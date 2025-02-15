@@ -1,101 +1,90 @@
-Return-Path: <linux-kernel+bounces-515997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07BFA36BCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1647BA36BCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A965E172A19
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6B91896B21
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6981946C3;
-	Sat, 15 Feb 2025 03:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pluCi0kt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DD31624D7;
+	Sat, 15 Feb 2025 03:51:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E0918D64B;
-	Sat, 15 Feb 2025 03:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60DC158DC4
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 03:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739591404; cv=none; b=D5IVKaGuY6JnUQwViLWwQpmfawZUvP82cDzywq2PPgtmCYaHUEDxR1tUqGRrQEB3uCnYQNeOVjPOZ1DQhLTqtk/Av2gpvId92J+g3DNVmbySOQaMbw9IK+wwaWzSJj8kbXuXzY0xbRWqQXx0dTWNv2tR+Ecy2xc/HHbl9yCG3NE=
+	t=1739591464; cv=none; b=Ha32KAyrd0R2+yK/yZhFPgpgA7GNkVhZKJRFiKNyvy8OaJ/Ig0UaNr1/2Pf+05suMWOBSYd9FBMpSCkez/huBA+1I+a+cPYxMPqcCErVvrFm+s/infViDAjNyRFF7TmoW4QbpSXeAJlrFyNzUw7lFXKhyLUIeBWwLA393LI5+oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739591404; c=relaxed/simple;
-	bh=FpyI8Wt6Q2ENMERd1QNvyAvr8Jt3MeuGi90LPoPrC60=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=crv4CHaSEyNkDZV4kBkLnExfQKSpH7rmboljqRriwbbFAIO0OImgMW7GTsRiXAR/7t6GXCKhk2oEVikH3GFjdTKiHXqvH54IFuGJD7xc7J+NiTy7LhynyH+RFbX09fLxiG2WHJmdY6G9K3E2PQFCfnSxZ+NBgCSiFmlzyb0a+WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pluCi0kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446E7C4CEE5;
-	Sat, 15 Feb 2025 03:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739591403;
-	bh=FpyI8Wt6Q2ENMERd1QNvyAvr8Jt3MeuGi90LPoPrC60=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pluCi0ktI/2o7cb1jtn9UhuZoAEn3cq1dtnaVR2cRoa11r6RDqa2+LfJEgATqy2wL
-	 D9VfeNeIp2HyJe/BZHVMtALhiYk1Qdcy18lOSUP7KNvt9ih1GHo70js3uIGF8SCPV6
-	 G9FRmcK9m3vkcGBRfru0wnCfq8sx2ji+19EPuV0qZ1yPOyxZWctcwGvt+M8LU7uCKi
-	 LHVWg6bpT55OTwEUXESR7uzEHA/A7a+z+2bCdqakxlipE2LAxpaCiNNCfEBJHJtsJ0
-	 w5Shs4v/zpEh3C8FBBj2CzJsQiuwm2V0ZV7+cVyNx8pguxC9nnyg2U6A6zfQQh4G6R
-	 /aJpQFosq4kuQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB505380CEE9;
-	Sat, 15 Feb 2025 03:50:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739591464; c=relaxed/simple;
+	bh=yKfHGyml/VMNQZ7mSWtQVi/XUgZd2/Bs0BnwruYi7ZQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DeGy6Fk4jzAJ52IzYMLjS5L2tY7WIDJPhbjv6rrXgEFephf5ZUYQMi9zgfHeFWxkanmkIGN7dJGnIsxVPJT+kUg1icBBEkiaR6dBx5oc0PfU7QnZKHmiTBzkMQFaqNk31DODGaY/nL8eaP47/T3MX6g8WOejf7yO2OY8jQ+cJzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-855757bd7eeso178145139f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 19:51:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739591462; x=1740196262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLmmMcItjiW5T7D050y29bFvlKkKUdr0a1D03ZCxE6Y=;
+        b=LnHLAQRo9crQJgjzqbL0AWptf++5hqY4104gnB0mg8hEiLbKPS028qq0NC5fHJEwXf
+         dLYaTOj9x0AoGQm2a7Kylg3W90nx7uLBJX5OBBERvUnpDROtf6Z+rbhZLKgfIq06GNLq
+         LuNteQ8QTlpLmxxielA3BRBHDhe+sYnJOYm+i5eHxDxnCdyU5dhJpZmf6hMovxlkXg1K
+         UY8ivme/oT3DHyxm4pMzcGCPza8b+H3FcbNAxdEkGsPZBjGCBknSLGZB893nv5GAsFRP
+         d1L16Q8FDmjY/xSPr2WPfCRHXx6JIKqTAb4zh4qyEPwm+QB8+RyGKSHyhus+OD5I40pu
+         nguQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRLlS3u62VyUnlJSsvxQkL7qKCxmeGL2SJ1SR50BpAG+nwMhu6qTIsd0teQh7An9Bdqz8LCg3bYaFBdTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcLABCq2Dy82fLNfeqD/JSbUdKQs6QGQtaAEIlPNOydLD8/G3n
+	l6281hAwpCGD+vJwYrju210nnkmY98alhywpM7LLqouPtOefO1VKflNATyl0U8EWFFGqgB8+ogZ
+	CCp2sUZ4YPOeXv9V3cOiHm4D/mwHhy1jhxMMLTh1RLAPI54bsO52RTIk=
+X-Google-Smtp-Source: AGHT+IFyL7mENl9r4qKQu3JVUhZqvQBsiVKwwuM4LTW1c/0GQPW+UMLY1S+vI6YaA9t6ikkZs2f/sN6B9Klg7I1mVONC2/0kHvIo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net/mlx4_core: Avoid impossible mlx4_db_alloc() order value
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173959143252.2183234.13500068544782550467.git-patchwork-notify@kernel.org>
-Date: Sat, 15 Feb 2025 03:50:32 +0000
-References: <20250210174504.work.075-kees@kernel.org>
-In-Reply-To: <20250210174504.work.075-kees@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: tariqt@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, yishaih@nvidia.com,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+X-Received: by 2002:a05:6e02:2181:b0:3d0:3851:c3cc with SMTP id
+ e9e14a558f8ab-3d2808f4b81mr12472445ab.16.1739591461877; Fri, 14 Feb 2025
+ 19:51:01 -0800 (PST)
+Date: Fri, 14 Feb 2025 19:51:01 -0800
+In-Reply-To: <tencent_7DDE136DA373496063A0644EF772177AE605@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b00f25.050a0220.21dd3.0065.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Write in io_submit_one
+From: syzbot <syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hello,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-On Mon, 10 Feb 2025 09:45:05 -0800 you wrote:
-> GCC can see that the value range for "order" is capped, but this leads
-> it to consider that it might be negative, leading to a false positive
-> warning (with GCC 15 with -Warray-bounds -fdiagnostics-details):
-> 
-> ../drivers/net/ethernet/mellanox/mlx4/alloc.c:691:47: error: array subscript -1 is below array bounds of 'long unsigned int *[2]' [-Werror=array-bounds=]
->   691 |                 i = find_first_bit(pgdir->bits[o], MLX4_DB_PER_PAGE >> o);
->       |                                    ~~~~~~~~~~~^~~
->   'mlx4_alloc_db_from_pgdir': events 1-2
->   691 |                 i = find_first_bit(pgdir->bits[o], MLX4_DB_PER_PAGE >> o);                        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                     |                         |                                                   |                     |                         (2) out of array bounds here
->       |                     (1) when the condition is evaluated to true                             In file included from ../drivers/net/ethernet/mellanox/mlx4/mlx4.h:53,
->                  from ../drivers/net/ethernet/mellanox/mlx4/alloc.c:42:
-> ../include/linux/mlx4/device.h:664:33: note: while referencing 'bits'
->   664 |         unsigned long          *bits[2];
->       |                                 ^~~~
-> 
-> [...]
+failed to apply patch:
+checking file fs/netfs/read_collect.c
+misordered hunks! output would be garbled
+Hunk #2 FAILED at 306.
+1 out of 2 hunks FAILED
 
-Here is the summary with links:
-  - net/mlx4_core: Avoid impossible mlx4_db_alloc() order value
-    https://git.kernel.org/netdev/net-next/c/4a6f18f28627
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
+Tested on:
+
+commit:         78a632a2 Merge tag 'pci-v6.14-fixes-3' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a7ddf49cf33ba213
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1dc29a4daf3f8051130
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=132099a4580000
 
 
