@@ -1,81 +1,72 @@
-Return-Path: <linux-kernel+bounces-516324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E698DA36FA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:09:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EA1A36FA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9E13AF08D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA0F16E485
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62521EA7D1;
-	Sat, 15 Feb 2025 17:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04911EA7CB;
+	Sat, 15 Feb 2025 17:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psG1m8xq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlUq0p2d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD1D1C6FE4;
-	Sat, 15 Feb 2025 17:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D5018B467;
+	Sat, 15 Feb 2025 17:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739639337; cv=none; b=o+8XlaEAF0/RYjvacoHP6BrBxYETO/a9q2eaIEP7VStRwGK3Mrf63zjniYKfhWC5sMi0ipK+v6DFVK34YN6izkz7k+OIjStApwfsEF8swZ1vkNSyDfAeOIAFHF8JSFKHsLfBoZZaq99MqjQuKhBGZnhST3LIlZC6rt9A0R4Gk5o=
+	t=1739639566; cv=none; b=eWCR1MDMYWz03JRoHgT4UXCwaolap9FEV9AGjuKD8+KVLSGNDdR9ffns0V1zY5mwf0b0IgIqdzU6Z9Yx8qoiZ3xXPTtV+0z7LbcpLQw0qcEO5vFL4M4yirA0dMOn/N04tXo08fbQwZkE9Dv1jjVYTPDFCXb8beVOf5sv70tGrmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739639337; c=relaxed/simple;
-	bh=Gff5Fb/UEHmhG3qEsrFxch0VTJF4L3wBvBHqc1Qlj0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lHpy+1J1C5cIEPEpKpuM768GCqEfn+OrKJCyztX8YgTuCLpArEI0sKZmmWv4X7pn/HdhvUbAJ+Ath1wMshWrhNoQO829nKvYbkJDWxleA2jhwDsZRK3CLVqFrjiltQJbpog3PL5pVvoVFpXGGxwre3BXtaO7rQwFMQvRvI9lA9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psG1m8xq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A7EC4CEE6;
-	Sat, 15 Feb 2025 17:08:53 +0000 (UTC)
+	s=arc-20240116; t=1739639566; c=relaxed/simple;
+	bh=9NpyrnnXrWQiuGlBMAHT8O8bCihdP9rW1a7d1z62utk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QHZ0T6tOoEuoqWvpejPeZ1DEq7LcRwaC1g5xVgPYmY+RHX5TnFtqXotTyx39zE/5mvomVrvStdJTHqzBsZYCOemwpQv9sbO1s7oYnRgTPGAPAg404tTVzfw2pjgf0tAgBI8vlrV0162hXTBhCi7Zw3XTyC+tJJWcnYsAnOb1pZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlUq0p2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACE6C4CEDF;
+	Sat, 15 Feb 2025 17:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739639336;
-	bh=Gff5Fb/UEHmhG3qEsrFxch0VTJF4L3wBvBHqc1Qlj0M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=psG1m8xquWHXiS4JqkvZE7SKTenQSi0pbhl+OdWfDkgrs9rpeBMrmnd8buVuWFW0O
-	 wKVMOJRkTKeQHSb1NNbV4HoSz+jECcZme+vA+wopDdJx0w+dEBHFLeC59agsUg9csa
-	 arXpWIaJsTVQGweY1aPSvZEGuNPs2Jk26q/of18Ej/+ldFT1EBt5KHXzPD950qNNRc
-	 aqcW8RFmG3MMTLSFFnzIBIc5waKK2DqQAx5Y27aBS5cvBtcFKovr4ydcWBlp5k+owU
-	 DBHK44zKuMGsJWBfdJUNliG42hWV2lYJtDvxYbgNB585ccr3rVy/xZGv4Hyw5RHXrf
-	 xbw8++R1hSA1A==
-From: Miguel Ojeda <ojeda@kernel.org>
+	s=k20201202; t=1739639565;
+	bh=9NpyrnnXrWQiuGlBMAHT8O8bCihdP9rW1a7d1z62utk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mlUq0p2dQuDhkx45R6PaZ0ppOcUEa7hfKU0YCp6F6q1nhiFRfFXawbxnsWzlA7ftv
+	 MtT2Q5lXugZEYSk25P0Qvar2cAl34qVdkE8m5jg+azurAWoZ7imxTr28sU5SsUgpod
+	 SMtCFRnD16J05HQ1q3bl+/jhr36n7MhOORsQ7WUKnf1LaDF3Df04Pyiex/hRnfU1CN
+	 AnknYyw9yD/Pa05SmKDZbunbB57Q1Wz1KsJNz4RaUbA4LE2tg79q2mR/xg9XUcPFRl
+	 Sqzae9ZwmD6S+zGa2C9Zfz3dwu+hX0U/guG/SYKXP2MVO9cM9Z3TP3QR2w++ma922J
+	 W/7yvFkMd00wQ==
+Date: Sat, 15 Feb 2025 18:12:42 +0100
+From: Wolfram Sang <wsa@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Rust fixes for 6.14 (2nd)
-Date: Sat, 15 Feb 2025 18:08:45 +0100
-Message-ID: <20250215170845.80764-1-ojeda@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.14-rc3
+Message-ID: <Z7DLCmDPaRhLWwos@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BLFyc/nnPRUAXEKU"
+Content-Disposition: inline
 
-Hi Linus,
 
-Please pull these fixes for Rust (second round).
-
-They have been in linux-next for a few days.
-
-No conflicts expected.
-
-Thanks!
-
-Cheers,
-Miguel
+--BLFyc/nnPRUAXEKU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
@@ -83,28 +74,51 @@ The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.14-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc3
 
-for you to fetch changes up to 2e4f982cf392af2f1282b5537a72144e064799e3:
+for you to fetch changes up to f85478fb3fecad01927935c51fe7e9dd5731d0b7:
 
-  rust: rbtree: fix overindented list item (2025-02-12 23:26:55 +0100)
-
-----------------------------------------------------------------
-Rust fixes for v6.14 (2nd)
-
-Toolchain and infrastructure:
-
- - Fix objtool warning due to future Rust 1.85.0 (to be released in
-   a few days).
-
- - Clean future Rust 1.86.0 (to be released 2025-04-03) Clippy warning.
+  Merge tag 'i2c-host-fixes-6.14-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-02-14 17:23:54 +0100)
 
 ----------------------------------------------------------------
-Miguel Ojeda (2):
-      objtool/rust: add one more `noreturn` Rust function
-      rust: rbtree: fix overindented list item
+i2c-for-6.14-rc3
 
- rust/kernel/rbtree.rs | 2 +-
- tools/objtool/check.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+MAINTAINERS maintenance. Changed email, added entry, deleted entry
+falling back to a generic one.
+
+----------------------------------------------------------------
+Mika Westerberg (1):
+      MAINTAINERS: Use my kernel.org address for I2C ACPI work
+
+Mukesh Kumar Savaliya (1):
+      MAINTAINERS: Add maintainer for Qualcomm's I2C GENI driver
+
+Wolfram Sang (2):
+      MAINTAINERS: delete entry for AXXIA I2C
+      Merge tag 'i2c-host-fixes-6.14-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+ MAINTAINERS | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+--BLFyc/nnPRUAXEKU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmewywoACgkQFA3kzBSg
+KbacIhAAjfE8FOxLyumD0R+pw5/p0lUc2ckdHbm4e9A1riJUTm/t84Ak8g5yPSWq
+dfPPjmuJpDG+nt6tXY9ZcqGhWD51Vtf52hnka4BkP/1jU671J+QCoqTOKXCMN/Bj
+xVc6b7IF+K703nU3BS7lUUJYwEWACfkOZdYHTGTxGmQNFf65yoT+5d+zAo3cxNZy
+Gs36QhqYrGh1ww6o42ukcRwstc1t7npMzqA2oAJ650fzRCg+F7kL5kIBZ5wR9yJ1
+J7Op35LXCIZorupDmb6Ux/ztlSPA0HfIitvUWwNWFBRFZN3GURNha0Hr5kBvAiAr
+++wRi6f0+uM64cokm8zo7TwfLx9+9f9bENAe/AkY0rEOnAsJN0Tt1WLYCWug9cAK
+6SiKWzqzR7FdiWVEYSa1lN/aXIsNg5rNtIRz/KA/CdmXNQKRJpWI6ukq6ljxJf5C
+2lEob1sbWhxEXaYNViOX0lr5jKP61mI0GPvq4n+1N+LWP/DmXnifgTuT7baSetgg
+0WSToDpjBnAtHAVWvsr4d2evnMWWODLsR3e34Z/KVm5ZFv/GYorPj/uLeRrNxh86
+6GjUQKE2fsMG2Bs//8mw1U+D21pb/VSswSiGx7Fo5tCxYesOdhHVOOsQ8uBG/mUD
+qfa9cWe5jAYhDcffVZMqawjNHtkIRHyMiNYngcIXRhvfiuqE8ug=
+=JNln
+-----END PGP SIGNATURE-----
+
+--BLFyc/nnPRUAXEKU--
 
