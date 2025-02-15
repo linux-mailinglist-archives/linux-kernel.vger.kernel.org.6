@@ -1,246 +1,227 @@
-Return-Path: <linux-kernel+bounces-516276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905ACA36F0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:22:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C240A36F14
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B176170CE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3A41894B73
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7585A1DF97E;
-	Sat, 15 Feb 2025 15:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05C142AA5;
+	Sat, 15 Feb 2025 15:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFAwPj10"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qnJ+mmQZ"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DA51B532F;
-	Sat, 15 Feb 2025 15:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0AB1DDC2C
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 15:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739632914; cv=none; b=RhFHcOX2PLPQ2gkFwX4+K8lLou81JABEULzRdDs+Wv3SFhAU37f/6hyk4APkGjSHgwt2em/2ZdXLnjrgDeB4HzNQkjTer+WF4FHTXFQTD9dMXZNgbI2glyKEW84wbZIX6qEEll/NGnWtBcFCPYFn3NX1XAWztAYDu/nPYSrs2EM=
+	t=1739632976; cv=none; b=uWDv1jyxgFXr1HEylCLISTMpmm0ptVC04AU9J7yo08c5fJy2C6kSujU1E6/vEUQeSDJr5FJpchhbAuntOlkvGBt8wuuBbByPpf9LHWX+slhR7cHmE7q4ku5Ezmf/uJUDQ7D3MwhUdseb0N5sFh4bf7ooBYbfBNxZuOP/9tIo9Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739632914; c=relaxed/simple;
-	bh=YQNdtcleLTF9hqSfo0yJUx3RAj6D3MTgjjM22M/sx7Q=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VInyScA58la8mlCs4XTSo0XmlTqsDqLtTYkmZQOzZ5mk0bqNXs7PVLOEt3hmXOMzlMSkxUdO2ZTqAbLmJ/9LTDAYXn3WMIERH2aPucE4sSg1Z6LAknuQZ5pH968bvvjLfgck8wpMlpClaF5nPbx0RuTPch68gyh29VcY9bWQYq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFAwPj10; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C144AC4CEDF;
-	Sat, 15 Feb 2025 15:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739632914;
-	bh=YQNdtcleLTF9hqSfo0yJUx3RAj6D3MTgjjM22M/sx7Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rFAwPj10zAk0vmuvXyoUiTs142M8Uj5+zeokYTLqah0CR0aifBbBIs1qcnMosP5d8
-	 EgKXdTtP/maSYxpkOwKzJLH5CecAUcRB3E5adkzs953R2LtMu/SwgyC/oRMRbVACNB
-	 gQProZKv24iBojCwPRgbFgeIOwGTsgOjckQJBYJfzZIDeKd/1jys1QLtB2z/8AMc+/
-	 cufg8OX+4HJ/QKcsPWnfhHppCy/lyS+Rm0teV7yd49wa3GgC4UsDeD2wwH7yuA//Jw
-	 lykVpN+xPR/8nLyBda3Lxn3bEC2p39JvjM/KSGfZYGnMdtjGujrl1nn4wPUpkIdmr0
-	 Nrm49Ncq+WTNA==
-Date: Sun, 16 Feb 2025 00:21:50 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH] ring-buffer: Allow persistent ring buffers to be
- mmapped
-Message-Id: <20250216002150.ef7dfcbc0b875dfebde31a5b@kernel.org>
-In-Reply-To: <20250214130442.3f4fee5d@gandalf.local.home>
-References: <20250214130442.3f4fee5d@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739632976; c=relaxed/simple;
+	bh=ot4shzajuE90HxsFFMmVirML9i4Ru8URXgw7E2tV8lQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WJgvrQhoPxnL71kV62Wc69d2vMyzBzX9uRX9YQkgrDkoZNZvXJ+vtLczc0okD/EHOqjuE/dtrkI/BwreFo4UmSkoYBte6layM1cl2R76kRHz5lIDclUpW01dltinXyGRqj6xfFyPaqUzfAHrMCMN5pi9LMdKytey9Xqpd2excR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qnJ+mmQZ; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e5dbdbdaeedso1348203276.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 07:22:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739632972; x=1740237772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ya1HOp4At8o4rZdZ1CZR9DS9vtC+SlJcJNAQgmy2no=;
+        b=qnJ+mmQZ19M8T8zvWmKXkLLyi10q9gXmvuOCrLbITuXvJQdFp6t5sgVXdEvgZ8ktzq
+         B6V3lVv742xn5KyWmmh+I2SMuAwAT6tfyfMcDVLHxvEljRSzLH9Xjh7ENa1GA7ztuzov
+         /fPPSEqNAidmHqU9XoymDhf3yNCwiM7SNmJP6P+kArmY8MobBy6WSWvDi7IBw3FK9YfT
+         QMCTd9H7u7ghg76lk9QKBKXK8Z+LzLvghkTknyTm0OlGKEjKNfdXB+ggFhxteAOXtnLj
+         usGmVPeQfsLy7vhj9TIY+IPUg23mdWDdjn6OLme83WZDc1RrrZriiz9+zvrQgtkqVGP/
+         iLdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739632972; x=1740237772;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2ya1HOp4At8o4rZdZ1CZR9DS9vtC+SlJcJNAQgmy2no=;
+        b=jb2/oq+wrsfwKXX/sYU3k3K3IvmhaUyixNJJjrUog5oApmcM/tmYpc1C0TPpVk//ov
+         n9jogKPciCFIlJFu841EwBahFrR1I/AGWrTUinHyd5X402IA77sXIVVP1YJiCdC3wwjZ
+         6EyCunRNoDkvNXW9uyPPY422fV7TpsTnFFjETvgohUvD7w6TdfBMBZgVr+gI3sAVuACo
+         6M2lQkHXvYXihLl8POxN/dax75KmLdf0RRIzeR3aU5KGQjeiF1uc6Y3C24gmnqYkD51P
+         0AwZk0UxPTJzVUf1FWWu9gLwzzQiGjJmdp6leuISjM4XI0jS5uoeDeBz1s6pawwtzOXV
+         Ywqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ksZMrIo8wOs4a+si9z7zk1PPfpGYEyDF3evQtcDASieud1rTtyfx66HvppVmuYHMC9U7Fu+Nb1G9da0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyko0iV1I2CpmH8ZxBuLWZ2kj+vACUYeJZO+eNBALVo8BWC7fvr
+	x9MLshRD2HKUTzqmwzNMheCpa6Q78wvfvbUUiyWQ953prkxTolLomFoypl9lKlTk4+AqKr9KGT4
+	3WF1Z4CjeVx27Qo6L+tCYSyZgiwsefV9cyxqoIA==
+X-Gm-Gg: ASbGncubk27Vuq9LZUB6sBI9W/DV++hW8D+ENgPD5TIqXflpAI0zANXCOB63cz//qVO
+	1DbPEjZnO93yVjdVaG2wkl0qoHPCpl9DEzofpJKBDKhJ7Tu67EitCdD7Q4W7kJ4hCqZHRcuV3Hj
+	cl3EdC6J8JZOJbhJeK5x2Kxyujcw==
+X-Google-Smtp-Source: AGHT+IHCM9nGvMBLMHM0urprzaVEMr1E9JJGwJN2aU4oCsO5lmJSn8L5sb5ABAdmNNdEk78PHDTei2/liPwZS3V/suk=
+X-Received: by 2002:a05:690c:6405:b0:6ef:6f24:d093 with SMTP id
+ 00721157ae682-6fb58260edamr32798287b3.6.1739632972228; Sat, 15 Feb 2025
+ 07:22:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
+ <20250213-a623-gpu-support-v1-2-993c65c39fd2@quicinc.com> <ttipuo56z76svx3womcrrqurglvovkqehsx2orgnegjj2z7uxn@d3cov6qmmalm>
+ <182b7896-9cfc-4f94-b9d4-759fd85fd997@quicinc.com>
+In-Reply-To: <182b7896-9cfc-4f94-b9d4-759fd85fd997@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 15 Feb 2025 17:22:40 +0200
+X-Gm-Features: AWEUYZkkpka5cr642Meq7bthCAe5gt3dTkRMkIvHVkAt9bN0FOufwH7vzAGO4cA
+Message-ID: <CAA8EJppO6ob+oQTzPkx1D6Fmq7bfyNquEyXwFXhmiiTKtXrOAA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] drm/msm/a6xx: Add support for Adreno 623
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jie Zhang <quic_jiezh@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 14 Feb 2025 13:04:42 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sat, 15 Feb 2025 at 13:49, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>
+> On 2/13/2025 10:24 PM, Dmitry Baryshkov wrote:
+> > On Thu, Feb 13, 2025 at 09:40:07PM +0530, Akhil P Oommen wrote:
+> >> From: Jie Zhang <quic_jiezh@quicinc.com>
+> >>
+> >> Add support for Adreno 623 GPU found in QCS8300 chipsets.
+> >>
+> >> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+> >> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >> ---
+> >>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c   | 29 +++++++++++++++++++++++++++++
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       |  8 ++++++++
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 +-
+> >>  drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  5 +++++
+> >>  4 files changed, 43 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >> index edffb7737a97..ac156c8b5af9 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >> @@ -879,6 +879,35 @@ static const struct adreno_info a6xx_gpus[] = {
+> >>                      { 0, 0 },
+> >>                      { 137, 1 },
+> >>              ),
+> >> +    }, {
+> >> +            .chip_ids = ADRENO_CHIP_IDS(0x06020300),
+> >> +            .family = ADRENO_6XX_GEN3,
+> >> +            .fw = {
+> >> +                    [ADRENO_FW_SQE] = "a650_sqe.fw",
+> >> +                    [ADRENO_FW_GMU] = "a623_gmu.bin",
+> >> +            },
+> >> +            .gmem = SZ_512K,
+> >> +            .inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> >> +            .quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> >> +                    ADRENO_QUIRK_HAS_HW_APRIV,
+> >> +            .init = a6xx_gpu_init,
+> >> +            .a6xx = &(const struct a6xx_info) {
+> >> +                    .hwcg = a620_hwcg,
+> >> +                    .protect = &a650_protect,
+> >> +                    .gmu_cgc_mode = 0x00020200,
+> >> +                    .prim_fifo_threshold = 0x00010000,
+> >> +                    .bcms = (const struct a6xx_bcm[]) {
+> >> +                            { .name = "SH0", .buswidth = 16 },
+> >> +                            { .name = "MC0", .buswidth = 4 },
+> >> +                            {
+> >> +                                    .name = "ACV",
+> >> +                                    .fixed = true,
+> >> +                                    .perfmode = BIT(3),
+> >> +                            },
+> >> +                            { /* sentinel */ },
+> >> +                    },
+> >> +            },
+> >> +            .address_space_size = SZ_16G,
+> >>      }, {
+> >>              .chip_ids = ADRENO_CHIP_IDS(
+> >>                      0x06030001,
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> index 0ae29a7c8a4d..1820c167fcee 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> @@ -616,6 +616,14 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
+> >>              gpu->ubwc_config.uavflagprd_inv = 2;
+> >>      }
+> >>
+> >> +    if (adreno_is_a623(gpu)) {
+> >> +            gpu->ubwc_config.highest_bank_bit = 16;
+> >> +            gpu->ubwc_config.amsbc = 1;
+> >
+> > This bit causes my question: the patch for msm_mdss states that on the
+> > display side both UBWC encoder and decoder are 4.0, which means that the
+> > UBWC_AMSBC bit won't be set in the UBWC_STATIC register.
+>
+> Not sure, but my guess is that AMSBC encoding is probably implicitly
+> enabled by MDSS HW when UBWC v4 is configured.
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The persistent ring buffer uses vmap()'d memory to map the reserved memory
-> from boot. But the user space mmap() to the ring buffer requires
-> virt_to_page() to return a valid page. But that only works for core kernel
-> addresses and not for vmap() addresses.
-> 
-> If virt_addr_valid() fails on the page to be mapped, use vmalloc_to_page()
-> instead.
-> 
-> Also, the persistent memory uses the page->id for its own purpose where as
-> the user mmap buffer currently uses that for the subbuf array mapped to
-> user space. If the buffer is a persistent buffer, use the page index into
-> that buffer as the identifier instead of the page->id.
-> 
-> That is, the page->id for a persistent buffer, represents the order of the
-> buffer is in the link list. ->id == 0 means it is the reader page.
-> When a reader page is swapped, the new reader page's ->id gets zero, and
-> the old reader page gets the ->id of the page that it swapped with.
-> 
-> The user space mapping has the ->id is the index of where it was mapped in
-> user space and does not change while it is mapped.
-> 
-> Since the persistent buffer is fixed in its location, the index of where
-> a page is in the memory range can be used as the "id" to put in the meta
-> page array, and it can be mapped in the same order to user space as it is
-> in the persistent memory.
+Ack.
 
-Looks good and works for me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/ring_buffer.c | 49 ++++++++++++++++++++++++++++++++------
->  kernel/trace/trace.c       |  4 ----
->  2 files changed, 42 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index bb6089c2951e..87caf9d48edb 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -5950,12 +5950,18 @@ static void rb_clear_buffer_page(struct buffer_page *page)
->  static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->  {
->  	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-> +	struct page *page;
->  
->  	if (!meta)
->  		return;
->  
->  	meta->reader.read = cpu_buffer->reader_page->read;
-> -	meta->reader.id = cpu_buffer->reader_page->id;
-> +	/* For boot buffers, the id is the index */
-> +	if (cpu_buffer->ring_meta)
-> +		meta->reader.id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-> +						     cpu_buffer->reader_page->page);
-> +	else
-> +		meta->reader.id = cpu_buffer->reader_page->id;
->  	meta->reader.lost_events = cpu_buffer->lost_events;
->  
->  	meta->entries = local_read(&cpu_buffer->entries);
-> @@ -5963,7 +5969,12 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->  	meta->read = cpu_buffer->read;
->  
->  	/* Some archs do not have data cache coherency between kernel and user-space */
-> -	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-> +	if (virt_addr_valid(cpu_buffer->meta_page))
-> +		page = virt_to_page(cpu_buffer->meta_page);
-> +	else
-> +		page = vmalloc_to_page(cpu_buffer->meta_page);
-> +
-> +	flush_dcache_folio(page_folio(page));
->  }
->  
->  static void
-> @@ -6883,23 +6894,38 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
->  	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
->  	unsigned int nr_subbufs = cpu_buffer->nr_pages + 1;
->  	struct buffer_page *first_subbuf, *subbuf;
-> +	int cnt = 0;
->  	int id = 0;
->  
-> -	subbuf_ids[id] = (unsigned long)cpu_buffer->reader_page->page;
-> -	cpu_buffer->reader_page->id = id++;
-> +	if (cpu_buffer->ring_meta)
-> +		id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-> +					cpu_buffer->reader_page->page);
-> +	else
-> +		cpu_buffer->reader_page->id = id;
-> +
-> +	subbuf_ids[id++] = (unsigned long)cpu_buffer->reader_page->page;
-> +	cnt++;
->  
->  	first_subbuf = subbuf = rb_set_head_page(cpu_buffer);
->  	do {
-> +		if (cpu_buffer->ring_meta)
-> +			id = rb_meta_subbuf_idx(cpu_buffer->ring_meta,
-> +						subbuf->page);
-> +		else
-> +			subbuf->id = id;
-> +
->  		if (WARN_ON(id >= nr_subbufs))
->  			break;
->  
->  		subbuf_ids[id] = (unsigned long)subbuf->page;
-> -		subbuf->id = id;
->  
->  		rb_inc_page(&subbuf);
->  		id++;
-> +		cnt++;
->  	} while (subbuf != first_subbuf);
->  
-> +	WARN_ON(cnt != nr_subbufs);
-> +
->  	/* install subbuf ID to kern VA translation */
->  	cpu_buffer->subbuf_ids = subbuf_ids;
->  
-> @@ -7064,7 +7090,10 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->  			goto out;
->  		}
->  
-> -		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-> +		if (virt_addr_valid(cpu_buffer->subbuf_ids[s]))
-> +			page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-> +		else
-> +			page = vmalloc_to_page((void *)cpu_buffer->subbuf_ids[s]);
->  
->  		for (; off < (1 << (subbuf_order)); off++, page++) {
->  			if (p >= nr_pages)
-> @@ -7210,6 +7239,7 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  	unsigned long missed_events;
->  	unsigned long reader_size;
->  	unsigned long flags;
-> +	struct page *page;
->  
->  	cpu_buffer = rb_get_mapped_buffer(buffer, cpu);
->  	if (IS_ERR(cpu_buffer))
-> @@ -7278,7 +7308,12 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  
->  out:
->  	/* Some archs do not have data cache coherency between kernel and user-space */
-> -	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-> +	if (virt_addr_valid(cpu_buffer->meta_page))
-> +		page = virt_to_page(cpu_buffer->meta_page);
-> +	else
-> +		page = vmalloc_to_page(cpu_buffer->meta_page);
-> +
-> +	flush_dcache_folio(page_folio(page));
->  
->  	rb_update_meta_page(cpu_buffer);
->  
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 0e6d517e74e0..25ff37aab00f 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8279,10 +8279,6 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
->  	struct trace_iterator *iter = &info->iter;
->  	int ret = 0;
->  
-> -	/* Currently the boot mapped buffer is not supported for mmap */
-> -	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
-> -		return -ENODEV;
-> -
->  	ret = get_snapshot_map(iter->tr);
->  	if (ret)
->  		return ret;
-> -- 
-> 2.47.2
-> 
+>
+> -Akhil
+>
+> >
+> >> +            gpu->ubwc_config.rgb565_predicator = 1;
+> >> +            gpu->ubwc_config.uavflagprd_inv = 2;
+> >> +            gpu->ubwc_config.macrotile_mode = 1;
+> >> +    }
+> >> +
+> >>      if (adreno_is_a640_family(gpu))
+> >>              gpu->ubwc_config.amsbc = 1;
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> >> index 2c10474ccc95..3222a406d089 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> >> @@ -1227,7 +1227,7 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
+> >>      _a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[1],
+> >>              &a6xx_state->gmu_registers[1], true);
+> >>
+> >> -    if (adreno_is_a621(adreno_gpu))
+> >> +    if (adreno_is_a621(adreno_gpu) || adreno_is_a623(adreno_gpu))
+> >>              _a6xx_get_gmu_registers(gpu, a6xx_state, &a621_gpucc_reg,
+> >>                      &a6xx_state->gmu_registers[2], false);
+> >>      else
+> >> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> >> index dcf454629ce0..92caba3584da 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> >> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> >> @@ -442,6 +442,11 @@ static inline int adreno_is_a621(const struct adreno_gpu *gpu)
+> >>      return gpu->info->chip_ids[0] == 0x06020100;
+> >>  }
+> >>
+> >> +static inline int adreno_is_a623(const struct adreno_gpu *gpu)
+> >> +{
+> >> +    return gpu->info->chip_ids[0] == 0x06020300;
+> >> +}
+> >> +
+> >>  static inline int adreno_is_a630(const struct adreno_gpu *gpu)
+> >>  {
+> >>      return adreno_is_revn(gpu, 630);
+> >>
+> >> --
+> >> 2.45.2
+> >>
+> >
+>
 
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With best wishes
+Dmitry
 
