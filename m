@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-515869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD62A36A08
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47479A36A0A
 	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E568170A18
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:42:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A39E3B01B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232F770FE;
-	Sat, 15 Feb 2025 00:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955478F4B;
+	Sat, 15 Feb 2025 00:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LYXh5m9a"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DeCIRD7E"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BFD74E09
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178407080E
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580152; cv=none; b=c0mtFc2h6WdSzWcFnc0PWCo1qnpODrNdglS07q5pPqanTq2cQhfTzUh/z6QqrtrxCIlodYmFb5X3kI9xJ8WwGoOVdaLVF7SPnUDhsO+svT8/mYTrAZROAkhC3I98hf0VljQzJKIdWcpZvJvGawayzh3BkVW0LWAvxtOdBZR0xOw=
+	t=1739580160; cv=none; b=o2WQqgxai/2zMvPbAZaLZZw/ub0aARn8CY9+8XWUZDbS4QHUfGuNKVBXGe22zdG8bzPGHHHR3AwTnhQ6OQlgvLlmNaKEZx4wwR++1Owo/m0xu/0mMaYRG97wfvlMqgskK/EpwZYqJKup//40/YzmxAujpwDddAtUaVdFZxzurUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580152; c=relaxed/simple;
-	bh=8A9VukIKZjL5+y0kfyvQdLBGzqyRaXOD7xTAsHPas4w=;
+	s=arc-20240116; t=1739580160; c=relaxed/simple;
+	bh=ZVu8+VefJZHMcjD4YYJyHLSOAOenrSokQl6lPKDqWFM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=exGx/AOwFTuaEbMbDkXzp8CgJOCq8Q8m4HeHSHZeGlxUT6NZYl5AOh5uZ2hCKKKiPxXjkSK11w6pm8B0M6iJmOogyzkAVBjxX3/W2c/fJQbOsLJKDGj+5AHJN6MMC6AlHvy1/eXvl+Oyap8sI1zo30DfWYRPcxgM/cEKKES90yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LYXh5m9a; arc=none smtp.client-ip=209.85.208.182
+	 To:Cc:Content-Type; b=PTWZdyJIdIG9TL2djCyQae6gHzvC/W4M5SbjmIqn4FGqUytVqwdHBhDA7Iwuuc7rlxqZnqlBCdmzf2NiN3mPqiG9f02aC+CdgvhuUIIZ+DZeZBOClz4UNGEmNWzYA9Qb/FORcKY241Q2ZlYFUHv0v5yt3HSDssQexz3Zqu/AEXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DeCIRD7E; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30762598511so27020641fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:42:29 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54529e15643so1096632e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:42:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739580148; x=1740184948; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1739580153; x=1740184953; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5/J1cbeKvcU3X1p/IOGIvH8IpZAtkyHcUrQchvpscnI=;
-        b=LYXh5m9aocNR8pre82m7VG2lYnwQgeGsU2ccgzNgsk2lZnH8rjBWOnnJsscUIYzDs6
-         cVlnbm4+6enakNfkxU4Yr26aVo5euvmJ9AloRHHeL+YMiKr2M6U9IeN8A01sMEgulhT8
-         8b3xMA3FLUCKa+jYu81JyhIjipfbP8+cLAVwI=
+        bh=knE8v9zYVGyQDQfSdvTMBCc1TTHDqVX+HxXJrV1G9rs=;
+        b=DeCIRD7E0/W6ymgtE8RkNgEHob2wsA02x6dG1AbAeVz2jwaueEHQhMKDgNXTuV/nVL
+         JmQbw2qdNE4yc/fLq70Nx2msis8PDx2W8dy7H51JyUle9DITqyqYjsrdxVCBrkBjEjXP
+         cpEj28e5X2bLKC312jJ2fSBIxN8G2WDSTEvLg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739580148; x=1740184948;
+        d=1e100.net; s=20230601; t=1739580153; x=1740184953;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5/J1cbeKvcU3X1p/IOGIvH8IpZAtkyHcUrQchvpscnI=;
-        b=J55e629V2G5s7thOaQrTYm2xTvKkrKvrc+cBjiERFk2MTCv1WKZBdYTFkxdo2kifGb
-         mRA/cSpWHNMq4ac/FOM2KAxgGRcOAYV+9jJJ/H1uAXe9ssmgxkvyeEQkutWQdIEkxCWY
-         zK/DhiyUdyO0huNzV9gMplLgCvOxjvbuxlgW/Sb2KDr7VvUUSzA45JW4KUPABYs4mA5k
-         y96hmIJiYPioEgPVr06jb6uYKFqwef3B2qi1WLKLW4GZVNnVnIonTPPKp8GdfNcvjHBo
-         KbsPRqRAjCHjPRFuOqF2nrS+XxgetRpqsqE9xiuCVatcT/XPvVrplorOfAdXILouX5e6
-         Z3tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHsu4PSrhp0S7AhYiUYT9XU4rpPcOhtnYWwLxOfp3NGC2laZG+wLlixitdihv9EhiG0MSzu98klP81huc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ndVcP8+0+UDgedOK0ck85rut9Xs7u/Ubh908rrydlMJu0DoD
-	/CyYoc4JupKSi8+k7znlvLu+8eBvteEwIF59/3HXMxVKFNE1bNIlLSn6g6haziT8e0OSPqqirFG
-	kantZ
-X-Gm-Gg: ASbGncvBxB2V7fqyVcOfjVe6j6OwDoOyb/TkqXnTmWgOP+9dJhTRlnhf9aVkTXA/NAZ
-	3EOvUrtBr7INeb8lVxGcyv3raBAgtaVbwY9YaFG66JK1BJrF6qYMdEnprbh41G9fWK+lZ/Daa1y
-	AkbWQ4pU1/NgmaEPWQOjfF8AdX/cF2/wi9w54oZRdhKQX06/R++bbpvWig2tTQeW+J121gohHAo
-	5pEzUjHKgOW/f5mINqBQRsGrntAp+Nn7ApVnKLwNcRfTvZo4AX0ZW604VIGyr86KnatbIg+LroC
-	GGSBPjvCCV6emrUeKmEy/4xxoXQxSVzQCjf+5xq2GB4u1z+CcafwZHg=
-X-Google-Smtp-Source: AGHT+IFK/PzvKeSNcbvn1PdjPV3MvSwxo29EFtwH9Dh+cBgyYSNE03QYYHfPBHNXHdRaAdUD7oIclA==
-X-Received: by 2002:a2e:91c6:0:b0:300:1ea5:1655 with SMTP id 38308e7fff4ca-30927a47351mr5082371fa.15.1739580147687;
-        Fri, 14 Feb 2025 16:42:27 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309100c536bsm7506651fa.21.2025.02.14.16.42.26
+        bh=knE8v9zYVGyQDQfSdvTMBCc1TTHDqVX+HxXJrV1G9rs=;
+        b=nVdHT8iPnIIW0TFn/8acM4Zw9HJRLzBr0QNK94ZE/9aUZ4r0cEmVA/+LGlSTEdbQrM
+         FE9ubN84pJTwa5Q2vhMczj4bB5sNj2G+HUV5uJlonfe3ar33W9AW1EH2TFJctFCEqkHV
+         +CVyK1U9dsaLtCeOIHlPxDHmeQYwws4JUgXRzx2nZjyGD0Z9nwKzCnFpaztPq/LHNO0P
+         2rWX1RCL66JCHj8hvRb49COxDkI7Aq+QuutUoSvHE2WcnoQ7DcbtN2ZGkLK1uL43EiwS
+         wqEyo/5STzBxmJfcboYjZuR6lB5wSMD4xCeA3KJmD/KwRpFwRgowh50CfFDl93O15zgv
+         2Rrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7YihDc+UkAq9HIHsUgZVJiVngvnkF/vVWVHUYgRK41YLJLKvORiWs0p9qFov7Ea4V6O+gnL9JRrUCMmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2gNHREh/qgl62c/aQSyZyxqQYLzXHVZhszK819+9Q3ZXXaw2/
+	VO4nxOl4mZNQCk+jqzCV514FOnI0D5xoRk+5/8/r2aywYcxbD1NEiuV799mcGSA9pR+WN0LBtfb
+	O4GYj
+X-Gm-Gg: ASbGncs11atiLl3h1btQCA0sI4a/DFyH14QZqCnAi+NcHzz0Bv0WbsMKuvvzEwtjuW8
+	VX5Y/7jR1uhr2E+pBs2aX0waXtOScMRTBkW6+7lhv1ODS1pcSgzE9Y7E05CWBtt7u3/68J/5Mkb
+	UgnXIyEfepJ0eMpDBxY3A+KHCJwt6bNI6AnqDRn9fNhC5Zt1UNRG2k5tsGteTwN118LHqRhRZwD
+	NKdi1ANBEHMx5/S9ZUJw9BkZ0SjhN/lHAcsygBYteUqMqNYXWanLhpixiUEMSbmjgZMRUnf7CvX
+	AAR50g11bsSg7Hj9zI5XtzLI0W6x4FHzUBMLT8+q4umUHlTokwiSMVoNgRU=
+X-Google-Smtp-Source: AGHT+IFQg1wcmwo+iJ7EFFquIFRBSXQMmzmCjSr4mgmiY6+83j0RI+3TWiEptU0VEL78BLtwfQl0/g==
+X-Received: by 2002:a05:6512:1193:b0:542:2139:636a with SMTP id 2adb3069b0e04-5453031820bmr328979e87.7.1739580153449;
+        Fri, 14 Feb 2025 16:42:33 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f105f28sm705563e87.118.2025.02.14.16.42.30
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 16:42:26 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5452ed5b5b2so779686e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:42:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXwnkg+MYiLckGAj/GlBxF7Axrqd+8+k7hbD3c9uiaLsOA7te+ulDz/v74/wjS/ZauF3sEGNFpsizlP8DE=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b0d:b0:544:13e0:d5b4 with SMTP id
- 2adb3069b0e04-5452fe26478mr426302e87.10.1739580146459; Fri, 14 Feb 2025
- 16:42:26 -0800 (PST)
+        Fri, 14 Feb 2025 16:42:32 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-307c13298eeso26119021fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:42:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWd8jxB4g/+4AInKLb6IpcPdruqT2ooVqMIlI9NdRM7voOOOilOdOuvKyHK3T19QwDP47kxfuASFsp8ISc=@vger.kernel.org
+X-Received: by 2002:a2e:910e:0:b0:309:28c9:54c3 with SMTP id
+ 38308e7fff4ca-30928c955aamr2870491fa.12.1739580150226; Fri, 14 Feb 2025
+ 16:42:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214172958.81258-1-tejasvipin76@gmail.com> <20250214172958.81258-2-tejasvipin76@gmail.com>
-In-Reply-To: <20250214172958.81258-2-tejasvipin76@gmail.com>
+References: <20250214172958.81258-1-tejasvipin76@gmail.com> <20250214172958.81258-3-tejasvipin76@gmail.com>
+In-Reply-To: <20250214172958.81258-3-tejasvipin76@gmail.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 14 Feb 2025 16:42:14 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=URp_SJ8RBhwgX1sW22EvscMA9y1OZUSu_F-79DrTFRXg@mail.gmail.com>
-X-Gm-Features: AWEUYZlc1dsZ7mE3BumU_xd1MLx_j1s_3MrYKpaZYO9q40UxvaVtfpj_5FGNv1c
-Message-ID: <CAD=FV=URp_SJ8RBhwgX1sW22EvscMA9y1OZUSu_F-79DrTFRXg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/mipi-dsi: Replace mipi_dsi_dcs_set_tear_off with
- its multi version
+Date: Fri, 14 Feb 2025 16:42:18 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=U22kToVeyCBy_TV5hNKuMZv-QBUg0WTyXsMSu=bHLd3g@mail.gmail.com>
+X-Gm-Features: AWEUYZl9RMNhOlvjGnk24tr1lRpcTUKmNyE4ytjlZLYxfkgep28FyUJ3Tv8BSeI
+Message-ID: <CAD=FV=U22kToVeyCBy_TV5hNKuMZv-QBUg0WTyXsMSu=bHLd3g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/panel: sony-td4353-jdi: transition to mipi_dsi
+ wrapped functions
 To: Tejas Vipin <tejasvipin76@gmail.com>
 Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
 	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
@@ -104,56 +104,22 @@ Hi,
 On Fri, Feb 14, 2025 at 9:30=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
 > wrote:
 >
-> mipi_dsi_dcs_set_tear_off can heavily benefit from being converted
-> to a multi style function as it is often called in the context of
-> similar functions.
+> Change the sony-td4353-jdi panel to use multi style functions for
+> improved error handling.
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/panel/panel-sony-td4353-jdi.c | 107 ++++--------------
+>  1 file changed, 23 insertions(+), 84 deletions(-)
 
-Given that it has one caller, the wording "heavily benefit" and "often
-called" is a bit of a stretch.
+Nice diffstat and so much boilerplate error code removed. :-)
 
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-> --- a/include/drm/drm_mipi_dsi.h
-> +++ b/include/drm/drm_mipi_dsi.h
-> @@ -346,7 +346,6 @@ int mipi_dsi_dcs_set_column_address(struct mipi_dsi_d=
-evice *dsi, u16 start,
->                                     u16 end);
->  int mipi_dsi_dcs_set_page_address(struct mipi_dsi_device *dsi, u16 start=
-,
->                                   u16 end);
-> -int mipi_dsi_dcs_set_tear_off(struct mipi_dsi_device *dsi);
->  int mipi_dsi_dcs_set_tear_on(struct mipi_dsi_device *dsi,
->                              enum mipi_dsi_dcs_tear_mode mode);
->  int mipi_dsi_dcs_set_pixel_format(struct mipi_dsi_device *dsi, u8 format=
-);
-> @@ -379,6 +378,7 @@ void mipi_dsi_dcs_set_page_address_multi(struct mipi_=
-dsi_multi_context *ctx,
->                                          u16 start, u16 end);
->  void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context =
-*ctx,
->                                           u16 scanline);
-> +void mipi_dsi_dcs_set_tear_off_multi(struct mipi_dsi_multi_context *ctx)=
-;
-
-This patch can't land as-is since it breaks bisection. In other words,
-if someone has the first patch but not the second then it won't
-compile because there will still be a user of
-mipi_dsi_dcs_set_tear_off() but you've removed it. If they have the
-second patch but not the first then it won't compile because
-mipi_dsi_dcs_set_tear_off_multi() hasn't been introduced yet. You have
-two options:
-
-1. Turn your 2 patches into 3 patches. The first patch would need to
-still provide the old function, the second patch would stay as-is, and
-the third patch would remove the wrapper.
-
-2. Just squash the two patches together.
-
-
-If I were picking, I'd pick #2. While it's nice to separate out
-patches, this is not a very complex case and adding code just to
-delete it two patches later is a bit silly. That being said, it's a
-tradeoff so if someone else has strong opinions I wouldn't object to
-taking path #1.
+Note that I'm on vacation next week and it might take me a while to
+dig out of email when I get back. More than happy if someone else
+wants to land if the bisectability problems I talk about in patch #1
+are resolved. Otherwise I'll get back to this eventually.
 
 
 -Doug
