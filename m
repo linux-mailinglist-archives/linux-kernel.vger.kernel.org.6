@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-515966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7A1A36B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:09:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8935A36B50
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129B81711FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:09:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2837A3A99
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4581B7BAEC;
-	Sat, 15 Feb 2025 02:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W7aDMuB1"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF917158851;
+	Sat, 15 Feb 2025 02:11:06 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB7CDDA8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 02:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA7C1519B3;
+	Sat, 15 Feb 2025 02:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739585350; cv=none; b=fexkHvEhA3hu5EkwuiGdmXDNse9FdtnEzjFQSdgZc2YXGW4QeVRuOqkKMRAscO0uiV+uxJBYhPCv9u+vmurtmsYp5q26+12rZZsaWYVcWhHUfAKemPGFbCchUKq+c6bveH67CXKdPXu5glUUl5zZuyMRh959+CuRh8EtUwcCfk8=
+	t=1739585466; cv=none; b=N/eox9Icc71+DJBi4uNOTtKqO4x54b3Br95bt5PgftmqDFiEMugQJD+syFoMDAfD+hLv6FIyeEkaipIwfdE551SJE4S+GaayJy3ZuGFUOK3wN6+i9kn6mAbTbQapz10J5DDLQukTGA+xTz1N3oZv8k4J+Pl5bLI1X5dLjdQQwp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739585350; c=relaxed/simple;
-	bh=E4OYdfaIiYC8Qjp1Y6DzTMvKsgVQ7c7a1Hru7VLrKWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaF0s6WYibt4OqvQOrlY5Nz4JZs5NpniH37evBV8igJzJGevxF/n7svWNH3AlLqLV/2P5nrZXlPUIJo4PQp8KegemMMBxHIJVlhOtGdUEyjmoIsATIVOVl3cGQp+nw+OV7RQI4ttfNvLHwNhrg0jS/My1KCZYN3wuAfUZdeu1N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W7aDMuB1; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 15 Feb 2025 02:08:59 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739585346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xo2P5E0/M5KD94XnehsexSIOx+TwWuT6jmlBnTmKr1U=;
-	b=W7aDMuB1A2dThwnDfWQmN/GuOK5BptsezXaBoE3Sths+AlpeoMgxTO8F/FVWJ5jKkCGS9D
-	nifQjL5HdpIVWVXzjPBRSHuuxibZgglj2rNZQTZ1ISRJpDQkBygg3/DbVgsClFgnTiDJVI
-	HtUpw2eZphXN1fG7hYfobPnWAi9sWgY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Rik van Riel <riel@surriel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali Shukla <Manali.Shukla@amd.com>
-Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
-Message-ID: <Z6_3O75TzANMFrKN@google.com>
-References: <20250213161423.449435-1-riel@surriel.com>
- <20250213161423.449435-7-riel@surriel.com>
- <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
- <20250214194013.GA2198@noisy.programming.kicks-ass.net>
- <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
- <3e26626aa1c01aaa5d1e7b42d3ffbd632c3264fb.camel@surriel.com>
+	s=arc-20240116; t=1739585466; c=relaxed/simple;
+	bh=fqLoR7qE0tAgf3AjuChE3y2lIyPhwPqfV7bvGF7BsX0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VXuA1xyhtBnCIhru/lAwWcYlNBYMFdlUKFWUyF128y3WaZ2jQHfXnaWT2iLmX5zYd5F8S7AuFz9RQ1xJCkVzNGYkgxpYTjrjZ2bc48RzOFU6lHa45nqnVfES73zCwNIwbC3X0i3isri7CUSC3oppdulnAAu6i1h/9gA4Sbinw4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220e6028214so40221775ad.0;
+        Fri, 14 Feb 2025 18:11:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739585464; x=1740190264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T0ReVf0qnhyKXGO+hX092mbyMrSSQcjdxP9zd0LJNJs=;
+        b=LlvmKYAabk8n3/GUZfM6KKHyDeWLNiULXO/HNi7CRbRM1IVL+qsLebpJWCwdL18iK7
+         y+Xvs+YPE9oBTqR6LALgeVByCbuHRTKlNNhnWZ7d39Ws/RcRwb4cUc1uazR1bQneur5H
+         kP4zGu0oUupz4vxwJ/CLttU5AkfLZcWb4mLBXAerk7N5WENMZ8WLWVPRHLbZO472jfnC
+         Qd+DcHB93HHfY1AHJ5p+0ulhWW3lG0BlUwOZpZYAylQYYO1MGj1oiCpi4VmsY1Mkg/pX
+         /KcFQ5NvEPPIerPzJ3CLws8ilnfcCp7jI6gWa+O4Ru3d1B7pf4adE6/BPNfJ2QbwzlzH
+         YGaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjH12EslKCeIGS+bVTkf2n4PcNShGkPVLngtGTBN8ZfVkGEKvWwdFx45MY9zkoKNjxRXH+ry/XgdK9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLO+SfldmETeGzizx1BjKJSmEHdC8oAecT0BOywc1qtHOhOJ/V
+	pOZhmvZwTmmgXMzvMxUzDK5DrsTZns1UiGlsertLLwyOmljG2BGa3ibpTw==
+X-Gm-Gg: ASbGncvqLEudyYvjI3bTCx6N76oIkVHftXslQ48+LPjpiU2k08cogBEje8+4ARMY5mv
+	2qxw4VWXQzRCdDEaYjAi7wxkD9YVDHwgBEFCqjMemmgNNa/MdXCYVHuW6J+IivPLNnaHlBRUtcN
+	ZwmB9XGpU2rdDNHrtRjukxuddshFX+IlEh4JfUkVp/jmiCUMtfO9uAIlfZ0D3AdMFlqjniZgjXu
+	jlOUJUALmOAIGlucKpK//56AQW3qR/Z+7h/vQYRwmMl39P7qtiZSOIB3jPAIOWlJeiVv/eh2u+u
+	aIiAIpOUNL7Sy4mtJIvplZjeC6QVzg==
+X-Google-Smtp-Source: AGHT+IFJN9v/I7Ko0ifLBRg5AN+d+73Bqjt6lyhi8HeDMsR8RSrDt0wPSUKsN6fU79yW8y3UZ/QMFA==
+X-Received: by 2002:a17:902:dac4:b0:219:e4b0:4286 with SMTP id d9443c01a7336-2210405f22amr18672335ad.29.1739585463989;
+        Fri, 14 Feb 2025 18:11:03 -0800 (PST)
+Received: from localhost.localdomain ([1.227.206.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d663sm34727725ad.120.2025.02.14.18.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 18:11:03 -0800 (PST)
+From: Namjae Jeon <linkinjeon@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: smfrench@gmail.com,
+	linux-cifs@vger.kernel.org,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <stfrench@microsoft.com>
+Subject: [PATCH] MAINTAINERS: update email address in cifs and ksmbd entry
+Date: Sat, 15 Feb 2025 11:10:06 +0900
+Message-Id: <20250215021006.6210-1-linkinjeon@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e26626aa1c01aaa5d1e7b42d3ffbd632c3264fb.camel@surriel.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 14, 2025 at 08:25:51PM -0500, Rik van Riel wrote:
-> On Fri, 2025-02-14 at 11:55 -0800, Dave Hansen wrote:
-> > 
-> > Fair enough. If we don't have a better name, we can at least do:
-> > 
-> > 	if (new_bad_name()) {
-> > 		new_thing();
-> > 	} else {
-> > 		old_thing();
-> > 	}
-> > 
-> > My real heartburn is with:
-> > 
-> > 	if (new_bad_name()) {
-> > 		new_thing();
-> > 	} else if (need_thing_1()) {
-> > 		old_thing1();
-> > 	} else {
-> > 		old_thing2();
-> > 	}
-> > 
-> > Where new and old are logically squished together.
-> > 
-> Do we want to group this code by history, or
-> by function?
-> 
-> I would argue that new_thing() and old_thing1()
-> are closer to each other functionally (they both
-> do remote TLB invalidation) than they are to 
-> old_thing2(), which does local-only invalidation.
-> 
-> I can organize the code however people want,
-> but I would like a second opinion on this idea :)
+Steve mainly checks his email through his gmail address.
+I also check issues through another email address.
 
-IIUC the discussion is about:
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-	if (broadcast_kernel_range_flush(info))
-       		; /* Fall through. */
-	else if (info->end == TLB_FLUSH_ALL)
-		on_each_cpu(do_flush_tlb_all, NULL, 1);
-	else
-		on_each_cpu(do_kernel_range_flush, info, 1);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 25c86f47353d..c4a56ced9633 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5782,6 +5782,7 @@ X:	drivers/clk/clkdev.c
+ 
+ COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
+ M:	Steve French <sfrench@samba.org>
++M:	Steve French <smfrench@gmail.com>
+ R:	Paulo Alcantara <pc@manguebit.com> (DFS, global name space)
+ R:	Ronnie Sahlberg <ronniesahlberg@gmail.com> (directory leases, sparse files)
+ R:	Shyam Prasad N <sprasad@microsoft.com> (multichannel)
+@@ -12653,7 +12654,9 @@ F:	tools/testing/selftests/
+ 
+ KERNEL SMB3 SERVER (KSMBD)
+ M:	Namjae Jeon <linkinjeon@kernel.org>
++M:	Namjae Jeon <linkinjeon@samba.org>
+ M:	Steve French <sfrench@samba.org>
++M:	Steve French <smfrench@gmail.com>
+ R:	Sergey Senozhatsky <senozhatsky@chromium.org>
+ R:	Tom Talpey <tom@talpey.com>
+ L:	linux-cifs@vger.kernel.org
+-- 
+2.25.1
 
-In this case I agree with Dave. old_thing1() and old_thing2() are both
-sending IPIs, the difference is that old_thing1() is doing a full flush
-while old_thing2() is doing a range flush. Not sure why you mentioned
-that old_thing2() does local invalidation.
-
-broadcast_kernel_range_flush() also decides between full and range
-flushes internally. So the main difference between 'new' and 'old' here
-is using the broadcast flush vs the IPI flush.
-
-So I think what Dave wants (and I agree) is:
-	if (!broadcast_kernel_range_flush(info))
-		ipi_kernel_range_flush(info)
-
-Where ipi_kernel_range_flush() contains old_thing1() and oldthing2().
-
-> -- 
-> All Rights Reversed.
-> 
 
