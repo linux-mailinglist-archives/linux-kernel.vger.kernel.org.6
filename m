@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-515873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758E6A36A14
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:49:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA12A36A17
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CAD188C9F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DF617A2F06
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90BE4315F;
-	Sat, 15 Feb 2025 00:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA16C5103F;
+	Sat, 15 Feb 2025 00:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hVB9BsLv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uglToXfE"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B006CEACE;
-	Sat, 15 Feb 2025 00:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C309E1373
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580537; cv=none; b=IHoRqVTmMli5xLRWRr5yJT0RGCaugCi5Li2oNgerMe7KnNvanJxBCFqDv4nHPw1/JCzso0aUrvmxlWNN713Tm98ZO5DkNacz0jKqttlLagzStB6ubM85arD9OK5Vkese9heX7yFDs1DvoGIJwa+ua8oRVdGEaWL1y7wohJkaiGc=
+	t=1739580632; cv=none; b=NdlE9FwnS2BLREapzVOmxWHp+MCFk4NS5BCUD01vMk+8SOkeJm5ZWKZ4VzFC5hdSGLfUvmUfoHrFVIe0TSSsHMTzJpT9ZkiPpDeTUhwbR4k43DuJGGqXhWhxfgcZLrRCvZv3wg/RgGrL3H7DQDQC2JEmP7bDAq1pmrfOJjodD3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580537; c=relaxed/simple;
-	bh=oF7epFmsstYIbvKZGuVYY4+F0Wb6tLz0FT60SUrhj0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KRRqLLaCNwwV1BofEabQlJ8zg+ockSP4PY2uo2kk8s6cp0m9risn57BlMyBWshlQXXASb9yDJWrp8nIe5q7SIyMJ0NDiBuQNcmqFSNkgZPp7LhuzjhQNCYnbMzpLZT8VXEq0CX3SxBZ7xd2MwHlCtTlOOCNzPSV6pxlug7Ma9mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hVB9BsLv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51EEDtsJ022230;
-	Sat, 15 Feb 2025 00:48:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7lwpThfECIvAZjnVcZ1dcc9HeoXUXItIFQ6CI74TL78=; b=hVB9BsLvuVPlgnxn
-	1JvhaNfAA1HfKOV7LorOaTyGhUTpdjb0bKmCdHhiMpoZJ9RlxdPpyhTR+5UUJb8O
-	6zGdPvX7YC5QgCJ16wHWfZtJquE+ScBrpLjj/N4yJZhXpEEHb2UJRXNEgFiUBWXt
-	e+gLeLOupawBnaOIGFGmFMFcIvHHYu+IfQCxXU3evOY19qhvn0wRdQt1dwsNaO8+
-	BF4q0IkO8v1XXplonlYYGXozVhzD+RVdDc8T6yoEH428s/jSndLMZDGyAM5BjMu/
-	BD9yMw3vucl3fMdxB6i5UflM9NVx3rK16kPN41YwFJGmo6tiARPZMQZblJUeIkgt
-	h/FEog==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44t7d899v5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 00:48:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51F0mmql006478
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 00:48:48 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Feb
- 2025 16:48:48 -0800
-Message-ID: <18840118-243c-40e2-9b74-226e515ae111@quicinc.com>
-Date: Fri, 14 Feb 2025 16:48:47 -0800
+	s=arc-20240116; t=1739580632; c=relaxed/simple;
+	bh=DD1RMHcqHXHtSXjy9qZLFVRyL9tDxgSiiURo9OQ96ok=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KhSC7VMlSS2crzMTIZR1y+EE1XTUou2r13qweYDQtxACAFdfPc4/VWOef4Idsct5Xjmv2WfBSLKIcFsaRR8I8b49OSNZ2EtVqsD2Wn5prwvBVbUkR6UtcCFNCTFH9MbDLSICEaCrLbrSaLdKbK4LwIjiiz2gmNX3hKgnnXGoS1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uglToXfE; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc0bc05b36so8349095a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:50:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739580630; x=1740185430; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIE47UKxxWcKjCmL21kwJ8j8oO1nS7dRlhB8wJS9w5g=;
+        b=uglToXfEvrnoSt2adz/vM+b0sCVPWjsKmd/d4S+IJ6gEsS+sti83ztD1hFF+M8mPOq
+         +BgEQI5ly3x2b/2LKrQr02QMGeh6LHXYBnmy0kgzkGWisYl0aekswCxRlS72xujLLGfu
+         fCLVNuzT8EqlHn7uUsUqxXM3TmEzI/X2DvlddUKTQRmh72pWjR1mamt7pN9X5gtyNsgF
+         +5o6KA82QiS/I8bITQWr1t6uag3joCXj00WUi+9rahUanjj5aEH5QkYUIFG2vRF0oip7
+         xfp/cO70Q//ri8wxqsogA+5OLxqgTWXHygq5IY5rhDlYDQN1waHjJCFIsw67JoXpEq2H
+         tC8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739580630; x=1740185430;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIE47UKxxWcKjCmL21kwJ8j8oO1nS7dRlhB8wJS9w5g=;
+        b=W1a29NgEvvL6BXcKPxHI0pCeu+GfFNUak9Xd9HhRGwVsnjVRI4PlBdk+FU4dEd1SHY
+         aBGjA3F6NCfPUfB8ZDsnYkYqagWr9RDNHcgh4I/yzk4v8TmbBCF5U5AMBcGFIXUf/nUP
+         +UWzkNbjoKShqXx3LPXXSRDV4JtagBERlhCZamEOKALm6/thiV8o2Nfq8XtQkcCqvZ28
+         mG9hguYUuckgjxenDYuLIy9FvA+oIN4jgYRXpiKaRglzsFJxEpkT0jpefu9BgxY9/PA0
+         oPJRwMGxypm55lpXZxxuf7jMwOJnRg9t3/ANtK0sDYNKavDJ/0tvc2W85q7vcYY1n/zH
+         ZIFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXD0AhyZ2MxcfXbIHlNi3XjMZbXUM21avMiRDiLuMNWs2APnhMQyOgvGM78UQS/T46MvoYQslsnMq78mgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxYoaofUrIerj0Xk2Jgf/TwbXatMJWqxcK2uJjdcUSj/y1WUGM
+	TsyFzWTcH5tckI+53iDs+1xK3V0YTJFMCLG21ejrm9AG2JYZpKe83XaFanBBWKnjbIoMpsI0q2h
+	Cug==
+X-Google-Smtp-Source: AGHT+IGYzFsreJBlV69pBS5DoE2MfEEmhv2kxLxr0Du9uKGuYXL3tqBYxD8gFLEQfCYq0uQKBRZAkppwvXo=
+X-Received: from pjvf11.prod.google.com ([2002:a17:90a:da8b:b0:2fc:1158:9fe5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c8e:b0:2ee:5958:828
+ with SMTP id 98e67ed59e1d1-2fc40f0e672mr1782459a91.9.1739580630045; Fri, 14
+ Feb 2025 16:50:30 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:50:07 -0800
+In-Reply-To: <20250130010825.220346-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/15] drm/msm/dpu: fix mixer number counter on
- allocation
-Content-Language: en-US
-To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250118-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-33-v5-0-9701a16340da@linaro.org>
- <20250118-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-33-v5-6-9701a16340da@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250118-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-33-v5-6-9701a16340da@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2sMJ_qwPjn0YgeNhaTKkW8V_hKteTUhg
-X-Proofpoint-ORIG-GUID: 2sMJ_qwPjn0YgeNhaTKkW8V_hKteTUhg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-14_10,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502150004
+Mime-Version: 1.0
+References: <20250130010825.220346-1-seanjc@google.com>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <173958023279.1189000.15717835333610830974.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: nSVM: Enter guest mode before initializing nested
+ NPT MMU
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="utf-8"
 
-
-
-On 1/17/2025 8:00 AM, Jun Nie wrote:
-> Current code only supports usage cases with one pair of mixers at
-> most. To support quad-pipe usage case, two pairs of mixers need to
-> be reserved. The lm_count for all pairs is cleared if a peer
-> allocation fails in current implementation. Reset the current lm_count
-> to an even number instead of completely clearing it. This prevents all
-> pairs from being cleared in cases where multiple LM pairs are needed.
+On Wed, 29 Jan 2025 17:08:25 -0800, Sean Christopherson wrote:
+> When preparing vmcb02 for nested VMRUN (or state restore), "enter" guest
+> mode prior to initializing the MMU for nested NPT so that guest_mode is
+> set in the MMU's role.  KVM's model is that all L2 MMUs are tagged with
+> guest_mode, as the behavior of hypervisor MMUs tends to be significantly
+> different than kernel MMUs.
 > 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
+> Practically speaking, the bug is relatively benign, as KVM only directly
+> queries role.guest_mode in kvm_mmu_free_guest_mode_roots(), which SVM
+> doesn't use, and in paths that are optimizations (mmu_page_zap_pte() and
+> shadow_mmu_try_split_huge_pages()).
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> index 24e085437039e..3b3660d0b166d 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> @@ -321,7 +321,11 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
->   		if (!rm->mixer_blks[i])
->   			continue;
->   
-> -		lm_count = 0;
-> +		/*
-> +		 * Reset lm_count to an even index. This will drop the previous
-> +		 * primary mixer if failed to find its peer.
-> +		 */
-> +		lm_count &= ~1;
->   		lm_idx[lm_count] = i;
->   
->   		if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
-> 
-> -- 
-> 2.34.1
-> 
+> [...]
 
+Applied to kvm-x86 fixes, thanks!
+
+[1/1] KVM: nSVM: Enter guest mode before initializing nested NPT MMU
+      https://github.com/kvm-x86/linux/commit/46d6c6f3ef0e
+
+--
+https://github.com/kvm-x86/linux/tree/next
 
