@@ -1,116 +1,163 @@
-Return-Path: <linux-kernel+bounces-516415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE6AA37104
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:31:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABCAA37131
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776597A4192
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4889C3ACA40
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571C11FC7F6;
-	Sat, 15 Feb 2025 22:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EstX1456"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C841A23A8;
+	Sat, 15 Feb 2025 23:07:29 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB01199B9;
-	Sat, 15 Feb 2025 22:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB034C76
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 23:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739658693; cv=none; b=eOxxNBU53Rh9j5OtB8e5LqJBiBaQzaop5TgJnmdtZlrPeqXMlm7NhoC9w9J+RALvYu22ABwynBREUnpPM9YHE+VdF7DKMyDh0VDVkNjB3m5ebbDKcyesCAldB/HW0ikKN/Su5cdtlYrVqtRa5UzfF/So+W9+21+NhmRVqAucDag=
+	t=1739660849; cv=none; b=MxGJvAm7Wwt2+D6AvBpFD2QI88L6yBB3hbXC0Hz9Du4uLBs1kPXkluGYK/x/DlmIwgAG22DWlQfhoMShdhtW4oimFRs5wQyFmF3pLeFX158G9ucUI8brNesNK3V4R9CmZrut7VEI03c1o2vkt97oppWpvYjvWpUIMpUS1f6x+Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739658693; c=relaxed/simple;
-	bh=zbhIo0xDzOZCTqwo4a9BF95ysjJWi4vttC5VSmsk5TM=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HxTc6RiwpWFfKF2ryxV3AS66rgN8cpAPc0JTVfvF0JqiOVm8i33Ny/LcvdAIzbmYtqoT1KHBeYk0JisaggP7pMnNrHfOvaSFnHpCWcK48hxXZH7ZvDQTgKDA2CQBRBmc6SG8b3HXWVB6WEMKPtrK+7wm3eUbdAEowPdwvg9QLG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EstX1456; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=gx6ah36rjngmvit33r3cdufykm.protonmail; t=1739658688; x=1739917888;
-	bh=ZQRmFVQtyeskggtP6Qj6Zx0oQ2+VkautJ0NT3svSj+w=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=EstX1456v6ehayDBu5AiNB8e4s3g9JpDn0+HTTWoi/sNE+k4W6NYnSrqAIEIbQUj+
-	 TAhFfsf7UWy9bwrLVIrpa1s8+zndxWmymCrjoTSpxZj7jm0jiS2DeVsXnKiSBl2fda
-	 ID/aZhXWrRBfVwoct3APjYo3JllV/41GjAhS+5UZwmD/awLZ0x9cTndT6zhFAjBV8k
-	 Lzanjj3ELN9tza3l6s0ICz1GKArnDwhGhXDuZ97oSxaGF+Duo1pr54muA2gsNvhCcB
-	 EtX8aczLjMQqArNAryD+UYW8+W4DdM92MdMPTqc3Eahkh97NKQYxSJWk1t8tO3vuft
-	 RXjLF8/wx40dg==
-Date: Sat, 15 Feb 2025 22:31:20 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Wedson Almeida Filho <wedsonaf@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: [PATCH] rust: fix clippy::too-long-first-doc-paragraph
-Message-ID: <20250215223106.2346285-1-benno.lossin@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a3ae3af5ebe8b7d59018f5f505a45767c59e37ab
+	s=arc-20240116; t=1739660849; c=relaxed/simple;
+	bh=sAUydxP2m80oXKo8WnXR34icefeMyLrCdS1/NT0+D/o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iBwEHtTuM1KpL0/PhpO/vRbS1FTG9IhAWo+cvWo068oapYNv5BPLavK4CNlu2JyyaWpBfiC5GRqjTsCkdxItJ2yG8iWbVww40wFFjJCpt6MYObCAexTk8uPX0X1r8AE6EKCLqoHgpB7maRAtIldivOCemBm4gNuEo/KevXC/z5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-851f02bbfd8so202505039f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 15:07:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739660846; x=1740265646;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2WYie95owwq4yNXrs+hzQDVYonhfXUI/z2RzXPREhoE=;
+        b=F5Um+ZtczI8EfFnan8670AGMZB3t1Wdv+zsrg5HlC5Hfh3GLFFUakYSc/pJucDJEHc
+         6j8ewOXNLP7aKXk62FnfyI/j+HCG8pHWWghYWcVHOE20oVZEeOlyTYai1/R+zvsM+p+d
+         AnTmI9oLcdUaSge2w2LG8Vhd4zzr6GP2dsrGSJBJOJWQZb2jab6k6ybJ7CvJ2Zg2aXNX
+         SKgnh8vrgVTRrVxbvnwlMEL+eoLPoMMKFwpMmNuoY/Rx1+edeHlhWirVd/No2EQ/vLyR
+         QltAa3YE0S+bnnbEiaGHNGMmn/mnkUuezGCgOgtDL80X7XIxqwjiByeim1O/WKuiuIoi
+         IbKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXziWmq+sB9xf8Q4D4bSTbb5fs7topxOXIy1d6+pu58zY8m8hWy3tiFy1LjcYj9gt5mJimoxctQzsziBKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhonel0IAXqnRoHfW9gELw/gWbQImT6mdwzUT3hiZB2/Yq/Qhn
+	E5emuMF2CvVQH8xQzXmMVspisgNPna+c906NrYh+D3BPBIRnZbZziZVJduMClelcKwLI7qoSa+m
+	RtAoN8vxJkkLdWhznhpItpkMh7tulrU1pE/yRFpOC14e7x4LHWhHGyCI=
+X-Google-Smtp-Source: AGHT+IEGTkhTpZewK0yZ4dnBAz/syN7LWHbXDNJU2Va13KdJcm+RMRSlozvL9pBfuuxhBeFPscsMEn6CGtZlQ0nG9Qf5g6CbUb4G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:2686:b0:3d1:bbc2:a324 with SMTP id
+ e9e14a558f8ab-3d28076e074mr41098035ab.4.1739660846652; Sat, 15 Feb 2025
+ 15:07:26 -0800 (PST)
+Date: Sat, 15 Feb 2025 15:07:26 -0800
+In-Reply-To: <0000000000001e20c30621e8d767@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b11e2e.050a0220.54b41.0000.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_dio_wr_get_block
+From: syzbot <syzbot+f8b081be889b639423bb@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When running `make LLVM=3D1 CLIPPY=3D1` on my machine, I get this error:
+syzbot has found a reproducer for the following issue on:
 
-    error: first doc comment paragraph is too long
-      --> rust/kernel/driver.rs:13:1
-       |
-    13 | / /// The [`RegistrationOps`] trait serves as generic interface fo=
-r subsystems (e.g., PCI, Platform,
-    14 | | /// Amba, etc.) to provide the corresponding subsystem specific =
-implementation to register /
-    15 | | /// unregister a driver of the particular type (`RegType`).
-    16 | | ///
-    17 | | /// For instance, the PCI subsystem would set `RegType` to `bind=
-ings::pci_driver` and call
-       | |_
-       |
-       =3D help: for further information visit https://rust-lang.github.io/=
-rust-clippy/master/index.html#too_long_first_doc_paragraph
-       =3D note: `-D clippy::too-long-first-doc-paragraph` implied by `-D w=
-arnings`
-       =3D help: to override `-D warnings` add `#[allow(clippy::too_long_fi=
-rst_doc_paragraph)]`
+HEAD commit:    7ff71e6d9239 Merge tag 'alpha-fixes-v6.14-rc2' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1463cbf8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8b081be889b639423bb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1242b9b0580000
 
-Thus add a short one-line description.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7ff71e6d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd3ab8248fc7/vmlinux-7ff71e6d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/78a957463e92/bzImage-7ff71e6d.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/9f4996b458f4/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=13d217df980000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/bb9bcc7dccee/mount_1.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1063cbf8580000)
+mounted in repro #3: https://storage.googleapis.com/syzbot-assets/f9c91d3ae4fc/mount_11.gz
 
-Fixes: ea7e18289f44 ("rust: implement generic driver registration")
-Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f8b081be889b639423bb@syzkaller.appspotmail.com
+
+(syz.0.529,6754,0):ocfs2_commit_trans:382 ERROR: status = -5
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/aops.c:2259!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 6754 Comm: syz.0.529 Not tainted 6.14.0-rc2-syzkaller-00259-g7ff71e6d9239 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_dio_wr_get_block+0x18bd/0x18d0 fs/ocfs2/aops.c:2259
+Code: 02 8f 4c 89 f2 e8 13 7d 76 01 e9 3a f6 ff ff e8 99 d0 50 08 e8 b4 5b 0a fe 90 0f 0b e8 ac 5b 0a fe 90 0f 0b e8 a4 5b 0a fe 90 <0f> 0b e8 9c 5b 0a fe 90 0f 0b 66 0f 1f 84 00 00 00 00 00 90 90 90
+RSP: 0018:ffffc9000d1a6cc0 EFLAGS: 00010293
+RAX: ffffffff83b75c9c RBX: 0000000000001000 RCX: ffff8880003b2440
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000d1a6eb0 R08: ffffffff83b7573b R09: 1ffffffff28a892d
+R10: dffffc0000000000 R11: fffffbfff28a892e R12: 1ffff1100b25690d
+R13: dffffc0000000000 R14: 00000000ffffffe2 R15: ffff888033f59e10
+FS:  00007f9eff0936c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa1c7fd4000 CR3: 00000000595e2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ get_more_blocks fs/direct-io.c:648 [inline]
+ do_direct_IO fs/direct-io.c:936 [inline]
+ __blockdev_direct_IO+0x1c87/0x4890 fs/direct-io.c:1243
+ ocfs2_direct_IO+0x255/0x2c0 fs/ocfs2/aops.c:2445
+ generic_file_direct_write+0x1e6/0x400 mm/filemap.c:4112
+ __generic_file_write_iter+0x126/0x230 mm/filemap.c:4276
+ ocfs2_file_write_iter+0x19af/0x2180 fs/ocfs2/file.c:2469
+ iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x11b/0x220 fs/splice.c:1164
+ splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+ do_sendfile+0x564/0x8a0 fs/read_write.c:1363
+ __do_sys_sendfile64 fs/read_write.c:1424 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9efe18cde9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9eff093038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f9efe3a5fa0 RCX: 00007f9efe18cde9
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000009
+RBP: 00007f9efe20e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000800000009 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9efe3a5fa0 R15: 00007ffc84ed0c78
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_dio_wr_get_block+0x18bd/0x18d0 fs/ocfs2/aops.c:2259
+Code: 02 8f 4c 89 f2 e8 13 7d 76 01 e9 3a f6 ff ff e8 99 d0 50 08 e8 b4 5b 0a fe 90 0f 0b e8 ac 5b 0a fe 90 0f 0b e8 a4 5b 0a fe 90 <0f> 0b e8 9c 5b 0a fe 90 0f 0b 66 0f 1f 84 00 00 00 00 00 90 90 90
+RSP: 0018:ffffc9000d1a6cc0 EFLAGS: 00010293
+RAX: ffffffff83b75c9c RBX: 0000000000001000 RCX: ffff8880003b2440
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000d1a6eb0 R08: ffffffff83b7573b R09: 1ffffffff28a892d
+R10: dffffc0000000000 R11: fffffbfff28a892e R12: 1ffff1100b25690d
+R13: dffffc0000000000 R14: 00000000ffffffe2 R15: ffff888033f59e10
+FS:  00007f9eff0936c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1bd36e8000 CR3: 00000000595e2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-The error also occurs in v6.14-rc1, so it must have slipped through our
-testing, which I find a bit strange. Also nobody reported it for rc1, so
-maybe this is only something that I encountered?
----
- rust/kernel/driver.rs | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-index 2a16d5e64e6c..65c9c1776556 100644
---- a/rust/kernel/driver.rs
-+++ b/rust/kernel/driver.rs
-@@ -10,6 +10,8 @@
- use core::pin::Pin;
- use macros::{pin_data, pinned_drop};
-=20
-+/// Generic interface for subsystem driver registrations.
-+///
- /// The [`RegistrationOps`] trait serves as generic interface for subsyste=
-ms (e.g., PCI, Platform,
- /// Amba, etc.) to provide the corresponding subsystem specific implementa=
-tion to register /
- /// unregister a driver of the particular type (`RegType`).
-
-base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
---=20
-2.46.0
-
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
