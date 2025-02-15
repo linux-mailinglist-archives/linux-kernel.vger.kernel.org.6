@@ -1,98 +1,129 @@
-Return-Path: <linux-kernel+bounces-516136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA94A36D49
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:28:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A7A36D4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BAB18965CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E263AFA35
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB481A2642;
-	Sat, 15 Feb 2025 10:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9B11A316D;
+	Sat, 15 Feb 2025 10:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EoEQR0li"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJDsM2JS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7750D155CB3
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C6D155CB3;
+	Sat, 15 Feb 2025 10:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739615301; cv=none; b=M6RuJqULXh/3aK/obkw74Wbz0S6tmCkCTwh+cY5hyPz8Cl03VJgspPPnhbCPxpLi5erBGSl54HTvwo1NXDCuCbdfu6rcMrxFy8i6LzVfVcR4sULbaGuv0UKNmyEDzGoGHQL3T0R5TAIaNrGov9BU5cTpXASj6XCnuP6F853BqbA=
+	t=1739615308; cv=none; b=m8ob6uLf4FvlBpQMB3TovaPg8rePzD/YgYeYqmqMsU9yv112RoaLiOBvWwztsFEk03je9B2UWS9Rf4fgDPCF3gfFAOcwzp/oZuu4jkSVpU4yBXiorLXk/wQCwP2ZWzY0EetvtW1wJJlVkduchqFOHJKAB2wfFu3lJf1dKtwhHBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739615301; c=relaxed/simple;
-	bh=XtvbIPzvQqKYFe1wb9GBAWD+DWkkj6O9gaCnsRC7z1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2gCF0jkGCukwjq9VnGnYV0oB7DL7CoMChSXlKuXlGn2/PJ6KAN4UGoVIM2e5Ifs1Ka8jM8iW8hEy/TSnPfuYIctEr1c85i9SufTlhuA/SorU8/twLk/swWsPhSEXtnxtw2/E8CWvO9u2mOiXs7ldkE6xIVkjpINRAq6p/2LCLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EoEQR0li; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739615298;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rQqwkeCetsLzXFYxcLLmFF2wPRgBA90OpzBTdvUtDcU=;
-	b=EoEQR0liuAtgnQXHUqSgcyXlhowwDEmsQPBzj1RLLPn2Z60pAIDUDqu7TETQYeitIHmE4C
-	YGwmeLR8iioWN/aIZfEFCFiBBJ+GOsQQQfVH+zyqldWKdvWuwKnUfYaYAaEmy3S22nHzY/
-	PSuuUMGEJN1S8vEabQcMIkya1VrWXjY=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-tL527mulOdqoGvq1ALhRNg-1; Sat,
- 15 Feb 2025 05:28:12 -0500
-X-MC-Unique: tL527mulOdqoGvq1ALhRNg-1
-X-Mimecast-MFC-AGG-ID: tL527mulOdqoGvq1ALhRNg_1739615291
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F29118EB2C3;
-	Sat, 15 Feb 2025 10:28:10 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.76])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F228D1800874;
-	Sat, 15 Feb 2025 10:28:07 +0000 (UTC)
-Date: Sat, 15 Feb 2025 18:27:59 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] mm, swap: remove swap slot cache
-Message-ID: <Z7BsL2v6+oweqWE4@MiWiFi-R3L-srv>
-References: <20250214175709.76029-1-ryncsn@gmail.com>
+	s=arc-20240116; t=1739615308; c=relaxed/simple;
+	bh=CEEKh7N14ok4a75LQPAkohKFtemp3HZBXqHD1CvOiWo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=TyKNbJOJRUbtQJt3fPxoLdrMihcT9MOMoIku5Yxw6+XtlGSedixvrfTCG8BY50p5AmomhEI+g1uxDmrvtx5IVONVQKQ+wKDftT2MSixQ+N8p8/okXc+0ySNMtybLbboArhg/XPsEIFShccimT4vzvdeUeHMSWsHxI1P9EevI5kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJDsM2JS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59EC8C4CEDF;
+	Sat, 15 Feb 2025 10:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739615307;
+	bh=CEEKh7N14ok4a75LQPAkohKFtemp3HZBXqHD1CvOiWo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OJDsM2JSsQlZMvIf51jy+TYtyGGWH8/FcywOqLviO/+8+XP551Ma8f0UnzxEI/PU4
+	 WtIofqRXNsppbmn1SkPcdmZZIvSlehazilnCQAm9+eMfyn9BPghUSJ81xI+uHZTUrd
+	 PsMqRIhIdxpq1AY9YPBwzw44vO+44aw+BzfEHfFvZ8d2rlcjbSpIqeSUUEUO1Vuls/
+	 L/kBQXuthXpW8SaeYeQxx/eUbC6J6MFQTs4b0mqWyzTJ4MmXRIkmKm+4N5PHUZqBB3
+	 Ogep1s81cq+Yv6tpMirUtcE9+X6sf5dnP/qGa3mNi1iwgzs3F7X9H4rayeh7RQdadb
+	 TJSrt3/rSMNdw==
+Date: Sat, 15 Feb 2025 04:28:26 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214175709.76029-1-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+ Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Scott Branden <sbranden@broadcom.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org
+To: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <20250215-bcm59054-v4-1-dbfb2d76a855@gmail.com>
+References: <20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com>
+ <20250215-bcm59054-v4-1-dbfb2d76a855@gmail.com>
+Message-Id: <173961530505.188543.13359016373130021930.robh@kernel.org>
+Subject: Re: [PATCH v4 1/9] dt-bindings: mfd: brcm,bcm59056: Convert to
+ YAML
 
-Hi Kairui,
 
-On 02/15/25 at 01:57am, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+On Sat, 15 Feb 2025 10:39:36 +0100, Artur Weber wrote:
+> Convert devicetree bindings for the Broadcom BCM59056 PMU MFD from
+> TXT to YAML format. This patch does not change any functionality;
+> the bindings remain the same.
 > 
-> Slot cache was initially introduced by commit 67afa38e012e ("mm/swap:
-> add cache for swap slots allocation") to reduce the lock contention
-> of si->lock.
+> The bindings have been split into two parts: the MFD binding and
+> a separate binding for the regulator node, to simplify the addition
+> of other models later (which have different regulators).
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v4:
+> - Made $ref use full schema path
+> - Cleaned up example
+> - Dropped regulator name list comment
+> - Changed description of regulator binding to mention BCM59056
+>   explicitly
+> - Changed "Power Management IC" to "Power Management Unit" to match
+>   official Broadcom naming
+> - Renamed mfd/brcm,bcm59056.yaml to mfd/brcm,bcm590xx.yaml
+> 
+> Changes in v3:
+> - Moved regulator node to separate binding
+> - Removed quotes around compatibles/vbus property
+> - Style fixes for example
+> ---
+>  .../devicetree/bindings/mfd/brcm,bcm59056.txt      | 39 ----------------
+>  .../devicetree/bindings/mfd/brcm,bcm590xx.yaml     | 54 ++++++++++++++++++++++
+>  .../bindings/regulator/brcm,bcm59056.yaml          | 51 ++++++++++++++++++++
+>  3 files changed, 105 insertions(+), 39 deletions(-)
+> 
 
-Thanks for adding me in CC. While I got failure to apply this series
-to the latest mainline kernel, could you tell what is the base commit
-of this pathcset?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks
-Baoquan
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/regulator/brcm,bcm59056.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
+Documentation/devicetree/bindings/regulator/brcm,bcm59056.yaml: Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250215-bcm59054-v4-1-dbfb2d76a855@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
