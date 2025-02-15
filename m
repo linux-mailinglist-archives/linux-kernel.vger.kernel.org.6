@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-515876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A42A36A1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:51:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D9DA36A1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DB9E189425C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:51:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F5BC7A4494
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C657E13A26F;
-	Sat, 15 Feb 2025 00:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D80D7CF16;
+	Sat, 15 Feb 2025 00:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YdCgtBcd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ITZVA4hE"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D113D8634E
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244DB1373
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580653; cv=none; b=Ebc05OFxg0EdSxvoaS41Fd+1y8/MHGCqsf+S9pggHsDnPzjmnCs9oSsf9YZdzFKizzni5U5VlzemLulyizzMIoWrEinxtuu73JK6/U9cPAXheLKnSJP3HXoM9B2M578joGEneqEtoG2m1M6FHBQ18/Mhfq+MVe1g+lC6zZyUqJY=
+	t=1739580736; cv=none; b=kaPL09zSTZE3feS8V7I/ozQrBcxaFrzfg4as4JHe6HJ4rbch+PexGu5H+99iIcD6ZOrTbzD7YwfUxY6GMKy0yUa4o0mWVUpTIsXk/msaIfuQUi6ml2O4d+07wQI7NzqGE+UckM6VFMKYRJy1bbPNbj3AbtlERZitQKoyNKf0Ww8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580653; c=relaxed/simple;
-	bh=dnqsjGiZaJAvA2XPJfChrA4I5XEs4RTsHpf3T/NjtVw=;
+	s=arc-20240116; t=1739580736; c=relaxed/simple;
+	bh=C270t9vOE8Jd+0AZ0H/d/kXPNITGhRctKxTbG4yjY1k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g8PKYA4pTfgN9mg5BQ9L5EI+VlFFbZDjSHwcw1VIkWoTKoB85MeSr027OA0haDkTXVyKG/UZgPLcHu9ypKfo0o0vrip8D34x/ZlHZeG1TocLWIZmS2Y1WK9BQHmyDuAxoRSG502oXQXxq9v/3eI0YLXNjWgiZHtShoFWSlKzz7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YdCgtBcd; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=XqecCkvk7QyovdtXlOMcjGFnb/5d9GjpRp74RmZDGRHl1IjbSWnLwwey7zbzd9oXJXihYOT3jS8wDsM7NOKStUWYr8/stXHzqBNatCdo77HCPWT8gsDwDG33VkvJCXAqDIK9Z4g1/sIBUeb+6jtq0jHMvDuBgGzR1kWJBTnXS+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ITZVA4hE; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc17c3eeb5so4539925a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:50:51 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbff6426f5so5517770a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:52:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739580651; x=1740185451; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739580733; x=1740185533; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNDWUiDg7PKVgEWW032CIy+qBy8SxwYT5s4el7ajobg=;
-        b=YdCgtBcdg4MpyYexrwccEQb5zZc72+E6AmKIxwak9t1/zXghXYDq0CcAy+o2ZC8Ye9
-         ah2pYLKYZvCRnUgahQGNJfcSFc86uXVARABkpcJwLVGh0QYZMWwn/KTuCmTwJyYiatTg
-         IE6ytuz47gDIytaLuMuaHPErX5K1UCSYnSCeSqGuqhaeAsYRofYNp61xQnluoBa8RI+n
-         Ag2fR5CTeDl/SURC9wTor6tSRW+pB845PaDiUjRgGjb13+Cac6aA4MZi10/UucWt0PzJ
-         DeGGyKESrJBx5V1QMcMcw8c5Z3118wQqBxJ41dlgi9SBtQVvTXuKD0NcGhEiBAl6stOy
-         HEYQ==
+        bh=L/w+c2CabV0dIn4w6RFieU1p5sEx0QasW8TYiOxAj4U=;
+        b=ITZVA4hEQbj8DbTd6VLOe83i48HN4WVhK92t66ZBvgIkSYEKaYG3ukG6BkMcVnZauY
+         0KJ031TlqMgrvVZHA4BJ9eUZbtDVTFkI+G4MYN2PKLGD6XwWKVfOTVz/QQ3yYCpnMiSh
+         EHVh7vADuBlvZ3MlCo109d66BAEh+najNQFtGJqx77TQK+m9g/6PGioQUhs/lVpHF5D1
+         nQpIWoy3wQwBD4tQ1+HV2b1l6Z7kXJpXbYSGhEGnpBriNqeqzhojKlxSncQoYffk1/To
+         mtgHo/k+liTc5+tlr9OZcOEjTTgsjyo8gijiKuFJfeVS587obGLlNIHi0pEYRSWXtTHL
+         YMfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739580651; x=1740185451;
+        d=1e100.net; s=20230601; t=1739580733; x=1740185533;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNDWUiDg7PKVgEWW032CIy+qBy8SxwYT5s4el7ajobg=;
-        b=MvglaehHTwJI7FongU/tM9p55TAFE5YU/KJiRUtChelO77+eqtK/6f1bfMc2p7Mn5i
-         9OEu+bZtMG+HVBeBLjeHK7LwZ/qsHVYGK9+DUMwwj43jkRSK3hhLk0Ls75mC33VFe2ym
-         TRV25g2VFW5j1PqD/gOm/7nGdcu5iv2bzbDpMr3jAnlHiev+y9uD5TurRbBZb1F+JcGL
-         K1kyvtk9MszdhYrtEMouY7pasUJ9xYcNDnvVn2f8rTnm3TAo0AToN+zvdf8TuE07fY4a
-         S2JVMQ7NasQ5n7h8H4oFkQwexjV3Xc19baWdOKCA1HsPEDHM3l2ba/WfnLbHZLahr4W3
-         Zh8g==
-X-Forwarded-Encrypted: i=1; AJvYcCViD+adxY2G/ViJEVcqG579UjUaRs5zdYDyCmk0jz/8zrtFB4JhZ3gnuE4em+XEzl1vhBBEss9T60+So70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkwJUVPDE7fC8WaP6AP6RCFWj63YaLR7nAJ3tXZ5P7vVrqPedi
-	6nQjwDk6FXJmQ2kjT13F+z/CcX9/jhAqcsNcDMYwKtwKbYPQGGyCtzmky1DM1qhMN9gBX2CKuu1
-	cpQ==
-X-Google-Smtp-Source: AGHT+IH68vaesX+wCuzZ/Dzwbh6t1VdKpG8BDU9Do5mXpvHPYPUxmzFLhrxBSs5qoUoGVbO5uqxzI5orjH0=
-X-Received: from pfbfi6.prod.google.com ([2002:a05:6a00:3986:b0:732:2df9:b513])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1882:b0:730:957d:a80f
- with SMTP id d2e1a72fcca58-7326177625dmr2632490b3a.2.1739580651144; Fri, 14
- Feb 2025 16:50:51 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:50:10 -0800
-In-Reply-To: <20250118003454.2619573-1-seanjc@google.com>
+        bh=L/w+c2CabV0dIn4w6RFieU1p5sEx0QasW8TYiOxAj4U=;
+        b=EApAcnuRekqvpr5k9v5NJ+Gr7fXuCNMZpViavS8jZzuSOvcIiEJobFZ/KM3Es97Zo/
+         PN1p44sHjOrmfxFIIJbfm+HTzXm01QPjH77mFh+demTrwYF4YwLYcmCuIDeHVEeUQ8J5
+         BNCdsi8R8DSGyik3dIubevrcj9KSA1hHdu6cQJPsU0GwOT/Jo6dazOfU/+OFbi+/8Oop
+         pIlVy/I1BfByVtYgNchZtXW6Sr03w4HK9yprKyub6+pwZf1+Gc/jg2Wld3FirfBoPqCX
+         PkSCioPVJcef7gg3lXOhah2ZcTllLlNaYyeJkz116lIynSSeIY/iJ8zt/W6pX+qiESQQ
+         WUXQ==
+X-Gm-Message-State: AOJu0Yw0AVGU8vje90N4bKkWUnttYTXxjhKX/Fc4vIKQlToBOeREPa4B
+	d+j1O8jr5Q3KNRQDWgvHudVm7InzOKHFhmiybkDVmkx0SH44AhQdYCoXa1eKKaBn1uUyLsk1z0y
+	bfg==
+X-Google-Smtp-Source: AGHT+IEzoM1kxytohJPzZiUBujM5HphgBOfWYDv5T6Prq7S8s2l8rylIt6ug7wHW06IQB/WPGcFyCMxgDYU=
+X-Received: from pjuw7.prod.google.com ([2002:a17:90a:d607:b0:2fc:2ee0:d38a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c0c:b0:2f6:d266:f45e
+ with SMTP id 98e67ed59e1d1-2fc40d14fcemr1771692a91.2.1739580733408; Fri, 14
+ Feb 2025 16:52:13 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:50:12 -0800
+In-Reply-To: <20250127013837.12983-1-haifeng.zhao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250118003454.2619573-1-seanjc@google.com>
+References: <20250127013837.12983-1-haifeng.zhao@linux.intel.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <173958022426.1188943.17908180485363586320.b4-ty@google.com>
-Subject: Re: [PATCH v2 0/4] KVM: x86: Hyper-V SEND_IPI fix and partial testcase
+Message-ID: <173958023920.1189103.10850075100042366704.b4-ty@google.com>
+Subject: Re: [PATCH v2] KVM: x86/cpuid: add type suffix to decimal const 48
+ fix building warning
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dongjie Zou <zoudongjie@huawei.com>
+To: Sean Christopherson <seanjc@google.com>, hpa@zytor.com, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, Ethan Zhao <haifeng.zhao@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
+	joro@8bytes.org, jmattson@google.com, wanpengli@tencent.com, 
+	pbonzini@redhat.com, etzhao@outlook.com
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 17 Jan 2025 16:34:50 -0800, Sean Christopherson wrote:
-> Fix a NULL pointer deref due to exposing Hyper-V enlightments to a guest
-> without an in-kernel local APIC (found by syzkaller, highly unlikely to
-> affect any "real" VMMs).  Expand the Hyper-V CPUID test to verify that KVM
-> doesn't incorrectly advertise support.
+On Mon, 27 Jan 2025 09:38:37 +0800, Ethan Zhao wrote:
+> The default type of a decimal constant is determined by the magnitude of
+> its value. If the value falls within the range of int, its type is int;
+> otherwise, if it falls within the range of unsigned int, its type is
+> unsigned int. This results in the constant 48 being of type int. In the
+> following min call,
 > 
-> v2
->  - Fix the stable@ email.  Hilariously, I was _this_ close to sending this
->    with stable@vger.kernel@kernel.org instead of stable@vger.kernel.org,
->    *after* I wrote this exact blurb about fat-fingering the email a second
->    time.  Thankfully, git send-email told me I was being stupid :-)
->  - Don't free the system-scoped CPUID entries object. [Vitaly]
->  - Collect reviews. [Vitaly]
+> g_phys_as = min(g_phys_as, 48);
 > 
 > [...]
 
-Applied to kvm-x86 fixes, thanks!
+Applied to kvm-x86 misc, thanks!
 
-[1/4] KVM: x86: Reject Hyper-V's SEND_IPI hypercalls if local APIC isn't in-kernel
-      https://github.com/kvm-x86/linux/commit/a8de7f100bb5
-[2/4] KVM: selftests: Mark test_hv_cpuid_e2big() static in Hyper-V CPUID test
-      https://github.com/kvm-x86/linux/commit/0b6db0dc43ee
-[3/4] KVM: selftests: Manage CPUID array in Hyper-V CPUID test's core helper
-      https://github.com/kvm-x86/linux/commit/cd5a0c2f0fae
-[4/4] KVM: selftests: Add CPUID tests for Hyper-V features that need in-kernel APIC
-      https://github.com/kvm-x86/linux/commit/e36454461c5e
+[1/1] KVM: x86/cpuid: add type suffix to decimal const 48 fix building warning
+      https://github.com/kvm-x86/linux/commit/a11128ce1636
 
 --
 https://github.com/kvm-x86/linux/tree/next
