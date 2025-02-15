@@ -1,128 +1,229 @@
-Return-Path: <linux-kernel+bounces-516052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D98A36C75
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:36:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDE3A36C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 988727A4F05
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454D93B1E53
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6A119884C;
-	Sat, 15 Feb 2025 07:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E06198842;
+	Sat, 15 Feb 2025 07:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="YG5i1RGl"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B7F1922DE;
-	Sat, 15 Feb 2025 07:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDfN4wbA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C01922DE;
+	Sat, 15 Feb 2025 07:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739604961; cv=none; b=jsOBzmho0SQe5cmiKu8h17+8ifRrzN3Ok+Mk9h6OUh+IdUbPtdngVBrOrOuOqQlsIUiDCj3FYmivP5gqJUPaaUX6janURqFZEJtmInxR0sXIG4Iv7+nmp4i8WhIfesmYm9igOxaENeXC5rKLrh6NDPO4sgpJoEwLSk8F1s9GbmU=
+	t=1739604888; cv=none; b=NU7FtkhG9OkEV7B3QiouT14ko9D8HU1d3+5YlDq1T5fNUpzUzZcI/VzQwYAsSwcQfqZ49rsuHzvh79SxKtd4vfSLQcZGFc7DJfe7qAbOz659FkXgqDjgKWvoFGzrNK3dCo7+0GYhZuKR6tJiEdITY3FnFf76GjPsMj8zozqckDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739604961; c=relaxed/simple;
-	bh=DpuQ4t7U8NgOje1/3fbZLkV/xEMgruWalimL5Zqzaaw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=cWjh8izLXEQ7ZgfGuhgDy4QlaXvW49MIiOZy1bnRpYprgaFG20RncmUEkIw69Nb17Bxe+hLE297Y3vU24DsqtmGQAgz57kXAXbCPtUuxIaNIRHceWq9UKtnDYkc/zHjih3Jg1Tzh0diyEXAlZNVlXR/fUXsng299X0TzhEOxako=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=YG5i1RGl reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=1EL9bFgToVEuBS6aPe0qceOXgXPkbk9N2MGTIJk/rp0=; b=Y
-	G5i1RGlF0yT2MC1JsIaESD5w0SrbSLiQFYc6VR1TkOYBgxezgzEKdo01jUbZsTIt
-	rFvOyiKL9BdAK8kLpCr5rkOt4sLj1Y+FbiJ+ZAakrQ3aGiKbigXa4qAFtuqT+sMZ
-	pz8OfHGFndM7ghj+qIwpGGP6rTLmSJurgzwLsm5QE8=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-141 (Coremail) ; Sat, 15 Feb 2025 15:34:31 +0800
- (CST)
-Date: Sat, 15 Feb 2025 15:34:31 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
-	detlev.casanova@collabora.com, daniel@fooishbar.org, robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	"Andy Yan" <andy.yan@rock-chips.com>
-Subject: Re:Re: [PATCH v14 04/13] drm/rockchip: vop2: Merge
- vop2_cluster/esmart_init function
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <8686639.gsGJI6kyIV@diego>
-References: <20250212093530.52961-1-andyshrk@163.com>
- <20250212093530.52961-5-andyshrk@163.com> <8686639.gsGJI6kyIV@diego>
-X-NTES-SC: AL_Qu2YC/qbu0As5yKeZukfmkcVgOw9UcO5v/Qk3oZXOJF8jCrr9gYOYUFMLFHZ4OeODhqPrheYUAFq0M9dZ69DWLMb8aThq5gl6h0v6I3OmQHGpg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1739604888; c=relaxed/simple;
+	bh=Nie6374pQr7FVzBWNLJ7RHDrHqIfGLRoboxl4wgtWys=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ac/MZntZuceiBxv7VDgrx/nqxDE1wpo0K8Ke7lVkh3CJqq8Xu/FqX3cfPgo2AyQ5P/x+zaiu6Jalc7/TdQwYd9NfhoT1+jN/FSmshMtwkUz2qV0lMPkJpI8VN0AXhvA14Kvu+qf8bfxm+r8/P8/YE7dC1T+OsS5/DkcVib+AtPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDfN4wbA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739604887; x=1771140887;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Nie6374pQr7FVzBWNLJ7RHDrHqIfGLRoboxl4wgtWys=;
+  b=RDfN4wbAV1O3a0rgvsmckZkZxwDT2dAjzoYloEeL95u+3JSuhhkrsKtq
+   PlVB5D1xM6zYCSEwF1MzTNtsJsGyHGsu38/6IXcb3FkIqvfb2rb4cajtX
+   7VXGxHkghqqbU60Q5+BF2jPCi5B4z37jhKuFbhcZJLwz5YA0T+c+meV8t
+   4Eg47UV/4hfIM31jF/KHJbWgE98kIg1y5pB4ddfaXgmzHkpFU2ClIugGS
+   QvQ3fLWkVoq1MNtU5S2fdhiT2JKXkq3J6Ngg8hVTU6KyKO5lj3Ksxys0D
+   QZS3bkpUCJMpZoKHEEN+GW0Q4SCBt1T3gO4jwiXgsjF8At79tuQXNsY6N
+   w==;
+X-CSE-ConnectionGUID: aAJEJXloQhifpive/CJ5iw==
+X-CSE-MsgGUID: ifgyA/slTPCo09/N6Dbdug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="62825470"
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="62825470"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 23:34:46 -0800
+X-CSE-ConnectionGUID: LX5TTBU2Qd6cQVilcQ3ung==
+X-CSE-MsgGUID: QweCwAf+RlC6RKFhvdQR7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="118572929"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.49])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 23:34:43 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Sat, 15 Feb 2025 09:34:39 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v2 1/2] PCI: Avoid pointless capability searches
+In-Reply-To: <20250215000301.175097-2-helgaas@kernel.org>
+Message-ID: <b6dc9011-8a12-9ab9-14e9-eec7a85f5f7b@linux.intel.com>
+References: <20250215000301.175097-1-helgaas@kernel.org> <20250215000301.175097-2-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <44c247c5.1dcc.1950887c866.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:jSgvCgCX3+aHQ7BnKltpAA--.20851W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBv0XmewMliNfQABsV
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/mixed; boundary="8323328-1335142543-1739604879=:3981"
 
-CgpIaSBIZWlrbywKCkF0IDIwMjUtMDItMTUgMDY6MjQ6MTcsICJIZWlrbyBTdMO8Ym5lciIgPGhl
-aWtvQHNudGVjaC5kZT4gd3JvdGU6Cj5BbSBNaXR0d29jaCwgMTIuIEZlYnJ1YXIgMjAyNSwgMTA6
-MzQ6NTkgTUVaIHNjaHJpZWIgQW5keSBZYW46Cj4+IEZyb206IEFuZHkgWWFuIDxhbmR5LnlhbkBy
-b2NrLWNoaXBzLmNvbT4KPj4gCj4+IE5vdyB0aGVzZSB0d28gZnVuY3Rpb24gc2hhcmUgdGhlIHNh
-bWUgbG9naWMsIHRoZSBjYW4KPj4gYmUgbWVyZ2VkIGFzIG9uZS4KPj4gCj4+IFNpZ25lZC1vZmYt
-Ynk6IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPj4gLS0tCj4+IAo+PiAobm8g
-Y2hhbmdlcyBzaW5jZSB2MSkKPj4gCj4+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2No
-aXBfZHJtX3ZvcDIuYyB8IDQyICsrKysrLS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdl
-ZCwgMTEgaW5zZXJ0aW9ucygrKSwgMzEgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwo+PiBpbmRleCBhMGQ5NjFjYjVkMjEu
-Ljg0NGRmNDAwMTE1OSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
-Y2tjaGlwX2RybV92b3AyLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
-aGlwX2RybV92b3AyLmMKPj4gQEAgLTI0MjQsMTggKzI0MjQsMTggQEAgc3RhdGljIGludCB2b3Ay
-X2ZpbmRfcmdiX2VuY29kZXIoc3RydWN0IHZvcDIgKnZvcDIpCj4+ICAJcmV0dXJuIC1FTk9FTlQ7
-Cj4+ICB9Cj4+ICAKPj4gLXN0YXRpYyBpbnQgdm9wMl9jbHVzdGVyX2luaXQoc3RydWN0IHZvcDJf
-d2luICp3aW4pCj4+ICtzdGF0aWMgaW50IHZvcDJfcmVnbWFwX2luaXQoc3RydWN0IHZvcDJfd2lu
-ICp3aW4sIGNvbnN0IHN0cnVjdCByZWdfZmllbGQgKnJlZ3MsCj4+ICsJCQkgICAgaW50IG5yX3Jl
-Z3MpCj4+ICB7Cj4+ICAJc3RydWN0IHZvcDIgKnZvcDIgPSB3aW4tPnZvcDI7Cj4+ICAJaW50IGk7
-Cj4+ICAKPj4gLQlmb3IgKGkgPSAwOyBpIDwgdm9wMi0+ZGF0YS0+bnJfY2x1c3Rlcl9yZWdzOyBp
-KyspIHsKPj4gKwlmb3IgKGkgPSAwOyBpIDwgbnJfcmVnczsgaSsrKSB7Cj4+ICAJCWNvbnN0IHN0
-cnVjdCByZWdfZmllbGQgZmllbGQgPSB7Cj4+IC0JCQkucmVnID0gKHZvcDItPmRhdGEtPmNsdXN0
-ZXJfcmVnW2ldLnJlZyAhPSAweGZmZmZmZmZmKSA/Cj4+IC0JCQkJdm9wMi0+ZGF0YS0+Y2x1c3Rl
-cl9yZWdbaV0ucmVnICsgd2luLT5vZmZzZXQgOgo+PiAtCQkJCXZvcDItPmRhdGEtPmNsdXN0ZXJf
-cmVnW2ldLnJlZywKPj4gLQkJCS5sc2IgPSB2b3AyLT5kYXRhLT5jbHVzdGVyX3JlZ1tpXS5sc2Is
-Cj4+IC0JCQkubXNiID0gdm9wMi0+ZGF0YS0+Y2x1c3Rlcl9yZWdbaV0ubXNiCj4+ICsJCQkucmVn
-ID0gKHJlZ3NbaV0ucmVnICE9IDB4ZmZmZmZmZmYpID8KPj4gKwkJCQlyZWdzW2ldLnJlZyArIHdp
-bi0+b2Zmc2V0IDogcmVnc1tpXS5yZWcsCj4+ICsJCQkubHNiID0gcmVnc1tpXS5sc2IsCj4+ICsJ
-CQkubXNiID0gcmVnc1tpXS5tc2IKPj4gIAkJfTsKPj4gIAo+PiAgCQl3aW4tPnJlZ1tpXSA9IGRl
-dm1fcmVnbWFwX2ZpZWxkX2FsbG9jKHZvcDItPmRldiwgdm9wMi0+bWFwLCBmaWVsZCk7Cj4+IEBA
-IC0yNDQ2LDI4ICsyNDQ2LDYgQEAgc3RhdGljIGludCB2b3AyX2NsdXN0ZXJfaW5pdChzdHJ1Y3Qg
-dm9wMl93aW4gKndpbikKPj4gIAlyZXR1cm4gMDsKPj4gIH07Cj4+ICAKPj4gLXN0YXRpYyBpbnQg
-dm9wMl9lc21hcnRfaW5pdChzdHJ1Y3Qgdm9wMl93aW4gKndpbikKPj4gLXsKPj4gLQlzdHJ1Y3Qg
-dm9wMiAqdm9wMiA9IHdpbi0+dm9wMjsKPj4gLQlpbnQgaTsKPj4gLQo+PiAtCWZvciAoaSA9IDA7
-IGkgPCB2b3AyLT5kYXRhLT5ucl9zbWFydF9yZWdzOyBpKyspIHsKPj4gLQkJY29uc3Qgc3RydWN0
-IHJlZ19maWVsZCBmaWVsZCA9IHsKPj4gLQkJCS5yZWcgPSAodm9wMi0+ZGF0YS0+c21hcnRfcmVn
-W2ldLnJlZyAhPSAweGZmZmZmZmZmKSA/Cj4+IC0JCQkJdm9wMi0+ZGF0YS0+c21hcnRfcmVnW2ld
-LnJlZyArIHdpbi0+b2Zmc2V0IDoKPj4gLQkJCQl2b3AyLT5kYXRhLT5zbWFydF9yZWdbaV0ucmVn
-LAo+PiAtCQkJLmxzYiA9IHZvcDItPmRhdGEtPnNtYXJ0X3JlZ1tpXS5sc2IsCj4+IC0JCQkubXNi
-ID0gdm9wMi0+ZGF0YS0+c21hcnRfcmVnW2ldLm1zYgo+PiAtCQl9Owo+PiAtCj4+IC0JCXdpbi0+
-cmVnW2ldID0gZGV2bV9yZWdtYXBfZmllbGRfYWxsb2Modm9wMi0+ZGV2LCB2b3AyLT5tYXAsIGZp
-ZWxkKTsKPj4gLQkJaWYgKElTX0VSUih3aW4tPnJlZ1tpXSkpCj4+IC0JCQlyZXR1cm4gUFRSX0VS
-Uih3aW4tPnJlZ1tpXSk7Cj4+IC0JfQo+PiAtCj4+IC0JcmV0dXJuIDA7Cj4+IC19Cj4+IC0KPj4g
-IHN0YXRpYyBpbnQgdm9wMl93aW5faW5pdChzdHJ1Y3Qgdm9wMiAqdm9wMikKPj4gIHsKPj4gIAlj
-b25zdCBzdHJ1Y3Qgdm9wMl9kYXRhICp2b3AyX2RhdGEgPSB2b3AyLT5kYXRhOwo+PiBAQCAtMjQ4
-NCw5ICsyNDYyLDExIEBAIHN0YXRpYyBpbnQgdm9wMl93aW5faW5pdChzdHJ1Y3Qgdm9wMiAqdm9w
-MikKPj4gIAkJd2luLT53aW5faWQgPSBpOwo+PiAgCQl3aW4tPnZvcDIgPSB2b3AyOwo+PiAgCQlp
-ZiAodm9wMl9jbHVzdGVyX3dpbmRvdyh3aW4pKQo+PiAtCQkJcmV0ID0gdm9wMl9jbHVzdGVyX2lu
-aXQod2luKTsKPj4gKwkJCXJldCA9IHZvcDJfcmVnbWFwX2luaXQod2luLCB2b3AyLT5kYXRhLT5j
-bHVzdGVyX3JlZywKPj4gKwkJCQkJICAgICAgIHZvcDItPmRhdGEtPm5yX2NsdXN0ZXJfcmVncyk7
-Cj4+ICAJCWVsc2UKPj4gLQkJCXJldCA9IHZvcDJfZXNtYXJ0X2luaXQod2luKTsKPj4gKwkJCXJl
-dCA9IHZvcDJfcmVnbWFwX2luaXQod2luLCB2b3AyLT5kYXRhLT5zbWFydF9yZWcsCj4+ICsJCQkJ
-CSAgICAgICB2b3AyLT5kYXRhLT5ucl9jbHVzdGVyX3JlZ3MpOwo+Cj4JCQkJCQleXiBucl9zbWFy
-dF9yZWdzCj5JIHRoaW5rCgpZZXMsIHRoYW5rcyBmb3IgY2F0Y2hpbmcgaXQsICB3aWxsIGJlIGZp
-eGVkIGluIFYxNS4KCj4KPgo+Cj4K
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1335142543-1739604879=:3981
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Fri, 14 Feb 2025, Bjorn Helgaas wrote:
+
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Many of the save/restore functions in the pci_save_state() and
+> pci_restore_state() paths depend on both a PCI capability of the device a=
+nd
+> a pci_cap_saved_state structure to hold the configuration data, and they
+> skip the operation if either is missing.
+>=20
+> Look for the pci_cap_saved_state first so if we don't have one, we can sk=
+ip
+> searching for the device capability, which requires several slow config
+> space accesses.
+>=20
+> Remove some error messages if the pci_cap_saved_state is not found so we
+> don't complain about having no saved state for a capability the device
+> doesn't have.  We have already warned in pci_allocate_cap_save_buffers() =
+if
+> the capability is present but we were unable to allocate a buffer.
+>=20
+> Other than the message change, no functional change intended.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pci.c       | 27 ++++++++++++++-------------
+>  drivers/pci/pcie/aspm.c | 15 ++++++++-------
+>  2 files changed, 22 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..503376bf7e75 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1686,10 +1686,8 @@ static int pci_save_pcie_state(struct pci_dev *dev=
+)
+>  =09=09return 0;
+> =20
+>  =09save_state =3D pci_find_saved_cap(dev, PCI_CAP_ID_EXP);
+> -=09if (!save_state) {
+> -=09=09pci_err(dev, "buffer not found in %s\n", __func__);
+> +=09if (!save_state)
+>  =09=09return -ENOMEM;
+> -=09}
+> =20
+>  =09cap =3D (u16 *)&save_state->cap.data[0];
+>  =09pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &cap[i++]);
+> @@ -1742,19 +1740,17 @@ static void pci_restore_pcie_state(struct pci_dev=
+ *dev)
+> =20
+>  static int pci_save_pcix_state(struct pci_dev *dev)
+>  {
+> -=09int pos;
+>  =09struct pci_cap_saved_state *save_state;
+> +=09u8 pos;
+> +
+> +=09save_state =3D pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> +=09if (!save_state)
+> +=09=09return -ENOMEM;
+> =20
+>  =09pos =3D pci_find_capability(dev, PCI_CAP_ID_PCIX);
+>  =09if (!pos)
+>  =09=09return 0;
+> =20
+> -=09save_state =3D pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> -=09if (!save_state) {
+> -=09=09pci_err(dev, "buffer not found in %s\n", __func__);
+> -=09=09return -ENOMEM;
+> -=09}
+> -
+>  =09pci_read_config_word(dev, pos + PCI_X_CMD,
+>  =09=09=09     (u16 *)save_state->cap.data);
+> =20
+> @@ -1763,14 +1759,19 @@ static int pci_save_pcix_state(struct pci_dev *de=
+v)
+> =20
+>  static void pci_restore_pcix_state(struct pci_dev *dev)
+>  {
+> -=09int i =3D 0, pos;
+>  =09struct pci_cap_saved_state *save_state;
+> +=09u8 pos;
+> +=09int i =3D 0;
+>  =09u16 *cap;
+> =20
+>  =09save_state =3D pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+> -=09pos =3D pci_find_capability(dev, PCI_CAP_ID_PCIX);
+> -=09if (!save_state || !pos)
+> +=09if (!save_state)
+>  =09=09return;
+> +
+> +=09pos =3D pci_find_capability(dev, PCI_CAP_ID_PCIX);
+> +=09if (!pos)
+> +=09=09return;
+> +
+>  =09cap =3D (u16 *)&save_state->cap.data[0];
+> =20
+>  =09pci_write_config_word(dev, pos + PCI_X_CMD, cap[i++]);
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index e0bc90597dca..007e4a082e6f 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -35,16 +35,14 @@ void pci_save_ltr_state(struct pci_dev *dev)
+>  =09if (!pci_is_pcie(dev))
+>  =09=09return;
+> =20
+> +=09save_state =3D pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> +=09if (!save_state)
+> +=09=09return;
+> +
+>  =09ltr =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
+>  =09if (!ltr)
+>  =09=09return;
+> =20
+> -=09save_state =3D pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> -=09if (!save_state) {
+> -=09=09pci_err(dev, "no suspend buffer for LTR; ASPM issues possible afte=
+r resume\n");
+> -=09=09return;
+> -=09}
+> -
+>  =09/* Some broken devices only support dword access to LTR */
+>  =09cap =3D &save_state->cap.data[0];
+>  =09pci_read_config_dword(dev, ltr + PCI_LTR_MAX_SNOOP_LAT, cap);
+> @@ -57,8 +55,11 @@ void pci_restore_ltr_state(struct pci_dev *dev)
+>  =09u32 *cap;
+> =20
+>  =09save_state =3D pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_LTR);
+> +=09if (!save_state)
+> +=09=09return;
+> +
+>  =09ltr =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_LTR);
+> -=09if (!save_state || !ltr)
+> +=09if (!ltr)
+>  =09=09return;
+> =20
+>  =09/* Some broken devices only support dword access to LTR */
+>=20
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1335142543-1739604879=:3981--
 
