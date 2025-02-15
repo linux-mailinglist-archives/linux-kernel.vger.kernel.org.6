@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-515821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3747A36966
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:07:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32A1A3696A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68D4188A55D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746B716A98C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31685B211;
-	Sat, 15 Feb 2025 00:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A69189F36;
+	Sat, 15 Feb 2025 00:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfVPgSNi"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e783JxQZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAECB4430;
-	Sat, 15 Feb 2025 00:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2F94C8E;
+	Sat, 15 Feb 2025 00:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577878; cv=none; b=j7/WvcdiA3i6Mj/Z7gbJKzc/OprPk0MVn3Sbobs+SI/anULA6oMQ6Pcb1Dqdyv8RDgk8MNUdZ9YBB9yPp4eJsdwdqi4iTQQyHJzrbbr7/TOB9l9lM+fLbPrnrPYhUwmIhK4rmRNzb81Du/NcBvrZWuHohbjkd1Ym+g2nD1okODY=
+	t=1739577885; cv=none; b=QCRt7oC1Y/M2W/w/ndwT+QaomEJ7l//u/Fupzn4j83oaBd3mwqzt9Y1JvlWq/dC3WwYKxHksJ0GNYvm5mEzur/mT0LcWn5aljGDYJJLtc0IwPkzZ/Bgynrsgde5hVFSV+W2nJ/vJzq4Djn/CjQIdDOnRmWVT7/mQbhZz+uofs44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577878; c=relaxed/simple;
-	bh=Zuc1I8TT4ZyUSdQ6djt01chHpoOe1TMWUTTGeSumqHI=;
+	s=arc-20240116; t=1739577885; c=relaxed/simple;
+	bh=avQn/VhlgQeahgG8tI1AA4uleObwB3TDgNlHt81617Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dHbz6M5n1+coln8qSvw25fcq9Lx5o0R0GtXQQW3Hh2Ed3A2pLvDZfS139xktixuOaSj22qkMsOQs6EJ0z0WcUg7tdbxCcGiK4PPc/lNA6zDcqnRTtE+ZB4ckTvm+w9F3hb9ajM3iChUqSvt1NH4xuSav+2vNaLwbx9QEgXvirm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfVPgSNi; arc=none smtp.client-ip=209.85.214.174
+	 In-Reply-To:To:Cc; b=gKGTZG0+WACMlIvXH4SLAmV9OtVAlN0qYEQWFR9iKET4XgO0TMI+9AyJlEwm7HkUkCmRpy9BDwnknLmI4Cn++/UKzuf3qyjcvecLPx1nbAay4j3MQntcxd+8OkCSRyS+n8B5wIHvQhCnNR35ly1fcqQgzvqqICIM3m9adM2hzyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e783JxQZ; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c8f38febso48962395ad.2;
-        Fri, 14 Feb 2025 16:04:36 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220e989edb6so41409845ad.1;
+        Fri, 14 Feb 2025 16:04:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739577876; x=1740182676; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739577883; x=1740182683; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=u1uOScahEEFhtiWZmGcmum0wyFSflQxWR2mBa6Jo9Q0=;
-        b=ZfVPgSNiPPd6vAwBS7Fn8n8Dz0IgIQwcGKt2RCkiot9vk2AX3Sha+HwAxnHRfPQqyP
-         c/RC7P5J8E/5beEeYan3TRktXSdDuijBC3ycYBsEP4WbIEoMzxffW6YWtDxrcCsL6VeZ
-         hcfOm1Q5udiNHPRXy5S8ly9eIOZH4Oz083XzL98kHZ6L8V1YGPBoJ+QGgrGNHoICLzuN
-         ydLme6Uv2halJ34A60FHzSYeEWskDwdzQ8kVRp+Xz9tOhQkgmss+sThtNLORy/aTNDkO
-         4C0Dyhu9FjS98PWBwnqMnHZttFIOyhIRjH1qXQNZa6fl2of74JsW1tn4pEM10fsl3ovF
-         Nk0w==
+        bh=5+dZdn5+oQsOB5+cSz2r2GMKgGUJjwVauG7gsEGMQik=;
+        b=e783JxQZUGxEkj1xBK/G4+uiFWJCpFyn5rcBqHJyI5BJ3IiirXLGm+5Gu9EIQiVMIS
+         D/N+ER+yCM0FEmtAz3sO26peVZ6j+hCDFLJbUqG23kkXGvZckleqcIYQAQEpu4NliVJk
+         6sYx4p0cZEABkuwQGQIC24ku7pvcsI8aGOxYKCNKCH1nQykg1BW7+RcnPVjMaKnPJyZC
+         WyuxJJ0HbAu3jvRtKF+81ag/h68Lgenhk7x2e9Wt9qhepvPEFQ8hvGNPSGCWJmCzqabJ
+         pDjeHvAkP1IYGcVPWqjq/kIzQUXaZuDtll7DZC/ssjKeDetfj40TJrFBqIEa4JW1wM1K
+         /jzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739577876; x=1740182676;
+        d=1e100.net; s=20230601; t=1739577883; x=1740182683;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u1uOScahEEFhtiWZmGcmum0wyFSflQxWR2mBa6Jo9Q0=;
-        b=IZvRgCjC8dv8F1Az4fiuqo4Y/aGENVkR8fiMu1BX7kJ9O1iQH8zlLeRV2Ur8a8LoA3
-         2kr6M+mDELL5AqoyH13l/VI5R+Jvn6bzdLp4tnii6BJbbX3k27BZj7HxLe0ChDZcJkDk
-         nk+4Ck6uBBOfCwV3dZSkhZY/lBrVWbYHBa2rcj/SQUySLf+rvQPIME5+sADY48UvjSBE
-         fEhBfFmycGEbaJz8f78xcTwGIPoGMipROuX2RnmHNy0fs8V5MbaujLDWyHwk9cFY9WCm
-         ZcUj+CdsTNVVPg7+E+R9qaP0mrurBsLaLZ3b1IBUBgEus9Aef65wDvMzDjySfgYrEAcp
-         U6aA==
-X-Forwarded-Encrypted: i=1; AJvYcCW17laguxHozu8Jg3q+u0O8p9ilMFMmgx2K2mJHJQyfJhYhUpB1eZFB3nArOJHT2jbNkFYAjFjHkqAa6tAE@vger.kernel.org, AJvYcCWQBhLEwOan1W4aADR9SlhQeDuh1uEZ70hagz0W8Ych0s1kfuzQk9sqB21rn5YLWKWklS4vUugJ48NB4co=@vger.kernel.org, AJvYcCXbgtaXhmKzF/I8f1qJS1MJZcFsmeT6Z5bLu8gjf+rtU7mw4ml1x7hy+P3yyEkF0XSyKyNb1+NO3Iga@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLfUI2/d1r3xol/sXNCPLjdjnbwLL69zk7LOtBAkvkBIc9WBeH
-	22g88yWJfL3Bv+MQ9BrMXpRxWGYhG3LZpNXCekulH4BHjOFYrnes
-X-Gm-Gg: ASbGncvTTuyS51UayRgiqc0lMWLN56qs9NmE4ph007I0H/3WfSVCcbcOyHSbqwGoCIr
-	hT9FOv4bVTGluax0CSsbywN8x236vhVNJ8ay9SxHVIxHLyyHtl9N0gDbGjcw0dduWZdJKWyEUhH
-	TECljuAIoo6Wsj80txes0UiTg/C2KSrZ/xUWAHybryenlk0WOE/s3sKmPq6iED89AV5wbEHKR8U
-	6PgiO3/mQvoCAnB1e3cfR5CIGcz7VNQrmaSuqrW4jq2fkyzY6xnsWnRP0hH4rLN1HGiKJEFBxJS
-	ToIELgQ1aOSwyLvGMY0yKB+OZ5BOoxekWRrUvsZ3DpvQnOGaQgwb1FC2ppX0LgfVl3ZlxxW79MR
-	ZQmUzQKF8gQ==
-X-Google-Smtp-Source: AGHT+IFM0dkXeXbf5JFHi/pDT6Wk/MrMpvxLc0SbbjSaYemzUXIi1yvFx1pgJhmq4OzzUyfVzhNe/w==
-X-Received: by 2002:a17:902:e848:b0:216:31aa:12eb with SMTP id d9443c01a7336-22104064cd6mr18187655ad.31.1739577876009;
-        Fri, 14 Feb 2025 16:04:36 -0800 (PST)
+        bh=5+dZdn5+oQsOB5+cSz2r2GMKgGUJjwVauG7gsEGMQik=;
+        b=UmgbP5tGxbfmisKFqYSS7QXlFIaA8aiYuF6+a6mxArQJBKQQwjY9G+QJyQTzFsAeS4
+         D9ZOiWEc9E04JHLBJxLKdcQT1QMdcH4UCWgsaZk1dlXjnZMzcPphh/3DW661kAdxEvl0
+         jkUIqFKR97RdtrXRdLOmblrRIYvnBZ9utehdw3zBZdD0D8ntNs19ifHtZmJL9Bj2P5yU
+         X9T9ZwgdUf4UUTpplQaIEtbke0yIvg5bYV/WD4EssCUsroF629q8tE6klpded+JLd64m
+         IYi093Oiq7rls4bjkAbip+A9o4q4p2AZPrBcoBchxxA24c6mjwYyDf1TJiwaZDksnh9+
+         j8qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWH8yMs+RYL43JO9r2+sEFlAWChu+1IqRTq1loa3BscaJezAEaDAg4gTKergV2eX0PssutaX7FzOtj@vger.kernel.org, AJvYcCX1zDgnYVuOchEghO/4xrnsJCtAuOM6phocKKAGeKJNb/WMS3kk1LoyqvfT0t/m0RwdyOXpCRoUmZEST2QJ@vger.kernel.org, AJvYcCXnf6PbKryXdyb5hM7A4sVQcBAss+K6v0AsHCry7pGQZXCOLePG7ARoNa2wSEL42OXR+8FwLMEhQdwsXiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX07bxVkcXZOgSDPBDCMivhWb6eP+JlojUcdsrhVwGsq2/+FM7
+	b8/F35aTXwaaWtfuBddrns4CehziAiDNcEAJW1t4pqU4UPLGMTk+leSK84HA
+X-Gm-Gg: ASbGncvNdhruIyblxTDzDDNYa8CD5VxNBvwTFRL/zm2icQDzaj8xpO2xdwYV80zRh/o
+	OT28SN62Meo8XdujcBEQiHLJIVsYOxxZed8MgCCR5vnevfEtCTbPprXL2DVNMIKDDaWZ+d9axaR
+	KuBkzkCMsylovXf5LAU9aHUrwBt3H8/yhbC+IKYzuPZTiTjVB4ntWtWLlLtXKMkWb754Zfs5PwC
+	Oc8jhoKIsIpNe2+eThooVkUNgjaKl0TBTaM/TI7jF9prkDx9zEAA0Xvh1DRH70GC7/mWkPxONeT
+	r+81CxKDytadul5JcU9CmihpUtYQyOObHjLwnz1Yd4T4Oqmy8Dl0PLZJOtWqZxvscTIzDKmbBVO
+	w2wob8fFFjQ==
+X-Google-Smtp-Source: AGHT+IF0A/O3P2fni+IwGOThsKRu0xADtqt5QnMWSAbBMMUtl0QHjLZWjq0YyFA1Fr4p+LAcC80Rag==
+X-Received: by 2002:a17:902:e803:b0:216:1543:196c with SMTP id d9443c01a7336-221040620b2mr18492975ad.27.1739577883025;
+        Fri, 14 Feb 2025 16:04:43 -0800 (PST)
 Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220f26ea127sm15071155ad.96.2025.02.14.16.04.29
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220f26ea127sm15071155ad.96.2025.02.14.16.04.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 16:04:35 -0800 (PST)
+        Fri, 14 Feb 2025 16:04:42 -0800 (PST)
 From: James Calligeros <jcalligeros99@gmail.com>
-Date: Sat, 15 Feb 2025 10:02:45 +1000
-Subject: [PATCH 12/27] ASoC: tas2764: Export 'die_temp' to sysfs
+Date: Sat, 15 Feb 2025 10:02:46 +1000
+Subject: [PATCH 13/27] ASoC: tas2764: Crop SDOUT zero-out mask based on
+ BCLK ratio
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250215-apple-codec-changes-v1-12-723569b21b19@gmail.com>
+Message-Id: <20250215-apple-codec-changes-v1-13-723569b21b19@gmail.com>
 References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
 In-Reply-To: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -98,123 +99,105 @@ Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  asahi@lists.linux.dev, James Calligeros <jcalligeros99@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3404;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2907;
  i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=Y3N6Dh3kVHE96LUsCuZ6vzwsDaQ59NOokhGRMET8DmQ=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDOnrb2479WdKn0LDY5GCu9u6tsuFrLDhvjjX6snKhxLCp
- 8XeP/sq01HKwiDGxSArpsiyoUnIY7YR281+kcq9MHNYmUCGMHBxCsBE1qcxMqxaI3fLcNu3sOyj
- nuxXUr/I5q4/dXm/6f/EJxP2iP6Zt3gmI8NUH6fex2d/GTXFuls8Tgxj+fU08bS1fseDDS/W/pC
- 2jecGAA==
+ bh=crv8gDizT2HlKiCBN8WV4dDNDnFJ9336ZzKsSQapktU=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOnrb24rTr8gdvthP0NvMDdj9ukdFzSjei9pp93kKtkhv
+ tG9Qa2xo5SFQYyLQVZMkWVDk5DHbCO2m/0ilXth5rAygQxh4OIUgIncsWdkOPu/rHDBfesYn+WP
+ mWLf7+Li/T/h4IoK3Yuvps9YV7p90n2Gf9YKm6+sWnc8KuJoQ3RrbYm+UAbbr/zVt5stzJPfn/Z
+ uYQMA
 X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
  fpr=B08212489B3206D98F1479BDD43632D151F77960
 
 From: Martin Povišer <povik+lin@cutebit.org>
 
-Export a file for the readout of die temperature measurements.
-As per the datasheet, the temperature can be calculated by
-subtracting the value in the register by 93.
-
 Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
 Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 ---
- sound/soc/codecs/tas2764.c | 45 +++++++++++++++++++++++++
- sound/soc/codecs/tas2764.h |  3 ++
- 2 files changed, 48 insertions(+)
+ sound/soc/codecs/tas2764.c | 56 +++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
 
 diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
-index e32ac441cf3cfc8fd8c6a1839c68e84ac9347150..25238d3721a21d5af8434490acfdb7ba53de9ce0 100644
+index 25238d3721a21d5af8434490acfdb7ba53de9ce0..439e5bbd372cd467966ac9cac1c92e3e300fed54 100644
 --- a/sound/soc/codecs/tas2764.c
 +++ b/sound/soc/codecs/tas2764.c
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <sound/soc.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
-@@ -571,6 +572,39 @@ static int tas2764_apply_init_quirks(struct tas2764_priv *tas2764)
- 	return 0;
+@@ -375,6 +375,44 @@ static int tas2764_hw_params(struct snd_pcm_substream *substream,
+ 	return tas2764_set_samplerate(tas2764, params_rate(params));
  }
  
-+static int tas2764_read_die_temp(struct tas2764_priv *tas2764, int *result)
++static int tas2764_write_sdout_zero_mask(struct tas2764_priv *tas2764, int bclk_ratio)
 +{
-+	int ret;
++	struct snd_soc_component *component = tas2764->component;
++	int nsense_slots = bclk_ratio / 8;
++	u32 cropped_mask;
++	int i, ret;
 +
-+	ret = snd_soc_component_read(tas2764->component, TAS2764_TEMP);
++	if (!tas2764->sdout_zero_mask)
++		return 0;
++
++	cropped_mask = tas2764->sdout_zero_mask & GENMASK(nsense_slots - 1, 0);
++
++	for (i = 0; i < 4; i++) {
++		ret = snd_soc_component_write(component, TAS2764_SDOUT_HIZ_1 + i,
++					      (cropped_mask >> (i * 8)) & 0xff);
++
++		if (ret < 0)
++			return ret;
++	}
++
++	ret = snd_soc_component_update_bits(component, TAS2764_SDOUT_HIZ_9,
++					    TAS2764_SDOUT_HIZ_9_FORCE_0_EN,
++					    TAS2764_SDOUT_HIZ_9_FORCE_0_EN);
++
 +	if (ret < 0)
 +		return ret;
-+	*result = ret - 93;
++
 +	return 0;
 +}
 +
-+static ssize_t die_temp_show(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
++static int tas2764_set_bclk_ratio(struct snd_soc_dai *dai, unsigned int ratio)
 +{
-+	struct tas2764_priv *tas2764 = i2c_get_clientdata(to_i2c_client(dev));
-+	int ret, temp;
++	struct snd_soc_component *component = dai->component;
++	struct tas2764_priv *tas2764 = snd_soc_component_get_drvdata(component);
 +
-+	ret = tas2764_read_die_temp(tas2764, &temp);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%d C\n", temp);
++	return tas2764_write_sdout_zero_mask(tas2764, ratio);
 +}
 +
-+static DEVICE_ATTR_RO(die_temp);
-+
-+static struct attribute *tas2764_sysfs_attrs[] = {
-+	&dev_attr_die_temp.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(tas2764_sysfs);
-+
- static int tas2764_codec_probe(struct snd_soc_component *component)
+ static int tas2764_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
  {
- 	struct tas2764_priv *tas2764 = snd_soc_component_get_drvdata(component);
-@@ -664,9 +698,19 @@ static int tas2764_codec_probe(struct snd_soc_component *component)
- 			return ret;
- 	}
+ 	struct snd_soc_component *component = dai->component;
+@@ -506,6 +544,7 @@ static int tas2764_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ static const struct snd_soc_dai_ops tas2764_dai_ops = {
+ 	.mute_stream = tas2764_mute,
+ 	.hw_params  = tas2764_hw_params,
++	.set_bclk_ratio = tas2764_set_bclk_ratio,
+ 	.set_fmt    = tas2764_set_fmt,
+ 	.set_tdm_slot = tas2764_set_dai_tdm_slot,
+ 	.no_capture_mute = 1,
+@@ -658,23 +697,6 @@ static int tas2764_codec_probe(struct snd_soc_component *component)
+ 	if (ret < 0)
+ 		return ret;
  
-+	ret = sysfs_create_groups(&component->dev->kobj, tas2764_sysfs_groups);
-+
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
- }
- 
-+static void tas2764_codec_remove(struct snd_soc_component *component)
-+{
-+	sysfs_remove_groups(&component->dev->kobj, tas2764_sysfs_groups);
-+}
-+
- static DECLARE_TLV_DB_SCALE(tas2764_digital_tlv, 1100, 50, 0);
- static DECLARE_TLV_DB_SCALE(tas2764_playback_volume, -10050, 50, 1);
- 
-@@ -698,6 +742,7 @@ static const struct snd_kcontrol_new tas2764_snd_controls[] = {
- 
- static const struct snd_soc_component_driver soc_component_driver_tas2764 = {
- 	.probe			= tas2764_codec_probe,
-+	.remove			= tas2764_codec_remove,
- 	.suspend		= tas2764_codec_suspend,
- 	.resume			= tas2764_codec_resume,
- 	.controls		= tas2764_snd_controls,
-diff --git a/sound/soc/codecs/tas2764.h b/sound/soc/codecs/tas2764.h
-index 10ef7d4a490e1dec3ba9c824479a6d35ac57f33e..dbe3f7fa90187919b017eb2d59a67cfffc222735 100644
---- a/sound/soc/codecs/tas2764.h
-+++ b/sound/soc/codecs/tas2764.h
-@@ -111,6 +111,9 @@
- #define TAS2764_INT_LTCH3               TAS2764_REG(0x0, 0x50)
- #define TAS2764_INT_LTCH4               TAS2764_REG(0x0, 0x51)
- 
-+/* Readout Registers */
-+#define TAS2764_TEMP                    TAS2764_REG(0x0, 0x56)
-+
- /* Clock/IRQ Settings */
- #define TAS2764_INT_CLK_CFG             TAS2764_REG(0x0, 0x5c)
- #define TAS2764_INT_CLK_CFG_IRQZ_CLR    BIT(2)
+-	if (tas2764->sdout_zero_mask) {
+-		for (i = 0; i < 4; i++) {
+-			ret = snd_soc_component_write(component, TAS2764_SDOUT_HIZ_1 + i,
+-						      (tas2764->sdout_zero_mask >> (i * 8)) & 0xff);
+-
+-			if (ret < 0)
+-				return ret;
+-		}
+-
+-		ret = snd_soc_component_update_bits(component, TAS2764_SDOUT_HIZ_9,
+-						    TAS2764_SDOUT_HIZ_9_FORCE_0_EN,
+-						    TAS2764_SDOUT_HIZ_9_FORCE_0_EN);
+-
+-		if (ret < 0)
+-			return ret;
+-	}
+-
+ 	if (tas2764->devid == DEVID_SN012776) {
+ 		ret = snd_soc_component_update_bits(component, TAS2764_PWR_CTRL,
+ 					TAS2764_PWR_CTRL_BOP_SRC,
 
 -- 
 2.48.1
