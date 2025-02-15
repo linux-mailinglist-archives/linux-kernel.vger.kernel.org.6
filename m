@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-516138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58E6A36D4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:30:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015DEA36D50
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8590A1893672
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:28:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5341892FB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE991A841C;
-	Sat, 15 Feb 2025 10:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D341A4F3C;
+	Sat, 15 Feb 2025 10:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQwX7l6Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7sJS+Ph"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A65C1A5BBF;
-	Sat, 15 Feb 2025 10:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7AC748F;
+	Sat, 15 Feb 2025 10:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739615309; cv=none; b=Pe0pfSGX165eVn1s4wOm7sqy8KX5fJGQvkmbP0wT1Yv5BkjFivxdyNIs2vt/QpFnFDjYuwO2qVUES75s54u8llvtxZROndW7mECXDvbPFNRDGM2m9xiWdk40NS64tVTQMA3vp5QyKMRXZOkIkdyC0Gtu9xANR0IwtMvvoGXa84k=
+	t=1739615547; cv=none; b=ezUHrJl39Hz/wkQzlWAk+Y4REw6Ea5lWhnmKBXf5ysm8OKdEhpTvuHJk+sRJ9Gm5Hmrrlk1ZIxTma7tKZy3hbsfPTMwSOWSs7JXItPaV4CfrNMt5I5Sf6dODlS7Ysx3KsNK4/csK2beAICXufiVeaHY9Wxw4R8/ZcCyi9/KiLBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739615309; c=relaxed/simple;
-	bh=gNprYAi87qXWXNPsGmU77W5/QOMMYo/jVxd3xT4q5IE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=imVDHPacRIUqA6LlLA53eDFvy5r1zhM5Ds7Zftt8iGBRu+NaQ7AD4jq23SagNWcncq/JeARUzcoo59qck7MhSvAc8VDQ1po7AttBiQpBoSkm9TVk3foUCch5zHDerQdkemTu9oaDfIC7G7x4Wya5/jGskaDOQUJR7VdPLSESK6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQwX7l6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D561DC4CEE8;
-	Sat, 15 Feb 2025 10:28:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739615309;
-	bh=gNprYAi87qXWXNPsGmU77W5/QOMMYo/jVxd3xT4q5IE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=oQwX7l6QUrwrSgf9XWJLP2EKJBpj/ccnw4KMliE/W1UQtATb+AgeyLPch2pSBQxrp
-	 +1koWenoRzEVpOpn5DafzZYqV4Y+F1aluMEv71LVph0YhEgqV0dwuHd0hedxcmksmD
-	 kvm3r5akTZ/DhdZbS7l2rEr91elvx2kdf4wTFe35+m0UIrNiCNnx585yc41bB97TP6
-	 0HgRnnbmOl+EfyzawAT9f66idI9TfG/oxQ5j0m3xTolH8HvLIN1/LKcvEY1kptvLq+
-	 8AfHDZlpxmXzmKtuvhOTNkqKRxsXDfUjMvR5ZE/FDnlLm+IUEePpY3kBc1OmThtpEG
-	 E3f2U79HrpuTA==
-Date: Sat, 15 Feb 2025 04:28:27 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739615547; c=relaxed/simple;
+	bh=PBgr8FLz5oLAqGvU0Ww9gruaAbHJmlB0I5+cST1gO04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dLvrD7pRLRDcCfGwYPOPJHB23vCN61QlSwvqfe6+dbilYhj/FKBfKIp3zU1tWvv9vGF24gvS7oc7LGECE1N0/TzXEQA2CzDM89ZyTVyZBS3B+6L9flRnHwMv49tJJzUAaRInM/JTRIzhobiHU/amJxFoExZ0dzpMwlEYSIUnQBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7sJS+Ph; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5450681b606so2821494e87.0;
+        Sat, 15 Feb 2025 02:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739615544; x=1740220344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+IFODiovVbi6js9JilOujPK29SFBBxZbaFpvul0+tsA=;
+        b=S7sJS+PhERUdjraYQxlrVbOkq8L4cRCHfYtxsfup4qudbUAMw+nKK+nIGVgXC3VUCp
+         X+jDr+KpEUzr9IaBqq8ae/XnI4jAk0CReJCAk2awAruFbCOw3qSI7au1EyXnUg9cXF4J
+         vl3Hn8if86Pab3XBX36gjjVX/iZ77EVA3xiYUsFIXoS8p07BeBmVtVrlPnR1MoPdBCqe
+         nmlCWGDy0baehxtqhI58W77WOC/9lvb/VMYt+4dIbd6c7lDvFEj9HPEvFLtDcBOo0oYY
+         ZPmIBHM5q5V2ik1Rq57+1sZyOnKj/vRZBja8oPDftPkUFNxYNQlpqQPGsA8MA82p5PTN
+         7vpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739615544; x=1740220344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+IFODiovVbi6js9JilOujPK29SFBBxZbaFpvul0+tsA=;
+        b=dzOLb5uoQteqbQGxoZ8BmrjvubiPipfQB4jO5CWcnpKK2WorotGsyqC+g4h8+ieQEZ
+         NzDOD0/ab269vvBgfmBqWyqWAEJyHWtxcIQP++ycCPFYMEgpJWMKNA65FOwKRno8z4Ub
+         Ecm1fMW9xrjvkmpssiBneKcUcBY/VfKYyYhPz4JdtjKf8566C+S1yte6VGZj73LbMnG5
+         LqIVsv+6iarNz/R4ryfSyh1QIOCpAjFFvgKlRNW6P5qg5Ajv84L3lKMjQa5S4ZW9SmPr
+         w/fYn52S7N16zBDSrml/fITGrILj68QxY8AFbQCE+qAhGmk1OO0lZGoxxqFJGyd19V11
+         /MCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBrZIH77uwHBo2We4A7I5rUyXsyODWIr1muurubXRHqlhsde0EWSHxU05Fs9pKxIBnVaZoPNID8WNMfVgh@vger.kernel.org, AJvYcCUDz+6CYLnxlM6hCihB2yq1vHZC24B1nbkCVxOJqxVjDjioRuT4Js9uX2T+wkMAb1xMwcn12edzIq93etc=@vger.kernel.org, AJvYcCVX8VFkHyUwENx9FZUKL7A/iMmqpgN1EsUN+jarH5WZSlPnhoivDORCFRPEfW4pyRnZ7VzTKvE8AvEG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8QU6BFcZc693icb7jO8h8b4kSX5UJy/WwnRTOtetyPG25vz8
+	gJtqAwrJv2AYF7Su9gm7OguhUIynoudthV5CIvuj5k4oRethmLhQ
+X-Gm-Gg: ASbGnctp4dcVkc9oVYtgmijssB9gKke/TDkW9DL0XA/h5wNiwcqrYZwiOcj8DQXs9Zx
+	1JobabzmCzMG6Ky+NyukvJA4mii1C3WgwNMZ68fmdgYKlbYXijn8TGuV0g1CpdC9u6ay6gaVjpN
+	SImiwxk45yDON9oNqU4zu1toniFAnqcchTvchOKz+5WCPaItfJFqe+KpjyTe+LF5/QuwMc91VJQ
+	MrZ6cI6tr8Z2LSd5Au2F5lyHOpfTqKIl0C0dlsECjlCFN507KfL9cvNzf8s5FMcicZHGliZNo9Z
+	ubRRmNE=
+X-Google-Smtp-Source: AGHT+IH113Zt+sUzS2Ps9oWib8/GKvxz3e6n6frTNjstX8eVnnrEEQKhdQnxlnIAeaOGJTRH+rvo2Q==
+X-Received: by 2002:a05:6512:4025:b0:545:ea9:1a11 with SMTP id 2adb3069b0e04-5452fe2738amr746168e87.5.1739615543524;
+        Sat, 15 Feb 2025 02:32:23 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309298dc5eesm2201571fa.95.2025.02.15.02.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 02:32:22 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/3] iio: light: add al3000a als support
+Date: Sat, 15 Feb 2025 12:31:56 +0200
+Message-ID: <20250215103159.106343-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- linux-arm-kernel@lists.infradead.org, Scott Branden <sbranden@broadcom.com>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- linux-kernel@vger.kernel.org, Stanislav Jakubek <stano.jakubek@gmail.com>, 
- Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>
-To: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <20250215-bcm59054-v4-2-dbfb2d76a855@gmail.com>
-References: <20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com>
- <20250215-bcm59054-v4-2-dbfb2d76a855@gmail.com>
-Message-Id: <173961530619.188590.17123911097531884942.robh@kernel.org>
-Subject: Re: [PATCH v4 2/9] dt-bindings: mfd: brcm,bcm59056: Add compatible
- for BCM59054
+Content-Transfer-Encoding: 8bit
 
+AL3000a is an illuminance sensor found in ASUS TF101 tablet.
 
-On Sat, 15 Feb 2025 10:39:37 +0100, Artur Weber wrote:
-> The BCM59054 MFD is fairly similar to the BCM59056, and will use
-> the same driver. Add compatible and specify the allowed regulator
-> nodes.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v4:
-> - Fix yamllint errors (missing unevaluatedProperties)
-> - Drop comment with regulator name list
-> - Use full schema paths for $reg
-> - Change description of regulator binding to mention BCM59054
->   explicitly
-> - Drop quotes around vbus reg name
-> - Change "Power Management IC" to "Power Management Unit" to match
->   official Broadcom naming
-> 
-> Note that I did not end up moving the regulator refs from
-> allOf compatible matches; I explained my reasoning in [1].
-> 
-> [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
-> 
-> Changes in v3:
-> - Split regulator node into separate file
-> - Removed quotes around compatible
-> ---
->  .../devicetree/bindings/mfd/brcm,bcm590xx.yaml     | 26 +++++++++-
->  .../bindings/regulator/brcm,bcm59054.yaml          | 56 ++++++++++++++++++++++
->  2 files changed, 80 insertions(+), 2 deletions(-)
-> 
+---
+Changes on switching from v1 to v2:
+- sort compatible alphabetically in schema
+- clarify commit descriptions
+- convert to use regmap
+- arrangle lux conversion table in rows of 8
+- add more used headers
+- improve code formatting 
+---
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Svyatoslav Ryhel (3):
+  dt-bindings: iio: light: al3010: add al3000a support
+  iio: light: Add support for AL3000a illuminance sensor
+  ARM: tegra: tf101: Add al3000a illuminance sensor node
 
-yamllint warnings/errors:
+ .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+ drivers/iio/light/Kconfig                     |  10 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/al3000a.c                   | 221 ++++++++++++++++++
+ 5 files changed, 247 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/light/al3000a.c
 
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/regulator/brcm,bcm59054.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
-Documentation/devicetree/bindings/regulator/brcm,bcm59054.yaml: Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250215-bcm59054-v4-2-dbfb2d76a855@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.43.0
 
 
