@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-516152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC924A36D71
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:57:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26689A36D74
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E4216EE9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917FB7A21B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414791A83F2;
-	Sat, 15 Feb 2025 10:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E261ADC8F;
+	Sat, 15 Feb 2025 10:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g+AmOBm+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZjNCMXzf"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D32e530V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKVWPCzq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9395E1A3168;
-	Sat, 15 Feb 2025 10:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB31A239E;
+	Sat, 15 Feb 2025 10:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617000; cv=none; b=JxT+daEk/73x1KF7yq5PzDC7iAbCksXmEoscDsSd/cnmqijuxJeGLNrlThXhvDzSshtn3c+xkeOjNDQ0zCmjbqeNYWLgRkF5rFqaOOIrqh7nDzM+be4lEGOPv4Z+0ctK9oZjgHDkc+BTsV2HT1tGLMkr59OsQ73ADscdilrg4Qc=
+	t=1739617001; cv=none; b=HsT/F9MQ4/1CIaBfOqiMHrMZdOOFzmGXYmopa19rkX3ONz36NOLLYdlrl9GEHIpaIJYGZc++JaaF67r28dXRCF0VfHBxrg/JvFSjYlc6VJwagXUx79sg72QL2t0Kz30Z/FITWHkChfNYrD1FYx5DlekgAQUiNJs3p3QOm8/I7rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617000; c=relaxed/simple;
-	bh=iIDOGNcGLoJvc66/45g/yCMkq2atkFudQaSXXdLZzOY=;
+	s=arc-20240116; t=1739617001; c=relaxed/simple;
+	bh=lC55fyNHoyp4vsS4UMlBwwB5k4O4e7wE6Rjucc/ganA=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=L1lzl4E/6lKp/xS0ayfi1thaVO4pnqFEYD9t/VKko+IGBdo89kCM7UWtY686rFamFGbrzlWnIGo4MEa71UbXu0bf2crNIF4cvcvwh+yQKEIBEnAbasJqyOstmJzd+xlx6DSBNCMZcNj6dYZiD5gVRHF8UBBZ0GgHfOz9HhDeWes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g+AmOBm+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZjNCMXzf; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=f5CL7wQJe9wfOHLsszcDzevvL9h8FwSjCukP0gxBzUwlRGLUflkmJkLIp5yfwGaYayQwgIbC/OzAEXozYeFmTgxw387qRYcj1SYi2JGMc0u6+Yw+LBAXDSffsH0dA2bq6rfebh6fFIWfJ/exlmK6qm2E9GLCsbBO4kLRCyN2ikg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D32e530V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKVWPCzq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 15 Feb 2025 10:56:36 -0000
+Date: Sat, 15 Feb 2025 10:56:37 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739616997;
+	s=2020; t=1739616998;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0hM6mQEM2DquiCXn3DFjKV52LFKc/MnW+V8Ac2kU8+M=;
-	b=g+AmOBm+3N1NGKcT7JHn63D69n6UkM4Wj0SkK0mpqaCRAG1mMae7GQxiPn7KUeUqCbs1SA
-	gtc4dPB8XidK+VmoaWgDOYBwx+8ccpGj5mZjk5SP+DW9kOO4FvTlua58CpkIV3tx2/LQAp
-	3F0CzFCGMRv32EDO/fsjCfCa+wO6Enqcep40qXI2A+xjj+Twb/9RfqnNca/mj66oxqeFuT
-	7jZEozBcy1PvA1T3B+kmJ6z1YP0OqVTyeDUCtiNtMSNyF/OvHnMG9QpeQX/lGdUOkqJ3rQ
-	efPFSPghMvFi3moQZQ8QAL8s9Zjn7TOfafgKRCj4heoZvJzUCM3sHrayGRCjfw==
+	bh=NZzIlYvmwxfnyejxp76CfJeOWAIpwTl7n+WiFqMLQh0=;
+	b=D32e530VFoDGUoWed9UFG5W0RJBX1tSnP+dZul+J9zOZ+bYJjYylB5VKSHfqhXcS/icKWl
+	MwLm3ms4pTOWkQHKmx3ZvbvbcD+jErrerOY2y6ITCCjtcLMKujRCOPjNwmd58GMX8/hptJ
+	Hug8gRr8vx8xRkNfVKepZ0RjqRu8oz0ISbBpg2p8iEIJ/BTwNdOox3RfSIkJvEpsLWFZLb
+	jqPFVSph/vp7OM6KWEqi+l2VxY8OwvpqcmjBauihRx6LZ7MKUhtNGDEVGhBo8nE4+goqrX
+	DLcWKQxplDfb/u61NhA0oIT4K/2i42TMFn4g/qFKkreRQBU1RSKFbtW6wVOrAg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739616997;
+	s=2020e; t=1739616998;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0hM6mQEM2DquiCXn3DFjKV52LFKc/MnW+V8Ac2kU8+M=;
-	b=ZjNCMXzfRPSEHhBmHrB1lUnOtVTPbLL0CC9v7cVyrpTbjX05diOfwYOeAcnh/nntmEfGLc
-	VNeJQI8y9rm2bDBw==
+	bh=NZzIlYvmwxfnyejxp76CfJeOWAIpwTl7n+WiFqMLQh0=;
+	b=bKVWPCzqS5nOd90B26EbV37QhvhVwfetQmHAMl8Bdi+gPITjVvgpogCee95sxKx+9LMetP
+	jWMBVL/NdDUUxYBA==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/early_printk: Harden early_serial
-Cc: Scott Constable <scott.d.constable@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Subject: [tip: x86/core] x86/traps: Cleanup and robustify decode_bug()
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Sami Tolvanen <samitolvanen@google.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250207122546.919773202@infradead.org>
-References: <20250207122546.919773202@infradead.org>
+In-Reply-To: <20250207122546.721120726@infradead.org>
+References: <20250207122546.721120726@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173961699643.10177.2484228241413795642.tip-bot2@tip-bot2>
+Message-ID: <173961699739.10177.117895311119370347.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,153 +81,192 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     306859de59e59f88662b6b56ff2ce3bbb1e375bb
-Gitweb:        https://git.kernel.org/tip/306859de59e59f88662b6b56ff2ce3bbb1e375bb
+Commit-ID:     c20ad96c9a8f0aeaf4e4057730a22de2657ad0c2
+Gitweb:        https://git.kernel.org/tip/c20ad96c9a8f0aeaf4e4057730a22de2657ad0c2
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 07 Feb 2025 13:15:38 +01:00
+AuthorDate:    Fri, 07 Feb 2025 13:15:36 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 14 Feb 2025 10:32:07 +01:00
+CommitterDate: Fri, 14 Feb 2025 10:32:06 +01:00
 
-x86/early_printk: Harden early_serial
+x86/traps: Cleanup and robustify decode_bug()
 
-Scott found that mem32_serial_in() is an ideal speculation gadget, an
-indirectly callable function that takes an adddress and offset and
-immediately does a load.
+Notably, don't attempt to decode an immediate when MOD == 3.
 
-Use static_call() to take away the need for indirect calls and
-explicitly seal the functions to ensure they're not callable on IBT
-enabled parts.
+Additionally have it return the instruction length, such that WARN
+like bugs can more reliably skip to the correct instruction.
 
-Reported-by: Scott Constable <scott.d.constable@intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-Link: https://lore.kernel.org/r/20250207122546.919773202@infradead.org
+Link: https://lore.kernel.org/r/20250207122546.721120726@infradead.org
 ---
- arch/x86/kernel/early_printk.c | 49 ++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ arch/x86/include/asm/bug.h |  5 +-
+ arch/x86/include/asm/ibt.h |  4 +-
+ arch/x86/kernel/traps.c    | 82 +++++++++++++++++++++++++++----------
+ 3 files changed, 65 insertions(+), 26 deletions(-)
 
-diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index 44f9370..fc1714b 100644
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -19,6 +19,7 @@
- #include <linux/usb/ehci_def.h>
- #include <linux/usb/xhci-dbgp.h>
- #include <asm/pci_x86.h>
-+#include <linux/static_call.h>
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index e85ac0c..1a5e4b3 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -22,8 +22,9 @@
+ #define SECOND_BYTE_OPCODE_UD2	0x0b
  
- /* Simple VGA output */
- #define VGABASE		(__ISA_IO_base + 0xb8000)
-@@ -94,26 +95,28 @@ static unsigned long early_serial_base = 0x3f8;  /* ttyS0 */
- #define DLL             0       /*  Divisor Latch Low         */
- #define DLH             1       /*  Divisor latch High        */
+ #define BUG_NONE		0xffff
+-#define BUG_UD1			0xfffe
+-#define BUG_UD2			0xfffd
++#define BUG_UD2			0xfffe
++#define BUG_UD1			0xfffd
++#define BUG_UD1_UBSAN		0xfffc
  
--static unsigned int io_serial_in(unsigned long addr, int offset)
-+static __noendbr unsigned int io_serial_in(unsigned long addr, int offset)
+ #ifdef CONFIG_GENERIC_BUG
+ 
+diff --git a/arch/x86/include/asm/ibt.h b/arch/x86/include/asm/ibt.h
+index d955e0d..f0ca5c0 100644
+--- a/arch/x86/include/asm/ibt.h
++++ b/arch/x86/include/asm/ibt.h
+@@ -41,7 +41,7 @@
+ 	_ASM_PTR fname "\n\t"				\
+ 	".popsection\n\t"
+ 
+-static inline __attribute_const__ u32 gen_endbr(void)
++static __always_inline __attribute_const__ u32 gen_endbr(void)
  {
- 	return inb(addr + offset);
- }
-+ANNOTATE_NOENDBR_SYM(io_serial_in);
+ 	u32 endbr;
  
--static void io_serial_out(unsigned long addr, int offset, int value)
-+static __noendbr void io_serial_out(unsigned long addr, int offset, int value)
+@@ -56,7 +56,7 @@ static inline __attribute_const__ u32 gen_endbr(void)
+ 	return endbr;
+ }
+ 
+-static inline __attribute_const__ u32 gen_endbr_poison(void)
++static __always_inline __attribute_const__ u32 gen_endbr_poison(void)
  {
- 	outb(value, addr + offset);
- }
-+ANNOTATE_NOENDBR_SYM(io_serial_out);
- 
--static unsigned int (*serial_in)(unsigned long addr, int offset) = io_serial_in;
--static void (*serial_out)(unsigned long addr, int offset, int value) = io_serial_out;
-+DEFINE_STATIC_CALL(serial_in, io_serial_in);
-+DEFINE_STATIC_CALL(serial_out, io_serial_out);
- 
- static int early_serial_putc(unsigned char ch)
- {
- 	unsigned timeout = 0xffff;
- 
--	while ((serial_in(early_serial_base, LSR) & XMTRDY) == 0 && --timeout)
-+	while ((static_call(serial_in)(early_serial_base, LSR) & XMTRDY) == 0 && --timeout)
- 		cpu_relax();
--	serial_out(early_serial_base, TXR, ch);
-+	static_call(serial_out)(early_serial_base, TXR, ch);
- 	return timeout ? 0 : -1;
- }
- 
-@@ -131,16 +134,16 @@ static __init void early_serial_hw_init(unsigned divisor)
- {
- 	unsigned char c;
- 
--	serial_out(early_serial_base, LCR, 0x3);	/* 8n1 */
--	serial_out(early_serial_base, IER, 0);	/* no interrupt */
--	serial_out(early_serial_base, FCR, 0);	/* no fifo */
--	serial_out(early_serial_base, MCR, 0x3);	/* DTR + RTS */
-+	static_call(serial_out)(early_serial_base, LCR, 0x3);	/* 8n1 */
-+	static_call(serial_out)(early_serial_base, IER, 0);	/* no interrupt */
-+	static_call(serial_out)(early_serial_base, FCR, 0);	/* no fifo */
-+	static_call(serial_out)(early_serial_base, MCR, 0x3);	/* DTR + RTS */
- 
--	c = serial_in(early_serial_base, LCR);
--	serial_out(early_serial_base, LCR, c | DLAB);
--	serial_out(early_serial_base, DLL, divisor & 0xff);
--	serial_out(early_serial_base, DLH, (divisor >> 8) & 0xff);
--	serial_out(early_serial_base, LCR, c & ~DLAB);
-+	c = static_call(serial_in)(early_serial_base, LCR);
-+	static_call(serial_out)(early_serial_base, LCR, c | DLAB);
-+	static_call(serial_out)(early_serial_base, DLL, divisor & 0xff);
-+	static_call(serial_out)(early_serial_base, DLH, (divisor >> 8) & 0xff);
-+	static_call(serial_out)(early_serial_base, LCR, c & ~DLAB);
- }
- 
- #define DEFAULT_BAUD 9600
-@@ -183,28 +186,26 @@ static __init void early_serial_init(char *s)
- 	/* Convert from baud to divisor value */
- 	divisor = 115200 / baud;
- 
--	/* These will always be IO based ports */
--	serial_in = io_serial_in;
--	serial_out = io_serial_out;
--
- 	/* Set up the HW */
- 	early_serial_hw_init(divisor);
- }
- 
- #ifdef CONFIG_PCI
--static void mem32_serial_out(unsigned long addr, int offset, int value)
-+static __noendbr void mem32_serial_out(unsigned long addr, int offset, int value)
- {
- 	u32 __iomem *vaddr = (u32 __iomem *)addr;
- 	/* shift implied by pointer type */
- 	writel(value, vaddr + offset);
- }
-+ANNOTATE_NOENDBR_SYM(mem32_serial_out);
- 
--static unsigned int mem32_serial_in(unsigned long addr, int offset)
-+static __noendbr unsigned int mem32_serial_in(unsigned long addr, int offset)
- {
- 	u32 __iomem *vaddr = (u32 __iomem *)addr;
- 	/* shift implied by pointer type */
- 	return readl(vaddr + offset);
- }
-+ANNOTATE_NOENDBR_SYM(mem32_serial_in);
+ 	/*
+ 	 * 4 byte NOP that isn't NOP4 (in fact it is OSP NOP3), such that it
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 2dbadf3..05b86c0 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -94,10 +94,17 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
  
  /*
-  * early_pci_serial_init()
-@@ -278,15 +279,13 @@ static __init void early_pci_serial_init(char *s)
+  * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
+- * If it's a UD1, get the ModRM byte to pass along to UBSan.
++ * If it's a UD1, further decode to determine its use:
++ *
++ * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
++ * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
++ * static_call:  0f b9 cc                ud1    %esp,%ecx
++ *
++ * Notably UBSAN uses EAX, static_call uses ECX.
+  */
+-__always_inline int decode_bug(unsigned long addr, u32 *imm)
++__always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ {
++	unsigned long start = addr;
+ 	u8 v;
+ 
+ 	if (addr < TASK_SIZE_MAX)
+@@ -110,24 +117,42 @@ __always_inline int decode_bug(unsigned long addr, u32 *imm)
+ 		return BUG_NONE;
+ 
+ 	v = *(u8 *)(addr++);
+-	if (v == SECOND_BYTE_OPCODE_UD2)
++	if (v == SECOND_BYTE_OPCODE_UD2) {
++		*len = addr - start;
+ 		return BUG_UD2;
++	}
+ 
+-	if (!IS_ENABLED(CONFIG_UBSAN_TRAP) || v != SECOND_BYTE_OPCODE_UD1)
++	if (v != SECOND_BYTE_OPCODE_UD1)
+ 		return BUG_NONE;
+ 
+-	/* Retrieve the immediate (type value) for the UBSAN UD1 */
+-	v = *(u8 *)(addr++);
+-	if (X86_MODRM_RM(v) == 4)
+-		addr++;
+-
+ 	*imm = 0;
+-	if (X86_MODRM_MOD(v) == 1)
+-		*imm = *(u8 *)addr;
+-	else if (X86_MODRM_MOD(v) == 2)
+-		*imm = *(u32 *)addr;
+-	else
+-		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
++	v = *(u8 *)(addr++);		/* ModRM */
++
++	if (X86_MODRM_MOD(v) != 3 && X86_MODRM_RM(v) == 4)
++		addr++;			/* SIB */
++
++	/* Decode immediate, if present */
++	switch (X86_MODRM_MOD(v)) {
++	case 0: if (X86_MODRM_RM(v) == 5)
++			addr += 4; /* RIP + disp32 */
++		break;
++
++	case 1: *imm = *(s8 *)addr;
++		addr += 1;
++		break;
++
++	case 2: *imm = *(s32 *)addr;
++		addr += 4;
++		break;
++
++	case 3: break;
++	}
++
++	/* record instruction length */
++	*len = addr - start;
++
++	if (X86_MODRM_REG(v) == 0)	/* EAX */
++		return BUG_UD1_UBSAN;
+ 
+ 	return BUG_UD1;
+ }
+@@ -258,10 +283,10 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	bool handled = false;
+-	int ud_type;
+-	u32 imm;
++	int ud_type, ud_len;
++	s32 ud_imm;
+ 
+-	ud_type = decode_bug(regs->ip, &imm);
++	ud_type = decode_bug(regs->ip, &ud_imm, &ud_len);
+ 	if (ud_type == BUG_NONE)
+ 		return handled;
+ 
+@@ -281,15 +306,28 @@ static noinstr bool handle_bug(struct pt_regs *regs)
  	 */
- 	if ((bar0 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
- 		/* it is IO mapped */
--		serial_in = io_serial_in;
--		serial_out = io_serial_out;
- 		early_serial_base = bar0 & PCI_BASE_ADDRESS_IO_MASK;
- 		write_pci_config(bus, slot, func, PCI_COMMAND,
- 				 cmdreg|PCI_COMMAND_IO);
- 	} else {
- 		/* It is memory mapped - assume 32-bit alignment */
--		serial_in = mem32_serial_in;
--		serial_out = mem32_serial_out;
-+		static_call_update(serial_in, mem32_serial_in);
-+		static_call_update(serial_out, mem32_serial_out);
- 		/* WARNING! assuming the address is always in the first 4G */
- 		early_serial_base =
- 			(unsigned long)early_ioremap(bar0 & PCI_BASE_ADDRESS_MEM_MASK, 0x10);
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_enable();
+-	if (ud_type == BUG_UD2) {
++
++	switch (ud_type) {
++	case BUG_UD2:
+ 		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+ 		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-			regs->ip += LEN_UD2;
++			regs->ip += ud_len;
+ 			handled = true;
+ 		}
+-	} else if (IS_ENABLED(CONFIG_UBSAN_TRAP)) {
+-		pr_crit("%s at %pS\n", report_ubsan_failure(regs, imm), (void *)regs->ip);
++		break;
++
++	case BUG_UD1_UBSAN:
++		if (IS_ENABLED(CONFIG_UBSAN_TRAP)) {
++			pr_crit("%s at %pS\n",
++				report_ubsan_failure(regs, ud_imm),
++				(void *)regs->ip);
++		}
++		break;
++
++	default:
++		break;
+ 	}
++
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_disable();
+ 	instrumentation_end();
 
