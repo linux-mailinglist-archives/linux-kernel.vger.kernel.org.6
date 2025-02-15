@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-516046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1742A36C66
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:01:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBBEA36C68
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 370BF7A484A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C803AFF99
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD22190662;
-	Sat, 15 Feb 2025 07:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D11925A6;
+	Sat, 15 Feb 2025 07:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FNdIKLTI"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6rh+JUf"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B3D2FF;
-	Sat, 15 Feb 2025 07:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D6FD2FF;
+	Sat, 15 Feb 2025 07:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739602885; cv=none; b=Bkhzc3VfAAcuPsueqgLbdFApdkxwDRCSkC2RcRW8gKAsNz/9qbDhfHM8b3gjxcEWrgKARApsRxKt1gFdpK2v8sBwLbV/j4kidTuKq1bHdCcKQUmsndGVPSjaOZI23gteTqnghWTs6HQ/xqzxh/H3HwNP9TDxWbW5nZ/bB+QgPk0=
+	t=1739603642; cv=none; b=gbo89OXfcoE5zMnkVWTwON4uVC8doMhV2RYxJzvj3d98dNU+gY+4jn3stFKhK/0LHIJb0EE51ZPlg/WGvrb8VSNTr+v0K3wE+/aW0hwsziGtssH81Aqk99OBXz87zL7ocbrfI4/jW0/3VZWKPo0r3oHXRqgiYTuNvEcYBJ7jihw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739602885; c=relaxed/simple;
-	bh=Cj10GefRMuc4vTdEGLMun4lQYXt0WGTz2+ZiQdAckLk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A4/dbAyFHXwbqMpMmU/loy3mv/Dr6mT8c+FMbEqBaxknPhNommNaqIoLIp6dI/xBsK3qKQ+FFAPEfOiL7aOGGnaPIexKzaqsV+idJlagSWpdYK3lbjGvB9/OZ2XdCxURBw3S8USZS5Xi/CrwIalVo6ORSDNeF4ClJ8hghLne6nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FNdIKLTI; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51F71A4g1100935
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 15 Feb 2025 01:01:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739602870;
-	bh=a49cENLS4LBwW3AZTSCjBneWux6vcWcfKqPjTK1C0V8=;
-	h=From:To:CC:Subject:Date;
-	b=FNdIKLTIZUyHtYOZM27/tKV6M3K1tyWNGHg+CKxiDSPZy6nbLzmHRV+xf5LiP1c0s
-	 rgRUOuU/vqbioSaZBBcHi8StWhjDq80gS04VEe31x/3BXzNzTVZpwB8l8dAeHWxcDw
-	 D41N4XWUDjdLvq9Glxhuv2fztysNRqztakd+7TVs=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51F71AmT028345
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 15 Feb 2025 01:01:10 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 15
- Feb 2025 01:01:09 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 15 Feb 2025 01:01:09 -0600
-Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.6])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51F7169d117699;
-	Sat, 15 Feb 2025 01:01:07 -0600
-From: Udit Kumar <u-kumar1@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        Udit Kumar
-	<u-kumar1@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j721s2-som-p0: Add flash partition details
-Date: Sat, 15 Feb 2025 12:30:59 +0530
-Message-ID: <20250215070059.1593489-1-u-kumar1@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739603642; c=relaxed/simple;
+	bh=hZGOYluwocYD344Hp0YtYOSiK125EZ0Y1lL4SI0ewxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIgrkCSXmIm7+AL509BLF5tNcEU6nZDLMy1gxo3s60vpzMn3JYUnHsQznMc5H45Q2COmUwKpulFCbrR5HfkTXeG/J9fn1b+DmaKcHOaGEMvMwB2bFYYR2MHCtT9EJXN9LhqCGsCnd8ablho1vb6YdXEM/axotvnh1fHBrFGXKJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6rh+JUf; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7e9254bb6so409494266b.1;
+        Fri, 14 Feb 2025 23:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739603639; x=1740208439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PLCsXJvI2pTlMZ5YkAh+Q9HM6I6MXWV7qOEpj3EsXpc=;
+        b=O6rh+JUfsByg0G/HSit9w/p0yqaUKp1ccMDuDX9v/GsQdzFRPHBNWxSOi+5pPlWErR
+         qs8YV3So04uGVTD1rWPE6n5yL5mWa7TVtI5gEQJyLuAqqIOC/9jjPhzThdUc3MWhfmf2
+         1h7fE4agQdZ/SM9fNPHQWSKH5e9Xlnh+RfjGQvdYFQ2ViHiD9WKISrLFDxv4QOiFz2/Z
+         MMYP87yQzDZVw0f4xH5u1QpkmHOJ6O46VtyuFK8ZfaVwo0MMPlHfeZFEZqDTghCfBDd+
+         37+ZTnt1BMI6kqYMPvGcjhXZqysZZ8U+cRYN7cMxV69E5xZw1FYpxLdFnGm19g2tpKzH
+         B7lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739603639; x=1740208439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PLCsXJvI2pTlMZ5YkAh+Q9HM6I6MXWV7qOEpj3EsXpc=;
+        b=Xazw9gFu1aOo45mIA3QVk8bHx6OGEdP7V0oSK6zmTvOkrSE7w7vkUt7GPnvesd1RFq
+         dbiD4j0wHeFJfcKpGF2Bc571gSPx7yWR41cB0STiM/N7qWrnRtQ4ICk3wo94SNewBGq9
+         OYtnoqO8IVwmMOZZ1z3nv5TZaSALYWwgbh3h5gOOAUrhmPfeNbFXd11VKN/lIj2iFYXh
+         f9Ua/o0JTovyjOFMLZo+ixx8rDtC2Qx5Zvr8RlxsnPdXvY39Yui5Iev5qH6/NzbMQ8eT
+         L7uNP+i61Sb7vG9RpIutCeEXg/ItrefShfx5gPz5aHZq6RgMSDkz4vzrwyBJb7eYkVZw
+         QAuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlnAc070Zwy4ZUypRs7XXcwL4iYyCrUcrVeORX+5rnKbE4tI/i/Y0MVlrWdMRE6p+6KkkWdTIr@vger.kernel.org, AJvYcCX4YbQpD1Btd+w8n3rajtxJFp8FbOmWWXGm4qSba64U5C4qNGXKUEWnOHzW/PQ+G687WwO7m6tD/fRXMYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI/ZBlzKDUpKC7AiY9TFeFTU7/4+f3YbNukWLalX+IEY/PA47x
+	GqFxgN/on+XsB+yoxoUMmmKd9ASLlZSFEkgm38F0yNrYS4OTUpX9
+X-Gm-Gg: ASbGncu3X/9YiCUyWPJzw0TzKNT+oQrsDgYqJJ4xr4KwR7By/7zNrFbblLAXjeL9pXJ
+	mD9+56+RJ+3MZYFK34hFL6B7ROf5mZwN5mbb56Bs0OGWf592Jw2L2zKwmB4XOXPw8MYeEOrhEbe
+	m6O5tjumk7Qg7UKdGXkWx7cjlzjuO16D6vAhQENHGVQ0zI1gL+0vGaapz7omqUnqd5rOTeArO6a
+	tDO7GHDSomAiBIhRzgUAANdec2F60chFVUK448oFl3kCyHCJDgPKs7VXtfFoR+kIsQH3igdvSv2
+	tpGFGAFEMVib
+X-Google-Smtp-Source: AGHT+IF2uRFcFBDrStq+y/ucMkc+CpORFtGKrLDH1I6w9WA5PS7WZV5TjfRaAZ9vCKnj/U+tMdOdzQ==
+X-Received: by 2002:a17:907:2d28:b0:ab7:dec1:b34d with SMTP id a640c23a62f3a-abb70de3fb2mr168850366b.47.1739603638775;
+        Fri, 14 Feb 2025 23:13:58 -0800 (PST)
+Received: from debian ([2a00:79c0:62b:1200:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bdcf9sm475099566b.163.2025.02.14.23.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 23:13:57 -0800 (PST)
+Date: Sat, 15 Feb 2025 08:13:53 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Stefan Eichenberger <eichest@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] net: phy: marvell-88q2xxx: enable
+ temperature sensor in mv88q2xxx_config_init
+Message-ID: <20250215071353.GA5691@debian>
+References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
+ <20250214-marvell-88q2xxx-cleanup-v1-3-71d67c20f308@gmail.com>
+ <a3a5bd94-5bb7-4c65-85b6-d7876dca74b8@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3a5bd94-5bb7-4c65-85b6-d7876dca74b8@lunn.ch>
 
-When used as boot device, OSPI flash hosts different  boot
-binaries and rootfs etc.
-So Add partition details for images hosted on OSPI flash.
+Am Fri, Feb 14, 2025 at 07:06:22PM +0100 schrieb Andrew Lunn:
+> On Fri, Feb 14, 2025 at 05:32:05PM +0100, Dimitri Fedrau wrote:
+> > Temperature sensor gets enabled for 88Q222X devices in
+> > mv88q222x_config_init. Move enabling to mv88q2xxx_config_init because
+> > all 88Q2XXX devices support the temperature sensor.
+> > 
+> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> 
+> The change itself looks fine:
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> 
+> but is the sensor actually usable if the PHY has not yet been
+> configured?
+>
+No.
 
-Signed-off-by: Udit Kumar <u-kumar1@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi | 41 ++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+> Architecturally, it seems odd to register the HWMON in probe, and then
+> enable it in config_init.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-index b3a0385ed3d8..54fc5c4f8c3f 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-@@ -448,6 +448,47 @@ flash@0 {
- 		cdns,tchsh-ns = <60>;
- 		cdns,tslch-ns = <60>;
- 		cdns,read-delay = <4>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "ospi.tiboot3";
-+				reg = <0x0 0x80000>;
-+			};
-+
-+			partition@80000 {
-+				label = "ospi.tispl";
-+				reg = <0x80000 0x200000>;
-+			};
-+
-+			partition@280000 {
-+				label = "ospi.u-boot";
-+				reg = <0x280000 0x400000>;
-+			};
-+
-+			partition@680000 {
-+				label = "ospi.env";
-+				reg = <0x680000 0x40000>;
-+			};
-+
-+			partition@6c0000 {
-+				label = "ospi.env.backup";
-+				reg = <0x6c0000 0x40000>;
-+			};
-+
-+			partition@800000 {
-+				label = "ospi.rootfs";
-+				reg = <0x800000 0x37c0000>;
-+			};
-+
-+			partition@3fc0000 {
-+				label = "ospi.phypattern";
-+				reg = <0x3fc0000 0x40000>;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.34.1
+I think it makes sense to enable it in probe as well. I just moved it to
+config_init because of the PHYs hard reset. Before
+https://lore.kernel.org/netdev/20250118-marvell-88q2xxx-fix-hwmon-v2-1-402e62ba2dcb@gmail.com/
+it was already done in mv88q2xxx_hwmon_probe. I will come up with a patch.
 
+Best regards,
+Dimitri Fedrau
 
