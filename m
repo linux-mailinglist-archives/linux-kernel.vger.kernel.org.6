@@ -1,105 +1,99 @@
-Return-Path: <linux-kernel+bounces-516412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1273A370FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:21:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EEA3A37100
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE5A1893820
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1AC16FC75
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2101A5B84;
-	Sat, 15 Feb 2025 22:21:16 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27A1F890D;
+	Sat, 15 Feb 2025 22:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Rnb111bk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3351925B8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 22:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739658075; cv=none; b=lWHNQOwmkDwC4ifJQt5TcCGePbN0z1SGPPiBRk1Uim7GeyAHeRsfX5819QJDgP55Q3z34+OPnUKDG6tOZYZKXCmBfTVQ0XQ4wE1T2zGhXP+LvZPenXHC5BJjw+ftBIdIXHthaGjUi74mN+ws59dV4pDosEddpMXrI91e3Lh7Mnw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739658075; c=relaxed/simple;
-	bh=7YBl0rJiPKdcMLSsC2tAHvhe5cuQvgT6BVtCUfuga4Q=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=hq+pB75LQXeJjK/umFQFxNJEV12bhZoOKJppdpxo18CN1cFdZlVw5edxDgMqfn6vwS7fxbVTPKR0hT2Himt0TdJ14cfzNuOnzwAtoAs5uIgOTvftDWrYuGqi8duU6CgIg9TyUqj1Sy3rF4RGzsJ91KxLRCDA6pec7bWu0u+ut2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 3B83D2F332B;
-	Sat, 15 Feb 2025 23:21:04 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id LVFoHIv9BJ5s; Sat, 15 Feb 2025 23:21:04 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id E4B912B4F6A;
-	Sat, 15 Feb 2025 23:21:03 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WNNxbRAQ5ZXY; Sat, 15 Feb 2025 23:21:03 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id CD1132B03C5;
-	Sat, 15 Feb 2025 23:21:03 +0100 (CET)
-Date: Sat, 15 Feb 2025 23:21:03 +0100 (CET)
-From: Richard Weinberger <richard@nod.at>
-To: torvalds <torvalds@linux-foundation.org>
-Cc: linux-um <linux-um@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <153400218.11019314.1739658063786.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UML fixes for v6.14-rc3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2079B1925B8;
+	Sat, 15 Feb 2025 22:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739658168; cv=pass; b=IkTK5wod2YOMRQqjikEoqjJ3yh+gdCJjmV0XxH8RlcfG85T/bUi7/BAbhwrZT3LWdCk4vF/vTP1BkyU6j8LJwZharY5YBHOdkuOc/bXpGxAC2QYtPzlnzHv5lnkyXC+P/kO69W41blCFSIcIZdPjNeO4EDd0NuftkPsOIiV3rt0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739658168; c=relaxed/simple;
+	bh=RQ86hVGMaawz0wFfk//wpdYKXxYRWrediwD2ebKn0c8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+A34X/o3XqNSvEZdxWlGZNnkHi+x8HcxN/VtIgAuXz+wMWXs0pIeCs5SmzPmRU16DhoWyW0jZdxdYvz5jrS7SvfFwXM8Hkc3XJTNw3Ltj2T5OfgCMTlLRRIX2P3Nt1wnQM2BVBizTa2uCBp3548Q+jRxnie+j+uJOu0+z9Vxws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Rnb111bk; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739658154; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YmF0IvhOTmnh1dWu4RSf+qquro+asXnI7k1O/zgivywQaFcyAfWAgGtqmRkB8E4ja9BlsbhgxhMVPz4QH5p/QVXgk50ywxHAxCCVFS9CTK0t+Edl43GAFpAilIyuH5oiH1OT/VP5bX420ESoBJKKDjbkOHuptQ1hbHzEU+F9aTE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739658154; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YVueEXeSmiJbNmR3RqJkm1geuIWo49OFRoKB4g004mk=; 
+	b=HrZzDYkI0zwBMDxtIjo2KLRzOW0BD8Cg3l1qSdT2vHE+dgKEqhR+YxXCbPZCw6vfZgrbnV4g7twlYowwV2yGxK5IbHvjlhqKkJy3VjBLeGhmE7SKDZDbdcyDTddDqrV3++Er9NNtY3eHMdF2zb20aMTT2N/37alqbLEiHG7frxs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739658154;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=YVueEXeSmiJbNmR3RqJkm1geuIWo49OFRoKB4g004mk=;
+	b=Rnb111bkeEICQFLq0dYD5MIejs26GwCkuq5M9aND+MgbcpqucEwp9vhFSzWfO/22
+	x+fhAMxpAtp2Y4/AX+kyJMl7igyFOYS6PjiDEO1L+4pXinoMS8HYZsAPdrh9l0di2e3
+	WAMIbW12YWs/++UhXQgoRisIe/S39P8bsRUngPLk=
+Received: by mx.zohomail.com with SMTPS id 1739658151880996.3267160015083;
+	Sat, 15 Feb 2025 14:22:31 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 6ABFC180CDE; Sat, 15 Feb 2025 23:22:27 +0100 (CET)
+Date: Sat, 15 Feb 2025 23:22:27 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
+Message-ID: <ltuyyul4vqyavsqvaue25tdbtjzpwkmq2smtsedidgyomu7d4w@rxsxbdgzheba>
+References: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF135 (Linux)/8.8.12_GA_3809)
-Thread-Index: Py+j5YggKIhDLYY1onwnBXiaHHPABg==
-Thread-Topic: UML fixes for v6.14-rc3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
+X-ZohoMailClient: External
 
-Linus,
++cc Piotr Oniszczuk because of [0]
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+[0] https://lore.kernel.org/linux-rockchip/C81810F2-6E9B-4DCC-85D1-CCB63CBFBFEA@gmail.com/
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+Hi,
 
-are available in the Git repository at:
+On Sat, Feb 15, 2025 at 11:25:45PM +0800, Jianfeng Liu wrote:
+> Enable the HDMI port next to ethernet port.
+> 
+> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+> ---
+> 
+> [...]
+> +&hdptxphy_hdmi0 {
+> +	status = "okay";
+> +};
+> [...]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.14-rc3
+&hdptxphy_hdmi0? That looks like a downstream thing and also for the
+wrong port?
 
-for you to fetch changes up to 96178631c3f53398044ed437010f7632ad764bf8:
-
-  um: convert irq_lock to raw spinlock (2025-02-12 23:40:59 +0100)
-
-----------------------------------------------------------------
-This pull request contains the following bug fixes for UML:
-
-- Align signal stack correctly
-- Convert to raw spinlocks where needed (irq and virtio)
-- FPU related fixes
-
-----------------------------------------------------------------
-Benjamin Berg (4):
-      um: add back support for FXSAVE registers
-      um: avoid copying FP state from init_task
-      um: properly align signal stack on x86_64
-      um: fix execve stub execution on old host OSs
-
-Johannes Berg (3):
-      um: virt-pci: don't use kmalloc()
-      um: virtio_uml: use raw spinlock
-      um: convert irq_lock to raw spinlock
-
- arch/um/drivers/virt-pci.c       | 198 ++++++++++++++++++++-------------------
- arch/um/drivers/virtio_uml.c     |   8 +-
- arch/um/kernel/irq.c             |  79 +++++++++-------
- arch/um/kernel/process.c         |  10 +-
- arch/um/os-Linux/skas/process.c  |  16 +++-
- arch/x86/um/os-Linux/registers.c |  21 ++++-
- arch/x86/um/signal.c             |  13 ++-
- 7 files changed, 203 insertions(+), 142 deletions(-)
+-- Sebastian
 
