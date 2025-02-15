@@ -1,304 +1,361 @@
-Return-Path: <linux-kernel+bounces-516266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39491A36ED8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:38:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFA7A36EDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC791894534
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:38:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 948F17A259D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956351D7E52;
-	Sat, 15 Feb 2025 14:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAC11D86FB;
+	Sat, 15 Feb 2025 14:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s70uIs5S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZwh9tB7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155E1A2643
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 14:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94971624F4;
+	Sat, 15 Feb 2025 14:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739630311; cv=none; b=o4j//Nh1b1I+D7zwJ+7B7atc6EvSU4hfT+X5YzpMCTWM4mX/7njP6uljl2u7lQMChRUkz6mYjHNtKv0a5uCZh3vr4VB+kHbpMj8VpTCq+EoZVd83T53n6fr6ZiGC7e9lj81a547KiXeeTYavRO+6S2DqxIskieDr3M+4wWP1z/A=
+	t=1739630509; cv=none; b=H9u3CG1e29aEwWyASx/dCHprkewZKvJtal0a7j9hgYDVCydMiHrXV3D/IZiGQSan3WHNTNA+FMAfEDhuwGy6frTwB85DQ4AWMqA4qnYATw79S2yGCgYLWrk0mliXaVhvyeaoDc2nyPbI9NiVYoDCnJpPZZUFf6AV9G1yxynzkKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739630311; c=relaxed/simple;
-	bh=sgq35m+dLzRHGGfBfn40NFSQSAiDYjHrhsKoG4yQIvs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cYLJUT0Bjd8PX/9HRLlDxdhPv3GDaCvtWXg6bVZqK2g5VxkUchx1DU7+ILXS6ssS9J+4v1TMPcTngzYk8M3kJ/H35w3UiUHNg9XM3GupqYxRdz9MWbJvzkeBcznNuhj9DFgAJPEFI56ifAos20MUssK/XH1x8Ltp4ZV16//bOqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s70uIs5S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E79DC4CEDF;
-	Sat, 15 Feb 2025 14:38:26 +0000 (UTC)
+	s=arc-20240116; t=1739630509; c=relaxed/simple;
+	bh=cMALQlkfyrmyqy4FynTTKBGjYkiowL4RZo6my42A0kc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hJlytVZ/uFU47K9b3ZAzGU7HdSBInCCGBbO4M/WPTXdI1BwfOnDeHTMAleQ6xLEnEfCBq9Qlag5MA6IS5Z19sFlXPKVwRzbUsygtld8QwRcABvE+ZiLqfj1R8ibkzIDTeiNHe0CjxFh08EtY/Ort0TLch6/2pu8xyT233LYWjuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZwh9tB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614C3C4CEE8;
+	Sat, 15 Feb 2025 14:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739630311;
-	bh=sgq35m+dLzRHGGfBfn40NFSQSAiDYjHrhsKoG4yQIvs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s70uIs5StKIsBjGItY+kmsGAGX+XUbfOArCfog8IBTqnfLlT23YHngrm5v7Pa2hX/
-	 VUardYcloSPhcHRn31mZRZu1rVj0eTdaaEEJMo2zhNRhmHSIE+JjvaF8JkHHS9tQnz
-	 cwH37ca26kOdxFMNby0UaAlfTPdspp5Kzju4CstVuJWKux27+IeaFG5z2i8LndDKTQ
-	 zLTG+4gjQiuF+Umir2bdwUb0DOXbaIuh/tSDkZOzWJZEa9pLdsR6oz03y8pV3AQnDV
-	 UdrRQIQNFg2MRmJvYJWQ2ydtH8zrCbg+r0Qgqm31ziTjB0YV/c682Vd2ezxGZYMi7p
-	 KjY5t7P5dsV1A==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
-	maz@kernel.org, catalin.marinas@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, steven.price@arm.com,
-	suzuki.poulose@arm.com,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH 1/1] arm64: realm: Use aliased addresses for device DMA
- to shared buffers
-In-Reply-To: <yq5apljj9tkc.fsf@kernel.org>
-References: <20250212171411.951874-1-suzuki.poulose@arm.com>
- <20250212171411.951874-2-suzuki.poulose@arm.com>
- <yq5apljj9tkc.fsf@kernel.org>
-Date: Sat, 15 Feb 2025 20:08:23 +0530
-Message-ID: <yq5amsen9stc.fsf@kernel.org>
+	s=k20201202; t=1739630508;
+	bh=cMALQlkfyrmyqy4FynTTKBGjYkiowL4RZo6my42A0kc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cZwh9tB7S2+Y/xS76LfYmbVFHr62MNf1jpmTu9YmyIqE6JcWAEjepIRkbVjdH5WRs
+	 3SP10Q95MkIrzS0ReTT8aRo1yLDcqymYnVhTLlkLiuObc9UNQlEZslDYLZeQf2xHRw
+	 BbDyovC8/0iUd0oieHzCJJHkLC4t2ywDSa9sXhGPhi4kEdjavgEQkqQEdAhrfbPcxd
+	 d8LK8BXatYjCn3ozpkSAOnH4/Rldy8eSJ64HZoFCNqiuHMLts3apUnOz4W7/7in9p6
+	 PBlCUczwpYXs1wFWAei9WohqbXgVpIj7+mqBUeMI24+491QdsKk5lhEknOMRJO4KEZ
+	 8tb1b8whakQWQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5de4d3bbc76so4841566a12.3;
+        Sat, 15 Feb 2025 06:41:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXGQ/2mjYqbNOsjrWXdwIIUAk64zwWTsEif4Jp3l5U91+uB2M2Nlpi3JPfniJ5lolGiI9+cAmE8t50S+MI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/pqCd+SzMM58fJMV3c6lw3d9p9jEMonTJGoDFdf39TDYt3QwV
+	+3hZP+vnyNsSHZ1U1fAj+55eAkdMD7TfXClXjADpy0LlMv6CMyYM6hlqAbKLrf6XVqK+jOdbiRN
+	M0D4fTM+hjm8rhsf2emn+cl50yTk=
+X-Google-Smtp-Source: AGHT+IE1EPbH7/8VeD3zieHEsJaiCvQtDLdoGz4sII10N0CcaqbTTsAeMXIJt7fbjMx/ojA+wytmk7ilSy6dYqZvYxg=
+X-Received: by 2002:a17:907:72d2:b0:ab3:ed0:8d7 with SMTP id
+ a640c23a62f3a-abb70b869efmr280397366b.23.1739630506827; Sat, 15 Feb 2025
+ 06:41:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250214105047.150835-1-marco.crivellari@suse.com>
+ <20250214105047.150835-2-marco.crivellari@suse.com> <CAAhV-H4qY9FOm4C4kBCerM4j+CcezL-Dkitb8gbVZCYjjCxQDA@mail.gmail.com>
+ <CAAofZF4PVYehyonsmyTC=gKTgucs-jZYzzoQ2dvFcqK9YgsKVw@mail.gmail.com>
+In-Reply-To: <CAAofZF4PVYehyonsmyTC=gKTgucs-jZYzzoQ2dvFcqK9YgsKVw@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 15 Feb 2025 22:41:36 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7bTHmbY13eiUR47Q4kcbb7VSU__WqY56WzSkmP6vYwZA@mail.gmail.com>
+X-Gm-Features: AWEUYZl0r-ydt010uYZuzP-JtdhqkVHS9FeD6aCv2KYWelXAKwy9VS6b3Xq9d5o
+Message-ID: <CAAhV-H7bTHmbY13eiUR47Q4kcbb7VSU__WqY56WzSkmP6vYwZA@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: Fix idle VS timer enqueue
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Aneesh Kumar K.V <aneesh.kumar@kernel.org> writes:
+On Fri, Feb 14, 2025 at 11:57=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
+>
+> Hi, thanks for the replies!
+>
+> Huacai: I used the '1' label when I compiled the first time, but I
+> noticed this warning, so I decided to use the label to avoid this:
+>
+> "WARNING: modpost: vmlinux: section mismatch in reference:
+> rollback_except_vec_vi+0x4 (section: .text) -> except_vec4 (section:
+> .init.text)"
+>
+> By the way, I will use the 1 label like you suggested.
+>
+> > For MIPS the rollback region is not 3 instructions, and so you cannot
+> > use 0xc below. I think there is no chance for the wait instruction
+> > after this patch.
+>
+> About this, does it look better if i don't change this part of the
+> code (except for PTR_LA  k1, 1b) ?
+> eg.
+>
+> @@ -136,7 +144,7 @@ LEAF(__r4k_wait)
+>        .set    push
+>        .set    noat
+>        MFC0    k0, CP0_EPC
+> -       PTR_LA  k1, __r4k_wait
+> +       PTR_LA  k1, 1b
+>        ori     k0, 0x1f        /* 32 byte rollback region */
+>        xori    k0, 0x1f
+>        bne     k0, k1, \handler
+>
+> So the real change would be:
+>
+> -       /* start of rollback region */
+> -       LONG_L  t0, TI_FLAGS($28)
+> +       /* start of idle interrupt region */
+> +       MFC0    k0, CP0_STATUS
+>        nop
+> -       andi    t0, _TIF_NEED_RESCHED
+> -       bnez    t0, 1f
+> -        nop
+> +       /* Enable Interrupt */
+> +       ori     k0, 0x1f
+> +       xori    k0, 0x1e
+> +       MTC0    k0, CP0_STATUS
+>        nop
+>        nop
+>
+> Maybe what I'm going to say is silly...
+> But considering the region should be a power of 2, maybe can also be
+> changed with:
+> ori   k0, 0x0f
+> addi  k0, 1
+>
+> Thanks for your time!
+I think you didn't get my key point, and maybe also didn't get
+Maciej's point, I paste my whole changes here which is tested on real
+hardware.
 
-> Suzuki K Poulose <suzuki.poulose@arm.com> writes:
->
->> When a device performs DMA to a shared buffer using physical addresses,
->> (without Stage1 translation), the device must use the "{I}PA address" wi=
-th the
->> top bit set in Realm. This is to make sure that a trusted device will be=
- able
->> to write to shared buffers as well as the protected buffers. Thus, a Rea=
-lm must
->> always program the full address including the "protection" bit, like AMD=
- SME
->> encryption bits.
->>
->> Add the support for this by providing arm64 version of the phys_to_dma()=
-. We
->> cannot use the __sme_mask as it assumes the "encryption" always "sets a =
-bit",
->> which is the opposite for CCA. i.e., "set a bit" for "decrypted" address=
-. So,
->> move the common code that can be reused by all - i.e., add __phys_to_dma=
-() and
->> __dma_to_phys() - and do the arch specific processing.
->>
->> Please note that the VMM needs to similarly make sure that the SMMU Stag=
-e2 in
->> the Non-secure world is setup accordingly to map IPA at the unprotected =
-alias.
->>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Steven Price <steven.price@arm.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>  arch/arm64/Kconfig                  |  1 +
->>  arch/arm64/include/asm/dma-direct.h | 38 +++++++++++++++++++++++++++++
->>  include/linux/dma-direct.h          | 35 +++++++++++++++++---------
->>  3 files changed, 62 insertions(+), 12 deletions(-)
->>  create mode 100644 arch/arm64/include/asm/dma-direct.h
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index fcdd0ed3eca8..7befe04106de 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -41,6 +41,7 @@ config ARM64
->>  	select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
->>  	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
->>  	select ARCH_HAS_NONLEAF_PMD_YOUNG if ARM64_HAFT
->> +	select ARCH_HAS_PHYS_TO_DMA
->>  	select ARCH_HAS_PTE_DEVMAP
->>  	select ARCH_HAS_PTE_SPECIAL
->>  	select ARCH_HAS_HW_PTE_YOUNG
->> diff --git a/arch/arm64/include/asm/dma-direct.h b/arch/arm64/include/as=
-m/dma-direct.h
->> new file mode 100644
->> index 000000000000..37c3270542b8
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/dma-direct.h
->> @@ -0,0 +1,38 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +#ifndef __ASM_DMA_DIRECT_H
->> +#define __ASM_DMA_DIRECT_H
->> +
->> +#include <asm/pgtable-prot.h>
->> +
->> +static inline unsigned long addr_to_shared(unsigned long addr)
->> +{
->> +	if (is_realm_world())
->> +		addr |=3D prot_ns_shared;
->> +	return addr;
->> +}
->> +
->> +static inline unsigned long addr_to_private(unsigned long addr)
->> +{
->> +	if (is_realm_world())
->> +		addr &=3D prot_ns_shared - 1;
->> +	return addr;
->> +}
->> +
->> +static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t pa=
-ddr)
->> +{
->> +	return __phys_to_dma(dev, paddr);
->> +}
->> +
->> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->> +						 phys_addr_t paddr)
->> +{
->> +	return addr_to_shared(__phys_to_dma(dev, paddr));
->> +}
->> +#define phys_to_dma_unencrypted phys_to_dma_unencrypted
->> +
->> +static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dm=
-a_addr)
->> +{
->> +	return addr_to_private(__dma_to_phys(dev, dma_addr));
->> +}
->> +
->> +#endif	/* __ASM_DMA_DIRECT_H */
->> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
->> index d7e30d4f7503..3e9bf6ca640e 100644
->> --- a/include/linux/dma-direct.h
->> +++ b/include/linux/dma-direct.h
->> @@ -72,18 +72,36 @@ static inline dma_addr_t dma_range_map_max(const str=
-uct bus_dma_region *map)
->>  	return ret;
->>  }
->>=20=20
->> +static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t =
-paddr)
->> +{
->> +	if (dev->dma_range_map)
->> +		return translate_phys_to_dma(dev, paddr);
->> +	return paddr;
->> +}
->> +
->> +static inline phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t =
-dma_addr)
->> +{
->> +	phys_addr_t paddr;
->> +
->> +	if (dev->dma_range_map)
->> +		paddr =3D translate_dma_to_phys(dev, dma_addr);
->> +	else
->> +		paddr =3D dma_addr;
->> +
->> +	return paddr;
->> +}
->> +
->>  #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
->>  #include <asm/dma-direct.h>
->>  #ifndef phys_to_dma_unencrypted
->>  #define phys_to_dma_unencrypted		phys_to_dma
->>  #endif
->>  #else
->> +
->>  static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->>  		phys_addr_t paddr)
->>  {
->> -	if (dev->dma_range_map)
->> -		return translate_phys_to_dma(dev, paddr);
->> -	return paddr;
->> +	return __phys_to_dma(dev, paddr);
->>  }
->>=20=20
->>  /*
->> @@ -94,19 +112,12 @@ static inline dma_addr_t phys_to_dma_unencrypted(st=
-ruct device *dev,
->>   */
->>  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t pa=
-ddr)
->>  {
->> -	return __sme_set(phys_to_dma_unencrypted(dev, paddr));
->> +	return __sme_set(__phys_to_dma(dev, paddr));
->>  }
->>=20=20
->>  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dm=
-a_addr)
->>  {
->> -	phys_addr_t paddr;
->> -
->> -	if (dev->dma_range_map)
->> -		paddr =3D translate_dma_to_phys(dev, dma_addr);
->> -	else
->> -		paddr =3D dma_addr;
->> -
->> -	return __sme_clr(paddr);
->> +	return __sme_clr(__dma_to_phys(dev, dma_addr));
->>  }
->>  #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
->>=20=20
->> --=20
->> 2.43.0
->
-> How about the below?
->
-> The function name addr_to_shared is too generic to be included in the
-> dma-direct.h header file. Since we don=E2=80=99t expect it to be called
-> directly, we can either inline it or find a more specific name.
->
-> Additionally, for dma_to_phys conversion, we first retrieve the private
-> address/alias before switching to the physical address. While both
-> approaches yield the correct result, this change more clearly defines the
-> conversion rules?
->
+diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+index b6de8e88c1bd..4b55115160f0 100644
+--- a/arch/mips/kernel/genex.S
++++ b/arch/mips/kernel/genex.S
+@@ -104,25 +104,27 @@ handle_vcei:
 
-Also translate_dma_to_phys/translate_phys_to_dma work with private dma
-addr/alias right?
+        __FINIT
+
+-       .align  5       /* 32 byte rollback region */
++       .align  5
+ LEAF(__r4k_wait)
+        .set    push
+        .set    noreorder
+-       /* start of rollback region */
+-       LONG_L  t0, TI_FLAGS($28)
+-       nop
+-       andi    t0, _TIF_NEED_RESCHED
+-       bnez    t0, 1f
+-        nop
+-       nop
+-       nop
+-#ifdef CONFIG_CPU_MICROMIPS
+-       nop
+-       nop
+-       nop
+-       nop
+-#endif
++       /* start of idle interrupt region */
++       MFC0    t0, CP0_STATUS
++       /* Enable Interrupt */
++       ori     t0, 0x1f
++       xori    t0, 0x1e
++       MTC0    t0, CP0_STATUS
++       _ssnop
++       _ssnop
++       _ssnop
+        .set    MIPS_ISA_ARCH_LEVEL_RAW
++       /*
++        * If an interrupt lands here, between enabling interrupts above an=
+d
++        * going idle on the next instruction, we must *NOT* go idle since =
+the
++        * interrupt could have set TIF_NEED_RESCHED or caused a timer to n=
+eed
++        * resched. Fall through -- see rollback_handler below -- and have
++        * the idle loop take care of things.
++        */
+        wait
+        /* end of rollback region (the region size must be power of two) */
+ 1:
+@@ -136,9 +138,10 @@ LEAF(__r4k_wait)
+        .set    push
+        .set    noat
+        MFC0    k0, CP0_EPC
+-       PTR_LA  k1, __r4k_wait
+-       ori     k0, 0x1f        /* 32 byte rollback region */
+-       xori    k0, 0x1f
++       PTR_LA  k1, 1b
++       /* 32 byte idle interrupt region */
++       ori     k0, 0x1f
++       daddiu  k0, 1
+        bne     k0, k1, \handler
+        MTC0    k0, CP0_EPC
+        .set pop
+diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
+index 5abc8b7340f8..1f74c0589f7e 100644
+--- a/arch/mips/kernel/idle.c
++++ b/arch/mips/kernel/idle.c
+@@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
+
+ void __cpuidle r4k_wait(void)
+ {
+-       raw_local_irq_enable();
+        __r4k_wait();
+        raw_local_irq_disable();
+ }
+
+Huacai
 
 >
-> modified   arch/arm64/include/asm/dma-direct.h
-> @@ -4,14 +4,14 @@
->=20=20
->  #include <asm/pgtable-prot.h>
->=20=20
-> -static inline unsigned long addr_to_shared(unsigned long addr)
-> +static inline unsigned long shared_dma_addr(unsigned long addr)
->  {
->  	if (is_realm_world())
->  		addr |=3D prot_ns_shared;
->  	return addr;
->  }
->=20=20
-> -static inline unsigned long addr_to_private(unsigned long addr)
-> +static inline unsigned long private_dma_addr(unsigned long addr)
->  {
->  	if (is_realm_world())
->  		addr &=3D prot_ns_shared - 1;
-> @@ -26,13 +26,14 @@ static inline dma_addr_t phys_to_dma(struct device *d=
-ev, phys_addr_t paddr)
->  static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
->  						 phys_addr_t paddr)
->  {
-> -	return addr_to_shared(__phys_to_dma(dev, paddr));
-> +	return shared_dma_addr(__phys_to_dma(dev, paddr));
->  }
->  #define phys_to_dma_unencrypted phys_to_dma_unencrypted
->=20=20
->  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma=
-_addr)
->  {
-> -	return addr_to_private(__dma_to_phys(dev, dma_addr));
-> +	/* if it is a shared dma addr convert to private before looking for phy=
-s_addr */
-> +	return __dma_to_phys(dev, private_dma_addr(dma_addr));
->  }
->=20=20
->  #endif	/* __ASM_DMA_DIRECT_H */
+> On Fri, Feb 14, 2025 at 3:47=E2=80=AFPM Huacai Chen <chenhuacai@kernel.or=
+g> wrote:
+> >
+> > Hi, Marco,
+> >
+> > On Fri, Feb 14, 2025 at 6:51=E2=80=AFPM Marco Crivellari
+> > <marco.crivellari@suse.com> wrote:
+> > >
+> > > MIPS re-enables interrupts on its idle routine and performs
+> > > a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
+> > >
+> > > The IRQs firing between the check and the 'wait' instruction may set =
+the
+> > > TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
+> > > interrupting __r4k_wait() rollback their return address to the
+> > > beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
+> > > again before going back to sleep.
+> > >
+> > > However idle IRQs can also queue timers that may require a tick
+> > > reprogramming through a new generic idle loop iteration but those tim=
+ers
+> > > would go unnoticed here because __r4k_wait() only checks
+> > > TIF_NEED_RESCHED. It doesn't check for pending timers.
+> > >
+> > > Fix this with fast-forwarding idle IRQs return address to the end of =
+the
+> > > idle routine instead of the beginning, so that the generic idle loop
+> > > handles both TIF_NEED_RESCHED and pending timers.
+> > >
+> > > Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> > > ---
+> > >  arch/mips/kernel/genex.S | 36 ++++++++++++++++++++----------------
+> > >  arch/mips/kernel/idle.c  |  1 -
+> > >  2 files changed, 20 insertions(+), 17 deletions(-)
+> > >
+> > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > > index a572ce36a24f..a78d5132c940 100644
+> > > --- a/arch/mips/kernel/genex.S
+> > > +++ b/arch/mips/kernel/genex.S
+> > > @@ -104,18 +104,16 @@ handle_vcei:
+> > >
+> > >         __FINIT
+> > >
+> > > -       .align  5       /* 32 byte rollback region */
+> > > +       .align  5
+> > >  LEAF(__r4k_wait)
+> > >         .set    push
+> > >         .set    noreorder
+> > > -       /* start of rollback region */
+> > > -       LONG_L  t0, TI_FLAGS($28)
+> > > -       nop
+> > > -       andi    t0, _TIF_NEED_RESCHED
+> > > -       bnez    t0, 1f
+> > > -        nop
+> > > -       nop
+> > > -       nop
+> > > +       /* start of idle interrupt region */
+> > > +       MFC0    k0, CP0_STATUS
+> > > +       /* Enable Interrupt */
+> > > +       ori     k0, 0x1f
+> > > +       xori    k0, 0x1e
+> > > +       MTC0    k0, CP0_STATUS
+> > >  #ifdef CONFIG_CPU_MICROMIPS
+> > >         nop
+> > >         nop
+> > > @@ -123,11 +121,17 @@ LEAF(__r4k_wait)
+> > >         nop
+> > >  #endif
+> > >         .set    MIPS_ISA_ARCH_LEVEL_RAW
+> > > +       /*
+> > > +        * If an interrupt lands here, between enabling interrupts ab=
+ove and
+> > > +        * going idle on the next instruction, we must *NOT* go idle =
+since the
+> > > +        * interrupt could have set TIF_NEED_RESCHED or caused a time=
+r to need
+> > > +        * resched. Fall through -- see rollback_handler below -- and=
+ have
+> > > +        * the idle loop take care of things.
+> > > +        */
+> > >         wait
+> > > -       /* end of rollback region (the region size must be power of t=
+wo) */
+> > > -1:
+> > > +       /* end of idle interrupt region (the region size must be powe=
+r of two) */
+> > > +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
+> > You can also use label 1 as the LoongArch version.
+> >
+> > >         jr      ra
+> > > -        nop
+> > >         .set    pop
+> > >         END(__r4k_wait)
+> > >
+> > > @@ -136,10 +140,10 @@ LEAF(__r4k_wait)
+> > >         .set    push
+> > >         .set    noat
+> > >         MFC0    k0, CP0_EPC
+> > > -       PTR_LA  k1, __r4k_wait
+> > > -       ori     k0, 0x1f        /* 32 byte rollback region */
+> > > -       xori    k0, 0x1f
+> > > -       bne     k0, k1, \handler
+> > > +       PTR_LA  k1, __r4k_wait_exit
+> > > +       /* 3 instructions rollback region */
+> > For MIPS the rollback region is not 3 instructions, and so you cannot
+> > use 0xc below. I think there is no chance for the wait instruction
+> > after this patch.
+> >
+> > Huacai
+> >
+> > > +       ori     k0, k0, 0x0c
+> > > +       bne     k0, k1, \handler
+> > >         MTC0    k0, CP0_EPC
+> > >         .set pop
+> > >         .endm
+> > > diff --git a/arch/mips/kernel/idle.c b/arch/mips/kernel/idle.c
+> > > index 5abc8b7340f8..1f74c0589f7e 100644
+> > > --- a/arch/mips/kernel/idle.c
+> > > +++ b/arch/mips/kernel/idle.c
+> > > @@ -37,7 +37,6 @@ static void __cpuidle r3081_wait(void)
+> > >
+> > >  void __cpuidle r4k_wait(void)
+> > >  {
+> > > -       raw_local_irq_enable();
+> > >         __r4k_wait();
+> > >         raw_local_irq_disable();
+> > >  }
+> > > --
+> > > 2.48.1
+> > >
+> > >
+>
+>
+>
+> --
+>
+> Marco Crivellari
+>
+> L3 Support Engineer, Technology & Product
+>
+>
+>
+>
+> marco.crivellari@suse.com
 
