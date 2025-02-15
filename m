@@ -1,86 +1,91 @@
-Return-Path: <linux-kernel+bounces-516227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C166FA36E65
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:07:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E8EA36E68
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A925171748
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF081892E92
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E371D1C84B5;
-	Sat, 15 Feb 2025 13:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AED1C84DE;
+	Sat, 15 Feb 2025 13:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTC3kBLS"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Wn4ZBtai"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB173623;
-	Sat, 15 Feb 2025 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B361ACECC
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624830; cv=none; b=BBNZJCNTH8rfVl+aVMrwwMkIKA08DV7ooR8FHmNXchC1sC8ItlHEJaIII3uJ0mXA56HSrrdPvGloMFXMaOfoKGCfzRgo1gbcnLUJ5WRwd7pfaL050ok3hTYxYwax96lC8mgihyXmvKdIHQYk5+XDIJS7iQTvviJIFJlYRO4QkZQ=
+	t=1739624942; cv=none; b=qw+SRODthGGUjy9x09/pV7fIRtPohrtIPqrzIyvt0VDgPjH/m9Gmd/RLliJhL16DNuBKmO3xpfOrlDQPc32leEz8g7gPNH0hp481zDcC/mdI9Qdz5T31U2n+rVbLg05sEq5ksOmK/M/9U020MG4dZEAbEmOOfdMOayDlyYNr4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624830; c=relaxed/simple;
-	bh=m8z38EiprjoO7ULkkH/GZ1Bl/HrTuZMd/gLZv43UgKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cLaMDTTRc6wbvwBq647hmkpF+1GiYEcUbEDhHfzAGNnHlYBIxXPmjZYzxI/42hFdaaVUZ7vIHGOZZVSlxPOHVtlwcf/2OuLBAvqFTCZ3yLwiiwwkENYZqtSZlpl74P1B8StM7GSxt1bmd+K68YrbaB79rIa7ctzUEzEdV8nU5Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTC3kBLS; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43967004304so11376135e9.2;
-        Sat, 15 Feb 2025 05:07:08 -0800 (PST)
+	s=arc-20240116; t=1739624942; c=relaxed/simple;
+	bh=s4htX+F1zzRD0lYov4+9prU+b0yfaEjXX+1u/e48NXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WQaBHCtAM4od0O5/hXASnCYqlAILc564fmK47zDjpSYRSVPSK3wxwOq2j8f094v/43y27mycFUCybRaitA2SZNMfv/VTba/iASqnsDtCMprmESX6Wkle9X2TUXD/D2kZ/85Aypw5q31+vH5hRBG08qon/18swmbRGjhhfsWSmpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Wn4ZBtai; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so4028614a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:08:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739624827; x=1740229627; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1739624938; x=1740229738; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FaQaynB3KedHnyc+zdw5Lrkx8DsP6cNuMCn8mu2UgNo=;
-        b=KTC3kBLS6NbXF6rpyn4RBBT53zs8Ifu+kqeIBNxts1g/PwpNMo6oXkvRQGSqPTonCt
-         pHmZQupwWDb69dDlgZWmfoebPkrR2HA8njSyVDuEU4edDCRocddAticWTLhYgzmvfHKq
-         lMzeGFhErryYCdKUHm33zdrTxxniKpjZVOtvPW+zDXSm/48i3r4fPbuXQuuFGJK2EZWO
-         ACphT6aGo/cNZQBciFqEY2dllcClEmAVGWdqjiy5bc5forHRHvoWzlsQSfm/JtOZ5a6Q
-         2AeirmoCAUkXIqvDizhLvDKQRV1pKQSivceNF2sQo46j0RO7AP789ILL/K6oxphfAj+0
-         /snw==
+        bh=TPr0RA4sTxfMrblR7pYl2liz/ysOC6e1FaOIdebj5hk=;
+        b=Wn4ZBtai/Eh60ePuwzYAWINMvABoAQ60hH8jAxjQoR8qMHg5AiBRj/DAxpIv9UNavu
+         KUJgs3jUlD5Ca0oz0LHBhLtjvaK8EldV0sa0ghsXyOaV3S2MDrJgipBGEqHOiFNSgQ5F
+         PmTzir/nQeWlJh6TDzlZvX6/v5nPAa4Xtiam+V3He284o2szQgdPqFWOa4RDsIH4BCt/
+         09M/DwPcReI+JR0jF+KHlhMfpE67lf/VJWI8vKXYwzYqFA7XfzM4Gx0uO8V1ClJQWicj
+         ogSqfnHidEFrHKhbwG6jk7XGvuq+ggiAqxv4lYefh/WPfFVY3DEyP/2ZNZpB7uFpxtoD
+         nTlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739624827; x=1740229627;
+        d=1e100.net; s=20230601; t=1739624938; x=1740229738;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FaQaynB3KedHnyc+zdw5Lrkx8DsP6cNuMCn8mu2UgNo=;
-        b=NWA9HuumrVP0se/7D5ASnMzqfLq2wmEHouSpyFn9Osq8vJedgXoPRcQXwtitndmP7h
-         OoJusNZD7vrT/53oQf2rqqrzGa9ZzFmNBe83rKmHwLK1RX5ieQFpLFQMfgRlgjK4qaTW
-         4jD0a/e8wgnyH8j2p2vjo+Of7+Ip50aMq86EOa7/3+D/o5ChdhXcRuFP51sdUHCoGEIs
-         8V8Nk0tdIAQfGCiqsJSRLPsem1xJwb9j4tqbV4Z2y1NYyIBhhfgRy2kwJELhAKCLPEJz
-         +6/eZdbu6NXLAg/Jn4JDUPSrrByrDLV/HOljr6QQFCB2eezUaZ88UlT7z1titK/tUJ8q
-         FvQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVz2iaBmC21WFdoHMDAj7GYHh6Ku/lGBmdniXlZ7eeojjMqzstQ0TPyvOh9rRqJlwkUcbbrw4t75JtgSlEd@vger.kernel.org, AJvYcCX5FL2QQqdWNnaOA0hpkJPcE/p2nt/DZ04MrtvQ+IY0SCoCPHCNTvNMwO81C4SBSWgxDLs3Bo8uK5jN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9yOHbd37aktJgYQsjSZFREMZQtt6+QxsxxoIxXVwrBgsUNWHA
-	pDwTdP13g0+aiiUT8DSFzJmsg9I9dCvQlmdSrrYCoB2Jn893v/2C
-X-Gm-Gg: ASbGnctpLIKVGNrOXH3kIgULMzW4CGgD8uJ3mCDtIvLWcI4H/12VptSPsumeC0jLson
-	pNHE6Akh+GMVQtVtEq0HUCg8IXWqpV52btX6akefxzE0uLeqYL/8q2JhPosGzTCpUiVlnhv8/E5
-	bZMQFU41zFGwmHqhBlM0zuBuXuHRsb1jXfK8ho4Ba64dFdllYHRW5TLJN+nxkSrXuRsJNQtxrxs
-	IgGytCKR8lrn8JHIH7zGfDr0H/gpjH5uK2np0mjfgbIFRfFS9ZoPjN8XxiROi/aAvqHfVPwl6Ke
-	ohlv+idVtkcX9qM3CJkXkOymfwkmlA3wzaPKAJPTLHsPalQWq2z6pZ7EZQnX5PCE87k=
-X-Google-Smtp-Source: AGHT+IFwPAOGPtyRYj1UkSwxPX/68on3y7o8btPwzsLs8+kfSjZ1S4NhhwH3txCrEPKfgYUWyS8/dw==
-X-Received: by 2002:a05:600c:5125:b0:439:44eb:2d84 with SMTP id 5b1f17b1804b1-4396e6c9315mr29004675e9.9.1739624826670;
-        Sat, 15 Feb 2025 05:07:06 -0800 (PST)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a04ee48sm101718465e9.3.2025.02.15.05.07.05
+        bh=TPr0RA4sTxfMrblR7pYl2liz/ysOC6e1FaOIdebj5hk=;
+        b=KN5FciH9rnOQ4FgVPv1d5sUZdp6u45v6xxXx/c8hvboCRYWrE9nVkOiBSCCoYMXN1S
+         JjFiJAnJS/awmA413kY1rCHUyuFcWr7xKQqr4jwUOXt9d5/BTCskw+n9oTHdUN+7gdZq
+         IZxmo9rRePTfEGdYMKkhF9hwwZDwQIynW1J5BKLT0ySxEw1LyFycD0kFHp+ITtnkBpuD
+         W/uashnAqF9ldkavlDHjNYQs9XgM1+VWnHvyzqqH1iAh1PT87GFtlp0p1YljsRwwgkvz
+         IyqnwTlSvrPT0DMnCl/XNAKZDygx0ULrSW9P8jw1dIs/Pn/VgO1V5qj9EczHf4HkRBdw
+         o35g==
+X-Forwarded-Encrypted: i=1; AJvYcCWVE2zHlc0wJLv8sHm7TQdjZ1D+plJqQN96gd2O4xQN64EqlP1+E/7osbp483w8R4Fl+CVhsAamUykHnzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkjI4i0RBIFGO9CypLvf5k7yeOLDa2NGu3D1xemmUa0mTsukB5
+	3pIrVbiVPQxqZZ0CYIYJD0J8ZiEsXX2ZqlGaCXO/nuKbH0dQeyKKEp4d8tIStKM=
+X-Gm-Gg: ASbGncvQXMj0rGMrEmtwR76VsAvUcd87aMDFYdZKEBzTc9FkdHhJzj2zMVS0sPdgvwK
+	/lrc5K49Chqy83MzyO+GUZWkHHj7fu6QEV4JknmExxh9+IqC3ZmjPDyFSbuR4IC3a6gSv9/a/rq
+	L6qa0qj5nhRkaYnVEaKtTxtUeaGIz1fFjYNkyo9kosuUo+AVoLs+SqcobwxrWeGA9+vE/g7WmPP
+	c5k8ePtJAHF/JALpSIMQzlJIJvjcsih2XeQBSWffG0ffEYJdmAx+D+qr1k0RcSeB137thCcPQQX
+	12d6FQFwSSbI0woLUnAvF3ca8fJh5ovS6KBwS1fbiTjaeg==
+X-Google-Smtp-Source: AGHT+IE2gOOcTHNza2EOhRpbFKVQn95DHRKBHAZlBuKwZYla0cd1eeJ63caSvBI9Z702VIK30UtwcA==
+X-Received: by 2002:a05:6402:42ca:b0:5de:cf0c:cb37 with SMTP id 4fb4d7f45d1cf-5e03608d918mr2811400a12.12.1739624937833;
+        Sat, 15 Feb 2025 05:08:57 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.173])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d3693sm4444316a12.39.2025.02.15.05.08.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 05:07:06 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
-Date: Sat, 15 Feb 2025 15:07:02 +0200
-Message-ID: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
+        Sat, 15 Feb 2025 05:08:56 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	jic23@kernel.org,
+	ulf.hansson@linaro.org,
+	daniel.lezcano@linaro.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] driver core: platform: Use devres group to free driver probe resources
+Date: Sat, 15 Feb 2025 15:08:49 +0200
+Message-ID: <20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,38 +95,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add maintainers entry for the Samsung Exynos2200 SoC based platforms.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+clocks are managed through PM domains. These PM domains, registered on
+behalf of the clock controller driver, are configured with
+GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+clocks are enabled/disabled using runtime PM APIs. The power domains may
+also have power_on/power_off support implemented. After the device PM
+domain is powered off any CPU accesses to these domains leads to system
+aborts.
+
+During probe, devices are attached to the PM domain controlling their
+clocks and power. Similarly, during removal, devices are detached from the
+PM domain.
+
+The detachment call stack is as follows:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    __device_release_driver() ->
+      device_remove() ->
+        platform_remove() ->
+	  dev_pm_domain_detach()
+
+During driver unbind, after the device is detached from its PM domain,
+the device_unbind_cleanup() function is called, which subsequently invokes
+devres_release_all(). This function handles devres resource cleanup.
+
+If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
+cleanup process triggers the action or reset function for disabling runtime
+PM. This function is pm_runtime_disable_action(), which leads to the
+following call stack of interest when called:
+
+pm_runtime_disable_action() ->
+  pm_runtime_dont_use_autosuspend() ->
+    __pm_runtime_use_autosuspend() ->
+      update_autosuspend() ->
+        rpm_idle()
+
+The rpm_idle() function attempts to resume the device at runtime. However,
+at the point it is called, the device is no longer part of a PM domain
+(which manages clocks and power states). If the driver implements its own
+runtime PM APIs for specific functionalities - such as the rzg2l_adc
+driver - while also relying on the power domain subsystem for power
+management, rpm_idle() will invoke the driver's runtime PM API. However,
+since the device is no longer part of a PM domain at this point, the PM
+domain's runtime PM APIs will not be called. This leads to system aborts on
+Renesas SoCs.
+
+Another identified case is when a subsystem performs various cleanups
+using device_unbind_cleanup(), calling driver-specific APIs in the process.
+A known example is the thermal subsystem, which may call driver-specific
+APIs to disable the thermal device. The relevant call stack in this case
+is:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    device_unbind_cleanup() ->
+      devres_release_all() ->
+        devm_thermal_of_zone_release() ->
+	  thermal_zone_device_disable() ->
+	    thermal_zone_device_set_mode() ->
+	      struct thermal_zone_device_ops::change_mode()
+
+At the moment the driver-specific change_mode() API is called, the device
+is no longer part of its PM domain. Accessing its registers without proper
+power management leads to system aborts.
+
+Open a devres group before calling the driver probe, and close it
+immediately after the driver remove function is called and before
+dev_pm_domain_detach(). This ensures that driver-specific devm actions or
+reset functions are executed immediately after the driver remove function
+completes. Additionally, it prevents driver-specific runtime PM APIs from
+being called when the device is no longer part of its power domain.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- MAINTAINERS | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4f5d8f68..6b6c0dc0f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20937,6 +20937,20 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/sound/samsung*
- F:	sound/soc/samsung/
+Hi,
+
+Although Ulf gave its green light for the approaches on both IIO [1],
+[2] and thermal subsystems [3], Jonathan considered unacceptable the
+approaches in [1], [2] as he considered it may lead to dificult to
+maintain code and code opened to subtle bugs (due to the potential of
+mixing devres and non-devres calls). He pointed out a similar approach
+that was done for the I2C bus [4], [5].
+
+As the discussions in [1], [2] stopped w/o a clear conclusion, this
+patch tries to revive it by proposing a similar approach that was done
+for the I2C bus.
+
+Please let me know you input.
+
+Thank you,
+Claudiu
+
+[1] https://lore.kernel.org/all/20250103140042.1619703-2-claudiu.beznea.uj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250117114540.289248-2-claudiu.beznea.uj@bp.renesas.com/
+[3] https://lore.kernel.org/all/20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com/
+[4] https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L579
+[5] https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L630
+
+ drivers/base/platform.c         | 10 +++++++++-
+ include/linux/platform_device.h |  3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 6f2a33722c52..1b64c4a44263 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1401,9 +1401,15 @@ static int platform_probe(struct device *_dev)
+ 		goto out;
  
-+SAMSUNG EXYNOS2200 SoC SUPPORT
-+M:	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/samsung,exynos2200-clock.yaml
-+F:	Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.yaml
-+F:	Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-+F:	arch/arm64/boot/dts/exynos/exynos2200*
-+F:	drivers/clk/samsung/clk-exynos2200.c
-+F:	drivers/phy/samsung/phy-exynos2200-snps-eusb2.c
-+F:	drivers/phy/samsung/phy-exynos2200-usbcon.c
-+F:	include/dt-bindings/clock/exynos2200.h
+ 	if (drv->probe) {
++		dev->devres_group_id = devres_open_group(&dev->dev, NULL, GFP_KERNEL);
++		if (!dev->devres_group_id)
++			return -ENOMEM;
 +
- SAMSUNG EXYNOS850 SoC SUPPORT
- M:	Sam Protsenko <semen.protsenko@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ 		ret = drv->probe(dev);
+-		if (ret)
++		if (ret) {
++			devres_close_group(&dev->dev, dev->devres_group_id);
+ 			dev_pm_domain_detach(_dev, true);
++		}
+ 	}
+ 
+ out:
+@@ -1422,6 +1428,8 @@ static void platform_remove(struct device *_dev)
+ 
+ 	if (drv->remove)
+ 		drv->remove(dev);
++	if (dev->devres_group_id)
++		devres_release_group(&dev->dev, dev->devres_group_id);
+ 	dev_pm_domain_detach(_dev, true);
+ }
+ 
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 074754c23d33..e842ad243bef 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -40,6 +40,9 @@ struct platform_device {
+ 	/* MFD cell pointer */
+ 	struct mfd_cell *mfd_cell;
+ 
++	/* ID of the probe devres group. */
++	void *devres_group_id;
++
+ 	/* arch specific additions */
+ 	struct pdev_archdata	archdata;
+ };
 -- 
 2.43.0
 
