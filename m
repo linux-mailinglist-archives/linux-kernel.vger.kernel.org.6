@@ -1,184 +1,153 @@
-Return-Path: <linux-kernel+bounces-516119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091F7A36D1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:48:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26624A36D25
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19F8169C4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9FC1895981
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA631A0BFE;
-	Sat, 15 Feb 2025 09:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3B01A23B8;
+	Sat, 15 Feb 2025 09:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdIEsFke"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B8MY28WN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D119B19049B;
-	Sat, 15 Feb 2025 09:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D55194A75;
+	Sat, 15 Feb 2025 09:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739612894; cv=none; b=rq2sJZOtjRPhCYmiYhm3kyKDVI2vjSpbdQ5O25mJvpu1WvFuX86rWFUYpmPQYH4SRWP1isLOEhvkQJXP83956LL6JzOqyBbfRNXvBpVuGW7G+ZWBLQiEsrMpU8pw7A52/RhdUid99Nun2AtUeB4JIsOZv5EsuIRFHltXbwRFfYo=
+	t=1739613372; cv=none; b=uxzrt+1d71oXdTKd3esnAya5SvSF/JWpgUAmBIcvH93Dvaz1W0s7HW8hQ2kYq6fVm8JFdUzxjrDiPKp6Hm4+j1VQNoPuFjBCvceVhZXEAuRUR64+letAzKxdO/1u/DHv6ADAzW8MktNEM1ipTO1yKKQwWARDBvTPlyuKlx4tf8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739612894; c=relaxed/simple;
-	bh=5p1qxbmmokb/RCjmP0J0KXsqx7Q/xH8ph31KI4qY+is=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XpdOcvHUichgGiI661RxjQZx9k1a05VIOBDukhOozhhyiigxxHR1u9Hc4q00rcf8dymtHsdx6jxb++oOPOjfN40Xj8DueDWsYpQcC9HWguLNvBrLlE/fjuC2BBgvLUR89PK8lQwVqAiOpND/ioe2M3XvI24mIXW9NfApTWZn03o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdIEsFke; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220d39a5627so42415695ad.1;
-        Sat, 15 Feb 2025 01:48:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739612891; x=1740217691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lVUIuv5v60t9dUYELYCuiXZ/SdEpKJMXESO8sDLvOaw=;
-        b=ZdIEsFkehPXmP/+UtvaUfX/y6oywKDbJURPxEDkalpCYNBpIJ16gJaNtu9grQITemU
-         GwElHt6iWA5kWqrlX+Zk5bHIApw+Niyb1pzlLCI/sVYLUvOzEZQUhmtfFpimfsqDx8lS
-         /qoyCrqTKCqhfDWao6vcZdeiX1hItHJMa38TCs9JOZPuxeFuutDLzXdE8A0bIWXdU9Mm
-         b8+l3rsK3y/MyabU0d50tPUNepXjuldLdCnjNnhXUW8DI2gZOjyY17of5Eh0PtSLCIk3
-         R1Ynkjffd1ajnASj3rOOt2zNHNzT5Ph85vX5RYLZn97ViRpp0ESQNSvB0SnoXB1h+6/F
-         gf8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739612891; x=1740217691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lVUIuv5v60t9dUYELYCuiXZ/SdEpKJMXESO8sDLvOaw=;
-        b=NFdpRTYokZh3gFJdLVUhYQPZnBwiE4LGBw4sYL7m+SCAAJ4AAf57UbqV6dVh1JnD2D
-         6+m0cNVHlREkIlnyQtGsNqHX7qg9POFXjhwLsTAwFI1cWnLt1jKmJxhFvmaQvhr2GdtA
-         wf5cK2xl9jhbUCw5XMx2gOgvQiRdfLU675YbkMU7zZgEYXDU2vpdXjKxveYVZzRxEbTJ
-         vyCGjAauzIOYL7Y/UbNMx9knpOn2G9/sbZvkuUgMV37WMI2hiBd3SIbGOEO91GfAuR8p
-         2caLqyW3i04kcdqCSdyYYqrSNTrzGh1cFmW8tVMiHbhZpUjrH494KN+GMOqoq+0WUR10
-         CjGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwb4CdN3EsfI0iHTENuOXje1JR2S24UJOjL3K6RRWqjB//uKBTCilkm5PdGWS2YCR8TGuYEUSeoPreW/hVaO4=@vger.kernel.org, AJvYcCV54OJruluIKfMFmhdqznZDmWDzG1kTixEKV4wV4ce8iDYnV+UM5z7MM4gYSXmBtoWxMUTYh2Rp@vger.kernel.org, AJvYcCW3uW+QaGCdUprrYh0OeIro+MDHp/kZUaZn6r9NXEZctivFr0KjxrIKdAg2CsZFdq0y+iMN3B1D3adtd/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM843kLskXN29EtJz1lziQOgL1mhheBmG4nS0NIP4eavr08JXd
-	mswF9dLTiOf7jraTOGkYNInfJg5LHdC3t+67Jtyd7rpDutOmAdt6
-X-Gm-Gg: ASbGncu/AwSw4LOYlCP/V2Ykp6S9VjmM+d2UaAc22I5NaJRcpq5JbGsTvsvyfJvjCGN
-	wKBC/nk0MBIXkyCoUIlF9GkXLLw6OlYZCvLhuOFoAIn2L9SOrN0+4FQxCvOeSwH4LMeHVEOUMSN
-	WBJn15klIK4LeRoJn5jPLa4ilGVELUyggNxY4o2r8/aslgWcl+iCgx6fsVw8KqpkmuunHFe5o+A
-	xIS7ywm9PSunREMlhcTIIVYHyBtb/lGhjlkRHoN47QnZ0edJmSCIp3SbvRdFVjPP/TcbPvx9lAP
-	W6yEr6n0rNJX9OdihUR0SdlzTgIFDJtO9V0ObVYeSZnOh9nP7vtpMBxrTmCT1VcS69tmgU43
-X-Google-Smtp-Source: AGHT+IFSkyYAhujjKt35ajNYuLEfuQtd1ZG9+o4N2CkiF9wb8sdnKHspORe3GA6ysX8Thph6oTObVw==
-X-Received: by 2002:a17:902:ce89:b0:220:e9ac:e746 with SMTP id d9443c01a7336-221040d81f2mr42004535ad.53.1739612890987;
-        Sat, 15 Feb 2025 01:48:10 -0800 (PST)
-Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5364351sm40951775ad.76.2025.02.15.01.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 01:48:10 -0800 (PST)
-Date: Sat, 15 Feb 2025 18:48:01 +0900 (JST)
-Message-Id: <20250215.184801.161111735013966961.fujita.tomonori@gmail.com>
-To: gary@garyguo.net
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
- hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
- alex.gaynor@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev
-Subject: Re: [PATCH v10 7/8] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250214113740.156faaf4@eugeo>
-References: <20250209162048.3f18eebd.gary@garyguo.net>
-	<20250214.130530.335441284525755047.fujita.tomonori@gmail.com>
-	<20250214113740.156faaf4@eugeo>
+	s=arc-20240116; t=1739613372; c=relaxed/simple;
+	bh=PDXxTjSHcNovs90NenL3yq3grvygHWpMIcQJRui2vF8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GnU3aOzZhR0sxE5Qw6EcPxyBlK5gxeAUVN+CXPKN6zmIBy1NvmH1k20dwbIIbRJEvAVqYHZ8sxA7qg0IhhzojOWYNSBQPHQsHGHpJeRyUAHaUYYLgazA5blJxb5RyUdGyEuIniA/sTfZd8xHcft8RgkHomdiNyS6WDt3B2+kcQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B8MY28WN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55100C4CEE7;
+	Sat, 15 Feb 2025 09:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739613372;
+	bh=PDXxTjSHcNovs90NenL3yq3grvygHWpMIcQJRui2vF8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=B8MY28WNxij960KIhHpXPZBcui8oLrabQ393VYeI0DubgXVbtiOWftxNgkVfGTrvF
+	 RhYgpfJtBmmFllLeo+IisN4oP4KO/ZToWuqYr2KFvvVaUHvcNzxqSRn2bz00kYrWx3
+	 hB5Ns15O+YSquJ4Nu1ntTIE0F/eqtcUdwxdigBC9/noGtXgvDDCjKCm26kj+BfY2vm
+	 53s07ghKuFO4oAe/ELWhQ2ivvIIKii4XjHHcvCU03G8pEhqC9DfpOWnUyoTgjqF5jQ
+	 5itZKCMh+qQFt1pvCZ6pdoPC9tGNuPDB1n0Zp2eX/2tBBRKOgddn/UFVA48irGk5V9
+	 BDPZb8oZX+UZA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Jason Gunthorpe" <jgg@nvidia.com>,  "Yury Norov"
+ <yury.norov@gmail.com>,  "Viresh Kumar" <viresh.kumar@linaro.org>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,  "Danilo Krummrich"
+ <dakr@redhat.com>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Rasmus Villemoes"
+ <linux@rasmusvillemoes.dk>,  <linux-pm@vger.kernel.org>,  "Vincent
+ Guittot" <vincent.guittot@linaro.org>,  "Stephen Boyd" <sboyd@kernel.org>,
+  "Nishanth Menon" <nm@ti.com>,  <rust-for-linux@vger.kernel.org>,  "Manos
+ Pitsidianakis" <manos.pitsidianakis@linaro.org>,  "Erik Schilling"
+ <erik.schilling@linaro.org>,  Alex =?utf-8?Q?Benn=C3=A9e?=
+ <alex.bennee@linaro.org>,
+  "Joakim Bech" <joakim.bech@linaro.org>,  "Rob Herring" <robh@kernel.org>,
+  "Christoph Hellwig" <hch@lst.de>,  <linux-kernel@vger.kernel.org>,  "Uros
+ Bizjak" <ubizjak@gmail.com>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  "Philipp Stanner" <phasta@mailbox.org>,  "Jens Axboe" <axboe@kernel.dk>
+Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
+In-Reply-To: <CANiq72mFKNWfGmc5J_9apQaJMgRm6M7tvVFG8xK+ZjJY+6d6Vg@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Fri, 14 Feb 2025 23:36:57 +0100")
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+	<db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
+	<Z6qTelPSqpFk439l@thinkpad> <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
+	<Z6t51xodSV21ER4M@thinkpad>
+	<CANiq72=3MR9F9ur-aQYP4P81RBreAr=UiGg5iaSuFjjd5Q4Y7Q@mail.gmail.com>
+	<Z66oWuLwY4X9Ou9D@thinkpad>
+	<CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
+	<20250214191103.GH3886819@nvidia.com>
+	<CANiq72=tDhUEjdBmVTPv4cFeD8iiKwJAQD3Cb1=Y4KnE-vh2OQ@mail.gmail.com>
+	<20250214210637.GK3886819@nvidia.com>
+	<8p3qXjy6QKTkpYaevmoORFfiyI62sFFSA6aKjoTlE2aGlLMCyLQXwpnag5qhXBFSa5PojMZrN-mLYKu29TyYIQ==@protonmail.internalid>
+	<CANiq72mFKNWfGmc5J_9apQaJMgRm6M7tvVFG8xK+ZjJY+6d6Vg@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 15 Feb 2025 10:55:53 +0100
+Message-ID: <87frkfv8eu.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Feb 2025 11:37:40 +0000
-Gary Guo <gary@garyguo.net> wrote:
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-> On Fri, 14 Feb 2025 13:05:30 +0900 (JST)
-> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
-> 
->> On Sun, 9 Feb 2025 16:20:48 +0000
->> Gary Guo <gary@garyguo.net> wrote:
->> 
->> >> +fn might_sleep(loc: &Location<'_>) {
->> >> +    // SAFETY: FFI call.
->> >> +    unsafe {
->> >> +        crate::bindings::__might_sleep_precision(
->> >> +            loc.file().as_ptr().cast(),
->> >> +            loc.file().len() as i32,
->> >> +            loc.line() as i32,
->> >> +        )
->> >> +    }
->> >> +}  
->> > 
->> > One last Q: why isn't `might_sleep` marked as `track_caller` and then
->> > have `Location::caller` be called internally?
->> >
->> > It would make the API same as the C macro.  
->> 
->> Equivalent to the C side __might_sleep(), not might_sleep(). To avoid
->> confusion, it might be better to change the name of this function.
->> 
->> The reason why __might_sleep() is used instead of might_sleep() is
->> might_sleep() can't always be called. It was discussed in v2:
->> 
->> https://lore.kernel.org/all/ZwPT7HZvG1aYONkQ@boqun-archlinux/
-> 
-> I don't follow. `__might_sleep` or `might_sleep` wouldn't make a
-> difference here, given that this function may actually sleep.
+> On Fri, Feb 14, 2025 at 10:06=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com>=
+ wrote:
 
-Yeah, it doesn't matter here. If I understand correctly, the
-discussion is about whether might_sleep() itself should be unsafe
-considering the case where it is called from other functions. I simply
-chose uncontroversial __might_sleep().
+[...]
 
-After reviewing the code again, I realized that I made a mistake;
-__might_sleep() should only be executed when CONFIG_DEBUG_ATOMIC_SLEEP
-is enabled. I also think that it is confusing that might_sleep() calls
-C's __might_sleep().
+>> As a side note, I don't see how anyone can enact this plan without the
+>> support of Linus to do CONFIG_RUST=3Dn builds and put out a non-working
+>> rc1. IMHO it is yet unclear if this is real thing or an unproven idea
+>> block has that will run into problems.
+>
+> Please ask Jens and the block layer -- Cc'ing Jens (Andreas and Boqun
+> are already Cc'd):
+>
+>     https://lore.kernel.org/all/593a98c9-baaa-496b-a9a7-c886463722e1@kern=
+el.dk/
+>
+> Having said that, I am not sure what you mean by -rc1. It is in the
+> context of a friendly collaboration -- I assume the intention is that
+> Andreas et al. are given enough lead time on new features to fix them
+> before the merge window. For fixes, it may be harder, of course. Other
+> ideas: they may be able to config out certain parts too; or in the
+> worst case, in an emergency, Linus may decide to break Rust. They may
+> be able to tell you the details of their plan.
 
-How about implementing the equivalent to might_sleep()?
+Maybe I can help move the discussion forward by describing how we do
+things in block.
 
-/// Annotation for functions that can sleep.
-///
-/// Equivalent to the C side [`might_sleep()`], this function serves as
-/// a debugging aid and a potential scheduling point.
-///
-/// This function can only be used in a nonatomic context.
-#[track_caller]
-fn might_sleep() {
-    #[cfg(CONFIG_DEBUG_ATOMIC_SLEEP)]
-    {
-        let loc = core::panic::Location::caller();
-	// SAFETY: FFI call.
-	unsafe {
-	    crate::bindings::__might_sleep_precision(
-	        loc.file().as_ptr().cast(),
-	        loc.file().len() as i32,
-                loc.line() as i32,
-	    )
-	}
-    }
-    // SAFETY: FFI call.
-    unsafe { crate::bindings::might_resched() }
-}
+In block we (the block subsystem community) currently have the rule that
+rust code should not delay shipping a PR. I am not sure how Jens will
+enforce this, but I could imagine that if builds start failing by the
+time a PR has to be submitted, Jens would just yank rust block code. And
+so no fallout of this would reach Linus.
+
+Of course, there may be situations where problems do not surface until
+Linux is merging things, but for this to happen without these issues
+first appearing in linux-next would be extremely unlikely.
+
+Maybe having a config option to disable rust block might be a good idea,
+to prevent the yanking if it ever comes to that.
+
+In practice, we never had any issues. Things have broken a handful of
+times, but I usually see it within 24 ours and then I am able to send a
+fix.
+
+I can't imagine that Jens has been forced to spend a lot of cycles on
+this, outside of applying a few fixes now and again. It would be
+interesting to know how much the workload has actually been for him.
+
+Anyways, it is my hope that within a few years, rust will become a fully
+qualified citizen in block, and the special rule can be dropped. This of
+course requires Jens becoming able and willing to handle rust related
+issues himself, or him becoming confident that the current arrangement
+will suffice for solving any rust related issues.
 
 
->> > Also -- perhaps this function can be public (though I guess you'd need
->> > to put it in a new module).  
->> 
->> Wouldn't it be better to keep it private until actual users appear?
+Best regards,
+Andreas Hindborg
 
-I'll make the above public if you think that is the better approach.
 
-C's might_sleep() is defined in linux/kernel.h but kernel/kernel.rs
-isn't a good choice, I guess. kernel/sched.rs or other options?
 
