@@ -1,200 +1,392 @@
-Return-Path: <linux-kernel+bounces-515895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17ECA36A44
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:56:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F1CA36A4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF7D3A2563
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A053AAC0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D091ADC8F;
-	Sat, 15 Feb 2025 00:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235631C7007;
+	Sat, 15 Feb 2025 00:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/yWif4G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OKsLUSKV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38E81AAA1A;
-	Sat, 15 Feb 2025 00:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC61442F2
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580793; cv=none; b=csNwCEwioayYvHDgjgPgxgIRVkg2QCZRNDn/BYfW4A1c6gVF8Tz7IZIYP35ymsTqCVHMiu5YtxxCT0wxvfyrRJ7tqtZfsRPP7sawmSuQ6hUg57ab23EL8UAjteP/qI9rx0dUJMPXjhsVBh8QTuqYcg+LAi78ewkt3fPtWgfmlaE=
+	t=1739580807; cv=none; b=qEPmwcawV9SxJSg+uVFvwH/kdvvi3E5yljfebj/htDQEuU9GpsDm0FfaFY48nyrNTeUGTu9Cq2QRo8MMMYOCF5ZYRE6D1miNiKwR5Z3HvxLXDLRDf30eL4LPDsGHNg3pZxCkHdJdbD7fjhOMl0qfL592yEgI/yDttSz8+eOz8iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580793; c=relaxed/simple;
-	bh=TSSw9OFmPPLgUn+9ZNp1J6vfcAnCljMBOaiSYDvNWdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bkmy7Cv+GYpe+Be4FRj4NgiM+VehN5G7l0QwcIeE4wW7sf+uXbqplrLQjytG2OLaGD7syTc2Ap8NFz20wZgKdfjj2Swg1JtQWdBU+eQXC0xvE/295HFcqqcPAYZBOKZd2FMHTdRkOOEL0UhYuqSh2SyNaWhzL0NWgxuwdb++U6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/yWif4G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43D5C4CEE2;
-	Sat, 15 Feb 2025 00:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739580793;
-	bh=TSSw9OFmPPLgUn+9ZNp1J6vfcAnCljMBOaiSYDvNWdQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k/yWif4G8cAb9NXF4TEECa+56T5Z/rCtN1a1Aw1pKbwcZ/aXNBd3MYUyiDQCepno0
-	 P50UBKNIli1Nz7rwm8l2bAb99ODKQMmBm+KxQht50sZqqVpp64FlZT0jPdKOCaLfCt
-	 6u1a6YqrgunYtnpJy+MnR1upEjVvqioFcGluGXRCbr3G5l0JX7nwcTorJFz0bAik+h
-	 UVSOwtr95rpKtRLzlrvsWXKXXllLzc6HKDykB3HEcGrVug6OJjTcPBuIr18EDMhHvD
-	 To9kLkW634b+nE1CWoFWMBERXYvIXsQAj1M/sYTuyv2xW6uqQ0sBDiD1nDiNV3wgy2
-	 JOatGUgK1JIGA==
-From: Mario Limonciello <superm1@kernel.org>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Subject: [PATCH v2 17/17] cpufreq/amd-pstate: Stop caching EPP
-Date: Fri, 14 Feb 2025 18:52:44 -0600
-Message-ID: <20250215005244.1212285-18-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215005244.1212285-1-superm1@kernel.org>
-References: <20250215005244.1212285-1-superm1@kernel.org>
+	s=arc-20240116; t=1739580807; c=relaxed/simple;
+	bh=icqivKlQAlngg/27aatLQwQzIxNZIBIa4GtjafdQWk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PaHKw5ZciSLB48IpYySCS7iD2EmBAkYNtcPc2e/4a745mIteJAq8ZRQ8N19aq9yl1J/Jzak7wIFD3NYWu1soDmeqCuqcn3nPjdCzjTq0jf8+H8vgFL+2XLZUGA1L0M4Qdhi8fkdXjjstaZUeW970HFhCkfZkY+uIdr+xaSBwRq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OKsLUSKV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739580803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0K9vQ8gnIOE/zovi+uGsR/o5x0rem5sCVj3F6eCSClQ=;
+	b=OKsLUSKVNSK602eVOli0dAT7SOKMJZ4ABAojMP6DBMQeqJ9ZcyBT8j/nzqjxEhTXgejkSF
+	7lhj32aHqDGWnTwXqaCqpxdF531GC9lkzcMfsNtczQdUP7Apxiz6J/2hauE1d3RF9u763R
+	9ufguhxpMXlDHxMzPzo/zYBf0HoNn0Q=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-170-7Qx7ErqvNUqSh4hw1S58JA-1; Fri, 14 Feb 2025 19:53:22 -0500
+X-MC-Unique: 7Qx7ErqvNUqSh4hw1S58JA-1
+X-Mimecast-MFC-AGG-ID: 7Qx7ErqvNUqSh4hw1S58JA_1739580801
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6fb5cfce9c1so732427b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:53:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739580801; x=1740185601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0K9vQ8gnIOE/zovi+uGsR/o5x0rem5sCVj3F6eCSClQ=;
+        b=o7VjmkVv5RgAxz+uRHJe5zEaF8JAmShM2K0WUb9EtXLLJGcOpzw14FU3hsPNkMbkSR
+         hH+IUzxlXCF4poNw9O4x6ax66SrykoaR4Mf6LGKLgNdqOeV+cvpup4PJbZnG5GpX9jWx
+         4P53Xe6S6sSfEXiBBK8HqQ2XODVOJzMqIeD2R1/9e7Gx3RFs/ogcQ+EStvv6Y/Q79aau
+         fBBXUqRPcY/uvmGfmNokxmeKzPGSbHGnDt1fQwJfF+71+uzNpj0sFF+Bc3L8/f1QmDvs
+         dtqy5b1bZxlFam7lFEeB41LGZ6rbRmmrWctILL8AXs6NGMI/i6lNEiApF3xvDEvGFCxh
+         GhYQ==
+X-Gm-Message-State: AOJu0YxBMHLShj+C/AB9Mg09Iwb0Eyw39BDHEGIsSdGhuC4c1OnlgDmN
+	Zm1C7DUfYC+Z6o5meGNK/wvRZBhBWIg5AOeOcQYFSznEWFMtWF5WLBcNNzBTUHmIoIKCb4guoOQ
+	GtXu5aag71H8fe+xqctySY/Rdmc6tNbfQIb407LdRtmVZn4Z24A2b61jgnGISwPjIbtQ5mQXuRJ
+	wtg+h031Ioc3eJmbd6pSCQu9kjhkSBgPxmaYgd
+X-Gm-Gg: ASbGncsEodfLryqJafi29j6oItChSz+ltLjUux7A2fZsU82gq77B7qJkM3rPjgh3LwL
+	OF01aksnLMdrzzeRzNYw/zkXlvhDal95Z6C3epxhiNJVPsvMmTD++6h4btA04GSbdbFMzx0tZKC
+	U=
+X-Received: by 2002:a05:6902:230d:b0:e5d:b542:f646 with SMTP id 3f1490d57ef6-e5dc91ed712mr1277069276.32.1739580801258;
+        Fri, 14 Feb 2025 16:53:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFNQptvSfMMTB0JMcea3598F7hlp17rMxacyhbowvlrPFMOZhOR/jtOOTEsV3VggUnKQ8DUzy4tS0o3CdHXAuI=
+X-Received: by 2002:a05:6902:230d:b0:e5d:b542:f646 with SMTP id
+ 3f1490d57ef6-e5dc91ed712mr1277032276.32.1739580800803; Fri, 14 Feb 2025
+ 16:53:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250211003028.213461-1-npache@redhat.com> <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
+ <CAA1CXcCo3eCH-5axnw3WUqPfL-EPCbLVFo_AFYXkbnExfX=KLQ@mail.gmail.com>
+ <4ba52062-1bd3-4d53-aa28-fcbbd4913801@arm.com> <CAA1CXcCeFjCx-6VDCjOUUniLHXMUYpjesOhcHQapMS5i7=RR4A@mail.gmail.com>
+ <71490f8c-f234-4032-bc2a-f6cffa491fcb@arm.com>
+In-Reply-To: <71490f8c-f234-4032-bc2a-f6cffa491fcb@arm.com>
+From: Nico Pache <npache@redhat.com>
+Date: Fri, 14 Feb 2025 17:52:55 -0700
+X-Gm-Features: AWEUYZlTlXctQ0Vt1tb0srouH10xebpBf2uF_SiuNgqpxtITK4nGVtrGgR7lVio
+Message-ID: <CAA1CXcCkbxe_D4cSroBTu3E4dn6SaaDDk6xo9y4O9cWW-9Rc9Q@mail.gmail.com>
+Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, ryan.roberts@arm.com, anshuman.khandual@arm.com, 
+	catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, 
+	apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org, 
+	baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu, 
+	haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org, 
+	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, 
+	wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com, 
+	surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com, 
+	zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com, 
+	willy@infradead.org, kirill.shutemov@linux.intel.com, david@redhat.com, 
+	aarcange@redhat.com, raquini@redhat.com, sunnanyong@huawei.com, 
+	usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org, 
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+On Thu, Feb 13, 2025 at 7:02=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+>
+>
+> On 14/02/25 1:09 am, Nico Pache wrote:
+> > On Thu, Feb 13, 2025 at 1:26=E2=80=AFAM Dev Jain <dev.jain@arm.com> wro=
+te:
+> >>
+> >>
+> >>
+> >> On 12/02/25 10:19 pm, Nico Pache wrote:
+> >>> On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Dev Jain <dev.jain@arm.com> w=
+rote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 11/02/25 6:00 am, Nico Pache wrote:
+> >>>>> The following series provides khugepaged and madvise collapse with =
+the
+> >>>>> capability to collapse regions to mTHPs.
+> >>>>>
+> >>>>> To achieve this we generalize the khugepaged functions to no longer=
+ depend
+> >>>>> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of =
+pages
+> >>>>> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
+> >>>>> using a bitmap. After the PMD scan is done, we do binary recursion =
+on the
+> >>>>> bitmap to find the optimal mTHP sizes for the PMD range. The restri=
+ction
+> >>>>> on max_ptes_none is removed during the scan, to make sure we accoun=
+t for
+> >>>>> the whole PMD range. max_ptes_none will be scaled by the attempted =
+collapse
+> >>>>> order to determine how full a THP must be to be eligible. If a mTHP=
+ collapse
+> >>>>> is attempted, but contains swapped out, or shared pages, we dont pe=
+rform the
+> >>>>> collapse.
+> >>>>>
+> >>>>> With the default max_ptes_none=3D511, the code should keep its most=
+ of its
+> >>>>> original behavior. To exercise mTHP collapse we need to set max_pte=
+s_none<=3D255.
+> >>>>> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "c=
+reep" and
+> >>>>> constantly promote mTHPs to the next available size.
+> >>>>>
+> >>>>> Patch 1:     Some refactoring to combine madvise_collapse and khuge=
+paged
+> >>>>> Patch 2:     Refactor/rename hpage_collapse
+> >>>>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+> >>>>> Patch 6-9:   The mTHP patches
+> >>>>>
+> >>>>> ---------
+> >>>>>     Testing
+> >>>>> ---------
+> >>>>> - Built for x86_64, aarch64, ppc64le, and s390x
+> >>>>> - selftests mm
+> >>>>> - I created a test script that I used to push khugepaged to its lim=
+its while
+> >>>>>       monitoring a number of stats and tracepoints. The code is ava=
+ilable
+> >>>>>       here[1] (Run in legacy mode for these changes and set mthp si=
+zes to inherit)
+> >>>>>       The summary from my testings was that there was no significan=
+t regression
+> >>>>>       noticed through this test. In some cases my changes had bette=
+r collapse
+> >>>>>       latencies, and was able to scan more pages in the same amount=
+ of time/work,
+> >>>>>       but for the most part the results were consistant.
+> >>>>> - redis testing. I tested these changes along with my defer changes
+> >>>>>      (see followup post for more details).
+> >>>>> - some basic testing on 64k page size.
+> >>>>> - lots of general use. These changes have been running in my VM for=
+ some time.
+> >>>>>
+> >>>>> Changes since V1 [2]:
+> >>>>> - Minor bug fixes discovered during review and testing
+> >>>>> - removed dynamic allocations for bitmaps, and made them stack base=
+d
+> >>>>> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+> >>>>> - Updated trace events to include collapsing order info.
+> >>>>> - Scaled max_ptes_none by order rather than scaling to a 0-100 scal=
+e.
+> >>>>> - No longer require a chunk to be fully utilized before setting the=
+ bit. Use
+> >>>>>       the same max_ptes_none scaling principle to achieve this.
+> >>>>> - Skip mTHP collapse that requires swapin or shared handling. This =
+helps prevent
+> >>>>>       some of the "creep" that was discovered in v1.
+> >>>>>
+> >>>>> [1] - https://gitlab.com/npache/khugepaged_mthp_test
+> >>>>> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@re=
+dhat.com/
+> >>>>>
+> >>>>> Nico Pache (9):
+> >>>>>      introduce khugepaged_collapse_single_pmd to unify khugepaged a=
+nd
+> >>>>>        madvise_collapse
+> >>>>>      khugepaged: rename hpage_collapse_* to khugepaged_*
+> >>>>>      khugepaged: generalize hugepage_vma_revalidate for mTHP suppor=
+t
+> >>>>>      khugepaged: generalize alloc_charge_folio for mTHP support
+> >>>>>      khugepaged: generalize __collapse_huge_page_* for mTHP support
+> >>>>>      khugepaged: introduce khugepaged_scan_bitmap for mTHP support
+> >>>>>      khugepaged: add mTHP support
+> >>>>>      khugepaged: improve tracepoints for mTHP orders
+> >>>>>      khugepaged: skip collapsing mTHP to smaller orders
+> >>>>>
+> >>>>>     include/linux/khugepaged.h         |   4 +
+> >>>>>     include/trace/events/huge_memory.h |  34 ++-
+> >>>>>     mm/khugepaged.c                    | 422 +++++++++++++++++++---=
+-------
+> >>>>>     3 files changed, 306 insertions(+), 154 deletions(-)
+> >>>>>
+> >>>>
+> >>>> Does this patchset suffer from the problem described here:
+> >>>> https://lore.kernel.org/all/8abd99d5-329f-4f8d-8680-c2d48d4963b6@arm=
+.com/
+> >>> Hi Dev,
+> >>>
+> >>> Sorry I meant to get back to you about that.
+> >>>
+> >>> I understand your concern, but like I've mentioned before, the scan
+> >>> with the read lock was done so we dont have to do the more expensive
+> >>> locking, and could still gain insight into the state. You are right
+> >>> that this info could become stale if the state changes dramatically,
+> >>> but the collapse_isolate function will verify it and not collapse.
+> >>
+> >> If the state changes dramatically, the _isolate function will verify i=
+t,
+> >> and fallback. And this fallback happens after following this costly
+> >> path: retrieve a large folio from the buddy allocator -> swapin pages
+> >> from the disk -> mmap_write_lock() -> anon_vma_lock_write() -> TLB flu=
+sh
+> >> on all CPUs -> fallback in _isolate().
+> >> If you do fail in _isolate(), doesn't it make sense to get the updated
+> >> state for the next fallback order immediately, because we have prior
+> >> information that we failed because of PTE state? What your algorithm
+> >> will do is *still* follow the costly path described above, and again
+> >> fail in _isolate(), instead of failing in hpage_collapse_scan_pmd() li=
+ke
+> >> mine would.
+> >
+> > You do raise a valid point here, I can optimize my solution by
+> > detecting certain collapse failure types and jump to the next scan.
+> > I'll add that to my solution, thanks!
+> >
+> > As for the disagreement around the bitmap, we'll leave that up to the
+> > community to decide since we have differing opinions/solutions.
+> >
+> >>
+> >> The verification of the PTE state by the _isolate() function is the "n=
+o
+> >> turning back" point of the algorithm. The verification by
+> >> hpage_collapse_scan_pmd() is the "let us see if proceeding is even wor=
+th
+> >> it, before we do costly operations" point of the algorithm.
+> >>
+> >>>   From my testing I found this to rarely happen.
+> >>
+> >> Unfortunately, I am not very familiar with performance testing/load
+> >> testing, I am fairly new to kernel programming, so I am getting there.
+> >> But it really depends on the type of test you are running, what actual=
+ly
+> >> runs on memory-intensive systems, etc etc. In fact, on loaded systems =
+I
+> >> would expect the PTE state to dramatically change. But still, no opini=
+on
+> >> here.
+> >
+> > Yeah there are probably some cases where it happens more often.
+> > Probably in cases of short lived allocations, but khugepaged doesn't
+> > run that frequently so those won't be that big of an issue.
+> >
+> > Our performance team is currently testing my implementation so I
+> > should have more real workload test results soon. The redis testing
+> > had some gains and didn't show any signs of obvious regressions.
+> >
+> > As for the testing, check out
+> > https://gitlab.com/npache/khugepaged_mthp_test/-/blob/master/record-khu=
+ge-performance.sh?ref_type=3Dheads
+> > this does the tracing for my testing script. It can help you get
+> > started. There are 3 different traces being applied there: the
+> > bpftrace for collapse latencies, the perf record for the flamegraph
+> > (not actually that useful, but may be useful to visualize any
+> > weird/long paths that you may not have noticed), and the trace-cmd
+> > which records the tracepoint of the scan and the collapse functions
+> > then processes the data using the awk script-- the output being the
+> > scan rate, the pages collapsed, and their result status (grouped by
+> > order).
+> >
+> > You can also look into https://github.com/gormanm/mmtests for
+> > testing/comparing kernels. I was running the
+> > config-memdb-redis-benchmark-medium workload.
+>
+> Thanks. I'll take a look.
+>
+> >
+> >>
+> >>>
+> >>> Also, khugepaged, my changes, and your changes are all a victim of
+> >>> this. Once we drop the read lock (to either allocate the folio, or
+> >>> right before acquiring the write_lock), the state can change. In your
+> >>> case, yes, you are gathering more up to date information, but is it
+> >>> really that important/worth it to retake locks and rescan for each
+> >>> instance if we are about to reverify with the write lock taken?
+> >>
+> >> You said "reverify": You are removing the verification, so this step
+> >> won't be reverification, it will be verification. We do not want to
+> >> verify *after* we have already done 95% of latency-heavy stuff, only t=
+o
+> >> know that we are going to fail.
+> >>
+> >> Algorithms in the kernel, in general, are of the following form: 1)
+> >> Verify if a condition is true, resulting in taking a control path -> 2=
+)
+> >> do a lot of stuff -> "no turning back" step, wherein before committing
+> >> (by taking locks, say), reverify if this is the control path we should
+> >> be in. You are eliminating step 1).
+> >>
+> >> Therefore, I will have to say that I disagree with your approach.
+> >>
+> >> On top of this, in the subjective analysis in [1], point number 7 (alo=
+ng
+> >> with point number 1) remains. And, point number 4 remains.
+> >
+> > for 1) your worst case of 1024 is not the worst case. There are 8
+> > possible orders in your implementation, if all are enabled, that is
+> > 4096 iterations in the worst case.
+>
+> Yes, that is exactly what I wrote in 1). I am still not convinced that
+> the overhead you produce + 512 iterations is going to beat 4096
+> iterations. Anyways, that is hand-waving and we should test this.
+>
+> > This becomes WAY worse on 64k page size, ~45,000 iterations vs 4096 in =
+my case.
+>
+> Sorry, I am missing something here; how does the number of iterations
+> change with page size? Am I not scanning the PTE table, which is
+> invariant to the page size?
 
-EPP values are cached in the cpudata structure per CPU. This is needless
-though because they are also cached in the CPPC request variable.
+I got the calculation wrong the first time and it's actually worst.
+Lets hope I got this right this time
+on ARM64 64k kernel:
+PMD size =3D 512M
+PTE=3D 64k
+PTEs per PMD =3D 8192
+log2(8192) =3D 13 - 2 =3D 11 number of (m)THP sizes including PMD (the
+first and second order are skipped)
 
-Drop the separate cache for EPP values and always reference the CPPC
-request variable when needed.
+Assuming I understand your algorithm correctly, in the worst case you
+are scanning the whole PMD for each order.
 
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 27 ++++++++++++++-------------
- drivers/cpufreq/amd-pstate.h |  1 -
- 2 files changed, 14 insertions(+), 14 deletions(-)
+So you scan 8192 PTEs 11 times. 8192 * 11 =3D 90112.
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 1117dd4a6addd..aafd765c43f30 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -268,8 +268,6 @@ static int msr_update_perf(struct cpufreq_policy *policy, u8 min_perf,
- 	}
- 
- 	WRITE_ONCE(cpudata->cppc_req_cached, value);
--	if (epp != cpudata->epp_cached)
--		WRITE_ONCE(cpudata->epp_cached, epp);
- 
- 	return 0;
- }
-@@ -318,7 +316,6 @@ static int msr_set_epp(struct cpufreq_policy *policy, u8 epp)
- 	}
- 
- 	/* update both so that msr_update_perf() can effectively check */
--	WRITE_ONCE(cpudata->epp_cached, epp);
- 	WRITE_ONCE(cpudata->cppc_req_cached, value);
- 
- 	return ret;
-@@ -335,9 +332,12 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 	struct cppc_perf_ctrls perf_ctrls;
-+	u8 epp_cached;
- 	u64 value;
- 	int ret;
- 
-+
-+	epp_cached = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 	if (trace_amd_pstate_epp_perf_enabled()) {
- 		union perf_cached perf = cpudata->perf;
- 
-@@ -348,10 +348,10 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- 					  FIELD_GET(AMD_CPPC_MAX_PERF_MASK,
- 						    cpudata->cppc_req_cached),
- 					  policy->boost_enabled,
--					  epp != cpudata->epp_cached);
-+					  epp != epp_cached);
- 	}
- 
--	if (epp == cpudata->epp_cached)
-+	if (epp == epp_cached)
- 		return 0;
- 
- 	perf_ctrls.energy_perf = epp;
-@@ -360,7 +360,6 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- 		pr_debug("failed to set energy perf value (%d)\n", ret);
- 		return ret;
- 	}
--	WRITE_ONCE(cpudata->epp_cached, epp);
- 
- 	value = READ_ONCE(cpudata->cppc_req_cached);
- 	value &= ~AMD_CPPC_EPP_PERF_MASK;
-@@ -1202,9 +1201,11 @@ static ssize_t show_energy_performance_preference(
- 				struct cpufreq_policy *policy, char *buf)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
--	u8 preference;
-+	u8 preference, epp;
-+
-+	epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
--	switch (cpudata->epp_cached) {
-+	switch (epp) {
- 	case AMD_CPPC_EPP_PERFORMANCE:
- 		preference = EPP_INDEX_PERFORMANCE;
- 		break;
-@@ -1567,7 +1568,7 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
- 	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
- 		epp = 0;
- 	else
--		epp = READ_ONCE(cpudata->epp_cached);
-+		epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
- 	perf = READ_ONCE(cpudata->perf);
- 
-@@ -1603,22 +1604,22 @@ static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 	union perf_cached perf = READ_ONCE(cpudata->perf);
- 	int ret;
-+	u8 epp;
-+
-+	epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
- 	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
- 
- 	ret = amd_pstate_cppc_enable(policy);
- 	if (ret)
- 		return ret;
--
--
--	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
-+	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, epp, false);
- 	if (ret)
- 		return ret;
- 
- 	cpudata->suspended = false;
- 
- 	return 0;
--
- }
- 
- static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
-index 1a52582dbac9d..13918853f0a82 100644
---- a/drivers/cpufreq/amd-pstate.h
-+++ b/drivers/cpufreq/amd-pstate.h
-@@ -100,7 +100,6 @@ struct amd_cpudata {
- 	bool	hw_prefcore;
- 
- 	/* EPP feature related attributes*/
--	u8	epp_cached;
- 	u32	policy;
- 	bool	suspended;
- 	u8	epp_default;
--- 
-2.43.0
+Please let me know if I'm missing something here.
+>
+> >>
+> >> [1]
+> >> https://lore.kernel.org/all/23023f48-95c6-4a24-ac8b-aba4b1a441b4@arm.c=
+om/
+> >>
+> >>>
+> >>> So in my eyes, this is not a "problem"
+> >>
+> >> Looks like the kernel scheduled us for a high-priority debate, I hope
+> >> there's no deadlock :)
+> >>
+> >>>
+> >>> Cheers,
+> >>> -- Nico
+> >>>
+> >>>
+> >>>>
+> >>>
+> >>
+> >
+>
 
 
