@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-516130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B408CA36D40
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81472A36D32
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D391895F65
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3801892A3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2301A304A;
-	Sat, 15 Feb 2025 10:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C50F1A3160;
+	Sat, 15 Feb 2025 10:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E/YIaglY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fu77did2"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7FF19E965
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0718C2ED;
+	Sat, 15 Feb 2025 10:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739614153; cv=none; b=cuRRdvz6rDxfXc6iTFBzJJGtBijmZhsS8aoJN7dsz0umRUuEy1oWGPoO4KayBQFOiZ2N/VNj4R0yss5WKqIeBC+dCRzl1Eq2+kYbO8sVpzsv/2aTolfDu760nSNMWLwNQ2c1PSQ9xfbZSnMepivZ5jBOzhMuRILNNN6QaTXUHB0=
+	t=1739613988; cv=none; b=i/OI+HIhiTMtcMq2d/DTbGNDoaHgDvZdtc/76uezLMH2a8MQ0m+T0+7L3PxM9cpE6onEM68HlVspZvgSp5ne+GVNT4Nprojzn/zxxRb7hnwSWiKmhE7mygoi6qj0b+fWObsQrVddxgFRXpLsyoIuYpon8VvSLKHupT/csrXhLuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739614153; c=relaxed/simple;
-	bh=xH3ekLyCUJXjtIM6uXeT6Wz5TQoPzfdJQKog0Ix76xE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXjeizcCDPYrEXAk7eJbabTBjO+iAgCUTXX5E/LQLGjbEj3USCRUlR9ZWiIAkyw6+N14sl8v+5i120ohU2mB++pFrGDE+lno3/u7nVjeSVbfuWsoZRpmdjv1eBaqSRX+/hBgNtVFYKJEarum9hZFWdsWB5jfr0pGsUCAgnyLRs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E/YIaglY; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739614152; x=1771150152;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xH3ekLyCUJXjtIM6uXeT6Wz5TQoPzfdJQKog0Ix76xE=;
-  b=E/YIaglYoP0QORFb/UHCQq/i4IHjVX8W7kUgJAeDwIpTZzHqBVz9hz13
-   7nodmRHB2giVlHqq9aNLQJenLaFajXCu8tqpL6e8IZ5otTzS+MhY/zzht
-   lX5SHHOqVx5S++b6tZmjMYEN6swLqy2VmCf1OgnJitEh+IjNzd800KSOc
-   Y/67GEnoc05yaMd9GK8VigeLImvaUI3PKgeh1QLl7hxxjn4FdSw1qtcAA
-   L5+NLcs8wQA8YscT7nPBZlvJGHO1FsSbW9beCysVRntSZU3B4WOjcWrWc
-   2Dvjgk5P3LvN1GwljTiWaYo1oSCuBShggN34LvHHIh5yTRYUDFRDkvpCQ
-   w==;
-X-CSE-ConnectionGUID: U4XQq8PpRgudmyXVkiS0lQ==
-X-CSE-MsgGUID: lCEmLXFxThi7lx5yz6ppfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40628888"
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="40628888"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 02:09:11 -0800
-X-CSE-ConnectionGUID: cSns9aWoTzGhPl1aIFPH/A==
-X-CSE-MsgGUID: IixXSpCuR9CDqZiOuF0NHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="114186845"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 02:09:09 -0800
-Message-ID: <d578bf4c-f475-42bf-9cb8-21941fc7af88@linux.intel.com>
-Date: Sat, 15 Feb 2025 18:06:11 +0800
+	s=arc-20240116; t=1739613988; c=relaxed/simple;
+	bh=qN9sqzBF8Wm+6uTGSVriIgBQyemhgwmom0TimKNH/w8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=texjjM1rPx7asEl6KEG0sqSpth69mLHYdm3fGsjrZJncblEISM4rb8PzpZawrZLL0SrqVUfPn3iogyZpQdrGbSXgGadR2m6q552ER91vS+7ctDGG+DllQQeuwOewfTFQ8sScJsmMxanhNTgLbffV3xj5Xuv3f48qispJaFCR/xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fu77did2; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 801471c0eb8411efb8f9918b5fc74e19-20250215
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=v+EJ59sKfsvOAm5WdSxUyGZEDjYp1M4xybOklYuyeHg=;
+	b=fu77did2raEuzRcT3h1MYDoVDr0fj/fnKEDqsnW+GpsYZcXcw5tWVXm78He8L18KYwQ4+Nh0fr1ELyGxAwuyojKdQ0MEU0V1o19Tu7zmPFmrC0kuS5Udx4dDqNFCb+wDANgn/GT+PY9GSSHIWIg1WiAD+slUTRBQ7QXBVgngKQQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:ef713562-0b45-401e-84a9-d54f1aad8ec5,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:60aa074,CLOUDID:11316988-f9ab-4ac1-951b-e3a689bed90c,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
+	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
+	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 801471c0eb8411efb8f9918b5fc74e19-20250215
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <chunfeng.yun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2031481686; Sat, 15 Feb 2025 18:06:18 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Sat, 15 Feb 2025 18:06:17 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Sat, 15 Feb 2025 18:06:16 +0800
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Chunfeng Yun <chunfeng.yun@mediatek.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Mathias Nyman <mathias.nyman@intel.com>,
+	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 2/4] dt-bindings: usb: mtu3: add support mt8196
+Date: Sat, 15 Feb 2025 18:06:12 +0800
+Message-ID: <20250215100615.808-2-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20250215100615.808-1-chunfeng.yun@mediatek.com>
+References: <20250215100615.808-1-chunfeng.yun@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
-To: Zhangfei Gao <zhangfei.gao@linaro.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Fenghua Yu <fenghua.yu@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-References: <20250214061104.1959525-1-baolu.lu@linux.intel.com>
- <CABQgh9FMy7oVt9+enSpJxXvkux+czMFqbsPZVgmBV+rFWWvhGA@mail.gmail.com>
- <20250214125600.GA3696814@ziepe.ca>
- <CABQgh9FQYe46hfjcs+o6GfLaS7OfSqrmvXUzOKd6PRK8oBF8Jw@mail.gmail.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <CABQgh9FQYe46hfjcs+o6GfLaS7OfSqrmvXUzOKd6PRK8oBF8Jw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On 2/15/25 16:11, Zhangfei Gao wrote:
-> It does not relate to multi devices, one device also happens when user
-> page fault triggers.
-> 
-> iopf_queue_remove_device is called.
-> rcu_assign_pointer(param->fault_param, NULL);
-> 
-> call trace
-> [  304.961312] Call trace:
-> [  304.961314]  show_stack+0x20/0x38 (C)
-> [  304.961319]  dump_stack_lvl+0xc0/0xd0
-> [  304.961324]  dump_stack+0x18/0x28
-> [  304.961327]  iopf_queue_remove_device+0xb0/0x1f0
-> [  304.961331]  arm_smmu_remove_master_domain+0x204/0x250
-> [  304.961336]  arm_smmu_attach_commit+0x64/0x100
-> [  304.961338]  arm_smmu_attach_dev_nested+0x104/0x1a8
-> [  304.961340]  __iommu_attach_device+0x2c/0x110
-> [  304.961343]  __iommu_device_set_domain.isra.0+0x78/0xe0
-> [  304.961345]  __iommu_group_set_domain_internal+0x78/0x160
-> [  304.961347]  iommu_replace_group_handle+0x9c/0x150
-> [  304.961350]  iommufd_fault_domain_replace_dev+0x88/0x120
-> [  304.961353]  iommufd_device_do_replace+0x190/0x3c0
-> [  304.961355]  iommufd_device_change_pt+0x270/0x688
-> [  304.961357]  iommufd_device_replace+0x20/0x38
-> [  304.961359]  vfio_iommufd_physical_attach_ioas+0x30/0x78
-> [  304.961363]  vfio_df_ioctl_attach_pt+0xa8/0x188
-> [  304.961366]  vfio_device_fops_unl_ioctl+0x310/0x990
-> 
-> 
-> When page fault triggers:
-> 
-> [ 1016.383578] ------------[ cut here ]-----------
-> [ 1016.388184] WARNING: CPU: 35 PID: 717 at
-> drivers/iommu/io-pgfault.c:231 iommu_report_device_fault+0x2c8/0x470
+There are three USB controllers on mt8196, each controller's wakeup
+control is different, add some specific versions for them, and add
+compatilbe for mt8196.
 
-It's likely that iopf_queue_add_device() was not called for this device.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+v3: add the ommitted third dual-role controller
+    add acked by Conor
+v2: new patch for dual-role controllers
+---
+ Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Thanks,
-baolu
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+index d4e187c78a0b..aa411568704b 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+@@ -28,6 +28,7 @@ properties:
+           - mediatek,mt8188-mtu3
+           - mediatek,mt8192-mtu3
+           - mediatek,mt8195-mtu3
++          - mediatek,mt8196-mtu3
+           - mediatek,mt8365-mtu3
+       - const: mediatek,mtu3
+ 
+@@ -188,7 +189,10 @@ properties:
+             103 - used by mt8195, IP0, specific 1.03;
+             105 - used by mt8195, IP2, specific 1.05;
+             106 - used by mt8195, IP3, specific 1.06;
+-          enum: [1, 2, 101, 102, 103, 105, 106]
++            107 - used by mt8196, IP0, specific 1.07;
++            108 - used by mt8196, IP1, specific 1.08;
++            109 - used by mt8196, IP2, specific 1.09;
++            enum: [1, 2, 101, 102, 103, 105, 106, 107, 108, 109]
+ 
+   mediatek,u3p-dis-msk:
+     $ref: /schemas/types.yaml#/definitions/uint32
+-- 
+2.46.0
+
 
