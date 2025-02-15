@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-515947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5B9A36AB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9320FA36AB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BC853B0536
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:15:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E931B3B0310
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AED21624E0;
-	Sat, 15 Feb 2025 01:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEE318892D;
+	Sat, 15 Feb 2025 01:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZmQvAmy6"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rwzn+S4h"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F351514EE
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3C41624C8
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739582086; cv=none; b=G9iWhoM3cWRhwrXyXXJlX19NLgOB619U1BX2T+VKwM3g1y9mtL1hqokUgSxrs6rK+jsCLOaduBk7D8a+l/RafdF06pmhljUkdfQEvfG5rsm0NBPNvfflreBqOJuma7Dj7S1RRYLuJ94EYxWZHY3eB/N01l3/FeypquI0eDpr+hU=
+	t=1739582088; cv=none; b=XONTVSp8CVwFipkcyrcu93nU6NCe4jrMbDWQkYGlEZbgQdeAfgVsUkabFJedOKBSyi+0uqofbxOYt13FORQ7ZeqY5w0pQSjzkqcrK6b3UEqEDt/v0qDUnmvEMWZK6fsVAc9oX55HkvNW/xDO6stjWJ/IZgWytrZzwzGgAEFXjOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739582086; c=relaxed/simple;
-	bh=Nq45uqSKHEPg4dzpAAVHI0Nbkbth2NKJarH67mwYrqw=;
+	s=arc-20240116; t=1739582088; c=relaxed/simple;
+	bh=V20/5Zcwsh3LkusvwxipaeAPlQmSrKGd8beRUUCMKWc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BfHE6bdpjW8oeydBgwBrBMAa/mDNimSnRvMDqnYtXP1mhe08kk36QuOdSve62eRvX81KPYau0gds2RXOLSHgV8wILNFq126+3cUFg660dVwFslTYQwOnDyglZf9gt+Af5m5u83U4cad7mu4uyoPL6Q2IBDOnOoVrbgFs5lzScPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZmQvAmy6; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=q1eNZ1W7NEfn/RcCh0a4iYCeFozGYrlV1HeftxsKe1//iVeyOZWM4MqwTXMNsRO1VTlUIqc2ys4Ds3879GU6LYqW6FnpvYPU/ZcPYQ/EGeN7qcorP3OlRD/BZuNbzWdkFjiw/NbOK83Vqsb99hiwdIFDYb2NgUeWtu7LMn3+Ibg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rwzn+S4h; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc45101191so78586a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:14:44 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220e1593b85so40385075ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739582084; x=1740186884; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739582086; x=1740186886; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=6j/gglXJS1yN/9vw2FthXhPcheEiRDBsR2pbz8PXCNU=;
-        b=ZmQvAmy6oVbzJNNwxqGkJh2wH+/p+6/WNgY+os8wZiVBuwL2jTlyen8C0Ya4W4dKfJ
-         MQO+28RdiVXLZUBtUDefqx8KCG4ZyL5OPKWSjnS23gtS5QZBbCGnVXLWTq45krMqn/GF
-         oRxyELLtllONZJ1U6u3sBs5Ax3zOqsKbuA6ySMlGM+f660Me3PB1O6c24PpsZAIMJ4DA
-         vPQXHrqMaWLDRiocl3J5l6GaJBRmmMDz6dvI1w3uBNsffeNdPDFzdmLEwax7KPOdz/bs
-         1SRMn6R5KQEJKLp920EY5IbJYmxKf+r59hXw+uaaQCsIVtgfd0rbB0qcmlBvi6aZIFde
-         aDQw==
+        bh=j7vKBoevqSd0YmMKIcf2UgJa+X4zyjdi3hzZRBAtboE=;
+        b=Rwzn+S4hIGg4lO+DfRTiSY4efs3/Y/cAxBcBhKr9SwwN1IJ4OS4hNcxNLrJkkLTJJn
+         h0Pw3yE5+U31JfWy4pqYUivC/JYuAnWowf/fHtZeFgB2jbPJQW8le9TLU1MXxOWyRDBz
+         2NtUvHAXmXllWtXHYWM21FkVpO2ZRJEJsfOHv8NAQGsGNnl1hOVrCBuzn+PHqf0wqryY
+         /DHO4z0b6E74WWN4bvUgshv6r4UdeKKthM7TzNLYG0HX15xlNHXMf+s6o8u/knZizIdY
+         JyLzF17t18bsC7ykkLFm+zjVqeOv2YgOTGBCTyihitMLmGvXBOhQ0qTgGK+Ny6CvYGcZ
+         e2vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739582084; x=1740186884;
+        d=1e100.net; s=20230601; t=1739582086; x=1740186886;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6j/gglXJS1yN/9vw2FthXhPcheEiRDBsR2pbz8PXCNU=;
-        b=ss3kTAIaP08V7rTSMx5fcN0oEUYX+8wUuEkRj4F7dfkcpDK16WDZGTe95b9xf6XlJJ
-         5NorkXTil+cybZ2wouD/qMsi4EDBXyErhG57LvQ65/PZnudk8umPRVjB3nw8tOOzgALi
-         CjFCzYMWKLdlevP3n1cZtgzLf4ks7ebBSlZbdg9efClTJ9LCNLQYZ+ZDJOIHNKmOsngA
-         ASmnuH4WcB7oeqZSo2PBYlIaQZza8h5gP8WGEkyYYaLRNpV/g4I7oHgX7WDTaltcSLCo
-         8T2rofR4ME8QG9oAOqIob7JW3EDPn2OL+DYZfNb+GmCeGONqvbR3nqo48A0xF34lhazl
-         2Czg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqYEoFNpKtGI35fXiYd1psJncajJ49LAkrQ15SN1PzJusKq47+DxYntTnhXVjSjvUwO9zZYm1lPElIXLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJlnl9WuIGseUWQ2/aA8tsBWHLCaSmLw8ZhgYrRELwcl3gx8+i
-	tKgCz7Dxakaz15v8Rgg2/47WKuE4XQyiywElV6womSdkeBGo6YSfatK63/KwstaWgCrdbXFVOCA
-	1/Q==
-X-Google-Smtp-Source: AGHT+IHDz0saxK+uDPiFg1p1YwHS66b4lZqXWidBMXMNqLNQVQfSJrHTu3y8P9oy8wEHlGtCW8YLz5mUoCk=
-X-Received: from pjbsi4.prod.google.com ([2002:a17:90b:5284:b0:2ee:53fe:d0fc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f06:b0:2fc:3264:3667
- with SMTP id 98e67ed59e1d1-2fc40d131bemr1894760a91.1.1739582084469; Fri, 14
- Feb 2025 17:14:44 -0800 (PST)
+        bh=j7vKBoevqSd0YmMKIcf2UgJa+X4zyjdi3hzZRBAtboE=;
+        b=iBvwKRA1PW45iy0rcfG8644+fUsmRsBY0cOpSXd7YOuWzZ7Tpfwcl/W2f1zRUCKSjT
+         mdYjhbfI4Aud/iOBhf0HJq/xA2HrIbwFHoYXVdzieNudhxpVerW1ru8uIZMieZJofexH
+         pTUiJWYMpVvJQVZVGHeCKymOXYYRJh/jo8eO5+EFnrF4i1A8WjugUvIzrzFP68jmKD54
+         W/WY9otSSz62mWQ9NtEvDc6q4AIU9V2hBJlB4BuyFmy0ReEExMDtYuy8AppULwGBPDL+
+         po83dUftJ/bcep/3otAyhmPoFVnlPDigw5vUAsCcKGnFAZIHXghrZEFRTFOQyopefBuf
+         GU2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUl7EbM6elCyBVIG1ZTkiDFqc3fN5FVJyXB2/92AFCS1fN8d9hUs9yPJns6pFjw3N6ewwIRo27DPT+OP1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaEgFhaBoetVAb8TivdCSRLWPaIUM/U8NQGXRDeTZsSdzScB3W
+	xrV60/ojVmHwz6Kk6us3iqRkzK67FITBG5lijlaEFai1n/HjKRgJqbqxh7/0h4djt44yY9k5H6L
+	xYg==
+X-Google-Smtp-Source: AGHT+IGtO3LhcclmaxlBOzDhlZWiTA4X0kQhu9BMoJyJBJrBPP1akoMVuWrkGmqqeaspC7bpVglvyuzDJl4=
+X-Received: from pgfp3.prod.google.com ([2002:a63:ab03:0:b0:add:f880:2c5b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:e8c:b0:1eb:48e2:2c2f
+ with SMTP id adf61e73a8af0-1ee8cbc1ea9mr3069398637.30.1739582086175; Fri, 14
+ Feb 2025 17:14:46 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 14 Feb 2025 17:14:35 -0800
+Date: Fri, 14 Feb 2025 17:14:36 -0800
 In-Reply-To: <20250215011437.1203084-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250215011437.1203084-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250215011437.1203084-4-seanjc@google.com>
-Subject: [PATCH v2 3/5] KVM: x86/xen: Consult kvm_xen_enabled when checking
- for Xen MSR writes
+Message-ID: <20250215011437.1203084-5-seanjc@google.com>
+Subject: [PATCH v2 4/5] KVM: x86/xen: Bury xen_hvm_config behind CONFIG_KVM_XEN=y
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>
@@ -85,14 +84,8 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Joao Martins <joao.m.martins@oracle.com>, David Woodhouse <dwmw@amazon.co.uk>
 Content-Type: text/plain; charset="UTF-8"
 
-Query kvm_xen_enabled when detecting writes to the Xen hypercall page MSR
-so that the check is optimized away in the likely scenario that Xen isn't
-enabled for the VM.
-
-Deliberately open code the check instead of using kvm_xen_msr_enabled() in
-order to avoid a double load of xen_hvm_config.msr (which is admittedly
-rather pointless given the widespread lack of READ_ONCE() usage on the
-plethora of vCPU-scoped accesses to kvm->arch.xen state).
+Now that all references to kvm_vcpu_arch.xen_hvm_config are wrapped with
+CONFIG_KVM_XEN #ifdefs, bury the field itself behind CONFIG_KVM_XEN=y.
 
 No functional change intended.
 
@@ -100,23 +93,30 @@ Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
 Reviewed-by: Paul Durrant <paul@xen.org>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/xen.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/kvm_host.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/xen.h b/arch/x86/kvm/xen.h
-index e92e06926f76..1e3a913dfb94 100644
---- a/arch/x86/kvm/xen.h
-+++ b/arch/x86/kvm/xen.h
-@@ -58,6 +58,9 @@ static inline bool kvm_xen_msr_enabled(struct kvm *kvm)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index b15cde0a9b5c..f31fca4c4968 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1410,8 +1410,6 @@ struct kvm_arch {
+ 	struct delayed_work kvmclock_update_work;
+ 	struct delayed_work kvmclock_sync_work;
  
- static inline bool kvm_xen_is_hypercall_page_msr(struct kvm *kvm, u32 msr)
- {
-+	if (!static_branch_unlikely(&kvm_xen_enabled.key))
-+		return false;
-+
- 	return msr && msr == kvm->arch.xen_hvm_config.msr;
- }
+-	struct kvm_xen_hvm_config xen_hvm_config;
+-
+ 	/* reads protected by irq_srcu, writes by irq_lock */
+ 	struct hlist_head mask_notifier_list;
  
+@@ -1421,6 +1419,7 @@ struct kvm_arch {
+ 
+ #ifdef CONFIG_KVM_XEN
+ 	struct kvm_xen xen;
++	struct kvm_xen_hvm_config xen_hvm_config;
+ #endif
+ 
+ 	bool backwards_tsc_observed;
 -- 
 2.48.1.601.g30ceb7b040-goog
 
