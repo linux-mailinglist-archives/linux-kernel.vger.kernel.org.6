@@ -1,144 +1,148 @@
-Return-Path: <linux-kernel+bounces-516142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F787A36D5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:34:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A422A36D83
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA8A3B2F8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E611188CF68
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED271ACED7;
-	Sat, 15 Feb 2025 10:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F0E1A5B8B;
+	Sat, 15 Feb 2025 10:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmYQ/P5K"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUSl3slT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C361A304A;
-	Sat, 15 Feb 2025 10:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8114A08;
+	Sat, 15 Feb 2025 10:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739615553; cv=none; b=rS7PFDR5B/WKgq78V0sCrJTaMgI6/KJosUkWkURGZSGqZiN3Py1vHOlkvkfzsT+ir5jnyBMG/sLrZQYKbsDyaYJ9UL7NQ8WgJ2StejkDmqrmj22EoJKrM1P/M+c4Ks82LxVsX9XW3vLkYk0cPQYVMgWQsMPOqHYzSu5P9zHqqWY=
+	t=1739617187; cv=none; b=XH68jjXRYaa6D74I+9Y/o1LECZ6p2hxI3AtkB5MJz1FvIFKkgyHrHmhAtRG0lee0BF9M+jTxqqL5Laj8uqpzfO4pwp6MuTA85HIL3qmgQAn7v1JrWn7LCAgwyBRjzXd4vGeHlXG/a7fBFh4tozzSnWJWK6T0yUNWwwQj4VILpxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739615553; c=relaxed/simple;
-	bh=ovU/udmsQruAG4JxrqrP/u7hpQFzVvlamOYHihmO89k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AcKJgamDukPDjRYCxYXh4gXF44SzUC6CGlvR03adhUaEZdvOhzwsMqL8HHky2+EMrGe12cefodeiGCcn0D0GHa/FMqm4mcl96LlPZUqiT2p+FtVQXf/NdzD2gKdR101EHKbV2mIsZeTDdBrXyDI/sinBqji1+HrCoc3tP9/QgFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmYQ/P5K; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-307325f2436so23285361fa.0;
-        Sat, 15 Feb 2025 02:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739615550; x=1740220350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6NGjbfzadf2K5Cwn0Cq99wst66ulH2eoNJ3X3i+jmY=;
-        b=YmYQ/P5K85s4t9mw/JGtt3D4s+NHNMPKbwbsbixWWihiw2MyPW7RAIVc68qjkPPjD8
-         6NB8mRh8a76vLXgw//yvOKbx+GSWjmk7l+Rg54EpTz181m731D91ra9T4mEFJeng7twB
-         w1GOe5C6svn4KbmUonyChaWBWmOvhIHANAjmjZyGv+nOIUozQUI1dpnwhhEgoLudLhvF
-         clNScepR0cCtsv2Tn4a/F2cgOc1wejZq+mmmaC6TMVaMZq/jw+v4WSmik91iHJniFCsj
-         tryX4IyF4o2+t1oaHJmz8adADbI4wEvr5ESJATrK7djX9bqN+N0GI+BOvorS2Ag3HDy9
-         Ka5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739615550; x=1740220350;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u6NGjbfzadf2K5Cwn0Cq99wst66ulH2eoNJ3X3i+jmY=;
-        b=NS47y4BP1fGXFgsVUVg2hmPxtPBT+ZFDrw9+e5p+LSzmNobQ2OFe5S1VmP1OPxHuR9
-         eBnVPKaumaIz0rjk4PmOl6TYjaQzn0bx8hR9huS28qlwlf6YEsEiOrRsb7Eha2Y7w+bA
-         yum3IIJ1gJULAmVQG4c35BKZ08CTK/cSUMnrHEhhFMxs8mU8Q3l1aiy3hYebutv3N2TW
-         wD2kpda52P9ib5FYFlH1vZP9ZxvtYNZ7PTBbVE48liPnpVd9E8B2NzI55fdVoSn925y4
-         yxd5/dOq3/99eQ5txe27Y3EWMPD0cNuDzzkQs1eyMzmf1n6R0Jc2AANLEj6FpW+hYoQV
-         LsNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvgBqd50evsOPbarTtAjDfzTsasKs5/SUhxiQDvmAJXxtLZDuT8CFbOsKl5ZsSo9YgQg6jVB5J5322@vger.kernel.org, AJvYcCVBLpQ2Jce47dAsZPsdVepqqRSZH43hkz+0QGwpcInLjhb6rXEbvK6G5fEbquFROhtXpMDfQQ6oAEfpZMg=@vger.kernel.org, AJvYcCVtmAw9MHMvGq3ZCtyqLrbnqTP3yhY8e+y8fByJKw/FkduktYMSLRqemUFyML6Uya1wXgntzWLXFak5B7CX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyeuj0RaSMy5O60CFKyPMe0wpWhIMnz79aOTsVs98GdIoGtGIiD
-	c5/bHyNs0lMZ6pkgpBLgbumxH8rbvXE0xQcg1FqMMWqjAtq17Yco
-X-Gm-Gg: ASbGnctp1mk/s3a8lMfNckyoebyRrxMCr0zfz7cakAWIvEK+uqvOBoNjBTuBjBVZXP8
-	2V3duc1tNGJogHnXPGM9m9bY215FfJqxs3j/8zp5+/up88JrztVuqeCa+oTQUZ2TpuUbG3+f8pN
-	H7IUa0Ydg69rdCpwR6wnPYoEkiyxQosH/IxMJ1cIkHvSd7YI9UN+zpKXtxgdCQF4OgmC2sRc8k8
-	g90m0XEF1iHZGDLEPx2QgnWW4aAO2l5sqi+fEtla1Ja6Jh5PPKjZUi8vYgQoQu2lmr3222b1fgd
-	oibodRI=
-X-Google-Smtp-Source: AGHT+IGlZODZxzfWnXWmjNedtkY9w+OfCyI2jzRhZXwmK4f5UUnoDzov55he5Jn1/VTVxV0/aHd0VQ==
-X-Received: by 2002:a2e:885a:0:b0:309:1e75:65b3 with SMTP id 38308e7fff4ca-30927b26f7cmr9044561fa.32.1739615549994;
-        Sat, 15 Feb 2025 02:32:29 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309298dc5eesm2201571fa.95.2025.02.15.02.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 02:32:29 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>
-Cc: linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 3/3] ARM: tegra: tf101: Add al3000a illuminance sensor node
-Date: Sat, 15 Feb 2025 12:31:59 +0200
-Message-ID: <20250215103159.106343-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215103159.106343-1-clamor95@gmail.com>
-References: <20250215103159.106343-1-clamor95@gmail.com>
+	s=arc-20240116; t=1739617187; c=relaxed/simple;
+	bh=IlbUBSOJy8hOCCuGT+m8jqc2wR8Ma7WO/ztuxQvUf0U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kGG8PxAX3ifySvVNNG69Q00smdXXOtNqrAAwqvY2qrPhS4h5W1u/QZn2ActdzjOgfR+1wYALqtmu1u/cmtkgSShitx8L0gGO3UUoZZAInObXhQ3DjqIARaJ1V4m5DwtGF2Ar6UylfFq7teFgBFoYoDSnZeuwVALfCkiiVz4PSwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUSl3slT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D3FC4CEDF;
+	Sat, 15 Feb 2025 10:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739617186;
+	bh=IlbUBSOJy8hOCCuGT+m8jqc2wR8Ma7WO/ztuxQvUf0U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LUSl3slT0ZUUyJPm7yt5eaId153RO4WYRqzjHXQnrQeuhhxrWfvCWEFnYSKAFFs69
+	 Fgoz2B8bbtcoHXkA/00gDJM0kpaOLFd2rOz/LNYnzQSWQTBbXKCYGSpl69w4qSPSRZ
+	 vjq5CNs/2HOaMJ/6ar8xOK7B5eMRXguifXOJSvf72Xk7Xc6lBI14oUoelBOqgowmr2
+	 Y8FqG912N9T5XlQ+WO1P5APZYHqR2sAW7HAwBSaS25ON6+iZTGTRmCRVunZz9O2h8l
+	 6MWY6hmUsemRgsCtqvti5mKeRb5snng2PFK/2JTNydoqumLbFZujehPiLJzX7/QGQ5
+	 dyiWZjtfbKKwA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 04/14] rust: hrtimer: implement `HrTimerPointer` for
+ `Arc`
+In-Reply-To: <4ce7b3dcbac5ba71d3f58d72f3c01d250da784e7.camel@redhat.com>
+	(Lyude Paul's message of "Mon, 10 Feb 2025 17:28:45 -0500")
+References: <20250203-hrtimer-v3-v6-12-rc2-v7-0-189144725399@kernel.org>
+	<20250203-hrtimer-v3-v6-12-rc2-v7-4-189144725399@kernel.org>
+	<5J6GLBNLTKE7HjIIlETU_xZcmzd9Nr1riVbm43DFR6LqAC_YnxQAMqMx8_QGZAqJ4wbTUkzHVn3Yra_irTB0Hg==@protonmail.internalid>
+	<4ce7b3dcbac5ba71d3f58d72f3c01d250da784e7.camel@redhat.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 15 Feb 2025 11:35:08 +0100
+Message-ID: <874j0vv6lf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Bind al3000a illuminance sensor found in ASUS TF101
+"Lyude Paul" <lyude@redhat.com> writes:
 
-Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> On Mon, 2025-02-03 at 16:07 +0100, Andreas Hindborg wrote:
+>> This patch allows the use of intrusive `hrtimer` fields in structs that are
+>> managed by an `Arc`.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/time/hrtimer.rs     |  3 +-
+>>  rust/kernel/time/hrtimer/arc.rs | 89 +++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 91 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>> index a6332924efabd40c475a112bbc434db77596a16f..3494c00481a4bd25735edf44b6bdcbec9810243e 100644
+>> --- a/rust/kernel/time/hrtimer.rs
+>> +++ b/rust/kernel/time/hrtimer.rs
+>> @@ -119,7 +119,6 @@ unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer {
+>>      /// # Safety
+>>      ///
+>>      /// `self_ptr` must point to a valid `Self`.
+>> -    #[allow(dead_code)]
+>>      pub(crate) unsafe fn raw_cancel(self_ptr: *const Self) -> bool {
+>>          // SAFETY: timer_ptr points to an allocation of at least `HrTimer` size.
+>>          let c_timer_ptr = unsafe { HrTimer::raw_get(self_ptr) };
+>> @@ -310,3 +309,5 @@ unsafe fn raw_get_timer(ptr: *const Self) ->
+>>          }
+>>      }
+>>  }
+>> +
+>> +mod arc;
+>> diff --git a/rust/kernel/time/hrtimer/arc.rs b/rust/kernel/time/hrtimer/arc.rs
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..d1c90631d00362bdc38be1ccc75429ae294ab544
+>> --- /dev/null
+>> +++ b/rust/kernel/time/hrtimer/arc.rs
+>> @@ -0,0 +1,89 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +use super::HasHrTimer;
+>> +use super::HrTimer;
+>> +use super::HrTimerCallback;
+>> +use super::HrTimerHandle;
+>> +use super::HrTimerPointer;
+>> +use super::RawHrTimerCallback;
+>> +use crate::sync::Arc;
+>> +use crate::sync::ArcBorrow;
+>> +use crate::time::Ktime;
+>> +
+>> +/// A handle for an `Arc<HasHrTimer<T>>` returned by a call to
+>> +/// [`HrTimerPointer::start`].
+>> +pub struct ArcHrTimerHandle<T>
+>> +where
+>> +    T: HasHrTimer<T>,
+>> +{
+>> +    pub(crate) inner: Arc<T>,
+>> +}
+>> +
+>
+> BTW - I noticed the other day that it doesn't seem like we actually expose
+> this type to users anywhere, even though we would want access to it for
+> storing the timer handle in structures
+>
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-index e118809dc6d9..67764afeb013 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-@@ -1085,6 +1085,17 @@ smart-battery@b {
- 				sbs,poll-retry-count = <10>;
- 				power-supplies = <&mains>;
- 			};
-+
-+			/* Dynaimage ambient light sensor */
-+			light-sensor@1c {
-+				compatible = "dynaimage,al3000a";
-+				reg = <0x1c>;
-+
-+				interrupt-parent = <&gpio>;
-+				interrupts = <TEGRA_GPIO(Z, 2) IRQ_TYPE_LEVEL_HIGH>;
-+
-+				vdd-supply = <&vdd_1v8_sys>;
-+			};
- 		};
- 	};
- 
--- 
-2.43.0
+Thanks for noticing! I'll make sure to `pub use` then handles in the
+parent module.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
