@@ -1,86 +1,135 @@
-Return-Path: <linux-kernel+bounces-516304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0039A36F81
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42E3A36F83
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A32F3AF77B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41B5188FD18
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06551DE2C7;
-	Sat, 15 Feb 2025 16:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326931C84A6;
+	Sat, 15 Feb 2025 16:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxVe/hJI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2iVQKjq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56948D529;
-	Sat, 15 Feb 2025 16:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BE61624CA;
+	Sat, 15 Feb 2025 16:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739637656; cv=none; b=nCQYuaCNinGo+onqysu+NbC5nZujminKyvQRGy6RjA1PpY7AdD0Bb8OevtHyyocYFWntwwuaYNqLdjuPRtqL9KM4BrOKKjoNGiHSmQ+gp+rICeCWHHAZRNmW1vVjg2tH+a4yjnkkkti9NapjVj+fA5nUF2oBzL9+myJ1gbMBkeg=
+	t=1739637721; cv=none; b=H+Ac8kgpVYjbCER70ofIFrc4AoFsIw6Jy6j3HKVYkcevyyjMqMTeGo4amYSBQXMthJF5cmuVhjsNptMNsXHiq8r0ClnOQJ/0UiBYiWrcFXZ0bAoK/j6LhAea9FdKAebQTlsaiT6oL0aW1k9FqXU94Lj40FWQ1nRbntmZs7GEJxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739637656; c=relaxed/simple;
-	bh=BVypI3IHDMnMPfXwsi4Pcfk/2mG1xpprtvPcUh7Oq/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p2dF83/yyMoTg7ciFoPk0dZzZxRkhdRkX+6MD78EAxfjeQEIda950vyNfC0BeN7vQmSs3FcSjEt3IOXpYCCDgSuS3lQdbeUA4dUYTQEFlirbcj1fFLPeJ3DqvrMPkhUZyXVVnhPqyuWL4jcV13o9CnX//O5p0dQDXaP6c8KaPwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LxVe/hJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E07C4CEDF;
-	Sat, 15 Feb 2025 16:40:55 +0000 (UTC)
+	s=arc-20240116; t=1739637721; c=relaxed/simple;
+	bh=MBdSKSQl5qKoLwg1wjEtWvk67McJc5SXlc6YFBBxgZI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jBzf0cBwDia9DySQmHgQ05rFNIAfUMhGCoUlarUzl/pz2L01ZrS97ZzCvDbTCNKmQx3yWrBz+yBSLj0y/O763pPjCH95TbI+ffYUzywChcGkUbwQ3pNNGyIE0boIHv3apt2Xe4kBzrLMyldRxSoCDBYpMEIyiYMocAFCe+bclLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2iVQKjq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EB0C4CEDF;
+	Sat, 15 Feb 2025 16:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739637655;
-	bh=BVypI3IHDMnMPfXwsi4Pcfk/2mG1xpprtvPcUh7Oq/U=;
+	s=k20201202; t=1739637721;
+	bh=MBdSKSQl5qKoLwg1wjEtWvk67McJc5SXlc6YFBBxgZI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LxVe/hJI43RZTfJeGj+7sR1ZghHCg1isg3hh7FiXjK5tKo+1CU8NrvbPZr5Ctl3u3
-	 lfb3vOgGFcre5sQwCpDTXlJxMvL1zxaTHQoNGq1QUfaFmV1iYAWuFh0DVdyeDRR+PA
-	 OYVCxwtYlpp4l7Kih7FF58FGXAvRQrYvO3/zNKDeiWohpf6FlUpFAiQNE5j2eVqMmo
-	 P6Ga1r0TqERaS4PQcqC/pL4rKNQ2tneou/k+NaXwoK8BJKNnh41wZCLd27SVIttcHt
-	 fYaxadY5GRFsArt4SgvB8M19ezhoZTFqTnwSLW+H3jmxWAVlc2RWBRq+RI8ZbM216F
-	 0eQSw+bgbeQ2w==
-Date: Sat, 15 Feb 2025 08:40:54 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Sean Anderson <sean.anderson@linux.dev>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Paolo
- Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: cadence: macb: Report standard stats
-Message-ID: <20250215084054.09f12b7a@kernel.org>
-In-Reply-To: <19e578ec-b71d-4b22-b1db-016f19c5801d@lunn.ch>
-References: <20250214212703.2618652-1-sean.anderson@linux.dev>
-	<20250214212703.2618652-3-sean.anderson@linux.dev>
-	<19e578ec-b71d-4b22-b1db-016f19c5801d@lunn.ch>
+	b=W2iVQKjqSoa88iXkUmC/QsqLJbTtY+g+QAwHNR1pZBhxKmxqkjnWjDPt2GrnxiDWf
+	 0kZ84IMg2EYQWnsebOIkmU8gBwChNpzvYue9sNIH92DMCafy6fFd0Qpgn6X2kRIHCA
+	 NsGCY5tVI9fhqIuvqQbVYMQ9mi9gQV0f3bj6gKaD2syFQItwqa1b9286FZ7061j+Qt
+	 roJSOZ7r/WKkY/uOm2qB5I9eUIBwOQk/FBlZh7JDASb7kWp8QQA6nbJ54qKv35neXh
+	 vdu0e7JgQRImjIdO7xb+se/fr6jchAHtneHu3ZwyspIdcBLovOAmm1hjbTuKmmo0R3
+	 aUOfWz+3uAG7A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjLEs-004PKM-Vc;
+	Sat, 15 Feb 2025 16:41:59 +0000
+Date: Sat, 15 Feb 2025 16:41:55 +0000
+Message-ID: <87v7tb17os.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: luoyonggang@gmail.com
+Cc: Oliver Upton <oliver.upton@linux.dev>,	Sebastian Ott <sebott@redhat.com>,	Joey Gouly <joey.gouly@arm.com>,	Suzuki K Poulose <suzuki.poulose@arm.com>,	Zenghui Yu <yuzenghui@huawei.com>,	Catalin Marinas <catalin.marinas@arm.com>,	Will Deacon <will@kernel.org>,	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,	Cornelia Huck <cohuck@redhat.com>,	Eric Auger <eric.auger@redhat.com>,	linux-arm-kernel@lists.infradead.org,	kvmarm@lists.linux.dev,	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] KVM: arm64: Allow userspace to change MIDR_EL1
+In-Reply-To: <CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
+References: <20250211143910.16775-1-sebott@redhat.com>
+	<20250211143910.16775-2-sebott@redhat.com>
+	<Z7BoydkyT_h0gwOV@linux.dev>
+	<CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: luoyonggang@gmail.com, oliver.upton@linux.dev, sebott@redhat.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, shameerali.kolothum.thodi@huawei.com, cohuck@redhat.com, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, 15 Feb 2025 00:14:35 +0100 Andrew Lunn wrote:
-> Could we maybe have one central table which drivers share? I assume
-> IETF defined these bands as part or RMON?
+On Sat, 15 Feb 2025 16:16:44 +0000,
+"=E7=BD=97=E5=8B=87=E5=88=9A(Yonggang Luo)" <luoyonggang@gmail.com> wrote:
+>=20
+> On Sat, Feb 15, 2025 at 6:15=E2=80=AFPM Oliver Upton <oliver.upton@linux.=
+dev> wrote:
+> >
+> > Hi Sebastian,
+> >
+> > On Tue, Feb 11, 2025 at 03:39:07PM +0100, Sebastian Ott wrote:
+> > > +static int set_id_reg_non_ftr(struct kvm_vcpu *vcpu, const struct sy=
+s_reg_desc *rd,
+> > > +                           u64 val)
+> > > +{
+> > > +     u32 id =3D reg_to_encoding(rd);
+> > > +     int ret;
+> > > +
+> > > +     mutex_lock(&vcpu->kvm->arch.config_lock);
+> >
+> > There's quite a few early outs, guard() might be a better fit than
+> > explicitly dropping the lock.
+> >
+> > > +     /*
+> > > +      * Since guest access to MIDR_EL1 is not trapped
+> > > +      * set up VPIDR_EL2 to hold the MIDR_EL1 value.
+> > > +      */
+> > > +     if (id =3D=3D SYS_MIDR_EL1)
+> > > +             write_sysreg(val, vpidr_el2);
+> >
+> > This is problematic for a couple reasons:
+> >
+> >  - If the kernel isn't running at EL2, VPIDR_EL2 is undefined
+> >
+> >  - VPIDR_EL2 needs to be handled as part of the vCPU context, not
+> >    written to without a running vCPU. What would happen if two vCPUs
+> >    have different MIDR values?
+> >
+> > Here's a new diff with some hacks thrown in to handle VPIDR_EL2
+> > correctly. Very lightly tested :)
+>=20
+> Thans, I am also faced this issue, but other than this, I am also
+> facing a issue, after updating
+> MIDR_EL1, The CP15 register MIDR for aarch32 not updated.
+> The instruction is `MRC p15,0,<Rt>,c0,c0,0    ; Read CP15 Main ID Registe=
+r` from
+> https://developer.arm.com/documentation/ddi0406/b/System-Level-Architectu=
+re/Protected-Memory-System-Architecture--PMSA-/CP15-registers-for-a-PMSA-im=
+plementation/c0--Main-ID-Register--MIDR-
+>=20
+> The value of this instruction is not updated
 
-IIRC RMON standardizes these three:
+How do you determine that MIDR isn't updated? How do you update the
+userspace view?
 
-        {    0,    64 },
-        {   65,   127 },
-        {  128,   255 },
-        {  256,   511 },
-        {  512,  1023 },
-        { 1024,  1518 },
+Thanks,
 
-Once we get into jumbo (as you probably noticed) the tables start 
-to diverge, mostly because max MTU is different.
+	M.
 
-On one hand common code is nice, on the other I don't think defining
-this table has ever been a source of confusion, and common table won't
-buy users anything. But, would be yet another thing we have to check
-in review, no?
+--=20
+Without deviation from the norm, progress is not possible.
 
