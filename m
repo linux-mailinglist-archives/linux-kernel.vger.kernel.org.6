@@ -1,148 +1,105 @@
-Return-Path: <linux-kernel+bounces-516411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0865A370FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:13:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1273A370FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0963AFCD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE5A1893820
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08121FCD12;
-	Sat, 15 Feb 2025 22:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eTk4Jsff"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2101A5B84;
+	Sat, 15 Feb 2025 22:21:16 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D01189BB5;
-	Sat, 15 Feb 2025 22:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3351925B8
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 22:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739657624; cv=none; b=gcBcRTbGgrAkBGtgsV4mOV0d4yMZCX2LzIlQvi4bmlA5t48Parle7P9rfvvMdjlAKNkM0L69H3jgYUD3pnJjdHf2cDGIz7W3R9uDRUpMGW0ylUNqmmSWtGA2rb78qI3lOUJa8L07LKWiwCvekS+kV9YpewreMMzOC7FLmg/MDCc=
+	t=1739658075; cv=none; b=lWHNQOwmkDwC4ifJQt5TcCGePbN0z1SGPPiBRk1Uim7GeyAHeRsfX5819QJDgP55Q3z34+OPnUKDG6tOZYZKXCmBfTVQ0XQ4wE1T2zGhXP+LvZPenXHC5BJjw+ftBIdIXHthaGjUi74mN+ws59dV4pDosEddpMXrI91e3Lh7Mnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739657624; c=relaxed/simple;
-	bh=1r417Fv4wbCmlslgcJsjmJDWgb1/N6LDEW+Yz33Fr8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBZHBleCHIzfYX1tT9/cmZedQAph4pjOhs0bKCqQShmBjZYdsAG2zzttTzQUQ5SZd8xzScz1o4rIMVx9RZIcn+mJy3uxgmYFrJ66VKxCp9W5GEleQUqqiolodrWDJ7xQ16gUmiktr4rTRVmYEybR/k/LrrEf6r/ThM4iN0bK/v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eTk4Jsff; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739657623; x=1771193623;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1r417Fv4wbCmlslgcJsjmJDWgb1/N6LDEW+Yz33Fr8c=;
-  b=eTk4JsffY48T1aCveFVVKUF91zvcQngO7c2D+FRiYQwPUhruOL9vlrL/
-   TxnUcGpddsi2oYDqvE4w4ou7MLzKMHqBQ8hDqTKaMZrEQDx+Lg+x0uO+J
-   hQI9VntdjoUBqD8OLREQtANxqjFA2DHN1KQHgGEAzR3mWefLQHZR78nCH
-   rVwX2UBZX3okZVjnSTnuu54mKOVoEIS1kPQ6xyOvaf/UlI4/7Y/yHCAaK
-   kXzemuctd85CIP48ugcRzqjD8mJsMmfUJOZCClQpNTgFDq4dSvnk4IMUf
-   MIaNspjnzGM9K8NlUy3ozYeOM0XfkRlLC37Mxy5ddNHhShOKuWUR6iBpO
-   w==;
-X-CSE-ConnectionGUID: Wm04jTO/Q/qcYmkMrNGbpQ==
-X-CSE-MsgGUID: e6NGyblDRimqZosizy6s0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40305229"
-X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
-   d="scan'208";a="40305229"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 14:13:42 -0800
-X-CSE-ConnectionGUID: DAovtuyVRvOV4qVt/ikIWA==
-X-CSE-MsgGUID: GowWOLRRQdyCy/J8bsEbUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118693578"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 15 Feb 2025 14:13:38 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjQPn-001BEZ-2W;
-	Sat, 15 Feb 2025 22:13:35 +0000
-Date: Sun, 16 Feb 2025 06:13:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Esteban Blanc <eblanc@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Esteban Blanc <eblanc@baylibre.com>
-Subject: Re: [PATCH v4 3/6] iio: adc: ad4030: add averaging support
-Message-ID: <202502160603.zYl25ISM-lkp@intel.com>
-References: <20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a@baylibre.com>
+	s=arc-20240116; t=1739658075; c=relaxed/simple;
+	bh=7YBl0rJiPKdcMLSsC2tAHvhe5cuQvgT6BVtCUfuga4Q=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=hq+pB75LQXeJjK/umFQFxNJEV12bhZoOKJppdpxo18CN1cFdZlVw5edxDgMqfn6vwS7fxbVTPKR0hT2Himt0TdJ14cfzNuOnzwAtoAs5uIgOTvftDWrYuGqi8duU6CgIg9TyUqj1Sy3rF4RGzsJ91KxLRCDA6pec7bWu0u+ut2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 3B83D2F332B;
+	Sat, 15 Feb 2025 23:21:04 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id LVFoHIv9BJ5s; Sat, 15 Feb 2025 23:21:04 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id E4B912B4F6A;
+	Sat, 15 Feb 2025 23:21:03 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id WNNxbRAQ5ZXY; Sat, 15 Feb 2025 23:21:03 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id CD1132B03C5;
+	Sat, 15 Feb 2025 23:21:03 +0100 (CET)
+Date: Sat, 15 Feb 2025 23:21:03 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: torvalds <torvalds@linux-foundation.org>
+Cc: linux-um <linux-um@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <153400218.11019314.1739658063786.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UML fixes for v6.14-rc3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF135 (Linux)/8.8.12_GA_3809)
+Thread-Index: Py+j5YggKIhDLYY1onwnBXiaHHPABg==
+Thread-Topic: UML fixes for v6.14-rc3
 
-Hi Esteban,
+Linus,
 
-kernel test robot noticed the following build warnings:
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-[auto build test WARNING on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Esteban-Blanc/dt-bindings-iio-adc-add-ADI-ad4030-ad4630-and-ad4632/20250214-202727
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a%40baylibre.com
-patch subject: [PATCH v4 3/6] iio: adc: ad4030: add averaging support
-config: parisc-randconfig-r112-20250216 (https://download.01.org/0day-ci/archive/20250216/202502160603.zYl25ISM-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250216/202502160603.zYl25ISM-lkp@intel.com/reproduce)
+are available in the Git repository at:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502160603.zYl25ISM-lkp@intel.com/
+  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.14-rc3
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/adc/ad4030.c:375:27: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected struct iio_scan_type *scan_type @@     got struct iio_scan_type const * @@
-   drivers/iio/adc/ad4030.c:375:27: sparse:     expected struct iio_scan_type *scan_type
-   drivers/iio/adc/ad4030.c:375:27: sparse:     got struct iio_scan_type const *
-   drivers/iio/adc/ad4030.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+for you to fetch changes up to 96178631c3f53398044ed437010f7632ad764bf8:
 
-vim +375 drivers/iio/adc/ad4030.c
+  um: convert irq_lock to raw spinlock (2025-02-12 23:40:59 +0100)
 
-   365	
-   366	static int ad4030_get_chan_scale(struct iio_dev *indio_dev,
-   367					 struct iio_chan_spec const *chan,
-   368					 int *val,
-   369					 int *val2)
-   370	{
-   371		struct ad4030_state *st = iio_priv(indio_dev);
-   372		struct iio_scan_type *scan_type;
-   373	
-   374		if (chan->differential) {
- > 375			scan_type = iio_get_current_scan_type(indio_dev,
-   376							      st->chip->channels);
-   377			*val = (st->vref_uv * 2) / MILLI;
-   378			*val2 = scan_type->realbits;
-   379			return IIO_VAL_FRACTIONAL_LOG2;
-   380		}
-   381	
-   382		*val = st->vref_uv / MILLI;
-   383		*val2 = chan->scan_type.realbits;
-   384		return IIO_VAL_FRACTIONAL_LOG2;
-   385	}
-   386	
+----------------------------------------------------------------
+This pull request contains the following bug fixes for UML:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Align signal stack correctly
+- Convert to raw spinlocks where needed (irq and virtio)
+- FPU related fixes
+
+----------------------------------------------------------------
+Benjamin Berg (4):
+      um: add back support for FXSAVE registers
+      um: avoid copying FP state from init_task
+      um: properly align signal stack on x86_64
+      um: fix execve stub execution on old host OSs
+
+Johannes Berg (3):
+      um: virt-pci: don't use kmalloc()
+      um: virtio_uml: use raw spinlock
+      um: convert irq_lock to raw spinlock
+
+ arch/um/drivers/virt-pci.c       | 198 ++++++++++++++++++++-------------------
+ arch/um/drivers/virtio_uml.c     |   8 +-
+ arch/um/kernel/irq.c             |  79 +++++++++-------
+ arch/um/kernel/process.c         |  10 +-
+ arch/um/os-Linux/skas/process.c  |  16 +++-
+ arch/x86/um/os-Linux/registers.c |  21 ++++-
+ arch/x86/um/signal.c             |  13 ++-
+ 7 files changed, 203 insertions(+), 142 deletions(-)
 
