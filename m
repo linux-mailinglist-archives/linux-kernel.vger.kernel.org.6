@@ -1,180 +1,132 @@
-Return-Path: <linux-kernel+bounces-516314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F600A36F94
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D4FA36F95
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3D316A72D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD203B0116
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF4E1E5B74;
-	Sat, 15 Feb 2025 16:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95341E5B7C;
+	Sat, 15 Feb 2025 16:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMFtdz/l"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Pe3YZ3y8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DE142AA5
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 16:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4C1C7011;
+	Sat, 15 Feb 2025 16:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739638587; cv=none; b=upoSGyz0mUrkb7ysVHu5Ibkts4FNl/6Ee17Lm5DHcN+z69gPfGApca7iArF2XI333lRIdikeFdqjw+BOLu7PGibYc4ZiA4ZYEDlxwUVaVSYn6XDJT582FgcLLQFfAcXUW6K6pcJNWwJoB/JxptuDuDoyfhxoC9zciYLZBraj3DE=
+	t=1739638617; cv=none; b=e0ksiP7FUM9Bkq7v9wva1bW3gBvkGfEWe019oCPlOm2ftlmnWDHs0SouOpYwT3lgZZGjMnxNCXsOacokk1zKT/pVB0u2gN+qYdP+/mfY70H0P93DilXAdVk9R9ms1SVNiVvW09qH7psqG7SBwooqWEVPGOdkAF6XDQMrngtTb8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739638587; c=relaxed/simple;
-	bh=4GhenkbDKrBeeQpaac7GCOVjDC5507GawgZwHJpzRtI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LbY1zT0pmPsFHYqLEVNSQYS/EDPTqvjFEh9ZAvuld/mMKo4NIYnPjJURr0fHJTc/Aqyc9TT1tZFJdwzmSO6SD9flWATC84pNVow/3S777BTgdJN8knt9bTNmuYlznGfAglNBu7DJIMCNzi0YE0xvxNtUOmWbmR4uWSaO1xAFPTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMFtdz/l; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c8eb195aso63325605ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 08:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739638585; x=1740243385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CinEX6MS0HzyKFLg59Ti4ekQYL3c86s5su+UMLdFpAA=;
-        b=nMFtdz/lZfN2cqpMcaXsmvURbjfkMYtc2eKgB4by/ucK5UQThUT8a4ZtZfI9qNqMTM
-         xMUcwop2TNxXmC8jpJhgCb/CmyCyNeU6FPXer2qcH5goLnSaUdI0NrtQEytjXKmFQ4QY
-         Mjg8+JzC8kJ1+qykQOBqZheFHLRoTlKY6/+qe8GX+I3bHWhA+gPg/JPCHadzNcXccUPp
-         uw2cFWRv6XkCE46eso1d4d7KlrxZQYVGRTkSi1J0YKS3gSBI2oSJa3y7pGNlE9MmJ45Z
-         Ai3xxwZcpjE2j45Ov+06tDcofkuf91HKRSBj2vcrAYByp19A8n4Q2WnrCUm/7iWyvk5P
-         gZkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739638585; x=1740243385;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CinEX6MS0HzyKFLg59Ti4ekQYL3c86s5su+UMLdFpAA=;
-        b=kWrWZK+5Ai/pPbgdoY2p1LZ7j5oYQtHxPm0eB/enrHmi1QqDIVUv7iNJ+fWJeTLdiG
-         W23VYPx9WDW4Yds7TUeG4jmO7BEsN05jAPo/HkpT3LzcWeXoC/pmeqa3UwfbeDSLaJK5
-         0B7F+Op363Rr6afA0S7fL8PMXnWWlHBbs9XKjWOoRKOITNRZKobDPt1ZRfxfUAlMb2vA
-         VT3jEY1w2GDm7mcovkRNo6/ihZzD5tGYC5DuMWcsBAu3s74FJweOiPHEo87Rdh8Gah+v
-         jgQTbFqSMzGT79kgsfJsIPOrfsylxbu91HdBsZbhbej7XyVZPvRrNHIgRoNP0REBGwRT
-         fduw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/jFUshJH1Z4Bde1KUa8ZJu0bCtL8PxV5gPeMw04NuYqml/Xstmq/nwpxQpY/5XJyFvHVnxmmPh/h8ot4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykzIXiRJ5dK8rWpLUizfIXG6H0X1GK5vE6XFqlxLH4ntOG1TvD
-	YX6Yb6iF0nZjw/EvzKrTWs7z7XacVLcX9/WI+jPfkwGtTOscittn
-X-Gm-Gg: ASbGncvFLTrC4tTQQiitplE8C+1nMVlT+KVoJHx13wYxjlnjrgrVgTz1yhRjDZQJ68c
-	tyMIepoXKcSmCJECvb1OHgfgdQYiJE5zEYiAc3d8OUZVIDXOwBVsqKkjTJOj07ukVzXHRch/qCn
-	sDWJqGKzwTWAmWW9BjBbWaCMdIh/GP+uIymeZimmC+1EUwxAKRgEGTylQ1H/v4I+MqAs2776MXp
-	2VN9qMFVp9Dj81wlE0aj+6tdJCbV9MaJviivu/Y00nrOqkMT74PJwsX740d8ooPMw6osrkPuhFC
-	Gl+bM6oMj+sN9tnRI9UnbdeUZ1yAVUynYlPNBSOWjvYzeQ==
-X-Google-Smtp-Source: AGHT+IH2P4if7COcGYmP4DezxEUNxcJikr03utpzr8xnuT8+KDr/NnQ904DfCePIlL8VCvYAr1nWZw==
-X-Received: by 2002:a17:903:1d1:b0:220:d272:534d with SMTP id d9443c01a7336-2210405c6b6mr68438755ad.22.1739638585171;
-        Sat, 15 Feb 2025 08:56:25 -0800 (PST)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536b047sm45926115ad.101.2025.02.15.08.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 08:56:24 -0800 (PST)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: akpm@linux-foundation.org
-Cc: jserv@ccns.ncku.edu.tw,
-	eleanor15x@gmail.com,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH RESEND] lib min_heap: Use size_t for array size and index variables
-Date: Sun, 16 Feb 2025 00:56:18 +0800
-Message-Id: <20250215165618.1757219-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739638617; c=relaxed/simple;
+	bh=wyw8Ovh8n7iuN0KZVDZ5yM4pmIpJuKuYOg7F8OqhR2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+dFTyLJww12SicatweWF9kwcDzKvHir5uAkDrf4GOvwCD1RVspUtpc2jf6Z1VcdfhzI3hvD4kbkVK8ctpHHsKFvJM1deRmrWH3VktaKzmR4dAYo1KA0zg+TXCLP6Jc5gmHlzfa11+9Dg3Yo2VI1BX7R4N7DApbck/ldUsUIMy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Pe3YZ3y8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BE9C4CEDF;
+	Sat, 15 Feb 2025 16:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739638616;
+	bh=wyw8Ovh8n7iuN0KZVDZ5yM4pmIpJuKuYOg7F8OqhR2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pe3YZ3y8ct0kRMusplLlWkv1fnkQGWM2FHYRkQIORDM1aXxaTnHGjMY1A+GaKPQP7
+	 7YGksMnp5hsxdjwTHW+zJnkMrrUhLnBr3aZ/bDuEOf8TsHU4QxGpzyN7Oa6LH6Gmij
+	 O3LqHMFnxZnyUSGtINrz4h/IwZqP6D7jAe/nIMNA=
+Date: Sat, 15 Feb 2025 17:56:54 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ian To <onlyian4981@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] staging: rtl8723bs: format comments
+Message-ID: <2025021510-surround-drainage-1425@gregkh>
+References: <cover.1739351267.git.onlyian4981@gmail.com>
+ <2e6dc11ef35d5af653095e416f2a48b6dbcc0de1.1739351267.git.onlyian4981@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e6dc11ef35d5af653095e416f2a48b6dbcc0de1.1739351267.git.onlyian4981@gmail.com>
 
-Replace the int type with size_t for variables representing array sizes
-and indices in the min-heap implementation. Using size_t aligns with
-standard practices for size-related variables and avoids potential
-issues on platforms where int may be insufficient to represent all
-valid sizes or indices.
+On Wed, Feb 12, 2025 at 01:22:54AM -0800, Ian To wrote:
+> Some comments were not formatted correctly. Reported by checkpatch.
+> 
+> Signed-off-by: Ian To <onlyian4981@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_security.c | 92 +++++++++----------
+>  1 file changed, 46 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+> index 1e9eff01b1aa..f4556ae54352 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_security.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+> @@ -30,10 +30,10 @@ const char *security_type_str(u8 value)
+>  /* WEP related ===== */
+>  
+>  /*
+> -	Need to consider the fragment  situation
+> -*/
+> + *	Need to consider the fragment  situation
+> + */
+>  void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+> -{																	/*  exclude ICV */
+> +{
+>  	union {
+>  		__le32 f0;
+>  		unsigned char f1[4];
+> @@ -342,23 +342,23 @@ static const unsigned short Sbox1[2][256] = {      /* Sbox for hash (can be in R
+>  	}
+>  };
+>  
+> - /*
+> -**********************************************************************
+> -* Routine: Phase 1 -- generate P1K, given TA, TK, IV32
+> -*
+> -* Inputs:
+> -*     tk[]      = temporal key                         [128 bits]
+> -*     ta[]      = transmitter's MAC address            [ 48 bits]
+> -*     iv32      = upper 32 bits of IV                  [ 32 bits]
+> -* Output:
+> -*     p1k[]     = Phase 1 key                          [ 80 bits]
+> -*
+> -* Note:
+> -*     This function only needs to be called every 2**16 packets,
+> -*     although in theory it could be called every packet.
+> -*
+> -**********************************************************************
+> -*/
+> +/*
+> + **********************************************************************
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
- include/linux/min_heap.h | 12 ++++++------
- lib/min_heap.c           |  4 ++--
- 2 files changed, 8 insertions(+), 8 deletions(-)
+Why the long line of **** ?
 
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-index 1160bed6579e..79ddc0adbf2b 100644
---- a/include/linux/min_heap.h
-+++ b/include/linux/min_heap.h
-@@ -218,7 +218,7 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
- 
- /* Initialize a min-heap. */
- static __always_inline
--void __min_heap_init_inline(min_heap_char *heap, void *data, int size)
-+void __min_heap_init_inline(min_heap_char *heap, void *data, size_t size)
- {
- 	heap->nr = 0;
- 	heap->size = size;
-@@ -254,7 +254,7 @@ bool __min_heap_full_inline(min_heap_char *heap)
- 
- /* Sift the element at pos down the heap. */
- static __always_inline
--void __min_heap_sift_down_inline(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down_inline(min_heap_char *heap, size_t pos, size_t elem_size,
- 				 const struct min_heap_callbacks *func, void *args)
- {
- 	const unsigned long lsbit = elem_size & -elem_size;
-@@ -324,7 +324,7 @@ static __always_inline
- void __min_heapify_all_inline(min_heap_char *heap, size_t elem_size,
- 			      const struct min_heap_callbacks *func, void *args)
- {
--	int i;
-+	ssize_t i;
- 
- 	for (i = heap->nr / 2 - 1; i >= 0; i--)
- 		__min_heap_sift_down_inline(heap, i, elem_size, func, args);
-@@ -379,7 +379,7 @@ bool __min_heap_push_inline(min_heap_char *heap, const void *element, size_t ele
- 			    const struct min_heap_callbacks *func, void *args)
- {
- 	void *data = heap->data;
--	int pos;
-+	size_t pos;
- 
- 	if (WARN_ONCE(heap->nr >= heap->size, "Pushing on a full heap"))
- 		return false;
-@@ -428,10 +428,10 @@ bool __min_heap_del_inline(min_heap_char *heap, size_t elem_size, size_t idx,
- 	__min_heap_del_inline(container_of(&(_heap)->nr, min_heap_char, nr),	\
- 			      __minheap_obj_size(_heap), _idx, _func, _args)
- 
--void __min_heap_init(min_heap_char *heap, void *data, int size);
-+void __min_heap_init(min_heap_char *heap, void *data, size_t size);
- void *__min_heap_peek(struct min_heap_char *heap);
- bool __min_heap_full(min_heap_char *heap);
--void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args);
- void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
- 			const struct min_heap_callbacks *func, void *args);
-diff --git a/lib/min_heap.c b/lib/min_heap.c
-index 4485372ff3b1..96f01a4c5fb6 100644
---- a/lib/min_heap.c
-+++ b/lib/min_heap.c
-@@ -2,7 +2,7 @@
- #include <linux/export.h>
- #include <linux/min_heap.h>
- 
--void __min_heap_init(min_heap_char *heap, void *data, int size)
-+void __min_heap_init(min_heap_char *heap, void *data, size_t size)
- {
- 	__min_heap_init_inline(heap, data, size);
- }
-@@ -20,7 +20,7 @@ bool __min_heap_full(min_heap_char *heap)
- }
- EXPORT_SYMBOL(__min_heap_full);
- 
--void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args)
- {
- 	__min_heap_sift_down_inline(heap, pos, elem_size, func, args);
--- 
-2.34.1
+That should not be needed.
 
+> -/**
+> +/*
+
+Why are you removing kerneldoc comment style?
+
+>   * omac1_aes_128_vector - One-Key CBC MAC (OMAC1) hash with AES-128
+>   * @key: 128-bit key for the hash operation
+>   * @num_elem: Number of elements in the data vector
+> @@ -1530,7 +1529,7 @@ static int omac1_aes_128_vector(u8 *key, size_t num_elem,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+
+Same here?
+
+thanks,
+
+greg k-h
 
