@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-516186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D126A36DDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:50:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157D2A36DDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6131895B61
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780C5171B21
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958A71ACEC6;
-	Sat, 15 Feb 2025 11:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD21A2642;
+	Sat, 15 Feb 2025 11:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AsQby83H"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SY1DdM/L"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2A2191F75;
-	Sat, 15 Feb 2025 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF7191F75;
+	Sat, 15 Feb 2025 11:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739620194; cv=none; b=bawjddDfa+nLcJ2s/4lj1O18M/SsBzLw7ExLpqN8t8Yc9aSNUKgDCFpWQx0fy0qiCXyzaKNfDDXdGpIhUyRbDVvmEodrM8MIWH18k2/MFFlM+4ST/1lpX99J0qSCiN2EfavQp8P59HoD2x1hp+3o2IIR63pUdQyH3a/KcceUoEU=
+	t=1739620203; cv=none; b=dSRV7DNxR5tqIne4Q+U/XcHa5ekYZ1lfhaPV0ileroKV2M5FU0sj2vKPUtWkuWjjWDn5AtvBwPoiO+7b6GrVT9vJk2Jz2QbZOO4u8SwhtS4eAoSZr1V3TTcvRyD+631u9/BZ0DueMJkjy8U53vDQu1X7vHSBjh9OC/+mK9beIuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739620194; c=relaxed/simple;
-	bh=+FQIRzs2wuQMgHTdEcnK0KoIvFu1L6jLBjAsnavS25g=;
+	s=arc-20240116; t=1739620203; c=relaxed/simple;
+	bh=Fs5UveEaIDoISFa7M98IagHDHCEkTg/NDXCCXkbaMC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pUgDR68lvw6wliojMNzC78prXTdhF2xBiMHDBBPZt8lVWs+CBfVjkkIo+nuKB1nsqJrEzMaVXR85F1BeoGN0QwKq+whTMMuPXxUa8wGEFMWy75ULwmtUXBsnhAKMVrak2wwnggr6C9uqkow9hLE3bDHoJXJ8cTGz8Zjxr6VmY7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AsQby83H; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51FBnHnD1020992
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 15 Feb 2025 05:49:17 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739620157;
-	bh=Rl5VY1tkZwofxrwLasF8opojSaEzhoskkIEIIsmtuIs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=AsQby83HBCpVhiAL5rUzfY4e7JKSLISu3hohn3PYxUJM2eQVWbKc34xnW7IwRG6In
-	 xjtYfeB8rqns+aV5jizW4OWE/y9T///AWlCxbfq5nXx+bKtZHJTNaa+7XBjKhzKcKi
-	 fiO9Y47polG80URj10cR6aIKmuV7kIT8dCD0aDhQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51FBnH53072303
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 15 Feb 2025 05:49:17 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 15
- Feb 2025 05:49:16 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 15 Feb 2025 05:49:16 -0600
-Received: from [172.24.227.220] (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51FBnB91026495;
-	Sat, 15 Feb 2025 05:49:12 -0600
-Message-ID: <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com>
-Date: Sat, 15 Feb 2025 17:19:11 +0530
+	 In-Reply-To:Content-Type; b=KiiGlzjCHxgXpoSpX7NZ7bgQbYhHRD2eQsQC7vlUy0LEzFXSW2nMZVrIxNWU61H9FHssS9Vaa+mc73A9MVgK+6U329HAJfERrzigAXFoOirSQx4Tno2S9q1Sw79VX8l+vEQj95uC5Ir1SAdOlBsR6CoRkD0h/dO7tpacJLyzi9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SY1DdM/L; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51FAidhu008563;
+	Sat, 15 Feb 2025 11:49:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	haO7wmDHIMtM6c5v1RgC2Q4mqukTFfgaoIqbl8FyAWE=; b=SY1DdM/LVFdmsMDH
+	5uZkNfJNHsknObXhDTx3+JYd9sZUiBivUGEZdK8vaFNYb1YMkY3FcgxIwJjm9jHk
+	o1/ZgDzoRx2ewysCdnghioiDMKZHPUxZs2dYLqtelpkWCuTAbrcDo7B+rEl5sbOr
+	qXcD+pPHx7XhVz5qGjb4uXVXAEPAZcf+5kBewLUy3DLCJSWXI6FUidAJE4AW9vwF
+	ge6B71P88P1qAwcVR5HPTmqjMHB20S5KBrh0b6nYDOiWMJAdq3IAI6IHZYBg8xPB
+	rvEY2RmlgcaAWsvUvMrvBcg9Kxl5QyjVFtRb7q7uL4jvZZbn20LxZRBX0G7oHaWm
+	10uz+g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tm3gres7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Feb 2025 11:49:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51FBnjgM014817
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Feb 2025 11:49:45 GMT
+Received: from [10.216.9.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Feb
+ 2025 03:49:38 -0800
+Message-ID: <182b7896-9cfc-4f94-b9d4-759fd85fd997@quicinc.com>
+Date: Sat, 15 Feb 2025 17:19:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,89 +64,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] irqchip: ti-tsir: Add support for Timesync
- Interrupt Router
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Reeder <jreeder@ti.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, Paolo Abeni <pabeni@redhat.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew+netdev@lunn.ch>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>, <danishanwar@ti.com>, <m-malladi@ti.com>
-References: <20250205160119.136639-1-c-vankar@ti.com>
- <20250205160119.136639-2-c-vankar@ti.com> <87lduin4o5.ffs@tglx>
- <09880b14-cef1-44cd-9fa4-8840fb673c0a@ti.com> <87cyfplg8s.ffs@tglx>
- <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com> <87jz9tjwjk.ffs@tglx>
+Subject: Re: [PATCH 2/5] drm/msm/a6xx: Add support for Adreno 623
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Jie Zhang
+	<quic_jiezh@quicinc.com>
+References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
+ <20250213-a623-gpu-support-v1-2-993c65c39fd2@quicinc.com>
+ <ttipuo56z76svx3womcrrqurglvovkqehsx2orgnegjj2z7uxn@d3cov6qmmalm>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
 Content-Language: en-US
-From: Chintan Vankar <c-vankar@ti.com>
-In-Reply-To: <87jz9tjwjk.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <ttipuo56z76svx3womcrrqurglvovkqehsx2orgnegjj2z7uxn@d3cov6qmmalm>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: F0rhQWccDnNCDqMUeNMOUdFqwH-YEh4e
+X-Proofpoint-GUID: F0rhQWccDnNCDqMUeNMOUdFqwH-YEh4e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-15_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502150105
 
-Hello Thomas,
-
-On 14/02/25 04:13, Thomas Gleixner wrote:
-> Chintan!
-> 
-> On Fri, Feb 14 2025 at 00:15, Vankar, Chintan wrote:
->> On 2/11/2025 1:33 AM, Thomas Gleixner wrote:
->>> On Sun, Feb 09 2025 at 14:06, Vankar, Chintan wrote:
->>>> On 2/7/2025 2:58 AM, Thomas Gleixner wrote:
->>> If I understand this correctly, then the interrupt number you need to
->>> allocate for this is never going to be requested. If it would be
->>> requested it just would do nothing and the handler would never be
->>> invoked, right?
->>>
->>> The allocation just establishes the routing of a signal between two
->>> arbitrary IP blocks in the SoC.
->>>
->>> So the question is what has this to do with interrupts in the first
->>> place?
+On 2/13/2025 10:24 PM, Dmitry Baryshkov wrote:
+> On Thu, Feb 13, 2025 at 09:40:07PM +0530, Akhil P Oommen wrote:
+>> From: Jie Zhang <quic_jiezh@quicinc.com>
 >>
->> Your understanding is correct about the Timesync INTR. As I mentioned
->> Timesync INTR is an instance of Interrupt Router which has multiple
->> output and not all the output lines are acting as interrupt lines unlike
->> other Interrupt Routers. Timesync INTR can have devices on both the
->> sides, we can provide input to Timesync INTR that can be consumed by
->> some other device from the output line. As an instance, One of the
->> input of Timesync INTR is an output from the CPTS module which can be
->> consumed by other device and that does not need to handle/allocate Linux
->> irq number.
+>> Add support for Adreno 623 GPU found in QCS8300 chipsets.
+>>
+>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c   | 29 +++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       |  8 ++++++++
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 +-
+>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  5 +++++
+>>  4 files changed, 43 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> index edffb7737a97..ac156c8b5af9 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -879,6 +879,35 @@ static const struct adreno_info a6xx_gpus[] = {
+>>  			{ 0, 0 },
+>>  			{ 137, 1 },
+>>  		),
+>> +	}, {
+>> +		.chip_ids = ADRENO_CHIP_IDS(0x06020300),
+>> +		.family = ADRENO_6XX_GEN3,
+>> +		.fw = {
+>> +			[ADRENO_FW_SQE] = "a650_sqe.fw",
+>> +			[ADRENO_FW_GMU] = "a623_gmu.bin",
+>> +		},
+>> +		.gmem = SZ_512K,
+>> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>> +			ADRENO_QUIRK_HAS_HW_APRIV,
+>> +		.init = a6xx_gpu_init,
+>> +		.a6xx = &(const struct a6xx_info) {
+>> +			.hwcg = a620_hwcg,
+>> +			.protect = &a650_protect,
+>> +			.gmu_cgc_mode = 0x00020200,
+>> +			.prim_fifo_threshold = 0x00010000,
+>> +			.bcms = (const struct a6xx_bcm[]) {
+>> +				{ .name = "SH0", .buswidth = 16 },
+>> +				{ .name = "MC0", .buswidth = 4 },
+>> +				{
+>> +					.name = "ACV",
+>> +					.fixed = true,
+>> +					.perfmode = BIT(3),
+>> +				},
+>> +				{ /* sentinel */ },
+>> +			},
+>> +		},
+>> +		.address_space_size = SZ_16G,
+>>  	}, {
+>>  		.chip_ids = ADRENO_CHIP_IDS(
+>>  			0x06030001,
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> index 0ae29a7c8a4d..1820c167fcee 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> @@ -616,6 +616,14 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
+>>  		gpu->ubwc_config.uavflagprd_inv = 2;
+>>  	}
+>>  
+>> +	if (adreno_is_a623(gpu)) {
+>> +		gpu->ubwc_config.highest_bank_bit = 16;
+>> +		gpu->ubwc_config.amsbc = 1;
 > 
-> Two questions:
+> This bit causes my question: the patch for msm_mdss states that on the
+> display side both UBWC encoder and decoder are 4.0, which means that the
+> UBWC_AMSBC bit won't be set in the UBWC_STATIC register.
+
+Not sure, but my guess is that AMSBC encoding is probably implicitly
+enabled by MDSS HW when UBWC v4 is configured.
+
+-Akhil
+
 > 
->   1) For the case where no interrupt is involved, how is the routing
->      configured?
+>> +		gpu->ubwc_config.rgb565_predicator = 1;
+>> +		gpu->ubwc_config.uavflagprd_inv = 2;
+>> +		gpu->ubwc_config.macrotile_mode = 1;
+>> +	}
+>> +
+>>  	if (adreno_is_a640_family(gpu))
+>>  		gpu->ubwc_config.amsbc = 1;
+>>  
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> index 2c10474ccc95..3222a406d089 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+>> @@ -1227,7 +1227,7 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
+>>  	_a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[1],
+>>  		&a6xx_state->gmu_registers[1], true);
+>>  
+>> -	if (adreno_is_a621(adreno_gpu))
+>> +	if (adreno_is_a621(adreno_gpu) || adreno_is_a623(adreno_gpu))
+>>  		_a6xx_get_gmu_registers(gpu, a6xx_state, &a621_gpucc_reg,
+>>  			&a6xx_state->gmu_registers[2], false);
+>>  	else
+>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+>> index dcf454629ce0..92caba3584da 100644
+>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+>> @@ -442,6 +442,11 @@ static inline int adreno_is_a621(const struct adreno_gpu *gpu)
+>>  	return gpu->info->chip_ids[0] == 0x06020100;
+>>  }
+>>  
+>> +static inline int adreno_is_a623(const struct adreno_gpu *gpu)
+>> +{
+>> +	return gpu->info->chip_ids[0] == 0x06020300;
+>> +}
+>> +
+>>  static inline int adreno_is_a630(const struct adreno_gpu *gpu)
+>>  {
+>>  	return adreno_is_revn(gpu, 630);
+>>
+>> -- 
+>> 2.45.2
+>>
 > 
->   2) For the case where it routes an input line to an interupt, then how
->      is this interrupt going to be handled by this interrupt domain which
->      is not connected to anything and implements an empty disfunctional
->      interrupt chip?
-> 
 
-For both the cases above the job of Timesync INTR is to map the output
-register with the corresponding input.
-
-As described in section 11.3.2.1 in the TRM at:
-https://www.ti.com/lit/ug/spruiu1d/spruiu1d.pdf,
-the job of the Timesync INTR is to provide a configuration of the
-"output registers which controls the selection". Hence we just have to
-provide configuration APIs in the Timesync INTR which programs output
-registers of the Timesync INTR. About the handling of the interrupts,
-the device which receives an interrupt needs to handle the interrupt.
-
-Could you please explain why we consider these two cases to be
-different?
-
-
-Regards,
-Chintan.
-
-> Thanks
-> 
->          tglx
 
