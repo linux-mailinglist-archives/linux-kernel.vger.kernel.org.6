@@ -1,143 +1,101 @@
-Return-Path: <linux-kernel+bounces-516358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F52A37019
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:10:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D45A3701B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701AC188CDB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79F9188E4A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8A61EA7D1;
-	Sat, 15 Feb 2025 18:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A231EA7FC;
+	Sat, 15 Feb 2025 18:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rxpai/9g"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3SeTT7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B8B1DC9BB
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 18:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A5D197A87;
+	Sat, 15 Feb 2025 18:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739642960; cv=none; b=LtAxLjkeyNR4A5KsyiPnWfg5EJ0S584IZvvZqI8qjFUDCTZP3VEIjrYUIbW6p32lAbF4M2ehi9rru4U78R5+TQgK78lAA6iTL04vQAEFRsIJXcdz8jfPWSQs9B5X4D/7OeNzmRM3eTCyWni1ABB3n5/U2x2LsQGLd3AYfieLWp8=
+	t=1739643072; cv=none; b=fTyIqsqMW4eVZWY1TR2UFSD9X5BsqsS7rf1fESiMw+R4ZXW5cL6YvdJ7GEp8C2jk1iUdWHOojYFaPdn5m7JP4xg1lWoJleOgBTOzbnsEGLbmSGawybP7Kq1GUMkln2dZDfFGLq8RPqHfZHhQsZZ2pi+HKxEvUt5kLOyw4i3C4WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739642960; c=relaxed/simple;
-	bh=15rssCfKMTilTq8EURyKsVA3WP9YhrGVgBbF5uFWkcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cT7sTtV/39JGwJBiUR2xPCJK8HfdeX2cQusZnPZ15BjO1H2Ye0rPgq1BproIKw9+12Xb7O5m7xEU/yNTl6evSa9q1iy5JCERrGCi31b8VQJZiTeHgRLxRnqMYKTgWAUz+CHTfuxrGW3eWlV1Wo11477w1y8hHBQ8502yorrZ10M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rxpai/9g; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0893f9aa6so96025585a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:09:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739642954; x=1740247754; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NPF/Alw+//gUVq8mrgRf1sA3HpgcZBGZ+ed5dpOL9uU=;
-        b=Rxpai/9gvE5emvOAheIBBTm16HKzGR6aUB95kJde7ip9ADje7qxrtPY4//zFj2BlDa
-         kyGTxfJH45u7IX7i75CemgS41VeU6X1u1erXVxR8xrnmR4QTCDjKIp5qV/xKmE2X4niX
-         ZXTiXyFtQtuUkiQwcXc1Qj80EgxHfnYP5WNPZkR4RJK0qdylylmKJ0qd+nejBVg8TtZ6
-         uCHjOV/nC4Am1w8ynoDyIz6x+ocSEdOAF+5Yrry/Jhg4UyB9PJTCBQ6PG7LjjmLVdLex
-         BayFDXwGp8ZgLi6Nwl0y6w7fuPlmyL0o+jf3hOGgpOF7Z2N07BAny+Gbpi6TevRlH9Bk
-         Lxbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739642954; x=1740247754;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NPF/Alw+//gUVq8mrgRf1sA3HpgcZBGZ+ed5dpOL9uU=;
-        b=dALS2HptuEPDmKIBC/ZMktCNdy7f3YtcMGgB9YQxORj7BCocx3bCot5UFCqqISMQfR
-         PBZSMjB7x9Q5andSpcRXdoJR5KqMmYehedTNH8Z0eDwT6oF0bJLGMIMJdl9zjw+RsfNl
-         Y9LMqa0nG3lbHtdgZ/FJDvFEOWtJBX33rMnO22AWJLgzUfvItwfITum0ag6GUGrUD4L3
-         Q251dHngLh7RgXORe//Qp6G4M7wpDi19kyAxl4zfdi04rOlwYIGQGnV2vpV84Q5Jxher
-         0QXkgRLv2gj9FevfMuvgDwU0SpZ6NpwS07DTOJv42p10EM4URd6M4bPX8xGoUXxMrXSq
-         yqOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ4jZwDCb1X3Ixmua6M1uxvoRephbrr5M+NKrS3Eys6NO+tj8229J3NTyRp5WH6yOZ3PEqdn6OL4PLSLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5BteKD3olzNVvq+Ju6rRj/WgeTjfvJYCYmZz3sNFnjRbTMacV
-	sgRxcNgH55SszicUk3zW+D2r2sF6ILZJndFqGD09mkZlBuLNUaZ5
-X-Gm-Gg: ASbGnctAX0n5+W9coolQUHXPK9W0/yqlnb5HNtVRLDMaf4RM/cwks22uQlL74sLOt2M
-	Q2VEn55HlPyDj1ZCiSe4d1Jba7haiSW/4/c2DPOZ6+alSeDEHNO7PC2qjZpiPqb/l+HqmmkuMv3
-	2oqviWKIRC+TEZNFlS2n0+NWfMpsSWAglUMPPGFnlWLM3H99KPPkYC1Rk/5Z5gsJT9k+hnOxTHk
-	KbTvXkr+ANP0OJbIP8rTayW3SZzhvfrs4bzUYKatp4PBCyODKcyIeCBl1Gwo6625LJmqcMsuld6
-	C6lDBLQJCL3ZtAiJaWwYC12X+exu+gZV8srVk32FXKnv0LIxmRE7
-X-Google-Smtp-Source: AGHT+IEl9KdRZhqzx5Xxn8OZkjroz7UixGi1SO9rhPskdpCEoIBJLhf+0gV/LBbwxGIzrqNyLlXW+Q==
-X-Received: by 2002:a05:620a:4441:b0:7c0:7f07:a635 with SMTP id af79cd13be357-7c08aac61c6mr588315685a.53.1739642954075;
-        Sat, 15 Feb 2025 10:09:14 -0800 (PST)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d77927csm34123606d6.10.2025.02.15.10.09.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 10:09:13 -0800 (PST)
-Date: Sat, 15 Feb 2025 13:09:11 -0500
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, David Laight <david.laight.linux@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] drm/repaper: fix integer overflows in repeat functions
-Message-ID: <xn7ikpjzqddnrna72ojiitufruemineonyhh5cmwizrrnt4txp@gh2sy6ixddx7>
-References: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1739643072; c=relaxed/simple;
+	bh=VwiucCmRsHj4WIjXs8qnCxLiQoA41Y/9GZf5q6IhOkU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TgLrVHbavgZB/TObITpCXQrtETXeGaLp26Lm76C29V4q0NX8F+7pmBFKNSfBdjAFFn7GZ39gdQSmKGzxi1KuFyqvCuYkV/a/pHlLUpphLnDGjcV/4Uw65Y8ERm9vRmTphDpJzt5DOWasWb9y0NCgMQaXWELDnWYAxodEQ1SMBOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3SeTT7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EEEC4CEE2;
+	Sat, 15 Feb 2025 18:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739643071;
+	bh=VwiucCmRsHj4WIjXs8qnCxLiQoA41Y/9GZf5q6IhOkU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d3SeTT7xsLBcmBCCbwEsTYMmsO5H+B9aU62Ry9WxlkZtPxRVfQWZaLjQtzEBNRK/8
+	 mWmcI/oBs8lsGujeTaP2Il5h2m2Hu8wR6hfwXZ8UKeMwUlcU2fB0bpIYs8jwmydQS0
+	 1rA2/FU3x4P+7Doi9WzLpR4PDhOuwy9yNdhshAz/9l8pairy/eDMgsfqp9sah/P6IZ
+	 H+bUl6D2PWzC2qHVYiMYcv+afzoOhgwbR0PW5QD1kOLOp1lcW8HO2XHD6TaKpY7O5x
+	 WGKxrJ0ZVjQimrRHXEeNRMsm1q96WnyFSXJ1r2WVvZXgPkOQ5VF1mA+WjFC687vatg
+	 sMjIVh956VbNQ==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54529eeb38aso1829783e87.2;
+        Sat, 15 Feb 2025 10:11:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU76f3SeWHbuNHX+8sSEsepXZ1Pbtfl8bLybFjQ4hQVGRiPfb5ky983/Rma40CUFJ+aqBRoj9sJzpdrv0CX@vger.kernel.org, AJvYcCUL9nduLKZ23Bgj0ySaBIT7OAnB1ePWLAc0SZB3OGi9ZBjahud/XVh5qjpRa1wjVI1cGOuuCr0DKBVKnkc=@vger.kernel.org, AJvYcCWNCeB9LdBZciU1C3R6VjK86JtWv4vlnv7RylRHJj6kS7DtS1tDoSM2WCvYvLdMPmyTmRxxSZ66@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM1LUP4JohoxY4qZyUBxpHTBCQ57cPjjKIVIVY2EDqZstO5ytF
+	EFNXrw0LvP7j0vi5td3voXegLtgbAveuVpBmDEGf0vnM7nzgxjUTRlxdo460YHJDzehmU8y/4BS
+	zOjCAt4SH2SzZq8J6L2rP78WILn0=
+X-Google-Smtp-Source: AGHT+IE0rwwrkKgLzFfRhD+QZGgoJPXVzhh3qODeXXehVd6GVBdQBZy6zuaKggs25GRFT4iSWYp/JPldBTE6dAjsCs8=
+X-Received: by 2002:a05:6512:6ce:b0:540:3561:969d with SMTP id
+ 2adb3069b0e04-5452fe8f8b0mr1371699e87.49.1739643070214; Sat, 15 Feb 2025
+ 10:11:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+References: <20250213-kbuild-userprog-fixes-v1-0-f255fb477d98@linutronix.de> <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
+In-Reply-To: <20250213-kbuild-userprog-fixes-v1-1-f255fb477d98@linutronix.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 16 Feb 2025 03:10:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQPO82Qp_161yGgsRL4hA1XdeoCX6ZgLutmivKorUuLxw@mail.gmail.com>
+X-Gm-Features: AWEUYZnbXcOx5HSwO35f-2mNBGhl_Ad3is1i1PF1BQf2JE6Cr9dN8_ACRThMo2w
+Message-ID: <CAK7LNAQPO82Qp_161yGgsRL4hA1XdeoCX6ZgLutmivKorUuLxw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kbuild: userprogs: fix bitsize and target detection
+ on clang
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 16, 2025 at 05:48:01AM -0800, Nikita Zhandarovich wrote:
-> There are conditions, albeit somewhat unlikely, under which right hand
-> expressions, calculating the end of time period in functions like
-> repaper_frame_fixed_repeat(), may overflow.
-> 
-> For instance, if 'factor10x' in repaper_get_temperature() is high
-> enough (170), as is 'epd->stage_time' in repaper_probe(), then the
-> resulting value of 'end' will not fit in unsigned int expression.
-> 
-> Mitigate this by casting 'epd->factored_stage_time' to wider type before
-> any multiplication is done.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
-> 
-> Fixes: 3589211e9b03 ("drm/tinydrm: Add RePaper e-ink driver")
+On Thu, Feb 13, 2025 at 11:55=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> scripts/Makefile.clang was changed in the linked commit to move --target =
+from
+> KBUILD_CFLAGS to KBUILD_CPPFLAGS, as that generally has a broader scope.
+> However that variable is not inspected by the userprogs logic,
+> breaking cross compilation on clang.
+>
+> Use both variables to detect bitsize and target arguments for userprogs.
+>
+> Fixes: feb843a469fb ("kbuild: add $(CLANG_FLAGS) to KBUILD_CPPFLAGS")
 > Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-
-After discussing with David Laight I cleared up my concerns.
-
-Reviewed-by: Alex Lanzano <lanzano.alex@gmail.com>
-
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 > ---
->  drivers/gpu/drm/tiny/repaper.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
-> index 77944eb17b3c..d76c0e8e05f5 100644
-> --- a/drivers/gpu/drm/tiny/repaper.c
-> +++ b/drivers/gpu/drm/tiny/repaper.c
-> @@ -456,7 +456,7 @@ static void repaper_frame_fixed_repeat(struct repaper_epd *epd, u8 fixed_value,
->  				       enum repaper_stage stage)
->  {
->  	u64 start = local_clock();
-> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
->  
->  	do {
->  		repaper_frame_fixed(epd, fixed_value, stage);
-> @@ -467,7 +467,7 @@ static void repaper_frame_data_repeat(struct repaper_epd *epd, const u8 *image,
->  				      const u8 *mask, enum repaper_stage stage)
->  {
->  	u64 start = local_clock();
-> -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
-> +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
->  
->  	do {
->  		repaper_frame_data(epd, image, mask, stage);
+
+Applied to linux-kbuild/fixes.
+Thanks!
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
