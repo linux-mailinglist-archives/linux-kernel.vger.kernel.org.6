@@ -1,101 +1,140 @@
-Return-Path: <linux-kernel+bounces-516281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29095A36F26
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:37:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FDFA36F33
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E252A3B1413
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A917A16F106
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9011DC9BB;
-	Sat, 15 Feb 2025 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537D11E0DC3;
+	Sat, 15 Feb 2025 15:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ridc4nAL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sl+ZFgve"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398719ABDE;
-	Sat, 15 Feb 2025 15:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6A3B672;
+	Sat, 15 Feb 2025 15:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739633825; cv=none; b=j4ut4OQxSLZ0CzCpDGI1RoZpSQOLICja9oZtmxVkSVA44OuNx67AiaOOdI3qjWlM6Ijgniugm7t2o1Q8idoEPhWyWTRZ7uf/Q83uLM1rM4Sl7EdslJQhKlRqXud0QTQeSXBEFfeqAwyewXc18A/qr/e3xxw+Oe5m7grnOJWMTNE=
+	t=1739635071; cv=none; b=pIFEdFi1xBXulJ2Xw+ARr//6RWMbLDJQqmLommNffpoXxqLNHR5+pZgkWfUjdXF80LybgJMBHIbZU+O+3n2nl7Cf0TD6y8cBGofjIsTqhZyP9n6NxD3aJC0Lk/uh2F23cH0Gzp9UjRrutqmsJvb7sXbet9fupL7U4XHF5ejNl3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739633825; c=relaxed/simple;
-	bh=qgv+eEVZ/QnPjxw+OPstNIcH0nqgtyxfQny/S6YCJtk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qH99oHVjNR36CY4M0BhkT0qxzF51ieWPIsuhdrjmFVfmQCZ9PpBpKC09aLQZnb0ZA6JVBL/eLx0Nfc0MbfkubgTmLwTOtL++Q6ZGByD7RLtAaaGi8Ydg0BRtcxITg7v/3hlvQ4dmQyvmuupSu/JxEZU5TAK5k3wWXg2spGefhvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ridc4nAL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C997AC4CEDF;
-	Sat, 15 Feb 2025 15:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739633824;
-	bh=qgv+eEVZ/QnPjxw+OPstNIcH0nqgtyxfQny/S6YCJtk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ridc4nALUjWrp5cBYzBAq/S6FbCz0TryGfM5G1WLruiZA4EMUdYLZJ+B42Ji0Cfqh
-	 X7tEEMcPVUMBp5VHdzYIxiy33u19YLL6lPrybjXkR39Hd/9Fp9t3KcoOFzqSvSRoDF
-	 h5ULtHij4F57ZX2+GmRJiIKjih4WyUd0JRQACQir2txsxu7mvi63kHQwv9rv0l8Ea6
-	 2SL6tYnlxU/CmldIEumZSuqG0tZ+r2TkSezyMZqN8n/nekD80NWB85D/1+b8lvN0pS
-	 wafMhE61PtHa/urVi5xf2/Xov0eUwiCHvEswxns6T33/b3B5QzToL72shju1Q6bEJw
-	 ckcCdB5kSbx4w==
-Date: Sun, 16 Feb 2025 00:37:02 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH] tracing: Do not allow mmap() of persistent ring buffer
-Message-Id: <20250216003702.eef00d543ebbc3b16140ed9c@kernel.org>
-In-Reply-To: <20250214095943.178501fa@gandalf.local.home>
-References: <20250213180737.061871ae@gandalf.local.home>
-	<20250214110722.7eaf35b42c4858e6b74500f7@kernel.org>
-	<20250213212147.6511b235@gandalf.local.home>
-	<20250214161332.8797b20f09e068c33f872698@kernel.org>
-	<20250214070712.01997ea1@gandalf.local.home>
-	<20250214233613.bde0638f393186f56f0b30eb@kernel.org>
-	<20250214095943.178501fa@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739635071; c=relaxed/simple;
+	bh=4cxnaIRCSk0B4fuAfPyf8j0yr6SHL5W0ftPhLQJviEA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oBL1I5Bxb934tRMOkvPmikF+FXkecEycj6/zzCS3PoLKK4l/qrdeRoYsnX3ws+1ZzYi1ZQzohBzwqAmKD77+YDA+SigGYWBhdgtyJq21iZoP/frzx+8geCOzEGVy+SWLdYKM3pXvYgdPS+ydI1eVAH1OUW2PBjnT0WNJjWwh8x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sl+ZFgve; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739635070; x=1771171070;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4cxnaIRCSk0B4fuAfPyf8j0yr6SHL5W0ftPhLQJviEA=;
+  b=Sl+ZFgvefFggzCDZYC4B2JuxUwqVIZe5wzhNWcDjSz22FQDfs9STlx1f
+   a72ts5sXxrAYEqjdLhCnS/olkD1fg//eNVlolLZ2y1cwK8EcpHZPpb4XR
+   SZ23hUDZyjz+7UtaOCU9pB7ML/Zp50fNYYbkQwQ4drXSeF9bTbeTHJqOD
+   kUvkOheKDwyUHtnaVIDhdnT4sQKyo70x2XU7bwxcY8svK0cmQ0qK8z5bn
+   gAL+GnMwtuKzZ1r67jYcKfDVMENlK55DMPe+fWXjTCo2xC4VL70/osRLv
+   /gKV2esDMB/zb4LwkuZTFATHBZ5CmFqjUk2nlqQkxdvYh3jgT/Vz5fY6u
+   w==;
+X-CSE-ConnectionGUID: pYOMkMHsQgKg/Y0yiA02/Q==
+X-CSE-MsgGUID: 5biMeDMfTV2Ni50lffDAQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40509933"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="40509933"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 07:57:49 -0800
+X-CSE-ConnectionGUID: lM3jTKIaRtOzDSJWrdCk6A==
+X-CSE-MsgGUID: V5ucWNWxRk2CMrZhMptEXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="113701902"
+Received: from test2-linux-lab.an.altera.com ([10.244.157.115])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 07:57:47 -0800
+From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	joyce.ooi@intel.com,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: matthew.gerlach@altera.com,
+	peter.colberg@altera.com,
+	Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: [PATCH v7 0/7] Add PCIe Root Port support for Agilex family of chips
+Date: Sat, 15 Feb 2025 09:53:52 -0600
+Message-Id: <20250215155359.321513-1-matthew.gerlach@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 09:59:43 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+This patch set adds PCIe Root Port support for the Agilex family of FPGA chips.
+Version 6 refactors duplicate dts snippets into dtsi's for correctness and
+maintainability.
 
-> On Fri, 14 Feb 2025 23:36:13 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > > 
-> > > It's not supported. If you try it, it will crash. This prevents reading via
-> > > mmap() on a boot buffer. I don't know what you are asking. Once this patch
-> > > is applied, mmap() will always fail on the boot buffer before or after you
-> > > start it.  
-> > 
-> > Hmm, I meant it is supported for other non-persisten ring buffer, isn't it?
-> 
-> Correct. It is supported in other buffers, but it just isn't supported in
-> the persistent one.
-> 
-> This patch only disables mmap if it's trying to mmap a persistent one.
-> 
-> I guess I don't understand your concern.
+Patch 1:
+  Add new compatible strings for the three variants of the Agilex PCIe controller IP.
 
-My concern is related to the fixes policy. If this is a "fix", we will
-backport the new "disables mmap on persistent ring buffer" limitation
-to the stable kernel (that was not documented previously.)
+Patch 2:
+  Add new board compatible string for Agilex F-series devkit with PCIe Root Port.
 
-However, from the user point of view, "mmap() ring buffers" is already
-supported (although it did not work on stable kernel for now). Thus I think
-the "Fix" is expected as "fixing mmap() persistent ring buffer". 
+Patch 3:
+  Fix fixed-clock schema warnings in socfpga_agilex.dtsi before adding to it.
 
-Thank you,
+Patch 4:
+  Move bus@80000000 dt node to socfpga_agilex.dtsi.
+
+Patch 5:
+  Add base dtsi for PCIe Root Port support of the Agilex family of chips.
+
+Patch 6:
+  Add dts enabling PCIe Root Port support on an Agilex F-series Development Kit.
+
+Patch 7:
+  Update Altera PCIe controller driver to support the Agilex family of chips.
+
+D M, Sharath Kumar (1):
+  PCI: altera: Add Agilex support
+
+Matthew Gerlach (6):
+  dt-bindings: PCI: altera: Add binding for Agilex
+  dt-bindings: intel: document Agilex PCIe Root Port
+  arm64: dts: agilex: Fix fixed-clock schema warnings
+  arm64: dts: agilex: move bus@80000000 to socfpga_agilex.dtsi
+  arm64: dts: agilex: add dtsi for PCIe Root Port
+  arm64: dts: agilex: add dts enabling PCIe Root Port
+
+ .../bindings/arm/intel,socfpga.yaml           |   1 +
+ .../bindings/pci/altr,pcie-root-port.yaml     |  10 +
+ arch/arm64/boot/dts/intel/Makefile            |   1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi |  14 +
+ .../socfpga_agilex7f_socdk_pcie_root_port.dts | 147 ++++++++++
+ .../boot/dts/intel/socfpga_agilex_n6000.dts   |  31 +--
+ .../intel/socfpga_agilex_pcie_root_port.dtsi  |  48 ++++
+ .../boot/dts/intel/socfpga_agilex_socdk.dts   |   1 +
+ .../dts/intel/socfpga_agilex_socdk_nand.dts   |   1 +
+ drivers/pci/controller/pcie-altera.c          | 253 +++++++++++++++++-
+ 10 files changed, 479 insertions(+), 28 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
+ create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
