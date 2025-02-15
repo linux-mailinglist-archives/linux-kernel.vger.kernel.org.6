@@ -1,102 +1,75 @@
-Return-Path: <linux-kernel+bounces-516075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38852A36CB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:58:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D8FA36CB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39EC169310
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:58:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF313AC189
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB32D19DF48;
-	Sat, 15 Feb 2025 08:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AqWtYMvx"
-Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5FE19ABC6;
+	Sat, 15 Feb 2025 09:03:03 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6CB18A6B2;
-	Sat, 15 Feb 2025 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BE423A9
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739609878; cv=none; b=SX4PwO50FfXnN8e83P9rYWwYN1cV7tM7ODJrS+y+0vxh6WHvNUr6Y/BdVKVKZU9jGCrSKIpO5sSloVp0KcKrV2J5+lvlxkdLzopJY3aKmga5YLfVpxbo4J7kZgjwsYv2sx+Ps/xWvVF7iesA3jPqj9ygsrcQBeK6Ph2Y957ezrM=
+	t=1739610183; cv=none; b=piMx+Ymh+lMMTsg4NIw1s9qnbrKerrWKKa/Yby8xygyZU0vCQlZbd8U0jp/6KFuN/BdjZ248fjBD9Fz6P0XtNGKdsEO2XOxOrzcYNrLJOJrNI5ZFymGZaP4aHhD897dqi0eJE7nM1kv6u5/7GjEAL4P0R81nkI5E7Doo4KYLNtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739609878; c=relaxed/simple;
-	bh=sbwGZyv9X0Po+KkuluhniU/1WUmWid6BRFjGaL526F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FI56uQs06Wc+lQtJP6di04tcDj8KHknvEUwRtQ3y5La7cjzU5da+ga6YbBm0cgVLttl20BmSAwmzQ3NtXAPSnMWpuvQKUxqeghbRfSp3jntl1MyJcjXFJxhJauaQqpI9pXuLimtsLRE5xTG2ZUqL3iyMxuPcNTiAonVqmumsQHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AqWtYMvx; arc=none smtp.client-ip=80.12.242.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id jDyatDMKf7l8CjDydtPWfW; Sat, 15 Feb 2025 09:56:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739609804;
-	bh=cDNKpgF1HWWNXJE5an9qyoAV+9AWpgKwxsYibXyf3gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=AqWtYMvxx7m8Fe1xTn36MenTl3g6GgZoKn1Ov9XqPlwI53tbW1rAJ7H3grjgey4Fq
-	 EXJsYqtuTuMfkHIRIkxfCmVjFUm1xp7KahNo1TBNkNBLXb9QkWJIwulG8cpVNwEqKp
-	 BhYwQwUWQ8Lcs35kabVQVY+VM/ddSzRT7RxNOIjY4vqPAxxViRmgQaq8WAOa00XTr3
-	 zRBUAYUHSCMYFygTzQlgD6I3zQ2y8FSgJyoXJRSSlx4rVf0eSrooNUiG+tRgEefpcr
-	 5BucV9Hp0tiW3Qor1z3vHoJAE4DNUbHmH5Oz1OMUKJE2KwjGu88P+3gjIoQwtTpXcV
-	 +8/ZzoL/XvB8w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 15 Feb 2025 09:56:44 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <ebf3ee33-3958-43a7-8bd9-fe6169ad6a9f@wanadoo.fr>
-Date: Sat, 15 Feb 2025 09:56:40 +0100
+	s=arc-20240116; t=1739610183; c=relaxed/simple;
+	bh=dtRZDjmpwlFZAR2qVzFYL4AJK9HPmwLNipkX1RGYTgg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dO9vd/lWHMuaaAi3+wixld57VHQ+0G1WwdcHrUIdsM5jqzSPHR5inScXIbt8Udo6H/U9rYdtLC80jvFRifSMMEvfiq+Zc5UTwWgdZC5VuaDh04oY91XwTj84RVDp0NCsGRlMJ3dstMSwPsIqZnn9SnPEScvqM7WV5PPvpZFPkoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4Yw2ww5BN7zYkxhG;
+	Sat, 15 Feb 2025 17:02:08 +0800 (CST)
+Received: from a004.hihonor.com (10.68.27.131) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 15 Feb
+ 2025 17:02:58 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a004.hihonor.com
+ (10.68.27.131) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 15 Feb
+ 2025 17:02:58 +0800
+Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
+ a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
+ 15.02.1544.011; Sat, 15 Feb 2025 17:02:58 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Suren
+ Baghdasaryan" <surenb@google.com>, Barry Song <21cnbao@gmail.com>, "Yosry
+ Ahmed" <yosry.ahmed@linux.dev>, yipengxiang <yipengxiang@honor.com>
+Subject: =?gb2312?B?s7e72DogW1BBVENIIHYzXSBtbTogRml4IHBvc3NpYmxlIE5VTEwgcG9pbnRl?=
+ =?gb2312?B?ciBkZXJlZmVyZW5jZSBpbiBfX3N3YXBfZHVwbGljYXRl?=
+Thread-Topic: [PATCH v3] mm: Fix possible NULL pointer dereference in
+ __swap_duplicate
+Thread-Index: AQHbf4hopAzXvKzOR6qFXWGTfwGJZg==
+X-CallingTelephoneNumber: IPM.Note
+X-VoiceMessageDuration: 1
+X-FaxNumberOfPages: 0
+Date: Sat, 15 Feb 2025 09:02:58 +0000
+Message-ID: <21fcd086831f47078c2fb2175048b33c@honor.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] PCI: cpci: remove unused fields
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: bhelgaas@google.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, scott@spiteful.org
-References: <a1af3a07-1e76-488b-82f7-87b3a4907f26@wanadoo.fr>
- <20250215021054.222787-1-trintaeoitogc@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250215021054.222787-1-trintaeoitogc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Le 15/02/2025 à 03:10, Guilherme Giacomo Simoes a écrit :
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->> If neither get_power nor set_power where defined in any driver, then
->> cpci_get_power_status() was always returning 1.
->>
->> IIUC, now it may return 1 or 0 depending of if enable_slot() or
->> disable_slot() have been called.
-> You is right... ever return 1, but, this is a expected behavior?
-> Don't seems for me, that ever return 1 is the right way.
-> 
->> I don't know the impact of this change and I dont know if it is correct,
->> but I think you should explain why this change of behavior is fine.
-> I submitt this patch only with intention that save resources removing the
-> get_power and set_power pointers and yours calls.
-
-So, if unsure if the change of behavior you introduce is correct, you 
-should only do what you wanted to do.
-
-If you still want to propose the other change, you should do the 2 
-things in 2 different steps.
-
-CJ
-
-> 
-> Thoughts ??
-> 
-> Thanks,
-> Guilherme
-> 
-> 
-
+Z2FveHUgvauzt7vY08q8/qGwW1BBVENIIHYzXSBtbTogRml4IHBvc3NpYmxlIE5VTEwgcG9pbnRl
+ciBkZXJlZmVyZW5jZSBpbiBfX3N3YXBfZHVwbGljYXRlobGhow==
 
