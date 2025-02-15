@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-516254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B26A36EC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:21:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE1BA36EC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2538C3B1464
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D74D189555E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BBF1C84DE;
-	Sat, 15 Feb 2025 14:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F961D5ACF;
+	Sat, 15 Feb 2025 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g9/uLV/a"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E5219CC06;
-	Sat, 15 Feb 2025 14:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEGS9Kir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F1E19CC06;
+	Sat, 15 Feb 2025 14:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739629290; cv=none; b=GKhgX+pxzRTqyYo3fA4qJn5aGrWK/88ETHqlaaTsAIJwoKHf5eMNKPhNTrRx6GA7xLPgd2xyGkQEZohdiLUYR2hLHeQGHVk1gpjOejRyxagfZWMNbwxW7h1EqjSZGvAbjb1QLksjhhH5Reuv8JxjHFisWl4O5GAaPX0wI/jNF14=
+	t=1739629311; cv=none; b=fyd5DuR67Sh0kVP5T9ortGu+tMpt4INs/qEKp+racsTtzp5U8A95C7u0HBf+3zC93l/TRqpoOwtkDmT+4jqVOxn4x4rki4Oa0z90XXJY6Sf4m239L/NZ58cqpUP5Fwu+lQHooAgCf2D5NOK3YMizRUzuQkiPzfzfdrpHqXn5yWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739629290; c=relaxed/simple;
-	bh=P+0MIT/BrvISBCkJBOiR+yD2Qbpe/TVG71OxAmudniU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z5AlwXFYX7YbOG0VhRlqJKWX0h0zoe7+fPGaoXiaXB1BhSjYZb2SvjklbSJlH6udsFysfUG14h8SMU6IMAW/LgP0zIBUnzbz2bo/swjgvEt5aDQj/MkpixANNLrEa1rLPPGm4pgJhDaPNj4aSdcg/WXczU1JOFHUXxRXCtoNMBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g9/uLV/a; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=m23se
-	41y4T9dKZAoN4dvVfDza2f+c99NlCW2C5/N5E8=; b=g9/uLV/ayLlTFJzpdw+iN
-	s36XPDicBFlE1+BxQx6sLwxGAp0mpfaXgYQAsTvfMC5OZuoPypcgIkHIiCTKgci5
-	XdMcSEKWX0/LfxdjJ29cx0OLvy2IHFX6C1CTKGVL1PV3XLfRfdy93gu7deXOG2uk
-	13mX4BpysrJmBNtHPGHouI=
-Received: from cc-vm.west-darter.ts.net (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgCn7vPiorBnIINAHw--.21730S2;
-	Sat, 15 Feb 2025 22:21:23 +0800 (CST)
-From: Yunli Liu <ylliu3788@163.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	Yunli Liu <ylliu3788@163.com>
-Subject: [PATCH input] input: add BUS_I3C definition to input.h
-Date: Sat, 15 Feb 2025 22:20:35 +0800
-Message-Id: <20250215142035.1745664-1-ylliu3788@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1739629311; c=relaxed/simple;
+	bh=O3b2JU3w/ODuxO3MLy1UzoyGGGaXmBwx1eEl4Fz+mQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RfEq7dqFwFUy/4Fwms5iZa4E4tzyYYcvH5OvKGKNaaYjJIu48she1vgxrtSnJ15VJxc5urCGh12XGz7dqF4lzx7RJtMO9miaRGNu8Wdhss1DFfF/Z0JYabyyy3ZLvTcyv6/m/vRHjuUuynxNqsT2Ct3g1e6cjSt9XEUkGHDoeVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEGS9Kir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862E6C4CEEB;
+	Sat, 15 Feb 2025 14:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739629310;
+	bh=O3b2JU3w/ODuxO3MLy1UzoyGGGaXmBwx1eEl4Fz+mQw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hEGS9Kir7L5VKuSvVoS3WRtvXngeEsvB3GpV/9fjCOCrhy9sYWKacXw8hfRSBUh7K
+	 pQZuyRLi1IsaXGh5mqgZF5yxp82d1nSThvgFxU/3GtN0sZ0D+XmFoeMJGfKfeR0RHa
+	 7UPYmkg7WVu8yxQcGHqTxN7kaaADW1ft3LFhoi82R3muUtYgP4rFVGadux8Ws4CURt
+	 bzfGrVEMPNYAJd+uQmsYUqD6yKPcm8MFiy76nPuP+mdpOoXzwxCaBVLF+sOiJJvhqD
+	 nvgZ5j2uO2rYTsGSomJLxTGBORrHL/rXl9k5ceasmIC1swXfsCfsIAz0jRm5ZnQA7i
+	 ofKhDMDYRJOKA==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3072f8dc069so30378011fa.3;
+        Sat, 15 Feb 2025 06:21:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUEQa72l7iNrUozyP8ZgDz0DNRQ4PT6+Y1o4wlcQaZFWnCjeQ0MyOKfy8w/RnfMWAE1yDWB4Ed+59Fnk4Cu@vger.kernel.org, AJvYcCVWmcbJcwQJWYqHlSlyGGPSLsJvWTmxMqXfoUIkao1N0orAPWpkdGKYnsRILzTJ2iW/muM=@vger.kernel.org, AJvYcCVhPIneuuIiFaQDmaNRoa3IaGJ7a7xeHTweFxLuencKtPQN1TCi8E5S+lPZcqTNCT9VbDwWLYXFnLJIaUcR2ecn@vger.kernel.org, AJvYcCX3kQWokwX97aythkIvSL6Bj0GZgDOJxfWJKRWfAQTUN+B0dvhmzD1IlmKHxMwI43luUoj8wZ/YzWMYe5oj@vger.kernel.org, AJvYcCXuislqfI/BpS19OwxajBEHBci2Bl4m9TUAKntEqMxCohs3XcxsbiNdSsK5OElbKJJNSJdpKC4WFGv64g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgdQAi1vqYReQ5xCYtJB2X/7ZBOGMldOxf3uuZe1H/uid81Mub
+	QNVqFZt+8gkgXoVTzZd1HL0gw11bAQ0IOOKwBT3RVivGcn9uwG0KtB4+79gkrvBTAPIMOSeBA2W
+	YCfWSYlJsMIHI5l6uD2KSfqphrhA=
+X-Google-Smtp-Source: AGHT+IHJAH2llTK/8FUeOa/uyjvPOa+oEZ4jzkPOcw5/nJJ+S7w8Kd3yArGdplvM1hiKKoy+jgbSokUCpMby5X/HYDE=
+X-Received: by 2002:a2e:99d6:0:b0:308:fa1d:1fed with SMTP id
+ 38308e7fff4ca-30927afee15mr9904211fa.34.1739629309211; Sat, 15 Feb 2025
+ 06:21:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgCn7vPiorBnIINAHw--.21730S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZr4xAr13KFWfJw47JrWkJFb_yoW3JrbE93
-	4xGFWkWr4FkF1xKw4ktFn5JrnYgw4xGFyY93WfJr4vyryvqrs8C3yxGF92qrWDGw17Cry3
-	ZF18Wr4Fvw1fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7VUU1CJ7UUUUU==
-X-CM-SenderInfo: 51oox3atxymqqrwthudrp/1tbiKBnzdGevOZlU1QADsc
+References: <20250207012045.2129841-1-stephen.s.brennan@oracle.com> <20250207012045.2129841-2-stephen.s.brennan@oracle.com>
+In-Reply-To: <20250207012045.2129841-2-stephen.s.brennan@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 15 Feb 2025 23:21:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQokoST0FnByeWywaghTMP2aG7hQaV1T=TcQ=1v4ZLQrg@mail.gmail.com>
+X-Gm-Features: AWEUYZk8XrdR9lJozRpCY9QyaANy91FqaGQymPUxQ0WR6PL3n7MJiW1ZBtl7LX4
+Message-ID: <CAK7LNAQokoST0FnByeWywaghTMP2aG7hQaV1T=TcQ=1v4ZLQrg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kallsyms: output rodata to ".kallsyms_rodata"
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andrii Nakryiko <andrii@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Kees Cook <kees@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Sami Tolvanen <samitolvanen@google.com>, 
+	Eduard Zingerman <eddyz87@gmail.com>, linux-arch@vger.kernel.org, 
+	Stanislav Fomichev <sdf@fomichev.me>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Jiri Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Jann Horn <jannh@google.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
+	Daniel Borkmann <daniel@iogearbox.net>, Nathan Chancellor <nathan@kernel.org>, 
+	linux-debuggers@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add BUS_I3C (0x21) bus type definition to the input subsystem header.
-This value is reserved for devices utilizing the I3C bus, which is
-increasingly adopted in modern embedded systems due to its enhanced
-capabilities over I2C/SPI.
+On Fri, Feb 7, 2025 at 10:21=E2=80=AFAM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
+>
+> When vmlinux is linked, the rodata from kallsyms is placed arbitrarily
+> within the .rodata section. The linking process is repeated several
+> times, since the kallsyms data size changes, which shifts symbols,
+> requiring re-generating the data and re-linking.
+>
+> BTF is generated during the first link only. For variables, BTF includes
+> a BTF_K_DATASEC for each data section that may contain a variable, which
+> includes the variable's name, type, and offset within the data section.
+> Because the size of kallsyms data changes during later links, the
+> offsets of variables placed after it in .rodata will change. This means
+> that BTF_K_DATASEC information for those variables becomes inaccurate.
+>
+> This is not currently a problem, because BTF currently only generates
+> variable data for percpu variables. However, the next commit will add
+> support for generating BTF for all global variables, including for the
+> .rodata section.
+>
+> We could re-generate BTF each time vmlinux is linked, but this is quite
+> expensive, and should be avoided at all costs. Further as each chunk of
+> data (BTF and kallsyms) are re-generated, there's no guarantee that
+> their sizes will converge anyway.
+>
+> Instead, we can take advantage of the fact that BTF only cares to store
+> the offset of variables from the start of their section. Therefore, so
+> long as the kallsyms data is stored last in the .rodata section, no
+> offsets will be affected. Adjust kallsyms to output to .rodata.kallsyms,
+> and update the linker script to include this at the end of .rodata.
+>
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
 
-Signed-off-by: Yunli Liu <ylliu3788@163.com>
----
- include/uapi/linux/input.h | 1 +
- 1 file changed, 1 insertion(+)
+I am fine if this is helpful for BTF.
 
-diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-index 2557eb7b0561..c6fbcbad5b7c 100644
---- a/include/uapi/linux/input.h
-+++ b/include/uapi/linux/input.h
-@@ -275,6 +275,7 @@ struct input_mask {
- #define BUS_CEC			0x1E
- #define BUS_INTEL_ISHTP		0x1F
- #define BUS_AMD_SFH		0x20
-+#define BUS_I3C			0x21
- 
- /*
-  * MT_TOOL types
--- 
-2.34.1
 
+
+--=20
+Best Regards
+Masahiro Yamada
 
