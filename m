@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-515961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AC9A36B42
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:04:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5593A36B57
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038583B10D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441373B24F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33957F7FC;
-	Sat, 15 Feb 2025 02:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0161527B4;
+	Sat, 15 Feb 2025 02:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DeYXD+m/"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="nX25qR1t"
+Received: from antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88074DDA8;
-	Sat, 15 Feb 2025 02:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D87D151998;
+	Sat, 15 Feb 2025 02:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739585086; cv=none; b=rO0U/j5bWvvpS8BOQBKblJ3AoyNQtCdkaB3EPfANGE8TEYS0vFlTZ+scLY6LeJk7ivGUgAQAgEjTW5SPr2HcrCnAC8F5ahao7lVuvGwfkQeROPjYBilSCxI9EFmx9abvnoSYhaNX8A1tZ+cwCGaBMJ89Y/AEEzE6XoENQRId6eA=
+	t=1739585713; cv=none; b=K6D/wGbf4nPGo6Qq+8ejpRlvJNUGw9BVkp2WG/daUl9v1tWCsQ4fI3t97xOkF+SO4tqaQYnClnRtZimLHA+TJyrb7qowqiNn/YsuRjU+WZ7esPe4Ii5Nc7rTCnhTFLKuEwMu0N9RZ9Tz+xY4YEH9Uc+JS8y68TuZDM6BPMMPQM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739585086; c=relaxed/simple;
-	bh=M0upLoFPndDptHey1Fcz73xMNLIS6txJ8x7vbsBptNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YsFbYhMmZy9ukecn/a+8oiKecW/9LQcWAPUxHIcGXapdsQUy2MbpUfSJop/vfBysEsESKAC0+CD/k7E8ExjUPtH9V91I1b7RVt6pSFf1+JgyA3esgXQoB4AJxoBorUBfDB0lAXk0llzO7vW5GGTfZFDX1FRJ4/DcpXhz/JnQ8YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DeYXD+m/; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739585075; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0vS94aBejcjqMgts3e0c50StL2HUB8lQYljkWqVTZs8=;
-	b=DeYXD+m/8Nyw2wt41cbkXprR6CbSbdCQFP3B7PZMGSs9gP31Ql2qr7fDaLxvJ4syHD2Lqk3+GmcwAsgCkKynhPt8wRtBCkdltg68PSTso0lTIzBQms1SQbqk0aEjK9hp3ZNZGsFLZvpwiCCn9cvCVtgVRcZen2zBqZN5x2PFODQ=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPSP6rS_1739585074 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 15 Feb 2025 10:04:34 +0800
-Message-ID: <1edd2e83-81fb-4cac-aaa0-f9581bebac77@linux.alibaba.com>
-Date: Sat, 15 Feb 2025 10:04:33 +0800
+	s=arc-20240116; t=1739585713; c=relaxed/simple;
+	bh=f/HFjrGZbsXz4gTQGvHCYTL/7eWhGkkflXSVPCcpWIg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+5fwzHkcHhV4i7I3SYmpWMp/rH+YITGd7UJeXAc0SQcPjm6W6pf2vWb01ZgIBJo0h3zxitxdVXKqh43PILAZx64NnZJKi+QjJ3mfTPxw3SzohljY9XYjTTg7nTzIR1OhmnkX069XSbWHPsKp8EyHoq+a1bahuzb7Kv2WfVBWsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=nX25qR1t; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Sat, 15 Feb 2025 03:05:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1739585126;
+	bh=f/HFjrGZbsXz4gTQGvHCYTL/7eWhGkkflXSVPCcpWIg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 mime-version:references:reply-to:Sender:Subject:Subject:To:To;
+	b=nX25qR1t0By4jFQtme5p9vdemxtjh6jOZl7YKFvaupfHyjrwTb/PM2Acgd3TLMPPG
+	 fQaUTiIKqdq6I8ff8k5Lu973dJ/bRcEmHsydD8igbP1WkjbsrsRo/sDj2jowpXxwHR
+	 5DC2VZNNNPTrJPTHWm2rTsesqCBHXfw9TVaCpit0gFqLdSWTDzzQ+yfZVub5jObwro
+	 EeJuscbEoIzMl/uMDpnrmfwz5u3ZI/SIB01G0/HOTHUgwv08+ZXjzswCt/A/IUwfL2
+	 dAnlKV7EhbC0rgiCtRIElirmPK+7JOxCdoW/Ghz2vKZXVgFYqhCjGLY9YpfJf8vfhO
+	 YkTixwq13v75Q==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.12 000/419] 6.12.14-rc2 review
+Message-ID: <20250215020526.GA23322@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250214133845.788244691@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] dmaengine: idxd: fix memory leak in error handling
- path of idxd_alloc
-To: Dave Jiang <dave.jiang@intel.com>, vkoul@kernel.org,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250110082237.21135-1-xueshuai@linux.alibaba.com>
- <20250110082237.21135-5-xueshuai@linux.alibaba.com>
- <5fa82b64-ac38-4d4d-9ff9-a2083a3d92a4@intel.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <5fa82b64-ac38-4d4d-9ff9-a2083a3d92a4@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214133845.788244691@linuxfoundation.org>
 
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-
-在 2025/2/15 01:01, Dave Jiang 写道:
+> This is the start of the stable review cycle for the 6.12.14 release.
+> There are 419 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> 
-> On 1/10/25 1:22 AM, Shuai Xue wrote:
->> Memory allocated for idxd is not freed if an error occurs during
->> idxd_alloc(). To fix it, free the allocated memory in the reverse order
->> of allocation before exiting the function in case of an error.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Responses should be made by Sun, 16 Feb 2025 13:37:21 +0000.
+> Anything received after that time might be too late.
 
-I received two Reviewed-by from you for this patch, is this (the second) for
-Patch 5/5.
+Hi Greg
 
-Thanks.
-Shuai
+6.12.14-rc2 compiles, boots and runs here on x86_64 (AMD Ryzen 5 7520U,
+Slackware64-current), no regressions observed.
+
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
