@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-516236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0660FA36E8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:35:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517DBA36E8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:35:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6659818929FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E55E3B26D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42D1AA1FF;
-	Sat, 15 Feb 2025 13:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959491537AC;
+	Sat, 15 Feb 2025 13:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWKm4jZD"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VkbBkDYj"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0535B1369B6
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB7B1B4248;
+	Sat, 15 Feb 2025 13:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739626500; cv=none; b=cVNf/S/2Qig6v5jirCtn5/7fLYGlIGAxWwCbsUwochuGZLS952/D83FdyCzBBrxMYumqqWZhqtKHVTVk9NTMG0cZ8Rg8Vcz1DubMNYKqBESSZK+GVVPaNvCrUSeEaggJw1e95GvHrN9aFbqtafrByYK+SUbLKYkNptd3466jEvg=
+	t=1739626503; cv=none; b=hYD+GUdkG3TxLIgFvHarYUaY2Esw6LWIlVp4aAm30K9nnkHs3Mqssq4H+jAdcsJ4sjOGaLD+11Iy3dNV2JhKFvzW2kba95uti98W2spkJs8i+8hWTfxOGkapRjkrNI8c8zHv6qYdOSO4+tY/Z8hHo9gexvN9k0Ga/c+WMpzPOhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739626500; c=relaxed/simple;
-	bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=maUcSN9349uIJkv8K3Ztar9ICctpyhhv0uJ56NQCkat96jy6JwgcjXBB06QWtxA/oCK1qgctkGpjRc4A7/2n/DX54vHCNYdbB+qml6XORHNlCYe8xglZ/MAhp+l2RLrtGSTNsYs8u+1QQi4GTyVYbyzU5FvFiFQF0XJ2Hk4SUe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWKm4jZD; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30613802a6bso30273431fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:34:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739626496; x=1740231296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
-        b=MWKm4jZDPa4nf2j65T2ok/KQMmAYqvddr3AMrAJO4DWuKR7woYpqtk82Rrq5McgqVu
-         rRFEr0iuZ6gh8P0pR6Vrj5evLXkkN7jEkCNdizqzRvIsz5BRVztfPeoCDqjmhAJuyRGJ
-         q85/az16rNR8I++tQKgszVMBs4TZa+OWlY9+5GxmfNpx7nHMoC3yLAJEPqsfWk2Yawfp
-         JBRm3Ie1K7NA9oGpB3IjvInieHS2HaEaGdxCJw+tzC8Z6wLzMMGeS0FhtjDIUQuEH2hu
-         0d203Fqxz/XLPqx1HEekVGaGYpWhh8nFvpOAhMzEtpO+ygFW18abzaAwmhG7lSavMUol
-         32PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739626496; x=1740231296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
-        b=AnuYr7/TrIowK+YWI48w1kaFVoEin6G30wVkjlqQVg9NmoMuCUr716rmlIm7iPyoff
-         da5AjauxluboYDXqr4bGRhuRMExMSJ4g7G55ra438w/jf28DB2mNae+P6trA8Ml6r7rx
-         eqlUWNyMARmDvivDelBO1sxqCxEIoxFa6AvYvAfixOXRv+CR7WNZynDDzlTFdo7R/l6X
-         vruXhU/dNIlJwNyMXtNb4R2qU3ikGqpaO6dIhJ9nDPDS9dy1Lmn8tDbI3pqfervnhyJn
-         Tdd2rdBv9QAAKIr2mCmMgBAAAPKjMttoPQsEHdZGyFv9aq7xTuXIasJf7hz1UVgFQZYr
-         3jSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkD+1fradPpbOA9oCIFyKfZ6ZdP+vriGJJ9ZHhkX8XHnfyt/eayunvitUIuCiaOTrnepL+t7MGvkpxYlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9aLd7F3T0r53jfvJl06gnmSQw9NO1e4nypc+0hlPN6Bhp84No
-	4K5ytvvWVdlXUZkhRMkziuCfKpzknCYi6T4NsSYLOd4oO9KhZ7AZXnJX5nJxUcLMY3iZSy9HxQc
-	8jOh953uNcrkoeIO9dKvcbuY8KPo=
-X-Gm-Gg: ASbGncuPmjhvIlj2MTgVaVmhKg8C6gEAklIW766JLpXChxxY072RtY49J9Omrz78lcf
-	9thO5bs6e62GPudNiIdcx9EQ8pcUzkl/O0VFoDZgjcIIckdph9fzwpCzxS9ErEFVoVhg7JtRF
-X-Google-Smtp-Source: AGHT+IFkHwrDrRt0v3rd10LeQLiumvR8TIbe+AmPA9arbLlMXfcqEz8MruliZZoJuyuyz3DILPXeMOp8rIAD30/IGqU=
-X-Received: by 2002:a2e:87ca:0:b0:309:2012:cc59 with SMTP id
- 38308e7fff4ca-30927ad5181mr10239421fa.26.1739626495747; Sat, 15 Feb 2025
- 05:34:55 -0800 (PST)
+	s=arc-20240116; t=1739626503; c=relaxed/simple;
+	bh=atpaXr4TR2Biw1BzOVCggsfOeAMZ0PotZ4lv/rOgYyE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=tSl5ApEz6v1kT2RMpnAyBWUhOnNNa8mEu2gn1TXd+PqdkXV/hJPRGACnENTnQaY74sN497DLRPLCtxl6cgYWGNWUe5g0GgUW5oGwjrAVv2iksX2G5QDhZvAXwMTCv569crX2PKZ8fWsVmeada/ua3UhtPzhPprPaOQhqUre6jB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VkbBkDYj; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739626489; x=1740231289; i=markus.elfring@web.de;
+	bh=atpaXr4TR2Biw1BzOVCggsfOeAMZ0PotZ4lv/rOgYyE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VkbBkDYjFKvPhqbQSt1C+X9dpQWlovXE7W3a9zhXEasIhoJw3/KmRJmLrEhRUmM/
+	 Up32rUVHx3bEbM3qm+FeRD07faZu3iamE+yM3VRtlfnXK+vlJSS3pasHgW1qQjd5s
+	 VPe0RonAW6qV0VFAL84V3Lpq0wIuslf39o+BGtiGE7FWlb22GlP0JaNOrCbqMmWU2
+	 OI4/rBiZv3SyUlBrvMxln6eB0jPwZjiHpYRazE3/+WSxPXCpbfW+anY0ayAflz2IC
+	 Tm+85iBTnLjvI0bLq+HEO+p5fhy4jpuJHHE7GQrSU5EY7KxPddTS/0y7VVyX95mcG
+	 sbpS+6UWrAsD2O9GZw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.21]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXoYS-1tr5Fd1vq8-00TE0i; Sat, 15
+ Feb 2025 14:34:49 +0100
+Message-ID: <09329455-a90a-4ff7-8184-31343def027e@web.de>
+Date: Sat, 15 Feb 2025 14:34:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214175709.76029-1-ryncsn@gmail.com> <Z7BsL2v6+oweqWE4@MiWiFi-R3L-srv>
-In-Reply-To: <Z7BsL2v6+oweqWE4@MiWiFi-R3L-srv>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Sat, 15 Feb 2025 21:34:39 +0800
-X-Gm-Features: AWEUYZncoCkFOJoAvMT12FkOeKGzmq1T0gZdXeu6E3ZvgiV4Ma_hq-Uj00l-Mmk
-Message-ID: <CAMgjq7DUdcbRdYLtFF7_VaBkzY4=VQXsRtDg_xhqTyBLmtMG9w@mail.gmail.com>
-Subject: Re: [PATCH 0/7] mm, swap: remove swap slot cache
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
-	Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Kalesh Singh <kaleshsingh@google.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jerry Snitselaar <jsnitsel@redhat.com>
+References: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v2 1/7] dmaengine: idxd: fix memory leak in error handling
+ path of idxd_setup_wqs
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ngmq4BaPF6er7HYPTcfmC6bU9pMC0bNlwmDZnFiwpYCt/xCSO9C
+ 5E9CP+Ux9vt6iCY6SexkE0tSKPa+3DfIElnaZ0tAHQE5NnJBy1pS2QQq4WZfC4hC3xdH2Jz
+ ZMFyS5M8tAKA4jq0N0aO4+w8/OO/2aEwsHVUnkEftUtysx4nl0Ahr81ZixMaiRdkVAjtIy1
+ y+l4dUJcyoZhpI+GlDSzw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QEqApKVhxxw=;ahj0ZN9YftLzjyDqgmZR7mM+CQQ
+ s009uMhxL5NLzWwCMgtDQbIYP+hNFSowLlxApBi5umK85W43rNPJ3fg3rkJz9nJUYVF79W1JP
+ vR7hj78dRH5LM7F3NU2GaYzzzWVaz1Lj5c2bUAb+2FYJ3KR5VYgqoFvAzqSVdnszPojiyOy0s
+ ZS9fNerR6lRkafV2VLFlPNnLTgh3+ySCiN31HplLgbJhtgehncexubjMfF7+y7MbIHWQ2c0XN
+ 08+kdaOGKHUlbppazQY0L/ILqMg8bMWd2LhKA/7O7xPOQZJx6LbOubAcSe+pPjHO3iGCkO1BN
+ +2DRhCA6Qh7xQo18LZ7GmzTKjcsiGrNGH3/PWJ9TIkyZ6Eg77oR4YDH+02mTemeKkl5ae/qCO
+ REr1DERT4CdWMeYHAf51rHygIbb/HmOTj6BeefZ/2uV3+7qcqlDKeJGuLoDGMizGhqYbAV1mt
+ 8w4OEPxMCle+XdxDPgOCIjhRX2CJsMZPLTL9zrxYXeMe1LhSeBYQxbfxSA4JOJByPReNcW05a
+ hPEfTeu698rq4o3MRQ28RcxudS4XciMtbJ2UHVr40bpu39VLFgA+CgWp1slLa2hBYvY8fdAsn
+ lDjCqpzJZcVReBCsZgxW+yOJbnLzvWkAaAFoUtq/6JXbxa1bYN1V9dnLfKuIAWlejW9Yj5dL9
+ EDFXhhZDNRaKt0gmwQnsjbGA/RykQUfCDYkfXceavZ+ax4bAdoA/I4+t96wtkcT2aAANzIeTI
+ iLsOZsb1TW0Bgzd12rtSxzGByOZvmzNCfKbFU/M82FJi7yrt+tb0vT5rgmYTwuXFeNKi7prew
+ M5P+KoyEE4WhP/bAzp+22N87qQPkWH/OgWYquHMztaQ+273YT50Hkyg38o2LNeLwvY9UySHxi
+ v29oAD0ZKzm9yxpliEIrD4HOFvpLB5QInHWKn1yC2cOmf8yGrrp88Sn1Qj2EIAPRBMkw9gaTQ
+ z/zbArU2PBxe+3p2BO/BWJThLzWdLOks4QKVeQ2yhxCcIjz/Vr0gT7mR/Qxqy/cMyjypN2Rsw
+ FSE8zh5U+rLvpZujbQKZJ8fak5yr0cuHnLiY097+SRpPPD4VVLHXYvOHIPjfp9FXWvrYOA0M6
+ jPpgkmoLOOpNIWOgONQ/5vc0ij5jaa4zQQDl5mD8d3L6/FE+tKOZMRcoM8o+uQhdOXUYaxc8i
+ u6Je/KCSzPut22JfDRhY0prTx6gnjjdRd6nj8zaQxsVf6hP/ppzCo/aIkAakzLo21s3s0xSgl
+ GgbmVJhO62BB+Hvuq8ik59VT4Cm0VA+OZY6v9FTMsf6EGbeRCpKIhjVz57ZLyT0ymxpZW2qDb
+ 2xLX3EGbz4sHbnI68cOPd+0b81BUiai4dMSgVoskIubD9/Rh9xDl0qB7PSNDOg2Gq6zEOimbR
+ w07XbZr5IELnWRq7ovEjbVquj97hCSUkZzrh3UYgSiFFc2IMy+LT7u3+Psmixv4m3/cnvBO/q
+ ZHCg33w==
 
-On Sat, Feb 15, 2025 at 6:28=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
->
-> Hi Kairui,
->
-> On 02/15/25 at 01:57am, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Slot cache was initially introduced by commit 67afa38e012e ("mm/swap:
-> > add cache for swap slots allocation") to reduce the lock contention
-> > of si->lock.
->
-> Thanks for adding me in CC. While I got failure to apply this series
-> to the latest mainline kernel, could you tell what is the base commit
-> of this pathcset?
->
-> Thanks
-> Baoquan
->
+=E2=80=A6
+> Fixes: a8563a33a5e2 ("dmanegine: idxd: reformat opcap output to match bi=
+tmap_parse() input")
+=E2=80=A6
 
-Hi Baoquan,
+Would other commits be more appropriate for the desired reference
+(according to the affected function implementation)?
 
-It's based on Andrews's mm-unstable here:
-git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git
+Examples:
+2022-09-29: de5819b994893197c71c86d21af10f85f50d6499 ("dmaengine: idxd: tr=
+ack enabled workqueues in bitmap")
+2021-04-21: 700af3a0a26cbac87e4a0ae1dfa79597d0056d5f ("dmaengine: idxd: ad=
+d 'struct idxd_dev' as wrapper for conf_dev")
+2021-04-20: 7c5dd23e57c14cf7177b8a5e0fd08916e0c60005 ("dmaengine: idxd: fi=
+x wq conf_dev 'struct device' lifetime")
 
-I've just re-checked, there should be no conflict. Sorry I didn't
-include this info in the cover letter, mm development is rapid so
-usually I send patch based on mm-unstable.
+
+Regards,
+Markus
 
