@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-515942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E767A36AAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76EAA36AAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CEB18925BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2EA3B001D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05F574BE1;
-	Sat, 15 Feb 2025 01:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AECA81732;
+	Sat, 15 Feb 2025 01:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OCoWvqqM"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMXHNTG/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8941B59A;
-	Sat, 15 Feb 2025 01:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A34911187;
+	Sat, 15 Feb 2025 01:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581921; cv=none; b=OMY1bS67R6i9w3RKWCg1Gws1acouWKCI+Bwq4Vr2vvmpISSBixubOis0yDT+2DqL/HpQvPTEA5Eu0KjIS5FC4cBptVcXtYCcM3b2/Y4+UTuUxVGbidP76EGdRsszhBYKn2VxYth7/PXtgO7PnWZpMzfyvzLgPKKRbmVOjp56J9E=
+	t=1739582025; cv=none; b=awDEbnjIC8HNmJIcqbrw+F/vkOm+FkPPVOMIf1QBpf5t8ks/WsECGpDzlNFEIlWo0G23qjM9cT2xFE05k5LwP8azyZe496fp1MhS9xTHQsvkP74PAeThht4YkpkIJFwjT+MXZ6r7vY60sgsSzllmcU/DPsbOLoGU1i1nycuGc44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739581921; c=relaxed/simple;
-	bh=d5OFd/G+/NcBl6t+Z0JGUCA4UL5w9rQnPohbFHgNGuo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ATro7fAFlS1L4/lBxYrLjynmjmIDyeyeLnCrZPVbzumyOg0r2HuiRWGRlhfqdH08zlOo9AYyomDfx5EoZiRyZ6Xhs+IOSxQCqkMfsXlHsFhf2OSmpWiFL8J1JlKV5J5CfwzgPrUSrT+JBIcFNhyEoU7xEEt6mWWU/OniqfO6XtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OCoWvqqM; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220c8f38febso49445475ad.2;
-        Fri, 14 Feb 2025 17:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739581919; x=1740186719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yhFHpTl87ZgzCdLyiXibfTAHdjueohyf2A6nhIyubNM=;
-        b=OCoWvqqM+HQrnBgUdy3pj8HITseJbRk/IhinaYp1RkqrcGWrivzEloIQDeRFV96eZe
-         W5fhriBlZDnhpEtoR+K9htkTvdSd362ohWLKAlC3vzC+FzXIl4NE6fq1AALhoCXXgVC1
-         Zu2Cnf+kcDBZ/WBo1n6Bdpkilo8qP0p5SOqbkdFTLRRintq+ZTCaiH4mCdPXCc5FapEl
-         Mgpzm93U922Ig71BWPR8Rgd3gvrKDdXneqwxwTi1nr4GpGb0VeFNOiTln6E8y7IKbKEh
-         z2tWI74hJbGuGIHFJJvSpKPnZzvrhVvQxE68A6qLt0z7Tr/8mGPsi+QCIMZcsUt9BhE1
-         hsyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739581919; x=1740186719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yhFHpTl87ZgzCdLyiXibfTAHdjueohyf2A6nhIyubNM=;
-        b=J7S3LnWTM9emWCG1EnPajrxAb/jBZQ7Y3a8udUXsjGCBJemr43e4NNJx0XTt6JAdnq
-         0nekGOI9DPk0/l6auazquW7o2ImKj01DOHDLTmY8pbnOPV+97GcsFRdSQd7tbiukUQar
-         q1rxEs22V8uVp+MCwwTQz2bCACWByrlp9aSvjoYPiTDMieXDv2WpltQUSGTUoJ8R7RK6
-         vXZ9MHxO1g889uxN7/kZoDr6J0Kh+Jw/lSCQ1YuA4VczsCM/orGKyvmtwW3fH0RiY0k6
-         BavpRoevh/x3SphHIE4mWXb6pvDy48o8BltKF1Yb4rY6pDh7dWlrapN8jyiXLvuIbFFI
-         /LPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCucL8F/osLfAMUi9VxDN7tdGAJWhzBTxL9ZBUHqTzkvsUeLeyni+sjSVHvnIw4barkYg1wUeSOu8pop0=@vger.kernel.org, AJvYcCWUzOBGICoNXBmeQjzK3FhN9vGOocxjrR06W/vPD1ZPjhVaws8SeGyx+FewpN9V0hzRwbLL7KNQwcnorHBmoZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYwRgAqSLQA6+x4Tgfkd/F40TXJpNmjNxIrCOtwsXtj/tCgIS3
-	vkutVZJCskhGQEQy4oDzdhR+Z3LtoqzrRO+pD/OEFfeKthotHPEj
-X-Gm-Gg: ASbGncuURlX9lHKJLmyu2/ph/SKYwckS/VJrFRDm7z8DFOg1XSXPV3TRUS3W2peqsGA
-	QpHftcv1e1QJB/hkDveugKqr5AlJXr6TeyROLI9xKnTx5oiDipO/OEeKEDx9VbmYfeCP0/z8BDD
-	yN3cHtrhFy0U2zbVwJ/3Er3xrTO+uGTPBjpDUnXwBMXx/yc16z4pPZRS8A9SgypbLaMsQ8yFXpc
-	X36xxPQO49voxYBv1IbHHBO7mc/OA4UGkt0IK7e5NLRKVbBiwekS47w5pX0fgPaDbbli9X8UwBN
-	qU4d/QqFfCC1NVqjQZkuDsCg
-X-Google-Smtp-Source: AGHT+IEA+0WyWlGsJ3YtsaFpMbR6Tv2W6sdVwfSW81viOVw30z3CtEWxoKbRnwimjE1Wg5HIlf6K4A==
-X-Received: by 2002:a17:902:dac5:b0:21f:4b01:b985 with SMTP id d9443c01a7336-221040bc38bmr20532935ad.45.1739581919030;
-        Fri, 14 Feb 2025 17:11:59 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.159.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5586141sm34906035ad.227.2025.02.14.17.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 17:11:58 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: charmitro@posteo.net
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
-	linux-kernel@vger.kernel.org,
-	lukas.bulwahn@gmail.com,
-	miguel.ojeda.sandonis@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	trintaeoitogc@gmail.com,
-	walmeida@microsoft.com
-Subject: Re: [PATCH V2 1/2] rust: module: change author to be a array
-Date: Fri, 14 Feb 2025 22:11:45 -0300
-Message-Id: <20250215011145.146552-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <m2y0y8b7p0.fsf@posteo.net>
-References: <m2y0y8b7p0.fsf@posteo.net>
+	s=arc-20240116; t=1739582025; c=relaxed/simple;
+	bh=WRCtZXjO6Wvl3SDyjYTihILfLHQlQU18HhuRJvAJYEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2AbjQuT6Dk/9C19GSRySJA++4B1ca1F/xhsvIB+7nPiT0R2295AfjIpFafv6EoGMCxFC7+lNbDqOCG3IQRBCzZYqzQ7une9XUnqoFPfsC7RLDoRBeZ9x7bI3JlNCeczqRNCt3jKHIcHeR87DFTwKHu+PaDuLw4rQWjPpzdzIHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMXHNTG/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739582023; x=1771118023;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WRCtZXjO6Wvl3SDyjYTihILfLHQlQU18HhuRJvAJYEc=;
+  b=EMXHNTG/YaLeiAZxYmBbGeIGGwEnAMLIFo75Nf/rWQHPubR7fr0bB9kX
+   15dzsf6w/Mbk6EHy0A6QZAnuAsxD8/+hgc9aoV5crWoKoMYsg0KTkoY+h
+   jPlLhMnoBUfFpTwpQs5P/hKAGytadz3gH3Put16HB8ul/DYDxBKNWTF3d
+   yqnLZdHEguxZVvD/TMRPc+/eAdeCh9+MERgPUEV1hmYgcrplv0EI0Sfrs
+   nmy/1ntPWEZObCy6qd0o3jAVFYO37/90SOX+Tbbp/MyCDKYc5las5ceLS
+   /h19XnejKagNuf5YJehCq4FXZk0L7RZOS3LxNNM899Y75yYOUO+XBfHmw
+   A==;
+X-CSE-ConnectionGUID: 58WddrJhR8+lRd3BXW/Shg==
+X-CSE-MsgGUID: rf4lZmH0STiXjkXRcgp0QA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="39575182"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="39575182"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 17:13:42 -0800
+X-CSE-ConnectionGUID: enkUg1f+SUGU47QDEBs55g==
+X-CSE-MsgGUID: BklhlydLS5ShgQeqQP7G7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="113580628"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 14 Feb 2025 17:13:40 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tj6kU-001ANT-0D;
+	Sat, 15 Feb 2025 01:13:38 +0000
+Date: Sat, 15 Feb 2025 09:12:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>
+Subject: Re: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
+Message-ID: <202502150933.vtaQAJRw-lkp@intel.com>
+References: <20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
 
-Charalampos Mitrodimas <charmitro@posteo.net> wrotes:
-> I wonder if we should make this "for author in authors", for code
-> clarity concerns.
-You is write, I will make this change.
+Hi Kim,
 
-> It could be that you developed this with an old tree history. You missed
-> changing the author for the samples/rust/rust_driver_platform.rs sample.
-Yes, my bad. 
-I will include this driver
+kernel test robot noticed the following build warnings:
 
-Thanks,
-Guilherme
+[auto build test WARNING on 4dc1d1bec89864d8076e5ab314f86f46442bfb02]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kim-Seer-Paller/dt-bindings-gpio-add-adg1414/20250213-211900
+base:   4dc1d1bec89864d8076e5ab314f86f46442bfb02
+patch link:    https://lore.kernel.org/r/20250213-for_upstream-v2-2-ec4eff3b3cd5%40analog.com
+patch subject: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
+config: alpha-randconfig-r132-20250215 (https://download.01.org/0day-ci/archive/20250215/202502150933.vtaQAJRw-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250215/202502150933.vtaQAJRw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502150933.vtaQAJRw-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpio/gpio-adg1414.c:68:31: sparse: sparse: Using plain integer as NULL pointer
+   drivers/gpio/gpio-adg1414.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+
+vim +68 drivers/gpio/gpio-adg1414.c
+
+    54	
+    55	static void adg1414_set(struct gpio_chip *chip, unsigned int offset, int value)
+    56	{
+    57		struct adg1414_state *st = gpiochip_get_data(chip);
+    58	
+    59		guard(mutex)(&st->lock);
+    60	
+    61		if (value)
+    62			st->buf |= BIT(offset);
+    63		else
+    64			st->buf &= ~BIT(offset);
+    65	
+    66		st->tx = cpu_to_be32(st->buf << (32 - st->chip.ngpio));
+    67	
+  > 68		adg1414_spi_write(st, 0, st->chip.ngpio / 8);
+    69	}
+    70	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
