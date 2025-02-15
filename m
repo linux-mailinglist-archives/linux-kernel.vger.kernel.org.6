@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-515964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F068A36B47
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:07:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406D6A36B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489551894631
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F290F17057F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16427154C0B;
-	Sat, 15 Feb 2025 02:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84380126C18;
+	Sat, 15 Feb 2025 02:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="hjLcEcvs"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rYm1eQYW"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCC1DDA8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 02:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A67238DE9;
+	Sat, 15 Feb 2025 02:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739585209; cv=none; b=twEIbMrWI2759RgRux8swqwUTRgq6DIJKUaWUYSZ6xEswpL5qOUJsx1HkKGQu5t2bfs4EtgReLZekTv7uXC3yrvY72bRtu9L0AD+iRkLC5pfm16KVqPHzRCZ6uUEdMa/YTdyr6qedQtKMMlN9zEcVM1bYv5daGkhB6wOZ7pRv8E=
+	t=1739584882; cv=none; b=frirRx9fD4C8fpqYzLSQQnigRE/CeFAOge1BqDFE6qvXo+2aeTGojJnrlHxmVJ4pedZh7yU1z4wDGvvvZlqgszwmspw3Cd2eW8Y5M56p/aCbCHoExP+PwGavPhTmmLRVeusJ+kfYJUcpXdqH2FS6afYBqtyf05lfkFRLtN33n1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739585209; c=relaxed/simple;
-	bh=MzthKMpX9KqIlm+3tgNfBQvwf9/vPDjpd5I3Y/62o5U=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=EPSIctgOqSndGb/Dkkw2UKX4pMwK0rpo9HnyEERDA/iIKX7hEROpGezp1MHEdVfcuT5W3BRHH/F/z0vC3K7VpkfXQWd7VPaWWoEyxMRTIItiXhUaGUBSt3t0PcNwbI4l3QYnvVQnmQW9qaVM8dy+tGFKVlzAzH0ctUd29sQ7Rlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=hjLcEcvs; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1739585200; bh=kLWbNa7rHBqbc8lkjhhNsnqxVEvCI0tfPtnxNaOJp9o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hjLcEcvsWQOxstzgqmMdKA6M6ruAST6/d5Ovhxjb8b911sStdHuOXly9kuX4d0Slz
-	 d8nYmVhwL6I11iQn2FNeqCwowePZXqjD2Gwwmlu/wahB7pO4268eWmoWHLKMb1fOeo
-	 W2MTRcYifXdmzsqHj+g6tgJyIwCeANfs+veyuKow=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 238400E; Sat, 15 Feb 2025 10:00:35 +0800
-X-QQ-mid: xmsmtpt1739584835tm8u2aki3
-Message-ID: <tencent_531E37224ACA755D7751666E3C2736789709@qq.com>
-X-QQ-XMAILINFO: NnYhxYSyuBnLcW5XKGOg3GwknI6eo2Q77+MNgCTkhmEKBbofyLK2yS9ZO5JSxR
-	 CohTFvykLF5tUprDksnSkC9nBa/KXl222QR3bmEnNWezZ3/gmvJHd3XCrM1W0FOFi+dGwFQXAHoW
-	 KFCzlsg18J4SMFSD/IufNglgwB5qrAHifSVspRu1yxrrs18KLaeczLJMYjY1gCO2ljSCxIqrH1YO
-	 fGsb1Cg7uTNkRCDWnpPRsODszSjgUyGD1HL0LL52xa/4GUp1cs3G/EaC+RNoSGBUl+EnsseKrKpD
-	 z440I+AK+o+zTB2J2zWzjJVH1awW1pV+FC66Z/GBx51wKwKhQ/M0psuyRjy4hdG128rzBZ6vbGID
-	 tjXIRHvdpfYWDeaHahrfl7B2GVlkPK51xY2Ktg4MDO9fYqb5JZgXn7BHQzTsKrt6bLNtL3G5Eryq
-	 CWQt9y0JVMQ65KIuApLwgnQDEJ4j5gK3WJNNukDN4h/8q9SG5OUMOgn24PaPmz/1isVSfQwDUctj
-	 q5zcgFfIA5jNove9mTjWj6QG3oY78Arzg6VknCDEy6HWufvmV2SvtkOq+m2S+HaUJJS1Or+/Znzv
-	 czOFcO8Q3SLxHKFjGBwJioonLj/VGLL6Bv4tOUPCllWmPAoOikelCParEoc1kA3qDDsLVAYRLwHt
-	 y4eGtSFojOLx5kShCjJPvXQBnEHD+zzWIcw8QuB25cJ7AeJDIdtLdvUr8qBqwt9qnJ4ja6ktiYhn
-	 uOf3h+orNebuo8rJvyXofjwVKyZumha0fVipbNm8PrsbcoDTLzjENMdEETQ4whcOAU5RdV34bBzO
-	 UyjGhiWQwufuycQ5+60rIfzksESToRicHx/a35OCqjx1lSesmjaztdlGTgB8SuX9KuDNZ4MJyYhv
-	 NH9EYOi8qkL23AVaI9lVvDaQFmB52F3dyuQcLNuqTly9yjKWLdb+Uq68MJQWjMh3JOZ8EEiLeh8E
-	 WR6gutkvRKKNPkr+WSNY8m6Exu0xk1
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [netfs?] KASAN: slab-use-after-free Write in io_submit_one
-Date: Sat, 15 Feb 2025 10:00:36 +0800
-X-OQ-MSGID: <20250215020035.1076254-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
-References: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
+	s=arc-20240116; t=1739584882; c=relaxed/simple;
+	bh=gncXKG7beu+TTX3jEhMnjEvxKai7cCwthLIhdbfy9tI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2hlksRvH718xEodAcgKNIZoNVvqcWvB9uey5zdYFic37IIFxg5re7eK+hifupNkuNan8+JhCjni03vREDaWh5cFRVVSNtIlsmPOCeslvs4kCWWb0TtK4pwLOYsty8QydiVjHNXL3jBf11jcreZpjvvLDW2gRDxEkg8p36CLl5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rYm1eQYW; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739584875; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=UZ1ldi7XqZiWV5GPZclbn7U2sRzymXfxs/plAaNIJR0=;
+	b=rYm1eQYWIuTeP1wI9cBoWBuyTc/T3VHZkpMNgjp7oq5yCnbCa5Foroof3Fec7EmPNGoCGBaH9Zfcv+k6te9guWYmu0NragZsVa7C/F1QeL+73YfwuHlKkLhDiJhCjrX8yIS9JXEy0zqdh7Rry4cyoyY2+xC0krw2xVEi7Vb2+Ds=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPSMrjJ_1739584874 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 15 Feb 2025 10:01:15 +0800
+Message-ID: <4661c8da-8f50-4d9d-8c0e-5208067c9ed8@linux.alibaba.com>
+Date: Sat, 15 Feb 2025 10:01:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] dmaengine: idxd: fix memory leak in error handling
+ path
+To: Dave Jiang <dave.jiang@intel.com>, Markus Elfring
+ <Markus.Elfring@web.de>, dmaengine@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+References: <20250110082237.21135-1-xueshuai@linux.alibaba.com>
+ <61c9c416-711c-44dc-87af-b1aefc76b87e@web.de>
+ <3bcf7b21-d894-4aa1-ba00-d32a32a72b2d@intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <3bcf7b21-d894-4aa1-ba00-d32a32a72b2d@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-#syz test
 
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index f65affa5a9e4..93eb315fffea 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -371,9 +371,11 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- 
- 	if (rreq->iocb) {
- 		rreq->iocb->ki_pos += rreq->transferred;
--		if (rreq->iocb->ki_complete)
-+		if (rreq->iocb->ki_complete) {
- 			rreq->iocb->ki_complete(
- 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
-+			rreq->iocb = NULL;
-+		}
- 	}
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
 
+在 2025/2/15 01:22, Dave Jiang 写道:
+> 
+> 
+> On 2/14/25 10:15 AM, Markus Elfring wrote:
+>> …
+>>>   drivers/dma/idxd/init.c | 62 ++++++++++++++++++++++++++++++++---------
+>> …
+>>
+>> How do you think about to add any tags (like “Fixes” and “Cc”)
+>> for the presented patches accordingly?
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc2#n145
+> 
+> I actually thought about asking for that. But I believe the fixes are against code that just went in for 6.14 so backporting won't be necessary.
+
+Will add fixes tags in next version.
+
+> 
+>>
+>> Regards,
+>> Markus
+
+Thanks.
+Shuai
 
