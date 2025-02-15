@@ -1,231 +1,281 @@
-Return-Path: <linux-kernel+bounces-516384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E5FA37072
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 078ECA37077
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35FF5188E588
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8690A18936E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBBE1EDA3F;
-	Sat, 15 Feb 2025 19:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="UFEq0suH"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70A31EDA0F;
+	Sat, 15 Feb 2025 19:47:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D11578F4B;
-	Sat, 15 Feb 2025 19:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B84B15696E
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 19:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739648163; cv=none; b=FsGjlw2Z+AEs7WZ7x9vamoylFuooeprlJMmBsvqyo95mLUNje14t5XBq/W2lebVBjniEVTdOZA5S63lTHgc4ge4jZ7WYTlZiRMUpgDnOzchLs9P5lneuBN48+XtsHZ5QLss0fuRyYV73m5KXjUHmJbZA5HgpUljdqIt18igkcPM=
+	t=1739648842; cv=none; b=tqqcQmdeAAeYu1JY/trk7srzR6hL32Id4N/GPOrLlbVUff/adFBDELsSZIRF+6fhI2c9wylwyqMHesuW8X42tgLR4HIBZA1zOVSqiNtrt8tWcXTLD4LlBXVQvKj8IuNpdGFDRfs7wT56WYNAlfORPZkUWzQeq2n+jpYjarWHL9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739648163; c=relaxed/simple;
-	bh=c+77P+CeCwpPbzD2Z3RL5T2OxM7qMYXw+vkgE9vWEuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PiDkaSFcEWVm3Rq0uH6XkvqmxxzijkTEOm5TVEvLCo20DkOeggkxdsGHhASecNghCJpsHx+1m14IErrMtVmr50/APhxCjn7VT19p4XHSpDB54BXoN976rSotGp/XN56i67mRDt/fftqB/2xqnFpB2dRbJcqxrBhxPzXgXNrBmgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=UFEq0suH; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739648155; x=1740252955; i=w_armin@gmx.de;
-	bh=fd3DQucLmbpCHhWlBe3NSl+CD9pYPIDbqFnHpaPD6vk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UFEq0suH5HzK3YKcBur0GbPEEU7xj9hkdIyQCY8nor4v1q+832cXMpzDHbeIX3mk
-	 DjFeWF584xZQN8z9XozmSo1M3OZ/gUPG/4F5jj7fkRPMmxfY2RbbZLrdWLJSJKFNm
-	 A+5EXuoI7JXVlA36YalQN9YNP1jPMkHfx/Nv9iMRTPHhy79yES+XTf0/3nCFJBl8q
-	 aV2HqHjdgeD4sud0NrlXFNH9KlW5/MauZQEEanCNG0KH8qu0XwFtILCe549oACLqO
-	 ilwUBQ+irBpN+lth2OuFztII0ARsZmhULvj+OhbMVzeiagt3jFI1y4BPAAMKRk6Ts
-	 ONV5WztQerEGL2/YsQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.24] ([87.177.78.219]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8XU1-1tEdj81twH-00xMpV; Sat, 15
- Feb 2025 20:35:55 +0100
-Message-ID: <d53c7f66-8efb-4df5-a372-5598aa1f3e01@gmx.de>
-Date: Sat, 15 Feb 2025 20:35:54 +0100
+	s=arc-20240116; t=1739648842; c=relaxed/simple;
+	bh=4wl7UBTs5Mar2UqO8ZJnxz/AGe9h4i57Uf+woQkLdl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mT8DZs14WLdWl8QNSUchGTPC3HQdRnMX652A1zeOrlJtuBdBmq1cDXt00dceZ9LiAlTb9D1qZrGlxCXmxpoA56w+zflEUQbTud6Y0jBVgEx42zROq4k26DvgsovdqgyQhp48lXXyD37NuoLYoFXel1ldrZTybiKo7xfMcelgQTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30CEAC4CEDF;
+	Sat, 15 Feb 2025 19:47:21 +0000 (UTC)
+Date: Sat, 15 Feb 2025 14:47:19 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [GIT PULL] ring-buffer: Fixes for v6.14
+Message-ID: <20250215144719.404616dc@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/3] platform/x86: acer-wmi: Fix setting of fan
- behavior
-To: Kurt Borja <kuurtb@gmail.com>, jlee@suse.com, basak.sb2006@gmail.com,
- rayanmargham4@gmail.com
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250215174544.8790-1-W_Armin@gmx.de>
- <20250215174544.8790-2-W_Armin@gmx.de> <D7T8UQ8PJ7BH.3DGKE2REW8025@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <D7T8UQ8PJ7BH.3DGKE2REW8025@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:MwxIggLEqNcEqPPL3Q5TLFAMFKXjUWlFujEiLFlebJU5GsJLOfi
- ngxyoYHqhkhoYu8M+NesMiiRkans+MXJR4NETZZQ/Jk26JyOmhhHkZpxuALPBOAHbVJx97i
- zbhGppvWdXcj2H4QOGtLA5CLWKY6xQyC5Wlz46LJsWEfUBCclC1JjiDbsDXMPlkM5VIxb2i
- sv3YT8PnCeqjL9b4gdONw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J2Gx4zBtoxE=;qia41CE4fgzpYhsOjrJbTCB5GIq
- O0RPKVPebBiWFFqiUl1ckj4QrMfV4Zf+DJYakRvBQTS9xy2xsbk0reog+0hYDATxaVOWR3+av
- OauE9uHn9NTcA/2fexQEunlLVxicJgW/PtNR97UPuVgURRyq6s34el9TAcMsmUr454fNNMotf
- YPbgTjjTFWWLC+SrbsPWt7eprqrzOTZXNqjlly9HtF2tFI95+WogSHbM/XyAeyG/IL5I6vg24
- Gz9gnCmQeKKsyUrYbfiK8hvh07ZUwK8r5PcIJF7XYOaKjwPeicDtO9skJ2ME8tNX8eLRqdbEm
- n/mraPMILZfg2htm+eTjqrTYqAIwEF22M3o6xXY9g8COsDocWMwrnZtRUkcy3m3JVUvXnvyDp
- xiRn049jGPgS/l9HMTt0PI3uqfi7Q9V73USgA7yuUXo+wyDS0ECBiPNcKr/LWzLqg0CqMPPD5
- WT3LQ12awXnm6jmf3j3Mn4BtP202umph2QaWACb1229rOkcQcOORzOBR2sqN4I+qHdGMHJrLs
- ehchv1oS2NGqpXdOLDicOU/4HI+ym9p/AxTzRfC3mrIG5+gRNiZBaFSCErxuMb+ReYXd2P9ev
- KMTS+DyqatjwbJGLOIwEAraIGfszSQoAUHnYOUCAKjOuJTt0x58Blxf6WdOf2ixb9fMf9CZga
- +HesuO/Bcqij80T/Ma37RCEA3jpn4ahe1ybWiOQuPR/QRkBH/Ok6YZjzsLC7Vj+9J8Lob2SH0
- dsSmttURCVdb+ZZUi80SFM5rQ4/uVzD/q48In8J0tjxaIXvD8JvD7/QBJN2vipy8YXMVCzgdD
- x3ipDlefM29nZyQnixyN41347529pCEVjES3ybwyUwgbUFhVpAYoneLekM+Quq9SoZU9vvRTb
- C9FGtMU4/fhp6ONfSUv8cY/pfORygm/Fe16lqQXsXBrZJzonGT4DA+/0nZfJDLH7TSW63yeM4
- BVY8hmOHW0KY2oO9XnkIyfLT6hLqVEmYDeX8/d5XTb0HlMNXJKU/6w2jUZ9GpDiwAz+RQa9aQ
- CoOimZAdYtObItQ/ya3nXOLYPi6J8bxAy7L/xUJRVkDYuwPp2GSxGA5hWAH2lJ+FgP5Rxymc+
- UMA93v9zQaetCmgiHG9P1oJ5QWDA9x6LxHix0xdkJX8GeXnCHkxA9xxqMcTVB8azCvrLJR7sO
- tIieenoWGHj0gNH/ubx3ELB+8ZBUIwz7ejyQZfOUn7s+ZA4F1/+8//lbBV9393NX7GC4NxBII
- KahRDl0kTMoAijSdLbISlc9z1VwF94i7In8RMLQ3xCRFdAOoRzqQ7lwtLVWOnVb8ZC454LwW1
- KMf/JaS4B4jYsq4pJhenjJs2vkwAeMXWcjfLM7m0D/CZLsL6docLadIox0PMVt+c3z5psnmL7
- ZkH5GeBr8/nuiY0RIuYKxlWLbxDvLdCOeBaqE35huadIqgVu/LXHWvSV6MkYNZylkUuUKaZHw
- /EvJa0I24UYUGxw8JqVYGntM1/2w=
 
-Am 15.02.25 um 19:51 schrieb Kurt Borja:
 
-> On Sat Feb 15, 2025 at 12:45 PM -05, Armin Wolf wrote:
->> After studying the linuwu_sense driver
->> (https://github.com/0x7375646F/Linuwu-Sense) i was able to understand
->> the meaning of the SetGamingFanBehavior() WMI method:
->>
->> - the first 16-bit are a bitmap of all fans affected by a fan behavior
->>    change request.
->>
->> - the next 8 bits contain four fan mode fields (2-bit), each being
->>    associated with a bit inside the fan bitmap.
->>
->> There are three fan modes: auto, turbo and custom.
->>
->> Use this newfound knowledge to fix the turbo fan handling by setting
->> the correct bits before calling SetGamingFanBehavior(). Also check
->> the result of the WMI method call and return an error should the ACPI
->> firmware signal failure.
->>
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/platform/x86/acer-wmi.c | 75 +++++++++++++++++++++++----------
->>   1 file changed, 52 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
->> index 69336bd778ee..f20a882e3650 100644
->> --- a/drivers/platform/x86/acer-wmi.c
->> +++ b/drivers/platform/x86/acer-wmi.c
->> @@ -68,10 +68,19 @@ MODULE_LICENSE("GPL");
->>   #define ACER_WMID_SET_GAMING_LED_METHODID 2
->>   #define ACER_WMID_GET_GAMING_LED_METHODID 4
->>   #define ACER_WMID_GET_GAMING_SYS_INFO_METHODID 5
->> -#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR 14
->> +#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID 14
->>   #define ACER_WMID_SET_GAMING_MISC_SETTING_METHODID 22
->>   #define ACER_WMID_GET_GAMING_MISC_SETTING_METHODID 23
->>
->> +#define ACER_GAMING_FAN_BEHAVIOR_ID_MASK GENMASK_ULL(15, 0)
->> +#define ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK GENMASK_ULL(23, 16)
->> +
->> +#define ACER_GAMING_FAN_BEHAVIOR_CPU BIT(0)
->> +#define ACER_GAMING_FAN_BEHAVIOR_GPU BIT(3)
->> +
->> +#define ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK GENMASK(1, 0)
->> +#define ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK GENMASK(7, 6)
->> +
->>   #define ACER_GAMING_MISC_SETTING_STATUS_MASK GENMASK_ULL(7, 0)
->>   #define ACER_GAMING_MISC_SETTING_INDEX_MASK GENMASK_ULL(7, 0)
->>   #define ACER_GAMING_MISC_SETTING_VALUE_MASK GENMASK_ULL(15, 8)
->> @@ -121,6 +130,12 @@ enum acer_wmi_predator_v4_sensor_id {
->>   	ACER_WMID_SENSOR_GPU_TEMPERATURE	= 0x0A,
->>   };
->>
->> +enum acer_wmi_gaming_fan_mode {
->> +	ACER_WMID_FAN_MODE_AUTO		= 0x01,
->> +	ACER_WMID_FAN_MODE_TURBO	= 0x02,
->> +	ACER_WMID_FAN_MODE_CUSTOM	= 0x03,
->> +};
->> +
->>   enum acer_wmi_predator_v4_oc {
->>   	ACER_WMID_OC_NORMAL			= 0x0000,
->>   	ACER_WMID_OC_TURBO			= 0x0002,
->> @@ -1565,9 +1580,6 @@ static acpi_status WMID_gaming_set_u64(u64 value, u32 cap)
->>   	case ACER_CAP_TURBO_LED:
->>   		method_id = ACER_WMID_SET_GAMING_LED_METHODID;
->>   		break;
->> -	case ACER_CAP_TURBO_FAN:
->> -		method_id = ACER_WMID_SET_GAMING_FAN_BEHAVIOR;
->> -		break;
->>   	default:
->>   		return AE_BAD_PARAMETER;
->>   	}
->> @@ -1618,25 +1630,42 @@ static int WMID_gaming_get_sys_info(u32 command, u64 *out)
->>   	return 0;
->>   }
->>
->> +static int WMID_gaming_set_fan_behavior(u16 fan_bitmap, u8 mode_bitmap)
->> +{
->> +	acpi_status status;
->> +	u64 input = 0;
->> +	u64 result;
->> +
->> +	input |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_ID_MASK, fan_bitmap);
->> +	input |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK, mode_bitmap);
->> +
->> +	status = WMI_gaming_execute_u64(ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID, input,
->> +					&result);
->> +	if (ACPI_FAILURE(status))
->> +		return -EIO;
->> +
->> +	/* TODO: Proper error handling */
->> +	pr_notice("Fan behavior return status: %llu\n", result);
-> I guess this is missing some ACER_GAMING_FAN_BEHAVIOR_STATUS_MASK
-> handling right? This shouldn't mess with testing tho.
 
-Yes, i need to wait for the hardware testers to give feedback before i can implement this.
+Linus,
 
->> +
->> +	return 0;
->> +}
->> +
->>   static void WMID_gaming_set_fan_mode(u8 fan_mode)
->>   {
->> -	/* fan_mode = 1 is used for auto, fan_mode = 2 used for turbo*/
->> -	u64 gpu_fan_config1 = 0, gpu_fan_config2 = 0;
->> -	int i;
->> -
->> -	if (quirks->cpu_fans > 0)
->> -		gpu_fan_config2 |= 1;
->> -	for (i = 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
->> -		gpu_fan_config2 |= 1 << (i + 1);
-> I agree on with your explaination in the previous thread, so after the
-> TODO is addressed:
->
-> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
->
-> I do wonder tho, isn't there a WMI operation to get the bitmap of
-> available fans? Like in the case of available thermal profiles and
-> sensors.
+Ring buffer fixes for v6.14:
 
-I do not know. There are a couple of other fan-related WMI methods available but they seem
-to do something else.
+- Enable resize on mmap() error
 
-For now i use the hwmon interface for detecting the presence of the CPU and GPU fan. I suspect
-that the second GPU fan can also be detected using the hwmon interface.
+  When a process mmaps a ring buffer, its size is locked and resizing is
+  disabled. But if the user passes in a wrong parameter, the mmap() can fail
+  after the resize was disabled and the mmap() exits with error without
+  reenabling the ring buffer resize. This prevents the ring buffer from ever
+  being resized after that. Reenable resizing of the ring buffer on mmap()
+  error.
 
-Thanks,
-Armin Wolf
+- Have resizing return proper error and not always -ENOMEM
 
+  If the ring buffer is mmapped by one task and another task tries to resize
+  the buffer it will error with -ENOMEM. This is confusing to the user as
+  there may be plenty of memory available. Have it return the error that
+  actually happens (in this case -EBUSY) where the user can understand why
+  the resize failed.
+
+- Test the sub-buffer array to validate persistent memory buffer
+
+  On boot up, the initialization of the persistent memory buffer will do a
+  validation check to see if the content of the data is valid, and if so, it
+  will use the memory as is, otherwise it re-initializes it. There's meta
+  data in this persistent memory that keeps track of which sub-buffer is the
+  reader page and an array that states the order of the sub-buffers. The
+  values in this array are indexes into the sub-buffers. The validator
+  checks to make sure that all the entries in the array are within the
+  sub-buffer list index, but it does not check for duplications.
+
+  While working on this code, the array got corrupted and had duplicates,
+  where not all the sub-buffers were accounted for. This passed the
+  validator as all entries were valid, but the link list was incorrect and
+  could have caused a crash. The corruption only produced incorrect data,
+  but it could have been more severe. To fix this, create a bitmask that
+  covers all the sub-buffer indexes and set it to all zeros. While iterating
+  the array checking the values of the array content, have it set a bit
+  corresponding to the index in the array. If the bit was already set, then
+  it is a duplicate and mark the buffer as invalid and reset it.
+
+- Prevent mmap()ing persistent ring buffer
+
+  The persistent ring buffer uses vmap() to map the persistent memory.
+  Currently, the mmap() logic only uses virt_to_page() to get the page
+  from the ring buffer memory and use that to map to user space. This works
+  because a normal ring buffer uses alloc_page() to allocate its memory.
+  But because the persistent ring buffer use vmap() it causes a kernel
+  crash.  Fixing this to work with vmap() is not hard, but since mmap() on
+  persistent memory buffers never worked, just have the mmap() return
+  -ENODEV (what was returned before mmap() for persistent memory ring
+  buffers, as they never supported mmap. Normal buffers will still allow
+  mmap(). Implementing mmap() for persistent memory ring buffers can wait
+  till the next merge window.
+
+- Fix polling on persistent ring buffers
+
+  There's a "buffer_percent" option (default set to 50), that is used to
+  have reads of the ring buffer binary data block until the buffer fills to
+  that percentage. The field "pages_touched" is incremented every time a
+  new sub-buffer has content added to it. This field is used in the
+  calculations to determine the amount of content is in the buffer and if it
+  exceeds the "buffer_percent" then it will wake the task polling on the
+  buffer.
+
+  As persistent ring buffers can be created by the content from a previous
+  boot, the "pages_touched" field was not updated. This means that if a task
+  were to poll on the persistent buffer, it would block even if the buffer
+  was completely full. It would block even if the "buffer_percent" was zero,
+  because with "pages_touched" as zero, it would be calculated as the buffer
+  having no content. Update pages_touched when initializing the persistent
+  ring buffer from a previous boot.
+
+
+Please pull the latest trace-ring-buffer-v6.14-rc2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-ring-buffer-v6.14-rc2
+
+Tag SHA1: 8fc8285409ff42935830f40e429fea5c8f691c3c
+Head SHA1: 97937834ae876f29565415ab15f1284666dc6be3
+
+
+Steven Rostedt (5):
+      ring-buffer: Unlock resize on mmap error
+      tracing: Have the error of __tracing_resize_ring_buffer() passed to user
+      ring-buffer: Validate the persistent meta data subbuf array
+      tracing: Do not allow mmap() of persistent ring buffer
+      ring-buffer: Update pages_touched to reflect persistent buffer content
+
+----
+ kernel/trace/ring_buffer.c | 28 ++++++++++++++++++++++++++--
+ kernel/trace/trace.c       | 12 +++++-------
+ 2 files changed, 31 insertions(+), 9 deletions(-)
+---------------------------
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index b8e0ae15ca5b..bb6089c2951e 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1672,7 +1672,8 @@ static void *rb_range_buffer(struct ring_buffer_per_cpu *cpu_buffer, int idx)
+  * must be the same.
+  */
+ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+-			  struct trace_buffer *buffer, int nr_pages)
++			  struct trace_buffer *buffer, int nr_pages,
++			  unsigned long *subbuf_mask)
+ {
+ 	int subbuf_size = PAGE_SIZE;
+ 	struct buffer_data_page *subbuf;
+@@ -1680,6 +1681,9 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 	unsigned long buffers_end;
+ 	int i;
+ 
++	if (!subbuf_mask)
++		return false;
++
+ 	/* Check the meta magic and meta struct size */
+ 	if (meta->magic != RING_BUFFER_META_MAGIC ||
+ 	    meta->struct_size != sizeof(*meta)) {
+@@ -1712,6 +1716,8 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 
+ 	subbuf = rb_subbufs_from_meta(meta);
+ 
++	bitmap_clear(subbuf_mask, 0, meta->nr_subbufs);
++
+ 	/* Is the meta buffers and the subbufs themselves have correct data? */
+ 	for (i = 0; i < meta->nr_subbufs; i++) {
+ 		if (meta->buffers[i] < 0 ||
+@@ -1725,6 +1731,12 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 			return false;
+ 		}
+ 
++		if (test_bit(meta->buffers[i], subbuf_mask)) {
++			pr_info("Ring buffer boot meta [%d] array has duplicates\n", cpu);
++			return false;
++		}
++
++		set_bit(meta->buffers[i], subbuf_mask);
+ 		subbuf = (void *)subbuf + subbuf_size;
+ 	}
+ 
+@@ -1838,6 +1850,11 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+ 				cpu_buffer->cpu);
+ 			goto invalid;
+ 		}
++
++		/* If the buffer has content, update pages_touched */
++		if (ret)
++			local_inc(&cpu_buffer->pages_touched);
++
+ 		entries += ret;
+ 		entry_bytes += local_read(&head_page->page->commit);
+ 		local_set(&cpu_buffer->head_page->entries, ret);
+@@ -1889,17 +1906,22 @@ static void rb_meta_init_text_addr(struct ring_buffer_meta *meta)
+ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ {
+ 	struct ring_buffer_meta *meta;
++	unsigned long *subbuf_mask;
+ 	unsigned long delta;
+ 	void *subbuf;
+ 	int cpu;
+ 	int i;
+ 
++	/* Create a mask to test the subbuf array */
++	subbuf_mask = bitmap_alloc(nr_pages + 1, GFP_KERNEL);
++	/* If subbuf_mask fails to allocate, then rb_meta_valid() will return false */
++
+ 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
+ 		void *next_meta;
+ 
+ 		meta = rb_range_meta(buffer, nr_pages, cpu);
+ 
+-		if (rb_meta_valid(meta, cpu, buffer, nr_pages)) {
++		if (rb_meta_valid(meta, cpu, buffer, nr_pages, subbuf_mask)) {
+ 			/* Make the mappings match the current address */
+ 			subbuf = rb_subbufs_from_meta(meta);
+ 			delta = (unsigned long)subbuf - meta->first_buffer;
+@@ -1943,6 +1965,7 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ 			subbuf += meta->subbuf_size;
+ 		}
+ 	}
++	bitmap_free(subbuf_mask);
+ }
+ 
+ static void *rbm_start(struct seq_file *m, loff_t *pos)
+@@ -7126,6 +7149,7 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+ 		kfree(cpu_buffer->subbuf_ids);
+ 		cpu_buffer->subbuf_ids = NULL;
+ 		rb_free_meta_page(cpu_buffer);
++		atomic_dec(&cpu_buffer->resize_disabled);
+ 	}
+ 
+ unlock:
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 1496a5ac33ae..0e6d517e74e0 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5977,8 +5977,6 @@ static int __tracing_resize_ring_buffer(struct trace_array *tr,
+ ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ 				  unsigned long size, int cpu_id)
+ {
+-	int ret;
+-
+ 	guard(mutex)(&trace_types_lock);
+ 
+ 	if (cpu_id != RING_BUFFER_ALL_CPUS) {
+@@ -5987,11 +5985,7 @@ ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ 			return -EINVAL;
+ 	}
+ 
+-	ret = __tracing_resize_ring_buffer(tr, size, cpu_id);
+-	if (ret < 0)
+-		ret = -ENOMEM;
+-
+-	return ret;
++	return __tracing_resize_ring_buffer(tr, size, cpu_id);
+ }
+ 
+ static void update_last_data(struct trace_array *tr)
+@@ -8285,6 +8279,10 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	struct trace_iterator *iter = &info->iter;
+ 	int ret = 0;
+ 
++	/* Currently the boot mapped buffer is not supported for mmap */
++	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
++		return -ENODEV;
++
+ 	ret = get_snapshot_map(iter->tr);
+ 	if (ret)
+ 		return ret;
 
