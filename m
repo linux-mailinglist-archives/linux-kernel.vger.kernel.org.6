@@ -1,166 +1,112 @@
-Return-Path: <linux-kernel+bounces-516012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0977A36BF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:11:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194FAA36BF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5507A46BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57C316FFDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C7F18BC2F;
-	Sat, 15 Feb 2025 04:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3718950A;
+	Sat, 15 Feb 2025 04:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ViylrUhi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CQK1gpLH"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C21714D7;
-	Sat, 15 Feb 2025 04:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA3E21345
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739592660; cv=none; b=sC+XhdDKANIDB1gSsjCnvg2WdBqM2kSOYoA9i1xtvq3JL6YNXRK70fqbg/pI18BTTuHNbxwqjHSkxnESE8V0P9Yzb1P3CE8JLjzSgyjsQ3owgWYPaiS33rJ+t0NOfWVhpjjeTVBmJ0/wJGeNADpH2SB47DYAlGruuc5QdZdAEQk=
+	t=1739592636; cv=none; b=WhTW2Ya/Tc9fvC8cJX9hlTzA/MGdyq/3A6Ya/JaCjQw7ddMBzvyh3Y+kRYYAtYENK37WGWMjfyRapvqGlXI++DnxGbHaacOBCRpAQQgk8dqL3j76gkrrL5qcVSmvzm6LlNwNB0NPEfU5eTWiR8s5gFqxXbshmDyUjslEkdas1Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739592660; c=relaxed/simple;
-	bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0DajfNQrbHkZntzbiQlNn4KmSpO3gtas4M94pXNXncB7W/p0AQ/qyce354vfI/xvoXqkS4R7mW+rtwawePr3bia6hOql1tSZli+I3gxnGMi7YxDfp6ILfyAbGv1G33dPUkFl+X7/agk9MSJ6TYNzNkEE1wEZ2r/XJ6WkTJLJec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ViylrUhi; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739592658; x=1771128658;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
-  b=ViylrUhincyZP4RP34R1atiFBjtMolXZLc1bZGMLHUkQzySfZP58vMzC
-   AsIDMltbn7rm02y7H/E3dNFKOkhXxq2IzTsPMlwPJ1rHzk39b3IikAA7M
-   uG+hrMtoNZTX8pHTWGQeKULM+DgLRmhaHFv+qMABzBrbRyzSTsLqLcMQs
-   ZlDBi+ihoSOgBgu57RGqxD9tfWPU6Lg8Jz3Zyjm/WYZiL1DqgIw8N9Et5
-   jxiMtN51td8q7wFiRug8DY957d1n9kKO0zkxe9eXIqMRIXSH6Z4L1dkst
-   p3BaPdUfYP9PI6mPkH+99rtoOeMiWNFrD/Yhj48NDcKWvQ1XwOiCoJwW6
-   A==;
-X-CSE-ConnectionGUID: CkLrFsydQlauwA0iT1ybcA==
-X-CSE-MsgGUID: em1S292YTmKjgpC4lkyBIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40221664"
-X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
-   d="scan'208";a="40221664"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 20:10:57 -0800
-X-CSE-ConnectionGUID: Q1bKLB5ERQq+tOPgb6THtw==
-X-CSE-MsgGUID: 9aGfC/PNT86DjBXMFPbQVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118831898"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 14 Feb 2025 20:10:55 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tj9W0-001AUV-0y;
-	Sat, 15 Feb 2025 04:10:52 +0000
-Date: Sat, 15 Feb 2025 12:10:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-Message-ID: <202502151124.LyMTodTU-lkp@intel.com>
-References: <20250214052204.3105610-4-neilb@suse.de>
+	s=arc-20240116; t=1739592636; c=relaxed/simple;
+	bh=sCdxMCkzHWRBZ3ztDqan7kQ8cy7gR+wccmJnXcqjrIE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=oPs/91sodk6D8GIgMcGVURfhSWgkrka8JLnF0nA7Od3uSICSaEB91wwNqJHTGC4VuPVc2lGhK89lW6ScUufh7beR5VfxTO/J6SATcTEX1O7PbmUDacbXuE5H1G6wo07r80gmmfm2+JUsc4/d7R9x0vEBxW9r/R+nm5khEobnA9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CQK1gpLH; arc=none smtp.client-ip=43.163.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1739592625; bh=hn7eniI7ejQ6Jnk0asupVxUvBLKiNPaSA+kH+lGVF3E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CQK1gpLHv88H8PZLHoTpNFCQK54hwAUWz0fC1s9mS97aAHSE4YPmRMymmzVwcak6E
+	 g2WqYSlxE3PJ/r7wZsjOXZ5LDJcfk2lhNra1BC1CtipEJP0gN8kDYQ7jCTyVqL6D4Y
+	 304NGamT1ODk96izLmQs+zXQ6sIF8l6X5v8CzEws=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 297B4276; Sat, 15 Feb 2025 12:10:23 +0800
+X-QQ-mid: xmsmtpt1739592623t27wrdanz
+Message-ID: <tencent_69777A376EC6CD33652368897203A5C44405@qq.com>
+X-QQ-XMAILINFO: MOnz+xTS1+9iYyVGmY44cQ5yWu+4aczBJoc8MwnRE7bgMnXZ3qujYPviUJbWDQ
+	 7gEBkcfqnBTY/oGZV5omsOE1/yd+lSzT7I6mImVO51QGS2MPNSKVWATK87hzI+WLIM+O6j/NrEYR
+	 ntKm0/JWApOBBkiP7p4qQ1Avpy4jkjORXa2m364gZHNpovKpS5mv7cVQKndDN8xb/aGhRGJ3RIA5
+	 1G0EcSdgUkhfH67khXPVstM6HcEFQsoq9H+m6tiWZnYVV36wclxayiF3sUJQhI+d8nOQiu4Bl8Wq
+	 IN1N6t8mbC9iV7PRSynkqq/5RRi4zzgt480mI6DPwA18mXi7QfMqY4K/Nz4W26/NVqO9pnl00rrz
+	 jWr+OrPp5Cj3WBZouKrDZvyFjTapq2nb6Lo9heeOb2zH3jy5Yb2h+iWZ+DdCDnOBz3h/YTVSX3UN
+	 7HCXknOv/OUqV98Ep1YNSf7znBEhJB+w4JGKf2rQI3sB3jBKFlrJYuqq8B2i8bcO9Ym2qerp52Kk
+	 eHytpHlmTRM0dEunJd8Eyyw3zWMUg96kd6iRIkkyo6gLJQykQv1EehHtB58cnGnAVROWhGyrPalb
+	 YGI6g7r+SpMEyMg23iFnEazedV379iLCrYL1xwuTKSO+LF3OMGd8fmVHVeJ1qZoyVbX7OSLROhng
+	 UUsUkOIMbQbjy6fORgruhGoLDAL2M3+seOEmuJhsMG/2khVnrwYnMetpL08kplEAQNJuf4EQaNVF
+	 7aXfY+rqrAb6hVkYG7EPtBZE9+ME0ko1CWg6jT+pxHVXDSRQoX4EKlI82gKUfSTWkuLK6749KZsg
+	 uXPJjK2Yl7CVHLw+8QG1/Kkql/KtlsbbdM0oQxA3wdJJZ9XXKdqz2E6LSEuRKAfxAmb5Eg/SSW+B
+	 bUHGELPpccUJfXq4pqVGx7lkIDCiL+coIcoODh7tw+G2Bc4bPP9ti8Ri40E3MBV5/HNnp7TbLFju
+	 6/Gz8ddVXN16fswHcNYjFe93TgKe0qfSK3fqQBQOQxbuTbHdJ6VQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [netfs?] KASAN: slab-use-after-free Write in io_submit_one
+Date: Sat, 15 Feb 2025 12:10:24 +0800
+X-OQ-MSGID: <20250215041023.1193332-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
+References: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214052204.3105610-4-neilb@suse.de>
+Content-Transfer-Encoding: 8bit
 
-Hi NeilBrown,
+#syz test
 
-kernel test robot noticed the following build errors:
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index f65affa5a9e4..72b08c1709fa 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -301,6 +301,8 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
+ 				     notes & ABANDON_SREQ ?
+ 				     netfs_sreq_trace_put_abandon :
+ 				     netfs_sreq_trace_put_done);
++		if (front == remove)
++			break;
+ 	}
+ 
+ 	trace_netfs_collect_stream(rreq, stream);
+@@ -369,12 +371,17 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
+ 		}
+ 	}
+ 
++	spin_lock(&rreq->lock);
+ 	if (rreq->iocb) {
+ 		rreq->iocb->ki_pos += rreq->transferred;
+-		if (rreq->iocb->ki_complete)
++		if (rreq->iocb->ki_complete) {
+ 			rreq->iocb->ki_complete(
+ 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
++			rreq->iocb = NULL;
++		}
+ 	}
++	spin_unlock(&rreq->lock);
++
+ 	if (rreq->netfs_ops->done)
+ 		rreq->netfs_ops->done(rreq);
+ 	if (rreq->origin == NETFS_DIO_READ)
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on trondmy-nfs/linux-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus cifs/for-next xfs-linux/for-next linus/master v6.14-rc2 next-20250214]
-[cannot apply to ericvh-v9fs/for-next tyhicks-ecryptfs/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/nfs-change-mkdir-inode_operation-to-return-alternate-dentry-if-needed/20250214-141741
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250214052204.3105610-4-neilb%40suse.de
-patch subject: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-config: x86_64-buildonly-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502151124.LyMTodTU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/smb/server/vfs.c: In function 'ksmbd_vfs_mkdir':
->> fs/smb/server/vfs.c:226:9: error: 'entry' undeclared (first use in this function); did you mean 'dentry'?
-     226 |         entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-         |         ^~~~~
-         |         dentry
-   fs/smb/server/vfs.c:226:9: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +226 fs/smb/server/vfs.c
-
-   196	
-   197	/**
-   198	 * ksmbd_vfs_mkdir() - vfs helper for smb create directory
-   199	 * @work:	work
-   200	 * @name:	directory name that is relative to share
-   201	 * @mode:	directory create mode
-   202	 *
-   203	 * Return:	0 on success, otherwise error
-   204	 */
-   205	int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
-   206	{
-   207		struct mnt_idmap *idmap;
-   208		struct path path;
-   209		struct dentry *dentry, *d;
-   210		int err;
-   211	
-   212		dentry = ksmbd_vfs_kern_path_create(work, name,
-   213						    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
-   214						    &path);
-   215		if (IS_ERR(dentry)) {
-   216			err = PTR_ERR(dentry);
-   217			if (err != -EEXIST)
-   218				ksmbd_debug(VFS, "path create failed for %s, err %d\n",
-   219					    name, err);
-   220			return err;
-   221		}
-   222	
-   223		idmap = mnt_idmap(path.mnt);
-   224		mode |= S_IFDIR;
-   225		d = dentry;
- > 226		entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-   227		err = PTR_ERR_OR_ZERO(dentry);
-   228		if (!err && dentry != d)
-   229			ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
-   230	
-   231		done_path_create(&path, dentry);
-   232		if (err)
-   233			pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
-   234		return err;
-   235	}
-   236	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
