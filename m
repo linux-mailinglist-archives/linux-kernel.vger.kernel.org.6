@@ -1,157 +1,118 @@
-Return-Path: <linux-kernel+bounces-516134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A07A36D46
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:20:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E723A36D48
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095563B170F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB34170D6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADBD1A316D;
-	Sat, 15 Feb 2025 10:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5ED1A2642;
+	Sat, 15 Feb 2025 10:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BQeCIQT1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+hGUZI9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67063155CB3;
-	Sat, 15 Feb 2025 10:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58D0155CB3
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739614845; cv=none; b=tY/SV2Eo7jNfCJpC5L3pcWxa4dOl70RnTdre+wYjhWQXh6OXd8/41dRiAwp1RVTmI058vuaWReI9CDfElNOfOBybvZ9I1+hcs1tRdKkFAFGHBdlBTrxxidv1N+ZicVSjH3T2cHkO/MTbKpFOTRQjPOh+KV5BVV+0GgrnBL3d5hY=
+	t=1739615106; cv=none; b=gKL6Q2Pc7AGijf8i8ONdqXfmdSMGkmbVPpRXlttcpAY++4Gmj6oyOZTP4iXGQ5Mf4ppwkgf1UaraIqpadbqqda47fNDhvZyrvz97DSMR6t8KZoHwBDFA3AMqLySR/qRyuGynkKhbmK5pGVFfGvViHQXElw9yFFTQpBxnmcVvjTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739614845; c=relaxed/simple;
-	bh=vdaZIbL/XhyFD1tljTOzP7QBjF6nY9Cv2bH9TbWELVk=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=LvJzDVefytxXQn3S0Fk8v355DsUozfJ4/n3jeBdJXY+9VBeBY1DEHCvWrSvf0AtlcLVLyTHjiaQnsMvn5Sq5olHZQl1d4BJcnRYEqZwpmnS+tePnqBzQHMHMZnLkK2A6hpOhAw76COUA4oyYAiKBPBF3m62qhv5QhABpmsE22kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BQeCIQT1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C353021C;
-	Sat, 15 Feb 2025 11:19:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739614761;
-	bh=vdaZIbL/XhyFD1tljTOzP7QBjF6nY9Cv2bH9TbWELVk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BQeCIQT1IPMJShD+BJvEyiR5GpZWPsB20+hrplKucno+yWdM+O/6GRiOY4kOgSzux
-	 GR/hFOT8nZb6P5rTR90o/spc2wwbZGgXaKS71c1bOwZWakhnhxU22xslMpDHzHnX8K
-	 Tol5gA3EMssN1iLQUcZJ5Y8Q07Ryqit0z1sKHXN0=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1739615106; c=relaxed/simple;
+	bh=9xNLXOo2q2bVrWlk34RqPRRCzEbJY4gHbShAdtSVDjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEGzOnOOjpL8DP++98UzsZxGJJ/cozWGZ1cCVSJjrzxxN6GzrH0CSRm5h9rZ4i0b/DFnLOuoxo75rsDURAT5NggIhDt6uspau/23yuyHd3R5igz4j3qC53z6CA5kvhEx8YZwFCRudDzXwinsdHcimsTfsqEfAhp3sEJKRtjkDYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+hGUZI9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739615103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ywkakhDb6C9zHP7TcT3WogD7vHQ564M3tb1gpNfgvE4=;
+	b=R+hGUZI99uWKOCqq/uzoIsH8/ZMKKTJfO7zTWq6Cmqe1ZX1BpRYBteBhRd52ZK1uhWVvqq
+	btpyN6b9YGv3Hv0zaLyTPySAwnUuJFFsi+1/wsiAJdYbxNsB60PbcLrPpFhqywf87L4ufy
+	LPUxxoaMt7Y2zmglzQrPsAYo6ZF7VUc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-HpNZMEPpPxWx_9DC5rBgYQ-1; Sat,
+ 15 Feb 2025 05:24:59 -0500
+X-MC-Unique: HpNZMEPpPxWx_9DC5rBgYQ-1
+X-Mimecast-MFC-AGG-ID: HpNZMEPpPxWx_9DC5rBgYQ_1739615097
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DDBE180034E;
+	Sat, 15 Feb 2025 10:24:57 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.76])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F105180087D;
+	Sat, 15 Feb 2025 10:24:55 +0000 (UTC)
+Date: Sat, 15 Feb 2025 18:24:50 +0800
+From: Baoquan He <bhe@redhat.com>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: Re: kernel/vmcore_info.c:117 paddr_vmcoreinfo_note() warn: unsigned
+ '_x' is never less than zero.
+Message-ID: <Z7Brcjzuh+SG/io1@MiWiFi-R3L-srv>
+References: <202502141843.5QoKdQ7g-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aae670db21a1de622cc89ac637c407bf6452c44f.camel@ndufresne.ca>
-References: <20250214133709.1290585-1-paul.elder@ideasonboard.com> <aae670db21a1de622cc89ac637c407bf6452c44f.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: imx335: Set vblank immediately
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, open list <linux-kernel@vger.kernel.org>
-To: Paul Elder <paul.elder@ideasonboard.com>, linux-media@vger.kernel.org, nicolas@ndufresne.ca
-Date: Sat, 15 Feb 2025 10:20:38 +0000
-Message-ID: <173961483828.3850773.86050600448052546@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202502141843.5QoKdQ7g-lkp@intel.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Quoting nicolas@ndufresne.ca (2025-02-14 14:44:05)
-> Hi,
->=20
-> Le vendredi 14 f=C3=A9vrier 2025 =C3=A0 22:37 +0900, Paul Elder a =C3=A9c=
-rit=C2=A0:
-> > When the vblank v4l2 control is set, it does not get written to the
-> > hardware immediately. It only gets updated when exposure is set.
-> > Change
-> > the behavior such that the vblank is written immediately when the
-> > control is set.
->=20
-> Not my field of competence, but won't this cause a flicker ?
+On 02/14/25 at 06:44pm, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   128c8f96eb8638c060cd3532dc394d046ce64fe1
+> commit: 443cbaf9e2fdbef7d7cae457434a6cb8a679441b crash: split vmcoreinfo exporting code out from crash_core.c
+> date:   12 months ago
+> config: riscv-randconfig-r073-20250213 (https://download.01.org/0day-ci/archive/20250214/202502141843.5QoKdQ7g-lkp@intel.com/config)
+> compiler: riscv32-linux-gcc (GCC) 14.2.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202502141843.5QoKdQ7g-lkp@intel.com/
+> 
+> smatch warnings:
+> kernel/vmcore_info.c:117 paddr_vmcoreinfo_note() warn: unsigned '_x' is never less than zero.
 
-No it shouldn't. The controls will only take effect on the next frame
-boundary, but what was missing here before was that the VBLANK was not
-being changed at all unless userspace also sets the Exposure control
-directly.
+Thanks for reporting this.
 
-That means that setting the exposure, and then setting the framerate
-would not update the framerate (adjusted through the blanking), meaning
-the framerate could not be updated at runtime. (Or it could be set but
-would not take effect).
+I am preparing to reproduce this issue, while I may not know what are
+the steps to reproduce.  Just run smatch or just build with the provided
+riscv-randconfig-r073-20250213?
 
-Note that in the event that VBLANK is updated, the exposure and blanking
-is fully recalculated and reprogrammed to the hardware through
-imx335_update_exp_gain(), which is required because the exposure is
-proportional against the total frame duration. Perhaps that's specific
-area you were concerned about potential for flicker?
+> 
+> vim +/_x +117 kernel/vmcore_info.c
+> 
+>    114	
+>    115	phys_addr_t __weak paddr_vmcoreinfo_note(void)
+>    116	{
+>  > 117		return __pa(vmcoreinfo_note);
+>    118	}
+>    119	EXPORT_SYMBOL(paddr_vmcoreinfo_note);
+>    120	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+> 
 
-Perhaps the commit message should make it clear that currently setting
-the vblank does not take effect at all *unless* the exposure is also
-*changed*. And Setting the vblank without changing the exposure is a
-valid use case to change the frame rate.
-
-
-
-> Nicolas
->=20
-> >=20
-> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > ---
-> > =C2=A0drivers/media/i2c/imx335.c | 19 +++++++++++++------
-> > =C2=A01 file changed, 13 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> > index fcfd1d851bd4..e73a23bbbc89 100644
-> > --- a/drivers/media/i2c/imx335.c
-> > +++ b/drivers/media/i2c/imx335.c
-> > @@ -559,12 +559,12 @@ static int imx335_set_ctrl(struct v4l2_ctrl
-> > *ctrl)
-> > =C2=A0                     imx335->vblank,
-> > =C2=A0                     imx335->vblank + imx335->cur_mode->height);
-> > =C2=A0
-> > -             return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
-> > -                                             IMX335_EXPOSURE_MIN,
-> > -                                             imx335->vblank +
-> > -                                             imx335->cur_mode-
-> > >height -
-> > -
-> >                                               IMX335_EXPOSURE_OFFSET,
-> > -                                             1,
-> > IMX335_EXPOSURE_DEFAULT);
-> > +              __v4l2_ctrl_modify_range(imx335->exp_ctrl,
-> > +                                     =C2=A0 IMX335_EXPOSURE_MIN,
-> > +                                     =C2=A0 imx335->vblank +
-> > +                                     =C2=A0 imx335->cur_mode->height -
-> > +                                     =C2=A0 IMX335_EXPOSURE_OFFSET,
-> > +                                     =C2=A0 1,
-> > IMX335_EXPOSURE_DEFAULT);
-> > =C2=A0     }
-> > =C2=A0
-> > =C2=A0     /*
-> > @@ -575,6 +575,13 @@ static int imx335_set_ctrl(struct v4l2_ctrl
-> > *ctrl)
-> > =C2=A0             return 0;
-> > =C2=A0
-> > =C2=A0     switch (ctrl->id) {
-> > +     case V4L2_CID_VBLANK:
-> > +             exposure =3D imx335->exp_ctrl->val;
-> > +             analog_gain =3D imx335->again_ctrl->val;
-> > +
-> > +             ret =3D imx335_update_exp_gain(imx335, exposure,
-> > analog_gain);
-> > +
-
-This is what I would expect here,
-
-
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
-
-> > +             break;
-> > =C2=A0     case V4L2_CID_EXPOSURE:
-> > =C2=A0             exposure =3D ctrl->val;
-> > =C2=A0             analog_gain =3D imx335->again_ctrl->val;
->
 
