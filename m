@@ -1,392 +1,96 @@
-Return-Path: <linux-kernel+bounces-515897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F1CA36A4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:57:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C569A36A4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A053AAC0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469A81884BF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235631C7007;
-	Sat, 15 Feb 2025 00:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7C71D63C6;
+	Sat, 15 Feb 2025 00:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OKsLUSKV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sE5KJbIE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC61442F2
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C2B154C0B;
+	Sat, 15 Feb 2025 00:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580807; cv=none; b=qEPmwcawV9SxJSg+uVFvwH/kdvvi3E5yljfebj/htDQEuU9GpsDm0FfaFY48nyrNTeUGTu9Cq2QRo8MMMYOCF5ZYRE6D1miNiKwR5Z3HvxLXDLRDf30eL4LPDsGHNg3pZxCkHdJdbD7fjhOMl0qfL592yEgI/yDttSz8+eOz8iI=
+	t=1739580827; cv=none; b=TxQHavdnyIwIBlqoaxgf/BmtFYotWNF1vI19kHBQo4JbDTt2p4dnWUgtwXC8/BWsyCfNiK+Q/qFGuf1GvrWdDCTWOFE3mCnLGa9MojBEaQ6tntmj9yxNlCxKPu4Uj1ozqwD20K6IOnf/1Nqa01bDspjzMSIfGT2hTNwjTMWt1jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580807; c=relaxed/simple;
-	bh=icqivKlQAlngg/27aatLQwQzIxNZIBIa4GtjafdQWk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaHKw5ZciSLB48IpYySCS7iD2EmBAkYNtcPc2e/4a745mIteJAq8ZRQ8N19aq9yl1J/Jzak7wIFD3NYWu1soDmeqCuqcn3nPjdCzjTq0jf8+H8vgFL+2XLZUGA1L0M4Qdhi8fkdXjjstaZUeW970HFhCkfZkY+uIdr+xaSBwRq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OKsLUSKV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739580803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0K9vQ8gnIOE/zovi+uGsR/o5x0rem5sCVj3F6eCSClQ=;
-	b=OKsLUSKVNSK602eVOli0dAT7SOKMJZ4ABAojMP6DBMQeqJ9ZcyBT8j/nzqjxEhTXgejkSF
-	7lhj32aHqDGWnTwXqaCqpxdF531GC9lkzcMfsNtczQdUP7Apxiz6J/2hauE1d3RF9u763R
-	9ufguhxpMXlDHxMzPzo/zYBf0HoNn0Q=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-170-7Qx7ErqvNUqSh4hw1S58JA-1; Fri, 14 Feb 2025 19:53:22 -0500
-X-MC-Unique: 7Qx7ErqvNUqSh4hw1S58JA-1
-X-Mimecast-MFC-AGG-ID: 7Qx7ErqvNUqSh4hw1S58JA_1739580801
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6fb5cfce9c1so732427b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:53:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739580801; x=1740185601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0K9vQ8gnIOE/zovi+uGsR/o5x0rem5sCVj3F6eCSClQ=;
-        b=o7VjmkVv5RgAxz+uRHJe5zEaF8JAmShM2K0WUb9EtXLLJGcOpzw14FU3hsPNkMbkSR
-         hH+IUzxlXCF4poNw9O4x6ax66SrykoaR4Mf6LGKLgNdqOeV+cvpup4PJbZnG5GpX9jWx
-         4P53Xe6S6sSfEXiBBK8HqQ2XODVOJzMqIeD2R1/9e7Gx3RFs/ogcQ+EStvv6Y/Q79aau
-         fBBXUqRPcY/uvmGfmNokxmeKzPGSbHGnDt1fQwJfF+71+uzNpj0sFF+Bc3L8/f1QmDvs
-         dtqy5b1bZxlFam7lFEeB41LGZ6rbRmmrWctILL8AXs6NGMI/i6lNEiApF3xvDEvGFCxh
-         GhYQ==
-X-Gm-Message-State: AOJu0YxBMHLShj+C/AB9Mg09Iwb0Eyw39BDHEGIsSdGhuC4c1OnlgDmN
-	Zm1C7DUfYC+Z6o5meGNK/wvRZBhBWIg5AOeOcQYFSznEWFMtWF5WLBcNNzBTUHmIoIKCb4guoOQ
-	GtXu5aag71H8fe+xqctySY/Rdmc6tNbfQIb407LdRtmVZn4Z24A2b61jgnGISwPjIbtQ5mQXuRJ
-	wtg+h031Ioc3eJmbd6pSCQu9kjhkSBgPxmaYgd
-X-Gm-Gg: ASbGncsEodfLryqJafi29j6oItChSz+ltLjUux7A2fZsU82gq77B7qJkM3rPjgh3LwL
-	OF01aksnLMdrzzeRzNYw/zkXlvhDal95Z6C3epxhiNJVPsvMmTD++6h4btA04GSbdbFMzx0tZKC
-	U=
-X-Received: by 2002:a05:6902:230d:b0:e5d:b542:f646 with SMTP id 3f1490d57ef6-e5dc91ed712mr1277069276.32.1739580801258;
-        Fri, 14 Feb 2025 16:53:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFNQptvSfMMTB0JMcea3598F7hlp17rMxacyhbowvlrPFMOZhOR/jtOOTEsV3VggUnKQ8DUzy4tS0o3CdHXAuI=
-X-Received: by 2002:a05:6902:230d:b0:e5d:b542:f646 with SMTP id
- 3f1490d57ef6-e5dc91ed712mr1277032276.32.1739580800803; Fri, 14 Feb 2025
- 16:53:20 -0800 (PST)
+	s=arc-20240116; t=1739580827; c=relaxed/simple;
+	bh=U2QJb6XIJC6fNter4lBmA14G9QFD+52FUM0I1jZgCx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MsF1njaWdf61H25YdARdrrsJ8pJIcyT8wNOvHJN+sKMFKXrvl6PRytk0eqM1JAyHsM24ycVk6K8st77yOCqkiUjJeNYoJ/5j4C4tFEj4IU5bzkczYJv8fe9yIrh4E+dJCVkL7axGlckp71bwxXCJ5G7akUthxbg1KMw7p7dzEK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sE5KJbIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E90C4CEE2;
+	Sat, 15 Feb 2025 00:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739580826;
+	bh=U2QJb6XIJC6fNter4lBmA14G9QFD+52FUM0I1jZgCx4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sE5KJbIErIEnMN8ssaRMOU7wYVNoq49KmLNBuOhpYT2dC9Qp58XGtuzTjVjfE8v4g
+	 MIeHJ9R3ASbAwY59YMeQB58dQgb/7ehBG+RdOt9nLndobnNZcRKdqvLLcDAgF7rEow
+	 56ij5RYIxWo5PS9bO1Rj0bRnVRry6lwsPhdxyycJsZfZl19PE5irc2c9d82I9SXjFf
+	 vY15DyE4TWVyYOcfOhXXaZ0LeVcSj/HKxM0ep2rfawnO/omKg1ZBAzk7AnVH3S6yk9
+	 9hxrMz8+dFD0NjTsNnLK7ta8GhuD7l0xgA7aD+jVdldnpo8siG5+cXOmM6ai9hqF11
+	 FI+arOB4Cx7cQ==
+Date: Fri, 14 Feb 2025 16:53:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Sean Anderson
+ <seanga2@gmail.com>
+Subject: Re: [PATCH net-next v4 00/15] Introduce an ethernet port
+ representation
+Message-ID: <20250214165345.6cab996f@kernel.org>
+In-Reply-To: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
+References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211003028.213461-1-npache@redhat.com> <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
- <CAA1CXcCo3eCH-5axnw3WUqPfL-EPCbLVFo_AFYXkbnExfX=KLQ@mail.gmail.com>
- <4ba52062-1bd3-4d53-aa28-fcbbd4913801@arm.com> <CAA1CXcCeFjCx-6VDCjOUUniLHXMUYpjesOhcHQapMS5i7=RR4A@mail.gmail.com>
- <71490f8c-f234-4032-bc2a-f6cffa491fcb@arm.com>
-In-Reply-To: <71490f8c-f234-4032-bc2a-f6cffa491fcb@arm.com>
-From: Nico Pache <npache@redhat.com>
-Date: Fri, 14 Feb 2025 17:52:55 -0700
-X-Gm-Features: AWEUYZlTlXctQ0Vt1tb0srouH10xebpBf2uF_SiuNgqpxtITK4nGVtrGgR7lVio
-Message-ID: <CAA1CXcCkbxe_D4cSroBTu3E4dn6SaaDDk6xo9y4O9cWW-9Rc9Q@mail.gmail.com>
-Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
-To: Dev Jain <dev.jain@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, ryan.roberts@arm.com, anshuman.khandual@arm.com, 
-	catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, 
-	apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org, 
-	baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu, 
-	haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org, 
-	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, 
-	wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com, 
-	surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com, 
-	zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com, 
-	willy@infradead.org, kirill.shutemov@linux.intel.com, david@redhat.com, 
-	aarcange@redhat.com, raquini@redhat.com, sunnanyong@huawei.com, 
-	usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org, 
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 7:02=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
->
->
-> On 14/02/25 1:09 am, Nico Pache wrote:
-> > On Thu, Feb 13, 2025 at 1:26=E2=80=AFAM Dev Jain <dev.jain@arm.com> wro=
-te:
-> >>
-> >>
-> >>
-> >> On 12/02/25 10:19 pm, Nico Pache wrote:
-> >>> On Tue, Feb 11, 2025 at 5:50=E2=80=AFAM Dev Jain <dev.jain@arm.com> w=
-rote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 11/02/25 6:00 am, Nico Pache wrote:
-> >>>>> The following series provides khugepaged and madvise collapse with =
-the
-> >>>>> capability to collapse regions to mTHPs.
-> >>>>>
-> >>>>> To achieve this we generalize the khugepaged functions to no longer=
- depend
-> >>>>> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of =
-pages
-> >>>>> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
-> >>>>> using a bitmap. After the PMD scan is done, we do binary recursion =
-on the
-> >>>>> bitmap to find the optimal mTHP sizes for the PMD range. The restri=
-ction
-> >>>>> on max_ptes_none is removed during the scan, to make sure we accoun=
-t for
-> >>>>> the whole PMD range. max_ptes_none will be scaled by the attempted =
-collapse
-> >>>>> order to determine how full a THP must be to be eligible. If a mTHP=
- collapse
-> >>>>> is attempted, but contains swapped out, or shared pages, we dont pe=
-rform the
-> >>>>> collapse.
-> >>>>>
-> >>>>> With the default max_ptes_none=3D511, the code should keep its most=
- of its
-> >>>>> original behavior. To exercise mTHP collapse we need to set max_pte=
-s_none<=3D255.
-> >>>>> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "c=
-reep" and
-> >>>>> constantly promote mTHPs to the next available size.
-> >>>>>
-> >>>>> Patch 1:     Some refactoring to combine madvise_collapse and khuge=
-paged
-> >>>>> Patch 2:     Refactor/rename hpage_collapse
-> >>>>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
-> >>>>> Patch 6-9:   The mTHP patches
-> >>>>>
-> >>>>> ---------
-> >>>>>     Testing
-> >>>>> ---------
-> >>>>> - Built for x86_64, aarch64, ppc64le, and s390x
-> >>>>> - selftests mm
-> >>>>> - I created a test script that I used to push khugepaged to its lim=
-its while
-> >>>>>       monitoring a number of stats and tracepoints. The code is ava=
-ilable
-> >>>>>       here[1] (Run in legacy mode for these changes and set mthp si=
-zes to inherit)
-> >>>>>       The summary from my testings was that there was no significan=
-t regression
-> >>>>>       noticed through this test. In some cases my changes had bette=
-r collapse
-> >>>>>       latencies, and was able to scan more pages in the same amount=
- of time/work,
-> >>>>>       but for the most part the results were consistant.
-> >>>>> - redis testing. I tested these changes along with my defer changes
-> >>>>>      (see followup post for more details).
-> >>>>> - some basic testing on 64k page size.
-> >>>>> - lots of general use. These changes have been running in my VM for=
- some time.
-> >>>>>
-> >>>>> Changes since V1 [2]:
-> >>>>> - Minor bug fixes discovered during review and testing
-> >>>>> - removed dynamic allocations for bitmaps, and made them stack base=
-d
-> >>>>> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
-> >>>>> - Updated trace events to include collapsing order info.
-> >>>>> - Scaled max_ptes_none by order rather than scaling to a 0-100 scal=
-e.
-> >>>>> - No longer require a chunk to be fully utilized before setting the=
- bit. Use
-> >>>>>       the same max_ptes_none scaling principle to achieve this.
-> >>>>> - Skip mTHP collapse that requires swapin or shared handling. This =
-helps prevent
-> >>>>>       some of the "creep" that was discovered in v1.
-> >>>>>
-> >>>>> [1] - https://gitlab.com/npache/khugepaged_mthp_test
-> >>>>> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@re=
-dhat.com/
-> >>>>>
-> >>>>> Nico Pache (9):
-> >>>>>      introduce khugepaged_collapse_single_pmd to unify khugepaged a=
-nd
-> >>>>>        madvise_collapse
-> >>>>>      khugepaged: rename hpage_collapse_* to khugepaged_*
-> >>>>>      khugepaged: generalize hugepage_vma_revalidate for mTHP suppor=
-t
-> >>>>>      khugepaged: generalize alloc_charge_folio for mTHP support
-> >>>>>      khugepaged: generalize __collapse_huge_page_* for mTHP support
-> >>>>>      khugepaged: introduce khugepaged_scan_bitmap for mTHP support
-> >>>>>      khugepaged: add mTHP support
-> >>>>>      khugepaged: improve tracepoints for mTHP orders
-> >>>>>      khugepaged: skip collapsing mTHP to smaller orders
-> >>>>>
-> >>>>>     include/linux/khugepaged.h         |   4 +
-> >>>>>     include/trace/events/huge_memory.h |  34 ++-
-> >>>>>     mm/khugepaged.c                    | 422 +++++++++++++++++++---=
--------
-> >>>>>     3 files changed, 306 insertions(+), 154 deletions(-)
-> >>>>>
-> >>>>
-> >>>> Does this patchset suffer from the problem described here:
-> >>>> https://lore.kernel.org/all/8abd99d5-329f-4f8d-8680-c2d48d4963b6@arm=
-.com/
-> >>> Hi Dev,
-> >>>
-> >>> Sorry I meant to get back to you about that.
-> >>>
-> >>> I understand your concern, but like I've mentioned before, the scan
-> >>> with the read lock was done so we dont have to do the more expensive
-> >>> locking, and could still gain insight into the state. You are right
-> >>> that this info could become stale if the state changes dramatically,
-> >>> but the collapse_isolate function will verify it and not collapse.
-> >>
-> >> If the state changes dramatically, the _isolate function will verify i=
-t,
-> >> and fallback. And this fallback happens after following this costly
-> >> path: retrieve a large folio from the buddy allocator -> swapin pages
-> >> from the disk -> mmap_write_lock() -> anon_vma_lock_write() -> TLB flu=
-sh
-> >> on all CPUs -> fallback in _isolate().
-> >> If you do fail in _isolate(), doesn't it make sense to get the updated
-> >> state for the next fallback order immediately, because we have prior
-> >> information that we failed because of PTE state? What your algorithm
-> >> will do is *still* follow the costly path described above, and again
-> >> fail in _isolate(), instead of failing in hpage_collapse_scan_pmd() li=
-ke
-> >> mine would.
-> >
-> > You do raise a valid point here, I can optimize my solution by
-> > detecting certain collapse failure types and jump to the next scan.
-> > I'll add that to my solution, thanks!
-> >
-> > As for the disagreement around the bitmap, we'll leave that up to the
-> > community to decide since we have differing opinions/solutions.
-> >
-> >>
-> >> The verification of the PTE state by the _isolate() function is the "n=
-o
-> >> turning back" point of the algorithm. The verification by
-> >> hpage_collapse_scan_pmd() is the "let us see if proceeding is even wor=
-th
-> >> it, before we do costly operations" point of the algorithm.
-> >>
-> >>>   From my testing I found this to rarely happen.
-> >>
-> >> Unfortunately, I am not very familiar with performance testing/load
-> >> testing, I am fairly new to kernel programming, so I am getting there.
-> >> But it really depends on the type of test you are running, what actual=
-ly
-> >> runs on memory-intensive systems, etc etc. In fact, on loaded systems =
-I
-> >> would expect the PTE state to dramatically change. But still, no opini=
-on
-> >> here.
-> >
-> > Yeah there are probably some cases where it happens more often.
-> > Probably in cases of short lived allocations, but khugepaged doesn't
-> > run that frequently so those won't be that big of an issue.
-> >
-> > Our performance team is currently testing my implementation so I
-> > should have more real workload test results soon. The redis testing
-> > had some gains and didn't show any signs of obvious regressions.
-> >
-> > As for the testing, check out
-> > https://gitlab.com/npache/khugepaged_mthp_test/-/blob/master/record-khu=
-ge-performance.sh?ref_type=3Dheads
-> > this does the tracing for my testing script. It can help you get
-> > started. There are 3 different traces being applied there: the
-> > bpftrace for collapse latencies, the perf record for the flamegraph
-> > (not actually that useful, but may be useful to visualize any
-> > weird/long paths that you may not have noticed), and the trace-cmd
-> > which records the tracepoint of the scan and the collapse functions
-> > then processes the data using the awk script-- the output being the
-> > scan rate, the pages collapsed, and their result status (grouped by
-> > order).
-> >
-> > You can also look into https://github.com/gormanm/mmtests for
-> > testing/comparing kernels. I was running the
-> > config-memdb-redis-benchmark-medium workload.
->
-> Thanks. I'll take a look.
->
-> >
-> >>
-> >>>
-> >>> Also, khugepaged, my changes, and your changes are all a victim of
-> >>> this. Once we drop the read lock (to either allocate the folio, or
-> >>> right before acquiring the write_lock), the state can change. In your
-> >>> case, yes, you are gathering more up to date information, but is it
-> >>> really that important/worth it to retake locks and rescan for each
-> >>> instance if we are about to reverify with the write lock taken?
-> >>
-> >> You said "reverify": You are removing the verification, so this step
-> >> won't be reverification, it will be verification. We do not want to
-> >> verify *after* we have already done 95% of latency-heavy stuff, only t=
-o
-> >> know that we are going to fail.
-> >>
-> >> Algorithms in the kernel, in general, are of the following form: 1)
-> >> Verify if a condition is true, resulting in taking a control path -> 2=
-)
-> >> do a lot of stuff -> "no turning back" step, wherein before committing
-> >> (by taking locks, say), reverify if this is the control path we should
-> >> be in. You are eliminating step 1).
-> >>
-> >> Therefore, I will have to say that I disagree with your approach.
-> >>
-> >> On top of this, in the subjective analysis in [1], point number 7 (alo=
-ng
-> >> with point number 1) remains. And, point number 4 remains.
-> >
-> > for 1) your worst case of 1024 is not the worst case. There are 8
-> > possible orders in your implementation, if all are enabled, that is
-> > 4096 iterations in the worst case.
->
-> Yes, that is exactly what I wrote in 1). I am still not convinced that
-> the overhead you produce + 512 iterations is going to beat 4096
-> iterations. Anyways, that is hand-waving and we should test this.
->
-> > This becomes WAY worse on 64k page size, ~45,000 iterations vs 4096 in =
-my case.
->
-> Sorry, I am missing something here; how does the number of iterations
-> change with page size? Am I not scanning the PTE table, which is
-> invariant to the page size?
+On Thu, 13 Feb 2025 11:15:48 +0100 Maxime Chevallier wrote:
+> This is V4 of the series introducing the phy_port infrastructure.
 
-I got the calculation wrong the first time and it's actually worst.
-Lets hope I got this right this time
-on ARM64 64k kernel:
-PMD size =3D 512M
-PTE=3D 64k
-PTEs per PMD =3D 8192
-log2(8192) =3D 13 - 2 =3D 11 number of (m)THP sizes including PMD (the
-first and second order are skipped)
+FWIW it doesn't seem to apply:
 
-Assuming I understand your algorithm correctly, in the worst case you
-are scanning the whole PMD for each order.
+Applying: net: ethtool: Introduce ETHTOOL_LINK_MEDIUM_* values
+Applying: net: ethtool: Export the link_mode_params definitions
+error: sha1 information is lacking or useless (net/ethtool/common.c).
+error: could not build fake ancestor
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+Patch failed at 0002 net: ethtool: Export the link_mode_params definitions
 
-So you scan 8192 PTEs 11 times. 8192 * 11 =3D 90112.
-
-Please let me know if I'm missing something here.
->
-> >>
-> >> [1]
-> >> https://lore.kernel.org/all/23023f48-95c6-4a24-ac8b-aba4b1a441b4@arm.c=
-om/
-> >>
-> >>>
-> >>> So in my eyes, this is not a "problem"
-> >>
-> >> Looks like the kernel scheduled us for a high-priority debate, I hope
-> >> there's no deadlock :)
-> >>
-> >>>
-> >>> Cheers,
-> >>> -- Nico
-> >>>
-> >>>
-> >>>>
-> >>>
-> >>
-> >
->
-
+-- 
+pw-bot: cr
 
