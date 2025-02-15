@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-515925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92849A36A85
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:04:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6B9A36A1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7073B2620
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:03:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 837667A31DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117ED1C6FF1;
-	Sat, 15 Feb 2025 00:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C4C4AEE0;
+	Sat, 15 Feb 2025 00:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJAEfnto"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovwI50sY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFE31A3178
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FD31373;
+	Sat, 15 Feb 2025 00:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581019; cv=none; b=pEcViUvJ8/8DZhNT9ZUYa3guECUWQyeKMAG1RqH+Nj1TYZNDEZ/Cg3z79SBzmCFrRoVMkuPTZ2iq7ZZJK3mk0vlBKUBtuF8lvixldeE0xVAdVdQWFG5PSfc0x+MMAmloZeGAeQik4BAYjg1jIBzG8pioVvaC4JvzbNhJwFkuUdw=
+	t=1739580776; cv=none; b=kVVJUGfmp8TqkV/eQ36DXIP7lnYM/hLkwF8kz5CaOymhTjMDznlGV/TqsiI1t2g1iTOSoPLjmTJ4y4o/a7NXKyRfUKvfr4dK2Oaq3l7v/5wOo7yBTuL2xHgxWSfeIsfZrK4vKEkJQNdkOuxLlqc/1fRW+1y8ysrXy6hv472DOS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739581019; c=relaxed/simple;
-	bh=+KR+FPyiWdY6nzi5E/xfi5ZIbXs6yttfbKTh2BzTWUY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HuwVzv6ZzhHu0UDGEeV0+ostPdMmyEbYDCyaHhIL4K0MIpufWUOVQRJ4oPp67CN9pDqfYVbhq6FWaEmaK/0fiq1NNXZv+k4khntT5igg+8GRBdA0yMZkKCFS9QGzEENPyRo1C/EPJ25XSM04R6B4OBWAZYNBRHSlI5gfmyf5PrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eJAEfnto; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so4000998a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:56:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739581017; x=1740185817; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYdp5KEOM09jg9p9N6DLn1QBn6Otq5JJd2KkgOh4RdE=;
-        b=eJAEfntoM5S7pFhA8vMKB2H7G2qIcnGiPNWXo9/+Sln0so7OC9g0UG1j9RNCrBO6AM
-         gjL+F2RmurdArV+u5GUUEQsdGDfxrIyUdSTVYOCkZYNlXiKAtblppNCBt3ByvgGqeDnC
-         3AufWoNpIDXXYNDRjnbnSlTohQLfcIv6qVLbt+j+gIttQjZzauV7NU0EoaMMblkWG91r
-         RECLEeRmh3JmHDbLE9IzCnrs+13du4SEnhkoa7G0HuuATq7uWC7fqgx2sFE9LsPhB0HE
-         TtHj0jgiuO35KV3B5ftz/oD852t3st3tbaF3gNGrR0qs01tjrm9McOuC+39df5H7AQQ9
-         DiNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739581017; x=1740185817;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYdp5KEOM09jg9p9N6DLn1QBn6Otq5JJd2KkgOh4RdE=;
-        b=h2VdNINoZGQObdVfOSJpU6+y2broNRatLxetygGtbOlwBBfEdCpNjDVZHKol1JSqNR
-         P4C3cHubbzfOUTNQ8S+NVrOji5VDgfCENeIae3NRaoTvJfC0cAYHEWd96bYX0QmoUctY
-         nG0X7++7yJqp6Mw05hff5w5fjfQcjwaqcrs2FUFI+qBeIIYU4f6qxq10J0mAAKPDDkve
-         DBM9iAbM7bjbf2QQ7biojo+cWMWlSDU6x42cp6sMHABt559OW/lWUHbXbe/KgLxwjG5h
-         PsIDAv/K082egPTzHZjPTBvae4plfRY+cWFXSojghe4pxzRmdnJx6OG4Ae+PJzkWEwxv
-         aqYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT8nF/LSKccJcEGFXUXSLza2wEH1bHf2vrbGo8M5fYOOxW8tOb84wHa+T5J4AAOCif147yxpGbmgOWhh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySpEPezWaFvwQogbKJbG+jzS7i5Kb46w+NH2q3G5QuCFaJzIa7
-	efDjZvrtzbAzxNs7Vxv6DTfkAFR3IsLmcX/Csl1bsZMKYDNKawCpe2wnhj+LBztJzKbt6fbBLI7
-	QHQ==
-X-Google-Smtp-Source: AGHT+IFyXn/jnfPe9MBamhPWud5uhVvBM7H05Zvnq/KLsngCiWW3jisWRrlgNP9Gm+ydmlhJ/vnEjK2DQMw=
-X-Received: from pjboh15.prod.google.com ([2002:a17:90b:3a4f:b0:2fc:3022:36b4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37
- with SMTP id 98e67ed59e1d1-2fc40f22cd2mr2192939a91.18.1739581017169; Fri, 14
- Feb 2025 16:56:57 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:50:41 -0800
-In-Reply-To: <de0437379dfab11e431a23c8ce41a29234c06cbf.camel@infradead.org>
+	s=arc-20240116; t=1739580776; c=relaxed/simple;
+	bh=18gY+6DNEY6pm3vWq+D6ujWxKSDxDmMWkCpBg3C4kX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u/kuHhcWxgVl9bdxodX32xyoDNou/W2sEbR6ymbIq2iv/PeGSom4xBrCTj8PUig20GV/21pD9KVjYI3geOsZevTkY+4Tu/T54VJsNdVG4WCLkgjlZAzmbxrnqERLLqoIp92GD92jN4NjCHizO8CVM+UZMoCkyah4I665VU6RvrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovwI50sY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52048C4CED1;
+	Sat, 15 Feb 2025 00:52:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739580776;
+	bh=18gY+6DNEY6pm3vWq+D6ujWxKSDxDmMWkCpBg3C4kX8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ovwI50sYHPvDuCNdAtmm/diy3+7sjRnAxjQvFxRltR2vSR1aK9SwhufnXSs08c1bY
+	 SvGyE+sbayWKiryq61Pdzt4p5c5wCBYEn/stlbFt322ZnM3tgcReeWlA1ZEvFn9SmB
+	 A5lClx5fgRT7VI5S77KE/eR8f8i1upQ++qC2nnIt2Zr6nX1R1EFU8BvzOOTlIToJyB
+	 DRMSCqPzNRrKp1guhqn/K8TPITflmd/47YYP0019oAR0SbcIBXQliijmNwVA/vWfO4
+	 aBbqzjBo4sIyE012lO1g4eMUuqIxj9DBYnF/yMFn7RAP1XO2hJhoD/Q70ohjS04iOy
+	 ZHu03G5EEzVIQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v2 00/17] amd-pstate cleanups
+Date: Fri, 14 Feb 2025 18:52:27 -0600
+Message-ID: <20250215005244.1212285-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250201011400.669483-1-seanjc@google.com> <de0437379dfab11e431a23c8ce41a29234c06cbf.camel@infradead.org>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <173958006311.1187438.11536700176929455.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86/xen: Only write Xen hypercall page for guest
- writes to MSR
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Paul Durrant <paul@xen.org>, 
-	David Woodhouse <dwmw2@infradead.org>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+cdeaeec70992eca2d920@syzkaller.appspotmail.com, 
-	Joao Martins <joao.m.martins@oracle.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 06 Feb 2025 19:14:19 +0000, David Woodhouse wrote:
-> The Xen hypercall page MSR is write-only. When the guest writes an address
-> to the MSR, the hypervisor populates the referenced page with hypercall
-> functions.
-> 
-> There is no reason for the host ever to write to the MSR, and it isn't
-> even readable.
-> 
-> [...]
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-Applied to kvm-x86 xen, thanks!  I'll post v2 of my series on top.
+This series overhauls locking and drops many unnecessarily cached
+variables.
 
-[1/1] KVM: x86/xen: Only write Xen hypercall page for guest writes to MSR
-      https://github.com/kvm-x86/linux/commit/3617c0ee7dec
+Debugging messages are also dropped in favor of more ftracing.
 
---
-https://github.com/kvm-x86/linux/tree/next
+This series is based off superm1/linux.git bleeding-edge branch.
+
+Mario Limonciello (17):
+  cpufreq/amd-pstate: Show a warning when a CPU fails to setup
+  cpufreq/amd-pstate: Drop min and max cached frequencies
+  cpufreq/amd-pstate: Move perf values into a union
+  cpufreq/amd-pstate: Overhaul locking
+  cpufreq/amd-pstate: Drop `cppc_cap1_cached`
+  cpufreq/amd-pstate-ut: Use _free macro to free put policy
+  cpufreq/amd-pstate-ut: Allow lowest nonlinear and lowest to be the
+    same
+  cpufreq/amd-pstate-ut: Drop SUCCESS and FAIL enums
+  cpufreq/amd-pstate-ut: Continue on missing policies
+  cpufreq/amd-pstate-ut: Adjust variable scope for
+    amd_pstate_ut_check_freq()
+  cpufreq/amd-pstate: Replace all AMD_CPPC_* macros with masks
+  cpufreq/amd-pstate: Cache CPPC request in shared mem case too
+  cpufreq/amd-pstate: Move all EPP tracing into *_update_perf and
+    *_set_epp functions
+  cpufreq/amd-pstate: Update cppc_req_cached for shared mem EPP writes
+  cpufreq/amd-pstate: Drop debug statements for policy setting
+  cpufreq/amd-pstate: Rework CPPC enabling
+  cpufreq/amd-pstate: Stop caching EPP
+
+ arch/x86/include/asm/msr-index.h   |  20 +-
+ arch/x86/kernel/acpi/cppc.c        |   2 +-
+ drivers/cpufreq/amd-pstate-trace.h |  13 +-
+ drivers/cpufreq/amd-pstate-ut.c    | 204 ++++------
+ drivers/cpufreq/amd-pstate.c       | 589 ++++++++++++++---------------
+ drivers/cpufreq/amd-pstate.h       |  60 +--
+ 6 files changed, 414 insertions(+), 474 deletions(-)
+
+-- 
+2.43.0
+
 
