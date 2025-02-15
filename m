@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-516213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86908A36E3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:53:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC99A36E41
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C140F3AF9B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E726D1709BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63E11BEF81;
-	Sat, 15 Feb 2025 12:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C221BEF81;
+	Sat, 15 Feb 2025 12:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JUwxh7lu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOGff1BZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2350C23BB;
-	Sat, 15 Feb 2025 12:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D793923BB;
+	Sat, 15 Feb 2025 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624014; cv=none; b=PWO+BqBq/p2gTziRzHQrqWN7mussuV7lqMBccQ5ujIBaOMja1f+l7xnoax8l3dcBvzkRru4P+C1dXTHlH2snmr59ihclSWMpB9BUI4tpk40ijfku2wWfc6Z3dTEzPWtfZu4CbwEymU24q2LotMHhlCBQIqLR4Xs3IbZS3AaFL1U=
+	t=1739624108; cv=none; b=hY3m6r2LgEr7kNO2w2JdhaIr/yvHlKCOApKC2vfvG3/RJLCFibu0taaomdUnsr0KerFrxbCCrJMCCaRe+7wRoPdWMneD7O414Dh7JXDtIuNirvwa23ct97zLdrPavlHCsjJku4GMvzPac8pW+cfacyRnBHRg/K7n6GwPXbwOz7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624014; c=relaxed/simple;
-	bh=55bFo5TwjiljeZK/OPEexGvWmrI7hXcDphFJik7KjUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVKDLcJfUgGLnC004l49Apw2TOtac6wOavQhQXREG7DbWmvRKDK6LEBkkcILsfxWRZHpFGUgi3deKnhhYq0RQiBLgdBn6PGcNshIZNlg869Ly3foSuQgR++l7lw6E+xk9rS/1jEIHOMsEqX60kS/KCWMZUzUn4PaCgcd6nv7ycU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JUwxh7lu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 99FAA40E016A;
-	Sat, 15 Feb 2025 12:53:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id wXaB67OA_vJI; Sat, 15 Feb 2025 12:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739624004; bh=G4jABUnk//FFd36m5A3RahJKuG1xCrEuoKlicK3ZhsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JUwxh7luVQQB8MeXuPuqa7zXQILmEi4HwRoRzbsXzkAGnkRtMHDvLABpNXKhmPvMM
-	 KkrawAk58zjqSzX6Yl6lj07cRczBQxhAaUXnI04A0YAQbAeH2e7F3KynI1/9n/6j6l
-	 k0PW/i1aIRjHRdDKWX4YdOhFM5O3ZuBHJpoXxzjHJnlOpn9V921g9r5ZL5/XDq4+6q
-	 h4zTVyZSy1IThlO1vsRKEzlnHCpZG5Q8x3ORERKGJaPVRB4v3cSF41NnpLrp7HOHbB
-	 fyZR80Mb7O6YBIPQn3ycHtBKsjKkxiHScNVOaC4psC9dagaamwHGLHpibR2m+oUNMu
-	 AHULu9twTHGauY82oL/mrMBogwYqiVxNuCyQKHAZuTM+EZquBOTFrBgNxVrUNOwf8v
-	 g/cfcZfaNAHMeucKfqcwqdDaBuIfjr7hA51CFXG6Oy+Mg/SFEnRN9boZ6WLZm+2j2p
-	 1zZWf6bvsngCITHF4s0rRSyF+Dp5/haaAbNfy/JwzF1HE0cT53TzmFl3B5eJBF6Uj3
-	 hbwrXn2yLicDjnKpE9YJa3PYosQF3XLg6WVkJ5Qrxlg3Z/yrQ5V4tIZec09nN44tAL
-	 zpQK0XIbYJDwqvnEZ4LIxrdMfNUADa1t4pS3G8ye2ByL9Vy8qX4lcQERCordJ+vKQJ
-	 jcwIruCfJx5evdTJ9QFI16tU=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3BBCE40E0028;
-	Sat, 15 Feb 2025 12:53:13 +0000 (UTC)
-Date: Sat, 15 Feb 2025 13:53:07 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Patrick Bellasi <derkling@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: Re: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250215125307.GBZ7COM-AkyaF8bNiC@fat_crate.local>
-References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
- <20250213175057.3108031-1-derkling@google.com>
- <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+	s=arc-20240116; t=1739624108; c=relaxed/simple;
+	bh=JaGaLcR0OlSjmLSJpiA+1SLPxaqyRVrzGxCfQHiGiqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M7HdWJd5KkxaLz4tfcjqY1/lo2WAa3csxJVF7Si0O/+fnCRvLfVVshP/Vuu0MazD6k3VLo1BKNh48EOYeHgDEzHO99wxbBWyOEw41TGoJUXmmLtV9fHX1UKqhSJJYxZ/Udk7ybLjdn28ysRLKATmAxMl012uQewnDLcr1ymD0kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOGff1BZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E27C4CEEA;
+	Sat, 15 Feb 2025 12:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739624107;
+	bh=JaGaLcR0OlSjmLSJpiA+1SLPxaqyRVrzGxCfQHiGiqw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bOGff1BZMouX1S6Q65nVCH08VaflkQKErpJ798norzjRrMmro1QHPiLxO3s+BIknY
+	 kfDGT45x7HOecEuNj1jIIJY1mLfXSgsiL28x/MsycpjxeFqiBZ5KpbAbZzJCpXeNoJ
+	 W3+44JCmWCT/ujHhEmzR9XJD+uhBHqa/60sTa97hBos5VHA/2w5VrF9hajjVqiRswE
+	 ucVAc/8R7rzM7zuPubdt35sJ6/I2Qa03bUpE+e6p9bwT7DYljjgILl2nr/1PAm/2Cg
+	 iB+cafwi0klRuVh15P33Dra2tXgLixe5FidkiUb4N9sL7nFlh/qv2nGCvZR2Kgdhmi
+	 j2oK9k4F2kwqQ==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-309311e7b39so3247621fa.2;
+        Sat, 15 Feb 2025 04:55:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUGu54a54tYhpHv6/ngEAZJI8Zn0PusXGuL6H78sXXQy6qDAFaxlLocopNkNvFkOMiHm+SbeKeTBYY=@vger.kernel.org, AJvYcCVfeJyRifJih7KSj5aeanFo5BHbCqQQX8YKO4lihtcjftUF6PP7Prk2yAiwqxpXDvi4A7VGTa8CbSyZBarG@vger.kernel.org, AJvYcCXdSIq8lSN6XXnGpKEDmgyNt7Us6b0qL7RlDkbdekP1w/V4ft00m5kSCoVBkbtUTPahCo95W6pZpIvMK8lA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi2IIUjbSG+LujSUosgzq1vSVdtJh7iK8edV5iJxFHRUM4zkDT
+	yYJMAp0eq/8C0C9ee+3TdIzhhKEi8QETmbMsKz9HjHiOOYiQlmOJyB52ndnTKeFZnL2B4s4wEt7
+	ch5VpEDmpNM4WDhV7oeroXSiKbPg=
+X-Google-Smtp-Source: AGHT+IFr8B7hsxDGqPUfOa8Yt6UmqRsD8EDegrqTe7PrwrORnf5yIkQ1bZMOVSd/B+oxrfBkZP+2XqN3y2BvsUbfqPs=
+X-Received: by 2002:a2e:8890:0:b0:309:2000:4902 with SMTP id
+ 38308e7fff4ca-30927afe770mr8871081fa.36.1739624105962; Sat, 15 Feb 2025
+ 04:55:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+References: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 15 Feb 2025 21:54:29 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
+X-Gm-Features: AWEUYZnVsPiXOOz3xRjVnfczcOOJr7OrhGTC5DvdAIckDANbA32iNLDI_H8iysg
+Message-ID: <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
+Subject: Re: [PATCH] docs: kconfig: Mention IS_REACHABLE as way for optional dependency
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 09:10:05PM +0100, Borislav Petkov wrote:
-> After talking with folks internally, you're probably right. We should slap an
-> IBPB before clearing. Which means, I cannot use the MSR return slots anymore.
-> I will have to resurrect some of the other solutions we had lined up...
+On Sat, Feb 15, 2025 at 8:42=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Several drivers express optional Kconfig dependency with FOO || !FOO,
+> but for many choices this is neither suitable (lack of stubs for !FOO
+> like in HWMON) nor really needed and driver can be built in even if FOO
+> is the module.  This is achieved with IS_REACHABLE, so provide cross
+> reference to it.
+>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/kbuild/kconfig-language.rst | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kb=
+uild/kconfig-language.rst
+> index 2619fdf56e68..66248294a552 100644
+> --- a/Documentation/kbuild/kconfig-language.rst
+> +++ b/Documentation/kbuild/kconfig-language.rst
+> @@ -194,6 +194,8 @@ applicable everywhere (see syntax).
+>    ability to hook into a secondary subsystem while allowing the user to
+>    configure that subsystem out without also having to unset these driver=
+s.
+>
+> +.. _is_reachable:
 
-So I'm thinking about this (totally untested ofc) but I'm doing it in the CLGI
-region so no need to worry about migration etc.
+Instead of this, could you move this hunk below ?
 
-Sean, that ok this way?
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 6ea3632af580..dcc4e5935b82 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4272,8 +4272,16 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
- 	if (!static_cpu_has(X86_FEATURE_V_SPEC_CTRL))
- 		x86_spec_ctrl_set_guest(svm->virt_spec_ctrl);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-+		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-+
- 	svm_vcpu_enter_exit(vcpu, spec_ctrl_intercepted);
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+		indirect_branch_prediction_barrier();
-+		msr_clear_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-+	}
-+
- 	if (!static_cpu_has(X86_FEATURE_V_SPEC_CTRL))
- 		x86_spec_ctrl_restore_host(svm->virt_spec_ctrl);
- 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+
+>    Note: If the combination of FOO=3Dy and BAZ=3Dm causes a link error,
+>    you can guard the function call with IS_REACHABLE()::
+>
+> @@ -580,10 +582,15 @@ Some drivers are able to optionally use a feature f=
+rom another module
+>  or build cleanly with that module disabled, but cause a link failure
+>  when trying to use that loadable module from a built-in driver.
+>
+> -The most common way to express this optional dependency in Kconfig logic
+> -uses the slightly counterintuitive::
+> +There are two ways to express this optional dependency:
+>
+> -  config FOO
+> +1. If pre-processor can discard entire optional code or module FOO does =
+not
+> +   provide !FOO stubs then in the C code :ref:`IS_REACHABLE<is_reachable=
+>`
+
+Instead of the link, please move the code example at line 200 to here.
+
+The note at line 197 is not strongly related to the 'imply' keyword.
+
+
+One more thing, please document the drawback of IS_REACHABLE.
+
+It is true that IS_REACHABLE() resolves the link error, but we
+will end up with run-time debugging.
+
+foo_init()
+{
+        if (IS_REACHABLE(CONFIG_BAZ))
+                baz_register(&foo);
+        ...
+}
+
+Even if CONFIG_BAZ is enabled, baz_register() may get discarded.
+Users may scratch their head why baz_register() does not work.
+Due to this reason, IS_REACHABLE() tends to be avoided.
+
+
+"depends on BAR || !BAR" is configuration-time debugging.
+
+
+> +
+> +2. Otherwise (and module FOO must provide all !FOO stubs) use the slight=
+ly
+> +   counterintuitive Kconfig syntax::
+> +
+> +     config FOO
+>         tristate "Support for foo hardware"
+>         depends on BAR || !BAR
+>
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
