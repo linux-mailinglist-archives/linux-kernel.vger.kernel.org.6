@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-515907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DB1A36A64
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:00:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2555A36A69
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:01:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89541894547
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C711717DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B233C1DF965;
-	Sat, 15 Feb 2025 00:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0A019D897;
+	Sat, 15 Feb 2025 00:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wtod9iN6"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgRUF6z2"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1024F1885B8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A43B7CF16
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739580903; cv=none; b=Q2ZckEahV3sVrXqJ8JBlqWlT1Weoru78gfCysWiYo+dMEXF7UDLvCfQOAJTSMJA6OXcmE0UDxL/lEFWY1PMrg2HrTFaq0Tldy8tSm4YrBbl931SdlGcOzuB9lvDHOWwIg9w9NUSOE5qSpwjE2eAg7SgKmJYGulvpE1ZTrhi7y6U=
+	t=1739580927; cv=none; b=Z1+ZWHJIiFzN/fWlWeIg1vXBHPwG37XueUW+eBJdt/oio9u7l6aybnI7uQaKGwNg3iZsYvYm+Inwagrreq+rj1JanlVSqGxvCp+Cn0SWfv06f7ZwI/NCJ108MCSKtm+/SCc89bvCTAPefxSNDJHf29BtQpJ0F0zRBD+SU1UPbQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739580903; c=relaxed/simple;
-	bh=EOahgPz6fyQhSLBWqHv6GC8sZf/XOeLdOvMNVwUIpnY=;
+	s=arc-20240116; t=1739580927; c=relaxed/simple;
+	bh=I3I/I1h+OO/0YADrUPFiEPeEHfEFccR/feZdyUvMcDk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Qk9OGGyvjK2lmuZkpjZtlmMhhO1Sd2rPtvYHlSmcTU/tBOpc2Rlf3Z3LeIuADs1Ht1E9V/VX0oGn2+n/Ihdct4IwjQocdKrw/d9EomtF0GRpoaiA+TT16l1D89+hhB/dNBzCTX/wF4w/QHHJiQnqAHo7VWvSxDGMLgeBE5UIFsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wtod9iN6; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=OKVtB+6DsGYdkk9EcIY2R7H5SXcd98XdijlyFr6452tMSTOWEjNdTYvwqw09cbrYxrHM2J2uiutp9ztyjGX452VTvheKL46ucQHCbCNXZCSygKSb4zXbxwEeK6EQQOblOimngEGKaiIAg6X7mwSeEoJYU83xK10/6is92NM8MoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgRUF6z2; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220ff7d7b67so15759215ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:55:00 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso6352688a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:55:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739580900; x=1740185700; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739580926; x=1740185726; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTgQsorQjh14TutxhLLCxQmV6p+nBtXX/1kn8rG1LNI=;
-        b=Wtod9iN6Ol6G1C2+n1COE1+3IjxIyqlCgOZuiNA91jEzp5cPW2wYUmAPhKrT4v0t7I
-         j+VEZPjvV1cXMDEaNcKxBv36Ai8pgKLYQ98JOjaIQtIyWbpCMTTaxR6Mi21stYMRRssY
-         YBXBfuxQDRUnKzED+ijt7k527hVQAsCZl52W4OSePiplLvj/FPhNgVMbizhRCEouRb+6
-         yWckVuoUSLT+gRApobHMwWEhfGR+y2lBlXk2JP3eweaJJ1YQlBPhZNDgm2ddryVupYmy
-         jhN9G6DQikxakNfMo/GMoMXZGQoYgg5bwo4Fz4ZRhCUXPk3/k4eWuaHS2cx/wIa8VV5e
-         uBDA==
+        bh=P9LzQSA5rRtonPXxH6y0V9FpnyXE8gcf+hdCI3QIwSM=;
+        b=AgRUF6z2TEAwMTi1OuynRaEtKmnOrupPC80DlPv1R9oA4HopYBfsGN2zndrHVUn8Bw
+         fdQcZSosk8q93zbblagkz5LjeLvPeRgFIVqelJaoJywQgYoFEMFKPinLTwLa4KTLqmeg
+         +PGnRdSPS4hRmpZo7LXPgLlqCT/HXfXusZjTcbtOIs9wkuVTbqiUOmg8C+q++i3xzKwT
+         1RLLmcmKkoYoL18n55Y+lWbJ/H/14brw38fIH06VazlbD5KjS1rCJbBxjl9lX99H257s
+         kZe2/bIKowMUjUw9HhFGEENY+AfY0NfdEkso3sGftaUiezN7C7EHZI5PhBz45/vxZAhn
+         yBtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739580900; x=1740185700;
+        d=1e100.net; s=20230601; t=1739580926; x=1740185726;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTgQsorQjh14TutxhLLCxQmV6p+nBtXX/1kn8rG1LNI=;
-        b=heyCP4sjL696zCPfdLNuohvQnY1gQQhFT8/jXJnCj//eru2vvuCVr5wBhN0wIJ/0IK
-         qA9atDi7/HxDRzISDb233dPHqFfmsEoz5QB2awYWHVQ6USD04FemnXZy6J1oTEWjcHhc
-         JQ+oSftpUXzclq/F7y8xgLDp0lT9bO+QT7qYXsfTaTXTfHGuKe2luEquKMIqKY9wxOt6
-         FP34KfkWbLxsmoZGVibbR4kTJ6YYNWXcIXewBCbtS4PzQG3DPGA0qgppybzPLAPWsYUQ
-         tR915K+wyA/1KiFLzxWcmlfQQk7nEBrupF5NQiXJKklL4QHX1o501m+GgF7EvJL4aBER
-         ZwrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtqnaUJon71zAgt9W4mj4bpzHRVYJdQauGZcf2X8OTa8NakUe4w4uJJQ9Z+8CYZEKdr5f908XY8RekhoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwZqRkPDZBeHrwgg6vvnkUA6A9rgYs5UxtWPvWq9kZj1fn1aao
-	Kzvz2AGummJJzAPgyhNNCVAz7vJpHxVdXOlslGqJiDfUX0qU7+RZmzRWSKfwvBjWO5DRe/SaMgJ
-	QZw==
-X-Google-Smtp-Source: AGHT+IFnNgJr4fAST/anqb/OhGfaJPL4qFzSio+iAadkBSAqDbENgFOFYfhtq5SRt2eIpuzxLd/Yc+sQw1s=
-X-Received: from plblg3.prod.google.com ([2002:a17:902:fb83:b0:21c:5115:8766])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f787:b0:216:410d:4c53
- with SMTP id d9443c01a7336-221040b1916mr20971295ad.41.1739580900440; Fri, 14
- Feb 2025 16:55:00 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:50:18 -0800
-In-Reply-To: <20241211013302.1347853-1-seanjc@google.com>
+        bh=P9LzQSA5rRtonPXxH6y0V9FpnyXE8gcf+hdCI3QIwSM=;
+        b=erHG1PXb/Y3TxSK26jaYYYghjmlsvWJDuh1m6kDRyIAtLNGdpfZQEwNzh3T9HRuRNN
+         6Pb5NDBbX438sJG/HP3i3sS9L7HpzS7ckyQZWi2Ii6Pt36aJ+GEYacY5LVuZJYGtlgxL
+         YgNACUdpty0aVEUhr7MKrsbjxp7Q0HLkbcLj5RqwnbYDQ8sLW4zXkuWSrYAX6MvN6H14
+         1PRfxyz63l9R3bT8eCwarghW3rqNOZwNjIl2pS3senJAnF3alkank7cybUPGHitnqkkv
+         VOvJsU+af9pV3lAoz2ciQfq5kiHk96EJmX6YWqMTCfB/VB4wTjIeDARhqx0oYRKfLwtF
+         lutA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWCuZ8ok5j6JzU6fRyeW5TbwGDb4ugei+cFkKxPaIcojlswWYTGioTXH2eUpGXKuBNVxHvEnXYu4Fs844=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaUvCtk7chhHYZALMF3T2nV0LaYdebnwYViHelET/OpSOlLpBt
+	6vablBk3XuUO37VdtjRafAGu8XK2YwXrkS8/JXxI0K7Albfgu6HZZt5g2nnFM64AKt09QG556XV
+	OEw==
+X-Google-Smtp-Source: AGHT+IGXCnxFph/47jBO6gezh198vbhbpiqJKCCbd9oF5b5bKFEtRf36qGRJifDiuvJwGbMX4gW0X2tJgIc=
+X-Received: from pfbjt23.prod.google.com ([2002:a05:6a00:91d7:b0:725:c7de:e052])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734c:b0:1e1:ac4f:d322
+ with SMTP id adf61e73a8af0-1ee8cb5d175mr2579012637.14.1739580925886; Fri, 14
+ Feb 2025 16:55:25 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:50:20 -0800
+In-Reply-To: <CACZJ9cX2R_=qgvLdaqbB_DUJhv08c674b67Ln_Qb9yyVwgE16w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241211013302.1347853-1-seanjc@google.com>
+References: <CACZJ9cX2R_=qgvLdaqbB_DUJhv08c674b67Ln_Qb9yyVwgE16w@mail.gmail.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <173958033580.1190199.12371307462069862956.b4-ty@google.com>
-Subject: Re: [PATCH 0/5] KVM: x86: Address xstate_required_size() perf regression
+Message-ID: <173958044518.1190905.5350869932218121015.b4-ty@google.com>
+Subject: Re: [PATCH V2] KVM:x86:Fix an interrupt injection logic error during
+ PIC interrupt simulation
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Liam Ni <zhiguangni01@gmail.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 10 Dec 2024 17:32:57 -0800, Sean Christopherson wrote:
-> Fix a hilarious/revolting performance regression (relative to older CPU
-> generations) in xstate_required_size() that pops up due to CPUID _in the
-> host_ taking 3x-4x longer on Emerald Rapids than Skylake.
-> 
-> The issue rears its head on nested virtualization transitions, as KVM
-> (unnecessarily) performs runtime CPUID updates, including XSAVE sizes,
-> multiple times per transition.  And calculating XSAVE sizes, especially
-> for vCPUs with a decent number of supported XSAVE features and compacted
-> format support, can add up to thousands of cycles.
+On Tue, 30 Jul 2024 21:59:41 +0800, Liam Ni wrote:
+> The input parameter level to the pic_irq_request function indicates
+> whether there are interrupts to be injected,
+> a level value of 1 indicates that there are interrupts to be injected,
+> and a level value of 0 indicates that there are no interrupts to be injected.
+> And the value of level will be assigned to s->output,
+> so we should set s->wakeup_needed to true when s->output is true.
 > 
 > [...]
 
-Applied 2-5 to kvm-x86 misc, with a changelog that doesn't incorrectly state
-that CPUID is a mandatory intercept on AMD.
+Applied to kvm-x86 misc, with a rewritten shortlog+changelog.  Thanks!
 
-[1/5] KVM: x86: Cache CPUID.0xD XSTATE offsets+sizes during module init
-      (no commit info)
-[2/5] KVM: x86: Use for-loop to iterate over XSTATE size entries
-      https://github.com/kvm-x86/linux/commit/aa93b6f96f64
-[3/5] KVM: x86: Apply TSX_CTRL_CPUID_CLEAR if and only if the vCPU has RTM or HLE
-      https://github.com/kvm-x86/linux/commit/7e9f735e7ac4
-[4/5] KVM: x86: Query X86_FEATURE_MWAIT iff userspace owns the CPUID feature bit
-      https://github.com/kvm-x86/linux/commit/a487f6797c88
-[5/5] KVM: x86: Defer runtime updates of dynamic CPUID bits until CPUID emulation
-      https://github.com/kvm-x86/linux/commit/93da6af3ae56
+[1/1] KVM:x86:Fix an interrupt injection logic error during PIC interrupt simulation
+      https://github.com/kvm-x86/linux/commit/4cad9f87876a
 
 --
 https://github.com/kvm-x86/linux/tree/next
