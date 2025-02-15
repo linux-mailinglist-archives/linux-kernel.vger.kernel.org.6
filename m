@@ -1,141 +1,159 @@
-Return-Path: <linux-kernel+bounces-515837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E99A36987
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:12:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAAAA3698F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12AC3B1FF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51791188F684
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD1238DE0;
-	Sat, 15 Feb 2025 00:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1178F43AA4;
+	Sat, 15 Feb 2025 00:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3KFErU9N"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b="NcHNGV18"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6445291E
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741DB3F9D2
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577999; cv=none; b=jO4u0Gy1s5X6yLjDT5C+DaH1XPUh9t2bWX8pJ0Ay3NxwTbwEJlJKskLHws72we2N5CSC4gexQV+I+FxGSS+TtVteFvDn1hYPBkjdHVdm3AV+0+NKkTjsn5LVE1bO0+aMcWvphKyzF14Kj5XkjNMXNvMMKUMXQYKQTj8Q8nWWGpw=
+	t=1739578047; cv=none; b=utjw9PZaq10rzPbD6hmJlrCH1qzBJhPf88BUp/FrXP40GVXuIgAH2z7uQsf976S2a/k92G+VosaLloHOujFF6hbLzhTQq6jX834HmYdMsWEow9uoFy02R9iMDa5UnmdeeqvGy6ZnIhtq/TdR71o/wtBi2a7U0F9PqxGfgHRU+0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577999; c=relaxed/simple;
-	bh=0w/O7XAcHnizaNLgdZdoSUadEkfJ3M787zxOIN8dWYo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WEboHJjpgJR9ZgR3TwA0kacqf/FRVtZ6jvKhc7rUcymtvB5qSILRIayy9eOkLvOoiFHgYF3DD/sDCeT5YXnSUjWN7xZV0rKwPpvngKVLJVZQXmLFdK3TTJpcAL6R0omkvkZqVniAPqWM8VT0ziJC1hI1+XHTvd6nrEJV9VtuTOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3KFErU9N; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc0bc05bb5so5478312a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:06:37 -0800 (PST)
+	s=arc-20240116; t=1739578047; c=relaxed/simple;
+	bh=8+xzf9ySd/X+Hdk6TVNjRCzbanGBd6Lj9zLGXDU7P6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6y3AB7jykwhv+MN/A3hLjPPF4U2bJAUtFhuVIqSWoz2dhGNvoy57X3tPv2ecOblAIHh0K35KNtwn7UaXGZPNn2M/m+8ix8+GZpUHWxUVeCpIv/BC9WGqkHbC2CMrI/s3hMYS/M5dsuTe/pUrFOTSpS+I5VPsLsyn4U6KmxBy38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu; spf=pass smtp.mailfrom=asu.edu; dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b=NcHNGV18; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asu.edu
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-221050f3f00so3876885ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:07:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739577997; x=1740182797; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dz+g4lvshIwKtoF1GJvNgyo0KsDnNgM7fWbFaBaiOh4=;
-        b=3KFErU9NUwFUP7h1KzUBneCbkTxGh60Rpe5woG43epw3FhWj7EjzQLgzNifcBmGBJ5
-         Q/BM7UAKDMoiomWW0k4Ko9H25tNid7HtRn6YMOToTb0XF7ReAKVPjCxZUb2lhtCJs/NB
-         RqvwTmP4t9ADYjyNCzy9hqUe4LRNcIiJvHrVqd+IigjoaGHXoEn+ZnvnbS60VVnudL3i
-         YeUQKSHLM4mq2uYB+T2ag8sNeJpNMLJpeoyYI4kYIEaZypHvghR6RM3fSRHeJdkbdvVN
-         b4dTA+EAqAhku/H82+QLdvh6u6OB01kNpKXZtywMLzwlFscUgdouXSZgivbSt8kATvZe
-         HQhg==
+        d=asu.edu; s=google; t=1739578045; x=1740182845; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lOjx+Bv4LjyysKyz1M7F23hlX9gJ5MiSnBCNPTwWjok=;
+        b=NcHNGV186OL4xtOyAINLbGLf/7e1xkPuNFC3INAK6Ix6VZdBFDoQtrrXjokae3SrcI
+         CoEtjHWZMolgKp4Og/AcNXvtT02czKpV3dhw2KGFPuFGXP8qahbSDQItJ2+IXKnuZBCB
+         BWBf5Li5ZeekfB0nsB2lwSUOGRSP/8Nm3P0AUIz2Py4tN0t4kzclhCRTwxBYL+L6W4r+
+         4DU6SaEVDYHtUuuGFPWD+0pj1QZl9Y8y9csvbNPED5+Oi8tLj5TRREKcU1dpYIOxx/1l
+         Oi7sOsUy8P0ABwT43BW04lzaLpn9pmTUh6SfC3k7Z+l3NUfFcPAFPd7dwcL3SiDxFktY
+         1DxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739577997; x=1740182797;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dz+g4lvshIwKtoF1GJvNgyo0KsDnNgM7fWbFaBaiOh4=;
-        b=oalgYyAlE0l4p3BqrOzIQtNcHzFFkR86kXmLv1PzTFZWW+JFGJdn9lIR6CiQMLy59v
-         IA6hdQDYYrDuxi7Y4iD9LOEQJat4V+QS5DSRXT+j58SH17/m7yp+GjKh51Q75UURVM2s
-         MlCus5J6RtGsn+LinceBXsG+O6DvU0+LWXWkuF67rx/NbGv0bxC7wpYSD7qKvHLSDMED
-         oXceUn7HkNL4178RYT6gk8G/4YVxTyFeVoyfvT/KSYq24y3/xpSSOW1IiccQB2brcgFT
-         4tih13xerVOyNyfdWHM2rtAv3jjE0/yb8tcqWRT8uH1kCH4KAkiflJJUpTC/a7ILStbH
-         qEuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZwF/EX+8PenIYQGWkAx8rng+G/mX42fGjWcNqO8SjwnvQs1wkknPOJrJJ9E3AYVY0YYcZ5DYWY0sPdLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBLPLhzU8wOJ+DwLB+5oDAeTGk5ktEIT1UaBknB2zk0IAte32T
-	yjAfhBGpn5nuHPvh9XqV9fHxnW8nA1w3UJyiX6GMyTI8LL4qN8ELcCdirzzgfcSRqfz8mrjaW4p
-	GYA==
-X-Google-Smtp-Source: AGHT+IFAaagnVh/yITNphVgAXZIbFbGAItl4BwYxNoiKtsFJ0MqhK/MMO9jwFhGOc3GUOdsRMoFtefDlolA=
-X-Received: from pfbc6.prod.google.com ([2002:a05:6a00:ad06:b0:72b:ccb:c99b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4f95:b0:730:949d:2d36
- with SMTP id d2e1a72fcca58-732618c21femr2181317b3a.18.1739577997093; Fri, 14
- Feb 2025 16:06:37 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:06:35 -0800
-In-Reply-To: <20250214234058.2074135-1-pbonzini@redhat.com>
+        d=1e100.net; s=20230601; t=1739578045; x=1740182845;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lOjx+Bv4LjyysKyz1M7F23hlX9gJ5MiSnBCNPTwWjok=;
+        b=A4dN1eqjB+uX3HAQu9/nisuCCcg2/DfXIBoVmSxFMwl4jW+NVjJ73jjkEvV8GwPEtx
+         i8vgKxAn/c5krkF1sMmnQY1XLz8Mzj67+KU5HpToIxCSBnp5PQ5ke8htMmODQmo+74wA
+         eUJ2wVIt9dOQmioCL2NPh45/p481dJ9C4ZakLukx8GxRm6Yj6+IRFzujpcRdIdSH3NFJ
+         jOvLLUDAMV4eZUaZAOrJi1atqmTW7gTUHVO2b6YZb0Dahdhs/W8w0yUuvTDH+ysRoZNi
+         +qjoBqtcP9HPjo95pfuSqXcoS7nYaSp6jEy0Ngw8XTnaRD3S4au6HjzDWnDRP7EOsG6e
+         ydOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYzNKpK1UHvQeoHXqIDu3MGeopUBkirfMCXmNMZxpCQKm8mSgcGx2K8riGo+p0RKRKbjHrW3F+hNVnC5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzErAQ1SH5cZct/i+/M9O1iuSZVldcoOkURyGmRcnLWO6ThEycP
+	I7Tt23QdH0FxsdfPdCoDRILbXv9nTsDhZi71JqAC1XAUNmQBMlIxbpfttcH3ow==
+X-Gm-Gg: ASbGnctg/HPKMgvO3R24Nf3aqEKYh09Fj/kIXmGIBpBGsX1hwxka5hOv8SJp6m1QqrD
+	gQG6N6ZTywza0gUvJtpko0yCxl9qqQuQoiZQlV6DnpGOXfhATwJddcgN8kbmMiFwWMm0K73JnNX
+	z8mItWWJtEi+qKGwuE+2//j8bYh4/gHMrAwZlxuzWRqyNOL1MZFE6pVim9tOTOurTWpX0kIDEvD
+	oU7prAG5GxQjHIfnm1AQKmmmaciZEd10n5OVBwyCKBxJbD/tzIPmtJ5cdd0ObOy37xIhTX007WD
+	pA==
+X-Google-Smtp-Source: AGHT+IHx5OkXIJXTPCfIKeOntur/esg3MA+G7B7HcUfQ9rX2ygUHZhoSaE9erMQQrxJMl6S5EprERA==
+X-Received: by 2002:a05:6a00:1903:b0:730:888a:252a with SMTP id d2e1a72fcca58-732618c1eb9mr2143203b3a.15.1739578044553;
+        Fri, 14 Feb 2025 16:07:24 -0800 (PST)
+Received: from ubun ([2600:8800:1689:e500:3522:b69b:bf26:8dfb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73261a0c0b8sm372070b3a.164.2025.02.14.16.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 16:07:23 -0800 (PST)
+Date: Fri, 14 Feb 2025 17:07:20 -0700
+From: Jennifer Miller <jmill@asu.edu>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
+	linux-hardening@vger.kernel.org, kees@kernel.org,
+	joao@overdrivepizza.com, samitolvanen@google.com,
+	kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <Z6/auDKBF1E0m/6L@ubun>
+References: <Z60NwR4w/28Z7XUa@ubun>
+ <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <Z62N6cGmaN+OZfoY@ubun>
+ <CAG48ez0Bt9348i=We3-wJ1QrW-_5R-we7y_S3Q1brhoyEdHJ0Q@mail.gmail.com>
+ <60447cd2-a8da-4be6-80fa-a5639b7455b1@citrix.com>
+ <Z65/Fpd9cnUk8TjE@ubun>
+ <c2af5771-1c16-4ac8-bc09-c33d07956358@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250125011833.3644371-1-seanjc@google.com> <20250214234058.2074135-1-pbonzini@redhat.com>
-Message-ID: <Z6_ai1HdLWiTJ2Pf@google.com>
-Subject: Re: [PATCH] KVM: x86: Load DR6 with guest value only before entering
- .vcpu_run() loop
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	John Stultz <jstultz@google.com>, Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c2af5771-1c16-4ac8-bc09-c33d07956358@citrix.com>
 
-On Fri, Feb 14, 2025, Paolo Bonzini wrote:
-> Queued, thanks.
+On Fri, Feb 14, 2025 at 11:06:50PM +0000, Andrew Cooper wrote:
+> On 13/02/2025 11:24 pm, Jennifer Miller wrote:
+> > On Thu, Feb 13, 2025 at 09:24:18PM +0000, Andrew Cooper wrote:
+> >>>> ; swap stacks as normal
+> >>>>     mov    QWORD PTR gs:[rip+0x7f005f85],rsp       # 0x6014 <cpu_tss_rw+20>
+> >>>>     mov    rsp,QWORD PTR gs:[rip+0x7f02c56d]       # 0x2c618 <pcpu_hot+24>
+> >> ... these are memory accesses using the user %gs.  As you note a few
+> >> lines lower, %gs isn't safe at this point.
+> >>
+> >> A cunning attacker can make gs:[rip+0x7f02c56d] be a read-only mapping,
+> >> at point we'll have loaded an attacker controlled %rsp, then take #PF
+> >> trying to spill %rsp into pcpu_hot, and now we're running the pagefault
+> >> handler on an attacker controlled stack and gsbase.
+> >>
+> > I don't follow, the spill of %rsp into pcpu_hot occurs first, before we
+> > would move to the attacker controlled stack. This is Intel asm syntax,
+> > sorry if that was unclear.
+> 
+> No, sorry.  It's clearly written; I simply wasn't paying enough attention.
+> 
+> > Still, I hadn't considered misusing readonly/unmapped pages on the GPR
+> > register spill that follows. Could we enforce that the stack pointer we get
+> > be page aligned to prevent this vector? So that if one were to attempt to
+> > point the stack to readonly or unmapped memory they should be guaranteed to
+> > double fault?
+> 
+> Hmm.
+> 
+> Espfix64 does involve #DF recovering from a write to a read-only stack. 
+> (This broken corner of x86 is also fixed in FRED.   We fixed a *lot* of
+> thing.)
 
-Drat, I was too slow today.  I applied and pushed this to "kvm-x86 fixes" and
-linux-next (as of yesterday), along with a few other things, I just haven't sent
-out the "thanks" yet (got sidetracked).
+Interesting, I haven't gotten around to reading into how FRED works, it
+sounds neat.
 
-If you want to grab those, here's a semi-impromptu pull request.  Otherwise I'll
-just drop this particular commit.
+> 
+> As long the #DF handler can be updated to safely distinguish espfix64
+> from this entrypoint attack, this seems like it might mitigate the
+> read-only case.
+> > I think we can do the overwrite at any point before actually calling into 
+> > the individual syscall handlers, really anywhere before potentially 
+> > hijacked indirect control flow can occur and then restore it just after 
+> > those return e.g., for the 64-bit path I am currently overwriting it at the
+> > start of do_syscall_64 and then restoring it just before 
+> > syscall_exit_to_user_mode. I'm not sure if there is any reason to do it
+> > sooner while we'd still be register constrained.
+> 
+> I don't follow.  If any "bad" execution is found in an entrypoint, Linux
+> needs to panic().  Detecting the malice involves clobbering an in-use
+> stack, and there's no ability to safely recover.
 
---
+Sorry, this was in response to Jann's question about the mitigation
+strategy proposed in my initial email.
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+> 
+> ~Andrew
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.14-rcN
-
-for you to fetch changes up to c2fee09fc167c74a64adb08656cb993ea475197e:
-
-  KVM: x86: Load DR6 with guest value only before entering .vcpu_run() loop (2025-02-12 08:59:38 -0800)
-
-----------------------------------------------------------------
-KVM fixes for 6.14 part 1
-
- - Reject Hyper-V SEND_IPI hypercalls if the local APIC isn't being emulated
-   by KVM to fix a NULL pointer dereference.
-
- - Enter guest mode (L2) from KVM's perspective before initializing the vCPU's
-   nested NPT MMU so that the MMU is properly tagged for L2, not L1.
-
- - Load the guest's DR6 outside of the innermost .vcpu_run() loop, as the
-   guest's value may be stale if a VM-Exit is handled in the fastpath.
-
-----------------------------------------------------------------
-Sean Christopherson (6):
-      KVM: x86: Reject Hyper-V's SEND_IPI hypercalls if local APIC isn't in-kernel
-      KVM: selftests: Mark test_hv_cpuid_e2big() static in Hyper-V CPUID test
-      KVM: selftests: Manage CPUID array in Hyper-V CPUID test's core helper
-      KVM: selftests: Add CPUID tests for Hyper-V features that need in-kernel APIC
-      KVM: nSVM: Enter guest mode before initializing nested NPT MMU
-      KVM: x86: Load DR6 with guest value only before entering .vcpu_run() loop
-
- arch/x86/include/asm/kvm-x86-ops.h             |  1 +
- arch/x86/include/asm/kvm_host.h                |  1 +
- arch/x86/kvm/hyperv.c                          |  6 +++++-
- arch/x86/kvm/mmu/mmu.c                         |  2 +-
- arch/x86/kvm/svm/nested.c                      | 10 +++++-----
- arch/x86/kvm/svm/svm.c                         | 13 ++++++-------
- arch/x86/kvm/vmx/main.c                        |  1 +
- arch/x86/kvm/vmx/vmx.c                         | 10 ++++++----
- arch/x86/kvm/vmx/x86_ops.h                     |  1 +
- arch/x86/kvm/x86.c                             |  3 +++
- tools/testing/selftests/kvm/x86/hyperv_cpuid.c | 47 ++++++++++++++++++++++++++++++++---------------
- 11 files changed, 62 insertions(+), 33 deletions(-)
+~Jennifer
 
