@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-516018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C37A36C0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:53:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CA5A36C10
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BBF1895D9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:53:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E50A1895E16
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A3717BEC6;
-	Sat, 15 Feb 2025 04:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88015A850;
+	Sat, 15 Feb 2025 04:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iC2OZ+nH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DGNF3scO"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF315A850
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A91624F2
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739595183; cv=none; b=NEFKuJ+hcmyv0kDaFJJ/L3PPkxPWN6a8R20QCztdsixRh1f0g9mblYNmWHOLFfjYGQ7UWBhi8gBEtDr856FWqCSWixcoteiJ6FgwhqX0dliTbA/O2Uh3lISH7fLkMD1OxjOeoqins4liRuu4ZnJwanPsF4dsPL+bK36WiCORC1M=
+	t=1739595255; cv=none; b=XxlEvmtliatZX2mcvq+Hoe1xSlq+XO9eBJostMKYVZ1CUNDwrB0wnzkSATq4AEyTJG4/ip/9dHznsLTZ0yPgTi3z+CHeHFUuwQ6mHTWQrmg9c9F1TqcumbMLRRVh/F1vITAtZ/bs7QXfWWrxKWFgdJNYk0csOgkwTzlThmB/Ab4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739595183; c=relaxed/simple;
-	bh=P0Dn37McRvnTms2m38LeCL7CgUPMmxn+F1yqceNAn/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NEnf9DWF5Yzv0hGHIVeUl/MSIkPS/21C2V3IJPmxLqvAUbXHWmmcq0aox82EggpesNQmtZNi78QoHRQqiJmBfl9wDs6OE9K4Qlbb1uNHvxeDoJzxQvRHnvvsYVcx8Dxx4SuAGlGjGwOYHYUTl/MTYsrsUDrCDYameQZFDXi8zRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iC2OZ+nH; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739595182; x=1771131182;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=P0Dn37McRvnTms2m38LeCL7CgUPMmxn+F1yqceNAn/8=;
-  b=iC2OZ+nHWEKmL1p2J6MPBlIPU8mfMr0TQM1esvF9YKfLQVqxS63nIBAD
-   BS0BX5NqIMMEw13++aEvszQq1/Z/3HqIfS/BvNTOJnkILjNwfJ0f3NMh1
-   ULvfkEiqu1cOXL03RnjMbn2YGd1yfs+jH/hr/cSL7lgi4m/d2RWnsI0sL
-   bHa1DovuchfLK56I70c/muTqIVEpfnP+EpRRYH6EH2RDKRJ8eja1i3SfI
-   8QN7zAXgOraTBGpXuch/a8frDmXuL51AZEMv3Ba4Y0innBejaHZXEsa9C
-   oGZjQ99U+VnC66bA8nUTbuGwX4LZU1jOe+cUVfC4nFTBw8hMeIZ7+RgRk
-   w==;
-X-CSE-ConnectionGUID: oHaY7ok1S0SxkWV0TTW5Qg==
-X-CSE-MsgGUID: GKdrMzqCSYeFf63IUBJYgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40492584"
-X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
-   d="scan'208";a="40492584"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 20:53:00 -0800
-X-CSE-ConnectionGUID: UUOvsTbOQBylIW9GqFfing==
-X-CSE-MsgGUID: sNZRjVBjTOahOdG4k/X27w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118838189"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 14 Feb 2025 20:52:58 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjAAh-001AVv-1G;
-	Sat, 15 Feb 2025 04:52:55 +0000
-Date: Sat, 15 Feb 2025 12:51:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Subject: [tip:x86/cpu 3/5] ERROR: modpost: "acpi_processor_ffh_play_dead"
- [drivers/acpi/processor.ko] undefined!
-Message-ID: <202502151207.FA9UO1iX-lkp@intel.com>
+	s=arc-20240116; t=1739595255; c=relaxed/simple;
+	bh=Qd+3HqLIBmzspnj051AjsoWB0jQ1fLQfmy2L2Kb+xZ0=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eRnhYb6LmBDLmP1q4EbTQmlWmCB3tihkNsvOyTuA9f1sx8vSbR9ptMxxnWPRQEYDg6LVFD+CqwJenEp5PJV9OoINt2oEejJqL31KOTvMETOe8Er31pKqHXeIYlcdUot+DKCKWRbW48lAbqtampl7PUMApvUhvG6UIuYYQ+PpaFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DGNF3scO; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6dd15d03eacso26612206d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 20:54:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1739595252; x=1740200052; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xk5ud9oKcdPfSa08b0yRfW7p4KmWGP1BqSd4dcIlPyY=;
+        b=DGNF3scOsOiSGIfblQujujVvl9SAKWxkYh7Ey9iSrHzLbZnUoOMxC0vnuMZEgIC3fe
+         vg3KYHfISFjKYGyUreKJcgi5FJwAT7VdsGWRqN1bmFapVunjLy+/t2OpTrH6iNGQRhlQ
+         dJtmKbF0rdxpOnc0qGL1EG5clhwhSm9FPpX3A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739595252; x=1740200052;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xk5ud9oKcdPfSa08b0yRfW7p4KmWGP1BqSd4dcIlPyY=;
+        b=Roo6lwcRP/ytmwrFw0q7UTR6pOo0QF4DjUYfe101NB5AaCE+xJz1L/njtIsnW7PP52
+         wYsG/Yw7gjM+YEd6TmjzZqdkFvF6PqUMVsFoOh5wevsWpOaPXVmVRZqvHiX7s4/c8z+v
+         g7aLG3Al2Vy2kvNKeP8+5trHN3Skm1kpixBT0iKSgVVrJaHnKHwGXsgD3dAJ3+PF3imy
+         benl+aoTngydWu9Xt7s9d1buUsAlGr/CgjGtLqoB6c4+WwOkN8Y13qOGUJL1NQzxBRUe
+         pTLKj9rRxLku+mpDfNrsuzlGeXGFllq41N2CRro3xBBlZL5i3GxuHk12U8uvO09IjQqM
+         7z/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9JVUshxFKtPwrCKvmtDOhid3C90XaA2/3hcWyT9xtf8x0OojqOvFX3qBinbKAtLGX15W5uBz4DyHlJTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz5BSWqFqvGP6Dev1d/yllI40sngHthFAL54cFkumI9UGAVljk
+	S13eABhcxf1NvNrFHn+7xtyj/nFzejoSA3FTCAfJHo5qsvCw8xzJWPMO56mwb1v0EWcd0u4FpGi
+	vcCcK5wnFOiQvc9RpEEr2Tv+LKhyIZb+3ekzp
+X-Gm-Gg: ASbGncswLaIVOH2OrgAtKBY8j9VT/ZCcqXqT66W888x6q+6Qezk83ztMVd9NQo3j9rQ
+	9xqieHfV1Du84b7FI+XNFWJBWdJq2qmUt3Jx6qYAsHCzJ2xFhD8XXAMAbQfdcc7VNLYpq5f+qrP
+	jpMWRrWafowbrvlk1a72rgap2V
+X-Google-Smtp-Source: AGHT+IGzK9Xw2SmDlUW8aMokwQq0lVBTGu1ZfRfxjaN3RAOn85fLCKnVOv/nBSKRqAiwjG3tNqoev++XhSLCxsebavE=
+X-Received: by 2002:a05:6214:d09:b0:6e2:49eb:fb7 with SMTP id
+ 6a1803df08f44-6e65c8c0796mr145135586d6.3.1739595252358; Fri, 14 Feb 2025
+ 20:54:12 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 14 Feb 2025 20:54:11 -0800
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 14 Feb 2025 20:54:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20250213-amigurumi-shrew-of-grandeur-bb1a13@krzk-bin>
+References: <20250210225714.1073618-1-swboyd@chromium.org> <20250210225714.1073618-2-swboyd@chromium.org>
+ <20250213-amigurumi-shrew-of-grandeur-bb1a13@krzk-bin>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Fri, 14 Feb 2025 20:54:11 -0800
+X-Gm-Features: AWEUYZm38Pxk6_mjiF-w5FYKquBrOAN7Cotkk66MVQ85J6cLXb_xLqE4js1sOZU
+Message-ID: <CAE-0n53Q=HFtZqgTNN2iq-XEaedr2zMJ63=k5+Rn3PsOf69fiQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: usb: Add binding for ChromeOS Pogo
+ pin keyboard connector
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	patches@lists.linux.dev, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, devicetree@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Pin-yen Lin <treapking@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-head:   96040f7273e2bc0be1871ad9ed4da7b504da9410
-commit: 541ddf31e30022b8e6f44b3a943964e8f0989d15 [3/5] ACPI/processor_idle: Add FFH state handling
-config: x86_64-randconfig-077-20250214 (https://download.01.org/0day-ci/archive/20250215/202502151207.FA9UO1iX-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151207.FA9UO1iX-lkp@intel.com/reproduce)
+Quoting Krzysztof Kozlowski (2025-02-13 00:11:25)
+> On Mon, Feb 10, 2025 at 02:57:11PM -0800, Stephen Boyd wrote:
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +  port:
+> > +    $ref: /schemas/graph.yaml#/properties/port
+> > +    description: Connection to USB2 port providing USB HS signals
+> > +    required:
+> > +      - endpoint
+> > +
+> > +patternProperties:
+> > +  "^keyboard@[0-9a-f]{1,2}$":
+>
+> What does the unit address represent here? Why this isn't just
+> "keyboard"? One connector usually has only one keyboard, right?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502151207.FA9UO1iX-lkp@intel.com/
+Yes one connector has one keyboard.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+>
+> Maybe it is only to fulfill the usb-device schema? The reg is there to
+> represent USB hub or controller port, which is not true here.
 
->> ERROR: modpost: "acpi_processor_ffh_play_dead" [drivers/acpi/processor.ko] undefined!
+Right, this is to fulfill the schema. These pins are connected to a USB
+hub or controller port, so we use that as the unit address.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> I don't have any idea how to solve it. I assume you need the keyboard
+> child, right?
+
+Yes we need the keyboard child so that we can make sure the keyboard
+that's expected is plugged in instead of some other one that doesn't
+pair with the device. We treat the detachable keyboard as 'not external'
+or 'expected' when it matches this VID/PID we have listed in DT so that
+we trust it slightly more than a standard USB keyboard that you could
+plug in to a USB connector.
 
