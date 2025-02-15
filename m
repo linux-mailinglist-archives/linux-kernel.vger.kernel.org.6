@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-516380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A361A37065
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:30:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40B6A3706C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE061891968
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD44216DF76
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B8B1F890D;
-	Sat, 15 Feb 2025 19:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1201FC0EC;
+	Sat, 15 Feb 2025 19:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOqyZZj/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W9HxCIAY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A861A9B58;
-	Sat, 15 Feb 2025 19:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF031F8F09
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 19:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739647780; cv=none; b=Q8gX2zyuYP//F017zYnC2Z9sBK2zPL47/IUgJQHgenr/hRL7ZM2zEX7gBqPjORHSzjusTRpEWbNIgswkdeyEq2OKNgiw+hxpy31ADsFFwAvPVloFBzkAW4+7mKdeiZqksEwBdj0xRzPLMITrV6coowUSvrtnLfoCxtbji8fmHrk=
+	t=1739648127; cv=none; b=r0fPMGuk1d55594fAj3SmknIL3HAK8kWOk99yEEMiX4qz1EA3jbUCn7+qdcpG+tEwwgb1nruKArjBhdhAymugYdYty8ZF61h+DsugpaOndmgnpyoVLTRrAywtEJGmulaqIRdeTu3sOxmL30hQrvcj7w1Ewv3bWYbzQRjns4qcNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739647780; c=relaxed/simple;
-	bh=ehjLwgwM1t69iI6E6+1h4fWJ2pSx2/m/NQW5hQlky4Y=;
+	s=arc-20240116; t=1739648127; c=relaxed/simple;
+	bh=DWFhykgEBIP6CT0ODgW61pQyFxQtgTH725Fg9dZrMCA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZTzXEOuhie0ynRr2zkPIWAZmstlOad3oyLOJg7brU4cTAmIEUthWrN7it5eqnA4vfeD5+i+vLzZg+niNew3oAn7I/ehkW6uBEqwfNTnz9j0yfKbBClezQUlWmKpcFyLqnB5Xa37jyVlossJ04UcPQ+hkks2EY+7brLdipjsCXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOqyZZj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0CFC4CEDF;
-	Sat, 15 Feb 2025 19:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739647780;
-	bh=ehjLwgwM1t69iI6E6+1h4fWJ2pSx2/m/NQW5hQlky4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SOqyZZj/6kaTgkoyRaSBLMkEf8t/HOsFy5n/BwQu/S8iSLlwwxv6GIW6enPOFSspd
-	 tjulUo7ckzOFqTrhC2L6V8oTuOPa7/d2QraO3FXiIuUcXroVIO7m19mY3QTti2d1r1
-	 Per0q5mHQyJ+o8VM+kuHJcgxZTnbjRrBDSii4fyxBR6QY963nCQN33VpGaXWaX4unX
-	 5wZXByBs1xS6PpXwMg740spgBWodKwE2fZ6/jWFxDFw+t4SCx5UCYpqfLwDGt6vLQl
-	 AXR5lN1Ry5NAW2bRNiBUmMfTRYa50AOOsw8xWD2SaxTCF7MpbVVwTx6h+CILnXSO7e
-	 lAIvsFK8A3taA==
-Date: Sat, 15 Feb 2025 19:29:35 +0000
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shahar Shitrit <shshitrit@nvidia.com>,
-	Gal Pressman <gal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [PATCH net-next 4/4] net/mlx5: Add sensor name to temperature
- event message
-Message-ID: <20250215192935.GU1615191@kernel.org>
-References: <20250213094641.226501-1-tariqt@nvidia.com>
- <20250213094641.226501-5-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ETq79hAciGtQuzUdpentCtXaDuDf993eoE4ldk69KfRkYXbxLBMXt+lPuQ8ypGd+pCqaQmss630qZUTbFgit0nNFOUjE5fnUR/viDR4FmtMVGINjTNLcmXlquGdc3RZZwm7om4/wcnFurZfVTTrzzyfMDJ+fgE+Qq/mlH+S1rTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W9HxCIAY; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739648126; x=1771184126;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DWFhykgEBIP6CT0ODgW61pQyFxQtgTH725Fg9dZrMCA=;
+  b=W9HxCIAYms66r9twmOYsYuIvf2Yz2soKZUjf/AVYMOcKxw3x5IRisNYD
+   BfTZ6hzJJop35DU7azO/oxzv13nMQ44aswT4YNZAA+g3GCDskFzunl9Qk
+   dii7ChITLPNZ44Z47bNw/T7nWey4WuIjsb2f8KgM1DIihjdsdtO5EPy2u
+   KZuzgK797thIL0mkFwycMFcpBG9Hkj0zq9ICs2/KY4IL/E0hW4fS3iTzr
+   JxVaXroJfiGZV69rF2JuZb7BhNAHxpGuVNJavZZ/Ea+CfsLw9qmRNUHLg
+   SZu3peJrjRpA73wrmOXUBgqyYjgAzKpyAnBM0bMfFTnp6I5aTj2f76Pw9
+   Q==;
+X-CSE-ConnectionGUID: qYgEVhIoS1OfhraybGb7XQ==
+X-CSE-MsgGUID: txyCQJ1sQJqrbvw6F580HQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="51356936"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="51356936"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 11:35:25 -0800
+X-CSE-ConnectionGUID: byhxzi1fQhet0cVnE79/rg==
+X-CSE-MsgGUID: 0LnPZu0fT7i3b5Wp/2gr4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="136972270"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Feb 2025 11:35:23 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjNwe-001B7L-2b;
+	Sat, 15 Feb 2025 19:35:20 +0000
+Date: Sun, 16 Feb 2025 03:34:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	peterz@infradead.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, tglx@linutronix.de,
+	prakash.sangappa@oracle.com
+Subject: Re: [PATCH 1/2] Sched: Scheduler time slice extension
+Message-ID: <202502160310.ZHjm28qH-lkp@intel.com>
+References: <20250215005414.224409-2-prakash.sangappa@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,66 +80,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213094641.226501-5-tariqt@nvidia.com>
+In-Reply-To: <20250215005414.224409-2-prakash.sangappa@oracle.com>
 
-On Thu, Feb 13, 2025 at 11:46:41AM +0200, Tariq Toukan wrote:
-> From: Shahar Shitrit <shshitrit@nvidia.com>
-> 
-> Previously, a temperature event message included a bitmap indicating
-> which sensors detect high temperatures.
-> 
-> To enhance clarity, we modify the message format to explicitly list
-> the names of the overheating sensors, alongside the sensors bitmap.
-> If HWMON is not configured, the event message remains unchanged.
-> 
-> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
-> Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Hi Prakash,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+kernel test robot noticed the following build errors:
 
-...
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on peterz-queue/sched/core linus/master v6.14-rc2 next-20250214]
+[cannot apply to tip/core/entry]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +#if IS_ENABLED(CONFIG_HWMON)
-> +static void print_sensor_names_in_bit_set(struct mlx5_core_dev *dev, struct mlx5_hwmon *hwmon,
-> +					  u64 bit_set, int bit_set_offset)
-> +{
-> +	unsigned long *bit_set_ptr = (unsigned long *)&bit_set;
-> +	int num_bits = sizeof(bit_set) * BITS_PER_BYTE;
-> +	int i;
-> +
-> +	for_each_set_bit(i, bit_set_ptr, num_bits) {
-> +		const char *sensor_name = hwmon_get_sensor_name(hwmon, i + bit_set_offset);
-> +
-> +		mlx5_core_warn(dev, "Sensor name[%d]: %s\n", i + bit_set_offset, sensor_name);
-> +	}
-> +}
+url:    https://github.com/intel-lab-lkp/linux/commits/Prakash-Sangappa/Sched-Scheduler-time-slice-extension/20250215-090421
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20250215005414.224409-2-prakash.sangappa%40oracle.com
+patch subject: [PATCH 1/2] Sched: Scheduler time slice extension
+config: hexagon-allnoconfig (https://download.01.org/0day-ci/archive/20250216/202502160310.ZHjm28qH-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 910be4ff90d7d07bd4518ea03b85c0974672bf9c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502160310.ZHjm28qH-lkp@intel.com/reproduce)
 
-nit:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502160310.ZHjm28qH-lkp@intel.com/
 
-If you have to respin for some other reason, please consider limiting lines
-to 80 columns wide or less here and elsewhere in this patch where it
-doesn't reduce readability (subjective I know).
+All errors (new ones prefixed by >>):
 
-e.g.:
+   In file included from kernel/sched/build_policy.c:66:
+>> kernel/sched/syscalls.c:1372:15: error: no member named 'rseq_sched_delay' in 'struct task_struct'
+    1372 |         if (current->rseq_sched_delay) {
+         |             ~~~~~~~  ^
+   1 error generated.
 
-static void print_sensor_names_in_bit_set(struct mlx5_core_dev *dev,
-                                          struct mlx5_hwmon *hwmon,
-                                          u64 bit_set, int bit_set_offset)
-{
-        unsigned long *bit_set_ptr = (unsigned long *)&bit_set;
-        int num_bits = sizeof(bit_set) * BITS_PER_BYTE;
-        int i;
 
-        for_each_set_bit(i, bit_set_ptr, num_bits) {
-                const char *sensor_name;
+vim +1372 kernel/sched/syscalls.c
 
-                sensor_name = hwmon_get_sensor_name(hwmon, i + bit_set_offset);
+  1361	
+  1362	/**
+  1363	 * sys_sched_yield - yield the current processor to other threads.
+  1364	 *
+  1365	 * This function yields the current CPU to other tasks. If there are no
+  1366	 * other threads running on this CPU then this function will return.
+  1367	 *
+  1368	 * Return: 0.
+  1369	 */
+  1370	SYSCALL_DEFINE0(sched_yield)
+  1371	{
+> 1372		if (current->rseq_sched_delay) {
+  1373			schedule();
+  1374			return 0;
+  1375		}
+  1376	
+  1377		do_sched_yield();
+  1378		return 0;
+  1379	}
+  1380	
 
-                mlx5_core_warn(dev, "Sensor name[%d]: %s\n",
-                               i + bit_set_offset, sensor_name);
-        }
-}
-
-...
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
