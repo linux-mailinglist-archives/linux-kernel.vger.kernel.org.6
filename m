@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-515815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAE0A36958
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:06:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2E8A3695C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787883B132A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB1D1895C93
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597B01F5FA;
-	Sat, 15 Feb 2025 00:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA396125;
+	Sat, 15 Feb 2025 00:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eP4rb3VH"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpwAE7XS"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020A7151998;
-	Sat, 15 Feb 2025 00:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6731096F;
+	Sat, 15 Feb 2025 00:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577836; cv=none; b=fMbtD6LO7YMddexHvSizj9wOI3J9ye+dKWGcRUbkJ4aR0XeXinLtyyAwrqEFv/bcmBba5mE/MQDwbS6SBzdKsglfHqauTnyGZqo8tDY5xTyHiCx855fwnUBVzCPckpbVMob6i0IF+W3TEAaarLSr+huZROEuNs2O/ZEoFEeHpDg=
+	t=1739577843; cv=none; b=gQWhl/M7xS9Opk0MRND+0Sqjkb+0W55n0eaEpgUul0jpVe/rfpbVtLkhLf0yAca3A9SFZV/VpuFOFrlTCIZ/e4HjRWGuaMwGzXutjbnsKHqcWTIBE0Whj8S9jQxsc86Vv8lzqWWAchRzVZ0S7mw7WUI0eN160OQnhEWS397VnDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577836; c=relaxed/simple;
-	bh=fAf1KAgaeIrxwZbwk9BO115UKgXcSqW2DO+wbz9KRpw=;
+	s=arc-20240116; t=1739577843; c=relaxed/simple;
+	bh=Q0SPl5JH9LaHvgfDJ96M2NZKrxwY3FINQN2Up2ZYVLw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uikJHECrZEHOYlv3C359pZUGIfOh/w/MgJYk/tJKD06l7QWy+91T2bJ4h22wTeONPLRzE9+MYLi4LTZh/OPuoRMgLNQYoaoeMuLe7tvmhxwxTD0jfFTj+A88O4Y/gVrW3/WOu4Gclo1Jgg/W7/3IRuxx9LsZPhNJ9IfCLIDxLYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eP4rb3VH; arc=none smtp.client-ip=209.85.216.41
+	 In-Reply-To:To:Cc; b=af6x08IR1+jWY+sb2oAsAjbA7vThzPsPSYE8fWsxv62BUy2TD9O/S/JxwrBf8qm/unIMXqm0h31wh/UCVoX/6OK37sIs/CrQtkzivUVi3phnzHc0m9RgizR/Bfe0cVM+PgFYM70IcH4L2o9nY6aQpE0eL8qBk15+0CXcN55GDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpwAE7XS; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fc11834404so3513045a91.0;
-        Fri, 14 Feb 2025 16:03:54 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220bff984a0so46093215ad.3;
+        Fri, 14 Feb 2025 16:04:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739577834; x=1740182634; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739577841; x=1740182641; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XjN69dWvX0hG9h4EhLNZtQys+yGsXU0w3VyGLhW1vec=;
-        b=eP4rb3VHiGS442c+U/Gm7iIaN8SmkUDA5XWKasqhWYffc+koVYUKTfz+nnUvbHbM7U
-         IQOiZ+S4n0SE8eyNQdPvsolIuvCAsOIy2GvAl5/aVnH5dJs396RrvayrzB+iOe6V4h/R
-         F4x0N1iZ6cv+sxWH/S37FDNRh7bQSBOAs3KUYb8n/AuzyaRifEcfcY0UTT4QDcJP0bQm
-         tL+wOmfgYzww+/Fej6nF7Rl0hwoPZ/Q67z1nbg2ay4pzPmLWfAGnrPrToGEIONpi/Wtt
-         89GtlkopnK+hiPClZHx8VMG7ZtlitezdlysnKJHw3edN9unJ6nsv2AuX7u8ae6W1Ago8
-         98FA==
+        bh=03VCERuRQd3sonLjwX2xR3AgSfd5Oyw98QEf0M2noT4=;
+        b=DpwAE7XSovHCQVrdlrDttQygRCqCnextqHu1/V5LNrRpzss3BVoqqXs4xuRic1+gYe
+         sjLPEA/TA4MTYbrn2FTTXA+qCBjg9L3VNQ5wnBerFtoNCxWqmZ4qYnJu42w7G0LD7ku0
+         GPjNnoFjw7bicksT70QifcAj42JjeOGJAfPGdwPGao07QSNEJIVrWxsFsh4uk+sDOnDe
+         0LAhuzrqNhdOZGHiurqQcBG6U6HkmpHPy7HbTUZhDWi3LdwyhUSbD2mVTnhGbM4JrFBL
+         kV7G1ZIEMPCeMd2vv2rg6yMHzsppUJg8LCdHdS7JxKHOcY8zvefHWHGqRFjjYN3rTiyI
+         khQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739577834; x=1740182634;
+        d=1e100.net; s=20230601; t=1739577841; x=1740182641;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XjN69dWvX0hG9h4EhLNZtQys+yGsXU0w3VyGLhW1vec=;
-        b=q7ftWb4be+u+r/pzgWfJJlzK35TOLCbd98149zNeMHCzLSpdZtXpJRGRq5qOUwERZE
-         lKyrQNOR7NL1hnaJKXcju24S0TmPzhcbH3Z0CVyHhgvB0kJPWyGb5rcZRLoxJqByICpF
-         CYiGq5TgmQ78sGKU1E8iEvhG/KKJqZLmKyp1dTLEaKZe+/Cm2OOjoVdu1UW5aHaDireW
-         K7FoEF6gSVSUiHPDKlwh1L4FqjHoLK3gbIMnJ0mYUhL/WOLEsxDbGR+ggsiPY5yTiRyP
-         EmzXavTjV5q3s4h67l6S1EVyuk5oYmOdocP0OzVn8ZrKK5DSppWrdL2u/1olQxMba3MS
-         iy6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUSkI7+kgFC1A6QPUku8Er30OC/1EmscemXMriblBlq8M73EwQbfN4CjfUD7oA6SwgIwD10WAjAH9GorDw=@vger.kernel.org, AJvYcCW2OAXDhYpQ4LilqDCKflQzL+DT38xZ//RNecnqBuAjTfUfQEfOpTPBRhAX7Wbs8/CxbaSaLN6utNGK@vger.kernel.org, AJvYcCWcQYz6z0J7gz1EkdJqoRAmUZt8APEjfa2qGkylWv29gZEGTsZKFaYae7qRloVmfekqtFxFA6zKsI2hM527@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFmV2WASGnwnuyZI3Nc7fdzWdhbqvkGwXYugSYO4ON1FdeseOC
-	/Ve7ag170a2sZaPinWvNPDPvYe+KPJIAG/SeAB49DBFBTUuOR7GC
-X-Gm-Gg: ASbGncswPPzRHjmHuy43Hn5/mcnDoKadfsBH9xKHc1j3Fe+mg9DMBuwWIHkMWMVw/Vz
-	FHcGMG3jZhSlGl0fxaixCZYW87SuTh/1udbbHYQ+ap7F5KsmRJpujEBslfBq9FK4hEvQFfOXfB9
-	VpRvTYIGvYaAHYlS6zQ6zJkqTAgb3aP57dj4us9z8iCdAhmOZP4qr4o/QBR+PYRj9xtvJ64bjqV
-	dA36kpXYlQcgQp3IL4cnjakt/335j9SHA6+U60BPS+HvwqsR1sTayCE1shpPfTEVB+LRDtycXMS
-	vP+lEvi1IfVBCfSDnMZg3IYoAM/GlOGNyzUY8b7NMzn+s6vrffKIUo4k1/ASQMU1OOpqJ3MIQCB
-	llMY8/5aLjg==
-X-Google-Smtp-Source: AGHT+IG8Y9dfFDg7fAsxSa/d9/xijgthnbv4dNrpx0e5/T2PydIYpo7CujjfmoaoePIUicpcVlYA3g==
-X-Received: by 2002:a17:90b:17c1:b0:2f5:88bb:118 with SMTP id 98e67ed59e1d1-2fc41044ffemr1257114a91.22.1739577834169;
-        Fri, 14 Feb 2025 16:03:54 -0800 (PST)
+        bh=03VCERuRQd3sonLjwX2xR3AgSfd5Oyw98QEf0M2noT4=;
+        b=bbi95uyBFXi4WnSQSK2iUyprA1cmRh6LZrvu4A0UDeLql7xp83vXJJp9mcqaLNJZr+
+         fsvb5rTZjX25oBF2UoDkF7z0ewMcGhIH6+3KKH/XQK+xA4nn7ekHS8IGh0btTX7i2xeY
+         Ayxf4wlFDTnLalP+CUjSPHqX83pP0uyYnZduJTaRVXXvY97ftYKhzwKb0YgWrJcesfFA
+         EutPpLf7uU7SioTl0emVG9RsdRsfjI/fvNWyFPSLl7nZkgF2CF8tm65AmDBuv2tY1ZuW
+         +nuvrN1f2wk3s4TCiINFQr0Aq/0ky1iIXwXGIy/w7C3A5acmQxjDPqb8TUTZtNtcFDsw
+         3rDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc4tjFwpvDnyURxFCtTTFEmK/0RQt8sPSUidlLY2nxDRFGir3pX8Z86kglXtars+jUGDiLRPLuUGdiAW0=@vger.kernel.org, AJvYcCWb2WesPKUDCLr5VgxQnRZX1PNRcsWQiVkJAnyHO6NNPbHz3kZTRg7fiX4q9bsnsBy8aN+ZG61IqyCOhhp0@vger.kernel.org, AJvYcCWcHw65E/umVDRQKMRO21Y8p1eUPr54NiYIxHvuvrCxAOR64m8GoIQwW5scWnBr5lDXCU1Rkop+qxre@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV2axzxGSo/QUM+0cvcJBxzdyjB8MZaIOrHLsZhifWhdat5/q+
+	fCGhZMx5anZxsTzgQyDsCzWMRpB0EXPI0aocneHngiYGeM4jAVgK
+X-Gm-Gg: ASbGncuAVO7T5OW3FZOvO/ooyCTSTmYhreVOxtZTb4mPLLSZf1gpSvUqvYkDvUbTfi3
+	0DQgLmi1qQyBo015ccQ2sUsCbGKFGVNRbPjsXXFrvQWeNkjYdqwaYvj8oGKhMKmcFostvYlo1Vi
+	Tqa/DlDAb55KleqQU+33BYlSnzl1LsE6Q4Ahj9M39xjg5KdQLXlxhy2PnFZHoONH/Ez+QlPceKT
+	AvMZXzLP1IOP5iT3eQZXlRIcljqnCmpHCvyTFLCjTW7dnANB8dJLyy5D3h66Oq3NAR16taapZXF
+	Z0udT+ESv6O1pOyTCEbgU5kjWdt0NbV3kVsQSnFMpBcZ4JFxJ1vis/Z6foW8AWC9jpMEXs4+8iC
+	P16XEOgFXDQ==
+X-Google-Smtp-Source: AGHT+IFEbbW3BAtsBgFCB9kBQKiM4ABgJn5ph4HV9zVEO0mqabKPwQqEDNW4omoAqNlYhJuWy8T6ng==
+X-Received: by 2002:a17:902:ce06:b0:21d:3bee:990c with SMTP id d9443c01a7336-221040a99cemr16511975ad.42.1739577840941;
+        Fri, 14 Feb 2025 16:04:00 -0800 (PST)
 Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220f26ea127sm15071155ad.96.2025.02.14.16.03.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220f26ea127sm15071155ad.96.2025.02.14.16.03.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 16:03:53 -0800 (PST)
+        Fri, 14 Feb 2025 16:04:00 -0800 (PST)
 From: James Calligeros <jcalligeros99@gmail.com>
-Date: Sat, 15 Feb 2025 10:02:39 +1000
-Subject: [PATCH 06/27] ASoC: tas2770: Fix and redo I/V sense TDM slot
- setting logic
+Date: Sat, 15 Feb 2025 10:02:40 +1000
+Subject: [PATCH 07/27] ASoC: tas2764: Reinit cache on part reset
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250215-apple-codec-changes-v1-6-723569b21b19@gmail.com>
+Message-Id: <20250215-apple-codec-changes-v1-7-723569b21b19@gmail.com>
 References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
 In-Reply-To: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -99,120 +98,51 @@ Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  asahi@lists.linux.dev, James Calligeros <jcalligeros99@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3845;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1362;
  i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=Zkv+pd4IC2a5+XRrYg3ceXkPLMS+eYmm7VHJxks2gAY=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDOnrb26N0Tec2n3GOWibmdL8lYv+X5dL1HTK/lBX7D11g
- q/IezWBjlIWBjEuBlkxRZYNTUIes43YbvaLVO6FmcPKBDKEgYtTACaicJ3hr+SiZRvdDolImi2c
- Nmdx5BKJN9d2MTcKuR1JVS0vZjdNbGL4nzXz407uk2VeP7mlGsveedtPjv7zjjN1lczHvrlqzXO
- 82AA=
+ bh=B1Sb5itjHDK3h5ZHbLewODahZLkXBqkrwz4IxIkfeXw=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOnrb261Fz3vOn+1fEP22nlTIuzP/Ap23/14z4oJmSFOV
+ TqJQllaHaUsDGJcDLJiiiwbmoQ8Zhux3ewXqdwLM4eVCWQIAxenAExkhgMjw+1vHUck4v6af+r5
+ PD/iU+ua4Aszgt5nLLVSb8/RuWHXXM3I8PBZfitrjEPuMWNe3TlbP1uxrk570vRle1GfcMibrHg
+ zFgA=
 X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
  fpr=B08212489B3206D98F1479BDD43632D151F77960
 
 From: Martin Povišer <povik+lin@cutebit.org>
 
-The former code sets the V slot from inside set_bitwidth according to
-the bitwidth of the PCM format. That's wrong, since:
+When the part is reset in component_probe, do not forget to reinit the
+regcache, otherwise the cache can get out of sync with the part's
+actual state. (This fix is similar to commit 0a0342ede303 which
+concerned the tas2770 driver.)
 
- * It overrides the V slot parsed from DT binding.
-
- * The V slot is set shifted behind the I slot by the length of the PCM
-   bitwidth, but the PCM bitwidth has no assured relation to the TDM
-   slot width.
-
-Replace the former logic by setting up the I/V sense transmission only
-in case of both I/V slots being specified in devicetree, and never
-override those values. In case the slots are left unspecified, disable
-the transmission completely.
-
-There's an improbable case someone is relying on the old behavior, but
-if so, that's a setup that only works by accident, and cannot be sanely
-supported going forward. There's no indication anyone is consuming the
-I/V sense data up to today, so break the former behavior.
-
+Fixes: 827ed8a0fa50 ("ASoC: tas2764: Add the driver for the TAS2764")
 Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
 Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 ---
- sound/soc/codecs/tas2770.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ sound/soc/codecs/tas2764.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index 0c8a02ac2c0db10c449a68d9365e79576e24abba..35a4d5a4a3e0cf4f71f81fd59f44f075c59cdbc1 100644
---- a/sound/soc/codecs/tas2770.c
-+++ b/sound/soc/codecs/tas2770.c
-@@ -224,19 +224,16 @@ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
- 		ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG2,
- 						    TAS2770_TDM_CFG_REG2_RXW_MASK,
- 						    TAS2770_TDM_CFG_REG2_RXW_16BITS);
--		tas2770->v_sense_slot = tas2770->i_sense_slot + 2;
- 		break;
- 	case SNDRV_PCM_FORMAT_S24_LE:
- 		ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG2,
- 						    TAS2770_TDM_CFG_REG2_RXW_MASK,
- 						    TAS2770_TDM_CFG_REG2_RXW_24BITS);
--		tas2770->v_sense_slot = tas2770->i_sense_slot + 4;
- 		break;
- 	case SNDRV_PCM_FORMAT_S32_LE:
- 		ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG2,
- 						    TAS2770_TDM_CFG_REG2_RXW_MASK,
- 						    TAS2770_TDM_CFG_REG2_RXW_32BITS);
--		tas2770->v_sense_slot = tas2770->i_sense_slot + 4;
- 		break;
+diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
+index 503bb7f8b729d3760194a6f6f6996ff6469c580f..6e91ad9229cad62860adc1f446fffc8872d32ca0 100644
+--- a/sound/soc/codecs/tas2764.c
++++ b/sound/soc/codecs/tas2764.c
+@@ -539,6 +539,8 @@ static uint8_t sn012776_bop_presets[] = {
+ 	0x06, 0x3e, 0x37, 0x30, 0xff, 0xe6
+ };
  
- 	default:
-@@ -246,11 +243,6 @@ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = tas2770_set_ivsense_transmit(tas2770, tas2770->i_sense_slot,
--					   tas2770->v_sense_slot);
--	if (ret < 0)
--		return ret;
--
- 	return 0;
- }
- 
-@@ -505,6 +497,7 @@ static int tas2770_codec_probe(struct snd_soc_component *component)
++static const struct regmap_config tas2764_i2c_regmap;
++
+ static int tas2764_codec_probe(struct snd_soc_component *component)
  {
- 	struct tas2770_priv *tas2770 =
- 			snd_soc_component_get_drvdata(component);
-+	int ret;
- 
- 	tas2770->component = component;
- 
-@@ -516,6 +509,14 @@ static int tas2770_codec_probe(struct snd_soc_component *component)
- 	tas2770_reset(tas2770);
- 	regmap_reinit_cache(tas2770->regmap, &tas2770_i2c_regmap);
- 
-+	if (tas2770->i_sense_slot != -1 && tas2770->v_sense_slot != -1) {
-+		ret = tas2770_set_ivsense_transmit(tas2770, tas2770->i_sense_slot,
-+						   tas2770->v_sense_slot);
-+
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -643,7 +644,7 @@ static int tas2770_parse_dt(struct device *dev, struct tas2770_priv *tas2770)
- 		dev_info(tas2770->dev, "Property %s is missing setting default slot\n",
- 			 "ti,imon-slot-no");
- 
--		tas2770->i_sense_slot = 0;
-+		tas2770->i_sense_slot = -1;
+ 	struct tas2764_priv *tas2764 = snd_soc_component_get_drvdata(component);
+@@ -552,6 +554,7 @@ static int tas2764_codec_probe(struct snd_soc_component *component)
  	}
  
- 	rc = fwnode_property_read_u32(dev->fwnode, "ti,vmon-slot-no",
-@@ -652,7 +653,7 @@ static int tas2770_parse_dt(struct device *dev, struct tas2770_priv *tas2770)
- 		dev_info(tas2770->dev, "Property %s is missing setting default slot\n",
- 			 "ti,vmon-slot-no");
+ 	tas2764_reset(tas2764);
++	regmap_reinit_cache(tas2764->regmap, &tas2764_i2c_regmap);
  
--		tas2770->v_sense_slot = 2;
-+		tas2770->v_sense_slot = -1;
- 	}
- 
- 	tas2770->sdz_gpio = devm_gpiod_get_optional(dev, "shutdown", GPIOD_OUT_HIGH);
+ 	if (tas2764->irq) {
+ 		ret = snd_soc_component_write(tas2764->component, TAS2764_INT_MASK0, 0xff);
 
 -- 
 2.48.1
