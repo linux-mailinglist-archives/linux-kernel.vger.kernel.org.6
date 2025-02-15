@@ -1,85 +1,72 @@
-Return-Path: <linux-kernel+bounces-516430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0744A37157
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:42:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D0BA3715B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C08316FBB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46EC188F8CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856201FDA8B;
-	Sat, 15 Feb 2025 23:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189821FC0FC;
+	Sat, 15 Feb 2025 23:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9rm8rtV"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="I+Ys1hJK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C641DFD9C
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 23:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739662961; cv=none; b=Jt+Wi66t1c8p91ftY5NpP6EqWdyNDOuY5i/Dv1MIz0H/SILpISUy2L1zGOoSLLTLnlftwTNBivAKBM+6v0hgNZF1GiKZ6aZaMS/eDIH6wkNoHqAacSt5EbvwBh9jsFCp0DF/1A3E/7SUjXM/bgz20jea0cH3ZFCBDLihNEyJK3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739662961; c=relaxed/simple;
-	bh=J2Ijsb+HD9ILre/twDctrrk2xivaEVKQsJ1LLyLy2gM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VhAETxmtPhI+d6w4dWrxM2F97ZaR2djKbdWFX6Q1w+1WTUwL9oBAUjqs6TWjpABnpDullcAQKpWscD0d+rDINiqhYmmmXeyC1XZ//2VYyvAhGT4C2kDyc+cTnsXSjkSbdqTTpt7ghp2SO+EVpevHi94cBeWQE8XaT8qw872+OYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9rm8rtV; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220e6028214so49803995ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 15:42:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739662958; x=1740267758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZLmRNArgA80J6VvBUYgRP6X+hYuozIBGig62C2XSMA=;
-        b=h9rm8rtVut9flmPesv4pqLh9Hsesc4uc/FDSTRmZpQKOs9jQ+dV4p8mB+BDSCr6g1u
-         S8qT8Pok8BNRsGS2RMcMI1aBqL0amjGeJZo0EzxzkOhmCxAvmXNAvByqe95wGHCoOcTv
-         6FpjAk85h+TnaOkr/O5+emppM2aeGndlAuDYmvD80holXrrWflQOiWXciqgLmu0KWWlk
-         m9FoTRoCgIUrmd0VLr+tYRMojt7qIFqUVuHCiFVbc9khVpylupV/p6itHr7nsaNO12Gp
-         0euxBrXxXUuh8No/ITJiX2FJAyGQ6TeoGtv8Qb+ftoi41GUDZuh5d85QxDwAudko5OH6
-         xseg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739662958; x=1740267758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uZLmRNArgA80J6VvBUYgRP6X+hYuozIBGig62C2XSMA=;
-        b=RZF0xhgobTnAKoIohGi6tfRd4fu0P19rQ8n5bd22PENa++zrvzzMhyTHoKjSylaB4p
-         Rjf6OB/bsBQ9tSsill0S3U61mxdfa07qALN76tJhFvPrgyRllSWhyLEeSf1HJcW5cVGJ
-         aiqUssbuMCstJMudDuJlV4Pdt6Zx47CM5+ezxH/HvNXhnvV7V131CTTqYh0SuOpMh/2z
-         5XFdQMMygz/6azLju/Gp+l7vdwYrJNQu+1504C1DbtJ4xL+8E4K9wYyujy6IkDHlzSWQ
-         5FNXtsK/cent5OTF9TSzikJyi2Nq/6aweVGsN0H7A3hN48WTOJp16kZmyP+UvUotCzlb
-         0r/A==
-X-Gm-Message-State: AOJu0YxM5uB77iCBLlEdYP0AWlXqaqGESm8HA1i4/x8ycNymV4YnMwUL
-	HAZPiJL1wD5ZtVnK3mcfNOMb1W70cCzu6AtBNLR6j1vDB8ieGnFjR4VYJKWpWLQ=
-X-Gm-Gg: ASbGncuGv8nJrL8PgaXOTPwDNg9vaM6meVgVLWfQgUL0cq59nMCoBG3t7686eaNUqsZ
-	HBN6o6rFXPntqn8wwadxnJ9iJscRhE1HaqcAhuHw/Oy9GW1bqE0pQC74jGr1HdNZ7BBS4r6FVm6
-	bSGACvmPEu/A+CT/k/rxw5BzlbeHifN0LfO9+TfG4m2JP15RSJA/ossF8nzubciWNuubw1KJUrF
-	J5Es6XZE154OQgO0sKe1+hV+Xl2OvE+nHbvPepgx61OcWRwd8rfUZOgOeBNESeo2rD//dzKXsI2
-	BjH/085qZuFXyp4aGgs1+PVolR4gXE21zI+rJICw6QOnHruDyKjqL9uLqMSMaGNzvQM3qCqqCnc
-	Q62nBS97P
-X-Google-Smtp-Source: AGHT+IE6NmHktcig9BJo09+F38JhiWnR3tXxtr20ZPVa7Hu4MD4NW4XEaxTqHvWYdSX8s5q88Nsbiw==
-X-Received: by 2002:a17:903:2291:b0:220:c8e2:5e30 with SMTP id d9443c01a7336-2211c5547a9mr19003245ad.46.1739662958471;
-        Sat, 15 Feb 2025 15:42:38 -0800 (PST)
-Received: from test-suraj.qjz2hk5f2gku1a3adsvczrat5c.xx.internal.cloudapp.net ([20.9.134.79])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349210sm48803145ad.11.2025.02.15.15.42.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 15:42:38 -0800 (PST)
-From: Suraj Patil <surajpatil522@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Suraj Patil <surajpatil522@gmail.com>
-Subject: [PATCH] docs: Fix typo in usb/CREDITS
-Date: Sat, 15 Feb 2025 23:42:33 +0000
-Message-ID: <20250215234233.105867-2-surajpatil522@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215234233.105867-1-surajpatil522@gmail.com>
-References: <20250215234233.105867-1-surajpatil522@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C491509BD;
+	Sat, 15 Feb 2025 23:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739663707; cv=pass; b=Wq33008AXJBGgqHwevcXUeaaTGtdNkWDIuM8nWI5Wxl9B0ANnE31Tj3HwY7LQnW4+YK1PuDCXf72ponAzI0Rpkn8Gxra6p3TqKqKAkhgIjQ5sj/ugvzihyTmptB8x+7VnmBnpj6U/hlSlh+G49S5VHAHZDuxEOX6tCZX02LxAAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739663707; c=relaxed/simple;
+	bh=kXeZO5JNyko3qN725x+xcA/yyLHNw/0GxxmNbYLfHnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QronB/65hXY7pSkelgcJTmgNy4ioUXSqkTXDmYC3IV5a1vk92cCSKXzKes5r22YFXa29piZgaJhI/r3zE8xr2PmMOv/GeWs0oA/HTSdbce/WkiU1Pd/bZ8Xnr88yIY0mXrPPbRvCwmg+iNKwf1mW6dF6k5Wf1KrIrwvXKLaYp0A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=I+Ys1hJK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739663682; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OB8jNtOTdSTvBuuqCwbu3QUtCBdL9cp+7fnRodE6I2Yb2JP6X0psSdQutHCRIQfOJltgip7MssM7Of/J3ctEBsEvoE57nXuYTu0ZT/wSd1C7s5uXMnjm9M5o83qc1ZlWKZi4K5WNa6/GYBBRFxGtHZeAe5lcmnmLpN5yZVkVHX0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739663682; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XX8SVPjXGD/M5xwZb5E4iQN2OwwF5DZ+dOEjFgE5/DY=; 
+	b=WY1OP7aPGw4XaDQj9yfTVSXewAKKZscrFxljswdn4wlcNwMzlyXP4zkPLyhSd6MpBzJX5pab1uBYqPcSpQyS3snmB2R7A+SEPUN2GlyT3I0Dt1adhZH4QFdeVmiKkpIju54bt8tZAgx/vN0fKs2Os9XUU4Si1VUJa8EL9qA9sr4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739663682;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=XX8SVPjXGD/M5xwZb5E4iQN2OwwF5DZ+dOEjFgE5/DY=;
+	b=I+Ys1hJK0P4WcWX+5P2t8+2v1Ng8vYYa9/5uG9pR6MD4Mw23LTFg2cH0wYPoZarl
+	CYyIxb+vTbXspYMOcPjiBiS937wR14eIGfYYactlKhjEOZE4iY8kF8re6r8uqvjpZeb
+	N1GbaLuYwKXTRaLPeWiUDJHutsxn1KvClLsfQsUw=
+Received: by mx.zohomail.com with SMTPS id 1739663679905558.4270282900428;
+	Sat, 15 Feb 2025 15:54:39 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Marc Zyngier <maz@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	XiaoDong Huang <derrick.huang@rock-chips.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	kernel@collabora.com
+Subject: [PATCH v1 0/4] Add Rockchip 3568001/2 errata workarounds and enable ITS on RK356x
+Date: Sun, 16 Feb 2025 02:54:27 +0300
+Message-ID: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,28 +74,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Correct 'Implementors' to 'Implementers'.
+Enable GIC ITS support on Rockchip RK3566/RK3568 SoCs by adding
+necessary GIC erratum workarounds and moving RK356x PCIe MSI to use
+ITS instead of MBI.
 
-Signed-off-by: Suraj Patil <surajpatil522@gmail.com>
----
- Documentation/usb/CREDITS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dmitry Osipenko (4):
+  irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
+  arm64: dts: rockchip: rk356x: Add dma-noncoherent property to GIC node
+  arm64: dts: rockchip: rk356x: Add MSI controller node
+  arm64: dts: rockchip: rk356x: Move PCIe MSI to use GIC ITS instead of
+    MBI
 
-diff --git a/Documentation/usb/CREDITS b/Documentation/usb/CREDITS
-index 81ea3eb29e96..ce6450a6ed7c 100644
---- a/Documentation/usb/CREDITS
-+++ b/Documentation/usb/CREDITS
-@@ -161,7 +161,7 @@ THANKS file in Inaky's driver):
-         - The people at the linux-usb mailing list, for reading so
-           many messages :) Ok, no more kidding; for all your advises!
- 
--        - All the people at the USB Implementors Forum for their
-+        - All the people at the USB Implementers Forum for their
-           help and assistance.
- 
-         - Nathan Myers <ncm@cantrip.org>, for his advice! (hope you
+ Documentation/arch/arm64/silicon-errata.rst   |  2 ++
+ arch/arm64/Kconfig                            |  9 ++++++++
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 14 ++++++++++-
+ drivers/irqchip/irq-gic-v3-its.c              | 23 ++++++++++++++++++-
+ 4 files changed, 46 insertions(+), 2 deletions(-)
+
 -- 
-2.43.0
+2.48.1
 
 
