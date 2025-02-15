@@ -1,196 +1,99 @@
-Return-Path: <linux-kernel+bounces-516252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADA6A36EBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:20:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBAFA36EBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49BB1895A02
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA793B147D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF711D86F1;
-	Sat, 15 Feb 2025 14:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA531C84B5;
+	Sat, 15 Feb 2025 14:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYaZmSXG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="H+1KhE0P"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41DD13DDAE;
-	Sat, 15 Feb 2025 14:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0614E13DDAE;
+	Sat, 15 Feb 2025 14:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739629226; cv=none; b=rCq2WkSh5I4X6DnJFXWiTriCvQpUsMTuHV5P+uBNTqd6bDcVD/30TYUz/EDXesM6FDiPm0dP55urpz/7hfXUnd6crche615C8/3cKwytq6EP/OxWdQ01N/P/+KQ40SNa3OLfGB0l6Iom1tGkFv+xveK+fAJmVVG5+UFQwHXb0t0=
+	t=1739629220; cv=none; b=nleHEhHOkilqBf6ZYs922cO9EUiBplFg3dZH5PuVlndEx81YP9XJquDzEn7IKZ1pQmAaDHdVho2NiFVN7WrXopv6rtTzTfUca1rVR9+4CJB995N/VLJ3WtYwe3WdxI250xaX1Bo9bDXOGBItEctkufwyyNIwmcbHOH7KVcJqS0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739629226; c=relaxed/simple;
-	bh=vMvQRjuv1vGCSFx8wFuFSrwF4Vfs84FA2cOaPrDafZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m2mIXrHHX8RR2bY+1lstNox4RPaQ/HXzFKko14WPUIEoov08ATESc/CHWJU6eT1sldwXPOuI6Qv3dx00RAIymXSBsANnS+6xJgZgP99LcOYj8zXzA0GKSUja5IfCNWkdE/Ixf+M18wy+RGhIq3NMmg0UoiTVSQgWtqL59ByXACk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYaZmSXG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54115C4CEE8;
-	Sat, 15 Feb 2025 14:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739629226;
-	bh=vMvQRjuv1vGCSFx8wFuFSrwF4Vfs84FA2cOaPrDafZY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HYaZmSXGFXQ7XcFmvAhp5sLGJ4+Mxv0Ll+Iuy+rwJcuVrBSlYM+ea3VBIEQyr/2tb
-	 o8llVs0DlGciXon2G4zCZJvkrGT3JTFELmSKXsZzjk+ZcYXgQjtm2GCGPax9a53Zr/
-	 JC5UOvtX2cFt3Pgc0dPFMqO5/1WDCKjcPGiSHhO89xAMZi6tDPfKUlatSyxnv1v5s+
-	 E3jzpKxgk/HnKp359kDhFTovdvpcMMY6amC7YGx6FLD2cZfu6JbWQsQRRZ6bDhFqCF
-	 ER1zG+iEz3hPO8P/Zx2Kw//pF4n3sv8l2i/O2e3w8qpF8HHzPI9TudkfGCZuNA+Ra8
-	 gyX4Oxl74F0SQ==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3091fecb637so14120201fa.1;
-        Sat, 15 Feb 2025 06:20:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUncpjoqN+YgJU8Wg3J5XjV9qOk9ByWnYPhl1yZw7Aq2UZRSI+aKetUbD3dv4phqAOxYkJzK7PN+Rk=@vger.kernel.org, AJvYcCXDLw+pmNt3EPfmsAb+v9twFZM8jB0DsSzRAFb+fSpxr26XCf3AmzeHkfafZ1hlqSPMg37X2cLTE40Adrsf@vger.kernel.org, AJvYcCXgAPUcxHY/hT7ps5qJTSbvc3C+7WKwVz4OWwQNXxsNCWO5n0L5SIxtz8jCP7o2edNtB0WrxMzkVVNdT+tw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRhxXWQGuefeQag4VqzGvQdzWorCux3VzRYZ5mlFaMDh+N9kb3
-	Cn9wdyhTLbgcpLzDIJXDoSLDR4LMty5CPJuwFkPPrEsEQHYvtWTV3t+YQsa7zMsFCFb9ZM1NS9c
-	rP8aFYUGi51IffUG+Mq3wx2WOf0Q=
-X-Google-Smtp-Source: AGHT+IEn4QmvBBN4zk0EepOwGaCTOHfaVaSe8FqudfNVLihJRqeNKKool8KtoxB6GlwlfdxZCKdgpO3jveG+b+F6Nug=
-X-Received: by 2002:a05:6512:2342:b0:542:2190:9d99 with SMTP id
- 2adb3069b0e04-5452fe2e32bmr1192255e87.6.1739629225000; Sat, 15 Feb 2025
- 06:20:25 -0800 (PST)
+	s=arc-20240116; t=1739629220; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Ak1nz46dIIsxwOv7//m4fI4hrdm9B2gtYzqkWFVeglyule8e0Qc0ZeDXwTT0QnrA1CYdMqeWj/wE6Iv+SuW2OPM3+irnEKPWOtQEg/DJPBMgCoHwsH1yg1W3Wg+FCqeUbsyQm4ykyt8912yE0A17t1fFQeFnVU4Wftp+op/w32Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=H+1KhE0P; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1739629215; x=1740234015; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=H+1KhE0Phd+tQmRRasQ1xdHWO3bMDgCJfXUWaLTSaCrH6xzyCRlxR79B+1KfLVCJ
+	 WUpZVk2MRy1Jk0MWAUPgZWpCprA8zypvfQy8/HWRg9LQ925LXb9ngtDdH/bNSlcm5
+	 rmzfzz5LXMXiVfqpMh1crCG128MMTt1vtWI7FT6S31iqQY2KcocSWo5zDKgY/qFth
+	 cRZwHd5CcIkF6FNlyQZfkaB4zHnZD4Z/z5MJuVNDnBKkpI8H4mdAaVV93BCPMwjSi
+	 4wFbzcZ47LVBDgjA5Ne3vKpMh+lLI2nWzvPrYLZQNACrcDNOG++zix1iawH0acc2w
+	 cHNUSrBT5BZE2dvYLQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.32.147]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuDbx-1tVE7G1csf-012qn5; Sat, 15
+ Feb 2025 15:20:15 +0100
+Message-ID: <dd2f2a88-1fcd-4c1c-8edf-48a6650fc74d@gmx.de>
+Date: Sat, 15 Feb 2025 15:20:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
- <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com> <886cb4b9-9d95-4346-9c38-923cb7c69036@linaro.org>
-In-Reply-To: <886cb4b9-9d95-4346-9c38-923cb7c69036@linaro.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 15 Feb 2025 23:19:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQXXrwCGHKJRCynM3edT9JyQ-f_CXHOoZaBH76csD1URw@mail.gmail.com>
-X-Gm-Features: AWEUYZl1j8av6G_nZeziPb8eszZ-qUH_e-MDL7y56CpjrilMtMb_j-ZyK67b6wo
-Message-ID: <CAK7LNAQXXrwCGHKJRCynM3edT9JyQ-f_CXHOoZaBH76csD1URw@mail.gmail.com>
-Subject: Re: [PATCH] docs: kconfig: Mention IS_REACHABLE as way for optional dependency
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.13 000/442] 6.13.3-rc3 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:CV1d0g9Yque2CD7d+Qgskoa8OF4S9MyqkIEzbso76TA6hlE5AkW
+ 3Q4d73O3zzsKxrVQwMQaIWTtbvk6tqy1Vo5lVokMcmj2oCJ3KVpeFaTOgo8bV8ovj4NEJ53
+ To+2q4SC3PlCX7sn5TJnDXWf/vCGycXJh+UP29WvF/gvuC53812eOQM4WwIS8LxbUKD4G0S
+ FA9tc98tGtES7VnoPqRag==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QM7NkFV+U/8=;DpsJgsG1ZGDiDIiMFyAHw8HC33M
+ IelNK/YEvanqVJ2bgC5s6cQxRwUTIzkDjwhioRE+tlN8+q8drVtayqWR0hCO/XCovED5OISSB
+ Wzt46/PriCR/FluIVaicnOFy0dfcdvzwWxFMDVM3IwNc6xZvVOcfnIg55MzPZpc9yXJIumkAs
+ 3F+oDPPk0OhC7qGvqKN72HrM+ZQQwCKLKlXkDWDw3N2Ba375+8Bjt2bXhjeWa8jDVV2qhV2la
+ 8WUrUxysv865Afooh/x81rV8WJNaqM9Tp1X+1ks+ED1cBSweHsAHdc3IYUTbzncajxeS8Kvhs
+ 1JACMi7cbwh9QyhTgGVB2LpXkoNGCEuh8XbWlDWVAsclgMw4ngq+U4yYdTt/sC4GyZodAh6jb
+ h1hCrQqtHGKiiPski5ceViGD2BjTctojFLKMIEYSIPTnWjtWqpEWhzIcQ2kuTDAB8QzBX/DKH
+ tCzbg+aFj3clmjk3LCKeD3+joTt+RD+GdFckqFwdtkubZcTDT6vesOFFxFH5AR3aW5+Cx2vlb
+ PfCDtytX8NHSwTp2POldn6GVbbt9vlnoigHyP4DMKlCq+d+e3/PHcY/dBdkOG2oNnED2XDsC/
+ ld5zP06TTUAeGodjqjZGYFVA9S7cQWDh1rnXHZpLMC9DPqB/Fdv28uOnQzOos1z7qG29cR1Ue
+ gE19JGQNAK+IlTtrz+BsxTSaDOTj8qdeqSanIf+XUAVIaKbJXm+mVuEotDoCTILVf9g+uWsQu
+ +mywbK0B496jpHo9zDf7tEDlWm/7HZBaFxpBeji4tW1HuJylEp1PHm+2Z9OXzDQxppqKXbQaI
+ VZXmlnEP4nnEnjYWYvbLBhhs0j+DSbRF/gP3f/VQtV8B64gop6Yj5LYQhaMjMTHOklvCU4fNG
+ +X/uhRK343zzipoHStX1+MOwUI2RFf/Ic6bfxYjaianDYvOKq715PP1dyqZ3Lzt0bA45BhNEo
+ FyzruR2nyS+ytuW5yGBQKEo4vFHNE++zdnmAs1D82ZwhZAg7lbg+ajhfWjnrbuXj0gg5YSKAO
+ HrQjqEsH53WyLCjiRyhh5t6CmxF1twlJ5/dc/mzlu1g4rmnukRH+WegeoZMkayW63ryHj2VkV
+ KEWY8HNcdc8/sYDcj61n78MxE1MA8r48bzMQ4WGRT6GpTX4ZM/gb2zL9EcL5J07HBLttQo98c
+ ytNdhNQHFirP4Md9lol5b4rQZmHcfARLSntHkE/05C9p44Y/cpBZNT7zv8Y/ioBa8HmC6U2TV
+ pdf/UfNzmZcUSXPAfS1RowXhIy6f4HijIDtdem7dPC+56egoodpiJrM+OkMu1kOIEuyKUbow1
+ +p1zD44ELSPxzk4+49tA7s68FCLMZAoLSYhf5pYSI6LUOkUUrsxBLr2CdYvE1xzLFsF00rSbI
+ dHkD6bW/RGjD4FZwpyMxel1YVcxhrM15jt+sU8l9v0Btyk84R98ohuh0C+
 
-On Sat, Feb 15, 2025 at 10:02=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 15/02/2025 13:54, Masahiro Yamada wrote:
-> > On Sat, Feb 15, 2025 at 8:42=E2=80=AFPM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>
-> >> Several drivers express optional Kconfig dependency with FOO || !FOO,
-> >> but for many choices this is neither suitable (lack of stubs for !FOO
-> >> like in HWMON) nor really needed and driver can be built in even if FO=
-O
-> >> is the module.  This is achieved with IS_REACHABLE, so provide cross
-> >> reference to it.
-> >>
-> >> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> ---
-> >>  Documentation/kbuild/kconfig-language.rst | 13 ++++++++++---
-> >>  1 file changed, 10 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation=
-/kbuild/kconfig-language.rst
-> >> index 2619fdf56e68..66248294a552 100644
-> >> --- a/Documentation/kbuild/kconfig-language.rst
-> >> +++ b/Documentation/kbuild/kconfig-language.rst
-> >> @@ -194,6 +194,8 @@ applicable everywhere (see syntax).
-> >>    ability to hook into a secondary subsystem while allowing the user =
-to
-> >>    configure that subsystem out without also having to unset these dri=
-vers.
-> >>
-> >> +.. _is_reachable:
-> >
-> > Instead of this, could you move this hunk below ?
-> >
->
-> Ack
->
-> >
-> >
-> >
-> >
-> >>    Note: If the combination of FOO=3Dy and BAZ=3Dm causes a link error=
-,
-> >>    you can guard the function call with IS_REACHABLE()::
-> >>
-> >> @@ -580,10 +582,15 @@ Some drivers are able to optionally use a featur=
-e from another module
-> >>  or build cleanly with that module disabled, but cause a link failure
-> >>  when trying to use that loadable module from a built-in driver.
-> >>
-> >> -The most common way to express this optional dependency in Kconfig lo=
-gic
-> >> -uses the slightly counterintuitive::
-> >> +There are two ways to express this optional dependency:
-> >>
-> >> -  config FOO
-> >> +1. If pre-processor can discard entire optional code or module FOO do=
-es not
-> >> +   provide !FOO stubs then in the C code :ref:`IS_REACHABLE<is_reacha=
-ble>`
-> >
-> > Instead of the link, please move the code example at line 200 to here.
-> >
-> > The note at line 197 is not strongly related to the 'imply' keyword.
-> >
-> >
-> > One more thing, please document the drawback of IS_REACHABLE.
->
-> Ack
->
-> >
-> > It is true that IS_REACHABLE() resolves the link error, but we
-> > will end up with run-time debugging.
-> >
-> > foo_init()
-> > {
-> >         if (IS_REACHABLE(CONFIG_BAZ))
-> >                 baz_register(&foo);
-> >         ...
-> > }
-> >
-> > Even if CONFIG_BAZ is enabled, baz_register() may get discarded.
->
-> Hm, why would that happen? For compiler this would be "if(true)", so
-> what case would lead to discarding?
+Hi Greg
 
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
+Thanks
 
-Let's say this code hunk exists in foo-init.c
-and it is compiled by CONFIG_FOO.
-
-  obj-$(CONFIG_FOO) +=3D foo-init.o
-
-If you see the top Makefile, 'MODULE' is defined only when
-this code is compiled as a module.
-
-   KBUILD_CFLAGS_MODULE  :=3D -DMODULE
-
-For the combination of CONFIG_FOO=3Dy and CONFIG_BAZ=3Dm,
-
-   IS_BUILTIN(CONFIG_BAZ) is 0
-   IS_MODULE(CONFIG_BAZ) is 1
-   __is_defined(MODULE) is 0
-
-Hence, IS_REACHABLE(CONFIG_BAZ) is 0
-
-This code becomes
-
-   if (0)
-          baz_register(&foo);
-
-
-and the compiler will optimize out this function call.
-
-
-
---
-Best Regards
-Masahiro Yamada
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
