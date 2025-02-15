@@ -1,57 +1,76 @@
-Return-Path: <linux-kernel+bounces-516389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67978A37087
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 21:16:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B374AA3708D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 21:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDD43B0C65
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:16:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6805C170059
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EE31F4172;
-	Sat, 15 Feb 2025 20:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78041EA7EF;
+	Sat, 15 Feb 2025 20:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="UhxPIwY9"
-Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YJV/5TsP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E70170A1B;
-	Sat, 15 Feb 2025 20:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DCB13DDAE
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 20:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739650573; cv=none; b=XrTCb5DxRq6HpzdBDn7jUBeH0JcfXkAuRXmAI/puoLiajMcVX2sTsKO7gDFK19BIeJdYEFjDLN4Vq3B9q+TeXzepD6Ktc7DFVIFpPIMQoCXIv+g8KgclKsiIWbYAVfsZe05jnj8rCd9twyC+TcxzJdThmi5AgV70BE5DkCUPNQ4=
+	t=1739650651; cv=none; b=uveGqKW5iVddDdjkO5mOK9fy0GmvsZX9n1QhuJO8WUA9d00decQ00jW75FasoWVVcwrYdkJnyu/GtMZM7LHFzsfTydzXW4oqC8wJQnVSfK++PBb4uXz4s1do6mBnqLpN4ATec1PtzNcrtk5iZmEFQksftjRF3u8jWwQhDmoK0dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739650573; c=relaxed/simple;
-	bh=WlbhtRtGYmtPNGje39iaRCjxdH8d7of9P4tp6NU4COQ=;
+	s=arc-20240116; t=1739650651; c=relaxed/simple;
+	bh=KXjKMjoQkvQLOoQ8gWA1SVy4+Ztl2KFhN/PtXv3e9bk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BofRZ2wzWozd5lRm4hUOjNvfgA0M+NUPxQXOELsnmVt9NGbuojZtBq/EbLZSdNgSO+YZc4UJ1LRXeIimSKwx9lq7C+L936Y4zIElHvAxv4GwA3mKt5Hyd4QgTsVbXg/qLAUtIx1uuNo968RN4Z9awLVtFkb0bp7hICN2lX3BJGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=UhxPIwY9; arc=none smtp.client-ip=206.189.193.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-	by a.peacevolution.org (Postfix) with ESMTPA id 6107141A29;
-	Sat, 15 Feb 2025 20:16:02 +0000 (UTC)
-Date: Sat, 15 Feb 2025 15:16:00 -0500
-From: Aren <aren@peacevolution.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Julien Stephan <jstephan@baylibre.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Ondrej Jirman <megi@xff.cz>, Dragan Simic <dsimic@manjaro.org>, 
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v5 6/8] iio: light: stk3310: use dev_err_probe where
- possible
-Message-ID: <54gp7mhpu5fgeeif5amajmcit4znuil2kikx43bcu6eujmq5wu@oxaq6fgmkuyr>
-References: <20250208211325.992280-2-aren@peacevolution.org>
- <20250208211325.992280-8-aren@peacevolution.org>
- <Z6jAEEU2dqn_FJVp@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTGHXujfWrCi/o/d9dh7JN6wC8DK7pGuS3uW6ykTpfnDLrG7tiVJfUnuQe6kUoka8vqfjAjc6OfHpf0wGlmyy9h0wBU/bQ19kh5yOTHMAzeuApqu8PKmgXPPLVtbRaHfau5lM9ym6hR114VA6w3uDApHNYixTw8Ie6yRkD/euhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YJV/5TsP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739650649; x=1771186649;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KXjKMjoQkvQLOoQ8gWA1SVy4+Ztl2KFhN/PtXv3e9bk=;
+  b=YJV/5TsPp4iT3pz1bjrx9QxPS3ZVGYs3ZhmU3RIHkCHjrv+VMD8hN8Iy
+   lmtR4IHsVWw5fnjbHr2eo7/TEB3+lKlJPstpDWgVOGbeMOmKN3MqgCWcp
+   Ef/p0hQU8NVRMv8lXIX75xhsXqWfZOjWsTQmmtUOk9ZCSrYEKXKCNKHVo
+   oPshBnZB4JWtmwbZDgzSIZ0lMcii3CpE9kBwcgH3B+2Y9XwPD1SNSuoth
+   RtknVVld16zDWNDJ7FsPi5YDpWY91b2xWLdPGW4pIfFkPYl46P6uebwTH
+   97mWoW9UEK5OXea8tlVg9FdvKA4RYw27mcroLBmmTZupC9+JDi4tvw+fg
+   Q==;
+X-CSE-ConnectionGUID: FJJbrpb0ROOlHD8cfJWZ9g==
+X-CSE-MsgGUID: UwajFumQQCSRnBiU6H48EA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="65728622"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="65728622"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 12:17:29 -0800
+X-CSE-ConnectionGUID: nFR14ZTlSgK3QFrCXZv70Q==
+X-CSE-MsgGUID: 5Qv8FcfmSNeDY+ZC8nIoUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="144606069"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 15 Feb 2025 12:17:26 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjObM-001B9T-1n;
+	Sat, 15 Feb 2025 20:17:24 +0000
+Date: Sun, 16 Feb 2025 04:16:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, peterz@infradead.org,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	tglx@linutronix.de, prakash.sangappa@oracle.com
+Subject: Re: [PATCH 1/2] Sched: Scheduler time slice extension
+Message-ID: <202502160412.H5MjYC21-lkp@intel.com>
+References: <20250215005414.224409-2-prakash.sangappa@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,63 +79,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z6jAEEU2dqn_FJVp@smile.fi.intel.com>
-X-Spamd-Bar: /
-Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=dkim; t=1739650563;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
-	bh=9aU3GtdyvnIFsX7EEuvTP5n0LC+5wNHQ+PxclHEEIGc=;
-	b=UhxPIwY9S/cJsjrbo7Y7Jbp8fUaTByXNtTY9daK6nCgyrAVRT/LqrCjd9PIK20mNGpI+Sb
-	FyoQ4aPFr+Gu5e6hm1lrVo5zf0SOTy7mJ8vMS9HehLOI0GNQBSn015MMTSx2lbhaBwB32O
-	GE4DT4Me4PlvRlOFVApH7v3WxkKD1H8=
+In-Reply-To: <20250215005414.224409-2-prakash.sangappa@oracle.com>
 
-On Sun, Feb 09, 2025 at 04:47:44PM +0200, Andy Shevchenko wrote:
-> On Sat, Feb 08, 2025 at 04:13:24PM -0500, Aren Moynihan wrote:
-> > Using dev_err_probe instead of dev_err and return makes the errors
-> 
-> Use dev_err_probe()
-> dev_err()
-> 
-> > easier to understand by including the error name, and saves a little
-> > code.
-> 
-> I believe this patch will make more sense before switching to local 'dev'
-> variable. Then the previous one will have an additional justification as
-> the "struct device *dev = ...;" lines in some cases will be added already
-> by this patch.
+Hi Prakash,
 
-That will only be added in one spot, and I skipped updating the dev_err
-calls in the previous patch that this patch rewrites, so churn shouldn't
-be an issue. That also makes it trivial to reorder them, so I guess it
-can't hurt.
+kernel test robot noticed the following build errors:
 
-> >  	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> > -	if (!indio_dev) {
-> > -		dev_err(&client->dev, "iio allocation failed!\n");
-> > -		return -ENOMEM;
-> > -	}
-> > +	if (!indio_dev)
-> > +		return dev_err_probe(dev, -ENOMEM, "iio allocation failed!\n");
-> 
-> We don't issue the messages for -ENOMEM.
-> 
-> If it's in the current code, add a new patch to drop this message and return an
-> error code directly.
-> 
-> ...
-> 
-> > +	if (ret < 0)
-> 
-> Perhaps, while at it, drop these ' < 0' parts where they are not hinting about
-> anything.
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on peterz-queue/sched/core linus/master v6.14-rc2 next-20250214]
+[cannot apply to tip/core/entry]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Sure, I can add patches for these, although continuing to rebase this
-series is getting a bit cumbersome (perhaps just because I haven't found
-a good workflow for it). Would I be better off reordering this so the
-refactoring patches come first and can be partially merged?
+url:    https://github.com/intel-lab-lkp/linux/commits/Prakash-Sangappa/Sched-Scheduler-time-slice-extension/20250215-090421
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20250215005414.224409-2-prakash.sangappa%40oracle.com
+patch subject: [PATCH 1/2] Sched: Scheduler time slice extension
+config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20250216/202502160412.H5MjYC21-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502160412.H5MjYC21-lkp@intel.com/reproduce)
 
-Regards
- - Aren
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502160412.H5MjYC21-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/sched/build_policy.c:66:
+   kernel/sched/syscalls.c: In function 'sys_sched_yield':
+>> kernel/sched/syscalls.c:1372:20: error: 'struct task_struct' has no member named 'rseq_sched_delay'
+    1372 |         if (current->rseq_sched_delay) {
+         |                    ^~
+
+
+vim +1372 kernel/sched/syscalls.c
+
+  1361	
+  1362	/**
+  1363	 * sys_sched_yield - yield the current processor to other threads.
+  1364	 *
+  1365	 * This function yields the current CPU to other tasks. If there are no
+  1366	 * other threads running on this CPU then this function will return.
+  1367	 *
+  1368	 * Return: 0.
+  1369	 */
+  1370	SYSCALL_DEFINE0(sched_yield)
+  1371	{
+> 1372		if (current->rseq_sched_delay) {
+  1373			schedule();
+  1374			return 0;
+  1375		}
+  1376	
+  1377		do_sched_yield();
+  1378		return 0;
+  1379	}
+  1380	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
