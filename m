@@ -1,148 +1,76 @@
-Return-Path: <linux-kernel+bounces-516383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D779A37070
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:35:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5AAA37069
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 20:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84EC16DC97
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CC6188E41D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E241FCCFE;
-	Sat, 15 Feb 2025 19:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbASNQqr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B0C1F3FEB;
+	Sat, 15 Feb 2025 19:35:11 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7281F890D;
-	Sat, 15 Feb 2025 19:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BF878F4B
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 19:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739648128; cv=none; b=Tb7vS04yLoHk6jAQ3JGstEPe5I/NEipnWWhhEp7tfZBNPGfkXYCDz0G3NI5yXZJ3OhfA/PxHBmtwmq4yvuEELYcbOh7ytUy8lPCaONEedSoEJowKBfqyzdsam/Vk5eicClJ43MBQFjfoGZSb14QhjN64W94Nu7FjTMO5IZs3f/0=
+	t=1739648110; cv=none; b=Vf/t+s1PxoHkfOVCk0aarigNDDu1hMwXVxdHz6rugmVTlgKPMRUb5cmeMFf60Y3GTjQ44GDNAH//gw6bSQf3ejwf7f1VuFU1NKw/yHRYY7mA+Of9zjXBZ7aAWfRJQR69KthF72AfYUtfDvBAfb783CXsUgKFLQkTCRjy/vLcmBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739648128; c=relaxed/simple;
-	bh=ikWYkDoin1yaKx3qdc9Z08RFLs1B9XJN0ceL+3+hyX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQqivpsEmtsal/01jOHIZ2g1kyH2RFafNn6swoPE6qNjWxy2k/tQwhJ9EmQ9wY2/cZcVhS2MLb9aLRAEhYBm0pCNE3TNFlWWcw+3mItFD6nU2ax/H7yDJP/p5tArMd520fiIryLLz4nuF9+9mGnpu4RZ1zVvpYhBX7npFcxjyTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbASNQqr; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739648127; x=1771184127;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ikWYkDoin1yaKx3qdc9Z08RFLs1B9XJN0ceL+3+hyX4=;
-  b=kbASNQqrApk23tCrQpQsEiaCglf9Gs2r66qZq4IoFFSzBCRDsRueTOYW
-   GQace4MEY+cYK9ZCiJ1+hMdzzXtsDJe5h4uzaxQWZ4aP5AZZ2bvXdeWPw
-   P/PZrfzVwKsv5214x7H1+QBhO1G2ujoy0q/93wxYxE+p/fZdDLLgicTlD
-   o8XsDd6EbfwU5hIRQnApa8o89H+wcn0rjvJ9FpdYkbLS/CygGKYJe+96Z
-   RX2edhRdqqo+GeaWGT997Tl0PbfFokkVupgf4LxjHxY+d1awQekHdwHW4
-   62wZMCYuXon8VLqlDdzop7N2G3zbuvYvqWLOq7HAejygRwMnwgmbV3TOD
-   Q==;
-X-CSE-ConnectionGUID: OzLBNtRoSLiUxEyDZTx/aQ==
-X-CSE-MsgGUID: 4vWYEFD2QI6sGivwMEJQDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="51356940"
-X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
-   d="scan'208";a="51356940"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 11:35:27 -0800
-X-CSE-ConnectionGUID: ykA1mrAHR3eNTeriF7hLMA==
-X-CSE-MsgGUID: p5CXGFyMQL+UMtGLPwtkFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="136972271"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Feb 2025 11:35:23 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjNwe-001B7N-2f;
-	Sat, 15 Feb 2025 19:35:20 +0000
-Date: Sun, 16 Feb 2025 03:34:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Esteban Blanc <eblanc@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Esteban Blanc <eblanc@baylibre.com>
-Subject: Re: [PATCH v4 3/6] iio: adc: ad4030: add averaging support
-Message-ID: <202502160351.NQfCUpV9-lkp@intel.com>
-References: <20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a@baylibre.com>
+	s=arc-20240116; t=1739648110; c=relaxed/simple;
+	bh=yBXzG4i9Dkiru55lQyz1Xr5+cE0Yl9ZHuQy6/bd/lrM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jVmN7ShA8bRz8L0Py7fTU04BcLQPZcaqL7N6wEv7diGOl8b1ZaQSq46FALOlkvKcmaVMl5yiI2ZGD81mpz5CBKVvPHDSSITptWVJS+bJtbrAvsYKt3CBDB2NAjlPQr2JdXuN94Smk8y2fH2KrZps2ucwlpJUTTEaU2azU7ZxiJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18a1a0f0eso61691695ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 11:35:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739648108; x=1740252908;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZKU5Kcevzf5gXwIZbo3x8mZboejbG5jsHlKHFlgunn8=;
+        b=a0SyrPtKlYgztYeB89OQPVT5gUYIC1HZq1D5EBWZjFYO6mlP8FnqV7NtcP2K2SeV5B
+         72LXWwW1Xihh/ZlvMnp0T2qdg6hB4ksdgtWqckW6ML21YgM+eNCT4iKAmQ22s7MuiVtq
+         KMcBchl/6I0xtUdHvc8MG5x7cVNTs4QWISI0LbjZcBrJg/KSrgeA0/J/75L0GZmOl6rl
+         mn3YcGf41WJVUDXTliWqQ3Tr50viOT0b0m+nS3Hd6QhQwg5bmYKbmH6UVGIo+qQJnhkk
+         Fas3qYJ31ZwcK76zEtTpJAuvL1Z+TtjijpKi0LofBtyHeR8vQSQoI0ONDl6LjVY9F61G
+         wGzA==
+X-Gm-Message-State: AOJu0YzM9xDIEjR+s6IC2k0Ink2s9ehdn94ioizB7/FKNRmemsGiLEEf
+	EkDgkkNQsbdUtapUIij/JL87nBjpEoP4SHlIrWhM9aGcrSeKs7DBGxXuTvTUi9SZtC/aFJxW6pj
+	Sp5wiMXVJXwDNVIuuFZyTkRmyaB9FpQ1kvJquwIWcR11jcGEsuXz2Omw=
+X-Google-Smtp-Source: AGHT+IFrhzAHg4m024aaL5RG7tk+MDBh0jWGu4pde4D2wOrGssZvy+uONVStdh015B3uV06SIvD1Eo8CpJEs8c5idGyw66rGNHN3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a@baylibre.com>
+X-Received: by 2002:a05:6e02:1a4d:b0:3d1:9fd2:d9cd with SMTP id
+ e9e14a558f8ab-3d2807c4396mr33260345ab.9.1739648108526; Sat, 15 Feb 2025
+ 11:35:08 -0800 (PST)
+Date: Sat, 15 Feb 2025 11:35:08 -0800
+In-Reply-To: <67ae3912.050a0220.21dd3.0021.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b0ec6c.050a0220.6f0b7.001b.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Esteban,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-kernel test robot noticed the following build errors:
+***
 
-[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+Subject: 
+Author: purvayeshi550@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Esteban-Blanc/dt-bindings-iio-adc-add-ADI-ad4030-ad4630-and-ad4632/20250214-202727
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250214-eblanc-ad4630_v1-v4-3-135dd66cab6a%40baylibre.com
-patch subject: [PATCH v4 3/6] iio: adc: ad4030: add averaging support
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250216/202502160351.NQfCUpV9-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502160351.NQfCUpV9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502160351.NQfCUpV9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/iio/adc/ad4030.c:375:13: error: assigning to 'struct iio_scan_type *' from 'const struct iio_scan_type *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-     375 |                 scan_type = iio_get_current_scan_type(indio_dev,
-         |                           ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     376 |                                                       st->chip->channels);
-         |                                                       ~~~~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +375 drivers/iio/adc/ad4030.c
-
-   365	
-   366	static int ad4030_get_chan_scale(struct iio_dev *indio_dev,
-   367					 struct iio_chan_spec const *chan,
-   368					 int *val,
-   369					 int *val2)
-   370	{
-   371		struct ad4030_state *st = iio_priv(indio_dev);
-   372		struct iio_scan_type *scan_type;
-   373	
-   374		if (chan->differential) {
- > 375			scan_type = iio_get_current_scan_type(indio_dev,
-   376							      st->chip->channels);
-   377			*val = (st->vref_uv * 2) / MILLI;
-   378			*val2 = scan_type->realbits;
-   379			return IIO_VAL_FRACTIONAL_LOG2;
-   380		}
-   381	
-   382		*val = st->vref_uv / MILLI;
-   383		*val2 = chan->scan_type.realbits;
-   384		return IIO_VAL_FRACTIONAL_LOG2;
-   385	}
-   386	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+#syz test
 
