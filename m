@@ -1,136 +1,253 @@
-Return-Path: <linux-kernel+bounces-516168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA573A36D9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:09:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 413FAA36D9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA6D3B1F0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E5A3B20DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6B11A5B89;
-	Sat, 15 Feb 2025 11:09:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98471A9B29;
+	Sat, 15 Feb 2025 11:11:03 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E71581F1
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 11:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E334418F2DF;
+	Sat, 15 Feb 2025 11:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617762; cv=none; b=dbhaFPi0hD5ivUL2aHCxR7BUHDpPWIh6pRxESbPBOL7Eu/1GgxMVQAYzrxmgrICcEl7ou5nXMJXJWw/GtLVYuzN1uPQ7xIn1eXQ3yV9C9PNLoKIg0NV98X27mR8ylNs89MOYvDDaNcTGpv6WffxKCtqQ7Q5S66Zfuy7t7wPErjM=
+	t=1739617863; cv=none; b=IwIiH4TqNlczlSJed7nfxSY4A4GtPPN5SMmRQWRa3ZEifcBt+x537Yle/PkA/Acc4BPUtrnvQG/rOhvr0OdTTwWMvZ2iqvX4N4/CNYDST+0iKuEmrEWnz05iRz53CWsSz0BnLjnQ7RQ0oKinpkFYcZfwnTXOAbsdgy5PcbW38tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617762; c=relaxed/simple;
-	bh=QsTM/b/ShaDvJLchPA/QcVpGiASWAv4GsSCkVYtg+P8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ahr/PMBHwoZefv+XyiWWjdsFzJnJ2xrIWZlk7LMe1CPkOeE7yDgkDeU4NDvxY83OuLXQUSD6AL2vOux7CrXY6JotGBhs4J0w5Bpj7eg6rTLPj4ACgxiFdjMbCsMiudBqAL96AiNIil/kSdhAJJPrYhwPpcsHQ3GPgTSl5xH4KqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so24121005ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 03:09:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739617760; x=1740222560;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+msdTiV3dh/grEx5HhcNgwCDceZ8oekmj7XtrsfSAkc=;
-        b=nMKFKnS6+KPG0YQ2RGMdmnHshMENri9+yVnhsHeADa7hu27JquySO82Y5jR8XTjCD8
-         XXpvLD06YLMbV2jLd+N8Yj722uWoyAyGT6bs3m5yMVv4PCGtBVr1dPgLzwjD/GqvWXcB
-         TB3W5Vik7ptek2jzKimByYlwMDwVw8TGW3bo8K5tFI6BrB4QCicZ4oRRqgnQh1c6dZFO
-         V2G4DnmRpYnSWIOAA9I3EYyKLZspBohhJG9nrg8Hjth/rBsN6AcsvQlNrFPZAXX2CpX9
-         K0vs5vAkrKs6IJI24ft4gMgeVvmhc03LXVczEk3ElE/Yzq16QDctrKNUW/MUCFi13A/b
-         wlsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdiaJvnZ2Ik7yL7xhKH5PSB6W2Q25Js/Go1r9Js/Te6iUCiqu7lg9x8b0y4M1VDS0c+4RRPsTX/MYkGRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx7G0dLOQdSaUP2tTcVgfaOsEGXLpolI2a777PSmaygyuLUW2o
-	HwUomrw0qH99FjrrWR+9l23skKo6SUgqztga+JdIy3vtC9hA3fnM7DG4kgLfPehc3/WanyEHiEL
-	fb3fnmZaBVM3zfTLnV8xfUGqfPgXBbrF5hGaheuYqrFkuH0Q75llAvLA=
-X-Google-Smtp-Source: AGHT+IG0HPosK62MBkh0uJdYlIhmznYl7gKiqEuRjj1CvH4+aBPVZnnatYPvX2F/VUJ5jPcY5MTOQIqRSiPv2utSM/QMFHbD2cfo
+	s=arc-20240116; t=1739617863; c=relaxed/simple;
+	bh=sPpAxcr8OEPeF6nDrBH1XyqrEsoo2vFroxJiGi2FJUc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ScDvp8Ceu4LVSZLtAoLi5pWTqeFBdvW8RbtfmP3IWat0Rb1G4N8NqSgDbuRnn/Ip0iyVdzTlNnbnttsVcd++HuF3i5moE14NIYwEdQv06qe8QBw08QnhOonqfsi+/LItycxkET5j9kt4tpw83UOh5a/P3Ml2QYBa6ZJE5KvHjus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Yw5hC54Fnz11Q89;
+	Sat, 15 Feb 2025 19:06:19 +0800 (CST)
+Received: from kwepemo500008.china.huawei.com (unknown [7.202.195.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id D92901800D9;
+	Sat, 15 Feb 2025 19:10:50 +0800 (CST)
+Received: from localhost.localdomain (10.175.124.27) by
+ kwepemo500008.china.huawei.com (7.202.195.163) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 15 Feb 2025 19:10:49 +0800
+From: m30030393 <mengkanglai2@huawei.com>
+To: <ja@ssi.bg>
+CC: <pablo@netfilter.org>, <kadlec@netfilter.org>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<coreteam@netfilter.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yanan@huawei.com>, <fengtao40@huawei.com>,
+	<gaoxingwang1@huawei.com>, <lvs-devel@vger.kernel.org>
+Subject: Re: ftp ipvs connect failed in ipv6
+Date: Sat, 15 Feb 2025 19:09:59 +0800
+Message-ID: <20250215110959.2557589-1-mengkanglai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <7a1903c5-f7e3-4480-2a07-ae94e4d6a895@ssi.bg>
+References: <7a1903c5-f7e3-4480-2a07-ae94e4d6a895@ssi.bg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:3d0:47cf:869c with SMTP id
- e9e14a558f8ab-3d280949c9emr16539415ab.19.1739617760343; Sat, 15 Feb 2025
- 03:09:20 -0800 (PST)
-Date: Sat, 15 Feb 2025 03:09:20 -0800
-In-Reply-To: <67afa09f.050a0220.21dd3.0054.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b075e0.050a0220.6f0b7.0002.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] [bcachefs?] UBSAN: shift-out-of-bounds in radix_tree_delete_item
-From: syzbot <syzbot+b581c7106aa616bb522c@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemo500008.china.huawei.com (7.202.195.163)
 
-syzbot has found a reproducer for the following issue on:
+Tue, 11 Feb 2025, Julian Anastasov wrote:
+>>
+>>
+>>	Hello,
+>>
+>>On Mon, 10 Feb 2025, mengkanglai wrote:
+>>
+>>> Hello:
+>>> I found a problem with ftp ipvs.
+>>> I create 3 virtual machine in one host. One is the FTP client, the other is the ipvs transition host, and the other is the FTP server.
+>>> The ftp connection is successful in ipv4 address,but failed in ipv6 address.
+>>> The failure is tcp6 checksum error in 
+>>> tcp_dnat_handler(tcp_dnat_handler-> tcp_csum_check->csum_ipv6_magic), I trace back where skb->csum is assigned and found skb->csum is assigned in nf_ip6_checksum in case CHECKSUM_NONE(ipv6_conntrack_in=> nf_conntrack_in => nf_conntrack_tcp_packet => nf_ip6_checksum).
+>>> I don't know much about ipv6 checksums,why ipv6 nf_conntrack assign skb->csum but check error in ipvs tcp_dnat_handler?
+>>
+>>	Looks like the checksum validation does not use correct offset for the protocol header in the case with IPv6. Do you see extension headers before the final IPv6 header that points to TCP header? If that is the case, the following patch can help. If you prefer, you can apply just the TCP part for the FTP test. Let me know if this solves the problem, thanks!
 
-HEAD commit:    04f41cbf03ec Merge tag 'sched_ext-for-6.14-rc2-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=158239b0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b581c7106aa616bb522c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b399a4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17dd4bf8580000
+    Thanks for your help, but the following patch can't help. see extension headers before the IPv6 header, it’s just the common first SYN packet of the IPv6 three-way handshake but csum check failed in tcp_csum_check. 
+	I tried different offsets for the protocol header but doesn't work.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-04f41cbf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/04aaec67f85e/vmlinux-04f41cbf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0b8db5fac3a6/bzImage-04f41cbf.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/402dc55a596d/mount_0.gz
+>>[PATCH] ipvs: provide correct ipv6 proto offset for csum checks
+>>
+>>Protocol checksum validation fails if there are multiple IPv6 headers before the protocol header. iph->len already contains its offset, so use it to fix the problem.
+>>
+>>Signed-off-by: Julian Anastasov <ja@ssi.bg>
+>>---
+>> net/netfilter/ipvs/ip_vs_proto_sctp.c | 18 ++++++------------  net/netfilter/ipvs/ip_vs_proto_tcp.c  | 19 ++++++-------------  net/netfilter/ipvs/ip_vs_proto_udp.c  | 18 ++++++------------
+>> 3 files changed, 18 insertions(+), 37 deletions(-)
+>>
+>>diff --git a/net/netfilter/ipvs/ip_vs_proto_sctp.c b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+>>index 83e452916403..63c78a1f3918 100644
+>>--- a/net/netfilter/ipvs/ip_vs_proto_sctp.c
+>>+++ b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+>>@@ -10,7 +10,8 @@
+>> #include <net/ip_vs.h>
+>> 
+>> static int
+>>-sctp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp);
+>>+sctp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+		unsigned int sctphoff);
+>> 
+>> static int
+>> sctp_conn_schedule(struct netns_ipvs *ipvs, int af, struct sk_buff *skb, @@ -108,7 +109,7 @@ sctp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!sctp_csum_check(cp->af, skb, pp))
+>>+		if (!sctp_csum_check(cp->af, skb, pp, sctphoff))
+>> 			return 0;
+>> 
+>> 		/* Call application helper if needed */ @@ -156,7 +157,7 @@ sctp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!sctp_csum_check(cp->af, skb, pp))
+>>+		if (!sctp_csum_check(cp->af, skb, pp, sctphoff))
+>> 			return 0;
+>> 
+>> 		/* Call application helper if needed */ @@ -185,19 +186,12 @@ sctp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,  }
+>> 
+>> static int
+>>-sctp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp)
+>>+sctp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+		unsigned int sctphoff)
+>> {
+>>-	unsigned int sctphoff;
+>> 	struct sctphdr *sh;
+>> 	__le32 cmp, val;
+>> 
+>>-#ifdef CONFIG_IP_VS_IPV6
+>>-	if (af == AF_INET6)
+>>-		sctphoff = sizeof(struct ipv6hdr);
+>>-	else
+>>-#endif
+>>-		sctphoff = ip_hdrlen(skb);
+>>-
+>> 	sh = (struct sctphdr *)(skb->data + sctphoff);
+>> 	cmp = sh->checksum;
+>> 	val = sctp_compute_cksum(skb, sctphoff); diff --git a/net/netfilter/ipvs/ip_vs_proto_tcp.c b/net/netfilter/ipvs/ip_vs_proto_tcp.c
+>>index 7da51390cea6..dabdb9d3b479 100644
+>>--- a/net/netfilter/ipvs/ip_vs_proto_tcp.c
+>>+++ b/net/netfilter/ipvs/ip_vs_proto_tcp.c
+>>@@ -29,7 +29,8 @@
+>> #include <net/ip_vs.h>
+>> 
+>> static int
+>>-tcp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp);
+>>+tcp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+	       unsigned int tcphoff);
+>> 
+>> static int
+>> tcp_conn_schedule(struct netns_ipvs *ipvs, int af, struct sk_buff *skb, @@ -166,7 +167,7 @@ tcp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!tcp_csum_check(cp->af, skb, pp))
+>>+		if (!tcp_csum_check(cp->af, skb, pp, tcphoff))
+>> 			return 0;
+>> 
+>> 		/* Call application helper if needed */ @@ -244,7 +245,7 @@ tcp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!tcp_csum_check(cp->af, skb, pp))
+>>+		if (!tcp_csum_check(cp->af, skb, pp, tcphoff))
+>> 			return 0;
+>> 
+>> 		/*
+>>@@ -301,17 +302,9 @@ tcp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 
+>> 
+>> static int
+>>-tcp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp)
+>>+tcp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+	       unsigned int tcphoff)
+>> {
+>>-	unsigned int tcphoff;
+>>-
+>>-#ifdef CONFIG_IP_VS_IPV6
+>>-	if (af == AF_INET6)
+>>-		tcphoff = sizeof(struct ipv6hdr);
+>>-	else
+>>-#endif
+>>-		tcphoff = ip_hdrlen(skb);
+>>-
+>> 	switch (skb->ip_summed) {
+>> 	case CHECKSUM_NONE:
+>> 		skb->csum = skb_checksum(skb, tcphoff, skb->len - tcphoff, 0); diff --git a/net/netfilter/ipvs/ip_vs_proto_udp.c b/net/netfilter/ipvs/ip_vs_proto_udp.c
+>>index 68260d91c988..e99e7c5df869 100644
+>>--- a/net/netfilter/ipvs/ip_vs_proto_udp.c
+>>+++ b/net/netfilter/ipvs/ip_vs_proto_udp.c
+>>@@ -25,7 +25,8 @@
+>> #include <net/ip6_checksum.h>
+>> 
+>> static int
+>>-udp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp);
+>>+udp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+	       unsigned int udphoff);
+>> 
+>> static int
+>> udp_conn_schedule(struct netns_ipvs *ipvs, int af, struct sk_buff *skb, @@ -155,7 +156,7 @@ udp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!udp_csum_check(cp->af, skb, pp))
+>>+		if (!udp_csum_check(cp->af, skb, pp, udphoff))
+>> 			return 0;
+>> 
+>> 		/*
+>>@@ -238,7 +239,7 @@ udp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 		int ret;
+>> 
+>> 		/* Some checks before mangling */
+>>-		if (!udp_csum_check(cp->af, skb, pp))
+>>+		if (!udp_csum_check(cp->af, skb, pp, udphoff))
+>> 			return 0;
+>> 
+>> 		/*
+>>@@ -297,17 +298,10 @@ udp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+>> 
+>> 
+>> static int
+>>-udp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp)
+>>+udp_csum_check(int af, struct sk_buff *skb, struct ip_vs_protocol *pp,
+>>+	       unsigned int udphoff)
+>> {
+>> 	struct udphdr _udph, *uh;
+>>-	unsigned int udphoff;
+>>-
+>>-#ifdef CONFIG_IP_VS_IPV6
+>>-	if (af == AF_INET6)
+>>-		udphoff = sizeof(struct ipv6hdr);
+>>-	else
+>>-#endif
+>>-		udphoff = ip_hdrlen(skb);
+>> 
+>> 	uh = skb_header_pointer(skb, udphoff, sizeof(_udph), &_udph);
+>> 	if (uh == NULL)
+>>--
+>>2.48.1
+>>
+>>
+>>Regards
+>>
+>>--
+>>Julian Anastasov <ja@ssi.bg>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b581c7106aa616bb522c@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in lib/radix-tree.c:88:31
-shift exponent 240 is too large for 64-bit type 'unsigned long'
-CPU: 0 UID: 0 PID: 5331 Comm: syz-executor299 Not tainted 6.14.0-rc2-syzkaller-00228-g04f41cbf03ec #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- radix_tree_descend lib/radix-tree.c:88 [inline]
- __radix_tree_lookup lib/radix-tree.c:766 [inline]
- radix_tree_delete_item+0x1df/0x3f0 lib/radix-tree.c:1420
- kernfs_put+0x1ba/0x370 fs/kernfs/dir.c:575
- __kernfs_remove+0x768/0x870 fs/kernfs/dir.c:1509
- kernfs_remove+0x7a/0xa0 fs/kernfs/dir.c:1529
- __kobject_del+0xe2/0x310 lib/kobject.c:604
- kobject_del+0x45/0x60 lib/kobject.c:627
- __bch2_fs_stop+0x288/0x5c0 fs/bcachefs/super.c:641
- bch2_fs_stop+0x15/0x20 fs/bcachefs/super.c:691
- bch2_fs_get_tree+0xdee/0x17a0 fs/bcachefs/fs.c:2299
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f17e484402a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f17e3fe7fd8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f17e3fe7ff0 RCX: 00007f17e484402a
-RDX: 00004000000058c0 RSI: 0000400000005900 RDI: 00007f17e3fe7ff0
-RBP: 0000400000005900 R08: 00007f17e3fe8030 R09: 0000000000005931
-R10: 0000000000010000 R11: 0000000000000282 R12: 00004000000058c0
-R13: 00007f17e3fe8030 R14: 0000000000000003 R15: 0000000000010000
- </TASK>
----[ end trace ]---
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
