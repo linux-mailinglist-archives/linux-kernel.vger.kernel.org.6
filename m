@@ -1,78 +1,166 @@
-Return-Path: <linux-kernel+bounces-516010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9A6A36BEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:06:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0977A36BF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 05:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B57693B24FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:06:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5507A46BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919017799F;
-	Sat, 15 Feb 2025 04:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C7F18BC2F;
+	Sat, 15 Feb 2025 04:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fy41Tav0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ViylrUhi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBFB21345;
-	Sat, 15 Feb 2025 04:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C21714D7;
+	Sat, 15 Feb 2025 04:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739592395; cv=none; b=nP1ras7YjGEgnp2XZGuv3mwuOjeMXN5dOav73s+sm9NQsaK19bH/3ihooUMapPVd+z/tfnKJogRwf4V1iZR6RhR1PcfrDArSWlqnqMwtga3BkTwcrus3Jk7zKI4TtlORN3xkhV4N3jB4wRpzaEOo3LFt8/T1czI9s7iLurithUU=
+	t=1739592660; cv=none; b=sC+XhdDKANIDB1gSsjCnvg2WdBqM2kSOYoA9i1xtvq3JL6YNXRK70fqbg/pI18BTTuHNbxwqjHSkxnESE8V0P9Yzb1P3CE8JLjzSgyjsQ3owgWYPaiS33rJ+t0NOfWVhpjjeTVBmJ0/wJGeNADpH2SB47DYAlGruuc5QdZdAEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739592395; c=relaxed/simple;
-	bh=Y5cx3BzWy0r1NBmCtxKnym1I/Xf4ODvZRE9CYmKEmMU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pbbeviyDLaSh8S88nEYF1zqfVwiCj52SuD+/SCXFBMmJrPGxPNXtqvmB7tG7P0rErciaDDjxFl+dH85NRiz3dULS95KyPf6f31Y8UGQOkQFIjFS1yz6R2tMfoLtIbKLK4cSbdC1AFM+Vk/IJpikXp27WX0e0qTfQ8Htz+0GXixg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fy41Tav0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CFEC4CEE4;
-	Sat, 15 Feb 2025 04:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739592395;
-	bh=Y5cx3BzWy0r1NBmCtxKnym1I/Xf4ODvZRE9CYmKEmMU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Fy41Tav0cjL8THQxPs0qvqsTM0gv9znNGTU/rj05YjfDqz0OTh/HUwh1jbenTESyZ
-	 eJOk7rHfTHREsyy1jhOqLdmfqGyDEK4O/3uVy8NrrCeGVN1F2eC2hRb6PC4bf3Eeap
-	 zylZRn9KG1+7w1T0jU96eqMTd73kbf+MZIf0aa5VzAoQm1wSBSFcg+xDUNgo7VjtSA
-	 5Pwik8lC+beM/uNkSP4Cx4zfeiuTBxKvlvkwIsN8UMjDGkQb61aHlRHLfGUBqTzNYk
-	 qpul8vW8T6fk23BEMJ15W77aldHJxNAxnN/heNe7WDq/KBHQqyVqhbHTQ+5Rdr4SFf
-	 bsDZu8aK7XMHA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE48B380CEE9;
-	Sat, 15 Feb 2025 04:07:05 +0000 (UTC)
-Subject: Re: [PULL] alpha.git
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <w3rw6n4cbgmlcylf5gbzzocqhyxjoyjy3qiedb7fzvd7jdwgap@44d323cbjljd>
-References: <w3rw6n4cbgmlcylf5gbzzocqhyxjoyjy3qiedb7fzvd7jdwgap@44d323cbjljd>
-X-PR-Tracked-List-Id: <linux-alpha.vger.kernel.org>
-X-PR-Tracked-Message-Id: <w3rw6n4cbgmlcylf5gbzzocqhyxjoyjy3qiedb7fzvd7jdwgap@44d323cbjljd>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mattst88/alpha.git tags/alpha-fixes-v6.14-rc2
-X-PR-Tracked-Commit-Id: 1523226edda566057bdd3264ceb56631ddf5f6f7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7ff71e6d923969d933e1ba7e0db857782d36cd19
-Message-Id: <173959242438.2188392.17832954861309834199.pr-tracker-bot@kernel.org>
-Date: Sat, 15 Feb 2025 04:07:04 +0000
-To: Matt Turner <mattst88@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1739592660; c=relaxed/simple;
+	bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0DajfNQrbHkZntzbiQlNn4KmSpO3gtas4M94pXNXncB7W/p0AQ/qyce354vfI/xvoXqkS4R7mW+rtwawePr3bia6hOql1tSZli+I3gxnGMi7YxDfp6ILfyAbGv1G33dPUkFl+X7/agk9MSJ6TYNzNkEE1wEZ2r/XJ6WkTJLJec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ViylrUhi; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739592658; x=1771128658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Es96yiweOVuX8TpMQ2C9w014YwlugLJ7ksbEKEAo1U=;
+  b=ViylrUhincyZP4RP34R1atiFBjtMolXZLc1bZGMLHUkQzySfZP58vMzC
+   AsIDMltbn7rm02y7H/E3dNFKOkhXxq2IzTsPMlwPJ1rHzk39b3IikAA7M
+   uG+hrMtoNZTX8pHTWGQeKULM+DgLRmhaHFv+qMABzBrbRyzSTsLqLcMQs
+   ZlDBi+ihoSOgBgu57RGqxD9tfWPU6Lg8Jz3Zyjm/WYZiL1DqgIw8N9Et5
+   jxiMtN51td8q7wFiRug8DY957d1n9kKO0zkxe9eXIqMRIXSH6Z4L1dkst
+   p3BaPdUfYP9PI6mPkH+99rtoOeMiWNFrD/Yhj48NDcKWvQ1XwOiCoJwW6
+   A==;
+X-CSE-ConnectionGUID: CkLrFsydQlauwA0iT1ybcA==
+X-CSE-MsgGUID: em1S292YTmKjgpC4lkyBIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40221664"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="40221664"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 20:10:57 -0800
+X-CSE-ConnectionGUID: Q1bKLB5ERQq+tOPgb6THtw==
+X-CSE-MsgGUID: 9aGfC/PNT86DjBXMFPbQVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118831898"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 14 Feb 2025 20:10:55 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tj9W0-001AUV-0y;
+	Sat, 15 Feb 2025 04:10:52 +0000
+Date: Sat, 15 Feb 2025 12:10:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
+Message-ID: <202502151124.LyMTodTU-lkp@intel.com>
+References: <20250214052204.3105610-4-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214052204.3105610-4-neilb@suse.de>
 
-The pull request you sent on Fri, 14 Feb 2025 16:34:18 -0500:
+Hi NeilBrown,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mattst88/alpha.git tags/alpha-fixes-v6.14-rc2
+kernel test robot noticed the following build errors:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7ff71e6d923969d933e1ba7e0db857782d36cd19
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on trondmy-nfs/linux-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus cifs/for-next xfs-linux/for-next linus/master v6.14-rc2 next-20250214]
+[cannot apply to ericvh-v9fs/for-next tyhicks-ecryptfs/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thank you!
+url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/nfs-change-mkdir-inode_operation-to-return-alternate-dentry-if-needed/20250214-141741
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250214052204.3105610-4-neilb%40suse.de
+patch subject: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
+config: x86_64-buildonly-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151124.LyMTodTU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502151124.LyMTodTU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/smb/server/vfs.c: In function 'ksmbd_vfs_mkdir':
+>> fs/smb/server/vfs.c:226:9: error: 'entry' undeclared (first use in this function); did you mean 'dentry'?
+     226 |         entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+         |         ^~~~~
+         |         dentry
+   fs/smb/server/vfs.c:226:9: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +226 fs/smb/server/vfs.c
+
+   196	
+   197	/**
+   198	 * ksmbd_vfs_mkdir() - vfs helper for smb create directory
+   199	 * @work:	work
+   200	 * @name:	directory name that is relative to share
+   201	 * @mode:	directory create mode
+   202	 *
+   203	 * Return:	0 on success, otherwise error
+   204	 */
+   205	int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
+   206	{
+   207		struct mnt_idmap *idmap;
+   208		struct path path;
+   209		struct dentry *dentry, *d;
+   210		int err;
+   211	
+   212		dentry = ksmbd_vfs_kern_path_create(work, name,
+   213						    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
+   214						    &path);
+   215		if (IS_ERR(dentry)) {
+   216			err = PTR_ERR(dentry);
+   217			if (err != -EEXIST)
+   218				ksmbd_debug(VFS, "path create failed for %s, err %d\n",
+   219					    name, err);
+   220			return err;
+   221		}
+   222	
+   223		idmap = mnt_idmap(path.mnt);
+   224		mode |= S_IFDIR;
+   225		d = dentry;
+ > 226		entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+   227		err = PTR_ERR_OR_ZERO(dentry);
+   228		if (!err && dentry != d)
+   229			ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
+   230	
+   231		done_path_create(&path, dentry);
+   232		if (err)
+   233			pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
+   234		return err;
+   235	}
+   236	
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
