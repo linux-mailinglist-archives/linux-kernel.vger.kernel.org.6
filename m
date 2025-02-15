@@ -1,416 +1,296 @@
-Return-Path: <linux-kernel+bounces-516257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E75A36EC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:22:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A0FA36EC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:22:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 681457A3F01
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C5221895986
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B6E1D90B9;
-	Sat, 15 Feb 2025 14:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B1213A88A;
+	Sat, 15 Feb 2025 14:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcom4IAP"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5LU7CJF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ECE13DDAE;
-	Sat, 15 Feb 2025 14:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17077156C79
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 14:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739629340; cv=none; b=FK92E8LyjsoZ9WIoBpcwSSIehdKvbySgMTkp/Uczu3wUNw1a/H68/zcELolGKBGdts7sauSAvNfRg6a/qkd5sAYsU4+1Nv6K438i8VsHeIQZbpvE6XJje8o+oIa0Grm7+w4vMFiEKz/xnsavGFHwqBOj5LL/X1pbT/7Wgu3a8bM=
+	t=1739629339; cv=none; b=Du5a7B/mW91MPPFLLg60Bj0aGFAwKfarTpAnaZilpH51B+Ns5HH1r44GyjSa5LS90d99qLIZ8Y+UzQZbuwTCzIuWQhLIRSAdv8J23lkDTdpAu21t19z3YPTIjULzgOmvIqZTGZ+JScjMBYYt96FihPnweXd06wRz50Wkgx3tUvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739629340; c=relaxed/simple;
-	bh=6fJ8zHaER+DuRqytlQHjD9/7h0lZh1Y1voiqfDeb9Eo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hCkNn81hXTJP8iHlPmXuz9tG3s/6zebzDt+p3kqaAKg25K/zvS/3BBpf17svoFlWLf0nFcnriPEaFYlxgQ/7CY2Lc34lvtz+r2/jJTrwcRo7K59LSFNICsyoNd9iQdSPyjGkwNFhHYdk5HzbHx9WsTx+Bs4uf+7PD/E6O58PnRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcom4IAP; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f325ddbc2so777557f8f.1;
-        Sat, 15 Feb 2025 06:22:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739629337; x=1740234137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4mA/QXoXjm/VEX8mtdfBVbYH7PcUqVqZV/G4AVhQ0KM=;
-        b=Gcom4IAPmYWMv7KMo9A59kW98xhgQK0AbBw9gZTNXJTmqM9MsNl/eIYs2SUm2/Tfkz
-         vve4EWipxzyJ14NdfZuDPBuiC8xVb6B2SOuoSv7xhT7DNJMx2f9vUF6XfOWZPUqCTqy/
-         LxaspLtN7tnsm2Ym8mi8pqHDAwq8Z2Agf2sEu52xfVkRctkK9R/VxQgnP7LWUjPkjHCB
-         2g76NtGxLGn5SoodEvILlnWIZYbTy7qhTdBU1Yix3aedIBFud7bAf3qnU2Q1lB1ELi7r
-         Vqu0Lx0IM9f2k1S3e9EHlN7256ck05Z1VGmDVO9HzhCTJ5Z+TkTKkC3WH6XBMvkLmCzS
-         LJbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739629337; x=1740234137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4mA/QXoXjm/VEX8mtdfBVbYH7PcUqVqZV/G4AVhQ0KM=;
-        b=bPNfVYovZyIf6thztw5yJtC/QW33yBAc15p1gPb+mlPcufTfeCgBZuVbcSA7CNk/Nb
-         Rym3zcTwIF+VTgmNr+Ve9Bbksb9K8KEMtxKxnVUi1HLng0RpI/TTcNovKxWop3D77p9f
-         tmXdctNlveJvgcLAeB4yZPt/4oROAhhJd0uV9w8yrSSnSb4aS7Rx6p/HcLsxesqoP0Mi
-         Gf6BL4dPIJO/VQ9DWiHc9oqBvdRlnYzM8GlF0WpDuzDMSmG97yVrc+/P073zC6uytgh6
-         C21CjChS7swAeIXsnmKI7XbfJt90EOvDf+SCX+S1IGIGAVE6n32SNQHowQ77wXdvyoZ9
-         sEzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeNS6QRKpoFIVE4IaME8O0fwqyRxsaTNmadiTvirPJj9EY/uBcLdSP+VeBOrfPxGaLpS4rTtWVoiHN@vger.kernel.org, AJvYcCUx89O2KRzguRH9WxnYIzUivHX8K4QAqTmEQfoSlTYvRgjg6SOAFhlPaUK+G/nxN5YL5u5OLL8C3lwV8MdT@vger.kernel.org, AJvYcCVLjcin3ign28OiZcu8iPX152BFIuZJ3xHf38Fj8kunTbwbSUQsrWDlyZ2clSzrsXUm2zrKpzxITu5H@vger.kernel.org, AJvYcCW2YWrdGxnBbX351nNHO/q/a1eTwjXY5fe2s5E5/sjO+TOPu2LfoHmvn96cSYbxVgYeUDz+7uUyH3GJsac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZc93e07re9KBP1+DiggfY1R76z+ctOyDj10zUtwpACmVk+8Q9
-	9hYtr+iR4VUy91Y9Tc91EH0puvgD5r9T4rTjVWNxFke0RDEJSmREoeXMoUgeOZFc6mvEW8P2Ptq
-	EJyL4lRkWVCTXuhqFi4vwtdI49PM=
-X-Gm-Gg: ASbGncuQYbycFJVpKhbSWWLRkuUgE38K93X9d4NXFgEvBA3GkC9lxwqYyVbv9M6QUIY
-	Ls7BfXUP5oSbGTZGJskGFSGbTR15qtvz5rhIo3s2EYeV24Ojy1AhXrsItjg0VvRIqNHptP/YnaQ
-	==
-X-Google-Smtp-Source: AGHT+IGgTNm98v+pbR9qnQiZnlt235288hQCip6r7Wkf15mQLQvOkt8aXUuMnlWWa78TqdHhIEIDsPKpPq16dRYTZKE=
-X-Received: by 2002:a05:6000:4007:b0:38f:2b59:b550 with SMTP id
- ffacd0b85a97d-38f34167df2mr2768661f8f.50.1739629336414; Sat, 15 Feb 2025
- 06:22:16 -0800 (PST)
+	s=arc-20240116; t=1739629339; c=relaxed/simple;
+	bh=hqW6ymOflAStCUdXwcL9PQWcJaSBxkT9va/7k3d0riM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tjCydTNZZMiQhtTjLgtBS0Koxz49vZesszT5ARJ5GIZ0MNhmMkAO8gLPVMK3z4+l507SeMbg6PLgi00mQXqESnxGdEOT5ztUrZ6cuRrkKZrtU1vGx81RvKO2XP5ekb6UIRIALY7tmK6YegTdLrCM5idtF6pzZU1vXo2aJUlAFzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5LU7CJF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40255C4CEDF;
+	Sat, 15 Feb 2025 14:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739629338;
+	bh=hqW6ymOflAStCUdXwcL9PQWcJaSBxkT9va/7k3d0riM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=r5LU7CJFB5NReP5POx76or/k0jq3lZN/wUK2VoEhsj4S2hJ4z/4WojyEoTIzNUOgo
+	 ip0tcxCVf4hKRiR0voivRcnHCmEaUfS5l53O3nNqEhtLKm/A0VWCLxNSHaM8xZwK2+
+	 JeLsHT7tPbQYSAloBIuPHNfUK8d5addpf0BkkrjnmMqZM7QL/UY4wg7CpORQVVrrcx
+	 s3FH+/vWiNauiH0myW7s7ImisAmeNpX7LkUXXnJN4VCyP5NlIw4jt8CkPWc1ks6tE1
+	 aNluGGv4W8/8iNIkveq0X9hmrhZ+ZTzxYJ4vFHsnE5WrxquoeCrrLNoe15TmEd71y4
+	 GIEhu3DXsqS/g==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, will@kernel.org,
+	maz@kernel.org, catalin.marinas@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, steven.price@arm.com,
+	suzuki.poulose@arm.com,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 1/1] arm64: realm: Use aliased addresses for device DMA
+ to shared buffers
+In-Reply-To: <20250212171411.951874-2-suzuki.poulose@arm.com>
+References: <20250212171411.951874-1-suzuki.poulose@arm.com>
+ <20250212171411.951874-2-suzuki.poulose@arm.com>
+Date: Sat, 15 Feb 2025 19:52:11 +0530
+Message-ID: <yq5apljj9tkc.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215103159.106343-1-clamor95@gmail.com> <20250215103159.106343-3-clamor95@gmail.com>
- <1597453a-31fc-49eb-8b69-efeb8805c67a@ixit.cz>
-In-Reply-To: <1597453a-31fc-49eb-8b69-efeb8805c67a@ixit.cz>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sat, 15 Feb 2025 16:22:05 +0200
-X-Gm-Features: AWEUYZmHa9pO9VfnLmYNuUWHpXt4I13oLrd7sTGxxt-V__hdk_gySc6k3867mqw
-Message-ID: <CAPVz0n1T_jXXDhm6gF7gDDqZ=b6abR1Tqk=5kLo=Ws4FF2EVJw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance sensor
-To: David Heidelberg <david@ixit.cz>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
-	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-=D1=81=D0=B1, 15 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:12 Davi=
-d Heidelberg <david@ixit.cz> =D0=BF=D0=B8=D1=88=D0=B5:
->
->
->
-> On 15/02/2025 11:31, Svyatoslav Ryhel wrote:
-> > AL3000a is a simple I2C-based ambient light sensor, which is
-> > closely related to AL3010 and AL3320a, but has significantly
-> > different way of processing data generated by the sensor.
-> >
-> > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >   drivers/iio/light/Kconfig   |  10 ++
-> >   drivers/iio/light/Makefile  |   1 +
-> >   drivers/iio/light/al3000a.c | 221 +++++++++++++++++++++++++++++++++++=
-+
-> >   3 files changed, 232 insertions(+)
-> >   create mode 100644 drivers/iio/light/al3000a.c
-> >
-> > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> > index e34e551eef3e..142f7f7ef0ec 100644
-> > --- a/drivers/iio/light/Kconfig
-> > +++ b/drivers/iio/light/Kconfig
-> > @@ -43,6 +43,16 @@ config ADUX1020
-> >        To compile this driver as a module, choose M here: the
-> >        module will be called adux1020.
-> >
-> > +config AL3000A
-> > +     tristate "AL3000a ambient light sensor"
-> > +     depends on I2C
-> > +     help
-> > +       Say Y here if you want to build a driver for the Dyna Image AL3=
-000a
-> > +       ambient light sensor.
-> > +
-> > +       To compile this driver as a module, choose M here: the
-> > +       module will be called al3000a.
-> > +
-> >   config AL3010
-> >       tristate "AL3010 ambient light sensor"
-> >       depends on I2C
-> > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
-> > index 11a4041b918a..17030a4cc340 100644
-> > --- a/drivers/iio/light/Makefile
-> > +++ b/drivers/iio/light/Makefile
-> > @@ -7,6 +7,7 @@
-> >   obj-$(CONFIG_ACPI_ALS)              +=3D acpi-als.o
-> >   obj-$(CONFIG_ADJD_S311)             +=3D adjd_s311.o
-> >   obj-$(CONFIG_ADUX1020)              +=3D adux1020.o
-> > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
-> >   obj-$(CONFIG_AL3010)                +=3D al3010.o
-> >   obj-$(CONFIG_AL3320A)               +=3D al3320a.o
-> >   obj-$(CONFIG_APDS9300)              +=3D apds9300.o
-> > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
-> > new file mode 100644
-> > index 000000000000..58d4336dd081
-> > --- /dev/null
-> > +++ b/drivers/iio/light/al3000a.c
-> > @@ -0,0 +1,221 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +#include <linux/array_size.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/device.h>
-> > +#include <linux/err.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pm.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/iio/sysfs.h>
-> > +
-> > +#define AL3000A_DRV_NAME             "al3000a"
-> > +#define AL3000A_REG_SYSTEM           0x00
-> > +#define AL3000A_REG_DATA             0x05
-> > +
-> > +#define AL3000A_CONFIG_ENABLE                0x00
-> > +#define AL3000A_CONFIG_DISABLE               0x0b
-> > +#define AL3000A_CONFIG_RESET         0x0f
-> > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
-> > +
-> > +/*
-> > + * This are pre-calculated lux values based on possible output of sens=
-or
-> > + * (range 0x00 - 0x3F)
-> > + */
-> > +static const u32 lux_table[] =3D {
-> > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* 0 - 7 =
-*/
-> > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* 8 - 15=
- */
-> > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* 16 - 2=
-3 */
-> > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* 24 - 3=
-1 */
-> > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* 32 - 3=
-9 */
-> > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* 40 - 4=
-7 */
-> > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* 48 - 5=
-5 */
-> > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* 56 - 6=
-3 */
-> > +};
-> > +
-> > +static const struct regmap_config al3000a_regmap_config =3D {
-> > +     .reg_bits =3D 8,
-> > +     .val_bits =3D 8,
-> > +     .max_register =3D AL3000A_REG_DATA,
-> > +};
-> > +
-> > +struct al3000a_data {
-> > +     struct regmap *regmap;
-> > +     struct regulator *vdd_supply;
-> > +};
-> > +
-> > +static const struct iio_chan_spec al3000a_channels[] =3D {
-> > +     {
-> > +             .type =3D IIO_LIGHT,
-> > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
-> > +                                   BIT(IIO_CHAN_INFO_SCALE),
-> > +     },
-> > +};
-> > +
-> > +static int al3000a_set_pwr(struct al3000a_data *data, bool pwr)
-> > +{
-> > +     struct device *dev =3D regmap_get_device(data->regmap);
-> > +     u8 val =3D pwr ? AL3000A_CONFIG_ENABLE : AL3000A_CONFIG_DISABLE;
-> > +     int ret;
-> > +
-> > +     if (pwr) {
-> > +             ret =3D regulator_enable(data->vdd_supply);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to enable vdd power supply\n=
-");
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, val);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "failed to write system register\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +     if (!pwr) {
-> > +             ret =3D regulator_disable(data->vdd_supply);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to disable vdd power supply\=
-n");
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void al3000a_set_pwr_off(void *_data)
-> > +{
-> > +     struct al3000a_data *data =3D _data;
-> > +
-> > +     al3000a_set_pwr(data, false);
-> > +}
-> > +
-> > +static int al3000a_init(struct al3000a_data *data)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D al3000a_set_pwr(data, true);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CO=
-NFIG_RESET);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CO=
-NFIG_ENABLE);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int al3000a_read_raw(struct iio_dev *indio_dev,
-> > +                         struct iio_chan_spec const *chan, int *val,
-> > +                         int *val2, long mask)
-> > +{
-> > +     struct al3000a_data *data =3D iio_priv(indio_dev);
-> > +     int ret, gain;
-> > +
-> > +     switch (mask) {
-> > +     case IIO_CHAN_INFO_RAW:
-> > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DATA, &gain=
-);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +
-> > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK];
->
-> Why did you chosen to do post-processing in the RAW channel instead
-> doing it in INFO_SCALE (same as al3010 does)?
->
+Suzuki K Poulose <suzuki.poulose@arm.com> writes:
 
-From my observation INFO_SCALE will just perform multiplication of RAW
-to SCALE. In this case values which are read are not actual raw values
-of illumination. Next is my assumption (since there is no datasheet),
-but values obtained from register are similar to values from adc
-thermal sensors, they need be converted via reference table to get
-actual data.
+> When a device performs DMA to a shared buffer using physical addresses,
+> (without Stage1 translation), the device must use the "{I}PA address" wit=
+h the
+> top bit set in Realm. This is to make sure that a trusted device will be =
+able
+> to write to shared buffers as well as the protected buffers. Thus, a Real=
+m must
+> always program the full address including the "protection" bit, like AMD =
+SME
+> encryption bits.
+>
+> Add the support for this by providing arm64 version of the phys_to_dma().=
+ We
+> cannot use the __sme_mask as it assumes the "encryption" always "sets a b=
+it",
+> which is the opposite for CCA. i.e., "set a bit" for "decrypted" address.=
+ So,
+> move the common code that can be reused by all - i.e., add __phys_to_dma(=
+) and
+> __dma_to_phys() - and do the arch specific processing.
+>
+> Please note that the VMM needs to similarly make sure that the SMMU Stage=
+2 in
+> the Non-secure world is setup accordingly to map IPA at the unprotected a=
+lias.
+>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  arch/arm64/Kconfig                  |  1 +
+>  arch/arm64/include/asm/dma-direct.h | 38 +++++++++++++++++++++++++++++
+>  include/linux/dma-direct.h          | 35 +++++++++++++++++---------
+>  3 files changed, 62 insertions(+), 12 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/dma-direct.h
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index fcdd0ed3eca8..7befe04106de 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -41,6 +41,7 @@ config ARM64
+>  	select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
+>  	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>  	select ARCH_HAS_NONLEAF_PMD_YOUNG if ARM64_HAFT
+> +	select ARCH_HAS_PHYS_TO_DMA
+>  	select ARCH_HAS_PTE_DEVMAP
+>  	select ARCH_HAS_PTE_SPECIAL
+>  	select ARCH_HAS_HW_PTE_YOUNG
+> diff --git a/arch/arm64/include/asm/dma-direct.h b/arch/arm64/include/asm=
+/dma-direct.h
+> new file mode 100644
+> index 000000000000..37c3270542b8
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/dma-direct.h
+> @@ -0,0 +1,38 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef __ASM_DMA_DIRECT_H
+> +#define __ASM_DMA_DIRECT_H
+> +
+> +#include <asm/pgtable-prot.h>
+> +
+> +static inline unsigned long addr_to_shared(unsigned long addr)
+> +{
+> +	if (is_realm_world())
+> +		addr |=3D prot_ns_shared;
+> +	return addr;
+> +}
+> +
+> +static inline unsigned long addr_to_private(unsigned long addr)
+> +{
+> +	if (is_realm_world())
+> +		addr &=3D prot_ns_shared - 1;
+> +	return addr;
+> +}
+> +
+> +static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t pad=
+dr)
+> +{
+> +	return __phys_to_dma(dev, paddr);
+> +}
+> +
+> +static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+> +						 phys_addr_t paddr)
+> +{
+> +	return addr_to_shared(__phys_to_dma(dev, paddr));
+> +}
+> +#define phys_to_dma_unencrypted phys_to_dma_unencrypted
+> +
+> +static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma=
+_addr)
+> +{
+> +	return addr_to_private(__dma_to_phys(dev, dma_addr));
+> +}
+> +
+> +#endif	/* __ASM_DMA_DIRECT_H */
+> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> index d7e30d4f7503..3e9bf6ca640e 100644
+> --- a/include/linux/dma-direct.h
+> +++ b/include/linux/dma-direct.h
+> @@ -72,18 +72,36 @@ static inline dma_addr_t dma_range_map_max(const stru=
+ct bus_dma_region *map)
+>  	return ret;
+>  }
+>=20=20
+> +static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t p=
+addr)
+> +{
+> +	if (dev->dma_range_map)
+> +		return translate_phys_to_dma(dev, paddr);
+> +	return paddr;
+> +}
+> +
+> +static inline phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t d=
+ma_addr)
+> +{
+> +	phys_addr_t paddr;
+> +
+> +	if (dev->dma_range_map)
+> +		paddr =3D translate_dma_to_phys(dev, dma_addr);
+> +	else
+> +		paddr =3D dma_addr;
+> +
+> +	return paddr;
+> +}
+> +
+>  #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
+>  #include <asm/dma-direct.h>
+>  #ifndef phys_to_dma_unencrypted
+>  #define phys_to_dma_unencrypted		phys_to_dma
+>  #endif
+>  #else
+> +
+>  static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+>  		phys_addr_t paddr)
+>  {
+> -	if (dev->dma_range_map)
+> -		return translate_phys_to_dma(dev, paddr);
+> -	return paddr;
+> +	return __phys_to_dma(dev, paddr);
+>  }
+>=20=20
+>  /*
+> @@ -94,19 +112,12 @@ static inline dma_addr_t phys_to_dma_unencrypted(str=
+uct device *dev,
+>   */
+>  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t pad=
+dr)
+>  {
+> -	return __sme_set(phys_to_dma_unencrypted(dev, paddr));
+> +	return __sme_set(__phys_to_dma(dev, paddr));
+>  }
+>=20=20
+>  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma=
+_addr)
+>  {
+> -	phys_addr_t paddr;
+> -
+> -	if (dev->dma_range_map)
+> -		paddr =3D translate_dma_to_phys(dev, dma_addr);
+> -	else
+> -		paddr =3D dma_addr;
+> -
+> -	return __sme_clr(paddr);
+> +	return __sme_clr(__dma_to_phys(dev, dma_addr));
+>  }
+>  #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+>=20=20
+> --=20
+> 2.43.0
 
-> Except this, LGTM.
->
-> Documentation and DT patch:
->
-> Reviewed-by: David Heidelberg <david@ixit.cz>
-> > +
-> > +             return IIO_VAL_INT;
-> > +     case IIO_CHAN_INFO_SCALE:
-> > +             *val =3D 1;
-> > +
-> > +             return IIO_VAL_INT;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +}
-> > +
-> > +static const struct iio_info al3000a_info =3D {
-> > +     .read_raw       =3D al3000a_read_raw,
-> > +};
-> > +
-> > +static int al3000a_probe(struct i2c_client *client)
-> > +{
-> > +     struct al3000a_data *data;
-> > +     struct device *dev =3D &client->dev;
-> > +     struct iio_dev *indio_dev;
-> > +     int ret;
-> > +
-> > +     indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> > +     if (!indio_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     data =3D iio_priv(indio_dev);
-> > +     i2c_set_clientdata(client, indio_dev);
-> > +
-> > +     data->regmap =3D devm_regmap_init_i2c(client, &al3000a_regmap_con=
-fig);
-> > +     if (IS_ERR(data->regmap))
-> > +             return dev_err_probe(dev, PTR_ERR(data->regmap),
-> > +                                  "cannot allocate regmap\n");
-> > +
-> > +     data->vdd_supply =3D devm_regulator_get(dev, "vdd");
-> > +     if (IS_ERR(data->vdd_supply))
-> > +             return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
-> > +                                  "failed to get vdd regulator\n");
-> > +
-> > +     indio_dev->info =3D &al3000a_info;
-> > +     indio_dev->name =3D AL3000A_DRV_NAME;
-> > +     indio_dev->channels =3D al3000a_channels;
-> > +     indio_dev->num_channels =3D ARRAY_SIZE(al3000a_channels);
-> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > +
-> > +     ret =3D al3000a_init(data);
-> > +     if (ret < 0)
-> > +             return dev_err_probe(dev, ret, "failed to init ALS\n");
-> > +
-> > +     ret =3D devm_add_action_or_reset(dev, al3000a_set_pwr_off, data);
-> > +     if (ret < 0)
-> > +             return dev_err_probe(dev, ret, "failed to add action\n");
-> > +
-> > +     return devm_iio_device_register(dev, indio_dev);
-> > +}
-> > +
-> > +static int al3000a_suspend(struct device *dev)
-> > +{
-> > +     struct al3000a_data *data =3D iio_priv(dev_get_drvdata(dev));
-> > +
-> > +     return al3000a_set_pwr(data, false);
-> > +}
-> > +
-> > +static int al3000a_resume(struct device *dev)
-> > +{
-> > +     struct al3000a_data *data =3D iio_priv(dev_get_drvdata(dev));
-> > +
-> > +     return al3000a_set_pwr(data, true);
-> > +}
-> > +
-> > +static DEFINE_SIMPLE_DEV_PM_OPS(al3000a_pm_ops, al3000a_suspend, al300=
-0a_resume);
-> > +
-> > +static const struct of_device_id al3000a_of_match[] =3D {
-> > +     { .compatible =3D "dynaimage,al3000a" },
-> > +     { /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, al3000a_of_match);
-> > +
-> > +static struct i2c_driver al3000a_driver =3D {
-> > +     .driver =3D {
-> > +             .name =3D AL3000A_DRV_NAME,
-> > +             .of_match_table =3D al3000a_of_match,
-> > +             .pm =3D pm_sleep_ptr(&al3000a_pm_ops),
-> > +     },
-> > +     .probe =3D al3000a_probe,
-> > +};
-> > +module_i2c_driver(al3000a_driver);
-> > +
-> > +MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
-> > +MODULE_DESCRIPTION("al3000a Ambient Light Sensor driver");
-> > +MODULE_LICENSE("GPL");
->
-> --
-> David Heidelberg
->
+How about the below?
+
+The function name addr_to_shared is too generic to be included in the
+dma-direct.h header file. Since we don=E2=80=99t expect it to be called
+directly, we can either inline it or find a more specific name.
+
+Additionally, for dma_to_phys conversion, we first retrieve the private
+address/alias before switching to the physical address. While both
+approaches yield the correct result, this change more clearly defines the
+conversion rules?
+
+modified   arch/arm64/include/asm/dma-direct.h
+@@ -4,14 +4,14 @@
+=20
+ #include <asm/pgtable-prot.h>
+=20
+-static inline unsigned long addr_to_shared(unsigned long addr)
++static inline unsigned long shared_dma_addr(unsigned long addr)
+ {
+ 	if (is_realm_world())
+ 		addr |=3D prot_ns_shared;
+ 	return addr;
+ }
+=20
+-static inline unsigned long addr_to_private(unsigned long addr)
++static inline unsigned long private_dma_addr(unsigned long addr)
+ {
+ 	if (is_realm_world())
+ 		addr &=3D prot_ns_shared - 1;
+@@ -26,13 +26,14 @@ static inline dma_addr_t phys_to_dma(struct device *dev=
+, phys_addr_t paddr)
+ static inline dma_addr_t phys_to_dma_unencrypted(struct device *dev,
+ 						 phys_addr_t paddr)
+ {
+-	return addr_to_shared(__phys_to_dma(dev, paddr));
++	return shared_dma_addr(__phys_to_dma(dev, paddr));
+ }
+ #define phys_to_dma_unencrypted phys_to_dma_unencrypted
+=20
+ static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_a=
+ddr)
+ {
+-	return addr_to_private(__dma_to_phys(dev, dma_addr));
++	/* if it is a shared dma addr convert to private before looking for phys_=
+addr */
++	return __dma_to_phys(dev, private_dma_addr(dma_addr));
+ }
+=20
+ #endif	/* __ASM_DMA_DIRECT_H */
 
