@@ -1,50 +1,86 @@
-Return-Path: <linux-kernel+bounces-516315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D4FA36F95
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:57:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D6AA36F96
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD203B0116
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26EC1891FC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95341E5B7C;
-	Sat, 15 Feb 2025 16:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703271D89FA;
+	Sat, 15 Feb 2025 16:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Pe3YZ3y8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kezgjIa+"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4C1C7011;
-	Sat, 15 Feb 2025 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4142142AA5
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 16:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739638617; cv=none; b=e0ksiP7FUM9Bkq7v9wva1bW3gBvkGfEWe019oCPlOm2ftlmnWDHs0SouOpYwT3lgZZGjMnxNCXsOacokk1zKT/pVB0u2gN+qYdP+/mfY70H0P93DilXAdVk9R9ms1SVNiVvW09qH7psqG7SBwooqWEVPGOdkAF6XDQMrngtTb8I=
+	t=1739638627; cv=none; b=qZ9VA5x17Dd17IEXqSwlWiwj32eCYoYBB2qG/8ywK22lZ3gX3x2k8vIzVxuku0Qm480E3PUqETYIWPJrjhUkCdz2wSFJEU2dbuUaJ3UNu6/cElQlssAQexHWVtNU8te5551RjsJAAlrgog/BeknQbI9BfInGK3VqONLPSLLDrOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739638617; c=relaxed/simple;
-	bh=wyw8Ovh8n7iuN0KZVDZ5yM4pmIpJuKuYOg7F8OqhR2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+dFTyLJww12SicatweWF9kwcDzKvHir5uAkDrf4GOvwCD1RVspUtpc2jf6Z1VcdfhzI3hvD4kbkVK8ctpHHsKFvJM1deRmrWH3VktaKzmR4dAYo1KA0zg+TXCLP6Jc5gmHlzfa11+9Dg3Yo2VI1BX7R4N7DApbck/ldUsUIMy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Pe3YZ3y8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BE9C4CEDF;
-	Sat, 15 Feb 2025 16:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739638616;
-	bh=wyw8Ovh8n7iuN0KZVDZ5yM4pmIpJuKuYOg7F8OqhR2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pe3YZ3y8ct0kRMusplLlWkv1fnkQGWM2FHYRkQIORDM1aXxaTnHGjMY1A+GaKPQP7
-	 7YGksMnp5hsxdjwTHW+zJnkMrrUhLnBr3aZ/bDuEOf8TsHU4QxGpzyN7Oa6LH6Gmij
-	 O3LqHMFnxZnyUSGtINrz4h/IwZqP6D7jAe/nIMNA=
-Date: Sat, 15 Feb 2025 17:56:54 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ian To <onlyian4981@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] staging: rtl8723bs: format comments
-Message-ID: <2025021510-surround-drainage-1425@gregkh>
-References: <cover.1739351267.git.onlyian4981@gmail.com>
- <2e6dc11ef35d5af653095e416f2a48b6dbcc0de1.1739351267.git.onlyian4981@gmail.com>
+	s=arc-20240116; t=1739638627; c=relaxed/simple;
+	bh=l4t/wsUY3T7/jpMvBhwTbPunZ1IaT1yxNcw4SrC5OfQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=On6WO5+ddXXhaD6NVK192m6pPIv7rz3+YDtX7WpJjUjEo58ODRHo5Iu9fvxOFbJog8yu5yfq1YnApoP6dWDbkgdgksNBoKFVb2wMgEZFomlCiZL26ydFfax2Lf/1JSVMwXnLcQLdOGifcU6f/7BDlpRUHxie3YPR6Nre4DzEi28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kezgjIa+; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7e1286126so530127666b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 08:57:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739638625; x=1740243425; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0c4zZz2kpW8BEFDTwqY0/JTaruHiG2j7HEu4uhE1vkU=;
+        b=kezgjIa+K8bWEkO8GQ5s1VO8N1TgUo8ioQPDBQW2lbMTZhONclS3wO2vTKv0D7aSp8
+         DNiGVSc3036E02X6Lpgfd344widaVfwi2jJtZukcy58qxR05YnB5IOQ11OSc5fb0i7Tl
+         PSl44eiiUWndU1fxx6iPtQMfQQbKWGIriR7aH2PCDeRSm4R7zZwGaoEGmGdni56CvJP4
+         HegFIwUp2oSdNXOF1WLUV1hOBAivYJECFmuQfR/qlchsSoE2jOxKJrze4RDKdr4ty2Ba
+         NcWL3JekpSZG56vdYeprxniIIqjel/jfKeoHFX0MCjyUbefE+qnkiUyNXaLilJdO15N8
+         FGOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739638625; x=1740243425;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c4zZz2kpW8BEFDTwqY0/JTaruHiG2j7HEu4uhE1vkU=;
+        b=SYDq6unf7WrfDLP6TczP08wgvJhvXbNky0iD0rt3Gnm47Z3aiejrFRZi0s7UCdMRSB
+         H64G086bvJNL+nu7nyLeHTOt3kZ8uIgmNqYjSKpITUXGHrxv5rFR9dsAg+su6Rr78ORN
+         BD80RyloKJ6buVbl7LsNh95V5AO6U+bgyFnH4Ui2fBUUdaqF+8QvvWh7RoM87pq37mpt
+         wFjkLye+B9+eZZipKbS+ZjSQQ+VRDFL0HZWYanhgkpFhn6ThYMiqW0QKTLr4B2u0xter
+         EC58rXWk/PNrC5LcRybDih+cw8hOKVZeqziseGiwV9ev1hQRraoiqlQ36LtZvyPEs3am
+         adpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi72cwN6YKsVVWwhGiE4XskoxKGXW9EOfk9RPjZtEUxe8EuRhEJuXNqiZmrB1X96Q4nrhFNT1lyScH1fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9gVnyRXT44SRrgHZ407G5oP7wZMcS2TPQf3Bua1fp/kdV7oje
+	eTyNQIUntkK1la8KwCqHzggv0Kxv9Aw0CzEyIkyoo6dx/uXBcuJE
+X-Gm-Gg: ASbGncsO8rrGeIarSW3ODZkU5F3nbsUeIG9wX8eCu4M9zMEDKsBG3jCYttivOhKLZ0N
+	OAAnHZnp2qf4ReO/y9gxBwM9vijzSfJsOgw3isDaPm8lFZ4lxOwgfOm0rS2u4JgPl4i5JvlEgF7
+	SZtjcQju4MNXv/Tyqn1/XdkZjo4vg47K8duLjMY6DeazlUUHaH/ahmwkbz6e2yhfIKbR+5gNVeJ
+	dmi5vbSe3/3nt9jW4PEAJ3Omrm6gVWiQ75KXQuWqcdNoKp/p+GT0NhFmEEid+UmTZGuybZiVoUu
+	2fvglxXFSsYH4DbSBh8=
+X-Google-Smtp-Source: AGHT+IGWpjIb5Vy6Nuo8jfBoCuvVBv63aWtTMF7Oe5Zscrbp2wx5S8DKF2J/IsI2QED1UHvXW9cXmg==
+X-Received: by 2002:a17:906:6a03:b0:ab7:d946:99ef with SMTP id a640c23a62f3a-abb70cd50abmr343055266b.16.1739638624232;
+        Sat, 15 Feb 2025 08:57:04 -0800 (PST)
+Received: from localhost ([2a02:587:860a:7219:38f1:eba9:54d5:df1f])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba5a4f4cb4sm481480966b.118.2025.02.15.08.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 08:57:03 -0800 (PST)
+Date: Sat, 15 Feb 2025 18:57:01 +0200
+From: Lilitha Persefoni Gkini <lilithpgkini@gmail.com>
+To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] slub: Fix Off-By-One in the While condition in on_freelist()
+Message-ID: <Z7DHXVNJ5aVBM2WA@Arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,80 +89,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e6dc11ef35d5af653095e416f2a48b6dbcc0de1.1739351267.git.onlyian4981@gmail.com>
 
-On Wed, Feb 12, 2025 at 01:22:54AM -0800, Ian To wrote:
-> Some comments were not formatted correctly. Reported by checkpatch.
-> 
-> Signed-off-by: Ian To <onlyian4981@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_security.c | 92 +++++++++----------
->  1 file changed, 46 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-> index 1e9eff01b1aa..f4556ae54352 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_security.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-> @@ -30,10 +30,10 @@ const char *security_type_str(u8 value)
->  /* WEP related ===== */
->  
->  /*
-> -	Need to consider the fragment  situation
-> -*/
-> + *	Need to consider the fragment  situation
-> + */
->  void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
-> -{																	/*  exclude ICV */
-> +{
->  	union {
->  		__le32 f0;
->  		unsigned char f1[4];
-> @@ -342,23 +342,23 @@ static const unsigned short Sbox1[2][256] = {      /* Sbox for hash (can be in R
->  	}
->  };
->  
-> - /*
-> -**********************************************************************
-> -* Routine: Phase 1 -- generate P1K, given TA, TK, IV32
-> -*
-> -* Inputs:
-> -*     tk[]      = temporal key                         [128 bits]
-> -*     ta[]      = transmitter's MAC address            [ 48 bits]
-> -*     iv32      = upper 32 bits of IV                  [ 32 bits]
-> -* Output:
-> -*     p1k[]     = Phase 1 key                          [ 80 bits]
-> -*
-> -* Note:
-> -*     This function only needs to be called every 2**16 packets,
-> -*     although in theory it could be called every packet.
-> -*
-> -**********************************************************************
-> -*/
-> +/*
-> + **********************************************************************
+The condition `nr <= slab->objects` in the `on_freelist()` serves as
+bound while walking through the `freelist` linked list because we can't
+have more free objects than the maximum amount of objects in the slab.
+But the `=` can result in an extra unnecessary iteration.
 
-Why the long line of **** ?
+The patch changes it to `nr < slab->objects` to ensure it iterates
+at most `slab->objects` number of times.
 
-That should not be needed.
+Signed-off-by: Lilitha Persefoni Gkini <lilithpgkini@gmail.com>
+---
+ mm/slub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -/**
-> +/*
+diff --git a/mm/slub.c b/mm/slub.c
+index 1f50129dcfb3..ad42450d4b0f 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1435,7 +1435,7 @@ static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
+ 	int max_objects;
+ 
+ 	fp = slab->freelist;
+-	while (fp && nr <= slab->objects) {
++	while (fp && nr < slab->objects) {
+ 		if (fp == search)
+ 			return 1;
+ 		if (!check_valid_pointer(s, slab, fp)) {
+-- 
+2.48.1
 
-Why are you removing kerneldoc comment style?
-
->   * omac1_aes_128_vector - One-Key CBC MAC (OMAC1) hash with AES-128
->   * @key: 128-bit key for the hash operation
->   * @num_elem: Number of elements in the data vector
-> @@ -1530,7 +1529,7 @@ static int omac1_aes_128_vector(u8 *key, size_t num_elem,
->  	return 0;
->  }
->  
-> -/**
-> +/*
-
-Same here?
-
-thanks,
-
-greg k-h
 
