@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-515981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEE9A36B8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:04:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4708EA36B92
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CFBB170320
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6B63B2603
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ACC156C7B;
-	Sat, 15 Feb 2025 03:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940AA1624CE;
+	Sat, 15 Feb 2025 03:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wewqj8AL"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SWra07Jl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA2415198B;
-	Sat, 15 Feb 2025 03:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF3C1426C;
+	Sat, 15 Feb 2025 03:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739588667; cv=none; b=JCRSPQq9i3EEALAgDP4tN/9LCXcJ/B/yC+adGrXSqH0eWLnUAOKN9xzOff/cPJSQYB9VO9RfRRAyxPS2P1qqsb2lJIcL8Nj9HKy+cGWf223qRH0sFl2QCOU/OsyCRvVVBaxhd1R/XNWtc9QLnjGD+PowjVxbYP3yvSXs2YRf3L4=
+	t=1739588861; cv=none; b=GXrA4ipBpQXD8NAWB8OdvEB24Cuk2IxCyHtQtfvwMwrkUxA8QfkWhaG3rxx+uMw888a/0RrUw1rDBaAxNiMCLI2J0j4xY8dCstISnwnuhgjupmigaJauLrnGpxdf1ssD38PPa/YqImR+Hxax3at5nhH1A4uJIo/ZoOgx9sFruV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739588667; c=relaxed/simple;
-	bh=I9x2MwW2MXiXY0ZFzL5MIBifqfA14vdI95tsEZByDB8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CJviFgjwFunBuoiWvISaihgsx7cnO6YmxPHFvLnOUzwCq0U1WfpwbIxV7farD9na35mvn7dG1bq1DeC+iRem4s37MCBeK6rJWNNBH9sdK/0ph6BHX7bhH8LUzjY2FRC7Jaz8PrQ6K7+B0WPWAhycNxeTk1L8rps2+HKKesHfJj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wewqj8AL; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43967004304so9981365e9.2;
-        Fri, 14 Feb 2025 19:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739588664; x=1740193464; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D1ke7H8+M8yCjXV+9PJPO/6rsexf+VnewbpjFFNJVx4=;
-        b=Wewqj8AL+l1Ll0CxhhIWwpIrzncEj0Ak39Hz/t710lGokiIuOGlfMNByVIZXodzXRp
-         kjOJEluD9I8F15FpEVr/p+vu6EyAehr71QyYdKplXNYduFoGX0k4OHnhlUdZkXS2CZBs
-         whCcOBmfGonX2DANlhKRZK4GAz1C/lgRZkgI1E+5QxwYUBSDbd1e3gNILiuSBM1JUGKi
-         XGp6LOQIFzfEu+NtXMohinFHa0dAJV0frYGnLW4WUAG3CyTWFqnTEpYgudbV4PD9zJYt
-         yuVSlEwGoed73HA/hgQNO6SJEgabQiLrxy4+Hs+K4Q2SsoIQz2AWds5ufJTH/3gTyPCJ
-         Nybw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739588664; x=1740193464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D1ke7H8+M8yCjXV+9PJPO/6rsexf+VnewbpjFFNJVx4=;
-        b=Kda66n2yaBNt8amuX1tQWGMwsS5M8s20FgaFRTLsm+ghVVJx4JOcPuNsv4zTFcgF7b
-         03rDhADJRn5AxY9LBl3YZznNeI5Wr3s+YuX0u4/UBzv8oz+laR4+clRaua99p5N8F+Pq
-         BdKJV8T++X5eIuZZzeVZM8Q/f9LI3BZZz11p3F0x5G+J/C+zbPKtUSyQwICe6JANLC0q
-         gvNKGBE7djPNQtxJf7vnMMA44xWsfOeQw9gkTQXj0Hktwp5Tqi2+eyZgXacuQYVB6Ngr
-         DoNEd8rwZOJSNx2vkviUow9sE7gz9DJxodHZ7OSzYK3JUUwz0RTwdSEW3WnCGiejeDyD
-         8ggg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzCX61+sa35LL8raoBvbJcWhshYcHO+zZJQmOavm2ntEMl9OdpZlg0opZNuED78iwqK3zV1JYXS1oCoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUojlJ3tyA2xnhTbyLOlCw8FZ0zFZXT3H2gjcV9yJ8bN9bMRky
-	8q2DRbiWZ+HONjQDu8lH1iK2WAqhj2tYm6NmXyj6Qu7ctpJHlfMeZs1te7SjN7Auv/slBULXbF0
-	lp+uKlCgOgCpra7EaiiCcvskJ//GMRJit
-X-Gm-Gg: ASbGncsct2V8SMlBeHE+34M8qSnL2BofBOBJF6R5cQt375TrJqzHHtCsL9S5OOT33jy
-	Fgq6LqDzHtsWdqHF0eNqr6hnf4wThZ5Q80ImN/7KMbp6FICCvUTSAbSLN6tR8q3NCsjRv81+D
-X-Google-Smtp-Source: AGHT+IGDmDaemoeZfMeIUnkaZyc8p3ts9pgGPm4BMDfRwRIGcfPCqXQEOelUoI+XwIc4D/xg+4rdj4ZLSWD9udHVlGo=
-X-Received: by 2002:a05:6000:184e:b0:38f:227e:6ff2 with SMTP id
- ffacd0b85a97d-38f33f1c711mr1918249f8f.14.1739588664456; Fri, 14 Feb 2025
- 19:04:24 -0800 (PST)
+	s=arc-20240116; t=1739588861; c=relaxed/simple;
+	bh=BsEFd0nMBYcKbEwAaxPfqO35YA616+80GQv4XEcbPug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l1iZd7mfxc85sSV5cXwlvrCFZ0AwFCvd65az76SDj4/tdVtZZQzebp3++EDFlMYrxFiWS4XIBG9nQUFV5biTKta1v8EjpwMuuQb61AiqOIBtHGMRYrN/56LL+4S4QJWPH8Hwr4/eV95JVgusSKhoUikrikT2ghokvX388PxPr2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SWra07Jl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51F0gJ0s015429;
+	Sat, 15 Feb 2025 03:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3T2QF3jiYcbzXCw0nOvWdlOOTQQmzMO7KkVzoHdBAUY=; b=SWra07JlwWsjG3XG
+	oK9YTASBwwKX9ysFequ8oYqL4Vz58P0r21/YkeaFX/yF9aDPo+WjeQx5VcOaJ8QE
+	eBGUU84QoPxJxI/uD3VQrq4HIisjv4NLNaXEEKR/bHqC1x1eYB6kzdVfw1AQUx/M
+	SroeA/zdv5Um5alcy00Yr5hQt2vCUz+CoO3g3H6Jojx8osfg9coNaCVp47/2J8Qy
+	3zWx1uoEIrg3SY8GhkifZafBJ6fItakXkyvYEgcuefTxJCleWC5JCgeCanLLWqPy
+	vjS3iied/ilz1lOtSAP5P5OHWYOAbts6gKX5qdveSv8ThBMHFRyPzZLgGcEdh0jZ
+	eGcQKA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44sebndfdr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Feb 2025 03:07:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51F37LXk012049
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Feb 2025 03:07:21 GMT
+Received: from [10.71.115.190] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Feb
+ 2025 19:07:20 -0800
+Message-ID: <f5dfc875-d5bd-49d7-b998-6d25f59e849a@quicinc.com>
+Date: Fri, 14 Feb 2025 19:07:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738888641.git.yepeilin@google.com> <d03d8c3305e311c6cb29924119b5eecae8370bbc.1738888641.git.yepeilin@google.com>
- <CAADnVQ+L0h8qXfYkC3+ORyQkXFJ2MgO8FDHr_Ha0QMAtS_ujag@mail.gmail.com>
- <Z6gRHDLfA7cjnlSn@google.com> <CAADnVQLkHA9LGv99k2TZOJEGUU=dw=q6nVurJ=aoh0v6cFS6zQ@mail.gmail.com>
- <Z6qC303CzfUMN8nV@google.com> <Z60dO2sV6VIVNE6t@google.com>
- <CAADnVQ+OyoBPOJk6dcUFozTt0RD-o-hHdR4Dgy+dK2r0uHyC7Q@mail.gmail.com>
- <Z63aX0Tv_zdw8LOQ@google.com> <Z6_9LgfOMeR18HGe@google.com>
-In-Reply-To: <Z6_9LgfOMeR18HGe@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 14 Feb 2025 19:04:13 -0800
-X-Gm-Features: AWEUYZmlNFZtUB1WliSaQIbmQErfRpNsKDqUO-NqyAwWdkRImN9BdvQxTrZQ4H4
-Message-ID: <CAADnVQKZ=pjXjyzB8tJj5Gen4odcj5H5JhXyRtVgphTEDCisTg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 4/9] bpf: Introduce load-acquire and
- store-release instructions
-To: Peilin Ye <yepeilin@google.com>
-Cc: bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	David Vernet <void@manifault.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
-	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v34 00/31] Introduce QC USB SND audio offloading support
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <tiwai@suse.com>, <krzk+dt@kernel.org>,
+        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20250121210518.2436771-1-quic_wcheng@quicinc.com>
+ <3b9447e2-4be8-479b-a418-5fd45369fb55@quicinc.com>
+ <2025021413-favorable-manatee-6859@gregkh>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <2025021413-favorable-manatee-6859@gregkh>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: G6IZ9o_1LHf3EbIqbqHfBBzEU7Uo4fx8
+X-Proofpoint-ORIG-GUID: G6IZ9o_1LHf3EbIqbqHfBBzEU7Uo4fx8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-15_01,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 mlxlogscore=779 phishscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502150025
 
-On Fri, Feb 14, 2025 at 6:34=E2=80=AFPM Peilin Ye <yepeilin@google.com> wro=
-te:
->
-> > On Wed, Feb 12, 2025 at 09:55:43PM -0800, Alexei Starovoitov wrote:
-> > > How about:
-> > > #define BPF_LOAD_ACQ 2
-> > > #define BPF_STORE_REL 3
-> > >
-> > > and only use them with BPF_MOV like
-> > >
-> > > imm =3D BPF_MOV | BPF_LOAD_ACQ - is actual load acquire
-> > > imm =3D BPF_MOV | BPF_STORE_REL - release
->
-> Based on everything discussed, should we proceed with the above
-> suggestion?  Specifically:
->
->   #define BPF_LD_ST     BPF_MOV /* 0xb0 */
+Hi Greg,
 
-The aliasing still bothers me.
-I hated doing it when going from cBPF to eBPF,
-but we only had 8-bit to work with.
-Here we have 32-bit.
-Aliases make disassemblers trickier, since value no longer
-translates to string as-is. It depends on the context.
-There is probably no use for BPF_MOV operation in atomic
-context, but by reusing BPF_ADD, BPF_XOR, etc in atomic
-we signed up ourselves for all of alu ops.
-That's why BPF_XCHG and BPF_CMPXCHG are outside
-of alu op range.
+On 2/14/2025 12:33 AM, Greg KH wrote:
+> On Tue, Feb 11, 2025 at 12:35:23PM -0800, Wesley Cheng wrote:
+>> Hi,
+>>
+>> On 1/21/2025 1:04 PM, Wesley Cheng wrote:
+>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+>>>
+>>
+>> Just seeing if we have any further feedback on this series? Thanks.
+> 
+> Given the lack of responses, and the huge number of iterations of this,
+> I've applied it now to my usb-testing branch to give 0-day some better
+> runs at it.  If it passes that in a few days, I'll move it to my
+> usb-next branch for inclusion into linux-next and hopefully 6.15-rc1.
+> 
+> thanks for sticking with this!
+> 
 
-So my preference is to do:
-#define BPF_LOAD_ACQ 0x100
-#define BPF_STORE_REL 0x110
-#define BPF_CMPWAIT_RELAXED   0x120
+I saw that kernel test bot reported some sparse errors.  I had some issue with my config and looks like sparse wasn't actually scanning the files I added.  Will fix that and resubmit another rev that addresses any errors.  Apologies for not catching this beforehand.
 
-and keep growing it.
-We burn the first nibble, but so be it.
+Thanks
+Wesley Cheng
 
