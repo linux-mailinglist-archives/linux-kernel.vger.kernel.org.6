@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-516235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB695A36E7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:30:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0660FA36E8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B12D1894E30
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6659818929FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048E51A262D;
-	Sat, 15 Feb 2025 13:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42D1AA1FF;
+	Sat, 15 Feb 2025 13:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb0Pa/AE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWKm4jZD"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584DF1D5AD3;
-	Sat, 15 Feb 2025 13:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0535B1369B6
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739626182; cv=none; b=MZvZkcgs0PEA5nbDrLMuZcnR7ZqiEMse+WoB0yBtVDHjGBxEQWeY2oO3pN740KTIgX2URU7YUSc+0ub9SH9XuBkE0Fv33U6Y/75dtzIazZpeBiyQ5jaeXPc1DGXwkeZaZXxeVOaNxiD8BBVwQXuCvXbs+8vw7UJ52k+N1E05uOc=
+	t=1739626500; cv=none; b=cVNf/S/2Qig6v5jirCtn5/7fLYGlIGAxWwCbsUwochuGZLS952/D83FdyCzBBrxMYumqqWZhqtKHVTVk9NTMG0cZ8Rg8Vcz1DubMNYKqBESSZK+GVVPaNvCrUSeEaggJw1e95GvHrN9aFbqtafrByYK+SUbLKYkNptd3466jEvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739626182; c=relaxed/simple;
-	bh=v07NLwnORgC/H0e++oVg4DTMt03GjGLqNa/Cm3BNWRA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Dk0ac56FhqkZD+Lad8oFmRuDYoQila2yp1Ga9NXc6ePuuXgtW42BngOlOvaIsB9j9MT0fOLxgI4VXsidpB0FgXtm9P93gc22q0Z+F13EUsT255f9JNC4WainZTtOp4QGubytPJvA4yuO9Yn8ETQfTwpCNVTvAbgDk0fXzFKPQeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb0Pa/AE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6B3C4CEE6;
-	Sat, 15 Feb 2025 13:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739626180;
-	bh=v07NLwnORgC/H0e++oVg4DTMt03GjGLqNa/Cm3BNWRA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Hb0Pa/AE/uEFOEjiqZQqXCQIC6iezuOQhOzemPZ8XUsa5o4VY+JOmYPsL3Sm8DIh0
-	 13vDy57PVgWJ6X+DD+cWu8y518LiatTqdJOWgr/KZKNRM5jCcITxRFGzU2ch5+agCO
-	 SAlNCYI6yJjmpRCS5hE43b3jfFSDbyeYmH0mp5Ps0wmioKjbnhMpBYatTjYXN9vm6F
-	 Sk8hoQ2ZJw9xRD3Gff1tY95k19SjFLW9syR2qKbIfv7bAiCHkhQrXtnqW9wP5yyfAr
-	 ACPenKhj8hhU/XVkkA1RX0UYniYSkGvjfIBMW8WVmj+szM57d3EEVQyLiVzDh7wMIq
-	 9ZAlGsSAoV18A==
-Date: Sat, 15 Feb 2025 07:29:39 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739626500; c=relaxed/simple;
+	bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=maUcSN9349uIJkv8K3Ztar9ICctpyhhv0uJ56NQCkat96jy6JwgcjXBB06QWtxA/oCK1qgctkGpjRc4A7/2n/DX54vHCNYdbB+qml6XORHNlCYe8xglZ/MAhp+l2RLrtGSTNsYs8u+1QQi4GTyVYbyzU5FvFiFQF0XJ2Hk4SUe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWKm4jZD; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30613802a6bso30273431fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739626496; x=1740231296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
+        b=MWKm4jZDPa4nf2j65T2ok/KQMmAYqvddr3AMrAJO4DWuKR7woYpqtk82Rrq5McgqVu
+         rRFEr0iuZ6gh8P0pR6Vrj5evLXkkN7jEkCNdizqzRvIsz5BRVztfPeoCDqjmhAJuyRGJ
+         q85/az16rNR8I++tQKgszVMBs4TZa+OWlY9+5GxmfNpx7nHMoC3yLAJEPqsfWk2Yawfp
+         JBRm3Ie1K7NA9oGpB3IjvInieHS2HaEaGdxCJw+tzC8Z6wLzMMGeS0FhtjDIUQuEH2hu
+         0d203Fqxz/XLPqx1HEekVGaGYpWhh8nFvpOAhMzEtpO+ygFW18abzaAwmhG7lSavMUol
+         32PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739626496; x=1740231296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qtISEi3VWWpCQFwIz4erk8DnBh5MPj5P2UoKg+Kghd4=;
+        b=AnuYr7/TrIowK+YWI48w1kaFVoEin6G30wVkjlqQVg9NmoMuCUr716rmlIm7iPyoff
+         da5AjauxluboYDXqr4bGRhuRMExMSJ4g7G55ra438w/jf28DB2mNae+P6trA8Ml6r7rx
+         eqlUWNyMARmDvivDelBO1sxqCxEIoxFa6AvYvAfixOXRv+CR7WNZynDDzlTFdo7R/l6X
+         vruXhU/dNIlJwNyMXtNb4R2qU3ikGqpaO6dIhJ9nDPDS9dy1Lmn8tDbI3pqfervnhyJn
+         Tdd2rdBv9QAAKIr2mCmMgBAAAPKjMttoPQsEHdZGyFv9aq7xTuXIasJf7hz1UVgFQZYr
+         3jSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkD+1fradPpbOA9oCIFyKfZ6ZdP+vriGJJ9ZHhkX8XHnfyt/eayunvitUIuCiaOTrnepL+t7MGvkpxYlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9aLd7F3T0r53jfvJl06gnmSQw9NO1e4nypc+0hlPN6Bhp84No
+	4K5ytvvWVdlXUZkhRMkziuCfKpzknCYi6T4NsSYLOd4oO9KhZ7AZXnJX5nJxUcLMY3iZSy9HxQc
+	8jOh953uNcrkoeIO9dKvcbuY8KPo=
+X-Gm-Gg: ASbGncuPmjhvIlj2MTgVaVmhKg8C6gEAklIW766JLpXChxxY072RtY49J9Omrz78lcf
+	9thO5bs6e62GPudNiIdcx9EQ8pcUzkl/O0VFoDZgjcIIckdph9fzwpCzxS9ErEFVoVhg7JtRF
+X-Google-Smtp-Source: AGHT+IFkHwrDrRt0v3rd10LeQLiumvR8TIbe+AmPA9arbLlMXfcqEz8MruliZZoJuyuyz3DILPXeMOp8rIAD30/IGqU=
+X-Received: by 2002:a2e:87ca:0:b0:309:2012:cc59 with SMTP id
+ 38308e7fff4ca-30927ad5181mr10239421fa.26.1739626495747; Sat, 15 Feb 2025
+ 05:34:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- linux-phy@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com>
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <173962617803.765517.17948286888997426214.robh@kernel.org>
-Subject: Re: [PATCH v1 2/4] dt-bindings: phy: add
- samsung,exynos2200-usbcon-phy schema file
+References: <20250214175709.76029-1-ryncsn@gmail.com> <Z7BsL2v6+oweqWE4@MiWiFi-R3L-srv>
+In-Reply-To: <Z7BsL2v6+oweqWE4@MiWiFi-R3L-srv>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Sat, 15 Feb 2025 21:34:39 +0800
+X-Gm-Features: AWEUYZncoCkFOJoAvMT12FkOeKGzmq1T0gZdXeu6E3ZvgiV4Ma_hq-Uj00l-Mmk
+Message-ID: <CAMgjq7DUdcbRdYLtFF7_VaBkzY4=VQXsRtDg_xhqTyBLmtMG9w@mail.gmail.com>
+Subject: Re: [PATCH 0/7] mm, swap: remove swap slot cache
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
+	Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Kalesh Singh <kaleshsingh@google.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Feb 15, 2025 at 6:28=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
+>
+> Hi Kairui,
+>
+> On 02/15/25 at 01:57am, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Slot cache was initially introduced by commit 67afa38e012e ("mm/swap:
+> > add cache for swap slots allocation") to reduce the lock contention
+> > of si->lock.
+>
+> Thanks for adding me in CC. While I got failure to apply this series
+> to the latest mainline kernel, could you tell what is the base commit
+> of this pathcset?
+>
+> Thanks
+> Baoquan
+>
 
-On Sat, 15 Feb 2025 14:24:07 +0200, Ivaylo Ivanov wrote:
-> The Exynos2200 SoC has a USB phy controller block that controls the
-> usage of USB phys. Add a dt-binding schema for the new driver.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 70 +++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
-> 
+Hi Baoquan,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+It's based on Andrews's mm-unstable here:
+git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250215122409.162810-3-ivo.ivanov.ivanov1@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+I've just re-checked, there should be no conflict. Sorry I didn't
+include this info in the cover letter, mm development is rapid so
+usually I send patch based on mm-unstable.
 
