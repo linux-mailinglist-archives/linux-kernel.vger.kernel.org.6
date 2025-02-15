@@ -1,276 +1,193 @@
-Return-Path: <linux-kernel+bounces-516184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACD0A36DD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:48:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40E7A36DD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAE716C830
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:48:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A38A3AE727
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC731AAA1E;
-	Sat, 15 Feb 2025 11:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757AC1C6FE4;
+	Sat, 15 Feb 2025 11:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IktJ9JCI"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFR6ykqh"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFB81A2547
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 11:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF141B4F0E
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739620082; cv=none; b=MN5vfeNR6O5R55L/00YFAVjkHp5Fo1fmM8bc3K6OnMegiNE8Tp/7BE1roBCLNTRzyBz2KIoCxCRQO0SK7NVcBGJwD76EL8fU80A0TGDzAETIurYuFf1wB3P1zy4zwlviFpnOxgxmwXVmOwqxsL3iaEVryybtCkz1lHFq6CGPeN0=
+	t=1739620087; cv=none; b=b4R0Qs5i0xuZGA0SDN7N5qMXbNA6D58mZjJF39MEh14mOE0NfS22588Thii6zk/71PRU7qrLg8u7ngnB/jzS4dlsp/z7mtnyEld5+pBP6tkHThHUCLrZN8RaddEC59e70g59FA5ev9qFvYHTP7yqUUPi811mJMPAGCbcfXsb/xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739620082; c=relaxed/simple;
-	bh=Umszq55zr2ydVirX4cX0YyqP04V4YxVqeM14wzK7Gek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PKxBs/nbgaF628qw3WqunFgSz09r1Plq6Z5WQHnubL9ZjKtDTJunzoJLyIdVWji/uoMLJaWRwnr94+GI7Ll7QLxftpMqVRUoiDBMOYtPqQDfUQzBSlXtfxFlCamfMGARUsvWlgrJC5QRRzsXlRqgYeXhgZl3M9hdEfUOUss6wdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IktJ9JCI; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so5230426a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 03:48:00 -0800 (PST)
+	s=arc-20240116; t=1739620087; c=relaxed/simple;
+	bh=9heQ1zUiZ05X1o9WKtbn8WbBRXPHecr6FUoihk1IyNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GqunAzwrNmuOLLdZQSx+1UW3jDewlDKJR+XD8JQZ2JU2DE1L7Fx04ZobxH/YwDlmxdlkZpjmEIJNvhsuLF69wgn1jK0EfcqXlNxdW79ki1RiH4lM/YaafTiGzUf6evWdo4NUXZgbl6oTwwDuLjIPp2SJtPwOK5AOdv0z8rov3vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFR6ykqh; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso19272335e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 03:48:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739620079; x=1740224879; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Umszq55zr2ydVirX4cX0YyqP04V4YxVqeM14wzK7Gek=;
-        b=IktJ9JCIzy9T3ShdP5JlhZaBPQaJGRse529IeM8mgNUSuATZ7oyaU7BhkhZdU7YFK2
-         OtkehAtbEP8QUiu2XcUArCrdwzxqyoHmxIiIkZ7xUt3bLQ3lLgcAiMjslpodnhGhxVTc
-         mrrzaJlSWeIaB+Welo+GA7JwFH9f45t6zRlSsV8kkPCsurWd1v08AeV3C9Ev5IujrJM8
-         USThTGsB+7g/ZTvGtWjpEmtXIKxMK020hp74at2hn7heAPnZuXbwInOOqKM2QEmlKl6J
-         sax2vv4HCRtmzfkrhr7dDGjtnctFfdTdskNjHRaY9CGMkvOi9QR5TjRADhukR3PY9y+/
-         2k/w==
+        d=gmail.com; s=20230601; t=1739620084; x=1740224884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aQ/7+76o2RkF0Tl1UnQ8iR0C7JbSGtAyttTSJZXazLM=;
+        b=WFR6ykqh45DSoHZbtkQq09+Ojga0No5DNMs8N86y0t/UAN6eGwmXAKq27soouddlzW
+         XGrlcEqNihWa+mwNV7+j6jf3Na5EBdD0AE87TrdjttRcBP9RsJkyhXWf+IsKeBSx5iHz
+         RxfcdMJbSEcMgTFH/VD3SeeEgGq4mlVHgZW1k1KyoSUSdzZKdmgwYmmu47nRLc4Ueune
+         4gHDmvV56AgW+iOHk7yBmjgTa6/zgegXTYXPnHB0QD/qTe9M95o9eDWwNLhYP0Hq2IFO
+         T3+5S4i9hoZZOFJKMm7LD0/nB6Z0+rqaDutQv6TQ3lWtyGuv3xoQ+BZmascZEnmGoGci
+         6Kww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739620079; x=1740224879;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Umszq55zr2ydVirX4cX0YyqP04V4YxVqeM14wzK7Gek=;
-        b=L9YRIasoRHQwx6IULn32jcQikrvUH3Jn9+pgVctitLrKPykg8IpQSwpXj1e5RDjTl9
-         tb4nIXXRQgmVQ5aIpFvkC5By6hX1gbWHnqDF2+NWTGIEUub/eKSRh13bdZjmyCAD9ohQ
-         +P/nSchZN+coy+RagVUNkM27ic85OZsNoI03gRxBXxPnSmc5M9psTvvmYKvZiDUeJE43
-         Bgq6GI3IMgWkXRth2Y6fcZE9NqpNRNUxHiTRWPADAdWLjOk3puv8xCdM0l460wKHYIUc
-         shZELHszinbSY8vPtGRuTx1+OjRoNwSoxNWmH86kgASc4L+jTPaWxN4zky9DOKL2r/VF
-         tjkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPx6cVqkK4yTn8MY1K22tzgo+0zspNxAc2w1LsCFvw09l2fvlUufqgI2SDIUMMAsGZ0EybprJgvmATkgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvwSDzbHjKXky7kFxmOO3YP1odmnZMkqIYdceWNRtPzsuwsWLg
-	UKk1Uwf4bpsdWfpyyGkQC0q91QGCNNUu1ee3cx6tzs2939opC7gnxr6yAUEGf7Y=
-X-Gm-Gg: ASbGncvm5kYyeANwmFc1UAVr304jrBUwqKY4G7Kx4Pf9hpxWm8kdYPzqEM16r3CsPdW
-	FA15EQE8s1MmEEtODY+d1ykrGtOofdAgdA5NLizEhA6bt7eXoyneECLCoBnhRLfXTkXR6SvBvAs
-	SZk1D0wMK47qG2y/cg+eQLrr1gI5wxIc7CeX+PYEsHBTXJLu6f9QEfz1hKsGL5GjkWU0DZO0ou7
-	VG7zp4j2P8SeB8e64TbRmu2ggQu0HtRQ+7zAu58A2NJUphPHFnBV/OxovTCkhZtmjRm4QIvbBkH
-	GLzAKAsHX+m4FN1Tcc5Z4xvckw//k1iY3jCXqGkbM39a/sya69x4JRmTpsvWRBgaYqUoxL4KVJa
-	GqdNbdv79smZExusiMWPsRdj9pZdvXOebROrdYg==
-X-Google-Smtp-Source: AGHT+IEd2I18feoKFQrCBvveQW06kMqwctHtNYSHriGkIrfLXSIhQudwBxTKqAj1/APg/uw8ipTAyw==
-X-Received: by 2002:a17:907:60d6:b0:aa6:84c3:70e2 with SMTP id a640c23a62f3a-abb70b65bbamr251214966b.20.1739620079016;
-        Sat, 15 Feb 2025 03:47:59 -0800 (PST)
-Received: from ?IPV6:2003:e5:8714:500:2aea:6ec9:1d88:c1ef? (p200300e5871405002aea6ec91d88c1ef.dip0.t-ipconnect.de. [2003:e5:8714:500:2aea:6ec9:1d88:c1ef])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53376ba4sm519803966b.106.2025.02.15.03.47.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Feb 2025 03:47:58 -0800 (PST)
-Message-ID: <6d7ed6bf-f8ad-438a-a368-724055b4f04c@suse.com>
-Date: Sat, 15 Feb 2025 12:47:57 +0100
+        d=1e100.net; s=20230601; t=1739620084; x=1740224884;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aQ/7+76o2RkF0Tl1UnQ8iR0C7JbSGtAyttTSJZXazLM=;
+        b=a5R2HQTOc1FdluPJ9TTrBcVGKqpG6DW8yMX2LLPl1I3jQViBxNFngVRv4QPYTkP+aI
+         XsRgPe/n/16F/wqDdlk4lWSRIfU34zq9xGjYIYEe8cxTaiUNAuyeCIJYvG/KXuQh74x6
+         Gy+6IOPplPuvtQJ6p487Qxb6M+6o9QhmqSjITf8vi9Z8dBConKh/I4jcBSrGm+3Aek6A
+         5f4gKK6VmkOunf4teU76ULcYaAlIDXsvocOg4sNbzaKzTaxuurVGM2EMiXE5dwAsugd9
+         0ftNtnamLQ9hTqqHoP8Iph+YWAb7u1AVU6+al7RQ0iuL2+tyYRxqKLpf64/4L4vAjxhq
+         /SJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxCNVfMMCKXlLYg8Xa5Z0J28suSy6q9jm7Ok5omRjFi6wJB+pFe0nhWBSP5i3SkbUixkjwPqVt5DIW7C8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd5vnTqRm4ES8bX6UJc5m3+dRJDnNho6vu2zaFZGxAUFCWpJga
+	ko6M6EFgV1SQikzqEI56eTPNwj66Nj1plSU0jxi0ojXDuyP4xyx0
+X-Gm-Gg: ASbGncuMoSxACQXUvngj5w3OMXCJJT9F4ZOgw9tvRztzR0nO67nmH8ErWsYa2QU0/on
+	fwjXAShih7qW9GPIJVfeVwb8REIP2fPFJmo2EjUvX8eaoltuFGIPalV8vP10KnIfnsD+iNicK46
+	ZjCKwWi7linX0/8+5JtTRS65MZ4p+BJ4iFevZqmA8HLqz/9yJ9G9XWitnqvnvowM79+vnFdMTub
+	yHSWWD4ZTeTv7EdcHPzLOdYv+dBVjsdhx+BV8uYRkUOdn/yOR9GjlYsEv9iQSqqONl0CTBbdMDJ
+	UInM2CfRf5sC3eMed1XO6ja/8L3zfDBzbNXm5FBKOmypDxvjCv4Bxw==
+X-Google-Smtp-Source: AGHT+IG9wAuFKj8al+/9GVnUsbtRcAxewKh3xIAG7tudThRlYZibB8RpchKc8FmJB8sL1EQNhWvqTg==
+X-Received: by 2002:a05:600c:4711:b0:434:a315:19c with SMTP id 5b1f17b1804b1-4396e6ab01dmr31632435e9.3.1739620083758;
+        Sat, 15 Feb 2025 03:48:03 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439618262d3sm68067885e9.22.2025.02.15.03.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 03:48:03 -0800 (PST)
+Date: Sat, 15 Feb 2025 11:48:00 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Alex Lanzano <lanzano.alex@gmail.com>
+Cc: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Noralf =?UTF-8?B?VHI=?=
+ =?UTF-8?B?w7hubmVz?= <noralf@tronnes.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] drm/repaper: fix integer overflows in repeat functions
+Message-ID: <20250215114800.5c8d8d2b@pumpkin>
+In-Reply-To: <cx4efp5kx3hahymdtgrjwu64373du4vg2v7errm3t34exrgezn@weo6exjuq2fu>
+References: <20250116134801.22067-1-n.zhandarovich@fintech.ru>
+	<ejsf4dwcyg7j4wdpdtbs56lbwokzlq65fxn2gxio4l5xg6di2r@pmnpafv3nwxz>
+	<20250214132910.2611f9cd@pumpkin>
+	<cx4efp5kx3hahymdtgrjwu64373du4vg2v7errm3t34exrgezn@weo6exjuq2fu>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add alignment
- check for dma buffers") when booting with Xen and mpt3sas_cm0 _scsih_probe
- failures
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Salvatore Bonaccorso <carnil@debian.org>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Sasha Levin <sashal@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
- =?UTF-8?Q?Radoslav_Bod=C3=B3?= <radoslav.bodo@igalileo.cz>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
- <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
- <Z6ukbNnyQVdw4kh0@eldamar.lan>
- <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------M6dSzVte7Sge1sXbnK1kLBUp"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------M6dSzVte7Sge1sXbnK1kLBUp
-Content-Type: multipart/mixed; boundary="------------iXeq0RGQhNDOwEfzNcf5fCRi";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Salvatore Bonaccorso <carnil@debian.org>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Sasha Levin <sashal@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
- =?UTF-8?Q?Radoslav_Bod=C3=B3?= <radoslav.bodo@igalileo.cz>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Message-ID: <6d7ed6bf-f8ad-438a-a368-724055b4f04c@suse.com>
-Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add alignment
- check for dma buffers") when booting with Xen and mpt3sas_cm0 _scsih_probe
- failures
-References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
- <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
- <Z6ukbNnyQVdw4kh0@eldamar.lan>
- <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
-In-Reply-To: <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
+On Fri, 14 Feb 2025 20:02:01 -0500
+Alex Lanzano <lanzano.alex@gmail.com> wrote:
 
---------------iXeq0RGQhNDOwEfzNcf5fCRi
-Content-Type: multipart/mixed; boundary="------------6L5YPKZE0gGGfK25ofOIoDda"
+> On Fri, Feb 14, 2025 at 01:29:10PM +0000, David Laight wrote:
+> > On Thu, 13 Feb 2025 20:54:59 -0500
+> > Alex Lanzano <lanzano.alex@gmail.com> wrote:
+> >   
+> > > On Thu, Jan 16, 2025 at 05:48:01AM -0800, Nikita Zhandarovich wrote:  
+> > > > There are conditions, albeit somewhat unlikely, under which right hand
+> > > > expressions, calculating the end of time period in functions like
+> > > > repaper_frame_fixed_repeat(), may overflow.
+> > > > 
+> > > > For instance, if 'factor10x' in repaper_get_temperature() is high
+> > > > enough (170), as is 'epd->stage_time' in repaper_probe(), then the
+> > > > resulting value of 'end' will not fit in unsigned int expression.
+> > > > 
+> > > > Mitigate this by casting 'epd->factored_stage_time' to wider type before
+> > > > any multiplication is done.
+> > > > 
+> > > > Found by Linux Verification Center (linuxtesting.org) with static
+> > > > analysis tool SVACE.
+> > > > 
+> > > > Fixes: 3589211e9b03 ("drm/tinydrm: Add RePaper e-ink driver")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> > > > ---
+> > > >  drivers/gpu/drm/tiny/repaper.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/tiny/repaper.c b/drivers/gpu/drm/tiny/repaper.c
+> > > > index 77944eb17b3c..d76c0e8e05f5 100644
+> > > > --- a/drivers/gpu/drm/tiny/repaper.c
+> > > > +++ b/drivers/gpu/drm/tiny/repaper.c
+> > > > @@ -456,7 +456,7 @@ static void repaper_frame_fixed_repeat(struct repaper_epd *epd, u8 fixed_value,
+> > > >  				       enum repaper_stage stage)
+> > > >  {
+> > > >  	u64 start = local_clock();
+> > > > -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
+> > > > +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
+> > > >  
+> > > >  	do {
+> > > >  		repaper_frame_fixed(epd, fixed_value, stage);
+> > > > @@ -467,7 +467,7 @@ static void repaper_frame_data_repeat(struct repaper_epd *epd, const u8 *image,
+> > > >  				      const u8 *mask, enum repaper_stage stage)
+> > > >  {
+> > > >  	u64 start = local_clock();
+> > > > -	u64 end = start + (epd->factored_stage_time * 1000 * 1000);
+> > > > +	u64 end = start + ((u64)epd->factored_stage_time * 1000 * 1000);
+> > > >  
+> > > >  	do {
+> > > >  		repaper_frame_data(epd, image, mask, stage);    
+> > > 
+> > > It might be best to change the underlying type in the struct instead of
+> > > type casting  
+> > 
+> > That'll just make people think there is a different overflow.  
+> The commit message should describe which overflow this applies to regardless.
+> 
+> > It'd also force the compiler to use a wider multiply.
+> > 
+> > A more subtle approach is to change the type of the first 1000 to 1000ull.
+> >   
+> My reasoning for favoring the type change route is as follows:
+> 
+> 1. I'm not a big fan of using the standard C integer types especially
+> mixing them with the fixed sized kernel integer types for these kinds of
+> overflow scenarios
 
---------------6L5YPKZE0gGGfK25ofOIoDda
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+I'm not sure whether the code is converting seconds to us or ms to ns.
+But in either case 32bit is plenty for the configured timeout.
+Whether that is 'unsigned int' or 'u32' doesn't really matter.
+If you change the type to u64 someone is going to decide that the
+multiply needs an overflow check.
 
-T24gMTIuMDIuMjUgMTY6MTIsIEhhcnNoaXQgTW9nYWxhcGFsbGkgd3JvdGU6DQo+IEhpIFNh
-bHZhdG9yZSwNCj4gDQo+IE9uIDEyLzAyLzI1IDAwOjU2LCBTYWx2YXRvcmUgQm9uYWNjb3Jz
-byB3cm90ZToNCj4+IEhpIEhhcnNoaXQsDQo+Pg0KPj4gT24gU3VuLCBGZWIgMDksIDIwMjUg
-YXQgMDE6NDU6MzhBTSArMDUzMCwgSGFyc2hpdCBNb2dhbGFwYWxsaSB3cm90ZToNCj4+PiBI
-aSBTYWx2YXRvcmUsDQo+Pj4NCj4+PiBPbiAwOC8wMi8yNSAyMToyNiwgU2FsdmF0b3JlIEJv
-bmFjY29yc28gd3JvdGU6DQo+Pj4+IEhpIEp1ZXJnZW4sIGhpIGFsbCwNCj4+Pj4NCj4+Pj4g
-UmFkb3NsYXYgQm9kw7MgcmVwb3J0ZWQgaW4gRGViaWFuIGFuIGlzc3VlIGFmdGVyIHVwZGF0
-aW5nIG91ciBrZXJuZWwNCj4+Pj4gZnJvbSA2LjEuMTEyIHRvIDYuMS4xMTUuIEhpcyByZXBv
-cnQgaW4gZnVsbCBpcyBhdDoNCj4+Pj4NCj4+Pj4gaHR0cHM6Ly9idWdzLmRlYmlhbi5vcmcv
-MTA4ODE1OQ0KPj4+Pg0KPj4+DQo+Pj4gTm90ZToNCj4+PiBXZSBoYXZlIHNlZW4gdGhpcyBv
-biA1LjQueSBrZXJuZWw6IE1vcmUgZGV0YWlscyBoZXJlOg0KPj4+IGh0dHBzOi8vbG9yZS5r
-ZXJuZWwub3JnL2FsbC85ZGQ5MWY2ZS0xYzY2LTQ5NjEtOTk0ZS1kYmRhODdkNjlkYWRAb3Jh
-Y2xlLmNvbS8NCj4+DQo+PiBUaGFua3MgZm9yIHRoZSBwb2ludGVyLCBzbyBsb29raW5nIGF0
-IHRoYXQgdGhyZWFkIEkgc3VzcGVjdCB0aGUgdGhyZWUNCj4+IHJlZmVyZW5jZWQgYnVncyBp
-biBEZWJpYW4gYXJlIGluIHRoZSBlbmQgYWxsIHJlbGVhdGVkLiBXZSBoYXZlIG9uZSBhcw0K
-Pj4gd2VsbCByZWxhdGluZyB0byB0aGUgbWVnYXNhc19zYXMgZHJpdmVyLCB0aGlzIG9uZSBm
-b3IgdGhlIG1wdDNzYXMNCj4+IGRyaXZlciBhbmQgb25lIGZvciB0aGUgaTQwZSBkcml2ZXIp
-Lg0KPj4NCj4+IEFGQUlDUywgdGhlcmUgaXMgbm90IHlldCBhIHBhdGNoIHdoaWNoIGhhcyBs
-YW5kZWQgdXBzdHJlYW0gd2hpY2ggSSBjYW4NCj4+IHJlZGlyZWN0IHRvIGEgYWZmZWN0ZWQg
-dXNlciB0byB0ZXN0Pw0KPj4NCj4gDQo+IEtvbnJhZCBwb2ludGVkIG1lIGF0IHRoaXMgdGhy
-ZWFkOiBodHRwczovL2xvcmUua2VybmVsLm9yZy8gDQo+IGFsbC8yMDI1MDIxMTEyMDQzMi4y
-OTQ5My0xLWpncm9zc0BzdXNlLmNvbS8NCj4gDQo+IFRoaXMgaGFzIHNvbWUgZml4ZXMsIGJ1
-dCBub3QgbGFuZGVkIHVwc3RyZWFtIHlldC4NCg0KUGF0Y2hlcyBhcmUgdXBzdHJlYW0gbm93
-LiBJbiBjYXNlIHlvdSBzdGlsbCBleHBlcmllbmNlIGFueSBwcm9ibGVtcywgcGxlYXNlDQpz
-cGVhayB1cC4NCg0KDQpKdWVyZ2VuDQo=
---------------6L5YPKZE0gGGfK25ofOIoDda
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+OTOH use of 'unsigned long' is often an 'accident waiting to happen'.
+There are far too many of them used for clock frequencies and similar.
+I'm sure 'long' has been used because of worries that 'int' might be 16bit.
+Even when Linux was started that was never going to be true.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+	David
 
-xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjri
-oyspZKOBycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2
-kaV2KL9650I1SJvedYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i
-1TXkH09XSSI8mEQ/ouNcMvIJNwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/B
-BLUVbDa4+gmzDC9ezlZkTZG2t14zWPvxXP3FAp2pkW0xqG7/377qptDmrk42GlSK
-N4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEBAAHNHEp1ZXJnZW4gR3Jvc3Mg
-PGpnQHBmdXBmLm5ldD7CwHkEEwECACMFAlOMcBYCGwMHCwkIBwMCAQYVCAIJCgsE
-FgIDAQIeAQIXgAAKCRCw3p3WKL8TL0KdB/93FcIZ3GCNwFU0u3EjNbNjmXBKDY4F
-UGNQH2lvWAUy+dnyThpwdtF/jQ6j9RwE8VP0+NXcYpGJDWlNb9/JmYqLiX2Q3Tye
-vpB0CA3dbBQp0OW0fgCetToGIQrg0MbD1C/sEOv8Mr4NAfbauXjZlvTj30H2jO0u
-+6WGM6nHwbh2l5O8ZiHkH32iaSTfN7Eu5RnNVUJbvoPHZ8SlM4KWm8rG+lIkGurq
-qu5gu8q8ZMKdsdGC4bBxdQKDKHEFExLJK/nRPFmAuGlId1E3fe10v5QL+qHI3EIP
-tyfE7i9Hz6rVwi7lWKgh7pe0ZvatAudZ+JNIlBKptb64FaiIOAWDCx1SzR9KdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+wsB5BBMBAgAjBQJTjHCvAhsDBwsJ
-CAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey/HmQf/RtI7kv5A2PS4
-RF7HoZhPVPogNVbC4YA6lW7DrWf0teC0RR3MzXfy6pJ+7KLgkqMlrAbN/8Dvjoz7
-8X+5vhH/rDLa9BuZQlhFmvcGtCF8eR0T1v0nC/nuAFVGy+67q2DH8As3KPu0344T
-BDpAvr2uYM4tSqxK4DURx5INz4ZZ0WNFHcqsfvlGJALDeE0LhITTd9jLzdDad1pQ
-SToCnLl6SBJZjDOX9QQcyUigZFtCXFst4dlsvddrxyqT1f17+2cFSdu7+ynLmXBK
-7abQ3rwJY8SbRO2iRulogc5vr/RLMMlscDAiDkaFQWLoqHHOdfO9rURssHNN8WkM
-nQfvUewRz80hSnVlcmdlbiBHcm9zcyA8amdyb3NzQG5vdmVsbC5jb20+wsB5BBMB
-AgAjBQJTjHDXAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/
-Ey8PUQf/ehmgCI9jB9hlgexLvgOtf7PJnFOXgMLdBQgBlVPO3/D9R8LtF9DBAFPN
-hlrsfIG/SqICoRCqUcJ96Pn3P7UUinFG/I0ECGF4EvTE1jnDkfJZr6jrbjgyoZHi
-w/4BNwSTL9rWASyLgqlA8u1mf+c2yUwcGhgkRAd1gOwungxcwzwqgljf0N51N5Jf
-VRHRtyfwq/ge+YEkDGcTU6Y0sPOuj4Dyfm8fJzdfHNQsWq3PnczLVELStJNdapwP
-OoE+lotufe3AM2vAEYJ9rTz3Cki4JFUsgLkHFqGZarrPGi1eyQcXeluldO3m91NK
-/1xMI3/+8jbO0tsn1tqSEUGIJi7ox80eSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1
-c2UuZGU+wsB5BBMBAgAjBQJTjHDrAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgEC
-F4AACgkQsN6d1ii/Ey+LhQf9GL45eU5vOowA2u5N3g3OZUEBmDHVVbqMtzwlmNC4
-k9Kx39r5s2vcFl4tXqW7g9/ViXYuiDXb0RfUpZiIUW89siKrkzmQ5dM7wRqzgJpJ
-wK8Bn2MIxAKArekWpiCKvBOB/Cc+3EXE78XdlxLyOi/NrmSGRIov0karw2RzMNOu
-5D+jLRZQd1Sv27AR+IP3I8U4aqnhLpwhK7MEy9oCILlgZ1QZe49kpcumcZKORmzB
-TNh30FVKK1EvmV2xAKDoaEOgQB4iFQLhJCdP1I5aSgM5IVFdn7v5YgEYuJYx37Io
-N1EblHI//x/e2AaIHpzK5h88NEawQsaNRpNSrcfbFmAg987ATQRTjHAWAQgAyzH6
-AOODMBjgfWE9VeCgsrwH3exNAU32gLq2xvjpWnHIs98ndPUDpnoxWQugJ6MpMncr
-0xSwFmHEgnSEjK/PAjppgmyc57BwKII3sV4on+gDVFJR6Y8ZRwgnBC5mVM6JjQ5x
-Dk8WRXljExRfUX9pNhdE5eBOZJrDRoLUmmjDtKzWaDhIg/+1Hzz93X4fCQkNVbVF
-LELU9bMaLPBG/x5q4iYZ2k2ex6d47YE1ZFdMm6YBYMOljGkZKwYde5ldM9mo45mm
-we0icXKLkpEdIXKTZeKDO+Hdv1aqFuAcccTg9RXDQjmwhC3yEmrmcfl0+rPghO0I
-v3OOImwTEe4co3c1mwARAQABwsBfBBgBAgAJBQJTjHAWAhsMAAoJELDendYovxMv
-Q/gH/1ha96vm4P/L+bQpJwrZ/dneZcmEwTbe8YFsw2V/Buv6Z4Mysln3nQK5ZadD
-534CF7TDVft7fC4tU4PONxF5D+/tvgkPfDAfF77zy2AH1vJzQ1fOU8lYFpZXTXIH
-b+559UqvIB8AdgR3SAJGHHt4RKA0F7f5ipYBBrC6cyXJyyoprT10EMvU8VGiwXvT
-yJz3fjoYsdFzpWPlJEBRMedCot60g5dmbdrZ5DWClAr0yau47zpWj3enf1tLWaqc
-suylWsviuGjKGw7KHQd3bxALOknAp4dN3QwBYCKuZ7AddY9yjynVaD5X7nF9nO5B
-jR/i1DG86lem3iBDXzXsZDn8R3/CwO0EGAEIACAWIQSFEmdy6PYElKXQl/ew3p3W
-KL8TLwUCWt3w0AIbAgCBCRCw3p3WKL8TL3YgBBkWCAAdFiEEUy2wekH2OPMeOLge
-gFxhu0/YY74FAlrd8NAACgkQgFxhu0/YY75NiwD/fQf/RXpyv9ZX4n8UJrKDq422
-bcwkujisT6jix2mOOwYBAKiip9+mAD6W5NPXdhk1XraECcIspcf2ff5kCAlG0DIN
-aTUH/RIwNWzXDG58yQoLdD/UPcFgi8GWtNUp0Fhc/GeBxGipXYnvuWxwS+Qs1Qay
-7/Nbal/v4/eZZaWs8wl2VtrHTS96/IF6q2o0qMey0dq2AxnZbQIULiEndgR625EF
-RFg+IbO4ldSkB3trsF2ypYLij4ZObm2casLIP7iB8NKmQ5PndL8Y07TtiQ+Sb/wn
-g4GgV+BJoKdDWLPCAlCMilwbZ88Ijb+HF/aipc9hsqvW/hnXC2GajJSAY3Qs9Mib
-4Hm91jzbAjmp7243pQ4bJMfYHemFFBRaoLC7ayqQjcsttN2ufINlqLFPZPR/i3IX
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+> 
+> 2. It would remove the chances of this field causing the same overflow
+> issues in future development
+> 
+> > Personally I like to see the units on variables containing times (x_s, _ms, _ns)
+> > since it makes off-by-1000 errors less likely and you can more easily tell
+> > whether overflow if likely.  
+> Agreed but this is out of scope of this patch
+> 
+> Best regards,
+> Alex
 
---------------6L5YPKZE0gGGfK25ofOIoDda--
-
---------------iXeq0RGQhNDOwEfzNcf5fCRi--
-
---------------M6dSzVte7Sge1sXbnK1kLBUp
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmewfu0FAwAAAAAACgkQsN6d1ii/Ey9q
-0Qf9HEPbsPcWoNpqW2D+wTQzWKLNPrmwEQRVmqxEzmP2+4hdRVEWrOXhE+0xmzmwC9HhULjztS3T
-cHcWMc4QJqSEF2qv+BGmX5TpTklaA0vuGODL0t9uMTpeFAw2reWvLwB8b3hHmuSzUVTYH+jOAtDI
-5wstz24Kt66fqmAKukyV5Om36DKwlydO0XCbYsHVa+iIa5AAPJlpuGJy5YIWGP69JLDn51u+Y/Rq
-mAaQOk/6J+K5Is2IQWGpW7AuCeuqWpRubWkwgUmJzFKtLxlwgiFXyP6t1bJjMALUbXplgxr8yH8s
-LVhtzCQlJ2dTve7vu82lOeoTnUrEbvF4odA+HqqvEQ==
-=ODhc
------END PGP SIGNATURE-----
-
---------------M6dSzVte7Sge1sXbnK1kLBUp--
 
