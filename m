@@ -1,179 +1,148 @@
-Return-Path: <linux-kernel+bounces-516273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D6CA36F03
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:14:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A117DA36F0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88FB3AE36E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7D41706F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A615D1DDA2D;
-	Sat, 15 Feb 2025 15:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF511DE3A0;
+	Sat, 15 Feb 2025 15:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMmU77J4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dg7opRyJ"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84F151991;
-	Sat, 15 Feb 2025 15:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D7A42AA5;
+	Sat, 15 Feb 2025 15:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739632460; cv=none; b=aEyalwC8X23EhVDc+93IBZJQ9bmiIs1m9pFmWQ1ZkCFtQxTL9lWtNUHPfrW79q/7dPrMRo0Ij9SDZPcYSlIS2bbDtQAXyT4/UzcjutNrv1pvBmVrH5JRC9iz+B4wQB0YhN/L/HJtBYURrzmdq3jHi0yLDjrQeEnx3GBl3dPbIB8=
+	t=1739632645; cv=none; b=tisg8hjK9gcB2hxeQf3en49+6Ve8cBXTe1aOf2qI1aJCWni+SQCduU+7wI55vAX/R9mtfAQUXz3KhXh7LVH/PL8vpXtYZz/qBfnZOyjHkS1zXuzmZ1T0QhDJaLSuDNjO2g2m6HdCS8WAJQNtysJz1viwoZb11E+/D0qqQmfBij4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739632460; c=relaxed/simple;
-	bh=Amz4dsNmRUOCIwBYNkKa4wXWJQ3S4OliaVZJ52kcn3I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ogFCyv5JZIj8XJqsTxpcqClBk0Wh/h3VYFmJb8iju4gSSWNOG8Q+VU9wAOuMk3LFC+s7M1HF9zGTR4gYyZJrT5ibSCrFKqHepiCzurRbrq6QRSt1DA2uFfl9Ad5AYvvg/iVHLxP1xP/9Eutp8xX4c9h/v3SDD0yw9GxFwkl486U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMmU77J4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E74C4CEDF;
-	Sat, 15 Feb 2025 15:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739632457;
-	bh=Amz4dsNmRUOCIwBYNkKa4wXWJQ3S4OliaVZJ52kcn3I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dMmU77J4yIhuMcA4Pb3zNw8djiccL4EGvgsD+uoZJK4d0C2JpeWOIdPXqErvSDKhH
-	 qIO3QONqk9Fs+gIMB8NFkXArupRGy6UaY2b0CXCS6IFz2Dtr3/sPaG9EWCU2N09tD9
-	 lC+ZwPfY991tgxXGFQUOYa9/oOQTze3uggaAYbmQ6fAf3we4SOiN5sG9EdAqkyhiZE
-	 DkOElc/ZQhMnJ/YerK/UKPNt50GQL2V4XcTQdS7Ebn9qQP2C7H/spQ6NxnGCzp64vt
-	 qI1CLAb7J9YUXo9AselDgMzEP7uIQumwnKea8HoI3Hcj4ATCPyrwO1pYIWpWC42rK7
-	 rq1jgOcFnFgGw==
-Date: Sun, 16 Feb 2025 00:14:13 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH v2] tracing: Do not allow mmap() of persistent ring
- buffer
-Message-Id: <20250216001413.5f2c05d95af12b1f1f01062e@kernel.org>
-In-Reply-To: <20250214115547.0d7287d3@gandalf.local.home>
-References: <20250214115547.0d7287d3@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739632645; c=relaxed/simple;
+	bh=12D54tSqZYYM94NSTY49DMrJ8u9BJDLtE0yKjHfwIoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CKmrR34uE1qJD+jeRQhlhQSahUm1HwJf2FiNGxtWQE8ymNaPeVpjo8JPKV1eW0STTiX96xjPnNSJtkVcSwC23WwT5K9d4abHRAzaStBUo8kUB0Y3nOll+2uugGI85QBhqxwDlyw3+lr//EWKZ+Y0/PuHLrpr5Bt4bg5FCTuJNGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dg7opRyJ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RVHUTIkovelkcVcjpfjCsd7fs8jwD3h1GnA4cAJiVMA=; b=dg7opRyJyzXQS/ijLpY6yVjfse
+	y0xiZSai6ir1hv53xjC04L7tKk7jUwdthNjnu6+3MoZHil9g61/njVIigEWQqplQBwHg4YPCTj69R
+	XVqr2Z8B2+j0RhvgMrVANU81GEWgYuOz6S/FCnQltOY6lUuz53o6cChvNwMU/0XWsP3xAPRlCJVAl
+	0dPikczG5BrOz/p0vm+FIrT4ZtZ7Etf5NCK7RMkCjTZpkYo0SURvtT/JKdYX3Ww9pIHI4FH0o5BIG
+	WW8exkUchA24xaIJ3trqItrV5euoRgM1tiWpFRlb3suc8bysL0NRXjy1geDU6bB4JyrXFvi350FSS
+	TUMvJcMw==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tjJuT-003xbB-B7; Sat, 15 Feb 2025 16:16:55 +0100
+Message-ID: <6632e26d-996c-432e-956f-5be178722e5b@igalia.com>
+Date: Sun, 16 Feb 2025 00:16:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
+ when unit_alloc() fails
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250212084851.150169-1-changwoo@igalia.com>
+ <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
+ <4fd39e4b-f2dc-4b7d-a3be-ec3eae8d592a@igalia.com>
+ <CAADnVQL5dt7_S-zFSh-ps7uPfL2ofYs0vo1fFuFBwiz0=DV2Vw@mail.gmail.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <CAADnVQL5dt7_S-zFSh-ps7uPfL2ofYs0vo1fFuFBwiz0=DV2Vw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 11:55:47 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello,
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When trying to mmap a trace instance buffer that is attached to
-> reserve_mem, it would crash:
-> 
->  BUG: unable to handle page fault for address: ffffe97bd00025c8
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 2862f3067 P4D 2862f3067 PUD 0
->  Oops: Oops: 0000 [#1] PREEMPT_RT SMP PTI
->  CPU: 4 UID: 0 PID: 981 Comm: mmap-rb Not tainted 6.14.0-rc2-test-00003-g7f1a5e3fbf9e-dirty #233
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
->  RIP: 0010:validate_page_before_insert+0x5/0xb0
->  Code: e2 01 89 d0 c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 <48> 8b 46 08 a8 01 75 67 66 90 48 89 f0 8b 50 34 85 d2 74 76 48 89
->  RSP: 0018:ffffb148c2f3f968 EFLAGS: 00010246
->  RAX: ffff9fa5d3322000 RBX: ffff9fa5ccff9c08 RCX: 00000000b879ed29
->  RDX: ffffe97bd00025c0 RSI: ffffe97bd00025c0 RDI: ffff9fa5ccff9c08
->  RBP: ffffb148c2f3f9f0 R08: 0000000000000004 R09: 0000000000000004
->  R10: 0000000000000000 R11: 0000000000000200 R12: 0000000000000000
->  R13: 00007f16a18d5000 R14: ffff9fa5c48db6a8 R15: 0000000000000000
->  FS:  00007f16a1b54740(0000) GS:ffff9fa73df00000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: ffffe97bd00025c8 CR3: 00000001048c6006 CR4: 0000000000172ef0
->  Call Trace:
->   <TASK>
->   ? __die_body.cold+0x19/0x1f
->   ? __die+0x2e/0x40
->   ? page_fault_oops+0x157/0x2b0
->   ? search_module_extables+0x53/0x80
->   ? validate_page_before_insert+0x5/0xb0
->   ? kernelmode_fixup_or_oops.isra.0+0x5f/0x70
->   ? __bad_area_nosemaphore+0x16e/0x1b0
->   ? bad_area_nosemaphore+0x16/0x20
->   ? do_kern_addr_fault+0x77/0x90
->   ? exc_page_fault+0x22b/0x230
->   ? asm_exc_page_fault+0x2b/0x30
->   ? validate_page_before_insert+0x5/0xb0
->   ? vm_insert_pages+0x151/0x400
->   __rb_map_vma+0x21f/0x3f0
->   ring_buffer_map+0x21b/0x2f0
->   tracing_buffers_mmap+0x70/0xd0
->   __mmap_region+0x6f0/0xbd0
->   mmap_region+0x7f/0x130
->   do_mmap+0x475/0x610
->   vm_mmap_pgoff+0xf2/0x1d0
->   ksys_mmap_pgoff+0x166/0x200
->   __x64_sys_mmap+0x37/0x50
->   x64_sys_call+0x1670/0x1d70
->   do_syscall_64+0xbb/0x1d0
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The reason was that the code that maps the ring buffer pages to user space
-> has:
-> 
-> 	page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-> 
-> And uses that in:
-> 
-> 	vm_insert_pages(vma, vma->vm_start, pages, &nr_pages);
-> 
-> But virt_to_page() does not work with vmap()'d memory which is what the
-> persistent ring buffer has. It is rather trivial to allow this, but for
-> now just disable mmap() of instances that have their ring buffer from the
-> reserve_mem option.
-> 
-> If an mmap() is performed on a persistent buffer it will return -ENODEV
-> just like it would if the .mmap field wasn't defined in the
-> file_operations structure.
-> 
+On 25. 2. 15. 12:51, Alexei Starovoitov wrote:
+ > On Fri, Feb 14, 2025 at 1:24 AM Changwoo Min <changwoo@igalia.com> wrote:
+ >>
+ >> Hello Alexei,
+ >>
+ >> Thank you for the comments! I reordered your comments for ease of
+ >> explanation.
+ >>
+ >> On 25. 2. 14. 02:45, Alexei Starovoitov wrote:
+ >>> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min <changwoo@igalia.com> 
+wrote:
+ >>
+ >>> The commit log is too terse to understand what exactly is going on.
+ >>> Pls share the call stack. What is the allocation size?
+ >>> How many do you do in a sequence?
+ >>
+ >> The symptom is that an scx scheduler (scx_lavd) fails to load on
+ >> an ARM64 platform on its first try. The second try succeeds. In
+ >> the failure case, the kernel spits the following messages:
+ >>
+ >> [   27.431380] sched_ext: BPF scheduler "lavd" disabled (runtime error)
+ >> [   27.431396] sched_ext: lavd: ops.init() failed (-12)
+ >> [   27.431401]    scx_ops_enable.isra.0+0x838/0xe48
+ >> [   27.431413]    bpf_scx_reg+0x18/0x30
+ >> [   27.431418]    bpf_struct_ops_link_create+0x144/0x1a0
+ >> [   27.431427]    __sys_bpf+0x1560/0x1f98
+ >> [   27.431433]    __arm64_sys_bpf+0x2c/0x80
+ >> [   27.431439]    do_el0_svc+0x74/0x120
+ >> [   27.431446]    el0_svc+0x80/0xb0
+ >> [   27.431454]    el0t_64_sync_handler+0x120/0x138
+ >> [   27.431460]    el0t_64_sync+0x174/0x178
+ >>
+ >> The ops.init() failed because the 5th bpf_cpumask_create() calls
+ >> failed during the initialization of the BPF scheduler. The exact
+ >> point where bpf_cpumask_create() failed is here [1]. That scx
+ >> scheduler allocates 5 CPU masks to aid its scheduling decision.
+ >
+ > ...
+ >
+ >> In this particular scenario, the IRQ is not disabled. I just
+ >
+ > since irq-s are not disabled the unit_alloc() should have done:
+ >          if (cnt < c->low_watermark)
+ >                  irq_work_raise(c);
+ >
+ > and alloc_bulk() should have started executing after the first
+ > calloc_cpumask(&active_cpumask);
+ > to refill it from 3 to 64
 
-Looks good to me.
+Is there any possibility that irq_work is not scheduled right away on 
+aarch64?
 
-Tested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ >
+ > What is sizeof(struct bpf_cpumask) in your system?
 
-Thanks,
+In my system, sizeof(struct bpf_cpumask) is 1032.
 
-> Cc: stable@vger.kernel.org
-> Fixes: e645535a954ad ("tracing: Add option to use memmapped memory for trace boot instance")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v1: https://lore.kernel.org/20250213180737.061871ae@gandalf.local.home
-> 
-> - Return -ENODEV instead of -EINVAL as that is what is returned when the .mmap
->   field is missing from the file_operations structure.
-> 
->  kernel/trace/trace.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 25ff37aab00f..0e6d517e74e0 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8279,6 +8279,10 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
->  	struct trace_iterator *iter = &info->iter;
->  	int ret = 0;
->  
-> +	/* Currently the boot mapped buffer is not supported for mmap */
-> +	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
-> +		return -ENODEV;
-> +
->  	ret = get_snapshot_map(iter->tr);
->  	if (ret)
->  		return ret;
-> -- 
-> 2.47.2
-> 
+ >
+ > Something doesn't add up. irq_work_queue() should be
+ > instant when irq-s are not disabled.
+ > This is not IRQ_WORK_LAZY.> Are you running PREEMPT_RT ?
 
+No, CONFIG_PREEMPT_RT is not set.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Regards,
+Changwoo Min
 
