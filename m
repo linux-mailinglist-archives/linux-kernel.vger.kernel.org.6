@@ -1,109 +1,90 @@
-Return-Path: <linux-kernel+bounces-516217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59E0A36E46
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87701A36E4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002C93B045E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651DA3B056D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DD01C6FE1;
-	Sat, 15 Feb 2025 12:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797741C84DE;
+	Sat, 15 Feb 2025 13:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="cnZI0DCY"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8tNpDey"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A087B23BB;
-	Sat, 15 Feb 2025 12:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1EB19DF41;
+	Sat, 15 Feb 2025 13:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624390; cv=none; b=RS/sv8khdswtp7hL9cnLuqU8MU3HCk3BSTTzb/4AV3jDn/m67Z+9v36NwPilrkovCJMVVHDVhdwgAEXRDkwCz1CqiKtVMHy2bVlOX6Lm5yr555l6J79TNVIV9zVcJNyMQxBAnVSFVCCUHhlEXC7CniEugg1fCtLtnJnE2BHEE/I=
+	t=1739624420; cv=none; b=BfZdIr8S5vBY5SPp1hybN81bKEUHwvRJ7HmZ4XT+RaD9S6D4geO4dd6pbfK3U2P3maYLAfnpMokVyv5ggOKrkA1k2N/R2YDP5ltT7SU1wWDN7EgPzhTPZFBf4Divo+JGpHBzy7vR5/YQtg8/mYtIOeJg1bfZA13J30NOSX+DqUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624390; c=relaxed/simple;
-	bh=8jQAb/dYuoUScJoKwj2GKJdNAULQX5Y+wNeOURHJANs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rUVZ/7HA6D+Rr2mTMfFAGKDOg3JjzgTeLsY25QgkAR5vt0x8I6V8fjtVNhntHhrTOyGiFBwGUTE60i11yf79X/wq5PfOc+UBFmntqPkmOyoMgSGXtrenv9tpDZlFp35UPNapRBZz3ve0XnXrj2G6DtMx/saAqQ5GexvzTfVH93s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=cnZI0DCY; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1739624340;
-	bh=8jQAb/dYuoUScJoKwj2GKJdNAULQX5Y+wNeOURHJANs=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=cnZI0DCYAghlShLEPVptANHOV27CLqKQlh0HBWHVfVHa16z+scReRl5PHP6wEMcLJ
-	 LhoJzEZxFNEydjAn6AH2tMG4RsjAIfayKHwi+EecA/lbEO9cuYyDXwcJEV4+cN/uCR
-	 eOSlPShrpz15dornjRf6ofvtvhD9YR/Iofs5yuJ0=
-X-QQ-mid: bizesmtpip2t1739624336tov8wgm
-X-QQ-Originating-IP: wBmH7GpDkqmHc20Gc6BCNXbWq1Le3PuTW+x/Q6ZSN9M=
-Received: from smtpclient.apple ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 15 Feb 2025 20:58:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2358419826102758231
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1739624420; c=relaxed/simple;
+	bh=w0pvTueIzTQegjN1z53/vVeHmRIdv6Lu6iiqdN/PLW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QAeH6GT10lJr/cDaQGtGA4YgefIT8dk0bhMk1HPcPhD0ASHDRSuku2hBOCg0j62VTPwY+iWvMEesJhRKvBi/IM20DVz1OMcE1LlCd2MisZAyu0H3whOvgLZLoxpZKWPFA5pjeuqByr2owak4mZEvd/0THbCasvvC8FIoLorr30c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8tNpDey; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4403EC4CEDF;
+	Sat, 15 Feb 2025 13:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739624420;
+	bh=w0pvTueIzTQegjN1z53/vVeHmRIdv6Lu6iiqdN/PLW0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j8tNpDeyRwGsXOm7OszB7vHJKZvtXlN83ND/q4OhnEPQhvv5brox20QVx7nAlntVg
+	 dMHSA/+eUrexzikHpby6abWi8lv/3WeVx3yUSknl4BVj/LWDlAny4fqAnCXYZDa+F3
+	 PEO9l6vdf07wBIYH0owe105+hcE9SCZL1mC+QLmU4QRaMAfqOkBAjxmqvRJ9YucLcl
+	 ur/NRs8vE2sr3RFW0N7ad0G5gz+SKxCaUHnOunJRUeSut3VblM6gqaL7q1ZPl9rFIR
+	 F0+hnwyVrop03fxTUW+qzeE+D8pam2xcRHPRrajEhTTrYi61hh+dQ2+QC+1Dj9truR
+	 /gOSpgpoBYLzw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307c13298eeso29486661fa.0;
+        Sat, 15 Feb 2025 05:00:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUe4fjQVkVB1UXPhreH2+pcSGlr47L3dqhqiaR32r2nlzOuEo+v/CG9c9nDtNDm4ZzZx5yQeWO4B6/ngpMuWb4=@vger.kernel.org, AJvYcCVQLtVjzpP3fc5hqHH4arC3uPhTm+PboXMzFVxSq0AkWXyQ1mGu7DydIhRqxMpcpws2SY3HMn8UOKWb7xbh@vger.kernel.org, AJvYcCVw2yyaAMK2eXgN+w8WnGPWbJmzi94V5OUkNNdpO9esNQfoGKXJ7RQHllG2a3uZGmkyFnbQjAaa7FT4tAc=@vger.kernel.org, AJvYcCXUEZ+WthbUFX+gHHP6sj72XpIl5ksrUJXNHxthrS5iK39SLQoZgyEzUNP+8FxbRD4Wu2W+ulWPaKmBuCp22Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9dFMoXo0/ymaU3pZLzuL2YNCYUTnQTZRpOgMnqlqO49/3EO8N
+	7Tq0ZRAVe4JjhCLFZGO8QWHlbod6mDHKR26ww1vPqTM1LTGQGUaGnWcJifmtU/bElw78i5f9onK
+	eJymLVEnlJwahvnvzt/kACvxM8k0=
+X-Google-Smtp-Source: AGHT+IFSUPXvnmrMQIyQbKKEJMl6/WzRVPKaodRlZzvePIrXQzTw7tqA3FMC13U3PDsUYyGy56BeFSxbu0i7HoVQkbY=
+X-Received: by 2002:a2e:a3d2:0:b0:308:f53a:ed31 with SMTP id
+ 38308e7fff4ca-309288b1b15mr8653751fa.3.1739624418975; Sat, 15 Feb 2025
+ 05:00:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Bug: soft lockup in exfat_clear_bitmap
-From: Kun Hu <huk23@m.fudan.edu.cn>
-In-Reply-To: <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
-Date: Sat, 15 Feb 2025 20:58:43 +0800
-Cc: "Yuezhang.Mo" <Yuezhang.Mo@sony.com>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>
+MIME-Version: 1.0
+References: <20250203212631.565818-2-samitolvanen@google.com>
+In-Reply-To: <20250203212631.565818-2-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 15 Feb 2025 21:59:42 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARwZ4YO4=w5ESenwNrEiW+_qV7HYNO0VgrWRrog1TSS-A@mail.gmail.com>
+X-Gm-Features: AWEUYZn5I6jeoZtUtSgKhQecrGLZl5Br1Rb7Etl05VSFZmf8WVKA1X0KT6WJmoI
+Message-ID: <CAK7LNARwZ4YO4=w5ESenwNrEiW+_qV7HYNO0VgrWRrog1TSS-A@mail.gmail.com>
+Subject: Re: [PATCH] gendwarfksyms: Add a separate pass to resolve FQNs
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Giuliano Procida <gprocida@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <9267F80E-138A-4707-A3C4-637892DD2828@m.fudan.edu.cn>
-References: <8F76A19F-2EFD-4DD4-A4B1-9F5C644B69EA@m.fudan.edu.cn>
- <04205AC4-F899-4FA0-A7C1-9B1D661EB4EA@m.fudan.edu.cn>
- <CAKYAXd_Zs4r2aX4M0DDQe2oYQaUwKrPq_qoNKj4kBFTSC2ynpg@mail.gmail.com>
- <C2EE930A-5B60-4DB7-861A-3CE836560E94@m.fudan.edu.cn>
- <CAKYAXd-6d2LCWJQkuc8=EdJbHi=gea=orvm_BmXTMXaQ2w8AHg@mail.gmail.com>
- <79CFA11A-DD34-46B4-8425-74B933ADF447@m.fudan.edu.cn>
- <CAKYAXd_ebG4L_mRwCqoGgt9kQ6BxcCf6M5UUJ1djnbMkBLUbgg@mail.gmail.com>
- <CBA1218B-888D-4FB1-A5CF-7B0541B37AA0@m.fudan.edu.cn>
- <CAKYAXd8iNRT+Ff817QTrP-5BERiORx5DcwVzW8wJGbtupcxzKQ@mail.gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OQEcVJ+S+3/DTVz/oBBTlZOOuuIDp2T4Sg8vYkztIAckbqiQx1fGPvjr
-	hModZazeQtVcCMF4vodjNxGec/fanxHyMy33/o402oAGVX4ey9DTj1Nf/mfPfGibAXZ2Kem
-	c0vb7CjDjUPbtd6svyTnMQ4wcbJSZN85g09Y3/44IHp2fc5Pi2oYTKuNq+FPv64OapcSXGZ
-	UYRYHUsWrtQ0dZGrUU+8kcJ8rKYH6rr6cpIFrCHC1kVJh3WalcYQejcXfC434AWIIBKebEe
-	B5I5zaiqvgqeU96AM32Nm+idD9cOnnyQAeEvNkhWCjmPkV999hZ4poipc2wS3DsgZlBMvBF
-	F4YPh9xXdP11lPmyWiWl6TGs7YfGTizPsEgPtHweEfoMI1b/Zh9hFCkEN3HysTKDHp9NSp6
-	G986jNJkFcoYMTQKCp6ewn0hGErV3WZvlALTpIRAnQ1Cle8gI3D9PSPaxeHCY+mB/4+bojh
-	sGO2uGaaak6t7khEX7alSj2jn+KUd8nBvsb2yqu6GN0BfmSic2w+A7JIw+0R+4d355sKuwb
-	l5UhnVCohEY9I0LHIduJOAvrkrgpi0Z4YgQyvjIgIRpzgDrFDT69TPfeRpiTrW0Dl/0Jw4w
-	7pVjhFAHWbkziYSz8/zMwJBT9iFKoTkGXNjck7LcphezA/61kBVsP5koV5X6E8ovmSvpBZJ
-	phZvNv1wnpxZVrlEChUnAuXWzdnIikMMVKiOXxYCTuTt5S8L7tKH9eCNZk4PimPmv7BG2Lp
-	YdxZSUoUtpzhd+UATz/tPIqsvGgrwA6PT2ykfXC8sUnNkW+f3Gt0LlrS2oxOEXW3+45vjH/
-	1f20/gxZQ96LkNm1y3bBLBw1S8PJuhrsxHG90OMwG+o/WQvGYdouCNIyQ8lB7w1Nr+z4y3Y
-	eoGUfcsC9OBWDjIvkHoGPZqgSBYjrk2gn8e+ua2W1FnaLj+TkzOPZsX9NLxfxfTPpEcHurm
-	2DVD918jxIaAwUDL6bDeo+8i1YL7OGbfBqx4Art9QTJRtNO31Zc6qLq1HJ8VAg5jly6/JFf
-	IkCuo02QwpF4LFN8/X75wAPt0A5bM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+
+On Tue, Feb 4, 2025 at 6:26=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
+om> wrote:
+>
+> Using dwarf_getscopes_die to resolve fully-qualified names turns out to
+> be rather slow, and also results in duplicate scopes being processed,
+> which doesn't help. Simply adding an extra pass to resolve names for all
+> DIEs before processing exports is noticeably faster.
 
 
-> The patch for this issue is in the exFAT dev queue. Additionally, I am
-> waiting for a performance improvement patch from Yuezhang. I plan to
-> send a PR along with that patch.
->=20
->=20
+Applied to linux-kbuild. Thanks!
 
-It=E2=80=99s great! Thanks for your time!
-
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94
-Kun=
+--=20
+Best Regards
+Masahiro Yamada
 
