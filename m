@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-516409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89279A370E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF418A370F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07F6A7A3712
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 21:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2F53AFCBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 22:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DC71FC7FC;
-	Sat, 15 Feb 2025 21:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C40F1F4184;
+	Sat, 15 Feb 2025 22:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ix1kiSRe"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANQkPYy3"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D46B170A37;
-	Sat, 15 Feb 2025 21:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739655690; cv=pass; b=J2FGKytuzb+euu1VqHHTax/5iETbl6sXoV9fzVYn+b4ifTVNn5TAZuy/FPgrZcd2YKsyqEbs/DJiTBN87n8+HwngsiFn8BUuAsqUgSGmCpP5mAq6UED6Gp6tjYQy+oUyeXcouekcv5EiIzEKdIeEiaSA85NzRfIL0GTGCvCqXP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739655690; c=relaxed/simple;
-	bh=wNkunTcwZ7tTA1DeZin72+i0UjvFvWDXsnEPq5Terjg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=V+ojkHcNnU6yVs3+oZ0Lq5eflZxaw6VzNgyEM3iP5l7f4DPhStyU0AsVfC0iPkUdQUahiLUS8H3Ls4seqKsOqFsWF8JUrFkLT5sC6ohLiK+Nn7NyDwqDPo63PP1x2N+vJB800WuKrtwwreS2vWnMWecTJoKjfvaHcRbXhtfY6+Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ix1kiSRe; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739655657; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NbX1zk1lg5k6KUKx1JyEb2MC59KZDsQkxUBoxWqsKymk2rMqrc9HN3QeS89/nuKKPvOcawEa3zwXskPqK1VblRyG161w7e8C/3d0JR2A1Q8Pu7YKUOVwETAB0HYdooPeNffgNu/SRputb5Af2db0QBdi/LfOcFwcUdsVvKRznXM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739655657; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wNkunTcwZ7tTA1DeZin72+i0UjvFvWDXsnEPq5Terjg=; 
-	b=nePZuMOi0a0q7a70EOq9QWbMnnNGyjGsRLFkDZxERQYxS0e84YNxJcnULoV9K7dpFkesgBoWMBA/W4ZfsMe6CX+ELGRsmayZUNr/Sdj5OnPoFB4LBSobw00f1wZpFRoTvq7zWwCtLUEKIp3ek7TiQ6c6/hJKadfJxbUukP0AIbY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739655657;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=wNkunTcwZ7tTA1DeZin72+i0UjvFvWDXsnEPq5Terjg=;
-	b=Ix1kiSRebBSiPWqdHJJgvZ6BIc/Q0F6yUFY2Hk/fjFflsGiAgVBZjR17s0R8geOO
-	zF5GMFV72somwG5rfOgROzHgSWKKWhYA3bMe6X8ZiXI6Qi+Ual8W+1FBUYImQsWEI4r
-	2txR+/eMZBLdiEkTMebM/lIDDKimeK9kCZ+Uj7Mk=
-Received: by mx.zohomail.com with SMTPS id 1739655655643285.80977869700473;
-	Sat, 15 Feb 2025 13:40:55 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEEADF59
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 22:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739657471; cv=none; b=OPvsJC19I0OfKhiGrj0Ug2jdnkS44CmLZq7vT+yNxYRujMXfjjEL6htTGPWod4OmmTC8baT2MfO5DHUDVl53/50XzzQvMFH2DGDB3Jjz6RIWSggjUYkT0B7dXail6aXKpQGtL3BhUgnwVoLeTp2KwO0t4TfONnF+xg8Y+xARflM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739657471; c=relaxed/simple;
+	bh=tq4tYuCKHVPUaPS4ZFMSdMUuEVTzbw9gduFxt5d4nyw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MahYO3TV9YGZOkD9OtqPdmcR2W/5IXjxIOgXYNhy3MQb0IWBK+QPqPm8OQGsESQk6wuDpBIVAWpAIyBzCK9Zp8F/a/IrYhog7l4t8aR+AMn5rEAMPYWEYkFP5JVJM7Q78jzI1SnzUd4MAlG1FC6VBUAz/xWNxQUKv4qhiadTz2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANQkPYy3; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5450681b606so3120054e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 14:11:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739657467; x=1740262267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CY5LXGN15DKUHwL6v7Eeasop1ObVi/Ph6DDcrE77SvQ=;
+        b=ANQkPYy3j464I/D6eSim/4+fEcl2awNN6yRoaL/zEJNUV2WFfflDxQ/QavqqTqfHVi
+         BLl/HBMz/jOmhxU67r8Xw8hlIiadHsz5cqKOfPmDiZwLRJIrUVx5yXlrL9MowGKwVMSL
+         nJivlPPt4+aOWe4FTAtMzkNZe07ASIi0QHEYZjFZYfErGpv1sc2n0B3IAFBRAntO7vXe
+         ktpbCUshyoPANjt4nhXSjG788hyBjClxKtfTEhDAiYuarWF1q3c7wh3EKqJZlo8nE/a4
+         6YmJ2b7RFIRvmwcx3nW5xjuw7NZnMywZ6xKwpkL3BdnQuO764W0q2LuHh66cWwYmGE+F
+         wxdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739657467; x=1740262267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CY5LXGN15DKUHwL6v7Eeasop1ObVi/Ph6DDcrE77SvQ=;
+        b=nlFXg2hSOBvLkz50W1KS4B8Sy2lP2swxf3heIdHBfpif1JA5SrIWyWr9Vfa3Ng2+je
+         iDB7WuW5YkDrz2dKt77M0OH3xw2Ju20mZOb+4W7ryJHtyQk6Dc3Yy8DSvPm+ONKexzzO
+         F6cqNb8tkE4EMNEaU1xdGpD2TMeFqU7yYx5XAIuMTxhF88JTfxicFD+pY3U+wCrPwFum
+         SBpKWwAsPjAYxbIR5d93ljopQj5UY278WCCAxJRvbFIK1LOq7PRwweiIPaVmNOSI9hwi
+         nVJZO03jDhtc9QZs/cnXA++a7FHBJcbj+jWtWHZrFr/Q78coVIh/MLtDfM8QwUumHp9u
+         cJIg==
+X-Gm-Message-State: AOJu0YzwyxGkR1ag2XNjqB5uYDN2a54+XqtmWBjB5MrvPcd9AJFCqDNV
+	+3nty5wnFylZFWGmWIGi0dd1Q001ghduZBYQDGSAleTDLtTX2X3MosRlsl0lPsSZ6/WETJCc/5P
+	oTjOVqVpna8dmt+qylxLdhiQ3qA==
+X-Gm-Gg: ASbGncvAKLBH4KhTiscQ5ujNJqJWthQcyeNfeVSPCddu2t/iX1E+nmVjnKSstcmY0tq
+	nTadrOWIHMqGR6EXpGPBn0MlInJFpaviWYWbMqZUNk+jucnZ0OEtlrPkgotlXpN8ubIFIBDpFUL
+	ly/N6lu1v34hY=
+X-Google-Smtp-Source: AGHT+IE9CjmFCU2XPrI35erAS+Alz5jIurnM3UdZUJLero3HrZT13QvVmZNGGEo02QlhmYC64hDgNwze/jvzczoozck=
+X-Received: by 2002:a05:6512:238a:b0:545:2300:924d with SMTP id
+ 2adb3069b0e04-5452fe3f69bmr1563768e87.22.1739657467077; Sat, 15 Feb 2025
+ 14:11:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v11 2/3] rust: add dma coherent allocator abstraction.
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250123104333.1340512-3-abdiel.janulgue@gmail.com>
-Date: Sat, 15 Feb 2025 18:40:37 -0300
-Cc: rust-for-linux@vger.kernel.org,
- dakr@kernel.org,
- robin.murphy@arm.com,
- aliceryhl@google.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+MIME-Version: 1.0
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-9-brgerst@gmail.com>
+ <20250215142714.GFZ7CkQtdXoUM-xKMo@fat_crate.local> <CAMzpN2h05N+KZzpFY6YXZjMViK+_U9gks36mOfRJpSOMY-Xm5A@mail.gmail.com>
+ <20250215211854.GFZ7EEvlYTQ2USmKiW@fat_crate.local>
+In-Reply-To: <20250215211854.GFZ7EEvlYTQ2USmKiW@fat_crate.local>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sat, 15 Feb 2025 17:10:55 -0500
+X-Gm-Features: AWEUYZm2KdxnaLLUoGt1kaLcKKiHCA47Q8gFr8x1y21_z4Iv4FlS5J5LDF0APpI
+Message-ID: <CAMzpN2hTYCB6f1v2RjzCZV_Kx0WjVzE0U1ALhZ-C=Rjya9Puvw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/16] x86/stackprotector/64: Convert to normal percpu variable
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <633274AD-E55C-4A90-AB72-33D3E176176F@collabora.com>
-References: <20250123104333.1340512-1-abdiel.janulgue@gmail.com>
- <20250123104333.1340512-3-abdiel.janulgue@gmail.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
 
-Hi Abdiel
+On Sat, Feb 15, 2025 at 4:19=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
+e:
+>
+> On Sat, Feb 15, 2025 at 12:38:21PM -0500, Brian Gerst wrote:
+> > The convention appears to me to be that all caps are used for global
+> > variables used by the core build scripts and/or exported to
+> > subdirectory makefiles, whereas lower case is for local variables.
+>
+> First time I hear of such a convention:
 
-I noticed that there=E2=80=99s no API to call =
-`dma_set_mask/dma_set_coherent_mask`.
+If you want it changed, please just say so.  I don't care either way.
 
-This should probably be included, i.e.:
 
-```
-By default, the kernel assumes that your device can address 32-bits of =
-DMA addressing.
-For a 64-bit capable device, this needs to be increased, and for a =
-device with limitations,
-it needs to be decreased.
-```
-
-=E2=80=94 Daniel=
+Brian Gerst
 
