@@ -1,274 +1,215 @@
-Return-Path: <linux-kernel+bounces-516370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A3BA37038
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:51:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51330A3703C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF0A1893B05
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:51:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0118D1703F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BC51EDA2C;
-	Sat, 15 Feb 2025 18:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A7E1EDA36;
+	Sat, 15 Feb 2025 18:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkG+eeF3"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcTf1zJS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5F41EA7C3;
-	Sat, 15 Feb 2025 18:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C791EDA13;
+	Sat, 15 Feb 2025 18:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739645479; cv=none; b=BCanBXdbzra4wsO1+/kXeyky3dV2DYI3X12w4FYi6gOl4MRWb1QTKOHoMjPyH3Sfj7tOjoS4KJWTWoNzaY4MoU/n7AGZhAW6jN+ogcQzX2p5Rh6dbCDRoPX0+oSY6KX53+Gqsmv5lBvl+xByJadaNjxhLZIaZY2r+qfIG1+UrsI=
+	t=1739645567; cv=none; b=LCLPYdL+DFsltPS25QLAbsWCQxTgy0OiVUyfRlhKo/pDZMEhsuN++JF9N2w8c9HJQOcPfvJbUSsu3o1tg5vGMFncFrdzKJaMLzMrwkHMPbXJzqyRHJxTb5CF3Ii/20bIQClid3nGt27pai4Rp7Bz6QhJf6/agDdMEJYHQwBaQcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739645479; c=relaxed/simple;
-	bh=VqfAAO+2ewg+TcOxFizGqtH28+ZDnMmepkAm8+hPYl4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=h/NexXk3t5tZoD5FGA9ZeQ3S37GmVNgSwFqPxn06/IQux2J1RcidSXY4ocAeRKRFq16v2BNjm4IUJejOw168BJQ25aKxQoI/IReoAZrXQjqyXrMokH3LVr/z7/BuI3X++8O4nowDprAhkXuwa844CHbpVQrpQ0tHJ8l+EJIRD7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkG+eeF3; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso2382079276.1;
-        Sat, 15 Feb 2025 10:51:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739645477; x=1740250277; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bq/MoOIXpfTdeb4jarHso8EP6qw+0UFsOxxZD4ZjqQU=;
-        b=SkG+eeF3w9soFetfTDnFyDROuNNMel9VMdnungjsgGqRndzSjJpq6ZwAO92PCwFSas
-         +JOZvLlOfkjO3fXeohYDcmhajs/JJt/jOAoJrrksJwu2zUmZLvq1dkYsVbhNnfimtc+y
-         9dczv7PNSgPFpJbLNUNoBe1QdfnUOzfUUJjCF1bA1N2Ku0ssCs6/jMZb4CQoJEtpLPx5
-         qertsZ0ZRcIh394IJiuL2Ok4Aax1YOK8NdySknR/pNQw7qwKdj/eO5mZLkNJs0e7NhYa
-         gEdePUscLzhoGry4cIJxcwQph6rYvN0CeCXbBp/DiYIDEY65tnA7dWvMNkvKlqQ6DMt/
-         7XIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739645477; x=1740250277;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bq/MoOIXpfTdeb4jarHso8EP6qw+0UFsOxxZD4ZjqQU=;
-        b=EQeq/Vh04pdMg6JhGwXDDV1yWKmSdoZRFkXpKVH5Q6ap9mzkfpWG2EgBSq0B3a1IfO
-         02xUnFv9zPtDHoM+rQaStsjHD9rxdy10Jev2/IDRufnemjdxZlxzU1uVsScmb7BIFAPz
-         W63fvCNVdjMy5DWQSBNLwRzV7Ie+HeKxq3/VwLmyXDbCeo37mNTCuRUIp8aayYo0GXpY
-         oSLU0PTNVLU0rcPTmfaiIyC1sEEEnTddQI/gg0B9u1NCXLbXepCInouzgsCc8dp1Wk1K
-         9LJrpzEhRfGVVRWavxT3FGn0JbRn2wWbOCHrfgfbEBOCDMCp8UHavpGESzajZpCHMvuh
-         yGlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN8sRy7w9zR2WkmFsh0Kbjc/g6B3axLksK2tc9V4iUfi3ycMzNxtt3NT1/XPRVrbJ7y+URTE5eIcGm98qBqf53wdJshQ==@vger.kernel.org, AJvYcCVxW5MNppkWBrXchybCrof9ZFdNXaxZephcDXCKnCcCXWwupDiuHVPCTnj9m4gpDiYjPCnchmLHEBXpnhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+n59TlVTJbFGSZa+TflbObuVMamLEv/qHtsgva15AZfgPlLOB
-	awg+INtm80iiptyOFtpAPcuTybey6U/oQKaKJuxHBoUn4IZj5Xuv
-X-Gm-Gg: ASbGnctTRHhQYVu53x79jfF9ZjGqsdYp/tEcLyRL39qsLGP7esytqUJJO/VPJz/jaVi
-	NG3b1rshG4Tdv7HhwLbinFfhBqzneJI6RhAEw9uXMy7T+ihr4FzdSQ24EuBJRDB9TbiFaD4r3x+
-	IztxwAmA7+vHKnBQgJ5cAKee91sFgF9rw1ZxuxkdqEiAJffFYzntblyzMQcE5BbtL5P2vKeb6sm
-	lZyzJ4y+YR6Kv2Eamlz5vj1hy1rCt/Icbtnx5ng1f/Tcg7PJV+XRWn3u+ArmVuOKART3TIn7IoI
-	t81dl2q11A==
-X-Google-Smtp-Source: AGHT+IEyys7tKIG0kBY4I3W6XkKrEnILjGfWxwyTqcAV/GwKFueV94RK7E6dYmvlAadB0Cu3Ic8avQ==
-X-Received: by 2002:a05:6902:11cd:b0:e5b:3c71:4b2c with SMTP id 3f1490d57ef6-e5dc902a5a1mr3464602276.6.1739645476900;
-        Sat, 15 Feb 2025 10:51:16 -0800 (PST)
-Received: from localhost ([2800:bf0:179:113e:cafc:c7f7:3156:ba62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dae0da0e5sm1695454276.39.2025.02.15.10.51.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Feb 2025 10:51:16 -0800 (PST)
+	s=arc-20240116; t=1739645567; c=relaxed/simple;
+	bh=/PQD4PwAVkDwv0RHEHZ6GErT3TxEUPl8AR+MB47KVcE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d+XpYEgBJ0ovugWFA5AYJDbRZRtYyJMl98MEzwYU0Dr4Ut4pDjGhj6fNn4UK6+8CiLxy92izX6/HVCOtCOwwyE3e6EDsvkoSaoWtGCDTtTdEdzKrZRqGS/XIQS+SLNEpLd9g6MkajFrXsksS1kE9T0eEucNZofCkFqWrSfGlAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcTf1zJS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6354CC4CEDF;
+	Sat, 15 Feb 2025 18:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739645566;
+	bh=/PQD4PwAVkDwv0RHEHZ6GErT3TxEUPl8AR+MB47KVcE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mcTf1zJS7dFUPBwQcmPveA2paU2Vl8Ar+hMeCC3u+jrIgw+89XfU25VM7eSh5lI4l
+	 a0bQzPW6zL1V387oPaFf2jQyZ4CpL1iO4fBkDus/sGXbsA4kc8azIOtBzY5J/UqesN
+	 hC0gn2JdI01TFCBdd1Ab4qJE6diT+0kBrdmrANI+LQEV0HDaWh5XxYyUDsKuMNDAjI
+	 IzB2y3cIaeBbin34FdtPnCSRd7/gm8c4iXaMJENt2KrCQc754lr6ik3sjpEbz622JQ
+	 HIsB94TmWTMX7ZJD7LlPpBV99K38SOzoFzqyr9BtoxwY0LC54J5h9Cv6DveBnRhO04
+	 O/7ms4hdlkQfQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjNHQ-004Qno-4c;
+	Sat, 15 Feb 2025 18:52:44 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Christoph Fritz <chf.fritz@googlemail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] irqchip/gic-v3: Fix rk3399 workaround when secure interrupts are enabled
+Date: Sat, 15 Feb 2025 18:52:41 +0000
+Message-Id: <20250215185241.3768218-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 15 Feb 2025 13:51:14 -0500
-Message-Id: <D7T8UQ8PJ7BH.3DGKE2REW8025@gmail.com>
-Cc: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
- <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 1/3] platform/x86: acer-wmi: Fix setting of fan
- behavior
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Armin Wolf" <W_Armin@gmx.de>, <jlee@suse.com>,
- <basak.sb2006@gmail.com>, <rayanmargham4@gmail.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250215174544.8790-1-W_Armin@gmx.de>
- <20250215174544.8790-2-W_Armin@gmx.de>
-In-Reply-To: <20250215174544.8790-2-W_Armin@gmx.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, chf.fritz@googlemail.com, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat Feb 15, 2025 at 12:45 PM -05, Armin Wolf wrote:
-> After studying the linuwu_sense driver
-> (https://github.com/0x7375646F/Linuwu-Sense) i was able to understand
-> the meaning of the SetGamingFanBehavior() WMI method:
->
-> - the first 16-bit are a bitmap of all fans affected by a fan behavior
->   change request.
->
-> - the next 8 bits contain four fan mode fields (2-bit), each being
->   associated with a bit inside the fan bitmap.
->
-> There are three fan modes: auto, turbo and custom.
->
-> Use this newfound knowledge to fix the turbo fan handling by setting
-> the correct bits before calling SetGamingFanBehavior(). Also check
-> the result of the WMI method call and return an error should the ACPI
-> firmware signal failure.
->
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/platform/x86/acer-wmi.c | 75 +++++++++++++++++++++++----------
->  1 file changed, 52 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-=
-wmi.c
-> index 69336bd778ee..f20a882e3650 100644
-> --- a/drivers/platform/x86/acer-wmi.c
-> +++ b/drivers/platform/x86/acer-wmi.c
-> @@ -68,10 +68,19 @@ MODULE_LICENSE("GPL");
->  #define ACER_WMID_SET_GAMING_LED_METHODID 2
->  #define ACER_WMID_GET_GAMING_LED_METHODID 4
->  #define ACER_WMID_GET_GAMING_SYS_INFO_METHODID 5
-> -#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR 14
-> +#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID 14
->  #define ACER_WMID_SET_GAMING_MISC_SETTING_METHODID 22
->  #define ACER_WMID_GET_GAMING_MISC_SETTING_METHODID 23
->
-> +#define ACER_GAMING_FAN_BEHAVIOR_ID_MASK GENMASK_ULL(15, 0)
-> +#define ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK GENMASK_ULL(23, 16)
-> +
-> +#define ACER_GAMING_FAN_BEHAVIOR_CPU BIT(0)
-> +#define ACER_GAMING_FAN_BEHAVIOR_GPU BIT(3)
-> +
-> +#define ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK GENMASK(1, 0)
-> +#define ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK GENMASK(7, 6)
-> +
->  #define ACER_GAMING_MISC_SETTING_STATUS_MASK GENMASK_ULL(7, 0)
->  #define ACER_GAMING_MISC_SETTING_INDEX_MASK GENMASK_ULL(7, 0)
->  #define ACER_GAMING_MISC_SETTING_VALUE_MASK GENMASK_ULL(15, 8)
-> @@ -121,6 +130,12 @@ enum acer_wmi_predator_v4_sensor_id {
->  	ACER_WMID_SENSOR_GPU_TEMPERATURE	=3D 0x0A,
->  };
->
-> +enum acer_wmi_gaming_fan_mode {
-> +	ACER_WMID_FAN_MODE_AUTO		=3D 0x01,
-> +	ACER_WMID_FAN_MODE_TURBO	=3D 0x02,
-> +	ACER_WMID_FAN_MODE_CUSTOM	=3D 0x03,
-> +};
-> +
->  enum acer_wmi_predator_v4_oc {
->  	ACER_WMID_OC_NORMAL			=3D 0x0000,
->  	ACER_WMID_OC_TURBO			=3D 0x0002,
-> @@ -1565,9 +1580,6 @@ static acpi_status WMID_gaming_set_u64(u64 value, u=
-32 cap)
->  	case ACER_CAP_TURBO_LED:
->  		method_id =3D ACER_WMID_SET_GAMING_LED_METHODID;
->  		break;
-> -	case ACER_CAP_TURBO_FAN:
-> -		method_id =3D ACER_WMID_SET_GAMING_FAN_BEHAVIOR;
-> -		break;
->  	default:
->  		return AE_BAD_PARAMETER;
->  	}
-> @@ -1618,25 +1630,42 @@ static int WMID_gaming_get_sys_info(u32 command, =
-u64 *out)
->  	return 0;
->  }
->
-> +static int WMID_gaming_set_fan_behavior(u16 fan_bitmap, u8 mode_bitmap)
-> +{
-> +	acpi_status status;
-> +	u64 input =3D 0;
-> +	u64 result;
-> +
-> +	input |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_ID_MASK, fan_bitmap);
-> +	input |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK, mode_bitm=
-ap);
-> +
-> +	status =3D WMI_gaming_execute_u64(ACER_WMID_SET_GAMING_FAN_BEHAVIOR_MET=
-HODID, input,
-> +					&result);
-> +	if (ACPI_FAILURE(status))
-> +		return -EIO;
-> +
-> +	/* TODO: Proper error handling */
-> +	pr_notice("Fan behavior return status: %llu\n", result);
+Christoph reports that their rk3399 system dies since we merged
+773c05f417fa1 ("irqchip/gic-v3: Work around insecure GIC
+integrations").
 
-I guess this is missing some ACER_GAMING_FAN_BEHAVIOR_STATUS_MASK
-handling right? This shouldn't mess with testing tho.
+It appears that some rk3399 have some secure payloads, and that
+the firmware sets SCR_EL3.FIQ==1. Obivously, disabling security
+in that configuration leads to even more problems.
 
-> +
-> +	return 0;
-> +}
-> +
->  static void WMID_gaming_set_fan_mode(u8 fan_mode)
->  {
-> -	/* fan_mode =3D 1 is used for auto, fan_mode =3D 2 used for turbo*/
-> -	u64 gpu_fan_config1 =3D 0, gpu_fan_config2 =3D 0;
-> -	int i;
-> -
-> -	if (quirks->cpu_fans > 0)
-> -		gpu_fan_config2 |=3D 1;
-> -	for (i =3D 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
-> -		gpu_fan_config2 |=3D 1 << (i + 1);
+Let's revisit the workaround by:
 
-I agree on with your explaination in the previous thread, so after the
-TODO is addressed:
+- making it rk3399 specific
+- checking whether Group-0 is available, which is a good proxy
+  for SCR_EL3.FIQ being 0
+- either apply the workaround if Group-0 is available, or disable
+  pseudo-NMIs if not
 
-Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+Note that this doesn't mean that the secure side is able to receive
+interrupts anyway, as we make all interrupts non-secure anyway.
+Clearly, nobody ever tested secure interrupts on this platform.
 
-I do wonder tho, isn't there a WMI operation to get the bitmap of
-available fans? Like in the case of available thermal profiles and
-sensors.
+With that, Christoph is able to use their rk3399.
 
---=20
- ~ Kurt
+Reported-by: Christoph Fritz <chf.fritz@googlemail.com>
+Tested-by: Christoph Fritz <chf.fritz@googlemail.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 773c05f417fa1 ("irqchip/gic-v3: Work around insecure GIC integrations")
+Link: https://lore.kernel.org/r/b1266652fb64857246e8babdf268d0df8f0c36d9.camel@googlemail.com
+---
+ drivers/irqchip/irq-gic-v3.c | 53 +++++++++++++++++++++++++++---------
+ 1 file changed, 40 insertions(+), 13 deletions(-)
 
-> -	for (i =3D 0; i < quirks->gpu_fans; ++i)
-> -		gpu_fan_config2 |=3D 1 << (i + 3);
-> -	if (quirks->cpu_fans > 0)
-> -		gpu_fan_config1 |=3D fan_mode;
-> -	for (i =3D 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
-> -		gpu_fan_config1 |=3D fan_mode << (2 * i + 2);
-> -	for (i =3D 0; i < quirks->gpu_fans; ++i)
-> -		gpu_fan_config1 |=3D fan_mode << (2 * i + 6);
-> -	WMID_gaming_set_u64(gpu_fan_config2 | gpu_fan_config1 << 16, ACER_CAP_T=
-URBO_FAN);
-> +	u16 mode_bitmap =3D 0;
-> +	u16 fan_bitmap =3D 0;
-> +
-> +	if (quirks->cpu_fans > 0) {
-> +		fan_bitmap |=3D ACER_GAMING_FAN_BEHAVIOR_CPU;
-> +		mode_bitmap |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK, fa=
-n_mode);
-> +	}
-> +
-> +	if (quirks->gpu_fans > 0) {
-> +		fan_bitmap |=3D ACER_GAMING_FAN_BEHAVIOR_GPU;
-> +		mode_bitmap |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK, fa=
-n_mode);
-> +	}
-> +
-> +	WMID_gaming_set_fan_behavior(fan_bitmap, mode_bitmap);
->  }
->
->  static int WMID_gaming_set_misc_setting(enum acer_wmi_gaming_misc_settin=
-g setting, u8 value)
-> @@ -1923,7 +1952,7 @@ static int acer_toggle_turbo(void)
->  		WMID_gaming_set_u64(0x1, ACER_CAP_TURBO_LED);
->
->  		/* Set FAN mode to auto */
-> -		WMID_gaming_set_fan_mode(0x1);
-> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_AUTO);
->
->  		/* Set OC to normal */
->  		if (has_cap(ACER_CAP_TURBO_OC)) {
-> @@ -1937,7 +1966,7 @@ static int acer_toggle_turbo(void)
->  		WMID_gaming_set_u64(0x10001, ACER_CAP_TURBO_LED);
->
->  		/* Set FAN mode to turbo */
-> -		WMID_gaming_set_fan_mode(0x2);
-> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_TURBO);
->
->  		/* Set OC to turbo mode */
->  		if (has_cap(ACER_CAP_TURBO_OC)) {
-> --
-> 2.39.5
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 76dce0aac2465..270d7a4d85a6d 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -44,6 +44,7 @@ static u8 dist_prio_nmi __ro_after_init = GICV3_PRIO_NMI;
+ #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+ #define FLAGS_WORKAROUND_CAVIUM_ERRATUM_38539	(1ULL << 1)
+ #define FLAGS_WORKAROUND_ASR_ERRATUM_8601001	(1ULL << 2)
++#define FLAGS_WORKAROUND_INSECURE		(1ULL << 3)
+ 
+ #define GIC_IRQ_TYPE_PARTITION	(GIC_IRQ_TYPE_LPI + 1)
+ 
+@@ -83,6 +84,8 @@ static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
+ #define GIC_LINE_NR	min(GICD_TYPER_SPIS(gic_data.rdists.gicd_typer), 1020U)
+ #define GIC_ESPI_NR	GICD_TYPER_ESPIS(gic_data.rdists.gicd_typer)
+ 
++static bool nmi_support_forbidden;
++
+ /*
+  * There are 16 SGIs, though we only actually use 8 in Linux. The other 8 SGIs
+  * are potentially stolen by the secure side. Some code, especially code dealing
+@@ -163,21 +166,27 @@ static void __init gic_prio_init(void)
+ {
+ 	bool ds;
+ 
+-	ds = gic_dist_security_disabled();
+-	if (!ds) {
+-		u32 val;
+-
+-		val = readl_relaxed(gic_data.dist_base + GICD_CTLR);
+-		val |= GICD_CTLR_DS;
+-		writel_relaxed(val, gic_data.dist_base + GICD_CTLR);
++	cpus_have_group0 = gic_has_group0();
+ 
+-		ds = gic_dist_security_disabled();
+-		if (ds)
+-			pr_warn("Broken GIC integration, security disabled");
++	ds = gic_dist_security_disabled();
++	if ((gic_data.flags & FLAGS_WORKAROUND_INSECURE) && !ds) {
++		if (cpus_have_group0) {
++			u32 val;
++
++			val = readl_relaxed(gic_data.dist_base + GICD_CTLR);
++			val |= GICD_CTLR_DS;
++			writel_relaxed(val, gic_data.dist_base + GICD_CTLR);
++
++			ds = gic_dist_security_disabled();
++			if (ds)
++				pr_warn("Broken GIC integration, security disabled\n");
++		} else {
++			pr_warn("Broken GIC integration, pNMI forbidden\n");
++			nmi_support_forbidden = true;
++		}
+ 	}
+ 
+ 	cpus_have_security_disabled = ds;
+-	cpus_have_group0 = gic_has_group0();
+ 
+ 	/*
+ 	 * How priority values are used by the GIC depends on two things:
+@@ -209,7 +218,7 @@ static void __init gic_prio_init(void)
+ 	 * be in the non-secure range, we program the non-secure values into
+ 	 * the distributor to match the PMR values we want.
+ 	 */
+-	if (cpus_have_group0 & !cpus_have_security_disabled) {
++	if (cpus_have_group0 && !cpus_have_security_disabled) {
+ 		dist_prio_irq = __gicv3_prio_to_ns(dist_prio_irq);
+ 		dist_prio_nmi = __gicv3_prio_to_ns(dist_prio_nmi);
+ 	}
+@@ -1922,6 +1931,18 @@ static bool gic_enable_quirk_arm64_2941627(void *data)
+ 	return true;
+ }
+ 
++static bool gic_enable_quirk_rk3399(void *data)
++{
++	struct gic_chip_data *d = data;
++
++	if (of_machine_is_compatible("rockchip,rk3399")) {
++		d->flags |= FLAGS_WORKAROUND_INSECURE;
++		return true;
++	}
++
++	return false;
++}
++
+ static bool rd_set_non_coherent(void *data)
+ {
+ 	struct gic_chip_data *d = data;
+@@ -1996,6 +2017,12 @@ static const struct gic_quirk gic_quirks[] = {
+ 		.property = "dma-noncoherent",
+ 		.init   = rd_set_non_coherent,
+ 	},
++	{
++		.desc	= "GICv3: Insecure RK3399 integration",
++		.iidr	= 0x0000043b,
++		.mask	= 0xff000fff,
++		.init	= gic_enable_quirk_rk3399,
++	},
+ 	{
+ 	}
+ };
+@@ -2004,7 +2031,7 @@ static void gic_enable_nmi_support(void)
+ {
+ 	int i;
+ 
+-	if (!gic_prio_masking_enabled())
++	if (!gic_prio_masking_enabled() || nmi_support_forbidden)
+ 		return;
+ 
+ 	rdist_nmi_refs = kcalloc(gic_data.ppi_nr + SGI_NR,
+-- 
+2.39.2
 
 
