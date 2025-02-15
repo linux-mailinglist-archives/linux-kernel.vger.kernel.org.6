@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-516188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B40AA36DE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:51:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D09A36DE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1416616C6B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA0A1892F81
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6111ACEC6;
-	Sat, 15 Feb 2025 11:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559191B4234;
+	Sat, 15 Feb 2025 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZoNOGM0"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBAvT6pd"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E74191F75;
-	Sat, 15 Feb 2025 11:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268E9158525;
+	Sat, 15 Feb 2025 11:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739620308; cv=none; b=DpKLP7oH/2S+cXg2wx1K4KDxzC1KESJEka28PFJADwHveeuwMqEU8WL/BitVN+J5f7hEKsfqgr1R0hd1ex8wK6Y3URGanyZA7/MT9qYG+FNJzJaSxifLpA5mMyx8jocrVu5Q5P8uHg8945qgREzkjqjnp0oVGjL6ZSQG+kvA088=
+	t=1739620491; cv=none; b=s8ZFINKhFfdRxB6WH8y6quZAsWJposnhoJ3Af74/kd1z/o4bSnsY+bBS992hrelPfe6ABmKnDQU2rSNUWa/WLjVxMg2GDA3Sqqr6NiF9BkfMwdDtk+Ql+2bk9ORRpijxplYWGLldoaZZddaiNRz0gh6N9yTFsjMk2IAtwrqq2kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739620308; c=relaxed/simple;
-	bh=ODBV7XxULaEKMbWW5H2hCBCAUiFq5HPbBkqQ992RLs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iAcWrJECVRe2fEWBunTaP3IwIN4Rb0Q375w5XA8TTJgZ42wxUa5Pr4r8rIg4Tc138+y87YNgZhwWCJKEr39uLJlPPk9a7ZbjznOl4xTjWrckTYZ4h5YgvUW4r8E8sckIgdMDkuARPHN+y2ljgPuKE6o7UWswjCgQbWCPrUv9WC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZoNOGM0; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1739620491; c=relaxed/simple;
+	bh=7Zf3Ae5ZzFJVNk2BAuzXQ31GnCunARpZs92590RFAEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0+48ZZX2FEyh6tCE7P028/qx9JDlrmyzDbHykJfeAabdMczASkMWkplOIVwZtF+/RVdMvd9sFFJ7Kxo5imxTKjC2cFcwVBKJdq9yFJ3oAMaAnxhaX2NNm6/ruf2x6G4c4dqFzqgzsYktkfLwwEo/VyR6NCg+BQr8MpOl2z4FnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBAvT6pd; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43690d4605dso18303035e9.0;
-        Sat, 15 Feb 2025 03:51:46 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so3337540f8f.0;
+        Sat, 15 Feb 2025 03:54:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739620305; x=1740225105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+E8cBYvEaPMhQTBmq7LkfColA/xNBOcLLm60gFA76t0=;
-        b=OZoNOGM0R4CtILKvTLFtUztQObab8k/apdQDMwmdokQKwpuSYwyCxZT6Wgb3yfiQfh
-         u6uT0o/l0TJMUtPZoul4K1vB/sJJz4Uz7kV3aCeHqAWkeYzYZs2h8MWM36/oThzRM7ei
-         AJKu3S0V5gqCkclg3J83xynsdkUpE98ojCuexveGfcui0gDL8XJUGTXn5UWJWXTDRTiH
-         qQ/1YWcR1Oz4DjnZpf9aVTxzy6ToaMUkU9QKus5lXWcEdzOCihsxDxJpBT9Gs9BlYdt0
-         +58dm4LyeBd3O8VVEmghlFz2CpH5gajZ2JEWugA2lobHcDg9tZvGQz3kTU5b94x/WAJM
-         jCQQ==
+        d=gmail.com; s=20230601; t=1739620488; x=1740225288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=is1pTYO6hsOD/Q0FGbUTVInc/xQnTq9eedN5nnjkq4M=;
+        b=SBAvT6pdMWbWhHPEnRNs/3rWBMlVBPJX++oeSe/xH+0qZ3QwhyL4+Nuu5VmfuBSq6M
+         qFujcbZL5EuC1zdq1kG8mzF6CTRYfbNIbhXHSOPRO89gxkwYl7dHsFb5WWl19jxK3R7g
+         oi1I89fvghwQ1C3V6rILBhqdSfuKqmfiiSceuHtj9ouTj1VAJKKQm324zJQ/2vxlv+jy
+         zJHTfYGb1Sg8HAUQeh03A4mO1oWsgJydtBTmqKhFsaNQTGF5d8glDNj66At9/wMsG3pf
+         CY5k+o9g86YVI81Si7/8KC9CFiY86Oiw6cE02whc+cCxZIv995uNvPH+8XeR8OSBSdCX
+         305g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739620305; x=1740225105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+E8cBYvEaPMhQTBmq7LkfColA/xNBOcLLm60gFA76t0=;
-        b=rQ19whl+KW4EUjokqg9H9isEq6vU0xRHhpxs8hThWym1nrdt5UECpaTurQepeRtwkg
-         Snp8TJkCqmlWrxMv3NYAJMK+fmo+m2lvkW0qOfpqZvwG6NIRYLxHWtioomNQM9b3cWLi
-         t5xWideYHkhU1o37TuYbEObH0wvM5EiGeUcEakcZEOY8znsoFsCfr7sjnkPE/SJOaTvQ
-         cwZcyWOJfmLfv4TQi1Vl38gHIp1Ad3bQ39On4Pas8jtcwY7mhGm1CzvnmOh50mMF+mnw
-         SEvPlvZXxsKbCqqREVKPhEQxDLlL6hzVxLPURrF1kebdc/JzCZdh8YiaTjoxluMX1V5K
-         9Rnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgClhxrewZkfo7t3Ln8pm5Y/EefKJDwiq/1vHaBE/WjQi8kC2/Ddko6mfmzsPGyDnBZ0Ybz04AyrfSJw==@vger.kernel.org, AJvYcCXD413dRedTuDC4rxCwuVJR1jCuc1ilMaHkCrnbAQ5+nUqG8eOCqp+3fUJOoe1JwzGavWBbriOx2CBhxTBC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgb9wwIRU61PWfUI5ANc/rMlHhzihYt3HeakKqQKtrE0gKDSQf
-	+pMVzDoQTUnPL1XhK4zldjWcziGLirjB8vJh0mH9oCRjQBaow3hD+w4V7Q==
-X-Gm-Gg: ASbGncv62REtVGR085zaT1aupI5C3RVtZufHbmbLyQVk7kTEgEfIMZWy0MvxMTy8Aeg
-	LZU8BiNCsBJ3/BlmMS9dPA17n/eySFkLCD++uwgVubqAQ2zdU0WU1IfrCnvNNVj75ImPHoeumLz
-	JldEVpA2MXsjAwCxwVb94sxosLv9vV4e2o5RsDWNH9G8y7A51ZwDoH1MzohSbpqAVrG0IgxlszP
-	vFPiWwzt4qWG5qiHqtj94XXNzlDyEicqlIXgZ9O/HDHS09E61eu26pymePoSvj5ownslWWcD3t+
-	GmxlFlv/baUp9p/W9H3MaOAjCKGhYaB6B4b4Xtab+xt/gnnNJY20XQ==
-X-Google-Smtp-Source: AGHT+IEQawC7SQVa9UF4slkO3lg86OopnWZ3aLTLVKEXgIrmgEgWz+bCG+8HW/R99D5VLCZ0Ld7EOQ==
-X-Received: by 2002:a05:600c:4e8d:b0:436:488f:4f3 with SMTP id 5b1f17b1804b1-4396e70d13emr25278915e9.17.1739620305242;
-        Sat, 15 Feb 2025 03:51:45 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc45sm7124144f8f.33.2025.02.15.03.51.44
+        d=1e100.net; s=20230601; t=1739620488; x=1740225288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=is1pTYO6hsOD/Q0FGbUTVInc/xQnTq9eedN5nnjkq4M=;
+        b=XW54Wy0cUCoczWPAEZrTga7fdBaT00oOfmy/DjYX4HW5k0L3UECrKbAyaV6xi76kTw
+         30zdngp4wFnvt/K/s0RYF3CntutyJA7yGqePN24EB0xlDiwAx2nqfnZdPgSejj6k5Ads
+         Ju0gGsPPPGobl5xjBW3Xi9R/VSy8OSED1ssEH5FAqEsqpvZ7SHah6pdobD4PZTwX648A
+         kWoeXAuFTPiKyXKT/2RtgT6Ih/lIdJV31kJkDPhYxeYaaVnx+7I+6VOO6XuKWM1uu6re
+         NToE0uZFvRKrAKQI2XzZIidq8PP/LyoDcmHk1VFeIYgj3+bEpSZpgHk1Es6Zu3N0jwKk
+         X6GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr7qe68GgKYvMiPgaQbnKz+9EYZfP111/tRWvy/GTJvalVXXgZECwk2gC2grYAZ9qWDW9Jd+1xlC2+@vger.kernel.org, AJvYcCW86BRggcueO4ZJ2853FOA04gYS6FCp0Hxa/VtHoa22KtqdynbzRP/BxIdBtAxqhAfEWaE5XKEmcW/mQv65b4Z3FKw=@vger.kernel.org, AJvYcCWsiJnO7+e3OOCC7JIOten69QDJBLkXb8FiOYgh/YcJiNNDEBs/WdSs26gObGoaqI1wDebQzekXRVIC@vger.kernel.org, AJvYcCXw9fFmNPai9VujG8k9aTHgYIeWxQS9i+eVTrD600Nqw88/5nTSUdwFb8WMGagHjrFHHVgqgIDLF6oxKBGY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLH5lRiSw2MpmZx2AqYJWp1Ng4O5LANMyjetCtUNm5EznF1SFe
+	7QiRWT3bvTowaS7YzRGOafin6aU2rtXvLMBsJ9Jm607TNFvBiPIj
+X-Gm-Gg: ASbGncu7g7Mn61rJXsBzVvop2PPhNrZYqCGi1DHUxAceBGMMUa6b6omh6mAG9VyzZLs
+	7dqslzVnJjcHvcKZ0eLmDAd/DzZl4XOv9qxA8l91OHCJ4Q2BKtp9VDtzjSLNEPf4+qRsDJDev4x
+	mpJiK+MZiJCttYC+Vh8zy/7VuJHpK+6LauodhCjama/T/yml58N3p4IpivnoVlw6OcBrtqv0uqD
+	9CC9aNZ8wCp6phjGO8HIbZ5ygKm5ldL2talJj+tABZE6UCtUcy4lyEsC+2WeU6NLBF04Vu1SxH2
+	hfcw+EA/EWMwf1wzV42Fg0LfVceH8IOd/nHehdEb3Za/JIjLpP3UXVOTVmKZqhzO9Os=
+X-Google-Smtp-Source: AGHT+IH9I+kF4E4FBAJ0uc10UZJds1ZQ+kSU1H9nf3tIt5AgUxMSTM3lxPiTDuhkF2I5bPfPT8RVxg==
+X-Received: by 2002:a5d:59a7:0:b0:38d:c087:98d5 with SMTP id ffacd0b85a97d-38f33f125d2mr3534739f8f.8.1739620488237;
+        Sat, 15 Feb 2025 03:54:48 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617de5b6sm70029875e9.1.2025.02.15.03.54.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 03:51:44 -0800 (PST)
-Date: Sat, 15 Feb 2025 11:51:44 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block/merge: remove unnecessary min() with UINT_MAX
-Message-ID: <20250215115144.6a10dad8@pumpkin>
-In-Reply-To: <20250214193637.234702-1-csander@purestorage.com>
-References: <20250214193637.234702-1-csander@purestorage.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Sat, 15 Feb 2025 03:54:47 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] clk: samsung: introduce Exynos2200 clock driver
+Date: Sat, 15 Feb 2025 13:54:30 +0200
+Message-ID: <20250215115433.161091-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Feb 2025 12:36:36 -0700
-Caleb Sander Mateos <csander@purestorage.com> wrote:
+Hey folks,
 
-> In bvec_split_segs(), max_bytes is an unsigned, so it must be less than
-> or equal to UINT_MAX. Remove the unnecessary min().
-> 
-> Prior to commit 67927d220150 ("block/merge: count bytes instead of
-> sectors"), the min() was with UINT_MAX >> 9, so it did have an effect.
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  block/blk-merge.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 15cd231d560c..39b738c0e4c9 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -268,11 +268,11 @@ static inline unsigned get_max_segment_size(const struct queue_limits *lim,
->   */
->  static bool bvec_split_segs(const struct queue_limits *lim,
->  		const struct bio_vec *bv, unsigned *nsegs, unsigned *bytes,
->  		unsigned max_segs, unsigned max_bytes)
->  {
-> -	unsigned max_len = min(max_bytes, UINT_MAX) - *bytes;
-> +	unsigned max_len = max_bytes - *bytes;
+This patchset introduces clock driver support for Exynos 2200.
 
-More interestingly, what stops *bytes being larger than max_bytes?
+It's modelled to take advantage of hwacg (hardware auto-clock gating).
+This means gates are not defined, so that hwacg takes care of the
+gating, which leads to a smaller and simpler clock driver design.
 
-	David
+Gate register definitions are left so that they're documented and
+in case a gate needs to be forcefully left open in the future, we
+won't have to define the register.
 
->  	unsigned len = min(bv->bv_len, max_len);
->  	unsigned total_len = 0;
->  	unsigned seg_size = 0;
->  
->  	while (len && *nsegs < max_segs) {
+Best regards,
+Ivaylo
+
+Ivaylo Ivanov (3):
+  dt-bindings: clock: add Exynos2200 SoC
+  clk: samsung: clk-pll: add support for pll_4311
+  clk: samsung: introduce Exynos2200 clock driver
+
+ .../clock/samsung,exynos2200-clock.yaml       |  247 ++
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynos2200.c          | 3928 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    1 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../dt-bindings/clock/samsung,exynos2200.h    |  431 ++
+ 6 files changed, 4609 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos2200-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos2200.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos2200.h
+
+-- 
+2.43.0
 
 
