@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-515932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511F6A36A9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:08:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BD6A36A8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787A41712F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 549C67A18BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC0113BC02;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9DB13B5B6;
 	Sat, 15 Feb 2025 01:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aUUOrfBQ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Om+ngLa3"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B60033CFC
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67141C92
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581575; cv=none; b=nzjNH0WhXPwhW2W4+60xlQAnII7IKDtjzry6IlVCIpbA0D++6KmVpy2HnDzYKod3MzXCA2oHe1nLiXeWsbB0ikpCGannBz2ovf04SgHyNY4LpvNGyh9HDsuIfak5ZpzUmvrL9uf4h8P/04odPxN8awvMR6D+zWtjUejvM+Wcybw=
+	t=1739581575; cv=none; b=sPj8Wim9q3fndDVohZ8FpkeLitfpbtrtKxrXE0/qunboiWbZYHslo/y0DVXIhlI1WJHKtoXhkJz3T2Dj7VNkL99vKdgKo9J5J5v9uO7mT7W7alA4l0Gl+KiKI3K7a6cRIdWaHGWPVB/gqJu+EkzPQT2raos4+Qm6Ac50ImcjOic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739581575; c=relaxed/simple;
-	bh=c5mT1kKJrJbBoF8W9ov5zGDfOIg+OOelnEWtDsywTcU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CjQ3a/U4lslsbyHuXWG6GpxPcAtaXMI25NZfbDVDTX2r3OwCrWkJMzAuyXDhoajvJq99eQrEgcHLMY0hM/Z5XOzv6fIodRgWPycaCEhMh0aal2Gq9E5S02EHPL53aFTeB6jVOTPIRF8NT+gdI+Fk1IzKfK2BxYiIhlqR9tc/das=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aUUOrfBQ; arc=none smtp.client-ip=209.85.216.74
+	bh=5wliXWDYsrFCwme0bU8BDoFYLmTGBwCFoyuhP4vduys=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IJVXOdN51ntcMwgH/Mm9TZYwgTPoLZNWRGO7qClS8cKBOPOP8ZhwBKBbK2F4+FcNW0nnQMqQhUt2sgIDLk7H+9izYYeUpFOsIFQQDoCTDil9nt/taxjJGKathIv7j3auzzrWTsWRZegRIPc7W1e1N0HeFiJ7AQUbVLrjnsuLW7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Om+ngLa3; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so8083205a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:06:12 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220fb031245so18000225ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 17:06:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739581571; x=1740186371; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R2wtXUfCTjgHI7TGu3PXE3lApHG/pri/NcZ6lpL1NqU=;
-        b=aUUOrfBQtjyEL7Uoo8LaAgBCJSPbu6DO/bZ6+sK7gh4Z7c2uRK4IuCGClNqY6UI/S5
-         F9+CMU7RQLllJuoiRg3gbWJYpODjQdIQXXU5Y223OGJRO2SfjfnWKoJ6fudXY0HFAqMZ
-         tYq1cxL1bNgFGvzdOyWdhy7OI0yq66NTsmd46jUynp7VkUfUD3WrFMJFLdHiz6953wAa
-         WiLiRdeWfqL1wMV7jmeJmM7vytX66Cbjgz15UJzkAfFQrJHZATCmFRlrt8YbQsgUXDc5
-         kAVA3TWv5/nV0c2cQL+O5cRUUqyTaJOXYsPdAi2vIHbrRr3nolzsUD+YdgbPmz9saScK
-         s2IQ==
+        d=google.com; s=20230601; t=1739581573; x=1740186373; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnHrxG87g2zrpNznbUWyypfRtpr7va7BhlbJAw1+aOQ=;
+        b=Om+ngLa3jxTKgaX7Canh3KrefjMF9f9R+pxKqw1qMdfYuVfPoVaPM6YaDh8Hyb5iDM
+         UhN03+GRWOS7q/aDkQFRHaXpeN86Zxzjvb344yehazSmn/YkJlIWFil2ZbBa+x6iGhCw
+         Qm0nNnmuh3citPrsn6yhuwaP+HMBObp3hUmSnmziF+NfXviXyislWG9G19A+amZLwpQO
+         0iucd3nGaBBK6jxkc736S3WhXBbZTV2mq0oJEYM69AFY6YCWUap4ZeGLrumthlZ30e5q
+         7T/+dtdwWBxu5xOQa3teEMxF/mt/PSb7F6x0aptw8JM2hb36QSM5oiCBjyXBCguTPWqj
+         PDHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739581571; x=1740186371;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R2wtXUfCTjgHI7TGu3PXE3lApHG/pri/NcZ6lpL1NqU=;
-        b=Vzu0Wv313JJdylqCb4nP6+VwqBCIkFaBh+FG4GSfe6GAniQBJ138eNNwT+y7xjddOQ
-         Sckkvcb0HpFnj3/v0njKogQpnLnHl8ESgdAviJxeLh3SzOSr+uIYCeU8pXVBzspXlcqC
-         ky20LRbsWg5eUzYKNyfUxjOEWeI59bGgaS9IDsNo0tJq81HZfz1IU3ZlE/Ymqac1J28M
-         1We1JnNwxIu3869OlvICJ1Xg85oyAaPVucOgyTVnddGYNbV4Ksa+rA9+HaRlQmkLCeGa
-         pOoCaPAhwQ7aqkVMn629y2qBv4I3JMN5M8afbmph4A8C9JHjPZGrd8H5ej/2DUH2shha
-         ipqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5f3HocIIkgwibTacIe5D1K0k7S5xpNMlhfOZ0Pb7i6gXAv7eoMZ0Csln4IBp7/W+7/bnkCOTvAEc5K1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsNkivHfYIaOfuBS0oC47nFGTq1ztBx0i8bcA60t86NPJ/rHFD
-	9OiBRqChSKHoEnmNABAI9IFh4I9GSGuGrxK2ZKTOxTetNysWO1uoIzkg06lxGop9o/BN4rtzjU6
-	Erg==
-X-Google-Smtp-Source: AGHT+IEYCzMbuX7xHl2Nvmsne3PdbtFPA0TlA2NZIveDqibzeV+LpQ2lV6/nn0zdhPIjP5m+GvpznOHJPUU=
-X-Received: from pjbtd3.prod.google.com ([2002:a17:90b:5443:b0:2f4:4222:ebba])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:39cc:b0:2fa:229f:d03a
- with SMTP id 98e67ed59e1d1-2fc4104056emr1548474a91.26.1739581571648; Fri, 14
- Feb 2025 17:06:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739581573; x=1740186373;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gnHrxG87g2zrpNznbUWyypfRtpr7va7BhlbJAw1+aOQ=;
+        b=OaGTF5GOZ/a+4EVj9CylsCcXN4YBZPfV+HSLmvDtk5oBxCd45Bzn3YXAKQmWH7o+Y9
+         k8gd5VhR7WQrntctFXP2G6MrX0jPbT0BP2WJhz/pjZOj1V4gJ6/ZXo+S1aIehS7nk2hp
+         m5b9vNpLwOA8LTYgbN8TO/L0GTwVNF4sqtumpxpa0vk26XcYJZ7cSaF6UiPMn0i0/NGZ
+         7xdik/w8ZhGvCWLvv4pBjTi4BBaWlWwFYXXwGl74ISJSqBLk0MqWkLyCQRCDGKaBquQp
+         tZzvjhS9UiJjehqJiAUQKjYLZdA8lw59PVS4rb8iii7FzY0LPIqt2XUSsRljol5rg/Vc
+         3fHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA98+3DQAH6ZWPRH+Nw94ZxMGGhgQsLTmL7Y44sP8PDwPke72VcMXB60YCGDi/dbuASkHQxFrRG8qWCyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxld5Wlb/xKaTe4ywZlL0v47CblD+SvNBCDdUrQOBxxc1L9vuOG
+	PwSWaUJvCvqjla5MmHa9BIG6jEo8UvilFSxKxErMKsVaF525Wv8y1wbNvdN5vQiFGy/TpdwsySt
+	bQQ==
+X-Google-Smtp-Source: AGHT+IFqpbcx0eksJgzswjg2oejQ8+iZ+7K9CjQZzR/co/7jmMUA3+1XjLY7h+QZJ+aWbZridj68BiDJaJg=
+X-Received: from pjbpd11.prod.google.com ([2002:a17:90b:1dcb:b0:2fa:27e2:a64d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac5:b0:216:7ee9:2227
+ with SMTP id d9443c01a7336-221040a8e62mr21822595ad.36.1739581573052; Fri, 14
+ Feb 2025 17:06:13 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 14 Feb 2025 17:06:07 -0800
+Date: Fri, 14 Feb 2025 17:06:08 -0800
+In-Reply-To: <20250215010609.1199982-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250215010609.1199982-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250215010609.1199982-1-seanjc@google.com>
-Subject: [PATCH 0/2] KVM: x86: Fix and a cleanup for async #PFs
+Message-ID: <20250215010609.1199982-2-seanjc@google.com>
+Subject: [PATCH 1/2] KVM: x86: Don't inject PV async #PF if SEND_ALWAYS=0 and
+ guest state is protected
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Fix an issue with async #PF and protected guests (which really shouldn't be
-using PV asyng #PFs), and clean up naming related to SEND_ALWAYS.
+Don't inject PV async #PFs into guests with protected register state, i.e.
+SEV-ES and SEV-SNP guests, unless the guest has opted-in to receiving #PFs
+at CPL0.  For protected guests, the actual CPL of the guest is unknown.
 
-Sean Christopherson (2):
-  KVM: x86: Don't inject PV async #PF if SEND_ALWAYS=0 and guest state
-    is protected
-  KVM: x86: Rename and invert async #PF's send_user_only flag to
-    send_always
+Note, no sane CoCo guest should enable PV async #PF, but the current state
+of Linux-as-a-CoCo-guest isn't entirely sane.
 
- arch/x86/include/asm/kvm_host.h | 2 +-
- arch/x86/kvm/x86.c              | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Fixes: add5e2f04541 ("KVM: SVM: Add support for the SEV-ES VMSA")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 58b82d6fd77c..3b67425c3e3d 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -13395,7 +13395,7 @@ static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
+ 		return false;
+ 
+ 	if (vcpu->arch.apf.send_user_only &&
+-	    kvm_x86_call(get_cpl)(vcpu) == 0)
++	    (vcpu->arch.guest_state_protected || !kvm_x86_call(get_cpl)(vcpu)))
+ 		return false;
+ 
+ 	if (is_guest_mode(vcpu)) {
 -- 
 2.48.1.601.g30ceb7b040-goog
 
