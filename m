@@ -1,501 +1,236 @@
-Return-Path: <linux-kernel+bounces-516354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDB3A37003
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:52:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2947AA3700D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73653188E45B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:52:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B783AFD60
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7C01E5B8E;
-	Sat, 15 Feb 2025 17:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2431EDA25;
+	Sat, 15 Feb 2025 18:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="uG0Tw2wp"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b="S5FEnrgi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qTD046kO"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F22614A088;
-	Sat, 15 Feb 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9531519A7;
+	Sat, 15 Feb 2025 18:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739641926; cv=none; b=mf42hebYwlbTsK15dA9k0jsvEcZ7cWdW5KgZIoI8UUvjFYXFk09mjtZ69Me7quwaG27+qsn0KCqrBDqYhhU12IxytU6L5LzIi1gZBUfMm1XBq5Fwp3bQvj45te0TU0pKY/lPUybTDt/s094E4SzcZkoCtX+ARxBoe7W9djwpvIE=
+	t=1739642489; cv=none; b=LsHrk+p7e5ek4iWcnJNcE6JQpL4lWHuKNj2bTcLWUu1IaYDi4hbKYzpqljmynv6paf0MZwAG9HKgso1fj3Kl+4QpqhFzHZjVPyT4XlVUutx6XXwKa9pwb4CVsllQTGJfuuupkX+qm1Firoppe1lv7YvqnqWa3RmWRdJZ5t0KwD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739641926; c=relaxed/simple;
-	bh=ZdF07qXoJPnojHDz6GKNBWAjjLy5weuq4FbGKn7LmEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZy9RMMbdtCzknAKQBFINJ3ZyWYekChBJkRG+VKc1sLbhy7PKeq2Xk7uWUBzd57JfZgV4aB38MLgk0PdYFrJ7GsFtGO2CpccCjYBXt9XcZ+Vk300QRNdaufBgDddPqrmxjqqi26B1jMdtKJ8WZIiwt7CSwmAoqG1wfC4ulSa9no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=uG0Tw2wp; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739641916; x=1740246716; i=w_armin@gmx.de;
-	bh=+Udm9OKsM9KLzWhel4Blt94F7jjifjUv4hiX3bMkiuk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=uG0Tw2wpgYN/tovYdljm4p5bpvLk1vK2gI7W8tLoEaznMZHyG3ST4q4cNSbFLwAc
-	 4SvJh/sahsobRWSG8i1/+K7C1thJmdBZzmfs+XRZJj0v4wbcJDS5EiKE742XRYpq0
-	 vkum6Y7dJTnRVFm9VyY+YUEPjjacxjhUc9UQL2QFcN/tSSoiycbI5456JZDhWGFlu
-	 I3wHFCkGuKJLF7oZluu3rUx7fBL14obskQ5Ere0+dSBKHMBl+k/g6KHKuQcOZqgdy
-	 rsHk0y/fEkmWLifi0VeOIx5wtB0EJIuARMgZpJt/teDj3IuymxB+jQU9+sqnY+4R0
-	 15iUQQl60Ywin5lE8g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhU9Z-1t6R4h1V0V-00b7Ia; Sat, 15
- Feb 2025 18:51:56 +0100
-Message-ID: <90ba69f5-7575-4d0c-bfd3-5aa404fa9b32@gmx.de>
-Date: Sat, 15 Feb 2025 18:51:53 +0100
+	s=arc-20240116; t=1739642489; c=relaxed/simple;
+	bh=taWaqU9AJIffNi083S431VvZXElZa2w7Z2Q7dkiccEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z8QVQyefyOM+Q+MR1gJ4pTIhNDZMr6+6I8qJFUZ2MPiVch47+fE1IF0lwZD4doItulASu/Tt9AMhJMIYbS88J7APR6f3BwEfi4CyoEdW22D/do8YPjlwevxc18kG6qX5H52xZrcjGzSPtAAQErbpB+nM0jYJy3m6ddgyAVOYk10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com; spf=pass smtp.mailfrom=davidreaver.com; dkim=pass (2048-bit key) header.d=davidreaver.com header.i=@davidreaver.com header.b=S5FEnrgi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qTD046kO; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidreaver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidreaver.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 703ED1140190;
+	Sat, 15 Feb 2025 13:01:25 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Sat, 15 Feb 2025 13:01:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=davidreaver.com;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1739642485; x=1739728885; bh=Fya9lbkVWb
+	PFwet1rRxpAFVsKDHH9iBCX448CWgNPC8=; b=S5FEnrgie0isFkLmRx1RcT+yQ/
+	qg/jKhGjwYLpUg0TaZ4NQ4bcOnUdbI6YoC0jyXq9rwHEyfYjK0y1qOWU+Ozb8FCb
+	0KyPzYha6kdfI+1BmpB6nHu/yYM7RPdcmnc8YZ/w4dDhEfWKT63/bvpKtMvNqfn/
+	VapT6eO1zSz6PdKOvGxgo3rxYnG1LMLAUFFTKlRJ/KIBKpkyIuR95RmFuNkV7F8e
+	+HaoQdQXYLiIlL5lzEijxpSw6QyvyoJFiq6WpxwyDLvJzD1aXWOOxeyUvEeU/OZk
+	64aU2pIEOmZOmzZUv+dZSlqy87/IXS7pjSHbLrMtvhhWBaAT6+CSQJNu6vGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739642485; x=1739728885; bh=Fya9lbkVWbPFwet1rRxpAFVsKDHH9iBCX44
+	8CWgNPC8=; b=qTD046kOhHcqO6GKtUzVt/fuwDl9+Y6vQbuasLNWbOuxnJ7lxPt
+	Bp5g3UHRFJP7aMn6tG2YaCxl76oQBf7csI7UOb5AcUAQe514aaGyD9Tbu12YuepO
+	Bje7EICVgAW5j53HMIqHtnQrPHqw4DRPjFmd+kmPp8VIFM7aRHtH8gQTw00X8Suz
+	S23dXgRW6zAEg8D/C0v7yKpApq4F/frNRavEcbaxGXVhLai2b7NwUXDgavVnaYtM
+	b1CYPwrl3jaqm8E7c/C4RMbMQ4yIn+os+r0Z+/fc3ht+JNvksAv5uZbyegyYNYFr
+	3vk2uyewpLK3QhbR6AXPpx5RrJ6RC/Tl8XA==
+X-ME-Sender: <xms:dNawZy5JAUq76KbQnA4vx__-R-EJ8aSz2-toHE9NHnZm3ngwjN3RcA>
+    <xme:dNawZ76YqUxuZRZ68wVbFd3bTw4O3e_wueugwAvfpW4IU-XvjbdB3EP3Z7nbH9Cqs
+    fNmsLJG4T6EzCo2dKM>
+X-ME-Received: <xmr:dNawZxcV-Y0yf2s1tg4cWSmty_2p_mOlcIsH9cIZmJaG4IJcHgDO57p-MFBbjmz_6b4i2QUQFwXGWhG7sl7-_01jevF0wjEtivLzDF5UR1mNGrE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehfedvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
+    hfhrohhmpeffrghvihguucftvggrvhgvrhcuoehmvgesuggrvhhiughrvggrvhgvrhdrtg
+    homheqnecuggftrfgrthhtvghrnhepkedtffffhfekhffhheeuleegfeejffeiudduudff
+    geehffejtedtgeduhefgheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpuggvvh
+    hitggvrdhinhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehmvgesuggrvhhiughrvggrvhgvrhdrtghomhdpnhgspghrtghpthhtohepkedpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhr
+    tghpthhtohepmhgvsegurghvihgurhgvrghvvghrrdgtohhmpdhrtghpthhtoheprhguuh
+    hnlhgrphesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrgigsohgvsehkvghr
+    nhgvlhdrughkpdhrtghpthhtohepkhhotghtlehisehgmhgrihhlrdgtohhmpdhrtghpth
+    htoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdgslhhotghksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:dNawZ_IQGOQJlYDwAmB-B_lIHmRcQeoa1azClh6VlwhG-XJxRXp2qw>
+    <xmx:ddawZ2Jn1HTg0ueeMWJdgu0kiSKzYL_3ioALjWtQL2_8HkhwBHwN7g>
+    <xmx:ddawZwytkF5UDpm_3dXrLGBX_a8CYUvTh4HpZSHVwl9JDB7tzU_viQ>
+    <xmx:ddawZ6IHwKC_SoZSVdhzxS_6bAU_t3hOSbaJC_bMfdvKEY7ddfvw3w>
+    <xmx:ddawZ19xg2QzlcwnDChXiZaIluzb1YD0z7bL35MRmPM_ionYC0J-JjAu>
+Feedback-ID: i67e946c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 15 Feb 2025 13:01:23 -0500 (EST)
+From: David Reaver <me@davidreaver.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: David Reaver <me@davidreaver.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Konstantin Khlebnikov <koct9i@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] docs: iostats: Rewrite intro, remove outdated formats
+Date: Sat, 15 Feb 2025 10:01:13 -0800
+Message-ID: <20250215180114.157948-1-me@davidreaver.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] platform/x86:lenovo-wmi-hotkey-utilities.c: Support
- for mic and audio mute LEDs
-To: Jackie Dong <xy-jackie@139.com>, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- kuurtb@gmail.com, dongeg1@lenovo.com,
- Mark Pearson <mpearson-lenovo@squebb.ca>
-References: <20250215023525.17233-1-xy-jackie@139.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250215023525.17233-1-xy-jackie@139.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GFE1oDGD16O90FPbqmzx2R2586NL3Y1mVjJgBes8P2z9zyArGPS
- 4kXGKpEOeLqZhIaJqmm1NWAaqZ0JqJl5ANyf/iyXe6RIORe4kQm5e1LbOhx7kGjVO0jeAVI
- t4isvhoWDJOYxe5gDZdWVhMmrdAImbTnvkBYD4CoXgdr4EP9/0K946IQ331nvjU0NQ2IO9a
- rEJApE55YoSAkndd00d5Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BZ8TbTQTcRs=;ub452Zx3OA23oFQRgz4v6v540xg
- 2dlP0mQ8n8lwGxPvZpxSJahlI91acBdT5eK1YxLyAA14XKFA6CfFuZbnuljPYH0PtV7G0VrPg
- qCjucv6wNj+yy1ne3IokGff7JZEtno8cgz+cUBVwBzW2/EoWteoUjSNIWKH/YoVvCpnVIpgjZ
- CitsogL74GHpIjPlspZgkgXXPGpMyM0ZanADE3vZzmJd5z5dyfgMlCS7LThj2UVjyj/hdnhHY
- EquvNjXL0jvmqxCDL2U/Uoda5IrCgjNRmGlQK+LUcs43GYKGxtpMtoKhweWI9JfeNGTSBesbs
- QO7umEewCnqfE1u1sXjOtPvbvoYDnO31s6o5OWImgXbGAH4xepbinVpgEdPhNgIVYhE1Jo4Pp
- KUVAfn84ObUon1yX06rNjvcXPEVhw3w35xDokarbHpEa7OaaPvwWjeukaJm+toznZMOuHe49m
- PVwvuoJAdPnaCIVzsuTJjR3yHCxc0i4JGaPMk7uKMOsnkUsiVS0USkoF72SqpF4xBLR/xFkjD
- HQIFlzDWGiy8JP9eZj1Y2ymn2TA/erxzRcObXr3nCL+ENnmpIWj3z3OwpWEZLLzDE2vctmC7f
- XYVwNsQCc0aYn8Es99E/P+df34BGsd82doMiTmx5OV7OR36TKk2+KWa4KjPoMtSr3AWGXBDl+
- RUHp7L0vu95WydH1Ghi4Zcek7FiHmxkd8Cy2AArM32tRbJpG+EENsgzn1CAdnPWcjUKjuhsWo
- j9tQLVHDk7ibdseZmMIWW6h4zlweBRc0fqotM0DPW+ct8cVa/x835vjT+T009xfaGdAvRYaKO
- AyFBhVGcxL4WT+n+W9s6r/wPlKTjGvKLVsIRi8XmKCi17cTbib2iXLneiAlbwps/pijlMGIEc
- mDFxiSIdm/gnLupV038Ysb7cy9S8eyr2qIlFLDiS4QhEP2GQxCumY7BvzbNQ2Jp84STaY3D8A
- Cju/+Ay/ueeyuOKWQuPsUWJnR81p40bbg8dyoO41vicJG9l5F9zGNbEERwvQiizKRwL8Mz9x8
- QDq0dVkkHg1Lmmh0VIKszLa9RH89lxbDSPdfI0eWqsaNhgO/aePpqF2BA7DEhCxiAoSXc/GpX
- moEiKRMDntHL9RaQGEKraLx7NX3CmGZRnHWQbI9X9w82xJrueWzzmYHNUSq/FdqnbU5Fs1GcP
- C2zGd5tCb9M9epCGpIaXQlbnQLElRo+xJpV25GUdgEAEfwhAFqYegMybUhF/AA4iBp3u8fj91
- I/aP+sBct4Wcv/mr6D/BzUiFbHPN9abKA4FFXb2Lc+1qVsRqtXkx9y3B+mKCYknhADa2Rdptm
- B84piMqr3EyVV6yNW4xdHhIcWpcDUq2Nnns33Y4VEbsfXDW0FlTzdm4rfRTmsq24BcXNCipXS
- bprvYmzU6lfChnbihbrUFy7tp/a+WXZDIXhXyBJ02IIDfMJqvWVSPqkMIC
+Content-Transfer-Encoding: 8bit
 
-Am 15.02.25 um 03:33 schrieb Jackie Dong:
+The introduction discussed stat file formats for very old kernel versions,
+which obscured key information that readers may find useful. Additionally,
+the example file contents and the reference to "15 fields" did not account
+for the flush fields added in b6866318657 ("block: add iostat counters for
+flush requests") [1].
 
-> Implement Lenovo utility data WMI calls needed to make LEDs
-> work on Ideapads that support this GUID.
-> This enables the mic and audio LEDs to be updated correctly.
->
-> Tested on below samples.
-> ThinkBook 13X Gen4 IMH
-> ThinkBook 14 G6 ABP
-> ThinkBook 16p Gen4-21J8
-> ThinkBook 16 G8 IRL
-> ThinkBook 16 G7+ ASP
->
-> Signed-off-by: Jackie Dong <xy-jackie@139.com>
-> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->
-> ---
-> Changes in v8:
->   - Update MAINTAINERS for this driver
->   - Added Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com=
->
->   - Added Reviewed-by: Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->
-> Changes in v7:
->   - Replaced spaces by tab for items in enum hotkey_set_feature
->   - Directly return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev)
->   - Added Reviewed-by: Kurt Borja <kuurtb@gmail.com>
->
-> Changes in v6:
->   - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
->   - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
->     NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
->   - Align items in enum hotkey_set_feature
->   - Drop some brances and return error message directly
->   - Check return value of lenovo_super_hotkey_wmi_led_init() in
->     lenovo_super_hotkey_wmi_leds_setup
->
-> Changes in v5:
->   - Take out union acpi_object *obj __free(kfree) =3D output.pointer fro=
-m
->     if-else block
->   - Remove lsk_wmi_context_lud_keys related source code
->
-> Changes in v4:
->   - Add related head files include cleanup.h, dev_printk.h, device.h,
->     module.h
->   - Replaced kfree() by __free()
->   - Remove double free for obj
->   - Remove wpriv->cdev[led_type].dev =3D dev
->   - Remove *wpriv =3D *(const struct lenovo_super_hotkey_wmi_private *)c=
-ontext
->   - Remove wpriv->event =3D=3D LSH_WMI_EVENT_LUD_KEYS
->   - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
->
-> Changes in v3:
->   - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
->   - Renamed everything in this driver which contains the name "ideapad"
->     to instead contain the name of this driver.
->   - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private=
-,
->     and use container_of() to the led_wdev pointer.
->   - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
->   - Added condtions checking for obj && obj->type =3D=3D ACPI_TYPE_INTEG=
-ER
->     and free the ACPI object after get the required value.
->   - Removed led_classdev_unregister() after led_reg_failed label, but
->     add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
->     resource.
->   - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
->     source codes and only keep LUD_WMI_METHOD_GUID.
->
-> Changes in v2:
->   - Update code layout and formatting as recommended in review
->   - Improved error handling in ideapad_wmi_led_init
->   - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
->     ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
->
->   MAINTAINERS                                   |   6 +
->   drivers/platform/x86/Kconfig                  |  11 +
->   drivers/platform/x86/Makefile                 |   1 +
->   .../x86/lenovo-wmi-hotkey-utilities.c         | 222 ++++++++++++++++++
->   4 files changed, 240 insertions(+)
->   create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 25c86f47353d..793ffb25ea74 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13149,6 +13149,12 @@ S:	Maintained
->   W:	http://legousb.sourceforge.net/
->   F:	drivers/usb/misc/legousbtower.c
->
-> +LENOVO WMI HOTKEY UTILITIES DRIVER
-> +M:	Jackie Dong <xy-jackie@139.com>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> +
->   LETSKETCH HID TABLET DRIVER
->   M:	Hans de Goede <hdegoede@redhat.com>
->   L:	linux-input@vger.kernel.org
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 0258dd879d64..715bcfbe992f 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
->   	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
->   	  rfkill switch, hotkey, fan control and backlight control.
->
-> +config LENOVO_WMI_HOTKEY_UTILITIES
-> +	tristate "Lenovo Hotkey Utility WMI extras driver"
-> +	depends on ACPI_WMI
-> +	depends on IDEAPAD_LAPTOP
-> +	select NEW_LEDS
-> +	select LEDS_CLASS
-> +	help
-> +	  This driver provides WMI support for Lenovo customized hotkeys funct=
-ion,
-> +	  such as LED control for audio/mic mute event for Ideapad, YOGA, Xiao=
-Xin,
-> +	  Gaming, ThinkBook and so on.
-> +
->   config LENOVO_YMC
->   	tristate "Lenovo Yoga Tablet Mode Control"
->   	depends on ACPI_WMI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefi=
-le
-> index e1b142947067..131fcf974477 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       +=3D uv_sysfs.o
->   # IBM Thinkpad and Lenovo
->   obj-$(CONFIG_IBM_RTL)		+=3D ibm_rtl.o
->   obj-$(CONFIG_IDEAPAD_LAPTOP)	+=3D ideapad-laptop.o
-> +obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)	+=3D lenovo-wmi-hotkey-utilit=
-ies.o
->   obj-$(CONFIG_LENOVO_YMC)	+=3D lenovo-ymc.o
->   obj-$(CONFIG_SENSORS_HDAPS)	+=3D hdaps.o
->   obj-$(CONFIG_THINKPAD_ACPI)	+=3D thinkpad_acpi.o
-> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/driver=
-s/platform/x86/lenovo-wmi-hotkey-utilities.c
-> new file mode 100644
-> index 000000000000..9df7145620a0
-> --- /dev/null
-> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> @@ -0,0 +1,222 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
-> + *
-> + *  Copyright (C) 2025	Lenovo
-> + */
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/device.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/wmi.h>
-> +
-> +/* Lenovo Super Hotkey WMI GUIDs */
-> +#define LUD_WMI_METHOD_GUID	"CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
-> +
-> +/* Lenovo Utility Data WMI method_id */
-> +#define WMI_LUD_GET_SUPPORT 1
-> +#define WMI_LUD_SET_FEATURE 2
-> +
-> +#define WMI_LUD_GET_MICMUTE_LED_VER   20
-> +#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
-> +
-> +#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
-> +#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
-> +
-> +/* Input parameters to mute/unmute audio LED and Mic LED */
-> +struct wmi_led_args {
-> +	u8 id;
-> +	u8 subid;
-> +	u16 value;
-> +};
-> +
-> +/* Values of input parameters to SetFeature of audio LED and Mic LED */
-> +enum hotkey_set_feature {
-> +	MIC_MUTE_LED_ON		=3D 1,
-> +	MIC_MUTE_LED_OFF	=3D 2,
-> +	AUDIO_MUTE_LED_ON	=3D 4,
-> +	AUDIO_MUTE_LED_OFF	=3D 5,
-> +};
-> +
-> +#define LSH_ACPI_LED_MAX 2
-> +
-> +struct lenovo_super_hotkey_wmi_private {
-> +	struct led_classdev cdev[LSH_ACPI_LED_MAX];
-> +	struct wmi_device *led_wdev;
-> +};
-> +
-> +enum mute_led_type {
-> +	MIC_MUTE,
-> +	AUDIO_MUTE,
-> +};
-> +
-> +static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct led=
-_classdev *led_cdev,
-> +				enum led_brightness brightness)
-> +
-> +{
-> +	struct lenovo_super_hotkey_wmi_private *wpriv =3D container_of(led_cde=
-v,
-> +			struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
-> +	struct wmi_led_args led_arg =3D {0, 0, 0};
-> +	struct acpi_buffer input;
-> +	acpi_status status;
-> +
-> +	switch (led_type) {
-> +	case MIC_MUTE:
-> +		led_arg.id =3D brightness =3D=3D LED_ON ? MIC_MUTE_LED_ON : MIC_MUTE_=
-LED_OFF;
-> +		break;
-> +	case AUDIO_MUTE:
-> +		led_arg.id =3D brightness =3D=3D LED_ON ? AUDIO_MUTE_LED_ON : AUDIO_M=
-UTE_LED_OFF;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	input.length =3D sizeof(led_arg);
-> +	input.pointer =3D &led_arg;
-> +	status =3D wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_SET_FEAT=
-URE, &input, NULL);
-> +	if (ACPI_FAILURE(status))
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
-> +static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
-> +				     enum led_brightness brightness)
-> +
-> +{
-> +	return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
-> +}
-> +
-> +static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
-> +				   enum led_brightness brightness)
-> +{
-> +	return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
-> +}
-> +
-> +static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type=
-, struct device *dev)
-> +{
-> +	struct lenovo_super_hotkey_wmi_private *wpriv =3D dev_get_drvdata(dev)=
-;
-> +	struct acpi_buffer output =3D { ACPI_ALLOCATE_BUFFER, NULL };
-> +	struct acpi_buffer input;
-> +	int led_version, err =3D 0;
-> +	unsigned int wmiarg;
-> +	acpi_status status;
-> +
-> +	switch (led_type) {
-> +	case MIC_MUTE:
-> +		wmiarg =3D WMI_LUD_GET_MICMUTE_LED_VER;
-> +		break;
-> +	case AUDIO_MUTE:
-> +		wmiarg =3D WMI_LUD_GET_AUDIOMUTE_LED_VER;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	input.length =3D sizeof(wmiarg);
-> +	input.pointer =3D &wmiarg;
-> +	status =3D wmidev_evaluate_method(wpriv->led_wdev, 0, WMI_LUD_GET_SUPP=
-ORT, &input, &output);
-> +	if (ACPI_FAILURE(status))
-> +		return -EIO;
-> +
-> +	union acpi_object *obj __free(kfree) =3D output.pointer;
-> +	if (obj && obj->type =3D=3D ACPI_TYPE_INTEGER)
-> +		led_version =3D obj->integer.value;
-> +	else
-> +		return -EIO;
-> +
-> +	wpriv->cdev[led_type].max_brightness =3D LED_ON;
-> +	wpriv->cdev[led_type].flags =3D LED_CORE_SUSPENDRESUME;
-> +
-> +	switch (led_type) {
-> +	case MIC_MUTE:
-> +		if (led_version !=3D WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-> +			return -EIO;
-> +
-> +		wpriv->cdev[led_type].name =3D "platform::micmute";
-> +		wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_micmute_le=
-d_set;
-> +		wpriv->cdev[led_type].default_trigger =3D "audio-micmute";
-> +
-> +		err =3D devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
-> +		if (err < 0)
-> +			goto led_reg_failed;
-> +
-> +		break;
-> +	case AUDIO_MUTE:
-> +		if (led_version !=3D WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-> +			return -EIO;
-> +
-> +		wpriv->cdev[led_type].name =3D "platform::mute";
-> +		wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_audiomute_=
-led_set;
-> +		wpriv->cdev[led_type].default_trigger =3D "audio-mute";
-> +
-> +		err =3D devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
-> +		if (err < 0)
-> +			goto led_reg_failed;
+Rewrite the introduction to focus only on the current kernel's disk I/O stat
+file formats. Also, clean up wording for conciseness.
 
-Hi,
+Link: https://lore.kernel.org/lkml/157433282607.7928.5202409984272248322.stgit@buzz/T/ [1]
 
-please deduplicate the LED registration code. You can do that by calling d=
-evm_led_classdev_register()
-after the switch statement.
+Signed-off-by: David Reaver <me@davidreaver.com>
+---
 
-> +
-> +		break;
-> +	default:
-> +		dev_err(dev, "Unknown LED type %d\n", led_type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +
-> +led_reg_failed:
-> +	dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
-> +	return err;
-> +}
-> +
-> +static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
-> +{
-> +	int err;
-> +
-> +	err =3D lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
-> +	if (err)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, const=
- void *context)
-> +{
-> +	struct lenovo_super_hotkey_wmi_private *wpriv;
-> +
-> +	wpriv =3D devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
-> +	if (!wpriv)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(&wdev->dev, wpriv);
-> +	wpriv->led_wdev =3D wdev;
-> +	return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
-> +}
-> +
-> +static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] =
-=3D {
-> +	{ LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
-> +	{ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(wmi, lenovo_super_hotkey_wmi_id_table);
-> +
-> +static struct wmi_driver lenovo_super_hotkey_wmi_driver =3D {
-> +	 .driver =3D {
-> +		 .name =3D "lenovo_super_hotkey_wmi",
+Lore links to previous versions:
+V1: https://lore.kernel.org/linux-doc/20250214013905.60526-1-me@davidreaver.com/
+V2: https://lore.kernel.org/linux-doc/20250214051432.207630-1-me@davidreaver.com/
 
-The name of the driver and the associated data structures still contains "=
-super_hotkey"
-when the module is being called "lenovo-wmi-hotkey-utilities".
+Changes:
+V1 -> V2: Rewrite entire introduction instead of just changing 15 -> 17.
+V2 -> V3: Reword counter reset paragraph for accuracy and clarity.
 
-Please rename the driver and the data structures to better match the modul=
-e name.
+ Documentation/admin-guide/iostats.rst | 89 ++++++++++-----------------
+ 1 file changed, 33 insertions(+), 56 deletions(-)
 
-Thanks,
-Armin Wolf
+diff --git a/Documentation/admin-guide/iostats.rst b/Documentation/admin-guide/iostats.rst
+index 609a3201fd4e..9453196ade51 100644
+--- a/Documentation/admin-guide/iostats.rst
++++ b/Documentation/admin-guide/iostats.rst
+@@ -2,62 +2,39 @@
+ I/O statistics fields
+ =====================
+ 
+-Since 2.4.20 (and some versions before, with patches), and 2.5.45,
+-more extensive disk statistics have been introduced to help measure disk
+-activity. Tools such as ``sar`` and ``iostat`` typically interpret these and do
+-the work for you, but in case you are interested in creating your own
+-tools, the fields are explained here.
+-
+-In 2.4 now, the information is found as additional fields in
+-``/proc/partitions``.  In 2.6 and upper, the same information is found in two
+-places: one is in the file ``/proc/diskstats``, and the other is within
+-the sysfs file system, which must be mounted in order to obtain
+-the information. Throughout this document we'll assume that sysfs
+-is mounted on ``/sys``, although of course it may be mounted anywhere.
+-Both ``/proc/diskstats`` and sysfs use the same source for the information
+-and so should not differ.
+-
+-Here are examples of these different formats::
+-
+-   2.4:
+-      3     0   39082680 hda 446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160
+-      3     1    9221278 hda1 35486 0 35496 38030 0 0 0 0 0 38030 38030
+-
+-   2.6+ sysfs:
+-      446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160
+-      35486    38030    38030    38030
+-
+-   2.6+ diskstats:
+-      3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160
+-      3    1   hda1 35486 38030 38030 38030
+-
+-   4.18+ diskstats:
+-      3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160 0 0 0 0
+-
+-On 2.4 you might execute ``grep 'hda ' /proc/partitions``. On 2.6+, you have
+-a choice of ``cat /sys/block/hda/stat`` or ``grep 'hda ' /proc/diskstats``.
+-
+-The advantage of one over the other is that the sysfs choice works well
+-if you are watching a known, small set of disks.  ``/proc/diskstats`` may
+-be a better choice if you are watching a large number of disks because
+-you'll avoid the overhead of 50, 100, or 500 or more opens/closes with
+-each snapshot of your disk statistics.
+-
+-In 2.4, the statistics fields are those after the device name. In
+-the above example, the first field of statistics would be 446216.
+-By contrast, in 2.6+ if you look at ``/sys/block/hda/stat``, you'll
+-find just the 15 fields, beginning with 446216.  If you look at
+-``/proc/diskstats``, the 15 fields will be preceded by the major and
+-minor device numbers, and device name.  Each of these formats provides
+-15 fields of statistics, each meaning exactly the same things.
+-All fields except field 9 are cumulative since boot.  Field 9 should
+-go to zero as I/Os complete; all others only increase (unless they
+-overflow and wrap). Wrapping might eventually occur on a very busy
+-or long-lived system; so applications should be prepared to deal with
+-it. Regarding wrapping, the types of the fields are either unsigned
+-int (32 bit) or unsigned long (32-bit or 64-bit, depending on your
+-machine) as noted per-field below. Unless your observations are very
+-spread in time, these fields should not wrap twice before you notice it.
++The kernel exposes disk statistics via ``/proc/diskstats`` and
++``/sys/block/<device>/stat``. These stats are usually accessed via tools
++such as ``sar`` and ``iostat``.
++
++Here are examples using a disk with two partitions::
++
++   /proc/diskstats:
++     259       0 nvme0n1 255999 814 12369153 47919 996852 81 36123024 425995 0 301795 580470 0 0 0 0 60602 106555
++     259       1 nvme0n1p1 492 813 17572 96 848 81 108288 210 0 76 307 0 0 0 0 0 0
++     259       2 nvme0n1p2 255401 1 12343477 47799 996004 0 36014736 425784 0 344336 473584 0 0 0 0 0 0
++
++   /sys/block/nvme0n1/stat:
++     255999 814 12369153 47919 996858 81 36123056 426009 0 301809 580491 0 0 0 0 60605 106562
++
++   /sys/block/nvme0n1/nvme0n1p1/stat:
++     492 813 17572 96 848 81 108288 210 0 76 307 0 0 0 0 0 0
++
++Both files contain the same 17 statistics. ``/sys/block/<device>/stat``
++contains the fields for ``<device>``. In ``/proc/diskstats`` the fields
++are prefixed with the major and minor device numbers and the device
++name. In the example above, the first stat value for ``nvme0n1`` is
++255999 in both files.
++
++The sysfs ``stat`` file is efficient for monitoring a small, known set
++of disks. If you're tracking a large number of devices,
++``/proc/diskstats`` is often the better choice since it avoids the
++overhead of opening and closing multiple files for each snapshot.
++
++All fields are cumulative, monotonic counters, except for field 9, which
++resets to zero as I/Os complete. The remaining fields reset at boot, on
++device reattachment or reinitialization, or when the underlying counter
++overflows. Applications reading these counters should detect and handle
++resets when comparing stat snapshots.
+ 
+ Each set of stats only applies to the indicated device; if you want
+ system-wide stats you'll have to find all the devices and sum them all up.
 
-> +		 .probe_type =3D PROBE_PREFER_ASYNCHRONOUS
-> +	 },
-> +	 .id_table =3D lenovo_super_hotkey_wmi_id_table,
-> +	 .probe =3D lenovo_super_hotkey_wmi_probe,
-> +	 .no_singleton =3D true,
-> +};
-> +
-> +module_wmi_driver(lenovo_super_hotkey_wmi_driver);
-> +
-> +MODULE_INFO(depends, "wmi,ideapad-laptop");
-> +MODULE_AUTHOR("Jackie Dong <dongeg1@lenovo.com>");
-> +MODULE_DESCRIPTION("Lenovo Super Hotkey Utility WMI extras driver");
-> +MODULE_LICENSE("GPL");
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
 
