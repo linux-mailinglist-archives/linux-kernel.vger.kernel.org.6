@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-516343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C54A36FEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:42:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024CFA36FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A121705E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:42:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8746188F8DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C41EA7E4;
-	Sat, 15 Feb 2025 17:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F501EDA0F;
+	Sat, 15 Feb 2025 17:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fNog5Toi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VYC4w4NI"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F38194C61;
-	Sat, 15 Feb 2025 17:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A6F14A088;
+	Sat, 15 Feb 2025 17:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739641320; cv=none; b=pcSKun/2MBBo2dwPaF91e0i0JPK/ULbhQ0K6r398NfvWSZfLJ/AWB6D4R5poaRo7gbbd4R1/0PyW/UTJO40zzHhl2aO9UCU9BmXrgfaUCNon98HQmjxovjNvcZUz8AKRAjJH1tAjPpWlNOOYRvuLVS4boTQsd2LpyJMM15t9CzY=
+	t=1739641561; cv=none; b=SEPb+OU/O6uzV5D7h/yFDbw9az/3PDDbn8g020gTjOD835x3os+dpVMlsg5NMEUh1wR4KzV/lRgKasnRK5rqQCxNAw7xmMJ2FPBsyCuKwfMdhWyVBA5z1//Qtw6gEdYZ6hrtDnnuCj1wKttAO3ipmtfuwD/9tJzLX0wgBXmOcDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739641320; c=relaxed/simple;
-	bh=Bnn2D/zlSFwXiqp4qPWBI3XZ7qXF6yGTp1XsCcwI9ec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YoM44Ow0wdlayfYmWr1XFJABekQF0ltkbPMuS3xvik8Jt1NAUUbt5Oobr7qlqMgFquJ0qN4V1eD81D1T1ZjAnRAjnGLOQn2HaM8QNau0LLp/ziIjntoBqvbwpdyhgsVOr6ohM8P+UL+fEA9al+f2flElmim+lnj+SH4J2QZjm/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fNog5Toi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51FFtKbE013257;
-	Sat, 15 Feb 2025 17:41:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M2ElzJt/I17QdLPM7eFrO0SLqYDxKpTo4yjjWUwjiw8=; b=fNog5ToiGxuWTxH+
-	MfAMzepVFsR2s1VYRHfhFn8zh/C7GbEs9MqnvanyMYW1CgP20mkp7sQp848H/Ljr
-	ORUJAk+8OZq40M2DXwLBatmUij/Y+XoqDehfK/WVgbed4rUByWWW9O3cuotL/vpV
-	7X/lbAiD4Q8SrRNjKrQZ15UB6KHZJPFJD3sF1Kl/Jv2zocTF/tVb4lpvXhWVx8CA
-	wyPhrzFHlWvyIBx88JmefetrhHzcFiRZkkmvVXaL5L/1CAbIXcmxYu1cXnsdd5c6
-	utn8rKlJAIYE+cUxc9KiMa33VKa01BIRMmSkejm+Bp4qvfWTo5FImpr6EB0vXhea
-	xE8J5A==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tkqh0uvh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 17:41:51 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51FHfo9I005965
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 17:41:50 GMT
-Received: from [10.110.17.177] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Feb
- 2025 09:41:49 -0800
-Message-ID: <5a5ad8f0-180f-4577-955c-7e26ebac129b@quicinc.com>
-Date: Sat, 15 Feb 2025 09:41:48 -0800
+	s=arc-20240116; t=1739641561; c=relaxed/simple;
+	bh=V5eZgV4YqqU1WMKnOEa29nBsCkNgtkDVwMzLz60eI4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cKxlMshqT0H8cB6OfJtqtq/beI/9Fco4FY3uBB1h7Lchh/AtQ5IO0ldLj4Hgk5g70S+Iz+LAJw4tVAeFe3yH2HxDdkzJx5sep8+QfYy28WOfNeEbF+fcJJpoSicRQo/aAFrBKGqPfTFSZNetC88/61DcTzCvc1qDBesZdbZQI+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VYC4w4NI; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1739641550; x=1740246350; i=w_armin@gmx.de;
+	bh=6bZeHd79oLqhFLOspuVVuNjpgjtmeGOKV9JZokmFqgg=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VYC4w4NIq1bnZf2jtQY527ogqGOcdwsD76YLEzx4c69/RHGfCGxNt5rsiOj+2rkB
+	 d9NGp/VYVZMh93xkPpjz/aG0CnnyoTBtldXFt0fGiKqGrkg1xZOSVW8OqiZbI3ISI
+	 q3P58KSQi6G+BFo3YxXbE/62+meIjyFO3kjDyoZvW9sf6mexqZnZI3LsdIrHzphIB
+	 sjpSOmvZ6LZAkOagldNM10mhfrvJPNxAUqBajyowGrEZEGuKf48S6sO2YC+hjK8Im
+	 Eds/sYohqmP1cfNFzRkQwfbKeJcuJ0Q4DdNGDB3gSTYzdYt4d24jl24wA+uFINKeJ
+	 2bPka+9TmwrauaGyog==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1N6sit-1tIVSj1VMt-00v0XC; Sat, 15 Feb 2025 18:45:50 +0100
+From: Armin Wolf <W_Armin@gmx.de>
+To: jlee@suse.com,
+	basak.sb2006@gmail.com,
+	rayanmargham4@gmail.com
+Cc: kuurtb@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control support
+Date: Sat, 15 Feb 2025 18:45:41 +0100
+Message-Id: <20250215174544.8790-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] drm/msm/dsi/phy: Do not overwite PHY_CMN_CLK_CFG1
- when choosing bitclk source
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean
- Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek
-	<jonathan@marek.ca>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark
-	<robdclark@chromium.org>
-References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
- <20250214-drm-msm-phy-pll-cfg-reg-v3-3-0943b850722c@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250214-drm-msm-phy-pll-cfg-reg-v3-3-0943b850722c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NaI3AVQre0LnVjbNlAmGwae4njtURylH
-X-Proofpoint-ORIG-GUID: NaI3AVQre0LnVjbNlAmGwae4njtURylH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-15_07,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=518 clxscore=1015 impostorscore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 spamscore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502150156
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:aU8fKXxED2XE3UjW99HTHU6xUDbt7/BmFrnhU6dAUzQLngMz/Wh
+ bJWrXt7HRCxEcndZ7jGti6YM/7V3QYlxPS79lGM22mcX7tHgzZTxsIaGxpfR57PrVLv4rqu
+ /DyVkktyrHTRbf/O8irzcuSUetDJdblVo3jHVHF90oHzTcbOR3CMpe+MT+d1aHTgJG4+bKc
+ y5AgQo4P0oHJZBPW4gDIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZG6f9kcBSSI=;bb/XQvLytO0Xx31QZUlUPRyNjsW
+ 80zJsZC8IcBUQACyo5TFjY/qhqIEDKg8ABD0Gecf2mjQ3kQHEW4vw7hQUsov6pGjx4LPO5ek7
+ /z2NC3h7rERsqmwTuqCOky94bYmLEM/BVvo3nWHsM4SOyShQSHestEYJd2N8X54SFV5Yo8y/+
+ pQG8UtEf4A8jE3JaT2OBhqu0bjnsbvF2swkx+zCFl/ZfaQW6b0p4foAZ7N/L957BwuU24qDga
+ jgGO+PqjXVYWRBKvQomWlEcpAsJwjcWoad7GtFWCfAPQ75plcrmBgh0Ot9WKODSlgo391XD02
+ nGxGhnWsuxyou02cSk+KXDuJaf3AoMw+JtZmfsgUXIjogfF7X+laz7Oo/StXH3Q29Nga0Qb5n
+ mJDIT6ljb9GR4iSZmS70rxKBzGSymIhzcgN5SGzdS23ImKKOpZUiA81kBc3VibBtng/0QWQ9q
+ TwD72SFljQ2iQyFj0qx3L2NOX3scksjTiYqYU+2RmZFrD6WxQEmO1ITtNPLQeXXs+ns+OTp8K
+ wdd5D5L7CI81NcUINEAWwI0gLNrH55pB5IO+PdNKng1+C3hOqJNO4zxSKCduuVwjW8LXg5twj
+ QIVb3YEcN16aHeLGKeiDQ37aO+ul/BKPzy6kZplAlp8/mnEcttp7ZuYGyLN+0hu1N02UKYvdA
+ 112J0oc8TBHfIftEsiD/ZVWfvh9KWnCrRSdA8NwxWLiPoe6lyv+PYZ1M/VJ74zLw6ByKaFyCc
+ l5hNZowxDZyC26CFvlXK8Q9EVwIWh9SXBCFjs3f41mKjcqhbSv1fN22JRk+X6WtZFZ5DYMWnd
+ xIXxByTGL7gXpufzqNs4iKQV3QtrW10FFhZBc7GI94JjkTkJk+MG2Lq9RpioPGP5QjsCtbREb
+ w2oEc40c8yrJN7R1ouJnDG6AH0hAQjKvxH1Q98BSxvfcZC6rAdrcajvTlrrze1Aw48Ygy9Y0y
+ MugyFI2JLGBCprsmQIK0m0pTuGBAWvp8VmZJiW9dmESBHkjrFrgPtqaDDfVfUX3snBAOZ6IYv
+ pMewx9aSn2zayN7C1lY+y/i1dYp6FKkSbSUKD2/r8DPWGO8C1AHa6V7s+UEgwG9xO/RxIoh5y
+ sKcRq8ue2eVGr1cZInzIZ6O2ZoW1f70Sm5+tTve9/fCdVKKll+dVr7xkHjcHPVHvUv3uHJa5E
+ uvs+TyNeE8NlJ8oMgodMkMunJf5//J+O4guff5qFXvrzMhhqQhEszkJMlVH9s/728kBRaHXBa
+ k/DRyxxkLKrmnHW/OKnJVv5ecGbkYHQ5fXQUbxRom7qCnCM9cGou5eRQJVpcV8tH385Kfxgs7
+ FDuIZY5nm6Zm2bTr8tLyKHrqPE/hHm1DrZrENMBGImr3MoKlymaHkCnOKopJLGzBR96p8T0ui
+ J11OZME1nOkOU2aA/TBPSDjYVz4c5Dd+CJQL3g8mauJGbelz1B7E4P8ZM4
 
+This experimental patch series aims to add fan control support to the
+acer-wmi driver. The patches are compile-tested only and need to be
+tested on real hardware to verify that they actually work.
 
+I CCed two users who requested support for this feature. I would be
+very happy if both of you could test those patches and report back.
 
-On 2/14/2025 7:08 AM, Krzysztof Kozlowski wrote:
-> PHY_CMN_CLK_CFG1 register has four fields being used in the driver: DSI
-> clock divider, source of bitclk and two for enabling the DSI PHY PLL
-> clocks.
-> 
-> dsi_7nm_set_usecase() sets only the source of bitclk, so should leave
-> all other bits untouched.  Use newly introduced
-> dsi_pll_cmn_clk_cfg1_update() to update respective bits without
-> overwriting the rest.
-> 
-> While shuffling the code, define and use PHY_CMN_CLK_CFG1 bitfields to
-> make the code more readable and obvious.
-> 
-> Fixes: 1ef7c99d145c ("drm/msm/dsi: add support for 7nm DSI PHY/PLL")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v3:
-> 1. Define bitfields (move here parts from patch #4)
-> ---
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             | 4 ++--
->   drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml | 1 +
->   2 files changed, 3 insertions(+), 2 deletions(-)
-> 
+I am ready to help you both with compiling a custom linux kernel for
+testing this series.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Changes since v2:
+- remove duplicate include and replace hwmon_pwm_mode with
+  hwmon_pwm_enable in second patch
+
+Armin Wolf (3):
+  platform/x86: acer-wmi: Fix setting of fan behavior
+  platform/x86: acer-wmi: Add fan control support
+  platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
+
+ drivers/platform/x86/acer-wmi.c | 298 +++++++++++++++++++++++++++++---
+ 1 file changed, 273 insertions(+), 25 deletions(-)
+
+=2D-
+2.39.5
+
 
