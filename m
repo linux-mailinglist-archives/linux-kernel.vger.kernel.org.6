@@ -1,132 +1,171 @@
-Return-Path: <linux-kernel+bounces-516209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51384A36E2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:39:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3595A36E36
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E16E3AEFC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:39:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138851700F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE741C6FF9;
-	Sat, 15 Feb 2025 12:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7BC1C6FFE;
+	Sat, 15 Feb 2025 12:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRj1imaK"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g0F1UOJg"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29937748D;
-	Sat, 15 Feb 2025 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AC5748D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 12:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739623176; cv=none; b=jIVR4unUdAGDPLfQoiKH04tzCqdypYsIRoMC5iCdsxK1IEj8/0/xCWdyr4CbBQyK173WFpYdRm9jt5t8dNQe+tgZhJlB+pO/QNMwcATWguRXsq/Xc8vsiKpvCG1fiO7wRe8Y3wPRHjH/lEPNSyBKQqxsZrGiB2Ud00kjZbH4rxM=
+	t=1739623457; cv=none; b=e3NF4F3y7f4EFBvITTFUWde/fqGqufnEvXSNzn0obTlQ8m+CxTTrS9XPSxug7Lw8+SndT58vezQ7d20o6jhswjeSY5zBxuc6vzItEBK+5MRRuakKCC3Cfs/5lYxhi/Yuflo3wUfzsozjPgxer01AzspX+G5fDdnkl2KpX/14qIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739623176; c=relaxed/simple;
-	bh=OsuOE1LzlUrTN5kX1dUSPK9jRgh4rxbgfC0a1NCoMcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLQcirTTVpJ+g1+dDVL8pcGTbYOuH74AhcHCtxWYGE4enANevj72AFi25nfkYMdfhPeEXgF0fd08AZWT5Qk+BYcAJQ8BiWpiW7W/G3A7rUKcmIroh42/QIuYdtjFIk20I1PQlTem9jDp/BYeWF/Xs4ljIAAh8LfLqn+PcRIVe6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRj1imaK; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38de17a5fc9so1519593f8f.3;
-        Sat, 15 Feb 2025 04:39:34 -0800 (PST)
+	s=arc-20240116; t=1739623457; c=relaxed/simple;
+	bh=KFlNeML0hcxjm+hdvWIGm4NG8m/nSoc68OSgTfMvGsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPE/EBSShNM/9XnFI1UHuP9E3+7f78qzWbwrgle+Rxga7P0OEBiUPxW0aX6qWk09kslHlM0JmL8ty9TM7m1is1EEYZBmc0xh37Gbtwna8+RoPxT2CVRZp0e4c9gMST6ooUUQlEkCctI82S3/0jn5aLUjgbYQ9srTQW5t/6zeS38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g0F1UOJg; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ded500589aso412164a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:44:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739623173; x=1740227973; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sOzHbiOoS5yihAuEFC/WAZMn5LqH9HEiJMUp2IVfaik=;
-        b=ZRj1imaKB8ncPCq69nU3xp1iFj0X7H4hNDD76Wao1/rMWIT1K6hFTL37bm/WZC9WUr
-         kMoHxXzZuYv1GGMUBJUJk/c2NWYWALDyeeXhdjeiPHOL2E9sH3R9Q60IRq0HonT3/bJk
-         PrFgV8deO89oIvnJkSSHT0g+hOC0j57/HkRgOmSCPGG5be1P7+88wE3SB0IkE8xUdZoI
-         ZRQZqSo831qf+YgrTWnywEAESKf+uMb1y6/as2ayLGXXOLBtuY/GSBE0TRijGxcBOpSB
-         fSSxwwFNilBdt8M2b0lsmU0/s67P+HDURIn3WLa0YCn0p58FaneqMEk0vEzDb0bbmB61
-         AEGw==
+        d=linaro.org; s=google; t=1739623452; x=1740228252; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+B7I6TUpdM4PsxD/neBUbK4/bhJwkNrIuTN9cb5z76E=;
+        b=g0F1UOJgH8SnEA0pN17lpjx9hXzt/at2vgzFS/9OWaoE5kBWRHi22Rs8XcyN7Iecv/
+         TPK3rQK3o64mT26LrgVuhUvFZj/qfqClV3J+F3lcPbgOLUW97AZEJ/Zg6jwmm80Pio+y
+         rCSku0gnv54F9evYCNOhys4HomZRkvDvery45UqTcvVTPvkzFWr0z3lP5i9YJCzBFz5X
+         MdO9qqXPA3rR2qs9NR9jpIgtKRfnu7wfsnxzziCJ/7v4qFFLL4heBWapD4fBqRpQTK0B
+         aJgcOSEijBPFHdH/blAPkZLf4yd5kTyhQP5GWcMRWXdQTf1T7k+JXCKVKJXzjL16bdDY
+         lhMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739623173; x=1740227973;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739623452; x=1740228252;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sOzHbiOoS5yihAuEFC/WAZMn5LqH9HEiJMUp2IVfaik=;
-        b=vX3An0KnqMyWrbaXGHpEfcmUWpiWkbPfTu/ebNkm/EGt9nb+Rzro9K/YPP/X9OPWG5
-         Ol0v+8OgmwuKu67PTNoqBgODWHw08xSa9NBVviphUhp45Wl0VOwjgJghOQx3tGNsoCZC
-         8JFR5uxqEoxlHLC4fuKwq0CR3yrv6M817CTcFpRJIpGchICfT3yLkbSnrDbv3eS+HorF
-         NDADTTJeloo60DSiQJt7u9ZJCCxNXaOFORgnFJt4/jh4WfkTymvetiFVVKS7Seuh+JS1
-         61JSj+Ze6fZ4/ljFXL2x8e0pqF/ADCsMwmQaG0jrXl9xWVAzOR4vpKrcBKrTeKhwt/Zx
-         UxRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvTuay0dMv+0A5hw1Uc8CTlGipxbLbw2Se0WAqNCjPtDO/GxzAP+ZIqXk+lF/QvPpP6VdP//qme5k1WNrz@vger.kernel.org, AJvYcCVBXg4rpTISqLQ5GO0xw/w4JY6o33qDKV6i7AEeTprr7ikrPg6MgkcC4QL88qFe9LANCK+/kLdZZvrO@vger.kernel.org, AJvYcCVSX5kHZLZnsLbPDyEPoa4vWwCrykCQyI98J6zl9uWE7qxLKEa3SFlfXaFdVALrZca7DYN68kIE+vtbMzu+hxFhzok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5dl7UoACYa452CvxqSHGoeex2TcOkDvhRz54LUL+e0GPoXgXM
-	fvxU/eSiSWyLdDMjAxM2a2ZkpIni46ogDnf42YFdcVfHPVqHR+Mm
-X-Gm-Gg: ASbGncuCItqOTikzvkeLBOIoGGfOl7sqxiL/86GJZtxuZEl4AtmXJFFM5yW5kARbBKx
-	f7dhbzB+3PHVnHcLwfBv9DN9hbLCXiEY/8huHSKaT7zu6u5LwDO6bKOaXkhFtLZaWMbRFy6+nWt
-	O3V5TW5W1wxdoYc0xCUVAH1OcFLhFJ/oW3RdcrIZWxRsHFG4BHsYgnV3e5dcC/7ZxPBFlmAXnFm
-	TkY7yIcJ2DotX21vEqHUnl/i4sThdlZcpUvbPXyQMDpx/74x5MBm+eu04OJPYZmlB/ddvBGZtV4
-	KcwbAbTlqqeGR1Qcx2jEw4NSizZNNRG9Lc24PVJcgO9L8A7RPDacKDVXgXGgoTZchBM=
-X-Google-Smtp-Source: AGHT+IG7zNrA01xgjYEn/MTIJYOqGw1HZPW6RPoPt4xc17909V642AX/ilwKBKzO9yBWRkBEkSVrLw==
-X-Received: by 2002:a05:6000:2c8:b0:38d:dd52:1b5d with SMTP id ffacd0b85a97d-38f33f11861mr2472767f8f.4.1739623173271;
-        Sat, 15 Feb 2025 04:39:33 -0800 (PST)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b410dsm7156112f8f.5.2025.02.15.04.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 04:39:32 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: timer: exynos4210-mct: add samsung,exynos2200-mct-peris compatible
-Date: Sat, 15 Feb 2025 14:39:22 +0200
-Message-ID: <20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=+B7I6TUpdM4PsxD/neBUbK4/bhJwkNrIuTN9cb5z76E=;
+        b=o+elo6MPYmDQ9aqD6y9fl/5a9vGhtZpT4GyX1hH+3MkygsLW226OrBEMj8RZjom/Vc
+         IYW73Yzw9Upt/MDn66ODY2lkQbs/E694TMkR+FIyLSY9AazPDNG/6n5k7DTY6ELrAN8M
+         L32T3nbL4vFFdBnJbrz4qBbrwWeRs9I7fI+0RmlL01VlZaNNraC/FeW7383X+LiY6nGQ
+         7oinZUR6o2GU0vBPFhSxi0ZRbTSqmqmHGGR3KRCncfULpJ+ScmJAd6YJWgDx37KmhWyc
+         piJBG+V9/vvB6lG64xiASdUmbA5K3gvhaCfPE2TpVWstLoYvxkIbzRPd6NSHoI4Z1+F3
+         Q39A==
+X-Forwarded-Encrypted: i=1; AJvYcCVWXaE1X/iAixNeExjzrlRBPgl+OGpw7fwTnzoBvyFPcRT01pffjqaki6jZe8+J6plUk5DcHLSQEW5lzfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOmqy8uaZJ8mYADPs9p/pxlFJ/Fw8LlI0LWCqTTsOPDOKtKvvY
+	3ShGeUcj3TdMoZelofhrA9K4LQuy/xqz7q5Ac+DBOQV2ufUGKLX5k3AYh5XsrHQ=
+X-Gm-Gg: ASbGncvhRd2azMUJnrjTp/q7BB5HdvXhBP+1n7LScDFkSAoYPjFu4UBZUiSIg2VsPkl
+	iIh0vLVYDydTzz1VVdEmVOMKcEfOkWVV6rDbBSSvzRJiz8AmvWqmDXCVpalVvAJbppUQjjgqbWZ
+	yOf7PgfMoBBCwQv+9BTHjW9xLZebQ78/e4JBLAKM8AFH46KdQYABNxlQ1Q1qES/MuZjyQ1dyl25
+	9kSEARA8ypC8HyXDCMYfaze1LEe7hzcZUIwTAEMv0GDZmg21BG7A+xLeBGd2yayA3zR1wOhcJlm
+	e6p0m4aEGWt4SIN1OoMM2wCZyboYPz9URPI=
+X-Google-Smtp-Source: AGHT+IElpLcwNQ6u1JakahPoc0t00IfbsjrSKY7uK59j4jK7wab+Pj+IpLpfpGCYq3y3shibvBY/eA==
+X-Received: by 2002:a05:6402:50c6:b0:5de:a8bd:a231 with SMTP id 4fb4d7f45d1cf-5e03604fbf9mr1035345a12.1.1739623452138;
+        Sat, 15 Feb 2025 04:44:12 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece270cbcsm4641325a12.49.2025.02.15.04.44.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Feb 2025 04:44:11 -0800 (PST)
+Message-ID: <c95582e4-9ac3-4636-8a4b-3d27ebcb28ee@linaro.org>
+Date: Sat, 15 Feb 2025 13:44:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: kconfig: Mention IS_REACHABLE as way for optional
+ dependency
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+References: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Whilst having a new multicore timer that differs from the old designs in
-functionality and registers (marked as MCTv2 in vendor kernels),
-Exynos2200 also keeps an additional multicore timer connected over PERIS
-that reuses the same design as older exynos socs.
+On 15/02/2025 12:42, Krzysztof Kozlowski wrote:
+> @@ -580,10 +582,15 @@ Some drivers are able to optionally use a feature from another module
+>  or build cleanly with that module disabled, but cause a link failure
+>  when trying to use that loadable module from a built-in driver.
+>  
+> -The most common way to express this optional dependency in Kconfig logic
+> -uses the slightly counterintuitive::
+> +There are two ways to express this optional dependency:
+>  
+> -  config FOO
+> +1. If pre-processor can discard entire optional code or module FOO does not
+> +   provide !FOO stubs then in the C code :ref:`IS_REACHABLE<is_reachable>`
+> +
+> +2. Otherwise (and module FOO must provide all !FOO stubs) use the slightly
 
-Add a compatible for the legacy multicore timer of Exynos2200. Rather
-than differentiating it based on the block version, mark it as the
-one connected over PERIS.
+Obviously this should be "module BAR", similarly above.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml       | 2 ++
- 1 file changed, 2 insertions(+)
+I will send a v2.
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 12ff972bf..10578f544 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -27,6 +27,7 @@ properties:
-           - enum:
-               - axis,artpec8-mct
-               - google,gs101-mct
-+              - samsung,exynos2200-mct-peris
-               - samsung,exynos3250-mct
-               - samsung,exynos5250-mct
-               - samsung,exynos5260-mct
-@@ -131,6 +132,7 @@ allOf:
-             enum:
-               - axis,artpec8-mct
-               - google,gs101-mct
-+              - samsung,exynos2200-mct-peris
-               - samsung,exynos5260-mct
-               - samsung,exynos5420-mct
-               - samsung,exynos5433-mct
--- 
-2.43.0
+> +   counterintuitive Kconfig syntax::
+> +
+> +     config FOO
+>  	tristate "Support for foo hardware"
+>  	depends on BAR || !BAR
+>  
 
+
+Best regards,
+Krzysztof
 
