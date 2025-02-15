@@ -1,230 +1,130 @@
-Return-Path: <linux-kernel+bounces-516187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157D2A36DDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:50:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B40AA36DE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780C5171B21
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1416616C6B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD21A2642;
-	Sat, 15 Feb 2025 11:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6111ACEC6;
+	Sat, 15 Feb 2025 11:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SY1DdM/L"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZoNOGM0"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF7191F75;
-	Sat, 15 Feb 2025 11:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E74191F75;
+	Sat, 15 Feb 2025 11:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739620203; cv=none; b=dSRV7DNxR5tqIne4Q+U/XcHa5ekYZ1lfhaPV0ileroKV2M5FU0sj2vKPUtWkuWjjWDn5AtvBwPoiO+7b6GrVT9vJk2Jz2QbZOO4u8SwhtS4eAoSZr1V3TTcvRyD+631u9/BZ0DueMJkjy8U53vDQu1X7vHSBjh9OC/+mK9beIuM=
+	t=1739620308; cv=none; b=DpKLP7oH/2S+cXg2wx1K4KDxzC1KESJEka28PFJADwHveeuwMqEU8WL/BitVN+J5f7hEKsfqgr1R0hd1ex8wK6Y3URGanyZA7/MT9qYG+FNJzJaSxifLpA5mMyx8jocrVu5Q5P8uHg8945qgREzkjqjnp0oVGjL6ZSQG+kvA088=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739620203; c=relaxed/simple;
-	bh=Fs5UveEaIDoISFa7M98IagHDHCEkTg/NDXCCXkbaMC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KiiGlzjCHxgXpoSpX7NZ7bgQbYhHRD2eQsQC7vlUy0LEzFXSW2nMZVrIxNWU61H9FHssS9Vaa+mc73A9MVgK+6U329HAJfERrzigAXFoOirSQx4Tno2S9q1Sw79VX8l+vEQj95uC5Ir1SAdOlBsR6CoRkD0h/dO7tpacJLyzi9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SY1DdM/L; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51FAidhu008563;
-	Sat, 15 Feb 2025 11:49:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	haO7wmDHIMtM6c5v1RgC2Q4mqukTFfgaoIqbl8FyAWE=; b=SY1DdM/LVFdmsMDH
-	5uZkNfJNHsknObXhDTx3+JYd9sZUiBivUGEZdK8vaFNYb1YMkY3FcgxIwJjm9jHk
-	o1/ZgDzoRx2ewysCdnghioiDMKZHPUxZs2dYLqtelpkWCuTAbrcDo7B+rEl5sbOr
-	qXcD+pPHx7XhVz5qGjb4uXVXAEPAZcf+5kBewLUy3DLCJSWXI6FUidAJE4AW9vwF
-	ge6B71P88P1qAwcVR5HPTmqjMHB20S5KBrh0b6nYDOiWMJAdq3IAI6IHZYBg8xPB
-	rvEY2RmlgcaAWsvUvMrvBcg9Kxl5QyjVFtRb7q7uL4jvZZbn20LxZRBX0G7oHaWm
-	10uz+g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tm3gres7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 11:49:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51FBnjgM014817
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Feb 2025 11:49:45 GMT
-Received: from [10.216.9.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Feb
- 2025 03:49:38 -0800
-Message-ID: <182b7896-9cfc-4f94-b9d4-759fd85fd997@quicinc.com>
-Date: Sat, 15 Feb 2025 17:19:35 +0530
+	s=arc-20240116; t=1739620308; c=relaxed/simple;
+	bh=ODBV7XxULaEKMbWW5H2hCBCAUiFq5HPbBkqQ992RLs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iAcWrJECVRe2fEWBunTaP3IwIN4Rb0Q375w5XA8TTJgZ42wxUa5Pr4r8rIg4Tc138+y87YNgZhwWCJKEr39uLJlPPk9a7ZbjznOl4xTjWrckTYZ4h5YgvUW4r8E8sckIgdMDkuARPHN+y2ljgPuKE6o7UWswjCgQbWCPrUv9WC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZoNOGM0; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43690d4605dso18303035e9.0;
+        Sat, 15 Feb 2025 03:51:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739620305; x=1740225105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+E8cBYvEaPMhQTBmq7LkfColA/xNBOcLLm60gFA76t0=;
+        b=OZoNOGM0R4CtILKvTLFtUztQObab8k/apdQDMwmdokQKwpuSYwyCxZT6Wgb3yfiQfh
+         u6uT0o/l0TJMUtPZoul4K1vB/sJJz4Uz7kV3aCeHqAWkeYzYZs2h8MWM36/oThzRM7ei
+         AJKu3S0V5gqCkclg3J83xynsdkUpE98ojCuexveGfcui0gDL8XJUGTXn5UWJWXTDRTiH
+         qQ/1YWcR1Oz4DjnZpf9aVTxzy6ToaMUkU9QKus5lXWcEdzOCihsxDxJpBT9Gs9BlYdt0
+         +58dm4LyeBd3O8VVEmghlFz2CpH5gajZ2JEWugA2lobHcDg9tZvGQz3kTU5b94x/WAJM
+         jCQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739620305; x=1740225105;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+E8cBYvEaPMhQTBmq7LkfColA/xNBOcLLm60gFA76t0=;
+        b=rQ19whl+KW4EUjokqg9H9isEq6vU0xRHhpxs8hThWym1nrdt5UECpaTurQepeRtwkg
+         Snp8TJkCqmlWrxMv3NYAJMK+fmo+m2lvkW0qOfpqZvwG6NIRYLxHWtioomNQM9b3cWLi
+         t5xWideYHkhU1o37TuYbEObH0wvM5EiGeUcEakcZEOY8znsoFsCfr7sjnkPE/SJOaTvQ
+         cwZcyWOJfmLfv4TQi1Vl38gHIp1Ad3bQ39On4Pas8jtcwY7mhGm1CzvnmOh50mMF+mnw
+         SEvPlvZXxsKbCqqREVKPhEQxDLlL6hzVxLPURrF1kebdc/JzCZdh8YiaTjoxluMX1V5K
+         9Rnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgClhxrewZkfo7t3Ln8pm5Y/EefKJDwiq/1vHaBE/WjQi8kC2/Ddko6mfmzsPGyDnBZ0Ybz04AyrfSJw==@vger.kernel.org, AJvYcCXD413dRedTuDC4rxCwuVJR1jCuc1ilMaHkCrnbAQ5+nUqG8eOCqp+3fUJOoe1JwzGavWBbriOx2CBhxTBC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgb9wwIRU61PWfUI5ANc/rMlHhzihYt3HeakKqQKtrE0gKDSQf
+	+pMVzDoQTUnPL1XhK4zldjWcziGLirjB8vJh0mH9oCRjQBaow3hD+w4V7Q==
+X-Gm-Gg: ASbGncv62REtVGR085zaT1aupI5C3RVtZufHbmbLyQVk7kTEgEfIMZWy0MvxMTy8Aeg
+	LZU8BiNCsBJ3/BlmMS9dPA17n/eySFkLCD++uwgVubqAQ2zdU0WU1IfrCnvNNVj75ImPHoeumLz
+	JldEVpA2MXsjAwCxwVb94sxosLv9vV4e2o5RsDWNH9G8y7A51ZwDoH1MzohSbpqAVrG0IgxlszP
+	vFPiWwzt4qWG5qiHqtj94XXNzlDyEicqlIXgZ9O/HDHS09E61eu26pymePoSvj5ownslWWcD3t+
+	GmxlFlv/baUp9p/W9H3MaOAjCKGhYaB6B4b4Xtab+xt/gnnNJY20XQ==
+X-Google-Smtp-Source: AGHT+IEQawC7SQVa9UF4slkO3lg86OopnWZ3aLTLVKEXgIrmgEgWz+bCG+8HW/R99D5VLCZ0Ld7EOQ==
+X-Received: by 2002:a05:600c:4e8d:b0:436:488f:4f3 with SMTP id 5b1f17b1804b1-4396e70d13emr25278915e9.17.1739620305242;
+        Sat, 15 Feb 2025 03:51:45 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc45sm7124144f8f.33.2025.02.15.03.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 03:51:44 -0800 (PST)
+Date: Sat, 15 Feb 2025 11:51:44 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block/merge: remove unnecessary min() with UINT_MAX
+Message-ID: <20250215115144.6a10dad8@pumpkin>
+In-Reply-To: <20250214193637.234702-1-csander@purestorage.com>
+References: <20250214193637.234702-1-csander@purestorage.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] drm/msm/a6xx: Add support for Adreno 623
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Jie Zhang
-	<quic_jiezh@quicinc.com>
-References: <20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com>
- <20250213-a623-gpu-support-v1-2-993c65c39fd2@quicinc.com>
- <ttipuo56z76svx3womcrrqurglvovkqehsx2orgnegjj2z7uxn@d3cov6qmmalm>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <ttipuo56z76svx3womcrrqurglvovkqehsx2orgnegjj2z7uxn@d3cov6qmmalm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: F0rhQWccDnNCDqMUeNMOUdFqwH-YEh4e
-X-Proofpoint-GUID: F0rhQWccDnNCDqMUeNMOUdFqwH-YEh4e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-15_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502150105
 
-On 2/13/2025 10:24 PM, Dmitry Baryshkov wrote:
-> On Thu, Feb 13, 2025 at 09:40:07PM +0530, Akhil P Oommen wrote:
->> From: Jie Zhang <quic_jiezh@quicinc.com>
->>
->> Add support for Adreno 623 GPU found in QCS8300 chipsets.
->>
->> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
->>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c   | 29 +++++++++++++++++++++++++++++
->>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       |  8 ++++++++
->>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 +-
->>  drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  5 +++++
->>  4 files changed, 43 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->> index edffb7737a97..ac156c8b5af9 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->> @@ -879,6 +879,35 @@ static const struct adreno_info a6xx_gpus[] = {
->>  			{ 0, 0 },
->>  			{ 137, 1 },
->>  		),
->> +	}, {
->> +		.chip_ids = ADRENO_CHIP_IDS(0x06020300),
->> +		.family = ADRENO_6XX_GEN3,
->> +		.fw = {
->> +			[ADRENO_FW_SQE] = "a650_sqe.fw",
->> +			[ADRENO_FW_GMU] = "a623_gmu.bin",
->> +		},
->> +		.gmem = SZ_512K,
->> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
->> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
->> +			ADRENO_QUIRK_HAS_HW_APRIV,
->> +		.init = a6xx_gpu_init,
->> +		.a6xx = &(const struct a6xx_info) {
->> +			.hwcg = a620_hwcg,
->> +			.protect = &a650_protect,
->> +			.gmu_cgc_mode = 0x00020200,
->> +			.prim_fifo_threshold = 0x00010000,
->> +			.bcms = (const struct a6xx_bcm[]) {
->> +				{ .name = "SH0", .buswidth = 16 },
->> +				{ .name = "MC0", .buswidth = 4 },
->> +				{
->> +					.name = "ACV",
->> +					.fixed = true,
->> +					.perfmode = BIT(3),
->> +				},
->> +				{ /* sentinel */ },
->> +			},
->> +		},
->> +		.address_space_size = SZ_16G,
->>  	}, {
->>  		.chip_ids = ADRENO_CHIP_IDS(
->>  			0x06030001,
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> index 0ae29a7c8a4d..1820c167fcee 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> @@ -616,6 +616,14 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
->>  		gpu->ubwc_config.uavflagprd_inv = 2;
->>  	}
->>  
->> +	if (adreno_is_a623(gpu)) {
->> +		gpu->ubwc_config.highest_bank_bit = 16;
->> +		gpu->ubwc_config.amsbc = 1;
+On Fri, 14 Feb 2025 12:36:36 -0700
+Caleb Sander Mateos <csander@purestorage.com> wrote:
+
+> In bvec_split_segs(), max_bytes is an unsigned, so it must be less than
+> or equal to UINT_MAX. Remove the unnecessary min().
 > 
-> This bit causes my question: the patch for msm_mdss states that on the
-> display side both UBWC encoder and decoder are 4.0, which means that the
-> UBWC_AMSBC bit won't be set in the UBWC_STATIC register.
-
-Not sure, but my guess is that AMSBC encoding is probably implicitly
-enabled by MDSS HW when UBWC v4 is configured.
-
--Akhil
-
+> Prior to commit 67927d220150 ("block/merge: count bytes instead of
+> sectors"), the min() was with UINT_MAX >> 9, so it did have an effect.
 > 
->> +		gpu->ubwc_config.rgb565_predicator = 1;
->> +		gpu->ubwc_config.uavflagprd_inv = 2;
->> +		gpu->ubwc_config.macrotile_mode = 1;
->> +	}
->> +
->>  	if (adreno_is_a640_family(gpu))
->>  		gpu->ubwc_config.amsbc = 1;
->>  
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> index 2c10474ccc95..3222a406d089 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> @@ -1227,7 +1227,7 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
->>  	_a6xx_get_gmu_registers(gpu, a6xx_state, &a6xx_gmu_reglist[1],
->>  		&a6xx_state->gmu_registers[1], true);
->>  
->> -	if (adreno_is_a621(adreno_gpu))
->> +	if (adreno_is_a621(adreno_gpu) || adreno_is_a623(adreno_gpu))
->>  		_a6xx_get_gmu_registers(gpu, a6xx_state, &a621_gpucc_reg,
->>  			&a6xx_state->gmu_registers[2], false);
->>  	else
->> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> index dcf454629ce0..92caba3584da 100644
->> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> @@ -442,6 +442,11 @@ static inline int adreno_is_a621(const struct adreno_gpu *gpu)
->>  	return gpu->info->chip_ids[0] == 0x06020100;
->>  }
->>  
->> +static inline int adreno_is_a623(const struct adreno_gpu *gpu)
->> +{
->> +	return gpu->info->chip_ids[0] == 0x06020300;
->> +}
->> +
->>  static inline int adreno_is_a630(const struct adreno_gpu *gpu)
->>  {
->>  	return adreno_is_revn(gpu, 630);
->>
->> -- 
->> 2.45.2
->>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  block/blk-merge.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 15cd231d560c..39b738c0e4c9 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -268,11 +268,11 @@ static inline unsigned get_max_segment_size(const struct queue_limits *lim,
+>   */
+>  static bool bvec_split_segs(const struct queue_limits *lim,
+>  		const struct bio_vec *bv, unsigned *nsegs, unsigned *bytes,
+>  		unsigned max_segs, unsigned max_bytes)
+>  {
+> -	unsigned max_len = min(max_bytes, UINT_MAX) - *bytes;
+> +	unsigned max_len = max_bytes - *bytes;
+
+More interestingly, what stops *bytes being larger than max_bytes?
+
+	David
+
+>  	unsigned len = min(bv->bv_len, max_len);
+>  	unsigned total_len = 0;
+>  	unsigned seg_size = 0;
+>  
+>  	while (len && *nsegs < max_segs) {
 
 
