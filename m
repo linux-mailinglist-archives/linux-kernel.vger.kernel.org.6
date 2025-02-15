@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-516311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B3BA36F90
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAACA36F91
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79743B05F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BC93B0618
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7741E5B77;
-	Sat, 15 Feb 2025 16:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E41D1E5B9C;
+	Sat, 15 Feb 2025 16:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JQoUf22X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hoa/mzmj"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E341D89FA
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 16:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6011D89FA;
+	Sat, 15 Feb 2025 16:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739638515; cv=none; b=qWrN27oWDThPo4yZezbAKL5NithjYOTDFld7KqBemU7/ChLkzBxBRvH7zbfgS6Yksr30For6xZCEeV84yJI14SeaiVq17LBiUGQVNnGpw+k4VJNrn//2mAGn2IOJYGJVR2UjZsmoNzgmetDSGs4QtBa9+876uBR4aV4dBTkpvHY=
+	t=1739638523; cv=none; b=hzC/Q4OXAD/RPPRZhdZM4zpbskXHKb0ys9+V5N6PqSRy9KAZR8dtNcbATrJlco58ONM3Ljxv2uY24EP9EjamdCMN6a49+cHWlHAa2/3ASF1SETcobUV9E85WSPvXuBHi1hYO6zMOFxZQoB2st2WOohX7eT+TCDlgAoG2JiYdC6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739638515; c=relaxed/simple;
-	bh=Hj5GrYaA4Y3pXk9qtf6QXQptx7dLeL6RqSbL2+NQc7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9cHz88bIyq/TfxCwqWxP/QzkCd8TH94s2Vfkf9qZwCMk5bl/BCj7HCcdQzTzw1yjJwyaJ/QShoop8JThUqvzU5gQ7SvxBEK0VhDXJqJ6b3UYY8hROdCYZ2cQ52LSgX+bEB4DHaFCKt1ywFTvCQvn4Ncalu4UiXJpoek4Fgi/yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JQoUf22X; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739638513; x=1771174513;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hj5GrYaA4Y3pXk9qtf6QXQptx7dLeL6RqSbL2+NQc7Q=;
-  b=JQoUf22X8ASvmOJ4V2gvQTxLXAZXtO7v8nlOhdsqxIBaMSuiLuKP4XHn
-   0ZEP5Sb57IYTYtC20yUbpherYDkX9tOjkiV6unbgY5oRWPrM6OP/6Ko3t
-   GX/HBP76qoHjtlHJNFoPtIWmkXuz/abbGfbn9WIPBq0qf5ppP/LUZNJpW
-   wBxb4AdZMFAcOswOY2p0vxktdC9jxYK691+yrfQ6AcgAfQuGe9PEzM8hs
-   ypGHUsCeBoRQS3ZLwrin1WOH11Nc7Vgg6N+mUeCgbEHHCdtbiTOxayPxm
-   zPn9SMfX0CoQvBrA/ML2K8iX3ZURDxfn28656IglZKEodyFoi1zFhnk6t
-   g==;
-X-CSE-ConnectionGUID: IUjb6aDqR6C/TIW2q+IOKA==
-X-CSE-MsgGUID: KwfmjJ4UTOqH38NidAO90g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40498647"
-X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
-   d="scan'208";a="40498647"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 08:55:12 -0800
-X-CSE-ConnectionGUID: F9EE5cSNSpqUiVco1sAkBw==
-X-CSE-MsgGUID: mXEs2OP5T0O/u16zJRzJgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="136952523"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Feb 2025 08:55:08 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjLRa-001B0x-0Z;
-	Sat, 15 Feb 2025 16:55:06 +0000
-Date: Sun, 16 Feb 2025 00:54:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH 7/7] mm, swap: simplify folio swap allocation
-Message-ID: <202502160040.5ULBvBsP-lkp@intel.com>
-References: <20250214175709.76029-8-ryncsn@gmail.com>
+	s=arc-20240116; t=1739638523; c=relaxed/simple;
+	bh=uy5cH16JsX4JeqEfRAx/FFIcMBDLoTmq8s1tlKdmEhc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=N3fsLbd/tglMF2sVWnGUsVFpgBzzrja3AOtGCB/ueODL61zUlumnCAvc9WAh2HHCElyyRql5XQQJVjBUoEny5yxZE6VxZRaTRVEHT9AIGEYBU6NVLulgotk0DXMDZO78AcqBHlIgXFnbm1Fax3KzaG0kNyGVUScqr4Q71Tyzjvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hoa/mzmj; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3d3bdb08eso1535899b6e.0;
+        Sat, 15 Feb 2025 08:55:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739638521; x=1740243321; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fFgotg9MMog9YPyVCTVdN/A41r7u9eJzo/q5sMJJgW8=;
+        b=Hoa/mzmjsRbTVlojhp9UZXM1FE6F0iAgW6e5OfTeSAUkYkleV8QIgDZGebfCid1mH9
+         xlPHUmhIrY8oTSORj+s5uREmov3LPxlpgEF61Zqo3TPg0/YQLpUA2wwuZsdcoAU6k+7u
+         HYZ0lH4JuXavLNh0zgsKiGgL77h2yLd19H75UISi64oF3l5XCzRt4M/sQkaJmf39VQsv
+         OWRN8zffGQ18B1BcVn1BrI9RpCN9oRnbt+obWlb+9WQW3dBQGyHdZMvmHprs3mLRQIBB
+         IzA8u5PACPBBfaUrbjbxMVh2a1NVlFdMlX+HFJoVkgKKwhXl+KI0hD8pK/VNdL+zslCi
+         JjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739638521; x=1740243321;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fFgotg9MMog9YPyVCTVdN/A41r7u9eJzo/q5sMJJgW8=;
+        b=Aac4KTZHlvi8dBDNSkECS0HpIGBzNZskgKBVR3m9Yfx34GfHP9y/F3JdFj5F8d7lgA
+         ZecCQ+BvQ2ygUDRUSD1p3lS64QxJ0zTQt/BXPRQmf75pICXi9VcxfRN+PvkpM4bJ0Sgm
+         qAuQRRM8bcVMznNFt4H2htX9QygpTaGyKhWFJygX/+953zzgP3iMXk9LQ4VSoi/zyDY1
+         kWWbNb6G1CN9sQ9qx5I2XQRClO8AoyPo//jxwjLtJaOCZBWvLQp+DB2/j17qTrztDcVb
+         jC9O1JGbLy3JhoWc2xqMozSW9GCpevyXqQv4JyNoc6rin2852boBqBMxw3+k8/Hvcp7W
+         542g==
+X-Forwarded-Encrypted: i=1; AJvYcCUgK/6BEuiPgEslGFEdXIvmp2edj3KeGBMWsb846HJb95dZQz/APZPHnkX8E47MvIrTk2HsTLKPt20i/6qy@vger.kernel.org, AJvYcCXLjPgYdP9zOAiGjmJnOeI4C6lSFq6ozM+HgKlD8LK4o2+V88WMQZRg5G2yCdrRlhRnS/L1b3/dNI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBFjfzqoey/Q1fm+rTuVZq9Si8GEIzTm4i8t1z+U5Yw3zM+/fs
+	+bfGd2alfU9dhEUDZmRV92giz2uzkjWgHJ3lbSnsh9Qjy5dqZ6K3+3hmsRfPsTtDH7ep/3VN/oU
+	aVzFOW3aCv/7VHc6UuuM+fy7yOtY=
+X-Gm-Gg: ASbGncuPGSLKSW+D3rPi1izAqRAXcn5BdN5EhjP+t2peObWVgzYse0PfP6k61j9sjMh
+	2IJ/L0yEdtP5SgVr9FvYxk/uREtbaPl4Gk7IUZdw4Z5CT2md1PG5BJ2fJ6EDQB+KmS+M4U1k=
+X-Google-Smtp-Source: AGHT+IGCeHqx4n/KP1WhydFUl06V5Mg/NgGju0fYq3OQFHyEYALKBBy4copQaMnqdqXEmQIOL1jxBiT1Y15BV84/x5Q=
+X-Received: by 2002:a05:6808:4496:b0:3f3:b657:cad0 with SMTP id
+ 5614622812f47-3f3eb0a42d4mr2338650b6e.4.1739638521092; Sat, 15 Feb 2025
+ 08:55:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214175709.76029-8-ryncsn@gmail.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sat, 15 Feb 2025 22:25:08 +0530
+X-Gm-Features: AWEUYZlnpn4Mw298NiG2Y9osPZ8n71VgEmJmjCOVRfOFQySR_9VyTWgb3KziY7g
+Message-ID: <CAO9wTFjW3i7C8wQEJ3kjdNMwQurs_bmAw8JN3rbsLVDuPFQ0mQ@mail.gmail.com>
+Subject: [PATCH] Documentation/mm: Fix spelling mistake
+To: akpm@linux-foundation.org, skhan@linuxfoundation.org
+Cc: linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Kairui,
+The word watermark was misspelled as "watemark" in the balance.rst
+file. This commit corrects the spelling error.
+Signed-off-by: Suchit <suchitkarunakaran@gmail.com>
+---
+ Documentation/mm/balance.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-kernel test robot noticed the following build errors:
+diff --git a/Documentation/mm/balance.rst b/Documentation/mm/balance.rst
+index abaa78561..c4962c89a 100644
+--- a/Documentation/mm/balance.rst
++++ b/Documentation/mm/balance.rst
+@@ -81,7 +81,7 @@ Page stealing from process memory and shm is done if
+stealing the page would
+ alleviate memory pressure on any zone in the page's node that has fallen below
+ its watermark.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kairui-Song/mm-swap-avoid-reclaiming-irrelevant-swap-cache/20250215-020239
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250214175709.76029-8-ryncsn%40gmail.com
-patch subject: [PATCH 7/7] mm, swap: simplify folio swap allocation
-config: x86_64-buildonly-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250216/202502160040.5ULBvBsP-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502160040.5ULBvBsP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502160040.5ULBvBsP-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/suspend.h:5,
-                    from arch/x86/kernel/asm-offsets.c:14:
->> include/linux/swap.h:591:1: error: expected identifier or '(' before '{' token
-     591 | {
-         | ^
->> include/linux/swap.h:590:13: warning: 'folio_alloc_swap' declared 'static' but never defined [-Wunused-function]
-     590 | static bool folio_alloc_swap(struct folio *folio, gfp_t gfp_mask);
-         |             ^~~~~~~~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=2631350961
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=2631350961
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2631350961
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2631350961
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +591 include/linux/swap.h
-
-8334b96221ff0d Minchan Kim    2015-09-08  589  
-f8d9ff0d052908 Kairui Song    2025-02-15 @590  static bool folio_alloc_swap(struct folio *folio, gfp_t gfp_mask);
-^1da177e4c3f41 Linus Torvalds 2005-04-16 @591  {
-f8d9ff0d052908 Kairui Song    2025-02-15  592  	return false;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  593  }
-^1da177e4c3f41 Linus Torvalds 2005-04-16  594  
-
+-watemark[WMARK_MIN/WMARK_LOW/WMARK_HIGH]/low_on_memory/zone_wake_kswapd: These
++watermark[WMARK_MIN/WMARK_LOW/WMARK_HIGH]/low_on_memory/zone_wake_kswapd: These
+ are per-zone fields, used to determine when a zone needs to be balanced. When
+ the number of pages falls below watermark[WMARK_MIN], the hysteric field
+ low_on_memory gets set. This stays set till the number of free pages becomes
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
 
