@@ -1,269 +1,329 @@
-Return-Path: <linux-kernel+bounces-516040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BEEA36C54
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:37:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB93A36C55
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F1916FEA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 06:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A653ABE58
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 06:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85EB192D84;
-	Sat, 15 Feb 2025 06:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UjrZ/oIG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BADC2ED;
-	Sat, 15 Feb 2025 06:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CB718950A;
+	Sat, 15 Feb 2025 06:39:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462BFC2ED;
+	Sat, 15 Feb 2025 06:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739601432; cv=none; b=QE2WtjBmzw4a2yeobGWX4E3Qm0AndlwUqtHjApqjlcFXbHTUKknf9ytwANEXQbdraBKsyEOsM+CRUc0SDmXjwyMs6m6cDRh6ZpkrT0fD4Xb749Q5Z+tKw1grFbdk71yRGr7EHdRlLOkB8pbyR3De99459B0YXWN9N07i+EYKlOs=
+	t=1739601541; cv=none; b=A3c7B1J5n91Qwgfs0w8yo+R5KAWErH6hfgYRtKsOblkH79V6Qpy9zwUjQVTt1U9bp56SIywJxMdFC03bcwhcdQ7karY6KJANFM6CaiaMijGPShRWcXIBx0vld4fu57zWfoooaMy9bi//y2n+fHxczPiB4saH6rl52iZkzX7zjjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739601432; c=relaxed/simple;
-	bh=xNoorQKTVK0QWI0cD/BSlH3mfl4SWfNf/loP2EWe6lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTdgK7AKGBaxN/srJAMVb1CELHJwGBCs5S5GvjyQzQgrTUuHto/TAt66RckosrG/RFYyA6nf6l+1IE5Ina5INd/tOH8Au5g/VfzFl8mmgFJdqvoOlIpyjYwp2zOgGt4FPy2zUtOGsIeSklZ18Ik4dWqYPFKm3oDF7a6T9M2So/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UjrZ/oIG; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739601432; x=1771137432;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xNoorQKTVK0QWI0cD/BSlH3mfl4SWfNf/loP2EWe6lM=;
-  b=UjrZ/oIGCGPy8Qj1aTCNwLLVnMVLoihmfR94CN65jCiqW+Nu6+GMwVgJ
-   jPX6XnfUKsr8+MtiPXu9ZOXvietQ4sXX7Ure4mc0d/MdwTafzYDkbsunQ
-   9djIgt0eWsLaXl6Al3JpK02qBpTyfqQobCHxVcIMLeS8iTfkHeMFRDklG
-   wd9kccZn4rmc8qzyg6SDQML71EIY0L9oN0jR572m4Nr7R+i9u+cs2DzM5
-   fpXeHivwz8EC0Q5YqGdhFfrd/fOoDkC9Xa99Lt/Scf73xXgLFH35ExMkU
-   +R24mL3z3owhGVSPzXD0imRVLltZZflMpJoKsELTG+azbRUdtwd4DU53o
-   Q==;
-X-CSE-ConnectionGUID: ehf8eOQjT1Wrv0Bnrn5WHw==
-X-CSE-MsgGUID: YRD2V9sbSG2LijKQB9ct9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40480991"
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="40480991"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 22:37:11 -0800
-X-CSE-ConnectionGUID: QIvQ+UdoRPCdWZQq5yO+/A==
-X-CSE-MsgGUID: zOxWroNvQnGTMiUQUDoTnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="118566029"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 14 Feb 2025 22:37:07 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjBnV-001AZB-0e;
-	Sat, 15 Feb 2025 06:37:05 +0000
-Date: Sat, 15 Feb 2025 14:36:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-Message-ID: <202502151435.jfkY8wb2-lkp@intel.com>
-References: <20250214052204.3105610-4-neilb@suse.de>
+	s=arc-20240116; t=1739601541; c=relaxed/simple;
+	bh=SQOrMWFD7Sxr/kmAX6d8BqquVqYa6iPTomkH62ORN2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EV1Llt/YhqAhsnGf3eUEfKLiGUNndOhX/K3O+mG09axYqs8BlPagbhjBGgyT0wJPCte+cu0Vw6xsnbiIG6l7u8Rg/BmDmp1pXv0qSrQ+/72ZRMeFNdMkitai3+fLmfmlV3T7yI1FbjGKeWg/k3u9ft+aOeshDuNTCq18nXEnMlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FC671063;
+	Fri, 14 Feb 2025 22:39:16 -0800 (PST)
+Received: from [10.163.93.19] (unknown [10.163.93.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA40B3F58B;
+	Fri, 14 Feb 2025 22:38:43 -0800 (PST)
+Message-ID: <5445bc55-6bd2-46fd-8107-99eb31aee172@arm.com>
+Date: Sat, 15 Feb 2025 12:08:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214052204.3105610-4-neilb@suse.de>
-
-Hi NeilBrown,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on trondmy-nfs/linux-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus cifs/for-next xfs-linux/for-next linus/master v6.14-rc2 next-20250214]
-[cannot apply to ericvh-v9fs/for-next tyhicks-ecryptfs/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/nfs-change-mkdir-inode_operation-to-return-alternate-dentry-if-needed/20250214-141741
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250214052204.3105610-4-neilb%40suse.de
-patch subject: [PATCH 3/3] VFS: Change vfs_mkdir() to return the dentry.
-config: riscv-randconfig-001-20250215 (https://download.01.org/0day-ci/archive/20250215/202502151435.jfkY8wb2-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502151435.jfkY8wb2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502151435.jfkY8wb2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:812:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     812 |         insw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
-     105 | #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:820:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     820 |         insl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
-     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     829 |         outsb(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
-     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     838 |         outsw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
-     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     847 |         outsl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
-     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from fs/smb/server/vfs.c:11:
-   In file included from include/linux/backing-dev.h:16:
-   In file included from include/linux/writeback.h:13:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> fs/smb/server/vfs.c:226:2: error: use of undeclared identifier 'entry'; did you mean 'dentry'?
-     226 |         entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-         |         ^~~~~
-         |         dentry
-   fs/smb/server/vfs.c:209:17: note: 'dentry' declared here
-     209 |         struct dentry *dentry, *d;
-         |                        ^
-   7 warnings and 1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
+To: Nico Pache <npache@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, ryan.roberts@arm.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
+ apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org,
+ baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu,
+ haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org,
+ yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com,
+ wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com,
+ surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com,
+ zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com,
+ willy@infradead.org, kirill.shutemov@linux.intel.com, david@redhat.com,
+ aarcange@redhat.com, raquini@redhat.com, sunnanyong@huawei.com,
+ usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
+References: <20250211003028.213461-1-npache@redhat.com>
+ <5a995dc9-fee7-442f-b439-c484d9de1750@arm.com>
+ <CAA1CXcCo3eCH-5axnw3WUqPfL-EPCbLVFo_AFYXkbnExfX=KLQ@mail.gmail.com>
+ <4ba52062-1bd3-4d53-aa28-fcbbd4913801@arm.com>
+ <CAA1CXcCeFjCx-6VDCjOUUniLHXMUYpjesOhcHQapMS5i7=RR4A@mail.gmail.com>
+ <71490f8c-f234-4032-bc2a-f6cffa491fcb@arm.com>
+ <CAA1CXcCkbxe_D4cSroBTu3E4dn6SaaDDk6xo9y4O9cWW-9Rc9Q@mail.gmail.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <CAA1CXcCkbxe_D4cSroBTu3E4dn6SaaDDk6xo9y4O9cWW-9Rc9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +226 fs/smb/server/vfs.c
 
-   196	
-   197	/**
-   198	 * ksmbd_vfs_mkdir() - vfs helper for smb create directory
-   199	 * @work:	work
-   200	 * @name:	directory name that is relative to share
-   201	 * @mode:	directory create mode
-   202	 *
-   203	 * Return:	0 on success, otherwise error
-   204	 */
-   205	int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
-   206	{
-   207		struct mnt_idmap *idmap;
-   208		struct path path;
-   209		struct dentry *dentry, *d;
-   210		int err;
-   211	
-   212		dentry = ksmbd_vfs_kern_path_create(work, name,
-   213						    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
-   214						    &path);
-   215		if (IS_ERR(dentry)) {
-   216			err = PTR_ERR(dentry);
-   217			if (err != -EEXIST)
-   218				ksmbd_debug(VFS, "path create failed for %s, err %d\n",
-   219					    name, err);
-   220			return err;
-   221		}
-   222	
-   223		idmap = mnt_idmap(path.mnt);
-   224		mode |= S_IFDIR;
-   225		d = dentry;
- > 226		entry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-   227		err = PTR_ERR_OR_ZERO(dentry);
-   228		if (!err && dentry != d)
-   229			ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
-   230	
-   231		done_path_create(&path, dentry);
-   232		if (err)
-   233			pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
-   234		return err;
-   235	}
-   236	
+On 15/02/25 6:22 am, Nico Pache wrote:
+> On Thu, Feb 13, 2025 at 7:02 PM Dev Jain <dev.jain@arm.com> wrote:
+>>
+>>
+>>
+>> On 14/02/25 1:09 am, Nico Pache wrote:
+>>> On Thu, Feb 13, 2025 at 1:26 AM Dev Jain <dev.jain@arm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 12/02/25 10:19 pm, Nico Pache wrote:
+>>>>> On Tue, Feb 11, 2025 at 5:50 AM Dev Jain <dev.jain@arm.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 11/02/25 6:00 am, Nico Pache wrote:
+>>>>>>> The following series provides khugepaged and madvise collapse with the
+>>>>>>> capability to collapse regions to mTHPs.
+>>>>>>>
+>>>>>>> To achieve this we generalize the khugepaged functions to no longer depend
+>>>>>>> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pages
+>>>>>>> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
+>>>>>>> using a bitmap. After the PMD scan is done, we do binary recursion on the
+>>>>>>> bitmap to find the optimal mTHP sizes for the PMD range. The restriction
+>>>>>>> on max_ptes_none is removed during the scan, to make sure we account for
+>>>>>>> the whole PMD range. max_ptes_none will be scaled by the attempted collapse
+>>>>>>> order to determine how full a THP must be to be eligible. If a mTHP collapse
+>>>>>>> is attempted, but contains swapped out, or shared pages, we dont perform the
+>>>>>>> collapse.
+>>>>>>>
+>>>>>>> With the default max_ptes_none=511, the code should keep its most of its
+>>>>>>> original behavior. To exercise mTHP collapse we need to set max_ptes_none<=255.
+>>>>>>> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "creep" and
+>>>>>>> constantly promote mTHPs to the next available size.
+>>>>>>>
+>>>>>>> Patch 1:     Some refactoring to combine madvise_collapse and khugepaged
+>>>>>>> Patch 2:     Refactor/rename hpage_collapse
+>>>>>>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+>>>>>>> Patch 6-9:   The mTHP patches
+>>>>>>>
+>>>>>>> ---------
+>>>>>>>      Testing
+>>>>>>> ---------
+>>>>>>> - Built for x86_64, aarch64, ppc64le, and s390x
+>>>>>>> - selftests mm
+>>>>>>> - I created a test script that I used to push khugepaged to its limits while
+>>>>>>>        monitoring a number of stats and tracepoints. The code is available
+>>>>>>>        here[1] (Run in legacy mode for these changes and set mthp sizes to inherit)
+>>>>>>>        The summary from my testings was that there was no significant regression
+>>>>>>>        noticed through this test. In some cases my changes had better collapse
+>>>>>>>        latencies, and was able to scan more pages in the same amount of time/work,
+>>>>>>>        but for the most part the results were consistant.
+>>>>>>> - redis testing. I tested these changes along with my defer changes
+>>>>>>>       (see followup post for more details).
+>>>>>>> - some basic testing on 64k page size.
+>>>>>>> - lots of general use. These changes have been running in my VM for some time.
+>>>>>>>
+>>>>>>> Changes since V1 [2]:
+>>>>>>> - Minor bug fixes discovered during review and testing
+>>>>>>> - removed dynamic allocations for bitmaps, and made them stack based
+>>>>>>> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+>>>>>>> - Updated trace events to include collapsing order info.
+>>>>>>> - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
+>>>>>>> - No longer require a chunk to be fully utilized before setting the bit. Use
+>>>>>>>        the same max_ptes_none scaling principle to achieve this.
+>>>>>>> - Skip mTHP collapse that requires swapin or shared handling. This helps prevent
+>>>>>>>        some of the "creep" that was discovered in v1.
+>>>>>>>
+>>>>>>> [1] - https://gitlab.com/npache/khugepaged_mthp_test
+>>>>>>> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redhat.com/
+>>>>>>>
+>>>>>>> Nico Pache (9):
+>>>>>>>       introduce khugepaged_collapse_single_pmd to unify khugepaged and
+>>>>>>>         madvise_collapse
+>>>>>>>       khugepaged: rename hpage_collapse_* to khugepaged_*
+>>>>>>>       khugepaged: generalize hugepage_vma_revalidate for mTHP support
+>>>>>>>       khugepaged: generalize alloc_charge_folio for mTHP support
+>>>>>>>       khugepaged: generalize __collapse_huge_page_* for mTHP support
+>>>>>>>       khugepaged: introduce khugepaged_scan_bitmap for mTHP support
+>>>>>>>       khugepaged: add mTHP support
+>>>>>>>       khugepaged: improve tracepoints for mTHP orders
+>>>>>>>       khugepaged: skip collapsing mTHP to smaller orders
+>>>>>>>
+>>>>>>>      include/linux/khugepaged.h         |   4 +
+>>>>>>>      include/trace/events/huge_memory.h |  34 ++-
+>>>>>>>      mm/khugepaged.c                    | 422 +++++++++++++++++++----------
+>>>>>>>      3 files changed, 306 insertions(+), 154 deletions(-)
+>>>>>>>
+>>>>>>
+>>>>>> Does this patchset suffer from the problem described here:
+>>>>>> https://lore.kernel.org/all/8abd99d5-329f-4f8d-8680-c2d48d4963b6@arm.com/
+>>>>> Hi Dev,
+>>>>>
+>>>>> Sorry I meant to get back to you about that.
+>>>>>
+>>>>> I understand your concern, but like I've mentioned before, the scan
+>>>>> with the read lock was done so we dont have to do the more expensive
+>>>>> locking, and could still gain insight into the state. You are right
+>>>>> that this info could become stale if the state changes dramatically,
+>>>>> but the collapse_isolate function will verify it and not collapse.
+>>>>
+>>>> If the state changes dramatically, the _isolate function will verify it,
+>>>> and fallback. And this fallback happens after following this costly
+>>>> path: retrieve a large folio from the buddy allocator -> swapin pages
+>>>> from the disk -> mmap_write_lock() -> anon_vma_lock_write() -> TLB flush
+>>>> on all CPUs -> fallback in _isolate().
+>>>> If you do fail in _isolate(), doesn't it make sense to get the updated
+>>>> state for the next fallback order immediately, because we have prior
+>>>> information that we failed because of PTE state? What your algorithm
+>>>> will do is *still* follow the costly path described above, and again
+>>>> fail in _isolate(), instead of failing in hpage_collapse_scan_pmd() like
+>>>> mine would.
+>>>
+>>> You do raise a valid point here, I can optimize my solution by
+>>> detecting certain collapse failure types and jump to the next scan.
+>>> I'll add that to my solution, thanks!
+>>>
+>>> As for the disagreement around the bitmap, we'll leave that up to the
+>>> community to decide since we have differing opinions/solutions.
+>>>
+>>>>
+>>>> The verification of the PTE state by the _isolate() function is the "no
+>>>> turning back" point of the algorithm. The verification by
+>>>> hpage_collapse_scan_pmd() is the "let us see if proceeding is even worth
+>>>> it, before we do costly operations" point of the algorithm.
+>>>>
+>>>>>    From my testing I found this to rarely happen.
+>>>>
+>>>> Unfortunately, I am not very familiar with performance testing/load
+>>>> testing, I am fairly new to kernel programming, so I am getting there.
+>>>> But it really depends on the type of test you are running, what actually
+>>>> runs on memory-intensive systems, etc etc. In fact, on loaded systems I
+>>>> would expect the PTE state to dramatically change. But still, no opinion
+>>>> here.
+>>>
+>>> Yeah there are probably some cases where it happens more often.
+>>> Probably in cases of short lived allocations, but khugepaged doesn't
+>>> run that frequently so those won't be that big of an issue.
+>>>
+>>> Our performance team is currently testing my implementation so I
+>>> should have more real workload test results soon. The redis testing
+>>> had some gains and didn't show any signs of obvious regressions.
+>>>
+>>> As for the testing, check out
+>>> https://gitlab.com/npache/khugepaged_mthp_test/-/blob/master/record-khuge-performance.sh?ref_type=heads
+>>> this does the tracing for my testing script. It can help you get
+>>> started. There are 3 different traces being applied there: the
+>>> bpftrace for collapse latencies, the perf record for the flamegraph
+>>> (not actually that useful, but may be useful to visualize any
+>>> weird/long paths that you may not have noticed), and the trace-cmd
+>>> which records the tracepoint of the scan and the collapse functions
+>>> then processes the data using the awk script-- the output being the
+>>> scan rate, the pages collapsed, and their result status (grouped by
+>>> order).
+>>>
+>>> You can also look into https://github.com/gormanm/mmtests for
+>>> testing/comparing kernels. I was running the
+>>> config-memdb-redis-benchmark-medium workload.
+>>
+>> Thanks. I'll take a look.
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Also, khugepaged, my changes, and your changes are all a victim of
+>>>>> this. Once we drop the read lock (to either allocate the folio, or
+>>>>> right before acquiring the write_lock), the state can change. In your
+>>>>> case, yes, you are gathering more up to date information, but is it
+>>>>> really that important/worth it to retake locks and rescan for each
+>>>>> instance if we are about to reverify with the write lock taken?
+>>>>
+>>>> You said "reverify": You are removing the verification, so this step
+>>>> won't be reverification, it will be verification. We do not want to
+>>>> verify *after* we have already done 95% of latency-heavy stuff, only to
+>>>> know that we are going to fail.
+>>>>
+>>>> Algorithms in the kernel, in general, are of the following form: 1)
+>>>> Verify if a condition is true, resulting in taking a control path -> 2)
+>>>> do a lot of stuff -> "no turning back" step, wherein before committing
+>>>> (by taking locks, say), reverify if this is the control path we should
+>>>> be in. You are eliminating step 1).
+>>>>
+>>>> Therefore, I will have to say that I disagree with your approach.
+>>>>
+>>>> On top of this, in the subjective analysis in [1], point number 7 (along
+>>>> with point number 1) remains. And, point number 4 remains.
+>>>
+>>> for 1) your worst case of 1024 is not the worst case. There are 8
+>>> possible orders in your implementation, if all are enabled, that is
+>>> 4096 iterations in the worst case.
+>>
+>> Yes, that is exactly what I wrote in 1). I am still not convinced that
+>> the overhead you produce + 512 iterations is going to beat 4096
+>> iterations. Anyways, that is hand-waving and we should test this.
+>>
+>>> This becomes WAY worse on 64k page size, ~45,000 iterations vs 4096 in my case.
+>>
+>> Sorry, I am missing something here; how does the number of iterations
+>> change with page size? Am I not scanning the PTE table, which is
+>> invariant to the page size?
+> 
+> I got the calculation wrong the first time and it's actually worst.
+> Lets hope I got this right this time
+> on ARM64 64k kernel:
+> PMD size = 512M
+> PTE= 64k
+> PTEs per PMD = 8192
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+*facepalm* my bad, thanks. I got thrown off thinking HPAGE_PMD_NR won't 
+depend on page size, but #pte entries = PAGE_SIZE / sizeof(pte) = 
+PAGE_SIZE / 8. So it does depend. You are correct, the PTEs per PMD is 1 
+<< 13.
+
+> log2(8192) = 13 - 2 = 11 number of (m)THP sizes including PMD (the
+> first and second order are skipped)
+> 
+> Assuming I understand your algorithm correctly, in the worst case you
+> are scanning the whole PMD for each order.
+> 
+> So you scan 8192 PTEs 11 times. 8192 * 11 = 90112.
+
+Yup. Now it seems that the bitmap overhead may just be worth it; for the 
+worst case the bitmap will give us an 11x saving...for the average case, 
+it will give us 2x, but still, 8192 is a large number. I'll think of 
+ways to test this out.
+
+Btw, I was made aware that an LWN article just got posted on our work!
+https://lwn.net/Articles/1009039/
+
+> 
+> Please let me know if I'm missing something here.
+>>
+>>>>
+>>>> [1]
+>>>> https://lore.kernel.org/all/23023f48-95c6-4a24-ac8b-aba4b1a441b4@arm.com/
+>>>>
+>>>>>
+>>>>> So in my eyes, this is not a "problem"
+>>>>
+>>>> Looks like the kernel scheduled us for a high-priority debate, I hope
+>>>> there's no deadlock :)
+>>>>
+>>>>>
+>>>>> Cheers,
+>>>>> -- Nico
+>>>>>
+>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
+> 
+
 
