@@ -1,214 +1,160 @@
-Return-Path: <linux-kernel+bounces-516360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D461A37021
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 787BFA37025
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 19:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831A4188D51A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D98C1893226
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBDA1EDA2C;
-	Sat, 15 Feb 2025 18:20:20 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149551EA7C3;
+	Sat, 15 Feb 2025 18:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CSUe4LYm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4211DE8A5
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 18:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE4D1ACECC
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 18:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739643619; cv=none; b=HDPwlD9rmWV8x4TYm6p1FxckJdtA4vOIU0eCVI+D/G4h7XE6IadOXMZH/PbS43m2QFvxMZRtDqRa4jtvgQeZ+E9XePaojp7/Qt6ZlEflUzIdZusAo/hwWZckKr6lmWKlfV6oDhNs1rbeMrMtgT56E2uyc7znxZEL2sTy6HPGYZI=
+	t=1739644221; cv=none; b=Cz/k/wKgwFQDZkdF73roQl+aopCSnt0KfLyexTJPhIGTKV784gu+dZ+x7hX49eAoKolfsLvuN10qHGmSFk/wKejJyDDjzd+Xg24e710axQ7FSPhkBQX8t4JB1G6oDlkN2KWnMEDANqJ2pC3e3ciKWlF6zGcxoeCHauNUhiI2CcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739643619; c=relaxed/simple;
-	bh=4IZFZVwxSOzjwGdsSJltCMPC+UOXv+W9HdBfvkqeNPM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ue6oWCRHz/y+FGsswjCLf7l1KRL2l2OXz7uAmCnoEDUgUT9NCljWdZteuz1A2mEGRtmfC8zY984WBYLxiYrc8xx5f7GFIdHZzjZqb7L5nAn5mv4oPtpxQzQqhz+IYtcwP/3c9eoXFEaNQmOB9rnhDXkIetS4lq1PjeoCZcldoXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d158477b5fso21812285ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 10:20:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739643617; x=1740248417;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6soIbLLaWqTuyjlNGLM2C7ZiMywCYPk0bzeKRcfSfCA=;
-        b=iipT9kgNlnzvhixC10VzYQRr4RLxqgn+7DewO/WmLjw6aHgZPcvB3SollS/fAKYr5s
-         GDVSAa1izpbgFMJ8WK5vUGf6vjdErCQY2KG6JX1vxl00RaAJEqVTyTOvWdPWkAj6QHP/
-         Nq5dO+WuUA4gSo7elehngLPm+429lEO7WnqE+XVIioJpRhWIcLNB3/c5Zk5dxx05mHju
-         t1MQyXD4SDlPkcv8/bUqnwPDqcBeBZulW9DAXsByxouPIUtoeyd3+TOGsWKLhCcjh0X5
-         VGaDnnApJxgm22qD1CGOADjxp/LvaO2BvD+Pi9CdJDw7TAyzB5ga7T/QytXZktQMsDLH
-         oPIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+p7pd3AnlRi8pbtuvc//4fKUEknHFY2sxUmTs86ZGrs0T9TROpmepyHindWlCgHbsWhoF/c3//e/BdKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM+fgmkxa0nCiLKUkxXKFKJVi9s4VbcklMfrwKcGPztmWhhR5Y
-	u4AHh8VNCab8PWlWs9EpUTBDnVojRWTXwDwhEnG+EVYv7pDR+G90bkv92Qlt9/8N2pOGPp4P77w
-	UJh8tSlNqYXfSJDI+9J2KhRMGrfLpKp8rNlOp1NUdOdGE0fSb+8/Od54=
-X-Google-Smtp-Source: AGHT+IG+GvKiaFPKEPnevbx3Uw8ccSd3DdGwU4IPkKUtnrbzZi0Gb60jDgG0HhmpC1JMGCtjfxIpBoKbMcx8FyqkRpbI4zP/B/6c
+	s=arc-20240116; t=1739644221; c=relaxed/simple;
+	bh=dMn1Q4aA9MGi5d/1Z9iwwNyIqYg63IgAYhGVKa2FIXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y5T/69BfDqeR9Ci9wJSYyCrQmgBvPIdWFaYQ9jvyzVYwu5bDfVqBL4LJxDNanDcohV4NT5DaEWmtacZg8bTT4hPGzfLha16AO4fPpPCxaOrCevyGA8HKiEsgVU9jTXmFrymp3nIrUX7Uzls9awqikBSkMaELjU8uu2ODbOroMMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CSUe4LYm; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739644220; x=1771180220;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dMn1Q4aA9MGi5d/1Z9iwwNyIqYg63IgAYhGVKa2FIXU=;
+  b=CSUe4LYmnaeYj0q6X8s/K9fPM4XhFmgumIqxyHIqaGQA1H1qLW6nC7SM
+   yrAVPoeZ6SwJq2jH9WTVBQjVcwoFJRlBjk1jOtOfOM/L8dRVviCbH/BOh
+   bfAIGX+3Fw+xAsTuWLC64j9UE+b2Akg3+TCMsVHN2CmrkfEJ5ZDwRvky8
+   7eO0icUmO4AwaR/1GkrYAam30yNoxfPBPtXBb0gaTQYlrdku9gqFsfbln
+   +BPKSCyIVn9XnQvK0uRclNrB2pnXpmp92/BWRD+rcitG5DVraKCMM3CnJ
+   u1nRy01gzF7cbo7K713XQYHRaUxBP1Xkko8I89n+e07DtoixOJgsFpU6w
+   Q==;
+X-CSE-ConnectionGUID: hijVqHmKQ3CFBeeu4WU4YQ==
+X-CSE-MsgGUID: tIkdJHymSa2Tzi2dr7PaXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="51355391"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="51355391"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 10:30:19 -0800
+X-CSE-ConnectionGUID: oh3mlhyLRUOQSRwO++DR0w==
+X-CSE-MsgGUID: gT8rgUL9ScmFbmRjcR+rLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="113696699"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 15 Feb 2025 10:30:18 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjMvf-001B4t-06;
+	Sat, 15 Feb 2025 18:30:15 +0000
+Date: Sun, 16 Feb 2025 02:29:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lizhi Hou <lizhi.hou@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	George Yang <George.Yang@amd.com>, Min Ma <min.ma@amd.com>
+Subject: drivers/accel/amdxdna/amdxdna_mailbox.c:203:9: error: implicit
+ declaration of function 'kfree'
+Message-ID: <202502160209.WZSMNh1N-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2181:b0:3d1:4b97:4f2d with SMTP id
- e9e14a558f8ab-3d280763f51mr23479835ab.5.1739643616909; Sat, 15 Feb 2025
- 10:20:16 -0800 (PST)
-Date: Sat, 15 Feb 2025 10:20:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b0dae0.050a0220.6f0b7.0016.GAE@google.com>
-Subject: [syzbot] [kernel?] INFO: task hung in hci_dev_open (2)
-From: syzbot <syzbot+b3b33ad3a3e6369375a7@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, davem@davemloft.net, frederic@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	vinicius.gomes@intel.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6452feaf29a6a1cc1c904520c4b1b4cd90133fac
+commit: b87f920b934426a24d54613f12ed67c03ae05024 accel/amdxdna: Support hardware mailbox
+date:   3 months ago
+config: x86_64-buildonly-randconfig-002-20250216 (https://download.01.org/0day-ci/archive/20250216/202502160209.WZSMNh1N-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502160209.WZSMNh1N-lkp@intel.com/reproduce)
 
-syzbot found the following issue on:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502160209.WZSMNh1N-lkp@intel.com/
 
-HEAD commit:    ae9b3c0e79bc Merge branch 'tcp-allow-to-reduce-max-rto'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e00aa4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
-dashboard link: https://syzkaller.appspot.com/bug?extid=b3b33ad3a3e6369375a7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161e23f8580000
+All error/warnings (new ones prefixed by >>):
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/93d74fa441be/disk-ae9b3c0e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e226dd1d1f06/vmlinux-ae9b3c0e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/423579a2a07e/bzImage-ae9b3c0e.xz
-
-The issue was bisected to:
-
-commit 5a781ccbd19e4664babcbe4b4ead7aa2b9283d22
-Author: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Date:   Sat Sep 29 00:59:43 2018 +0000
-
-    tc: Add support for configuring the taprio scheduler
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126b4718580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=116b4718580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=166b4718580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b3b33ad3a3e6369375a7@syzkaller.appspotmail.com
-Fixes: 5a781ccbd19e ("tc: Add support for configuring the taprio scheduler")
-
-INFO: task syz-executor:6086 blocked for more than 178 seconds.
-      Not tainted 6.14.0-rc1-syzkaller-00272-gae9b3c0e79bc #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:25984 pid:6086  tgid:6086  ppid:6085   task_flags:0x400140 flags:0x00000000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5377 [inline]
- __schedule+0x190e/0x4c90 kernel/sched/core.c:6764
- __schedule_loop kernel/sched/core.c:6841 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6856
- schedule_timeout+0xb0/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- __flush_workqueue+0x575/0x1280 kernel/workqueue.c:3998
- hci_dev_open+0x149/0x300 net/bluetooth/hci_core.c:455
- sock_do_ioctl+0x158/0x460 net/socket.c:1194
- sock_ioctl+0x626/0x8e0 net/socket.c:1313
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f940718c9eb
-RSP: 002b:00007fff6ef05ae0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f940718c9eb
-RDX: 0000000000000005 RSI: 00000000400448c9 RDI: 0000000000000003
-RBP: 00007fff6ef05b4c R08: 0000000000000000 R09: 00007fff6ef05a57
-R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000005
-R13: 0000000000000005 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/0:0/8:
-3 locks held by kworker/1:0/25:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e9387e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
-2 locks held by kworker/u8:3/51:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc90000bc7c60 ((work_completion)(&pool->idle_cull_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc90000bc7c60 ((work_completion)(&pool->idle_cull_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
-3 locks held by kworker/u9:0/53:
- #0: ffff88807da56148 ((wq_completion)hci5){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88807da56148 ((wq_completion)hci5){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc90000be7c60 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc90000be7c60 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
- #2: ffff88805a3d8d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_open net/bluetooth/hci_core.c:409 [inline]
- #2: ffff88805a3d8d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_power_on+0x1bf/0x6b0 net/bluetooth/hci_core.c:940
-3 locks held by kworker/1:2/974:
- #0: ffff88801ac81d48 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88801ac81d48 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc90003a0fc60 ((crda_timeout).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc90003a0fc60 ((crda_timeout).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
- #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: crda_timeout_work+0x15/0x50 net/wireless/reg.c:540
-5 locks held by kworker/u8:5/1025:
-3 locks held by kworker/u8:8/1153:
- #0: ffff888030945148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff888030945148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc90003d0fc60 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc90003d0fc60 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
- #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
- #2: ffffffff8fcc0208 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0x10e/0x16a0 net/ipv6/addrconf.c:4190
-3 locks held by kworker/0:2/1165:
-4 locks held by kworker/u9:1/5146:
- #0: ffff88802976d948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88802976d948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc900106d7c60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc900106d7c60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
- #2: ffff888025450d80 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:331
- #3: ffff888025450078 (&hdev->lock){+.+.}-{4:4}, at: hci_abort_conn_sync+0x1e4/0x11f0 net/bluetooth/hci_sync.c:5569
-2 locks held by dhcpcd/5502:
-2 locks held by getty/5586:
- #0: ffff8880355800a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz-execprog/5826:
-4 locks held by kworker/u9:2/5851:
- #0: ffff88802991a148 ((wq_completion)hci3){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88802991a148 ((wq_completion)hci3){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3317
- #1: ffffc900041bfc60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc900041bfc60 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3317
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'mailbox_release_msg':
+>> drivers/accel/amdxdna/amdxdna_mailbox.c:203:9: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+     203 |         kfree(mb_msg);
+         |         ^~~~~
+   drivers/accel/amdxdna/amdxdna_mailbox.c: At top level:
+   drivers/accel/amdxdna/amdxdna_mailbox.c:357:8: error: unknown type name 'irqreturn_t'
+     357 | static irqreturn_t mailbox_irq_handler(int irq, void *p)
+         |        ^~~~~~~~~~~
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'mailbox_irq_handler':
+   drivers/accel/amdxdna/amdxdna_mailbox.c:367:16: error: 'IRQ_HANDLED' undeclared (first use in this function)
+     367 |         return IRQ_HANDLED;
+         |                ^~~~~~~~~~~
+   drivers/accel/amdxdna/amdxdna_mailbox.c:367:16: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'mailbox_rx_worker':
+   drivers/accel/amdxdna/amdxdna_mailbox.c:395:25: error: implicit declaration of function 'disable_irq'; did you mean 'disable_work'? [-Werror=implicit-function-declaration]
+     395 |                         disable_irq(mb_chann->msix_irq);
+         |                         ^~~~~~~~~~~
+         |                         disable_work
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'xdna_mailbox_send_msg':
+>> drivers/accel/amdxdna/amdxdna_mailbox.c:431:18: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+     431 |         mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
+         |                  ^~~~~~~
+>> drivers/accel/amdxdna/amdxdna_mailbox.c:431:16: warning: assignment to 'struct mailbox_msg *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     431 |         mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
+         |                ^
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'xdna_mailbox_create_channel':
+>> drivers/accel/amdxdna/amdxdna_mailbox.c:490:18: warning: assignment to 'struct mailbox_channel *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     490 |         mb_chann = kzalloc(sizeof(*mb_chann), GFP_KERNEL);
+         |                  ^
+   drivers/accel/amdxdna/amdxdna_mailbox.c:513:15: error: implicit declaration of function 'request_irq'; did you mean 'request_region'? [-Werror=implicit-function-declaration]
+     513 |         ret = request_irq(mb_irq, mailbox_irq_handler, 0, MAILBOX_NAME, mb_chann);
+         |               ^~~~~~~~~~~
+         |               request_region
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'xdna_mailbox_destroy_channel':
+   drivers/accel/amdxdna/amdxdna_mailbox.c:537:9: error: implicit declaration of function 'free_irq' [-Werror=implicit-function-declaration]
+     537 |         free_irq(mb_chann->msix_irq, mb_chann);
+         |         ^~~~~~~~
+   drivers/accel/amdxdna/amdxdna_mailbox.c: In function 'mailbox_irq_handler':
+   drivers/accel/amdxdna/amdxdna_mailbox.c:368:1: warning: control reaches end of non-void function [-Wreturn-type]
+     368 | }
+         | ^
+   cc1: some warnings being treated as errors
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +/kfree +203 drivers/accel/amdxdna/amdxdna_mailbox.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+   194	
+   195	static int mailbox_release_msg(int id, void *p, void *data)
+   196	{
+   197		struct mailbox_channel *mb_chann = data;
+   198		struct mailbox_msg *mb_msg = p;
+   199	
+   200		MB_DBG(mb_chann, "msg_id 0x%x msg opcode 0x%x",
+   201		       mb_msg->pkg.header.id, mb_msg->pkg.header.opcode);
+   202		mb_msg->notify_cb(mb_msg->handle, NULL, 0);
+ > 203		kfree(mb_msg);
+   204	
+   205		return 0;
+   206	}
+   207	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
