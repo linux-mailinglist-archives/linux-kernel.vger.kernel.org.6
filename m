@@ -1,137 +1,184 @@
-Return-Path: <linux-kernel+bounces-516166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4041CA36D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:01:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E00A36D99
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B796D188C1A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB6616CB42
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6101AAA1A;
-	Sat, 15 Feb 2025 11:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1169F1A5BAF;
+	Sat, 15 Feb 2025 11:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ce1mR6Mp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFW6meLh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D63192D97;
-	Sat, 15 Feb 2025 11:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDBB1482E1;
+	Sat, 15 Feb 2025 11:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617270; cv=none; b=hX/5Q2mzWI0NZreuuWXbumDY0OxMk2/y5O49QK6/e6dEg9YSw9QqHCbzYtgJFd8GnKs3abTtlzImG9qb/UNp6bZc+/Dk9jBw2sxdOahbYhPYqR4B31hAt70rZfhYML36tuUqYVNvqsNxUL/28uOpOgLSs+iQ2PaqU314Z+eD4dI=
+	t=1739617667; cv=none; b=q0TVXcCmfSyIuuO6AIt5fIG3faXQnHzccw+lVNxVYYSi6JqbhjLVXlsBTl6tso7OMU82UTbpJdLLyZujX6IfgWCL/ZfUHyF30VSpZ2qLb46u6vJrvp0xfjkpQfd2vL2yF85lAJRhD0pURjnWhVJqcH5JKew/yAfCH5tJanhpWPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617270; c=relaxed/simple;
-	bh=dJMXZjkxRnJGqf19Krt1G2+pubbDJ/b6B23F0R9noN0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=J3E2qsXJK1wwCEpB7KGJEzlQ3K82o1T3XmSdZKewIFdFJ1cBFXir+64tfSJZQBdtBJvdTOU0/wv8Z1fjSqR99BJQR2s81qsh47qZLgW7X3lvChN12hh2LDt0ZxMIOzQA61bSHR+GWYqsvcw4NMenKUrxXhQwBQHd9a3FHLvH3ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ce1mR6Mp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=PPMcrClHGwldmJKxzwOU3qelWLajHsspzH8nTkIQ1mI=; b=ce1mR6Mp+Xi3xZCOGFxNUNkzVo
-	udkQJfg8zsBfbiBObS3VksNYNY/AFsdK5K9x/8C7LJz7sxUnLOnM5bEjjbwJiF9f44WaQzmQHiauD
-	HXHErR6YqiQV9Dj4Qq86U/s22uP7Hde3B1mN4eGV4/lba9UhtMKekn4Nz/TIU2vyjcr35lUETIiHQ
-	tQ5VfQHVoEXfV34i9TiVNvGcInzOEs1/MC/gsXlVHiofBcv7Ac+W3Zz4mrL4XdK9RO0saYbH8Vlot
-	rgJLeOu8cftYUgoBOF0jz+hmIlIveYyqTZ63FX8HXSbNqpStyyc+RTBfIvgzj5JanAfN9RqheauZj
-	s88XKhSQ==;
-Received: from [31.94.24.172] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tjFut-00000001REG-28sK;
-	Sat, 15 Feb 2025 11:01:00 +0000
-Date: Sat, 15 Feb 2025 12:00:54 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Paul Durrant <paul@xen.org>
-CC: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Joao Martins <joao.m.martins@oracle.com>,
- David Woodhouse <dwmw@amazon.co.uk>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/5=5D_KVM=3A_x86/xen=3A_Restrict_?=
- =?US-ASCII?Q?hypercall_MSR_to_unofficial_synthetic_range?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250215011437.1203084-2-seanjc@google.com>
-References: <20250215011437.1203084-1-seanjc@google.com> <20250215011437.1203084-2-seanjc@google.com>
-Message-ID: <DC438DC0-CC4B-4EE2-ABA8-8E0F9D15DD46@infradead.org>
+	s=arc-20240116; t=1739617667; c=relaxed/simple;
+	bh=aviqrW+4MMM0OACMiFIOXdC21DPQ4amvmUKmI0yVnsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f9EEPMemyTjnlvLAvO32zq+TEJwFzzM0ehzp5lA79C+rmaHZp51FbWL+KosHwSAq6zDCQwtMgFBW85CAyH0g/SP15QQHMY0WPDzH0Kt7qQAb5Fc2L0QIaWphO+Q+2mzOlZTuEQniD5286s8fl1giWguxNqle+NxDSg0Ki2X2RaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFW6meLh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89FAC4CEDF;
+	Sat, 15 Feb 2025 11:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739617666;
+	bh=aviqrW+4MMM0OACMiFIOXdC21DPQ4amvmUKmI0yVnsc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mFW6meLh6335BCBVacv3KLcHO3Lnh6ZpSDXy/9IXWDFgzUwZIW1SxqylwEuTLXAfz
+	 3KUwHnvFAv0Qyn3s/p5GVuVygQqlCSSOwxqJQLsnWkCAW/MPD5N7FJs0of2XpXZtTx
+	 9NeCIkkRgIEsUcwJHI4t1jq7rpVGJUSoJ7kVH0LfmQ29+1orsNuvbbmE3K38DlkB9W
+	 S5u5YdiF+hcNUeMMo5nd9FWUSRkkgjzDuN3DqR44cSohZy4aCheFQr129ouxWqWGyJ
+	 xLAUI8BcokmJ1drd4ogMNlJLXZHQThsm7EBDjKwQXbymiosyyIjpdm+C6vaBL2nD0a
+	 d+0iZxdlYB2ug==
+Message-ID: <87e21b2a-b0f5-41c3-ba6e-960da5c1f836@kernel.org>
+Date: Sat, 15 Feb 2025 12:07:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
+ define
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250210085004.1898895-1-ryan_chen@aspeedtech.com>
+ <20250210085004.1898895-2-ryan_chen@aspeedtech.com>
+ <20250211-encouraging-free-aardwolf-0fabb1@krzk-bin>
+ <OS8PR06MB7541287BC48C500E50C7C77FF2F92@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB7541287BC48C500E50C7C77FF2F92@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 15 February 2025 02:14:33 CET, Sean Christopherson <seanjc@google=2Ecom>=
- wrote:
->Reject userspace attempts to set the Xen hypercall page MSR to an index
->outside of the "standard" virtualization range [0x40000000, 0x4fffffff],
->as KVM is not equipped to handle collisions with real MSRs, e=2Eg=2E KVM
->doesn't update MSR interception, conflicts with VMCS/VMCB fields, special
->case writes in KVM, etc=2E
->
->While the MSR index isn't strictly ABI, i=2Ee=2E can theoretically float =
-to
->any value, in practice no known VMM sets the MSR index to anything other
->than 0x40000000 or 0x40000200=2E
->
->Cc: Joao Martins <joao=2Em=2Emartins@oracle=2Ecom>
->Reviewed-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->Reviewed-by: Paul Durrant <paul@xen=2Eorg>
->Signed-off-by: Sean Christopherson <seanjc@google=2Ecom>
->---
-> arch/x86/include/uapi/asm/kvm=2Eh | 3 +++
-> arch/x86/kvm/xen=2Ec              | 9 +++++++++
-> 2 files changed, 12 insertions(+)
->
->diff --git a/arch/x86/include/uapi/asm/kvm=2Eh b/arch/x86/include/uapi/as=
-m/kvm=2Eh
->index 9e75da97bce0=2E=2E460306b35a4b 100644
->--- a/arch/x86/include/uapi/asm/kvm=2Eh
->+++ b/arch/x86/include/uapi/asm/kvm=2Eh
->@@ -559,6 +559,9 @@ struct kvm_x86_mce {
-> #define KVM_XEN_HVM_CONFIG_PVCLOCK_TSC_UNSTABLE	(1 << 7)
-> #define KVM_XEN_HVM_CONFIG_SHARED_INFO_HVA	(1 << 8)
->=20
->+#define KVM_XEN_MSR_MIN_INDEX			0x40000000u
->+#define KVM_XEN_MSR_MAX_INDEX			0x4fffffffu
->+
-> struct kvm_xen_hvm_config {
-> 	__u32 flags;
-> 	__u32 msr;
->diff --git a/arch/x86/kvm/xen=2Ec b/arch/x86/kvm/xen=2Ec
->index a909b817b9c0=2E=2E5b94825001a7 100644
->--- a/arch/x86/kvm/xen=2Ec
->+++ b/arch/x86/kvm/xen=2Ec
->@@ -1324,6 +1324,15 @@ int kvm_xen_hvm_config(struct kvm *kvm, struct kvm=
-_xen_hvm_config *xhc)
-> 	     xhc->blob_size_32 || xhc->blob_size_64))
-> 		return -EINVAL;
->=20
->+	/*
->+	 * Restrict the MSR to the range that is unofficially reserved for
->+	 * synthetic, virtualization-defined MSRs, e=2Eg=2E to prevent confusin=
-g
->+	 * KVM by colliding with a real MSR that requires special handling=2E
->+	 */
->+	if (xhc->msr &&
->+	    (xhc->msr < KVM_XEN_MSR_MIN_INDEX || xhc->msr > KVM_XEN_MSR_MAX_IND=
-EX))
->+		return -EINVAL;
->+
-> 	mutex_lock(&kvm->arch=2Exen=2Exen_lock);
->=20
-> 	if (xhc->msr && !kvm->arch=2Exen_hvm_config=2Emsr)
+On 15/02/2025 03:14, Ryan Chen wrote:
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Tuesday, February 11, 2025 4:18 PM
+>> To: Ryan Chen <ryan_chen@aspeedtech.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+>> <sboyd@kernel.org>; Philipp Zabel <p.zabel@pengutronix.de>; Joel Stanley
+>> <joel@jms.id.au>; Andrew Jeffery <andrew@aj.id.au>;
+>> linux-clk@vger.kernel.org; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
+>> linux-arm-kernel@lists.infradead.org; linux-aspeed@lists.ozlabs.org;
+>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v8 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
+>> define
+>>
+>> On Mon, Feb 10, 2025 at 04:50:02PM +0800, Ryan Chen wrote:
+>>> remove soc0 clock:
+>>
+>> Why? Your commit msg must explain why. What is obvious from the diff, isn't
+>> it?
+> Thank you for your feedback. I will add explanation in next commit patch.
+>>
+>>>  SOC0_CLK_UART_DIV13
+>>>  SOC0_CLK_HPLL_DIV_AHB
+>>>  SOC0_CLK_MPLL_DIV_AHB
+>>> add soc0 clock:
+>>>  SOC0_CLK_AHBMUX
+>>>  SOC0_CLK_MPHYSRC
+>>>  SOC0_CLK_U2PHY_REFCLKSRC
+>>> add soc1 clock:
+>>>  SOC1_CLK_I3C
+>>>
+>>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+>>> ---
+>>>  include/dt-bindings/clock/aspeed,ast2700-scu.h | 7 ++++---
+>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/dt-bindings/clock/aspeed,ast2700-scu.h
+>>> b/include/dt-bindings/clock/aspeed,ast2700-scu.h
+>>> index 63021af3caf5..c7389530629d 100644
+>>> --- a/include/dt-bindings/clock/aspeed,ast2700-scu.h
+>>> +++ b/include/dt-bindings/clock/aspeed,ast2700-scu.h
+>>> @@ -13,18 +13,17 @@
+>>>  #define SCU0_CLK_24M		1
+>>>  #define SCU0_CLK_192M		2
+>>>  #define SCU0_CLK_UART		3
+>>> -#define SCU0_CLK_UART_DIV13	3
+>>
+>> NAK, ABI break without any explanation.
+> 
+> The `SCU0_CLK_UART_DIV13` was originally defined as a separate clock identifier, reviewing the AST2700 clock driver implement, I realized it is no longer necessary.
+> The clk-ast2700.c driver I have **integrated the SOC0 UART clock (`soc0_uartclk`) with `ast2700_clk_uart_div_table`**. 
+> The UART clock source will get from ast2700_clk_uart_div_table, that will div from source 24M div13 or div1.
 
-I'd still like to restrict this to ensure it doesn't collide with MSRs tha=
-t KVM expects to emulate=2E But that can be a separate patch, as discussed=
-=2E
+Wrap your replies correctly.
 
-This patch should probably have a docs update too=2E
+So all this means you exported clocks which are not clocks?
+How are ABI consumers behaving now?
+
+Anyway, any ABI impact must be clearly justified in commit msg.
+
+
+
+Best regards,
+Krzysztof
 
