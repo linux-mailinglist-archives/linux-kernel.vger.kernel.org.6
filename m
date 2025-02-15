@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-515801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FC9A3693D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBC5A36941
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F810171251
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Feb 2025 23:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA50188CDA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 00:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F511FDA65;
-	Fri, 14 Feb 2025 23:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D312879D0;
+	Sat, 15 Feb 2025 00:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GIEoyJh0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fRYzY/5r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547251922DE;
-	Fri, 14 Feb 2025 23:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC5328F1
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739577316; cv=none; b=CfvgkPEZWkUdXBjd42vb/2eEusb83/v+B8ATvDFTC/gWRcDZi9ijC9FTu+cItCe/4ZLogLdDcc0EjmFA3r1x2rNBgJ+Z2CtHMCwa0iMWZxxQEK7hfrzNB/z5sFHnh7WRtXMNORLX95HFD7zYS+mGU0PO6nn7aUC02gQtNZFWzRU=
+	t=1739577636; cv=none; b=VjCmDqHCvI9NAyxXwoxM4cwLxnLX6WCmNdhXWCvCzgj5gMp9sN9cMAOTd4xa+UZt+ktvz9cLD7915b40BXx55wGucHL1CycGBG1DBAuDukpPlFMljXjvFTyvoEgay+7wOU3z4YFPS6sYs2dttB+UbfIhDIvw3okoyMWeb5ISQHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739577316; c=relaxed/simple;
-	bh=LOrgP2GBZzTB/pBJ6maZqV8jSpcnBwpbXGa9l3n7VD0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kXN2+rwJVvn7wJ0l6P9RnRXpER/rRX+nhqVjHoNyGYYDsDZ68qEsk2Z74VTu8zm4N9mzUvWPal0/YzUCcAHHDJ16HfSrhAVpqOG7cIhF88P/6h0LLJRMlQAMWUK2I4PLAUY2e9jv1DfkngFl14h9Ze8WBY0bmyAmZYHiG6q+kJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GIEoyJh0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA60C4CED1;
-	Fri, 14 Feb 2025 23:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1739577315;
-	bh=LOrgP2GBZzTB/pBJ6maZqV8jSpcnBwpbXGa9l3n7VD0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GIEoyJh02x/WA7joBFGX34vUq9LZ+XhWRQrIwhNHtvyS7JCheHlvR5f6S+2k7fiPL
-	 1vBX7XJPvbP8gWlNvsRvOlfK2ejPeflBcsSgkhlI4X/7GJCf9R25IAnsQpnh3KcjfC
-	 g1rg6I6uktN/Dk/7mt3DEBy4HwzaKgOESXgEl4EY=
-Date: Fri, 14 Feb 2025 15:55:15 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Wengang Wang <wen.gang.wang@oracle.com>, "ocfs2-devel@lists.linux.dev"
- <ocfs2-devel@lists.linux.dev>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ocfs2: update seq_file index in ocfs2_dlm_seq_next
-Message-Id: <20250214155515.6283b71e47730d0e2e6c9664@linux-foundation.org>
-In-Reply-To: <6c468b6c-c449-444d-90af-fd2a6c7c1993@linux.alibaba.com>
-References: <20241108192829.58813-1-wen.gang.wang@oracle.com>
-	<614f6304-f096-41f7-b0a4-05127904e601@linux.alibaba.com>
-	<72E849B5-ECE7-4304-AF90-A60784B4EEFF@oracle.com>
-	<6c468b6c-c449-444d-90af-fd2a6c7c1993@linux.alibaba.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739577636; c=relaxed/simple;
+	bh=amuutJCuNDxyZJ7QgT7xRyCe6q1uiWlS8hBJVV0XIWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bUAIAQ23VF7OoankpahPDAzLSBZJi2dpV2lBnLrfilcD7wV1JHsphR0SAuxftqvlB+RFGz4BT5WkpIPkMN8ZkP66/09HGQyAnRNzQCfNrqnLtgctCJxXHONIi+mth6U4Av1Ws0Ty8nsPLfUiRvw1h/zAqBCWCx38IM8jRpaxwE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fRYzY/5r; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739577634; x=1771113634;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=amuutJCuNDxyZJ7QgT7xRyCe6q1uiWlS8hBJVV0XIWI=;
+  b=fRYzY/5rl+F9147tpvejdDtU7g4aklO7N+uGCqlt2fV2oCMGOcBaGPWz
+   2+MQvHgXWkPyte0Xj6mTJ9NyxbU+xKn/ETWU2khw7O9ZbSXcYsN/QkZRs
+   owt2UXq0NgJ6eeL6VluB6Fm5XxprEqqA4I4mzyFX0CN30IhT+CcIunQxy
+   H3IDiduvkGVffpZglgizThU0mie+dS8bNtsVqFPwhLxi5K9Mr0XXbjpLa
+   +RWEKuzAPJvi9DHGJ+czAdAnKQe/aUIfeY6yP0dyH1RwlgGPO5GWW8GME
+   ye+IgOJE6+QMAC5HRwI+p2pJH9SqK0As3EMdJWrRdRI0LeBohzzENWkjM
+   A==;
+X-CSE-ConnectionGUID: SwAV7vu4R9+522QWLErtsw==
+X-CSE-MsgGUID: s2Q23VUNT16R6CSlDYwcmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="39526550"
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="39526550"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 16:00:34 -0800
+X-CSE-ConnectionGUID: qvTrUmPaRKKDNmIluC0dnw==
+X-CSE-MsgGUID: q5BlMU0ITliDd0aybViZww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,287,1732608000"; 
+   d="scan'208";a="113449214"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Feb 2025 16:00:32 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tj5bi-001AIv-1A;
+	Sat, 15 Feb 2025 00:00:30 +0000
+Date: Sat, 15 Feb 2025 08:00:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol
+ 'errata_list'; recompile with -fPIC
+Message-ID: <202502150711.cW42YQaA-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 11 Nov 2024 17:35:49 +0800 Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
+Hi Masahiro,
 
-> 
-> 
-> On 11/11/24 3:04 PM, Wengang Wang wrote:
-> > 
-> > 
-> >> On Nov 10, 2024, at 5:38 PM, Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
-> >>
-> >>
-> >>
-> >> On 11/9/24 3:28 AM, Wengang Wang wrote:
-> >>> The following INFO level message was seen:
-> >>>
-> >>> seq_file: buggy .next function ocfs2_dlm_seq_next [ocfs2] did not
-> >>> update position index
-> >>>
-> >>> Fix:
-> >>> Updata m->index to make seq_read_iter happy though the index its self makes
-> >>> no sense to ocfs2_dlm_seq_next.
-> >>>
-> >>> Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
-> >>> ---
-> >>> fs/ocfs2/dlmglue.c | 1 +
-> >>> 1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-> >>> index 60df52e4c1f8..349d131369cf 100644
-> >>> --- a/fs/ocfs2/dlmglue.c
-> >>> +++ b/fs/ocfs2/dlmglue.c
-> >>> @@ -3120,6 +3120,7 @@ static void *ocfs2_dlm_seq_next(struct seq_file *m, void *v, loff_t *pos)
-> >>> }
-> >>> spin_unlock(&ocfs2_dlm_tracking_lock);
-> >>>
-> >>> + m->index++;
-> >>
-> >> We can directly use '(*pos)++' instead.
-> >>
-> > 
-> > The input/output "pos” indicates more an offset into the file. Actually the output for an item is not really 1 byte in length, so incrementing the offset by 1 sounds a bit strange to me. Instead If we increment the “index”, It would be easier to understand it as  for next item. Though updating “index” or updating “*pos” instead makes no difference to binary running, the code understanding is different.  I know other seq_operations.next functions are directly incrementing the “*pos”, I think updating “index” is better. Well, if you persist (*pos)++, I will also let it go.
-> > 
-> >From seq_read_iter(), the input pos is equivalent to '&m->index'. So the
-> above two ways seems have no functional difference.
-> IMO, we'd better hide the m->index logic into seqfile and just use pos
-> instead like other .next implementations.
+FYI, the error/warning still remains.
 
-Did we ever fix this?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   04f41cbf03ec7221ab0b179e336f4c805ee55520
+commit: f79dc03fe68c79d388908182e68d702f7f1786bc kconfig: refactor choice value calculation
+date:   7 months ago
+config: riscv-randconfig-r054-20250214 (https://download.01.org/0day-ci/archive/20250215/202502150711.cW42YQaA-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250215/202502150711.cW42YQaA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502150711.cW42YQaA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:93 (arch/riscv/errata/sifive/errata.c:93)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:93 (arch/riscv/errata/sifive/errata.c:93)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str.8'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str.8'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:99 (arch/riscv/errata/sifive/errata.c:99)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:99 (arch/riscv/errata/sifive/errata.c:99)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'text_mutex'; recompile with -fPIC
+   >>> defined in vmlinux.a(kernel/extable.o)
+   >>> referenced by errata.c:99 (arch/riscv/errata/sifive/errata.c:99)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'text_mutex'; recompile with -fPIC
+   >>> defined in vmlinux.a(kernel/extable.o)
+   >>> referenced by errata.c:99 (arch/riscv/errata/sifive/errata.c:99)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
