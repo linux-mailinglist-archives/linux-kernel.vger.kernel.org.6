@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-515924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E578CA36A82
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92849A36A85
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0FE3B2E7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7073B2620
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FBC1FFC4D;
-	Sat, 15 Feb 2025 00:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117ED1C6FF1;
+	Sat, 15 Feb 2025 00:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mdm7AY/A"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJAEfnto"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669281A3178
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFE31A3178
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581013; cv=none; b=HOH6PCdKXH9X2hJ/MOgABe1wbutMVcSyL72RoWcww7bzVywwWpWGZLfBb3Kpdh6+HLVhlg0PaQxsAsj1/+dy1SEMGt1Cg+EmL6joTFemF324t7unv3SBOYqElxgJ0cQDMjuQ1z3ptiQDHtIJoCu/N2XQfwCmbq2QMQldyE2HUEc=
+	t=1739581019; cv=none; b=pEcViUvJ8/8DZhNT9ZUYa3guECUWQyeKMAG1RqH+Nj1TYZNDEZ/Cg3z79SBzmCFrRoVMkuPTZ2iq7ZZJK3mk0vlBKUBtuF8lvixldeE0xVAdVdQWFG5PSfc0x+MMAmloZeGAeQik4BAYjg1jIBzG8pioVvaC4JvzbNhJwFkuUdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739581013; c=relaxed/simple;
-	bh=SlXFcJN9gPIXQ7/UHXvc6Ej3/MtxP+TT4NMl74PBaJw=;
+	s=arc-20240116; t=1739581019; c=relaxed/simple;
+	bh=+KR+FPyiWdY6nzi5E/xfi5ZIbXs6yttfbKTh2BzTWUY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dPGDjlj6yohGrHlkiRoC/K1QUtRBf/4B0MlQkfaofrWkxW0AQ/MU8gAUJXgqXtlKxPsQfONWAlMAAOBZttVXDrmjgB3eo2xr2WebtwK19H4pnN03DYF8vQv8aX84BW3NLjSfqP02T2B7MjLJL85fAjwYQEv47p4vzOSloLGcCgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mdm7AY/A; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=HuwVzv6ZzhHu0UDGEeV0+ostPdMmyEbYDCyaHhIL4K0MIpufWUOVQRJ4oPp67CN9pDqfYVbhq6FWaEmaK/0fiq1NNXZv+k4khntT5igg+8GRBdA0yMZkKCFS9QGzEENPyRo1C/EPJ25XSM04R6B4OBWAZYNBRHSlI5gfmyf5PrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eJAEfnto; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22104619939so9361095ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:56:52 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so4000998a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Feb 2025 16:56:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739581011; x=1740185811; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739581017; x=1740185817; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGFU0x6ME31j27M/E1QZf0SjJwI3DZIXAbtz12osBGU=;
-        b=mdm7AY/Ahi8cDDpPlXzXCSCMOLctuT/JYL4z8Rd2ze8CT+wqq3WUVph9gJ15C1eDIs
-         RreYOpFSZQrgNpaVdVb4XfIFV1j1BVFsvpL6Fe8sTZUl/EwmQD9TNdmGg8TBdnyspGUZ
-         6Re+69G3tgqgMJ/c0BsVRvDoF6Ye3xoJcVVxD/XmKOSucu3BbOONj3fXTb+jdd+bKVkc
-         X+/nISy/L5gkOAXMKzObhQZ94uLYOQyVszwU7FBJi6AcxQmjoPJPyCAMXzo23ad4yV63
-         52C27hojfHiGLc9cpDjbuAzgYKT+C5fuSMvfXkGo50dzIBhg8WlavuQixSQKF/PNKemH
-         2e6A==
+        bh=dYdp5KEOM09jg9p9N6DLn1QBn6Otq5JJd2KkgOh4RdE=;
+        b=eJAEfntoM5S7pFhA8vMKB2H7G2qIcnGiPNWXo9/+Sln0so7OC9g0UG1j9RNCrBO6AM
+         gjL+F2RmurdArV+u5GUUEQsdGDfxrIyUdSTVYOCkZYNlXiKAtblppNCBt3ByvgGqeDnC
+         3AufWoNpIDXXYNDRjnbnSlTohQLfcIv6qVLbt+j+gIttQjZzauV7NU0EoaMMblkWG91r
+         RECLEeRmh3JmHDbLE9IzCnrs+13du4SEnhkoa7G0HuuATq7uWC7fqgx2sFE9LsPhB0HE
+         TtHj0jgiuO35KV3B5ftz/oD852t3st3tbaF3gNGrR0qs01tjrm9McOuC+39df5H7AQQ9
+         DiNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739581012; x=1740185812;
+        d=1e100.net; s=20230601; t=1739581017; x=1740185817;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGFU0x6ME31j27M/E1QZf0SjJwI3DZIXAbtz12osBGU=;
-        b=mjIZm5NnFTXY+cOKgdeHRj/QGtgzEsLcm588nI3XSVOCtwxhj1SE0kCnE2NmzJvr/t
-         ytHXZn7sMEmOBAq+03CDJhM3XyapcMMnuMXT1qOWeWwWGcui5x3eKwLmZI6f8MZcWyGp
-         Jht5jAAxGrnixRcHUI3PVlLusnKHG5IbyJYNf9iD66X5oFhjV6tQojV9y6Q4t4GW6oEd
-         e1xSpIZfQryc90tjUtZxxVkpIi2jbmVrSRqdWG7LOSAchGYhcYSqj5Cucmj8qWa9yTTP
-         yquYwXWCVYCBz9dimTycmdQ4+CP4uXXZptzw55dSlgx+XkWwXoxcNOFlCUrrYZ1ZbCnu
-         5UOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAomwEN7pDCaIag+XWPlSgrAHUSedwSJuP3Fi6T6FuVnC8BazNIKFCvTZA1I1rnvNQUYWJ+Xb0vKuK7tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDRTNmaeOBIIGEh5Vl3dBdvlccma1TbRSI+wJeVJQkq/RQAGzw
-	4y/Jd8UZwvwwWR+DA30E7FTXPY5CWGf/xcAtsqN8zLBPKC9hDuVGVWM0hT+kB66ZEIN+czTGEe5
-	BNg==
-X-Google-Smtp-Source: AGHT+IGzjZ4q3ipCJ9H8WgyBye344Mufo5MgNAaVcmrLT+j8+QI69Usa/fdkwZc427X31ScOU5PG+HDtyb0=
-X-Received: from pfbcz19.prod.google.com ([2002:aa7:9313:0:b0:730:7bad:2008])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:619c:b0:1e0:c77c:450d
- with SMTP id adf61e73a8af0-1ee8caab780mr2596787637.1.1739581011703; Fri, 14
- Feb 2025 16:56:51 -0800 (PST)
-Date: Fri, 14 Feb 2025 16:50:39 -0800
-In-Reply-To: <1739241423-14326-1-git-send-email-yangge1116@126.com>
+        bh=dYdp5KEOM09jg9p9N6DLn1QBn6Otq5JJd2KkgOh4RdE=;
+        b=h2VdNINoZGQObdVfOSJpU6+y2broNRatLxetygGtbOlwBBfEdCpNjDVZHKol1JSqNR
+         P4C3cHubbzfOUTNQ8S+NVrOji5VDgfCENeIae3NRaoTvJfC0cAYHEWd96bYX0QmoUctY
+         nG0X7++7yJqp6Mw05hff5w5fjfQcjwaqcrs2FUFI+qBeIIYU4f6qxq10J0mAAKPDDkve
+         DBM9iAbM7bjbf2QQ7biojo+cWMWlSDU6x42cp6sMHABt559OW/lWUHbXbe/KgLxwjG5h
+         PsIDAv/K082egPTzHZjPTBvae4plfRY+cWFXSojghe4pxzRmdnJx6OG4Ae+PJzkWEwxv
+         aqYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT8nF/LSKccJcEGFXUXSLza2wEH1bHf2vrbGo8M5fYOOxW8tOb84wHa+T5J4AAOCif147yxpGbmgOWhh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySpEPezWaFvwQogbKJbG+jzS7i5Kb46w+NH2q3G5QuCFaJzIa7
+	efDjZvrtzbAzxNs7Vxv6DTfkAFR3IsLmcX/Csl1bsZMKYDNKawCpe2wnhj+LBztJzKbt6fbBLI7
+	QHQ==
+X-Google-Smtp-Source: AGHT+IFyXn/jnfPe9MBamhPWud5uhVvBM7H05Zvnq/KLsngCiWW3jisWRrlgNP9Gm+ydmlhJ/vnEjK2DQMw=
+X-Received: from pjboh15.prod.google.com ([2002:a17:90b:3a4f:b0:2fc:3022:36b4])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37
+ with SMTP id 98e67ed59e1d1-2fc40f22cd2mr2192939a91.18.1739581017169; Fri, 14
+ Feb 2025 16:56:57 -0800 (PST)
+Date: Fri, 14 Feb 2025 16:50:41 -0800
+In-Reply-To: <de0437379dfab11e431a23c8ce41a29234c06cbf.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <1739241423-14326-1-git-send-email-yangge1116@126.com>
+References: <20250201011400.669483-1-seanjc@google.com> <de0437379dfab11e431a23c8ce41a29234c06cbf.camel@infradead.org>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <173958047445.1191117.9513441851544868586.b4-ty@google.com>
-Subject: Re: [PATCH V4] KVM: SEV: fix wrong pinning of pages
+Message-ID: <173958006311.1187438.11536700176929455.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86/xen: Only write Xen hypercall page for guest
+ writes to MSR
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, yangge1116@126.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, david@redhat.com, 
-	baolin.wang@linux.alibaba.com, thomas.lendacky@amd.com, liuzixing@hygon.cn, 
-	Barry Song <baohua@kernel.org>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Paul Durrant <paul@xen.org>, 
+	David Woodhouse <dwmw2@infradead.org>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+cdeaeec70992eca2d920@syzkaller.appspotmail.com, 
+	Joao Martins <joao.m.martins@oracle.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 11 Feb 2025 10:37:03 +0800, yangge1116@126.com wrote:
-> In the sev_mem_enc_register_region() function, we need to call
-> sev_pin_memory() to pin memory for the long term. However, when
-> calling sev_pin_memory(), the FOLL_LONGTERM flag is not passed, causing
-> the allocated pages not to be migrated out of MIGRATE_CMA/ZONE_MOVABLE,
-> violating these mechanisms to avoid fragmentation with unmovable pages,
-> for example making CMA allocations fail.
+On Thu, 06 Feb 2025 19:14:19 +0000, David Woodhouse wrote:
+> The Xen hypercall page MSR is write-only. When the guest writes an address
+> to the MSR, the hypervisor populates the referenced page with hypercall
+> functions.
+> 
+> There is no reason for the host ever to write to the MSR, and it isn't
+> even readable.
 > 
 > [...]
 
-Applied to kvm-x86 svm, thanks!
+Applied to kvm-x86 xen, thanks!  I'll post v2 of my series on top.
 
-[1/1] KVM: SEV: fix wrong pinning of pages
-      https://github.com/kvm-x86/linux/commit/7e066cb9b71a
+[1/1] KVM: x86/xen: Only write Xen hypercall page for guest writes to MSR
+      https://github.com/kvm-x86/linux/commit/3617c0ee7dec
 
 --
 https://github.com/kvm-x86/linux/tree/next
