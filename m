@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-516247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F4AA36EAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:01:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B2A36EAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416C518955BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1F81707AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B0C1C8617;
-	Sat, 15 Feb 2025 14:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054211AAE1E;
+	Sat, 15 Feb 2025 14:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdkeIjoa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4UEFGvc"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62F8634E;
-	Sat, 15 Feb 2025 14:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2349B5103F;
+	Sat, 15 Feb 2025 14:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739628070; cv=none; b=UPKUMdMCzR4EseavdWi7cRU3zEdbo/Go4pdZQMteyh37Mwy8IORtD+GPcpBxVQhR75JYz3zTf/4C05rbgeejeqvvRxRDUcRMGHchVYL6lHkbEi4cCR/s6W35af7AMyzYCjWoRXHw7iKuGnehqAJN06fhgCLI+QzympdtJ8TbZvs=
+	t=1739628345; cv=none; b=dXzrEFLAIX18n5e43rdAtULp0iwSc0OJ6jmIOGcs4dYOofcHNDB1gXK/EBzKk9z81u7Uix1PKymLZ4y4pL21gnm37t/OThMF1u/D0CFjJrpL6XF8ZpVg3YHvulpWHlUSwohJ/XDD8dm9a8dQdOKHMW6EGxNRsm2QmcyHyHYs6Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739628070; c=relaxed/simple;
-	bh=3KZjQFG9kWj7eD82rZJTbZ9FPBolNJSFaZ87/g22y1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0AE3Vw5Pgc+XA1tSwRLZfDwZbt9F2J8ezrU00JY6R0NzwhZNWcCQ7xV+4ka9RYjIEvnELHKzraMSa4tocO5y4v3ODC1uguxSnI1+No5uBv4sGXKJ/zGBr1ztgwBcG7bwnD7jgUbqPTPcKBNnFsuQo8jHUVZRJpvzzfzx9IG3Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdkeIjoa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822DEC4CEDF;
-	Sat, 15 Feb 2025 14:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739628069;
-	bh=3KZjQFG9kWj7eD82rZJTbZ9FPBolNJSFaZ87/g22y1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mdkeIjoaX5Cb1zuFkBFKRC5hh5M29XZV6OoodO/ZlM3RWcOllZD4faWThxIxKAilu
-	 /iuMlnTsVOmvaUlKMWzMz5ioNFJOXsiMMall0OHQ5poQv5AalO30eE62ksKJNLys9m
-	 avuff3LzCUsjxCRVh/t92j1yyH3H7FvPdXrKUOKmWJxLUey6VcZNnyDE1WeRjBfOt1
-	 AAyWl08v6RedA0ScYvadnEDN2CwZ1fjFeeB+ivrxUOi3LQvWGLreBwFsweGGPCKke1
-	 LDUWOLGA7xmCvobdxxd+EikL5WJC7hNXcHgTv8xCmhg8BHfFCEsi2cvputIOqUNCB7
-	 SwzWhYoCaaffA==
-Date: Sat, 15 Feb 2025 14:01:04 +0000
-From: Simon Horman <horms@kernel.org>
-To: Eric Woudstra <ericwouds@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 net-next] net: ethernet: mtk_ppe_offload: Allow QinQ
-Message-ID: <20250215140104.GO1615191@kernel.org>
-References: <20250209110936.241487-1-ericwouds@gmail.com>
- <20250211165127.3282acb0@kernel.org>
- <fe6509ab-c186-47c1-b004-4e17a875c5c7@gmail.com>
+	s=arc-20240116; t=1739628345; c=relaxed/simple;
+	bh=ZYjGJAar+VrlW8o4Wdk9AVmdFh+y4NmIJmrHDIUv2oo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=A+/Kvwzpu5j0zyLfm7DrQEBoVPdPSIhbcGOs7YCSArOcc5w22tAogMnFwNiFB+kDL3Vp2y3QkoZ29tfKtads0DQNtfLmiDnZYbHmninlohYl2KMZlOnXcUrS96IDriez44A9lQGj+IpzYA3PXVlrtQyaKOwQC/rTKyHwAVj9RJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4UEFGvc; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220d398bea9so42260755ad.3;
+        Sat, 15 Feb 2025 06:05:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739628342; x=1740233142; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j+vEBIq9kWlXFMUJvEVKmydQ9oi3O+Xeurv2TBEA2XM=;
+        b=i4UEFGvcQmHPy/N90PfAmh8AHoOL1dVI0OESRgIYNf+qHQEJZqlZTDHZWv12G5BrcV
+         3cM0l2TtGx7awwqNfqshZhTwNMkZUDUsVPzdqlQUNrTjpMz8r2w0XQf5mTNWOYyFkWga
+         yuu5sWcK9rh/HxEd4qLQyIEOT1nS9xW2DqZ0jWeOfp4vy7Esg5eQ19o17IhhyWwKniDm
+         k+qOy2pOkLVd/5wkDtcYz5HCCiyBlNF2u2Uz2vylF0kvPqOQLw30jmAvP9g6axO5YyYE
+         o7CjCniQLeSDb+u2wchtfLLiKPsXV16G3wBpeY4LHKV2k1H3K/POU3Sq4Bp7aSV21xaG
+         rpqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739628342; x=1740233142;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j+vEBIq9kWlXFMUJvEVKmydQ9oi3O+Xeurv2TBEA2XM=;
+        b=a4ol+tMdzpOSrA2KxxWbJzH/VpUQOs5hGOZ8Limzt1HVLoeIwI28vJv1DNBGTRjFU2
+         hJzZmFqS34e5L24I/vXbQJBtG8rPvA4Tz7mp9zn0rrgQ13+FEYvq7PHM3kYp1o+6AGRI
+         1eSvkqQI3Qc1h/5R0nxp9z/yBWPNtXroXQ1QmfjpIaDomNBfZ9XGon7aapBhjkuRBQXQ
+         6SZ6fnNF3nj6qB+NQOhVYdzxwgDiDadJsos4NiQ5JZlFE44skOyEJh4tc+n/dD9XF9Qu
+         dwGJEkqi2LwgyPctUJQVqaAZwpZvppuzIYrAmWCkTmlpmNU+Pgp9PUck4X2NYxrfhEdD
+         OgBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV10CprvqsBek1tS11ekoKRqzggPwyvyCV69merakv8r2U3XhWCyO3HXGEMEPtrh1xqjUQjNaDDdQxa@vger.kernel.org, AJvYcCV8U4ZcuZbJzhUYXBWRz0L4jpojDIp0fxQufEzxIDbTPDQKGh+RBLemUI6MLCpBriBdGww82f8Ds/pH3zI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx9NQCbXmTt/9xY8dCBxT7N7zddzpQlsNNlvE8uWSW2fkuCj8o
+	z04Fu8dqpKHTeajuXF4PGZm4S0iOBzxxpG69K5wByuqMDQ8hSdx9
+X-Gm-Gg: ASbGncsDhjBj+UgtrghL/IhNcN4v5PsovUSAD444gWOLo5QtbB0TCEdIrfSnzFKyZ3N
+	nQI4eFeNWb4axW9ozCGEDpnZlyUy4oYdHuvSMSRx4tM2LX2quJG0S5ELwvaYoNsByi0J+qKSKw3
+	zmLW7WebmoakroRI9MNVIpN9rBmxqo+A7ieEETHV9S5feXhjT4WvUIFAQ6UuqhEf0dmulnu+1ht
+	4P7NtHoJVC4u3w4z2nZVSSKQA9ht1Z3R9mOlJ5xCc2cAzsd6rtZWi924hBtwOxrIakt6GOoXqqh
+	6526bGYKI2VB6OuxkCL0yb4Q
+X-Google-Smtp-Source: AGHT+IHxcqs+01OksadipCnKxB6vaD7XaLdYOfU7wsj0NnPLTnz8bwbnLbwuY65+SMZKvZRgvHv32w==
+X-Received: by 2002:a17:903:2f85:b0:21f:3e2d:7d40 with SMTP id d9443c01a7336-2210403e859mr38846005ad.18.1739628342216;
+        Sat, 15 Feb 2025 06:05:42 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.159.118])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf98b4c45sm6898833a91.2.2025.02.15.06.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 06:05:41 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: christophe.jaillet@wanadoo.fr
+Cc: bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	scott@spiteful.org,
+	trintaeoitogc@gmail.com
+Subject: Re: [RESEND PATCH] PCI: cpci: remove unused fields
+Date: Sat, 15 Feb 2025 11:05:35 -0300
+Message-Id: <20250215140535.301162-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ebf3ee33-3958-43a7-8bd9-fe6169ad6a9f@wanadoo.fr>
+References: <ebf3ee33-3958-43a7-8bd9-fe6169ad6a9f@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe6509ab-c186-47c1-b004-4e17a875c5c7@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 12, 2025 at 08:33:52PM +0100, Eric Woudstra wrote:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> So, if unsure if the change of behavior you introduce is correct, you 
+> should only do what you wanted to do.
 > 
-> 
-> On 2/12/25 1:51 AM, Jakub Kicinski wrote:
-> > On Sun,  9 Feb 2025 12:09:36 +0100 Eric Woudstra wrote:
-> >> This patch adds QinQ support to mtk_flow_offload_replace().
-> >>
-> >> Only PPPoE-in-Q (as before) and Q-in-Q are allowed. A combination
-> >> of PPPoE and Q-in-Q is not allowed.
-> > 
-> > AFAIU the standard asks for outer tag in Q-in-Q to be ETH_P_8021AD,
-> > but you still check:
-> > 
-> >> 			    act->vlan.proto != htons(ETH_P_8021Q))
-> >> 				return -EOPNOTSUPP;
-> > 
-> > If this is a HW limitation I think you should document that more
-> > clearly in the commit message. If you can fix it, I think you should..
-> 
-> It will be the first case. mtk_foe_entry_set_vlan() is limited to using
-> only 1 fixed protocol. I'll drop the reviewed-by, amend the commit
-> message and send v4.
+> If you still want to propose the other change, you should do the 2 
+> things in 2 different steps.
+Okay, I will send a patch with only (g|s)et_power() removed.
 
-I agree with Jakub's comment regarding the spec, and his suggested actions.
-But, FWIIW, I also think that situations such as this are not uncommon in
-the wild.
-
+Thanks,
+Guilherme
 
