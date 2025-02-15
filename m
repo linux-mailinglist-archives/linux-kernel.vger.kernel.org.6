@@ -1,124 +1,271 @@
-Return-Path: <linux-kernel+bounces-515954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790F7A36AFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 533D6A36B05
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAA13B1B7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1EFA3B1EEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFA5103F;
-	Sat, 15 Feb 2025 01:27:03 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0C715A842;
+	Sat, 15 Feb 2025 01:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/pEEj8S"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A2D2FF
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A332151985;
+	Sat, 15 Feb 2025 01:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739582822; cv=none; b=dGPVg/4qc1LOzUPip/L9vdoRvC8JF+RljM9zPw0WB5vGG1BoY8Bp2J6TZa64TE1fO12sirUrRPl1DaiJt48+vaotyzuTBZZ7hHpCk6NhsEhVAMnN6gIFrjKyZ6tEcJD83ppzqBFMsKOEKz1610kWDWeMITzFJEH4vnszfmnjqbM=
+	t=1739583036; cv=none; b=TIzCzsGTitnrclWl8keF/qBwYKoewA4IHm5RKCtR5C2tL4Hby81+8ER3cN0lPjZ4bkxM75/jqdpXnCSRB1MzTb3Zyr9UOZtgGYBiGzNulBnWVFREXcahk5FZf1Ze5FHO7B5PV6WANLGworAM5x0ScePzLw1qqsbDqMvnhM2u5Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739582822; c=relaxed/simple;
-	bh=AdsovmeqayU7sop6zJS8/ADHIunyLp4dOkTInukMREg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hGD42jDFCgsANlVOm2imy8IK0+1w3q942LMpur0egILkQpQFhqJteWStSBHUX5hMh5QcmRRQ2en87LIPvbe783i/PjbVaN/cE9+WZv8ShH0nEhdNGEYPhGUFqN6XHQE66Z8cp8lz8cPsE4U3zhtcHnd1ei+QieB1VSodaOBoVfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tj6wL-0000000055H-2ugD;
-	Fri, 14 Feb 2025 20:25:53 -0500
-Message-ID: <3e26626aa1c01aaa5d1e7b42d3ffbd632c3264fb.camel@surriel.com>
-Subject: Re: [PATCH v11 06/12] x86/mm: use INVLPGB for kernel TLB flushes
-From: Rik van Riel <riel@surriel.com>
-To: Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, 	thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, 	akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, 	mhklinux@outlook.com, andrew.cooper3@citrix.com, Manali
- Shukla	 <Manali.Shukla@amd.com>
-Date: Fri, 14 Feb 2025 20:25:51 -0500
-In-Reply-To: <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
-References: <20250213161423.449435-1-riel@surriel.com>
-	 <20250213161423.449435-7-riel@surriel.com>
-	 <ab55a809-e0d2-4364-84ce-917a40ee299a@intel.com>
-	 <20250214194013.GA2198@noisy.programming.kicks-ass.net>
-	 <c42c314c-3c1b-4e4a-803a-ecf31685d4cc@intel.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1739583036; c=relaxed/simple;
+	bh=Spjd0+CPKcnwg6LOWxgLFJqDtJsQv/sjsOlQKMMo/oU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cN6zN+S+793hLqc0qupQkgXkHTK07YkeJbGcrTL+E+FVH45MskUds5LDMHYCJh+m0Fv8MjQX4H1bIp99Ca/WN//XzvPt7mC88u8LmMnuH1Zw56Z2AhdHlgS4XGtTGSd8P2+V0chVd0flCEnBht8LC+u7SQ8hTAXjdc31hCKFsC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/pEEj8S; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso1700948e0c.1;
+        Fri, 14 Feb 2025 17:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739583033; x=1740187833; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSGM5ho1Yts9mu8HW67wgopxLYvRJsKN317227YXOfo=;
+        b=G/pEEj8SCv6HLLY9k/9u5FmsNOM6uJzYwdturi8zXkbEhd68NJ6aeS4CFI6XT8DcnU
+         u/lbsSljclOGEPDwHIbOpVeWrcjxyybwL7dVevU1mDY2QiefeigPBKwPlQEEE96u2clR
+         0ulcJRwWqwTtuyP79NffxTCqyxOUn+gjQHlIpgcs1kwHw50PhGMhO+u0bIzWQKSK2F+h
+         dWNNZGsMcV6UxAThWxvIU99cfp1Ab0m8hmWmZFnV7VhSMtC7y9wppSvQT/oDxauFHX6/
+         C6RH7b87av2aUmj6TAX50z3iTzX47n58U1JbkUhyzcbX6LkZGbDgdvjtwQxNiIuZYeaQ
+         lKcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739583033; x=1740187833;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TSGM5ho1Yts9mu8HW67wgopxLYvRJsKN317227YXOfo=;
+        b=QhnfJtFnKjqN/6cMQnDnjoOdQHxJr8n7rXI2pyVvxrZxNMeByjHK8rcKM23GqvTNQx
+         SwPr6uRIraCpTtnRSRDPzwivB+sz1ah6/hqfym7mrlPud+t7BeyPBBqfT1pRQtwFLuGC
+         k37qxwPCwOs5esH7wSlDoYMqQuJw4sEDysUsjp/cXVHNGPS4oCTckSs88a8j+0rFFNBM
+         D8c040yyNrMuViNwiJUFBhcS/q3AHkx8lYj7kelZAWx+XbCnn2zPYwH/8GL+p4A1RdxZ
+         Mji0ajvFPiERPTFCGG37qWpV+N/LE8DMo52xB8+5zOsRhfCSK+HGN8UgVWMLmiXe3kQP
+         rmIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc/8RyeqcUTqfmgRmuRBfALLlmPmYu7hbmaKjRxueOYqdaDPL6O5zth7sUfq1Hllgq+AHa1UR2un6h13L6imqlAjqnpw==@vger.kernel.org, AJvYcCVmtOSNQKrs+/6Zqf5+9LTzHoyTfkzcW7ovjLDuIlz/azAK3QUq1vOAQBQFWPhFAAZOa9HPOKJOV9c8pUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz85qUvRCpKywJUW0z1b0vcchuNMa2PD7CM4603Id9qCai+7b1
+	23WCjMw4x1mAG+opRCLI+FGMpGfiw25d8ob3nRI/yNU0gJA0f4Ja
+X-Gm-Gg: ASbGncuWp9ipHWeP/g6BxLdv7LMmIxld9vMkrXSKaDwb9sZQVwj3MRLpKBZgAUlrdWn
+	i8y2DUwvXfa4/n6bs5+pYyKW6nOrSOZnFrkcu1I4oo6IRCAtTwdlzBwOacnAPW4fCFawGCgxGeu
+	2q4ynrG6+UfGYE42edMHJgIyeoi57xNQyQjwSYX2kaewm6Sw997soDZs9kAlB3324Oa7uXc4bQj
+	F6rtVnWQCFoat6zP6AMAAkf3VIAYq3AYoYAii4ymNZ0mvOqoBnkDoqwsZORvn44g3RK8DJW76Xe
+	BE+OYtE=
+X-Google-Smtp-Source: AGHT+IHqvEQ4auzkcaLR2teW9yEnTAwZ5BacKnVAy+LW2WTgyrGiPtTi7NFoVsIbxQj+wr4MPSvXsg==
+X-Received: by 2002:a05:6122:2701:b0:520:6773:e5ba with SMTP id 71dfb90a1353d-5209da6bf7emr868075e0c.2.1739583033152;
+        Fri, 14 Feb 2025 17:30:33 -0800 (PST)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52097e27968sm463557e0c.18.2025.02.14.17.30.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 17:30:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Sender: riel@surriel.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Feb 2025 20:30:30 -0500
+Message-Id: <D7SMPVK7KM8E.3VYTBGLEVS109@gmail.com>
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Armin Wolf" <W_Armin@gmx.de>, <jlee@suse.com>,
+ <basak.sb2006@gmail.com>, <rayanmargham4@gmail.com>
+Cc: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
+ <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] platform/x86: acer-wmi: Fix setting of fan
+ behavior
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250214221322.47298-1-W_Armin@gmx.de>
+ <20250214221322.47298-2-W_Armin@gmx.de>
+In-Reply-To: <20250214221322.47298-2-W_Armin@gmx.de>
 
-On Fri, 2025-02-14 at 11:55 -0800, Dave Hansen wrote:
->=20
-> Fair enough. If we don't have a better name, we can at least do:
->=20
-> 	if (new_bad_name()) {
-> 		new_thing();
-> 	} else {
-> 		old_thing();
-> 	}
->=20
-> My real heartburn is with:
->=20
-> 	if (new_bad_name()) {
-> 		new_thing();
-> 	} else if (need_thing_1()) {
-> 		old_thing1();
-> 	} else {
-> 		old_thing2();
-> 	}
->=20
-> Where new and old are logically squished together.
->=20
-Do we want to group this code by history, or
-by function?
+Hi Armin,
 
-I would argue that new_thing() and old_thing1()
-are closer to each other functionally (they both
-do remote TLB invalidation) than they are to=C2=A0
-old_thing2(), which does local-only invalidation.
+On Fri Feb 14, 2025 at 5:13 PM -05, Armin Wolf wrote:
+> After studying the linuwu_sense driver
+> (https://github.com/0x7375646F/Linuwu-Sense) i was able to understand
+> the meaning of the SetGamingFanBehavior() WMI method:
+>
+> - the first 16-bit are a bitmap of all fans affected by a fan behavior
+>   change request.
+>
+> - the next 8 bits contain four fan mode fields (2-bit), each being
+>   associated with a bit inside the fan bitmap.
+>
+> There are three fan modes: auto, turbo and custom.
+>
+> Use this newfound knowledge to fix the turbo fan handling by setting
+> the correct bits before calling SetGamingFanBehavior(). Also check
+> the result of the WMI method call and return an error should the ACPI
+> firmware signal failure.
+>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/acer-wmi.c | 75 +++++++++++++++++++++++----------
+>  1 file changed, 52 insertions(+), 23 deletions(-)
+>
+> --
+> 2.39.5
+>
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-=
+wmi.c
+> index 69336bd778ee..f20a882e3650 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -68,10 +68,19 @@ MODULE_LICENSE("GPL");
+>  #define ACER_WMID_SET_GAMING_LED_METHODID 2
+>  #define ACER_WMID_GET_GAMING_LED_METHODID 4
+>  #define ACER_WMID_GET_GAMING_SYS_INFO_METHODID 5
+> -#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR 14
+> +#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID 14
+>  #define ACER_WMID_SET_GAMING_MISC_SETTING_METHODID 22
+>  #define ACER_WMID_GET_GAMING_MISC_SETTING_METHODID 23
+>
+> +#define ACER_GAMING_FAN_BEHAVIOR_ID_MASK GENMASK_ULL(15, 0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK GENMASK_ULL(23, 16)
+> +
+> +#define ACER_GAMING_FAN_BEHAVIOR_CPU BIT(0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_GPU BIT(3)
+> +
+> +#define ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK GENMASK(1, 0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK GENMASK(7, 6)
+> +
+>  #define ACER_GAMING_MISC_SETTING_STATUS_MASK GENMASK_ULL(7, 0)
+>  #define ACER_GAMING_MISC_SETTING_INDEX_MASK GENMASK_ULL(7, 0)
+>  #define ACER_GAMING_MISC_SETTING_VALUE_MASK GENMASK_ULL(15, 8)
+> @@ -121,6 +130,12 @@ enum acer_wmi_predator_v4_sensor_id {
+>  	ACER_WMID_SENSOR_GPU_TEMPERATURE	=3D 0x0A,
+>  };
+>
+> +enum acer_wmi_gaming_fan_mode {
+> +	ACER_WMID_FAN_MODE_AUTO		=3D 0x01,
+> +	ACER_WMID_FAN_MODE_TURBO	=3D 0x02,
+> +	ACER_WMID_FAN_MODE_CUSTOM	=3D 0x03,
+> +};
+> +
+>  enum acer_wmi_predator_v4_oc {
+>  	ACER_WMID_OC_NORMAL			=3D 0x0000,
+>  	ACER_WMID_OC_TURBO			=3D 0x0002,
+> @@ -1565,9 +1580,6 @@ static acpi_status WMID_gaming_set_u64(u64 value, u=
+32 cap)
+>  	case ACER_CAP_TURBO_LED:
+>  		method_id =3D ACER_WMID_SET_GAMING_LED_METHODID;
+>  		break;
+> -	case ACER_CAP_TURBO_FAN:
+> -		method_id =3D ACER_WMID_SET_GAMING_FAN_BEHAVIOR;
+> -		break;
+>  	default:
+>  		return AE_BAD_PARAMETER;
+>  	}
+> @@ -1618,25 +1630,42 @@ static int WMID_gaming_get_sys_info(u32 command, =
+u64 *out)
+>  	return 0;
+>  }
+>
+> +static int WMID_gaming_set_fan_behavior(u16 fan_bitmap, u8 mode_bitmap)
+> +{
+> +	acpi_status status;
+> +	u64 input =3D 0;
+> +	u64 result;
+> +
+> +	input |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_ID_MASK, fan_bitmap);
+> +	input |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK, mode_bitm=
+ap);
+> +
+> +	status =3D WMI_gaming_execute_u64(ACER_WMID_SET_GAMING_FAN_BEHAVIOR_MET=
+HODID, input,
+> +					&result);
+> +	if (ACPI_FAILURE(status))
+> +		return -EIO;
+> +
+> +	/* TODO: Proper error handling */
+> +	pr_notice("Fan behavior return status: %llu\n", result);
+> +
+> +	return 0;
+> +}
+> +
+>  static void WMID_gaming_set_fan_mode(u8 fan_mode)
+>  {
+> -	/* fan_mode =3D 1 is used for auto, fan_mode =3D 2 used for turbo*/
+> -	u64 gpu_fan_config1 =3D 0, gpu_fan_config2 =3D 0;
+> -	int i;
+> -
+> -	if (quirks->cpu_fans > 0)
+> -		gpu_fan_config2 |=3D 1;
+> -	for (i =3D 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
+> -		gpu_fan_config2 |=3D 1 << (i + 1);
 
-I can organize the code however people want,
-but I would like a second opinion on this idea :)
+This was not replicated bellow. Just to be sure, are there no fans at
+BIT(1) and BIT(2)?
+
+
+> -	for (i =3D 0; i < quirks->gpu_fans; ++i)
+> -		gpu_fan_config2 |=3D 1 << (i + 3);
+> -	if (quirks->cpu_fans > 0)
+> -		gpu_fan_config1 |=3D fan_mode;
+> -	for (i =3D 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
+> -		gpu_fan_config1 |=3D fan_mode << (2 * i + 2);
+
+Same as above.
+
 --=20
-All Rights Reversed.
+ ~ Kurt
+
+> -	for (i =3D 0; i < quirks->gpu_fans; ++i)
+> -		gpu_fan_config1 |=3D fan_mode << (2 * i + 6);
+> -	WMID_gaming_set_u64(gpu_fan_config2 | gpu_fan_config1 << 16, ACER_CAP_T=
+URBO_FAN);
+> +	u16 mode_bitmap =3D 0;
+> +	u16 fan_bitmap =3D 0;
+> +
+> +	if (quirks->cpu_fans > 0) {
+> +		fan_bitmap |=3D ACER_GAMING_FAN_BEHAVIOR_CPU;
+> +		mode_bitmap |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK, fa=
+n_mode);
+> +	}
+> +
+> +	if (quirks->gpu_fans > 0) {
+> +		fan_bitmap |=3D ACER_GAMING_FAN_BEHAVIOR_GPU;
+> +		mode_bitmap |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK, fa=
+n_mode);
+> +	}
+> +
+> +	WMID_gaming_set_fan_behavior(fan_bitmap, mode_bitmap);
+>  }
+>
+>  static int WMID_gaming_set_misc_setting(enum acer_wmi_gaming_misc_settin=
+g setting, u8 value)
+> @@ -1923,7 +1952,7 @@ static int acer_toggle_turbo(void)
+>  		WMID_gaming_set_u64(0x1, ACER_CAP_TURBO_LED);
+>
+>  		/* Set FAN mode to auto */
+> -		WMID_gaming_set_fan_mode(0x1);
+> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_AUTO);
+>
+>  		/* Set OC to normal */
+>  		if (has_cap(ACER_CAP_TURBO_OC)) {
+> @@ -1937,7 +1966,7 @@ static int acer_toggle_turbo(void)
+>  		WMID_gaming_set_u64(0x10001, ACER_CAP_TURBO_LED);
+>
+>  		/* Set FAN mode to turbo */
+> -		WMID_gaming_set_fan_mode(0x2);
+> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_TURBO);
+>
+>  		/* Set OC to turbo mode */
+>  		if (has_cap(ACER_CAP_TURBO_OC)) {
+
 
