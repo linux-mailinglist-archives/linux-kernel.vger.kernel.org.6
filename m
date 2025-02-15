@@ -1,128 +1,178 @@
-Return-Path: <linux-kernel+bounces-516047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBBEA36C68
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:14:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36665A36C6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C803AFF99
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7671171EE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D11925A6;
-	Sat, 15 Feb 2025 07:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266CE18C01E;
+	Sat, 15 Feb 2025 07:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6rh+JUf"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D6FD2FF;
-	Sat, 15 Feb 2025 07:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VelXm3zB"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68BB2753FC
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 07:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739603642; cv=none; b=gbo89OXfcoE5zMnkVWTwON4uVC8doMhV2RYxJzvj3d98dNU+gY+4jn3stFKhK/0LHIJb0EE51ZPlg/WGvrb8VSNTr+v0K3wE+/aW0hwsziGtssH81Aqk99OBXz87zL7ocbrfI4/jW0/3VZWKPo0r3oHXRqgiYTuNvEcYBJ7jihw=
+	t=1739604075; cv=none; b=j9xucv1WTGi03TQ0zAIaXMAy0CtXROXEZ5mWTy2mZALodkxO9Jl3r/XL3ekZiA5bmhQ7WY38SQWafMeivNGFUxiMibXdMnC4U9oPv4rTzvVVygYmh98IXurZnBOHTroMLkRAxyFvcllzfWP79RjoE7TV9FFPjAskjY0CMNnQ2Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739603642; c=relaxed/simple;
-	bh=hZGOYluwocYD344Hp0YtYOSiK125EZ0Y1lL4SI0ewxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIgrkCSXmIm7+AL509BLF5tNcEU6nZDLMy1gxo3s60vpzMn3JYUnHsQznMc5H45Q2COmUwKpulFCbrR5HfkTXeG/J9fn1b+DmaKcHOaGEMvMwB2bFYYR2MHCtT9EJXN9LhqCGsCnd8ablho1vb6YdXEM/axotvnh1fHBrFGXKJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6rh+JUf; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab7e9254bb6so409494266b.1;
-        Fri, 14 Feb 2025 23:14:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739603639; x=1740208439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLCsXJvI2pTlMZ5YkAh+Q9HM6I6MXWV7qOEpj3EsXpc=;
-        b=O6rh+JUfsByg0G/HSit9w/p0yqaUKp1ccMDuDX9v/GsQdzFRPHBNWxSOi+5pPlWErR
-         qs8YV3So04uGVTD1rWPE6n5yL5mWa7TVtI5gEQJyLuAqqIOC/9jjPhzThdUc3MWhfmf2
-         1h7fE4agQdZ/SM9fNPHQWSKH5e9Xlnh+RfjGQvdYFQ2ViHiD9WKISrLFDxv4QOiFz2/Z
-         MMYP87yQzDZVw0f4xH5u1QpkmHOJ6O46VtyuFK8ZfaVwo0MMPlHfeZFEZqDTghCfBDd+
-         37+ZTnt1BMI6kqYMPvGcjhXZqysZZ8U+cRYN7cMxV69E5xZw1FYpxLdFnGm19g2tpKzH
-         B7lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739603639; x=1740208439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLCsXJvI2pTlMZ5YkAh+Q9HM6I6MXWV7qOEpj3EsXpc=;
-        b=Xazw9gFu1aOo45mIA3QVk8bHx6OGEdP7V0oSK6zmTvOkrSE7w7vkUt7GPnvesd1RFq
-         dbiD4j0wHeFJfcKpGF2Bc571gSPx7yWR41cB0STiM/N7qWrnRtQ4ICk3wo94SNewBGq9
-         OYtnoqO8IVwmMOZZ1z3nv5TZaSALYWwgbh3h5gOOAUrhmPfeNbFXd11VKN/lIj2iFYXh
-         f9Ua/o0JTovyjOFMLZo+ixx8rDtC2Qx5Zvr8RlxsnPdXvY39Yui5Iev5qH6/NzbMQ8eT
-         L7uNP+i61Sb7vG9RpIutCeEXg/ItrefShfx5gPz5aHZq6RgMSDkz4vzrwyBJb7eYkVZw
-         QAuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlnAc070Zwy4ZUypRs7XXcwL4iYyCrUcrVeORX+5rnKbE4tI/i/Y0MVlrWdMRE6p+6KkkWdTIr@vger.kernel.org, AJvYcCX4YbQpD1Btd+w8n3rajtxJFp8FbOmWWXGm4qSba64U5C4qNGXKUEWnOHzW/PQ+G687WwO7m6tD/fRXMYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI/ZBlzKDUpKC7AiY9TFeFTU7/4+f3YbNukWLalX+IEY/PA47x
-	GqFxgN/on+XsB+yoxoUMmmKd9ASLlZSFEkgm38F0yNrYS4OTUpX9
-X-Gm-Gg: ASbGncu3X/9YiCUyWPJzw0TzKNT+oQrsDgYqJJ4xr4KwR7By/7zNrFbblLAXjeL9pXJ
-	mD9+56+RJ+3MZYFK34hFL6B7ROf5mZwN5mbb56Bs0OGWf592Jw2L2zKwmB4XOXPw8MYeEOrhEbe
-	m6O5tjumk7Qg7UKdGXkWx7cjlzjuO16D6vAhQENHGVQ0zI1gL+0vGaapz7omqUnqd5rOTeArO6a
-	tDO7GHDSomAiBIhRzgUAANdec2F60chFVUK448oFl3kCyHCJDgPKs7VXtfFoR+kIsQH3igdvSv2
-	tpGFGAFEMVib
-X-Google-Smtp-Source: AGHT+IF2uRFcFBDrStq+y/ucMkc+CpORFtGKrLDH1I6w9WA5PS7WZV5TjfRaAZ9vCKnj/U+tMdOdzQ==
-X-Received: by 2002:a17:907:2d28:b0:ab7:dec1:b34d with SMTP id a640c23a62f3a-abb70de3fb2mr168850366b.47.1739603638775;
-        Fri, 14 Feb 2025 23:13:58 -0800 (PST)
-Received: from debian ([2a00:79c0:62b:1200:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bdcf9sm475099566b.163.2025.02.14.23.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 23:13:57 -0800 (PST)
-Date: Sat, 15 Feb 2025 08:13:53 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Stefan Eichenberger <eichest@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: phy: marvell-88q2xxx: enable
- temperature sensor in mv88q2xxx_config_init
-Message-ID: <20250215071353.GA5691@debian>
-References: <20250214-marvell-88q2xxx-cleanup-v1-0-71d67c20f308@gmail.com>
- <20250214-marvell-88q2xxx-cleanup-v1-3-71d67c20f308@gmail.com>
- <a3a5bd94-5bb7-4c65-85b6-d7876dca74b8@lunn.ch>
+	s=arc-20240116; t=1739604075; c=relaxed/simple;
+	bh=KwgyuZcUY4y8bDCbi66j9KBksFUWq3oFlj/daIQ/lJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=dVm4/fh6YzuXzSmHViuIJAtnxfDGqmwresUVlfSTNCcv4PtPY0ggJoPAt9LwLAhJabj5W6sXKFFikXoRwW/+95ibPywPF8fzMSSr84Q5UrMb4pSJyzCC9RTRp6q8iiG1PI50nz1o72Yg+Cy9KO9ejttMu4QkUc63zME1BW8aAO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VelXm3zB; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=agHQ3lenbLOgIS9g7b
+	cB70WfrVWcB0GiCF7MKu9qzgM=; b=VelXm3zB73ANjuuDCGmHZwdJ23/NOSMyZf
+	cFdAa9gYjh2sG5Ph/3LMmCzBZUdfmjtgA2pVWnzzaIcYzfZG1IhSEmVX2xGCgwkI
+	mjggBmt/wDI9GI4Sz6sT30uNS/SdCDrpBZlhC2rw3oGH4Sn3M/lIBu5baQe0JBzL
+	4tRd5HciM=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wC3j9M8QLBnZ7P7Aw--.29501S2;
+	Sat, 15 Feb 2025 15:20:29 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	21cnbao@gmail.com,
+	david@redhat.com,
+	baolin.wang@linux.alibaba.com,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	liuzixing@hygon.cn,
+	Ge Yang <yangge1116@126.com>
+Subject: [PATCH V2] mm/hugetlb: wait for hugepage folios to be freed
+Date: Sat, 15 Feb 2025 15:20:26 +0800
+Message-Id: <1739604026-2258-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wC3j9M8QLBnZ7P7Aw--.29501S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXryrCFy8Xr45tw4UKr1UAwb_yoWrZF1xpF
+	yUKr43GFWDJ3sakrnrZws8Ar1Ik395ZFW2krWIqw45Z3ZxJa4DKFy2vw1qq3y5ZrWkCFWx
+	ZrWjvrWDuF1UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoGQDUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifgb0G2ewM0J3AAAAsG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3a5bd94-5bb7-4c65-85b6-d7876dca74b8@lunn.ch>
 
-Am Fri, Feb 14, 2025 at 07:06:22PM +0100 schrieb Andrew Lunn:
-> On Fri, Feb 14, 2025 at 05:32:05PM +0100, Dimitri Fedrau wrote:
-> > Temperature sensor gets enabled for 88Q222X devices in
-> > mv88q222x_config_init. Move enabling to mv88q2xxx_config_init because
-> > all 88Q2XXX devices support the temperature sensor.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> 
-> The change itself looks fine:
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
-> but is the sensor actually usable if the PHY has not yet been
-> configured?
->
-No.
+From: Ge Yang <yangge1116@126.com>
 
-> Architecturally, it seems odd to register the HWMON in probe, and then
-> enable it in config_init.
+Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer freeing
+of HugeTLB pages"), which supports deferring the freeing of HugeTLB pages,
+the allocation of contiguous memory through cma_alloc() may fail
+probabilistically.
 
-I think it makes sense to enable it in probe as well. I just moved it to
-config_init because of the PHYs hard reset. Before
-https://lore.kernel.org/netdev/20250118-marvell-88q2xxx-fix-hwmon-v2-1-402e62ba2dcb@gmail.com/
-it was already done in mv88q2xxx_hwmon_probe. I will come up with a patch.
+In the CMA allocation process, if it is found that the CMA area is occupied
+by in-use hugepage folios, these in-use hugepage folios need to be migrated
+to another location. When there are no available hugepage folios in the
+free HugeTLB pool during the migration of in-use HugeTLB pages, new folios
+are allocated from the buddy system. A temporary state is set on the newly
+allocated folio. Upon completion of the hugepage folio migration, the
+temporary state is transferred from the new folios to the old folios.
+Normally, when the old folios with the temporary state are freed, it is
+directly released back to the buddy system. However, due to the deferred
+freeing of HugeTLB pages, the PageBuddy() check fails, ultimately leading
+to the failure of cma_alloc().
 
-Best regards,
-Dimitri Fedrau
+Here is a simplified call trace illustrating the process:
+cma_alloc()
+    ->__alloc_contig_migrate_range() // Migrate in-use hugepage
+        ->unmap_and_move_huge_page()
+            ->folio_putback_hugetlb() // Free old folios
+    ->test_pages_isolated()
+        ->__test_page_isolated_in_pageblock()
+             ->PageBuddy(page) // Check if the page is in buddy
+
+To resolve this issue, we have implemented a function named
+wait_for_hugepage_folios_freed(). This function ensures that the hugepage
+folios are properly released back to the buddy system after their migration
+is completed. By invoking wait_for_hugepage_folios_freed() before calling
+PageBuddy(), we ensure that PageBuddy() will succeed.
+
+Fixes: b65d4adbc0f0 ("mm: hugetlb: defer freeing of HugeTLB pages")
+Signed-off-by: Ge Yang <yangge1116@126.com>
+---
+
+V2:
+- flush all folios at once suggested by David
+
+ include/linux/hugetlb.h |  5 +++++
+ mm/hugetlb.c            |  8 ++++++++
+ mm/page_isolation.c     | 10 ++++++++++
+ 3 files changed, 23 insertions(+)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 6c6546b..04708b0 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, struct huge_bootmem_page *m);
+ 
+ int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list);
+ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn);
++void wait_for_hugepage_folios_freed(void);
+ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 				unsigned long addr, bool cow_from_owner);
+ struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int preferred_nid,
+@@ -1092,6 +1093,10 @@ static inline int replace_free_hugepage_folios(unsigned long start_pfn,
+ 	return 0;
+ }
+ 
++static inline void wait_for_hugepage_folios_freed(void)
++{
++}
++
+ static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 					   unsigned long addr,
+ 					   bool cow_from_owner)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 30bc34d..36dd3e4 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2955,6 +2955,14 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
+ 	return ret;
+ }
+ 
++void wait_for_hugepage_folios_freed(void)
++{
++	struct hstate *h;
++
++	for_each_hstate(h)
++		flush_free_hpage_work(h);
++}
++
+ typedef enum {
+ 	/*
+ 	 * For either 0/1: we checked the per-vma resv map, and one resv
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 8ed53ee0..f56cf02 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -615,6 +615,16 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
+ 	int ret;
+ 
+ 	/*
++	 * Due to the deferred freeing of HugeTLB folios, the hugepage folios may
++	 * not immediately release to the buddy system. This can cause PageBuddy()
++	 * to fail in __test_page_isolated_in_pageblock(). To ensure that the
++	 * hugepage folios are properly released back to the buddy system, we
++	 * invoke the wait_for_hugepage_folios_freed() function to wait for the
++	 * release to complete.
++	 */
++	wait_for_hugepage_folios_freed();
++
++	/*
+ 	 * Note: pageblock_nr_pages != MAX_PAGE_ORDER. Then, chunks of free
+ 	 * pages are not aligned to pageblock_nr_pages.
+ 	 * Then we just check migratetype first.
+-- 
+2.7.4
+
 
