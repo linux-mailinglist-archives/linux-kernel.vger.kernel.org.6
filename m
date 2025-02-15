@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-516056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA66CA36C7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:40:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9866BA36C7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 08:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE87A4EE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E7816FC20
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 07:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E4A198E63;
-	Sat, 15 Feb 2025 07:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD0C199E89;
+	Sat, 15 Feb 2025 07:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qqFqp0qK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xfIh23c2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qqFqp0qK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xfIh23c2"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SRGyeX0p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jxnMBqVd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SRGyeX0p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jxnMBqVd"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4CC17BEC6
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 07:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6238194A66
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 07:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739605229; cv=none; b=PhT6UdgZzWJ10rpV4UQApsr8fkwqn9eYF1TiSA3aAMFUOm1bxNEsve/HD297DGltwxpMYiV7UCsVgb6zkMB2/ytkd8COsjjr2V4kN+qIvlikctaphJYfsC/CUWTKHr4f3kISiPErIvmKeqxAlsMS5NeohhqfHCOkNnGs3dd/t78=
+	t=1739605251; cv=none; b=dsjf4aeIK577ldz9McHrjoDXYeF6WrUM5dEPYXyWyNDKq5mq1OWC2U09VJHhwgV1jwRC/ftkQPehERny5QcA8joIhxsk3yH4WAhyUSo6MDbmp9+z/rYQMgYwhAGeG7EPgVE2LA3fUyhRI/PWnWNuhxSMxn22K0NoteMKxgcbIWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739605229; c=relaxed/simple;
-	bh=Wq2FdLDDQU4Q4XhQ/ytlo46V0/wxP5QsCCK0tYSiyzQ=;
+	s=arc-20240116; t=1739605251; c=relaxed/simple;
+	bh=tyAe1G4vozOH8CQNR+XXtkERMsRznPA5f9eHnzagxu8=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p/VEDhCaeNDGnPzl01sgojmQGeo1eNIZTjVq9o4cEQ+tJd4Di/OZxHXOvO2LHLD/8QUmvOepvLcQB6ZjH+SQTRkM8EuqXANLVibsIu7ZGNImE1Yfizo0/igAjsO/zXGVvz4NyVPpJL5ttEOqf9nI/TUzOJYb6slveepO8FrNgR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qqFqp0qK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xfIh23c2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qqFqp0qK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xfIh23c2; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version:Content-Type; b=G0cbVkZRx/ilfHhRdj3QngYi+J4r0Y9X93O6Oaf8GM5D1vNXC9zz2uNpmVdlQVW+R3TFGKmK15vt7+amZVg9sjzKhFpdD8VpCR8y9OuUsgJEB9EDA4VdRM3MT3scEkOqQ7oGyxW5TLefL8qR8iJvZnM10LQtjtK+DubMFdy7Dr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SRGyeX0p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jxnMBqVd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SRGyeX0p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jxnMBqVd; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 31A711F381;
-	Sat, 15 Feb 2025 07:40:26 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BA2D31F381;
+	Sat, 15 Feb 2025 07:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739605226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1739605247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89GOzecJWJ5fth28wmJfBX2Crh6E0LoclWly+ExUfUc=;
-	b=qqFqp0qKK/y06BVGRhpXpupplRKuoJaD7DjqYhgpa6iojc/+hdGOgerVmML0WtzjrlIm0X
-	IWQNMlhrQzPgJ6QyY2Fo6GiFU2YI1HgJxLVn7bHoB88btHq136WGHnUfd4z2XLAKaQh7I+
-	dNqHdG9ojHBLtxaLYkXQpx3xd0VM8t4=
+	bh=UtA3nSwz8qGNQKPcMWpiYZ5PIhInc0gt1HKYHJ3suHY=;
+	b=SRGyeX0pE7lPj1OAv41DcBKfOvNfPJ2dHB8LpvebKI/BqHhzpB3Oys4WCeTbG+j7AvyE/X
+	eXnlmGIwxc9eafSOehTKKUAJAKXT2AGEMuETPUqvQOC+TdeQGnszGtj9lgJKkClwGCX/d1
+	tCPrwVfkzo0ySajQMtXCVypSEv6H8A8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739605226;
+	s=susede2_ed25519; t=1739605247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89GOzecJWJ5fth28wmJfBX2Crh6E0LoclWly+ExUfUc=;
-	b=xfIh23c26XOmwcHMONfD9I1lbKYexFlb3BGzm+kEsKQXSY6404XWHe8ltUOpTejPxzq2+u
-	N5r1BrIR0sYZ+rDA==
+	bh=UtA3nSwz8qGNQKPcMWpiYZ5PIhInc0gt1HKYHJ3suHY=;
+	b=jxnMBqVd5iSQlVYaIHcjO5dmGuVOtpn7y4Yv5UKtZ3GWYCGgnrQkvghDPsvlYyIYMhm8id
+	+mkYkXNEPNsyeOCw==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739605226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1739605247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89GOzecJWJ5fth28wmJfBX2Crh6E0LoclWly+ExUfUc=;
-	b=qqFqp0qKK/y06BVGRhpXpupplRKuoJaD7DjqYhgpa6iojc/+hdGOgerVmML0WtzjrlIm0X
-	IWQNMlhrQzPgJ6QyY2Fo6GiFU2YI1HgJxLVn7bHoB88btHq136WGHnUfd4z2XLAKaQh7I+
-	dNqHdG9ojHBLtxaLYkXQpx3xd0VM8t4=
+	bh=UtA3nSwz8qGNQKPcMWpiYZ5PIhInc0gt1HKYHJ3suHY=;
+	b=SRGyeX0pE7lPj1OAv41DcBKfOvNfPJ2dHB8LpvebKI/BqHhzpB3Oys4WCeTbG+j7AvyE/X
+	eXnlmGIwxc9eafSOehTKKUAJAKXT2AGEMuETPUqvQOC+TdeQGnszGtj9lgJKkClwGCX/d1
+	tCPrwVfkzo0ySajQMtXCVypSEv6H8A8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739605226;
+	s=susede2_ed25519; t=1739605247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89GOzecJWJ5fth28wmJfBX2Crh6E0LoclWly+ExUfUc=;
-	b=xfIh23c26XOmwcHMONfD9I1lbKYexFlb3BGzm+kEsKQXSY6404XWHe8ltUOpTejPxzq2+u
-	N5r1BrIR0sYZ+rDA==
+	bh=UtA3nSwz8qGNQKPcMWpiYZ5PIhInc0gt1HKYHJ3suHY=;
+	b=jxnMBqVd5iSQlVYaIHcjO5dmGuVOtpn7y4Yv5UKtZ3GWYCGgnrQkvghDPsvlYyIYMhm8id
+	+mkYkXNEPNsyeOCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B75AB13782;
-	Sat, 15 Feb 2025 07:40:25 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 49F3C13782;
+	Sat, 15 Feb 2025 07:40:47 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jMhbKelEsGf0PwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 15 Feb 2025 07:40:25 +0000
-Date: Sat, 15 Feb 2025 08:40:24 +0100
-Message-ID: <87tt8vpsev.wl-tiwai@suse.de>
+	id HGjoDv9EsGcgQAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 15 Feb 2025 07:40:47 +0000
+Date: Sat, 15 Feb 2025 08:40:42 +0100
+Message-ID: <87seofpsed.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
 To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
 Cc: Takashi Iwai <tiwai@suse.com>,
@@ -92,9 +92,10 @@ Cc: Takashi Iwai <tiwai@suse.com>,
 	<linux-sound@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>,
 	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2 v2] ALSA: hda/cirrus: Correct the full scale volume set logic
-In-Reply-To: <20250214210736.30814-1-vitalyr@opensource.cirrus.com>
-References: <20250214210736.30814-1-vitalyr@opensource.cirrus.com>
+Subject: Re: [PATCH 2/2] ALSA: hda/cirrus: Reduce codec resume time
+In-Reply-To: <20250214162354.2675652-2-vitalyr@opensource.cirrus.com>
+References: <20250214162354.2675652-1-vitalyr@opensource.cirrus.com>
+	<20250214162354.2675652-2-vitalyr@opensource.cirrus.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -126,23 +127,16 @@ X-Spamd-Result: default: False [-3.30 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-On Fri, 14 Feb 2025 22:07:28 +0100,
+On Fri, 14 Feb 2025 17:23:26 +0100,
 Vitaly Rodionov wrote:
 > 
-> This patch corrects the full-scale volume setting logic. On certain
-> platforms, the full-scale volume bit is required. The current logic
-> mistakenly sets this bit and incorrectly clears reserved bit 0, causing
-> the headphone output to be muted.
+> This patch reduces the resume time by half and introduces an option to
+> include a delay after a single write operation before continuing.
 > 
-> Fixies: 342b6b610ae2 (ALSA: hda/cs8409: Fix Full Scale Volume setting for all variants)
+> Signed-off-by: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
 
-It should be "Fixes" :)
-Also, the tag should be in the form of
-  Fixes: $ID ("$SUBJECT")
-with quotes.  I fixed and applied now.
+Applied now.  Thanks.
 
-
-thanks,
 
 Takashi
 
