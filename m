@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-516325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57EA1A36FA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B67A36FAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA0F16E485
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E67A16FD33
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04911EA7CB;
-	Sat, 15 Feb 2025 17:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1F71EA7D4;
+	Sat, 15 Feb 2025 17:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlUq0p2d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4VpjfNk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D5018B467;
-	Sat, 15 Feb 2025 17:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541B8158DC4;
+	Sat, 15 Feb 2025 17:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739639566; cv=none; b=eWCR1MDMYWz03JRoHgT4UXCwaolap9FEV9AGjuKD8+KVLSGNDdR9ffns0V1zY5mwf0b0IgIqdzU6Z9Yx8qoiZ3xXPTtV+0z7LbcpLQw0qcEO5vFL4M4yirA0dMOn/N04tXo08fbQwZkE9Dv1jjVYTPDFCXb8beVOf5sv70tGrmw=
+	t=1739639775; cv=none; b=oKXDnXwdKullD05qEzoaxHlb/kaF5w3qvKO8NaUm0NN2qkMr4YaEJRd683nRB9c2N10Oy60fsbQUjkKnvGoQMYBnkTbmEVn8iSPN61sgqDHeU+F6c/ZjOrnFTwtWGm+fPZZk7L649l3WWvAm4a015TCm6TsuXaIo2VtDVaOQHX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739639566; c=relaxed/simple;
-	bh=9NpyrnnXrWQiuGlBMAHT8O8bCihdP9rW1a7d1z62utk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QHZ0T6tOoEuoqWvpejPeZ1DEq7LcRwaC1g5xVgPYmY+RHX5TnFtqXotTyx39zE/5mvomVrvStdJTHqzBsZYCOemwpQv9sbO1s7oYnRgTPGAPAg404tTVzfw2pjgf0tAgBI8vlrV0162hXTBhCi7Zw3XTyC+tJJWcnYsAnOb1pZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlUq0p2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACE6C4CEDF;
-	Sat, 15 Feb 2025 17:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739639565;
-	bh=9NpyrnnXrWQiuGlBMAHT8O8bCihdP9rW1a7d1z62utk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mlUq0p2dQuDhkx45R6PaZ0ppOcUEa7hfKU0YCp6F6q1nhiFRfFXawbxnsWzlA7ftv
-	 MtT2Q5lXugZEYSk25P0Qvar2cAl34qVdkE8m5jg+azurAWoZ7imxTr28sU5SsUgpod
-	 SMtCFRnD16J05HQ1q3bl+/jhr36n7MhOORsQ7WUKnf1LaDF3Df04Pyiex/hRnfU1CN
-	 AnknYyw9yD/Pa05SmKDZbunbB57Q1Wz1KsJNz4RaUbA4LE2tg79q2mR/xg9XUcPFRl
-	 Sqzae9ZwmD6S+zGa2C9Zfz3dwu+hX0U/guG/SYKXP2MVO9cM9Z3TP3QR2w++ma922J
-	 W/7yvFkMd00wQ==
-Date: Sat, 15 Feb 2025 18:12:42 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.14-rc3
-Message-ID: <Z7DLCmDPaRhLWwos@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1739639775; c=relaxed/simple;
+	bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJjw14GM2p74EzhszkU7cuPLDbH/gF40xidz+dEY/VN1tXNpn33JNEMZ2Nl7F4j+n0jMcJINQGxVPns8E2HXye4loAW4I6CIxKXETIZVB2/o4Zc7/TZhh9v7Xn6zLrVajoj5jhAYOzp8BTCC1x5fqiO9kMjQmIj/Lxqsf6/ViXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4VpjfNk; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739639773; x=1771175773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Equsm08FQ5ieBMbjiGQm0NyEsM2olvsgtLG0zKJlMKo=;
+  b=l4VpjfNkSNwuaTcR0Pxvss4+9dfbJx+EqVrSadMv3SX7//LiHfIi13sr
+   a/zy2x+DHGUD+bpEE/RsNNFPrNOzfEjAFkuOICFe/h4Kqm9Ycbtvif651
+   NqUgV+5U3hGxhcZg7w1v1lKqXd4K+EcdBq685nfpVX2Kv/iatY2Rl1T2R
+   yvGkVqiPUHJad/ngRr/j7NNNRYajaHp5wXKdv39A6mHg/4zWw4ReYt42q
+   tkfyhm60w7riUEX7oj79d8VcS+l8bpT6N5mYcwrgPD/ffOGiepe018lUq
+   trb9F7KXZw1PqPU4w6ETFzJlaAS21S5ABn6VNfjPetZK+MUPOP1vWU3wO
+   Q==;
+X-CSE-ConnectionGUID: pPoMEHllQE27/H1nZL+vKQ==
+X-CSE-MsgGUID: 4yQv5bnlQoSii68tLT6a1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40403678"
+X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
+   d="scan'208";a="40403678"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 09:16:12 -0800
+X-CSE-ConnectionGUID: Yd7RnQbmTgWJdCCXOEjokw==
+X-CSE-MsgGUID: Dzd1IWb1TXSPnX7Q8e5WhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="144654676"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Feb 2025 09:16:10 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjLlw-001B1v-0e;
+	Sat, 15 Feb 2025 17:16:08 +0000
+Date: Sun, 16 Feb 2025 01:16:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+Message-ID: <202502160050.nTezfbL3-lkp@intel.com>
+References: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BLFyc/nnPRUAXEKU"
-Content-Disposition: inline
-
-
---BLFyc/nnPRUAXEKU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250215130702.170851-1-ivo.ivanov.ivanov1@gmail.com>
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+Hi Ivaylo,
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+kernel test robot noticed the following build warnings:
 
-are available in the Git repository at:
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.14-rc2 next-20250214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc3
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/MAINTAINERS-add-entry-for-Samsung-Exynos2200-SoC/20250215-210923
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250215130702.170851-1-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v1] MAINTAINERS: add entry for Samsung Exynos2200 SoC
+reproduce: (https://download.01.org/0day-ci/archive/20250216/202502160050.nTezfbL3-lkp@intel.com/reproduce)
 
-for you to fetch changes up to f85478fb3fecad01927935c51fe7e9dd5731d0b7:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502160050.nTezfbL3-lkp@intel.com/
 
-  Merge tag 'i2c-host-fixes-6.14-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-02-14 17:23:54 +0100)
+All warnings (new ones prefixed by >>):
 
-----------------------------------------------------------------
-i2c-for-6.14-rc3
+   Warning: Documentation/hwmon/isl28022.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/isl,isl28022.yaml
+   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/clock/samsung,exynos2200-clock.yaml
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-snps-eusb2-phy.yaml
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+   Using alabaster theme
 
-MAINTAINERS maintenance. Changed email, added entry, deleted entry
-falling back to a generic one.
-
-----------------------------------------------------------------
-Mika Westerberg (1):
-      MAINTAINERS: Use my kernel.org address for I2C ACPI work
-
-Mukesh Kumar Savaliya (1):
-      MAINTAINERS: Add maintainer for Qualcomm's I2C GENI driver
-
-Wolfram Sang (2):
-      MAINTAINERS: delete entry for AXXIA I2C
-      Merge tag 'i2c-host-fixes-6.14-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
- MAINTAINERS | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
---BLFyc/nnPRUAXEKU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmewywoACgkQFA3kzBSg
-KbacIhAAjfE8FOxLyumD0R+pw5/p0lUc2ckdHbm4e9A1riJUTm/t84Ak8g5yPSWq
-dfPPjmuJpDG+nt6tXY9ZcqGhWD51Vtf52hnka4BkP/1jU671J+QCoqTOKXCMN/Bj
-xVc6b7IF+K703nU3BS7lUUJYwEWACfkOZdYHTGTxGmQNFf65yoT+5d+zAo3cxNZy
-Gs36QhqYrGh1ww6o42ukcRwstc1t7npMzqA2oAJ650fzRCg+F7kL5kIBZ5wR9yJ1
-J7Op35LXCIZorupDmb6Ux/ztlSPA0HfIitvUWwNWFBRFZN3GURNha0Hr5kBvAiAr
-++wRi6f0+uM64cokm8zo7TwfLx9+9f9bENAe/AkY0rEOnAsJN0Tt1WLYCWug9cAK
-6SiKWzqzR7FdiWVEYSa1lN/aXIsNg5rNtIRz/KA/CdmXNQKRJpWI6ukq6ljxJf5C
-2lEob1sbWhxEXaYNViOX0lr5jKP61mI0GPvq4n+1N+LWP/DmXnifgTuT7baSetgg
-0WSToDpjBnAtHAVWvsr4d2evnMWWODLsR3e34Z/KVm5ZFv/GYorPj/uLeRrNxh86
-6GjUQKE2fsMG2Bs//8mw1U+D21pb/VSswSiGx7Fo5tCxYesOdhHVOOsQ8uBG/mUD
-qfa9cWe5jAYhDcffVZMqawjNHtkIRHyMiNYngcIXRhvfiuqE8ug=
-=JNln
------END PGP SIGNATURE-----
-
---BLFyc/nnPRUAXEKU--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
