@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-516280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0414A36F1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:28:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29095A36F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:37:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702541894ABC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:28:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E252A3B1413
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B71DF73D;
-	Sat, 15 Feb 2025 15:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9011DC9BB;
+	Sat, 15 Feb 2025 15:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VltFOaff"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ridc4nAL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15511DDC2C
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 15:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398719ABDE;
+	Sat, 15 Feb 2025 15:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739633283; cv=none; b=YV9faDJAgh4aGuT+b37RVWYEkPiVk9ASb7K4JVGaT/6jYdDGgGwDY+IOQWTn6mRYw8VuE+26biBSRz6PKOs+K82BMOMAadUsKdq6XPCtpGbhgHckTuDC5keuTz6nk26wUoolpxXILlHF8JZ+tDO59fXLGIlRTLNsvMrIHDm7aEQ=
+	t=1739633825; cv=none; b=j4ut4OQxSLZ0CzCpDGI1RoZpSQOLICja9oZtmxVkSVA44OuNx67AiaOOdI3qjWlM6Ijgniugm7t2o1Q8idoEPhWyWTRZ7uf/Q83uLM1rM4Sl7EdslJQhKlRqXud0QTQeSXBEFfeqAwyewXc18A/qr/e3xxw+Oe5m7grnOJWMTNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739633283; c=relaxed/simple;
-	bh=8VTYB10hPqOrf/u1pOI7j4P8G7PEOPP5ICNgU/q4IVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJOTre4c4bEXVLMkG0b1aPzpgYDGvahfF0d4VbljcLtucZYMeC2XadxoKD1YUgg+fGVpRLMiZKLT5AQdI8SXdaFOplm59AR8DfVNiDTdm4GDzgDKgWJ5MjoJHnl/rgUBg8A1L9POr/Wvln+3JXWPsuRYwjQsPiHHn2Vw5gqVXc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VltFOaff; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54504bf07cdso3051967e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 07:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739633279; x=1740238079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AGf5rmg49p6MaNgIwMB/5odZQ50Ill9b6G6pRafnfic=;
-        b=VltFOaffPDmZg/3+DKf838X7LTcmAYhHUDmL/QYgJQZaP94OAxCi+S90iVYwSoQ0r1
-         Jfctnwoy/dhzYl5FkZzOcd7wcTml6ZqIJgBNp5UMSlOLn1tKE0rj1rNz+mLnaic8+bD9
-         ZHd6+H8+4ODmi+KkZcFGH/PSjKkcccM4tpUCqWr3V0cx3JOnKEzvF+7hoNIUny90pWjN
-         sx1Gqa/Wvf4Q3Jk/zoxVoWMpbgmHzn8AWABStZ4U6Xky2zKu1pRZ+nZQEc3H+z0PM67o
-         j7tJFkXUo4wE5f2V1rZuPICR1cTAtGZOtnYxR9zngEDGpjcIHB8ew5TYI2GCHYOWuDBQ
-         B+LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739633279; x=1740238079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AGf5rmg49p6MaNgIwMB/5odZQ50Ill9b6G6pRafnfic=;
-        b=fbhH+F7pHWHMetDNTuU7zBdoK9HQHhAivzVfnFKHTeZNePPXGlES8EbH7FuiNrnmmm
-         8/5BWRQJ859lE1o8fSKk+G8hX1jrb5JA9Ttbtmpk8bDbNLvxpN145ZCBz4Hp+7nfp5E3
-         zEe2qe0GsQOmOufvw20zgfrW25R63TawBqmkzY/Ss1BwDVi4Ep8CNwZMjLUGAcIHFDmA
-         c4EtyPEvjmynQqktbEqQfbXDpTXs+OXm1GUhkrDzAG9xeKZgKe89YXUw249hgzgr4fDL
-         rW9S1//JeFszi1VdH92Am0kMico2ToGuuZrR6OHZM6QV5bIFAjGQS0psdeRe2tdFYevj
-         w5Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWgrO5GN2Z8caY5VD4dt0iAbfyagoS4i7K3KY0r98X9rpYI96HGBOwO1Sa7MGNi7ljoGJyrJagfP2ZUW7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkZHeTX+enZtD+RQNtmUYaiFUx6ItPWjTWjLwhRnC4JP1DTaxW
-	fAPnWrW+mp/nHPaBX+MyDM7mDH7R2F1DHQahg8zFuYxSZ0KkmtTnFegbEQfUYFI=
-X-Gm-Gg: ASbGncseB2cjQpVqW+XM4vGXpTUp6emYt0l2ZWC86OUmr2/XVXQgmHUGYNYVXcBCh7V
-	/r4iG4Mrk5cfUmvEHXumI5Y78YTORALYEpD4k8zzBJVzpOUtHtdFiTyolgfAmw6EaPcipl8vRUc
-	beOpD6bFXmiOGaNy7j5N5p2DVFtybkB3cq6327seymPYNQ5wC2P0IGcXoA2Si7c5mcen4s9+zme
-	iVJs4BEU8J6sPoOVqdjGkE1DnGeSMtnVjdqj18fq2yb5jEoAwNLf4uVY3IZco/BgRA5quhY5sbW
-	cSUQ4ncraGnqItHnqYdqPCLsZ3YW26i4gOzT3UwF2d7BEq+s5S6zLdjH2kuAg1qfsrorA7U=
-X-Google-Smtp-Source: AGHT+IGM2zzla/sAtpjhHsDca+TA2fL77Ecg4EGheoA5N95v+ACAAM7LoIlZRAUhg5mZDNj9h6xYJw==
-X-Received: by 2002:a05:6512:401b:b0:545:fc8:e155 with SMTP id 2adb3069b0e04-5452fe4dc30mr1064901e87.20.1739633278874;
-        Sat, 15 Feb 2025 07:27:58 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5453197f3f9sm162596e87.53.2025.02.15.07.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 07:27:57 -0800 (PST)
-Date: Sat, 15 Feb 2025 17:27:54 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v6 07/14] drm/msm/dpu: Reserve resources for CWB
-Message-ID: <55njf2p4cg24bihrp7n4laaize7onslfgke6bwqw4jfofsaxq2@epwug3zfs2ow>
-References: <20250214-concurrent-wb-v6-0-a44c293cf422@quicinc.com>
- <20250214-concurrent-wb-v6-7-a44c293cf422@quicinc.com>
+	s=arc-20240116; t=1739633825; c=relaxed/simple;
+	bh=qgv+eEVZ/QnPjxw+OPstNIcH0nqgtyxfQny/S6YCJtk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qH99oHVjNR36CY4M0BhkT0qxzF51ieWPIsuhdrjmFVfmQCZ9PpBpKC09aLQZnb0ZA6JVBL/eLx0Nfc0MbfkubgTmLwTOtL++Q6ZGByD7RLtAaaGi8Ydg0BRtcxITg7v/3hlvQ4dmQyvmuupSu/JxEZU5TAK5k3wWXg2spGefhvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ridc4nAL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C997AC4CEDF;
+	Sat, 15 Feb 2025 15:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739633824;
+	bh=qgv+eEVZ/QnPjxw+OPstNIcH0nqgtyxfQny/S6YCJtk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ridc4nALUjWrp5cBYzBAq/S6FbCz0TryGfM5G1WLruiZA4EMUdYLZJ+B42Ji0Cfqh
+	 X7tEEMcPVUMBp5VHdzYIxiy33u19YLL6lPrybjXkR39Hd/9Fp9t3KcoOFzqSvSRoDF
+	 h5ULtHij4F57ZX2+GmRJiIKjih4WyUd0JRQACQir2txsxu7mvi63kHQwv9rv0l8Ea6
+	 2SL6tYnlxU/CmldIEumZSuqG0tZ+r2TkSezyMZqN8n/nekD80NWB85D/1+b8lvN0pS
+	 wafMhE61PtHa/urVi5xf2/Xov0eUwiCHvEswxns6T33/b3B5QzToL72shju1Q6bEJw
+	 ckcCdB5kSbx4w==
+Date: Sun, 16 Feb 2025 00:37:02 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
+Subject: Re: [PATCH] tracing: Do not allow mmap() of persistent ring buffer
+Message-Id: <20250216003702.eef00d543ebbc3b16140ed9c@kernel.org>
+In-Reply-To: <20250214095943.178501fa@gandalf.local.home>
+References: <20250213180737.061871ae@gandalf.local.home>
+	<20250214110722.7eaf35b42c4858e6b74500f7@kernel.org>
+	<20250213212147.6511b235@gandalf.local.home>
+	<20250214161332.8797b20f09e068c33f872698@kernel.org>
+	<20250214070712.01997ea1@gandalf.local.home>
+	<20250214233613.bde0638f393186f56f0b30eb@kernel.org>
+	<20250214095943.178501fa@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-concurrent-wb-v6-7-a44c293cf422@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 04:14:30PM -0800, Jessica Zhang wrote:
-> Add support for RM to reserve dedicated CWB PINGPONGs and CWB muxes
-> 
-> For concurrent writeback, even-indexed CWB muxes must be assigned to
-> even-indexed LMs and odd-indexed CWB muxes for odd-indexed LMs. The same
-> even/odd rule applies for dedicated CWB PINGPONGs.
-> 
-> Track the CWB muxes in the global state and add a CWB-specific helper to
-> reserve the correct CWB muxes and dedicated PINGPONGs following the
-> even/odd rule.
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> 
+On Fri, 14 Feb 2025 09:59:43 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> On Fri, 14 Feb 2025 23:36:13 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > 
+> > > It's not supported. If you try it, it will crash. This prevents reading via
+> > > mmap() on a boot buffer. I don't know what you are asking. Once this patch
+> > > is applied, mmap() will always fail on the boot buffer before or after you
+> > > start it.  
+> > 
+> > Hmm, I meant it is supported for other non-persisten ring buffer, isn't it?
+> 
+> Correct. It is supported in other buffers, but it just isn't supported in
+> the persistent one.
+> 
+> This patch only disables mmap if it's trying to mmap a persistent one.
+> 
+> I guess I don't understand your concern.
+
+My concern is related to the fixes policy. If this is a "fix", we will
+backport the new "disables mmap on persistent ring buffer" limitation
+to the stable kernel (that was not documented previously.)
+
+However, from the user point of view, "mmap() ring buffers" is already
+supported (although it did not work on stable kernel for now). Thus I think
+the "Fix" is expected as "fixing mmap() persistent ring buffer". 
+
+Thank you,
 
 -- 
-With best wishes
-Dmitry
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
