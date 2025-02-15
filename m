@@ -1,174 +1,110 @@
-Return-Path: <linux-kernel+bounces-516088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F889A36CD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:22:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2C5A36CE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 10:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64BF1895014
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13684171B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 09:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977C19DFA5;
-	Sat, 15 Feb 2025 09:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EZVW4oby"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFF219F438;
+	Sat, 15 Feb 2025 09:26:00 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9FF19CC3D
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 09:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6853319D8A2;
+	Sat, 15 Feb 2025 09:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739611348; cv=none; b=WBzcLqHZFfnYMG0yKJzOVXimb2+InRJIE8iks9bolzvoyhnRFaQJ/M3vsHBLWqTZ/EMkQ8qy0WZLzzOIUf2qTk5dBMgR//G4/oLOl5V4rCEXRGoxFLw20OZ4USNt9wGmbcNjg7H35Dd/wHip686fWcsJKg1wVOH2LmTFxPmq8oc=
+	t=1739611560; cv=none; b=VidqKqumXpWhqjPgCJ2d0qAWWBk3MUqN019VGro7q8CMUwnPiJkKFl8i6mF4SkdzMwXXWO1rllr+8U2lAK2llDA3WthuW9NHC3JHczRwzol1jmAwMwZC4tdx8yQPBjhFslLKVLuZU8Hx7cfBkoXCyrKwoazC+EoI+tECxjFSVX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739611348; c=relaxed/simple;
-	bh=sLhWljl77kFulYgmKP/XNP8GseZdhJlpw0W5ambG1Xg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=lC/neL2C+1YRNn/DIIcgto/7OqaLOcaYTN6Cw9mRIl3geaBfjnRvkl4A+jYThiv/+GW5A7SCwcHyeeouIxiNUj0RE/OUSpZ2T8ZsaD3mpfMKfIoloX0VTVR6/PYP0ze6zy+sHEPEpZBq5Fx1nAw2WRwSThB1CXQ/ga/sYStTqHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EZVW4oby; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739611347; x=1771147347;
-  h=date:from:to:cc:subject:message-id;
-  bh=sLhWljl77kFulYgmKP/XNP8GseZdhJlpw0W5ambG1Xg=;
-  b=EZVW4obywcGSG4GUcB4Z1iE97L1gPxWwsNzjSHDB3qBA3nuwH8FJKK8Y
-   T2UfeL0qeDsaAHLGcUtbSX1M9LMxqBuHRkcwprehHcmXX2LDaNGLu4MfQ
-   CHAMjO3A+WtdkI9yy5Rdlz2V7W2sLxIsn5OMRdV6DbWUJA3MyJ97+Xk7r
-   +TT7tASCkQGSn5XMpRuZrAeQBMkJpTy6gPdeUgVG1RXq752IHzxfcLSz8
-   gcYg9hStTQUHdmyxXuCx8+kONfNlRwJjFKvOuXYRz4yR78jL8aexvPMQ7
-   dIMwMdb34rNTqTz5f21ugTOG17oOiYSFinRKcYcTyTGdT+3oiqaQ8l15m
-   w==;
-X-CSE-ConnectionGUID: swMiQhEORHClb+OvhJ+30w==
-X-CSE-MsgGUID: bUCXc1vuQ0yHiYoDhe/peQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57886320"
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="57886320"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:22:25 -0800
-X-CSE-ConnectionGUID: F0yZyTofTjS1wKWe96b+rQ==
-X-CSE-MsgGUID: uLT9HwBiTAy8a9A5FooAUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="113648578"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Feb 2025 01:22:23 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjENQ-001AgB-2Q;
-	Sat, 15 Feb 2025 09:22:20 +0000
-Date: Sat, 15 Feb 2025 17:21:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- e4cb98b9ef02fede832955307f569ca2855fe133
-Message-ID: <202502151737.AWpyutuW-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739611560; c=relaxed/simple;
+	bh=DjWLiNorl5ume31k8GQXKZ1BFIOrFPSqhdTJ3sEpNYY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ARHyo2QE0JZ1fl90cPv0VD9mZGgVBBqBSqgf3+cu+ts50u/zv0+IDmX7q8QM9KC0XemVHJl7pEG89KeD8gGjZlFklmcQgpCCInDkJp4XgUVQoBz7JkiTDMJfU2hE+pA5VJDYE8MsKzFI2qsG1KVEeVwwDMLKEqFwrYg5hWxFSew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Yw3Rq752Mz4f3jY2;
+	Sat, 15 Feb 2025 17:25:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6F3581A1405;
+	Sat, 15 Feb 2025 17:25:49 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAni1+bXbBn+Q+iDw--.49525S4;
+	Sat, 15 Feb 2025 17:25:49 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/7 md-6.15] md: introduce md_submodle_head
+Date: Sat, 15 Feb 2025 17:22:18 +0800
+Message-Id: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAni1+bXbBn+Q+iDw--.49525S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw4kuF1DXFW3JFW8KFy3urg_yoWDZwc_ZF
+	yYqFy3JryUXF17Ga4fXrsxZrWkAr4vvr1vqF9Fg3yrZw13Ww47Gr109w47Xw18uFyjvan8
+	Xr18Gw1Fy340qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
+	U==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: e4cb98b9ef02fede832955307f569ca2855fe133  Merge branch into tip/master: 'x86/mm'
+From: Yu Kuai <yukuai3@huawei.com>
 
-elapsed time: 1451m
+This set introduce md_submodle_head and related API to replace
+personality and md-cluter registration, and remove lots of exported
+helpers and global variables.
 
-configs tested: 82
-configs skipped: 1
+Also prepare to add kconfig for md-bitmap.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yu Kuai (7):
+  md: merge common code into find_pers()
+  md: only include md-cluster.h if necessary
+  md: introduce struct md_submodule_head and APIs
+  md: switch personalities to use md_submodule_head
+  md/md-cluster: cleanup md_cluster_ops reference
+  md: don't export md_cluster_ops
+  md: switch md-cluster to use md_submodle_head
 
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                             allmodconfig    gcc-13.2.0
-arc                             allyesconfig    gcc-13.2.0
-arc                  randconfig-001-20250214    gcc-13.2.0
-arc                  randconfig-002-20250214    gcc-13.2.0
-arm                             allyesconfig    gcc-14.2.0
-arm                  randconfig-001-20250214    clang-16
-arm                  randconfig-002-20250214    gcc-14.2.0
-arm                  randconfig-003-20250214    clang-21
-arm                  randconfig-004-20250214    gcc-14.2.0
-arm64                           allmodconfig    clang-18
-arm64                randconfig-001-20250214    gcc-14.2.0
-arm64                randconfig-002-20250214    gcc-14.2.0
-arm64                randconfig-003-20250214    gcc-14.2.0
-arm64                randconfig-004-20250214    gcc-14.2.0
-csky                 randconfig-001-20250214    gcc-14.2.0
-csky                 randconfig-002-20250214    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250214    clang-21
-hexagon              randconfig-002-20250214    clang-15
-i386                            allmodconfig    gcc-12
-i386                             allnoconfig    gcc-12
-i386                            allyesconfig    gcc-12
-i386       buildonly-randconfig-001-20250214    gcc-12
-i386       buildonly-randconfig-002-20250214    gcc-12
-i386       buildonly-randconfig-003-20250214    clang-19
-i386       buildonly-randconfig-004-20250214    gcc-12
-i386       buildonly-randconfig-005-20250214    gcc-12
-i386       buildonly-randconfig-006-20250214    gcc-12
-i386                               defconfig    clang-19
-loongarch            randconfig-001-20250214    gcc-14.2.0
-loongarch            randconfig-002-20250214    gcc-14.2.0
-nios2                randconfig-001-20250214    gcc-14.2.0
-nios2                randconfig-002-20250214    gcc-14.2.0
-openrisc                         allnoconfig    gcc-14.2.0
-openrisc                        allyesconfig    gcc-14.2.0
-parisc                          allmodconfig    gcc-14.2.0
-parisc                           allnoconfig    gcc-14.2.0
-parisc                          allyesconfig    gcc-14.2.0
-parisc               randconfig-001-20250214    gcc-14.2.0
-parisc               randconfig-002-20250214    gcc-14.2.0
-powerpc                          allnoconfig    gcc-14.2.0
-powerpc              randconfig-001-20250214    gcc-14.2.0
-powerpc              randconfig-002-20250214    clang-18
-powerpc              randconfig-003-20250214    clang-21
-powerpc64            randconfig-001-20250214    clang-18
-powerpc64            randconfig-002-20250214    gcc-14.2.0
-powerpc64            randconfig-003-20250214    gcc-14.2.0
-riscv                            allnoconfig    gcc-14.2.0
-riscv                randconfig-001-20250214    clang-18
-riscv                randconfig-002-20250214    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                             allnoconfig    clang-21
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250214    gcc-14.2.0
-s390                 randconfig-002-20250214    clang-19
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250214    gcc-14.2.0
-sh                   randconfig-002-20250214    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250214    gcc-14.2.0
-sparc                randconfig-002-20250214    gcc-14.2.0
-sparc64              randconfig-001-20250214    gcc-14.2.0
-sparc64              randconfig-002-20250214    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                               allnoconfig    clang-18
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250214    gcc-12
-um                   randconfig-002-20250214    clang-16
-x86_64                           allnoconfig    clang-19
-x86_64                          allyesconfig    clang-19
-x86_64     buildonly-randconfig-001-20250214    clang-19
-x86_64     buildonly-randconfig-002-20250214    clang-19
-x86_64     buildonly-randconfig-003-20250214    gcc-12
-x86_64     buildonly-randconfig-004-20250214    clang-19
-x86_64     buildonly-randconfig-005-20250214    gcc-12
-x86_64     buildonly-randconfig-006-20250214    gcc-12
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20250214    gcc-14.2.0
-xtensa               randconfig-002-20250214    gcc-14.2.0
+ drivers/md/md-bitmap.c  |   8 +-
+ drivers/md/md-cluster.c |  18 ++-
+ drivers/md/md-cluster.h |   6 +
+ drivers/md/md-linear.c  |  15 ++-
+ drivers/md/md.c         | 259 +++++++++++++++++++---------------------
+ drivers/md/md.h         |  48 +++++---
+ drivers/md/raid0.c      |  18 +--
+ drivers/md/raid1-10.c   |   4 +-
+ drivers/md/raid1.c      |  33 ++---
+ drivers/md/raid10.c     |  41 ++++---
+ drivers/md/raid5.c      |  70 +++++++----
+ 11 files changed, 297 insertions(+), 223 deletions(-)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+2.39.2
+
 
