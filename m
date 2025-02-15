@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-516319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB00A36F98
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:58:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405B7A36F9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 18:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFE117A4897
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 16:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E6E16C937
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 17:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAF41EA7C6;
-	Sat, 15 Feb 2025 16:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81511E5B98;
+	Sat, 15 Feb 2025 17:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P+1AxeRN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7gKlt5s"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26301C7011;
-	Sat, 15 Feb 2025 16:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1A91624EF;
+	Sat, 15 Feb 2025 17:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739638686; cv=none; b=VKQiHAYtqyMqWW13igwAF6tkRF+/msyvUnUk30FRWIrmz0MX0QesqeEwVHnkbQmb0fxZFACbWpAiCsz+IqSbuP1/ZEtOlZo1zBm343QfOjOY5UmImFESrKQGVa5erPD7+0lroR8mJXe7aVGcB0XACmbj3OPMd2bA+BTs8gdJ5Ac=
+	t=1739638856; cv=none; b=H2PM0FMD95AnApnFPwAuBLCA7dWUZdqJjjmyadyS/Y0nmmj4FWpCmNBvmvxeSvxzfi7CY6MJHO7k11qabJ43SVXXkUi/ymyYIsSstdVZZ82MEECrj3qYbrmy0Tn0tagweainaHoNXBUgzoPctGoxwr1y5Jhj+5sWOQ1E/QqmkvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739638686; c=relaxed/simple;
-	bh=6B6zoiCNIqlHv0DUk8i1Yt74gncjmTv9FpzXd+uhWjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKL1e+edSkzZdkJVHTo92bOkXDYb8gIyZb5TRMi06VwQeWDoKXPsEvZYFfGMwl3qB5VRjwoSFhStGl7sG/FHy0nlG3ESWcqkjOQnvwfdEpaJaaz1KteLMYxAsYQaGCQ+d1sYXs6tAPaucVeqD488tQuFWePNDei8XiEsLVGr0So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P+1AxeRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A12C4CEDF;
-	Sat, 15 Feb 2025 16:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739638686;
-	bh=6B6zoiCNIqlHv0DUk8i1Yt74gncjmTv9FpzXd+uhWjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P+1AxeRN2xmGRtomDVev2ZJZaSIcHqW6kueTTEhyomw15yIwaTRi6VIx5EmyJOp22
-	 d2V9OuSqXMBFc3+6kEXQbbx/1WnVFFxsZgEQxp/4E4lmdWQ6KsiX/Ry8LYoXCSvQ8w
-	 74hhobng4aSNT8Lib4PcuARxsMJfKvhSmCjkGrRU=
-Date: Sat, 15 Feb 2025 17:58:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ian To <onlyian4981@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] staging: rtl8723bs: remove extra blank lines
-Message-ID: <2025021535-riding-darkening-1c0d@gregkh>
-References: <cover.1739351267.git.onlyian4981@gmail.com>
- <78f3702e2810424d12785f64334127a0f3cd82ef.1739351267.git.onlyian4981@gmail.com>
+	s=arc-20240116; t=1739638856; c=relaxed/simple;
+	bh=uy5cH16JsX4JeqEfRAx/FFIcMBDLoTmq8s1tlKdmEhc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=t0ayUAu0psa3iJWVD/1iJ+Mj0v95pqXVfHrYB+65rjfw02uqviLsCN2laYpnx2PcJ0gfM2m73N1zgZOUz/Vkbq/Lfj43wNIAwFd08leKFZPbqtdOwt0AJmG0QlhMSC7AYs9hq2WnftrLedUlb8H0HkQJ/bVFQknIh3ecGznVVa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7gKlt5s; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72703b0fe2fso1451178a34.1;
+        Sat, 15 Feb 2025 09:00:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739638854; x=1740243654; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fFgotg9MMog9YPyVCTVdN/A41r7u9eJzo/q5sMJJgW8=;
+        b=h7gKlt5sc06Ta2tb/Zt2ai0BdAWauALgj5w5VsPvGg4rPWE8F3hvI7jEaQzXcA4iBb
+         1qQKuXb/YKN2LoHL5yJYB0kef/sC857VkUcQaHWElN9u9Ke6aCI/iZzQeHAiOQY7O7Nk
+         JVP31NuLrqWNDaSS+2hQdshd2OfLL9M8iCQaBNDg39o0n5+tvpfJlJESpaGTc5ROqhtU
+         tCgjlvhWn32Rc2EaZTXqtww4eAGct6MAFR9ZPLssScsQI38q804MgpSC1nHFZ+LgIFzy
+         C7oDj7jMcG2eR6HTlH4OJw3gaRRpALs1rU/SPAkZEFiQt/0UQFOQOzWE5gHTcBmwMpLN
+         wJsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739638854; x=1740243654;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fFgotg9MMog9YPyVCTVdN/A41r7u9eJzo/q5sMJJgW8=;
+        b=R2XJVctyAacPMeKQnoO2GlBUcY99yuBseA36/DX0dyonBq/3z1S3Vt7M2/WkmsT/5M
+         3oCmOnjU2DKZoXvbwnFiPpSgX5HLFS/WcKR5DHqjbectlz65/9fU+WIVxAciS8Dy2x6V
+         OihEhWlMP2t6yR+JJooO2wohASh2Ki2dMwpYOEu4r/qBNAVSIj0pGZCa5hnJp5U79Tt/
+         biGLW/ZNW4f7qeJRFwmi/+0aYlzEOzA3KUui8LHaE6q648hxdBpzMBHcPLGeZagdEbEo
+         f/cBIXrxD3QlNOfxZuQ5219LQ2BkGCmuIYQCePDfW3zPUibONrUYUdLU3YlCplkOi2a1
+         aP8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVxn/W8hHuJmM5FtzoltdhUhI/f3Eo3lqANJwzoqxnegGM/9mo5+ltFf0Ya4nMAlFV8Pc/BRoJFZEs=@vger.kernel.org, AJvYcCWP/DPMs7K1FtStaRncCQ51leSvBUAGa6/rjZkbkD4b631eyu/p77IJSCEiTbs/7Xl9fVztOEy+DdHZrZyM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuwZo13O8cQFCrPHYif70eLh2rtueVkjvQjh5gMIBnEra+muhb
+	dt84pgqmvKVoxhbvF0uURm/cfvsRFMo2S4cFT+SJge63Gk111dQD+7EAD+x/rFuCQlQ8iB9wWT4
+	ufjA68HhC6vdjaohd6yZPSxe0RJM=
+X-Gm-Gg: ASbGncu9AGnTPPVnn+wiuUAEHjfL4ZGqkE+t6Xis8Rf+lQViYoy1xcIylcj716QQY8d
+	oLATaKMDWB/qPpSqnUa6TUDQWiZoId0lYpBDnY6+eFmgXALrvhynZ48dn98dQCnx2QWyYEqY=
+X-Google-Smtp-Source: AGHT+IFCE/ujiPdHP+4NuCAT8iQjlOyrijo3LcUM+5WICOd0f0Wy1TP+CpF11sc0YvuV5vk3xilB1nbZdK6s7ywGhF8=
+X-Received: by 2002:a05:6808:1447:b0:3f3:bd43:8870 with SMTP id
+ 5614622812f47-3f3eb127cb3mr2685351b6e.28.1739638853708; Sat, 15 Feb 2025
+ 09:00:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78f3702e2810424d12785f64334127a0f3cd82ef.1739351267.git.onlyian4981@gmail.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sat, 15 Feb 2025 22:30:42 +0530
+X-Gm-Features: AWEUYZnjUakxvfVroE4-xJQ6oTeQ2JVIPhF7OnNS0SB8lYYBB3LZ2DiPulj_kzw
+Message-ID: <CAO9wTFhe4sf1eVVgijt2cdLPPsUHBj7B=HN-380_JSpve5KbvQ@mail.gmail.com>
+Subject: [PATCH] Documentation/mm: Fix spelling mistake
+To: akpm@linux-foundation.org, skhan@linuxfoundation.org
+Cc: Suchit K <suchitkarunakaran@gmail.com>, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 12, 2025 at 01:22:56AM -0800, Ian To wrote:
-> Repeated blank lines were present and removed. Reported by checkpatch.
-> 
-> Signed-off-by: Ian To <onlyian4981@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_security.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-> index e8f583206f92..18f640d48701 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_security.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-> @@ -123,7 +123,6 @@ void rtw_wep_decrypt(struct adapter  *padapter, u8 *precvframe)
->  
->  		/* calculate icv and compare the icv */
->  		*((u32 *)crc) = ~crc32_le(~0, payload, length - 4);
-> -
->  	}
+The word watermark was misspelled as "watemark" in the balance.rst
+file. This commit corrects the spelling error.
+Signed-off-by: Suchit <suchitkarunakaran@gmail.com>
+---
+ Documentation/mm/balance.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This was not a "repeated blank line".
+diff --git a/Documentation/mm/balance.rst b/Documentation/mm/balance.rst
+index abaa78561..c4962c89a 100644
+--- a/Documentation/mm/balance.rst
++++ b/Documentation/mm/balance.rst
+@@ -81,7 +81,7 @@ Page stealing from process memory and shm is done if
+stealing the page would
+ alleviate memory pressure on any zone in the page's node that has fallen below
+ its watermark.
 
->  }
->  
-> @@ -219,10 +218,8 @@ void rtw_secgetmic(struct mic_data *pmicdata, u8 *dst)
->  	secmicclear(pmicdata);
->  }
->  
-> -
->  void rtw_seccalctkipmic(u8 *key, u8 *header, u8 *data, u32 data_len, u8 *mic_code, u8 pri)
->  {
-> -
->  	struct mic_data	micdata;
->  	u8 priority[4] = {0x0, 0x0, 0x0, 0x0};
->  
-
-Neither was that :(
-
-I've stopped reviewing here.
-
-thanks,
-
-greg k-h
+-watemark[WMARK_MIN/WMARK_LOW/WMARK_HIGH]/low_on_memory/zone_wake_kswapd: These
++watermark[WMARK_MIN/WMARK_LOW/WMARK_HIGH]/low_on_memory/zone_wake_kswapd: These
+ are per-zone fields, used to determine when a zone needs to be balanced. When
+ the number of pages falls below watermark[WMARK_MIN], the hysteric field
+ low_on_memory gets set. This stays set till the number of free pages becomes
+-- 
+2.48.1
 
