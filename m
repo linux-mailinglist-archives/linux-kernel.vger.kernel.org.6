@@ -1,136 +1,84 @@
-Return-Path: <linux-kernel+bounces-516215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02B6A36E44
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:57:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2B4A36E45
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76A601893648
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D4E170FFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A611C6FE1;
-	Sat, 15 Feb 2025 12:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a29d4oib"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9432C1A5BAE;
+	Sat, 15 Feb 2025 12:58:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A2423BB;
-	Sat, 15 Feb 2025 12:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78BC2AD2D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 12:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624228; cv=none; b=CuB3ns4etTmmGuhh9DyQtDgDdylaEn4XzzOFfVJWfWRNwHQIc2D3lGkp3P7ST8h+fPFTpQnigbLFP1Sl9cz/+E4hvlxCf9nAn77Hf+WFyMXXwpLa22PQ9iFgpJ9IUedXnGhweCxCOIaUrCkB5APqrTr64Ww/7lPd34ZZnPx0V7I=
+	t=1739624287; cv=none; b=E6d3v10Y5vXO4gZfYhwNfG976IRXe3DsHQyF1m3ODmlimDUpw+J/zk570nToZp3IHsHWUkl3lyCy8ATKLzodWOmFajl5bzhkG11i2wMv5A+OqAmx0OfxxMJ8y87Sawf/CQvXCgvAyk9I75Z1qHGGzAg4AoyZRXkDstyDa/6Vpig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624228; c=relaxed/simple;
-	bh=kM7YDOX7M089oM6EaB2+Gynk23YBNP4Ux48RkU99e+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dCQ406vWo7G9/OWcqFUlsiaZ6e6BSdj5oBIHlNEZ4UseZbsBNFf6j6/Wv4nsa7OsPSt8OdlAod8JudOS5EzXifZO/lYlutBKiImtNDjvLZZKtOa3B8Vak1whvvDxr1BFihlMr+hpbrhGeD9cMNhCaqht/qbf7UfpfHcmspbXiEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a29d4oib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FFAC4CEF1;
-	Sat, 15 Feb 2025 12:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739624228;
-	bh=kM7YDOX7M089oM6EaB2+Gynk23YBNP4Ux48RkU99e+U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a29d4oib83MWmvJt0oTvfXiQ5oMAhhrNXdt5RTMzCfZRFbTwIrZ/20Gz3HsYlxDG0
-	 fM+gWxfKAEq2BLQ6kvXNsZJ2wmH7kh0TTwtBhIcSeBvZuD/JsQTuCfoN9aQoX9AZHi
-	 yxuxQmyN+210ij21vPATeYCLBBwx3h0/sJCFFA7HAdzrOWXNTKp+HPfpaW/65a/n2e
-	 JgTs9MaQmiPfJJ7GdAVhHvfa1QlNAtkfJdIw6wEn972YsrfD1ZPoUfZY/JVzUKr/5x
-	 /nGOA2HIO/5yYOirABW/Y9fV69hQVE4RQZbx7yFw+kgIHeR4qzY6Iwch5CT0FBg0Fl
-	 IOQgxoJyR8uWw==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3098088c630so1702091fa.1;
-        Sat, 15 Feb 2025 04:57:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMUlkkNH1VIiLGygHaq8aNWhrr/aFVESlyjMIMSwiOUCiOYysmwuGiu5q4A9dIpZIbSIKLWrhwW5kUpr4=@vger.kernel.org, AJvYcCUcfQP2Jvq/B82YONmqRfqTJt4ZG621x46fUKbvv8GVmRkJO80XzOjnXWMxVhkVe/vyfMICeZkUs7whqsWM5C4=@vger.kernel.org, AJvYcCVsvXmn/ZLT8OPaD1BK+4pdnh88P4SJ+hyPmrgWSGfo9DQiBoSCXmq14FUQpG7pDzkqio3iWjh6bgcX42nM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnAgKOBSXfmpJTyto9MLQ388FDLk54pYQJcSt28cZbqc7VBlwS
-	xYUmY/01phNKwfr7k8N6eAR48v+3mILXIDyAmjxJmz/AKKHbTTb4327JBLE/iCXvVQe50v9ncvV
-	LHFdAeBnf3MzFve6ftFsV/ri/R2g=
-X-Google-Smtp-Source: AGHT+IEsTZF/aaIkd2W2yDE7XhrivBIrlJSlG4EYc08U5lemoAf3PC4tUJ7UZ+YVghk5SfORdtSUmhtioANUwm1uA24=
-X-Received: by 2002:a2e:b2d0:0:b0:308:efdd:b184 with SMTP id
- 38308e7fff4ca-30927a6fa08mr9447091fa.10.1739624226481; Sat, 15 Feb 2025
- 04:57:06 -0800 (PST)
+	s=arc-20240116; t=1739624287; c=relaxed/simple;
+	bh=qUOKmRDEGSnF4Pzp94qlrp32fYZGL4Y9QCx4YwO8/rE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Cvk97Gi6QFWuXNrpjRlNJJV4FCHP0ONiSRs86rE0wLnt53UGCEyqiQft9wTsUdFEQiaw2zQTJ7R1ZLCs1bE9S/Asez1gYfout9wm4ohvZBM/tS83HMfOYcJqFIhkHJpzvmccRzU6YX9zqaUerTe7RIIstUsDWsM1OKNffFzkzyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d158477b5fso19364405ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 04:58:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739624285; x=1740229085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pvIyoKFkKJkE4APFgv1fclSgzQUADvqZn9LSd6dD4eQ=;
+        b=YKQjoBZQLAv1PDh+xk87YMHEW3EKPwWYGjIqibDHyesZNw6/573UoN71gv+hTiTa4S
+         KCpDqd1y2dZuvIRn/T+bfu2MPtiCWX6Hp9Oe8ZHYqhwCDcSIdgIoN3CXHhMg4NkvSqKa
+         fp8qEbJPQixM4VepxjDErP2tv1tEk0mPwF6KhozBGtVI9cRDE5/n+1wTq6IbmP7aP+TN
+         eufXhmx79kJMkCpnMYIEoUASuPMErgib4TL/vz2SJab1VTkkyx2Z6kf6G5wLxXpWnw7U
+         DX0QsEuIPp0H/OL3UjXeiKhbqQrTFQgu9AgEzL98oQSJ8ci/GrY3X5kM/WCG9KqbjH23
+         SxZg==
+X-Gm-Message-State: AOJu0Yz1rB8+rtsKNtPeOdGdcRwnz4Act3bgpnwG5PqNcVfFXEs9e/Ht
+	53hoiikCmEgA40uLkYpMrktMTCyLSmw2KvS5GoNMTLzz/ypOHMPwNbPnM/S9Ktpsi1NSymZQBGV
+	jEqyfA2sAnAVrliO/AbRIAAP490Mnizh+bvfsNDeH6eCLlBvHfVJ7QX8=
+X-Google-Smtp-Source: AGHT+IG9Qeomynodxj7mGb0vap3MDCOJDFr5IeFouGgnAPP5NtSRPgJVg+zTijlqg+a1TcLVGMJOEB6PqW0S/DRZ9lMIzeuL6dW3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net>
-In-Reply-To: <20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 15 Feb 2025 21:56:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATOgb0Wry50Mjoa=o4FkzG-Jf-5FjbKsf3DCN7dybwMgw@mail.gmail.com>
-X-Gm-Features: AWEUYZlqwTgp-wnBM-VhIxcv_BtmOE0JijNrv0Drs7vRsuia8wiRS1nsqb348YU
-Message-ID: <CAK7LNATOgb0Wry50Mjoa=o4FkzG-Jf-5FjbKsf3DCN7dybwMgw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild, rust: use -fremap-path-prefix to make paths relative
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+X-Received: by 2002:a92:c24d:0:b0:3d1:966c:fc8c with SMTP id
+ e9e14a558f8ab-3d2809066demr22350725ab.17.1739624284978; Sat, 15 Feb 2025
+ 04:58:04 -0800 (PST)
+Date: Sat, 15 Feb 2025 04:58:04 -0800
+In-Reply-To: <CAMp3bLVAx01Kd_UEK_sGTAd1ZgXESUcX497bumaKjt+nX8iqwQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b08f5c.050a0220.6f0b7.0008.GAE@google.com>
+Subject: Re: [syzbot] [ppp?] KMSAN: uninit-value in ppp_sync_send (2)
+From: syzbot <syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2025 at 2:11=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> Remap source path prefixes in all output, including compiler
-> diagnostics, debug information, macro expansions, etc.
-> This removes a few absolute paths from the binary and also makes it
-> possible to use core::panic::Location properly.
->
-> Equivalent to the same configuration done for C sources in
-> commit 1d3730f0012f ("kbuild: support -fmacro-prefix-map for external mod=
-ules")
-> and commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__=
- a relative path").
->
-> Link: https://doc.rust-lang.org/rustc/command-line-arguments.html#--remap=
--path-prefix-remap-source-names-in-output
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+drivers/net/ppp/ppp_synctty.c:502:23: error: initializer element is not a compile-time constant
 
 
-I will apply this if Miguel gives Ack.
+Tested on:
 
+commit:         7ff71e6d Merge tag 'alpha-fixes-v6.14-rc2' of git://gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f20bce78db15972a
+dashboard link: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=124f99a4580000
 
-
-
-> ---
->  Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Makefile b/Makefile
-> index 9e0d63d9d94b90672f91929e5e148e5a0c346cb6..ac35083180c825b72f13149ec=
-3acfd7d6d74ef98 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1068,6 +1068,7 @@ endif
->  # change __FILE__ to the relative path to the source directory
->  ifdef building_out_of_srctree
->  KBUILD_CPPFLAGS +=3D $(call cc-option,-fmacro-prefix-map=3D$(srcroot)/=
-=3D)
-> +KBUILD_RUSTFLAGS +=3D $(call rustc-option,--remap-path-prefix=3D$(srcroo=
-t)/=3D)
->  endif
->
->  # include additional Makefiles when needed
->
-> ---
-> base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
-> change-id: 20250210-rust-path-remap-e97cec71e61a
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
