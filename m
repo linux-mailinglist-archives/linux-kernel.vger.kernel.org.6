@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-516269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE78A36EE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:45:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF66A36EE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 15:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8986C170D45
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4E418904DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E111D8E01;
-	Sat, 15 Feb 2025 14:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC61DB34E;
+	Sat, 15 Feb 2025 14:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AGUjcw6V"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XcGnmlky"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77EE56C;
-	Sat, 15 Feb 2025 14:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B7978F35;
+	Sat, 15 Feb 2025 14:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739630694; cv=none; b=lbZf/1z0ukG6UbdZ1lWPqtgH5TWEMJyTYHGla1z2pS4SleI8mLcZYwlZwqMwIFRdcE56bgwcGci9CG9IRs101Nmup1Ib79pUZhvgDHtcl802pFFPQx+hhNQoFCcZ+L4nyGpwRcHjdnWM0enMpt/l4tvFn/R/twz70ad/S/A/xlQ=
+	t=1739631324; cv=none; b=FNuAF/ZzPQpDrr8yCdOxMb+xiepNCJZl3W4HuRu1o/XzDJHhNj9xcP7WpUgzR/VcyA79x4DpBBScvyMN3gajolOEG9vxrV+/N+n1FExS4XMIx68SERM3atwqoMeW3+YRDJRdMmFL2EO4Q5C3dZm7fZeAMH8a+iUO/KcdpmrDb40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739630694; c=relaxed/simple;
-	bh=svlFGVVhjKFB9Em7Mi6H1dBmzJpragRWaSONCrliaqk=;
+	s=arc-20240116; t=1739631324; c=relaxed/simple;
+	bh=Bw2PVlbFNQbJcZ8QOpOgMBPK5kD45wXQ0FsdYVTIFGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAXEnUxtxq+v7iftyOGj4Vul7+RQsZ86jSEmobkIDPlDFEwNCpxOV39pBKmOqxwSJgCj3KRUYdMmQvtmOczDNEp3QRzcUtqJD9C+l/SQ3zOOXmQwbwTpKj0k1I8qo5QGRpQn/u8+IAPMzfU4jIjmUgOh4e1JPzrMchWvTwLsIS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AGUjcw6V; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB71140E0028;
-	Sat, 15 Feb 2025 14:44:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id QS2pJyruZGmj; Sat, 15 Feb 2025 14:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739630686; bh=rM+HUZmv9x/yWQiAsCsjATK0g5p2KbrCDJ2KzSzNRQU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvBKFDvLp9SHgbDhqkXMjkW65H7i2hlzOJga/jD4I8ImOw87Hz49IaqnPfbqgn7RMFHAXCfCWqkl2fi/zCCU1EclxbHL4rcCNyUs0M7Pp2cwkv4Ncu+rbNqb2riqoc0knsYaHKebf9lbPNXnZn6lOse+tMKqTWL8j4r1/HcllUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XcGnmlky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4494DC4CEDF;
+	Sat, 15 Feb 2025 14:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739631323;
+	bh=Bw2PVlbFNQbJcZ8QOpOgMBPK5kD45wXQ0FsdYVTIFGk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AGUjcw6VXaJ2SLEIEbLUF6NSxJgkPp0HVhWW+opFWjUhrvD2+m0psE461dXOyRg2A
-	 b1urVVjrx/Zppe7+m0vzeWr3aI/uWDsej4CUcK6z389gnCalxrlZAqNpFZtmN4sp00
-	 mLKoqeb5TybelVBV+NZ6d0N/XkEk/3NhEo/sZQvCgPcZG32nWt9kbpL63tGVMbLpQK
-	 0dSDBMsvN8wHD0KMO00Iba37/pBbCD/CYnQpE8I26xS10JF7cS3XYXRqCO6fwD4Acm
-	 qy1bpEINL+cRu88wXjXdOEpgTqmU9swgURbtnjhl5gmkrQG3LbO5BXgo4xejxH6PIk
-	 j/t/tkDQcruCdk/YSLP2mA5DgAPo5qtqjy4pHF5zHTpNf66Qz0VMGigub/C9wtAycx
-	 6rDI0jlkB90lCumUvylgR0asBosM9xrGEuRuUg2zruesNeZtUR7UMHAIefafKmeVEI
-	 SciC7fVw2TeMqke/eyxrlhcIJAYZBmbpPVCISpqYgVJQnoe8aZSjw7D9wIIcbiysdi
-	 Tb3avrdsxTvunn02Dk9KMwnx0aHU5c+XORl5i1zmeIa3/HjJgM9YgZOrU05OBufO03
-	 ugoSPruoYhCitwghdxLRTUM0t0VhTgp+UrUrLAxC1gnF2E/Hz5NKDU/4aGsxAGv3El
-	 3CtD+VuMkdpVC5ChFs2nBhsk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CCE4E40E016A;
-	Sat, 15 Feb 2025 14:44:28 +0000 (UTC)
-Date: Sat, 15 Feb 2025 15:44:23 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
-	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
-	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: Re: [PATCH v5 1/5] x86/cpufeatures: Add {required,disabled} feature
- configs
-Message-ID: <20250215144423.GEZ7CoR2O3FOKQgfVH@fat_crate.local>
-References: <20250106070727.3211006-1-xin@zytor.com>
- <20250106070727.3211006-2-xin@zytor.com>
- <20250214215823.GEZ6-8f5wt--IWggtl@fat_crate.local>
- <469D0BEE-76D6-4417-B5B0-0054D3F96784@zytor.com>
- <20250215142017.GCZ7CioRHgpm6a-eIZ@fat_crate.local>
- <3B96E82B-7AA8-40FF-9401-829D408AA790@zytor.com>
- <20250215143032.GDZ7ClCJzyDkuvQSJp@fat_crate.local>
- <6187A454-B995-45A3-8356-ED7CBB4E478F@zytor.com>
+	b=XcGnmlky6ERWwyUKReVNNNd2TN2OA/kvUNytC2324tammtTVK0xSrkvoK7Rcl41Qj
+	 QEVll+Pot1jER0PRjHoigOuIe8gXB/c5I6jQL795cRnL894PUtE/LqpoFomzAz1x6E
+	 g26ERaVP9ifA4cVpbvwGvwmnNZpVxi9Dyv7Ry2bk=
+Date: Sat, 15 Feb 2025 15:55:20 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	xen-devel@lists.xenproject.org, iommu@lists.linux.dev,
+	Radoslav =?iso-8859-1?Q?Bod=F3?= <radoslav.bodo@igalileo.cz>,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [6.1.y] Regression from b1e6e80a1b42 ("xen/swiotlb: add
+ alignment check for dma buffers") when booting with Xen and mpt3sas_cm0
+ _scsih_probe failures
+Message-ID: <2025021533-grime-luminous-d598@gregkh>
+References: <Z6d-l2nCO1mB4_wx@eldamar.lan>
+ <fd650c88-9888-46bc-a448-9c1ddcf2b066@oracle.com>
+ <Z6ukbNnyQVdw4kh0@eldamar.lan>
+ <716f186d-924a-4f2c-828a-2080729abfe9@oracle.com>
+ <6d7ed6bf-f8ad-438a-a368-724055b4f04c@suse.com>
+ <2025021548-amiss-duffel-9dcf@gregkh>
+ <74e74dde-0703-4709-96b8-e1615d40f19c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <6187A454-B995-45A3-8356-ED7CBB4E478F@zytor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74e74dde-0703-4709-96b8-e1615d40f19c@suse.com>
 
-On Sat, Feb 15, 2025 at 06:35:52AM -0800, H. Peter Anvin wrote:
-> A bunch of flags in Kconfig.cpu have exactly the meaning of "this CPU is
-> guaranteed to have this feature."
+On Sat, Feb 15, 2025 at 02:39:46PM +0100, Jürgen Groß wrote:
+> On 15.02.25 13:34, Greg KH wrote:
+> > On Sat, Feb 15, 2025 at 12:47:57PM +0100, Jürgen Groß wrote:
+> > > On 12.02.25 16:12, Harshit Mogalapalli wrote:
+> > > > Hi Salvatore,
+> > > > 
+> > > > On 12/02/25 00:56, Salvatore Bonaccorso wrote:
+> > > > > Hi Harshit,
+> > > > > 
+> > > > > On Sun, Feb 09, 2025 at 01:45:38AM +0530, Harshit Mogalapalli wrote:
+> > > > > > Hi Salvatore,
+> > > > > > 
+> > > > > > On 08/02/25 21:26, Salvatore Bonaccorso wrote:
+> > > > > > > Hi Juergen, hi all,
+> > > > > > > 
+> > > > > > > Radoslav Bodó reported in Debian an issue after updating our kernel
+> > > > > > > from 6.1.112 to 6.1.115. His report in full is at:
+> > > > > > > 
+> > > > > > > https://bugs.debian.org/1088159
+> > > > > > > 
+> > > > > > 
+> > > > > > Note:
+> > > > > > We have seen this on 5.4.y kernel: More details here:
+> > > > > > https://lore.kernel.org/all/9dd91f6e-1c66-4961-994e-dbda87d69dad@oracle.com/
+> > > > > 
+> > > > > Thanks for the pointer, so looking at that thread I suspect the three
+> > > > > referenced bugs in Debian are in the end all releated. We have one as
+> > > > > well relating to the megasas_sas driver, this one for the mpt3sas
+> > > > > driver and one for the i40e driver).
+> > > > > 
+> > > > > AFAICS, there is not yet a patch which has landed upstream which I can
+> > > > > redirect to a affected user to test?
+> > > > > 
+> > > > 
+> > > > Konrad pointed me at this thread: https://lore.kernel.org/
+> > > > all/20250211120432.29493-1-jgross@suse.com/
+> > > > 
+> > > > This has some fixes, but not landed upstream yet.
+> > > 
+> > > Patches are upstream now. In case you still experience any problems, please
+> > > speak up.
+> > 
+> > What specific commits should be backported here?
+> 
+> Those are:
+> 
+> e93ec87286bd1fd30b7389e7a387cfb259f297e3
+> 85fcb57c983f423180ba6ec5d0034242da05cc54
 
-... and we won't add new ones which are required any time soon so we might as
-well make the required ones really be called "REQUIRED" and have those defines
-basically self-document themselves...?
+Ugh, neither of them were marked for stable inclusion, why not?  Anyway,
+I'll go queue them up after this round of kernels is released hopefully
+tomorrow, but next time, please follow the stable kernel rules if you
+know you want a patch included in a tree.
 
--- 
-Regards/Gruss,
-    Boris.
+thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
 
