@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-515980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81007A36B87
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:01:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEE9A36B8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 04:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B95617025F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:01:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CFBB170320
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 03:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE263151995;
-	Sat, 15 Feb 2025 03:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ACC156C7B;
+	Sat, 15 Feb 2025 03:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISN7Jzvl"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wewqj8AL"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EC9DDC3;
-	Sat, 15 Feb 2025 03:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA2415198B;
+	Sat, 15 Feb 2025 03:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739588486; cv=none; b=uqpbX75TujyjkUqjRONa1DgVvjJJsxNAEKLPtx4YJ5EwUKjVVG5UBWC2XXc7YwCz+sGhA9rw0VHesLr49AB8lzUf1GGlJKr+dOSdMjTBlSEQSkgDe8aZbGgGc8Qp57cOAQ/FJIwr/SNLATl8RLbGv+ueAG6Td50RFBuggHQpyiE=
+	t=1739588667; cv=none; b=JCRSPQq9i3EEALAgDP4tN/9LCXcJ/B/yC+adGrXSqH0eWLnUAOKN9xzOff/cPJSQYB9VO9RfRRAyxPS2P1qqsb2lJIcL8Nj9HKy+cGWf223qRH0sFl2QCOU/OsyCRvVVBaxhd1R/XNWtc9QLnjGD+PowjVxbYP3yvSXs2YRf3L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739588486; c=relaxed/simple;
-	bh=ydZp4TlIsqSmjYDiFlBz73Jriv+xKFTZ8q8q94UbOuw=;
+	s=arc-20240116; t=1739588667; c=relaxed/simple;
+	bh=I9x2MwW2MXiXY0ZFzL5MIBifqfA14vdI95tsEZByDB8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/pDm2oKi6ypwdjosMaG3JjyxUoEMqduvaGy69u2UUJN7wLMLRixN6cdvI/8pMjyOLx0tSxIOwGJcQ38dsbz5X2vIiJQ0he/HG7X1gFsWPr2sA0xFgxgTmLOfGyNG5gqGkV3QEKrBOh1+Q4QnZ+SJJ4Kxpid0kp29mqpRzTbsT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISN7Jzvl; arc=none smtp.client-ip=209.85.208.41
+	 To:Cc:Content-Type; b=CJviFgjwFunBuoiWvISaihgsx7cnO6YmxPHFvLnOUzwCq0U1WfpwbIxV7farD9na35mvn7dG1bq1DeC+iRem4s37MCBeK6rJWNNBH9sdK/0ph6BHX7bhH8LUzjY2FRC7Jaz8PrQ6K7+B0WPWAhycNxeTk1L8rps2+HKKesHfJj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wewqj8AL; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so4771643a12.1;
-        Fri, 14 Feb 2025 19:01:24 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43967004304so9981365e9.2;
+        Fri, 14 Feb 2025 19:04:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739588483; x=1740193283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739588664; x=1740193464; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oYJ448LXGs52M9ufJR4pd9S3Z2faHguUY1XQCvleFUM=;
-        b=ISN7JzvlmAdH/Uu7zv4yAWPFHGaRumy/KdRKVhEarvjhLSZrUzbLd6hC99ab2Vg8tM
-         NKNcoPS8wjUXJ5Q5pqeEWRQ8zuezKHcyCDCoYcQwtZ2KvCMsWOYLlla82Xs6RF1oSNOX
-         inI6ROFrY0Cdi2u7WOfftc+se+8ngpKliLQE+E5xDKfyC4Tr7WtJ8qRGRHKjAzqIGn0o
-         +TxOjfy1xcFxafi0kNo1S0qo5SbdFOpRuuMYL8J5VtadRpAZdox5jr2Fk1FK3HcFI5tz
-         cY+CgN+neGDwjNCXT2rUgWnbjb54PSJzEXuSld0q/cbGGhvqkhXY5rYgEIguma/ouq14
-         tgVA==
+        bh=D1ke7H8+M8yCjXV+9PJPO/6rsexf+VnewbpjFFNJVx4=;
+        b=Wewqj8AL+l1Ll0CxhhIWwpIrzncEj0Ak39Hz/t710lGokiIuOGlfMNByVIZXodzXRp
+         kjOJEluD9I8F15FpEVr/p+vu6EyAehr71QyYdKplXNYduFoGX0k4OHnhlUdZkXS2CZBs
+         whCcOBmfGonX2DANlhKRZK4GAz1C/lgRZkgI1E+5QxwYUBSDbd1e3gNILiuSBM1JUGKi
+         XGp6LOQIFzfEu+NtXMohinFHa0dAJV0frYGnLW4WUAG3CyTWFqnTEpYgudbV4PD9zJYt
+         yuVSlEwGoed73HA/hgQNO6SJEgabQiLrxy4+Hs+K4Q2SsoIQz2AWds5ufJTH/3gTyPCJ
+         Nybw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739588483; x=1740193283;
+        d=1e100.net; s=20230601; t=1739588664; x=1740193464;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oYJ448LXGs52M9ufJR4pd9S3Z2faHguUY1XQCvleFUM=;
-        b=Ox4/1xpef8CzvVOsgsOxaK+nxz03jwqtkBQ+hgTQhIEwqRit8gxYEIcvaJo8IlqVTn
-         aenC4wyo1Tqiq5dNr39dE0sY77WI0xGhQtakA7NUVSc/XEDGZ8U75PaP6CB5qNv8VbIs
-         QF8Y/A938sl+CANsQ31kUJXn8YLTkBO4+bkVS1Up93zHzmoFpz0H9PJpH3O6wRUtWbZD
-         iCTCR1bvXEc2h8HWY2Mlzl2kzd+bD706bDU9SMWiUb01wwnaz7EZGWMQ0PgyZi5P4/MU
-         1JfbA/b2WfcIj5kqG9PTNWg7XFQoy8bNEWm0MrrGnA/IHcWmpORYnvCGRjmdIcT2Jskb
-         /kMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsKo2mclAsGw512BYUqnAceyxFTjzR4oDKfgcHtsm2mF2lWJt4UCsDZGRY03zUb814YhIQQUyf68+NGYOT@vger.kernel.org, AJvYcCXn++UUIx9nT7mb8BgvGG0WdnSWuTzUHjkFg+03ltYlkwIjhjD9uv6jEK1J54MCF3+NViqPIoTGCUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgfySf7hy5erzQNPTiRqXLOuTjTLLoN8s3FJi9iMVZUuHF4g+8
-	2r/NI8vNm35M0ozRTce/sH57DZsYD/Z7YaFJAxzsV3Mna4q5EB1oogU/0n0Jt83f9PJQMTkmhSH
-	TGVCL6vkvkcnL9sFk7Y7zmEtURjaJ7ywsxdg=
-X-Gm-Gg: ASbGncsatKnSKY1HD6p425w+IOuQ6SM4VB8cJnlKDQ1GeUon7zNtaynS5SQgqNZtI9h
-	P3fBZ9OFXL0bg31q11x4bwYx5TnWWfRjCKvorjas3KZ1ZX73F74PrCeMZkd8zDw3SR4CDc59Hay
-	k=
-X-Google-Smtp-Source: AGHT+IGsOSuHyhJLcQBMlRwELDfDCNC0Vv6is2jiG0l+8IKzR1sa6rTqybII7zcDlwM7n0LHH3a3gpnSQLxxEKkDwTA=
-X-Received: by 2002:a17:906:c10f:b0:ab7:97ca:3276 with SMTP id
- a640c23a62f3a-abb70bad02emr109166166b.25.1739588482564; Fri, 14 Feb 2025
- 19:01:22 -0800 (PST)
+        bh=D1ke7H8+M8yCjXV+9PJPO/6rsexf+VnewbpjFFNJVx4=;
+        b=Kda66n2yaBNt8amuX1tQWGMwsS5M8s20FgaFRTLsm+ghVVJx4JOcPuNsv4zTFcgF7b
+         03rDhADJRn5AxY9LBl3YZznNeI5Wr3s+YuX0u4/UBzv8oz+laR4+clRaua99p5N8F+Pq
+         BdKJV8T++X5eIuZZzeVZM8Q/f9LI3BZZz11p3F0x5G+J/C+zbPKtUSyQwICe6JANLC0q
+         gvNKGBE7djPNQtxJf7vnMMA44xWsfOeQw9gkTQXj0Hktwp5Tqi2+eyZgXacuQYVB6Ngr
+         DoNEd8rwZOJSNx2vkviUow9sE7gz9DJxodHZ7OSzYK3JUUwz0RTwdSEW3WnCGiejeDyD
+         8ggg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmzCX61+sa35LL8raoBvbJcWhshYcHO+zZJQmOavm2ntEMl9OdpZlg0opZNuED78iwqK3zV1JYXS1oCoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUojlJ3tyA2xnhTbyLOlCw8FZ0zFZXT3H2gjcV9yJ8bN9bMRky
+	8q2DRbiWZ+HONjQDu8lH1iK2WAqhj2tYm6NmXyj6Qu7ctpJHlfMeZs1te7SjN7Auv/slBULXbF0
+	lp+uKlCgOgCpra7EaiiCcvskJ//GMRJit
+X-Gm-Gg: ASbGncsct2V8SMlBeHE+34M8qSnL2BofBOBJF6R5cQt375TrJqzHHtCsL9S5OOT33jy
+	Fgq6LqDzHtsWdqHF0eNqr6hnf4wThZ5Q80ImN/7KMbp6FICCvUTSAbSLN6tR8q3NCsjRv81+D
+X-Google-Smtp-Source: AGHT+IGDmDaemoeZfMeIUnkaZyc8p3ts9pgGPm4BMDfRwRIGcfPCqXQEOelUoI+XwIc4D/xg+4rdj4ZLSWD9udHVlGo=
+X-Received: by 2002:a05:6000:184e:b0:38f:227e:6ff2 with SMTP id
+ ffacd0b85a97d-38f33f1c711mr1918249f8f.14.1739588664456; Fri, 14 Feb 2025
+ 19:04:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213054222.21776-1-alexs@kernel.org> <20250213054222.21776-2-alexs@kernel.org>
- <5d35c3f6-a52f-4e63-a972-50ee2898947e@linux.dev> <CAD-N9QXhmNBUFPfo11-h0H0Du_JFNX_Qxcs8aoesW8=ABgneaw@mail.gmail.com>
- <CAJy-AmmZAuZWUS5TTuSGg5y33Q7Q52CGQ7en5vg_eB2W2y_s9Q@mail.gmail.com>
- <CAD-N9QXRjr3yVtyucRbRJqXcJy0JwR=UhcNoHPbs3MQ2JcGKdg@mail.gmail.com> <87bjv4zfsx.fsf@trenco.lwn.net>
-In-Reply-To: <87bjv4zfsx.fsf@trenco.lwn.net>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Sat, 15 Feb 2025 11:00:55 +0800
-X-Gm-Features: AWEUYZkBodELibF3aDkTVu_Y4y9XuvcTqtZyJc58hZ-Em56EeadVnXiuBJhnnvU
-Message-ID: <CAD-N9QXn5m=9xWaAwrex+ahDayArWejXQjm03JkqqNiYMWfieg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] docs/zh_CN: add few request for Chinese translation
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Alex Shi <seakeel@gmail.com>, Yanteng Si <si.yanteng@linux.dev>, alexs@kernel.org, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <cover.1738888641.git.yepeilin@google.com> <d03d8c3305e311c6cb29924119b5eecae8370bbc.1738888641.git.yepeilin@google.com>
+ <CAADnVQ+L0h8qXfYkC3+ORyQkXFJ2MgO8FDHr_Ha0QMAtS_ujag@mail.gmail.com>
+ <Z6gRHDLfA7cjnlSn@google.com> <CAADnVQLkHA9LGv99k2TZOJEGUU=dw=q6nVurJ=aoh0v6cFS6zQ@mail.gmail.com>
+ <Z6qC303CzfUMN8nV@google.com> <Z60dO2sV6VIVNE6t@google.com>
+ <CAADnVQ+OyoBPOJk6dcUFozTt0RD-o-hHdR4Dgy+dK2r0uHyC7Q@mail.gmail.com>
+ <Z63aX0Tv_zdw8LOQ@google.com> <Z6_9LgfOMeR18HGe@google.com>
+In-Reply-To: <Z6_9LgfOMeR18HGe@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 14 Feb 2025 19:04:13 -0800
+X-Gm-Features: AWEUYZmlNFZtUB1WliSaQIbmQErfRpNsKDqUO-NqyAwWdkRImN9BdvQxTrZQ4H4
+Message-ID: <CAADnVQKZ=pjXjyzB8tJj5Gen4odcj5H5JhXyRtVgphTEDCisTg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 4/9] bpf: Introduce load-acquire and
+ store-release instructions
+To: Peilin Ye <yepeilin@google.com>
+Cc: bpf <bpf@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	David Vernet <void@manifault.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
+	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
+	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 11:50=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> w=
-rote:
+On Fri, Feb 14, 2025 at 6:34=E2=80=AFPM Peilin Ye <yepeilin@google.com> wro=
+te:
 >
-> Dongliang Mu <mudongliangabcd@gmail.com> writes:
+> > On Wed, Feb 12, 2025 at 09:55:43PM -0800, Alexei Starovoitov wrote:
+> > > How about:
+> > > #define BPF_LOAD_ACQ 2
+> > > #define BPF_STORE_REL 3
+> > >
+> > > and only use them with BPF_MOV like
+> > >
+> > > imm =3D BPF_MOV | BPF_LOAD_ACQ - is actual load acquire
+> > > imm =3D BPF_MOV | BPF_STORE_REL - release
 >
-> > It takes quite a bit of time to finish running `make htmldocs`. Grab a
-> > coffee and relax while you wait!
+> Based on everything discussed, should we proceed with the above
+> suggestion?  Specifically:
 >
-> If you have not updated to latest Sphinx (8.1.3, say), you should do so.
-> The Sphinx developers fixed a big performance problem, and it's much
-> faster.  Not as much relaxation possible as once was...:)
+>   #define BPF_LD_ST     BPF_MOV /* 0xb0 */
 
-Really good news. Let me upgrade my Sphinx.
+The aliasing still bothers me.
+I hated doing it when going from cBPF to eBPF,
+but we only had 8-bit to work with.
+Here we have 32-bit.
+Aliases make disassemblers trickier, since value no longer
+translates to string as-is. It depends on the context.
+There is probably no use for BPF_MOV operation in atomic
+context, but by reusing BPF_ADD, BPF_XOR, etc in atomic
+we signed up ourselves for all of alu ops.
+That's why BPF_XCHG and BPF_CMPXCHG are outside
+of alu op range.
 
-Thanks.
+So my preference is to do:
+#define BPF_LOAD_ACQ 0x100
+#define BPF_STORE_REL 0x110
+#define BPF_CMPWAIT_RELAXED   0x120
 
-Dongliang Mu
-
->
-> jon
+and keep growing it.
+We burn the first nibble, but so be it.
 
