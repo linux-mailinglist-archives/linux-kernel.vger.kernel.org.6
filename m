@@ -1,137 +1,137 @@
-Return-Path: <linux-kernel+bounces-516165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C878DA36D89
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:01:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4041CA36D8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 12:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D92C188A4F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B796D188C1A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 11:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E0D1A304A;
-	Sat, 15 Feb 2025 11:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6101AAA1A;
+	Sat, 15 Feb 2025 11:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="a8Xp3lXf"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ce1mR6Mp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30BD70824;
-	Sat, 15 Feb 2025 11:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D63192D97;
+	Sat, 15 Feb 2025 11:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739617267; cv=none; b=qZRYUZBB7FPM7+XxV0QCM25itjwCZgieCeuw7tGfrQYAnZOUWACgELhexOyq4g6a/k3siFvNBuLMVBFcVy10llmh9l1MpGx6HBML7TtxTLnEG190zfGc+dcSgWvLR6AYdPcIuPTxQlAp656gVLgMfhdoGPyCEU69lGaiqzx5tZg=
+	t=1739617270; cv=none; b=hX/5Q2mzWI0NZreuuWXbumDY0OxMk2/y5O49QK6/e6dEg9YSw9QqHCbzYtgJFd8GnKs3abTtlzImG9qb/UNp6bZc+/Dk9jBw2sxdOahbYhPYqR4B31hAt70rZfhYML36tuUqYVNvqsNxUL/28uOpOgLSs+iQ2PaqU314Z+eD4dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739617267; c=relaxed/simple;
-	bh=taUL8GvzEIHC87/SEVJl/tjSqqcyWj5N2NeN6/rEVG4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tb6YTGr+I23oh8Wc7+U54aELVvLc85y0x1qnreTRPklfH/Nd7zHqA4ar0Uyj+QJSQ9iJFfr2FV17obF5NlHC/NeffgUW7QgrTWnx11zn//3kvlvUZXbYF8pLeg9JDTBm/mGFkKRz6CGvtnkRqwlyZ1O25a4bYzZMR5SjIPBsByg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=a8Xp3lXf; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739617237; x=1740222037; i=markus.elfring@web.de;
-	bh=lwlOpS/PngUjZo7c6ftmB0Rq3lhMukkPp4s5og7vFrs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=a8Xp3lXfz1eCB64IfdUNs2agY4JJhHHboa4RDHsub3kfeQL8BwlziQDS49kW2EM8
-	 Ut7iUkec1S0puZ1L11C/Jvbrf6ZX5lyxZrvU5qzSMNntwRHLjVjD5PJ7+wrpioMKU
-	 +eIn3JGhQdKCW/R0dV/RONXbXN6c34IaocOBW3yfyTVXzCH2LKXnSmVlYiBUyvocW
-	 DY7GAeTx+hiZsOscaNmtLELRIjlWBmIqPsLeQZT86wJ17BwY4qMU4+5OIt5ZKNbCE
-	 Kcf6zduj7xSpr3qPuRCZ1q+usLE97dduAwBvJSgH8Y1uFpzuUrgmTMpiusEAkbP+A
-	 nhRUquMDOfn2HnGRqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.21]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnX17-1t2jtg18In-00c4v5; Sat, 15
- Feb 2025 12:00:37 +0100
-Message-ID: <98327a4d-7684-4908-9d67-5dfcaa229ae1@web.de>
-Date: Sat, 15 Feb 2025 12:00:34 +0100
+	s=arc-20240116; t=1739617270; c=relaxed/simple;
+	bh=dJMXZjkxRnJGqf19Krt1G2+pubbDJ/b6B23F0R9noN0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=J3E2qsXJK1wwCEpB7KGJEzlQ3K82o1T3XmSdZKewIFdFJ1cBFXir+64tfSJZQBdtBJvdTOU0/wv8Z1fjSqR99BJQR2s81qsh47qZLgW7X3lvChN12hh2LDt0ZxMIOzQA61bSHR+GWYqsvcw4NMenKUrxXhQwBQHd9a3FHLvH3ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ce1mR6Mp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=PPMcrClHGwldmJKxzwOU3qelWLajHsspzH8nTkIQ1mI=; b=ce1mR6Mp+Xi3xZCOGFxNUNkzVo
+	udkQJfg8zsBfbiBObS3VksNYNY/AFsdK5K9x/8C7LJz7sxUnLOnM5bEjjbwJiF9f44WaQzmQHiauD
+	HXHErR6YqiQV9Dj4Qq86U/s22uP7Hde3B1mN4eGV4/lba9UhtMKekn4Nz/TIU2vyjcr35lUETIiHQ
+	tQ5VfQHVoEXfV34i9TiVNvGcInzOEs1/MC/gsXlVHiofBcv7Ac+W3Zz4mrL4XdK9RO0saYbH8Vlot
+	rgJLeOu8cftYUgoBOF0jz+hmIlIveYyqTZ63FX8HXSbNqpStyyc+RTBfIvgzj5JanAfN9RqheauZj
+	s88XKhSQ==;
+Received: from [31.94.24.172] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tjFut-00000001REG-28sK;
+	Sat, 15 Feb 2025 11:01:00 +0000
+Date: Sat, 15 Feb 2025 12:00:54 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Paul Durrant <paul@xen.org>
+CC: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Joao Martins <joao.m.martins@oracle.com>,
+ David Woodhouse <dwmw@amazon.co.uk>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/5=5D_KVM=3A_x86/xen=3A_Restrict_?=
+ =?US-ASCII?Q?hypercall_MSR_to_unofficial_synthetic_range?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250215011437.1203084-2-seanjc@google.com>
+References: <20250215011437.1203084-1-seanjc@google.com> <20250215011437.1203084-2-seanjc@google.com>
+Message-ID: <DC438DC0-CC4B-4EE2-ABA8-8E0F9D15DD46@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
- Dave Jiang <dave.jiang@intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
- Nikhil Rao <nikhil.rao@intel.com>
-References: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
-Subject: Re: [PATCH v2 1/7] dmaengine: idxd: fix memory leak in error handling
- path of idxd_setup_wqs()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:y4YNU/Ldfti/nNnkoM/15BDbsFCs0cpuJFILpvgO2iZi9lC3w96
- J0B14dMNa6nIy6pyg5xbGHX5uzvIuNkmkwwVLQBioR01OXg/SHUklYw0aAItAKe846kyIzs
- 9UXGflXNqmqoq5UjTpbn2hHzZB3cFeC4Fr1XJt7+lYcmFtp8EerUiMcjFu4wGNh1hvWpo1Y
- i4VUNKl2bhyi1ZCuEef8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mw6Mo6hEnY4=;BlRHP++aeom6XB14pE33vK0tv78
- YdcyjUy8EMcHdetlEn1Nnnmu22p4CsHHWltG8XdLvZrTCSACwpEiEzYlRrsV1DUmhpCvLQmOz
- vP782XXYs/ncg/e2wBCuhwjzLC8XYr/96e3KUUvFJ7YWU1NAJKjUXTrdjydKBQCS5b44T1Dce
- 7KwblP/D1ukvXM/CRanj5Kyllu/Yrek6LcWHrOc8aFFFN7QvVbFDNXOiLQLpU5VuI7vV9E+ae
- 7HC6cWvxOOq8yp37XS7LW71QGjuwLESh2tS+Ml9UOtWCVnRQXWazdxrM+SWYCQhM12PsYQ+T1
- YY1rugZyWED9t02UsG/f6DCcie0UQlxNsykKPW55GPtv0Zj9UYDda6jwRQ01OnNs0scY3+4hl
- MtMm/lasmUpVrUBf9m7sEpmbRWKaz4XnpIgJpkRKUxi7mTWvl7+4GmuxjQQy8tElv0eofQPBL
- xUaoIgKyS5fCw8L6Lv0bqhVw02w5DDATY5ol23l8ZE6wnhHt0yErm3aHUA8b6i9778bEOXjiu
- pQ5b3BMVrgskfUgJKrYkbWgNfyggwiU3SZcwqMM1bIRUPBowTFkq/1LHLNDIMgxJQeqE1zdRN
- xuigqgevx1FrjyQ6NaQIIw7ofl70atYJJP732N3h6ldmldYWPs2wZ1v9y4ScfsSQzxra7uyPy
- VRY6w/7EkWZY3+mhFh3v/0/n1hW9TV+IXAxfCUXXl7VTltsB201JUGUasNn9Q9iV/xf2UU3b2
- pcDjvPXLmSdvLp3iHyDcjXG2Q9OMSflWS7yPNHhC/ARKp2xMt01BlDxQnpGWRDqlNpiaUiz5Y
- zoKow4EoPUjcHjjH7VrU7232+r3QHdUMOl+ZL4vm6ZNgewVIr9FZO9vB4PKYxmKSyWZu5shXW
- nSuR4EJIAZv8zhQDcS9iNCyHwUmtEjWch/T50HDhhGTj0C3fow0/y467hN3FP/LGJsCwLdDwc
- Pm/FCmbUkDHrEUVVUg8HmYLapiBUzwiiSmhVsAdFtIqia/IMC5Y3ELvwXUn8PcIlmCgXr664Z
- LreME/I0aFITjOhHhBEYKRFUfpzlWxi4yvVznK4OlSk1cs0opTxfHwGrbqa2qANy7fAC6HLim
- RJ1pIKGci+LdNy6pZNJjkvkoAVVnkJQdqvGXK/5Xnf9/W31Jhg0Sxlf7gaGTDfrR5IKNjBLe0
- dQKcXtoTeAUvkMD7Xf5tQLgPLJgz4rXKSB5sbTFVHXYqE+ET9AXVYlmpBulcOOMSkHKtAPJPZ
- jvPR8ilY+6vzkVW738eTHTnMC8k3I3p9HIuuHOLMGSH6y4GTygplsKS6fGJovOWYHiICeoz+Y
- m8dmMnKIqTHwtNgVtxAFOROSXjK4lxDAf9SKdtrNXafJZMwCEQL9llX5A1Q7XOLD3oGbRhJMh
- MlpKvlVVQkOdrI/vFP7eGGertta6N22X8a24UMkv7QredWOPtro9znaUFW+SJRxKL2Sic2yS3
- xrmAelA==
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-> Memory allocated for wqs is not freed if an error occurs during
-> idxd_setup_wqs(). To fix it, free the allocated memory in the reverse
-> order of allocation before exiting the function in case of an error.
+On 15 February 2025 02:14:33 CET, Sean Christopherson <seanjc@google=2Ecom>=
+ wrote:
+>Reject userspace attempts to set the Xen hypercall page MSR to an index
+>outside of the "standard" virtualization range [0x40000000, 0x4fffffff],
+>as KVM is not equipped to handle collisions with real MSRs, e=2Eg=2E KVM
+>doesn't update MSR interception, conflicts with VMCS/VMCB fields, special
+>case writes in KVM, etc=2E
 >
-> Fixes: a8563a33a5e2 ("dmanegine: idxd: reformat opcap output to match bi=
-tmap_parse() input")
-=E2=80=A6
+>While the MSR index isn't strictly ABI, i=2Ee=2E can theoretically float =
+to
+>any value, in practice no known VMM sets the MSR index to anything other
+>than 0x40000000 or 0x40000200=2E
+>
+>Cc: Joao Martins <joao=2Em=2Emartins@oracle=2Ecom>
+>Reviewed-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>Reviewed-by: Paul Durrant <paul@xen=2Eorg>
+>Signed-off-by: Sean Christopherson <seanjc@google=2Ecom>
+>---
+> arch/x86/include/uapi/asm/kvm=2Eh | 3 +++
+> arch/x86/kvm/xen=2Ec              | 9 +++++++++
+> 2 files changed, 12 insertions(+)
+>
+>diff --git a/arch/x86/include/uapi/asm/kvm=2Eh b/arch/x86/include/uapi/as=
+m/kvm=2Eh
+>index 9e75da97bce0=2E=2E460306b35a4b 100644
+>--- a/arch/x86/include/uapi/asm/kvm=2Eh
+>+++ b/arch/x86/include/uapi/asm/kvm=2Eh
+>@@ -559,6 +559,9 @@ struct kvm_x86_mce {
+> #define KVM_XEN_HVM_CONFIG_PVCLOCK_TSC_UNSTABLE	(1 << 7)
+> #define KVM_XEN_HVM_CONFIG_SHARED_INFO_HVA	(1 << 8)
+>=20
+>+#define KVM_XEN_MSR_MIN_INDEX			0x40000000u
+>+#define KVM_XEN_MSR_MAX_INDEX			0x4fffffffu
+>+
+> struct kvm_xen_hvm_config {
+> 	__u32 flags;
+> 	__u32 msr;
+>diff --git a/arch/x86/kvm/xen=2Ec b/arch/x86/kvm/xen=2Ec
+>index a909b817b9c0=2E=2E5b94825001a7 100644
+>--- a/arch/x86/kvm/xen=2Ec
+>+++ b/arch/x86/kvm/xen=2Ec
+>@@ -1324,6 +1324,15 @@ int kvm_xen_hvm_config(struct kvm *kvm, struct kvm=
+_xen_hvm_config *xhc)
+> 	     xhc->blob_size_32 || xhc->blob_size_64))
+> 		return -EINVAL;
+>=20
+>+	/*
+>+	 * Restrict the MSR to the range that is unofficially reserved for
+>+	 * synthetic, virtualization-defined MSRs, e=2Eg=2E to prevent confusin=
+g
+>+	 * KVM by colliding with a real MSR that requires special handling=2E
+>+	 */
+>+	if (xhc->msr &&
+>+	    (xhc->msr < KVM_XEN_MSR_MIN_INDEX || xhc->msr > KVM_XEN_MSR_MAX_IND=
+EX))
+>+		return -EINVAL;
+>+
+> 	mutex_lock(&kvm->arch=2Exen=2Exen_lock);
+>=20
+> 	if (xhc->msr && !kvm->arch=2Exen_hvm_config=2Emsr)
 
-Will a =E2=80=9Cstable tag=E2=80=9D become relevant also for this patch se=
-ries?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/stable-kernel-rules.rst?h=3Dv6.14-rc2#n3
+I'd still like to restrict this to ensure it doesn't collide with MSRs tha=
+t KVM expects to emulate=2E But that can be a separate patch, as discussed=
+=2E
 
-
-> +++ b/drivers/dma/idxd/init.c
-> @@ -169,8 +169,8 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
-=E2=80=A6
-> @@ -204,6 +205,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->  		wq->wqcfg =3D kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(=
-dev));
->  		if (!wq->wqcfg) {
->  			put_device(conf_dev);
-> +			kfree(wq);
->  			rc =3D -ENOMEM;
->  			goto err;
->  		}
-=E2=80=A6
-
-I got the impression that more common exception handling code could be mov=
-ed
-to additional jump targets at the end of such function implementations.
-Will further adjustment opportunities be taken into account for
-the affected resource management?
-
-Regards,
-Markus
+This patch should probably have a docs update too=2E
 
