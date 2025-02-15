@@ -1,492 +1,234 @@
-Return-Path: <linux-kernel+bounces-516219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F331AA36E4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50378A36E50
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 14:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DB863ABCE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1223AE7E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 13:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D451C84A3;
-	Sat, 15 Feb 2025 13:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35FE1C701C;
+	Sat, 15 Feb 2025 13:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B72rRaci"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKPFFvM2"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A34623;
-	Sat, 15 Feb 2025 13:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F39A1C862A
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 13:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739624517; cv=none; b=gRnjCKMtAS5dtsw3taFkwId++FsTqt6rEPKYVi32cKCSXTQg9JStJwfMgFGgKYRwSFXC4VdtYdCZPf7o+QrbTMokTP0Ot6TZPCj9XOSaYUmQzKjIxjah3yUPYVQ0NE/k3KmjPPjQx6jq1QUIS+FD1LsRICI31yZ7Tx3KxCnHYUk=
+	t=1739624525; cv=none; b=S7ULzUPbDssCGoO+iRcJdzDCdWlmegRb6ClVCi7kHg2B0/ZFmg03zaHJVTd5qxDUCbnJkY85ixYzhrsJdCDVXTDXyeo855OGuE6OmnJZGZknH2DmygfGYXei0KBi6hD29ksm35lHvazH/mJvHifIFX5l1NKGVpMODOnmC8tZpZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739624517; c=relaxed/simple;
-	bh=yLJ2xFGq8f/gfg6NkwwjwmCBmrRbjJ1xnr113KsNsVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ei4jOWvrcfpfafz2ftJGMoHQI14TlKWbvvuQPze820uN/2NqmIMNfNtB2Xa0vNMaH7vLdciKCmpmzUShWP407X2sCv99VGuk/0jttiLBU8TgFNxSjp6IGS1cYbIWaS3zz4MvMzCCbpiW5he3d1XzeLqU9TrSNTOet/6qG0FwtmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B72rRaci; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5439a6179a7so3026754e87.1;
-        Sat, 15 Feb 2025 05:01:54 -0800 (PST)
+	s=arc-20240116; t=1739624525; c=relaxed/simple;
+	bh=pNpqUiamZ9dzTnpgPJdYJAKOpDBLeZW7fnoSXdVQ0Oc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=onFhNxKFAJmCyxpgWQBFYjHiXZeYsrGTYcnpkkdw6DQBl7bse7+WS8Wog9CQjxcqHB4DJaanv/TIRhAeFxjdRtlQAzHKgkGW3sG+Iw89N54M4mJSz77P0POQfxRwFpEaYBHB5I8vf2FoMsOLmHqJtj6RyKpkCthO2hT+MEtoqhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKPFFvM2; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4395cf61014so2210175e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 05:02:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739624513; x=1740229313; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ozhKsWX3kweoYJQju1+qqAjGdDcPiipwU+Xczk1SZZE=;
-        b=B72rRaci3TSIXrEGsC/e2fPBWJZxurhUhE8V3P4F9f3aQQdbMR2yg/f8oA403SUSfN
-         pMSoM+Z51DzEsGvVZnm/u/ZiRySJBsDEi9Q2GFqnacTCJRxQMRiKHyqQobDiiI/q0OgE
-         o393fHTo0fh5tbIoX7O+WluCm62tcXPtmoz976lPu60D/Gge+sLxjghhoS4fF4gFr0Ky
-         wJU0oOZmzHhPRoNeBflWLMF/5icfMp8mF8t9VYl6LEatFhlHt8gGdV4WDAR+/GErt+SG
-         SI2nMeIOnu6702fpjHm+DuKhyFTFM8GLsazIoTTwqwIHGVA6KjWGMkxHO3XU7WwTflJ4
-         X8Lg==
+        d=linaro.org; s=google; t=1739624521; x=1740229321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=RR/GHUMHBjoRr6SKp1D1VZVvMK6Rk4ChRoLAcy+7yFQ=;
+        b=XKPFFvM2H8umov4k3DcblYrLFytcv64PQqcpIXGIFKZtSxvNFv4VG7Xa/XKGZz/gDe
+         RGC8jdWZRCDpt9Z/EfsW3iQTsa0YN9s4LVPeZQ1ngrMsNCziBXRptREckb8b41Pz2mDy
+         Rr89WdVumDHGCsFWhtOOGYQTb1IewOH81ZedMbCbYSX6s+xYGFugtKHNbwX5feYsU2fD
+         WQ84uv10A+U0MmsKe6b7uRt9tvH0sdUPbIKvFm1wI8PKqvwQZ5v4E/mLUn7e2GCqm8ip
+         oLuviCDL/ZgzaiOWXqVl9wL0HtmdZHf5CA7Vv6/Q4sww+i/tGnXNwUZ7B7dyYgWCpS0p
+         Q4Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739624513; x=1740229313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ozhKsWX3kweoYJQju1+qqAjGdDcPiipwU+Xczk1SZZE=;
-        b=WKIHVHpTKRbCqmZN4tqAEHATQqsUhDJdbD8Pazb8AVPBQ3yWXpHJJG6jE8gPntspql
-         SfGB+MvA6CwKMVHu7unkVbisTmCCE4jSOST0UkZJ009iHscP0hrigMmfxWHDTtYVv291
-         s5c2f/OUJpJ/7W5xamQ4DkgtEaE5THUIpDt1MubfkxcH7E8cDBNpqzLFa9TykKz1vhMB
-         RmYevlREENlYCW51BZuc3YLq9gN8HddYZPv2DtM5SX9YvwCpqKqDWmi0M4qRBo9c9/Wf
-         Mfc00KOdljD+6p9PQQPmlOJiLeOEyI4NOJcokcw0t2O7MqXv3wlP2HACz6zh6QWvR9xN
-         oIVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcC7cejAOT2xuvNpRG6OcB1PTnXOUNrrDA3o9mYu29lY3RpRTS+vV8Cmu+opCkP0wP0dS97yl83TmtxuCteLU=@vger.kernel.org, AJvYcCV24xYcUELo/wP817L1dv5vBRT66m6TwLjPY7Yz4YM0UbZXdBiFQUmp3lTQoxCTexyPDzHrWc6Qny2TbjU=@vger.kernel.org, AJvYcCW4FPWaM20lqQNrJN7LAmAoF+pDdMOEAFLSfCgvT+PLJ+2cI/zYZ0N2lcDdEGmmxbvgQVW6ycA2tj6+HhVo1Zh6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzGT8W3fKAOsUZhqO81KIuwIB8jiw038SI1mUMcn1+7bjgVtWi
-	c50fU10JXKoRNVQNOiD4lD5y0cA+i6K9LiaK5eO+RVQlYOrZX6Km1r3BbW/IE1edD31mg+ccDnr
-	J29GkR8KavThgqMIU/ZQTCYAhGms=
-X-Gm-Gg: ASbGncsD9BXB72D2vmvJA/++JtFUDPSCQhwm7GrRz0uELD4FmW5cttO4zU8qI08p1k8
-	nmDB6xwL2WqC2zkoL/2YducEMuXiji+yihpauzBOxWxS0Ynb7nlnFHC/aEEBYidSeVGf/I8UaTR
-	D2D2yyRQdfXQQ4Ysv1UxSiPfO2JeIdlw==
-X-Google-Smtp-Source: AGHT+IGKVOUfO1mi/BujIz8JVHzz8ieUmXy4eCf+jhg42xu7xOL4QbqHEO0He+TVLlt+CR/i1mw2UYZAGOMLV5lvF+0=
-X-Received: by 2002:a05:6512:3ca1:b0:545:f90:2771 with SMTP id
- 2adb3069b0e04-5451dfc13fcmr3731365e87.3.1739624512703; Sat, 15 Feb 2025
- 05:01:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739624521; x=1740229321;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RR/GHUMHBjoRr6SKp1D1VZVvMK6Rk4ChRoLAcy+7yFQ=;
+        b=j2m3xqcYmRJd3xT4+DqTXag+Jh4NqoE47G40t190oMJMlpRHVj2ber7qAlxLhjx3sK
+         WPrsMFBdsa4TcOCSj1lyA294mUWmCphZ4IlyNPMRFXTNlu7bCqrXZIAEtOekidBppv5Y
+         TE4Xt399kR4ojnldnx/0xM7eGOvERML2xrpMOZ1s/xVsXjnHNzgP2W/tKEoMy9d1jUus
+         t8ZJ7Svpi/Rc9rrxjBxNfxrZBeN6NN6xmiufrffAyrLBlvbrQPba9mhPKXfgDnTp+HHk
+         zCmuP4DPz1x1k2VVBy2RV4tygh8EnZ1/tNPBw1+uFPT0g+dyaANFK6luqKVI6BipFyTD
+         DzhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVppzTChRL8MDaUX5IfjDlr/gXm6sjoEgfhjaMsXVDDY7oqVz0jVGlGad/p/4wr1feDD6xSGGLkGJDn4ow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoJ2wfKvWE9WQPZ5GvKm0DWc8bRj5p7hThX54xkx7dR8lEmiYn
+	Yz0W8RK+V0Es48MQEpFGB6NZMVD6GbfBczkTq9BJ3cq4Kc36omOu3CEbmdpeZwA=
+X-Gm-Gg: ASbGncs7iSmDhss52OgdDBzbpokorJhRpklaeofcl3H5m4cloWjTO5XVPhuhTftw/QR
+	fg4nuqlOCjk313ussKxivz10P9cyNpZoqeIRb30WFgCX1x/TwGlFs4TyKPCoVWXQUBVokKgmzXh
+	wTH5Oahrf4ES6ln2DUi3Dfgn8cB5V/uQQw1ZUN+sLZ38tK7BQm0yw/XvTwtu58VaCbGaIyMJR5s
+	YCJbS3ydecCeiQLfFZRu5qLLMrihJPYKofbAi+6FicVtWEO5L2EdgebFxMfO4R88LEx+OGhrA7e
+	C8UZo0a38K72Ofc49abSlB74Wl2Jy3PGfyo=
+X-Google-Smtp-Source: AGHT+IEkYaev64JoIJX7BjN1Kn2qbNsU34l3xF8cI2UjENhYJNPkz42xyMxJqIrN2wkI3tDlo9ovyA==
+X-Received: by 2002:a05:600c:1d23:b0:434:9cb7:7321 with SMTP id 5b1f17b1804b1-4396e6d8163mr14041935e9.1.1739624521315;
+        Sat, 15 Feb 2025 05:02:01 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396713feccsm45558085e9.39.2025.02.15.05.02.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Feb 2025 05:02:00 -0800 (PST)
+Message-ID: <886cb4b9-9d95-4346-9c38-923cb7c69036@linaro.org>
+Date: Sat, 15 Feb 2025 14:01:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214074051.1619256-1-davidgow@google.com> <20250214074051.1619256-2-davidgow@google.com>
- <CAJ-ks9kw7FTJ7EcHy8B+-1XFK8J4a-DuHLJhP1f3hPy10nOJZA@mail.gmail.com> <CABVgOSkcDPwWEz=Uo0q+HXSeQT4a5yPg8vb4BMkpZ0yyDu4wQA@mail.gmail.com>
-In-Reply-To: <CABVgOSkcDPwWEz=Uo0q+HXSeQT4a5yPg8vb4BMkpZ0yyDu4wQA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 15 Feb 2025 08:01:16 -0500
-X-Gm-Features: AWEUYZkVH7Z7HtHO3XWyE9VdXkKoq077qDEkI6kD3AGCSxCPbfw3nUR0i29ULfQ
-Message-ID: <CAJ-ks9mEocaBAhovLvjFuEPrSipLpOEzKOtJ7uGK5X-TG44QBw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] rust: kunit: add KUnit case and suite macros
-To: David Gow <davidgow@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: kconfig: Mention IS_REACHABLE as way for optional
+ dependency
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+ <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>,
+ linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+References: <20250215114223.140688-1-krzysztof.kozlowski@linaro.org>
+ <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAK7LNATqSPBnGfVXCfJq7oCtE1ge4-L5QY6gVx8_chpmKDQusg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Feb 15, 2025 at 4:03=E2=80=AFAM David Gow <davidgow@google.com> wro=
-te:
->
-> On Fri, 14 Feb 2025 at 22:41, Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > Very excited to see this progress.
-> >
-> > On Fri, Feb 14, 2025 at 2:41=E2=80=AFAM David Gow <davidgow@google.com>=
- wrote:
-> > >
-> > > From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> > >
-> > > Add a couple of Rust const functions and macros to allow to develop
-> > > KUnit tests without relying on generated C code:
-> > >
-> > >  - The `kunit_unsafe_test_suite!` Rust macro is similar to the
-> > >    `kunit_test_suite` C macro. It requires a NULL-terminated array of
-> > >    test cases (see below).
-> > >  - The `kunit_case` Rust function is similar to the `KUNIT_CASE` C ma=
-cro.
-> > >    It generates as case from the name and function.
-> > >  - The `kunit_case_null` Rust function generates a NULL test case, wh=
-ich
-> > >    is to be used as delimiter in `kunit_test_suite!`.
-> > >
-> > > While these functions and macros can be used on their own, a future
-> > > patch will introduce another macro to create KUnit tests using a
-> > > user-space like syntax.
-> > >
-> > > Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> > > Co-developed-by: Matt Gilbride <mattgilbride@google.com>
-> > > Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> > > Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-> > > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> > > Co-developed-by: David Gow <davidgow@google.com>
-> > > Signed-off-by: David Gow <davidgow@google.com>
-> > > ---
-> > >
-> > > Changes since v5:
-> > > https://lore.kernel.org/all/20241213081035.2069066-2-davidgow@google.=
-com/
-> > > - Rebased against 6.14-rc1
-> > > - Several documentation touch-ups, including noting that the example
-> > >   test function need not be unsafe. (Thanks, Miguel)
-> > > - Remove the need for static_mut_refs, by using core::addr_of_mut!()
-> > >   combined with a cast. (Thanks, Miguel)
-> > >   - While this should also avoid the need for const_mut_refs, it seem=
-s
-> > >     to have been enabled for other users anyway.
-> > > - Use ::kernel::ffi::c_char for C strings, rather than i8 directly.
-> > >   (Thanks, Miguel)
-> > >
-> > > Changes since v4:
-> > > https://lore.kernel.org/linux-kselftest/20241101064505.3820737-2-davi=
-dgow@google.com/
-> > > - Rebased against 6.13-rc1
-> > > - Allowed an unused_unsafe warning after the behaviour of addr_of_mut=
-!()
-> > >   changed in Rust 1.82. (Thanks Boqun, Miguel)
-> > > - Fix a couple of minor rustfmt issues which were triggering checkpat=
-ch
-> > >   warnings.
-> > >
-> > > Changes since v3:
-> > > https://lore.kernel.org/linux-kselftest/20241030045719.3085147-4-davi=
-dgow@google.com/
-> > > - The kunit_unsafe_test_suite!() macro now panic!s if the suite name =
-is
-> > >   too long, triggering a compile error. (Thanks, Alice!)
-> > >
-> > > Changes since v2:
-> > > https://lore.kernel.org/linux-kselftest/20241029092422.2884505-2-davi=
-dgow@google.com/
-> > > - The kunit_unsafe_test_suite!() macro will truncate the name of the
-> > >   suite if it is too long. (Thanks Alice!)
-> > > - We no longer needlessly use UnsafeCell<> in
-> > >   kunit_unsafe_test_suite!(). (Thanks Alice!)
-> > >
-> > > Changes since v1:
-> > > https://lore.kernel.org/lkml/20230720-rustbind-v1-1-c80db349e3b5@goog=
-le.com/
-> > > - Rebase on top of rust-next
-> > > - As a result, KUnit attributes are new set. These are hardcoded to t=
-he
-> > >   defaults of "normal" speed and no module name.
-> > > - Split the kunit_case!() macro into two const functions, kunit_case(=
-)
-> > >   and kunit_case_null() (for the NULL terminator).
-> > >
-> > > ---
-> > >  rust/kernel/kunit.rs | 121 +++++++++++++++++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 121 insertions(+)
-> > >
-> > > diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> > > index 824da0e9738a..d34a92075174 100644
-> > > --- a/rust/kernel/kunit.rs
-> > > +++ b/rust/kernel/kunit.rs
-> > > @@ -161,3 +161,124 @@ macro_rules! kunit_assert_eq {
-> > >          $crate::kunit_assert!($name, $file, $diff, $left =3D=3D $rig=
-ht);
-> > >      }};
-> > >  }
-> > > +
-> > > +/// Represents an individual test case.
-> > > +///
-> > > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated l=
-ist of valid test cases.
-> > > +/// Use `kunit_case_null` to generate such a delimiter.
-> >
-> > Can both of these be linkified? [`kunit_unsafe_test_suite!`] and
-> > [`kunit_case_null`]. There are more instances below.
-> >
->
-> I've done this here. I've not linkified absolutely everything, but the
-> most obvious/prominent ones should be done.
->
-> > > +#[doc(hidden)]
-> > > +pub const fn kunit_case(
-> > > +    name: &'static kernel::str::CStr,
-> > > +    run_case: unsafe extern "C" fn(*mut kernel::bindings::kunit),
-> > > +) -> kernel::bindings::kunit_case {
-> > > +    kernel::bindings::kunit_case {
-> > > +        run_case: Some(run_case),
-> > > +        name: name.as_char_ptr(),
-> > > +        attr: kernel::bindings::kunit_attributes {
-> > > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
-> > > +        },
-> > > +        generate_params: None,
-> > > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
-> > > +        module_name: core::ptr::null_mut(),
-> > > +        log: core::ptr::null_mut(),
-> >
-> > These members, after `name`, can be spelled `..kunit_case_null()` to
-> > avoid some repetition.
->
-> I'm going to leave this as-is, as logically, the NULL terminator case
-> and the 'default' case are two different things (even if, in practice,
-> they have the same values). And personally, I find it clearer to have
-> them more explicitly set here for now.
->
-> It is a nice thought, though, so I reserve the right to change my mind
-> in the future. :-)
->
-> > > +    }
-> > > +}
-> > > +
-> > > +/// Represents the NULL test case delimiter.
-> > > +///
-> > > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated l=
-ist of test cases. This
-> > > +/// function returns such a delimiter.
-> > > +#[doc(hidden)]
-> > > +pub const fn kunit_case_null() -> kernel::bindings::kunit_case {
-> > > +    kernel::bindings::kunit_case {
-> > > +        run_case: None,
-> > > +        name: core::ptr::null_mut(),
-> > > +        generate_params: None,
-> > > +        attr: kernel::bindings::kunit_attributes {
-> > > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
-> > > +        },
-> > > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
-> > > +        module_name: core::ptr::null_mut(),
-> > > +        log: core::ptr::null_mut(),
-> > > +    }
-> > > +}
-> > > +
-> > > +/// Registers a KUnit test suite.
-> > > +///
-> > > +/// # Safety
-> > > +///
-> > > +/// `test_cases` must be a NULL terminated array of valid test cases=
-.
-> > > +///
-> > > +/// # Examples
-> > > +///
-> > > +/// ```ignore
-> > > +/// extern "C" fn test_fn(_test: *mut kernel::bindings::kunit) {
-> > > +///     let actual =3D 1 + 1;
-> > > +///     let expected =3D 2;
-> > > +///     assert_eq!(actual, expected);
-> > > +/// }
-> > > +///
-> > > +/// static mut KUNIT_TEST_CASES: [kernel::bindings::kunit_case; 2] =
-=3D [
-> > > +///     kernel::kunit::kunit_case(kernel::c_str!("name"), test_fn),
-> > > +///     kernel::kunit::kunit_case_null(),
-> > > +/// ];
-> > > +/// kernel::kunit_unsafe_test_suite!(suite_name, KUNIT_TEST_CASES);
-> > > +/// ```
-> > > +#[doc(hidden)]
-> > > +#[macro_export]
-> > > +macro_rules! kunit_unsafe_test_suite {
-> > > +    ($name:ident, $test_cases:ident) =3D> {
-> > > +        const _: () =3D {
-> > > +            const KUNIT_TEST_SUITE_NAME: [::kernel::ffi::c_char; 256=
-] =3D {
-> > > +                let name_u8 =3D ::core::stringify!($name).as_bytes()=
-;
-> >
-> > This can be a little simpler:
-> >
-> > let name =3D $crate::c_str!(::core::stringify!($name)).as_bytes_with_nu=
-l();
-> >
->
-> I'm not sure this ends up being much simpler: it makes it (possible?,
-> obvious?) to get rid of the cast below, but we don't actually need to
-> copy the null byte at the end, so it seems wasteful to bother.
->
-> So after playing around both ways, I think this is probably best.
+On 15/02/2025 13:54, Masahiro Yamada wrote:
+> On Sat, Feb 15, 2025 at 8:42 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> Several drivers express optional Kconfig dependency with FOO || !FOO,
+>> but for many choices this is neither suitable (lack of stubs for !FOO
+>> like in HWMON) nor really needed and driver can be built in even if FOO
+>> is the module.  This is achieved with IS_REACHABLE, so provide cross
+>> reference to it.
+>>
+>> Cc: Masahiro Yamada <masahiroy@kernel.org>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  Documentation/kbuild/kconfig-language.rst | 13 ++++++++++---
+>>  1 file changed, 10 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
+>> index 2619fdf56e68..66248294a552 100644
+>> --- a/Documentation/kbuild/kconfig-language.rst
+>> +++ b/Documentation/kbuild/kconfig-language.rst
+>> @@ -194,6 +194,8 @@ applicable everywhere (see syntax).
+>>    ability to hook into a secondary subsystem while allowing the user to
+>>    configure that subsystem out without also having to unset these drivers.
+>>
+>> +.. _is_reachable:
+> 
+> Instead of this, could you move this hunk below ?
+> 
 
-If you don't want to copy the null byte, you can s/as_bytes_with_nul/as_byt=
-es.
+Ack
 
-The main thing is that `as` casts in Rust are a rare instance of
-unchecked coercion in the language, so I encourage folks to avoid
-them. The rest I don't feel strongly about.
+> 
+> 
+> 
+> 
+>>    Note: If the combination of FOO=y and BAZ=m causes a link error,
+>>    you can guard the function call with IS_REACHABLE()::
+>>
+>> @@ -580,10 +582,15 @@ Some drivers are able to optionally use a feature from another module
+>>  or build cleanly with that module disabled, but cause a link failure
+>>  when trying to use that loadable module from a built-in driver.
+>>
+>> -The most common way to express this optional dependency in Kconfig logic
+>> -uses the slightly counterintuitive::
+>> +There are two ways to express this optional dependency:
+>>
+>> -  config FOO
+>> +1. If pre-processor can discard entire optional code or module FOO does not
+>> +   provide !FOO stubs then in the C code :ref:`IS_REACHABLE<is_reachable>`
+> 
+> Instead of the link, please move the code example at line 200 to here.
+> 
+> The note at line 197 is not strongly related to the 'imply' keyword.
+> 
+> 
+> One more thing, please document the drawback of IS_REACHABLE.
 
-> > > +                let mut ret =3D [0; 256];
-> > > +
-> > > +                if name_u8.len() > 255 {
-> > > +                    panic!(concat!(
-> > > +                        "The test suite name `",
-> > > +                        ::core::stringify!($name),
-> > > +                        "` exceeds the maximum length of 255 bytes."
-> > > +                    ));
-> > > +                }
-> > > +
-> > > +                let mut i =3D 0;
-> > > +                while i < name_u8.len() {
-> > > +                    ret[i] =3D name_u8[i] as ::kernel::ffi::c_char;
-> > > +                    i +=3D 1;
-> > > +                }
-> >
-> > I'd suggest `ret[..name.len()].copy_from_slice(name)` but
-> > `copy_from_slice` isn't `const`. This can stay the same with the
-> > now-unnecessary cast removed, or it can be the body of
-> > `copy_from_slice`:
-> >
-> >                 // SAFETY: `name` is valid for `name.len()` elements
-> > by definition, and `ret` was
-> >                 // checked to be at least as large as `name`. The
-> > buffers are statically know to not
-> >                 // overlap.
-> >                 unsafe {
-> >                     ::core::ptr::copy_nonoverlapping(name.as_ptr(),
-> > ret.as_mut_ptr(), name.len());
-> >
-> >                 }
-> >
->
-> I think I'll keep this as the loop for now, as that's more obvious to
-> me, and avoids the extra unsafe block.
->
-> If copy_from_slice ends up working in a const context, we can consider
-> that later (though, personally, I still find the loop easier to
-> understand).
->
-> > > +
-> > > +                ret
-> > > +            };
-> > > +
-> > > +            #[allow(unused_unsafe)]
-> > > +            static mut KUNIT_TEST_SUITE: ::kernel::bindings::kunit_s=
-uite =3D
-> > > +                ::kernel::bindings::kunit_suite {
-> > > +                    name: KUNIT_TEST_SUITE_NAME,
-> > > +                    // SAFETY: User is expected to pass a correct `t=
-est_cases`, given the safety
-> > > +                    // precondition; hence this macro named `unsafe`=
-.
-> > > +                    test_cases: unsafe {
-> > > +                        ::core::ptr::addr_of_mut!($test_cases)
-> > > +                            .cast::<::kernel::bindings::kunit_case>(=
-)
-> > > +                    },
-> >
-> > This safety comment seems to be referring to the safety of
-> > `addr_of_mut!` but this was just a compiler limitation until Rust
-> > 1.82, right? Same thing below on `KUNIT_TEST_SUITE_ENTRY`.
-> >
->
-> Yeah, this comment was originally written prior to 1.82 existing.
->
-> But I think we probably should keep the safety comment here anyway, as
-> -- if I understand it -- 1.82 only makes this safe if $test_cases is
-> static, so it's still worth documenting the preconditions here.
+Ack
 
-I don't think the safety guarantees changed. In the Rust 1.82 release notes=
-:
+> 
+> It is true that IS_REACHABLE() resolves the link error, but we
+> will end up with run-time debugging.
+> 
+> foo_init()
+> {
+>         if (IS_REACHABLE(CONFIG_BAZ))
+>                 baz_register(&foo);
+>         ...
+> }
+> 
+> Even if CONFIG_BAZ is enabled, baz_register() may get discarded.
 
-> In an expression context, STATIC_MUT and EXTERN_STATIC are place expressi=
-ons. Previously, the compiler's safety checks were not aware that the raw r=
-ef operator did not actually affect the operand's place, treating it as a p=
-ossible read or write to a pointer. No unsafety is actually present, howeve=
-r, as it just creates a pointer.
+Hm, why would that happen? For compiler this would be "if(true)", so
+what case would lead to discarding?
 
-https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-addressing-un=
-safe-statics
+> Users may scratch their head why baz_register() does not work.
+> Due to this reason, IS_REACHABLE() tends to be avoided.
 
-That's why I flagged this; the SAFETY comment is not actually correct.
+I would rather say IS_REACHABLE should be avoided if someone really
+wants to document the dependency, not optional feature.
 
-> If we eventually stop supporting rust < 1.82, though, I'd be happy to
-> remove the unsafe and thereby enforce the use of this macro only on
-> statics at compile time.
->
-> > Can we also narrow the `#[allow]`? This seems to work:
-> >
-> >                     #[allow(unused_unsafe)]
-> >                     // SAFETY: ...
-> >                     test_cases: unsafe {
-> >                         ::core::ptr::addr_of_mut!($test_cases)
-> >                             .cast::<::kernel::bindings::kunit_case>()
-> >                     },
-> >
->
-> We hit problems before with #[allow] not working on expressions, so
-> assumed we couldn't narrow it further. Seems to be working here,
-> though, so I've changed it.
->
-> > > +                    suite_init: None,
-> > > +                    suite_exit: None,
-> > > +                    init: None,
-> > > +                    exit: None,
-> > > +                    attr: ::kernel::bindings::kunit_attributes {
-> > > +                        speed: ::kernel::bindings::kunit_speed_KUNIT=
-_SPEED_NORMAL,
-> > > +                    },
-> > > +                    status_comment: [0; 256usize],
-> >
-> > I don't think you need the usize hint here, there's always a usize in
-> > the length position.
-> >
-> > > +                    debugfs: ::core::ptr::null_mut(),
-> > > +                    log: ::core::ptr::null_mut(),
-> > > +                    suite_init_err: 0,
-> > > +                    is_init: false,
-> > > +                };
-> > > +
-> > > +            #[used]
-> > > +            #[link_section =3D ".kunit_test_suites"]
-> >
-> > This attribute causes the same problem I describe in
-> > https://lore.kernel.org/all/20250210-macros-section-v2-1-3bb9ff44b969@g=
-mail.com/.
-> > That's because the KUnit tests are generated both on target and on
-> > host (even though they won't run on host). I don't think you need to
-> > deal with that here, just pointing it out. I think we'll need a cfg to
-> > indicate we're building for host to avoid emitting these attributes
-> > that only make sense in the kernel.
-> >
->
-> I've added the same exclusion for macos here, but don't have a macos
-> machine to test it on. If it's broken, we can fix it in a follow-up.
->
-> > > +            static mut KUNIT_TEST_SUITE_ENTRY: *const ::kernel::bind=
-ings::kunit_suite =3D
-> > > +                // SAFETY: `KUNIT_TEST_SUITE` is static.
-> > > +                unsafe { ::core::ptr::addr_of_mut!(KUNIT_TEST_SUITE)=
- };
-> >
-> > This is missing the `#[allow(unused_unsafe)]` (it appears in the next
-> > patch). This means this commit will not compile on bisection.
->
-> Whoops. This must have snuck in during one of the many squashes and
-> rebases. I'll fix that now.
->
-> Annoyingly, I'm no longer able to actually reproduce the warning,
-> which is strange.
-> >
-> > > +        };
-> > > +    };
-> > > +}
-> > > --
-> > > 2.48.1.601.g30ceb7b040-goog
-> > >
-> > >
-> >
-> > Global note: it seems more customary to use crate:: and $crate::
-> > instead of kernel:: and ::kernel in functions and macros,
-> > respectively.
->
-> Hmm... I think I had that at one point and was told to change it to
-> kernel. Personally, I think kernel:: makes more sense. So if it's not
-> breaking anything, and I'll only get yelled at a little bit, let's
-> keep it as is.
->
-> In any case, I'm sending out v7 with the changes above. My hope is
-> that this is then probably "good enough" to let us get started, and
-> future changes can be done as independent patches, so we're both not
-> holding this up for too long, and can better parallelise any fixes,
-> rather than having to re-spin the whole series each time.
->
-> Thanks a lot,
-> -- David
+> 
+> 
+> "depends on BAR || !BAR" is configuration-time debugging.
+> 
+
+
+
+Best regards,
+Krzysztof
 
