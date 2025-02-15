@@ -1,108 +1,167 @@
-Return-Path: <linux-kernel+bounces-516417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7624CA37137
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:20:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD30AA37142
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:36:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00133AFAA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:19:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B3367A4479
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 23:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944BB1EA7C0;
-	Sat, 15 Feb 2025 23:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6B1FDE33;
+	Sat, 15 Feb 2025 23:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOMKiMPJ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="VdUaNEpT"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70811624D4
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 23:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739661603; cv=none; b=d4tivNk29qowpUe5kkKqt0yVsOfBTQayjiU+4mbnryBF0WOaAEQcLCNMcYIh8/YjZIQ26ZEY2XPwz+rARppkYNIhf/92GK5vun6K+peiBW2oubihflig8OPwZF4zoiHaBX+UHYebCDnwVofTE5+dOJ7H1IONlZyu24K3Nsar5YI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739661603; c=relaxed/simple;
-	bh=XWlsf+isIAxAkohHLrQkZfOvNu2Tmap8/2AntAcdZhg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lgdIafrcsPJT8L4Aog6J+elPl/Prxg4MJ0jMCiLnbKsa3DZBpauZmdVN9lH5fjW6BLIZs5kETB1M8bFLuP9uy1/rX6FvqQp8fJXdhwl1xO8O4mD/7oAz7Tsna5YUGS7Dxhcf44Fq5Y7KMYgw4WLYMQ4MV1EXXkTCzKQK/BEJ4Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOMKiMPJ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22104c4de96so13010575ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 15:20:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739661601; x=1740266401; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lUTuJeqyZZgiPtFS10sZTnTPWv3qnMdLOMr9WEQY29k=;
-        b=DOMKiMPJVoTpDoNJ4d1w6GmWzjbwGUehEXe3H0tfg8aws9l0EAgepUO2xUl5ffxnl5
-         URNpr8K7dGWg8PKA1OKak6RKgCmDPTtztgeJw92SeGqgMDdKUHgungEoolGroIhtZR2y
-         2VC4LeM0h3at9HJHLVOEzndnoejgecVihY8b/voafE33e3M9a3FjBV1J60Bfw+B0zNfz
-         v0bhOUuceLR2ffDGi7+jX7mHV0+qdpZy02CduQrSMrf6yqiI2qFtQz/aAyVcTISkIPWI
-         SWirW5JN27iNCngHKoo3mKe3hBy4QLfOPcFiKK6zBtw2sx9w+GctfKdayIsr9Km8h5P+
-         6l5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739661601; x=1740266401;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lUTuJeqyZZgiPtFS10sZTnTPWv3qnMdLOMr9WEQY29k=;
-        b=KLscwReEAxyTS0jDSfrWgFuyzrFwzm0BBUayCx92GumIxdAqT3C8sr4GV7wi0Ubj9n
-         PUVh4nRiTBYiuywt1SAjVZv0SzNPmwj+z/9/6FgVNOB8V4r6uxGPpV7BCIY/osAvgwKN
-         7awENdK/wr7RJTF6UAn3ibCE2wPKuMpeSNdrrR0xNNfWKBciWAsPq7S9jGxakAM9OyS5
-         2QjnlJLxuE387agDtgBwNSNDN2C8l8HqcnknSefpUgS+acEf9Okyrsj87h1XGu/O68gx
-         eCYcP+K0+Dv+EFf8pJHTLduk3kawiGkEGZ5GweqoMEbiiglnRambu1J+JmWh6kMqP1YG
-         kd6Q==
-X-Gm-Message-State: AOJu0YwOxNb2hqoriAThWd8WYPQq6ut4wGEz7MiTdQOeesbg9x4Uod3D
-	n2OQjabP8rU+76vYeicoWfKACGJNunvO5hquHYMVa1w1XArtW5Q6/B9d0A==
-X-Gm-Gg: ASbGncu+Q+3wudMD6Z0MFvWpt9t4LHBRmPu9bNWr0RrRlQQUOlVPFSjf8AmXRoBczl0
-	H6X4JhebD79EE24vSC1qDkUyoag7EWOyOM08KVK9JgGHNkfefume2R2JZB1DkwP01P2nUIQvQPF
-	Dtb9ESq9KFhKPTOFnjFox/eaHmFfvbTMgOeb43oLRU1rLI2bfFyIN4+XwoO1gUDbwczlVJklAVA
-	6ba099iTCteVh4dPjTi2B8fx8oVVm4vLZUpXd0fLJldqIwYnLP2pmlTBuYetVg+qz9rx0YaASb1
-	k4I0At+0nNJ20gqY6Re43h3a9xoN+GxDhF9qCb8ZGGmcU6Ni8HZ3zeW44CepC7Z0HJI/1jbW+DL
-	rPdvNuORq
-X-Google-Smtp-Source: AGHT+IGwLxyJpAx8ujHWyq0SqWSXK0dcVemx5vQxZfB+KutWHwgw3ykSamlZaE+/1DbAQrgDETUgrA==
-X-Received: by 2002:a17:903:94e:b0:21c:fb6:7c3c with SMTP id d9443c01a7336-22104034f86mr75295795ad.17.1739661600597;
-        Sat, 15 Feb 2025 15:20:00 -0800 (PST)
-Received: from test-suraj.qjz2hk5f2gku1a3adsvczrat5c.xx.internal.cloudapp.net ([20.9.134.79])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349019sm48810395ad.36.2025.02.15.15.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 15:20:00 -0800 (PST)
-From: Suraj Patil <surajpatil522@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Suraj Patil <surajpatil522@gmail.com>
-Subject: [PATCH] docs: Fix typo in aspeed-lpc.yaml
-Date: Sat, 15 Feb 2025 23:19:57 +0000
-Message-ID: <20250215231957.105232-1-surajpatil522@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E151FDA8B;
+	Sat, 15 Feb 2025 23:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739662533; cv=pass; b=i9RwfPYpge2LKklywTQF5sCTcf8mRrpQ3tb1cbnZN4ufj5Go2hiMcS1l8S10u+dVVFTDp/ZLrNHDm0HCf/mzgmbnQ8ts+SoicCbWljVqvN3OuyzFrG/aXO+uqJCBTq632kWBxFyBIPrQWMJN6e+aqkFoSig0GNQpYMPJYQL/vOs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739662533; c=relaxed/simple;
+	bh=3LfqDR2Pzs7OKRyDz5mrNdZnhWugx+GxSd2BzhP+4os=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YBEOfmU3VJYwo3BOeo6m59uNPMF9ABNdFVVOqIKhok/mF4ofMOBc9AzOEBu0ER8igdx1nAzR+KeU5+Ge3gN9BbsK9dHkEG5rkq760L+HkK3HUY6Z7qKdhh/fn/x6NmKRAPTbDMrHcXNJNlJLYalnp/qzPjZEZVyS1H5EmPka2aY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=VdUaNEpT; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739662504; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=H0f8h1UNsng7CEtVbo53pmVCmAmNgqG1K+hLVRKeEcomU5XTOAh18wBstErMKh6Hw2FK3gUAC1dbA8We+yVsz9aUijeqAekFF07kj/Xi5DFh8AtlELheUtk8lw+vf2Yau7ttmpEfNmx0rBsJeWUjEJvRsr3QkhgGBbnADZOOsvg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739662504; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2IwalmKvII2wjdNIZlzpaAimkHRlXVRsnIocmdujjKQ=; 
+	b=UBX/iciIGXZ8T1EY1+SI80SJ6mVfsxZ4ODXRYLkFLbFlueRf6lNVnppjAlrfzGr8tQ4JyXcmkyaERmQ+V3WpBq14f+2Qjv5aqfJGBIpBE9Yr7P0k1YcF+4capG9+r9UAppK4Cb4/+eTcZwxZD4hgH5n3D0cbbaAr5ZfW0/zzv+s=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739662504;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=2IwalmKvII2wjdNIZlzpaAimkHRlXVRsnIocmdujjKQ=;
+	b=VdUaNEpTfhrBgz3yCxJzRhkxyYY5GNurBCa8pmxnME/ZtDHwcQc0nlpt2+KurSty
+	KzJw55z3DxnXck48z5u7/MsTpR6alWj2HV7YgfNcxHUASd0QuF90wFCR1dwkkPR2R51
+	+nntNRTtBUYqfAr0cJBgs4jgRKl7i8/7SGxPtF3c=
+Received: by mx.zohomail.com with SMTPS id 1739662502809296.039531409702;
+	Sat, 15 Feb 2025 15:35:02 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/6] RK3576 thermal sensor support, including OTP trim
+ adjustments
+Date: Sun, 16 Feb 2025 00:34:49 +0100
+Message-Id: <20250216-rk3576-tsadc-upstream-v1-0-6ec969322a14@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJkksWcC/y3MQQqDMBCF4atI1h1JotEqpfQexUUaxxokajOxC
+ OLda9Xl/+B9CyP0FomV0cI8fi3Zod9CXCJmWt2/EWy9NZNcKi6FAt8lKs8gkK4NTCMFj9pBjty
+ IImny7KrZ9h09Nnbe3Wd1tMfPtPHhGJlDIr3zZXQ7dS5lqgSPhSjSIktAQIu2Gx7UBzRtXOP9b
+ 780IZjBORvKqMc5wHmXrFrXHwAAv+7SAAAA
+X-Change-ID: 20250215-rk3576-tsadc-upstream-7e0c193f768a
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ kernel@collabora.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Ye Zhang <ye.zhang@rock-chips.com>
+X-Mailer: b4 0.14.2
 
-Correct 'Tehchnology' to 'Technology' in the copyright line.
+This series adds support for the RK3576's thermal sensor.
 
-Signed-off-by: Suraj Patil <surajpatil522@gmail.com>
+The sensor has six channels, providing measurements for the package
+temperature, the temperature of the big cores, the temperature of the
+little cores, and the GPU, NPU and DDR controller.
+
+In addition to adding support for the sensor itself, the series also
+adds support for reading thermal trim values out of the device tree.
+Most of this functionality is not specific to this SoC, but needed to be
+implemented to make the sensors a little more accurate in order to
+investigate whether the TRM swapped GPU and DDR or downstream swapped
+GPU and DDR in terms of channel IDs, as downstream disagrees with what's
+in the TRM, and the difference is so small and hard to pin down with
+testing that the constant offset between the two sensors was a little
+annoying for me to deal with.
+
+I ended up going with the channel assignment the TRM lists, as I see the
+DDR sensor get a larger deviation from baseline temperatures during memory
+stress tests (stress-ng --memrate 8 --memrate-flush) than what the TRM
+claims is the GPU sensor but downstream claims is the DDR sensor. Input
+from Rockchip engineers on whether the TRM is right or wrong welcome.
+
+The trim functionality is only used by RK3576 at the moment. Code to
+handle other SoCs can rely on the shared otp reading and perhaps even
+the IP revision specific function, but may need its own IP revision
+specific functions added as well. Absent trim functionality in other
+SoCs should not interfere with the modified common code paths.
+
+Patch 1 adds the RK3576 compatible to the bindings.
+
+Patch 2 adds the basic thermal nodes required to get temperature
+readings and device throttling to the rk3576.dtsi device tree.
+
+Patch 3 adds support for this SoC's thermal chip to the driver. It is a
+port of the downstream commit adding support for this.
+
+Patch 4 adds some documentation for imminent additional functionality to
+the binding, namely the trim value stuff.
+
+Patch 5 adds the requisite OTP cells and tsadc nodes to the SoC's device
+tree, conforming with the bindings modified in Patch 4.
+
+Patch 6 adds support for reading these OTP values in the
+rockchip_thermal driver, and makes use of them. The code is mostly new
+upstream code written by me, using downstream code as reference.
+
+This series depends on Heiko's OTP series[1]. You can grab yourself a
+spicy linux-next based tree from [2] with both changesets if you just
+want to give it a spin on your own board.
+
+[1]: https://lore.kernel.org/linux-rockchip/20250210224510.1194963-1-heiko@sntech.de/
+[2]: https://gitlab.collabora.com/fratti/linux/-/tree/rk3576-thermal-adc-4
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nicolas Frattaroli (5):
+      dt-bindings: rockchip-thermal: Add RK3576 compatible
+      arm64: dts: rockchip: Add thermal nodes to RK3576
+      dt-bindings: thermal: rockchip: document otp thermal trim
+      arm64: dts: rockchip: Add thermal trim OTP and tsadc nodes
+      thermal: rockchip: support reading trim values from OTP
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-index 5dfe77aca167..d88854e60b7f 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-+++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--# # Copyright (c) 2021 Aspeed Tehchnology Inc.
-+# # Copyright (c) 2021 Aspeed Technology Inc.
- %YAML 1.2
- ---
- $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+Ye Zhang (1):
+      thermal: rockchip: Support RK3576 SoC in the thermal driver
+
+ .../bindings/thermal/rockchip-thermal.yaml         |  45 ++++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           | 239 +++++++++++++++++-
+ drivers/thermal/rockchip_thermal.c                 | 280 +++++++++++++++++++--
+ 3 files changed, 540 insertions(+), 24 deletions(-)
+---
+base-commit: 6f5eb5a1b91efbc9317ac7a55c5c9e74be3e358d
+change-id: 20250215-rk3576-tsadc-upstream-7e0c193f768a
+prerequisite-message-id: <20250210224510.1194963-1-heiko@sntech.de>
+prerequisite-patch-id: 8b8d7c74c83755b87a59b37dfa1c335a84f4fbda
+prerequisite-patch-id: 39def5e1f0f4ae6f182cf50b42e1e43a90d0991d
+prerequisite-patch-id: bf402264f426cb53f5a40b36dea74e0e2def5621
+prerequisite-patch-id: fb7a67402ea0d8792cbcefed9239ad141689e33a
+prerequisite-patch-id: ae942d1f9e0e9d8e0b0ca493b8ec0bd5994365ae
+prerequisite-patch-id: 12e5d422403737e300ba9563f7d4338e356d0299
+
+Best regards,
 -- 
-2.43.0
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
