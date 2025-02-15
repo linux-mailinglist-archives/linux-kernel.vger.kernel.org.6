@@ -1,102 +1,96 @@
-Return-Path: <linux-kernel+bounces-515927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-515931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB409A36A92
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:07:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F39AA36A8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 02:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F6C1729A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9BE3A9BAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Feb 2025 01:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF4A13CA9C;
-	Sat, 15 Feb 2025 00:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8871C8624B;
+	Sat, 15 Feb 2025 01:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TqJEdj5v"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BpJZEjAd"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0F7144D21
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 00:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2507213C80E
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 01:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739581038; cv=none; b=H9HyU7MWKZq49rfoMieIiM6uPwkBh4ZGv2SGc4vDpb+d1Fxx6iz1pWoUsikfdThUlCjz29y4w6HAir2bXTktOxMewRaiIsg/9TIgMialNS1UjMR/zuM7ry3zKi34r+jUMx1+t2PqfBYAmQaM9nQh+yUEtU+I7AuSzaoMYr+5bls=
+	t=1739581476; cv=none; b=FgZfuObr1uUiNBKRJz4VOoaKATu+/buQ23+r3efgy476EaqjUDWQLSzMUm32YFpfTzDKgCdRhJWQG90Cp6Q3EM5dmEXuo0eK2QpH4HejkqDkzrC59qOLchdbKFpCXJ21VoQLm13A5csJ01dhNzXRV/t/R6L0xbYnWb6KdE9v28s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739581038; c=relaxed/simple;
-	bh=nnoQI6FWAHPVgbUaFSMH0teF0LgFuzIsBNVBOQo5EK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4UihRMzl3NUbgM7jLYlilqSPWlsShSYnB46n2SaLzdChI9K9smVx1YW/Uhk+VnlkvPlTE8OPb3fVZ3GR56uguIFkgOk+x/r8ayDmipmczDHWKAcmjrYMiuNmMi1QosDx/+hBGLhO9Gxw9GmH0kA5fuO0BoeUf/qQxA7KyGiq4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TqJEdj5v; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 15 Feb 2025 00:57:07 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739581032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULLjJNjDq0utTi5CLFZt6GhLkdXDd/3gI8n8ZSY2n0o=;
-	b=TqJEdj5vkvxy8qYPKvRPZtv99VxJOX1cUM3pnFDRPRWyFcGQocLF9gyQFMGX9czf2fIYIc
-	qJJ9fFbFa8KRpt+FbzKn275zri2nG1appkc39bTekXSeVPeGThBT7JkporaoLdazIQjjgY
-	PCnaDcVTxKPBs/el00NRMznSjXbY7qc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Patrick Bellasi <derkling@google.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <Z6_mY3a_FH-Zw4MC@google.com>
-References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
- <20250213175057.3108031-1-derkling@google.com>
- <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+	s=arc-20240116; t=1739581476; c=relaxed/simple;
+	bh=W1PfXsK8Dj/IOV9U04Ew3tdiTcOqnHPCWj3pwXw3J4w=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=J9s+mZKM+xisRAEmMFlKTqg76qAqqLdrfv4mIYw1BFzslsbaeqIsDw8F8ORu4dLe63oJKe6kFL2d5vI3J8NMwtAa8AO8uzBpOlLnyx7cEAXq6LXbX84sSH+oM+BAolXQ4p8cK81Z0wp3qKgR2yhDV29KDoWsbGS/MMAb/OGhEXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BpJZEjAd; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1739581161; bh=6/QcT1QkuuTKM24+t2ztN8oGZqIds9C+fSou5xFgRNQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BpJZEjAdIv5b4EkMRdOwhbQH9wzondu3O7i1Xuupyl5dIrJXVT06TIW1NwlIDhwKd
+	 zIyLZOstfGFMaUajcq6U8mmFV2A+BHPFTmNpmX81FkCPWyncPHflSDbB+dSBwuIyrO
+	 TClccbGQISc9PpCmiRA2dxtoTrWzWMCtVab/fiv4=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id ED409AA0; Sat, 15 Feb 2025 08:59:20 +0800
+X-QQ-mid: xmsmtpt1739581160ty8xvmc1e
+Message-ID: <tencent_6EC0D361236A496543ABC44E176E577EA605@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujNMaS2jrERWzTKyQb2Ge+20+a1oCANOFq3Au3b9DLQm/ECPDv7D
+	 g1mrSuUKZdCw9Fl4IOAnvBbD1KSSxBeyN9/D3WHtk6E7X2mROZ/aEt9uJHtxbsLEQlqu7/4ij+HV
+	 1BwrQlk/361JJ/FPctXY+iU7EJDSM/gy25KybBboMT03HqBTQ5F+9t+de1zcdl+wSbf15pKpm8w1
+	 SOc5mLzd8t6fyKFxfzib36wccgvSbYyjWinTG1PIHaikKVHkIeXMp/f9yeH2IhHxCDv7Ez9yjxRn
+	 Xj53PVpt5zR56VdQtjr4awl8goNRoDQL9/yBDiW0EUTzmCvtCdy1o0/4xpW5ZujbcZJRiAdEFeSC
+	 lBxMm/mQxlUA3aCRsUvunbqa+5AlQXZBFgjD+JQuVdlIIfxTpNtqe+el1eanivBZk73V1Ygxm7er
+	 q6xmAv6A/UZPKtnOMCNGcsegTGan1EkisrCsfOfgvjtBdqresoJS34Grx2tfIINW+cA6DUYcDUmN
+	 /35U/qgspL8nMESPcFYXwQzF3rVBGwXAGd/tY2hPastOHUHEKwQxZR9TnoHZ8X8lm0uPDdfGsr8R
+	 l4P8bkh2UeaurJ3ZBLtCIOQAlcqqARYObBSjZ5umcWu+KRSdfXkFT/hiJcR82CKKBvDH1iRIJIi7
+	 TP2NrU42owH0J89wx+AdE/tUfH9RzXhccm0cnLciQgR6ptzqJHTvam/DtCFyuHC5N8wxizu/NMjV
+	 yY2hlWAI/qQhQptiCxVq5oQoK+BnQSmq2l9f7E8sfBYyVx3YIiM/5LtOnHHWEzypWFWDJVQG2H9w
+	 TeYAiqOWIFwdIdFdLtUNnvhaIu2RC6YlSJzamhNbaTEMENoY8PDSPIeYnWCVPY8BBIIEi6r0GZF7
+	 Da9U46sUBl/Rojhd9D/4qcNoshvIXlrQ==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+e1dc29a4daf3f8051130@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [netfs?] KASAN: slab-use-after-free Write in io_submit_one
+Date: Sat, 15 Feb 2025 08:59:20 +0800
+X-OQ-MSGID: <20250215005919.1020762-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
+References: <67aedac7.050a0220.21dd3.002d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 09:10:05PM +0100, Borislav Petkov wrote:
-> On Thu, Feb 13, 2025 at 05:50:57PM +0000, Patrick Bellasi wrote:
-> > The "should be set identically across all processors in the system" makes me
-> > wondering if using the "KVM's user_return approach" proposed here is robust
-> > enough. Could this not lead to the bit being possibly set only on some CPU
-> > but not others?
-> 
-> That's fine, we should update that paper.
-> 
-> > If BpSpecReduce does not prevent training, but only the training from being
-> > used, should not we keep it consistently set after a guest has run, or until an
-> > IBPB is executed?
-> 
-> After talking with folks internally, you're probably right. We should slap an
-> IBPB before clearing. Which means, I cannot use the MSR return slots anymore.
-> I will have to resurrect some of the other solutions we had lined up...
-> 
-> Stay tuned.
+#syz test
 
-Thanks for working on this!
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index f65affa5a9e4..7854d55120b8 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -371,9 +371,11 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
+ 
+ 	if (rreq->iocb) {
+ 		rreq->iocb->ki_pos += rreq->transferred;
+-		if (rreq->iocb->ki_complete)
++		if (rreq->iocb->ki_complete) {
+ 			rreq->iocb->ki_complete(
+ 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
++			rreq->iocb->ki_complete = NULL;
++		}
+ 	}
+ 	if (rreq->netfs_ops->done)
+ 		rreq->netfs_ops->done(rreq);
 
-Should this patch (and the two previously merged patches) be backported
-to stable? I noticed they did not have CC:stable.
-
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
 
