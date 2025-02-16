@@ -1,194 +1,113 @@
-Return-Path: <linux-kernel+bounces-516537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57548A373AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:51:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBC7A373AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3EC61891C95
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:51:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A501891D34
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889A118DB04;
-	Sun, 16 Feb 2025 09:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD58918C93C;
+	Sun, 16 Feb 2025 09:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isANc/Px"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Sv9AKbn0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C2F290F;
-	Sun, 16 Feb 2025 09:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0FD290F
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 09:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699473; cv=none; b=QVab+BfsCmX6Wz/ir0LYf188gzM7ul1c+lrrpszh+Y1Si/XlKuWWhXIINxEsA470XcqbowV4scPhFJ9qUTNAWgIHIVQH2ynzkTzUVdx57lTTNYJnpDQ3M8ae6QHup4BU4cuZJUKurm8rIUPJEWYjju8fEFcQ7OtYfifA4EI3dNw=
+	t=1739699598; cv=none; b=UhfZybwHExOvG10swvVVJzStfBNoH27Hdj6i5nHm7NH6aweug3Lr9Odc7vz6f+vHLsfdNAMVfCTHWakAR91fBHxxt+wBCACYuHMN3tVoWRTNNpczmqcGO0Xp8O05r7bbXRMz5f6WW61xOqRrZ16zQ/gM/7LDa8gmQN1DnG+9QGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699473; c=relaxed/simple;
-	bh=yISe520NaURNs4pNJO6Yn+iblvFIFY4wu1aWR8VoVSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRfSxY7IIY0YcFoo1Eh1ng5yk0v3jsFM1GvCC9xjLZA8oWMiJtEXJTnciwKxfKYKW3T9ftERy+SUYpZLqheNVSONmNODUji61DkSAjElV/o+eBAer7/RHNgxwRDPagvPg/IBYxWqD4hEZULhenDCy4Jc7m1f+fFZAwjQlenLc+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isANc/Px; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4396e9ee133so5128435e9.0;
-        Sun, 16 Feb 2025 01:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739699470; x=1740304270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AKkwKTyg9w786XwSKoYuBYLKS23VVWg1TYbTDYTWNCg=;
-        b=isANc/Pxs7mDe2j4V/m4P0bzqGRvUfcp2NFgkudGn9zRUpHOolewz8qOmknoFPuLq1
-         ZwOYFShNRv3a7j+jAR5DU4fgv6CrFPHbIc4F8kURYh54o4Y6llyiuMsMJT6LlwZoHqdj
-         EdLm/RnRZOCHEhBp6KK2PrSgqBhvgms/0OElajT1VcOCvCuG4irofMTjioe8/qthUv+1
-         PIrZBs4/r0HM/pq8k4sxWkH6AH9oXjjoBBJua1VcPjHmOUc2gjPSJP20aqBxdfRm55Qj
-         Sxc9kW+2xl8HQHsAYlFEAqVlaz+nPKtKUUajelyxqVfqlmp2/WFSecxf9R/mXK9Gdr3r
-         Dvtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739699470; x=1740304270;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AKkwKTyg9w786XwSKoYuBYLKS23VVWg1TYbTDYTWNCg=;
-        b=M7xLwg8ffTr2ZutP9L1Xrp0tFZ5onZOmayvXAqRB7254d5gd4Sm24vOftG+senzJNY
-         0eDLIG+RINh38sHu0DK+IHAVYjNBegvP/olldCGgj2yP95U0QZhtExSi6JILFimpvVVQ
-         vcocuYuRw98+oZ0XbcUT1IrGIBzqO5q3YNs1Ip6o4by52dOak1/XiG5cMKXA7zRIk8aU
-         st+iElY2CYSIyFYl1bV42pvEu4ZeNLFY+Wd/STel7nAjgAQ5awp/J9Ky4//3dqw+Weus
-         a5UJ8txo5c8rlwRBL5OS470xg6v3GAqZicG57TAvFIbnr5stIYqU61/58qCtyQqbmPk2
-         W04w==
-X-Forwarded-Encrypted: i=1; AJvYcCXE2i3XPlGgbWdAje3OD23HOEgAhb60OWhQO/k7teV0dup1p0qpn8vbV5fIqw+nSq/dOl7cw9oXTIrr@vger.kernel.org, AJvYcCXe3etdQr28S6E0/rzQdbyQ4bIk8rFrUc7G8LYhXxduhZOjfex5pVBVM2FSepOjFOAmUO6SzAGPj6j14Skm@vger.kernel.org, AJvYcCXukLl+MMvdWnmbH1S0ebgY7p0DYrgceNjhcZSqCG5Z5wdQMCw4Dl+6S1jtIroSVuxiB1TPsiQJUfzCZNuCcMExX6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8o7Awi7BPx2PPQnEyiUk6hUCDshtv7PROohxJMPpnTdtlND1+
-	mo6zdUfyXA39dvr0eGO11cBREOmLoYDO0wY51vxoUJ9EebIcOVjh
-X-Gm-Gg: ASbGncsUa0XkxER1KYwo2+niz5fPE1swoPozzRyiDE83b7sCfmuQms9H6DW4ZYyqYzr
-	IIGPdjGpMzhv/K+k3KwDL3V8EYCn6N2JzZ2glJvnOqVMpqq6azgILPHTSH55x+ESHmy+QXoD71Q
-	HjA3IsMWoXNz4phgPIaYZAdZtKIJbzBXaR4y0L12bjVAwa04roy9B7ak/1eIbsOg1UXYZk1G8mK
-	uHNSFUOJALGaHGjzZiVIOoUiJ/DEhA3DlZ9Z5rpz1G4b1HpNxL97QX0cW2FgfdWUzGHRJr7aWdx
-	o6XyzZZUrZfphUt9Kk3yNZQHx4Q1wnDVawaEKq1C4wSYQBEvxtmQUZiYt1TE+gJEMOgVRA==
-X-Google-Smtp-Source: AGHT+IFPiVqkcK4Kd/T3e2U3LKZcUOmyLMjVkbQdDG1jJW67h/Annjc9EhvSTWnD04mKUQYqryGMpA==
-X-Received: by 2002:a05:6000:381:b0:38c:2745:2ddb with SMTP id ffacd0b85a97d-38f339d8912mr4723327f8f.2.1739699470216;
-        Sun, 16 Feb 2025 01:51:10 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258eb141sm9080681f8f.41.2025.02.16.01.51.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 01:51:09 -0800 (PST)
-Message-ID: <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
-Date: Sun, 16 Feb 2025 11:51:08 +0200
+	s=arc-20240116; t=1739699598; c=relaxed/simple;
+	bh=GRW9dLjDH4bhTt2UkYPP8YghJ8vtA0i+/uf8xl5bGdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n+3CCXeC0/Ia3hObCPZYx9jloUCUoJSl4v94BT70fDdl8S7/CXOqo6ohDv6flEqfzqE0KiVtWxK4wEE2R4tJztdaIvVD7ISIqhoZNt+vt7QIBPXpZJAKPqKtzEMnWi5pBhsmKeuCW1sRBNiZlmk83zTzzfxPhGCiHJsG+qYTkus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Sv9AKbn0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 16B6140E0191;
+	Sun, 16 Feb 2025 09:53:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rLNWiU24pLQa; Sun, 16 Feb 2025 09:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739699591; bh=L29Whz40E2Hp+lMhdhUfZf4f6lJh4LRv2sCzmO3G4kE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sv9AKbn0A4vweDCCus30qnLd/fOwzhS0tT/irXeYwQjJ4BEcGeCQhSay61T1MaXHm
+	 dM8JG7dxtOwzZRpZqKXX2wZjzBHotqZx6hBIksYZKEiaiQ17qpyuwOW1ySIZhVqPRI
+	 BIu3yc35fnXp69zi2uK/mHonXGsZJWwBUXuPJp3j/0591Th+FrbWhPYOjsuewFTffN
+	 UJPSAX695g4cvlyFNzXIj5LxNdr3h3a5oAwtsyQuxRtDCfu3N+0yFncXgnaxinq0pR
+	 nUIIoD6hLCK8bMUdKmbqfY7zTLUyfU7zfqzK/5zJ6mgdPmRU7/DX0pvVbxbTPfTK+6
+	 qx3CDN5QctsrfmJb+qtsy8OOZ0BbGA+2BYVNE9v/9bixn0TdEBE1UrkoGNX/lguHdV
+	 kKKa9hSOJr0KOWbwm+jhClCHg+FrQvOrtGADYBk9Cr7T2bK/v0d0eelkooVaGELyFU
+	 JVTe0Q6FnALJP+NUnhG9HAsleR4yRWFoyPpb20FA3wYTdOJda4mf5APxpRpIBwzdrJ
+	 6jRTEhnveG/MCy1C9FjlptG7XFOVhEtVBVCO+2V5fI+tTUDLIXtoswOoYYnWhVjoBV
+	 n+Do4hKvRMRIahTyJpDtrHddx39GM6YHksKmghk8ipFkF6VHneW8+GFSyCWdSvuMss
+	 oT/p181sqSVi7VKZf0Ls1ldQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 58CB740E016A;
+	Sun, 16 Feb 2025 09:53:08 +0000 (UTC)
+Date: Sun, 16 Feb 2025 10:53:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] irq/urgent for v6.14-rc3
+Message-ID: <20250216095307.GAZ7G1g8jr0xW0nGus@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
- <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
- <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
- <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 2/16/25 11:44, Krzysztof Kozlowski wrote:
-> On 16/02/2025 10:41, Ivaylo Ivanov wrote:
->> On 2/16/25 11:26, Krzysztof Kozlowski wrote:
->>> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
->>>> The Exynos2200 SoC uses Synopsis eUSB2 PHY for USB 2.0. Add a new
->>>> driver for it.
->>>>
->>>> eUSB2 on Exynos SoCs is usually paired alongside a USB PHY controller.
->>>> Currently the driver is modelled to take and enable/disable the usb phy
->>>> controller when needed.
->>>>
->>>> The driver is based on information from downstream drivers.
->>>>
->>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>> ---
->>>>  drivers/phy/samsung/Kconfig                   |  13 +
->>>>  drivers/phy/samsung/Makefile                  |   1 +
->>>>  .../phy/samsung/phy-exynos2200-snps-eusb2.c   | 351 ++++++++++++++++++
->>>>  3 files changed, 365 insertions(+)
->>>>  create mode 100644 drivers/phy/samsung/phy-exynos2200-snps-eusb2.c
->>>>
->>>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->>>> index e2330b089..f62285254 100644
->>>> --- a/drivers/phy/samsung/Kconfig
->>>> +++ b/drivers/phy/samsung/Kconfig
->>>> @@ -77,6 +77,19 @@ config PHY_S5PV210_USB2
->>>>  	  particular SoC is compiled in the driver. In case of S5PV210 two phys
->>>>  	  are available - device and host.
->>>>  
->>>> +config PHY_EXYNOS2200_SNPS_EUSB2
->>>> +	tristate "Exynos2200 eUSB 2.0 PHY driver"
->>>> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>>> +	depends on HAS_IOMEM
->>>> +	depends on USB_DWC3_EXYNOS
->>> How does it depend? What are you using from DWC3?
->> Can drop, I guess.
->>
->>>> +	select GENERIC_PHY
->>>> +	select MFD_SYSCON
->>> Where do you use it?
->> Remained from USBCON driver.
->>
->>>> +	default y
->>>> +	help
->>>> +	  Enable USBCON PHY support for Exynos2200 SoC.
->>>> +	  This driver provides PHY interface for eUSB 2.0 controller
->>>> +	  present on Exynos5 SoC series.
->>>> +
->>>>  config PHY_EXYNOS5_USBDRD
->>>>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>>>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>>> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
->>>> index fea1f96d0..90b84c7fc 100644
->>>> --- a/drivers/phy/samsung/Makefile
->>>> +++ b/drivers/phy/samsung/Makefile
->>>> @@ -14,5 +14,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
->>>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->>>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->>>>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
->>>> +obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
->>> Entire driver looks like repeating existing qcom-snps-eusb2.
->> It's the same IP, but implemented differently on a different platform. At
->> the very least, the register layout is different.
->
-> I checked few registers, looked very the same. Same blocks from synopsys
-> have the common register layouts.
+Hi Linus,
 
-I see.
+please pull an urgent irq fix for v6.14-rc3.
 
->
->>>  You need to
->>> integrate the changes, not create duplicated driver.
->> I can do that, but it would be come a bit cluttered, won't it? Depends on
->> if we want to follow the current oem-provided initialization sequence, or
->> try and fully reuse what we have in there.
->
-> I think it duplicates a lot, so it won't be clutter. We have many
-> drivers having common code and per-variant ops.
+Thx.
 
-So the approach to take here is to make a common driver?
+---
 
-What about the current modelling scheme, as-in taking the phandle to
-the usbcon phy and handling it?
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-Best regards,
-Ivaylo
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
->
-> Best regards,
-> Krzysztof
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.14_rc3
+
+for you to fetch changes up to 4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b:
+
+  genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS (2025-02-13 13:18:54 +0100)
+
+----------------------------------------------------------------
+- Remove an unused config item GENERIC_PENDING_IRQ_CHIPFLAGS
+
+----------------------------------------------------------------
+Anup Patel (1):
+      genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
+
+ kernel/irq/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
