@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-516476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14AAA37241
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:12:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A181A37242
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4127A1F80
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B523AF598
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B99914A4DF;
-	Sun, 16 Feb 2025 06:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E398154439;
+	Sun, 16 Feb 2025 06:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="akPJbced"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="X9XXiQcr"
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB66C151990;
-	Sun, 16 Feb 2025 06:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12DA13D897;
+	Sun, 16 Feb 2025 06:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739686338; cv=none; b=oCawtAAXOBtQlLWEVy7wnlqjShCIoYO5Q9GwG3/+/0rYjjr02jTA5yGpKUxsTibQYNeDVZdzLry6rjm6fVYQTcsc732HSVF3vVSe81GTThhByouh15SWFAMHHXns4OQVR975FVe1N3YI+qXaQKDxcJjK+TgQfn0HsEpRYmt0XEQ=
+	t=1739686502; cv=none; b=dVR2IzOatwCTXPJfrWF/yjLEDKMdDxxmzErKMKqVJESlY1n9QSrCfDTYuvT9gLgh6kARnLc0kw4cxhgURZfr35b99y2k3oe5GY05F642d5RtoupHSaHsihf4dX8t+jhwOjWRdyDJKO1CtSxG8PyhxPDvpEVAeCzO9qqUqPdKVik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739686338; c=relaxed/simple;
-	bh=/N8YG/jy/wmsmYyKRAEu2kWRya/dLerbeIMcYd9rahQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otiRGBb+7z/+CLqy3BGqjHcrdwvAydkwG2BFa4U0OG//gswCimhCW40ITQ37LzsNE0o253OOfLgc9FZJyGRT/8/hMza4xE7Il6ATLUdNeIAPKlLkOeV0uIKkX4tQ+091JEh9MQqlw9zJ7SY71hvS+JYAiGtm9G0iywHCvg6swDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=akPJbced; arc=none smtp.client-ip=212.227.15.18
+	s=arc-20240116; t=1739686502; c=relaxed/simple;
+	bh=i8w7HpYDQ2T3KX9GNVnujaABlVCO0sEEaJdHAJDAW/c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Mq4wrJdzpWZnVhOn3uHc0mvT7Vnc27gm11/XRJcoAVnsTbG16HiszEt5HowyaitS+d1pmqK6ivqmkr7ToTPoQepnUnDUXOJthEV808Hv6W3dDfys1ft6WagQCLkj4Vyo/gHo81K0pyTvap6xudGmUEz6WJYj913LjVd+wBOskqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=X9XXiQcr; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739686334; x=1740291134; i=w_armin@gmx.de;
-	bh=9fD0exKNYvwCSbTMLX9oPr/l3I7ISL1YWb+JfxBCxpw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=akPJbcedbmK1759O1DK9SKsP2Pmr2CeiFsrZtPevTlks4dce23070BFJsUtgHTQB
-	 DEHlLKb4kF6ev4nEbJvtAnGx2P7/zN6dRgVn5vTi7SoL6rn0Utqo8AD74NVpLfeeT
-	 djJ+jWxLO+pIISSkYyvhZcQuey6gBfDhvVx4qqXQN5HjUHEaffhvPf7me/3uA9ids
-	 D8eZ1hO5kBBhQGIXeW6dRcc3rBzaQbgTUnfrraSthyYgJKwvmHnlScvEuNpsPvMgN
-	 +IMR3yPERJKwRrSQ0pdkFVJ7x0/7JnqACC7i21TJf1+Ck32R344UTE16sVEPecEB8
-	 7OR/JVBcBfdUFWF0Mw==
+	s=s31663417; t=1739686488; x=1740291288; i=w_armin@gmx.de;
+	bh=i8w7HpYDQ2T3KX9GNVnujaABlVCO0sEEaJdHAJDAW/c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=X9XXiQcrCxX7uuveWQCM7sv9w6jpC6Mxas6Naqc+YnmL/hzupR6AVcO0BrpsoBAk
+	 10agdznGXSurcC+Hfcws8ui642yYXkFIWsO9ESPp65dRNGzjateOYwkEkeyWnjknX
+	 a5yawfto6QMtnZEYqRml+1TBCSQ+/jj1aoMqc6LBTnsgCFcdsU0NjxcL/d56YDfOP
+	 aCbe8ehWwrwPLrsgpIM4jPA1iF+2HUFovNl8S4tnSVrflSUhVI9W5UAXR5utsN5vs
+	 qBgv1mvbzqze8S4DGhN6b0BNE5ecH3tTT7RC8kBvlizod9kqt0f9ZtiLw+eWzG9i+
+	 nHU9KPlLOXYMj8FKWQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6Ue3-1th5yG3qYb-003QRu; Sun, 16
- Feb 2025 07:12:14 +0100
-Message-ID: <ee2a8428-0c37-408d-9ad2-a8975c1b3c23@gmx.de>
-Date: Sun, 16 Feb 2025 07:12:11 +0100
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MmlT2-1t36B41new-00nRE0; Sun, 16
+ Feb 2025 07:14:48 +0100
+Message-ID: <36201d78-1b6c-4a8c-9e53-90cf43aca2c5@gmx.de>
+Date: Sun, 16 Feb 2025 07:14:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,6 +58,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 08/10] platform/x86: alienware-wmi-wmax: Add support for
  manual fan control
+From: Armin Wolf <W_Armin@gmx.de>
 To: Kurt Borja <kuurtb@gmail.com>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
@@ -66,218 +66,162 @@ Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
  Guenter Roeck <linux@roeck-us.net>
 References: <20250208051614.10644-1-kuurtb@gmail.com>
  <20250208051614.10644-9-kuurtb@gmail.com>
+ <ee2a8428-0c37-408d-9ad2-a8975c1b3c23@gmx.de>
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250208051614.10644-9-kuurtb@gmail.com>
+In-Reply-To: <ee2a8428-0c37-408d-9ad2-a8975c1b3c23@gmx.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NdQOpXmVcP4xD8jZV+UrfalgiuhGLS4iAtB76uIQnkeNMUUP4hq
- 8C5rZbqdsVy2ViZgmDthjr8yLeVExvpuL0BrTaAoJCul5TwOICWJAbI7zzSiaDKKUskrthx
- EAIjxftLYUQ1uluIuoOkdVjHtTMr6BHFR/yn2NlilRQK+VGJ0n5drkv2/yBjlyjbG+P4TZE
- Gq7GQliJN46DVA9O7DtYg==
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:7qbwuEAfues1phdF/I3FSVwgPLFzG6A8F83kHXwUA0Dsl8AnAYH
+ l0MVN/kSudbeJ0OnHicHa+I9P61drCIixNh+t3SHGip6imAN8jetNgmrdlJDDBdAJR5OTv4
+ mit5U7V27SDM6/AgBTLSOnJaWuRqBQPGReKVakFWKt5dDhFjCzzlpMAN8aXYPmgPhef3oqw
+ ImyoIXCjW9rpZ3PXbyfdw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ONgkAQcelkw=;/waKdXfm5Zj6YjM4f8SuRaRBiei
- bMVWT/f2sowAo8xI/3ShEm06ZAJxTfYaugcKa2wowbbs1z8BkBGDKVcSDZCekmcveaRUx7tSZ
- gy8y7WnkzjSykaZxcwIUckiyDLwLpf/7ITbcerEZVI5V/1CiAEqL1WaH64mxhMhZAN1W7vxo/
- N6e4pT4TeyRkWdWW0RbtlnpJQL719EAtt6P9VOGtocYcjZS6T+r1Y19n5yUpVt8nDvM0QHaEl
- jmGIlAUd0Se7sZowFSiwtbYV1f9v/+OqSccILFZr4PZymAWOqUvBPci7Y5ts7nGsRBRJTzAyw
- gFhaj9rWsIF4jbtxGfrAJXBcIjlaDeOsk/505abIyta5clL6ZWDhJ7jFP/bp54teIo1SXQnhZ
- TIhiyNd6BmTrcykMPAZoG6zN7PJe7KD00fWLXCG2+rAYqJYjchGgD18LEnG9E2mRtnVkcXssw
- Qt0lfscWSo4HxrSECfL62JATpdCLGgetofKfgAGeAcwBQXhN3k0r4m+JViPoN9PApSEASFixr
- yudMZJxcIVb4SMzzFiO7GEwkcbXTrrSj1A0HCVci7AVY2bRVotB06e5ven244n4uWa6yKgCGl
- 6unrbqg4JablV/S4XdnMEM1h8U5lMGhwLyOuTvg0/07iJbH3ZkD9qkQR9ZQCrpXKO2xr5QyyV
- QCsrYPVFex9AN7ExN9duRiX3z/WT0zg650F5MFEmAIeicRlcUk8g11ooiZ6gunMVsMFnP+8Tw
- 9NxEsG8jdqr3fvE/3Ax9HHffofEgbxrqOdN+UoNlziT0LChiwlGP5m/i6EZiIAeL8Vry5iRpo
- Iae0H77lYFltTdnOaSUO+v6bzjm9JwKSVrG5siNRSXFqhXucLBmc1R12/+5aL0kMY95KdwUBF
- zzjnKlLer89TPHifPybY7ms36DMwesBrJzAj1ap8B6AZhiM+nJSKlOY+D4G+ouPcCFbdpkjKR
- FWAgduGDuUeDR11Pfy+6Fo4ZaAxCwQ8VJ5IJrvUNtsv6v2ncKnjjhDgHdb8z/i8hmLSZo91N0
- hVHlQyxOeXTaQxBlNVR9jN/DjwmELxGWOhOZHcJtRepZ0k1FfZLGoNXhhl1PMnXMWZeC0lmJ/
- KZa1U9ACJRdB95lG+7xN+X3wv/4y5gaiiFBiePj6q41VH0rjxhfS/lKjxDNkUsDPFeqcfo71v
- nUdVNaqlaPaYQBvG3puMiurKikzkA6apTSshfSlIGNmbqPZ95XPIToBLwWE9Tg+BQzQQDmTpE
- iRJBJuiqbOSB+y0EbSWdtnLfUT/+mzE40u2O8zM4TE0DmR3PeUT3P14S/vaSaq8QOXst2DXrZ
- r8xXIUtVm/Um6ySAoZFH835hsYhz1V4OgJHKEefBBXm48wmDV3CDnEMXu4PKmRVvbeD+XiZTQ
- EyHK8JEA2Iveq31x6rATw/4/h7e735CIEvgYCl7teBqMronibFQq6nVz0U
+UI-OutboundReport: notjunk:1;M01:P0:S3xutyQnoSo=;6bqL+oMNzZGCBCrg7bKb4qw8lp9
+ gnX1xobbDg9F1MWc2lUjql+coFF6Q81Pga4fNawRfGzaEJ0/rA+RapqD7FjMXHJnwUDR5I+cj
+ IleraaFWza9yCKxMl0/4fvC9shbGPBAKdZHGQOHLr6Vw9M1OxePz4JSbipAWNnYh7lqWRdnh9
+ /5v+egM0t2XukiUsDK9D70IxamElaMI4PAI0brE1e9tJrFm/6xmch6UNM+HLizlC4cuC1HgO5
+ qXgZp4lra1KzMfkeYHOlVjKv95LdCWs60OIOda2b56fYmNWNqLFOUMblPVRQ8dHhu2fY5wfS/
+ tKQbJ0W6YhNSR1Qxx2+tfHyqIkzzJm9wYZNldayIdvh9kgp3vuX/WNg8e6r+/szy3LDBerxI9
+ VuoUZ5A+EB28ElcHqHI8kLcXngX9CHjMWlLV3S0LmejixcpFC5NjVQz9hiYkRwXuw/TXhtJ1F
+ fRFfG78yYUpdki5aY/5eGT4VHov38q21FGxtttrexdLhkZLWSqH3PW1iRWSy1RRlDO/4/YeaX
+ jL0RAoCQRNtajcT2HAJTzGSVKjcAcLjEO2Zw3g6RFJrlBCKfZkQ71GoSUOIHUhV5PxvDdPzjN
+ qmh+K8ztkEgdiaZ6wtkyLCIzP3NXVR2cqz7UFphzeorCzRSj5qUpEMRWjeo077ZIXzkpM00N6
+ fgnm/HWYftPOtgJTAW5qFL+bqdSFDc/RqgXw5FqSsY+X0KYVTg3UlashkYU9RCaqVzsCt84Xs
+ mdQEZ3b9sAbDZVxJYKv9G+Bb9zPPbuARcR4irVmEQxvlrOqhnbhxXh9lpPIKKFxRKdv/sbw+f
+ tJd8lYNFvIhfcUM/3SbA3KeFEf18VRM4szAhxiWyMcABYr1oUH2gItxE3/DVwdaULZS0kdkJ7
+ G2B3PwnrTV8d+P94GRNc12BBufgLqcCFSLU51niujRMoSnfMajBQe2QzfMvA1CNbrkmCK/Ats
+ 24kvqfzFdDvuqdJHUqw9As1S6o9G+35aOAAKlr6gGyILjwXRKO8MSb/EvlodoBUwuxthJXxbL
+ s3+S2bhOhGCHvDRzkuyIvp3qDVja7klr2YKE8V2Uzvgdb8XjBhJc/7GWMk/v+62tTSJo5qAEj
+ g8XCNGfiNsM1mJ1aZIoRVqQcK+kLYDkFb3NpglGYl6nqiqK75rhn48d/c+hzYXzaMpc9fc6CN
+ VlmECuOeBfCVz4D11SrbbarV46jJKJ1654dPTdIAhhmeqTFRoA3ZsuaBnklTZdk/WItun/rHi
+ n53m3dpZYkpsQeH3C9UU+LeVGLDWbioPCKTcur/uT5w03lXgaesY7pt7zqevoaNMVLp22QvhL
+ lJBQjVqQMzDm9VJx4N11xX4Nfa8cQPQqFMovDKE6zA+Dn4CxiNJOKriULDXbTZI9vpk5AGHno
+ ldgicFGrSzJeSlGnVPhaeDNtSGjsTJ+qNZ/c2/xVeGegL3/YZkdy6+QEha
 
-Am 08.02.25 um 06:16 schrieb Kurt Borja:
-
-> All models with the "AWCC" WMAX device support a way of manually
-> controlling fans.
->
-> The PWM duty cycle of a fan can't be controlled directly. Instead the
-> AWCC interface let's us tune a PWM `boost` value, which has the
-> following empirically discovered behavior over the PWM value:
->
-> 	pwm =3D pwm_base + (pwm_boost / 255) * (pwm_max - pwm_base)
->
-> Where the pwm_base is the locked PWM value controlled by the EC and
-> pwm_boost is a value between 0 and 255.
->
-> This pwm_boost knob is exposed as a standard `pwm` attribute.
-
-I am not sure if exposing this over the standard "pwm" attribute is correc=
-t here,
-since userspace applications expect to have full access to the fan when us=
-ing the
-"pwm" attribute.
-
-Maybe using a custom attribute like "fanX_boost" would make sense here? Ei=
-ther way
-documenting this special behavior would be nice for future users, maybe yo=
-u can write
-this down under Documentation/admin-guide/laptops?
-
-Thanks,
-Armin Wolf
-
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->   .../platform/x86/dell/alienware-wmi-wmax.c    | 55 +++++++++++++++++--
->   1 file changed, 49 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pl=
-atform/x86/dell/alienware-wmi-wmax.c
-> index 5f02da7ff25f..06d6f88ea54b 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> @@ -13,6 +13,7 @@
->   #include <linux/dmi.h>
->   #include <linux/hwmon.h>
->   #include <linux/jiffies.h>
-> +#include <linux/minmax.h>
->   #include <linux/moduleparam.h>
->   #include <linux/mutex.h>
->   #include <linux/overflow.h>
-> @@ -176,10 +177,12 @@ enum AWCC_THERMAL_INFORMATION_OPERATIONS {
->   	AWCC_OP_GET_MIN_RPM			=3D 0x08,
->   	AWCC_OP_GET_MAX_RPM			=3D 0x09,
->   	AWCC_OP_GET_CURRENT_PROFILE		=3D 0x0B,
-> +	AWCC_OP_GET_FAN_BOOST			=3D 0x0C,
->   };
->
->   enum AWCC_THERMAL_CONTROL_OPERATIONS {
->   	AWCC_OP_ACTIVATE_PROFILE		=3D 0x01,
-> +	AWCC_OP_SET_FAN_BOOST			=3D 0x02,
->   };
->
->   enum AWCC_GAME_SHIFT_STATUS_OPERATIONS {
-> @@ -563,12 +566,13 @@ static inline int awcc_thermal_information(struct =
-wmi_device *wdev, u8 operation
->   	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &arg=
-s, out);
->   }
->
-> -static inline int awcc_thermal_control(struct wmi_device *wdev, u8 prof=
-ile)
-> +static inline int awcc_thermal_control(struct wmi_device *wdev, u8 oper=
-ation,
-> +				       u8 arg1, u8 arg2)
->   {
->   	struct wmax_u32_args args =3D {
-> -		.operation =3D AWCC_OP_ACTIVATE_PROFILE,
-> -		.arg1 =3D profile,
-> -		.arg2 =3D 0,
-> +		.operation =3D operation,
-> +		.arg1 =3D arg1,
-> +		.arg2 =3D arg2,
->   		.arg3 =3D 0,
->   	};
->   	u32 out;
-> @@ -684,6 +688,11 @@ static umode_t awcc_hwmon_is_visible(const void *dr=
-vdata, enum hwmon_sensor_type
->   		if (channel < priv->fan_count)
->   			return 0444;
->
-> +		break;
-> +	case hwmon_pwm:
-> +		if (channel < priv->fan_count)
-> +			return 0644;
-> +
->   		break;
->   	default:
->   		break;
-> @@ -698,6 +707,7 @@ static int awcc_hwmon_read(struct device *dev, enum =
-hwmon_sensor_types type,
->   	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->   	struct awcc_temp_channel_data *temp;
->   	struct awcc_fan_channel_data *fan;
-> +	u32 fan_boost;
->   	int ret;
->
->   	switch (type) {
-> @@ -742,6 +752,16 @@ static int awcc_hwmon_read(struct device *dev, enum=
- hwmon_sensor_types type,
->   			return -EOPNOTSUPP;
->   		}
->
-> +		break;
-> +	case hwmon_pwm:
-> +		fan =3D &priv->fan_data[channel];
-> +
-> +		ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_FAN_BOOST,
-> +					       fan->id, &fan_boost);
-> +		if (ret)
-> +			return ret;
-> +
-> +		*val =3D fan_boost;
->   		break;
->   	default:
->   		return -EOPNOTSUPP;
-> @@ -796,10 +816,27 @@ static int awcc_hwmon_read_string(struct device *d=
-ev, enum hwmon_sensor_types ty
->   	return 0;
->   }
->
-> +
-> +static int awcc_hwmon_write(struct device *dev, enum hwmon_sensor_types=
- type,
-> +			    u32 attr, int channel, long val)
-> +{
-> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
-> +	u8 fan_id =3D priv->fan_data[channel].id;
-> +
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return awcc_thermal_control(priv->wdev, AWCC_OP_SET_FAN_BOOST,
-> +					    fan_id, (u8)clamp_val(val, 0, 255));
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
->   static const struct hwmon_ops awcc_hwmon_ops =3D {
->   	.is_visible =3D awcc_hwmon_is_visible,
->   	.read =3D awcc_hwmon_read,
->   	.read_string =3D awcc_hwmon_read_string,
-> +	.write =3D awcc_hwmon_write,
->   };
->
->   static const struct hwmon_channel_info * const awcc_hwmon_info[] =3D {
-> @@ -814,6 +851,12 @@ static const struct hwmon_channel_info * const awcc=
-_hwmon_info[] =3D {
->   			   HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MAX,
->   			   HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MAX
->   			   ),
-> +	HWMON_CHANNEL_INFO(pwm,
-> +			   HWMON_PWM_INPUT,
-> +			   HWMON_PWM_INPUT,
-> +			   HWMON_PWM_INPUT,
-> +			   HWMON_PWM_INPUT
-> +			   ),
->   	NULL
->   };
->
-> @@ -954,8 +997,8 @@ static int awcc_platform_profile_set(struct device *=
-dev,
->   		}
->   	}
->
-> -	return awcc_thermal_control(priv->wdev,
-> -				    priv->supported_profiles[profile]);
-> +	return awcc_thermal_control(priv->wdev, AWCC_OP_ACTIVATE_PROFILE,
-> +				    priv->supported_profiles[profile], 0);
->   }
->
->   static int awcc_platform_profile_probe(void *drvdata, unsigned long *c=
-hoices)
+QW0gMTYuMDIuMjUgdW0gMDc6MTIgc2NocmllYiBBcm1pbiBXb2xmOg0KDQo+IEFtIDA4LjAyLjI1
+IHVtIDA2OjE2IHNjaHJpZWIgS3VydCBCb3JqYToNCj4NCj4+IEFsbCBtb2RlbHMgd2l0aCB0aGUg
+IkFXQ0MiIFdNQVggZGV2aWNlIHN1cHBvcnQgYSB3YXkgb2YgbWFudWFsbHkNCj4+IGNvbnRyb2xs
+aW5nIGZhbnMuDQo+Pg0KPj4gVGhlIFBXTSBkdXR5IGN5Y2xlIG9mIGEgZmFuIGNhbid0IGJlIGNv
+bnRyb2xsZWQgZGlyZWN0bHkuIEluc3RlYWQgdGhlDQo+PiBBV0NDIGludGVyZmFjZSBsZXQncyB1
+cyB0dW5lIGEgUFdNIGBib29zdGAgdmFsdWUsIHdoaWNoIGhhcyB0aGUNCj4+IGZvbGxvd2luZyBl
+bXBpcmljYWxseSBkaXNjb3ZlcmVkIGJlaGF2aW9yIG92ZXIgdGhlIFBXTSB2YWx1ZToNCj4+DQo+
+PiDCoMKgwqDCoHB3bSA9IHB3bV9iYXNlICsgKHB3bV9ib29zdCAvIDI1NSkgKiAocHdtX21heCAt
+IHB3bV9iYXNlKQ0KPj4NCj4+IFdoZXJlIHRoZSBwd21fYmFzZSBpcyB0aGUgbG9ja2VkIFBXTSB2
+YWx1ZSBjb250cm9sbGVkIGJ5IHRoZSBFQyBhbmQNCj4+IHB3bV9ib29zdCBpcyBhIHZhbHVlIGJl
+dHdlZW4gMCBhbmQgMjU1Lg0KPj4NCj4+IFRoaXMgcHdtX2Jvb3N0IGtub2IgaXMgZXhwb3NlZCBh
+cyBhIHN0YW5kYXJkIGBwd21gIGF0dHJpYnV0ZS4NCj4NCj4gSSBhbSBub3Qgc3VyZSBpZiBleHBv
+c2luZyB0aGlzIG92ZXIgdGhlIHN0YW5kYXJkICJwd20iIGF0dHJpYnV0ZSBpcyANCj4gY29ycmVj
+dCBoZXJlLA0KPiBzaW5jZSB1c2Vyc3BhY2UgYXBwbGljYXRpb25zIGV4cGVjdCB0byBoYXZlIGZ1
+bGwgYWNjZXNzIHRvIHRoZSBmYW4gDQo+IHdoZW4gdXNpbmcgdGhlDQo+ICJwd20iIGF0dHJpYnV0
+ZS4NCj4NCj4gTWF5YmUgdXNpbmcgYSBjdXN0b20gYXR0cmlidXRlIGxpa2UgImZhblhfYm9vc3Qi
+IHdvdWxkIG1ha2Ugc2Vuc2UgDQo+IGhlcmU/IEVpdGhlciB3YXkNCj4gZG9jdW1lbnRpbmcgdGhp
+cyBzcGVjaWFsIGJlaGF2aW9yIHdvdWxkIGJlIG5pY2UgZm9yIGZ1dHVyZSB1c2VycywgDQo+IG1h
+eWJlIHlvdSBjYW4gd3JpdGUNCj4gdGhpcyBkb3duIHVuZGVyIERvY3VtZW50YXRpb24vYWRtaW4t
+Z3VpZGUvbGFwdG9wcz8NCj4NCj4gVGhhbmtzLA0KPiBBcm1pbiBXb2xmDQo+DQo+PiBDYzogR3Vl
+bnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0Pg0KPj4gU2lnbmVkLW9mZi1ieTogS3VydCBC
+b3JqYSA8a3V1cnRiQGdtYWlsLmNvbT4NCj4+IC0tLQ0KPj4gwqAgLi4uL3BsYXRmb3JtL3g4Ni9k
+ZWxsL2FsaWVud2FyZS13bWktd21heC5jwqDCoMKgIHwgNTUgKysrKysrKysrKysrKysrKystLQ0K
+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+
+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwvYWxpZW53YXJlLXdt
+aS13bWF4LmMgDQo+PiBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwvYWxpZW53YXJlLXdtaS13
+bWF4LmMNCj4+IGluZGV4IDVmMDJkYTdmZjI1Zi4uMDZkNmY4OGVhNTRiIDEwMDY0NA0KPj4gLS0t
+IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC9hbGllbndhcmUtd21pLXdtYXguYw0KPj4gKysr
+IGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC9hbGllbndhcmUtd21pLXdtYXguYw0KPj4gQEAg
+LTEzLDYgKzEzLDcgQEANCj4+IMKgICNpbmNsdWRlIDxsaW51eC9kbWkuaD4NCj4+IMKgICNpbmNs
+dWRlIDxsaW51eC9od21vbi5oPg0KPj4gwqAgI2luY2x1ZGUgPGxpbnV4L2ppZmZpZXMuaD4NCj4+
+ICsjaW5jbHVkZSA8bGludXgvbWlubWF4Lmg+DQo+PiDCoCAjaW5jbHVkZSA8bGludXgvbW9kdWxl
+cGFyYW0uaD4NCj4+IMKgICNpbmNsdWRlIDxsaW51eC9tdXRleC5oPg0KPj4gwqAgI2luY2x1ZGUg
+PGxpbnV4L292ZXJmbG93Lmg+DQo+PiBAQCAtMTc2LDEwICsxNzcsMTIgQEAgZW51bSBBV0NDX1RI
+RVJNQUxfSU5GT1JNQVRJT05fT1BFUkFUSU9OUyB7DQo+PiDCoMKgwqDCoMKgIEFXQ0NfT1BfR0VU
+X01JTl9SUE3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgID0gMHgwOCwNCj4+IMKgwqDCoMKgwqAgQVdD
+Q19PUF9HRVRfTUFYX1JQTcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPSAweDA5LA0KPj4gwqDCoMKg
+wqDCoCBBV0NDX09QX0dFVF9DVVJSRU5UX1BST0ZJTEXCoMKgwqDCoMKgwqDCoCA9IDB4MEIsDQo+
+PiArwqDCoMKgIEFXQ0NfT1BfR0VUX0ZBTl9CT09TVMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPSAw
+eDBDLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBlbnVtIEFXQ0NfVEhFUk1BTF9DT05UUk9MX09QRVJB
+VElPTlMgew0KPj4gwqDCoMKgwqDCoCBBV0NDX09QX0FDVElWQVRFX1BST0ZJTEXCoMKgwqDCoMKg
+wqDCoCA9IDB4MDEsDQo+PiArwqDCoMKgIEFXQ0NfT1BfU0VUX0ZBTl9CT09TVMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgPSAweDAyLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBlbnVtIEFXQ0NfR0FNRV9T
+SElGVF9TVEFUVVNfT1BFUkFUSU9OUyB7DQo+PiBAQCAtNTYzLDEyICs1NjYsMTMgQEAgc3RhdGlj
+IGlubGluZSBpbnQgDQo+PiBhd2NjX3RoZXJtYWxfaW5mb3JtYXRpb24oc3RydWN0IHdtaV9kZXZp
+Y2UgKndkZXYsIHU4IG9wZXJhdGlvbg0KPj4gwqDCoMKgwqDCoCByZXR1cm4gX19hd2NjX3dtaV9j
+b21tYW5kKHdkZXYsIA0KPj4gQVdDQ19NRVRIT0RfVEhFUk1BTF9JTkZPUk1BVElPTiwgJmFyZ3Ms
+IG91dCk7DQo+PiDCoCB9DQo+Pg0KPj4gLXN0YXRpYyBpbmxpbmUgaW50IGF3Y2NfdGhlcm1hbF9j
+b250cm9sKHN0cnVjdCB3bWlfZGV2aWNlICp3ZGV2LCB1OCANCj4+IHByb2ZpbGUpDQo+PiArc3Rh
+dGljIGlubGluZSBpbnQgYXdjY190aGVybWFsX2NvbnRyb2woc3RydWN0IHdtaV9kZXZpY2UgKndk
+ZXYsIHU4IA0KPj4gb3BlcmF0aW9uLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHU4IGFyZzEsIHU4IGFyZzIpDQo+PiDCoCB7DQo+PiDCoMKgwqDCoMKg
+IHN0cnVjdCB3bWF4X3UzMl9hcmdzIGFyZ3MgPSB7DQo+PiAtwqDCoMKgwqDCoMKgwqAgLm9wZXJh
+dGlvbiA9IEFXQ0NfT1BfQUNUSVZBVEVfUFJPRklMRSwNCj4+IC3CoMKgwqDCoMKgwqDCoCAuYXJn
+MSA9IHByb2ZpbGUsDQo+PiAtwqDCoMKgwqDCoMKgwqAgLmFyZzIgPSAwLA0KPj4gK8KgwqDCoMKg
+wqDCoMKgIC5vcGVyYXRpb24gPSBvcGVyYXRpb24sDQo+PiArwqDCoMKgwqDCoMKgwqAgLmFyZzEg
+PSBhcmcxLA0KPj4gK8KgwqDCoMKgwqDCoMKgIC5hcmcyID0gYXJnMiwNCj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoCAuYXJnMyA9IDAsDQo+PiDCoMKgwqDCoMKgIH07DQo+PiDCoMKgwqDCoMKgIHUzMiBv
+dXQ7DQo+PiBAQCAtNjg0LDYgKzY4OCwxMSBAQCBzdGF0aWMgdW1vZGVfdCBhd2NjX2h3bW9uX2lz
+X3Zpc2libGUoY29uc3Qgdm9pZCANCj4+ICpkcnZkYXRhLCBlbnVtIGh3bW9uX3NlbnNvcl90eXBl
+DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGNoYW5uZWwgPCBwcml2LT5mYW5fY291bnQpDQo+
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gMDQ0NDsNCj4+DQo+PiArwqDCoMKg
+wqDCoMKgwqAgYnJlYWs7DQo+PiArwqDCoMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKg
+wqDCoMKgIGlmIChjaGFubmVsIDwgcHJpdi0+ZmFuX2NvdW50KQ0KPj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgcmV0dXJuIDA2NDQ7DQo+PiArDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7
+DQo+PiDCoMKgwqDCoMKgIGRlZmF1bHQ6DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+
+PiBAQCAtNjk4LDYgKzcwNyw3IEBAIHN0YXRpYyBpbnQgYXdjY19od21vbl9yZWFkKHN0cnVjdCBk
+ZXZpY2UgKmRldiwgDQo+PiBlbnVtIGh3bW9uX3NlbnNvcl90eXBlcyB0eXBlLA0KPj4gwqDCoMKg
+wqDCoCBzdHJ1Y3QgYXdjY19wcml2ICpwcml2ID0gZGV2X2dldF9kcnZkYXRhKGRldik7DQo+PiDC
+oMKgwqDCoMKgIHN0cnVjdCBhd2NjX3RlbXBfY2hhbm5lbF9kYXRhICp0ZW1wOw0KPj4gwqDCoMKg
+wqDCoCBzdHJ1Y3QgYXdjY19mYW5fY2hhbm5lbF9kYXRhICpmYW47DQo+PiArwqDCoMKgIHUzMiBm
+YW5fYm9vc3Q7DQo+PiDCoMKgwqDCoMKgIGludCByZXQ7DQo+Pg0KPj4gwqDCoMKgwqDCoCBzd2l0
+Y2ggKHR5cGUpIHsNCj4+IEBAIC03NDIsNiArNzUyLDE2IEBAIHN0YXRpYyBpbnQgYXdjY19od21v
+bl9yZWFkKHN0cnVjdCBkZXZpY2UgKmRldiwgDQo+PiBlbnVtIGh3bW9uX3NlbnNvcl90eXBlcyB0
+eXBlLA0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FT1BOT1RTVVBQOw0K
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIH0NCj4+DQo+PiArwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+
+PiArwqDCoMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKgwqDCoMKgIGZhbiA9ICZwcml2
+LT5mYW5fZGF0YVtjaGFubmVsXTsNCj4+ICsNCj4+ICvCoMKgwqDCoMKgwqDCoCByZXQgPSBhd2Nj
+X3RoZXJtYWxfaW5mb3JtYXRpb24ocHJpdi0+d2RldiwgDQo+PiBBV0NDX09QX0dFVF9GQU5fQk9P
+U1QsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBmYW4tPmlkLCAmZmFuX2Jvb3N0KTsNCj4+ICvCoMKgwqDCoMKgwqDCoCBpZiAocmV0KQ0K
+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHJldDsNCj4+ICsNCj4+ICvCoMKgwqDC
+oMKgwqDCoCAqdmFsID0gZmFuX2Jvb3N0Ow0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOw0K
+Pj4gwqDCoMKgwqDCoCBkZWZhdWx0Og0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU9Q
+Tk9UU1VQUDsNCj4+IEBAIC03OTYsMTAgKzgxNiwyNyBAQCBzdGF0aWMgaW50IGF3Y2NfaHdtb25f
+cmVhZF9zdHJpbmcoc3RydWN0IGRldmljZSANCj4+ICpkZXYsIGVudW0gaHdtb25fc2Vuc29yX3R5
+cGVzIHR5DQo+PiDCoMKgwqDCoMKgIHJldHVybiAwOw0KPj4gwqAgfQ0KPj4NCj4+ICsNCg0KSSBu
+ZWFybHkgZm9yZ290OiBQbGVhc2UgZG9uJ3QgdXNlIG11bHRpcGxlIGJsYW5rIGxpbmVzLg0KDQpU
+aGFua3MsDQpBcm1pbiBXb2xmDQoNCj4+DQo+PiArc3RhdGljIGludCBhd2NjX2h3bW9uX3dyaXRl
+KHN0cnVjdCBkZXZpY2UgKmRldiwgZW51bSANCj4+IGh3bW9uX3NlbnNvcl90eXBlcyB0eXBlLA0K
+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgYXR0ciwgaW50IGNoYW5uZWws
+IGxvbmcgdmFsKQ0KPj4gK3sNCj4+ICvCoMKgwqAgc3RydWN0IGF3Y2NfcHJpdiAqcHJpdiA9IGRl
+dl9nZXRfZHJ2ZGF0YShkZXYpOw0KPj4gK8KgwqDCoCB1OCBmYW5faWQgPSBwcml2LT5mYW5fZGF0
+YVtjaGFubmVsXS5pZDsNCj4+ICsNCj4+ICvCoMKgwqAgc3dpdGNoICh0eXBlKSB7DQo+PiArwqDC
+oMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiBhd2NjX3RoZXJt
+YWxfY29udHJvbChwcml2LT53ZGV2LCBBV0NDX09QX1NFVF9GQU5fQk9PU1QsDQo+PiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmYW5faWQsICh1OCljbGFt
+cF92YWwodmFsLCAwLCAyNTUpKTsNCj4+ICvCoMKgwqAgZGVmYXVsdDoNCj4+ICvCoMKgwqDCoMKg
+wqDCoCByZXR1cm4gLUVPUE5PVFNVUFA7DQo+PiArwqDCoMKgIH0NCj4+ICt9DQo+PiArDQo+PiDC
+oCBzdGF0aWMgY29uc3Qgc3RydWN0IGh3bW9uX29wcyBhd2NjX2h3bW9uX29wcyA9IHsNCj4+IMKg
+wqDCoMKgwqAgLmlzX3Zpc2libGUgPSBhd2NjX2h3bW9uX2lzX3Zpc2libGUsDQo+PiDCoMKgwqDC
+oMKgIC5yZWFkID0gYXdjY19od21vbl9yZWFkLA0KPj4gwqDCoMKgwqDCoCAucmVhZF9zdHJpbmcg
+PSBhd2NjX2h3bW9uX3JlYWRfc3RyaW5nLA0KPj4gK8KgwqDCoCAud3JpdGUgPSBhd2NjX2h3bW9u
+X3dyaXRlLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBzdGF0aWMgY29uc3Qgc3RydWN0IGh3bW9uX2No
+YW5uZWxfaW5mbyAqIGNvbnN0IGF3Y2NfaHdtb25faW5mb1tdID0gew0KPj4gQEAgLTgxNCw2ICs4
+NTEsMTIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBod21vbl9jaGFubmVsX2luZm8gKiBjb25zdCAN
+Cj4+IGF3Y2NfaHdtb25faW5mb1tdID0gew0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgSFdNT05fRl9MQUJFTCB8IEhXTU9OX0ZfSU5QVVQgfCBIV01PTl9GX01JTiB8IA0KPj4g
+SFdNT05fRl9NQVgsDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBIV01PTl9G
+X0xBQkVMIHwgSFdNT05fRl9JTlBVVCB8IEhXTU9OX0ZfTUlOIHwgDQo+PiBIV01PTl9GX01BWA0K
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKSwNCj4+ICvCoMKgwqAgSFdNT05f
+Q0hBTk5FTF9JTkZPKHB3bSwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9O
+X1BXTV9JTlBVVCwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9J
+TlBVVCwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9JTlBVVCwN
+Cj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9JTlBVVA0KPj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKSwNCj4+IMKgwqDCoMKgwqAgTlVMTA0KPj4gwqAg
+fTsNCj4+DQo+PiBAQCAtOTU0LDggKzk5Nyw4IEBAIHN0YXRpYyBpbnQgYXdjY19wbGF0Zm9ybV9w
+cm9maWxlX3NldChzdHJ1Y3QgDQo+PiBkZXZpY2UgKmRldiwNCj4+IMKgwqDCoMKgwqDCoMKgwqDC
+oCB9DQo+PiDCoMKgwqDCoMKgIH0NCj4+DQo+PiAtwqDCoMKgIHJldHVybiBhd2NjX3RoZXJtYWxf
+Y29udHJvbChwcml2LT53ZGV2LA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHByaXYtPnN1cHBvcnRlZF9wcm9maWxlc1twcm9maWxlXSk7DQo+PiArwqDCoMKgIHJl
+dHVybiBhd2NjX3RoZXJtYWxfY29udHJvbChwcml2LT53ZGV2LCBBV0NDX09QX0FDVElWQVRFX1BS
+T0ZJTEUsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJpdi0+
+c3VwcG9ydGVkX3Byb2ZpbGVzW3Byb2ZpbGVdLCAwKTsNCj4+IMKgIH0NCj4+DQo+PiDCoCBzdGF0
+aWMgaW50IGF3Y2NfcGxhdGZvcm1fcHJvZmlsZV9wcm9iZSh2b2lkICpkcnZkYXRhLCB1bnNpZ25l
+ZCBsb25nIA0KPj4gKmNob2ljZXMpDQo+DQo=
 
