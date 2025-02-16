@@ -1,91 +1,54 @@
-Return-Path: <linux-kernel+bounces-516649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB13A37551
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:00:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44772A37559
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80C73B006B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C4816EDC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0C2199938;
-	Sun, 16 Feb 2025 16:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D0B40C03;
+	Sun, 16 Feb 2025 16:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="pTgJM2RV"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="bQIvUn1b"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA0F42A97
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD6379DC
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739721608; cv=none; b=FO4uY88hpGNzuqLm2IZXuqOGX0E2h9adzSdKDxYmH4rqK+DVD2AXeUnDshRe3xdSNCjV4iwkqoYBKtMadG2U8I9+bzGXYD4mwtggUFHB+oheSnwF3bmgV5VAPLOfgary1syehYye7d8oziaiU3N6sAx52YZdPr9YXCQa7+/7C/Y=
+	t=1739721719; cv=none; b=b9Kwf1juBu43TBOnW8F7C5Sh6mDZi88ciYQZxfvxPafhf3+/FN+HIAXMjQ67C0Xo4qO4r0iJY5V0wC+bmZ7HbIoVY+Ymfbn+rlO0QIZExwVmC4gCoq31UnCC8hILgSftH6Mxs0Ezp9wdXybWwIH7zhh2urIva9gB0UoNJGi3AHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739721608; c=relaxed/simple;
-	bh=EF26j1suwLuBzziUeMgwWp0X8x4RpIgeD8Jxuuo4ULs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S56An9R2NJIw8MulwsPtOJDkyUV1PaQM0dAE4PtRf2etqtfrY3sWQBBMNEsaKMnhNUSu9U5HDzOBSItj6zadcC7ohcACjl/t3+UFZNBUNsnXvSrA08gGp+f2LcDbDEcVjtSax+IzDliCcfNwSFmG4owLuhbVadC/Y85Vz9RrlAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=pTgJM2RV; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 5A1EE240028
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 17:00:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739721604; bh=EF26j1suwLuBzziUeMgwWp0X8x4RpIgeD8Jxuuo4ULs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=pTgJM2RVrLprfYbMXybmlG4KLOjVo9E5qpqmA+ccmW85RElh5VpLIRz1jG+WN+S/n
-	 /1a+/Z7pYIDe5dnKfrSx017pXnXOnaK0Z4oSx9JPbq5XY211pMBp1oBmcel4YGxq52
-	 F3RFdjVJ+IRnPS7aXKXN0RW4qOCHxnRfvy1KzqoSH8ARmyd2EiaZD4HdzFGgnbeGt1
-	 EF0887xrzs+xoKfuvZWrJfWF4lUIF/f4kWYDcBTen21LugjWTYJ/6EFcuL+Jof8s8x
-	 Rz6Ymj2KIeS3xT0Ke1YT8gFrFa0zSQbesigmbblCfD+ohW23aPetTyHEH8BbIFFnzO
-	 aesaOV6qAm6Dw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Ywr8V6Vlfz9rxW;
-	Sun, 16 Feb 2025 16:59:54 +0100 (CET)
-Date: Sun, 16 Feb 2025 15:59:54 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Crystal Wood <oss@buserror.net>, j.ne@posteo.net,
-	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org, Li Yang <leoyang.li@nxp.com>,
-	John Ogness <john.ogness@linutronix.de>
-Subject: Re: [PATCH v2 09/12] dt-bindings: memory-controllers: Convert
- fsl,elbc to YAML
-Message-ID: <Z7ILej_AJYot_wKP@probook>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-9-8137b0c42526@posteo.net>
- <Z6kQpuQf5m-bXTyt@buserror.net>
- <20250210215324.GA1040564-robh@kernel.org>
+	s=arc-20240116; t=1739721719; c=relaxed/simple;
+	bh=DrFpAuUgCojBbVhqy3e9tBdipAyeY0/uf6RSS7XXZXE=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NmXndNQD2OHK2KzS5cPrxFEQ76U3vVh+yuprQtEZNQ2y7Wu8RH3yebZFSBSjEa+ZlQKf0Mp0sBvwGekya6UDCJMLUz2m55gp9y2/3JUZalt544bsXFAzx8y/iMDFvnZ7xzHIJ7NekPSCd2oZ9/X6/UeVrSw+KXMaTSgsYgEM9Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=bQIvUn1b; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1739721715; x=1739980915;
+	bh=DrFpAuUgCojBbVhqy3e9tBdipAyeY0/uf6RSS7XXZXE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=bQIvUn1b2Bz+L/WRubshu912FBI8lqNHdwFsI5zLlKDa5V7Jcxxaun8Q11TTLWToD
+	 HewzcKXQMvDit9Bb/Vhqfm+xNh6D3GF/2B3bQ7RZlhrFG5Ip95f391Aj3FE8B2Wxgp
+	 NxrFUSinxW6dJ7NKxeEvhQnG9e1m+SlKn3BLjMp1omCRfRCJ9Tu9iI7b3D251nIbIR
+	 sXBB7/Rb+Gz7kHWpjE/fbnRQ6R7d80vyW1xnAid1P8nCRXIWfktiJP+/+ie0M6lR+2
+	 XUVLr27MxIIQToYcsJXEp5NCwEoYKQS2Mq0+bNs3VAIfvKcvxCETkGo3eoQ00+7gti
+	 mCBWbSb/3epLA==
+Date: Sun, 16 Feb 2025 16:01:49 +0000
+To: shuah@kernel.org
+From: Imanol <imvalient@protonmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Imanol <imvalient@protonmail.com>
+Subject: [PATCH] selftests/core: fix repeated word in close_range_test.c comment
+Message-ID: <20250216160114.83221-1-imvalient@protonmail.com>
+Feedback-ID: 28866602:user:proton
+X-Pm-Message-ID: 1368527d4ae133340ed3f0d12103bec4f24af3d3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,70 +56,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250210215324.GA1040564-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10, 2025 at 03:53:24PM -0600, Rob Herring wrote:
-> On Sun, Feb 09, 2025 at 02:31:34PM -0600, Crystal Wood wrote:
-> > On Fri, Feb 07, 2025 at 10:30:26PM +0100, J. Neuschäfer via B4 Relay wrote:
-> > > From: "J. Neuschäfer" <j.ne@posteo.net>
-> > > 
-> > > Convert the Freescale localbus controller bindings from text form to
-> > > YAML. The updated list of compatible strings reflects current usage
-> > > in arch/powerpc/boot/dts/, except that many existing device trees
-> > > erroneously specify "simple-bus" in addition to fsl,*elbc.
-> > > 
-> > > Changes compared to the txt version:
-> > >  - removed the board-control (fsl,mpc8272ads-bcsr) node because it only
-> > >    appears in this example and nowhere else
-> > >  - added a new example with NAND flash
-> > >  - updated list of compatible strings
-> > > 
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > ---
-> > > 
-> > > V2:
-> > > - fix order of properties in examples, according to dts coding style
-> > > - move to Documentation/devicetree/bindings/memory-controllers
-> > > - clarify the commit message a tiny bit
-> > > - remove unnecessary multiline markers (|)
-> > > - define address format in patternProperties
-> > > - trim subject line (remove "binding")
-> > > - remove use of "simple-bus", because it's technically incorrect
-> > 
-> > While I admit I haven't been following recent developments in this area,
-> > as someone who was involved when "simple-bus" was created (and was on the
-> > ePAPR committee that standardized it) I'm surprised to hear simple-bus
-> > being called "erroneous" or "technically incorrect" here.
-> 
-> Erroneous because the binding did not say "simple-bus" was used. Not 
-> uncommon with the old .txt bindings.
-> 
-> Generally, if a bus has control registers or resources like clocks, then 
-> we tend not to call them 'simple-bus'. And '"specific-bus", 
-> "simple-bus"' gives some problems around what driver if any do you 
-> bind to. 
-[...]
-> > You'd probably need something like commit 3e25f800afb82bd9e5f8 ("memory:
-> > fsl_ifc: populate child devices without relying on simple-bus") and the 
-> > subsequent fix in dd8adc713b1656 ("memory: fsl_ifc: populate child
-> > nodes of buses and mfd devices")...
-> > 
-> > I'm curious what the reasoning was for removing simple-bus from IFC.  It
-> > seems that the schema verification also played a role in that:
-> > https://www.spinics.net/lists/devicetree/msg220418.html
-> 
-> If a kernel change is needed to support changed .dts files, then we 
-> shouldn't be doing that here (being mature platforms). That would mean 
-> new DTB will not work with existing kernels.
+Fixes a minor grammatical issue in a comment in close_range_test.c
+where "and and" was mistakenly repeated.
 
-Alright, I'll keep simple-bus in the eLBC binding for historical
-compatibility.
+Signed-off-by: Imanol <imvalient@protonmail.com>
+---
+ tools/testing/selftests/core/close_range_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testin=
+g/selftests/core/close_range_test.c
+index e0d9851fe1c9..c19e8d037211 100644
+--- a/tools/testing/selftests/core/close_range_test.c
++++ b/tools/testing/selftests/core/close_range_test.c
+@@ -506,7 +506,7 @@ TEST(close_range_cloexec_unshare_syzbot)
+=20
+ =09/*
+ =09 * Create a huge gap in the fd table. When we now call
+-=09 * CLOSE_RANGE_UNSHARE with a shared fd table and and with ~0U as upper
++=09 * CLOSE_RANGE_UNSHARE with a shared fd table and with ~0U as upper
+ =09 * bound the kernel will only copy up to fd1 file descriptors into the
+ =09 * new fd table. If the kernel is buggy and doesn't handle
+ =09 * CLOSE_RANGE_CLOEXEC correctly it will not have copied all file
+--=20
+2.43.0
 
 
-Thank you both for your discussion.
-
-
-J. Neuschäfer
 
