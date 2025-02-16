@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-516747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA219A37692
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:26:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E85DA37695
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B31F16D733
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B4F3AE663
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B70719E96D;
-	Sun, 16 Feb 2025 18:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F1019E99E;
+	Sun, 16 Feb 2025 18:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6MrxurJ"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V+JJulZP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D115319CC0C;
-	Sun, 16 Feb 2025 18:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4C218787A
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739730365; cv=none; b=FFyJhGQGz+itneIXl+AL3T4xAoYJwjqwLsLu+Ba8OptN+qDgHCZll9cUozi+rPihKgmQISm1B/pGI1WAt0kcmGSzfLetRr7P2EZFoN1ganlGBr/CeNW48lkpXIFEOhy+odqnkjWSeK++FGfBPL9Qozb6MHXfHpXQmgwzxiqyyIY=
+	t=1739730403; cv=none; b=aa+gOi3eIID2WQSwgW2IDYL6DMr8zn82H+hLSAmatc3wg+lQt4KxNtUFw0ds+zLEObC0Yrw+6hEUzGVx5+2NJg1m9uV/+1zp6nYIziiC2xJEJOpfZ+WYrjWLfHKBKuhthqDWJt1+KWe8S/2Cis09zBE8mOaOcZnxFjRuu51r97I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739730365; c=relaxed/simple;
-	bh=wr+XCAgPgbGifaV9zuo3NuEbKxQ2q/ycgpn4NRzl2+s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Az896elNg31gppilXasUnBEmP8iob0x1lEqLCOQZigm+oUTXp8Gda7g7cAGp0vzeiQ3cpIAFmL39Gu4z/tjLJ1QdfaRKIR4462uSV1O1zCJDLtXQEj5MxrJOD2CfrwWojMJ21m204dUThswS3AGCbRj9YFDV4wNG3IhnZqTHko4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6MrxurJ; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f2b7ce319so1919510f8f.2;
-        Sun, 16 Feb 2025 10:26:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739730362; x=1740335162; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
-        b=N6MrxurJjN8z8buRiZs72gexX7Um31Ns03LeMVyANjz9u0yCaVste/cQ0ZGuRsae9t
-         dD0jVzVSVR+XU10gk6GjDqPIvNaGAK3nybcgfYGJ5trlixnMnfyaAJP8tUM8X6ttI0rE
-         bHDDc4cbymx71lXCIzXq7GcpEp6NaY9hkWVCX8CkfbVvtryqCJIoQlNb32zyO/XmMppJ
-         jzUy4zaQUeVFqTI4Ek2EOZ23tUdUDwFYGbpr+dvR7mLEfiaiWWGNzSl+Or8j/VfBtDca
-         Ub25IXCz8wrgo1JwxfAaeJtsMe6zIonkoIU6F3+n0m0Tkq8CoeCXElFWNwmVtVRSfsw+
-         EDZw==
+	s=arc-20240116; t=1739730403; c=relaxed/simple;
+	bh=Y/LuZ+y1LHMMuqQJizlowi3f8Sz0wsZbNk/mZuwrRyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WCGK/ENfiC1dKdrQ8fMmxeZInEjAC9kkJBViCYVig9Zsg7ZXLFTipPGiGRkrnupgYTe9G8ccqho2pUCj9rtBXwwD2ulzKrfovZNjgDH180fhlxeSwxS86slhmgX8VhjUNjvETBbDq4BnK9rCnyMNPcGU5/HHSiv1xv7RAmXYBlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V+JJulZP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739730400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0qUnpIEotEDFzC8jwR5Z3hGPfKph5TWJ9N2byfk13X8=;
+	b=V+JJulZPZVfZc0EE+aHs9yzIVCkd3KmCOqlZKIX7eM+jUcY865XYTc2MI6+lPEq0Es8o+R
+	Q5gIDRF+PtfaBfF78HGukksJ+tBVt8SMtpCBak91m6dRgngdWOSfwzi6yv8/R5EHiIMrDr
+	32pDxuQS+jC6qx2TWsh4IQIdWepT/MU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-3i9_HX12PNWb5HTEVeKm4Q-1; Sun, 16 Feb 2025 13:26:38 -0500
+X-MC-Unique: 3i9_HX12PNWb5HTEVeKm4Q-1
+X-Mimecast-MFC-AGG-ID: 3i9_HX12PNWb5HTEVeKm4Q_1739730397
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4393e873962so19725205e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 10:26:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739730362; x=1740335162;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
-        b=IkoxBRo4PDws3lQYmska8SR/BbUcC/zzv4soIPB6DE6aF7Ygc3hJEy9TsJSxEvoYWc
-         ZNA8k2wMVNIXT3yBgZWH5BYpAvqPSaFWCzCSRWasuBGPl/Ispl8aRL33UiSmEdM9S7fX
-         wp8psA+IM5iXxzI8CovmKMnQQUHMnJESA+k4jllVaeAZG4kuOznHzP1vuD4gC/xSyUuV
-         DSN/mICzDqe1OxvregSr2NWPFaLrTj8j25oCtMUX/Z3glQBIoGhx2nq2hYq1UfnRRNzK
-         MiN8oyskz2B5fZB9mc45M1onUoqUKlx/he5Osz30cCuOnRFCCXD1hkDoQ18cTec1No+l
-         R76g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxr8XcJaIrSYbbHed8qWlP1k+Nudd8K22BRZkskQQeAHOID67aIa0yNQ+Ok9/kw0b9RNL+I7PQXHSZ@vger.kernel.org, AJvYcCWc7OHeyHpHobzwcbJEheGEv0Kykze73FSHXb2cVBeQx+g62ztRH0s96FggqxKJAfopEiHYxwCPZErNKw1nw7Btfes=@vger.kernel.org, AJvYcCWfNG0M7deqsPIv4qN5kEO3ftCi0eEwu2GBXJht6PCaAOoXQhNY9LNuQeE6+cW49M5CWDerGcCt0Kb8FFDI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo5KjupfA9/F2iLKnngsdttBcHfWPlGaLGGxJtdfeNhUe7UFMQ
-	HGNKZYHp4jtyoBg8n+pOUjSxrPRFPcUA6+GhxuNsV0mpnyIvJsKd
-X-Gm-Gg: ASbGncuieaXeU6S+UPmx9kkdTgEvHpdzkWeTpvxIqFsGv+EpWFLE6cqjitHInQ3kyxK
-	k538sSBUwk6SgklF6lAW93Ss2mcKV018prtqVvayMNVGcJpJ/Z7Tjv+CPRV1U/u6VSTQpl4VboY
-	SEc5PA3tQ1CDF2hn16VSTvE9GCdW2N2mTsZl3WAiBj2OhoByTzq0npBoB0d6pdBZFZnRWkbM3Nv
-	kmqASqm3Or206qrDx8g+/tMUECM2BwhOMKz/umtiiiSQjGxQE0jsvbaJ4nVkH3Kgvx/PuTA8n4X
-	/bUPgm+r4XWZgLXXJhINUxDh4FVv4vxr20rwq/o2rnSu5UragrNs0n8FXeibz7AK54kfsA==
-X-Google-Smtp-Source: AGHT+IGr42oNfHQVVm7EhzTuFuuHWgflwzxpqf7PlmDhyAn8X5YOs8yIU+uV1nWQeu6T0SPpjYT2CA==
-X-Received: by 2002:adf:f9cc:0:b0:38f:231a:635e with SMTP id ffacd0b85a97d-38f33f2c2cbmr6494370f8f.25.1739730361813;
-        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7df2sm10192625f8f.84.2025.02.16.10.26.00
+        d=1e100.net; s=20230601; t=1739730397; x=1740335197;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0qUnpIEotEDFzC8jwR5Z3hGPfKph5TWJ9N2byfk13X8=;
+        b=jeMDKUumEYcOVtB2bHpMeJXSTb07R8/E1YKKkAI3pnQsQISeV9G89++5L3b8JVFwQb
+         fBn7MnyuuC/LIzgJHg2yF4eBURWtDa1SREeQVipO/gDpvqjpjHXDhmq+x4vLxOXjzAm1
+         7DNlT8znEzf+zhqm2R/loxBPAhDt5ObwwTvUzG7jPTZIyD+15r6ToKF36kMiznlUPYsy
+         ujQZplFSkoMGO2xy+4zHXD+IJ6GXetVCfD7GcFB3lDzkNSz/eUzHl5g6QFilqkARRKFK
+         zUjhAPJkfGcQ6swPbzEYgpHGQBfatsvYhHAPiX4uv3w8y8VjYkAZqlGO20c31euYXTL2
+         SyaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoB7sBqnsukiKECjV65DtC8jhMoBF5bcVc6oRzqHTTv2DG5vfvTcdneEJy50vsYraSQC+YVB9b3Hlcvtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJRwLTJb88L3qhtZnNBrYZDbziNpi8LbDvCsKoT9UFbtaIcUOk
+	4OA3Q3ArWbZHa1IKTWqSmE3ErMPKaOCymlSVsLJxrm6d/wZbfXLPNYbBGs6WnTPeS1o/efS7yi0
+	wO5carcouAZXj/5qGUmL5RIE+ZVJNrylRSNevF87sO5dWiDhwVdXI+od3xPvKgw==
+X-Gm-Gg: ASbGncvi3SXki4ud00JLi/jv/OFxlXPjENw3XL+rEbXXFlzXLOqY2ktC2IuKTzpGZRS
+	R5i40ljLt0sODd9J/nhMaPxxT0tAW+r5N6IhFwLyqPzVMDwY75U2WHh1iQjsab5X81MYQIF9O1o
+	PNanHoFQ2F99Y8rFxIjVuM/rkklUcc3p4b6zdZMCV+egy0yvTf+qXVfCntGEywEAzP3uhUCqoKR
+	WtwXiNT+t4E1y5V9snXO7LcGEssBs6v07VhF7hsGnoNNlt67OfUWdjLUblV6bFi8r6bsU61DWRA
+	ewcbRUeH1ck=
+X-Received: by 2002:a05:6000:1b02:b0:38f:2bee:e112 with SMTP id ffacd0b85a97d-38f341708a2mr5846762f8f.45.1739730397161;
+        Sun, 16 Feb 2025 10:26:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHU852ANofr7l6L4LfZEnPNpkucPJmxoYAM56W5GbeuwuCrVeNqnARgV7I8xoIvOnMq1BplTw==
+X-Received: by 2002:a05:6000:1b02:b0:38f:2bee:e112 with SMTP id ffacd0b85a97d-38f341708a2mr5846738f8f.45.1739730396776;
+        Sun, 16 Feb 2025 10:26:36 -0800 (PST)
+Received: from [192.168.10.48] ([176.206.122.109])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm10053303f8f.43.2025.02.16.10.26.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
-Message-ID: <aede22df-8930-4854-8269-6cb12b8fb2b8@gmail.com>
-Date: Sun, 16 Feb 2025 20:25:59 +0200
+        Sun, 16 Feb 2025 10:26:36 -0800 (PST)
+Message-ID: <0c2bb665-93ee-4f46-ac28-5dbd1dd2b9a2@redhat.com>
+Date: Sun, 16 Feb 2025 19:26:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,90 +88,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+Subject: Re: [PATCH V2 01/12] x86/virt/tdx: Make tdh_vp_enter() noinstr
+To: Adrian Hunter <adrian.hunter@intel.com>, seanjc@google.com
+Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com,
+ weijiang.yang@intel.com, dave.hansen@linux.intel.com, x86@kernel.org
+References: <20250129095902.16391-1-adrian.hunter@intel.com>
+ <20250129095902.16391-2-adrian.hunter@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
- <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
- <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
- <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
- <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
- <065ea296-480c-4ac4-bb4a-0fc2915b59f1@kernel.org>
- <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
-In-Reply-To: <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20250129095902.16391-2-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/16/25 15:57, Ivaylo Ivanov wrote:
-> On 2/16/25 15:19, Krzysztof Kozlowski wrote:
->> On 16/02/2025 10:51, Ivaylo Ivanov wrote:
->>>>>>  You need to
->>>>>> integrate the changes, not create duplicated driver.
->>>>> I can do that, but it would be come a bit cluttered, won't it? Depends on
->>>>> if we want to follow the current oem-provided initialization sequence, or
->>>>> try and fully reuse what we have in there.
->>>> I think it duplicates a lot, so it won't be clutter. We have many
->>>> drivers having common code and per-variant ops.
->>> So the approach to take here is to make a common driver?
->> For example: one common module and two modules per each soc, because I
->> assume some per-soc stuff might be needed. But maybe even these two
->> modules are not necessary and everything could be in one driver.
-...
->
-> So, Exynos2200 has a much simpler eusb initialization sequence than what
-> is present in mainline for QCOMs. I still don't really think the drivers
-> should be merged, as we aren't really duplicating code per-say.
->
-> I've already started working on merging them, and my current idea is to
-> not redefine the registers once again for 2200, but rather make an enum
-> that defines if the SoC is a QCOM or EXYNOS, and select the register
-> offsets dynamically
+On 1/29/25 10:58, Adrian Hunter wrote:
+> Make tdh_vp_enter() noinstr because KVM requires VM entry to be noinstr
+> for 2 reasons:
+>   1. The use of context tracking via guest_state_enter_irqoff() and
+>      guest_state_exit_irqoff()
+>   2. The need to avoid IRET between VM-exit and NMI handling in order to
+>      avoid prematurely releasing NMI inhibit.
+> 
+> Consequently make __seamcall_saved_ret() noinstr also. Currently
+> tdh_vp_enter() is the only caller of __seamcall_saved_ret().
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Never mind. That's a bad idea - after more digging way too much bits differ
-not just the register layout. I'll implement the init/exit sequence in the
-qcom driver separately. Sadly I can't reuse much code.
+This can be squashed into "x86/virt/tdx: Add SEAMCALL wrapper to 
+enter/exit TDX guest"; I did that in kvm-coco-queue.
 
-Best regards,
-Ivaylo
+Paolo
 
->  - similarly as how I did with USIv1. If a register
-> offset is not present, it'd just not do the write. My guess is that this
-> will make it work with the qualcomm init sequence as well, so it'd result
-> in even less redundant code (apart from the eUSB tuning, which can be
-> omitted for now).
->
->>> What about the current modelling scheme, as-in taking the phandle to
->>> the usbcon phy and handling it?
->> What about it? 
-> As I said in the commit description, I'm passing the USBCON phy as a
-> phandle to the eusb2 node and enabling/disabling it when needed. I'm
-> not 100% sure it would be adequate to include that in a common snps EUSB
-> driver, as it seems to more of a quirk with the exynoses. But then how
-> can I model it so that it's correctly described according to how the
-> hardware works (as-in usbcon "muxing" between child phys, in this case
-> eUSB and snps USBDP combophy)
->
-> Regarding repeaters, I still don't have the TI repeater implemented.
->
-> Best regards,
-> Ivaylo
->
->> Did you look at the bindings of qcom snps eusb2? Are you
->> saying you do not have here repeater? If so, then this phy phandle might
->> not be correct.
->>
->>
->>
->> Best regards,
->> Krzysztof
+> ---
+> TD vcpu enter/exit v2:
+>   - New patch
+> ---
+>   arch/x86/virt/vmx/tdx/seamcall.S | 3 +++
+>   arch/x86/virt/vmx/tdx/tdx.c      | 2 +-
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/seamcall.S b/arch/x86/virt/vmx/tdx/seamcall.S
+> index 5b1f2286aea9..6854c52c374b 100644
+> --- a/arch/x86/virt/vmx/tdx/seamcall.S
+> +++ b/arch/x86/virt/vmx/tdx/seamcall.S
+> @@ -41,6 +41,9 @@ SYM_FUNC_START(__seamcall_ret)
+>   	TDX_MODULE_CALL host=1 ret=1
+>   SYM_FUNC_END(__seamcall_ret)
+>   
+> +/* KVM requires non-instrumentable __seamcall_saved_ret() for TDH.VP.ENTER */
+> +.section .noinstr.text, "ax"
+> +
+>   /*
+>    * __seamcall_saved_ret() - Host-side interface functions to SEAM software
+>    * (the P-SEAMLDR or the TDX module), with saving output registers to the
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 4a010e65276d..1515c467dd86 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -1511,7 +1511,7 @@ static void tdx_clflush_page(struct page *page)
+>   	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
+>   }
+>   
+> -u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
+> +noinstr u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
+>   {
+>   	args->rcx = tdx_tdvpr_pa(td);
+>   
 
 
