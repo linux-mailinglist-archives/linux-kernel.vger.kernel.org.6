@@ -1,228 +1,239 @@
-Return-Path: <linux-kernel+bounces-516781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A483A3774B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:55:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDFBA3774E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6440816890E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3316616E9BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9F71A255C;
-	Sun, 16 Feb 2025 19:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3272C1A2564;
+	Sun, 16 Feb 2025 19:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eeTiaYuS"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WF3UQQNI"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23028179A3;
-	Sun, 16 Feb 2025 19:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739735689; cv=fail; b=C5/ul0rkuHbtc7N3qC1TTnkmMbVBWi7qi4pB2ONhmoZKOGtMIhaPgkkSap4zV0+RwrrSSJgONA9qhxZyP5MolNchJdnj4pmyPjgmPNIE7CiaeAZCdQ2aWYlsC1BqopC5zvq9WTOoFamFfSep+QXJF/8KVCNNNcEXRXlZ3011zPc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739735689; c=relaxed/simple;
-	bh=oDTa/Gve8jT/obvDXzh09HwN2SSLhDxcrHp1H6Ke/Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oGzMBlXlqgMrqtYpOR5mNRdQcj77nneLAErFA+E0tDFS8857r6fnyIw6eIubgSMQzGt4AzXprKSlwqpz23iH0fIBKMjWlcWcv8Q5JW15vcjOVPVmmzk/8YDcfahpWunI6uliFxjhaUAXUaCljgM8u0Lgda2ZWhvsx+kbfCdDRtM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eeTiaYuS; arc=fail smtp.client-ip=40.107.94.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q5Q4wIIb10EXayEx7ePblgcb+zOB6lesocijSGRPbWDoK3v3EzKBuIFhq+fqGETnU7bUuwGRHFSRHfam9gXs4SiqksDt9BsyacVA4UVdQqlTs2k1+hJeFg1cRKmgIg9BsSp75T1PAEPlmScM5tcnXIOD9fBfqM+82rCfwiXN6YIaT4h8wN0bbp5I/Ei7zWKQgp89pUnMFSTmnERtUb4D0PxDFBxZ8G4SAffaBfDUWjEf6tFA59KOWDG3jT9zScH14oZDaXINkRTQ6WIlOlDPzbO1cR0Q8JZHw6DbLXB/ig8Svq/q3JbnXkdduFRw6kt5qgD5AZ7N/pv/qR/Ejs1BxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CHwNUInhdzdwznlr3RaoYkLXE7f7l4BunlvQ6Jrb4Xg=;
- b=rbKbxQv7A4G6kgAXAyozhi9QE0+JaR5pjG1Zk9guPtEt6OIG7cJ44BK3HrrqSTMHYKJU8AE65hQyBbVzpxrK1dA+nqzrQ+EKlPBE9rVflQ8nZu20ZIUa3xAD4f6ydgHaFpeUEQ3PraHW/mbopKY+tFPpqCd3qLT+uEyklLNgtbn40gUhGvtCf4QY/GDKs2k+kjMWnIDM+Dbc8V7mTYdP4NhnHDmOAoG+H1zqUAW7Merb53Crb4n0UqI5PbEy2notp9mTtAyIPR08X4luKtN0yffh2VSM1ZvlrlXVSAD0rtvhvOvCNtu3uSBDWsB6+ZfkB9eZovzXewh4BbyRjJOToA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CHwNUInhdzdwznlr3RaoYkLXE7f7l4BunlvQ6Jrb4Xg=;
- b=eeTiaYuSCJN2V3jQLmZ1KfCtqklrX71YyoPrmIXrS/C+1Yx3Ab9Cz5aDXXC0ZVKzBSGDYBWajKqPP81I68jxE+1iG2xYFR/RU2J+oLgGCr0ICYfkMktwALjZgyWQXhtUCU1vWkMb7ZxTJshAkepa6HY3rx308G8OzgXUr48sh8mMMrJSDh6LKmqoI+Arr4c1Z65iCXliIuj5dQmDaSqJ1HoY670osWO37dmNClURhFiLZh/s0Lh5qz1ZlhKeR0aJ/qvTdot3R/0fPFURplWGqpoZJzN7xn+jpzr2AOJ0bvPX+kR7YT3a7lGoPpk1wtVYNUyfVAdEsE3qUtoy4jYpMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by IA1PR12MB8585.namprd12.prod.outlook.com (2603:10b6:208:451::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Sun, 16 Feb
- 2025 19:54:42 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8445.017; Sun, 16 Feb 2025
- 19:54:42 +0000
-Date: Sun, 16 Feb 2025 20:54:34 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] sched_ext: idle: Introduce node-aware idle cpu kfunc
- helpers
-Message-ID: <Z7JCeiLpxoZB7rnl@gpd3>
-References: <20250214194134.658939-1-arighi@nvidia.com>
- <20250214194134.658939-9-arighi@nvidia.com>
- <Z7IY3yr1VErsryqw@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7IY3yr1VErsryqw@slm.duckdns.org>
-X-ClientProxiedBy: FR4P281CA0355.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f4::8) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CD414A4DF;
+	Sun, 16 Feb 2025 19:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739735724; cv=none; b=q8/F92VaBsa0UBxyvy3xEJoC4PwkrOdK4cP/hS2FpmeQLUYSCBJ8HnwXtIEXq6p1TwoSWTg1pDQvFRmc3efv/l4z7O4DhBAklCVLhKBe+F8Gj9R+WM0P0UveqEJlkMfJKvW2lMwTuHgm7dtfRvzbEAvdWnSAtW7OxVn4jR8qYWE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739735724; c=relaxed/simple;
+	bh=cUFwdCYp1y9cf9WgQ7945xolw8SU5jXmThPQFq26R3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ri/DgSI1nXzHmdiJ2WuCqFObvlgb4f0wqni3Q30XynkuBvuCDDtfm+OhtLJJywZoKkvQni1rYJ/AQOLl8HSpQNBrjUJ9A+GoEyM5tGoMpWI9HyXjcGPJFcSDzwV5HGebmhxRMWNhuXO2pxGzcE1IKeKYSNrToNdZ7gKl7Lky1pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WF3UQQNI; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb999658fbso35057466b.3;
+        Sun, 16 Feb 2025 11:55:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739735721; x=1740340521; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FjuEgIRPEVxOOOXwspmjErHTDOYB/IsuvwkVh9SDhiE=;
+        b=WF3UQQNIZum36jc9IcpIiuGwVAS2aHrLlBP6x/LmwuRGX+JRK9f6gJDxTFZiJGL5Qo
+         4LKlY2D2HqNmgJpE+lAArkgRdaCrFbYpgIkfGQ2ugYqwXcq8anT6+esLC5t0z4YlF4IG
+         09s/1s0coM03uIxQ3Ddzh3yB5lpA7hGesK2iPQQ6ikcOYhuJybfd3jlJ5A8tPFE6hF4c
+         4jWOE65Ma7Ft9NAFBLm8mUnQc36NQNYT4VA0FLRjA7byR4Eecl0PyyxDeq4+ar3ZYhwb
+         an1tAq9kPteVoACOsLPF8dImum7cyFdgkozwhMVuRa5+xRNk9cNITMgV0I7EmEPsdcmD
+         TvRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739735721; x=1740340521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FjuEgIRPEVxOOOXwspmjErHTDOYB/IsuvwkVh9SDhiE=;
+        b=HSZNtH79znkpV1I8mHWj/BevCA2E4Mkt4SIMzf31zEaJDgrqR/BN7TNArUdARL8xTk
+         j0/mesjmInz2VWG/DKLSJFlKLlBtYx14oZvLMIYNKqNqZ0aRB2HIvltYGXd6dJZ3XwG3
+         wuZzdvsgSFAXleQv8f0GACMhS2DqG/5ttTWCX1x/MN3LF5sphps6LkkJKvfMcEFvGPkG
+         LabZ5wuCXAQtqrupXprSl/cLEV/fGqTGQtanjdtHkfrkSMNFUcZ8krV0SKzHLlztvQPL
+         YkBC2EzhVi6/cninRM8frsPNpcRAZRks1FWZQN/BQOmXurYGftLcaKEANII5q7ceyPNg
+         PM6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHEuWQRItLNs2aM1yOsfRhjPvBhtM4ny0JpLF5o6igoCaqdLJ0+bqYHzPfwV0QkSjcbuTl9Rits53V@vger.kernel.org, AJvYcCWKsb64w/uYwl0ur1yL/1NM0hn/MSXm4bDBOm1sZgIRMH6tdbBZeQmOY8b9X/dcbAHdVXrqFVPE2n/0JZPi@vger.kernel.org, AJvYcCXGUj8knbPPZCrI8Cb+QBc8+ZT6kpzKAFxOBvFEgxilScHvKve8tHzpl+1+8yijwMQzVeL+rjwCV/TLkQh4+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsgrf05chZ2hh03HaXtfMNvacYYUxUgUgACKaRxoVi+/p9zuCy
+	DUFFEzhpxD+Ja3I0QMXv0PmrMQrw7FbzX+Du8zp3jPdkSM8tNjLstLlIx21C/LIPq3v0P9BRke5
+	Aw9yt/NS0fXQggtXy5FZ1b5RNF+g=
+X-Gm-Gg: ASbGncsMroDzBXNipDmU5AbzPSUOe8Y5HXoFjOucepdun9zn2GBCSvduFBV37TXfFGc
+	5NYEJ5HJStN9xDj+ulKdCY7Y1Eo4IJF0rYsEh5pI3b0/1HOqCwF864uvMDB0zxI22p/IfZgTC
+X-Google-Smtp-Source: AGHT+IGeUh5D2COm7DcMHyM5fyROj+2hiuMiWSXd7/XaOT0L3NOIbBruVcshszxVHb/lbtMUy7x8ICnFwlGoJdcOB3w=
+X-Received: by 2002:a05:6402:3547:b0:5dc:cf9b:b04a with SMTP id
+ 4fb4d7f45d1cf-5e035ff9d49mr16638900a12.1.1739735720389; Sun, 16 Feb 2025
+ 11:55:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|IA1PR12MB8585:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3476fd3d-55d3-43eb-c5ca-08dd4ec3c149
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DI4rhRF6ryklLtkhtPFZk9CmJoMG5ypaGXbMfR6KRg5zFxoymYOc3GI/2POu?=
- =?us-ascii?Q?0C2bnlKkPIQwY4oIxL7kBREv2EVzedQ8I3RIOeymFnGEsNB6SD3ExOHeguFA?=
- =?us-ascii?Q?mghWvRxQlSJHLhG3EkkqC/XkYplcwe2m2zfwVkS4Fvo6iCl3dn1VGPebbWQP?=
- =?us-ascii?Q?zcJPxh0F3zHpBJjWru4Ap/rl5+woXTiJ04S3+/nHl5FHjH41/jaFHZ06ve87?=
- =?us-ascii?Q?rYtqlVB8fm6a9v3rgbayM1AqiZ6YYBQNA1GevJQD843/nN7NkKljYDGkRg+X?=
- =?us-ascii?Q?rE6o5GN5KCPUT27TTVPvbpcCkmCktlog9NIv0z0fAISNcUrf4dG6Xw6cHsM9?=
- =?us-ascii?Q?HU6mrfzEJ876N2YyBD5pZjOaNSuVXBS1+8encHZM3gxVO6G09AFaLyN2HM+n?=
- =?us-ascii?Q?hXWGYsIurbz8lrome0IvdhtW8uZyhSiS/tPPsiXIDgnq5zRWBRoflviI3x2v?=
- =?us-ascii?Q?/xyxcqGCb6D/nKgrVEwyk0aV3BYROxo1cIzfPcyKot/YEpCnHaz0PKKyeBVu?=
- =?us-ascii?Q?hPBnaoNWUMK28BAmhf5EW+wceNfCjNCxZWjyqNcU4oLZzByr1okH97Bi4F3d?=
- =?us-ascii?Q?Luf00yLsWl7ZXlh/Cy7fu0VVdqUgE+6bzAB/H/md5nykX38mQ2XW7pZi3HWo?=
- =?us-ascii?Q?OjpXLrXRBLexxpWuAgLYcWFANxOu2UdMaX8T3g7P7bM9ZWizmV54ClCzujd6?=
- =?us-ascii?Q?uolbZEuu42X6dHaQmVJZ1ruPh9MC5m0SPYEkn5wbQcKJ/u0hwumPqE4Wvg2w?=
- =?us-ascii?Q?yJ9WYPnUFsP3T/L/RTAMxzLbGVgcfePlTVDqy/+nYFLoPVqb61Zp16ibWeCr?=
- =?us-ascii?Q?uRzdyq8B/0KedOIeQlB0tIwTRpTK90sv6NsrVLuVJFKREedgB7cdYNMwSP5W?=
- =?us-ascii?Q?TUzlOO+e8NtOvtH+hXymHVd2Qgm6wEZ45JER/dAqOvk3Zj8KJ5BNCatgd/2W?=
- =?us-ascii?Q?L23wbRP4zN+1BPARvj5/ncoWHgudPuBuBQuEUmN5H+jWaPUfvptu3MR3tj4C?=
- =?us-ascii?Q?gyQ1PIbM+blILJn7uwWlJ5flQIu133lD2mfnDu5Us7p5sM44S1GGFL1WzwNv?=
- =?us-ascii?Q?8E5NvPAmPVw+NysC9iLr/2IIhORsV6ir4aTLucKO4BURQ94kznwenLHGic1o?=
- =?us-ascii?Q?Ca3xxwGyxx5xOzbC/IDKzjyXu4RxW5r+TWBo8P+A77FLUI1raStRGsz0vZ3q?=
- =?us-ascii?Q?tnQRHDzw+84ZV6knln+7JG8xNPvXkYuPG13KW5Crw55ZNztHXBa6z8UlzTpx?=
- =?us-ascii?Q?sIEBScxDIcB3cmqkr4vbKV5EXq5nD7GfuBaiinGVKYLUslBgfLVp000btLkf?=
- =?us-ascii?Q?w4277Vk+SJmFt2d8RWSudr1Uh1ThwOiHH/T3SiGymBTh+IgPVEBHgICHAV/l?=
- =?us-ascii?Q?DNCntfPTpDnZ0Q5jJCVhItalmvVA?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ibP6zqlsVywCjAdn/yWDTeHU3TqMBVX8/0lzBNbaN3rpR2q2RHJJVuYxe7tE?=
- =?us-ascii?Q?As3akqPj4m3TK/7XL4RWEJiUX/TIZRGXbDNhKGEJNIPlwQhsZ8/s8oBkGoXe?=
- =?us-ascii?Q?2/CxgrflSikLU9FRy/zgGsvqzTyO2evFFGoYpR0T31dako+NXx08Br3FuV1u?=
- =?us-ascii?Q?YfUxSal6mFdtvwzdUH+lyTcy1A6dg8kPc7LBPtxoo7OfAdTTHTZe1AXCR6b+?=
- =?us-ascii?Q?Xms8KFxB1IYgoSgYPhY3IPw3ISKqQloI11v0QJ5mecQUxfosJLtUQJ448wP6?=
- =?us-ascii?Q?n14xEydSJr3IhnRj9Y6TAWFrSu5I6uvmWRhYCqmrCbUMkjyq+uL76SA1qU3J?=
- =?us-ascii?Q?P+eCxUIVqVzsOWyOls1GvakcuLuXaeGI+/Caeex+YlNlga+QH/GX+5Hzqz6K?=
- =?us-ascii?Q?X3WkUQWmq6C6g2rUfaRraD2IhvlPSvFntiJzHOxDwe5PekQxRAzxSJn04ueW?=
- =?us-ascii?Q?ukSM+Epmc77VsJbEsmVBLtFcwJHtQwEIPDBL4Lq3vqlrjJv9BpxfkXynAstI?=
- =?us-ascii?Q?oFStPnuvCSoATAM8DyFA+vF4nY/evizWM1UqTyz99s2wjBJpl68+hYX34wRm?=
- =?us-ascii?Q?58SgICNBbZGH/7l7UutfBBzwZa/A5Ylm5dmrB3vlZNHFzC6T9JQgY4NoJ6Ut?=
- =?us-ascii?Q?Fe8gmKwPlFs2RS9L2hb6sFt6K5jV8ujM4hNhMJbplysr4DRfE7G/R1XEB0Cw?=
- =?us-ascii?Q?WijdfZIpeRAkNQcmm9cTwbHZDe4zoKs5g+/O01OfHj/3XTQlk90pKfUBV93k?=
- =?us-ascii?Q?DljLDw1p75FMIMYo+3SZFrUnN+hDFvwnF9YK1LoajxtBA4fO3ZvM9+iihgNu?=
- =?us-ascii?Q?aoXZ7Ve4dBbmtPwIdTaQJvuJa/Txs+0byr6ZdJSzPhSbZrzNGJr7L77tAaho?=
- =?us-ascii?Q?saMSIJiN7npEO/sfwfMismh1rZF3G6f06Oj85b+Or5K0jTSvE/1LC2yegxI7?=
- =?us-ascii?Q?lG02KnKOr5sBqBiZxMMTwC+22aOFEdIHQ86+kQf1oPRzNGhz9UNZEwTjZXdN?=
- =?us-ascii?Q?irQ/7Ck6WZNbPkMQUnUSpGuBX/8OTni7IS3jdFPD3ERZIXrJPfB7LWUtcOrB?=
- =?us-ascii?Q?NF+pua/gyKQGC47YdbhISHUky1BnGpXflNYeptq7692+z3PHft2wl4ilQlRY?=
- =?us-ascii?Q?T/+U9O8veROoDyUhUOWQvHPuAMQBC+U8+iEr6Jw7SvB+jxXM6noxNc7xUuFz?=
- =?us-ascii?Q?/xjHt/P9H5uHPeXQM1OBsVAbApaS4QPbVKH+YMmlXoBBEBTb1e/ORV27AdQp?=
- =?us-ascii?Q?fz/jxbF476z5cTniUldQYXbOipd0GzAebkNTDcyxXPlTzdub8mOaDTUZjS+I?=
- =?us-ascii?Q?zIATcZXLXGlWoMosCp8aqUMsQqDNRQHQ4//NJsb9XjWWze8Ml1Wndtvvafqj?=
- =?us-ascii?Q?7CR3cMy7bsChkhQ4pcMfqlZBmS9OYqAY0AUer7OTj8y4H18oNORyKf10s8Xb?=
- =?us-ascii?Q?YQrvERKWah499JfYpL77WUqiUenSPmuXZiDeUfQ6odY3E1t52CRSV+Xzo4JB?=
- =?us-ascii?Q?Mg/WgGHkV4SEk6u6aF+CIcu/zDfBLW2lGGs+x/zDcukESZbPEdgUw55eQfZS?=
- =?us-ascii?Q?lgAPJNVHC+A3aHGXLIrGFF0iQxMBNqB6KtjTnQS7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3476fd3d-55d3-43eb-c5ca-08dd4ec3c149
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2025 19:54:42.6342
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B3SvA9PVGFnDGkX0wJGAlUKhK5Q7MH5bkYchT26c31sUh7Ae3EX8Nv8ZUVQey9tu1hoYedVb+XpXgkM3VBj7AA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8585
+References: <20250216164029.20673-1-pali@kernel.org> <20250216164029.20673-3-pali@kernel.org>
+In-Reply-To: <20250216164029.20673-3-pali@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 16 Feb 2025 20:55:09 +0100
+X-Gm-Features: AWEUYZlaY-TvdolXkAkXWU4H4qU60nI1n-YilFzKQFF4WUuxD4hzLDGa7m4iGBU
+Message-ID: <CAOQ4uxi0saGQYF5qgCKWu_mLNg8FZBHqZu3TvnqpY8v8Hmq-nQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] fs: Extend FS_IOC_FS[GS]ETXATTR API for Windows attributes
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 16, 2025 at 06:57:03AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Fri, Feb 14, 2025 at 08:40:07PM +0100, Andrea Righi wrote:
-> ...
-> >  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> >  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
-> >  s32 scx_bpf_pick_idle_cpu_in_node(const cpumask_t *cpus_allowed,
-> >  				   int node, u64 flags)
-> 
-> All other functions have just _node as the suffix. Might as well do the same
-> here?
+On Sun, Feb 16, 2025 at 5:42=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> struct fsxattr has 8 reserved padding bytes. Use these bytes for defining
+> new fields fsx_xflags2, fsx_xflags2_mask and fsx_xflags_mask in backward
+> compatible manner. If the new FS_XFLAG_HASEXTFIELDS flag in fsx_xflags is
+> not set then these new fields are treated as not present, like before thi=
+s
+> change.
+>
+> New field fsx_xflags_mask for SET operation specifies which flags in
+> fsx_xflags are going to be changed. This would allow userspace applicatio=
+n
+> to change just subset of all flags. For GET operation this field specifie=
+s
+> which FS_XFLAG_* flags are supported by the file.
+>
+> New field fsx_xflags2 specify new flags FS_XFLAG2_* which defines some of
+> Windows FILE_ATTRIBUTE_* attributes, which are mostly not going to be
+> interpreted or used by the kernel, and are mostly going to be used by
+> userspace. Field fsx_xflags2_mask then specify mask for them.
+>
+> This change defines just API without filesystem support for them. These
+> attributes can be implemented later for Windows filesystems like FAT, NTF=
+S,
+> exFAT, UDF, SMB, NFS4 which all native storage for those attributes (or a=
+t
+> least some subset of them).
+>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> ---
+>  include/uapi/linux/fs.h | 36 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 367bc5289c47..93e947d6e604 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -145,15 +145,26 @@ struct fsxattr {
+>         __u32           fsx_nextents;   /* nextents field value (get)   *=
+/
+>         __u32           fsx_projid;     /* project identifier (get/set) *=
+/
+>         __u32           fsx_cowextsize; /* CoW extsize field value (get/s=
+et)*/
+> -       unsigned char   fsx_pad[8];
+> +       __u16           fsx_xflags2;    /* xflags2 field value (get/set)*=
+/
+> +       __u16           fsx_xflags2_mask;/*mask for xflags2 (get/set)*/
+> +       __u32           fsx_xflags_mask;/* mask for xflags (get/set)*/
+> +       /*
+> +        * For FS_IOC_FSSETXATTR ioctl, fsx_xflags_mask and fsx_xflags2_m=
+ask
+> +        * fields specify which FS_XFLAG_* and FS_XFLAG2_* flags from fsx=
+_xflags
+> +        * and fsx_xflags2 fields are going to be changed.
+> +        *
+> +        * For FS_IOC_FSGETXATTR ioctl, fsx_xflags_mask and fsx_xflags2_m=
+ask
+> +        * fields specify which FS_XFLAG_* and FS_XFLAG2_* flags are supp=
+orted.
+> +        */
+>  };
+>
+>  /*
+> - * Flags for the fsx_xflags field
+> + * Flags for the fsx_xflags and fsx_xflags_mask fields
+>   */
+>  #define FS_XFLAG_REALTIME      0x00000001      /* data in realtime volum=
+e */
+>  #define FS_XFLAG_PREALLOC      0x00000002      /* preallocated file exte=
+nts */
+> -#define FS_XFLAG_IMMUTABLE     0x00000008      /* file cannot be modifie=
+d */
+> +#define FS_XFLAG_IMMUTABLEUSER 0x00000004      /* file cannot be modifie=
+d, changing this bit does not require CAP_LINUX_IMMUTABLE, equivalent of Wi=
+ndows FILE_ATTRIBUTE_READONLY */
 
-I agree, I'll rename this scx_bpf_pick_idle_cpu_node().
+So why not call it FS_XFLAG2_READONLY? IDGI
 
-> 
-> >  s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed,
-> >  			       int node, u64 flags)
-> 
-> ...
-> > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> > +{
-> > +	node = validate_node(node);
-> > +	if (node < 0)
-> > +		return cpu_none_mask;
-> > +
-> > +#ifdef CONFIG_SMP
-> > +	return idle_cpumask(node)->cpu;
-> > +#else
-> > +	return cpu_none_mask;
-> 
-> Shouldn't the UP case forwarded to scx_bpf_get_idle_cpumask()? Wouldn't a
-> NUMA aware scheduler running on a UP kernel end up specifying 0 to these
-> calls?
+Does anyone think that FS_XFLAG_IMMUTABLEUSER is more clear or something?
 
-Hm... but scx_bpf_get_idle_cpumask() also returns cpu_none_mask in the UP
-case. We also want to validate the node and trigger a failure if an invalid
-node is specified (and in the UP case, node 0 is valid, since
-nr_node_ids == 1).
+Thanks,
+Amir.
 
-> 
-> > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
-> > +{
-> > +	node = validate_node(node);
-> > +	if (node < 0)
-> > +		return cpu_none_mask;
-> > +
-> > +#ifdef CONFIG_SMP
-> > +	if (sched_smt_active())
-> > +		return idle_cpumask(node)->smt;
-> > +	else
-> > +		return idle_cpumask(node)->cpu;
-> > +#else
-> > +	return cpu_none_mask;
-> 
-> Ditto here.
-> 
-> Thanks.
-> 
-> -- 
-> tejun
-
--Andrea
+> +#define FS_XFLAG_IMMUTABLE     0x00000008      /* file cannot be modifie=
+d, changing this bit requires CAP_LINUX_IMMUTABLE */
+>  #define FS_XFLAG_APPEND                0x00000010      /* all writes app=
+end */
+>  #define FS_XFLAG_SYNC          0x00000020      /* all writes synchronous=
+ */
+>  #define FS_XFLAG_NOATIME       0x00000040      /* do not update access t=
+ime */
+> @@ -167,10 +178,25 @@ struct fsxattr {
+>  #define FS_XFLAG_FILESTREAM    0x00004000      /* use filestream allocat=
+or */
+>  #define FS_XFLAG_DAX           0x00008000      /* use DAX for IO */
+>  #define FS_XFLAG_COWEXTSIZE    0x00010000      /* CoW extent size alloca=
+tor hint */
+> -#define FS_XFLAG_COMPRESSED    0x00020000      /* compressed file */
+> -#define FS_XFLAG_ENCRYPTED     0x00040000      /* encrypted file */
+> +#define FS_XFLAG_COMPRESSED    0x00020000      /* compressed file, equiv=
+alent of Windows FILE_ATTRIBUTE_COMPRESSED */
+> +#define FS_XFLAG_ENCRYPTED     0x00040000      /* encrypted file, equiva=
+lent of Windows FILE_ATTRIBUTE_ENCRYPTED */
+> +#define FS_XFLAG_CHECKSUMS     0x00080000      /* checksum for data and =
+metadata, equivalent of Windows FILE_ATTRIBUTE_INTEGRITY_STREAM */
+> +#define FS_XFLAG_HASEXTFIELDS  0x40000000      /* fields fsx_xflags_mask=
+, fsx_xflags2 and fsx_xflags2_mask are present */
+>  #define FS_XFLAG_HASATTR       0x80000000      /* no DIFLAG for this   *=
+/
+>
+> +/*
+> + * Flags for the fsx_xflags2 and fsx_xflags2_mask fields
+> + */
+> +#define FS_XFLAG2_HIDDEN       0x0001  /* inode is hidden, equivalent of=
+ Widows FILE_ATTRIBUTE_HIDDEN */
+> +#define FS_XFLAG2_SYSTEM       0x0002  /* inode is part of operating sys=
+tem, equivalent of Windows FILE_ATTRIBUTE_SYSTEM */
+> +#define FS_XFLAG2_ARCHIVE      0x0004  /* inode was not archived yet, eq=
+uivalent of Windows FILE_ATTRIBUTE_ARCHIVE */
+> +#define FS_XFLAG2_TEMPORARY    0x0008  /* inode content does not have to=
+ preserved across reboots, equivalent of Windows FILE_ATTRIBUTE_TEMPORARY *=
+/
+> +#define FS_XFLAG2_NOTINDEXED   0x0010  /* inode will not be indexed by c=
+ontent indexing service, equivalent of Windows FILE_ATTRIBUTE_NOT_CONTENT_I=
+NDEXED */
+> +#define FS_XFLAG2_NOSCRUBDATA  0x0020  /* file inode will not be checked=
+ by scrubber (proactive background data integrity scanner), for directory i=
+node it means that newly created child would have this flag set, equivalent=
+ of Windows FILE_ATTRIBUTE_NO_SCRUB_DATA */
+> +#define FS_XFLAG2_OFFLINE      0x0040  /* inode is marked as HSM offline=
+, equivalent of Windows FILE_ATTRIBUTE_OFFLINE */
+> +#define FS_XFLAG2_PINNED       0x0080  /* inode data content must be alw=
+ays stored in local HSM storage, equivalent of Windows FILE_ATTRIBUTE_PINNE=
+D */
+> +#define FS_XFLAG2_UNPINNED     0x0100  /* inode data content can be remo=
+ved from local HSM storage, equivalent of Windows FILE_ATTRIBUTE_UNPINNED *=
+/
+> +
+>  /* the read-only stuff doesn't really belong here, but any other place i=
+s
+>     probably as bad and I don't want to create yet another include file. =
+*/
+>
+> --
+> 2.20.1
+>
 
