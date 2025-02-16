@@ -1,221 +1,202 @@
-Return-Path: <linux-kernel+bounces-516539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAB1A373B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:55:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D7CA373B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7EB3ABCD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1E93AE21E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A7E18DB03;
-	Sun, 16 Feb 2025 09:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7DB18DB0B;
+	Sun, 16 Feb 2025 09:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFVxLyce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSvmUUZG"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1383A290F;
-	Sun, 16 Feb 2025 09:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9B290F;
+	Sun, 16 Feb 2025 09:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699726; cv=none; b=FMQmphnCbX3wlf2WI/lGYZX1HsRe2yqr6FUICHcbMGbfubCw5wrxhalu34TXP39tWvkKMMPzpGZE1cxrgWZwc0fVqkBqXOOcsUXKnwGcxPQlxLAWK0UXMBY4tRGKD5bmiSLBXTyyMqjC7Z4ABUa4cRY29N6RzEL7V33pdFI5Xd8=
+	t=1739699944; cv=none; b=FaTkavjcNv7+SaGz0fJyXBfIarpiMEMDriOhff0+dTymrbfWNp1IjZn+k5V8/6aiF2AgNwvneeYoiFhVHiBMeCdQElz+16gMIUG8oonniFMoxH9wRKp+TEsLw7fqTr2kzLZl1AksdNgph66LkrrIXis7mvdRSV+/ENqhRJk95PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699726; c=relaxed/simple;
-	bh=uxeXeJ6bnFjUDM2/tZeOi6I4UpOhwNCOUpFKYkaIesA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pCsq1Jag1nOQTL7+n6h8SWXoI4dCn6pXuec328ji8b3PVKAgIPy+o/sIWTnFdXEJGsIKq0xQvbHjWEwAC8VCdkCIF+b6+2DHvrQbBMZlCxhc7Z0z7fDFcGd36zCDaEki81yXJ3T+xII6GaXWNb5r4sSa/TTorG36sL5ZM5FSMIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFVxLyce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A565C4CEDD;
-	Sun, 16 Feb 2025 09:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739699725;
-	bh=uxeXeJ6bnFjUDM2/tZeOi6I4UpOhwNCOUpFKYkaIesA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cFVxLyceRo6lO/Cu3nvm5w6ePc2RI5vfYAL6WD2CPnRNex1Zpb+xxt/Qt8EuEEwk/
-	 sNY0RXPqF1tDkhjwQd3Tgm78ZpkaUZ+rDDKRczTvoBaJei1wZCN9aG/9sT9xKyB3/K
-	 WPVlAcSI6htO7ka9iuk7+g9CWLvLXyhbOhbEmUXJ4PsaFudRpvEIoAsfY/v4e4zNqN
-	 B/9rhR/e6wc+JAKaEHwZG9kPWMARHnXdlduMUMDp7CJncS2dDTh4ggYO0y20InxGsW
-	 +RmuJKrbpoHgj+82Dbk8OZO1cri6E+8EO5OdRlWo2EQPtP4y0kk0P5ptKdKbmL9vAe
-	 6zpKHXX7iKgfw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tjbMx-004WpP-4V;
-	Sun, 16 Feb 2025 09:55:23 +0000
-Date: Sun, 16 Feb 2025 09:55:21 +0000
-Message-ID: <87seoe1aeu.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	XiaoDong Huang <derrick.huang@rock-chips.com>,
-	Peter Geis <pgwipeout@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	kernel@collabora.com
-Subject: Re: [PATCH v1 1/4] irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
-In-Reply-To: <20250215235431.143138-2-dmitry.osipenko@collabora.com>
-References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
-	<20250215235431.143138-2-dmitry.osipenko@collabora.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739699944; c=relaxed/simple;
+	bh=aL+04xZVulicpTdrxisp1JEl4Klmtg3++whjLvtr2xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eOHV46mCk6JE0iRqckbVc4j+x2cVXUCatIgzeFrq6m4agx+11tMgRV9HM94DdK4KymuvJ+zApvV1UhMxPB8d0Uj+E7QOCChNs2vVMP3Bvp8C+eUatjD0ZvHBJQ8hHpG9L4z1aO6OOfRVQscVQLcULWZ1Pq6vzlnV8aXOlmZWj20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSvmUUZG; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f3ac22948so248501f8f.0;
+        Sun, 16 Feb 2025 01:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739699941; x=1740304741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
+        b=jSvmUUZGbEkC0OqOgrBd7RkDRwQ8vFKizGOknw6ShBfgs9snx+WOZ3UUHZgsvSmBL0
+         4r45YHwVI7VBQTcBQeaiXoaNwDO0wQY3oBDhDxFPWH9QT2fniMS1wJxusLFSFtPmDQsa
+         W4DIG+o8w+lxssBhVebgWKMbIM69gXng8IVqWVTYTDccWh8txh3WTFdHaclxwQdMIUmg
+         M5bZhGYxnN0wWjKXdUDECN4yEjeDhB7hSb8UGGrrJeQFcoo7A0j3Cj5dL82V1xvawRZu
+         HEfeSKQcGMrfDFA90LjOLE6e7VC6ohZI10Zq1IYJhbQiHyWX73uepqlLCS9sEaq3+2B0
+         WBPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739699941; x=1740304741;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
+        b=gRRS6WzrzDkIyYPvcJ3UVNVKygog9fE6pBKB8OVX131Yp+lrltYoxGTkQLaFUltGt/
+         8Ayn74WfcxYAWtFaSNSj8UHS6RdARhoKx4O/9Ij9RQf7Mwbay5qnnnsjU7kzzTCJtZmf
+         isl6HZthWJflNeDLDh5Wx7gQ6Dj2K+vIj4T7VoHU7OAVT4yIWA6GIrqfZ9PU9jWkhqoS
+         wCIUcDCcLpL0adcwROd8VTmIlcc/+7orHJvpw5Iqp1jCz8hQ27DWM+W8vURGJ7sJEWo7
+         Gs5+M2cdOK4YIOZuugKqxH6wqyIq95t/wmq+g5tvrtShlUiTjalouKSBV8k3YI8yRK7Y
+         8F2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVRn4l9VidYrQD3Nj2duzG3/4lGoK6jDl09t1rUewMGEyfMHKnl1PHTNs3RcNqnQHOLLLixL7ZUHOfYmqXO@vger.kernel.org, AJvYcCX7aw1ra+Xym5NZpvyYAHvDww9QGOIRmK/97GI/yIJetuGt0rH4aF3+qrzE8Gd5EkPTNGlJ/dh6AJxFOFI4UABE1Uk=@vger.kernel.org, AJvYcCXmtwcQitFJ9gkiaohH+XbJ6sGcQjJ9VIJUPpG9cm/pN8eEB3S6EaEO2TJCcIuXmJLA+tH1NwOa1pTj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlA2HazfHsFAz1VbJuqktIX4ihuGsH9buPhjAS0n5gPAQEmXsi
+	lcfPoKC5U9b1OjfsMLVbPGiDEaFqHeSzDChHIuCUnPrkJY6Lqsvy
+X-Gm-Gg: ASbGncs1Dua4qrIHWAWAsfI7vUjxM0Tp4uvN7FZjRJ5WPSSAW8Jhze3muYhhdJ5gBx3
+	NE0z6nBTLLFZibsXxVCUW6+aQn9nQ8tNzmjP+mlWZjNMK8UKgrfJvmKpD4JOGdzvJPKGEcebgXh
+	6DPYpZlQGaKAdG2jU6yD9lJOjpVosjjk4s2i3OzG2iLRBQrnUchpaFQm1l7iuZXknyQbU9oJI/1
+	eyViMLny2UXp3j+HFzbKnga948HQYYUn3Psb/QAsHYeNglsPnQt4bM5WVDpdN0sSETYZ8eZnhe0
+	dXlxkgYU50KIRW8wkecc8ChOPminlYf8Y0XkbzNKCby2ykCrXw2e1OZK9qhCzZ6rhJ424A==
+X-Google-Smtp-Source: AGHT+IHZgNqHyHCv5yT6p4apSYBg8SJTvge1/YRU31W+9aRlNzcxZQY9QQK2OBKvkkzXkaKW1nJebA==
+X-Received: by 2002:a5d:59af:0:b0:385:ee40:2d88 with SMTP id ffacd0b85a97d-38f33f117d1mr4534496f8f.3.1739699941089;
+        Sun, 16 Feb 2025 01:59:01 -0800 (PST)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm9144911f8f.43.2025.02.16.01.58.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2025 01:59:00 -0800 (PST)
+Message-ID: <9451f339-c8ff-4be2-9cde-1aaf78fa8e7b@gmail.com>
+Date: Sun, 16 Feb 2025 11:58:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dmitry.osipenko@collabora.com, heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kever.yang@rock-chips.com, derrick.huang@rock-chips.com, pgwipeout@gmail.com, robin.murphy@arm.com, kernel@collabora.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] phy: samsung: add Exynos2200 usb phy controller
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-5-ivo.ivanov.ivanov1@gmail.com>
+ <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 15 Feb 2025 23:54:28 +0000,
-Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> 
-> Rockchip RK3566/RK3568 GIC600 integration has DDR addressing
-> limited to first 4GB of DRAM. Rockchip assigned Erratum ID #3568002
-> for this issue. Add driver quirk for this Rockchip GIC Erratum.
+On 2/16/25 11:36, Krzysztof Kozlowski wrote:
+> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
+>> The Exynos2200 SoC comes with 3 PHYs - snps eUSB2, snps USBDP combophy
+>> and a cut-off phy that origins from exynos5-usbdrd. The latter is used
+>> for link control, as well as pipe3 attachment and detachment.
+>>
+>> Add a new driver for it.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  drivers/phy/samsung/Kconfig                 |  13 ++
+>>  drivers/phy/samsung/Makefile                |   1 +
+>>  drivers/phy/samsung/phy-exynos2200-usbcon.c | 241 ++++++++++++++++++++
+>>  include/linux/soc/samsung/exynos-regs-pmu.h |   3 +
+>>  4 files changed, 258 insertions(+)
+>>  create mode 100644 drivers/phy/samsung/phy-exynos2200-usbcon.c
+>>
+>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+>> index f62285254..47e9b9926 100644
+>> --- a/drivers/phy/samsung/Kconfig
+>> +++ b/drivers/phy/samsung/Kconfig
+>> @@ -90,6 +90,19 @@ config PHY_EXYNOS2200_SNPS_EUSB2
+>>  	  This driver provides PHY interface for eUSB 2.0 controller
+>>  	  present on Exynos5 SoC series.
+>>  
+>> +config PHY_EXYNOS2200_USBCON
+>> +	tristate "Exynos2200 USBCON PHY driver"
+>> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>> +	depends on HAS_IOMEM
+>> +	depends on USB_DWC3_EXYNOS
+> How? What are you using from DWC3?
 
-Thanks for taking the time to submit this. It only took 5 years for
-this erratum to be published...
+Will drop.
 
-However, my understanding of this issue is that the integration is
-limited to the first 32bit of physical address space, not the first
-32bit of RAM. If the memory is placed as physical address 0, then they
-represent the same space. But this is still an important distinction.
-
-> 
-> Note, that the 0x0201743b ID is not Rockchip 356x specific and thus
-> there is an extra of_machine_is_compatible() check. Rockchip 3588 uses
-> same ID and it is not affected by this errata.
-
-This ID is that of ARM's GIC600, which is a very common GICv3
-implementation, and is not Rockchip-specific. Please capture this in
-the commit message.
-
-> 
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> ---
->  Documentation/arch/arm64/silicon-errata.rst |  2 ++
->  arch/arm64/Kconfig                          |  9 ++++++++
->  drivers/irqchip/irq-gic-v3-its.c            | 23 ++++++++++++++++++++-
->  3 files changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
-> index f074f6219f5c..f968c13b46a7 100644
-> --- a/Documentation/arch/arm64/silicon-errata.rst
-> +++ b/Documentation/arch/arm64/silicon-errata.rst
-> @@ -284,6 +284,8 @@ stable kernels.
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Rockchip       | RK3588          | #3588001        | ROCKCHIP_ERRATUM_3588001    |
->  +----------------+-----------------+-----------------+-----------------------------+
-> +| Rockchip       | RK3568          | #3568002        | ROCKCHIP_ERRATUM_3568002    |
-> ++----------------+-----------------+-----------------+-----------------------------+
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Fujitsu        | A64FX           | E#010001        | FUJITSU_ERRATUM_010001      |
->  +----------------+-----------------+-----------------+-----------------------------+
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index c997b27b7da1..0428ad8f324d 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1302,6 +1302,15 @@ config NVIDIA_CARMEL_CNP_ERRATUM
->  
->  	  If unsure, say Y.
->  
-> +config ROCKCHIP_ERRATUM_3568002
-> +	bool "Rockchip 3568002: can not support DDR addresses higher than 4G"
-> +	default y
-> +	help
-> +	  The Rockchip RK3566 and RK3568 GIC600 SoC integrations have DDR
-> +	  addressing limited to first 4GB.
-> +
-> +	  If unsure, say Y.
-> +
-
-s/DDR addresses/physical addresses/
-
->  config ROCKCHIP_ERRATUM_3588001
->  	bool "Rockchip 3588001: GIC600 can not support shareability attributes"
->  	default y
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 8c3ec5734f1e..f30ed281882f 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -205,13 +205,15 @@ static DEFINE_IDA(its_vpeid_ida);
->  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
->  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
->  
-> +static gfp_t gfp_flags_quirk;
-> +
->  static struct page *its_alloc_pages_node(int node, gfp_t gfp,
->  					 unsigned int order)
->  {
->  	struct page *page;
->  	int ret = 0;
->  
-> -	page = alloc_pages_node(node, gfp, order);
-> +	page = alloc_pages_node(node, gfp | gfp_flags_quirk, order);
 >
->  	if (!page)
->  		return NULL;
-> @@ -4887,6 +4889,17 @@ static bool __maybe_unused its_enable_quirk_hip09_162100801(void *data)
->  	return true;
->  }
->  
-> +static bool __maybe_unused its_enable_rk3568002(void *data)
-> +{
-> +	if (!of_machine_is_compatible("rockchip,rk3566") &&
-> +	    !of_machine_is_compatible("rockchip,rk3568"))
-> +		return false;
-> +
-> +	gfp_flags_quirk |= GFP_DMA32;
-> +
-> +	return true;
-> +}
-> +
->  static const struct gic_quirk its_quirks[] = {
->  #ifdef CONFIG_CAVIUM_ERRATUM_22375
->  	{
-> @@ -4954,6 +4967,14 @@ static const struct gic_quirk its_quirks[] = {
->  		.property = "dma-noncoherent",
->  		.init   = its_set_non_coherent,
->  	},
-> +#ifdef CONFIG_ROCKCHIP_ERRATUM_3568002
-> +	{
-> +		.desc   = "ITS: Rockchip erratum RK3568002",
-> +		.iidr   = 0x0201743b,
-> +		.mask   = 0xffffffff,
-> +		.init   = its_enable_rk3568002,
-> +	},
-> +#endif
->  	{
->  	}
->  };
+>> +	select GENERIC_PHY
+>> +	select MFD_SYSCON
+>> +	default y
+>> +	help
+>> +	  Enable USBCON PHY support for Exynos2200 SoC.
+>> +	  This driver provides PHY interface for USB controller present
+>> +	  on Exynos2200 SoC.
+>> +
+>>  config PHY_EXYNOS5_USBDRD
+>>  	tristate "Exynos5 SoC series USB DRD PHY driver"
+>>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
+>> index 90b84c7fc..f70e12ddf 100644
+>> --- a/drivers/phy/samsung/Makefile
+>> +++ b/drivers/phy/samsung/Makefile
+>> @@ -15,5 +15,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+>>  obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
+>> +obj-$(CONFIG_PHY_EXYNOS2200_USBCON)	+= phy-exynos2200-usbcon.o
+>>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+>>  obj-$(CONFIG_PHY_EXYNOS5250_SATA)	+= phy-exynos5250-sata.o
+>> diff --git a/drivers/phy/samsung/phy-exynos2200-usbcon.c b/drivers/phy/samsung/phy-exynos2200-usbcon.c
+>> new file mode 100644
+>> index 000000000..7968c9792
+>> --- /dev/null
+>> +++ b/drivers/phy/samsung/phy-exynos2200-usbcon.c
+>> @@ -0,0 +1,241 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2025, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+> Are you using this header?
+>
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/iopoll.h>
+> And rhis?
+>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/phy/phy.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/regulator/consumer.h>
+>> +#include <linux/reset.h>
+> And this?
 
-Another thing is that this patch conflates ITS and redistributors. As
-it turns out, we use the same allocator for both, but they are
-distinct architectural concepts, even if GIC600 is a monolithic
-implementation. It is OK for now, but it will have to be revisited if
-we ever move the redistributor management outside of the ITS driver.
+Nope, it's a leftover I forgot to drop. Same with the above
 
-With the other comments addressed:
+...
+> Same comments as on previous patch.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Alright. Thanks for the feedback!
 
-	M.
+Best regards,
+Ivaylo
 
--- 
-Without deviation from the norm, progress is not possible.
+>
+>
+>
+> Best regards,
+> Krzysztof
+
 
