@@ -1,146 +1,112 @@
-Return-Path: <linux-kernel+bounces-516612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A22A374B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:31:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80005A374BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05D93AF224
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B05C16CB4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABFF19755B;
-	Sun, 16 Feb 2025 14:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE74194AF9;
+	Sun, 16 Feb 2025 14:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4TzT68C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Aw5CEZRJ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4579218DB2B;
-	Sun, 16 Feb 2025 14:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF4B18BC1D
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 14:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739716263; cv=none; b=LyuAK0oFVQA5YVAZdOFnDRwgUWI4ARZmGFRJ7tlhGGnTjH7Ghi5muzCDuYR2UkfO6ap3FGE2uN1wDXBt4jbTOZxiU4Uzj38rFu3yTvMORPVMytoprkhHz9YKMdIf3MtQ1KjZGA/ZXJeKiG86ZoofnwhC5OfJkT5Y1lSjO0y0KE8=
+	t=1739716635; cv=none; b=du4ihkuhmUgV1wxShlpyxxCYZo7udPIQ69TAdqGIrSz3CzWU4FJW6a4P6kFUkCW29avC9/kL7awJUT8PGQxANvptd4WgPKxMbV5sSmM2CwgdUmIdDeZ4VW0CYdzFbhO0I4eor39Fp8FeARlb+tF7/aY5FVCbcf4C5z3thQ7qw50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739716263; c=relaxed/simple;
-	bh=3olusQxlP2lV5Ne2h6cljoQ1pOoB5XyJHYVk4XIXQUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OqR8l4hONmeSTwt3zsoNxvuX28URmLJu3hqocN1XqVhG4QJK1W/DAvibNMpV7lky+wKCAQ5TJ1RL2WwiW7lSdg3dqW/mzDqFI41ltu39WbSOzLi5JKKiB323I2VPeaP33QqWVzz9JNfosU9k+AukUHne/lQCE9eWS7RA+9zr07E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4TzT68C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE32BC4CEDD;
-	Sun, 16 Feb 2025 14:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739716262;
-	bh=3olusQxlP2lV5Ne2h6cljoQ1pOoB5XyJHYVk4XIXQUg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k4TzT68CAkXwVqBa35Yq+TjiwuvYfFJ7jMxhPzLvnZsJUUnWlbBnJnh/3UaF0XiHf
-	 qBi/9ZghtKhdxXApECAMTcuut06w8DcTBdudoCyqsaH1YPVcil8Z1JvSz8f4N/k0Xh
-	 W9EnQIDcPUyQrhpCGa4DSuug2uHS4Co0G2es6a71Q3Xgbw2tsxmita0Na1zd8up/tc
-	 4F0RGFqWAMS4khZirBgBOE0tgzvGK/0jWmoE2zM3O/bF+4YDnWzzC6MGvpCGgma/6c
-	 BUgwxS8wfU33Mwq6o7XrrBPzIWCt6stM2gwASiiicuwT1DJrsSuyXr4/+ylPq5OYtm
-	 FJ59DJMmYO1Pg==
-Date: Sun, 16 Feb 2025 14:30:52 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Kim Seer Paller
- <kimseer.paller@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio
- <linux-iio@vger.kernel.org>, Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
-Message-ID: <20250216143052.6f21ace0@jic23-huawei>
-In-Reply-To: <CACRpkda+CDRMYKmjw7kewenkteLhPYb040E4B=ZG6pgdy=65pg@mail.gmail.com>
-References: <20250213-for_upstream-v2-0-ec4eff3b3cd5@analog.com>
-	<20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
-	<CACRpkdZR8X17Bn-i2anqjxf0Gk60V175F7Xfwytkhy7_K+LsSA@mail.gmail.com>
-	<880631da17a6d8ed4afe5a8c453fd4f7d0e4fca5.camel@gmail.com>
-	<CACRpkda+CDRMYKmjw7kewenkteLhPYb040E4B=ZG6pgdy=65pg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739716635; c=relaxed/simple;
+	bh=jJQhD75jKktmb4BgIxDSwBKaAZQ9a6KTmdQKQrbfXYA=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=JhJHzbd99IDnKzJGBvbe1PS85Ez7LTUBfYtW87/RVClpaQbjDN4DCaxcxgR53AJgC6WDuJ0J6fWHQiPT1qHqOSwm98+cOBpfy5Aiu6W2A+NYLXvUkW5UrtDee579HKrve/OBqNyH2zBgJYAHnZ/mBT6F6+8g41TWNJrILxEhnfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Aw5CEZRJ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51GDroZJ021213;
+	Sun, 16 Feb 2025 14:36:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=XzCGYRBydUXu4RE+1YR673QjfYos
+	j/ZQ+0EkfdbbZ6g=; b=Aw5CEZRJg5rzQI6gNKBuI8NY8PQAoGmebxgl3u1iWiVu
+	KtqkAbiCYjdA1j0lWq+P17VK/vunt+QWhxjua3Zj7phnKSeBoi51/gl/aqiNT7Sf
+	a0OSNuNnJnTimJpjZH0t68Oivt3ms+XZG263paX20LJyNvXHXQJMyOsXT6ZOdtst
+	jAJoUlsUWEoyfKq0Vq7u19cvANQjqPHlNx7JWpPTG9pYldH7zp5JtAVyFAwwnrLM
+	TeLnzCfnoKOxTmTQWCTF392hHNS+to/JjSzAFg8XKNYmIsHIv21GlWJygXGjqN+0
+	B5dHPqwjVRSYjUzqrecZTOgZMdD8TJHwoNps62beow==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44twrtm8bh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Feb 2025 14:36:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51G8vqse024883;
+	Sun, 16 Feb 2025 14:36:50 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u7y19r86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Feb 2025 14:36:50 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51GEamiI29754050
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 16 Feb 2025 14:36:48 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D9ABA58059;
+	Sun, 16 Feb 2025 14:36:48 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 77C1058057;
+	Sun, 16 Feb 2025 14:36:45 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.242.32])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 16 Feb 2025 14:36:45 +0000 (GMT)
+From: Venkat <venkat88@linux.ibm.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] kexec: Fix kexec_locate_mem_hole() for missing
+ CONFIG_KEXEC_HANDOVER
+Message-Id: <CDD6EF33-E1A5-4D0D-81D2-F280E23A310A@linux.ibm.com>
+Date: Sun, 16 Feb 2025 20:06:31 +0530
+Cc: akpm@linux-foundation.org, bhe@redhat.com, graf@amazon.com,
+        Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, maddy@linux.ibm.com, rppt@kernel.org,
+        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: TlMFenNNJ55o34LALG77mJKNEPZXoq4D
+X-Proofpoint-ORIG-GUID: TlMFenNNJ55o34LALG77mJKNEPZXoq4D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-16_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=350 bulkscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 mlxscore=0 adultscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502160131
 
-On Sat, 15 Feb 2025 00:22:20 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> Let's check with Jonathan Cameron (IIO maintainer) on this as well.
-> He might have ideas.
->=20
-> For reference, the datasheet:
-> https://www.analog.com/media/en/technical-documentation/data-sheets/adg14=
-14.pdf
->=20
-> (By the way: add the datasheet to a special Datasheet: tag in the
-> commit please!)
->=20
-> On Fri, Feb 14, 2025 at 2:17=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail.c=
-om> wrote:
-> > On Fri, 2025-02-14 at 00:25 +0100, Linus Walleij wrote: =20
->=20
-> > > Now, the kernel does not have switch subsystem I think,
-> > > so this is something like a special case, so we might be
-> > > compelled to make an exception, if the users will all be in =20
-> >
-> > Exactly, since we could not find anything, the best fit seemed like the=
- gpio
-> > subsystem. I was the one suggesting it since a new subsystem for a simp=
-le device
-> > like this looked excessive. If we had more devices that would fit such =
-a class
-> > of devices, maybe it would make more sense to start thinking on such a
-> > subsystem?
-> > =20
-> > > say userspace and make use of this switch for factory lines
-> > > or similar. =20
-> >
-> > Kim should know better again (about usecases) but I would also assume t=
-his is
-> > for userspace use. =20
->=20
-> Actually the GPIO documentation Documentation/driver-api/gpio/using-gpio.=
-rst
-> even talks about this for userspace use cases:
->=20
-> "The userspace ABI is intended for one-off deployments. Examples are prot=
-otypes,
-> factory lines, maker community projects, workshop specimen, production to=
-ols,
-> industrial automation, PLC-type use cases, door controllers, in short a p=
-iece
-> of specialized equipment that is not produced by the numbers, requiring
-> operators to have a deep knowledge of the equipment and knows about the
-> software-hardware interface to be set up. They should not have a natural =
-fit
-> to any existing kernel subsystem and not be a good fit for an operating s=
-ystem,
-> because of not being reusable or abstract enough, or involving a lot of n=
-on
-> computer hardware related policy."
->=20
-> If this is the usecase, like controlling an external switch for such thin=
-gs,
-> using the GPIO subsystem might actually be reasonable in my opinion,
-> (even if the DT bindings end up in their own category).
->=20
-> If the switches control stuff related to computer machinery (i.e. integra=
-ted
-> into a laptop to switch on/off the fans...) then no. So it depends on how
-> and where it will be used.
+Hello,
 
-Maybe, treat them as a weird mux? A switch is similar to a mux with only
-one connected path.  +CC Peter.=20
+I have applied the patch on top of 6.14.0-rc2-next-20250212, and =
+proposed patch fixes the issue reported.
 
-Jonathan
+Please add the below tag.
 
->=20
-> Yours,
-> Linus Walleij
+Tested-By:  Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
 
+Regards,
+Venkat.=
 
