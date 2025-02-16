@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-516864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EA6A3790A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:56:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ABEA3790C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7BDF7A2EAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B383A04F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D18D1A7AF7;
-	Sun, 16 Feb 2025 23:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13981A9B4C;
+	Sun, 16 Feb 2025 23:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="EJuDjHHr"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFpoj70M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9B642070;
-	Sun, 16 Feb 2025 23:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F1742070;
+	Sun, 16 Feb 2025 23:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739750183; cv=none; b=b9W28LZvGxYtBIZEpGdI2Cqv8jrx4dX7OlnffvMTx1sBPzZv8uvMDQ57DR/gYHL8GBcFq6FrBV2mOHBDZLeMLeI3Hcwr22t7+jrdJor6a5RF9peg9aCCgzI/f1YmJIJ2v2mAAdaBXWo+ETrf+JXmgqj+TR0KKvweHRs7MDub5bw=
+	t=1739750187; cv=none; b=BAqIuYrRtwgvdIr5CnJdYas46A8ofVXZgp6sAKklpskcXuJVBMqMdKrenm7TzdyxcqkBPun13fk/U9kiSkmfRZq3GVi5GE08TEvMON9j8cClu8TbqeymXRr+qSTWQEpm/EUWDUWsZ78A+huSbh3U2y50w8eZ4UAkqwZjzLNZwsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739750183; c=relaxed/simple;
-	bh=V++XAGw5e8HCPJB0+vZcIEAUsfypgMEYSAKLxet2gy8=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VdTV2enGQXTMMxVhqwXqP393XNBVI5aQnbhOrnidIJXOf1HkUuQUjBDxt0uIvGKZG5paAgy05UzvEX4xp+aEWldxNtcGpqi3S4w1ziJ5o444jqZ++SC6fuRq7LDudLaCjLHJhgj1ycD/vphR0CWkUhRh1cevbo5LqvGmGzgn3BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=EJuDjHHr; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1739750173; x=1740009373;
-	bh=CK1h/qqIm1MrCSBdeD49fjjpclhLOf7AL7ArRk6/1ZE=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=EJuDjHHrCRZOb1YG6XaJ1DCSAICru+Qdq+VUTbDTcfJG1xA81F1AGe1CTLR5kWdpF
-	 H4AwJgT+mnau0swCdktLzdCGur7MxNv6e8op0W9+Tz7hmFii3PsQVEfYdJRYwBHbpt
-	 ts2iQB+NJP167IflKbMX3f02pB8ydY7rqM1D6cdCyUzOXcvMwzkxUgFckhHW618Ptz
-	 V+cFHSYSlUH7VyEP4rqj2IGuPGtbqEV3FXnBLF5GVosQo+O58O0RxQZN4SImrqbxmx
-	 rN3k5pGofqfmltM6ir5fO2N6pPoqCPs9YQ7y6FvlkQ1rWGEgtqAi0PBfAV4yDA6Aqt
-	 swyBMO7IAj54Q==
-Date: Sun, 16 Feb 2025 23:56:08 +0000
-To: shuah@kernel.org, sagi@grimberg.me, mgurtovoy@nvidia.com, jgg@ziepe.ca, leon@kernel.org
-From: Imanol <imvalient@protonmail.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Imanol <imvalient@protonmail.com>
-Subject: [PATCH] infiniband: iscsi_iser: fix typos in comments
-Message-ID: <20250216235602.177904-1-imvalient@protonmail.com>
-Feedback-ID: 28866602:user:proton
-X-Pm-Message-ID: 368e9c71ecc7a789a8e3dda4a49455dbaf7b6414
+	s=arc-20240116; t=1739750187; c=relaxed/simple;
+	bh=j6Gn+HMB6SopZbs1Rg2ehZv/3D386/1lLfPTTt36S5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hr/gn+5g6+GjIy94u1TjMU/q8rvKg/DtA0pzkCSc+qLNwluxjWCbU2UBJOn87ITIA3mmlV+pR9m2jJYxSI06VOG4pigyg47+K18Zi/2NuzQliTH2zsvzTfXeXQBrQHpfU1cCoHSPmUpQ1vO7P0DAXdSvfsfj5bPCS6024YY29mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFpoj70M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87D5C4CEE7;
+	Sun, 16 Feb 2025 23:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739750186;
+	bh=j6Gn+HMB6SopZbs1Rg2ehZv/3D386/1lLfPTTt36S5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uFpoj70MmzIdRjLlmXyjeMgnSlPUdnKm6CDdyDuFqVNYAPtZXTXdBCkRIvYUuHjGx
+	 8MwLcJszK5qyiRliGArDiLLCxq7Bh2xZ2CHw6Cwd9gmj9g58X2or02lGwGW8bMDgTe
+	 /jyxXW1d6qCdeiJElajHel/LF+XFVzdXmUPN4EdJliLQZkGjueto01l+UxvGuZ4foR
+	 DtUA4dNCHrrvnPpt4jei5KNLwJ9ptTwxyuV+2uocY7zoAOs41WSJF3R0kIfpAPIk56
+	 JWFTdYcwphi32QA4QDMXyczkbsPlhC5/ubHABoOCWwc5K2KKz8Gk+GAkxCnzSYtqu9
+	 A7PBRBhsbmT5Q==
+Date: Sun, 16 Feb 2025 23:56:19 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev
+Subject: Re: [PATCH 11/27] ASoC: tas2770: Export 'die_temp' to sysfs
+Message-ID: <7b4adf37-fdbd-4245-973c-5f923414b131@sirena.org.uk>
+References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
+ <20250215-apple-codec-changes-v1-11-723569b21b19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PXshCQ8lgf8ndIg+"
+Content-Disposition: inline
+In-Reply-To: <20250215-apple-codec-changes-v1-11-723569b21b19@gmail.com>
+X-Cookie: This is a good time to punt work.
+
+
+--PXshCQ8lgf8ndIg+
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Fixes multiple occurrences of the misspelled word "occured" in the comments
-of `iscsi_iser.c`, replacing them with the correct spelling "occurred".
+On Sat, Feb 15, 2025 at 10:02:44AM +1000, James Calligeros wrote:
+> From: Martin Povi=C5=A1er <povik+lin@cutebit.org>
+>=20
+> Export a file for the readout of die temperature measurements.
+> As per the datasheet, the temperature can be calculated by
+> dividing the register value by 16 and then subtracting 93.
 
-This improves readability without affecting functionality.
+Should this be registered with hwmon - it appears to be exactly the sort
+of thing that gets exported through there?
 
-Signed-off-by: Imanol <imvalient@protonmail.com>
----
- drivers/infiniband/ulp/iser/iscsi_iser.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--PXshCQ8lgf8ndIg+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/=
-ulp/iser/iscsi_iser.c
-index bb9aaff92ca3..a5be6f1ba12b 100644
---- a/drivers/infiniband/ulp/iser/iscsi_iser.c
-+++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
-@@ -393,10 +393,10 @@ static void iscsi_iser_cleanup_task(struct iscsi_task=
- *task)
-  * @task:     iscsi task
-  * @sector:   error sector if exsists (output)
-  *
-- * Return: zero if no data-integrity errors have occured
-- *         0x1: data-integrity error occured in the guard-block
-- *         0x2: data-integrity error occured in the reference tag
-- *         0x3: data-integrity error occured in the application tag
-+ * Return: zero if no data-integrity errors have occurred
-+ *         0x1: data-integrity error occurred in the guard-block
-+ *         0x2: data-integrity error occurred in the reference tag
-+ *         0x3: data-integrity error occurred in the application tag
-  *
-  *         In addition the error sector is marked.
-  */
---=20
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeyeyMACgkQJNaLcl1U
+h9CkUAf+OlvePkmuGFAOUofSjCQ2n99p0ULLt0fZMHvj7hUNIXjnGzTO0Po8FRkz
+2nvCgko1DkFadWb6HKMyoaJMHCSF/tkWKDJHs2YeGbRvNkW93eWano1G05Q7OWK1
+XIy8NkwZk54Dy7+/Ahz85TULty7IcvbjTizwwqncuK6rVIJ3YWw1tHKg84KPWz77
+4KlLayI1Iq/U+AXEd/qEOoMy6j+nbfWfgWDL/ee7a8bmX9T4GkhPWS+bcnOP06Yv
+3YcS0CIxT0LSGyu0IhJAguZSfQpcl2LKtFH1nIsFV5CH9G27yzBeZYRYwFGJlihI
++YGmpmbBXq7Y1bXfk1eXLpBzhlOAqw==
+=d09O
+-----END PGP SIGNATURE-----
 
+--PXshCQ8lgf8ndIg+--
 
