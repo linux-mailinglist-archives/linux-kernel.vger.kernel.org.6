@@ -1,86 +1,199 @@
-Return-Path: <linux-kernel+bounces-516675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806B3A375A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80834A375AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CE118895A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567681884A91
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE0F19ABAB;
-	Sun, 16 Feb 2025 16:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D2619ABAB;
+	Sun, 16 Feb 2025 16:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="L3bYw1IT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba0Ts5BV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AC918024;
-	Sun, 16 Feb 2025 16:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417A21B808;
+	Sun, 16 Feb 2025 16:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739722775; cv=none; b=aXQGMRlvH9DWBA8P1D9LHa3xrVgugglvMCdU7K2cVnEsQ+LPoZ1n6UUTfPSkwOWdUqiW69xmOGnNKOhP3LOvy/4L4AiLRyS0Jn0gkk3Uodbfb2ECBrdw59WxWkzUvhgv4cULfGqqikQDgxkh26GlM6TOD9XyTX+Hbi9ZMk1WiAc=
+	t=1739722901; cv=none; b=YcDHgN+Fsm7oB+o9+jDo6fj98rSpHXznL1qGti2L/juFCOMMwHAUk8Afzl83mlZgKknGF30gbqtNvtfY7y4UB+BI2vwnkLALxO/5CMMCda5ONhIbFbaRucJFwxoVGPqr8Q+dQV88unasvoJIMY/OsWlZL/JZFQrOPjaS7JzoGGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739722775; c=relaxed/simple;
-	bh=i69Rxv/M0TlJhdvqOqvlHHUGj58LbWRvt4U1OKsIxtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjdDC7HOpdQmZ4f3DsAd+2Pw9WiOuD+FHZceNNnjehGyO/wQ/Nx+Lun8/EBdC4dIy4BO+vYuothN9qWPA+JaNmyU7sAGT5OJX4rbAQ8mYbXVG6FG3Cg2kI0hl6xk+04EWM13VuDsqP0n3bCEKnnGbiooZNnI3u6QGFRAFV4xosM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=L3bYw1IT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Kd7X3GlD7l2NnFs2sFyauaR3N10qrRNEi52KigS/1Wc=; b=L3bYw1IT6EpF2nt+PswxXgve3j
-	ZKckm8iHa6R27ERI/sgUqkpALquQmvpERDwP409NpuSrXCgM45qtaFbKefAQKwzBX/pWOkSYMl4s1
-	GrLo1N/ST6Dlk9LB6t6KioZPoGGTHBQ8fgvguqcqt5cTmOaJssPl44NhyQ5xkSEOw8zw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tjhMb-00EhOG-5M; Sun, 16 Feb 2025 17:19:25 +0100
-Date: Sun, 16 Feb 2025 17:19:25 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: dimitri.fedrau@liebherr.com
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next v5 3/3] net: phy: dp83822: Add support for
- changing the transmit amplitude voltage
-Message-ID: <62495f94-c3e0-4483-a4cb-d01c261903c6@lunn.ch>
-References: <20250214-dp83822-tx-swing-v5-0-02ca72620599@liebherr.com>
- <20250214-dp83822-tx-swing-v5-3-02ca72620599@liebherr.com>
+	s=arc-20240116; t=1739722901; c=relaxed/simple;
+	bh=fT2zYqJ6YLeX9QSBNjyLADGTECUTNaknokkdN6W1JFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Th55akttqFfJ4H6+xIH2Vxoy7qZfvkjIAf+3W/rFTSLA4NvTBLu5LGjZE/Vf+TGzERwaNiuX2blmZ4B+CNSYFtoHIfmT+dwXa6gxpVwEVxMXSsXrlbp1LhXZ5BRpm5D169Zt8K4X6Xh30+dsDX2vY4mWGq++jlls1D4nOhGiu4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ba0Ts5BV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A940C4CEDD;
+	Sun, 16 Feb 2025 16:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739722900;
+	bh=fT2zYqJ6YLeX9QSBNjyLADGTECUTNaknokkdN6W1JFE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ba0Ts5BVlDLjr2cniFRNNRjBTB7Xai2R/EIDFg1mvKBXWa4sV4yqZuxMF/7H+SQCc
+	 u5ay3x3Q1xX09FKUDRhQXyzgWinQmXGpyyhHM5JBVsSCQPn+RzdG+UeZzeNTf+FA6h
+	 dC7R8h2LjAuMCyv9ZkavCJyz86R3yiF6C2gK2QIGFyKSyQc3SmI4zkM9oZXORvqzzq
+	 SEed9CF+ccUyo318XGJ3oNYEzUrBKzdh+Fvf5dZdZ1E7bltHpuZfTG/hJ5BUZFuNLz
+	 ZuMGqyeyzniD81LcDS4S7ViVK3qjJN+beXG/Q37NwD1+LkMzX5SZCqTauwo7N2lJ7N
+	 uDasgv3X3l70w==
+Date: Sun, 16 Feb 2025 16:21:30 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
+ <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <jonath4nns@gmail.com>, <marcelo.schmitt1@gmail.com>,
+ <dlechner@baylibre.com>
+Subject: Re: [PATCH RESEND v3 15/17] iio: adc: ad7768-1: replace manual
+ attribute declaration
+Message-ID: <20250216162130.0de4f148@jic23-huawei>
+In-Reply-To: <ea5d5ef777d4d7d15471369813c1613990fee862.1739368121.git.Jonathan.Santos@analog.com>
+References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+	<ea5d5ef777d4d7d15471369813c1613990fee862.1739368121.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-dp83822-tx-swing-v5-3-02ca72620599@liebherr.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 03:14:11PM +0100, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Wed, 12 Feb 2025 15:18:48 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+
+> Use read_avail callback from struct iio_info to replace the manual
+> declaration of sampling_frequency_available attribute.
 > 
-> Add support for changing the transmit amplitude voltage in 100BASE-TX mode.
-> Modifying it can be necessary to compensate losses on the PCB and
-> connector, so the voltages measured on the RJ45 pins are conforming.
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v3 Changes:
+> * New patch in v3.
+> ---
+>  drivers/iio/adc/ad7768-1.c | 58 +++++++++++++++++---------------------
+>  1 file changed, 26 insertions(+), 32 deletions(-)
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 716cf3582577..8aea38c154fe 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -187,6 +187,7 @@ static const struct iio_chan_spec ad7768_channels[] = {
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+>  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+>  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> +		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+>  		.indexed = 1,
+>  		.channel = 0,
+>  		.scan_index = 0,
+> @@ -207,6 +208,7 @@ struct ad7768_state {
+>  	unsigned int mclk_freq;
+>  	unsigned int dec_rate;
+>  	unsigned int samp_freq;
+> +	unsigned int samp_freq_avail[ARRAY_SIZE(ad7768_clk_config)];
+>  	struct completion completion;
+>  	struct iio_trigger *trig;
+>  	struct gpio_desc *gpio_sync_in;
+> @@ -564,28 +566,6 @@ static int ad7768_set_freq(struct ad7768_state *st,
+>  	return 0;
+>  }
+>  
+> -static ssize_t ad7768_sampling_freq_avail(struct device *dev,
+> -					  struct device_attribute *attr,
+> -					  char *buf)
+> -{
+> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> -	struct ad7768_state *st = iio_priv(indio_dev);
+> -	unsigned int freq;
+> -	int i, len = 0;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++) {
+> -		freq = DIV_ROUND_CLOSEST(st->mclk_freq,
+> -					 ad7768_clk_config[i].clk_div);
+> -		len += scnprintf(buf + len, PAGE_SIZE - len, "%d ", freq);
+> -	}
+> -
+> -	buf[len - 1] = '\n';
+> -
+> -	return len;
+> -}
+> -
+> -static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(ad7768_sampling_freq_avail);
+> -
+>  static int ad7768_read_raw(struct iio_dev *indio_dev,
+>  			   struct iio_chan_spec const *chan,
+>  			   int *val, int *val2, long info)
+> @@ -633,6 +613,29 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
+>  	return -EINVAL;
+>  }
+>  
+> +static int ad7768_read_avail(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +			     const int **vals, int *type, int *length,
+> +			     long info)
+> +{
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int i;
+> +
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++)
+> +			st->samp_freq_avail[i] = DIV_ROUND_CLOSEST(st->mclk_freq,
+> +								   ad7768_clk_config[i].clk_div);
+There are some complex race conditions around these available arrays, so in
+general it is better to make it obvious when they are static after
+init vs actually dynamic.  In this case I think we can fill this
+in the moment we know mclk_freq?  If so please move the calculation into
+probe() and just reference it here.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+How to close the race condition is an ongoing topic but I don't think
+that problem applies here anyway!
 
-    Andrew
+Jonathan
+
+> +
+> +		*vals = (int *)st->samp_freq_avail;
+> +		*length = ARRAY_SIZE(ad7768_clk_config);
+> +		*type = IIO_VAL_INT;
+> +		return IIO_AVAIL_LIST;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static int ad7768_write_raw(struct iio_dev *indio_dev,
+>  			    struct iio_chan_spec const *chan,
+>  			    int val, int val2, long info)
+> @@ -655,15 +658,6 @@ static int ad7768_read_label(struct iio_dev *indio_dev,
+>  	return sprintf(label, "%s\n", st->labels[chan->channel]);
+>  }
+>  
+> -static struct attribute *ad7768_attributes[] = {
+> -	&iio_dev_attr_sampling_frequency_available.dev_attr.attr,
+> -	NULL
+> -};
+> -
+> -static const struct attribute_group ad7768_group = {
+> -	.attrs = ad7768_attributes,
+> -};
+> -
+>  static int ad7768_get_current_scan_type(const struct iio_dev *indio_dev,
+>  					const struct iio_chan_spec *chan)
+>  {
+> @@ -674,8 +668,8 @@ static int ad7768_get_current_scan_type(const struct iio_dev *indio_dev,
+>  }
+>  
+>  static const struct iio_info ad7768_info = {
+> -	.attrs = &ad7768_group,
+>  	.read_raw = &ad7768_read_raw,
+> +	.read_avail = &ad7768_read_avail,
+>  	.write_raw = &ad7768_write_raw,
+>  	.read_label = ad7768_read_label,
+>  	.get_current_scan_type = &ad7768_get_current_scan_type,
+
 
