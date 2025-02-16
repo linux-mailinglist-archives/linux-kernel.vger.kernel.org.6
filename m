@@ -1,202 +1,140 @@
-Return-Path: <linux-kernel+bounces-516540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D7CA373B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:59:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EE4A373B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1E93AE21E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:59:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 367367A3501
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7DB18DB0B;
-	Sun, 16 Feb 2025 09:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E994818DB03;
+	Sun, 16 Feb 2025 10:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSvmUUZG"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEGjhidv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9B290F;
-	Sun, 16 Feb 2025 09:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E618DB1A;
+	Sun, 16 Feb 2025 10:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699944; cv=none; b=FaTkavjcNv7+SaGz0fJyXBfIarpiMEMDriOhff0+dTymrbfWNp1IjZn+k5V8/6aiF2AgNwvneeYoiFhVHiBMeCdQElz+16gMIUG8oonniFMoxH9wRKp+TEsLw7fqTr2kzLZl1AksdNgph66LkrrIXis7mvdRSV+/ENqhRJk95PM=
+	t=1739700002; cv=none; b=nQKwTpm717mDT/Q8xJPVuYbmJzEtakEFPgHyglmOIV2pBQ5oEwqpOtu6ha6oiKySAtgmzM0+sWeHnZB+9+b/TjEXG0/0+VDrXDg6ajBQx8Npvxuxngmiuf5QPbB6bhEn9sdm86qPnN1OYmvUt11+fv8st663o8jO4qMtSQ5GrLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699944; c=relaxed/simple;
-	bh=aL+04xZVulicpTdrxisp1JEl4Klmtg3++whjLvtr2xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eOHV46mCk6JE0iRqckbVc4j+x2cVXUCatIgzeFrq6m4agx+11tMgRV9HM94DdK4KymuvJ+zApvV1UhMxPB8d0Uj+E7QOCChNs2vVMP3Bvp8C+eUatjD0ZvHBJQ8hHpG9L4z1aO6OOfRVQscVQLcULWZ1Pq6vzlnV8aXOlmZWj20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSvmUUZG; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f3ac22948so248501f8f.0;
-        Sun, 16 Feb 2025 01:59:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739699941; x=1740304741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
-        b=jSvmUUZGbEkC0OqOgrBd7RkDRwQ8vFKizGOknw6ShBfgs9snx+WOZ3UUHZgsvSmBL0
-         4r45YHwVI7VBQTcBQeaiXoaNwDO0wQY3oBDhDxFPWH9QT2fniMS1wJxusLFSFtPmDQsa
-         W4DIG+o8w+lxssBhVebgWKMbIM69gXng8IVqWVTYTDccWh8txh3WTFdHaclxwQdMIUmg
-         M5bZhGYxnN0wWjKXdUDECN4yEjeDhB7hSb8UGGrrJeQFcoo7A0j3Cj5dL82V1xvawRZu
-         HEfeSKQcGMrfDFA90LjOLE6e7VC6ohZI10Zq1IYJhbQiHyWX73uepqlLCS9sEaq3+2B0
-         WBPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739699941; x=1740304741;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pv2ab+l4k/GmIjg6UFnNL/02FoWRRTFcUTIE2g9NS0=;
-        b=gRRS6WzrzDkIyYPvcJ3UVNVKygog9fE6pBKB8OVX131Yp+lrltYoxGTkQLaFUltGt/
-         8Ayn74WfcxYAWtFaSNSj8UHS6RdARhoKx4O/9Ij9RQf7Mwbay5qnnnsjU7kzzTCJtZmf
-         isl6HZthWJflNeDLDh5Wx7gQ6Dj2K+vIj4T7VoHU7OAVT4yIWA6GIrqfZ9PU9jWkhqoS
-         wCIUcDCcLpL0adcwROd8VTmIlcc/+7orHJvpw5Iqp1jCz8hQ27DWM+W8vURGJ7sJEWo7
-         Gs5+M2cdOK4YIOZuugKqxH6wqyIq95t/wmq+g5tvrtShlUiTjalouKSBV8k3YI8yRK7Y
-         8F2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRn4l9VidYrQD3Nj2duzG3/4lGoK6jDl09t1rUewMGEyfMHKnl1PHTNs3RcNqnQHOLLLixL7ZUHOfYmqXO@vger.kernel.org, AJvYcCX7aw1ra+Xym5NZpvyYAHvDww9QGOIRmK/97GI/yIJetuGt0rH4aF3+qrzE8Gd5EkPTNGlJ/dh6AJxFOFI4UABE1Uk=@vger.kernel.org, AJvYcCXmtwcQitFJ9gkiaohH+XbJ6sGcQjJ9VIJUPpG9cm/pN8eEB3S6EaEO2TJCcIuXmJLA+tH1NwOa1pTj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlA2HazfHsFAz1VbJuqktIX4ihuGsH9buPhjAS0n5gPAQEmXsi
-	lcfPoKC5U9b1OjfsMLVbPGiDEaFqHeSzDChHIuCUnPrkJY6Lqsvy
-X-Gm-Gg: ASbGncs1Dua4qrIHWAWAsfI7vUjxM0Tp4uvN7FZjRJ5WPSSAW8Jhze3muYhhdJ5gBx3
-	NE0z6nBTLLFZibsXxVCUW6+aQn9nQ8tNzmjP+mlWZjNMK8UKgrfJvmKpD4JOGdzvJPKGEcebgXh
-	6DPYpZlQGaKAdG2jU6yD9lJOjpVosjjk4s2i3OzG2iLRBQrnUchpaFQm1l7iuZXknyQbU9oJI/1
-	eyViMLny2UXp3j+HFzbKnga948HQYYUn3Psb/QAsHYeNglsPnQt4bM5WVDpdN0sSETYZ8eZnhe0
-	dXlxkgYU50KIRW8wkecc8ChOPminlYf8Y0XkbzNKCby2ykCrXw2e1OZK9qhCzZ6rhJ424A==
-X-Google-Smtp-Source: AGHT+IHZgNqHyHCv5yT6p4apSYBg8SJTvge1/YRU31W+9aRlNzcxZQY9QQK2OBKvkkzXkaKW1nJebA==
-X-Received: by 2002:a5d:59af:0:b0:385:ee40:2d88 with SMTP id ffacd0b85a97d-38f33f117d1mr4534496f8f.3.1739699941089;
-        Sun, 16 Feb 2025 01:59:01 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258f5efdsm9144911f8f.43.2025.02.16.01.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 01:59:00 -0800 (PST)
-Message-ID: <9451f339-c8ff-4be2-9cde-1aaf78fa8e7b@gmail.com>
-Date: Sun, 16 Feb 2025 11:58:59 +0200
+	s=arc-20240116; t=1739700002; c=relaxed/simple;
+	bh=gVeX3dBdYmZQsryIB7Wq4wt/LHImRZlGSznWXeC+bdQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjqWUE7+1wzxourds9BTcdy0RPJ8YEv6WPuxdLU7VJlHY6xvZN6XDFIlUhnbdPzipybVSr+k6xDXKr+gZ+jUsN+Fs7qQLmavIFN85rJIzZmJPYiQ9EyrUTgq8A7EM9Tmu7z0pJZtywmjJTBnlkvZ65JB4B5T8bQ2PIEH+qzQlgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEGjhidv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B172FC4CEDD;
+	Sun, 16 Feb 2025 10:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739700001;
+	bh=gVeX3dBdYmZQsryIB7Wq4wt/LHImRZlGSznWXeC+bdQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eEGjhidvFztftvpNvYUBUCPEIHS4fTn9lXgf8jDC2vKsbpB6MK5zjnxZIWIegh3bM
+	 ZpGU/kTh9YqM84sssA7R+vGmQrOhGaxWisZbLmfoKgu1TV/KsgwsHnoWPUCk4LxMr8
+	 Y3DaKX464/DBmfY8c/dGY+3XF7UKO73kbUG9OF4av0aqJoR/cLga3E5hqJWV7OiiTb
+	 DMW3fsavmlFLPpmwR63oMikDdLSE4pUBKBPUeEYsgKMVISVhSBKWnANzdnHI48Kpln
+	 UFPlwKR/XK/w5je/zZQh7RvcfY7RrJxrjwj8iXcoKnO6Bsg4/txasKViAbUMX6ox+h
+	 auUuwfdWbMGrA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjbRP-004WsE-AG;
+	Sun, 16 Feb 2025 09:59:59 +0000
+Date: Sun, 16 Feb 2025 09:59:58 +0000
+Message-ID: <87r03y1a75.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	XiaoDong Huang <derrick.huang@rock-chips.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	kernel@collabora.com
+Subject: Re: [PATCH v1 3/4] arm64: dts: rockchip: rk356x: Add MSI controller node
+In-Reply-To: <20250215235431.143138-4-dmitry.osipenko@collabora.com>
+References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
+	<20250215235431.143138-4-dmitry.osipenko@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] phy: samsung: add Exynos2200 usb phy controller
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-5-ivo.ivanov.ivanov1@gmail.com>
- <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <32b67c56-9331-4391-90ad-031e0388434f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dmitry.osipenko@collabora.com, heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kever.yang@rock-chips.com, derrick.huang@rock-chips.com, pgwipeout@gmail.com, robin.murphy@arm.com, kernel@collabora.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2/16/25 11:36, Krzysztof Kozlowski wrote:
-> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
->> The Exynos2200 SoC comes with 3 PHYs - snps eUSB2, snps USBDP combophy
->> and a cut-off phy that origins from exynos5-usbdrd. The latter is used
->> for link control, as well as pipe3 attachment and detachment.
->>
->> Add a new driver for it.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->>  drivers/phy/samsung/Kconfig                 |  13 ++
->>  drivers/phy/samsung/Makefile                |   1 +
->>  drivers/phy/samsung/phy-exynos2200-usbcon.c | 241 ++++++++++++++++++++
->>  include/linux/soc/samsung/exynos-regs-pmu.h |   3 +
->>  4 files changed, 258 insertions(+)
->>  create mode 100644 drivers/phy/samsung/phy-exynos2200-usbcon.c
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index f62285254..47e9b9926 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -90,6 +90,19 @@ config PHY_EXYNOS2200_SNPS_EUSB2
->>  	  This driver provides PHY interface for eUSB 2.0 controller
->>  	  present on Exynos5 SoC series.
->>  
->> +config PHY_EXYNOS2200_USBCON
->> +	tristate "Exynos2200 USBCON PHY driver"
->> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->> +	depends on HAS_IOMEM
->> +	depends on USB_DWC3_EXYNOS
-> How? What are you using from DWC3?
+On Sat, 15 Feb 2025 23:54:30 +0000,
+Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> 
+> Rockchip 356x SoC's GIC has two hardware integration issues that
+> affect MSI functionality of the GIC. Previously, both these GIC
+> limitations were worked around by using MBI for MSI instead of ITS
+> because kernel GIC driver didn't have necessary quirks.
+> 
+> The first limitation is about RK356x GIC not supporting programmable
+> shareability. Rockchip assigned Errata ID #3568001 for this issue.
+> 
+> Second limitation is about GIC AXI master interface addressing only
+> first 4GB of DRAM. Rockchip assigned Errata ID #3568002 for this issue.
+> 
+> Now that kernel supports quirks for both of the erratums, add
+> MSI controller node to RK356x device-tree.
+> 
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> index 28be38b7182e..423185686600 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> @@ -284,7 +284,18 @@ gic: interrupt-controller@fd400000 {
+>  		mbi-alias = <0x0 0xfd410000>;
+>  		mbi-ranges = <296 24>;
+>  		msi-controller;
+> +		ranges;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+>  		dma-noncoherent;
+> +
+> +		its: msi-controller@fd440000 {
+> +			compatible = "arm,gic-v3-its";
+> +			reg = <0x0 0xfd440000 0 0x20000>;
+> +			dma-noncoherent;
+> +			msi-controller;
+> +			#msi-cells = <1>;
+> +		};
+>  	};
+>  
+>  	usb_host0_ehci: usb@fd800000 {
 
-Will drop.
+You can merge this patch with the previous one. Marking the GIC
+non-coherent is pointless if no ITS is available, because there is no
+point in allocating memory for them.
 
->
->> +	select GENERIC_PHY
->> +	select MFD_SYSCON
->> +	default y
->> +	help
->> +	  Enable USBCON PHY support for Exynos2200 SoC.
->> +	  This driver provides PHY interface for USB controller present
->> +	  on Exynos2200 SoC.
->> +
->>  config PHY_EXYNOS5_USBDRD
->>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
->> index 90b84c7fc..f70e12ddf 100644
->> --- a/drivers/phy/samsung/Makefile
->> +++ b/drivers/phy/samsung/Makefile
->> @@ -15,5 +15,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
->>  obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
->> +obj-$(CONFIG_PHY_EXYNOS2200_USBCON)	+= phy-exynos2200-usbcon.o
->>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
->>  obj-$(CONFIG_PHY_EXYNOS5250_SATA)	+= phy-exynos5250-sata.o
->> diff --git a/drivers/phy/samsung/phy-exynos2200-usbcon.c b/drivers/phy/samsung/phy-exynos2200-usbcon.c
->> new file mode 100644
->> index 000000000..7968c9792
->> --- /dev/null
->> +++ b/drivers/phy/samsung/phy-exynos2200-usbcon.c
->> @@ -0,0 +1,241 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2025, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> + */
->> +
->> +#include <linux/bitfield.h>
-> Are you using this header?
->
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/iopoll.h>
-> And rhis?
->
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/reset.h>
-> And this?
+Thanks,
 
-Nope, it's a leftover I forgot to drop. Same with the above
+	M.
 
-...
-> Same comments as on previous patch.
-
-Alright. Thanks for the feedback!
-
-Best regards,
-Ivaylo
-
->
->
->
-> Best regards,
-> Krzysztof
-
+-- 
+Without deviation from the norm, progress is not possible.
 
