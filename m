@@ -1,81 +1,91 @@
-Return-Path: <linux-kernel+bounces-516802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6E8A3778F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:52:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7F3A37793
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005E43AF321
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E12E3B0473
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC0F1A0BFA;
-	Sun, 16 Feb 2025 20:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810E51A3163;
+	Sun, 16 Feb 2025 20:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qTo1zww6"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCPJNAZ1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC6F1A23BB
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 20:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740CEE55B;
+	Sun, 16 Feb 2025 20:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739739139; cv=none; b=Oa2DiRCfd+m2xcz8HoRikC2d4f5UtQZja15pCsrBoUZUoVkvM+T6sT9Q+J/fbwh8Zr5gR1AOhYjQ4wlYxZSfESbBos/+rWk36cpXX2+4ujTArWSWgkAYgomIGysoRija7Ycm7ogVrsO+jy7ag6uHuhq20+qQQu22rQkAWj+rOr0=
+	t=1739739433; cv=none; b=jqp+UF0nXBhAxGnabhwTTWWKB96DbvvTds0D360x4ogbetqhj4c9BVRQgCPKgnviYy3mCe9VlxYIc8mewS+NdmlvVf950PLqNUbsU6Gb65cViHI7SBtOjMnIifXADgyvGtJkjkvXCON9B97HRpVCogIQmd0Sii5hpc+aMy4NM80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739739139; c=relaxed/simple;
-	bh=aXs0vWAmuS0U8j3KJYwst5oPNJcMtkOfy6vx1+vPaD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UxAFcRQqC8DFxTodviBLTHTQs7OgTam/KQs6DK8Cj7vlh/D5xcOX39UFvbQZ6LQHH2K2exPv2A22X6NRjwhV4/js+gaz1eGYZBOEJx7CV092o4QFpiXfesgLYmKgwAQpbGH4tc5tbOi6Bwq7oujHDPeT+NUCJihkLOKB0torKLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qTo1zww6; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e0573a84fcso817423a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 12:52:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739739136; x=1740343936; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XkyPg/crIfWv0Cn6JEGTdKe/XqmIlkAQmtesjInAumU=;
-        b=qTo1zww6FSZbLTcAJMRuG3KZoIcSmR5WH6W9vordHWTFHoWehPOLkQ6/jxP+0GW0hH
-         HPaAPtW1dQNIkEZ2gy2FB0Ued6oj+lV61JRAhp1lDxL3xgRpybLt9h54PwoJsukbZG6a
-         RR2lYJcMG7kBsaUQmVKKWuqaeGWwAbKnenX750NMB2jVfOCvOaRcWnFszYzQ/vI9tsRG
-         XlQPrLASnGRD9ATkG0H8zgOil/E9BovNA/w5MdDlwD6TtryJwE15m4nFy2rEyh23bXLa
-         7wolUuyaFLlFiwn7R2z5u6AWR8+M1MeQk7Ll1L8rzzrOhxAunt39iK9i8XJnafcoGFfm
-         VJRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739739136; x=1740343936;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkyPg/crIfWv0Cn6JEGTdKe/XqmIlkAQmtesjInAumU=;
-        b=mlb3rJzk/A6X/EbUZf/Ojl0ytal0DLRvFNPTShzbyMfGtNXsxSBqvDV024QOlY8nV8
-         oPYWwRBB1alDSRm1+5hYd6ZFcPOVu7tL+TGulIujAIioVmgRo6iAdrmpUV48Zj6tGaCI
-         aZdKsOi0QcuN/nXePs16g0ifTDmfYCZN6eEz5KvO1cRFcvrcykRJjJwkD513BM/CI25M
-         HQW7lv/BjXQDr4kKQORiiVZ2ZgtNlW/ADALsBA1Sz4LYy0NnTlNn3c0Cn7ZS8kTXuzBd
-         eOG6NleBHNUaR18mqYT6YRU7YnSKb+0OFd0VHnb/8xxQzzEK4yZSl/kTMjx5yDhAEX7J
-         UP4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU43EvgL9yrVgb+wYG4aEsqJU/6uvy6eEtwLgAp1dZ9sSM5nCmfvK7dHABzrD93lRKHoMFRoZe/3I4TM7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsqDFdtuD35nD00NK8shLxt6ofusngnVs924zmJ9wONqYLh2W8
-	jaahMOSYQlbGIE+FQt41MObbLk0sFR5WegXb0raN3XTc8SQ93Im4zDZUlowHdnw=
-X-Gm-Gg: ASbGncttzmRM/ZnUxJcW36FwOluXXjaChaNG+or2fEi21xj5pjvRM58UO6i/Z+TIJ1T
-	hGCr8cHDXHK//ar7lfXYUBl7Yv2bWgldSKOAf9GB+Hdi7EojzagScn/cntoPuZxgVKbnqrxYagn
-	8iw/zk4whcc0+OpkAvutu8Ps6ZsSZ0EFbyaLmQi5R+XTDjz0kjnhuAU+RhyO4sr/Dhm5KuTNL/G
-	hcVmTJ6dMJ35ydvw1LVmAxZAYi28ba+udY0E+7z7YKrG/KIWeCEKVSiML3C0bVt5CvqAaKgpjdm
-	V4pfq8EhbeWPzclVU3qs
-X-Google-Smtp-Source: AGHT+IEMU++D2lnTLgi14JzxAcN1KpQU2iWjj9Zk4bircM7Q9WHx1vcmQHv39BJ+Q3JC4O7xeGXx3w==
-X-Received: by 2002:a05:6402:42d2:b0:5e0:2996:72ff with SMTP id 4fb4d7f45d1cf-5e0360bdf15mr7424447a12.19.1739739136154;
-        Sun, 16 Feb 2025 12:52:16 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1b4e99sm6273670a12.16.2025.02.16.12.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 12:52:15 -0800 (PST)
-Date: Sun, 16 Feb 2025 23:52:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/ntfs3: Prevent integer overflow in hdr_first_de()
-Message-ID: <b78ff7ff-f260-4499-beaa-169f725abff9@stanley.mountain>
+	s=arc-20240116; t=1739739433; c=relaxed/simple;
+	bh=qpmYDbI5414LoAXsg1Wso6jHCQCn0aAfZK4f38DxgKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvSeq4grtSfYFqiLpURFqSmTeNRN104g2/uOJKKPa0MxfI0RG1Ial5qwVatK2jl8lPBq6ItV1JNIGYgXBkM3emkqxa6B9Nk0JhCvZV+HUe3FW8jbriQV7dC+GdR0XHouRG4gum1trwLkEhH0iULZdkCoXS0wsMUHeSfp0CB9lVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCPJNAZ1; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739739433; x=1771275433;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qpmYDbI5414LoAXsg1Wso6jHCQCn0aAfZK4f38DxgKQ=;
+  b=KCPJNAZ1Oxg/h5wOzCYLFaiL77MKd4pPsn0YAtV5xwVnrKkamHRDtK/w
+   MWLQ9oIPIoKUDRDJl30VbNWK488BLcg0uW8rqLIYn8sljRR4afQNTZSR5
+   nHfGXc0+m/+NioP5nXxnOh/FhCkoeAz/7s1xR+vERAieD/BSrdEAKXldH
+   vVrtA323nkSU9YZzpB2O3nPPxyB7Ucj294ilbeQJErMzULhI9ZWCStnNm
+   jaZrhKq8bK8+vdjY1pjk+Zpej2xp4ehFanlYuq4wKW34OmoTNMD8vbRER
+   a8VqW6jpeTmJlU/o9uRTRmngXFoy7kYTmMqXFiQH7kCL5OQxgUnYuPhEt
+   g==;
+X-CSE-ConnectionGUID: 4yngzIveQEWeAs6P7xZxjQ==
+X-CSE-MsgGUID: GjVKyzd8SXy1RyqfBKFasA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="44181715"
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="44181715"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 12:57:12 -0800
+X-CSE-ConnectionGUID: HOa9lWoOSHerZgpKhD32FA==
+X-CSE-MsgGUID: X7QjEGsGQnSqteClj9z9KQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="114576033"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 12:57:07 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tjlhH-0000000CDJt-46jj;
+	Sun, 16 Feb 2025 22:57:03 +0200
+Date: Sun, 16 Feb 2025 22:57:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <Z7JRH8ITxA2KOozH@smile.fi.intel.com>
+References: <20250216162721.124834-1-clamor95@gmail.com>
+ <20250216162721.124834-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,33 +94,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20250216162721.124834-3-clamor95@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The "de_off" and "used" variables come from the disk so they both need to
-check.  The problem is that on 32bit systems if they're both greater than
-UINT_MAX - 16 then the check does work as intended because of an integer
-overflow.
+On Sun, Feb 16, 2025 at 06:27:20PM +0200, Svyatoslav Ryhel wrote:
+> AL3000a is a simple I2C-based ambient light sensor, which is
+> closely related to AL3010 and AL3320a, but has significantly
+> different way of processing data generated by the sensor.
 
-Fixes: 60ce8dfde035 ("fs/ntfs3: Fix wrong if in hdr_first_de")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/ntfs3/ntfs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...
 
-diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
-index 241f2ffdd920..44c99d35a59c 100644
---- a/fs/ntfs3/ntfs.h
-+++ b/fs/ntfs3/ntfs.h
-@@ -717,7 +717,7 @@ static inline struct NTFS_DE *hdr_first_de(const struct INDEX_HDR *hdr)
- 	struct NTFS_DE *e;
- 	u16 esize;
- 
--	if (de_off >= used || de_off + sizeof(struct NTFS_DE) > used )
-+	if (de_off >= used || size_add(de_off, sizeof(struct NTFS_DE)) > used)
- 		return NULL;
- 
- 	e = Add2Ptr(hdr, de_off);
+> +static int al3000a_set_pwr_on(struct al3000a_data *data)
+> +{
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +
+> +	ret = regulator_enable(data->vdd_supply);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable vdd power supply\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_ENABLE);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write system register\n");
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+	return ret;
+
+> +}
+
+...
+
+> +static void al3000a_set_pwr_off(void *_data)
+> +{
+> +	struct al3000a_data *data = _data;
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_DISABLE);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write system register\n");
+> +		return;
+> +	}
+> +
+> +	ret = regulator_disable(data->vdd_supply);
+> +	if (ret) {
+> +		dev_err(dev, "failed to disable vdd power supply\n");
+
+> +		return;
+
+This is not needed, but I understand the intention. To me, nevertheless, seems
+better to return an error to upper layer.
+
+> +	}
+> +}
+> +
+> +static int al3000a_init(struct al3000a_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = al3000a_set_pwr_on(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_RESET);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+	return regmap_write(...);
+
+> +}
+
+...
+
+> +static const struct i2c_device_id al3000a_id[] = {
+> +	{"al3000a", },
+
+Remove redundant inner comma. And make style consistent with OF, i.e. surround
+string with spaces.
+
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, al3010_id);
+
+Copy'n'paste error, obviously. Please, test every version before sending.
+
+> +
+> +static const struct of_device_id al3000a_of_match[] = {
+> +	{ .compatible = "dynaimage,al3000a" },
+> +	{ /* sentinel */ }
+> +};
+
+
 -- 
-2.47.2
+With Best Regards,
+Andy Shevchenko
+
 
 
