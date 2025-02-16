@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-516533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36EEAA37392
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:45:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBD1A373A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67CE23AA6CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E71116D2A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6BA198A34;
-	Sun, 16 Feb 2025 09:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66BD2030A;
+	Sun, 16 Feb 2025 09:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFbKd6S/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t3On8y7q"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42737197A7A;
-	Sun, 16 Feb 2025 09:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3C2FB2
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 09:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699056; cv=none; b=gjjk6XFKez8J6FH/UVaMrW7MpMVfLhdGEdJq7XuUkmoydMWxY4/9cazFq5E3MRA/8R4VFCa0ESBUGz/zz2D26f0otDN3OTdoDpCaM3bzmFMtwk5utxFNUw9GjxTgKiy8FDEwcBMJj3lZ3qKvceNhnxszdKf0kPWWYQdRRzA/z5M=
+	t=1739699211; cv=none; b=q9xHTjMffabQlb+TDAaRAYnLEDk2DDYsIV/IgGSuD2FfgI+zqKQsLth2VIl1U1YunOC5jkVcyYU2amnLlpFcxWNTiasHwhrhB0gwVRrc+fLIXJ2j4E3xrlHtvjAqx3SypHQM5nzL9s8c0g81L1MuhWa8nAPjnXQqDZdtRKTQ80s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699056; c=relaxed/simple;
-	bh=zD0KT9CZGcw7t13T9u3q2BqVesbZ0W0Wa6rgYZKhLmA=;
+	s=arc-20240116; t=1739699211; c=relaxed/simple;
+	bh=k97yzTngzG1jtC9Re1Ktb1Dk13Z04vY9OlmPo2l/dho=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qk72vfm95IeF3u1rbOoxpcRmtEfzR9W9xT/WyPk3vfTOr59Pny6mQsL0+B3yKuZxSCCTPGz+3uEXfwudCSw+Yqj/m8QGTH8e4O7AusSn8InK79rsi8t3CMCdWoj9pbSGt2VSmaq6W9QCOuYAevb9QKsGXdyhfrmPkRoQ1S57Xzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFbKd6S/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8BFC4CEDD;
-	Sun, 16 Feb 2025 09:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739699055;
-	bh=zD0KT9CZGcw7t13T9u3q2BqVesbZ0W0Wa6rgYZKhLmA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UFbKd6S/vwLqDQywKStuwPzw8ZvHttgL+NliLzZHxFxnFyX9gqse06lNgH1ZCixPN
-	 jeEOJmEQnjSy6ShWpLf+4s3l/6RtyySfPuY5to3R747CykItS6lV0SY1eT3eEg10oQ
-	 uABtZFs3CKsBBCOGRKgQ1Gf9hGBy4DN+4gBEEliQ8eCJV52PXAdCAemOERqacZao0m
-	 WVKMpK32v04pFq6wI5ZxrZE3Dhxl9CpzXKncjIFG6OG6gIKy3CR0nW7NiX94JurHqH
-	 aC7SHlW+W1TdUTePxORhnxRWOO7rjwQCl2zchxPOBPZuwrYlu4cX0NscGZW6oYY5KG
-	 3z3OAgL22RWGg==
-Message-ID: <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
-Date: Sun, 16 Feb 2025 10:44:08 +0100
+	 In-Reply-To:Content-Type; b=GQpaswrT828brR07ZKH7+YotDUlUR+lSH2pU0nM1nC57AsOjEJM7kC8colsIik9pdJvQZTVqxFzhS2P/4LB0qPvSt4eekNTK1+PunFrrCMpp0dc5FLxOIJMhpTV7KlckFSXq61qhS8/OtxsvViLnwY3cX54pL4Q5InrKoGwFhHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t3On8y7q; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab7bf29883aso53360766b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739699207; x=1740304007; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBwmAM1bqoGKM8ObYOzeB2TB7JgWvPAFUX2t35OVQaQ=;
+        b=t3On8y7q0/wLNyXVrPWJ2cj6TSnRAputY8FACk6IZSQzIruPtfFGd3XSKm1UWjg41g
+         yjOfW101SygGhL62Xy1dfIS/ckhPr6RjzOoEczAMOf/f6HJBOt7mSHm6bhbRzhvjJ6F1
+         76+eJK0u7dMyKT84zpRPNPeRlpYVsdZ1u1qT68JsOS2vpWRCdrfs6piFrsGt8PaYxqw4
+         52WhjsnCLGD1/CxmkrZ8x6hKCy2JNEb2BMTJoIpaiLF5aCPm0/442rgqIAJBDThaILgc
+         xxGMDlux5YwDiM++3qgIiUaCsIK3RXDivvMVIi5AlAdF0hxeOoibeA9KaUtL+iFbd3y/
+         f/jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739699207; x=1740304007;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iBwmAM1bqoGKM8ObYOzeB2TB7JgWvPAFUX2t35OVQaQ=;
+        b=oc2I9xOm0A5eLS7AsnzJKkH/ouccSa39TKSr8oKZotYEK6V0tvNJto/Ljztm8J3k+d
+         5WGEi6J9RErvZ2PQhhxT2bFCcYzXEy8a3fIdIGs16A30TxtOmRooP69K9kxyVvy5OF/7
+         P/Q183VEjhEnd+Vou6YSiiCmC0LtlT4jTD3LvX+DqjQKXUTp0Lb5hWDu3qSemhSG56Cw
+         tAg4JTXRFTu4gOxEgfq0lSWaPEe2tOKaSCx/6c8SPv2y2B21wH+cVOjkMz4HXFIFMaAh
+         DP2OnS5pxTt33qpxDRap+rl3LUNkn2mFslA2tYJ6oI3UkNk3gdZNwJvJp1mqAyOmvfdy
+         HIoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1YJyTvdYjPkHW9/tIfjCFQkP8+InydgDQmCaUZ8CVqEOciZ2OskT5CvQSOr/OEnl9u9f2IWRIHU5cJto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRC+En7+lSxlDtn+0pTkwiZK0BVhLjfaUe/q5kVCjIZuIVXbzN
+	RPE3NqK8CBrgqqbD14JnETQaoslx7BD1dKUDCZpYcvCZQN1jPuULuZNO40zsNCs=
+X-Gm-Gg: ASbGncuOaxdmAy4ffBADRwC+YqCDhZ2/DaJahBWa/HF3J8OU5+Z1MdFI9aP8cladZuj
+	hO8Sj/SzlT5fiGe70Y5GILgEwzAfn64loFcUpP0Up0lYUZqYF5ZlFhgJ101RCAtVUDwk8ul6YA9
+	4ZgcVEdlXpbrcm8B26aZzAXiUzz7L93DkheFWMepRNrPIDtaEFef+4n+dDH4hsIOaFF3W8oAw0D
+	5numEjWh08SHBJUdMYMZ5dPLixlcHK2SM59g0L4VjChAh5cmYJfl6jVdlEMJ7pHAr+fQ78GX46E
+	/EB641pWR4bXpZd4plBtnnG/ZAXMRDkfDPA=
+X-Google-Smtp-Source: AGHT+IH/YKXADFiBu6FbTGcilwtif1SrJBL3sTYqxc/Y+L0YsKY4TqDk7b17Epk1VV/TF72nZB3fXQ==
+X-Received: by 2002:a05:6402:22e2:b0:5e0:36c6:2169 with SMTP id 4fb4d7f45d1cf-5e036c622bbmr1764024a12.0.1739699207317;
+        Sun, 16 Feb 2025 01:46:47 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4f59sm5652890a12.6.2025.02.16.01.46.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2025 01:46:45 -0800 (PST)
+Message-ID: <fb610a26-aafe-4a76-a577-9e659ae54930@linaro.org>
+Date: Sun, 16 Feb 2025 10:46:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +81,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
- <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
- <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 4/4] drm/msm/dsi/phy: Define PHY_CMN_CLK_CFG[01]
+ bitfields and simplify saving
+To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Rob Clark <robdclark@chromium.org>
+References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
+ <20250214-drm-msm-phy-pll-cfg-reg-v3-4-0943b850722c@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -74,127 +105,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  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
- 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 fv0=
-In-Reply-To: <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250214-drm-msm-phy-pll-cfg-reg-v3-4-0943b850722c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/02/2025 10:41, Ivaylo Ivanov wrote:
-> On 2/16/25 11:26, Krzysztof Kozlowski wrote:
->> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
->>> The Exynos2200 SoC uses Synopsis eUSB2 PHY for USB 2.0. Add a new
->>> driver for it.
->>>
->>> eUSB2 on Exynos SoCs is usually paired alongside a USB PHY controller.
->>> Currently the driver is modelled to take and enable/disable the usb phy
->>> controller when needed.
->>>
->>> The driver is based on information from downstream drivers.
->>>
->>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>> ---
->>>  drivers/phy/samsung/Kconfig                   |  13 +
->>>  drivers/phy/samsung/Makefile                  |   1 +
->>>  .../phy/samsung/phy-exynos2200-snps-eusb2.c   | 351 ++++++++++++++++++
->>>  3 files changed, 365 insertions(+)
->>>  create mode 100644 drivers/phy/samsung/phy-exynos2200-snps-eusb2.c
->>>
->>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->>> index e2330b089..f62285254 100644
->>> --- a/drivers/phy/samsung/Kconfig
->>> +++ b/drivers/phy/samsung/Kconfig
->>> @@ -77,6 +77,19 @@ config PHY_S5PV210_USB2
->>>  	  particular SoC is compiled in the driver. In case of S5PV210 two phys
->>>  	  are available - device and host.
->>>  
->>> +config PHY_EXYNOS2200_SNPS_EUSB2
->>> +	tristate "Exynos2200 eUSB 2.0 PHY driver"
->>> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>> +	depends on HAS_IOMEM
->>> +	depends on USB_DWC3_EXYNOS
->>
->> How does it depend? What are you using from DWC3?
+On 14/02/2025 16:08, Krzysztof Kozlowski wrote:
+> Add bitfields for PHY_CMN_CLK_CFG0 and PHY_CMN_CLK_CFG1 registers to
+> avoid hard-coding bit masks and shifts and make the code a bit more
+> readable.  While touching the lines in dsi_7nm_pll_save_state()
+> resulting cached->pix_clk_div assignment would be too big, so just
+> combine pix_clk_div and bit_clk_div into one cached state to make
+> everything simpler.
 > 
-> Can drop, I guess.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
->>
->>> +	select GENERIC_PHY
->>> +	select MFD_SYSCON
->> Where do you use it?
+> ---
 > 
-> Remained from USBCON driver.
-> 
->>
->>> +	default y
->>> +	help
->>> +	  Enable USBCON PHY support for Exynos2200 SoC.
->>> +	  This driver provides PHY interface for eUSB 2.0 controller
->>> +	  present on Exynos5 SoC series.
->>> +
->>>  config PHY_EXYNOS5_USBDRD
->>>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
->>> index fea1f96d0..90b84c7fc 100644
->>> --- a/drivers/phy/samsung/Makefile
->>> +++ b/drivers/phy/samsung/Makefile
->>> @@ -14,5 +14,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
->>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->>>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
->>> +obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
->> Entire driver looks like repeating existing qcom-snps-eusb2.
-> 
-> It's the same IP, but implemented differently on a different platform. At
-> the very least, the register layout is different.
+> Changes in v3:
+> 1. Use FIELD_GET
 
 
-I checked few registers, looked very the same. Same blocks from synopsys
-have the common register layouts.
+I have LKP build reports here, so this or some earlier patches need
+bitfield.h header.
 
-> 
->>  You need to
->> integrate the changes, not create duplicated driver.
-> 
-> I can do that, but it would be come a bit cluttered, won't it? Depends on
-> if we want to follow the current oem-provided initialization sequence, or
-> try and fully reuse what we have in there.
-
-
-I think it duplicates a lot, so it won't be clutter. We have many
-drivers having common code and per-variant ops.
 
 Best regards,
 Krzysztof
