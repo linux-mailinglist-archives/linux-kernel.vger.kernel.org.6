@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-516844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2050CA37818
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:50:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A965A37835
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344903AF78B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF14E16F263
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCE11A4F2D;
-	Sun, 16 Feb 2025 22:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F461A5B90;
+	Sun, 16 Feb 2025 23:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfZgYw00"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QohltwnV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE035748F;
-	Sun, 16 Feb 2025 22:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB2C2EF;
+	Sun, 16 Feb 2025 23:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739746242; cv=none; b=iYFrPXBLEiFtX8h+LM85xjunJC4sj85gKSgmHg8ncZODIApAc4aUzaFKarcer/i+fzgCBVPU/pHjsr6Eq3XprZc01JoqvXuBInx9iFrmzcR89XczqDDjJg0/te19dlXK2FHHDPTHZmF+UDHF1Yw1kiuXIoM3PCo40V5aUx9MP5I=
+	t=1739746832; cv=none; b=MgtioPSW2T0v6yCreQcp5enYrIwvzAI6ahtyKWdmv9GZNElHAd0ksHh5XwefvfXg6mCr3OFWehZK+6zGzNDV0jb97vvTClE75iW9MNxdt2X/Ah/GyRT1ifBAWfM59q6CNwijmc7eN2Y1Y8tLiFklSJ470ecVQymUeTQdPSERxzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739746242; c=relaxed/simple;
-	bh=MVPYUEfqQP7SYtryyiFnYb+MCB/nRuUktfoW6AhsSsE=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CB1wJ8S3qP9XVNAfCrWmpmMmug4nCPxcxLmle82AHef4xbGC8Qw+7O71hQLbloGhXugL08LyC7sBRgws+qvFMQkhET6HX8Ey0g6V8b6CzPyzR1VgsnztMJeq7fseY/8PBSRyVagHO28is7iOOtIBITmPsj4yLSwuvie66wX/sMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfZgYw00; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220d601886fso48224415ad.1;
-        Sun, 16 Feb 2025 14:50:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739746240; x=1740351040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rwRpTiFhkazH7eZCnzFo4dfJTeXkjVTocPymKPEhdxo=;
-        b=BfZgYw00LiTNTk+K0EWlPpbX4GkcUorSqwXbpFtvWHVoqwJd2R04XvLO7pKjDyg8BI
-         +P8M3xK56K6zjzVq9Bzvp0LeHyuuA7NUX+G+xDrqyrjJ3yzg/oGJy5Phdi1r72IxYUFT
-         snJqqwSbx3GVh55xgKYtOl2/CJy12U9eI8q0wVIop6HV30ccqrwuGW+eSe+bpMmZ9f9Y
-         5PIhVisYOY7d7QPLjdDo5t1C0eO7RsDff4KFdic3Yx6b6eAdCrjnAeHwPd4YtTJyA1gq
-         CmZ7eVscVy0SJiwk5F1mx0SOLYEb+lM9TDIVS0QFC/oOtw3Wh7zTMyMY8Sp9TPfDhTiQ
-         hGow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739746240; x=1740351040;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rwRpTiFhkazH7eZCnzFo4dfJTeXkjVTocPymKPEhdxo=;
-        b=v+cjbNQpIAG0t7d7KhavjRSvFZp3yjbULsfudE7YpkxkI4MTPv+3mF51wJjkOlcE7n
-         77OauOrG8KO04DlN23l7K5v3k5wRXeQE1/fyCTcFncC5YDa0Ylup9oDMC96GZ/KtlRUP
-         BcruDKXHjLNnS1nT1JZJnWmEqn1W5MbA3jaPbyVpUrMyRBDl/96n0FjHLowW5KYcPjoJ
-         J3EkMvnUOLmUEiMUyaY6Et10BteMM/MUTDqf+ocvB4242jGtz64hsqnjvDExYO7H/5cJ
-         jWpJGgQinEAH+mMMOj1EvlfmglOuKbKLwtZS3gmoXojTScLyIWPuZQ6RqLmQ037n4eNm
-         GbUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUph41B+DMA9yuboNms8DGnV6S2mu/wfV1lApzLtd4QwrK/MRIi95onvV3YTBVQFT/u/LP4hwel@vger.kernel.org, AJvYcCW1lMXeM8lCs37Rb+NpgnZQjcOp0pZtU6T9+Bo9f0HP/pt5ZDur1NGXeTxdmdvq7//FiE6VYquOANkHKPM=@vger.kernel.org, AJvYcCWwnuWSGhYx9AUXl4MOQedOKOgNSeKDz3twzMBQnxmvNLCnbVh4j850+pdy4HtA33c3T9/V9/kwX+oWdyfm5Jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ByqjWu2yAMm06jFiIRaSg+IRkfmsEml1tIOf9esvbcH7OUAI
-	ZoQS8d1nC8bweaH8+xoXhDRpYMMlVwE/+9ziTuW7hbTh6cjmRcLV
-X-Gm-Gg: ASbGncv1iNFZpmI5vzYi/3Plgzbi61TvpoWAYNYqOQFGYEfhLpwWW47h6/es3WQG6ze
-	wqY6FEJcLnasD0Wyqbla6klKsIrpIUsUr/wsZOsMpgLAavbu9K9wPCvgKTeYcnInHDmNNBPnUk+
-	kR35FCJHgOSPNkJp4QddFRgQrsvYCAqHRytdgkhGhqIOc0+npoqovthtvsqhjUnJ4pzGwUKYbKj
-	BUOEaxKtNLrjOXWRWGz8mT/HO2U/HK9m7/Pjl/GxXLf3+EgeB7QaRbjdif3AbtzRV+j+dVa+BL6
-	FMgRrgakbP/+YeA6nEP3NtOzWmEJ/JCHfRWJCy7VltkDMwuZfkiokSfx4HYi9d4KcerFSx/H
-X-Google-Smtp-Source: AGHT+IE6flqDwVsTpGpc3YTvZ/iHfBKBaGrBtHop4poOhkkBMwzDiFwM8gvHelDmDsGXIxZ3B+QX9g==
-X-Received: by 2002:a17:903:32c3:b0:220:e7ae:dbcf with SMTP id d9443c01a7336-22104039c9cmr81807265ad.23.1739746240046;
-        Sun, 16 Feb 2025 14:50:40 -0800 (PST)
-Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536733fsm60448195ad.77.2025.02.16.14.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 14:50:39 -0800 (PST)
-Date: Mon, 17 Feb 2025 07:50:29 +0900 (JST)
-Message-Id: <20250217.075029.1780115689208398996.fujita.tomonori@gmail.com>
-To: daniel.almeida@collabora.com
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
- hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
- anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
- arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev
-Subject: Re: [PATCH v10 7/8] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <CEF87294-8580-4C84-BEA3-EB72E63ED7DF@collabora.com>
-References: <3F610447-C8B9-4F9D-ABDA-31989024D109@collabora.com>
-	<20250214.131330.2062210935756508516.fujita.tomonori@gmail.com>
-	<CEF87294-8580-4C84-BEA3-EB72E63ED7DF@collabora.com>
+	s=arc-20240116; t=1739746832; c=relaxed/simple;
+	bh=2d6ZtWkWQ357DtEP1dRgzHJghjeMoRX2Npj7Yv4hSGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tjtbhQk1zHn1FzCDjQrLsbUUBbvTbOIeVXnXpHikoF1qngBqL9YS7nut0h6gBqhxKjlo5mgWfXbuLdUCFNjaZXI9sa/mEQ28VWNH26FGCJHLdPAv4S8jDudCBTC5YjASpkx7e/mUC3Btyo8XiBncTxdDjsHZu4lSk5roIvGLa+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QohltwnV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65928C4CEDD;
+	Sun, 16 Feb 2025 23:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739746831;
+	bh=2d6ZtWkWQ357DtEP1dRgzHJghjeMoRX2Npj7Yv4hSGE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QohltwnVNTwOz7KDrIKCLR37vW5W4nrOzm7uF7UIuCKk1SlnGDxR0Z/2pl3ag4fm9
+	 SY5blg5pleNqD+N3p2pu3d2nWtMCvQEihDPmiyWmHwgRO9vEgBKe4d4reZuZDyZyGM
+	 EkAiu18j4zY5bfptlaaAhja8S/IeQ07X6uZkD7vLBiMDXyDkd6NOZt/OGAAwacjEc0
+	 4aBn2i/12jAC6TPGTJSeL3H2ZM6tUyGWGmHLbNgTpyCHhPXIJS2kXgdmG398QvYsP0
+	 qlPhWtPFLB4P5gZuswb7PN1rWTQJva2HMrcvWrvNKMzN0R40VYUBZz2ydGC8sPGoYe
+	 mc9HLIccc8gyA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH 0/4] RISC-V CRC optimizations
+Date: Sun, 16 Feb 2025 14:55:26 -0800
+Message-ID: <20250216225530.306980-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, 16 Feb 2025 09:19:02 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+This patchset is a replacement for
+"[PATCH v4] riscv: Optimize crct10dif with Zbc extension"
+(https://lore.kernel.org/r/20250211071101.181652-1-zhihang.shao.iscas@gmail.com/).
+It adopts the approach that I'm taking for x86 where code is shared
+among CRC variants.  It replaces the existing Zbc optimized CRC32
+functions, then adds Zbc optimized CRC-T10DIF and CRC64 functions.
 
->>>> +/// Polls periodically until a condition is met or a timeout is reached.
->>>> +///
->>>> +/// ```rust
->>>> +/// use kernel::io::poll::read_poll_timeout;
->>>> +/// use kernel::time::Delta;
->>>> +/// use kernel::sync::{SpinLock, new_spinlock};
->>>> +///
->>>> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
->>>> +/// let g = lock.lock();
->>>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
->>>> +/// drop(g);
->>>> +///
->>>> +/// # Ok::<(), Error>(())
->>> 
->>> IMHO, the example section here needs to be improved.
->> 
->> Do you have any specific ideas?
->> 
->> Generally, this function is used to wait for the hardware to be
->> ready. So I can't think of a nice example.
-> 
-> Just pretend that you’re polling some mmio address that indicates whether some hardware
-> block is ready, for example.
-> 
-> You can use “ignore” if you want, the example just has to illustrate how this function works, really.
+This new code should be significantly faster than the current Zbc
+optimized CRC32 code and the previously proposed CRC-T10DIF code.  It
+uses "folding" instead of just Barrett reduction, and it also implements
+Barrett reduction more efficiently.
 
-Ah, you use `ignore` comment. I was only considering examples that
-would actually be tested.
+This applies to crc-next at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next.
+It depends on other patches that are queued there for 6.15, so I plan to
+take it through there if there are no objections.
+
+Tested with crc_kunit in QEMU (set CONFIG_CRC_KUNIT_TEST=y and
+CONFIG_CRC_BENCHMARK=y), both 32-bit and 64-bit.  I don't have real Zbc
+capable hardware to benchmark this on, but the new code should work very
+well; similar optimizations work very well on other architectures.
+
+Eric Biggers (4):
+  riscv/crc: add "template" for Zbc optimized CRC functions
+  riscv/crc32: reimplement the CRC32 functions using new template
+  riscv/crc-t10dif: add Zbc optimized CRC-T10DIF function
+  riscv/crc64: add Zbc optimized CRC64 functions
+
+ arch/riscv/Kconfig                  |   2 +
+ arch/riscv/lib/Makefile             |   5 +
+ arch/riscv/lib/crc-clmul-consts.h   | 122 +++++++++++
+ arch/riscv/lib/crc-clmul-template.h | 265 ++++++++++++++++++++++++
+ arch/riscv/lib/crc-clmul.h          |  23 +++
+ arch/riscv/lib/crc-t10dif.c         |  24 +++
+ arch/riscv/lib/crc16_msb.c          |  18 ++
+ arch/riscv/lib/crc32-riscv.c        | 310 ----------------------------
+ arch/riscv/lib/crc32.c              |  53 +++++
+ arch/riscv/lib/crc32_lsb.c          |  18 ++
+ arch/riscv/lib/crc32_msb.c          |  18 ++
+ arch/riscv/lib/crc64.c              |  34 +++
+ arch/riscv/lib/crc64_lsb.c          |  18 ++
+ arch/riscv/lib/crc64_msb.c          |  18 ++
+ scripts/gen-crc-consts.py           |  55 ++++-
+ 15 files changed, 672 insertions(+), 311 deletions(-)
+ create mode 100644 arch/riscv/lib/crc-clmul-consts.h
+ create mode 100644 arch/riscv/lib/crc-clmul-template.h
+ create mode 100644 arch/riscv/lib/crc-clmul.h
+ create mode 100644 arch/riscv/lib/crc-t10dif.c
+ create mode 100644 arch/riscv/lib/crc16_msb.c
+ delete mode 100644 arch/riscv/lib/crc32-riscv.c
+ create mode 100644 arch/riscv/lib/crc32.c
+ create mode 100644 arch/riscv/lib/crc32_lsb.c
+ create mode 100644 arch/riscv/lib/crc32_msb.c
+ create mode 100644 arch/riscv/lib/crc64.c
+ create mode 100644 arch/riscv/lib/crc64_lsb.c
+ create mode 100644 arch/riscv/lib/crc64_msb.c
 
 
-> Something like
-> 
-> ```ignore
->  /* R is a fictional type that abstracts a memory-mapped register where `read()` returns Result<u32> */
->  fn wait_for_hardware(ready_register: R) {
->      let op = || ready_register.read()?
-> 
->      // `READY` is some device-specific constant that we are waiting for.
->      let cond =  |value: &u32| { *value == READY }
-> 
->      let res = io::poll::read_poll_timeout (/* fill this with the right arguments */);
-> 
->      /* show how `res` works, is -ETIMEDOUT returned on Err? */
-> 
->      match res {
->        Ok(<what is here?>) => { /* hardware is ready */}
->        Err(e) => { /* explain that *value != READY here? */ }
-> 
->      /* sleep is Option<Delta>, how does this work? i.e.: show both None, and Some(…) with some comments. */
->  } 
-> ```
-> 
-> That’s just a rough draft, but I think it's going to be helpful for users.
+base-commit: cf1ea3a7c1f63cba7d1dd313ee3accde0c0c8988
+-- 
+2.48.1
 
-I'll add an example based on the code QT2025 PHY (8th patch). It's
-similar to the above.
-
-Thanks,
 
