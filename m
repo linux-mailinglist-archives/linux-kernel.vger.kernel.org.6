@@ -1,113 +1,221 @@
-Return-Path: <linux-kernel+bounces-516538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBC7A373AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:53:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAB1A373B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A501891D34
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7EB3ABCD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD58918C93C;
-	Sun, 16 Feb 2025 09:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A7E18DB03;
+	Sun, 16 Feb 2025 09:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Sv9AKbn0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFVxLyce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0FD290F
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 09:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1383A290F;
+	Sun, 16 Feb 2025 09:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739699598; cv=none; b=UhfZybwHExOvG10swvVVJzStfBNoH27Hdj6i5nHm7NH6aweug3Lr9Odc7vz6f+vHLsfdNAMVfCTHWakAR91fBHxxt+wBCACYuHMN3tVoWRTNNpczmqcGO0Xp8O05r7bbXRMz5f6WW61xOqRrZ16zQ/gM/7LDa8gmQN1DnG+9QGI=
+	t=1739699726; cv=none; b=FMQmphnCbX3wlf2WI/lGYZX1HsRe2yqr6FUICHcbMGbfubCw5wrxhalu34TXP39tWvkKMMPzpGZE1cxrgWZwc0fVqkBqXOOcsUXKnwGcxPQlxLAWK0UXMBY4tRGKD5bmiSLBXTyyMqjC7Z4ABUa4cRY29N6RzEL7V33pdFI5Xd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739699598; c=relaxed/simple;
-	bh=GRW9dLjDH4bhTt2UkYPP8YghJ8vtA0i+/uf8xl5bGdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n+3CCXeC0/Ia3hObCPZYx9jloUCUoJSl4v94BT70fDdl8S7/CXOqo6ohDv6flEqfzqE0KiVtWxK4wEE2R4tJztdaIvVD7ISIqhoZNt+vt7QIBPXpZJAKPqKtzEMnWi5pBhsmKeuCW1sRBNiZlmk83zTzzfxPhGCiHJsG+qYTkus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Sv9AKbn0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 16B6140E0191;
-	Sun, 16 Feb 2025 09:53:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rLNWiU24pLQa; Sun, 16 Feb 2025 09:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739699591; bh=L29Whz40E2Hp+lMhdhUfZf4f6lJh4LRv2sCzmO3G4kE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Sv9AKbn0A4vweDCCus30qnLd/fOwzhS0tT/irXeYwQjJ4BEcGeCQhSay61T1MaXHm
-	 dM8JG7dxtOwzZRpZqKXX2wZjzBHotqZx6hBIksYZKEiaiQ17qpyuwOW1ySIZhVqPRI
-	 BIu3yc35fnXp69zi2uK/mHonXGsZJWwBUXuPJp3j/0591Th+FrbWhPYOjsuewFTffN
-	 UJPSAX695g4cvlyFNzXIj5LxNdr3h3a5oAwtsyQuxRtDCfu3N+0yFncXgnaxinq0pR
-	 nUIIoD6hLCK8bMUdKmbqfY7zTLUyfU7zfqzK/5zJ6mgdPmRU7/DX0pvVbxbTPfTK+6
-	 qx3CDN5QctsrfmJb+qtsy8OOZ0BbGA+2BYVNE9v/9bixn0TdEBE1UrkoGNX/lguHdV
-	 kKKa9hSOJr0KOWbwm+jhClCHg+FrQvOrtGADYBk9Cr7T2bK/v0d0eelkooVaGELyFU
-	 JVTe0Q6FnALJP+NUnhG9HAsleR4yRWFoyPpb20FA3wYTdOJda4mf5APxpRpIBwzdrJ
-	 6jRTEhnveG/MCy1C9FjlptG7XFOVhEtVBVCO+2V5fI+tTUDLIXtoswOoYYnWhVjoBV
-	 n+Do4hKvRMRIahTyJpDtrHddx39GM6YHksKmghk8ipFkF6VHneW8+GFSyCWdSvuMss
-	 oT/p181sqSVi7VKZf0Ls1ldQ=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 58CB740E016A;
-	Sun, 16 Feb 2025 09:53:08 +0000 (UTC)
-Date: Sun, 16 Feb 2025 10:53:07 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.14-rc3
-Message-ID: <20250216095307.GAZ7G1g8jr0xW0nGus@fat_crate.local>
+	s=arc-20240116; t=1739699726; c=relaxed/simple;
+	bh=uxeXeJ6bnFjUDM2/tZeOi6I4UpOhwNCOUpFKYkaIesA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pCsq1Jag1nOQTL7+n6h8SWXoI4dCn6pXuec328ji8b3PVKAgIPy+o/sIWTnFdXEJGsIKq0xQvbHjWEwAC8VCdkCIF+b6+2DHvrQbBMZlCxhc7Z0z7fDFcGd36zCDaEki81yXJ3T+xII6GaXWNb5r4sSa/TTorG36sL5ZM5FSMIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFVxLyce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A565C4CEDD;
+	Sun, 16 Feb 2025 09:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739699725;
+	bh=uxeXeJ6bnFjUDM2/tZeOi6I4UpOhwNCOUpFKYkaIesA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cFVxLyceRo6lO/Cu3nvm5w6ePc2RI5vfYAL6WD2CPnRNex1Zpb+xxt/Qt8EuEEwk/
+	 sNY0RXPqF1tDkhjwQd3Tgm78ZpkaUZ+rDDKRczTvoBaJei1wZCN9aG/9sT9xKyB3/K
+	 WPVlAcSI6htO7ka9iuk7+g9CWLvLXyhbOhbEmUXJ4PsaFudRpvEIoAsfY/v4e4zNqN
+	 B/9rhR/e6wc+JAKaEHwZG9kPWMARHnXdlduMUMDp7CJncS2dDTh4ggYO0y20InxGsW
+	 +RmuJKrbpoHgj+82Dbk8OZO1cri6E+8EO5OdRlWo2EQPtP4y0kk0P5ptKdKbmL9vAe
+	 6zpKHXX7iKgfw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjbMx-004WpP-4V;
+	Sun, 16 Feb 2025 09:55:23 +0000
+Date: Sun, 16 Feb 2025 09:55:21 +0000
+Message-ID: <87seoe1aeu.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	XiaoDong Huang <derrick.huang@rock-chips.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	kernel@collabora.com
+Subject: Re: [PATCH v1 1/4] irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
+In-Reply-To: <20250215235431.143138-2-dmitry.osipenko@collabora.com>
+References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
+	<20250215235431.143138-2-dmitry.osipenko@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dmitry.osipenko@collabora.com, heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kever.yang@rock-chips.com, derrick.huang@rock-chips.com, pgwipeout@gmail.com, robin.murphy@arm.com, kernel@collabora.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Linus,
+On Sat, 15 Feb 2025 23:54:28 +0000,
+Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> 
+> Rockchip RK3566/RK3568 GIC600 integration has DDR addressing
+> limited to first 4GB of DRAM. Rockchip assigned Erratum ID #3568002
+> for this issue. Add driver quirk for this Rockchip GIC Erratum.
 
-please pull an urgent irq fix for v6.14-rc3.
+Thanks for taking the time to submit this. It only took 5 years for
+this erratum to be published...
 
-Thx.
+However, my understanding of this issue is that the integration is
+limited to the first 32bit of physical address space, not the first
+32bit of RAM. If the memory is placed as physical address 0, then they
+represent the same space. But this is still an important distinction.
 
----
+> 
+> Note, that the 0x0201743b ID is not Rockchip 356x specific and thus
+> there is an extra of_machine_is_compatible() check. Rockchip 3588 uses
+> same ID and it is not affected by this errata.
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+This ID is that of ARM's GIC600, which is a very common GICv3
+implementation, and is not Rockchip-specific. Please capture this in
+the commit message.
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+> 
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  Documentation/arch/arm64/silicon-errata.rst |  2 ++
+>  arch/arm64/Kconfig                          |  9 ++++++++
+>  drivers/irqchip/irq-gic-v3-its.c            | 23 ++++++++++++++++++++-
+>  3 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
+> index f074f6219f5c..f968c13b46a7 100644
+> --- a/Documentation/arch/arm64/silicon-errata.rst
+> +++ b/Documentation/arch/arm64/silicon-errata.rst
+> @@ -284,6 +284,8 @@ stable kernels.
+>  +----------------+-----------------+-----------------+-----------------------------+
+>  | Rockchip       | RK3588          | #3588001        | ROCKCHIP_ERRATUM_3588001    |
+>  +----------------+-----------------+-----------------+-----------------------------+
+> +| Rockchip       | RK3568          | #3568002        | ROCKCHIP_ERRATUM_3568002    |
+> ++----------------+-----------------+-----------------+-----------------------------+
+>  +----------------+-----------------+-----------------+-----------------------------+
+>  | Fujitsu        | A64FX           | E#010001        | FUJITSU_ERRATUM_010001      |
+>  +----------------+-----------------+-----------------+-----------------------------+
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index c997b27b7da1..0428ad8f324d 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1302,6 +1302,15 @@ config NVIDIA_CARMEL_CNP_ERRATUM
+>  
+>  	  If unsure, say Y.
+>  
+> +config ROCKCHIP_ERRATUM_3568002
+> +	bool "Rockchip 3568002: can not support DDR addresses higher than 4G"
+> +	default y
+> +	help
+> +	  The Rockchip RK3566 and RK3568 GIC600 SoC integrations have DDR
+> +	  addressing limited to first 4GB.
+> +
+> +	  If unsure, say Y.
+> +
 
-are available in the Git repository at:
+s/DDR addresses/physical addresses/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.14_rc3
+>  config ROCKCHIP_ERRATUM_3588001
+>  	bool "Rockchip 3588001: GIC600 can not support shareability attributes"
+>  	default y
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 8c3ec5734f1e..f30ed281882f 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -205,13 +205,15 @@ static DEFINE_IDA(its_vpeid_ida);
+>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>  
+> +static gfp_t gfp_flags_quirk;
+> +
+>  static struct page *its_alloc_pages_node(int node, gfp_t gfp,
+>  					 unsigned int order)
+>  {
+>  	struct page *page;
+>  	int ret = 0;
+>  
+> -	page = alloc_pages_node(node, gfp, order);
+> +	page = alloc_pages_node(node, gfp | gfp_flags_quirk, order);
+>
+>  	if (!page)
+>  		return NULL;
+> @@ -4887,6 +4889,17 @@ static bool __maybe_unused its_enable_quirk_hip09_162100801(void *data)
+>  	return true;
+>  }
+>  
+> +static bool __maybe_unused its_enable_rk3568002(void *data)
+> +{
+> +	if (!of_machine_is_compatible("rockchip,rk3566") &&
+> +	    !of_machine_is_compatible("rockchip,rk3568"))
+> +		return false;
+> +
+> +	gfp_flags_quirk |= GFP_DMA32;
+> +
+> +	return true;
+> +}
+> +
+>  static const struct gic_quirk its_quirks[] = {
+>  #ifdef CONFIG_CAVIUM_ERRATUM_22375
+>  	{
+> @@ -4954,6 +4967,14 @@ static const struct gic_quirk its_quirks[] = {
+>  		.property = "dma-noncoherent",
+>  		.init   = its_set_non_coherent,
+>  	},
+> +#ifdef CONFIG_ROCKCHIP_ERRATUM_3568002
+> +	{
+> +		.desc   = "ITS: Rockchip erratum RK3568002",
+> +		.iidr   = 0x0201743b,
+> +		.mask   = 0xffffffff,
+> +		.init   = its_enable_rk3568002,
+> +	},
+> +#endif
+>  	{
+>  	}
+>  };
 
-for you to fetch changes up to 4cf7d58620bfc2ebe934e3dfa97208f13f14ab8b:
+Another thing is that this patch conflates ITS and redistributors. As
+it turns out, we use the same allocator for both, but they are
+distinct architectural concepts, even if GIC600 is a monolithic
+implementation. It is OK for now, but it will have to be revisited if
+we ever move the redistributor management outside of the ITS driver.
 
-  genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS (2025-02-13 13:18:54 +0100)
+With the other comments addressed:
 
-----------------------------------------------------------------
-- Remove an unused config item GENERIC_PENDING_IRQ_CHIPFLAGS
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-----------------------------------------------------------------
-Anup Patel (1):
-      genirq: Remove unused CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
-
- kernel/irq/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
-
+	M.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Without deviation from the norm, progress is not possible.
 
