@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-516838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E575A3780C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:19:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC9FA37807
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173773A4F1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E9F3A6315
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE271A9B24;
-	Sun, 16 Feb 2025 22:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B91A3BC0;
+	Sun, 16 Feb 2025 22:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="XqfA279Y"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="PQavqjZn"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B551A5BAB;
-	Sun, 16 Feb 2025 22:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2835A1A2544;
+	Sun, 16 Feb 2025 22:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739744302; cv=pass; b=SefDA8LlthsR2SOsL1RT/vT3hcJ6hdavW6f7v5KiwO1P8iRudo5dH/SOzdq7Sboweny2duBLzq04amwLLopwQ7i6Scmp3sGy5G5NTYkpWrOr1avs2HxUp34Q/64asEDLYHH+vFosLiUDY1DErCiwUAW+C+Z3K4RW0mecBA0jPcg=
+	t=1739744299; cv=pass; b=gIDfoNqMGEvb43nUKgtMBkf3+IEeaMcD3SwHDT5UaQvWvhOZND3mNOGPqeBwVoUSs7CnXvooQwI5MjbCxj3VT5F/HjaNP2Tv9E7jq6ty5HBg48EmXxXvjl5WKpfxBgXOs2n4yKiEndDitkeMfzjxRd22P9H6z2/jFIIq3uMTymc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739744302; c=relaxed/simple;
-	bh=Ow2wOKW47xQxE1tes6dzGd7yzs8hgRX69tsKSBSfITc=;
+	s=arc-20240116; t=1739744299; c=relaxed/simple;
+	bh=wHJhwOeaSpNNbgCYMkjjG1GNlz5YxerPhIo6B14rw9E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pUvCJs5NE7oCFwI6HaQGNO+cTGJ+YRhrzdOPre9BuK6DxoACIMRjqU55XMZDv9/BIsOlyeG9ri0Dj4k/4OCepORLSkI6J8BD1+galR4c4y2DWswDgbVat+plccjQOKPs/DQADHZ0KiKvyeyTRc1zgkxn4SJq91mCWQgyYm4DHEo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=XqfA279Y; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version; b=cPRjA5RLxqP7ooL9Lll/kycouwMQ02LnsgiVIDI4oo/Djn3SYfZVN8+0IlGBQhncza64A+V5NAEDuU2lVht6LfVJe9nC8L2MaF8KRWVMXazxIBSaviRYEkM+Q4+VGZss6fPYYeK/DAMoWrErTimJrNBNZ2FrghmlkNa7NiAt0xM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=PQavqjZn; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739744269; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1739744271; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=BvPGmvJYmrhsFTWC+5HKGniE0h7h+HgTmgnSsV4gOWE2e7bVOGLd+nv4YOxN3D3sXfmpZ5Cy4ywy3dq8XOBYe/OKGbsMjuCISubeGrDQozBuwJdTYHTioaRhw/303rOCpBOUtFwB/0CRnNN8h1FOoP/1/cXA6MQoY2MuZkHViUA=
+	b=OIPg5n8vVNysNAPm+Fx4I0iVm/kVBYn1uipiSBFHzqoFnliSnBugJBIG6KTteAFX3rln6Hr/0PDeUNmcALZRNSHIn9Jr83nCFk2QfYlD4E0vmmWxOZ+rU5Oq+WdczxVSEkw6vD4xmhbeFl/mOrtrJ0evvs5loQPxIdCdt+ShcsQ=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739744269; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qV9FtGc2J3JofUAmzm8a7AF6xA8rwztBenPkjZxjGQ4=; 
-	b=TFpNfVS3uXJLTtA45QpC19mKMSSrF3VHkplIapyKHLWU5GltAtATRoZ1fxBonqtSCvdtqz8WGYbJwiPraLct3h7dSO+6uJ/Pi/kjaIUtFCw6zoBGmYnuQjeZYFHlMOCECaTvaw9A85UnhGQ8I9+2w6WKa6qqNBZKZFs5nItU2/w=
+	t=1739744271; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oCI25TPhy4Id7iRyjm7K0b1dudwW2Ibox3w9+UV2UCs=; 
+	b=TsRIgq+zr3kAZtaC5R6BfiEv7ftvn90Hw1oj6g7EHtbS9KC5HUmI4o59Kgk07RvZ4JQ6oJKZzmytfKelA+38xwh707OeB57t+U7LkPxWMt3TT1modY86vdecxHCx+kS2YWhj2pkA/CQSk7GSje56KtxmJwnjJh9AWBvlABac/wY=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
 	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739744269;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739744271;
 	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=qV9FtGc2J3JofUAmzm8a7AF6xA8rwztBenPkjZxjGQ4=;
-	b=XqfA279YJRUTqsywVZRV1flD/G4pzs3eywPnE/1MymVzaoTYCxmFZEneDrtHNeC4
-	kCeX581kRYANASWq52UpCrxBm5H2Nv42kJ3aqpQrLmVKdD946917hSbkWeNcgz/DZGr
-	xgk5iK2PGrcKhIaM3n08QB7bqcaR6CNPBwYOBh1Y=
-Received: by mx.zohomail.com with SMTPS id 1739744266007162.2709788827533;
-	Sun, 16 Feb 2025 14:17:46 -0800 (PST)
+	bh=oCI25TPhy4Id7iRyjm7K0b1dudwW2Ibox3w9+UV2UCs=;
+	b=PQavqjZngPTcpOG8lvnaNbyjOsHK+eEX9D0ggD8DQkhua7NrntRb9/+tXqnEaw5F
+	aqutiC8q2x7X2wIdQH8F02Vy52j7DgYHN7aK2ZrWMZpwshhgf1JkhzSJaX07FjQsKhl
+	YgDMjGwdjzEk2meE2Wz02msdw5mgN6Tlc1PVHyhQ=
+Received: by mx.zohomail.com with SMTPS id 1739744269720837.2148685030786;
+	Sun, 16 Feb 2025 14:17:49 -0800 (PST)
 From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To: Heiko Stuebner <heiko@sntech.de>,
 	Marc Zyngier <maz@kernel.org>
@@ -64,9 +64,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	Peter Geis <pgwipeout@gmail.com>,
 	Robin Murphy <robin.murphy@arm.com>,
 	kernel@collabora.com
-Subject: [PATCH v2 2/3] arm64: dts: rockchip: rk356x: Add MSI controller node
-Date: Mon, 17 Feb 2025 01:16:33 +0300
-Message-ID: <20250216221634.364158-3-dmitry.osipenko@collabora.com>
+Subject: [PATCH v2 3/3] arm64: dts: rockchip: rk356x: Move PCIe MSI to use GIC ITS instead of MBI
+Date: Mon, 17 Feb 2025 01:16:34 +0300
+Message-ID: <20250216221634.364158-4-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250216221634.364158-1-dmitry.osipenko@collabora.com>
 References: <20250216221634.364158-1-dmitry.osipenko@collabora.com>
@@ -79,52 +79,28 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-Rockchip 356x SoC's GIC has two hardware integration issues that
-affect MSI functionality of the GIC. Previously, both these GIC
-issues were worked around by using MBI for MSI instead of ITS
-because kernel GIC driver didn't have necessary quirks.
-
-First issue is about RK356x GIC not supporting programmable
-shareability, while reporting it as supported in a GIC's feature
-register. Rockchip assigned Erratum ID #3568001 for this issue. This
-patch adds dma-noncoherent property to the GIC node, denoting that a SW
-workaround is required for mitigating the issue.
-
-Second issue is about GIC AXI master interface addressing limited to
-the first 4GB of physical address space. Rockchip assigned Erratum
-ID #3568002 for this issue.
-
-Now that kernel supports quirks for both of the erratums, add
-MSI controller node to RK356x device-tree.
+Rockchip 356x device-tree now supports GIC ITS. Move PCIe controller's
+MSI to use ITS instead of MBI. This removes extra CPU overhead of handling
+PCIe MBIs by letting GIC's ITS to serve the PCIe MSIs.
 
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-index de5e6c0c3d24..423185686600 100644
+index 423185686600..4f11141ea146 100644
 --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -284,6 +284,18 @@ gic: interrupt-controller@fd400000 {
- 		mbi-alias = <0x0 0xfd410000>;
- 		mbi-ranges = <296 24>;
- 		msi-controller;
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		dma-noncoherent;
-+
-+		its: msi-controller@fd440000 {
-+			compatible = "arm,gic-v3-its";
-+			reg = <0x0 0xfd440000 0 0x20000>;
-+			dma-noncoherent;
-+			msi-controller;
-+			#msi-cells = <1>;
-+		};
- 	};
- 
- 	usb_host0_ehci: usb@fd800000 {
+@@ -969,7 +969,7 @@ pcie2x1: pcie@fe260000 {
+ 		num-ib-windows = <6>;
+ 		num-ob-windows = <2>;
+ 		max-link-speed = <2>;
+-		msi-map = <0x0 &gic 0x0 0x1000>;
++		msi-map = <0x0 &its 0x0 0x1000>;
+ 		num-lanes = <1>;
+ 		phys = <&combphy2 PHY_TYPE_PCIE>;
+ 		phy-names = "pcie-phy";
 -- 
 2.48.1
 
