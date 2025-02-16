@@ -1,91 +1,127 @@
-Return-Path: <linux-kernel+bounces-516550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F421AA373E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:05:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609B0A373E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357AF1692B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3167B18908ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9341318DB02;
-	Sun, 16 Feb 2025 11:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7516418C33B;
+	Sun, 16 Feb 2025 11:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GG2iREBr"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lcnM8hqF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F7C3209;
-	Sun, 16 Feb 2025 11:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3CA3209;
+	Sun, 16 Feb 2025 11:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739703897; cv=none; b=X7GPdI0TiAuuJiYv9B1Xm+Le/KPHxbieFg5JEJszdzXKngQ+oCtlrMfrsn27ax3x94JAjb9NTmGJ5FDDRSn+QzXznJjhdZsJIVVLbHg9J1vAuHqimY1D64m5AEsL9tHfSt5OUhcHZc3D0X3IBExmG0TFDlqXQeMLWlKSepc1Yxc=
+	t=1739704001; cv=none; b=hi1uWVFvKq7PNf2jmaJGVU808A1iuUG+nEgFH2MTUFQBDzE/M6Y6azgDwZwp9wX/4JjgTmF0oOhTB8nKm5rvHZf2vnxWTVMTmTdGxZvBtbVwzAJXtJvHrVC8zpGvQz0BTMMlaQETmryp2G2WNOYX5ku+ikn0nNOHUvA+vOSbHOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739703897; c=relaxed/simple;
-	bh=z9x8xH8SWbg10OAFANJInFF/Fw8mgRPqB2Lc31pVMp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hzndduz6TRDYrx7/FG82sRLAsJ7cLBiNrJGn/gfSztiyTfR1RDtQNqEgwUFz7lPZ3jERikdunIf5U3HiNVBU31ilsK4ielZuqYwoDCB8r/2pKdRQnEcnway4kAsmPQU8hpb6kkyTq8JqUHihG32wht7LFTyb6i72SL8J+p+lDmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GG2iREBr; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739703885; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BNWxHp3VpENqQX9PIKu665q5aryES8RoVts4fxU0i60=;
-	b=GG2iREBrj5HoEFF4S5pBkAJiws/UH144eayEdLacF1sboSFT2uM78HLSn65ZEyaBWlinrZV5mKrUmw8dZO8rRMoqjLD6N9/8fjAC1feGNcPuhitYP9kAbrSxZXp3QemGQ8//O/NnO8Tu7nyuosQ1QhKT7pzdUUa/frv+iudP8ig=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPWTwAZ_1739703884 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 16 Feb 2025 19:04:44 +0800
-Message-ID: <761ef7d1-47d0-4ada-a5d5-8e7b8bf966ea@linux.alibaba.com>
-Date: Sun, 16 Feb 2025 19:04:43 +0800
+	s=arc-20240116; t=1739704001; c=relaxed/simple;
+	bh=2sLUpHPjXnj29AqxoEcLA40AhQ30jI32qBjj6pdtTe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n/V25Kf3DNoOArujrrHeg3X/Thm3qqQy3y/hbZGYAtaH23mCeAbWo2goJCMtYe2bBiQ1DdaD6ch4QckS0eB01v/qob4CO7/aK55Lc/jQybg3I6RtMpIi/Wi2+6T4dzszTEe/kDbga71G4BkGI4ieHSkSnsL1walHO+s7P7GwtV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lcnM8hqF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739703987;
+	bh=Bk42sfpIFzn5GMpdjl9AQd6GOHPhbLJezzNmh2dxWdI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lcnM8hqFbq58IPUGvye+YYa8CDqNAZ4+c10uTczXKKfKy4UQRKFhHqFJhxMp3YGy+
+	 It6LSQ28PpSGDEuIclpPbY39jqYFSTXlisv/xn0iEzBESIq/rdM+NsHdBgngysp71t
+	 pvle0yyXmXKOWOksfHgdHlnINg/ASJpMj3JFsXBqo6Ss2aaqoyLoUFcHYIIt9ryhuP
+	 SnGVjrOONWy7Fw9XpBx72z8xw4ivR73jC36El58558sLp6np0wTuW6Lj126ZLZHDyb
+	 HQkUIV+jW8o4bf51YlMYc7/bNNZccEhRtQ2gNQ165L9uIqSutXGpVc4yVXjQ/tPiFO
+	 bHzfXfMWSlQOw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ywjdv1L6tz4wvg;
+	Sun, 16 Feb 2025 22:06:27 +1100 (AEDT)
+Date: Sun, 16 Feb 2025 22:06:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Matt Turner <mattst88@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PULL] alpha.git
+Message-ID: <20250216220611.41e33084@canb.auug.org.au>
+In-Reply-To: <CAEdQ38F6ts1qXj2xb+PN=O_byGwZAp1mvF8aRdTEq2zrzLBFSA@mail.gmail.com>
+References: <w3rw6n4cbgmlcylf5gbzzocqhyxjoyjy3qiedb7fzvd7jdwgap@44d323cbjljd>
+	<CAEdQ38F6ts1qXj2xb+PN=O_byGwZAp1mvF8aRdTEq2zrzLBFSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 1/7] dmaengine: idxd: fix memory leak in error handling path
- of idxd_setup_wqs()
-To: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org,
- Dave Jiang <dave.jiang@intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
- <98327a4d-7684-4908-9d67-5dfcaa229ae1@web.de>
- <4128c7ad-a191-4c37-a6ba-47b06324a8b5@linux.alibaba.com>
- <825ed0c6-e804-4e07-9881-78de319aadf2@web.de>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <825ed0c6-e804-4e07-9881-78de319aadf2@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/3OIeJvs353bilnFMy4SaGNU";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/3OIeJvs353bilnFMy4SaGNU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Matt,
 
-在 2025/2/16 17:34, Markus Elfring 写道:
->>> Will a “stable tag” become relevant also for this patch series?
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/stable-kernel-rules.rst?h=v6.14-rc2#n3
->>
->> I don't know if this is a real serious issue for stable kernel.
-> How many resource leaks would you like to avoid with your contributions?
+On Fri, 14 Feb 2025 16:36:43 -0500 Matt Turner <mattst88@gmail.com> wrote:
+>
+> The last time I sent a pull request to Linus he noted that the commits
+> weren't in linux-next. I meant to sort that out before next time, but
+> well, better late than never!
+>=20
+> Could you please add
+> https://git.kernel.org/pub/scm/linux/kernel/git/mattst88/alpha.git
+> alpha-next to linux-next?
 
-For this patch:
+Added from tomorrow.  I have put just you as a contact for problems
+with the tree (conflict, build failures ...), do you want anyone else -
+or a mailing list?
 
-     - wqs = 8 * 8 bytes = 64 bytes
-     - wq = 8 * 2400 bytes =  19200 bytes
-     - opcap_bmap = 256 bit / 8 = 32 bytes
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Around 18 KB.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-> 
-> Regards,
-> Markus
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-Thanks.
-Shuai
+--Sig_/3OIeJvs353bilnFMy4SaGNU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmexxqQACgkQAVBC80lX
+0Gx7eQf9H1IkgWlGsdKYPZJE0JpJsLZxJwLsmAm9j0rTCgLYoo0UxXBFRiQsNGJO
+5YC/a7F/xjm/1TGb6Sk1ngjY+9o8QhtvjXJy2ZkzuHEDIy4GLj18igS5fdJkA9j2
+cmt61ufgV5uw2IsNHvbUuIfj67EmPT7Xfo/ZTKTscOA1cqiKWUoe6kuoFxL5oVQq
+ouogk6aVnbjTobyoW7IFMNNayFZ2yO2a8chmICin9+MzZg/HP84fAI7hE60X+N9w
+44x/hXjDSjKrBfUgcnkQhxsEvPYUdBr6s8G6fReEtgO7wwQR+s4NhD1OOd8M4LY6
+thp/S65/LwMASCbhEkdy+DATL1dtSA==
+=1J1E
+-----END PGP SIGNATURE-----
+
+--Sig_/3OIeJvs353bilnFMy4SaGNU--
 
