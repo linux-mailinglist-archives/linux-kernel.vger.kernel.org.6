@@ -1,85 +1,139 @@
-Return-Path: <linux-kernel+bounces-516510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B0EA3730B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:21:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DB9A3730E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AF33AF6D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DCE1889834
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B91E183CD1;
-	Sun, 16 Feb 2025 09:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21CC185B5F;
+	Sun, 16 Feb 2025 09:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJUSv6AL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvXv4U+l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00F3748F;
-	Sun, 16 Feb 2025 09:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDC123BB;
+	Sun, 16 Feb 2025 09:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739697710; cv=none; b=hvl/UVpF899657HkyaFVXokhVnLmO6aT2IYgUzM9Untn2ETO/db+GmearJuyZBq5Rs1C8UJqesHlMclL6vp/sVm7eMDzqTYoQjBAsq1hj4sikvu5PweYDC4lBIH6ZRiPGtMiKxuaMmVH1TTD/bXP41jeEkp/zKPRN6tx8bjS2cc=
+	t=1739697786; cv=none; b=XlAyJ3Ygfe1nIQVjE7oTS8Gi1B2d7zsYhmXRdfc2Z8Jxj2/wEROkcyJKq/hCUBGDu80V9aMtYpDlZvySIyHv4L0gjWY3c4MYVyukprO2Ppu65OKevDloP4slbAgbQ7bLiMBYd6k1+DXuBtIS+rWtO9y864hQpWLM82wYxmCL5ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739697710; c=relaxed/simple;
-	bh=VH4VD6duncdZbySK8dpWl861MwxA2T+57iz/zOyt5Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqqLi+HGxU9y72+P9q3IpTiSn+fOiJN9ZtrCxuGh1+DjLNzZy9f06BqTHHn2LRUr02FIfQI1QiYuxJgp3GDWiCR8HWk8HyZ0FGaG5FmV6HIDhkc29QN9jYdbfHdxrSbtufzj7ZSCWi1Um1yenmALp7Yt2dOjFjW1OPRo5pguFUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJUSv6AL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49DDC4CEDD;
-	Sun, 16 Feb 2025 09:21:47 +0000 (UTC)
+	s=arc-20240116; t=1739697786; c=relaxed/simple;
+	bh=VmlxNCvtpElT137a/Hp42+ErwPH4etbgXswEcnmNOYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrrA52DiUpzxwZJu7aHaR2+hAA8Cqzd9x0ug51jL0DMAzG1zzSQgvH+qDOE/b0yZXvrA2pH5QiOenTt78exHN60Z7JyPUXJtneDrSwwe4pIkogIAooH4uIdRfpx7s1AfkiSkOR3jOXPPUkR26ONYj2CcygoKAxwz9oJhnFPUlI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvXv4U+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0DBC4CEDD;
+	Sun, 16 Feb 2025 09:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739697710;
-	bh=VH4VD6duncdZbySK8dpWl861MwxA2T+57iz/zOyt5Lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lJUSv6AL1SADA8bbvfEHV/IwCmOYjV2PtYLp5dZD8jLcM4/OgomyX2mIEz4fz1Dyl
-	 x1flFPG5+Rr2SjCtnWGBifrONc8j8NF6DkLYfE8FKe608CfVc3NZkC+A8B3ifgYsLW
-	 9Go7+8OdaIpkrU/uMWXWyuxF6wy6RYwW50QPUI/kxpqMzcvQaEBb1c32mX9M5qrELx
-	 mhBDC5WCqRBtk5cfSyerD6H9nwGKjHzJOEvD+NCGn9gP3Kno2VOzbXzValFcDVC/ia
-	 w91QSU3nLSxYwdlakVPCZunIaRYvtpUG99yz9SFN8kzbsdAcsMe2gwTPfphpBX3BST
-	 s5JWCkji+WTnQ==
-Date: Sun, 16 Feb 2025 09:21:45 +0000
-From: Simon Horman <horms@kernel.org>
-To: Peter Seiderer <ps.report@gmx.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Artem Chernyshev <artem.chernyshev@red-soft.ru>,
-	Nam Cao <namcao@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH net-next v5 2/8] net: pktgen: enable 'param=value' parsing
-Message-ID: <20250216092145.GX1615191@kernel.org>
-References: <20250213110025.1436160-1-ps.report@gmx.net>
- <20250213110025.1436160-3-ps.report@gmx.net>
+	s=k20201202; t=1739697785;
+	bh=VmlxNCvtpElT137a/Hp42+ErwPH4etbgXswEcnmNOYU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SvXv4U+lxQgP939ccDcLNPqNTLnnrqQaS32Y7oweKkQCQg4UCP+1wgY++iVffHHBY
+	 GBJetBx0r8xSEuIXyUXfI8b1IsiIPrbFdqTYQaPeuwVgzyHiXWUnNyl8rfuVWjmiR6
+	 c70pM9cDfhybVZt/UNSOGm3bPORcEZRk+GI0eVZDS9eybyF6Ny2biGURYUkgkbqFXS
+	 UkMqczzMVNR8UxY/EoSvzgFSqKZKON0MAj1r8GK2o6F0fnR9aXDJvOwcY9wI0Wdl/l
+	 oPpn9eL1u5wJLHkDxyNHu/nyArBTh4gyFM1dsqZNjvuDiynyVUwSKhhfchCinVsDBj
+	 f/3CHN3aQ1Dxg==
+Message-ID: <fc860290-c5e5-4193-a8b7-a53137dd4155@kernel.org>
+Date: Sun, 16 Feb 2025 10:22:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213110025.1436160-3-ps.report@gmx.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] dt-bindings: phy: add
+ samsung,exynos2200-snps-eusb2-phy schema file
+To: Diederik de Haas <didi.debian@cknow.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-2-ivo.ivanov.ivanov1@gmail.com>
+ <D7TR7VP9UPQA.2U5BL328HNSXU@cknow.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <D7TR7VP9UPQA.2U5BL328HNSXU@cknow.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 13, 2025 at 12:00:19PM +0100, Peter Seiderer wrote:
-> Enable more flexible parameters syntax, allowing 'param=value' in
-> addition to the already supported 'param value' pattern (additional
-> this gives the skipping '=' in count_trail_chars() a purpose).
+On 16/02/2025 10:14, Diederik de Haas wrote:
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/samsung,exynos2200.h>
+>> +
+>> +    usb_hsphy: phy@10ab0000 {
+>> +        compatible = "samsung,exynos2200-snps-eusb2-phy";
+>> +        reg = <0 0x10ab0000 0 0x10000>;
+>> +        clocks = <&cmu_hsi0 CLK_MOUT_HSI0_USB32DRD>,
+>> +                 <&cmu_hsi0 CLK_MOUT_HSI0_NOC>,
+>> +                 <&cmu_hsi0 CLK_DOUT_DIV_CLK_HSI0_EUSB>;
+>> +        clock-names = "ref", "apb", "ctrl";
+>> +        #phy-cells = <0>;
+>> +        phys = <&usbcon_phy>;
+>> +    };
 > 
-> Tested with:
-> 
-> 	$ echo "min_pkt_size 999" > /proc/net/pktgen/lo\@0
-> 	$ echo "min_pkt_size=999" > /proc/net/pktgen/lo\@0
-> 	$ echo "min_pkt_size =999" > /proc/net/pktgen/lo\@0
-> 	$ echo "min_pkt_size= 999" > /proc/net/pktgen/lo\@0
-> 	$ echo "min_pkt_size = 999" > /proc/net/pktgen/lo\@0
-> 
-> Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+> Shouldn't the example have at least all the *required* properties?
+> Same for patch 2 of this series.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+
+Yeah, this wasn't ever tested.
+
+Best regards,
+Krzysztof
 
