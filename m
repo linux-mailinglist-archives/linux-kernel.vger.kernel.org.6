@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-516734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2C3A37661
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:45:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A2BA37663
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:47:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F7416FC99
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601253AFC22
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCF919DF9A;
-	Sun, 16 Feb 2025 17:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E234F199FDE;
+	Sun, 16 Feb 2025 17:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="j/9JlxT4"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww1CS+nS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F042070;
-	Sun, 16 Feb 2025 17:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471D6405F7;
+	Sun, 16 Feb 2025 17:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739727852; cv=none; b=sQGf98zRT+KxSyPAJfbNswC1CUHmjIcdfP0DZeb1h5LK25rFOx+xrVZwdehLdBLo3g5wqAOqNnkEl2FQMfTQP7uOP0Vm+wAs2/2Ngt5uxf9nb8NLJekmNRQZMfbHsNls5jEhUpTtLubFqhle2hxlNl5tkmzxDtPypembW2sRgw0=
+	t=1739728037; cv=none; b=X1q1OCtUMeTxBgFq34khStcZQQllEBfVc9/S30eJNuWYc44WfjwHcxXFfDIJlzNS8ceKW21AeqM+mgvzOpV4WhkHTj79mwoj6gzex6F43Yo0elAxRllOZVhdqfEMMUntYYI0pnh0A/IKtvuatK6BCH6AxNwtzR8fxA6G+5nTg1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739727852; c=relaxed/simple;
-	bh=LTOjVk+4QHTyDDma3KbEPH1FY8x5w5DWJiaF31yDOKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRDHxHJTO+SfRsBXPSeLc3PQGoDcylqsBrwFS38ZzZgJwizlrcVwBzte0vyauskL3bR8Bo8OcYWnr0PvmBMq6QZu1YeooOvh6CpH3GpRWFRjs2zyp/lqWO8IJ5PCg97q9Q7SODKn7gCfEix2MRifuhd7BYAQ9ttg8kdFdVPJ818=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=j/9JlxT4; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4YwtSd0Dcwz9sp5;
-	Sun, 16 Feb 2025 18:44:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1739727841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTOjVk+4QHTyDDma3KbEPH1FY8x5w5DWJiaF31yDOKw=;
-	b=j/9JlxT4IEo8QlXbMmRMOo+zggf7UGKFoUqsQ0TIh/KrGxM32QNQUWhx2IeiOCej30RQ2e
-	CT4n0x9tf8bX8S8hZs+pW69StYwip1QI9HBA56jmauFh33umaQc4197JFw10j3Vdn6UGG/
-	lg5mh2sg3Qlz5ireoieZQBDcPA7cweJ2E2ZKk/P/RATxgQouOwLYEwHmPifCemGZwGGzVX
-	awMR8T+LvB5IqWS8PH2TOOlVxATsxNBykxIPJlLM2KcVSkZGea7fEbDqGEnjEyCxHZvO69
-	oRZOQ4XZW+qBxFad7NaoZdNpEpllZJPKiIjwDw/RCfTzW4U8p5AgG/qf/vRpJw==
-Date: Sun, 16 Feb 2025 18:43:58 +0100
-From: Anthony Ruhier <aruhier@mailbox.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] power: supply: qcom_battmgr: abs() on POWER_NOW
- property
-Message-ID: <6w6pq2d2nlrun6cz6tq4fjzqri52n3sskrf2frj6wj4jxzzrcg@z3a5bykeixsu>
-References: <20250213-patch-qcomm-bat-uint-power-v1-1-16e7e2a77a02@mailbox.org>
- <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
- <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
- <p5tszocxa7mcazgxsnt3gnv547m523gde2hj2yekiuoimm6rsy@pzofvxngb4ul>
- <7wbot7sxm3y5y7in5ashcn5lpx3mi55abnbfrkz2jta7nm6jep@zk6zvocd3tuz>
+	s=arc-20240116; t=1739728037; c=relaxed/simple;
+	bh=BuGzOO1oasV+jexDVpsDSNPhZMW2r5PgM3V8hlhAHNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RIgBzBsjhqRu3wmQKM0gA/zhqY9isU9UW9Yw8PmWY7iUKrLzJTmSFYC9y2HXD2K8IKW+TLidS117XvlHmaGd54UB7SMuBgv+tNxZ3tZJnsZFfB15bByDY3fSuf9/PU2G0UXTKWu3C5UnS1/SUITMNBUOBQgkX7hacfV5BVF/ZO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww1CS+nS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145A3C4CEDD;
+	Sun, 16 Feb 2025 17:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739728034;
+	bh=BuGzOO1oasV+jexDVpsDSNPhZMW2r5PgM3V8hlhAHNQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ww1CS+nSBBQQIpNAkzrzrQKzGY4WHPQzcoa3p11IunF1jRoIcpaodcEWTN/ZXzRLK
+	 em7CfBwpbyQrq6vHIosiPNPaCiT9KmiBS6SCE2weVjdcKeYsXPFDxpEl3lQ870myXV
+	 8Hsf5LCO64YN17kl+Mz2t/SK7crZ3+vhgp12ebQm7EwTWEhHinzJlmHDj1lGRYT7J8
+	 JaIKP3Gt5ryuSOy7Ffhei2+lidKll7m8BpsGl8Gj6owczROC4KdWHcGrAy3bLsBDwe
+	 6KaIjoBJ2eJlCmK6tn2hAQopMbblPsaWwQvWTjgrh+G8AsbqEx/R5uqiscsy7g6IQ1
+	 goAOSH0DlfnzQ==
+Date: Sun, 16 Feb 2025 17:47:05 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v2 12/14] iio: accel: adxl345: add inactivity feature
+Message-ID: <20250216174705.712beaeb@jic23-huawei>
+In-Reply-To: <20250210110119.260858-13-l.rubusch@gmail.com>
+References: <20250210110119.260858-1-l.rubusch@gmail.com>
+	<20250210110119.260858-13-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7wbot7sxm3y5y7in5ashcn5lpx3mi55abnbfrkz2jta7nm6jep@zk6zvocd3tuz>
-X-MBO-RS-ID: 093cea7cce9679a1858
-X-MBO-RS-META: a9sgno18t6wer8kquh3rbd78d1597mc4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 15, 2025 at 04:08:25AM +0100, Sebastian Reichel wrote:
->
-> There are other drivers reporting negative values as documented.
-> Most of the embedded ones do this actually and there surely are
-> (embedded) userspace programs relying on this by now. But the
-> most used driver - generic ACPI battery - does not. That's why
-> quite a few userspace tools handle it wrong without anyone
-> noticing for quite some time. Fixing it to follow the ABI would
-> obviously end up in a bunch of regression reports, so things are
-> a bit messy :(
->
-> > I think it is a problem of the 'acpi' tool. At least 'upower -d' uses
-> > fabs internally since the initial commit in 2008.
->
-> It's definitely sensible to fix the userspace tools. We can't change
-> the documented ABI for current_now after that many years and while
-> documentation for power_now is missing, it would be quite unexpected
-> to have it behave differently than current_now. Also userspace
-> tooling needs to handle current_now and power_now anyways. And we
-> surely can't change the behaviour for all drivers reporting signed
-> data. So let's keep qcom_battmgr as is. It follows the documented
-> ABI and hopefully helps giving this more exposure (I'm typing this
-> on a X1E laptop right now and can see your problem with waybar).
->
-> But we should document the power_now property. It somehow fell
-> through the cracks :)
->
-> -- Sebastian
+On Mon, 10 Feb 2025 11:01:17 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Hi Sebastian,
-Thanks a lot for the detailed answer, that makes sense for me.
-I was sending this patch more to know which direction to follow (changing the
-driver or the userspace tools), and you answered it perfectly.
+> Add the inactivity feature of the sensor. When activity and inactivity
+> is enabled, a link bit will be set linking activity and inactivity
 
-I started fixing the different desktop tools I use, starting with Waybar:
-https://github.com/Alexays/Waybar/pull/3942
+are enabled, a link...
 
-For powertop, the fix seems straightforward. For acpiclient, due to no activity
-in almost 10 years, we'll see if it goes through.
-
---
-Thanks,
-Anthony Ruhier
+> handling. Additionally, the auto-sleep mode will be enabled. Due to the
+> link bit the sensor is going to auto-sleep when inactivity was
+> detected.
+> 
+> Inactivity detection needs a threshold to be configured, and a time
+> after which it will go into inactivity state if measurements under
+> threshold.
+> 
+> When a ODR is configured this time for inactivity is adjusted with a
+> corresponding reasonable default value, in order to have higher
+> frequencies and lower inactivity times, and lower sample frequency but
+> give more time until inactivity. Both with reasonable upper and lower
+> boundaries, since many of the sensor's features (e.g. auto-sleep) will
+> need to operate beween 12.5 Hz and 400 Hz. This is a default setting
+> when actively changing sample frequency, explicitly setting the time
+> until inactivity will overwrite the default.
+> 
+> Similarly, setting the g-range will provide a default value for the
+> activity and inactivity thresholds. Both are implicit defaults, but
+> equally can be overwritten to be explicitly configured.
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+A few things follow through from earlier patches (I'll assume you'll
+apply those throughout).  Otherwise LGTM. 
 
