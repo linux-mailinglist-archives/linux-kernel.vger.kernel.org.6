@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-516598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B700A37473
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D74A37479
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83DA93A6A04
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE443AA34B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBBC1917E7;
-	Sun, 16 Feb 2025 13:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98F91917F0;
+	Sun, 16 Feb 2025 13:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkItY1gG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cm3wkLVt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911318DB32;
-	Sun, 16 Feb 2025 13:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0961281E;
+	Sun, 16 Feb 2025 13:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739711216; cv=none; b=ZmYX1tf0F8sbS5xwLnYz476nw5YbyvDQFcwOYkm4ZLzAur7ntyeZcQnrx1g+Bghr8+Iw6rZ5MHLx4S6kWoUgx8AXpOBvt2isIc3UHApPFVrnboGjX1jRZGeJk4Sf9MFoMEXP0IJZMCWc4Xhpbb3aQMt5HxmQ3JRxNL93T+SpuuM=
+	t=1739711614; cv=none; b=jqnKiyqsD5MrDVHb0SnL2TVE2TE4hz48D15ZMf9YImyhKBrYDZTdIf/sMRSdaaqdlyqaLfqAyf+UmxTUKokDwBpYXMcqQkHYbENcHNkmT8fwmDyrmxJhhlgD/D8aRjNjZqlr46TWFfoyEVcdqYOUBRH1w0xGhT/vheeWQYXQnoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739711216; c=relaxed/simple;
-	bh=ykJyMJULcLZDpqvZcbmg5sewNSxnK8UmHYPwtvvLaBU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dW782snYcZvYusrFwl4k2tNEiRTZjkMaBvmP1BPITzuvDfdxyc8KZfJsxoj5RSrMp75PwSHZG95oVrtmUgCouzZkPLeJZZ2YsMcAJuGLZhKXULQY9Nv04ej4V2NpGdATFbJzI10VNz7FhKSQyNn56vcY9dpcmOOM4O2UkIaa4cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkItY1gG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5AE2C4CEDD;
-	Sun, 16 Feb 2025 13:06:51 +0000 (UTC)
+	s=arc-20240116; t=1739711614; c=relaxed/simple;
+	bh=PZx6BuP/dAC0HJlapUZQyUVs9LyPefBCZ7QGLfAyiv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXLEeQwlZxjcETz7wy/IU4Cd5FY0qZAOTpaQPBlbpCwTcjdcre/Ov6DlL3HuVi0o71wHw1XIrAW1yUqSqym1gfLrZB5OpcgvHH4hhtYcur8rbs9geG1RtWDSqH8zTVaJ02s09V5ZKQHwowwljFKf/q+wjxmEazd2h9hZDBQM0O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cm3wkLVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF123C4CEDD;
+	Sun, 16 Feb 2025 13:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739711215;
-	bh=ykJyMJULcLZDpqvZcbmg5sewNSxnK8UmHYPwtvvLaBU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=JkItY1gGIVhyzRaJAsGSGlJiUidLvTYJbcZg5EMDVnRTY1Fobut34V6WV+rf4h3XA
-	 fSJhD6Nupse6aPytjnr6+8u7uMGVF1PuiMa0iDNbVoEYzPaF7fvTv586aEAe5LXsSn
-	 xxvhktiBm+DX3fYscQQSYDQH9nKthkEsRaDhUfdiIUpZjz4rZ+zLGhwIWMUSLZns8C
-	 cspdrtC4LvdTlGD1dgtL/vVkkMq4xkQrGe7nbRt7sGyDW9hyv0a1TlwW4ORPVvNBjI
-	 wFAT5T7rVIBwI7sBnP1VHsbnnvAOrwnjHxOW5mdLVMcd9KcvphDjKmLKGnVPZz+vNS
-	 peSvxg9aUyi9g==
-Message-ID: <cdbb8176-d109-4a31-9393-5e1ae6767170@kernel.org>
-Date: Sun, 16 Feb 2025 14:06:49 +0100
+	s=k20201202; t=1739711613;
+	bh=PZx6BuP/dAC0HJlapUZQyUVs9LyPefBCZ7QGLfAyiv4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cm3wkLVtpkJ/w7U7M/RbbK/9IPH239DW6CEad5eK0ASABQKSMyitmyxmL9PxEyNkV
+	 d5JSuEHwUhgChHIGlH958NA4Sgd+S/j3wJBq2dA/mojSac7bHezbIKYOCZ6NjMBxvu
+	 fsUfikTrc1TyufNMZjMQFqWKiqPhreV9cDMC2xTrh/E3KpDFFmzbbwR0Jvr89opJC8
+	 CYs4awcHWI68KlqZDxYIjKeTp1HcPVLCEIqby53hwypYi55oxnsBqo3KtkyGb0fUf0
+	 W/jnsIChkQk6MnUG42ecRssI9MaaSk/EWKyBLdIg1XzRoktAusCkT6yabHOM22zuLS
+	 MTc/wHvll3oSA==
+Message-ID: <c3672f33-c383-42db-853a-3a45fecc6a0f@kernel.org>
+Date: Sun, 16 Feb 2025 14:13:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2 V4] ASoC: dt-bindings: Add cmx655 codec
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikola Jelic <nikola.jelic83@gmail.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, rwalton@cmlmicro.com
-References: <20250214215826.80878-1-nikola.jelic83@gmail.com>
- <20250216-fearless-arcane-koel-3c75ad@krzk-bin>
+Subject: Re: [PATCH v3 0/2] dt-bindings: mmc: Fix the mmc-slot and Convert
+ atmel,hsmci to json schema
+To: Dharma Balasubiramani <dharma.b@microchip.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250212-mmc-slot-v3-0-2bf288207040@microchip.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -102,37 +106,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250216-fearless-arcane-koel-3c75ad@krzk-bin>
+In-Reply-To: <20250212-mmc-slot-v3-0-2bf288207040@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/02/2025 14:03, Krzysztof Kozlowski wrote:
-> On Fri, Feb 14, 2025 at 10:58:01PM +0100, Nikola Jelic wrote:
->> Signed-off-by: Nikola Jelic <nikola.jelic83@gmail.com>
->>
->> ---
->> V3 -> V4: review remarks
+On 12/02/2025 10:22, Dharma Balasubiramani wrote:
+> This patch series modifies the property status of "compatible"
+> (required/optional).
 > 
-> You keep sending the same, not responding to comments and not fixing
-> them. Still nothing improved - same problems as v1.
-> 
-> What above changelog even mean?
-> 
-> Please respond to the feedback, the best to the v1 which you received,
-> that you acknowledge and implement it. If you have questions, then ask.
-> Sending something with the same mistakes for 5th or 6th time means we do
-> not understand each other.
-To recap, feedback from v1 to respond to:
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also `scripts/checkpatch.pl --strict` and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
-
-Feedback from v3: go to v3 and respond or implement. Your changelog
-suggests nothing changed or it is just not precise enough.
-
+Are you sure you run checkpatch before sending?
 
 Best regards,
 Krzysztof
