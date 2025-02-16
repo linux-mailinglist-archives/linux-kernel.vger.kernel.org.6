@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-516506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45CBA372E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:00:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B37A372FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7325B1889A7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:00:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0FEF7A3832
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F702156236;
-	Sun, 16 Feb 2025 09:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE5D1624D8;
+	Sun, 16 Feb 2025 09:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G+eOAy1E"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AkUPlBJF"
 Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605E613C682
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 09:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D21F23CE
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 09:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739696422; cv=none; b=MucvXPDxs13cqvv2ORKzpSQyzFt+jGiQMRiMJ1Co96QnmGkLpy0FoaLlO6IKCGynv9qjXD55pOXyv0ZRO449oisB3z4H/2nwB8KOOb1jEOAd5dtmwSbnWxkruDNnRfn5MRoIusc+WfhtytdpqACAdrzXrzTLRmy6bJIS8dRy0e4=
+	t=1739697059; cv=none; b=O5xxCBzuJ7N78OjiuoRE15ugFa7wc4+4sIjKEsIKTsGQKydu7YIFzNxLUBFw1BgqDFjwurEaAckINL8MdpGihBR4eNErXkHMso/7HNrxrh+kuFi49piD5+B8BkREJolOPe6C7hGljzTtC0I+8eyB9dG054V25IwGXu+h08bCRbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739696422; c=relaxed/simple;
-	bh=EfYAyriXNM/qSoolrJQboWYPWj0SmdItgk/ObDmbGTQ=;
+	s=arc-20240116; t=1739697059; c=relaxed/simple;
+	bh=ISWrzmudP6yy7TpsbT5vNHX/223JuQIIBGgXeaWSCew=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ssn12m8+AOrcU9hm+I8D3/cObnI40MwT3h8uHjgzF0rCpofS36sE8ByIQCmspwhWAuJf2Wb7H6VvP8qRZUjjEZPCpstJGBx7Fg6yXt096+vYQX+MpfNOA2T3P15qS+KFp8XkM+XA/zrtZk8Gr/2xaVC80Q5anUP3Ozu9TdMcWmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G+eOAy1E; arc=none smtp.client-ip=65.109.113.108
+	 Content-Disposition; b=Uwmey7U80M2XIjRL+6E4m/lWR0SEJvrPTU0q8/YyYgVU9+SoD1TY11aRv/8NPYqMtbQzj9NUvAuuXh9aMtMkjzK3HW2JILfWk+UeOk3RtTtWOoOW4HletFb6m/r5O4tz+IrTC0eDn22PcYAz3bq0ns8vRTrs8SQNgcL9C16sQlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AkUPlBJF; arc=none smtp.client-ip=65.109.113.108
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 12CCC40E0191;
-	Sun, 16 Feb 2025 09:00:17 +0000 (UTC)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 098E140E0176;
+	Sun, 16 Feb 2025 09:10:53 +0000 (UTC)
 X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
 Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
 	header.d=alien8.de
 Received: from mail.alien8.de ([127.0.0.1])
 	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7liuNlhF0BIG; Sun, 16 Feb 2025 09:00:13 +0000 (UTC)
+	with ESMTP id 77PU4uzVe4mD; Sun, 16 Feb 2025 09:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739696413; bh=Lgewwa0gpgwMCyCDZ9aXwVbXpivGeycQwcmTefXM5sg=;
+	t=1739697048; bh=3TjvKEcG18tI11OvPN4kPtQptRY/6siHC9d7Rv3qshQ=;
 	h=Date:From:To:Cc:Subject:From;
-	b=G+eOAy1E964b0bxyn1ReoQArifoGOQL9vhmXgkpVlS6D45mbVK6TAn8Xlqi6iDN+e
-	 hgmqZtYGmYPQmpyZgg87MlrLCg/9NzoGB9FeH++Sk0G9dhLQcvWu9teB2RSOSX/Xzq
-	 KsQxaHkMyO1WFAOA8aRrjZdHkQAM+1B4EBnDwLT1neofpWU0AtFtE3eSljcs2W+1BD
-	 LEavVbgt3OpANmAniTSiCrBtahs9oa3tniHkpy29TBAhxeq/+dmJU1gMgpi2R0917M
-	 jIEAhhesWNfgwk+lOACGzgappWzkDedx42qVCk9dIl2WutyLkE4AdEYgG4oIXrYPvl
-	 h3BdhgZEmElhZSD1YGVl3e/J0akUDmikcDnwqGr7tt1HTJOU5FVl3WhjqIlcBWcB8e
-	 7YZciVtq9XtNnrWJXJUTii8M+94FM/hq1f/u7lw+gGeaZ2j4G6bCjC3PQhPQv7+S12
-	 OMH1T/ZjHa+il2/iVUuB/y4357gof78fP1xF1zElRjp6cwRtX5GdApP+4oLNO8dAcl
-	 XYckTgD6Wx/+/JG9m+OV/btobKpl9uRck0KaewVr82F1T7paZX7F0XEoQ6oftzfVpV
-	 VjFtguqgnPF8IlikvFqfGnkGkGakLGUVc9FXD/uCEY0wlM+aYmRFnHemOEkwwTI/SQ
-	 gXdLLUw6Lw0OYDGcpW/CdNq0=
+	b=AkUPlBJFRBXN4w3vsapi4LdDnTXCBtzL8+nfNRkiqCLRF/HIAjz4ao+v0VitYoPCf
+	 i9xPCqZjZV5PsZpP1wb7k5maRPCZ6uzOCI/yWXppWoWHlGuHyEcoqSSJaTwCMkbT04
+	 G6F7t95dgVNtV/nLb/iWtFt44Nkv+nW+NRBh+8012R/t6JuOT9gvv7dcIFb/l3Fb20
+	 wfiL81bLmjJApQGCbB9b8DHmAqG/J4pD7sYDC1/yzs1Tt9gURis8IgOp4jzXgafDvy
+	 kO6ugZADfJ+lMG4EPWxMwavpqOtcK+w/ofqICklF877N6vZrYOm5EFAw5HBISPA4Nd
+	 j4joyoJzt6/QR13h4AY2spCohtXLuZfWzHcz4zr5iYvoN78ttHJVHRu/SrbnQDXL3c
+	 SfD4+pBzaJURBYFPj3CQAHTgVEDGqi/z/cgxH0zCVUW3UM5VcPfNsAMoyVUXn8Xj7K
+	 QRYw1+Anx7bJqe5P/558osKfgyZYed1O3BwjNGCCcu3nOUbHc4yzym8mjf6/CNv2gE
+	 fwoGyzPBQJL4uCV0gEsqutdjsZkO68zsIUK1WkvtB9Hn5/1rgGpApulBDnb3QmqH/r
+	 3mMOEe9kUkHuzTRxnancKrsYq1tX75BDTp9nJeRTwJj4Ti3p8nxcF5xpGLyvaF7gv4
+	 gS2fz0sP7dmtbnCujKBjRdps=
 Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 57F8640E016A;
-	Sun, 16 Feb 2025 09:00:10 +0000 (UTC)
-Date: Sun, 16 Feb 2025 10:00:02 +0100
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 05EDC40E015F;
+	Sun, 16 Feb 2025 09:10:45 +0000 (UTC)
+Date: Sun, 16 Feb 2025 10:10:38 +0100
 From: Borislav Petkov <bp@alien8.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] objtool/urgent for v6.14-rc3
-Message-ID: <20250216090002.GAZ7GpEpdWUKHyUtr4@fat_crate.local>
+Subject: [GIT PULL] sched/urgent for v6.14-rc3
+Message-ID: <20250216091038.GAZ7GrjtV16Hk0TmHk@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,39 +76,34 @@ Content-Disposition: inline
 
 Hi Linus,
 
-please pull the objtool/urgent lineup for v6.14-rc3.
+please pull an urgent sched fix for v6.14-rc3.
 
 Thx.
 
 ---
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+The following changes since commit 9065ce69754dece78606c8bbb3821449272e56bf:
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+  sched/debug: Provide slice length for fair tasks (2025-01-31 10:45:33 +0100)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/objtool_urgent_for_v6.14_rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/sched_urgent_for_v6.14_rc3
 
-for you to fetch changes up to 7e501637bd5b702a2fa627e903a0025654110e1e:
+for you to fetch changes up to bcc6244e13b4d4903511a1ea84368abf925031c0:
 
-  objtool: Move dodgy linker warn to verbose (2025-02-08 15:43:08 +0100)
-
-----------------------------------------------------------------
-- Move a warning about a lld.ld breakage into the verbose setting as said
-  breakage has been fixed in the meantime
-
-- Teach objtool to ignore dangling jump table entries added by Clang
+  sched: Clarify wake_up_q()'s write to task->wake_q.next (2025-02-08 15:43:12 +0100)
 
 ----------------------------------------------------------------
-Josh Poimboeuf (1):
-      objtool: Ignore dangling jump table entries
+ - Clarify what happens when a task is woken up from the wake queue and make
+   clear its removal from that queue is atomic
 
-Peter Zijlstra (1):
-      objtool: Move dodgy linker warn to verbose
+----------------------------------------------------------------
+Jann Horn (1):
+      sched: Clarify wake_up_q()'s write to task->wake_q.next
 
- tools/objtool/check.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 
 -- 
