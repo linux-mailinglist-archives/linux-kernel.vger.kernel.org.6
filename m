@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-516713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85B2A3761C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:59:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F061A3762F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15313AC86C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277293AF4B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1D619D881;
-	Sun, 16 Feb 2025 16:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC581993BD;
+	Sun, 16 Feb 2025 17:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjOK0BAh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5Cc86cz"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B729450FE;
-	Sun, 16 Feb 2025 16:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D0B1AAC9;
+	Sun, 16 Feb 2025 17:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739725188; cv=none; b=c9RC1m3h34kdDIwPBPV8ke4V/T6mgZRC9e5eK0HTasMxwzZGskg6vExMXSjKJpV4NO6uTrCCyXpWyAfcatxa8q1YiOneSrubN1tK6Q2gv11ONEGztMPisggo1O+0rv542WB+RmRDPD5i51b0eJV7xScqsWnRuX+Cz7XU/8MN+8I=
+	t=1739725695; cv=none; b=SrTmE9e8MnabfuPULrMHcVrF9/lwMOzmQBwJty3QUlsxaZDCjXjkc+lLDvXC7cR8c71gyg+XlNnRGHL0CcuvGybnt08ByJhxPUyp/mz3qKyowzh/uVwwNDJdl0xbiDlWVyHz0ei3C92m0xl1Ox4cDzqRSo8MzgJkq6GjpOCZeTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739725188; c=relaxed/simple;
-	bh=SC/tuAOm11oCVUJiOo+McB3iHWTWiP1gMTvFuGu89bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MpK9qa5+sJ4bzrg/bmD5rt5sJ5TMrKNMVDEl4WY7f2WWc6qzo56ik7F35n1kl8kr22ANwvXar7afpK+ief+lHpv9FumFTkAYnm6Ua0hpLmTzrBxZRIiXAf2RNhfFFgsPvnL+j7mHpEwV4CYV+fz7vTy2IOh4kZ4YSGCWF1BoCno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjOK0BAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70575C4CEDD;
-	Sun, 16 Feb 2025 16:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739725187;
-	bh=SC/tuAOm11oCVUJiOo+McB3iHWTWiP1gMTvFuGu89bk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LjOK0BAhP4tBI99Nx5vy4ZiuXj1NO3gslpAEUnCkgPVmaZbtVzp+7U0Gc0QARywLo
-	 hN70p05uB7/X2PfK05gNdKRgjq+A7ZkmI5wJWzLRYfCVXNT4xFBdGw+5QtUY03ToSm
-	 nw3+phcjHe8Slp0xIE1PFgySsx735f7meh+Qtx7uwlG1IvEdyjVrXi0hB92wZZQm24
-	 VIG7vofvWX6djtnOKo47FwpFtU7FqK3St46CzRF6vTOfdp01F4+wO3iz5OZeeEE7dR
-	 cxpAlsOluSe7u5qWo6f36DTqYASC84d4Ut6Vj1+HUN3inYk9Lo9xBlqxADFihM21t0
-	 SY3xdX+a08lRw==
-Date: Sun, 16 Feb 2025 16:59:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, rafael@kernel.org,
- linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
- andriy.shevchenko@linux.intel.com, dmitry.torokhov@gmail.com,
- przemyslaw.kitszel@intel.com, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 10/12] iio: adc: xilinx-xadc-core: use
- devm_kmemdup_array()
-Message-ID: <20250216165939.4780c4f4@jic23-huawei>
-In-Reply-To: <20250212062513.2254767-11-raag.jadav@intel.com>
-References: <20250212062513.2254767-1-raag.jadav@intel.com>
-	<20250212062513.2254767-11-raag.jadav@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739725695; c=relaxed/simple;
+	bh=/N419Jjps23Vm5o3weAzAHFlgOhhlc9/Av3/FoZCn8k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=lrzOF3rdngKe56ehMoJGaVYTRvZjOWCAC2cFwutPy/7lup8i7fKlS/JkxsWE6HnF+8hktHw47I8VuN6Qwax1+Xq2yj1MH8gs8cUlWtmSeKbu1eO3WSRjD3lNxX9c5LPayJmsjTl8Rh5oXb9qeFDD+kp6WAtFKsIinMST8DAjqvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5Cc86cz; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54622829175so79302e87.0;
+        Sun, 16 Feb 2025 09:08:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739725692; x=1740330492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/N419Jjps23Vm5o3weAzAHFlgOhhlc9/Av3/FoZCn8k=;
+        b=D5Cc86czePK3ElxOp4gv7LXDMhulXmbgpf38B5IzZS+3XKcSqpolRSlVypEYAQjaIm
+         MUj46jxNakescDg0rhWMKTN/XyN7ACXEDZ0Qa+eDSBeg8rxTxtTv4lJcMeRwGk3TGgVc
+         AGXIPJOcEUeQioyd6DczjnncIuAAL3MaEq1+xvyVWCXXXtjNLwuf7SVEW8VqRXwWHMtz
+         El7tj+idaDS5n/FsEnDEf8YWJkUNjgLd91bKtKAzwBoTWDeAe5D0WBqTChIEUqlseGtI
+         /3UtzJTKudT85dwa3X/R4WgBNyOKilTPgwaevEP55jhxLz3cBYhfVBNHcbZClr1mmlqS
+         8wlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739725692; x=1740330492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/N419Jjps23Vm5o3weAzAHFlgOhhlc9/Av3/FoZCn8k=;
+        b=Bb+Axrke36wLJfzus0YgfDAWiOdBQjJVpdIHM8TBulelAPNM7nhU2BsHumvvS8yRKO
+         SFildBjYzamQh4jsLug5EwnNcxPD+MYq19eiACqQOS2DgoiBzJDIuyOS0KDc/+3kK8vO
+         undGSoB8mEDn3XO5P78+f7bh4Xr+QWEL1Jm7bL0JhAyj0ENK7JEWefBVTNX7Xa5Bmk0N
+         eMy1INZKsTbyn7+bKqHwcXOCdJ1e9froLNLhv1OMqGUA7nT4l3oU6E/snbj8RWuoYieS
+         M6F+jID8a8UFe0xYOmneUI9BbJwueSWIdsoThfWL4ph7K1pz2zZ0y6IRbTsviluidnOU
+         U3gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKIw6xJui6MrjP+oW8RdDSGHm+ogE84vyQGEo80WKk6vY0PUXZYfnY5G+92SWlYIb1L2MXlP7THVzSN44A@vger.kernel.org, AJvYcCXjv7ssJcstKi1mTxgaqP7J8D+txzRVU5CiBY1BC5fGpcpBaYwGAW76m/pHTboYY+MZWqQ/NpTFkE6Ctg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjhPwPyzYyh2x3NymegtbrvQr0lPpWjjSHxSl6ndhl7sD2Ofp/
+	Wt4uLfJ+qN5C+SZFcsDdZGrlzssnV8Ru60HelejK6YBH+m5OZQd/
+X-Gm-Gg: ASbGncu8D9kEZCq+YQaP4bbiw19h3O46TLgrkHdMLuOeHRA6795zq60ZVRPvHOJ8WX0
+	8B0495KHfz4na3OJIcYksPgqKg6hAENdPHeYnY2B3UXBdVkuXRDxWzg0Mx5Go8s6u6tC61mM4oJ
+	kjTtnJW+ZfYZt5CXSNpe/MkXp7xQqBXX5yk1OBK8zJ3yNESAOZwRuBrh1X+QAIUAnLGHcu0F29l
+	rc/fpByvI73yjTrq4WZondCOOZmuTJxiAqcSB0szP5bwLCOZluDgGRb5gxfOFAgxR7OBmuwXMTu
+	2d5XfvfBArI0CzFvtLEOEmv8PCga0UGgmP223G1LiOMW6dyrWJ/PiPwLX6MxXg==
+X-Google-Smtp-Source: AGHT+IG79RCqXdLXG/HYFwClaSDt/ZsTMc6dIp2bgXOZ71fA6MF40N8lXz97AC8QaU45ONheAhjtlw==
+X-Received: by 2002:a05:6512:ea1:b0:545:ae6:d73d with SMTP id 2adb3069b0e04-5452fe767f3mr2112547e87.45.1739725691902;
+        Sun, 16 Feb 2025 09:08:11 -0800 (PST)
+Received: from es40.darklands.se (h-94-254-104-176.A469.priv.bahnhof.se. [94.254.104.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452a67e6c3sm921808e87.1.2025.02.16.09.08.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 09:08:11 -0800 (PST)
+From: Magnus Lindholm <linmag7@gmail.com>
+To: linmag7@gmail.com,
+	richard.henderson@linaro.org,
+	mattst88@gmail.com,
+	glaubitz@physik.fu-berlin.de,
+	ink@unseen.parts,
+	kees@kernel.org,
+	arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org
+Subject: [PATCH 0/1] alpha: Fix pte_swp_exclusive on alpha
+Date: Sun, 16 Feb 2025 18:04:52 +0100
+Message-ID: <20250216170748.2258-1-linmag7@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Feb 2025 11:55:11 +0530
-Raag Jadav <raag.jadav@intel.com> wrote:
-
-> Convert to use devm_kmemdup_array() and while at it, use source size
-> instead of destination.
-> 
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-
-Seems fine to me.
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
->  drivers/iio/adc/xilinx-xadc-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-> index cfbfcaefec0f..e1f8740ae688 100644
-> --- a/drivers/iio/adc/xilinx-xadc-core.c
-> +++ b/drivers/iio/adc/xilinx-xadc-core.c
-> @@ -1245,8 +1245,8 @@ static int xadc_parse_dt(struct iio_dev *indio_dev, unsigned int *conf, int irq)
->  		channel_templates = xadc_us_channels;
->  		max_channels = ARRAY_SIZE(xadc_us_channels);
->  	}
-> -	channels = devm_kmemdup(dev, channel_templates,
-> -				sizeof(channels[0]) * max_channels, GFP_KERNEL);
-> +	channels = devm_kmemdup_array(dev, channel_templates, max_channels,
-> +				      sizeof(*channel_templates), GFP_KERNEL);
->  	if (!channels)
->  		return -ENOMEM;
->  
-
+First noticed that swapoff fails to unmount/free a previously used swap
+file or partition on alpha. swapoff fails to writeback exclusive swap
+pages and gets stuck in an infinite loop trying to do so. This was
+introduced in commit a172d5128706028ac07b8db709728379ecc72f6e. This
+patch provides a fix for pte_swp_exclusive. Verified on UP2000 alpha.
 
