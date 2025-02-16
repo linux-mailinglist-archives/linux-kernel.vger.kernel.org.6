@@ -1,87 +1,128 @@
-Return-Path: <linux-kernel+bounces-516450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADAEA371A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 03:00:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F18A371D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 03:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB7D16F144
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4527E3B0110
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FEF4C96;
-	Sun, 16 Feb 2025 02:00:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DB0D517;
+	Sun, 16 Feb 2025 02:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3fylSSv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED1D53A7
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 02:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B543322A;
+	Sun, 16 Feb 2025 02:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739671205; cv=none; b=DbROj68haeY7l7mQfIYwJSOE65Nf3QVHZmrFY67VQiFtCSGy2aALWABYdl6EmDiH3bTJdj6eY8LRx1BhsMdz0mCuwoNqgbjQK6WAL03TMX2WRGb6D8+EsFIbJNqA7NK+cPAM9LYG8MCTN3rk7x6Pg+mRsXAa8hqrx3cwO40n09Y=
+	t=1739672512; cv=none; b=EYVzQxgnCzajtbTW5P/2aK9mJVMTKLfIKvgUUjasuaigUpdjM3HPhqy04W8s1tJ0+qPFSdWEQ9Xtok+5GLgRhs6TSyUtU5iGqaKaA26J8FEjII5IPG5jzG6wRhOujxfLKxY+qzGB5rEQ3Yk6qe0FCl58xEK9NWHSdS2awFoaAL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739671205; c=relaxed/simple;
-	bh=geyEhR8lxBcnTiGd0+6bGXiNJr/yXfXkE5/RAuz5C/o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=u4P5oFBcszvjaN8x9zuZ6hCeDIWULodMsrqfhfai+6UW21DlfA465OSLzE/SXKfTgp5xg4+BHDI2EANAHG+FcIv513tRt/4EWBxbXUqa1uCG5kU2ph4BGUqvb9jPYsJV3r+i5sKFOPspHLFeGddLTzbLl0GRhJAcCHIWe5Oss0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso18226145ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 18:00:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739671203; x=1740276003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1li1iexV3lz4uywLPUrDR/AzPPthSRR4DBT4jwU49pI=;
-        b=KLIz39fTUPH9GCd55BcGkw7E1c9JEKE2gwwtzxc2jVBcZgNxIqFlvA2bhLUhwUguJv
-         UC5ZLUC0pJdsxe9RCDRg+Hkv2LitJr8qr5GBlY4NqblJNiGkEpBbTT0xqb1NpHoKgX2F
-         8UUUZ8JCe+7XEolNijXk9/Un0h+kI6LeVbnVKcPkBD+WmXJLHnEgzZMZxAu7WjQNOyY3
-         GTMMGLnOTWkKZV5nICpA8KtXXuAApTZxWlGAcDcPuXA4qDhKHq5kiXD6XoCp3AZ4mpNl
-         dQIiTKEzxNvelcauKDNwQtCgSESwR6uJ4VIVuKtaZLGQUT/6EN4GgVuiYvqV7gqgCaBr
-         tJLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXg3IZYhzTghfqiRqKTiK34IFMliRsopfvjqw+TWBJSnam9H0neFUnehWMQSz55mRw6QdA4PTWah95Tn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgmYZlWwl6r9qCGBOwumhCyU0DryqrDZxW6kP/5QWO8KPOQj9o
-	SeJzNBcPYI9awKudWgijpZs10aHCr2McL3AN2g6FOskREs7NBLlQXvcRxtzv77bbJ0ZyqOMBXfK
-	voiXQ26VCH0no2avxRGybDXogqA01cHbXbqGA/OTlg/AZepzx26H91ws=
-X-Google-Smtp-Source: AGHT+IF/6xKCZ1hWj6svGPqBC32LXJw7gS4H4+xOc1wmFy65d5jQFzX1ePf7krcagu5kyLsLDVXVLpmyP7hdpoyTibFtzwuVCPfc
+	s=arc-20240116; t=1739672512; c=relaxed/simple;
+	bh=89f6kjxXBtZAaNt6NCCVp/SV2zvdrtocy+P983Rdy88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JwQU9BDEGVUVxK41J/sKV+IHNEtqZHS5ku+LOr34+V4Rl27OaootYW8MWbaJ1fAGUak4/vPl/Hp0XZygr2NTy9O0uI8t0jx0nIffUtniJAAYMTRnxY06LscCKpChxR5yrLOA+iiW5/UQkiljtWhbumJpHCrXJefjX9iwOaTy/qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3fylSSv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B80C4CEED;
+	Sun, 16 Feb 2025 02:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739672511;
+	bh=89f6kjxXBtZAaNt6NCCVp/SV2zvdrtocy+P983Rdy88=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=A3fylSSvAsnYH15ydUFS+r59N8y3bLbLFqbqACryAQfsbPwavz5g7jM0RcLMdcDtF
+	 karFTM3aFOEIOi+smeCgIPWJx5TuDvcDft0+zLgshVCZeMvGd3cBnVar18mNGYIewZ
+	 5giB+H993hrvDHnsuZyZw8GnSLVg6ZsFTAKEMiBZJTpCVLu8gyj0Q2qSfpiDRnJBpu
+	 tfG+phyvg1zKmmtdze0tdfo5PK+eUswmvvgpuJLrtdv1LLUuDZRpr1VlK6GCKLnXia
+	 BoQ4PpzouLkGmYqMKQUzrsUg0ZtZ6FAu1ZpKSBhE7o7lDhQ9oBu+pHMTqthW0lOYLu
+	 vz4QuUvrxcFXA==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so1718132a12.0;
+        Sat, 15 Feb 2025 18:21:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUbNGZb5S1JyHny9DU2Cg1MLFMWcIWlQlW21gJthmRhHhyH8IUB/fd3zJAvXHxNr7NvqA8M9oU5@vger.kernel.org, AJvYcCXHi0ix+UyMTUEqvbKzGswtiSMIALtIRDIol+xC4v7epc5YlobduebAUNqewjbQymGGX9o7swTXnm/WyA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOA7HoAuTLzcvP5oaLNvNuyW8Sc6gKxQFqa8wjyD1XWuM9qCJk
+	BE2gnf52rOy7yuQuMNiCx1a4PQa1iNt1mKrKXufKj6ViLNloyCNqidHffA4MTmQnrzrkV6KMOc1
+	xzqRPL/A3IP0HWgo6a7UebxwUGq8=
+X-Google-Smtp-Source: AGHT+IHv+Clf+CXzjqX5DyVc7sIti2vAtNeryj4NmNK9lHofxSOPkE/OLkVPxMWDbiNC8PccJdCN2jloNFjeFePjtcU=
+X-Received: by 2002:a05:6402:27d3:b0:5de:c9d0:673b with SMTP id
+ 4fb4d7f45d1cf-5e03600514bmr5012067a12.1.1739672510048; Sat, 15 Feb 2025
+ 18:21:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a03:b0:3cf:bbb4:f1e with SMTP id
- e9e14a558f8ab-3d28079040bmr34286745ab.7.1739671203253; Sat, 15 Feb 2025
- 18:00:03 -0800 (PST)
-Date: Sat, 15 Feb 2025 18:00:03 -0800
-In-Reply-To: <20250215234008.2328-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b146a3.050a0220.173698.0003.GAE@google.com>
-Subject: Re: [syzbot] [block?] BUG: corrupted list in loop_process_work
-From: syzbot <syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250215164412.2040338-1-eleanor15x@gmail.com>
+In-Reply-To: <20250215164412.2040338-1-eleanor15x@gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 16 Feb 2025 10:21:38 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6G47+vitTq1ua1Mse3kyABAoX0FWQRNYkpt2HzGb4E-g@mail.gmail.com>
+X-Gm-Features: AWEUYZlrH4zag26LnBQs_GejJWjGU1nYIl_mCem3RB06CTfTw7Cw4lFJKwa6J0E
+Message-ID: <CAAhV-H6G47+vitTq1ua1Mse3kyABAoX0FWQRNYkpt2HzGb4E-g@mail.gmail.com>
+Subject: Re: [PATCH] net: stmmac: Use str_enabled_disabled() helper
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	jserv@ccns.ncku.edu.tw, visitorckw@gmail.com, 
+	kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Feb 16, 2025 at 12:44=E2=80=AFAM Yu-Chun Lin <eleanor15x@gmail.com>=
+ wrote:
+>
+> As kernel test robot reported, the following warning occurs:
+>
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c:582:6-8: opportun=
+ity for str_enabled_disabled(on)
+>
+> Replace ternary (condition ? "enabled" : "disabled") with
+> str_enabled_disabled() from string_choices.h to improve readability,
+> maintain uniform string usage, and reduce binary size through linker
+> deduplication.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202502111616.xnebdSv1-lkp@i=
+ntel.com/
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com
-Tested-by: syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         0ae0fa3b Add linux-next specific files for 20250214
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a5d9a4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c67242141a7e5bdd
-dashboard link: https://syzkaller.appspot.com/bug?extid=c104904eeb2c0edbdb06
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12220898580000
-
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drive=
+rs/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+> index 96bcda0856ec..3efee70f46b3 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/ethtool.h>
+>  #include <linux/io.h>
+> +#include <linux/string_choices.h>
+>  #include "stmmac.h"
+>  #include "stmmac_pcs.h"
+>  #include "stmmac_ptp.h"
+> @@ -633,7 +634,7 @@ int dwmac1000_ptp_enable(struct ptp_clock_info *ptp,
+>                 }
+>
+>                 netdev_dbg(priv->dev, "Auxiliary Snapshot %s.\n",
+> -                          on ? "enabled" : "disabled");
+> +                          str_enabled_disabled(on));
+>                 writel(tcr_val, ptpaddr + PTP_TCR);
+>
+>                 /* wait for auxts fifo clear to finish */
+> --
+> 2.43.0
+>
+>
 
