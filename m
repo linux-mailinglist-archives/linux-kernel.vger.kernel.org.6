@@ -1,101 +1,231 @@
-Return-Path: <linux-kernel+bounces-516726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127FEA37646
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB7CA37647
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC483A674C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0EF83B1069
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F1C19CCFC;
-	Sun, 16 Feb 2025 17:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D419D881;
+	Sun, 16 Feb 2025 17:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uJa+qLc3"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKFf6KH1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80562D299;
-	Sun, 16 Feb 2025 17:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98314D299;
+	Sun, 16 Feb 2025 17:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739726802; cv=none; b=IBW5EcFYP1AMXtzgtIVXAeQlHudG9kdSY05ipTBUZebFXvZNjB6B/+B9ce3NGlAa0+45INHiH6s4vVrVy0aWEUzUWZDe2+7QgvVOyuOpcRWUdaXJ8DVzn1BZtEe5AR4APB8yTKF3uwxmw6AOrMoYu7mNXVY/eMkluIMOyLQMhx4=
+	t=1739726933; cv=none; b=l+7YH+dEGPHVghXT6wk6Caegpyansc4pt+ic5JJhch1AVj21o2E/vjnxEdXyDJx3lmU3qvfDZ1nkIi7LX7ZxLMcCrmFRm+Y2D8bIJgWNca6WVBskNkt5fE4wSx3Dl3n0aLHLUoWK8KTT4KYHRDiYg6Kk+n4Iorr5srEcLf4XF3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739726802; c=relaxed/simple;
-	bh=uEt464/h2m3GqGiapkNB2JJvR+MVEX5A4+rFNpOFjck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/ZfEbzjeVzuOSXXXpVuFmCEOEA3DY5q+kBWL+RvEs3Sd5CXsy/Q8+qzipoHsrF+9eYMrMtHezy0T4kYbSZ25yxmG/F6z4vg1HjfuftAzuZ6lXWShhKY0TsMmjIkfMPkyEYnGe9s3tx6t+rw3LyEIyKDJW9Rqo9Dp6+M/hRtqYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uJa+qLc3; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jmWOQZCXMxbv82cQngQGVJfiQD14sQuWaCtfDjrw/2o=; b=uJa+qLc35duMilGvoz3lM8gxlz
-	g58gA8YPlRXZeeTTYAsTYrpRA9AM/0SvrUkuG+CougKPe/CA0Xq992zlq6BtHUrddDQmrD1p/cpbD
-	eqEkW2Ur1utltygrmi7C6C92IhkuCaLJiQP68tr+3ht1JDNQYZ4+iOrKe0i0yYYZpZHNnaxh+PuNB
-	/66GluGIJvXetwCix84Yxjr/y1HumtQVM25ys6cTq+AmutSifVfNuA3QfffD8i6JXv6yq3iCP5eQU
-	GOiJ7sYCNQ7e5ICthYnDBDCqzq9MCojerhG0lymQCZbeEgk5My/HRxfiDFlHuNF45j6s2TZEosyFR
-	lORUZ+mw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tjiPd-0000000G1Vi-23bL;
-	Sun, 16 Feb 2025 17:26:37 +0000
-Date: Sun, 16 Feb 2025 17:26:37 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Magnus Lindholm <linmag7@gmail.com>
-Cc: richard.henderson@linaro.org, mattst88@gmail.com,
-	glaubitz@physik.fu-berlin.de, ink@unseen.parts, kees@kernel.org,
-	arnd@arndb.de, linux-kernel@vger.kernel.org,
-	linux-alpha@vger.kernel.org
-Subject: Re: [PATCH 1/1] alpha: Fix pte_swp_exclusive on alpha
-Message-ID: <20250216172637.GI1977892@ZenIV>
-References: <20250216170748.2258-1-linmag7@gmail.com>
- <20250216170748.2258-2-linmag7@gmail.com>
- <20250216171741.GG1977892@ZenIV>
+	s=arc-20240116; t=1739726933; c=relaxed/simple;
+	bh=sP3RyiLceS4KF4COcqroLs4WQlSl0gvOgk0Juiab5rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ai1PosJmu8mzNWKa52tHspTeocIJzVYAayN/sFOWvZJ6/mYigSgKQfzW7zKuubVSsyxt47wHJX9OympbaNzOdKw1e7Vz8izNGetSaO1n+nmV/mb9eYAJcVdQMNR7YrusfH2bkhgizYXHqX3gjuFy24kkiFOLywwKfFyevSPiCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKFf6KH1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D23C4CEDD;
+	Sun, 16 Feb 2025 17:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739726933;
+	bh=sP3RyiLceS4KF4COcqroLs4WQlSl0gvOgk0Juiab5rA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jKFf6KH1pienKT5r0URXcy7urAft+0U2gZtSUwXyHY3eFLXDZYs7LAfGnzYki/JPs
+	 La6dQcpES/qatiU4FN3xPp+yXleqbf36Q96GCdJ5EDke2+IUlT3veGreVq6ARAGn2Y
+	 Z3jp4UBLsELIJeamJ4OEHOdv6QIYmGrSXB2puoMuiCsWTHkWRHVMZBfbtwBWH5iF2D
+	 oxnnJpiHdozOyBsXG7g6JjuPYJ4kcK0hw6gbaFvA5enXem25rg8l+rJw7pgKkx7z+w
+	 XRKW+89QVbSunEykO6RZo5KNUS+v1jnw2kIm6AsS71VMbX+vB7DNNlAIIHwI1nQS1V
+	 S9jsu7ixIVQcg==
+Date: Sun, 16 Feb 2025 17:28:45 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v2 07/14] iio: accel: adxl345: add double tap suppress
+ bit
+Message-ID: <20250216172845.2fe98ea1@jic23-huawei>
+In-Reply-To: <20250210110119.260858-8-l.rubusch@gmail.com>
+References: <20250210110119.260858-1-l.rubusch@gmail.com>
+	<20250210110119.260858-8-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216171741.GG1977892@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 16, 2025 at 05:17:41PM +0000, Al Viro wrote:
-> On Sun, Feb 16, 2025 at 06:04:53PM +0100, Magnus Lindholm wrote:
-> > Function pte_swp_exclusive() checks if _PAGE_SWP_EXCLUSIVE bit is set in
-> > PTE but returns lower 32-bits only. Shift bits right by 32 to return upper
-> > 32-bits of PTE which contain the _PAGE_SWP_EXCLUSIVE bit. On alpha this is
-> > bit 39 but on most other architectures this bit already resides somewhere
-> > in the first 32-bits and hence a shift is not necessary on those archs.
-> 
-> Just make it return bool and be done with that - all users are either
-> if (pte_swp_exclusive(...)) or if (!pte_swp_exclusive(...)) or assignments
-> to bool variable.
-> 
-> No need to shift anything - compiler probably will figure out that
-> 	if ((int)((x & (1UL<<39)>>32)))
+On Mon, 10 Feb 2025 11:01:12 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Sorry,
+> Add the suppress bit feature to the double tap feature.
+> 
+> Any tap event is defined by a rising signal edge above threshold, i.e.
+> duration time starts counting; and the falling edge under threshold
+> within duration time, i.e. then the tap event is issued. This means
+> duration is used individually for each tap event.
+> 
+> For double tap detection after a single tap, a latency time needs to be
+> specified. Usually tap events, i.e. spikes above and returning below
+> threshold will be ignored within latency. After latency, the window
+> time starts counting for a second tap detection which has to happen
+> within a duration time.
+> 
+> If the suppress bit is not set, spikes within latency time are ignored.
+> Setting the suppress bit will invalidate the double tap function. The
+> sensor will thus be able to save the window time for double tap
+> detection, and follow a more strict definition of what signal qualifies
+> for a double tap.
 
-	if ((int)(((x & (1UL<<39))>>32))
+Silly question.  Is there a reason this function would ever be
+turned off?   Seems like a sensible heuristic that would not stop
+genuine double taps being detected.  Maybe we just always leave it on?
 
-> is equivalent to
-> 	if (x & (1UL<<39))
-> but why bother with such convolutions in the first place?
+Sometimes the best ABI is the one that doesn't exist as userspace
+can't use it wrong.
+
+Jonathan
+
+
 > 
-> Seriously, just make it
+> This brings in a new ABI functionality.
+> ---
+> Q: Perhaps there is already some IIO ABI for it? If not, please let me
+> know which ABI documentation to extend. There will be a documentation
+> patch also later in this series.
 > 
-> bool pte_swp_exclusive(pte_t pte)
-> {
-> 	return pte_val(pte) & _PAGE_SWP_EXCLUSIVE;
-> }
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  drivers/iio/accel/adxl345_core.c | 82 ++++++++++++++++++++++++++++++++
+>  1 file changed, 82 insertions(+)
 > 
-> and that's it - conversion from arithmetical types to bool will do the right thing.
-> 
+> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
+> index cf35a8f9f432..b6966fee3e3d 100644
+> --- a/drivers/iio/accel/adxl345_core.c
+> +++ b/drivers/iio/accel/adxl345_core.c
+> @@ -34,6 +34,7 @@
+>  #define ADXL345_INT2			1
+>  
+>  #define ADXL345_REG_TAP_AXIS_MSK	GENMASK(2, 0)
+> +#define ADXL345_REG_TAP_SUPPRESS_MSK	BIT(3)
+>  
+>  enum adxl345_axis {
+>  	ADXL345_Z_EN = BIT(0),
+> @@ -81,6 +82,7 @@ struct adxl345_state {
+>  	u32 tap_duration_us;
+>  	u32 tap_latent_us;
+>  	u32 tap_window_us;
+> +	bool tap_suppressed;
+>  
+>  	__le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned(IIO_DMA_MINALIGN);
+>  };
+> @@ -243,6 +245,31 @@ static int adxl345_set_doubletap_en(struct adxl345_state *st, bool en)
+>  	return _adxl345_set_tap_int(st, ADXL345_DOUBLE_TAP, en);
+>  }
+>  
+> +static int adxl345_is_suppressed_en(struct adxl345_state *st, bool *en)
+> +{
+> +	*en = st->tap_suppressed;
+> +
+> +	return 0;
+> +}
+> +
+> +static int adxl345_set_suppressed_en(struct adxl345_state *st, bool en)
+> +{
+> +	unsigned long regval = 0;
+> +	int ret;
+> +
+> +	en ? __set_bit(ilog2(ADXL345_TAP_SUPPRESS), &regval)
+> +		: __clear_bit(ilog2(ADXL345_TAP_SUPPRESS), &regval);
+> +
+> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_TAP_AXIS,
+> +				 ADXL345_REG_TAP_SUPPRESS_MSK, regval);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->tap_suppressed = en;
+> +
+> +	return 0;
+> +}
+> +
+>  static int adxl345_set_tap_threshold(struct adxl345_state *st, u8 val)
+>  {
+>  	int ret;
+> @@ -616,6 +643,60 @@ static int adxl345_write_raw_get_fmt(struct iio_dev *indio_dev,
+>  	}
+>  }
+>  
+> +static ssize_t in_accel_gesture_doubletap_suppressed_en_show(struct device *dev,
+> +							     struct device_attribute *attr,
+> +							     char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct adxl345_state *st = iio_priv(indio_dev);
+> +	bool en;
+> +	int val, ret;
+> +
+> +	ret = adxl345_is_suppressed_en(st, &en);
+> +	if (ret)
+> +		return ret;
+> +	val = en ? 1 : 0;
+> +
+> +	return iio_format_value(buf, IIO_VAL_INT, 1, &val);
+> +}
+> +
+> +static ssize_t in_accel_gesture_doubletap_suppressed_en_store(struct device *dev,
+> +							      struct device_attribute *attr,
+> +							      const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct adxl345_state *st = iio_priv(indio_dev);
+> +	int val, ret;
+> +
+> +	ret = kstrtoint(buf, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = adxl345_set_measure_en(st, false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = adxl345_set_suppressed_en(st, val > 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =  adxl345_set_measure_en(st, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +static IIO_DEVICE_ATTR_RW(in_accel_gesture_doubletap_suppressed_en, 0);
+> +
+> +static struct attribute *adxl345_event_attrs[] = {
+> +	&iio_dev_attr_in_accel_gesture_doubletap_suppressed_en.dev_attr.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group adxl345_event_attrs_group = {
+> +	.attrs = adxl345_event_attrs,
+> +};
+> +
+>  static void adxl345_powerdown(void *ptr)
+>  {
+>  	struct adxl345_state *st = ptr;
+> @@ -899,6 +980,7 @@ static irqreturn_t adxl345_irq_handler(int irq, void *p)
+>  
+>  static const struct iio_info adxl345_info = {
+>  	.attrs		= &adxl345_attrs_group,
+> +	.event_attrs	= &adxl345_event_attrs_group,
+>  	.read_raw	= adxl345_read_raw,
+>  	.write_raw	= adxl345_write_raw,
+>  	.write_raw_get_fmt	= adxl345_write_raw_get_fmt,
+
 
