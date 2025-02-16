@@ -1,89 +1,240 @@
-Return-Path: <linux-kernel+bounces-516530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB501A3736B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FABA3736E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B1416C15F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5A916C1C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E3618DB02;
-	Sun, 16 Feb 2025 09:40:30 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE16290F;
-	Sun, 16 Feb 2025 09:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C9018DB0B;
+	Sun, 16 Feb 2025 09:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTBo6N+e"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1150290F;
+	Sun, 16 Feb 2025 09:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739698830; cv=none; b=rtNjTl34CzTupkU61Ad9QeBaahRIelgxNld9AaMIdsF1lQT661lGymRz3mrxBJnAW++hKPN7dTZWOYSQtGleEJZ98aXQ9opod5L1Fnq7IfbnUyubSbGIeuv9Xh/vQfWVk8QusDKNYOosxZpkigKPufcBP8ZLRpiYxLPX4OQHGpA=
+	t=1739698887; cv=none; b=c7c3paie/5l1Wbt4zXlvGnaEzzoPTJO+/JBWz85eK1//MNt0p9AUVOb31IBP6+NfSpLn4sqZCXolFqKmfGeG1z6iTZ3wWU5DuOQgFA8MmQb08kia/YeoeuIvIvnN4FQQA2DY72qK3Wu6FDhwiM/sECB4f8C2EGe0X2+OhTtlkzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739698830; c=relaxed/simple;
-	bh=zCIUMQNWbz0RyKAwHEoIEGbL6E4OPshHS5Xt4dnxspk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UW9/7LlGwzNHYrXv7U8a1rPzXzefApvrdMXdbBhXFqLAZd+ZgsVCfvqX8zCAxKTBhgIVYHpbJFUl4k61DZK2O/3nTZfNPaIjj5MoYJlByoEJPfUUithhajaPYLeuq/SQXwQXF1k0N5gmZ1fZ2m+lDkiixBhC/UyUljgLcnvJoHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 51G9deOg002270;
-	Sun, 16 Feb 2025 10:39:40 +0100
-Date: Sun, 16 Feb 2025 10:39:40 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/nolibc: only run constructor tests on nolibc
-Message-ID: <20250216093940.GA2192@1wt.eu>
-References: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
+	s=arc-20240116; t=1739698887; c=relaxed/simple;
+	bh=E8PpzKQBTIHLCdeHuS3m7W0qOJeKRwaOcsIaKNMYCnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HcbiXwvFlovmeO/aKXtavk2Cac1A98wTCFURXWYYqqfP8hJh5aUKjiqdsRKhWyv5YIhO+NCnazLS3dUMDYwuEL24AuwEuBvz6rda03rOJwGrVZoKS+pfkPyy5M8jF3shkKJiXFggHX6sNLFi8eb8N5iD/R1YQLDbQxdGshioGmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTBo6N+e; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f2b7ce2e5so1150581f8f.2;
+        Sun, 16 Feb 2025 01:41:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739698884; x=1740303684; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V5A6h6iCJneZy4mP9pZb+hu2qmd2HY0brexOCwmkBrQ=;
+        b=fTBo6N+eOxMzBfPwRIGk79vi1cOJMh49wuFF3XuoMcDFEfrZ7iuqnpBQk0+hJdLViS
+         n646loIE3TEnMWAP+4oEBoK7NfQPX2S7uk0ajSQsAxzm89XIkw+g9MZ58fuUZBPpGNYr
+         rWEG6kb4lsrutspi60aD7qqIW1/FInVHbyskG2iBJHQ3/PgtyKOm/lldU4cFJSTEEoKK
+         4DWxsdBgftGyqwVM1khSYw29oFgciNS3z0Z2weTtswvx4+XgARaiyGPGT1stuHm0zS3t
+         vKBdsZP/ntco93TfObk4nucmE/tZMOUG+ANoueEPzJp6chw03JPb/GFWcGKgaFdtrudt
+         mOJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739698884; x=1740303684;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5A6h6iCJneZy4mP9pZb+hu2qmd2HY0brexOCwmkBrQ=;
+        b=WUG8jspmc6/tOoBQpbjg32hqIfTIaY3OrobENyWYA6dhAdqBisW7vSDp+wzdxBWIQa
+         6lSN/3NcxWKJ5CTqUII0fif6nJsuSQR7hVo/xKCShJ19OXml7seujHOuvYYtkzadTXbO
+         dZOwreN94PMvecepscV0m+yvquZvxB4Lufcpd/ak5qfGHDreqnubSU1SSKZhJ/mqlVfA
+         HvBgWlx1LPJ1ZCzGDwDvZLOYRuPi9K04xQQRSjjqLvdOjvzbKx0W1LCivKX6tZGAGNZD
+         abxaYz1ZRasIOwztC6BIBi3Y5pGdR3BAXyBx9s0whUIeepW3rP+udQ54yB7qR1cpCCWE
+         04CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKw5V8J5wvgU96OSXAtBVgIiu2DOkI2fpURF0+HUbOgtpTZrGuKFzjR4tKDy6/Ss0LKZH+4FEWuIMA9aCx3S4ge78=@vger.kernel.org, AJvYcCVu1CsBWIFVJP/c4tQi7dLeAoCdkHAuEee88b7e/oWJmMxQsyp3pye/YRY+MYeXSxZ3+aMAzNpRdoxm@vger.kernel.org, AJvYcCXZMFIFlNKo0ARODqgQEN799iz7pz7eFRQ7GhxqILQaHXUo4exr+ZFRLo0W1lC6TXxaaQmQ3GmhxTtkNVF9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNxjPGHDbE8/qDq3rcnD5hb373DUu+BA+AvrS8JbRRSu5dEX9w
+	8zl0iJACyDJXLW9STH2d6i7iiXT10j01JY7o2AHnIWjszrD1Av9v
+X-Gm-Gg: ASbGncu5dBhGDQUEo768bFnXf8wkrIQo/0pdmTR/otum7ko9S4FZkWAUc3WtqJPq/s+
+	Q1vZtpthssZ7cBT6ahnrfQU7C/4UnvLJZse08osblyRYhKbjsHN60eC+WwlMkvEK71A1f7SgPpM
+	rcpPG67mS2sxE+dzRgb1w0dD/gvg0Whib93tR+5QpghGy5S4hvxA6YLil5B16WYeySuxG+AoiwM
+	j6fkRLdV9UvA40x6lnz1silaaOFQ1ZkfLibEp/lD4jbLW5I9EZM9kGgHn8vt98OKhFY6cC2lD0m
+	NfETGB+pZFP8foxB03hpK6h5pB17ypF//Z5OyG5UF8Cn+eErSwsVCuTRrT/56cn+hVouFQ==
+X-Google-Smtp-Source: AGHT+IEb2OQelhkZ2wVYFcVcHXQRhSgxb1xWaG3Vk4kg47/uyDzz72WWWsuUpEK0jcrP+/DgGN6R1Q==
+X-Received: by 2002:a05:6000:18a9:b0:38b:ed1c:a70d with SMTP id ffacd0b85a97d-38f33e87e68mr7582693f8f.0.1739698883317;
+        Sun, 16 Feb 2025 01:41:23 -0800 (PST)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5ef9sm9212015f8f.76.2025.02.16.01.41.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2025 01:41:22 -0800 (PST)
+Message-ID: <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
+Date: Sun, 16 Feb 2025 11:41:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
+ <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 07:01:01PM +0100, Thomas Weiﬂschuh wrote:
-> The nolibc testsuite can be run against other libcs to test for
-> interoperability. Some aspects of the constructor execution are not
-> standardized and musl does not provide all tested feature, for one it
-> does not provide arguments to the constructors, anymore?
+On 2/16/25 11:26, Krzysztof Kozlowski wrote:
+> On 15/02/2025 13:24, Ivaylo Ivanov wrote:
+>> The Exynos2200 SoC uses Synopsis eUSB2 PHY for USB 2.0. Add a new
+>> driver for it.
+>>
+>> eUSB2 on Exynos SoCs is usually paired alongside a USB PHY controller.
+>> Currently the driver is modelled to take and enable/disable the usb phy
+>> controller when needed.
+>>
+>> The driver is based on information from downstream drivers.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  drivers/phy/samsung/Kconfig                   |  13 +
+>>  drivers/phy/samsung/Makefile                  |   1 +
+>>  .../phy/samsung/phy-exynos2200-snps-eusb2.c   | 351 ++++++++++++++++++
+>>  3 files changed, 365 insertions(+)
+>>  create mode 100644 drivers/phy/samsung/phy-exynos2200-snps-eusb2.c
+>>
+>> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+>> index e2330b089..f62285254 100644
+>> --- a/drivers/phy/samsung/Kconfig
+>> +++ b/drivers/phy/samsung/Kconfig
+>> @@ -77,6 +77,19 @@ config PHY_S5PV210_USB2
+>>  	  particular SoC is compiled in the driver. In case of S5PV210 two phys
+>>  	  are available - device and host.
+>>  
+>> +config PHY_EXYNOS2200_SNPS_EUSB2
+>> +	tristate "Exynos2200 eUSB 2.0 PHY driver"
+>> +	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>> +	depends on HAS_IOMEM
+>> +	depends on USB_DWC3_EXYNOS
 >
-> Skip the constructor tests on non-nolibc configurations.
+> How does it depend? What are you using from DWC3?
 
-I'm not much surprised, I've always avoided arguments in my use of
-constructors due to a lack of portability. However the patch disables
-all constructors tests, while I'm seeing that the linkage_test version
-does not make use of arguments, though there is an implied expectation
-that they're executed in declaration order, which is not granted.
+Can drop, I guess.
 
-I'm wondering if we shouldn't make the tests more robust:
-  1) explicitly set linkage_test_constructor_test_value to zero in the
-     declaration, because here it's not set so we have no guarantee
-     (we're not in the kernel)
-  2) only add values to check for cumulated values (e.g. |1 in const1,
-     |2 in const2) and verify that the result is properly 3
-  3) make the argument test add a distinct value (|4) so that when
-     testing it's instantly obvious which test was not called.
+>
+>> +	select GENERIC_PHY
+>> +	select MFD_SYSCON
+> Where do you use it?
 
-And indeed, we can disable the tests we know fail on other libcs and
-even split that by feature (e.g. test that at least one constructor
-was called using !=0, that all non-arg ones were called via &3 == 3,
-and that the args were passed via &4==4). That would allow to further
-refine the tests if desired so that we can keep the differences in mind.
+Remained from USBCON driver.
 
-In any case all of this can also be done later, and I'm obviously fine
-with this immediate adjustement.
+>
+>> +	default y
+>> +	help
+>> +	  Enable USBCON PHY support for Exynos2200 SoC.
+>> +	  This driver provides PHY interface for eUSB 2.0 controller
+>> +	  present on Exynos5 SoC series.
+>> +
+>>  config PHY_EXYNOS5_USBDRD
+>>  	tristate "Exynos5 SoC series USB DRD PHY driver"
+>>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
+>> index fea1f96d0..90b84c7fc 100644
+>> --- a/drivers/phy/samsung/Makefile
+>> +++ b/drivers/phy/samsung/Makefile
+>> @@ -14,5 +14,6 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+>> +obj-$(CONFIG_PHY_EXYNOS2200_SNPS_EUSB2)	+= phy-exynos2200-snps-eusb2.o
+> Entire driver looks like repeating existing qcom-snps-eusb2.
 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+It's the same IP, but implemented differently on a different platform. At
+the very least, the register layout is different.
 
-Acked-by: Willy Tarreau <w@1wt.eu>
+>  You need to
+> integrate the changes, not create duplicated driver.
 
-Willy
+I can do that, but it would be come a bit cluttered, won't it? Depends on
+if we want to follow the current oem-provided initialization sequence, or
+try and fully reuse what we have in there.
+
+Best regards,
+Ivaylo
+
+>
+> ...
+>
+>> +
+>> +	ret = devm_clk_bulk_get(dev, drv_data->n_clks,
+>> +				phy->clks);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret,
+>> +				     "failed to get phy clock(s)\n");
+>> +
+>> +	for (int i = 0; i < phy->drv_data->n_clks; ++i) {
+>> +		if (!strcmp(phy->clks[i].id, "ref")) {
+>> +			phy->ref_clk = phy->clks[i].clk;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	phy->vregs = devm_kcalloc(dev, drv_data->n_regulators,
+>> +				  sizeof(*phy->vregs), GFP_KERNEL);
+>> +	if (!phy->vregs)
+>> +		return -ENOMEM;
+>> +	regulator_bulk_set_supply_names(phy->vregs,
+>> +					drv_data->regulator_names,
+>> +					drv_data->n_regulators);
+>> +	ret = devm_regulator_bulk_get(dev, drv_data->n_regulators,
+>> +				      phy->vregs);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to get regulators\n");
+>> +
+>> +	/* we treat the usblink controller phy as a separate phy */
+>> +	phy->usbcon = devm_of_phy_get_by_index(dev, np, 0);
+>> +	if (IS_ERR(phy->usbcon))
+>> +		return dev_err_probe(dev, PTR_ERR(phy->usbcon),
+>> +				     "failed to get usbcon\n");
+>> +
+>> +	generic_phy = devm_phy_create(dev, NULL, &exynos2200_snps_eusb2_phy_ops);
+>> +	if (IS_ERR(generic_phy)) {
+>> +		dev_err(dev, "failed to create phy %d\n", ret);
+>
+> Syntax is return dev_err_probe
+>
+>> +		return PTR_ERR(generic_phy);
+>> +	}
+>> +
+>> +	dev_set_drvdata(dev, phy);
+>> +	phy_set_drvdata(generic_phy, phy);
+>> +
+>> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>> +	if (IS_ERR(phy_provider)) {
+>> +		dev_err(dev, "failed to register phy provider\n");
+>
+> Syntax is return dev_err_probe
+>
+>> +		return PTR_ERR(phy_provider);
+>> +	};
+>> +
+>> +	return 0;
+>> +}
+> Best regards,
+> Krzysztof
+
 
