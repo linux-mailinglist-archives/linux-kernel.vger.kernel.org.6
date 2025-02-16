@@ -1,160 +1,103 @@
-Return-Path: <linux-kernel+bounces-516812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B76A377BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:17:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DADA377CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADD4189108C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:17:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B73CF7A37C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9641A38E4;
-	Sun, 16 Feb 2025 21:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03D81A5B8C;
+	Sun, 16 Feb 2025 21:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYQ5J64p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QbRGpGXT"
+Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36E633C5;
-	Sun, 16 Feb 2025 21:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80B74C70;
+	Sun, 16 Feb 2025 21:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739740650; cv=none; b=NoMG3vI1W6RQqgLwV05FDHca9n0VJnM/eXRS3OVbXl8y7oQMK35dilOaxf4Fljz0IX2/jrAEBfhscCGaSqvk/5JLWAnSg0hbSsFnUApvCTD9IfCQtiLSHcyJSljk1NO3iLe9pcWggQfsiePOnJ+3flXJezhpRGJrOOQrmebPK/M=
+	t=1739741634; cv=none; b=lt/+IVuhW1QlCEglpJsBFrYbfn8eI2LVUBEpoD/5BDUSRzuISS+zfFgn6BfAZh/7TFML6p3BNTDYxgrcMh/1kCvWhkPeAhT8oF8nMIWsAB2wt/g3DsBqI4V0tzKiNTAL4Kaahswtsm0e9wmDK+E6WcBAoABJvUm0RlH3mxFReyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739740650; c=relaxed/simple;
-	bh=B70L66JAjJLrVOOPdoxtwKfa95fTYtQahdSnp8u5cTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z50KH9tc9JQG6i/r74nL3po/GR1cTgGXq3oku6IJ6c27Sus6au/sQ0BbOswVWmcHnKowG10XnfiXqmON5YAv7TJ/+sTWOPFTAURv1wPKIJZBjig33y++1ZcXqxPGjoKbz0bXVv56wkXKH0L6uKW2KcdjFq1iSjNOGGz2vFmyMmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYQ5J64p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94B6C4CEDD;
-	Sun, 16 Feb 2025 21:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739740650;
-	bh=B70L66JAjJLrVOOPdoxtwKfa95fTYtQahdSnp8u5cTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EYQ5J64pnBy/0gpq4OvAANBzHRHbLamWsJTjcPOWAUNFUyjs5CZjpM7xGSY3MkjJ3
-	 duDSbbHYJcdoPYF03PPqA4IqxD2ewLU+Q55HKxxYH88ypL6M9y7r7clySm5Os88DEs
-	 oFu9bHIgFPIvH5LYl+/YaiiOJkLV4s3pAU4RvzfAijEn9cGhASCro4aXPtB2dsu/eD
-	 mFUylndFn+SRyA6Q4uBTmD9OuyuMcnQ7raBp7gpn7anrHUJIKI8FvQWvD+sV1gtIo+
-	 l2jJI9ZOV/EVdys19PqwjTo6eBwHZt9Kh9J0MND1PL9o0HaSgmImSdZj9KqcjVmojG
-	 F+MJ3pHlnIqYA==
-Received: by pali.im (Postfix)
-	id 7E1147FD; Sun, 16 Feb 2025 22:17:17 +0100 (CET)
-Date: Sun, 16 Feb 2025 22:17:17 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Message-ID: <20250216211717.f7mvmh4lwpopbukn@pali>
-References: <20250216164029.20673-1-pali@kernel.org>
- <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain>
- <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali>
- <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+	s=arc-20240116; t=1739741634; c=relaxed/simple;
+	bh=7guRH1aGM8Oh0aNzrHu+kgdJ26FPwWdwt/A0ZwzFSsU=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=p3RiZj62dNmBTgMyenTtSMazRqPOrXn0j/FbxKwjhwtOS3g/4yHGe/uQ1OJsoCOxF7lTXPGhAQn9gPu6wsmROKGnZ4ocFOgE1zS/QKQqBhvLOJA2McHDVX+XZPI8ksnIVxWmJuBVfnmzEu8B4fiyvPTXPNZJU8wEvUl9zbkUc8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QbRGpGXT; arc=none smtp.client-ip=80.12.242.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id jm7qtro1wBmk4jm7ttKqTm; Sun, 16 Feb 2025 22:24:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739741076;
+	bh=0lA5RpCI8RgDLbiFA6kjdlW7BOO4zRImL2WUGm+cZio=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=QbRGpGXTEERSgWydbfK8F3S6nB4XFi7sMpQThiZi3L0G3x1FhjjcK0mAXUB2juw5s
+	 YyEblB6RihQXQQvLViMLCCLKHNKSYHbfoUcl8AzKes/6VASSCpdypOqSC+xeB/O3CK
+	 7jlmGxNCSH0zaZhUbJxpIcJxvRDPiEpC29zIVdCFUJt6on8Mj1pZvahJOlO2hAfQ8s
+	 AxgeS98Wnw7hMXdkq09/79Z9iP3ujUsk+rHW7sKzpnuHhUIjICrq75p1JyZl+eKqWJ
+	 nQYSnL89h0Yh5fzw+gb6eOdiHpgL5XpZOxn0/eq2F6yIsOeQo1AwUtaiYn0L4lu2tR
+	 GGTjVF3PkqJmw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 16 Feb 2025 22:24:36 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <b0af7103-882d-41ec-8b15-7c8955e1b77e@wanadoo.fr>
+Date: Sun, 16 Feb 2025 22:24:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+References: <20250216162721.124834-1-clamor95@gmail.com>
+ <20250216162721.124834-3-clamor95@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: clamor95@gmail.com
+Cc: andriy.shevchenko@linux.intel.com, arthur.becker@sentec.com,
+ conor+dt@kernel.org, david@ixit.cz, devicetree@vger.kernel.org,
+ emil.gedenryd@axis.com, ivan.orlov0322@gmail.com,
+ javier.carrasco.cruz@gmail.com, jic23@kernel.org, jonathanh@nvidia.com,
+ krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ mazziesaccount@gmail.com, muditsharma.info@gmail.com,
+ perdaniel.olsson@axis.com, robh@kernel.org, subhajit.ghosh@tweaklogic.com,
+ thierry.reding@gmail.com
+In-Reply-To: <20250216162721.124834-3-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
 
-On Sunday 16 February 2025 21:43:02 Amir Goldstein wrote:
-> On Sun, Feb 16, 2025 at 9:24 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
-> > > On Sun, Feb 16, 2025 at 7:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >
-> > > > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
-> > > > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
-> > > > >
-> > > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > >
-> > > > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
-> > > > this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
-> > > > which use that flag?
-> > >
-> > > As far as I can tell, after fileattr_fill_xflags() call in
-> > > ioctl_fssetxattr(), the call
-> > > to ext4_fileattr_set() should behave exactly the same if it came some
-> > > FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
-> > > IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
-> > >
-> > > However, unlike the legacy API, we now have an opportunity to deal with
-> > > EXT4_FL_USER_MODIFIABLE better than this:
-> > >         /*
-> > >          * chattr(1) grabs flags via GETFLAGS, modifies the result and
-> > >          * passes that to SETFLAGS. So we cannot easily make SETFLAGS
-> > >          * more restrictive than just silently masking off visible but
-> > >          * not settable flags as we always did.
-> > >          */
-> > >
-> > > if we have the xflags_mask in the new API (not only the xflags) then
-> > > chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
-> > > ext4_fileattr_set() can verify that
-> > > (xflags_mask & ~EXT4_FL_USER_MODIFIABLE == 0).
-> > >
-> > > However, Pali, this is an important point that your RFC did not follow -
-> > > AFAICT, the current kernel code of ext4_fileattr_set() and xfs_fileattr_set()
-> > > (and other fs) does not return any error for unknown xflags, it just
-> > > ignores them.
-> > >
-> > > This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
-> > > before adding support to ANY new xflags, whether they are mapped to
-> > > existing flags like in this patch or are completely new xflags.
-> > >
-> > > Thanks,
-> > > Amir.
-> >
-> > But xflags_mask is available in this new API. It is available if the
-> > FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improvement
-> > mentioned above can be included into this new API.
-> >
-> > Or I'm missing something?
-> 
-> Yes, you are missing something very fundamental to backward compat API -
-> You cannot change the existing kernels.
-> 
-> You should ask yourself one question:
-> What happens if I execute the old ioctl FS_IOC_FSSETXATTR
-> on an existing old kernel with the new extended flags?
-> 
-> The answer, to the best of my code emulation abilities is that
-> old kernel will ignore the new xflags including FS_XFLAG_HASEXTFIELDS
-> and this is suboptimal, because it would be better for the new chattr tool
-> to get -EINVAL when trying to set new xflags and mask on an old kernel.
-> 
-> It is true that the new chattr can call the old FS_IOC_FSGETXATTR
-> ioctl and see that it has no FS_XFLAG_HASEXTFIELDS,
+Le 16/02/2025 à 17:27, Svyatoslav Ryhel a écrit :
+> AL3000a is a simple I2C-based ambient light sensor, which is
+> closely related to AL3010 and AL3320a, but has significantly
+> different way of processing data generated by the sensor.
 
-Yes, this was my intention how the backward and forward compatibility
-will work. I thought that reusing existing IOCTL is better than creating
-new IOCTL and duplicating functionality.
+...
 
-> so I agree that a new ioctl is not absolutely necessary,
-> but I still believe that it is a better API design.
+> +static int al3000a_resume(struct device *dev)
+> +{
+> +	struct al3000a_data *data = iio_priv(dev_get_drvdata(dev));
+> +
+> +	return al3000a_set_pwr_on(data);
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(al3000a_pm_ops, al3000a_suspend, al3000a_resume);
+> +
+> +static const struct i2c_device_id al3000a_id[] = {
+> +	{"al3000a", },
 
-If it is a bad idea then for sure I can prepare new IOCTL and move all
-new functionality only into the new IOCTL, no problem.
+Nitpick: missing leading space after {
 
-> Would love to hear what other fs developers prefer.
-> 
-> Thanks,
-> Amir.
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, al3010_id);
 
