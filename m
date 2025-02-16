@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-516714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5D4A37621
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:00:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85B2A3761C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CDD188EBBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15313AC86C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F08C19DF9A;
-	Sun, 16 Feb 2025 16:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1D619D881;
+	Sun, 16 Feb 2025 16:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xkCExdn1"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjOK0BAh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667C119CC28;
-	Sun, 16 Feb 2025 16:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B729450FE;
+	Sun, 16 Feb 2025 16:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739725196; cv=none; b=m/4gUoCt7wX0aK6G3V1EbBPgZIEIw6kDMuqO+e5BmcFF5DI/vY0BLjVeXZo0CKupLl6oVd9BVx6b+9DshuflS6S8lNy23U199RMk6bMegrdsskFjNoj6boJHqbVM41qRIm/JVhcP3Bu/fMpsWKP7odv8UTYyxEtFtKTkGJmQB6A=
+	t=1739725188; cv=none; b=c9RC1m3h34kdDIwPBPV8ke4V/T6mgZRC9e5eK0HTasMxwzZGskg6vExMXSjKJpV4NO6uTrCCyXpWyAfcatxa8q1YiOneSrubN1tK6Q2gv11ONEGztMPisggo1O+0rv542WB+RmRDPD5i51b0eJV7xScqsWnRuX+Cz7XU/8MN+8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739725196; c=relaxed/simple;
-	bh=DhySorGZIc9kQXBR4kFIxyKQSoB8SqkmLxPlhPKbfkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2c5RWR2FJNCCWfMm+lMZce1Y5tMyVcDozaEMjf3PMJikOB0HO0snuLyXddsj0ZGAZi7VhoC6MzjEp+/f6bXhKcodHSwRqjc4VnsK4l2YcEViuXWjlQ+W9c5vkdGFO0QsSz9xEiAyiyXBZQHDNnta8tvZPCgpnICd54arLts8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xkCExdn1; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SGjXFxJmVk/FKeJ46IrEjqRmgY6gQvmYuvqL1kDeGQ4=; b=xkCExdn11EsAZtDgmuPdYucM2j
-	bK3pZs2vK93GF1VCsaJw9PI1Rx6zDnUDYt3fCnsSGGmkrntc4cSBM6QhC8CwBAKoDhfZkXjhqumGV
-	mE26uEYC00UAVkIj4JZSjPkjpP2ho+epU+iwoSH56gh2332eCOTh7rsxa6Xvd0ngofbo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tjhzP-00Ehw8-Nx; Sun, 16 Feb 2025 17:59:31 +0100
-Date: Sun, 16 Feb 2025 17:59:31 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v5 2/3] net: stmmac: platform: Add
- snps,dwmac-5.30a IP compatible string
-Message-ID: <9dcab9aa-6d1e-4804-82ff-fb8dfa434df7@lunn.ch>
-References: <20250216123953.1252523-1-inochiama@gmail.com>
- <20250216123953.1252523-3-inochiama@gmail.com>
+	s=arc-20240116; t=1739725188; c=relaxed/simple;
+	bh=SC/tuAOm11oCVUJiOo+McB3iHWTWiP1gMTvFuGu89bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MpK9qa5+sJ4bzrg/bmD5rt5sJ5TMrKNMVDEl4WY7f2WWc6qzo56ik7F35n1kl8kr22ANwvXar7afpK+ief+lHpv9FumFTkAYnm6Ua0hpLmTzrBxZRIiXAf2RNhfFFgsPvnL+j7mHpEwV4CYV+fz7vTy2IOh4kZ4YSGCWF1BoCno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjOK0BAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70575C4CEDD;
+	Sun, 16 Feb 2025 16:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739725187;
+	bh=SC/tuAOm11oCVUJiOo+McB3iHWTWiP1gMTvFuGu89bk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LjOK0BAhP4tBI99Nx5vy4ZiuXj1NO3gslpAEUnCkgPVmaZbtVzp+7U0Gc0QARywLo
+	 hN70p05uB7/X2PfK05gNdKRgjq+A7ZkmI5wJWzLRYfCVXNT4xFBdGw+5QtUY03ToSm
+	 nw3+phcjHe8Slp0xIE1PFgySsx735f7meh+Qtx7uwlG1IvEdyjVrXi0hB92wZZQm24
+	 VIG7vofvWX6djtnOKo47FwpFtU7FqK3St46CzRF6vTOfdp01F4+wO3iz5OZeeEE7dR
+	 cxpAlsOluSe7u5qWo6f36DTqYASC84d4Ut6Vj1+HUN3inYk9Lo9xBlqxADFihM21t0
+	 SY3xdX+a08lRw==
+Date: Sun, 16 Feb 2025 16:59:39 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+ linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+ andriy.shevchenko@linux.intel.com, dmitry.torokhov@gmail.com,
+ przemyslaw.kitszel@intel.com, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH v5 10/12] iio: adc: xilinx-xadc-core: use
+ devm_kmemdup_array()
+Message-ID: <20250216165939.4780c4f4@jic23-huawei>
+In-Reply-To: <20250212062513.2254767-11-raag.jadav@intel.com>
+References: <20250212062513.2254767-1-raag.jadav@intel.com>
+	<20250212062513.2254767-11-raag.jadav@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216123953.1252523-3-inochiama@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 16, 2025 at 08:39:50PM +0800, Inochi Amaoto wrote:
-> Add "snps,dwmac-5.30a" compatible string for 5.30a version that can avoid
-> to define some platform data in the glue layer.
+On Wed, 12 Feb 2025 11:55:11 +0530
+Raag Jadav <raag.jadav@intel.com> wrote:
+
+> Convert to use devm_kmemdup_array() and while at it, use source size
+> instead of destination.
 > 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 
-Ideally, this would be two patches, one adding the
-stmmac_gmac4_compats[] with the existing compatibles, and then a patch
-adding snps,dwmac-5.30a. Logically, these are different, so two
-patches.
+Seems fine to me.
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+>  drivers/iio/adc/xilinx-xadc-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+> index cfbfcaefec0f..e1f8740ae688 100644
+> --- a/drivers/iio/adc/xilinx-xadc-core.c
+> +++ b/drivers/iio/adc/xilinx-xadc-core.c
+> @@ -1245,8 +1245,8 @@ static int xadc_parse_dt(struct iio_dev *indio_dev, unsigned int *conf, int irq)
+>  		channel_templates = xadc_us_channels;
+>  		max_channels = ARRAY_SIZE(xadc_us_channels);
+>  	}
+> -	channels = devm_kmemdup(dev, channel_templates,
+> -				sizeof(channels[0]) * max_channels, GFP_KERNEL);
+> +	channels = devm_kmemdup_array(dev, channel_templates, max_channels,
+> +				      sizeof(*channel_templates), GFP_KERNEL);
+>  	if (!channels)
+>  		return -ENOMEM;
+>  
 
-    Andrew
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
 
