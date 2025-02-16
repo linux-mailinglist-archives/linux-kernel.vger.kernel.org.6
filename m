@@ -1,195 +1,278 @@
-Return-Path: <linux-kernel+bounces-516839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5469A3780F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:30:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491C9A37811
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94942188BA36
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A48B16B6F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8DE1A3A8D;
-	Sun, 16 Feb 2025 22:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D2C1A3163;
+	Sun, 16 Feb 2025 22:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HTrTYdYz"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1q9/ySNc"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891B31A256B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4582D18A6AB
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739745010; cv=none; b=YkB5HtEBMgS5K0p0aWv1krgekEQRLohlenhw/KfCItJzdWsh74rk8Raw4CNGzAqdeIQVZwUG5UCZA06dU645xEsekA3lUM22qMG/lLLbTTaRQuDClnwobQ7NRyBpm44hKScivUbT+37jGClyYOiJ1YtADhaskGxXS/B7hbhKQbA=
+	t=1739745148; cv=none; b=IEagyP6CarLRX+hGSfXkmVeWPaaz6CE+/Fa7/AyyRjbRTzCvreQZwuD4KIIgY+mLgWrUkIykeBnabK+YjrB+GlkEUozwPcbkGRx8gmem69t+znClD3MdVfeiwjrAcoMC4zivPCsooYi3+AWG3oK26M8EsG82Z2jqnOPQzXx+prc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739745010; c=relaxed/simple;
-	bh=LQHcicrNmgiAow4s/z1Kr2I6yAyQolTRZ7P8h/rJKd4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZjoxtQVZetbPUVIL/r6rZtDPUNcQmSVfbINUhc6N6pLYuyLeaOPZN711CeFyxV02J6i5FMnAiwZH8XYiYA70ji0GUABBSBbGqqfqP0UiQacKx3M5Q0wh+WCKXM0azfP4BPnbj7A2zWm2ccUfl83WJ8n0wrbe90tWDDLeOLgenLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HTrTYdYz; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1739745148; c=relaxed/simple;
+	bh=tdI+oIN/tO9TuxIoZAOrI65UU5MhsPdm2dzbxucnf08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h5sj/EObhrPa6Zf++xZncgOhkAcboNEl5u9mY5wZoSN2a/tzB94XimaJ5pvjt0hm924aNotkrBbP/BAFD7H4lRHtcjkIJKq+P6at1DD4+XGGogVf5OZJ525wNJT4ZLG48PpPyPEpnbdxdr59APBrmEmJdiNggQGZFAgQGsrPJg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1q9/ySNc; arc=none smtp.client-ip=209.85.167.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2210121ac27so33235685ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 14:30:08 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3f3fa7ba7f4so212395b6e.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 14:32:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739745008; x=1740349808; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PNKnjIND1cDqA5voAjCPjINYGDuyBQKKS2ATUZdV07o=;
-        b=HTrTYdYzEwr6Bug/GQHjkynDKvBrMthfudcaGYNf2cgLVBGghkLjm3RUIzybtSsFnP
-         Rzae/0w2bNONvGRBnky3GXepr50TkAnQ6pzqpr/m8TYOcyCjuJrkoNHK/tgQOUBy4Q3E
-         pfgiVn2d9LacNCMx2/9j8LrbKbRQxTz7AkLZ6WA9SRwVCo8T9SQibtfqy1w6m1orImf0
-         yc8Cb3vt4nCVgHOCHGZk21YKHVIWMPtwvx1wD4j+Pm8fSS4Tn7FsuccDawsKmJPJXyLs
-         ZxlZOmnp11fzZaAqQeUT2orFPtVMpybTL+uI1cZ1SsBkK23E+5lZZUlPtKehrR2tNWg0
-         DImQ==
+        d=google.com; s=20230601; t=1739745145; x=1740349945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/rUh+CVB78Vypb0kxzr8Cgzng5gMOmCsEYl8kNCe+o=;
+        b=1q9/ySNc1umN3IYybaXt1E7TBJzk/3tptp9xk7E0PFvy3sDmfbpNuARBKoICUFvvdJ
+         TUscyeQC9mq8xxDCReKk484Ht/w1A54TU3CrUjz3uGhbcrOkFnvrBT4iyTnDe0kfpyS6
+         HxJFv87Emh68Up15s2Er8b1+kDYzNVEnipKwp/Id6k0KGobZZVDSewePBalMfh88UIGD
+         Z8NHqrECABDL7UzHOVy4AtM9Xbdk2OaORFKcXLyJMBp0N4jfvd4wgsOeX8J5EVPj3hlf
+         Oi6hJdxmXXouA52pDshULX46iWs9tEVpLtnZvY24rXH9Et5FGIZimbpGFH/KrJEGufC4
+         etDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739745008; x=1740349808;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PNKnjIND1cDqA5voAjCPjINYGDuyBQKKS2ATUZdV07o=;
-        b=ALirGiu+vx/A6uI/CX4p7dQghxAXY/w/AGf2+RCDHLnr5vrQ2bz8ASnNwDjCM/LFPY
-         iKxLONI5MKL7xaQ9gdkeHgSdXWaiCdMPPaCBHez8H7cNt1kgp9YtdADXAB7tldUNMLel
-         AaBS1atnqDU4HG0KHB8AyTot24dXVnHWBvKmdgLCbss/nfTeTO9b55dHUpvXx3SBhGxb
-         11JiZGbgs47d6GAE2k5bRCfFmNWnNe/xW+HVUzBsZ9azDG5mHMtraVAajF5+1DuG7Oi3
-         NZ+Qd/E+RImofdzZHBOoa9dpfNay3w02PVW+3P35ik0b3+xvHUiLzdwfWPVsSwgyHXiY
-         wOHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPjoiJX9uXQjo2DNx7IyN0Ukz5gUd6eraN1dTkT4rV4aC+R1dyl9ikSif4cqXMDkydlEsM10tiiR9Xzi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjSRV1PzEynxGWxR17jFJSthbe/rGbqrpQaW/4UqWZIjKSvoPm
-	vz+LVHXl3phnOTJ5V1TVNS5OfRhy3C5QwIk0HCIi+KNC7BGyTmH2FMmfdvW7Wznb00o/GkKqqHT
-	sqw==
-X-Google-Smtp-Source: AGHT+IGimr17LrcrOJVFoDyG28j2uaoSa1qW7nDuBEqMagI93FDjZ+5itHfCRBNoeBZXHeX5KcpLhm/yiak=
-X-Received: from plkl5.prod.google.com ([2002:a17:902:d345:b0:21f:347:73a8])
- (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f88:b0:220:c4f0:4ee7
- with SMTP id d9443c01a7336-22103ef2039mr123034435ad.1.1739745007775; Sun, 16
- Feb 2025 14:30:07 -0800 (PST)
-Date: Sun, 16 Feb 2025 22:30:02 +0000
+        d=1e100.net; s=20230601; t=1739745145; x=1740349945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/rUh+CVB78Vypb0kxzr8Cgzng5gMOmCsEYl8kNCe+o=;
+        b=vc+a7hvljBY83vSbq/XItgZ0GinhOW/9iBK6GN0ij0M7jHtqMNxztDbUbr8Q/e1VJZ
+         G4lkng1qpwAxxuQEp3eyUz3E2g5mklxvpdECvrnvVLIOnMUeJPGce8rHHTjusc/sX4wR
+         GaByIl0HEPOU39Ll00Q1dWgxTuUWY2gFfaQ6tTMnF8f/E5YFdUVRfKr/u1LTlBX+nCQb
+         Flin5q3QPmVM7bTsGLFK39cjr8gJiBi3jiwNRiAgQpjhLTS4f1tTN9BqDz/GG2E0Ai3f
+         OH6+BUiIZ/7JsHs+rV5uL4bbT6lXVjc4MIqXMM+gXv6c9cD4r9erMe30uFwYzfaUKwfx
+         RsMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCAIAcftkDW+Fit5wjtF8jrPYV57yf7lqalMtDu3r+/skEVuJg3c/yk5zqljZfdiJtHsWN6NIeeHIODAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkYTMFlLCvA+KRGgLAiu6tDTCvSOB9QMptDeeeXjLRtHBN7csh
+	yy0n6v0n3MH7ch25QZrGVY7aqA0orwo46RKrZOv3HnzMAtWA6tl70dJzKTTqBqDSmg95b0rO9CX
+	+0WTLi0a/VZGAPpexNmA6UKYiEcDlZY0VTTPi
+X-Gm-Gg: ASbGncvFsKqNCK7KIkyw/N1dWKsl+WoDh73JmiYitXwUFXOW++8nDJ3/M0RzoCqbCPv
+	W1ApdPG+EjxdiW3NmZmvK5ZWAN+RhoHLjDTR5oCuocNkSfWDIpG/jnB8eeSgLUPpI8PINT0nFqV
+	HJLowYPdzxAhhbUhUwOkSHoTWBXFY=
+X-Google-Smtp-Source: AGHT+IFbi7s1NIZvofF0AhrEdWXltDvRZei3qZG3g4jM5ZlkUT7bIV9G/wo6MQGk38JgDazQH3mQqvFARhsBlIaAp3Y=
+X-Received: by 2002:a05:6808:384d:b0:3f3:ba6b:8174 with SMTP id
+ 5614622812f47-3f3d90d9ad6mr10333175b6e.8.1739745145024; Sun, 16 Feb 2025
+ 14:32:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250216223003.3568039-1-badhri@google.com>
-Subject: [PATCH v3] usb: dwc3: gadget: Prevent irq storm when TH re-executes
+MIME-Version: 1.0
+References: <20250208033129.3524423-1-badhri@google.com> <20250211002155.62lyfqjlygod7cdp@synopsys.com>
+ <CAPTae5LisYMjx63Jz_xmZ9zA5PtaxRA49gh2FA-fONsJ12sXeg@mail.gmail.com>
+ <20250211005508.qeselc6eakgnys74@synopsys.com> <CAPTae5+RENJkgSLJAfzh-LryHvkU+i12ELjYqo_b22CT5HXm7w@mail.gmail.com>
+ <20250213222858.3l54lmgfq55o7yc5@synopsys.com>
+In-Reply-To: <20250213222858.3l54lmgfq55o7yc5@synopsys.com>
 From: Badhri Jagan Sridharan <badhri@google.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
-	felipe.balbi@linux.intel.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jameswei@google.com, Badhri Jagan Sridharan <badhri@google.com>, stable@kernel.org
+Date: Sun, 16 Feb 2025 14:31:48 -0800
+X-Gm-Features: AWEUYZmkRrQrQdokNUgGybniLGe4W3P_6erF9zgnNPRfR9oMjd1lIsIHVIkfe4w
+Message-ID: <CAPTae5KEc+E7FyY-k11v3NJFzOwwPO29v8+zqqapAdO5STjh_w@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: dwc3: gadget: Prevent irq storm when TH re-executes
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jameswei@google.com" <jameswei@google.com>, 
+	"stable@kernel.org" <stable@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-While commit d325a1de49d6 ("usb: dwc3: gadget: Prevent losing events in
-event cache") makes sure that top half(TH) does not end up overwriting the
-cached events before processing them when the TH gets invoked more than one
-time, returning IRQ_HANDLED results in occasional irq storm where the TH
-hogs the CPU. The irq storm can be prevented by the flag before event
-handler busy is cleared. Default enable interrupt moderation in all
-versions which support them.
+On Thu, Feb 13, 2025 at 2:29=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys=
+.com> wrote:
+>
+> On Wed, Feb 12, 2025, Badhri Jagan Sridharan wrote:
+> > On Mon, Feb 10, 2025 at 4:55=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@syno=
+psys.com> wrote:
+> > >
+> > > On Mon, Feb 10, 2025, Badhri Jagan Sridharan wrote:
+> > > > .
+> > > >
+> > > > On Mon, Feb 10, 2025 at 4:22=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@=
+synopsys.com> wrote:
+> > > > >
+> > > > > On Sat, Feb 08, 2025, Badhri Jagan Sridharan wrote:
+> > > > > > While commit d325a1de49d6 ("usb: dwc3: gadget: Prevent losing e=
+vents in
+> > > > > > event cache") makes sure that top half(TH) does not end up over=
+writing the
+> > > > > > cached events before processing them when the TH gets invoked m=
+ore than one
+> > > > > > time, returning IRQ_HANDLED results in occasional irq storm whe=
+re the TH
+> > > > > > hogs the CPU. The irq storm can be prevented by clearing the fl=
+ag before
+> > > > > > event handler busy is cleared. Default enable interrupt moderat=
+ion in all
+> > > > > > versions which support them.
+> > > > > >
+> > > > > > ftrace event stub during dwc3 irq storm:
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000866: irq_handle=
+r_exit: irq=3D14 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000872: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000874: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000881: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000883: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000889: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000892: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000898: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000901: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000907: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000909: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000915: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000918: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000924: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000927: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000933: irq_handle=
+r_entry: irq=3D504 name=3Ddwc3
+> > > > > >     irq/504_dwc3-1111  ( 1111) [000] .... 70.000935: irq_handle=
+r_exit: irq=3D504 ret=3Dhandled
+> > > > > >     ....
+> > > > > >
+> > > > > > Cc: stable@kernel.org
+> > > > > > Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> > > > > > Fixes: d325a1de49d6 ("usb: dwc3: gadget: Prevent losing events =
+in event cache")
+> > > > > > Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+> > > > > > ---
+> > > > > >  drivers/usb/dwc3/core.c   |  2 +-
+> > > > > >  drivers/usb/dwc3/gadget.c | 10 +++++++---
+> > > > > >  2 files changed, 8 insertions(+), 4 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > > > > index dfa1b5fe48dc..6df971ef7285 100644
+> > > > > > --- a/drivers/usb/dwc3/core.c
+> > > > > > +++ b/drivers/usb/dwc3/core.c
+> > > > > > @@ -1835,7 +1835,7 @@ static void dwc3_get_properties(struct dw=
+c3 *dwc)
+> > > > > >       dwc->tx_thr_num_pkt_prd =3D tx_thr_num_pkt_prd;
+> > > > > >       dwc->tx_max_burst_prd =3D tx_max_burst_prd;
+> > > > > >
+> > > > > > -     dwc->imod_interval =3D 0;
+> > > > > > +     dwc->imod_interval =3D 1;
+> > > > >
+> > > > > Use dwc3_has_imod() to determine whether to set this. Otherwise w=
+e get
+> > > > > a warning on setups that don't support imod.
+> > > >
+> > > > Hi Thinh,
+> > > >
+> > > > dwc3_check_params() which gets invoked after dwc3_get_properties() =
+at
+> > > > https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.14-=
+rc1/source/drivers/usb/dwc3/core.c*L1851__;Iw!!A4F2R9G_pg!Zar83WUe4sM-EF4c2=
+wR2-vWBJHgYOCWEc1ijhOsWQHiXtzCF0d_t2gckS0YJUv4lAZgGZl2C-oSp1QMIx28$
+> > > > seems to already call dwc3_has_imod(). Do you prefer me to add an
+> > > > explicit check here as well ?
+> > > >
+> > >
+> > > Yes. I don't want to see dev_warn print when there shouldn't be any f=
+or
+> > > setup that don't support imod.
+> >
+> > Hi Thinh,
+> >
+> > Looks like adding dwc3_has_imod() in dwc3_get_properties() would not
+> > be possible as the dwc->revision gets filled in much later at
+> > dwc3_core_is_valid():
+> > https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v6.14-rc2/=
+source/drivers/usb/dwc3/core.c*L2218__;Iw!!A4F2R9G_pg!d67RghVyoDYTtMqlnAcNg=
+HywoW0ZfJnYX1NSjokyqaBnPrdiF4w0FlFgTGDEVcSZeUHfpBGIgQtx_UAa1t0$ ,
+> > also, the core is still not brought out of reset yet. Would it be
+> > reasonable to initialize dwc->imod_interval to 1 in
+> > dwc3_check_params() like below ?
+> >
+> > +++ b/drivers/usb/dwc3/core.c
+> > @@ -1835,8 +1835,6 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+> >         dwc->tx_thr_num_pkt_prd =3D tx_thr_num_pkt_prd;
+> >         dwc->tx_max_burst_prd =3D tx_max_burst_prd;
+> >
+> > -       dwc->imod_interval =3D 1;
+> > -
+> >         dwc->tx_fifo_resize_max_num =3D tx_fifo_resize_max_num;
+> >  }
+> >
+> > @@ -1858,6 +1856,8 @@ static void dwc3_check_params(struct dwc3 *dwc)
+> >         if (dwc->imod_interval && !dwc3_has_imod(dwc)) {
+> >                 dev_warn(dwc->dev, "Interrupt moderation not supported\=
+n");
+> >                 dwc->imod_interval =3D 0;
+> > +       } else if (!dwc->imod_interval && dwc3_has_imod(dwc)) {
+> > +               dwc->imod_interval =3D 1;
+> >         }
+> >
+>
+> Can you consolidate all the settings of IMOD to the below:
 
-ftrace event stub during dwc3 irq storm:
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000866: irq_handler_exit: irq=14 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000872: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000874: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000881: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000883: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000889: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000892: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000898: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000901: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000907: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000909: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000915: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000918: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000924: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000927: irq_handler_exit: irq=504 ret=handled
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000933: irq_handler_entry: irq=504 name=dwc3
-    irq/504_dwc3-1111  ( 1111) [000] .... 70.000935: irq_handler_exit: irq=504 ret=handled
-    ....
+Done Thinh !
+Sent out V3 version of the patch:
+https://lore.kernel.org/all/20250216223003.3568039-1-badhri@google.com/
 
-Cc: stable@kernel.org
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Fixes: d325a1de49d6 ("usb: dwc3: gadget: Prevent losing events in event cache")
-Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
----
-Changes since v2:
-* Consolidate logic for default enabling interrupt moderation as suggested
-  by Thinh.Nguyen@
----
- drivers/usb/dwc3/core.c   | 16 ++++++----------
- drivers/usb/dwc3/gadget.c | 10 +++++++---
- 2 files changed, 13 insertions(+), 13 deletions(-)
+Thanks,
+Badhri
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index dfa1b5fe48dc..2c472cb97f6c 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1835,8 +1835,6 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 	dwc->tx_thr_num_pkt_prd = tx_thr_num_pkt_prd;
- 	dwc->tx_max_burst_prd = tx_max_burst_prd;
- 
--	dwc->imod_interval = 0;
--
- 	dwc->tx_fifo_resize_max_num = tx_fifo_resize_max_num;
- }
- 
-@@ -1854,21 +1852,19 @@ static void dwc3_check_params(struct dwc3 *dwc)
- 	unsigned int hwparam_gen =
- 		DWC3_GHWPARAMS3_SSPHY_IFC(dwc->hwparams.hwparams3);
- 
--	/* Check for proper value of imod_interval */
--	if (dwc->imod_interval && !dwc3_has_imod(dwc)) {
--		dev_warn(dwc->dev, "Interrupt moderation not supported\n");
--		dwc->imod_interval = 0;
--	}
--
- 	/*
-+	 * Enable IMOD for all supporting controllers.
-+	 *
-+	 * Particularly, DWC_usb3 v3.00a must enable this feature for
-+	 * the following reason:
-+	 *
- 	 * Workaround for STAR 9000961433 which affects only version
- 	 * 3.00a of the DWC_usb3 core. This prevents the controller
- 	 * interrupt from being masked while handling events. IMOD
- 	 * allows us to work around this issue. Enable it for the
- 	 * affected version.
- 	 */
--	if (!dwc->imod_interval &&
--	    DWC3_VER_IS(DWC3, 300A))
-+	if (dwc3_has_imod((dwc)))
- 		dwc->imod_interval = 1;
- 
- 	/* Check the maximum_speed parameter */
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index d27af65eb08a..fad115113d28 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -4467,14 +4467,18 @@ static irqreturn_t dwc3_process_event_buf(struct dwc3_event_buffer *evt)
- 	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
- 		    DWC3_GEVNTSIZ_SIZE(evt->length));
- 
-+	evt->flags &= ~DWC3_EVENT_PENDING;
-+	/*
-+	 * Add an explicit write memory barrier to make sure that the update of
-+	 * clearing DWC3_EVENT_PENDING is observed in dwc3_check_event_buf()
-+	 */
-+	wmb();
-+
- 	if (dwc->imod_interval) {
- 		dwc3_writel(dwc->regs, DWC3_GEVNTCOUNT(0), DWC3_GEVNTCOUNT_EHB);
- 		dwc3_writel(dwc->regs, DWC3_DEV_IMOD(0), dwc->imod_interval);
- 	}
- 
--	/* Keep the clearing of DWC3_EVENT_PENDING at the end */
--	evt->flags &= ~DWC3_EVENT_PENDING;
--
- 	return ret;
- }
- 
-
-base-commit: 9682c35ff6ecd76d9462d4749b8b413d3e8e605e
--- 
-2.48.1.601.g30ceb7b040-goog
-
+>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 423866b2ffaa..a485fef82301 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -2021,21 +2021,19 @@ static void dwc3_check_params(struct dwc3 *dwc)
+>         unsigned int hwparam_gen =3D
+>                 DWC3_GHWPARAMS3_SSPHY_IFC(dwc->hwparams.hwparams3);
+>
+> -       /* Check for proper value of imod_interval */
+> -       if (dwc->imod_interval && !dwc3_has_imod(dwc)) {
+> -               dev_warn(dwc->dev, "Interrupt moderation not supported\n"=
+);
+> -               dwc->imod_interval =3D 0;
+> -       }
+> -
+>         /*
+> +        * Enable IMOD for all supporting controllers.
+> +        *
+> +        * Particularly, DWC_usb3 v3.00a must enable this feature for
+> +        * the following reason:
+> +        *
+>          * Workaround for STAR 9000961433 which affects only version
+>          * 3.00a of the DWC_usb3 core. This prevents the controller
+>          * interrupt from being masked while handling events. IMOD
+>          * allows us to work around this issue. Enable it for the
+>          * affected version.
+>          */
+> -       if (!dwc->imod_interval &&
+> -           DWC3_VER_IS(DWC3, 300A))
+> +       if (dwc3_has_imod((dwc)))
+>                 dwc->imod_interval =3D 1;
+>
+>
+> Thanks,
+> Thinh
 
