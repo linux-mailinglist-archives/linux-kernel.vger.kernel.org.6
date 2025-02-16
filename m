@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-516866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C07A3790E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:58:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F7EA37910
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7983AB051
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78FFC16CCBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4245C1A83E6;
-	Sun, 16 Feb 2025 23:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637AF19DF40;
+	Sun, 16 Feb 2025 23:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="BYJTIAYP"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dACoSNaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C601A38E1;
-	Sun, 16 Feb 2025 23:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA0D1A38E1;
+	Sun, 16 Feb 2025 23:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739750281; cv=none; b=Tex9znj3SxSxCDU6o50jZfU+6NP4X61b+yYMwUh6nhzSog2YNCm079RbDIExE2x+GgdIRO8TSiAH8xEFyvrosaDs/ek3bUX7RvF9EZze/43fylkv5iUMQPKQwq1uiguf7CTYS2mmU3/8ldEesrFfy1pP/v3H8O8AQg2SwciB9L0=
+	t=1739750303; cv=none; b=W/5CqSAdh98kIIuCIRK/jY4JxFNj2sOES/rjPgfWKmDxqcAfgoS6Kuy+jK80/i38WfSoPp53O1PV6Jl5dBAvzpJ/eIedQGcqsCQjdPRe3juISv+BPZNKXlgRi7jWgXAOhPRM0Kl5dytPOQN+8isVI3ri8GcCyMpwyXh8ckDFaFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739750281; c=relaxed/simple;
-	bh=RvMyz69Q5a1HwyeTHOUFJKWZ23Du+1ViAhQqi4WE9X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qZJnVtRxml29kiyFKloLoJ+wt9J4ILgzflSrNhZ3gooXnef2nu6vLeyy7M/DXFM+zGZkJe+qri0mCoagvqOA0zpI+GISzSEEVc6hQCOy77LixAm2zbbOhpWwazNspWDVLsQQZmSKKGzjhyi3xX1XxsU95CPir37w6mqwwa5c2W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=BYJTIAYP; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.157])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 3AB4C260F6;
-	Sun, 16 Feb 2025 23:57:58 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay3.mymailcheap.com (Postfix) with ESMTPS id B8B2F3EA8A;
-	Sun, 16 Feb 2025 23:57:49 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 6182F4023E;
-	Sun, 16 Feb 2025 23:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1739750269; bh=RvMyz69Q5a1HwyeTHOUFJKWZ23Du+1ViAhQqi4WE9X8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BYJTIAYPkG+5mPQal7AKQJlQ0t0QDjtxp/w+OPwiLxmU2/ZraRrj+ID3Oy9WLNn9p
-	 aZw1Uok8dOW6s4eiflXpQRnTtQMBLcVlyxqCdqgl8VWGdbUgdLZpo1s+I09BnLoIh9
-	 RDsoSOrVmiHWKdVMk22qOhwpeJ+dBL6APKbBzltE=
-Received: from [198.18.0.1] (unknown [58.32.17.244])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id C863940657;
-	Sun, 16 Feb 2025 23:57:44 +0000 (UTC)
-Message-ID: <270c8038-dfb2-4b09-87ba-023b353c67df@aosc.io>
-Date: Mon, 17 Feb 2025 07:57:42 +0800
+	s=arc-20240116; t=1739750303; c=relaxed/simple;
+	bh=NW8y5IgtWJOIbWJ6+WKvwXaEUgAUvbyrTPPzLSFtQS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqELcvAe+IlHs0evdgVwvRSzqs3B72yKL55P/hMJpM9V79hhTvFstwJubkN2N1O20WQK3RCorvJ9v5hLNQlUS8BByw4b+KqVvZgD499tGmogxMF4tv8N1CXoVv+fM705ealdnKYGxadhSBkKDFulYwb6xIMlVSDAAqsBUFCKaSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dACoSNaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A8FC4CEDD;
+	Sun, 16 Feb 2025 23:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739750303;
+	bh=NW8y5IgtWJOIbWJ6+WKvwXaEUgAUvbyrTPPzLSFtQS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dACoSNaXP1tnUuY/1D08IkyLPK59GfyoqOQD6DeVVqPpjLKzHthmQDSB9H/CDk0wZ
+	 tc20E5q8JdrlK9TnaftVkxprduiIo7ucittZOqYe0DGyvEBFmfZaDxcHwHrRyrLrk5
+	 3WnkXIPnM7HRUAeOnQw+XRwmFDEj+G+lKkCHDpCqO3j0jowK4sQ6g+HRjbDxLQPseb
+	 nIqtXgi/SMIV38+B5PUwRzW3xp6kASDJtG0qJOWfnIJevmYdrT4d46RIO395J9QJpw
+	 rlxng0Wb0FSv4Ld0EQB1a4ah0s+5EWr2PEpalk9JEdXuS/uTi/tFFhKsPWfm2zikoT
+	 Co2+Fp3qXMlDA==
+Date: Sun, 16 Feb 2025 23:58:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev
+Subject: Re: [PATCH 19/27] ASoC: tas2764: Fix power control mask
+Message-ID: <4b665578-7da7-4a94-a4b8-bbb3196927a1@sirena.org.uk>
+References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
+ <20250215-apple-codec-changes-v1-19-723569b21b19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Thunderbird Daily
-Subject: Re: [PATCH 6.12 000/418] 6.12.14-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250215075701.840225877@linuxfoundation.org>
-Content-Language: en-US
-From: Kexy Biscuit <kexybiscuit@aosc.io>
-In-Reply-To: <20250215075701.840225877@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: 6182F4023E
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.41 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	BAYES_SPAM(0.00)[20.06%];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCVD_COUNT_ONE(0.00)[1];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[kexybiscuit.aosc.io:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de,microsoft.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3g2f+/Kxo5qlC/ux"
+Content-Disposition: inline
+In-Reply-To: <20250215-apple-codec-changes-v1-19-723569b21b19@gmail.com>
+X-Cookie: This is a good time to punt work.
 
-On 2/15/2025 3:58 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.14 release.
-> There are 418 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon, 17 Feb 2025 07:52:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.14-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-All tests passed.
+--3g2f+/Kxo5qlC/ux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-amd64       (kernel arch: x86)
-   building passed, smoke testing passed on 9 test systems
-arm64       (kernel arch: arm64)
-   building passed, smoke testing passed on 2 test systems
-loongarch64 (kernel arch: loongarch)
-   building passed, smoke testing passed on 2 test systems
-loongson3   (kernel arch: mips)
-   building passed, smoke testing passed on 1 test system
-ppc64el     (kernel arch: powerpc)
-   building passed
-riscv64     (kernel arch: riscv)
-   building passed
+On Sat, Feb 15, 2025 at 10:02:52AM +1000, James Calligeros wrote:
+> From: Hector Martin <marcan@marcan.st>
+>=20
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 
-Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+Fixes should go at the start of the series so that they don't end up
+with spurious dependencies on other non-fix patches.  I did pull some
+random fixes out of the Asahi tree the other week which are in CI now,
+I can't remember off hand if this was one of them.
 
-https://github.com/AOSC-Dev/aosc-os-abbs/pull/9699
+--3g2f+/Kxo5qlC/ux
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Best Regards,
-Kexy Biscuit
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeye5YACgkQJNaLcl1U
+h9CjEQf/YDoJJkwN67MI2NSsLjIamXB0d+897tBjYsBbH6UAa9IR9fyEXuzJ+XcR
+MxG8DSp6/niCIUpdfz0JLlfVjjthp89L/Q2UOCxRaW3CUwA29BQtJTfFARZpsy4w
+/IsJ+XWRhq98GZ2+lDGLWzJ+OX8A/9ea6k8B3chQZjw62qzf/9XDFVKKkt38ElQn
+eL+wW1td6LTEtI6G3s54BzLvNUSfc8ddUGyPk+GF9QM+9wgUuPxXi+1jVYVZ/lSK
+ZFX2HH8lyYX/aUYCxiU2ODtvKbhpsQlzmhTgSqmh28+ErRGDhmNZ2z8ROxGKyzRL
+cmbHtlO4TM2jp3ktemvX7bCVLIZC1Q==
+=1sjf
+-----END PGP SIGNATURE-----
+
+--3g2f+/Kxo5qlC/ux--
 
