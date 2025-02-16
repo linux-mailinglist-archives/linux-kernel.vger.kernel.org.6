@@ -1,78 +1,139 @@
-Return-Path: <linux-kernel+bounces-516597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938C5A3746F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B700A37473
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E413A80CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83DA93A6A04
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59B918FC80;
-	Sun, 16 Feb 2025 13:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBBC1917E7;
+	Sun, 16 Feb 2025 13:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9fTKODF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkItY1gG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476361624E7;
-	Sun, 16 Feb 2025 13:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911318DB32;
+	Sun, 16 Feb 2025 13:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739711068; cv=none; b=n2WbKpK/D1qB6yQ2+G84DvWyhkXTscj7J7bhvYZGJkkLlPIDE37NvLxRHKh9lKIpR1TLGMT5DtvvWFPTHqdABu0I/Nfepknx/EBeZUafksvbZIPD/VdG+F5pZrOCr+9xhUGucyCqpI0TjDGcrx0sgzMZeaSZPY7hQx/FWj0pHHo=
+	t=1739711216; cv=none; b=ZmYX1tf0F8sbS5xwLnYz476nw5YbyvDQFcwOYkm4ZLzAur7ntyeZcQnrx1g+Bghr8+Iw6rZ5MHLx4S6kWoUgx8AXpOBvt2isIc3UHApPFVrnboGjX1jRZGeJk4Sf9MFoMEXP0IJZMCWc4Xhpbb3aQMt5HxmQ3JRxNL93T+SpuuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739711068; c=relaxed/simple;
-	bh=2DgYYa+sRMSdsArcKlMHioO3e8x9CH+o+ntTlFbukHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOfqNInrIblcQhvYP93rOSHzwBHBXl3n81FtCntrwalP9yYrgeJWRAietotuTIlqLb0QSErQxDmEFs1ecNw3/bXnyvXk3W5Vo6APlWg3Ou5LXnyi9aPeS2Zv4GCTpGoN+wxu83Sd+X5F3slQnJRDVZbqNDK4bZb2adj5PpI4tEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9fTKODF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F5CDC4CEDD;
-	Sun, 16 Feb 2025 13:04:26 +0000 (UTC)
+	s=arc-20240116; t=1739711216; c=relaxed/simple;
+	bh=ykJyMJULcLZDpqvZcbmg5sewNSxnK8UmHYPwtvvLaBU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dW782snYcZvYusrFwl4k2tNEiRTZjkMaBvmP1BPITzuvDfdxyc8KZfJsxoj5RSrMp75PwSHZG95oVrtmUgCouzZkPLeJZZ2YsMcAJuGLZhKXULQY9Nv04ej4V2NpGdATFbJzI10VNz7FhKSQyNn56vcY9dpcmOOM4O2UkIaa4cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkItY1gG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5AE2C4CEDD;
+	Sun, 16 Feb 2025 13:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739711067;
-	bh=2DgYYa+sRMSdsArcKlMHioO3e8x9CH+o+ntTlFbukHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u9fTKODFfoifPnR9RwfctjqijIXwhq8ui6ZqPyQbbqdk/EEVTh5BLH9Zj0YCsso9Q
-	 KF17nj5EnIBNcXLEcWiIMDUOGC2T9Sujm0Ah329jNbGdd8FdsM3r/uVxcuotmo6iNG
-	 pTto3kLPJq+BEvl38RYwKHglkijlPQNFv5z1ngsnnAh9LNt18jYX2J2idV09efplBe
-	 1fSHQVJqpP7S5AqzxU+94N06F3/KGHz8ix6Ck0j2L4CHFmyPjTXbQMVPQr+m8U7AOr
-	 q1ZJ1HBXbEBgdvPTfPkEatYreGFNSv7GKhBfgHyAYKMPuNMCKGoSMThr1zNHaKBKxw
-	 mVPIp4EIRkbFg==
-Date: Sun, 16 Feb 2025 14:04:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikola Jelic <nikola.jelic83@gmail.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, 
-	tiwai@suse.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rwalton@cmlmicro.com
-Subject: Re: [PATCH 2/2 V5] ASoC: codecs: cmx655: Add CML's CMX655D codec
-Message-ID: <20250216-nano-pelican-of-holiness-23b1fb@krzk-bin>
-References: <20250214215826.80878-1-nikola.jelic83@gmail.com>
- <20250214215826.80878-2-nikola.jelic83@gmail.com>
+	s=k20201202; t=1739711215;
+	bh=ykJyMJULcLZDpqvZcbmg5sewNSxnK8UmHYPwtvvLaBU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=JkItY1gGIVhyzRaJAsGSGlJiUidLvTYJbcZg5EMDVnRTY1Fobut34V6WV+rf4h3XA
+	 fSJhD6Nupse6aPytjnr6+8u7uMGVF1PuiMa0iDNbVoEYzPaF7fvTv586aEAe5LXsSn
+	 xxvhktiBm+DX3fYscQQSYDQH9nKthkEsRaDhUfdiIUpZjz4rZ+zLGhwIWMUSLZns8C
+	 cspdrtC4LvdTlGD1dgtL/vVkkMq4xkQrGe7nbRt7sGyDW9hyv0a1TlwW4ORPVvNBjI
+	 wFAT5T7rVIBwI7sBnP1VHsbnnvAOrwnjHxOW5mdLVMcd9KcvphDjKmLKGnVPZz+vNS
+	 peSvxg9aUyi9g==
+Message-ID: <cdbb8176-d109-4a31-9393-5e1ae6767170@kernel.org>
+Date: Sun, 16 Feb 2025 14:06:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250214215826.80878-2-nikola.jelic83@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 V4] ASoC: dt-bindings: Add cmx655 codec
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikola Jelic <nikola.jelic83@gmail.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rwalton@cmlmicro.com
+References: <20250214215826.80878-1-nikola.jelic83@gmail.com>
+ <20250216-fearless-arcane-koel-3c75ad@krzk-bin>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250216-fearless-arcane-koel-3c75ad@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 10:58:02PM +0100, Nikola Jelic wrote:
-> Signed-off-by: Nikola Jelic <nikola.jelic83@gmail.com>
+On 16/02/2025 14:03, Krzysztof Kozlowski wrote:
+> On Fri, Feb 14, 2025 at 10:58:01PM +0100, Nikola Jelic wrote:
+>> Signed-off-by: Nikola Jelic <nikola.jelic83@gmail.com>
+>>
+>> ---
+>> V3 -> V4: review remarks
 > 
-> ---
-> V4 -> V5: Introduced a module parameter for reset attempts, header fixes
+> You keep sending the same, not responding to comments and not fixing
+> them. Still nothing improved - same problems as v1.
+> 
+> What above changelog even mean?
+> 
+> Please respond to the feedback, the best to the v1 which you received,
+> that you acknowledge and implement it. If you have questions, then ask.
+> Sending something with the same mistakes for 5th or 6th time means we do
+> not understand each other.
+To recap, feedback from v1 to respond to:
 
-Why this is v5 but other patch is v4?
+Please run scripts/checkpatch.pl and fix reported warnings. After that,
+run also `scripts/checkpatch.pl --strict` and (probably) fix more
+warnings. Some warnings can be ignored, especially from --strict run,
+but the code here looks like it needs a fix. Feel free to get in touch
+if the warning is not clear.
 
-Entire patchset is versioned, not patches. `b4` does it for you. `git
-format-patch -v4` as well.
+Feedback from v3: go to v3 and respond or implement. Your changelog
+suggests nothing changed or it is just not precise enough.
+
 
 Best regards,
 Krzysztof
-
 
