@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-516865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ABEA3790C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:56:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053DEA3791C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B383A04F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:56:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB50F188E7BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13981A9B4C;
-	Sun, 16 Feb 2025 23:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E356E23C9;
+	Mon, 17 Feb 2025 00:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFpoj70M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="XG8sok2p"
+Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F1742070;
-	Sun, 16 Feb 2025 23:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE9A41;
+	Mon, 17 Feb 2025 00:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739750187; cv=none; b=BAqIuYrRtwgvdIr5CnJdYas46A8ofVXZgp6sAKklpskcXuJVBMqMdKrenm7TzdyxcqkBPun13fk/U9kiSkmfRZq3GVi5GE08TEvMON9j8cClu8TbqeymXRr+qSTWQEpm/EUWDUWsZ78A+huSbh3U2y50w8eZ4UAkqwZjzLNZwsM=
+	t=1739750666; cv=none; b=MsXkPsDsnyg7EaX8CnPAN/kBMssqcBbpo4c+dmprciOMNJnVn0L+nI0FRE1XlS7riF/czV6+OxOpDLCJj1iJa5BYHLXWOyFolOrGM1YPI1ftccg1dcVbqNtREaOUmH4Pnu2UW4KCILH2tH0naLnY0cuUBqJ9Wb1vJ4C+nNLHuvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739750187; c=relaxed/simple;
-	bh=j6Gn+HMB6SopZbs1Rg2ehZv/3D386/1lLfPTTt36S5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hr/gn+5g6+GjIy94u1TjMU/q8rvKg/DtA0pzkCSc+qLNwluxjWCbU2UBJOn87ITIA3mmlV+pR9m2jJYxSI06VOG4pigyg47+K18Zi/2NuzQliTH2zsvzTfXeXQBrQHpfU1cCoHSPmUpQ1vO7P0DAXdSvfsfj5bPCS6024YY29mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFpoj70M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87D5C4CEE7;
-	Sun, 16 Feb 2025 23:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739750186;
-	bh=j6Gn+HMB6SopZbs1Rg2ehZv/3D386/1lLfPTTt36S5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uFpoj70MmzIdRjLlmXyjeMgnSlPUdnKm6CDdyDuFqVNYAPtZXTXdBCkRIvYUuHjGx
-	 8MwLcJszK5qyiRliGArDiLLCxq7Bh2xZ2CHw6Cwd9gmj9g58X2or02lGwGW8bMDgTe
-	 /jyxXW1d6qCdeiJElajHel/LF+XFVzdXmUPN4EdJliLQZkGjueto01l+UxvGuZ4foR
-	 DtUA4dNCHrrvnPpt4jei5KNLwJ9ptTwxyuV+2uocY7zoAOs41WSJF3R0kIfpAPIk56
-	 JWFTdYcwphi32QA4QDMXyczkbsPlhC5/ubHABoOCWwc5K2KKz8Gk+GAkxCnzSYtqu9
-	 A7PBRBhsbmT5Q==
-Date: Sun, 16 Feb 2025 23:56:19 +0000
-From: Mark Brown <broonie@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev
-Subject: Re: [PATCH 11/27] ASoC: tas2770: Export 'die_temp' to sysfs
-Message-ID: <7b4adf37-fdbd-4245-973c-5f923414b131@sirena.org.uk>
-References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
- <20250215-apple-codec-changes-v1-11-723569b21b19@gmail.com>
+	s=arc-20240116; t=1739750666; c=relaxed/simple;
+	bh=WcwwYqXch6QV/PhVm4Vn7dF66DiUSx5U7MGHrLCNvyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H/B4v3oV5H5MMHohQwL3laB63zhr6bRvGGxjDorS3w7pfCD0OUVBx2HZ99WsnDyhjHwFMCaw81P9QFBvlvc5gPHZhEPOJlg/zh2wNwUSrfm7ReOczt2zAqViJEJV8dQzGfzBQ1xWs3nt6M9Jl6zEyewoY190ina4AGHLEtx2++c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=XG8sok2p; arc=none smtp.client-ip=51.81.35.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 45D6820496;
+	Sun, 16 Feb 2025 23:57:27 +0000 (UTC)
+Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.102])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id A9EFF260EB;
+	Sun, 16 Feb 2025 23:57:17 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay1.mymailcheap.com (Postfix) with ESMTPS id 9F97C3E939;
+	Sun, 16 Feb 2025 23:57:09 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id A3B0F4023E;
+	Sun, 16 Feb 2025 23:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1739750228; bh=WcwwYqXch6QV/PhVm4Vn7dF66DiUSx5U7MGHrLCNvyw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XG8sok2p80qBXIoQ91t+ESJlpumx2vB7wGIhARCY5ph8gw9ubH7pF54BJJ0TAO2M3
+	 jSzrYOFW0u6P/hl157Ib8r0El2aoU1o8N2aP/qdPGQY8tyhbdWf3LxhhHVxSaorFqd
+	 fkwVReZmINsF3ytVyalzDAJo54ia5xvTsssc6Zak=
+Received: from [198.18.0.1] (unknown [58.32.17.244])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 6D5E04086E;
+	Sun, 16 Feb 2025 23:57:03 +0000 (UTC)
+Message-ID: <2327a312-8b1a-4fde-9fa5-1aec5498bfdb@aosc.io>
+Date: Mon, 17 Feb 2025 07:57:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PXshCQ8lgf8ndIg+"
-Content-Disposition: inline
-In-Reply-To: <20250215-apple-codec-changes-v1-11-723569b21b19@gmail.com>
-X-Cookie: This is a good time to punt work.
+User-Agent: Thunderbird Daily
+Subject: Re: [PATCH 6.13 000/442] 6.13.3-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250215075925.888236411@linuxfoundation.org>
+Content-Language: en-US
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+In-Reply-To: <20250215075925.888236411@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: A3B0F4023E
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.41 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	BAYES_SPAM(0.00)[20.06%];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	RCVD_COUNT_ONE(0.00)[1];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[kexybiscuit.aosc.io:server fail];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de,microsoft.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
 
+On 2/15/2025 4:00 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.3 release.
+> There are 442 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Mon, 17 Feb 2025 07:57:54 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.3-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
---PXshCQ8lgf8ndIg+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+All tests passed.
 
-On Sat, Feb 15, 2025 at 10:02:44AM +1000, James Calligeros wrote:
-> From: Martin Povi=C5=A1er <povik+lin@cutebit.org>
->=20
-> Export a file for the readout of die temperature measurements.
-> As per the datasheet, the temperature can be calculated by
-> dividing the register value by 16 and then subtracting 93.
+amd64       (kernel arch: x86)
+   building passed, smoke testing passed on 9 test systems
+arm64       (kernel arch: arm64)
+   building passed, smoke testing passed on 2 test systems
+loongarch64 (kernel arch: loongarch)
+   building passed, smoke testing passed on 2 test systems
+loongson3   (kernel arch: mips)
+   building passed, smoke testing passed on 1 test system
+ppc64el     (kernel arch: powerpc)
+   building passed
+riscv64     (kernel arch: riscv)
+   building passed
 
-Should this be registered with hwmon - it appears to be exactly the sort
-of thing that gets exported through there?
+Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
 
---PXshCQ8lgf8ndIg+
-Content-Type: application/pgp-signature; name="signature.asc"
+https://github.com/AOSC-Dev/aosc-os-abbs/pull/9696
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmeyeyMACgkQJNaLcl1U
-h9CkUAf+OlvePkmuGFAOUofSjCQ2n99p0ULLt0fZMHvj7hUNIXjnGzTO0Po8FRkz
-2nvCgko1DkFadWb6HKMyoaJMHCSF/tkWKDJHs2YeGbRvNkW93eWano1G05Q7OWK1
-XIy8NkwZk54Dy7+/Ahz85TULty7IcvbjTizwwqncuK6rVIJ3YWw1tHKg84KPWz77
-4KlLayI1Iq/U+AXEd/qEOoMy6j+nbfWfgWDL/ee7a8bmX9T4GkhPWS+bcnOP06Yv
-3YcS0CIxT0LSGyu0IhJAguZSfQpcl2LKtFH1nIsFV5CH9G27yzBeZYRYwFGJlihI
-+YGmpmbBXq7Y1bXfk1eXLpBzhlOAqw==
-=d09O
------END PGP SIGNATURE-----
-
---PXshCQ8lgf8ndIg+--
+-- 
+Best Regards,
+Kexy Biscuit
 
