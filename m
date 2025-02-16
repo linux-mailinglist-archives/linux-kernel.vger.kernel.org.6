@@ -1,236 +1,121 @@
-Return-Path: <linux-kernel+bounces-516815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BD6A377C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF275A377D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B40216C40E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE36216CB9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6811A3166;
-	Sun, 16 Feb 2025 21:31:19 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01481A5BAA;
+	Sun, 16 Feb 2025 21:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="cK9NLujJ"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A594B4C70;
-	Sun, 16 Feb 2025 21:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A91A2541
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 21:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739741479; cv=none; b=PJhNWF8hncT/LELWHdM51sDpMY4NRzY4jR0a0ihMzk2nIAVdVr7LhO+TLGsXLJrEIYVPDyswNCmDfubgjHeiwbPN1viZbCMk35KF8n6bWNpZAzeXh3XkUBZ/xP6K+3bfW70WdpAigunqHR0BuJMsonrtlQ5bZwjPHHW6YCx1k+0=
+	t=1739741888; cv=none; b=I288odtguKUGeGzxMWEDzTDUY8ozGZxqPc7U38yMONunfu4+ouSfKnDDzSvStGWoV9EGN0D/x+jR7JkJwES3hg5JJgCVPXADLfos09VdICEjvSj1yUQSHcwIexhoSZBh3dCpZ2I8mlSIlRCmQEBiaL2ClOrYI7XBcCzCn8n5LOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739741479; c=relaxed/simple;
-	bh=324praNk089pcOYVRkP1OUZJrMvuW0f4iovKWIJh408=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=px/iGGCY0tRBNaB/zxjUxLN0SNP6wi2w4WyV5flS1VqLGpT9EWHuzJ0vxgS1Anjfyq2V6lPJFpnA+26BK/4h5rulfuC2T0q9tn1e+ye1dkPU20w5Gg/H3P0uO5Gu6wUzOE0wUVqLPIZ7cLk5YIys2b7PLHR1Q2vubhd3N39c6qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1tjmEH-00000007Ms3-12lb;
-	Sun, 16 Feb 2025 22:31:09 +0100
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Kailang Yang <kailang@realtek.com>,
-	Oder Chiou <oder_chiou@realtek.com>,
-	Shuming Fan <shumingf@realtek.com>,
-	Qiu Wenbo <qiuwenbo@kylinos.com.cn>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ALSA: hda/realtek: Enable PC beep passthrough for HP EliteBook 855 G7
-Date: Sun, 16 Feb 2025 22:31:03 +0100
-Message-ID: <7461f695b4daed80f2fc4b1463ead47f04f9ad05.1739741254.git.mail@maciej.szmigiero.name>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739741888; c=relaxed/simple;
+	bh=og2mtC207ZGWxPyV8PuZWDABbeHGD9YF42XsoDmRfZc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ba+6STBJgJDwzGyWYLikvIIYw6YoK5eg+botRzCh3zk8DCMsg6xC+cYIEgPMItDvlaW/6qztBGCubiDztnN5T1T6Toy4s0+1JL+TvRQFYWFNQQi3hjkeRww8mXwX5iYjO8fYUTGYlX8pA0EWXnQnWx49UT5D//N6m1d+iS+lbWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=cK9NLujJ; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 567BB2C0276;
+	Mon, 17 Feb 2025 10:37:57 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1739741877;
+	bh=og2mtC207ZGWxPyV8PuZWDABbeHGD9YF42XsoDmRfZc=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=cK9NLujJqhlFD7Nd4Pk4McXM4dxjzfec8zOq53eZ8geyncpnvv/UneyqbX6ORCtI2
+	 qvqpRubE3JcOAwPgQ8uOb1y7HBvaNklttVSyFc2CGvhFhBb+h7zAeBsx3/W3MKxMI/
+	 PXJII0aAGvFC0Qx3aGo4Yyg/vp95VI9TKLL9qLkzFXInFeJIF8z4GjL6iWEMIlf3pp
+	 fDlxzLoihuuI1Lv96r1AQpWl69u7Qz4R6TlfZl5WzzOAVwub+EjZvFTN9/3GKKqQx5
+	 7pCDriyEKpFtWM/NZW2TytN7G/JmH8yb4vLT3bB0NzeHsYzUqf64oMTz/Rt+dfXefy
+	 KkHA/Lqe0eCiA==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67b25ab50000>; Mon, 17 Feb 2025 10:37:57 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 17 Feb 2025 10:37:57 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Mon, 17 Feb 2025 10:37:57 +1300
+From: Tony O'Brien <Tony.OBrien@alliedtelesis.co.nz>
+To: "krzk@kernel.org" <krzk@kernel.org>
+CC: "pavel@kernel.org" <pavel@kernel.org>, "lee@kernel.org" <lee@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Ben Hoelker
+	<Ben.Hoelker@alliedtelesis.co.nz>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] dt-bindings:leds: Add function define for POE
+Thread-Topic: [PATCH] dt-bindings:leds: Add function define for POE
+Thread-Index: AQHbffocic3Nn7P/gEqFn6lcAUmgubNJoDIA
+Date: Sun, 16 Feb 2025 21:37:57 +0000
+Message-ID: <31bc5340976761dbf3653ed2802a8988e07b18d5.camel@alliedtelesis.co.nz>
+References: <20250213005841.4143929-1-tony.obrien@alliedtelesis.co.nz>
+	 <20250213005841.4143929-2-tony.obrien@alliedtelesis.co.nz>
+	 <20250213-successful-pronghorn-of-dignity-83facb@krzk-bin>
+In-Reply-To: <20250213-successful-pronghorn-of-dignity-83facb@krzk-bin>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <94056713911F684BAD502A0AC49E75D6@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: mhej@vps-ovh.mhejs.net
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67b25ab5 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=_uhMn-sHrSUA:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=uH8sxfnJXPhuacFOrcwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=lc6YxIADdIgEMAPwAa2T:22
+X-SEG-SpamProfiler-Score: 0
 
-PC speaker works well on this platform in BIOS and in Linux until sound
-card drivers are loaded. Then it stops working.
-
-There seems to be a beep generator node at 0x1a in this CODEC
-(ALC269_TYPE_ALC215) but it seems to be only connected to capture mixers
-at nodes 0x22 and 0x23.
-If I unmute the mixer input for 0x1a at node 0x23 and start recording
-from its "ALC285 Analog" capture device I can clearly hear beeps in that
-recording.
-
-So the beep generator is indeed working properly, however I wasn't able to
-figure out any way to connect it to speakers.
-
-However, the bits in the "Passthrough Control" register (0x36) seems to
-work at least partially: by zeroing "B" and "h" and setting "S" I can at
-least make the PIT PC speaker output appear either in this laptop speakers
-or headphones (depending on whether they are connected or not).
-
-
-There are some caveats, however:
-* If the CODEC gets runtime-suspended the beeps stop so it needs HDA beep
-device for keeping it awake during beeping.
-
-* If the beep generator node is generating any beep the PC beep passthrough
-seems to be temporarily inhibited, so the HDA beep device has to be
-prevented from using the actual beep generator node - but the beep device
-is still necessary due to the previous point.
-
-* In contrast with other platforms here beep amplification has to be
-disabled otherwise the beeps output are WAY louder than they were on pure
-BIOS setup.
-
-
-Unless someone (from Realtek probably) knows how to make the beep generator
-node output appear in speakers / headphones using PC beep passthrough seems
-to be the only way to make PC speaker beeping actually work on this
-platform.
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
-
-Since more than 6 weeks has now passed since the previous version of this
-patch was posted, yet no better or other solution was provided I'm
-re-submitting an updated version of the original patch.
-    
-This solution has been working fine for me on this platform all that time,
-without any obvious issues.
-    
-Changes from v1:
-* Correct the typo in !IS_ENABLED(CONFIG_INPUT_PCSPKR) code that the
-kernel test robot found.
-    
-* Change codec_warn() into dev_warn_once(hda_codec_dev(codec))
-to avoid spamming the kernel log at runtime PM CODEC re-init.
-
- include/sound/hda_codec.h     |  1 +
- sound/pci/hda/hda_beep.c      | 15 +++++++++------
- sound/pci/hda/patch_realtek.c | 34 +++++++++++++++++++++++++++++++++-
- 3 files changed, 43 insertions(+), 7 deletions(-)
-
-diff --git a/include/sound/hda_codec.h b/include/sound/hda_codec.h
-index 575e55aa08ca..c1fe6290d04d 100644
---- a/include/sound/hda_codec.h
-+++ b/include/sound/hda_codec.h
-@@ -195,6 +195,7 @@ struct hda_codec {
- 	/* beep device */
- 	struct hda_beep *beep;
- 	unsigned int beep_mode;
-+	bool beep_just_power_on;
- 
- 	/* widget capabilities cache */
- 	u32 *wcaps;
-diff --git a/sound/pci/hda/hda_beep.c b/sound/pci/hda/hda_beep.c
-index e51d47572557..13a7d92e8d8d 100644
---- a/sound/pci/hda/hda_beep.c
-+++ b/sound/pci/hda/hda_beep.c
-@@ -31,8 +31,9 @@ static void generate_tone(struct hda_beep *beep, int tone)
- 			beep->power_hook(beep, true);
- 		beep->playing = 1;
- 	}
--	snd_hda_codec_write(codec, beep->nid, 0,
--			    AC_VERB_SET_BEEP_CONTROL, tone);
-+	if (!codec->beep_just_power_on)
-+		snd_hda_codec_write(codec, beep->nid, 0,
-+				    AC_VERB_SET_BEEP_CONTROL, tone);
- 	if (!tone && beep->playing) {
- 		beep->playing = 0;
- 		if (beep->power_hook)
-@@ -212,10 +213,12 @@ int snd_hda_attach_beep_device(struct hda_codec *codec, int nid)
- 	struct hda_beep *beep;
- 	int err;
- 
--	if (!snd_hda_get_bool_hint(codec, "beep"))
--		return 0; /* disabled explicitly by hints */
--	if (codec->beep_mode == HDA_BEEP_MODE_OFF)
--		return 0; /* disabled by module option */
-+	if (!codec->beep_just_power_on) {
-+		if (!snd_hda_get_bool_hint(codec, "beep"))
-+			return 0; /* disabled explicitly by hints */
-+		if (codec->beep_mode == HDA_BEEP_MODE_OFF)
-+			return 0; /* disabled by module option */
-+	}
- 
- 	beep = kzalloc(sizeof(*beep), GFP_KERNEL);
- 	if (beep == NULL)
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 224616fbec4f..fff6e7c1c265 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -28,6 +28,7 @@
- #include <sound/hda_codec.h>
- #include "hda_local.h"
- #include "hda_auto_parser.h"
-+#include "hda_beep.h"
- #include "hda_jack.h"
- #include "hda_generic.h"
- #include "hda_component.h"
-@@ -6923,6 +6924,30 @@ static void alc285_fixup_hp_envy_x360(struct hda_codec *codec,
- 	}
- }
- 
-+static void alc285_fixup_hp_beep(struct hda_codec *codec,
-+				 const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-+		codec->beep_just_power_on = true;
-+	} else  if (action == HDA_FIXUP_ACT_INIT) {
-+#ifdef CONFIG_SND_HDA_INPUT_BEEP
-+		/*
-+		 * Just enable loopback to internal speaker and headphone jack.
-+		 * Disable amplification to get about the same beep volume as
-+		 * was on pure BIOS setup before loading the driver.
-+		 */
-+		alc_update_coef_idx(codec, 0x36, 0x7070, BIT(13));
-+
-+		snd_hda_enable_beep_device(codec, 1);
-+
-+#if !IS_ENABLED(CONFIG_INPUT_PCSPKR)
-+		dev_warn_once(hda_codec_dev(codec),
-+			      "enable CONFIG_INPUT_PCSPKR to get PC beeps\n");
-+#endif
-+#endif
-+	}
-+}
-+
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
- 
-@@ -7707,6 +7732,7 @@ enum {
- 	ALC285_FIXUP_HP_GPIO_LED,
- 	ALC285_FIXUP_HP_MUTE_LED,
- 	ALC285_FIXUP_HP_SPECTRE_X360_MUTE_LED,
-+	ALC285_FIXUP_HP_BEEP_MICMUTE_LED,
- 	ALC236_FIXUP_HP_MUTE_LED_COEFBIT2,
- 	ALC236_FIXUP_HP_GPIO_LED,
- 	ALC236_FIXUP_HP_MUTE_LED,
-@@ -9303,6 +9329,12 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc285_fixup_hp_spectre_x360_mute_led,
- 	},
-+	[ALC285_FIXUP_HP_BEEP_MICMUTE_LED] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc285_fixup_hp_beep,
-+		.chained = true,
-+		.chain_id = ALC285_FIXUP_HP_MUTE_LED,
-+	},
- 	[ALC236_FIXUP_HP_MUTE_LED_COEFBIT2] = {
- 	    .type = HDA_FIXUP_FUNC,
- 	    .v.func = alc236_fixup_hp_mute_led_coefbit2,
-@@ -10392,7 +10424,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8730, "HP ProBook 445 G7", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
- 	SND_PCI_QUIRK(0x103c, 0x8735, "HP ProBook 435 G7", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
- 	SND_PCI_QUIRK(0x103c, 0x8736, "HP", ALC285_FIXUP_HP_GPIO_AMP_INIT),
--	SND_PCI_QUIRK(0x103c, 0x8760, "HP", ALC285_FIXUP_HP_MUTE_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8760, "HP EliteBook 8{4,5}5 G7", ALC285_FIXUP_HP_BEEP_MICMUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x876e, "HP ENVY x360 Convertible 13-ay0xxx", ALC245_FIXUP_HP_X360_MUTE_LEDS),
- 	SND_PCI_QUIRK(0x103c, 0x877a, "HP", ALC285_FIXUP_HP_MUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x877d, "HP", ALC236_FIXUP_HP_MUTE_LED),
+SGkgS3J6eXN6dG9mIC0NCg0KPiBXaGVyZSBkaWQgdGhlc2UgdHdvIHJldmlld3MgaGFwcGVuPw0K
+VGhleSB3ZXJlIGluLWhvdXNlIHJldmlld3MuICBQbGVhc2UgZmVlbCBmcmVlIHRvIHJlbW92ZSB0
+aGVtIGZyb20gdGhlDQpwYXRjaC4NCg0KPiBXaGVyZSBpcyBhbnkgdXNlciBvZiB0aGlzPw0KV2Ug
+YXJlIGFkZGluZyBLZXJuZWwgY29udHJvbCBvZiBQb0UgTEVEcyBhbmQgdGhvdWdodCB0aGlzIG1p
+Z2h0IGJlDQp1c2VmdWwgdG8gb3RoZXJzLCBtYXliZSB0aG9zZSB3b3JraW5nIG9uIG5ldGRldiwg
+b3IgYW55b25lIGltcGxlbWVudGluZw0KUG9FIG9uIHRoZWlyIGRldmljZXMuICBBbHNvLCB0aGUg
+S2VybmVsID4+IERvY3MgPj4gTEVEcyBwYWdlIHN0YXRlczoNCiJJZiByZXF1aXJlZCBjb2xvciBv
+ciBmdW5jdGlvbiBpcyBtaXNzaW5nLCBwbGVhc2Ugc3VibWl0IGEgcGF0Y2ggdG8NCmxpbnV4LWxl
+ZHNAdmdlci5rZXJuZWwub3JnIiwgd2hpY2ggaXMgaW5jbHVkZWQgaGVyZS4NCg0KQ2hlZXJzLA0K
+VG9ueSBPJ0JyaWVuDQoNCk9uIFRodSwgMjAyNS0wMi0xMyBhdCAxMDozMSArMDEwMCwgS3J6eXN6
+dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gVGh1LCBGZWIgMTMsIDIwMjUgYXQgMDE6NTg6NDFQ
+TSArMTMwMCwgVG9ueSBPJ0JyaWVuIHdyb3RlOg0KPiA+IEFkZCBhIGRlZmluZSBzbyBuZXR3b3Jr
+IGRldmljZXMgd2l0aCBhIFBvRSBQU0UgZmVhdHVyZSBjYW4gcHJvdmlkZQ0KPiA+IHN0YXR1cyBp
+bmRpY2F0aW9ucyBvZiBjb25uZWN0ZWQgUG9FIFBEcy4NCj4gPiANCj4gPiBSZXZpZXdlZC1ieTog
+QmVuIEhvZWxrZXIgPGJlbi5ob2Vsa2VyQGFsbGllZHRlbGVzaXMuY28ubno+DQo+ID4gUmV2aWV3
+ZWQtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4N
+Cj4gDQo+IFdoZXJlIGRpZCB0aGVzZSB0d28gcmV2aWV3cyBoYXBwZW4/DQo+IA0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IFRvbnkgTydCcmllbiA8dG9ueS5vYnJpZW5AYWxsaWVkdGVsZXNpcy5jby5uej4N
+Cj4gPiAtLS0NCj4gPiDCoGluY2x1ZGUvZHQtYmluZGluZ3MvbGVkcy9jb21tb24uaCB8IDEgKw0K
+PiA+IMKgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvbGVkcy9jb21tb24uaCBiL2luY2x1ZGUvZHQtDQo+ID4g
+YmluZGluZ3MvbGVkcy9jb21tb24uaA0KPiA+IGluZGV4IDRmMDE3YmVhMDEyMy4uM2E4OTU4Yjgx
+Yzg3IDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvZHQtYmluZGluZ3MvbGVkcy9jb21tb24uaA0K
+PiA+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvbGVkcy9jb21tb24uaA0KPiA+IEBAIC05NCw2
+ICs5NCw3IEBADQo+ID4gwqAjZGVmaW5lIExFRF9GVU5DVElPTl9NT0JJTEUgIm1vYmlsZSINCj4g
+PiDCoCNkZWZpbmUgTEVEX0ZVTkNUSU9OX01URCAibXRkIg0KPiA+IMKgI2RlZmluZSBMRURfRlVO
+Q1RJT05fUEFOSUMgInBhbmljIg0KPiA+ICsjZGVmaW5lIExFRF9GVU5DVElPTl9QT0UgInBvZSIN
+Cj4gDQo+IFdoZXJlIGlzIGFueSB1c2VyIG9mIHRoaXM/DQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+
+IEtyenlzenRvZg0KPiANCg0K
 
