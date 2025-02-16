@@ -1,151 +1,238 @@
-Return-Path: <linux-kernel+bounces-516505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87664A372A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:47:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CB4A372A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504C216E089
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61883AED61
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A71158851;
-	Sun, 16 Feb 2025 08:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEDE1624C2;
+	Sun, 16 Feb 2025 08:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K9i6jsGA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAJjO3BD"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7900A14658B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 08:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86014658B;
+	Sun, 16 Feb 2025 08:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739695666; cv=none; b=Xj/OhehBH/rSZ/ftcU+0QRm1/5gm3WT7sTlhvmYWZNsuENMVKeHB/TPfYt+LU/ZL9AiQsS4WbXB59W6hAkm6YkfglsQFsNlP8yrRzDJAlYgenhOA9xhgX7fP3NCr7EFRRXZCaFKPHQvFtmGlNfpmVEFwxhNQ28zlcXLkbG5MdPc=
+	t=1739695632; cv=none; b=EDhzvsZsCp3CVMO2xTzuJ+HxUrYAcaYuNr4p5J/IGylu+rM/QkHFed2I/5WLrkUf0mEZemeR2kaB3ahWWMNqBn7N02eaJriDnj79xoWq4YbPJ41Od1P73EuF0x4Ah53VtoKaGljjTr9oKKU0dZgMnQjK30Vv/zxiTIkbmxeuTPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739695666; c=relaxed/simple;
-	bh=JjFpiMgcU5A3YARaCEOhDLgvm9/evP6IgGp9NwHlW/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pvHxjZXH/c7sUtbPZY6njUVsCaHi+buTdgRSmkH0oUySADg52PMyCnELsxAeZYnT5SFvaQXZN6YHRMOk8FIKXF6s/hh6pEYLfiwvn8rDGOpBMe5sqoWhEZlP/B2cs1eZfIYmH+7bdlQlj2Cbz0SU3bBsf0a6TjMMU5GFuYRsR/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K9i6jsGA; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739695664; x=1771231664;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=JjFpiMgcU5A3YARaCEOhDLgvm9/evP6IgGp9NwHlW/0=;
-  b=K9i6jsGA2W+shW3BMxG3uNlwiDykHC2ZbDyeAUtAK1rAVP0/9OkwEgse
-   4E0Y0maJ5mvmoPv9rMHHn5pAQkUJQ0xoDFO0z+/dMDm0iBv0QtQKfWf3k
-   zNreCGHAq6rwgvboLS1cqxxAWUTNwSlDD4+CXz4iAhNHS8gTGWTmltT1p
-   vEUelnWH/ddaU3af51B2AG6wCGO55CllkV2Xz2mx0F/2itFRzNoMQwYn8
-   KVdE23WS12jvww71DwbnCMYr3K+hS1tDF0ApkXbn2qxODWuANPxNO8vYe
-   FeGhDf/cK11cIJd7wcP6YPBVEtcMReDmfecu43y9Ay0C4oJttGd9mKbDn
-   Q==;
-X-CSE-ConnectionGUID: XlDNp+OUS82lDrtV7S1Gpg==
-X-CSE-MsgGUID: 6ncwikc1S/G6se+GKtPoGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40535364"
-X-IronPort-AV: E=Sophos;i="6.13,290,1732608000"; 
-   d="scan'208";a="40535364"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 00:47:44 -0800
-X-CSE-ConnectionGUID: q4/0rrhdQw2aZ8vSEcdWVw==
-X-CSE-MsgGUID: kv1TOuqFTkixiT8j7Y/E2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119056105"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 16 Feb 2025 00:47:42 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjaJP-001Bip-2H;
-	Sun, 16 Feb 2025 08:47:39 +0000
-Date: Sun, 16 Feb 2025 16:46:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
- parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
-Message-ID: <202502161648.WZWrFV7I-lkp@intel.com>
+	s=arc-20240116; t=1739695632; c=relaxed/simple;
+	bh=dgLIkuXCcjsa0ryvpJNdPC6pa01pbIKoRU7VPbnSE/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPEjH7AfrF4vgI8UgsRdURNXG0miiScaP9JWQi5vhRuz+Wadd6+Oi70er3n3Yw3/RK1vhcdirT60s7/kXVE8NwIPapLPP0GhvOgZhm+3oRj/Ex2Q5YJi4FiZweTiI45c2agbR3305n/D/WVMcvtlC3qSrII+zZivqDVze7ZNW/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAJjO3BD; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2212a930001so2105405ad.0;
+        Sun, 16 Feb 2025 00:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739695630; x=1740300430; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xGLzo1ULaJmlQlynE+LEweCnpKSiaThlEE0rSn94tRs=;
+        b=AAJjO3BDOYTPHx6hGijqEeh5CE+tmf0uPAxp+2M5V/N/F3jvLPue7GAjooPckTztCR
+         AygMzL1UBHV1ch36NpKfyJ7jw4y0f3iHNOnP4f1PWFbtwCvr7Csjv3ZlHTIde2stJ9/n
+         N4bhB/t/WlB+epOy1hZxyoACzy7elHcSfmy15KIkOD2PUJcqprBSS76QWDDQ4ebq1KTf
+         LJAFt4lkxKuBL8dBERieA3bBzIfr6evUYM8n5ohCL3rzC9a4nVx5+YyRQvysmU4Rozfl
+         z8GoGuCw4/JNZ58M18Yy/enXVeijijJ+IM4TIxuOy/WOQB+E91suaeAEwdCnZv3yN2ty
+         0TLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739695630; x=1740300430;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xGLzo1ULaJmlQlynE+LEweCnpKSiaThlEE0rSn94tRs=;
+        b=cadxBCzDjILci4/S8UW4dOnfXmnCXo7WZ7wza0goRGQ7dsk9vPl9iIBrJJGLo9qToj
+         0Ec5DYL7BJowZKXfLF3nx4UosJN/ZXNTLs7N9ONTkx05RlAV6Bpfv0LOPPkwOu2lpDoO
+         C9wfEv1syeNHHXX6tYWO7kIvIlKzbkWLc6nEYARMm9bEAz6Fdv6sUNf6kufXWZjykBOp
+         iUKv9MYpU5OtMv6L8Sr2if7Oq5tc1hI6k7E9CG4fkete7JIylpeuSuRZ65+20KG3lEyR
+         ogrr1Glkp/Uyzhe9VjyLr95+XDRDezSJDywTINChfI/Q21ucC/vrPsuPQvM40ciPwk8j
+         i6rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBjpu0YwyL8YuLPWkDXn72z8wkeq4ceDcpNPBseJC64cVBTXeifbMletdmKsgZlhzqOeGtyK5BArbtLg==@vger.kernel.org, AJvYcCWpv2QjdnjRNm9NxUxtksTDRcli46JYbsOPd9Yb9PfrxvFx66bjrhdKKsjVYM0vErzjDyhaKK/jlk1T@vger.kernel.org, AJvYcCXxvk9MAmjy+5uT4n/xDUZ+Cb1soV34Ry80Y6wx2rN1vVTiyLYjaHkgirrrqUFas2eiaHEG7Spzzq5G8idY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4oQnvv6Ra1vHLGQKFF68kj1YVjIbthxpQvj8QocgwBdrWqONl
+	E8DreAJ1BkC4zWzcGb7LlWF+D5o5WIPxws26NBfLlFR16VwUqhxa
+X-Gm-Gg: ASbGnctwmH+sAoZhAxi6dEpw5RR5Alqdwkl62P90jY+MflHjszxIi8hZj31X9cOBZt7
+	yfBVioTfl1xuioDPzj6AkbXXYPk/R7fHZarAJe3mEY1GAJENHKl/1dmoiqJGBRGZllpsI9TbKdY
+	0ik6/2QR44c2UYsp7c+J6rpW1qOxKdlqg765z9iqcMKTLm9+73x70JRbR2emHV4DPCRhJMNCvtP
+	ITLsiuWspAPN3Usk3eIIRBROZDUWuVDM/FBq3Q1ulpcj/zw11PilFB5eiiep3PU7o7JrmIppkZc
+	dvmq/udp6WNarEM=
+X-Google-Smtp-Source: AGHT+IFwGSO57uiGrSPWaSqPF81f0cIB7VO2BKvwKqm/QvTPTue+VPSNxvUpu8h5yIfCrS1nOycvLQ==
+X-Received: by 2002:a05:6a21:62c4:b0:1e1:c0d7:7502 with SMTP id adf61e73a8af0-1ee8cc1347amr10454149637.37.1739695629977;
+        Sun, 16 Feb 2025 00:47:09 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7325aadd797sm3323334b3a.34.2025.02.16.00.47.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 00:47:08 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id ADD564208F47; Sun, 16 Feb 2025 15:46:57 +0700 (WIB)
+Date: Sun, 16 Feb 2025 15:46:57 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: David Reaver <me@davidreaver.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	Konstantin Khlebnikov <koct9i@gmail.com>, linux-doc@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] docs: iostats: Rewrite intro, remove outdated formats
+Message-ID: <Z7GmAcpIRrmbWHQ7@archie.me>
+References: <20250215180114.157948-1-me@davidreaver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1k5tCeOp3IGuamdw"
 Content-Disposition: inline
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ad1b832bf1cf2df9304f8eb72943111625c7e5a7
-commit: 40df0a91b2a5228ded8e5f75b80d28c96c6831cd remoteproc: add is_iomem to da_to_va
-date:   3 years, 11 months ago
-config: arm-randconfig-c041-20230507 (https://download.01.org/0day-ci/archive/20250216/202502161648.WZWrFV7I-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502161648.WZWrFV7I-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502161648.WZWrFV7I-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/remoteproc/omap_remoteproc.c:732: warning: Function parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
+In-Reply-To: <20250215180114.157948-1-me@davidreaver.com>
 
 
-vim +732 drivers/remoteproc/omap_remoteproc.c
+--1k5tCeOp3IGuamdw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-34ed5a33b1218e Ohad Ben-Cohen 2011-10-20  716  
-530a1b57e8590f Suman Anna     2020-03-24  717  /**
-530a1b57e8590f Suman Anna     2020-03-24  718   * omap_rproc_da_to_va() - internal memory translation helper
-530a1b57e8590f Suman Anna     2020-03-24  719   * @rproc: remote processor to apply the address translation for
-530a1b57e8590f Suman Anna     2020-03-24  720   * @da: device address to translate
-530a1b57e8590f Suman Anna     2020-03-24  721   * @len: length of the memory buffer
-530a1b57e8590f Suman Anna     2020-03-24  722   *
-530a1b57e8590f Suman Anna     2020-03-24  723   * Custom function implementing the rproc .da_to_va ops to provide address
-530a1b57e8590f Suman Anna     2020-03-24  724   * translation (device address to kernel virtual address) for internal RAMs
-530a1b57e8590f Suman Anna     2020-03-24  725   * present in a DSP or IPU device). The translated addresses can be used
-530a1b57e8590f Suman Anna     2020-03-24  726   * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-530a1b57e8590f Suman Anna     2020-03-24  727   *
-530a1b57e8590f Suman Anna     2020-03-24  728   * Return: translated virtual address in kernel memory space on success,
-530a1b57e8590f Suman Anna     2020-03-24  729   *         or NULL on failure.
-530a1b57e8590f Suman Anna     2020-03-24  730   */
-40df0a91b2a522 Peng Fan       2021-03-06  731  static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
-530a1b57e8590f Suman Anna     2020-03-24 @732  {
-530a1b57e8590f Suman Anna     2020-03-24  733  	struct omap_rproc *oproc = rproc->priv;
-530a1b57e8590f Suman Anna     2020-03-24  734  	int i;
-530a1b57e8590f Suman Anna     2020-03-24  735  	u32 offset;
-530a1b57e8590f Suman Anna     2020-03-24  736  
-530a1b57e8590f Suman Anna     2020-03-24  737  	if (len <= 0)
-530a1b57e8590f Suman Anna     2020-03-24  738  		return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  739  
-530a1b57e8590f Suman Anna     2020-03-24  740  	if (!oproc->num_mems)
-530a1b57e8590f Suman Anna     2020-03-24  741  		return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  742  
-530a1b57e8590f Suman Anna     2020-03-24  743  	for (i = 0; i < oproc->num_mems; i++) {
-530a1b57e8590f Suman Anna     2020-03-24  744  		if (da >= oproc->mem[i].dev_addr && da + len <=
-530a1b57e8590f Suman Anna     2020-03-24  745  		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-530a1b57e8590f Suman Anna     2020-03-24  746  			offset = da - oproc->mem[i].dev_addr;
-530a1b57e8590f Suman Anna     2020-03-24  747  			/* __force to make sparse happy with type conversion */
-530a1b57e8590f Suman Anna     2020-03-24  748  			return (__force void *)(oproc->mem[i].cpu_addr +
-530a1b57e8590f Suman Anna     2020-03-24  749  						offset);
-530a1b57e8590f Suman Anna     2020-03-24  750  		}
-530a1b57e8590f Suman Anna     2020-03-24  751  	}
-530a1b57e8590f Suman Anna     2020-03-24  752  
-530a1b57e8590f Suman Anna     2020-03-24  753  	return NULL;
-530a1b57e8590f Suman Anna     2020-03-24  754  }
-530a1b57e8590f Suman Anna     2020-03-24  755  
+On Sat, Feb 15, 2025 at 10:01:13AM -0800, David Reaver wrote:
+> diff --git a/Documentation/admin-guide/iostats.rst b/Documentation/admin-=
+guide/iostats.rst
+> index 609a3201fd4e..9453196ade51 100644
+> --- a/Documentation/admin-guide/iostats.rst
+> +++ b/Documentation/admin-guide/iostats.rst
+> @@ -2,62 +2,39 @@
+>  I/O statistics fields
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =20
+> -Since 2.4.20 (and some versions before, with patches), and 2.5.45,
+> -more extensive disk statistics have been introduced to help measure disk
+> -activity. Tools such as ``sar`` and ``iostat`` typically interpret these=
+ and do
+> -the work for you, but in case you are interested in creating your own
+> -tools, the fields are explained here.
+> -
+> -In 2.4 now, the information is found as additional fields in
+> -``/proc/partitions``.  In 2.6 and upper, the same information is found i=
+n two
+> -places: one is in the file ``/proc/diskstats``, and the other is within
+> -the sysfs file system, which must be mounted in order to obtain
+> -the information. Throughout this document we'll assume that sysfs
+> -is mounted on ``/sys``, although of course it may be mounted anywhere.
+> -Both ``/proc/diskstats`` and sysfs use the same source for the informati=
+on
+> -and so should not differ.
+> -
+> -Here are examples of these different formats::
+> -
+> -   2.4:
+> -      3     0   39082680 hda 446216 784926 9550688 4382310 424847 312726=
+ 5922052 19310380 0 3376340 23705160
+> -      3     1    9221278 hda1 35486 0 35496 38030 0 0 0 0 0 38030 38030
+> -
+> -   2.6+ sysfs:
+> -      446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 337=
+6340 23705160
+> -      35486    38030    38030    38030
+> -
+> -   2.6+ diskstats:
+> -      3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 1=
+9310380 0 3376340 23705160
+> -      3    1   hda1 35486 38030 38030 38030
+> -
+> -   4.18+ diskstats:
+> -      3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 1=
+9310380 0 3376340 23705160 0 0 0 0
+> -
+> -On 2.4 you might execute ``grep 'hda ' /proc/partitions``. On 2.6+, you =
+have
+> -a choice of ``cat /sys/block/hda/stat`` or ``grep 'hda ' /proc/diskstats=
+``.
+> -
+> -The advantage of one over the other is that the sysfs choice works well
+> -if you are watching a known, small set of disks.  ``/proc/diskstats`` may
+> -be a better choice if you are watching a large number of disks because
+> -you'll avoid the overhead of 50, 100, or 500 or more opens/closes with
+> -each snapshot of your disk statistics.
+> -
+> -In 2.4, the statistics fields are those after the device name. In
+> -the above example, the first field of statistics would be 446216.
+> -By contrast, in 2.6+ if you look at ``/sys/block/hda/stat``, you'll
+> -find just the 15 fields, beginning with 446216.  If you look at
+> -``/proc/diskstats``, the 15 fields will be preceded by the major and
+> -minor device numbers, and device name.  Each of these formats provides
+> -15 fields of statistics, each meaning exactly the same things.
+> -All fields except field 9 are cumulative since boot.  Field 9 should
+> -go to zero as I/Os complete; all others only increase (unless they
+> -overflow and wrap). Wrapping might eventually occur on a very busy
+> -or long-lived system; so applications should be prepared to deal with
+> -it. Regarding wrapping, the types of the fields are either unsigned
+> -int (32 bit) or unsigned long (32-bit or 64-bit, depending on your
+> -machine) as noted per-field below. Unless your observations are very
+> -spread in time, these fields should not wrap twice before you notice it.
+> +The kernel exposes disk statistics via ``/proc/diskstats`` and
+> +``/sys/block/<device>/stat``. These stats are usually accessed via tools
+> +such as ``sar`` and ``iostat``.
+> +
+> +Here are examples using a disk with two partitions::
+> +
+> +   /proc/diskstats:
+> +     259       0 nvme0n1 255999 814 12369153 47919 996852 81 36123024 42=
+5995 0 301795 580470 0 0 0 0 60602 106555
+> +     259       1 nvme0n1p1 492 813 17572 96 848 81 108288 210 0 76 307 0=
+ 0 0 0 0 0
+> +     259       2 nvme0n1p2 255401 1 12343477 47799 996004 0 36014736 425=
+784 0 344336 473584 0 0 0 0 0 0
+> +
+> +   /sys/block/nvme0n1/stat:
+> +     255999 814 12369153 47919 996858 81 36123056 426009 0 301809 580491=
+ 0 0 0 0 60605 106562
+> +
+> +   /sys/block/nvme0n1/nvme0n1p1/stat:
+> +     492 813 17572 96 848 81 108288 210 0 76 307 0 0 0 0 0 0
+> +
+> +Both files contain the same 17 statistics. ``/sys/block/<device>/stat``
+> +contains the fields for ``<device>``. In ``/proc/diskstats`` the fields
+> +are prefixed with the major and minor device numbers and the device
+> +name. In the example above, the first stat value for ``nvme0n1`` is
+> +255999 in both files.
+> +
+> +The sysfs ``stat`` file is efficient for monitoring a small, known set
+> +of disks. If you're tracking a large number of devices,
+> +``/proc/diskstats`` is often the better choice since it avoids the
+> +overhead of opening and closing multiple files for each snapshot.
+> +
+> +All fields are cumulative, monotonic counters, except for field 9, which
+> +resets to zero as I/Os complete. The remaining fields reset at boot, on
+> +device reattachment or reinitialization, or when the underlying counter
+> +overflows. Applications reading these counters should detect and handle
+> +resets when comparing stat snapshots.
+> =20
+>  Each set of stats only applies to the indicated device; if you want
+>  system-wide stats you'll have to find all the devices and sum them all u=
+p.
+>=20
 
-:::::: The code at line 732 was first introduced by commit
-:::::: 530a1b57e8590f2ebbb6a35effa0efa988aabf6c remoteproc/omap: Add the rproc ops .da_to_va() implementation
+The doc LGTM, thanks!
 
-:::::: TO: Suman Anna <s-anna@ti.com>
-:::::: CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--1k5tCeOp3IGuamdw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ7Gl+gAKCRD2uYlJVVFO
+o1p5AQDkfhl6zkpLLKdDOA6iiuY0vt3XzWg2iXIsZ9/ZMhviyQEA6nkZpo8HHpqN
+TqtgvYhTFxAQ524Eb7DMKx3axQ/IXAk=
+=CLqk
+-----END PGP SIGNATURE-----
+
+--1k5tCeOp3IGuamdw--
 
