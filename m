@@ -1,161 +1,360 @@
-Return-Path: <linux-kernel+bounces-516742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E366CA37674
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:03:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB831A37677
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88344168961
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A611887FD3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAEF19D89B;
-	Sun, 16 Feb 2025 18:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5CC19DF4D;
+	Sun, 16 Feb 2025 18:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JYhvvmWZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiGjR5aU"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1982525771;
-	Sun, 16 Feb 2025 18:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6408C1494DF;
+	Sun, 16 Feb 2025 18:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739728978; cv=none; b=YCRKSWNW+4wsa18lbHt1r/KsIqwZqp+a5UFe13GB3nXir3gbKYlsK/mZFeJERoxqddP/tSjS+bzfUHyLP3wRZ6gVKqJiTaR2BgH/2HTp5G0VjdiF34HWP11Kq0+yGy96NPHVEN5737vHbUpj78Ou0vWKeWNhqjft4N3UBEN+GDc=
+	t=1739729377; cv=none; b=WwQp6jqMy8tw6Sf97DyNG6jib9xlfWp2uo+QKMKo/vQfnxCtZYK+dpkc7zaDLE/u58K9T04z73D7fXB3zPsDZ7YhsMkfe350zUd+5mdAxQTVb8fQ79TJfJKShtlu3Uz7utTAZpCjUQPIo8ZVtpzcZRyQVe6Vkh4R0NoWgY+EzLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739728978; c=relaxed/simple;
-	bh=t+WEa/YV84UHDrghWTAOC96OzfAFkWsWBd2b101LDa8=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=cWgw9KrHLKCQ4Pi5ik8aQhlkN0uYPLqBLbFoRzaVU86vjBlEKghVF1uxJnqVU09c1X/SzFpMCqUiXRX99Pz1vkX+YnATc6QJHlaWcuBXNMkPJwuLThGfX9Uajv1++9q9zcIJUsMcpYmZ5BaL6yOUcs8dwbkSrfF2R3Phgrbe2Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JYhvvmWZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51GFFC6d004824;
-	Sun, 16 Feb 2025 18:02:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=t+WEa/YV84UHDrghWTAOC96OzfAF
-	kWsWBd2b101LDa8=; b=JYhvvmWZDFFsQnZKMzDtfI7NFM3GwsOqdZXlGTEB9Fpw
-	kBX4hzvw1uAlIU8vwI1W07phxjJ5tydgZPxEC3JZIaOIHePglXpwURBxJC0sXhfE
-	cl1AB9N0HnznsVnJl+ACctlGpmynjOqku5FK/Wn4SHZd538zHOui95kPsfYHH11a
-	H/DRJX0IC8e74cl3XztMdNyeZma11VU82a1bQ8T+FYJ1lzwGm0kBjieEbyFH5OCL
-	G2qWjCIkMyl84MYCHKxEA44NFbFqb+zK2tiwca9utZY1n40/XkDqlere1ysQ2OV3
-	r/paTv6seKAL9Rt0goSgUkUom1qHW6Sk78WJyFNM7Q==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44u9u7t3vg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 18:02:42 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51GHaRgb003891;
-	Sun, 16 Feb 2025 18:02:41 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u68njp2m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 18:02:41 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51GI2eeO29295120
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 16 Feb 2025 18:02:40 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D5F15803F;
-	Sun, 16 Feb 2025 18:02:40 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2D1E558060;
-	Sun, 16 Feb 2025 18:02:37 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.242.32])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTPS;
-	Sun, 16 Feb 2025 18:02:36 +0000 (GMT)
-From: Venkat <venkat88@linux.ibm.com>
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1739729377; c=relaxed/simple;
+	bh=Z/E2jVKQjg00whzxYSWZzggCCsussqYqWWHWhmFLPg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kl2ZAIqmgHXtxGfKxI8tUHFZs+VqNKm/4HB2TIbuMcVUjyHo/PfF2RfTJIkv6ItQGVZRGSIYYQ8kW3QLDfMj40pbO/MC56S/vxWBHbG3+VjorKudHm4FnHtmq5YdlEi5NUdbFgsb4LpqfUBstjelSJo3wwZi8nsaXbe223REXos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiGjR5aU; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abb81285d33so180277166b.0;
+        Sun, 16 Feb 2025 10:09:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739729374; x=1740334174; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jDKGgAw/XBDG/QV4A9vk0jo2V9VB2oQWQFTgbJUtcfc=;
+        b=BiGjR5aUwBFUIyLNr1lEdxDyMbknDcpq5deljv6nCptWjVXDi8upPkOt2h8kMezbbd
+         eQYrjy0Aez7nBkHMugkxMQN3ZS8W8zl/CfHG551lc/L7fR0lqv7siPxWDkD6VSBeXG8Z
+         5WIikMbfrf/4kCBczVkbyS77q0WLrZI6FX6f/bH+GK8+Tf+P3q4aBuiNvZncM0Omk8Be
+         rn7+SbOtihzFiukgb7aFoqRbgdu5JrbD25sN1uB3p7ILU2Q5reebFV7pyLO7PAHQqDXr
+         zGhvBKoU4ezDdkiSj8w3J9/avAJZbYiHLWv5m4Za9VJpXZn3CPr0wws7Ah2STxKZq5b9
+         bWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739729374; x=1740334174;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jDKGgAw/XBDG/QV4A9vk0jo2V9VB2oQWQFTgbJUtcfc=;
+        b=ZoFpVG1joL3CM9Slom5wgcCUhKjLMRMfx4akJaoEJY7OvBXoQTaNVTKvVFnzpxkbSu
+         eC5MerV8CVqaL3jbyvbvg5ThkHXGD9A2Djj9JPbDvfjjXbqbcR0XY1q0PQoUgZcNLthM
+         9YnWPFfBa8c6frErE4a12c/X7FeaxgrskXPuFLaWrFdTts6u8Pb5R1NJtTZMJak7+yb8
+         FYjEy48Pgr3xSd0bYDEFiRygvRL20EqjVZ61btjwEMkewp8oDH3ftnvkXfTe1EeaD+OP
+         RAsY7mVsWOILQL2eNNGTGBLMPtbIi+iKXYpAuX8+s75voEPREMlv7AccBCTaSxU4F7CM
+         /SLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgdIo49S73kj2kfdgwcWh4utVqa5VSK06bUCIOeSN/qjr6wdRyrOWuHMzDhMnOsu3rleIuZAn0CbjCq4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgjaTQQ1NyeV0+cZkWDQT5ioVKZ+Z4OdcukO/9jh7tRGqfvSAu
+	+v2o993xKekBFzK9oE8Ny2ketsoaIjAU7LEjyyuTKmuPW5KpzSAAsOPhZg==
+X-Gm-Gg: ASbGncs+69m3oNbHuQsgmNUITPlNArn7qqO5NeKyGiM3Qfh9lM8wlNkF6H+DoicM0nB
+	3X8wCC1R0X4MSNU8eBYQ6UEyB9zcjW/GrcOcFOFoBQEhlbvRC293GwVH6ORjRq7gA19vEDR7XM1
+	pfrBd7OO1fIXFUuEWU1Dbcva1ZpBKER2dIb3Hr/PhXlNX7P+lJtx1q4G/zJJP/B+lJU2SmhqUD1
+	R/50J7kZEMSKfUEwoulx4d2xyiLB4ayEY2ok1GU+CUbU6WUJc2ALGlqNZqK9NORPOzdcY69SWYZ
+	lIdQ+SFLqOTegMplRb6XGUU/piLh
+X-Google-Smtp-Source: AGHT+IFkY4om+Y9dsuLLfHc/ExMOv5QyNvMmLcNt7jetS7qFMsh3KyfXK15v7y8UdkMryMOIKaHqmg==
+X-Received: by 2002:a17:907:9494:b0:ab7:ec84:10af with SMTP id a640c23a62f3a-abb70b1d813mr737311566b.16.1739729373356;
+        Sun, 16 Feb 2025 10:09:33 -0800 (PST)
+Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8eea4d65sm164712666b.161.2025.02.16.10.09.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 10:09:32 -0800 (PST)
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC] dt-bindings: rtc: sophgo: add RTC support for Sophgo CV1800 series SoC
+Date: Sun, 16 Feb 2025 19:09:09 +0100
+Message-ID: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [next-20250212] FStests generic/451 on EXT4 FS resulting in
- kernel OOPs
-Message-Id: <7F085D3B-4AE5-4DDC-94BB-59EF8A67A592@linux.ibm.com>
-Date: Sun, 16 Feb 2025 23:32:24 +0530
-Cc: fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-To: tytso@mit.edu, robh@kernel.org, angelogioacchino.delregno@collabora.com,
-        chunfeng.yun@mediatek.com, vkoul@kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: A4tV1X1Njir-qAVKGwGrVvZlbr3Tu9-B
-X-Proofpoint-ORIG-GUID: A4tV1X1Njir-qAVKGwGrVvZlbr3Tu9-B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-16_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=695
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 adultscore=0
- malwarescore=0 phishscore=0 spamscore=0 clxscore=1011 impostorscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502160159
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-I did attempt git bisect, and the first bad commit is =
-d49e636ed7014be354d1ee279b8f4957e8def389.
+Add RTCSYS devicetree binding for Sophgo CV1800 SoC.
 
-Git bisect log:
+The RTC (Real Time Clock) is an independently powered module in the chip.
+It contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which
+can be used for time display and scheduled alarm produce. In addition, the
+hardware state machine provides triggering and timing control for chip
+power-on, power-off and reset.
 
- #git bisect log
-#git bisect start
-# status: waiting for both good and bad commits
-# good: [a64dcfb451e254085a7daee5fe51bf22959d52d3] Linux 6.14-rc2
-git bisect good a64dcfb451e254085a7daee5fe51bf22959d52d3
-# status: waiting for bad commit, 1 good commit known
-# bad: [c674aa7c289e51659e40dda0f954886ef7f80042] Add linux-next =
-specific files for 20250212
-git bisect bad c674aa7c289e51659e40dda0f954886ef7f80042
-# good: [0a354ebcff3e3564281f2ee70b7094f5d16b762e] Merge branch =
-'for-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
-git bisect good 0a354ebcff3e3564281f2ee70b7094f5d16b762e
-# good: [21abbfe377b86bac23e3d167f002a492391555c7] Merge branch =
-'for-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
-git bisect good 21abbfe377b86bac23e3d167f002a492391555c7
-# good: [fcd8e79b9c555ea05cca4ab4593e3fa02722158f] Merge branch =
-'usb-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-git bisect good fcd8e79b9c555ea05cca4ab4593e3fa02722158f
-# bad: [8b5e9ed3e14f98a0dfa9a2e15654c0f4d94ac64c] Merge branch =
-'pwm/for-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git
-git bisect bad 8b5e9ed3e14f98a0dfa9a2e15654c0f4d94ac64c
-# bad: [4e91a64bcf478f6f7cf7aab043d80ca671367348] Merge branch =
-'staging-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-git bisect bad 4e91a64bcf478f6f7cf7aab043d80ca671367348
-# good: [7b465a0d58c19a45ddf81c90bc8ba04693de038b] iio: light: adux1020: =
-Drop unneeded assignment for cache_type
-git bisect good 7b465a0d58c19a45ddf81c90bc8ba04693de038b
-# good: [66b800119cc5ced59aa45d523e8ef9af54211abd] Merge branch 'togreg' =
-of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
-git bisect good 66b800119cc5ced59aa45d523e8ef9af54211abd
-# bad: [1fad5171135d31d3d9258715c7d3fefa378797e0] Merge branch =
-'for-next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-w1.git
-git bisect bad 1fad5171135d31d3d9258715c7d3fefa378797e0
-# good: [0d8db251dd15d2e284f5a6a53bc2b869f3eca711] phy: qcom: qmp-pcie: =
-Add X1P42100 Gen4x4 PHY
-git bisect good 0d8db251dd15d2e284f5a6a53bc2b869f3eca711
-# bad: [d49e636ed7014be354d1ee279b8f4957e8def389] Merge branch 'next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
-git bisect bad d49e636ed7014be354d1ee279b8f4957e8def389
-# good: [88c0053baed659acd85b87dd52cbd75f3d8806be] phy: Use =
-(of|device)_property_present() for non-boolean properties
-git bisect good 88c0053baed659acd85b87dd52cbd75f3d8806be
-# first bad commit: [d49e636ed7014be354d1ee279b8f4957e8def389] Merge =
-branch 'next' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
-#
+Furthermore, the 8051 subsystem is located within RTCSYS and is
+independently powered. System software can use the 8051 to manage wake
+conditions and wake the system while the system is asleep, and communicate
+with external devices through peripheral controllers.
 
-Regards,
-Venkat.=09=
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+---
+QUESTION:
+
+I'm unsure about reg properties in the subnodes (child devices) of
+RTCSYS:
+- they will not be used anyway by the drivers because they genuinely
+overlap (the whole point of going MFD) -- therefore the drivers will do
+syscon_node_to_regmap(pdev->dev.parent->of_node)
+- as I understood from the history of MFD dt bindings' submissions, regs
+are encouraged, if can be specified
+- overlapping regs cause dt_binding_check warnings:
+Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/pmu@0)
+Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
+
+Shall I remove the MMIO resources from the actual devices or rather ignore the warnings?
+
+ .../bindings/mfd/sophgo,cv1800b-rtcsys.yaml   | 222 ++++++++++++++++++
+ 1 file changed, 222 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
+
+diff --git a/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
+new file mode 100644
+index 000000000000..2dc7c2df15c1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
+@@ -0,0 +1,222 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/sophgo,cv1800b-rtcsys.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Cvitek CV18xx/Sophgo SG200x Real Time Clock module
++
++maintainers:
++  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
++  - sophgo@lists.linux.dev
++
++description:
++  The RTC (Real Time Clock) is an independently powered module in the chip. It
++  contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which can
++  be used for time display and scheduled alarm produce. In addition, the
++  hardware state machine provides triggering and timing control for chip
++  power-on, power-off and reset.
++
++  Furthermore, the 8051 subsystem is located within RTCSYS and is independently
++  powered. System software can use the 8051 to manage wake conditions and wake
++  the system while the system is asleep, and communicate with external devices
++  through peripheral controllers.
++
++  Technical Reference Manual available at
++    https://github.com/sophgo/sophgo-doc/releases/download/sg2000-trm-v1.01/sg2000_trm_en.pdf
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - sophgo,cv1800b-rtcsys
++      - const: simple-mfd
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  ranges: true
++
++patternProperties:
++  "^mcu@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++
++    description:
++      The 8051 subsystem is located within RTCSYS and is independently powered.
++      System software can use the 8051 to manage wake conditions and wake the
++      system while the system is asleep, and communicate with external devices
++      through peripheral controllers.
++
++    properties:
++      compatible:
++        items:
++          - enum:
++              - sophgo,cv1800b-rtc-dw8051
++
++      reg:
++        maxItems: 1
++
++      clocks:
++        maxItems: 1
++
++      resets:
++        maxItems: 1
++
++      sram:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        maxItems: 1
++        description: The SRAM controller to host the code/data
++
++    required:
++      - compatible
++      - clocks
++
++  "^pmu@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++
++    description:
++      Power-On-Reset (POR) sub-module, hardware state machine providing
++      triggering and timing control for chip power-on, power-off and reset.
++      Supports battery low voltage detection and interrupt generation, as
++      well as button-triggered wake up from sleep.
++
++    properties:
++      compatible:
++        items:
++          - enum:
++              - sophgo,cv1800b-rtc-pmu
++
++      reg:
++        maxItems: 1
++
++      clocks:
++        maxItems: 1
++
++      interrupts:
++        items:
++          - description: long button press interrupt
++          - description: vbat detection interrupt
++
++      interrupt-names:
++        items:
++          - const: longpress
++          - const: vbat
++
++    required:
++      - compatible
++
++  "^rtc@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++
++    description:
++      The RTC (Real Time Clock) is an independently powered module in the chip.
++      Its calibration module uses a 25MHz crystal oscillator clock to calibrate
++      32KHz oscillator.
++
++    properties:
++      compatible:
++        items:
++          - enum:
++              - sophgo,cv1800b-rtc
++
++      reg:
++        maxItems: 1
++
++      clocks:
++        maxItems: 1
++
++      interrupts:
++        items:
++          - description: alarm interrupt
++
++      interrupt-names:
++        items:
++          - const: alarm
++
++    required:
++      - compatible
++      - clocks
++      - interrupts
++
++  "^sram@[0-9a-f]+$":
++    type: object
++    additionalProperties: false
++
++    description:
++      Provide 2KB of SRAM, which can host software code or temporary data.
++
++    properties:
++      compatible:
++        items:
++          - enum:
++              - sophgo,cv1800b-rtc-sram
++
++      reg:
++        maxItems: 1
++
++      clocks:
++        maxItems: 1
++
++    required:
++      - compatible
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
++
++additionalProperties:
++  type: object
++
++examples:
++  - |
++    #include <dt-bindings/clock/sophgo,cv1800.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    rtcsys@5025000 {
++        compatible = "sophgo,cv1800b-rtcsys", "simple-mfd", "syscon";
++        reg = <0x5025000 0x2000>;
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0 0x5025000 0x2000>;
++
++        mcu@0 {
++            compatible = "sophgo,cv1800b-rtc-dw8051";
++            reg = <0x0 0x1000>;
++            clocks = <&clk CLK_SRC_RTC_SYS_0>;
++            sram = <&rtc_sram>;
++        };
++
++        pmu@0 {
++            compatible = "sophgo,cv1800b-rtc-pmu";
++            reg = <0x0 0x2000>;
++            interrupts = <18 IRQ_TYPE_LEVEL_HIGH>,
++                         <19 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-names = "longpress", "vbat";
++        };
++
++        rtc@0 {
++            compatible = "sophgo,cv1800b-rtc";
++            reg = <0 0x2000>;
++            interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-names = "alarm";
++            clocks = <&clk CLK_RTC_25M>;
++        };
++
++        rtc_sram: sram@0 {
++            compatible = "sophgo,cv1800b-rtc-sram";
++            reg = <0x0 0x1000>;
++        };
++    };
+-- 
+2.48.1
+
 
