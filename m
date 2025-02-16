@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-516711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D73A37617
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:57:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F8A37616
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762A23AC6DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C8F16C2E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5713819D083;
-	Sun, 16 Feb 2025 16:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F5119D083;
+	Sun, 16 Feb 2025 16:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWWL35/y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzNnuw+e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91CC450FE;
-	Sun, 16 Feb 2025 16:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF5450FE;
+	Sun, 16 Feb 2025 16:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739725010; cv=none; b=JRJc+Qv2oOsbHCKCzXwQ/nSsK4GFW00MIPSz1DEy0DKx2u4kNeLVpyb3IPbv080CcU71wavmGINOd3MKT4pm7HwHRPpGbd7Woybm8YxXWHJR/Tg+45xTP1oG6hZm6GRuhYFhQx7nbzgcTgi6zk2aBMB3Yu9FDirUpWPJG5j/WkI=
+	t=1739725026; cv=none; b=uVA54P4qAwxWr4rt1mWcrgm0Ynol9doUAwkXes0wemBbBdLr7eOcaIw9fP9qtATc6XxlenIEr+R8/xECr0pE/nPRTS/pdMkNft6bqTt1krfplcm/h5BiPvMfozUB9IAHMN2NT8doSvTgzIk77gUVRyDTClI1yxqmjNdFAvBhMWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739725010; c=relaxed/simple;
-	bh=lyYWlIL5pV+P204PWq9RJs+b2lncRmWinTLyKexeKLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AThv2TAFwm94dyA0Nxyb0npCSP7YR6+giWKVcTqn6S6cMaDD+wyyhwlkAJFftLNEU+iXqLLuNOE9UD3PMRmYIcywAIInvln9D5NhlhQ6Aw45FD4A8fvNZ9gVFgzJQsZ7PGF4tPPxkhvbZpn+PVEPAOF5B0myAjVMAXB0DO3pbSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWWL35/y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1F1C4CEDD;
-	Sun, 16 Feb 2025 16:56:44 +0000 (UTC)
+	s=arc-20240116; t=1739725026; c=relaxed/simple;
+	bh=vFZ0bIZ4JUsP4R5cEsTCRCJCscbl/sGPQwm3H8zHCr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgbRP4H8oJkfploHCIfSHnBljuMTZlWybu1r0hWDAlH1X8EILJDagv6Zb4/KtKehdzdsytKiq6daZ5uNVxYdjILAaOJ9a6cLd+1V+VIhA0j5vd/KhEymIAqrMwCGXjETY+SKkxUgIecr7EZDANeXSCRBHyJpsnwPRjlCGVyw+H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzNnuw+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F28BC4CEDD;
+	Sun, 16 Feb 2025 16:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739725010;
-	bh=lyYWlIL5pV+P204PWq9RJs+b2lncRmWinTLyKexeKLQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rWWL35/yPTnPOWL0B4OV5ivtP906jfLlk95gZBFEFPD1KEU7LxzPTLRF2cbiw4t/f
-	 g0IZb/wjC1GLREddI86c3DLrjgnQKARWX++ZbObj7wcz9TBg9L5A+ok85ter9WYEna
-	 r1UcfKL2SdvZdEOrekLomhS+jedss3VxXE1r0erQIeqTS2ehhUyrAmozCvOwtdwSI7
-	 o2Z71IZuu7Vb10KpVXo+1ia0k89Dsvl/hLv79p7Npad1GL90eD9o7MQI2iGNDy42j+
-	 5XFugBKU2eD5fABH/Jiz49YaiN6l15LXqmEYRt8D7k+B9jfJiYK7bAgWZQXj88nxOM
-	 W95aP2wUQL9Gg==
-Date: Sun, 16 Feb 2025 16:56:40 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Robert Budai <robert.budai@analog.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] docs: iio: add documentation for adis16550
- driver
-Message-ID: <20250216165640.2e89f617@jic23-huawei>
-In-Reply-To: <20250211175706.276987-7-robert.budai@analog.com>
-References: <20250211175706.276987-1-robert.budai@analog.com>
-	<20250211175706.276987-7-robert.budai@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1739725024;
+	bh=vFZ0bIZ4JUsP4R5cEsTCRCJCscbl/sGPQwm3H8zHCr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KzNnuw+e+QUfckWuIq9Mft4taJNR/pvCCuBiDe+lxRT2GXPivlx1NYUVtO2wqyJuU
+	 xyvG6xrymf3Ymaka2+B4A6D+Aef/Qa+kaDZpZhhuNX4z51W2GiyKvp4bSgq7BSz15N
+	 hYk9iqHgjb+rI4IfXxMlHpmdgrR/XZmaqIXtz4WWN9/pnHwhVKe/OUGkhpVG4jrFVy
+	 C/BHAjRtxpAw8Y6plebt9z0nVqsygaVcxkm2URVHNzxSFQcs4csvHA5pmDTicDMnwW
+	 MPzEXeWRZj2c8B1XwG7h89mba6Hm20FKpG0S2SWtIXCBUiQdjNWp0/Zra2Telz2Wid
+	 vOYuh6VLqkmow==
+Date: Sun, 16 Feb 2025 06:57:03 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] sched_ext: idle: Introduce node-aware idle cpu kfunc
+ helpers
+Message-ID: <Z7IY3yr1VErsryqw@slm.duckdns.org>
+References: <20250214194134.658939-1-arighi@nvidia.com>
+ <20250214194134.658939-9-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214194134.658939-9-arighi@nvidia.com>
 
-On Tue, 11 Feb 2025 19:57:03 +0200
-Robert Budai <robert.budai@analog.com> wrote:
+Hello,
 
-> Add documentation for adis16550 driver which describes the driver device
-> files and shows how the user may use the ABI for various scenarios
-> (configuration, measurement, etc.).
-> 
-> Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> Signed-off-by: Robert Budai <robert.budai@analog.com>
-One minor comment inline.
-> ---
->  Documentation/iio/adis16550.rst | 376 ++++++++++++++++++++++++++++++++
->  Documentation/iio/index.rst     |   1 +
->  2 files changed, 377 insertions(+)
->  create mode 100644 Documentation/iio/adis16550.rst
-> 
-> diff --git a/Documentation/iio/adis16550.rst b/Documentation/iio/adis16550.rst
-> new file mode 100644
-> index 000000000..f929c460a
-> --- /dev/null
-> +++ b/Documentation/iio/adis16550.rst
-> @@ -0,0 +1,376 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +================
-> +ADIS16550 driver
-> +================
-> +
-> +This driver supports Analog Device's IMUs on SPI bus.
-> +
-> +1. Supported devices
-> +====================
-> +
-> +* `ADIS16550 <https://www.analog.com/ADIS16550>`_
-> +
-> +The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
-> +and a triaxis accelerometer. The factory calibration characterizes each sensor for
-> +sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
-> +compensation formulas that provide accurate sensor measurements.
-> +
-> +1. Device attributes
-
-1 Again?
-
-> +====================
+On Fri, Feb 14, 2025 at 08:40:07PM +0100, Andrea Righi wrote:
 ...
+>  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+>  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+>  s32 scx_bpf_pick_idle_cpu_in_node(const cpumask_t *cpus_allowed,
+>  				   int node, u64 flags)
 
+All other functions have just _node as the suffix. Might as well do the same
+here?
+
+>  s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed,
+>  			       int node, u64 flags)
+
+...
+> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> +{
+> +	node = validate_node(node);
+> +	if (node < 0)
+> +		return cpu_none_mask;
 > +
-> +3. Device buffers
-> +=================
+> +#ifdef CONFIG_SMP
+> +	return idle_cpumask(node)->cpu;
+> +#else
+> +	return cpu_none_mask;
 
-> +4. IIO Interfacing Tools
-> +========================
+Shouldn't the UP case forwarded to scx_bpf_get_idle_cpumask()? Wouldn't a
+NUMA aware scheduler running on a UP kernel end up specifying 0 to these
+calls?
+
+> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> +{
+> +	node = validate_node(node);
+> +	if (node < 0)
+> +		return cpu_none_mask;
+> +
+> +#ifdef CONFIG_SMP
+> +	if (sched_smt_active())
+> +		return idle_cpumask(node)->smt;
+> +	else
+> +		return idle_cpumask(node)->cpu;
+> +#else
+> +	return cpu_none_mask;
+
+Ditto here.
+
+Thanks.
+
+-- 
+tejun
 
