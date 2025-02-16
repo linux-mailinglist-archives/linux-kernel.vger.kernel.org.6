@@ -1,139 +1,159 @@
-Return-Path: <linux-kernel+bounces-516635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A3DA3750A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B42AA37518
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CD73AA017
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591523ADA84
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317DA199947;
-	Sun, 16 Feb 2025 15:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F461224EA;
+	Sun, 16 Feb 2025 15:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="kgAy8grO"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HMCejJGs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A521993A3;
-	Sun, 16 Feb 2025 15:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739719614; cv=pass; b=V3wlbgdpOx7CVrzFWAiQvT9gjMRh6Jj5119EC9jSaM5qUGUcqeokDxckF6uD5lsu4q9eo8kpNvNbn+ZrerbhAJzUdAOMD+73vvpS9N7/LsEYENN1P0lwyXIsac0oo4ErSANvByAsg+rxCQn0W2qsUwjHQtl66gBfa9HVq4xyVx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739719614; c=relaxed/simple;
-	bh=P1GGikOFBhM64e8ThnF+EAlpwy8a7Ben4RjDWz90wQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drM3WEfL/QO62eDWvaoRhuvqu2kmQTY3QgPRC6B1aNysIRADtr5dldCpx3G7wvkpv0uXWL6Q2eVH7CG1zVnKJO6UdvQKI1RqMct2AE5xaZU0vriDO5eYQdt/Kdxmgu7Fvuz8Zt2lHfGlZaBx3Lj1V/KSpp9mRBjrIIIZP2iWMhQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=kgAy8grO; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739719582; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lUhEfBRVSo79Huwj+wzJXrPk5x+fk3E/WKGITPucvjJqsA9W28bDmDYVIJV5OtFAzZeiVpgvZPaVBL0jA2EZlDpwAJwHH9YYg2PUUYKyNt01rrEr3hbg9a+dPEq0rW0iyLQDZMJ8tkEy0GxUX31+9P0heIbOShMCEwNL8d5xrfw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739719582; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nGRt15avi2VNEMTjVMkiOHeiNiOp/BakzHpL53Qa5IE=; 
-	b=U9YsfwGHz31g0HHvFlwd3Ll2mrkoeK5MGiFIJng82FZjicNRTv862tyKmTmh5OhEUNTocN9QrCZIiZh0SGOBfnBzbZx2P/uVVTZnLLccxOmR3hvfnfNaP3x24xhDsBYoGVY/sd+S8hhIHwCCSGhzx+eIOwNA5WZOyeIxZvyUjAo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739719582;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nGRt15avi2VNEMTjVMkiOHeiNiOp/BakzHpL53Qa5IE=;
-	b=kgAy8grO7hkyPy96FKPI4UObo/yrWIeiiaBNuy7Tc950wRdugBlFZpr/ZONvD7Ah
-	ULiiPIxBSZs4lF8cvqP6J3Jlduftn7FOEMoRpzuwUIvxgREIecs7vZbTc28F07I9i8F
-	Nd7mJq4SelsxoZ2nib+Oh6mugQdlM/n37qoawp2M=
-Received: by mx.zohomail.com with SMTPS id 1739719580093298.8599431071333;
-	Sun, 16 Feb 2025 07:26:20 -0800 (PST)
-Message-ID: <68b4a5bb-79df-425a-af66-fa8973866729@collabora.com>
-Date: Sun, 16 Feb 2025 18:26:15 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDDE208A0;
+	Sun, 16 Feb 2025 15:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739720006; cv=none; b=sDf4I0vC+fVvwgJZavGgSFvdHme9SGSUT8KtCXX+t3t1cowQSwcuOgUZGXHgWO5+JH+2El3nmlKdS5AfMuGzBnzzXGiQUxsV/J3RqSzHbj+BhIyw6NlguGSVahGPU3/8+A+bb5T+HMbUdQEqgZEDm3Jd04OP/6+4YvU/wG3AtI0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739720006; c=relaxed/simple;
+	bh=zpGAUL2A6gkU3zldFOJ6dcxKJ8KW2u6T2qeA9Zh6zyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhxkV7UmYW8cDrzIbTVXXQNd/iwQoNE75C4OFABXgE7RaUzmSDrTgHQnknNBhLc2B01mv2t4q5i1glLivacd4Q1khpPqFE6/bg8o0LQzPfPxmVBcOmexO/m7Nwtj6x4ksrQGAvtjGAdMxaCAe3P10v2KDdoHkQsm3uXryjNMyCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HMCejJGs; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739720005; x=1771256005;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zpGAUL2A6gkU3zldFOJ6dcxKJ8KW2u6T2qeA9Zh6zyA=;
+  b=HMCejJGsg5N41Op9N63kYz2f/Zz71wB8egfHxkIl/pBIw6CkXno+4DRW
+   696diqYsbetUU8536fKK2XhkFCGBRH94mif6dCwgYCZnzx8u1gWwoDRKG
+   KBPxChys0+1XT8yV8dQEu3uAq98znh8VhMnWrToXqClTfDgiYKgYZh/eS
+   /4LGWzMHduw8GhCiuKFtbttxkz3r1oc9S8UQGxxL+q9cBl0LknhxWstAh
+   +/pLIaq4qnF2z2F4VOOau/ai8Mh1RbVZ1BWlXZByBgzNZp02cAOVkOwTj
+   tSzJdpU3gw7S88faYg5my+WySm4RYqz5774KKQkXey5xAP1F0UneAAVjU
+   w==;
+X-CSE-ConnectionGUID: Wqsyu2KvThq5rrvyD1tHhA==
+X-CSE-MsgGUID: x6Jy28y5TWeqdEOB1TyT8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51836689"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="51836689"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 07:33:24 -0800
+X-CSE-ConnectionGUID: livIVoLVSXmbyGoEui878g==
+X-CSE-MsgGUID: CKzRqbeLQpS/MAeYtiuhfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113768074"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 16 Feb 2025 07:33:22 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjgdz-001C1b-1z;
+	Sun, 16 Feb 2025 15:33:19 +0000
+Date: Sun, 16 Feb 2025 23:32:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, brgl@bgdev.pl, geert+renesas@glider.be,
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo
+ utilities
+Message-ID: <202502162345.FT5z7kr9-lkp@intel.com>
+References: <20250216125816.14430-6-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] arm64: dts: rockchip: rk356x: Add MSI controller
- node
-To: Marc Zyngier <maz@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Kever Yang <kever.yang@rock-chips.com>,
- XiaoDong Huang <derrick.huang@rock-chips.com>,
- Peter Geis <pgwipeout@gmail.com>, Robin Murphy <robin.murphy@arm.com>,
- kernel@collabora.com
-References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
- <20250215235431.143138-4-dmitry.osipenko@collabora.com>
- <87r03y1a75.wl-maz@kernel.org>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <87r03y1a75.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216125816.14430-6-koichiro.den@canonical.com>
 
-On 2/16/25 12:59, Marc Zyngier wrote:
-> On Sat, 15 Feb 2025 23:54:30 +0000,
-> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
->>
->> Rockchip 356x SoC's GIC has two hardware integration issues that
->> affect MSI functionality of the GIC. Previously, both these GIC
->> limitations were worked around by using MBI for MSI instead of ITS
->> because kernel GIC driver didn't have necessary quirks.
->>
->> The first limitation is about RK356x GIC not supporting programmable
->> shareability. Rockchip assigned Errata ID #3568001 for this issue.
->>
->> Second limitation is about GIC AXI master interface addressing only
->> first 4GB of DRAM. Rockchip assigned Errata ID #3568002 for this issue.
->>
->> Now that kernel supports quirks for both of the erratums, add
->> MSI controller node to RK356x device-tree.
->>
->> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->> ---
->>  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
->> index 28be38b7182e..423185686600 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
->> @@ -284,7 +284,18 @@ gic: interrupt-controller@fd400000 {
->>  		mbi-alias = <0x0 0xfd410000>;
->>  		mbi-ranges = <296 24>;
->>  		msi-controller;
->> +		ranges;
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->>  		dma-noncoherent;
->> +
->> +		its: msi-controller@fd440000 {
->> +			compatible = "arm,gic-v3-its";
->> +			reg = <0x0 0xfd440000 0 0x20000>;
->> +			dma-noncoherent;
->> +			msi-controller;
->> +			#msi-cells = <1>;
->> +		};
->>  	};
->>  
->>  	usb_host0_ehci: usb@fd800000 {
-> 
-> You can merge this patch with the previous one. Marking the GIC
-> non-coherent is pointless if no ITS is available, because there is no
-> point in allocating memory for them.
+Hi Koichiro,
 
-Ack
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.14-rc2 next-20250214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Koichiro-Den/gpio-aggregator-reorder-functions-to-prepare-for-configfs-introduction/20250216-210413
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250216125816.14430-6-koichiro.den%40canonical.com
+patch subject: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo utilities
+config: csky-randconfig-002-20250216 (https://download.01.org/0day-ci/archive/20250216/202502162345.FT5z7kr9-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502162345.FT5z7kr9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502162345.FT5z7kr9-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpio/gpio-pseudo.c: In function 'pseudo_gpio_register':
+>> drivers/gpio/gpio-pseudo.c:62:17: error: implicit declaration of function 'kfree'; did you mean 'kvfree'? [-Wimplicit-function-declaration]
+      62 |                 kfree(common->name);
+         |                 ^~~~~
+         |                 kvfree
+
+
+vim +62 drivers/gpio/gpio-pseudo.c
+
+ef524a2229b717 Koichiro Den 2025-02-16  43  
+ef524a2229b717 Koichiro Den 2025-02-16  44  int pseudo_gpio_register(struct pseudo_gpio_common *common,
+ef524a2229b717 Koichiro Den 2025-02-16  45  			 struct platform_device_info *pdevinfo)
+ef524a2229b717 Koichiro Den 2025-02-16  46  {
+ef524a2229b717 Koichiro Den 2025-02-16  47  	struct platform_device *pdev;
+ef524a2229b717 Koichiro Den 2025-02-16  48  	char *name;
+ef524a2229b717 Koichiro Den 2025-02-16  49  
+ef524a2229b717 Koichiro Den 2025-02-16  50  	name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
+ef524a2229b717 Koichiro Den 2025-02-16  51  	if (!name)
+ef524a2229b717 Koichiro Den 2025-02-16  52  		return -ENOMEM;
+ef524a2229b717 Koichiro Den 2025-02-16  53  
+ef524a2229b717 Koichiro Den 2025-02-16  54  	common->driver_bound = false;
+ef524a2229b717 Koichiro Den 2025-02-16  55  	common->name = name;
+ef524a2229b717 Koichiro Den 2025-02-16  56  	reinit_completion(&common->probe_completion);
+ef524a2229b717 Koichiro Den 2025-02-16  57  	bus_register_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16  58  
+ef524a2229b717 Koichiro Den 2025-02-16  59  	pdev = platform_device_register_full(pdevinfo);
+ef524a2229b717 Koichiro Den 2025-02-16  60  	if (IS_ERR(pdev)) {
+ef524a2229b717 Koichiro Den 2025-02-16  61  		bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16 @62  		kfree(common->name);
+ef524a2229b717 Koichiro Den 2025-02-16  63  		return PTR_ERR(pdev);
+ef524a2229b717 Koichiro Den 2025-02-16  64  	}
+ef524a2229b717 Koichiro Den 2025-02-16  65  
+ef524a2229b717 Koichiro Den 2025-02-16  66  	wait_for_completion(&common->probe_completion);
+ef524a2229b717 Koichiro Den 2025-02-16  67  	bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16  68  
+ef524a2229b717 Koichiro Den 2025-02-16  69  	if (!common->driver_bound) {
+ef524a2229b717 Koichiro Den 2025-02-16  70  		platform_device_unregister(pdev);
+ef524a2229b717 Koichiro Den 2025-02-16  71  		kfree(common->name);
+ef524a2229b717 Koichiro Den 2025-02-16  72  		return -ENXIO;
+ef524a2229b717 Koichiro Den 2025-02-16  73  	}
+ef524a2229b717 Koichiro Den 2025-02-16  74  
+ef524a2229b717 Koichiro Den 2025-02-16  75  	common->pdev = pdev;
+ef524a2229b717 Koichiro Den 2025-02-16  76  	return 0;
+ef524a2229b717 Koichiro Den 2025-02-16  77  }
+ef524a2229b717 Koichiro Den 2025-02-16  78  EXPORT_SYMBOL_GPL(pseudo_gpio_register);
+ef524a2229b717 Koichiro Den 2025-02-16  79  
 
 -- 
-Best regards,
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
