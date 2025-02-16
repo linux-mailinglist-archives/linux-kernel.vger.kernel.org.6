@@ -1,360 +1,182 @@
-Return-Path: <linux-kernel+bounces-516744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB831A37677
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:09:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AC7A37675
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A611887FD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED6616DB87
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5CC19DF4D;
-	Sun, 16 Feb 2025 18:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E532919CC34;
+	Sun, 16 Feb 2025 18:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiGjR5aU"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7T9LPn/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6408C1494DF;
-	Sun, 16 Feb 2025 18:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4628825771;
+	Sun, 16 Feb 2025 18:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739729377; cv=none; b=WwQp6jqMy8tw6Sf97DyNG6jib9xlfWp2uo+QKMKo/vQfnxCtZYK+dpkc7zaDLE/u58K9T04z73D7fXB3zPsDZ7YhsMkfe350zUd+5mdAxQTVb8fQ79TJfJKShtlu3Uz7utTAZpCjUQPIo8ZVtpzcZRyQVe6Vkh4R0NoWgY+EzLM=
+	t=1739729366; cv=none; b=fVgrtwIs9ed3xxfYDt0arEi10r3v4DdPBrUKijio+s5sMKM5/He+bd6jDUfz/B5vkKx+BLzpCa+oZWe7qr48bRt4fsoKaVMGFwv214GdtyxDYShwl+yM/2nEZISj2c3gXPp102rYfmwPaNYm07mXODSy/fvhz+wxpvcvaOewTww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739729377; c=relaxed/simple;
-	bh=Z/E2jVKQjg00whzxYSWZzggCCsussqYqWWHWhmFLPg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kl2ZAIqmgHXtxGfKxI8tUHFZs+VqNKm/4HB2TIbuMcVUjyHo/PfF2RfTJIkv6ItQGVZRGSIYYQ8kW3QLDfMj40pbO/MC56S/vxWBHbG3+VjorKudHm4FnHtmq5YdlEi5NUdbFgsb4LpqfUBstjelSJo3wwZi8nsaXbe223REXos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiGjR5aU; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abb81285d33so180277166b.0;
-        Sun, 16 Feb 2025 10:09:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739729374; x=1740334174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDKGgAw/XBDG/QV4A9vk0jo2V9VB2oQWQFTgbJUtcfc=;
-        b=BiGjR5aUwBFUIyLNr1lEdxDyMbknDcpq5deljv6nCptWjVXDi8upPkOt2h8kMezbbd
-         eQYrjy0Aez7nBkHMugkxMQN3ZS8W8zl/CfHG551lc/L7fR0lqv7siPxWDkD6VSBeXG8Z
-         5WIikMbfrf/4kCBczVkbyS77q0WLrZI6FX6f/bH+GK8+Tf+P3q4aBuiNvZncM0Omk8Be
-         rn7+SbOtihzFiukgb7aFoqRbgdu5JrbD25sN1uB3p7ILU2Q5reebFV7pyLO7PAHQqDXr
-         zGhvBKoU4ezDdkiSj8w3J9/avAJZbYiHLWv5m4Za9VJpXZn3CPr0wws7Ah2STxKZq5b9
-         bWGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739729374; x=1740334174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jDKGgAw/XBDG/QV4A9vk0jo2V9VB2oQWQFTgbJUtcfc=;
-        b=ZoFpVG1joL3CM9Slom5wgcCUhKjLMRMfx4akJaoEJY7OvBXoQTaNVTKvVFnzpxkbSu
-         eC5MerV8CVqaL3jbyvbvg5ThkHXGD9A2Djj9JPbDvfjjXbqbcR0XY1q0PQoUgZcNLthM
-         9YnWPFfBa8c6frErE4a12c/X7FeaxgrskXPuFLaWrFdTts6u8Pb5R1NJtTZMJak7+yb8
-         FYjEy48Pgr3xSd0bYDEFiRygvRL20EqjVZ61btjwEMkewp8oDH3ftnvkXfTe1EeaD+OP
-         RAsY7mVsWOILQL2eNNGTGBLMPtbIi+iKXYpAuX8+s75voEPREMlv7AccBCTaSxU4F7CM
-         /SLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgdIo49S73kj2kfdgwcWh4utVqa5VSK06bUCIOeSN/qjr6wdRyrOWuHMzDhMnOsu3rleIuZAn0CbjCq4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgjaTQQ1NyeV0+cZkWDQT5ioVKZ+Z4OdcukO/9jh7tRGqfvSAu
-	+v2o993xKekBFzK9oE8Ny2ketsoaIjAU7LEjyyuTKmuPW5KpzSAAsOPhZg==
-X-Gm-Gg: ASbGncs+69m3oNbHuQsgmNUITPlNArn7qqO5NeKyGiM3Qfh9lM8wlNkF6H+DoicM0nB
-	3X8wCC1R0X4MSNU8eBYQ6UEyB9zcjW/GrcOcFOFoBQEhlbvRC293GwVH6ORjRq7gA19vEDR7XM1
-	pfrBd7OO1fIXFUuEWU1Dbcva1ZpBKER2dIb3Hr/PhXlNX7P+lJtx1q4G/zJJP/B+lJU2SmhqUD1
-	R/50J7kZEMSKfUEwoulx4d2xyiLB4ayEY2ok1GU+CUbU6WUJc2ALGlqNZqK9NORPOzdcY69SWYZ
-	lIdQ+SFLqOTegMplRb6XGUU/piLh
-X-Google-Smtp-Source: AGHT+IFkY4om+Y9dsuLLfHc/ExMOv5QyNvMmLcNt7jetS7qFMsh3KyfXK15v7y8UdkMryMOIKaHqmg==
-X-Received: by 2002:a17:907:9494:b0:ab7:ec84:10af with SMTP id a640c23a62f3a-abb70b1d813mr737311566b.16.1739729373356;
-        Sun, 16 Feb 2025 10:09:33 -0800 (PST)
-Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8eea4d65sm164712666b.161.2025.02.16.10.09.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 10:09:32 -0800 (PST)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	sophgo@lists.linux.dev,
+	s=arc-20240116; t=1739729366; c=relaxed/simple;
+	bh=O/E/r5ASZKXffJhOIy6Fl6+74Z3ePdDBUDsU152mGFo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pFv5CANTSvKpmvaDC3IyshTEUxSZPwVHh5eavLCKKxEKvlU5savl9vCsFeUsKTwEEcKFtB0Rqu/Re6aa2d4Jegh/g0MlH6L4pW4ZtmR1ZnAwnE7AZK19dJpyO2uYL2qAYHkcin60t6adxH+xDv5/JQxxdJQ8RChBEx+P2EhaLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7T9LPn/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44A3C4CEDD;
+	Sun, 16 Feb 2025 18:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739729365;
+	bh=O/E/r5ASZKXffJhOIy6Fl6+74Z3ePdDBUDsU152mGFo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H7T9LPn/uWmvfZ3KjI/F5rPc6+db5eXkhogkBeuN9CI8rMEPFVh7XxqOL8KB06fKl
+	 qVmjn6fQlFMHzLN5F6ExW0YX8OK1LO6DJIg5ODqks3r1WAgAOz+fkKUDFWoZqQnDOn
+	 lLx70FoaNJ7P57N0iWy7/zZM8QIXgTXy5iN8i+o49YCWbpO6eYzQFr1/h8GFwUthbq
+	 3oco4TwdcLfZg+Jmz2tdM2MTnC7r6gFRBLyL2xnfq5/O57ihh/pvznnwv/tV/YV0GQ
+	 gAUz+veYkHclqDTncQWNEAXgDS5Q0o5v1UDkzI8aUkSzX0/S1p+4Ulk4yZopzxQ+8A
+	 M6Y9AaMq+bKjA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjj51-004b85-7o;
+	Sun, 16 Feb 2025 18:09:23 +0000
+Date: Sun, 16 Feb 2025 18:09:22 +0000
+Message-ID: <86jz9psqwd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: luoyonggang@gmail.com
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Sebastian Ott <sebott@redhat.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] dt-bindings: rtc: sophgo: add RTC support for Sophgo CV1800 series SoC
-Date: Sun, 16 Feb 2025 19:09:09 +0100
-Message-ID: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
-X-Mailer: git-send-email 2.48.1
+Subject: Re: [PATCH v2 1/4] KVM: arm64: Allow userspace to change MIDR_EL1
+In-Reply-To: <CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
+References: <20250211143910.16775-1-sebott@redhat.com>
+	<20250211143910.16775-2-sebott@redhat.com>
+	<Z7BoydkyT_h0gwOV@linux.dev>
+	<CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
+	<87v7tb17os.wl-maz@kernel.org>
+	<CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: luoyonggang@gmail.com, oliver.upton@linux.dev, sebott@redhat.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, shameerali.kolothum.thodi@huawei.com, cohuck@redhat.com, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add RTCSYS devicetree binding for Sophgo CV1800 SoC.
+On Sat, 15 Feb 2025 19:04:20 +0000,
+"=E7=BD=97=E5=8B=87=E5=88=9A(Yonggang Luo)" <luoyonggang@gmail.com> wrote:
+>=20
+> According to this, the MIDR EL1 is updated properly, but the MIDR for
+> aarch32 is not updated, and I don't know how to hook the update for
+> MIDR for aarch32
 
-The RTC (Real Time Clock) is an independently powered module in the chip.
-It contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which
-can be used for time display and scheduled alarm produce. In addition, the
-hardware state machine provides triggering and timing control for chip
-power-on, power-off and reset.
+It is the same thing. The AArch32 view is configured the same way as
+the AArch64 view, and there is nothing to do at all (that's what
+VPIDR_EL2 is all about).
 
-Furthermore, the 8051 subsystem is located within RTCSYS and is
-independently powered. System software can use the 8051 to manage wake
-conditions and wake the system while the system is asleep, and communicate
-with external devices through peripheral controllers.
+With Oliver's change, I'm correctly getting a different MIDR using a
+hacked up kvmtool, see below. I suspect you're not running with the
+correct patch applied.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
-QUESTION:
+	M.
 
-I'm unsure about reg properties in the subnodes (child devices) of
-RTCSYS:
-- they will not be used anyway by the drivers because they genuinely
-overlap (the whole point of going MFD) -- therefore the drivers will do
-syscon_node_to_regmap(pdev->dev.parent->of_node)
-- as I understood from the history of MFD dt bindings' submissions, regs
-are encouraged, if can be specified
-- overlapping regs cause dt_binding_check warnings:
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/pmu@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
+* kvmtool hack:
 
-Shall I remove the MMIO resources from the actual devices or rather ignore the warnings?
+diff --git a/arm/aarch64/kvm-cpu.c b/arm/aarch64/kvm-cpu.c
+index c8be10b..f8ecbfe 100644
+--- a/arm/aarch64/kvm-cpu.c
++++ b/arm/aarch64/kvm-cpu.c
+@@ -128,6 +128,18 @@ static void reset_vcpu_aarch64(struct kvm_cpu *vcpu)
+ 	}
+ }
+=20
++static void reset_vcpu_midr(struct kvm_cpu *vcpu)
++{
++	struct kvm_one_reg reg;
++	u64 midr =3D 0xbadf00d5;
++
++	reg.id =3D ARM64_SYS_REG(ARM_CPU_ID, 0);
++	reg.addr =3D (u64)&midr;
++
++	if (ioctl(vcpu->vcpu_fd, KVM_SET_ONE_REG, &reg) < 0)
++		die("KVM_SET_ONE_REG failed (set_midr vcpu%ld", vcpu->cpu_id);
++}
++
+ void kvm_cpu__select_features(struct kvm *kvm, struct kvm_vcpu_init *init)
+ {
+ 	if (kvm->cfg.arch.aarch32_guest) {
+@@ -181,6 +193,8 @@ void kvm_cpu__reset_vcpu(struct kvm_cpu *vcpu)
+ 			die_perror("sched_setaffinity");
+ 	}
+=20
++	reset_vcpu_midr(vcpu);
++
+ 	if (kvm->cfg.arch.aarch32_guest)
+ 		return reset_vcpu_aarch32(vcpu);
+ 	else
 
- .../bindings/mfd/sophgo,cv1800b-rtcsys.yaml   | 222 ++++++++++++++++++
- 1 file changed, 222 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
+* arm64 host:
 
-diff --git a/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
-new file mode 100644
-index 000000000000..2dc7c2df15c1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
-@@ -0,0 +1,222 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/sophgo,cv1800b-rtcsys.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cvitek CV18xx/Sophgo SG200x Real Time Clock module
-+
-+maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - sophgo@lists.linux.dev
-+
-+description:
-+  The RTC (Real Time Clock) is an independently powered module in the chip. It
-+  contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which can
-+  be used for time display and scheduled alarm produce. In addition, the
-+  hardware state machine provides triggering and timing control for chip
-+  power-on, power-off and reset.
-+
-+  Furthermore, the 8051 subsystem is located within RTCSYS and is independently
-+  powered. System software can use the 8051 to manage wake conditions and wake
-+  the system while the system is asleep, and communicate with external devices
-+  through peripheral controllers.
-+
-+  Technical Reference Manual available at
-+    https://github.com/sophgo/sophgo-doc/releases/download/sg2000-trm-v1.01/sg2000_trm_en.pdf
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - sophgo,cv1800b-rtcsys
-+      - const: simple-mfd
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges: true
-+
-+patternProperties:
-+  "^mcu@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: false
-+
-+    description:
-+      The 8051 subsystem is located within RTCSYS and is independently powered.
-+      System software can use the 8051 to manage wake conditions and wake the
-+      system while the system is asleep, and communicate with external devices
-+      through peripheral controllers.
-+
-+    properties:
-+      compatible:
-+        items:
-+          - enum:
-+              - sophgo,cv1800b-rtc-dw8051
-+
-+      reg:
-+        maxItems: 1
-+
-+      clocks:
-+        maxItems: 1
-+
-+      resets:
-+        maxItems: 1
-+
-+      sram:
-+        $ref: /schemas/types.yaml#/definitions/phandle
-+        maxItems: 1
-+        description: The SRAM controller to host the code/data
-+
-+    required:
-+      - compatible
-+      - clocks
-+
-+  "^pmu@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: false
-+
-+    description:
-+      Power-On-Reset (POR) sub-module, hardware state machine providing
-+      triggering and timing control for chip power-on, power-off and reset.
-+      Supports battery low voltage detection and interrupt generation, as
-+      well as button-triggered wake up from sleep.
-+
-+    properties:
-+      compatible:
-+        items:
-+          - enum:
-+              - sophgo,cv1800b-rtc-pmu
-+
-+      reg:
-+        maxItems: 1
-+
-+      clocks:
-+        maxItems: 1
-+
-+      interrupts:
-+        items:
-+          - description: long button press interrupt
-+          - description: vbat detection interrupt
-+
-+      interrupt-names:
-+        items:
-+          - const: longpress
-+          - const: vbat
-+
-+    required:
-+      - compatible
-+
-+  "^rtc@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: false
-+
-+    description:
-+      The RTC (Real Time Clock) is an independently powered module in the chip.
-+      Its calibration module uses a 25MHz crystal oscillator clock to calibrate
-+      32KHz oscillator.
-+
-+    properties:
-+      compatible:
-+        items:
-+          - enum:
-+              - sophgo,cv1800b-rtc
-+
-+      reg:
-+        maxItems: 1
-+
-+      clocks:
-+        maxItems: 1
-+
-+      interrupts:
-+        items:
-+          - description: alarm interrupt
-+
-+      interrupt-names:
-+        items:
-+          - const: alarm
-+
-+    required:
-+      - compatible
-+      - clocks
-+      - interrupts
-+
-+  "^sram@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: false
-+
-+    description:
-+      Provide 2KB of SRAM, which can host software code or temporary data.
-+
-+    properties:
-+      compatible:
-+        items:
-+          - enum:
-+              - sophgo,cv1800b-rtc-sram
-+
-+      reg:
-+        maxItems: 1
-+
-+      clocks:
-+        maxItems: 1
-+
-+    required:
-+      - compatible
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - ranges
-+
-+additionalProperties:
-+  type: object
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/sophgo,cv1800.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    rtcsys@5025000 {
-+        compatible = "sophgo,cv1800b-rtcsys", "simple-mfd", "syscon";
-+        reg = <0x5025000 0x2000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges = <0 0x5025000 0x2000>;
-+
-+        mcu@0 {
-+            compatible = "sophgo,cv1800b-rtc-dw8051";
-+            reg = <0x0 0x1000>;
-+            clocks = <&clk CLK_SRC_RTC_SYS_0>;
-+            sram = <&rtc_sram>;
-+        };
-+
-+        pmu@0 {
-+            compatible = "sophgo,cv1800b-rtc-pmu";
-+            reg = <0x0 0x2000>;
-+            interrupts = <18 IRQ_TYPE_LEVEL_HIGH>,
-+                         <19 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "longpress", "vbat";
-+        };
-+
-+        rtc@0 {
-+            compatible = "sophgo,cv1800b-rtc";
-+            reg = <0 0x2000>;
-+            interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "alarm";
-+            clocks = <&clk CLK_RTC_25M>;
-+        };
-+
-+        rtc_sram: sram@0 {
-+            compatible = "sophgo,cv1800b-rtc-sram";
-+            reg = <0x0 0x1000>;
-+        };
-+    };
--- 
-2.48.1
+$ cat /proc/cpuinfo=20
+processor	: 0
+BogoMIPS	: 200.00
+Features	: fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x0
+CPU part	: 0xd03
+CPU revision	: 4
 
+* arm64 guest:
+
+# cat /proc/cpuinfo
+processor	: 0
+BogoMIPS	: 200.00
+Features	: fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
+CPU implementer	: 0xba
+CPU architecture: 8
+CPU variant	: 0xd
+CPU part	: 0x00d
+CPU revision	: 5
+
+* arm32 guest:
+
+# cat /proc/cpuinfo=20
+processor	: 0
+model name	: ARMv7 Processor rev 5 (v7l)
+BogoMIPS	: 200.00
+Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vf=
+pd32 lpae evtstrm aes pmull sha1 sha2 crc32=20
+CPU implementer	: 0xba
+CPU architecture: 7
+CPU variant	: 0xd
+CPU part	: 0x00d
+CPU revision	: 5
+
+--=20
+Without deviation from the norm, progress is not possible.
 
