@@ -1,136 +1,101 @@
-Return-Path: <linux-kernel+bounces-516725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302EAA37642
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:23:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127FEA37646
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0801D1891114
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC483A674C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C3F19D890;
-	Sun, 16 Feb 2025 17:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F1C19CCFC;
+	Sun, 16 Feb 2025 17:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPpvNsNK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uJa+qLc3"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E678C18DB21;
-	Sun, 16 Feb 2025 17:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80562D299;
+	Sun, 16 Feb 2025 17:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739726598; cv=none; b=jo5OsPcbfeIxk10R5R1hhse/1pgXm6YSuXfZlV5mCVfpqr+wCKk/ejYzK2kqKStLprW2yuUQeOjLOLHU94Sn5wS5/p7h3fQgY4KcIPbv3ncw0w1HMj8wma2Q8elAV7GVDftz1pIz3N7FVLtiyouOKyVy12E3kii3rCrcbmNc2wo=
+	t=1739726802; cv=none; b=IBW5EcFYP1AMXtzgtIVXAeQlHudG9kdSY05ipTBUZebFXvZNjB6B/+B9ce3NGlAa0+45INHiH6s4vVrVy0aWEUzUWZDe2+7QgvVOyuOpcRWUdaXJ8DVzn1BZtEe5AR4APB8yTKF3uwxmw6AOrMoYu7mNXVY/eMkluIMOyLQMhx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739726598; c=relaxed/simple;
-	bh=EzkwvjYBF/gF4oH+KNyU4qu6XNtV5u8kaYcnXPP9HrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NCjHcxQPidWS1b0dBzT72aS4cMyUUD0Nk10kciVumglA5h0Ast1LWyehqwj16x4ak0/7N+MEqGrolI4kl9ukhAIy2j6ZojCjLjxwycBSwmfn6exzcAqiuQJTQasagvXnsSoiSrc5+8acFU0wVQirhMjDdHmA44fIVCxKQ4Pva5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPpvNsNK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85ACC4CEDD;
-	Sun, 16 Feb 2025 17:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739726597;
-	bh=EzkwvjYBF/gF4oH+KNyU4qu6XNtV5u8kaYcnXPP9HrE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gPpvNsNKE7F8OwKbdbK9Trx/TUjYk9tYqTPzGeVodBsyb3s9DX8E7NEYN0G5487kJ
-	 gRvEBWKavlbdYVZ+xpudmLH/ppMOwWbacAUPr0m0Q+CElZK2TWBW0f68VzNJTaX/lg
-	 ruBOwRVSrq9miTOZB/XftfX70MJSpaE2rqkntTgvgMQQwC4KGJwMvfOCLlDLkDjg6/
-	 z5GuAjVwnatWIQIFsNIvJRRyZnKPMFtXi7u6Wp0+A5NHF3ljsNjP2ehQZGR3uvuFsA
-	 QoI66oQqE9Ltgv4BtcOZ7H86xaBHWVRoTDM/ZjckrLi/522G7a3SwPXAQ58o7L+HhM
-	 Pi73jBq29hi4Q==
-Date: Sun, 16 Feb 2025 17:23:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 06/14] iio: accel: adxl345: add double tap feature
-Message-ID: <20250216172309.6c57d160@jic23-huawei>
-In-Reply-To: <20250210110119.260858-7-l.rubusch@gmail.com>
-References: <20250210110119.260858-1-l.rubusch@gmail.com>
-	<20250210110119.260858-7-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739726802; c=relaxed/simple;
+	bh=uEt464/h2m3GqGiapkNB2JJvR+MVEX5A4+rFNpOFjck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/ZfEbzjeVzuOSXXXpVuFmCEOEA3DY5q+kBWL+RvEs3Sd5CXsy/Q8+qzipoHsrF+9eYMrMtHezy0T4kYbSZ25yxmG/F6z4vg1HjfuftAzuZ6lXWShhKY0TsMmjIkfMPkyEYnGe9s3tx6t+rw3LyEIyKDJW9Rqo9Dp6+M/hRtqYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uJa+qLc3; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jmWOQZCXMxbv82cQngQGVJfiQD14sQuWaCtfDjrw/2o=; b=uJa+qLc35duMilGvoz3lM8gxlz
+	g58gA8YPlRXZeeTTYAsTYrpRA9AM/0SvrUkuG+CougKPe/CA0Xq992zlq6BtHUrddDQmrD1p/cpbD
+	eqEkW2Ur1utltygrmi7C6C92IhkuCaLJiQP68tr+3ht1JDNQYZ4+iOrKe0i0yYYZpZHNnaxh+PuNB
+	/66GluGIJvXetwCix84Yxjr/y1HumtQVM25ys6cTq+AmutSifVfNuA3QfffD8i6JXv6yq3iCP5eQU
+	GOiJ7sYCNQ7e5ICthYnDBDCqzq9MCojerhG0lymQCZbeEgk5My/HRxfiDFlHuNF45j6s2TZEosyFR
+	lORUZ+mw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tjiPd-0000000G1Vi-23bL;
+	Sun, 16 Feb 2025 17:26:37 +0000
+Date: Sun, 16 Feb 2025 17:26:37 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Magnus Lindholm <linmag7@gmail.com>
+Cc: richard.henderson@linaro.org, mattst88@gmail.com,
+	glaubitz@physik.fu-berlin.de, ink@unseen.parts, kees@kernel.org,
+	arnd@arndb.de, linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org
+Subject: Re: [PATCH 1/1] alpha: Fix pte_swp_exclusive on alpha
+Message-ID: <20250216172637.GI1977892@ZenIV>
+References: <20250216170748.2258-1-linmag7@gmail.com>
+ <20250216170748.2258-2-linmag7@gmail.com>
+ <20250216171741.GG1977892@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216171741.GG1977892@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, 10 Feb 2025 11:01:11 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Add the double tap feature of the sensor. The interrupt handler needs
-> to catch and forward the event to the IIO channel. The single tap
-> implementation now is extended to deal with double tap as well.
+On Sun, Feb 16, 2025 at 05:17:41PM +0000, Al Viro wrote:
+> On Sun, Feb 16, 2025 at 06:04:53PM +0100, Magnus Lindholm wrote:
+> > Function pte_swp_exclusive() checks if _PAGE_SWP_EXCLUSIVE bit is set in
+> > PTE but returns lower 32-bits only. Shift bits right by 32 to return upper
+> > 32-bits of PTE which contain the _PAGE_SWP_EXCLUSIVE bit. On alpha this is
+> > bit 39 but on most other architectures this bit already resides somewhere
+> > in the first 32-bits and hence a shift is not necessary on those archs.
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345_core.c | 102 ++++++++++++++++++++++++++++++-
->  1 file changed, 100 insertions(+), 2 deletions(-)
+> Just make it return bool and be done with that - all users are either
+> if (pte_swp_exclusive(...)) or if (!pte_swp_exclusive(...)) or assignments
+> to bool variable.
 > 
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index 304147a4ca60..cf35a8f9f432 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -46,17 +46,23 @@ enum adxl345_axis {
->  /* single/double tap */
->  enum adxl345_tap_type {
->  	ADXL345_SINGLE_TAP,
-> +	ADXL345_DOUBLE_TAP,
->  };
->  
->  static const unsigned int adxl345_tap_int_reg[2] = {
+> No need to shift anything - compiler probably will figure out that
+> 	if ((int)((x & (1UL<<39)>>32)))
 
-Ah. Here comes the rest.  Just use [] so no need to update.
-This size should only matter the other way around where you
-are doing an ARRAY_SIZE() or similar (might not even need that!)
+Sorry,
 
->  	[ADXL345_SINGLE_TAP] = ADXL345_INT_SINGLE_TAP,
-> +	[ADXL345_DOUBLE_TAP] = ADXL345_INT_DOUBLE_TAP,
->  };
->  
->  enum adxl345_tap_time_type {
-> +	ADXL345_TAP_TIME_LATENT,
-> +	ADXL345_TAP_TIME_WINDOW,
->  	ADXL345_TAP_TIME_DUR,
->  };
->  
->  static const unsigned int adxl345_tap_time_reg[3] = {
-> +	[ADXL345_TAP_TIME_LATENT] = ADXL345_REG_LATENT,
-> +	[ADXL345_TAP_TIME_WINDOW] = ADXL345_REG_WINDOW,
->  	[ADXL345_TAP_TIME_DUR] = ADXL345_REG_DUR,
->  };
->  
-> @@ -73,6 +79,8 @@ struct adxl345_state {
->  	u32 tap_axis_ctrl;
->  	u8 tap_threshold;
->  	u32 tap_duration_us;
-> +	u32 tap_latent_us;
-> +	u32 tap_window_us;
->  
->  	__le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned(IIO_DMA_MINALIGN);
->  };
-> @@ -86,6 +94,14 @@ static struct iio_event_spec adxl345_events[] = {
->  		.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE) |
->  			BIT(IIO_EV_INFO_TIMEOUT),
->  	},
-> +	{
-> +		/* double tap */
+	if ((int)(((x & (1UL<<39))>>32))
 
-Kind of obvious comment given the dir, so could just not mention it.
-
-> +		.type = IIO_EV_TYPE_GESTURE,
-> +		.dir = IIO_EV_DIR_DOUBLETAP,
-> +		.mask_shared_by_type = BIT(IIO_EV_INFO_ENABLE) |
-> +			BIT(IIO_EV_INFO_RESET_TIMEOUT) |
-> +			BIT(IIO_EV_INFO_TAP2_MIN_DELAY),
-> +	},
->  };
-
-> +
+> is equivalent to
+> 	if (x & (1UL<<39))
+> but why bother with such convolutions in the first place?
+> 
+> Seriously, just make it
+> 
+> bool pte_swp_exclusive(pte_t pte)
+> {
+> 	return pte_val(pte) & _PAGE_SWP_EXCLUSIVE;
+> }
+> 
+> and that's it - conversion from arithmetical types to bool will do the right thing.
+> 
 
