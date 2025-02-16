@@ -1,88 +1,92 @@
-Return-Path: <linux-kernel+bounces-516688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7386DA375D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:36:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE57A375DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0CC3ACA3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:36:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4925188AC97
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10E419C546;
-	Sun, 16 Feb 2025 16:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BFE19ADB0;
+	Sun, 16 Feb 2025 16:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UJ59A9xI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZvIVB6P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DB818024;
-	Sun, 16 Feb 2025 16:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D240D3D6F;
+	Sun, 16 Feb 2025 16:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723791; cv=none; b=Hg0/V6KA/wH7Q9g/EnBSi1PFed8//NlNAsZrBRZQ+sFcMjKAXOKTdKxy8Ejmy+D9OFT+ps3aKnz5NwZRInjei8smzCGXDLfQwbI6zTsJDaw13chFdUEacOQHeMFYskIiAL4aHHT1xLZ/LUy/rzAadjaepUfVf7y+Qn8gFf+yUmM=
+	t=1739723926; cv=none; b=EzujgRdyVzyXbf3uHAFPPgtM+/JNihP5jo7s0z8k6KhNKT7w/W5CAwl5LoOGQuht4B+LjsCPZepWxckXfCr6nH1hcRhXcswrkm3JAlqwqqXlwajgja8Bh8BgYgaDPaT6/wmakapiWpwZ0KuvPrge65wYcSJHWyD8Uw53Jcx6aaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723791; c=relaxed/simple;
-	bh=ByXLAurH+1Re1vVJZ/BAA4HrNWB6FIi2AKVogbcsalw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ocy9dv3D6lbPQpSnELcCdsY6wc6u1W7VP6MSJxXDLJc0lUhAGdNIp6wdHEW9tR4IxSuSMdhKYK22tK4MuD8FWy+UmfXpge9/+o5Qb1Boc02hx5e2hzRGkTDzfYC9hv7t69AQuwu6qrCuLyjqT02WtoTbE5P3gxPFbhoXoPi32Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UJ59A9xI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZsOQcoouRE/mfiTFlVK+KMfUUssVnYx0z0OR3ds2eRM=; b=UJ59A9xIaPWrvFp/9acztvmD2r
-	H1j65E31RNbmx78HtLmmgvzF+oNEU/h/bFAHaa5tewmZxE7PTFuQc8Y9s/g9MLpAteqq3fttnW0hN
-	82o0GHAaHZtHMphzMW02dfF6tj/KwxO+mYafb6g3rv/MeGjmrESFL8+/xi8pZIB0yKcw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tjhd0-00Ehal-SA; Sun, 16 Feb 2025 17:36:22 +0100
-Date: Sun, 16 Feb 2025 17:36:22 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next] Documentation: net: phy: Elaborate on RGMII
- delay handling
-Message-ID: <92111af4-c0d0-48bd-b774-0cac4f2abd13@lunn.ch>
-References: <20250214094414.1418174-1-maxime.chevallier@bootlin.com>
- <Z68WDG_OzTDOBGY-@shell.armlinux.org.uk>
- <20250214114254.0b57693b@fedora.home>
+	s=arc-20240116; t=1739723926; c=relaxed/simple;
+	bh=CPcswU4WAs4lHkUIrx1fyYu9o5RBDOL0AwGQ6So+GZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O4SWsXuX66qBgcghtvhoVjViKS7ye46IeuKKKNh0XQgZ8kfDOkTGhFqu1hUX9psIMPwtSBDYb2xtva9YD60F3YdKY8afyzPYTfEeNfg1XXZPC07I7EEIywp0j0MxMSJiGNCr93Ikh3VWFeUcngsxCAuReZmR9Q90ECcbdfl1OgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZvIVB6P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F2FC4CEDD;
+	Sun, 16 Feb 2025 16:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739723926;
+	bh=CPcswU4WAs4lHkUIrx1fyYu9o5RBDOL0AwGQ6So+GZE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rZvIVB6PD+6FkOCioPmoRbv3oKSU4FgqndcGU+aBrD7WPbfgStZiMMJAXOiqtfIIo
+	 qbV7JNm8a8UBJXd/j9G5QaFezao6fanxQhBX4tZbSuUnV1oSgVpXM2x2izQ0lY5lEn
+	 CzExczXdufA9ZhpmW1b6uBrLZdjPRPYgYY02G+eAi6cag0tGUfbOoy6EYCrGF9kWWp
+	 o3NOploiINup58CI1tBoV5xxQ4nEFZQkS+TM4vo9UbBdEf/cQOe4T8qv7iHGxW2vGX
+	 CdLTKSFSSIZKqGdMnnKYGbxZD5PtdOmms3NTQiOr1hMM+/24/Yy6sCjPpveBPUNbxn
+	 d5V6wYQYCe+Ug==
+Date: Sun, 16 Feb 2025 16:38:39 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Bo Liu <liubo03@inspur.com>
+Cc: <dan@dlrobertson.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] iio: accel: convert to use maple tree register
+ cache
+Message-ID: <20250216163839.2055d5e1@jic23-huawei>
+In-Reply-To: <20250212075223.4164-1-liubo03@inspur.com>
+References: <20250212075223.4164-1-liubo03@inspur.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214114254.0b57693b@fedora.home>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Just to clarify, do you see that patch as useful ? seems to me like the
-> original version is clear enough to you
+On Wed, 12 Feb 2025 02:52:19 -0500
+Bo Liu <liubo03@inspur.com> wrote:
+
+> The maple tree register cache is based on a much more modern data structure
+> than the rbtree cache and makes optimisation choices which are probably
+> more appropriate for modern systems than those made by the rbtree cache.
 > 
-> Thanks for reviewing,
+> Bo Liu (4):
+>   iio: accel: msa311: convert to use maple tree register cache
+>   iio: accel: bma400: convert to use maple tree register cache
+>   iio: accel: bmi088: convert to use maple tree register cache
+>   iio: accel: kx022a: convert to use maple tree register cache
+> 
+>  drivers/iio/accel/bma400_core.c       | 2 +-
+>  drivers/iio/accel/bmi088-accel-core.c | 2 +-
+>  drivers/iio/accel/kionix-kx022a.c     | 4 ++--
+>  drivers/iio/accel/msa311.c            | 2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+> 
+These are all fairly small register maps so I doubt it makes much
+real difference.   Still there is the possibility these get copied
+into a driver with a much larger regmap, so fair enough to tidy these
+up.  Applied to the togreg branch of iio.git and pushed out as testing
+for 0-day to take a first look.
 
-Is the problem that the documentation is confusing? Or that developers
-don't actually read the documentation, nor the mailing list?
+Thanks,
 
-There is a point of diminishing returns with working on Documentation.
-
-There might be more value in working on checkpatch, add a warning
-about any patch adding phy-mode == 'rmgii' without a comment on the
-line.
-
-	Andrew
-
+Jonathan
 
 
