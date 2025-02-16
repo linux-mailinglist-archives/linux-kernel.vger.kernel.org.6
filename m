@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-516712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F8A37616
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:57:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5D4A37621
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C8F16C2E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CDD188EBBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F5119D083;
-	Sun, 16 Feb 2025 16:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F08C19DF9A;
+	Sun, 16 Feb 2025 16:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzNnuw+e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xkCExdn1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF5450FE;
-	Sun, 16 Feb 2025 16:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667C119CC28;
+	Sun, 16 Feb 2025 16:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739725026; cv=none; b=uVA54P4qAwxWr4rt1mWcrgm0Ynol9doUAwkXes0wemBbBdLr7eOcaIw9fP9qtATc6XxlenIEr+R8/xECr0pE/nPRTS/pdMkNft6bqTt1krfplcm/h5BiPvMfozUB9IAHMN2NT8doSvTgzIk77gUVRyDTClI1yxqmjNdFAvBhMWI=
+	t=1739725196; cv=none; b=m/4gUoCt7wX0aK6G3V1EbBPgZIEIw6kDMuqO+e5BmcFF5DI/vY0BLjVeXZo0CKupLl6oVd9BVx6b+9DshuflS6S8lNy23U199RMk6bMegrdsskFjNoj6boJHqbVM41qRIm/JVhcP3Bu/fMpsWKP7odv8UTYyxEtFtKTkGJmQB6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739725026; c=relaxed/simple;
-	bh=vFZ0bIZ4JUsP4R5cEsTCRCJCscbl/sGPQwm3H8zHCr4=;
+	s=arc-20240116; t=1739725196; c=relaxed/simple;
+	bh=DhySorGZIc9kQXBR4kFIxyKQSoB8SqkmLxPlhPKbfkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AgbRP4H8oJkfploHCIfSHnBljuMTZlWybu1r0hWDAlH1X8EILJDagv6Zb4/KtKehdzdsytKiq6daZ5uNVxYdjILAaOJ9a6cLd+1V+VIhA0j5vd/KhEymIAqrMwCGXjETY+SKkxUgIecr7EZDANeXSCRBHyJpsnwPRjlCGVyw+H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzNnuw+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F28BC4CEDD;
-	Sun, 16 Feb 2025 16:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739725024;
-	bh=vFZ0bIZ4JUsP4R5cEsTCRCJCscbl/sGPQwm3H8zHCr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KzNnuw+e+QUfckWuIq9Mft4taJNR/pvCCuBiDe+lxRT2GXPivlx1NYUVtO2wqyJuU
-	 xyvG6xrymf3Ymaka2+B4A6D+Aef/Qa+kaDZpZhhuNX4z51W2GiyKvp4bSgq7BSz15N
-	 hYk9iqHgjb+rI4IfXxMlHpmdgrR/XZmaqIXtz4WWN9/pnHwhVKe/OUGkhpVG4jrFVy
-	 C/BHAjRtxpAw8Y6plebt9z0nVqsygaVcxkm2URVHNzxSFQcs4csvHA5pmDTicDMnwW
-	 MPzEXeWRZj2c8B1XwG7h89mba6Hm20FKpG0S2SWtIXCBUiQdjNWp0/Zra2Telz2Wid
-	 vOYuh6VLqkmow==
-Date: Sun, 16 Feb 2025 06:57:03 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] sched_ext: idle: Introduce node-aware idle cpu kfunc
- helpers
-Message-ID: <Z7IY3yr1VErsryqw@slm.duckdns.org>
-References: <20250214194134.658939-1-arighi@nvidia.com>
- <20250214194134.658939-9-arighi@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2c5RWR2FJNCCWfMm+lMZce1Y5tMyVcDozaEMjf3PMJikOB0HO0snuLyXddsj0ZGAZi7VhoC6MzjEp+/f6bXhKcodHSwRqjc4VnsK4l2YcEViuXWjlQ+W9c5vkdGFO0QsSz9xEiAyiyXBZQHDNnta8tvZPCgpnICd54arLts8u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xkCExdn1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SGjXFxJmVk/FKeJ46IrEjqRmgY6gQvmYuvqL1kDeGQ4=; b=xkCExdn11EsAZtDgmuPdYucM2j
+	bK3pZs2vK93GF1VCsaJw9PI1Rx6zDnUDYt3fCnsSGGmkrntc4cSBM6QhC8CwBAKoDhfZkXjhqumGV
+	mE26uEYC00UAVkIj4JZSjPkjpP2ho+epU+iwoSH56gh2332eCOTh7rsxa6Xvd0ngofbo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tjhzP-00Ehw8-Nx; Sun, 16 Feb 2025 17:59:31 +0100
+Date: Sun, 16 Feb 2025 17:59:31 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v5 2/3] net: stmmac: platform: Add
+ snps,dwmac-5.30a IP compatible string
+Message-ID: <9dcab9aa-6d1e-4804-82ff-fb8dfa434df7@lunn.ch>
+References: <20250216123953.1252523-1-inochiama@gmail.com>
+ <20250216123953.1252523-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,57 +90,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214194134.658939-9-arighi@nvidia.com>
+In-Reply-To: <20250216123953.1252523-3-inochiama@gmail.com>
 
-Hello,
+On Sun, Feb 16, 2025 at 08:39:50PM +0800, Inochi Amaoto wrote:
+> Add "snps,dwmac-5.30a" compatible string for 5.30a version that can avoid
+> to define some platform data in the glue layer.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
 
-On Fri, Feb 14, 2025 at 08:40:07PM +0100, Andrea Righi wrote:
-...
->  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
->  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
->  s32 scx_bpf_pick_idle_cpu_in_node(const cpumask_t *cpus_allowed,
->  				   int node, u64 flags)
+Ideally, this would be two patches, one adding the
+stmmac_gmac4_compats[] with the existing compatibles, and then a patch
+adding snps,dwmac-5.30a. Logically, these are different, so two
+patches.
 
-All other functions have just _node as the suffix. Might as well do the same
-here?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
->  s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed,
->  			       int node, u64 flags)
+    Andrew
 
-...
-> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> +{
-> +	node = validate_node(node);
-> +	if (node < 0)
-> +		return cpu_none_mask;
-> +
-> +#ifdef CONFIG_SMP
-> +	return idle_cpumask(node)->cpu;
-> +#else
-> +	return cpu_none_mask;
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Shouldn't the UP case forwarded to scx_bpf_get_idle_cpumask()? Wouldn't a
-NUMA aware scheduler running on a UP kernel end up specifying 0 to these
-calls?
-
-> +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
-> +{
-> +	node = validate_node(node);
-> +	if (node < 0)
-> +		return cpu_none_mask;
-> +
-> +#ifdef CONFIG_SMP
-> +	if (sched_smt_active())
-> +		return idle_cpumask(node)->smt;
-> +	else
-> +		return idle_cpumask(node)->cpu;
-> +#else
-> +	return cpu_none_mask;
-
-Ditto here.
-
-Thanks.
-
--- 
-tejun
+    Andrew
 
