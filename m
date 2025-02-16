@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-516437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AA9A37170
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:03:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BDBA3717F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F160E3B033E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58C5B167FA7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD83A2D;
-	Sun, 16 Feb 2025 00:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D8DEC0;
+	Sun, 16 Feb 2025 00:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shxH02hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="RNnOCkw0"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED36184;
-	Sun, 16 Feb 2025 00:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1A17FD
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 00:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739664207; cv=none; b=NjnsTnQkGYJ2I+SSJ7YOh4b/Ofn8Y+QpbVz/BPmUB5+MT+suO/g/w92WDpZ8auyqmmLjK5Y73K4HW5ukG9iorIh934/qi5UrrB5IikX05GkiBsEex1tXxyi8roCJQEzUVfZJJ3Ll0deppsPrU6z9BAA1sVBZx3w2FRkGBZaLCUU=
+	t=1739664785; cv=none; b=fCm6lwbSbpNvRX1ljFODVqSgyR/SAXJQkvd+qW+yKluZGgKLrlozUoxsK1DxQv4NWq68drdqNQzxkme9Zhca/BDvy0ZozJ+uQxFiuY0x12SvQBn8sqC6TQmI267Q08jziX3ZJzYo/vl3WzYRUSp98iEB/zWYegtph7dwMSKwtmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739664207; c=relaxed/simple;
-	bh=xGt/JVQlQOuGg/pZcw+eNAm3ifsdJu12WLi5c+cM2LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RKaiRS1T3NRzlwny4ye0tw2GziRe2SmECWERRF3AHVkV8L+JDuddIvwc4HZlYcVVuXzpPi4F/iKe9sYDQEwRO6hwwe8DJbdH3eZFMhWVrbPIvGvNQHbM8XPwi/Nx8oU2EDG6fbx47ErRbIirhkzm6Tmmxo6rC1MMIHxwgAZoadQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shxH02hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF55C4CEDF;
-	Sun, 16 Feb 2025 00:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739664207;
-	bh=xGt/JVQlQOuGg/pZcw+eNAm3ifsdJu12WLi5c+cM2LU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=shxH02hs+SiRlUHQ+EfiVNIKfyf316DEDuH1Lw2aSjc5YQzqRzE0BWCiudJjA0c5L
-	 XYB6vFYngPKXAYJwFcQnA9mdB3gpIF6RcY243gZv0bA+IjVD9nZTi4be3gcFDnpGCA
-	 3DEFVgl1dFC6+Yqy9kp3ayNGvjCeTaBN4z+nP/6wJ3mL0euNu8A8lxAYCmz/rIex3z
-	 C4SIc/b89WdVPMi2OFwjvhX9ZvxjbkNCXYGqcj89o+6qa1uy18n7lSlTD9vugF4ecO
-	 MoZZ7+4L1zZ+z8DExhgbDWgSDfR5FujfKCm9MfRJzrVY0rvq8oMdYA2sLb7cid38dJ
-	 +zXrEhTTr7KPA==
-Date: Sat, 15 Feb 2025 18:03:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [GIT PULL] Devicetree fixes for v6.14, part 1
-Message-ID: <20250216000325.GA1688225-robh@kernel.org>
+	s=arc-20240116; t=1739664785; c=relaxed/simple;
+	bh=QD486JtHs8u4Im9A2uDBFVUZyQYd+1OFyI8EK2WxMjk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZCT+quSd6Yd3gvYqJxNKR0Ndg+L6IMbA/lJFkpMyUdNH9YGjJMwceFuBVHw3sYaAPOWeUHEdZrFtS/k2xfrSbpSgJ8yHmhZ2DAt41NeXeWz5TJ0bDro6HA+rhGc+pnsAub6pHBP8emtUXv8lQPsk9g0le7GxFVIDson1+I9Yt/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=RNnOCkw0; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id BEA9C240029
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:12:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1739664775; bh=QD486JtHs8u4Im9A2uDBFVUZyQYd+1OFyI8EK2WxMjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=RNnOCkw0uNRjupc/nm0BJgO5kYWMwJZ/MiSMmDwvvovBzEGI+kX8YwWRxUq6UJzdr
+	 7kYee5Ln9Kkppr8r7ROGbXxT6yuwcis4S8HSkASKqh716m6WqdKHM6h6ZFREOLsl7I
+	 mE9CVU8tx98D+mkrW2yaKMe+TFrQ1jNczOwjC4usrHFb5Gtp9H0aXQWYVsqve5w1Or
+	 2GMBwX+WKnePPaaCA29WTsAVFiOChPWe19EDfjSjmWOl28JNNk3tRqt90xvwkxEppc
+	 bJ0q7FL9aIqE0kBJxvTNpseJWJTdrf25JGIRnQL4eSlVohGlPUYmYyh1l7VboyVBmb
+	 tASdYUopKQG6A==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YwR7m2ZDqz6ty8;
+	Sun, 16 Feb 2025 01:12:52 +0100 (CET)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Danilo Krummrich <dakr@kernel.org>,  Miguel Ojeda
+ <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
+ <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6?=
+ =?utf-8?Q?rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  Andreas Hindborg <a.hindborg@kernel.org>,
+  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,
+  Nathan Chancellor <nathan@kernel.org>,  Nick Desaulniers
+ <ndesaulniers@google.com>,  Bill Wendling <morbo@google.com>,  Justin
+ Stitt <justinstitt@google.com>,  Wedson Almeida Filho
+ <wedsonaf@gmail.com>,  rust-for-linux@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  llvm@lists.linux.dev
+Subject: Re: [PATCH] rust: fix clippy::too-long-first-doc-paragraph
+In-Reply-To: <20250215223106.2346285-1-benno.lossin@proton.me>
+References: <20250215223106.2346285-1-benno.lossin@proton.me>
+Date: Sun, 16 Feb 2025 00:12:51 +0000
+Message-ID: <m21pvy927w.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Linus,
+Benno Lossin <benno.lossin@proton.me> writes:
 
-Please pull a couple of DT fixes. Well, a few are things that fell thru 
-the cracks for the merge window.
+> When running `make LLVM=1 CLIPPY=1` on my machine, I get this error:
+>
+>     error: first doc comment paragraph is too long
+>       --> rust/kernel/driver.rs:13:1
+>        |
+>     13 | / /// The [`RegistrationOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform,
+>     14 | | /// Amba, etc.) to provide the corresponding subsystem specific implementation to register /
+>     15 | | /// unregister a driver of the particular type (`RegType`).
+>     16 | | ///
+>     17 | | /// For instance, the PCI subsystem would set `RegType` to `bindings::pci_driver` and call
+>        | |_
+>        |
+>        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_long_first_doc_paragraph
+>        = note: `-D clippy::too-long-first-doc-paragraph` implied by `-D warnings`
+>        = help: to override `-D warnings` add `#[allow(clippy::too_long_first_doc_paragraph)]`
+>
+> Thus add a short one-line description.
+>
+> Fixes: ea7e18289f44 ("rust: implement generic driver registration")
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> ---
+> The error also occurs in v6.14-rc1, so it must have slipped through our
+> testing, which I find a bit strange. Also nobody reported it for rc1, so
+> maybe this is only something that I encountered?
+> ---
+>  rust/kernel/driver.rs | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> index 2a16d5e64e6c..65c9c1776556 100644
+> --- a/rust/kernel/driver.rs
+> +++ b/rust/kernel/driver.rs
+> @@ -10,6 +10,8 @@
+>  use core::pin::Pin;
+>  use macros::{pin_data, pinned_drop};
+>  
+> +/// Generic interface for subsystem driver registrations.
+> +///
+>  /// The [`RegistrationOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform,
+>  /// Amba, etc.) to provide the corresponding subsystem specific implementation to register /
+>  /// unregister a driver of the particular type (`RegType`).
+>
+> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
 
-Rob
+Hi,
 
+I cannot reproduce this as-is, but adding
+"-Wclippy::too_long_first_doc_paragraph" to the "rust_common_flags" in
+the Makefile reproduces it. Maybe try adding it there in your patch?
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-6.14-1
-
-for you to fetch changes up to 038e33fcd40e59b60cdca561c2a39998e6759e08:
-
-  dt-bindings: display: Add powertip,{st7272|hx8238a} as DT Schema description (2025-02-05 12:39:30 -0600)
-
-----------------------------------------------------------------
-Devicetree fixes for v6.14:
-
-- Add bindings for QCom QCS8300 clocks, QCom SAR2130P qfprom,
-powertip,{st7272|hx8238a} displays,
-
-- Fix compatible for TI am62a7 dss
-
-- Add a kunit test for __of_address_resource_bounds()
-
-----------------------------------------------------------------
-Devarsh Thakkar (1):
-      dt-bindings: display: ti: Fix compatible for am62a7 dss
-
-Dmitry Baryshkov (1):
-      dt-bindings: nvmem: qcom,qfprom: Add SAR2130P compatible
-
-Imran Shaik (3):
-      dt-bindings: clock: qcom: Add GPU clocks for QCS8300
-      dt-bindings: clock: qcom: Add CAMCC clocks for QCS8300
-      dt-bindings: clock: qcom: Add QCS8300 video clock controller
-
-Lukasz Majewski (1):
-      dt-bindings: display: Add powertip,{st7272|hx8238a} as DT Schema description
-
-Thomas Weiﬂschuh (1):
-      of: address: Add kunit test for __of_address_resource_bounds()
-
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |   3 +
- .../bindings/clock/qcom,sa8775p-camcc.yaml         |   6 +-
- .../bindings/clock/qcom,sa8775p-videocc.yaml       |   1 +
- .../bindings/display/panel/powertip,hx8238a.yaml   |  29 +++++
- .../bindings/display/panel/powertip,st7272.yaml    |  29 +++++
- .../bindings/display/ti/ti,am65x-dss.yaml          |   2 +-
- .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |   1 +
- drivers/of/address.c                               |   5 +-
- drivers/of/of_private.h                            |   4 +
- drivers/of/of_test.c                               | 119 ++++++++++++++++++++-
- include/dt-bindings/clock/qcom,qcs8300-camcc.h     |  16 +++
- include/dt-bindings/clock/qcom,qcs8300-gpucc.h     |  17 +++
- 12 files changed, 228 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
- create mode 100644 Documentation/devicetree/bindings/display/panel/powertip,st7272.yaml
- create mode 100644 include/dt-bindings/clock/qcom,qcs8300-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,qcs8300-gpucc.h
+diff --git a/Makefile b/Makefile
+index 89628e354..e1b14fb68 100644
+--- a/Makefile
++++ b/Makefile
+@@ -486,6 +486,7 @@ export rust_common_flags := --edition=2021 \
+ 			    -Wclippy::undocumented_unsafe_blocks \
+ 			    -Wclippy::unnecessary_safety_comment \
+ 			    -Wclippy::unnecessary_safety_doc \
++			    -Wclippy::too_long_first_doc_paragraph \
+ 			    -Wrustdoc::missing_crate_level_docs \
+ 			    -Wrustdoc::unescaped_backticks
+ 
 
