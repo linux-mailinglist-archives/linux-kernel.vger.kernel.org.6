@@ -1,92 +1,173 @@
-Return-Path: <linux-kernel+bounces-516686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DE9A375D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:33:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2550A375D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE546188984A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D40F43A96A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE33F19AD90;
-	Sun, 16 Feb 2025 16:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145919B5B4;
+	Sun, 16 Feb 2025 16:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amin34Yy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="hQe5evxT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FB318024;
-	Sun, 16 Feb 2025 16:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05B318024
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723601; cv=none; b=ZeXLaEvVPIFkOv3+CtoR4m2XoCd2XXl03A00RYV4lGbZicZlB+Zsgw7VRJStPBaPK9Ts0oPu3fETifh3b4A31phymSN+UgPsSyhqIBB/p+gnMR0KVyuVhyYTdycoyI80/gKs+W6NCokFTsxg1lwW+ZJS+PKWro4fzf6pKxV3qvs=
+	t=1739723626; cv=none; b=RWdEW8rVmdlwqOsMoifDhEYhu/PWPK7N84jvlaLsRR70wK87UhWfsLAlwgBry6GzGSaEfM4HXfRY4xA9WJFjTxoyA1X6Tvw3bQK1LINYVn4Mj3M0sZueohlXtH1zLYfEt+V8O24sPSo1maT/WoG1d3fhZn+x90vFjr3tojUxoCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723601; c=relaxed/simple;
-	bh=yVfFGre5pKFBf/Wjd8cEUun0ZmJ00U6LxY4jEpsc/Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AdloALe1906f+znoSEWLJubutbIsvlgioUyttuGVecUVfG1s0wLqzXAK5I+zQ4G5aTS9HR8VAui2klhHf9/iuI2jf6aEdyMjCjWFrwnUlSzy+XXxPH4ZG1d3DgBk+P6g+M4YkmeoqGpJSvkUUn719D3svVoPvIIjr8K557AzlZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amin34Yy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECDDFC4CEDD;
-	Sun, 16 Feb 2025 16:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739723597;
-	bh=yVfFGre5pKFBf/Wjd8cEUun0ZmJ00U6LxY4jEpsc/Wo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=amin34YyhxBmzjHJyo5mT5kLGVyM/ta+RXSTKBLvCeB5VjJYUHoSeiSOtHiu2+7i7
-	 OjZG/ej93CsOe9JjRZ3yPsXmWRTKZN/K4lEzuoD6+L6u/ggSUwiJvEG75/fuswSmbA
-	 8/WeCxnu+FVwKt9Z3qXZFlIZhPWx44TqqJSSb2WwKfuTJ+rctBOvkJ/BYEKQ9QmSgt
-	 mVN3+6U22aSSdiR6Gml4mPxY2pDuRzQROkXNcSwthxkjoz9jy8CTVInfmSqqUSVbG5
-	 +9atz9qsRvNXumL/SZOKKZ0beOeJG3LUzkSCPqXCqMhzHGRRaxb0FVIYEN8xfrm5jc
-	 4vx0obcv3Qm5A==
-Date: Sun, 16 Feb 2025 16:33:08 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
- <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <jonath4nns@gmail.com>, <marcelo.schmitt1@gmail.com>,
- <dlechner@baylibre.com>
-Subject: Re: [PATCH RESEND v3 17/17] iio: adc: ad7768-1: add low pass -3dB
- cutoff attribute
-Message-ID: <20250216163308.78680337@jic23-huawei>
-In-Reply-To: <50098494d2d3d50fe914de1f966d86c6fff7ecfc.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
-	<50098494d2d3d50fe914de1f966d86c6fff7ecfc.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739723626; c=relaxed/simple;
+	bh=BICul6GUdFbuU5tzJRFrpq8T0hra/dZQaGyO/rn8I6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKsCJK0ks+lpbQKaOil7JIR5Q/6JaUXvzMEK94ZbYAomLIES7ai/Xv0xc7rhi+cQT9dhEL7hMoNXC1QMtKCq1XTXFrYSOBuhozVD3BfWTXuCxb5A5S7QMzDYjO7uTa657KRSeCHzkVT2GdBRxAxDq3cnxzL6ahbB92y5ym9G4k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=hQe5evxT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so24602335e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 08:33:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1739723623; x=1740328423; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lUMfqS3dZBd43tbBbndbhZ/u2f+U8HCOLG9lUIdc1Xk=;
+        b=hQe5evxT+0D7PSbChtzPQKbTiyUIiiu7l2aK66kgJeYjF374OOaElthMytJrcyagA5
+         WwQBI+JNBdPAyWfOh6eVB5grz1sPeiBNgMbT8XDOlzYhhwSUcTnxlg4WDoF+Zxf0PDGL
+         oVha5iJpYwO8zKx/C0P+BokFcqleYmYITWPcQCPbCuEaWNurgvvJBngdlVgF+IYwugYg
+         w4GYjSl0nKNNuYHbsEy8AzyR3FjCJ3PRsCA7eXAGXsiCFiWAp+BuE9/1C/InSTA4wPfR
+         elniRGqo2vJGpiYK+KbGy3Xwyf2kI0Mefw8XiJZ5wFT5ZQ00cezj1v331aWRLYS4ccNH
+         rzgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739723623; x=1740328423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lUMfqS3dZBd43tbBbndbhZ/u2f+U8HCOLG9lUIdc1Xk=;
+        b=j4ZF9uoq1ci3xZduc2q1eYRYpRl4dBuzt9QNE2FvbwmfPZl9nhFusqqbpvMDPjMGXT
+         2HRD6p/XMXQcp40hHmPEfOz/xWgbavMqUm9jiY6mjUvawnjxWmIbvTOhE46EYadDImae
+         JUhoTc64fJvV4e+Yov726jE8zTo22vxNEomu3sj+86CtTzYcPevuLG/TY8Pyd9dPOYS0
+         kd/xf9gZ0/D8FHaNQn2kfI9/gVgqkgk2Jt8nx/3CX5SMqJ34VUEmp5auXjUVsF4TFLnV
+         rRiJSSDxs+Scoy2HSWbQcNcxolwf+mTAEQ/TShOWUeEjzPVmgTi7ZNuQQ2Z4HTHOUujp
+         ahkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmh7cTqZxb5kBsxJD83YJEoQ3l3SnjTexWAwyVNazKtKPJmoEegfssEe7/c4clE/l6++OTwRNFLsE8BUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqad6DFtzsk0uNoDAGMWW5O86IPfEnJKqy/Wo4RtjlTdM/toKb
+	z+qHOqKyrRSAp2WHqcxHHtiqIi+7cpve/nKsOssxW61PX+TwEeM44hLNj3hIxiw=
+X-Gm-Gg: ASbGnctNSNamm9WDqu5+18Y5Lue+HIrxh2cYqmwl7Qs7tvQR+FoTVS8Y5D3dRgY1g3N
+	ojFSkkZFgy5P8KLBprJSCWg7abQ/hG0IqrNOx2IBq3u7aU3qkKIh13uUySSu37Z2kCoXyqnnnEo
+	yK0K1R6jZqO+8wQ0zJ/N+rXHlAzyG55gcbXFgEoD4yoWw0nu9lDzqTmDuxRw/JKFxZ2TOgGEh0a
+	ih9WMJuhRNGYQtK+DQ6w7vp6S62d6NVplQ2MFW4nu0xLAucFj9sWLxERZckPjV8chSfoW+8ZTEm
+	9u2e66yU6cGUKKOZ9gbzTcW7G0YJmHKhLu/Bb7Rh7SoVjNvMvp5qyJgIgK2kHrT64+pf
+X-Google-Smtp-Source: AGHT+IEeNlCzVzCebfog7rtjgazJvr3JIatphpj/eDAtE93/JEe47lhOf70TFBDtpeDDgQbB0eiCOg==
+X-Received: by 2002:a05:600c:3c9d:b0:439:5a37:8157 with SMTP id 5b1f17b1804b1-4396e7674c6mr66151195e9.30.1739723622005;
+        Sun, 16 Feb 2025 08:33:42 -0800 (PST)
+Received: from airbuntu (host109-154-33-115.range109-154.btcentralplus.com. [109.154.33.115])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8dd6sm10107550f8f.62.2025.02.16.08.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 08:33:41 -0800 (PST)
+Date: Sun, 16 Feb 2025 16:33:40 +0000
+From: Qais Yousef <qyousef@layalina.io>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <20250216163340.ttwddti5pzuynsj5@airbuntu>
+References: <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
+ <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
+ <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
+ <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <285a43db-c36d-400e-8041-0566f089a482@arm.com>
+ <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
 
-On Wed, 12 Feb 2025 15:19:10 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+On 02/13/25 07:20, Juri Lelli wrote:
+> On 12/02/25 19:22, Dietmar Eggemann wrote:
+> > On 11/02/2025 11:42, Juri Lelli wrote:
+> 
+> ...
+> 
+> > > What about we actually ignore them consistently? We already do that for
+> > > admission control, so maybe we can do that when rebuilding domains as
+> > > well (until we find maybe a better way to deal with them).
+> > > 
+> > > Does the following make any difference?
+> > 
+> > It at least seems to solve the issue. And like you mentioned on irc, we
+> > don't know the bw req of sugov anyway.
+> > 
+> > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
+> > 
+> > dl_rq[0]:
+> >   .dl_nr_running                 : 0
+> >   .dl_bw->bw                     : 996147
+> >   .dl_bw->total_bw               : 0       <-- !
+> > 
+> > IMHO, people who want to run serious DL can always check whether there
+> > are already these infrastructural DL tasks or even avoid schedutil.
+> 
+> It definitely not ideal and admittedly gross, but not worse than what we
+> are doing already considering we ignore sugovs at AC and the current
+> bandwidth allocation its there only to help with PI. So, duck tape. :/
+> 
+> A more proper way to work with this would entail coming up with sensible
+> bandwidth allocation for sugovs, but that's most probably hardware
+> specific, so I am not sure how we can make that general enough.
 
-> Ad7768-1 has a different -3db frequency multiplier depending on
-> the filter type configured. The cutoff frequency also varies according
-> to the current ODR.
-> 
-> Add a readonly low pass -3dB frequency cutoff attribute to clarify to
-> the user which bandwidth is being allowed depending on the filter
-> configurations.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
-> v3 Changes:
-> * None
-> 
-> v2 Changes:
-> * New patch in v2.
-> 
-> OBS: should i drop this?
-I think keep it as potentially useful and is compliant with the ABI
-even if a little unusual.
+I haven't been following the problem closely, but one thing I was considering
+and I don't know if it makes sense to you and could help with this problem too.
+Shall we lump sugov with stopper class or create a new sched_class (seems
+unnecessary, I think stopper should do)? With the consolidate cpufreq update
+patch I've been working on Vincent raised issues with potential new ctx switch
+and to improve that I needed to look at improving sugov wakeup path. If we
+decouple it from DL I think that might fix your problem here and could allow us
+to special case it for other problems like the ones I faced more easily without
+missing up with DL.
 
-Jonathan
+Has the time come to consider retire the simple solution of making sugov a fake
+DL task?
+
+> 
+> Anyway, looks like Jon was still seeing the issue. I asked him to verify
+> he is using all the proposed changes. Let's see what he reports.
+> 
+> Best,
+> Juri
+> 
 
