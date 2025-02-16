@@ -1,166 +1,216 @@
-Return-Path: <linux-kernel+bounces-516571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D3EA37421
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:36:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841EFA37427
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3C2189073D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 863D07A1C4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5519191461;
-	Sun, 16 Feb 2025 12:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36648191461;
+	Sun, 16 Feb 2025 12:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aORRIOTg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWv2zOKY"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04DA18C91F;
-	Sun, 16 Feb 2025 12:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2E18C91F;
+	Sun, 16 Feb 2025 12:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739709375; cv=none; b=fvVqhAc0rtY+E+AWTH1n5DsvXHWtp1LTAfA6IMcU18nBdxyFmNO/LQ6q9RCYD3+FQ02FPnDaFWDaDAoQm2Ejfx4N0JH/V4Z1RJbP0Sh5SmG8f4VIUjGPs3acgTg8hQ+MskyBG8r3Kksx4NjIioS0rO5VWK4GCBgulGQ0d18bEe0=
+	t=1739709442; cv=none; b=oiTHlEL3ksvi7qGY5AEAnaBLuMeO7jSDj77cyro2pYYDny5n4oHTGzVCaV2rtG93I/lwd9CFKKnhdL45gFmI6CsRw+7DWAyeWDpD/gApZ7izeXGcbBb7Dw1Si4mzYn+zdGyJxUbE2HlAX5yQYPAledzjVKUbwYIZM8fB7nyyaKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739709375; c=relaxed/simple;
-	bh=uzjQ5966InuPnGGMdyDjOTWFoAV7hcjkEWlATi0x8xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hklg3wcimInYBVkx9yhm3qQl0FkY3kxtS1+ii3HDKzVSRF9VsHE/fy0FHCfomjMGywH6Y66b+QFoivsjtphr0Pq8/JtjuUkvIgcf1aaRkNTev++FWQx2PzmuFAdB4qs/HJ0mHvPG4csQp6DbNSXJC0t/4vjMu50ncP064Cx4m3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aORRIOTg; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739709373; x=1771245373;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uzjQ5966InuPnGGMdyDjOTWFoAV7hcjkEWlATi0x8xc=;
-  b=aORRIOTg3sHJ76Tg41Ve24nGOekaREgiQtFO21I9GYUlEv5i/mA9WSB1
-   dO4dpBDYN+nhrIRhP2yNOqZ3swI/bJhEur+l99zEZvus37gOzY++90kBn
-   bnKK3G42lMHMUOkHOl+JQppYwZsexWZo2wtaVHOV6M6L6m1hvl5AACLa/
-   tcx0P+UXAT9u6PN3o9Ipe+aeCsTJUeJ21b6J8L9DVLvgdF4uEifUTNtLf
-   zTXmVygYu33Q/LS/lS7H+D2fdRQE8kZCnc76NxBmuv+0sTErKBFi4lJOP
-   vfIOYMXOrrzIkeqTlAwe8PG/iGAzEobguMH7/5hoICQMjNnENoo+nINYE
-   g==;
-X-CSE-ConnectionGUID: Urb+Wx/7QoeShkO/RsyJCw==
-X-CSE-MsgGUID: ElNLd6NfQBW47nG9Uf8b/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="57810243"
-X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
-   d="scan'208";a="57810243"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 04:36:13 -0800
-X-CSE-ConnectionGUID: J/+Pk537QyqW2XIUOlDd8w==
-X-CSE-MsgGUID: fin8e3KDRSSfzdTpStsqfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114777410"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 16 Feb 2025 04:36:07 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjdsR-001Bud-2G;
-	Sun, 16 Feb 2025 12:36:03 +0000
-Date: Sun, 16 Feb 2025 20:35:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com,
-	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com,
-	axboe@kernel.dk, benno.lossin@proton.me, bhelgaas@google.com,
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org,
-	dwaipayanray1@gmail.com, ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com, gary@garyguo.net,
-	gregkh@linuxfoundation.org, joe@perches.com,
-	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com,
-	tmgross@umich.edu, walmeida@microsoft.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	trintaeoitogc@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [PATCH V2 1/2] rust: module: change author to be a array
-Message-ID: <202502162042.nKMk0Rff-lkp@intel.com>
-References: <20250214184550.120775-2-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1739709442; c=relaxed/simple;
+	bh=HIGEJB0qUycZsdckTlxaaoA0bk1Jt2vpqEozX5IOtYQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=AzM6gI4pr/sFrLDCCbAggpM27U2gj1oYB4Cy6IREY2n9VZ9Uld/o0VCwEDeX4fMcX1fpzIJk585+1wpVQtaRuAVcF3nYJTwr4rd+RudRWC+VMivUxvT0HaP3SoE1tl/ws9BYUpbHS6MK5PHbyKrP/SpGGChGi2viRChOg0Cwv28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWv2zOKY; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaecf50578eso695785066b.2;
+        Sun, 16 Feb 2025 04:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739709439; x=1740314239; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9JuodrbTqt2kISAe95cYUvufIOl8Fb0pi3tva7a0oDw=;
+        b=QWv2zOKYj5lcPQGBr3lClx2aBXsNJI7rUke9/j2utxjF8V5NwEgz1Fnx92JIkkLMuZ
+         cSObtQfp/CEJPl9UG0dVsVrJ99M5RHkwFHUzSApwsPZ1+1H5dwT7ZrlkT0JeDXcy3O8p
+         2uZOS5+LI9D10Liw8hImOEvGf9y7BTSOymylS2KcV+2cxVAGyj3EzcD08r39cYC7wsMc
+         +60i6Fnh5GTqBQNBX3YLF2agLSYmZ8edH37HSWS6QspBsbZ659T/ABTpqHJbnPQmYi8R
+         0XUxqivzv8186wgkn1EHpATRjYndMmLzRFe9GcAz1s9H3cBnwDRMPsjEgevLC4oChv5F
+         3YHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739709439; x=1740314239;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9JuodrbTqt2kISAe95cYUvufIOl8Fb0pi3tva7a0oDw=;
+        b=vWAyTlXr9qx15jox3CE6Z8Odg37ZxYhNhsRGh6lsw/UQxXtAxC20GAIbxKgJph1j1Y
+         Xk6eUYLV5FVE8/tiB6lPngJNKsf4Cedr7mJ0B7IKPh2xc7JkGFsuMV78AyJZt9KqYlCc
+         uhn6sLEHN08mom79JWy8CN0NM18z7Q7EX+GTkwdw5CSAfb8nSJlWz/oMmJClK9MKeNWb
+         NokmrcsVhFv780PK11oP6/3gOCV0IddTACgXMhx41B6u93ryVQ2ztkNKWWWRM4EeuiHV
+         I0jYbK2KcBmwUPH/ZCWFuc6To/Q64BWT1+sDG+aqjyW79OhUfkhIHNZgZsTUrUamoWkS
+         kxjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMpdtEMVGfG9WNagZ9lo26hUH/3aQlpEBG71jKjsypEtEvc2jNI0E0mxzFECInZZahNvxsgwW5pazd@vger.kernel.org, AJvYcCUai3LiubEP83UKN0hqFJFYJhfgJCiT5NwgW/95Et3+V2/1HVFnHWkNtmUwVNYrgFTZEnjQ0zFA5vSL0I31@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0WC6IUsF+tV04w0SmqbVtczw3n6cDw+Tg+JlQD1gfFWdIRzFJ
+	MlzS6k6onQf0slua0wm9xZyPbFEoqsxzTVCCNK50EQ63ZKC+XzQ5
+X-Gm-Gg: ASbGncuNFXWS7FAG42k4//9DtopJGd1ilrBUVzgO3UiR/rjBisjb39D5YdFByT7pNa9
+	ONqO47OMI8aMZTjOsKssDOhw24KTi2QMibJExvdoDdzHeSJtng6h/bRA6kiBS59mcPBqJPjVZyq
+	YxiibSO4Te0RhRWH68Ys9mh8OgF0IjPnqFTOzOjNaG7Ya7ZzjX02H8SSW+EpcygX/TIiGpGOjyU
+	fn6EIy3Tj3EVH8q/t8r4S3tOA27mC/6RC7sY0MCUxebam/o/GCwc3p6vRLxG/HLyDtbjf24wgdf
+	YwxC+hscvwsg/c8KtTNkSgbT1dfcoYs6RZujM5ofyCgDf7XWBRSaeJsIVfHXbI6plS/3VS2t
+X-Google-Smtp-Source: AGHT+IF7Li7Lm7POp1hY1DOd+YXcUFGnt79PSyFeoLFF1fqoqNga9gqKiKlCsi70OcwAnvjg618OOA==
+X-Received: by 2002:a17:907:7244:b0:ab7:d6c:5781 with SMTP id a640c23a62f3a-abb70b35452mr579701566b.24.1739709438780;
+        Sun, 16 Feb 2025 04:37:18 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb67732cd5sm343423666b.183.2025.02.16.04.37.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Feb 2025 04:37:17 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214184550.120775-2-trintaeoitogc@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
+Date: Sun, 16 Feb 2025 13:37:05 +0100
+Cc: linux-rockchip@lists.infradead.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <566E6F11-765C-4415-8805-55DFD3C2BD4D@gmail.com>
+References: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-Hi Guilherme,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on pci/next pci/for-linus char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.14-rc2 next-20250214]
-[cannot apply to rust/rust-block-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Wiadomo=C5=9B=C4=87 napisana przez Jianfeng Liu =
+<liujianfeng1994@gmail.com> w dniu 15 lut 2025, o godz. 16:25:
+>=20
+> Enable the HDMI port next to ethernet port.
+>=20
+> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+> ---
+>=20
+> .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 53 +++++++++++++++++++
+> 1 file changed, 53 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts =
+b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> index 6d68f70284e..a4fdced052c 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> @@ -11,6 +11,7 @@
+> #include <dt-bindings/leds/common.h>
+> #include <dt-bindings/pinctrl/rockchip.h>
+> #include <dt-bindings/pwm/pwm.h>
+> +#include <dt-bindings/soc/rockchip,vop2.h>
+> #include "dt-bindings/usb/pd.h"
+> #include "rk3588.dtsi"
+>=20
+> @@ -89,6 +90,17 @@ fan0: pwm-fan {
+> pwms =3D <&pwm14 0 10000 0>;
+> };
+>=20
+> + hdmi1-con {
+> + compatible =3D "hdmi-connector";
+> + type =3D "a";
+> +
+> + port {
+> + hdmi1_con_in: endpoint {
+> + remote-endpoint =3D <&hdmi1_out_con>;
+> + };
+> + };
+> + };
+> +
+> /* M.2 E-KEY */
+> sdio_pwrseq: sdio-pwrseq {
+> compatible =3D "mmc-pwrseq-simple";
+> @@ -261,6 +273,32 @@ &gpu {
+> status =3D "okay";
+> };
+>=20
+> +&hdmi1 {
+> + pinctrl-0 =3D <&hdmim0_tx1_cec &hdmim0_tx1_hpd
+> +     &hdmim1_tx1_scl &hdmim1_tx1_sda>;
+> + status =3D "okay";
+> +};
+> +
+> +&hdmi1_in {
+> + hdmi1_in_vp1: endpoint {
+> + remote-endpoint =3D <&vp1_out_hdmi1>;
+> + };
+> +};
+> +
+> +&hdmi1_out {
+> + hdmi1_out_con: endpoint {
+> + remote-endpoint =3D <&hdmi1_con_in>;
+> + };
+> +};
+> +
+> +&hdptxphy_hdmi0 {
+> + status =3D "okay";
+> +};
+> +
+> +&hdptxphy1 {
+> + status =3D "okay";
+> +};
+> +
+> &i2c0 {
+> pinctrl-names =3D "default";
+> pinctrl-0 =3D <&i2c0m2_xfer>;
+> @@ -1209,3 +1247,18 @@ &usbdp_phy1 {
+> rockchip,dp-lane-mux =3D <2 3>;
+> status =3D "okay";
+> };
+> +
+> +&vop {
+> + status =3D "okay";
+> +};
+> +
+> +&vop_mmu {
+> + status =3D "okay";
+> +};
+> +
+> +&vp1 {
+> + vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
+> + reg =3D <ROCKCHIP_VOP2_EP_HDMI1>;
+> + remote-endpoint =3D <&hdmi1_in_vp1>;
+> + };
+> +};
+> --=20
+> 2.43.0
+>=20
+>=20
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guilherme-Giacomo-Simoes/rust-module-change-author-to-be-a-array/20250215-024906
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/20250214184550.120775-2-trintaeoitogc%40gmail.com
-patch subject: [PATCH V2 1/2] rust: module: change author to be a array
-config: x86_64-randconfig-006-20250216 (https://download.01.org/0day-ci/archive/20250216/202502162042.nKMk0Rff-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502162042.nKMk0Rff-lkp@intel.com/reproduce)
+Jianfeng,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502162042.nKMk0Rff-lkp@intel.com/
+Is there anywhere repo with this patch applied to test it on rock5 itx =
+hw?
 
-All errors (new ones prefixed by >>):
+(asking as I can=E2=80=99t get it working; even with hdmi1 only vop =
+clocks like here: =
+https://gist.github.com/warpme/49feadbe1f53ea31fca76f41d5bb3ee4)
 
->> error: proc macro panicked
-   --> samples/rust/rust_driver_platform.rs:43:1
-   |
-   43 | / kernel::module_platform_driver! {
-   44 | |     type: SampleDriver,
-   45 | |     name: "rust_driver_platform",
-   46 | |     author: "Danilo Krummrich",
-   47 | |     description: "Rust Platform driver",
-   48 | |     license: "GPL v2",
-   49 | | }
-   | |_^
-   |
-   = help: message: Expected Group
-   = note: this error originates in the macro `$crate::module_driver` which comes from the expansion of the macro `kernel::module_platform_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0277]: the trait bound `DriverModule: ModuleMetadata` is not satisfied
-   --> samples/rust/rust_driver_platform.rs:43:1
-   |
-   43 | / kernel::module_platform_driver! {
-   44 | |     type: SampleDriver,
-   45 | |     name: "rust_driver_platform",
-   46 | |     author: "Danilo Krummrich",
-   47 | |     description: "Rust Platform driver",
-   48 | |     license: "GPL v2",
-   49 | | }
-   | |_^ the trait `ModuleMetadata` is not implemented for `DriverModule`
-   |
-   = note: this error originates in the macro `$crate::module_driver` which comes from the expansion of the macro `kernel::module_platform_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error: proc macro panicked
-   --> drivers/net/phy/ax88796b_rust.rs:14:1
-   |
-   14 | / kernel::module_phy_driver! {
-   15 | |     drivers: [PhyAX88772A, PhyAX88772C, PhyAX88796B],
-   16 | |     device_table: [
-   17 | |         DeviceId::new_with_driver::<PhyAX88772A>(),
-   ...  |
-   24 | |     license: "GPL",
-   25 | | }
-   | |_^
-   |
-   = help: message: Expected Group
-   = note: this error originates in the macro `kernel::module_phy_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
