@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-516477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A181A37242
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:15:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB528A37247
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B523AF598
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:14:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B15427A2FB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E398154439;
-	Sun, 16 Feb 2025 06:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D65514D2BB;
+	Sun, 16 Feb 2025 06:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="X9XXiQcr"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="RC471Vhl"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12DA13D897;
-	Sun, 16 Feb 2025 06:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1B486344;
+	Sun, 16 Feb 2025 06:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739686502; cv=none; b=dVR2IzOatwCTXPJfrWF/yjLEDKMdDxxmzErKMKqVJESlY1n9QSrCfDTYuvT9gLgh6kARnLc0kw4cxhgURZfr35b99y2k3oe5GY05F642d5RtoupHSaHsihf4dX8t+jhwOjWRdyDJKO1CtSxG8PyhxPDvpEVAeCzO9qqUqPdKVik=
+	t=1739686970; cv=none; b=Ku1d3+/v/t7jS8lzUaUcquGyVTo7sSMDHOhxOlNjF99XrvhHiQK6YVRNpR/xuOa+3osZAdveK+vRxlaw/t9THl946oxfwR4sz9W4MKwhUGHm4xYnxW5HorQ5ARVIXLIBl8yKjHJ4d12pBiXjS1OgxPNOL5aq3X4+qb1JOUQVGe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739686502; c=relaxed/simple;
-	bh=i8w7HpYDQ2T3KX9GNVnujaABlVCO0sEEaJdHAJDAW/c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Mq4wrJdzpWZnVhOn3uHc0mvT7Vnc27gm11/XRJcoAVnsTbG16HiszEt5HowyaitS+d1pmqK6ivqmkr7ToTPoQepnUnDUXOJthEV808Hv6W3dDfys1ft6WagQCLkj4Vyo/gHo81K0pyTvap6xudGmUEz6WJYj913LjVd+wBOskqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=X9XXiQcr; arc=none smtp.client-ip=212.227.15.18
+	s=arc-20240116; t=1739686970; c=relaxed/simple;
+	bh=WOU/nIoQOZRokrfbkinDVyck6ARf8XJ0g25+zTy39lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7nedgbCxXOjw1epaLes+ZJ1JL/a89jzIDN1WjICcdjb1MwcscxEx/9BnkzgxpGMb6W0JhkgIN+rtPNc54/RK3gr6WjRwcUkdF7ZGBjiT+AEV0L/IovvuhZHidwvhUxA8dYDejQMP6/iBFYUcw8hmmI3Oi9qDFZRr+ENItItsEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=RC471Vhl; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1739686488; x=1740291288; i=w_armin@gmx.de;
-	bh=i8w7HpYDQ2T3KX9GNVnujaABlVCO0sEEaJdHAJDAW/c=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=X9XXiQcrCxX7uuveWQCM7sv9w6jpC6Mxas6Naqc+YnmL/hzupR6AVcO0BrpsoBAk
-	 10agdznGXSurcC+Hfcws8ui642yYXkFIWsO9ESPp65dRNGzjateOYwkEkeyWnjknX
-	 a5yawfto6QMtnZEYqRml+1TBCSQ+/jj1aoMqc6LBTnsgCFcdsU0NjxcL/d56YDfOP
-	 aCbe8ehWwrwPLrsgpIM4jPA1iF+2HUFovNl8S4tnSVrflSUhVI9W5UAXR5utsN5vs
-	 qBgv1mvbzqze8S4DGhN6b0BNE5ecH3tTT7RC8kBvlizod9kqt0f9ZtiLw+eWzG9i+
-	 nHU9KPlLOXYMj8FKWQ==
+	s=s31663417; t=1739686956; x=1740291756; i=w_armin@gmx.de;
+	bh=f2VfAQc/X3awpEWdGvpOmSfPZtxt5IxKbTaicqbm5BE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RC471Vhl4SfhaEjQniNSO2rmT320ytm8GrEQFiEM6q9JJrc5PLw53IZ0TsdUsewH
+	 HwHO2HlnHOnnDwLR4Z6j/zoy+0nN8RCUcjb9KYBGA+Gfs919ttI/zbQSZ1I0D3e2X
+	 MxGASQ+l0rXUxXTp0LKLd1WNVq/K4t5Z94nAQTYoqAJgO6PLMyTJR5txm6ALC/fvF
+	 E+1V8XESckOsoNAED4+jAQTnkipJBkTrxNpixKH5AbIUJmUkUASv5/GC7RgsMuU50
+	 RUPNXEqe8JB+n4OX5POvkT8pRSfkq7rDs5d/m5KGwdUM/soqfVYBDFmAGCEklzadx
+	 yXd3eWVxW4wbAONyGg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MmlT2-1t36B41new-00nRE0; Sun, 16
- Feb 2025 07:14:48 +0100
-Message-ID: <36201d78-1b6c-4a8c-9e53-90cf43aca2c5@gmx.de>
-Date: Sun, 16 Feb 2025 07:14:46 +0100
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MOzOw-1u08au1gyq-00K7qa; Sun, 16
+ Feb 2025 07:22:36 +0100
+Message-ID: <b65ffe38-78a3-4d37-b1d1-366bc6870665@gmx.de>
+Date: Sun, 16 Feb 2025 07:22:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,172 +57,641 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] platform/x86: alienware-wmi-wmax: Add support for
- manual fan control
-From: Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH 10/10] platform/x86: alienware-wmi: Improve and update
+ documentation
 To: Kurt Borja <kuurtb@gmail.com>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- Dell.Client.Kernel@dell.com, linux-kernel@vger.kernel.org,
- Guenter Roeck <linux@roeck-us.net>
+ Dell.Client.Kernel@dell.com, linux-kernel@vger.kernel.org
 References: <20250208051614.10644-1-kuurtb@gmail.com>
- <20250208051614.10644-9-kuurtb@gmail.com>
- <ee2a8428-0c37-408d-9ad2-a8975c1b3c23@gmx.de>
+ <20250208051614.10644-11-kuurtb@gmail.com>
 Content-Language: en-US
-In-Reply-To: <ee2a8428-0c37-408d-9ad2-a8975c1b3c23@gmx.de>
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20250208051614.10644-11-kuurtb@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:7qbwuEAfues1phdF/I3FSVwgPLFzG6A8F83kHXwUA0Dsl8AnAYH
- l0MVN/kSudbeJ0OnHicHa+I9P61drCIixNh+t3SHGip6imAN8jetNgmrdlJDDBdAJR5OTv4
- mit5U7V27SDM6/AgBTLSOnJaWuRqBQPGReKVakFWKt5dDhFjCzzlpMAN8aXYPmgPhef3oqw
- ImyoIXCjW9rpZ3PXbyfdw==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ue3JR2/GTY4zxdomKfu1BKey4nUbweEI1ZaNi6iFnNh41XfdClr
+ dYlUN4k+logL0t9+MJRYnAITnSJeOF8Of9kROAqRmBTbGARflxWN148SZMJRh3KQ/FJCv53
+ pUqLdYbrfQYhcYOvaJcr+QiVmISTFT5wdw5RrczIRFO0qypL5VaF//kTYcPSeIZtPADUG/u
+ EqkwODL+UE6sP3G0a4iJQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:S3xutyQnoSo=;6bqL+oMNzZGCBCrg7bKb4qw8lp9
- gnX1xobbDg9F1MWc2lUjql+coFF6Q81Pga4fNawRfGzaEJ0/rA+RapqD7FjMXHJnwUDR5I+cj
- IleraaFWza9yCKxMl0/4fvC9shbGPBAKdZHGQOHLr6Vw9M1OxePz4JSbipAWNnYh7lqWRdnh9
- /5v+egM0t2XukiUsDK9D70IxamElaMI4PAI0brE1e9tJrFm/6xmch6UNM+HLizlC4cuC1HgO5
- qXgZp4lra1KzMfkeYHOlVjKv95LdCWs60OIOda2b56fYmNWNqLFOUMblPVRQ8dHhu2fY5wfS/
- tKQbJ0W6YhNSR1Qxx2+tfHyqIkzzJm9wYZNldayIdvh9kgp3vuX/WNg8e6r+/szy3LDBerxI9
- VuoUZ5A+EB28ElcHqHI8kLcXngX9CHjMWlLV3S0LmejixcpFC5NjVQz9hiYkRwXuw/TXhtJ1F
- fRFfG78yYUpdki5aY/5eGT4VHov38q21FGxtttrexdLhkZLWSqH3PW1iRWSy1RRlDO/4/YeaX
- jL0RAoCQRNtajcT2HAJTzGSVKjcAcLjEO2Zw3g6RFJrlBCKfZkQ71GoSUOIHUhV5PxvDdPzjN
- qmh+K8ztkEgdiaZ6wtkyLCIzP3NXVR2cqz7UFphzeorCzRSj5qUpEMRWjeo077ZIXzkpM00N6
- fgnm/HWYftPOtgJTAW5qFL+bqdSFDc/RqgXw5FqSsY+X0KYVTg3UlashkYU9RCaqVzsCt84Xs
- mdQEZ3b9sAbDZVxJYKv9G+Bb9zPPbuARcR4irVmEQxvlrOqhnbhxXh9lpPIKKFxRKdv/sbw+f
- tJd8lYNFvIhfcUM/3SbA3KeFEf18VRM4szAhxiWyMcABYr1oUH2gItxE3/DVwdaULZS0kdkJ7
- G2B3PwnrTV8d+P94GRNc12BBufgLqcCFSLU51niujRMoSnfMajBQe2QzfMvA1CNbrkmCK/Ats
- 24kvqfzFdDvuqdJHUqw9As1S6o9G+35aOAAKlr6gGyILjwXRKO8MSb/EvlodoBUwuxthJXxbL
- s3+S2bhOhGCHvDRzkuyIvp3qDVja7klr2YKE8V2Uzvgdb8XjBhJc/7GWMk/v+62tTSJo5qAEj
- g8XCNGfiNsM1mJ1aZIoRVqQcK+kLYDkFb3NpglGYl6nqiqK75rhn48d/c+hzYXzaMpc9fc6CN
- VlmECuOeBfCVz4D11SrbbarV46jJKJ1654dPTdIAhhmeqTFRoA3ZsuaBnklTZdk/WItun/rHi
- n53m3dpZYkpsQeH3C9UU+LeVGLDWbioPCKTcur/uT5w03lXgaesY7pt7zqevoaNMVLp22QvhL
- lJBQjVqQMzDm9VJx4N11xX4Nfa8cQPQqFMovDKE6zA+Dn4CxiNJOKriULDXbTZI9vpk5AGHno
- ldgicFGrSzJeSlGnVPhaeDNtSGjsTJ+qNZ/c2/xVeGegL3/YZkdy6+QEha
+UI-OutboundReport: notjunk:1;M01:P0:ltCTqu1jXZQ=;Tz/hWeJwRN9rz0CVVDAEmafdGVl
+ THAwT4CDw89FAX9/3Tv0hEEjA3qXh6zQZfK5xL6dfY3qRxeYjTL/GLx2Rw2mf4gvrxxSl1kLU
+ hC3pciwNEPFJyJQMCtuIFwui/1uBfnvaTsAYMJkhbUst7ou1PzwdOwUFPRehm6NMp2pzGtjUi
+ Ka8+1dUXW4X2E+xY1jyBuwdxwLDenIUN3muAgsJdkfxhBZJOKvK87YdGwcGcbnt3cZF4V337v
+ MxJyM9P5i+fGQMgHeubbNSXh5A8AvXlO/9RvJ4VlKdXZ4k9yAn3OrY98sqyzphyEl7YEsse9c
+ rk3MzsiDkmYoJHceq5b2HVrU+jMSWDx804HHuyD+v1FkLfFqrQiGZKEOyykXvb0dSUZnBYxCv
+ WIVYfAfV7KB6koH3EUz1nC7hMhcPG6yLKaYLVJNtHiXOJTSsaNw1ZsJ9p8DByXn/JzH5uhXgN
+ JwKiIL7DMbICw7Dq1h/50i77RG5NCjyHPm/WHt4Bh3fwXcG+vBNxnSk45FFU8ErQ5NUdoQ8IF
+ ktRfJc9lq3ZLaG9WXqCX3k9x8MrE0Rdxmb9dckcT1jkROJAcspCYUgXcjODrrHNLneQro9p6u
+ 1zimmhPMR9i/N465zyyzhxuRomv5igTn5IYomq/MvplwQcAvYyOEtGvi6m0b1ZycV7ZYQyZSc
+ vXMhmvq2fWLnGcWYjSKsKRM7d6/xLs1VUVLi3cGkcG9/vSei8heN9E4XJ2yLgE3TWvn9+cBzl
+ zoNQqffxD7XnblKh9YP+FJCfLCeJi3nBa39gQZWgt92oT6SVVNk9NQf5tGwEF3OiGN6KtQLXg
+ gQhON+W5wQFwQNxxZ9hVhusB2ljIFiTLQMh+mjbwiKMc4ZDsiULsmrz6tFjg7DhkAGNV+LBcS
+ YCJ/nq3V1WtAmvSXYp61uj9PfivfhvvjZuVQR5W32P0zuA9MTYnj5fflW+O8p60grBlWgUrdX
+ 22B4jQbci6KX4vSZXI/VjU4iaGtA8Oz952SOILBP56sY3WZitjnBu7/toCRc/fM9OAUpV+snu
+ WTHZbk0g8CnAYtUdQJT8xMqLkPubaIgmaqEh8h663fm2EFMvasDjBc6BWFaZCFuX29rF9LMti
+ QXqyPYrchqvYt1zbj4j/qmZ3WEM3umJb/CBaeagRXVVwe9eQOGZpmDL1BnJZc56dGNk/M43av
+ 04yWHYBCg/lu2JxIti0a/bWh3c3cCDwdr4qU7yeVZTj7WA44N6A3DUmgE+ULzI9COUDYaXCB3
+ CbtTqxVsnZGNIkOQuFQYcN0QWfsYZQNBImO8J5Cm4Gds+QpJVGv8ZNJW+44RcQQkJJqslMUHU
+ P2+TM40I0iz3VJgAqkU2qbFeY3ZQvHF0SsMXtHjMXrBvGvmjE8vDDsA08yuUmV9mSZxUlBg/o
+ QdOy0GSRE+N7r0xY+7vM6UwK9CsWVjwP/sXD4Bws5TGPoBYghx9Lts5Hzp/fIY+SVYZgaqXgv
+ YnhIko1NabrRcT3ccAVrVuTawAO8=
 
-QW0gMTYuMDIuMjUgdW0gMDc6MTIgc2NocmllYiBBcm1pbiBXb2xmOg0KDQo+IEFtIDA4LjAyLjI1
-IHVtIDA2OjE2IHNjaHJpZWIgS3VydCBCb3JqYToNCj4NCj4+IEFsbCBtb2RlbHMgd2l0aCB0aGUg
-IkFXQ0MiIFdNQVggZGV2aWNlIHN1cHBvcnQgYSB3YXkgb2YgbWFudWFsbHkNCj4+IGNvbnRyb2xs
-aW5nIGZhbnMuDQo+Pg0KPj4gVGhlIFBXTSBkdXR5IGN5Y2xlIG9mIGEgZmFuIGNhbid0IGJlIGNv
-bnRyb2xsZWQgZGlyZWN0bHkuIEluc3RlYWQgdGhlDQo+PiBBV0NDIGludGVyZmFjZSBsZXQncyB1
-cyB0dW5lIGEgUFdNIGBib29zdGAgdmFsdWUsIHdoaWNoIGhhcyB0aGUNCj4+IGZvbGxvd2luZyBl
-bXBpcmljYWxseSBkaXNjb3ZlcmVkIGJlaGF2aW9yIG92ZXIgdGhlIFBXTSB2YWx1ZToNCj4+DQo+
-PiDCoMKgwqDCoHB3bSA9IHB3bV9iYXNlICsgKHB3bV9ib29zdCAvIDI1NSkgKiAocHdtX21heCAt
-IHB3bV9iYXNlKQ0KPj4NCj4+IFdoZXJlIHRoZSBwd21fYmFzZSBpcyB0aGUgbG9ja2VkIFBXTSB2
-YWx1ZSBjb250cm9sbGVkIGJ5IHRoZSBFQyBhbmQNCj4+IHB3bV9ib29zdCBpcyBhIHZhbHVlIGJl
-dHdlZW4gMCBhbmQgMjU1Lg0KPj4NCj4+IFRoaXMgcHdtX2Jvb3N0IGtub2IgaXMgZXhwb3NlZCBh
-cyBhIHN0YW5kYXJkIGBwd21gIGF0dHJpYnV0ZS4NCj4NCj4gSSBhbSBub3Qgc3VyZSBpZiBleHBv
-c2luZyB0aGlzIG92ZXIgdGhlIHN0YW5kYXJkICJwd20iIGF0dHJpYnV0ZSBpcyANCj4gY29ycmVj
-dCBoZXJlLA0KPiBzaW5jZSB1c2Vyc3BhY2UgYXBwbGljYXRpb25zIGV4cGVjdCB0byBoYXZlIGZ1
-bGwgYWNjZXNzIHRvIHRoZSBmYW4gDQo+IHdoZW4gdXNpbmcgdGhlDQo+ICJwd20iIGF0dHJpYnV0
-ZS4NCj4NCj4gTWF5YmUgdXNpbmcgYSBjdXN0b20gYXR0cmlidXRlIGxpa2UgImZhblhfYm9vc3Qi
-IHdvdWxkIG1ha2Ugc2Vuc2UgDQo+IGhlcmU/IEVpdGhlciB3YXkNCj4gZG9jdW1lbnRpbmcgdGhp
-cyBzcGVjaWFsIGJlaGF2aW9yIHdvdWxkIGJlIG5pY2UgZm9yIGZ1dHVyZSB1c2VycywgDQo+IG1h
-eWJlIHlvdSBjYW4gd3JpdGUNCj4gdGhpcyBkb3duIHVuZGVyIERvY3VtZW50YXRpb24vYWRtaW4t
-Z3VpZGUvbGFwdG9wcz8NCj4NCj4gVGhhbmtzLA0KPiBBcm1pbiBXb2xmDQo+DQo+PiBDYzogR3Vl
-bnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0Pg0KPj4gU2lnbmVkLW9mZi1ieTogS3VydCBC
-b3JqYSA8a3V1cnRiQGdtYWlsLmNvbT4NCj4+IC0tLQ0KPj4gwqAgLi4uL3BsYXRmb3JtL3g4Ni9k
-ZWxsL2FsaWVud2FyZS13bWktd21heC5jwqDCoMKgIHwgNTUgKysrKysrKysrKysrKysrKystLQ0K
-Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+
-Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwvYWxpZW53YXJlLXdt
-aS13bWF4LmMgDQo+PiBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwvYWxpZW53YXJlLXdtaS13
-bWF4LmMNCj4+IGluZGV4IDVmMDJkYTdmZjI1Zi4uMDZkNmY4OGVhNTRiIDEwMDY0NA0KPj4gLS0t
-IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC9hbGllbndhcmUtd21pLXdtYXguYw0KPj4gKysr
-IGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC9hbGllbndhcmUtd21pLXdtYXguYw0KPj4gQEAg
-LTEzLDYgKzEzLDcgQEANCj4+IMKgICNpbmNsdWRlIDxsaW51eC9kbWkuaD4NCj4+IMKgICNpbmNs
-dWRlIDxsaW51eC9od21vbi5oPg0KPj4gwqAgI2luY2x1ZGUgPGxpbnV4L2ppZmZpZXMuaD4NCj4+
-ICsjaW5jbHVkZSA8bGludXgvbWlubWF4Lmg+DQo+PiDCoCAjaW5jbHVkZSA8bGludXgvbW9kdWxl
-cGFyYW0uaD4NCj4+IMKgICNpbmNsdWRlIDxsaW51eC9tdXRleC5oPg0KPj4gwqAgI2luY2x1ZGUg
-PGxpbnV4L292ZXJmbG93Lmg+DQo+PiBAQCAtMTc2LDEwICsxNzcsMTIgQEAgZW51bSBBV0NDX1RI
-RVJNQUxfSU5GT1JNQVRJT05fT1BFUkFUSU9OUyB7DQo+PiDCoMKgwqDCoMKgIEFXQ0NfT1BfR0VU
-X01JTl9SUE3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgID0gMHgwOCwNCj4+IMKgwqDCoMKgwqAgQVdD
-Q19PUF9HRVRfTUFYX1JQTcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPSAweDA5LA0KPj4gwqDCoMKg
-wqDCoCBBV0NDX09QX0dFVF9DVVJSRU5UX1BST0ZJTEXCoMKgwqDCoMKgwqDCoCA9IDB4MEIsDQo+
-PiArwqDCoMKgIEFXQ0NfT1BfR0VUX0ZBTl9CT09TVMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPSAw
-eDBDLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBlbnVtIEFXQ0NfVEhFUk1BTF9DT05UUk9MX09QRVJB
-VElPTlMgew0KPj4gwqDCoMKgwqDCoCBBV0NDX09QX0FDVElWQVRFX1BST0ZJTEXCoMKgwqDCoMKg
-wqDCoCA9IDB4MDEsDQo+PiArwqDCoMKgIEFXQ0NfT1BfU0VUX0ZBTl9CT09TVMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgPSAweDAyLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBlbnVtIEFXQ0NfR0FNRV9T
-SElGVF9TVEFUVVNfT1BFUkFUSU9OUyB7DQo+PiBAQCAtNTYzLDEyICs1NjYsMTMgQEAgc3RhdGlj
-IGlubGluZSBpbnQgDQo+PiBhd2NjX3RoZXJtYWxfaW5mb3JtYXRpb24oc3RydWN0IHdtaV9kZXZp
-Y2UgKndkZXYsIHU4IG9wZXJhdGlvbg0KPj4gwqDCoMKgwqDCoCByZXR1cm4gX19hd2NjX3dtaV9j
-b21tYW5kKHdkZXYsIA0KPj4gQVdDQ19NRVRIT0RfVEhFUk1BTF9JTkZPUk1BVElPTiwgJmFyZ3Ms
-IG91dCk7DQo+PiDCoCB9DQo+Pg0KPj4gLXN0YXRpYyBpbmxpbmUgaW50IGF3Y2NfdGhlcm1hbF9j
-b250cm9sKHN0cnVjdCB3bWlfZGV2aWNlICp3ZGV2LCB1OCANCj4+IHByb2ZpbGUpDQo+PiArc3Rh
-dGljIGlubGluZSBpbnQgYXdjY190aGVybWFsX2NvbnRyb2woc3RydWN0IHdtaV9kZXZpY2UgKndk
-ZXYsIHU4IA0KPj4gb3BlcmF0aW9uLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHU4IGFyZzEsIHU4IGFyZzIpDQo+PiDCoCB7DQo+PiDCoMKgwqDCoMKg
-IHN0cnVjdCB3bWF4X3UzMl9hcmdzIGFyZ3MgPSB7DQo+PiAtwqDCoMKgwqDCoMKgwqAgLm9wZXJh
-dGlvbiA9IEFXQ0NfT1BfQUNUSVZBVEVfUFJPRklMRSwNCj4+IC3CoMKgwqDCoMKgwqDCoCAuYXJn
-MSA9IHByb2ZpbGUsDQo+PiAtwqDCoMKgwqDCoMKgwqAgLmFyZzIgPSAwLA0KPj4gK8KgwqDCoMKg
-wqDCoMKgIC5vcGVyYXRpb24gPSBvcGVyYXRpb24sDQo+PiArwqDCoMKgwqDCoMKgwqAgLmFyZzEg
-PSBhcmcxLA0KPj4gK8KgwqDCoMKgwqDCoMKgIC5hcmcyID0gYXJnMiwNCj4+IMKgwqDCoMKgwqDC
-oMKgwqDCoCAuYXJnMyA9IDAsDQo+PiDCoMKgwqDCoMKgIH07DQo+PiDCoMKgwqDCoMKgIHUzMiBv
-dXQ7DQo+PiBAQCAtNjg0LDYgKzY4OCwxMSBAQCBzdGF0aWMgdW1vZGVfdCBhd2NjX2h3bW9uX2lz
-X3Zpc2libGUoY29uc3Qgdm9pZCANCj4+ICpkcnZkYXRhLCBlbnVtIGh3bW9uX3NlbnNvcl90eXBl
-DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGNoYW5uZWwgPCBwcml2LT5mYW5fY291bnQpDQo+
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gMDQ0NDsNCj4+DQo+PiArwqDCoMKg
-wqDCoMKgwqAgYnJlYWs7DQo+PiArwqDCoMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKg
-wqDCoMKgIGlmIChjaGFubmVsIDwgcHJpdi0+ZmFuX2NvdW50KQ0KPj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgcmV0dXJuIDA2NDQ7DQo+PiArDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7
-DQo+PiDCoMKgwqDCoMKgIGRlZmF1bHQ6DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+
-PiBAQCAtNjk4LDYgKzcwNyw3IEBAIHN0YXRpYyBpbnQgYXdjY19od21vbl9yZWFkKHN0cnVjdCBk
-ZXZpY2UgKmRldiwgDQo+PiBlbnVtIGh3bW9uX3NlbnNvcl90eXBlcyB0eXBlLA0KPj4gwqDCoMKg
-wqDCoCBzdHJ1Y3QgYXdjY19wcml2ICpwcml2ID0gZGV2X2dldF9kcnZkYXRhKGRldik7DQo+PiDC
-oMKgwqDCoMKgIHN0cnVjdCBhd2NjX3RlbXBfY2hhbm5lbF9kYXRhICp0ZW1wOw0KPj4gwqDCoMKg
-wqDCoCBzdHJ1Y3QgYXdjY19mYW5fY2hhbm5lbF9kYXRhICpmYW47DQo+PiArwqDCoMKgIHUzMiBm
-YW5fYm9vc3Q7DQo+PiDCoMKgwqDCoMKgIGludCByZXQ7DQo+Pg0KPj4gwqDCoMKgwqDCoCBzd2l0
-Y2ggKHR5cGUpIHsNCj4+IEBAIC03NDIsNiArNzUyLDE2IEBAIHN0YXRpYyBpbnQgYXdjY19od21v
-bl9yZWFkKHN0cnVjdCBkZXZpY2UgKmRldiwgDQo+PiBlbnVtIGh3bW9uX3NlbnNvcl90eXBlcyB0
-eXBlLA0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FT1BOT1RTVVBQOw0K
-Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIH0NCj4+DQo+PiArwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQo+
-PiArwqDCoMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKgwqDCoMKgIGZhbiA9ICZwcml2
-LT5mYW5fZGF0YVtjaGFubmVsXTsNCj4+ICsNCj4+ICvCoMKgwqDCoMKgwqDCoCByZXQgPSBhd2Nj
-X3RoZXJtYWxfaW5mb3JtYXRpb24ocHJpdi0+d2RldiwgDQo+PiBBV0NDX09QX0dFVF9GQU5fQk9P
-U1QsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBmYW4tPmlkLCAmZmFuX2Jvb3N0KTsNCj4+ICvCoMKgwqDCoMKgwqDCoCBpZiAocmV0KQ0K
-Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHJldDsNCj4+ICsNCj4+ICvCoMKgwqDC
-oMKgwqDCoCAqdmFsID0gZmFuX2Jvb3N0Ow0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOw0K
-Pj4gwqDCoMKgwqDCoCBkZWZhdWx0Og0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU9Q
-Tk9UU1VQUDsNCj4+IEBAIC03OTYsMTAgKzgxNiwyNyBAQCBzdGF0aWMgaW50IGF3Y2NfaHdtb25f
-cmVhZF9zdHJpbmcoc3RydWN0IGRldmljZSANCj4+ICpkZXYsIGVudW0gaHdtb25fc2Vuc29yX3R5
-cGVzIHR5DQo+PiDCoMKgwqDCoMKgIHJldHVybiAwOw0KPj4gwqAgfQ0KPj4NCj4+ICsNCg0KSSBu
-ZWFybHkgZm9yZ290OiBQbGVhc2UgZG9uJ3QgdXNlIG11bHRpcGxlIGJsYW5rIGxpbmVzLg0KDQpU
-aGFua3MsDQpBcm1pbiBXb2xmDQoNCj4+DQo+PiArc3RhdGljIGludCBhd2NjX2h3bW9uX3dyaXRl
-KHN0cnVjdCBkZXZpY2UgKmRldiwgZW51bSANCj4+IGh3bW9uX3NlbnNvcl90eXBlcyB0eXBlLA0K
-Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgYXR0ciwgaW50IGNoYW5uZWws
-IGxvbmcgdmFsKQ0KPj4gK3sNCj4+ICvCoMKgwqAgc3RydWN0IGF3Y2NfcHJpdiAqcHJpdiA9IGRl
-dl9nZXRfZHJ2ZGF0YShkZXYpOw0KPj4gK8KgwqDCoCB1OCBmYW5faWQgPSBwcml2LT5mYW5fZGF0
-YVtjaGFubmVsXS5pZDsNCj4+ICsNCj4+ICvCoMKgwqAgc3dpdGNoICh0eXBlKSB7DQo+PiArwqDC
-oMKgIGNhc2UgaHdtb25fcHdtOg0KPj4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiBhd2NjX3RoZXJt
-YWxfY29udHJvbChwcml2LT53ZGV2LCBBV0NDX09QX1NFVF9GQU5fQk9PU1QsDQo+PiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmYW5faWQsICh1OCljbGFt
-cF92YWwodmFsLCAwLCAyNTUpKTsNCj4+ICvCoMKgwqAgZGVmYXVsdDoNCj4+ICvCoMKgwqDCoMKg
-wqDCoCByZXR1cm4gLUVPUE5PVFNVUFA7DQo+PiArwqDCoMKgIH0NCj4+ICt9DQo+PiArDQo+PiDC
-oCBzdGF0aWMgY29uc3Qgc3RydWN0IGh3bW9uX29wcyBhd2NjX2h3bW9uX29wcyA9IHsNCj4+IMKg
-wqDCoMKgwqAgLmlzX3Zpc2libGUgPSBhd2NjX2h3bW9uX2lzX3Zpc2libGUsDQo+PiDCoMKgwqDC
-oMKgIC5yZWFkID0gYXdjY19od21vbl9yZWFkLA0KPj4gwqDCoMKgwqDCoCAucmVhZF9zdHJpbmcg
-PSBhd2NjX2h3bW9uX3JlYWRfc3RyaW5nLA0KPj4gK8KgwqDCoCAud3JpdGUgPSBhd2NjX2h3bW9u
-X3dyaXRlLA0KPj4gwqAgfTsNCj4+DQo+PiDCoCBzdGF0aWMgY29uc3Qgc3RydWN0IGh3bW9uX2No
-YW5uZWxfaW5mbyAqIGNvbnN0IGF3Y2NfaHdtb25faW5mb1tdID0gew0KPj4gQEAgLTgxNCw2ICs4
-NTEsMTIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBod21vbl9jaGFubmVsX2luZm8gKiBjb25zdCAN
-Cj4+IGF3Y2NfaHdtb25faW5mb1tdID0gew0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgSFdNT05fRl9MQUJFTCB8IEhXTU9OX0ZfSU5QVVQgfCBIV01PTl9GX01JTiB8IA0KPj4g
-SFdNT05fRl9NQVgsDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBIV01PTl9G
-X0xBQkVMIHwgSFdNT05fRl9JTlBVVCB8IEhXTU9OX0ZfTUlOIHwgDQo+PiBIV01PTl9GX01BWA0K
-Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKSwNCj4+ICvCoMKgwqAgSFdNT05f
-Q0hBTk5FTF9JTkZPKHB3bSwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9O
-X1BXTV9JTlBVVCwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9J
-TlBVVCwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9JTlBVVCwN
-Cj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEhXTU9OX1BXTV9JTlBVVA0KPj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKSwNCj4+IMKgwqDCoMKgwqAgTlVMTA0KPj4gwqAg
-fTsNCj4+DQo+PiBAQCAtOTU0LDggKzk5Nyw4IEBAIHN0YXRpYyBpbnQgYXdjY19wbGF0Zm9ybV9w
-cm9maWxlX3NldChzdHJ1Y3QgDQo+PiBkZXZpY2UgKmRldiwNCj4+IMKgwqDCoMKgwqDCoMKgwqDC
-oCB9DQo+PiDCoMKgwqDCoMKgIH0NCj4+DQo+PiAtwqDCoMKgIHJldHVybiBhd2NjX3RoZXJtYWxf
-Y29udHJvbChwcml2LT53ZGV2LA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHByaXYtPnN1cHBvcnRlZF9wcm9maWxlc1twcm9maWxlXSk7DQo+PiArwqDCoMKgIHJl
-dHVybiBhd2NjX3RoZXJtYWxfY29udHJvbChwcml2LT53ZGV2LCBBV0NDX09QX0FDVElWQVRFX1BS
-T0ZJTEUsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJpdi0+
-c3VwcG9ydGVkX3Byb2ZpbGVzW3Byb2ZpbGVdLCAwKTsNCj4+IMKgIH0NCj4+DQo+PiDCoCBzdGF0
-aWMgaW50IGF3Y2NfcGxhdGZvcm1fcHJvZmlsZV9wcm9iZSh2b2lkICpkcnZkYXRhLCB1bnNpZ25l
-ZCBsb25nIA0KPj4gKmNob2ljZXMpDQo+DQo=
+Am 08.02.25 um 06:16 schrieb Kurt Borja:
+
+> Use tables to describe method operations instead of using pseudo-code.
+> Drop unknown method descriptions to avoid redundancy. Drop GPIO section
+> as it is currently irrelevant to this driver. Update Thermal_Information
+> method documentation. Add one more helpful developer to the kudos sectio=
+n.
+>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+>   Documentation/wmi/devices/alienware-wmi.rst | 390 ++++++--------------
+>   1 file changed, 122 insertions(+), 268 deletions(-)
+>
+> diff --git a/Documentation/wmi/devices/alienware-wmi.rst b/Documentation=
+/wmi/devices/alienware-wmi.rst
+> index ddc5e561960e..2bb3abfd9cd7 100644
+> --- a/Documentation/wmi/devices/alienware-wmi.rst
+> +++ b/Documentation/wmi/devices/alienware-wmi.rst
+> @@ -11,7 +11,7 @@ The WMI device WMAX has been implemented for many Alie=
+nware and Dell's G-Series
+>   models. Throughout these models, two implementations have been identif=
+ied. The
+>   first one, used by older systems, deals with HDMI, brightness, RGB, am=
+plifier
+>   and deep sleep control. The second one used by newer systems deals pri=
+marily
+> -with thermal, overclocking, and GPIO control.
+> +with thermal control and overclocking.
+>
+>   It is suspected that the latter is used by Alienware Command Center (A=
+WCC) to
+>   manage manufacturer predefined thermal profiles. The alienware-wmi dri=
+ver
+> @@ -69,9 +69,6 @@ data using the `bmfdec <https://github.com/pali/bmfdec=
+>`_ utility:
+>      [WmiMethodId(164), Implemented, read, write, Description("Tobii Cam=
+era Power Off.")] void TobiiCameraPowerOff([out] uint32 argr);
+>    };
+>
+> -Some of these methods get quite intricate so we will describe them usin=
+g
+> -pseudo-code that vaguely resembles the original ASL code.
+> -
+>   Methods not described in the following document have unknown behavior.
+>
+>   Argument Structure
+> @@ -87,175 +84,136 @@ ID 0xA0, the argument you would pass to the method=
+ is 0xA001.
+>   Thermal Methods
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -WMI method Thermal_Information([in] uint32 arg2, [out] uint32 argr)
+> --------------------------------------------------------------------
+> -
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0x01:
+> -         argr =3D 1
+> -
+> - if BYTE_0(arg2) =3D=3D 0x02:
+> -         argr =3D SYSTEM_DESCRIPTION
+> -
+> - if BYTE_0(arg2) =3D=3D 0x03:
+> -         if BYTE_1(arg2) =3D=3D 0x00:
+> -                 argr =3D FAN_ID_0
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x01:
+> -                 argr =3D FAN_ID_1
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x02:
+> -                 argr =3D FAN_ID_2
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x03:
+> -                 argr =3D FAN_ID_3
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x04:
+> -                 argr =3D SENSOR_ID_CPU | 0x0100
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x05:
+> -                 argr =3D SENSOR_ID_GPU | 0x0100
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x06:
+> -                 argr =3D THERMAL_MODE_QUIET_ID
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x07:
+> -                 argr =3D THERMAL_MODE_BALANCED_ID
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x08:
+> -                 argr =3D THERMAL_MODE_BALANCED_PERFORMANCE_ID
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x09:
+> -                 argr =3D THERMAL_MODE_PERFORMANCE_ID
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x0A:
+> -                 argr =3D THERMAL_MODE_LOW_POWER_ID
+> -
+> -         if BYTE_1(arg2) =3D=3D 0x0B:
+> -                 argr =3D THERMAL_MODE_GMODE_ID
+> -
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> - if BYTE_0(arg2) =3D=3D 0x04:
+> -         if is_valid_sensor(BYTE_1(arg2)):
+> -                 argr =3D SENSOR_TEMP_C
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> - if BYTE_0(arg2) =3D=3D 0x05:
+> -         if is_valid_fan(BYTE_1(arg2)):
+> -                 argr =3D FAN_RPM()
+> -
+> - if BYTE_0(arg2) =3D=3D 0x06:
+> -         skip
+> -
+> - if BYTE_0(arg2) =3D=3D 0x07:
+> -         argr =3D 0
+> -
+> - If BYTE_0(arg2) =3D=3D 0x08:
+> -         if is_valid_fan(BYTE_1(arg2)):
+> -                 argr =3D 0
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> - if BYTE_0(arg2) =3D=3D 0x09:
+> -         if is_valid_fan(BYTE_1(arg2)):
+> -                 argr =3D FAN_UNKNOWN_STAT_0()
+> -
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> - if BYTE_0(arg2) =3D=3D 0x0A:
+> -         argr =3D THERMAL_MODE_BALANCED_ID
+> -
+> - if BYTE_0(arg2) =3D=3D 0x0B:
+> -         argr =3D CURRENT_THERMAL_MODE()
+> -
+> - if BYTE_0(arg2) =3D=3D 0x0C:
+> -         if is_valid_fan(BYTE_1(arg2)):
+> -                 argr =3D FAN_UNKNOWN_STAT_1()
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> -Operation 0x02 returns a *system description* buffer with the following
+> -structure:
+> -
+> -::
+> -
+> - out[0] -> Number of fans
+> - out[1] -> Number of sensors
+> - out[2] -> 0x00
+> - out[3] -> Number of thermal modes
+> +WMI method GetFanSensors([in] uint32 arg2, [out] uint32 argr)
+> +-------------------------------------------------------------
+>
+> -Operation 0x03 list all available fan IDs, sensor IDs and thermal profi=
+le
+> -codes in order, but different models may have different number of fans =
+and
+> -thermal profiles. These are the known ranges:
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| Operation (Byte 0) | Description                        | Arguments  =
+        |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+
+> +| 0x01               | Get the number of fans for a given | - Byte 1: F=
+an ID   |
+> +|                    | fan ID.                            |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x02               | Get the temperature sensor ID      | - Byte 1: F=
+an ID   |
+> +|                    | related to a fan sensor ID         |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+
+After looking at a acpidump from a alienware machine i discovered that ope=
+ration 0x02
+takes a second argument which acts like an index.
+
+Could it be that operation 0x01 actually returns the number of temperature=
+ sensors
+associated with a given fan which can then be queried using operation 0x02=
+?
+
+>
+> -* Fan IDs: from 2 up to 4
+> -* Sensor IDs: 2
+> -* Thermal profile codes: from 1 up to 7
+> +WMI method Thermal_Information([in] uint32 arg2, [out] uint32 argr)
+> +-------------------------------------------------------------------
+>
+> -In total BYTE_1(ARG2) may range from 0x5 up to 0xD depending on the mod=
+el.
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| Operation (Byte 0) | Description                        | Arguments  =
+        |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+
+> +| 0x01               | Unknown.                           | - None     =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x02               | Get system description number with | - None     =
+        |
+> +|                    | the following structure:           |            =
+        |
+> +|                    |                                    |            =
+        |
+> +|                    | - Byte 0: Number of fans           |            =
+        |
+> +|                    | - Byte 1: Number of temperature    |            =
+        |
+> +|                    |   sensors                          |            =
+        |
+> +|                    | - Byte 2: Unknown                  |            =
+        |
+> +|                    | - Byte 3: Number of thermal        |            =
+        |
+> +|                    |   profiles                         |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x03               | List an ID or resource at a given  | - Byte 1: I=
+ndex    |
+> +|                    | index. Fan IDs, temperature IDs,   |            =
+        |
+> +|                    | unknown IDs and thermal profile    |            =
+        |
+> +|                    | IDs are listed in that exact       |            =
+        |
+> +|                    | order.                             |            =
+        |
+> +|                    |                                    |            =
+        |
+> +|                    | Operation 0x02 is used to know     |            =
+        |
+> +|                    | which indexes map to which         |            =
+        |
+> +|                    | resources.                         |            =
+        |
+> +|                    |                                    |            =
+        |
+> +|                    | **Returns:** ID at a given index   |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x04               | Get the current temperature for a  | - Byte 1: S=
+ensor   |
+> +|                    | given temperature sensor.          |   ID       =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x05               | Get the current RPM for a given    | - Byte 1: F=
+an ID   |
+> +|                    | fan.                               |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x06               | Get fan speed percentage. (not     | - Byte 1: F=
+an ID   |
+> +|                    | implemented in every model)        |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x07               | Unknown.                           | - Unknown  =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x08               | Get minimum RPM for a given FAN    | - Byte 1: F=
+an ID   |
+> +|                    | ID.                                |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x09               | Get maximum RPM for a given FAN    | - Byte 1: F=
+an ID   |
+> +|                    | ID.                                |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x09               | Get maximum RPM for a given FAN    | - Byte 1: F=
+an ID   |
+> +|                    | ID.                                |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+
+Duplicated entry here.
+
+Other than that the new documentation looks quite good.
+
+Thanks,
+Armin Wolf
+
+> +| 0x0A               | Get balanced thermal profile ID.   | - None     =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x0B               | Get current thermal profile ID.    | - None     =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x0C               | Get current `boost` value for a    | - Byte 1: F=
+an ID   |
+> +|                    | given fan ID.                      |            =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+>
+>   WMI method Thermal_Control([in] uint32 arg2, [out] uint32 argr)
+>   ---------------------------------------------------------------
+>
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0x01:
+> -         if is_valid_thermal_profile(BYTE_1(arg2)):
+> -                 SET_THERMAL_PROFILE(BYTE_1(arg2))
+> -                 argr =3D 0
+> -
+> - if BYTE_0(arg2) =3D=3D 0x02:
+> -         if is_valid_fan(BYTE_1(arg2)):
+> -                 SET_FAN_SPEED_MULTIPLIER(BYTE_2(arg2))
+> -                 argr =3D 0
+> -         else:
+> -                 argr =3D 0xFFFFFFFF
+> -
+> -.. note::
+> -   While you can manually change the fan speed multiplier with this met=
+hod,
+> -   Dell's BIOS tends to overwrite this changes anyway.
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| Operation (Byte 0) | Description                        | Arguments  =
+        |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+
+> +| 0x01               | Activate a given thermal profile.  | - Byte 1: T=
+hermal  |
+> +|                    |                                    |   profile I=
+D       |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x02               | Set a `boost` value for a given    | - Byte 1: F=
+an ID   |
+> +|                    | fan ID.                            | - Byte 2: B=
+oost    |
+> ++--------------------+------------------------------------+------------=
+--------+
+>
+>   These are the known thermal profile codes:
+>
+> -::
+> -
+> - CUSTOM                         0x00
+> -
+> - BALANCED_USTT                  0xA0
+> - BALANCED_PERFORMANCE_USTT      0xA1
+> - COOL_USTT                      0xA2
+> - QUIET_USTT                     0xA3
+> - PERFORMANCE_USTT               0xA4
+> - LOW_POWER_USTT                 0xA5
+> -
+> - QUIET                          0x96
+> - BALANCED                       0x97
+> - BALANCED_PERFORMANCE           0x98
+> - PERFORMANCE                    0x99
+> -
+> - GMODE                          0xAB
+> -
+> -Usually if a model doesn't support the first four profiles they will su=
+pport
+> -the User Selectable Thermal Tables (USTT) profiles and vice-versa.
+> -
+> -GMODE replaces PERFORMANCE in G-Series laptops.
+> ++------------------------------+----------+------+
+> +| Thermal Profile              | Type     | ID   |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D+
+> +| Custom                       | Special  | 0x00 |
+> ++------------------------------+----------+------+
+> +| G-Mode                       | Special  | 0xAB |
+> ++------------------------------+----------+------+
+> +| Quiet                        | Legacy   | 0x96 |
+> ++------------------------------+----------+------+
+> +| Balanced                     | Legacy   | 0x97 |
+> ++------------------------------+----------+------+
+> +| Balanced Performance         | Legacy   | 0x98 |
+> ++------------------------------+----------+------+
+> +| Performance                  | Legacy   | 0x99 |
+> ++------------------------------+----------+------+
+> +| Balanced                     | USTT     | 0xA0 |
+> ++------------------------------+----------+------+
+> +| Balanced Performance         | USTT     | 0xA1 |
+> ++------------------------------+----------+------+
+> +| Cool                         | USTT     | 0xA2 |
+> ++------------------------------+----------+------+
+> +| Quiet                        | USTT     | 0xA3 |
+> ++------------------------------+----------+------+
+> +| Performance                  | USTT     | 0xA4 |
+> ++------------------------------+----------+------+
+> +| Low Power                    | USTT     | 0xA5 |
+> ++------------------------------+----------+------+
+> +
+> +If a model supports the User Selectable Thermal Tables (USTT) profiles,=
+ it will
+> +not support the Legacy profiles and vice-versa.
+> +
+> +Every model supports the CUSTOM (0x00) thermal profile. GMODE replaces
+> +PERFORMANCE in G-Series laptops.
+>
+>   WMI method GameShiftStatus([in] uint32 arg2, [out] uint32 argr)
+>   ---------------------------------------------------------------
+>
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0x1:
+> -         TOGGLE_GAME_SHIFT()
+> -         argr =3D GET_GAME_SHIFT_STATUS()
+> -
+> - if BYTE_0(arg2) =3D=3D 0x2:
+> -         argr =3D GET_GAME_SHIFT_STATUS()
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| Operation (Byte 0) | Description                        | Arguments  =
+        |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+
+> +| 0x01               | Toggle *Game Shift*.               | - None     =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+> +| 0x02               | Get *Game Shift* status.           | - None     =
+        |
+> ++--------------------+------------------------------------+------------=
+--------+
+>
+>   Game Shift Status does not change the fan speed profile but it could b=
+e some
+>   sort of CPU/GPU power profile. Benchmarks have not been done.
+> @@ -267,131 +225,27 @@ Thermal_Information does not list it.
+>   G-key on Dell's G-Series laptops also changes Game Shift status, so bo=
+th are
+>   directly related.
+>
+> -WMI method GetFanSensors([in] uint32 arg2, [out] uint32 argr)
+> --------------------------------------------------------------
+> -
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0x1:
+> -        if is_valid_fan(BYTE_1(arg2)):
+> -                argr =3D 1
+> -        else:
+> -                argr =3D 0
+> -
+> - if BYTE_0(arg2) =3D=3D 0x2:
+> -        if is_valid_fan(BYTE_1(arg2)):
+> -                if BYTE_2(arg2) =3D=3D 0:
+> -                        argr =3D=3D SENSOR_ID
+> -                else
+> -                        argr =3D=3D 0xFFFFFFFF
+> -        else:
+> -                argr =3D 0
+> -
+>   Overclocking Methods
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -.. warning::
+> -   These methods have not been tested and are only partially reverse
+> -   engineered.
+> -
+> -WMI method Return_OverclockingReport([out] uint32 argr)
+> --------------------------------------------------------
+> -
+> -::
+> -
+> - CSMI (0xE3, 0x99)
+> - argr =3D 0
+> -
+> -CSMI is an unknown operation.
+> -
+> -WMI method Set_OCUIBIOSControl([in] uint32 arg2, [out] uint32 argr)
+> --------------------------------------------------------------------
+> -
+> -::
+> -
+> - CSMI (0xE3, 0x99)
+> - argr =3D 0
+> -
+> -CSMI is an unknown operation.
+> -
+> -WMI method Clear_OCFailSafeFlag([out] uint32 argr)
+> ---------------------------------------------------
+> -
+> -::
+> -
+> - CSMI (0xE3, 0x99)
+> - argr =3D 0
+> -
+> -CSMI is an unknown operation.
+> -
+> -
+>   WMI method MemoryOCControl([in] uint32 arg2, [out] uint32 argr)
+>   ---------------------------------------------------------------
+>
+>   AWCC supports memory overclocking, but this method is very intricate a=
+nd has
+>   not been deciphered yet.
+>
+> -GPIO methods
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -
+> -These methods are probably related to some kind of firmware update syst=
+em,
+> -through a GPIO device.
+> -
+> -.. warning::
+> -   These methods have not been tested and are only partially reverse
+> -   engineered.
+> -
+> -WMI method FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr)
+> -------------------------------------------------------------------
+> -
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0:
+> -         if BYTE_1(arg2) =3D=3D 1:
+> -                 SET_PIN_A_HIGH()
+> -         else:
+> -                 SET_PIN_A_LOW()
+> -
+> - if BYTE_0(arg2) =3D=3D 1:
+> -         if BYTE_1(arg2) =3D=3D 1:
+> -                 SET_PIN_B_HIGH()
+> -
+> -         else:
+> -                 SET_PIN_B_LOW()
+> -
+> - else:
+> -         argr =3D 1
+> -
+> -WMI method ReadTotalofGPIOs([out] uint32 argr)
+> -----------------------------------------------
+> -
+> -::
+> -
+> - argr =3D 0x02
+> -
+> -WMI method ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr)
+> -------------------------------------------------------------------
+> -
+> -::
+> -
+> - if BYTE_0(arg2) =3D=3D 0:
+> -         argr =3D PIN_A_STATUS
+> -
+> - if BYTE_0(arg2) =3D=3D 1:
+> -         argr =3D PIN_B_STATUS
+> -
+>   Other information Methods
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>
+>   WMI method ReadChassisColor([out] uint32 argr)
+>   ----------------------------------------------
+>
+> -::
+> -
+> - argr =3D CHASSIS_COLOR_ID
+> +Returns the chassis color internal ID.
+>
+>   Acknowledgements
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -Kudos to `AlexIII <https://github.com/AlexIII/tcc-g15>`_ for documentin=
+g
+> -and testing available thermal profile codes.
+> +Kudos to `AlexIII <https://github.com/AlexIII/tcc-g15>`_ and
+> +`T-Troll <https://github.com/T-Troll/alienfx-tools/>`_ for documenting =
+and
+> +testing some of this device's functionality, making it possible to gene=
+ralize
+> +this driver.
 
