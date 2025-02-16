@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-516764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A7AA37710
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:06:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B599DA37711
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C0216D434
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8573416D467
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D719DF40;
-	Sun, 16 Feb 2025 19:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF241A0BFA;
+	Sun, 16 Feb 2025 19:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jd84Zb3U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="v1SRTl9Q"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7CC17E4;
-	Sun, 16 Feb 2025 19:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45A419ABC2;
+	Sun, 16 Feb 2025 19:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739732799; cv=none; b=r/UVHvm/f7oAx0I6g/Q/L6oOw9TJHh1BPBIwWwFFb+Pj5DNvuEpX0AfHkCJtguBK5DuKAN/Bpu2YbQQF/s8Kd99nC2wczG1pRv7nOkxxCik3Jv6Nh/9fOidPBg/O06hpXtngfewvy8xoTL8t72O/VEa645qFO66eoqeubUZnAHs=
+	t=1739732835; cv=none; b=dL0FKMnELNPBepIV9mRKVHwQBi3s1l3DxzhXFMGNWwZOHY2LOZWV8oMAHoYQIxnzAzgEhy0rZw1Xffzu8lhnHXinyjXhTNa2bQPyWyll359eK6ECZBFZvIfdEhm7AqKE+OeFBTizMBFwjdgjhMwHl1spyj8sSZWH+wZsHVLjlHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739732799; c=relaxed/simple;
-	bh=O7NSxWzoeuFuIw1UPCPgZKMMHrar2/KGCtVfAJv3L4k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgj8tG4vjPVh2iD1HiIKgg9wrprMQcOCr9KOlFXKw71INwMmS9fAfMvwkk1IHzAq4tPKHTCmksIvZzK2ZsJNdlD0OcRjpNOtg9bJvENHm2tK3sM5edXKKJH+sLlKXQ1hQ2toi6eJJIf60W/K0HsC4vFBygnYoFMDTs09+TSe7oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jd84Zb3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D7DC4CEDD;
-	Sun, 16 Feb 2025 19:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739732798;
-	bh=O7NSxWzoeuFuIw1UPCPgZKMMHrar2/KGCtVfAJv3L4k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jd84Zb3UF85llvUO8w/ChFisdlVk2JJiY4XicELTLblzQ0oTaMnn6JaMT7FkaaYAM
-	 BGikJ/njek2u+/qQ5XFs4YixT/ZpzZKjcH8FW2KUGM67M42DXTDQ3aJ4FDzzdjatRP
-	 xB00eyFHBfFBR7rljQRNrTj0SQRNQctdwzDT+P7IVLjbRnbgEEfh3FEfWplAD1wCdU
-	 JWVnKgIvm3xmMgMYmaGV3s2FbbS6aYYDj3RcDITQw6IXB1CW3tkHsVnuTVj4QuQYSm
-	 QmYX3FwZ00QjDODkWtBxvKHX2SjaqVefQFuS9aT8VTkbJLqMeQghiFObEBZC+q7rgv
-	 QHEwEZSIYurRw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tjjyO-004cDp-Cp;
-	Sun, 16 Feb 2025 19:06:36 +0000
-Date: Sun, 16 Feb 2025 19:06:36 +0000
-Message-ID: <87pljh1zgj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: luoyonggang@gmail.com
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Sebastian Ott <sebott@redhat.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] KVM: arm64: Allow userspace to change MIDR_EL1
-In-Reply-To: <CAE2XoE8i=jPgSea5jXY0eOxas9Y_2pa7QheqS1xuw2qeTQDNyw@mail.gmail.com>
-References: <20250211143910.16775-1-sebott@redhat.com>
-	<20250211143910.16775-2-sebott@redhat.com>
-	<Z7BoydkyT_h0gwOV@linux.dev>
-	<CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
-	<87v7tb17os.wl-maz@kernel.org>
-	<CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
-	<86jz9psqwd.wl-maz@kernel.org>
-	<CAE2XoE8i=jPgSea5jXY0eOxas9Y_2pa7QheqS1xuw2qeTQDNyw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739732835; c=relaxed/simple;
+	bh=WdUtfn83UKbZ9F3tMqRb3yyPvHLmUxE1jmeVFo4QYvs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KU0xlJOzZHXZ7NNFFOtWpxJP6Ade1M0D0UdA4ffuCBlg5tvpqf9S8pRcA5GZDgJFJ6lu30f5gWYvLpHVoBhA33Ja2tQtKAylQzHdHO2lIAGJrf7T/1n/UI5xnL/zuBddApcBLItf8gEnCVQZzlja594P7QDYrg+OURknDEfGzqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=v1SRTl9Q; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739732834; x=1771268834;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Ot3sZW9m1KrcwT8em5+cF0/58aAY/1r9ugZxy8yla4I=;
+  b=v1SRTl9QMiJx/2xYox3TG1048MIPxt3ZUiqL2yB89H3o8MxaU7lDQIqj
+   QY04l5OrIwDTlKa4YBPOxNp/b2N/hWj80RES2FcamR4WeExIGG1LvxFKj
+   cbhzJvaXuwaknGktGMcLE23r8c1/Ln0JiDZ3A+a6hYAP1nLKSac7XbTrn
+   w=;
+X-IronPort-AV: E=Sophos;i="6.13,291,1732579200"; 
+   d="scan'208";a="463041476"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 19:07:09 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:60624]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.73:2525] with esmtp (Farcaster)
+ id 57c8e7c4-aa7c-48b3-b74c-a9a298df9c11; Sun, 16 Feb 2025 19:07:09 +0000 (UTC)
+X-Farcaster-Flow-ID: 57c8e7c4-aa7c-48b3-b74c-a9a298df9c11
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Sun, 16 Feb 2025 19:07:01 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.119.10.131) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sun, 16 Feb 2025 19:06:53 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <enjuk@amazon.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <gnaaman@drivenets.com>,
+	<horms@kernel.org>, <joel.granados@kernel.org>, <kohei.enju@gmail.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<lizetao1@huawei.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net-next v1] neighbour: Replace kvzalloc() with kzalloc() when GFP_ATOMIC is specified
+Date: Sun, 16 Feb 2025 11:06:42 -0800
+Message-ID: <20250216190642.31169-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250216163016.57444-1-enjuk@amazon.com>
+References: <20250216163016.57444-1-enjuk@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: luoyonggang@gmail.com, oliver.upton@linux.dev, sebott@redhat.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, shameerali.kolothum.thodi@huawei.com, cohuck@redhat.com, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Sun, 16 Feb 2025 18:55:23 +0000,
-"=E7=BD=97=E5=8B=87=E5=88=9A(Yonggang Luo)" <luoyonggang@gmail.com> wrote:
->=20
-> On Mon, Feb 17, 2025 at 2:09=E2=80=AFAM Marc Zyngier <maz@kernel.org> wro=
-te:
-> >
-> > On Sat, 15 Feb 2025 19:04:20 +0000,
-> > "=E7=BD=97=E5=8B=87=E5=88=9A(Yonggang Luo)" <luoyonggang@gmail.com> wro=
-te:
-> > >
-> > > According to this, the MIDR EL1 is updated properly, but the MIDR for
-> > > aarch32 is not updated, and I don't know how to hook the update for
-> > > MIDR for aarch32
-> >
-> > It is the same thing. The AArch32 view is configured the same way as
-> > the AArch64 view, and there is nothing to do at all (that's what
-> > VPIDR_EL2 is all about).
-> >
-> > With Oliver's change, I'm correctly getting a different MIDR using a
-> > hacked up kvmtool, see below. I suspect you're not running with the
-> > correct patch applied.
-> >
-> The applied patch is V2, with writing vpidr_el2 disabled, Is that the cau=
-se?
-> The branch is here
-> https://github.com/lygstate/linux/tree/main
-> I am not applying your patch
+From: Kohei Enju <enjuk@amazon.com>
+Date: Mon, 17 Feb 2025 01:30:16 +0900
+> Replace kvzalloc()/kvfree() with kzalloc()/kfree() when GFP_ATOMIC is
+> specified, since kvzalloc() doesn't support non-sleeping allocations such
+> as GFP_ATOMIC.
+> 
+> With incompatible gfp flags, kvzalloc() never falls back to the vmalloc
+> path and returns immediately after the kmalloc path fails.
+> Therefore, using kzalloc() is sufficient in this case.
+> 
+> Fixes: 41b3caa7c076 ("neighbour: Add hlist_node to struct neighbour")
 
-Well, there is no magic. If you don't write to VPIDR_EL2, not much
-will happen. You need to apply Oliver's change instead of the first
-patch in this series.
+This commit followed the old hash_buckets allocation, so I'd add
 
-	M.
+  Fixes: ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()")
 
---=20
-Without deviation from the norm, progress is not possible.
+too.
+
+Both commits were introduced in v6.13, so there's no difference in terms
+of backporting though.
+
+Also, it would be nice to CC mm maintainers in case they have some
+comments.
+
+
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+> ---
+>  net/core/neighbour.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+> index d8dd686b5287..344c9cd168ec 100644
+> --- a/net/core/neighbour.c
+> +++ b/net/core/neighbour.c
+> @@ -518,7 +518,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+>  	if (!ret)
+>  		return NULL;
+>  
+> -	hash_heads = kvzalloc(size, GFP_ATOMIC);
+> +	hash_heads = kzalloc(size, GFP_ATOMIC);
+>  	if (!hash_heads) {
+>  		kfree(ret);
+>  		return NULL;
+> @@ -536,7 +536,7 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
+>  						    struct neigh_hash_table,
+>  						    rcu);
+>  
+> -	kvfree(nht->hash_heads);
+> +	kfree(nht->hash_heads);
+>  	kfree(nht);
+>  }
+>  
+> -- 
+> 2.39.5 (Apple Git-154)
 
