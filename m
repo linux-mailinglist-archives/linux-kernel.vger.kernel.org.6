@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-516730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DD0A37650
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:38:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386D7A37656
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:39:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937E418925D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BC516908F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BAA19D890;
-	Sun, 16 Feb 2025 17:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520B119E7F9;
+	Sun, 16 Feb 2025 17:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4nUsyBp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="RUgSl7vy"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA6119A298;
-	Sun, 16 Feb 2025 17:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B8C19CC0C
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 17:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739727493; cv=none; b=T/UCCjj5e5/hVvQfr3ZMaKqQ4a0+KXbxbZnAcPvi5cBN2SdQDp6ky9SihQYhst8CE9ORAzN3Bf1oP8x9fQnAmKpGneShk+wEGj9I436ilC/LOEUEU2XVESFWEFYcxpyXn+M17qHneGGVIGVP9UtQcy1KO0J5OY9oiNSCXZupD8Y=
+	t=1739727565; cv=none; b=li632M6V6gOTdelTcezH9zoNxXb4czcAH2h3d5cyffHK41fuSN0gZDaxDNS/OGtlFTS9+vC8VRWUg5Fgv+xTPMoLA2N/+3iT8m0E+yyHB0TIsCsWxfSUYDLw8L9bhJybgk7zoTa9UCF+JIXOUbG50CK1s2PWovt5poL9ziYheng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739727493; c=relaxed/simple;
-	bh=DbUMcXFKtHfM50Yjw/Uc2hXibnawpUKWpR41+KNiiKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gPtPmnkm4+R8wmyAAToma02bYZilmQpSod7SxKq8u4cw0PD3iSaVQPRzflqsm6Q0ManOmo3dAPYAfRr0Ak2aJNl6LLthLFigKaJyUYPzlQSRUOrhizGBd5+krgjTLoCBYm3UKC+QQ8cw+WRFTnGXj0zc04eRQYp1Ak2eLfQGCcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4nUsyBp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57503C4CEDD;
-	Sun, 16 Feb 2025 17:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739727493;
-	bh=DbUMcXFKtHfM50Yjw/Uc2hXibnawpUKWpR41+KNiiKM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i4nUsyBpUXhtE/9YqJJ++JiujSDLehXLPYDL/zH0yaQkej2FIHCZyI4MK88AGB33j
-	 TqXMRnUFW/wY0sIAylMT8yIuTFdTsKanQ9Z2Kg4ZywoQrmnjt4bmt7Qrv6deYn5yjK
-	 Xc6Sk2+nOTq1z2eI+iVekSq5So8P24dszPmOIStjyNJ/wsq0Egz1hUqqeEeZQqFMDa
-	 cYBiQYgWHIV30/RD3lTpfJhEsJ9dwr+hEtTz5GVUYncUPy8o9S6v5K/lJm3xlnEkI7
-	 8GJ22Pye/a09CzgLXO72YWWzJcMYKcGEmCUJVzGPUtzSa9SsGuTedh6pRr9670VxRN
-	 OSB632/jMvUMg==
-Date: Sun, 16 Feb 2025 17:38:05 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 09/14] iio: accel: adxl345: extend sample frequency
- adjustments
-Message-ID: <20250216173805.3b629a61@jic23-huawei>
-In-Reply-To: <20250210110119.260858-10-l.rubusch@gmail.com>
-References: <20250210110119.260858-1-l.rubusch@gmail.com>
-	<20250210110119.260858-10-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739727565; c=relaxed/simple;
+	bh=9Ya3nZNb9MMk0kVeCzyrPJWutNb/VgKd2miIFEuE9e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSqlzZnBikmBung/jSZylm6VP+ptMnirNgziVohvB6uukmRFIcHY5zXPIgrgBqNjDwBjLffmbFy/uxxwl6w9a+jiMPDvurrdIHj8CWkOWpYjFHFwzv+XFM8B9IcxHtfPZHf7Hv9Gd4Uzvsx8PL4bsU9+HxzQ5ezMfe7FV3p8lmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=RUgSl7vy; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 16BA424002F
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:39:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1739727562; bh=9Ya3nZNb9MMk0kVeCzyrPJWutNb/VgKd2miIFEuE9e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=RUgSl7vyuD2gu97FMTGIHdpD9+s2OvoQa9Nw1zQw37hMzYtynBGKY1TvPUgt3cQ+/
+	 ovTyJ8wwDt+SrvDnejvkHeLCpib+vqnNQZHILfweuQDIh0y2B604KgecdoS7dUP4ae
+	 yW6G+OO3uRqrbkwh36SO1nlmLxGT01Y2hkKBOcgNrIREea1UUQCZ0+BUG7+K1iKrN+
+	 de+TmyWis9VfuniNIVfA5h4BY1q+/yjAf2NqMNQE6m/FDq7NZQk0KiWCKBSTTw21Sb
+	 jf147xX42+o1IMYGbMU9rhLJk8l8+VAd1Ym4Khu0ShwMV3tgVIbmh050LCBKqjbAj4
+	 /NluK9WXPq68g==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YwtM83X13z6txn;
+	Sun, 16 Feb 2025 18:39:16 +0100 (CET)
+Date: Sun, 16 Feb 2025 17:39:16 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Rob Herring <robh@kernel.org>
+Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
+	Scott Wood <oss@buserror.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 11/12] dt-bindings: nand: Add fsl,elbc-fcm-nand
+Message-ID: <Z7IixGUskrWxxZIZ@probook>
+References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
+ <20250207-ppcyaml-v2-11-8137b0c42526@posteo.net>
+ <20250211000157.GA240011-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250211000157.GA240011-robh@kernel.org>
 
-On Mon, 10 Feb 2025 11:01:14 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Introduce enums and functions to work with the sample frequency
-> adjustments. Let the sample frequency adjust via IIO and configure
-> a reasonable default.
+On Mon, Feb 10, 2025 at 06:01:57PM -0600, Rob Herring wrote:
+> On Fri, Feb 07, 2025 at 10:30:28PM +0100, J. Neuschäfer wrote:
+> > Formalize the binding already supported by the fsl_elbc_nand.c driver
+> > and used in several device trees in arch/powerpc/boot/dts/.
+> > 
+> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> > ---
+> > 
+> > V2:
+> > - split out from fsl,elbc binding patch
+> > - constrain #address-cells and #size-cells
+> > - add a general description
+> > - use unevaluatedProperties=false instead of additionalProperties=false
+> > - fix property order to comply with dts coding style
+> > - include raw-nand-chip.yaml instead of nand-chip.yaml
 > 
-> Replace the old static sample frequency handling. The patch is in
-> preparation for activity/inactivity handling.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> Why? Doesn't look like you use anything from it. I think the correct 
+> thing to use here is just mtd.yaml to pick up partitions.
 
-I noticed now that we don't actually have regmap caching enabled.
-I think it will make things sufficiently simpler that it is worth
-doing even though you have to specify which registers are volatile etc.
+There is one example of properties from nand-chip.yaml being used
+on an fsl,elbc-fcm-nand node: arch/powerpc/boot/dts/turris1x.dts
+uses nand-ecc-mode and nand-ecc-algo.
 
 
-> +
-> +static int adxl345_set_odr(struct adxl345_state *st, enum adxl345_odr odr)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
-> +				 ADXL345_BW_RATE_MSK,
-> +				 FIELD_PREP(ADXL345_BW_RATE_MSK, odr));
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->odr = odr;
-Why do we need to keep a copy cached? Seems like we can get it from
-regmap cache easily enough?
-
-> +
-> +	return 0;
-> +}
-
-> @@ -488,7 +572,12 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  			     int val, int val2, long mask)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
-> -	s64 n;
-> +	enum adxl345_odr odr;
-> +	int ret;
-> +
-> +	ret = adxl345_set_measure_en(st, false);
-
-Please add some more on why this is now necessary to the patch description.
-
-> +	if (ret)
-> +		return ret;
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_CALIBBIAS:
-> @@ -496,20 +585,24 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  		 * 8-bit resolution at +/- 2g, that is 4x accel data scale
->  		 * factor
->  		 */
-> -		return regmap_write(st->regmap,
-> -				    ADXL345_REG_OFS_AXIS(chan->address),
-> -				    val / 4);
-> +		ret = regmap_write(st->regmap,
-> +				   ADXL345_REG_OFS_AXIS(chan->address),
-> +				   val / 4);
-> +		break;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		n = div_s64(val * NANOHZ_PER_HZ + val2,
-> -			    ADXL345_BASE_RATE_NANO_HZ);
-> -
-> -		return regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
-> -					  ADXL345_BW_RATE,
-> -					  clamp_val(ilog2(n), 0,
-> -						    ADXL345_BW_RATE));
-> +		ret = adxl345_find_odr(st, val, val2, &odr);
-> +		if (ret)
-> +			return ret;
-> +		ret = adxl345_set_odr(st, odr);
-> +		break;
-> +	default:
-> +		return -EINVAL;
->  	}
->  
-> -	return -EINVAL;
-> +	if (ret)
-> +		return ret;
-> +
-> +	return adxl345_set_measure_en(st, true);
->  }
-
-
+Thanks,
+J. Neuschäfer
 
