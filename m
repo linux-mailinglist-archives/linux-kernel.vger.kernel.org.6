@@ -1,140 +1,332 @@
-Return-Path: <linux-kernel+bounces-516789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D95FA3776A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:18:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1D2A3776C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:19:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 208A3189118F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:18:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A18C16BF68
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6534E1A238D;
-	Sun, 16 Feb 2025 20:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D91A19B5B4;
+	Sun, 16 Feb 2025 20:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POVmy4Io"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1CXHS8P"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AD41442E8;
-	Sun, 16 Feb 2025 20:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090EB1442E8
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 20:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739737090; cv=none; b=Vv7xiZR6UVxD8DiJ3F3Z5XsJbzcChUycNyJDMdjGOBTckHz8hmCgl9QX7GIggZOWO+SfUKTjlwdo7KOkFyaOqEkF2y6TAfd174FYTxj+yZXeNb4yxbQhvO6hYXPRcMyMeRhn8ehamaWtdlROaeVFtN9qya7jHqxCbwqbK/9XA5s=
+	t=1739737157; cv=none; b=AnI2Ucl7kembdeACp85/exiRGzwlug84MkUV/TDcJqLrpco1ykHClt5sxs2fz8gQ1kVKqQHcy2I6+R4OSO+joALMLW/lHeAk/tHYPJmGyxuKaSZmJfJ/1n93c8eQ34h1/83e8PBHrAd6/tABzJWrBD8AkY46rZcEEiQbZjS2oB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739737090; c=relaxed/simple;
-	bh=NB0QhsQOFBr5gBqalO0z/Cl2Q7zM3XxL3dN+Pae5AhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZeuZZ5u4uprtAjBxlHqTRaNU/rSJZMQtAFl//awpX4gczptE8DkN6aoFRO6vfei0CZWCCdDsRIH+TBjlydJ/mptIOkl4HY5i88tXgWh+eqkYDkf4TgJ3OwJPM87mwi7t91re5JH7/mCSaEzKc4pEl3WvbI/wGaZvCObPXLn78/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POVmy4Io; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1739737157; c=relaxed/simple;
+	bh=5vET/Ou1PDDyKjOtfy501y+tyeDkHLeJQUjWFOpAbiQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kdtCwGkyjauNqwzwgquPqHzrSRFQZFrOKKOnb/ZfyTQOnO7vh6lZ6zFlzgK5vpj3mHjmARPeXk8YHkLxrVXlY8LKxbmPA/4utUz32bfXWs3BGBToH5Or1lAydLsy55/QB4P2V7fwL4eQY+qFQIGQohXQzAj2MfsWZn0OAizYZi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1CXHS8P; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb8e405640so88491966b.0;
-        Sun, 16 Feb 2025 12:18:08 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f403edb4eso232349f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 12:19:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739737087; x=1740341887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8MTbnbtlsv7ZvzsO8udhAtLIFoLXmm5zxerQZC4bmGU=;
-        b=POVmy4Io5+8gsnZF/YeEppcfc8dsfZSmI4AEmPtA636adQt+cf3gNME0HIori29Vkt
-         4N+xN945c8RMaq3OenimGLJLYhYhMF0B+9u4yF+pdtQ5A+7IhYSTE5THui/uKSBUCgcu
-         q4Fn5omdKMal/bD9v6dsOL748DgdDc3OHC5eZjCEOu+ONiPJDc76IOnL/9xj5OA1lZnL
-         oDBAX9PNx2t5gj2bEzAlW6ugvrgPfOrT6RIJmhSKUfZ2I9hEARBCBwGeA3zCKpfDNaiT
-         Dnpj9Rkv4405AXJLBs4NxuctUBF6dwfxosBUQRpWMJUHMesnvjm7UEMJUU7ZKJRhSQ1r
-         Y7rw==
+        d=gmail.com; s=20230601; t=1739737154; x=1740341954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wcORu97Ma/0XPhsdiIQdr72OgVnzXvpwEseFqbHC+kA=;
+        b=V1CXHS8PdH/3mBqz4Co7qVOADr/yshLZEVJPkMHm3iu9N9i2fE876y+/eQRCz/x+ZC
+         or/bqxWntrHUjZEm2Mw0cfeoLPnLbOuQJY2hBHEyZTXH+ufk5hXWHS639eGPqBxyxNI7
+         STszgx8ti+341ZtGlOsIDj0bxDkvXTBJz87O4WHBxKfYCnWPkpBgOeBUDpqFr6Lx4xEC
+         gUJpS71mgo8++5fcSgskokC2Dkc0RsgMwCOM1dxp/PTO2+T57OJq6zZE/2BxygQgFaVc
+         PuUV5s/IzV+ZYtcOjTlfJD9TdmLjRwQPVBHaCIZ4yZoFcBrnQ+DCmhZTr/V3FFyrHPog
+         JYAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739737087; x=1740341887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MTbnbtlsv7ZvzsO8udhAtLIFoLXmm5zxerQZC4bmGU=;
-        b=qpvSEBRRD+Sa8JRzoWGECSMPaWmjDtGzLmdBUMh+wxophodKvhY8TSbl8XLsnwmahA
-         PuuxqHpStNKm3x/csynRNppFJL7uG8F3OaSsgoDI/w3M8EBQP3TAojblLgfeLUGbLj0a
-         Ac0GFcfPEFbtcmtbBvJB3yYF2uTx9tNN/hCzCH1FqL1yMkFMnAInLGiCjZvh5xVLnPjh
-         Zml59RMct1yJciR+c35lVV89KU0FndYF0SoBrb4VdxVb/d4X6OYyfoKbJMRXrba0nP9P
-         7fcD9zH9P+nymPGW+9a4dn6u5EHFCTjohrynaDHwGx3js9GAQWgTr6SLh4CC1DKErWSG
-         0U+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVXOq+rPrsUFBBdmxcMJv7kTmJxFUouMkvfGg3ptGQvzBwqgm/9wqcJUQRUcK/V7E1rCXM4cTHnvoizb3ZKNQ==@vger.kernel.org, AJvYcCVcJ0imZVRKT8hgrPeHGGXbHcBTILPnEKiMol1P2q0rpXisbK9evnhx3ChXUXXeZwc4ltkt9CzpBVzN@vger.kernel.org, AJvYcCXY0O/mUHATXIMoC5OqNmyJoYm2gwSfMIGTTTh01VCL5x+q40mJ34TmZ2G6cbfHWSATDAvB/BxRXrqLEp5a@vger.kernel.org
-X-Gm-Message-State: AOJu0YybZ3gHz3w16Tk0lfYTrBSYD409LoF9dycB+NVK7WMnWHRo0Bmn
-	tbUQl2ECDYIfDjiAulYszFIq2NU1j8nM1WVndwY3rvs5dTYkFmrlX8vcBviuIfmFWJ1WYNPjn6T
-	0lIzMpVgqh5sNG/dYM+shIiUf1Yc=
-X-Gm-Gg: ASbGncu5nZIx32RKw4RilWP12Sphh4g1oD+xc7EaLxe6PD8SYInv7n8jjibIQ7KwOkV
-	H1WnVoyVZGYyYsTYeIUMhWeFynVjgrKuhcpgtuNgAtpwSpLrBjyTs6K8aEZlTziXPa9e2AgNc
-X-Google-Smtp-Source: AGHT+IGF1VMyH3LhI3tNgU/V3onDXnvGxqD9tYrvi1dhpucP4c9QdDKTfPNzWyv6hJFeShA1EKRF0FXRxiUVslvUHLY=
-X-Received: by 2002:a17:907:7ba4:b0:ab7:eead:57ad with SMTP id
- a640c23a62f3a-abb70de4097mr665289566b.52.1739737087051; Sun, 16 Feb 2025
- 12:18:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739737154; x=1740341954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wcORu97Ma/0XPhsdiIQdr72OgVnzXvpwEseFqbHC+kA=;
+        b=dNlMK6Laik1RST5NicrayNj2tGAikRDRlnul2pO3zYwetgQBFreR8Iwah1Zr/xB0wZ
+         WB5GH2gI0piLn6m7eIoQxFfFRO1iXPC2K5PFedDj83lNd6jHHmzjT1ta4wY3aVeDUIC2
+         xby3fPg9yICLHgqTH5Jc8XGS7Hf8pgp+hyhjZYbLal3cIImUAyjbiNXOW6+RZdW8WKKW
+         lRdD63NZMWJLaFs76vG4XzHZKH+S7JFCqM0Soi6U5+mqB13BrkPE7rZo1Qe9JPrWXgt7
+         cph9YRu9UEEqhiUV63WPE0wm4+PdB9YwGfm3H/Luoa4FGffnPhpZgVytV04pfcLGaacA
+         bmAw==
+X-Gm-Message-State: AOJu0YyAEo0XIuvf1IUKbaocyfy9yGiHfL5Ltl3hzzRcSbUZoQUEJlK6
+	n+HPAmHn3JCTFO2l/GWNOguGcgiHqwDi0wwKuG8y6eGSiV5s1yu4jkWgKA==
+X-Gm-Gg: ASbGncvsHLG86S9XdPWP/lT7utr+/GTIHGb5C5597Z2qw+nU83MIGBZvjcV2xMI+jRV
+	EuzpZbec6hX1rR9XFIczxyni5OZdkZvG2aigm9a9Yh5qXx11r1SfQfi7NX4bsuki7s4MbBoLSO5
+	v0J+wJaQR+E6ZOPIpeglONNgMTkCC6mZzgkWBGY84ySdPIahLnmauib0Cf21loktl9slI2UY82J
+	WtgZWG2lW9zOPbyZvffB80bZA3HzaqkMHejeiyTIgOfYYvpFoactTp+7ejMVz/SnVXlF4sqzpI7
+	4uSzW5z0MMkduUgwfI3VK5kJMwFPdpjjZoSvYi3N2RTYRbXpKjEtDyV3eWhquExRyosZ5EsH
+X-Google-Smtp-Source: AGHT+IHS1U/TdD51ht7gl5HWHc7c+vJM1wQGjQiUaqtRJfbB5RBd0XIbTJQ1HN7aN6GBXyLFSPPfsw==
+X-Received: by 2002:a5d:6ac1:0:b0:38f:229a:b48 with SMTP id ffacd0b85a97d-38f33f34e0fmr5786885f8f.32.1739737154021;
+        Sun, 16 Feb 2025 12:19:14 -0800 (PST)
+Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ddbe0sm10504048f8f.39.2025.02.16.12.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 12:19:13 -0800 (PST)
+From: David Laight <david.laight.linux@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH next 1/1] lib: Optimise hex_dump_to_buffer()
+Date: Sun, 16 Feb 2025 20:19:01 +0000
+Message-Id: <20250216201901.161781-1-david.laight.linux@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216164029.20673-1-pali@kernel.org> <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain>
-In-Reply-To: <20250216183432.GA2404@sol.localdomain>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 16 Feb 2025 21:17:55 +0100
-X-Gm-Features: AWEUYZnom1AJnFYuknh9-pu4go-A_jsHI1q4jlpGAaZLYjeSVNgq7DZ7I9GQ7LM
-Message-ID: <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-To: Eric Biggers <ebiggers@kernel.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steve French <sfrench@samba.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 16, 2025 at 7:34=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Roh=C3=A1r wrote:
-> > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC=
-_FSGETXATTR/FS_IOC_FSSETXATTR API.
-> >
-> > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
->
-> Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and h=
-ow does
-> this interact with the existing fscrypt support in ext4, f2fs, ubifs, and=
- ceph
-> which use that flag?
+Fastpath the normal case of single byte output that fits in the buffer.
+Output byte groups (byteswapped on little-endian) without calling snprintf().
+Remove the restriction that rowsize must be 16 or 32.
+Remove the restriction that groupsize must be 8 or less.
+If groupsize isn't a power of 2 or doesn't divide into both len and
+  rowsize it is set to 1 (otherwise byteswapping is hard).
+Change the types of the rowsize and groupsize parameters to be unsigned types.
 
-As far as I can tell, after fileattr_fill_xflags() call in
-ioctl_fssetxattr(), the call
-to ext4_fileattr_set() should behave exactly the same if it came some
-FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
-IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
+Tested in a userspace harness, code size (x86-64) halved to 723 bytes.
 
-However, unlike the legacy API, we now have an opportunity to deal with
-EXT4_FL_USER_MODIFIABLE better than this:
-        /*
-         * chattr(1) grabs flags via GETFLAGS, modifies the result and
-         * passes that to SETFLAGS. So we cannot easily make SETFLAGS
-         * more restrictive than just silently masking off visible but
-         * not settable flags as we always did.
-         */
+Signed-off-by: David Laight <david.laight.linux@gmail.com>
+---
+ include/linux/printk.h |   6 +-
+ lib/hexdump.c          | 165 ++++++++++++++++++++---------------------
+ 2 files changed, 85 insertions(+), 86 deletions(-)
 
-if we have the xflags_mask in the new API (not only the xflags) then
-chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
-ext4_fileattr_set() can verify that
-(xflags_mask & ~EXT4_FL_USER_MODIFIABLE =3D=3D 0).
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 4217a9f412b2..49e67f63277e 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -752,9 +752,9 @@ enum {
+ 	DUMP_PREFIX_ADDRESS,
+ 	DUMP_PREFIX_OFFSET
+ };
+-extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
+-			      int groupsize, char *linebuf, size_t linebuflen,
+-			      bool ascii);
++extern size_t hex_dump_to_buffer(const void *buf, size_t len, size_t rowsize,
++			      size_t groupsize, char *linebuf,
++			      size_t linebuflen, bool ascii);
+ #ifdef CONFIG_PRINTK
+ extern void print_hex_dump(const char *level, const char *prefix_str,
+ 			   int prefix_type, int rowsize, int groupsize,
+diff --git a/lib/hexdump.c b/lib/hexdump.c
+index c3db7c3a7643..da40ae217c41 100644
+--- a/lib/hexdump.c
++++ b/lib/hexdump.c
+@@ -98,13 +98,16 @@ EXPORT_SYMBOL(bin2hex);
+  * hex_dump_to_buffer - convert a blob of data to "hex ASCII" in memory
+  * @buf: data blob to dump
+  * @len: number of bytes in the @buf
+- * @rowsize: number of bytes to print per line; must be 16 or 32
+- * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
++ * @rowsize: number of bytes to print per line
++ * @groupsize: number of bytes to print at a time
+  * @linebuf: where to put the converted data
+  * @linebuflen: total size of @linebuf, including space for terminating NUL
+  * @ascii: include ASCII after the hex output
+  *
+- * hex_dump_to_buffer() works on one "line" of output at a time, i.e.,
++ * If @groupsize isn't a power of 2 that divides into both @len and @rowsize
++ * the it is set to 1.
++ *
++ * hex_dump_to_buffer() works on one "line" of output at a time, e.g.,
+  * 16 or 32 bytes of input data converted to hex + ASCII output.
+  *
+  * Given a buffer of u8 data, hex_dump_to_buffer() converts the input data
+@@ -124,105 +127,101 @@ EXPORT_SYMBOL(bin2hex);
+  * (excluding the terminating NUL) which would have been written to the final
+  * string if enough space had been available.
+  */
+-int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
+-		       char *linebuf, size_t linebuflen, bool ascii)
++size_t hex_dump_to_buffer(const void *buf, size_t len, size_t rowsize,
++		       size_t groupsize, char *linebuf, size_t linebuflen,
++		       bool ascii)
+ {
++	char *dst_end = linebuf + linebuflen;
++	size_t out_len, pad_len;
++	char *dst = linebuf;
+ 	const u8 *ptr = buf;
+-	int ngroups;
++	unsigned int j;
+ 	u8 ch;
+-	int j, lx = 0;
+-	int ascii_column;
+-	int ret;
+ 
+-	if (rowsize != 16 && rowsize != 32)
+-		rowsize = 16;
++	if (!len) {
++		if (linebuflen)
++			linebuf[0] = 0;
++		return 0;
++	}
+ 
+-	if (len > rowsize)		/* limit to one line at a time */
+-		len = rowsize;
+-	if (!is_power_of_2(groupsize) || groupsize > 8)
+-		groupsize = 1;
+-	if ((len % groupsize) != 0)	/* no mixed size output */
+-		groupsize = 1;
++	if (len > rowsize) {
++		if (rowsize == 0)
++			rowsize = 16;
++		if (len > rowsize)
++			len = rowsize;
++	}
+ 
+-	ngroups = len / groupsize;
+-	ascii_column = rowsize * 2 + rowsize / groupsize + 1;
++	if ((groupsize & (groupsize - 1)) || (rowsize & (groupsize - 1)) ||
++	    (len & (groupsize - 1)))
++		groupsize = 1;
+ 
+-	if (!linebuflen)
+-		goto overflow1;
++	if (groupsize == 1 && len * 3 <= linebuflen) {
++		for (j = 0; j < len; j++, dst += 3) {
++			ch = ptr[j];
++			dst[0] = hex_asc_hi(ch);
++			dst[1] = hex_asc_lo(ch);
++			dst[2] = ' ';
++		}
+ 
+-	if (!len)
+-		goto nil;
++		pad_len = (rowsize - len) * 3;
++	} else {
++		unsigned int mask = groupsize - 1;
++		unsigned int byteswap;
+ 
+-	if (groupsize == 8) {
+-		const u64 *ptr8 = buf;
++		byteswap = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) ? 0 : mask;
+ 
+-		for (j = 0; j < ngroups; j++) {
+-			ret = snprintf(linebuf + lx, linebuflen - lx,
+-				       "%s%16.16llx", j ? " " : "",
+-				       get_unaligned(ptr8 + j));
+-			if (ret >= linebuflen - lx)
+-				goto overflow1;
+-			lx += ret;
+-		}
+-	} else if (groupsize == 4) {
+-		const u32 *ptr4 = buf;
++		for (j = 0; j < len; j++) {
++			if (dst + 2 > dst_end)
++				goto hex_truncated;
++			ch = ptr[j ^ byteswap];
++			dst[0] = hex_asc_hi(ch);
++			dst[1] = hex_asc_lo(ch);
++			dst += 2;
+ 
+-		for (j = 0; j < ngroups; j++) {
+-			ret = snprintf(linebuf + lx, linebuflen - lx,
+-				       "%s%8.8x", j ? " " : "",
+-				       get_unaligned(ptr4 + j));
+-			if (ret >= linebuflen - lx)
+-				goto overflow1;
+-			lx += ret;
++			if ((j & mask) != mask)
++				continue;
++			if (dst >= dst_end)
++				goto hex_truncated;
++			*dst++ = ' ';
+ 		}
+-	} else if (groupsize == 2) {
+-		const u16 *ptr2 = buf;
+ 
+-		for (j = 0; j < ngroups; j++) {
+-			ret = snprintf(linebuf + lx, linebuflen - lx,
+-				       "%s%4.4x", j ? " " : "",
+-				       get_unaligned(ptr2 + j));
+-			if (ret >= linebuflen - lx)
+-				goto overflow1;
+-			lx += ret;
+-		}
+-	} else {
+-		for (j = 0; j < len; j++) {
+-			if (linebuflen < lx + 2)
+-				goto overflow2;
+-			ch = ptr[j];
+-			linebuf[lx++] = hex_asc_hi(ch);
+-			if (linebuflen < lx + 2)
+-				goto overflow2;
+-			linebuf[lx++] = hex_asc_lo(ch);
+-			if (linebuflen < lx + 2)
+-				goto overflow2;
+-			linebuf[lx++] = ' ';
+-		}
+-		if (j)
+-			lx--;
++		pad_len = rowsize - len;
++		pad_len = pad_len * 2 + pad_len / groupsize;
+ 	}
+-	if (!ascii)
+-		goto nil;
++	dst--;
++	out_len = dst - linebuf;
+ 
+-	while (lx < ascii_column) {
+-		if (linebuflen < lx + 2)
+-			goto overflow2;
+-		linebuf[lx++] = ' ';
++	if (!ascii) {
++		*dst = 0;
++		return out_len;
+ 	}
++
++	pad_len += 2;
++	out_len += pad_len + len;
++	if (dst + pad_len >= dst_end)
++		pad_len = dst_end - dst - 1;
++	while (pad_len--)
++		*dst++ = ' ';
++
++	if (dst + len >= dst_end)
++		len = dst_end - dst - 1;
++
+ 	for (j = 0; j < len; j++) {
+-		if (linebuflen < lx + 2)
+-			goto overflow2;
+ 		ch = ptr[j];
+-		linebuf[lx++] = (isascii(ch) && isprint(ch)) ? ch : '.';
++		*dst++ = ch >= ' ' && ch < 0x7f ? ch : '.';
+ 	}
+-nil:
+-	linebuf[lx] = '\0';
+-	return lx;
+-overflow2:
+-	linebuf[lx++] = '\0';
+-overflow1:
+-	return ascii ? ascii_column + len : (groupsize * 2 + 1) * ngroups - 1;
++	*dst = 0;
++
++	return out_len;
++
++hex_truncated:
++	if (dst_end != linebuf)
++		dst_end[-1] = 0;
++
++	out_len = ascii ? rowsize : len;
++	out_len = out_len * 2 + out_len / groupsize;
++	out_len += ascii ? 1 + len : -1;
++	return out_len;
+ }
+ EXPORT_SYMBOL(hex_dump_to_buffer);
+ 
+-- 
+2.39.5
 
-However, Pali, this is an important point that your RFC did not follow -
-AFAICT, the current kernel code of ext4_fileattr_set() and xfs_fileattr_set=
-()
-(and other fs) does not return any error for unknown xflags, it just
-ignores them.
-
-This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
-before adding support to ANY new xflags, whether they are mapped to
-existing flags like in this patch or are completely new xflags.
-
-Thanks,
-Amir.
 
