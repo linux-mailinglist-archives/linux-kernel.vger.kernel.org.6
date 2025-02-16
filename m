@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-516745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD839A3767E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:12:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3D5A37684
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2322716E3A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BD1188F3CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2654918A92D;
-	Sun, 16 Feb 2025 18:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A33019DF8B;
+	Sun, 16 Feb 2025 18:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="fRSHGNjN"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXGG9reU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E61494DF
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D566238385;
+	Sun, 16 Feb 2025 18:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739729555; cv=none; b=REA9itWpk7QQ8n0YA3zwvG1TvffNKcsdHXsUw5wVGBXouFZBH3fvgcj94JlIGZRXtllaOdnM4fATd+3llwm3+CsrB6Pk3kLJOI+8GIrbyZelP59Ge0KrWvVh+1M/jCvM4OlnI0ypeVwr8rJxoUY0dmd57Cg+WNkZ8oTD8P3VQ7s=
+	t=1739730077; cv=none; b=R2yU+mNwhSoGkw5f95JS1n9qZL17+vJOGnYTrf+kdHLI9D9BnHVkdTxZRoI3LUV+lNELIgC5pw/hycDh537hcBGfq4nWwLRtLyd0Q6A+gx7YaKQ//PQNMBMoO+sMHL8ZuzJl8F5ttx1gkLNG1exiMmixw4VfmSJruP4dFC81HgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739729555; c=relaxed/simple;
-	bh=YUqph/b4fBwdoaZ+voCpRWWS6XtVpDBsEp5ssxllxE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gu7+3hU8Gdk9JvR5W9RVmTKM1VxyAOELxsy5fOKmfwlXRI/QfrlWZFAueM+SEhaTkjzALiNI9+cesFo7fB/kcxjgd2aICnOcG7xPWoh/Ld5fFWxJ0wairG0rzFldO6aujGnA65Iq0VlfVS3XOZBFrBDFwR2qlPKPWBbB9WNjqhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=fRSHGNjN; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 16EB9240103
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 19:12:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739729552; bh=YUqph/b4fBwdoaZ+voCpRWWS6XtVpDBsEp5ssxllxE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=fRSHGNjNl1cAmfChbInU63IRKQoTu0JS4Iplfwe6RMf1WKD/8cj1/It/DYf7mq3SO
-	 YYOBmVZjU/UUQJtErfw/Vv/SWTzbu0/FmZcn4PFWEYFufoigcMrJ61CTy3Gy4uYAVr
-	 4uv3Ys+FTeiG5ex24zqk1VNfKtgXa/Ga0Qt74Mcc4toniz1OCmFfwdFl7CoZHKfDJ3
-	 C3HrXTooDAaMfAUdpm7iRMmLtB2EVfetl428iA4VwI1k2D77rjkmG+2NR0fcpU+07m
-	 N2K7T2bnW27tZzoW2bN0x+LJuOe6avDzrxNt7l22CJifL2g9IzlI/a2ptu6b9mjJGi
-	 0xKN+sirq5c2A==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Ywv5R2d3Hz9rxK;
-	Sun, 16 Feb 2025 19:12:27 +0100 (CET)
-Date: Sun, 16 Feb 2025 18:12:26 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= via B4 Relay <devnull+j.ne.posteo.net@kernel.org>,
-	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, j.ne@posteo.net,
-	imx@lists.linux.dev, Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1739730077; c=relaxed/simple;
+	bh=iT7RkO2CCHiOUnzQAXrW2nBT25Icnok0W558wVUTTBU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EaqGeJCxtDq6LbS4H0bIQ867zpvDm3X5CAtujRDVeX/3uKDdtt6sTF6NbGvtjP6VRvQSR/9TOrCzNpDP9WUpVa7LLkHCYiszU9dlKEgYGMl20xryD9byZCZcIgK+n72hSPeUNzKecy3KuzfEsaFAId8J+jAeO7DTfNxCQcQ6qt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXGG9reU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFB6C4CEDD;
+	Sun, 16 Feb 2025 18:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739730074;
+	bh=iT7RkO2CCHiOUnzQAXrW2nBT25Icnok0W558wVUTTBU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fXGG9reUQ/BpKUNmvhgyt+U6oWzw0iVZfJlJxFVHOKuWGbZdmee3mijN4bNPTHTTm
+	 3SkMLQ4DZUeLszWZDz96wIQv3zuUJh5Hpa6vjgJa7zNDC6n1NL18co0JZV7o5+O3b6
+	 lZWnuV6UdCcwCNFeLhee5XnnN1/1ghNcaUEJ9TJ9r3h/L3gAQDZZDGIG7jPbgEf2G1
+	 37vYBucmxT/PBmW/GBlNxjy9d61Y2+U71/fpoWNUSEhIbXgvFqnYO88G1mUEsxKU41
+	 MYWL80HzR18sRtrcXtsYVRcqnqrLH/es0z8Jj70XgGWGzjADMoxsBW2L9KxW3eTSbO
+	 UlRI1qA8k1q3Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tjjGR-004bCu-Sa;
+	Sun, 16 Feb 2025 18:21:11 +0000
+Date: Sun, 16 Feb 2025 18:21:11 +0000
+Message-ID: <86ikp9sqco.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 12/12] dt-bindings: mtd: raw-nand-chip: Relax node
- name pattern
-Message-ID: <Z7Iqir-qaZDt6tsx@probook>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-12-8137b0c42526@posteo.net>
- <87o6zaurv9.fsf@bootlin.com>
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	XiaoDong Huang <derrick.huang@rock-chips.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	kernel@collabora.com
+Subject: Re: [PATCH v1 1/4] irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
+In-Reply-To: <ac4afb67-9ec7-405a-acf9-6287b30320d4@collabora.com>
+References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
+	<20250215235431.143138-2-dmitry.osipenko@collabora.com>
+	<87seoe1aeu.wl-maz@kernel.org>
+	<ac4afb67-9ec7-405a-acf9-6287b30320d4@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87o6zaurv9.fsf@bootlin.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dmitry.osipenko@collabora.com, heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kever.yang@rock-chips.com, derrick.huang@rock-chips.com, pgwipeout@gmail.com, robin.murphy@arm.com, kernel@collabora.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Feb 10, 2025 at 09:27:22AM +0100, Miquel Raynal wrote:
-> Hello,
+On Sun, 16 Feb 2025 15:25:53 +0000,
+Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
 > 
-> On 07/02/2025 at 22:30:29 +01, J. Neuschäfer via B4 Relay <devnull+j.ne.posteo.net@kernel.org> wrote:
+> On 2/16/25 12:55, Marc Zyngier wrote:
+> > On Sat, 15 Feb 2025 23:54:28 +0000,
+> > Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> >>
+> >> Rockchip RK3566/RK3568 GIC600 integration has DDR addressing
+> >> limited to first 4GB of DRAM. Rockchip assigned Erratum ID #3568002
+> >> for this issue. Add driver quirk for this Rockchip GIC Erratum.
+> > 
+> > Thanks for taking the time to submit this. It only took 5 years for
+> > this erratum to be published...
 > 
-> > From: "J. Neuschäfer" <j.ne@posteo.net>
-> >
-> > In some scenarios, such as under the Freescale eLBC bus, there are raw
-> > NAND chips with a unit address that has a comma in it (cs,offset).
-> > Relax the $nodename pattern in raw-nand-chip.yaml to allow such unit
-> > addresses.
-> 
-> This is super specific to this controller, I'd rather avoid that in the
-> main (shared) files. I believe you can force another node name in the
-> controller's binding instead?
+> The erratum document itself actually is dated by 5 years ago. Only wish
+> the doc was made publicly available, which would've accelerated the
+> upstreaming process.
 
-It's a bit tricky. AFAICS, when I declare a node name pattern in my
-specific binding in addition to the generic binding, the result is that
-both of them apply, so I can't relax stricter requirements:
+The funny thing is that RockChip was very public about the issue in
+2019, but refused to acknowledge that it was a bug (see the list
+archives). 5 years lost with bad performance and bad upstream support,
+only to finally admit the bleeding obvious.
 
-# raw-nand-chip.yaml
-properties:
-  $nodename:
-    pattern: "^nand@[a-f0-9]$"
+On the other hand, we're getting close to 10 years of rk3399, and the
+botched integration of GIC500 still hasn't been officially disclosed.
+I guess this counts as progress ;-).
 
-# fsl,elbc-fcm-nand.yaml
-properties:
-  $nodename:
-    pattern: "^nand@[a-f0-9](,[0-9a-f]*)?$"
+	M.
 
-# dtc
-/.../fsl,elbc-fcm-nand.example.dtb:
-nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
-        from schema $id:
-	http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
-
-(I changed the second pattern to nand-fail@... and dtc warned about it
- mismatching too.)
-
-Perhaps I'm missing a DT-schema trick to override a value/pattern.
-
-Alternatively (pending discussion on patch 11/12), I might end up not
-referencing raw-nand-chip.yaml.
-
-
-Best regards,
-J. Neuschäfer
+-- 
+Without deviation from the norm, progress is not possible.
 
