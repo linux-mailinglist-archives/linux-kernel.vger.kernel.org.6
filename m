@@ -1,65 +1,68 @@
-Return-Path: <linux-kernel+bounces-516754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47108A376FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:49:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62E5A37701
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7274F18900FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F573A69B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480CD1A238B;
-	Sun, 16 Feb 2025 18:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99E41A238A;
+	Sun, 16 Feb 2025 18:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCJUU/5h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="GaVK6LCa"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3DA32C8B;
-	Sun, 16 Feb 2025 18:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EAC17E019
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739731760; cv=none; b=ir8NKPdZtFpyapVZEpo5+7gWlISRzSo5RfMm/uKbJDstdUDAbmEZWwO5XagElP/ySW8TkyIsK8oR/7kunRVS3Joya18tbfzxLh27sPRCOsaiJ5Z2s5oSHa4mFhSm4ZsvcnQMjwtQyD2TJMpttc4CxrjGoqkqs9ClY2dcQc+gR38=
+	t=1739731804; cv=none; b=Ijqp0xNQQ4NVWNrHjdiso7uUoGOJCa7XKSze7k72wX4tgorVUKCBLcQsAT8xNSlxAwVppYYfXspu0yzTG5mW0tRrYALtEeRsiLYuQPEQw6YNzvqXRmwOd0Qs9P/OykiDd2RIXeYEOpQ1Uk78ZRmVWNOQaQoY0aDthSZWcHATH3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739731760; c=relaxed/simple;
-	bh=6SJKxdr3CHZodxSX4Pw6E6iSXqrdPMgfMqdFeaPKRJI=;
+	s=arc-20240116; t=1739731804; c=relaxed/simple;
+	bh=0sMOYFr8lutzqCd8xDlGm4XShbFef/qPFvt/RMTnqFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE5/EQztV7USc6gR+jeGIcRX26ONJla6v8tIucx+j/H4BuAMFSHEwMREMuEeIKyiP65cQXqrH0sqSMto//Pe4YYLzRNxQ+HK33Pn+oRaNi+2c2g0e9Q1Q9WgQbsS3z/BoS5LDyGHqNhlbNQvyCEu+0IZ3H5jMY/EWiK9X+2ley4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCJUU/5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED970C4CEDD;
-	Sun, 16 Feb 2025 18:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739731760;
-	bh=6SJKxdr3CHZodxSX4Pw6E6iSXqrdPMgfMqdFeaPKRJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fCJUU/5havBVpgmwHCcK6kNYnX2SSuc6XSM+PIq7vEo0tdLqde/ulHJxwfyVlN/7a
-	 I/PiPRfvnZjkxeXWYMfrFRKLBDjYU/64mzj0qdxFUrjm2gAV016W7cxFsnxlP4KZPV
-	 fnTsQovPjDHQaiXaiUul1ZtlqqOBSbD680lf8xrdmSGrCpGD5Ln+QnuR6sVa6eFooQ
-	 nfGZ1o3QrXtscA3gURVOUaa9wGg/8FF3uIqCJE7fHLgp7tvGIGR3pLhuP7agKVD3zu
-	 KajPFtaEBT1WJfNguhWHSHPWbCRgnTtJst6d9IJtfTMRiEgVCQuZ00YuKrItmveMA/
-	 lSR8TMhrVAXXQ==
-Received: by pali.im (Postfix)
-	id E0AC17FD; Sun, 16 Feb 2025 19:49:07 +0100 (CET)
-Date: Sun, 16 Feb 2025 19:49:07 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=OkmhNTS0Flvbsrt+X94XjqZ/35302A+9g6XGM13f3PrUPLonB3D892+9vyGhbESS3wGvrydIsMYknWIvxQmr7DndeHnZl3EHK7AIS0JvnaLKl5t9weXcdmnrqRzO0t/cVaCJDK1AIGvAKocaIxcvzHGAj5QlQa0C3FW0WUA+UpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=GaVK6LCa; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 77C75240027
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 19:50:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1739731800; bh=0sMOYFr8lutzqCd8xDlGm4XShbFef/qPFvt/RMTnqFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=GaVK6LCauNE8RtiinMqme2XXU/YUdrG1T1mHORTrShsihCOz0tSqNq5hjZvclrVer
+	 mDNcrf2Rc2e8WezCQrrD1jJNUZlLifWz9TXVqGID+chD6GRttte4tn+388WFi1hFjq
+	 kUfSXphmGHrGTW+apf1kM9dxuBE+SW6TCK/iZ9/dZNgdI6NpYJoUQWNiF6xpE00WNw
+	 uuSmS4AyOCuH0viiH6RsQEI4zlhF+2dzfk2Bo0HGRinh02kmGacxAwbFPmlw65Qf9R
+	 MCosauHdUuK1Z8rnUmZZ0h50ILdN3TJ8yREJ/7RHOR0wmvdjRfHPzCMJVTGfeCBiKH
+	 wfSVKOnZVEhdg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4Ywvwl1vCqz6tw7;
+	Sun, 16 Feb 2025 19:49:59 +0100 (CET)
+Date: Sun, 16 Feb 2025 18:49:59 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Message-ID: <20250216184907.wuezls5brv3syosa@pali>
-References: <20250216164029.20673-1-pali@kernel.org>
- <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain>
+Subject: Re: [PATCH] dt-bindings: leds: Allow differently named multicolor
+ leds
+Message-ID: <Z7IzV15IVizOQxu4@probook>
+References: <20250209-multi-led-v1-1-5aebccbd2db7@posteo.net>
+ <20250211144300.GW1868108@google.com>
+ <Z6ucAFNauWkhfYZr@probook>
+ <de7fb605-527e-4c62-9b5d-947a1636c54b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,30 +72,83 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250216183432.GA2404@sol.localdomain>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <de7fb605-527e-4c62-9b5d-947a1636c54b@kernel.org>
 
-On Sunday 16 February 2025 10:34:32 Eric Biggers wrote:
-> On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
-> > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
+On Tue, Feb 11, 2025 at 08:10:28PM +0100, Krzysztof Kozlowski wrote:
+> On 11/02/2025 19:50, J. Neuschäfer wrote:
+> > On Tue, Feb 11, 2025 at 02:43:00PM +0000, Lee Jones wrote:
+> >> On Sun, 09 Feb 2025, J. Neuschäfer via B4 Relay wrote:
+> >>
+> >>> From: "J. Neuschäfer" <j.ne@posteo.net>
+> >>>
+> >>> In some cases, a board may have multiple multi-leds, which can't be
+> >>> distinguished by unit address. In such cases it should be possible to
+> >>> name them differently, for example multi-led-a and multi-led-b.
+> >>> This patch adds another node name pattern to leds-class-multicolor.yaml
+> >>> to allow such names.
+> >>
+> >> Which H/W needs this?  Is it upstream?  Where is the doc / usage?
 > > 
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > I encountered this situation while upstreaming the LANCOM NWAPP2 board,
+> > which has multiple LED-group-based multicolor LEDs:
+> > 
+> >   https://lore.kernel.org/lkml/20250102-mpc83xx-v1-16-86f78ba2a7af@posteo.net/
 > 
-> Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
-> this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
-> which use that flag?  In the fscrypt case it's very intentional that
-> FS_ENCRYPT_FL can be gotten via FS_IOC_GETFLAGS but not set via FS_IOC_SETFLAGS.
-> A simple toggle of the flag can't work, as it doesn't provide the needed
-> information.  Instead there is a separate ioctl (FS_IOC_SET_ENCRYPTION_POLICY)
-> for enabling encryption which takes additional parameters and only works on
-> empty directories.
+> Which LEDs are these?
+
+These and a few more:
+
+	led-power {
+		label = "multicolor:power";
+		compatible = "leds-group-multicolor";
+		color = <LED_COLOR_ID_MULTI>;
+		function = LED_FUNCTION_POWER;
+		leds = <&led_power_red>, <&led_power_green>;
+	};
+
+	led-wlan-link {
+		label = "multicolor:wlan-link";
+		compatible = "leds-group-multicolor";
+		color = <LED_COLOR_ID_MULTI>;
+		function = LED_FUNCTION_WLAN;
+		leds = <&led_wlan_link_red>, <&led_wlan_link_green>;
+	};
+
+According to the leds-class-multicolor.yaml binding, they should be
+named "multi-led", optionally with a unit address. Unit addresses don't
+make a lot of sense, as these nodes don't have (or need) a reg property.
+They can't, however, have the same name, which brings me to the idea of
+this patch: To allow different names that start with "multi-led-".
+
+> I don't see multi-led there node name at all.
+
+This was my mistake while writing the NWAPP2 devicetree.
+
 > 
-> - Eric
+> This patch must come with user. It's fine to send the user separately,
+> but please provide lore link to exact user.
+> 
+> Otherwise what certainty we have that this change is needed in the first
+> place?
 
-This encrypt flag I have not implemented in the last cifs patch.
-For SMB it needs to use additional SMB IOCTL which is not supported yet.
-So I have not looked at that deeply yet.
+For ease of review, I'll include this patch in v2 of the NWAPP2 series,
+and extend the commit message.
 
-I tested only that setting and clearing compression bit is working over
-cifs SMB client, via that additional SMB IOCTL.
+> 
+> > 
+> > Since they are based on leds-group-multicolor, they don't have a unit
+> > address, but there is more than one on the same level (as direct
+> > sub-nodes of the DT root node).
+> 
+> Which binding is this?
+
+Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+  specifies compatible = "leds-group-multicolor", and includes:
+
+Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+  defines node name pattern of "^multi-led(@[0-9a-f])?$"
+
+
+Best regards,
+J. Neuschäfer
 
