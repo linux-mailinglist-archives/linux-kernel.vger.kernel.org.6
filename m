@@ -1,136 +1,173 @@
-Return-Path: <linux-kernel+bounces-516765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B599DA37711
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:07:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D223A37717
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8573416D467
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B091188FC8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF241A0BFA;
-	Sun, 16 Feb 2025 19:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491E11A23AE;
+	Sun, 16 Feb 2025 19:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="v1SRTl9Q"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VEY7xmFB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45A419ABC2;
-	Sun, 16 Feb 2025 19:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E04119ABC2;
+	Sun, 16 Feb 2025 19:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739732835; cv=none; b=dL0FKMnELNPBepIV9mRKVHwQBi3s1l3DxzhXFMGNWwZOHY2LOZWV8oMAHoYQIxnzAzgEhy0rZw1Xffzu8lhnHXinyjXhTNa2bQPyWyll359eK6ECZBFZvIfdEhm7AqKE+OeFBTizMBFwjdgjhMwHl1spyj8sSZWH+wZsHVLjlHM=
+	t=1739732990; cv=none; b=HXAGnvzzlQkPPYHIjSVkawnSpIEyuGDXyOqBqSn9FTnbtWVfBkygB2HqX7XKQVRB293b3J4mAS0UdA20ppVcQLK6JVI6mmj+HBZUaHgT3GHKNYlTD5lu/UzTQoobn+cmpi7PFBeTwEOfaRBVtYiKO6N5fkp1kbLKA2Ua1w/+lBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739732835; c=relaxed/simple;
-	bh=WdUtfn83UKbZ9F3tMqRb3yyPvHLmUxE1jmeVFo4QYvs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KU0xlJOzZHXZ7NNFFOtWpxJP6Ade1M0D0UdA4ffuCBlg5tvpqf9S8pRcA5GZDgJFJ6lu30f5gWYvLpHVoBhA33Ja2tQtKAylQzHdHO2lIAGJrf7T/1n/UI5xnL/zuBddApcBLItf8gEnCVQZzlja594P7QDYrg+OURknDEfGzqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=v1SRTl9Q; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1739732834; x=1771268834;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ot3sZW9m1KrcwT8em5+cF0/58aAY/1r9ugZxy8yla4I=;
-  b=v1SRTl9QMiJx/2xYox3TG1048MIPxt3ZUiqL2yB89H3o8MxaU7lDQIqj
-   QY04l5OrIwDTlKa4YBPOxNp/b2N/hWj80RES2FcamR4WeExIGG1LvxFKj
-   cbhzJvaXuwaknGktGMcLE23r8c1/Ln0JiDZ3A+a6hYAP1nLKSac7XbTrn
-   w=;
-X-IronPort-AV: E=Sophos;i="6.13,291,1732579200"; 
-   d="scan'208";a="463041476"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 19:07:09 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:60624]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.73:2525] with esmtp (Farcaster)
- id 57c8e7c4-aa7c-48b3-b74c-a9a298df9c11; Sun, 16 Feb 2025 19:07:09 +0000 (UTC)
-X-Farcaster-Flow-ID: 57c8e7c4-aa7c-48b3-b74c-a9a298df9c11
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Sun, 16 Feb 2025 19:07:01 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.119.10.131) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sun, 16 Feb 2025 19:06:53 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <enjuk@amazon.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <gnaaman@drivenets.com>,
-	<horms@kernel.org>, <joel.granados@kernel.org>, <kohei.enju@gmail.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<lizetao1@huawei.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next v1] neighbour: Replace kvzalloc() with kzalloc() when GFP_ATOMIC is specified
-Date: Sun, 16 Feb 2025 11:06:42 -0800
-Message-ID: <20250216190642.31169-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250216163016.57444-1-enjuk@amazon.com>
-References: <20250216163016.57444-1-enjuk@amazon.com>
+	s=arc-20240116; t=1739732990; c=relaxed/simple;
+	bh=43PE+ybG5ai0fUI2JHrGDr+HV775T2akdlm+svW1kak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IoLshK6352PacgfLIGZyeaxpCiENCYTWE78Hh0XnUKl1k7MlTt6YXjrZzguY3dHIdE0rTStmK+q98ZKnehg+6eD4eAeEy6rVrIuUNQkdViWNx9G00iljQ0qzoRJWzs1ejIbbM6eChj2cnpFcoNFnXxvp1BfBU10+kpHB2yEDxUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VEY7xmFB; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739732989; x=1771268989;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=43PE+ybG5ai0fUI2JHrGDr+HV775T2akdlm+svW1kak=;
+  b=VEY7xmFBWWf7LK0QwAlykE6fB13KxHNb6Nghasvap70CD8ys6ar8FDKV
+   2lqmw0QYiIUGZaIlIyWH5qbE3IhH1DE29G6DJFu92tHmWUN/En2fbXqLm
+   F3TMNYd3c2apCycrdE6RlP/iCxRKE0sbckmXJDMZwHb9rme3jKMqA2x7P
+   4QcbHGN2QCBRa34u/V0PkVTtZy/cAhcz3RBYDzv+iOqOMT6ymvmWxedE+
+   R9l7hAUM8JD5cJvoVJeotg4B2vatCMPA9PyuqfLKY0wGSj8In1RhzRjRX
+   +njLMUMKLfnfSAeD2w0CxytMBRIFSeJAPhorFMHlWYr60IS/Dc48ZZBIN
+   w==;
+X-CSE-ConnectionGUID: mC0xVXLCS1OaXdKV1S3KAQ==
+X-CSE-MsgGUID: J77sd33ES4ySkRkSaB1+1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="65773639"
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="65773639"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 11:09:48 -0800
+X-CSE-ConnectionGUID: njlfmQXoREanvy8Syb5NEQ==
+X-CSE-MsgGUID: 1GY4+8dWSIqT3AFVwTJAUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="113811061"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Feb 2025 11:09:43 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjk1M-001CAl-2r;
+	Sun, 16 Feb 2025 19:09:40 +0000
+Date: Mon, 17 Feb 2025 03:09:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <202502170243.eNwe0AL0-lkp@intel.com>
+References: <20250216162721.124834-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216162721.124834-3-clamor95@gmail.com>
 
-From: Kohei Enju <enjuk@amazon.com>
-Date: Mon, 17 Feb 2025 01:30:16 +0900
-> Replace kvzalloc()/kvfree() with kzalloc()/kfree() when GFP_ATOMIC is
-> specified, since kvzalloc() doesn't support non-sleeping allocations such
-> as GFP_ATOMIC.
-> 
-> With incompatible gfp flags, kvzalloc() never falls back to the vmalloc
-> path and returns immediately after the kmalloc path fails.
-> Therefore, using kzalloc() is sufficient in this case.
-> 
-> Fixes: 41b3caa7c076 ("neighbour: Add hlist_node to struct neighbour")
+Hi Svyatoslav,
 
-This commit followed the old hash_buckets allocation, so I'd add
+kernel test robot noticed the following build errors:
 
-  Fixes: ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()")
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.14-rc2 next-20250214]
+[cannot apply to jic23-iio/togreg]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-too.
+url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/dt-bindings-iio-light-al3010-add-al3000a-support/20250217-002927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250216162721.124834-3-clamor95%40gmail.com
+patch subject: [PATCH v3 2/3] iio: light: Add support for AL3000a illuminance sensor
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250217/202502170243.eNwe0AL0-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250217/202502170243.eNwe0AL0-lkp@intel.com/reproduce)
 
-Both commits were introduced in v6.13, so there's no difference in terms
-of backporting though.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502170243.eNwe0AL0-lkp@intel.com/
 
-Also, it would be nice to CC mm maintainers in case they have some
-comments.
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from drivers/iio/light/al3000a.c:4:
+>> drivers/iio/light/al3000a.c:202:26: error: 'al3010_id' undeclared here (not in a function); did you mean 'al3000a_id'?
+     202 | MODULE_DEVICE_TABLE(i2c, al3010_id);
+         |                          ^~~~~~~~~
+   include/linux/module.h:250:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     250 | extern typeof(name) __mod_device_table__##type##__##name                \
+         |               ^~~~
+>> include/linux/module.h:250:21: error: '__mod_device_table__i2c__al3010_id' aliased to undefined symbol 'al3010_id'
+     250 | extern typeof(name) __mod_device_table__##type##__##name                \
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   drivers/iio/light/al3000a.c:202:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     202 | MODULE_DEVICE_TABLE(i2c, al3010_id);
+         | ^~~~~~~~~~~~~~~~~~~
+--
+   In file included from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from al3000a.c:4:
+   al3000a.c:202:26: error: 'al3010_id' undeclared here (not in a function); did you mean 'al3000a_id'?
+     202 | MODULE_DEVICE_TABLE(i2c, al3010_id);
+         |                          ^~~~~~~~~
+   include/linux/module.h:250:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     250 | extern typeof(name) __mod_device_table__##type##__##name                \
+         |               ^~~~
+>> include/linux/module.h:250:21: error: '__mod_device_table__i2c__al3010_id' aliased to undefined symbol 'al3010_id'
+     250 | extern typeof(name) __mod_device_table__##type##__##name                \
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   al3000a.c:202:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     202 | MODULE_DEVICE_TABLE(i2c, al3010_id);
+         | ^~~~~~~~~~~~~~~~~~~
 
 
-> Signed-off-by: Kohei Enju <enjuk@amazon.com>
-> ---
->  net/core/neighbour.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-> index d8dd686b5287..344c9cd168ec 100644
-> --- a/net/core/neighbour.c
-> +++ b/net/core/neighbour.c
-> @@ -518,7 +518,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
->  	if (!ret)
->  		return NULL;
->  
-> -	hash_heads = kvzalloc(size, GFP_ATOMIC);
-> +	hash_heads = kzalloc(size, GFP_ATOMIC);
->  	if (!hash_heads) {
->  		kfree(ret);
->  		return NULL;
-> @@ -536,7 +536,7 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
->  						    struct neigh_hash_table,
->  						    rcu);
->  
-> -	kvfree(nht->hash_heads);
-> +	kfree(nht->hash_heads);
->  	kfree(nht);
->  }
->  
-> -- 
-> 2.39.5 (Apple Git-154)
+vim +202 drivers/iio/light/al3000a.c
+
+   197	
+   198	static const struct i2c_device_id al3000a_id[] = {
+   199		{"al3000a", },
+   200		{}
+   201	};
+ > 202	MODULE_DEVICE_TABLE(i2c, al3010_id);
+   203	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
