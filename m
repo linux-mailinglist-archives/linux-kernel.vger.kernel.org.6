@@ -1,298 +1,167 @@
-Return-Path: <linux-kernel+bounces-516682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2662A375C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:29:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B4BA375C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35F31618E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8892118907EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C56B19C54C;
-	Sun, 16 Feb 2025 16:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00A719A288;
+	Sun, 16 Feb 2025 16:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HSFCGGsD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="qQx77b4h"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8822619A288;
-	Sun, 16 Feb 2025 16:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7270019ABAB
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723346; cv=none; b=Da67Z3DyXB3CWZXk5m83eAzR8vYgbj9qA/nRpCJFCEq3zTDD/F3SSN16DteLUwiezmP0d/A3mYF7Y2QKyy+hutVA90GAUh3S+/nAtMSEInLAOSZ6/XQRc9QU/jb/mIT2/yni7zS8YApiv9uU5nlgZ1fh2+KKEHP70fubVkK+ijs=
+	t=1739723360; cv=none; b=N2DXgqxUZjOb9tZHA5YlHzQBL5AqQml3IvPAU9uyyDK/ZDHvWbPXV9ub9K+3NQa/yw6Oeyk42gwMwo2FqzalS1yAWGseM2EZRq/wLcDAeKE9B+4lRmfIDtQpdZuCTkFRig+vUEXQT/LZkCmbKKhL7vx3mjBRwWwLKvWKWEhWlFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723346; c=relaxed/simple;
-	bh=BB1M9pZes0XnX0AWgNfSTRychSVPRlf6abBbzHDQJNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=htdkXJ2Db+f6kO1MIX/yLqhJC3znnAc7AGJERJRlEk9U9fqEXtbG/VAyDei3N9QI8YcTncuQ9g3C/kjaOx9ts5Sc0A7de+ZicEhf2VnI2jzjSkptWfMQYwWFxpka4fK/+7JSmr0DPgsXClG3dL3qll4VrF48+cfOz8YYB8VYIDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HSFCGGsD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51GEglqK028585;
-	Sun, 16 Feb 2025 16:28:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Fefc5d7Yr5GC1JM/WaUcFMRv4iRq/YkXdeYK/2W7m3E=; b=HSFCGGsDVfJ9kKqt
-	779YGeriTSswDn3uG7qrLfBRULNFytdzsv1NNVL2rlc/wEPAhyqX41hadtO92T4l
-	/IVcLkvupA5pYl/pSpW9MS3jRAxH2RX4s+ZJ9QKzh+voojN8P/opBOYRqZJy0OaI
-	44cG13MFp1cXqNJaHipSvpYGHLRCD8cXDTMv6lZ8YKkkvxf2+SOmiWl6sb8BYwPQ
-	tpEn/7uNyN/+521GfE/4bwu0VAJ5PlTYPj7LCCika9egStlGEUei9AZc0f3TdK8d
-	ijMS9JGgpZENjT9Pv+jDipwvXjVhaYoMBmMicRWOk1WW6zBv7GjmF6wTSJPl3UMB
-	GuaJxg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tm3gta0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 16:28:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51GGSob0026790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 16:28:50 GMT
-Received: from [10.216.15.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Feb
- 2025 08:28:45 -0800
-Message-ID: <4482b900-2ec0-44c1-9b68-3b403a1df7d8@quicinc.com>
-Date: Sun, 16 Feb 2025 21:58:41 +0530
+	s=arc-20240116; t=1739723360; c=relaxed/simple;
+	bh=IF0kN5D7MRNLIaRbAmCzUbINkd04aZChF99GX+SDCxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TN9s52tvn4lVcgOinnC1Tqxj+/Uv1ppPh5WsoaDa2WSsHbJVchQzulth5heup4pgSi8rOykyQP4awsf9Rztkr6PAJNeMyDFgplboe/WkzEeLU93dtH1L7sHmk5easyYdI9FLXDs2z0mkAdOZ1BqKyydIzJ/zHGnQoYlLSkU8AeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=qQx77b4h; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f3ac22948so339476f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 08:29:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1739723356; x=1740328156; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UAhfnYpTnYxNND8RVs/qgruEseNc8XFVZ5I6OH3cRtE=;
+        b=qQx77b4h+GdCEzGIgfnsaqylochJYi+MWFwS/pTPKcu48h/Sgfl3LzfBr+bAZ1ggFj
+         5clT2y+dFh/P8TwnqOGmhDeaYNvi8mKG7W/PZIWWySbW23zJDFOoe3OGPJy03/mQhkBC
+         2dfg+I30oNIDNxIGJrj/oq1Zh+e1vSikd0p1AAYHSnM8tpYMn+kqeTArMkucbcOFe7N4
+         +tNEcsAC2T4JdsVpmO3HNKeH7X2j/D3CKniz9h/VclP9hlGxab56MyqwZ+fioBoyHW3d
+         WZPdbDD0Om1FLou3Bz3uSfknja2OkEyFkD5wMOLKqEyz+ib9z2nKuS3NWNw22yW1pxsA
+         g0VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739723356; x=1740328156;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UAhfnYpTnYxNND8RVs/qgruEseNc8XFVZ5I6OH3cRtE=;
+        b=hdR+PkwAnylRZOZ+APuaSaRhQxwk0Pz6np3jCRw/4lFCu2iw3Ve0KMdEo9Cpl6Fsy0
+         mZNSwbegoUG7UZht+LxMo9D58qOn9ZrrYMWT6uwT/ZbUkOAKD3iRZsltAf2ZbTRG8Ndq
+         VHIt77woxlL3i0eABO3KlRj3ijEWS0rtan0CNm0Deuol760RacGQDJCSTMuAMK2FxWG2
+         wv+IP/OIoEbZJtlFe0Lg713dC6cRFJ6gJWKpFd2nGeB9gkRgaXa9JBx1dr1yJjRZRG8y
+         4JY09mFq9euZEsW+enN58DvaYgFvIiwwM9AMUFxXxFo3G3bxI5ndkluAlLvM2k+F2d/2
+         uoUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoOyDJeCAkTWDx8pkFofmAl1edNu0DGTNiGHCkon4ZSXT7cnvNNEGp/UiMq1PV6hMqttTea5FZQ6qDlcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIHvOskrzAoUTiz/N+XWCnxL1GzFNBHvSVfjDEcF58lEktSeTF
+	JfVp9zHzlHfJnJZh22jAI2p3dNfgUCYuEo+/Ugj9YK+IO9g84b8sRol1VI5hPSc=
+X-Gm-Gg: ASbGncvOvKNT7jQdwchGMd+XPx/LOfBseLYiLOi8tNlMkIp9o8Zvubm3gPfNI95KcBT
+	Dd7xAbA0cMR2VvOyUekiLWa3+/mdYS0Y78RaDi+Proteybi+1YaDqQB5/KKUfLU8tcl68fbhY7i
+	pn8W7jKG4gYnIXiL55isy4HpctF1FMlLuho1UX7WHLFtbv/APFrBAZ8tv0IFyczaBvR2CHJXPHC
+	1bodBMifUnh9537+kC0Jh2mRGBUrxoguvoAKAKg4dupZW0kXcwpTmxiTwuh4XEt263TrRPyLpvK
+	Z9QVIY/LRivxlWR5w8cuai5iXCuydDsbzdeGzqZdzqZ3b8iLn7Mn6+2JrgWoPP1mV5kh
+X-Google-Smtp-Source: AGHT+IE29rpJaTzcgH1ReQmiY7jkCnDWpHeHyl5p8P9vWxiW/05CDQrF0FVxPYhuuUA0lIwdRthJ3g==
+X-Received: by 2002:a5d:6d84:0:b0:38f:3888:339a with SMTP id ffacd0b85a97d-38f388836c5mr6027222f8f.21.1739723355697;
+        Sun, 16 Feb 2025 08:29:15 -0800 (PST)
+Received: from airbuntu (host109-154-33-115.range109-154.btcentralplus.com. [109.154.33.115])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4398148f4fcsm12981595e9.7.2025.02.16.08.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 08:29:15 -0800 (PST)
+Date: Sun, 16 Feb 2025 16:29:14 +0000
+From: Qais Yousef <qyousef@layalina.io>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Stultz <jstultz@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
+Message-ID: <20250216162914.n74bcclvry7cwvnh@airbuntu>
+References: <20250210001915.123424-1-qyousef@layalina.io>
+ <CAGETcx9T-Fz-AN0GgOCmT+xZ3JMehmz-cDf5wEm7a1QuBHWUxA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 3/7] interconnect: qcom: Add multidev EPSS L3 support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        "Mike
- Tipton" <quic_mdtipton@quicinc.com>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Sibi
- Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250205182743.915-1-quic_rlaggysh@quicinc.com>
- <20250205182743.915-4-quic_rlaggysh@quicinc.com>
- <fclfywuw3p43pcj42gi2w5kutvnto3rcrdng2zl2pzgpvz7dis@cjx2e6v4skfm>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <fclfywuw3p43pcj42gi2w5kutvnto3rcrdng2zl2pzgpvz7dis@cjx2e6v4skfm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3Pc0CGekBsZEW164Qp0G6t9N5dzBdf6q
-X-Proofpoint-GUID: 3Pc0CGekBsZEW164Qp0G6t9N5dzBdf6q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-16_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502160149
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGETcx9T-Fz-AN0GgOCmT+xZ3JMehmz-cDf5wEm7a1QuBHWUxA@mail.gmail.com>
 
+On 02/13/25 00:24, Saravana Kannan wrote:
 
-
-On 2/10/2025 4:27 PM, Dmitry Baryshkov wrote:
-> On Wed, Feb 05, 2025 at 06:27:39PM +0000, Raviteja Laggyshetty wrote:
->> EPSS on SA8775P has two instances, necessitating the creation of two
->> device nodes with different compatibles due to the unique ICC node ID
->> and name limitations in the interconnect framework. Add multidevice
->> support for the OSM-L3 provider to dynamically obtain unique node IDs
->> and register with the framework.
->>
->> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> ---
->>  drivers/interconnect/qcom/osm-l3.c | 46 +++++++++++++++++-------------
->>  1 file changed, 26 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
->> index 6a656ed44d49..da2d82700b5a 100644
->> --- a/drivers/interconnect/qcom/osm-l3.c
->> +++ b/drivers/interconnect/qcom/osm-l3.c
->> @@ -1,6 +1,7 @@
->>  // SPDX-License-Identifier: GPL-2.0
->>  /*
->>   * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->>   */
->>  
->>  #include <linux/args.h>
->> @@ -33,6 +34,7 @@
->>  #define EPSS_REG_PERF_STATE		0x320
->>  
->>  #define OSM_L3_MAX_LINKS		1
->> +#define ALLOC_DYN_ID			-1
+> >  kernel/Kconfig.hz | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
+> > index 38ef6d06888e..c742c9298af3 100644
+> > --- a/kernel/Kconfig.hz
+> > +++ b/kernel/Kconfig.hz
+> > @@ -5,7 +5,7 @@
+> >
+> >  choice
+> >         prompt "Timer frequency"
+> > -       default HZ_250
+> > +       default HZ_1000
 > 
-> This should be defined by ICC framework.
+> This is going to mess up power for tons of IOT and low power devices.
 
-ok, I will move this to framework.
-> 
->>  
->>  #define to_osm_l3_provider(_provider) \
->>  	container_of(_provider, struct qcom_osm_l3_icc_provider, provider)
->> @@ -55,46 +57,40 @@ struct qcom_osm_l3_icc_provider {
->>   */
->>  struct qcom_osm_l3_node {
->>  	const char *name;
->> -	u16 links[OSM_L3_MAX_LINKS];
->> -	u16 id;
->> +	struct qcom_osm_l3_node *links[OSM_L3_MAX_LINKS];
->> +	int id;
->>  	u16 num_links;
->>  	u16 buswidth;
->>  };
->>  
->>  struct qcom_osm_l3_desc {
->> -	const struct qcom_osm_l3_node * const *nodes;
->> +	struct qcom_osm_l3_node * const *nodes;
->>  	size_t num_nodes;
->>  	unsigned int lut_row_size;
->>  	unsigned int reg_freq_lut;
->>  	unsigned int reg_perf_state;
->>  };
->>  
->> -enum {
->> -	OSM_L3_MASTER_NODE = 10000,
->> -	OSM_L3_SLAVE_NODE,
->> -};
->> -
->> -#define DEFINE_QNODE(_name, _id, _buswidth, ...)			\
->> -	static const struct qcom_osm_l3_node _name = {			\
->> +#define DEFINE_QNODE(_name, _buswidth, ...)			\
->> +	static struct qcom_osm_l3_node _name = {			\
->>  		.name = #_name,						\
->> -		.id = _id,						\
->>  		.buswidth = _buswidth,					\
->>  		.num_links = COUNT_ARGS(__VA_ARGS__),			\
->>  		.links = { __VA_ARGS__ },				\
->>  	}
->>  
->> -DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
->> -DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
->> +DEFINE_QNODE(osm_l3_slave, 16);
->> +DEFINE_QNODE(osm_l3_master, 16, &osm_l3_slave);
->>  
->> -static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->> +static struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->>  	[MASTER_OSM_L3_APPS] = &osm_l3_master,
->>  	[SLAVE_OSM_L3] = &osm_l3_slave,
->>  };
->>  
->> -DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
->> -DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
->> +DEFINE_QNODE(epss_l3_slave, 32);
->> +DEFINE_QNODE(epss_l3_master, 32, &epss_l3_slave);
->>  
->> -static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
->> +static struct qcom_osm_l3_node * const epss_l3_nodes[] = {
->>  	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
->>  	[SLAVE_EPSS_L3_SHARED] = &epss_l3_slave,
->>  };
->> @@ -164,7 +160,7 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  	const struct qcom_osm_l3_desc *desc;
->>  	struct icc_onecell_data *data;
->>  	struct icc_provider *provider;
->> -	const struct qcom_osm_l3_node * const *qnodes;
->> +	struct qcom_osm_l3_node * const *qnodes;
->>  	struct icc_node *node;
->>  	size_t num_nodes;
->>  	struct clk *clk;
->> @@ -242,6 +238,10 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  
->>  	icc_provider_init(provider);
->>  
->> +	/*Initialize IDs to ALLOC_DYN_ID to indicate dynamic id allocation*/
->> +	for (i = 0; i < num_nodes; i++)
->> +		qnodes[i]->id = ALLOC_DYN_ID;
-> 
-> This can be initialized statically.
+Why are you singling them out? Why is it worse for them compared to other
+battery powered devices?
 
-There are two instances of EPSS L3 and the target specific compatible
-data is global which requires resetting the IDs for the second instance
-probe. If we don't the reset the IDs back to ALLOC_DYN_ID, then ICC
-framework assumes that ID has been already allocated and doesn't create
-the new ICC nodes for the second instance.
+> I think we should leave the default alone and set the config in the
+> device specific defconfig. Even on Android, for some use cases, this
+
+I'll hold the mirror and tell you to keep the default for your systems in your
+defconfigs. There has been a lot of discussion about sched latency and this is
+a common cause especially when combined with schedutil. There's a lot of
+accidental behaviors going and they are being addressed. The default should be
+representative of what users of all classes are after. And responsiveness has
+been a prime problem for a while.
+
+> causes ~7% CPU power increase. This also causes more CPU wakeups
+
+Have you analyzed the cause? Is this caused by something not mentioned in the
+commit message? Accidental behaviors are not a reason not to move on to better
+default. And managing system response time (particularly with schedutil) is an
+ongoing area of improvement.
+
+UiBench gets 13% and 54% less missed frames at the cost of 6.67% higher power.
+There's a big performance impact because of the long TICK.
+
+Phoronix (thankfully!) did a comparison too. The power impact wasn't noticeable
+with some big gains in some benchmark. The things that got slightly worse were
+regained by enabling PREEMPT_LAZY according to the comments.
+
+	https://www.phoronix.com/news/Linux-250Hz-1000Hz-Kernel-2025
+
+> because jiffy based timers that are set for t + 1ms, t + 2ms, t+ 3ms,
+> t + 4ms would all get grouped into a t + 4ms HZ wakeup, but with 1000
+> HZ timer, it'd cause 4 separate wakeups.
+
+This has been called out in the commit message. You can't rely on accidental
+behavior. If this is something that you think matters a lot you can send
+a patch to do this coaleasing and decouple it from TICK. The right thing to do
+is audit the drivers that are causing high wake rate. You can't prevent
+improvements to the system because there are users that rely on wrong behavior.
 
 > 
->> +
->>  	for (i = 0; i < num_nodes; i++) {
->>  		size_t j;
->>  
->> @@ -250,14 +250,19 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  			ret = PTR_ERR(node);
->>  			goto err;
->>  		}
->> +		qnodes[i]->id = node->id;
-> 
-> Should not be necessary.
-This is required, each qnode corresponds to a ICC node in framework and
-some nodes get created in icc_node_create() API and some in
-icc_link_create() API, to have a track of node creation qnode->id is
-used, hence initializing qnode->id with id allocated during icc node
-creation and avoid creation of duplicate nodes.
-> 
->>  
->>  		node->name = qnodes[i]->name;
->>  		/* Cast away const and add it back in qcom_osm_l3_set() */
->>  		node->data = (void *)qnodes[i];
->>  		icc_node_add(node, provider);
->>  
->> -		for (j = 0; j < qnodes[i]->num_links; j++)
->> -			icc_link_create(node, qnodes[i]->links[j]);
->> +		for (j = 0; j < qnodes[i]->num_links; j++) {
->> +			struct qcom_osm_l3_node *link_node = qnodes[i]->links[j];
->> +
->> +			icc_link_create(node, link_node->id);
-> 
-> Please add icc_link_nodes() (or something like that), taking two struct
-> icc_node instances. Then you can use it here, instead of reading back
-> the ID. Ideally the 'ID' should become an internal detail which is of no
-> concern for the ICC drivers.
->
+> I'd like to Nack this.
 
-Instead of reading back the link node id from the framework, I will call
-icc_node_create before calling the icc_link_create() API and assign the
-allocated id to respective qnode in the following way:
+Please use the value you like in your defconfig if you have concerns. The new
+default is a good indications for what people should be using by default. But
+no one is forcing anyone to stick to them. The new default is what really the
+majority of people want today, and this patch signals this clearly but doesn't
+take away any other option from them.
 
-struct qcom_osm_l3_node *qn_link_node = qnodes[i]->links[j];
-struct icc_node *link_node = icc_node_create(qnodes[i]->links[j]->id);
-qn_link_node->id = link_node->id;
-icc_link_create(node, link_node->id);
-
-This looks cleaner than reading back the id.
-
-
->> +			link_node->id = (node->links[node->num_links - 1])->id;
->> +		}
->>  
->>  		data->nodes[i] = node;
->>  	}
->> @@ -278,6 +283,7 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  static const struct of_device_id osm_l3_of_match[] = {
->>  	{ .compatible = "qcom,epss-l3", .data = &epss_l3_l3_vote },
->>  	{ .compatible = "qcom,osm-l3", .data = &osm_l3 },
->> +	{ .compatible = "qcom,sa8775p-epss-l3", .data = &epss_l3_perf_state },
->>  	{ .compatible = "qcom,sc7180-osm-l3", .data = &osm_l3 },
->>  	{ .compatible = "qcom,sc7280-epss-l3", .data = &epss_l3_perf_state },
->>  	{ .compatible = "qcom,sdm845-osm-l3", .data = &osm_l3 },
->> -- 
->> 2.39.2
->>
-> 
-
+--
+Qais Yousef
 
