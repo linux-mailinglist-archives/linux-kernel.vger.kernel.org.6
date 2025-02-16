@@ -1,86 +1,117 @@
-Return-Path: <linux-kernel+bounces-516704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67F0A37609
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:51:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0939EA375FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E113E18926C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:50:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A617A21E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBE619C554;
-	Sun, 16 Feb 2025 16:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E63819D081;
+	Sun, 16 Feb 2025 16:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XWvrAn0e"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="G/71Qlyf"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB67450FE;
-	Sun, 16 Feb 2025 16:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B271993BD;
+	Sun, 16 Feb 2025 16:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724593; cv=none; b=Q+UCDb0qPnyeAGIuuPnLQ5CeU8b7pUHlXUml14qiJeIbEhcRxCVwMeKOh6YzmSqsdI2YhBge+1Eyp9Dczzlgnif8SaHYCEBTpUbXHpj/FJijRD28BfB7xfINgb/8V8L16sChqnI5gto6KkFw22ulRMuvRZaw9GYUg5v9uMvYqBE=
+	t=1739724634; cv=none; b=QSXz4l6JZnDIgHIwZgwc45GskJonN4Ni9ownHNVy90hOVHNQJjziQTpRNoigKCvV12+qh+sDNy72s9PziFbznOY/o26hYwRuTGH2hVuEcbrfhOi3TiRFfmaZhzQ+p2vd8HWi7viaiS8k7gzjDE550LwZeoivQiCCHFKlIgn0oY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724593; c=relaxed/simple;
-	bh=toV7LFOTgT/7xXKZPWHQL3jjzI7BAI8Hh/GtIg9vWvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnoYwohV8VAEdbMzu/t1It7btZYO0D0cD7/0p38kc9jMNLtTo3fanjqmGTFpafsWnlllFHmgIsYoHhB+0PDjlS1vt4PicppqRNDliCrBjqoIcBx5emsAFTpjIzGc1+2+8dd2J93Zd9HLNPgUX1Kw2qsiOujAJMdK7WGsZXMPjT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XWvrAn0e; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=IBP8PjFk2WAxOxQm9t/o4fjQueGDTjyIu8J/74eb6dM=; b=XWvrAn0eNnYtGT3Mp6+TrT4WuP
-	L6TG4g6Ft+8WcdysYSDIei+lNuQsbh/OreRE4miKyD5Jk4V/CC9io0v2CtlvnjRUasoLLj0MgSL7o
-	kj1W7DadwGFe9pq5OdMID8MLYe5Ne7K8SAjV+g36uOCS7OZEXcPXACG07YF4IQ5PecNY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tjhpt-00EhnG-Eb; Sun, 16 Feb 2025 17:49:41 +0100
-Date: Sun, 16 Feb 2025 17:49:41 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v2 5/5] net: phy: mediatek: Move some macros to
- phy-lib for later use
-Message-ID: <10060033-532c-4462-9a1b-13a72f790ca1@lunn.ch>
-References: <20250213080553.921434-1-SkyLake.Huang@mediatek.com>
- <20250213080553.921434-6-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1739724634; c=relaxed/simple;
+	bh=K8160Mpl70SxTgtjMA/0Q+r9PBVwXxxO9s5QYPkl8aw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G8tF46deF1eAMoC+PD4iqqRCrJo09brpqjexksswyfcHAkT/I6yjMxq7qFEVtHr7hDYMFaPfTG7tQn6cdu5TDi8+Wk459pDVCG8ftfsEvk8kbnss00uPiRcWzyraMnCQYnXWgzN0lkP5rwXbxj3JaVR+eGBJycAnSvGajv8HwMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=G/71Qlyf; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GuJjkzhA/wxq6jSIF/WL5nNUMyBZkTHRN/TfStd13Ks=; b=G/71QlyfRee1MbPwJBS7D94Jds
+	TFLe+ku8YKFGPTerJNTl0/Z0f9SYMhZhDAZJq55CrodjM5SegC+cjzvwndhiXNc9FNkQWiG84B5iD
+	fws/7fDkx3Ke3peQ6e0u/EpJRbp3gnDUATm5mw4hpmW54mhD/SPWWjHUd6uYx3/vT9s6WzWbs62VK
+	9dUDeK+x1pNkukzHmcrO5fbV96TUU6AGZlQLtPWOf6J6g1cxM8GRBc7Eq2wCHOlytA6AGZVBHqjHC
+	G+a7E7HKvcJrANWWUGgV1+KWo8RkfQOWwEzKMbthQR4rg7agrYO6S8WLwgVZoAIFU2T0uQWWHbP7X
+	CtmUG3MA==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tjhqM-005FJd-Cg; Sun, 16 Feb 2025 17:50:16 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Matt Harvey <mharvey@jumptrading.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v5 0/2] fuse: allow notify_inval for all inodes
+Date: Sun, 16 Feb 2025 16:50:06 +0000
+Message-ID: <20250216165008.6671-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213080553.921434-6-SkyLake.Huang@mediatek.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 04:05:53PM +0800, Sky Huang wrote:
-> From: Sky Huang <skylake.huang@mediatek.com>
-> 
-> Move some macros to phy-lib because MediaTek's 2.5G built-in
-> ethernet PHY will also use them.
-> 
-> Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
+Hi!
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+In this version, invalidate_inodes() needs to be exported to be used by
+fuse_reverse_inval_all().  This is a big simplification of this function,
+which now simply calls shrink_dcache_sb() and invalidate_inodes().
 
-    Andrew
+It's clear that inodes still being referenced will not be invalidated --
+but that's already the case for the single inode NOTIFY_INVAL_INODE fuse
+operation.  
+
+* Changes since v4
+- Replaced superblock inodes iteration by a single call to
+  invalidate_inodes().  Also do the shrink_dcache_sb() first. (Dave Chinner)
+
+* Changes since v3
+- Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+  when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+- Added comments to inodes iteration loop to clarify __iget/iput usage
+  (suggested by Joanne)
+- Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+  fuse_ilookup() directly (suggested by Joanne)
+
+(Also dropped the RFC from the subject.)
+
+* Changes since v2
+- Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+- Also updated patch description as per checkpatch.pl suggestion.
+
+* Changes since v1
+As suggested by Bernd, this patch v2 simply adds an helper function that
+will make it easier to replace most of it's code by a call to function
+super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+
+[1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
+
+
+Luis Henriques (2):
+  vfs: export invalidate_inodes()
+  fuse: add new function to invalidate cache for all inodes
+
+ fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+ fs/inode.c                |  1 +
+ fs/internal.h             |  1 -
+ include/linux/fs.h        |  1 +
+ include/uapi/linux/fuse.h |  3 +++
+ 5 files changed, 38 insertions(+), 1 deletion(-)
+
 
