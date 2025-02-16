@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-516707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE85CA37606
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A25A37603
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3837916C101
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEC116DA43
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12C819E96B;
-	Sun, 16 Feb 2025 16:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973B119D884;
+	Sun, 16 Feb 2025 16:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VjgOO79O"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X0NHws+j"
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F00450FE;
-	Sun, 16 Feb 2025 16:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B91199935;
+	Sun, 16 Feb 2025 16:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724636; cv=none; b=qZQNyKrpYfxuCGG1KtRzpTUst6qh0kIfU2T/I5OVJYNKJlZ3bA7hoDmqQt+yL0FS+qp8faYlOtVQpuATqPv4SA/7COKe0pke+FTSpuC++x6dDrNBcPy3r/IOaIR+ncsMJL/+cymUgr5KthPJ3sjwpj6g1qwm6Ao7Fa2gx6BSgeY=
+	t=1739724635; cv=none; b=h5iUWg3OzyoTViHeb1pQnB06o+HaWKCvmJf94JRX+yl1UxduEQkF5yxenZexAnSOcIlD5B6nGHgOlxB2XuLrJvmCcUgB7KkqEugBEUjQqlk4o0PHMT8LFqxOVg1fJp00Ah/Z43d5hMjQ5SWZVfGnbvPHE7j2SZ0SKf023xgtVIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724636; c=relaxed/simple;
-	bh=O+xf4Pjh0FmkOANa2TdynZ4baqKl4IxACwdRgqvC/gA=;
+	s=arc-20240116; t=1739724635; c=relaxed/simple;
+	bh=MYDNA7vQdGwvrR9u4naOeO04qzzQoPZZQw+WAtjhwI8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r5164bMbKE+bCDpeuN5mqu/jEFMJA2EsVvuKje9mMm+JbQ+JrytpPj5wyJtTkPAvu5gq/ZZf1cuFKDifE+teFc2/oOK42Wucz3E/DB+0zeukxmKEPpiTkxH710KdqFmB1VaCgbJeU1Lh/IX6iHIrlfHV6ABDGcAAWxDyNrJZ9BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VjgOO79O; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version; b=cVpisn6SminYFklCizv7aIsWQXD7kWtLh+NX+7NTKYgnYYhfTddQvA3FpwmVDokHdIuCNZbCFw0XMu+5qsCYmTDKYXXFb1IBhEk5+GpwyL9ZDrR7URfEpZ6XpA8XyUXf2Tzf7hcXF2lv3HDamdUrzZqfncH95BXPaCukA3Zm2ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X0NHws+j; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -36,16 +36,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=ndDFacYqo5RlTSgmq7eZGeOr8WEe1xcV2iL6qYnhkrE=; b=VjgOO79O9dV3jmyYmrxcyFKIzx
-	ZZsgTTEktk+7JOZ2gQPmpUmzDtszyHdRfl+cW2yGNpgmlkTQuwS//AD7dx2fgR8b1fjFXgZ62nwC8
-	opA5jNImvhrvDsk6V2O96fFuDvojeNt1wGPIYrmHisaIZ4t8QtQ9RoNNYzRExb7/vq8TFR8MHYlkO
-	+eMjeEAm/tNuf60ca5jO1zDzSy0a1KeUW9D+khJDevmhE+hJoD1atZLKakcxe+1Mtz+v/ZJfK2A73
-	sd60MvpYswXDFuO6s1aUCuWxQhKn4E3tH1vQPzjxcjvEp5IM919pkhchG2Kc5PhtAWRwe5D6SODul
-	/7Gu9Njg==;
+	bh=X//16u3A076vRnXiSh6q78jzmve7NLCpY7kdhsSSP7E=; b=X0NHws+jlyf6zpAJhycCm8HZ72
+	8QLIr6FQ+1nB04GXQ8oA3AMcRk0rsKxWJiX7dJxKj5oMBE6bPlbeAxKyFH09m3dEHJgkyl71M9EUp
+	OZht1174YB1hCQkMwG1Lqv0fZkvJi8nOeB4G/U9o6TVptF9j0gnYEq9kFdtVlV6NTYNxO+mnENZHX
+	vMPVopPhkQGLnM/eWad/cu1CzGglPla0wR/rrQpT743UMuCgKT8ZUm4c87UrjOWQeRXWMxEFBjG/l
+	Pzw9XEf6w1pNh0coSn/65ik+6V6GkB7ixdBVtLwWHpRnMe6GkCfhmRVczpujhhdyMkmYs6T4HBkKX
+	FVWsa9hQ==;
 Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
 	by fanzine2.igalia.com with utf8esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tjhqO-005FJp-JW; Sun, 16 Feb 2025 17:50:18 +0100
+	id 1tjhqO-005FJw-Sa; Sun, 16 Feb 2025 17:50:18 +0100
 From: Luis Henriques <luis@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Bernd Schubert <bschubert@ddn.com>
@@ -57,9 +57,9 @@ Cc: Dave Chinner <david@fromorbit.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Luis Henriques <luis@igalia.com>
-Subject: [PATCH v5 1/2] vfs: export invalidate_inodes()
-Date: Sun, 16 Feb 2025 16:50:07 +0000
-Message-ID: <20250216165008.6671-2-luis@igalia.com>
+Subject: [PATCH v5 2/2] fuse: add new function to invalidate cache for all inodes
+Date: Sun, 16 Feb 2025 16:50:08 +0000
+Message-ID: <20250216165008.6671-3-luis@igalia.com>
 In-Reply-To: <20250216165008.6671-1-luis@igalia.com>
 References: <20250216165008.6671-1-luis@igalia.com>
 Precedence: bulk
@@ -70,47 +70,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Currently userspace is able to notify the kernel to invalidate the cache
+for an inode.  This means that, if all the inodes in a filesystem need to
+be invalidated, then userspace needs to iterate through all of them and do
+this kernel notification separately.
+
+This patch adds a new option that allows userspace to invalidate all the
+inodes with a single notification operation.  In addition to invalidate
+all the inodes, it also shrinks the sb dcache.
+
 Signed-off-by: Luis Henriques <luis@igalia.com>
 ---
- fs/inode.c         | 1 +
- fs/internal.h      | 1 -
- include/linux/fs.h | 1 +
- 3 files changed, 2 insertions(+), 1 deletion(-)
+ fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |  3 +++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 5587aabdaa5e..88387ecb2c34 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -939,6 +939,7 @@ void invalidate_inodes(struct super_block *sb)
- 
- 	dispose_list(&dispose);
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index e9db2cb8c150..01a4dc5677ae 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
+ 	return NULL;
  }
-+EXPORT_SYMBOL(invalidate_inodes);
  
- /*
-  * Isolate the inode from the LRU in preparation for freeing it.
-diff --git a/fs/internal.h b/fs/internal.h
-index e7f02ae1e098..7cb515cede3f 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -207,7 +207,6 @@ bool in_group_or_capable(struct mnt_idmap *idmap,
-  * fs-writeback.c
-  */
- extern long get_nr_dirty_inodes(void);
--void invalidate_inodes(struct super_block *sb);
++static int fuse_reverse_inval_all(struct fuse_conn *fc)
++{
++	struct fuse_mount *fm;
++	struct inode *inode;
++
++	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
++	if (!inode || !fm)
++		return -ENOENT;
++
++	/* Remove all possible active references to cached inodes */
++	shrink_dcache_sb(fm->sb);
++
++	/* Remove all unreferenced inodes from cache */
++	invalidate_inodes(fm->sb);
++
++	return 0;
++}
++
++/*
++ * Notify to invalidate inodes cache.  It can be called with @nodeid set to
++ * either:
++ *
++ * - An inode number - Any pending writebacks within the rage [@offset @len]
++ *   will be triggered and the inode will be validated.  To invalidate the whole
++ *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
++ *   is negative, only the inode attributes are invalidated.
++ *
++ * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
++ *   and the whole dcache is shrinked.
++ */
+ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+ 			     loff_t offset, loff_t len)
+ {
+@@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+ 	pgoff_t pg_start;
+ 	pgoff_t pg_end;
  
- /*
-  * dcache.c
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2c3b2f8a621f..ff016885646e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3270,6 +3270,7 @@ extern void discard_new_inode(struct inode *);
- extern unsigned int get_next_ino(void);
- extern void evict_inodes(struct super_block *sb);
- void dump_mapping(const struct address_space *);
-+extern void invalidate_inodes(struct super_block *sb);
++	if (nodeid == FUSE_INVAL_ALL_INODES)
++		return fuse_reverse_inval_all(fc);
++
+ 	inode = fuse_ilookup(fc, nodeid, NULL);
+ 	if (!inode)
+ 		return -ENOENT;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..e5852b63f99f 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -669,6 +669,9 @@ enum fuse_notify_code {
+ 	FUSE_NOTIFY_CODE_MAX,
+ };
  
- /*
-  * Userspace may rely on the inode number being non-zero. For example, glibc
++/* The nodeid to request to invalidate all inodes */
++#define FUSE_INVAL_ALL_INODES 0
++
+ /* The read buffer is required to be at least 8k, but may be much larger */
+ #define FUSE_MIN_READ_BUFFER 8192
+ 
 
