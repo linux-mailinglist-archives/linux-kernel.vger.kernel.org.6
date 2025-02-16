@@ -1,141 +1,122 @@
-Return-Path: <linux-kernel+bounces-516473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D6AA37239
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:06:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994C9A37236
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6E2188F195
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA1E3AAA89
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 06:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A0014A635;
-	Sun, 16 Feb 2025 06:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBCB149DF0;
+	Sun, 16 Feb 2025 06:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShB7WDIb"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="VHDfq+fc"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C715367;
-	Sun, 16 Feb 2025 06:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E618367;
+	Sun, 16 Feb 2025 06:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739685959; cv=none; b=jB3KwLrWNY6VENu47EvrVAqDSp0XB7MmBRMZzVDXpf5Vonc879jj3E5p1gJKNdlrV1YYfWgO2+hbzKv+hyNtC7dBw5XhoifsdHdrYWyeL1ruRyL+0dcUAF6LFZYtfBKzZSlpbbn6ZOnLdDZ8PzGzgomD3lFO+cT/HxmEjhc6PEg=
+	t=1739685927; cv=none; b=X+ox/H7uusT7pi7AbR1NcqSw2dWweWYS/v6Jq8lMFXV0wDLVCJQk934yMxfMIR+85/KVXhEOU72G86ypGRGXWc6G+4kUMtBIozIaNt19lVjBGvelfqfbYPjssZPDVNNVx/VORekPmtaegQIK4fbMgdJ3Hw8gTywhA5Y+7WwJCDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739685959; c=relaxed/simple;
-	bh=Ne7UlvkHLrSu5pPHFMnqQpZbQ/XsBwEe47R2mLq5gqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HGr0ax+N++7TkMOyjwr2dVCvd25TsVJ69dQDaDVGWVqiirGx7FiMD1kcsrtiPsZOpg1oL9z78Eb13ciXMqAfehaBBmabhqlwuco9AtLEGquGa02I0SyDZ/nDbgj+vHvxWoXG2b3/vzmL/ywx+tRrG/KfoYhdu3F6O2SC8XKreSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShB7WDIb; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2212a930001so796385ad.0;
-        Sat, 15 Feb 2025 22:05:57 -0800 (PST)
+	s=arc-20240116; t=1739685927; c=relaxed/simple;
+	bh=OhaL9slNmUsK/Mpa2QptKckfEEgfXXdFLpuPR71wGL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wf/cmm/EANcWcauwM+Gg9FypnvKp8BEWOEprcUfUBK4EP3W4c5IDZR0s8Fl9HYmE4VnCnmD5+YgMxrkpWXlAKkg4Lw6aYdU1WW0GDzbCFhSKXAFP0iLJ74ikoyp5m7uZ+OzgIHp/UzkOw4NHUzlgCR5YqluWFk25yudbeBMZURI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=VHDfq+fc; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43937cf2131so22031385e9.2;
+        Sat, 15 Feb 2025 22:05:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739685957; x=1740290757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5jTapXlC1YJYE8Fuo/zvj49N9KVPFzd+PYqhYKTYCbI=;
-        b=ShB7WDIbYa+slgtKzmBcbYhccJGtsVafqU/ADPtKbZGJxLQzy3hamqZP5nhS2msjD1
-         l9MSkwBb6bEN+FBg2wmbQJYZHZhkOPy7lFEXUY2bl4nlv1Z04/RBNl6BcYjC3ABsrUd+
-         26D6/7OFLASISO/ufhnGopytKBEoKSUdg+9SnnTsAvIOvXRDlFARcqsBQt1ZwcKOLv8s
-         seOXl32vUtMCUaFB//B0j9H8ShqPfEJrX7VJYctP4DZoFwNeUT2P07jh9qnzE2rzdarg
-         x9gShsfUrB5gcaMQgHAszVedQnlYEOQD7pisbmzA9IU3wN4b8Et/Xo4KsVqYElrbZ8c2
-         IQIw==
+        d=googlemail.com; s=20230601; t=1739685923; x=1740290723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=seds6rEanzkvGS/3OLh60miuFhKKG+9f4hFXMzC6V9M=;
+        b=VHDfq+fcznkCX4jALQuspB5yckOFtZtYokzx9oXKWMTAP+uq9PH4qHAuYsmTAUvQJg
+         SwHlfrIYu0q4jY+/P9ntI49210U1pRoYC4p1VtBBlOUtavmXhUw3jx3zrhew1Z9lLeLN
+         OMMbWF1CnEcz7jyV/WO7Vx0/uzgZpZb98J2Mu3RsEZQrEvrgvN/9p28wyoX3G0fFWc3w
+         2d76P2ffZaJmy1hWAtxFmZzctjRgD5GZOq7g+HsIv9B6XoI/mWSKIgqUHIsnySw7z70W
+         vCC23v6qGIM0FOd45Y6QOsQ8jJVqAxUvLCv4dPwE+z9MWlzEnJ4N3ZUHxGlfq9EWhlzf
+         2aAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739685957; x=1740290757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5jTapXlC1YJYE8Fuo/zvj49N9KVPFzd+PYqhYKTYCbI=;
-        b=lFWg6UwNUBcwfvmRoKVnWIcGaFiOM1fpWK687OqUmcadq+6rT2RlW2Ub6RqdLhuT4r
-         c0zkPXGLyjd9vBw7rao325+SyIRE3olHHh6JOiCki7h3lm/aeldYt/LSOzFcYIFiq66O
-         QuNCOFMB1gRpSt6HN1oJgSk0SaOit7eX2wVDWf1sGwkVv+xDR8cX80JII2l9u3/FlFc/
-         /LjtSqo3hxw5yDiKpnes3JS0jAvlqEA4tpv1uBrolYzI6rkkpEj0vicaYdyAfvY9Y0oM
-         ji6TdXCDUNxuuxLAzYKSnED0pqgdnN1Eijj1A4zcX/xvp60C1Aoc+sk0dZ6cUm/AlZoP
-         zu0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIbOHBpVVJX3p5Vy2aaihqlxiQE7MoCrZB6nB/LcpcP9TY/exslB0AKsNEGGYCFESLsnBfythmZkQ6@vger.kernel.org, AJvYcCVc92+pLMm31fRh+AdGZ+yhLx8VrdguBaKlC4AZopduQswz8Wcsle5z0lvuMzRsX2aeu/wI4YaU@vger.kernel.org, AJvYcCXcv/hroXJ5BIrDr5dfdaIzzQG16LgMBMXS288CSKq1gfT09hbamtI19/e/+IBXQDCm8nvJVeyv7jTaQBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsQsHa5kTnjNesbsovP0KbkplAGyQdM49qNfUdOKCi6Qk0cGc/
-	v8tvX0LWKqKzHsi0Ez3iRZqEYHw6xefvGW2U+NCGeLi8fLS5tkYB
-X-Gm-Gg: ASbGncv1XKtgZBEFhXhjBVzVBhkNF12b5/PV0gi/WYktpywl6XO5ejo+uUnsU1KFEfX
-	5d/QOP+Bl7+FzZ3ZrJT0AKr3tJrbq0seamSjuLQQfbLnGyKJ34R9nbXzaBMQVx47D91V1Z83cyM
-	9jDMZpnskKkdJ1L4ui6DS4rofx9p50YnepWvcA+EFYlaemEtt9/5qvBI4cgyZ/3o6SniPuyTE8P
-	Od1bF9O0brRos2hjlS/8P0XRtMVACI29Hd7zJihj6TMgJhcJbf0wW9ys6T3R3EK324APP5ZeupL
-	8dj9KjmZIjxkLeGukXDtTN3y2GG+E1uGL0JsJwknToB2Xw==
-X-Google-Smtp-Source: AGHT+IHs8XMBTRzu3KT73jxsEp0W44CgM/+zKPSZcHvbAB3MU3yM2R/HWZe7wKmWc2rKQVVWyUrrcQ==
-X-Received: by 2002:a17:903:2b0f:b0:21f:f02:413c with SMTP id d9443c01a7336-221040b18a4mr71761035ad.42.1739685957269;
-        Sat, 15 Feb 2025 22:05:57 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40c0:2e:ea4:de25:f19b:8521:c31d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5367510sm52188685ad.83.2025.02.15.22.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 22:05:56 -0800 (PST)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: skhan@linuxfoundation.org,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>,
-	syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-Subject: [PATCH] ppp: Prevent out-of-bounds access in ppp_sync_txmunge
-Date: Sun, 16 Feb 2025 11:34:46 +0530
-Message-Id: <20250216060446.9320-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1739685923; x=1740290723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=seds6rEanzkvGS/3OLh60miuFhKKG+9f4hFXMzC6V9M=;
+        b=lzA7+Dkbw25m/akpLglrY/JS3foFWJICBsNLaFu5iCES5uT8Kt5nd+8blbLIEZpdMB
+         6JTg1Ls1ABk1dULX13Hbvwwno4eMkmEcejMAoSZVJgOOEAo6EgLlPhrES34L1c+iXzTk
+         PoalGon6ObARFS3LmygvUkU/vK8QZWdxaYKHPcTdbI+zldbPLM7EG6Jfkrgu0c1n2oyt
+         dWzpCnXWW3OjMPhBxssy/6H5et23CJF6feZf9FjmgrPu/rUUZRigDnafhpCoj147p2+B
+         PXEJQPASrKfAbH+tNRv58/5ve1NCNAeGcL6yRk7ilvzOIShQ4vGTUcg6XPG5eVRIGLOh
+         D9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFLRgvfj2O765KfpgdbAZ51GqgCXdf7xnU4rus6aaSMDMr2+rNTDbDt3GcexOHNV38oXWMENKOAxFkoSQ=@vger.kernel.org, AJvYcCXtLc0YUkyPIl5apT0Fy0OGeKy/s94gsCmP75qyjt2Fgu+vbRvwWjNTJG4iYJ0GzFnTXYu0Kpug@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGN7aXasVG5OPLjx8Bev/nwgb4nWIme0/EmNbcZB1pD3E0oTc8
+	cHPDMDI6qRwe2bi3nwaW7DKg1ee9laI82Axn8WGlHP+AWIJcPd8=
+X-Gm-Gg: ASbGncstwUWNLrt2uAguWy4LsNy0nmpJp7BJZeiHQcROF8L2PpdqmeM8r13YjsT1MO0
+	/CrLhtv9uebeL+gTCEsVmgqeX4ngQjsK22JKRoiqpHynEDRj0E7g+XtcIuMLkoA7sgeBs32G+09
+	4Nivea9Pn04PMW7bBSUTivjywn3INIiWsKxMjNdiVKQmx+3XbGeP8KiT3rcouzS724eK1dFgYzj
+	pFyYtD70A+kL2/YDl3hOOS147mXUsA5IcIFsHIpMjsy7C/TZSh3KiU41TSwTT6imDITGcjb6PsU
+	8/9TlmSjv3lsjVPhNgejP/Heir+BHZOn4hXVfjzxRFuL1vJ3rTX5hdm6SanhmE1qf9Yh
+X-Google-Smtp-Source: AGHT+IHCHA4n/7FH5Y+lRBDP7CtQ0JE291+E2RuWebGty35SOl7fQM5SuPMzQk81ZJZ2t1ABlSP04A==
+X-Received: by 2002:a5d:5f50:0:b0:38f:28dc:db50 with SMTP id ffacd0b85a97d-38f33f11953mr5975112f8f.1.1739685923257;
+        Sat, 15 Feb 2025 22:05:23 -0800 (PST)
+Received: from [192.168.1.3] (p5b2b47ca.dip0.t-ipconnect.de. [91.43.71.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4335sm9042195f8f.15.2025.02.15.22.05.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Feb 2025 22:05:21 -0800 (PST)
+Message-ID: <259fc09b-3185-47b4-a10d-46feb2e09eb0@googlemail.com>
+Date: Sun, 16 Feb 2025 07:05:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/418] 6.12.14-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250215075701.840225877@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250215075701.840225877@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix an issue detected by syzbot with KMSAN:
+Am 15.02.2025 um 08:58 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.14 release.
+> There are 418 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-BUG: KMSAN: uninit-value in ppp_sync_txmunge
-drivers/net/ppp/ppp_synctty.c:516 [inline]
-BUG: KMSAN: uninit-value in ppp_sync_send+0x21c/0xb00
-drivers/net/ppp/ppp_synctty.c:568
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Ensure sk_buff is valid and has at least 3 bytes before accessing its
-data field in ppp_sync_txmunge(). Without this check, the function may
-attempt to read uninitialized or invalid memory, leading to undefined
-behavior.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-To address this, add a validation check at the beginning of the function
-to safely handle cases where skb is NULL or too small. If either condition
-is met, free the skb and return NULL to prevent processing an invalid
-packet.
 
-Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
-Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- drivers/net/ppp/ppp_synctty.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Beste Grüße,
+Peter Schneider
 
-diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
-index 644e99fc3..e537ea3d9 100644
---- a/drivers/net/ppp/ppp_synctty.c
-+++ b/drivers/net/ppp/ppp_synctty.c
-@@ -506,6 +506,12 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
- 	unsigned char *data;
- 	int islcp;
- 
-+	/* Ensure skb is not NULL and has at least 3 bytes */
-+	if (!skb || skb->len < 3) {
-+		kfree_skb(skb);
-+		return NULL;
-+	}
-+
- 	data  = skb->data;
- 	proto = get_unaligned_be16(data);
- 
 -- 
-2.34.1
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
