@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-516511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DB9A3730E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A29F2A37310
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DCE1889834
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13536188CDB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21CC185B5F;
-	Sun, 16 Feb 2025 09:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F057C183CCA;
+	Sun, 16 Feb 2025 09:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvXv4U+l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kBGtwZjM"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDC123BB;
-	Sun, 16 Feb 2025 09:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DFB23BB;
+	Sun, 16 Feb 2025 09:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739697786; cv=none; b=XlAyJ3Ygfe1nIQVjE7oTS8Gi1B2d7zsYhmXRdfc2Z8Jxj2/wEROkcyJKq/hCUBGDu80V9aMtYpDlZvySIyHv4L0gjWY3c4MYVyukprO2Ppu65OKevDloP4slbAgbQ7bLiMBYd6k1+DXuBtIS+rWtO9y864hQpWLM82wYxmCL5ks=
+	t=1739697912; cv=none; b=SNzPxyKl4ZwAgVEK3+NBnV7sVm6h+PeZcNzpEjoya1EqzCAzZvl9weUy+SE3Rcu8UBg2pQ3j/WYXesG5FHko+WUYZtlC34v/UqtbScrMJggHwPM0lhIcuoetB60/m/NuIpu13ij3tOoLxM7YDF0uaRxpNI0Pq02miwiDKuWjpbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739697786; c=relaxed/simple;
-	bh=VmlxNCvtpElT137a/Hp42+ErwPH4etbgXswEcnmNOYU=;
+	s=arc-20240116; t=1739697912; c=relaxed/simple;
+	bh=CKHMz7EJa7GotRQwz4YOFeVoitR8jrEg260qTPDo84Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jrrA52DiUpzxwZJu7aHaR2+hAA8Cqzd9x0ug51jL0DMAzG1zzSQgvH+qDOE/b0yZXvrA2pH5QiOenTt78exHN60Z7JyPUXJtneDrSwwe4pIkogIAooH4uIdRfpx7s1AfkiSkOR3jOXPPUkR26ONYj2CcygoKAxwz9oJhnFPUlI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvXv4U+l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0DBC4CEDD;
-	Sun, 16 Feb 2025 09:23:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739697785;
-	bh=VmlxNCvtpElT137a/Hp42+ErwPH4etbgXswEcnmNOYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SvXv4U+lxQgP939ccDcLNPqNTLnnrqQaS32Y7oweKkQCQg4UCP+1wgY++iVffHHBY
-	 GBJetBx0r8xSEuIXyUXfI8b1IsiIPrbFdqTYQaPeuwVgzyHiXWUnNyl8rfuVWjmiR6
-	 c70pM9cDfhybVZt/UNSOGm3bPORcEZRk+GI0eVZDS9eybyF6Ny2biGURYUkgkbqFXS
-	 UkMqczzMVNR8UxY/EoSvzgFSqKZKON0MAj1r8GK2o6F0fnR9aXDJvOwcY9wI0Wdl/l
-	 oPpn9eL1u5wJLHkDxyNHu/nyArBTh4gyFM1dsqZNjvuDiynyVUwSKhhfchCinVsDBj
-	 f/3CHN3aQ1Dxg==
-Message-ID: <fc860290-c5e5-4193-a8b7-a53137dd4155@kernel.org>
-Date: Sun, 16 Feb 2025 10:22:58 +0100
+	 In-Reply-To:Content-Type; b=eLINpsacG+YwdA0+VfNN9u2TjlIwynmDyGwwLZUawVwrv/xEhUvFY3h9+CAVd3RgmYTHHXkzbelldWtF+w4134u+hDkSEaRz7LRvW5JvvL4AZEAg2D1u2rlsPJBCuJ5bBC9Gl0rFeWd/YFcfxqSIGPPJz1BQYZ1J/a5RigxEpQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kBGtwZjM; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739697899; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qeHPYXoLTBSg8F8l1iBZr2XOfg0E8EOnMsxri1fETvQ=;
+	b=kBGtwZjMYmrpn/6mFLgojCnabywBse0Sb+dqPViUdZ5g5rpDI9JpC9bHfcZxqzrhE2QzeO8SUsrFn9KzVZwSyhzrct4cuJA5oC2pGavx6ZoS5GjG8+irOhotYj+1aPL1MFDmafQlNKUoG06viUsHjYt3eadXYYY7IgP/MRZRGxY=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPWHKN9_1739697898 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 16 Feb 2025 17:24:58 +0800
+Message-ID: <4128c7ad-a191-4c37-a6ba-47b06324a8b5@linux.alibaba.com>
+Date: Sun, 16 Feb 2025 17:24:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +47,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: phy: add
- samsung,exynos2200-snps-eusb2-phy schema file
-To: Diederik de Haas <didi.debian@cknow.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-2-ivo.ivanov.ivanov1@gmail.com>
- <D7TR7VP9UPQA.2U5BL328HNSXU@cknow.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D7TR7VP9UPQA.2U5BL328HNSXU@cknow.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 1/7] dmaengine: idxd: fix memory leak in error handling
+ path of idxd_setup_wqs()
+To: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+ Nikhil Rao <nikhil.rao@intel.com>
+References: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
+ <98327a4d-7684-4908-9d67-5dfcaa229ae1@web.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <98327a4d-7684-4908-9d67-5dfcaa229ae1@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 16/02/2025 10:14, Diederik de Haas wrote:
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/samsung,exynos2200.h>
->> +
->> +    usb_hsphy: phy@10ab0000 {
->> +        compatible = "samsung,exynos2200-snps-eusb2-phy";
->> +        reg = <0 0x10ab0000 0 0x10000>;
->> +        clocks = <&cmu_hsi0 CLK_MOUT_HSI0_USB32DRD>,
->> +                 <&cmu_hsi0 CLK_MOUT_HSI0_NOC>,
->> +                 <&cmu_hsi0 CLK_DOUT_DIV_CLK_HSI0_EUSB>;
->> +        clock-names = "ref", "apb", "ctrl";
->> +        #phy-cells = <0>;
->> +        phys = <&usbcon_phy>;
->> +    };
+
+
+在 2025/2/15 19:00, Markus Elfring 写道:
+>> Memory allocated for wqs is not freed if an error occurs during
+>> idxd_setup_wqs(). To fix it, free the allocated memory in the reverse
+>> order of allocation before exiting the function in case of an error.
+>>
+>> Fixes: a8563a33a5e2 ("dmanegine: idxd: reformat opcap output to match bitmap_parse() input")
+> …
 > 
-> Shouldn't the example have at least all the *required* properties?
-> Same for patch 2 of this series.
+> Will a “stable tag” become relevant also for this patch series?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/stable-kernel-rules.rst?h=v6.14-rc2#n3
+> 
 
+I don't know if this is a real serious issue for stable kernel.
+But I would like to add stable tag if the mantainer @Vinicius and @Dave ask.
 
-Yeah, this wasn't ever tested.
+> 
+>> +++ b/drivers/dma/idxd/init.c
+>> @@ -169,8 +169,8 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+> …
+>> @@ -204,6 +205,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>>   		wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
+>>   		if (!wq->wqcfg) {
+>>   			put_device(conf_dev);
+>> +			kfree(wq);
+>>   			rc = -ENOMEM;
+>>   			goto err;
+>>   		}
+> …
+> 
+> I got the impression that more common exception handling code could be moved
+> to additional jump targets at the end of such function implementations.
+> Will further adjustment opportunities be taken into account for
+> the affected resource management?
 
-Best regards,
-Krzysztof
+Sure, I will move them to the jump targets.
+
+> 
+> Regards,
+> Markus
+
+Thanks for valuable comments.
+Shuai
 
