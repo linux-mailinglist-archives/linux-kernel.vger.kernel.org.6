@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-516602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4F3A3748A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:20:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6AEA3748D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA76188F49E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:19:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB5C7A3699
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847AB192D7C;
-	Sun, 16 Feb 2025 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E090192B9D;
+	Sun, 16 Feb 2025 13:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuobK6Us"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WGPMJf1e"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24211624C3;
-	Sun, 16 Feb 2025 13:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7449918DB08
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 13:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739711982; cv=none; b=GvG6BLbiMcnFHkgJOHDXb41EoPaJFJCRcgtoZDFQAVKBdtqRlGZ/AK1yfTUaE/NS1Y5F6Py9v5YuB2hnAFDqH8j/Ch0jz0i5WUlTdUp57mCT7SK13uDVDF8AhTxgpHBUN/i1dzeSKQAegOrLqtALqWhf5prmec8XQqraO3f+vY0=
+	t=1739712637; cv=none; b=h1CS+NjIoHgk6Ljx8LdSsfJsxjCmvkxPKN5iU4lCu8HFChIL5btQe5klSwXYUEn0yaIJXmGOIALb9AfF2tpVYaeJLQ4sSv0BNAjI9LHmkL6pKnB2FkNV7Z/vq0ABaR2KbZge3w890YZAVjQtGKCY6ntQKIAk1ll0YY/dERk2yqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739711982; c=relaxed/simple;
-	bh=v6Nt2Y+8iHq87fjnFJRgzXvuOS9r0e0EJDUvhWvayQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZXSWLhMKt6e4nri1VcoHPUkxHA6WeRJUU4D0hTFJ43nrYWOJ9bfnvb6amAMIN5Xx7svQUoE5RFuV2CtTUjUp8jODnOnm2JT6RMYZ9iFs9QbB1quRPXRLWJKF51P9yHnZ6MLqmXWVhmWH4dB2sSdxx0Nwzs9zz6v7E1JBgdXlAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuobK6Us; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7D6C4CEDD;
-	Sun, 16 Feb 2025 13:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739711982;
-	bh=v6Nt2Y+8iHq87fjnFJRgzXvuOS9r0e0EJDUvhWvayQs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uuobK6Usa9e7F/KxFzT3aKd13/ZOq5opq2Ha6mFnDf9aJVR3D3WoAtfXt12CdRczF
-	 c1B/8NS/HdQa6ZBxmnlhs3xfqUnuatoAnpJX9mp4FFyEOI7ecWg//I79V9iSxUg/o8
-	 NCxh8cfUTtZkoHNhe0bpJoPgDSP+fszjVKCmNUq4RdmFP400rMEl60AdD7v7sb92M9
-	 9qRWMGz7qvsZm68R0Dp56mOfXhPi2unSKmu24GdFdLnG9hYfRInDduSnjmaLXYs68t
-	 l7+wbdcpzfiuIAZDdLKMIE/+CNuDFpv+cYNN7k3v+qtgNUNOV9L9lecHFyiazDgrxv
-	 C+5W3O77SNCpg==
-Message-ID: <065ea296-480c-4ac4-bb4a-0fc2915b59f1@kernel.org>
-Date: Sun, 16 Feb 2025 14:19:35 +0100
+	s=arc-20240116; t=1739712637; c=relaxed/simple;
+	bh=M3Fgli14JlCJs5eqzyoYg+4kju/5yYUjMV00kDWAkH4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rnG+xrtMQmeAcuUYSLEvJ4ePMUSNzU7tapQ7PGQmVN1ilxQZsbuhM1tYDGGKU9+eSJ+vuJr1algGUUhuD0OAzzua47TKqgbFLZMNUXq83ggXBNvRAcwvXUf5bLxTW9w8f0Tryz5RQ3EYGGdgf7Ffzz4z8VYyZK4zVBtSOusVOGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WGPMJf1e; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=acymz7xonff2xkvpqhdhftspy4.protonmail; t=1739712626; x=1739971826;
+	bh=M3Fgli14JlCJs5eqzyoYg+4kju/5yYUjMV00kDWAkH4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=WGPMJf1eXCkYn2nNaPX9Myvgbf0hX1tWuvQ6qQx3SnlN1f6A3GVaYJj/XC/YNPtQb
+	 2tJuCs/BZfNC7lCs9lEl4zQK6Az9yxtwD95C4ODpiB0enJnHZRbwcLO1NKER3tThjw
+	 zkWQH5ZjT+ijoUF+xrzJgI1i8i5eZS2hZaAGXHLZ3bbhZOruFiKm0LorHWoWkB7+I/
+	 vE0OER/iGREZ8s/2U3RpMOHAhAe+MZCp5ckjr5r5nvndl772BC1aGit2r4bMgJWPz0
+	 zSNLbq0LBvcnZC9zVl2piUrqm2UiRPu+izNjjggFgEmoXTiixvjuxHV9x6BzVORE77
+	 Ekrif1D2gn6PQ==
+Date: Sun, 16 Feb 2025 13:30:21 +0000
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Charalampos Mitrodimas <charmitro@posteo.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] rust: fix clippy::too-long-first-doc-paragraph
+Message-ID: <10c0a50e-14de-4da3-a592-dc65753cec1b@proton.me>
+In-Reply-To: <CANiq72myMWv87Me2C6Nmse-p=4YL=J+ZTEHe2hu7AhbpfZhgyw@mail.gmail.com>
+References: <20250215223106.2346285-1-benno.lossin@proton.me> <m21pvy927w.fsf@posteo.net> <10690211-eb3b-4b95-8d9d-35c62930d924@proton.me> <CANiq72myMWv87Me2C6Nmse-p=4YL=J+ZTEHe2hu7AhbpfZhgyw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c4662db2bf6c4829825f058e06453e0b1f3576c3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
- <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
- <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
- <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
- <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
- <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 16/02/2025 10:51, Ivaylo Ivanov wrote:
+On 16.02.25 13:40, Miguel Ojeda wrote:
+> On Sun, Feb 16, 2025 at 1:18=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
 >>
->>>>  You need to
->>>> integrate the changes, not create duplicated driver.
->>> I can do that, but it would be come a bit cluttered, won't it? Depends on
->>> if we want to follow the current oem-provided initialization sequence, or
->>> try and fully reuse what we have in there.
+>> I have done some more digging and bisected my Rust version. It turns out
+>> I was on a rather old nightly from last September. I also don't get the
+>> error on a newer compiler version. My bisection identified that the
+>> error last occurs in nightly 2024-10-18, so from 2024-10-19 onwards it
+>> compiles without the error.
+>=20
+> Thanks Benno, that is very useful and saved me some work.
+
+My pleasure :)
+
+>> So probably `-Wclippy::all` implied the `too_long_first_doc_paragraph`
+>> lint in that version. That is probably because of [1]. It changes the
+>> lint from style to nursery.
 >>
->> I think it duplicates a lot, so it won't be clutter. We have many
->> drivers having common code and per-variant ops.
-> 
-> So the approach to take here is to make a common driver?
+>> [1]: https://github.com/rust-lang/rust-clippy/pull/13551
+>=20
+> Yeah, sometimes that happens when working regularly with nightly over tim=
+e.
+>=20
+> There is an upside, trying to look at it positively, which is that it
+> gives us something to look into from time to time (i.e. the new lint)
+> and give feedback, and sometimes we can clean it up anyway, even if
+> the lint is broken and we cannot enable it just yet :)
 
-For example: one common module and two modules per each soc, because I
-assume some per-soc stuff might be needed. But maybe even these two
-modules are not necessary and everything could be in one driver.
+Yeah that is true.
 
+>> So we don't need this patch, as it seems this never hit stable. However,
+>> there is already a patch fixing what this lint reports: 2f390cc58943
+>> ("rust: provide proper code documentation titles").
+>>
+>> I think it's a good lint, so maybe we should turn it on?
+>=20
+> Agreed, we should -- it is something we tell people from time to time
+> to fix in review, so hopefully it will make patches better before the
+> review phase.
+>=20
+> ...well, assuming it works well enough, given it was moved to nursery,
+> e.g. in the linked Zulip thread in your link above they point to
+> https://github.com/rust-lang/rust-clippy/issues/13315 and
 
-> 
-> What about the current modelling scheme, as-in taking the phandle to
-> the usbcon phy and handling it?
+I don't think that this one is bad. Of course it would be nice if only
+the rendered form would be considered, but there might also be people
+reading it directly in the code, so it could actually be a good idea to
+also keep the raw text short.
+In the case of long links, one can easily work around it by just not
+using an inline link. (so having [text with link] and then after the
+paragraph `[text with link]: link`.)
 
-What about it? Did you look at the bindings of qcom snps eusb2? Are you
-saying you do not have here repeater? If so, then this phy phandle might
-not be correct.
+> https://github.com/rust-lang/rust-clippy/issues/13538, which we may or
+> may not care about.
 
+This one just seems like a nice-to-have, but not a deal breaker.
 
+IMO we can enable the lint (since the instance fixed in this patch is
+the only error I get with that lint) and just see how it behaves.
 
-Best regards,
-Krzysztof
+---
+Cheers,
+Benno
+
 
