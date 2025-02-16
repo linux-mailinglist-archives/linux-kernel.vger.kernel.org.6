@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-516793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4373CA37774
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:25:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8027BA37776
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144E13AFF3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:24:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E23B7A37B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 20:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA711A2557;
-	Sun, 16 Feb 2025 20:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77881A23B9;
+	Sun, 16 Feb 2025 20:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUQsJ/8E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VVXiBV3s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2907018DF6B;
-	Sun, 16 Feb 2025 20:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA81219ABC2;
+	Sun, 16 Feb 2025 20:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739737494; cv=none; b=E4xKqH3CPpIaV14h2SgjsQMbPQh/fCOK9D7INN0CqgSgzUsJ0rzujpHAO087sRkzrUc/MSExA85XcCyQXwm93Y/TK6NJJRl6JOeghuGgZAHdkL+UnmtsVsWgY1iY2rTvBOvxIEAlFaqppwE4uOCXDsKGHuu0YQMCITBk8Z61gGs=
+	t=1739737506; cv=none; b=Z+E8h99/9VyKTNyRM0PAyDXKGP74vB5YH1njat05pfFeryL0UniuvjQb0oserz4XxCEewO7U3w26KR+XfYSKoTuJlxTj79NYta7ViYbfv96yOaa32dCI2xNt/BL9YOrX3HFam/ZAudL7q+xS6hfXkekvxG2MOAd8mrtku5vbMpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739737494; c=relaxed/simple;
-	bh=r9JEgcOxnzNtoItYqF/1p17G52QEzRvGskS3plFFchE=;
+	s=arc-20240116; t=1739737506; c=relaxed/simple;
+	bh=i81roCFL6So/zqD17WYXXv/Ly1YSkln3Ezb7GmQSuJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPBDVdaji9Mc8tnn8xPG4w+DvPERQGzmp0Y9q47/jM1JAdx/RQHgFz3ihJhRZ0eXwOvQLwHiZr6AscvmgRxF3zqIF3Eh3um45aTzhGgY+4x2uw6r1ADFuFC3REVAbKHx42jyigCAifoQy0QYz+S8F1l5zk62zi7mA9oulv5fNmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUQsJ/8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED1FC4CEDD;
-	Sun, 16 Feb 2025 20:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739737493;
-	bh=r9JEgcOxnzNtoItYqF/1p17G52QEzRvGskS3plFFchE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YUQsJ/8E+de+NTmeUBaAsXqVttig9QRPbxb9VEtDYiz3cNcGVYyXXsEbb0XC6fdMo
-	 obmJiUSQPOoXyrmoO+6BhkL5bRyMNZ/PmARBGXv0nQsuUd6KZGwMNppo6tW8Z7zx5C
-	 +t/uEdXwrMpbkTyUf5nQh3HoFRXINQifGO7mR3Aj3A6/72cXOw7oENm2QS024zFzYP
-	 2bOX5upJtO2GOCiPU4+0WDCwzoYvRkVyrz+gIaYq2wdcp8UMy8dBWdoAtHChNmCNMX
-	 6ljZkRNp0OenaUOL2wBMRIOKvT5xWSg0k+268jbPeUXJUQ93ozlCma4xZdF0RLxxQr
-	 209u5QHRyjRjw==
-Received: by pali.im (Postfix)
-	id 235127FD; Sun, 16 Feb 2025 21:24:41 +0100 (CET)
-Date: Sun, 16 Feb 2025 21:24:41 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Message-ID: <20250216202441.d3re7lfky6bcozkv@pali>
-References: <20250216164029.20673-1-pali@kernel.org>
- <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain>
- <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+g6kagaKLS+oeX+C+PU5QBGOOiWgJYKPejwjq04Pjez5yfN1GU2eNAru7RR8/NGmT9OU5t1/j6c55jfGTfqI6mRk0ZwhuUYsAUH3bu51jkAFMkejWxKCgl5IHEPzn5yy68Hv0ImGfjuDQ5j6B5M4iFg21Omz0mj8EyAFwOAIls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VVXiBV3s; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739737505; x=1771273505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i81roCFL6So/zqD17WYXXv/Ly1YSkln3Ezb7GmQSuJA=;
+  b=VVXiBV3svZTRQvksWT4T4aiXGlZmiG5cv9QROFIJrVBFR9wFUx1f3gEL
+   My+KNzy0fY5L5Od33TN0wIZ//eU4fEF+5zUcS2UC6DC0D8QPRWf34sT5Z
+   sIJGW2pAckiJmLlrs0d/IHtw4wWtQR/DG1TtC8PFDJY3RtQwmIDjmsKYr
+   vkASjMHwN1uq665KHOQklm1dgt9+i5rzy7jpegwruSI9z9KkoWDOxtZVu
+   /oBVUENhIgGhscKA4e02wjutovwPFfl3bOAnjcD0W0xbTPBYSN6uOpvJZ
+   RKab9dauqRLg1ppDtq17qZyIT8s/EDDbnGEzotz5k5vH3d05NcuBk4xgr
+   g==;
+X-CSE-ConnectionGUID: gMRetDlOQ2O19gwEWLP1Aw==
+X-CSE-MsgGUID: g6cFHkkoTjiLaBIwMwLGUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="44074211"
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="44074211"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 12:25:04 -0800
+X-CSE-ConnectionGUID: QbLNZGg0R7WQrApl1ECy3A==
+X-CSE-MsgGUID: qVbi/pFvRdiVYIJv5Y49og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="118957889"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 12:25:02 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tjlCF-0000000CCud-0xEC;
+	Sun, 16 Feb 2025 22:24:59 +0200
+Date: Sun, 16 Feb 2025 22:24:58 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Dell.Client.Kernel@dell.com, Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: [PATCH] platform/x86: dell: Use *-y instead of *-objs in Makefile
+Message-ID: <Z7JJmrEZgTNPf0h0@smile.fi.intel.com>
+References: <20250214214535.4947-1-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20250214214535.4947-1-kuurtb@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
-> On Sun, Feb 16, 2025 at 7:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
-> > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
-> > >
-> > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> >
-> > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
-> > this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
-> > which use that flag?
-> 
-> As far as I can tell, after fileattr_fill_xflags() call in
-> ioctl_fssetxattr(), the call
-> to ext4_fileattr_set() should behave exactly the same if it came some
-> FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
-> IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
-> 
-> However, unlike the legacy API, we now have an opportunity to deal with
-> EXT4_FL_USER_MODIFIABLE better than this:
->         /*
->          * chattr(1) grabs flags via GETFLAGS, modifies the result and
->          * passes that to SETFLAGS. So we cannot easily make SETFLAGS
->          * more restrictive than just silently masking off visible but
->          * not settable flags as we always did.
->          */
-> 
-> if we have the xflags_mask in the new API (not only the xflags) then
-> chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
-> ext4_fileattr_set() can verify that
-> (xflags_mask & ~EXT4_FL_USER_MODIFIABLE == 0).
-> 
-> However, Pali, this is an important point that your RFC did not follow -
-> AFAICT, the current kernel code of ext4_fileattr_set() and xfs_fileattr_set()
-> (and other fs) does not return any error for unknown xflags, it just
-> ignores them.
-> 
-> This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
-> before adding support to ANY new xflags, whether they are mapped to
-> existing flags like in this patch or are completely new xflags.
-> 
-> Thanks,
-> Amir.
+On Fri, Feb 14, 2025 at 04:45:35PM -0500, Kurt Borja wrote:
+> The `objs` suffix is reserved for user-space tools. Use the `y` suffix
+> instead, which is usually used for kernel drivers.
 
-But xflags_mask is available in this new API. It is available if the
-FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improvement
-mentioned above can be included into this new API.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Or I'm missing something?
+Thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
