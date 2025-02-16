@@ -1,147 +1,98 @@
-Return-Path: <linux-kernel+bounces-516753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE70A376FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:47:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47108A376FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E22188CD72
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7274F18900FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096851A315F;
-	Sun, 16 Feb 2025 18:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480CD1A238B;
+	Sun, 16 Feb 2025 18:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIhZYaZ3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCJUU/5h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D8132C8B;
-	Sun, 16 Feb 2025 18:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3DA32C8B;
+	Sun, 16 Feb 2025 18:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739731622; cv=none; b=UVX5BG6TwXCZryuu+TtXN8Z5xv9haUm4tQwD9HXa58AwW+Jl8Ds4BmoRD+yqSGjVeyEmk1amhQ69mkEtyZJ60vK7Q5IOWzNwqGNOKAYs2FWFauqq3h65vl85C7Y1J63wBY7vtj9SxZ38nUK2nWwITQDeYG2ecYLrBdliOhAXuhY=
+	t=1739731760; cv=none; b=ir8NKPdZtFpyapVZEpo5+7gWlISRzSo5RfMm/uKbJDstdUDAbmEZWwO5XagElP/ySW8TkyIsK8oR/7kunRVS3Joya18tbfzxLh27sPRCOsaiJ5Z2s5oSHa4mFhSm4ZsvcnQMjwtQyD2TJMpttc4CxrjGoqkqs9ClY2dcQc+gR38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739731622; c=relaxed/simple;
-	bh=NBkyLSUP9n9Ax4+7aC60v72hjL1RvF641HX71E/k+i8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RqdWhBc+MgWkJT6pNNqbKq9Cvgmpr3vQir8k7PoJAd8vs3V4DotOtPD98z+bFAqI52djAacst2q1xoTXIj1svoIEwRelGBLk+gGt3V8CGxy/y8oOkl4i/AV3GKFsWvFD2aJ1oQNwpm5nk6RqC78sSAzOA4WJRm6eXYWmZi2JYM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIhZYaZ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CAE0EC4CEEE;
-	Sun, 16 Feb 2025 18:47:01 +0000 (UTC)
+	s=arc-20240116; t=1739731760; c=relaxed/simple;
+	bh=6SJKxdr3CHZodxSX4Pw6E6iSXqrdPMgfMqdFeaPKRJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AE5/EQztV7USc6gR+jeGIcRX26ONJla6v8tIucx+j/H4BuAMFSHEwMREMuEeIKyiP65cQXqrH0sqSMto//Pe4YYLzRNxQ+HK33Pn+oRaNi+2c2g0e9Q1Q9WgQbsS3z/BoS5LDyGHqNhlbNQvyCEu+0IZ3H5jMY/EWiK9X+2ley4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCJUU/5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED970C4CEDD;
+	Sun, 16 Feb 2025 18:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739731621;
-	bh=NBkyLSUP9n9Ax4+7aC60v72hjL1RvF641HX71E/k+i8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=MIhZYaZ3tLTZUlFRLPquLLedClEatwHqI1HH46K4/f6h32get/Uq8jefv/3fRUBYC
-	 Tf9xB3ooNSNflo6mJQINlizyaiVc58t2sJs2nb3zNg4TCLpVH8BMiG11xzlwh/bRWm
-	 0KHicL3HROtCBTzNMuNKKqo6JVENDwgfJvqteF6H31Owd0mfy/3ZvjZoR/06A5nagJ
-	 g2x9GDlN6sYb/uLCyNOB4WijzjPDOEnGyAVRh/y4CxJxP5sA9zvfGWiq0A4Cy/gbi+
-	 MD9hy5k8bV94Oy9RtpAeUK9TQo3RuQPanZQiiNmKsddd1HsXHCaPVV6SvpPrti+sMv
-	 Yq5XHV46/e0Jg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0E3C02198;
-	Sun, 16 Feb 2025 18:47:01 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Sun, 16 Feb 2025 19:46:47 +0100
-Subject: [PATCH 4/4] media: i2c: imx214: Add support for 23.88MHz clock
+	s=k20201202; t=1739731760;
+	bh=6SJKxdr3CHZodxSX4Pw6E6iSXqrdPMgfMqdFeaPKRJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fCJUU/5havBVpgmwHCcK6kNYnX2SSuc6XSM+PIq7vEo0tdLqde/ulHJxwfyVlN/7a
+	 I/PiPRfvnZjkxeXWYMfrFRKLBDjYU/64mzj0qdxFUrjm2gAV016W7cxFsnxlP4KZPV
+	 fnTsQovPjDHQaiXaiUul1ZtlqqOBSbD680lf8xrdmSGrCpGD5Ln+QnuR6sVa6eFooQ
+	 nfGZ1o3QrXtscA3gURVOUaa9wGg/8FF3uIqCJE7fHLgp7tvGIGR3pLhuP7agKVD3zu
+	 KajPFtaEBT1WJfNguhWHSHPWbCRgnTtJst6d9IJtfTMRiEgVCQuZ00YuKrItmveMA/
+	 lSR8TMhrVAXXQ==
+Received: by pali.im (Postfix)
+	id E0AC17FD; Sun, 16 Feb 2025 19:49:07 +0100 (CET)
+Date: Sun, 16 Feb 2025 19:49:07 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steve French <sfrench@samba.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
+ for FS_IOC_FS[GS]ETXATTR API
+Message-ID: <20250216184907.wuezls5brv3syosa@pali>
+References: <20250216164029.20673-1-pali@kernel.org>
+ <20250216164029.20673-2-pali@kernel.org>
+ <20250216183432.GA2404@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250216-imx214_clk_freq-v1-4-812f40f07db3@apitzsch.eu>
-References: <20250216-imx214_clk_freq-v1-0-812f40f07db3@apitzsch.eu>
-In-Reply-To: <20250216-imx214_clk_freq-v1-0-812f40f07db3@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739731620; l=2166;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=WazSPfo9iHxmaDrm3SErM4Vh2VDI2d/EHPhwKDpeOK0=;
- b=BoyYCYkxO//ewUb9c7pOCpeeStR0dHu5eekomgEGJ/18Mc+UzekMg0rTJBYYMRtU59/G3WqLu
- dqSnzYLJfqMBpauXbMRRAAdBwHU8X0wquKgiHnzTAYP1sXqeDoc0dSy
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+In-Reply-To: <20250216183432.GA2404@sol.localdomain>
+User-Agent: NeoMutt/20180716
 
-From: André Apitzsch <git@apitzsch.eu>
+On Sunday 16 February 2025 10:34:32 Eric Biggers wrote:
+> On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
+> > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
+> > 
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> 
+> Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
+> this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
+> which use that flag?  In the fscrypt case it's very intentional that
+> FS_ENCRYPT_FL can be gotten via FS_IOC_GETFLAGS but not set via FS_IOC_SETFLAGS.
+> A simple toggle of the flag can't work, as it doesn't provide the needed
+> information.  Instead there is a separate ioctl (FS_IOC_SET_ENCRYPTION_POLICY)
+> for enabling encryption which takes additional parameters and only works on
+> empty directories.
+> 
+> - Eric
 
-Qualcomm MSM8916 devices only provide an external clock of 23.88MHz.
-Make the sensor usable by those devices by adding support for this
-frequency.
+This encrypt flag I have not implemented in the last cifs patch.
+For SMB it needs to use additional SMB IOCTL which is not supported yet.
+So I have not looked at that deeply yet.
 
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index c3d55259d6fd1c4ca96f52833864bdfe6bedf13a..e24c76e01ab5070c073d082b1a2969cff3e17f9f 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -30,7 +30,10 @@
- 
- #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
- 
-+#define IMX214_CLK_FREQ_23880KHZ	23880000
- #define IMX214_CLK_FREQ_24000KHZ	24000000
-+
-+#define IMX214_LINK_FREQ_597MHZ		597000000
- #define IMX214_LINK_FREQ_600MHZ		600000000
- /* Keep wrong link frequency for backward compatibility */
- #define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
-@@ -233,6 +236,7 @@ static const char * const imx214_supply_name[] = {
- #define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
- 
- static const s64 link_freq[] = {
-+	IMX214_LINK_FREQ_597MHZ,
- 	IMX214_LINK_FREQ_600MHZ,
- };
- 
-@@ -242,6 +246,10 @@ struct imx214_clk_params {
- };
- 
- static const struct imx214_clk_params imx214_clk_params[] = {
-+	{
-+		.clk_freq = IMX214_CLK_FREQ_23880KHZ,
-+		.link_freq = IMX214_LINK_FREQ_597MHZ,
-+	},
- 	{
- 		.clk_freq = IMX214_CLK_FREQ_24000KHZ,
- 		.link_freq = IMX214_LINK_FREQ_600MHZ,
-@@ -1320,8 +1328,7 @@ static int imx214_parse_fwnode(struct device *dev, struct imx214 *imx214)
- 
- 	if (i == bus_cfg.nr_of_link_frequencies)
- 		ret = dev_err_probe(dev, -EINVAL,
--				    "link-frequencies %d not supported, please review your DT\n",
--				    IMX214_LINK_FREQ_600MHZ);
-+				    "provided link-frequencies not supported, please review your DT\n");
- 
- done:
- 	v4l2_fwnode_endpoint_free(&bus_cfg);
-@@ -1359,6 +1366,7 @@ static int imx214_probe(struct i2c_client *client)
- 	}
- 
- 	switch (xclk_freq) {
-+	case IMX214_CLK_FREQ_23880KHZ:
- 	case IMX214_CLK_FREQ_24000KHZ:
- 		if (imx214->clk_params->clk_freq != xclk_freq)
- 			return dev_err_probe(imx214->dev, -EINVAL,
-
--- 
-2.48.1
-
-
+I tested only that setting and clearing compression bit is working over
+cifs SMB client, via that additional SMB IOCTL.
 
