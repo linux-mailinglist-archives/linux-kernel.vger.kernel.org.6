@@ -1,186 +1,276 @@
-Return-Path: <linux-kernel+bounces-516485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 551ACA37256
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB567A3725A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E53318879CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529F618906F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 07:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA2114C5B0;
-	Sun, 16 Feb 2025 07:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC6814BFA2;
+	Sun, 16 Feb 2025 07:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YTYxVF1g"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lSkGxRgy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05BA14387B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 07:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C89B672
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 07:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739689500; cv=none; b=BFnC3+jA+gv8bw12iSJie9/4bswGutXVoi2rIBUAr3Z2tkIes/FwvqaGUwgZLdc8FkANQeE3CyolTkA9v9S7PHr51wy9aoZhojcnV4zfCRpYfhnHSPq1iY6/xW8YwoD9ygKqZ5qgPD7s/Oi36R+P5SSXSi2+NeN2joefndfdL20=
+	t=1739690379; cv=none; b=iJ683iEBkBU4dheCGFWhcgQeFWsfZHv2B0kV+EyqqxHJccc9e3VhddvSOwADxqEJzfY67+oZxlej6YXlwcFtbEKd/iFVfsBzXnmA5Nkuj8ZAcb3ZSZG9LLVAbQfD5zibHywYR0Vqung+W5lMjd7/6o2USRUYUGyAJLd93wqe3UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739689500; c=relaxed/simple;
-	bh=gg3jH31zGAHJiHekNhoUqb9X9KejcHabojVZg2sXCCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QvH9h8X96UwDgA+3exyyza3U6jziIMtAjgircparWzPyweVbDM3SR61gh3TmqZ3PQTrIfSCYPR4CbzBAVd+DcTldElPTBXZxOyrhM1tmSBRYjqMsGxS6TGgVHhgv2f8yU0S71eMhoK1RSED+IKfLZNm6EtRHSmivsoORjyLIkMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YTYxVF1g; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739689494; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=lBJ47s5NRlrS0cb6wfv64d5UsTFv+6Rba2Bz4U5pMfc=;
-	b=YTYxVF1gtf3u8hkoxPa5C6nZ7hmGx2ovTNFb5oeDlPl1nT4IWdwUFDI5cu14PipCchAq/zMK7zVKU0C3PF2EWLbzNfZ68fzAHDUHh76K9fIJEARq886LJ3pbUCQcFyxFNuTqma9EUSxMF/q2bzVmIb0ffV6J0anmYvxkzfagRPg=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WPVxozs_1739689489 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 16 Feb 2025 15:04:51 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Bharata B Rao <bharata@amd.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Raghavendra K T
- <raghavendra.kt@amd.com>,  linux-mm@kvack.org,  akpm@linux-foundation.org,
-  lsf-pc@lists.linux-foundation.org,  gourry@gourry.net,
-  nehagholkar@meta.com,  abhishekd@meta.com,  nphamcs@gmail.com,
-  hannes@cmpxchg.org,  feng.tang@intel.com,  kbusch@meta.com,
-  Hasan.Maruf@amd.com,  sj@kernel.org,  david@redhat.com,
-  willy@infradead.org,  k.shutemov@gmail.com,  mgorman@techsingularity.net,
-  vbabka@suse.cz,  hughd@google.com,  rientjes@google.com,
-  shy828301@gmail.com,  liam.howlett@oracle.com,  peterz@infradead.org,
-  mingo@redhat.com,  nadav.amit@gmail.com,  shivankg@amd.com,
-  ziy@nvidia.com,  jhubbard@nvidia.com,  AneeshKumar.KizhakeVeetil@arm.com,
-  linux-kernel@vger.kernel.org,  jon.grimm@amd.com,
-  santosh.shukla@amd.com,  Michael.Day@amd.com,  riel@surriel.com,
-  weixugc@google.com,  leesuyeon0506@gmail.com,  honggyu.kim@sk.com,
-  leillc@google.com,  kmanaouil.dev@gmail.com,  rppt@kernel.org,
-  dave.hansen@intel.com, yuanchu@google.com
-Subject: Re: [LSF/MM/BPF TOPIC] Unifying sources of page temperature
- information - what info is actually wanted?
-In-Reply-To: <de31971e-98fc-4baf-8f4f-09d153902e2e@amd.com> (Bharata B. Rao's
-	message of "Wed, 5 Feb 2025 11:54:05 +0530")
-References: <20250123105721.424117-1-raghavendra.kt@amd.com>
-	<20250131122803.000031aa@huawei.com>
-	<20250131130901.00000dd1@huawei.com>
-	<de31971e-98fc-4baf-8f4f-09d153902e2e@amd.com>
-Date: Sun, 16 Feb 2025 15:04:48 +0800
-Message-ID: <87bjv22wvj.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1739690379; c=relaxed/simple;
+	bh=89P8pqEplothGZ7DSJ71cyNQ7MOr6pxfyIc31iSpErs=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RCu9McqaXxvZyJE3hQZE/vu1KskDfdpFKrJmWMn5tkKw/tO4GSj9RyM9UUSin4C2BJ5xLXr0NkZlVyhuxwoXGRz1vGufNe5eiP8rCwmcFIQ4rj4BuXkYgEsFI+aoM7zzcOmNHwwf275meU7Y04Qxz6AR0j2dn+xSCgMXn9F5oaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lSkGxRgy; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739690377; x=1771226377;
+  h=date:from:to:cc:subject:message-id;
+  bh=89P8pqEplothGZ7DSJ71cyNQ7MOr6pxfyIc31iSpErs=;
+  b=lSkGxRgy0uqi5UHlrFL+ml1Ls4UVd3nrNTm+pOTOvHq4sN/AiWB3YMtB
+   MC5b4iJFIOL3Yl/bbMMfgH6wRo8lgQrLVZi+wcfQJtcNIJrji6k8XAe8b
+   EWWrPuBPyE7eiNEbBUg6nB3B0tY9Xn/hQnzrzLIWhh90Ddysj42aKPJqT
+   2SfUNKi8oiPxJYv9m3APYo9advcT23thM+MC8GrW2iaGRQ8KI5efHGfPZ
+   Kws1fbZs5gmEAv8TkMxClEKsAFPyzosR+gB56jUKLOYfLqMsd+Bw7hZlJ
+   LsE0nb4jiqAsRag4vjpDqnEYLN4BGmaZSCjqGnBGQ84i4tPAsrOsacK+e
+   g==;
+X-CSE-ConnectionGUID: 3HEXswnZTFuhs8vBHfkLvQ==
+X-CSE-MsgGUID: lCiE3Y5BQKuMpUVstALFhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40532856"
+X-IronPort-AV: E=Sophos;i="6.13,290,1732608000"; 
+   d="scan'208";a="40532856"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 23:19:36 -0800
+X-CSE-ConnectionGUID: oZGXc2H9QJ6Z5IGuuc7LDA==
+X-CSE-MsgGUID: o/0HEW/nQD6HyCQojU+Upw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,290,1732608000"; 
+   d="scan'208";a="114023482"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 15 Feb 2025 23:19:35 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjYw8-001Bg7-2C;
+	Sun, 16 Feb 2025 07:19:32 +0000
+Date: Sun, 16 Feb 2025 15:19:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ d34e798094ca7be935b629a42f8b237d4d5b7f1d
+Message-ID: <202502161512.4sDKhiKd-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
 
-Hi, Bharata,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: d34e798094ca7be935b629a42f8b237d4d5b7f1d  sched/fair: Refactor can_migrate_task() to elimate looping
 
-Bharata B Rao <bharata@amd.com> writes:
+elapsed time: 1200m
 
-> On 31-Jan-25 6:39 PM, Jonathan Cameron wrote:
->> On Fri, 31 Jan 2025 12:28:03 +0000
->> Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
->> 
->>>> Here is the list of potential discussion points:
->>> ...
->>>
->>>> 2. Possibility of maintaining single source of truth for page hotness that would
->>>> maintain hot page information from multiple sources and let other sub-systems
->>>> use that info.
->>> Hi,
->>>
->>> I was thinking of proposing a separate topic on a single source of hotness,
->>> but this question covers it so I'll add some thoughts here instead.
->>> I think we are very early, but sharing some experience and thoughts in a
->>> session may be useful.
->> Thinking more on this over lunch, I think it is worth calling this
->> out as a
->> potential session topic in it's own right rather than trying to find
->> time within other sessions.  Hence the title change.
->> I think a session would start with a brief listing of the
->> temperature sources
->> we have and those on the horizon to motivate what we are unifying, then
->> discussion to focus on need for such a unification + requirements
->> (maybe with a straw man).
->
-> Here is a compilation of available temperature sources and how the
-> hot/access data is consumed by different subsystems:
+configs tested: 184
+configs skipped: 4
 
-Thanks for your information!
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> PA-Physical address available
-> VA-Virtual address available
-> AA-Access time available
-> NA-accessing Node info available
->
-> I have left the slot blank for those which I am not sure about.
-> ==================================================
-> Temperature		PA	VA	AA	NA
-> source
-> ==================================================
-> PROT_NONE faults	Y	Y	Y	Y
-> --------------------------------------------------
-> folio_mark_accessed()	Y		Y	Y
-> --------------------------------------------------
-> PTE A bit		Y	Y	N	N
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+alpha                               defconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                                 defconfig    gcc-13.2.0
+arc                   randconfig-001-20250215    gcc-13.2.0
+arc                   randconfig-002-20250215    gcc-13.2.0
+arc                        vdk_hs38_defconfig    gcc-13.2.0
+arm                              alldefconfig    gcc-14.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    gcc-14.2.0
+arm                     am200epdkit_defconfig    gcc-14.2.0
+arm                         bcm2835_defconfig    clang-16
+arm                                 defconfig    clang-21
+arm                      integrator_defconfig    clang-15
+arm                         lpc32xx_defconfig    clang-21
+arm                   randconfig-001-20250215    clang-15
+arm                   randconfig-002-20250215    clang-17
+arm                   randconfig-003-20250215    gcc-14.2.0
+arm                   randconfig-004-20250215    gcc-14.2.0
+arm                         s5pv210_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                               defconfig    gcc-14.2.0
+arm64                 randconfig-001-20250215    clang-21
+arm64                 randconfig-002-20250215    gcc-14.2.0
+arm64                 randconfig-003-20250215    clang-17
+arm64                 randconfig-004-20250215    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                                defconfig    gcc-14.2.0
+csky                  randconfig-001-20250215    gcc-14.2.0
+csky                  randconfig-002-20250215    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-18
+hexagon                             defconfig    clang-21
+hexagon               randconfig-001-20250215    clang-21
+hexagon               randconfig-002-20250215    clang-21
+i386                             allmodconfig    clang-19
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-19
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-19
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250215    gcc-12
+i386        buildonly-randconfig-002-20250215    clang-19
+i386        buildonly-randconfig-003-20250215    clang-19
+i386        buildonly-randconfig-004-20250215    gcc-12
+i386        buildonly-randconfig-005-20250215    clang-19
+i386        buildonly-randconfig-006-20250215    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20250216    gcc-12
+i386                  randconfig-002-20250216    gcc-12
+i386                  randconfig-003-20250216    gcc-12
+i386                  randconfig-004-20250216    gcc-12
+i386                  randconfig-005-20250216    gcc-12
+i386                  randconfig-006-20250216    gcc-12
+i386                  randconfig-007-20250216    gcc-12
+i386                  randconfig-011-20250216    gcc-12
+i386                  randconfig-012-20250216    gcc-12
+i386                  randconfig-013-20250216    gcc-12
+i386                  randconfig-014-20250216    gcc-12
+i386                  randconfig-015-20250216    gcc-12
+i386                  randconfig-016-20250216    gcc-12
+i386                  randconfig-017-20250216    gcc-12
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                           defconfig    gcc-14.2.0
+loongarch             randconfig-001-20250215    gcc-14.2.0
+loongarch             randconfig-002-20250215    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                         amcore_defconfig    gcc-14.2.0
+m68k                                defconfig    gcc-14.2.0
+m68k                        m5407c3_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                          defconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20250215    gcc-14.2.0
+nios2                 randconfig-002-20250215    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20250215    gcc-14.2.0
+parisc                randconfig-002-20250215    gcc-14.2.0
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc                    amigaone_defconfig    gcc-14.2.0
+powerpc                       holly_defconfig    clang-21
+powerpc                 mpc836x_rdk_defconfig    clang-18
+powerpc               randconfig-001-20250215    gcc-14.2.0
+powerpc               randconfig-002-20250215    clang-21
+powerpc               randconfig-003-20250215    clang-19
+powerpc                     taishan_defconfig    clang-17
+powerpc64             randconfig-001-20250215    gcc-14.2.0
+powerpc64             randconfig-002-20250215    clang-21
+powerpc64             randconfig-003-20250215    gcc-14.2.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                               defconfig    clang-19
+riscv                 randconfig-001-20250215    clang-17
+riscv                 randconfig-002-20250215    clang-19
+s390                             allmodconfig    clang-19
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-15
+s390                  randconfig-001-20250215    gcc-14.2.0
+s390                  randconfig-002-20250215    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                    randconfig-001-20250215    gcc-14.2.0
+sh                    randconfig-002-20250215    gcc-14.2.0
+sh                      rts7751r2d1_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250215    gcc-14.2.0
+sparc                 randconfig-002-20250215    gcc-14.2.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250215    gcc-14.2.0
+sparc64               randconfig-002-20250215    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250215    clang-21
+um                    randconfig-002-20250215    clang-19
+um                           x86_64_defconfig    clang-15
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250215    gcc-12
+x86_64      buildonly-randconfig-002-20250215    clang-19
+x86_64      buildonly-randconfig-003-20250215    gcc-12
+x86_64      buildonly-randconfig-004-20250215    clang-19
+x86_64      buildonly-randconfig-005-20250215    clang-19
+x86_64      buildonly-randconfig-006-20250215    clang-19
+x86_64                              defconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-19
+x86_64                randconfig-001-20250216    clang-19
+x86_64                randconfig-002-20250216    clang-19
+x86_64                randconfig-003-20250216    clang-19
+x86_64                randconfig-004-20250216    clang-19
+x86_64                randconfig-005-20250216    clang-19
+x86_64                randconfig-006-20250216    clang-19
+x86_64                randconfig-007-20250216    clang-19
+x86_64                randconfig-008-20250216    clang-19
+x86_64                randconfig-071-20250216    gcc-12
+x86_64                randconfig-072-20250216    gcc-12
+x86_64                randconfig-073-20250216    gcc-12
+x86_64                randconfig-074-20250216    gcc-12
+x86_64                randconfig-075-20250216    gcc-12
+x86_64                randconfig-076-20250216    gcc-12
+x86_64                randconfig-077-20250216    gcc-12
+x86_64                randconfig-078-20250216    gcc-12
+x86_64                               rhel-9.4    clang-19
+x86_64                           rhel-9.4-bpf    clang-19
+x86_64                         rhel-9.4-kunit    clang-19
+x86_64                           rhel-9.4-ltp    clang-19
+x86_64                          rhel-9.4-rust    clang-19
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250215    gcc-14.2.0
+xtensa                randconfig-002-20250215    gcc-14.2.0
 
-We can get some coarse-grained AA from PTE A bit scanning.  That is, the
-page is accessed at least once between two rounds of scanning.  The AA
-is less the scanning interval.  IIUC, the similar information is
-available in Yuanchu's MGLRU periodic aging series [1].
-
-[1] https://lore.kernel.org/all/20221214225123.2770216-1-yuanchu@google.com/
-
-> --------------------------------------------------
-> Platform hints		Y	Y	Y	Y
-> (AMD IBS)
-> --------------------------------------------------
-> Device hints		Y
-> (CXL HMU)
-> ==================================================
->
-> And here is an attempt to compile how different subsystems
-> use the above data:
-> ==============================================================
-> Source			Subsystem		Consumption
-> ==============================================================
-> PROT_NONE faults	NUMAB		NUMAB=1 locality based
-> via process pgtable			balancing
-> walk					NUMAB=2 hot page
-> 					promotion
-> ==============================================================
-> folio_mark_accessed()	FS/filemap/GUP	LRU list activation
-
-IIUC, Gregory is working on a patchset to promote unmapped file cache
-pages via folio_mark_accessed().
-
-> ==============================================================
-> PTE A bit via		Reclaim:LRU	LRU list activation,	
-> rmap walk				deactivation/demotion
-> ==============================================================
-> PTE A bit via		Reclaim:MGLRU	LRU list activation,	
-> rmap walk and process			deactivation/demotion
-> pgtable walk
-> ==============================================================
-> PTE A bit via		DAMON		LRU activation,
-> rmap walk				hot page promotion,
-> 					demotion etc
-> ==============================================================
-> Platform hints		NUMAB		NUMAB=1 Locality based
-> (AMD IBS)				balancing and
-> 					NUMAB=2 hot page
-> 					promotion
-> ==============================================================
-> Device hints		NUMAB		NUMAB=2 hot page
-> 					promotion
-> ==============================================================
-> The last two are listed as possibilities.
->
-> Feel free to correct/clarify and add more.
-
----
-Best Regards,
-Huang, Ying
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
