@@ -1,180 +1,125 @@
-Return-Path: <linux-kernel+bounces-516690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D86A375E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:40:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2B4A375DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A28C188CBAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D701696F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F87199EAF;
-	Sun, 16 Feb 2025 16:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEC419C553;
+	Sun, 16 Feb 2025 16:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="esO2Fg5n"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TnqXdLS5"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5A3D6F;
-	Sun, 16 Feb 2025 16:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A95618DB21;
+	Sun, 16 Feb 2025 16:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723965; cv=none; b=t11ZDaGH4ggbpA0O6xRTveQhuKxajiyJDRfGJT21Ud0rFCQCD6benBm0qS69q09DUnG2z6m0TibaCVF1SHBm73wt7t8+mqNMhcx40qV4SAlJfvhE7iiagO/JfgzW6QJAb6mbJ9h/Va+Ku2C/AKhKdvRV9Gj5VQLJGtOJw91jUpA=
+	t=1739724000; cv=none; b=Z4m/Y0g8QCxxEvRjxNjI3pL7W9lb6/uAfZUgqtX8vA5DbAso32VVRsgm+PQinI+nBgszrB7siPZ7B6VZvXXjMhG39JxN9yBm6Uj+0F9xhEaFdzUL6yYsQ6SlwRjoeZAedd3MC86nH3LVOgUMwB2OfZc0rNEoHynI1qt5AYOCo0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723965; c=relaxed/simple;
-	bh=F7lxG+YyUpyZN5BDO1TWo52GvkiZpf4iGTTc9DJNJZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kQNwpk7j2Kx4J+XSKfh4oXX/Z36m9y2HzPJB6Ox6iYh9yk+YPneBS2mcrntnEYKTzTUTL7LpHBLTG2bBV/4HTQVR5YeS+oj+DS9nOpllysESUAIZ/5pW6tpEOG+kamaXHJ2uxDnHl1TgSeSuEgnyF9zK0LaslOWpgRSDvBsZYj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=esO2Fg5n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51GEsrNq018208;
-	Sun, 16 Feb 2025 16:39:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jybwYLBxnC29e5G9/7UFhw8l7MCD8xAgH5D9/8Aq3Wc=; b=esO2Fg5nYbgHipOi
-	D36/g3dkeCDxeKMAX51sotQeJW9QXiI8pXWFUhLZKv+WLe3oHb/Ohe0sexN8Ofzd
-	GdIqDJk/NsJvD5Feg/zS27q8SEpF9XrkrUt36thEax0ou3jxSghuIHgifFdg6zgn
-	DE72sU7Uxi6zwEn8g8sbZswQg9awcjwAD63PRdb3VzPVYtWNmTV1/YarJLmHxen+
-	l1iPMb1XguwwRyMoSjc84hJO9aggJioms6LtISAUCFZ4Zc7P9AEUQZKGYdeRQ2HU
-	RInRbvH8PJiRFmDQwtcAaUC0Ox+BzE++XELearLbtozEwKw7fEV2ffs6emBWPVUN
-	c7F21Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tkwnaaee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 16:39:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51GGdE5r019692
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Feb 2025 16:39:14 GMT
-Received: from [10.216.15.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Feb
- 2025 08:38:54 -0800
-Message-ID: <f40f6b9d-8f31-4ce6-a912-1aa484863d5e@quicinc.com>
-Date: Sun, 16 Feb 2025 22:08:51 +0530
+	s=arc-20240116; t=1739724000; c=relaxed/simple;
+	bh=cv5EOH+N+QjpDHLVR3ttgMrKK0wRCoDgfy5bp2fw/II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCytZX0IUeVy8f9p+NIoAd3hd+oqy/Z4kpaW/l+rn8cX60aPztYmiWn80s68GhjrOZ5DCVzdb8VPW0QsT6s0kG3+/7naS2e9WPQLZiIjIh/qjoo+Kux22vw6xmtUYElEln2mVy6KRX/iheI6pKS4db5x4sX700QuD+DjQXjTM2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TnqXdLS5; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Ui7HEUJhEQf9Ds/ECcnB0minOtGYjZZ90SeYLQsSlUw=; b=Tn
+	qXdLS5oE5zr4X/BKFyfbTLBPyRQnjEEEE+6IOI4N4TUmlx4pmDBdKCfMTX8IkxB2Mphf5neeQPE1L
+	QXoyTXni+ghDDX/hh6v0/8sem8mFgGzC/3unW6xWd4FdDVTcKU2nXaKuAJrIL3UaKEXthOnMBAixt
+	A1o30917TYG4+qU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tjhgC-00Ehdh-2m; Sun, 16 Feb 2025 17:39:40 +0100
+Date: Sun, 16 Feb 2025 17:39:40 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>
+Subject: Re: [PATCH net-next 1/3] net: phy: mediatek: Add token ring access
+ helper functions in mtk-phy-lib
+Message-ID: <1b4c3254-c596-486a-bde9-d4737dfc5a48@lunn.ch>
+References: <20250116012159.3816135-1-SkyLake.Huang@mediatek.com>
+ <20250116012159.3816135-2-SkyLake.Huang@mediatek.com>
+ <5546788b-606e-489b-bb1a-2a965e8b2874@lunn.ch>
+ <385ba7224bbcc5ad9549b1dfb60ace63e80f2691.camel@mediatek.com>
+ <64b70b2d-b9b6-4925-b3f6-f570ddb70e95@lunn.ch>
+ <Z633GUUhyxinwWiP@makrotopia.org>
+ <81234e04-f37c-4b10-81e6-d8508c9fb487@lunn.ch>
+ <ea348d0a4b30c4926ba16a6e79cb52196aebcf47.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 2/7] interconnect: core: Add dynamic id allocation
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        "Mike
- Tipton" <quic_mdtipton@quicinc.com>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Sibi
- Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250205182743.915-1-quic_rlaggysh@quicinc.com>
- <20250205182743.915-3-quic_rlaggysh@quicinc.com>
- <bwiuhfgv4jw7tlwjqffgrxvskxbpf4forz46nn5g3vihz3z5od@w25y7hdprykf>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <bwiuhfgv4jw7tlwjqffgrxvskxbpf4forz46nn5g3vihz3z5od@w25y7hdprykf>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3Y1V5aHKQunWBqCnAPPXtUPZVUhoxVbT
-X-Proofpoint-ORIG-GUID: 3Y1V5aHKQunWBqCnAPPXtUPZVUhoxVbT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-16_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- mlxscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502160151
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ea348d0a4b30c4926ba16a6e79cb52196aebcf47.camel@mediatek.com>
 
-
-
-On 2/10/2025 4:20 PM, Dmitry Baryshkov wrote:
-> On Wed, Feb 05, 2025 at 06:27:38PM +0000, Raviteja Laggyshetty wrote:
->> The current interconnect framework relies on static IDs for node
->> creation and registration, which limits topologies with multiple
->> instances of the same interconnect provider. To address this, update
->> the interconnect framework APIs icc_node_create() and icc_link_create()
->> APIs to dynamically allocate IDs for interconnect nodes during creation.
->> This change removes the dependency on static IDs, allowing multiple
->> instances of the same hardware, such as EPSS L3.
->>
->> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> ---
->>  drivers/interconnect/core.c | 13 ++++++++++++-
->>  1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
->> index 9d5404a07e8a..40700246f1b6 100644
->> --- a/drivers/interconnect/core.c
->> +++ b/drivers/interconnect/core.c
->> @@ -20,6 +20,8 @@
->>  
->>  #include "internal.h"
->>  
->> +#define ICC_DYN_ID_START 10000
->> +
->>  #define CREATE_TRACE_POINTS
->>  #include "trace.h"
->>  
->> @@ -826,7 +828,12 @@ static struct icc_node *icc_node_create_nolock(int id)
->>  	if (!node)
->>  		return ERR_PTR(-ENOMEM);
->>  
->> -	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
->> +	/* negative id indicates dynamic id allocation */
->> +	if (id < 0)
+On Fri, Feb 14, 2025 at 03:35:10AM +0000, SkyLake Huang (黃啟澤) wrote:
+> On Thu, 2025-02-13 at 16:34 +0100, Andrew Lunn wrote:
+> > 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> > 
+> > 
+> > > > > Those registers with Mrvl* prefix were originally designed for
+> > > > > connection with certain Marvell devices. It's our DSP
+> > > > > parameters.
+> > > > 
+> > > > Will this code work with real Marvell devices? Is this PHY
+> > > > actually
+> > > > licensed from Marvell?
+> > > 
+> > > > From what I understood the tuning of those parameters is required
+> > > to connect to a Marvell PHY link partner on the other end.
+> > 
+> > If so, the naming is bad. I assume you need the same settings for
+> > Microchip, Atheros, Broadcom, etc. These settings just tune the
+> > hardware to be standards conforming?
+> > 
+> >         Andrew
+> > 
+> This part is pretty old old old design. Some compatibility issues were
+> firstly found on Marvell link partners, so the registers are named
+> accordingly. And yes, now, those Kf/Kp settings will be used for
+> connection with other link partners. However, if I change the register
+> names, it violates our hardware register map application note. If this
+> does bother, I can add some comments before these macros like:
 > 
-> Nit: I think it might be better to add an explicit define for that and
-> to decline all other negatdive values. Please leave us some room for
-> future expansion.
-> 
-Do you mean to replace the value of ALLOC_DYN_ID from -1 to some
-positive value like 100000 and to use it as initial ID for the nodes
-requiring the dynamic allocation ? This explicit define can be used as
-check for dynamic allocation and also as argument to idr_alloc min value
-argument. Is my interpretation of the comment correct ?
+> /* Mrvl* prefix only means that in the very beginning we tune the
+>  * parameters with Marvell link partners. These settings will be used
+>  * for all link partners now.
+>  */
 
->> +		id = idr_alloc(&icc_idr, node, ICC_DYN_ID_START, 0, GFP_KERNEL);
->> +	else
->> +		id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
->> +
->>  	if (id < 0) {
->>  		WARN(1, "%s: couldn't get idr\n", __func__);
->>  		kfree(node);
->> @@ -962,6 +969,10 @@ void icc_node_add(struct icc_node *node, struct icc_provider *provider)
->>  	node->avg_bw = node->init_avg;
->>  	node->peak_bw = node->init_peak;
->>  
->> +	if (node->id >= ICC_DYN_ID_START)
->> +		node->name = devm_kasprintf(provider->dev, GFP_KERNEL, "%s@%s",
->> +					    node->name, dev_name(provider->dev));
->> +
->>  	if (node->avg_bw || node->peak_bw) {
->>  		if (provider->pre_aggregate)
->>  			provider->pre_aggregate(node);
->> -- 
->> 2.39.2
->>
-> 
+A comment would be good. The current names lead the questions....
 
+	Andrew
 
