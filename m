@@ -1,159 +1,90 @@
-Return-Path: <linux-kernel+bounces-516709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D953EA3760E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:54:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF640A3760D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 965AE7A2EBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:53:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FFD7A2B77
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A70019D881;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C43E19D071;
 	Sun, 16 Feb 2025 16:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD8s2exV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7yboXjw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819219C546;
-	Sun, 16 Feb 2025 16:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB3D450FE;
+	Sun, 16 Feb 2025 16:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724860; cv=none; b=ruaox3UVzWll9LQraNUOst33ywJxvvzyQDBGbfMtJO9vq4jeFMHlJ9714i7vh+VkA+M8J5nPS2mCj9Z1vJufxFh3yQSqjKxmAP4TeJE+kPRtnNRS1rL6AZZrq6XKemvkiJY97D5Z3i2KwKcWKIA+jkAKFfsvtQvm2eVzvjcixss=
+	t=1739724859; cv=none; b=ER2+IeFRxy83jAtinHSAuEDTr5I3oHclvyNTLwEYfYUFdGQQ5u5fTu3VbYnCnjT80EZZg5FHXmSvGlPS/rv8UoagPtCjkGpRqlMSppLelV6RFL3o0CveJrS4rIwckeYQ3mL26cY2bJLz7xmRFk7DNswjSvlbwSiEJAjSr9pcQEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724860; c=relaxed/simple;
-	bh=b1gMtTVrS9kG/tz3DJSz0avx21//+/wqhBYvF9zq1fo=;
+	s=arc-20240116; t=1739724859; c=relaxed/simple;
+	bh=pTlZ14AnOX+J+ZoO/hKr1nC/IBpBU/25GV1jkqIE8A8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXDBj5OWDqaKxCrXQvw+cj5Nn1bYqh1Z/d/ppEmpPJjoAsgJw/n3CEuPX7DreauYaB9r4T2OAcbRv+Nfls7652AGvr+y4hQAeMraWXeIrN/ofNt7ViFiPExpVFoCGE6e4C6Hbj3ddJGbBp3URYPiXmXyIeKDnFzmseIgtFFqr8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD8s2exV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF13C4CEE4;
-	Sun, 16 Feb 2025 16:54:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXsk6LKOv4hZXCd7rQvL2XxrsCn48cE8EbuUys9YDXuNCfFlAoJwuXep40FERK+UudXMw7yZ3kW0jHur5ZBz/jsvQU0zPdhqJ4vDJTTo64IMzPHRl9nMGLzUpnVNEHgeEDmtA7hyMNwUhjmbf0jDlZPHhNXLmAFRhrvuLxHwx+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7yboXjw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6966C4CEDD;
+	Sun, 16 Feb 2025 16:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739724859;
-	bh=b1gMtTVrS9kG/tz3DJSz0avx21//+/wqhBYvF9zq1fo=;
+	s=k20201202; t=1739724858;
+	bh=pTlZ14AnOX+J+ZoO/hKr1nC/IBpBU/25GV1jkqIE8A8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iD8s2exVQnZGw+vub1rvN5H80vPireFTswP2cXX3QzK3lDkD0aS1cAbqGDepxPnIw
-	 eQzm45oLLgWvyuG2ub6l7rQCWLdxjzFdMcMELW25dffiDF9bAOAd15klpgspzi3qmi
-	 5RD/YJb9gbyOvhR7GKYGruF6fxVfd6bFNVtejgF4PVKjylyZw289x/7I8o8c1NPOes
-	 NnTe+kGH1bcCRs6lmwG38kV56mvtespmUHQDkgFX8Ng5tl4rBg+p/Q7Msoutw727Zh
-	 bhshPwDxHWL/+9VuFs/Bly8bho7QTMETty3M2UYv0Yz2B/LrwuZRcS8fkLBPyBSSkT
-	 SBmJZDaglNYbQ==
-Received: by pali.im (Postfix)
-	id E3B6C7FD; Sun, 16 Feb 2025 17:54:06 +0100 (CET)
-Date: Sun, 16 Feb 2025 17:54:06 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: mvebu: Use for_each_of_range() iterator for parsing
- "ranges"
-Message-ID: <20250216165406.jp2dzfwdfucklt5b@pali>
-References: <20241107153255.2740610-1-robh@kernel.org>
- <20241115073104.gsgf3xfbv4gg67ut@thinkpad>
+	b=C7yboXjw4BMW5zsi0GF/0TZR65srPHVJr2yte36QBHktyNm/thmCjpyMV1iAH13/b
+	 evp5Qm4CARBJsxTWVCnrXBTEWlKADDmt/DluCFOqYg4O9tvOzwP4KXxwB3e545H81E
+	 lTF7S4h7BZmZilqwgtHEyLqGhWXfxsKxoN8S3vqM9TFRyWaG2Q8PiEHAlTdF7pg16z
+	 yrVxYQNgHB3Kb0ss1IK0Q3g1Bd7iCNRFs0HIkX20JyIpuvCT0dNiYiX1LrKygS/wGN
+	 6CbY6r1AQFeFfa0A1qCIsBVhAINd6ZOTDngbl5a0rWEn19IhMFdEcIMemYcQ8imURy
+	 8ibGffRUK8HYg==
+Date: Sun, 16 Feb 2025 06:54:16 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHSET v12 sched_ext/for-6.15] sched_ext: split global idle
+ cpumask into per-NUMA cpumasks
+Message-ID: <Z7IYOHDLVUTiYuI5@slm.duckdns.org>
+References: <20250214194134.658939-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115073104.gsgf3xfbv4gg67ut@thinkpad>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20250214194134.658939-1-arighi@nvidia.com>
 
-On Friday 15 November 2024 13:01:04 Manivannan Sadhasivam wrote:
-> On Thu, Nov 07, 2024 at 09:32:55AM -0600, Rob Herring (Arm) wrote:
-> > The mvebu "ranges" is a bit unusual with its own encoding of addresses,
-> > but it's still just normal "ranges" as far as parsing is concerned.
-> > Convert mvebu_get_tgt_attr() to use the for_each_of_range() iterator
-> > instead of open coding the parsing.
-> > 
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Fri, Feb 14, 2025 at 08:39:59PM +0100, Andrea Righi wrote:
+> = Overview =
 > 
-> LGTM!
+> As discussed during the sched_ext office hours, using a global cpumask to
+> keep track of the idle CPUs can be inefficient and it may not scale really
+> well on large NUMA systems.
 > 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Therefore, split the idle cpumask into multiple per-NUMA node cpumasks to
+> improve scalability and performance on such large systems.
 > 
-> Could someone please verify it on mvebu machine?
-> 
-> - Mani
+> Scalability issues seem to be more noticeable on Intel Sapphire Rapids
+> dual-socket architectures.
 
-That is mostly impossible as pci-mvebu is broken. Bjorn and Krzysztof in
-past already refused to take patches which would fix the driver or
-extend it for other platforms.
+Applied 1-7 to sched_ext/for-6.15.
 
-So I do not understand why you are rewriting something which worked,
-instead of fixing something which is broken. The only point can be to
-make driver even more broken...
+Thanks.
 
-> > ---
-> > Compile tested only.
-> > ---
-> >  drivers/pci/controller/pci-mvebu.c | 26 +++++++++-----------------
-> >  1 file changed, 9 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
-> > index 29fe09c99e7d..d4e3f1e76f84 100644
-> > --- a/drivers/pci/controller/pci-mvebu.c
-> > +++ b/drivers/pci/controller/pci-mvebu.c
-> > @@ -1179,37 +1179,29 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
-> >  			      unsigned int *tgt,
-> >  			      unsigned int *attr)
-> >  {
-> > -	const int na = 3, ns = 2;
-> > -	const __be32 *range;
-> > -	int rlen, nranges, rangesz, pna, i;
-> > +	struct of_range range;
-> > +	struct of_range_parser parser;
-> >  
-> >  	*tgt = -1;
-> >  	*attr = -1;
-> >  
-> > -	range = of_get_property(np, "ranges", &rlen);
-> > -	if (!range)
-> > +	if (of_pci_range_parser_init(&parser, np))
-> >  		return -EINVAL;
-> >  
-> > -	pna = of_n_addr_cells(np);
-> > -	rangesz = pna + na + ns;
-> > -	nranges = rlen / sizeof(__be32) / rangesz;
-> > -
-> > -	for (i = 0; i < nranges; i++, range += rangesz) {
-> > -		u32 flags = of_read_number(range, 1);
-> > -		u32 slot = of_read_number(range + 1, 1);
-> > -		u64 cpuaddr = of_read_number(range + na, pna);
-> > +	for_each_of_range(&parser, &range) {
-> >  		unsigned long rtype;
-> > +		u32 slot = upper_32_bits(range.bus_addr);
-> >  
-> > -		if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_IO)
-> > +		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
-> >  			rtype = IORESOURCE_IO;
-> > -		else if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_MEM32)
-> > +		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
-> >  			rtype = IORESOURCE_MEM;
-> >  		else
-> >  			continue;
-> >  
-> >  		if (slot == PCI_SLOT(devfn) && type == rtype) {
-> > -			*tgt = DT_CPUADDR_TO_TARGET(cpuaddr);
-> > -			*attr = DT_CPUADDR_TO_ATTR(cpuaddr);
-> > +			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
-> > +			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
-> >  			return 0;
-> >  		}
-> >  	}
-> > -- 
-> > 2.45.2
-> > 
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+-- 
+tejun
 
