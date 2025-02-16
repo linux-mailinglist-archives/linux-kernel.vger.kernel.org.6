@@ -1,216 +1,177 @@
-Return-Path: <linux-kernel+bounces-516572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841EFA37427
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:37:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40984A3742D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 863D07A1C4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:36:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276A47A1B1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36648191461;
-	Sun, 16 Feb 2025 12:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6C8191F68;
+	Sun, 16 Feb 2025 12:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWv2zOKY"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpBBOIi9"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2E18C91F;
-	Sun, 16 Feb 2025 12:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300FB1547C8;
+	Sun, 16 Feb 2025 12:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739709442; cv=none; b=oiTHlEL3ksvi7qGY5AEAnaBLuMeO7jSDj77cyro2pYYDny5n4oHTGzVCaV2rtG93I/lwd9CFKKnhdL45gFmI6CsRw+7DWAyeWDpD/gApZ7izeXGcbBb7Dw1Si4mzYn+zdGyJxUbE2HlAX5yQYPAledzjVKUbwYIZM8fB7nyyaKE=
+	t=1739709621; cv=none; b=Xp+pvcFYQXOLS6VZfNxbM4OqKHltmZPchC/js5QmbndKUEHBjBxAn8u1UlQivfpUSnR5IO3BewpG1zd5amuY0IiZr17Rm3TwAaQB1XDZYWoiE5zy9gvC8y8wyCo5UITDsgTKpY0NKn/H36d7NMtaSYzcGS0EjaG1M4aao/HZuiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739709442; c=relaxed/simple;
-	bh=HIGEJB0qUycZsdckTlxaaoA0bk1Jt2vpqEozX5IOtYQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=AzM6gI4pr/sFrLDCCbAggpM27U2gj1oYB4Cy6IREY2n9VZ9Uld/o0VCwEDeX4fMcX1fpzIJk585+1wpVQtaRuAVcF3nYJTwr4rd+RudRWC+VMivUxvT0HaP3SoE1tl/ws9BYUpbHS6MK5PHbyKrP/SpGGChGi2viRChOg0Cwv28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWv2zOKY; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1739709621; c=relaxed/simple;
+	bh=eChtph/Tyvc00kHahpYDlz0Y5UiP6dhoC+pdUTtBAPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oWszOON2n5sJso253F/KmzSkkJ1LPCWo2u4dzO0GmUspGtlXUNsmvETRF5nXs1rS3if9WhPOxeZzHB3VEcxTADWSEwty+orsg0wFO01LjP0p6k6nqDNsSaDa/ICRxbwHZNO2w6AsTVu3KCQX0qZRshwkX8o45L6qvjc0XVvJMa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpBBOIi9; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaecf50578eso695785066b.2;
-        Sun, 16 Feb 2025 04:37:20 -0800 (PST)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e672a21b9dso9297016d6.1;
+        Sun, 16 Feb 2025 04:40:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739709439; x=1740314239; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9JuodrbTqt2kISAe95cYUvufIOl8Fb0pi3tva7a0oDw=;
-        b=QWv2zOKYj5lcPQGBr3lClx2aBXsNJI7rUke9/j2utxjF8V5NwEgz1Fnx92JIkkLMuZ
-         cSObtQfp/CEJPl9UG0dVsVrJ99M5RHkwFHUzSApwsPZ1+1H5dwT7ZrlkT0JeDXcy3O8p
-         2uZOS5+LI9D10Liw8hImOEvGf9y7BTSOymylS2KcV+2cxVAGyj3EzcD08r39cYC7wsMc
-         +60i6Fnh5GTqBQNBX3YLF2agLSYmZ8edH37HSWS6QspBsbZ659T/ABTpqHJbnPQmYi8R
-         0XUxqivzv8186wgkn1EHpATRjYndMmLzRFe9GcAz1s9H3cBnwDRMPsjEgevLC4oChv5F
-         3YHA==
+        d=gmail.com; s=20230601; t=1739709619; x=1740314419; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGDs3HpGQkICOAu67lknk/dBvFr+k4sdCQo4X5U4Pgo=;
+        b=IpBBOIi98JwK5bQRo8ajS9R7v9V5b2acnJogiZtVpcE4Vvoxs0ma74pQG/NwIOvunR
+         +AI6+yZZ88rkQ1cLMK8l1YPJKnCYdIwm2ZlLabS0t8iaVkM9PHgxurvYe9gEvsd30FjN
+         WdMzkfNnMsqFl/3eqJvZRODtXydaGqsd3xnPurjF2A20XwUw2i7dMTlJTkq6b53um/+6
+         ioxge3yuzsSoqMaW+HIIdrYZN10D/UByl6vIrDRMO6G6H3aAA8sPqZNfBLou7/kAVY9M
+         dhaUSu5I8fd18yRI/EIGoD6b/JvLWgZB1N2vtaMDu7DL30g4blAUWgPFePftln+JHy2S
+         20NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739709439; x=1740314239;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9JuodrbTqt2kISAe95cYUvufIOl8Fb0pi3tva7a0oDw=;
-        b=vWAyTlXr9qx15jox3CE6Z8Odg37ZxYhNhsRGh6lsw/UQxXtAxC20GAIbxKgJph1j1Y
-         Xk6eUYLV5FVE8/tiB6lPngJNKsf4Cedr7mJ0B7IKPh2xc7JkGFsuMV78AyJZt9KqYlCc
-         uhn6sLEHN08mom79JWy8CN0NM18z7Q7EX+GTkwdw5CSAfb8nSJlWz/oMmJClK9MKeNWb
-         NokmrcsVhFv780PK11oP6/3gOCV0IddTACgXMhx41B6u93ryVQ2ztkNKWWWRM4EeuiHV
-         I0jYbK2KcBmwUPH/ZCWFuc6To/Q64BWT1+sDG+aqjyW79OhUfkhIHNZgZsTUrUamoWkS
-         kxjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMpdtEMVGfG9WNagZ9lo26hUH/3aQlpEBG71jKjsypEtEvc2jNI0E0mxzFECInZZahNvxsgwW5pazd@vger.kernel.org, AJvYcCUai3LiubEP83UKN0hqFJFYJhfgJCiT5NwgW/95Et3+V2/1HVFnHWkNtmUwVNYrgFTZEnjQ0zFA5vSL0I31@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0WC6IUsF+tV04w0SmqbVtczw3n6cDw+Tg+JlQD1gfFWdIRzFJ
-	MlzS6k6onQf0slua0wm9xZyPbFEoqsxzTVCCNK50EQ63ZKC+XzQ5
-X-Gm-Gg: ASbGncuNFXWS7FAG42k4//9DtopJGd1ilrBUVzgO3UiR/rjBisjb39D5YdFByT7pNa9
-	ONqO47OMI8aMZTjOsKssDOhw24KTi2QMibJExvdoDdzHeSJtng6h/bRA6kiBS59mcPBqJPjVZyq
-	YxiibSO4Te0RhRWH68Ys9mh8OgF0IjPnqFTOzOjNaG7Ya7ZzjX02H8SSW+EpcygX/TIiGpGOjyU
-	fn6EIy3Tj3EVH8q/t8r4S3tOA27mC/6RC7sY0MCUxebam/o/GCwc3p6vRLxG/HLyDtbjf24wgdf
-	YwxC+hscvwsg/c8KtTNkSgbT1dfcoYs6RZujM5ofyCgDf7XWBRSaeJsIVfHXbI6plS/3VS2t
-X-Google-Smtp-Source: AGHT+IF7Li7Lm7POp1hY1DOd+YXcUFGnt79PSyFeoLFF1fqoqNga9gqKiKlCsi70OcwAnvjg618OOA==
-X-Received: by 2002:a17:907:7244:b0:ab7:d6c:5781 with SMTP id a640c23a62f3a-abb70b35452mr579701566b.24.1739709438780;
-        Sun, 16 Feb 2025 04:37:18 -0800 (PST)
-Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb67732cd5sm343423666b.183.2025.02.16.04.37.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Feb 2025 04:37:17 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1739709619; x=1740314419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dGDs3HpGQkICOAu67lknk/dBvFr+k4sdCQo4X5U4Pgo=;
+        b=TXGLn3a1C33w13c0L/GoZnbiqpvYEadf7m6BmUEl2GKKWVEEpBcOiKpxPXE6u9fU7v
+         dZuwRNMheia70AAH7ar6PnoB8CWZrONzTL24PKTbcZE7/IhXV3oAxvn23vTNQEA9B+EM
+         4gC+l2HEc8JvYzhqZspLgSR7+Kf0RZ3BTDEizTWnLR20t+Un2fUk5zL3KzrgjYlpYbfi
+         /hyxXtoWksWXU+ljQ7zv0KiLqh1rDY+22csmWcMJ7DLV7zG7MP78Sd1H+KW4yGJDwaPF
+         d0feAP3t9R1xkcOzRVb7pTQQ1Z/9X6v8kxJ2StYMShilihCfHwtpTSQZJn+K7S/jPNxv
+         VEIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLgNp1oxIS8/7t9nIXxUdNRBCe7NvZFFH6OK8//MrRVUkUiwHsHO6p3NF4OTwOaX08QYefS9340J791Myr@vger.kernel.org, AJvYcCXAGeR+vn+oDaTlsgjIhInlswP59ujdpUgIYoa4Ej9HX5Evu81T3Ivf37OEtX7kFb+yRmGJABzmyiMj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHa/TtfkoS7caMCIMARi5aeNX3ScDc6RRM22Xx2Ql9PJF1ugHi
+	h+jELkQsCirUgjUGcdZXNC73VcysNr5yMOlnu2xPbEW/OZEW3IHr
+X-Gm-Gg: ASbGncv7zj7TLD8IHGj0Md/fpAXIWkg1WUxyg+uw7TrboouJVau6a+6bRaf9INiYi86
+	uqYETFwEwANfZd1ANjhUdg8FRoUn4Nl8L3yHiFcx7gklBFz6KSEeTOF0iKjjM1vNUabISA2++SL
+	mjwsQdDq/1YBcLyYPtksJHKGmI/R3T/olq5l9p+fTyapfeil96Ae7hpnpn3NvAgwPNFMvAVzGJO
+	8ZErYmYvJQjAxCjjaQ6jEvNc8D4Bu26/XFgmicHxBLqxcsGT8YQ39vNF7yCxgNJlX0=
+X-Google-Smtp-Source: AGHT+IEpfpOMHZ8O/1KvInhk3KcC7dM/mez8wsS2NuX284w3zcB/+PjufIWyqrWrlCFEXBwTJBBy2Q==
+X-Received: by 2002:ad4:5f0a:0:b0:6e0:ad33:36c with SMTP id 6a1803df08f44-6e66cc86d3cmr90601876d6.2.1739709619021;
+        Sun, 16 Feb 2025 04:40:19 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d77927csm41319936d6.10.2025.02.16.04.40.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 04:40:18 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH net-next v5 0/3] riscv: sophgo: Add ethernet support for SG2044
+Date: Sun, 16 Feb 2025 20:39:48 +0800
+Message-ID: <20250216123953.1252523-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
-Date: Sun, 16 Feb 2025 13:37:05 +0100
-Cc: linux-rockchip@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <566E6F11-765C-4415-8805-55DFD3C2BD4D@gmail.com>
-References: <20250215152550.3975614-1-liujianfeng1994@gmail.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+The ethernet controller of SG2044 is Synopsys DesignWare IP with
+custom clock. Add glue layer for it.
 
+Changed from v4:
+- https://lore.kernel.org/netdev/20250209013054.816580-1-inochiama@gmail.com/
+1. apply Romain's tag
+2. patch 3: use device variable to replace &pdev->dev.
+3. patch 3: remove unused include.
+4. patch 3: make error message more useful.
 
-> Wiadomo=C5=9B=C4=87 napisana przez Jianfeng Liu =
-<liujianfeng1994@gmail.com> w dniu 15 lut 2025, o godz. 16:25:
->=20
-> Enable the HDMI port next to ethernet port.
->=20
-> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-> ---
->=20
-> .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 53 +++++++++++++++++++
-> 1 file changed, 53 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts =
-b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-> index 6d68f70284e..a4fdced052c 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-> @@ -11,6 +11,7 @@
-> #include <dt-bindings/leds/common.h>
-> #include <dt-bindings/pinctrl/rockchip.h>
-> #include <dt-bindings/pwm/pwm.h>
-> +#include <dt-bindings/soc/rockchip,vop2.h>
-> #include "dt-bindings/usb/pd.h"
-> #include "rk3588.dtsi"
->=20
-> @@ -89,6 +90,17 @@ fan0: pwm-fan {
-> pwms =3D <&pwm14 0 10000 0>;
-> };
->=20
-> + hdmi1-con {
-> + compatible =3D "hdmi-connector";
-> + type =3D "a";
-> +
-> + port {
-> + hdmi1_con_in: endpoint {
-> + remote-endpoint =3D <&hdmi1_out_con>;
-> + };
-> + };
-> + };
-> +
-> /* M.2 E-KEY */
-> sdio_pwrseq: sdio-pwrseq {
-> compatible =3D "mmc-pwrseq-simple";
-> @@ -261,6 +273,32 @@ &gpu {
-> status =3D "okay";
-> };
->=20
-> +&hdmi1 {
-> + pinctrl-0 =3D <&hdmim0_tx1_cec &hdmim0_tx1_hpd
-> +     &hdmim1_tx1_scl &hdmim1_tx1_sda>;
-> + status =3D "okay";
-> +};
-> +
-> +&hdmi1_in {
-> + hdmi1_in_vp1: endpoint {
-> + remote-endpoint =3D <&vp1_out_hdmi1>;
-> + };
-> +};
-> +
-> +&hdmi1_out {
-> + hdmi1_out_con: endpoint {
-> + remote-endpoint =3D <&hdmi1_con_in>;
-> + };
-> +};
-> +
-> +&hdptxphy_hdmi0 {
-> + status =3D "okay";
-> +};
-> +
-> +&hdptxphy1 {
-> + status =3D "okay";
-> +};
-> +
-> &i2c0 {
-> pinctrl-names =3D "default";
-> pinctrl-0 =3D <&i2c0m2_xfer>;
-> @@ -1209,3 +1247,18 @@ &usbdp_phy1 {
-> rockchip,dp-lane-mux =3D <2 3>;
-> status =3D "okay";
-> };
-> +
-> +&vop {
-> + status =3D "okay";
-> +};
-> +
-> +&vop_mmu {
-> + status =3D "okay";
-> +};
-> +
-> +&vp1 {
-> + vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
-> + reg =3D <ROCKCHIP_VOP2_EP_HDMI1>;
-> + remote-endpoint =3D <&hdmi1_in_vp1>;
-> + };
-> +};
-> --=20
-> 2.43.0
->=20
->=20
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Changed from v3:
+- https://lore.kernel.org/netdev/20241223005843.483805-1-inochiama@gmail.com/
+1. rebase for 6.14.rc1
+2. remove the dependency requirement as it was already merged
+   into master.
 
-Jianfeng,
+Changed from RFC:
+- https://lore.kernel.org/netdev/20241101014327.513732-1-inochiama@gmail.com/
+1. patch 1: apply Krzysztof' tag
 
-Is there anywhere repo with this patch applied to test it on rock5 itx =
-hw?
+Changed from v2:
+- https://lore.kernel.org/netdev/20241025011000.244350-1-inochiama@gmail.com/
+1. patch 1: merge the first and the second bindings patch to show the all
+            compatible change.
+2. patch 2: use of_device_compatible_match helper function to perform check.
+2. patch 3: remove unused include and sort the left.
+3. patch 3: fix wrong variable usage in sophgo_dwmac_fix_mac_speed
+4. patch 3: drop unused variable in the patch.
 
-(asking as I can=E2=80=99t get it working; even with hdmi1 only vop =
-clocks like here: =
-https://gist.github.com/warpme/49feadbe1f53ea31fca76f41d5bb3ee4)
+Changed from v1:
+- https://lore.kernel.org/netdev/20241021103617.653386-1-inochiama@gmail.com/
+1. patch 2: remove sophgo,syscon as this mac delay is resolved.
+2. patch 2: apply all the properties unconditionally.
+3. patch 4: remove sophgo,syscon code as this mac delay is resolved.
+4. patch 4: use the helper function to compute rgmii clock.
+5. patch 4: use remove instead of remove_new for the platform driver.
 
+Inochi Amaoto (3):
+  dt-bindings: net: Add support for Sophgo SG2044 dwmac
+  net: stmmac: platform: Add snps,dwmac-5.30a IP compatible string
+  net: stmmac: Add glue layer for Sophgo SG2044 SoC
+
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   4 +
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 124 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 107 +++++++++++++++
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |  17 ++-
+ 6 files changed, 259 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+
+--
+2.48.1
 
 
