@@ -1,79 +1,89 @@
-Return-Path: <linux-kernel+bounces-516529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15664A37368
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:38:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB501A3736B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361EC7A204B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B1416C15F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0EF18BC06;
-	Sun, 16 Feb 2025 09:38:50 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9C8290F;
-	Sun, 16 Feb 2025 09:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E3618DB02;
+	Sun, 16 Feb 2025 09:40:30 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE16290F;
+	Sun, 16 Feb 2025 09:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739698730; cv=none; b=AcGJ4lCm70R5X2bZO3pj9vM4p4jMQXJ6oVMuRMk+VyhWEItvhkRmrrLIUxgMM80/GmK5djiw6oMt9iGtlMuvXApPUCC8vfDpahzhim0GrQfFO7/XWgLgIcAuKYynuhuqJ9zx0P6LmZS+Q+ZYntA/sfiN2UNU8Q8gTAclDUXWomE=
+	t=1739698830; cv=none; b=rtNjTl34CzTupkU61Ad9QeBaahRIelgxNld9AaMIdsF1lQT661lGymRz3mrxBJnAW++hKPN7dTZWOYSQtGleEJZ98aXQ9opod5L1Fnq7IfbnUyubSbGIeuv9Xh/vQfWVk8QusDKNYOosxZpkigKPufcBP8ZLRpiYxLPX4OQHGpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739698730; c=relaxed/simple;
-	bh=8gHbHKvxkRS3nnYekQqimtgaD9gDQL4A67uM5Q9hc+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BX923W7D6xtEyG9kDFkDn642x7fW+eIZC/PRoi1KfM9sbAtawhJ4kx8Oj37pnAibVXr+g+rbN3NRIw0U4ei0gt7PQ3BB5k9x6ShB1SK1fHgGO8C4aDqrrWVRvkW9Dfreky5JSu9g9MVYAQobTuyearki6TzU3Uo4iDErITSyaKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tjb6k-0002kq-00; Sun, 16 Feb 2025 10:38:38 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id A1610C0135; Sun, 16 Feb 2025 10:38:28 +0100 (CET)
-Date: Sun, 16 Feb 2025 10:38:28 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS fixes for v6.14
-Message-ID: <Z7GyFB5hAays_aII@alpha.franken.de>
+	s=arc-20240116; t=1739698830; c=relaxed/simple;
+	bh=zCIUMQNWbz0RyKAwHEoIEGbL6E4OPshHS5Xt4dnxspk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UW9/7LlGwzNHYrXv7U8a1rPzXzefApvrdMXdbBhXFqLAZd+ZgsVCfvqX8zCAxKTBhgIVYHpbJFUl4k61DZK2O/3nTZfNPaIjj5MoYJlByoEJPfUUithhajaPYLeuq/SQXwQXF1k0N5gmZ1fZ2m+lDkiixBhC/UyUljgLcnvJoHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 51G9deOg002270;
+	Sun, 16 Feb 2025 10:39:40 +0100
+Date: Sun, 16 Feb 2025 10:39:40 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/nolibc: only run constructor tests on nolibc
+Message-ID: <20250216093940.GA2192@1wt.eu>
+References: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250212-nolibc-test-constructor-v1-1-c963875b3da4@weissschuh.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+On Wed, Feb 12, 2025 at 07:01:01PM +0100, Thomas Weiﬂschuh wrote:
+> The nolibc testsuite can be run against other libcs to test for
+> interoperability. Some aspects of the constructor execution are not
+> standardized and musl does not provide all tested feature, for one it
+> does not provide arguments to the constructors, anymore?
+>
+> Skip the constructor tests on non-nolibc configurations.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+I'm not much surprised, I've always avoided arguments in my use of
+constructors due to a lack of portability. However the patch disables
+all constructors tests, while I'm seeing that the linkage_test version
+does not make use of arguments, though there is an implied expectation
+that they're executed in declaration order, which is not granted.
 
-are available in the Git repository at:
+I'm wondering if we shouldn't make the tests more robust:
+  1) explicitly set linkage_test_constructor_test_value to zero in the
+     declaration, because here it's not set so we have no guarantee
+     (we're not in the kernel)
+  2) only add values to check for cumulated values (e.g. |1 in const1,
+     |2 in const2) and verify that the result is properly 3
+  3) make the argument test add a distinct value (|4) so that when
+     testing it's instantly obvious which test was not called.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.14_1
+And indeed, we can disable the tests we know fail on other libcs and
+even split that by feature (e.g. test that at least one constructor
+was called using !=0, that all non-arg ones were called via &3 == 3,
+and that the args were passed via &4==4). That would allow to further
+refine the tests if desired so that we can keep the differences in mind.
 
-for you to fetch changes up to 733a90561ad0a4a74035d2d627098da85d43b592:
+In any case all of this can also be done later, and I'm obviously fine
+with this immediate adjustement.
 
-  MIPS: fix mips_get_syscall_arg() for o32 (2025-02-13 12:41:29 +0100)
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-----------------------------------------------------------------
-Fix for o32 ptrace/get_syscall_info
+Acked-by: Willy Tarreau <w@1wt.eu>
 
-----------------------------------------------------------------
-Dmitry V. Levin (1):
-      MIPS: fix mips_get_syscall_arg() for o32
-
-Maciej W. Rozycki (1):
-      MIPS: Export syscall stack arguments properly for remote use
-
- arch/mips/include/asm/ptrace.h  |  4 ++--
- arch/mips/include/asm/syscall.h | 32 ++++++++------------------------
- arch/mips/kernel/asm-offsets.c  |  6 ++++++
- arch/mips/kernel/scall32-o32.S  |  8 ++++----
- 4 files changed, 20 insertions(+), 30 deletions(-)
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Willy
 
