@@ -1,117 +1,169 @@
-Return-Path: <linux-kernel+bounces-516746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3D5A37684
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:21:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA219A37692
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BD1188F3CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:21:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B31F16D733
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A33019DF8B;
-	Sun, 16 Feb 2025 18:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B70719E96D;
+	Sun, 16 Feb 2025 18:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXGG9reU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6MrxurJ"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D566238385;
-	Sun, 16 Feb 2025 18:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D115319CC0C;
+	Sun, 16 Feb 2025 18:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739730077; cv=none; b=R2yU+mNwhSoGkw5f95JS1n9qZL17+vJOGnYTrf+kdHLI9D9BnHVkdTxZRoI3LUV+lNELIgC5pw/hycDh537hcBGfq4nWwLRtLyd0Q6A+gx7YaKQ//PQNMBMoO+sMHL8ZuzJl8F5ttx1gkLNG1exiMmixw4VfmSJruP4dFC81HgE=
+	t=1739730365; cv=none; b=FFyJhGQGz+itneIXl+AL3T4xAoYJwjqwLsLu+Ba8OptN+qDgHCZll9cUozi+rPihKgmQISm1B/pGI1WAt0kcmGSzfLetRr7P2EZFoN1ganlGBr/CeNW48lkpXIFEOhy+odqnkjWSeK++FGfBPL9Qozb6MHXfHpXQmgwzxiqyyIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739730077; c=relaxed/simple;
-	bh=iT7RkO2CCHiOUnzQAXrW2nBT25Icnok0W558wVUTTBU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EaqGeJCxtDq6LbS4H0bIQ867zpvDm3X5CAtujRDVeX/3uKDdtt6sTF6NbGvtjP6VRvQSR/9TOrCzNpDP9WUpVa7LLkHCYiszU9dlKEgYGMl20xryD9byZCZcIgK+n72hSPeUNzKecy3KuzfEsaFAId8J+jAeO7DTfNxCQcQ6qt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXGG9reU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFB6C4CEDD;
-	Sun, 16 Feb 2025 18:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739730074;
-	bh=iT7RkO2CCHiOUnzQAXrW2nBT25Icnok0W558wVUTTBU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fXGG9reUQ/BpKUNmvhgyt+U6oWzw0iVZfJlJxFVHOKuWGbZdmee3mijN4bNPTHTTm
-	 3SkMLQ4DZUeLszWZDz96wIQv3zuUJh5Hpa6vjgJa7zNDC6n1NL18co0JZV7o5+O3b6
-	 lZWnuV6UdCcwCNFeLhee5XnnN1/1ghNcaUEJ9TJ9r3h/L3gAQDZZDGIG7jPbgEf2G1
-	 37vYBucmxT/PBmW/GBlNxjy9d61Y2+U71/fpoWNUSEhIbXgvFqnYO88G1mUEsxKU41
-	 MYWL80HzR18sRtrcXtsYVRcqnqrLH/es0z8Jj70XgGWGzjADMoxsBW2L9KxW3eTSbO
-	 UlRI1qA8k1q3Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tjjGR-004bCu-Sa;
-	Sun, 16 Feb 2025 18:21:11 +0000
-Date: Sun, 16 Feb 2025 18:21:11 +0000
-Message-ID: <86ikp9sqco.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	XiaoDong Huang <derrick.huang@rock-chips.com>,
-	Peter Geis <pgwipeout@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	kernel@collabora.com
-Subject: Re: [PATCH v1 1/4] irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
-In-Reply-To: <ac4afb67-9ec7-405a-acf9-6287b30320d4@collabora.com>
-References: <20250215235431.143138-1-dmitry.osipenko@collabora.com>
-	<20250215235431.143138-2-dmitry.osipenko@collabora.com>
-	<87seoe1aeu.wl-maz@kernel.org>
-	<ac4afb67-9ec7-405a-acf9-6287b30320d4@collabora.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739730365; c=relaxed/simple;
+	bh=wr+XCAgPgbGifaV9zuo3NuEbKxQ2q/ycgpn4NRzl2+s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Az896elNg31gppilXasUnBEmP8iob0x1lEqLCOQZigm+oUTXp8Gda7g7cAGp0vzeiQ3cpIAFmL39Gu4z/tjLJ1QdfaRKIR4462uSV1O1zCJDLtXQEj5MxrJOD2CfrwWojMJ21m204dUThswS3AGCbRj9YFDV4wNG3IhnZqTHko4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6MrxurJ; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f2b7ce319so1919510f8f.2;
+        Sun, 16 Feb 2025 10:26:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739730362; x=1740335162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
+        b=N6MrxurJjN8z8buRiZs72gexX7Um31Ns03LeMVyANjz9u0yCaVste/cQ0ZGuRsae9t
+         dD0jVzVSVR+XU10gk6GjDqPIvNaGAK3nybcgfYGJ5trlixnMnfyaAJP8tUM8X6ttI0rE
+         bHDDc4cbymx71lXCIzXq7GcpEp6NaY9hkWVCX8CkfbVvtryqCJIoQlNb32zyO/XmMppJ
+         jzUy4zaQUeVFqTI4Ek2EOZ23tUdUDwFYGbpr+dvR7mLEfiaiWWGNzSl+Or8j/VfBtDca
+         Ub25IXCz8wrgo1JwxfAaeJtsMe6zIonkoIU6F3+n0m0Tkq8CoeCXElFWNwmVtVRSfsw+
+         EDZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739730362; x=1740335162;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G6THbQSx/8fAHe9PzsDdfiskI2J1Cdkq06AblUO8EgA=;
+        b=IkoxBRo4PDws3lQYmska8SR/BbUcC/zzv4soIPB6DE6aF7Ygc3hJEy9TsJSxEvoYWc
+         ZNA8k2wMVNIXT3yBgZWH5BYpAvqPSaFWCzCSRWasuBGPl/Ispl8aRL33UiSmEdM9S7fX
+         wp8psA+IM5iXxzI8CovmKMnQQUHMnJESA+k4jllVaeAZG4kuOznHzP1vuD4gC/xSyUuV
+         DSN/mICzDqe1OxvregSr2NWPFaLrTj8j25oCtMUX/Z3glQBIoGhx2nq2hYq1UfnRRNzK
+         MiN8oyskz2B5fZB9mc45M1onUoqUKlx/he5Osz30cCuOnRFCCXD1hkDoQ18cTec1No+l
+         R76g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxr8XcJaIrSYbbHed8qWlP1k+Nudd8K22BRZkskQQeAHOID67aIa0yNQ+Ok9/kw0b9RNL+I7PQXHSZ@vger.kernel.org, AJvYcCWc7OHeyHpHobzwcbJEheGEv0Kykze73FSHXb2cVBeQx+g62ztRH0s96FggqxKJAfopEiHYxwCPZErNKw1nw7Btfes=@vger.kernel.org, AJvYcCWfNG0M7deqsPIv4qN5kEO3ftCi0eEwu2GBXJht6PCaAOoXQhNY9LNuQeE6+cW49M5CWDerGcCt0Kb8FFDI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo5KjupfA9/F2iLKnngsdttBcHfWPlGaLGGxJtdfeNhUe7UFMQ
+	HGNKZYHp4jtyoBg8n+pOUjSxrPRFPcUA6+GhxuNsV0mpnyIvJsKd
+X-Gm-Gg: ASbGncuieaXeU6S+UPmx9kkdTgEvHpdzkWeTpvxIqFsGv+EpWFLE6cqjitHInQ3kyxK
+	k538sSBUwk6SgklF6lAW93Ss2mcKV018prtqVvayMNVGcJpJ/Z7Tjv+CPRV1U/u6VSTQpl4VboY
+	SEc5PA3tQ1CDF2hn16VSTvE9GCdW2N2mTsZl3WAiBj2OhoByTzq0npBoB0d6pdBZFZnRWkbM3Nv
+	kmqASqm3Or206qrDx8g+/tMUECM2BwhOMKz/umtiiiSQjGxQE0jsvbaJ4nVkH3Kgvx/PuTA8n4X
+	/bUPgm+r4XWZgLXXJhINUxDh4FVv4vxr20rwq/o2rnSu5UragrNs0n8FXeibz7AK54kfsA==
+X-Google-Smtp-Source: AGHT+IGr42oNfHQVVm7EhzTuFuuHWgflwzxpqf7PlmDhyAn8X5YOs8yIU+uV1nWQeu6T0SPpjYT2CA==
+X-Received: by 2002:adf:f9cc:0:b0:38f:231a:635e with SMTP id ffacd0b85a97d-38f33f2c2cbmr6494370f8f.25.1739730361813;
+        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7df2sm10192625f8f.84.2025.02.16.10.26.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2025 10:26:01 -0800 (PST)
+Message-ID: <aede22df-8930-4854-8269-6cb12b8fb2b8@gmail.com>
+Date: Sun, 16 Feb 2025 20:25:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dmitry.osipenko@collabora.com, heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kever.yang@rock-chips.com, derrick.huang@rock-chips.com, pgwipeout@gmail.com, robin.murphy@arm.com, kernel@collabora.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
+ <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
+ <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
+ <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
+ <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
+ <065ea296-480c-4ac4-bb4a-0fc2915b59f1@kernel.org>
+ <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
+In-Reply-To: <cc6fc19e-cdcb-42bb-ba68-555cb8a9cbf5@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 16 Feb 2025 15:25:53 +0000,
-Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> 
-> On 2/16/25 12:55, Marc Zyngier wrote:
-> > On Sat, 15 Feb 2025 23:54:28 +0000,
-> > Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> >>
-> >> Rockchip RK3566/RK3568 GIC600 integration has DDR addressing
-> >> limited to first 4GB of DRAM. Rockchip assigned Erratum ID #3568002
-> >> for this issue. Add driver quirk for this Rockchip GIC Erratum.
-> > 
-> > Thanks for taking the time to submit this. It only took 5 years for
-> > this erratum to be published...
-> 
-> The erratum document itself actually is dated by 5 years ago. Only wish
-> the doc was made publicly available, which would've accelerated the
-> upstreaming process.
+On 2/16/25 15:57, Ivaylo Ivanov wrote:
+> On 2/16/25 15:19, Krzysztof Kozlowski wrote:
+>> On 16/02/2025 10:51, Ivaylo Ivanov wrote:
+>>>>>>  You need to
+>>>>>> integrate the changes, not create duplicated driver.
+>>>>> I can do that, but it would be come a bit cluttered, won't it? Depends on
+>>>>> if we want to follow the current oem-provided initialization sequence, or
+>>>>> try and fully reuse what we have in there.
+>>>> I think it duplicates a lot, so it won't be clutter. We have many
+>>>> drivers having common code and per-variant ops.
+>>> So the approach to take here is to make a common driver?
+>> For example: one common module and two modules per each soc, because I
+>> assume some per-soc stuff might be needed. But maybe even these two
+>> modules are not necessary and everything could be in one driver.
+...
+>
+> So, Exynos2200 has a much simpler eusb initialization sequence than what
+> is present in mainline for QCOMs. I still don't really think the drivers
+> should be merged, as we aren't really duplicating code per-say.
+>
+> I've already started working on merging them, and my current idea is to
+> not redefine the registers once again for 2200, but rather make an enum
+> that defines if the SoC is a QCOM or EXYNOS, and select the register
+> offsets dynamically
 
-The funny thing is that RockChip was very public about the issue in
-2019, but refused to acknowledge that it was a bug (see the list
-archives). 5 years lost with bad performance and bad upstream support,
-only to finally admit the bleeding obvious.
+Never mind. That's a bad idea - after more digging way too much bits differ
+not just the register layout. I'll implement the init/exit sequence in the
+qcom driver separately. Sadly I can't reuse much code.
 
-On the other hand, we're getting close to 10 years of rk3399, and the
-botched integration of GIC500 still hasn't been officially disclosed.
-I guess this counts as progress ;-).
+Best regards,
+Ivaylo
 
-	M.
+>  - similarly as how I did with USIv1. If a register
+> offset is not present, it'd just not do the write. My guess is that this
+> will make it work with the qualcomm init sequence as well, so it'd result
+> in even less redundant code (apart from the eUSB tuning, which can be
+> omitted for now).
+>
+>>> What about the current modelling scheme, as-in taking the phandle to
+>>> the usbcon phy and handling it?
+>> What about it? 
+> As I said in the commit description, I'm passing the USBCON phy as a
+> phandle to the eusb2 node and enabling/disabling it when needed. I'm
+> not 100% sure it would be adequate to include that in a common snps EUSB
+> driver, as it seems to more of a quirk with the exynoses. But then how
+> can I model it so that it's correctly described according to how the
+> hardware works (as-in usbcon "muxing" between child phys, in this case
+> eUSB and snps USBDP combophy)
+>
+> Regarding repeaters, I still don't have the TI repeater implemented.
+>
+> Best regards,
+> Ivaylo
+>
+>> Did you look at the bindings of qcom snps eusb2? Are you
+>> saying you do not have here repeater? If so, then this phy phandle might
+>> not be correct.
+>>
+>>
+>>
+>> Best regards,
+>> Krzysztof
 
--- 
-Without deviation from the norm, progress is not possible.
 
