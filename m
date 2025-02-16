@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-516743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AC7A37675
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:09:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD839A3767E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED6616DB87
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2322716E3A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E532919CC34;
-	Sun, 16 Feb 2025 18:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2654918A92D;
+	Sun, 16 Feb 2025 18:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7T9LPn/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="fRSHGNjN"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4628825771;
-	Sun, 16 Feb 2025 18:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E61494DF
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739729366; cv=none; b=fVgrtwIs9ed3xxfYDt0arEi10r3v4DdPBrUKijio+s5sMKM5/He+bd6jDUfz/B5vkKx+BLzpCa+oZWe7qr48bRt4fsoKaVMGFwv214GdtyxDYShwl+yM/2nEZISj2c3gXPp102rYfmwPaNYm07mXODSy/fvhz+wxpvcvaOewTww=
+	t=1739729555; cv=none; b=REA9itWpk7QQ8n0YA3zwvG1TvffNKcsdHXsUw5wVGBXouFZBH3fvgcj94JlIGZRXtllaOdnM4fATd+3llwm3+CsrB6Pk3kLJOI+8GIrbyZelP59Ge0KrWvVh+1M/jCvM4OlnI0ypeVwr8rJxoUY0dmd57Cg+WNkZ8oTD8P3VQ7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739729366; c=relaxed/simple;
-	bh=O/E/r5ASZKXffJhOIy6Fl6+74Z3ePdDBUDsU152mGFo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pFv5CANTSvKpmvaDC3IyshTEUxSZPwVHh5eavLCKKxEKvlU5savl9vCsFeUsKTwEEcKFtB0Rqu/Re6aa2d4Jegh/g0MlH6L4pW4ZtmR1ZnAwnE7AZK19dJpyO2uYL2qAYHkcin60t6adxH+xDv5/JQxxdJQ8RChBEx+P2EhaLpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7T9LPn/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44A3C4CEDD;
-	Sun, 16 Feb 2025 18:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739729365;
-	bh=O/E/r5ASZKXffJhOIy6Fl6+74Z3ePdDBUDsU152mGFo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H7T9LPn/uWmvfZ3KjI/F5rPc6+db5eXkhogkBeuN9CI8rMEPFVh7XxqOL8KB06fKl
-	 qVmjn6fQlFMHzLN5F6ExW0YX8OK1LO6DJIg5ODqks3r1WAgAOz+fkKUDFWoZqQnDOn
-	 lLx70FoaNJ7P57N0iWy7/zZM8QIXgTXy5iN8i+o49YCWbpO6eYzQFr1/h8GFwUthbq
-	 3oco4TwdcLfZg+Jmz2tdM2MTnC7r6gFRBLyL2xnfq5/O57ihh/pvznnwv/tV/YV0GQ
-	 gAUz+veYkHclqDTncQWNEAXgDS5Q0o5v1UDkzI8aUkSzX0/S1p+4Ulk4yZopzxQ+8A
-	 M6Y9AaMq+bKjA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tjj51-004b85-7o;
-	Sun, 16 Feb 2025 18:09:23 +0000
-Date: Sun, 16 Feb 2025 18:09:22 +0000
-Message-ID: <86jz9psqwd.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: luoyonggang@gmail.com
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Sebastian Ott <sebott@redhat.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] KVM: arm64: Allow userspace to change MIDR_EL1
-In-Reply-To: <CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
-References: <20250211143910.16775-1-sebott@redhat.com>
-	<20250211143910.16775-2-sebott@redhat.com>
-	<Z7BoydkyT_h0gwOV@linux.dev>
-	<CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
-	<87v7tb17os.wl-maz@kernel.org>
-	<CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1739729555; c=relaxed/simple;
+	bh=YUqph/b4fBwdoaZ+voCpRWWS6XtVpDBsEp5ssxllxE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gu7+3hU8Gdk9JvR5W9RVmTKM1VxyAOELxsy5fOKmfwlXRI/QfrlWZFAueM+SEhaTkjzALiNI9+cesFo7fB/kcxjgd2aICnOcG7xPWoh/Ld5fFWxJ0wairG0rzFldO6aujGnA65Iq0VlfVS3XOZBFrBDFwR2qlPKPWBbB9WNjqhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=fRSHGNjN; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 16EB9240103
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 19:12:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1739729552; bh=YUqph/b4fBwdoaZ+voCpRWWS6XtVpDBsEp5ssxllxE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=fRSHGNjNl1cAmfChbInU63IRKQoTu0JS4Iplfwe6RMf1WKD/8cj1/It/DYf7mq3SO
+	 YYOBmVZjU/UUQJtErfw/Vv/SWTzbu0/FmZcn4PFWEYFufoigcMrJ61CTy3Gy4uYAVr
+	 4uv3Ys+FTeiG5ex24zqk1VNfKtgXa/Ga0Qt74Mcc4toniz1OCmFfwdFl7CoZHKfDJ3
+	 C3HrXTooDAaMfAUdpm7iRMmLtB2EVfetl428iA4VwI1k2D77rjkmG+2NR0fcpU+07m
+	 N2K7T2bnW27tZzoW2bN0x+LJuOe6avDzrxNt7l22CJifL2g9IzlI/a2ptu6b9mjJGi
+	 0xKN+sirq5c2A==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4Ywv5R2d3Hz9rxK;
+	Sun, 16 Feb 2025 19:12:27 +0100 (CET)
+Date: Sun, 16 Feb 2025 18:12:26 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= via B4 Relay <devnull+j.ne.posteo.net@kernel.org>,
+	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, j.ne@posteo.net,
+	imx@lists.linux.dev, Scott Wood <oss@buserror.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 12/12] dt-bindings: mtd: raw-nand-chip: Relax node
+ name pattern
+Message-ID: <Z7Iqir-qaZDt6tsx@probook>
+References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
+ <20250207-ppcyaml-v2-12-8137b0c42526@posteo.net>
+ <87o6zaurv9.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: luoyonggang@gmail.com, oliver.upton@linux.dev, sebott@redhat.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, shameerali.kolothum.thodi@huawei.com, cohuck@redhat.com, eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87o6zaurv9.fsf@bootlin.com>
 
-On Sat, 15 Feb 2025 19:04:20 +0000,
-"=E7=BD=97=E5=8B=87=E5=88=9A(Yonggang Luo)" <luoyonggang@gmail.com> wrote:
->=20
-> According to this, the MIDR EL1 is updated properly, but the MIDR for
-> aarch32 is not updated, and I don't know how to hook the update for
-> MIDR for aarch32
+On Mon, Feb 10, 2025 at 09:27:22AM +0100, Miquel Raynal wrote:
+> Hello,
+> 
+> On 07/02/2025 at 22:30:29 +01, J. Neuschäfer via B4 Relay <devnull+j.ne.posteo.net@kernel.org> wrote:
+> 
+> > From: "J. Neuschäfer" <j.ne@posteo.net>
+> >
+> > In some scenarios, such as under the Freescale eLBC bus, there are raw
+> > NAND chips with a unit address that has a comma in it (cs,offset).
+> > Relax the $nodename pattern in raw-nand-chip.yaml to allow such unit
+> > addresses.
+> 
+> This is super specific to this controller, I'd rather avoid that in the
+> main (shared) files. I believe you can force another node name in the
+> controller's binding instead?
 
-It is the same thing. The AArch32 view is configured the same way as
-the AArch64 view, and there is nothing to do at all (that's what
-VPIDR_EL2 is all about).
+It's a bit tricky. AFAICS, when I declare a node name pattern in my
+specific binding in addition to the generic binding, the result is that
+both of them apply, so I can't relax stricter requirements:
 
-With Oliver's change, I'm correctly getting a different MIDR using a
-hacked up kvmtool, see below. I suspect you're not running with the
-correct patch applied.
+# raw-nand-chip.yaml
+properties:
+  $nodename:
+    pattern: "^nand@[a-f0-9]$"
 
-	M.
+# fsl,elbc-fcm-nand.yaml
+properties:
+  $nodename:
+    pattern: "^nand@[a-f0-9](,[0-9a-f]*)?$"
 
-* kvmtool hack:
+# dtc
+/.../fsl,elbc-fcm-nand.example.dtb:
+nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
+        from schema $id:
+	http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
 
-diff --git a/arm/aarch64/kvm-cpu.c b/arm/aarch64/kvm-cpu.c
-index c8be10b..f8ecbfe 100644
---- a/arm/aarch64/kvm-cpu.c
-+++ b/arm/aarch64/kvm-cpu.c
-@@ -128,6 +128,18 @@ static void reset_vcpu_aarch64(struct kvm_cpu *vcpu)
- 	}
- }
-=20
-+static void reset_vcpu_midr(struct kvm_cpu *vcpu)
-+{
-+	struct kvm_one_reg reg;
-+	u64 midr =3D 0xbadf00d5;
-+
-+	reg.id =3D ARM64_SYS_REG(ARM_CPU_ID, 0);
-+	reg.addr =3D (u64)&midr;
-+
-+	if (ioctl(vcpu->vcpu_fd, KVM_SET_ONE_REG, &reg) < 0)
-+		die("KVM_SET_ONE_REG failed (set_midr vcpu%ld", vcpu->cpu_id);
-+}
-+
- void kvm_cpu__select_features(struct kvm *kvm, struct kvm_vcpu_init *init)
- {
- 	if (kvm->cfg.arch.aarch32_guest) {
-@@ -181,6 +193,8 @@ void kvm_cpu__reset_vcpu(struct kvm_cpu *vcpu)
- 			die_perror("sched_setaffinity");
- 	}
-=20
-+	reset_vcpu_midr(vcpu);
-+
- 	if (kvm->cfg.arch.aarch32_guest)
- 		return reset_vcpu_aarch32(vcpu);
- 	else
+(I changed the second pattern to nand-fail@... and dtc warned about it
+ mismatching too.)
 
-* arm64 host:
+Perhaps I'm missing a DT-schema trick to override a value/pattern.
 
-$ cat /proc/cpuinfo=20
-processor	: 0
-BogoMIPS	: 200.00
-Features	: fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
-CPU implementer	: 0x41
-CPU architecture: 8
-CPU variant	: 0x0
-CPU part	: 0xd03
-CPU revision	: 4
+Alternatively (pending discussion on patch 11/12), I might end up not
+referencing raw-nand-chip.yaml.
 
-* arm64 guest:
 
-# cat /proc/cpuinfo
-processor	: 0
-BogoMIPS	: 200.00
-Features	: fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
-CPU implementer	: 0xba
-CPU architecture: 8
-CPU variant	: 0xd
-CPU part	: 0x00d
-CPU revision	: 5
-
-* arm32 guest:
-
-# cat /proc/cpuinfo=20
-processor	: 0
-model name	: ARMv7 Processor rev 5 (v7l)
-BogoMIPS	: 200.00
-Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vf=
-pd32 lpae evtstrm aes pmull sha1 sha2 crc32=20
-CPU implementer	: 0xba
-CPU architecture: 7
-CPU variant	: 0xd
-CPU part	: 0x00d
-CPU revision	: 5
-
---=20
-Without deviation from the norm, progress is not possible.
+Best regards,
+J. Neuschäfer
 
