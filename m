@@ -1,76 +1,112 @@
-Return-Path: <linux-kernel+bounces-516640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F78CA3752C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:41:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CAFA3752F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:42:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755DE16E893
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE63188F359
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BC31922E0;
-	Sun, 16 Feb 2025 15:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZKlpxwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF1D1F94C;
-	Sun, 16 Feb 2025 15:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDA19048D;
+	Sun, 16 Feb 2025 15:42:05 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E45E567;
+	Sun, 16 Feb 2025 15:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739720483; cv=none; b=pNVNDSGxzPcESRjVHS88gwXsr/ps4B5rGfpgsxUEm5jJZe2z5EUj2AHe5F3WohPdOzMl8Rp4W5IUlauy3tLJ5xcN4f+Xk1zWn+mT5CRcoB+G7m3k8B4GKM4K3Up+keQgTxKyFTg5mJhIV19oVeRzEh1kIOhjOnY+e5HvnOJmSC8=
+	t=1739720525; cv=none; b=TG3u3NDTCdAOpJiKEDGSyLhKiUd0RDfkhLypLsOjDGmJYsD3KhTMNVsgFjBoKeVAxi8dsVXlmvJzoXfj25LrwAm3iLPbnhPfJv9cGHtFYURQ4Ech1m1vFRAOM1BoO5J/2DHGB8npymumwPjp1q/YvOfuZobntjR0hKnrf7ClxzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739720483; c=relaxed/simple;
-	bh=m7R21IgthMwbzYas9Ri7Wmr+fjBjc8DbdQNopPbTE2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cZbgsYig21is7S3iJ4G2QwAVycMapdAKHF0yIqObsbXwK6yJtXxBnRSz8P+pxz8bDx6zGA8oydP2T2bB3+tu+zw9JDhy9vA6WJ3pU97O9/HmFfUqVFoqh3YUvWFZTtQsxgb6mK7R6Mfinn2mFi7C57SOHUq7Jhx5N7LnQxQOgMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZKlpxwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0656FC4CEDD;
-	Sun, 16 Feb 2025 15:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739720482;
-	bh=m7R21IgthMwbzYas9Ri7Wmr+fjBjc8DbdQNopPbTE2Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HZKlpxwEFoVmHgvooKn6+dCYvyTwwb7oVhP8k4AeVymSVjSROoARlnE2PfG1pZMQe
-	 Tfx0P/zO2pLvxC/TWCQ01g8RlCExz25puLlmJNK2EYSdd1737zo04DPx87uypIPqvY
-	 ByaFadIwXhsgJU5Cv+FVrQ1ePiQyhKKV75/ttG74VF9EvjF2fbVSh09VrZ3subpCsb
-	 Z9J/ndJgv5tcC4YEdTuV/TTZGAiLg5oVKE8z8lX/32Spd8w1SUph/5+pTjwYxeSI50
-	 55rAyNtK6AHSZftsEb6xIjfr9iF1ysMRsaIdPMOqApdqKmT7mtGJqctWDyWM5n9/3+
-	 hbyB1s60fupvA==
-Date: Sun, 16 Feb 2025 15:41:13 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Esteban Blanc <eblanc@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] docs: iio: ad4030: add documentation
-Message-ID: <20250216154113.08636975@jic23-huawei>
-In-Reply-To: <20250214-eblanc-ad4630_v1-v4-6-135dd66cab6a@baylibre.com>
-References: <20250214-eblanc-ad4630_v1-v4-0-135dd66cab6a@baylibre.com>
-	<20250214-eblanc-ad4630_v1-v4-6-135dd66cab6a@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739720525; c=relaxed/simple;
+	bh=eSzKgV/qkiFhJkkCzIQX0Z+jgrhpsUclZiqEZFUe9z8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EFQJUbTnxvYto+4BOb/tXtV9PUBj9VyNfNCQxGKIklex8K82YjSoI6uZZ+j9Zuzlg51sMkAEfBzLXug98xAEAoIQIZLBf2JVZ/e6Bree1JDMB8PKZp/709boCP1YxQb6dTLXYvQK0/RfwhuUJTpCOiNz95gxtOuGLnCHjagLc80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 5DB2792009C; Sun, 16 Feb 2025 16:41:55 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 574B892009B;
+	Sun, 16 Feb 2025 15:41:55 +0000 (GMT)
+Date: Sun, 16 Feb 2025 15:41:55 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-mips@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] tools/nolibc: add support for N64 and N32 ABIs
+In-Reply-To: <20250212-nolibc-mips-n32-v1-1-6892e58d1321@weissschuh.net>
+Message-ID: <alpine.DEB.2.21.2502161523290.65342@angie.orcam.me.uk>
+References: <20250212-nolibc-mips-n32-v1-1-6892e58d1321@weissschuh.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On Fri, 14 Feb 2025 13:22:36 +0100
-Esteban Blanc <eblanc@baylibre.com> wrote:
+On Wed, 12 Feb 2025, Thomas Weißschuh wrote:
 
-> This adds a new page to document how to use the ad4030 ADC driver
-> 
-> Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
-There was a bonus blank line at the end of this one as well.
-I dropped it.
+> diff --git a/tools/include/nolibc/arch-mips.h b/tools/include/nolibc/arch-mips.h
+> index 753a8ed2cf695f0b5eac4b5e4d317fdb383ebf93..638520a3427a985fdbd5f5a49b55853bbadeee75 100644
+> --- a/tools/include/nolibc/arch-mips.h
+> +++ b/tools/include/nolibc/arch-mips.h
+> @@ -190,13 +257,33 @@ void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector __
+>  		"1:\n"
+>  		".cpload $ra\n"
+>  		"move  $a0, $sp\n"       /* save stack pointer to $a0, as arg1 of _start_c */
+> +
+> +#if defined(_ABIO32)
+>  		"addiu $sp, $sp, -4\n"   /* space for .cprestore to store $gp              */
+>  		".cprestore 0\n"
+>  		"li    $t0, -8\n"
+>  		"and   $sp, $sp, $t0\n"  /* $sp must be 8-byte aligned                     */
+>  		"addiu $sp, $sp, -16\n"  /* the callee expects to save a0..a3 there        */
+> -		"lui $t9, %hi(_start_c)\n" /* ABI requires current function address in $t9 */
+> +#else
+> +		"daddiu $sp, $sp, -8\n"  /* space for .cprestore to store $gp              */
+> +		".cpsetup $ra, 0, 1b\n"
+> +		"li    $t0, -16\n"
+> +		"and   $sp, $sp, $t0\n"  /* $sp must be 16-byte aligned                    */
+> +#endif
 
+ Why is this code breaking stack alignment just to have to fix it up two 
+instructions down the line?  Or is it that the incoming $sp is not aligned 
+in the first place (in which case we're having a deeper problem).
+
+> +
+> +		/* ABI requires current function address in $t9 */
+> +#if defined(_ABIO32) || defined(_ABIN32)
+> +		"lui $t9, %hi(_start_c)\n"
+>  		"ori $t9, %lo(_start_c)\n"
+> +#else
+> +		"lui  $t9, %highest(_start_c)\n"
+> +		"ori  $t9, %higher(_start_c)\n"
+> +		"dsll $t9, 0x10\n"
+> +		"ori  $t9, %hi(_start_c)\n"
+> +		"dsll $t9, 0x10\n"
+> +		"ori  $t9, %lo(_start_c)\n"
+
+ This could be optimised using a temporary (e.g. $at, but I guess any will 
+do as I gather we don't have any ABI abnormalities here).
+
+> +#endif
+> +
+>  		"jalr $t9\n"             /* transfer to c runtime
+> */
+>  		" nop\n"                 /* delayed slot
+
+ On an unrelated matter JALR above ought to be JAL (or otherwise there's 
+no point in using the .cprestore pseudo-op).  And I fail to see why this 
+code has to be "noreorder" (except for the .cpload piece, of course), it's 
+just asking for troubles.
+
+  Maciej
 
