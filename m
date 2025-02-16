@@ -1,199 +1,164 @@
-Return-Path: <linux-kernel+bounces-516676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80834A375AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:21:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9DAA375B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567681884A91
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC94A7A2FB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D2619ABAB;
-	Sun, 16 Feb 2025 16:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349BB19ABCE;
+	Sun, 16 Feb 2025 16:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba0Ts5BV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1C49KRH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417A21B808;
-	Sun, 16 Feb 2025 16:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B94191499;
+	Sun, 16 Feb 2025 16:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739722901; cv=none; b=YcDHgN+Fsm7oB+o9+jDo6fj98rSpHXznL1qGti2L/juFCOMMwHAUk8Afzl83mlZgKknGF30gbqtNvtfY7y4UB+BI2vwnkLALxO/5CMMCda5ONhIbFbaRucJFwxoVGPqr8Q+dQV88unasvoJIMY/OsWlZL/JZFQrOPjaS7JzoGGo=
+	t=1739723192; cv=none; b=lm968MhnMnEnzBkLLcASt5AX6p4HJnznsUiW1f8JafjCX7sRacoZJ/rSNTlVzsv35v8N+D8xXeJp6pwzxHTn/9CZhYUrRPfvrFZfvlNzQnxZLhKy2nnj3+Y3ztNEcK7trP1gvqpI0WmMw3uAaHj8etpAfpmVKti5HOpFxnXtwQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739722901; c=relaxed/simple;
-	bh=fT2zYqJ6YLeX9QSBNjyLADGTECUTNaknokkdN6W1JFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Th55akttqFfJ4H6+xIH2Vxoy7qZfvkjIAf+3W/rFTSLA4NvTBLu5LGjZE/Vf+TGzERwaNiuX2blmZ4B+CNSYFtoHIfmT+dwXa6gxpVwEVxMXSsXrlbp1LhXZ5BRpm5D169Zt8K4X6Xh30+dsDX2vY4mWGq++jlls1D4nOhGiu4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ba0Ts5BV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A940C4CEDD;
-	Sun, 16 Feb 2025 16:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739722900;
-	bh=fT2zYqJ6YLeX9QSBNjyLADGTECUTNaknokkdN6W1JFE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ba0Ts5BVlDLjr2cniFRNNRjBTB7Xai2R/EIDFg1mvKBXWa4sV4yqZuxMF/7H+SQCc
-	 u5ay3x3Q1xX09FKUDRhQXyzgWinQmXGpyyhHM5JBVsSCQPn+RzdG+UeZzeNTf+FA6h
-	 dC7R8h2LjAuMCyv9ZkavCJyz86R3yiF6C2gK2QIGFyKSyQc3SmI4zkM9oZXORvqzzq
-	 SEed9CF+ccUyo318XGJ3oNYEzUrBKzdh+Fvf5dZdZ1E7bltHpuZfTG/hJ5BUZFuNLz
-	 ZuMGqyeyzniD81LcDS4S7ViVK3qjJN+beXG/Q37NwD1+LkMzX5SZCqTauwo7N2lJ7N
-	 uDasgv3X3l70w==
-Date: Sun, 16 Feb 2025 16:21:30 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
- <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <jonath4nns@gmail.com>, <marcelo.schmitt1@gmail.com>,
- <dlechner@baylibre.com>
-Subject: Re: [PATCH RESEND v3 15/17] iio: adc: ad7768-1: replace manual
- attribute declaration
-Message-ID: <20250216162130.0de4f148@jic23-huawei>
-In-Reply-To: <ea5d5ef777d4d7d15471369813c1613990fee862.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
-	<ea5d5ef777d4d7d15471369813c1613990fee862.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739723192; c=relaxed/simple;
+	bh=pdXqxA4mn1LXn6gauTPZ9l945Lc3FsmLdchU+slJBRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGO46M7bX9gV1vNiCw4GFqS32YEJQdvVqNbCbDoSYZlBhhDQquH8SIolbdZ4wUQlc/faQBpyMByftMwuBNjceZn6261lXM1FlM9NTFa88WdlODqvpVN93A7dTLajE/ZCThyOR+OUUbb2Fi7sLB36SJ3gdp4MWATvi6qbvINT00o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1C49KRH; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739723191; x=1771259191;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pdXqxA4mn1LXn6gauTPZ9l945Lc3FsmLdchU+slJBRE=;
+  b=T1C49KRH79MV+4IJNZWBGxDXq+oiVzgPnbiNBGDbj5Q3d7cIuC42Q8ZL
+   xKaw9ShnRTKaN14rlpIF4k+BGNg890JzQiQAmoZTITMjmZSvFSuh96ec4
+   INMoU70sj1GvGLFheOek7e6uagqLoDhVoVyjQdwZsS5C6/2nOkHHADPGd
+   jCMM66rKR2bOKCHaDGK/q41R/HIEoo98QRReah7YfMASz4j3mRBfPTk8w
+   eNFoj6O8DV3qk0CB5WeFZjY2VjfwAROjhKfA3ChM/33VvTtunYjPJ3tU1
+   UEVptjLULUJXZkZUXIICtpdaGvD2egIR+Wd0UV4UwtBH9eSGH41wvGZYe
+   g==;
+X-CSE-ConnectionGUID: wfEbrep7T169fjt8nl3WMw==
+X-CSE-MsgGUID: IYWBG4NPTISIGnR88iX9rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="44066208"
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="44066208"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 08:26:30 -0800
+X-CSE-ConnectionGUID: j2rYBsrySEGjBWBSY7L+pA==
+X-CSE-MsgGUID: WsMvpPg4QAeFT7xmrFOKBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="114398676"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 16 Feb 2025 08:26:28 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjhTN-001C4N-1B;
+	Sun, 16 Feb 2025 16:26:25 +0000
+Date: Mon, 17 Feb 2025 00:25:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, brgl@bgdev.pl,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo
+ utilities
+Message-ID: <202502170056.DR6nbxpY-lkp@intel.com>
+References: <20250216125816.14430-6-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216125816.14430-6-koichiro.den@canonical.com>
 
-On Wed, 12 Feb 2025 15:18:48 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+Hi Koichiro,
 
-> Use read_avail callback from struct iio_info to replace the manual
-> declaration of sampling_frequency_available attribute.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
-> v3 Changes:
-> * New patch in v3.
-> ---
->  drivers/iio/adc/ad7768-1.c | 58 +++++++++++++++++---------------------
->  1 file changed, 26 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index 716cf3582577..8aea38c154fe 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -187,6 +187,7 @@ static const struct iio_chan_spec ad7768_channels[] = {
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
->  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
->  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> +		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
->  		.indexed = 1,
->  		.channel = 0,
->  		.scan_index = 0,
-> @@ -207,6 +208,7 @@ struct ad7768_state {
->  	unsigned int mclk_freq;
->  	unsigned int dec_rate;
->  	unsigned int samp_freq;
-> +	unsigned int samp_freq_avail[ARRAY_SIZE(ad7768_clk_config)];
->  	struct completion completion;
->  	struct iio_trigger *trig;
->  	struct gpio_desc *gpio_sync_in;
-> @@ -564,28 +566,6 @@ static int ad7768_set_freq(struct ad7768_state *st,
->  	return 0;
->  }
->  
-> -static ssize_t ad7768_sampling_freq_avail(struct device *dev,
-> -					  struct device_attribute *attr,
-> -					  char *buf)
-> -{
-> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> -	struct ad7768_state *st = iio_priv(indio_dev);
-> -	unsigned int freq;
-> -	int i, len = 0;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++) {
-> -		freq = DIV_ROUND_CLOSEST(st->mclk_freq,
-> -					 ad7768_clk_config[i].clk_div);
-> -		len += scnprintf(buf + len, PAGE_SIZE - len, "%d ", freq);
-> -	}
-> -
-> -	buf[len - 1] = '\n';
-> -
-> -	return len;
-> -}
-> -
-> -static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(ad7768_sampling_freq_avail);
-> -
->  static int ad7768_read_raw(struct iio_dev *indio_dev,
->  			   struct iio_chan_spec const *chan,
->  			   int *val, int *val2, long info)
-> @@ -633,6 +613,29 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
->  	return -EINVAL;
->  }
->  
-> +static int ad7768_read_avail(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     const int **vals, int *type, int *length,
-> +			     long info)
-> +{
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int i;
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++)
-> +			st->samp_freq_avail[i] = DIV_ROUND_CLOSEST(st->mclk_freq,
-> +								   ad7768_clk_config[i].clk_div);
-There are some complex race conditions around these available arrays, so in
-general it is better to make it obvious when they are static after
-init vs actually dynamic.  In this case I think we can fill this
-in the moment we know mclk_freq?  If so please move the calculation into
-probe() and just reference it here.
+kernel test robot noticed the following build errors:
 
-How to close the race condition is an ongoing topic but I don't think
-that problem applies here anyway!
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.14-rc2 next-20250214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Jonathan
+url:    https://github.com/intel-lab-lkp/linux/commits/Koichiro-Den/gpio-aggregator-reorder-functions-to-prepare-for-configfs-introduction/20250216-210413
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250216125816.14430-6-koichiro.den%40canonical.com
+patch subject: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo utilities
+config: i386-buildonly-randconfig-003-20250216 (https://download.01.org/0day-ci/archive/20250217/202502170056.DR6nbxpY-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250217/202502170056.DR6nbxpY-lkp@intel.com/reproduce)
 
-> +
-> +		*vals = (int *)st->samp_freq_avail;
-> +		*length = ARRAY_SIZE(ad7768_clk_config);
-> +		*type = IIO_VAL_INT;
-> +		return IIO_AVAIL_LIST;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int ad7768_write_raw(struct iio_dev *indio_dev,
->  			    struct iio_chan_spec const *chan,
->  			    int val, int val2, long info)
-> @@ -655,15 +658,6 @@ static int ad7768_read_label(struct iio_dev *indio_dev,
->  	return sprintf(label, "%s\n", st->labels[chan->channel]);
->  }
->  
-> -static struct attribute *ad7768_attributes[] = {
-> -	&iio_dev_attr_sampling_frequency_available.dev_attr.attr,
-> -	NULL
-> -};
-> -
-> -static const struct attribute_group ad7768_group = {
-> -	.attrs = ad7768_attributes,
-> -};
-> -
->  static int ad7768_get_current_scan_type(const struct iio_dev *indio_dev,
->  					const struct iio_chan_spec *chan)
->  {
-> @@ -674,8 +668,8 @@ static int ad7768_get_current_scan_type(const struct iio_dev *indio_dev,
->  }
->  
->  static const struct iio_info ad7768_info = {
-> -	.attrs = &ad7768_group,
->  	.read_raw = &ad7768_read_raw,
-> +	.read_avail = &ad7768_read_avail,
->  	.write_raw = &ad7768_write_raw,
->  	.read_label = ad7768_read_label,
->  	.get_current_scan_type = &ad7768_get_current_scan_type,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502170056.DR6nbxpY-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/gpio/gpio-pseudo.c:62:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      62 |                 kfree(common->name);
+         |                 ^
+   drivers/gpio/gpio-pseudo.c:71:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      71 |                 kfree(common->name);
+         |                 ^
+   drivers/gpio/gpio-pseudo.c:83:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      83 |         kfree(common->name);
+         |         ^
+   3 errors generated.
+
+
+vim +/kfree +62 drivers/gpio/gpio-pseudo.c
+
+ef524a2229b717 Koichiro Den 2025-02-16  43  
+ef524a2229b717 Koichiro Den 2025-02-16  44  int pseudo_gpio_register(struct pseudo_gpio_common *common,
+ef524a2229b717 Koichiro Den 2025-02-16  45  			 struct platform_device_info *pdevinfo)
+ef524a2229b717 Koichiro Den 2025-02-16  46  {
+ef524a2229b717 Koichiro Den 2025-02-16  47  	struct platform_device *pdev;
+ef524a2229b717 Koichiro Den 2025-02-16  48  	char *name;
+ef524a2229b717 Koichiro Den 2025-02-16  49  
+ef524a2229b717 Koichiro Den 2025-02-16  50  	name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
+ef524a2229b717 Koichiro Den 2025-02-16  51  	if (!name)
+ef524a2229b717 Koichiro Den 2025-02-16  52  		return -ENOMEM;
+ef524a2229b717 Koichiro Den 2025-02-16  53  
+ef524a2229b717 Koichiro Den 2025-02-16  54  	common->driver_bound = false;
+ef524a2229b717 Koichiro Den 2025-02-16  55  	common->name = name;
+ef524a2229b717 Koichiro Den 2025-02-16  56  	reinit_completion(&common->probe_completion);
+ef524a2229b717 Koichiro Den 2025-02-16  57  	bus_register_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16  58  
+ef524a2229b717 Koichiro Den 2025-02-16  59  	pdev = platform_device_register_full(pdevinfo);
+ef524a2229b717 Koichiro Den 2025-02-16  60  	if (IS_ERR(pdev)) {
+ef524a2229b717 Koichiro Den 2025-02-16  61  		bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16 @62  		kfree(common->name);
+ef524a2229b717 Koichiro Den 2025-02-16  63  		return PTR_ERR(pdev);
+ef524a2229b717 Koichiro Den 2025-02-16  64  	}
+ef524a2229b717 Koichiro Den 2025-02-16  65  
+ef524a2229b717 Koichiro Den 2025-02-16  66  	wait_for_completion(&common->probe_completion);
+ef524a2229b717 Koichiro Den 2025-02-16  67  	bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
+ef524a2229b717 Koichiro Den 2025-02-16  68  
+ef524a2229b717 Koichiro Den 2025-02-16  69  	if (!common->driver_bound) {
+ef524a2229b717 Koichiro Den 2025-02-16  70  		platform_device_unregister(pdev);
+ef524a2229b717 Koichiro Den 2025-02-16  71  		kfree(common->name);
+ef524a2229b717 Koichiro Den 2025-02-16  72  		return -ENXIO;
+ef524a2229b717 Koichiro Den 2025-02-16  73  	}
+ef524a2229b717 Koichiro Den 2025-02-16  74  
+ef524a2229b717 Koichiro Den 2025-02-16  75  	common->pdev = pdev;
+ef524a2229b717 Koichiro Den 2025-02-16  76  	return 0;
+ef524a2229b717 Koichiro Den 2025-02-16  77  }
+ef524a2229b717 Koichiro Den 2025-02-16  78  EXPORT_SYMBOL_GPL(pseudo_gpio_register);
+ef524a2229b717 Koichiro Den 2025-02-16  79  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
