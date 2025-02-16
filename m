@@ -1,94 +1,144 @@
-Return-Path: <linux-kernel+bounces-516453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4232A371DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 03:27:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076B1A371DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 03:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654B27A3E7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C713AAEB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F495175AB;
-	Sun, 16 Feb 2025 02:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41251758B;
+	Sun, 16 Feb 2025 02:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="GakgaZxU"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STY1/6DV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965DCBA4A;
-	Sun, 16 Feb 2025 02:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3893D367;
+	Sun, 16 Feb 2025 02:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739672839; cv=none; b=ArGFudeb28s90KSa2ao3MfF3ySlR13TZhGSgr9MvPdzjq1QvquZx1FzIu/13OfXqOBnaLtMBcaeY/6Nv1GdxONheUZU7V8dODqBg8qKcHyxj8j1+SMyoU8UytOPuPGvOwzBs2u29USd6jy4GiECdxe4BC09KRH+8CU3ZT1RFdQU=
+	t=1739673348; cv=none; b=YFCoOSbm1QjuT3egZ6lAee/zmJ8lv6035Lo5HEpRcSDi6HJuc+PArwNfAObHHPDW2h0dMsg9/JwpTyWeKiBTKyHeO+Fkb6SOpQ9wfuPKc5LPQP4BbMDz2Y5UZLm2mCxCTd0E7ngHDjuhEaOezxuE+awGrzt1UcdywAiF7NZhXVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739672839; c=relaxed/simple;
-	bh=y594kqnFYnmSKQC1AE3fsEF7zTOcAohwMW7qDULL64o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3ra9z/28mcvdFlkhgm+qTaAgqvZD9itN7D1um2F+bfduzDK35wzokF/doAK40My+ZcHTFFbWF1eJS+gDQJ20vxzKw8HLDCAfnaiygY9Sg0dF/MbL3Ot5Gua4o7bfSkunTpPe2Gi4gXaPpfTsOyhmRBNSZ+BtlH/14mPc56WgS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=GakgaZxU; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=g2yG0zZeHrh41/HUvAcj64EieaWG1lDiLMI8ggvgcIQ=; b=GakgaZxUxo5UvoGCj6Z78b2nFR
-	1ABLhDgqZLFZgRqbS0rm4ZExs1mSizKDwWXCTA3fzCQcZk3YZfu/U/T/YSE3lpWk23UTZquJie9Rr
-	y9GW7PI+UrBYGz2ALDO+oDT5U9S53yGWlwaqk1AuOUKPSX8x1Ce1DIGpJdYhzkmYVsVYLZxZ4JgeH
-	w7ryL7q86eqjgRawoHEnXijCTJjUIgFfefHus8xH0iEn8/lT28iuEzpdze0ET13c52a1OpSV5C+i+
-	ntv7NPzqZvCzSaANwx9c1rHGc+4JDUdhrwn/YWzPb1d5E9bLgjPKVnqTszqbq7oU8enRZ9zhAgek6
-	N+3nXd5g==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tjUA9-000gJl-1j;
-	Sun, 16 Feb 2025 10:27:03 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 16 Feb 2025 10:27:02 +0800
-Date: Sun, 16 Feb 2025 10:27:02 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev,
-	linux-crypto@vger.kernel.org, dm-devel@lists.linux.dev,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH v8 0/7] Optimize dm-verity and fsverity using multibuffer
- hashing
-Message-ID: <Z7FM9rhEA7n476EJ@gondor.apana.org.au>
-References: <20250212154718.44255-1-ebiggers@kernel.org>
- <Z61yZjslWKmDGE_t@gondor.apana.org.au>
- <20250213063304.GA11664@sol.localdomain>
- <20250215090412.46937c11@kernel.org>
+	s=arc-20240116; t=1739673348; c=relaxed/simple;
+	bh=og7vRdotEbl970Mxh3tCgnLXuP+7n1w8WQ3zdtO/IFk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uDhVB6RkOe5f6X//+ZjQhSycssgFNrM2+YhqvKnF8gdgQVWfLlZ4jZiX4JENmaQJN+4ASoRymIuIk+O2g6oWEAjuQZZhMKjX3Z9MDM/eLXYoHRIPSK0fwwzxbc3zHXwVJDkmoTsJ+5SZHoioffBY9Cz8qcFAYhI6LhHx9dcwbTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STY1/6DV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA32C4CEDF;
+	Sun, 16 Feb 2025 02:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739673347;
+	bh=og7vRdotEbl970Mxh3tCgnLXuP+7n1w8WQ3zdtO/IFk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=STY1/6DVx2ue+1I8wj8+diIba67bpb0LgomeJUcOPpN09fa/wxx/UNjL0c86cuFi5
+	 xBYAnMqN6vcQ8aWpDULOnXALhhzzgid3RCPL/ouSZOgimew576pUwfpXrArMXsC37a
+	 veJqHFOrQ0m1IwMa/OpDOMAChHQrXRlPeWGkQZZq27GKoQEHwEsY8utxIgC1dExoKz
+	 tHj+4DhkQy+WyKPGOySRDYIiK0cCoC9Y/485oc4ILaQR/7/h1P7x9y/RkXiLr90xnP
+	 OGPitbwK+frCwUAdEtZr49FeHjEUl1HnMUvUOAqLFdhdeL8mf4dxbYXG4gTY5fCmI0
+	 XXqgK/JIuDfdw==
+Date: Sun, 16 Feb 2025 11:35:44 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 0/8] ring-buffer/tracing: Save module information in
+ persistent memory
+Message-Id: <20250216113544.5abf06ed25203539a8c7d16c@kernel.org>
+In-Reply-To: <20250215034301.624019422@goodmis.org>
+References: <20250215034301.624019422@goodmis.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215090412.46937c11@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 15, 2025 at 09:04:12AM -0800, Jakub Kicinski wrote:
->
-> Can confirm, FWIW. I don't know as much about IPsec, but for TLS
-> lightweight SW-only crypto would be ideal.
+On Fri, 14 Feb 2025 22:43:01 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Please note that while CPU-only crypto is the best for networking,
-it actually operates in asynchronous mode on x86.  This is because
-RX occurs in softirq context, which may not be able to use SIMD on
-x86.
+> 
+> This updates the persistent instance to record what modules were
+> loaded and what addresses they were loaded at.
+> 
+> First the KASLR offset is recorded in the persistent ring buffer instead of
+> a text address. This can be used to calculated the address offset.
+> 
+> Next the persistent memory is divided up differently so that there's
+> a single global meta data for the entire buffer that can hold the
+> global data, and each per CPU meta data can just hold what it needs.
+> 
+> A scratch area can be created by the caller, in this case the tracing
+> system, to store data in the persistent memory area.
+> 
+> As the KASLR offset is only needed by the tracer, that data is moved
+> from the ring buffer meta data into this new storage.
+> 
+> Next the modules that are loaded and where they are loaded is stored in this
+> new persistent storage.
+> 
+> The module list along with the KASLR offset is now exposed in the
+> last_boot_info if the buffer is from a previous boot. If it is from the
+> current boot, the file will only contain:
+> 
+>    # Current
+> 
+> in order to not leak the KASLR offset.
+> 
+> Finally, when new modules are loaded while the trace is active, they too
+> will be added to this persistent memory. Note, if tracing is stopped, and
+> then restarted, it clears the module list and will reload all the modules
+> again so that it doesn't need to keep track of what is loaded or unloaded
+> while no tracing is going on.
 
-Cheers,
+The series looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org> for this series.
+
+Thanks,
+
+> 
+> Changes since v1: https://lore.kernel.org/all/20250205225031.799739376@goodmis.org/
+> 
+> - Rebased on top of the urgent branch
+> 
+> - Allow the size of the scratch area in the persistent ring buffer to be
+>   defined by the caller.
+> 
+> - Change the output of the last_boot_info to show the kaslr instead of:
+>   "Offset: <offset>" to "<offset>\t[kernel]" to make it consistent with
+>   the module output.
+> 
+> 
+> Steven Rostedt (8):
+>       ring-buffer: Use kaslr address instead of text delta
+>       ring-buffer: Add buffer meta data for persistent ring buffer
+>       ring-buffer: Add ring_buffer_meta_scratch()
+>       tracing: Have persistent trace instances save KASLR offset
+>       module: Add module_for_each_mod() function
+>       tracing: Have persistent trace instances save module addresses
+>       tracing: Show module names and addresses of last boot
+>       tracing: Update modules to persistent instances when loaded
+> 
+> ----
+>  include/linux/module.h      |   6 +
+>  include/linux/ring_buffer.h |   8 +-
+>  kernel/module/main.c        |  14 +++
+>  kernel/trace/ring_buffer.c  | 245 ++++++++++++++++++++++++-----------------
+>  kernel/trace/trace.c        | 263 ++++++++++++++++++++++++++++++++++++++++----
+>  kernel/trace/trace.h        |  15 ++-
+>  kernel/trace/trace_events.c |  40 +++++--
+>  7 files changed, 448 insertions(+), 143 deletions(-)
+
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
