@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-516647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9B2A3754C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:59:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3946A3754F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7144A1886BBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:59:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1EE37A3B3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05876194C78;
-	Sun, 16 Feb 2025 15:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC951194C78;
+	Sun, 16 Feb 2025 15:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yaBr2Glz"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSnb5Wcv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1B97EF09
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 15:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40943C8E0;
+	Sun, 16 Feb 2025 15:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739721546; cv=none; b=rnAaFoNobcnpNiFvsCPgXU0MzNnJJlYac2QjlbYpYGQC+V3Jm9fcX+mvHvHUmXJqnoT/xec7CsmZ/KeIoqrPXTBHpxwY9yHaMmq6S9zp5Zym6o73ya/GSMP5iHDwCR3Stqpmnalyq0/24mFCo7YN7Z+9NXhecmYiHCUHRP7ubSU=
+	t=1739721554; cv=none; b=JjaTfYzqsDo3z5UOcJFd4gbWEok18dm7FsAkwiRYlJrq6mxxAtByH8Kll0OGc+s3PMcw7583yk4KLLhrg+2v8q3Bx23WhRoet3q7d5qnhlDYkRFAlBulGMMl0HU7FM0HO9DDI1oF1j5OgEiBUs1ZNYB8sVQoL21JsKT0LJnG7bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739721546; c=relaxed/simple;
-	bh=IFij8wrZ5Xes/0S/tgCYsJ2b9Mf6BOf6rIN/gEboWF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nsyrfIxtIwYw4SgAi6pjeOLQzrioHOdeOXGfyl5dVbr+yGHghujmETo9cyJv3gjM5NCZYb5WX1cePLBT6nso6er476LXlyzRYOs52ctUT401KwCKwZYyEMIrDxtqqzTPYCJGr9hwYqNGUucHOB/hUED+vbpDRyd0anPVHjZT/iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yaBr2Glz; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5452e6f2999so2310822e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 07:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739721543; x=1740326343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IFij8wrZ5Xes/0S/tgCYsJ2b9Mf6BOf6rIN/gEboWF8=;
-        b=yaBr2Glz6qBGdC5yhuGyqEKUgtQS0gvyRhU1hAxzCa1lYi/PH80bwV3Yj3+4SaJiyF
-         v8drQBgR/bX5BojYK+BZtkEcvhDnnruH65BZCmwgFE4iP6hNaqJgnpAVsPJd0cG10UAl
-         +Z4WNeCNAZrmtKDiGL1GTM7SHZaDhwi0HB7Zj8ftGn93QD3KWqPDwh6swR2NSvJpBeVH
-         Ml4WzO1VIVgYceaYXXqZtJQKBPTa1fssdiwFixrX3OZMW1WCEsunadk0WqQ0oW1Y+4yd
-         0KVmVTu02GY3U/FzxoRhDppPZzpryMluSw0LcdYzeH2ewSlLbYFw8vmMCsouI5vkuWcI
-         S8+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739721543; x=1740326343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IFij8wrZ5Xes/0S/tgCYsJ2b9Mf6BOf6rIN/gEboWF8=;
-        b=F8p0HgLagyVGACgaE3DAX/AIXWCnz2fNhgN1M2qUSQAPRU49TqsWYW+8CsIcxhNNx9
-         auVnmkwTNNK5FsgLy5MrBTEgRqzUgdtSt0S30+keQOcq63qqIFbN4EThFA2MpeACCrG2
-         0rCN2HfhFFhysqSqMnNw4XjsnSOE4gZw5DgCtWoz0Xbo/hSITQtAtPlSFdn85PKRwkrw
-         DfaZXbx6d4AQo69sP12EqzPXQBEbbwN55/plPgcMxin7O6viYy4i2mUvJI2k5+eP4bBL
-         KQKTO/zd1LGSGCJgnFaQsvrQsfKlmLkV8rVZeGvFSqMFBwvtXF5MmcirdQNW4zcpBdPH
-         99yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW290BHPg12fI3vwEyH1eBaYZ2wbtaKAT0qCgUz5SfrKf7XYwzdGP/HFKaQciAY54mL5I8w6fBxEVYSIK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrjdxC5UMNu7KRAnt9A0HZkHfzWi1lc7kzfHZuXVhh9tJIBkhL
-	M28QFtDI1RAqakO6fQVqS1iM9o13ygq18iCa/16pBPj/zL9GfLdUEycyllo/co61ns92eQ3AAI4
-	ri/0EZB7MFOzFCygsStkoQgau2H38V2O9cXmPdQ==
-X-Gm-Gg: ASbGncukvX4vh5rfjzG8Qd80oxfNj+s/ynN/JzgdIDbXAGDiWnyEvOC+JGSs1amS6XY
-	krwNUPtqZG33WmZnBRpJmGmiOknbOFDiR7imAMQkAqhfFWCRWJJjXaubMZXOpuCFjmHmpUuFa1N
-	OySltOsSMrjSs3bjItlH789SvxD8A0
-X-Google-Smtp-Source: AGHT+IGkC2IfSMRmxOqx0hkkTAOYeoWJ9dmkM5Ek/609sutnODD8nSQFDs34oVKxa1WUcVLm90JlqRJalZhkW19J53U=
-X-Received: by 2002:a05:6512:2256:b0:545:17b:3cf9 with SMTP id
- 2adb3069b0e04-5452fe73c43mr2132281e87.48.1739721542943; Sun, 16 Feb 2025
- 07:59:02 -0800 (PST)
+	s=arc-20240116; t=1739721554; c=relaxed/simple;
+	bh=tzRwEphCXCXbvUeFh2tqFV1w5C5R3tQ/tBfNFSyYgcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GakBtoQFcozF25GLAjoORjxSDiEw+CVvRRDMK0ZahT9Bbmh1v7Rzz5xwfPJAL95ShyYBV8bDUUs0CWRu/CxnDt3Sfr9L+mE71xX87Af9/PLnzpCu2hUbpKTO32KRQfj1GrTm1kKaxSHier1i1TdB9ubRsOQkScEXgEw+GpvXmpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSnb5Wcv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE9FBC4CEE4;
+	Sun, 16 Feb 2025 15:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739721553;
+	bh=tzRwEphCXCXbvUeFh2tqFV1w5C5R3tQ/tBfNFSyYgcw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mSnb5WcvZxZab5ZaPIiE/x6oN0qbhUASUGtNRDzkEq0pMRwrXGdaOZLPX+Vc0jBJJ
+	 +dsVUh6rKKTzfBXx0VyGGD0azL/mKQGDsYxbu+IJOvWpoET/roHaNkSMR0cd4dXEDD
+	 ON6ku54RXIbiPCsiy8KbtOYAXjOavm0eR22mL/es9nntKF7kxIVGOOP80sY8kGhQ5O
+	 MIhBxqq5Osc1FLvk++MQTFg2+dX+kbbvvUL2eFawE6xumF9rfKZ5qhYuYzE1LRQyif
+	 DhEI8XfGPy452GbaUBVBnvCISqmLCeIjDYDAzZLZheTos3I0nX+xvdEM/PR0QVFQRr
+	 rGPQKG3U4jrgw==
+Date: Sun, 16 Feb 2025 15:59:03 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
+ <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <jonath4nns@gmail.com>, <marcelo.schmitt1@gmail.com>,
+ <dlechner@baylibre.com>
+Subject: Re: [PATCH RESEND v3 02/17] iio: adc: ad7768-1: set MOSI idle state
+ to prevent accidental reset
+Message-ID: <20250216155903.0ebd32de@jic23-huawei>
+In-Reply-To: <c2a2b0f3d54829079763a5511359a1fa80516cfb.1739368121.git.Jonathan.Santos@analog.com>
+References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+	<c2a2b0f3d54829079763a5511359a1fa80516cfb.1739368121.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203031213.399914-1-koichiro.den@canonical.com>
- <20250203031213.399914-10-koichiro.den@canonical.com> <CAMRc=Meb633zVgemPSeNtnm8oJmk=njcr2CQQbD5UJd=tBC5Zg@mail.gmail.com>
- <CAMuHMdU24x9pxEjBHTKxySxwr-L+iKXSUNFxpM9hvaSTNAWDuQ@mail.gmail.com> <5mffw5s3p5biu726cfn6hrgcxiamawxz4qna4jajww3evoievd@itffjdnhijxb>
-In-Reply-To: <5mffw5s3p5biu726cfn6hrgcxiamawxz4qna4jajww3evoievd@itffjdnhijxb>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sun, 16 Feb 2025 16:58:51 +0100
-X-Gm-Features: AWEUYZkeX-EqpZNtXHF3Zoer-gkZGD1U415wFl9eUuh4ihhKh0d-eUGnLs0Au6U
-Message-ID: <CAMRc=MdjiyzBzdQpYK=qGwS=j55W5mujoTWruRP9DeOv11Y8rg@mail.gmail.com>
-Subject: Re: [PATCH v2 09/10] gpio: aggregator: cancel deferred probe for
- devices created via configfs
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-gpio@vger.kernel.org, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 16, 2025 at 2:15=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
->
-> >
-> > On one hand, I agree that it would make some scenarios simpler, and
-> > let us propagate an error code to the sysfs writer in case of failure.
-> >
-> > On the other hand, it would change user behavior. Currently people can
-> > configure a GPIO aggregator, and load the driver module for the parent
-> > gpiochip later, relying on deferred probing to bring up everything
-> > when it is ready.
->
-> Thank you both for your insights, Bartosz and Geert. I've just sent v3
-> (https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canonica=
-l.com/)
-> which retains the current behavior, to not suprise anyone now.
-> I'm now considering whether we might eventually deprecate the sysfs
-> interface in the future. Doing so could simplify the codebase and bring i=
-t
-> in line with gpio-sim and gpio-virtuser.
->
+On Wed, 12 Feb 2025 15:16:07 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-Heh, yeah you'd think so. You can watch my talk[1] on how easy it is
-to remove sysfs interfaces. :)
+> Datasheet recommends Setting the MOSI idle state to high in order to
+> prevent accidental reset of the device when SCLK is free running.
+> This happens when the controller clocks out a 1 followed by 63 zeros
+> while the CS is held low.
+> 
+> Check if SPI controller supports SPI_MOSI_IDLE_HIGH flag and set it.
+> 
+> Fixes: a5f8c7da3dbe ("iio: adc: Add AD7768-1 ADC basic support")
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+Just a quick note that I'm not picking these first two up on their
+own (yet) as I don't want to create an upstream dependency issue that
+might delay the main set.  If anyone would prefer these being rushed
+in and potential delay to the new stuff in here, then let me know.
 
-Bartosz
+Jonathan
 
-[1] https://fosdem.org/2025/schedule/event/fosdem-2025-5288-the-status-of-r=
-emoving-sys-class-gpio-and-the-global-gpio-numberspace-from-the-kernel/
+> ---
+> v3 Changes:
+> * Patch moved closer to the start of the patch set.
+> 
+> v2 Changes:
+> * Only setup SPI_MOSI_IDLE_HIGH flag if the controller supports it, otherwise the driver
+>   continues the same. I realized that using bits_per_word does not avoid the problem that
+>   MOSI idle state is trying to solve. If the controller drives the MOSI low between bytes
+>   during a transfer, nothing happens.
+> ---
+>  drivers/iio/adc/ad7768-1.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index c3cf04311c40..2e2d50ccb744 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -574,6 +574,21 @@ static int ad7768_probe(struct spi_device *spi)
+>  		return -ENOMEM;
+>  
+>  	st = iio_priv(indio_dev);
+> +	/*
+> +	 * Datasheet recommends SDI line to be kept high when data is not being
+> +	 * clocked out of the controller and the spi clock is free running,
+> +	 * to prevent accidental reset.
+> +	 * Since many controllers do not support the SPI_MOSI_IDLE_HIGH flag
+> +	 * yet, only request the MOSI idle state to enable if the controller
+> +	 * supports it.
+> +	 */
+> +	if (spi->controller->mode_bits & SPI_MOSI_IDLE_HIGH) {
+> +		spi->mode |= SPI_MOSI_IDLE_HIGH;
+> +		ret = spi_setup(spi);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	st->spi = spi;
+>  
+>  	st->vref = devm_regulator_get(&spi->dev, "vref");
+
 
