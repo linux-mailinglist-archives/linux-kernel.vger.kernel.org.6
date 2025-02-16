@@ -1,173 +1,88 @@
-Return-Path: <linux-kernel+bounces-516687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2550A375D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:33:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7386DA375D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D40F43A96A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0CC3ACA3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145919B5B4;
-	Sun, 16 Feb 2025 16:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10E419C546;
+	Sun, 16 Feb 2025 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="hQe5evxT"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UJ59A9xI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05B318024
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DB818024;
+	Sun, 16 Feb 2025 16:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723626; cv=none; b=RWdEW8rVmdlwqOsMoifDhEYhu/PWPK7N84jvlaLsRR70wK87UhWfsLAlwgBry6GzGSaEfM4HXfRY4xA9WJFjTxoyA1X6Tvw3bQK1LINYVn4Mj3M0sZueohlXtH1zLYfEt+V8O24sPSo1maT/WoG1d3fhZn+x90vFjr3tojUxoCs=
+	t=1739723791; cv=none; b=Hg0/V6KA/wH7Q9g/EnBSi1PFed8//NlNAsZrBRZQ+sFcMjKAXOKTdKxy8Ejmy+D9OFT+ps3aKnz5NwZRInjei8smzCGXDLfQwbI6zTsJDaw13chFdUEacOQHeMFYskIiAL4aHHT1xLZ/LUy/rzAadjaepUfVf7y+Qn8gFf+yUmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723626; c=relaxed/simple;
-	bh=BICul6GUdFbuU5tzJRFrpq8T0hra/dZQaGyO/rn8I6w=;
+	s=arc-20240116; t=1739723791; c=relaxed/simple;
+	bh=ByXLAurH+1Re1vVJZ/BAA4HrNWB6FIi2AKVogbcsalw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKsCJK0ks+lpbQKaOil7JIR5Q/6JaUXvzMEK94ZbYAomLIES7ai/Xv0xc7rhi+cQT9dhEL7hMoNXC1QMtKCq1XTXFrYSOBuhozVD3BfWTXuCxb5A5S7QMzDYjO7uTa657KRSeCHzkVT2GdBRxAxDq3cnxzL6ahbB92y5ym9G4k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=hQe5evxT; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so24602335e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 08:33:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1739723623; x=1740328423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lUMfqS3dZBd43tbBbndbhZ/u2f+U8HCOLG9lUIdc1Xk=;
-        b=hQe5evxT+0D7PSbChtzPQKbTiyUIiiu7l2aK66kgJeYjF374OOaElthMytJrcyagA5
-         WwQBI+JNBdPAyWfOh6eVB5grz1sPeiBNgMbT8XDOlzYhhwSUcTnxlg4WDoF+Zxf0PDGL
-         oVha5iJpYwO8zKx/C0P+BokFcqleYmYITWPcQCPbCuEaWNurgvvJBngdlVgF+IYwugYg
-         w4GYjSl0nKNNuYHbsEy8AzyR3FjCJ3PRsCA7eXAGXsiCFiWAp+BuE9/1C/InSTA4wPfR
-         elniRGqo2vJGpiYK+KbGy3Xwyf2kI0Mefw8XiJZ5wFT5ZQ00cezj1v331aWRLYS4ccNH
-         rzgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739723623; x=1740328423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lUMfqS3dZBd43tbBbndbhZ/u2f+U8HCOLG9lUIdc1Xk=;
-        b=j4ZF9uoq1ci3xZduc2q1eYRYpRl4dBuzt9QNE2FvbwmfPZl9nhFusqqbpvMDPjMGXT
-         2HRD6p/XMXQcp40hHmPEfOz/xWgbavMqUm9jiY6mjUvawnjxWmIbvTOhE46EYadDImae
-         JUhoTc64fJvV4e+Yov726jE8zTo22vxNEomu3sj+86CtTzYcPevuLG/TY8Pyd9dPOYS0
-         kd/xf9gZ0/D8FHaNQn2kfI9/gVgqkgk2Jt8nx/3CX5SMqJ34VUEmp5auXjUVsF4TFLnV
-         rRiJSSDxs+Scoy2HSWbQcNcxolwf+mTAEQ/TShOWUeEjzPVmgTi7ZNuQQ2Z4HTHOUujp
-         ahkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmh7cTqZxb5kBsxJD83YJEoQ3l3SnjTexWAwyVNazKtKPJmoEegfssEe7/c4clE/l6++OTwRNFLsE8BUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqad6DFtzsk0uNoDAGMWW5O86IPfEnJKqy/Wo4RtjlTdM/toKb
-	z+qHOqKyrRSAp2WHqcxHHtiqIi+7cpve/nKsOssxW61PX+TwEeM44hLNj3hIxiw=
-X-Gm-Gg: ASbGnctNSNamm9WDqu5+18Y5Lue+HIrxh2cYqmwl7Qs7tvQR+FoTVS8Y5D3dRgY1g3N
-	ojFSkkZFgy5P8KLBprJSCWg7abQ/hG0IqrNOx2IBq3u7aU3qkKIh13uUySSu37Z2kCoXyqnnnEo
-	yK0K1R6jZqO+8wQ0zJ/N+rXHlAzyG55gcbXFgEoD4yoWw0nu9lDzqTmDuxRw/JKFxZ2TOgGEh0a
-	ih9WMJuhRNGYQtK+DQ6w7vp6S62d6NVplQ2MFW4nu0xLAucFj9sWLxERZckPjV8chSfoW+8ZTEm
-	9u2e66yU6cGUKKOZ9gbzTcW7G0YJmHKhLu/Bb7Rh7SoVjNvMvp5qyJgIgK2kHrT64+pf
-X-Google-Smtp-Source: AGHT+IEeNlCzVzCebfog7rtjgazJvr3JIatphpj/eDAtE93/JEe47lhOf70TFBDtpeDDgQbB0eiCOg==
-X-Received: by 2002:a05:600c:3c9d:b0:439:5a37:8157 with SMTP id 5b1f17b1804b1-4396e7674c6mr66151195e9.30.1739723622005;
-        Sun, 16 Feb 2025 08:33:42 -0800 (PST)
-Received: from airbuntu (host109-154-33-115.range109-154.btcentralplus.com. [109.154.33.115])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8dd6sm10107550f8f.62.2025.02.16.08.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 08:33:41 -0800 (PST)
-Date: Sun, 16 Feb 2025 16:33:40 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <20250216163340.ttwddti5pzuynsj5@airbuntu>
-References: <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
- <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ocy9dv3D6lbPQpSnELcCdsY6wc6u1W7VP6MSJxXDLJc0lUhAGdNIp6wdHEW9tR4IxSuSMdhKYK22tK4MuD8FWy+UmfXpge9/+o5Qb1Boc02hx5e2hzRGkTDzfYC9hv7t69AQuwu6qrCuLyjqT02WtoTbE5P3gxPFbhoXoPi32Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UJ59A9xI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZsOQcoouRE/mfiTFlVK+KMfUUssVnYx0z0OR3ds2eRM=; b=UJ59A9xIaPWrvFp/9acztvmD2r
+	H1j65E31RNbmx78HtLmmgvzF+oNEU/h/bFAHaa5tewmZxE7PTFuQc8Y9s/g9MLpAteqq3fttnW0hN
+	82o0GHAaHZtHMphzMW02dfF6tj/KwxO+mYafb6g3rv/MeGjmrESFL8+/xi8pZIB0yKcw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tjhd0-00Ehal-SA; Sun, 16 Feb 2025 17:36:22 +0100
+Date: Sun, 16 Feb 2025 17:36:22 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next] Documentation: net: phy: Elaborate on RGMII
+ delay handling
+Message-ID: <92111af4-c0d0-48bd-b774-0cac4f2abd13@lunn.ch>
+References: <20250214094414.1418174-1-maxime.chevallier@bootlin.com>
+ <Z68WDG_OzTDOBGY-@shell.armlinux.org.uk>
+ <20250214114254.0b57693b@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
+In-Reply-To: <20250214114254.0b57693b@fedora.home>
 
-On 02/13/25 07:20, Juri Lelli wrote:
-> On 12/02/25 19:22, Dietmar Eggemann wrote:
-> > On 11/02/2025 11:42, Juri Lelli wrote:
+> Just to clarify, do you see that patch as useful ? seems to me like the
+> original version is clear enough to you
 > 
-> ...
-> 
-> > > What about we actually ignore them consistently? We already do that for
-> > > admission control, so maybe we can do that when rebuilding domains as
-> > > well (until we find maybe a better way to deal with them).
-> > > 
-> > > Does the following make any difference?
-> > 
-> > It at least seems to solve the issue. And like you mentioned on irc, we
-> > don't know the bw req of sugov anyway.
-> > 
-> > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
-> > 
-> > dl_rq[0]:
-> >   .dl_nr_running                 : 0
-> >   .dl_bw->bw                     : 996147
-> >   .dl_bw->total_bw               : 0       <-- !
-> > 
-> > IMHO, people who want to run serious DL can always check whether there
-> > are already these infrastructural DL tasks or even avoid schedutil.
-> 
-> It definitely not ideal and admittedly gross, but not worse than what we
-> are doing already considering we ignore sugovs at AC and the current
-> bandwidth allocation its there only to help with PI. So, duck tape. :/
-> 
-> A more proper way to work with this would entail coming up with sensible
-> bandwidth allocation for sugovs, but that's most probably hardware
-> specific, so I am not sure how we can make that general enough.
+> Thanks for reviewing,
 
-I haven't been following the problem closely, but one thing I was considering
-and I don't know if it makes sense to you and could help with this problem too.
-Shall we lump sugov with stopper class or create a new sched_class (seems
-unnecessary, I think stopper should do)? With the consolidate cpufreq update
-patch I've been working on Vincent raised issues with potential new ctx switch
-and to improve that I needed to look at improving sugov wakeup path. If we
-decouple it from DL I think that might fix your problem here and could allow us
-to special case it for other problems like the ones I faced more easily without
-missing up with DL.
+Is the problem that the documentation is confusing? Or that developers
+don't actually read the documentation, nor the mailing list?
 
-Has the time come to consider retire the simple solution of making sugov a fake
-DL task?
+There is a point of diminishing returns with working on Documentation.
 
-> 
-> Anyway, looks like Jon was still seeing the issue. I asked him to verify
-> he is using all the proposed changes. Let's see what he reports.
-> 
-> Best,
-> Juri
-> 
+There might be more value in working on checkpatch, add a warning
+about any patch adding phy-mode == 'rmgii' without a comment on the
+line.
+
+	Andrew
+
+
 
