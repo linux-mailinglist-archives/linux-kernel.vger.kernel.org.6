@@ -1,206 +1,117 @@
-Return-Path: <linux-kernel+bounces-516855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66589A37846
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:06:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF18A37863
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E093AAB7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:06:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9AA188F564
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1284C1A5B8E;
-	Sun, 16 Feb 2025 23:06:36 +0000 (UTC)
-Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CE21A5BAD;
+	Sun, 16 Feb 2025 23:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k6Z3oVEk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0789FC2EF;
-	Sun, 16 Feb 2025 23:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D6C2EF;
+	Sun, 16 Feb 2025 23:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739747195; cv=none; b=U6z6QpgEE+a8QnODy2esBYG0FBwR0f+FBbTHSYQWl+Zh6LwLK73GPyU88PGtT8JbMCoiD48FKUQTH1vJgFnF0BJCt8BWK9WBoMXAoLwvkTtmHVt2zpkCjx10CR0E9Xw0GZorWcQW77ezVfUwAfzjxYPFcQNcflRfR34Mq7g2/g0=
+	t=1739747701; cv=none; b=cs0nRkYGXMHUyPPIU0DMZu2q+TW+1OAWC0l9cKrApKAEFKvJlY1Lltz7SMlp2Y434wEWokHlJfjllTQ8I83K7K3T+5PXpLwmP96ghlPlMfUjTkB8rJZT+OeTiDDPmHXmAwPndU4pFLtLEl7yMpFtw1cUBKE9GyN/0+0qzCu/TJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739747195; c=relaxed/simple;
-	bh=YZb/MI83ZX30L0zZAmUfUF/iWVoHwrcibLZzeMA3cwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6Dvkjsb5kgi1FjiYUfPOkj1U734C9kafcRdy8t3XCNS6GdbG5JyBqznuR56O4Rs5QUhKYaR5yaW1WxsLsBrGEaq9Gu9NO4x8LmfFfBJXFobGR0HGhMmhyVpetY8fN1lIDNB6LuNMnDQxQJ/nBD6FhaeV0CL7oMyPCpreKeuSwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	s=arc-20240116; t=1739747701; c=relaxed/simple;
+	bh=h6rJDHL1Z2nYkUHU8S1LDBR+3J3CZDQKRKaOWX52248=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=F+WIe4684QFxXVZRHKJAzMj0BPqsJG9sKrHI+eVk96n/UxVgfMNXURClPlhX+IWAAIpJogb7jtPj5OgEZcKi4Z3ZJQzf/3JEqk7DMW9H2SYNIrDOt8MiW1euE/f3S0uZaylMVXy4RUTsqFsu8M3DwaGwbk/MI1cnBAJeonPtEz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=k6Z3oVEk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739747695;
+	bh=Rb7EBlM6/x6Acp/ztXV/Q38lXBxR/5tq1BynVQHwOPw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k6Z3oVEkfuxWcPt2PYcCZoe+8vVAQSDXNEv/SewWmvAxo92OLBVHA9So+jw1BgMI4
+	 A5xEUGzMg2NlztS3+qiHDH8qUoUUO6LU51xokSvBSSOk16rxX5ptAtPRmQdqg3BzlI
+	 WEf1yQJB+RK+oaCsHOYsD7LTXcoXbyb1UkE9C3K1oUKaE8dSx9Rm1uFYLWdKnDt7To
+	 sDEs5NoY9/7gt/lGBSmxWsZl+WXkguQfMTFtLOXZ06v0sEl+qaYULR8bUUHPncJhYi
+	 y/0uclVBre48IID+xYmCIoIxrePlQ1y8t6uaLsT4CXG9T45V895UaJu3oAJLbaz8Zt
+	 FOlae0FEk18gw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id ECDC6402B1;
-	Mon, 17 Feb 2025 00:06:22 +0100 (CET)
-Date: Mon, 17 Feb 2025 00:06:21 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Vinod Koul <vkoul@kernel.org>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Jordan Crouse <jordan@cosmicpenguin.net>, ~postmarketos/upstreaming@lists.sr.ht, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Martin Botka <martin.botka@somainline.org>, 
-	Jami Kettunen <jami.kettunen@somainline.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/3] drm/msm/dsi: Set PHY usescase (and mode) before
- registering DSI host
-Message-ID: <xtcwuscf3nz6o6qhv4lerpeoxep34iloj6kvxxuad7yoqsus22@tmuv2jqvfpo7>
-References: <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-0-9a60184fdc36@somainline.org>
- <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-2-9a60184fdc36@somainline.org>
- <nzm3tokbvho3hxz3e5vblp5ndagfcv5ah3j7gtkqjmt7ynr6f3@v36juvu73i5v>
- <vsxfi43d7rxh5xxc7ctivjslf6w4yy5iprqpqid3u3diylrtwd@wayafjlgzz7v>
- <x4jced57uhdfnq4d7tdqsozxbdosu2fcmsjlqtuuvh25ltx2rc@2eqsa7e4vcdv>
- <c5503020-0224-428a-9452-f8d668b47caf@quicinc.com>
- <ca80bd37-3b3f-48d3-a57d-2440d20d0c6c@quicinc.com>
- <hvwpqzvdoeosz34ptbksc44ad7ohi6uwioy6o7qc4ewwcvx4d4@g3kksn3rwk6j>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yx1pQ6S6Zz4wy1;
+	Mon, 17 Feb 2025 10:14:54 +1100 (AEDT)
+Date: Mon, 17 Feb 2025 10:14:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20250217101453.34720e6f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <hvwpqzvdoeosz34ptbksc44ad7ohi6uwioy6o7qc4ewwcvx4d4@g3kksn3rwk6j>
+Content-Type: multipart/signed; boundary="Sig_/LZnPDJsuWabi+7atH/9JiY5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2025-02-13 04:13:06, Dmitry Baryshkov wrote:
-> On Wed, Feb 12, 2025 at 05:13:08PM -0800, Abhinav Kumar wrote:
-> > Hi Marijn
-> > 
-> > On 2/10/2025 2:17 PM, Abhinav Kumar wrote:
-> > > 
-> > > 
-> > > On 2/10/2025 6:24 AM, Dmitry Baryshkov wrote:
-> > > > On Mon, Feb 10, 2025 at 01:54:29PM +0100, Marijn Suijten wrote:
-> > > > > On 2025-02-10 01:11:59, Dmitry Baryshkov wrote:
-> > > > > > On Sun, Feb 09, 2025 at 10:42:53PM +0100, Marijn Suijten wrote:
-> > > > > > > Ordering issues here cause an uninitialized (default STANDALONE)
-> > > > > > > usecase to be programmed (which appears to be a MUX) in some cases
-> > > > > > > when msm_dsi_host_register() is called, leading to the slave PLL in
-> > > > > > > bonded-DSI mode to source from a clock parent (dsi1vco) that is off.
-> > > > > > > 
-> > > > > > > This should seemingly not be a problem as the actual
-> > > > > > > dispcc clocks from
-> > > > > > > DSI1 that are muxed in the clock tree of DSI0 are way
-> > > > > > > further down, this
-> > > > > > > bit still seems to have an effect on them somehow and causes the right
-> > > > > > > side of the panel controlled by DSI1 to not function.
-> > > > > > > 
-> > > > > > > In an ideal world this code is refactored to no longer have such
-> > > > > > > error-prone calls "across subsystems", and instead model the "PLL src"
-> > > > > > > register field as a regular mux so that changing the clock parents
-> > > > > > > programmatically or in DTS via `assigned-clock-parents` has the
-> > > > > > > desired effect.
-> > > > > > > But for the avid reader, the clocks that we *are* muxing into DSI0's
-> > > > > > > tree are way further down, so if this bit turns out to be a simple mux
-> > > > > > > between dsiXvco and out_div, that shouldn't have any effect as this
-> > > > > > > whole tree is off anyway.
-> > > > > > > 
-> > > > > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> > > > > > > ---
-> > > > > > >   drivers/gpu/drm/msm/dsi/dsi_manager.c | 30
-> > > > > > > ++++++++++++++++++ +-----------
-> > > > > > >   1 file changed, 19 insertions(+), 11 deletions(-)
-> > > > > > 
-> > > > > > 
-> > > > > > Fixes: 57bf43389337 ("drm/msm/dsi: Pass down use case to PHY")
-> > > > > 
-> > > > > I'm not exactly confident about that.  Abhinav pointed out in
-> > > > > https://gitlab.freedesktop.org/drm/msm/-/issues/41#note_2375646 that
-> > > > > msm_dsi_host_register() was not supposed to be enabling the PHY, which I
-> > > > > provided a counter-stacktrace for to show that is indeed the case.
-> > > > > 
-> > > > > Either this was always a problem that's only become visible now
-> > > > > (and it's an
-> > > > > issue with that patch), or a different change causes
-> > > > > msm_dsi_host_register()
-> > > > > to enable the PHY and program the usecase too early?
-> > > > 
-> > > > As currently usecase is being programmed after the DSI host being
-> > > > registered, there might be a race condition between panel driver probe
-> > > > _and_ usecase programming.
-> > > > 
-> > > > > 
-> > > > > What do you think?
-> > > > > 
-> > > > > - Marijn
-> > > > > 
-> > > 
-> > > Yes I agree with Dmitry's explanation. The race condition between the
-> > > two can cause this. Hence I am also fine with this change.
-> > > 
-> > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > 
-> > > > > > > 
-> > > > > > > diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> > > > > > > b/drivers/gpu/ drm/msm/dsi/dsi_manager.c
-> > > > > > > index a210b7c9e5ca281a46fbdb226e25832719a684ea..b93205c034e4acc73d536deeddce6ebd694b4a80
-> > > > > > > 100644
-> > > > > > > --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> > > > > > > +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> > > > > > > @@ -74,17 +74,33 @@ static int dsi_mgr_setup_components(int id)
-> > > > > > >       int ret;
-> > > > > > >       if (!IS_BONDED_DSI()) {
-> > > > > > > +        /* Set the usecase before calling
-> > > > > > > msm_dsi_host_register(), which would
-> > > > > > > +         * already program the PLL source mux based on
-> > > > > > > a default usecase.
-> > > > > > > +         */
-> > > > > > > +        msm_dsi_phy_set_usecase(msm_dsi->phy,
-> > > > > > > MSM_DSI_PHY_STANDALONE);
-> > > > > > > +        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
-> > > > > > > +
-> > > > > > >           ret = msm_dsi_host_register(msm_dsi->host);
-> > > > > > >           if (ret)
-> > > > > > >               return ret;
-> > > > > > > -
-> > > > > > > -        msm_dsi_phy_set_usecase(msm_dsi->phy,
-> > > > > > > MSM_DSI_PHY_STANDALONE);
-> > > > > > > -        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
-> > > > > > >       } else if (other_dsi) {
-> > > > > > >           struct msm_dsi *master_link_dsi = IS_MASTER_DSI_LINK(id) ?
-> > > > > > >                               msm_dsi : other_dsi;
-> > > > > > >           struct msm_dsi *slave_link_dsi = IS_MASTER_DSI_LINK(id) ?
-> > > > > > >                               other_dsi : msm_dsi;
-> > > > > > > +
-> > > > > > > +        /* PLL0 is to drive both DSI link clocks in bonded DSI mode.
-> > > > > > > +         *
-> > > > > > > +        /* Set the usecase before calling
-> > > > > > > msm_dsi_host_register(), which would
-> > > > > > > +         * already program the PLL source mux based on
-> > > > > > > a default usecase.
-> > > > > > > +         */
-> > 
-> > My compiler is throwing a warning here
-> > 
-> > drivers/gpu/drm/msm/dsi/dsi_manager.c: In function
-> > 'dsi_mgr_setup_components':
-> > drivers/gpu/drm/msm/dsi/dsi_manager.c:94:3: warning: "/*" within comment
-> > [-Wcomment]
-> >    /* Set the usecase before calling msm_dsi_host_register(), which would
-> >    ^
-> > drivers/gpu/drm/msm/dsi/dsi_manager.c: At top level:
-> > 
-> > Can you pls address this one so that I can pick this one up?
+--Sig_/LZnPDJsuWabi+7atH/9JiY5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Whoops, that looks like copy-paste mistake when copying the comment from
-!IS_BONDED_DSI() and merging it with the original comment about PLL0.
-Will resend when I understand Dmitry's question below;
+Hi all,
 
-> 
-> While you are at it, Marijn, could you please also fix the first comment
-> to be properly formatted?
+After merging the mm tree, today's linux-next build (powerpc native perf)
+failed like this:
 
-What exactly do you need to be reformatted about the first comment?  It's
-exactly the same in both branches.  No multiline comments in dsi_manager.c
-start with a newline after the first /*.  Anything I'm missing?
+In file included from threadmap.c:4:
+tools/include/linux/refcount.h: In function 'refcount_set_release':
+tools/include/linux/refcount.h:65:9: error: implicit declaration of functio=
+n 'atomic_set_release'; did you mean 'refcount_set_release'? [-Wimplicit-fu=
+nction-declaration]
+   65 |         atomic_set_release(&r->refs, n);
+      |         ^~~~~~~~~~~~~~~~~~
+      |         refcount_set_release
+tools/include/linux/refcount.h:65:9: error: nested extern declaration of 'a=
+tomic_set_release' [-Werror=3Dnested-externs]
+cc1: all warnings being treated as errors
 
-- Marijn
+(and several more similar)
 
-> -- 
-> With best wishes
-> Dmitry
+Caused by commit
+
+  1465347e498f ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
+
+from the mm-unstable branch of the mm tree.
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LZnPDJsuWabi+7atH/9JiY5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmeycW4ACgkQAVBC80lX
+0GypUAf+KPhuTCv9/maTIsKt+g4VqYwmN42e14ui7h6wIpuHdAMVW/QufwJj2tI6
+0c13ljDO6DLWq56GumaC2vLuSeREm/9imlvRjz7/b8Mgu3tNSafX3krMKZ1QlpIe
+dQdUderIs2BZn+bn2XICfyveGsLDslGqPuuUqS7W8fWOAQ5PL0KHpcoLhZvqIyDM
+CzZkdE4QGdV40u/tdspSfKMswZmlFZS4Cqw1lb5cDsinwM1OGmElN2d0MTzTqYMq
+YO12wHskWLbaI1ZyxWg4yU11P0Tzn+4P4uQhUtBAoi3IwjKuqumVuUY/ZDrtnVvr
+LDcY2YPVZ2ACJMeV5X0I13Szm0lWnw==
+=eDof
+-----END PGP SIGNATURE-----
+
+--Sig_/LZnPDJsuWabi+7atH/9JiY5--
 
