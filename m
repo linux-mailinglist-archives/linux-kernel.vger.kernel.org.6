@@ -1,197 +1,151 @@
-Return-Path: <linux-kernel+bounces-516503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B077A3729E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:42:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87664A372A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E599516DBA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504C216E089
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 08:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CAA161320;
-	Sun, 16 Feb 2025 08:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A71158851;
+	Sun, 16 Feb 2025 08:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4TwHDBp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K9i6jsGA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B43156F54;
-	Sun, 16 Feb 2025 08:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7900A14658B
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 08:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739695321; cv=none; b=eAx2JIvEebx1gOxcKpS8b97DxhlkYuAQFfKy1CgaGDVCb9V2wqYa8wfmBJlWU8tSdSRS/CwnScvw7b5NgX03HeCk9E7S9M7Ok/HkZTguwngc6s/hXSjTms8k9N0DpSwA0WAVxu33zSceXEl44WaP3rV8ogqjNY/xbnk560Mq4dI=
+	t=1739695666; cv=none; b=Xj/OhehBH/rSZ/ftcU+0QRm1/5gm3WT7sTlhvmYWZNsuENMVKeHB/TPfYt+LU/ZL9AiQsS4WbXB59W6hAkm6YkfglsQFsNlP8yrRzDJAlYgenhOA9xhgX7fP3NCr7EFRRXZCaFKPHQvFtmGlNfpmVEFwxhNQ28zlcXLkbG5MdPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739695321; c=relaxed/simple;
-	bh=Vskc2wwVqA5Ms7gkLQLcg3MEV8RCfdMgVZ3QWgJZO90=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D6fQNz7cIc1mcModLLxn6yFBbCP0dmrFe+1Owiarp6VwQp3F7eBPKd+GZsB8sxvECt5IkbaUQBFZVItK5h/MXMZJirCsi9xz1HpRpxQmBkcy3gT72LXeG4N1eco2gecyfAiGVyXpb8ETHp4+MHQIAd3dsztrm6cq5Cvo8czTRJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4TwHDBp; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220d39a5627so49610245ad.1;
-        Sun, 16 Feb 2025 00:42:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739695320; x=1740300120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Uo8I2VTpZsm/M0eSKbaSlNCrIf12xCPXDdrqy9nBvo=;
-        b=P4TwHDBpeh6M7610/9FzvPiOeoeLOR3PgXmVV1tPALgZrMvLancGcIp8hPyVB/o29W
-         uDc/nngDkJX7EDbYMiIRyCf4WVg29QaqLDprmD4IA3OOfFE8FO4Y7F7jB30hSM50D+hp
-         OiBGNLhC1TtSEvVyUGuyPwdt9TqF/lw6riG6Wzh5BdkgYuOyQjRyBxWUJ/+tZqPrQJa1
-         CJOutdmi7uMHQmSi3L8DdtJcVWDWTfH5kY/iB+YkjfdPkEIoORlhagWlVLhAMcnz+nAa
-         GTEek2t06T8xKWrk0X9OSIOjwbuOz3rkAPwnVIQ9wzIJzStFiwkOF9dGl8g0Eg8YrZ/L
-         gLnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739695320; x=1740300120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Uo8I2VTpZsm/M0eSKbaSlNCrIf12xCPXDdrqy9nBvo=;
-        b=Poxe4B31jRopDecnkIQkqljbPC1DMsCrfahT2T/VfflBwwvjFWwB7lptq0Y/4R9qvD
-         oN+eJ3jVN/B5RikuVdO/u7lcBZZn7dNAMdAJWOsJkb0wqce1fnQQMnOxzk6FJVqg6K6s
-         5ASBbkDgxrXYycL3u5xUGJVg4VSGATYwWW436thqQQHXLnbYYgc/T5+FeYzKkOI3XmZt
-         IxxN8FmSzOAlx1iKEeexJFHlAdc53lKpgJB+t/2YHd7I5vKL8iTD2K+F55E4RZKJMI69
-         XUpUvp0wycf+IE/XgIQsZ5lYBvVFIJjCp34dKpysPAVbPjYbjE7nYwxxu+4fl+qmXNqK
-         7SVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVizOdCUhDK68JpDKOzK7e8b7jMOAGONhmR6BQFIwM4qrUPkqpPheDICWWkrQ+6TG4FBORt@vger.kernel.org, AJvYcCWVA8+rKcnz7MzHukU6et8B3aZlSWM/hwqWB3Cm+2MhbG0u2gxy7AYUMrXmIGkpstgOLvxkgT4rdFRJoJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWu0w+Bo4Fx4jEO1k4Sa8HwrJRHgKBq/v4X+LmRfx1YTa5YoQF
-	uFojMRwemKy+hjtWZqFQCZS1TCLBJBcOSvVO3zMpcCmD9KtkMSQxSBhz9cC0
-X-Gm-Gg: ASbGncsi64Vq0gAmEhJPifIjbrYnxT4jlhOL1+ot7ixcqQE8+YGWtL/HT3/HgBEFC53
-	l1RCHuTT1VZTGrLaxokbKA3hhNcCVORQLM5qlrRmkIUAHvc9RH6mvNJFk1C54zLnxtw1+ryMQhv
-	DsFlJYsi9RG+pLZRfcJyckFq0rZAxVvFUIdlZ877WeJ9OVd+AMbHZWaGJYbAqoWgymnBpbGxe7K
-	ty0bsm5KDOyantG5h6iA//L6wHwN0tdxQp5hJOmAqEiqji/m+rkplirtfUJlN/7HXMh3bd9pvh0
-	q1gj7ynoaIk1nlfFw88WPczHQrJsDN83X1vyduk1qGbmPXx7Zv7NGhv4fyr0Hw==
-X-Google-Smtp-Source: AGHT+IFWSv7o5UfJZsr45iFaTsnSGgjOJ/QEPD95j0N9PVTAsh9E6EiQ4ySP/8hifcKlUKOW3csoJg==
-X-Received: by 2002:a17:902:d4cd:b0:221:2f4:5446 with SMTP id d9443c01a7336-22104048145mr89810585ad.25.1739695319630;
-        Sun, 16 Feb 2025 00:41:59 -0800 (PST)
-Received: from VM-119-80-tencentos.localdomain ([14.22.11.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5349634sm52681805ad.31.2025.02.16.00.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 00:41:59 -0800 (PST)
-From: Yongliang Gao <leonylgao@gmail.com>
-To: Neeraj.Upadhyay@amd.com,
-	paulmck@kernel.org,
-	frederic@kernel.org,
-	thunder.leizhen@huawei.com
-Cc: frankjpliu@tencent.com,
-	kernelxing@tencent.com,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yongliang Gao <leonylgao@tencent.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v3] rcu/cpu_stall_cputime: fix the hardirq count for x86 architecture
-Date: Sun, 16 Feb 2025 16:41:09 +0800
-Message-Id: <20250216084109.3109837-1-leonylgao@gmail.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1739695666; c=relaxed/simple;
+	bh=JjFpiMgcU5A3YARaCEOhDLgvm9/evP6IgGp9NwHlW/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pvHxjZXH/c7sUtbPZY6njUVsCaHi+buTdgRSmkH0oUySADg52PMyCnELsxAeZYnT5SFvaQXZN6YHRMOk8FIKXF6s/hh6pEYLfiwvn8rDGOpBMe5sqoWhEZlP/B2cs1eZfIYmH+7bdlQlj2Cbz0SU3bBsf0a6TjMMU5GFuYRsR/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K9i6jsGA; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739695664; x=1771231664;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=JjFpiMgcU5A3YARaCEOhDLgvm9/evP6IgGp9NwHlW/0=;
+  b=K9i6jsGA2W+shW3BMxG3uNlwiDykHC2ZbDyeAUtAK1rAVP0/9OkwEgse
+   4E0Y0maJ5mvmoPv9rMHHn5pAQkUJQ0xoDFO0z+/dMDm0iBv0QtQKfWf3k
+   zNreCGHAq6rwgvboLS1cqxxAWUTNwSlDD4+CXz4iAhNHS8gTGWTmltT1p
+   vEUelnWH/ddaU3af51B2AG6wCGO55CllkV2Xz2mx0F/2itFRzNoMQwYn8
+   KVdE23WS12jvww71DwbnCMYr3K+hS1tDF0ApkXbn2qxODWuANPxNO8vYe
+   FeGhDf/cK11cIJd7wcP6YPBVEtcMReDmfecu43y9Ay0C4oJttGd9mKbDn
+   Q==;
+X-CSE-ConnectionGUID: XlDNp+OUS82lDrtV7S1Gpg==
+X-CSE-MsgGUID: 6ncwikc1S/G6se+GKtPoGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40535364"
+X-IronPort-AV: E=Sophos;i="6.13,290,1732608000"; 
+   d="scan'208";a="40535364"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 00:47:44 -0800
+X-CSE-ConnectionGUID: q4/0rrhdQw2aZ8vSEcdWVw==
+X-CSE-MsgGUID: kv1TOuqFTkixiT8j7Y/E2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119056105"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 16 Feb 2025 00:47:42 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjaJP-001Bip-2H;
+	Sun, 16 Feb 2025 08:47:39 +0000
+Date: Sun, 16 Feb 2025 16:46:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
+ parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
+Message-ID: <202502161648.WZWrFV7I-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Yongliang Gao <leonylgao@tencent.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ad1b832bf1cf2df9304f8eb72943111625c7e5a7
+commit: 40df0a91b2a5228ded8e5f75b80d28c96c6831cd remoteproc: add is_iomem to da_to_va
+date:   3 years, 11 months ago
+config: arm-randconfig-c041-20230507 (https://download.01.org/0day-ci/archive/20250216/202502161648.WZWrFV7I-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502161648.WZWrFV7I-lkp@intel.com/reproduce)
 
-When counting the number of hardirqs in the x86 architecture,
-it is essential to add arch_irq_stat_cpu to ensure accuracy.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502161648.WZWrFV7I-lkp@intel.com/
 
-For example, a CPU loop within the rcu_read_lock function.
+All warnings (new ones prefixed by >>):
 
-Before:
-[   70.910184] rcu: INFO: rcu_preempt self-detected stall on CPU
-[   70.910436] rcu:     3-....: (4999 ticks this GP) idle=***
-[   70.910711] rcu:              hardirqs   softirqs   csw/system
-[   70.910870] rcu:      number:        0        657            0
-[   70.911024] rcu:     cputime:        0          0         2498   ==> 2498(ms)
-[   70.911278] rcu:     (t=5001 jiffies g=3677 q=29 ncpus=8)
+>> drivers/remoteproc/omap_remoteproc.c:732: warning: Function parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
 
-After:
-[   68.046132] rcu: INFO: rcu_preempt self-detected stall on CPU
-[   68.046354] rcu:     2-....: (4999 ticks this GP) idle=***
-[   68.046628] rcu:              hardirqs   softirqs   csw/system
-[   68.046793] rcu:      number:     2498        663            0
-[   68.046951] rcu:     cputime:        0          0         2496   ==> 2496(ms)
-[   68.047244] rcu:     (t=5000 jiffies g=3825 q=4 ncpus=8)
 
-Fixes: be42f00b73a0 ("rcu: Add RCU stall diagnosis information")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202501090842.SfI6QPGS-lkp@intel.com/
-Signed-off-by: Yongliang Gao <leonylgao@tencent.com>
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+vim +732 drivers/remoteproc/omap_remoteproc.c
 
----
-Changes from v2:
-- Add Reviewed-by 'Neeraj Upadhyay' information
-- Link to v2: https://lore.kernel.org/all/20250109024652.1342595-1-leonylgao@gmail.com
-Changes from v1:
-- Fix compilation error when using arm64-allnoconfig/riscv-randconfig. [kernel test robot]
-- Link to v1: https://lore.kernel.org/r/20250108065716.2888148-1-leonylgao%40gmail.com
----
----
- kernel/rcu/tree.c       | 10 +++++++---
- kernel/rcu/tree.h       |  2 +-
- kernel/rcu/tree_stall.h |  4 ++--
- 3 files changed, 10 insertions(+), 6 deletions(-)
+34ed5a33b1218e Ohad Ben-Cohen 2011-10-20  716  
+530a1b57e8590f Suman Anna     2020-03-24  717  /**
+530a1b57e8590f Suman Anna     2020-03-24  718   * omap_rproc_da_to_va() - internal memory translation helper
+530a1b57e8590f Suman Anna     2020-03-24  719   * @rproc: remote processor to apply the address translation for
+530a1b57e8590f Suman Anna     2020-03-24  720   * @da: device address to translate
+530a1b57e8590f Suman Anna     2020-03-24  721   * @len: length of the memory buffer
+530a1b57e8590f Suman Anna     2020-03-24  722   *
+530a1b57e8590f Suman Anna     2020-03-24  723   * Custom function implementing the rproc .da_to_va ops to provide address
+530a1b57e8590f Suman Anna     2020-03-24  724   * translation (device address to kernel virtual address) for internal RAMs
+530a1b57e8590f Suman Anna     2020-03-24  725   * present in a DSP or IPU device). The translated addresses can be used
+530a1b57e8590f Suman Anna     2020-03-24  726   * either by the remoteproc core for loading, or by any rpmsg bus drivers.
+530a1b57e8590f Suman Anna     2020-03-24  727   *
+530a1b57e8590f Suman Anna     2020-03-24  728   * Return: translated virtual address in kernel memory space on success,
+530a1b57e8590f Suman Anna     2020-03-24  729   *         or NULL on failure.
+530a1b57e8590f Suman Anna     2020-03-24  730   */
+40df0a91b2a522 Peng Fan       2021-03-06  731  static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+530a1b57e8590f Suman Anna     2020-03-24 @732  {
+530a1b57e8590f Suman Anna     2020-03-24  733  	struct omap_rproc *oproc = rproc->priv;
+530a1b57e8590f Suman Anna     2020-03-24  734  	int i;
+530a1b57e8590f Suman Anna     2020-03-24  735  	u32 offset;
+530a1b57e8590f Suman Anna     2020-03-24  736  
+530a1b57e8590f Suman Anna     2020-03-24  737  	if (len <= 0)
+530a1b57e8590f Suman Anna     2020-03-24  738  		return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  739  
+530a1b57e8590f Suman Anna     2020-03-24  740  	if (!oproc->num_mems)
+530a1b57e8590f Suman Anna     2020-03-24  741  		return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  742  
+530a1b57e8590f Suman Anna     2020-03-24  743  	for (i = 0; i < oproc->num_mems; i++) {
+530a1b57e8590f Suman Anna     2020-03-24  744  		if (da >= oproc->mem[i].dev_addr && da + len <=
+530a1b57e8590f Suman Anna     2020-03-24  745  		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
+530a1b57e8590f Suman Anna     2020-03-24  746  			offset = da - oproc->mem[i].dev_addr;
+530a1b57e8590f Suman Anna     2020-03-24  747  			/* __force to make sparse happy with type conversion */
+530a1b57e8590f Suman Anna     2020-03-24  748  			return (__force void *)(oproc->mem[i].cpu_addr +
+530a1b57e8590f Suman Anna     2020-03-24  749  						offset);
+530a1b57e8590f Suman Anna     2020-03-24  750  		}
+530a1b57e8590f Suman Anna     2020-03-24  751  	}
+530a1b57e8590f Suman Anna     2020-03-24  752  
+530a1b57e8590f Suman Anna     2020-03-24  753  	return NULL;
+530a1b57e8590f Suman Anna     2020-03-24  754  }
+530a1b57e8590f Suman Anna     2020-03-24  755  
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 475f31deed14..a0dab5923d03 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -781,6 +781,10 @@ static int rcu_watching_snap_save(struct rcu_data *rdp)
- 	return 0;
- }
- 
-+#ifndef arch_irq_stat_cpu
-+#define arch_irq_stat_cpu(cpu) 0
-+#endif
-+
- /*
-  * Returns positive if the specified CPU has passed through a quiescent state
-  * by virtue of being in or having passed through an dynticks idle state since
-@@ -916,9 +920,9 @@ static int rcu_watching_snap_recheck(struct rcu_data *rdp)
- 			rsrp->cputime_irq     = kcpustat_field(kcsp, CPUTIME_IRQ, cpu);
- 			rsrp->cputime_softirq = kcpustat_field(kcsp, CPUTIME_SOFTIRQ, cpu);
- 			rsrp->cputime_system  = kcpustat_field(kcsp, CPUTIME_SYSTEM, cpu);
--			rsrp->nr_hardirqs = kstat_cpu_irqs_sum(rdp->cpu);
--			rsrp->nr_softirqs = kstat_cpu_softirqs_sum(rdp->cpu);
--			rsrp->nr_csw = nr_context_switches_cpu(rdp->cpu);
-+			rsrp->nr_hardirqs = kstat_cpu_irqs_sum(cpu) + arch_irq_stat_cpu(cpu);
-+			rsrp->nr_softirqs = kstat_cpu_softirqs_sum(cpu);
-+			rsrp->nr_csw = nr_context_switches_cpu(cpu);
- 			rsrp->jiffies = jiffies;
- 			rsrp->gp_seq = rdp->gp_seq;
- 		}
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index a9a811d9d7a3..1bba2225e744 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -168,7 +168,7 @@ struct rcu_snap_record {
- 	u64		cputime_irq;	/* Accumulated cputime of hard irqs */
- 	u64		cputime_softirq;/* Accumulated cputime of soft irqs */
- 	u64		cputime_system; /* Accumulated cputime of kernel tasks */
--	unsigned long	nr_hardirqs;	/* Accumulated number of hard irqs */
-+	u64		nr_hardirqs;	/* Accumulated number of hard irqs */
- 	unsigned int	nr_softirqs;	/* Accumulated number of soft irqs */
- 	unsigned long long nr_csw;	/* Accumulated number of task switches */
- 	unsigned long   jiffies;	/* Track jiffies value */
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 925fcdad5dea..56b21219442b 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -435,8 +435,8 @@ static void print_cpu_stat_info(int cpu)
- 	rsr.cputime_system  = kcpustat_field(kcsp, CPUTIME_SYSTEM, cpu);
- 
- 	pr_err("\t         hardirqs   softirqs   csw/system\n");
--	pr_err("\t number: %8ld %10d %12lld\n",
--		kstat_cpu_irqs_sum(cpu) - rsrp->nr_hardirqs,
-+	pr_err("\t number: %8lld %10d %12lld\n",
-+		kstat_cpu_irqs_sum(cpu) + arch_irq_stat_cpu(cpu) - rsrp->nr_hardirqs,
- 		kstat_cpu_softirqs_sum(cpu) - rsrp->nr_softirqs,
- 		nr_context_switches_cpu(cpu) - rsrp->nr_csw);
- 	pr_err("\tcputime: %8lld %10lld %12lld   ==> %d(ms)\n",
+:::::: The code at line 732 was first introduced by commit
+:::::: 530a1b57e8590f2ebbb6a35effa0efa988aabf6c remoteproc/omap: Add the rproc ops .da_to_va() implementation
+
+:::::: TO: Suman Anna <s-anna@ti.com>
+:::::: CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 -- 
-2.39.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
