@@ -1,155 +1,113 @@
-Return-Path: <linux-kernel+bounces-516519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81778A3732E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:32:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09AEA37331
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 10:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D038188DA38
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:32:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08B927A1484
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 09:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951318B463;
-	Sun, 16 Feb 2025 09:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57618B463;
+	Sun, 16 Feb 2025 09:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSqbu4+t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JqnYIwrs"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED9D433A0;
-	Sun, 16 Feb 2025 09:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62A4188CB1;
+	Sun, 16 Feb 2025 09:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739698329; cv=none; b=dJkNsJdbH+qOeyY9EiSlIcibK1Hx7Menguph740pNE7gdHGBE+ziGVmr401GjZrSIIywljZb5Nq1TAHSfR8b30mur++CUERaCoQjCkd8pd8aa886jBRf6ADSV0O+WaSqtKkZnHZybGnRiSEVSogpWEAtaFxETMv9hD9i4+C9nhM=
+	t=1739698457; cv=none; b=Q7AiObX+0UxyKywsok9ObwIcTBQLN2O8FyFKuazMWYsMCro5hLYDfHAm317iRcwlBZz5Lwk+BcpzG6fvGcnMnnf9YEL+x7o0txSUpUi+NA6ijbJC1KMcLE8ZHNmA6qJG5U/K6McUPO1HQNJd3/JSdq/1x0Pc7YE+PNE2eu1ma+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739698329; c=relaxed/simple;
-	bh=sM2HFCLqAxsh4GngDOhlxRVRtA3N/hd95Tg81RfRQFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jhvKmTM8h2OpeMv9ebvN+I6EVaHnVreAZL1mpSACZnHwPW8T5A2nbSUPUbG3yORCLjIiLkWAJrAUp23VI+VRCZxicVZ5cenza1iFmpP97prz1OirZ7HVuaJYL12KMDhqKfH1QCLfrElpRzXZ1NXRHuMPsdFKqYKeklP6du/r2hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSqbu4+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED22AC4CEDD;
-	Sun, 16 Feb 2025 09:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739698328;
-	bh=sM2HFCLqAxsh4GngDOhlxRVRtA3N/hd95Tg81RfRQFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VSqbu4+tEX+C/2s1TbcFTrMIK+qL/1F+WKH2CoR28EH30Sn6dCaPq9OqX8EiHCd+Z
-	 MWLufQMzvM6Oss4aHU71MfXyhG1tG5OhtObH60+5GI9YZSXmwZUWWe4AmqL4rkBqvx
-	 qb85QA1WEXIXEBn87bKvIGV5WkoO+UF8Q2oUuTmM7s2erZND4ZYcvOz2mOlh6xc8B+
-	 GQKD3Iq/hzrC2zV5J+3oFkYadfh7KcgciSXyAyPdg+RZQv9pKHsG8SCfwpuYiuTRVL
-	 6PS6Yioe20W3ilHsyrawLKJ0AlYSmjXkX/9C6f6EdrlPAAOdBTYRNN9ZcYWv5WFX2A
-	 +Kw3NrbONlrRg==
-Date: Sun, 16 Feb 2025 09:32:04 +0000
-From: Simon Horman <horms@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Nick Child <nnac123@linux.ibm.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, haren@linux.ibm.com,
-	ricklind@us.ibm.com, nick.child@ibm.com, jacob.e.keller@intel.com
-Subject: Re: [PATCH 1/3] hexdump: Implement macro for converting large buffers
-Message-ID: <20250216093204.GZ1615191@kernel.org>
-References: <20250214162436.241359-1-nnac123@linux.ibm.com>
- <20250214162436.241359-2-nnac123@linux.ibm.com>
- <20250215163612.GR1615191@kernel.org>
- <20250215174039.20fbbc42@pumpkin>
- <20250215174635.3640fb28@pumpkin>
+	s=arc-20240116; t=1739698457; c=relaxed/simple;
+	bh=JjasO57TmkHAF2+pt5YiZGmKt0D66MJKTHWtDtgXpOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UlR/lleU9NsJGigG6FVpW50I6d+D8XesoOMtSHMljHbmA9IwkXqbXIDHa899OVO0voXcgAZOSH+9LPafENN0yT6EbtHzTHAa1KBOrBFBpOBcEo2vhazztC+/uLhSlKhQAzb2po0cbv2WlX1umQiBnWXO3GeJ/WpVpwpnIOPI6fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JqnYIwrs; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739698447; x=1740303247; i=markus.elfring@web.de;
+	bh=JjasO57TmkHAF2+pt5YiZGmKt0D66MJKTHWtDtgXpOM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JqnYIwrsfRLzj2ihBi9fLcTozo5SvmI6ArZf1IAtxmJLLpIATdmzFK80R+WsgUOz
+	 NItk9NG+hRgUQLEkEcHpqVyBrQjvTfBzxlay94u3hRfld5RmfaUP8JVBegSwilNrz
+	 WEfKmqEaYjm+c5OV6uTw/nftV+oJoXywakEpJOzXhsrNJNcTQoFdT8Wi2rjOrO3Zf
+	 Be2EKsI088mIFMvUofp0luNG5z7s8+LBa7GA8PDQkenfMAcz2BMgg5So+djfeDvR3
+	 XAoYHwnKBo4Wn8yZEs7jY3YYMHDIk1TP4wPhxcD5O72K2uDN5w6yACVgIJRq16ClX
+	 GHpL856YKf2XTRLaDw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.29]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsJTC-1tUgqa3rbO-011102; Sun, 16
+ Feb 2025 10:34:06 +0100
+Message-ID: <825ed0c6-e804-4e07-9881-78de319aadf2@web.de>
+Date: Sun, 16 Feb 2025 10:34:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215174635.3640fb28@pumpkin>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 1/7] dmaengine: idxd: fix memory leak in error handling path
+ of idxd_setup_wqs()
+To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250215054431.55747-2-xueshuai@linux.alibaba.com>
+ <98327a4d-7684-4908-9d67-5dfcaa229ae1@web.de>
+ <4128c7ad-a191-4c37-a6ba-47b06324a8b5@linux.alibaba.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <4128c7ad-a191-4c37-a6ba-47b06324a8b5@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jBPEHK56v1GiAi8FaQGVMj0HYTAfCUJmy3VnNlUwHt6570thwgX
+ RpDz72g7Z9InZYkjX8+XvQo6sXsSdlLqqXS80pH9L6JB2BM6AjbpHmcXvy2fh/6RtqRxLV3
+ Vhc9Go5Vtc2E+OWSZhnNijCBADD6e4eRVMq/2e8YSoDcsrBb567IjdIDXDUAnvHBwrvOEoy
+ vuOjvQoHLtNjDXB9W6XKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3Ynx3OFfHcA=;I7SjZe99VdczEddmEAI4P4AjLRp
+ 2MlD2Gdy0uAYlatzINNQy+ySW801Qjcsm7AK0kmGGeF8By+kAg4ccSMwsb4JCI3eEh+ceaYnF
+ 056RBhuZPlbVuNhMIsgXK9OuDwqkVqIz77nGuQssLt/gpRCGmEYXMQS0R/ZPxpcibnQyzXhT5
+ ykevBKGp57euwmAynF/k7/AyQJA/ZQvelegTtr2uDCQLAojrZjFKym/xTUsKsHpuMEiHampem
+ BukDMA8IZDFP1gt1puM3w9ya4lSk+8u1X2qIwq6LLDaYkGu/NQBHrSVCUxFum9o7WJ5UYxENE
+ 0it/bQARCQ7ja2mLa3tVnT9w6aA6T8kpIntgXUZ0vpm4WA0xAmmBX2HLIqfMDu/SA9599lozz
+ ao0mgn5fSCLDygJZQm5WS2J7eHYjv0pe54EMVif5uzO1i2x+xODFQKdWBTuq2HNcAirrGAJin
+ EUIZZ+jq1Jmi83pQ6uZT9hlMVqvWP6ICiCT61mmTb3w4ULpTAAGUh70q19bCouCf4C8IhiC/a
+ oJDrvHKhjtxocpg81ZSQ8T4ed7GhQ+Bnw0VCw2JZOs61ZtUU3OBYIhzn6nfR/+FbFu4+tk2XW
+ H2s2x4GhAM9CL56U6XNuj49lwjqybsoSzODAbpJUgAYSyKIEPA0xlBYJstKtAvZvaDB0a+DKe
+ /2qjufOcM82wSNUfotJTfUn7UECYV1ImCKKljc+9H8QZA3FARWSesDiHDSCyUZ71G5/mcyEsw
+ CuuIPr2fYAr6HJuqakX2cq4fFuCIsUUdWfPqk8wGu7HmTyjg9aqtmfEdeidcBwgpIhCvmiwYv
+ 3fiR5MLiM67PkzN7Wm3os/ydFnoRln2j4q105rjSfmq/Y6xVWMhzU8yEGdVNWSoj6OD7W9QMN
+ LD0E1ZGVZY7smxxS54Lj11As11kygFY11SL1jQoxp/OAywAQTAj98yzuNhLuVU/qU4Ii/CUqA
+ u/v1zCeIHnx+c+VMHq3nZk5pkowCWU7XpIS7aL1OoFkqhPmaqe8h2/4aQMlPn5Mp3TLK/Nmn3
+ 1HidzAjpCRe67nnRgJ3AYsG5HrRfY+2oM2TXuVZsTQ0i8AZGBR+EgrimWLHZorUBMwA+MlnGi
+ 2IF69qfRRQ7Ppi5pE6OVVzHx7ZPgwtWp4mgN/q8lGOC5oZAJOsetEpNe4N85m+gsTf3IjfMvK
+ XnhmolF7GJIk1s9uen0/QI3Zq3orTCkD3xCdJBspN7UAXWs4jzmfwVtEcQXTrN6EN6Imr/o6g
+ YLoLAkslBbtAd2mcg0ReJnHzNn+u1OgXOIzWLkzonpkqvbcxMZJ6ohnM/vAqs8LF1aHh8wsGY
+ FgMu84/xA9ctCTaPS1L5Bp+fc9ZDM/PT3uu3Vcsxj/egCeHk2juo9n52hpymEEBio7iRFJm4V
+ ofPTmlYy92mGxxOTolRXUuWS8G6/dNRFrI5k+7Fti52NUy3Buqyl6H9RIEFz0JmYBg0JfzLVv
+ qZcK69tQBU1sWzKx3QaQpRCLNv2E=
 
-On Sat, Feb 15, 2025 at 05:46:35PM +0000, David Laight wrote:
-> On Sat, 15 Feb 2025 17:40:39 +0000
-> David Laight <david.laight.linux@gmail.com> wrote:
-> 
-> > On Sat, 15 Feb 2025 16:36:12 +0000
-> > Simon Horman <horms@kernel.org> wrote:
-> > 
-> > > + David Laight
-> > > 
-> > > On Fri, Feb 14, 2025 at 10:24:34AM -0600, Nick Child wrote:  
-> > > > Define for_each_line_in_hex_dump which loops over a buffer and calls
-> > > > hex_dump_to_buffer for each segment in the buffer. This allows the
-> > > > caller to decide what to do with the resulting string and is not
-> > > > limited by a specific printing format like print_hex_dump.
-> > > > 
-> > > > Signed-off-by: Nick Child <nnac123@linux.ibm.com>
-> > > > ---
-> > > >  include/linux/printk.h | 21 +++++++++++++++++++++
-> > > >  1 file changed, 21 insertions(+)
-> > > > 
-> > > > diff --git a/include/linux/printk.h b/include/linux/printk.h
-> > > > index 4217a9f412b2..559d4bfe0645 100644
-> > > > --- a/include/linux/printk.h
-> > > > +++ b/include/linux/printk.h
-> > > > @@ -755,6 +755,27 @@ enum {
-> > > >  extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
-> > > >  			      int groupsize, char *linebuf, size_t linebuflen,
-> > > >  			      bool ascii);
-> > > > +/**
-> > > > + * for_each_line_in_hex_dump - iterate over buffer, converting into hex ASCII
-> > > > + * @i: offset in @buff
-> > > > + * @rowsize: number of bytes to print per line; must be 16 or 32
-> > > > + * @linebuf: where to put the converted data
-> > > > + * @linebuflen: total size of @linebuf, including space for terminating NUL
-> > > > + *		IOW >= (@rowsize * 2) + ((@rowsize - 1 / @groupsize)) + 1
-> > > > + * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
-> > > > + * @buf: data blob to dump
-> > > > + * @len: number of bytes in the @buf
-> > > > + */
-> > > > + #define for_each_line_in_hex_dump(i, rowsize, linebuf, linebuflen, groupsize, \
-> > > > +				   buf, len) \
-> > > > +	for ((i) = 0;							\
-> > > > +	     (i) < (len) &&						\
-> > > > +	     hex_dump_to_buffer((unsigned char *)(buf) + (i),		\
-> > > > +				min((len) - (i), rowsize),		\
-> > > > +				(rowsize), (groupsize), (linebuf),	\
-> > > > +				(linebuflen), false);			\
-> > > > +	     (i) += (rowsize) == 16 || (rowsize) == 32 ? (rowsize) : 16	\  
-> > > > +	    )
-> > > >  #ifdef CONFIG_PRINTK
-> > > >  extern void print_hex_dump(const char *level, const char *prefix_str,
-> > > >  			   int prefix_type, int rowsize, int groupsize,    
-> > > 
-> > > Hi Nick,
-> > > 
-> > > When compiling with gcc 7.5.0 (old, but still supported AFAIK) on x86_64
-> > > with patch 2/3 (and 1/3) applied I see this:
-> > > 
-> > >   CC      lib/hexdump.o
-> > > In file included from <command-line>:0:0:
-> > > lib/hexdump.c: In function 'print_hex_dump':
-> > > ././include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_11' declared with attribute error: min((len) - (i), rowsize) signedness error  
-> > ...
-> > > Highlighting the min line in the macro for context, it looks like this:
-> > > 
-> > > 	min((len) - (i), rowsize)
-> > > 
-> > > And in this case the types involved are:
-> > > 
-> > > 	size_t len
-> > > 	int i
-> > > 	int rowsize  
-> > 
-> > Yep, that should fail for all versions of gcc.
-> > Both 'i' and 'rowsize' should be unsigned types.
-> > In fact all three can be 'unsigned int'.
+>> Will a =E2=80=9Cstable tag=E2=80=9D become relevant also for this patch=
+ series?
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/stable-kernel-rules.rst?h=3Dv6.14-rc2#n3
+>
+> I don't know if this is a real serious issue for stable kernel.
+How many resource leaks would you like to avoid with your contributions?
 
-To give a bit more context, a complication changing the types is that the
-type of len and rowsise (but not i) is in the signature of the calling
-function, print_hex_dump(). And I believe that function is widely used
-throughout the tree.
-
-> 
-> Thinking a bit more.
-> If the compiler can determine that 'rowsize >= 0' then the test will pass.
-> More modern compilers do better value tracking so that might be enough
-> to stop the compiler 'bleating'.
-
-FTR, I did not see this with GCC 14.2.0 (or clang 19.1.7).
+Regards,
+Markus
 
