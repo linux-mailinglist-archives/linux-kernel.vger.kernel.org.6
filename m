@@ -1,161 +1,206 @@
-Return-Path: <linux-kernel+bounces-516854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725C4A37842
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66589A37846
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:06:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858753AA11A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E093AAB7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F7B1624E0;
-	Sun, 16 Feb 2025 23:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="ESMd6txQ"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1284C1A5B8E;
+	Sun, 16 Feb 2025 23:06:36 +0000 (UTC)
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C1CC2EF
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0789FC2EF;
+	Sun, 16 Feb 2025 23:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739747045; cv=none; b=b10ld3DN1eS4aLFMlt4c/iXwK/lTDNaYHX35PIZzJbmn+/vY8mfOc78/w3N1B3aQz2PgxZIzJ2UoK66jXGemf1A3YHpx2TsdHxvhYVtmO2hccrpb04xuNrB439Ff+bL5NMl9rRwoU1DhbB5tIs1baAtU58R8VzpshAA7P+2GhEo=
+	t=1739747195; cv=none; b=U6z6QpgEE+a8QnODy2esBYG0FBwR0f+FBbTHSYQWl+Zh6LwLK73GPyU88PGtT8JbMCoiD48FKUQTH1vJgFnF0BJCt8BWK9WBoMXAoLwvkTtmHVt2zpkCjx10CR0E9Xw0GZorWcQW77ezVfUwAfzjxYPFcQNcflRfR34Mq7g2/g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739747045; c=relaxed/simple;
-	bh=wkzegGe6PuDvfuysYYpmOfCYrAJvZhUqTEETXwxIkeQ=;
+	s=arc-20240116; t=1739747195; c=relaxed/simple;
+	bh=YZb/MI83ZX30L0zZAmUfUF/iWVoHwrcibLZzeMA3cwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gI+NfE1dckQKLHc7+Ryg1saAFDbVHciMjWWIcr+fHgTsPKSBElvT34W5L7k4MCCnhe34CgUKK0PQQIuDwshFuxRrOvPH90hND295EMw+EbPLjQRQR/YqaJTatrb+348tvXjkFJRwccv9iaUoJm2M8A/C3GcUoJAS4ZdSKsfDOpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=ESMd6txQ; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Sun, 16 Feb 2025 18:03:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1739747041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5jBKuQz78Uh8OIAFgi4TgrQwNoRPu6E6igkIETLWFjs=;
-	b=ESMd6txQJdqiAM+dkUY7rHkSJxpUqdFMgq2PMVM2FJcWFxi62dlUYzkfAyu87m9vqelXz8
-	6SzMxZSRqNu8hyIPpqfV9IOLNLfsEGr3DsN8dd02Jm5wSnfwql16zisNzALr4QsyEDmZmK
-	0hi/+jrHd4d36OXpHzhImQqO/v8pk1ccLWW3LLqcZr1ugFJvhjG0MfowQweeI8mdYdOPxv
-	lNcvYkvxLWkwHuK6YWB2X+RrgHQIgHRfUUD0LqJE1H03juyrMK0k0oBHOti4CDgADNglCG
-	X/YPzL2IY4CrRbzX+Pxl+4l0tx42vE7bRX+OlQaSpbwTEceSgseQ1Hv/LGy2tg==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik@protonmail.com>
-Subject: Re: [PATCH 00/27] ASoC: tas27{64,70}: improve support for Apple
- codec variants
-Message-ID: <Z7Ju3HFQaLKgQJmC@blossom>
-References: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6Dvkjsb5kgi1FjiYUfPOkj1U734C9kafcRdy8t3XCNS6GdbG5JyBqznuR56O4Rs5QUhKYaR5yaW1WxsLsBrGEaq9Gu9NO4x8LmfFfBJXFobGR0HGhMmhyVpetY8fN1lIDNB6LuNMnDQxQJ/nBD6FhaeV0CL7oMyPCpreKeuSwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id ECDC6402B1;
+	Mon, 17 Feb 2025 00:06:22 +0100 (CET)
+Date: Mon, 17 Feb 2025 00:06:21 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Vinod Koul <vkoul@kernel.org>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Jordan Crouse <jordan@cosmicpenguin.net>, ~postmarketos/upstreaming@lists.sr.ht, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Martin Botka <martin.botka@somainline.org>, 
+	Jami Kettunen <jami.kettunen@somainline.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/3] drm/msm/dsi: Set PHY usescase (and mode) before
+ registering DSI host
+Message-ID: <xtcwuscf3nz6o6qhv4lerpeoxep34iloj6kvxxuad7yoqsus22@tmuv2jqvfpo7>
+References: <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-0-9a60184fdc36@somainline.org>
+ <20250209-drm-msm-initial-dualpipe-dsc-fixes-v2-2-9a60184fdc36@somainline.org>
+ <nzm3tokbvho3hxz3e5vblp5ndagfcv5ah3j7gtkqjmt7ynr6f3@v36juvu73i5v>
+ <vsxfi43d7rxh5xxc7ctivjslf6w4yy5iprqpqid3u3diylrtwd@wayafjlgzz7v>
+ <x4jced57uhdfnq4d7tdqsozxbdosu2fcmsjlqtuuvh25ltx2rc@2eqsa7e4vcdv>
+ <c5503020-0224-428a-9452-f8d668b47caf@quicinc.com>
+ <ca80bd37-3b3f-48d3-a57d-2440d20d0c6c@quicinc.com>
+ <hvwpqzvdoeosz34ptbksc44ad7ohi6uwioy6o7qc4ewwcvx4d4@g3kksn3rwk6j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <hvwpqzvdoeosz34ptbksc44ad7ohi6uwioy6o7qc4ewwcvx4d4@g3kksn3rwk6j>
 
-This looks much better than the v0 I eyeballed last week, good stuff :-)
-Will leave the technical review on this to people who know more audio
-than me but it /looks/ just about right to me. Thanks for getting this
-into shape and submitting it, James :-)
+On 2025-02-13 04:13:06, Dmitry Baryshkov wrote:
+> On Wed, Feb 12, 2025 at 05:13:08PM -0800, Abhinav Kumar wrote:
+> > Hi Marijn
+> > 
+> > On 2/10/2025 2:17 PM, Abhinav Kumar wrote:
+> > > 
+> > > 
+> > > On 2/10/2025 6:24 AM, Dmitry Baryshkov wrote:
+> > > > On Mon, Feb 10, 2025 at 01:54:29PM +0100, Marijn Suijten wrote:
+> > > > > On 2025-02-10 01:11:59, Dmitry Baryshkov wrote:
+> > > > > > On Sun, Feb 09, 2025 at 10:42:53PM +0100, Marijn Suijten wrote:
+> > > > > > > Ordering issues here cause an uninitialized (default STANDALONE)
+> > > > > > > usecase to be programmed (which appears to be a MUX) in some cases
+> > > > > > > when msm_dsi_host_register() is called, leading to the slave PLL in
+> > > > > > > bonded-DSI mode to source from a clock parent (dsi1vco) that is off.
+> > > > > > > 
+> > > > > > > This should seemingly not be a problem as the actual
+> > > > > > > dispcc clocks from
+> > > > > > > DSI1 that are muxed in the clock tree of DSI0 are way
+> > > > > > > further down, this
+> > > > > > > bit still seems to have an effect on them somehow and causes the right
+> > > > > > > side of the panel controlled by DSI1 to not function.
+> > > > > > > 
+> > > > > > > In an ideal world this code is refactored to no longer have such
+> > > > > > > error-prone calls "across subsystems", and instead model the "PLL src"
+> > > > > > > register field as a regular mux so that changing the clock parents
+> > > > > > > programmatically or in DTS via `assigned-clock-parents` has the
+> > > > > > > desired effect.
+> > > > > > > But for the avid reader, the clocks that we *are* muxing into DSI0's
+> > > > > > > tree are way further down, so if this bit turns out to be a simple mux
+> > > > > > > between dsiXvco and out_div, that shouldn't have any effect as this
+> > > > > > > whole tree is off anyway.
+> > > > > > > 
+> > > > > > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > > > > > > ---
+> > > > > > >   drivers/gpu/drm/msm/dsi/dsi_manager.c | 30
+> > > > > > > ++++++++++++++++++ +-----------
+> > > > > > >   1 file changed, 19 insertions(+), 11 deletions(-)
+> > > > > > 
+> > > > > > 
+> > > > > > Fixes: 57bf43389337 ("drm/msm/dsi: Pass down use case to PHY")
+> > > > > 
+> > > > > I'm not exactly confident about that.  Abhinav pointed out in
+> > > > > https://gitlab.freedesktop.org/drm/msm/-/issues/41#note_2375646 that
+> > > > > msm_dsi_host_register() was not supposed to be enabling the PHY, which I
+> > > > > provided a counter-stacktrace for to show that is indeed the case.
+> > > > > 
+> > > > > Either this was always a problem that's only become visible now
+> > > > > (and it's an
+> > > > > issue with that patch), or a different change causes
+> > > > > msm_dsi_host_register()
+> > > > > to enable the PHY and program the usecase too early?
+> > > > 
+> > > > As currently usecase is being programmed after the DSI host being
+> > > > registered, there might be a race condition between panel driver probe
+> > > > _and_ usecase programming.
+> > > > 
+> > > > > 
+> > > > > What do you think?
+> > > > > 
+> > > > > - Marijn
+> > > > > 
+> > > 
+> > > Yes I agree with Dmitry's explanation. The race condition between the
+> > > two can cause this. Hence I am also fine with this change.
+> > > 
+> > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > 
+> > > > > > > 
+> > > > > > > diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > > b/drivers/gpu/ drm/msm/dsi/dsi_manager.c
+> > > > > > > index a210b7c9e5ca281a46fbdb226e25832719a684ea..b93205c034e4acc73d536deeddce6ebd694b4a80
+> > > > > > > 100644
+> > > > > > > --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > > +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> > > > > > > @@ -74,17 +74,33 @@ static int dsi_mgr_setup_components(int id)
+> > > > > > >       int ret;
+> > > > > > >       if (!IS_BONDED_DSI()) {
+> > > > > > > +        /* Set the usecase before calling
+> > > > > > > msm_dsi_host_register(), which would
+> > > > > > > +         * already program the PLL source mux based on
+> > > > > > > a default usecase.
+> > > > > > > +         */
+> > > > > > > +        msm_dsi_phy_set_usecase(msm_dsi->phy,
+> > > > > > > MSM_DSI_PHY_STANDALONE);
+> > > > > > > +        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
+> > > > > > > +
+> > > > > > >           ret = msm_dsi_host_register(msm_dsi->host);
+> > > > > > >           if (ret)
+> > > > > > >               return ret;
+> > > > > > > -
+> > > > > > > -        msm_dsi_phy_set_usecase(msm_dsi->phy,
+> > > > > > > MSM_DSI_PHY_STANDALONE);
+> > > > > > > -        msm_dsi_host_set_phy_mode(msm_dsi->host, msm_dsi->phy);
+> > > > > > >       } else if (other_dsi) {
+> > > > > > >           struct msm_dsi *master_link_dsi = IS_MASTER_DSI_LINK(id) ?
+> > > > > > >                               msm_dsi : other_dsi;
+> > > > > > >           struct msm_dsi *slave_link_dsi = IS_MASTER_DSI_LINK(id) ?
+> > > > > > >                               other_dsi : msm_dsi;
+> > > > > > > +
+> > > > > > > +        /* PLL0 is to drive both DSI link clocks in bonded DSI mode.
+> > > > > > > +         *
+> > > > > > > +        /* Set the usecase before calling
+> > > > > > > msm_dsi_host_register(), which would
+> > > > > > > +         * already program the PLL source mux based on
+> > > > > > > a default usecase.
+> > > > > > > +         */
+> > 
+> > My compiler is throwing a warning here
+> > 
+> > drivers/gpu/drm/msm/dsi/dsi_manager.c: In function
+> > 'dsi_mgr_setup_components':
+> > drivers/gpu/drm/msm/dsi/dsi_manager.c:94:3: warning: "/*" within comment
+> > [-Wcomment]
+> >    /* Set the usecase before calling msm_dsi_host_register(), which would
+> >    ^
+> > drivers/gpu/drm/msm/dsi/dsi_manager.c: At top level:
+> > 
+> > Can you pls address this one so that I can pick this one up?
 
-Le Sat, Feb 15, 2025 at 10:02:33AM +1000, James Calligeros a Ã©crit :
-> Hi all,
+Whoops, that looks like copy-paste mistake when copying the comment from
+!IS_BONDED_DSI() and merging it with the original comment about PLL0.
+Will resend when I understand Dmitry's question below;
+
 > 
-> This series introduces a number of changes to the drivers for
-> the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
-> introduce (and improve in the case of TAS2770) support for the
-> variants of these amps found in Apple Silicon Macs.
-> 
-> Apple's variant of TAS2764 is known as SN012776, and as always with
-> Apple is a subtly incompatible variant with a number of quirks. It
-> is not publicly available. The TAS2770 variant is known as TAS5770L,
-> and does not require incompatible handling.
-> 
-> Much as with the Cirrus codec patches, I do not
-> expect that we will get any official acknowledgement that these parts
-> exist from TI, however I would be delighted to be proven wrong.
-> 
-> This series has been living in the downstream Asahi kernel tree[1]
-> for over two years, and has been tested by many thousands of users
-> by this point[2].
-> 
-> Regards,
-> James
-> 
-> [1] https://github.com/AsahiLinux/linux/tree/asahi-wip
-> [2] https://stats.asahilinux.org/
-> 
-> ---
-> Hector Martin (14):
->       ASoC: tas2764: Enable main IRQs
->       ASoC: tas2764: Power up/down amp on mute ops
->       ASoC: tas2764: Add SDZ regulator
->       ASoC: tas2764: Add reg defaults for TAS2764_INT_CLK_CFG
->       ASoC: tas2764: Mark SW_RESET as volatile
->       ASoC: tas2764: Fix power control mask
->       ASoC: tas2764: Wait for ramp-down after shutdown
->       ASoC: tas2770: Add SDZ regulator
->       ASoC: tas2770: Power cycle amp on ISENSE/VSENSE change
->       ASoC: tas2770: Add zero-fill and pull-down controls
->       ASoC: tas2770: Support setting the PDM TX slot
->       ASoC: tas2770: Fix volume scale
->       ASoC: tas2764: Set the SDOUT polarity correctly
->       ASoC: tas2770: Set the SDOUT polarity correctly
-> 
-> James Calligeros (2):
->       ASoC: dt-bindings: tas27xx: add compatible for SN012776
->       ASoC: dt-bindings: tas2770: add compatible for TAS5770L
-> 
-> Martin PoviÅ¡er (11):
->       ASoC: tas2764: Extend driver to SN012776
->       ASoC: tas2764: Add control concerning overcurrent events
->       ASoC: tas2770: Factor out set_ivsense_slots
->       ASoC: tas2770: Fix and redo I/V sense TDM slot setting logic
->       ASoC: tas2764: Reinit cache on part reset
->       ASoC: tas2764: Configure zeroing of SDOUT slots
->       ASoC: tas2764: Apply Apple quirks
->       ASoC: tas2764: Raise regmap range maximum
->       ASoC: tas2770: Export 'die_temp' to sysfs
->       ASoC: tas2764: Export 'die_temp' to sysfs
->       ASoC: tas2764: Crop SDOUT zero-out mask based on BCLK ratio
-> 
->  .../bindings/sound/ti,tas2770.yaml       |   1 +
->  .../bindings/sound/ti,tas27xx.yaml       |   1 +
->  sound/soc/codecs/Kconfig                 |   1 +
->  sound/soc/codecs/tas2764-quirks.h        | 188 +++++++++++++++
->  sound/soc/codecs/tas2764.c               | 302 +++++++++++++++++++++----
->  sound/soc/codecs/tas2764.h               |  29 ++-
->  sound/soc/codecs/tas2770.c               | 264 +++++++++++++++++----
->  sound/soc/codecs/tas2770.h               |  20 ++
->  8 files changed, 711 insertions(+), 95 deletions(-)
-> ---
-> base-commit: cc7708ae5e2aab296203fcec774695fc9d995f48
-> change-id: 20250214-apple-codec-changes-6e656dc1e24d
-> 
-> Best regards,
+> While you are at it, Marijn, could you please also fix the first comment
+> to be properly formatted?
+
+What exactly do you need to be reformatted about the first comment?  It's
+exactly the same in both branches.  No multiline comments in dsi_manager.c
+start with a newline after the first /*.  Anything I'm missing?
+
+- Marijn
+
 > -- 
-> James Calligeros <jcalligeros99@gmail.com>
-> 
+> With best wishes
+> Dmitry
 
