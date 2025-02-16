@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-516618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02004A374CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:44:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9960FA374CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3AE3AEA04
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1D118900CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE151990C1;
-	Sun, 16 Feb 2025 14:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE571990D9;
+	Sun, 16 Feb 2025 14:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GHS+PHwD"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbiV0dug"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D0B18BC1D;
-	Sun, 16 Feb 2025 14:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A0E19755B;
+	Sun, 16 Feb 2025 14:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739717062; cv=none; b=IYUN+8bvEC23qvNkGo565GczPFRaq3NokQSJdXfuJ+GsLtpM84G4IwdMPqGEmu404G69D37gWWEhiZ1nXHkzxTJIifg+Kioh/RyBye1g0dAzFdEtBOv10bj0oq+m8rR02a2wTt14YfMHVN18pId6zwu/aCMQEHHK+pUkxDqFvZE=
+	t=1739717087; cv=none; b=ok4QVY/RljFA139sqJxe2w+uLk+YmnQx9azV5YQNvYBSxjzpew8SAj2HZFsbU3B2kXfNcOU4Q/XznxhqRSQvJAICJxuCzEUSdd4/5kNbw9UMQr1+HMGh+OEmloOc+JjhJAzK0WwiaAtKLiGMZD49lx1XNILXXmi0Y9C3Nqy4i2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739717062; c=relaxed/simple;
-	bh=eEXisePiItVInqXP8r8mz0G1g91CunOEy+VSQmiT/sw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K0rPXsZ/pXIeNFe1BAboPpBOoqTyYeOOb7mjzbQ+yCsDVKOeIGbl8QHXjezR0W5A1uVu0Ntbi7+WSMjfSPoBzojB/UY/Ueg7sbG2wYI3DNbYldyJsLE+teq3XcxBJelOHXW2hP27oG+sWCF8slbiZx2Bl8Kz1Eb+mBHuGxqT1iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=GHS+PHwD; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7a31ec88ec7411ef8eb9c36241bbb6fb-20250216
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=k/dEYJoO4Qk0W2/aYoTFiGpV/VHj1MHfhfjKfCBVoWg=;
-	b=GHS+PHwDdBkVw5ixuvT5jV7YqGuYx+/Y6VBHs2HaZ6d6CMolbwLE9Fx7nNyIM9+cGTDSbklVU5y9z/wr5siYOBozK+7MwxcvXDYAwAAdVENzIt4e7d4V/3Qjz+dADfR1mGhF2Yt3aD2u56DQ6lUEDs8q6yHiGbsoMNKSSI6YYzA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:f77fecc7-e59b-4c26-a5ba-d6462e77df15,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:b711d524-96bd-4ac5-8f2e-15aa1ef9defa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7a31ec88ec7411ef8eb9c36241bbb6fb-20250216
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <ed.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 574062639; Sun, 16 Feb 2025 22:44:08 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Sun, 16 Feb 2025 22:44:06 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Sun, 16 Feb 2025 22:44:06 +0800
-From: <ed.tsai@mediatek.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<chun-hung.wu@mediatek.com>, Ed Tsai <ed.tsai@mediatek.com>,
-	<dm-devel@lists.linux.dev>
-Subject: [PATCH 1/1] dm: Enable inline crypto passthrough for striped target
-Date: Sun, 16 Feb 2025 22:42:21 +0800
-Message-ID: <20250216144224.1702385-2-ed.tsai@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1739717087; c=relaxed/simple;
+	bh=HUXeE93HUWmwSWE2DNlCQ6wi1Dmd4yxC3MTLyhyLT6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bpCzxxtXymwmMoPSQJ1t12dE2cxyvDYAXTchJf+/b/09PdxeUqgYxC2EiH0ofVu4bufaszsSO9p0X8hLFJxyyGDyWn25ROelzLIIERsT5bfb6kIQSSkxiZzj9LL8iWjlxYCej876yZzaMdft74XwiO0yKryLDuDgs5Jy2amtU+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbiV0dug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A4CC4CEDD;
+	Sun, 16 Feb 2025 14:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739717086;
+	bh=HUXeE93HUWmwSWE2DNlCQ6wi1Dmd4yxC3MTLyhyLT6U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sbiV0dugI2pytUK3ePCDtacuQrV1jt5qGWPYFFBY2t0oN+kNRcudp1tBjT7jLXKUF
+	 7jLx+4HC0eADTb12IeTO7OqFQgFZnOE+/m8aQ6gAxKb0N2v2divflg+d4ijsBgwbmB
+	 smRgJu9ynFGAfzqpkPeU7U47lB+rYhLdRrmQW8PVlDpS/aKDTaOspj4FkjcfE1GYPS
+	 5rRZCkbQnBJH6zUjeNAjE8ASWjvfjc/s7mX5BCEJeTkmyeeL4L+LFd3rSjJHgiDn9Z
+	 jIsEGlOiE2rdIc1g2gWVZDhd+fx0BftUPS0zUxF7JpVYpxfa3EnSaK2ZyaLbVdw7db
+	 vZlVIq4lRy5ww==
+Date: Sun, 16 Feb 2025 14:44:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <20250216144436.70ff78c3@jic23-huawei>
+In-Reply-To: <CAPVz0n1T_jXXDhm6gF7gDDqZ=b6abR1Tqk=5kLo=Ws4FF2EVJw@mail.gmail.com>
+References: <20250215103159.106343-1-clamor95@gmail.com>
+	<20250215103159.106343-3-clamor95@gmail.com>
+	<1597453a-31fc-49eb-8b69-efeb8805c67a@ixit.cz>
+	<CAPVz0n1T_jXXDhm6gF7gDDqZ=b6abR1Tqk=5kLo=Ws4FF2EVJw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Ed Tsai <ed.tsai@mediatek.com>
 
-Added DM_TARGET_PASSES_CRYPTO feature to the striped target to utilize
-the hardware encryption of the underlying storage devices, preventing
-fallback to the crypto API.
+> > > +
+> > > +static int al3000a_read_raw(struct iio_dev *indio_dev,
+> > > +                         struct iio_chan_spec const *chan, int *val,
+> > > +                         int *val2, long mask)
+> > > +{
+> > > +     struct al3000a_data *data = iio_priv(indio_dev);
+> > > +     int ret, gain;
+> > > +
+> > > +     switch (mask) {
+> > > +     case IIO_CHAN_INFO_RAW:
+> > > +             ret = regmap_read(data->regmap, AL3000A_REG_DATA, &gain);
+> > > +             if (ret < 0)
+> > > +                     return ret;
+> > > +
+> > > +             *val = lux_table[gain & AL3000A_GAIN_MASK];  
+> >
+> > Why did you chosen to do post-processing in the RAW channel instead
+> > doing it in INFO_SCALE (same as al3010 does)?
+> >  
+> 
+> From my observation INFO_SCALE will just perform multiplication of RAW
+> to SCALE. In this case values which are read are not actual raw values
+> of illumination. Next is my assumption (since there is no datasheet),
+> but values obtained from register are similar to values from adc
+> thermal sensors, they need be converted via reference table to get
+> actual data.
 
-Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
----
- drivers/md/dm-stripe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please add a comment somewhere here to say that we don't know the
+relationship of these values to illuminance hence providing
+_RAW and _SCALE would not be helpful.
 
-diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
-index 3786ac67cefe..a1b7535c508a 100644
---- a/drivers/md/dm-stripe.c
-+++ b/drivers/md/dm-stripe.c
-@@ -467,7 +467,7 @@ static struct target_type stripe_target = {
- 	.name   = "striped",
- 	.version = {1, 7, 0},
- 	.features = DM_TARGET_PASSES_INTEGRITY | DM_TARGET_NOWAIT |
--		    DM_TARGET_ATOMIC_WRITES,
-+		    DM_TARGET_ATOMIC_WRITES | DM_TARGET_PASSES_CRYPTO,
- 	.module = THIS_MODULE,
- 	.ctr    = stripe_ctr,
- 	.dtr    = stripe_dtr,
--- 
-2.45.2
+> 
+> > Except this, LGTM.
+> >
+> > Documentation and DT patch:
+> >
+> > Reviewed-by: David Heidelberg <david@ixit.cz>  
+> > > +
+> > > +             return IIO_VAL_INT;
+> > > +     case IIO_CHAN_INFO_SCALE:
+> > > +             *val = 1;
+> > > +
+
+Don't do this.  The above lack of known relationship has to be
+expressed by not providing the _scale attribute.
+
+> > > +             return IIO_VAL_INT;
+> > > +     default:
+> > > +             return -EINVAL;
+> > > +     }
+> > > +}
+> > > +
+> > > +static const struct iio_info al3000a_info = {
+> > > +     .read_raw       = al3000a_read_raw,
+> > > +};
+
 
 
