@@ -1,209 +1,163 @@
-Return-Path: <linux-kernel+bounces-516843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62204A37816
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:45:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2050CA37818
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DF7188E0CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344903AF78B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF86418DB14;
-	Sun, 16 Feb 2025 22:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCE11A4F2D;
+	Sun, 16 Feb 2025 22:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0H4cHXK"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfZgYw00"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45DC1EB2A
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE035748F;
+	Sun, 16 Feb 2025 22:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739745940; cv=none; b=KM/JIwLkvYwq/2q5xXpEWMD/ByJ9BQ/g4z/IUjNXpPBs1GpdPsrJ//PCC4GmO+IQBEwiDqyGOHIJWWj37UR04Nzm/7hG4zBIaVL1Q38gkoTBBKlj2FL/GdsWmjrI6SR7OMU0vLly0XIvdz5ym0X5a6jWJB05/Mp63R3mBH+j7VU=
+	t=1739746242; cv=none; b=iYFrPXBLEiFtX8h+LM85xjunJC4sj85gKSgmHg8ncZODIApAc4aUzaFKarcer/i+fzgCBVPU/pHjsr6Eq3XprZc01JoqvXuBInx9iFrmzcR89XczqDDjJg0/te19dlXK2FHHDPTHZmF+UDHF1Yw1kiuXIoM3PCo40V5aUx9MP5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739745940; c=relaxed/simple;
-	bh=o5h+vxYNv93C+B5377DoXBzz3I1RzT+aVxCT1CztCts=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V6T2ItnMWW0pYOUspiM49K9VFL+4DVEPfOKdfNNhn+Y5+Yt1vwxyyN5Zq/SSTqOIxvr+3az2MclJpDnMj0xz7OWMxHTNu7FyS9uCBiHWz2NnQRx48NcCC0uf6oZpEF8TgoCJ0tKzBEmcio72GHnyBEG+zx44KZU3Gy9shSgQQj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0H4cHXK; arc=none smtp.client-ip=209.85.214.195
+	s=arc-20240116; t=1739746242; c=relaxed/simple;
+	bh=MVPYUEfqQP7SYtryyiFnYb+MCB/nRuUktfoW6AhsSsE=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CB1wJ8S3qP9XVNAfCrWmpmMmug4nCPxcxLmle82AHef4xbGC8Qw+7O71hQLbloGhXugL08LyC7sBRgws+qvFMQkhET6HX8Ey0g6V8b6CzPyzR1VgsnztMJeq7fseY/8PBSRyVagHO28is7iOOtIBITmPsj4yLSwuvie66wX/sMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfZgYw00; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-221050f3f00so23431715ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 14:45:38 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220d601886fso48224415ad.1;
+        Sun, 16 Feb 2025 14:50:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739745938; x=1740350738; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1lXgZGYbOeNkArlRc4xYi0BsMJqExmF6NA5ol15gPq0=;
-        b=B0H4cHXK/Cztes7JIvTU31e4czrZweCH1az0CxJv9hDNsSsnkXjf0yOkisd5Bp2sA/
-         Op7GiglfPOLELmsEGRIUXRhikHBQ4F4Cowz16fPoZzYtMSB6GGLCGDC4V64pvm0zFj/e
-         OCIAxsO1hRI2pOUNdfuCOpQzfWT24nxWmUJzJkMnPPs1ISfLnb8hOjikni+2UkAKTs5W
-         WTwVM6pqiZ0tjEiqSTtayKGhukZS98/WBtRh6hxcGNzzVDoOqVDOVzD56GOF4s0R+/k2
-         1Bgm0wiGx4xXSLVE/Th5xhmJK8/byWOwNMslheUzUodIsRv8u5UsvqVKimPt3S4b9A41
-         ufcg==
+        d=gmail.com; s=20230601; t=1739746240; x=1740351040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rwRpTiFhkazH7eZCnzFo4dfJTeXkjVTocPymKPEhdxo=;
+        b=BfZgYw00LiTNTk+K0EWlPpbX4GkcUorSqwXbpFtvWHVoqwJd2R04XvLO7pKjDyg8BI
+         +P8M3xK56K6zjzVq9Bzvp0LeHyuuA7NUX+G+xDrqyrjJ3yzg/oGJy5Phdi1r72IxYUFT
+         snJqqwSbx3GVh55xgKYtOl2/CJy12U9eI8q0wVIop6HV30ccqrwuGW+eSe+bpMmZ9f9Y
+         5PIhVisYOY7d7QPLjdDo5t1C0eO7RsDff4KFdic3Yx6b6eAdCrjnAeHwPd4YtTJyA1gq
+         CmZ7eVscVy0SJiwk5F1mx0SOLYEb+lM9TDIVS0QFC/oOtw3Wh7zTMyMY8Sp9TPfDhTiQ
+         hGow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739745938; x=1740350738;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lXgZGYbOeNkArlRc4xYi0BsMJqExmF6NA5ol15gPq0=;
-        b=pdEAbqonU0fkoAkJ8+upV1Rg8S3z66SlgcpAjmq6dF+EUZWwXNWdghbODdsiXmCuqh
-         JNFeYdZqk/m0JOdt2BYY71q6Vy7wcoc69VRa9jY5TY9aivwPY7PNAZvjPEa8HCKlCdwk
-         w/L2QeCoACI9xm98nlC9WKZH2rDOUa+LUsiKdFGPSCI+admGgiv0TSFwZ+GETlC1yOBh
-         aTKYp9v5etzfT61ZQ0rE+VcOXvsTDEUFpzzDbZkg+1azFWQ0bivOOfSjVUIoaWmKUyYW
-         PeQl1SiSCyWMRvPRBRjEMnj8tvt6UPDB0cEMVuuXyp67rOUfcG2kUWm7nB8SjqrmpFpn
-         +MHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdOAA2+R/f5snRhu1Dd7+UJe9L8M5UKv9un0hZZCPXhmeUYiTJx7/xdWqpfCwpDGGF/0R0HLXOwi6WPpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF3viXBnwFTYJHfM437xawubMclRIyDvrkjgmxP11bK0rdNz8r
-	lIneasNdhOVwAUC2gbvo3j41DujcvLgb9R589rsF7eGS7atvE+zwDkfE6CZf16beyg==
-X-Gm-Gg: ASbGnct1ihV4PwiyUr5qNt9vEFIefr8qyrI3eTAAYcdIBrw/2Qx61UrVw1sam6OYDlL
-	on7vRpIdpBr9Y2GVTS/bSwJB7rc0GJ+t13nS9/DSSfqfkaR8tFEPgYeid9xN2aHQVYloK7myUqK
-	a7d2IG5FOH3tsFa6y5qx2BUlNnlEwwSzJBmWViYewjmlB+EzXYDl50OtI2l+FeKbSaHpJGkwTBs
-	j2+UTUE233pG3By9s1sJNjxmhMzc/RWvoqJJPXNykO2PJPsMgaGpfRZBBwd2vVJFZM7ljSclLH+
-	SYMGAokdkBQ+5RKC
-X-Google-Smtp-Source: AGHT+IETsdToexfOKnV5RTAsBCUGxTRJy/k3CPXnlBh32kLjeoH5tmu6Ztfx5d8mopXKW1L5W9JtpA==
-X-Received: by 2002:a17:902:f54e:b0:220:ca08:8986 with SMTP id d9443c01a7336-2210402d6b2mr139799835ad.22.1739745937571;
-        Sun, 16 Feb 2025 14:45:37 -0800 (PST)
-Received: from pronto ([2409:4066:d04:319e:1d76:db25:b6bf:4f52])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556fbeesm59571015ad.183.2025.02.16.14.45.36
+        d=1e100.net; s=20230601; t=1739746240; x=1740351040;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rwRpTiFhkazH7eZCnzFo4dfJTeXkjVTocPymKPEhdxo=;
+        b=v+cjbNQpIAG0t7d7KhavjRSvFZp3yjbULsfudE7YpkxkI4MTPv+3mF51wJjkOlcE7n
+         77OauOrG8KO04DlN23l7K5v3k5wRXeQE1/fyCTcFncC5YDa0Ylup9oDMC96GZ/KtlRUP
+         BcruDKXHjLNnS1nT1JZJnWmEqn1W5MbA3jaPbyVpUrMyRBDl/96n0FjHLowW5KYcPjoJ
+         J3EkMvnUOLmUEiMUyaY6Et10BteMM/MUTDqf+ocvB4242jGtz64hsqnjvDExYO7H/5cJ
+         jWpJGgQinEAH+mMMOj1EvlfmglOuKbKLwtZS3gmoXojTScLyIWPuZQ6RqLmQ037n4eNm
+         GbUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUph41B+DMA9yuboNms8DGnV6S2mu/wfV1lApzLtd4QwrK/MRIi95onvV3YTBVQFT/u/LP4hwel@vger.kernel.org, AJvYcCW1lMXeM8lCs37Rb+NpgnZQjcOp0pZtU6T9+Bo9f0HP/pt5ZDur1NGXeTxdmdvq7//FiE6VYquOANkHKPM=@vger.kernel.org, AJvYcCWwnuWSGhYx9AUXl4MOQedOKOgNSeKDz3twzMBQnxmvNLCnbVh4j850+pdy4HtA33c3T9/V9/kwX+oWdyfm5Jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8ByqjWu2yAMm06jFiIRaSg+IRkfmsEml1tIOf9esvbcH7OUAI
+	ZoQS8d1nC8bweaH8+xoXhDRpYMMlVwE/+9ziTuW7hbTh6cjmRcLV
+X-Gm-Gg: ASbGncv1iNFZpmI5vzYi/3Plgzbi61TvpoWAYNYqOQFGYEfhLpwWW47h6/es3WQG6ze
+	wqY6FEJcLnasD0Wyqbla6klKsIrpIUsUr/wsZOsMpgLAavbu9K9wPCvgKTeYcnInHDmNNBPnUk+
+	kR35FCJHgOSPNkJp4QddFRgQrsvYCAqHRytdgkhGhqIOc0+npoqovthtvsqhjUnJ4pzGwUKYbKj
+	BUOEaxKtNLrjOXWRWGz8mT/HO2U/HK9m7/Pjl/GxXLf3+EgeB7QaRbjdif3AbtzRV+j+dVa+BL6
+	FMgRrgakbP/+YeA6nEP3NtOzWmEJ/JCHfRWJCy7VltkDMwuZfkiokSfx4HYi9d4KcerFSx/H
+X-Google-Smtp-Source: AGHT+IE6flqDwVsTpGpc3YTvZ/iHfBKBaGrBtHop4poOhkkBMwzDiFwM8gvHelDmDsGXIxZ3B+QX9g==
+X-Received: by 2002:a17:903:32c3:b0:220:e7ae:dbcf with SMTP id d9443c01a7336-22104039c9cmr81807265ad.23.1739746240046;
+        Sun, 16 Feb 2025 14:50:40 -0800 (PST)
+Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536733fsm60448195ad.77.2025.02.16.14.50.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 14:45:37 -0800 (PST)
-Date: Mon, 17 Feb 2025 04:15:32 +0530
-From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
-To: dpenkler@gmail.com
-Cc: gregkh@linuxfoundation.org, krzysztof.kozlowski@linaro.org,
-	broonie@kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging:gpib:agilent_82350b: Fixed spelling errors removed
- commented code
-Message-ID: <Z7JqjL_qGn8zEQXF@pronto>
+        Sun, 16 Feb 2025 14:50:39 -0800 (PST)
+Date: Mon, 17 Feb 2025 07:50:29 +0900 (JST)
+Message-Id: <20250217.075029.1780115689208398996.fujita.tomonori@gmail.com>
+To: daniel.almeida@collabora.com
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+ arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev
+Subject: Re: [PATCH v10 7/8] rust: Add read_poll_timeout functions
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <CEF87294-8580-4C84-BEA3-EB72E63ED7DF@collabora.com>
+References: <3F610447-C8B9-4F9D-ABDA-31989024D109@collabora.com>
+	<20250214.131330.2062210935756508516.fujita.tomonori@gmail.com>
+	<CEF87294-8580-4C84-BEA3-EB72E63ED7DF@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
 
-Fixed spelling error from "havn't" to "haven't" and removed commented
-code which created empty lines removed them as well, removed few
-whitespaces and other empty lines. Removed braces from a single line.
+On Sun, 16 Feb 2025 09:19:02 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-Signed-off-by: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
----
- .../gpib/agilent_82350b/agilent_82350b.c      | 29 ++++---------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+>>>> +/// Polls periodically until a condition is met or a timeout is reached.
+>>>> +///
+>>>> +/// ```rust
+>>>> +/// use kernel::io::poll::read_poll_timeout;
+>>>> +/// use kernel::time::Delta;
+>>>> +/// use kernel::sync::{SpinLock, new_spinlock};
+>>>> +///
+>>>> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
+>>>> +/// let g = lock.lock();
+>>>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
+>>>> +/// drop(g);
+>>>> +///
+>>>> +/// # Ok::<(), Error>(())
+>>> 
+>>> IMHO, the example section here needs to be improved.
+>> 
+>> Do you have any specific ideas?
+>> 
+>> Generally, this function is used to wait for the hardware to be
+>> ready. So I can't think of a nice example.
+> 
+> Just pretend that you’re polling some mmio address that indicates whether some hardware
+> block is ready, for example.
+> 
+> You can use “ignore” if you want, the example just has to illustrate how this function works, really.
 
-diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-index 5c62ec24fc..9c9e66b85b 100644
---- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-+++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-@@ -48,7 +48,7 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
- 		return 0;
- 	//disable fifo for the moment
- 	writeb(DIRECTION_GPIB_TO_HOST, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
--	// handle corner case of board not in holdoff and one byte might slip in early
-+	// handle corner case of board not in hold off and one byte might slip in early
- 	if (tms_priv->holdoff_active == 0 && length > 1) {
- 		size_t num_bytes;
- 
-@@ -121,10 +121,10 @@ static int agilent_82350b_accel_read(gpib_board_t *board, uint8_t *buffer, size_
- 	writeb(DIRECTION_GPIB_TO_HOST, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 	if (retval < 0)
- 		return retval;
--	// read last bytes if we havn't received an END yet
-+	// read last bytes if we haven't received an END yet
- 	if (*end == 0) {
- 		size_t num_bytes;
--		// try to make sure we holdoff after last byte read
-+		// try to make sure we hold off after last byte read
- 		retval = tms9914_read(board, tms_priv, buffer, length, end, &num_bytes);
- 		*bytes_read += num_bytes;
- 		if (retval < 0)
-@@ -176,8 +176,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 
- 	event_status = read_and_clear_event_status(board);
- 
--	//pr_info("ag_ac_wr: event status 0x%x tms state 0x%lx\n", event_status, tms_priv->state);
--
- #ifdef EXPERIMENTAL
- 	pr_info("ag_ac_wr: wait for previous BO to complete if any\n");
- 	retval = wait_event_interruptible(board->wait,
-@@ -190,18 +188,14 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		return retval;
- #endif
- 
--	//pr_info("ag_ac_wr: sending first byte\n");
- 	retval = agilent_82350b_write(board, buffer, 1, 0, &num_bytes);
- 	*bytes_written += num_bytes;
- 	if (retval < 0)
- 		return retval;
- 
--	//pr_info("ag_ac_wr: %ld bytes eoi %d tms state 0x%lx\n",length, send_eoi, tms_priv->state);
--
- 	write_byte(tms_priv, tms_priv->imr0_bits & ~HR_BOIE, IMR0);
- 	for (i = 1; i < fifotransferlength;) {
- 		clear_bit(WRITE_READY_BN, &tms_priv->state);
--
- 		block_size = min(fifotransferlength - i, agilent_82350b_fifo_size);
- 		set_transfer_counter(a_priv, block_size);
- 		for (j = 0; j < block_size; ++j, ++i) {
-@@ -210,13 +204,8 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		}
- 		writeb(ENABLE_TI_TO_SRAM, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 
--		//pr_info("ag_ac_wr: send block: %d bytes tms 0x%lx\n", block_size,
--		// tms_priv->state);
--
--		if (agilent_82350b_fifo_is_halted(a_priv)) {
-+		if (agilent_82350b_fifo_is_halted(a_priv))
- 			writeb(RESTART_STREAM_BIT, a_priv->gpib_base + STREAM_STATUS_REG);
--			//	pr_info("ag_ac_wr: needed restart\n");
--		}
- 
- 		retval = wait_event_interruptible(board->wait,
- 						  ((event_status =
-@@ -226,8 +215,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 						  test_bit(TIMO_NUM, &board->status));
- 		writeb(0, a_priv->gpib_base + SRAM_ACCESS_CONTROL_REG);
- 		num_bytes = block_size - read_transfer_counter(a_priv);
--		//pr_info("ag_ac_wr: sent  %ld bytes tms 0x%lx\n", num_bytes, tms_priv->state);
--
- 		*bytes_written += num_bytes;
- 		retval = translate_wait_return_value(board, retval);
- 		if (retval)
-@@ -238,9 +225,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
- 		return retval;
- 
- 	if (send_eoi) {
--		//pr_info("ag_ac_wr: sending last byte with eoi byte no:   %d\n",
--		// fifotransferlength+1);
--
- 		retval = agilent_82350b_write(board, buffer + fifotransferlength, 1, send_eoi,
- 					      &num_bytes);
- 		*bytes_written += num_bytes;
-@@ -284,8 +268,7 @@ static irqreturn_t agilent_82350b_interrupt(int irq, void *arg)
- 		tms9914_interrupt_have_status(board, &a_priv->tms9914_priv, tms9914_status1,
- 					      tms9914_status2);
- 	}
--//pr_info("event_status=0x%x s1 %x s2 %x\n", event_status,tms9914_status1,tms9914_status2);
--//write-clear status bits
-+
- 	if (event_status & (BUFFER_END_STATUS_BIT | TERM_COUNT_STATUS_BIT)) {
- 		writeb(event_status & (BUFFER_END_STATUS_BIT | TERM_COUNT_STATUS_BIT),
- 		       a_priv->gpib_base + EVENT_STATUS_REG);
-@@ -317,7 +300,7 @@ static void set_transfer_counter(struct agilent_82350b_priv *a_priv, int count)
- 
- 	writeb(complement & 0xff, a_priv->gpib_base + XFER_COUNT_LO_REG);
- 	writeb((complement >> 8) & 0xff, a_priv->gpib_base + XFER_COUNT_MID_REG);
--	//I don't think the hi count reg is even used, but oh well
-+	// I don't think the hi count reg is even used, but oh well
- 	writeb((complement >> 16) & 0xf, a_priv->gpib_base + XFER_COUNT_HI_REG);
- }
- 
--- 
-2.48.1
+Ah, you use `ignore` comment. I was only considering examples that
+would actually be tested.
 
+
+> Something like
+> 
+> ```ignore
+>  /* R is a fictional type that abstracts a memory-mapped register where `read()` returns Result<u32> */
+>  fn wait_for_hardware(ready_register: R) {
+>      let op = || ready_register.read()?
+> 
+>      // `READY` is some device-specific constant that we are waiting for.
+>      let cond =  |value: &u32| { *value == READY }
+> 
+>      let res = io::poll::read_poll_timeout (/* fill this with the right arguments */);
+> 
+>      /* show how `res` works, is -ETIMEDOUT returned on Err? */
+> 
+>      match res {
+>        Ok(<what is here?>) => { /* hardware is ready */}
+>        Err(e) => { /* explain that *value != READY here? */ }
+> 
+>      /* sleep is Option<Delta>, how does this work? i.e.: show both None, and Some(…) with some comments. */
+>  } 
+> ```
+> 
+> That’s just a rough draft, but I think it's going to be helpful for users.
+
+I'll add an example based on the code QT2025 PHY (8th patch). It's
+similar to the above.
+
+Thanks,
 
