@@ -1,298 +1,140 @@
-Return-Path: <linux-kernel+bounces-516831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA65A377F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A89A377F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAE43B09FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 21:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A17318880B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846FD1A315F;
-	Sun, 16 Feb 2025 21:55:23 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C181531E8;
+	Sun, 16 Feb 2025 22:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HBaAI/b4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE99E1531E9
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 21:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE221624E6
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739742922; cv=none; b=bIShOsY3f287NFhF2Bn/erheWlnmEuuWNbXcQU3CQRsVBJyXNTlv4sGhXO9y/5OtRO6pDWLqhXZY1aZ6BEHaqRIPhJECP/Utd5+s2t7GDbS65pzOAd7dyYl6Ju6Vux+DI+1FqnxBdPMX77uacKJsnXbJjyZWjiSLkwqgI3EGpr0=
+	t=1739743809; cv=none; b=DKKrSn7j0mtRqzovfZrH26cc5keeHb8PZqXYdvbSpvy+XdyV4fNYceZCqfxZdB7MFutrwsrvsqUGkVtAs4j/DdxlmDuluO2EABsnmv2DuK9v8DcCjJsytojD3slVLH0LlBKJ5vAi8Wa1jT2xj9KvjS1zvSwCp19iBn26tsW93BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739742922; c=relaxed/simple;
-	bh=Q++t0vVW6RW7LpZ8pv5DVPNLxuDPt2G9Z4KSxGjrOy8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k15XSZWzj9yWzso7XiamN7ZQeBeNf6PExAQK2uEyVGGx+eLg2OWK+5XNxPJ0Rz0rgLiTL8mL7TcCLckJO6rweMO0e6YjlErbvuK6pQtkoFHZ5kX3iuP3Ia3NWtFGFnvqfvZzot5GVwr2GSx8z+u4fXBp0T6G0esp/5B0sgC605A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d18a553f42so79235195ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 13:55:20 -0800 (PST)
+	s=arc-20240116; t=1739743809; c=relaxed/simple;
+	bh=CkdBIOfKGyvQNLz9XBICP6Cd3ZJnuGzuaK1x7Dkc5PY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jpp8kuNJnGBiF7vfuFa6S5H96r0fK4mGBvm1Op8jRg5dP4zRZUwwUuF8ZfJ5OFx/luabeM4geq+htZ0SR8mkoZJJFmeTU/bDQgp+7QADS3IUPuShZDy3HmkXKq5cLRZmECxaqNqgkf9hARLqbdg+rXpXQFnHYNYMuRewwBw9IhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HBaAI/b4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2211ea911b5so935495ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 14:10:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739743807; x=1740348607; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=svEMB+fuQjKggY6D7PQDoMNSfyDP3hVbtjvNOR1UMfk=;
+        b=HBaAI/b4+yF0c6+QSIhqO/C7Car6yEXdyHCb/Tq54ACJZaj75IKY+LM1qLkF6fGYXW
+         IDtV9/kPiIXoFjaqBuVfv+/r/lZJkqQzowP9hZjfL6CmmOOYESz09BdiBNJVBqKiOslh
+         n4GkFRXzbSkDPOaTSW84iTj2MGdNINbs4nj2EDHb+8lrkEaR3LUQHzN3i7xjqjlkdIiE
+         g8544jHy7/z+VRHkwVbrAVur0kfeb+blV7y5xPZLuhBrWZPyVctwn3Aux+UuPR5tDT5x
+         6l/zGPMyGaVWQTtmfmve1Ki6fLL6nrlY3V++K9N22k64D3hgftfWxMpoo4I5LqnwYsHL
+         u1EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739742920; x=1740347720;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lTpqsv4/Uuhx/t5CGYhQdBXECPsd91OHr06F8SEGZ/A=;
-        b=XpntBAWBdAoZHsaSqDtTgPyGcE9C5uitB6KN0gjVCXLsBt6JfV/3KogS3WNtTNKjdL
-         T8GGm1ioYbxb7dqmNPv1yVVZ2oE1ouIMukeYV5EjjgtpcdLfc8esu7GiDSzI8QwmIyWs
-         sy7ZptbMKzbPaNIHx5bc+hGIbGsm2KWmIwzYdV2Wtsvl0LVfhAhyPpQd1uTDcwWi4fi+
-         IvL9FyiJiF/rZCE8dEYDcXCPqU7asbiKjGkFtw47h7f0KY85y3tP8v0i0UWPxByHH/yF
-         cLSjph8YokYwIy+0a4JIMuWwGMdzwaDReo/VAZy6U3qJTBT71ifVrdMiZEj3sAFCMvPU
-         r9zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFMGGAbilYyoKs3h4pKhHqxVkyWa5Ah4i4KQcpiOCxO0IV3ldi0oUH18YfhyHQdqW9WoA6EHLKtXIh4L8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUh9ZKs/G7J2Q4XXcxSVg6ZOuDzIfBXY5VsdYiz6+8RIk9/Yym
-	xkzkwTf2EFZZ8zDCvkg3TRpgEzan/eyQtOUCEa4HWxfwVWjc6PKgtbS3djBJNwOpHUcPBK9y6cP
-	sDrT5eNGdXZsW65WnKd9ZYpE6VB5CgDOcBtZgVg5OgTBytzZmSHkEDas=
-X-Google-Smtp-Source: AGHT+IEU6h1eI5TQihOqCBzobUXSUB7kC237bVggc8WJ9oC75Rmui1NisuurMBhI4vaZ4t8/4ZzkKPM+OqbmNwaKy+SW5gnmMO7G
+        d=1e100.net; s=20230601; t=1739743807; x=1740348607;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=svEMB+fuQjKggY6D7PQDoMNSfyDP3hVbtjvNOR1UMfk=;
+        b=rPEfug6g+p8z2GUdHkxZ+R33epPIGNBVG9Ao/Opc9ooIuC17XJLZ+xRdiJvLp1ZC4o
+         BDQU6S8SBmHo0CPwgFowJF0mHHAETza1aFq4Ac+e8kUGR5A3apfI1rFqLaltzyymluJ+
+         umGVzNev0h3Fflrfd5l50A5QXbBOuvtfQ50w6MHvOwimsL+rVWm2JYk5+O3iG9zPf7WF
+         H+h6eACFdl+WWvbCME/gvTU8wEJ/FjGbpyFWPf06RHUpM13SScMgWkDn9/SPYdMcZ0Qo
+         syuBznVAork+Cs4py/7CSubQ6YtF9a34QbqiqrIYDzt/Q8UCgr19PIrGhL2r5IWfAn9x
+         DYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLee5WtW6QXaGNcE+L0S2tAfBmwdxLG05jq/shPVmBEeBC5CmjF4pWHMYrihSfgOHMFALKNZHScMNQslU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8yY/q/jYUTTJ/1caurDDZqKcm+Ey6nZxuG2VKSQwJJTegtLoc
+	DOB2Try+i/HTxosFw2T/+MMWiiq/1Dnz2sBjvUEBVHS5n4lAeLlLkyRBpe6y+3NOn237zAKBwX/
+	FMnDLKep2Vr67KIh6sW2Va78BkHWqWj8xodYUgMJvaUp2frFrYQw=
+X-Gm-Gg: ASbGncvUrrztOkqsy0U+pq4RLkN9gn7QlQEDYZRK86HaJi+8LXs/ZCqRtUn3YE4MSq7
+	8/8oOZuY6HaRT8UFtf4I8ME1H5FLk9pdttKr6QT+Y5jb7b+bpusfpzWBe9Y2SHE4FuGygocc=
+X-Google-Smtp-Source: AGHT+IHCf1cwz26/6LxZ3CgT7yLxo7A7C8mkN6znzDdjrY4sVFLTH8/84ue7tK2yeT71neju4p2OUL2rCwmBq7xpdnM=
+X-Received: by 2002:a17:902:c94f:b0:220:fce5:977c with SMTP id
+ d9443c01a7336-2210402b42amr43550165ad.8.1739743806990; Sun, 16 Feb 2025
+ 14:10:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f8e:b0:3a7:5cda:2769 with SMTP id
- e9e14a558f8ab-3d280886981mr72874675ab.12.1739742920123; Sun, 16 Feb 2025
- 13:55:20 -0800 (PST)
-Date: Sun, 16 Feb 2025 13:55:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b25ec8.050a0220.54b41.000d.GAE@google.com>
-Subject: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ib_device_uevent (2)
-From: syzbot <syzbot+17fb1664c4f5a2eeb36f@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250214193637.234702-1-csander@purestorage.com> <20250215115144.6a10dad8@pumpkin>
+In-Reply-To: <20250215115144.6a10dad8@pumpkin>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sun, 16 Feb 2025 14:09:55 -0800
+X-Gm-Features: AWEUYZkBZVk86ijik-PVUaU2vN0hDwMhamyD4byjIJ94_ZBdHz98lnubONZNZqE
+Message-ID: <CADUfDZqjDxLctcSpBzjxu8fN9NjrMq9JvKZeJOB__9ZrjyEOOg@mail.gmail.com>
+Subject: Re: [PATCH] block/merge: remove unnecessary min() with UINT_MAX
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Feb 15, 2025 at 3:51=E2=80=AFAM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Fri, 14 Feb 2025 12:36:36 -0700
+> Caleb Sander Mateos <csander@purestorage.com> wrote:
+>
+> > In bvec_split_segs(), max_bytes is an unsigned, so it must be less than
+> > or equal to UINT_MAX. Remove the unnecessary min().
+> >
+> > Prior to commit 67927d220150 ("block/merge: count bytes instead of
+> > sectors"), the min() was with UINT_MAX >> 9, so it did have an effect.
+> >
+> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > ---
+> >  block/blk-merge.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/block/blk-merge.c b/block/blk-merge.c
+> > index 15cd231d560c..39b738c0e4c9 100644
+> > --- a/block/blk-merge.c
+> > +++ b/block/blk-merge.c
+> > @@ -268,11 +268,11 @@ static inline unsigned get_max_segment_size(const=
+ struct queue_limits *lim,
+> >   */
+> >  static bool bvec_split_segs(const struct queue_limits *lim,
+> >               const struct bio_vec *bv, unsigned *nsegs, unsigned *byte=
+s,
+> >               unsigned max_segs, unsigned max_bytes)
+> >  {
+> > -     unsigned max_len =3D min(max_bytes, UINT_MAX) - *bytes;
+> > +     unsigned max_len =3D max_bytes - *bytes;
+>
+> More interestingly, what stops *bytes being larger than max_bytes?
 
-syzbot found the following issue on:
+bvec_split_segs() has two callers, bio_split_rw_at() and
+blk_recalc_rq_segments(). In both, *bytes =3D 0 originally.
+bio_split_rw_at() has another code path which increments *bytes, but
+it makes sure not to exceed max_bytes. So when bvec_split_segs() is
+called, *bytes <=3D max_bytes. The logic in bvec_split_segs() won't
+increment *bytes by more than len, which is at most max_len =3D
+max_bytes - *bytes. So inductively, *bytes <=3D max_bytes before every
+call to bvec_split_segs().
 
-HEAD commit:    09fbf3d50205 Merge tag 'tomoyo-pr-20250211' of git://git.c..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=140563f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=641fe3e3cfee64bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=17fb1664c4f5a2eeb36f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-09fbf3d5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/31b409a4b675/vmlinux-09fbf3d5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/27f349d4d8cb/bzImage-09fbf3d5.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+17fb1664c4f5a2eeb36f@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in string_nocheck lib/vsprintf.c:632 [inline]
-BUG: KASAN: slab-use-after-free in string+0x4a6/0x4f0 lib/vsprintf.c:714
-Read of size 1 at addr ffff88803e895ea0 by task udevd/6903
-
-CPU: 1 UID: 0 PID: 6903 Comm: udevd Not tainted 6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:489
- kasan_report+0xd9/0x110 mm/kasan/report.c:602
- string_nocheck lib/vsprintf.c:632 [inline]
- string+0x4a6/0x4f0 lib/vsprintf.c:714
- vsnprintf+0x4c8/0x1180 lib/vsprintf.c:2843
- add_uevent_var+0x17c/0x3a0 lib/kobject_uevent.c:679
- ib_device_uevent+0x4e/0xb0 drivers/infiniband/core/device.c:502
- dev_uevent+0x28b/0x770 drivers/base/core.c:2673
- uevent_show+0x1d8/0x3b0 drivers/base/core.c:2731
- dev_attr_show+0x53/0xe0 drivers/base/core.c:2423
- sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
- seq_read_iter+0x4f4/0x12b0 fs/seq_file.c:230
- kernfs_fop_read_iter+0x414/0x580 fs/kernfs/file.c:279
- new_sync_read fs/read_write.c:484 [inline]
- vfs_read+0x886/0xbf0 fs/read_write.c:565
- ksys_read+0x12b/0x250 fs/read_write.c:708
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7681378b6a
-Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffcbdf9d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 000055efbec7de20 RCX: 00007f7681378b6a
-RDX: 0000000000001000 RSI: 000055efbeca9490 RDI: 0000000000000008
-RBP: 000055efbec7de20 R08: 0000000000000008 R09: 0000000000020000
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000003fff R14: 00007ffcbdf9d518 R15: 000000000000000a
- </TASK>
-
-Allocated by task 12483:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4294 [inline]
- __kmalloc_node_track_caller_noprof+0x222/0x510 mm/slub.c:4313
- __kmemdup_nul mm/util.c:61 [inline]
- kstrdup+0x53/0x100 mm/util.c:81
- kstrdup_const+0x63/0x80 mm/util.c:101
- kvasprintf_const+0x164/0x1a0 lib/kasprintf.c:46
- kobject_set_name_vargs+0x5a/0x140 lib/kobject.c:274
- dev_set_name+0xc8/0x100 drivers/base/core.c:3468
- assign_name drivers/infiniband/core/device.c:1202 [inline]
- ib_register_device+0x7e0/0xdf0 drivers/infiniband/core/device.c:1384
- siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
- siw_newlink drivers/infiniband/sw/siw/siw_main.c:431 [inline]
- siw_newlink+0xb60/0xd70 drivers/infiniband/sw/siw/siw_main.c:413
- nldev_newlink+0x38e/0x660 drivers/infiniband/core/nldev.c:1795
- rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
- rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
- netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg net/socket.c:733 [inline]
- ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
- __sys_sendmsg+0x16e/0x220 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 12485:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x2c4/0x4d0 mm/slub.c:4757
- kfree_const+0x55/0x60 mm/util.c:43
- kobject_rename+0x179/0x260 lib/kobject.c:524
- device_rename+0x130/0x230 drivers/base/core.c:4525
- ib_device_rename+0x114/0x5c0 drivers/infiniband/core/device.c:402
- nldev_set_doit+0x3be/0x4c0 drivers/infiniband/core/nldev.c:1146
- rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
- rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
- netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg net/socket.c:733 [inline]
- ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
- __sys_sendmsg+0x16e/0x220 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88803e895ea0
- which belongs to the cache kmalloc-8 of size 8
-The buggy address is located 0 bytes inside of
- freed 8-byte region [ffff88803e895ea0, ffff88803e895ea8)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3e895
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801b042500 ffffea0000a05a00 dead000000000002
-raw: 0000000000000000 0000000000800080 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 11986, tgid 11985 (syz.1.1513), ts 150711065425, free_ts 150704805794
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
- alloc_pages_mpol+0x1fc/0x540 mm/mempolicy.c:2270
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab mm/slub.c:2587 [inline]
- new_slab+0x23d/0x330 mm/slub.c:2640
- ___slab_alloc+0xc5d/0x1720 mm/slub.c:3826
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- __do_kmalloc_node mm/slub.c:4293 [inline]
- __kmalloc_node_noprof+0x2f0/0x510 mm/slub.c:4300
- __kvmalloc_node_noprof+0xad/0x1a0 mm/util.c:662
- kvmalloc_array_node_noprof include/linux/slab.h:1063 [inline]
- __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
- ptr_ring_resize_multiple_bh_noprof include/linux/ptr_ring.h:634 [inline]
- skb_array_resize_multiple_bh_noprof include/linux/skb_array.h:208 [inline]
- pfifo_fast_change_tx_queue_len+0x157/0xbb0 net/sched/sch_generic.c:909
- qdisc_change_tx_queue_len net/sched/sch_generic.c:1410 [inline]
- dev_qdisc_change_tx_queue_len+0x166/0x380 net/sched/sch_generic.c:1457
- dev_change_tx_queue_len+0x1a3/0x1e0 net/core/dev.c:9362
- dev_ifsioc+0xdfe/0x10d0 net/core/dev_ioctl.c:608
- dev_ioctl+0x224/0x10c0 net/core/dev_ioctl.c:826
- sock_do_ioctl+0x19e/0x280 net/socket.c:1213
- sock_ioctl+0x228/0x6c0 net/socket.c:1318
-page last free pid 11986 tgid 11985 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
- __put_partials+0x14c/0x170 mm/slub.c:3153
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4115 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- __kmalloc_cache_noprof+0x243/0x410 mm/slub.c:4320
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kmalloc_array_noprof include/linux/slab.h:945 [inline]
- ptr_ring_resize_multiple_bh_noprof include/linux/ptr_ring.h:629 [inline]
- skb_array_resize_multiple_bh_noprof include/linux/skb_array.h:208 [inline]
- pfifo_fast_change_tx_queue_len+0xe1/0xbb0 net/sched/sch_generic.c:909
- qdisc_change_tx_queue_len net/sched/sch_generic.c:1410 [inline]
- dev_qdisc_change_tx_queue_len+0x166/0x380 net/sched/sch_generic.c:1457
- dev_change_tx_queue_len+0x1a3/0x1e0 net/core/dev.c:9362
- dev_ifsioc+0xdfe/0x10d0 net/core/dev_ioctl.c:608
- dev_ioctl+0x224/0x10c0 net/core/dev_ioctl.c:826
- sock_do_ioctl+0x19e/0x280 net/socket.c:1213
- sock_ioctl+0x228/0x6c0 net/socket.c:1318
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88803e895d80: 05 fc fc fc fa fc fc fc 05 fc fc fc fa fc fc fc
- ffff88803e895e00: 05 fc fc fc 00 fc fc fc 05 fc fc fc fa fc fc fc
->ffff88803e895e80: 05 fc fc fc fa fc fc fc 05 fc fc fc 00 fc fc fc
-                               ^
- ffff88803e895f00: 05 fc fc fc 05 fc fc fc 05 fc fc fc fa fc fc fc
- ffff88803e895f80: 05 fc fc fc 00 fc fc fc 05 fc fc fc fa fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>         David
+>
+> >       unsigned len =3D min(bv->bv_len, max_len);
+> >       unsigned total_len =3D 0;
+> >       unsigned seg_size =3D 0;
+> >
+> >       while (len && *nsegs < max_segs) {
+>
 
