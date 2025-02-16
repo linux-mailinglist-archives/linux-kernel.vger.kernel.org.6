@@ -1,234 +1,142 @@
-Return-Path: <linux-kernel+bounces-516446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6F4A3719A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:43:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1ECA3719C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F823A4025
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:43:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1191B3AF912
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1644610D;
-	Sun, 16 Feb 2025 01:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57555C8CE;
+	Sun, 16 Feb 2025 01:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuFKgq1a"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IFBbSwP+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94494DDA9
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EF823A9
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739670186; cv=none; b=bYNPdg8DGV2ta7jVvEV8UMG0bjksnU7lOqOrsrJ5b+OKgS/37TMN7v435WJfhvz7vVOKci4muEKzEAQL7NEHLq0rEuR2OAWezkU+ITerIXGSukZ8+/D4VmJ/omfLnBSVHd1to6IEF/6B0HbJbADS4XlY5SKdY6NvNwALUyAV1h8=
+	t=1739670338; cv=none; b=KyqItBU66Tw5z42f/yIcdjZflkvpk5yCY9ITYWSxr2Ozxlco5iik4DVHhRUkN/XwBOhZAlFX7Upbj94l6cR8f2QSND6VtrLuxyuQfzlJRwVQaavkwtUF5114/F/fEt+cq/R4rxn4mUD1iv12mHMSvDfxdLOSYLWx3XYeNNnF6ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739670186; c=relaxed/simple;
-	bh=iVxlRcjUGKUoeYp3uUr6xPeDPGy4Lv3nl+rd4UPDGu8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fi+R1vdv0sppHyGACpvhw/uUJoM+spWVJf2P47iN1NJvKD5eRA1xtt+nNVqcWQe7uq8iLTtCKywsEmCoioMWiSXYuMX1Inp7l87ODLs+PG4QQ9RkWz9S8LBG93tZM621tzxtfyqs1hdii5uc3wdY6czCXhgfLLAGK3hGXJ3IZac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UuFKgq1a; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-866f32750a7so2062855241.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 17:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739670183; x=1740274983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oz8gPdV3LRbojLNIjkuNDOulXZh/XmAXdk7uHwTbEGc=;
-        b=UuFKgq1aE71JEpu6K4jwT0uh8cQ7WKlJ5IJJyNTFoeLFEQYkr3XRi9uUZbNkcnIw28
-         X1vOI4EdH2EigcYoio9VgFI4YIwp99iSR60S65gIainOIyaiY6hm3e1+BqxpJf7wvU4I
-         yTp8GjHTVyq9zPSvgwejrnb0pGNiYu20LXnrL3IcKduGAgQ1OCtmJyvoW8U2zqo4HKs7
-         CCtmJ1G6JJEVWAGFZvMKOPpXsvc/FyslnoH4QsCA34rEI2hM6YvMQlX8aXZ1yEh0qeln
-         cjr2fAnAyYlWMRKxtsPY9ZkC1B2H8oiuFBFNcccgRIM4gyK3nP8z3yhSVAB+p2bDsj2M
-         xAUQ==
+	s=arc-20240116; t=1739670338; c=relaxed/simple;
+	bh=6d/C0OzP206Bfx6ax3rRPN3TPah22XiTEZpdfRfQaV0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s976ys9rKlp8qYKbveWhX1aHY2mcsbKKJGV/3Q6+xtNIa6AZ3/UEZwiUTVjHcyjMsDf0EYayrAgbC5idSDxlgbh9MDcbPmmCajF3hrBIRj3BPM61s4DelQdC8e3gPNvk15N0UpHwpVFluliuNtL+/y6kyxArmT2uwFx1vxeLx1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IFBbSwP+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51G0ed7b020006
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:45:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=QChqI6vVHRRW6C7u3A4HFPKyjHOOONIPmTq
+	BbAmlM34=; b=IFBbSwP+L+TKBLOwDGTSfMR5We3MsKpzulNpXwSmmpszde/zIOm
+	Q8atyutJnYwGXXt5ApAhqftF4z3CgCIRxqaY4ffma2ANRT2wy/VpyT2ARs5t3vJf
+	aVQCycsROPe94dL9Dz37E7CF0ZNfPZ5HyD0ICHeO4zWWN9UFkyB5CKQ9oaOSwMnz
+	baNoZWcwENPE2huuhp7qJSzqnXVzKMBlg/pZygLUzuDyyJQ6hk1OZUQPJpTq2vrD
+	GAdTggzkFcElz/AbFews+Q/PPuLkXeJWxyPayXAPdLyHrnuTWqM3z/VRssjLnUYN
+	FMiqu6+jWjsEV2jndKlSmjhAbmhl4uF0MlQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44tkqj9b6w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 01:45:35 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-220e1593b85so52057745ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Feb 2025 17:45:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739670183; x=1740274983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oz8gPdV3LRbojLNIjkuNDOulXZh/XmAXdk7uHwTbEGc=;
-        b=jIsB9oSd0+tRYZPlBTflKF8FIQ+bX0NpRhPpxsKUJyv9hMkqy0RsBisd1b1NhE6gXl
-         mb/hwvttKFyL9wdu7UIDSwZvdG2x5Z2R2nvSBfEoL5LivQRv1jz/JTh756Quapy6CLJc
-         5+Y8hRL6fZ4OkONpt2cbGz+pJzGgc+E8suznzNnLfgAQEyDlpja665VDhHqmg2kHzVPU
-         I1nEOLV1vjbhhaG/xhTz8Fr836X01OfN72nhYAibJN6VNjgBkr/bmgojeWAL3km8USD0
-         JF6HFtn/q7VQcyqKMvosAog4HEzrZIaIyDagZLeo2JrfLRaezlXJD91EaBTcf/9TAji7
-         K/Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvHc1qLpMAucnLru908LA2sg2CSyEssbEC6CeWRbpy1TGP69Swi1gMmdfXfy9y+dKG+I+IhzPVVr4ip7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRR+727rVuPBQjtlJ1Lqb+hejCvzDk/uPY9Q9Ps8u0mhLxDDSy
-	RoJZJ5RYXZ3A+K+YAxyLczzauXEUC3wLjTIw5N4n8epxgtjOZO6IcXb8fgEjTLBaSF0EVqBa+Bv
-	ExMvIm/a3MCr61LnycbeI4rB80lqQIeU+iz8=
-X-Gm-Gg: ASbGnctfmn44jnmEpCbO+59/EZVVwgEdR5eXVlziP759YsaawGRqpkiGJWDFC6w9yt5
-	8EvN6xKBEtRkQdmf/qmOVrRfAB8l1qVIzaPLpQPxMgXqDwUzYg1D/xJnm8eCmdsfCHWWcfaDE
-X-Google-Smtp-Source: AGHT+IELZfSG9qgadmAGFgRgUBNleVJU39u54xzNpXFaf7xgM7ahJlVK8AQUwUHHT6+iot3V0FRVllvA89mBVAE0tP0=
-X-Received: by 2002:a05:6102:150f:b0:4bb:c8e5:aa6d with SMTP id
- ada2fe7eead31-4bd3fe46605mr2964097137.17.1739670183375; Sat, 15 Feb 2025
- 17:43:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739670334; x=1740275134;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QChqI6vVHRRW6C7u3A4HFPKyjHOOONIPmTqBbAmlM34=;
+        b=X3gV5vmGEbwdTHaUu/CQNYNlhyGfValh2S5zqNlgOGPr5fnppbzr5GP9xfHS+0AWjJ
+         FqGl+SpGfbVq4UxcCKNV97JAxxxnuqOEpNVu2PjZ9DSsEgFQ3ci/Oi3+id7wzXPOyAaA
+         SIb53gITf+3mmhj077awEZnMg5aZrWrKiA9dNUCCFWBP0LNjAupnNG1hu4JpXE/ov814
+         L7MMQxKFaH50b9p2vmMSIZwdhjqe7fo/+dB9dogrnRkRZ1GV9mb4v6A2qn9R/HdxlZoe
+         VBbyJ8ywvjuqPXva+ZLjH323jUYvEhLJ9EGrw1hkuR7Gfi22I2ktgkUy7gZKnfL8seH9
+         02lA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpfIYNXqmQjgldp0WvqRE7X3gm+yj1dUjVdVmK31y2bbIstgJhvFLDYN+vB3pWOME2k0yUADVyrs7qWPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfD3/5v6J9GVeN8D2VRJlChwFL4dwHQhnN+0KUZSimGfQZ2pzX
+	nijSSWx5cQ/WOJ8dFEsdXM2ylyeVtg+/ReA8Zty5Vl0m01o+2Y/BdKm6U4X/nCfalIqFzPtEEha
+	Sltn/Al16YkkU9gjtEN7C5X+h4PtmySIrYkI55dV9GhzzIbzJaMeoPIpnmXqWmjA=
+X-Gm-Gg: ASbGncsxvUWVXXtwP/7VSYkk/kpUg9C2t8iVDA6AN3zqgUxIn+se+K+li0nS8YMDHiH
+	XY6uTWgAH7Jq0RwHAWbzQ9cHvcfxFkZ3f2UtvmAv5qGCyr2VGRqDiqJ7KbsR34mc5k4JtCH7Uy+
+	3MFcoX1IBz1e1x5DSQ4zMTKd39AO26xYyW5KO/0FfU5Awx5VYbp22pl2iIQksc6qCJonw4t6rOU
+	NuNRaT2roMCJKOIIiFK7MGP0gBhwSmyYSMnOxoWczL4W1bcOJ58K8e9IAaZJOzNAuGEb6LWQlW3
+	1LAeFgnClJQP0CL/ioJdHRD+UZokEtNPn1ubHc3I
+X-Received: by 2002:a17:902:fb45:b0:21f:89e5:2704 with SMTP id d9443c01a7336-221040b1427mr59927785ad.34.1739670334384;
+        Sat, 15 Feb 2025 17:45:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGk0Wm6pBDN1zI1JP/eN7P464Mszuon80WKDa6iniNlFdMaUXzJp9MDPJ+nFawzsFqmexnMJw==
+X-Received: by 2002:a17:902:fb45:b0:21f:89e5:2704 with SMTP id d9443c01a7336-221040b1427mr59927565ad.34.1739670333991;
+        Sat, 15 Feb 2025 17:45:33 -0800 (PST)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536455esm49896955ad.74.2025.02.15.17.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 17:45:33 -0800 (PST)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+To: andersson@kernel.org, robh@kernel.org, dmitry.baryshkov@linaro.org,
+        manivannan.sadhasivam@linaro.org, krzk@kernel.org, helgaas@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        lpieralisi@kernel.org, kw@linux.com, conor+dt@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree-spec@vger.kernel.org, quic_vbadigan@quicinc.com,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH V3 0/2] schemas: pci: bridge: Document PCI L0s & L1 entry delay and N_FTS
+Date: Sun, 16 Feb 2025 07:15:08 +0530
+Message-Id: <20250216014510.3990613-1-krishna.chundru@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8be2606fa114184a17a48f9859ec592@honor.com>
-In-Reply-To: <f8be2606fa114184a17a48f9859ec592@honor.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sun, 16 Feb 2025 14:42:52 +1300
-X-Gm-Features: AWEUYZl-ufMVHWw-G1aIPwkogcyGLMRPv76oh35rbF_LJDBXhkOEznJIxHy20O0
-Message-ID: <CAGsJ_4zUbwFP+gf-Y70uGQeO08uAJn2RKj=h9nsV83GvfgVA0A@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: Fix possible NULL pointer dereference in __swap_duplicate
-To: gaoxu <gaoxu2@honor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, yipengxiang <yipengxiang@honor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: fEAwg2z7s6CLH9478w5l9metMEYNZCwh
+X-Proofpoint-ORIG-GUID: fEAwg2z7s6CLH9478w5l9metMEYNZCwh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-15_09,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 suspectscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502160014
 
-On Sat, Feb 15, 2025 at 10:05=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
->
-> Add a NULL check on the return value of swp_swap_info in __swap_duplicate
-> to prevent crashes caused by NULL pointer dereference.
->
-> The reason why swp_swap_info() returns NULL is unclear; it may be due to
-> CPU cache issues or DDR bit flips. The probability of this issue is very
-> small, and the stack info we encountered is as follows=EF=BC=9A
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000058
-> [RB/E]rb_sreason_str_set: sreason_str set null_pointer
-> Mem abort info:
->   ESR =3D 0x0000000096000005
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x05: level 1 translation fault
-> Data abort info:
->   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
->   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
->   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> user pgtable: 4k pages, 39-bit VAs, pgdp=3D00000008a80e5000
-> [0000000000000058] pgd=3D0000000000000000, p4d=3D0000000000000000,
-> pud=3D0000000000000000
-> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-> Skip md ftrace buffer dump for: 0x1609e0
-> ...
-> pc : swap_duplicate+0x44/0x164
-> lr : copy_page_range+0x508/0x1e78
-> sp : ffffffc0f2a699e0
-> x29: ffffffc0f2a699e0 x28: ffffff8a5b28d388 x27: ffffff8b06603388
-> x26: ffffffdf7291fe70 x25: 0000000000000006 x24: 0000000000100073
-> x23: 00000000002d2d2f x22: 0000000000000008 x21: 0000000000000000
-> x20: 00000000002d2d2f x19: 18000000002d2d2f x18: ffffffdf726faec0
-> x17: 0000000000000000 x16: 0010000000000001 x15: 0040000000000001
-> x14: 0400000000000001 x13: ff7ffffffffffb7f x12: ffeffffffffffbff
-> x11: ffffff8a5c7e1898 x10: 0000000000000018 x9 : 0000000000000006
-> x8 : 1800000000000000 x7 : 0000000000000000 x6 : ffffff8057c01f10
-> x5 : 000000000000a318 x4 : 0000000000000000 x3 : 0000000000000000
-> x2 : 0000006daf200000 x1 : 0000000000000001 x0 : 18000000002d2d2f
-> Call trace:
->  swap_duplicate+0x44/0x164
->  copy_page_range+0x508/0x1e78
+Some controllers and endpoints provide provision to program the entry
+delays of L0s & L1 which will allow the link to enter L0s & L1 more
+aggressively to save power.
 
-This is really strange since we already have a swap entry check before
-calling swap_duplicate().
+Per PCIe r6.0, sec 4.2.5.1, during Link training, a PCIe component
+captures the N_FTS value it receives.  Per 4.2.5.6, when
+transitioning the Link from L0s to L0, it must transmit N_FTS Fast
+Training Sequences to enable the receiver to obtain bit and Symbol
+lock.
 
-copy_nonpresent_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-                pte_t *dst_pte, pte_t *src_pte, struct vm_area_struct *dst_=
-vma,
-                struct vm_area_struct *src_vma, unsigned long addr, int *rs=
-s)
-{
-        unsigned long vm_flags =3D dst_vma->vm_flags;
-        pte_t orig_pte =3D ptep_get(src_pte);
-        pte_t pte =3D orig_pte;
-        struct folio *folio;
-        struct page *page;
-        swp_entry_t entry =3D pte_to_swp_entry(orig_pte);
+Components may have device-specific ways to configure N_FTS values
+to advertise during Link training.  Define an n-fts array with an
+entry for each supported data rate.
 
-        if (likely(!non_swap_entry(entry))) {
-                if (swap_duplicate(entry) < 0)
-                        return -EIO;
-...
-}
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+---
+changes in v3:-
+- Update the description to specfify about entries of the array (rob)
+changes in v2:-
+- Split N_FTS & L1 and L0s entry delay in two patches (bjorn)
+- Update the commit text, description (bjorn)
 
-likely the swap_type is larger than MAX_SWAPFILES so we get a NULL?
+Krishna Chaitanya Chundru (2):
+  schemas: pci: bridge: Document PCI L0s & L1 entry delay
+  schemas: pci: bridge: Document PCIe N_FTS
 
-static struct swap_info_struct *swap_type_to_swap_info(int type)
-{
-        if (type >=3D MAX_SWAPFILES)
-                return NULL;
+ dtschema/schemas/pci/pci-bus-common.yaml | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-        return READ_ONCE(swap_info[type]); /* rcu_dereference() */
-}
+-- 
+2.34.1
 
-But non_swap_entry() guarantees that swp_type is smaller than MAX_SWAPFILES=
-.
-
-static inline int non_swap_entry(swp_entry_t entry)
-{
-        return swp_type(entry) >=3D MAX_SWAPFILES;
-}
-
-So another possibility is that we have an overflow of swap_info[] where typ=
-e is
-< MAX_SWAPFILES but is not a valid existing swapfile?
-
-I don't see how the current patch contributes to debugging or fixing
-anything related to
-this dumped stack. Can we dump swp_type() as well?
-
->  copy_process+0x1278/0x21cc
->  kernel_clone+0x90/0x438
->  __arm64_sys_clone+0x5c/0x8c
->  invoke_syscall+0x58/0x110
->  do_el0_svc+0x8c/0xe0
->  el0_svc+0x38/0x9c
->  el0t_64_sync_handler+0x44/0xec
->  el0t_64_sync+0x1a8/0x1ac
-> Code: 9139c35a 71006f3f 54000568 f8797b55 (f9402ea8)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
-> SMP: stopping secondary CPUs
->
-> The patch seems to only provide a workaround, but there are no more
-> effective software solutions to handle the bit flips problem. This path
-> will change the issue from a system crash to a process exception, thereby
-> reducing the impact on the entire machine.
->
-> Signed-off-by: gao xu <gaoxu2@honor.com>
-> ---
-> v1 -> v2:
-> - Add WARN_ON_ONCE.
-> - update the commit info.
-> v2 -> v3: Delete the review tags (This is my issue, and I apologize).
-> ---
->
-> mm/swapfile.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 7448a3876..a0bfdba94 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3521,6 +3521,8 @@ static int __swap_duplicate(swp_entry_t entry, unsi=
-gned char usage, int nr)
->         int err, i;
->
->         si =3D swp_swap_info(entry);
-> +       if (WARN_ON_ONCE(!si))
-
-I mean, printk something related to swp_type(). This is really
-strange, but the current
-stack won't help with debugging.
-
-> +               return -EINVAL;
->
->         offset =3D swp_offset(entry);
->         VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
-> --
-> 2.17.1
-
-Thanks
-Barry
 
