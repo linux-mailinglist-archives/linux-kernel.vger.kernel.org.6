@@ -1,207 +1,161 @@
-Return-Path: <linux-kernel+bounces-516741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB6AA37670
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E366CA37674
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 19:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931F316E6BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88344168961
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D979219D09C;
-	Sun, 16 Feb 2025 18:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAEF19D89B;
+	Sun, 16 Feb 2025 18:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIMdZms5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JYhvvmWZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F2625771;
-	Sun, 16 Feb 2025 18:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1982525771;
+	Sun, 16 Feb 2025 18:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739728823; cv=none; b=oCkcI+64HIlq35ds9x54HX5DctSfoSbQNUgSZ9Y1GN9QdhxXqOoKfDRJRiJ6hKf8fwsklue4l5B7Ih/YARrHG9OWklJUVnDDnEy75zBmjMefChW+htcypPS9oGQFnGsUU0G9EpeZNIpvIN1nHClTLmA4yrvMdkEASQgw9IVT+Kc=
+	t=1739728978; cv=none; b=YCRKSWNW+4wsa18lbHt1r/KsIqwZqp+a5UFe13GB3nXir3gbKYlsK/mZFeJERoxqddP/tSjS+bzfUHyLP3wRZ6gVKqJiTaR2BgH/2HTp5G0VjdiF34HWP11Kq0+yGy96NPHVEN5737vHbUpj78Ou0vWKeWNhqjft4N3UBEN+GDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739728823; c=relaxed/simple;
-	bh=diIO3ITDoU7AktJFiSmDVWriGSibTVn0llDzkSO25Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bgx/NPUiKBDEH7IGFBw2iPNq84My2m5q9u+ProYew27sx8/jxORZHtq1aydWeP3EwOskSmd2TVtzBirNfi+zyvTqN8gUcWJQwgh8NF3F1kalett53IplhCq0ygQ/Mcad9FCvLzjnVDd5VnLLeFGD8OtXVEsEJzVsluDhJpB/5JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIMdZms5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5298CC4CEDD;
-	Sun, 16 Feb 2025 18:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739728822;
-	bh=diIO3ITDoU7AktJFiSmDVWriGSibTVn0llDzkSO25Ms=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NIMdZms5lWeG8dIDKm8bhY22lqDJUm2YErtH8uW7HX0OfYUkM+3+wd+4u6/ppB0iL
-	 nkfff5r0uVoIZjYrTWafNvoiLaxkwcLHeHxVO36PpDPPn8J91coUcNvkG5bKJnsIa1
-	 L4OUP6VHbIjcpTHKZhpUhj9B/vGNvUZ/68Jt0/ywSYM2xd7STd3g0mGpBJJN/InULV
-	 YYE6xLXiQ2RL7ijUBvsNMq62SlNjFSsWk/YC1ZnUSL4WF+n+rKj1brcjV2oO9/OE+H
-	 tRbLPEQ8JNdhaLK+OzQ+yU4MZStpHFEzqX5kRkiCIP+8A8zX1M13yJ5WBmdJi9szxa
-	 OK51pagyYacQQ==
-Date: Sun, 16 Feb 2025 18:00:15 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 14/14] docs: iio: add documentation for adxl345
- driver
-Message-ID: <20250216180015.17787b22@jic23-huawei>
-In-Reply-To: <20250210110119.260858-15-l.rubusch@gmail.com>
-References: <20250210110119.260858-1-l.rubusch@gmail.com>
-	<20250210110119.260858-15-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739728978; c=relaxed/simple;
+	bh=t+WEa/YV84UHDrghWTAOC96OzfAFkWsWBd2b101LDa8=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=cWgw9KrHLKCQ4Pi5ik8aQhlkN0uYPLqBLbFoRzaVU86vjBlEKghVF1uxJnqVU09c1X/SzFpMCqUiXRX99Pz1vkX+YnATc6QJHlaWcuBXNMkPJwuLThGfX9Uajv1++9q9zcIJUsMcpYmZ5BaL6yOUcs8dwbkSrfF2R3Phgrbe2Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JYhvvmWZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51GFFC6d004824;
+	Sun, 16 Feb 2025 18:02:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=t+WEa/YV84UHDrghWTAOC96OzfAF
+	kWsWBd2b101LDa8=; b=JYhvvmWZDFFsQnZKMzDtfI7NFM3GwsOqdZXlGTEB9Fpw
+	kBX4hzvw1uAlIU8vwI1W07phxjJ5tydgZPxEC3JZIaOIHePglXpwURBxJC0sXhfE
+	cl1AB9N0HnznsVnJl+ACctlGpmynjOqku5FK/Wn4SHZd538zHOui95kPsfYHH11a
+	H/DRJX0IC8e74cl3XztMdNyeZma11VU82a1bQ8T+FYJ1lzwGm0kBjieEbyFH5OCL
+	G2qWjCIkMyl84MYCHKxEA44NFbFqb+zK2tiwca9utZY1n40/XkDqlere1ysQ2OV3
+	r/paTv6seKAL9Rt0goSgUkUom1qHW6Sk78WJyFNM7Q==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44u9u7t3vg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Feb 2025 18:02:42 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51GHaRgb003891;
+	Sun, 16 Feb 2025 18:02:41 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u68njp2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Feb 2025 18:02:41 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51GI2eeO29295120
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 16 Feb 2025 18:02:40 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D5F15803F;
+	Sun, 16 Feb 2025 18:02:40 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D1E558060;
+	Sun, 16 Feb 2025 18:02:37 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.242.32])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 16 Feb 2025 18:02:36 +0000 (GMT)
+From: Venkat <venkat88@linux.ibm.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [next-20250212] FStests generic/451 on EXT4 FS resulting in
+ kernel OOPs
+Message-Id: <7F085D3B-4AE5-4DDC-94BB-59EF8A67A592@linux.ibm.com>
+Date: Sun, 16 Feb 2025 23:32:24 +0530
+Cc: fstests@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+To: tytso@mit.edu, robh@kernel.org, angelogioacchino.delregno@collabora.com,
+        chunfeng.yun@mediatek.com, vkoul@kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: A4tV1X1Njir-qAVKGwGrVvZlbr3Tu9-B
+X-Proofpoint-ORIG-GUID: A4tV1X1Njir-qAVKGwGrVvZlbr3Tu9-B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-16_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=695
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 clxscore=1011 impostorscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502160159
 
-On Mon, 10 Feb 2025 11:01:19 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+I did attempt git bisect, and the first bad commit is =
+d49e636ed7014be354d1ee279b8f4957e8def389.
 
-> The documentation describes the ADXL345 driver, IIO interface,
-> interface usage and configuration.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Hi Lothar,
+Git bisect log:
 
-I was running out of time so this was a little more superficial review than I would
-have liked to have done.  I've commented on a few bits that I was confuse about in the driver.
-Document is showing how useful these are :)
+ #git bisect log
+#git bisect start
+# status: waiting for both good and bad commits
+# good: [a64dcfb451e254085a7daee5fe51bf22959d52d3] Linux 6.14-rc2
+git bisect good a64dcfb451e254085a7daee5fe51bf22959d52d3
+# status: waiting for bad commit, 1 good commit known
+# bad: [c674aa7c289e51659e40dda0f954886ef7f80042] Add linux-next =
+specific files for 20250212
+git bisect bad c674aa7c289e51659e40dda0f954886ef7f80042
+# good: [0a354ebcff3e3564281f2ee70b7094f5d16b762e] Merge branch =
+'for-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
+git bisect good 0a354ebcff3e3564281f2ee70b7094f5d16b762e
+# good: [21abbfe377b86bac23e3d167f002a492391555c7] Merge branch =
+'for-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
+git bisect good 21abbfe377b86bac23e3d167f002a492391555c7
+# good: [fcd8e79b9c555ea05cca4ab4593e3fa02722158f] Merge branch =
+'usb-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+git bisect good fcd8e79b9c555ea05cca4ab4593e3fa02722158f
+# bad: [8b5e9ed3e14f98a0dfa9a2e15654c0f4d94ac64c] Merge branch =
+'pwm/for-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git
+git bisect bad 8b5e9ed3e14f98a0dfa9a2e15654c0f4d94ac64c
+# bad: [4e91a64bcf478f6f7cf7aab043d80ca671367348] Merge branch =
+'staging-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+git bisect bad 4e91a64bcf478f6f7cf7aab043d80ca671367348
+# good: [7b465a0d58c19a45ddf81c90bc8ba04693de038b] iio: light: adux1020: =
+Drop unneeded assignment for cache_type
+git bisect good 7b465a0d58c19a45ddf81c90bc8ba04693de038b
+# good: [66b800119cc5ced59aa45d523e8ef9af54211abd] Merge branch 'togreg' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+git bisect good 66b800119cc5ced59aa45d523e8ef9af54211abd
+# bad: [1fad5171135d31d3d9258715c7d3fefa378797e0] Merge branch =
+'for-next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-w1.git
+git bisect bad 1fad5171135d31d3d9258715c7d3fefa378797e0
+# good: [0d8db251dd15d2e284f5a6a53bc2b869f3eca711] phy: qcom: qmp-pcie: =
+Add X1P42100 Gen4x4 PHY
+git bisect good 0d8db251dd15d2e284f5a6a53bc2b869f3eca711
+# bad: [d49e636ed7014be354d1ee279b8f4957e8def389] Merge branch 'next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
+git bisect bad d49e636ed7014be354d1ee279b8f4957e8def389
+# good: [88c0053baed659acd85b87dd52cbd75f3d8806be] phy: Use =
+(of|device)_property_present() for non-boolean properties
+git bisect good 88c0053baed659acd85b87dd52cbd75f3d8806be
+# first bad commit: [d49e636ed7014be354d1ee279b8f4957e8def389] Merge =
+branch 'next' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
+#
 
-Jonathan
-
-> +
-> +Particular IIO events will be triggered by the corresponding interrupts. The
-> +sensor driver supports no or one active INT line, where the sensor has two
-> +possible INT IOs. Configure the used INT line in the devicetree. If no INT line
-> +is configured, the sensor falls back to FIFO bypass mode and no events are
-> +possible, only X, Y and Z axis measurements are possible.
-> +
-> +The following table shows the ADXL345 related device files, found in the
-> +specific device folder path ``/sys/bus/iio/devices/iio:deviceX/events``.
-> +
-> ++---------------------------------------------+-----------------------------------------+
-> +| Event handle                                | Description                             |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_doubletap_en               | Enable double tap detection on all axis |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_doubletap_reset_timeout    | Double tap window in [us]               |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_doubletap_suppressedbit_en | Enable double tap suppress bit          |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_doubletap_tap2_min_delay   | Double tap latent in [us]               |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_singletap_timeout          | Single tap duration in [us]             |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_gesture_singletap_value            | Single tap threshold value in 62.5/LSB  |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_mag_falling_en                     | Enable free fall detection              |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_mag_falling_period                 | Free fall time in [us]                  |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_mag_falling_value                  | Free fall threshold value in 62.5/LSB   |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_mag_referenced_falling_en          | Set 1 to couple inactivity AC, 0 for DC |
-
-That interface doesn't work align with the normal ABI.
-
-
-Should be a selection of either mag_referenced_falling_en or another event to
-pick between AC and DC. I assume thresh_falling_en though i'll admit to being a little
-lost in what this hardware is doing!
-
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_mag_referenced_rising_en           | Set 1 to couple activity AC, 0 for DC   |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_thresh_falling_en                  | Enable inactivity detection             |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_thresh_falling_period              | Inactivity time in seconds              |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_thresh_falling_value               | Inactivity threshold value in 62.5/LSB  |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_thresh_rising_en                   | Enable activity detection               |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_thresh_rising_value                | Activity threshold value in 62.5/LSB    |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_x_gesture_singletap_en             | Enable single tap detection on X axis   |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_y_gesture_singletap_en             | Enable single tap detection on Y axis   |
-> ++---------------------------------------------+-----------------------------------------+
-> +| in_accel_z_gesture_singletap_en             | Enable single tap detection on Z axis   |
-> ++---------------------------------------------+-----------------------------------------+
-> +
-> +Find a detailed description of a particular functionality in the sensor
-> +datasheet.
-> +
-> +Setting the ODR explicitly will result in estimated adjusted default values
-> +for the inactivity time detection, where higher frequencies shall default to
-> +longer wait periods, and vice versa. It is also possible to explicetly
-> +configure inactivity wait times, if the defaulting approach does not match
-> +application requirements. Setting 0 here, will fall back to default setting.
-> +
-> +The g range configuration also tries to estimate activity and inactivity
-> +thresholds when switching to another g range. The default range will be
-> +factorized by the relation of old range divided by new range. The value never
-> +becomes 0 and will be at least 1 and at most 255 i.e. 62.5g/LSB according to
-> +the datasheet. Nevertheless activity and inactivity thresholds can be
-> +overwritten by explicit values.
-> +
-> +When activity and inactivity events are enabled, the driver automatically will
-> +set link bit and autosleep bit. The link bit serially links the activity and
-> +inactivity functions. 
-
-So this is a sort of hysteresis?  We may want to describe that more directly.
-
-> On the other side, the autosleep function switches the
-> +sensor to sleep mode if the inactivity function is enabled. This will reduce
-> +current consumption to the sub-12.5Hz rate.
-> +
-> +In dc-coupled operation, the current acceleration magnitude is compared
-> +directly with THRESH_ACT and THRESH_INACT registers to determine whether
-> +activity or inactivity was detected. In ac-coupled operation for activity
-> +detection, the acceleration value at the start of activity detection is taken
-> +as a reference value. New samples are then compared to this reference value.
-
-That applies for activity - the inactivity description is rather more confusing.
-
-> +
-> +Single tap detection can be configured according to the datasheet by specifying
-> +threshold and duration. If only the single tap is in use, the single tap
-> +interrupt is triggered when the acceleration goes above threshold (i.e. DUR
-> +start) and below the threshold, as long as duration is not exceeded. If single
-> +tap and double tap are in use, the single tap is triggered when the doulbe tap
-> +event has been either validated or invalidated.
-> +
-> +For double tap configure additionally window and latency in [us]. Latency
-> +starts counting when the single tap goes below threshold and is a waiting
-> +period, any spikes here are ignored for double tap detection. After latency,
-> +the window starts. Any rise above threshold, with a consequent fall below
-> +threshold within window time, rises a double tap signal when going below
-> +threshold.
-> +
-> +A double tap event can be invalidated in three ways: If the suppress bit is set,
-> +any acceleration spike above the threshold already during the latency time
-> +invalidates the double tap detection immediately, i.e. during latence must not
-> +occur spikes for double tap detection with suppress bit set.
-> +A double tap event is invalidated if acceleration lies above the threshold at
-> +the start of the window time for the double tap detection.
-> +Additionally a double tap event can be invalidated if an acceleration exceeds
-> +the time limit for taps, set by duration register, since also for the double
-> +tap the same value for duration counts, i.e. when rising above threshold the
-> +fall below threshold has to be within duration time.
-> +
-> +A free fall event will be detected if the signal goes below the configured
-> +threshold, for the configured time [us].
-> +
-> +Note, that activity/inactivy, as also freefall is recommended for 12.5 Hz ODR
-> +up to 400 Hz.
-> +
->
+Regards,
+Venkat.=09=
 
