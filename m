@@ -1,319 +1,166 @@
-Return-Path: <linux-kernel+bounces-516570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD92A37420
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:32:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D3EA37421
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFCD3AAA55
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3C2189073D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E528518F2EA;
-	Sun, 16 Feb 2025 12:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5519191461;
+	Sun, 16 Feb 2025 12:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPafPQNU"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aORRIOTg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422F89450;
-	Sun, 16 Feb 2025 12:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04DA18C91F;
+	Sun, 16 Feb 2025 12:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739709131; cv=none; b=ML8bzjUHpgLfjOoCVrIRfraL5dym5iZ4yN99o5bCypw9e2deszxXnZScuUqzvPU7pkm3+hTFLw9VXSZGvNc09VZXtNYObspD13+xaH7zWa04E4U5nOxlJtkcj4R5rGfYp2aJU0Tmyy/0V6Oq8GUGyX6Qj1Jx/DEV1zRVYoIxljQ=
+	t=1739709375; cv=none; b=fvVqhAc0rtY+E+AWTH1n5DsvXHWtp1LTAfA6IMcU18nBdxyFmNO/LQ6q9RCYD3+FQ02FPnDaFWDaDAoQm2Ejfx4N0JH/V4Z1RJbP0Sh5SmG8f4VIUjGPs3acgTg8hQ+MskyBG8r3Kksx4NjIioS0rO5VWK4GCBgulGQ0d18bEe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739709131; c=relaxed/simple;
-	bh=BWfZJmwKHkGRJvK3yJiVpCNBiYui01PINhOsku8NgP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D7RdmPounz0Jngyoe+MgvFbPcXkw0tbfkA1Psy0/bUGrr1CHGIsoHGtsAK5IyD7xGUPqw3FlpNogd9ol54vCzyBhRgf2mFxrtk54Q2Z43kt3Lzp+bpye50ayyRcQUzOXFs7vuYsgyCwTYpkhWYgajkZeEsB7iRb79tw8vTaJbtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XPafPQNU; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471dc990e18so11275771cf.0;
-        Sun, 16 Feb 2025 04:32:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739709128; x=1740313928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1pmRU4oV8Lwr70PJWkHKSc+JQWjhbwJ0zctlvUTldiE=;
-        b=XPafPQNUOG+hB6BDxVNRRlL/cGIRgfp847dzxwa0WzlLb5ZI7Y+csQJF4wGTC+s3Nu
-         D8hkTyRZOrUA96QNKD0feIv25zwnk4/jR2hII3FrH+GPS/wdJ9LzX92i/xqB7KpEuWfD
-         3W7dKDIEgRZ0QV/Q64tmmqBAZek0yakN8PRGkg6+YpxB+whQ5gvCoO85JorXCIzI+Sco
-         clANxBRgOhKfvFXSk/xTAVlmAvR7OIXFe/MkD3FC5XU/urYCShPd/3yBd7BR0miqJ5Pb
-         FKvaK2KtnbwU5rWxLEvMoQaBHkSgb4ajmE5PnwIG5SgxfhNnh+uyFGkjXsA/j0qqQk2y
-         ErcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739709128; x=1740313928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1pmRU4oV8Lwr70PJWkHKSc+JQWjhbwJ0zctlvUTldiE=;
-        b=Hx6doaiqSsuTXFtGsgCVNNCPCBFx0h1s7PdF8g9GqReM+b/ff0U6iztppAzSFzpMAy
-         80uOMQpnWfQPvuGy1yCcDreFvDEvvWD4xtHqBmYN15SbEJEuXvkjFpsM/RbHMdLskOqV
-         jesC/pdRNzSYYY8RaijHL0/oIjhqtN4aFMW4drY7b06/KWaSKsqfrVNcHZ6fjaOiRGV6
-         tgAn15/zM5qM5kRsbpki3R7vfHXohv+UxvzZcjCEr27oNXQWrnngI/KdyGzkBt38Kmjf
-         676OGd2Kn1Ql/fm/aGk0UivvljmLVwdpCn2m9OQw8coLhIGSf8CSIsGCJ+Qq3O3IXnaP
-         sInQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6cTCSqdEvyxL3eKe2jRx3m/RqZ16fCJjXRdNuMKZJRHCVgErVCX3CYUrRjvMWoMjRZbk3/Z1EFwja@vger.kernel.org, AJvYcCXbplmTyXrjYwPK8JXpQ5cceabzZmN5Maq9cdpSjQkaqC7LRuHAeQTxOhvUogGw9rJkFZjqa+Yr0p6WKV/T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+bsMPSoRQBRMpKZngftjDMNDwMyszQNuVb4Vo3j9DK551uHPi
-	UF6sDgpDF7F989Hi5Bj2QyhoN7nHG+uH3t/ezttR2OyDWcwMq6apNBpywYJAPQH29VzYqAPi2CJ
-	XMU+ukFhbvY6X1jjCa70l2NuT+UQ=
-X-Gm-Gg: ASbGncvUb+1on03G4bNRtyovKpTo+KvwsZkkaMq/W66sdUddxPeQUgGw4UfeQBj5rG+
-	JfaNKNFAKyw53tvTLQ4u58X98RNb7gZLGVKK6+WgKAPM8krYJlPC5Ok/WiGTN+4wDvjxYYY4c2+
-	w=
-X-Google-Smtp-Source: AGHT+IHWuSE1Y3gFhYEtN+DZ/0JnI2ICnduM/7vMvfprywwSYgWgj2BhMei/y/cbzJAVNP5zlk73gFgjgP1Mp2EmMmg=
-X-Received: by 2002:ac8:7e8d:0:b0:471:d132:f91b with SMTP id
- d75a77b69052e-471dbccbaa2mr79514361cf.3.1739709127957; Sun, 16 Feb 2025
- 04:32:07 -0800 (PST)
+	s=arc-20240116; t=1739709375; c=relaxed/simple;
+	bh=uzjQ5966InuPnGGMdyDjOTWFoAV7hcjkEWlATi0x8xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hklg3wcimInYBVkx9yhm3qQl0FkY3kxtS1+ii3HDKzVSRF9VsHE/fy0FHCfomjMGywH6Y66b+QFoivsjtphr0Pq8/JtjuUkvIgcf1aaRkNTev++FWQx2PzmuFAdB4qs/HJ0mHvPG4csQp6DbNSXJC0t/4vjMu50ncP064Cx4m3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aORRIOTg; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739709373; x=1771245373;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uzjQ5966InuPnGGMdyDjOTWFoAV7hcjkEWlATi0x8xc=;
+  b=aORRIOTg3sHJ76Tg41Ve24nGOekaREgiQtFO21I9GYUlEv5i/mA9WSB1
+   dO4dpBDYN+nhrIRhP2yNOqZ3swI/bJhEur+l99zEZvus37gOzY++90kBn
+   bnKK3G42lMHMUOkHOl+JQppYwZsexWZo2wtaVHOV6M6L6m1hvl5AACLa/
+   tcx0P+UXAT9u6PN3o9Ipe+aeCsTJUeJ21b6J8L9DVLvgdF4uEifUTNtLf
+   zTXmVygYu33Q/LS/lS7H+D2fdRQE8kZCnc76NxBmuv+0sTErKBFi4lJOP
+   vfIOYMXOrrzIkeqTlAwe8PG/iGAzEobguMH7/5hoICQMjNnENoo+nINYE
+   g==;
+X-CSE-ConnectionGUID: Urb+Wx/7QoeShkO/RsyJCw==
+X-CSE-MsgGUID: ElNLd6NfQBW47nG9Uf8b/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="57810243"
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="57810243"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 04:36:13 -0800
+X-CSE-ConnectionGUID: J/+Pk537QyqW2XIUOlDd8w==
+X-CSE-MsgGUID: fin8e3KDRSSfzdTpStsqfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="114777410"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 16 Feb 2025 04:36:07 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjdsR-001Bud-2G;
+	Sun, 16 Feb 2025 12:36:03 +0000
+Date: Sun, 16 Feb 2025 20:35:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com,
+	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com,
+	axboe@kernel.dk, benno.lossin@proton.me, bhelgaas@google.com,
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org,
+	dwaipayanray1@gmail.com, ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com, gary@garyguo.net,
+	gregkh@linuxfoundation.org, joe@perches.com,
+	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com,
+	tmgross@umich.edu, walmeida@microsoft.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	trintaeoitogc@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: Re: [PATCH V2 1/2] rust: module: change author to be a array
+Message-ID: <202502162042.nKMk0Rff-lkp@intel.com>
+References: <20250214184550.120775-2-trintaeoitogc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
- <d8ce8db2-1717-40f8-b53e-24cc71a758c9@cherry.de> <CABjd4Yw-r-ogfwcrph4K1wbkybS25gk6LFg8wpqLG27uWdybNA@mail.gmail.com>
- <2914631.KiezcSG77Q@diego>
-In-Reply-To: <2914631.KiezcSG77Q@diego>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Sun, 16 Feb 2025 15:32:01 +0300
-X-Gm-Features: AWEUYZnpDb3wjAorVn4kGg8idUTWI0ik5GUkTOikdcLRJ5KAatVLRX81_8fVTX4
-Message-ID: <CABjd4YxF4N1tAgGUZk-oKkMUO+Q9rWHZsas9gMQdJ+TF4A1=NA@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] arm64: dts: rockchip: Add OPP data for CPU cores
- on RK3588j
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Quentin Schulz <quentin.schulz@cherry.de>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Dragan Simic <dsimic@manjaro.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Diederik de Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214184550.120775-2-trintaeoitogc@gmail.com>
 
-Hi Heiko,
+Hi Guilherme,
 
-On Sat, Feb 15, 2025 at 11:30=E2=80=AFPM Heiko St=C3=BCbner <heiko@sntech.d=
-e> wrote:
->
-> Am Samstag, 15. Februar 2025, 19:59:44 MEZ schrieb Alexey Charkov:
-> > On Tue, Feb 11, 2025 at 7:32=E2=80=AFPM Quentin Schulz <quentin.schulz@=
-cherry.de> wrote:
-> > > On 6/17/24 8:28 PM, Alexey Charkov wrote:
-> > > > RK3588j is the 'industrial' variant of RK3588, and it uses a differ=
-ent
-> > > > set of OPPs both in terms of allowed frequencies and in terms of
-> > > > applicable voltages at each frequency setpoint.
-> > > >
-> > > > Add the OPPs that apply to RK3588j (and apparently RK3588m too) to
-> > > > enable dynamic CPU frequency scaling.
-> > > >
-> > > > OPP values are derived from Rockchip downstream sources [1] by taki=
-ng
-> > > > only those OPPs which have the highest frequency for a given voltag=
-e
-> > > > level and dropping the rest (if they are included, the kernel compl=
-ains
-> > > > at boot time about them being inefficient)
-> > > >
-> > > > [1] https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96=
-c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > > >
-> > >
-> > > Funny stuff actually. Rockchip have their own downstream cpufreq driv=
-er
-> > > which autodetects at runtime the SoC variant and filter out OPPs base=
-d
-> > > on that info. And this patch is based on those values and filters.
-> > >
-> > > However, they also decided that maybe this isn't the best way to do i=
-t
-> > > and they decided to have an rk3588j.dtsi where they remove some of th=
-ose
-> > > OPPs instead of just updating the mask/filter in their base dtsi
-> > > (rk3588s.dtsi downstream). See
-> > > https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2=
-fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-> >
-> > Funny stuff indeed! Judging by the comments in the file you
-> > referenced, those higher OPP values constitute an 'overdrive' mode,
-> > and apparently the chip shouldn't stay in those for prolonged periods
-> > of time. However, I couldn't locate any dts file inside Rockchip
-> > sources that would include this rk3588j.dtsi - so not sure if we
-> > should follow what it says too zealously.
-> >
-> > > So...
-> > >
-> > > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > > > ---
-> > > >   arch/arm64/boot/dts/rockchip/rk3588j.dtsi | 108 +++++++++++++++++=
-+++++++++++++
-> > > >   1 file changed, 108 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi b/arch/arm64=
-/boot/dts/rockchip/rk3588j.dtsi
-> > > > index 0bbeee399a63..b7e69553857b 100644
-> > > > --- a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-> > > > +++ b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-> > > > @@ -5,3 +5,111 @@
-> > > >    */
-> > > >
-> > > >   #include "rk3588-extra.dtsi"
-> > > > +
-> > > > +/ {
-> > > > +     cluster0_opp_table: opp-table-cluster0 {
-> > > > +             compatible =3D "operating-points-v2";
-> > > > +             opp-shared;
-> > > > +
-> > > > +             opp-1416000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1416000000>;
-> > > > +                     opp-microvolt =3D <750000 750000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +                     opp-suspend;
-> > > > +             };
-> > > > +             opp-1608000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1608000000>;
-> > > > +                     opp-microvolt =3D <887500 887500 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-1704000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1704000000>;
-> > > > +                     opp-microvolt =3D <937500 937500 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > >
-> > > None of those are valid according to Rockchip, we should have
-> >
-> > Well, valid but more taxing on the hardware apparently.
-> >
-> > >                 opp-1296000000 {
-> > >                         opp-hz =3D /bits/ 64 <1296000000>;
-> > >                         opp-microvolt =3D <750000 750000 950000>;
-> > >                         clock-latency-ns =3D <40000>;
-> > >                         opp-suspend;
-> > >                 };
-> > >
-> > > instead?
-> >
-> > I dropped this one because it uses a lower frequency but same voltage
-> > as the 1.416 GHz one, thus being 'inefficient' as the thermal
-> > subsystem says in the logs. It can be added back if we decide to
-> > remove opp-1416000000.
-> >
-> > > and...
-> > >
-> > > > +     };
-> > > > +
-> > > > +     cluster1_opp_table: opp-table-cluster1 {
-> > > > +             compatible =3D "operating-points-v2";
-> > > > +             opp-shared;
-> > > > +
-> > > > +             opp-1416000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1416000000>;
-> > > > +                     opp-microvolt =3D <750000 750000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-1608000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1608000000>;
-> > > > +                     opp-microvolt =3D <787500 787500 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-1800000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1800000000>;
-> > > > +                     opp-microvolt =3D <875000 875000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-2016000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <2016000000>;
-> > > > +                     opp-microvolt =3D <950000 950000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > >
-> > > opp-1800000000 and opp-2016000000 should be removed.
-> > >
-> > > and...
-> > >
-> > > > +     };
-> > > > +
-> > > > +     cluster2_opp_table: opp-table-cluster2 {
-> > > > +             compatible =3D "operating-points-v2";
-> > > > +             opp-shared;
-> > > > +
-> > > > +             opp-1416000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1416000000>;
-> > > > +                     opp-microvolt =3D <750000 750000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-1608000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1608000000>;
-> > > > +                     opp-microvolt =3D <787500 787500 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-1800000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <1800000000>;
-> > > > +                     opp-microvolt =3D <875000 875000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > > > +             opp-2016000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <2016000000>;
-> > > > +                     opp-microvolt =3D <950000 950000 950000>;
-> > > > +                     clock-latency-ns =3D <40000>;
-> > > > +             };
-> > >
-> > > opp-1800000000 and opp-2016000000 should be removed as well.
-> > >
-> > > Did I misunderstand what Rockchip did here? Adding Kever in Cc at lea=
-st
-> > > for awareness on Rockchip side :)
-> > >
-> > > I guess another option could be to mark those above as
-> > >
-> > > turbo-mode;
-> > >
-> > > though no clue what this would entail. From a glance at cpufreq, it
-> > > seems that for Rockchip since we use the default cpufreq-dt, it would
-> > > mark those as unusable, so essentially a no-op, so better remove them
-> > > entirely?
-> >
-> > I believe the opp core just marks 'turbo-mode' opps as
-> > CPUFREQ_BOOST_FREQ, and cpufreq-dt only passes that flag along to the
-> > cpufreq core. But then to actually use those boost frequencies I would
-> > guess the governor needs to somehow know the power/thermal constraints
-> > of the chip?.. Don't know where that is defined.
->
-> personally I don't believe in "boost" frequencies - except when they are
-> declared officially.
->
-> Rockchip for the longest time maintains that running the chip outside
-> the declared power/rate envelope can reduce its overall lifetime.
->
-> So for Rockchip in mainline a "it runs stable for me" has never been a
-> suitable reasoning ;-) .
+kernel test robot noticed the following build errors:
 
-My key concern here was perhaps that we are looking at a file inside
-the Rockchip source tree which looks relevant by the name of it, but
-doesn't actually get included anywhere for any of the boards. This may
-or may not constitute an endorsement by Rockchip of any OPPs listed
-there :-D
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on pci/next pci/for-linus char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.14-rc2 next-20250214]
+[cannot apply to rust/rust-block-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I haven't seen a TRM for the J variant, nor do I have a board with
-RK3588J to run tests, so it would be great if Kever could chime in
-with how these OPPs are different from the others (or not).
+url:    https://github.com/intel-lab-lkp/linux/commits/Guilherme-Giacomo-Simoes/rust-module-change-author-to-be-a-array/20250215-024906
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20250214184550.120775-2-trintaeoitogc%40gmail.com
+patch subject: [PATCH V2 1/2] rust: module: change author to be a array
+config: x86_64-randconfig-006-20250216 (https://download.01.org/0day-ci/archive/20250216/202502162042.nKMk0Rff-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250216/202502162042.nKMk0Rff-lkp@intel.com/reproduce)
 
-> So while the situation might be strange for the rk3588j, I really only wa=
-nt
-> correct frequencies here please - not any pseudo "turbo freqs".
->
-> I don't care that much what people do on their own device{s/trees}, but
-> the devicetrees we supply centrally (and to u-boot, etc) should only
-> contain frequencies vetted by the manufacturer.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502162042.nKMk0Rff-lkp@intel.com/
 
-Fair enough. Let's just try and get another data point on whether
-these frequencies are vetted or not.
+All errors (new ones prefixed by >>):
 
-Best regards,
-Alexey
+>> error: proc macro panicked
+   --> samples/rust/rust_driver_platform.rs:43:1
+   |
+   43 | / kernel::module_platform_driver! {
+   44 | |     type: SampleDriver,
+   45 | |     name: "rust_driver_platform",
+   46 | |     author: "Danilo Krummrich",
+   47 | |     description: "Rust Platform driver",
+   48 | |     license: "GPL v2",
+   49 | | }
+   | |_^
+   |
+   = help: message: Expected Group
+   = note: this error originates in the macro `$crate::module_driver` which comes from the expansion of the macro `kernel::module_platform_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0277]: the trait bound `DriverModule: ModuleMetadata` is not satisfied
+   --> samples/rust/rust_driver_platform.rs:43:1
+   |
+   43 | / kernel::module_platform_driver! {
+   44 | |     type: SampleDriver,
+   45 | |     name: "rust_driver_platform",
+   46 | |     author: "Danilo Krummrich",
+   47 | |     description: "Rust Platform driver",
+   48 | |     license: "GPL v2",
+   49 | | }
+   | |_^ the trait `ModuleMetadata` is not implemented for `DriverModule`
+   |
+   = note: this error originates in the macro `$crate::module_driver` which comes from the expansion of the macro `kernel::module_platform_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error: proc macro panicked
+   --> drivers/net/phy/ax88796b_rust.rs:14:1
+   |
+   14 | / kernel::module_phy_driver! {
+   15 | |     drivers: [PhyAX88772A, PhyAX88772C, PhyAX88796B],
+   16 | |     device_table: [
+   17 | |         DeviceId::new_with_driver::<PhyAX88772A>(),
+   ...  |
+   24 | |     license: "GPL",
+   25 | | }
+   | |_^
+   |
+   = help: message: Expected Group
+   = note: this error originates in the macro `kernel::module_phy_driver` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
