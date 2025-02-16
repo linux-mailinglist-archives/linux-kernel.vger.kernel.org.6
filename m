@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-516834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F0DA37804
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:17:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFD2A3780B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 23:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173433A5821
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B513A50CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 22:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3428519E7F9;
-	Sun, 16 Feb 2025 22:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BD01A5B8C;
+	Sun, 16 Feb 2025 22:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DhK3zPVh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="TUjKT8sV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D321422AB;
-	Sun, 16 Feb 2025 22:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739744217; cv=none; b=Tf9urdCAQhl4qXweCBsG5xO8xjUlHQ7ofNY72WSCbGhf31Ye2UDwDto1UqX4LrUVjIzLpF0AP0IrdvEO1gktkvCOl5gaaeDOMsFiEGnQusaJurXwoD9C3AAiNBfY4+jTYSPt2XdJwMCbE7hKNPKdeB8fb6Urx1/zixOXPGAN2BE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739744217; c=relaxed/simple;
-	bh=KfU64UaIpT6OuT3/ZmFyligyAsUqVg4A/iWFeAHmTgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YwOBAFmRYbF+w6DMnfEUxIL5yfNQXd2xgD3Cma4uSPKcnc2Fx/N0OTRCfc81cnf/Eg/5mwDgay4cpq1gmNOYPgE8tVJyiZTwSG3WysZp8N8TXkpvd2cDuNHsT0lcqWa7N23TINZXBgIVfruyPWgnIweBCiWSbXLOqZ8EDJefL5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DhK3zPVh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739744210;
-	bh=MnKmwzzxZXfx4NldWFEDNvM1Aws2wVI9u4K0gOZxiaQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DhK3zPVhcG6UzAAQaZ7QuLc3yXQYti06tnb1nMi5wanqunR5mbc07gJIeL2c/qnyU
-	 Ks9eCuG1Y4R76uUlFIfydINJ6htCzylyWqN0DvH1oIUGz3UeHBB46E/CDIugdUomTy
-	 CvM0WMm8WSjxWTyAeOY4ni7aBYBskO01TQsJmwNYLbsDRH52XyM+DVQJSIf83oPT4G
-	 Vl+S2WERu7F7fUr5oy8s05rglxdqxKF/c/BLD/Jd1Pzvf7R8zD386HtGFV6pfFMo5z
-	 9zluwEMfPNwpFW+yTUE1xcEQQq3+cN3WFHVf3zWgTTirRMOnB5j/+n9nZfYWj1esHN
-	 5vrHM5oVd/v0g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yx0WQ1KRfz4wc4;
-	Mon, 17 Feb 2025 09:16:50 +1100 (AEDT)
-Date: Mon, 17 Feb 2025 09:16:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vinod Koul <vkoul@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Mohan Kumar D
- <mkumard@nvidia.com>
-Subject: linux-next: manual merge of the dmaengine-fixes tree with Linus'
- tree
-Message-ID: <20250217091616.1e123860@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677A11A256B;
+	Sun, 16 Feb 2025 22:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739744300; cv=pass; b=gQySkjAxUqwtgVDGZCCGl7IX1a2sE/5QuLfFrkYbIOiecfOvGg4V5NnDvZwr7zbAi1R85x/r5bR029K4x4/2A83Ui24VoOIHpufAkSPekEiG43H8Ukaxco0N4S3T/8PjtQZ50TnJD/kMat1QKnbiwCSaH/nVkVyTPYY9zDqQzoc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739744300; c=relaxed/simple;
+	bh=UbTmSHeRcNR9y1w9sWk4L+7Gfr+PNHE8EJupaM4yiQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d8FDrHMaG7dAk4ouZ51/0SVYtw4FXlC0hsed4faQBKRFIC5T8rtOGssXfiz+f+Ry0/LVIgHTZqLF0DA/egOPnLImJxaofjOI/eU/IJqw/cpjAzrMDzqGq4yntjgiWQMioU8TnzK+ln69nZUKffdgj7dhNgKZavc5/Hb0ErSzV44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=TUjKT8sV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739744261; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cjI1qX5rKD2Zjd20T7ze3hGakn5kKhIB0o6VZ+kacmLQQknY6m5HK/Z2kPAI8S7Ic8kLO7v9dRTz66ffqNKhx+s17tg8ZXt9XkvnuoRka8xzQhXa2+0dtBgeoEOrSiFbQNpZ3SX0Qsj4r3ksCEjnBzrl4EoH3jd6T+sVcM/TCO0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739744261; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2uXMZuqioGZ1TWUtUfrDpKK3F04ilgq6QgvYzApfTE0=; 
+	b=GNuYeyVCaqibMqrL9uJLNkYcJxiVKYbyDfAym4RTQH4oyEIHR7wygKFwNbeqjpUq/Ukk1YFZXFFo7h+zlgXyoOf2WwCb7Zg0H5bEK99Hrxp4j35pzq+omGtjSbGlaCjF1h3+VEyoS7mJMpgvoToWn32x/O858e3ypXZUrGSnbVU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739744261;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=2uXMZuqioGZ1TWUtUfrDpKK3F04ilgq6QgvYzApfTE0=;
+	b=TUjKT8sVz4Q7MKk9pzKkq+2ImEWDG810ozJpX2eI8IPJ9nz1IM8iX9hn1ExHEFYp
+	pVdMqD71PdwbaV4MUug4DTPEcKuYoVhoR8vlRPtgqzAy/e9AvuwLEW9Tb+3FX5L/d80
+	XhxOIsg5wddLEjwm8KlnN1h4zCqsx5J/TcPk7V98=
+Received: by mx.zohomail.com with SMTPS id 1739744258146392.05421080390477;
+	Sun, 16 Feb 2025 14:17:38 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Marc Zyngier <maz@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	XiaoDong Huang <derrick.huang@rock-chips.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	kernel@collabora.com
+Subject: [PATCH v2 0/3] Add Rockchip 3568001/2 errata workarounds and enable ITS on RK356x
+Date: Mon, 17 Feb 2025 01:16:31 +0300
+Message-ID: <20250216221634.364158-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Cj8wmFFHQUQnD.Rbz2utEIg";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
---Sig_/Cj8wmFFHQUQnD.Rbz2utEIg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Enable GIC ITS support on Rockchip RK3566/RK3568 SoCs by adding
+necessary GIC erratum workarounds and moving RK356x PCIe MSI to use
+ITS instead of MBI.
 
-Hi all,
+Changelog:
 
-Today's linux-next merge of the dmaengine-fixes tree got a conflict in:
+v2: - Changed Kconfig and commit descriptions of the GIC driver patch,
+      as was requested by Marc Zyngier.
 
-  drivers/dma/tegra210-adma.c
+    - Added ack from Marc Zyngier to the GIC driver patch.
 
-between commit:
+    - Squashed DT patch that added dma-noncoherent property to GIC node
+      into the patch that adds MSI controller node, as was suggested by
+      Marc Zyngier.
 
-  d440148418f4 ("tegra210-adma: fix 32-bit x86 build")
+Dmitry Osipenko (3):
+  irqchip/gic-v3: Add Rockchip 3568002 erratum workaround
+  arm64: dts: rockchip: rk356x: Add MSI controller node
+  arm64: dts: rockchip: rk356x: Move PCIe MSI to use GIC ITS instead of
+    MBI
 
-from Linus' tree and commits:
+ Documentation/arch/arm64/silicon-errata.rst   |  2 ++
+ arch/arm64/Kconfig                            |  9 ++++++++
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 14 ++++++++++-
+ drivers/irqchip/irq-gic-v3-its.c              | 23 ++++++++++++++++++-
+ 4 files changed, 46 insertions(+), 2 deletions(-)
 
-  17987453a9d9 ("dmaengine: tegra210-adma: Use div_u64 for 64 bit division")
-  76ed9b7d177e ("dmaengine: tegra210-adma: check for adma max page")
+-- 
+2.48.1
 
-from the dmaengine-fixes tree.
-
-I fixed it up (see belowi - this is basically d440148418f4 with
-76ed9b7d177e) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/dma/tegra210-adma.c
-index 5c6a5b358987,801740ad8e0d..000000000000
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@@ -914,21 -920,16 +919,21 @@@ static int tegra_adma_probe(struct plat
- =20
-  		res_base =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "global=
-");
-  		if (res_base) {
- -			if (WARN_ON(res_page->start <=3D res_base->start))
- -				return -EINVAL;
- +			resource_size_t page_offset, page_no;
- +			unsigned int ch_base_offset;
- =20
- +			if (res_page->start < res_base->start)
- +				return -EINVAL;
-  			page_offset =3D res_page->start - res_base->start;
- -			page_no =3D div_u64(page_offset, cdata->ch_base_offset);
- +			ch_base_offset =3D cdata->ch_base_offset;
- +			if (!ch_base_offset)
- +				return -EINVAL;
- =20
- -			if (WARN_ON(page_no =3D=3D 0 || page_no > cdata->max_page))
- +			page_no =3D div_u64(page_offset, ch_base_offset);
-- 			if (!page_no || page_no > INT_MAX)
-++			if (!page_no || page_no > cdata->max_page)
-  				return -EINVAL;
- =20
- -			tdma->ch_page_no =3D lower_32_bits(page_no) - 1;
- +			tdma->ch_page_no =3D page_no - 1;
-  			tdma->base_addr =3D devm_ioremap_resource(&pdev->dev, res_base);
-  			if (IS_ERR(tdma->base_addr))
-  				return PTR_ERR(tdma->base_addr);
-
---Sig_/Cj8wmFFHQUQnD.Rbz2utEIg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmeyY7AACgkQAVBC80lX
-0GwUxQf9H4J9PuHr6kg0Hz6T+RWnUgls7KGyYNPhRVtvXr31EuhYhXems0NLWRX8
-OrXjE5HJ107FG3Z2vYydVT3GIXuE9Ry8JJzTVz7dvWmoWNTf40jwMO+8seczlHz1
-VBTPCyALjimtb4eRiZXYwdS6o2D6AcUXhYrzaRQy2kfd4jqdhYz/SBlx4eyc+EJX
-NLZUThSeUq5t6prPXw8LxcgY7Ww99pL9lPfy1/xXe+91g87t95tNPbMR4QgcgOaw
-KPLoBpxV2YoopvM01gMuqXKSQbjF1NBqMo3xgdN0uey1qlPk7TirKZvWklXVvgKy
-sCpq97Z4K51o1dmyMgD4Kn6YW62wcA==
-=CfbY
------END PGP SIGNATURE-----
-
---Sig_/Cj8wmFFHQUQnD.Rbz2utEIg--
 
