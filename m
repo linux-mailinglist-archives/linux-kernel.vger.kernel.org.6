@@ -1,153 +1,159 @@
-Return-Path: <linux-kernel+bounces-516706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A25A37603
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:51:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D953EA3760E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEC116DA43
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 965AE7A2EBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973B119D884;
-	Sun, 16 Feb 2025 16:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A70019D881;
+	Sun, 16 Feb 2025 16:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X0NHws+j"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD8s2exV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B91199935;
-	Sun, 16 Feb 2025 16:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E819219C546;
+	Sun, 16 Feb 2025 16:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739724635; cv=none; b=h5iUWg3OzyoTViHeb1pQnB06o+HaWKCvmJf94JRX+yl1UxduEQkF5yxenZexAnSOcIlD5B6nGHgOlxB2XuLrJvmCcUgB7KkqEugBEUjQqlk4o0PHMT8LFqxOVg1fJp00Ah/Z43d5hMjQ5SWZVfGnbvPHE7j2SZ0SKf023xgtVIs=
+	t=1739724860; cv=none; b=ruaox3UVzWll9LQraNUOst33ywJxvvzyQDBGbfMtJO9vq4jeFMHlJ9714i7vh+VkA+M8J5nPS2mCj9Z1vJufxFh3yQSqjKxmAP4TeJE+kPRtnNRS1rL6AZZrq6XKemvkiJY97D5Z3i2KwKcWKIA+jkAKFfsvtQvm2eVzvjcixss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739724635; c=relaxed/simple;
-	bh=MYDNA7vQdGwvrR9u4naOeO04qzzQoPZZQw+WAtjhwI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVpisn6SminYFklCizv7aIsWQXD7kWtLh+NX+7NTKYgnYYhfTddQvA3FpwmVDokHdIuCNZbCFw0XMu+5qsCYmTDKYXXFb1IBhEk5+GpwyL9ZDrR7URfEpZ6XpA8XyUXf2Tzf7hcXF2lv3HDamdUrzZqfncH95BXPaCukA3Zm2ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X0NHws+j; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=X//16u3A076vRnXiSh6q78jzmve7NLCpY7kdhsSSP7E=; b=X0NHws+jlyf6zpAJhycCm8HZ72
-	8QLIr6FQ+1nB04GXQ8oA3AMcRk0rsKxWJiX7dJxKj5oMBE6bPlbeAxKyFH09m3dEHJgkyl71M9EUp
-	OZht1174YB1hCQkMwG1Lqv0fZkvJi8nOeB4G/U9o6TVptF9j0gnYEq9kFdtVlV6NTYNxO+mnENZHX
-	vMPVopPhkQGLnM/eWad/cu1CzGglPla0wR/rrQpT743UMuCgKT8ZUm4c87UrjOWQeRXWMxEFBjG/l
-	Pzw9XEf6w1pNh0coSn/65ik+6V6GkB7ixdBVtLwWHpRnMe6GkCfhmRVczpujhhdyMkmYs6T4HBkKX
-	FVWsa9hQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tjhqO-005FJw-Sa; Sun, 16 Feb 2025 17:50:18 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Matt Harvey <mharvey@jumptrading.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH v5 2/2] fuse: add new function to invalidate cache for all inodes
-Date: Sun, 16 Feb 2025 16:50:08 +0000
-Message-ID: <20250216165008.6671-3-luis@igalia.com>
-In-Reply-To: <20250216165008.6671-1-luis@igalia.com>
-References: <20250216165008.6671-1-luis@igalia.com>
+	s=arc-20240116; t=1739724860; c=relaxed/simple;
+	bh=b1gMtTVrS9kG/tz3DJSz0avx21//+/wqhBYvF9zq1fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXDBj5OWDqaKxCrXQvw+cj5Nn1bYqh1Z/d/ppEmpPJjoAsgJw/n3CEuPX7DreauYaB9r4T2OAcbRv+Nfls7652AGvr+y4hQAeMraWXeIrN/ofNt7ViFiPExpVFoCGE6e4C6Hbj3ddJGbBp3URYPiXmXyIeKDnFzmseIgtFFqr8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD8s2exV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF13C4CEE4;
+	Sun, 16 Feb 2025 16:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739724859;
+	bh=b1gMtTVrS9kG/tz3DJSz0avx21//+/wqhBYvF9zq1fo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iD8s2exVQnZGw+vub1rvN5H80vPireFTswP2cXX3QzK3lDkD0aS1cAbqGDepxPnIw
+	 eQzm45oLLgWvyuG2ub6l7rQCWLdxjzFdMcMELW25dffiDF9bAOAd15klpgspzi3qmi
+	 5RD/YJb9gbyOvhR7GKYGruF6fxVfd6bFNVtejgF4PVKjylyZw289x/7I8o8c1NPOes
+	 NnTe+kGH1bcCRs6lmwG38kV56mvtespmUHQDkgFX8Ng5tl4rBg+p/Q7Msoutw727Zh
+	 bhshPwDxHWL/+9VuFs/Bly8bho7QTMETty3M2UYv0Yz2B/LrwuZRcS8fkLBPyBSSkT
+	 SBmJZDaglNYbQ==
+Received: by pali.im (Postfix)
+	id E3B6C7FD; Sun, 16 Feb 2025 17:54:06 +0100 (CET)
+Date: Sun, 16 Feb 2025 17:54:06 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: mvebu: Use for_each_of_range() iterator for parsing
+ "ranges"
+Message-ID: <20250216165406.jp2dzfwdfucklt5b@pali>
+References: <20241107153255.2740610-1-robh@kernel.org>
+ <20241115073104.gsgf3xfbv4gg67ut@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115073104.gsgf3xfbv4gg67ut@thinkpad>
+User-Agent: NeoMutt/20180716
 
-Currently userspace is able to notify the kernel to invalidate the cache
-for an inode.  This means that, if all the inodes in a filesystem need to
-be invalidated, then userspace needs to iterate through all of them and do
-this kernel notification separately.
+On Friday 15 November 2024 13:01:04 Manivannan Sadhasivam wrote:
+> On Thu, Nov 07, 2024 at 09:32:55AM -0600, Rob Herring (Arm) wrote:
+> > The mvebu "ranges" is a bit unusual with its own encoding of addresses,
+> > but it's still just normal "ranges" as far as parsing is concerned.
+> > Convert mvebu_get_tgt_attr() to use the for_each_of_range() iterator
+> > instead of open coding the parsing.
+> > 
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> 
+> LGTM!
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Could someone please verify it on mvebu machine?
+> 
+> - Mani
 
-This patch adds a new option that allows userspace to invalidate all the
-inodes with a single notification operation.  In addition to invalidate
-all the inodes, it also shrinks the sb dcache.
+That is mostly impossible as pci-mvebu is broken. Bjorn and Krzysztof in
+past already refused to take patches which would fix the driver or
+extend it for other platforms.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |  3 +++
- 2 files changed, 36 insertions(+)
+So I do not understand why you are rewriting something which worked,
+instead of fixing something which is broken. The only point can be to
+make driver even more broken...
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index e9db2cb8c150..01a4dc5677ae 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
- 	return NULL;
- }
- 
-+static int fuse_reverse_inval_all(struct fuse_conn *fc)
-+{
-+	struct fuse_mount *fm;
-+	struct inode *inode;
-+
-+	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
-+	if (!inode || !fm)
-+		return -ENOENT;
-+
-+	/* Remove all possible active references to cached inodes */
-+	shrink_dcache_sb(fm->sb);
-+
-+	/* Remove all unreferenced inodes from cache */
-+	invalidate_inodes(fm->sb);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Notify to invalidate inodes cache.  It can be called with @nodeid set to
-+ * either:
-+ *
-+ * - An inode number - Any pending writebacks within the rage [@offset @len]
-+ *   will be triggered and the inode will be validated.  To invalidate the whole
-+ *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
-+ *   is negative, only the inode attributes are invalidated.
-+ *
-+ * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
-+ *   and the whole dcache is shrinked.
-+ */
- int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- 			     loff_t offset, loff_t len)
- {
-@@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
- 	pgoff_t pg_start;
- 	pgoff_t pg_end;
- 
-+	if (nodeid == FUSE_INVAL_ALL_INODES)
-+		return fuse_reverse_inval_all(fc);
-+
- 	inode = fuse_ilookup(fc, nodeid, NULL);
- 	if (!inode)
- 		return -ENOENT;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 5e0eb41d967e..e5852b63f99f 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -669,6 +669,9 @@ enum fuse_notify_code {
- 	FUSE_NOTIFY_CODE_MAX,
- };
- 
-+/* The nodeid to request to invalidate all inodes */
-+#define FUSE_INVAL_ALL_INODES 0
-+
- /* The read buffer is required to be at least 8k, but may be much larger */
- #define FUSE_MIN_READ_BUFFER 8192
- 
+> > ---
+> > Compile tested only.
+> > ---
+> >  drivers/pci/controller/pci-mvebu.c | 26 +++++++++-----------------
+> >  1 file changed, 9 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> > index 29fe09c99e7d..d4e3f1e76f84 100644
+> > --- a/drivers/pci/controller/pci-mvebu.c
+> > +++ b/drivers/pci/controller/pci-mvebu.c
+> > @@ -1179,37 +1179,29 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
+> >  			      unsigned int *tgt,
+> >  			      unsigned int *attr)
+> >  {
+> > -	const int na = 3, ns = 2;
+> > -	const __be32 *range;
+> > -	int rlen, nranges, rangesz, pna, i;
+> > +	struct of_range range;
+> > +	struct of_range_parser parser;
+> >  
+> >  	*tgt = -1;
+> >  	*attr = -1;
+> >  
+> > -	range = of_get_property(np, "ranges", &rlen);
+> > -	if (!range)
+> > +	if (of_pci_range_parser_init(&parser, np))
+> >  		return -EINVAL;
+> >  
+> > -	pna = of_n_addr_cells(np);
+> > -	rangesz = pna + na + ns;
+> > -	nranges = rlen / sizeof(__be32) / rangesz;
+> > -
+> > -	for (i = 0; i < nranges; i++, range += rangesz) {
+> > -		u32 flags = of_read_number(range, 1);
+> > -		u32 slot = of_read_number(range + 1, 1);
+> > -		u64 cpuaddr = of_read_number(range + na, pna);
+> > +	for_each_of_range(&parser, &range) {
+> >  		unsigned long rtype;
+> > +		u32 slot = upper_32_bits(range.bus_addr);
+> >  
+> > -		if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_IO)
+> > +		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
+> >  			rtype = IORESOURCE_IO;
+> > -		else if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_MEM32)
+> > +		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
+> >  			rtype = IORESOURCE_MEM;
+> >  		else
+> >  			continue;
+> >  
+> >  		if (slot == PCI_SLOT(devfn) && type == rtype) {
+> > -			*tgt = DT_CPUADDR_TO_TARGET(cpuaddr);
+> > -			*attr = DT_CPUADDR_TO_ATTR(cpuaddr);
+> > +			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> > +			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
+> >  			return 0;
+> >  		}
+> >  	}
+> > -- 
+> > 2.45.2
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
