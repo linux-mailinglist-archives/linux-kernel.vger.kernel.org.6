@@ -1,109 +1,178 @@
-Return-Path: <linux-kernel+bounces-516654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2978A37566
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:06:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03934A3756C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604CF18914D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D35189171D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867BC1991AE;
-	Sun, 16 Feb 2025 16:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506E7199EAD;
+	Sun, 16 Feb 2025 16:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFpuXxMd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlM6MgGh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60CADF78;
-	Sun, 16 Feb 2025 16:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DD7DF78;
+	Sun, 16 Feb 2025 16:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739721981; cv=none; b=FTwMcWLNwBYo5EAtbLI1LWWX1cLD3QuHUzC3YjwWK3/yDywUQvRWPql1RzSgzqn4pwoAL4sVNxBSa1a5sf/lwHD+CR3Z/pb+lL8vPaIKzeUWcp7RVo0xSmNz0l8l+oV2thoyXLDad9jKFxZZlb1xFT+3SkRzU293EMbQKmX7z+4=
+	t=1739722056; cv=none; b=djw/o42l3eiyhIaZlUyOwGdIyRw+dCcDzm46STbb5i7L+yV9E0NHxIp7ZajI9X2hpGFIoKJtBvE7qBfKCL0hOa2ieIJuEScNsjIhARSwOZoXLs99Q9+temDOTGczJLKlklax8TPChdebhbvPT7nR4iQ4DlCN45EkrT0kuhuvR+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739721981; c=relaxed/simple;
-	bh=JweQu+dllQvDOaUoSvaoLQOYmVQ+Zt8DRdK2KAlrKyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EeHmnm7NRQgRlSaiAutZtSSTwvHCxrD+/Rn+djhy70Ald89JCL9tonYccEDm+Wa1PkOCq3bShD+fob4G18CVlbAKrG+WGsVABUKQSCZptGW0am3FyKRfwUP7jKS8ZqEly4+bCowfZptWjJybOX9sswgxjbtjLTGEInozD14x0W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFpuXxMd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58CD4C4CEDD;
-	Sun, 16 Feb 2025 16:06:15 +0000 (UTC)
+	s=arc-20240116; t=1739722056; c=relaxed/simple;
+	bh=43hB0V5xGtsW08Wu4x/+54J0/oLkkgqApWLJEGgtdtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDr6774fUlMOKALnvM8CYPrQwk7DviZ1kWpwUg3aNDUPu0iEVz5luI41Kjfkjpmn+VliPJAZLklghx1/+UyVY1BvhdvcoS4Su4lIBItxMKPNvfYXdlvBxeUJhkuTldv0LgMe+6tok/2spirTYLNatOpaR3Xo+mxa5eD09jrTX6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlM6MgGh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BB6C4CEDD;
+	Sun, 16 Feb 2025 16:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739721980;
-	bh=JweQu+dllQvDOaUoSvaoLQOYmVQ+Zt8DRdK2KAlrKyY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bFpuXxMd5EmRAovscgx7oIkZe3CQsMaxXM76QIzvcsRMbC1wIrA5AHx+2YZUP0jkj
-	 4ZxyXX1F36p4Ru2Gvc2S4/FKKwBXWoNhDfJoCF6WJ/oep8Qb+DhCkrQ9MWhxsG3X50
-	 ttZQm3RAnXq6Zm3Crz8baY3sGRoqLljCQCrqILdSLES9ny+H359+WHkv4QYa9r5K3A
-	 4wUbDUp+67Jt0jtqStabYM5PkT4QewHWjJ6uYzjueXSVIDYcfjH3HKVllvrYjmdABH
-	 I5X9GJfvJOsqf0v8+8174LHORkJe83sJpAAH4rRvjmhrEA4gr2ANJ16CpiSLWUUkk4
-	 CaJEIy71Gz7Lg==
-Date: Sun, 16 Feb 2025 16:06:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
- <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <jonath4nns@gmail.com>, <marcelo.schmitt1@gmail.com>,
- <dlechner@baylibre.com>
-Subject: Re: [PATCH RESEND v3 08/17] iio: adc: ad7768-1: convert driver to
- use regmap
-Message-ID: <20250216160610.4cbfb73f@jic23-huawei>
-In-Reply-To: <51aa3df84b50bf981bea65690d54feddd3d98a89.1739368121.git.Jonathan.Santos@analog.com>
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
-	<51aa3df84b50bf981bea65690d54feddd3d98a89.1739368121.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1739722056;
+	bh=43hB0V5xGtsW08Wu4x/+54J0/oLkkgqApWLJEGgtdtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LlM6MgGh//jb+HqFo2mNjO2abwlassCQW6QN1S0IhXrx9UWPKTL5lXIMRVICZOzHG
+	 +aYnJH6ZYStPAMiRJq9BoaA6fzzHLdcCGBjnpM5huUWXgAncyX5dPH9jTWi91Cv77M
+	 +3WB5YZYxAlEHNJp704sGJRxxnh02eUtAbNDOw2MfHkvNQ059CHOsRU99vDxYhKXt7
+	 vit/P0fUJ3Q1Fdij3Rpolx/Bjd5n5gQEy+dOsP9hDJgFvZpHViTnJNBLuCntrxlzRm
+	 45+oqW8LoqDcKA8k4nG/gqp6QP/yPQubFrpCeejequuS5/T2OBUF34Br4sw9waNrgt
+	 jsqu0/NtZNKhw==
+Date: Sun, 16 Feb 2025 16:07:29 +0000
+From: Simon Horman <horms@kernel.org>
+To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ajay Singh <ajay.kathat@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Kalle Valo <kvalo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Marek Vasut <marex@denx.de>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/12] wifi: wilc1000: disable firmware power save if
+ bluetooth is in use
+Message-ID: <20250216160729.GG1615191@kernel.org>
+References: <20250212-wilc3000_bt-v1-0-9609b784874e@bootlin.com>
+ <20250212-wilc3000_bt-v1-9-9609b784874e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250212-wilc3000_bt-v1-9-9609b784874e@bootlin.com>
 
-On Wed, 12 Feb 2025 15:17:16 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
-
-> Convert the AD7768-1 driver to use the regmap API for register
-> access. This change simplifies and standardizes register interactions,
-> reducing code duplication and improving maintainability.
+On Wed, Feb 12, 2025 at 04:46:28PM +0100, Alexis Lothoré wrote:
+> If the wlan interface exposed by wilc driver has power save enabled
+> (either explicitly with iw dev wlan set power_save on, or because
+> kernel is built with CONFIG_CFG80211_DEFAULT_PS), it will send a power
+> management command to the wlan firmware when corresponding interface is
+> brought up. The bluetooth part, if used, is supposed to work
+> independently from the WLAN CPU. Unfortunately, this power save
+> management, if applied by the WLAN side, disrupts bluetooth operations
+> (the bluetooth CPU does not answer any command anymore on the UART
+> interface)
 > 
-> Create two regmap configurations, one for 8-bit register values and
-> other for 24-bit register values.
+> Make sure that the bluetooth part can work independently by disabling
+> power save in wlan firmware when bluetooth is in use.
 > 
-> Since we are using regmap now, define the remaining registers from 0x32
-> to 0x34.
+> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> ---
+>  drivers/net/wireless/microchip/wilc1000/bt.c       | 29 +++++++++++++++++++---
+>  drivers/net/wireless/microchip/wilc1000/cfg80211.c |  5 +++-
+>  drivers/net/wireless/microchip/wilc1000/netdev.h   |  3 +++
+>  3 files changed, 33 insertions(+), 4 deletions(-)
 > 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-Looks good.  Just one passing suggestion that might reduce chance of
-future bugs a tiny bit.  Any bug that uses the wrong regmap should show
-up quickly in testing but none the less, maybe naming can help too.
-
-Not an important comment though so don't respin the series just for this.
-
-Jonathan
-
-
+> diff --git a/drivers/net/wireless/microchip/wilc1000/bt.c b/drivers/net/wireless/microchip/wilc1000/bt.c
+> index b0f68a5479a5bd6f70e2390a35512037dc6c332b..f0eb5fb506eddf0f6f4f3f0b182eaa650c1c7a87 100644
+> --- a/drivers/net/wireless/microchip/wilc1000/bt.c
+> +++ b/drivers/net/wireless/microchip/wilc1000/bt.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <net/wilc.h>
+> +#include "cfg80211.h"
+>  #include "netdev.h"
+>  #include "wlan_if.h"
+>  #include "wlan.h"
+> @@ -261,22 +262,36 @@ static int wilc_bt_start(struct wilc *wilc)
+>  int wilc_bt_init(void *wilc_wl_priv)
+>  {
+>  	struct wilc *wilc = (struct wilc *)wilc_wl_priv;
+> +	struct wilc_vif *vif;
+>  	int ret;
 >  
->  static int ad7768_scan_direct(struct iio_dev *indio_dev)
-> @@ -233,9 +269,10 @@ static int ad7768_scan_direct(struct iio_dev *indio_dev)
->  	if (!ret)
->  		return -ETIMEDOUT;
->  
-> -	readval = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-> -	if (readval < 0)
-> -		return readval;
-> +	ret = regmap_read(st->regmap24, AD7768_REG_ADC_DATA, &readval);
-I wonder if it is worth reducing the possibility of reading the register
-via the wrong regmap by changing the defintion to
-AD7768_REG24_ADC_DATA or something along those lines?
-
-> +	if (ret)
-> +		return ret;
+> +	wilc->bt_enabled = true;
 > +
+>  	if (!wilc->hif_func->hif_is_init(wilc)) {
+>  		dev_info(wilc->dev, "Initializing bus before starting BT");
+>  		acquire_bus(wilc, WILC_BUS_ACQUIRE_ONLY);
+>  		ret = wilc->hif_func->hif_init(wilc, false);
+>  		release_bus(wilc, WILC_BUS_RELEASE_ONLY);
+> -		if (ret)
+> +		if (ret) {
+> +			wilc->bt_enabled = false;
+>  			return ret;
+> +		}
+>  	}
+>  
+> +	/* Power save feature managed by WLAN firmware may disrupt
+> +	 * operations from the bluetooth CPU, so disable it while bluetooth
+> +	 * is in use (if enabled, it will be enabled back when bluetooth is
+> +	 * not used anymore)
+> +	 */
+> +	vif = wilc_get_wl_to_vif(wilc);
+> +	if (wilc->power_save_mode && wilc_set_power_mgmt(vif, false))
+> +		goto hif_deinit;
 
+Hi Alexis,
+
+Jumping to hif_deinit will result in the function returning ret.
+But ret may not not be initialised until a few lines below.
+
+Flagged by Smatch.
+
+> +
+>  	mutex_lock(&wilc->radio_fw_start);
+>  	ret = wilc_bt_power_up(wilc);
+>  	if (ret) {
+>  		dev_err(wilc->dev, "Error powering up bluetooth chip\n");
+> -		goto hif_deinit;
+> +		goto reenable_power_save;
+>  	}
+>  	ret = wilc_bt_firmware_download(wilc);
+>  	if (ret) {
+> @@ -293,10 +308,14 @@ int wilc_bt_init(void *wilc_wl_priv)
+>  
+>  power_down:
+>  	wilc_bt_power_down(wilc);
+> -hif_deinit:
+> +reenable_power_save:
+> +	if (wilc->power_save_mode_request)
+> +		wilc_set_power_mgmt(vif, true);
+>  	mutex_unlock(&wilc->radio_fw_start);
+> +hif_deinit:
+>  	if (!wilc->initialized)
+>  		wilc->hif_func->hif_deinit(wilc);
+> +	wilc->bt_enabled = false;
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(wilc_bt_init);
+
+...
 
