@@ -1,172 +1,139 @@
-Return-Path: <linux-kernel+bounces-516559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21385A37401
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:41:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D970A37404
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB5F316ADEA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F109D16B000
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB79618DB34;
-	Sun, 16 Feb 2025 11:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62218E351;
+	Sun, 16 Feb 2025 11:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JM9lYGzr"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CtagqkxN"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441AE13D897
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 11:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B867118DB28;
+	Sun, 16 Feb 2025 11:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739706103; cv=none; b=s8cJOJuLUz7sNx+gXJvTevvCpQ9oRNLBf0u5niDxTRcdvs02SMMDu314bhTYScsFSvWE34r+naMuPAHKSi+xztv3UQYTgwuPBYVzjCTKMiXglNWBZ7/gcJ9toAHSA5jW2s0SzXC4GFpJQXbuHbBY/i0UAjF235FtRLGANF81azk=
+	t=1739706128; cv=none; b=pz/db+ElgNuAWKns1uKcKGaACcy3JyrAmR6aGQuIXq6lfaa6CIJHAbbY6wmpSRsnzZEd2JULYyKn0abcYM0Na4R9SZs0MdHGvTDryD2zhC39GpNzGNnw5CZssGWLJtH+7rdFMKh+9eW10/XnvTIgULwX+fpKpdZ0ATPaqlzoa1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739706103; c=relaxed/simple;
-	bh=s3nfQuXv8pD77XaplmLRXJWK6Y8/FRbwq9nK0WlmdOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=blr8+Qymjfe5tF+hUQkmoTSJF7NJYtZErR3JWLS4rUN8TYPI7JEdGNlr925vT/uBOMc+uy95KxTQfdjQ7s01LhnusRhaztkVtnKkGpl15YeH0LAuU8cxhVszE7qmDQCbRX8kAkrxqb9obWe3taqi6iTnff1/YvRZgrbzsZEH2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JM9lYGzr; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7c3d44ae1so59067666b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 03:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739706099; x=1740310899; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+YOIFY1QqnkQull6bw6UkU5fZ1LXxRkH++QD8PUiro=;
-        b=JM9lYGzrwEVJZZNvLvVvyJx/KA4Vl8Ja6+E3Qlyh6/mCCvtqwAJ3oVBe8E/B6E/jJY
-         dlf6x5VQ0v7nvk3ysGeRF4gpDGqOMGfGj8Kn7biRJMJFVF+rvW0YFcMTpBOdYfjwEkeJ
-         J60TQctZsB/G5pgp7TWO+FW81QnXBS9tqFACtCwi53yqVFhguvgjXcVc/OJeuaq+YlhH
-         c0HaSWjNfGP4x+APAV4ZXefTiWoYVIm++oNah/WTmmClQUoOqDkJMMRsk3q8c68asuQ8
-         bsjMAKjzpgTiZ52NJ6JX4itd7s6kp83VwbWREOIZQ49NBghf2EvTT5smRH+yTIXzoy5d
-         jZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739706099; x=1740310899;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+YOIFY1QqnkQull6bw6UkU5fZ1LXxRkH++QD8PUiro=;
-        b=UeZZIzkNbqVvDFrA+Q9otXLXgrwVQt+lxDTl0bDtddPR5RGW0dETJcIs1wMrObMJkp
-         rC81EEE4gRXiTITz/sqt+HJqwSCLhFyCz37vCvr85suSJcNOsk0AkbSWKx4YozpMikU4
-         vh+D7rqRtqIiEX/daP4i0exVtSZhDmknnA4x5E0lifI1TtTLnbzXQ1BT9cGRZvSttrSq
-         7Q33+oIXRrHSQTNl5YZsryPNpWp8CYG/3aaqVwRBYFYHDQQQO17ujywuLdpLxUvLxrWG
-         U2UpxXSpSHjksjT3yBn1HS3565z6Mc6NTjWaEKqZT2Cmtag+GQ5oRXO7i/QUCp9tSAI1
-         dFcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSSuVeSa6oML3dGwcpbRuXIVserXT5z4SGJAB/x10hJhKd16p+lAuXxDmwO1eoqYWSLbzLKCp03+WYIF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaxTYW4PbTQ4HTN/CguUU0UHP7mQsdsGYhgH/vtAG6LsQJtD0I
-	tQ8xFwP0sA7g/rkQwNM/OYOVePHY9Izs9+zJIDQnGsLIROtYhxGRXUpAH/7PELs=
-X-Gm-Gg: ASbGnctcacGg650tpByWHc1ULAxAoF+n+7/o1GKDxu7DURJKjEBiI2I4ApnEHflL7QC
-	qDJjwwr3DFRAay2St2J2qNnIg39/O55ohGSwOUV4wWuo6cuvoMw43yTGgYFDBiRqCvripABfCOr
-	2InAQ6F11NrTAgoPTd2+tmgnPQ/vfdKqM3tQYARKbcRMLnjg8LykfAqxTECAaLuyq0LJt3juGMn
-	X+GGHXuLJgAuA1Ja41C1MdrqjLxaVZxtF/w8ZXFHjvI4qlyrKKUyYB2CwmQVcY04jG2eZrahaxM
-	MqZJ3/HYTn5sk2iv9APqpp/mDoZfKQ==
-X-Google-Smtp-Source: AGHT+IGC7GfLml1oeu8oNIX5tls4ha6EZGX1Ok0ynCFcQ9rntDrsSXbTflTn2CbbuY9r3Pnoy6M6hQ==
-X-Received: by 2002:a17:907:7248:b0:ab6:6176:9dff with SMTP id a640c23a62f3a-abb7053d8e7mr248373666b.0.1739706099492;
-        Sun, 16 Feb 2025 03:41:39 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba533bdc41sm682048066b.162.2025.02.16.03.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 03:41:38 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC dependency)
-Date: Sun, 16 Feb 2025 12:41:36 +0100
-Message-ID: <20250216114136.245814-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739706128; c=relaxed/simple;
+	bh=XqwOI8y99cwJzv1rKKhU1DblINCFVyfT0uqOCYw2rZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BKGlX8tY+5WX5BM9wcBFWYtgx51EhBIveEYwlwVf4A9wjNraJc9JtQg0qbMynTWKqPWVqMDfd1vhkSdXtH6cjizqfBnThYy5uYenlBlVq9tipKwDEVwzbouxrJH2Vrw9II/USdz67jznkWRHl4gzGtzrV7v70xJSJKBk9gRnzHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CtagqkxN; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739706122;
+	bh=Zi1V8fNPQGS0siVzlt7NiDcecy0vStvM3PWsN+6LX24=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CtagqkxNYoNgpdsXOwreW7PW+++vFw49W0qzvr5UYrEi3NLjmb/3slbf+6GOIpDzf
+	 pgGlBoGooGyFFY7gegJHZMWsyHfOC21wON/5VsGBNqDSd+ybfFpjEFjoiInIpn4plA
+	 wzLIX5yFoF8on3cHQHUUfUA/lknnFueqWHXPKJLKLpAJ9f8CX18DP9py2Q75056lDb
+	 FJYTe5+kZIR9i2u6bKdNIRum2BNXRCafoHYp8gGd1qDaSIosULFtylOWI69ugD8y5b
+	 2C+BsrWXh1qZLRbTwccI1P4xfNR+cavEEpXUfyXSc5WML6J0PhKMhHdM3/gbdel7mt
+	 vbk8rG9ziqEBw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YwkQy3Tlkz4wvg;
+	Sun, 16 Feb 2025 22:42:01 +1100 (AEDT)
+Date: Sun, 16 Feb 2025 22:42:00 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams
+ <dan.j.williams@intel.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Jeff Layton <jlayton@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley
+ <joel@jms.id.au>, Kent Overstreet <kent.overstreet@linux.dev>, Linus
+ Walleij <linus.walleij@linaro.org>, Nick Terrell <terrelln@fb.com>, Vineet
+ Gupta <vgupta@kernel.org>
+Subject: Re: linux-next: trees being removed
+Message-ID: <20250216224200.50b9dd6a@canb.auug.org.au>
+In-Reply-To: <20250212095632.6bdd50d7@canb.auug.org.au>
+References: <20250212095632.6bdd50d7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/j5R8t8iEuqK6H1oKeKLT4cD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Older Exynos designs, like Exynos5422, do not have USB Type-C and the
-USB DRD PHY does not really depend on Type-C for these devices at all.
-Incorrectly added optional dependency on CONFIG_TYPEC caused this driver
-to be missing for exynos_defconfig and as result Exynos5422-based boards
-like Hardkernel Odroid HC1 failed to probe USB.
+--Sig_/j5R8t8iEuqK6H1oKeKLT4cD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-However ARM64 boards should have CONFIG_TYPEC enabled and in proper
-state (e.g. =y when PHY_EXYNOS5_USBDRD is =y) for proper USB support on
-Google GS101 boards.
+Hi all,
 
-Add itermediate CONFIG_PHY_EXYNOS5_USBDRD_TYPEC symbol to skip TYPEC on
-older boards, while still expressing optional dependency.
+On Wed, 12 Feb 2025 09:56:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Tree			Last commit date
+>   URL
+>   comits (if any)
+> ----			----------------
+> file-locks		2023-09-01 08:09:48 -0700
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git#locks-n=
+ext
+> fsi			2023-12-14 19:44:11 +1030
+>   git://git.kernel.org/pub/scm/linux/kernel/git/joel/fsi.git#next
+>   ec084e4ec314 ("fsi: sbefifo: Bump up user write cmd length")
+>   f7236a0c919e ("fsi: sbefifo: Handle pending write command")
+>   c5eeb63edac9 ("fsi: Fix panic on scom file read")
+> gpio			2023-09-10 16:28:41 -0700
+>   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for=
+-next
+> header_cleanup		2024-01-15 15:52:12 -0500
+>   git://evilpiepirate.org/bcachefs.git#header_cleanup
+> kspp-gustavo		2024-01-21 14:11:32 -0800
+>   git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git#for-=
+next/kspp
+> tsm			2023-10-19 18:12:00 -0700
+>   git://git.kernel.org/pub/scm/linux/kernel/git/djbw/linux#tsm-next
+> zstd			2023-11-20 14:49:34 -0800
+>   https://github.com/terrelln/linux.git#zstd-next
+>   98988fc8e9ed ("zstd: import upstream v1.5.5")
+>   40eb0e915deb ("zstd: Backport Huffman speed improvement from upstream")
+>   3f832dfb8a8e ("zstd: fix g_debuglevel export warning")
+> zstd-fixes		2023-11-14 17:12:52 -0800
+>   https://github.com/terrelln/linux.git#zstd-linus
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Closes: https://krzk.eu/#/builders/21/builds/6139
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
-Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+All the above trees have been removed.  Give me a yell if you want one
+back.
 
----
+> arc			2023-09-10 16:28:41 -0700
+>   git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git#for-next
 
-Patch for issue in linux-next
+This one is still pending.
 
-Changes in v2:
-1. Add PHY_EXYNOS5_USBDRD_TYPEC, so arm64 defconfig will have both
-   symbols in-sync
----
- drivers/phy/samsung/Kconfig              | 12 +++++++++++-
- drivers/phy/samsung/phy-exynos5-usbdrd.c |  1 +
- 2 files changed, 12 insertions(+), 1 deletion(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index 7fba571c0e2b..b20ac6b75993 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -77,12 +77,22 @@ config PHY_S5PV210_USB2
- 	  particular SoC is compiled in the driver. In case of S5PV210 two phys
- 	  are available - device and host.
- 
-+# None of ARM32 Samsung boards use Type-C, however newer ARM64 do and
-+# PHY_EXYNOS5_USBDRD driver needs TYPEC to be in a matching state to avoid link
-+# failures (see optional dependencies in kconfig-language.rst).  Intermediate
-+# PHY_EXYNOS5_USBDRD_TYPEC symbol allows to skip TYPEC on ARM32 boards.
-+config PHY_EXYNOS5_USBDRD_TYPEC
-+	tristate
-+	depends on ARCH_EXYNOS
-+	depends on ARM || TYPEC || !TYPEC
-+	default y
-+
- config PHY_EXYNOS5_USBDRD
- 	tristate "Exynos5 SoC series USB DRD PHY driver"
- 	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
- 	depends on HAS_IOMEM
--	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
- 	depends on USB_DWC3_EXYNOS
-+	depends on PHY_EXYNOS5_USBDRD_TYPEC
- 	select GENERIC_PHY
- 	select MFD_SYSCON
- 	default y
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index ff2436f11d68..6d571dff2898 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1456,6 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
- {
- 	int ret;
- 
-+	/* See CONFIG_PHY_EXYNOS5_USBDRD_TYPEC */
- 	if (!IS_ENABLED(CONFIG_TYPEC))
- 		return 0;
- 
--- 
-2.43.0
+--Sig_/j5R8t8iEuqK6H1oKeKLT4cD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmexzwgACgkQAVBC80lX
+0GzpDgf9GxN7FzDwxGC9RmL/bI70U6NJWRBcnARDZ1OcNIllG6puSOg5uCkggaVY
+w6gnVUvFWepmwhqzZ4YmE5gOd6/j6TRpu6pcc5s/P3ShPAmw1AdV20ULhvQHlJkG
+Pvfjlp3gtzQ2QdJNAEpceNHBm5i3HAt55BUnTdohQp3hQWEIe1uYQaiNQYUjKDcz
+6s7CvTKaPqekLGcLRwEa+PgC3Po3V6kKXZzid8LF6Rg/CsHxNED9SBtit3hy2DMZ
+223VraX+JwJ1OdbEVYub0lY5OYpL+/mAnLaBSogMRSl25O09SKKDF6w0qjCy6hod
+EW7xYjr29VkexE3ykfGmgqzclUJZwQ==
+=eKZj
+-----END PGP SIGNATURE-----
+
+--Sig_/j5R8t8iEuqK6H1oKeKLT4cD--
 
