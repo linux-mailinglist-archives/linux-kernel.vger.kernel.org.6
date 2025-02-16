@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-516553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0DEA373F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:24:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FDDA373F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 12:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D2563AEE4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B6D3AEDC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 11:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94F718DB32;
-	Sun, 16 Feb 2025 11:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F7018DB34;
+	Sun, 16 Feb 2025 11:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAfGUCki"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sa9NW4bI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA60015F3FF;
-	Sun, 16 Feb 2025 11:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772931624E2;
+	Sun, 16 Feb 2025 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739705075; cv=none; b=AEKWMp8MUggLtHv4ha+aem7Kcrh32ggcufSdMLKdhWDOUxI6A+F6brEksfmaU/8jKoF/x5d+zZXVLd47w9yIBXjrK8yibHQyaGkj1ki0fc1g8MY1VmVbSqfZhh+NQo0EAdVIFWoU7zuaxP3gAyXh0bE/EsM7RAVkcstGUTFTLLo=
+	t=1739705100; cv=none; b=bTy4mt+9enLmujM3BF3SbuBPnwasRidXIiO72Q9U2cOsuBZyF4F857jSqcIN58ys7zIQBHUa8iUwoLKApieuWd8qDWZ0NotkFYVjfJmCDZwBaeCdwvOgfg6tGeXX+DarLSYTrLr8K2RhBHBAeILPMzwmAjjRYZHWYRAXsECeIKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739705075; c=relaxed/simple;
-	bh=enwafucR5NlWPBdACF9TuMGdAR8VNwvlFw1zTCogdRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+CTHdK5p/qAe0k0a7sSppuS8vnSNWyenRhVlENOI2TU4Jah59FXVbTyBjou1cuSn6oVpMRiCyNwpZ4zheZD0JPxIX3eTTH1W/e8Z5VS5yLGJ0wGFf7X3voSmXD0ESeSP4XWdmO7cxsTcOUywHnyZAE7PLVO5s7uu1byCDpE4FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAfGUCki; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f31f7732dso921363f8f.1;
-        Sun, 16 Feb 2025 03:24:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739705072; x=1740309872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6CW6cwzy3RXFFAj6UJ9mWJ4TcwTIqGU+hJNWCt4bOU=;
-        b=VAfGUCkiNaz1wAtfPWmAAVbQAHnIFLypid2M1mFLYLesG6jP7kgt5zBaeJvp4+7Lf/
-         nTHAouJRY/3fLWslTCi7zGT8cfBIW8jaDqztgVaSY5vlXBL34cTacoFqfYhms/owz07k
-         zPit1IOAAQyMnDPLglNMhL0c/lmLzk4+XyzfFFutZELp890Q21jLnWocDhJ59T/CFwet
-         Gy32Kjt0tFpzFBCz7f35JOS7mJMenRLBjt7AEIg+I0HxGX+oGu/42ItpFPEBmgKsDRgv
-         2MJjcDaKsvl0as0uGMg9lbdHGT/nQ005V97UGoZBiBx6sjVfj23cbynsKML36W/FEoxG
-         kIwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739705072; x=1740309872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N6CW6cwzy3RXFFAj6UJ9mWJ4TcwTIqGU+hJNWCt4bOU=;
-        b=nl0FpfMD0otDqMSQVgfPqDMIb1iw5r14E23o7EuQUiH0K591Y8TxljCtU9BEBGA8Rb
-         yaADwDpaM/HVsIkjkHpmTYfZY4tSzh2KX/lYbmquqVoYC5/jftuVzRaz5htHYa5FJjup
-         bmUscqYhqHC14v4o9buYWig8n6dHnyNIF4VAdVs217wY1jPT/2x5z8NhIVWRpV0WX19V
-         6vT47otCF4MeEDGTBC56QPOrsh/xL/LNLef1fK+LxfvG8DsiiRMRkUNXn1X1Gpv/gzpJ
-         iBYhapWgevk8jxi2r3O2yfM0iNxiseNuUPWeTKeUyUMsm6rXv5Q2BO1M6O9j0r/Ne4ep
-         t74g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfb7T7yX+vmk5GUp630tVgYbg9CZzziMKVf0LfC30KhEO4XjtEa7SJ/EEYJxit3/VuIjNi+/e1eCek8PE=@vger.kernel.org, AJvYcCWi1SCJIP/9MFMu+garr8BozaCWrZJWsIH8J2invpm0h9yU5qGpRPV5ZDr2brB3WbSHEVPrWbK8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiYdvmjy3JouOJJ1KoE3W0YoDrYH3XlDRkv4pps+IRhnIPX5aS
-	kyZ75lUq2nnC88CTZxSt8Z4g7Cg28KgcdgSoaVKBapd1m/MvIEFo
-X-Gm-Gg: ASbGncu7ZEaOPcENN0xyKyC+QD6+2bA4ZjNLqDxL2IQnmoQeXaMITZAKDXXr19tW1M8
-	8AnODIm7S+0VhfPIJloxJJxnJILLO9jKTC+2WNWuzDsm7rQD09syys+pUbgmSp+OSQZkDAU+SSI
-	SaFqezKgCxSZO5D9EPH9bZ6OKbT2QzYLE+gs+UY7swhSgnD57BC9cGx2wew2C/RXvt2YvI3FX8I
-	TUkEo5NbrScM0Tt/lWJKUOB2taM8Z5pO81Ro1yxhuroREY3GY5aAFrBGON+ifURDLmdOJU9zVht
-	bT+z9hyOtbaDIZmZtTqe7HGnDI5FcGcIM0XkpCcxckutm4U8HpjvDg==
-X-Google-Smtp-Source: AGHT+IGVwtYfKNvFbUEXI11NHDgMu2PvMKflTrnjpL6Qjbpq/I/5bYeadzXPYdLkMR7a3RogSPSc2g==
-X-Received: by 2002:a05:6000:1fae:b0:38f:3aae:830b with SMTP id ffacd0b85a97d-38f3aafb43bmr3288926f8f.26.1739705071708;
-        Sun, 16 Feb 2025 03:24:31 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7e8sm124397715e9.26.2025.02.16.03.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 03:24:31 -0800 (PST)
-Date: Sun, 16 Feb 2025 11:24:30 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Nick Child <nnac123@linux.ibm.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, haren@linux.ibm.com, ricklind@us.ibm.com,
- nick.child@ibm.com, jacob.e.keller@intel.com
-Subject: Re: [PATCH 1/3] hexdump: Implement macro for converting large
- buffers
-Message-ID: <20250216112430.29c725c5@pumpkin>
-In-Reply-To: <20250216093204.GZ1615191@kernel.org>
-References: <20250214162436.241359-1-nnac123@linux.ibm.com>
-	<20250214162436.241359-2-nnac123@linux.ibm.com>
-	<20250215163612.GR1615191@kernel.org>
-	<20250215174039.20fbbc42@pumpkin>
-	<20250215174635.3640fb28@pumpkin>
-	<20250216093204.GZ1615191@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1739705100; c=relaxed/simple;
+	bh=uOmry1/9nwb5c3upcUXJfES1mkzJ76wINHw8amDhFVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tM4LQbIrk3+2Q1Y1RzQbjAu9dg0ZG8wLTMRn/+FZmuJ0y3ARmUuG5LAgu/FjhfEoTmrH8Ydenl51sgbs9fmleK99bXTo4sZ0Hgw70DjLHOlSAa4bHDeXhpH3Z8RROJenrhYojCbmIZmx3jM0z8kdzVMA8Drbvjo/yKmT/A2Fadk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sa9NW4bI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739705094;
+	bh=y8OZwAL4vyppIUoQfFhEXeABCEmYaNE0iem0dDlxlps=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sa9NW4bI3a5ilnpuG8SjkH+ldhfjdAArAElfX6OQbXIgKl271Bf56V09xcwij4Pch
+	 BrGUjwEMivInlPnKRt8EP5JuYAIy0TAO6uZPWx59sBJAiYeIcey8ELHy1OewDYQOo0
+	 x4xnVF0rVMpZV2ruvOo2tHoTx24xaId5RRxxNz7mkzR3dAvObL7YK3DXxeXg1s/DWf
+	 P+qmaYBTOxExUN+0MP0VMh9yESBZ+R7NOGRfxforgsRC+AI/N7luVgc8CyePafZzKV
+	 TAFLmCmMECVVPH+XK2BFBq5+kRhwiF633hs4JaPHhLC7HWBL2Q8NU44foWDRTWoJyI
+	 V+r9VwpeTfkWQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ywk3B3Zgpz4wvg;
+	Sun, 16 Feb 2025 22:24:54 +1100 (AEDT)
+Date: Sun, 16 Feb 2025 22:24:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>, Matt Turner
+ <mattst88@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the mm tree
+Message-ID: <20250216222453.50b352d0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/YjW6b==FtpboK5mbzzGf7b.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/YjW6b==FtpboK5mbzzGf7b.
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 16 Feb 2025 09:32:04 +0000
-Simon Horman <horms@kernel.org> wrote:
+Hi all,
 
->...
-> > > Yep, that should fail for all versions of gcc.
-> > > Both 'i' and 'rowsize' should be unsigned types.
-> > > In fact all three can be 'unsigned int'.  
-> 
-> To give a bit more context, a complication changing the types is that the
-> type of len and rowsise (but not i) is in the signature of the calling
-> function, print_hex_dump(). And I believe that function is widely used
-> throughout the tree.
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-Doesn't matter, nothing with assign the address of the function to a
-variable so changing the types (to unsigned) doesn't affect any callers.
-The values better be positive!
+  8efb49fa5fa8 ("alpha: use str_yes_no() helper in pci_dac_dma_supported()")
 
-I just changed the prototypes (include/linux/printk.h) to make both
-rowsize and groupsize 'unsigned int'.
-The same change in lib/hexdump.c + changing the local 'i, linelen, remaining'
-to unsigned int and it all compiled.
+from the mm-nonmm-unstable branch of the mm tree.
 
-FWIW that hexdump code is pretty horrid (especially if groupsize != 1).
+This is commit
 
-	David
+  1523226edda5 ("alpha: Use str_yes_no() helper in pci_dac_dma_supported()")
 
+in Linus' tree.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YjW6b==FtpboK5mbzzGf7b.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmexywUACgkQAVBC80lX
+0GymVwf7BiO4ERBVj/+id+VqNh8kCCPSu7NreB8fvGK5MyY+oEvDTqs5q9inBBRs
+xOP+D/aHrMTHxhEVQgKhTHyOjjcYmwsOaLkfNicOsxPDXDwPiUDcjVgqwQ78QQDv
+L1dMMStNESM1nkInhRYa4d29mfJMeIBA48AVy0do8sIBpyQypfX5Ogq1aq2GvtYl
+z9u6sS8cEmHDQ700Wlc01hcOP02z8VEmajJSjmvomnxXtv7K/X4f5mfYVmLGHSXr
+qRwtPwnIa4qhkrlTiDg5/1KgXDHPz63647U1GWE/PQ9dS8FVI0M2JqtoW3sK+Qkb
+whforn1OWOwQcB9CnI3lHbSAWsc0rg==
+=ZClk
+-----END PGP SIGNATURE-----
+
+--Sig_/YjW6b==FtpboK5mbzzGf7b.--
 
