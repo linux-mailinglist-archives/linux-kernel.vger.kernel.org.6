@@ -1,171 +1,143 @@
-Return-Path: <linux-kernel+bounces-516440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF3FA37187
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:29:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA3AA3718C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 02:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE36E3AF7D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 00:28:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF157A3F84
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 01:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD23D46BF;
-	Sun, 16 Feb 2025 00:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C633379DC;
+	Sun, 16 Feb 2025 01:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aHvGniaz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvBSl+b9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1D31FC8;
-	Sun, 16 Feb 2025 00:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67D94C70;
+	Sun, 16 Feb 2025 01:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739665741; cv=none; b=hqCATZwiSFJG5BCVUhwmERMtFQh1av3NkLAXfneXPSf21DSdwHDMWRYsxeewEA3AMtMOqTcEpUAw/x2A6Wyk1UMYWzR4cO9dJ/HI3Qg6m7GcPE9YpYdmj0JJw9xh0OD4lGYqV23Hqm2abcgsn9/o0V5Mjgqqci0w7Kq1SfOHdfM=
+	t=1739668103; cv=none; b=fZIBtAHsC+yMPrFekV/jJXa8Uj4d4EqLo9x4myajOqo9f10G4cwTCVPcR+lAxEh4EKHAOByrEv++Z4BcdnypQFqr1Citydzk9FZnGhkoGhnO/4BDDYf5n0Q8TH4B4tiIIV4ZNMjCTmeO4km7ThJJdTASwj8pChsfaSFQJ1LT7g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739665741; c=relaxed/simple;
-	bh=ptxeuYv+DMlsfr3xX9uWibwwGHo6HQ1eNYvjC87zIgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqNclcKr83TqIIfwPmJIONudFE6mtGyAT7vXdATYaKYwzpfOJQfT3cvnKueeYcaTMU8kS/b/PJJByK1OF59J+fUg0cmy9IkwEoh5vULQpYhxkOPdXzmMISDhdHdt1eVZt+b2unco+IOgvG6c8oWejN+T8i2IzEUnT1aKPZOeK3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aHvGniaz; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739665740; x=1771201740;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ptxeuYv+DMlsfr3xX9uWibwwGHo6HQ1eNYvjC87zIgc=;
-  b=aHvGniazVBeL8z/HdIJHllGoiF6ufc9olz0d0qKbLgDxsKum2GQFCtlG
-   CkjSN6OvgyzHEmF4IAQpKs5Uo+pJGB2SUDkv//g+8tXhuJll+gZw0qIWO
-   ul+LZdE9L/o4tc0wI3cAjBUtCntjtSNifjRleuLneZ7yDzOLkACx1ki2w
-   X0wsm/rEmfdIOpSagVPoFP8xMA/BWiKmJSVIeo2gGpW+uqvuKVPhxipki
-   DptzcOAviEgKv435weSotTMziIW/PcduWp/whL1dUU21uHhksgQwntpQ3
-   F4KcHQ1Ge1E4/YxKq5Ad8qbata4MRA9ONqOT7Alc+RLKNIYdmk6rowh+Q
-   A==;
-X-CSE-ConnectionGUID: Y0AJ2VywS2Kdem0lyAtjPQ==
-X-CSE-MsgGUID: 24YtorFeQ46PygfL+/NUYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11346"; a="40255637"
-X-IronPort-AV: E=Sophos;i="6.13,289,1732608000"; 
-   d="scan'208";a="40255637"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 16:28:59 -0800
-X-CSE-ConnectionGUID: YrjrGHGXQcaHZH/AlOcNHQ==
-X-CSE-MsgGUID: cA6oL5o9TpuEvVCBmmt5Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114267907"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 15 Feb 2025 16:28:56 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjSWj-001BRT-1Z;
-	Sun, 16 Feb 2025 00:28:53 +0000
-Date: Sun, 16 Feb 2025 08:28:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stuart Yoder <stuart.yoder@arm.com>, linux-integrity@vger.kernel.org,
-	jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-	sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] tpm_crb: implement driver compliant to CRB over
- FF-A
-Message-ID: <202502160801.zzYlGtHn-lkp@intel.com>
-References: <20250212220548.400447-2-stuart.yoder@arm.com>
+	s=arc-20240116; t=1739668103; c=relaxed/simple;
+	bh=VYVUtvPTqYR1OgPro7djmzeJPEH2PetO89zR5ZuN8hM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rvbZyYw20IGWOusdhr9rhUnsg2/hG2p62/HTBvWWfzfT41k4nY4zFWj4Nq7L7EdU+CONgj1wL45Hb+worl/+iAFoH8bVIF6xn+5HjymHSe3E6LD4Nz+rHbStHagrYAACTexfg5+mOgC5Bdtrbl7cHM8XV4u2aThV0htGY08+YaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvBSl+b9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220c3e25658so7689425ad.1;
+        Sat, 15 Feb 2025 17:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739668101; x=1740272901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GaG1ejkjjP44pGEgXrg6pmu19/GDuXtS2tYJ56ktCw0=;
+        b=QvBSl+b9svYGpMXeN9/byiDmZ4BuHA2E/dZxNqf140VXoCf3ThRxkqaiGbm3yW4gnZ
+         AtTCbbA4hzHwy/LA0IsbmwwB3JeIqEiwQO3j5qAOtUbnBsTdcKglfYMPGOIvTf9y/z9Z
+         QdR4VbwlW5TBZolHQIY3ie35Qjojd/KEpNTJUvly0vqXaja1GxwoPRaVAT0HngozwuEX
+         /2AHYic68lTBPDEYN7PxdqA2pSVZBA9oG2dmHnh3kuREBRIKdCXwhYie27Hd606avkHm
+         LsL95cluP7wDWLC2NPUceQJaRZTTWhmm/4DNg0fFTnpM9I3aPtxuJ9GvDzuuZ3kNdE6n
+         SJzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739668101; x=1740272901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GaG1ejkjjP44pGEgXrg6pmu19/GDuXtS2tYJ56ktCw0=;
+        b=lvr21QIAomB56vfHXNeVXY9KvyJcYMCSuGzNpJ7trWPxe4Hupr/vD3J+Ja1QkUe8OY
+         IPaT7yCqz8MvDcb5RZ2au6aFbNY2oqcuatI+A0rdOyJAsmZmwOlfcHf4LoINwkfhcCet
+         To2wftBgFckfO7iDBdeYlPUo3nPHEQYvYcb16olUCQUf164/I40F40Hy/UI3WFVhC+xC
+         +Ol24+RLqqkmZF5t3Ijzyi4hMSvJv1F046r9C/nJud363cZuib1tcK66Om7b4tgClMjb
+         ep/LmqdTfDmQ7O1460EWDP7y2hhWQzVxjTa2Ig7YvD8CLk5gPvHEoGiKH+OeooQ8JFSM
+         VbBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhUfVjvDSKPOaoPz8xuFBO+umIciQkxcd4tcEj9ZI7/KNnfK+cjhPFFvY9SY/AvXIH/UjfX98W92M@vger.kernel.org, AJvYcCVx5st/aAZzr7bO6tRBgk1jNtd+5gLQ55Z4gMWmGUwhTMU918piToGGS48lwFZQbt4sQd2VSiLN5bo9wVZ9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6qBLeQBuBJ8sPDAh5arYgPGuNFnquMqz1qktY9+3SGUO93Yli
+	xO7rttKKe1LlTz/3AgmJTY6f4VxXrPNpPQQ2kqn9fNLf+LZZ7HG8
+X-Gm-Gg: ASbGncvcU7D9N57iXDBhYxHvgZsEcdoAeSNKCGllq1GXVFGAifVfe1t7AMTJa+5Q11p
+	gTSeV+qrI2fyQHONtSwAxusRJCQ1B4Vi9naLUfA7aDLBaXsXon1WGAkD0BZ86iF1ZfHYrV1e4Ur
+	4GXBnF5I/ph7di44rqmgyWKAMEUZg266EjiBqgobtcNAyRtH4UZBZZgA2ZlMxq1EYK6HYC4P1MD
+	PqmFpaZ3kILVUK9KbQo1Sg5L+SaEveyHDI7LUYNdE43NyPaU1Bb482oGQ8D9PyW5BvtSE5vooTj
+	CEiXqtVcw6ekjTbIyC03
+X-Google-Smtp-Source: AGHT+IH/+mxdcBT6whVFWrHxgZ6a5u1nwOwVnd7fAtlQA3wZRira0RXbOVdfvGoGi405l24/1SuaIw==
+X-Received: by 2002:a17:903:2f88:b0:21b:b115:1dd9 with SMTP id d9443c01a7336-22103f0b0b3mr28232985ad.5.1739668101056;
+        Sat, 15 Feb 2025 17:08:21 -0800 (PST)
+Received: from rock-5b.. ([221.220.131.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536455esm49672045ad.74.2025.02.15.17.08.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 17:08:20 -0800 (PST)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: sebastian.reichel@collabora.com
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	liujianfeng1994@gmail.com,
+	piotr.oniszczuk@gmail.com,
+	robh@kernel.org,
+	sfr@canb.auug.org.au
+Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
+Date: Sun, 16 Feb 2025 09:08:14 +0800
+Message-ID: <20250216010814.375313-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ltuyyul4vqyavsqvaue25tdbtjzpwkmq2smtsedidgyomu7d4w@rxsxbdgzheba>
+References: <ltuyyul4vqyavsqvaue25tdbtjzpwkmq2smtsedidgyomu7d4w@rxsxbdgzheba>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212220548.400447-2-stuart.yoder@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Stuart,
+Hi,
 
-kernel test robot noticed the following build warnings:
+Sat, 15 Feb 2025 23:22:27 +0100, Sebastian Reichel wrote:
+>&hdptxphy_hdmi0? That looks like a downstream thing and also for the
+>wrong port?
 
-[auto build test WARNING on char-misc/char-misc-testing]
-[also build test WARNING on char-misc/char-misc-next char-misc/char-misc-linus rafael-pm/linux-next rafael-pm/bleeding-edge linus/master v6.14-rc2 next-20250214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+You are right. I was refering to the patch of rock5b from mailing list[1],
+in which there is "&hdptxphy_hdmi0" so I assumed this port is merged
+upstream.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stuart-Yoder/tpm_crb-implement-driver-compliant-to-CRB-over-FF-A/20250213-060938
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20250212220548.400447-2-stuart.yoder%40arm.com
-patch subject: [PATCH v2 1/5] tpm_crb: implement driver compliant to CRB over FF-A
-config: arm64-randconfig-r073-20250214 (https://download.01.org/0day-ci/archive/20250216/202502160801.zzYlGtHn-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+Although ROCK 5 ITX only uses hdmi1, vop need &hdptxphy0 for pll clk, so
+this node is necessary if we don't change the vop clocks at board level
+devicetree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502160801.zzYlGtHn-lkp@intel.com/
+I just notice that there is a new patch series[2] to let phy of hdmi1
+provide clk. I have to add both hdptxphy0 and hdptxphy1 based on this
+series, or I can only add hdptxphy1 and change the vop clk like:
 
-smatch warnings:
-drivers/char/tpm/tpm_ffa_crb.c:272 ffa_crb_probe() warn: unsigned 'ffa_crb->minor_version' is never less than zero.
+&vop {
+	clocks = <&cru ACLK_VOP>,
+		 <&cru HCLK_VOP>,
+		 <&cru DCLK_VOP0>,
+		 <&cru DCLK_VOP1>,
+		 <&cru DCLK_VOP2>,
+		 <&cru DCLK_VOP3>,
+		 <&cru PCLK_VOP_ROOT>,
+		 <&hdptxphy1>;
+	clock-names = "aclk",
+		      "hclk",
+		      "dclk_vp0",
+		      "dclk_vp1",
+		      "dclk_vp2",
+		      "dclk_vp3",
+		      "pclk_vop",
+		      "pll_hdmiphy1";
+};
 
-vim +272 drivers/char/tpm/tpm_ffa_crb.c
+[1] https://lore.kernel.org/all/20241211-rk3588-hdmi1-v2-4-02cdca22ff68@collabora.com/
+[2] https://lore.kernel.org/all/20250215-vop2-hdmi1-disp-modes-v1-0-81962a7151d6@collabora.com/
 
-   230	
-   231	static int ffa_crb_probe(struct ffa_device *ffa_dev)
-   232	{
-   233		int rc;
-   234		struct ffa_crb *p;
-   235	
-   236		/* only one instance of a TPM partition is supported */
-   237		if (ffa_crb && !IS_ERR_VALUE(ffa_crb))
-   238			return -EEXIST;
-   239	
-   240		ffa_crb = ERR_PTR(-ENODEV); // set ffa_crb so we can detect probe failure
-   241	
-   242		if (!ffa_partition_supports_direct_recv(ffa_dev)) {
-   243			pr_err("TPM partition doesn't support direct message receive.\n");
-   244			return -EINVAL;
-   245		}
-   246	
-   247		p = kzalloc(sizeof(*ffa_crb), GFP_KERNEL);
-   248		if (!p)
-   249			return -ENOMEM;
-   250		ffa_crb = p;
-   251	
-   252		mutex_init(&ffa_crb->msg_data_lock);
-   253		ffa_crb->ffa_dev = ffa_dev;
-   254		ffa_dev_set_drvdata(ffa_dev, ffa_crb);
-   255	
-   256		/* if TPM is aarch32 use 32-bit SMCs */
-   257		if (!ffa_partition_check_property(ffa_dev, FFA_PARTITION_AARCH64_EXEC))
-   258			ffa_dev->ops->msg_ops->mode_32bit_set(ffa_dev);
-   259	
-   260		/* verify compatibility of TPM service version number */
-   261		rc = ffa_crb_get_interface_version(&ffa_crb->major_version,
-   262				&ffa_crb->minor_version);
-   263		if (rc) {
-   264			pr_err("failed to get crb interface version. rc:%d", rc);
-   265			goto out;
-   266		}
-   267	
-   268		pr_info("ABI version %u.%u", ffa_crb->major_version,
-   269			ffa_crb->minor_version);
-   270	
-   271		if ((ffa_crb->major_version != FFA_CRB_VERSION_MAJOR) ||
- > 272		    (ffa_crb->minor_version < FFA_CRB_VERSION_MINOR)) {
-   273			pr_err("Incompatible ABI version");
-   274			goto out;
-   275		}
-   276	
-   277		return 0;
-   278	
-   279	out:
-   280		kfree(ffa_crb);
-   281		ffa_crb = ERR_PTR(-ENODEV);
-   282		return -EINVAL;
-   283	}
-   284	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Jianfeng
 
