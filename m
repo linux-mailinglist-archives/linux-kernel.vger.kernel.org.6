@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-516656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27A6A37570
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:09:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F45A37577
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6030716D301
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD40818846E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C1A199938;
-	Sun, 16 Feb 2025 16:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35603199EB2;
+	Sun, 16 Feb 2025 16:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YA4tE66s"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PEFfnEHC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97989450;
-	Sun, 16 Feb 2025 16:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D89194A53;
+	Sun, 16 Feb 2025 16:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739722171; cv=none; b=gfvqG4s0PXAYj3/DeyYmT2XZvbomn/Sl11gFJm1bH4UoNLIgfJkVk+hN/qQpYaggYKY4p83wvws8LHPKSDxKzTNxl/Ik+H/xMimdoWIgW7N6KzLlc13LjxnEd3WXVL+uPoFghPUH2jj60vAl1uL+YRxVb4/PYrzPFFmtguJQ5Yg=
+	t=1739722275; cv=none; b=COddczwegI6+GhWnmFS+smlztb7ZXUi406kURvk4eJwxfNw2Xo3MhcBgNtlL2kHOk2OuyVqdRJkPz59g3rjSTHZD4vkcuJ+9PS/cUF7rLeWjkKa05L7x7Ea/JbBLI3ccYMbtNlRpxFEWlMv9uQJTZdJg6+azTDMhEU8LaPvHtn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739722171; c=relaxed/simple;
-	bh=mfbl0vJ7voZrewg6vqPE5K/y2Lsehv8G+ZR6l9PEvH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKpEspcE2l2fLqP1NaUQzoaMSo2npdaAJjEz+LHg8zeLUL94kxrFg2OmjteXOWZv6sM/2ZdvGQeSk6C61sVQ8f0RTqxBhczvD8HGq9XXUunsghUCHLGAXcSGhFlbWGbnGlq8qLFyJHOFveH8XmGI1leNt6U3CMu/6ajDfqRdO1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YA4tE66s; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2b89395a3efso1847494fac.2;
-        Sun, 16 Feb 2025 08:09:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739722169; x=1740326969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
-        b=YA4tE66sWIuN6iYuyWeIr6s6gEVzmIAaUusZcglqeibsR43nGTyhoJs0IU2pWtCsVC
-         CgbVax1zsosT4iAf5PpdxbSegrYLdp9ryhZ4IFsa1CF4FrRDsfRLZyrJS8NOSp3ybG9K
-         HejzFdHcDnKe0kHR9PU9M+a+ReC858+7KtS3dQQa3QYvBpDfRzG+7lD+GxVe3zeRRRvv
-         C5dP5jxM2jhP5OQioNKQGm9DXAJE1WHwV3BHfYfIULw4SMiEZPgS6v5o9+pwwVwgae8t
-         CptV4dR/CL6ElaT+1aqGAUpg5lUffnis9MlLafjjPyVpUvTdDkBcgb4N7dp4LXLcXX1A
-         fXZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739722169; x=1740326969;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
-        b=B2gKFHA6geanHf/XsxvMg6xJG2ICpp5Cp3ui07VCybmZ0hJtWat4CDzkiyETsX5MQk
-         NMBUjcAFnYBKIQxkqIISDqL2LI4gLoyFMNE8y2QraGMQshUhykxt/p4KZPC54Pm7HuWc
-         vMhhrpVUZ14w/q+zIfLr73Xuer3FSDQHCXaFk4fMcvQumeAMpLQh83WFYaYGJOEW5xgs
-         h9ZHLBXeQzi00QDUfLm6fVXJaGfhf5XGod94qsiLb30q6tr5JytWwlTYiCazjlyfXIEl
-         vWG9JFae3IcVtHHPyD8zbmyZEHqnpuVQvliNISOKSN1baaLrJbS0KOwYXJviMKqSn+Nz
-         l/XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYJBNIhWsC3VRPW6kTk5J0oKz1fwXUTOMwTH++BzWq8und4346kpjGn8Gp1j+hSahy63l9rklUsqj75Pw=@vger.kernel.org, AJvYcCV3pyWdoeMgNxxui0s39/636SKazhW4A/5TIEfvR+TKHgK3N+5HImHqcM4/xznZriv4mkCDAHSgbQQ=@vger.kernel.org, AJvYcCXJeMCPIxG+eNRjv7wxEwULz5N58dcUEdbUuT2BRBFLu2xu0ZMJhhhRfj3CCHWhu/n/+TYJY0x9IlUuwXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbBhHCVsVMJ6j7M4ZkxiM+Rt9oIgNIivEACeQ80NpJgcPw4vhF
-	xr/soIjNWeJKxySLw3gx4oVU+FqGBdI5n3Bb6tuB9xoonuFPFyGE
-X-Gm-Gg: ASbGncuOv58C1e+1Lz8THOi9ie4PKhyBp3YHkqHvBt0ypiXcwQ+8gAnsRLkdrVR/Tqr
-	oev9Q0FoZVufAozSY5/opmgkwQTnoBSLDhebrPf5fbzUo196SyUBiacWtK+k6DwKr/Qe3aIe94t
-	U3+scY1b8bDKSXzgw/iQ58m+ad35YUXl1KdiKTn98Esf3vdhByQkztc3YcYLkJ/Fk3kycRWId0j
-	mUy2y+B3yuVhcSLPtbqw+Fym7lT02FSIVRK9M+FIlvNtLMncofvol632Ebfx60FzIq16N+Vj/Hr
-	jgzonNQwC6a0LndrriD4cPR01w==
-X-Google-Smtp-Source: AGHT+IFJPDGkTR5KrflDiwTGE1Nz3oDLGA/P37bHvK58TqTMmGm8EI2n/rlW/oxOOtIfbvxA4e/B9A==
-X-Received: by 2002:a05:6870:280f:b0:29e:4a13:603f with SMTP id 586e51a60fabf-2bc99a4b935mr3705664fac.4.1739722168850;
-        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
-Received: from vengeance.tcpc.lan ([97.75.251.196])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b954875e0esm3355467fac.14.2025.02.16.08.09.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
-From: Aaron Kling <luceoscutum@gmail.com>
-X-Google-Original-From: Aaron Kling <webgeek1234@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Aaron Kling <webgeek1234@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: tegra186: Share policy per cluster
-Date: Sun, 16 Feb 2025 10:08:06 -0600
-Message-ID: <20250216160806.391566-1-webgeek1234@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739722275; c=relaxed/simple;
+	bh=5d9qWiM6oV4TkIef8p61OFJAOWXEpIu/WUmR93U/7UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RX/pJqYKVAQ+eh57fhQVBKw25gKJf8J99dLQ7zvrt1M0NEqeovjchJaKqbrGm9YcjhX3n8A54YtjTtUgqilnmrl6oGnllfLqm/RH1zDEZpvc5Ug7o3vH040hj86jMUvXDhqw/3K1bQg8BB0psaf+Ixx5NgC4b0mkrzrJHwnitJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PEFfnEHC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1837540E0184;
+	Sun, 16 Feb 2025 16:11:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZSwyIVpKrW68; Sun, 16 Feb 2025 16:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739722260; bh=luSirJF7K4cUJRWwOshzBSweonnX9rGzh1rKpdTw8nI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PEFfnEHCQf9kVZ4A92FOyFG0qb0pT3WIMIbS/3X9apO0vTLZmtGU++iig5lkG8a2c
+	 MC/yWKSMHKbkHiv0oxS3riWDhzjp9we/iCR9sYABuHf3zHUwc71c9l0OOq9Eetxclc
+	 Uv7yoF60c7gItrOxPkDgPBNEvBEaK4Qbu4+KQrgxWXIZQVIgCMwM0ARI0AMrH3QxqN
+	 R1449Vs4HB9y6XYHPTqYPldg9xV5wq2vlTvfbNlyrVZrFl74aKeQbfNh7TZH+vXDpe
+	 zq9Fn6MNKKtbVrz9Rm73AIvIzd9WbpVuSrwbo1eZxLWbr18m2pl3ez7F7rkI652VcH
+	 eXElsuJ211dXQI/SMbWW4RxlkRKHFaYRnKSrq56UH73MexL3SFeGIBpakFboaoiuCl
+	 g116LA+th/+y3MyF258lu/c++qO4t8jHz16T/O9XOiOtd32MWOyem47VfAHZ+JSSgA
+	 E63tGx6eUUoMnI6zEPGh7cZ5vLaS2835OJXg6cRCLOpZwzjWyeW59MzkTSPy9cFL8b
+	 /tuw4EWqnXG0l7weabuFprp1Z0uxsuAybnZ4t+3f0IxxErdY4Qm+PojBt3rJYWWrCy
+	 FfSB6hS9EjrOOs7DrZNUtdDWmLYn5tPP2n20b8DuF/RRJuKiu29U8fklrwP5xhphFu
+	 GjypBwoAXYTrUbdQ2zKAi5JA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3AA040E015F;
+	Sun, 16 Feb 2025 16:10:55 +0000 (UTC)
+Date: Sun, 16 Feb 2025 17:10:50 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v2 1/3] x86/mce/inject: Remove call to mce_notify_irq()
+Message-ID: <20250216161050.GBZ7IOCofLUUelomR4@fat_crate.local>
+References: <20250210154707.114219-1-nik.borisov@suse.com>
+ <20250210154707.114219-2-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250210154707.114219-2-nik.borisov@suse.com>
 
-This functionally brings tegra186 in line with tegra210 and tegra194,
-sharing a cpufreq policy between all cores in a cluster.
+On Mon, Feb 10, 2025 at 05:47:04PM +0200, Nikolay Borisov wrote:
+> The call is actually a noop because when the MCE is raised the early
+> notifier is the only call site that correctly calls mce_notify_irq()
+> because it also sets mce_need_notify. Remove this call and as a result
+> make mce_notify_irq() static
+> 
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+>  arch/x86/include/asm/mce.h       |  2 --
+>  arch/x86/kernel/cpu/mce/core.c   | 44 ++++++++++++++++----------------
+>  arch/x86/kernel/cpu/mce/inject.c |  1 -
+>  3 files changed, 22 insertions(+), 25 deletions(-)
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+So what you're looking at are the remnants of the old soft-inject of MCE
+errors. And it seems that we lost some of that functionality along the way and
+no one has noticed because, well, it seems no one uses it anymore.
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index c7761eb99f3cc..c832a1270e688 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	u32 cpu;
- 
- 	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-+	/* set same policy for all cpus in a cluster */
-+	for (cpu = 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra186_cpufreq_cpu)); cpu++) {
-+		if (data->cpus[cpu].bpmp_cluster_id == cluster)
-+			cpumask_set_cpu(cpu, policy->cpus);
-+	}
-+
- 	return 0;
- }
- 
+In order to understand how this thing was supposed to work, checkout
+
+ea149b36c7f5 ("x86, mce: add basic error injection infrastructure")
+
+and follow what raise_mce() does and pay attention to notify_user which is
+what mce_need_notify was called back then.
+
+Remember to have fun :-P
+
 -- 
-2.48.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
