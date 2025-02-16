@@ -1,164 +1,143 @@
-Return-Path: <linux-kernel+bounces-516677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9DAA375B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:26:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8646A375B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC94A7A2FB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB95169078
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349BB19ABCE;
-	Sun, 16 Feb 2025 16:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241B219AD90;
+	Sun, 16 Feb 2025 16:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1C49KRH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QenDqNEl"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B94191499;
-	Sun, 16 Feb 2025 16:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EE0191499;
+	Sun, 16 Feb 2025 16:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739723192; cv=none; b=lm968MhnMnEnzBkLLcASt5AX6p4HJnznsUiW1f8JafjCX7sRacoZJ/rSNTlVzsv35v8N+D8xXeJp6pwzxHTn/9CZhYUrRPfvrFZfvlNzQnxZLhKy2nnj3+Y3ztNEcK7trP1gvqpI0WmMw3uAaHj8etpAfpmVKti5HOpFxnXtwQ0=
+	t=1739723264; cv=none; b=lAr3gUvKNfn811GnQlu4O+oztML9MiEz4SZ2SaZS7L1XvHPgOqWCIxDaK57/i3tYccoQ6vEqR7zNRmeMSZHsvLK8v6N4kw6Ww3UkrpiJcwV3pCk090ynmoe4ze7P4eBzlZJHYEQpz8nHYhDJw62vSqocCqKmR14Aa6ISnuo5Sn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739723192; c=relaxed/simple;
-	bh=pdXqxA4mn1LXn6gauTPZ9l945Lc3FsmLdchU+slJBRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGO46M7bX9gV1vNiCw4GFqS32YEJQdvVqNbCbDoSYZlBhhDQquH8SIolbdZ4wUQlc/faQBpyMByftMwuBNjceZn6261lXM1FlM9NTFa88WdlODqvpVN93A7dTLajE/ZCThyOR+OUUbb2Fi7sLB36SJ3gdp4MWATvi6qbvINT00o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1C49KRH; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739723191; x=1771259191;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pdXqxA4mn1LXn6gauTPZ9l945Lc3FsmLdchU+slJBRE=;
-  b=T1C49KRH79MV+4IJNZWBGxDXq+oiVzgPnbiNBGDbj5Q3d7cIuC42Q8ZL
-   xKaw9ShnRTKaN14rlpIF4k+BGNg890JzQiQAmoZTITMjmZSvFSuh96ec4
-   INMoU70sj1GvGLFheOek7e6uagqLoDhVoVyjQdwZsS5C6/2nOkHHADPGd
-   jCMM66rKR2bOKCHaDGK/q41R/HIEoo98QRReah7YfMASz4j3mRBfPTk8w
-   eNFoj6O8DV3qk0CB5WeFZjY2VjfwAROjhKfA3ChM/33VvTtunYjPJ3tU1
-   UEVptjLULUJXZkZUXIICtpdaGvD2egIR+Wd0UV4UwtBH9eSGH41wvGZYe
-   g==;
-X-CSE-ConnectionGUID: wfEbrep7T169fjt8nl3WMw==
-X-CSE-MsgGUID: IYWBG4NPTISIGnR88iX9rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="44066208"
-X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
-   d="scan'208";a="44066208"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 08:26:30 -0800
-X-CSE-ConnectionGUID: j2rYBsrySEGjBWBSY7L+pA==
-X-CSE-MsgGUID: WsMvpPg4QAeFT7xmrFOKBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114398676"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 16 Feb 2025 08:26:28 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjhTN-001C4N-1B;
-	Sun, 16 Feb 2025 16:26:25 +0000
-Date: Mon, 17 Feb 2025 00:25:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, brgl@bgdev.pl,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo
- utilities
-Message-ID: <202502170056.DR6nbxpY-lkp@intel.com>
-References: <20250216125816.14430-6-koichiro.den@canonical.com>
+	s=arc-20240116; t=1739723264; c=relaxed/simple;
+	bh=yTLzjAo+KcqoWNduSSE0mzD0ceiO5DTQAXIIndfLujA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbxIQXo1vMhVMWfQr6BeLQimrb0kXBKYdQ8Iqsz5Y1LL7JYLXNxqvJxwSbl8g9gRPEP0IVbzFgM9CNo2ZZs1C33000ASOzgCJ6xGFD8jgItRJWY1v9L2j7RKz9245Do6ER9rt77EtlVGGpUe/ek0WYq1bCk1nA028DzniEJXVFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QenDqNEl; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5452c2805bcso2327512e87.2;
+        Sun, 16 Feb 2025 08:27:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739723261; x=1740328061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zauf5zxFWWLZSth2HbJwJMsQ216gUntGDkfuE30UgBk=;
+        b=QenDqNElfw31q077uHvoZEGgovnipnCbeMVXPJykoa4mmr7Nqh27zDZz3wrIKAUQEI
+         if9Hc9iEdIv89enY+oW788SgARSXHC07v5YqkaVfpf9eF3p8kb+EQWhXQfRsEvjICApI
+         tyBDdVtSt2PU3ugSD/G2roqF1YM3/qPbnFm6vQOzr545OhO05XgDn6E4o9A+oNIBo8fC
+         1xMlwR5w6f/TXKVCaOlvm7rNEq/pt46UXIVg/xEgwCJdJyX61p67PhuDQNWMvP//VsGd
+         1a1vGekeS7lZfPdnohs4n74byuJyKu09SRcHfMv6DE26PYsY8cyLIbhSsAiDN6N+Dzme
+         vALQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739723261; x=1740328061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zauf5zxFWWLZSth2HbJwJMsQ216gUntGDkfuE30UgBk=;
+        b=h3vov2RDlCyUBYO8TEH+4gEo8OsUoP0cP9NE9Cm3eI/CzCbKmSdnZ5jwgTgrqgsmpU
+         5Kr14Tsuhx9WPSQRG7t0WFjT+4LYNZeJN98j4WIu9Zq0VhenfEQGf70adMItlG/CnNiZ
+         FBhFKbdVY3CDFc56Fs/uaBpB6rMUXu2JzYNy11/JZDQ3aZbVi2r2gZE/GrSl0hJTwqbG
+         z/PAHqjnsz9AksmK6PXw3fsDs4qls+hCgPWyEavegjKdxMDa2C0XTUyhj0/bXkjmnA0C
+         5zYonN4XVI+z5sm1atvvWMYlVD8KYIO8fqQYijw1oiiAWbVLC5rOCJVLnQijutPNyCsW
+         48Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCULb9Y5X4KN7AqSE4r82rSO9NcDGQ2DkoaH1Y4fWGpkykLT5wJv2na6QaotM1pUJCRt+TEOQogrxBFOB38=@vger.kernel.org, AJvYcCUUqrOGFts8PXWN3Efovdbfe1jm/s1HbmOnfoeJwRIHnPdO/MQf4HscJmcSIEN7/edRY4ukt34z2eS8ilTB@vger.kernel.org, AJvYcCXhpbCoYnXhxqy0e/Xeddh2lLpbrfNaBPYCBRH0ihgBTAKu/ypkgEy9KGIxB3B4JEazz4yiGMPSf0qZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKFw7Bn697nKS5G0GrTgek73RSFGlo276QV4NoUuT0D2ZawqY2
+	Bw8EOksQADtC+yuKETaf3hI0kzhEutK44CDpWOWGaqTtqwxWiTrH
+X-Gm-Gg: ASbGnctr16Pm8TmGCtL6CUgoeUdxiQUtQlq4AoZcDr7lk9gSmJaHk2LroCzS7OpFsBK
+	gw52LhI+o5xTqRw4O1+OVwueQJoI51QXeMi5pEs6bk3ti5GP2p1nf9FStsKubs4lPo4gFNbhfjJ
+	UeGDrtDvYREYLeD9vbHIuds2v9v1Aa1IQi+vchu6aYSzgM7bbjwr8NaijxXgiUTyVp4MLiZwrY7
+	KeJPBHMg7YC+mpKY2yD+d8XwbMUnXD0+kDbect41PVvQby//V/ElDv2R3depl5RZ7BaujlzTQiy
+	uNkl8Q==
+X-Google-Smtp-Source: AGHT+IEfyw19KqgBgbX8BnoR8UCxGSSP+RtIOF9FWGWE9j0G1d3J+HWE+7CvgJ0oLl3OVIOTDVIE1w==
+X-Received: by 2002:a05:6512:1189:b0:545:3dd:aa5f with SMTP id 2adb3069b0e04-5452fe92491mr1764798e87.36.1739723260558;
+        Sun, 16 Feb 2025 08:27:40 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5456468c28csm481835e87.122.2025.02.16.08.27.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 08:27:40 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/3]  iio: light: add al3000a als support
+Date: Sun, 16 Feb 2025 18:27:18 +0200
+Message-ID: <20250216162721.124834-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216125816.14430-6-koichiro.den@canonical.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Koichiro,
+AL3000a is an illuminance sensor found in ASUS TF101 tablet.
 
-kernel test robot noticed the following build errors:
+---
+Changes on switching from v2 to v3:
+- droped linux/iio/sysfs.h
+- set driver name directly
+- switched to IIO_CHAN_INFO_PROCESSED
+- split al3000a_set_pwr into 2 functions
+- added i2c_device_id
+- improved code formatting 
 
-[auto build test ERROR on brgl/gpio/for-next]
-[also build test ERROR on linus/master v6.14-rc2 next-20250214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Changes on switching from v1 to v2:
+- sort compatible alphabetically in schema
+- clarify commit descriptions
+- convert to use regmap
+- arrangle lux conversion table in rows of 8
+- add more used headers
+- improve code formatting 
+---
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Koichiro-Den/gpio-aggregator-reorder-functions-to-prepare-for-configfs-introduction/20250216-210413
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20250216125816.14430-6-koichiro.den%40canonical.com
-patch subject: [PATCH v3 05/13] gpio: virtuser: convert to use gpio-pseudo utilities
-config: i386-buildonly-randconfig-003-20250216 (https://download.01.org/0day-ci/archive/20250217/202502170056.DR6nbxpY-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250217/202502170056.DR6nbxpY-lkp@intel.com/reproduce)
+Svyatoslav Ryhel (3):
+  dt-bindings: iio: light: al3010: add al3000a support
+  iio: light: Add support for AL3000a illuminance sensor
+  ARM: tegra: tf101: Add al3000a illuminance sensor node
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502170056.DR6nbxpY-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpio/gpio-pseudo.c:62:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      62 |                 kfree(common->name);
-         |                 ^
-   drivers/gpio/gpio-pseudo.c:71:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      71 |                 kfree(common->name);
-         |                 ^
-   drivers/gpio/gpio-pseudo.c:83:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      83 |         kfree(common->name);
-         |         ^
-   3 errors generated.
-
-
-vim +/kfree +62 drivers/gpio/gpio-pseudo.c
-
-ef524a2229b717 Koichiro Den 2025-02-16  43  
-ef524a2229b717 Koichiro Den 2025-02-16  44  int pseudo_gpio_register(struct pseudo_gpio_common *common,
-ef524a2229b717 Koichiro Den 2025-02-16  45  			 struct platform_device_info *pdevinfo)
-ef524a2229b717 Koichiro Den 2025-02-16  46  {
-ef524a2229b717 Koichiro Den 2025-02-16  47  	struct platform_device *pdev;
-ef524a2229b717 Koichiro Den 2025-02-16  48  	char *name;
-ef524a2229b717 Koichiro Den 2025-02-16  49  
-ef524a2229b717 Koichiro Den 2025-02-16  50  	name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
-ef524a2229b717 Koichiro Den 2025-02-16  51  	if (!name)
-ef524a2229b717 Koichiro Den 2025-02-16  52  		return -ENOMEM;
-ef524a2229b717 Koichiro Den 2025-02-16  53  
-ef524a2229b717 Koichiro Den 2025-02-16  54  	common->driver_bound = false;
-ef524a2229b717 Koichiro Den 2025-02-16  55  	common->name = name;
-ef524a2229b717 Koichiro Den 2025-02-16  56  	reinit_completion(&common->probe_completion);
-ef524a2229b717 Koichiro Den 2025-02-16  57  	bus_register_notifier(&platform_bus_type, &common->bus_notifier);
-ef524a2229b717 Koichiro Den 2025-02-16  58  
-ef524a2229b717 Koichiro Den 2025-02-16  59  	pdev = platform_device_register_full(pdevinfo);
-ef524a2229b717 Koichiro Den 2025-02-16  60  	if (IS_ERR(pdev)) {
-ef524a2229b717 Koichiro Den 2025-02-16  61  		bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
-ef524a2229b717 Koichiro Den 2025-02-16 @62  		kfree(common->name);
-ef524a2229b717 Koichiro Den 2025-02-16  63  		return PTR_ERR(pdev);
-ef524a2229b717 Koichiro Den 2025-02-16  64  	}
-ef524a2229b717 Koichiro Den 2025-02-16  65  
-ef524a2229b717 Koichiro Den 2025-02-16  66  	wait_for_completion(&common->probe_completion);
-ef524a2229b717 Koichiro Den 2025-02-16  67  	bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
-ef524a2229b717 Koichiro Den 2025-02-16  68  
-ef524a2229b717 Koichiro Den 2025-02-16  69  	if (!common->driver_bound) {
-ef524a2229b717 Koichiro Den 2025-02-16  70  		platform_device_unregister(pdev);
-ef524a2229b717 Koichiro Den 2025-02-16  71  		kfree(common->name);
-ef524a2229b717 Koichiro Den 2025-02-16  72  		return -ENXIO;
-ef524a2229b717 Koichiro Den 2025-02-16  73  	}
-ef524a2229b717 Koichiro Den 2025-02-16  74  
-ef524a2229b717 Koichiro Den 2025-02-16  75  	common->pdev = pdev;
-ef524a2229b717 Koichiro Den 2025-02-16  76  	return 0;
-ef524a2229b717 Koichiro Den 2025-02-16  77  }
-ef524a2229b717 Koichiro Den 2025-02-16  78  EXPORT_SYMBOL_GPL(pseudo_gpio_register);
-ef524a2229b717 Koichiro Den 2025-02-16  79  
+ .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+ drivers/iio/light/Kconfig                     |  10 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/al3000a.c                   | 223 ++++++++++++++++++
+ 5 files changed, 249 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/light/al3000a.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
