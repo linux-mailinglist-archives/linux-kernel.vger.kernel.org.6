@@ -1,146 +1,95 @@
-Return-Path: <linux-kernel+bounces-516643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40155A37538
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:48:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EDEA37542
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 16:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 052857A2E7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AA188F1BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 15:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD70194094;
-	Sun, 16 Feb 2025 15:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C88194A59;
+	Sun, 16 Feb 2025 15:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TH/sXzoG"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtnGPs2x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5E7C8E0;
-	Sun, 16 Feb 2025 15:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4DC8E0;
+	Sun, 16 Feb 2025 15:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739720883; cv=none; b=sQn5Bj/zKblUDitbbKPxDmmHZEgerYls3jI4FYzTZA4y39c2gshG/bz0ObxfUYdhubNxXxTN9/P13iEAHwF1cmmBsg9G829IcH5Xi/l12OI2iTnWqC4ysoPxhAX2EYnBYEWzVzryju7x9CSQ5uCQy3khzT3+xKH1MnzQot1y4Sc=
+	t=1739721287; cv=none; b=ZoCG+ykq6dGFfU3OQgqXF2u3d7x3Ji62ohyEHoLy/y2A9qAyjry4UJb6rbiMvw45phnJvZztcwVwAA2uwXnqMJJw/KILVIw/x/1uxtTIFaqkE9Jv5y/L2WivtLoT+KZvMw6YC5EL8KhmYbBZuzwKbz+3O/wDcjGDPu9guxQRdoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739720883; c=relaxed/simple;
-	bh=JqQMD0hqYOzs5dOw+guRhjn4l01nDPpTFW7xyP6E+tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHYws73Q0q0sDp6ClAzsAF1Arsqmj2lsrZEkAHhRaERNZTmxKctQF0M2C3nGGq3/5F7X9hFgums6qOelmEjUcDoEvB4ZerabxY8USLYu+3Watjg6Wzh5v9CjezYKn8rX/BSk/wclvd2UNd2a82kb3xLrLRhkRdLsAlexE9r3+Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=TH/sXzoG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/FrEnAM0Ty8b3TT2wk1qUCREpGSXW5825yX1yLHlP7U=; b=TH/sXzoGZDKFZxyyyYNMJfCCcJ
-	haaiHeMXtkJd0EXixYhy5qRVdKxKvo6QU4s+3xu/7RPBJy8inXCaysxqUhpogLaQcnHn5agZHY7vC
-	ISA3JdH8ZIaySnObQY2s/fgesQH838h2X0hJ3Ddzde/x05GIMag/3XwrgarNWLs68l5ow65dSA6Ez
-	GZTTUyKV3vIU8VQAcZF8t39IRm/HYkxgn7wil+eIRf85b52fO03F2CLRoj36JaFDK0f/aQ/io0ge3
-	q8X+LcpW8NGBveQyqdM7nD9heEDOB1Jz6Zd2z8FuDZLqL3ahCTvqdWKkxt/Upnvkzk8EOTmfUfgiT
-	8owusuhQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39494)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tjgrh-0003Z0-1w;
-	Sun, 16 Feb 2025 15:47:29 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tjgrW-0005Ji-15;
-	Sun, 16 Feb 2025 15:47:18 +0000
-Date: Sun, 16 Feb 2025 15:47:18 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
- SG2044 SoC
-Message-ID: <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
-References: <20250216123953.1252523-1-inochiama@gmail.com>
- <20250216123953.1252523-4-inochiama@gmail.com>
+	s=arc-20240116; t=1739721287; c=relaxed/simple;
+	bh=YI4M66rMnlM4jffL09OWWos9o9IdSGPmEKyE2XKLKsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WM/U7He6BrloEMakmkdcXyc03spGMFO/yAvFHHDyPx5ULnOHyUlvGUY1XEOGf9i62j/S8N/gggssW2diH8MZS22cHuzhH+tKa86/t5ie+2m3kF1X4MwHQlhHWkhRWzGugRRrugvCT5PRWlow3ehNb6XprejnpnVguRxoHkUFK/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtnGPs2x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECE8C4CEDD;
+	Sun, 16 Feb 2025 15:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739721286;
+	bh=YI4M66rMnlM4jffL09OWWos9o9IdSGPmEKyE2XKLKsA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MtnGPs2xt1uIXwO2ZPAKiZB2/p//rlS5qM8wtOEE9fstN9muWiJTXYPT8wr82uQbx
+	 TL75TSbl9Ua7GxV1FJErdVPksDvOsXq+Lb0TvbNM8C+L0mPtI5m1PlKsSVK06Ip6X6
+	 vZ9yYRcpLID0jvp2E4QZJzqMPCOMs7e4lo8X63pfjUW1r2oevwJTNi0fg7Gj+AiV26
+	 9CAMjzeYrjfMeF7+JN05IcT7QfB3f8g2wH5cb09foAdWknnE0AvtC5Lz/pK3oiDVC/
+	 /XSty42uT44xjwa9Qls3wYwhaz2Ar2d+ysbcH7kQOcuyy85r3O78TPh1Cz4WN5MlPe
+	 vtYs/SFAqBANg==
+Date: Sun, 16 Feb 2025 15:54:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Tobias Sperling via B4 Relay
+ <devnull+tobias.sperling.softing.com@kernel.org>
+Cc: tobias.sperling@softing.com, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 0/2] Support for TI ADS7128 and ADS7138 ADCs
+Message-ID: <20250216155436.239a4b35@jic23-huawei>
+In-Reply-To: <20250213-adc_ml-v4-0-66b68f8fdb8c@softing.com>
+References: <20250213-adc_ml-v4-0-66b68f8fdb8c@softing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216123953.1252523-4-inochiama@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 16, 2025 at 08:39:51PM +0800, Inochi Amaoto wrote:
-> +static void sophgo_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
-> +{
-> +	struct sophgo_dwmac *dwmac = priv;
-> +	long rate;
-> +	int ret;
-> +
-> +	rate = rgmii_clock(speed);
-> +	if (rate < 0) {
-> +		dev_err(dwmac->dev, "invalid speed %u\n", speed);
-> +		return;
-> +	}
-> +
-> +	ret = clk_set_rate(dwmac->clk_tx, rate);
-> +	if (ret)
-> +		dev_err(dwmac->dev, "failed to set tx rate %ld: %pe\n",
-> +			rate, ERR_PTR(ret));
-> +}
+On Thu, 13 Feb 2025 16:58:56 +0100
+Tobias Sperling via B4 Relay <devnull+tobias.sperling.softing.com@kernel.org> wrote:
 
-There are a bunch of other platform support in stmmac that are doing
-the same:
+> This patch series adds support for Texas Instruments ADS7128 and
+> ADS7138, which are 12-bit, 8 channel analog-to-digital converters (ADCs)
+> with build-in digital window comparator (DWC), using the I2C interface.
+> 
+> The driver exposes the interfaces to read the raw values, as well as the
+> minimum and maximum value for each channel. In addition several settings
+> can be configured, like the DWC, sampling frequency or an averaging
+> filter/oversampling. Interrupts triggered by the DWC, if configured, are
+> then exposed as IIO events.
+> 
+> ADS7128 differs in the addition of further hardware features, like a
+> root-mean-square (RMS) and a zero-crossing-detect (ZCD) module, which
+> are not yet supported by the driver.
+> 
+> Regarding the I2C interface the chips using opcodes to define the way
+> how the registeres are accessed, like single or multiple register(s)
+> read/write or setting/clearing only bits.
+LGTM. Applied to the togreg branch of iio.git and pushed out initially
+as testing for 0-day to take a look at it.
 
-dwmac-s32.c is virtually identical
-dwmac-imx.c does the same, although has some pre-conditions
-dwmac-dwc-qos-eth.c is virually identical but the two steps are split
-  across a bunch of register writes
-dwmac-starfive.c looks the same
-dwmac-rk.c also
-dwmac-intel-plat.c also
+I did notice whilst applying that the Kconfig ordering for these TI parts
+has gotten scrambled. So at some point we should clean that up and
+bring them back into alphanumeric order!
 
-So, I wonder whether either this should be a helper, or whether core
-code should be doing this. Maybe something to look at as a part of
-this patch submission?
-
-We really need to stop writing the same code in different ways and
-think more about how to reuse the code that's already present!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Jonathan
 
