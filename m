@@ -1,123 +1,146 @@
-Return-Path: <linux-kernel+bounces-516601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08F4A37486
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:17:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4F3A3748A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 14:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BF53AA095
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:17:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA76188F49E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 13:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8357B1624C3;
-	Sun, 16 Feb 2025 13:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847AB192D7C;
+	Sun, 16 Feb 2025 13:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="Yot2FZiX"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuobK6Us"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64D9190696
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 13:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24211624C3;
+	Sun, 16 Feb 2025 13:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739711838; cv=none; b=pvBasQK/mi25a9RP8sduezAmw96fn0bi/n86LQo/6vLuo6Dspc1Xb1d6rnPtmMzj+AkO8FIe3uqeUYn2pKoV4M4I/kEG5/ur0/1zL54l9Grf2Nbp5iBbrhBFhZVB12soZ+qB9ZM7vJCpxkueM3KhdOcV7BMmFt03KsZP2kome4M=
+	t=1739711982; cv=none; b=GvG6BLbiMcnFHkgJOHDXb41EoPaJFJCRcgtoZDFQAVKBdtqRlGZ/AK1yfTUaE/NS1Y5F6Py9v5YuB2hnAFDqH8j/Ch0jz0i5WUlTdUp57mCT7SK13uDVDF8AhTxgpHBUN/i1dzeSKQAegOrLqtALqWhf5prmec8XQqraO3f+vY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739711838; c=relaxed/simple;
-	bh=sfcZRcJwPeOIU9XKiIxo6nI71to/19D4OItEfcVxOMg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VytRy6s6mx9sz5JU+0Er9cDMuOp+GjqQSwzQZo5CKmhGYQUFtd7zBKjiSOTI2MkS9NRDoCRYnhYfqu0H+XHuB4GQB3BDNxnTifakqC0tjAQbAA2WvmcMB2eYrWB/gXrFfFH8UqJEsrr4VRcI7U/iTu9eOzIovMdPIwKhrFxm08o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=Yot2FZiX; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [192.168.90.187] (unknown [94.110.49.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id B328F5BC49F;
-	Sun, 16 Feb 2025 14:17:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1739711826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R7IgcHlLJeAGnnUahqICvLFnrNle5U16KsUlP1mgP+Y=;
-	b=Yot2FZiXf09qLXMd9tESzQK0lwOv9lDJrcNbgrtNqVH8Viq/fgK+IqIQ78mTa/3zAELodY
-	yYp8smZjK54QLZe3O/w4Tmce6kR/YOR+A9fg74IufA7M6pfBl0roUHFID/a5wjEw3S+++A
-	nr2UzzByfTBT6SMkf61HHDwTOzzuwL1y9b9fUnVpQdxzivcCNcmhDMrcFEx4oeURoV1Xt8
-	uUZfBzmOX8oxwLou9vH6R4GAZf6mQuHlWWwjWv+UElwom8Ed7cWYNTpXIunpxYCjssXshw
-	o1XKSyGg49erUrdHTUs75fcI5oepn0TB6rkJiVd8nGvGUJFJWeE/U69Qax3Y/w==
-Message-ID: <e6194c5ed4f305f2150ab89a91a998028ac687c0.camel@svanheule.net>
-Subject: Re: [PATCH v4 04/10] gpio: regmap: Allow to provide request and
- free callbacks
-From: Sander Vanheule <sander@svanheule.net>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, Lee Jones
-	 <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kamel Bouhara
-	 <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski
-	 <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	 <ukleinek@kernel.org>, Michael Walle <mwalle@kernel.org>, Mark Brown
-	 <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki"
-	 <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
- =?ISO-8859-1?Q?Gr=E9gory?= Clement	 <gregory.clement@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Date: Sun, 16 Feb 2025 14:17:03 +0100
-In-Reply-To: <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
-	 <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739711982; c=relaxed/simple;
+	bh=v6Nt2Y+8iHq87fjnFJRgzXvuOS9r0e0EJDUvhWvayQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eZXSWLhMKt6e4nri1VcoHPUkxHA6WeRJUU4D0hTFJ43nrYWOJ9bfnvb6amAMIN5Xx7svQUoE5RFuV2CtTUjUp8jODnOnm2JT6RMYZ9iFs9QbB1quRPXRLWJKF51P9yHnZ6MLqmXWVhmWH4dB2sSdxx0Nwzs9zz6v7E1JBgdXlAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuobK6Us; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7D6C4CEDD;
+	Sun, 16 Feb 2025 13:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739711982;
+	bh=v6Nt2Y+8iHq87fjnFJRgzXvuOS9r0e0EJDUvhWvayQs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uuobK6Usa9e7F/KxFzT3aKd13/ZOq5opq2Ha6mFnDf9aJVR3D3WoAtfXt12CdRczF
+	 c1B/8NS/HdQa6ZBxmnlhs3xfqUnuatoAnpJX9mp4FFyEOI7ecWg//I79V9iSxUg/o8
+	 NCxh8cfUTtZkoHNhe0bpJoPgDSP+fszjVKCmNUq4RdmFP400rMEl60AdD7v7sb92M9
+	 9qRWMGz7qvsZm68R0Dp56mOfXhPi2unSKmu24GdFdLnG9hYfRInDduSnjmaLXYs68t
+	 l7+wbdcpzfiuIAZDdLKMIE/+CNuDFpv+cYNN7k3v+qtgNUNOV9L9lecHFyiazDgrxv
+	 C+5W3O77SNCpg==
+Message-ID: <065ea296-480c-4ac4-bb4a-0fc2915b59f1@kernel.org>
+Date: Sun, 16 Feb 2025 14:19:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215122409.162810-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215122409.162810-4-ivo.ivanov.ivanov1@gmail.com>
+ <a10f8a77-9440-477d-b6f6-9d651e3ab49a@kernel.org>
+ <537698af-841f-48e7-bd7c-4077d0a240a1@gmail.com>
+ <9b58a985-3d63-42bb-9a76-e5b04a4b6012@kernel.org>
+ <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f3d38b63-dc97-482e-aeac-b59e65f91424@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mathieu,
+On 16/02/2025 10:51, Ivaylo Ivanov wrote:
+>>
+>>>>  You need to
+>>>> integrate the changes, not create duplicated driver.
+>>> I can do that, but it would be come a bit cluttered, won't it? Depends on
+>>> if we want to follow the current oem-provided initialization sequence, or
+>>> try and fully reuse what we have in there.
+>>
+>> I think it duplicates a lot, so it won't be clutter. We have many
+>> drivers having common code and per-variant ops.
+> 
+> So the approach to take here is to make a common driver?
 
-On Fri, 2025-02-14 at 12:49 +0100, Mathieu Dubois-Briand wrote:
-> Allows to populate the gpio_regmap_config structure with request() and
-> free() callbacks to set on the final gpio_chip structure.
->=20
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
-> =C2=A0drivers/gpio/gpio-regmap.c=C2=A0 | 2 ++
-> =C2=A0include/linux/gpio/regmap.h | 7 +++++++
-> =C2=A02 files changed, 9 insertions(+)
->=20
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index 05f8781b5204..ba72c23bcf97 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -261,6 +261,8 @@ struct gpio_regmap *gpio_regmap_register(const struct
-> gpio_regmap_config *config
-> =C2=A0	chip->names =3D config->names;
-> =C2=A0	chip->label =3D config->label ?: dev_name(config->parent);
-> =C2=A0	chip->can_sleep =3D regmap_might_sleep(config->regmap);
-> +	chip->request =3D config->request;
-> +	chip->free =3D config->free;
-> =C2=A0
-> =C2=A0	chip->request =3D gpiochip_generic_request;
-> =C2=A0	chip->free =3D gpiochip_generic_free;
-
-You probably have a bad rebase here, as the chip->{request,free} functions =
-are immediately
-overwritten by gpiochip_generic_{request,free}. Perhaps those can actually =
-be used if you
-provide a pinctrl driver for the MFD.
+For example: one common module and two modules per each soc, because I
+assume some per-soc stuff might be needed. But maybe even these two
+modules are not necessary and everything could be in one driver.
 
 
-Best,
-Sander
+> 
+> What about the current modelling scheme, as-in taking the phandle to
+> the usbcon phy and handling it?
 
+What about it? Did you look at the bindings of qcom snps eusb2? Are you
+saying you do not have here repeater? If so, then this phy phandle might
+not be correct.
+
+
+
+Best regards,
+Krzysztof
 
