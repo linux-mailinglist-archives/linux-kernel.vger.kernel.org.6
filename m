@@ -1,88 +1,54 @@
-Return-Path: <linux-kernel+bounces-516716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D05A3762A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:07:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97376A3762C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 18:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 487273AD679
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7481416F579
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Feb 2025 17:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFA219D08F;
-	Sun, 16 Feb 2025 17:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C4219D086;
+	Sun, 16 Feb 2025 17:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B8uFo8Lw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROq5nN8R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6C93A1DB;
-	Sun, 16 Feb 2025 17:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FC6188724;
+	Sun, 16 Feb 2025 17:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739725647; cv=none; b=HAO9nqal0ZmiyghHCVUMm0ypLHHfX6uRWUdpIX8G69jrI/KT7rcZzud7ss2IZsoLxauc9Z+hWgKCPDfxpDNPNSwsr8PoqKvC+baXa8YCPMV+1EzcYeiHuc6nVqz6MVUT00/sD/3VeF8kTGzqBvEfyPzVN9S+bWgywJrZaFA3IDE=
+	t=1739725660; cv=none; b=Ul4YhJtnpFGI+qBsPhW2Gxlt3UsUJ06YDwNvh3b/+lwUfYYqYDCekrwreYiKadh93W5CWrNdgg2AhP/ZPRik4EJ9AICbM8Q4fL8edq5FIsfNcErW2UP+SACNKrp9vAAkouMsX4jJNa3KhzvtHrDM2n3GS2eseRZ25bhGkFHraPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739725647; c=relaxed/simple;
-	bh=VTFXIGwapkjlOdIp4WRhTQfD70mAJDYBz/TQyMO7S6w=;
+	s=arc-20240116; t=1739725660; c=relaxed/simple;
+	bh=c/9tgpooSevtIXvhv7PfQOLK0UYpRmLA8i6VZpmd/iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzXvuJXnZLqOSUC0aE9hhtzX46rdADIWuJ65GwrX6eoHsOuuKOnB1cfYVTPFZBqF6a4ucReWSfIeo7qYl0z1pcjgTlfkct/ao3kJ6pq6+YtwxKVzwe4dVl3DeU2JyGJ0v6hxQO1RFLEIaPvmzyvAaDCdsyVWa8MSsWUFx8E1+HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B8uFo8Lw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7hZ1fSExpzVyKpRFgU6VF7mxJS6w1IMWmpYoUWdP8zU=; b=B8uFo8Lw1gxr7PSjRioQ8WDC7M
-	RB4rvTQkIiL+FxUZ/tl2g/b8/c8gA69f6BVQgjHWJDfZt1svMu4dwCcCywlxvzTi4QV7K91m9XQvu
-	7Mx6JqYWdHVCF8qDfYC5MdDw7siI5bws4rdjL42azaIOwmkrGk0oZ7JGDtqruXvdmrBk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tji6j-00Ei2d-C0; Sun, 16 Feb 2025 18:07:05 +0100
-Date: Sun, 16 Feb 2025 18:07:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
- SG2044 SoC
-Message-ID: <5e481b95-3cf8-4f71-a76b-939d96e1c4f3@lunn.ch>
-References: <20250216123953.1252523-1-inochiama@gmail.com>
- <20250216123953.1252523-4-inochiama@gmail.com>
- <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+V4zDbDGUYpNRvDPo7Yr96q1aoa9ZZOeGY8dfphTDQTFJ4XC4qtRe+fDVpR7ImK6bjaArWN+xVsQKhG2HDByqfvUVGkYpY2dylWacJFRru9yC6HtNcCvowJ1M6zRb16ylTz6WQ4z/apFV+SjziLEMThKFuY4gQkYGBF9YbaXuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROq5nN8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A380AC4CEDD;
+	Sun, 16 Feb 2025 17:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739725659;
+	bh=c/9tgpooSevtIXvhv7PfQOLK0UYpRmLA8i6VZpmd/iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ROq5nN8RVyJAMn17jXCyBSVuaEax3FPssecRERcsRwBH3AHln2IMI1OzwOYnJT4su
+	 /POZOgxKJL+W8w0TIeDJ3N5uMBPfvUIpY3t2ZVLgY5/CUW9kF0k2hrsoIdIMbVrX5H
+	 hwOMIOHqcVr2u/DkGxscJtNzZ++N+fdGSd5I045laZYna0p5b6rIev7XGetR5k0U5h
+	 WCrYazJLBjKOMjQmJ8L5NJzwkGlVj7g4vlkpwFGinrZGX24RLLsen368EKtPtfesxl
+	 DAeCS9f9NLcrGeuPHdSw33HXpd02y5fTcr7YkCo0m3SHmIaInFgISngBZPa2rxWe5u
+	 FrXx6uqkC8A1w==
+Date: Sun, 16 Feb 2025 09:07:39 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ruiwu Chen <rwchen404@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kees@kernel.org, joel.granados@kernel.org, zachwade.k@gmail.com
+Subject: Re: [PATCH] drop_caches: re-enable message after disabling
+Message-ID: <20250216170739.GA1564284@frogsfrogsfrogs>
+References: <20250216101729.2332-1-rwchen404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,47 +57,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
+In-Reply-To: <20250216101729.2332-1-rwchen404@gmail.com>
 
-On Sun, Feb 16, 2025 at 03:47:18PM +0000, Russell King (Oracle) wrote:
-> On Sun, Feb 16, 2025 at 08:39:51PM +0800, Inochi Amaoto wrote:
-> > +static void sophgo_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
-> > +{
-> > +	struct sophgo_dwmac *dwmac = priv;
-> > +	long rate;
-> > +	int ret;
-> > +
-> > +	rate = rgmii_clock(speed);
-> > +	if (rate < 0) {
-> > +		dev_err(dwmac->dev, "invalid speed %u\n", speed);
-> > +		return;
-> > +	}
-> > +
-> > +	ret = clk_set_rate(dwmac->clk_tx, rate);
-> > +	if (ret)
-> > +		dev_err(dwmac->dev, "failed to set tx rate %ld: %pe\n",
-> > +			rate, ERR_PTR(ret));
-> > +}
-> 
-> There are a bunch of other platform support in stmmac that are doing
-> the same:
-> 
-> dwmac-s32.c is virtually identical
-> dwmac-imx.c does the same, although has some pre-conditions
-> dwmac-dwc-qos-eth.c is virually identical but the two steps are split
->   across a bunch of register writes
-> dwmac-starfive.c looks the same
-> dwmac-rk.c also
-> dwmac-intel-plat.c also
-> 
-> So, I wonder whether either this should be a helper, or whether core
-> code should be doing this. Maybe something to look at as a part of
-> this patch submission?
+On Sun, Feb 16, 2025 at 06:17:29PM +0800, Ruiwu Chen wrote:
+> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+> but there is no interface to enable the message, only by restarting
+> the way, so I want to add the 'echo 0 > /proc/sys/vm/drop_caches'
+> way to enabled the message again.
 
-Inochi, please could you look at the datasheet for this IP. Is the
-transmit clock a part of the IP? Can we expect all devices integrating
-this IP to have such a clock? That would be a good indicator the clock
-handling should be moved into the core.
+Please update Documentation/ to note this new API.
 
-	Andrew
+--D
+
+> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+> ---
+>  fs/drop_caches.c | 7 +++++--
+>  kernel/sysctl.c  | 2 +-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d45ef541d848..c90cfaf9756d 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -57,7 +57,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  	if (ret)
+>  		return ret;
+>  	if (write) {
+> -		static int stfu;
+> +		static bool stfu;
+>  
+>  		if (sysctl_drop_caches & 1) {
+>  			lru_add_drain_all();
+> @@ -73,7 +73,10 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  				current->comm, task_pid_nr(current),
+>  				sysctl_drop_caches);
+>  		}
+> -		stfu |= sysctl_drop_caches & 4;
+> +		if (sysctl_drop_caches == 0)
+> +			stfu = false;
+> +		else if (sysctl_drop_caches == 4)
+> +			stfu = true;
+>  	}
+>  	return 0;
+>  }
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index cb57da499ebb..f2e06e074724 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2088,7 +2088,7 @@ static const struct ctl_table vm_table[] = {
+>  		.maxlen		= sizeof(int),
+>  		.mode		= 0200,
+>  		.proc_handler	= drop_caches_sysctl_handler,
+> -		.extra1		= SYSCTL_ONE,
+> +		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_FOUR,
+>  	},
+>  	{
+> -- 
+> 2.27.0
+> 
+> 
 
