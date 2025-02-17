@@ -1,324 +1,268 @@
-Return-Path: <linux-kernel+bounces-518171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86C2A38AF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:55:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06455A38AF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797FF16E75F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B594E16EA2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF78231CB0;
-	Mon, 17 Feb 2025 17:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAFD231C8D;
+	Mon, 17 Feb 2025 17:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ub8l+g/X"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dBGwhhD9"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0FD229B21
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78150D528;
+	Mon, 17 Feb 2025 17:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739814949; cv=none; b=rNkoJII/UZKTlsxGJDAE1XNp4vb5knAL7xVd4/7efZ1OqNWFTkZiyHbGi0c4nKN84E77QLoMjch3Mnp3X+giU1kSkvCLh6Fc/Yj0F8iVh9Aw4QIYFd1wTHuj6YrbQZzJH6JcW3MOeZovRD+xlsNJFpy7WJWXQ8ZrLRmrVSuyWL4=
+	t=1739814968; cv=none; b=PL8yLF/ElczI+RTyusGl5SvNucT9XfzTrEsXBkbNEzqplHGetZv4NroUABJ1lyqXHEbYDS5qp/TkVytq+pkgDZnbqhYS3Xih3x+JSL1JvTeeUjo441zfrfZ9/Y2Ir8lQqohXqHyNHdig2g/Kr7tnYcPIzMANvxJzxJYAwTJLL0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739814949; c=relaxed/simple;
-	bh=5hkUoC3+amsHF1qrXInhFICP1KnhED+w7Ap95nJYZaQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PVxxr2Jqy3T2Ni0RgKmCAuZlT3brAPNXp6UrFeeRU1+zTJFrp4OWBFZ7D7IwJq+Vllf9W21e+Npzw55IqdHD52NbXn2PqzDWnfA8VUCJRmCFLzmVXOhOhcU51fM7UYj8b67nbb+YetsQfyyAN3mZ/OpU50J4tLDXxAbWeZZMk6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ub8l+g/X; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4395dddb07dso48342725e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:55:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739814946; x=1740419746; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Bstxg6aAtD9jX2Uqr4kULz226chVwc5s2P7OWkQ6aI=;
-        b=Ub8l+g/X26s++7qr21hrad88TzYxm5DGAGcJoaLW9i2JuoFDgNNWmYm+Bfl/uvVBNw
-         aMOYtoBoLZC8gE8K5S+ErsXzRP1y0yYV+/Hlv4cZ3QHKvNuBT3oMfNy4VhWial4dz2gA
-         zqP2/3NIOjb2D8rNGuEYezYFDNZjIypb9tPQ44Wf9a9764EmRSy9er+N8NfuEtXV3pFk
-         0w4orMdPTqbksWv+fKIFWC1m8wFFft3WtkPowX0wTvUO/TWUpfqu+2mf4MoC8k4xca2Y
-         Hndp7malX4cSUU0FT9xvEnS8JyAzO3tzvbiJuV7NnqrwA/IfLo8Zapht2vKKw0kNUuWt
-         LILQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739814946; x=1740419746;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Bstxg6aAtD9jX2Uqr4kULz226chVwc5s2P7OWkQ6aI=;
-        b=IZmclmxBLGajNaZq5Knl19yKT1eepsvvkwWgacfSxUGmPmIBrMU14eVY8th7kuW1nw
-         6I5NSUDOJoRejUsSPnyAy7Ci/OichgWyUlkIBrU5LMOxHnXNPOLOh1Miq51S0op0Osww
-         cSTitthXr6YdYW5HEW/ydGpgujfk/URLoO3ey6V29o5I/BnL96P93ZaRtTjU16TEwjuN
-         kkWpgZhR1i2Bg/SDRyu6NJkQMKBSnUhshbu8qmNh15j+S6UXrd6A3D9tGsoV62hQ9lOH
-         PsKoRp3TDvcUaOZXArzqzHMOOt68mi8nJULH3x9fKRp3axd8KYD7/b0nOR47fj6V14yk
-         YHkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSgsXltEOhe9pVfoCylk+MskfEoLIM3Mjab+zG+X/W1iA6t8HErOBKPP7Q4mmLWADQT3JnDChYjPmX3YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+08j2MF4WEUM7UKZ7gwI0sy7IoNIlbWvOfRTaXr6NvlrA94/7
-	Vqjf5meva8WY3t45+JKYqDp3BFIPw+bn6JUmvWXE3bUgCKcPK8aCThoo/TCePLg=
-X-Gm-Gg: ASbGncugfPEiaKkgdPQAELoSMHYjGy7REY2K7bfGsWx+C5N56wjf/jAF60wth50jkkr
-	9HFv9PUhNGargeG+NgSvLWJ3A9oejkmCfIsFEAH+NXE8ZHcO3fAKfTqr5AHe9CXdq/iN/LwXZSw
-	nq05BlY5R/U7jdjjE4G6Z1zzeA3iNii7FAxcWkF9ABv+7Ga6OgidVf1AkvwJi4E/sFZHPabhJ/M
-	25+b/lB1CW4ZAOY+wVI4eq0SGTsrppEQ702rHbrMukG7FfcE+3Jq75UNVFoyLrDeQwB8773GAHi
-	UgDi/4jlYUuqnB13EyhTxBA8j410kQ==
-X-Google-Smtp-Source: AGHT+IFTLcWChe/TpfcRU31PaZWkMA3HiydKUWofMaadNMzdOJpsLlbL3BnV3RVInRO37VebIyUiLA==
-X-Received: by 2002:a05:6000:1a88:b0:38f:3471:71c8 with SMTP id ffacd0b85a97d-38f34717a8cmr10251107f8f.3.1739814945937;
-        Mon, 17 Feb 2025 09:55:45 -0800 (PST)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:70ff:3068:45e8:b844])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc50sm13090095f8f.34.2025.02.17.09.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 09:55:45 -0800 (PST)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Mon, 17 Feb 2025 18:55:23 +0100
-Subject: [PATCH v3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+	s=arc-20240116; t=1739814968; c=relaxed/simple;
+	bh=v4d8g6Zss+ZZElac2aEjNvU4+9ul3z2rtSI2buTKt/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ux52ZR2gMlLsp50fK1VFyXlaSa4YtSoHAOiepaPGxq7LmCfxlGGJT2pyL2neJAFxGBIbYcf5jSTbh1IRlBbMX6T8w86CK4bQVKJ8Iv2QEUOX53dmjDmiPzXU6v36Dt6YCftfT8uUP2BlXFNwByZk6+gSLflZqQ3ak1EngqmZB94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dBGwhhD9; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9DF5A442C2;
+	Mon, 17 Feb 2025 17:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739814963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+FExaZ6awrhNUR+O/77ICcKPBMvq+e06oZnkz4XEEQ=;
+	b=dBGwhhD9TPznMPEScqRh19KvL6CEKEuLzlFafe7E1jnKps3zMUCBrrMRYguWZJLHPI44oV
+	ekTkDtdkum0ZeJ6hkcNiQW6qr9z6y0HRLyzv2E2xoHG2N0TUiR3KEr3qiiv523eslP3GZq
+	mbfJKM7PvHWK2qZ50LsuyZFxtPAjPqp70A3C84kBw9Mj0ZPcptakpKA7ulM8xWOQbXG2+g
+	zxqDOf/ixcKxH8kvhJszWrMu1W1LFZi+o7u+zfWNdnkwQL3JKaID9KGRmNehk0XpsNweNv
+	qlZrhiy31AlPoLJw/hDv2uNwsyWJoxEKF80XjMH2xfBJplAxm7aUMO9QpDxYcw==
+Date: Mon, 17 Feb 2025 18:55:59 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
+ <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+ "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
+ brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
+ dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+ kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
+ list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
+ ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+ lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+ manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
+ thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
+ <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <20250217185559.2e56bd75@bootlin.com>
+In-Reply-To: <CAMEGJJ13476pKJb441o5X0Y+rbfromj5-3V-j2KZiOt326OL4A@mail.gmail.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+	<20250213171435.1c2ce376@bootlin.com>
+	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+	<821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
+	<CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+	<20250213195304.3a2df02c@bootlin.com>
+	<CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
+	<20250213220639.373da07b@bootlin.com>
+	<CAMEGJJ2_HVKfsE3P22baadbzxSDAX=yTr=m76YuXa5A2cJsJig@mail.gmail.com>
+	<20250217165306.3f055b94@bootlin.com>
+	<CAMEGJJ13476pKJb441o5X0Y+rbfromj5-3V-j2KZiOt326OL4A@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-x1e80100-pwrseq-qcp-v3-1-a0525cc01666@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAp4s2cC/33NzQrCMAzA8VcZPRtJ2m7dPPke4qGr3VaQfbRSJ
- 2PvbjfwIIi3/AP5ZWHBemcDO2UL8za64IY+hThkzHS6by24W2rGkUtCVDCTLTFNMD59sBNMZgR
- eN2VVmgJFLli6HL1t3Lyrl2vqzoXH4F/7k0jb9r8XCRAaRUWRE+qa1Pnueu2H4+BbtoGRf5AcO
- dFvhAOBkUJWRldK6voLWdf1DSWeJrz8AAAA
-X-Change-ID: 20241007-x1e80100-pwrseq-qcp-2bf898c60353
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehledtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvhfeljedtfedtjeevffegtddutdeghfettdduhfeuhfdttdffieeuiefgvdfhvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefhedprhgtphhtthhopehphhhilhesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvrgdrphhorhhtrgesshhushgvrdgtohhmpdhrtghpthhtoheprghrn
+ hgusegrrhhnuggsrdguvgdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
 
-Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
-combo chip using the new power sequencing bindings. All voltages are
-derived from chained fixed regulators controlled using a single GPIO.
+On Mon, 17 Feb 2025 17:03:34 +0000
+Phil Elwell <phil@raspberrypi.com> wrote:
 
-The same setup also works for CRD (and likely most of the other X1E80100
-laptops). However, unlike the QCP they use soldered or removable M.2 cards
-supplied by a single 3.3V fixed regulator. The other necessary voltages are
-then derived inside the M.2 card. Describing this properly requires
-new bindings, so this commit only adds QCP for now.
+> Hi Hervé,
+> 
+> On Mon, 17 Feb 2025 at 15:53, Herve Codina <herve.codina@bootlin.com> wrote:
+> >
+> > Hi Phil,
+> >
+> > On Thu, 13 Feb 2025 21:12:43 +0000
+> > Phil Elwell <phil@raspberrypi.com> wrote:
+> >  
+> > > On Thu, 13 Feb 2025, 21:06 Herve Codina, <herve.codina@bootlin.com> wrote:  
+> > > >
+> > > > Hi Phil,
+> > > >
+> > > > On Thu, 13 Feb 2025 20:15:06 +0000
+> > > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > > >  
+> > > > > Once more, with plain text, which I'd hoped the Android GMail client
+> > > > > would work out for itself.
+> > > > >
+> > > > > On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com> wrote:  
+> > > > > >
+> > > > > > Hi Phil,
+> > > > > >
+> > > > > > On Thu, 13 Feb 2025 17:57:37 +0000
+> > > > > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > > > > >  
+> > > > > > > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:  
+> > > > > > > >  
+> > > > > > > > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
+> > > > > > > > > > fan are directly on this custom board? You then want a board DTS which
+> > > > > > > > > > includes all these pieces?  
+> > > > > > > > >
+> > > > > > > > > That depends on whether you count the Raspberry Pi 5 as a custom board.  
+> > > > > > > >
+> > > > > > > > So you mean the Pi 5 board would itself make use of the resources the
+> > > > > > > > RP1 device has? They are not simply connected to headers for plugin
+> > > > > > > > boards, but used by the main board? Hence you want to describe them in
+> > > > > > > > the board .DTS file.  
+> > > > > > >
+> > > > > > > That's correct. But even for plug-in devices, those which are on
+> > > > > > > non-discoverable buses need overlays to declare them, which causes a
+> > > > > > > problem when the overlay application happens before the kernel is
+> > > > > > > started.
+> > > > > > >  
+> > > > > >
+> > > > > > Hum, I see.
+> > > > > >
+> > > > > > We worked on overlay usage on non-discoverable buses wired to a connector
+> > > > > > and we did a talk about issues we are facing on at Plumber [0].
+> > > > > >
+> > > > > > You can also find our big picture in [1] and a last contribution introducing
+> > > > > > export-symbols feature in [2]. export-symbols is also under discussion on
+> > > > > > some other threads.
+> > > > > >
+> > > > > > Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
+> > > > > > an addon board to add devices on an i2c bus provided by a base board and
+> > > > > > wired to an connector the addon board is connected to.
+> > > > > >
+> > > > > > Maybe in your case, you can decouple resources (gpio, pwm) provided by the
+> > > > > > addon board and used by the base board using also nexus node.
+> > > > > >
+> > > > > > We use a nexus node [4] (not presented at the Plumbers talk because the idea
+> > > > > > came during 'out of talk' discussions in Plumbers) in order to allow our
+> > > > > > addon board to use resources provided by the base board.
+> > > > > >
+> > > > > > In your case, if I understood, you are in the other direction but why not
+> > > > > > using also a nexus node to decouple and translate resources in this other
+> > > > > > direction ?
+> > > > > >
+> > > > > > Don't know if this idea can help but feel free to ask for some more
+> > > > > > information if needed.  
+> > > > >
+> > > > > Nexus nodes look interesting - I see them as adding a layer of
+> > > > > abstraction such that, for example, boards can declare which of their
+> > > > > specific resources performs a common function so that clients can
+> > > > > treat them all the same. We do the same thing in a limited way by
+> > > > > using common labels on nodes, but this goes much further.
+> > > > >
+> > > > > In the case of Pi 5 and RP1, I imagine you are proposing that the Pi 5
+> > > > > dtb declares the connector node and the overlay fills in the content
+> > > > > with references to its GPIO controller, PWM controller etc. However, I
+> > > > > think the overlay would also have to be board specific because it's
+> > > > > not possible to patch part of a property from an overlay, so you'd end
+> > > > > up overwriting the GPIO number as well as the controller reference.
+> > > > >
+> > > > > What is needed to make this work is the ability to cope with
+> > > > > unresolved references in the base dtb, to be resolved as each overlay
+> > > > > is applied, with runtime checking that each reference is resolved
+> > > > > before it is used, all of which sounds like a nightmare. Plus, we
+> > > > > really don't want to have to change the way all our camera and display
+> > > > > overlays work on all Raspberry Pis just to accommodate somebody's idea
+> > > > > of how RP1 should be handled.  
+> > > >
+> > > > Just to be clear, my comments were not there to tell you how RP1 should
+> > > > work. I just proposed ideas without trying to force anything and I can
+> > > > fully understand that ideas proposed don't feed your needs.
+> > > >
+> > > > Sorry if my approach was misunderstood.  
+> > >
+> > > I feel I've been misunderstood - I appreciate your ideas.
+> > >
+> > > Perhaps it would help if you could outline how you think we could
+> > > apply your suggestions?
+> > >  
+> >
+> > I was thinking about what your mentioned, i.e. the overlay fill the nexus node.
+> > No sure to understand why the overlay should patch some properties.
+> > Also where are the unresolved references in that case. The base DT refers to
+> > the Nexus node.
+> > The issue will probably be that the translation performed by the nexus node is
+> > not available until the overlay is applied. The consumer will see errors other
+> > than PROBE_DEFER when if probes while the overlay is not applied.  
+> 
+> The job of the nexus node would be to translate a generic request for
+> a numbered resource to a specific request for an RP1 resource with
+> arbitrary properties. The arbitrary properties could be GPIO offsets,
+> which are board specific, while the node supplying the resource is
+> provided by the overlay. This means that an entry in the table,
+> described by a single property, could have contributions from the base
+> DT and the overlay, which is not possible since overlays overwrite
+> whole properties.
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
-Changes in v3:
-- Fix node ordering (Johan)
-- Link to v2: https://lore.kernel.org/r/20250211-x1e80100-pwrseq-qcp-v2-1-c4349ca974ab@linaro.org
+Hum, I am a bit lost.
+Some DT example (base and overlay) could help me to understand.
 
-Changes in v2:
-- Rebase on qcom for-next, patch 1-2 were applied already
-- Mention dummy regulator warning
-- Link to v1: https://lore.kernel.org/r/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org
----
-The Linux driver currently warns about a missing regulator supply:
+> 
+> Perhaps that particular problem could be overcome by creating a
+> single-entry map, using the map-mask feature to pass through all of
+> the GPIO offset and flags to the parent, so that the whole table
+> becomes a proxy for RP1's GPIO controller. Is that what you had in
+> mind?
+> 
+> > Also, the solution will lead to memory leak at runtime. Indeed, the overlay
+> > add properties in an already existing node.
+> > If the overlay is applied by the Kernel itself, this lead to memory leak when
+> > the overlay is removed.
+> > Indeed, an overlay can add/remove node without any issue but it cannot
+> > add/remove properties to/from existing nodes.  
+> 
+> Fortunately for me I'm not arguing _for_ the use of an overlay.
+> 
+> > In the case described here, the nexus node is already present in the DT and the
+> > overlay add/remove properties to/from this existing node.  
+> 
+> I think I can see how that could be made to work for GPIOs. It looks
+> as though the GPIO subsystem is the only one making use of
+> of_parse_phandle_with_args_map. Interrupts seem to have an open-coded
+> equivalent, and iommus. What about I2C and PWM?
 
-  pwrseq-qcom_wcn wcn7850-pmu: supply vddio1p2 not found, using dummy regulator
+Support for PWM has been recently accepted.
+  https://lore.kernel.org/all/ufl4kwrjyp4zid4muvghefevqc6hk3zyvxnsu72fxd4f46fzg6@hufkci2dzjid/
 
-This supply exists on the WCN7850 chip, but nothing is connected there on
-the QCP. Bartosz is working on hiding this warning in the driver. Since the
-DT is correct and the same setup is already used on SM8550 upstream, this
-doesn't block this patch.
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 144 ++++++++++++++++++++++++++++++
- 1 file changed, 144 insertions(+)
+For i2c, nexus node is not suitable.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index ec594628304a9ab9fe2dd7cdc0467953cd82dc1f..4254e9a364001f076eb066651bae8743bd1e31ec 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -17,6 +17,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart21;
-+		serial1 = &uart14;
- 	};
- 
- 	wcd938x: audio-codec {
-@@ -281,6 +282,42 @@ vreg_nvme: regulator-nvme {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_wcn_0p95: regulator-wcn-0p95 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_0P95";
-+		regulator-min-microvolt = <950000>;
-+		regulator-max-microvolt = <950000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_1p9: regulator-wcn-1p9 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_1P9";
-+		regulator-min-microvolt = <1900000>;
-+		regulator-max-microvolt = <1900000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_3p3: regulator-wcn-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wcn_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	usb-1-ss0-sbu-mux {
- 		compatible = "onnn,fsusb42", "gpio-sbu-mux";
- 
-@@ -337,6 +374,65 @@ usb_1_ss2_sbu_mux: endpoint {
- 			};
- 		};
- 	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		vdd-supply = <&vreg_wcn_0p95>;
-+		vddio-supply = <&vreg_l15b_1p8>;
-+		vddaon-supply = <&vreg_wcn_0p95>;
-+		vdddig-supply = <&vreg_wcn_0p95>;
-+		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-+		vddrfa1p8-supply = <&vreg_wcn_1p9>;
-+
-+		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&wcn_wlan_bt_en>;
-+		pinctrl-names = "default";
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -825,6 +921,23 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie4_port0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -1135,6 +1248,37 @@ wcd_default: wcd-reset-n-active-state {
- 		bias-disable;
- 		output-low;
- 	};
-+
-+	wcn_wlan_bt_en: wcn-wlan-bt-en-state {
-+		pins = "gpio116", "gpio117";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	wcn_sw_en: wcn-sw-en-state {
-+		pins = "gpio214";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+		max-speed = <3200000>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+	};
- };
- 
- &uart21 {
+Nexus node works well when resources are indexed (gpio line in a gpio chip
+for instance). For bus controller there is no index.
+I mean we never refer a i2c bus controller using <&i2c-ctrl 12>.
 
----
-base-commit: c177fed7617d6306541305e93e575c0c01600ff0
-change-id: 20241007-x1e80100-pwrseq-qcp-2bf898c60353
+For i2c, I proposed i2c bus extension:
+  https://lore.kernel.org/all/20250205173918.600037-1-herve.codina@bootlin.com/
 
 Best regards,
--- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
-
+Hervé
 
