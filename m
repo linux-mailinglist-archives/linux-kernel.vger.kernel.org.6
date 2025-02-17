@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-517331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8D9A37F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:05:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6393CA37F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E067A48EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7DD43A43D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C514217645;
-	Mon, 17 Feb 2025 10:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B56221660F;
+	Mon, 17 Feb 2025 10:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="C9XXRLqq"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcyc1gzw"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030F515278E;
-	Mon, 17 Feb 2025 10:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268262260C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786724; cv=none; b=OvLKD9wnZ9hqPAyAtjaqS0orqj8DpeYqKY/pjNR9AcA/mpo0wAjliftF6SLRxYtSXV53rdwIZK5hO8cy+d3lUOCuFExVPNqbvfqRLnXYNO4hLcnpSHiW1MJSlWXGYWVSt9g1yKOn6WAq5eqTCBP6RzEJZRpw6nVaRj4p/TBmkCY=
+	t=1739786739; cv=none; b=WQC5MA9ik8hATnIStAqPrUTyzgPcsDQBVEq6lKfVXHGrr9m5ZsjiS4F7ruxctWEW993lE59rINYBI3VBb2ywEpIl3X76Sk+UpJGdWgdvLPX+KKsya9hn+9fARckFpYC9oPQsB+CiLBMpVTorB/Gw4eBjGP1yU64BaZmmzYmWeBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786724; c=relaxed/simple;
-	bh=MbLGiFPw0BviblpRBDxgF45OB1YB6WtJVJ4j6noJOlg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PrWp7Mr2AIO4DtOrzToADJif5CUBP0pp0Yc2WPX2l66LyQwRhpeXnUQNu3i/yJ4zawber3TVUd4fiwEhTBsiEDYGyoAqh8UyrlNBK1UJlsd6zTVR1wdMREhFQsfF8nUcspVvML4rtlr74IxXoC+gDD7DoWD79mZf+G1l4xsDgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=C9XXRLqq; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H60KGZ016956;
-	Mon, 17 Feb 2025 04:05:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=+AKz3PxkgrQ2fR1liQ
-	UtFRny2oU0WB6PMxdh8i/jLek=; b=C9XXRLqqp2Jwo4Aut2lQW7qSFH31tI7qhr
-	1DNmD7QpmjD6JmW7jAHQyrblVMgftZUvBgDFim0YvMtUxeyxeXQzJ+kkFFASqs8f
-	93PJcJh7a3FYx+zl5Hs20KeTWBJbWl25OzCVSOLk9TE2O+YxlVK3MLQssm+AAWvW
-	7PfeQ3H+HYc4R2EZKwe5zGTwodhJBfUNfszBz3ug3XBWu8q8jc+w5Vgn/kDoIp9c
-	xaZzHmHvzOjPNsyiHAaRDX/R3bDJTgLK7yU+VVDLOpqz10ORynm2yIrsw7tunWLN
-	HpH+ZIWXgnKNFSXIncag7UcWKAbaz0nZW7KcHQ4Bjwb4PO7zyw8Q==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44ts75uj7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 04:05:07 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 10:05:05 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 10:05:05 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 15098822561;
-	Mon, 17 Feb 2025 10:05:05 +0000 (UTC)
-Date: Mon, 17 Feb 2025 10:05:04 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <patches@opensource.cirrus.com>,
-        Ernest Van Hoecke
-	<ernest.vanhoecke@toradex.com>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Francesco
- Dolcini" <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
- and EQ support
-Message-ID: <Z7MJ0IlOSAd4YdCd@opensource.cirrus.com>
-References: <20250206163152.423199-1-francesco@dolcini.it>
- <20250206163152.423199-4-francesco@dolcini.it>
+	s=arc-20240116; t=1739786739; c=relaxed/simple;
+	bh=3jgBOSa3D+X0g/hAdlexzK+wA0bCemdDQBe6UWljxoc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bFBwx7RUVtv1VCN/5OBhm3Gc9Q0IZeiRdfC18cx2oz9sk3gGsUtlABQBEVCN+GDOXDaVIvSq530xJ4+cQgsGDHJsjXK5XBn2NYL0olfL2hcVPdL+B7PDOUHUZ6ERKNFJhERZEOhPC5DSaKEqEGzB3V1xbHlxB/RhW0FlJ3dNpos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcyc1gzw; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-220c2a87378so57347915ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:05:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739786737; x=1740391537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=har9C3q0z1JARfPuvDnkQ85Yn9EDW13OUXY77oUlYjc=;
+        b=bcyc1gzwib6YSsPYoy+yifqbtVoJSBPxNg8p0JOb3xWtzPxIHGvmT084+Pg9qu/Ict
+         78mnN8RzFvaEmcOHDnFVjVTsG1Dru8WEgbIYet2nrj41tCczPknKUcaej5k8tBd425cU
+         4H+gqtpmvmgat15pafqukti504AiToBNd+8s50Ix+7Jjhr9/PXblU+iRS7mYVXdq8T4r
+         LG7VTglrC10ncPR+uGLjIYtlJA/GriAzDjGPdDhymIskCNq2f0fT1LMf6c9jI+xiayi+
+         PTTth51cTjmUhqVKYxy4o/PVX0lMjywTA7nJAo0iHkDYYKr9kQOyihksHj8dVJuB5gkQ
+         3WIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739786737; x=1740391537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=har9C3q0z1JARfPuvDnkQ85Yn9EDW13OUXY77oUlYjc=;
+        b=YI8ClAx+smF0vEPKtwwTUrTLXk+NZvRdxq2MXftepeLfDVZDD9/LcrmfFt4D92aopG
+         ygYxVJJ7l5G+2kC8HH2yrR+W3cgS0qj0b0YHjgRhNSC9DYBWGM0b8R67fvCErxwLTX1V
+         PbPdtpym/gu5RFvSCk4O6fFcr7Dk4ocGzrhNNQcgftqDm8TFLQ7tgRVPb1dTxH7UhdNK
+         UsmaC3BYIWqN06QXosRXGiGQLVak8SPRyZEJj05LnmpUkXf/fSHPMETCQFo5U++f2pj4
+         1dxXABWa/xIJdPCzXcojJ581CTucObuzYk6euV+8oxqBF4oqOvys2iEdGjwhht80mfDB
+         W4YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURxASM1d5+ttMR8yLm1QC/ggX/xBH2KVIAPCUDUQW1AEeVrZPH3+5HQ0h+EJ0HqsU1zMxDRGTNVImfD3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnElatcsn6tLD8VOW6abFSPz1OotLo2Jt9RmS7jz+qexBL0fos
+	flQzY0FCwU1WQQmc0vB5fB6WX+MRVPvhtnE4jlwpp23EI6Hmk9NY
+X-Gm-Gg: ASbGncsRZySMzIrP3/eCyzcX12uNeEYthZuoGa3zZ6KLUOVoe1ZFiBR6LDaZOnUBJd4
+	Fi5P6OiPe3dOMb5KQg9DOuzaqo81s8tp0/V+h5aHNX+5BFP3WRgKbYXbytg6ctrNbh88/4zx/RO
+	s++jodsxRoQHPc3uYPm2p5G21qDfexXNCMI26xNV5+/yZ9BBrxrPxsRPkAbRMELdA5h9vrd0JzH
+	158oF+9qyYujQZ2DJEnI7In6kx3TPTiTEKh6QJ0L1B89dYpy7AM4ObjpByDi/qbyEWZ1zGFV+up
+	wSwexjueJ9CErQpttbd1
+X-Google-Smtp-Source: AGHT+IGU0+B1gfHA4wYrcfYnjnFpOKwnU9J+GSI5umSPco+CyZ7+Mefz0snJ8m0beCN0Mpz9nRU0ig==
+X-Received: by 2002:a17:902:f54e:b0:220:c63b:d93c with SMTP id d9443c01a7336-221040d75a0mr156557235ad.44.1739786737260;
+        Mon, 17 Feb 2025 02:05:37 -0800 (PST)
+Received: from localhost ([2409:4066:d04:319e:1d76:db25:b6bf:4f52])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d53668d1sm68311605ad.75.2025.02.17.02.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 02:05:36 -0800 (PST)
+From: Ravi Kumar kairi <kumarkairiravi@gmail.com>
+To: dpenkler@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kuba@kernel.org,
+	dan.carpenter@linaro.org,
+	rmk+kernel@armlinux.org.uk,
+	Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+Subject: [PATCH 0/4] staging:gpib:agilent_82350b:Cleanup and spelling fixes
+Date: Mon, 17 Feb 2025 15:35:09 +0530
+Message-ID: <20250217100526.49495-1-kumarkairiravi@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250206163152.423199-4-francesco@dolcini.it>
-X-Proofpoint-GUID: 4SUv7R2l17ptoWHijpFi3Q4U62P0TeG7
-X-Authority-Analysis: v=2.4 cv=fepXy1QF c=1 sm=1 tr=0 ts=67b309d3 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=m8ToADvmAAAA:8 a=kPAxZCdUXx29zqvt4jMA:9 a=CjuIK1q_8ugA:10
- a=YXXWInSmI4Sqt1AkVdoW:22 a=kCrBFHLFDAq2jDEeoMj9:22
-X-Proofpoint-ORIG-GUID: 4SUv7R2l17ptoWHijpFi3Q4U62P0TeG7
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 06, 2025 at 05:31:50PM +0100, Francesco Dolcini wrote:
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> 
-> Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
-> functionality:
-> - wlf,in1l-as-dmicdat1
-> - wlf,in1r-as-dmicdat2
-> 
-> Add a property to describe the GPIO configuration registers, that can be
-> used to set the four multifunction pins:
-> - wlf,gpio-cfg
-> 
-> Add a property to describe the mic bias control registers:
-> - wlf,mic-cfg
-> 
-> Add two properties to describe the Dynamic Range Controller (DRC),
-> allowing multiple named configurations where each config sets the 4 DRC
-> registers (R40-R43):
-> - wlf,drc-cfg-regs
-> - wlf,drc-cfg-names
-> 
-> Add three properties to describe the equalizer (ReTune Mobile), allowing
-> multiple named configurations (associated with a samplerate) that set
-> the 24 (R134-R157) EQ registers:
-> - wlf,retune-mobile-cfg-regs
-> - wlf,retune-mobile-cfg-names
-> - wlf,retune-mobile-cfg-rates
-> 
-> Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
+From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+1. Fixing spelling mistakes such as "havn't" → "haven't"
+2. Removing unnecessary commented-out code
+3. Cleaning up whitespace and formatting inconsistencies
+4. Removing a empty line in if{} which was casuing it be read as single
+line
 
-Thanks,
-Charles
+These are minor changes aimed at improving code readability and maintainability.
+
+I appreciate your time in reviewing this series.
+
+Thanks,  
+Ravi Kumar Kairi
+
+Ravi Kumar Kairi (4):
+  staging:gpib:agilent_82350b: Fixed spelling error
+  staging:gpib:agilent_82350b: Removed commented out code
+  staging:gpib:agilent_82350b:Removed blank line
+  staging:gpib:agilent_82350b: Fix Indent issue with block
+
+ .../staging/gpib/agilent_82350b/agilent_82350b.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+-- 
+2.48.1
+
 
