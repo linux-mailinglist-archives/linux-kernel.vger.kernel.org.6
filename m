@@ -1,236 +1,213 @@
-Return-Path: <linux-kernel+bounces-517261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1B5A37E61
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:26:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F81A37E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1839C7A2E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9544E3A811B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9B4212D97;
-	Mon, 17 Feb 2025 09:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37021FECDC;
+	Mon, 17 Feb 2025 09:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MLFtirCx"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kLakgr6L"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011033.outbound.protection.outlook.com [52.103.68.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013EC8FE;
-	Mon, 17 Feb 2025 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784371; cv=none; b=Bnmd6Q678BSiAu9lZo3W46WJqf7EguZE/ElxGHDia30qLv3P9RdXA9oWCMZreZ7AbJkCQVUUPLW3anvvudqxk1juB0jexd2pxmvth3TnfJ7e2ak9Wa033IjnnWPeEwEAq70g7C+0Pw7rFL1jBHXzdsTZhzwje0ZuIbKdbiFS4Mk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784371; c=relaxed/simple;
-	bh=IKQs58geIf6VApu4EVnDj+XctVVzkrTjTdBiFfP+2VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eNvwMv+NMefumc08dvl1/6u6fNso4gyh3D0j8s8WoStAaHtqptkoqIm8PXHChHlzpk0DeCXhNljVuhdsb//MNyVZmpmy334AtfUnFVXlKnAvEOLSN7DO3Bw+JBJU6oQp0PJFo9fBPGx9ffttVdqjGezn/pPaTawYih2FaXMrKj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MLFtirCx; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E9AC43287;
-	Mon, 17 Feb 2025 09:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739784366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SO8T0nIRKcbdmM4ftj1RFljqcKZxemj3VTPTdtlNmjc=;
-	b=MLFtirCxqUcwJLqDAF9h1I3aRDy2RzlA7h1E+0KjutTWO/wcKl9ZvtjtBwdKchSCyaJDgy
-	CaxGL5CGTLJplLIvSYEpH8fqOeGchC0bYgBehPZzPyO9swh92IOGDIUs0qVkGVh0w/PUPR
-	GSb/6weTO2IvE+PDO2D1gKXCLtUh4My8GR1xgiyB6jhQelAC0Q7rY2Rssv3qrAdgxQvQza
-	75Pde7zQE6/rEwCbZHi5hBdDVvXx0dC+impytylGgwEo1bJIxRwex1B7bCTYhtrLJ0974X
-	MFGDaYDIiu3DB7bJRxXl6wHIorTetdJCGWA1PB62miaDEYo2BWmhHJpDLsxENQ==
-Date: Mon, 17 Feb 2025 10:26:03 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Fedrau Dimitri (LED)" <Dimitri.Fedrau@liebherr.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org"
- <linux-arm-msm@vger.kernel.org>, "thomas.petazzoni@bootlin.com"
- <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- "mwojtas@chromium.org" <mwojtas@chromium.org>, Antoine Tenart
- <atenart@kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Sean Anderson <seanga2@gmail.com>, "dima.fedrau@gmail.com"
- <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next v4 04/15] net: phy: dp83822: Add support for
- phy_port representation
-Message-ID: <20250217102603.3e9f79c6@fedora.home>
-In-Reply-To: <DB8P192MB08386B9F0FB342EB7B0FA785F3F92@DB8P192MB0838.EURP192.PROD.OUTLOOK.COM>
-References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
-	<20250213101606.1154014-5-maxime.chevallier@bootlin.com>
-	<DB8P192MB08386B9F0FB342EB7B0FA785F3F92@DB8P192MB0838.EURP192.PROD.OUTLOOK.COM>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A83B155316;
+	Mon, 17 Feb 2025 09:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739784398; cv=fail; b=pA77/mPmR4fiY58pEz5P05IhELxWdOGTdiXTjQ/AvAmd9LcHsCt7uQaMpyX+X3lK9/BW+LHFYdGOBHyzc2YTHhPW4WHvaXQjSNNMhu2EXsOaK3XM/B/guY686gmci4Mj+0TCbEuYmR1mq/5cp4Ev5z4GKgkO2y/vKmuZ9h326KI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739784398; c=relaxed/simple;
+	bh=h41z6MGN6JMHl718yu+YmZE+db9paNi/y5z49Z62h1Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BPJCk25n6LYSWAcz+xzys6l4XztI/NEyqVV9j5FTN0la6CcIwrbaDEIqis1kFfLIIoIMuGM9fm73QcrkKsDBYb/gSManEytLo/5vDxGUUTTmFBbUbP5Bgt+rGvFIhP7BH2uYh+mJcEr5vSDcoSgHBzqfvU3YW9tCxxvuu3npCgE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kLakgr6L; arc=fail smtp.client-ip=52.103.68.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l+PLKiYAmzqq79D9mmtft8bUFtscCyn7dgYMP6+ClzSe00fNV0uenXMORG47yF+K7x5vOhGnCp3pT38bNHfRXaQD2FlsB/ucAjRmdtfzmAQ0V+Zd77mF8j696VNFb2Z/CsaEOwNrVx2U1XfL6u27njtjPxfNXaqsUkDn6OkXmXTZClevTMBAwdvOZQkQ6a81RGTgVHlyHac9og33twK7OdaZJ9YHqwXzAN34X6Kkv8FTJK+l/eD7CSiCxp2qj+SwF5sibHK846w2tpyJGDs3CU5lLqlaJnglMIlDfeblzFJcrwTfsnA8t3VF4kT6bCHOb160oHI40YyiwVDt8P57/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dJyccMl5SrvZ75ed3kVjT0rC4M4G01AG+1qfT9MYRSo=;
+ b=xqDv2oqMLUQ0pFdY0T/J4hxmMjOnrWb0y0Sq89VMDZLIvin68N7CEGq0jNQk8nV0/lDUSJf+sJn8Iih87Pjj/lqhgKaUylrKiuAuGPvAqMvWv/TK4CgZk+I5zPnKEdMtoMwAy+aeNPIgeYZ9MrnOzW07j5GnxzA+W5CyfXWoT5NIV+4tsz6cwjhF5CXmazkaqQqSkWDuYtMo08hLr0yVFHF4vLYjVSSQVh7wjigcjluPogDUU/+A2fhM7UNUxRqNBp/JMj9iz/GN2442y0z9LIKofo28SFApPRjoQtODd58m1RGZ5qwX3mZpON8PH6FlJrAkyPKKn8/HP1MqRnRknw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dJyccMl5SrvZ75ed3kVjT0rC4M4G01AG+1qfT9MYRSo=;
+ b=kLakgr6L5Owws3YkS/0naz/qefPI90A5t9YMxyd+6LfCgCb93D0qKi1XX3gWSBdBA8eXLzgD54IBkaHppp0t8Vt6sTzsZywiI2P5J1rR/Of4A/eC3+gDYfe5hSaa96z4dycHBnmywNJ1nE6JSvoEHrM0mx6H/lstqPeT/kPMu+6WtK7Y8jOQyhx+Dm7HbaZ8SmJWjuaooF/DJtun8xhghi6K1pYjiXH8bucTituQb6fR5Ts9QqIrqAVOMMqmQjZwWOf1rmx1e66VM4gIpkBP7szO1gZ0dzvTNVEFVqUhmEOyL0H/ZfNDjSXX0O+oCVjl4OAI3kl4zVexC9aCYPgqXw==
+Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:6e::9)
+ by MAZPR01MB7374.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:53::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 09:26:29 +0000
+Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::6e06:bc2e:85c0:c2ee]) by MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::6e06:bc2e:85c0:c2ee%2]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 09:26:29 +0000
+Message-ID:
+ <MA0PR01MB567164E6BE03750F2200CBDBFEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+Date: Mon, 17 Feb 2025 17:26:25 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
+ Sophgo CV1800 series SoC
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+ Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, dlan@gentoo.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-rtc@vger.kernel.org
+References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+ <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0139.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::19) To MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:6e::9)
+X-Microsoft-Original-Message-ID:
+ <a065d2e9-b5d1-4d9d-832a-daa0e90dac04@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkedtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfefgffgtdfhgffhvdfhhffhteeutdektefghfetveehheejjefgudeiudehudenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefvddprhgtphhtthhopeffihhmihhtrhhirdfhvggurhgruheslhhivggshhgvrhhrrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0PR01MB5671:EE_|MAZPR01MB7374:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa3ef208-cdd9-40e4-1cb2-08dd4f3528ca
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|5072599009|19110799003|7092599003|461199028|6090799003|8060799006|440099028|10035399004|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SGhEeUZBayswVHFzMHQ0NzN0elM0WC9iSXhDWk5GVjFuYTRnczFJV3J5cXlR?=
+ =?utf-8?B?VmxBdGJEdFpVdWhKRFgxWnJ0RWc0TkhrbHB0RDIzb2pGZU5nZ0p4L0pLTUx1?=
+ =?utf-8?B?bFgyTCs5UUY3Y1h5blNqV1o1MmYvTS9kNy9rOEFzT2NteXFjYStkNGZ1Vk84?=
+ =?utf-8?B?VEh1NW1Ca3o1Nk0rSVNXNmhmRHc0UGkzM2dOSkdQNFpsa0tqNXdscEFUWFN0?=
+ =?utf-8?B?VGRHSy9JejUvc1A1Z0RBVGVwVzVDNjFrNDZKNnZ0Ukc1SFY4MlBleVFPUUNu?=
+ =?utf-8?B?cFVEby9JVU8vcFpqQ1gwNDUvN3lJYmlGek1XN0x1ZXNYcHZGM3F2K3RUeXNm?=
+ =?utf-8?B?MTFWaldiQ3NHdTArWDNWWXFHQ2JWM2hBb1gzdGpJU2puOVI2WWtjWVVLeW5I?=
+ =?utf-8?B?LzcrSzJIek5NN3g0Skp1TUxMdHp1dDJuU0ZuczF0c2wzUG1sUksvblFkZ0lh?=
+ =?utf-8?B?ZkdoaFo1S2lhb3hOb2lIUkZYUTZSczZXUDhKbDkwa0VhYStjU2Rab1o0U2E3?=
+ =?utf-8?B?bnpMUTE0d3Z0YW5EdXZiRGxIa1Rwa1dlRFRzVnJYMk1ycFBSL1MxY2hwaGVx?=
+ =?utf-8?B?emNqTTRYclpMRHpYekxpV1Z4Y3N2UzE3eTN5aERFN2JWaW9zclpvUk43bHl5?=
+ =?utf-8?B?SjQ4RkxBdHFYUjJ2TDVvKzdzclRnZy9pd3hURi9hV2EzVUU3ZTJnbW1tRFly?=
+ =?utf-8?B?d1RzZmdzemNIV25WKzhpc1Z4Z1M0b1BZRHVqbDZ1KytLMWZYdjFwWXczQVd1?=
+ =?utf-8?B?Q3R5ZnllUmJJK2Z0bEdKNGtycUFjZlA2MTdwMDM4UVYxRkhBOGJWTFc3dnJK?=
+ =?utf-8?B?eVFGY2RlajdoWTg5ZkxHR3N4SEdMRG5rUkNlV3dNNDVOV2QvU0NtME5PNjZh?=
+ =?utf-8?B?TW9MUFV3S2xRMm8xVTBybDk2T0JHQWIrcE9hMW5jeGdjdmx0SVRVYmswY09v?=
+ =?utf-8?B?bFBlWStMSStPb1BTbVJGYzZKdlNsOHpsK0VvQU1NQytJUUNVQ2JRQjg1MHQ0?=
+ =?utf-8?B?OHhXdUwxT0RNRHFsTHU1WUU4c3F3dUFUalB0b24rR3dvVjRYN3RKc2JDcjI5?=
+ =?utf-8?B?L2I1U3lYUGVEYXNWR3BPSy8wVmN3Sm1ibUxhbGV6MHZ1SDlibTZUVkNUdjFp?=
+ =?utf-8?B?YVd2bi9xZFpaUDJNaDZMT09XaVh0RmZGcjdOaXBJUTlZZ28zVkZjVk41MEtJ?=
+ =?utf-8?B?dE9WZndpOExIRjdSOExSdnFDeHhkUTNhakZkWHFzZmo4SE54bnFlcDNQNzNL?=
+ =?utf-8?B?UTRRendtN1QyMGxKYUdQUHYwWjNFNXduMWtTMDVjMGlPR3JSYnltcGh3eVh6?=
+ =?utf-8?B?cjlLZVRSUmYzUThvdTFyWmh4ZVBqdk9QOVQzbWIyKzZ2bVBZUkpnc3h6VUZm?=
+ =?utf-8?B?NkFTczdsVDBjajBlNDJrTzQwdnJocUN5SkJUblpVS0llUVNnTzRhWmdaWTh1?=
+ =?utf-8?B?UU9SYWhpL0Yyam41SlV3V2RKdi9HdXQ3eWtJNDZmbjA1STZFbnZRTWdvTE14?=
+ =?utf-8?B?QlFyaHBKQno1Nlh2YjF3cFhBSHlrUWFweitRM05pUXRQS2dRb2loc3RLWjB4?=
+ =?utf-8?Q?eZS+599iHfmTh+z1hdE5NrCtk=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dlR2d0l3YUhjeW5Rb1lZSGdNVWRsakpwcGQxNVVyalBKeU4zZVJaMEVVbWdo?=
+ =?utf-8?B?RTNxeis3TytuSGNlQjhvbVpwOU12Vk5vQUtwTFZjNXU5R1I3d3BoMzV4NVNN?=
+ =?utf-8?B?ejBFU3huK3dwRXUwR1lOa3lZSGhSU3JhazFNMGNBMVlnRVE4WHdDZDFiY1Zz?=
+ =?utf-8?B?Nmw3eXhBRnB4b3k3b3JDWWM3UVpJeWhLNUkyc0c5a3JSTUl4NWdMSVU0N3Ux?=
+ =?utf-8?B?ZGF1RUZyVzlVd2NsSDFTdnV1U0N5S3ZOR09KSDlBN2RvRzg0NDhUMms3REp0?=
+ =?utf-8?B?WFI3MzJkNkp3L2tEa2VrRXNGS3VJZHo0eGtId05EWTBmRGRBOHpQSkgyVy9z?=
+ =?utf-8?B?d1Q5eGFkTjFGY0IvVWZlUDNWYVYzQ1pFYXNtejYvSFZteTMvd3B0WGZRbFo0?=
+ =?utf-8?B?WXNiVU0zdFRDdDR3V29QSWRRNlduU0ZkcjhINlpWYlRXdXc2YnlnVGtCK2Ez?=
+ =?utf-8?B?UjVNeVZzQkZURnZkWExkS2xnd0Q2TGNVc205cFdLMmhBV3F2S05tTE0rdksr?=
+ =?utf-8?B?cDhuS0hmNERmSjFiQUJya3R3aWJTOGFxNGx3bXl1L081WnZtZndnVEZPT3hF?=
+ =?utf-8?B?ZnlnVVVNMkw2blI5M00rcGpWR0RSaUNsb2FSSVNHZ2FZeG5QSmVEWG5MRndu?=
+ =?utf-8?B?T2svT3U3UkZDRUZkS3R1T3J5ZkZHdy9PVERsbGlidituWjRXcnFiTmtQcENj?=
+ =?utf-8?B?R1lyRmF3SE5obnI0aWZlWldQT0ROTWVMUURvd1E0NFhxNldWQXNVSFZYb0JD?=
+ =?utf-8?B?TzBlM1Rpc3QveHhOUXJidGxRWlhwdi9RdW1qMzl4NUZ3dEZDaWl0WFJVKzY3?=
+ =?utf-8?B?bmdMU2N2SURxMCt2TExGN1o1UXBCNmJiWWt5WXpseE4vcU5rWmQxNlE4RzFQ?=
+ =?utf-8?B?QkdFbE5ObkJuNXhUNnJySytTQUNJTmV0eUxicis2YUNyMFF0Q2ovRVRJcEpX?=
+ =?utf-8?B?RHpvYXVpVjJUdythTUdnQ3BtWUtZN0R2cGFrQkdtTExYRnROTWpVSHBZSkxX?=
+ =?utf-8?B?VDRzaTZIQndzcWxTckNXL0NRVGhQUmVzckdFc01HbkdPSDBGcW5EeUZjTjJr?=
+ =?utf-8?B?V0FoVXVTSHF4aGZCeFFnTW15bURNSXQrZjdma3F0YnI1TnZUenkzWkFFNUky?=
+ =?utf-8?B?NG1aeHJraHNsdDFkblNvMTJmQ090WUw1OVV5SGQrTWFDUDg2S3NsZzhmMXBD?=
+ =?utf-8?B?MkI3eE4xSXY3ZC9EbHhDRVZBNjB0OTdtRGJoeEFNZGkxaE1ISVQyb2dncDNO?=
+ =?utf-8?B?VE9yRTdsWUpDM1RPdzRFalo2NGhERUROSmhRcXdwMFFkYm9PWEdyV3R5dHRB?=
+ =?utf-8?B?NGRXZXo3enE4QlVmM3R3SjY3RVFZa3V4bE5Kd2QrODZPdmRHT2g5cUZ0WnBr?=
+ =?utf-8?B?YXloeDl6UHF1dXliUHZPditWczBJTEpwMlBRcWNvNDlHYXhBZk4yQnpRaXlV?=
+ =?utf-8?B?RG1Fc1lFRkY1N1NlQXlVZjg5NUFsVXVxbjhVbXpSTWo3MTNWUXRZNFp3ZUxm?=
+ =?utf-8?B?Y1JqMHNQSStFWlhkUXpKL2ErMDBSR0lqNWNMRDhPS2xWZ1I5eFd4UWJYTDZv?=
+ =?utf-8?B?ZEZEQUZUanQvWnJ2cHBqbDE0RlZ2WDBoRndkckI2blBhcTBnQnJDWDRGN0FX?=
+ =?utf-8?B?SWVKb3hnYlVPRGxuTHp4RGJqemZZdFdacGI1MS9RZnl6VzQrT0FnSmFQdGlT?=
+ =?utf-8?B?aDFMc01MK2pPTzlweFIyNlhuRUsvTDNvWVFSS0tUNWxwVHZiSmVpMy84SDJ3?=
+ =?utf-8?Q?FVw2XyxVb/9PTUMxDGJP1EiF8S80CFb6cByy/iO?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa3ef208-cdd9-40e4-1cb2-08dd4f3528ca
+X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 09:26:29.5784
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB7374
 
-Hello Dimitri,
 
-On Sat, 15 Feb 2025 11:31:28 +0000
-"Fedrau Dimitri (LED)" <Dimitri.Fedrau@liebherr.com> wrote:
-
-> Hi Maxime,
->=20
-> > -----Urspr=C3=BCngliche Nachricht-----
-> > Von: Maxime Chevallier <maxime.chevallier@bootlin.com>=20
-> > Gesendet: Donnerstag, 13. Februar 2025 11:16
-> > =20
-> [...]
-> > =20
-> > @@ -781,17 +782,6 @@ static int dp83822_of_init(struct phy_device *phyd=
-ev)
-> >  	struct device *dev =3D &phydev->mdio.dev;
-> >  	const char *of_val;
-> > =20
-> > -	/* Signal detection for the PHY is only enabled if the FX_EN and the
-> > -	 * SD_EN pins are strapped. Signal detection can only enabled if FX_EN
-> > -	 * is strapped otherwise signal detection is disabled for the PHY.
-> > -	 */ =20
-> Does it make sense to keep the comment ?
+On 2025/2/14 5:56, Alexander Sverdlin wrote:
+> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
 >
+> Add RTC devicetree binding for Sophgo CV1800 SoC.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> ---
+>   .../bindings/rtc/sophgo,cv1800-rtc.yaml       | 53 +++++++++++++++++++
+>   1 file changed, 53 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> new file mode 100644
+> index 000000000000..b36b51a69166
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Real Time Clock of the Sophgo CV1800 SoC
+> +
+> +description:
+> +  Real Time Clock (RTC) is an independently powered module
+> +  within the chip, which includes a 32KHz oscillator and a
+> +  Power On Reset/POR submodule. It can be used for time display
+> +  and timed alarm generation. In addition, the hardware state
+> +  machine provides triggering and timing control for chip
+> +  power on, off, and reset.
+> +
+> +maintainers:
+> +  - Jingbao Qiu <qiujingbao.dlmu@gmail.com>
 
-I think so, this behaviour isn't expected to change with this patchset
+I guess Jingbao will not take this role. If he doesn't raise any 
+objections, please just change this.
 
-> > -	if (dp83822->fx_enabled && dp83822->fx_sd_enable)
-> > -		dp83822->fx_signal_det_low =3D device_property_present(dev,
-> > -								     "ti,link-loss-low");
-> > -	if (!dp83822->fx_enabled)
-> > -		dp83822->fx_enabled =3D device_property_present(dev,
-> > -							      "ti,fiber-mode");
-> > -
-> >  	if (!device_property_read_string(dev, "ti,gpio2-clk-out", &of_val)) {
-> >  		if (strcmp(of_val, "mac-if") =3D=3D 0) {
-> >  			dp83822->gpio2_clk_out =3D DP83822_CLK_SRC_MAC_IF;
-> > @@ -884,6 +874,43 @@ static int dp83822_read_straps(struct phy_device *=
-phydev)
-> >  	return 0;
-> >  }
-> > =20
-> > +static int dp83822_attach_port(struct phy_device *phydev, struct phy_p=
-ort *port)
-> > +{
-> > +	struct dp83822_private *dp83822 =3D phydev->priv;
-> > +	int ret;
-> > +
-> > +	if (port->mediums) {
-> > +		if (phy_port_is_fiber(port) ||
-> > +		    port->mediums & BIT(ETHTOOL_LINK_MEDIUM_BASEX))
-> > +			dp83822->fx_enabled =3D true;
-> > +	} else {
-> > +		ret =3D dp83822_read_straps(phydev);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +#ifdef CONFIG_OF_MDIO
-> > +		if (dp83822->fx_enabled && dp83822->fx_sd_enable)
-> > +			dp83822->fx_signal_det_low =3D
-> > +				device_property_present(dev, "ti,link-loss-low");
-> > +		if (!dp83822->fx_enabled)
-> > +			dp83822->fx_enabled =3D
-> > +				device_property_present(dev, "ti,fiber-mode");
-> > +#endif =20
->=20
-> I think this is to make it backwards compatible to the dp83822 bindings,
-> is it worth mentioning this in a comment ?
+Jingbao, do you have any comment on this?
 
-Good point yes, I'll mention that.
+[......]
 
-> > +
-> > +		if (dp83822->fx_enabled) {
-> > +			port->lanes =3D 1;
-> > +			port->mediums =3D BIT(ETHTOOL_LINK_MEDIUM_BASEF) |
-> > +					BIT(ETHTOOL_LINK_MEDIUM_BASEX);
-> > +		} else {
-> > +			/* This PHY can only to 100BaseTX max, so on 2 lanes */
-> > +			port->lanes =3D 2;
-> > +			port->mediums =3D BIT(ETHTOOL_LINK_MEDIUM_BASET);
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int dp8382x_probe(struct phy_device *phydev)
-> >  {
-> >  	struct dp83822_private *dp83822;
-> > @@ -900,25 +927,13 @@ static int dp8382x_probe(struct phy_device *phyde=
-v)
-> > =20
-> >  static int dp83822_probe(struct phy_device *phydev)
-> >  {
-> > -	struct dp83822_private *dp83822;
-> >  	int ret;
-> > =20
-> >  	ret =3D dp8382x_probe(phydev);
-> >  	if (ret)
-> >  		return ret;
-> > =20
-> > -	dp83822 =3D phydev->priv;
-> > -
-> > -	ret =3D dp83822_read_straps(phydev);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	ret =3D dp83822_of_init(phydev);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	if (dp83822->fx_enabled)
-> > -		phydev->port =3D PORT_FIBRE;
-> > +	dp83822_of_init(phydev); =20
->=20
-> Keep the check of the return value.
 
-Ah yes indeed, the check should indeed stay. Thanks !
-
-> > =20
-> >  	return 0;
-> >  }
-> > @@ -1104,6 +1119,7 @@ static int dp83822_led_hw_control_get(struct phy_=
-device *phydev, u8 index,
-> >  		.led_hw_is_supported =3D dp83822_led_hw_is_supported,	\
-> >  		.led_hw_control_set =3D dp83822_led_hw_control_set,	\
-> >  		.led_hw_control_get =3D dp83822_led_hw_control_get,	\
-> > +		.attach_port =3D dp83822_attach_port		\
-> >  	}
-> > =20
-> >  #define DP83825_PHY_DRIVER(_id, _name)				\
-> > --=20
-> > 2.48.1 =20
->=20
-> Best regards,
-> Dimitri Fedrau
-
-Thanks for reviewing,
-
-Maxime
 
