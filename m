@@ -1,215 +1,188 @@
-Return-Path: <linux-kernel+bounces-517284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F9FA37EC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:37:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F61A37F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18B4161650
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CE016D16F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF65B215F40;
-	Mon, 17 Feb 2025 09:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E85216E2C;
+	Mon, 17 Feb 2025 09:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH6llmNi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h292Lw14"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2070.outbound.protection.outlook.com [40.107.103.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC61F155316;
-	Mon, 17 Feb 2025 09:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739785050; cv=none; b=eOF57wjaWMud+R4I8GvA+yfMyNkrVfsCUOG6HniS3v7yzZ0Qy+ZK3y1wu60UFNrYVspc2OFWnc8uirjvDGt/slQKHr3Poo6kljfgS0VURWhOWVm4CCSScWbA5OTYHqU5n9JAqo99vkskuryHKP+rV4efEA5J5AxxCJKMIhACTAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739785050; c=relaxed/simple;
-	bh=AZCs5g8Mralms5Xjea2hMqxAgz+/0HZ4sntHHhpsj9s=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=en1YhjzqeLj/lQXy1IEnSLUv/WjdvMeHQd/A3O0FCY90x+3vJndO6y9PuLORmxh+dp9vrFEo084no5JoJTr+mV7lWfGvps1yQjOL9C1+IKo3pWySoJMUycQCllC6KuUWt+41vbet5DsGFq3V1aNIBvTnx9L+9b3XeIXZdyqFuSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RH6llmNi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258C1C4CED1;
-	Mon, 17 Feb 2025 09:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739785049;
-	bh=AZCs5g8Mralms5Xjea2hMqxAgz+/0HZ4sntHHhpsj9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RH6llmNifW/GIp1YLSH29+A+9o7u8I2E0W3EyKFXLU1MKdiVZlTSttctViCPDEaJo
-	 MSIIzZbfDvaacMB1GK9oIeii0mbPtrcxYzLiAZOaZRSZdWUnyLm4ByZd3t4CH+U7CU
-	 gsoVw7xBdahqHquX6A0YTxXvsgT5mSVnTGO5uyb0C+aqHQtt8njJ8vi+P6XBxPbAkR
-	 3dgdnwqQ2dQ3CXZDE9IHiEV50BsIu6jt2W/y2pWE6six45KfPb7KAShqDFWq6JNn2L
-	 zlKe+Av4bNn/RPTMlp6lUbfdyMM0xMJxjueXRziyc6atx+8Ki923PlfQ97JSRVrDI7
-	 gl3zTX1ukcHkA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tjxZ8-004zmI-N1;
-	Mon, 17 Feb 2025 09:37:26 +0000
-Date: Mon, 17 Feb 2025 09:37:26 +0000
-Message-ID: <86h64ssyi1.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C182165F9;
+	Mon, 17 Feb 2025 09:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739786180; cv=fail; b=fnUEf6z7/XCca1+OiqBnllcnwHK/oT7MbWFMcRfPuF58ewpWpAWJd7f9Jhn8zYnUae4OHOh0Biy9d1rsG1GGaEOAHJXEUtD8z2qXvaA2bdfRM2d86wKoonyd/S2g/QyTEmhD45W6DjdEC58JPxsMA9aE/rPiOwfuXXf2MqahAGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739786180; c=relaxed/simple;
+	bh=jPu1ZP22+NClqqng6QlP5eqoDB1CNQTLuEMrSuFRHic=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MvTY1QrfYGDgJONxCTVenqFu1tRxvDjmPVCEFwoXGYB8vOvxrGqVP3IZ803hoFfaKmgXTUMD9FYZBLaVZ8ORsFwZbHDofSRsjFcJJSxMAYBX+SH4+m5P7UHf9mc6s/vzKH4EDBs0qSxsosvkjVLFBDwCpvHAwYR63BTd7+bOOu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h292Lw14; arc=fail smtp.client-ip=40.107.103.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jE1AqGIaCxnrbJ84n1bky6JbmbHK7RCmaJQG+PYlb1bc+Gg35rfZCVgwb2njhurc/KIAy28rNkp6HlUyFTLzQO6B+mIoAwTnxkbK+w+lbR0NvKIatwJqnXgDMR0sxvaD58q7YrVV10pXtFp4jNb8AZIPhXZRQ79XGPdKKrn3gQeMB207GpMpXePBSxd6TyxkertwIJUVyoTjRCS9+DZl7eypx2GO/+UK9rpFHa+F/cv1wF9Qlw5FxYtRT5ArJ8hMRZgJgNIAsxVTN4TbrLW3h1gnJrcpVcyRLgF+SYvfuHDABCaGtQv4cxAYSudFUO1itBha3Bp6mR4ZbQ/bpPhRZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V8G7MSe2P/2X03ljRDMV4899Mbm1A4oIxxTH6ARR+dA=;
+ b=nQd0gXvSbWFNNQHJ0L73905Gx6auZACy556tmNyhk673q3NFr4JCH0iDlml6C1g5aqTteLTr76QxcLXpTO++Hx9g/JdWJ9a8T9YsbiZxNw5lujAoBjAFITgvI0xWeiG8kD1YZyv0Sa/7r4Jjw9ny4UR3J3EpsvLXcXQ3nsz70aHWBWUeNh9X/ernQNhRHB0A7Q7hioZmRozNTx3TUSjRgEMP3OgSIPbkP8vVW5lPGKHFYuqzczu9vKjaphRIHfQXIdtS7z3a/Px+ZftsMc1q2je4pSSQakay8JRj7Z8nqz3cd7xTI7t7rXtZwDKxvjA09/WIC6XLPUKcliInOvxPjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V8G7MSe2P/2X03ljRDMV4899Mbm1A4oIxxTH6ARR+dA=;
+ b=h292Lw1455TXH2+vKbmGv4Cp4n2cyHi5j2M6BV2SFSr2PwA9sJ607NXpHL8Jwl/w1lmKlqyw+T+c8jOnrNKmIyKaqL0dMFtJMieZrKT/puTMxMK1pSrqL8qk2AiOiizFgJ0mwbFSii8VARTJMmC2MzkhWwMcv/KI9OhyqSLUcygy9+QTet6qWoiq6RwVG86DthImwBKXVtfh9EMFWUGhOY/DzMFTTs2spQSGd5T3vqCVBV+WdIdtzBFeJ7U/cp+rnkeUXgyF1iUlxHwsagE7jmUqtg8cLgaWFwTSLA06PBmzF74F8/goJANGF8c3GzgCwlns/VTKEpZZeBCLxvbLdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM9PR04MB7684.eurprd04.prod.outlook.com (2603:10a6:20b:287::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 09:56:14 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8445.011; Mon, 17 Feb 2025
+ 09:56:14 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: ioana.ciornei@nxp.com,
+	yangbo.lu@nxp.com,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/27] KVM: arm64: Implement support for SME in non-protected guests
-In-Reply-To: <Z69dsGn1JVWPCqAi@finisterre.sirena.org.uk>
-References: <20250214-kvm-arm64-sme-v4-0-d64a681adcc2@kernel.org>
-	<86pljkswuk.wl-maz@kernel.org>
-	<Z69dsGn1JVWPCqAi@finisterre.sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	imx@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: [PATCH net 0/8] net: enetc: fix some known issues
+Date: Mon, 17 Feb 2025 17:38:58 +0800
+Message-Id: <20250217093906.506214-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0196.apcprd04.prod.outlook.com
+ (2603:1096:4:14::34) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, Dave.Martin@arm.com, tabba@google.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AM9PR04MB7684:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29d2fcd4-b940-4e25-547e-08dd4f3950c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Rl+HKIODbHJ8Geo2yBpwQa5CvyT3GTJnWyku0cDXoBRE9Uz/r5za0lm5xaRU?=
+ =?us-ascii?Q?saUKbJiM6E2Ir6N0FlEQp/jG/3Me5FiLq6bXd1fk5VLEVt4Y3Zlu96QPC081?=
+ =?us-ascii?Q?b+3g/sJyiT+BxCCtd4VbYsTeoUhu0dKH+iWDqeJj3p5R8rwHvzRNyLDarrIH?=
+ =?us-ascii?Q?cHCKLEqTEbpXv89XWvvZRy+Ylmyo5fxpvRAKSA/m8mF3CLqGoTmE5ERxGT0K?=
+ =?us-ascii?Q?NHW8fzkWkc/jzgQo8G2ZatQXbg0jrlOKf4JY0q7xQNKLm+T/Gru6TigrBXre?=
+ =?us-ascii?Q?Shc68B1nkMSN752MgyvBLgQfLWKQrloIoDrU2ifO5CtTPJyCvlTaOPY9OfN5?=
+ =?us-ascii?Q?PIbjja5fHSAxPe7D4S5sImZzVtluNEExRJjRiwQO8IciXwX+uNRf0fKbiZKf?=
+ =?us-ascii?Q?urVOkUp6IbvP2wXGFUgJlLcgWVUYgrpH/eASGuG7rnDNGDGT0RD/7BAppBNu?=
+ =?us-ascii?Q?OEWQTDh2wamnXSr15/6/+nOWmnggnGWEkzzgpDNwpX75MC8Ve0Hg/FYHZM7s?=
+ =?us-ascii?Q?nOoYiyAPoU/AUwh9B62fmhS4YlKYmS7P18quKcIJ839mv3fZCEzD+GAdz48o?=
+ =?us-ascii?Q?6HF17X5z8gfoq29/NW5lEqVWPTYOzoMoiG7i9qyGGb4XefiX2m4Hei7WHWgp?=
+ =?us-ascii?Q?tTlYsZo/r9xJNfLqj1PY9VBucrr+WBjcvfzCzLgf++TpdgljyoRkr1CCCNUU?=
+ =?us-ascii?Q?R0tIU38VRL7JXVTnIA4oWSicF61JOla4o5MBhEFmRia9coWiTpEAnXZAAPEe?=
+ =?us-ascii?Q?Giq8Tj/sE23smOZrCDPbvWZAxaVh6M33kVpEXGN0n0NBURbor8pFOBYcewTb?=
+ =?us-ascii?Q?fGL5nuRkV8SPvGnE1AMNtC6Wmy59J+cC3f0nVfCRUzr+T3+MbZf3ZRKm3CVH?=
+ =?us-ascii?Q?teeWgHTkahtmKz8xKINhofOeGFo4pF3G8CAI3c0TyYFKUtF3Gith3rVAPEdg?=
+ =?us-ascii?Q?WnGHquWysK+sN33JigiLEAUxussVAoJD3G0kZVKpVzl9s5/viP6Ro5bwe5h/?=
+ =?us-ascii?Q?CCGs7+/aYj2KJBuL9I79K3cZIt0kcyq3ZQAlOBqgpHWTLjqS95we3SRTM/vt?=
+ =?us-ascii?Q?bUfMVgwJhTPebjhwB99ZHT2W7bENAbHurBBp25fum/b/6W2Ez3Yn6FcJkUze?=
+ =?us-ascii?Q?IQ+UlvcUDjQmvnK9tKqReCKJkj/hjBF/epbihKE6fkn96zIH1nQ0kynlgjb9?=
+ =?us-ascii?Q?AwWgrcff+3C3iAmSmg7XClPpYnOndgIJXCeO+eNTmjnsFkcOiDY9h+xwqXdl?=
+ =?us-ascii?Q?mwe5wcUw3mEXie8qX/sGMprCGTv+i1K4qsrlzvbGMTVZTaaZGQ6i1i24FuHr?=
+ =?us-ascii?Q?ZzjCZXwbZGr6XmQw9CSTLLluCO40sDMc7N7jAYxn32Oq2uVhRUnJWsM8SD3E?=
+ =?us-ascii?Q?M8I5LP6pM8oMR/7ViEbLywwK03TdnatUsU6NjpZyoE/kq3glOUCnwTyaQnsc?=
+ =?us-ascii?Q?nT2jAIJkpPqVB6sfvezl+CA8I0z3OXkS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FGU43UyynQfl0cuzDWLb2ukspbsDn3KcD8ISlvSrsxkZKUz6Q3+xoBfTGZ/C?=
+ =?us-ascii?Q?4VJhETd6V2OjLpjVjs1MFjIwHQb9p5ePd/swKOZFC5rJfz6aV/72B40spLBf?=
+ =?us-ascii?Q?ZxmhmpyoFMJI73b7gyoVmABWiEAXEQoLioQlNxHnLYLsJBEaC5BdpMOgkKlH?=
+ =?us-ascii?Q?KIAkRH5Gls3lrwjQ5OnIGTSPhuTjD8FcFZzi/4w7Xj0kfmx2ugy6g66nKAV/?=
+ =?us-ascii?Q?WO3G5fYT28vGJi9N/DQFQK5Yi71cSIKulnfJB0PBzA+SeXXf78LbsXd/pDvG?=
+ =?us-ascii?Q?l4lM7jiFn3IEeDfGxYrRm9XvFmbhE1yQO3M2ZWP1x3z30baTl167ZZ8e/Q1z?=
+ =?us-ascii?Q?eyVV4D6YStbyYiRj7lFpemGHUscAZbQUqqailVChdb7nmwIChF8mx7rFeiLp?=
+ =?us-ascii?Q?69n25uJDqFNME4d3cSfo2wn/SfxamzzAt9q6hCBokOmKtYx5h1iqM2gu2VkD?=
+ =?us-ascii?Q?mimXZS1wAeAVaGbjEgL64P1uYy4Of0xYVqzz59gStR8KHG+IPBVhnyT2oIoM?=
+ =?us-ascii?Q?uX/jGql89OjK80Zp+y6juYn7dbyEAIQ/qSGVk8b6rjExOzmzqogYbELUHUxJ?=
+ =?us-ascii?Q?ynz3tgHRowGR4mgW0mp5WHHxfsV1sdDxiTo0u0wrAJJ8FIY5+4OBsLHrD2yj?=
+ =?us-ascii?Q?NFeEeg4sCNi4L89EAUl9Z56AHfQ++zt6hiEJL4Ny+Ebama0guOXu8W9g7f1h?=
+ =?us-ascii?Q?47HqnmbxSFruYuYDpGK/I4Y0DcV3KWc3/9Eg3fjQApVrNrPj744dgd6WEPjv?=
+ =?us-ascii?Q?RimmcroKgsqlwSFd8hyEe5lVCfmtKWWSLWYCBMPHGhcXeUstaYrPsWaJSHqq?=
+ =?us-ascii?Q?pAXBh1lnQNGdxOUbVPVeyhfPexnnrk104uNUFzzh6MCLQp8RxNSf59ziO/Bu?=
+ =?us-ascii?Q?xbfj6P8GqLsFK+hVOJVIO9sbyK+oluokZHxslk3Y5tVzHgJAfSkZ4Dpw/zlS?=
+ =?us-ascii?Q?tiacYFxccjKslfPpbw9Mn6qPhygSkd5EYhVwCl6DRen+Aea/op0qC6bmmTuU?=
+ =?us-ascii?Q?OQ0kl8FVUo/CfZq27AhY9EMKxzQJ0nVEY71XfLhhrX0y31P+4H/XGXQjgduW?=
+ =?us-ascii?Q?oNQ/bk4aXe4fdLILi8Ijox/DgJD0MtoC+j1puutTHW2HR5cZ7PpzHbfDnXRK?=
+ =?us-ascii?Q?ON8flskhDV6HuKPpYgG2ADitLd6JwB4YVJiVq6hgbFBL5nELo5KjOpbVSL0e?=
+ =?us-ascii?Q?wg9Tz4+zXJwGAXwLQxXxE7NbpW6PXAjf7dAeVhA6UpkHyNe0zeHRK15XuIg1?=
+ =?us-ascii?Q?7bspwRdb2EdWv1Mp8NtqPNUulacolVocPFDe/nGEYnjVp7KjsMsoSf1Y/Zii?=
+ =?us-ascii?Q?LbYb8W8VenCDQQwtxUtN9RPlcu0CC0sH+mxgE6eW2yxlyHl/9gbO6xNSKfW0?=
+ =?us-ascii?Q?9xsppuKwH3T5Ljd5RIb1zdge39dXIrACCxBrAcGKE3GIj1yfwI8Wi3D3JVWm?=
+ =?us-ascii?Q?fABtqnd6mSPrExc++WYu3Uq6jB0aYFCkv88vt7lIo8T6xcbSYAZkVHJnuvXy?=
+ =?us-ascii?Q?htaESXrc14U70zs86/7/3d0GAMGAs9wBOLaaxRajPN1sCl9CkneIAbhPcnU9?=
+ =?us-ascii?Q?J3EKsU/AmV3+rCE+SWktF2Azocrc5Br5qZUJ8lWW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29d2fcd4-b940-4e25-547e-08dd4f3950c0
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 09:56:14.6845
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vBAvxQZbqZF+qo/oTEorXQa5ZGAG/ChqTctbvRWfMmavyZMHCww559kd77S8c+kwRiLZm3CfEpvAYZT6LN0Knw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7684
 
-On Fri, 14 Feb 2025 15:13:52 +0000,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> On Fri, Feb 14, 2025 at 09:24:03AM +0000, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> 
-> > Just to be clear: I do not intend to review a series that doesn't
-> > cover the full gamut of KVM from day 1. Protected mode is an absolute
-> > requirement. It is the largest KVM deployment, and Android phones the
-> > only commonly available platform with SME. If CCA gets merged prior to
-> > SME support, supporting it will also be a requirement.
-> 
-> OK, no problem.  This is a new requirement and I'd been trying to
-> balance the concerns people have with the size of serieses like this
-> with the need to get everything in, my plan had been to follow up as
-> soon as possible with pKVM.
+There are some issues with the enetc driver, some of which are specific
+to the LS1028A platform, and some of which were introduced recently when
+i.MX95 ENETC support was added, so this patch set aims to clean up those
+issues.
 
-If size is an issue, split the UAPI from the core code. But don't
-fragment the overall world switch and exception handling, because
-that's a sure way to end-up with the same sort of problems we ended up
-fixing in SVE. pKVM has a direct influence on what you track, where
-you track it, and implementing it as an afterthought is a very bad
-idea.
+Wei Fang (8):
+  net: enetc: fix the off-by-one issue in enetc_map_tx_buffs()
+  net: enetc: correct the tx_swbd statistics
+  net: enetc: correct the xdp_tx statistics
+  net: enetc: VFs do not support HWTSTAMP_TX_ONESTEP_SYNC
+  net: enetc: update UDP checksum when updating originTimestamp field
+  net: enetc: add missing enetc4_link_deinit()
+  net: enetc: remove the mm_lock from the ENETC v4 driver
+  net: enetc: correct the EMDIO base offset for ENETC v4
 
-> 
-> > > Access to the floating point registers follows the architecture:
-> 
-> > >  - When both SVE and SME are present:
-> > >    - If PSTATE.SM == 0 the vector length used for the Z and P registers
-> > >      is the SVE vector length.
-> > >    - If PSTATE.SM == 1 the vector length used for the Z and P registers
-> > >      is the SME vector length.
-> > >  - If only SME is present:
-> > >    - If PSTATE.SM == 0 the Z and P registers are inaccessible and the
-> > >      floating point state accessed via the encodings for the V registers. 
-> > >    - If PSTATE.SM == 1 the vector length used for the Z and P registers
-> > >  - The SME specific ZA and ZT0 registers are only accessible if SVCR.ZA is 1.
-> 
-> > > The VMM must understand this, in particular when loading state SVCR
-> > > should be configured before other state.
-> 
-> > Why SVCR? This isn't a register, just an architected accessor to
-> > PSTATE.{ZA,SM}. Userspace already has direct access to PSTATE, so I
-> > don't understand this requirement.
-> 
-> Could you be more explicit as to what you mean by direct access to
-> PSTATE here?  The direct access to these PSTATE fields is in the form of
-> SVCR register accesses, or writes via SMSTART or SMSTOP instructions
-> when executing code - is there another access mechanism I'm not aware of
-> here?  They don't appear in SPSR.  Or is this a terminology issue with
-> referring to SVCR as the mechanism for configuring PSTATE.{SM,ZA}
-> without explicitly calling out that that's what's happening?
-
-I'm painfully aware of the architecture limitations.
-
-However, I don't get your mention of SPSR here. The architecture is
-quite clear that PSTATE is where these bits are held, that they are
-not propagated anywhere else, and that's where userspace should expect
-to find them.
-
-The fact that SW must use SVCR to alter PSTATE.{ZA,SM} doesn't matter.
-We save/restore registers, not accessors. If this means we need to
-play a dance when the VMM accesses PSTATE to reconciliate KVM's
-internal view with the userspace view, so be it.
-
-It probably means you need to obtain a clarification of the
-architecture to define *where* these bits are stored in PSTATE,
-because that's not currently defined.
-
->
-> > Isn't it that there is simply a dependency between restoring PSTATE
-> > and any of the vector stuff? Also, how do you preserve the current ABI
-> > that do not have this requirement?
-> 
-> Yes, that's the dependency - I'm spelling out explicitly what changes in
-> the register view when PSTATE.{SM,ZA} are restored.  This ABI is what
-> you appeared to be asking for the last time we discussed this.
-> Previously I had also proposed either:
-> 
->  - Exposing the streaming mode view of the register state as separate
->    registers, selecting between the standard and streaming views for
->    load/save based on the mode when the guest runs and clearing the
->    inactive registers on userspace access.
-> 
->  - Always presenting userspace with the largest available vector length,
->    zero padding when userspace reads and discarding unused high bits
->    when loading into the registers for the guest.  This ends up
->    requiring rewriting between VLs, or to/from FPSIMD format, around
->    periods of userspace access since when normally executing and context
->    switching the guest we want to store the data in the native format
->    for the current PSTATE.SM for performance.
-> 
-> both of which largely avoid the ordering requirements but add complexity
-> to the implementation, and memory overhead in the first case.  I'd
-> originally implemented the second case, that seems the best of the
-> available options to me.  You weren't happy with these options and said
-> that we should not translate register formats and always use the current
-> mode for the vCPU, but given that changing PSTATE.SM changes the
-> register sizes that ends up creating an ordering requirement.  You
-> seemed to agree that it was reasonable to have an ordering requirement
-> with PSTATE.SM so long as it only came when SME had been explicitly
-> enabled.
-> 
-> Would you prefer:
-> 
->  - Changing the register view based on the current value of PSTATE.SM.
->  - Exposing streaming mode Z and P as separate registers.
->  - Exposing the existing Z and P registers with the maximum S?E VL.
-> 
-> or some other option?
-
-My take on this hasn't changed. I want to see something that behaves
-*exactly* like the architecture defines the expected behaviour of a
-CPU.
-
-But you still haven't answered my question: How is the *current* ABI
-preserved? Does it require *not* selecting SME? Does it require
-anything else? I'm expecting simple answers to simple questions, not a
-wall of text describing something that is not emulating the
-architecture.
-
-	M.
+ drivers/net/ethernet/freescale/enetc/enetc.c  | 53 +++++++++++++++----
+ .../net/ethernet/freescale/enetc/enetc4_hw.h  |  3 ++
+ .../net/ethernet/freescale/enetc/enetc4_pf.c  |  2 +-
+ .../ethernet/freescale/enetc/enetc_ethtool.c  |  7 ++-
+ .../freescale/enetc/enetc_pf_common.c         | 10 +++-
+ 5 files changed, 60 insertions(+), 15 deletions(-)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
