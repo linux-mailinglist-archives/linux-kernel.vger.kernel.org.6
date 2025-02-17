@@ -1,119 +1,210 @@
-Return-Path: <linux-kernel+bounces-517523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A07A381F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:39:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2E4A3820D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0F416A28C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9E53B6768
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34915219EAD;
-	Mon, 17 Feb 2025 11:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951CA219A66;
+	Mon, 17 Feb 2025 11:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLgkTqAj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cqHv1XRS"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777C8218ADD;
-	Mon, 17 Feb 2025 11:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792296; cv=none; b=udMJXlxvINM8NXZ8yEzKW1RHyCfm3FpGb51yropK/kxrFIW8EgpSGgVRqqhkNwCvA4SiGkAnrsWytK5p2978EDXSKSdbQBxYkVqmjGo6Gimy0mcqhZeKYtlblKxSG3lhciPTUbtyk/+VaMxuPmSSxzqzyHijKBIYC6KWIykdapY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792296; c=relaxed/simple;
-	bh=vJ4rRARvHvI+TqMh5YEfuph2abkuxCb70so77AF6Lp0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UXQenFjnhMigUH4z6rE0w3yqOEVMFH0xEBti8kasmeBu/g2v2T7bvV5VZSl6fWCKSBb7bcmgMfz0l8ubiJMIIS5c5KRpbAqSwcticm/nzYjliWsIln7jun3zawCreLN5sDm41NqdHG9YIc3FYEAIzA/OHCtXP0yqGpuRbiUyA/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLgkTqAj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EC47C4CEEB;
-	Mon, 17 Feb 2025 11:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739792296;
-	bh=vJ4rRARvHvI+TqMh5YEfuph2abkuxCb70so77AF6Lp0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aLgkTqAjZvP6rN/OTvl7AfhLcg/jEkj9q1r29l6LwmspKJtdguR1u1WeqG+IyJcgs
-	 IQD3Lh8xaGWNdvD4uHWKsRHL3oEKpkhnr1xzRvf/QPe0q9JbdoLX4wlG+6a7wUZtih
-	 TDk1GsVEru93sIyGt8zDZbJiwbBLWe+ZiZnNMiDx59huz5KWVPpFyMxOSz3athl4XQ
-	 bjnRWu0wsuifYo/CPrFntpcpv3Nc5J8MyHqMtf9CztyNnvdNNrVOOYwikBNZCaZ0lS
-	 10O+Pv5MjwSWUGFCHVEODRHdA92Y/SFjc8bVz9mDSE4tg7fxA+ZXG06bQnUe71oqdE
-	 owT3QCsheT8JQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10369C021AC;
-	Mon, 17 Feb 2025 11:38:16 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Mon, 17 Feb 2025 12:38:04 +0100
-Subject: [PATCH RESEND v6 4/4] MAINTAINERS: Add entries for Apple Z2
- touchscreen driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9E721B183;
+	Mon, 17 Feb 2025 11:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739792308; cv=fail; b=ESsIu2VGI5FUGYvTqq7fqho3B8ChN9fEjqLiJ7T6XBH0d8ZrWDUvcsZbu5CM8wSJPpp9NDQPA2m8zGSy8CEHtpzf3lLAyutNYu2ccmesOdIwllzVIGIoZnyu+UjTWyecLhSEm/ZZMNckuLMr1hhS1rwiMYP+BBibPFYA322m5bs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739792308; c=relaxed/simple;
+	bh=fp60hMV8ONakNer2vgV8x3KT95ZVtipvjG9aXB3yuB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=M2uFSJCl/4tRbPgCX8oD1WQCfA5ySvbKoZfwdONF6YAAONnGkV0F1E8BsVJBYIMbVLkC/3cQvTzQBoplnGCs9+OmdKRJiNacqfvz+010F9NeOcFogPkrlpsizvw+8X0XlXBSEZszdMSLTpXCahiQwYBls/dCg8VbPvJ9IWxttk4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cqHv1XRS; arc=fail smtp.client-ip=40.107.94.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BBc2SMkz57KCIUewHRA/Hqt0j457HhoLyszHevmcXL4iiJiZcvYCOLhocnHLdvFAwk1hdzqmhWL0mwZBens+SKTk8WqZCiiakHhUbI6/SxuKf8rqmhzs2pLFkIW4m0WO3Zy3CW3vwxIYulGYdwGiAgbtCBu0CwIil9ppoc2KguBPaONbLOd5VXeEPWIghBzI9H+lFz6OgODqavzCmtPfssGiNhqnj23FfNamtnfGgL8KtpZGB5JefL48dZCvx6hX8aSXGOR4z/oXZEG86HDvNhlzFMvgt20BdGRl/J4GN/9BwJL/vF3efEoolO9e1t56Idyv3ir5DJ9kEuTpyPZZ+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JCwcrhbDp+BPUyCOahc7/NTgWr2s0S7ISYi5X2fnsEE=;
+ b=VTdywQhZwva/3yKgQTU9hDpFW4jthaoTuvXlHLvcQz8pvk6lNb99kzidr/cQvof/ykoZFZuMOgcBwwDlfTicLtcbgqG9Pj1HFSnYxvftRcUBvCXk0ZOGLkuHB8R87Rb+IB6xc29dqLNa480Nhi0UNeETVlmfTvB6uAQ6JF+4tlcfMDD8GfvT9iqrZs7gUy8zOBuLDt4ofKMBmGILnM2HV6QwtxEpzfUlGwWSm60RATIEZEdeEoe4RQkb+8wO4Gun24JKs5BqfUOhy/M7fC701RRJ8owQ3uPYKd1zC0FxwMC7LEf4MrvJ77U4f7/ee+Y01tbQdkNs91Y+QeTVmQ/pGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JCwcrhbDp+BPUyCOahc7/NTgWr2s0S7ISYi5X2fnsEE=;
+ b=cqHv1XRS5ULvHP/Y6T6iZE2PSG0onWSRuzmPvFa7I4f0/+4hNZ35qVxHupqsJ9Zf5cKhnPcYYOHg/TLthRH5ayR6gPgBLkVqzvWiAGB0T75Za1QhdAVgIMwp1CGrPyLDKR5pMLqJ+X8jFaSajmKLuKG5lLd56whQ3efkk+fC5LE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ PH0PR12MB8128.namprd12.prod.outlook.com (2603:10b6:510:294::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.13; Mon, 17 Feb 2025 11:38:24 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 11:38:24 +0000
+Date: Mon, 17 Feb 2025 17:08:16 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 09/17] cpufreq/amd-pstate-ut: Continue on missing
+ policies
+Message-ID: <Z7MfqEB48RqD7tuZ@BLRRASHENOY1.amd.com>
+References: <20250215005244.1212285-1-superm1@kernel.org>
+ <20250215005244.1212285-10-superm1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215005244.1212285-10-superm1@kernel.org>
+X-ClientProxiedBy: PN2PR01CA0229.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:eb::11) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-z2-v6-4-c2115d6e5a8f@gmail.com>
-References: <20250217-z2-v6-0-c2115d6e5a8f@gmail.com>
-In-Reply-To: <20250217-z2-v6-0-c2115d6e5a8f@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
- Neal Gompa <neal@gompa.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739792294; l=1303;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=InMRbHicu7oJRHDFwDtDafdNISTi0qP6MkyrWoUFJQU=;
- b=q/IU4spImyU4lkrTPb1Sg0FrX7UxOiEvj7DS7BBtsryr0q42cLnwkhNA5/D9LZTElpkvjdxf7
- Sf/fJJw00D5DXJdrOZdae6HPsK1n21+QpsFYjh7tgj2I4MP95rCxFKl
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH0PR12MB8128:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee59f2da-6fdf-4124-bc05-08dd4f479659
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u94jjx6iU24IljXYgAbGnw6Zjj/GxqPYcJaN2Rqhp4eKR0aFVk983JUgz9Kz?=
+ =?us-ascii?Q?ZVsP3IOIWKTSxgk9v3oSSJIrX2je/HbWompqBhjb5PGQ9XA5h5YG5cnmuWWw?=
+ =?us-ascii?Q?VHOA++QRtLFHSxJZtGFDPOdwE7Z/n3xHadBx6OQs+TnA3wwUEIbcIiIKPXXS?=
+ =?us-ascii?Q?NjwFKfGSoXaE2HAMgAGFMG0OXi7Kq5Z2MSG8VQQd7JyPFwzPwafVDvNm1Vh0?=
+ =?us-ascii?Q?ahYTxiYlAHtYXg6bhbfFPyOc5j0h4o3hbN8OsnyckSt3idDoUNoUOJb9rNUb?=
+ =?us-ascii?Q?Z8PzmF9oqXEG1I/R/eP4UPc84sM1Iu/07Z34QoHtUq2IW0nrvsJf1mtikjju?=
+ =?us-ascii?Q?q1HigGzvrbgLcQVrNBi/SctMBFalymunn7H1GbToMoLousx3fl1q746FrjgK?=
+ =?us-ascii?Q?NwI2pD4eDfeYLEtEiKUIVvEvTKor9zsnWYCGMtcLiWZzoPM3ydamk2YGx/+9?=
+ =?us-ascii?Q?wzGx8jFPSnmNNAI/58P3LCAUEWs6312STt6uf+wJw3WpAiOJBi4USgb2QMW2?=
+ =?us-ascii?Q?aJIRyiNMlcDeyAz8PVWUBbwPOh2ICpP0+GDic89sy5o+R0RSLF86z0c2ZGEm?=
+ =?us-ascii?Q?8j4mI0C+DvlpTPIBS/hnNYGUxNr/jf3USSuHCyPfkZBmsQ0MWREYolOyPgI5?=
+ =?us-ascii?Q?Hat8j88RtLjqDYAjf+kpW5z+mJ/IFyO7UZZv7+GDVrU2yz39gN1Tgafb5YeK?=
+ =?us-ascii?Q?cTwNB+Q/c31+GGwHAAwdBBLalcLJDo/heYehTwC3eSyKFr9cpclVjqvt5SUe?=
+ =?us-ascii?Q?YdWFPIfBDzJ3u8PChm8EB35kDxqyk4e1joEbljmBxNkdQwICq/hs+vscjr2e?=
+ =?us-ascii?Q?qtXfYPSIsysQdy0QKu1p4kvahtDDfVp4T2Md9yZnanLazwTjoJ6/x0UvDrpk?=
+ =?us-ascii?Q?om8t4HJAKxBkjXkqpfD5uBQm0QUdN3Mjx+zWJDZx14/fr+BSv7XlBmMDe+dr?=
+ =?us-ascii?Q?Z+Jh/IhCidNGOJIAxj9VA4tLS7ivHAnC2K2YLGonIbAZjelc8Sv81ALPNPl9?=
+ =?us-ascii?Q?D2PwWZSDZQTjEUNKDL9mCw71fVQJ4Z22GOokjHr5SczIwPVkHCu+pdoNL8F7?=
+ =?us-ascii?Q?2ICEOeJIOnxXn9UcZue1CcVVD2hzv3yr+k2rfPIsWuD18U50LwkWEuGwPw8d?=
+ =?us-ascii?Q?ciViVtgpT4jbO7g99eX4kJtoYDEZgqvLhhqg/eiGrZiCp29nZXnrhQSP0LJ+?=
+ =?us-ascii?Q?/BHY9hIQ6tJAW/siM2HDYGcn75TFH9Pp8/pZa5IEngJqLQKrRxAgWK4CoUPj?=
+ =?us-ascii?Q?kym9WWxwsopM9crJHW8dpPNcB/sPbfQ8ws9VkGJk0HBZmhIBETz2ydyrH3/l?=
+ =?us-ascii?Q?nfOG5TK9cDQviXFIF2s3PgAX6rZz6vDvRFt8Y5eeOUSEhC2Bam3+f2JBThwg?=
+ =?us-ascii?Q?NbTublxpCPODZiJ0qotuKbeQ07OR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hee5Pgqe0dO/HIjclBY1R5DX096rmiSP4o5I/njYGTX02eIlbiRUoUPEBL/N?=
+ =?us-ascii?Q?3QCQN6ERtLCgMgzSx+pipgyctir4w/ds1NaPfP/Yk63D7P3xo7bFt+sQZ6jU?=
+ =?us-ascii?Q?DheV53+MR7SfjxyZfTnYXeyAfeY/M44Uqy/wccN7JzT8fV4u8wZPp3ZEm1PM?=
+ =?us-ascii?Q?+Lz33ZphO7NeYQ17RmZwfQIN/X0Rgl0DXYyOmEXksJpvzhQNfJ9qITDRJOtU?=
+ =?us-ascii?Q?l2RCLpfbngBKuBxPcELWHN95+nELAIIxkrfBFWUEymEruZsL0IfP1/jevG0o?=
+ =?us-ascii?Q?HnktMusOCcnNSNoLh8x4Y3ekNOZ3fRNktSySxSYHB1Xd3M8S/lG06lztypCe?=
+ =?us-ascii?Q?JIOf+uqcbwXhLQy24yc809JMOLKfNlfaSnvUrVAakmK8vCNO4Os8pvzdb2E+?=
+ =?us-ascii?Q?xK3FT94bzIJVwuPDS0WZjKDAQ31B7I1q3E9tguMrzxixnHBQwhXKvSjn2aKn?=
+ =?us-ascii?Q?GB3Yy670aK5mzIFtUz8TKSIXzMGVA9hD9/8AOdUHVCQIQdw3hQdIAIw5TdDx?=
+ =?us-ascii?Q?4qGY5S2p9g7pBkmj+m/oH13aQI+U0wGILD3RftjQsmmgWnOO/Wb4GiDpLH5W?=
+ =?us-ascii?Q?P4yh+sIK12TVK3MSnQNKvJ10jPH9Ynxu0QbgUjubBoPAKTqoeI5F80L9yYT8?=
+ =?us-ascii?Q?jKBf/6IcXLjhuqp1K3LmXYi2iHwX6A1LEiVclCjLHyaAvZKAr+9Lpmh4h8mk?=
+ =?us-ascii?Q?1om8f2vUu9srTH6qvj/wcT6W4l0kIPMWX3IXCNN7aWbgh3h6tBSJ7uS2rKmw?=
+ =?us-ascii?Q?TuRdOS2QwMwpQbriOJFfK5lzSPb7HVdoe1uN7wPYTc4f1s1bWdtuKbEHZOba?=
+ =?us-ascii?Q?HCiKqoN6M+kgXAq/KBVhUKoWAvssoHLZuSYnPkjh/kouTUczGWsOkTHVqHmT?=
+ =?us-ascii?Q?vAEYnRHUgjxJpZmSojgnt07ISyiXPt8K7Qe1o4weTSqGswITleXCukZ0v9S8?=
+ =?us-ascii?Q?qMExS1lZoL8zhMDT+RVCNsuOeOJwTYju72ykHXXIyL4LXh91WmPBbsqixDUF?=
+ =?us-ascii?Q?vJIDAA5+1xqsF7+uOaJ00RhLV/cQE7sAwYnyA3PqCLHKRa8fg4bPw7fjPu6o?=
+ =?us-ascii?Q?xLhhxVjc/P59l2JkDQYvGOJF0swuszPrLpo04OdGbE363Dm3gU5Btui7++SW?=
+ =?us-ascii?Q?jN0g8GVfALmiOHKhXuRaBxvYgpEa3hvc129OOvLjCWpgA4Zg+KoXMHW2EoGE?=
+ =?us-ascii?Q?i39BT+rxYVOo57dt922VNB4b9OTvAksYw/lH9GnZTWO0Va1x8kLDdAGwa1N5?=
+ =?us-ascii?Q?rBWijqAneT02OweDdEViutmnBD+RIpkfG5hNCZd+lWRLUQKaZk+MOQjvGkPO?=
+ =?us-ascii?Q?dtuluyUnCMK9eXIPIWG0WTmzLMyaF3eMkWF0EiPR3couNOY/Djn4WMw14rGt?=
+ =?us-ascii?Q?m5Kza+QSpvmCjE6Fz/GyFoI6TaGAS+owFcGF0yT0eYvYLJ3YGpj6gqFVHmVJ?=
+ =?us-ascii?Q?N4wnE76Av2SJW05y+NCe/ON+inczMx9YWDOn7Z6YAimB9cYwiF+Oi+NQV2kD?=
+ =?us-ascii?Q?cU8YHnCQGdPhIKa+qurrG/IwvHGeY483fFB1woyOiswdD54nQ32nFyit8jAt?=
+ =?us-ascii?Q?jUAR8rkHKq8DRCanGOceppPlFYHmPlPqFyo7eMpc?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee59f2da-6fdf-4124-bc05-08dd4f479659
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 11:38:24.1257
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WFIFGMDFnvqBbGJU7WKxUcGZ1Y8iCljwEwVIjkFUtKwBEftK6kICQDGveYux2LmYdtVxpUBlnk0Xd8cQcyl16g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8128
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+On Fri, Feb 14, 2025 at 06:52:36PM -0600, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> If a CPU is missing a policy then the unit test is skipped for the rest
+> of the CPUs on the system.
+> 
+> Instead just skip the rest of that test and continue to test the rest
+> of them.
 
-Add the MAINTAINERS entries for the driver
+Along with this change, does it make sense to only loop over the
+online CPUs instead of possible CPUs ?
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Acked-by: Sven Peter <sven@svenpeter.dev>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a87ddad78e26f28ffd0f3433560d6db1518f9f95..8b3776eb748e128f87c44886b117e0652447fb37 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2191,6 +2191,7 @@ F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
- F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
- F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-+F:	Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
- F:	Documentation/devicetree/bindings/iommu/apple,dart.yaml
- F:	Documentation/devicetree/bindings/iommu/apple,sart.yaml
-@@ -2211,6 +2212,7 @@ F:	drivers/dma/apple-admac.c
- F:	drivers/pmdomain/apple/
- F:	drivers/i2c/busses/i2c-pasemi-core.c
- F:	drivers/i2c/busses/i2c-pasemi-platform.c
-+F:	drivers/input/touchscreen/apple_z2.c
- F:	drivers/iommu/apple-dart.c
- F:	drivers/iommu/io-pgtable-dart.c
- F:	drivers/irqchip/irq-apple-aic.c
 
 -- 
-2.48.1
+Thanks and Regards
+gautham.
 
 
+
+
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2:
+>  * new patch
+> 
+>  drivers/cpufreq/amd-pstate-ut.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
+> index 028527a0019ca..b888a5877ad93 100644
+> --- a/drivers/cpufreq/amd-pstate-ut.c
+> +++ b/drivers/cpufreq/amd-pstate-ut.c
+> @@ -121,7 +121,7 @@ static int amd_pstate_ut_check_perf(u32 index)
+>  
+>  		policy = cpufreq_cpu_get(cpu);
+>  		if (!policy)
+> -			break;
+> +			continue;
+>  		cpudata = policy->driver_data;
+>  
+>  		if (get_shared_mem()) {
+> @@ -193,7 +193,7 @@ static int amd_pstate_ut_check_freq(u32 index)
+>  
+>  		policy = cpufreq_cpu_get(cpu);
+>  		if (!policy)
+> -			break;
+> +			continue;
+>  		cpudata = policy->driver_data;
+>  
+>  		if (!((policy->cpuinfo.max_freq >= cpudata->nominal_freq) &&
+> -- 
+> 2.43.0
+> 
 
