@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-517204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5908A37DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:59:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343C3A37DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE961885C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C791887782
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1771AA1E4;
-	Mon, 17 Feb 2025 08:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20F1AA795;
+	Mon, 17 Feb 2025 08:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KXZaiGyI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yo0pUhoV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0041A4F2F;
-	Mon, 17 Feb 2025 08:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246821A5BAD;
+	Mon, 17 Feb 2025 08:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782611; cv=none; b=cX1Wh1DAKqvevLuPBAjqdw9J1BeeAEkFDwDpoBEJDEQfvhUq1nrs9ft108DYQzD08Rir1iwPbkx7eCpUny7hPmtyAcqANxBXyx38Up8crak5/Lae7pjJqlktW+WmvHTP2W+HmJevY2YhJfb1Y9JUrzp1VO2oYhFZ9XgwePHTnic=
+	t=1739782546; cv=none; b=HBQBgXRkQ9ylWTUkg7qCI3h4M9W1OJiPq6D2SDbg8UHKj26LbW3/3kr844grvhXZbAAqw2xOmNSvWX40YEImWd9zcZUB0G2adGAmEpGSqT3WAXR/rAnqGY+XfKz8DAHE9m+Sz68O7/ESSF/uf/1QBcvHX7ukMQOWIijdkzfgQPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782611; c=relaxed/simple;
-	bh=cCeJVZnbyCxm3okPfPj18vzOfbqd689/PyAo6ALqKZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIwY09akfSzWilAZsUAm85hRlPM4fykbs4Yt6qjCHpzEYhEHsMuozRW7qTJshsrsR/qI/FjMPbbocrJfywusTYAUwSIY69HK1M8CSEJxC1h3Jh+SIgHVJdmOusdvxtn8AgKd7RZS9jlEFpShK9UsGVCXCE5/BepNBuVLkHe8iWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KXZaiGyI; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739782607; x=1771318607;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cCeJVZnbyCxm3okPfPj18vzOfbqd689/PyAo6ALqKZ4=;
-  b=KXZaiGyISRNjXPv6TazfbR7mMEuBUOINFqCUwfqPWi27bBT+E6f1XVqC
-   BL0f4+MvUvfDNAc4/Y7DN7fjUSd+x4hSjWQD5dljPcNQWIxvLK1yZDtQ8
-   4JYL/BMe/KG0ODMFKhFoGCG3t/Hy0XXmYoHVlSPHdb+juuxSkJcqpVecb
-   AZFpxPnd1fUpc+zKvNTija5/sG3Vk3hsP2dDOhnV8Wfqr//35gS70ly5z
-   3UeS/PmKTd1DQAef8klSIfPUqbCN/hHhb4aT2bvVTEWVaB0nCkncI42Ro
-   E0+TbaHbB1luWP7PB3KmlK2OHLTL+xIpnT1Ng27wewxHGyYl543RNJdLF
-   Q==;
-X-CSE-ConnectionGUID: a4/GaCORT/auveGWX25qQA==
-X-CSE-MsgGUID: settv8tWQbqZBc+yuVRhnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="57986160"
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="57986160"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:56:47 -0800
-X-CSE-ConnectionGUID: fkiXbU45RaqtTj2TfbQ9vA==
-X-CSE-MsgGUID: 5GDjRd3/R1ixa2KjIFoIFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="114691424"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:56:45 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 0/2] two KVM MMU fixes for TDX
-Date: Mon, 17 Feb 2025 16:55:35 +0800
-Message-ID: <20250217085535.19614-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1739782546; c=relaxed/simple;
+	bh=EFEkJhwmsl3bE4JjyU5jJiAhM1TmuoUEGGWs/FNGWnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqZbDmjGREEKMk5rUOwVn58bRWVkSUeAPczOLbOrJ3KqslDvKT1kr6IalzHnVfNjIPvl5Y5CrPKCsAmv8hHWkVcb4HXePLRKzRMy9F8aFonMxc7tCB3eIhbjAj/1fBygzcd94awmG4W0RG+x3KsvWk46bQ0mttd67Vh9TNDGkPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yo0pUhoV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9EBC4CED1;
+	Mon, 17 Feb 2025 08:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739782545;
+	bh=EFEkJhwmsl3bE4JjyU5jJiAhM1TmuoUEGGWs/FNGWnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yo0pUhoVFd0aJzWxdHo4ZXreXR6IglCbU7SJLVBMqq/pEZjzyKTx0UeF1sCQ+S3Og
+	 kDg+yxTY63/5tpJ/RPLud90voPYhYnyCzKCpPzl31brSYScbr2ivzccyvxIwQIKe8b
+	 d29cH5pvYTpB3Fn6jGnLFPPkvfSDFqEMtYD3Aj/Y=
+Date: Mon, 17 Feb 2025 09:55:42 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
+	chromeos-bluetooth-upstreaming@chromium.org,
+	Hsin-chen Chuang <chharry@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs
+ isoc_alt
+Message-ID: <2025021705-speckled-ooze-c4d0@gregkh>
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh>
+ <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
 
-Hi, 
+On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
+> On Fri, Feb 14, 2025 at 7:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
+> > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > >
+> > > Expose the isoc_alt attr with device group to avoid the racing.
+> > >
+> > > Now we create a dev node for btusb. The isoc_alt attr belongs to it and
+> > > it also becomes the parent device of hci dev.
+> > >
+> > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+> >
+> > Wait, step back, why is this commit needed if you can change the alt
+> > setting already today through usbfs/libusb without needing to mess with
+> > the bluetooth stack at all?
+> 
+> In short: We want to configure the alternate settings without
+> detaching the btusb driver, while detaching seems necessary for
+> libusb_set_interface_alt_setting to work (Please correct me if I'm
+> wrong!)
+> 
+> Background:
+> The Bluetooth Core Specification defines a protocol for the operating
+> system to communicate with a Bluetooth chipset, called HCI (Host
+> Controller Interface) (Host=OS, Controller=chipset).
+> We could say the main purpose of the Linux Bluetooth drivers is to set
+> up and get the HCI ready for the "upper layer" to use.
+> 
+> Who could be the "upper layer" then? There are mainly 2: "Control" and
+> "User" channels.
+> Linux has its default Bluetooth stack, BlueZ, which is splitted into 2
+> parts: the kernel space and the user space. The kernel space part
+> provides an abstracted Bluetooth API called MGMT, and is exposed
+> through the Bluetooth HCI socket "Control" channel.
+> On the other hand Linux also exposes the Bluetooth HCI socket "User"
+> channel, allowing the user space APPs to send/receive the HCI packets
+> directly to/from the chipset. Google's products (Android, ChromeOS,
+> etc) use this channel.
+> 
+> Now why this patch?
+> It's because the Bluetooth spec defines something specific to USB
+> transport: A USB Bluetooth chipset must/should support these alternate
+> settings; When transferring this type of the Audio data this alt must
+> be used, bla bla bla...
+> The Control channel handles this in the kernel part. However, the
+> applications built on top of the User channel are unable to configure
+> the alt setting, and I'd like to add the support through sysfs.
 
-There are two fixes to KVM MMU for TDX in response to two hypothetically
-triggered errors:
-(1) errors in tdh_mem_page_add(),
-(2) fatal errors in tdh_mem_sept_add()/tdh_mem_page_aug().
+So the "problem" is that Google doesn't want to use BlueZ, which is
+fine, you do you :)
 
-Patch 1 handles the error in SEPT zap resulting from error (1).
-Patch 2 fixes a possible stuck in the kernel loop introduced by error (2).
-(A similar fix in SEPT SEAMCALL local retry is also required if the fix in
-patch 2 looks good to you).
+But how does BlueZ handle this same problem today?  What api to the
+kernel does it use to change the interface that you can't also do with
+your "BlueZ replacement"?
 
-The two errors are not observed in any real workloads yet.
-The series is tested by faking the error in the SEAMCALL wrapper while
-bypassing the real SEAMCALLs.
+Surely this isn't a new issue suddenly, but if it is, it needs to be
+solved so BOTH userspace stacks can handle it.
 
-Thanks
-Yan
+thanks,
 
-Yan Zhao (2):
-  KVM: TDX: Handle SEPT zap error due to page add error in premap
-  KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
-
- arch/x86/kvm/mmu/mmu.c |  4 +++
- arch/x86/kvm/vmx/tdx.c | 64 +++++++++++++++++++++++++++++-------------
- 2 files changed, 49 insertions(+), 19 deletions(-)
-
--- 
-2.43.2
-
+greg k-h
 
