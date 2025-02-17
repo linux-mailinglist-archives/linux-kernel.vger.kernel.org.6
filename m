@@ -1,172 +1,138 @@
-Return-Path: <linux-kernel+bounces-517834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61FCA38651
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:28:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0649A3865B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA58188365B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A05164F62
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7534621C9E5;
-	Mon, 17 Feb 2025 14:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7AA21CA17;
+	Mon, 17 Feb 2025 14:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="K1XeG3K3"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mJOE/RVj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87452179BC;
-	Mon, 17 Feb 2025 14:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66A216E29
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802410; cv=none; b=Vx/xzJ4/WzjEdQrWzdypuPAWY0dqhE/U0RKV3O57fjCZvtTNf9CIUs0AgIhhZzPexHVaO5wQUlQuRY4+tiw1oSBb+YNCwtEGNx3iFZlC3QSZOUZCI5WzO94OvQG5PNFFWJ2/rmc75/A496k/qiN9Gatie3SHSQre4hoCfClxwdA=
+	t=1739802354; cv=none; b=NY7qJI6WVqrg3C6Vz5gz2MtgaGNu7C9MgsIi+2J3lZOFTIOLNqlGhXNrh6uR1ln4yOllse91NqM7GbmOf6kv2OCQUOomfbRoQWgo+s593vT/X4XvOtamUxOYDVK306YIIp95IjAg4OvINxCJOnDIlcI9fE6Ho693BfJ7quL6mpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802410; c=relaxed/simple;
-	bh=0jdRWZfMjJ9o8HTfWfu0CRWnmYJnx9HUXqf4MGIEdWc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dD79UknHRWu7JMJUTdG1r614i4Gqo4tJfrvVMqdeuPmI6jV1atjpMGc7x53K2EbSQZSAQOI6q/n3mks6E3qFgHcXi42FfRO0B90J7/hoQ8zekgNTqh5u+/Qzq9spQy+WBckl9wuXWb+pHLgXlF4h0Yg0XnoUUaZyxPHtP2uU/iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=K1XeG3K3; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739802362;
-	bh=REnARYrxDOSngSpHfdUz6sHKkiOENalg0HoRWGPAq30=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=K1XeG3K3M8cEQUpM6KKE986yGrUNr0yTrWCO67Xpl0e7JWcK/NZXXotKmyi1B1hEI
-	 uBR3swb6Y5e5mWkQTIm6khFDlL6cnevkPZzSAI9c7A65sidQE7A7j05abnT9nFzq12
-	 DkQgoJ5hwRtllmwmVMSLC2DSC5UUGy0gJSoMgHSI=
-X-QQ-mid: bizesmtpip3t1739802349t4jlhfn
-X-QQ-Originating-IP: Yt8/2h18GrwIvBBQY5sSejJFu2ZDkKpWNCGtPkOOMRQ=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 17 Feb 2025 22:25:47 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3477360017264247857
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	macro@orcam.me.uk,
-	masahiroy@kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v3 0/2] MIPS: dec: Only check -msym32 when need compiler
-Date: Mon, 17 Feb 2025 22:25:41 +0800
-Message-ID: <8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1739802354; c=relaxed/simple;
+	bh=GUAxZImZWtamppr8zlI/A9rVG2tyYKU95DwC2jGXbBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D/1c5XMMqvKdm2y+T5yBMnZUtcbMKtVXUiBSkcXvlQC6a3VOmYfKQXUNgU4/85sqWwrRkzNB4cQd6wURqm95PIss78CG8AzMaA8F+dsaOMFFzY2D2Jdv5jculg3IB2cdqGvaxg8/xPfurPUqKxII2wIvwuh/yylhyXPU8XLUIsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mJOE/RVj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739802350;
+	bh=GUAxZImZWtamppr8zlI/A9rVG2tyYKU95DwC2jGXbBg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mJOE/RVj3wNsVYObyE/oZbGXxop1evH9WUwdJoZUmA8+53sjNIBAVNW6klqDyio4L
+	 OxQv+iqv5Lq/tD7aiwNo5rmA7a9FChrl45oo143dGcKIVxMJIufdV2b8IzE6eG2TWH
+	 IOuxuElpbrjwjmuRzMIebMsDLB0+nPNVYi8E2wV18dZ/io13aQjFEGoD2I1bjiEzAw
+	 A+oSCGd6CjFfz2+UbqZG7FY5oSdyn5PEp4sDFcEdQ4hJ4h0jh65WUMQGaFMjQ2lysj
+	 t2Wz3yY13uQUyKxGnvd0YichLhTjV3Y98R/FBkIFgdlRQTk/ONx9VRx4SFGd+lHCG4
+	 9UY81byDPryCQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D4D4117E0F86;
+	Mon, 17 Feb 2025 15:25:49 +0100 (CET)
+Message-ID: <041ffe38-ca24-4e05-90c1-e37f9323c7cf@collabora.com>
+Date: Mon, 17 Feb 2025 15:25:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] drm/mediatek: Change main display path to support PQ
+ for MT8196
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ =?UTF-8?B?U3VubnkgU2hlbiAo5rKI5aeN5aeNKQ==?= <Sunny.Shen@mediatek.com>
+Cc: =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
+ "treapking@chromium.org" <treapking@chromium.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ =?UTF-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+References: <20250211025317.399534-1-sunny.shen@mediatek.com>
+ <20250211025317.399534-6-sunny.shen@mediatek.com>
+ <b3a6afa2e818d31dc60632615215a88449fb78bf.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <b3a6afa2e818d31dc60632615215a88449fb78bf.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OAj1qrjhA85AAjmwes1HF7KTeM0EW5wviUUuyH+0qhTat01X+S5+zQQ9
-	6iSV7PUu3SGLaCq0pVsAiBINjbLJ5RuVmsBjXI+wzlriTzwn9fBU/VNWeeHdRJF21KdI81x
-	sKHfWecBjl3LTEkNEgctcs+UsmQmX21J0UCeYpW2NecOpzwLkrtCRA5TRarnDNgsqIxmFek
-	+kHS9fMkwHrTVncyUadtK/kt73KngNyhfs0EEvp7AHVyuulzLn1dr0FWfvNmGGAPqvqRoOJ
-	UURTVNzq5ta7GHfqKUtsoh/rGYCXn2d+sAtiA2wz2dEBX2T3kKpU2+aNc2x4ug6mjjvXHep
-	/qK3wQuje9irjOstBmw6rP2FX2nZE4NiDgYm9I6/S0AO35Wj3qwW+8wyhvrtRXdpn5CXA9j
-	y8N9lRNpfpAHGXVW1YTkJS7oQGs3D4JkXS6Zd2P5ScZ005trdb4Uh24Erv3BWM79i2qlC6O
-	u/busKD+TyYnhcp2LWWC9s1+0iVMP9Ue+WkeQBnaN0y1PjZ7lXh/U4vycFvwIqB9nodR8RQ
-	KabAwsLxhkflSN3nBGvzQ8vTLkvhc2BsPrzvHY7burux8EUIDLRvkuYIY59TRcBLqaVvmeA
-	1NB4IyN8A4CJqQqKeL9gw0rvHlKCXEAhQ3jRO50UPtiSi0a/ILH4M1SeoNIxN9XKViNVH5m
-	FP8YJGg4wRpmVpGJ0a6WlNprusp40nIU/p/CiAUXAasZu3S+6L43yaj1e7t6f2T+cyeHk3w
-	JGnDXruRlUdFPXwtZEWcJKRU7GdJuT659ot25o7x6TB2U8nyVKCZicbqehEIajsEVUmQKuB
-	mdc7Ogm+5miFNmaXo40j9byiXorpV3zK2DnqJelXLlPLO2NfgBBi8BDb6Y2BGm0lJeepY3Q
-	xiilM7aaPplNnLIRvJjRkbVJN7/5br/3Ge39erXIUXGotLiQf84vISs/4IV1lRib0hM8KSE
-	ndyaD+v3Yryur6qtlet5JChQY6ILeyVZmcPu3wluQ/jt6Hb+iDJLvWRmZisoVRUWM9Y6gHs
-	yG9ygAy+ZjVyqN8eBulDSw2/KOADAH7AB5qafsfgs9lvYASUrhnOxcVDkXoC8=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
 
-During 'make modules_install', the need-compiler variable becomes
-null, so Makefile.compiler isn't included.
-    
-This results in call cc-option-yn returning nothing.
-    
-For more technical details on why need-compiler is null during
-‘make modules_install’ and why no compiler invocation is actually
-needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
-Only fiddle with CHECKFLAGS if need-compiler") and commit
-805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
-is needed").
-    
-Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
-`modules_install' regression") tried to fix the same issue but it
-caused a compile error on clang compiler because it doesn't support
-'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
-of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
-`modules_install' regression.
-    
-Wrapping this entire code block with #ifdef need-compiler to avoid
-all issues is the best solution for now.
-    
-To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
-without -msym32" error.
+Il 17/02/25 07:06, CK Hu (胡俊光) ha scritto:
+> On Tue, 2025-02-11 at 10:52 +0800, Sunny Shen wrote:
+>> Due to the path mux design of the MT8196, the following components
+>> need to be added to support Picture Quality (PQ) in the main display
+>> path: CCORR0, CCORR1, DITHER0, GAMMA0, MDP_RSZ0, POSTMASK0, TDSHP0.
+> 
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> 
+>>
+>> Signed-off-by: Sunny Shen <sunny.shen@mediatek.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index b810a197f58b..1c97dc46ae70 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -242,6 +242,13 @@ static const unsigned int mt8196_mtk_ddp_ovl0_main[] = {
+>>   
+>>   static const unsigned int mt8196_mtk_ddp_disp0_main[] = {
+
+If you build the display controller path with an OF graph, you don't need to
+introduce any mt8196_mtk_ddp_disp0_main, at all.
+
+Since all this work was done and upstreamed, and was done because hardcoding
+the display pipeline for each board is only bloating the driver (and wrong),
+just express the pipeline with a graph in the devicetree.
+
+The driver doesn't need that array, not anymore.
+
+Regards,
+Angelo
+
+>>   	DDP_COMPONENT_DLI_ASYNC0,
+>> +	DDP_COMPONENT_MDP_RSZ0,
+>> +	DDP_COMPONENT_TDSHP0,
+>> +	DDP_COMPONENT_CCORR0,
+>> +	DDP_COMPONENT_CCORR1,
+>> +	DDP_COMPONENT_GAMMA0,
+>> +	DDP_COMPONENT_POSTMASK0,
+>> +	DDP_COMPONENT_DITHER0,
+>>   	DDP_COMPONENT_DLO_ASYNC1,
+>>   };
+>>   
+> 
 
 
-NOTE:
-
-It is particularly important to note that this code fix does not
-imply that we have resolved the problem entirely.
-
-In fact, the entire application of cc-option and its auxiliary
-commands within the kernel codebase currently carries significant
-risk.
-
-When we execute make modules_install, the Makefile for the
-corresponding architecture under arch/subarches/Makefile is
-invariably included. Within these files, there are numerous
-usages of cc-option and its auxiliary commands, all of which will
-return empty strings. The reason other architectures can
-successfully complete compilation under these circumstances is
-purely because they do not, unlike MIPS, check the return values
-of cc-option and its auxiliary commands within their Makefiles
-and halt the compilation process when the expected results are
-not received.
-
-A feasible approach to remediation might be to encapsulate all
-usages of cc-option and its auxiliary commands within conditional
-statements across all architecture Makefiles, preventing their
-execution entirely during make modules_install.
-
-However, this would lead to a massive number of inelegant
-modifications, and these broader implications may require
-deliberation by Masahiro Yamada.
-
-Regardless, this does not preclude us from addressing the
-issue on MIPS first.
-
-Link: https://lore.kernel.org/all/41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com/
-Link: https://lore.kernel.org/all/F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com/
-
-WangYuli (2):
-  MIPS: dec: Only check -msym32 when need compiler
-  MIPS: Eliminate Redundant KBUILD_SYM32 Checks
-
- arch/mips/Makefile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
----
-Changelog:
- *v1->v2:
-    1). Correct semantic errors.
-    2). Adopted a revised fix: Using a check for need-compiler
-in place of KBUILD_SYM32 check.
-    3). Swap the order of the changes in v1.
-  v2->v3:
-    Per Maciej's suggestion, expanded the commit message with
-more information and removed the code comment.
-
--- 
-2.47.2
 
 
