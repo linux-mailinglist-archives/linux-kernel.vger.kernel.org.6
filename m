@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-517934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6069A387D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:41:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74128A387CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809511897182
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A863B3FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78858224B03;
-	Mon, 17 Feb 2025 15:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8AB2253F3;
+	Mon, 17 Feb 2025 15:39:33 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D56224AF9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998302206B6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806772; cv=none; b=CWLwLtkRTQxlK7emljgsSY97Z/DZ72wrwloiPM5akrVZ7pJ+JI9r8n6WPCdkq3OxLlwtVUudxjPwSKpEJcV9mHvo1ao6ydzL1L5hvBa1T7y6ZGR+8K/qo2hr2CWWwJ2lQI2KyAAYIk24qqtp+KrwXywlSPnTJWwM7b7A4Yu+XDA=
+	t=1739806773; cv=none; b=DGnmso/mA/PT9QUxjan9KERyArV1IKD3ZF3DLfQIFv04jFlc4AbhzYmQZpY2cizco2kcJI/qTgWiMVn+uahRYaBzVAO88NsKvW2/xm/V5UgQx7oAxEE4E4oHHAWGVdrJalRZauD7sgGkM8dO+P6DhvV8y2ok6JWNtlXs6C2CGBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806772; c=relaxed/simple;
-	bh=tJtJ+iZ/RH0kV6E8FVz8GWyFPWw0X5nxEmvPF+pyVpA=;
+	s=arc-20240116; t=1739806773; c=relaxed/simple;
+	bh=41/PckYdXDOTJF8iWlnuSJNwd8OQjt77Kk+5Anq6r5U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=MT+R/HZQioBFcz8btsoIsBM4GnAxnhd4/MGP1xy9ZZ/TsMN0Lq825GXprVALmnsCr02QZg1lez2GE3lnJRyFg++ZCnH143XlU4nCjTS9P6kPoFvY227zg4MYqtLkRfjeJlxS2mLjiyQ4mQ4MeNPjvEBERW7xohuuRXLoPwG7Cfs=
+	 In-Reply-To:To; b=juIOAI7VKh8qHqhQGvkaGPqwyzCqzoywYhZToRioJGvNA8o+22vXa8KSX8azsg5RqPvnnXoK1J71+GyYs6pyREtVAktKhwc/CgFHi0xESzShlE06EGHHU0gMfUNuLsf6ufkHd1RAA2BEBKFJ5vnIaOaOseItVdix67DO6Zpar8A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A3EC1692;
-	Mon, 17 Feb 2025 07:39:49 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10D8B176C;
+	Mon, 17 Feb 2025 07:39:50 -0800 (PST)
 Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25D243F6A8;
-	Mon, 17 Feb 2025 07:39:29 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C96B3F6A8;
+	Mon, 17 Feb 2025 07:39:30 -0800 (PST)
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Feb 2025 15:38:42 +0000
-Subject: [PATCH v3 01/19] firmware: arm_ffa: Replace SCMI by FF-A in the
- macro
+Date: Mon, 17 Feb 2025 15:38:43 +0000
+Subject: [PATCH v3 02/19] firmware: arm_ffa: Replace UUID buffer to
+ standard UUID format
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,73 +44,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-ffa_updates-v3-1-bd1d9de615e7@arm.com>
+Message-Id: <20250217-ffa_updates-v3-2-bd1d9de615e7@arm.com>
 References: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 In-Reply-To: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1599; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=tJtJ+iZ/RH0kV6E8FVz8GWyFPWw0X5nxEmvPF+pyVpA=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gtXHWnKMr9WB5CJdIm1VEcTqqQjHoG8va+Y
- X+57qiPKpOJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLQAKCRAAQbq8MX7i
- mC22EACTJ1oYJdI/jH3Mk8BIbelop4SG8s08yql/bZfcv1x+PDI8uqU+FBC/c//aJVpOaNmDPXf
- BKFVqR3r5o9svjC82IAsKRD6ZW4JjGrUsn6QGJxHKS4eW+LGaNEduPnr+mb8GHT1YzDju2ZLDDh
- 97OQ/j4mVz5CVJdtlmcgAXHjVY/W15F2iE/PkRfVgVlsVeLdKuNGH5TSIyLZGSempxZvHHukxIT
- fPSopQAPDGFWZchtSzzA4TW50gevDU46kEYa54iqa2uVw2H+ne9qvXuXzesc+ddUGLFfqeF6oCD
- pjPw8F544ZDRfw3zMiqprjyD+bIE4WWpOfpu/iUJZ+rUMkUiMJdCYZbed6QMswj9r5iNTL2pCcO
- /t0jRtiUWkGaAjONSI2j2KJDWaFuqNNTkBXCnkniam5UQe85P9xfVPMHlbSMQo9pCl8/igVHNS9
- 23sfDJt0Qjw79Cdw6Rgzqu1Ps5KyO9o++c5QlvrYrUz7+jGim5GuLX5LtduNWUtAG4Dc3wzruFE
- qFhD9LokcPbKVyMTErbDonSV07AwRli6OFuAvYhMoZ/bkgpSN8onj2HbjGWJTrDk+D7fXcBgraY
- RLACo93enHMMfIutecbjQ8q7c5jIGTeZGlDtGAGqY/K90z3qI6yt1OA6DXlYOc4b94ASxJ4u8bR
- OB0SxNn84EAe9BQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1834; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=41/PckYdXDOTJF8iWlnuSJNwd8OQjt77Kk+5Anq6r5U=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gujyDHIKZMNG7950DZexKR3aYwMRvLGf/k2
+ G9mgUW16smJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLgAKCRAAQbq8MX7i
+ mHZ/D/wNF9tM7wzyNXUygi+AGta04YEYaQ9RmT6Vh64PQoapjffroFoi2W0QDJXXUqepbb0ErNE
+ JzO6MLjbqRP6H4Q+cWQNZ9Fl31BbbIUpwiqMTyeDir/1dkSrSQ840i9DdBaSzVmrcZPs+vJ2BFN
+ YjTqjoUcjZgvySN61u6M2duPKrARh02IPJ9WJMadGipV6vGW/sTzX5zKBkW8noYZT7TayLrNrV4
+ 8czN/yo359zKxTqAIcoUJTenDgEJ0ubrEBtpnvpdbwm2AOniqlqJ4nkNd9dVZn2ox/CwL8mu71V
+ re2GamEvkh2pRLD4+/4wdzmO6uMwReOSxsfNUiR/hb069YcwVF45gpoQeyOGDWrDLfY/vb+Gzfx
+ u5WbcDoMBQ+fkO88uM2OVn7bAw7QUNVFZZYqbRAb81GyqSgYa7yG/0Zoi5/WzzCvA6xFji0w0lA
+ pRqsrZRRLNBe9bMp2BM+pWz658nenMeXjZ2vhciYYZgKmov7jkTO4kN/PYS8pryqZNCe0OdEN9E
+ +FGeSUk7MVr+RpWXSefHEU1WDThFV5hHUgjXQ4db+nOFCm/dk1IUU2+P83NujIVDo4jMrragsFJ
+ m6jNPesiCF5ho35L2AQhYY7/QyzFSSPymBMEkcrEcfzWpS8nw/woTXdnus6N6JlxkoCqEhvXTx4
+ +AR8N6sI/Z+ixXA==
 X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
  fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-Commit 22779149e93d ("firmware: arm_ffa: Emit modalias for FF-A devices")
-added modalias for FF-A devices. However the macro added used SCMI
-incorrectly. Replace the reference to SCMI by FF-A and update the macro.
-(i.e. s/SCMI/FFA/)
+Currently ffa_partition_info structure holds the UUID in the format
+compatible with the firmware interface. However, most of the functions
+in the FF-A core driver deals directly with uuid_t type.
 
-No functional change.
+Replace UUID buffer to standard UUID format in the ffa_partition_info
+structure.
 
 Tested-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_ffa/bus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/firmware/arm_ffa/bus.c | 4 +---
+ include/linux/arm_ffa.h        | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/firmware/arm_ffa/bus.c b/drivers/firmware/arm_ffa/bus.c
-index dfda5ffc14db7208e8b622cdd648194c9cb1ef34..52b1f09209a0e51e321cd23a69aa7e4c4daa8dd1 100644
+index 52b1f09209a0e51e321cd23a69aa7e4c4daa8dd1..a90e2faa990219574ff20b8f573dbb7ca76137d9 100644
 --- a/drivers/firmware/arm_ffa/bus.c
 +++ b/drivers/firmware/arm_ffa/bus.c
-@@ -15,7 +15,7 @@
- 
- #include "common.h"
- 
--#define SCMI_UEVENT_MODALIAS_FMT	"arm_ffa:%04x:%pUb"
-+#define FFA_UEVENT_MODALIAS_FMT	"arm_ffa:%04x:%pUb"
- 
- static DEFINE_IDA(ffa_bus_id);
- 
-@@ -68,7 +68,7 @@ static int ffa_device_uevent(const struct device *dev, struct kobj_uevent_env *e
+@@ -192,7 +192,6 @@ ffa_device_register(const struct ffa_partition_info *part_info,
+ 		    const struct ffa_ops *ops)
  {
- 	const struct ffa_device *ffa_dev = to_ffa_dev(dev);
+ 	int id, ret;
+-	uuid_t uuid;
+ 	struct device *dev;
+ 	struct ffa_device *ffa_dev;
  
--	return add_uevent_var(env, "MODALIAS=" SCMI_UEVENT_MODALIAS_FMT,
-+	return add_uevent_var(env, "MODALIAS=" FFA_UEVENT_MODALIAS_FMT,
- 			      ffa_dev->vm_id, &ffa_dev->uuid);
- }
+@@ -218,8 +217,7 @@ ffa_device_register(const struct ffa_partition_info *part_info,
+ 	ffa_dev->vm_id = part_info->id;
+ 	ffa_dev->properties = part_info->properties;
+ 	ffa_dev->ops = ops;
+-	import_uuid(&uuid, (u8 *)part_info->uuid);
+-	uuid_copy(&ffa_dev->uuid, &uuid);
++	uuid_copy(&ffa_dev->uuid, &part_info->uuid);
  
-@@ -77,7 +77,7 @@ static ssize_t modalias_show(struct device *dev,
- {
- 	struct ffa_device *ffa_dev = to_ffa_dev(dev);
+ 	ret = device_register(&ffa_dev->dev);
+ 	if (ret) {
+diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
+index 74169dd0f65948b05991732358855cdc31b54adb..abd0208f0f74c15ef4ee4c81de81eb7800a0eb1d 100644
+--- a/include/linux/arm_ffa.h
++++ b/include/linux/arm_ffa.h
+@@ -238,7 +238,7 @@ struct ffa_partition_info {
+ /* partition runs in the AArch64 execution state. */
+ #define FFA_PARTITION_AARCH64_EXEC	BIT(8)
+ 	u32 properties;
+-	u32 uuid[4];
++	uuid_t uuid;
+ };
  
--	return sysfs_emit(buf, SCMI_UEVENT_MODALIAS_FMT, ffa_dev->vm_id,
-+	return sysfs_emit(buf, FFA_UEVENT_MODALIAS_FMT, ffa_dev->vm_id,
- 			  &ffa_dev->uuid);
- }
- static DEVICE_ATTR_RO(modalias);
+ static inline
 
 -- 
 2.34.1
