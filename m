@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-518140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8DBA38A7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:20:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1378A38ACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCB413B380D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8393B4541
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07202229B05;
-	Mon, 17 Feb 2025 17:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hqri5vQf"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5F322B8A0;
+	Mon, 17 Feb 2025 17:39:49 +0000 (UTC)
+Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7D922576E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3DC22A4E8;
+	Mon, 17 Feb 2025 17:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739812847; cv=none; b=H7T9+bpuqQ9ZX67u82plAvA/6IzxbPmaK5fsUjwBRW9Kt50BEHQvwzYQWn3qm9REonZ/bL74PIcIA3NqZC/EvrOBdy/bUEqOtbwMAv4UPBHFrDS/FX3XhvcYEwrh4Eohdi/WQ6hDBUqmCH7NelZsWL8E+q9nBU+JkYX/c1vRqHQ=
+	t=1739813989; cv=none; b=QoYbCsgjTriOiOs7BvnMlFV1xTEcUIpPBHONaN0MkCj8vHm1308o60akzBxBWkK8b7LeJyTYHFfQArfQig2waTLFVyf15DLFIjZ6pwak2PMTnEsGhs+K26cAPWxv/MTgB6cHIfMxVvnoOM9b21+npzHfRRc0HyR97QRdaqr67uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739812847; c=relaxed/simple;
-	bh=KitNqb1hNItZph35zvXtWR51tXJ70TMYSOy5bT0CeFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4DdC56pgehtve3FJXHnkVGDW2u+mM+vmtFnpPXsuV+z4kHgrDcKLjUkhxTF8FLVvBbUbX8N9OblrbrRTd8lXO12SG5gnQDr310F29Fk2ST00DE0VzRaraFs0BQzI0oaxsgqZ4SU2dV8gWA9ExHjNpRq4SECzavN1X4/d9iB3o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hqri5vQf; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471f1dd5b80so231131cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739812845; x=1740417645; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KitNqb1hNItZph35zvXtWR51tXJ70TMYSOy5bT0CeFE=;
-        b=Hqri5vQfE6X4CmbPI+wat/XNcpXNIfrMSsPUyM7hEWS4BjROAc9RDS0INUy9TTmedU
-         Kfmwxny0sh9P6lVvPYW8haRcBySc+mMNNRoSk0e0BY68Z7kjGagTSioTicAgkfh5lSyU
-         10G2BIs/qMWCiVW5IAjWmM55ZfwgMoc2iY3vp4UuzZTHSU0UkvoFAnmai9BUCp/tuUmP
-         Ik7Zc0um6co1yT9/lMneHHpks8agb1WJKnSrTeMZ+HvMGmmZgn+MWeiqp+HqZvrysf/Z
-         PLQ9ZDhhJT3ve12eGid2trM67y5v8QXX+OQ0iIWC5CnE9ifk4vE9ir0wTa5Tb//887Sj
-         PWpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739812845; x=1740417645;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KitNqb1hNItZph35zvXtWR51tXJ70TMYSOy5bT0CeFE=;
-        b=lZlKkO4DKn21CNwKS9hZRyzMILWx06n8oP8Uev/Htvjc4AblQjnLxubnAz7POThK9p
-         PMeJ4sA5eJ+fgbHDzAd7y61VDXmmRvvjqunwEAI7X8tVaME/HB8Bm5eSF8sihYf8907I
-         JD931Q8IOWv2NJTAL0pfLDXfaWnI0DgJp6MK7zFGuUqzSYSVsZH0zMnoCUR7Uee4EH2u
-         OTY3kybz57RhBmnIIApca/8wPOSQHCHAghb3KOAGtzcN/z+aRCl4U5WzAHcK26RwrFTu
-         oKEaTMS+j1YgZc9c4Xq9PCP6soJ7Kj33oaFD6Hc5pXdWzr5yIZRw5oc98GQHUoHZM3AV
-         ol4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV2EkpXYWSjofyn3HBr21FloUjWKZHBuIbGn+YXaUzcownXqKumkSmSAfr08pZ1P6u5yNYG5ZXTs1EgD68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeA5LNPoDkioF8i8/CcHt5E6Iom2p3+2tdDrjVjpP6O56MPsVH
-	sRu0mX8oH7lEo8WD38DENhIBYZBHHFbiBhqkplyf0rwiAUmml6YVXsq6o4TouQp9pbcRZ7D70fR
-	bjI+A5vD3bmayfIufscHr7sIVSMVf+6Q/QGP8
-X-Gm-Gg: ASbGncu/p/OVpdLcAo1jydBH5M4foeYqRyyqEO0g/j7MRcQ0gkC/Hk4P6wJDy6hNSnx
-	Gkrc4SGpEZ3t8Vcurid24R5/KcbAld8MeZKQ3VCNzDCfMk9S3row3AhgP120s1PZyus3uVzxqst
-	HXXrJ8xNGMadfda1I2bl0CMDu7vw0=
-X-Google-Smtp-Source: AGHT+IHtSBo94EPpnG7ESdGyKa6VP68eV3ZrRwK4VaJPxYG/Im2Y0ZICU1JdsATecA8kZWmkgxucfSYewavfDnZgqnA=
-X-Received: by 2002:a05:622a:22a6:b0:466:8f39:fc93 with SMTP id
- d75a77b69052e-471dde5f57fmr7315731cf.3.1739812844746; Mon, 17 Feb 2025
- 09:20:44 -0800 (PST)
+	s=arc-20240116; t=1739813989; c=relaxed/simple;
+	bh=PRTZbIsGA8Nc0ATeWU+MuKCsNsmGvZmADdAnNmIhl7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lpti0uX467h21SK2NlrlI+qmCWG7LYlCrS4ELrU0DjfJWMByYsZjNMDR5TT84YSIPM5OGFxJqlo7/MTb6CnjIISVqHytqvDzk4neb7JdYe2s70UQlzdhTg/cE54WTVZGhxjiJeLS6MrfsWi2NwKr4rbttwsMr8PhbO4tSyY5S5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tk4pt-0001we-HZ; Mon, 17 Feb 2025 18:23:13 +0100
+Received: from [78.47.5.107] (helo=sdn-nic-test01..)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tk4pt-000Opa-0r;
+	Mon, 17 Feb 2025 18:23:13 +0100
+From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	hawk@kernel.org,
+	marcus.wichelmann@hetzner-cloud.de
+Subject: [PATCH bpf-next v2 0/6] XDP metadata support for tun driver
+Date: Mon, 17 Feb 2025 17:23:02 +0000
+Message-ID: <20250217172308.3291739-1-marcus.wichelmann@hetzner-cloud.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129-force-cpu-bug-v2-0-5637b337b443@google.com>
- <20250129-force-cpu-bug-v2-3-5637b337b443@google.com> <20250217111029.GIZ7MZJUGJRoeiScgn@fat_crate.local>
- <CA+i-1C3fetiBYVbfpAbQEAnogzdza25pu2DosCiTT9YkXwt0yw@mail.gmail.com> <20250217170817.GGZ7NtAf-mg-zySpdP@fat_crate.local>
-In-Reply-To: <20250217170817.GGZ7NtAf-mg-zySpdP@fat_crate.local>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Mon, 17 Feb 2025 18:20:33 +0100
-X-Gm-Features: AWEUYZlSXLSAfoE9pg28Ca8tCxl2r2aeCJtImtIUaZOuCIeuoNl_kBUKnQ8H2SI
-Message-ID: <CA+i-1C0=tDMpfZqNq0aWns=cj70UOOmCAPOonmJi+MM7B6G9Kg@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2 3/3] x86/cpu: Enable modifying bug flags with {clear,set}puid
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27552/Mon Feb 17 10:47:21 2025)
 
-On Mon, 17 Feb 2025 at 18:08, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Mon, Feb 17, 2025 at 05:56:32PM +0100, Brendan Jackman wrote:
-> > Er, hold on, what chunk can be whacked? Do you mean delete the ability
-> > to set clearcpuid by number? There are still features with no name.
->
-> Really, which ones?
+Hi all,
 
-I just mean the ones without a "name" in cpufeatures.h, e.g.
+Thank you for your review comments. Here is an updated patch series with
+the requested changes.
 
-#define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+16) /* MSR SPEC_CTRL is implemented */
+To add a selftest for the metadata support of the tun driver, I refactored
+an existing "xdp_context_functional" test which already tested something
+similar but for the veth driver. I made the testing logic behind it more
+reusable so that it also works for the tun driver and possibly other
+drivers in the future.
 
-> Are you saying you want to turn off *arbitrary* features? Not only what gets
-> advertized in /proc/cpuinfo?
+The last patch ("fix file descriptor assertion in open_tuntap helper")
+fixes an assertion in an existing helper function that I just moved and
+reused. Somehow the file descriptor for /dev/net/tun turned out to be 0
+when running in the BPF kernel-patches GitHub CI, so the assert condition
+needed adjustment:
+https://github.com/kernel-patches/bpf/actions/runs/13339140896
 
-You can already clear arbitrary ones with clearcpuid.
+Successful pipeline:
+https://github.com/kernel-patches/bpf/actions/runs/13372306548
 
-But for bugs, they all have a name. I was thinking that this was
-because they are defined by the kernel, that's what I meant by "It t
-doesn't make sense for a bug not to have a name", although now I think
-about it we could totally have a bug and not give it a user-visible
-name if we wanted to.
+---
 
-Anyway, still think the current logic is what we want here:
+v2:
+- submit against bpf-next subtree
+- split commits and improved commit messages
+- remove redundant metasize check and add clarifying comment instead
+- use max() instead of ternary operator
+- add selftest for metadata support in the tun driver
 
-- The new setcpuid should be consistent with the existing clearcpuid,
-i.e. accept numbers for the same things clearcpuid does.
+v1: https://lore.kernel.org/all/20250130171614.1657224-1-marcus.wichelmann@hetzner-cloud.de/
 
-- There are currently no bugs without names so for those, require the
-string for both setcpuid and clearcpuid. If we wanted to we could add
-number support later.
+Marcus Wichelmann (6):
+  net: tun: enable XDP metadata support
+  net: tun: enable transfer of XDP metadata to skb
+  selftests/bpf: move open_tuntap to network helpers
+  selftests/bpf: refactor xdp_context_functional test and bpf program
+  selftests/bpf: add test for XDP metadata support in tun driver
+  selftests/bpf: fix file descriptor assertion in open_tuntap helper
+
+ drivers/net/tun.c                             |  24 ++-
+ tools/testing/selftests/bpf/network_helpers.c |  28 ++++
+ tools/testing/selftests/bpf/network_helpers.h |   3 +
+ .../selftests/bpf/prog_tests/lwt_helpers.h    |  29 ----
+ .../bpf/prog_tests/xdp_context_test_run.c     | 152 +++++++++++++++---
+ .../selftests/bpf/progs/test_xdp_meta.c       |  56 ++++---
+ 6 files changed, 215 insertions(+), 77 deletions(-)
+
+-- 
+2.43.0
+
 
