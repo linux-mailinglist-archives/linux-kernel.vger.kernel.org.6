@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-517343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0040A37F6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:09:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2505FA37F71
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:10:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A844B3AA01D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39C867A5563
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC0C21884B;
-	Mon, 17 Feb 2025 10:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC421661C;
+	Mon, 17 Feb 2025 10:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J22Q+xZQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="obikmQo7"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F532217679
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EFE216E23
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786817; cv=none; b=A09LdtRMwL4XrYQloSd4Ir8aa7t4KGvwmDWRZk524KJRKXiyJC2NTuHEffSQwu/6K4wiwOtBMdXsTlYIL2xgRygd9obO790bD7LqccxNmji5/pq4WCEJq2KFa1eCH6H4yKepenwpBOYV6wo6cwGBu3SZrphkNtYSShTsCs0XrJQ=
+	t=1739786829; cv=none; b=KU5bXM658azUj28IN2HWJG2hcbkZ1juwlGEHYbI5rAqtTd/y2gYVmQrTV14lZmPr1djZh1Jj/L0GE0rD0gGhtZQqwUkLy6ZQ5Y08Cg9Z12RJeo/KLFpskEdRArb7oTWu+oOx4Y+bKjb1q/SKDYwGpZW2LgO0pEyd3ggWiDWFxRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786817; c=relaxed/simple;
-	bh=Biw6DUxzk939fJknAJPcsYdiS9No9FiyXZeyYUMpkmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z8EKYoVTHkebZcQ9OPEbEoI35OjdTeSkJIenf+6afGPQz6ccPodGjKwtzsZFf/SejDFFWhXrGP57fRv/UYnadz/bnjt6CGFPQQHiZMMnH6+IbudS8XZUoQdzI6crwd98/9bjMVL8M9lKdplknPyjkhiX09wte8RnhOXhe04sz3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J22Q+xZQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739786813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7uYWhEd1/c+mNMCq30U6Kc7sDjWCoVhIrgohc+6hGoc=;
-	b=J22Q+xZQ3vOyF6bsHnE58G3RsyEsQ9eHT22rkXJoXGR9jNdQJetfsfRobVMQPsQQLNMO6H
-	E2HuUi1ykCGDR/pbKU0Xv+P7tYSvwF1ICnRtPEeZRfG+sNW+k/Lp5xkjqQSZCAQ9nO9nau
-	nMsVuSGgFL8O0aiFiLEePEKZhXWp4qQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-p5jhmzO0NS2W1Zp9RXPLxA-1; Mon, 17 Feb 2025 05:06:52 -0500
-X-MC-Unique: p5jhmzO0NS2W1Zp9RXPLxA-1
-X-Mimecast-MFC-AGG-ID: p5jhmzO0NS2W1Zp9RXPLxA_1739786811
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38f338525e1so864068f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:06:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739786811; x=1740391611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7uYWhEd1/c+mNMCq30U6Kc7sDjWCoVhIrgohc+6hGoc=;
-        b=NwD2yZhCgayRg2PGvQULpeGXpIGKo+EkxxB58SzaHBKMzVLai4G0MJ8efB08HMfRIN
-         THWq9KGwhiDXYAY5tSOqwaS9O98f1uM029w3mokw9XJ4vpaP4ypoLiHa+CixtN/MwoRd
-         lqbbLjr2FKrH5cgOXjD1xbwas/+IuswrlUo0LYyvSCXWG+RzokxB4DSjmKyDG2Skzbmt
-         XYbTDw2UGNozJgYJeBv2MSh+umUfjCk6/XF5wAFDs+Zk7GjFgKEo0KFYh/RyV+1s/zYU
-         XvSuYPYYIjkVVHM1z50hr9yNt7eQoMXtzV6CTmS48HAaFGl9v+sSCl5t8dO/eXWd4skC
-         XIjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbbWLAH1X4lKycAvxHPrnEn8JVpnoXfKTqgkvGLijqC8kQmJo9qJozyPyRlFtv/dl7AA0voSIgV5KW8nU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwERwphkM8dAsfQVmvH0CfIWjaMQpkemKHNRfUW/55447wgnyaU
-	DxuSWbkJilEFqA7YjqT2lBIXePtQVPHYY3DUtCyq0SEKRIpzxQ89i+voF1JXAekJwES05adSkLb
-	FknTtMIJD56ZUXRG0juFOsgW8S9VaRhL/+wlsbXnGX7s9agw0Z75bXY6MVA05zvgHGmwxIbn7
-X-Gm-Gg: ASbGncvPq+b45i+T/tXUP0Sck3l/S0d2cB0e1KjsRgHD4yikc+Kzdn8D2lEtH8tukoc
-	QYNqt3lR+mvAMQdiNpPuV7eQJm1E96JWSO7Zvk48R+k0rNs6PZv6vkd9lqRx8Z+8mxRRCfmJLBV
-	QWsiZZRYDlwpy/h3Qs4MckNXEo8yyl8+BSOLhh2Soo1zTTtluJJEeOmiFFj0gV9pyeBhODbiDiZ
-	s/o8fwGKI17Awf5ZXLEUzy8Fx7JO3VbEYsVQIw9xVFFzM70jSVl36or5OZ3BSFfOtaP72QfCee+
-	gDlhTnjNCOwhpwzMml/F63+3N6b+DRR+KZNGY/o/RhkpqmytgRcq
-X-Received: by 2002:a05:6000:4025:b0:38f:4176:7c25 with SMTP id ffacd0b85a97d-38f41768063mr2940023f8f.2.1739786810971;
-        Mon, 17 Feb 2025 02:06:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF17aX5wN9RpvCFSTEz6ASI7aS8LQfB/Yvz3pfn6bQCqV1ymw293EC3qwrkdzNkvfNshhjdBA==
-X-Received: by 2002:a05:6000:4025:b0:38f:4176:7c25 with SMTP id ffacd0b85a97d-38f41768063mr2939994f8f.2.1739786810613;
-        Mon, 17 Feb 2025 02:06:50 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc50sm12020780f8f.34.2025.02.17.02.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:06:49 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
-Date: Mon, 17 Feb 2025 11:06:43 +0100
-Message-ID: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739786829; c=relaxed/simple;
+	bh=bQELPkec0MJoMy8bNhsAYADpRKR0ovTZ4GOt34YuvQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Zfw0tHRqH6Ssx5H6Od2QeYP4IRO7Xn1OHCh9sH+uWiMI8lQrr1h7WLP2akomKliR7VaDGUpEMzjk48ZPkjDtyVLzS1gi6y9GCxlIOhoB/o33+uh+k7vcQ1FB7fXwRzAoLs7r2xVsNKB4C2DJ+kmSkB/7pE2sfndFJ9eQJbXrCQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=obikmQo7; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250217100659euoutp025ca73ac602db0c86ee9635f83f0473db~k9uT_i5Ta3090930909euoutp02y
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:06:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250217100659euoutp025ca73ac602db0c86ee9635f83f0473db~k9uT_i5Ta3090930909euoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739786819;
+	bh=Jobxjz0O5iU4Sq+a8KfVXaxTWH9devKPzLIw9uayggQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=obikmQo7WMO4yz5lwZ+rXdk/TNCyq0PZmUR07tDH9wfV5KwMfAhGmQ9DjJfL90cbK
+	 4B0DPR6aB1Kh/54hYHCjAnAVUnqiiL2+4Yd4ioImK1/rXGX9/4lYRkuLf9WZLPyukg
+	 sC6Q15WSjwltNxdxE22tm+kkyi8f2486/IC4ibW4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250217100659eucas1p16714f12a2e813207d6736f5ffa020ca8~k9uTpfA2J3003830038eucas1p1P;
+	Mon, 17 Feb 2025 10:06:59 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id C3.FF.20821.24A03B76; Mon, 17
+	Feb 2025 10:06:59 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250217100658eucas1p29350cfc5dd819acfbf23462cc28f7d85~k9uTPyWqv1941919419eucas1p2R;
+	Mon, 17 Feb 2025 10:06:58 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250217100658eusmtrp20642beaec24b54d0c061ba256c3ec38b~k9uTPJC6J2648126481eusmtrp2l;
+	Mon, 17 Feb 2025 10:06:58 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-a2-67b30a42cce3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 57.14.19920.24A03B76; Mon, 17
+	Feb 2025 10:06:58 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250217100657eusmtip18c77699e56a11c35aaa92766b8d7edc0~k9uSK4rj30406804068eusmtip1Y;
+	Mon, 17 Feb 2025 10:06:57 +0000 (GMT)
+Message-ID: <b452a106-a7e5-46b9-9274-dde8929ef3fd@samsung.com>
+Date: Mon, 17 Feb 2025 11:06:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] phy: exynos5-usbdrd: Fix broken USB on Exynos5422
+ (TYPEC dependency)
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Vinod Koul
+	<vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Peter Griffin
+	<peter.griffin@linaro.org>, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250217090518.137606-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf0yMcRjf933f7t4ul7cru0fInGGxImN7x83PtJutZcMoow6vC3XxvkWF
+	OePoXmZpxXVTWsI5Q7pDpRsVipQSaef83FEr2Y5qYjru3tB/n+fzPJ/v5/M8+5K4rNgvlNyu
+	TWdYrTpFIZIQtx4OtUQsl1g1c354EG3rsRL0A70Hp58+LRfT9t6bYrq9+qyIzrUMEnS5cZig
+	q5yN+BJSVWExiFTOjhqRylp2UPWtImwVkSBRbmVStu9h2NmLkiTJr053o11tVKbewPvp0Hcp
+	j/xJoObB/e4ajEcSUkaZETS3XxcLRT+CnAvHkFB8Q9Cf1yT6K2m5UeMnNC4hKB66N6J3I/g4
+	dMbPOyWlFsGXykM+TFDToL+9Hxf4IHhU6CK8eBw1Gd46jGIvDqY2wevb1T7vEOoqBodri31i
+	nAqH4+YCsYDl4HCdw7xYREUB38f/iUSS/tQKcFowYWQy3O47i3vfAcpJQvfgKSTEjoYC1x2x
+	gIOhp8E2gieCp+ocJgiOISj5+XakyEWg63KMqBeCs+WHz82b6Hr1bIFeCpefD/hooAKhsy9I
+	CBEIebfO4AIthZyjMmF6Opgarv2zrW19hucihWnUWUyjtjSNWsf037cEERYkZzK4VA3DRWmZ
+	vZGcOpXL0Goit6SlVqA/X6hpuOFrJSrqcUfWIYxEdQhIXBEirePLNTLpVnVWNsOmJbIZKQxX
+	hyaQhEIuLb2r18gojTqd2ckwuxj2bxcj/UN12MZJz9OfnWgNiAnfG18U+0gVbO6OCVxTn64L
+	GDaH6KWe1tDkgPG5jseOzHG7eysLL+jC5Z8jX1w7MtRRZYt7Eq2zb7NtXqtT8jPXF+V/ajfw
+	rvjE/PfNR5fs/qWnTZLY8Kb3xkTqcEdm0gPa2LwwYa7mTaz+CjumKvOlMi+sdmp94yxeO+ju
+	YT/IprTYFxTYexe/ibEMGO/PqNZlveLy7Uv3NUWcX2e1YafyOqFsszLM+XGn62J0fae/PWj/
+	kw+H5r7bsKytS87VGLriPOSOF4tLS05EZOPTilcqV5sftradLKNPJnVa3QONwdrKsUd2lGRn
+	FfLzS+2GAyHunDQVqyC4ZHXUTJzl1L8BDMVGDLEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsVy+t/xu7pOXJvTDb70K1tsebWZxeJo639m
+	i/PnN7Bb7H29ld3i8q45bBYTVn1jsdgw4x+Lxc47J5gdODw2repk87hzbQ+bx+Yl9R6fN8kF
+	sETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZdye
+	9oKx4KJARWtnF2sD4w/eLkZODgkBE4lzG/ewdjFycQgJLGWUeLLpOhNEQkbi5LQGVghbWOLP
+	tS42iKL3jBJzlmwFK+IVsJN4t6MRrIhFQFXiy+UvzBBxQYmTM5+wgNiiAvIS92/NYAexhQXi
+	JO5u38UOMkhEYC2TxIcPi8CKmAU0JbpXTAUrEhKYwSgxudURIi4ucevJfLBlbAKGEl1vQa7g
+	4OAUcJW4s4oJosRMomtrFyOELS+x/e0c5gmMQrOQnDELyaRZSFpmIWlZwMiyilEktbQ4Nz23
+	2FCvODG3uDQvXS85P3cTIzDmth37uXkH47xXH/UOMTJxMB5ilOBgVhLhPdS1IV2INyWxsiq1
+	KD++qDQntfgQoykwLCYyS4km5wOjPq8k3tDMwNTQxMzSwNTSzFhJnNft8vk0IYH0xJLU7NTU
+	gtQimD4mDk6pBiYL2bRplReM5y049jzF7eh2baf8Wdk9XurLdrcqZLZ8/Gd+MGpuvV5/fSbX
+	u9J5DxrK9V+quwi8/ZUc5XFDxbo5YE6BeMpqTQbdN/X8J9YINR9umnfE9LpxV8kNn5V7/Ct1
+	Z83xU2iq7ey8eyoivdh1/rT7k1dJ598JOW72e5XYm9uh5zvO8Gk0TGjbIZyWosf5mH3xhK0r
+	WV144ovCfaYeenDdviZcxWS+3N2Y7qUOH9x81F/tvfFLXf0ja9+BzIlapw0urzB9NGPnjBC7
+	DxfvnJkmUT1lslxJQpm6UOiiS7f/3/zw4/aR0/u44x0qf/y6meuw0ES5R1NOqvJi/bsbJrWT
+	eXP3uXxznZu0yUGJpTgj0VCLuag4EQDf0qL/QgMAAA==
+X-CMS-MailID: 20250217100658eucas1p29350cfc5dd819acfbf23462cc28f7d85
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250217090527eucas1p1b0e271cbff234416eb2c9de0a0e35333
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250217090527eucas1p1b0e271cbff234416eb2c9de0a0e35333
+References: <CGME20250217090527eucas1p1b0e271cbff234416eb2c9de0a0e35333@eucas1p1.samsung.com>
+	<20250217090518.137606-1-krzysztof.kozlowski@linaro.org>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 17.02.2025 10:05, Krzysztof Kozlowski wrote:
+> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
+> USB DRD PHY does not really need CONFIG_TYPEC for these devices at all.
+> Incorrectly added optional dependency on CONFIG_TYPEC caused this driver
+> to be missing for exynos_defconfig and as result Exynos5422-based boards
+> like Hardkernel Odroid HC1 failed to probe USB.
+>
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Closes: https://protect2.fireeye.com/v1/url?k=3ff42dbe-606f14a1-3ff5a6f1-000babdfecba-6594ef1677acb151&q=1&e=602788a5-c8c6-4f98-b7f3-304ceee337cf&u=https%3A%2F%2Fkrzk.eu%2F%23%2Fbuilders%2F21%2Fbuilds%2F6139
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
+> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Commit db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory") adds
-a file entry to the non-existing file scripts/test_fortify.sh. Probably,
-this entry intends to refer to ./lib/test_fortify/test_fortify.sh, though.
-As that file is already covered by the entry lib/test_fortify/*, there is
-no need for a separate file entry. So, drop the unnecessary file entry to
-the test_fortify script.
+Works fine with old ARM32bit Exynos5-based boards (exynos_defconfig) as 
+well as TM2e and E850.
 
-Further, this commit misses to adjust the entry referring to
-lib/usercopy_kunit.c, which is moved to lib/tests. So, also adjust that
-file entry.
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Fixes: db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory")
+> ---
+>
+> Patch for issue in linux-next
+>
+> Changes in v3:
+> 1. Simplify and go back to standard optional dependency without
+>     intermediate symbol
+>
+> Changes in v2:
+> 1. Add PHY_EXYNOS5_USBDRD_TYPEC, so arm64 defconfig will have both
+>     symbols in-sync
+> ---
+>   drivers/phy/samsung/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+> index 7fba571c0e2b..6566100441d6 100644
+> --- a/drivers/phy/samsung/Kconfig
+> +++ b/drivers/phy/samsung/Kconfig
+> @@ -81,7 +81,7 @@ config PHY_EXYNOS5_USBDRD
+>   	tristate "Exynos5 SoC series USB DRD PHY driver"
+>   	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>   	depends on HAS_IOMEM
+> -	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+> +	depends on TYPEC || !TYPEC
+>   	depends on USB_DWC3_EXYNOS
+>   	select GENERIC_PHY
+>   	select MFD_SYSCON
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 53cf3cbf33c9..15632a34b740 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9070,7 +9070,6 @@ F:	include/linux/fortify-string.h
- F:	lib/test_fortify/*
- F:	lib/tests/fortify_kunit.c
- F:	lib/tests/memcpy_kunit.c
--F:	scripts/test_fortify.sh
- K:	\bunsafe_memcpy\b
- K:	\b__NO_FORTIFY\b
- 
-@@ -12613,7 +12612,7 @@ F:	arch/*/configs/hardening.config
- F:	include/linux/overflow.h
- F:	include/linux/randomize_kstack.h
- F:	kernel/configs/hardening.config
--F:	lib/usercopy_kunit.c
-+F:	lib/tests/usercopy_kunit.c
- F:	mm/usercopy.c
- F:	security/Kconfig.hardening
- K:	\b(add|choose)_random_kstack_offset\b
+Best regards
 -- 
-2.48.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
