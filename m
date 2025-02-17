@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-518037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A48A388EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:15:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7E5A388F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3CB3A1BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB30167F64
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65312224B08;
-	Mon, 17 Feb 2025 16:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0955022541D;
+	Mon, 17 Feb 2025 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vo0mxhPD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CGN7mBl2"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428C62248A8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3E0225404;
+	Mon, 17 Feb 2025 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739808896; cv=none; b=OKRpfA3MK3sZlBe9z4fbaq+1whcVNdXZ+xT571hHOKHHsTwWPvVSWn28SXXe+eAGixRVrfMYMhFT3nJ1ED2MwjL7+WR0F6wU9iWuiWvUPtMTXxOELF7d5C5c8oU3nwMQ/2iJvGe5tBqTB3wY86nX4oDpx1ElqN9LS6Al05aSIaU=
+	t=1739808907; cv=none; b=ehTi4OkRDCreC1JX6imV9/2WLXTqrGr6ERdNeNS2REPn+PfkFicKCbRKYIxTvjsB+qHA1sGpqx7iB5RAjonTlnI+x/ymTraxwTdDKEV9KnpCbLBGCCLyioMtc3KUgEzuYeohQ95lAssSrV10mgO7cWCdnrZa8LfD+US5ZLEFuKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739808896; c=relaxed/simple;
-	bh=M9DYsLsVT07CGT4hPobGI6G7FsS06XUOR06XNfwA+t4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXnBdFP4tnOWQQXc1gEpZX2tST5sMlIh7gAKHXe2REXHBWzfFjzRcnnTRbKJhSlpZ987p0Rxuvp7I4W9+VRzV/DFLPsdDurIC6o0BrwHoVpLNVSxX4f3qzPGkeBoQP/T7UDlXRLlRTU2D+4kWzCLUh9LCPLtEPrFpq5poDu//aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vo0mxhPD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739808894;
+	s=arc-20240116; t=1739808907; c=relaxed/simple;
+	bh=l46BqOFjw4AhN6v4MslaecuDquLIk/2juU4bc70f7k8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FrZlhvDCVBmDpoOMg1HYff5sNezPmcv1nn0Hw2z7O+lTzg5v089BHTtL9Ej/7gvEeFV0wdngwRt70ISPKfUooSgbT2U4spzx7WlkAbwjZEbNN2c9ZTZQgdBtu7xJO1DruUrYqU+ZUagZucLr9FgGwL4FpXJoqiAErKmviCOFFA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CGN7mBl2; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 31BB6442B2;
+	Mon, 17 Feb 2025 16:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739808903;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z6/+vP1Xpq+4H3W/cSS/0CX+mScp7vF8v6bogSAvR/s=;
-	b=Vo0mxhPD5KXAlWncBrVCzeJJ07nxGeYcAWPSc3FglG7n+J43jYuYSn+jb9CUcSjjOFQnrn
-	yeigLi5emC7dRn3lXe5xcleYbEEJWAZ8PvyZ7KyrgY2FiO5pxoASHRI2BciZ6mm2TIC9X4
-	XHHsSh3K66sWJp9R80G0t2JZm4Yqutk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-SAEJScF1P7isgQ0EHNNT0g-1; Mon,
- 17 Feb 2025 11:14:51 -0500
-X-MC-Unique: SAEJScF1P7isgQ0EHNNT0g-1
-X-Mimecast-MFC-AGG-ID: SAEJScF1P7isgQ0EHNNT0g_1739808889
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 94E9F19783B5;
-	Mon, 17 Feb 2025 16:14:48 +0000 (UTC)
-Received: from [10.22.65.116] (unknown [10.22.65.116])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 20C561955BCB;
-	Mon, 17 Feb 2025 16:14:44 +0000 (UTC)
-Message-ID: <ea9537d5-721a-4b37-84d1-df797646fce2@redhat.com>
-Date: Mon, 17 Feb 2025 11:14:44 -0500
+	bh=sCAruAplvrh9CTzplEZWARPcYnJG6c4oelg/rF1mVsk=;
+	b=CGN7mBl2DhZF4inxJfydz6QAbL2Ah/LtgMvjvqcgbVCh1NYe54rkEMGmp4azvouUcF2WxO
+	fnNWUAzRrYkQdoBUvvchu9MisFxvr9q6hza//jR53pWbOOE2vNaOmhnvl+pTlbZMUb+PvN
+	NLK+8v260wabceWfy+1BjIKl1j+xlLg+rGbuc5bkxUDvPOhd1zv93ySEsErYZ4XtfRyYz4
+	+c/apWLc2eqDXb05/DGOnV9+E5tiIBcIeiYi3xw77/pk4LMUYkrwDxBnz414ZSsuEGbSnO
+	vP2tomFo6lRN0DLWhZEo/dLH2YsWI7N4R4QZWL5rqBZuXnXWhBbdV27DgW/zww==
+Date: Mon, 17 Feb 2025 17:15:00 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jakub Kicinski <kuba@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: pse-pd: pd692x0: Fix power limit retrieval
+Message-ID: <20250217171500.0fd4a519@kmaincent-XPS-13-7390>
+In-Reply-To: <bb058f5f-31f2-4c20-848e-54c178ecaf6c@lunn.ch>
+References: <20250217134812.1925345-1-kory.maincent@bootlin.com>
+	<bb058f5f-31f2-4c20-848e-54c178ecaf6c@lunn.ch>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-To: Sagi Grimberg <sagi@grimberg.me>, kbusch@kernel.org, hch@lst.de
-Cc: bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
-References: <20250204211158.43126-1-bgurney@redhat.com>
- <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
- <ea0e6445-9770-4df9-91bd-80f44cd0388e@grimberg.me>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <ea0e6445-9770-4df9-91bd-80f44cd0388e@grimberg.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnu
+ higqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvth
+X-GND-Sasl: kory.maincent@bootlin.com
 
+On Mon, 17 Feb 2025 16:24:44 +0100
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-On 2/17/25 3:08 AM, Sagi Grimberg wrote:
->>
->> We plan to ship this patch with RHEL-10. So it would be really good if we could get this
->> change accepted and merged upstream, perhaps into v6.15.
-> 
-> Hey John,
-> 
-> This looks fine to me, I'm assuming this was also tested with CONFIG_NVME_MULTIPATH=n ?
+> On Mon, Feb 17, 2025 at 02:48:11PM +0100, Kory Maincent wrote:
+> > Fix incorrect data offset read in the pd692x0_pi_get_pw_limit callback.
+> > The issue was previously unnoticed as it was only used by the regulator
+> > API and not thoroughly tested, since the PSE is mainly controlled via
+> > ethtool.
+> >=20
+> > The function became actively used by ethtool after commit 3e9dbfec4998
+> > ("net: pse-pd: Split ethtool_get_status into multiple callbacks"),
+> > which led to the discovery of this issue.
+> >=20
+> > Fix it by using the correct data offset.
+> >=20
+> > Fixes: a87e699c9d33 ("net: pse-pd: pd692x0: Enhance with new current li=
+mit
+> > and voltage read callbacks") Signed-off-by: Kory Maincent
+> > <kory.maincent@bootlin.com> ---
+> >  drivers/net/pse-pd/pd692x0.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+> > index fc9e23927b3b..7d60a714ca53 100644
+> > --- a/drivers/net/pse-pd/pd692x0.c
+> > +++ b/drivers/net/pse-pd/pd692x0.c
+> > @@ -1047,7 +1047,7 @@ static int pd692x0_pi_get_pw_limit(struct
+> > pse_controller_dev *pcdev, if (ret < 0)
+> >  		return ret;
+> > =20
+> > -	return pd692x0_pi_get_pw_from_table(buf.data[2], buf.data[3]);
+> > +	return pd692x0_pi_get_pw_from_table(buf.data[0], buf.data[1]); =20
+>=20
+> Would the issue of been more obvious if some #defines were used,
+> rather than magic numbers?
 
-Yes, everything has been tested with CONFIG_NVME_MULTIPATH both enabled (Y) and disabled (N).
+We would need lots of defines as the offset of the useful data can
+change between each command. Don't know if it would have been better.=20
 
-As we discussed in the previous email thread[1] there is an anomaly seen when you build a kernel with CONFIG_NVME_MULTIPATH=n.
-and the host discovers a multipath capable nvme device (CMIC/NMIC=1). You will see exactly the same thing that you do with
-CONFIG_NVME_MULTIPATH=y when the nvme_core.multipath parameter is N. You see a separate /dev/nvmeNN entry for
-every namespace/controller path.
+On my current patch priority series.
+git grep "buf\." drivers/net/pse-pd/pd692x0.c | wc -l
+29
 
-We can send send a separate patch to address that problem, but this patch, which simply removes the nvme_core.multipath parameter
-has beeen fully tested and is ready to go.
-
-[1] https://lore.kernel.org/linux-nvme/58519c4e-5801-4481-9087-be4f19b218f7@redhat.com/
-
-Please approve/merge this patch.
-
-/John
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
