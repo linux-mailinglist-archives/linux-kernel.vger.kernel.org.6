@@ -1,248 +1,161 @@
-Return-Path: <linux-kernel+bounces-517286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1107A37ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F0EA37EDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5A81883670
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D631886F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88222215F61;
-	Mon, 17 Feb 2025 09:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUcCqQR1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB36215F4E;
-	Mon, 17 Feb 2025 09:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAC8215F5B;
+	Mon, 17 Feb 2025 09:41:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7432B2153C7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739785230; cv=none; b=bhgO3TuKoiLWgPzHhpUyh7GIsNLD8hCESJkfqQtPFCbLZ/Oojn7O8xHxAgemdanIVi4eWudnq9w/QwED1Pu2LSlgIg2usP5eEtIjZbtlUBVFg+dS4CFtWljOfy93Ov8q3O8g09OQIdKAoKwgMRALqnrLhSLnyceq+iFtkPtzRvE=
+	t=1739785261; cv=none; b=KibhQH+NRRYcBGRDiBckDo5J8USwNJFnxNEpFZgMtIFAr6dkcvQZqkvCCYT5/yBV9NT7yVYgkTUL4DvUdtdVx3tW0kTyTob+lex6MZVnsg0ArIXTApJA0bl30Guk7p+K77qn7XWP6Zk5BnbFMdF8CzfDeG01VxJZL+maMCrnQLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739785230; c=relaxed/simple;
-	bh=kYgXWMJwq6XOl64XcIksXL3q8esusZOw1JjspQSIEDQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Gspu2JQk9os3wglante4DcGlnaDNT7WcwYNHVMm74MQ9VA2hyxs35w9KxCynpDGy3vZrG+ZQsJ/wbdl2gjuQC05nVVltq/05Pj84+CpIue0olSsc/YlmCCilDx1J5GffjM4WrHxWagzOwahhNJlXLsw2pq+3GXIYlZDzM5hik2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUcCqQR1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220dc3831e3so58011965ad.0;
-        Mon, 17 Feb 2025 01:40:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739785228; x=1740390028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJdSXpXW9LlkBOPkFR0Utx/8PFGdBu9YmyGsnlOk7f4=;
-        b=LUcCqQR1NCiDI78IVYRALxwYeAE+WOFPfh0qOXSSedxZ3DD1VdmCumcBrOpWFPncPI
-         yDe1TGvXOjXtKMAwj9HEslmnmT+XsX9ulgS6QPeG18yLXr633/sbGiSTTg6gP9YAnBlj
-         QC3AfiwfkHzqv/XvailH81/vGK5hF6epspVhzdRcpQV4YJyMxxfAYdP+Yn1TxznL4/37
-         UUAG8MLPTxRlHh2PwPnR3htMD+Lw8Sds0CVgw6+YIbuhFlKQSog32pXiGtjohF+Pi4J1
-         lutRKl0NG+2hhVGEahancEQoQXLnJFt/SdjeSm09O6sx/Qgv5ZKWufmxVcDqFDQ9OlMB
-         SVDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739785228; x=1740390028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJdSXpXW9LlkBOPkFR0Utx/8PFGdBu9YmyGsnlOk7f4=;
-        b=KhDpU8ZkU/FqPD4QUcLQmKf1MNzxcm87ftKetR1ZZhyttxJFhuGVR37hNtKsVgAZZa
-         Im+IuXxO7YbLRgDOKkX9kg6JoaqPxNL2c14PgJn8nBxUXaWg9L8dKZ06tXI14c4gCx0a
-         8tKzew1sArf5ijs4Muw1HBeTxQB7x2xhVTWv8MQRo7jwHcDNQsGrvMX2FgAfvH4OZngj
-         jycfTcfRtqagku/GGSIW4VvVor63OhxhyGnmDsSNfBd7lcbhErsUySjc3G6++CSQ0126
-         YdRvmkQzjlOV0KJIX2EfEakxZGKXa06VaB6rdLPjChIpvi3wlZB2vXrOlVn3qVKzWi1u
-         bsHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEFOzJMnKNo0caJ2P3YdUqDHcVA2136yqluVVhjXSIKegpErEMFvXycuu7Aq3afJk0fdUBbcjV6G3/LSI=@vger.kernel.org, AJvYcCXJg6eX+tIFJdD9ryheEwMiKY45CCBGUksrL0p3UkXuDOPmKz7t3UucXvlHbEx2HcV9g6iaRY63@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQDIvQNnqTBcxfyA45Z9yyzuKZhrB/BNUsnFTZjr+H6VtWLiBY
-	4rovP/t+cRqtR0imbt5In1Ks7R2hjcx0zFVoO5J+W8Vg3etIHgcS
-X-Gm-Gg: ASbGnctmbBBzUa7VusMwjb8flnWpr4sQj0NffeOhEKfTab9BhkvX/gl+bKixkUkfJTv
-	qZNu2O8m3ea40NoiLqVlWi/k1Iuy2JnMiArmJu5eKPhkmuncjL3e2CCpmcM31WclIa0NDE890Up
-	wCuJGeulgc2lhLN1HAs16mEQyD0lIK314TnC3REx3bXAU1o/pmWfVNu7oZAW/Nn+l0bqIkFRoRg
-	PrmsQZkbEFjqKt2o5j/FUH/P4NdxtHoOghjIV22VLxyx1JDllc5s9XPsFL9Q+4r1u4k9DSfSktn
-	7zQur7Uz
-X-Google-Smtp-Source: AGHT+IElh54SBERly9RJ4+nFUA5iu6PJvcF2dB2EW9JHMiqhpE+vcHK/m2s43XEf/EAUzaCYFZraHQ==
-X-Received: by 2002:a05:6a00:4643:b0:725:f1e9:5334 with SMTP id d2e1a72fcca58-7323c751ab9mr34939772b3a.8.1739785228464;
-        Mon, 17 Feb 2025 01:40:28 -0800 (PST)
-Received: from gmail.com ([116.237.135.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732425467adsm7947446b3a.15.2025.02.17.01.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 01:40:28 -0800 (PST)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next v4] net: ethernet: mediatek: add EEE support
-Date: Mon, 17 Feb 2025 17:40:21 +0800
-Message-ID: <20250217094022.1065436-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739785261; c=relaxed/simple;
+	bh=TkscNV7R9SN6TrFtqtWjGgMqoeohLYFd5zmGSrMHQnQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kBIIQk9EsmpfNxMhsELsJbVDgeLWMwQabpoCkx0fQ/spOftcsXqBW3AzCp764yB3zo4ujD8uIis7m6+MclLWyELheiEJI9E/q8KuZ/Ieb6R5Ub4Z5oqIvGeLudjxCRj8IZl6d8lybjKf6TWF4xsIt65tn0V3maI/5ITEseozT7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAC5C152B;
+	Mon, 17 Feb 2025 01:41:16 -0800 (PST)
+Received: from [10.1.38.151] (XHFQ2J9959.cambridge.arm.com [10.1.38.151])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C0823F6A8;
+	Mon, 17 Feb 2025 01:40:54 -0800 (PST)
+Message-ID: <9c7929f4-d024-4919-9b38-8cae05cc6fcf@arm.com>
+Date: Mon, 17 Feb 2025 09:40:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 16/16] arm64/mm: Defer barriers when updating kernel
+ mappings
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-17-ryan.roberts@arm.com>
+ <9bc5527e-16f4-45cc-aced-55b1ace6c143@arm.com>
+ <a5d66063-c3a0-46fc-ab88-21ae2448c9f0@arm.com>
+ <0052097e-2284-4f9e-b37c-2ca2de527667@arm.com>
+ <43d852bb-ab5f-40be-b188-166c57ab795c@arm.com>
+ <77dfb8ae-2a57-4d76-a3d2-8a486dd9721b@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <77dfb8ae-2a57-4d76-a3d2-8a486dd9721b@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add EEE support to MediaTek SoC Ethernet. The register fields are
-similar to the ones in MT7531, except that the LPI threshold is in
-milliseconds.
+On 17/02/2025 04:48, Anshuman Khandual wrote:
+> 
+> 
+> On 2/13/25 15:08, Ryan Roberts wrote:
+>> On 13/02/2025 05:30, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 2/10/25 16:42, Ryan Roberts wrote:
+>>>> On 10/02/2025 08:03, Anshuman Khandual wrote:
+>>>>>
+>>>>>
+>>>>> On 2/5/25 20:39, Ryan Roberts wrote:
+>>>>>> Because the kernel can't tolerate page faults for kernel mappings, when
+>>>>>> setting a valid, kernel space pte (or pmd/pud/p4d/pgd), it emits a
+>>>>>> dsb(ishst) to ensure that the store to the pgtable is observed by the
+>>>>>> table walker immediately. Additionally it emits an isb() to ensure that
+>>>>>> any already speculatively determined invalid mapping fault gets
+>>>>>> canceled.> 
+>>>>>> We can improve the performance of vmalloc operations by batching these
+>>>>>> barriers until the end of a set up entry updates. The newly added
+>>>>>> arch_update_kernel_mappings_begin() / arch_update_kernel_mappings_end()
+>>>>>> provide the required hooks.
+>>>>>>
+>>>>>> vmalloc improves by up to 30% as a result.
+>>>>>>
+>>>>>> Two new TIF_ flags are created; TIF_KMAP_UPDATE_ACTIVE tells us if we
+>>>>>> are in the batch mode and can therefore defer any barriers until the end
+>>>>>> of the batch. TIF_KMAP_UPDATE_PENDING tells us if barriers are queued to
+>>>>>> be emited at the end of the batch.
+>>>>>
+>>>>> Why cannot this be achieved with a single TIF_KMAP_UPDATE_ACTIVE which is
+>>>>> set in __begin(), cleared in __end() and saved across a __switch_to().
+>>>>
+>>>> So unconditionally emit the barriers in _end(), and emit them in __switch_to()
+>>>> if TIF_KMAP_UPDATE_ACTIVE is set?
+>>>
+>>> Right.
+>>>
+>>>>
+>>>> I guess if calling _begin() then you are definitely going to be setting at least
+>>>> 1 PTE. So you can definitely emit the barriers unconditionally. I was trying to
+>>>> protect against the case where you get pre-empted (potentially multiple times)
+>>>> while in the loop. The TIF_KMAP_UPDATE_PENDING flag ensures you only emit the
+>>>> barriers when you definitely need to. Without it, you would have to emit on
+>>>> every pre-emption even if no more PTEs got set.
+>>>>
+>>>> But I suspect this is a premature optimization. Probably it will never occur. So
+>>>
+>>> Agreed.
+>>
+>> Having done this simplification, I've just noticed that one of the
+>> arch_update_kernel_mappings_begin/end callsites is __apply_to_page_range() which
+>> gets called for user space mappings as well as kernel mappings. So actually with
+>> the simplification I'll be emitting barriers even when only user space mappings
+>> were touched.
+> 
+> Right, that will not be desirable.
+> 
+>>
+>> I think there are a couple of options to fix this:
+>>
+>> - Revert to the 2 flag approach. For the user space case, I'll get to _end() and
+>> notice that no barriers are queued so will emit nothing.
+>>
+>> - Only set TIF_KMAP_UPDATE_ACTIVE if the address range passed to _begin() is a
+>> kernel address range. I guess that's just a case of checking if the MSB is set
+>> in "end"?
+>>
+>> - pass mm to _begin() and only set TIF_KMAP_UPDATE_ACTIVE if mm == &init_mm. I
+>> guess this should be the same as option 2.
+>>
+>> I'm leaning towards option 2. But I have a niggling feeling that my proposed
+>> check isn't quite correct. What do you think?
+> 
+> Option 2 and 3 looks better than the two flags approach proposed earlier. But is
+> not option 3 bit more simplistic than option 2 ? Does getting struct mm argument
+> into these function create more code churn ?
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
-v4: fix build warning
+Actually looking at this again, I think the best thing is that when called in
+the context of __apply_to_page_range(), we will only call
+arch_update_kernel_mappings_[begin|end]() if mm == &init_mm. The function is
+explicitly for "kernel mappings" so it doesn't make sense to call it for user
+mappings.
 
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 67 +++++++++++++++++++++
- drivers/net/ethernet/mediatek/mtk_eth_soc.h | 11 ++++
- 2 files changed, 78 insertions(+)
+Looking at the current implementations of arch_sync_kernel_mappings() they are
+filtering on kernel addresses anyway, so this should be safe.
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 0ad965ced5ef..922330b3f4d7 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -815,12 +815,60 @@ static void mtk_mac_link_up(struct phylink_config *config,
- 	mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
- }
- 
-+static void mtk_mac_disable_tx_lpi(struct phylink_config *config)
-+{
-+	struct mtk_mac *mac = container_of(config, struct mtk_mac,
-+					   phylink_config);
-+	struct mtk_eth *eth = mac->hw;
-+
-+	mtk_m32(eth, MAC_MCR_EEE100M | MAC_MCR_EEE1G, 0, MTK_MAC_MCR(mac->id));
-+}
-+
-+static int mtk_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
-+				 bool tx_clk_stop)
-+{
-+	struct mtk_mac *mac = container_of(config, struct mtk_mac,
-+					   phylink_config);
-+	struct mtk_eth *eth = mac->hw;
-+	u32 val;
-+
-+	/* Tx idle timer in ms */
-+	timer = DIV_ROUND_UP(timer, 1000);
-+
-+	/* If the timer is zero, then set LPI_MODE, which allows the
-+	 * system to enter LPI mode immediately rather than waiting for
-+	 * the LPI threshold.
-+	 */
-+	if (!timer)
-+		val = MAC_EEE_LPI_MODE;
-+	else if (FIELD_FIT(MAC_EEE_LPI_TXIDLE_THD, timer))
-+		val = FIELD_PREP(MAC_EEE_LPI_TXIDLE_THD, timer);
-+	else
-+		val = MAC_EEE_LPI_TXIDLE_THD;
-+
-+	if (tx_clk_stop)
-+		val |= MAC_EEE_CKG_TXIDLE;
-+
-+	/* PHY Wake-up time, this field does not have a reset value, so use the
-+	 * reset value from MT7531 (36us for 100M and 17us for 1000M).
-+	 */
-+	val |= FIELD_PREP(MAC_EEE_WAKEUP_TIME_1000, 17) |
-+	       FIELD_PREP(MAC_EEE_WAKEUP_TIME_100, 36);
-+
-+	mtk_w32(eth, val, MTK_MAC_EEECR(mac->id));
-+	mtk_m32(eth, 0, MAC_MCR_EEE100M | MAC_MCR_EEE1G, MTK_MAC_MCR(mac->id));
-+
-+	return 0;
-+}
-+
- static const struct phylink_mac_ops mtk_phylink_ops = {
- 	.mac_select_pcs = mtk_mac_select_pcs,
- 	.mac_config = mtk_mac_config,
- 	.mac_finish = mtk_mac_finish,
- 	.mac_link_down = mtk_mac_link_down,
- 	.mac_link_up = mtk_mac_link_up,
-+	.mac_disable_tx_lpi = mtk_mac_disable_tx_lpi,
-+	.mac_enable_tx_lpi = mtk_mac_enable_tx_lpi,
- };
- 
- static int mtk_mdio_init(struct mtk_eth *eth)
-@@ -4469,6 +4517,20 @@ static int mtk_set_pauseparam(struct net_device *dev, struct ethtool_pauseparam
- 	return phylink_ethtool_set_pauseparam(mac->phylink, pause);
- }
- 
-+static int mtk_get_eee(struct net_device *dev, struct ethtool_keee *eee)
-+{
-+	struct mtk_mac *mac = netdev_priv(dev);
-+
-+	return phylink_ethtool_get_eee(mac->phylink, eee);
-+}
-+
-+static int mtk_set_eee(struct net_device *dev, struct ethtool_keee *eee)
-+{
-+	struct mtk_mac *mac = netdev_priv(dev);
-+
-+	return phylink_ethtool_set_eee(mac->phylink, eee);
-+}
-+
- static u16 mtk_select_queue(struct net_device *dev, struct sk_buff *skb,
- 			    struct net_device *sb_dev)
- {
-@@ -4501,6 +4563,8 @@ static const struct ethtool_ops mtk_ethtool_ops = {
- 	.set_pauseparam		= mtk_set_pauseparam,
- 	.get_rxnfc		= mtk_get_rxnfc,
- 	.set_rxnfc		= mtk_set_rxnfc,
-+	.get_eee		= mtk_get_eee,
-+	.set_eee		= mtk_set_eee,
- };
- 
- static const struct net_device_ops mtk_netdev_ops = {
-@@ -4610,6 +4674,9 @@ static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
- 	mac->phylink_config.type = PHYLINK_NETDEV;
- 	mac->phylink_config.mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
- 		MAC_10 | MAC_100 | MAC_1000 | MAC_2500FD;
-+	mac->phylink_config.lpi_capabilities = MAC_100FD | MAC_1000FD |
-+		MAC_2500FD;
-+	mac->phylink_config.lpi_timer_default = 1000;
- 
- 	/* MT7623 gmac0 is now missing its speed-specific PLL configuration
- 	 * in its .mac_config method (since state->speed is not valid there.
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index 0d5225f1d3ee..90a377ab4359 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -453,6 +453,8 @@
- #define MAC_MCR_RX_FIFO_CLR_DIS	BIT(12)
- #define MAC_MCR_BACKOFF_EN	BIT(9)
- #define MAC_MCR_BACKPR_EN	BIT(8)
-+#define MAC_MCR_EEE1G		BIT(7)
-+#define MAC_MCR_EEE100M		BIT(6)
- #define MAC_MCR_FORCE_RX_FC	BIT(5)
- #define MAC_MCR_FORCE_TX_FC	BIT(4)
- #define MAC_MCR_SPEED_1000	BIT(3)
-@@ -461,6 +463,15 @@
- #define MAC_MCR_FORCE_LINK	BIT(0)
- #define MAC_MCR_FORCE_LINK_DOWN	(MAC_MCR_FORCE_MODE)
- 
-+/* Mac EEE control registers */
-+#define MTK_MAC_EEECR(x)		(0x10104 + (x * 0x100))
-+#define MAC_EEE_WAKEUP_TIME_1000	GENMASK(31, 24)
-+#define MAC_EEE_WAKEUP_TIME_100		GENMASK(23, 16)
-+#define MAC_EEE_LPI_TXIDLE_THD		GENMASK(15, 8)
-+#define MAC_EEE_CKG_TXIDLE		BIT(3)
-+#define MAC_EEE_CKG_RXLPI		BIT(2)
-+#define MAC_EEE_LPI_MODE		BIT(0)
-+
- /* Mac status registers */
- #define MTK_MAC_MSR(x)		(0x10108 + (x * 0x100))
- #define MAC_MSR_EEE1G		BIT(7)
--- 
-2.43.0
+Thanks,
+Ryan
+
 
 
