@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-518339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68F7A38D8B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF696A38D8C
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619441743E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3CD18972E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6470240618;
-	Mon, 17 Feb 2025 20:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E620323959B;
+	Mon, 17 Feb 2025 20:40:57 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94B423958E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2513E23F279
 	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739824858; cv=none; b=VYpC2IrB6Ca+T2WLymwJroScMWcJwfGBU65/l7VBiBPPAsrf6PVmDDW5MvXE0bn6GGPF8ST10zOPjtqM7cogQhn0F1d8NFeBGkd8iS6vgODm+jyySwRFzq6hikGfGIjDg0JZZfPSWX7gMvdTEc99pMN7eavllKiygH0CaXc+sEY=
+	t=1739824857; cv=none; b=Z6/VBLmGVIuZK3OThg+XK8DqY9lNp6LeLWV0Yyow52wY9F0z8LcHtnarEIJeOlgHzTSr+Zyqj0fmXcMB0VmWwg0y3TTQfJ1K2/PXvjsnxa6WlEX+2nDv4NVaNPxpiloZeCMiE2eJqgvTDWSiHe4OBOgwuVbL68G81Y7DUYdGcd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739824858; c=relaxed/simple;
-	bh=gaPSjZVx/Yimb+0L5jpSeFIvuSJksgLRI7SDPB3SfWU=;
+	s=arc-20240116; t=1739824857; c=relaxed/simple;
+	bh=+O2FsB2biFPebdsD/mYQegd/ubEfl2Q7jmEet+oj0VI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iw/j4vzjvEFPwSKhZXAIteeOYK8mNKcS1Bq0DakYArunHIAoi/cEZ36qx+sqrf/C9/FOXWMdJYzEJnfYWtbGymnqWdw0ayGxr3kyxZxadcthPAymHcJVAqnGm/DJREWtKE9s7zvxUn4eGR2JQRtwC1ROtIh55bnyqek+MPKQzZI=
+	 In-Reply-To:To:Cc; b=EyCfwFVqyhHMQdmGJ3XrmMHOZCwGyweHKv5joMItCQOvmx4FaazxlfLHZYwi158KVy97AAUy489UhnAmKh38xWKMW0Dzvfwc9uuym3zKEGrkYpB8kOhNIaAMV0eWLYhk476fBaywxV5xzCHeBw6YzHXarn2m+6GxqStMruIKDRs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,22 +32,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uZ-0007oI-CW; Mon, 17 Feb 2025 21:40:15 +0100
+	id 1tk7uZ-0007oF-CW; Mon, 17 Feb 2025 21:40:15 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uX-001TFv-2y;
+	id 1tk7uX-001TFw-2v;
 	Mon, 17 Feb 2025 21:40:13 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uX-000W9t-2P;
+	id 1tk7uX-000W9t-2Q;
 	Mon, 17 Feb 2025 21:40:13 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 17 Feb 2025 21:39:42 +0100
-Subject: [PATCH v3 02/12] reboot: reboot, not shutdown, on
- hw_protection_reboot timeout
+Date: Mon, 17 Feb 2025 21:39:43 +0100
+Subject: [PATCH v3 03/12] docs: thermal: sync hardware protection doc with
+ code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-hw_protection-reboot-v3-2-e1c09b090c0c@pengutronix.de>
+Message-Id: <20250217-hw_protection-reboot-v3-3-e1c09b090c0c@pengutronix.de>
 References: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
 In-Reply-To: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -80,140 +80,57 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-hw_protection_shutdown() will kick off an orderly shutdown and if that
-takes longer than a configurable amount of time, an emergency shutdown
-will occur.
+Originally, the thermal framework's only hardware protection action was
+to trigger a shutdown. This has been changed a little over a year ago to
+also support rebooting as alternative hardware protection action.
 
-Recently, hw_protection_reboot() was added for those systems that don't
-implement a proper shutdown and are better served by rebooting and
-having the boot firmware worry about doing something about the critical
-condition.
+Update the documentation to reflect this.
 
-On timeout of the orderly reboot of hw_protection_reboot(), the system
-would go into shutdown, instead of reboot. This is not a good idea, as
-going into shutdown was explicitly not asked for.
-
-Fix this by always doing an emergency reboot if hw_protection_reboot()
-is called and the orderly reboot takes too long.
-
-Fixes: 79fa723ba84c ("reboot: Introduce thermal_zone_device_critical_reboot()")
+Fixes: 62e79e38b257 ("thermal/thermal_of: Allow rebooting after critical temp")
 Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
 Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- kernel/reboot.c | 70 ++++++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 49 insertions(+), 21 deletions(-)
+ Documentation/driver-api/thermal/sysfs-api.rst | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index b20b53f08648d88bac533ab18ea66396b44a3045..f348f1ba9e22675ac1183149ba19f39be12edacd 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -932,48 +932,76 @@ void orderly_reboot(void)
- }
- EXPORT_SYMBOL_GPL(orderly_reboot);
+diff --git a/Documentation/driver-api/thermal/sysfs-api.rst b/Documentation/driver-api/thermal/sysfs-api.rst
+index c803b89b7248f9f26ac24608b0144db5e9c2ddb4..f73de211bdced452b578fb77fb8707b8e59c9180 100644
+--- a/Documentation/driver-api/thermal/sysfs-api.rst
++++ b/Documentation/driver-api/thermal/sysfs-api.rst
+@@ -413,18 +413,21 @@ This function serves as an arbitrator to set the state of a cooling
+ device. It sets the cooling device to the deepest cooling state if
+ possible.
  
-+static const char *hw_protection_action_str(enum hw_protection_action action)
-+{
-+	switch (action) {
-+	case HWPROT_ACT_SHUTDOWN:
-+		return "shutdown";
-+	case HWPROT_ACT_REBOOT:
-+		return "reboot";
-+	default:
-+		return "undefined";
-+	}
-+}
-+
-+static enum hw_protection_action hw_failure_emergency_action;
-+
- /**
-- * hw_failure_emergency_poweroff_func - emergency poweroff work after a known delay
-- * @work: work_struct associated with the emergency poweroff function
-+ * hw_failure_emergency_action_func - emergency action work after a known delay
-+ * @work: work_struct associated with the emergency action function
-  *
-  * This function is called in very critical situations to force
-- * a kernel poweroff after a configurable timeout value.
-+ * a kernel poweroff or reboot after a configurable timeout value.
-  */
--static void hw_failure_emergency_poweroff_func(struct work_struct *work)
-+static void hw_failure_emergency_action_func(struct work_struct *work)
- {
-+	const char *action_str = hw_protection_action_str(hw_failure_emergency_action);
-+
-+	pr_emerg("Hardware protection timed-out. Trying forced %s\n",
-+		 action_str);
-+
- 	/*
--	 * We have reached here after the emergency shutdown waiting period has
--	 * expired. This means orderly_poweroff has not been able to shut off
--	 * the system for some reason.
-+	 * We have reached here after the emergency action waiting period has
-+	 * expired. This means orderly_poweroff/reboot has not been able to
-+	 * shut off the system for some reason.
- 	 *
--	 * Try to shut down the system immediately using kernel_power_off
--	 * if populated
-+	 * Try to shut off the system immediately if possible
- 	 */
--	pr_emerg("Hardware protection timed-out. Trying forced poweroff\n");
--	kernel_power_off();
-+
-+	if (hw_failure_emergency_action == HWPROT_ACT_REBOOT)
-+		kernel_restart(NULL);
-+	else
-+		kernel_power_off();
+-5. thermal_emergency_poweroff
+-=============================
++5. Critical Events
++==================
  
- 	/*
- 	 * Worst of the worst case trigger emergency restart
- 	 */
--	pr_emerg("Hardware protection shutdown failed. Trying emergency restart\n");
-+	pr_emerg("Hardware protection %s failed. Trying emergency restart\n",
-+		 action_str);
- 	emergency_restart();
- }
+-On an event of critical trip temperature crossing the thermal framework
+-shuts down the system by calling hw_protection_shutdown(). The
+-hw_protection_shutdown() first attempts to perform an orderly shutdown
+-but accepts a delay after which it proceeds doing a forced power-off
+-or as last resort an emergency_restart.
++On an event of critical trip temperature crossing, the thermal framework
++will trigger a hardware protection power-off (shutdown) or reboot,
++depending on configuration.
++
++At first, the kernel will attempt an orderly power-off or reboot, but
++accepts a delay after which it proceeds to do a forced power-off or
++reboot, respectively. If this fails, ``emergency_restart()`` is invoked
++as last resort.
  
--static DECLARE_DELAYED_WORK(hw_failure_emergency_poweroff_work,
--			    hw_failure_emergency_poweroff_func);
-+static DECLARE_DELAYED_WORK(hw_failure_emergency_action_work,
-+			    hw_failure_emergency_action_func);
+ The delay should be carefully profiled so as to give adequate time for
+-orderly poweroff.
++orderly power-off or reboot.
  
- /**
-- * hw_failure_emergency_poweroff - Trigger an emergency system poweroff
-+ * hw_failure_emergency_schedule - Schedule an emergency system shutdown or reboot
-+ *
-+ * @action:		The hardware protection action to be taken
-+ * @action_delay_ms:	Time in milliseconds to elapse before triggering action
-  *
-  * This may be called from any critical situation to trigger a system shutdown
-- * after a given period of time. If time is negative this is not scheduled.
-+ * or reboot after a given period of time.
-+ * If time is negative this is not scheduled.
-  */
--static void hw_failure_emergency_poweroff(int poweroff_delay_ms)
-+static void hw_failure_emergency_schedule(enum hw_protection_action action,
-+					  int action_delay_ms)
- {
--	if (poweroff_delay_ms <= 0)
-+	if (action_delay_ms <= 0)
- 		return;
--	schedule_delayed_work(&hw_failure_emergency_poweroff_work,
--			      msecs_to_jiffies(poweroff_delay_ms));
-+	hw_failure_emergency_action = action;
-+	schedule_delayed_work(&hw_failure_emergency_action_work,
-+			      msecs_to_jiffies(action_delay_ms));
- }
- 
- /**
-@@ -1006,7 +1034,7 @@ void __hw_protection_shutdown(const char *reason, int ms_until_forced,
- 	 * Queue a backup emergency shutdown in the event of
- 	 * orderly_poweroff failure
- 	 */
--	hw_failure_emergency_poweroff(ms_until_forced);
-+	hw_failure_emergency_schedule(action, ms_until_forced);
- 	if (action == HWPROT_ACT_REBOOT)
- 		orderly_reboot();
- 	else
+-If the delay is set to 0 emergency poweroff will not be supported. So a
+-carefully profiled non-zero positive value is a must for emergency
+-poweroff to be triggered.
++If the delay is set to 0, the emergency action will not be supported. So a
++carefully profiled non-zero positive value is a must for the emergency
++action to be triggered.
 
 -- 
 2.39.5
