@@ -1,273 +1,214 @@
-Return-Path: <linux-kernel+bounces-517867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9684A386C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED6AA386CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1D21893035
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D731895EF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B51224B02;
-	Mon, 17 Feb 2025 14:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DFF223316;
+	Mon, 17 Feb 2025 14:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="s2wB5lHB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OVID06cC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252DD222580;
-	Mon, 17 Feb 2025 14:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9800421CC4C;
+	Mon, 17 Feb 2025 14:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739803101; cv=none; b=iinSrDYiOzuqQAIqk+j2KwmuGKj0qWPOLkhgzeUNrt8nYfzuIaxqWQrzFIgm9e6CANFDU8U+/vuw5oQZJGvBT2WAd2SYWrYJiEbLiTRcfsF5ledIwmoNcKgPfywQVW55KdGYVQSQLivZoJMMVwTcakOhct0ONRkR8eYdd3PcYwM=
+	t=1739803239; cv=none; b=hIAQzz0SFoZEcV9W8zi6ftNmexIFTBO04OHF7o38Wq0CS4BHdMtftNXRMi39VJ4wqHrqbasXhL2t9dFPDk/PYnJj9sDqoXbb32xBU0HkqU13OOjhi8VC0lruqv5jcKMlyiysh95miOu31YVZfED3IDUnvjPYddlYUaP/hyVjnEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739803101; c=relaxed/simple;
-	bh=o3WlnS+9v2KIsegeKvdL/aNix10NAnGSUD7UEMqnio0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+mhhCSLXoWTRZ+nEfunzqWAf1myLGJxD0yTn+Vmi7klRxU4gHjYY5W0gSkMmPyQm68RwVKwn0zv9joNsnX5JMBTOK7hoCgG0wAANuEqVoC0R+MKuHDXu0U7vSJAp98g1Sc1Fa0Gp8QhmI/HRYK7ergSsyYy9AXltSDV7zV37lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=s2wB5lHB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-137-90.net.vodafone.it [5.90.137.90])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 10819A98;
-	Mon, 17 Feb 2025 15:36:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1739803015;
-	bh=o3WlnS+9v2KIsegeKvdL/aNix10NAnGSUD7UEMqnio0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s2wB5lHB7s9tvcbfkNzxJulZwALbRcWf20nZqc2r4k5TObXaXXNscIezxOgwyZaB+
-	 i30yJ7RT81fMIg2bFdlO7lBQYHU5DFcGWAk4X3VtLciim4G3WAHL7CA1mmaX2+XMKF
-	 uV2o7ovrTVAOd5wmE7/hUqfNYFK2jXM6Vcco6C4Q=
-Date: Mon, 17 Feb 2025 15:38:12 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
-Subject: Re: [PATCH v7 5/5] media: i2c: imx219: Scale the pixel rate for
- analog binning
-Message-ID: <sejl7xskif6rlpdsg3jhczjwe5gi6rs53ehbyka6omv2zeg7qq@4iis7i2lla5p>
-References: <20250217-imx219_fixes-v7-0-83c3c63b737e@ideasonboard.com>
- <20250217-imx219_fixes-v7-5-83c3c63b737e@ideasonboard.com>
+	s=arc-20240116; t=1739803239; c=relaxed/simple;
+	bh=OVYHI4VIbnJazFaLF3pUhlCt++RZBQtTTuEqeJGFegA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IGwO8j7XxdC3qxS6wl2xeDjuE65srysbosD4WshSykv1g4GpbeK9xBRbgzFOko8hVnfds/+OraoC7T3+25CQrAswt8+uEgNanWRp5w3b7dqHwnUSl9blsVWMR4vMPoncp4DDhadSWSUgidY6uM2rKmrwXuj97n/lxY0nPqiBf5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OVID06cC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739803235;
+	bh=OVYHI4VIbnJazFaLF3pUhlCt++RZBQtTTuEqeJGFegA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OVID06cCDpY/UZaJcMIRfZbGqFE1fTIeO42R97aHrIeN32evrFtIQNS5Z0lkPew7T
+	 ECf4JsNgv1J1rpBsdHA8WjxcxbUhocD4DDWZcw6mPXZOsUbHCzbGKyakX52mfVIlBr
+	 JBkd00iIiaPxmo2QLnF2sBJpJhEHlh7xT4Hx+hkHse6laJOMTPnYb1IigP3edzCYaE
+	 gg4xmpT0Oqfkht9xQl0ySoR5EcX93hYKE0D6OM79hBkxMWncjwHTLqL/BPoQ3pJ99J
+	 9fW+hZFVrtCgCK2opnpemY0IggNcqyysUb6k4PCLM7YvKdb2la7fyUWYioPjMft7nD
+	 mwNgUGkv4tdZQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 56A8B17E0F86;
+	Mon, 17 Feb 2025 15:40:34 +0100 (CET)
+Message-ID: <6feb3c06-c4bd-4e8b-bd89-c73fae9801d1@collabora.com>
+Date: Mon, 17 Feb 2025 15:40:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217-imx219_fixes-v7-5-83c3c63b737e@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 07/42] drm/mediatek: mtk_dpi: Add support for DPI input
+ clock from HDMI
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "jie.qiu@mediatek.com" <jie.qiu@mediatek.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+ <mripard@kernel.org>, =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
+ <jitao.shi@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ =?UTF-8?B?TGV3aXMgTGlhbyAo5buW5p+P6YieKQ==?= <Lewis.Liao@mediatek.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ =?UTF-8?B?VG9tbXlZTCBDaGVuICjpmbPlvaXoia8p?= <TommyYL.Chen@mediatek.com>,
+ =?UTF-8?B?SXZlcyBDaGVuamggKOmZs+S/iuW8mCk=?= <Ives.Chenjh@mediatek.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "junzhi.zhao@mediatek.com" <junzhi.zhao@mediatek.com>
+References: <20250211113409.1517534-1-angelogioacchino.delregno@collabora.com>
+ <20250211113409.1517534-8-angelogioacchino.delregno@collabora.com>
+ <500ce64dd1f4d0b18289418183011ea24938fe99.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <500ce64dd1f4d0b18289418183011ea24938fe99.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Jai
+Il 14/02/25 03:09, CK Hu (胡俊光) ha scritto:
+> On Tue, 2025-02-11 at 12:33 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>
+>>
+>> On some SoCs, like MT8195 and MT8188, the DPI instance that is
+>> reserved to the HDMI Transmitter uses a different clock topology.
+>>
+>> In this case, the DPI is clocked by the HDMI IP, and this outputs
+>> its clock to the MM input of dpi_pixel_clk, which is essential to
+>> enable register access to the DPI IP.
+>>
+>> Add a `clocked_by_hdmi` member to struct mtk_dpi_conf, and check
+>> it to avoid enabling the DPI clocks in the mediatek-drm internal
+>> .start() callback (and avoid disabing in the .stop() component
+>> callback): this will make sure that the clock configuration
+>> sequence is respected during display pipeline setup by following
+>> the bridge ops between DPI and HDMI, where the HDMI driver is
+>> expected to enable the clocks in the bridge's pre_enable(), and
+>> DPI in the enable() cb.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/mtk_dpi.c | 13 ++++++++++---
+>>   1 file changed, 10 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+>> index ad07005ad56e..6493c7e2fae4 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+>> @@ -146,6 +146,8 @@ struct mtk_dpi_factor {
+>>    * @input_2p_en_bit: Enable bit of two pixel per round feature
+>>    * @pixels_per_iter: Quantity of transferred pixels per iteration.
+>>    * @edge_cfg_in_mmsys: If the edge configuration for DPI's output needs to be set in MMSYS.
+>> + * @clocked_by_hdmi: HDMI IP outputs clock to dpi_pixel_clk input clock, needed
+>> + *                  for DPI registers access.
+>>    */
+>>   struct mtk_dpi_conf {
+>>          const struct mtk_dpi_factor *dpi_factor;
+>> @@ -167,6 +169,7 @@ struct mtk_dpi_conf {
+>>          u32 input_2p_en_bit;
+>>          u32 pixels_per_iter;
+>>          bool edge_cfg_in_mmsys;
+>> +       bool clocked_by_hdmi;
+>>   };
+>>
+>>   static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
+>> @@ -587,7 +590,9 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+>>          struct videomode vm = { 0 };
+>>
+>>          drm_display_mode_to_videomode(mode, &vm);
+>> -       mtk_dpi_set_pixel_clk(dpi, &vm, mode->clock);
+>> +
+>> +       if (!dpi->conf->clocked_by_hdmi)
+>> +               mtk_dpi_set_pixel_clk(dpi, &vm, mode->clock);
+>>
+>>          dpi_pol.ck_pol = MTK_DPI_POLARITY_FALLING;
+>>          dpi_pol.de_pol = MTK_DPI_POLARITY_RISING;
+>> @@ -922,14 +927,16 @@ void mtk_dpi_start(struct device *dev)
+>>   {
+>>          struct mtk_dpi *dpi = dev_get_drvdata(dev);
+>>
+>> -       mtk_dpi_power_on(dpi);
+>> +       if (!dpi->conf->clocked_by_hdmi)
+>> +               mtk_dpi_power_on(dpi);
+> 
+> mtk_dpi_bridge_enable() also call mtk_dpi_power_on().
+> Add this checking in mtk_dpi_bridge_enable() also.
+> 
 
-On Mon, Feb 17, 2025 at 06:57:35PM +0530, Jai Luthra wrote:
-> When the analog binning mode is used for high framerate operation, the
-> pixel rate is effectively doubled. Account for this when setting up the
-> pixel clock rate, and applying the vblank and exposure controls.
->
-> The previous logic only used analog binning for RAW8, but normal binning
-> limits the framerate on RAW10 480p [1]. So with this patch we switch to
-> using special binning (with 2x pixel rate) wherever possible.
->
-> [1]: https://github.com/raspberrypi/linux/issues/5493
->
-> Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
-> Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx219.c | 80 +++++++++++++++++++++++++++++++---------------
->  1 file changed, 54 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 418f88386659d494ff674d64ed69b8441d1ee2cd..f97abcc5703ea32f1d6f19a4c0a671a7e978a974 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -296,13 +296,13 @@ static const struct imx219_mode supported_modes[] = {
->  		.fll_def = 1763,
->  	},
->  	{
-> -		/* 2x2 binned 30fps mode */
-> +		/* 2x2 binned 60fps mode */
->  		.width = 1640,
->  		.height = 1232,
->  		.fll_def = 1707,
->  	},
->  	{
-> -		/* 640x480 30fps mode */
-> +		/* 640x480 60fps mode */
->  		.width = 640,
->  		.height = 480,
->  		.fll_def = 1707,
-> @@ -357,6 +357,45 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
->  	return imx219_mbus_formats[i];
->  }
->
-> +static void imx219_get_binning(struct imx219 *imx219, u8 *bin_h, u8 *bin_v)
-> +{
-> +	struct v4l2_subdev_state *state =
-> +		v4l2_subdev_get_locked_active_state(&imx219->sd);
-> +	const struct v4l2_mbus_framefmt *format =
-> +		v4l2_subdev_state_get_format(state, 0);
-> +	const struct v4l2_rect *crop = v4l2_subdev_state_get_crop(state, 0);
-> +	u32 hbin = crop->width / format->width;
-> +	u32 vbin = crop->height / format->height;
-> +
-> +	*bin_h = IMX219_BINNING_NONE;
-> +	*bin_v = IMX219_BINNING_NONE;
-> +
-> +	/*
-> +	 * Use analog binning only if both dimensions are binned, as it crops
-> +	 * the other dimension.
-> +	 */
-> +	if (hbin == 2 && vbin == 2) {
-> +		*bin_h = IMX219_BINNING_X2_ANALOG;
-> +		*bin_v = IMX219_BINNING_X2_ANALOG;
-> +
-> +		return;
-> +	}
-> +
-> +	if (hbin == 2)
-> +		*bin_h = IMX219_BINNING_X2;
-> +	if (vbin == 2)
-> +		*bin_v = IMX219_BINNING_X2;
-> +}
-> +
-> +static inline u32 imx219_get_rate_factor(struct imx219 *imx219)
-> +{
-> +	u8 bin_h, bin_v;
-> +
-> +	imx219_get_binning(imx219, &bin_h, &bin_v);
-> +
-> +	return (bin_h & bin_v) == IMX219_BINNING_X2_ANALOG ? 2 : 1;
-> +}
-> +
->  /* -----------------------------------------------------------------------------
->   * Controls
->   */
-> @@ -368,10 +407,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
->  	const struct v4l2_mbus_framefmt *format;
->  	struct v4l2_subdev_state *state;
-> +	u32 rate_factor;
->  	int ret = 0;
->
->  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
->  	format = v4l2_subdev_state_get_format(state, 0);
-> +	rate_factor = imx219_get_rate_factor(imx219);
->
->  	if (ctrl->id == V4L2_CID_VBLANK) {
->  		int exposure_max, exposure_def;
-> @@ -400,7 +441,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		break;
->  	case V4L2_CID_EXPOSURE:
->  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
-> -			  ctrl->val, &ret);
-> +			  ctrl->val / rate_factor, &ret);
->  		break;
->  	case V4L2_CID_DIGITAL_GAIN:
->  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
-> @@ -417,7 +458,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		break;
->  	case V4L2_CID_VBLANK:
->  		cci_write(imx219->regmap, IMX219_REG_FRM_LENGTH_A,
-> -			  format->height + ctrl->val, &ret);
-> +			  (format->height + ctrl->val) / rate_factor, &ret);
->  		break;
->  	case V4L2_CID_HBLANK:
->  		cci_write(imx219->regmap, IMX219_REG_LINE_LENGTH_A,
-> @@ -589,7 +630,7 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  	const struct v4l2_mbus_framefmt *format;
->  	const struct v4l2_rect *crop;
->  	unsigned int bpp;
-> -	u64 bin_h, bin_v;
-> +	u8 bin_h, bin_v;
->  	int ret = 0;
->
->  	format = v4l2_subdev_state_get_format(state, 0);
-> @@ -602,7 +643,6 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  	case MEDIA_BUS_FMT_SBGGR8_1X8:
->  		bpp = 8;
->  		break;
-> -
->  	case MEDIA_BUS_FMT_SRGGB10_1X10:
->  	case MEDIA_BUS_FMT_SGRBG10_1X10:
->  	case MEDIA_BUS_FMT_SGBRG10_1X10:
-> @@ -621,26 +661,7 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
->  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
->
-> -	switch (crop->width / format->width) {
-> -	case 1:
-> -	default:
-> -		bin_h = IMX219_BINNING_NONE;
-> -		break;
-> -	case 2:
-> -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> -		break;
-> -	}
-> -
-> -	switch (crop->height / format->height) {
-> -	case 1:
-> -	default:
-> -		bin_v = IMX219_BINNING_NONE;
-> -		break;
-> -	case 2:
-> -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> -		break;
-> -	}
-> -
-> +	imx219_get_binning(imx219, &bin_h, &bin_v);
->  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
->  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
->
-> @@ -847,6 +868,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  		int exposure_max;
->  		int exposure_def;
->  		int hblank, llp_min;
-> +		int pixel_rate;
->
->  		/* Update limits and set FPS to default */
->  		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-> @@ -882,6 +904,12 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  		 */
->  		hblank = prev_line_len - mode->width;
->  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +
-> +		/* Scale the pixel rate based on the mode specific factor */
-> +		pixel_rate = imx219_get_pixel_rate(imx219) *
-> +			     imx219_get_rate_factor(imx219);
+That's wanted.
 
-Is this correct ? imx219_set_pad_format() operates a subdev state,
-while imx219_get_rate_factor() always operate on the active state.
+>>   }
+>>
+>>   void mtk_dpi_stop(struct device *dev)
+>>   {
+>>          struct mtk_dpi *dpi = dev_get_drvdata(dev);
+>>
+>> -       mtk_dpi_power_off(dpi);
+>> +       if (!dpi->conf->clocked_by_hdmi)
+>> +               mtk_dpi_power_off(dpi);
+> 
+> mtk_dpi_bridge_disable() also call mtk_dpi_power_off().
+> Add this checking in mtk_dpi_bridge_disable() also.
+> 
 
-It could be argued that controls are always 'active' so using the
-'active' state for both imx219_get_pixel_rate() and
-imx219_get_rate_factor() is ok.
+That's also wanted.
 
-However I would rather pass to imx219_get_rate_factor() the current subdev
-state and pass it to imx219_get_binning() as well.
+> Because the clock is from hdmi, I think the clock define in DPI node in device tree should be removed.
+> Also change the binding document and let the clock not required in MT8195.
 
-With this
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+No, because the clock is from HDMI, but there's a gate that needs to be
+enabled in order to enable the clock output to the DPI hardware.
 
-Thanks
-  j
+The clock being *generated from* HDMI IP doesn't mean that there's no
+gate in DPI - and that's the actual problem here that we're solving
+with clocked_by_hdmi. We are preventing the clock to be ungated to DPI
+while it is wrong or unstable.
 
-> +		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> +					 pixel_rate, 1, pixel_rate);
->  	}
->
->  	return 0;
->
-> --
-> 2.48.1
->
->
+I didn't miss any check, all that was on purpose.
+
+Regards,
+Angelo
+
+> 
+> Regards,
+> CK
+> 
+>>   }
+>>
+>>   unsigned int mtk_dpi_encoder_index(struct device *dev)
+>> --
+>> 2.48.1
+>>
+> 
+
+
 
