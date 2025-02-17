@@ -1,262 +1,101 @@
-Return-Path: <linux-kernel+bounces-518472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5ABEA38FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1895AA38FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B51B167275
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17AB1673BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ACC1ADFEB;
-	Mon, 17 Feb 2025 23:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B67E1ADFEB;
+	Mon, 17 Feb 2025 23:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i4xJ/Xei"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="er0ZcjQb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AF815666D;
-	Mon, 17 Feb 2025 23:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3B315666D;
+	Mon, 17 Feb 2025 23:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739835399; cv=none; b=MCA6oo57jhhhrneU8Zfmnu2N/oAOCel5w6mI962X4VeyBDnsQhRDuLBC48AsAJVzJ5PkOjWMw8EqG2FLt2cloeoXE18ZvJgiAQXbcg8OnP6F2AGFhp2JVL+loJ5azOmUa2iJmuMLPZS75c71/qcoxIDGqsd1D8Lz1tL+4Xg8PVo=
+	t=1739835431; cv=none; b=i6sI9mE9H4ZZu/Gy/TtMcitNTojHuMAevzNGbdx5QD2TwXHO7Qaliu7/uevwtU/LOO4zPWxUDWiu1wsMSAabDgRNlxBV6cU1JXfRgWBqd3SFq9Lh6epJyIH6x93qzufSgTtjH7vxLIL6SJVr65uEZ/qSkQNddQTyuQKcI8ZMRlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739835399; c=relaxed/simple;
-	bh=b1NMjktdEW4cyABcNC8DJFFrZN0i8dJK7f9UZQsgBQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fe4neDXpylDvfED7mU4u4puR24hImxS9kowmQGYdIDf2x6gnBsmtb0gBMs5+CR/WCp2n6TAhfLmJhXeHe1srKFp7WeaSoXvBwyO/NUjlKrYnHJNNhFFn+x0zwSpxYgyApOZ08KIkWoSsdLt8S2+vNM7gkzcN2SxvbT/jDHik0ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i4xJ/Xei; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAUAi7007123;
-	Mon, 17 Feb 2025 23:36:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bn8aLTOaSFfuTe1I2/VjlP8wLE0nfFKiGqo53Bp2LZA=; b=i4xJ/Xei9wH4mVst
-	VWi5xRtLEkHZnaF7ifzKK/2SDuDN+rB2k/MeO5Uc5zEyctjF776iTCUMxqTWCdfX
-	8Eemjs1HH9pFiURVOcR6BT1/8YtbkXdgqA53CxqCIo2nG6R8is+UG6NDc+Ed9D3N
-	tP+oKQ8q3Wq7s4wD/kUgBbmRhB6CCOqBySjLC5aMCxA4zq3DEhGydHzrWE6kcri4
-	nvLHk7JFs2WY+JHVo7lHtGtdHPRAoCgPwGsMHuYMLrWZUIQjLZkh3wi8TyamMspg
-	Xe38dpT9vkxgpUxrwzGIWEGJAS4jr3fV9eabwKWr7QHQlbzeZrejFlRLmjbheZJ+
-	EiFtAw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3du1p9t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 23:36:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HNaWsA008837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 23:36:32 GMT
-Received: from [10.4.85.56] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
- 2025 15:36:29 -0800
-Message-ID: <6594f69e-f4ba-4d2b-a3d6-7eb5c8f95ac4@quicinc.com>
-Date: Tue, 18 Feb 2025 10:36:27 +1100
+	s=arc-20240116; t=1739835431; c=relaxed/simple;
+	bh=lYbE0SAfYIia+ES5GmheRgynkRFOmIJkICc8YdbeYRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=egk1zQQyvQ4Pk+61Sk/dqcEcTWgAlkxIB7ewooo+pFFAskVH61tXJFuOMB154yhyzfQZX7YM1KJmQSyjgASQP4JWifsdJ5R+P90bhGhOjXe8vRFOO5BnpNf2ejpemwbIttMkswcmWQWY3da76PyIzRpTvvFPxcnB4BFp5AQiUcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=er0ZcjQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7823C4CED1;
+	Mon, 17 Feb 2025 23:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739835430;
+	bh=lYbE0SAfYIia+ES5GmheRgynkRFOmIJkICc8YdbeYRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=er0ZcjQbSaxvBEiRqXzMiWOBKwtedYkfxwI3roN2O29jl5BOIz3cNgcM02lkE6lbK
+	 HYBA4IEHONbxm2/0OekqR7qhtG4/WWjdl8QsUPgWnNNtanB14yVo6g0Ms+24uMz886
+	 4e0SEv5Aj33CRwYn+gMlXs1qoqDCFqVti9O8AHYWmraf5Z3bMGU9s077fYP/7ejxD/
+	 kj0iYEzpEciSGg6556xS2ixaQiNJLt4Zsan3Zm6AYJTFsVxdlQSEyvA0PrvwgaYE54
+	 Yzh7P2B4dkQf3gorsvdPqanWEym++4DzYgiTuh3xXi4LDxQG1b4WUxEtqc63zw1FtP
+	 qeqIFIJ3AEE/g==
+Date: Mon, 17 Feb 2025 15:37:08 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Suchit K <suchitkarunakaran@gmail.com>, netdev@vger.kernel.org,
+ horms@kernel.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] selftests: net: Fix minor typos in MPTCP and
+ psock_tpacket tests
+Message-ID: <20250217153708.65269745@kernel.org>
+In-Reply-To: <0c5f1dcf-1bd4-4ddd-b6c0-e3ee2b3671ea@kernel.org>
+References: <CAO9wTFgN=hVJN8jUrFif0SO5hAvayrKweLDQSsmJWrE55wnTwQ@mail.gmail.com>
+	<0c5f1dcf-1bd4-4ddd-b6c0-e3ee2b3671ea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] tee: add close_context to TEE driver operation
-To: Jens Wiklander <jens.wiklander@linaro.org>
-CC: Sumit Garg <sumit.garg@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com>
- <20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-2-297eacd0d34f@quicinc.com>
- <20250217093546.GA2637163@rayden>
-Content-Language: en-US
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <20250217093546.GA2637163@rayden>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: b1WFPEjf1AapS7mGgJWW9bwsRUorAjq9
-X-Proofpoint-GUID: b1WFPEjf1AapS7mGgJWW9bwsRUorAjq9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170179
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, 17 Feb 2025 11:08:36 +0100 Matthieu Baerts wrote:
+> On 16/02/2025 13:25, Suchit K wrote:
+> > Fixes minor spelling errors:
+> > - `simult_flows.sh`: "al testcases" =E2=86=92 "all testcases"
+> > - `psock_tpacket.c`: "accross" =E2=86=92 "across" =20
+>=20
+> The modifications in MPTCP (and psock_tpacket) look good to me:
+>=20
+> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
+Thanks! This patch is corrupted:
 
-On 2/17/2025 8:35 PM, Jens Wiklander wrote:
-> Hi,
-> 
-> On Sun, Feb 02, 2025 at 06:43:30PM -0800, Amirreza Zarrabi wrote:
->> The tee_context can be used to manage TEE user resources, including
->> those allocated by the driver for the TEE on behalf of the user.
->> The release() callback is invoked only when all resources, such as
->> tee_shm, are released and there are no references to the tee_context.
->>
->> When a user closes the device file, the driver should notify the
->> TEE to release any resources it may hold and drop the context
->> references. To achieve this, a close_context() callback is
->> introduced to initiate resource release in the TEE driver when
->> the device file is closed.
->>
->> Relocate teedev_ctx_get, teedev_ctx_put, tee_device_get, and
->> tee_device_get functions to tee_drv.h to make them accessible
->> outside the TEE subsystem.
->>
->> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
->> ---
->>  drivers/tee/tee_core.c    |  7 +++++++
->>  drivers/tee/tee_private.h |  6 ------
->>  include/linux/tee_core.h  | 11 +++++++++--
->>  include/linux/tee_drv.h   |  6 ++++++
->>  4 files changed, 22 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
->> index 24edce4cdbaa..721522fe5c63 100644
->> --- a/drivers/tee/tee_core.c
->> +++ b/drivers/tee/tee_core.c
->> @@ -79,6 +79,7 @@ void teedev_ctx_get(struct tee_context *ctx)
->>  
->>  	kref_get(&ctx->refcount);
->>  }
->> +EXPORT_SYMBOL_GPL(teedev_ctx_get);
->>  
->>  static void teedev_ctx_release(struct kref *ref)
->>  {
->> @@ -96,11 +97,15 @@ void teedev_ctx_put(struct tee_context *ctx)
->>  
->>  	kref_put(&ctx->refcount, teedev_ctx_release);
->>  }
->> +EXPORT_SYMBOL_GPL(teedev_ctx_put);
->>  
->>  void teedev_close_context(struct tee_context *ctx)
->>  {
->>  	struct tee_device *teedev = ctx->teedev;
->>  
->> +	if (teedev->desc->ops->close_context)
->> +		teedev->desc->ops->close_context(ctx);
->> +
->>  	teedev_ctx_put(ctx);
->>  	tee_device_put(teedev);
->>  }
->> @@ -1037,6 +1042,7 @@ void tee_device_put(struct tee_device *teedev)
->>  	}
->>  	mutex_unlock(&teedev->mutex);
->>  }
->> +EXPORT_SYMBOL_GPL(tee_device_put);
->>  
->>  bool tee_device_get(struct tee_device *teedev)
->>  {
->> @@ -1049,6 +1055,7 @@ bool tee_device_get(struct tee_device *teedev)
->>  	mutex_unlock(&teedev->mutex);
->>  	return true;
->>  }
->> +EXPORT_SYMBOL_GPL(tee_device_get);
->>  
->>  /**
->>   * tee_device_unregister() - Removes a TEE device
->> diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
->> index 9bc50605227c..d3f40a03de36 100644
->> --- a/drivers/tee/tee_private.h
->> +++ b/drivers/tee/tee_private.h
->> @@ -14,12 +14,6 @@
->>  
->>  int tee_shm_get_fd(struct tee_shm *shm);
->>  
->> -bool tee_device_get(struct tee_device *teedev);
->> -void tee_device_put(struct tee_device *teedev);
->> -
->> -void teedev_ctx_get(struct tee_context *ctx);
->> -void teedev_ctx_put(struct tee_context *ctx);
->> -
->>  struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t size);
->>  struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
->>  					  unsigned long addr, size_t length);
->> diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
->> index a38494d6b5f4..8a4c9e30b652 100644
->> --- a/include/linux/tee_core.h
->> +++ b/include/linux/tee_core.h
->> @@ -65,8 +65,9 @@ struct tee_device {
->>  /**
->>   * struct tee_driver_ops - driver operations vtable
->>   * @get_version:	returns version of driver
->> - * @open:		called when the device file is opened
->> - * @release:		release this open file
->> + * @open:		called for a context when the device file is opened
->> + * @close_context:	called when the device file is closed
->> + * @release:		called to release the context
->>   * @open_session:	open a new session
->>   * @close_session:	close a session
->>   * @system_session:	declare session as a system session
->> @@ -76,11 +77,17 @@ struct tee_device {
->>   * @supp_send:		called for supplicant to send a response
->>   * @shm_register:	register shared memory buffer in TEE
->>   * @shm_unregister:	unregister shared memory buffer in TEE
->> + *
->> + * The context given to @open might last longer than the device file if it is
->> + * tied to other resources in the TEE driver. @close_context is called when the
->> + * client closes the device file, even if there are existing references to the
->> + * context. The TEE driver can use @close_context to start cleaning up.
->>   */
->>  struct tee_driver_ops {
->>  	void (*get_version)(struct tee_device *teedev,
->>  			    struct tee_ioctl_version_data *vers);
->>  	int (*open)(struct tee_context *ctx);
->> +	void (*close_context)(struct tee_context *ctx);
->>  	void (*release)(struct tee_context *ctx);
->>  	int (*open_session)(struct tee_context *ctx,
->>  			    struct tee_ioctl_open_session_arg *arg,
->> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
->> index a54c203000ed..d5f0c70ac95c 100644
->> --- a/include/linux/tee_drv.h
->> +++ b/include/linux/tee_drv.h
->> @@ -96,6 +96,12 @@ struct tee_param {
->>  	} u;
->>  };
->>  
->> +bool tee_device_get(struct tee_device *teedev);
->> +void tee_device_put(struct tee_device *teedev);
->> +
->> +void teedev_ctx_get(struct tee_context *ctx);
->> +void teedev_ctx_put(struct tee_context *ctx);
->> +
-> 
-> Now that these functions are available to all the backend drivers,
-> please add some documentation for them so it more clear how they are
-> supposed to be used.
-> 
-> Thanks,
-> Jens
+Applying: selftests: net: Fix minor typos in MPTCP and psock_tpacket tests
+error: git diff header lacks filename information when removing 1 leading p=
+athname component (line 7)
+Patch failed at 0001 selftests: net: Fix minor typos in MPTCP and psock_tpa=
+cket tests
+hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort=
+".
+hint: Disable this message with "git config set advice.mergeConflict false"
+Waiting for rebase to finish Mon Feb 17 03:34:36 PM PST 2025^C
 
-Ack.
+So repost will be needed (unless Matt wants to take it into his tree
+manually).
 
-> 
->>  /**
->>   * tee_shm_alloc_kernel_buf() - Allocate kernel shared memory for a
->>   *                              particular TEE client driver
->>
->> -- 
->> 2.34.1
->>
+> This patch can be applied directly in the netdev tree, but I'm not sure
+> the Netdev maintainers will accept that kind of small clean-up patch
+> alone, see:
+>=20
+>  https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
 
+FWIW spelling problems are explicitly called out as okay there.
+--=20
+pw-bot: cr
 
