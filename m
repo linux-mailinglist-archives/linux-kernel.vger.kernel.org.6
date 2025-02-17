@@ -1,476 +1,142 @@
-Return-Path: <linux-kernel+bounces-518385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A85A38E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:45:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5CBA38E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191A93AFE1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A563AB1B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230E819CD19;
-	Mon, 17 Feb 2025 21:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3D11A5BA5;
+	Mon, 17 Feb 2025 21:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PuwV73Lu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hZufUftv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017161AA1D2
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84BE224F0;
+	Mon, 17 Feb 2025 21:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739828708; cv=none; b=fG2eJB8lSMcYXt9WzBvg5jVo8G1oLBBrjFdYsJvuV2QerLBtLyOHSgw4uGnY2N4xcFBcOeHxVIynyPXYt8qsKcT8NJD9jS+3xGUI7HRYLV7LTm0sJPtNEpcy5Rxr1w/9XW3WNQSR07c+he9dBugXnTEO5G2PPI1Pz3xnpD5OBVM=
+	t=1739828838; cv=none; b=slRIzKSd79R3PBZ6gZbt9Xu01UmcBXY/JDWqB5A0tAi6M5MRP52v6GjspjfPwgr7ZuyHjqw4aKar3KQRAkBY+fotKW0mc3sf1wx2Cpjnosbm3Kao1nHlUqUXBX/ZygWLH1GfAgWu9AoPZVEiBVXx1u357fR5z8jonN4px987r5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739828708; c=relaxed/simple;
-	bh=YupG+oerM5zQ1jKJLPA0LZ9yHKTpX9POatmenH43x40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmYv8YVyox3pVbVsP7cq61DerJdYly3wA+h+hZXYMu5gHNBb2me1XP+WrCJSH5QO41dvZfmc19mq0EMTcVI3IoiXCNpMfi2Keq4A5jo74if0XZB6UZ+kHIkLzWncNAjHXDJ8GjROXqzHW63NX0cK+Loq6tsjttwgACJxhsZquaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PuwV73Lu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739828704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rynaZk8s3qbrrEEdhqi8skHEAMDYPl1Pe/lGr0ndqTw=;
-	b=PuwV73LuOdvHyajKcnUR+6dTJn+Pc8F0rl0SriWw9WVtFrt7gYnOXuaHrMlaCpMn8TkoTI
-	7M/7sgTT/hQuQlMUhS2SvvVqUBcUFXIoKl57c9qSKS4booHHzhzJe5uQ91cvdNGf8heqXD
-	Z4f6Dcr1HGOkrIKE7CulmB8lVU18B4w=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-38-dG_D_7JQPoWq2lPOjnxagQ-1; Mon, 17 Feb 2025 16:45:02 -0500
-X-MC-Unique: dG_D_7JQPoWq2lPOjnxagQ-1
-X-Mimecast-MFC-AGG-ID: dG_D_7JQPoWq2lPOjnxagQ_1739828702
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43943bd1409so40870275e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:45:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739828701; x=1740433501;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rynaZk8s3qbrrEEdhqi8skHEAMDYPl1Pe/lGr0ndqTw=;
-        b=iOyYxw9prnrK6VH0xp1qY1gcPD+BY+RQqLMx7KCjCB1HL395K3s3GpPHLfMwAdvbPN
-         3TCh7M62b7IRFi6z/dsj3k2cYrNzdjGIDqD2hw8uikTv/5Nl4h6IjBvb26s2dhNJBlib
-         sPNZ1UPsRh65H3Y0wxNaGbchM0QKfF48lP3z94zliRa5CWAAiatKMAI0Q/fSyMT1wxK3
-         PHrmWFVhBhQb2Em9w5CNfWMuhJ3OEN0hQmsMuIU6OoRbx/3uNYk5AW7apwWjanE/XdM7
-         49q7X7nWDKT5TE8jMv9i43OnZVgE/5T9HYFxHnljC9XGpBjTOTl3JVy2gi3lMcwiEefh
-         IiLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZpMcTx0kzdvIT0rvV6NVL9a4R/tW3lAlwwic6SQijAVA8+32IgZjY8hFat6L6FmXIjCncEtg2W27M/88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysfI8vH8zYwPou5pZIKVCJFl8LMRfpGPUEDBU8Nq56/MXSH1uT
-	Mkzeo4m1QyPAQvoDSWsaKBp7jrpZ8O4On2W3qeNoCh077pwr1YBO5zYmX6mAXwMrlv6BPdYwjgN
-	Wj7lxucEzCjJxLn9rEnkimGAMdTRjpPnomaPwQajF3fDsPEvhr+lwNRigpqAdtw==
-X-Gm-Gg: ASbGncvFDZVSrLZkYESDos32L3XGHLfi0tHPYRoXsaYGRwQbIhsnwLtLY39gyPjdbJQ
-	p1VjdHwPF5ALRm8ZeXwnueS4IbIdx+gMNKMgyBXZrwMRYW8zr+25Ii96QSYsEzUIKYBpDvpVst0
-	n+66+rWEivExyKtcy2AzIgxgOiUZpQxGeDDeOR+F0peMbTTCj8Bc8nRTtVHLj31D3UL/Nl2fc95
-	ie52r8AB26Qlq3AByUj5btiVk95c7q2PPiFU9PmiTwJiU0WCi+zGti2z4xX/5V2IJE5n78GM27g
-	AMnk1+WOXNNrOsDbMvJoc2T5bSyax/uME/r2pfzY9XgLihbULoNZNTOR1MnVvQh318IlaKPiZAV
-	9VASh4ihlfFU3tgARk/Y/5jrIRk4O8Q==
-X-Received: by 2002:a05:600c:46d1:b0:439:6712:643d with SMTP id 5b1f17b1804b1-4396e6a74f2mr95257765e9.9.1739828699936;
-        Mon, 17 Feb 2025 13:44:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXol8v5NkAyR+xRGiXV2+BVyoGEdakLnTxHp1V14AEX4FungEeVKj/n6Dg8lytHBjs6CdwIQ==
-X-Received: by 2002:a05:600c:46d1:b0:439:6712:643d with SMTP id 5b1f17b1804b1-4396e6a74f2mr95257615e9.9.1739828699487;
-        Mon, 17 Feb 2025 13:44:59 -0800 (PST)
-Received: from ?IPV6:2003:cb:c739:900:900f:3c9e:2f7b:5d0a? (p200300cbc7390900900f3c9e2f7b5d0a.dip0.t-ipconnect.de. [2003:cb:c739:900:900f:3c9e:2f7b:5d0a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccd46sm13257522f8f.21.2025.02.17.13.44.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 13:44:58 -0800 (PST)
-Message-ID: <0bb75517-9418-4145-8aa8-b05373010711@redhat.com>
-Date: Mon, 17 Feb 2025 22:44:56 +0100
+	s=arc-20240116; t=1739828838; c=relaxed/simple;
+	bh=dWswvE6k6RZzT0gYmzA3vHv6oGrSRhqk5YRVLJGMfQo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f5LcpGPvmvDSWlGhQ5mdLcMca4irzHqz6fdyXIy1WD+xDny4kH+KZdZ7tGZNhSeEPXic7rxgUbRP7Yh4GcOPCPwy0Jg7cprGHTj0xAdT6pzO5e3LtiWEG4o+54esR1xwJ870+vHJHGdTOf0pjXDyqmJu0+Xcg1ozyAHLVyXyfeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hZufUftv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739828833;
+	bh=dWswvE6k6RZzT0gYmzA3vHv6oGrSRhqk5YRVLJGMfQo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=hZufUftvTOC/mPZXkXOHREXlqLHcDmhBPjyZR65EGwNgnpyckzModKaTL56HP23ac
+	 D5WU2jg40FGCoi8ABPELrsSFK/gEOAPGAgyTo24p+pqWO3CveE7ufid2/jUhnY2Z90
+	 fM7Jq5QsHVozPBYdqANWrqbeKQWRerMiGbjwT+v/Me+o9aMG0gXVbKOg0Y/nfW0oHS
+	 G9/PFlmmZtcSK+zSd1R8VyqjIc4FLW6I9efLoka5GrKJZNvy1R38F+gW9ft/TaODjF
+	 sgJ5DCKez2nfV7gH1FCMX7t1Dx/xiO09Q4wWkmtii8wDUr5a/M4pR6ylu5uL+ckRwk
+	 Csh+oYWpr5UpQ==
+Received: from [192.168.13.3] (unknown [IPv6:2606:6d00:11:e976::c73])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8987817E02BE;
+	Mon, 17 Feb 2025 22:47:12 +0100 (CET)
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Date: Mon, 17 Feb 2025 16:46:54 -0500
+Subject: [PATCH v2] media: verisilicon: Fix AV1 decoder clock frequency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
- entry.
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250211155034.268962-1-ziy@nvidia.com>
- <20250211155034.268962-2-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250211155034.268962-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-b4-hantro-av1-clock-rate-v2-1-e179fad52641@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAE2us2cC/42NQQ6CMBBFr0Jm7RimUkldeQ/DopRBGpExU0I0h
+ LtbOYHL95L//gqJNXKCS7GC8hJTlCmDORQQBj/dGWOXGUxpbGmoxrbC7GcV9AthGCU8UP3MyLZ
+ ydU+Vc10Pef5S7uN7T9+azENMs+hnf1roZ/+IZiI829YRnUywlq5BxtG3ov4Y5AnNtm1fTty95
+ MQAAAA=
+X-Change-ID: 20250217-b4-hantro-av1-clock-rate-e5497f1499df
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 11.02.25 16:50, Zi Yan wrote:
-> It is a preparation patch for non-uniform folio split, which always split
-> a folio into half iteratively, and minimal xarray entry split.
-> 
-> Currently, xas_split_alloc() and xas_split() always split all slots from a
-> multi-index entry. They cost the same number of xa_node as the to-be-split
-> slots. For example, to split an order-9 entry, which takes 2^(9-6)=8
-> slots, assuming XA_CHUNK_SHIFT is 6 (!CONFIG_BASE_SMALL), 8 xa_node are
-> needed. Instead xas_try_split() is intended to be used iteratively to split
-> the order-9 entry into 2 order-8 entries, then split one order-8 entry,
-> based on the given index, to 2 order-7 entries, ..., and split one order-1
-> entry to 2 order-0 entries. When splitting the order-6 entry and a new
-> xa_node is needed, xas_try_split() will try to allocate one if possible.
-> As a result, xas_try_split() would only need one xa_node instead of 8.
-> 
-> When a new xa_node is needed during the split, xas_try_split() can try to
-> allocate one but no more. -ENOMEM will be return if a node cannot be
-> allocated. -EINVAL will be return if a sibling node is split or
-> cascade split happens, where two or more new nodes are needed, and these
-> are not supported by xas_try_split().
-> 
-> xas_split_alloc() and xas_split() split an order-9 to order-0:
-> 
->           ---------------------------------
->           |   |   |   |   |   |   |   |   |
->           | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->           |   |   |   |   |   |   |   |   |
->           ---------------------------------
->             |   |                   |   |
->       -------   ---               ---   -------
->       |           |     ...       |           |
->       V           V               V           V
-> ----------- -----------     ----------- -----------
-> | xa_node | | xa_node | ... | xa_node | | xa_node |
-> ----------- -----------     ----------- -----------
-> 
-> xas_try_split() splits an order-9 to order-0:
->     ---------------------------------
->     |   |   |   |   |   |   |   |   |
->     | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
->     |   |   |   |   |   |   |   |   |
->     ---------------------------------
->       |
->       |
->       V
-> -----------
-> | xa_node |
-> -----------
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   Documentation/core-api/xarray.rst |  14 ++-
->   include/linux/xarray.h            |   7 ++
->   lib/test_xarray.c                 |  47 +++++++++++
->   lib/xarray.c                      | 136 ++++++++++++++++++++++++++----
->   tools/testing/radix-tree/Makefile |   1 +
->   5 files changed, 188 insertions(+), 17 deletions(-)
-> 
-> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-> index f6a3eef4fe7f..c6c91cbd0c3c 100644
-> --- a/Documentation/core-api/xarray.rst
-> +++ b/Documentation/core-api/xarray.rst
-> @@ -489,7 +489,19 @@ Storing ``NULL`` into any index of a multi-index entry will set the
->   entry at every index to ``NULL`` and dissolve the tie.  A multi-index
->   entry can be split into entries occupying smaller ranges by calling
->   xas_split_alloc() without the xa_lock held, followed by taking the lock
-> -and calling xas_split().
-> +and calling xas_split() or calling xas_try_split() with xa_lock. The
-> +difference between xas_split_alloc()+xas_split() and xas_try_alloc() is
-> +that xas_split_alloc() + xas_split() split the entry from the original
-> +order to the new order in one shot uniformly, whereas xas_try_split()
-> +iteratively splits the entry containing the index non-uniformly.
-> +For example, to split an order-9 entry, which takes 2^(9-6)=8 slots,
-> +assuming ``XA_CHUNK_SHIFT`` is 6, xas_split_alloc() + xas_split() need
-> +8 xa_node. xas_try_split() splits the order-9 entry into
-> +2 order-8 entries, then split one order-8 entry, based on the given index,
-> +to 2 order-7 entries, ..., and split one order-1 entry to 2 order-0 entries.
-> +When splitting the order-6 entry and a new xa_node is needed, xas_try_split()
-> +will try to allocate one if possible. As a result, xas_try_split() would only
-> +need 1 xa_node instead of 8.
->   
->   Functions and structures
->   ========================
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index 0b618ec04115..9eb8c7425090 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -1555,6 +1555,8 @@ int xa_get_order(struct xarray *, unsigned long index);
->   int xas_get_order(struct xa_state *xas);
->   void xas_split(struct xa_state *, void *entry, unsigned int order);
->   void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
-> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
-> +		gfp_t gfp);
->   #else
->   static inline int xa_get_order(struct xarray *xa, unsigned long index)
->   {
-> @@ -1576,6 +1578,11 @@ static inline void xas_split_alloc(struct xa_state *xas, void *entry,
->   		unsigned int order, gfp_t gfp)
->   {
->   }
-> +
-> +static inline void xas_try_split(struct xa_state *xas, void *entry,
-> +		unsigned int order, gfp_t gfp)
-> +{
-> +}
->   #endif
->   
->   /**
-> diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-> index 6932a26f4927..598ca38a2f5b 100644
-> --- a/lib/test_xarray.c
-> +++ b/lib/test_xarray.c
-> @@ -1857,6 +1857,49 @@ static void check_split_1(struct xarray *xa, unsigned long index,
->   	xa_destroy(xa);
->   }
->   
-> +static void check_split_2(struct xarray *xa, unsigned long index,
-> +				unsigned int order, unsigned int new_order)
-> +{
-> +	XA_STATE_ORDER(xas, xa, index, new_order);
-> +	unsigned int i, found;
-> +	void *entry;
-> +
-> +	xa_store_order(xa, index, order, xa, GFP_KERNEL);
-> +	xa_set_mark(xa, index, XA_MARK_1);
-> +
-> +	xas_lock(&xas);
-> +	xas_try_halve(&xas, xa, order, GFP_KERNEL);
-> +	if (((new_order / XA_CHUNK_SHIFT) < (order / XA_CHUNK_SHIFT)) &&
-> +	    new_order < order - 1) {
-> +		XA_BUG_ON(xa, !xas_error(&xas) || xas_error(&xas) != -EINVAL);
-> +		xas_unlock(&xas);
-> +		goto out;
-> +	}
-> +	for (i = 0; i < (1 << order); i += (1 << new_order))
-> +		__xa_store(xa, index + i, xa_mk_index(index + i), 0);
-> +	xas_unlock(&xas);
-> +
-> +	for (i = 0; i < (1 << order); i++) {
-> +		unsigned int val = index + (i & ~((1 << new_order) - 1));
-> +		XA_BUG_ON(xa, xa_load(xa, index + i) != xa_mk_index(val));
-> +	}
-> +
-> +	xa_set_mark(xa, index, XA_MARK_0);
-> +	XA_BUG_ON(xa, !xa_get_mark(xa, index, XA_MARK_0));
-> +
-> +	xas_set_order(&xas, index, 0);
-> +	found = 0;
-> +	rcu_read_lock();
-> +	xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_1) {
-> +		found++;
-> +		XA_BUG_ON(xa, xa_is_internal(entry));
-> +	}
-> +	rcu_read_unlock();
-> +	XA_BUG_ON(xa, found != 1 << (order - new_order));
-> +out:
-> +	xa_destroy(xa);
-> +}
-> +
->   static noinline void check_split(struct xarray *xa)
->   {
->   	unsigned int order, new_order;
-> @@ -1868,6 +1911,10 @@ static noinline void check_split(struct xarray *xa)
->   			check_split_1(xa, 0, order, new_order);
->   			check_split_1(xa, 1UL << order, order, new_order);
->   			check_split_1(xa, 3UL << order, order, new_order);
-> +
-> +			check_split_2(xa, 0, order, new_order);
-> +			check_split_2(xa, 1UL << order, order, new_order);
-> +			check_split_2(xa, 3UL << order, order, new_order);
->   		}
->   	}
->   }
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 116e9286c64e..c38beca77830 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -1007,6 +1007,31 @@ static void node_set_marks(struct xa_node *node, unsigned int offset,
->   	}
->   }
->   
-> +static struct xa_node *__xas_alloc_node_for_split(struct xa_state *xas,
-> +		void *entry, gfp_t gfp)
-> +{
-> +	unsigned int i;
-> +	void *sibling = NULL;
-> +	struct xa_node *node;
-> +	unsigned int mask = xas->xa_sibs;
-> +
-> +	node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
-> +	if (!node)
-> +		return NULL;
-> +	node->array = xas->xa;
-> +	for (i = 0; i < XA_CHUNK_SIZE; i++) {
-> +		if ((i & mask) == 0) {
-> +			RCU_INIT_POINTER(node->slots[i], entry);
-> +			sibling = xa_mk_sibling(i);
-> +		} else {
-> +			RCU_INIT_POINTER(node->slots[i], sibling);
-> +		}
-> +	}
-> +	RCU_INIT_POINTER(node->parent, xas->xa_alloc);
-> +
-> +	return node;
-> +}
-> +
->   /**
->    * xas_split_alloc() - Allocate memory for splitting an entry.
->    * @xas: XArray operation state.
-> @@ -1025,7 +1050,6 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
->   		gfp_t gfp)
->   {
->   	unsigned int sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-> -	unsigned int mask = xas->xa_sibs;
->   
->   	/* XXX: no support for splitting really large entries yet */
->   	if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT <= order))
-> @@ -1034,23 +1058,9 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
->   		return;
->   
->   	do {
-> -		unsigned int i;
-> -		void *sibling = NULL;
-> -		struct xa_node *node;
-> -
-> -		node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
-> +		struct xa_node *node = __xas_alloc_node_for_split(xas, entry, gfp);
->   		if (!node)
->   			goto nomem;
-> -		node->array = xas->xa;
-> -		for (i = 0; i < XA_CHUNK_SIZE; i++) {
-> -			if ((i & mask) == 0) {
-> -				RCU_INIT_POINTER(node->slots[i], entry);
-> -				sibling = xa_mk_sibling(i);
-> -			} else {
-> -				RCU_INIT_POINTER(node->slots[i], sibling);
-> -			}
-> -		}
-> -		RCU_INIT_POINTER(node->parent, xas->xa_alloc);
->   		xas->xa_alloc = node;
->   	} while (sibs-- > 0);
->   
-> @@ -1122,6 +1132,100 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
->   	xas_update(xas, node);
->   }
->   EXPORT_SYMBOL_GPL(xas_split);
-> +
-> +/**
-> + * xas_try_split() - Try to split a multi-index entry.
-> + * @xas: XArray operation state.
-> + * @entry: New entry to store in the array.
-> + * @order: Current entry order.
-> + * @gfp: Memory allocation flags.
-> + *
-> + * The size of the new entries is set in @xas.  The value in @entry is
-> + * copied to all the replacement entries. If and only if one xa_node needs to
-> + * be allocated, the function will use @gfp to get one. If more xa_node are
-> + * needed, the function gives EINVAL error.
-> + *
-> + * Context: Any context.  The caller should hold the xa_lock.
-> + */
-> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int order,
-> +		gfp_t gfp)
-> +{
-> +	unsigned int sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-> +	unsigned int offset, marks;
-> +	struct xa_node *node;
-> +	void *curr = xas_load(xas);
-> +	int values = 0;
-> +
-> +	node = xas->xa_node;
-> +	if (xas_top(node))
-> +		return;
-> +
-> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-> +		gfp |= __GFP_ACCOUNT;
-> +
-> +	marks = node_get_marks(node, xas->xa_offset);
-> +
-> +	offset = xas->xa_offset + sibs;
-> +	do {
-> +		if (xas->xa_shift < node->shift) {
-> +			struct xa_node *child = xas->xa_alloc;
-> +			unsigned int expected_sibs =
-> +				(1 << ((order - 1) % XA_CHUNK_SHIFT)) - 1;
-> +
-> +			/*
-> +			 * No support for splitting sibling entries
-> +			 * (horizontally) or cascade split (vertically), which
-> +			 * requires two or more new xa_nodes.
-> +			 * Since if one xa_node allocation fails,
-> +			 * it is hard to free the prior allocations.
-> +			 */
-> +			if (sibs || xas->xa_sibs != expected_sibs) {
-> +				xas_destroy(xas);
-> +				xas_set_err(xas, -EINVAL);
-> +				return;
-> +			}
-> +
-> +			if (!child) {
-> +				child = __xas_alloc_node_for_split(xas, entry,
-> +						gfp);
-> +				if (!child) {
-> +					xas_destroy(xas);
-> +					xas_set_err(xas, -ENOMEM);
-> +					return;
-> +				}
-> +			}
+The desired clock frequency was correctly set to 400MHz in the device tree
+but was lowered by the driver to 300MHz breaking 4K 60Hz content playback.
+Fix the issue by removing the driver call to clk_set_rate(), which reduce
+the amount of board specific code.
 
-No expert on this, just wondering ...
+Fixes: 003afda97c65 ("media: verisilicon: Enable AV1 decoder on rk3588")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+---
+This patch fixes user report of AV1 4K60 decoder not being fast enough
+on RK3588 based SoC. This is a break from Hantro original authors
+habbit of coding the frequencies in the driver instead of specifying this
+frequency in the device tree. The other calls to clk_set_rate() are left
+since this would require modifying many dtsi files, which would then be
+unsuitable for backport.
+---
+Changes in v2:
+- Completely remove the unused init function, the driver is null-safe
+- Link to v1: https://lore.kernel.org/r/20250217-b4-hantro-av1-clock-rate-v1-1-65b91132c551@collabora.com
+---
+ drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-... what is the effect if we halfway-through fail the split? Is it okay 
-to leave that "partially split" thing in place? Can callers deal with that?
+diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+index 964122e7c355934cd80eb442219f6ba51bba8b71..842040f713c15e6ff295771bc9fa5a7b66e584b2 100644
+--- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
++++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+@@ -17,7 +17,6 @@
+ 
+ #define RK3066_ACLK_MAX_FREQ (300 * 1000 * 1000)
+ #define RK3288_ACLK_MAX_FREQ (400 * 1000 * 1000)
+-#define RK3588_ACLK_MAX_FREQ (300 * 1000 * 1000)
+ 
+ #define ROCKCHIP_VPU981_MIN_SIZE 64
+ 
+@@ -440,13 +439,6 @@ static int rk3066_vpu_hw_init(struct hantro_dev *vpu)
+ 	return 0;
+ }
+ 
+-static int rk3588_vpu981_hw_init(struct hantro_dev *vpu)
+-{
+-	/* Bump ACLKs to max. possible freq. to improve performance. */
+-	clk_set_rate(vpu->clocks[0].clk, RK3588_ACLK_MAX_FREQ);
+-	return 0;
+-}
+-
+ static int rockchip_vpu_hw_init(struct hantro_dev *vpu)
+ {
+ 	/* Bump ACLK to max. possible freq. to improve performance. */
+@@ -807,7 +799,6 @@ const struct hantro_variant rk3588_vpu981_variant = {
+ 	.codec_ops = rk3588_vpu981_codec_ops,
+ 	.irqs = rk3588_vpu981_irqs,
+ 	.num_irqs = ARRAY_SIZE(rk3588_vpu981_irqs),
+-	.init = rk3588_vpu981_hw_init,
+ 	.clk_names = rk3588_vpu981_vpu_clk_names,
+ 	.num_clocks = ARRAY_SIZE(rk3588_vpu981_vpu_clk_names)
+ };
 
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250217-b4-hantro-av1-clock-rate-e5497f1499df
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
 
