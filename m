@@ -1,196 +1,149 @@
-Return-Path: <linux-kernel+bounces-517414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07110A3806A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:40:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A154A3806B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7504A7A481F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:38:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D37167DB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BF0217711;
-	Mon, 17 Feb 2025 10:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20E0217664;
+	Mon, 17 Feb 2025 10:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TfwCg1XQ"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RVRUZ31E"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A41216E1B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C5A2135AF;
+	Mon, 17 Feb 2025 10:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788769; cv=none; b=mCPrtHAkEdgB7buAF06CiwPMiGn4zJx5SrVz1EJa/J9BVDRzAjKagy/bHTyHpToCpUw6atjxWH9R14gm0fDiNlZqsJ0zyo/idzffOaQ5KI88zEzIULSzjehGxZW5LEWYkH0I2nfsyfvY/urQmV2qFhNotVk5X4AOi2zOs4T1ZCU=
+	t=1739788801; cv=none; b=YkttcQOWGqps/LnAa0PwE948o7Wjp6PlN3Kn41DSZYqvedIrymUx5ZFHE7wb0ESiOx4/rYi4yBnv+eLhvlLeDkcAkrrocTsxIWFqjnvOzJxeif8ROKMyAXsWWRoyKbl+F4P5fTGmGYui3ntH4QSPOGyBfxULSc8MoHM4VcY9u4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788769; c=relaxed/simple;
-	bh=vUF/NdChsuF8RX0PL62paJYNXihVr9EN9nW0GqUH6HU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CpcmtHRUVTvdWZwz1nVHA0+gXyOEJXDWJ+GL+2tttJBaLS6/Ovj42LL0wYSdDaNUEJZJFvkfMYMQo1HqTYbdHQNoXkwzeaAZ7ChIGjaTOxx/2lWnwDBHWHkOJvwJOF6Z2M3M+nOYp5CxJozJW6Y6womjh173wtgAvPvqjXxn1kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TfwCg1XQ; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4396a82daf5so27132405e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:39:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739788765; x=1740393565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bq7tnHLSofTfA2piDpZZwNRhnA5jRBNdKKxEFfHW/ec=;
-        b=TfwCg1XQP43BW6ofJ60nIlueVJdmsPmenMs08VlvdQE9C3JbYJEn4aIFC4oCP0fUtH
-         YGl/D/ieSMfQEGk+nJrc6TzQU7Eot7FgmOjMMTOLIfAyIB4ZUrQYUBYdYkCF1DA2lbPn
-         ysE/qSFXDFVzq/7rP85BVHEvB+jfNDyXeJeyPFJXOE+kxCpuheiF7EizCHq4UZkxC7en
-         qdl4O22yVHnzMLIQqlqrsIBXhRw3VZVWWdS0UGJMgzn885GD6IpRHi+nZj7Pa7+j6L8s
-         xS2oqHJmzJWJ9QP0TRQkgCFUIhTbTnnc4xD40K9wB7JJvxWwamshG1dmt/zeqR2eDrQ8
-         kzwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739788765; x=1740393565;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bq7tnHLSofTfA2piDpZZwNRhnA5jRBNdKKxEFfHW/ec=;
-        b=WEdSBf/39/MRBbbSjsWgNh1Lp/s2G875zAhLcFko6i3vcwHzs3X4Z6j4XkBCOVTUDP
-         Q1zdPV/sR/bZ8ZrOiimM6LRyWOA7b/poeHFS2xaHlYtwd9CuRTIKtj5R+l8nlP+krecO
-         GP6PvN943hwXL0qVwmLKCFl+u5wbbFvxY3Yj/pUm+ZNiyG+SYxEQgCFgmZWj44TDC/qB
-         steRaKXlcZPKZWuD0Lg4mgbroUhFGZQnQCNT2XfaaD51d3a2X5Y+Dn3euh3xyOFvWM44
-         9A6aVIKS7y0hLSKsP2c5adnlxwE9QpNlJXMnXf9O9QvAqxn/O4YzZjCdf2LkEsJEL1+v
-         K3dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz4d0ki++GmrbqI8NCh4PVaQ+gn43nWsHbu1mvH4Uzq0ahk1Y2p40FpcZyfxpY+zSiszoFhe+ktNxM2JI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr6rFc5aSK0aiNG458w7cIOZYgDfU+jVJTzL9ZMTHcemFBQGWS
-	RJMnfDxk+oNPhVkMfFUrAm+kZUu7CGz6c7OoDhlQ+eaBQpikxR7XH72rrxrjwpy1SUBQhaVSFh/
-	IvpE=
-X-Gm-Gg: ASbGncuzPnnQWF9i+/2JQ9mwWmOGqrV/bmzdDyi52fw6Xf8GAB/IXiaRmlhBD5n2ve8
-	8fW0Jw4G4z6JO8Eorq2mtndlc7ygRCAUTwABdUGn6KVdaybEz4nVWtAL6QT9uLKKHhaprAoUmr+
-	KYyZ+bsfWixPOedh+bBlbDldblvxYEJD1FOi2QlY5EMGreX+H3jqZgDdsU1+E9yu4K/4qW8WXaM
-	eiU41NnAcV7zwnY17+ljv2lRRgw3n9+h5Ge+aDxq0fVbnRbpN2giSQrFzvrEYwIyvBO3pK3q+W4
-	HxUwuYzFFoK8
-X-Google-Smtp-Source: AGHT+IE4CNwnlKoha9ADPAeKHqx7QY4/pSOdlR/jtGXh8ZGwx2i49taknc0Hm9Pgs+7Gplgq0zx0mw==
-X-Received: by 2002:a05:600c:3ca3:b0:439:60bc:71e5 with SMTP id 5b1f17b1804b1-4396e72aac4mr73128495e9.26.1739788765080;
-        Mon, 17 Feb 2025 02:39:25 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8707:ccd:3679:187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06d1f2sm147990095e9.18.2025.02.17.02.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:39:24 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Dipen Patel <dipenp@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	timestamp@lists.linux.dev,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v4 2/2] gpiolib: don't build HTE code with CONFIG_HTE disabled
-Date: Mon, 17 Feb 2025 11:39:22 +0100
-Message-ID: <20250217103922.151047-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250217103922.151047-1-brgl@bgdev.pl>
-References: <20250217103922.151047-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1739788801; c=relaxed/simple;
+	bh=aexLyFKD2izY1bwPV7rn+KFIvV8FTQbYldZGou1hmvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMuGwIramJCfZV7JVMas/y7C2ejZYeXe+fA8dilaTn4nKbyaqa9z5lh7ewamyrJ+3Gs2N32bjSZ7CAt+Kgt2bvxtZ95NwFheeYRoWuhRKQCgks58p6SpuMRR9Fcjl3Jz4ryklkiLRPIZqnroHNkBxG6Ij1IqAbakhJj0duURrqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RVRUZ31E; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OE4rNS8s/qPZLHL+1S0BHoa0MIZLU9wgIaMlGXFasXI=; b=RVRUZ31EH3FU/hiV/9opTaU4OM
+	D65gb+ZHDhF6OlYLrWMcV1tSwA9lz3S5/DUh7LSkN0t2fdUE/hnYiwCU7SzVhpsrUldiUXHMXyGno
+	K3+3hgGVvzMar/81T0914p0IdBaDlmX8TSboyDPFZbjNJ/8UJVw5+zfrxYmdDTlKf0Ff9VLyF1Mu/
+	79RywaKA5JmbNYMkTf19OJc83vJ+fxwC1UZ48e7VrYk6CoZmQJl6c4Gp/V+6FQmUCgJk5sg95RtC+
+	/Cxc+3vvZ7B+HzUWUij94RCUFNEbBQEU5Bkrh+VOBwKGbokR/I9+zsM352KvoQOtFr/cnb8x5owhQ
+	qdd2FXAw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tjyXa-00000001mIh-0YCV;
+	Mon, 17 Feb 2025 10:39:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 05561300756; Mon, 17 Feb 2025 11:39:53 +0100 (CET)
+Date: Mon, 17 Feb 2025 11:39:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, jannh@google.com,
+	jmill@asu.edu, joao@overdrivepizza.com,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	luto@kernel.org, samitolvanen@google.com,
+	scott.d.constable@intel.com, x86@kernel.org
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <20250217103952.GM14028@noisy.programming.kicks-ass.net>
+References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+ <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
+ <202502131224.D6F5A235@keescook>
+ <6641d1e0-7151-4857-bb0e-db555d4cdf50@citrix.com>
+ <202502131248.B6CC333@keescook>
+ <20250214095751.GF21726@noisy.programming.kicks-ass.net>
+ <20250215210729.GA25168@noisy.programming.kicks-ass.net>
+ <202502161547.B05817003F@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202502161547.B05817003F@keescook>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Sun, Feb 16, 2025 at 03:51:27PM -0800, Kees Cook wrote:
+> On Sat, Feb 15, 2025 at 10:07:29PM +0100, Peter Zijlstra wrote:
+> > On Fri, Feb 14, 2025 at 10:57:51AM +0100, Peter Zijlstra wrote:
+> > > On Thu, Feb 13, 2025 at 12:53:28PM -0800, Kees Cook wrote:
+> > > 
+> > > > Right, the "if they can control a function pointer" is the part I'm
+> > > > focusing on. This attack depends on making an indirect call with a
+> > > > controlled pointer. Non-FineIBT CFI will protect against that step,
+> > > > so I think this is only an issue for IBT-only and FineIBT, but not CFI
+> > > > nor CFI+IBT.
+> > > 
+> > > Yes, the whole caller side validation should stop this.
+> > 
+> > And I think we can retro-fit that in FineIBT. Notably the current call
+> > sites look like:
+> > 
+> > 0000000000000060 <fineibt_caller>:
+> >   60:   41 ba 78 56 34 12       mov    $0x12345678,%r10d
+> >   66:   49 83 eb 10             sub    $0x10,%r11
+> >   6a:   0f 1f 40 00             nopl   0x0(%rax)
+> >   6e:   41 ff d3                call   *%r11
+> >   71:   0f 1f 00                nopl   (%rax)
+> > 
+> > Of which the last 6 bytes are the retpoline site (starting at 0x6e). It
+> > is trivially possible to re-arrange things to have both nops next to one
+> > another, giving us 7 bytes to muck about with.
+> > 
+> > And I think we can just about manage to do a caller side hash validation
+> > in them bytes like:
+> > 
+> > 0000000000000080 <fineibt_paranoid>:
+> >   80:   41 ba 78 56 34 12       mov    $0x12345678,%r10d
+> >   86:   49 83 eb 10             sub    $0x10,%r11
+> >   8a:   45 3b 53 07             cmp    0x7(%r11),%r10d
+> >   8e:   74 01                   je     91 <fineibt_paranoid+0x11>
+> >   90:   ea                      (bad)
+> >   91:   41 ff d3                call   *%r11
+> 
+> Ah nice! Yes, that would be great and removes all my concerns about
+> FineIBT. :) 
 
-Hardware timestamping is only used on tegra186 platforms but we include
-the code and export the symbols everywhere. Shrink the binary a bit by
-compiling the relevant functions conditionally.
+Excellent!
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Changes in v4:
-- rebased after fixing conflicts
+> (And you went with EA just to distinguish it more easily?
+> Can't we still use the UD2 bug tables to find this like normal?)
 
- drivers/gpio/gpiolib.c        |  2 ++
- include/linux/gpio/consumer.h | 36 +++++++++++++++++++++--------------
- 2 files changed, 24 insertions(+), 14 deletions(-)
+No space; UD2 is a 2 byte instruction. IIUC all the single byte
+instructions that trip #UD are more or less 'reserved' and we shouldn't
+be using them, but I think we can use 0xEA here since it is specific to
+the paranoid FineIBT thing -- and if people want to reclaim the usage,
+all they need to do is fix IBT :-) -- which as I said before should be
+done once FRED happens.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f261f7893f85..65ca749a1078 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2906,6 +2906,7 @@ int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
- 	return 0;
- }
- 
-+#if IS_ENABLED(CONFIG_HTE)
- /**
-  * gpiod_enable_hw_timestamp_ns - Enable hardware timestamp in nanoseconds.
-  *
-@@ -2971,6 +2972,7 @@ int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_disable_hw_timestamp_ns);
-+#endif /* CONFIG_HTE */
- 
- /**
-  * gpiod_set_config - sets @config for a GPIO
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 0dc49b5fca5c..0b2b56199c36 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -114,8 +114,6 @@ int gpiod_get_direction(struct gpio_desc *desc);
- int gpiod_direction_input(struct gpio_desc *desc);
- int gpiod_direction_output(struct gpio_desc *desc, int value);
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
--int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
--int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
- 
- /* Value get/set from non-sleeping context */
- int gpiod_get_value(const struct gpio_desc *desc);
-@@ -347,18 +345,6 @@ static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- 	WARN_ON(desc);
- 	return -ENOSYS;
- }
--static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
--					       unsigned long flags)
--{
--	WARN_ON(desc);
--	return -ENOSYS;
--}
--static inline int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc,
--						unsigned long flags)
--{
--	WARN_ON(desc);
--	return -ENOSYS;
--}
- static inline int gpiod_get_value(const struct gpio_desc *desc)
- {
- 	/* GPIO can never have been requested */
-@@ -559,6 +545,28 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 
- #endif /* CONFIG_GPIOLIB */
- 
-+#if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_HTE)
-+int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
-+int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
-+#else
-+static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
-+					       unsigned long flags)
-+{
-+	if (!IS_ENABLED(CONFIG_GPIOLIB))
-+		WARN_ON(desc);
-+
-+	return -ENOSYS;
-+}
-+static inline int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc,
-+						unsigned long flags)
-+{
-+	if (!IS_ENABLED(CONFIG_GPIOLIB))
-+		WARN_ON(desc);
-+
-+	return -ENOSYS;
-+}
-+#endif /* CONFIG_GPIOLIB && CONFIG_HTE */
-+
- static inline
- struct gpio_desc *devm_fwnode_gpiod_get(struct device *dev,
- 					struct fwnode_handle *fwnode,
--- 
-2.45.2
+(/me makes note to go read the very latest FRED spec -- its been a
+while).
 
+> > And while this is somewhat daft, it would close the hole vs this entry
+> > point swizzle afaict, no?
+> > 
+> > Patch against tip/x86/core (which includes the latest ibt bits as per
+> > this morning).
+> > 
+> > Boots and builds the next kernel on my ADL.
+> 
+> Lovely! Based on the patch, I assume you were testing CFI crash location
+> reporting too?
+
+Sami was, he reminded me I forgot to hook up FineIBT, so I did :-)
+
+> I'll try to get this spun up for testing here too.
+
+Thanks!
 
