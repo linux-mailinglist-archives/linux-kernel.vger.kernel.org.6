@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-518345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75960A38DAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:56:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305BAA38DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8161886065
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6E8188B41F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6112239095;
-	Mon, 17 Feb 2025 20:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51537239068;
+	Mon, 17 Feb 2025 20:56:15 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64D62376FD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0E238D35
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739825763; cv=none; b=Qqay8x2294NXhZa+IxgE3rK815618GH2RQ/A/2Mcq72eg4vne6bBHZ61zhUKuZQikvivTR4BErqQxTzqIkGN7C0KY4M0RZ7PQ6Gxng4lCNQCby+C37ZLSYZdLcXSIW46NarPAZOQOmP7BwgR1X7v09c9bLaiLEn9xE9B7UNGvu0=
+	t=1739825775; cv=none; b=gaN/yQcUWDs9hquNRNW9SCjlVSyq8fuhiFG1ZvGFF0Jz2SUddyxrJksCOaWhPWkXSrQoKLXLJXW9HL4B3ysF7ldGTpbg/tN0tmXCPwRuI1P3/5VMYtgif3j7bORIjYmuQpNhjVvkaaXJrmmU0dCcluxpX5W0FtF4c38cTu5QfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739825763; c=relaxed/simple;
-	bh=GbyX32X+vQrwB3z3vHzaBs748Z5oShxfqdhcPjn/50w=;
+	s=arc-20240116; t=1739825775; c=relaxed/simple;
+	bh=7xlQqT6SyHmrrrZ7lcI+lzDoY6cGIt6c6FPPGn5CXb4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qf/xjF9ogpJIoYmacsIBzf9xA/vtcPm4RvCir0iCwiUke8MXAfEl7hnzJvfAcq6gob4g0/cpet+2jAwjjQEYeQezeliVGvw+proHYf5Xe+5Dskv53u0AFzpDJoCF5hCEENTYsDcmuTrNpIBdLO3h20qj7jp3Fs54HId/g6c/4us=
+	 In-Reply-To:To:Cc; b=ISGK5ivVyDNYgHs4eYy02iJigFr3sR2zR7WdVWIwBk7HRaekCQa62yDiLtmzQwP97pyrvet0A1qr/9JZVsH8K1x1qYlU95BLcx2lAIsFg3Y0vzhAt9R2YtipGbFUURDpd2nKJCi/HSldKR0vZ59ErdxMoqesRmP5wAghHwLx2dY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,22 +32,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89U-00028j-TM; Mon, 17 Feb 2025 21:55:40 +0100
+	id 1tk89U-00028h-TM; Mon, 17 Feb 2025 21:55:40 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89S-001THg-28;
+	id 1tk89S-001THa-1I;
 	Mon, 17 Feb 2025 21:55:38 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uX-000W9t-2Y;
+	id 1tk7uX-000W9t-2Z;
 	Mon, 17 Feb 2025 21:40:13 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 17 Feb 2025 21:39:51 +0100
-Subject: [PATCH v3 11/12] thermal: core: allow user configuration of
- hardware protection action
+Date: Mon, 17 Feb 2025 21:39:52 +0100
+Subject: [PATCH v3 12/12] reboot: retire hw_protection_reboot and
+ hw_protection_shutdown helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-hw_protection-reboot-v3-11-e1c09b090c0c@pengutronix.de>
+Message-Id: <20250217-hw_protection-reboot-v3-12-e1c09b090c0c@pengutronix.de>
 References: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
 In-Reply-To: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -80,105 +80,55 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In the general case, we don't know which of system shutdown or
-reboot is the better action to take to protect hardware in an emergency
-situation. We thus allow the policy to come from the device-tree in the
-form of an optional critical-action OF property, but so far there was no
-way for the end user to configure this.
+The hw_protection_reboot and hw_protection_shutdown functions mix
+mechanism with policy: They let the driver requesting an emergency
+action for hardware protection also decide how to deal with it.
 
-With recent addition of the hw_protection parameter, the user can now
-choose a default action for the case, where the driver isn't fully sure
-what's the better course of action.
+This is inadequate in the general case as a driver reporting e.g. an
+imminent power failure can't know whether a shutdown or a reboot would
+be more appropriate for a given hardware platform.
 
-Let's make use of this by passing HWPROT_ACT_DEFAULT in absence of the
-critical-action OF property.
+With the addition of the hw_protection parameter, it's now possible to
+configure at runtime the default emergency action and drivers are
+expected to use hw_protection_trigger to have this parameter dictate
+policy.
 
-As HWPROT_ACT_DEFAULT is shutdown by default, this introduces no
-functional change for users, unless they start using the new parameter.
+As no current users of either hw_protection_shutdown or
+hw_protection_shutdown helpers remain, remove them, as not to tempt
+driver authors to call them.
+
+Existing users now either defer to hw_protection_trigger or call
+__hw_protection_trigger with a suitable argument directly when
+they have inside knowledge on whether a reboot or shutdown would
+be more appropriate.
 
 Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- drivers/thermal/thermal_core.c | 17 ++++++++++-------
- drivers/thermal/thermal_core.h |  1 +
- drivers/thermal/thermal_of.c   |  7 +++++--
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ include/linux/reboot.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 2328ac0d8561b1d051a0dea6d7565c145d584cbb..5847729419f2e02e3367ad39553440defe702d59 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -369,7 +369,8 @@ void thermal_governor_update_tz(struct thermal_zone_device *tz,
- 	tz->governor->update_tz(tz, reason);
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index 79e02876f2ba2b5508f6f26567cbcd5cbe97a277..aa08c3bbbf59a9dec65d775d280902b1455427c2 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -211,16 +211,6 @@ static inline void hw_protection_trigger(const char *reason, int ms_until_forced
+ 	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_DEFAULT);
  }
  
--static void thermal_zone_device_halt(struct thermal_zone_device *tz, bool shutdown)
-+static void thermal_zone_device_halt(struct thermal_zone_device *tz,
-+				     enum hw_protection_action action)
- {
- 	/*
- 	 * poweroff_delay_ms must be a carefully profiled positive value.
-@@ -380,21 +381,23 @@ static void thermal_zone_device_halt(struct thermal_zone_device *tz, bool shutdo
- 
- 	dev_emerg(&tz->device, "%s: critical temperature reached\n", tz->type);
- 
--	if (shutdown)
--		hw_protection_shutdown(msg, poweroff_delay_ms);
--	else
--		hw_protection_reboot(msg, poweroff_delay_ms);
-+	__hw_protection_trigger(msg, poweroff_delay_ms, action);
- }
- 
- void thermal_zone_device_critical(struct thermal_zone_device *tz)
- {
--	thermal_zone_device_halt(tz, true);
-+	thermal_zone_device_halt(tz, HWPROT_ACT_DEFAULT);
- }
- EXPORT_SYMBOL(thermal_zone_device_critical);
- 
-+void thermal_zone_device_critical_shutdown(struct thermal_zone_device *tz)
-+{
-+	thermal_zone_device_halt(tz, HWPROT_ACT_SHUTDOWN);
-+}
-+
- void thermal_zone_device_critical_reboot(struct thermal_zone_device *tz)
- {
--	thermal_zone_device_halt(tz, false);
-+	thermal_zone_device_halt(tz, HWPROT_ACT_REBOOT);
- }
- 
- static void handle_critical_trips(struct thermal_zone_device *tz,
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index 09866f0ce76585d4c7f2322ee62030fc1af9afc2..bdadd141aa24cf3c0afaf8d4c274e62bd796a4e9 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -262,6 +262,7 @@ int thermal_build_list_of_policies(char *buf);
- void __thermal_zone_device_update(struct thermal_zone_device *tz,
- 				  enum thermal_notify_event event);
- void thermal_zone_device_critical_reboot(struct thermal_zone_device *tz);
-+void thermal_zone_device_critical_shutdown(struct thermal_zone_device *tz);
- void thermal_governor_update_tz(struct thermal_zone_device *tz,
- 				enum thermal_notify_event reason);
- 
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index 5ab4ce4daaebdf0210d9b318ae17b3eb8a4bccaf..0eb92d57a1e2d5170754ee04c86e85634f10acc1 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -397,9 +397,12 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
- 	of_ops.should_bind = thermal_of_should_bind;
- 
- 	ret = of_property_read_string(np, "critical-action", &action);
--	if (!ret)
--		if (!of_ops.critical && !strcasecmp(action, "reboot"))
-+	if (!ret && !of_ops.critical) {
-+		if (!strcasecmp(action, "reboot"))
- 			of_ops.critical = thermal_zone_device_critical_reboot;
-+		else if (!strcasecmp(action, "shutdown"))
-+			of_ops.critical = thermal_zone_device_critical_shutdown;
-+	}
- 
- 	tz = thermal_zone_device_register_with_trips(np->name, trips, ntrips,
- 						     data, &of_ops, &tzp,
+-static inline void hw_protection_reboot(const char *reason, int ms_until_forced)
+-{
+-	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_REBOOT);
+-}
+-
+-static inline void hw_protection_shutdown(const char *reason, int ms_until_forced)
+-{
+-	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_SHUTDOWN);
+-}
+-
+ /*
+  * Emergency restart, callable from an interrupt handler.
+  */
 
 -- 
 2.39.5
