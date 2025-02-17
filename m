@@ -1,159 +1,91 @@
-Return-Path: <linux-kernel+bounces-517380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63366A3800B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18785A3800A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FE3189892D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AE13B468A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD64216E28;
-	Mon, 17 Feb 2025 10:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D75C21764D;
+	Mon, 17 Feb 2025 10:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="VoOKg8Sc"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BFnG4wDc"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776CD216E0B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AA5215F4B;
+	Mon, 17 Feb 2025 10:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787727; cv=none; b=ccxX1QZ5QaC40wocvZjcLuk/6SuMpaup7/SaJlsOHFR/qF5yWKfzBqsg+lISfV10FxYg/RZl9ixzTfMJwKRGYTKhUouQHuF8QdoQYGQELaLRCTREB0tWj0QrM4H+J3B9/rZo02irNLMVZSaN4vMMfs9OHmsw+r3sksnC+oVZK2Q=
+	t=1739787830; cv=none; b=FOEcY60JEATUY3hYELCJEFX/QRUOH2V5tnjY1RMF4Nsdhnj4tK+vffyaBEe3LPC7of7aNFfCRrb4RWIu0oweQdt+IozRXC4F0wEG7MjnzqIfzy/85j/yM2bEtTRQ9LKfG9qqLnUUxayiT39ZqSfqCoWI1FnXQipewfszxOMu+rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787727; c=relaxed/simple;
-	bh=jMs/nQgZnmKABPkw9jqt7Jfzzk1OWmU8OV/13GG2QpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=digewljgtD/XFGH9WVvEy5dvTEWMedKL3Dj7nxACp/DEiqCbofXk2hthyy4oqCSeLbbXb5UykPaSavONJf9X/fgHI8iK9W8eA6VojF3ph7XjDJzR66m4fUvNnXERLRTL2CnKdI1eIIuNyQw5jnRDMyMAfGFsSV1prnkYaWo+0XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=VoOKg8Sc; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 8B1FA24002B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:21:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1739787718; bh=jMs/nQgZnmKABPkw9jqt7Jfzzk1OWmU8OV/13GG2QpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=VoOKg8ScbUMn0vwJXXeE+NHJZ0a9mDWjY3CeKpA7rXlmzvqNpeipXr22cUOZkwj5W
-	 hlHqEuxydHy2X+qdRqpAo/cZQ0lKjeeiHRkh9nxqXR5EWMuKhJuMZW1Fm26Xtg1VNw
-	 tbdXTKy0CrqIUEbhY0LakzhEglbdyyiFYaoYghcIt8r4EyXEM2uxT+QJ6RRDWpBWm4
-	 OAMMipY1+hxsNKuYe7M94yopTUKCsQDL/6zirsQuwS50oW7b0kPaaMuIW9tg7PQOzY
-	 ahZGwYFab344VQG/hqYTXsssLZrxpk4bz1wWrxm03KZGWNYvnFT67CaAZfNIy7ddYs
-	 JG3RfyGnXf56g==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4YxJc00sngz9rxD;
-	Mon, 17 Feb 2025 11:21:51 +0100 (CET)
-Date: Mon, 17 Feb 2025 10:21:51 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= via B4 Relay <devnull+j.ne.posteo.net@kernel.org>,
-	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
-	Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 12/12] dt-bindings: mtd: raw-nand-chip: Relax node
- name pattern
-Message-ID: <Z7MNv4NX8dSztdsP@probook>
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
- <20250207-ppcyaml-v2-12-8137b0c42526@posteo.net>
- <87o6zaurv9.fsf@bootlin.com>
- <Z7Iqir-qaZDt6tsx@probook>
- <87tt8svrxf.fsf@bootlin.com>
+	s=arc-20240116; t=1739787830; c=relaxed/simple;
+	bh=WovgSGbvNWLLRcAWn+Mya6CHxmCESkWIMuKX5gtD5aI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iq7UNIX8uvNQwOVsMZeg1Q75RmXHSktasPQ6TI82TVSMnHN3+cKvsOffFRbAwxHV8MogPkhigKKVJnEtk1IznaenaBC4Tz/LwcaH3zQeP51ZS7xHNWaAq1sLh2sw8GrQ3yfc+sp9aF6W6RoILrKnRp1Zfps6XQDq/6fygOeFfmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BFnG4wDc; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=WovgSGbvNWLLRcAWn+Mya6CHxmCESkWIMuKX5gtD5aI=;
+	t=1739787829; x=1740997429; b=BFnG4wDccXfm9v/YgG2uOh+/7hulCLBJphafC4pVRr4USz0
+	1Dg0Hmpazntti/JFpt1WVvz9jIw+C07U7Us6lpZFIlLbJu4lrxC1kvogUCJpEMhbWyl8VH6E8SACw
+	WAp/Jj7xju02PUPSzpSd/H30k9pxHqBKYYrQfCKDHRM3eVJIt3MJj/3SwG3KVVmxZLXQe573UZR4X
+	dNroxTxY+47E9reHGW6qY4Dy50NC/DJja9/21i8HUAH130zQ1TSIKIvOeoghbRi5HyrKR4JDGy3m2
+	BZHUGhzr3sRYhHE4dvgd7FlkL855IhhNwwKxzknQ7+hRTLyu4oqK7OoTqLrtGUYA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tjyHp-00000000GpA-1DBY;
+	Mon, 17 Feb 2025 11:23:37 +0100
+Message-ID: <c4b48faeae8531e670ea5909800d1a0bfed69862.camel@sipsolutions.net>
+Subject: Re: [RFC][PATCH 00/10] pstore: directly mapped regions
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ 	linux-hardening@vger.kernel.org, kees@kernel.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ rafael@kernel.org, 	dakr@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, tony.luck@intel.com, 	gpiccoli@igalia.com,
+ pmladek@suse.com, rostedt@goodmis.org, 	john.ogness@linutronix.de,
+ senozhatsky@chromium.org, quic_mojha@quicinc.com, 
+	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com
+Date: Mon, 17 Feb 2025 11:23:35 +0100
+In-Reply-To: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87tt8svrxf.fsf@bootlin.com>
+X-malware-bazaar: not-scanned
 
-On Mon, Feb 17, 2025 at 10:31:08AM +0100, Miquel Raynal wrote:
-> Hello,
-> 
-> >> > In some scenarios, such as under the Freescale eLBC bus, there are raw
-> >> > NAND chips with a unit address that has a comma in it (cs,offset).
-> >> > Relax the $nodename pattern in raw-nand-chip.yaml to allow such unit
-> >> > addresses.
-> >> 
-> >> This is super specific to this controller, I'd rather avoid that in the
-> >> main (shared) files. I believe you can force another node name in the
-> >> controller's binding instead?
-> >
-> > It's a bit tricky. AFAICS, when I declare a node name pattern in my
-> > specific binding in addition to the generic binding, the result is that
-> > both of them apply, so I can't relax stricter requirements:
-> >
-> > # raw-nand-chip.yaml
-> > properties:
-> >   $nodename:
-> >     pattern: "^nand@[a-f0-9]$"
-> >
-> > # fsl,elbc-fcm-nand.yaml
-> > properties:
-> >   $nodename:
-> >     pattern: "^nand@[a-f0-9](,[0-9a-f]*)?$"
-> 
-> Well, I guess this is creating a second possible node name.
-> 
-> > # dtc
-> > /.../fsl,elbc-fcm-nand.example.dtb:
-> > nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
-> >         from schema $id:
-> > 	http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
-> 
-> What about fixing the DT instead?
+On Mon, 2025-02-17 at 12:16 +0200, Eugen Hristev wrote:
 
-In this particular context under the Freescale eLBC ("enhanced Local Bus
-Controller"), nand@1,0 makes complete sense, because it refers to chip
-select 1, offset 0. The eLBC binding (which has existed without YAML
-formalization for a long time) specifies that each device address
-includes a chip select and a base address under that CS.
+> This series comes as an RFC proposed solution to enhance pstore and
+> devcoredump with the following functionality:
 
-The alternative of spelling it as nand@100000000 makes readability
-strictly worse (IMO).
+...
 
-Due to the conflicting requirements of keeping compatibility with
-historic device trees and complying with modern DT conventions,
-I'm already ignoring a validation warning from dtc, which suggests to
-use nand@100000000 instead of nand@1,0 because the eLBC bus has
-historically been specified with compatible = ..., "simple-bus",
-so I guess the fsl,elbc-fcm-nand binding can't be perfect anyway.
+> This patch series attempts to solve this by reusing existing
+> infrastructure in pstore and devcoredump, and provide a copy-free
 
-In any case, I'll drop this patch during further development.
+...
 
+You mention devcoredump multiple times, but it almost seems like you
+don't even know what devcoredump does? I don't see how there's any
+relation at all, and the code added to it seems to have no relation to
+the actual functionality of devcoredump either?
 
-Thank you for your inputs,
-
-J. Neuschäfer
+johannes
 
