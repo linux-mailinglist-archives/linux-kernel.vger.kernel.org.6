@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-517181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A096A37D68
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:47:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB1EA37D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C8FC7A3ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C371894971
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574F31ADFEB;
-	Mon, 17 Feb 2025 08:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F30E199FA4;
+	Mon, 17 Feb 2025 08:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="P7a1/1M1"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CxbrPuFE"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160301AAE08
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5711AC882
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739781917; cv=none; b=ERbiNoyqTVDVg9prJRIXl6quUM0TGLe6S5VLim6TPE9DOMXJT5gUSUqIv5N8de0tfo//SHRpzXwpR++3dNFyCsML/EIJjC7j5OT9sTa7eMjTXlAxceG9JQQvLuHYDjcE099qSe255yclLHfwN3k4RfAG56CkaLl7iSqhxN4Gi+o=
+	t=1739781918; cv=none; b=Caq+x2ALPMK6bloNEHQ02rk0/IdIgbiKJdUYpLbPc4hQnOaIhRAR89pMwL/lhOrplGh5ImDcDuzzWxQ0pL/JpU6T8PXRaoVZ8t19lqzrSG7ktAUwbwgh9VMYqhnVoNf07FqIQ0cOtY6y+CwNnm6rHDmdNid7qE0gf+hd8Tbr7uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739781917; c=relaxed/simple;
-	bh=TsyxZ34/uk8jH+7pi9gkNKFwME87qom8rRAB+x7I9U0=;
+	s=arc-20240116; t=1739781918; c=relaxed/simple;
+	bh=4KWL7WT4m2P9Gzuj6XBNp3VWAe3nw+1IhcUCc4X7DHc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z/SaqRE+nOHyOc5q5xM49zXvFNU3bIkp048stzcPghBk6fI423kbY6LXwdUp2Qxf8trRaZOegXswpfM3nQodQqdIs9j5VMCeAyax1ElRTdibMhCPl4K7AzMmUEUSnZ3TDBfMXH9c7pQffX79OovhDF9c6ldvHoMfJ449FPPLj8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=P7a1/1M1; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=EzEFioBMInTKhe2KuA6JsTHPQUcRqFY3UWbr+nOPLaW+CnP1CGWjZLfScZoOKTkKgIg9VOtGc6r7IVStEIUFKv9H30o2oxjrmtrf6NwnwXNR4CRCz7m49XrQynrHn9Ww5FYHJamTZhvOqb5EAS27avG+Oh4JCMHXD1DpZFCHUxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CxbrPuFE; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f1e8efe82so4454594f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:45:14 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f31f7732dso1285300f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:45:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1739781913; x=1740386713; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1739781914; x=1740386714; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DPqGeqDxSe+aOIAEww9m1M//H8GA90MJiJy6W/MxoXw=;
-        b=P7a1/1M1pYDRLeKVNPY0ep4MJaHT2Jhcs8cF7xKDEaPngx4NcBtJk4h9uv8HlC9qVc
-         S6vHpkjQrouh/7iELXVSacCqyRbmRlWBpBC/7z+oQuTcS5zrAufDChgovbV+AhZ7Wk81
-         IKmi36GG4iWtQxsN708WH4RSlQGKiQ9XhcQnA3+95ANm9CtOlqTKoQHeyVNQOC2ZVVrv
-         1ZqevJCTwgYCUQ+j1JVEewKVVr7dEkDhGZa44yBcSZwJBaGjC89Kyzg974EmymOTRMfS
-         zSUXrjlg8O5v03KqwMdig2MkBVNUxg/HSZvCezaa8H0Q2Z2iGxO1NlCELmdmSEO3lq2y
-         mBaQ==
+        bh=tUiohrMXynF4IhELzrFmGh0geLQ0Ng2lOgwpKuwejQg=;
+        b=CxbrPuFE5cerjU+oX0UCAN6SJlWfaT4dtNFADNy9//P0fK8FV1y/bzJntSwlQD9wSt
+         Yl34LsKS91cH8ma9PYaSo1qsY99yz9TPxslCvW0ZaJU3tWX+eRV2pIHwqLkLT9VGmaYH
+         molh6ZwTLG2WPSnjSJbsTiB2ZBvuQqac0i12lE478Uj6Edvf2pZa8wuE70P2kRRy3RPu
+         n2s+igJ6YDEQvEHa9XDlFGXE0K2VkE3tnOynClSCw+FKiObkJi+vf2xIpkETdo7VY1qR
+         vgtNcK2o0bgvVTuweXHt9cHvGH1lZHOVSVhtp9040a1hL95uO/mBuf1IovF8qoWs5mCE
+         3MKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739781913; x=1740386713;
+        d=1e100.net; s=20230601; t=1739781914; x=1740386714;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DPqGeqDxSe+aOIAEww9m1M//H8GA90MJiJy6W/MxoXw=;
-        b=NcEQWnqLz2kGn6csZUBx2HCAHmIKJwYYp4+HEoZ336u25SnsrVXRXL4MDxWNbOBvPX
-         LX59sH1pkNOEPaUXK8Kz8hiAPBQtd0ZYaX3cmmINIkKeTyg6qD0ySmJFeLPbEWTAoap6
-         OTnWlcd6fcYqURwTLVGAkXGbKAtyRHkr44Um8nvhxJY2oW/274vb6t/R35OGntgSwvxX
-         GrFsBo+xktMxXXWzUxjuEiNDCiP3m5mshVdm09iz3tgBiBDqXKrWGK+9vH1lGLHaOFa/
-         B7egtyPimu61btGZMaKWUBFExTvwNqPFqVe8xKbMC6L1UPiI2ELU0HSDrVubWYl+zQtt
-         um7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUxCBP06kxnbtt0AYZRrlV1foYwn7ifC9UUSjTXPDZhvHK4xcIHaiCG0ltMPnP/7nA4g9298vA1br/o9bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ+86g6hntokkGoZvyImKpsU7FS0f7X8g0IDDIO+zHxouVaqm2
-	dNlzPz3oMauc43+iYRtY66dOrczP0VFXCGurr1vcoqlLFp/uOf2w7o5TYa7R3JU=
-X-Gm-Gg: ASbGncuJVJLXdCdwkRkVu8Ry8+UdHF6oQYboOj8TwDMnUH1XL2PsSxzgezi7xl+KFwt
-	l2CJYw/iisO3KoxzdwObGV7EPJ4eG6yUUGIquaDY7A5gr19UC+45PqvRQzjyrE2f2/07X0Kz3EF
-	1GwKRY4qsLtgDToj1rwP01L89gJ9ltzFAvAadDJd9ur+TkIN/YckoPXG5SBEhfUwKlk2a8I0xLd
-	5EGp9ChwCnfA5MKilDcbr6jpQkAFlIAs4rjPBfSI7eEBeKLLOG8/4byZVnf7iLyW62sTYvNgUTN
-	dl0=
-X-Google-Smtp-Source: AGHT+IFw2SQlG3mEiHsZKLXfCIe42+z2FtTbwXKzNb64tTScHuV6pXuwf02llElP/bUJfKsa7cfpqA==
-X-Received: by 2002:a5d:648b:0:b0:38f:31fe:6d12 with SMTP id ffacd0b85a97d-38f33f295f7mr8268862f8f.19.1739781913174;
-        Mon, 17 Feb 2025 00:45:13 -0800 (PST)
+        bh=tUiohrMXynF4IhELzrFmGh0geLQ0Ng2lOgwpKuwejQg=;
+        b=NwAKD3ct1AlRXIkUqCh/fA8IF46bGJMNzPfTVSnU6d4HXYyXGtvP1WbThPfjv4JeGo
+         xRbCkqAHLG7VYl4SLqcq+gmPkRcsKn74oY3UhBYYUNncltMOuL2MFJUAgWsJI2guBt7w
+         gFCwDthvREP0LX7IkIajKpdiw3ZSZjrzPLj2RXPqGZVEwQeMVCZXo9xoy4UG/GMvoYVw
+         IAjqIDUlV2JnwCyV3MqnccD1FmGhZ1lhcPdfETr417MCFnxM62m7yhZUjcyiL0vPUn3N
+         6pxnEh9loT6vuT06U7TRNP9C1/msXqc3Tifwd1rXJ9+BxPmNcU4Z2h3hu9AA8Kw/AK9j
+         FNYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNFct5XHysseOvJ/qv8s7HGgK5Bp9AGmv87ltmX2tb7sS7UhJQqCdOTSIQmmJ2+RVhsU/65MZkOJKSoCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIU4U8bVr1eRpLPz8JA7W5o7Y46WLGW5vuVzmLpX0yWpwH2rfa
+	/Xq1IJAy1AxTloxnnir2X+TIxEbFOl5+My2qK7BbnWnHXZE607xLB+p50wRlbjI=
+X-Gm-Gg: ASbGncsml7pgohSbtNpV/mbKbFApL9priE283T8kerN6gA7JLlPbwp7FFtI6E0TAYP4
+	yyMJaPIMHSI+Ig4VTkQny+tZSZshF7KjmfFamKEPR9kpaaN/XwQUvHwG6K2Yg+ZsCMTT9ujYTst
+	30Pvi+WZR1sWdZKfVU8+uQx6Lklvvkv9H2yxO2jd2fxpK+P5ymMjpMUM/i3SlXGADMWpTKWl/nL
+	lVJfwr7w2+rAxovqsgW/kBJu53qebHxL5geGZ6mZxfRpu+tpGmOzvJyP0xuMXty3mvNjBZ0e1JM
+	gCA=
+X-Google-Smtp-Source: AGHT+IELeloq+YGu7jeWFNzVErrIwYQyO3BkZOQqDo2NauOC4G+f26bXlMmY85lR2Dzf3d+ItLp71w==
+X-Received: by 2002:a5d:64a7:0:b0:38d:ae1e:2f3c with SMTP id ffacd0b85a97d-38f33c2886emr8174108f8f.25.1739781914336;
+        Mon, 17 Feb 2025 00:45:14 -0800 (PST)
 Received: from localhost ([2a02:8308:a00c:e200::766e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ccdccsm11661079f8f.24.2025.02.17.00.45.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4491sm11387499f8f.7.2025.02.17.00.45.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 00:45:12 -0800 (PST)
+        Mon, 17 Feb 2025 00:45:14 -0800 (PST)
 From: Andrew Jones <ajones@ventanamicro.com>
 To: kvm@vger.kernel.org,
 	kvm-riscv@lists.infradead.org,
@@ -82,9 +82,9 @@ Cc: anup@brainfault.org,
 	palmer@dabbelt.com,
 	aou@eecs.berkeley.edu,
 	cleger@rivosinc.com
-Subject: [PATCH 4/5] riscv: KVM: Fix SBI TIME error generation
-Date: Mon, 17 Feb 2025 09:45:11 +0100
-Message-ID: <20250217084506.18763-11-ajones@ventanamicro.com>
+Subject: [PATCH 5/5] riscv: KVM: Fix SBI sleep_type use
+Date: Mon, 17 Feb 2025 09:45:12 +0100
+Message-ID: <20250217084506.18763-12-ajones@ventanamicro.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250217084506.18763-7-ajones@ventanamicro.com>
 References: <20250217084506.18763-7-ajones@ventanamicro.com>
@@ -96,28 +96,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When an invalid function ID of an SBI extension is used we should
-return not-supported, not invalid-param.
+The spec says sleep_type is 32 bits wide and "In case the data is
+defined as 32bit wide, higher privilege software must ensure that it
+only uses 32 bit data." Mask off upper bits of sleep_type before
+using it.
 
-Fixes: 5f862df5585c ("RISC-V: KVM: Add v0.1 replacement SBI extensions defined in v0.2")
+Fixes: 023c15151fbb ("RISC-V: KVM: Add SBI system suspend support")
 Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 ---
- arch/riscv/kvm/vcpu_sbi_replace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/kvm/vcpu_sbi_system.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kvm/vcpu_sbi_replace.c b/arch/riscv/kvm/vcpu_sbi_replace.c
-index 74e3a38c6a29..5fbf3f94f1e8 100644
---- a/arch/riscv/kvm/vcpu_sbi_replace.c
-+++ b/arch/riscv/kvm/vcpu_sbi_replace.c
-@@ -21,7 +21,7 @@ static int kvm_sbi_ext_time_handler(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 	u64 next_cycle;
+diff --git a/arch/riscv/kvm/vcpu_sbi_system.c b/arch/riscv/kvm/vcpu_sbi_system.c
+index 5d55e08791fa..bc0ebba89003 100644
+--- a/arch/riscv/kvm/vcpu_sbi_system.c
++++ b/arch/riscv/kvm/vcpu_sbi_system.c
+@@ -4,6 +4,7 @@
+  */
  
- 	if (cp->a6 != SBI_EXT_TIME_SET_TIMER) {
--		retdata->err_val = SBI_ERR_INVALID_PARAM;
-+		retdata->err_val = SBI_ERR_NOT_SUPPORTED;
- 		return 0;
- 	}
+ #include <linux/kvm_host.h>
++#include <linux/wordpart.h>
  
+ #include <asm/kvm_vcpu_sbi.h>
+ #include <asm/sbi.h>
+@@ -19,7 +20,7 @@ static int kvm_sbi_ext_susp_handler(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 
+ 	switch (funcid) {
+ 	case SBI_EXT_SUSP_SYSTEM_SUSPEND:
+-		if (cp->a0 != SBI_SUSP_SLEEP_TYPE_SUSPEND_TO_RAM) {
++		if (lower_32_bits(cp->a0) != SBI_SUSP_SLEEP_TYPE_SUSPEND_TO_RAM) {
+ 			retdata->err_val = SBI_ERR_INVALID_PARAM;
+ 			return 0;
+ 		}
 -- 
 2.48.1
 
