@@ -1,190 +1,102 @@
-Return-Path: <linux-kernel+bounces-517575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9B7A38292
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:04:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B232A38297
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70CA16B81B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2EF1888513
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C81F2185BB;
-	Mon, 17 Feb 2025 12:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DF4219E99;
+	Mon, 17 Feb 2025 12:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="Y8gWhHAi"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2090.outbound.protection.outlook.com [40.107.92.90])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="iIAlto/c"
+Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB01A5B91
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793887; cv=fail; b=heo9m+lcN2dGKsS2WcgV3UD7kjvOP2/aMrTTaseopQFSJQFSnZcn5Q6dS75is0+B9+QzhOavcCN4DY1mAD+1h75/9Cu1nVLqKiEOgS7qp97VK9fg84FAeQBuNOse7jW4U/0nGyTeYz7CsCoHza87Y9fSKT7NCrbM/DzC/rjzXNk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793887; c=relaxed/simple;
-	bh=Pa4o3xEHgSRV3yK6dMMLpdqj7p0IMelGVz4bqLSUtqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nvvFKXSJpjAjScyg+wbB1fgdcOVLSMlkIp8a4z3OU1NjSQK4d3EExk9Slmw0qqD2th3zv5/zl87dJZzT/rCF881HgpHvg1kjHhnvdtT2Q+nxB8vT9GDPSyqdF7zl2OlN9anr+1ZH6OdEW/bkHi2wJz/GwK52KDuOg6yhvxAFJdc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=Y8gWhHAi; arc=fail smtp.client-ip=40.107.92.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ttcvey9Z20jYfoUGFQ678A0sED3Mg+kk4aG2hoGiINrFbDE8x9O6umIc+h1f+JaJ0afDeaFx32Eatlke3xg/uep3AoQLsgMa/KxESmQJxfmlg9bXTnNq36pd+59zopDeDNBur6GLCmGG49DncsYPtEpGy3q18oT8QbhPaWPA+tRNx6MrAqUhmHLD7mhjvy9vdJQ0gpm5kvG2YO9S9wKSwRap2xvA6wU6rm1iPy8hYZOMHOk6Zb8MWbibocy6NPeaUh/xaw64+GMh4NumLbShlOw5x/8PCPAogqGgu9XVyR3GgTDfemlRzBtIVrcUq9rn6+cjcYGTc2E9CjVS57v7kA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F7nk7V0szb9xOTaw+A3hIWr1N107vhwbWKKCohKH4fY=;
- b=TTL80Z/gCfugQk/+z3Tj91YVYLFtIVrx2gPbB39rMznFPR8/p6ta01jvb3RfUwsrqazwzgBOX8V5ydn5MpoGyfr7KkLuCJMH6flmN6TOH0HSKlXUuu4t0jayAND6yhUcDhyYQi2V0jnxtJoB3Nulv1aMFbmR+RyFcuyQErXqAux0H930cF6nes/IMoxXnC4WO+P10QNv2dSrdgkiRH6Jd4jEcNX5iwuYaSid6pLgN+9/oJTlZSkCh/Xq3XYJpT8JUD1qiSXh5f5egd57WPmC52Xexji0NyIBbdp3nFdUvBb3GdLYryUHAH5YIIX900Q29KN0dPyr2MUPaIExbGTREQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
- header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F7nk7V0szb9xOTaw+A3hIWr1N107vhwbWKKCohKH4fY=;
- b=Y8gWhHAiuaZzQJmk0kbEKKfQXTyv6M1qYAezgj0sIIQPJEuJoYwS/Ye7FjHogIfRBAXfKzvozgwxVolpHPNnzmDtFgh88GzFXv2CDwtdEUY1xxYWUhvpQev4oJ/6HHVuEoIqfeUwzd3SIlfm+7weiKlnqInewDiJvTNjIlzR60A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
- by PH0PR08MB7178.namprd08.prod.outlook.com (2603:10b6:510:78::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 12:04:41 +0000
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401%6]) with mapi id 15.20.8445.013; Mon, 17 Feb 2025
- 12:04:40 +0000
-From: John Keeping <jkeeping@inmusicbrands.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: John Keeping <jkeeping@inmusicbrands.com>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel: ilitek-ili9882t: fix GPIO name in error message
-Date: Mon, 17 Feb 2025 12:04:28 +0000
-Message-ID: <20250217120428.3779197-1-jkeeping@inmusicbrands.com>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0179.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18a::22) To MW4PR08MB8282.namprd08.prod.outlook.com
- (2603:10b6:303:1bd::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89E21A08DB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739794014; cv=none; b=fFm4WBriU+AoHxr7aErNFvG8OpXtNjAilBi6KuUh48df7rMEnKoqmk0MDX+QVZfr3xb6PolfjKLJTmBmiJF9YIKPyiXXbxK3POSJUqZyIKLdesGml/Ypfu2aitHXXBMTLMop+LGM6rKSfty7Q3tfnwizOXtm1HZ4MeWNo/5xxyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739794014; c=relaxed/simple;
+	bh=fOR6OeNYk6pjJz3p+ZkVYEPE8eoOb0VsJrdOWY6FW1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hT3gzaRLGqIw6zhawBhsM6R87r6RQCWxD6wMw+DOXHraL6Dq6wPEtNJ8fbSRZijWkVUXAHU0RDMBLJPRorpi2Fou8HS06hh1BqUPx1nipvbm5kvcFbq2lMA2E3G4ZoqQs9RQlNZGM0JWaWcbVgHhwzozY+TvrAXPpFSvoUz4ZIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=iIAlto/c; arc=none smtp.client-ip=17.58.6.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=gdHE72SWR74/9/CdrLgsgrLo5axD2Xp+SLBtwjszUJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=iIAlto/cOIj8qQFQUZHC1Tijnvfnu8T9Y3dXbe6M1h3JCoxNEVFMhFM+S0Me/sGWu
+	 QsZ9TtzAfUc7dL0Iaya4TzEIX3Y/IXwLFQ2gAB0U/DP54THORaqZHUBzHsMEkVCn/l
+	 M9/GwZIRSDg4+9OLqnG6gS/yLdTwo3SypoT4X/gXoK2uFAhP+kFkHizX77KzA3AKrS
+	 KZ7OW+VCrJHL/qKFdGkbtLzeHSgQTtql+Tjr2irZcAJ/jdeuIxM4BYXrAk/pRO7m4P
+	 aic7j+X6pVMM/+hmw0AS0qLvuWhTjfFiH4SV/8vlAe607qyBkMIDZKmu5i6IAktdzY
+	 MKmiVdY5rKWxg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 01408CC699F;
+	Mon, 17 Feb 2025 12:06:46 +0000 (UTC)
+Message-ID: <a99e4576-ca9a-4b28-9a5b-242184de852c@icloud.com>
+Date: Mon, 17 Feb 2025 20:06:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|PH0PR08MB7178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c89abf9-18a0-411e-c7d0-08dd4f4b41fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0SK/h07KkT2sDzJlaVVfdH1eNA8zrXTo5FJ8t2y+9t8RI6Moz6Hc79tzJ+7H?=
- =?us-ascii?Q?KtSpehTy7EiTLjwBomT2BBmpqtZbom8VNRWhEl0xfCHcDabQW893eiZRBMCt?=
- =?us-ascii?Q?yAtVdvlx2z9vfqWwb0t9pqIz1nfW9iFS8WPHPAS22cZRFDmiLzy4RWfMG8tE?=
- =?us-ascii?Q?jSvz3TAW/63NxqRYfMEPJ3BVedaivkYsJxvHv5g+8Ce36g+Kc1JMCqB25Qf1?=
- =?us-ascii?Q?7Jxf1WfLPphDGvgfbeNHLcn+k0S/RcaxY1wlJIh14sYide6F+quDDojJFTgr?=
- =?us-ascii?Q?NmY7N/r63432o1AWTBDC5prn457iP3QfWznjZCIdLsREP0hk+1KyU0viGzm+?=
- =?us-ascii?Q?F5f58RkjWsevHIHHwupk8BVEieGgy1uYEXokGoJ9yW+7uoH85nF4EJx23/UP?=
- =?us-ascii?Q?7clLdANoCCQB2LR5q2ry6wi4cGQxZhLuyDQ79yFzkV5+V1d8WCIIHPsMkRSp?=
- =?us-ascii?Q?7n2LjHycJVJ0PlwCI1nllR7xl+9Ap/BVXyBxUZGzwBoW53k0ONvOWFi4hkmn?=
- =?us-ascii?Q?vXzp5hoAQiq+vZRrWh/gCMSRV1ak6s1JZLTz+U9ZXXsBaeojkCX8Fq6soW4O?=
- =?us-ascii?Q?IpnkqFKn7c6dbs/3tW3qosOz8wN3wLOkCJGKYrlsxm91fGnLQvSKRuRaysha?=
- =?us-ascii?Q?Q1P8TNwjzEAuyhiFEcMapXdyM4J8JFHxxCavh13RKPFz/zFxw6vXc/VfVJ+s?=
- =?us-ascii?Q?h4Uf5kBZr/zD/4/vQDZsfoKg3/t9kRD4HEoQAGDiszfyXyAhYjGpUx0n/OoN?=
- =?us-ascii?Q?0LiyPXAVOcwJ1NPh0Cr2glIl6l+PnGl534ObnTR9pi7V3kk+qhj7CcZJX5qq?=
- =?us-ascii?Q?C1gUn9PjoQPCJqYCVO+3x8/q8gINf4PA2zmpYJxLPK6IKxtKkmNDsrIKb/Aj?=
- =?us-ascii?Q?ZB1PHI3K6xkNBhBGXWex3yrgompOclCtP/xdS8J/z/o6EPQ8fPgIz1mA9LDh?=
- =?us-ascii?Q?7yKvhi0w673y9MMficvR9CTFLb9oxErHUx5utWMmjOJ3tnCOldH3RYRYmAHN?=
- =?us-ascii?Q?rAl30EeIBQlUe7G1RsxHhvO+2IFWGqiqVv0/jGcVsITOG4ncm9U7DvPoebsl?=
- =?us-ascii?Q?XVpOa6rASDkZXem/0uBXjsf1/GWpfEqkgv8VRPzsayj3Sa3kGe/9GppM45xp?=
- =?us-ascii?Q?f6mBO4endO/i5OTpeGutg7a2kRpkb9r0vx1dcDcKD2QMhL6f0GVhXsPza2Xl?=
- =?us-ascii?Q?VFyi1JqctVQlWlwVASpL/gHQbFXNRChk9nlzdh8jgQPt019JH4Jt5mvqDp1n?=
- =?us-ascii?Q?rrutN8FfO0h+GnWMvkG8DdCT/R9oqW6n4O9ThjG+RQBmE79FUD8VF2gUbgBl?=
- =?us-ascii?Q?KMR6payy+n1k31WYKEeE4NG2i4krBFsq/PXCSSs6+eWnOCXxSM188J5noIiC?=
- =?us-ascii?Q?t8D+tsmlu2uffPquK9Pd+ltuJtxsNAB8gcWimMA780vXrDGXR8kWyURQ0Wtg?=
- =?us-ascii?Q?vovkVL3BSaCmUNoCq21limsIcTzoak2R?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2+E6c4cf1P09gQtyarbZ9gaXgwKtocuYUOvjG3esGUNTkvUh+KXgvxjRAoxp?=
- =?us-ascii?Q?X3aAUTPcGEh1a/7vFVxqhUcwjXmHjzly14sL3N31c4xpxnSv+hh3rFwPzeCr?=
- =?us-ascii?Q?eCZTMi+r9ALTL0rCXcFzRshM586NIlspRzQkS/GqMd2mjgKPNpOZWECoaK2B?=
- =?us-ascii?Q?GKik5WEJmAqwCNdV1RPTolVdP4h1tVhi69Vdy0n5E16/2hyJEtDyxdTfASLp?=
- =?us-ascii?Q?BadqgLA+UlO8huM760Zci9VMiJNR90Z8w88VZ63xPya94slOwE6H5M3Dx9Tq?=
- =?us-ascii?Q?CSrdKnh6eg5Q0xQ2K6YwmOFIiO2ZRa32243NrDpFmFON/7SaA94OYDB5XUG0?=
- =?us-ascii?Q?U3vAx+4lobTJV8Fez69HIQoGR+mEyQHQtQPUmPRQbc7uKg8pV5Iy/61n2dDh?=
- =?us-ascii?Q?+gwlqc0X4BNwQvptntTbg8rJxfuPcWqjOgv1gGpazXx0iUF/U7GTzeUhpfuo?=
- =?us-ascii?Q?PYmMO5xJPmMN2Bij+32g3HP3eluagV3l/wmWIbDh+uXpAFkvt2GVzJkjx1vm?=
- =?us-ascii?Q?lnbXac+R2oFJiLy4TjrA/GdOU441inw6GLpXzJJDcVs8/vqTVfaMffn6pdyy?=
- =?us-ascii?Q?A2uazgfZ4NwKZ9w0d8Tx8YTnOS/jPOlCFOYrreP4BsHwYSDOfOBC7Tiob2Nh?=
- =?us-ascii?Q?XsrFez4uN4DqG7x3l23PzV6FrmPbRofwAGNWpvtcXMcqNVZUGStEKYxT5Xa7?=
- =?us-ascii?Q?8nAGRMtVshRQOhYC/qsB4eHUaERMdo7f3ZH//144bS5tq0IPYLZLMd+rgk1I?=
- =?us-ascii?Q?7uyx2KMv23Qp996JaJdlDnIFlTD9dGBavVyYWbs4cXoxVuhuR/kEcZ/hLens?=
- =?us-ascii?Q?2pbUDJdJDbYoXliw8mY272610IndcfgJQLdt9ya2IXp+PVe82H9u2C+2Go91?=
- =?us-ascii?Q?fw98LaddJFEbgYbhy5QBXtOx30dH/tiywAEiTt99vMwLXaW8Ni6E/c/Vk6so?=
- =?us-ascii?Q?yh4fm74/OE0jQfxuSHY1CiMRZBkCtbVUhui8/YEtQBuTO/dtzRXInEtxuPI5?=
- =?us-ascii?Q?4i17DacJWJo7Mgn3R6l50Jmwrg6KruyCTqCEDOhTnEZ+VfotY/FZo8qafLTW?=
- =?us-ascii?Q?YIr0gZTngqCkiSqHriLtp5tzjWRDAuTK56kFkcxEQz0IIMnYoqL8TQzOybx8?=
- =?us-ascii?Q?b2qENrluJjmCX5jI0QWgItsK2qbE7vZc1+TRBQ9aDXU44Gz1MzTj+WIzvyu6?=
- =?us-ascii?Q?hUKmltbqCX7XtxC1rEWeaSVB0f91vnfHMgKR5xfE9wxLysmWANyLQ2g/xI6Q?=
- =?us-ascii?Q?hrum8kQSjyCSoauymn1gGzR8i/KGj8nb1u0Jcin6U0sdnpMMehDfdIZOwQbA?=
- =?us-ascii?Q?wpJjWVGWJ7skK6S4Jx6odWVexEpYLA4V6RkuCA9ruM4bHb9D1ZUmhxQ5v/GW?=
- =?us-ascii?Q?/cfIIEi2LwU3Ig042hQGBE1xf8rscMgu6oVod98QJ6oxK4+NwHVbT9mCz9k3?=
- =?us-ascii?Q?lgNOj7EmaIlOApe9+wCj+cagx0E1RJDI0PUO2MWElowy4XAFYQx4vMy3fTNX?=
- =?us-ascii?Q?ICNLdnPlUWZmbOxeIg0Vtaa3WyT3/pxeqVSdVA/RnImSLpbBZTl8DEBufoKE?=
- =?us-ascii?Q?01bpxa84E9639Y6oo/q3MxWeTAtI58THFnXVGoYPIdMQJfcu3r+l4SeLubbx?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-OriginatorOrg: inmusicbrands.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c89abf9-18a0-411e-c7d0-08dd4f4b41fd
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 12:04:40.7826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qC+H/AFAzyhUFonppfWxGWSNdkQdsGzfUHxUOc5h1Bef3c9mfoxbO2+fl8Tl1pJIIk46HoKR6Ox6lUupw1K6vrILLxkFXTsDUzKJxr8CT44=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR08MB7178
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: endpoint: Remove API devm_pci_epc_destroy()
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20250210-remove_api-v1-1-8ae6b36e3a5c@quicinc.com>
+ <20250214154007.tg3bzi5berkk45wk@thinkpad>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20250214154007.tg3bzi5berkk45wk@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: _8OPX240B8Z1D5erMbyUxHevYUZatzB1
+X-Proofpoint-GUID: _8OPX240B8Z1D5erMbyUxHevYUZatzB1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=742
+ clxscore=1011 mlxscore=0 suspectscore=0 bulkscore=0 phishscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2502170106
 
-This driver uses the enable-gpios property and it is confusing that the
-error message refers to reset-gpios.  Use the correct name when the
-enable GPIO is not found.
+On 2025/2/14 23:40, Manivannan Sadhasivam wrote:
+> On Mon, Feb 10, 2025 at 08:39:53PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Static devm_pci_epc_match() is only invoked by API devm_usb_put_phy(), and
+> devm_usb_put_phy()? Did you mean to say 'devm_pci_epc_destroy()'?
+> 
 
-Fixes: e2450d32e5fb5 ("drm/panel: ili9882t: Break out as separate driver")
-Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
----
- drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+yes. it is devm_pci_epc_destroy().
+my mistake, thank you for pointing out this.
+will correct in v2. (^^)
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-index 266a087fe14c1..3c24a63b6be8c 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-@@ -607,7 +607,7 @@ static int ili9882t_add(struct ili9882t *ili)
- 
- 	ili->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(ili->enable_gpio)) {
--		dev_err(dev, "cannot get reset-gpios %ld\n",
-+		dev_err(dev, "cannot get enable-gpios %ld\n",
- 			PTR_ERR(ili->enable_gpio));
- 		return PTR_ERR(ili->enable_gpio);
- 	}
--- 
-2.48.1
+>> the API has not had callers since 2017-04-10 when it was introduced.
+>>
+>> Remove both the API and the static function.
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> With above fixup,
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> - Mani
 
 
