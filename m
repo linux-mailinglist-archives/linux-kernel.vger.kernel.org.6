@@ -1,208 +1,143 @@
-Return-Path: <linux-kernel+bounces-517561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9279A38268
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:55:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E1FA3827C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7687E18960BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7743B6DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C549C21B1B4;
-	Mon, 17 Feb 2025 11:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA52221A43D;
+	Mon, 17 Feb 2025 11:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQpUIk/r"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="QAClIXWv"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C13C21883E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197FC2EF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793214; cv=none; b=iju4zgmZ6mf4WIBWYUg9nUyNB/OhaFvqlAVrYqPXmW2luC6a7Ucooo8yrkZ/rUPI+CPZmsYfEWoDoxNIl++sp1+qpqrT/focbueSs1XBdkzI9SfbC8CwyAHW1PaSOjZ0DCBzjZnkTLzjET4e3ojAHmsoffFyGHTO1SmkjlH5uEE=
+	t=1739793284; cv=none; b=qsjeUj4YOOAlxAdpyKwHHduFB7X1U5lXo1yG0r/+pp8a5pvLkHh9o5BPs0TtO2GMi0wicLY2jvt2eN279Nc3uf9YD+4fCUvtR9km6wuyT56C68DPGpBFG32IEUFJCr/Dq+3XZsp+cUB3nkBmiLaU4D2mYQYUOY0T/+LCdSAvQNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793214; c=relaxed/simple;
-	bh=4yRGnHcWDQONSQquawDOtYjp+676tk0lAQdyTV3hXMg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nul4N2yKq3q3U0z0KWRdz24mW8LRu8Ius6kopzkMsjJohobRBy7IKqZ0aic0/sAa1jaFn2AVKtcggYjsYMcclVOzw2PiBu2SIeNNhgZoL8zwXKQ+vvjXj6kjysJipE/W9vlQeEaC4jnZgXUH28AHHsl3bqAtGkYN8ZlINAUzg3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XQpUIk/r; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4396590c614so4338345e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:53:31 -0800 (PST)
+	s=arc-20240116; t=1739793284; c=relaxed/simple;
+	bh=CNZT+25ePdrVoRVjO98eXznFTfieoFVKs8XN57JBj0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rEzMJ1xOx2eesoJtaNaesrctc3aKrJnGHlL34oLSgUzA8saO6fj2NSLny5oye/gvjuBPySBL3K3COG59kZa+9iqrOujIr7MfRzx7zogNo3rtBOW0WlSFWzUlpByBEHohtz1Qbj295pfXbbroYGcswCWkyebdsS2ljW2x5N0+8n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=QAClIXWv; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaec111762bso981464166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739793210; x=1740398010; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VXADKpBGHnogkbd8cS/4TYoAV8pATRtlq3ir5WyAbIs=;
-        b=XQpUIk/rg95F8vxBd4s4GMrlMb4ymra7Pwyt2aIbpbjy9t7Epw2H7Y6S7lWbF5UaDt
-         p0PHtNH7LzCDemTpN/JngmSZTAGEOCzGS/uNVzdgKt9rj9kNRjY6ro61pdFENPm8rUnM
-         hAvkxCfZ76RfrR0hKSDDSeq28ixL+9vuTT08gCrhXAanhhwalyCNDY5hXj80tfNmxtKQ
-         zmHlCwzytbsYx4x9ys/KF/pFYGyerm4EmwkbzK5j18XzUW4M47/7H7lwNN8J1nVEp5NU
-         9hCmpWumASwQkcziNU7VETGzAiSdr1iqVZ9M4Mk5xNBVEyc62vmgVfiWTqAevuX+T5wm
-         jAeA==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1739793280; x=1740398080; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ODoUNIzhz8wbS9RlnqshxBZqUZSt9lnSSqoVHSSyPbo=;
+        b=QAClIXWvVYY01roVLlcpb9TTJ86LJOq+KhJTDD2k/6ImP4iy7SZyLNBPkRBaigkkSr
+         U4utWB2Diy9ewkOktgrDjUpHf7j5YLSavn1NquBdjaPHgtYiJpqv+49QQXP5qMg8mApU
+         9eZjKzhr5JZgxON733sTMGNZcikGleNrP4kmjg4LNcV2zhyJGBoUBXGdkBIoR84WEzZQ
+         /60jp5D5QEoyCsUrnimWYUS7fsA+ASbotSf+9yXvll5ehzTDP3kQhedo8r7DosQN5k0G
+         z7m03Xdlv1ArqJvXwy9IRLIi4WV7wmi31FfXN1RnqaECNz25G5YjArUVRyK5bVZEri9B
+         Dp0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739793210; x=1740398010;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VXADKpBGHnogkbd8cS/4TYoAV8pATRtlq3ir5WyAbIs=;
-        b=AKTI3NK2m9zp+GElHLPxYpSKj3cM1uDeywewDCIJ3KugiYhBBtIeG2A4QKKnen6Sxw
-         eJqHjbKytSAvbPuXLQhn1PNOAKPBYqbE4eiV0euZ8jyzN7N66sIpmvsc8HYzO0vvOjCi
-         McyK4EQER7MAeACf4YANN8/Pfz96IaaDYzFx3LyWNqmJ8z7jToV2zWB0fK8YDFyp/W+a
-         UNO+6EiZaIceIyjEvuxQ6E0MH06HNcBMqSDTbWpmZzvACWJS4BJBa7vfT7Zo9DmITJMi
-         cYmnIlf5dM1GIegwD0YEjCbirPDd5c9dMVyqD5Q7eKQWiCRQj5by2tJHP6uZ9/0s4fFS
-         giEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa/yM6hDY7zISDQqLClmYCyz80mU+SnsqTLqk8IzoOsf+FtjZ/IpFViVBGTvX3oGKdI/co0SLiuFYFhTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNMJyavzmOtYu69pAuH34cY2mtuatIj+YHuWKmT5yo3rz33kL1
-	TaUesMSBvID79VyUNmk6l24iRRmV5NDW/TPDqyDd78A2bu9Sp2MOKi6CGzbpu9E=
-X-Gm-Gg: ASbGncsEYZT6HwEU8I7DJvVIbxfVXefpRPYXM75a+yUX9fX/Umv86uCsXovjX+dx02G
-	KjkKrbY45bD6RbmesNALl8XEIW5XSZZgUzVA7jzXDb2dovbhdQsEjl2wpF+jVe0ZkYepSbpKsX4
-	+tZ6GmnkxEVEmDhjIqZ4Qm2qHoQcbNyFKmzw08MPUrUvLAnjdux9kFZgvkUAM/9HRLmoyQ/QmyS
-	1rQ2c3CrxuejR0RupykJh2SDPN1pmjv5mvgcxjI8UlCJcDm+GLt0iwHLh1vVENq4J9zPjizf1Y2
-	1StXA4CBA8Zxc9eGZDuhPx9efA13Y14=
-X-Google-Smtp-Source: AGHT+IGvMjD7p9GjhrUpvftXXHMvF0vbK7oOwRaetxWgr7yi3kaGjbJ1/6/7j1IQvEsbRwaSlUn3zQ==
-X-Received: by 2002:a05:600c:4fc6:b0:439:60ef:ce81 with SMTP id 5b1f17b1804b1-4396e766556mr33000415e9.3.1739793210354;
-        Mon, 17 Feb 2025 03:53:30 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b8397sm150212575e9.36.2025.02.17.03.53.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 03:53:29 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 17 Feb 2025 12:53:17 +0100
-Subject: [PATCH v4 4/4] drm/msm/dsi/phy: Define PHY_CMN_CLK_CFG[01]
- bitfields and simplify saving
+        d=1e100.net; s=20230601; t=1739793280; x=1740398080;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODoUNIzhz8wbS9RlnqshxBZqUZSt9lnSSqoVHSSyPbo=;
+        b=JSwdE2bUxIOxTxBvd429v5IxZ2uveGe0zfkRIguf841Od5vWQ0KuTkmZDMZkPlGUBq
+         Tpa66hlA7a3dWLXa6O7Xh3R2bhvLGESNJWYQ2s52LnrXPHBdf2Dc+R/JwDpwrjrp8Fxo
+         nqKC0B9LvNvycSWZgnSlwE4o0GajPqQ6r0L5NVFhcOVsu5yl05fhZ2Th6fv5Q4n0lXHa
+         e0N9y6N71dAKW0xVmmzXNtIneEHldYOMLUI2luSSc6gE34IB5zRQ66V5X2AYJFgoSe5/
+         qPsowwYpGKm0JmX+g3SCocICgUOPTBF2FylFHnXDRuiWQFp67EL42SfQoBWLFQMfmUxx
+         oBKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUvCw8lDOwef26bMc1U7FA90CKhvVirPY5NDMiYBo9YoS/AGn3f01ZcWzDiwg71pO5pQzWyU1X7m92A+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/cqcvdPlvqQxt/F5+s01M76gOhCNq7zwHyAftFvE7QzChIh/P
+	WV+9mwsBi4VZ/9iGqxJasRP9xlgPuhjTAp3zDCKxzhpB88oTLD9jP6BOf3v5rv4=
+X-Gm-Gg: ASbGnctIjPQtu4F41WtoosdtsgU6H96p/Ozv9P7SRaD2yR96Xg5YacHTBkxrz8CObXj
+	QZWHaijkhVM5hSs1ekurJwFhndT88YlWGGIRT7mWcTxmk4Pan6ZjpN+uNfY5/poU+mhyLnvVXk5
+	4EV/VGACm+varB2bD1n1/jxsGrl7poSN5zIdOaSli4kvue6AyxF9oQ01gg4cutEnn9DFx1hICB2
+	+dCp5KrSWeZuU7qzSVQxeODAAWnP26JI9uPoV7TvhRWtOwCXhSaA82IM/hd3unXqPvh2uzdDVQf
+	/NKc4VOd2k+UaeO8f6WQxIq1KfKXGmmPIiqGwe12juBThck=
+X-Google-Smtp-Source: AGHT+IH5LYB6p/HXb8BGQs5I7Qwcm3npFyWcKGxO91RFb9WWl38/bVbziniG96GtqAkw2iimohL1RQ==
+X-Received: by 2002:a17:907:72c8:b0:ab7:be66:792f with SMTP id a640c23a62f3a-abb7112e046mr1020984366b.49.1739793279612;
+        Mon, 17 Feb 2025 03:54:39 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba9bd6e22sm71743666b.121.2025.02.17.03.54.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 03:54:39 -0800 (PST)
+Message-ID: <37bf04ee-954e-461f-9e37-210a8c5a790a@blackwall.org>
+Date: Mon, 17 Feb 2025 13:54:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: bridge: locally receive all multicast packets if
+ IFF_ALLMULTI is set
+To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250217112621.66916-1-nbd@nbd.name>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250217112621.66916-1-nbd@nbd.name>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-drm-msm-phy-pll-cfg-reg-v4-4-106b0d1df51e@linaro.org>
-References: <20250217-drm-msm-phy-pll-cfg-reg-v4-0-106b0d1df51e@linaro.org>
-In-Reply-To: <20250217-drm-msm-phy-pll-cfg-reg-v4-0-106b0d1df51e@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Rob Clark <robdclark@chromium.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3974;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=4yRGnHcWDQONSQquawDOtYjp+676tk0lAQdyTV3hXMg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnsyMwK7IZW73ULwxxqUXagpmKeHSvU+x5QzO/z
- k2gd9eaWp6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7MjMAAKCRDBN2bmhouD
- 1zCvD/9NDmBcpr4KfuIFGlG3APDEV8rTX5KEwtZ4EYWYh6xlWPARnoeam+n4Q+ZrBgqUqO32nAv
- YkSpnGU2fbzqbNZJ7LDaKe6ZuQ17q8emN9411nKX3L4zyF+3cOi+1ZVGTYA+COfzdrPFnlVYAn7
- Pgg/ojtRQNfxWlLGLD4Q+vB3/OXXMqnslW6ksFANsHYqhihKqwXvX6aus+XZtzbAtP2yGaIVY5Z
- SmzpTu2TvHD1aN17XWdf0nAN3bLpz3uAp3ySxd089adIHfMt5kMXyTSyHMg5svC2jLLD9pvhdPS
- AbK542sQ/XHukkiPeuwOwOLuFTdJjvPBJRjUgjcaPuo/DXUm7rzrD56Qgb/6TyZJFUSO/8gk9sd
- fudKxUkZNb9vsvnxFhFK6uYo8+jku3UJZlKEhVAf1bf7lEaxRizDOvEGq5vwyaP/SwCB+xe0+xA
- hnsoakNgkoEeOeW8QRvC7i2yVAxOzthurIfAfFOIuQhhSBOO85Uymw0nopl4rr14lRXsh6kx60G
- aaopaqdf4c1VRmTF9frM1ysffPNOudb87GsY5KvuUaEED76YlLt4aDdoFSO3lRtR6G0oRpSlW1g
- HBlsmRPu9mFabyUmcrriZ0GctEd8LnCiqzc1n7cwDKfXDPA4riuzoAMw/PdNt/g8U2MiM5drN0G
- MmJAfqK5jQnm+IQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Add bitfields for PHY_CMN_CLK_CFG0 and PHY_CMN_CLK_CFG1 registers to
-avoid hard-coding bit masks and shifts and make the code a bit more
-readable.  While touching the lines in dsi_7nm_pll_save_state()
-resulting cached->pix_clk_div assignment would be too big, so just
-combine pix_clk_div and bit_clk_div into one cached state to make
-everything simpler.
+On 2/17/25 13:26, Felix Fietkau wrote:
+> If multicast snooping is enabled, multicast packets may not always end up on
+> the local bridge interface, if the host is not a member of the multicast
+> group. Similar to how IFF_PROMISC allows all packets to be received locally,
+> let IFF_ALLMULTI allow all multicast packets to be received.
+> 
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> ---
+>  net/bridge/br_input.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+> index 232133a0fd21..7fa2da6985b5 100644
+> --- a/net/bridge/br_input.c
+> +++ b/net/bridge/br_input.c
+> @@ -155,6 +155,8 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
+>  			pkt_type = BR_PKT_MULTICAST;
+>  			if (br_multicast_rcv(&brmctx, &pmctx, vlan, skb, vid))
+>  				goto drop;
+> +			if (br->dev->flags & IFF_ALLMULTI)
+> +				local_rcv = true;
+>  		}
+>  	}
+>  
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This doesn't look like a bug fix, IMO it should be for net-next.
 
----
+Also you might miss a mcast stat increase, see the multicast code
+below, the only case that this would cover is the missing "else"
+branch of:
+                       if ((mdst && mdst->host_joined) ||
+                            br_multicast_is_router(brmctx, skb)) {
+                                local_rcv = true;
+                                DEV_STATS_INC(br->dev, multicast);
+                        }
 
-Changes in v4:
-1. Add mising bitfield.h include
-2. One more FIELD_GET and DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL (Dmitry)
+So I'd suggest to augment the condition and include this ALLMULTI check there,
+maybe with a comment to mention that all other cases are covered by the current
+code so people are not surprised.
 
-Changes in v3:
-1. Use FIELD_GET
-2. Keep separate bit_clk_div and pix_clk_div
-3. Rebase (some things moved to previous patches)
+By the way what is the motivation for supporting this flag? I mean you can
+make the bridge mcast router and it will receive all mcast anyway.
 
-Changes in v2:
-1. New patch
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             | 13 ++++++++-----
- drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml |  1 +
- 2 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 798168180c1ab6c96ec2384f854302720cb27932..cf63b4c5c3c0c39f0031dbe948b1694765f01af8 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2018, The Linux Foundation
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/iopoll.h>
-@@ -572,11 +573,11 @@ static void dsi_7nm_pll_save_state(struct msm_dsi_phy *phy)
- 	cached->pll_out_div &= 0x3;
- 
- 	cmn_clk_cfg0 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG0);
--	cached->bit_clk_div = cmn_clk_cfg0 & 0xf;
--	cached->pix_clk_div = (cmn_clk_cfg0 & 0xf0) >> 4;
-+	cached->bit_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0__MASK, cmn_clk_cfg0);
-+	cached->pix_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4__MASK, cmn_clk_cfg0);
- 
- 	cmn_clk_cfg1 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
--	cached->pll_mux = cmn_clk_cfg1 & 0x3;
-+	cached->pll_mux = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK, cmn_clk_cfg1);
- 
- 	DBG("DSI PLL%d outdiv %x bit_clk_div %x pix_clk_div %x pll_mux %x",
- 	    pll_7nm->phy->id, cached->pll_out_div, cached->bit_clk_div,
-@@ -598,7 +599,8 @@ static int dsi_7nm_pll_restore_state(struct msm_dsi_phy *phy)
- 	dsi_pll_cmn_clk_cfg0_write(pll_7nm,
- 				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0(cached->bit_clk_div) |
- 				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4(cached->pix_clk_div));
--	dsi_pll_cmn_clk_cfg1_update(pll_7nm, 0x3, cached->pll_mux);
-+	dsi_pll_cmn_clk_cfg1_update(pll_7nm, DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK,
-+				    cached->pll_mux);
- 
- 	ret = dsi_pll_7nm_vco_set_rate(phy->vco_hw,
- 			pll_7nm->vco_current_rate,
-@@ -739,7 +741,8 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		u32 data;
- 
- 		data = readl(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
--		writel(data | 3, pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
-+		writel(data | DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL(3),
-+		       pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
- 
- 		phy_pll_out_dsi_parent = pll_post_out_div;
- 	} else {
-diff --git a/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml b/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-index 35f7f40e405b7dd9687725eae754522a7136725e..d2c8c46bb04159da6e539bfe80a4b5dc9ffdf367 100644
---- a/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-+++ b/drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml
-@@ -17,6 +17,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
- 		<bitfield name="CLK_EN" pos="5" type="boolean"/>
- 		<bitfield name="CLK_EN_SEL" pos="4" type="boolean"/>
- 		<bitfield name="BITCLK_SEL" low="2" high="3" type="uint"/>
-+		<bitfield name="DSICLK_SEL" low="0" high="1" type="uint"/>
- 	</reg32>
- 	<reg32 offset="0x00018" name="GLBL_CTRL"/>
- 	<reg32 offset="0x0001c" name="RBUF_CTRL"/>
-
--- 
-2.43.0
+Thanks,
+ Nik
 
 
