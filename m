@@ -1,386 +1,263 @@
-Return-Path: <linux-kernel+bounces-518349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8459FA38DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3016DA38DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFC7188C081
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A11D3A9DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAD9239085;
-	Mon, 17 Feb 2025 20:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C2D239589;
+	Mon, 17 Feb 2025 21:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z9XIXWXT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="X6zfjovR"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255BE237180
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739825856; cv=fail; b=lRD9fFFsVpWZMdawTkuYNPIkw+WbsPkdlm9odXrAqc4Lk/8BjehJhAKGArEAOv1v4uX+/8o7qPntSNwexoea+BZ/MOOVXQWKA+++pJRiHrna4XiHvN/IAQYcwQzFYy4tuPMAXnqX5fsqKsZ4W7dll2vk7YlmCwUtM/j+487homY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739825856; c=relaxed/simple;
-	bh=tj9Rsebrm4/EIYNyD7vf0V6NhpqFzLPXMFpX/BJ1Xhg=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iedN45QqDJJQZXXezhY6Jh4RHhDArwsKxvBqJyDVAjs+uRIU/14UZyOplAmfyi+7MaqPHTlkzzwk71VKT9kdGKM6wwQJAPMaUB8ayo8AWGjgHvJNNkMzbToDewNsOz7vmvXRXqa83EYfE8ObBJriTFdattlnfgCqDSyhE+BLgoo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z9XIXWXT; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739825854; x=1771361854;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=tj9Rsebrm4/EIYNyD7vf0V6NhpqFzLPXMFpX/BJ1Xhg=;
-  b=Z9XIXWXTV25MB6a8KipiB8MAUOUOge2oiG6OYBiB76GrulBN5Dslaqmp
-   fNF4RD1JeEwZSfTkWQgPeoC7I0R3/22FsJnqL2ie++opdlhPl6Aphwv8f
-   h5FVDQAySxeHBYDPqvCgQ+ua34/JvbTj4pIHfxttLwQ0dpf4qCvXc6DFi
-   tmkkvBSrn53llQa2vzHvIOQcZZnnW4FfUczAU1WCWQ09XhXcyZuPPSZoc
-   WGCb/0ZDELewUidlF25ezvd9/dWZmcCRIlx5m18XjVXlNGCpYcMLt1uRz
-   fyds5n9TDt8T32dBIkFJE0ElmX2R38JErIlMupN6kaOUszMpggOL5idAP
-   w==;
-X-CSE-ConnectionGUID: q5FZJZKTQKKRrumul9YQcw==
-X-CSE-MsgGUID: Zv8EGmp9Qt+5C2Utsy9ydQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51133165"
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
-   d="scan'208";a="51133165"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 12:57:34 -0800
-X-CSE-ConnectionGUID: DkNuP0OlTZ6Xn1v4y0PRGw==
-X-CSE-MsgGUID: o3pKfQgETXGGk8ji9Q5RIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
-   d="scan'208";a="114077391"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 12:57:33 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Mon, 17 Feb 2025 12:57:32 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Mon, 17 Feb 2025 12:57:32 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.171)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 12:57:32 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l2MO1J0iXxTfCZm/xmUC4jYjQtuTIE/9zheQ528ePClTE5efefKEQC+31bviZI+WSvJDd43+aktZhTVrovwe6Z/tCX6vGMJJmxZTX0uIvIUp4SGFyvPd4YQV/5dPZzAfsUjRPIuKt2is9oyYPtCtFaovJTthIA6zA8zgGWW/wn0FuJl6W83TOXlPFkdotMhZ7MPQ5G1qpwLB/66caNq9tWTsoQDX+6iZzFX9/DeAaN7Vp8P6aw1XZ1QaGXjX3xirNOA84ENaLgrdmSPCzGuqxUv6/gxBtElt3JZLeUtqfzu3gGPnXdvI24zDUSShjCIC+p8svqqijq2mhosXTotYgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IuCEdTySEVai0xg6sNNiz5PyC4tNt3u40+RNGeUmGe0=;
- b=bXZ0bWsbztcB7PlAVAVnOdQrVe7b6u7oloo35AFpkoByuZ/jFfqauWG0MQ+dzwNaa9bqB0amJ3whGapkVjssEg0H/fmyDq7addbsThy2xOuDlkSzLsSP70+pMVSyKqpzBvxVeCMtorkVR7NVJII54YIOeVpdDX11iREbuZHy6qhEE5hXQsMhNWcwoKa87/hPeAQk+pNQnqYhKMxzwgszFCGKCN22KuG6T9WTjBMVJvRR14PdvjoKVpcrAZX1feWWmMbf/V8JA36ke+je5/MdyTMowK+zM4vzn9NYDBk6AeYQbuiROFqNmZ/nScRMiDOmZU3CjAQanONf5toUB6eVTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB6269.namprd11.prod.outlook.com (2603:10b6:8:97::14) by
- CY8PR11MB7687.namprd11.prod.outlook.com (2603:10b6:930:74::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.19; Mon, 17 Feb 2025 20:57:30 +0000
-Received: from DS7PR11MB6269.namprd11.prod.outlook.com
- ([fe80::af1f:dcc:49bf:1a26]) by DS7PR11MB6269.namprd11.prod.outlook.com
- ([fe80::af1f:dcc:49bf:1a26%3]) with mapi id 15.20.8445.013; Mon, 17 Feb 2025
- 20:57:30 +0000
-Message-ID: <10ab62c7-d2fc-4014-a235-700bef017a3e@intel.com>
-Date: Mon, 17 Feb 2025 14:57:01 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] tsm: Add TVM Measurement Register support
-To: "Huang, Kai" <kai.huang@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, "Kirill A. Shutemov"
-	<kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>
-References: <20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com>
- <20250212-tdx-rtmr-v1-1-9795dc49e132@intel.com>
- <828df2dd-a099-4146-96fe-0915cfa2e4b5@intel.com>
-Content-Language: en-US
-From: "Xing, Cedric" <cedric.xing@intel.com>
-In-Reply-To: <828df2dd-a099-4146-96fe-0915cfa2e4b5@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0077.namprd05.prod.outlook.com
- (2603:10b6:a03:332::22) To DS7PR11MB6269.namprd11.prod.outlook.com
- (2603:10b6:8:97::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDF8226545;
+	Mon, 17 Feb 2025 21:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739826472; cv=none; b=QPG36kWh5G8TTlpRpoXlW/RU0Dtju3z8MhDlLNeN7ZSVi1MVGR7Ee95YTt8QtyhaInJd6TJCWWJTRg80Df+oBICYrUYhGVXDqg1aaeSRUBbbgoAUuDpeHq8l4bzG2a8BIgig8/Kn+5imROpDfR9NEo7SNLLy7gyQiv49yvPcm2Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739826472; c=relaxed/simple;
+	bh=LsYRpOjpOL3V/STxpqzTCiQRToI3srOvQgLq+WUoynM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M6oFzLMKsUHS3jr0ZfGmeJexgXez+o8mSyCjMIkPr7EQK+saMJnN6VJ5vPZHF4dd3CrtZY6buCVF6oQycVtcgDB8HvgnIMRNIbrlFWxvBabeOQ+pdA7domDvEIKh77nZYmy4L876ps9KSA7RGrgldtIUEoKwCFJtFiLhq3IPbZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=X6zfjovR; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1739825928; bh=BRHWXSncwQHxJEXz+lPaEWqa58lv4Bor0CGJfRHxbg8=;
+	h=From:Date:Subject:To:Cc;
+	b=X6zfjovRH7NkXptn/J6mtDR9BX1owDj0vx8EV5djizyPDLDXxE8bLKkwQ71nb7SUg
+	 VtH09O2H2PNU8NmTSQ5qbQ+k+FdeSwYyoTq7IMbClzFWK79RfKpPMGLgH1PvvpaZmH
+	 AZtwS6REop8NX1W58OuDmboOfIPviUDnpE24sC2k=
+Date: Mon, 17 Feb 2025 21:58:14 +0100
+Subject: [PATCH] rust: io: rename `io::Io` accessors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB6269:EE_|CY8PR11MB7687:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bc606f0-42ca-4bb1-129d-08dd4f95b158
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aXV6U0doQjZpSWlwZEF1NW1jZU01eGN3TjZYUDZkYlFla24zQU1wejY3em53?=
- =?utf-8?B?N0wvdmtCTkJyWW51VCs5YzYyRGtueGpzOC84aS8wMEs4WDZYWFBKbzN1bVhF?=
- =?utf-8?B?TkE1d2VxZHdsMW9QL2tFbDgrRHBRUWplREFRNm5XRXljYmJZd3UvcS91MXhx?=
- =?utf-8?B?SDRvdUxreElJSWo0djhZQzBSckV1UldRNHFZazhRY211c2xsazlHMnVkSFZy?=
- =?utf-8?B?MkVIaVNYMXE2LzJaZEp0T3ArT2lCV0Y4ZkFuYmlTWUFZVTZVUmhOUG1najFY?=
- =?utf-8?B?YitNczhCNXFYdHZkUzY5cXF0MkN5UUdmR3VIUFc0bU9OSlh0NXhjNUpOeDBu?=
- =?utf-8?B?bHI2QytyT0VrNk5XbllVTFQ4eWVvLzFYVUlvQTl5SGxneVJidEN5dmVnSEU1?=
- =?utf-8?B?aHBkMGRVTHM5QlJQZHpuWVVKM2N1OUlIYldvNlVwV0lsTW5hMkNuWFF0enFW?=
- =?utf-8?B?a2lUQzU5T1NZL3ZXN3lJQUJZSTducnFkejUxNzFGRW9xNldsRW04WlV1UWpl?=
- =?utf-8?B?ZnJKTjlIcHcwS3E0N1hSY0xsNkQzVTFpMFNiU0RScWJmWnhxSEtzbmY1cWpj?=
- =?utf-8?B?TWFKay9BQmFoSGFLaHU2VGR6WlVCL05sdDR2eUVCV1ErVlh2YWxtVGRFdTdx?=
- =?utf-8?B?bDRwZWk0a29tVzlFQkZaN0J5b2RYeXFxMDJzVmpzR210WDJXNHB5c0NxNnVq?=
- =?utf-8?B?R2dYN0hqWE9FK3l5QWdGSy9SVHg5dUZNRk1lbzFZVGRKcTRnQXp0NnlxeHlJ?=
- =?utf-8?B?N1cvZWhndTd3cHM0dk1McHF1aGd4WkRYeXEzbzZvMmpXK1Uxb3E4LzNxbmdQ?=
- =?utf-8?B?cG9Halg2RyttRU9VQkNKeG5nQ2Fsa25uWHJONTNad0V5bU91N0UrQksrczB3?=
- =?utf-8?B?OW8vTWh0c3ZDdEVPQW5aUjBDVXpCaUpraTRBQlZlWk5XZjZNVk1FRDIwbXBk?=
- =?utf-8?B?Y1VpTEJwcm8xOHRBUlZJd3ovZ1V6R0pMbXBVRmQ3a1hMVlZTQnJLQU9NemVF?=
- =?utf-8?B?YU5VWHo0ZHhyeVJFN2FUQ1l4TGVXUW5OUkZaQ0c1M1RrUmZhaElBdEp4djJ0?=
- =?utf-8?B?SkpYQzgyMlFpZWFOVXBSUVJyOG5KL3NtS3VoS20vbnRGMXFpTkVNRzF0UUp6?=
- =?utf-8?B?M1JGTk9kU2dOZVBjS0pUMVI5L0QvNVFqb2NFNWlDbDF4aGtpT2JZQUowVGZx?=
- =?utf-8?B?SkFxVUprbDE1QTVIV2xDN3NIMURuMzdUd3FUMEU2S1Nra0pzZHZORkdkUUN0?=
- =?utf-8?B?Mys1YVJPSlhjc3FVM2M1N0xHTk1lVFFzSHRrdUVZZlRNQXFyL0NnU3JpK0Iy?=
- =?utf-8?B?T2hrVTFqZTY1eW14VzVxSzlCc2hXTEorK3BrRGN4UE1wN29ic2FnRmRSN0lR?=
- =?utf-8?B?emcvZW5YYSt3eXFFSFJaYXcwK3pTQThCVGxFNXR2UWRVdHZuNmRDaVNTV1JW?=
- =?utf-8?B?UCtHZE1aR2tFWWIxMitlQllNejdocXhFRzR0VjVNOUhMS1pVMUZBMUR2Y011?=
- =?utf-8?B?bzFhNWlUTDlaaUFVYWRINXlzY09kdndYSldpUzBTQlExWWRvRFFzek84cjRx?=
- =?utf-8?B?aWhSc29WZEhsTHE4OXFidWFpRUR1YUp2b2tPNndHbjg5TktzTHR5WU9IUXlh?=
- =?utf-8?B?a3JoaFY0aER6aE83bEQ3VWhHSm9ORUVMamJwTEVDRk1XSXg5VE1BbE5LUUll?=
- =?utf-8?B?Q3VXMHZDbjNXZ0pzU1MvWnpmcm1IZjRYMkhlSmgzRlFkK3N3d25oc25kbVl5?=
- =?utf-8?B?VUNTS3BTQU1nVkU2RFhGaVRObEIwd2FacGI3bEZGUUhrWjFoRkRkaHhBM1ZJ?=
- =?utf-8?B?amd5SmdZSWtaWld1U1hIY251emdxaklvNTExc3NvbVlyS3NIQ3VUdU1yd0pJ?=
- =?utf-8?B?VEJrRlVMVDJpRWxQcXpUVkR0Z202RDFNL0JoeXhGa1ZWdFNlOS84eUw5alhP?=
- =?utf-8?Q?QG4rO9zFaOI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6269.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RTNhRHhUSk9IbnBhbE1nNFlUZE5nUnRqdm5hcHlPaFdFbFRaVWJ4dk9FWGE4?=
- =?utf-8?B?K1NCb1FyckdiaENKTDlqZ1owNXZWSW1uV0lQVUNqZHFpYk90Q1dvaFNlMTlv?=
- =?utf-8?B?eWNpTDRLZnJVeHVZd1NvRlU3M2RyeVo0STdIWTFFY2QxOGlxK3cwSjI1RDN4?=
- =?utf-8?B?MTdDUXZnVnc4VUxMNHBnMHN1bFVxZ1lpL3BpQVFPN0FDOGVQNVpqSG9JTVNN?=
- =?utf-8?B?MXM4b2gyQVVldEJ3eFJHcXN0SWJZMnNjOXJlbGt6d0Y4akRidDVxWUJZUkNJ?=
- =?utf-8?B?czZwVUxOQ2ZSdFhRSDZXdnlPUTdVWUhSZ0VKNmJWOGJHQ0lEc2hwN0MrVVpZ?=
- =?utf-8?B?ZWI5eWd5Wm9jK2p1VzEyQ1hGZnZLbjhETk92Sk1iVk1pTTNQWFBUWGRDMm5O?=
- =?utf-8?B?bDBibTFiMXlyajNIb2FwK3ExQS9jRW9vUi80eGtpejNudGovSCt6ZXhrZnM2?=
- =?utf-8?B?d3NlbWp1OEQ2TW9TanNaUEh3QXpTYS96S1BhbWptSnMxVitmZGdBdFdoYkpF?=
- =?utf-8?B?QWV6M3FZY3NWWUJ1ZEVhOFZ6anpYQzVKK2s0MHJwdDVURDI2WjJuMnBBTmkx?=
- =?utf-8?B?b3dKalR2SnZXb3ZoQ2dYdEl6R3pTTWhEOWxuVkozaVZacEJCVjJLVFUvQ0c2?=
- =?utf-8?B?UWIxOHoyQUVudHkxdW1kclRJTTF6SllJbmV3Y2szeWM2TjVRNm9UeVJrWTkx?=
- =?utf-8?B?WlUxaTJpRDJHN3pFL1dFRGpxN1pOS2tKMzFYMTFJcXNwbkJabEhRSFd2eUZi?=
- =?utf-8?B?RWZJRUN1UkxRSnA0UGZjaU05Y3ZPZysyait3UkVaNnk5TkZ0VlB5Tkp3Zlg1?=
- =?utf-8?B?a0wxbTBjaDlhL1RBTkJIdm5wYWRFVG1JUVllYVFqZzNLOWtnTE0rU3pka1hj?=
- =?utf-8?B?WmpYT2xpRHdtQVBsL2dUdS96Qmd1aXdwd3AraUl0ZEZKUjJrbEVmcGs1MFVJ?=
- =?utf-8?B?Uk03TVRpWjRQODZqOVlhendtVmN0WTJQbFd2ZmFnRTdUZTNadm9Nb0xnT0xw?=
- =?utf-8?B?QnBvb0FsSHRVRDd3VjQrci9NSWcxcDZGTy9uTU51OU5sTmNXL1Q2dC92amRG?=
- =?utf-8?B?QTNzbmlNWW1TUWR3MXRDaE5QdmdDQlpaSUtPOGxMdUtvK3RRbTE0OHpyeHBS?=
- =?utf-8?B?Um5raVBrQWxwMWdnL3dWVGt6OTl2VE05YmdPcEVzU2JEbURJUUllTjRYQitK?=
- =?utf-8?B?WjZGb3lXYlI1NFZ6L1k2SnEvaFF6ZGc1OENxUlIvMGYyQUdMeXhUWmhPQzRW?=
- =?utf-8?B?MllJTElyMzNZaExkL2UyWEJPTEx5c3MrbkxMVjBTK3JvVE1jQlViZ3FjV0N3?=
- =?utf-8?B?YkhOZWFja3Yrb2R0a3FmNmpXNmYvZG9kRlFoWEh5SGR2Z3pzRk5sZzZoNmtR?=
- =?utf-8?B?UkxFcUtrakltdGZnMHhuVER5L0RUOWtGdFJML2xldUZOa3BBUTh0VndNZ1Qy?=
- =?utf-8?B?RW5GcUZXM3N6WUdnUEVnK3pNbjBBZXNEQytRbmF0TlZVbDhpVmp4UkdreWNH?=
- =?utf-8?B?R0wvZ0VEZXZCRG1hZXRCdEszQ3lDQkFyREVydmhQSksrMTBUc3NCMFhWQWdw?=
- =?utf-8?B?eHdoQ2dMR3R1dlVuVzFWcHJxZXBScUdocW5vRG5mS01Rd1pWV3pZbjVCWXNy?=
- =?utf-8?B?YUh4VmRMVTFlT1BXWjhGalhIdlc4ZThLcisxNTh5QkN3TW5sVmVnRHVERlhk?=
- =?utf-8?B?dDh3enpvL3RBYWs2R3J6V003NXQybGIveFpZdTZSM3dPUjlBelQvc0twb2hO?=
- =?utf-8?B?bURxQStqUmZhNlBnMXZ6aEp4Z2kvNHdsWk0xcXpFZFpGZG12UVlZZGoxWDlh?=
- =?utf-8?B?VmEyanB3cnF0VmdJMExJMld6aE11VkowTDhOajY4RytNSitMOXo4L2xkVUIv?=
- =?utf-8?B?TG93U09EMTNrOUtvN0RYRGcwQkpZZ0NSWmhLbk1vbWZadEc4R2xZYXBTQTRj?=
- =?utf-8?B?RTdtdUJtYVVMSGVHNHBCbWo4VDkreWlkVGo5Vk54WWk5VFNMVEVzU1duWm9r?=
- =?utf-8?B?N2tQdkRpMTZSY3NWSDZ2cmhuemtlNlVreHRabS9HczVEb05ZQWllNERFUU5z?=
- =?utf-8?B?Z3lMS2RFbzVMeGRSK2xZNGY2WG1kRDdLUFFPdEtEL0lVc0oyS09wZDJnejMz?=
- =?utf-8?Q?6hkj5Afg0EPEKX5xTEJzdyabz?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bc606f0-42ca-4bb1-129d-08dd4f95b158
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6269.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 20:57:30.2702
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cfW/GPD+N72q3h9glqnq6xIL/Ab4jl0DJQGo/cDCJE6/iZuHoW7YQt7ulmOguq1ZcLp6rc4yQD1pmz+PF6oJoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7687
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
+X-B4-Tracking: v=1; b=H4sIAOWis2cC/x3MQQqAIBBA0avErBswy4KuEi1MR5tFUyhEIN09a
+ fkX7xfIlJgyzE2BRDdnPqVG1zbgdiuRkH1t0EobpbsJ+cRIUpHDRGIPQqN9b4PZhrEPUN2VKPD
+ zP5f1fT9gApy0YwAAAA==
+X-Change-ID: 20250217-io-generic-rename-52d3af5b463f
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7615; i=me@kloenk.dev;
+ h=from:subject:message-id; bh=LsYRpOjpOL3V/STxpqzTCiQRToI3srOvQgLq+WUoynM=;
+ b=owJ4nJvAy8zAJdbGuXyr5NPHToyn1ZIY0jcv+n/TearU7Binj3UPrrXaX8ufesZINmrV44PFF
+ xsatwapOO7qKGVhEONikBVTZNnidf/+j8xlWfb373bDzGFlAhnCwMUpABPJ3Mfwz+5N3OuTYjd9
+ 4p/23YmUebR7y1GPXquAgsTprs519xZoTGP4767yYn6X6k6r8utWjqEZJjkCNae4JbddlHKzP9m
+ xbUIFDwDSDk9S
+X-Developer-Key: i=me@kloenk.dev; a=openpgp;
+ fpr=B44ADFDFF869A66A3FDFDD8B8609A7B519E5E342
 
-Hi Kai,
+Rename the I/O accessors provided by `Io` to encode the type as
+number instead of letter. This is in preparation for Port I/O support
+to use a trait for generic accessors.
 
-On 2/16/2025 6:17 PM, Huang, Kai wrote:
-> Hi Cedric,
-> 
-> [...]
-> 
->> +static ssize_t tmr_digest_read(struct file *filp, struct kobject 
->> *kobj, struct bin_attribute *attr,
->> +                   char *page, loff_t off, size_t count)
-> 
-> Better to rename 'page' to 'buffer'?
-> 
-> Since page normally implies 4KB alignment but I don't see we need the 
-> alignment here.
-> 
+Add a `c_fn` argument to the accessor generation macro to translate
+between rust and C names.
 
-'page' was used here to imply the size of the buffer cannot exceed a 
-page (which is the current behavior of the kernel). But I agree with you 
-and will make the changes.
+Suggested-by: Danilo Krummrich <dakr@kernel.org>
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/PIO.20support/near/499460541
+Signed-off-by: Fiona Behrens <me@kloenk.dev>
+---
+ rust/kernel/io.rs               | 66 ++++++++++++++++++++---------------------
+ samples/rust/rust_driver_pci.rs | 12 ++++----
+ 2 files changed, 39 insertions(+), 39 deletions(-)
 
-[...]
+diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+index d4a73e52e3ee68f7b558749ed0108acde92ae5fe..72d80a6f131e3e826ecd9d2c3bcf54e89aa60cc3 100644
+--- a/rust/kernel/io.rs
++++ b/rust/kernel/io.rs
+@@ -98,9 +98,9 @@ pub fn maxsize(&self) -> usize {
+ ///# fn no_run() -> Result<(), Error> {
+ /// // SAFETY: Invalid usage for example purposes.
+ /// let iomem = unsafe { IoMem::<{ core::mem::size_of::<u32>() }>::new(0xBAAAAAAD)? };
+-/// iomem.writel(0x42, 0x0);
+-/// assert!(iomem.try_writel(0x42, 0x0).is_ok());
+-/// assert!(iomem.try_writel(0x42, 0x4).is_err());
++/// iomem.write32(0x42, 0x0);
++/// assert!(iomem.try_write32(0x42, 0x0).is_ok());
++/// assert!(iomem.try_write32(0x42, 0x4).is_err());
+ /// # Ok(())
+ /// # }
+ /// ```
+@@ -108,7 +108,7 @@ pub fn maxsize(&self) -> usize {
+ pub struct Io<const SIZE: usize = 0>(IoRaw<SIZE>);
+ 
+ macro_rules! define_read {
+-    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) => {
++    ($(#[$attr:meta])* $name:ident, $try_name:ident, $c_fn:ident -> $type_name:ty) => {
+         /// Read IO data from a given offset known at compile time.
+         ///
+         /// Bound checks are performed on compile time, hence if the offset is not known at compile
+@@ -119,7 +119,7 @@ pub fn $name(&self, offset: usize) -> $type_name {
+             let addr = self.io_addr_assert::<$type_name>(offset);
+ 
+             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
+-            unsafe { bindings::$name(addr as _) }
++            unsafe { bindings::$c_fn(addr as _) }
+         }
+ 
+         /// Read IO data from a given offset.
+@@ -131,13 +131,13 @@ pub fn $try_name(&self, offset: usize) -> Result<$type_name> {
+             let addr = self.io_addr::<$type_name>(offset)?;
+ 
+             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
+-            Ok(unsafe { bindings::$name(addr as _) })
++            Ok(unsafe { bindings::$c_fn(addr as _) })
+         }
+     };
+ }
+ 
+ macro_rules! define_write {
+-    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) => {
++    ($(#[$attr:meta])* $name:ident, $try_name:ident, $c_fn:ident <- $type_name:ty) => {
+         /// Write IO data from a given offset known at compile time.
+         ///
+         /// Bound checks are performed on compile time, hence if the offset is not known at compile
+@@ -148,7 +148,7 @@ pub fn $name(&self, value: $type_name, offset: usize) {
+             let addr = self.io_addr_assert::<$type_name>(offset);
+ 
+             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
+-            unsafe { bindings::$name(value, addr as _, ) }
++            unsafe { bindings::$c_fn(value, addr as _, ) }
+         }
+ 
+         /// Write IO data from a given offset.
+@@ -160,7 +160,7 @@ pub fn $try_name(&self, value: $type_name, offset: usize) -> Result {
+             let addr = self.io_addr::<$type_name>(offset)?;
+ 
+             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
+-            unsafe { bindings::$name(value, addr as _) }
++            unsafe { bindings::$c_fn(value, addr as _) }
+             Ok(())
+         }
+     };
+@@ -218,43 +218,43 @@ fn io_addr_assert<U>(&self, offset: usize) -> usize {
+         self.addr() + offset
+     }
+ 
+-    define_read!(readb, try_readb, u8);
+-    define_read!(readw, try_readw, u16);
+-    define_read!(readl, try_readl, u32);
++    define_read!(read8, try_read8, readb -> u8);
++    define_read!(read16, try_read16, readw -> u16);
++    define_read!(read32, try_read32, readl -> u32);
+     define_read!(
+         #[cfg(CONFIG_64BIT)]
+-        readq,
+-        try_readq,
+-        u64
++        read64,
++        try_read64,
++        readq -> u64
+     );
+ 
+-    define_read!(readb_relaxed, try_readb_relaxed, u8);
+-    define_read!(readw_relaxed, try_readw_relaxed, u16);
+-    define_read!(readl_relaxed, try_readl_relaxed, u32);
++    define_read!(read8_relaxed, try_read8_relaxed, readb_relaxed -> u8);
++    define_read!(read16_relaxed, try_read16_relaxed, readw_relaxed -> u16);
++    define_read!(read32_relaxed, try_read32_relaxed, readl_relaxed -> u32);
+     define_read!(
+         #[cfg(CONFIG_64BIT)]
+-        readq_relaxed,
+-        try_readq_relaxed,
+-        u64
++        read64_relaxed,
++        try_read64_relaxed,
++        readq_relaxed -> u64
+     );
+ 
+-    define_write!(writeb, try_writeb, u8);
+-    define_write!(writew, try_writew, u16);
+-    define_write!(writel, try_writel, u32);
++    define_write!(write8, try_write8, writeb <- u8);
++    define_write!(write16, try_write16, writew <- u16);
++    define_write!(write32, try_write32, writel <- u32);
+     define_write!(
+         #[cfg(CONFIG_64BIT)]
+-        writeq,
+-        try_writeq,
+-        u64
++        write64,
++        try_write64,
++        writeq <- u64
+     );
+ 
+-    define_write!(writeb_relaxed, try_writeb_relaxed, u8);
+-    define_write!(writew_relaxed, try_writew_relaxed, u16);
+-    define_write!(writel_relaxed, try_writel_relaxed, u32);
++    define_write!(write8_relaxed, try_write8_relaxed, writeb_relaxed <- u8);
++    define_write!(write16_relaxed, try_write16_relaxed, writew_relaxed <- u16);
++    define_write!(write32_relaxed, try_write32_relaxed, writel_relaxed <- u32);
+     define_write!(
+         #[cfg(CONFIG_64BIT)]
+-        writeq_relaxed,
+-        try_writeq_relaxed,
+-        u64
++        write64_relaxed,
++        try_write64_relaxed,
++        writeq_relaxed <- u64
+     );
+ }
+diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
+index 1fb6e44f33951c521c8b086a7a3a012af911cf26..ddc52db71a82a79657ec53025f9ef81d620516fc 100644
+--- a/samples/rust/rust_driver_pci.rs
++++ b/samples/rust/rust_driver_pci.rs
+@@ -43,17 +43,17 @@ struct SampleDriver {
+ impl SampleDriver {
+     fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
+         // Select the test.
+-        bar.writeb(index.0, Regs::TEST);
++        bar.write8(index.0, Regs::TEST);
+ 
+-        let offset = u32::from_le(bar.readl(Regs::OFFSET)) as usize;
+-        let data = bar.readb(Regs::DATA);
++        let offset = u32::from_le(bar.read32(Regs::OFFSET)) as usize;
++        let data = bar.read8(Regs::DATA);
+ 
+         // Write `data` to `offset` to increase `count` by one.
+         //
+-        // Note that we need `try_writeb`, since `offset` can't be checked at compile-time.
+-        bar.try_writeb(data, offset)?;
++        // Note that we need `try_write8`, since `offset` can't be checked at compile-time.
++        bar.try_write8(data, offset)?;
+ 
+-        Ok(bar.readl(Regs::COUNT))
++        Ok(bar.read32(Regs::COUNT))
+     }
+ }
+ 
 
-> The logic around using pvd->in_sync is kinda complicated.  MR operations 
-> seem like a classic reader/writer contention problem and I am not sure 
-> why pvd->in_sync is needed.  Could you help to clarify?
-> 
-If in_sync is true, then "refresh()" will NOT be invoked on reads from 
-"live" MRs.
+---
+base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
+change-id: 20250217-io-generic-rename-52d3af5b463f
 
-For example, on TDX, if an RTMR has NOT been extended since the last 
-read, then the next read will return the cached copy of the RTMR value - 
-i.e., saving a "refresh()" call (which must issue TDCALL[TDG.MR.REPORT] 
-to reread all MRs and can be slow).
+Best regards,
+-- 
+Fiona Behrens <me@kloenk.dev>
 
-> [...]
-> 
->> +
->> +/**
->> + * struct tsm_measurement_register - describes an architectural 
->> measurement register (MR)
->> + * @mr_name: name of the MR
->> + * @mr_value: buffer containing the current value of the MR
->> + * @mr_size: size of the MR - typically the digest size of @mr_hash
->> + * @mr_flags: bitwise OR of flags defined in enum 
->> tsm_measurement_register_flag
->> + * @mr_hash: optional hash identifier defined in include/uapi/linux/ 
->> hash_info.h
->> + *
->> + * A CC guest driver provides this structure to detail the 
->> measurement facility supported by the
->> + * underlying CC hardware. After registration via 
->> `tsm_register_measurement`, the CC guest driver
->> + * must retain this structure until it is unregistered using 
->> `tsm_unregister_measurement`.
->> + */
->> +struct tsm_measurement_register {
->> +    const char *mr_name;
->> +    void *mr_value;
->> +    u32 mr_size;
->> +    u32 mr_flags;
->> +    enum hash_algo mr_hash;
->> +};
->> +
->> +/**
->> + * enum tsm_measurement_register_flag - properties of an MR
->> + * @TSM_MR_F_X: this MR supports the extension semantics on write
->> + * @TSM_MR_F_W: this MR is writable
-> 
-> Why a MR can be written w/o being extended?  What is the use case of this?
-> 
-
-This is because "write" may not be the only way to extend an RTMR. For 
-example, the current ABI proposed by this patch can be considered "MR 
-centric", meaning it's the application that takes care of what to hash, 
-using what algorithm, and which RTMR to extend. However, theoretically, 
-applications should only be concerned the integrity of some sequence of 
-events (the event log). Therefore, there could be a "log centric" ABI 
-that allows applications to integrity-protect its logs in a CC-arch 
-agnostic manner. And if that's the case, RTMRs may be marked RO ("X w/o 
-W") to prevent direct extension.
-
-The use of "W w/o X" is to support pseudo-MRs. For example, `reportdata` 
-is such a pseudo-MR that is W but not X. So an application can request a 
-TDREPORT by a write to `reportdata` followed by a read from `report0`.
-
->> + * @TSM_MR_F_R: this MR is readable. This should typically be set
->> + * @TSM_MR_F_L: this MR is live - writes to other MRs may change this MR
-> 
-> Why one MR can be changed by writing to other MRs?
-> 
-
-Good catch! I'll fix the comment.
-
->> + * @TSM_MR_F_F: present this MR as a file (instead of a directory)
->> + * @TSM_MR_F_LIVE: shorthand for L (live) and R (readable)
->> + * @TSM_MR_F_RTMR: shorthand for LIVE and X (extensible)
->> + */
->> +enum tsm_measurement_register_flag {
->> +    TSM_MR_F_X = 1,
->> +    TSM_MR_F_W = 2,
->> +    TSM_MR_F_R = 4,
->> +    TSM_MR_F_L = 8,
->> +    TSM_MR_F_F = 16,
->> +    TSM_MR_F_LIVE = TSM_MR_F_L | TSM_MR_F_R,
->> +    TSM_MR_F_RTMR = TSM_MR_F_LIVE | TSM_MR_F_X,
->> +};
-> 
-> I am not sure whether we need so many flags.  To me seems like we only 
-> need:
-> 
->   - TSM_MR_ENABLED:  The MR has been initialized with a certain algo.
->   - TSM_MR_UNLOCKED: The MR is writable and any write will extend it.
->   - TSM_MR_LOCKED:   The MR is locked and finalized.
-> 
-
-W/X are independent and both necessary (see my previous explanation on 
-"X w/o W" and "W w/o X").
-
-I'm not sure if there are non-readable MRs. But theoretically, 
-applications inside a TVM (CC guest) may not need to read any MR values. 
-Therefore, there could be CC archs (in future) that do not support 
-reading all MRs within a guest. And because of that, I decided to keep R 
-as an independent bit.
-
-L is to indicate an MR's value may not match its last write.
-
-F is for CC guest to expose (pseudo) MRs that may not have an associated 
-hash algorithm (e.g., `report0` on TDX).
-
-LOCKED/UNLOCKED, from attestation perspective, is NOT a functional but a 
-verifiable security property, which is usually implemented by extending 
-a special token to the RTMR.
-
-> The TSM_MR_ENABLED may not be needed either, but I think it's better to 
-> have it so that the kernel can reject both read/write from userspace.
-> 
-I'm not sure what a "disabled" MR is and its implication from 
-attestation perspective.
-
->> +
->> +#define TSM_MR_(mr, 
->> hash)                                                           \
->> +    .mr_name = #mr, .mr_size = hash##_DIGEST_SIZE, .mr_hash = 
->> HASH_ALGO_##hash, \
->> +    .mr_flags = TSM_MR_F_R
->> +
->> +/**
->> + * struct tsm_measurement - define CC specific MRs and methods for 
->> updating them
->> + * @name: name of the measurement provider
->> + * @mrs: array of MR definitions ending with mr_name set to %NULL
->> + * @refresh: invoked to update the specified MR
->> + * @extend: invoked to extend the specified MR with mr_size bytes
->> + */
->> +struct tsm_measurement {
->> +    const char *name;
->> +    const struct tsm_measurement_register *mrs;
->> +    int (*refresh)(struct tsm_measurement *tmr, const struct 
->> tsm_measurement_register *mr);
->> +    int (*extend)(struct tsm_measurement *tmr, const struct 
->> tsm_measurement_register *mr,
->> +              const u8 *data);
->> +};
-> 
->  From the description above, I don't quite follow what does ->refresh() 
-> do exactly.  Could you clarify why we need it?
-
-I'll fix the comment.
-
-Basically, refresh() brings all cached MR values up to date. The 
-parameter `mr` indicate which MR that has triggered the refresh. On TDX, 
-the 1st read after a write to any RTMR will trigger refresh() to reread 
-all MRs by TDG.MR.REPORT, while subsequent reads will simply return the 
-cached values until the next write to any RTMRs.
-
--Cedric
 
