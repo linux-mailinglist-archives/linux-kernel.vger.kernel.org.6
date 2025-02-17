@@ -1,140 +1,288 @@
-Return-Path: <linux-kernel+bounces-517907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7570BA3873D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:09:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5885BA38740
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76D116BAF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1980E188C875
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC052236F6;
-	Mon, 17 Feb 2025 15:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723A2236F6;
+	Mon, 17 Feb 2025 15:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fMYzlZeB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gCg6LPAR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3A2153BE4;
-	Mon, 17 Feb 2025 15:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908341758B;
+	Mon, 17 Feb 2025 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804986; cv=none; b=aN5S9M+0uuSVcBbERR8WyJC7x2UwUxtgaujV8Fdwd/j81SrJmCsUuGHA8IzQevlX0bztALYqs9pka4/t9pl+JjmNkSJ5P1Ecolaf6F4LP4XaCrSh/pX5qQvZS45RblvcFVThQlmHmP1sb6H6BqU+aEXPcBWcbkWwvOOZtnq5l9A=
+	t=1739805048; cv=none; b=izbaQMSwh6jZylZbAb061s1CivkEGj1xU4MGI5EIuCoXALmfi2O+La1fnoRYd5GxoprFvSF66e+Y48Uv8yisgu3gtpd2gwx3n/2S9lA8BRg6E8TSkOnymIw7d/SpJCwqeatFkKXvISU9jXXacxB9KwTQNYlZnk3OH0/FvhkHMKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804986; c=relaxed/simple;
-	bh=J8Q+ouyUGMJmAIQWvjqhkuaXP2nvzroCE42M6Pt219k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rDYJ0g+zlPiDY8SpBI0AmrFVHgmgqAsd5nPgKdNp9nLZmGKMrGu5coTHdX84UFoJNrTyDX3sGSTptMnNzwsGzqripxRvMCVJm44TCD0w3dzS1x98QWxV7mW67DWF0q9bvMNqCLaPiiKkhsACXzdKb5+o2ZpnN2v0xYnqRfdt/w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fMYzlZeB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H5POVp000551;
-	Mon, 17 Feb 2025 15:09:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=rsGbBDyvPWvIey+H276PvvAAydIWC3
-	3Gz/fReaevlwQ=; b=fMYzlZeB6XhR/l/RGfD95AAgjY82DvsfdN5W3L8JCQPI1G
-	F3X0kn/wPRHDArHIsynunCkhsdo8FZQHXAaqu4WfbVmZePmSIQAHEIZZLExMTAmJ
-	heVvPGLCyVTIyVO4KHSs/ZU828s9MikeCZEpS31B67w4QkDL27eRpNs0gxpUkkAF
-	75PQQo+CHGi4w21BQjwMDeSH8+RetcbKCxLK8qYShLvz9rsq0xmKRxtl22wfFIxk
-	5sZgBYtJdtlhuf/XwHFCsxzK1eIsFjq6JlxEXN5G2u+nBJzs7qJp/a65cvb/5Bnl
-	1OQxkibEiNRlb3vaQPHh/aYqk9WxPWkF35a4kFgw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uxx7ttm1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 15:09:40 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HF9dwQ025781;
-	Mon, 17 Feb 2025 15:09:39 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uxx7ttku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 15:09:39 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HDUAnl032326;
-	Mon, 17 Feb 2025 15:09:38 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u6rkphs0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 15:09:38 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HF9YtM17760608
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 15:09:34 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6979558063;
-	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 563A458056;
-	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
-Received: from localhost (unknown [9.61.91.157])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
-Date: Mon, 17 Feb 2025 09:09:34 -0600
-From: Nick Child <nnac123@linux.ibm.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, haren@linux.ibm.com, ricklind@us.ibm.com,
-        nick.child@ibm.com, jacob.e.keller@intel.com
-Subject: Re: [PATCH 1/3] hexdump: Implement macro for converting large buffers
-Message-ID: <Z7NRLmcWJFNkyHGN@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250214162436.241359-1-nnac123@linux.ibm.com>
- <20250214162436.241359-2-nnac123@linux.ibm.com>
- <20250215163612.GR1615191@kernel.org>
- <20250215174039.20fbbc42@pumpkin>
- <20250215174635.3640fb28@pumpkin>
- <20250216093204.GZ1615191@kernel.org>
- <20250216112430.29c725c5@pumpkin>
+	s=arc-20240116; t=1739805048; c=relaxed/simple;
+	bh=xsqdmzcQVf4MaVLIq+wCHoFk6tUjSd/ZSKbG3ogYrWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTfivkZKspik3fhfNlOz/7p+HIQD7+FAPVkGSJ2jpzS5YfTQbnXGUbQun5UanoUTC9JbvVVWoR7CZsf+IApIkCEa0HknKK/seaaoNuWHVHLV4v7MZkx5Z677VodJJeO6godKIHrcFLLuPHFYcVLjnMucuwUl1hlNpiPkOuRHqUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gCg6LPAR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739805044;
+	bh=xsqdmzcQVf4MaVLIq+wCHoFk6tUjSd/ZSKbG3ogYrWM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gCg6LPARAAeFfI2o/RKgT8DMH4oTejs18JXRaXx2LyQKw5onjWYm9SgVsTmBjPtlM
+	 pZWDyv7bH5FcAr67KlV6y7JpHgCKmyv/dwZLbmFbcqsKh3xTC1dSYNCj6YUEdBo8uY
+	 PNSUtM/3XMyuSIDauvfhgKhSYDF/MaD8CFxq+jiirWhK9uIUhMJVIuGsPMXRZKUGPl
+	 aLg9QsQpfv3CrBejxijBgMz3pn5/IU5EKfERRN8PE5ImgR6lBE0FnzXYdoImGYlbN7
+	 olEHbagdWKOn1eroAwABeGcg3Te/CbsLbM2gp3sx2GzLoxVYtAZmN7AUCYexsBv5lf
+	 uieOeFJKyMGVQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5437217E0CD1;
+	Mon, 17 Feb 2025 16:10:43 +0100 (CET)
+Message-ID: <358623c0-a81a-4a17-8979-f11de5b71675@collabora.com>
+Date: Mon, 17 Feb 2025 16:10:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216112430.29c725c5@pumpkin>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mAASe0gVh-_z6flf8QwL2q88tVmvwtbu
-X-Proofpoint-ORIG-GUID: YBrXGj0-RBG-NJDkjB0Pja_eQ5z7wPAv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- adultscore=0 bulkscore=0 clxscore=1015 suspectscore=0 mlxlogscore=400
- lowpriorityscore=0 malwarescore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170126
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 41/42] drm/mediatek: mtk_hdmi_v2: Add debugfs ops and
+ implement ABIST
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "jie.qiu@mediatek.com" <jie.qiu@mediatek.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+ <mripard@kernel.org>, =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
+ <jitao.shi@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ =?UTF-8?B?TGV3aXMgTGlhbyAo5buW5p+P6YieKQ==?= <Lewis.Liao@mediatek.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ =?UTF-8?B?VG9tbXlZTCBDaGVuICjpmbPlvaXoia8p?= <TommyYL.Chen@mediatek.com>,
+ =?UTF-8?B?SXZlcyBDaGVuamggKOmZs+S/iuW8mCk=?= <Ives.Chenjh@mediatek.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "junzhi.zhao@mediatek.com" <junzhi.zhao@mediatek.com>
+References: <20250211113409.1517534-1-angelogioacchino.delregno@collabora.com>
+ <20250211113409.1517534-42-angelogioacchino.delregno@collabora.com>
+ <0541a9bedef16763cc0279127ab258015b9a8a82.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <0541a9bedef16763cc0279127ab258015b9a8a82.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thank you David and Simon for testing and review!
-
-On Sun, Feb 16, 2025 at 11:24:30AM +0000, David Laight wrote:
+Il 14/02/25 06:21, CK Hu (胡俊光) ha scritto:
+> On Tue, 2025-02-11 at 12:34 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>
+>>
+>> Implement the Automated Built-In Self-Test ABIST functionality
+>> provided by the HDMIv2 IP and expose it through the "hdmi_abist"
+>> debugfs file.
+>>
+>> Write "1" to this file to activate ABIST, or "0" to deactivate.
 > 
-> I just changed the prototypes (include/linux/printk.h) to make both
-> rowsize and groupsize 'unsigned int'.
-> The same change in lib/hexdump.c + changing the local 'i, linelen, remaining'
-> to unsigned int and it all compiled.
-> 
-> FWIW that hexdump code is pretty horrid (especially if groupsize != 1).
+> Describe what we would see when activate ABIST.
+> Give some example of when to use it.
 > 
 
-Given this discussion and my own head-scratching, I think I will take a
-closer look at hex_dump_to_buffer.
+Sure, I will.
 
-I was trying to avoid editing this function due the number of callers it
-has across the kernel. But I think we can get away with keeping the
-API (but change args to uint's) and editing the body of the function
-to always iterate byte-by-byte, addding space chars where necessary. At the
-cost of a few more cycles, this will allow for more dynamic values
-for rowsize and groupsize and shorten the code up a bit. This would also
-address the "Side question" in my cover letter. Will send a v3
-regardless if I can figure that out or not.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c | 123 +++++++++++++++++++++++++
+>>   1 file changed, 123 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+>> index 36b7f8d8d218..f4a086b92dae 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
+>> @@ -1170,6 +1170,128 @@ static int mtk_hdmi_v2_hdmi_write_infoframe(struct drm_bridge *bridge,
+>>          return 0;
+>>   }
+>>
+>> +static int mtk_hdmi_v2_set_abist(struct mtk_hdmi *hdmi, bool enable)
+>> +{
+>> +       struct drm_display_mode *mode = &hdmi->mode;
+>> +       int abist_format = -EINVAL;
+>> +       bool interlaced;
+>> +
+>> +       if (!enable) {
+>> +               regmap_clear_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
+>> +               return 0;
+>> +       }
+>> +
+>> +       if (!mode->hdisplay || !mode->vdisplay)
+>> +               return -EINVAL;
+>> +
+>> +       interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+>> +
+>> +       switch (mode->hdisplay) {
+>> +       case 720:
+>> +               if (mode->vdisplay == 480)
+>> +                       abist_format = 2;
+>> +               else if (mode->vdisplay == 576)
+>> +                       abist_format = 11;
+>> +               break;
+>> +       case 1280:
+>> +               if (mode->vdisplay == 720)
+>> +                       abist_format = 3;
+>> +               break;
+>> +       case 1440:
+>> +               if (mode->vdisplay == 480)
+>> +                       abist_format = interlaced ? 5 : 9;
+>> +               else if (mode->vdisplay == 576)
+>> +                       abist_format = interlaced ? 14 : 18;
+>> +               break;
+>> +       case 1920:
+>> +               if (mode->vdisplay == 1080)
+>> +                       abist_format = interlaced ? 4 : 10;
+>> +               break;
+>> +       case 3840:
+>> +               if (mode->vdisplay == 2160)
+>> +                       abist_format = 25;
+>> +               break;
+>> +       case 4096:
+>> +               if (mode->vdisplay == 2160)
+>> +                       abist_format = 26;
+>> +               break;
+>> +       default:
+>> +               break;
+>> +       }
+>> +       if (!abist_format)
+> 
+> abist_format's initial value is -EINVAL, so this checking would never be true.
+> Let abist_format's initial value be zero.
+> 
 
-The return value of hex_dump_to_buffer on error still irks me a bit but
-I don't think that can easily be changed.
+No, because abist_format 0 is a valid format.
 
-Thanks again!
+I'll change this to
+
+if (abist_format < 0)
+	return abist_format;
+
+Thanks!
+
+Regards,
+Angelo
+
+> Regards,
+> CK
+> 
+>> +               return -EINVAL;
+>> +
+>> +       regmap_update_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_VIDEO_FORMAT,
+>> +                          FIELD_PREP(HDMI_ABIST_VIDEO_FORMAT, abist_format));
+>> +       regmap_set_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
+>> +       return 0;
+>> +}
+>> +
+>> +static int mtk_hdmi_v2_debug_abist_show(struct seq_file *m, void *arg)
+>> +{
+>> +       struct mtk_hdmi *hdmi = m->private;
+>> +       bool en;
+>> +       u32 val;
+>> +       int ret;
+>> +
+>> +       if (!hdmi)
+>> +               return -EINVAL;
+>> +
+>> +       ret = regmap_read(hdmi->regs, TOP_CFG00, &val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       en = FIELD_GET(HDMI_ABIST_ENABLE, val);
+>> +
+>> +       seq_printf(m, "HDMI Automated Built-In Self Test: %s\n",
+>> +                  en ? "Enabled" : "Disabled");
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static ssize_t mtk_hdmi_v2_debug_abist_write(struct file *file,
+>> +                                            const char __user *ubuf,
+>> +                                            size_t len, loff_t *offp)
+>> +{
+>> +       struct seq_file *m = file->private_data;
+>> +       int ret;
+>> +       u32 en;
+>> +
+>> +       if (!m || !m->private || *offp)
+>> +               return -EINVAL;
+>> +
+>> +       ret = kstrtouint_from_user(ubuf, len, 0, &en);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       if (en < 0 || en > 1)
+>> +               return -EINVAL;
+>> +
+>> +       mtk_hdmi_v2_set_abist((struct mtk_hdmi *)m->private, en);
+>> +       return len;
+>> +}
+>> +
+>> +static int mtk_hdmi_v2_debug_abist_open(struct inode *inode, struct file *file)
+>> +{
+>> +       return single_open(file, mtk_hdmi_v2_debug_abist_show, inode->i_private);
+>> +}
+>> +
+>> +static const struct file_operations mtk_hdmi_debug_abist_fops = {
+>> +       .owner = THIS_MODULE,
+>> +       .open = mtk_hdmi_v2_debug_abist_open,
+>> +       .read = seq_read,
+>> +       .write = mtk_hdmi_v2_debug_abist_write,
+>> +       .llseek = seq_lseek,
+>> +       .release = single_release,
+>> +};
+>> +
+>> +static void mtk_hdmi_v2_debugfs_init(struct drm_bridge *bridge, struct dentry *root)
+>> +{
+>> +       struct mtk_hdmi *dpi = hdmi_ctx_from_bridge(bridge);
+>> +
+>> +       debugfs_create_file("hdmi_abist", 0640, root, dpi, &mtk_hdmi_debug_abist_fops);
+>> +}
+>> +
+>>   static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
+>>          .attach = mtk_hdmi_v2_bridge_attach,
+>>          .detach = mtk_hdmi_v2_bridge_detach,
+>> @@ -1189,6 +1311,7 @@ static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
+>>          .hdmi_tmds_char_rate_valid = mtk_hdmi_v2_hdmi_tmds_char_rate_valid,
+>>          .hdmi_clear_infoframe = mtk_hdmi_v2_hdmi_clear_infoframe,
+>>          .hdmi_write_infoframe = mtk_hdmi_v2_hdmi_write_infoframe,
+>> +       .debugfs_init = mtk_hdmi_v2_debugfs_init,
+>>   };
+>>
+>>   /*
+>> --
+>> 2.48.1
+>>
+> 
+
+
+
 
