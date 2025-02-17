@@ -1,89 +1,172 @@
-Return-Path: <linux-kernel+bounces-517832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF91A3866E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:32:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61FCA38651
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132093B41DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA58188365B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB6521CC5C;
-	Mon, 17 Feb 2025 14:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7534621C9E5;
+	Mon, 17 Feb 2025 14:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IhGT9vNn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="K1XeG3K3"
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9287821C186;
-	Mon, 17 Feb 2025 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87452179BC;
+	Mon, 17 Feb 2025 14:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802301; cv=none; b=vGYirYEqCf8pMbvIElJXPBcpVvxFYGiJkveZrTGm03mCo9Am0caIUGfE7t/Kqw2tbPRub3XtpvU4ICKv9eEj1pDaK4NNJdMuZTjXbVIxf2U18U5KEPV2bpJUozG4+Q9lorjr1sGqMBqqTr1CGue8TKdDuat6Nn90Yc8eRsEN2Zw=
+	t=1739802410; cv=none; b=Vx/xzJ4/WzjEdQrWzdypuPAWY0dqhE/U0RKV3O57fjCZvtTNf9CIUs0AgIhhZzPexHVaO5wQUlQuRY4+tiw1oSBb+YNCwtEGNx3iFZlC3QSZOUZCI5WzO94OvQG5PNFFWJ2/rmc75/A496k/qiN9Gatie3SHSQre4hoCfClxwdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802301; c=relaxed/simple;
-	bh=4O6pUbxU9WhZLQgMK95/BrypKre2S+YKMb4hZtOiXFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQF+gx1KX9WS5k0ELAJaan0dbOMeTTbFcMnpjGlou5XYt+QcPAjNsw3fXW4DJugJaSFhVyiBR4ZTHoGMGqCU8WU7F66DVZmNOF67k0r13PblEUZA+ha4bj0tonEKx8/ksJAaG0FtGoORKrM7+uRoJ19hdyXT2ksPTmBGAhADkoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IhGT9vNn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MTfZEpj9A3ZPs39PczkqPfdLk2kt/FXHPcDnQdLDiQ4=; b=IhGT9vNnq7KY3wiwOFVEaFUuGD
-	TWu3bhkXjnhGHNkSUzOjccXBymT68+AhQiCUCEYr0XIfRquHjvKRLHFjvpjapYQUqemDg1J0+Uo0R
-	6JZomK7FBkaITfGoa+Gzk0C3XGa1fxOOzfFf8z37dXKEmqlLLtB6vtIavXa4PkKkZOxh+Z0yiAxPa
-	5926D4pPM4fQuJlCD+IR93c6Jc4f79rQqcRxeP9JyG9/cxNvpEVhkK6dMv51S991J3eTt5C2nUknA
-	9ybw4r+Sz0UEpnDe20c3pDeuwgbFL2cIuUtwKUWU9D/Do6CGXRQvAp6IcngwuHLw+F2ufd0C4oU8x
-	72/UXRGQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tk23C-00000001N3V-3H2B;
-	Mon, 17 Feb 2025 14:24:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B16C83002C7; Mon, 17 Feb 2025 15:24:45 +0100 (CET)
-Date: Mon, 17 Feb 2025 15:24:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	eranian@google.com, irogers@google.com, jolsa@kernel.org,
-	bp@alien8.de, x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
-	ananth.narayan@amd.com, sandipan.das@amd.com
-Subject: Re: [RESEND][PATCH v3 0/7] perf/amd/ibs: Add Zen5 support
-Message-ID: <20250217142445.GA2076@noisy.programming.kicks-ass.net>
-References: <20250205060547.1337-1-ravi.bangoria@amd.com>
- <65818316-434e-4468-9ead-2e55c15b62eb@amd.com>
+	s=arc-20240116; t=1739802410; c=relaxed/simple;
+	bh=0jdRWZfMjJ9o8HTfWfu0CRWnmYJnx9HUXqf4MGIEdWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dD79UknHRWu7JMJUTdG1r614i4Gqo4tJfrvVMqdeuPmI6jV1atjpMGc7x53K2EbSQZSAQOI6q/n3mks6E3qFgHcXi42FfRO0B90J7/hoQ8zekgNTqh5u+/Qzq9spQy+WBckl9wuXWb+pHLgXlF4h0Yg0XnoUUaZyxPHtP2uU/iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=K1XeG3K3; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739802362;
+	bh=REnARYrxDOSngSpHfdUz6sHKkiOENalg0HoRWGPAq30=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=K1XeG3K3M8cEQUpM6KKE986yGrUNr0yTrWCO67Xpl0e7JWcK/NZXXotKmyi1B1hEI
+	 uBR3swb6Y5e5mWkQTIm6khFDlL6cnevkPZzSAI9c7A65sidQE7A7j05abnT9nFzq12
+	 DkQgoJ5hwRtllmwmVMSLC2DSC5UUGy0gJSoMgHSI=
+X-QQ-mid: bizesmtpip3t1739802349t4jlhfn
+X-QQ-Originating-IP: Yt8/2h18GrwIvBBQY5sSejJFu2ZDkKpWNCGtPkOOMRQ=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 17 Feb 2025 22:25:47 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3477360017264247857
+From: WangYuli <wangyuli@uniontech.com>
+To: tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	macro@orcam.me.uk,
+	masahiroy@kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	chenlinxuan@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH v3 0/2] MIPS: dec: Only check -msym32 when need compiler
+Date: Mon, 17 Feb 2025 22:25:41 +0800
+Message-ID: <8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65818316-434e-4468-9ead-2e55c15b62eb@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OAj1qrjhA85AAjmwes1HF7KTeM0EW5wviUUuyH+0qhTat01X+S5+zQQ9
+	6iSV7PUu3SGLaCq0pVsAiBINjbLJ5RuVmsBjXI+wzlriTzwn9fBU/VNWeeHdRJF21KdI81x
+	sKHfWecBjl3LTEkNEgctcs+UsmQmX21J0UCeYpW2NecOpzwLkrtCRA5TRarnDNgsqIxmFek
+	+kHS9fMkwHrTVncyUadtK/kt73KngNyhfs0EEvp7AHVyuulzLn1dr0FWfvNmGGAPqvqRoOJ
+	UURTVNzq5ta7GHfqKUtsoh/rGYCXn2d+sAtiA2wz2dEBX2T3kKpU2+aNc2x4ug6mjjvXHep
+	/qK3wQuje9irjOstBmw6rP2FX2nZE4NiDgYm9I6/S0AO35Wj3qwW+8wyhvrtRXdpn5CXA9j
+	y8N9lRNpfpAHGXVW1YTkJS7oQGs3D4JkXS6Zd2P5ScZ005trdb4Uh24Erv3BWM79i2qlC6O
+	u/busKD+TyYnhcp2LWWC9s1+0iVMP9Ue+WkeQBnaN0y1PjZ7lXh/U4vycFvwIqB9nodR8RQ
+	KabAwsLxhkflSN3nBGvzQ8vTLkvhc2BsPrzvHY7burux8EUIDLRvkuYIY59TRcBLqaVvmeA
+	1NB4IyN8A4CJqQqKeL9gw0rvHlKCXEAhQ3jRO50UPtiSi0a/ILH4M1SeoNIxN9XKViNVH5m
+	FP8YJGg4wRpmVpGJ0a6WlNprusp40nIU/p/CiAUXAasZu3S+6L43yaj1e7t6f2T+cyeHk3w
+	JGnDXruRlUdFPXwtZEWcJKRU7GdJuT659ot25o7x6TB2U8nyVKCZicbqehEIajsEVUmQKuB
+	mdc7Ogm+5miFNmaXo40j9byiXorpV3zK2DnqJelXLlPLO2NfgBBi8BDb6Y2BGm0lJeepY3Q
+	xiilM7aaPplNnLIRvJjRkbVJN7/5br/3Ge39erXIUXGotLiQf84vISs/4IV1lRib0hM8KSE
+	ndyaD+v3Yryur6qtlet5JChQY6ILeyVZmcPu3wluQ/jt6Hb+iDJLvWRmZisoVRUWM9Y6gHs
+	yG9ygAy+ZjVyqN8eBulDSw2/KOADAH7AB5qafsfgs9lvYASUrhnOxcVDkXoC8=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Feb 17, 2025 at 02:00:14PM +0530, Ravi Bangoria wrote:
-> On 05-Feb-25 11:35 AM, Ravi Bangoria wrote:
-> > IBS on Zen5:
-> > - introduced Load Latency filtering capability.
-> > - shows DTLB and page size information differently from prior generations.
-> > 
-> > Incorporate these changes into IBS kernel driver as well as perf tool.
-> > Also include a perf unit-test to test IBS sample period constraints.
-> > 
-> > Patches are prepared on peterz/queue/perf/core (cffa473a06d2).
-> 
-> Ingo, Peter, gentle ping!
+During 'make modules_install', the need-compiler variable becomes
+null, so Makefile.compiler isn't included.
+    
+This results in call cc-option-yn returning nothing.
+    
+For more technical details on why need-compiler is null during
+‘make modules_install’ and why no compiler invocation is actually
+needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
+Only fiddle with CHECKFLAGS if need-compiler") and commit
+805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
+is needed").
+    
+Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression") tried to fix the same issue but it
+caused a compile error on clang compiler because it doesn't support
+'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
+of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression.
+    
+Wrapping this entire code block with #ifdef need-compiler to avoid
+all issues is the best solution for now.
+    
+To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+without -msym32" error.
 
-First 3 patches are in queue/perf/core, assuming the robots be happy,
-I'll push it into tip/perf/core.
 
+NOTE:
 
-Thanks!
+It is particularly important to note that this code fix does not
+imply that we have resolved the problem entirely.
+
+In fact, the entire application of cc-option and its auxiliary
+commands within the kernel codebase currently carries significant
+risk.
+
+When we execute make modules_install, the Makefile for the
+corresponding architecture under arch/subarches/Makefile is
+invariably included. Within these files, there are numerous
+usages of cc-option and its auxiliary commands, all of which will
+return empty strings. The reason other architectures can
+successfully complete compilation under these circumstances is
+purely because they do not, unlike MIPS, check the return values
+of cc-option and its auxiliary commands within their Makefiles
+and halt the compilation process when the expected results are
+not received.
+
+A feasible approach to remediation might be to encapsulate all
+usages of cc-option and its auxiliary commands within conditional
+statements across all architecture Makefiles, preventing their
+execution entirely during make modules_install.
+
+However, this would lead to a massive number of inelegant
+modifications, and these broader implications may require
+deliberation by Masahiro Yamada.
+
+Regardless, this does not preclude us from addressing the
+issue on MIPS first.
+
+Link: https://lore.kernel.org/all/41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com/
+
+WangYuli (2):
+  MIPS: dec: Only check -msym32 when need compiler
+  MIPS: Eliminate Redundant KBUILD_SYM32 Checks
+
+ arch/mips/Makefile | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+---
+Changelog:
+ *v1->v2:
+    1). Correct semantic errors.
+    2). Adopted a revised fix: Using a check for need-compiler
+in place of KBUILD_SYM32 check.
+    3). Swap the order of the changes in v1.
+  v2->v3:
+    Per Maciej's suggestion, expanded the commit message with
+more information and removed the code comment.
+
+-- 
+2.47.2
+
 
