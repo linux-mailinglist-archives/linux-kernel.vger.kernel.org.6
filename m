@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-518354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4E1A38DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:06:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2914FA38DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D048A188B14C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F185816C6C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3016E239099;
-	Mon, 17 Feb 2025 21:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59E2239082;
+	Mon, 17 Feb 2025 21:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aW7ol2iP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSdMCVRW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BD9226545;
-	Mon, 17 Feb 2025 21:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02222226545;
+	Mon, 17 Feb 2025 21:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739826352; cv=none; b=bfEDdtbm6NfKFysW86QvjOkLS5TF07eacQuXju9VOHBsqjpcRdux2lWQSeEnwk5a7dkG2Kpkw8uvMW6yrW9oqfFOVYx5cK0WQayjY08Za71kKFbQ9EePQGCl/nXAVd2ZEAUiauYM50DlWTwLC7wiHhiqNRXLxbNhYA/6f0h8lBc=
+	t=1739826419; cv=none; b=hizw+G6X1a8Zq7JzDzmVGys0Puqja6cht9A0tCRnpp1EOFg6KUTifcXIZG3kysZ7p2sxsSplX1auCpD154YkIUAxk2T/ZK3enC3/dAMy59XBolxO1eM6oIgf0+fqC6Ao7ez0n/LKMfX8hhN3nkMkN6f6WKW+xYsUNzyYDbYHR64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739826352; c=relaxed/simple;
-	bh=xkZ5C4RRw8ad7q0dz3o/qbGl9MzaFXUgGSXYjVbtOWA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DFgJ7CPklGRl/Y/GXbEsEMqvibN9Sacgze8ajRvGvC2UFOjKD5PkL0VDjp2FbO1iWFbIf6oSbVH4krwtrRZPd2jmZ2m1274SyitE7oIC8oRnPs2TneXkYpDZJ8GlVd9m1TGDoh2yE5UVX8yjoGZJ3jQWOJPAMZJM/zkERXmEP48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aW7ol2iP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739826348;
-	bh=xkZ5C4RRw8ad7q0dz3o/qbGl9MzaFXUgGSXYjVbtOWA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=aW7ol2iPEM7YU4BSPBprp8cFl+Z+UAF9wru33YLobNMb8LuCedfbT7PMVqEmzXoyU
-	 Eclj16zUhqKuxwm3uLMCCys4gwKc/0i2pW+c4P90BPtmO+xoTL5XEvIge3ao9kQiNS
-	 MgBIMevZaTq1raoHsKuPfBCfwlfg2xoCH1FgnLV+aUcggUynldsC7Eyqz5Yi3aUCxa
-	 lo1Ofo/arQLiv05QrnCkiOuosBnspOrefc/NRapd23xkwCy6nhRsc+Qejg9NMBAcI+
-	 neyhVGRHgcCMr/bd6B3C5xPxLUcRpA3Sw6TV+EBS6iiEz/6WYUkXc9vO09t5SvcRlT
-	 2S0h2HA3zVlyQ==
-Received: from [IPv6:2606:6d00:11:e976::5ac] (unknown [IPv6:2606:6d00:11:e976::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 85CC517E0391;
-	Mon, 17 Feb 2025 22:05:47 +0100 (CET)
-Message-ID: <83e0afab381fe2580e4c75fccc62cb7bcb546369.camel@collabora.com>
-Subject: Re: [PATCH] media: verisilicon: Fix AV1 decoder clock frequency
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Philipp Zabel	
- <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: stable@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, kernel@collabora.com
-Date: Mon, 17 Feb 2025 16:05:45 -0500
-In-Reply-To: <20250217-b4-hantro-av1-clock-rate-v1-1-65b91132c551@collabora.com>
-References: 
-	<20250217-b4-hantro-av1-clock-rate-v1-1-65b91132c551@collabora.com>
-Organization: Collabora Canada
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739826419; c=relaxed/simple;
+	bh=XBiZ9M6VH2FsYZ+jANHvMHi9akZFIZce1Nh6SBYvdYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PiTzsMVpnm6ydfUQ6sGN6OKgdWFLKekiW0aL5pl3oT4mWmdYJ3BmiPu0y+gTLMMDvqeFc9nj0lyoqwa+zyS7BXh1XQTI9eG7u26HhhYkeshWOjGDgtUgqAZR22v0YdDnZwcwAdGA/nJMM+HAO1HGf67mieHB8vY5GROtMW47e9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSdMCVRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A28C4CED1;
+	Mon, 17 Feb 2025 21:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739826418;
+	bh=XBiZ9M6VH2FsYZ+jANHvMHi9akZFIZce1Nh6SBYvdYs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LSdMCVRW/1ceh83iJtXPcXh6CajmXy5DEIHnWeAadVc3KlpvKanX94pfsiffM56uC
+	 ZoxrnZQ+eU4dWCDzv1jm1nJD19eBvcVSZx9h9YtwV1ZEteIUNKtrZf9qDZGI5xpDel
+	 Vf/DagYv9SSXZPSVAsrFWqLvbYsqnv3Mc34qfeJH5ta2VmrnrWHPeavDyaQKqfJ2R4
+	 LYyLJ/FQLSR36iGI1r6JAxpqqvjUPRxNo7tJxRlGfjH3V4RaWIwfbabiT7ehv1psMx
+	 D4TO5E1hcO4qsNU2Kc/7Jd2orrI4MnQMkjwwI5lyj+ajVXwyXkZbIiOT8hEjURlazM
+	 agMSXDylJ76Fg==
+Message-ID: <8d909900-daee-4925-8d5a-2aa46275240d@kernel.org>
+Date: Mon, 17 Feb 2025 15:06:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/17] cpufreq/amd-pstate: Drop min and max cached
+ frequencies
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250215005244.1212285-1-superm1@kernel.org>
+ <20250215005244.1212285-3-superm1@kernel.org>
+ <Z7LZg8oq3LqfKZID@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <Z7LZg8oq3LqfKZID@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-I'm sorry for this bad send, please dismiss.
-
-Le lundi 17 février 2025 à 16:00 -0500, Nicolas Dufresne a écrit :
-> The desired clock frequency was correctly set to 400MHz in the device tree
-> but was lowered by the driver to 300MHz breaking 4K 60Hz content playback.
-> Fix the issue by removing the driver call to clk_set_rate(), which reduce
-> the amount of board specific code.
+On 2/17/2025 00:38, Gautham R. Shenoy wrote:
+> Hello Mario,
 > 
-> Fixes: 003afda97c65 ("media: verisilicon: Enable AV1 decoder on rk3588")
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> ---
-> This patch fixes user report of AV1 4K60 decoder not being fast enough
-> on RK3588 based SoC. This is a break from Hantro original authors
-> habbit of coding the frequencies in the driver instead of specifying this
-> frequency in the device tree. The other calls to clk_set_rate() are left
-> since this would require modifying many dtsi files, which would then be
-> unsuitable for backport.
-> ---
->  drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> On Fri, Feb 14, 2025 at 06:52:29PM -0600, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> Use the perf_to_freq helpers to calculate this on the fly.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> --
+>> v2:
+>>   * Keep cached limits
+>> ---
 > 
-> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> index 964122e7c355934cd80eb442219f6ba51bba8b71..9d8eab33556d62733ec7ec6b5e685c86ba7086e4 100644
-> --- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> +++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> @@ -17,7 +17,6 @@
->  
->  #define RK3066_ACLK_MAX_FREQ (300 * 1000 * 1000)
->  #define RK3288_ACLK_MAX_FREQ (400 * 1000 * 1000)
-> -#define RK3588_ACLK_MAX_FREQ (300 * 1000 * 1000)
->  
->  #define ROCKCHIP_VPU981_MIN_SIZE 64
->  
-> @@ -440,10 +439,9 @@ static int rk3066_vpu_hw_init(struct hantro_dev *vpu)
->  	return 0;
->  }
->  
-> +/* TODO just remove, the CLK are defined correctly in the DTS */
->  static int rk3588_vpu981_hw_init(struct hantro_dev *vpu)
-
-Obviously that function is meant to completely go away, got distracted
-and sent the old version.
-
-Nicolas
-
->  {
-> -	/* Bump ACLKs to max. possible freq. to improve performance. */
-> -	clk_set_rate(vpu->clocks[0].clk, RK3588_ACLK_MAX_FREQ);
->  	return 0;
->  }
->  
-> @@ -807,7 +805,6 @@ const struct hantro_variant rk3588_vpu981_variant = {
->  	.codec_ops = rk3588_vpu981_codec_ops,
->  	.irqs = rk3588_vpu981_irqs,
->  	.num_irqs = ARRAY_SIZE(rk3588_vpu981_irqs),
-> -	.init = rk3588_vpu981_hw_init,
->  	.clk_names = rk3588_vpu981_vpu_clk_names,
->  	.num_clocks = ARRAY_SIZE(rk3588_vpu981_vpu_clk_names)
->  };
+> [..snip..]
 > 
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250217-b4-hantro-av1-clock-rate-e5497f1499df
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -717,7 +717,7 @@ static int amd_pstate_cpu_boost_update(struct cpufreq_policy *policy, bool on)
+>>   	int ret = 0;
+>>   
+>>   	nominal_freq = READ_ONCE(cpudata->nominal_freq);
+>> -	max_freq = READ_ONCE(cpudata->max_freq);
+>> +	max_freq = perf_to_freq(cpudata, READ_ONCE(cpudata->highest_perf));
+>>   
+>>   	if (on)
+>>   		policy->cpuinfo.max_freq = max_freq;
+>> @@ -901,35 +901,25 @@ static u32 amd_pstate_get_transition_latency(unsigned int cpu)
+>>   static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>>   {
+>>   	int ret;
+>> -	u32 min_freq, max_freq;
+>> -	u32 nominal_freq, lowest_nonlinear_freq;
+>> +	u32 min_freq, nominal_freq, lowest_nonlinear_freq;
+>>   	struct cppc_perf_caps cppc_perf;
+>>   
+>>   	ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	if (quirks && quirks->lowest_freq)
+>> -		min_freq = quirks->lowest_freq;
+>> -	else
+>> -		min_freq = cppc_perf.lowest_freq;
+>> -
+>>   	if (quirks && quirks->nominal_freq)
+>>   		nominal_freq = quirks->nominal_freq;
+>>   	else
+>>   		nominal_freq = cppc_perf.nominal_freq;
+>>   
+>> -	min_freq *= 1000;
+>>   	nominal_freq *= 1000;
+>> -
+>>   	WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
 > 
-> Best regards,
+> So cpudata->nominal_freq will be in KHz here.
+> 
+> 
+>> -	WRITE_ONCE(cpudata->min_freq, min_freq);
+>> -
+>> -	max_freq = perf_to_freq(cpudata, cpudata->highest_perf);
+>> -	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+>>   
+>> -	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+>> -	WRITE_ONCE(cpudata->max_freq, max_freq);
+>> +	if (quirks && quirks->lowest_freq) {
+>> +		min_freq = quirks->lowest_freq;
+>> +	} else
+>> +		min_freq = cppc_perf.lowest_freq;
+>>
+> 
+> Since cppc_perf exposes the frequency values in MHz, min_freq is in MHz.
+> 
+>>   	/**
+>>   	 * Below values need to be initialized correctly, otherwise driver will fail to load
+>> @@ -937,12 +927,15 @@ static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>>   	 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
+>>   	 * Check _CPC in ACPI table objects if any values are incorrect
+>>   	 */
+>> -	if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
+>> -		pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
+>> -			min_freq, max_freq, nominal_freq);
+>> +	if (nominal_freq <= 0) {
+>> +		pr_err("nominal_freq(%d) value is incorrect\n",
+>> +			nominal_freq);
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> +	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+> 
+> Since lowest_nonlinear_freq will be computed using cpudata->nominal_freq, the former will be in KHz.
+> 
+>> +	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+>> +
+>>   	if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
+>              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> And thus since lowest_nonlinear_freq is in KHz and min_freq is in MHz, this check will always be true.
+> 
+> Shouldn't the min_freq be multiplied by 1000 ?
+>     
+
+Yup, I think you're right.  Great catch!
+I'll spin this for v3.
+
+> 
+>>   		pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
+>>   			lowest_nonlinear_freq, min_freq, nominal_freq);
+> 
+> 
+
 
