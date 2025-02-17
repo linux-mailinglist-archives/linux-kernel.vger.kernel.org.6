@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-517607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF61EA38308
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:32:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D46DA38311
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACFE77A1FED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25B53A7559
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A034F218E85;
-	Mon, 17 Feb 2025 12:31:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999DB7F9;
-	Mon, 17 Feb 2025 12:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB0121A454;
+	Mon, 17 Feb 2025 12:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Mdth02Gv"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443061E49F;
+	Mon, 17 Feb 2025 12:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739795515; cv=none; b=MJ+49WQheyc3UPkXqL/3Mra02dF6FXFx4T1isxwAGN5+CZx/JPX+6Iia3PhsgmwZDvw4b805KjVOGDCiYvRZyTwirdmX6L54uttsJRgrRPwm1BHWhTbMAitENkdlLeaPjAI97llOUy7uueTiBQjj3TsVd04zghooRb+IUcsmDAk=
+	t=1739795865; cv=none; b=bYYVoWqowU+X/8NpKro9Ero9qzMTxrBtNm5JEUGsGRq31CT+OGOmsNiDUGyrAJ9GfV+OJE2u+0HFcdvvxpKV7aQ8R+uLSPflbzQ+7JXuWFiYRs36MNPTaBUazbvzPqjPyDf2f21RQ1LIHwmu5EKa/EdI1ZnJ/Us8Kkdzrf5Xsa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739795515; c=relaxed/simple;
-	bh=mLoswGq4ee6hpNyl8OOh6wrbHYc6wwRA6DU8avtw+Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7yxuRDRQtbItJauivYBZMKv3yOX1PjSGmiCrnvOtPbYJzLp/OBP7kG3HEObcRFpRAX0VQM/oAE8reUdXGNFB56q86fz1iqDePz1CxMOtgaZHLwI3Zgjvf4KzkvfcN0ZeBahvr8I4giXFrAxL6iXW7Orwj9qPWhOkysM0b3lmj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16C171692;
-	Mon, 17 Feb 2025 04:32:12 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 198303F5A1;
-	Mon, 17 Feb 2025 04:31:49 -0800 (PST)
-Date: Mon, 17 Feb 2025 12:31:47 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Keita Morisaki <keyz@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
-	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org, aarontian@google.com,
-	Sudeep Holla <sudeep.holla@arm.com>, yimingtseng@google.com,
-	Dhruva Gole <d-gole@ti.com>, Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v5 RESEND] cpuidle: psci: Add trace for PSCI domain idle
-Message-ID: <Z7MsM5Va5xi-Nuis@bogus>
-References: <20250210055828.1875372-1-keyz@google.com>
- <CAJZ5v0hWNYB69ydM4--GNtLBgG3WS4MT+S10w46883kHnFMMEQ@mail.gmail.com>
+	s=arc-20240116; t=1739795865; c=relaxed/simple;
+	bh=N+hbKVsU3yr0pdvxSg3gz8TMzTEZjqbulPC2FucYu98=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VmuNooo3el3wmc9OL/wnjFQX2EGpDC5sv91zXvi/ZLnDdlKsr1CEQp+pPPRll5mbOHt+SwfR73pbMo0xqSfGon3Q5NqhozXmT4mSN0wG0uI8NSpOYmWNaeaKER8fGARu6MptQpIHwRj8LZnOVMNm9pQKtX+sj8AScLXl+CMSGAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Mdth02Gv; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D1C96442E6;
+	Mon, 17 Feb 2025 12:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739795860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MHW5GHgCy90xIagepwZyXILIBdlp2eVTmbrVYozSMjs=;
+	b=Mdth02GvPC71UBUWFwBXdI21GKQdAJx5mrseKFVMSMqXvPctTza2z2LFWUgA3bhcDt4hf4
+	kjWrXZARqI0d1YvvIcpJxsxaBSeZ8pPNMuH815nS5u3d0kgSz71co+5Mg9aVe0n6CbIqRA
+	4TecOUWugWTCcZ25rnXSY1s1j1Fl4NGT4vofO/oHHCI4zZiTDhOQEcdbaeFxhu8nXAEqk+
+	MH06NK5hGrYJ6dnQ6pVdOKxGqzaBIWEbXnMYw08wPjSj4/GVhQHaFL4ashOA3pknIpglDw
+	P24F55uilVkXQrou8p1rQRJszBwcblcFo2nAuzlRF9vSvG4UHOf9a6xbbk/gNQ==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next 0/3] selftests/bpf: tc_links/tc_opts: Unserialize
+ tests
+Date: Mon, 17 Feb 2025 13:37:37 +0100
+Message-Id: <20250217-tc_links-v1-0-27f7965e3dcd@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0hWNYB69ydM4--GNtLBgG3WS4MT+S10w46883kHnFMMEQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJEts2cC/x3MWwqAIBBA0a3IfCeYvdtKRKSNNRQWGhGIe0/6P
+ HC5ATw6Qg89C+DwIU+nTcgzBnqb7YqclmSQQlYily2/9XSQ3T1f2q6cZaEaUReQ8suhofdfDaA
+ uwy2+N4wxfsCbhjdkAAAA
+X-Change-ID: 20250128-tc_links-d894a23b7063
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkedtkefgtedtgeekhfdujeevfefhvdetgfduudeifedvhfdvgfefteehhfdvvefhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhis
+ ehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsughfsehfohhmihgthhgvvhdrmhgvpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvhdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhm
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Mon, Feb 17, 2025 at 12:57:07PM +0100, Rafael J. Wysocki wrote:
-> +Ulf
-> 
-> On Mon, Feb 10, 2025 at 6:58 AM Keita Morisaki <keyz@google.com> wrote:
-> >
-> > The trace event cpu_idle provides insufficient information for debugging
-> > PSCI requests due to lacking access to determined PSCI domain idle
-> > states. The cpu_idle usually only shows -1, 0, or 1 regardless how many
-> > idle states the power domain has.
-> >
-> > Add new trace events namely psci_domain_idle_enter and
-> > psci_domain_idle_exit to trace enter and exit events with a determined
-> > idle state.
-> >
-> > These new trace events will help developers debug CPUidle issues on ARM
-> > systems using PSCI by providing more detailed information about the
-> > requested idle states.
-> >
-> > Signed-off-by: Keita Morisaki <keyz@google.com>
-> > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> > Tested-by: Kevin Hilman <khilman@baylibre.com>
-> > ---
-> > v1->v2: Split the ftrace event into two (psci_domain_idle_(enter|exit))
-> >         and rephrase the commit message accordingly. Rebased onto the latest.
-> > v2->v3: Add "Reviewed-by: Steven Rostedt"
-> > v3->v4: Add the Tested-by label
-> > v4->v5: Add "Reviewed-by: Dhruva Gole"
-> >
-> > Hopefully this patch gets attention from maintainers of
-> > drivers/cpuidle/cpuidle-psci.c too.
->
-> Lorenzo, Sudeep, Ulf, any comments?
->
+Hi all,
 
-Looks good to me. I left it to Ulf, FWIW:
+Both tc_links.c and tc_opts.c do their tests on the loopback interface.
+It prevents from parallelizing their executions.
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Use namespaces and the new append_tid() helper to allow this
+parallelization.
 
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Bastien Curutchet (eBPF Foundation) (3):
+      selftests/bpf: tc_helpers: Add create_and_open_tid_ns()
+      selftests/bpf: tc_link/tc_opts: Use unique namespace
+      selftests/bpf: tc_links/tc_opts: Serialize tests
+
+ .../testing/selftests/bpf/prog_tests/tc_helpers.h  |  12 ++
+ tools/testing/selftests/bpf/prog_tests/tc_links.c  | 164 +++++++++++++--
+ tools/testing/selftests/bpf/prog_tests/tc_opts.c   | 230 ++++++++++++++++++---
+ 3 files changed, 361 insertions(+), 45 deletions(-)
+---
+base-commit: cfed0f474a4bb2f12b54de5d6a7301cfb7dc0dbd
+change-id: 20250128-tc_links-d894a23b7063
+
+Best regards,
 -- 
-Regards,
-Sudeep
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
 
