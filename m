@@ -1,132 +1,243 @@
-Return-Path: <linux-kernel+bounces-518207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54063A38B69
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:44:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F246A38B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01E07A3C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:42:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C31647A3494
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB84236A6D;
-	Mon, 17 Feb 2025 18:43:30 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58082236425;
+	Mon, 17 Feb 2025 18:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MmCGamMB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c3h1eEAL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rQGTzicH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jYy7YrY6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F8188A3B;
-	Mon, 17 Feb 2025 18:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1403188A3B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739817809; cv=none; b=lZC4yY4Cfewei7YQ6LvPYV08CHxIHkj3Lok3vF0Noggz/ya4bEp6Xenytodne2X6b9slCcVIUZGY/hEkKnoAStwohKp1R2O6C79SWxBbyHJxN+WGWIMTWnQ+5NZYkUT6NLCozn4oTz4HRtRlCHKariqCAln/Q3OJH8z8ZSMZ1M4=
+	t=1739817803; cv=none; b=lt1gLpw6zHdPX6lBTYgDBaNff97lXqtMJV1ksqM1awlDuu3goZo7kOa0K5sSOcij37AiajRsF1jroXpHOYKP8WwGJC6bGFwoP8qaf+BWycsTQmcrfazFpWubYCY9e4Vg+riSL2PnPzCSnU1uZVTWiqCubDtbS1knEGPUC7SgVCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739817809; c=relaxed/simple;
-	bh=RUgkl8+qiiUJqMZDSidbtp6rukdJhBWi9YsrZQib35w=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kd6KzreW8vbax0gu2frR7VDyDM+8LXUdDkDFF89sXEmBcQDVsuAW0gByCyIrJpimLEn+p15UfMVuOlvmKEcaeOTigO52UfSqT7ySPAfkA6UY2y/oj9X4wHWdTvREQ128USStGG+jdCtGh0BSxlge7+oRmWplsHlRHbM1oWITeBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fb3a611afdso30948817b3.0;
-        Mon, 17 Feb 2025 10:43:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739817807; x=1740422607;
-        h=cc:to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PFc6FgN8m4J2TWKi8vdlYPk5a0hg89Z1mc2OwblTl34=;
-        b=gbMMu0skd/lWQcbgtLBlZZEP2qIFatvbX3AXZ3eyogj/gzuQi9Os6uuTzrOncaNTUQ
-         T0aZgy4kosVR4ChLawkDn78XAJuNO3H/Q8GIktCKZXSlpb3zR6OXiILVcBel/NMT5T7S
-         QBBg0s5LDcE6H3ywb+Xku0faozxFOGnzpG4SL1BqKjrGT8s8F8b7ezGDYeK88fB3nEPA
-         /4qtN/EM5hbGvPOdwk8v//WR2FlUrFB4y5kOGUVn3qvfAPt/M5nDmJKu8EMrs0ienLgP
-         fMrCnrO9ufjpa7xQosbnY7hjOQSY/RXixyetoMc6fsiXYbul2LtJ7EIoToyB/ANesWfm
-         KXGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURc5lKXQaeDuVb5JyYZgtQwK9v9dKEeWTkVG0txD6k+uc2hqhOGOdctNMOmzIlriHMqUMPd5zn+sDGvn5L@vger.kernel.org, AJvYcCXYwHu0CUHW8j+PVUJHckmjvv6LbKrqdWyRsiwjd7+mGX6YUc67G6Gkf9pty40my/Ahy4QjgKXnHW+TE92MfA==@vger.kernel.org, AJvYcCXzaE8/wQXywp8iyNhshTq5aCcP1Htw+3oRSqKhiki+H34x8F2YNx6QNDQx9WmJd4jXbTgTZXxQzoVwL10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0UePy/f8n82y1bHWiI9vdW408Efl/KlKMbN86O6S9qJrBVqYU
-	4HMX2cmZJf2RfbE3dmJqG/48A5FKY6M8QNMfDxZ0usIX341AQLKY/qkV+gjK
-X-Gm-Gg: ASbGncunxQVT4xED1ThF0n7+RP+XxUuY7G1v/W6Hi9a2cCQdnvXFECXoEMd1VI7+KP6
-	FsOiSrFsI5Dd4fzvq3KEwxveDjV8+uhuIre54Ok0+k9NnATNSPHF58G85Ef9fZBMY65qkgOBM8U
-	djZqVMxWLLuKwyaoPcBC0fMlE1CS6TU0nVHPUO1jtclSkhUWQ40gETZeJQRF2aQL+xN+EiBeURC
-	WOhIdS8/MTtaSJuSKJVct7gGRKkKQp765+CnRhFwrWmFuo89kO+gDM70K7f+C1FFbo2HkyU3bOo
-	pfwwlOieWipUbgDi5x7CtYLsiqdXQccWbfreRUKi8570a+cUa+WB
-X-Google-Smtp-Source: AGHT+IFDW2YQz9xie7jp11jQsm49Vx5YDGdLya1FoWyEe161ZR/tmEfYh+OINbggTTULDGCAq8rCPQ==
-X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id 00721157ae682-6fb582b757emr87012937b3.18.1739817806773;
-        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb7ca441e0sm5968497b3.100.2025.02.17.10.43.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ef7c9e9592so35457747b3.1;
-        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUaMNq+YdlRUvU7EotQ03CBRTHexY4wu3+XJ0aY8+krIzMAL0Le2MJY6p+mzps2Wbmz2Pm5mv9rUvHGlDY=@vger.kernel.org, AJvYcCVNPRCAuGtSYhrzdQebmSfG6t44n12wbFSzYIWq2kn2Unh1HJGKf7NyvH+R3AJijmDQ96HFFRgmFeliD/Wf@vger.kernel.org, AJvYcCXDPSRAgTCQS+W3oHpRlzT3TSZMbc+HLFIf3H1Vukr+6E5yAAoEUtwpIp7BgxV0fBHUTXo+IasBktl9fGqk/g==@vger.kernel.org
-X-Received: by 2002:a05:690c:9217:b0:6fb:91a9:94d9 with SMTP id
- 00721157ae682-6fb91a9969emr5116087b3.2.1739817806159; Mon, 17 Feb 2025
- 10:43:26 -0800 (PST)
+	s=arc-20240116; t=1739817803; c=relaxed/simple;
+	bh=aQ8/F+Lh2P9Vy2jF93ARw99yi6bnud3ngrkQ+wzhoGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=odmSsempe+lByc65wYGo5BUkRnoiAzvEqTTZhT4v+j/e2FJPTo5K8AyPDwtaUP1md6MKgpvyGzpiSf7tU1JCMj7tRjhxIsFWpeglsBSSm6ExYyUVW3tkI0ksgfzPlJ4/Qy7eeKnhTfUbSbwCumrVGSVuW7lt0ZZxC1++wWI6MHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MmCGamMB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c3h1eEAL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rQGTzicH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jYy7YrY6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E5EE421172;
+	Mon, 17 Feb 2025 18:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739817800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V5lZynmEUR+YeywYZpcWxhoHhkH//bvz+HMMgYXLssE=;
+	b=MmCGamMB4yR/kMGuOav/oCZgNlsKbej/iEDivKWQAfphN4rpAwvJjh0aMh0UotpiBHvvQ9
+	FhhfvkfMMIL17X2+0o7iuGnjk4vSrZluie8HPcc4RjRvEwBA15Y4CerLh/8IJQhIgtGHqF
+	nHNgiCs3lbKg4xNmpImZKHWb0dbg6jE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739817800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V5lZynmEUR+YeywYZpcWxhoHhkH//bvz+HMMgYXLssE=;
+	b=c3h1eEALIj4xQAPDWcBAgSJvcYNpeaT6PY9xlGPfCUw2ArR70RKQbR6NXIkrwqj5RqU+Tt
+	mZMoTpLQVD8g+pAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739817799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V5lZynmEUR+YeywYZpcWxhoHhkH//bvz+HMMgYXLssE=;
+	b=rQGTzicHaa/o0iyUdHK+ki7RUOjPeW4cWuYz0nOYWCsmNX0bYf13T/OpDlytCaAkLQjrHu
+	2ZA8ZK4/QXcm5zbDs/xEUN0qxJiRERNdbNZbVfV+ItUXWTuN2C2fIREcco8D1YUFxbXb9A
+	ObiZXjcHCn15wZhjpfnnTOOUcKN+CiY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739817799;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V5lZynmEUR+YeywYZpcWxhoHhkH//bvz+HMMgYXLssE=;
+	b=jYy7YrY6o22q+HHXYv7P8SMXq/tc3qerKhB7voZpijM+bmV7KAR/SKXMr0Oyy289/o6pQ6
+	ozhIswbbCIwhMrBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBF6D13485;
+	Mon, 17 Feb 2025 18:43:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lMyELUeDs2fOegAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Feb 2025 18:43:19 +0000
+Message-ID: <b4a2bf18-c1ec-4ccd-bed9-671a2fd543a9@suse.cz>
+Date: Mon, 17 Feb 2025 19:43:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Reply-To: tanure@linux.com
-From: Lucas Tanure <tanure@linux.com>
-Date: Mon, 17 Feb 2025 18:43:15 +0000
-X-Gmail-Original-Message-ID: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
-X-Gm-Features: AWEUYZl_7IlOgzFB-KpkD13HgqA2BIMZysbWNtof4L3UoLqK50-0X4pW8xCZseE
-Message-ID: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
-Subject: crypto: fscrypt: crypto_create_tfm_node memory leak
-To: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-fscrypt@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
-Cc: "krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>, 
-	"lucas.tanure@neat.no" <lucas.tanure@neat.no>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1] neighbour: Replace kvzalloc() with kzalloc()
+ when GFP_ATOMIC is specified
+Content-Language: en-US
+To: Kohei Enju <enjuk@amazon.com>, edumazet@google.com
+Cc: davem@davemloft.net, gnaaman@drivenets.com, horms@kernel.org,
+ joel.granados@kernel.org, kohei.enju@gmail.com, kuba@kernel.org,
+ kuniyu@amazon.com, linux-kernel@vger.kernel.org, lizetao1@huawei.com,
+ netdev@vger.kernel.org, pabeni@redhat.com, cl@linux.com, penberg@kernel.org,
+ rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+ roman.gushchin@linux.dev, 42.hyeyoo@gmail.com
+References: <CANn89i+ap-8BB_XKfcjMnXLR0ae+XV+6s_jacPLUd8rqSgyayA@mail.gmail.com>
+ <20250217165229.87240-1-enjuk@amazon.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20250217165229.87240-1-enjuk@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[davemloft.net,drivenets.com,kernel.org,gmail.com,amazon.com,vger.kernel.org,huawei.com,redhat.com,linux.com,google.com,lge.com,linux-foundation.org,linux.dev];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Hi,
+On 2/17/25 17:52, Kohei Enju wrote:
+> + SLAB ALLOCATOR maintainers and reviewers
+> 
+>> > From: Kohei Enju <enjuk@amazon.com>
+>> > Date: Mon, 17 Feb 2025 01:30:16 +0900
+>> > > Replace kvzalloc()/kvfree() with kzalloc()/kfree() when GFP_ATOMIC is
+>> > > specified, since kvzalloc() doesn't support non-sleeping allocations such
+>> > > as GFP_ATOMIC.
+>> > >
+>> > > With incompatible gfp flags, kvzalloc() never falls back to the vmalloc
+>> > > path and returns immediately after the kmalloc path fails.
+>> > > Therefore, using kzalloc() is sufficient in this case.
+>> > >
+>> > > Fixes: 41b3caa7c076 ("neighbour: Add hlist_node to struct neighbour")
+>> >
+>> > This commit followed the old hash_buckets allocation, so I'd add
+>> >
+>> >   Fixes: ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()")
+>> >
+>> > too.
+>> >
+>> > Both commits were introduced in v6.13, so there's no difference in terms
+>> > of backporting though.
+>> >
+>> > Also, it would be nice to CC mm maintainers in case they have some
+>> > comments.
+>> 
+>> Oh well, we need to trigger neigh_hash_grow() from a process context,
+>> or convert net/core/neighbour.c to modern rhashtable.
+> 
+> Hi all, thanks for your comments.
+> 
+> kzalloc() uses page allocator when size is larger than 
+> KMALLOC_MAX_CACHE_SIZE, so I think what commit ab101c553bc1 ("neighbour: 
+> use kvzalloc()/kvfree()") intended could be achieved by using kzalloc().
 
-I am working with Android 13 and V5.15 kernel. During our development,
-I found a memory leak using kmemleak.
+Indeed, kzalloc() should be equivalent to pre-ab101c553bc1 code. kvmalloc()
+would only be necessary if you need more than order-3 page worth of memory
+and don't want it to fail because of fragmentation (but indeed it's not
+supported in GFP_ATOMIC context). But since you didn't need such large
+allocations before, you probably don't need them now too?
 
-Steps I did to find the memleak:
-mount -t debugfs debugfs /sys/kernel/debug
-echo scan=5 > /sys/kernel/debug/kmemleak
-cat /sys/kernel/debug/kmemleak
+> As mentioned, when using GFP_ATOMIC, kvzalloc() only tries the kmalloc 
+> path, since the vmalloc path doesn't support the flag.
+> In this case, kvzalloc() is equivalent to kzalloc() in that neither try 
+> the vmalloc path, so there is no functional change between this patch and 
+> either commit ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()") or 
 
-Stack I got (hundreds of them):
-unreferenced object 0xffffff8101d31000 (size 1024):
-  comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
-    [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
-    [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
-    [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
-    [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
-    [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
-    [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
-    [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
-    [<ffffffd32796a108>] do_mkdirat+0x88/0x204
-    [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
-    [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
-    [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
-    [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
-    [<ffffffd328abcf88>] el0_svc+0x28/0x90
-    [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
-    [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
+Agreed.
 
-After checking upstream, I came up with the following:
-cff805b1518f  fscrypt: fix keyring memory leak on mount failure
+> commit 41b3caa7c076 ("neighbour: Add hlist_node to struct neighbour").
+> 
+> Actually there's no real bug in the current code so the Fixes tag was not 
+> appropriate. I shall remove the tag.
 
-But my kernel has this patch. So I continued to dig around this and
-saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
-V5.15.
-I can't see the pointer tfm being used anywhere or saved, and
-smp_store_release doesn't kfree it.
-Is smp_store_release doing something with that pointer that makes this
-memory leak a false positive?
+True, the code is just more clear.
 
-Any help with this issue would be much appreciated.
-Thanks
+Thanks,
+Vlastimil
 
-Lucas Tanure
+> Regards,
+> Kohei
+
 
