@@ -1,179 +1,127 @@
-Return-Path: <linux-kernel+bounces-518443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8914CA38F28
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75998A38F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633D9188F593
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684BE1886F58
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8FF1AA1FA;
-	Mon, 17 Feb 2025 22:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25E71AAE01;
+	Mon, 17 Feb 2025 22:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kc+dvkd+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uIGjXqyl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RXFui61R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F3618B495;
-	Mon, 17 Feb 2025 22:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57DB1A76AE;
+	Mon, 17 Feb 2025 22:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739831761; cv=none; b=VIA3rS+ggscYH6wfpFQ8Iz/Q6gxSVpJkaEqggoI8Os6zR7195KG6XEd4KCxRDBTk5fktRdtpwztZNCctapbU9R0lflVEYA6SQHMocJoystltcIur71zd3+m4MOMR9vXCxqEXMjDVEUEJDGeOY5az1HhrlvWbGMXVqWvlwNUuIKY=
+	t=1739831927; cv=none; b=URoAkcM+ZvxClMp3t2pyISpics3qyWV86gVTQoJd46q5CcVS0azpe7WLf6hv+9li1jBk1wjRAHXcFK3YtXalKe8r004ggJnaYTpWkdBi8q1bvRDZfAeAorCEbfBRQg0vXYxALavjXG60JIi5Jm7Rj+kRpAKBLifJh8C0dYTtIPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739831761; c=relaxed/simple;
-	bh=oMICIuWIG6DxASFGtvq1TCWt6gz+3YFNwUR5Td1nUZY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gPWCKx9azxnCbN8yebnw+DQf3AM0DALEU93uUWJo0AsHt5GmSg5EvfG6AjWq4DMLJg99diuQpD5mRexU9ZZHb2m2ai+tHD5Q8e+D+kY3tF5EJacHyXoTnsJe1mwbwC+YBpy6BJLQZF+hGLZAz4CBcD9Ah4noEU0iSh30939TORo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kc+dvkd+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uIGjXqyl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Feb 2025 22:35:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739831757;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmFmRvLIBNNe2lKaA6QGnqy8aZBZgPT6Hw2gPxP7vxk=;
-	b=Kc+dvkd+UDEQTOIgGTaz2Mm+NnPK/huWycnrmqmoFSZiJ+ruXpeVRielR5Sr60Z/Kxumkd
-	yHBCk6FPRJ9vvyMF1Rb9Rukw32yC3uek7ep/QenoLm2HiHp8zoGF3Pbv28NSphd0FUJ6Yw
-	o/lgdkGnEolpz6HPkx0Lx2I247xcD09WMaNCZnRCjYkhnNMbUno/eixZuD/5Vvj0bkL8dP
-	xhRjw/qP9hoynsu0/wrJCGA7og/3HNVs7NWzI96a4oqmW/cz0rXo6TPAv4CIy56vN5nHe9
-	QGGY8mrhrvwcJtsVE+JsIiJLwjyRxZm82y8f5l0ueo6YR1FuPwQAtMWZ8uk03A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739831757;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmFmRvLIBNNe2lKaA6QGnqy8aZBZgPT6Hw2gPxP7vxk=;
-	b=uIGjXqylNth2/B5E1EU8OTII9xTQMUEM9iD28GQklpsGxTncznXY9fog/T2r66N232Ule4
-	P79TjU0Jo1AyZECA==
-From: "tip-bot2 for Artur Rojek" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/jcore-aic, clocksource/drivers/jcore: Fix
- jcore-pit interrupt request
-Cc: Artur Rojek <contact@artur-rojek.eu>, Thomas Gleixner <tglx@linutronix.de>,
- Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
- maz@kernel.org
-In-Reply-To: <20250216175545.35079-3-contact@artur-rojek.eu>
-References: <20250216175545.35079-3-contact@artur-rojek.eu>
+	s=arc-20240116; t=1739831927; c=relaxed/simple;
+	bh=UpkLMFwdVN1SfumTC4gLP6uKLRByY8cWGS93kTF8qQc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fWsRdJIudaVcqE/+lQ+uoTwNmpSUkyd6qd6Uuoycw0MU/+gywkED02e0WxUIUc0yy52iok4LuhYvSesuBQIdJnnflJtun4ZFu8FS0jOm2dxXs6aDfFvLVefFuBVV/w8usicdOyVsRhy/qLdyBznv7Bp1bfSnXhmFEG1Dzm/cu58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RXFui61R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAcnwq029901;
+	Mon, 17 Feb 2025 22:38:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	42rWO8dHWS3ppdgrcUkKYDi9W3bIli7fWo7u/B2A2qY=; b=RXFui61Rh+bYFZEB
+	vtsZVt29/JgZ1btSOCp7JXEKhuiOFEQPkJBYMb6hUPZZD3LdyMIpt/4XG5NLS54e
+	KO+Eq8lOYdIKpESSQCD1FxnXYwNLvXDWmEilnuBc5SAqZdu/bbzWMMuGunPilTHX
+	ZbN2hcg39BIp6sEz47ZQhXHQUo0Bii+ERWyopzz9k55GxEbwRLCranmfnJjlcAdj
+	F5oqY+vUSqT/A/LvejrHljW/bHqPf/M5ELe+++qjNBhLWjQv87aqGeBSKLAvd6Em
+	d1Iw7GMCWoTYeyr4sTyV7Nx39iG/59ooqRbJB4xv8oapSF+zGmaGup9Hwm5Li5Wh
+	8InDHA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7sjyjb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:38:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HMcVTN008215
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:38:32 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Feb 2025 14:38:31 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie
+	<airlied@gmail.com>,
+        Simona Vetter <simona@ffwll.ch>, Vinod Koul
+	<vkoul@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: (subset) [PATCH] drm/msm/dpu: Don't leak bits_per_component into random DSC_ENC fields
+Date: Mon, 17 Feb 2025 14:38:23 -0800
+Message-ID: <173983182587.1719712.14378723556060583905.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250211-dsc-10-bit-v1-1-1c85a9430d9a@somainline.org>
+References: <20250211-dsc-10-bit-v1-1-1c85a9430d9a@somainline.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173983175288.10177.2680129742009360731.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6YfRdLVYgfJjzJ19XleMGb5g2qXdKLnc
+X-Proofpoint-ORIG-GUID: 6YfRdLVYgfJjzJ19XleMGb5g2qXdKLnc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=907
+ clxscore=1015 priorityscore=1501 adultscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502170176
 
-The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     d7e3fd658248f257006227285095d190e70ee73a
-Gitweb:        https://git.kernel.org/tip/d7e3fd658248f257006227285095d190e70ee73a
-Author:        Artur Rojek <contact@artur-rojek.eu>
-AuthorDate:    Sun, 16 Feb 2025 18:55:45 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Feb 2025 23:27:49 +01:00
+On Tue, 11 Feb 2025 00:19:32 +0100, Marijn Suijten wrote:
+> What used to be the input_10_bits boolean - feeding into the lowest
+> bit of DSC_ENC - on MSM downstream turned into an accidental OR with
+> the full bits_per_component number when it was ported to the upstream
+> kernel.
+> 
+> On typical bpc=8 setups we don't notice this because line_buf_depth is
+> always an odd value (it contains bpc+1) and will also set the 4th bit
+> after left-shifting by 3 (hence this |= bits_per_component is a no-op).
+> 
+> [...]
 
-irqchip/jcore-aic, clocksource/drivers/jcore: Fix jcore-pit interrupt request
+Applied to msm-fixes, thanks!
 
-The jcore-aic irqchip does not have separate interrupt numbers reserved for
-cpu-local vs global interrupts. Therefore the device drivers need to
-request the given interrupt as per CPU interrupt.
+[1/1] drm/msm/dpu: Don't leak bits_per_component into random DSC_ENC fields
+      https://gitlab.freedesktop.org/drm/msm/-/commit/144429831f44
 
-69a9dcbd2d65 ("clocksource/drivers/jcore: Use request_percpu_irq()")
-converted the clocksource driver over to request_percpu_irq(), but failed
-to do add all the required changes, resulting in a failure to register PIT
-interrupts.
-
-Fix this by:
-
- 1) Explicitly mark the interrupt via irq_set_percpu_devid() in
-    jcore_pit_init().
-
- 2) Enable and disable the per CPU interrupt in the CPU hotplug callbacks.
-
- 3) Pass the correct per-cpu cookie to the irq handler by using
-    handle_percpu_devid_irq() instead of handle_percpu_irq() in
-    handle_jcore_irq().
-
-[ tglx: Massage change log ]
-
-Fixes: 69a9dcbd2d65 ("clocksource/drivers/jcore: Use request_percpu_irq()")
-Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Uros Bizjak <ubizjak@gmail.com>
-Link: https://lore.kernel.org/all/20250216175545.35079-3-contact@artur-rojek.eu
----
- drivers/clocksource/jcore-pit.c | 15 ++++++++++++++-
- drivers/irqchip/irq-jcore-aic.c |  2 +-
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clocksource/jcore-pit.c b/drivers/clocksource/jcore-pit.c
-index a3fe98c..8281542 100644
---- a/drivers/clocksource/jcore-pit.c
-+++ b/drivers/clocksource/jcore-pit.c
-@@ -114,6 +114,18 @@ static int jcore_pit_local_init(unsigned cpu)
- 	pit->periodic_delta = DIV_ROUND_CLOSEST(NSEC_PER_SEC, HZ * buspd);
- 
- 	clockevents_config_and_register(&pit->ced, freq, 1, ULONG_MAX);
-+	enable_percpu_irq(pit->ced.irq, IRQ_TYPE_NONE);
-+
-+	return 0;
-+}
-+
-+static int jcore_pit_local_teardown(unsigned cpu)
-+{
-+	struct jcore_pit *pit = this_cpu_ptr(jcore_pit_percpu);
-+
-+	pr_info("Local J-Core PIT teardown on cpu %u\n", cpu);
-+
-+	disable_percpu_irq(pit->ced.irq);
- 
- 	return 0;
- }
-@@ -168,6 +180,7 @@ static int __init jcore_pit_init(struct device_node *node)
- 		return -ENOMEM;
- 	}
- 
-+	irq_set_percpu_devid(pit_irq);
- 	err = request_percpu_irq(pit_irq, jcore_timer_interrupt,
- 				 "jcore_pit", jcore_pit_percpu);
- 	if (err) {
-@@ -237,7 +250,7 @@ static int __init jcore_pit_init(struct device_node *node)
- 
- 	cpuhp_setup_state(CPUHP_AP_JCORE_TIMER_STARTING,
- 			  "clockevents/jcore:starting",
--			  jcore_pit_local_init, NULL);
-+			  jcore_pit_local_init, jcore_pit_local_teardown);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-jcore-aic.c b/drivers/irqchip/irq-jcore-aic.c
-index b9dcc8e..1f613eb 100644
---- a/drivers/irqchip/irq-jcore-aic.c
-+++ b/drivers/irqchip/irq-jcore-aic.c
-@@ -38,7 +38,7 @@ static struct irq_chip jcore_aic;
- static void handle_jcore_irq(struct irq_desc *desc)
- {
- 	if (irqd_is_per_cpu(irq_desc_get_irq_data(desc)))
--		handle_percpu_irq(desc);
-+		handle_percpu_devid_irq(desc);
- 	else
- 		handle_simple_irq(desc);
- }
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
 
