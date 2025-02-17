@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-517366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362EDA37FD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:20:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99813A37FBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849D71884AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE473ACD5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5988721772C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F2217654;
 	Mon, 17 Feb 2025 10:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="viPX+Pkp"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zwToEZ5d"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383071DE2CC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EADC217651
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787470; cv=none; b=olzVUupHUlB5KX5usVpAZDcOkXJ+PcOK9HrifxOXzf8pPIzCrmio6emDK+IJS4I3HnQYTbeUBoX69+s2Zn/7NXhpXWrQVTqk2K78Rp03hn1fOCalWtdbXhkggc8/M7cucVhGIWsp7R2Up6kp/e8amvMu3auB+9vbjyPgvIAPFrQ=
+	t=1739787470; cv=none; b=qLIQ54lLEEG/5dLBLyC2qdgIJObE5WwGRFxfm/VkmQI2I2hJHQVDY/VoFqg4LBXyI/Wa6j+SBZTNSK9necPnBJDatSWieTLxVYPxCJC7Jqo6mS/0IDY5dfGpCuFKOsiNp6X08DizW9KN0cEnqtpmPv3YGCjKQFUAzBx4E45y68k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739787470; c=relaxed/simple;
-	bh=7r+4EPkQi0khwl3pIMV3sEMCc4jpZs7gCnWySQtmFhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TB/te81PQ/2SdLELwoZpe1uLgvDIiLy/0ZCBnVhnIRB32fQfWU88nhz7W0hkrJdx0HxtbkigtHIad2Fa4Y0lSeWZGwcA7dhnXT2MP1acAxJUSLWwwcpwP7R17YmCbnWZu5h4Y94Dzcv/Qk4h7WZVg17WhtKNjsWoBW4sVCfci30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=viPX+Pkp; arc=none smtp.client-ip=209.85.218.44
+	bh=/cVyc1rh86otJZ3wkWGcQ4N27XkUc752xM+g69NmlEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cWtRuWC+fJnZ330bCeCM87yzzqK2WVyZHLtS130bpUubZ1tV2HdSTzJthd7443LzPRZw47RmEvItAAUFK27NRQpwsOi6nGBTX5lbGXADvLYBKrZZ4geiN/N1VjFS7ALJUIZ0N5GQ8TWxGUASPp8+oAEhuzjKzHge/vuX8Ow+DJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zwToEZ5d; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaec111762bso960094966b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:46 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb8d63b447so124198766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739787465; x=1740392265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dLhLqEj5CnQGR3HAISzr8o6znCJqNhfLLG9jh4rRpzQ=;
-        b=viPX+PkpF32PixuYkVDABqydvgOAyGmPhijKrDpDJbYaxWzgdJddJ32jLeZG4eqgCS
-         EFlpwZaPqaqCu5vnMHpZ37lCLT4qxXPOL/qbvkrtqvERWnizOjLxfPJ2OE2N1ksBrb20
-         styW8xEsW+pTBAsfX2n4ptvU42ZVmhbbELcIPZBSkd2H6kOJPaZPsV5Mv+ikp0HsrOjj
-         ZYxkRMuHv+yGuVyMCeYR24PxXYXrGeSZJ0qQCEZvHDxWJgu6+h3wRbnVXEwF5UQ4q3Y0
-         OIVC1iQLa4MqbaWdIlNJNQ6LCkrW344sDv5h+mFSYrBiQPfx/OGNy1vg8+9GV/MJ4AJ8
-         tSZg==
+        d=linaro.org; s=google; t=1739787467; x=1740392267; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/6BYtQ0vagWpucItzriIw7qjC34OuqzM5CfNcTita1Q=;
+        b=zwToEZ5diBI6TG5Yp7XbbbcR8h7sfZJNrVqOlFEIdGyENZ8PjZXze1+6sJggc62EOr
+         +VPtaoacD1FTJcjXLTiyHjCLUYDKQePfaCWicY2V5fp8RDpkbfjl0HfJlQxLw8BOYxuX
+         w8RBwdAozE7aGJRV7v2aIyP9hMGjjsJtUoGIQfnNCMKvcc2/PzDeEAowEd0+znlUNglJ
+         hQ1FxOnc7YyFsAansc328Do7loPvoCDgdDS+uCz986oKumrg7P+lp6jvyYlAo7KD4fvX
+         s8cZuyYhZr++xg4iRb4qK0UlNJXpUvINFjPT1YuJvN6m6EvN0fXvmgvnBFhbF+ibEghd
+         J1WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787465; x=1740392265;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dLhLqEj5CnQGR3HAISzr8o6znCJqNhfLLG9jh4rRpzQ=;
-        b=VkAGBLHEhLmDW5iTR0JxIr08eM3uRqc9yhqalUp0Npg618gp1dpWB3Yfw+ymo/75HH
-         ZAhUIcqmxbux5PiVAjz/NorZPcKn328GD47/pgOZMHy28yUAo3pRYpdj697MtYrFBfMK
-         QSCVlFf/UmCCjUqB0o69ERyOBW/OiWu/i3PfDY4tLu7sVwT5Z9yc4FXcM9amplKLr2lJ
-         cnBLY1DWBlcFPA8jdeyTYaASFGV0wGFlNBm88N0cFMmsx359/WOU3PEOLk3oymX5lICA
-         2bVzMBOCyczfAsNBKEMymntK5aQXZkQhEEtTU9qBXy/Gk/NlEUsgC1MOgOXf5bsL7YMw
-         vSsg==
-X-Gm-Message-State: AOJu0Yy8ovDYJxGiSO9nneoZnaa67fqrSxserb9OpNP1btg4ZV9iOemP
-	xILZdqD2NyR/EtItS8qKDiQ93tgfQfgxVBFRtppXQYrzJnpxKJPKq1f+OWzE+/17LM4in+48G63
-	kdHg=
-X-Gm-Gg: ASbGncsOjur3KhAboPh0owUwXGdsbRlLWN2av7pc5aXcJfLXYasR1AtxSOTi/g1D/lu
-	bLvS9SPP3jLt2sinaq7CTGvUY8WRN7tW6+LP/HWH1q9NifeuYlqV2tkfVBwOBDh/jbudB4HYj7c
-	5wbVwD2PGXkDkl2lkOeo7ekgsNp10R0Fo+TwBeEMO/lP6BcMu3QK9HQiO3DggarGZqw1ALAyztt
-	VF7/iqPq0Ewu0CaiSu2uCVmoHHF2nu2EPb1nPraGHu/VuPR7cMlU1V/Q8YROVcxOUbQbGh2yZ3H
-	8IfW0O6+uAyH55rKVF8Hfaqv
-X-Google-Smtp-Source: AGHT+IGhAefa1tvvBaYve+g3pCx7CrvFHmDaSY+YPBz5y8cOdMoT47LHpy0cyxq3ytVFBIUJ3pcdAg==
-X-Received: by 2002:a17:907:2da0:b0:ab7:83c2:bdbf with SMTP id a640c23a62f3a-abb710dc6cbmr892362566b.41.1739787465317;
-        Mon, 17 Feb 2025 02:17:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739787467; x=1740392267;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/6BYtQ0vagWpucItzriIw7qjC34OuqzM5CfNcTita1Q=;
+        b=CbsRApNJZPUk17QuUVcpJmwYedXgVFU57ROca7mNeQaWTF1QWVnIMmo7oxrRDD3yVW
+         ED/tF89G86FXZd32lpKDKGyjgPYGFP+CyKmRb2fmTqIW2405McI1a4YhRA1SkMG+Ohcu
+         Y4YyTqmcWbhaeQ/AeWdGCunwh93i3PzVJDibPrZxI21A64wORXnB5z/T9tg1ZAas7b7j
+         rA7xHHjUEEdd1+wxJDJeDkw71I55nGv8i7dHS5IUtBQkkmovsCdNs49EMxuxhk4CRe1i
+         n/QBG/8kGhAbHJRS3CvZS71bKsjtiYzyC5+0h+2EACxd4aL4xUgV9N4NFb52e976LeUI
+         o24g==
+X-Gm-Message-State: AOJu0YzS1CzYyoJ/So+4LEaTuy5c/Zm3B67Ji8qGdwiWy5QbxnFavvjM
+	BLruQGgc++e5Q3IomC5l/V+DJJQ0jP1AGwAzLIebe0kK6GkcmYCkHEQCtQKLnmY=
+X-Gm-Gg: ASbGncsZzHvgJiMapco20HqCAlo3RRnSOliGGRAN480fcnVa+09p3CRcj7Y29Y6XlF9
+	BeLyinkmaN94KBaJKdqXQNnr8L+N44Wm1dFtRuFrUt2scb0cXcT88RtgkZLjSwNGz1gfg25i6QX
+	3OX+RzeSFGbMZoySgiPxCgeNCz72P69paxZTZ+f240d/brEVnhC+n1fMoWTgi2AveDJ8f63knWh
+	eUlZdJ24kOYbOuU9Qp8IZzXkYB3dtITwdbhmdem6qPMEgdtt+ywigWggssMu1Nk3aQ5oYHVvEQh
+	ZIOM6DJok39WoLH7pkWW7wCc
+X-Google-Smtp-Source: AGHT+IFgDnivD1OBw8RBeqZ1T3wvlR/UtXkBn7pRJ5OfcJBMf9SgRGM/cdk3Igb/07dwRLGbAITBVQ==
+X-Received: by 2002:a17:907:1c85:b0:abb:6ea6:161 with SMTP id a640c23a62f3a-abb70e4e28cmr925547666b.56.1739787466832;
+        Mon, 17 Feb 2025 02:17:46 -0800 (PST)
 Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:17:44 -0800 (PST)
+        Mon, 17 Feb 2025 02:17:46 -0800 (PST)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-hardening@vger.kernel.org,
@@ -90,10 +91,12 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@quicinc.com,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH 00/10] pstore: directly mapped regions
-Date: Mon, 17 Feb 2025 12:16:56 +0200
-Message-ID: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH 01/10] pstore/zone: move pstore_device_info into zone header
+Date: Mon, 17 Feb 2025 12:16:57 +0200
+Message-ID: <20250217101706.2104498-2-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,122 +105,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Struct pstore_device_info is used in pstore/zone, and it's
+not really connected to anything related to pstore/blk.
+To further improve on the pstore zone and allow other types of
+drivers to connect, it is logical to have this struct into
+pstore_zone.h file.
 
-This series comes as an RFC proposed solution to enhance pstore and
-devcoredump with the following functionality:
-It is interesting to mark specific memory regions in the kernel
-as core areas, such that in the even of a cataclysmic event like
-panic, deadlock, hardware fault, those areas can be retrieved by
-an external agent, that can be JTAG, firmware, additional debug
-processor, etc.
-Even though pstore panic handlers attempt to copy data into the
-persistent storage, this is not always working, because the kernel
-could be in a deadlock, have irqs disabled, panic handler could
-crash itself, or even some memory areas could be corrupted badly
-enough that the recovery mechanism doesn't work.
-This patch series attempts to solve this by reusing existing
-infrastructure in pstore and devcoredump, and provide a copy-free
-possibility to have core kernel data exposed for creating debug
-information like a coredump or list of binary elements with data.
+Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+---
+ include/linux/pstore_blk.h  | 14 --------------
+ include/linux/pstore_zone.h | 14 ++++++++++++++
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-How this works:
-Drivers and key kernel infrastructure, like for example the dmesg
-buffer (ftrace buffer is still work in progress and not in the series),
-would register themselves into pstore, with a simple function
-call taking a name, a pointer to the area and size.
-That would be all, and the patch labeled "EXAMPLE" shows a driver
-doing exactly that, registering it's own dev struct with string markers
-that can help identifying the data later once it's being retrieved.
-Further, pstore and pstore/zone would keep track of all registered
-areas inside the intermediary back-end. There would not be any copy of
-the data.
-Pstore would require a new type of back-end, named directly mapped
-(because there is no copy, and each zone directly maps the incoming
-buffer). If this back-end is available, then pstore further calls
-the back-end to register the area.
-The back-end itself is then free to do whatever it wishes with the
-received area. It can (possibly) do a copy to store data, it can
-have a timer to check the area every x time periods, or store the
-pointers inside a table of contents (which is what the qcom smem is
-doing).
-The qcom smem driver registers itself into pstore as a new type of
-back-end called shared memory. It's very similar with the pstore/blk
-but much simplified, to cope with just a shared memory storage.
-The areas metadata are stored in a shared memory that is being managed
-by the qcom_smem driver. It's called shared memory because it's being
-shared between the main processor running the kernel and additional
-secondary remote processors running firmware.
-In this qcom smem backend case, the firmware runs when there is a
-panic event, of watchdog timeout, and uses the table of contents to
-retrieve useful kernel debug data.
-
-The advantages of this proposed idea are: no kernel panic handler
-intervention. Everything is being marked and prepared ahead of time,
-before there is an actual crash. There is no overhead associated,
-simply the areas are being marked and metadata created, no buffers
-associated, no memory areas reserved for it. Memory areas being marked,
-there is no possibility of getting older useless data, that was copied
-before the actual events leading to a crash would occur, so the data
-would be the real actual data the kernel was working on.
-Of course, this would not work if there is no external agent to parse
-the areas and get the useful data. However as the hardware becomes
-more and more advanced, in the cases where this is available, kernel
-debugging had no way of using this advantage. As the hardware evolves,
-so is the kernel.
-
-There is another aspect to underline: the directly mapped zones
-change the semantics of pstore using them. Pstore relies on user being
-able to read the data from a previous kernel run once the system
-has rebooted. This is not valid with the directly mapped zones unless
-the JTAG/firmware would copy this data into a persistent area and make
-it available upon reboot (which is not impossible).
-
-I would like to thank everyone reviewing and chiping in on the series.
-
-The back-end implementation for qcom_smem is based on the minidump
-patch series and driver written by Mukesh Ojha, thanks:
-https://lore.kernel.org/lkml/20240131110837.14218-1-quic_mojha@quicinc.com/
-
-Eugen
-
-Eugen Hristev (10):
-  pstore/zone: move pstore_device_info into zone header
-  pstore/smem: add new pstore/smem type of pstore
-  pstore/zone: introduce directly mapped zones
-  qcom: smem: add pstore smem backend
-  pstore: implement core area registration
-  qcom: smem: enable smem pstore backend
-  printk: export symbols for buffer address and length functions
-  pstore: register kmsg into directly mapped zones if available
-  devcoredump: add devcd_{un}register_core_area API
-  rng: qcom_rng: EXAMPLE: registering dev structure
-
- drivers/base/devcoredump.c     |  13 ++
- drivers/crypto/qcom-rng.c      |  11 ++
- drivers/soc/qcom/Kconfig       |   9 +
- drivers/soc/qcom/Makefile      |   6 +-
- drivers/soc/qcom/smem.c        |  10 ++
- drivers/soc/qcom/smem_md.c     | 306 +++++++++++++++++++++++++++++++++
- drivers/soc/qcom/smem_pstore.c | 112 ++++++++++++
- fs/pstore/Kconfig              |  13 ++
- fs/pstore/Makefile             |   3 +
- fs/pstore/platform.c           |  84 +++++++++
- fs/pstore/smem.c               | 115 +++++++++++++
- fs/pstore/zone.c               | 122 +++++++++++--
- include/linux/devcoredump.h    |   3 +
- include/linux/pstore.h         |  20 +++
- include/linux/pstore_blk.h     |  14 --
- include/linux/pstore_smem.h    |   9 +
- include/linux/pstore_zone.h    |  17 ++
- include/linux/soc/qcom/smem.h  |  43 +++++
- kernel/printk/printk.c         |   2 +
- 19 files changed, 885 insertions(+), 27 deletions(-)
- create mode 100644 drivers/soc/qcom/smem_md.c
- create mode 100644 drivers/soc/qcom/smem_pstore.c
- create mode 100644 fs/pstore/smem.c
- create mode 100644 include/linux/pstore_smem.h
-
+diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
+index 924ca07aafbd..d0c8fb40c46c 100644
+--- a/include/linux/pstore_blk.h
++++ b/include/linux/pstore_blk.h
+@@ -7,20 +7,6 @@
+ #include <linux/pstore.h>
+ #include <linux/pstore_zone.h>
+ 
+-/**
+- * struct pstore_device_info - back-end pstore/blk driver structure.
+- *
+- * @flags:	Refer to macro starting with PSTORE_FLAGS defined in
+- *		linux/pstore.h. It means what front-ends this device support.
+- *		Zero means all backends for compatible.
+- * @zone:	The struct pstore_zone_info details.
+- *
+- */
+-struct pstore_device_info {
+-	unsigned int flags;
+-	struct pstore_zone_info zone;
+-};
+-
+ int  register_pstore_device(struct pstore_device_info *dev);
+ void unregister_pstore_device(struct pstore_device_info *dev);
+ 
+diff --git a/include/linux/pstore_zone.h b/include/linux/pstore_zone.h
+index 1e35eaa33e5e..284364234162 100644
+--- a/include/linux/pstore_zone.h
++++ b/include/linux/pstore_zone.h
+@@ -54,6 +54,20 @@ struct pstore_zone_info {
+ 	pstore_zone_write_op panic_write;
+ };
+ 
++/**
++ * struct pstore_device_info - back-end pstore device driver structure.
++ *
++ * @flags:	Refer to macro starting with PSTORE_FLAGS defined in
++ *		linux/pstore.h. It means what front-ends this device support.
++ *		Zero means all backends for compatible.
++ * @zone:	The struct pstore_zone_info details.
++ *
++ */
++struct pstore_device_info {
++	unsigned int flags;
++	struct pstore_zone_info zone;
++};
++
+ extern int register_pstore_zone(struct pstore_zone_info *info);
+ extern void unregister_pstore_zone(struct pstore_zone_info *info);
+ 
 -- 
 2.43.0
 
