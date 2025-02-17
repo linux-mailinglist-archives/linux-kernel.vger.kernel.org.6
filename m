@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-517782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738E6A38596
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:11:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A62A3859D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D0C1893377
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160763B4F1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAD021D3DB;
-	Mon, 17 Feb 2025 14:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B3E2236ED;
+	Mon, 17 Feb 2025 14:08:38 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B9221575
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4679B21D586
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801315; cv=none; b=IN6OVGm61I44KjBPHfb2HoIh6q0U35cqv9McX+Vdg8MARQ/jVrbYOPf4VAlxGU8p+/DOtqYoSbU4hrO4ihv1MfUnC+Fhx2NK0ZTAbsNUXj2EYXCBZTrzGfGEznZDmZS+KdnpRrKukfq0ou9/X9ZwvDvFU83Dg606Nre9hr/NEO4=
+	t=1739801317; cv=none; b=ca1kLmz65jHaDdEAGo1csknvs3gcFEdIJqsRtpAxYtuWQzwICpse+r7IVbQWgiztSFk/b1BlTGqTg3ZFvQq49Ch8G55suoEOkMZ3E1w4AE7OFLErLoF7NJWX0KhJdqTZyBCxpSZzWmXnV/dOdHkEc/3UuEZsGu3vSntD31+pr6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801315; c=relaxed/simple;
-	bh=pkdur6oh1pZgYmO+n4Hrxc231s4U4fT7LsTlsJhAADU=;
+	s=arc-20240116; t=1739801317; c=relaxed/simple;
+	bh=SX4OTafAaulA5O7xFZ6alYY8jRcMtmSuUfViWgmLzFQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Eo/Va+cEX6FMdcuzKnL983mhcVkii0ab+9k1T/4suTYUBZbPIuCBR1QPY2Ah02kEo5EdJS2fXy4xYRKaZgSCICIQvruE9CrdSvO6xiuVGGoPcWjvYjf4ELPi3RNw97W++el+Zk3kHvwr11TT0Jw706STgam+5vRwdWdUVXP9/XI=
+	 MIME-Version; b=SW06YyDdsC6ofIerqErpLzd0HKEd3kjBDfn3xw+DCmwa5KW43DI0a4B2CCiQL1rOmNKMHPqSc0YcQl28ovFvumKiesYP0rnXLWriGKMhIiWUaZeX1/X7GbASFH1z7u56r3rIOojo1+A9tNk2tP/sO68yRl/fw1O9Tih94MgR2w8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45EC71A2D;
-	Mon, 17 Feb 2025 06:08:52 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA4601E5E;
+	Mon, 17 Feb 2025 06:08:54 -0800 (PST)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC4143F6A8;
-	Mon, 17 Feb 2025 06:08:30 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BF713F6A8;
+	Mon, 17 Feb 2025 06:08:33 -0800 (PST)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
@@ -49,9 +49,9 @@ Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/14] arm64: hugetlb: Use set_ptes_anysz() and ptep_get_and_clear_anysz()
-Date: Mon, 17 Feb 2025 14:07:57 +0000
-Message-ID: <20250217140809.1702789-6-ryan.roberts@arm.com>
+Subject: [PATCH v2 06/14] arm64/mm: Hoist barriers out of set_ptes_anysz() loop
+Date: Mon, 17 Feb 2025 14:07:58 +0000
+Message-ID: <20250217140809.1702789-7-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250217140809.1702789-1-ryan.roberts@arm.com>
 References: <20250217140809.1702789-1-ryan.roberts@arm.com>
@@ -63,171 +63,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refactor the huge_pte helpers to use the new common set_ptes_anysz() and
-ptep_get_and_clear_anysz() APIs.
+set_ptes_anysz() previously called __set_pte() for each PTE in the
+range, which would conditionally issue a DSB and ISB to make the new PTE
+value immediately visible to the table walker if the new PTE was valid
+and for kernel space.
 
-This provides 2 benefits; First, when page_table_check=on, hugetlb is
-now properly/fully checked. Previously only the first page of a hugetlb
-folio was checked. Second, instead of having to call __set_ptes(nr=1)
-for each pte in a loop, the whole contiguous batch can now be set in one
-go, which enables some efficiencies and cleans up the code.
-
-One detail to note is that huge_ptep_clear_flush() was previously
-calling ptep_clear_flush() for a non-contiguous pte (i.e. a pud or pmd
-block mapping). This has a couple of disadvantages; first
-ptep_clear_flush() calls ptep_get_and_clear() which transparently
-handles contpte. Given we only call for non-contiguous ptes, it would be
-safe, but a waste of effort. It's preferable to go straight to the layer
-below. However, more problematic is that ptep_get_and_clear() is for
-PAGE_SIZE entries so it calls page_table_check_pte_clear() and would not
-clear the whole hugetlb folio. So let's stop special-casing the non-cont
-case and just rely on get_clear_contig_flush() to do the right thing for
-non-cont entries.
+We can do better than this; let's hoist those barriers out of the loop
+so that they are only issued once at the end of the loop. We then reduce
+the cost by the number of PTEs in the range.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
- arch/arm64/mm/hugetlbpage.c | 52 +++++++------------------------------
- 1 file changed, 10 insertions(+), 42 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index b7434ed1b93b..8ac86cd180b3 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -166,12 +166,12 @@ static pte_t get_clear_contig(struct mm_struct *mm,
- 	pte_t pte, tmp_pte;
- 	bool present;
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index e255a36380dc..e4b1946b261f 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -317,10 +317,8 @@ static inline void __set_pte_nosync(pte_t *ptep, pte_t pte)
+ 	WRITE_ONCE(*ptep, pte);
+ }
  
--	pte = __ptep_get_and_clear(mm, addr, ptep);
-+	pte = ptep_get_and_clear_anysz(mm, ptep, pgsize);
- 	present = pte_present(pte);
- 	while (--ncontig) {
+-static inline void __set_pte(pte_t *ptep, pte_t pte)
++static inline void __set_pte_complete(pte_t pte)
+ {
+-	__set_pte_nosync(ptep, pte);
+-
+ 	/*
+ 	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
+ 	 * or update_mmu_cache() have the necessary barriers.
+@@ -331,6 +329,12 @@ static inline void __set_pte(pte_t *ptep, pte_t pte)
+ 	}
+ }
+ 
++static inline void __set_pte(pte_t *ptep, pte_t pte)
++{
++	__set_pte_nosync(ptep, pte);
++	__set_pte_complete(pte);
++}
++
+ static inline pte_t __ptep_get(pte_t *ptep)
+ {
+ 	return READ_ONCE(*ptep);
+@@ -647,12 +651,14 @@ static inline void set_ptes_anysz(struct mm_struct *mm, pte_t *ptep, pte_t pte,
+ 
+ 	for (;;) {
+ 		__check_safe_pte_update(mm, ptep, pte);
+-		__set_pte(ptep, pte);
++		__set_pte_nosync(ptep, pte);
+ 		if (--nr == 0)
+ 			break;
  		ptep++;
- 		addr += pgsize;
--		tmp_pte = __ptep_get_and_clear(mm, addr, ptep);
-+		tmp_pte = ptep_get_and_clear_anysz(mm, ptep, pgsize);
- 		if (present) {
- 			if (pte_dirty(tmp_pte))
- 				pte = pte_mkdirty(pte);
-@@ -215,7 +215,7 @@ static void clear_flush(struct mm_struct *mm,
- 	unsigned long i, saddr = addr;
- 
- 	for (i = 0; i < ncontig; i++, addr += pgsize, ptep++)
--		__ptep_get_and_clear(mm, addr, ptep);
-+		ptep_get_and_clear_anysz(mm, ptep, pgsize);
- 
- 	__flush_hugetlb_tlb_range(&vma, saddr, addr, pgsize, true);
- }
-@@ -226,32 +226,20 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 	size_t pgsize;
- 	int i;
- 	int ncontig;
--	unsigned long pfn, dpfn;
--	pgprot_t hugeprot;
- 
- 	ncontig = num_contig_ptes(sz, &pgsize);
- 
- 	if (!pte_present(pte)) {
- 		for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
--			__set_ptes(mm, addr, ptep, pte, 1);
-+			set_ptes_anysz(mm, ptep, pte, 1, pgsize);
- 		return;
+ 		pte = pte_advance_pfn(pte, stride);
  	}
- 
--	if (!pte_cont(pte)) {
--		__set_ptes(mm, addr, ptep, pte, 1);
--		return;
--	}
--
--	pfn = pte_pfn(pte);
--	dpfn = pgsize >> PAGE_SHIFT;
--	hugeprot = pte_pgprot(pte);
--
- 	/* Only need to "break" if transitioning valid -> valid. */
--	if (pte_valid(__ptep_get(ptep)))
-+	if (pte_cont(pte) && pte_valid(__ptep_get(ptep)))
- 		clear_flush(mm, addr, ptep, pgsize, ncontig);
- 
--	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
--		__set_ptes(mm, addr, ptep, pfn_pte(pfn, hugeprot), 1);
-+	set_ptes_anysz(mm, ptep, pte, ncontig, pgsize);
++
++	__set_pte_complete(pte);
  }
  
- pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-@@ -441,11 +429,9 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 			       unsigned long addr, pte_t *ptep,
- 			       pte_t pte, int dirty)
- {
--	int ncontig, i;
-+	int ncontig;
- 	size_t pgsize = 0;
--	unsigned long pfn = pte_pfn(pte), dpfn;
- 	struct mm_struct *mm = vma->vm_mm;
--	pgprot_t hugeprot;
- 	pte_t orig_pte;
- 
- 	VM_WARN_ON(!pte_present(pte));
-@@ -454,7 +440,6 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 		return __ptep_set_access_flags(vma, addr, ptep, pte, dirty);
- 
- 	ncontig = num_contig_ptes(huge_page_size(hstate_vma(vma)), &pgsize);
--	dpfn = pgsize >> PAGE_SHIFT;
- 
- 	if (!__cont_access_flags_changed(ptep, pte, ncontig))
- 		return 0;
-@@ -469,19 +454,14 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 	if (pte_young(orig_pte))
- 		pte = pte_mkyoung(pte);
- 
--	hugeprot = pte_pgprot(pte);
--	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
--		__set_ptes(mm, addr, ptep, pfn_pte(pfn, hugeprot), 1);
--
-+	set_ptes_anysz(mm, ptep, pte, ncontig, pgsize);
- 	return 1;
- }
- 
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 			     unsigned long addr, pte_t *ptep)
- {
--	unsigned long pfn, dpfn;
--	pgprot_t hugeprot;
--	int ncontig, i;
-+	int ncontig;
- 	size_t pgsize;
- 	pte_t pte;
- 
-@@ -494,16 +474,11 @@ void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 	}
- 
- 	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
--	dpfn = pgsize >> PAGE_SHIFT;
- 
- 	pte = get_clear_contig_flush(mm, addr, ptep, pgsize, ncontig);
- 	pte = pte_wrprotect(pte);
- 
--	hugeprot = pte_pgprot(pte);
--	pfn = pte_pfn(pte);
--
--	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
--		__set_ptes(mm, addr, ptep, pfn_pte(pfn, hugeprot), 1);
-+	set_ptes_anysz(mm, ptep, pte, ncontig, pgsize);
- }
- 
- pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
-@@ -512,13 +487,6 @@ pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
- 	struct mm_struct *mm = vma->vm_mm;
- 	size_t pgsize;
- 	int ncontig;
--	pte_t pte;
--
--	pte = __ptep_get(ptep);
--	VM_WARN_ON(!pte_present(pte));
--
--	if (!pte_cont(pte))
--		return ptep_clear_flush(vma, addr, ptep);
- 
- 	ncontig = num_contig_ptes(huge_page_size(hstate_vma(vma)), &pgsize);
- 	return get_clear_contig_flush(mm, addr, ptep, pgsize, ncontig);
+ static inline void __set_ptes(struct mm_struct *mm,
 -- 
 2.43.0
 
