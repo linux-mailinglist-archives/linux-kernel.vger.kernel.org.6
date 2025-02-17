@@ -1,121 +1,147 @@
-Return-Path: <linux-kernel+bounces-517153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36661A37CC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:08:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E94A37CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727AB18901EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988893B09FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199D21A2543;
-	Mon, 17 Feb 2025 08:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fcb+1zgw"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B14D1A08DB;
+	Mon, 17 Feb 2025 08:08:08 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E22B1632D7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF418FDC9
 	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739779688; cv=none; b=I6YXRmqBQkd+Qylh1KK+66fNiKmjom0xxdwPX0zES+uSulfpnoIPes3zi5BASH4fxMyDjhe3vuH4R0G3pJ/8jYNjqa+Su4/S2QitJxGzZ9/AvBzvIJzKuEIfX5z6XZebQztUMO9txC2SBkPl2RPEEe++d8IN71iC5nY13iFwFFw=
+	t=1739779688; cv=none; b=YqorwCqVtUpurxkvllgNzYurblKgB32PzqwDlix1O0/aSz8kYlXkV1+DpIl0Z7pccFAbBKrRF7jnqjVqfN0Dnu5F+kyGZoiFon7bwfZ+l2ecA7oDrtYz0vBX9BbzeI69Z6RgXAzU8VcL1uaeZ/az+vlcRu0Kzq8GFi+dqGllhfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739779688; c=relaxed/simple;
-	bh=2ikSgfGf1exOnsFu88z+5kxpMPTxBzklFFNfq0MBXfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Nq407V6vLRsfRQfOqDbbW78OpKXlWPpSO1/5MA4eIanQkckcGghPqR3+3UkoiwsIX2z71FNp5neA7PObhG17f6asae9KQ5I+kqXQCGNYONUKgxuA5sziXoQ+NHDSFuKd9Ep5yyNwb10/TfagWnf21v1p+k3+4sOjcgtyzYH+dis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fcb+1zgw; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so5034899a12.1
+	bh=rsho1jtu2mE/C0fXdcJoK81YtLdyywLTxubxvvs4+S0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WUDlYdoFBypAlpwJ5PNYseNMcguBuh+VHm5cjOKlJUH4KNiqBikC9X0ASho/m5YLnkmoKlujoU7nPa59Kmop+iAI8NCpLuJsv8iergE6M8zg37OdKXPXAi5/KEswZ0uEn8M50OL405pUxpoURRG2Bn0iq2G52IDgNUrCuST73v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so42262465e9.1
         for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:08:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739779684; x=1740384484; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ziFzV0Y9ZdSXReLGJPFeArO5FCiM55hkxr4sd1Sn0do=;
-        b=fcb+1zgwh2mXX1AMSgeEnNFcHK5Mf2w1i1Zi0KaTTmM6YjVrBKmIqVF1Dc2OFwd0w4
-         OkysB3CFui06AqR3Sk+//iriDKsbGWA5+75okgn7Pd/y6gB1a9c65uhxsQf9QVEjQj+p
-         pYLpvTcmk8+JfzbiK74fRLqJ+doBD4LlaNhbaHaFIia4IlSWlkGDVoiIzp9BcKj2lMnB
-         mPxFgDXsCMZyRh8pPEGOt6Nsz+oKrLcQJ6DIWl9twHMwuUVTsb90XG4GE0IRFXiGjFbd
-         GcBaWkPvfwK2bOl4XTIzLeDeWBe5ijlYbDz/5ajO58lVXKFXPdg+Vdh9BcuDKk3Og786
-         gJEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739779684; x=1740384484;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1739779683; x=1740384483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ziFzV0Y9ZdSXReLGJPFeArO5FCiM55hkxr4sd1Sn0do=;
-        b=QEOXoq22QKby2qXyrjT9HCPgBDuqFmqMy4Uf8VjsiPKT8jILVZ50jrXfzblTdqw0/S
-         pZGr4I0J3U4wInnuGGAIV90OSwgccLgm7w5hRLwp7pG3hlh+Wg3O8mv4ArINPJjrBKP8
-         zMPLtsb1LeUPyE1ca1NG7t1QkQkIGaOQn0X/4VgBZY4f+gZnk8ZsVsMy0/cLfe7doU46
-         76QlwdR0LNEmP2Mh9GZgx4OAwf7L3x8iFm16C5K9DOFSqBgETF8uKIFlDreN2I7hPoyT
-         yD/jr/0hZueW1jNtExGRC8y670UnauNj+Zn8A6WPXvRmadlqWd3C/qbj8MBYvgWK/Piv
-         8ixg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9DY0gdggFXiAe+jUpkoMVODwfiX7qTTx7xuwcU/SiB5Rvtxa5CknmVa054nY2liqmn+OSQHoFssprFHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQvVqlZfhGjfXS06b4H3oBzCxI3FH8VUBolLoytzENlIwSTko5
-	3E5ElTviFkM9InLTbBXGlmN+T/iT5KhNg/IkowRn+MONZJZ85T7H2Hv7jkWa5Wk=
-X-Gm-Gg: ASbGncskp6lIVBWEraJZtDI9t2Glw6iHh+/690GpV33elj8fI97sCdp/9oK019X2IIj
-	Jwhzwh6WKJZFjX9vUbk1cc3R4BYvXIn7VZC/qDnEjH0e5h9ZjD4Zv3kr1JOmqyq7FlAHVL/4yvi
-	hGhDQYSu2tEzjSCO1DBnjSyRA7C7o5y1wsz+wf7J2+6/ALsLjKYDBJo0V92AAPLavp3BOn23GgG
-	iS4VqM0c5gWLRlA4zZca9k7kzglx0rNJ/1ptA8HCYybi3GIExaEHu5o/49vC8M72NIr1t9q3X2k
-	1fCt+n9FgHl/445HrlwM
-X-Google-Smtp-Source: AGHT+IFBXYQnvhbaTs+R1+H9kU9Himyc237EX2vSSmBY82Bm6sjx/eueayJNYvLdiOzneYVu+KD0DQ==
-X-Received: by 2002:a05:6402:348d:b0:5dc:882f:74b7 with SMTP id 4fb4d7f45d1cf-5e0361747fbmr10164192a12.30.1739779684400;
-        Mon, 17 Feb 2025 00:08:04 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece287cebsm6843141a12.74.2025.02.17.00.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 00:08:04 -0800 (PST)
-Date: Mon, 17 Feb 2025 11:08:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: iris: fix error code in iris_load_fw_to_memory()
-Message-ID: <a1d9e082-a4d5-4440-996f-7ee7e850de60@stanley.mountain>
+        bh=m2wFYX8dgaktOSAgfZPyadoLd/GGU3mSBDrqYC4o1Vc=;
+        b=vjU2vbx0AX2/WpEUB43pZfeKhs1rfoVm8d5si4nRSg6/Wd6oMZsiDf0lxNTy/XoVFG
+         kk4vgAi+YiNO86SCMU/79T3T90A5DLCH7tr/86IIQwxbJKsoLP2oAlJ5r+dSEC44Vo/R
+         w72L+B8GQJNAZtnpbaKQJtr2ZvbC665md17kHFZ/Kkuijj2AlQElkCmhGPvJ51hBcyxa
+         R0eVRxVZrjWhh1To9Fei0nfd0Ww6mOcW2tYwex9V3LB7HUdjVGVmvtb8gQzeto4hwR/c
+         ZT9wqZBbz2dLoAlL5VHGGNjnxqN5WH3FT5z+UlUVv7PntjeCA4nqAor/lJgKT0xhpjr6
+         83uA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4XarUfWeGCwvqRtSinK6E3Qp1LatDrZIc+4pvgqPhcx6Qa5dwNRPNClRwg0/TTZExbuO7YHqICzl2GQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0F5rsBDdnsgvGrajwYMCY3bAqiRbKBTvcaHrSeWSXiKfgsOGD
+	oFuJPxdI0ZS8NTVFV5apzP2ye4IeylxTi5rnkWBge9H6RRi7QMjA
+X-Gm-Gg: ASbGnct2A9ivT7DJRjNhSwa8ZnX+bRlW/L0IENmXm8XGIKwgmaXIRgw3I2e6SGgNxH3
+	SxT8v7J5OwZSURt23LZLZI7VjC3UzjqmsmCWsM0vUa0y489q0gf5Q/KyRp38D7lXxadHsiQraHX
+	jF1QgUIFRK8cMFz9j+YwuU+Pjg39QTjf7y+ujgJud2zwE71D1glZZRSUnaVlfeR8+4Devrp8Qdf
+	mjdrzSKLolZHGPkLqirhe9oGhVilzRfBZuvYMlUQMSr2BN+8Nt1LlMBZKzCMMrPF0Wdj0e3caJk
+	z3w6ZtB2gWo0NlerYOCiLfFo90oyJ3/TpGLqk67n49Vwi4hDCcm5kcAJWw==
+X-Google-Smtp-Source: AGHT+IFNcTDOkaZQlTyUplPUqQ21ZWQqF0+0Rp/O3wOz3kPHGdMVBsJAT9nt0R2HPDY5n8OxJZJKPQ==
+X-Received: by 2002:adf:ed48:0:b0:38f:2a3e:870c with SMTP id ffacd0b85a97d-38f33f38891mr8801531f8f.16.1739779683530;
+        Mon, 17 Feb 2025 00:08:03 -0800 (PST)
+Received: from [10.50.4.206] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4314sm11408949f8f.9.2025.02.17.00.08.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 00:08:03 -0800 (PST)
+Message-ID: <ea0e6445-9770-4df9-91bd-80f44cd0388e@grimberg.me>
+Date: Mon, 17 Feb 2025 10:08:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: John Meneghini <jmeneghi@redhat.com>, kbusch@kernel.org, hch@lst.de
+Cc: bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Return -ENOMEM if memremap() fails.  Don't return success.
 
-Fixes: d19b163356b8 ("media: iris: implement video firmware load/unload")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/media/platform/qcom/iris/iris_firmware.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
-index 7c493b4a75db..f1b5cd56db32 100644
---- a/drivers/media/platform/qcom/iris/iris_firmware.c
-+++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-@@ -53,8 +53,10 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
- 	}
- 
- 	mem_virt = memremap(mem_phys, res_size, MEMREMAP_WC);
--	if (!mem_virt)
-+	if (!mem_virt) {
-+		ret = -ENOMEM;
- 		goto err_release_fw;
-+	}
- 
- 	ret = qcom_mdt_load(dev, firmware, fw_name,
- 			    pas_id, mem_virt, mem_phys, res_size, NULL);
--- 
-2.47.2
 
+On 13/02/2025 22:37, John Meneghini wrote:
+> Keith, Christoph and Sagi,
+>
+> This patch has been fully tested and analyzed by Red Hat's QA group 
+> and no
+> unexpected side effects or regressions have been found. Both NVMe/FC 
+> and NVMe/TCP
+> have been tested. Our QE engineer has asked me to report this upstream.
+>
+> Tested-by: Marco Patalano <mpatalan@redhat.com>
+>
+> Fixes: 32acab3181c7 ("nvme: implement multipath access to nvme 
+> subsystems")
+>
+> As discussed in previous email threads, the nvme.core_multipath 
+> parameter was included
+> by Christoph in the original implementation of nvme/host/multipath.c 
+> back in 2017
+> at the request of Red Hat. At that time Red Hat was only supporting 
+> DMMP multipath
+> with NVMe and we needed a way to disable core native nvme multipathing 
+> without
+> reconfiging the kernel.
+>
+> The nvme.core_multipath parameter has been used by Red Hat, together 
+> with some additional
+> out-of-tree changes to nvme/host/core.c, to support DMMP multipath 
+> with NVMe since RHEL-8.
+> However, the plan all along has been to deprecate and remove support 
+> for DMMP multipath with NVMe
+> in RHEL and to remove this parameter. This change has been advertised 
+> and communicated to our
+> customers and partners, beginning with RHEL-9, through release notes 
+> and other communications.
+>
+> In RHEL-9 we changed the default setting of this parameter from "N" to 
+> "Y" to match the upstream
+> kernel and the move our customers to native nvme multipath. DMMP 
+> multipath w/NVMe was deprecated
+> in RHEL-9 but still supported. Customers were still able to optionally 
+> enabled DMMP multipath
+> with NVMe if they wanted, by changing this parameter, and many of them 
+> do.
+>
+> In the (soon to be released) RHEL-10 release DMMP multipath is longer 
+> supported with NVMe and
+> the out-of-tree patches needed to support DMMP multipath with NVMe 
+> have been removed.
+>
+> Red Hat is proposing this patch to remove nvme.core_multipath 
+> parameter from the kernel as we believe
+> leaving this non-supported parameter in the kernel for future releases 
+> will only lead to confusion.
+>
+> We plan to ship this patch with RHEL-10. So it would be really good if 
+> we could get this
+> change accepted and merged upstream, perhaps into v6.15.
+
+Hey John,
+
+This looks fine to me, I'm assuming this was also tested with 
+CONFIG_NVME_MULTIPATH=n ?
 
