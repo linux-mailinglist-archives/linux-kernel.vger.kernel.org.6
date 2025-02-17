@@ -1,155 +1,162 @@
-Return-Path: <linux-kernel+bounces-517578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9E2A38298
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:07:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C692A3829F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17A4188852E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:07:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020C57A1875
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F6218EB8;
-	Mon, 17 Feb 2025 12:07:02 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E6E21A443;
+	Mon, 17 Feb 2025 12:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W267dJ6j"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E27021A44D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB7C2185A8;
+	Mon, 17 Feb 2025 12:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794022; cv=none; b=pr2N8xCTsdfJRT8aP9jDVUvols+tJREGI5JL1A9NS4cX/V5IXchUZPA25YBfGX5S7uyRi82M0CRt3HDqe4mFEbByF+K8Dav4+RX/PXBQwLctRGOmpuf4g4Yw1HcTQn1ommmxrwafLHMu2hHUkyaE2ntQueHXigjCm0ImJd1TAvQ=
+	t=1739794188; cv=none; b=KhEIxiJ5sIUieVUoVjX6wXkRvFL7m/E8Sn1RaOuxxKKANvjxJ5kB3AytmRzxF4us4XJG/KAZTEOVZwmvRQ8MG+9Y+gCxalLXjWwl9x9fyswvhYwmUaZOr/gsE0xt+2m8+gk88KzT3aOmRi3fmqDVRamEyoCyUxMRXP//8WQ5sTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794022; c=relaxed/simple;
-	bh=X/KpQNA1qmybhn2eemCkawYW7o05VCaGU6XdYv22Az4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H5fF46Rz8kU7GrTV3tTFG1UrBmxyYTeJx7QTffrcJMjkdY/w0VfqSIR7yM5q8R1VX6VPzvD45UAuD+QxkwSKcS7aYHDB1ZGDuko5f+FR0Pt5S3Fi7AhFmpJrsT1rmJE3CJmH9rQweaEfdO+GlIfLg1g429EGiU4Nqdy8d4vUWhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C1F3A43181;
-	Mon, 17 Feb 2025 12:06:49 +0000 (UTC)
-Message-ID: <a14347d2-6189-49bc-a1cc-e5959e76e6c2@ghiti.fr>
-Date: Mon, 17 Feb 2025 13:06:49 +0100
+	s=arc-20240116; t=1739794188; c=relaxed/simple;
+	bh=Inc0DYizA8KNQ76TznDJ4jYBwtNttsUa637XXQe72zE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSFNwQYg3Gi8QVszkcs52y9sVSKLBwE55+DJGeu/1hdbn9O6SPV5zEyEFULhguUAKE5vG2C4xs94JTS/BEaFw7xmt5SrXTYWjJolgNTV8MTZYKrMlQsyH76Fg5E525qZM2+lRLlsQHMDQrnbMwqC7R/5RC9Sn0DCRWmPltx+N3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W267dJ6j; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38dd9b3419cso2241312f8f.0;
+        Mon, 17 Feb 2025 04:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739794185; x=1740398985; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eSFQgbvq+nNgV7Pls+43YmrvimRl0VvsXoAHq2jrYgw=;
+        b=W267dJ6jRpk4INEYYLmNDUkAmeD4bA1PwAp8dcm+kXnJ3Q73MYS5TEepJIhqP5Ge3g
+         paVhAS4SEzsqzL9ITYeaHNdgPTCgJybin8oBu9WDEaJLIfCQ3J0iWYLTbj9GlKjENI4h
+         yehkXSv3TqnJQVinaubyAQ+Xr+vhujMhxn7eHOASpYln0qOLX8XnWangUv4A1Ajaln9C
+         RJFrVHC4R4lOv6jQf206DPB3QtqeLwSY+uNFcTpXyZBkKhxSvdMPIO2PiKYhHbQIE2NW
+         NzW9KayTHIp0c1JaOOo8HFfxgXCxR0wrCMccMz2OdWTnDoFLilYiN1eot+mvX1m0kS9G
+         JmIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739794185; x=1740398985;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eSFQgbvq+nNgV7Pls+43YmrvimRl0VvsXoAHq2jrYgw=;
+        b=gOJLm3e5uybz//qkwsFqDVB31C04SGk9TJO3v2fNEfgGuPb6JitjuoFe7X4mhVni6c
+         jBv21lOG9R0YMMem/ZrHZctRJSf9Z8LpLciPzzuJjjQbnhi6V5k25YyJlubYTMwbq+RL
+         gVrMbM8D1TzHP4RwDasbMI07CfnNB9tIL/yCZrJEF0RNQR4t4d+0Bkz2lYcNCoh2Yb5x
+         qbb8sUbGdOzD9p2R8n45uMd+azJpC5TzZLtJI71wGbFT6P6w8BLS1aIwSzU89nO5lKeU
+         OwDC536eN8pyfp6MvoIvn9rcZjzPGzB/tf4ZmYwKJXdz5/v8hXBDwKysMmE6uNwMH22g
+         kQJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ/Czgs1augz1PGsBvaILjwzGmq9VzaqqBpOcZMCat8+1aDnFZoV1Y4WYzoAqtqSQ14JHlDnk4rpGx@vger.kernel.org, AJvYcCVo65O9eStms4zeMo/bC2gJOUBMZb8DvgFgkPK6r5MEffcBX0pWTv8EIsZKF+QBFai4f562fqCy@vger.kernel.org, AJvYcCWCfqM6MnpkMOkJIuaOmtQzIH0H+s+2AHnmj2mFD6276K7CMvLkNvgfA13vIZq/XVqhaK0=@vger.kernel.org, AJvYcCWlmTaR4ZLYdKUqAC8HHiy+qBAT7pcFp2Ii7gVJyehiXewnZHKvoJBpi3Z4BNkYJ9PuIgme5u13SLg/rm2KzuGr9+Bj@vger.kernel.org, AJvYcCX2BntPeE8SlbwiSZUkFb5+6Qhjyx7ndduRRKqNFf8WYXUFUa/OXmEYh2c7Lwm3LBwsGFkkGWmb8U57oAqZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2PN3l99oyryJsSoulngZ8NuA/9ASr24/TP4lAbG7nv1TEGMGZ
+	nGMIQHbdN77CfsFjFXmZ4+6yGrDf75MAlnEv68bWAWPAMq660uHJ
+X-Gm-Gg: ASbGncvfbo93rb81GUqfbASB4e5VoIeEn9qh+wNJvH/xJb4sW1/sDy356cgrMl31uI4
+	tgisXpS6ULgKZH+m6WFSH4XusBW4/YGppQRlw7azCSJVYXW2mmRiFUfQeXA5lKTgIYqNEhPVE4J
+	Z9HHZL96cOqhbpTTw5hDqfyDJmJiIQBHnIBNXllLlqhzpGTV1OGISkvkI44n5j5z1uM53B4BZYT
+	2ePHM+LMdvsn1BDUQITq+QRHQp1U6DjEM6b6H2KfwxLseMpqo0QZmiKP8encqNPIXho4w3rSN2D
+	h3GsYhwi6ECy/YD4X3Doi142MNgJ/vo=
+X-Google-Smtp-Source: AGHT+IGUXM3M95eG2ye29Yd/3FfkwlIr6guJPzqgoVosGmixd8/VUD2KiN9iIXdlnRjIK3DBW5mXIw==
+X-Received: by 2002:a05:6000:2c8:b0:38f:277a:4eb3 with SMTP id ffacd0b85a97d-38f33f1199amr7927742f8f.8.1739794185289;
+        Mon, 17 Feb 2025 04:09:45 -0800 (PST)
+Received: from krava (ip4-95-82-160-96.cust.nbox.cz. [95.82.160.96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dd5acsm12253193f8f.35.2025.02.17.04.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 04:09:44 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 17 Feb 2025 13:09:43 +0100
+To: Andy Lutomirski <luto@kernel.org>, Kees Cook <kees@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>, stable@vger.kernel.org,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, bpf@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Deepak Gupta <debug@rivosinc.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCHv3 perf/core] uprobes: Harden uretprobe syscall trampoline
+ check
+Message-ID: <Z7MnB3yf2u9eR1yp@krava>
+References: <20250212220433.3624297-1-jolsa@kernel.org>
+ <CALCETrVFdAFVinbpPK+q7pSQHo3=JgGxZSPZVz-y7oaG=xP3fA@mail.gmail.com>
+ <Z623ZcZj6Wsbnrhs@krava>
+ <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is
- never less than zero.
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
- linux-riscv@lists.infradead.org
-References: <202502171326.j4Xd3I0j-lkp@intel.com>
- <20250217092445.GA29568@lst.de>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250217092445.GA29568@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephfduteegueelkeelgeejfeeigffhkeefhedvffdugeeuvddtudfhuefgkeffgfeunecuffhomhgrihhnpehgihhthhhusgdrtghomhdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeellegvheemfhgrtdgsmeejiedvugemudgssghfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeellegvheemfhgrtdgsmeejiedvugemudgssghfpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeellegvheemfhgrtdgsmeejiedvugemudgssghfngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeejpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehovgdqkhgsuhhil
- hguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptggvmheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+In-Reply-To: <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
 
-Hi Christoph,
+On Thu, Feb 13, 2025 at 09:58:29AM -0800, Andy Lutomirski wrote:
+> On Thu, Feb 13, 2025 at 1:16 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Wed, Feb 12, 2025 at 05:37:11PM -0800, Andy Lutomirski wrote:
+> > > On Wed, Feb 12, 2025 at 2:04 PM Jiri Olsa <jolsa@kernel.org> wrote:
+> > > >
+> > > > Jann reported [1] possible issue when trampoline_check_ip returns
+> > > > address near the bottom of the address space that is allowed to
+> > > > call into the syscall if uretprobes are not set up.
+> > > >
+> > > > Though the mmap minimum address restrictions will typically prevent
+> > > > creating mappings there, let's make sure uretprobe syscall checks
+> > > > for that.
+> > >
+> > > It would be a layering violation, but we could perhaps do better here:
+> > >
+> > > > -       if (regs->ip != trampoline_check_ip())
+> > > > +       /* Make sure the ip matches the only allowed sys_uretprobe caller. */
+> > > > +       if (unlikely(regs->ip != trampoline_check_ip(tramp)))
+> > > >                 goto sigill;
+> > >
+> > > Instead of SIGILL, perhaps this should do the seccomp action?  So the
+> > > logic in seccomp would be (sketchily, with some real mode1 mess):
+> > >
+> > > if (is_a_real_uretprobe())
+> > >     skip seccomp;
+> >
+> > IIUC you want to move the address check earlier to the seccomp path..
+> > with the benefit that we would kill not allowed caller sooner?
+> 
+> The benefit would be that seccomp users that want to do something
+> other than killing a process (returning an error code, getting
+> notified, etc) could retain that functionality without the new
+> automatic hole being poked for uretprobe() in cases where uprobes
+> aren't in use or where the calling address doesn't match the uprobe
+> trampoline.  IOW it would reduce the scope to which we're making
+> seccomp behave unexpectedly.
 
-On 17/02/2025 10:24, Christoph Hellwig wrote:
-> On Mon, Feb 17, 2025 at 01:53:08PM +0800, kernel test robot wrote:
->> New smatch warnings:
->> fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is never less than zero.
-> Looks like this is an issue in the riscv virt_to_page implementation
-> which also shows up in various other places.  Any chance this could get
-> fixed in the riscv code?
+Kees, any thoughts about this approach?
+
+thanks,
+jirka
 
 
-To me, the only test that could give rise to this warning is the last 
-part of:
-
-#define is_linear_mapping(x) \
-         ((x) >= PAGE_OFFSET && (!IS_ENABLED(CONFIG_64BIT) || (x) < 
-PAGE_OFFSET + KERN_VIRT_SIZE))
-
-But given that the config is a 32-bit config, it should not be evaluated 
-at all.
-
-Could that be a false-positive and then an issue in smatch?
-
-Thanks,
-
-Alex
-
-
->
->> Old smatch warnings:
->> fs/xfs/xfs_linux.h:283 kmem_to_page() warn: unsigned '_x' is never less than zero.
->> fs/xfs/xfs_buf.c:761 xfs_buf_get_map() error: we previously assumed 'bp' could be null (see line 743)
->> arch/riscv/include/asm/atomic.h:218 arch_atomic_fetch_add_unless() warn: inconsistent indenting
->>
->> vim +/_x +1534 fs/xfs/xfs_buf.c
->>
->>    1518	
->>    1519	static void
->>    1520	xfs_buf_submit_bio(
->>    1521		struct xfs_buf		*bp)
->>    1522	{
->>    1523		unsigned int		size = BBTOB(bp->b_length);
->>    1524		unsigned int		map = 0, p;
->>    1525		struct blk_plug		plug;
->>    1526		struct bio		*bio;
->>    1527	
->>    1528		bio = bio_alloc(bp->b_target->bt_bdev, bp->b_page_count,
->>    1529				xfs_buf_bio_op(bp), GFP_NOIO);
->>    1530		bio->bi_private = bp;
->>    1531		bio->bi_end_io = xfs_buf_bio_end_io;
->>    1532	
->>    1533		if (bp->b_flags & _XBF_KMEM) {
->>> 1534			__bio_add_page(bio, virt_to_page(bp->b_addr), size,
->>    1535					bp->b_offset);
->>    1536		} else {
->>    1537			for (p = 0; p < bp->b_page_count; p++)
->>    1538				__bio_add_page(bio, bp->b_pages[p], PAGE_SIZE, 0);
->>    1539			bio->bi_iter.bi_size = size; /* limit to the actual size used */
->>    1540	
->>    1541			if (xfs_buf_is_vmapped(bp))
->>    1542				flush_kernel_vmap_range(bp->b_addr,
->>    1543						xfs_buf_vmap_len(bp));
->>    1544		}
->>    1545	
->>    1546		/*
->>    1547		 * If there is more than one map segment, split out a new bio for each
->>    1548		 * map except of the last one.  The last map is handled by the
->>    1549		 * remainder of the original bio outside the loop.
->>    1550		 */
->>    1551		blk_start_plug(&plug);
->>    1552		for (map = 0; map < bp->b_map_count - 1; map++) {
->>    1553			struct bio	*split;
->>    1554	
->>    1555			split = bio_split(bio, bp->b_maps[map].bm_len, GFP_NOFS,
->>    1556					&fs_bio_set);
->>    1557			split->bi_iter.bi_sector = bp->b_maps[map].bm_bn;
->>    1558			bio_chain(split, bio);
->>    1559			submit_bio(split);
->>    1560		}
->>    1561		bio->bi_iter.bi_sector = bp->b_maps[map].bm_bn;
->>    1562		submit_bio(bio);
->>    1563		blk_finish_plug(&plug);
->>    1564	}
->>    1565	
->>
->> -- 
->> 0-DAY CI Kernel Test Service
->> https://github.com/intel/lkp-tests/wiki
-> ---end quoted text---
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+> >
+> > jirka
+> >
+> > >
+> > > where is_a_real_uretprobe() is only true if the nr and arch match
+> > > uretprobe *and* the address is right.
+> > >
+> > > --Andy
+> >
 
