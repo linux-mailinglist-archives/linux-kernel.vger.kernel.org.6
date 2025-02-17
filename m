@@ -1,100 +1,194 @@
-Return-Path: <linux-kernel+bounces-517568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585B0A38276
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:56:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E422EA38289
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:00:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B611668CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03D833A881A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDD6219A99;
-	Mon, 17 Feb 2025 11:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA4821A44D;
+	Mon, 17 Feb 2025 11:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ih8i/P+7"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfv+iQDr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFA0217733;
-	Mon, 17 Feb 2025 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E95721A421;
+	Mon, 17 Feb 2025 11:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793393; cv=none; b=SGPDP1dIgXFpgGzqL+GoWf+//4UZXyb5yiK9xOnpYVNJKUIPF5xYsyEkQ7JJ6FCWRkgPejm6QVyy8GHNnlD3Otxjf+JjymfBMgwIcZdnnAlVHlmJJO7bRQbVycIVNChQbDsx4+GXGCKxjdyEjGBdOnK9FrMlTkPOm4M2SL7Tofo=
+	t=1739793440; cv=none; b=QKOd2/1ZQfKD4WFEcIgBMrYhvDzQCJzi8Gh7jdbmZPgfZ39Qk7ckZVO26ylfuqR+arrFOxj/DbgndQnacBfTSMiWFtMbi9fIb3n8YGtgSrI10T0LHBvIiiCt5Xh+MxMwZZaDedlFKscS0Xs7p1YSFzi9oXmlx2biT1aPqK6Sbg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793393; c=relaxed/simple;
-	bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
+	s=arc-20240116; t=1739793440; c=relaxed/simple;
+	bh=Y/TN2bh9LSXg3FW05NB+yXIAvd1FTqOs+ZHW/w1bA90=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gsJwmLBrlKoyTnSgDUhX6HBNDwK9en4gSzmH5QeVh4bauYtEIiyXu5i+sucH2IuqbpivytIRZF8AiTSTR+XLoSilBiif6cfv2ktjXfsQswSA/kORIGXaJAGokSbrqY9JF8dLUcITipIMhsbiB6vyRO3Eyfr/gUw9LzGwsQ5AUU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ih8i/P+7; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30761be8fa7so42591711fa.2;
-        Mon, 17 Feb 2025 03:56:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739793390; x=1740398190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
-        b=ih8i/P+79vc9dpO0T8UIBGpNhykURBZvtxniUxmZ0yH00GRNiE3mwo7/NosmS5fpGo
-         8W9rFbg9+vmPDPN3EK/kBNjXCbedNfxEWEvhqohKZR9m9fBKnwmD/y3f97hCu+SXQ6Kq
-         Dz8Iin63fouFvv8LfO7kM+GLsACKWECDbLGVhKOY/Pp9AYnk2eBxk8+/J2M5m8/4IGjb
-         Iutq7FQ27eFVC2SA5ZrgtS5zmtkinnkDj3pVqPhukH5Ngy/3YAh5kDDIS4/3szlqbNx+
-         JhmUCs/0lAZCVfiDV5/I/7ALdV8bFrm4ZxOtkIKfWI7KkOpatPlFdLVioxnO5P43vCFL
-         bKQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739793390; x=1740398190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
-        b=SQJUXS/ApfY3gErCPr99EWSIKwQdPJOX+Y6Sj8sByd+A7HbGLKeIuUlWo9yZi8UAEC
-         UVItNPje7Z5/3SxTRO4InB1fY/BLC63vGZ5hr2peiny9svbwXskvmo1i6vBzdviVpo15
-         +oM7SHVZPGZhP0wzla5Qv27g9zbXDNa0jAtacWamlR8rjAp+D6zVJgA/+fQTL/cnMyhX
-         /JHfZbe43A3U0v/TJfqCEQj6W8VfuLmFvEtvF+ElImSqTlJm/kJilxgOLMki7lXEJI1s
-         qxW3KYku0sfyzoYk4eZF2oiYSBd3f+qfHMz4tJXtCuiVr4XkGg7EmjMuHt24QLzJm87X
-         vMSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZdbVCRVVfae7ve4KPlEVFE/p++TFln9xGzKMpD9TlUcqI2I1QOEU8e6bHwfGv+21Gws1LyXYErvzP@vger.kernel.org, AJvYcCXav6exwsr8j+qUbe3S3pv5Kcibc33ChcItlz4q8lNtsWexpaS7xhhNajb5I1aO3Dl4++ofXA/lly2TEcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHMQwIqY77ddNF8QRvMrRnG4HNDa+/LJg3lAqtf6+ykvwWXp1e
-	LPbKqCg5vl3k+v/JN+upsFjR4dVcTqsAlO4ZBwMPAF2zShd5vKSxurJ8w/BlvOdFS63oO5aqHdv
-	4w33n1nq8ezYLZkSugiGLJP+mEgL4yw==
-X-Gm-Gg: ASbGncsmvd+Y8Deki1bPPdhA247b3l9QERUJsqf+b0LgpwD0xurV49wZdGFlQoGWCY4
-	Grf8LnYjgBKV0FZvbFcZxb7IdWuD6d47CzzcblsibW8pU5dNr0dkFoy17CT19ELVBomZTjhrEkU
-	4bui2k/7qrEQ==
-X-Google-Smtp-Source: AGHT+IHtj/ZdhxXotccy9rIWf5rf13ssM1qX/siRW2ohOQo19dHThB2bEMb7IsViEOJydxxoEPlta3cBjBRhxTyDCxM=
-X-Received: by 2002:a2e:9e11:0:b0:309:20b4:b6d5 with SMTP id
- 38308e7fff4ca-30927ad53aamr22443111fa.28.1739793390003; Mon, 17 Feb 2025
- 03:56:30 -0800 (PST)
+	 To:Cc:Content-Type; b=ldE920u7rUvtBn74wARon0x7osZdJW8ypqENRvJz9n8rJIbzQuBcLZQZiU32bcSOMXJWo5zA9w7HvuH69H4f3ck7NHrkFqYYtwmVT/cLZOU2uZr4psI101hG5lqNN0Pk5ip6j0RWTqsxAgFbUiSZrNasftkh/981yGItzSrHUkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfv+iQDr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9842FC4CEEE;
+	Mon, 17 Feb 2025 11:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739793439;
+	bh=Y/TN2bh9LSXg3FW05NB+yXIAvd1FTqOs+ZHW/w1bA90=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cfv+iQDrdlvQhTaqmTSjjFAW0FI5sUTOl67HXFXxgts+jSAGVIuTfp5jpzwcsBtZ6
+	 GJuA92555UBfHT+pKctv0gc9wkFh4gzmvZfuOkS5fwDHJDqeEcKzVUliWqFC6WW6m+
+	 00aKxI2H65TKhey8O+fp0FK4qH7FvSOD5Am80Wh6yg81CPerUtNIRwpa6foYMyh3Ff
+	 v7EkH2Xx91D0lrJ9i6ZIXFH/gS9tPGpr7Itq9FPswe8EL4262ExHLItgWYKDwfaUQQ
+	 t40pWxGJcGDIgJIEbPIBfyj06/E8Jw/MHG9KLdxFrSe7dLaMJeQBz+Qfv19nbNKJtL
+	 /eKinNhoEyzdw==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3f3deb037cfso1750335b6e.3;
+        Mon, 17 Feb 2025 03:57:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVgmMmH2jLLpI2ELQ5HJfsTV2OYXw99c/SlPOULVuntUA8ixEbO59OaMFMgGgPwVTGbrUQ3A3LyMo6cHkeQo5wYPcV5@vger.kernel.org, AJvYcCWgYbIFZN0YBOLY3k9tNsFIqG+k7H1R/0CySa3iLw2rCrPim0MFzaD90hzJv4QDaUl+L1qoOY+hmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjxOUn/UAvFkKu955hHWfA/HeEiBLtBQh8NLe4yBy4WotO6sPP
+	rXwVHv3K6EwkaAmnznsdeiD8hJLywSMKDnB4HR/xi+uk0K0XhRfYgOGyo1A7GqCcRXPfQGmPqY7
+	2IEBSZdXkefF4Jy0NwxVg2j39ayY=
+X-Google-Smtp-Source: AGHT+IGgk9wjF7NwnX8et0jzER6LayQU2MY0yj2pfOSKSlhSiBlMxG4HuFD/YSGpYLbiMFfjiKIXrDujz+RjTFY3bqo=
+X-Received: by 2002:a05:6808:13c2:b0:3f3:e1c3:39d8 with SMTP id
+ 5614622812f47-3f3eb088af9mr6680370b6e.7.1739793438923; Mon, 17 Feb 2025
+ 03:57:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
-In-Reply-To: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 17 Feb 2025 08:56:18 -0300
-X-Gm-Features: AWEUYZmHvY_1XI6VdOUomFMuvpcQrKJqSxvERooJApcoU_Ugmh026Kvs_8J2YQo
-Message-ID: <CAOMZO5AaLxmaz+c2z5W2M1SV+55pMmhKC2-oqt7_vh1TM6jr3w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: improve imx8mq emmc/sd read performance
-To: ziniu.wang_1@nxp.com
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, haibo.chen@nxp.com, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	imx@lists.linux.dev, linux-mmc@vger.kernel.org, s32@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250210055828.1875372-1-keyz@google.com>
+In-Reply-To: <20250210055828.1875372-1-keyz@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 17 Feb 2025 12:57:07 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hWNYB69ydM4--GNtLBgG3WS4MT+S10w46883kHnFMMEQ@mail.gmail.com>
+X-Gm-Features: AWEUYZlerGW8CaScCPlNU0kV18tmC8lLU10SucLC1QEGtyvEZia5QSOw4UT49-U
+Message-ID: <CAJZ5v0hWNYB69ydM4--GNtLBgG3WS4MT+S10w46883kHnFMMEQ@mail.gmail.com>
+Subject: Re: [PATCH v5 RESEND] cpuidle: psci: Add trace for PSCI domain idle
+To: Keita Morisaki <keyz@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, lpieralisi@kernel.org, 
+	sudeep.holla@arm.com
+Cc: linux-kernel@vger.kernel.org, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	linux-trace-kernel@vger.kernel.org, aarontian@google.com, 
+	yimingtseng@google.com, Dhruva Gole <d-gole@ti.com>, Kevin Hilman <khilman@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 8:05=E2=80=AFAM <ziniu.wang_1@nxp.com> wrote:
->
-> From: Luke Wang <ziniu.wang_1@nxp.com>
->
-> Compared with kernel 6.1, imx8mq eMMC/SD read performance drops by about
-> 30% with kernel 6.6.
++Ulf
 
-Since this fixes a significant performance regression, what about
-adding a Fixes tag?
+On Mon, Feb 10, 2025 at 6:58=E2=80=AFAM Keita Morisaki <keyz@google.com> wr=
+ote:
+>
+> The trace event cpu_idle provides insufficient information for debugging
+> PSCI requests due to lacking access to determined PSCI domain idle
+> states. The cpu_idle usually only shows -1, 0, or 1 regardless how many
+> idle states the power domain has.
+>
+> Add new trace events namely psci_domain_idle_enter and
+> psci_domain_idle_exit to trace enter and exit events with a determined
+> idle state.
+>
+> These new trace events will help developers debug CPUidle issues on ARM
+> systems using PSCI by providing more detailed information about the
+> requested idle states.
+>
+> Signed-off-by: Keita Morisaki <keyz@google.com>
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+> v1->v2: Split the ftrace event into two (psci_domain_idle_(enter|exit))
+>         and rephrase the commit message accordingly. Rebased onto the lat=
+est.
+> v2->v3: Add "Reviewed-by: Steven Rostedt"
+> v3->v4: Add the Tested-by label
+> v4->v5: Add "Reviewed-by: Dhruva Gole"
+>
+> Hopefully this patch gets attention from maintainers of
+> drivers/cpuidle/cpuidle-psci.c too.
+
+Lorenzo, Sudeep, Ulf, any comments?
+
+>  drivers/cpuidle/cpuidle-psci.c |  3 +++
+>  include/trace/events/power.h   | 37 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 40 insertions(+)
+>
+> diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psc=
+i.c
+> index 2562dc001fc1..dd8d776d6e39 100644
+> --- a/drivers/cpuidle/cpuidle-psci.c
+> +++ b/drivers/cpuidle/cpuidle-psci.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/syscore_ops.h>
+>
+>  #include <asm/cpuidle.h>
+> +#include <trace/events/power.h>
+>
+>  #include "cpuidle-psci.h"
+>  #include "dt_idle_states.h"
+> @@ -74,7 +75,9 @@ static __cpuidle int __psci_enter_domain_idle_state(str=
+uct cpuidle_device *dev,
+>         if (!state)
+>                 state =3D states[idx];
+>
+> +       trace_psci_domain_idle_enter(dev->cpu, state, s2idle);
+>         ret =3D psci_cpu_suspend_enter(state) ? -1 : idx;
+> +       trace_psci_domain_idle_exit(dev->cpu, state, s2idle);
+>
+>         if (s2idle)
+>                 dev_pm_genpd_resume(pd_dev);
+> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> index d2349b6b531a..9253e83b9bb4 100644
+> --- a/include/trace/events/power.h
+> +++ b/include/trace/events/power.h
+> @@ -62,6 +62,43 @@ TRACE_EVENT(cpu_idle_miss,
+>                 (unsigned long)__entry->state, (__entry->below)?"below":"=
+above")
+>  );
+>
+> +DECLARE_EVENT_CLASS(psci_domain_idle,
+> +
+> +       TP_PROTO(unsigned int cpu_id, unsigned int state, bool s2idle),
+> +
+> +       TP_ARGS(cpu_id, state, s2idle),
+> +
+> +       TP_STRUCT__entry(
+> +               __field(u32,            cpu_id)
+> +               __field(u32,            state)
+> +               __field(bool,           s2idle)
+> +       ),
+> +
+> +       TP_fast_assign(
+> +               __entry->cpu_id =3D cpu_id;
+> +               __entry->state =3D state;
+> +               __entry->s2idle =3D s2idle;
+> +       ),
+> +
+> +       TP_printk("cpu_id=3D%lu state=3D0x%lx is_s2idle=3D%s",
+> +                 (unsigned long)__entry->cpu_id, (unsigned long)__entry-=
+>state,
+> +                 (__entry->s2idle)?"yes":"no")
+> +);
+> +
+> +DEFINE_EVENT(psci_domain_idle, psci_domain_idle_enter,
+> +
+> +       TP_PROTO(unsigned int cpu_id, unsigned int state, bool s2idle),
+> +
+> +       TP_ARGS(cpu_id, state, s2idle)
+> +);
+> +
+> +DEFINE_EVENT(psci_domain_idle, psci_domain_idle_exit,
+> +
+> +       TP_PROTO(unsigned int cpu_id, unsigned int state, bool s2idle),
+> +
+> +       TP_ARGS(cpu_id, state, s2idle)
+> +);
+> +
+>  TRACE_EVENT(powernv_throttle,
+>
+>         TP_PROTO(int chip_id, const char *reason, int pmax),
+>
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> --
+> 2.48.1.362.g079036d154-goog
 
