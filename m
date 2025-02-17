@@ -1,47 +1,91 @@
-Return-Path: <linux-kernel+bounces-517797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589E3A385DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:18:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B46A385A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDE83B3AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBDF1885099
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B9521D009;
-	Mon, 17 Feb 2025 14:13:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8C121CC59
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B511B21D3DB;
+	Mon, 17 Feb 2025 14:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CoFuUB7V"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D17C21CC59
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801630; cv=none; b=lHxNH9RfGoPgh/P+ITvAEaChzKv5yr8hTVUYWs6OTPfxy94FR/aJ7cFPJfG0Uz2ilMY/pPmUZTdBmAHrUqjuDf0oag4V/As8r3CwCUIHH+aow6vvXqt4zvRmUEQrdA93JrFqhquE++z3HtT4P/ge10v7HWf9dnc9h0RA/l/hEYA=
+	t=1739801662; cv=none; b=m/Sv0A9Din2FWTFW7ET4kNaYMjRFUPv7So7iTGNBYD7swnNHPU6GFctzJ/XuiNiD5YtuIWYbz4sXdWJci7xoOgnyvhAO1bsL1lorcvJIWrntuqUDDXFABYEBhL5hFOFEVc60/2kQLeyQA1gcfqQxGgUtBxiaomHRtU+Z0YUl/qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801630; c=relaxed/simple;
-	bh=BDhq3FnMyKkbbSsoUCH6vLeyIdi0qbI6Kw9qS+IRKD0=;
+	s=arc-20240116; t=1739801662; c=relaxed/simple;
+	bh=DmRKIA81ischDwAmOUMnE56ItcSr1yGOCW5aJOAlBi4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yd0cLzLOMlj9lUSlMHP81cZz4r18/HHCZr22/LW0QnX+QNkzXeheSltph4YeHpLoHaqmQbw5YKx3A3kvJAIQDQ20UHvoSewSDxhdq/MiUnpbLWcQNyLdScs4Au60Xax9kilVp0ssKpYB+5WZ8d0WulWODdBP4+llai8QV1yB0KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 379CA152B;
-	Mon, 17 Feb 2025 06:14:07 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D4523F6A8;
-	Mon, 17 Feb 2025 06:13:47 -0800 (PST)
-Date: Mon, 17 Feb 2025 14:13:44 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/18] firmware: arm_ffa: Refactor addition of
- partition information into XArray
-Message-ID: <Z7NEGG3DKiMUEu83@bogus>
-References: <20250131-ffa_updates-v2-0-544ba4e35387@arm.com>
- <20250131-ffa_updates-v2-6-544ba4e35387@arm.com>
- <20250214045030.mfegbypq27gdl6sg@vireshk-i7>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fMV5al01JSKRDW/vWtjoU9lMCIkpfI1DohP3J4uSEQw+pBrEIv6NAjlWQTAd6KQEoJMeIa7ZRZek4SBFIgcHu/7Wiq+PQzHym1BPU7Q6bhgh3BEovyQa+omG/u7ltVAnPeLY+kGnoKWctBsCa4X9GvLORNcq0PoBpLa9gZPzTAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CoFuUB7V; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb97e15bcbso193046666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:14:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739801659; x=1740406459; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NekdZXTafvfqhoDySEOcOucxcXKvkkXorz4QTbjm09c=;
+        b=CoFuUB7Va2KM2WkUvr8rHHtuXRuF5vEmV4WS4i77FzWP7MPIkbCUhNusf3nGuWTISB
+         YRJIYEppJQaxKFsE2ZrEovaorkE7MKt4YBJSbYKEvlYcD1431KQwn/G64vEPD7AGOg+A
+         Rsa17W56HAHwpyc1aLEMA5hDmpAPWMyibFCG5ZSkve98ngBrUxRhBqjbUpLmb2tVY79a
+         SFw+HgZLGii4eFm3XKDQlHfdpwdeRhSwh8jciN856MB/KfnNezsQGDFjw6LeOdNpFkft
+         TNgs8ksMnP/OWMh9ZZ/uX4XXl5xalaB5fiAnjtDpbktPAPAFYHODnTzasLXLRWBIUs1Q
+         y/8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739801659; x=1740406459;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NekdZXTafvfqhoDySEOcOucxcXKvkkXorz4QTbjm09c=;
+        b=QeqCFflbvZ9AFS52Nnw2DvEjYVeX7VgLskkKIUfOQGoiLLHpe88JYGgAgJyGjQyDOF
+         hrOhkKY5TUbreUYVHQ1b8VahiJ1fn3upXHL03yn8pzYVzAnf5Mgn+usqA4fyfB73lV58
+         V4L1HzZqxPWdi7EuA6BcdI6e8LIaTkuzz1JJ0CvC9v6KhmzWqhXxV4Efrpubk+ijSAPg
+         ugm3J8VB/2pPHZzoM/8Vtd4/KXuAyL8scVmT5Modq24j9kVmY+1w5yB/5mSPl691yW9D
+         aIqsKPw+4RtOk7nlultbsDjX/As9/rlUbNlzTTMnrAIm6KwXpKBY70OxPOr05jnE3BHi
+         XHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRKV1kJqduTuA9n6W6iuARmIzPAm/kTtBA49zGbivWJnD+JOxZsE4cBPeGPIaY/Ler9KORzai2umETS94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhsFTbhwfkjvypE+E1iYEXvV7LfvNTqUCLaPOETE1gdb6YKlpa
+	gzGF/nsgqs6wB73DBQ+ShCi+rgxY76E7kLh+0Jd9pwV+EiDGgrn4VgvblF+6vyE=
+X-Gm-Gg: ASbGncv5jPGug5njCKQJPGFTrdCU8VV1wKIxaOcnuOyEvTrlpNAHO6a/3cpu9aM4wIu
+	BwU18G1Bd4FoB3UCpvM51aPhNd70cjgj68C7P/R2nB2X6NdhYePg/sNMe0ed0qXYKVzC+TUAYyh
+	fFcmxpBhCDSUmWgqBgtH33/j1N1+gKMBBDUd0YKTxR+7LViDYP08h7tUjnUYhDIFqY0Q4RZC0Ag
+	vu6GM8ZvWeN3QzaecILmg/b0iUqGSHDUqxJQndMnGJP0mThp3UASZF2sg+vFVKzyPAH7KI0zhzW
+	4xaj/hrJW/KyXgIJduyC
+X-Google-Smtp-Source: AGHT+IFIBR3Zp7n4KLa1AEo72USiTDt41XIvlExhYbBs/eXLCwhTItsYSqPIAHweOwZVqQQcbYAUmw==
+X-Received: by 2002:a17:907:780f:b0:ab7:440e:7d08 with SMTP id a640c23a62f3a-abb70bff32emr769230766b.4.1739801658666;
+        Mon, 17 Feb 2025 06:14:18 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb8fef1332sm308806366b.69.2025.02.17.06.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 06:14:18 -0800 (PST)
+Date: Mon, 17 Feb 2025 17:14:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	skhan@linuxfoundation.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
+	linux-sparse@vger.kernel.org
+Subject: Re: [PATCH net-next v2] af_unix: Fix undefined 'other' error
+Message-ID: <bbf51850-814a-4a30-8165-625d88f221a5@stanley.mountain>
+References: <20250210075006.9126-1-purvayeshi550@gmail.com>
+ <20250215172440.GS1615191@kernel.org>
+ <4fbba9c0-1802-43ec-99c4-e456b38b6ffd@stanley.mountain>
+ <20250217111515.GI1615191@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,37 +94,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214045030.mfegbypq27gdl6sg@vireshk-i7>
+In-Reply-To: <20250217111515.GI1615191@kernel.org>
 
-On Fri, Feb 14, 2025 at 10:20:30AM +0530, Viresh Kumar wrote:
-> On 31-01-25, 11:24, Sudeep Holla wrote:
-> > @@ -1461,39 +1480,18 @@ static int ffa_setup_partitions(void)
-> >  		    !(tpbuf->properties & FFA_PARTITION_AARCH64_EXEC))
-> >  			ffa_mode_32bit_set(ffa_dev);
-> >  
-> > -		info = kzalloc(sizeof(*info), GFP_KERNEL);
-> > -		if (!info) {
-> > +		if (ffa_xa_add_partition_info(ffa_dev->vm_id)) {
-> >  			ffa_device_unregister(ffa_dev);
-> >  			continue;
-> >  		}
-> > -		rwlock_init(&info->rw_lock);
-> > -		ret = xa_insert(&drv_info->partition_info, tpbuf->id,
-> > -				info, GFP_KERNEL);
-> > -		if (ret) {
-> > -			pr_err("%s: failed to save partition ID 0x%x - ret:%d\n",
-> > -			       __func__, tpbuf->id, ret);
-> > -			ffa_device_unregister(ffa_dev);
-> > -			kfree(info);
-> > -		}
-> > +
-> 
-> Why extra blank line here ?
-> 
+On Mon, Feb 17, 2025 at 11:15:15AM +0000, Simon Horman wrote:
+> So, hypothetically, Smatch could be enhanced and there wouldn't be any
+> locking warnings with this patch applied?
 
-Spurious for sure, no idea how I managed that though. Dropped it now.
+Heh.  No.  What I meant to say was that none of this has anything to do
+with Smatch.  This is all Sparse stuff.  But also I see now that my email
+was wrong...
 
--- 
-Regards,
-Sudeep
+What happened is that we changed unix_sk() and that meant Sparse couldn't
+parse the annotations and prints "error: undefined identifier 'other'".
+The error disables Sparse checking for the file.
+
+When we fix the error then the checking is enabled again.  The v1 patch
+which changes the annotation is better than the v2 patch because then
+it's 9 warnings vs 11 warnings.
+
+The warnings are all false positives.  All old warnings are false
+positives.  And again, these are all Sparse warnings, not Smatch.  Smatch
+doesn't care about annotations.  Smatch has different bugs completely.
+;)
+
+regards,
+dan carpenter
+
 
