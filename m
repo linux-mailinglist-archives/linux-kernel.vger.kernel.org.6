@@ -1,94 +1,97 @@
-Return-Path: <linux-kernel+bounces-517114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1500EA37C57
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D37A37C58
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B395170DAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B87E16F823
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EE019D8B2;
-	Mon, 17 Feb 2025 07:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E2419995E;
+	Mon, 17 Feb 2025 07:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TOXVVFPE"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/bQSt82"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BD0194C8B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2A2194C8B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739777561; cv=none; b=h/xk4sOrbY5FAfT0V3p6CmhZdgn+o7jHx2MPIam8YfE1vnn6yhn9lt2Kv4hcIyCB44EhxqVit2fRcdlgbZNOesVsugVYPFqw+4UrQo658/+rM1AOhfyoey+we+s3+eKFuJKSWpRkc+c+KSLKVEhYlch0tHhzJznYDyj/wcFV9tA=
+	t=1739777572; cv=none; b=F1BRezAdZQduUWI15trZ7Nvu2U2ar8LiecMlqHrmgJZQliTEqSz8K283agut1iTV5H7b/toGLaXGNrniBeDZ8rhwA/h/EfRcm8/wMjSYhIPa7pF0rVydxUN5wKP2H83U0xn+HolNpCRLxhf7fP6C+aahzDldy6mNhLbREaYmiB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739777561; c=relaxed/simple;
-	bh=iOSp9K3fulh0VbLRdj1Bcq7Vd9vXiDQNcOEL0h9MGOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BH+fvi5OjLNTLx0A2EMGgKPB9gjCx2l+6xKE9hd/BmUqMKj8qPz0maIFaaCb56E6dvkDAugfC5r0mECVzizTcXcizSatAmH4F4hBe/yHmaIepBwpDfe7+krjCZ6OyHkmiR0hSuKDy6JwY21LFzEpMWZnCYGYYJcTjPSq2x9Wy+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TOXVVFPE; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1739777572; c=relaxed/simple;
+	bh=r6aBwQGIKHihW7+Ag844yt6fSqk0SJomx7ZY5GraGU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DalVdqamT8whOhAehKL9l41zjdUDGqzPH6EWm1YfcZljsyMPohdUXzaRi1uEd3yV2E/F0lbXkllS8WZdw+VJN8BUhMk+w3HWV84qnCq9nRzJu8sOoCsJ1Z5fTtgQPUtRmPUC8+5o5i9iIleKpmQPW21BD6bRHJzGHFbfuXhhz6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/bQSt82; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abb8f586d68so135311966b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:32:38 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abb90f68f8cso174466066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:32:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739777557; x=1740382357; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Iuq9jtDgHZUGKQlgExINfZtY7T0OwXIUJbx8KDqcL2g=;
-        b=TOXVVFPEBlAEA9l8JpUN1RYaoM/lQdXa+8Onu6qpDJANJ5bCR9EYtjkd0Ui+1AyEJQ
-         X3uPImLr7wSgVFPjkWX7vK/zKhGYntLM3PEtcK+xYVqP3TERdHUYQjH4kXYq+ng2LTCs
-         tutY9q7umGpv2XH2Jx/sRNvsAfiDsqrI+vNT0i3YmKbZhWS5OJ93AdDTWPCBuw4q5tJY
-         +1L1rcOLjY6kH67ne1xuvQQpzYd1CXcCQ6K/WTrU5fh6P2OATL+I6DUXi+qN5COkyjUT
-         EuISwzf4qHjJ0Wfa6Zf7t4hJ+bYxCKg4uwk7hnsU/0v64LGAsMvknTyj/66fjTOUn3g/
-         zLHQ==
+        d=linaro.org; s=google; t=1739777569; x=1740382369; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wMllDSNz6y9GDkrgwRaQVDA/pIhA4eMkvxsotewnFzc=;
+        b=L/bQSt82XGSdLraoupLNCMzX4Qc6baDNAILNy7VNwqsGFqRAxDbyijzY5/T5swPIuB
+         dAkBiOb3AEk8cx+XvHd6TFb1adgyeCKFyEkUp/gOmyc49T9dLFY9gNR7ssrBQhMWa7i4
+         D73DI3RS+daKOmHWCc+0lJj4KUy7FR0inCFCyWXnZwB8ZzmOrrWhgxmeoBOmX97zPWjA
+         tTSo4/SCnw32jObqpXG+rlN16/C4ia691amGPdnM21Vx1g1Un7zSwSkeQgqIso5ZSx9A
+         ySmhPZTCC0Xx9rfpwxENPvjQF26PDYZAjOe1C1l6kPfP8MBtA9plTvoeoRmDE0eLjsIw
+         SBvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739777557; x=1740382357;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iuq9jtDgHZUGKQlgExINfZtY7T0OwXIUJbx8KDqcL2g=;
-        b=xQlv2T3MhkyTeUf27GBcyQyvmXZd+TQsjAKtzG7AdIeeiMZYxjG9ory4yY1v5Wvqpm
-         qraIwngXnzIGcIvLOt7od+nUkTVU6vjkkpVR5RRnwjnhv66xdX7ukBboxDD4uYDw76QH
-         aqoHa8E5F3PP5TfIjZupMMregBDldZQwdZhttASHplwaxz84TqBzBEln8raxEnixNJds
-         VDlLiaVC2I1eCqocEekjYQyozqCV7ncXhqQWYiVzYqlxjALa6GP1dvpnBklO1k85qn0c
-         QP0JJKYYccivq6kFvnwVIUAshWBzjvT2NiGmm7HQqkOv9KZ+DHYtrrjLB4wSDewkDxjk
-         8vng==
-X-Forwarded-Encrypted: i=1; AJvYcCXfd8vlFUROe+L/t+yxA4rNAU0q5zXijgvWgKz2nq4yWpIxD3LhalJssuIVi4petwTK/faZ9eC7sxJfQM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwahXSZHXGjNSUyaZYAuk0as1TeUjtf3BRiI0sVHlxrEMt8lXuR
-	hxmtfVpiIi3C/FlMKZiXcKa0b0R+G6erLSQsuuwd1MCbQ6BVGNqxSrg7DgXUE18=
-X-Gm-Gg: ASbGncsOqNo3g2gM7AFlykwORrSrOHiHzBtknP7bLuG3tW8NMVig6daYz6g8gJUGaxa
-	8dboyra6br/GLn2CMbsmeLV+FN49rZA5P+VVbkaBq/GFFm1BowXp8EYPj3bQCGNhCzkPNqHkdkd
-	rcGETNL7yLIp8BcRYW0TIH+pGz+mrm1U6giokIbhO36iwxmQHgINjJIATQ8OicuYK8ajUiujPdi
-	+VwafAUfGcL+rKvigMl4wO92NifpX0vGmZkX4P0YqTRvbIp7N/37aVOBUUrbitsjBzR/Nzi7F77
-	neC8NrAkOtPw16LDKkTW
-X-Google-Smtp-Source: AGHT+IEcdCzKmfW6zdCdnOroccwgNmmDLOlJUJcE91OJUWqcSxVf6IhB+cxML7fRc8rv7wfAKU/7HA==
-X-Received: by 2002:a17:907:1b23:b0:aab:c35e:509b with SMTP id a640c23a62f3a-abb70e435abmr973427866b.55.1739777556866;
-        Sun, 16 Feb 2025 23:32:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739777569; x=1740382369;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMllDSNz6y9GDkrgwRaQVDA/pIhA4eMkvxsotewnFzc=;
+        b=Txy/KXp/WzKuv9qAzvZkaNvLKbgPsZ4n6cVqhRpDgUOowF8XaNqJMnlr3FhDzCWR1b
+         DHChB4V98u8LqF+l1D7f6y9R0kFcrhpOscHJrqauSDZ9qWQ4nNcA8D/czCSdAoJZVvwn
+         hOC7M2LaoYM7DQaPpqm0n61VavtlO6BaeJzHs/bgUYcdhidv6V33BtGBWMXsMN0U6vjq
+         Avzl0UJ3/GY3jctxSVEZeGXQqpFqFFxdmG3hT1MWpt9BZ2PzugUZ89lBjzjBs5an0cY7
+         5KJSOHN1Th3lCaANgsZdQf8ym3+5NADUmf+Io+kFxT44S2BaC6IBqU2j4+LzFUZPmU6S
+         BKwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNFg/YRzI/lqYJ19b4y77mTCfzrA8nAEicwUygr9ZYpYidw23mJ0Z0i5Jbs3aW904yZwQYliuREgoCFgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymJeTfKbnlhHe/5SjG1sj0+6wBgduTpo9n5O2OckMc1bPAp5x4
+	5ORvnbEDFOWey5jTy/hjM3RUyT3etR0gBSa5ru6eftqkkzNVVoyewoiuUUW3EZ8=
+X-Gm-Gg: ASbGnctAkOC3G5duIzTMGqhBvcWFdQ7U+oGjFYM5yG3wuOlFsrD5LQP0nLsgtjaBjIJ
+	tYtHTEhsIr1rUS53wjvGXaQtE4oQ/f/cfLWm8Dt6qU8MXT8e37F+l0pWYh1BVfGlSi/CmrdnC9p
+	6o9cRlAQCkVCM9Ncj9zPyWpwlEvQsO5CFU3WQ6gri077PrkTvIVHtIa3N224Pt0sZ01yufxW+Q0
+	Yyz8eDMygz/4ES2xvm/aJdX+WhiTWAUm7+ma8ooysPGTl+fFjLYWJAFjWrz+KU3QYqC/8nbgd80
+	gkwhV05fMYdDIwwo/a+K
+X-Google-Smtp-Source: AGHT+IHJ6d8K2hnOLwZegjEVoeae7Dajjoxiun/dSlgu+G3MOV8fyQIllsHLSF3ttg4CQNHc/VyvvA==
+X-Received: by 2002:a17:906:2454:b0:abb:9c8a:fbcd with SMTP id a640c23a62f3a-abb9c8afde3mr235343866b.53.1739777569229;
+        Sun, 16 Feb 2025 23:32:49 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb916db37bsm238238266b.165.2025.02.16.23.32.35
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbac867bbfsm7724566b.137.2025.02.16.23.32.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 23:32:36 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:32:32 +0300
+        Sun, 16 Feb 2025 23:32:48 -0800 (PST)
+Date: Mon, 17 Feb 2025 10:32:44 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	imx@lists.linux.dev, Jaroslav Kysela <perex@perex.cz>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
 	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
 	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	sound-open-firmware@alsa-project.org, Takashi Iwai <tiwai@suse.com>
-Subject: [PATCH 0/2] ASoC: SOF: imx: fix a couple Smatch bugs
-Message-ID: <fffa1613-72e8-4cd0-a4db-b6b13a5222e9@stanley.mountain>
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ASoC: SOF: imx: Fix an IS_ERR() vs NULL bug in
+ imx_parse_ioremap_memory()
+Message-ID: <68973636-eab8-4d82-8359-ae2c8f60f261@stanley.mountain>
+References: <cover.1739435600.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,18 +100,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1739435600.git.dan.carpenter@linaro.org>
 
-Fix a couple of bugs which were detected using Smatch.
-(https://github.com/error27/smatch)
+The devm_ioremap() function doesn't return error pointers, it returns
+NULL on error.  Update the checking to match.
 
-Dan Carpenter (2):
-  ASoC: SOF: imx: Fix an IS_ERR() vs NULL bug in
-    imx_parse_ioremap_memory()
-  ASoC: SOF: imx: Fix error code in probe()
+Fixes: 651e0ed391b1 ("ASoC: SOF: imx: introduce more common structures and functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/soc/sof/imx/imx-common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- sound/soc/sof/imx/imx-common.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
+diff --git a/sound/soc/sof/imx/imx-common.c b/sound/soc/sof/imx/imx-common.c
+index 82057af1436c..5a385d140bc7 100644
+--- a/sound/soc/sof/imx/imx-common.c
++++ b/sound/soc/sof/imx/imx-common.c
+@@ -338,9 +338,9 @@ static int imx_parse_ioremap_memory(struct snd_sof_dev *sdev)
+ 		}
+ 
+ 		sdev->bar[blk_type] = devm_ioremap(sdev->dev, base, size);
+-		if (IS_ERR(sdev->bar[blk_type]))
++		if (!sdev->bar[blk_type])
+ 			return dev_err_probe(sdev->dev,
+-					     PTR_ERR(sdev->bar[blk_type]),
++					     -ENOMEM,
+ 					     "failed to ioremap %s region\n",
+ 					     chip_info->memory[i].name);
+ 	}
 -- 
 2.47.2
 
