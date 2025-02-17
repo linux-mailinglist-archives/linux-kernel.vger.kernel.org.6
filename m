@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-517820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C57A3864D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:28:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538B3A38613
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84CB3BB5A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:21:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC3A1895DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9030622069A;
-	Mon, 17 Feb 2025 14:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA19521CA19;
+	Mon, 17 Feb 2025 14:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KM6gEvKw"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n/5qO8KR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DTx3N+0p"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43350221701
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679B721B1BC;
+	Mon, 17 Feb 2025 14:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801968; cv=none; b=LTDCclyrdtSPxgIDTKM/qORp5CiQJRYV5LBIWbhl+KBkvt64ux6ljziBC0YEAoo71gQYBj0du7cETqM7qc8JbF32SYJZ+MawC88RRcGIQho4fyichhP1/wjxvQ/YsAp8plRZDgecvbUvlPPJY/lMFIWOrNZdFjNS8qK6XXbfFig=
+	t=1739802002; cv=none; b=sy94bP6kO6pPr0Lr5TNs40DV6RiIOEdCT/d9DwdnOOpHgWdranV0Y2W5NdZZAY1D+/mOiNO4ENIh8U/Xu77PQbAJ+kmNZE1/6Jll4u4rDD2cZaXF1nIWjY4o5GHBp/QUpWeH05aZ3tKLVZJJ1qWPefOKgz61dcUCBpknHrE0Fjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801968; c=relaxed/simple;
-	bh=f+lGY3bRo6/ZlhAWhfwDJ4lK51LrYKEasKvNJQ3CAN0=;
+	s=arc-20240116; t=1739802002; c=relaxed/simple;
+	bh=F5Fq4V08KjRjvKMrLulUhqT0/eJwNG0iacCf2irg2mw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEZaZq2PgdqpSpVebIE3fV4W8JDQbq8l7L8ktSJsVsxsaZwMn0DcJzLQluMC1uP2ndIRAEVpuSYWYKkRBD8pPmu9tSzMsmoKtK/PNymPz/K30HiZ6581fWwUk/koKmNrO7E8143ckkFwkN69UvsOf9MMtwRq0yBjPAS0lVpYggU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KM6gEvKw; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb90c20baeso182195966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739801964; x=1740406764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zu4oJ+jaqD1SJBOCWTKei1kl+R5dexP/eMTe6Jc1Gjc=;
-        b=KM6gEvKwOZVqAr9YsrHEiRTrrwe3c6xFtk7kht3PDiqiKeAiTXHj3SMEmO38hY82nz
-         I/fRrFqoQvfB2DteAOyKm10D/8Y/fBS+Rl7YK1gC+r5dV0p9Kduu3ZQ/tAz9zEDvxeWR
-         agSj0HM6ud3d2lgVZh1q9uXRsd4AasB03GTaJffpXR/DU/PKpP3NvAsUCDLckDhihz7A
-         DIBRlf3BZ/vFRYHUc6iIXvVhTEY9c3qUlbITuwtR3LybKe57PVFVjNGVVWCNrx7J9rMO
-         bEhe4bv6T2adm33Rn14ijXBgUDb6V70LdJO2AC/nKGVyIbu8/MqY/GzBnSvJ/eXa4tV6
-         ghww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739801964; x=1740406764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zu4oJ+jaqD1SJBOCWTKei1kl+R5dexP/eMTe6Jc1Gjc=;
-        b=YtyJiWf7I91+NhY1OJp//I5z4O0Xfh4KWdwXxeEGzSwpmvSbis0Fkz8MIDwxk5CreH
-         p5ooUy/skDadoxcNvAaLV3GClYzBZhanXUCSnFISkzGFbETc1Vl4k/ebYHUCV7GGo6qW
-         EhAICCBIq4AAgYYbZeb4M5R5mqAVWBbEIeVWJelNTlrhOM3TTep/RVCxGo5WNHumtRt7
-         XiKfRRi/AlWTDdjwfyxTrFRihdNu0/PppbCgQSuSp9yc87vKr7KE5fhf6si1gQjnSewx
-         NF1r73Pysjs6MXKPmRHg8hsAHkvITUNv31etnVuIK8YGlX9O31EuUagXjJWvM00pSqcT
-         2oiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZErAYwq72uAkqUAxCRsvDMAfN2GY65+ry5c4hqrkB53s52JOxrT4ccN2jmgAAGx3vAE1d+3vLfqjgVow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDjsb79mYZPU36MrbfSvL86x/o/YJ1UbvS8Sxq+CLh50BjniGi
-	gmSc12efZTGANkmgSbJlgHTdrTnTQe0yxmiWiSks5WV59142zT40G8zXEu59WSA=
-X-Gm-Gg: ASbGncvwGpdxSfAz6ZlF7zdghv3pZ1QPA2uTV47/iO5CfCdAFrcAntjWYJoAvWYAGj1
-	RHE/yKRV9b7gqZQwnLQ28LlxJRcEX16EbtfzJ+R167sGcDXrihLVmfwTEgY3FT3as+1xINaWt4e
-	c1Si4UzvIxXhCRpH2heAdA5zY9LZUK+TFutxFx1oHB7SVzQh4hKKOA74bJeKprOfa/n3MvYANi4
-	aaSpNqKqvfT3cKLeQmYECVoHBoIxD94eABRVdGYWhaim+9CNBx40l3YrsQDDhYBBA78gTvwayTY
-	ShkWB993LrZlOgMTauG/
-X-Google-Smtp-Source: AGHT+IE8w6imfFH8KYgZ2tawwP2DiwXKUkUiNLxLFwschuBltQWRjocByVFunBs3ccNxbFC7TA3z6Q==
-X-Received: by 2002:a17:906:6d04:b0:abb:b092:dade with SMTP id a640c23a62f3a-abbb092ded0mr66067766b.38.1739801964594;
-        Mon, 17 Feb 2025 06:19:24 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb99fd1983sm224140966b.108.2025.02.17.06.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 06:19:24 -0800 (PST)
-Date: Mon, 17 Feb 2025 17:19:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
-Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kuba@kernel.org, rmk+kernel@armlinux.org.uk
-Subject: Re: [PATCH v3 2/4] [PATCH V2 2/4] staging:gpib:agilent_82350b:
- Removed commented out code
-Message-ID: <2ff8f3f8-e915-4ec0-80e8-fbc87c8fd1b2@stanley.mountain>
-References: <20250217103046.54294-1-kumarkairiravi@gmail.com>
- <20250217103046.54294-3-kumarkairiravi@gmail.com>
- <629f57dc-d6c7-48ca-8b05-f1d0169eb454@stanley.mountain>
- <CAEEw=4mN+Y8G6a92baCH6kANcpmTFDzn_LSS3XRfXAFdPZxo8A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9zKiDDglWL+9oHUi+rUi5HqOgebsTfrrFYzDFPhkI6bjz1VlN/g8TS9BY4cxf6SQp47BPbje04tIsw/r6ZE84019b+WWwWuHAku/7o491zlRyJkuIGXajeUoC7vpvVbjSeQrfssMTIQgyIfqxjAMj9g6eomMOTVPFI0off01hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n/5qO8KR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DTx3N+0p; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Feb 2025 15:19:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739801998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uyo5k+GprhxLkM9w+L8CKX8UCCowCbgz4V8rWU94hrg=;
+	b=n/5qO8KRcWA5TDw7mzbASwa8PTTRlvWJeskMNFDCEY1LSP2GJcqN8Xo1OhZF1NlPR5CKrt
+	o5iJ4Pgw07grRwEtIpkKmQYLoFpYpOWbXk7D6qhiC/pnfmjrNoc/YXqKUOZPqpKcQhyRue
+	1wfytWALSZLDIvwFOv1Y3erUq7+NY6ncvL1sMzLTUNe59tdKah/JevsF59wm5TYF4bqYnb
+	wWjYVL/r9TowTYkJqqZU4nx1LyPGtLH6K9X90WpeFkGGQGs3UmFe8odwUWd+ee0XBtOaLZ
+	mXKb3mOJoEEX8IaIl6Hm/Lu/EvJpmPfTwmVBTaP+i/OEnkAvYCNrcWnlkfpPxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739801998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uyo5k+GprhxLkM9w+L8CKX8UCCowCbgz4V8rWU94hrg=;
+	b=DTx3N+0ptr7aSyabWFl3/dtr/ABDwRBuekFvwkohqTkrN6CilHfXC3uuPCRqMS5DQPaUAH
+	tiATJ0uyVQn/OUCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce
+ localtry_lock_t
+Message-ID: <20250217141956._01BcsrG@linutronix.de>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAEEw=4mN+Y8G6a92baCH6kANcpmTFDzn_LSS3XRfXAFdPZxo8A@mail.gmail.com>
+In-Reply-To: <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz>
 
-On Mon, Feb 17, 2025 at 07:09:23PM +0530, Ravi Kumar Kairi wrote:
-> So should I just do the whole deleting comment thing in one go? Instead of
-> first deleted comment and then deleted blank space?
+On 2025-02-14 17:27:39 [+0100], Vlastimil Babka wrote:
+> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> In !PREEMPT_RT local_lock_irqsave() disables interrupts to protect
+> critical section, but it doesn't prevent NMI, so the fully reentrant
+> code cannot use local_lock_irqsave() for exclusive access.
+> 
+> Introduce localtry_lock_t and localtry_lock_irqsave() that
+> disables interrupts and sets acquired=1, so localtry_lock_irqsave()
+> from NMI attempting to acquire the same lock will return false.
+> 
+> In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+> Map localtry_lock_irqsave() to preemptible spin_trylock().
+> When in hard IRQ or NMI return false right away, since
+> spin_trylock() is not safe due to PI issues.
 
-Hm...  I had to check.  All the issues addressed in patch 3 were
-introduced by patch 2.  So, yes, combine patch 2 and 3.
+spin_trylock() is not safe due to explicit locking in the underneath
+rt_spin_trylock() implementation. Removing this explicit locking and
+attempting only "trylock" is undesired due to PI implications.
 
-regards,
-dan carpenter
+> Note there is no need to use local_inc for acquired variable,
+> since it's a percpu variable with strict nesting scopes.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
+Other than that, thank you two ;)
+
+Sebastian
 
