@@ -1,144 +1,100 @@
-Return-Path: <linux-kernel+bounces-517567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE824A38279
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:57:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585B0A38276
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850251895ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B611668CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10B219A97;
-	Mon, 17 Feb 2025 11:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDD6219A99;
+	Mon, 17 Feb 2025 11:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt6UZJpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ih8i/P+7"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FAA217733
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFA0217733;
+	Mon, 17 Feb 2025 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793375; cv=none; b=HBlcm/CHPPBG9rtYFaka5OU/jt1d2uR8u0d9cfYstMY9q6rg0yjJUf8ktUjRPkLOyF410gjc6rO7SSGIoD+a4siJKGlABjL6oZXlaAYXCsaj2zPFbYMRRkpFoOmvZgz1NKpwJWOmxoCfC4/gSRWkVFFswqeAQCuuKyIZOnv/2sc=
+	t=1739793393; cv=none; b=SGPDP1dIgXFpgGzqL+GoWf+//4UZXyb5yiK9xOnpYVNJKUIPF5xYsyEkQ7JJ6FCWRkgPejm6QVyy8GHNnlD3Otxjf+JjymfBMgwIcZdnnAlVHlmJJO7bRQbVycIVNChQbDsx4+GXGCKxjdyEjGBdOnK9FrMlTkPOm4M2SL7Tofo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793375; c=relaxed/simple;
-	bh=BwweQqmHmd4epRmfYOdDtMF+OmsJru6LslOEtC7cpwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V7EECFQaojAgAJaogCteKCxd2nK90EZpZ1GuPIQsqyeD1U8AVifdhGl2lBOVu+GYBikPwKRhZbKCcF6aDZ9VHqRvbja1bAxLwQZ0DRtn7SRUoq7Jm5PwzjQOmH4gx8N5yhEhhn0nCdgHpeJ1LJKCUyrSjzh9Df3D9qJUkh86euw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt6UZJpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89027C4CED1;
-	Mon, 17 Feb 2025 11:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739793375;
-	bh=BwweQqmHmd4epRmfYOdDtMF+OmsJru6LslOEtC7cpwg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Xt6UZJpgjp6XnRyJ8w+VHIRjSmSrMzxbjB2jGloRyTEDP4W5+ybqqZycj1VYFZFhM
-	 ZA1ULlLKBeWrugAxyWVAtuGgbQKlPyQ2V0et3uefRn6MBLzmw8x2t2esuDbAHxiGIm
-	 0OGWDNbOLWi5aDCP88F3sUHDCasg8U1GSMg8saSIi2eqG98GdG/DwSo9KRRF2/nut5
-	 Dr0aGWtKDJdo681qI6tDZCIPcaidEH3myuRdhsN+m20NNlJi3Qm5GZlBMMaBukdfbO
-	 I25aLbOXnvwvd92zK89uGApLIoRHcmQpglftRoXeXcYIK4odc3bpqK9x+I7bHaPRXr
-	 44Rjdy9Lr1B8Q==
-Message-ID: <6ab0afc3-dcfa-4ae8-a695-b8b3864c0a6e@kernel.org>
-Date: Mon, 17 Feb 2025 12:56:09 +0100
+	s=arc-20240116; t=1739793393; c=relaxed/simple;
+	bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsJwmLBrlKoyTnSgDUhX6HBNDwK9en4gSzmH5QeVh4bauYtEIiyXu5i+sucH2IuqbpivytIRZF8AiTSTR+XLoSilBiif6cfv2ktjXfsQswSA/kORIGXaJAGokSbrqY9JF8dLUcITipIMhsbiB6vyRO3Eyfr/gUw9LzGwsQ5AUU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ih8i/P+7; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30761be8fa7so42591711fa.2;
+        Mon, 17 Feb 2025 03:56:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739793390; x=1740398190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
+        b=ih8i/P+79vc9dpO0T8UIBGpNhykURBZvtxniUxmZ0yH00GRNiE3mwo7/NosmS5fpGo
+         8W9rFbg9+vmPDPN3EK/kBNjXCbedNfxEWEvhqohKZR9m9fBKnwmD/y3f97hCu+SXQ6Kq
+         Dz8Iin63fouFvv8LfO7kM+GLsACKWECDbLGVhKOY/Pp9AYnk2eBxk8+/J2M5m8/4IGjb
+         Iutq7FQ27eFVC2SA5ZrgtS5zmtkinnkDj3pVqPhukH5Ngy/3YAh5kDDIS4/3szlqbNx+
+         JhmUCs/0lAZCVfiDV5/I/7ALdV8bFrm4ZxOtkIKfWI7KkOpatPlFdLVioxnO5P43vCFL
+         bKQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739793390; x=1740398190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RWb9c12CAhxULoD0dTGRwfEz9mcz+7D1z6r/WQDA7rc=;
+        b=SQJUXS/ApfY3gErCPr99EWSIKwQdPJOX+Y6Sj8sByd+A7HbGLKeIuUlWo9yZi8UAEC
+         UVItNPje7Z5/3SxTRO4InB1fY/BLC63vGZ5hr2peiny9svbwXskvmo1i6vBzdviVpo15
+         +oM7SHVZPGZhP0wzla5Qv27g9zbXDNa0jAtacWamlR8rjAp+D6zVJgA/+fQTL/cnMyhX
+         /JHfZbe43A3U0v/TJfqCEQj6W8VfuLmFvEtvF+ElImSqTlJm/kJilxgOLMki7lXEJI1s
+         qxW3KYku0sfyzoYk4eZF2oiYSBd3f+qfHMz4tJXtCuiVr4XkGg7EmjMuHt24QLzJm87X
+         vMSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZdbVCRVVfae7ve4KPlEVFE/p++TFln9xGzKMpD9TlUcqI2I1QOEU8e6bHwfGv+21Gws1LyXYErvzP@vger.kernel.org, AJvYcCXav6exwsr8j+qUbe3S3pv5Kcibc33ChcItlz4q8lNtsWexpaS7xhhNajb5I1aO3Dl4++ofXA/lly2TEcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHMQwIqY77ddNF8QRvMrRnG4HNDa+/LJg3lAqtf6+ykvwWXp1e
+	LPbKqCg5vl3k+v/JN+upsFjR4dVcTqsAlO4ZBwMPAF2zShd5vKSxurJ8w/BlvOdFS63oO5aqHdv
+	4w33n1nq8ezYLZkSugiGLJP+mEgL4yw==
+X-Gm-Gg: ASbGncsmvd+Y8Deki1bPPdhA247b3l9QERUJsqf+b0LgpwD0xurV49wZdGFlQoGWCY4
+	Grf8LnYjgBKV0FZvbFcZxb7IdWuD6d47CzzcblsibW8pU5dNr0dkFoy17CT19ELVBomZTjhrEkU
+	4bui2k/7qrEQ==
+X-Google-Smtp-Source: AGHT+IHtj/ZdhxXotccy9rIWf5rf13ssM1qX/siRW2ohOQo19dHThB2bEMb7IsViEOJydxxoEPlta3cBjBRhxTyDCxM=
+X-Received: by 2002:a2e:9e11:0:b0:309:20b4:b6d5 with SMTP id
+ 38308e7fff4ca-30927ad53aamr22443111fa.28.1739793390003; Mon, 17 Feb 2025
+ 03:56:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-binding: aspeed: Add LPC PCC controller
-To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, chiawei_wang@aspeedtech.com,
- linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
- <20250217114831.3225970-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250217114831.3225970-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
+In-Reply-To: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 17 Feb 2025 08:56:18 -0300
+X-Gm-Features: AWEUYZmHvY_1XI6VdOUomFMuvpcQrKJqSxvERooJApcoU_Ugmh026Kvs_8J2YQo
+Message-ID: <CAOMZO5AaLxmaz+c2z5W2M1SV+55pMmhKC2-oqt7_vh1TM6jr3w@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: improve imx8mq emmc/sd read performance
+To: ziniu.wang_1@nxp.com
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, haibo.chen@nxp.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	imx@lists.linux.dev, linux-mmc@vger.kernel.org, s32@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/02/2025 12:48, Kevin Chen wrote:
-> Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
-> 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  .../devicetree/bindings/mfd/aspeed-lpc.yaml   | 36 +++++++++++++++++++
+On Mon, Feb 17, 2025 at 8:05=E2=80=AFAM <ziniu.wang_1@nxp.com> wrote:
+>
+> From: Luke Wang <ziniu.wang_1@nxp.com>
+>
+> Compared with kernel 6.1, imx8mq eMMC/SD read performance drops by about
+> 30% with kernel 6.6.
 
-Nothing improved. You will not get different review.
-
-Also, provide detailed changelog explaining how you fixed here
-previously reported issues.
-
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
+Since this fixes a significant performance regression, what about
+adding a Fixes tag?
 
