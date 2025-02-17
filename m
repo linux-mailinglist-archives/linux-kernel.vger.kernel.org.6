@@ -1,270 +1,259 @@
-Return-Path: <linux-kernel+bounces-517288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A8EA37EDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE081A37EE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553FC16BB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534D7170FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F154215F5E;
-	Mon, 17 Feb 2025 09:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4772165EE;
+	Mon, 17 Feb 2025 09:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXxYqG36"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Zv5AOoK4"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C242153C7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F152163BA;
+	Mon, 17 Feb 2025 09:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739785474; cv=none; b=GUP3eRwWT3TKMKM4mQuRdHc6NvBlQHFtpXFgoKI5vTBkzNHaBv5XK3JcMxtNvj9t/qXrXC05Nh/UdnZd0U7M+ElqdLLPsH5v+b1KklKfIkkMR6enMK8cbyAT14Ho+HvfFV/0PxvYJu3g1OE80nbWUfWlq5fXoqkbPb5hzZNNWPU=
+	t=1739785540; cv=none; b=k9mTBmLMaCg6RBkdm9YSdtpMziTUzWwbrCu4nQICtRGk0uIyKPOgl7j9GOq7uPFlnkiReyj1GCAXd8K/1AlnTuvMoc9oy1XsCXrbVnILSWMIctT/fkR+R2vhPYzsUdhifMTlQYnCL2euT34PsKuoZ1iTXVd4iHYZubYkm7UUqK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739785474; c=relaxed/simple;
-	bh=J1yePCgXsp5KdF/XMhCFbyJxvq8CaN+RODwGPnRjKak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8BcfsFZNCrufLBxAl+TCm6IsBVUSuAG0w0nVDYff5qir3JR/RIXlptsDpAStHbwj/EmPNxrkVj85lqBMTKKrAuiKpnRMGYKm+e/KHLWDUQf+Z3nWRqdd5SyfWKL2aL1nwpNqPDVOUhRoqD5nS+iIfvj1eUuV2STFUW55eIEsiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXxYqG36; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739785471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1739785540; c=relaxed/simple;
+	bh=dfy2ywxbm9ZJJb1F36/6VsBddiXxecHJPPozdX/dwZI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mCy4eDYUiEPM4brm28MGVH7KJzpgZj5sf9pdZLqtbmEQuw1W/2J+89ekxCzXU46Y2TjN11S86p5RUYijGgXgnY6HNs95AiCvIj1UOwtphNSe1vHpab6GI21NAOYJW/Wy29kW+d+h7WRaWDLhCCt0YgDtEJjb9BZp3IrURroM+J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Zv5AOoK4; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4YxHnz0xy7z9sc4;
+	Mon, 17 Feb 2025 10:45:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1739785527; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zqDAUvAEeGP+kauicMXsQJdKxUNLdnbFg64inWAI/Iw=;
-	b=AXxYqG36q1aCMIyv8jJzL9ioR7J9vyX9AABv0ztE4NYQD4P9VWbjE0u3VrB5psRYtgXnyG
-	TTDYIzHwhECJgl4oB96jJxw2Gdo540RnkaDXMdNGxjGk+l9QsaE1SKggPX5TY6nvvlWVcT
-	xACLJQCkbp2LJOM2O7PTiVuC/nuA66o=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-75-69M3RX2mMJylp_7nuN-IYw-1; Mon, 17 Feb 2025 04:44:28 -0500
-X-MC-Unique: 69M3RX2mMJylp_7nuN-IYw-1
-X-Mimecast-MFC-AGG-ID: 69M3RX2mMJylp_7nuN-IYw_1739785468
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f455a8fcaso592602f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:44:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739785467; x=1740390267;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zqDAUvAEeGP+kauicMXsQJdKxUNLdnbFg64inWAI/Iw=;
-        b=KyyzNlTBUUBr2qd3zv5Wg5Y3qJ5JUzAcCkrDXQqrDVORyyCqd/ogd1w1T3ftmScta/
-         cF/66kMeegQHhY3cUh2zY4qYZ1AgozwdcqhEouoyzsBKsh0WLa+i/bHRGj+idhRAtQEM
-         lI9Rw3XdbmxZWbJiCA8HP6E2V5e3AoQmVivoxAkmIPV46+lxc4gvgr7ye7/KybDUP/ZF
-         5YG4eQdRBdA8il1hLf9nQSJ1VMNC2lin+VvAakoAPb6JLdLaUW0KZvv0i4sU7PGLevc+
-         tiiFAJOV8ASMYp2t4l477SLSkZIj/VXMpO/+vb4eFYm2oXrVKLrGGL6T/YGkkOM9cRUy
-         pT9A==
-X-Forwarded-Encrypted: i=1; AJvYcCV4koV7oKoO2fagyaG6rioPUrJXHWcMjDCqSsVL9mWPyL7Fb9otdrkp8ms1RRTS+83u6iCuqd47nB6Z6j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcivDgNN7Y/JoSBBvjzVqNHGA22l5Z1DvzP+U3PN1PonE5e/k9
-	00iuHEgE+Z9f+rTbChz26rRv+LDlZWiFKbHf8rc+6VgZWq7TN9vfxXMPe/pMMAYuy71P/4v5leM
-	QiY708AubB3XN2bp59vBZ3cm+Jhcu8019jwahTCSj9mWaxLDAMA496QLzdbp35g==
-X-Gm-Gg: ASbGnculVb0+pYIQ35QBqsFLKNBd+fCSBEKcE4nSH1bDDgjuqWt0Y9sLTtvY04riIcf
-	SDFDPLG8UYz7I1JWg8bR2/+9g1Tzuv9rmj5BB0OQTRAD/rt3797wYBPlwnVuJkvgdjmKwWMs2gJ
-	mEFVq3xBKro0LS5IzK7PvgJGM95TQY9ZIJT/cJlO5um4ibcASixsouIxEMSJZCNKCuLdqf6RxXc
-	tSOy4wEBIpk257u/5Hbsakt6/4sJ59Z2nObFBAXYJupwE6Y151e6l45SqYlCDVyCoySw0uwgLz7
-	5GQAY8ZP2w2Vf4vXnN2OUOde6DQ27i32Qs5Pq/K4OPeyvS56pE9q43d0xP/vW6BVoPWvXuBRKc4
-	y4eO1XZ68Rue69k6G1uy2xN1eeNWRhA==
-X-Received: by 2002:a05:6000:1acb:b0:38d:b051:5a0e with SMTP id ffacd0b85a97d-38f33f5403emr9005236f8f.49.1739785467541;
-        Mon, 17 Feb 2025 01:44:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGNgLkKR19H26t5bIeaj/kdxdOHxKJk3k2pdc8bDKMxYHqeL2D6C5+H/jLNeUyyltbMVaZIzw==
-X-Received: by 2002:a05:6000:1acb:b0:38d:b051:5a0e with SMTP id ffacd0b85a97d-38f33f5403emr9005196f8f.49.1739785467127;
-        Mon, 17 Feb 2025 01:44:27 -0800 (PST)
-Received: from ?IPV6:2003:cb:c739:900:900f:3c9e:2f7b:5d0a? (p200300cbc7390900900f3c9e2f7b5d0a.dip0.t-ipconnect.de. [2003:cb:c739:900:900f:3c9e:2f7b:5d0a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258eb141sm11538422f8f.41.2025.02.17.01.44.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 01:44:25 -0800 (PST)
-Message-ID: <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
-Date: Mon, 17 Feb 2025 10:44:23 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=dfy2ywxbm9ZJJb1F36/6VsBddiXxecHJPPozdX/dwZI=;
+	b=Zv5AOoK4F+wgFhT65eRzIy1aLRnffHEfrQI0Njsj80Pp/TcjLFOUNPIXpF6ItFWQsF4FDz
+	GiBnRU8B+nr3/xur/sFDrTZ420NHsCW0ypgi1VHrmrJhPbQoPceXV5/fP66sEisdepUw+E
+	w+Za99O287mBh8nbNTrr6N3mJJkBV5aeBwPiCWbcHngkSvIzqUrbwwT4GEjR3aw560yo4D
+	RdyiV8ZjjrMiLUMBtdBPdyZZCygZaX3xWlf4P1fk7q58sz17o5c8G3Jbp5kPeJhTZZmtR0
+	PpnbG8skJxBRtPswxrz3lrcmqnazlqeiws37kHvqTHuRAbn3Xz2YBL8o8RVZqA==
+Message-ID: <55a58a606cbd2afd86f83a89b9843e8c7d88c9f6.camel@mailbox.org>
+Subject: Re: [PATCH V8 04/14] rust: Add cpumask helpers
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Jason Gunthorpe <jgg@nvidia.com>, Miguel Ojeda
+	 <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Viresh Kumar
+ <viresh.kumar@linaro.org>,  "Rafael J. Wysocki" <rafael@kernel.org>, Danilo
+ Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>,  =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+ Gross <tmgross@umich.edu>,  Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org, Manos Pitsidianakis
+ <manos.pitsidianakis@linaro.org>, Erik Schilling
+ <erik.schilling@linaro.org>, Alex =?ISO-8859-1?Q?Benn=E9e?=
+ <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring
+ <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ linux-kernel@vger.kernel.org,  Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 17 Feb 2025 10:45:17 +0100
+In-Reply-To: <20250214210637.GK3886819@nvidia.com>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+	 <db0166341ce824c157d0c58c240b3efc6aec6f6e.1738832118.git.viresh.kumar@linaro.org>
+	 <Z6qTelPSqpFk439l@thinkpad> <20250211042908.nyftiw7gtxosfjwc@vireshk-i7>
+	 <Z6t51xodSV21ER4M@thinkpad>
+	 <CANiq72=3MR9F9ur-aQYP4P81RBreAr=UiGg5iaSuFjjd5Q4Y7Q@mail.gmail.com>
+	 <Z66oWuLwY4X9Ou9D@thinkpad>
+	 <CANiq72=Yy8e=pGA+bUHPZhn+D66TmU3kLSjAXCSQzgseSYnDxQ@mail.gmail.com>
+	 <20250214191103.GH3886819@nvidia.com>
+	 <CANiq72=tDhUEjdBmVTPv4cFeD8iiKwJAQD3Cb1=Y4KnE-vh2OQ@mail.gmail.com>
+	 <20250214210637.GK3886819@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] arm64: mm: Populate vmemmap at the page level if not
- section aligned
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
- catalin.marinas@arm.com
-Cc: will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
- mark.rutland@arm.com, joey.gouly@arm.com, dave.hansen@linux.intel.com,
- akpm@linux-foundation.org, chenfeiyang@loongson.cn, chenhuacai@kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com
-References: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: srr8d9hbx4hrod39prc91hgogotwtthr
+X-MBO-RS-ID: c04db6c564b3c4e7acd
 
-On 17.02.25 10:29, Zhenhua Huang wrote:
-> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-> to 27, making one section 128M. The related page struct which vmemmap
-> points to is 2M then.
-> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-> vmemmap to populate at the PMD section level which was suitable
-> initially since hot plug granule is always one section(128M). However,
-> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-> existing arm64 assumptions.
-> 
-> The first problem is that if start or end is not aligned to a section
-> boundary, such as when a subsection is hot added, populating the entire
-> section is wasteful.
-> 
-> The Next problem is if we hotplug something that spans part of 128 MiB
-> section (subsections, let's call it memblock1), and then hotplug something
-> that spans another part of a 128 MiB section(subsections, let's call it
-> memblock2), and subsequently unplug memblock1, vmemmap_free() will clear
-> the entire PMD entry which also supports memblock2 even though memblock2
-> is still active.
-> 
-> Assuming hotplug/unplug sizes are guaranteed to be symmetric. Do the
-> fix similar to x86-64: populate to pages levels if start/end is not aligned
-> with section boundary.
-> 
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> ---
->   arch/arm64/mm/mmu.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index b4df5bc5b1b8..eec1666da368 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -1178,7 +1178,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
->   {
->   	WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
->   
-> -	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES))
-> +	if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) ||
-> +		(end - start < PAGES_PER_SECTION * sizeof(struct page)))
->   		return vmemmap_populate_basepages(start, end, node, altmap);
->   	else
->   		return vmemmap_populate_hugepages(start, end, node, altmap);
+On Fri, 2025-02-14 at 17:06 -0400, Jason Gunthorpe wrote:
+> On Fri, Feb 14, 2025 at 09:24:31PM +0100, Miguel Ojeda wrote:
+> > On Fri, Feb 14, 2025 at 8:11=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com=
+>
+> > wrote:
+> > >=20
+> > > Sure, but it was said, by many people, many times, that "Rust is
+> > > allowed to break".
+> >=20
+> > A lot of people have said many things (especially in online fora),
+> > and
+> > many of those things are contradictory, but that does not really
+> > mean
+> > anything.
+>=20
+> We don't have a community where there is a clear authority
+> structure. If lots of people are repeating a thing, that thing
+> usually
+> becomes the consensus and common viewpoint regardless of who
+> originated it. The repetition reflects community agreement and buy in
+> of the idea.
+>=20
+> At the end of the day, only the policy adopted by the people merging
+> patches really matters.
+>=20
+> The assumption being if respected people speak with authority on a
+> policy they have also got buy in from the people responsible to
+> execute it.
+>=20
+> I also think you should merge your policy document to the tree, not
+> keep it on a web page. That seems to be a big part of getting
+> community agreed policy adopted.
+>=20
+> > Finally, ambiguous terms are used in many cases to refer to
+> > different
+> > parties: "Rust community", "Rust people", "Rust team", "Rust
+> > maintainers"... I have started to ask people to avoid doing that
+> > (at
+> > least in the LKML), please, and be concrete if possible.
+>=20
+> Okay, that makes lots of seense. Please don't use "we" as well.. I
+> have no idea who is included in your "we", or what to even call it.
+>=20
+> > > And Greg's version:
+> > >=20
+> > > https://lore.kernel.org/all/2025013030-gummy-cosmic-7927@gregkh/
+> >=20
+> > I cannot speak for Greg, sorry.
+>=20
+> Yet he does seems to be speaking with authority on this topic. His
+> message was quoted on LWN and likely was read by a large number of
+> maintainers.
+>=20
+> Is he not part of your "we"?
+>=20
+> > I can read his message in the following ways:
+>=20
+> I think it was very clear, sorry, I don't read it your many ways at
+> all.
+>=20
+> > =C2=A0 - I can read it as a general ability of subsystems to potentiall=
+y
+> > agree to treat Rust code as something like staging, like block's
+> > plan.
+>=20
+> As a side note, I don't see how anyone can enact this plan without
+> the
+> support of Linus to do CONFIG_RUST=3Dn builds and put out a non-working
+> rc1. IMHO it is yet unclear if this is real thing or an unproven idea
+> block has that will run into problems.
+>=20
+> > It is very hard to keep hundreds of maintainers on the same page.
+>=20
+> It is, but also I think you need to take this challenge to succeed.
+> =C2=A0
+> > > I do not agree with "Didn't you promise Rust wouldn't be extra
+> > > work
+> > > for maintainers?" in your document. Clearly there is a widespread
+> > > belief this kind of promise was made, even if it was never made
+> > > by
+> > > you. "Rust is allowed to break" is understood to be the same as
+> > > saying
+> > > it won't cause extra work.
+> >=20
+> > Sorry, but I have to strongly push back against this paragraph.
+> >=20
+> > Are you really saying that, because people out there may think
+> > something, we cannot claim anymore that we did not promise
+> > something?
+>=20
+> Again "we" ?
+>=20
+> I'm not concerned about "people out there". Greg said it. Others who
+> I
+> would think are part of your "we" have posted it on LKML.
+>=20
+> It is not clear at all. If you said Miguel never claimed it, then I
+> would not complain. You said it correctly above, be concrete. Ideally
+> acknowledge there were different policy ideas in wide circulation,
+> but
+> they did not get adopted.
+>=20
+> > Furthermore, I don't agree with your assessment in your last
+> > sentence
+> > at all. Even if it was decided to allow Rust to break globally and
+> > at
+> > all times, it does not mean Rust is not extra work.=20
+>=20
+> I appreciate this point is realistically true, but look at how
+> Philipp
+> presented this 'no break' concept to Christoph as a no-work option
+> for
+> him.
 
-Yes, this does mimic what x86 does. That handling does look weird, because it
-doesn't care about any address alignments, only about the size, which is odd.
+Hello,
 
-I wonder if we could do better and move this handling
-into vmemmap_populate_hugepages(), where we already have a fallback
-to vmemmap_populate_basepages().
+so to clarify that: I'm (currently) not writing or maintaining any Rust
+abstractions. So I'm not representing official projects, so take the
+statement for what it's worth. I mainly wanted to probe how an
+agreement with Christoph could have been worked out.
 
-Something like:
+My main point still holds up, though:
+The rules should be written down. In tree, in linux/
 
-One thing that confuses me is the "altmap" handling in x86-64 code: in particular
-why it is ignored in some cases. So that might need a bit of thought / double-checking.
-
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 01ea7c6df3036..57542313c0000 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1546,10 +1546,10 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-         VM_BUG_ON(!PAGE_ALIGNED(start));
-         VM_BUG_ON(!PAGE_ALIGNED(end));
-  
--       if (end - start < PAGES_PER_SECTION * sizeof(struct page))
--               err = vmemmap_populate_basepages(start, end, node, NULL);
--       else if (boot_cpu_has(X86_FEATURE_PSE))
-+       if (boot_cpu_has(X86_FEATURE_PSE))
-                 err = vmemmap_populate_hugepages(start, end, node, altmap);
-+       else
-+               err = vmemmap_populate_basepages(start, end, node, NULL);
-         else if (altmap) {
-                 pr_err_once("%s: no cpu support for altmap allocations\n",
-                                 __func__);
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index 3287ebadd167d..8b217265b25b1 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -300,6 +300,10 @@ int __weak __meminit vmemmap_check_pmd(pmd_t *pmd, int node,
-         return 0;
-  }
-  
-+/*
-+ * Try to populate PMDs, but fallback to populating base pages when ranges
-+ * would only partially cover a PMD.
-+ */
-  int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
-                                          int node, struct vmem_altmap *altmap)
-  {
-@@ -313,6 +317,9 @@ int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
-         for (addr = start; addr < end; addr = next) {
-                 next = pmd_addr_end(addr, end);
-  
-+               if (!IS_ALIGNED(addr, PMD_SIZE) || !IS_ALIGNED(next, PMD_SIZE))
-+                       goto fallback;
-+
-                 pgd = vmemmap_pgd_populate(addr, node);
-                 if (!pgd)
-                         return -ENOMEM;
-@@ -346,6 +353,7 @@ int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned long end,
-                         }
-                 } else if (vmemmap_check_pmd(pmd, node, addr, next))
-                         continue;
-+fallback:
-                 if (vmemmap_populate_basepages(addr, next, node, altmap))
-                         return -ENOMEM;
-         }
+As you, Jason, also state, this would enforce a discussion leading to
+more clarity.
 
 
--- 
-Cheers,
+>=20
+> My main point here is that I'm glad things are getting straightened
+> out, some of the conflicting policy ideas shot down, and the demands
+> on maintainers are being articulated more clearly.
+>=20
+> > That is good, but to be clear, from my point of view, the approach
+> > mentioned in the document I wrote is what we have always said.
+>=20
+> There is another we :)
 
-David / dhildenb
+The current, apparent, distinction between Rust and non-Rust kernel
+engineers might indeed be a symbol for an underlying big question. 10
+years down the road, will there still be "Rust people" who take care
+of=E2=80=A6 the compiler? The abstractions and bindings? Are there "Clang
+people and GCC people" currently, too?
+
+That question goes deeper than one might think, because it's ultimately
+about who maintains what and, as we already discussed, who can break
+what. If, in the mid-future, subsystem maintainers uninvolved with Rust
+couldn't merge changes that break Rust anymore, that *might* de facto
+indeed lead to them having to learn that language. Or everyone would
+need a Rust-proficient co-maintainer who can deal with those breakages;
+or similar solutions.
+
+So that's why I think clarifying it rather sooner than later is
+necessary.
+
+
+P.
+
+
+>=20
+> Jason
+>=20
 
 
