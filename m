@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-517036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D76BA37B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:10:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF67A37B37
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976BB188B68F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F0E188BD1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E7E18B492;
-	Mon, 17 Feb 2025 06:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D94D18A6A6;
+	Mon, 17 Feb 2025 06:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CEj7rkkX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cSrwkAd9"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AE081720;
-	Mon, 17 Feb 2025 06:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E8218DB39;
+	Mon, 17 Feb 2025 06:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739772624; cv=none; b=N9+xvbl425OENOtqsT0ThQCH3n/N7M8/7a2EXiwD6S9HMFpmUFOmyvKOp2424r7jkzYeyuimJnOdFmUmkiauYFImdxAGos01Vks3Gr3XOk6ebtSgndJyleO0StrmtxaxjZkjni2X6NfubfpUgMhvrd1Lkhl89m1+d0tpMdNqz7U=
+	t=1739772794; cv=none; b=G3EM+TZIG51sUI3JBFFirHbeZ6TX3tr2DshD4ivaW8U0Oe6kFHiSVMMBYr5pqJWiWgYZLY2QQ2bypgRIDgkrnnDLPjCkFUvPTPDyCtcPuvhPN8wMB5FAQDjRvSlxUAR3w3j4gIOe0DrS4Vf2Iv4ECLD+wzEzAuiEcrdiIIRPt+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739772624; c=relaxed/simple;
-	bh=K4OeC41l7IpXmWbXMYOCF5o+qZ2MehpHvB+IHS0bOCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ae7wh90BM3j5ZW104zsrbiEqFUwpHuXbSg1znrfFk7cwHo24LDp8fVdS45E2oMCPNzMOXpzz3VNElhgKm8FGZ7tlETEspVH7cMA6EmiUR4VYp5G9RJrlfQWwHve0Ucb+s4G2/XUE4a+NU/Ab+/KQTB+wICsR83T+A69z+5bfif0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CEj7rkkX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739772619;
-	bh=0RAUI7VAgj5tpOqNTajbxsQ46PFbVSTGhEmCkFpbqTM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CEj7rkkXX71z8JG8xvRvbQbVfax5+55VQ9o/pvwgDsQld8jTcyT3ojb4CyZh2Kucg
-	 wc4PzvYJfK4yPYuJFrjXHd0iyyw3Bw7lAfaAlV6s963nqI+0xg5fFy2OlI8ZK7GPvw
-	 lq6UhMA8t8zhbdjC3YYvtMiYpwHZumTBwlxRtG+Vv7Mlv4XAaBqrciZnbioRxSTUkC
-	 aUZ1RBEWc8W2MjsGw2mYNDdUOENIz06GyAq6PI6nrbcey6NFspMWM93lcV46VxtUGR
-	 1GGK1wcME76jqe82loXddirkVQDaKxPPkKKeAm13QucJauRutR5sx6W1zKizya+E/h
-	 jEnuwX+/yeKcA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YxC1l3fyDz4wb0;
-	Mon, 17 Feb 2025 17:10:19 +1100 (AEDT)
-Date: Mon, 17 Feb 2025 17:10:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the mm tree
-Message-ID: <20250217171018.7b4f5e2e@canb.auug.org.au>
+	s=arc-20240116; t=1739772794; c=relaxed/simple;
+	bh=HHMbgpNeEzDZ7ORYxSAbQ1Gijr8bxwEMUpfHHov6srE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V0xS62j67VzTuIPvkdWadAvDwJOsquRh6sk594xRQ0GCIExRba7mMKePL9qb2l0MdIgbhYe/BKTElD3anEGMVMI+N0lc7lXr+sLbR7+fd7tXRDk5hqFsFz7HzwbzOCzfZSzyu6/8lnTPp286J3xdrRljm6A8eS3ejmDCrLKrVxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cSrwkAd9; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9029C25B74;
+	Mon, 17 Feb 2025 07:13:03 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id IRIx5wKWMOLU; Mon, 17 Feb 2025 07:13:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1739772782; bh=HHMbgpNeEzDZ7ORYxSAbQ1Gijr8bxwEMUpfHHov6srE=;
+	h=From:To:Cc:Subject:Date;
+	b=cSrwkAd9nQ9/f7hytK2sLC/Yq52BOidLYDL4/zjPakiRnY+Ko8IGseGBqzrEWGTmg
+	 /YubN+MdiNjAsYaRpDlTNFxP4MPkMrbAZ8+hGVCxrKh/RS5SX1uB2kihn2WLd9eMB6
+	 wRzYsY+PSPRlkSQngYnlp0QbahuNvqgQdJY4vMx3TzIFVQq6LtQSYq7wR5X5tLZy8N
+	 v7OyD+nf0xfigG1RXhlSXn3w/aeB5nPgC0CuJWOW23IGj3O3D1QAhfo8PHDrLfMk2r
+	 8YrzORKjnAPpk1ukkWaRWzcHueLFzFaoyvGcWTI8QHG4nyzCLrhZlWmOuwzVBHVAWZ
+	 2z03ghVdwzV/A==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v3 0/5] Support clock and reset unit of Rockchip RK3528
+Date: Mon, 17 Feb 2025 06:11:41 +0000
+Message-ID: <20250217061142.38480-5-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vwhpvG6_yXUnw5_xHNJ5n.Z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/vwhpvG6_yXUnw5_xHNJ5n.Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Similar to previous Rockchip SoCs, reset controller on RK3528 shares
+MMIO region with clock controller, combined as CRU. They're represented
+as a single node in dt.
 
-Hi all,
+For the reset controller, only bindings are included in this series
+because it's hard to test the reset controller without support for some
+peripherals (e.g. pinctrl). I'd like to first make dt and basic
+peripherals available, then submit the driver.
 
-After merging the mm tree, today's linux-next build (htmldocs) produced
-these warnings:
+This is tested on Radxa E20C board. With some out-of-tree drivers, I've
+successfully brouhgt up UART, pinctrl/gpio and I2C. A clock dump could
+be obtained from [1].
 
-Documentation/core-api/refcount-vs-atomic.rst:90: WARNING: Title underline =
-too short.
+[1]: https://gist.github.com/ziyao233/032961d1eebeecb9a41fea2d690e8351
 
-case 2) - non-"Read/Modify/Write" (RMW) ops with release ordering
-------------------------------------------- [docutils]
-Documentation/core-api/refcount-vs-atomic.rst:142: WARNING: Title underline=
- too short.
+Changed from v2
+- dt-bindings:
+  - drop redundant assigned-clocks and assigned-clock-rates properties
+  - improve description of input clock gmac0
+- Link to v2: https://lore.kernel.org/all/20250108114605.1960-2-ziyao@disroot.org/
 
-case 6) - increment-based RMW ops with acquire ordering that return a value
------------------------------------------------------ [docutils]
+Changed from v1
+- dt-bindings:
+  - relicense binding headers as GPL-2.0-only OR MIT
+  - use gapless integers starting from 0 for binding IDs
+  - make input clocks essential, add corresponding description
+  - rename the input clock that is generated by phy module as "gmac0"
+  - style fixes
+- driver:
+  - format in the common Rockchip driver style
+  - drop initializing code of the reset controller, as it'll not be
+    supported in this series
+- Link to v1: https://lore.kernel.org/linux-rockchip/20241001042401.31903-2-ziyao@disroot.org/
 
-Introduced by commit
+Yao Zi (5):
+  dt-bindings: clock: Document clock and reset unit of RK3528
+  clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
+  clk: rockchip: Add clock controller driver for RK3528 SoC
+  arm64: dts: rockchip: Add clock generators for RK3528 SoC
+  arm64: dts: rockchip: Add UART clocks for RK3528 SoC
 
-  03b412c8b184 ("refcount: provide ops for cases when object's memory can b=
-e reused")
+ .../bindings/clock/rockchip,rk3528-cru.yaml   |   64 +
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      |   68 +-
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-pll.c                |   10 +-
+ drivers/clk/rockchip/clk-rk3528.c             | 1114 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |   22 +
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  453 +++++++
+ .../dt-bindings/reset/rockchip,rk3528-cru.h   |  241 ++++
+ 9 files changed, 1975 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3528.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+2.48.1
 
---Sig_/vwhpvG6_yXUnw5_xHNJ5n.Z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmey0ssACgkQAVBC80lX
-0GxrPAf/YmTEhlXWdoWrpfmoAtSL9msrOhKm3WRwnlGtvVjL4kKay+B9T0qImuJP
-1FCk2arfA8Sl3oliuci8F4pVeonCleA1qfx31LtAIIou/pu4cRejtyI2si1bsShn
-yL+KRl/Pyzil558BlupKEwiNtpDXBNz6C9vE06+YPiEKzv6xRWS/t3s94F3vXSix
-guMdKuPQ6Tr6VY5+X+7tRVQ2ehT0fXhfw46r707xg9J4+ugNwLVkJe0r/BOMMubG
-f8ZL6PpMah8H8CpYxe98JCfDBqsA4clSz9roVM5T+ydNvPTI2eKHWXUuSI2b1xPD
-HNkUrZeka8mCv393p199LwgwaT/ymg==
-=FoWp
------END PGP SIGNATURE-----
-
---Sig_/vwhpvG6_yXUnw5_xHNJ5n.Z--
 
