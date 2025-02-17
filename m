@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-517125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0AAA37C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF13A37C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C86162232
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1486A16E551
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA5E19F12A;
-	Mon, 17 Feb 2025 07:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9190199E94;
+	Mon, 17 Feb 2025 07:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nubmVWJQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iJFXuCEj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I7PljjRE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE919E97F;
-	Mon, 17 Feb 2025 07:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A463317B506;
+	Mon, 17 Feb 2025 07:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739778052; cv=none; b=kVQltD2h9Aqu+1wHttptlKpHwIfmsnvlkwJ6Kwte6Y1xc9Wf8H/QMPknqylGtEJ+64tSW7886Bx3jxwJz9ZmqZc968vPK8r58FZiJt24O4scbxFjwSMfJ89/PMKaBMTeGqaKrLX9eqAt8s8li+i4pqFQjxg2rS5/mu2sUd/j42k=
+	t=1739778232; cv=none; b=tFRKChoke958kmX6bHcVT7iYppVH2CmrmeMdBZ/h8fCOYWvRzWpun0O9cwul8MZWJKtj7bZsKQCTOyxdwTwR3+THmpUjZmRJwkQNlRyK0cGlQ/drk20I9vAKrIHeV6um9U0PIJnjBs24Hw/A/Nb0fARtzVjprENne50tJ3lXhug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739778052; c=relaxed/simple;
-	bh=hJCAxOXGH2Bv87df0NWn1NlDsDEdMyCS/d/gEenDeSE=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=a/GsrmaytgswG/9mGcjHAQYW0vI/Pgo6x24UGR/lmdWNAtIL0sQ1fOIJtPJIj984k24j5H0IyTTNfzbwWL9QWxP63QTq8P+KNq6bgqRS6nArsj1PXm/9faOn5xb7R80D/7VYSBlQxs7Tq+H5c2yLI/Cb5VwVy9KfMe6D1XNDBbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nubmVWJQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5CEC4CEE2;
-	Mon, 17 Feb 2025 07:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739778052;
-	bh=hJCAxOXGH2Bv87df0NWn1NlDsDEdMyCS/d/gEenDeSE=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=nubmVWJQ/dvBmtAKzzcJwdV8+zBI8G0yh4VrR9qQC0uyfifo373gmzxJKT9UAd/HS
-	 9RuEFXSuSPFVY9DHxwFRwqaBL/PM1Yp6tKZTyJumN9/JUER6PVoT7C+33rFXWnqQqw
-	 3dYsPQIs7miOVVP51V/T+xdOvVlXaWK1svq1cSICRKV5a5gaKCQZTVP0/Cy+xd8io3
-	 wCvQ1h403ltAeDq9pghu+C69HaBEmAsff/3HnQj2JLHYCThaBuiB3sUq0aHtJNxkpg
-	 d2wHPPRraXguC8miFAzb7fMxPgIxqv4B+5siffEdPvps0rBnWzCnfGZVvf5vPWkTDn
-	 2Vs61qxZDSbpQ==
-Content-Type: multipart/signed;
- boundary=a5f3114633a16736597ecb4613edd6a3286b97e102f23f69fc0836cec9a8;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 17 Feb 2025 08:40:48 +0100
-Message-Id: <D7UJUHPZNH5I.2YIX1Q3AFB7ED@kernel.org>
-Subject: Re: [PATCH v1 3/5] gpio: regmap: Group optional assignments
- together for better understanding
-Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski"
- <brgl@bgdev.pl>, "athieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
- <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
- <20250213195621.3133406-4-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250213195621.3133406-4-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1739778232; c=relaxed/simple;
+	bh=00sTRUDdu8vbS8MwColUls5lEUvb1WlKlXH6I93MHuU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LUw7+HAwl9EdFCkQzmUYrEj0aBzXF72Vr0vydDL281YzabEh0rcZAdHX86S039v0J/cg07I14H6HPtq3UxI/UQscKqOyN2LNrKmsAyqRt/XjqiuAJFK6zEKyWsXm1rr/5N23XOpwmA5JTkrmaukmpGq5HxqXDHi7Z64x6pVFM4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iJFXuCEj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I7PljjRE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739778229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Hk1Y9Y+p+iPCClZ+zKo3NZ/M2GuwbcSwKkzVokfVkTA=;
+	b=iJFXuCEj+r2/Xxo+pxO6uh7FS2RiEZWHb78ggOWwqndbeeVjkzr9isMTVOag+npsMDZvpN
+	TiryTbef/Kzoog7RBx7+jAaKviXVLqxWt6rnw6BmU2rg+m9HbjfQdqhDwOk74ib9z5/AJs
+	KXOdm+rYD8/G+5JEVBDERF5yJb0rlZ6Jw4apZi3Qlyo5eBr/luQRmmWSih+TvbyfKwBIYn
+	WUH+6qTd7h4BI96CxJaoXEvWWyPwPB1UwTHlRUqE8RPvCPz6/6+XUQEzhC/c6NQTu18mZi
+	Kb8OvMTkAvLfjSCig13P+dfZfQ7Zv5lBAAAedIjN+zgiq+Q/jZqQ8ubiJAJ/Jw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739778229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Hk1Y9Y+p+iPCClZ+zKo3NZ/M2GuwbcSwKkzVokfVkTA=;
+	b=I7PljjREBaH4KywhHbao1WsFCV70DLKvnWud9CDZJigLx2bTuZBQ3A4mgYuUY72IOvueVg
+	XyFk7oNfunxpFPCw==
+Date: Mon, 17 Feb 2025 08:43:35 +0100
+Subject: [PATCH] uprobes: Don't use %pK through printk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250217-restricted-pointers-uprobes-v1-1-e8cbe5bb22a7@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAKbosmcC/x3MQQ6CMBAF0KuQWTtJW4OgVzEstHxkNm0zU4gJ4
+ e42Lt/mHWRQgdGjO0ixi0lODf7SUVxf6QOWuZmCC70LfmCFVZVYMXPJkirUeCua3zAery76290
+ PcempDUWxyPe/P6fz/AH5kvhGbQAAAA==
+X-Change-ID: 20250217-restricted-pointers-uprobes-830c16917cf5
+To: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739778228; l=1302;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=00sTRUDdu8vbS8MwColUls5lEUvb1WlKlXH6I93MHuU=;
+ b=qoDczWA9Nsy/IEBtZ8Pu1pCBBe8mT36Ct26fqF3dRHou9S8MpNPl5vjtrLmSFPPvGVRAFU1zR
+ oN3PmyVau7WBJKLGMwPPy+zlgD9yBcU9anS/ltNOIMqH+nw5Pm7/U9v
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
---a5f3114633a16736597ecb4613edd6a3286b97e102f23f69fc0836cec9a8
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Restricted pointers ("%pK") are not meant to be used through printk().
+It can unintentionally expose security sensitive, raw pointer values.
 
-On Thu Feb 13, 2025 at 8:48 PM CET, Andy Shevchenko wrote:
-> Group ngpio_per_reg, reg_stride, and reg_mask_xlate assignments together
-> with the respective conditional for better understanding what's going on
-> in the code.
->
-> While at it, mark ngpio_per_reg as (Optional) in the kernel-doc
-> in accordance with what code actually does.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Use regular pointer formatting instead.
 
-Reviewed-by: Michael Walle <mwalle@kernel.org>
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ kernel/events/uprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---a5f3114633a16736597ecb4613edd6a3286b97e102f23f69fc0836cec9a8
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 2ca797cbe465f2d4a596e4a5d0d2d5a45e5cacf9..bf2a87a0a37878e99d0cf715ddedfdc2d1949c5d 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -417,7 +417,7 @@ static void update_ref_ctr_warn(struct uprobe *uprobe,
+ 				struct mm_struct *mm, short d)
+ {
+ 	pr_warn("ref_ctr %s failed for inode: 0x%lx offset: "
+-		"0x%llx ref_ctr_offset: 0x%llx of mm: 0x%pK\n",
++		"0x%llx ref_ctr_offset: 0x%llx of mm: 0x%p\n",
+ 		d > 0 ? "increment" : "decrement", uprobe->inode->i_ino,
+ 		(unsigned long long) uprobe->offset,
+ 		(unsigned long long) uprobe->ref_ctr_offset, mm);
 
------BEGIN PGP SIGNATURE-----
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-restricted-pointers-uprobes-830c16917cf5
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ7LoABIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gDtQGAxAO5CFuWOk8DPp859niSj/Zyu+LdBqf+
-prL23eg7WEFaHBDWTjUm93NhnW+xR2JtAX4vy5JtSaIMTS7h0IHipFbGvqrqMzCq
-4PigvcyzRbl8V3MaQ2nMud9HlTyPtSzVqGs=
-=/5g0
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
---a5f3114633a16736597ecb4613edd6a3286b97e102f23f69fc0836cec9a8--
 
