@@ -1,382 +1,383 @@
-Return-Path: <linux-kernel+bounces-517170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4158A37D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:34:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E4A37D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770BB16DFD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6A218942CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04D71A2645;
-	Mon, 17 Feb 2025 08:34:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF301A2632;
+	Mon, 17 Feb 2025 08:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EMOy8Ad1"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010008.outbound.protection.outlook.com [52.103.68.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FED33D68;
-	Mon, 17 Feb 2025 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739781278; cv=none; b=o7xf5kF18EovTchtQHT9SJdBAM38B21oEb0tC3usC0k+HosS1uLFsHi3krhnFCsQWIjeSx1lMmTw9DcJubu2PiEYWqad1eOtMTMIKO32JsaMDvo5f6m2jxtNc+BbNL5MQ5eDNpLwjsOkhY2U5YQ64SHaVYoPKgU5aoScenrr5GQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739781278; c=relaxed/simple;
-	bh=LP/NlF41VkpAPujYgGHkQ1l0Jz6j6iI2jRbpzwDioxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVPDTze+QLrq1iNKXp5fbKANRiJC/tBk081JBHim4Q7Syy4XS78jQCkt5fukd+FLHa7M/SBZ9cZcADiDabO8slQ5Gg4hvM0o5knrqvYAD7klCSFnFH5QYdJpE2hY6yozwnWvdSLDA9znDtdP7Whv1kUUnJP00K/27shiQ4vGlTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83768C4CEE2;
-	Mon, 17 Feb 2025 08:34:33 +0000 (UTC)
-Message-ID: <0218c59c-ed97-4315-9306-041636462293@xs4all.nl>
-Date: Mon, 17 Feb 2025 09:34:32 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406D13D68;
+	Mon, 17 Feb 2025 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739781437; cv=fail; b=f7sGlbjT7jGOVAdQJdr3Sl9UbTeSgPSKCTaf+cvMv0VTtm0gsP4bKD8dzYIZr9KHpbNMAd5VyPdN638hErnxHwdtHTaaSNYLhvMxsjIZd5UFUjtO9jBrdASp2FeOaVKcPmqgweZOFNAIVUirDwN3xnI0sGdrfP0Ox4TEwH+VHYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739781437; c=relaxed/simple;
+	bh=cDDjq8Rc0W7pwnzSzNOO36t2fVDFZ5b3cylx5XxXOqU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YCpdBRkBN8gzE2be3b8lHneyLpH5L/gq9rpRR0+KKFOVBTf+phiGU5YC3kRb+uHwEgTD1dEM7pk2eK5sLyYp9iPnt589jGdYtvzR9H/zB5mKu+9R8KRAB49oMoU1TItoKZnXuvSCUibtsDUvSDuDVYAkQ6Jfval6FKGfdEm2lMo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EMOy8Ad1; arc=fail smtp.client-ip=52.103.68.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZCAOIrjCYaXyrLtWSgPlPBABkKfOnu5cyRHFrVNBs7Ue9J3KMKoGWS1vXHmaLJWd9HIRCFxxBHGhoYDXn8kqk8Ose3R3gsdDs1UsJVMizD5Xx9nUBHnsBjaitNsIuSoQDW8r0pe4Lwh8YUA3jwguvWWzjTnqJyzSIOXxLL3vcbepXaLPBWy1x3qxM6wk8j2Xu6DVixCqTGDuwvEYHe9PKv/cT6VNpSDJ+2HHpF8GM6vZVVlGEtQI7kc7I7+7LXp9i1Y8K38jvrkY7SYIktJ1Hgp43odWtbBlUv09SxXgrTuIrTplOwMlQpYsLIVevMH4UOxEIyEkuay6JuyMEOyooA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+/lmH3hliXFfrwhuPd2qi9Ax/nF386Fu4E7znrcRs5w=;
+ b=XSK13fnoIzAO2ILIGO5fZnjaqO3ooE9VmArEse4uUfE3muQmxOW7iHHKVys9kJUtGBZ3B+K7aaXLgGhM1mp2RBjmDqaVOYsdJ2nOZotYQv0Tg6WZj5uDD8Gwl2bVJqaeKYtQ71xaS75Egr18F7XphXT4z93ypG7MT2n51qHJr7FGx1le/SyjHQLT8Nf/6YGLlrx/sMEOpeE+s1BHnMa1WdSLNBMb20jzTkyooTvzHWXJFqOP/XpZhCq5EBvNaPSR+KdwS2Ctvl8Qm5isqiHOPxyKDyAyDDq6L7iFBVMQabGe3ZNSFpFnc2WQ3QNnCAOX/jfq+0oGOk+QmZYCfDvAtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+/lmH3hliXFfrwhuPd2qi9Ax/nF386Fu4E7znrcRs5w=;
+ b=EMOy8Ad1ETTXN73Ut++u+Ap/t4f4uy1gSDsM78yVCa7K4VKugudk9Ed+Bmlc/FuGAh1Za38tQdKuVguagXK2O+FXM1THvyHrOmaubLmN37tq0Gurb9jQv6Z2NWwWYNtvmDdIJbJC/T/mBiKfBwYUJAsVxJQ3119FziyqR7tIsL9QGuPTk/1OSScwC0wM+ud2rZCRVzc74f35ZaR5Lmjc5i6Roq/M/QukTKYn1xluaQQIqWE5j8p8/MJ0ownn8sJ/laDfFaGfLDSLHSB80kFo+c5FhVwPvemF2P8RbyS9OJ/IMtnL/IyPOle7SX9X6CW2WcNCADm9DrHTurFCaxNRKg==
+Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:6e::9)
+ by MA0PR01MB6441.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:79::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 08:37:04 +0000
+Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::6e06:bc2e:85c0:c2ee]) by MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::6e06:bc2e:85c0:c2ee%2]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 08:37:04 +0000
+Message-ID:
+ <MA0PR01MB56715CA3F83F4ADF298D2E4CFEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+Date: Mon, 17 Feb 2025 16:36:59 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
+To: Bjorn Helgaas <helgaas@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
+ arnd@arndb.de, bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
+ inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
+ lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+ chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
+References: <20250122213303.GA1102149@bhelgaas>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20250122213303.GA1102149@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0117.apcprd02.prod.outlook.com
+ (2603:1096:4:92::33) To MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:6e::9)
+X-Microsoft-Original-Message-ID:
+ <762afb26-e11d-4f55-a374-6bd215bb79ba@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] Add Synopsys DesignWare HDMI RX Controller
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
-References: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0PR01MB5671:EE_|MA0PR01MB6441:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08562252-7ca3-43d9-f27f-08dd4f2e417c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|461199028|7092599003|6090799003|5072599009|8060799006|19110799003|1602099012|4302099013|3412199025|10035399004|440099028|12091999003|41001999003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NzZ0YlJ4L2hVU1JNVEpBTGMvQ2xXSG1SNGtLZFU5QWlYNFNWVUc5ZlZzQW93?=
+ =?utf-8?B?ZnBqOE1pT21YVGlQOTV6VXcyczZMbEpMZit2RmJKS2FUL0dZcGtmL2tINmVJ?=
+ =?utf-8?B?K204YnlXUUgyUUFZSzdTb01ocEdPb1U5Rk9vdkpCTEVwSWlEb3hyWkJiU256?=
+ =?utf-8?B?Tyt3WW1zMjJUQmJ2a2dUalNiSEhyZ2ZtZnlGS3BGeUVzMXJRemx6VmZ5bEV6?=
+ =?utf-8?B?N0t1bksyMVdQNm1sTXJZUXFPYTU4YUlBcVVkRGs3bkFLdE9XeGJyZDd0Tzkx?=
+ =?utf-8?B?Z0dBRHlCWHpGYVFia3hRbFExL3FjK1JCQmZPcGRrcnZFQWZqTUI1K3kzNTZx?=
+ =?utf-8?B?YkNpSWRZblRnTzcrK0FUNnNSeE5PbXYvcUQveW9QeHlONC9YNmEyVmtrRXJL?=
+ =?utf-8?B?SW9YcjZuWVMzSmxtVnRoQW9VMjVtU2dVY09zUzF4anVXdk9qVHBCcVB1SE4z?=
+ =?utf-8?B?bkJ3em8yeFV0VStjZmRtWjBHRk0yVVVDVXM0SG1VWXpoRjhwclVmZkZtSmFX?=
+ =?utf-8?B?dGliSk9hRGVkczFyQTEzYVBJUE9tRUJFdTdPSzVZWTJMaC9UeE90YW5WNENs?=
+ =?utf-8?B?Z1dPVUVIRm42Qyt3YTJUWFgwZnNTb29LWWZtUnNPajQ1M0kraVdBWW1kN3d5?=
+ =?utf-8?B?QjUzSk9ySDh5Ni9GdmdOUXN0Q0dlS3BGeksxcS9SUlp1Y1VyTkhpMmpNUUI0?=
+ =?utf-8?B?UTQ4ZXhLVGo1SDU5b1VpV1hNK3BWSHJSdCt2Mkxvdk1yYWhyR3h3RmVOQjNn?=
+ =?utf-8?B?MmJ4WmhTZm5nTVNmQjhubkdhVEN1RS9qM1pKL0d0VkFQQXp4b3FKaWg5NElM?=
+ =?utf-8?B?STR5VzJ2cDFCeHN0SGQybjUvcDF1MjF0Y1NPTlM0ZVlRU1NIeFh3bStBaGJX?=
+ =?utf-8?B?QTZXVmQ5cUU2anpKbFVCSEp3TXc2L0xleS8wcGhRSXBRVmU2c1NQZ1RjSHY3?=
+ =?utf-8?B?NlMzYmRPOGx5aXNIT2txRlV0bzdpUzk3ck9BMW5odDNNRE4wY2l4RUNBUjdi?=
+ =?utf-8?B?SWFCeWd5TDQ3RERlSHRKQXBhNDl0QmYxQUxhcWo1QzJRK0wxLy9yU1JRWThD?=
+ =?utf-8?B?OE90dUh1emZSZVcrcDA0ZkFpR1p5WS9XemcwYTRsYWhpWjgwbWN6TklQMkds?=
+ =?utf-8?B?dUZaVUI0M0ltOG5hMEpueFJreUgwK3B0cUIxTlM4Z2xOa0NkUUJvd2hReStW?=
+ =?utf-8?B?bk1KVlBYd1h5ek9KQnBzWDhCaElXMEg5NGJJYmVxMTExTWhlQ2lYQm5YS3I2?=
+ =?utf-8?B?N3lmVVExZHdiQzlPSlZoRkhtM1lSeGVLM3pkc05UbVQxT25UVFNZWmNOOEs2?=
+ =?utf-8?B?ck9ZaWhOMVgxU1BaejNabGhVaEdJeHY2UW1IZWNDNElRWVlwcm1mYml6NWVz?=
+ =?utf-8?B?U1NITTZ5aE4wVXdtekxyTTZGK2pObjRIbVdGUno0b1YwL0Z6cjBmYlpYWm14?=
+ =?utf-8?B?UGRQTkswNFlXakNkSHVaMHg1NHlkQ3dLTHlqdERQdWdKVnJuUldpS0VXNWVj?=
+ =?utf-8?B?UGJDckRJSHQyY0ZGQlBuL1dsTnBVeC81T1Rjb1ZrRUtNZ0QyYjl6dlhRUVVs?=
+ =?utf-8?B?Z09NUDJ0K1Zld1ZsTkFDM1M4OVFWKzNJME9Lb1BvcW50eHpBb1l3d2h6Q3Jo?=
+ =?utf-8?B?UmxEUDlkemMwZWsrUzM1aERGSGZ4bWlqMG5yS1AxQzFBRlZvZjVWb0pmSm5R?=
+ =?utf-8?B?c2grTE15cnJJQzhLSGcrMU1JemhMbjJuNk1xMktHcFNvcFhrNXpEd0lHK0hp?=
+ =?utf-8?B?M091OXJtbnJzbDVXWUZPMnV0NDB4dHZFTnVQNUNUUXpQUnFHRUVRODlKTk1I?=
+ =?utf-8?B?eTJramMvSTVwS1BvWndEZz09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SDQvV01Sai8zc01iaXRVN1JTL1NNbnZ0S3UxRmdyNTlRNzNxeUZPSGZrZ0hT?=
+ =?utf-8?B?N0NacUx3ZllOWHhQdHQ3cmFmNTQ3QXlSMXVaOVpuZkhsS2krYjY4SGx6YUlY?=
+ =?utf-8?B?dS90S3MxVTVZT0wzeVg1eHRVQVBOM2xTeTZRcDlnMDh0djNrdWx3bnBrbmpY?=
+ =?utf-8?B?TWZyQ21kVEhScVZVNlUrUjNoVXM0RVNJMUpWTGQ1OXhlRDNxTFhTTjJHOWll?=
+ =?utf-8?B?ZHVzZHhDcWxHM0NyMWJPVGRMRzZ3dUtVbzRkek9PZ2x0S25VWko0TDBhbGRG?=
+ =?utf-8?B?b1lIaWJRRnAxSTFtNlBMcDh4SnRXdVN2VFd3Tk9RUk9hdDFoM2QvK0RqeDZh?=
+ =?utf-8?B?VUF2QlZiTTIyaUlPeEtLQzZtRHVvOHRuelJkcDRrbGJBUjY4QWwvRHhhTTFI?=
+ =?utf-8?B?TDBFVUJpUkVwRTBHS0c2a1BMYlMwWVhYSW5HSFBPeExLOCtEQXRvc3ZOdllC?=
+ =?utf-8?B?TDhBM2g0NjYyVjhKamRnL2xxbm1MUjVuV3NKa0RTQUYzeXlXckxXdVErNk9p?=
+ =?utf-8?B?d0Vpb0F5T0lLOWwvK0VyampYYldHNkkyaVkxNEpSQmtYWFBOY1kyWXpnSHZB?=
+ =?utf-8?B?SFhyN1MxUU5oZFkwN1M2Ulo5NzJJckl1dzdZTVpGRk9vbncyNTFWUHdKT0dI?=
+ =?utf-8?B?KzBMaGFYUENvc1VHdkNFL0JQeEhEMjFVVFZXbEN3ZTNPZE5YclFjblJMdjRF?=
+ =?utf-8?B?aC9qd0xqRkI3MFM4SkpUN1RkOVcyYy9iUnR3REVHN1JrM0oxcFZKZnQvWWlN?=
+ =?utf-8?B?L0w2aVBhTGFjY2dJbDJpeDVuRmhmQ3BCRFVQMEFiU3RNV3Zsc0xkRm5Qb1pW?=
+ =?utf-8?B?MXdORXNFdlFxbndIditnL3NLVzBuMnVGUmcwVlNiYXV3bVQybkR3Y0xEemY4?=
+ =?utf-8?B?emZ5QUlBWFdoQXNmd0I4dml2eWQyemtleXFDT0tNdjNoWlVNMzUvOC9WSnNl?=
+ =?utf-8?B?ZyticEovcFJnRXRjL1I2ZDBQV28rN0hqQUF2MW9JdXhUVndqOUJSc2ZoQ1BK?=
+ =?utf-8?B?NTRFdHlMUTRoS3REZEZLOEtrNnBwQVJwM3JHR0t6eGpCVUI2WENwbDFhVE9J?=
+ =?utf-8?B?QU8rSEhpcktoK3NITHlRRjJZdVovRW9KbkdhdVBwNHgyWFlLTENWR2VOOGhh?=
+ =?utf-8?B?bS9KN0psSkhqN1MvcU9rb3RpdkdXMHpEeG9RZExsUmsvSDJaNDdVYWVnL0hs?=
+ =?utf-8?B?QzY5THpxeHJJSmMwZ0FSNitUOTlOUmd3aENPckVzeEw1WjJLNXgzczN5WnF0?=
+ =?utf-8?B?cmhBblFYNmV5SDVmdzIwcVE0SS9YTVlvOHNKME9WVHBZL2p2cWhwSzhvODN6?=
+ =?utf-8?B?TXRBZVpDa2ZmSWUyd1NzZ21neGxxRHlBUzFJME0xZ3c2LytvN0FHMWdLWFVj?=
+ =?utf-8?B?SjdhZnZWWnRqRm9rUkZSalMrOWxrSjRueXB4bmdxc2xPL1lxeTk5M2VqUkpG?=
+ =?utf-8?B?b1Z6bTVENnJOTytOWXhVVU5QdllBOEp2bm9VYkZNdXFsSDRMbXZySTA2UEQr?=
+ =?utf-8?B?QzlQWGU0QlUzZDhIVFFrczRRT2JSVnNsUDJHeWhvM1Q0TWhvV3JHbEUwcUcr?=
+ =?utf-8?B?REpUWDhIRFR4U09EUUlRczA5Q1YyK1R6K0NVa0dnWnI0dlRGQmxQWW5IK2Fp?=
+ =?utf-8?B?WGREdUMvNE1PWEVCblE1Z0UrNk5iOGZhZHRVdGg5ekw5OXkxVmRtblN1ZnR3?=
+ =?utf-8?B?VnNaYTBzdmxGT3d5QUQvaE1OUVE0RXU1WUxBQlZiNDU5YUlzOWtYc2ZTMk54?=
+ =?utf-8?Q?215U/nFU1fmgQ9xdFZD68h8jdlDyAqwW9nwJWjX?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08562252-7ca3-43d9-f27f-08dd4f2e417c
+X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 08:37:04.6868
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB6441
 
-Hi Dmitry,
 
-On 15/02/2025 22:04, Dmitry Osipenko wrote:
-> This series implements support for the Synopsys DesignWare
-> HDMI RX Controller, being compliant with standard HDMI 1.4b
-> and HDMI 2.0.
-> 
-> Features that are currently supported by the HDMI RX driver
-> have been tested on rock5b board using a HDMI to micro-HDMI cable.
-> It is recommended to use a good quality cable as there were
-> multiple issues seen during testing the driver.
-> 
-> Please note the below information :-
-> * HDMIRX driver now only works with the opensource TF-A.
-> * We have tested the working of OBS studio with HDMIRX driver and
-> there were no issues seen.
-> * We tested and verified the support for interlaced video.
-> * We tested capturing of YUV formats.
-> 
-> To test the HDMI RX Controller driver, following example commands can be used :-
-> 
-> root@debian-rockchip-rock5b-rk3588:~# v4l2-ctl --verbose -d /dev/video0 \
-> --set-fmt-video=width=1920,height=1080,pixelformat='BGR3' --stream-mmap=4 \
-> --stream-skip=3 --stream-count=100 --stream-to=/home/hdmiin4k.raw --stream-poll
+On 2025/1/23 5:33, Bjorn Helgaas wrote:
+> On Wed, Jan 15, 2025 at 03:06:57PM +0800, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add support for PCIe controller in SG2042 SoC. The controller
+>> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
+>> PCIe controller will work in host mode only.
+>> + * pcie-sg2042 - PCIe controller driver for Sophgo SG2042 SoC
+> I'm guessing this is the first of a *family* of Sophgo SoCs, so
+> "sg2042" looks like it might be a little too specific if there will be
+> things like "sg3042" etc added in the future.
+As I know, SG2042 will be the only one SoC using Cadence IP from Sophgo. 
+They have switched to other IP(DWC) later.
+>> +#include "../../../irqchip/irq-msi-lib.h"
+> I know you're using this path because you're relying on Marc's
+> work in progress [1].
+>
+> But I don't want to carry around an #include like this in drivers/pci
+> while we're waiting for that, so I think you should use the existing
+> published MSI model until after Marc's update is merged.  Otherwise we
+> might end up with this ugly path here and no real path to migrate to
+> the published, supported one.
+>
+> [1] https://lore.kernel.org/linux-riscv/20241204124549.607054-2-maz@kernel.org/
+OK, I will switch back to use the existing published MSI model.
+>> + * SG2042 PCIe controller supports two ways to report MSI:
+>> + *
+>> + * - Method A, the PCIe controller implements an MSI interrupt controller
+>> + *   inside, and connect to PLIC upward through one interrupt line.
+>> + *   Provides memory-mapped MSI address, and by programming the upper 32
+>> + *   bits of the address to zero, it can be compatible with old PCIe devices
+>> + *   that only support 32-bit MSI address.
+>> + *
+>> + * - Method B, the PCIe controller connects to PLIC upward through an
+>> + *   independent MSI controller "sophgo,sg2042-msi" on the SOC. The MSI
+>> + *   controller provides multiple(up to 32) interrupt sources to PLIC.
+> Maybe expand "PLIC" the first time?
+Sure.
+>
+> s/SOC/SoC/ to match previous uses, e.g., in commit log
+> s/multiple(up to 32)/up to 32/
+ok
+>> + *   Compared with the first method, the advantage is that the interrupt
+>> + *   source is expanded, but because for SG2042, the MSI address provided by
+>> + *   the MSI controller is fixed and only supports 64-bit address(> 2^32),
+>> + *   it is not compatible with old PCIe devices that only support 32-bit MSI
+>> + *   address.
+> "Supporting 64-bit address" means supporting any address from 0 to
+> 2^64 - 1, but I don't think that's what you mean here.
+>
+> I think what you mean here is that with Method B, the MSI address is
+> fixed and it can only be above 4GB.
+Yes, I will fix it.
+>> +#define REG_CLEAR_LINK0_BIT	2
+>> +#define REG_CLEAR_LINK1_BIT	3
+>> +#define REG_STATUS_LINK0_BIT	2
+>> +#define REG_STATUS_LINK1_BIT	3
+>> +static void sg2042_pcie_msi_clear_status(struct sg2042_pcie *pcie)
+>> +{
+>> +	u32 status, clr_msi_in_bit;
+>> +
+>> +	if (pcie->link_id == 1)
+>> +		clr_msi_in_bit = BIT(REG_CLEAR_LINK1_BIT);
+>> +	else
+>> +		clr_msi_in_bit = BIT(REG_CLEAR_LINK0_BIT);
+> Why not put the BIT() in the #defines for REG_CLEAR_LINK0_BIT,
+> REG_STATUS_LINK0_BIT, ...?  Then this code is slightly simpler, and
+> you can use similar style in sg2042_pcie_msi_chained_isr() instead of
+> shifting there.
+Ok, I will check this out in new version.
+>> +	regmap_read(pcie->syscon, REG_CLEAR, &status);
+>> +	status |= clr_msi_in_bit;
+>> +	regmap_write(pcie->syscon, REG_CLEAR, status);
+>> +static void sg2042_pcie_msi_irq_compose_msi_msg(struct irq_data *d,
+>> +						struct msi_msg *msg)
+>> +{
+>> +	struct sg2042_pcie *pcie = irq_data_get_irq_chip_data(d);
+>> +	struct device *dev = pcie->cdns_pcie->dev;
+>> +
+>> +	msg->address_lo = lower_32_bits(pcie->msi_phys) + BYTE_NUM_PER_MSI_VEC * d->hwirq;
+>> +	msg->address_hi = upper_32_bits(pcie->msi_phys);
+> This seems a little suspect because adding "BYTE_NUM_PER_MSI_VEC *
+> d->hwirq" could cause overflow into the upper 32 bits.  I think you
+> should add first, then take the lower/upper 32 bits of the 64-bit
+> result.
+OK, I will check this out in new version.
+>> +	if (d->hwirq > pcie->num_applied_vecs)
+>> +		pcie->num_applied_vecs = d->hwirq;
+> "num_applied_vecs" is a bit of a misnomer; it's actually the *max*
+> hwirq.
+"max_applied_vecs"？
+>
+>> +static const struct irq_domain_ops sg2042_pcie_msi_domain_ops = {
+>> +	.alloc	= sg2042_pcie_irq_domain_alloc,
+>> +	.free	= sg2042_pcie_irq_domain_free,
+> Mention "msi" in these function names, e.g.,
+> sg2042_pcie_msi_domain_alloc().
+ok
+>
+>> +static int sg2042_pcie_init_msi_data(struct sg2042_pcie *pcie)
+>> +{
+>> ...
+>> +	/* Program the MSI address and size */
+>> +	if (pcie->link_id == 1) {
+>> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_LOW,
+>> +			     lower_32_bits(pcie->msi_phys));
+>> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_HIGH,
+>> +			     upper_32_bits(pcie->msi_phys));
+>> +
+>> +		regmap_read(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, &value);
+>> +		value = (value & REG_LINK1_MSI_ADDR_SIZE_MASK) | MAX_MSI_IRQS;
+>> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, value);
+>> +	} else {
+>> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_LOW,
+>> +			     lower_32_bits(pcie->msi_phys));
+>> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_HIGH,
+>> +			     upper_32_bits(pcie->msi_phys));
+>> +
+>> +		regmap_read(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, &value);
+>> +		value = (value & REG_LINK0_MSI_ADDR_SIZE_MASK) | (MAX_MSI_IRQS << 16);
+>> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, value);
+>> +	}
+> Would be nicer to set temporaries to the link_id-dependent values (as
+> you did elsewhere) so it's obvious that the code is identical, e.g.,
+>
+>    if (pcie->link_id == 1) {
+>      msi_addr = REG_LINK1_MSI_ADDR_LOW;
+>      msi_addr_size = REG_LINK1_MSI_ADDR_SIZE;
+>      msi_addr_size_mask = REG_LINK1_MSI_ADDR_SIZE;
+>    } else {
+>      ...
+>    }
+>
+>    regmap_write(pcie->syscon, msi_addr, lower_32_bits(pcie->msi_phys));
+>    regmap_write(pcie->syscon, msi_addr + 4, upper_32_bits(pcie->msi_phys));
+>    ...
+Ok，I will check this out.
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static irqreturn_t sg2042_pcie_msi_handle_irq(struct sg2042_pcie *pcie)
+> Which driver are you using as a template for function names and code
+> structure?  There are probably a dozen different names for functions
+> that iterate like this around a call to generic_handle_domain_irq(),
+> but you've managed to come up with a new one.  If you can pick a
+> similar name to copy, it makes it easier to compare drivers and find
+> and fix defects across them.
+>
+>> +{
+>> +	u32 i, pos;
+>> +	unsigned long val;
+>> +	u32 status, num_vectors;
+>> +	irqreturn_t ret = IRQ_NONE;
+>> +
+>> +	num_vectors = pcie->num_applied_vecs;
+>> +	for (i = 0; i <= num_vectors; i++) {
+>> +		status = readl((void *)(pcie->msi_virt + i * BYTE_NUM_PER_MSI_VEC));
+>> +		if (!status)
+>> +			continue;
+>> +
+>> +		ret = IRQ_HANDLED;
+>> +		val = status;
+> I don't think you need both val and status.
+Yes, I will fix this.
+>
+>> +		pos = 0;
+>> +		while ((pos = find_next_bit(&val, MAX_MSI_IRQS_PER_CTRL,
+>> +					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
+> Most drivers use for_each_set_bit() here.
+Ok, I will check this out.
+>> +			generic_handle_domain_irq(pcie->msi_domain,
+>> +						  (i * MAX_MSI_IRQS_PER_CTRL) +
+>> +						  pos);
+>> +			pos++;
+>> +		}
+>> +		writel(0, ((void *)(pcie->msi_virt) + i * BYTE_NUM_PER_MSI_VEC));
+>> +	}
+>> +	return ret;
+>> +}
+>> +static int sg2042_pcie_setup_msi(struct sg2042_pcie *pcie,
+>> +				 struct device_node *msi_node)
+>> +{
+>> +	struct device *dev = pcie->cdns_pcie->dev;
+>> +	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+>> +	struct irq_domain *parent_domain;
+>> +	int ret = 0;
+> Pointless initialization of "ret".
+Yes, I will fix this.
+>> +	if (!of_property_read_bool(msi_node, "msi-controller"))
+>> +		return -ENODEV;
+>> +
+>> +	ret = of_irq_get_byname(msi_node, "msi");
+>> +	if (ret <= 0) {
+>> +		dev_err(dev, "%pOF: failed to get MSI irq\n", msi_node);
+>> +		return ret;
+>> +	}
+>> +	pcie->msi_irq = ret;
+>> +
+>> +	irq_set_chained_handler_and_data(pcie->msi_irq,
+>> +					 sg2042_pcie_msi_chained_isr, pcie);
+>> +
+>> +	parent_domain = irq_domain_create_linear(fwnode, MSI_DEF_NUM_VECTORS,
+>> +						 &sg2042_pcie_msi_domain_ops, pcie);
+> Wrap to fit in 80 columns like 99% of the rest of this file.
 
-This looks a bit odd. This commandline should work just as well:
+Ok, I will check this out.
 
-v4l2-ctl --stream-mmap --stream-count=100 --stream-to=/home/hdmiin4k.raw
+Thanks,
 
-v4l2-ctl will call QUERY_DV_TIMINGS, then (if a valid signal is found) S_DV_TIMINGS.
-That in turn updates the v4l2_format. So there is no need to set the video format,
-it should happen automatically.
+Chen
 
-Also, why skip the first three frames? And why select --stream-poll?
-
-It could be that these are just left-overs from previous attempts, but it's
-weird.
-
-I also commented on the debugfs InfoFrame code in patch 4/6, that's not
-correct.
-
-Regards,
-
-	Hans
-
-> 
-> root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvideo \
-> -s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
-> 
-> CEC compliance test results :-
-> 
-> * https://gitlab.collabora.com/-/snippets/380
-> * https://gitlab.collabora.com/-/snippets/381
-> 
-> Following is the v4l2-compliance test result :-
-> 
-> root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video1
-> v4l2-compliance 1.29.0-5326, 64 bits, 64-bit time_t
-> v4l2-compliance SHA: 77f5df419204 2025-02-07 08:59:59
-> 
-> Compliance test for snps_hdmirx device /dev/video1:
-> 
-> Driver Info:
->         Driver name      : snps_hdmirx
->         Card type        : snps_hdmirx
->         Bus info         : platform:fdee0000.hdmi_receiver
->         Driver version   : 6.14.0
->         Capabilities     : 0x84201000
->                 Video Capture Multiplanar
->                 Streaming
->                 Extended Pix Format
->                 Device Capabilities
->         Device Caps      : 0x04201000
->                 Video Capture Multiplanar
->                 Streaming
->                 Extended Pix Format
-> 
-> Required ioctls:
->         test VIDIOC_QUERYCAP: OK
->         test invalid ioctls: OK
-> 
-> Allow for multiple opens:
->         test second /dev/video1 open: OK
->         test VIDIOC_QUERYCAP: OK
->         test VIDIOC_G/S_PRIORITY: OK
->         test for unlimited opens: OK
-> 
-> Debug ioctls:
->         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->         test VIDIOC_LOG_STATUS: OK
-> 
-> Input ioctls:
->         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->         test VIDIOC_ENUMAUDIO: OK (Not Supported)
->         test VIDIOC_G/S/ENUMINPUT: OK
->         test VIDIOC_G/S_AUDIO: OK (Not Supported)
->         Inputs: 1 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->         Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
->         test VIDIOC_DV_TIMINGS_CAP: OK
->         test VIDIOC_G/S_EDID: OK
-> 
-> Control ioctls (Input 0):
->         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->         test VIDIOC_QUERYCTRL: OK
->         test VIDIOC_G/S_CTRL: OK
->         test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->         Standard Controls: 4 Private Controls: 0
-> 
-> Format ioctls (Input 0):
->         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->         test VIDIOC_G/S_PARM: OK
->         test VIDIOC_G_FBUF: OK (Not Supported)
->         test VIDIOC_G_FMT: OK
->         test VIDIOC_TRY_FMT: OK
->         test VIDIOC_S_FMT: OK
->         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->         test Cropping: OK (Not Supported)
->         test Composing: OK (Not Supported)
->         test Scaling: OK (Not Supported)
-> 
-> Codec ioctls (Input 0):
->         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls (Input 0):
->         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->         test CREATE_BUFS maximum buffers: OK
->         test VIDIOC_REMOVE_BUFS: OK
->         test VIDIOC_EXPBUF: OK
->         test Requests: OK (Not Supported)
->         test blocking wait: OK
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
->         test read/write: OK (Not Supported)
->         test MMAP (no poll, REQBUFS): OK                  
->         test MMAP (select, REQBUFS): OK                   
->         test MMAP (epoll, REQBUFS): OK                    
->         test MMAP (no poll, CREATE_BUFS): OK              
->         test MMAP (select, CREATE_BUFS): OK               
->         test MMAP (epoll, CREATE_BUFS): OK                
->         test USERPTR (no poll): OK (Not Supported)
->         test USERPTR (select): OK (Not Supported)
->         test DMABUF: Cannot test, specify --expbuf-device
-> 
-> Total for snps_hdmirx device /dev/video1: 57, Succeeded: 57, Failed: 0, Warnings: 0
-> 
-> ---
-> 
-> Changes in v6 :-
-> - Driver now keeps HPD low instead of zeroing EDID when EDID-clearing is 
->   invoked and when default EDID usage is disabled in the kernel config
-> - Added InfoFrame debugfs support
-> - Added another code comment clarifying validation of timing values
-> - Rebased on top of recent media-next tree
-> 
-> Changes in v5 :-
-> - Fix the interrupt IRQ number in the dt-bindings and device tree
-> - Add alignment property to ensure hdmi-receiver-cma
->   starts at a 64KB-aligned address
-> - Change the MODULE_DESCRIPTION
-> - Add VIDEO_SYNOPSYS_HDMIRX as prefix to the default edid config
-> - Drop the enabling of default edid in the Kconfig
-> - Replace the default EDID with hdmi-4k-300mhz EDID produced
->   by v4l2-ctl tool for better compatibility with various HDMI
->   cables and adapters
-> - Rework the write_edid and set_edid functions
-> - During format change, retrieve the current pixel format,
->   color depth, and AVI infoframe details instead of only
->   detecting the format
-> - Improve the logging mechanism and delays in the
->   hdmirx_wait_signal_lock function
-> - Fix the 4K@60 capturing for RGB format
-> - Document what hdmirx_check_timing_valid function does
-> - Rework the hdmirx_get_detected_timings function
-> - Fix the NV16/24 size image value
-> - Add the implementation from Benjamin Hoff to expose the
->   ITC type to v4l2
-> - Remove all the firmware related code
-> 
-> Changes in v4 :-
-> - Remove DTS changes included in the device tree patch
-> - Remove the hdmi rx pin info as it's already present
-> in the rk3588-base-pinctrl.dtsi
-> - Create a separate config option for selecting the EDID
-> and enable it by default
-> - Improve the comment related to DV timings and move it
-> to the side of hdmirx_get_detected_timings
-> - Add 100ms delay before pulling the HPD high
-> - Do not return the detected timings from VIDIOC_G_DV_TIMINGS
-> - Drop the bus info from hdmirx_querycap
-> - If *num_planes != 0 then return 0 in hdmirx_queue_setup
-> - Set queue->min_queued_buffers to 1
-> - Drop q->allow_cache_hints = 0; as it's always 0 by default
-> - Add a comment for q->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
-> - Drop .read = vb2_fop_read as it's not supported by driver
-> - Remove redundant edid_init_data_600M
-> - Make HPD low when driver is loaded
-> - Add support for reading AVI Infoframe
-> - Remove msg_len checks from hdmirx_cec_transmit
-> - Add info about the CEC compliance test in the cover letter
-> - Add arbitration lost status
-> - Validate the physical address inside the EDID
-> 
-> Changes in v3 :-
-> - Use v4l2-common helpers in the HDMIRX driver
-> - Rename cma node and phandle names
-> - Elaborate the comment to explain 160MiB calculation
-> - Move &hdmi_receiver_cma to the rock5b dts file
-> - Add information about interlaced video testing in the
-> cover-letter
-> 
-> Changes in v2 :-
-> - Fix checkpatch --strict warnings
-> - Move the dt-binding include file changes in a separate patch
-> - Add a description for the hardware in the dt-bindings file
-> - Rename resets, vo1 grf and HPD properties
-> - Add a proper description for grf and vo1-grf phandles in the
-> bindings
-> - Rename the HDMI RX node name to hdmi-receiver
-> - Include gpio header file in binding example to fix the
-> dt_binding_check failure
-> - Move hdmirx_cma node to the rk3588.dtsi file
-> - Add an entry to MAINTAINERS file for the HDMIRX driver
-> 
-> Sebastian Reichel (2):
->   arm64: defconfig: Enable Synopsys HDMI receiver
->   arm64: dts: rockchip: Enable HDMI receiver on rock-5b
-> 
-> Shreeya Patel (4):
->   MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
->   dt-bindings: media: Document bindings for HDMI RX Controller
->   arm64: dts: rockchip: Add device tree support for HDMI RX Controller
->   media: platform: synopsys: Add support for HDMI input driver
-> 
->  .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
->  MAINTAINERS                                   |    8 +
->  .../dts/rockchip/rk3588-base-pinctrl.dtsi     |   14 +
->  .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   57 +
->  .../boot/dts/rockchip/rk3588-rock-5b.dts      |   18 +
->  arch/arm64/configs/defconfig                  |    1 +
->  drivers/media/platform/Kconfig                |    1 +
->  drivers/media/platform/Makefile               |    1 +
->  drivers/media/platform/synopsys/Kconfig       |    3 +
->  drivers/media/platform/synopsys/Makefile      |    2 +
->  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
->  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
->  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2715 +++++++++++++++++
->  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
->  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
->  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
->  16 files changed, 3705 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
->  create mode 100644 drivers/media/platform/synopsys/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
-> 
-
+>
+> Bjorn
 
