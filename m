@@ -1,155 +1,164 @@
-Return-Path: <linux-kernel+bounces-517967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8E8A38846
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:50:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A207CA3886B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C54417413C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07431701B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA89225777;
-	Mon, 17 Feb 2025 15:48:25 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698B229B21;
+	Mon, 17 Feb 2025 15:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OW+EUzom"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31DA22541C;
-	Mon, 17 Feb 2025 15:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C67228C9D;
+	Mon, 17 Feb 2025 15:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807304; cv=none; b=DISuyioPcD6nhtgwlZZlNWJwb9sGayIPEFWlahyOGjr6mUg/OPeBXwLhSDEvkR6wv5v3or8OrrDmgRR1JAymW8qcNINyQp0hReaArOWjADR+Y8GA1yfz9EHa72UnNhK5cxJwWZMk9MrXRUrhEAmhszwW4iG8iBm7iGyQNXV9a70=
+	t=1739807390; cv=none; b=FjBxGuODX4V3M27hiaJ5JjFHTLijqbtnrMoiYOVqkwq8ATxO70/gHhL8JKAv+ERwUr5k6I5kmmPYKXhCRO/Y5SDCUdS86+RfMgrVbceMDXptqwul6ZMdH4WOgQkd6KLh662Pdh5R+4X/L0SRKWn0JQOCsbjrhtN687Y9xwvCZmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807304; c=relaxed/simple;
-	bh=/lEU7xULHAxpZlni8AN8DMboE77iRpAYV9/tk9IUOWo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GUW+s6eROIBOL6x6R88vWFR08ynAr0+3c0LNA+/sYNN9Ju60+F3ZtmHHSEewqf/626D4GtqdpaO5YAF5rlwoYamvJ57PD6dyU4rSRDKlb8dR2X3lewLeROVaZoQs+7Vvx4vP3kQvo0BZRb98BtlKcqjpJ7Rtyg3neUtZjhtLcxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso5703140a12.1;
-        Mon, 17 Feb 2025 07:48:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739807301; x=1740412101;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/1TpPTCwLBrR1Kg3bSBlDuh3UE64GUFqlUJpFTwfGE=;
-        b=G0tp/dPoRYQh/uoxqzYK+5tbdiitFxKT1CLYd/ZXgalDq241Flut8pp0U9OY/WgxA1
-         gHjopvCRVCVuEAJlAma1rMUv+IToHBMvwcBb3mJBHxg80D0GOEXNCElTTjSYrUlr3nIi
-         30deSvdIvNUfCTjcGA1+XlTFZthj8ew+KLQ2VvvIznDgZDFrg/jFf+i57W1d1ijtPc20
-         Zms6sgnmX5iX/vefa6ZKyWvN97J7lrf+DFrNLMeKxZX2XrUdLHDJiMhgtYBtaeO56OKS
-         9TPdMMNHCWUIhFLyYBi5IB6aoy0GuvQfM3LxIZBPo+uEvw7JNyJlQ9Arz62/uRT5HHNx
-         9Fjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWuJWWqV/6xiDmISWlyJdyyYDtqrX7M8M12qyC20DSdBfi3Tbd0moG2CC4yoUbVNafG24Gp70/R/6rpFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMjXfv1PbmUS0SzRHOP/9ZsFSP7YoNj4g3mqTiBTdkOvB5sAyH
-	Qn6zIt3GLMhWPD+PNruI43osX9NayHH+4lktJDvmmH5JhHtAHckD
-X-Gm-Gg: ASbGncunUcc33wZKzX2WtalrZGvklgq3RAZtFQr3+oVnFRFyoglbZwctq1+BaVuCZmD
-	wdPwTii+X9zEqOkk65dMQu74FThwHv/fgoSyqS2lzrzwXEK5cqCVuxY279mecQvJ7/7eUaHeaG8
-	qxd/Y2NO/PsPHw4iypvh2OG1lMd0tbQkgLSgWqXXxuMIF+G4hQg69R7lO/pJeffZejA95coaGA7
-	ulvbDsKtUuy1k1kdvyiB73LtW+tu8E19EJe79miB5xkjVyn0xjiA4EIe+haXahIW1nNwzQe01xx
-	UyhVkg==
-X-Google-Smtp-Source: AGHT+IGa1bidXafeMjDwaHLsDjxINfvO4wZU3rw0YCPBPybKrh47+RviRoxnX7Rhi2G5tYu7f0aAPA==
-X-Received: by 2002:a17:906:f59c:b0:ab3:76fb:96ab with SMTP id a640c23a62f3a-abb70e4e1d9mr1096890266b.57.1739807300877;
-        Mon, 17 Feb 2025 07:48:20 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9f8442c0sm177973466b.150.2025.02.17.07.48.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 07:48:20 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 17 Feb 2025 07:48:13 -0800
-Subject: [PATCH net-next v2] net: Remove redundant variable declaration in
- __dev_change_flags()
+	s=arc-20240116; t=1739807390; c=relaxed/simple;
+	bh=bw8rCx7v+bgiBlD+SI/NQtL2q5RqtEsz/aiuZYDVTg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VVTsZhXaRnAdUKJkoPlB1XM+Vi1KnTd68kOmerXf98LvRW6B23P4n1FquwNX27h8H42lCGOLZN5jwV71XcHsUO0gvX46Gk4Ae0f6u6STLwJfk4yezPDpAEBNnOwQoyHa4oxicOYEKfGoLOY+iIMR7TvXYa3e7m/4MuWLuOdN8Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OW+EUzom; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739807386;
+	bh=bw8rCx7v+bgiBlD+SI/NQtL2q5RqtEsz/aiuZYDVTg0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OW+EUzomV5z/EFv6by8ncUUdp8+dp+9Yexb+IIv9gNDj/OMFWeiHnwOGayOQODAuv
+	 f9Gru2VhjKYtgWa6jFJGHGOcitnYJtb8+EKovhDdrFjECinl4QwHtrvvjeWU7BYt/U
+	 nT3wMtFQ+Z3dk+Ii/6dKcweQzDzxHKgT74FyUQ3bKfUaEmh7UFm/uTEhOQ/xZieAJB
+	 MdJAEnSERA0EqZhza+ezX0znEJqh7FQU6sGs5ucwv6r/f5oFB6kL90xk1WNmthk53C
+	 VosIHn1hdZ3ntzcEmTVBUylCYoqaWtQ8bTipefuA0U3+ZMWylFCm7LY4mkzV2ZwscF
+	 4hUOUiX08GSkA==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 95F1E17E1578;
+	Mon, 17 Feb 2025 16:49:45 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chunkuang.hu@kernel.org
+Cc: p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	ck.hu@mediatek.com,
+	jitao.shi@mediatek.com,
+	jie.qiu@mediatek.com,
+	junzhi.zhao@mediatek.com,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com,
+	dmitry.baryshkov@linaro.org,
+	lewis.liao@mediatek.com,
+	ives.chenjh@mediatek.com,
+	tommyyl.chen@mediatek.com,
+	jason-jh.lin@mediatek.com
+Subject: [PATCH v7 20/43] drm/mediatek: mtk_hdmi: Disgregate function mtk_hdmi_audio_set_param()
+Date: Mon, 17 Feb 2025 16:48:13 +0100
+Message-ID: <20250217154836.108895-21-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
+References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-old_flags-v2-1-4cda3b43a35f@debian.org>
-X-B4-Tracking: v=1; b=H4sIADxas2cC/23NQQqDMBBG4auEf21KMtW2cdV7FClRRx2QpCQiF
- vHuBdddP/jejsxJOKNWOxKvkiUG1IoKhW7yYWQtPWoFMlQZsqWOc/8eZj9mXdFjYFNRebcdCoV
- P4kG203oh8KIDbwuaQmGSvMT0PSerPfsfb7XaanLG3Vp3dc67Z8+t+HCJaURzHMcPXFLGwq0AA
- AA=
-X-Change-ID: 20250214-old_flags-528fe052471c
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Nicolas Dichtel <nicolas.dichtel@6wind.com>, andrew@lunn.ch
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, 
- Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1938; i=leitao@debian.org;
- h=from:subject:message-id; bh=/lEU7xULHAxpZlni8AN8DMboE77iRpAYV9/tk9IUOWo=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBns1pDYujvLAfw5utcmAgE+6mDEDCDH4OpvaK6t
- QFU1Qp78/OJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ7NaQwAKCRA1o5Of/Hh3
- bUmYD/0ccF1Vxf3F4MLAjdje/sP41HsJTtFkDULzfzqbkQ4pGvE755kWqw4lbuix80ntioQDj81
- LrIUBOgJfJpg7GnV+aDMW5FriICKAsK8T4pxsWhqyDBC3eRQJvpsviJ9Pif+uG2rKtLwdBAnJWc
- esbOfKORfDD7VTVWD2vX+aarHjNHcgn/TGRwDU9rM5GJPejpNE7HeDv3KJ5TvpYmMS0nZsO3Wtc
- jzD0UAGXqSZk2A2ph56jqwTCGkIJC6bQLALxx0GBsvdOLZnc16WvZ8yceDG+typbcpYitHe8FIs
- tTkj8Vvcj7BvmfAC++HZLfEIsEhi3lvr2fSL4Lsjdfs4Q+IXYOcVDYvWpbfaQSmeEJHNj6LB0Ly
- u0XCBwQtQWFiA9cuYvvK44b2DHtmsAGbXwep/W+TZUccDqzu5rvnMjSsnT5NMf0JTyWGUZ+vi8y
- hxGF3gJEK7PFyyM3zal/FBAavTQPJZSinxu0/lowBJPjwG73tEY0cIOZdcqNp1pEYLmGMqdumSV
- Vlj9KiILvur5H8BXFVLayI7lkggpS1lici0MODmxINQlFoSOq1emuv9IcPlJolW7AXEElYKMPwp
- g/Rx2gMjPMX22dh9SzjFbLUwQl/V6uF0Sa0NoMfXUEfDecZWgDv6yRUu1nyWLJCK3WZE8kqdjI9
- UXeQfVGST6gjrOw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Transfer-Encoding: 8bit
 
-The old_flags variable is declared twice in __dev_change_flags(),
-causing a shadow variable warning. This patch fixes the issue by
-removing the redundant declaration, reusing the existing old_flags
-variable instead.
+As a cleanup, and in preparation for splitting common bits of this
+driver, disgregate the code in function mtk_hdmi_audio_set_param()
+to the beginning and end of function mtk_hdmi_audio_hw_params().
 
-	net/core/dev.c:9225:16: warning: declaration shadows a local variable [-Wshadow]
-	9225 |                 unsigned int old_flags = dev->flags;
-	|                              ^
-	net/core/dev.c:9185:15: note: previous declaration is here
-	9185 |         unsigned int old_flags = dev->flags;
-	|                      ^
-	1 warning generated.
+In a later commit, the hw_params callback function will also be
+disgregated so that the code will get two functions: one that
+performs the generic hdmi_audio_param copy, and one that performs
+IP specific setup, both of which will be called in the callback,
+allowing all of the non IP version specific code to get moved in
+a common file.
 
-Remove the redundant inner declaration and reuse the existing old_flags
-variable since its value is not needed outside the if block, and it is
-safe to reuse the variable. This eliminates the warning while
-maintaining the same functionality.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-Changes in v2:
-- Improve the commit message to specify that there is no impact reusing
-  the variable (Andrew)
-- Remove the Fixes tag, since we do not want this to be backported.
-  (Andrew)
-- Link to v1: https://lore.kernel.org/r/20250214-old_flags-v1-1-29096b9399a9@debian.org
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index d5ab9a4b318ea4926c200ef20dae01eaafa18c6b..cd2474a138201e6ee86acf39ca425d57d8d2e9b4 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9182,7 +9182,7 @@ int __dev_change_flags(struct net_device *dev, unsigned int flags,
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 6257503ce639..1f90cac112e2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1054,20 +1054,6 @@ static void mtk_hdmi_audio_disable(struct mtk_hdmi *hdmi)
+ 	hdmi->audio_enable = false;
+ }
  
- 	if ((flags ^ dev->gflags) & IFF_PROMISC) {
- 		int inc = (flags & IFF_PROMISC) ? 1 : -1;
--		unsigned int old_flags = dev->flags;
-+		old_flags = dev->flags;
+-static int mtk_hdmi_audio_set_param(struct mtk_hdmi *hdmi,
+-				    struct hdmi_audio_param *param)
+-{
+-	if (!hdmi->audio_enable) {
+-		dev_err(hdmi->dev, "hdmi audio is in disable state!\n");
+-		return -EINVAL;
+-	}
+-	dev_dbg(hdmi->dev, "codec:%d, input:%d, channel:%d, fs:%d\n",
+-		param->aud_codec, param->aud_input_type,
+-		param->aud_input_chan_type, param->codec_params.sample_rate);
+-	memcpy(&hdmi->aud_param, param, sizeof(*param));
+-	return mtk_hdmi_aud_output_config(hdmi, &hdmi->mode);
+-}
+-
+ static int mtk_hdmi_output_set_display_mode(struct mtk_hdmi *hdmi,
+ 					    struct drm_display_mode *mode)
+ {
+@@ -1487,6 +1473,11 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+ 	struct hdmi_audio_param hdmi_params;
+ 	unsigned int chan = params->cea.channels;
  
- 		dev->gflags ^= IFF_PROMISC;
++	if (!hdmi->audio_enable) {
++		dev_err(hdmi->dev, "hdmi audio is in disable state!\n");
++		return -EINVAL;
++	}
++
+ 	dev_dbg(hdmi->dev, "%s: %u Hz, %d bit, %d channels\n", __func__,
+ 		params->sample_rate, params->sample_width, chan);
  
-
----
-base-commit: 7a7e0197133d18cfd9931e7d3a842d0f5730223f
-change-id: 20250214-old_flags-528fe052471c
-
-Best regards,
+@@ -1547,8 +1538,13 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+ 
+ 	memcpy(&hdmi_params.codec_params, params,
+ 	       sizeof(hdmi_params.codec_params));
++	memcpy(&hdmi->aud_param, &hdmi_params, sizeof(hdmi_params));
++
++	dev_dbg(hdmi->dev, "codec:%d, input:%d, channel:%d, fs:%d\n",
++		hdmi_params.aud_codec, hdmi_params.aud_input_type,
++		hdmi_params.aud_input_chan_type, hdmi_params.codec_params.sample_rate);
+ 
+-	mtk_hdmi_audio_set_param(hdmi, &hdmi_params);
++	mtk_hdmi_aud_output_config(hdmi, &hdmi->mode);
+ 
+ 	return 0;
+ }
 -- 
-Breno Leitao <leitao@debian.org>
+2.48.1
 
 
