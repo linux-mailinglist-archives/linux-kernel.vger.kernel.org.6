@@ -1,51 +1,39 @@
-Return-Path: <linux-kernel+bounces-517653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C931FA383C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:04:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D00BA383D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5051896BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7875B172BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D2721C16D;
-	Mon, 17 Feb 2025 13:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="bO6ALWhb"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825D21ADA7;
-	Mon, 17 Feb 2025 13:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3003221C172;
+	Mon, 17 Feb 2025 13:03:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10169193084;
+	Mon, 17 Feb 2025 13:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739797295; cv=none; b=RcT0SCWjcDdXasVgKeqWzXRoSh2wmm4tmuMINdnTiZPlxJrxjcYK64C3SPUFSNytPiP0qD8VbyCB3XEX1Y4DNiM6zHMAsOZ8l5ZBIGHPqyJH5gSp4qRscXzLxtwTZ+eM0cf5+tNLTSFV3bLUI3KJb7Nb/sC9hywAQEEjLO4upjE=
+	t=1739797388; cv=none; b=LdmwTV3tOVjUdweHqXJw9Vn8B+XYgci0ZgTCv4I8+5buKidTzSFSOzkrAaGvtqLQMjg7n5GSR6XHe81F51XaclYlU23wzPIgELW+YdahOO+1qHDoC7FlQMTBWVEcOpoIIKN8BL/XJ7eE4HuUwOIKN2DHHTuDP33U3u5G9xz1inE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739797295; c=relaxed/simple;
-	bh=Hk9O6kgZtW5HBAPWDi1ubXQtnoQYa4K3Vipj/XLrz20=;
+	s=arc-20240116; t=1739797388; c=relaxed/simple;
+	bh=qrmOkaVLkCWivZRjK6eeyFEaTtgFT3AnfYzGBM29WPE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rLhUjimsb5HiVjdvLx2GPp/efjB71D7Fph6/3IwRnKVEYMHlmCoTQPPAYuaxJI74pwmmDNKUxwZezk/v9vmLkzPIA1PBX+dQ96f2P2tmNHB8DmMZMwkKG1CvDPXDc5hus6XigFlLOie/G3wQpGBC6cl8WotOL0FABlCGfy/z/wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=bO6ALWhb; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 21E8D442EC;
-	Mon, 17 Feb 2025 13:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1739797291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bOL9mfk/9v5FRO1VfirUKFrE/whi9WWcvzNJX8maZI0=;
-	b=bO6ALWhbXToInNzAwugYrepTD3C+fePro0peaMuYKAJEE3qz90F7zY7uftSaSeTkdCswHs
-	MrTrpDJ1FZM57Tzm8SVabRsLlTnl94kLbVKIH7NDR8ZyawZLlbBqpMXWIjnOoC5rvsbO68
-	GVO3qzIBDclhusXUotVYOinhVZOKqGBIcM3yad8MBNN61YqEt6ndtV62AqmdJu/xjfqmZa
-	7ntQ0wH9q87y8WbWy42Rd38CRgyNvaWCJn0iHeHqSL5InCKdkX7ipQUADuueouPSgSXyhO
-	nadEqh1vOOr6Dzy/itC1ersATHYxw+UUccV8/Ita2PvLOxTv+ntMJzQHctCuPQ==
-Message-ID: <b5ed8cc5-ae78-42f7-bbb8-8f9d286ed7b6@yoseli.org>
-Date: Mon, 17 Feb 2025 14:01:29 +0100
+	 In-Reply-To:Content-Type; b=FjoBHalo7tO3fTSNOEJkNoq/9bKm5Bd6Hg7o5OPCwXyskAj08LQXzDkA8calSgtoXOW1XIKlx35EbSi9qJH/OddeGMcKzlWs1LJH+a9mk87Vsg17o60xQnw9GEzun4JuOsfnyuMBkmkBHSnbdzW/uR38qoVbBuZ/ygDs//lzZvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BD9413D5;
+	Mon, 17 Feb 2025 05:03:24 -0800 (PST)
+Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABE313F6A8;
+	Mon, 17 Feb 2025 05:03:03 -0800 (PST)
+Message-ID: <4ccf81b2-fa1e-479d-91f4-1c518594f877@arm.com>
+Date: Mon, 17 Feb 2025 13:03:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,56 +41,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: mm: Replace deprecated strncpy() with strscpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-hardening@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org
-References: <20250213141037.50394-2-thorsten.blum@linux.dev>
-Content-Language: en-US, fr
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <20250213141037.50394-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFT][PATCH v1 2/5] cpuidle: menu: Use one loop for average and
+ variance computations
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>
+References: <1916668.tdWV9SEqCh@rjwysocki.net>
+ <3339073.aeNJFYEL58@rjwysocki.net>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <3339073.aeNJFYEL58@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeegiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnheptdehkedtieetudeiffekhfeghfdtheetfeeftddvleekgeelieduveetueehgeefnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepfeejrdduieelrdduvdeirddvgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepfeejrdduieelrdduvdeirddvgeekpdhhvghloheplgduledvrdduieekrddvtddrudeijegnpdhmrghilhhfrhhomhepjhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgpdhnsggprhgtphhtthhopeehpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumheslhhinhhugidruggvvhdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepl
- hhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Hi Thorsten,
-
-On 2/13/25 3:10 PM, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers. Use
-> strscpy() instead and remove the manual NUL-termination.
+On 2/6/25 14:24, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Compile-tested only.
+> Use the observation that one loop is sufficient to compute the average
+> of an array of values and their variance to eliminate one of the loops
+> from get_typical_interval().
 > 
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-
-Thanks for the patch !
-It works fine for me:
-
-Tested-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> While at it, make get_typical_interval() consistently use u64 as the
+> 64-bit unsigned integer data type and rearrange some white space and the
+> declarations of local variables in it (to make them follow the reverse
+> X-mas tree pattern).
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->   arch/m68k/kernel/setup_mm.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/cpuidle/governors/menu.c |   61 +++++++++++++++++----------------------
+>  1 file changed, 28 insertions(+), 33 deletions(-)
 > 
-> diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
-> index 15c1a595a1de..48ce67947678 100644
-> --- a/arch/m68k/kernel/setup_mm.c
-> +++ b/arch/m68k/kernel/setup_mm.c
-> @@ -243,8 +243,7 @@ void __init setup_arch(char **cmdline_p)
->   	setup_initial_init_mm((void *)PAGE_OFFSET, _etext, _edata, _end);
->   
->   #if defined(CONFIG_BOOTPARAM)
-> -	strncpy(m68k_command_line, CONFIG_BOOTPARAM_STRING, CL_SIZE);
-> -	m68k_command_line[CL_SIZE - 1] = 0;
-> +	strscpy(m68k_command_line, CONFIG_BOOTPARAM_STRING, CL_SIZE);
->   #endif /* CONFIG_BOOTPARAM */
->   	process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
->   	*cmdline_p = m68k_command_line;
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -116,49 +116,45 @@
+>   */
+>  static unsigned int get_typical_interval(struct menu_device *data)
+>  {
+> -	int i, divisor;
+> -	unsigned int max, thresh, avg;
+> -	uint64_t sum, variance;
+> -
+> -	thresh = INT_MAX; /* Discard outliers above this value */
+> +	unsigned int max, divisor, thresh = INT_MAX;
+> +	u64 avg, variance, avg_sq;
+> +	int i;
+>  
+>  again:
+> -
+> -	/* First calculate the average of past intervals */
+> +	/* Compute the average and variance of past intervals. */
+>  	max = 0;
+> -	sum = 0;
+> +	avg = 0;
+> +	variance = 0;
+>  	divisor = 0;
+>  	for (i = 0; i < INTERVALS; i++) {
+>  		unsigned int value = data->intervals[i];
+> -		if (value <= thresh) {
+> -			sum += value;
+> -			divisor++;
+> -			if (value > max)
+> -				max = value;
+> -		}
+> +
+> +		/* Discard data points above the threshold. */
+> +		if (value > thresh)
+> +			continue;
+> +
+> +		divisor++;
+> +
+> +		avg += value;
+> +		variance += (u64)value * value;
+> +
+> +		if (value > max)
+> +			max = value;
+>  	}
+>  
+>  	if (!max)
+>  		return UINT_MAX;
+>  
+> -	if (divisor == INTERVALS)
+> -		avg = sum >> INTERVAL_SHIFT;
+> -	else
+> -		avg = div_u64(sum, divisor);
+> -
+> -	/* Then try to determine variance */
+> -	variance = 0;
+> -	for (i = 0; i < INTERVALS; i++) {
+> -		unsigned int value = data->intervals[i];
+> -		if (value <= thresh) {
+> -			int64_t diff = (int64_t)value - avg;
+> -			variance += diff * diff;
+> -		}
+> -	}
+> -	if (divisor == INTERVALS)
+> +	if (divisor == INTERVALS) {
+> +		avg >>= INTERVAL_SHIFT;
+>  		variance >>= INTERVAL_SHIFT;
+> -	else
+> +	} else {
+> +		do_div(avg, divisor);
+>  		do_div(variance, divisor);
+> +	}
+> +
+> +	avg_sq = avg * avg;
+> +	variance -= avg_sq;
+>  
+>  	/*
+>  	 * The typical interval is obtained when standard deviation is
+> @@ -173,10 +169,9 @@
+>  	 * Use this result only if there is no timer to wake us up sooner.
+>  	 */
+>  	if (likely(variance <= U64_MAX/36)) {
+> -		if ((((u64)avg*avg > variance*36) && (divisor * 4 >= INTERVALS * 3))
+> -							|| variance <= 400) {
+> +		if ((avg_sq > variance * 36 && divisor * 4 >= INTERVALS * 3) ||
+> +		    variance <= 400)
+>  			return avg;
+> -		}
+>  	}
+>  
+>  	/*
+> 
+
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
 
