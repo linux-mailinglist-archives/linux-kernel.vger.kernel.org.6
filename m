@@ -1,88 +1,130 @@
-Return-Path: <linux-kernel+bounces-517589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA38A382C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:17:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66D5A382D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C2D189560D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E963AC14D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F764219EB6;
-	Mon, 17 Feb 2025 12:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666121A436;
+	Mon, 17 Feb 2025 12:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b="iWuF2D/t"
-Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gnQfqixc"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47B18DB37;
-	Mon, 17 Feb 2025 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B9E16C850;
+	Mon, 17 Feb 2025 12:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794559; cv=none; b=ETpaFMXgulKLHWqPP+tl+dJ8eKQCrN058Cft9smuq2TbW72EfudEn3WdeXdTX6NMoYQ46racRCl0NYKkNvm6ddDYfMCdjzbUyhg0MREyCJSPzAUhwOeCwmwgyQUNSzd8hWBbR7uqM+8qYyb/+jMI+OOHnAmq9PV5oXC2oHqOoio=
+	t=1739794772; cv=none; b=r0/u6Fzxvx+8VvVNPKU54skia9YTvbZC6S7x5OyHvTVjrEWphxzCzKbHb5WkPZ0H7huc6Qhs8sYzxT9Bcbvtzx9mudi4UES53/J1nlOvs165JbTyymf+AQ1G/aIYJgtMRGhIdFMHp/O9GXPrHR6TAws84BPOo6r/O5zZFuVSu38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794559; c=relaxed/simple;
-	bh=IUpcs5fuPv0MlqHTX1WqaxfwSXVbNE64n/vXBNN2vFI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=oXSV4dabLnOsxA2yhyRnMyFExYB7IEp+UAgpgTlqdX8zeuWityPeruAm8L4mX00b9Ggcd/tsR48LLMQo15+tcg9vkzKUdvSg68y6b675XgCvi0qB716M2OQNxs0CaTEB1A6pFzuts0QrK6hHlUIsHwY+LUq8KP5o6vPTKMowd7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk; spf=pass smtp.mailfrom=pelago.org.uk; dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b=iWuF2D/t; arc=none smtp.client-ip=46.235.227.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pelago.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=pelago.org.uk; s=mythic-beasts-k1; h=To:Subject:From:Date;
-	bh=N29UVb7lsFIAUeKtfz7zQQ1tY8pSM+hJIbIL5FWIg6I=; b=iWuF2D/tIqz9lu7WQd1IKMPx/g
-	98XTkVwpg0VIafwEjfl3c5jCOmSbN1SDL7aJz4s8o3tGWpv3Zh2uIgAntHOXoDrZXLK6/wkF8QDL6
-	/TN+G/adWi0WXg7BeyAC16IQEHvcLxcp/OxWNSx2mRuydLEli1feK5uK0423NE5XcpWvcDhDcZADN
-	VP6M9BvVHboj3xTt6a1dX9j9w6goy+tV+dXt7qYTgUvYHQ8X4MmQzBksLVpZQKOiiMcnc9qWa3/P/
-	fibw9LPjf4kQK7sJgBtUsWUL2XOxkK5WBkk4WRvBaHzJavqxDCu7vRkQ1l4ZXdNGEf/8Etjzmsm72
-	CY68dURg==;
-Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <john-linux@pelago.org.uk>)
-	id 1tk02U-0054vQ-VP; Mon, 17 Feb 2025 12:15:55 +0000
-Message-ID: <2fb55d48-6991-4a42-b591-4c78f2fad8d7@pelago.org.uk>
-Date: Mon, 17 Feb 2025 12:15:50 +0000
+	s=arc-20240116; t=1739794772; c=relaxed/simple;
+	bh=9kgC/V3qNkmeNamkYMHdidfNovuDvLGnvK/bhGmeUsE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=eaBVt1XJ0ZERkZY21LeuoPcF4VvdtAlWYDX9MO55DksgCkAgFdIWzTXhjXbUxMpS58V0yFAixVKdRzO73S5UiJSjiJShFMYsYb5rP8mIVINJ27ETb3oYgjVPGHiZrwW03LrjQ9GQ87jcZNWaxt5AZk3VoVPx0w5iSezUBPlHh54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gnQfqixc; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 73786443DE;
+	Mon, 17 Feb 2025 12:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739794762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tUryUHsSyNveCM8ra3eNAsj4HLJFnzA9/YVXKHA+TZA=;
+	b=gnQfqixcQkY+shV5lUNMH6t6Zxf8MFytJsH2aF+as31qt7dlRjeQ4KfHt+iaagb/6+Xmx9
+	iIQpzny1DLfxc0eRKDM48JkP9tdsAgpU+YOr8YCLUvVcyh2Sy8tuMnULiQsSUHPQpEMZPy
+	GozCbrh+Pl+w33v0SX5eUSchob5owlIAs3F06UAoyHgfTNFEetF1O/Lrn1YYmQ3O3cQfOL
+	3k0QjMNr6wApZL4fS3pu88DtO+L68GdgKR6W/GHGGvaP2K+p4l6bdLr6/BJBvizmwg9F26
+	6I3dY6mBDPPiuxIZv4/R0IpGnvjSsrot2Wb3nsOIfMTeS83cpqaDsnPwTa4/dw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: John Veness <john-linux@pelago.org.uk>
-Subject: [PATCH v2] ALSA: hda/conexant: Add quirk for HP ProBook 450 G4 mute
- LED
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org
-Content-Language: en-GB
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-BlackCat-Spam-Score: 0
+Date: Mon, 17 Feb 2025 13:19:19 +0100
+Message-Id: <D7UPRQW1B51Y.1GI2GOM7XBJOA@bootlin.com>
+Subject: Re: [PATCH v4 04/10] gpio: regmap: Allow to provide request and
+ free callbacks
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Sander Vanheule" <sander@svanheule.net>, "Lee Jones" <lee@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
+ <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
+ <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
+ <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
+ <e6194c5ed4f305f2150ab89a91a998028ac687c0.camel@svanheule.net>
+In-Reply-To: <e6194c5ed4f305f2150ab89a91a998028ac687c0.camel@svanheule.net>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtohepshgrnhguvghrsehsvhgrnhhhvghulhgvrdhnvghtpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpt
+ hhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Allows the LED on the dedicated mute button on the HP ProBook 450 G4
-laptop to change colour correctly.
+On Sun Feb 16, 2025 at 2:17 PM CET, Sander Vanheule wrote:
+> Hi Mathieu,
+>
+> On Fri, 2025-02-14 at 12:49 +0100, Mathieu Dubois-Briand wrote:
+> > Allows to populate the gpio_regmap_config structure with request() and
+> > free() callbacks to set on the final gpio_chip structure.
+> >=20
+> > Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com=
+>
+> > ---
+> > =C2=A0drivers/gpio/gpio-regmap.c=C2=A0 | 2 ++
+> > =C2=A0include/linux/gpio/regmap.h | 7 +++++++
+> > =C2=A02 files changed, 9 insertions(+)
+> >=20
+> > diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> > index 05f8781b5204..ba72c23bcf97 100644
+> > --- a/drivers/gpio/gpio-regmap.c
+> > +++ b/drivers/gpio/gpio-regmap.c
+> > @@ -261,6 +261,8 @@ struct gpio_regmap *gpio_regmap_register(const stru=
+ct
+> > gpio_regmap_config *config
+> > =C2=A0	chip->names =3D config->names;
+> > =C2=A0	chip->label =3D config->label ?: dev_name(config->parent);
+> > =C2=A0	chip->can_sleep =3D regmap_might_sleep(config->regmap);
+> > +	chip->request =3D config->request;
+> > +	chip->free =3D config->free;
+> > =C2=A0
+> > =C2=A0	chip->request =3D gpiochip_generic_request;
+> > =C2=A0	chip->free =3D gpiochip_generic_free;
+>
+> You probably have a bad rebase here, as the chip->{request,free} function=
+s are immediately
+> overwritten by gpiochip_generic_{request,free}. Perhaps those can actuall=
+y be used if you
+> provide a pinctrl driver for the MFD.
+>
 
-Signed-off-by: John Veness <john-linux@pelago.org.uk>
----
-Re-submitted with correct tabs (I hope!)
+Thanks, indeed I missed this rebase issue. It's fixed now.
 
- sound/pci/hda/patch_conexant.c | 1 +
- 1 file changed, 1 insertion(+)
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 4985e72b9..34874039a 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -1090,6 +1090,7 @@ static const struct hda_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
-+	SND_PCI_QUIRK(0x103c, 0x8231, "HP ProBook 450 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
--- 
-2.48.1
 
