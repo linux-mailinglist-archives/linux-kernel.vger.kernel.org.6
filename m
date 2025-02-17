@@ -1,143 +1,92 @@
-Return-Path: <linux-kernel+bounces-517188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06641A37D80
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:53:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868A9A37D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960D33AC481
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223D83B22B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405B1A76AE;
-	Mon, 17 Feb 2025 08:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a+bJN/vV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UFolICx7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A5718A92D;
+	Mon, 17 Feb 2025 08:52:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFA919EEBD;
-	Mon, 17 Feb 2025 08:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168B41AA1EC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782320; cv=none; b=nannFJItN1kM6VEkRdEZstQU3QOpxO9Gjfh8v6fxay8NbldaIfzW9/O9OhSf8TAwtQRWdXd+xwOmn4eqdnctmnmYvO56rwRZwBDDl8V9rj6VqQIar88UjI7h2nXgBU3KWlPBngPhRSZ6CeyPG+ccvrn0AT1N1mM+7j5HKtRa8sA=
+	t=1739782325; cv=none; b=cq5j+1ZEp/Du8BSo2lwbMVxL6f4Ft/JxWD5MaFtyKeMI1RpaNZV0fWX4fKlVLZ2UPC2sis2gJhzWRPZiTUc4lcwhHHrkEPtpByRwIJqVxAawyvgAz06v3gm90im8k/o94cQXt5fuw4xxb0vlI43EQeKriRAh413lzWOLmV5RaRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782320; c=relaxed/simple;
-	bh=mkiJ96UHseTE5jskAij7NUvt7qtFcUL504yNQipCynA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IgdtuXcezjTXz6cdopMIKea9V2YxabsyAVT6Q+Zx7YsW/6JpwDQAmtimHGJL9c/lxqx3vpHkGqbLBw/iZ5yh9AeMpQKnJMxYmyDNjfDP9GLPU1qWHNPUCwzDGhDehZ+lDGjo9WXhH5RtZ/0rLYyoph7tV6Lx6GAmTBV1LHpkDjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a+bJN/vV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UFolICx7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Feb 2025 08:51:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739782315;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cyak+Y+fd5s+doCvc3Z7QHi0FZ/Yeh7Z+nhmtSc4Hv8=;
-	b=a+bJN/vVxAfpSpMfOPNrgZAzzikOblJiHbCpQyAIQ4Bvh+d2EizDjoCun84z9Z0pDwR0PK
-	yfeD2k8pgO5Yoyf6aL0Na9vroebj6CZ3zveZeAwnVLX4t/z2TvkcSdsr8hOXXK9hG1TWQL
-	lD+SvEiXF5WQusDq/gstoaWSB6tWSNoOQd/RcQd8ePMFccso6DM7l0wC+clQfFVqDENjkv
-	X+fL2DC9I4iRIj9julrMo9Pi3hbHsK+W17jq3AnMLsbL2zPx9AdQKSoc/9EPtsEMFzyjf+
-	6nTKquOV4YQqiW1vuGgYZFfUL5mMORJb8WnJoy1hsb01uUDF7C4hf5jSa8YK1A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739782315;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cyak+Y+fd5s+doCvc3Z7QHi0FZ/Yeh7Z+nhmtSc4Hv8=;
-	b=UFolICx7VnxOqT4BWfQCzMlHtu7F9XvjOjEJmU+iAJi0wjzvpz7O8imy/Rs6dxAoW3+m69
-	EaFk2cv8l52zu6Bw==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/microcode] x86/microcode/AMD: Remove unused
- save_microcode_in_initrd_amd() declarations
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250211163648.30531-3-bp@kernel.org>
-References: <20250211163648.30531-3-bp@kernel.org>
+	s=arc-20240116; t=1739782325; c=relaxed/simple;
+	bh=pTKM4ONs5xdJ/zoEznz6Tt7sfINMDFv0eJ7Qdu+k/w8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nznnteEuJwasD6IJudg93K0N2HIBMUdVSPmjPtruvptOGI0y6PktCC5ag2Vi2E8kQcfvUy8wkue8RhUoCpevw1Jqp9lmHkrRGP4/N8cVdZ9Zaej3+ewwEUGNpH28n1O/Q5yU21OJVM1+ec2QKAoqKaNqG5vXusLkyF/nkFDSuBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d16acfdddaso73990385ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:52:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739782323; x=1740387123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7dkqt5TNcfumetUYnVjyG/hBirM8FVc1r3s0VKr1EU=;
+        b=XgR2g/wkMnaKqFFWfQAhyyqLI/1/eqFKwSLn3cn9EWGvIcjazCZ/9XO51UAruZ1ny7
+         VbkgDdNeFDeW9qNiCWi2QN0rpM3qQqwo9RVhXq4i2lZnCgtLT/KYC3Ve6xwJCMbrmHSx
+         uLAtSNsEYqIX4RcyIdp4f8ZuvEV1D+DUQrxHN1EK0lXFCkBqN5b0l8YyUiKs0baOYqbW
+         9iaXrIEnwD2SZjs8puNQidUI6qToAmAQHIPiZoKPkVdVWKYHY3ZlBtNVgG9qt+j/77wu
+         9bm7oZt9nJ1gyG49SCNKSiB4xiOmpMjLo3uqbLi1BCJyQ/llP0c0XkabTEvp3pZQRlzC
+         OxLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVduBQykBpo7BMGNWd+4lRbhUDfEM1y6YTmoqva8njUSpm10GFWmjy/6Cnyig8rHEKzCN5R7NYdGJYL3D0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrR7wgQ6aEUEgRKaVh4QLwVYkBfWys725KW4iVIYr+JOplTVs+
+	IzAXhOLtaFz4mUq1pyv8HkBzHAqOEnG66ZUfXiJPMcP6aXO7PGZN64bCmWKwl7VZOUSt6vuLP8+
+	KykbTDc8Q2ufezUmtvG8UFxBNwxa9jQTZRoNUtmsSmz+T1DYvPZlW0Mk=
+X-Google-Smtp-Source: AGHT+IFadkoA3rneb+/gRE8ngOLHkiIC8pgXB6U7bDf3vvzatGshGE1p8RJ8nI2S7qTrxqPWueCsvZB2taQHwL2K7O4VLxN/2L4b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173978231515.10177.15581223977606985908.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b4b:b0:3d0:e6c:e9c5 with SMTP id
+ e9e14a558f8ab-3d280974ff4mr90204965ab.21.1739782323278; Mon, 17 Feb 2025
+ 00:52:03 -0800 (PST)
+Date: Mon, 17 Feb 2025 00:52:03 -0800
+In-Reply-To: <679fb3a5.050a0220.163cdc.0030.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b2f8b3.050a0220.173698.0026.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs] general protection fault in bioset_exit (2)
+From: syzbot <syzbot+76f13f2acac84df26aae@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/microcode branch of tip:
+syzbot has bisected this issue to:
 
-Commit-ID:     3ef0740d10b005a45e8ae5b4b7b5d37bfddf63c0
-Gitweb:        https://git.kernel.org/tip/3ef0740d10b005a45e8ae5b4b7b5d37bfddf63c0
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 23 Jan 2025 12:23:47 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 17 Feb 2025 09:42:31 +01:00
+commit 14152654805256d760315ec24e414363bfa19a06
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Mon Nov 25 05:21:27 2024 +0000
 
-x86/microcode/AMD: Remove unused save_microcode_in_initrd_amd() declarations
+    bcachefs: Bad btree roots are now autofix
 
-Commit
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=171a52e4580000
+start commit:   224e74511041 Merge tag 'kbuild-fixes-v6.14-2' of git://git..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=149a52e4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=109a52e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=76f13f2acac84df26aae
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e8b5a4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1155a898580000
 
-  a7939f016720 ("x86/microcode/amd: Cache builtin/initrd microcode early")
+Reported-by: syzbot+76f13f2acac84df26aae@syzkaller.appspotmail.com
+Fixes: 141526548052 ("bcachefs: Bad btree roots are now autofix")
 
-renamed it to save_microcode_in_initrd() and made it static. Zap the
-forgotten declarations.
-
-No functional changes.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20250211163648.30531-3-bp@kernel.org
----
- arch/x86/kernel/cpu/microcode/amd.c      | 2 +-
- arch/x86/kernel/cpu/microcode/internal.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 4a62625..f831c06 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -517,7 +517,7 @@ static bool __apply_microcode_amd(struct microcode_amd *mc, unsigned int psize)
-  * patch container file in initrd, traverse equivalent cpu table, look for a
-  * matching microcode patch, and update, all in initrd memory in place.
-  * When vmalloc() is available for use later -- on 64-bit during first AP load,
-- * and on 32-bit during save_microcode_in_initrd_amd() -- we can call
-+ * and on 32-bit during save_microcode_in_initrd() -- we can call
-  * load_microcode_amd() to save equivalent cpu table and microcode patches in
-  * kernel heap memory.
-  *
-diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/microcode/internal.h
-index 21776c5..5df6217 100644
---- a/arch/x86/kernel/cpu/microcode/internal.h
-+++ b/arch/x86/kernel/cpu/microcode/internal.h
-@@ -100,14 +100,12 @@ extern bool force_minrev;
- #ifdef CONFIG_CPU_SUP_AMD
- void load_ucode_amd_bsp(struct early_load_data *ed, unsigned int family);
- void load_ucode_amd_ap(unsigned int family);
--int save_microcode_in_initrd_amd(unsigned int family);
- void reload_ucode_amd(unsigned int cpu);
- struct microcode_ops *init_amd_microcode(void);
- void exit_amd_microcode(void);
- #else /* CONFIG_CPU_SUP_AMD */
- static inline void load_ucode_amd_bsp(struct early_load_data *ed, unsigned int family) { }
- static inline void load_ucode_amd_ap(unsigned int family) { }
--static inline int save_microcode_in_initrd_amd(unsigned int family) { return -EINVAL; }
- static inline void reload_ucode_amd(unsigned int cpu) { }
- static inline struct microcode_ops *init_amd_microcode(void) { return NULL; }
- static inline void exit_amd_microcode(void) { }
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
