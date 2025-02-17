@@ -1,162 +1,123 @@
-Return-Path: <linux-kernel+bounces-518233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A2CA38BDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D7CA38BE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AFB3B014D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E011891F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EB222DFBF;
-	Mon, 17 Feb 2025 19:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45629235C1E;
+	Mon, 17 Feb 2025 19:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qTuSJvWB"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMRZd3r+"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0639723236E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646FF216605;
+	Mon, 17 Feb 2025 19:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739819027; cv=none; b=XeT71fcVWIsQ+jm8apIrGgss994klSERPX0gCgNzbqrRjYBcdakLbl1jbGWy+MOvZ6JlMT9Dn7UToQe9gbiYnXo9zk4dtKM6Cji9UhkcejWMD6vaaDW7dTbnyiORxgqWYFcWtweYy+7f6N8F9fXpjZxI0UYzQ5GFBXavAOH4zDA=
+	t=1739819052; cv=none; b=Tcq6cDNjYH5ANfQ8Qu6BT4xrAtAznK4GaNCx81BXf01wLdIk4B/lLIfOQLhj1/l5rkkrhsI0bvH4QagYNBphfQvEPRN1GwYmFzhkRh1EvNpih++x6f4oIHs48AsRjB2VGsjwvBoKvESwgzljcvWKz7mmjk36VxdcSRivsPsk9vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739819027; c=relaxed/simple;
-	bh=24/bz6JEVvmrmSFzPSCxuWh9BN6jYpaav0CqOqnOR44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bs+35CDikkjPsA4bQzckgtyyYmBYTXXNa6kWEUZcPwC75bXAi4QGdqG106cKSEsUR5ufkgZDPM/QxDvp/NBcLE6X74zga1/Zazn8aOOAd3V7+FVMWf86CMiOd8Jf7UTGSgNScYe5gMrSVrUz1RLL1YXrYo+PChHdoz9WdkNyNSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qTuSJvWB; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3072f8dc069so48105761fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:03:44 -0800 (PST)
+	s=arc-20240116; t=1739819052; c=relaxed/simple;
+	bh=KO2kfgFS56BUZdOcSTHtjmZFrdN1FXtNYPlVSHH+yw4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I4/wSu/YnJ6Xt/VYZaknb4zlR8m4y8XH3EzlRM9m4pwMcoJrnhUyuluCCgvEJx3kHYjPNxL0ppC6CtSpefxAVGe5SKX4etr8k6vopdm5ozf4v3LLquYYpj9ZD6qGFV+txtT8W9Eh6kSbaftywW4JzzELsrAsZX0qE4vMiIbmMY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMRZd3r+; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2212a930001so33890195ad.0;
+        Mon, 17 Feb 2025 11:04:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739819023; x=1740423823; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqARAPdYJ/xdElMselfYbhjeGyD6v5q+Wc1NzQmTawk=;
-        b=qTuSJvWBwrLW2jJP30+cqY+ntkSsLQZ+5Nn8+MbN9oVEFKjvT+7qtXdaZRD8KaAcVv
-         D+VkIKCbPtZGJ3CiyQXsceYXywP+ha4X6by9TMGmI47rTrBkji9XHXri4bwWTveAQg04
-         ANINxLki3Q8n0BEAKwqKEeoTePplyRYivq+ODHNDrnNBjCCkNxIGpruOEcXH19CW17mo
-         nVh3CV5oV3VqBhTNCtM8/iwjy7bX/Ug/OUvwAe5ocymnWY3Cl0I0fkGbk6ldzgHhdIkd
-         Wayo6SazrV2rDn6S8A/TBF8rVbJJnEOJa4kYssJx80nUyuQH6hzfot9nQNnjchGL3p/M
-         cedg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739819023; x=1740423823;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739819050; x=1740423850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wqARAPdYJ/xdElMselfYbhjeGyD6v5q+Wc1NzQmTawk=;
-        b=KNQCpshRweMZ1UzhX8zp1GFhMyfqycTH/azkoPBicRmSPqHot/QAmlSiP1Xo19qWnA
-         EIjRSTPNP08fayQ8Xi3ihOQO7eP+7x7TkdSxgv32Rm6LA8Wb4/Rnujd5SSp+vwzZzo65
-         8Au4BqUngOZ0/SByt+yOJaIE7QEn+n3wtQswVE8JZtKJxem418fXOjx32qnFZcYQhTp/
-         8DgBAwRgH97pWpvA4cDad/Z0ybrrxZvo2oZ428Y2K7Wn81NUdazXWLhG7H5rZCm7lGrm
-         8oCyIAiRsbYkAaOdgbdgwFtZYhnJTRFof+V5GAx7e7aOl5iPbNXnnPceLt7ICRkdJbMs
-         yrCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcD5kH1DBTpJHGf7Csbg668FjJDAD9GRtuFgQhiSmw6If4YG4yji8bn5+dT1ljM8woKUfrYmDwSsuBWsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu4Xjy0ZLRBWamia+W3GxAPSvjBKf2zx6HPb8THiWI8vh88jOL
-	TDqIXNeggW32vB32nlESUa3b/0rta+KW2707dIZDaMusEkZadtzDf3IgxNiphdw=
-X-Gm-Gg: ASbGncsswqtGzf1clKrb7hk0IbaO9XLaQa4lmON8F/h595zk+Swt7gi95Wn1a3vNJIu
-	0q49AKQ/T3PZEmR7Sk/S2/6WaVU6d4T7htWxZ8dULN4B5U2l6YIBA9sgj/UPEULfSTpcd4a3+ha
-	I1Xpn3g+nGYC4hkSJ18PnX8KTvgLpssLBApUk5STCOEXLoPZwNd2Kb6eHhxJoX+xiXNiB9NxNpM
-	EbYHTIB52CX47/ygE4W4og5RNd6e42kDHun+ym1Rkhz/gPuxifWvq0KA58Sh6f8UwpCDyrZQUIK
-	t93rdo7Ech/O3q6K9pTlIJQ6cCpiYpiOF8uGw2ti+eLu67U2hF/V9nLcrMLlChFB88pB4Ls=
-X-Google-Smtp-Source: AGHT+IH62f2i1NiC9Y1L4JGihKmed7FGNYzj/K/SBkHNk/de8aDSNi8aRspcctiuRSH4/mHKv2w5Ww==
-X-Received: by 2002:a2e:87c7:0:b0:308:f479:5696 with SMTP id 38308e7fff4ca-30927a48b4emr31189761fa.15.1739819022995;
-        Mon, 17 Feb 2025 11:03:42 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3091d025767sm14492051fa.54.2025.02.17.11.03.40
+        bh=AzkP+pgnUzTb5fXTNKSxJCrrQ506fnmgvA15C64w6yk=;
+        b=QMRZd3r+VWunZbhKdbHi2Dip4aj6kxJCi9rGRodqtZbxKosM/ZElxqqy/rFOkO78sk
+         FYxqqWR+B0CZiqRTB70JnDV/sQTCQ1Jup1jNY14qIg0b9De6p9vT0Ql6JSL2igd2rFX1
+         BThqvjT/sL4bL7Ep6e/332+reWV4oArErK10EDNLiTZhRckKYBCMYEjFrhRImEMTnJK/
+         67KZyq548nuYRQss0+ZyO9cwpqQpsB2TmK/hOdC6bIjA+4onErKAMCCNjUfnHn1h0NNj
+         lcZj+HQdHgOzjTb7qzOSGn6NFSTlcYyd1ukEwSfeCBMtTsIdsRcEscYe2U7IlQ9H/pnZ
+         OL6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739819050; x=1740423850;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AzkP+pgnUzTb5fXTNKSxJCrrQ506fnmgvA15C64w6yk=;
+        b=sE1F3etiBuo/P4/kruEwbFX7gsOwe93Lz45i2B3/SFWGF4gC+k7hIsdvMy76Pf1Vpm
+         7OQm0aj4Iv3P0C8IemThqJ/aINgOe0urQLiq7TJwrfvRrhBCshmCzy+1Oyu7IIvWzSdA
+         YfuodmUjSLFRF6XFAb0AwkHRlWJ9IeMbxEmr1IeTv7fq/8ePyxbmtctaHFBkxfLtqAH2
+         qTQ/vrRm3LqJ12q6J8vf4+81frhb0LsjFZITDs2TILFMEmjpIgvQ4KxflX/DYTYs+99F
+         K8X7Vl/6VdAjiGp6i/RPWj2nvI3+9IenT3jewAm7wo6lNxQAZdiTGPZdV0KzIqhRT1yX
+         yMBg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9kusX4re+HlsoA/mhpl+VJNI1Ii4+VsZg7pk7+EZbFbeAYjDyeyEt8S9yVKa/9trEJhejE3LE0tQ=@vger.kernel.org, AJvYcCW43EeMzaXyRNF7YhaCgfkgMQJlT2EX0IFPabwC8b7UXY27SfUdW9eWizBbErYx3wsyyRJkj5jRh98+eZhP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo77RQYHLJEjMWVoCTyrdblK7lnwwKmtEbhmYJif5pUGy9Vx2Z
+	t7922ISo3OMtL6/dTHmX1FmGoKPSl6YRWIbkY4Z3/WAAsftna2MB
+X-Gm-Gg: ASbGncsyEDD8jIO2LYmkfCG3779q+nVooZdiMG6t5yq1PabLJmNgLMrnnIHgztvolTl
+	qSqjsVZ+SBob+ZWEvnYRJf/YTyo3PhEnGDj/l7xU9XWT47dRKHiUFi3NPttiygmEHfXe6PmDIOh
+	kn6x1mlKd2mmzJHCt3U/5KShaPwJkgVkj2V6HGe3cXd1KNJHLFaiGWQ422jykdn+nEjtWbTlCUU
+	24rXa0mKJ+WZHl+owVw2k0JMY563oE8h2VMbddaXnr9xYn2JWBQWq2ihdm1E7x8GsuUoyw5s7MN
+	MJkCx1GbjCMDKtc4W3Mv8d22pDpBWL+qn3ZgS9V/o5eptXR8WXi7U1twI0mYYpi/3EWEOQ==
+X-Google-Smtp-Source: AGHT+IGgqgdJzgTfl69t4Ey8DdgeJrgVpz4clUAOHWF+w725HPTqhULI3J8MpIpecy/ABG9SZDPbHQ==
+X-Received: by 2002:a05:6a20:7287:b0:1ee:4813:8a93 with SMTP id adf61e73a8af0-1ee8cbe818cmr18150837637.27.1739819050580;
+        Mon, 17 Feb 2025 11:04:10 -0800 (PST)
+Received: from TW-MATTJAN1.eu.trendnet.org (61-216-130-235.hinet-ip.hinet.net. [61.216.130.235])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7326a38ff76sm4322087b3a.160.2025.02.17.11.04.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 11:03:41 -0800 (PST)
-Date: Mon, 17 Feb 2025 21:03:39 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2 11/16] drm/msm/dsi/phy: Add support for SM8750
-Message-ID: <sxepkcq5sbksj3xsq4mlvpzg6ljaz23bdhrehahhfjmalrlege@4atufz3uxs6x>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-11-d201dcdda6a4@linaro.org>
+        Mon, 17 Feb 2025 11:04:10 -0800 (PST)
+From: Matt Jan <zoo868e@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Matt Jan <zoo868e@gmail.com>,
+	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+Subject: [PATCH] can: ucan: Correct the size parameter
+Date: Tue, 18 Feb 2025 03:04:04 +0800
+Message-Id: <20250217190404.354574-1-zoo868e@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <67b323a4.050a0220.173698.002b.GAE@google.com>
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217-b4-sm8750-display-v2-11-d201dcdda6a4@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 05:41:32PM +0100, Krzysztof Kozlowski wrote:
-> Add support for DSI PHY v7.0 on Qualcomm SM8750 SoC which comes with an
-> incompatible hardware interface change:
-> 
-> ICODE_ACCUM_STATUS_LOW and ALOG_OBSV_BUS_STATUS_1 registers - their
-> offsets were just switched.  Currently these registers are not used in
-> the driver, so the easiest is to document both but keep them commented
-> out to avoid conflict.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> 1.
+According to the comment, the size parameter is only required when
+@dst is not an array, or when the copy needs to be smaller than
+sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
+correct size should be sizeof(union ucan_ctl_payload).
 
+Signed-off-by: Matt Jan <zoo868e@gmail.com>
+Reported-by: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+Fixes: b3e40fc85735 ("USB: usb_parse_endpoint: ignore reserved bits")
+---
+ drivers/net/can/usb/ucan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-:-)
-
-
-> ---
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |  2 +
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |  1 +
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c          | 79 ++++++++++++++++++++--
->  .../gpu/drm/msm/registers/display/dsi_phy_7nm.xml  | 14 ++++
->  4 files changed, 90 insertions(+), 6 deletions(-)
-> 
-> @@ -191,11 +192,24 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
->  	<reg32 offset="0x01b0" name="COMMON_STATUS_ONE"/>
->  	<reg32 offset="0x01b4" name="COMMON_STATUS_TWO"/>
->  	<reg32 offset="0x01b8" name="BAND_SEL_CAL"/>
-> +	<!--
-> +	Starting from SM8750, offset moved from 0x01bc to 0x01cc, however
-> +	we keep only one register map.  That's not a problem, so far,
-> +        because this register is not used.  The register map should be split
-> +        once it is going to be used.  Comment out the code to prevent
-> +	any misuse due to the change in the offset.
-
-Mumbles a lot about the hardware design.
-
->  	<reg32 offset="0x01bc" name="ICODE_ACCUM_STATUS_LOW"/>
-> +	<reg32 offset="0x01cc" name="ICODE_ACCUM_STATUS_LOW"/>
-> +	-->
->  	<reg32 offset="0x01c0" name="ICODE_ACCUM_STATUS_HIGH"/>
->  	<reg32 offset="0x01c4" name="FD_OUT_LOW"/>
->  	<reg32 offset="0x01c8" name="FD_OUT_HIGH"/>
-> +	<!--
-> +	Starting from SM8750, offset moved from 0x01cc to 0x01bc, however
-> +	we keep only one register map.  See above comment.
->  	<reg32 offset="0x01cc" name="ALOG_OBSV_BUS_STATUS_1"/>
-> +	<reg32 offset="0x01bc" name="ALOG_OBSV_BUS_STATUS_1"/>
-> +	-->
->  	<reg32 offset="0x01d0" name="PLL_MISC_CONFIG"/>
->  	<reg32 offset="0x01d4" name="FLL_CONFIG"/>
->  	<reg32 offset="0x01d8" name="FLL_FREQ_ACQ_TIME"/>
-
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+index 39a63b7313a4..1ccef00388ae 100644
+--- a/drivers/net/can/usb/ucan.c
++++ b/drivers/net/can/usb/ucan.c
+@@ -1533,7 +1533,7 @@ static int ucan_probe(struct usb_interface *intf,
+ 	if (ret > 0) {
+ 		/* copy string while ensuring zero termination */
+ 		strscpy(firmware_str, up->ctl_msg_buffer->raw,
+-			sizeof(union ucan_ctl_payload) + 1);
++			sizeof(union ucan_ctl_payload));
+ 	} else {
+ 		strcpy(firmware_str, "unknown");
+ 	}
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
