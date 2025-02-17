@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-517296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4050BA37F06
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688CDA37F04
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8671168E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167803AD6D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DC12163B9;
-	Mon, 17 Feb 2025 09:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0422163BB;
+	Mon, 17 Feb 2025 09:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fccD9gij"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HLIFETDf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6549212B3A;
-	Mon, 17 Feb 2025 09:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EB021639F;
+	Mon, 17 Feb 2025 09:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786136; cv=none; b=n9ansA518ThKcgYvj6uoII1S+GcvrOrat6YYlQomLXZ3xBXoriCGhKHoC7IERSuZwpxtO7O8tIWcaIOG5p/1qcd0oG8Kh5Y3FU8mHqGjsOhPCr0rjVCIRMYiGL37oxFQLPN0Hdd9wfYRTgXtSFA1BG7BCrg6g4exeQNVG+zTbK4=
+	t=1739786159; cv=none; b=YSNYEz2sbdh6TxeGWu/nYCdPTRB/4wUv3V2d6CGzCnyiaATBj4nAdgGp2mE95AUQYs1UNcLhUNcdhGJVZO0ULnvk/Tsewb84OQpPlkNJu6Rv2BX7EBkHLQUclKFjTS51HmlivwIpUrPp//LpLdzTm76lGlzVm51o0ennB3axDIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786136; c=relaxed/simple;
-	bh=tpn46eI2tbdNHKTRTV+W9UMHPv4VKyZwIxuF36MkbTY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCP2xUcuZXGw0zMSzLaqZWgftdbY8EKga5Z9wpAasvEH8TNLelpmjKT5jDAorS4RrOfqSrPzSkLrbKxk8llhOfVOoMd/9fDH67BykNFSPGdPSN9vop8Mwozmyd418A7ABG4nll/loCxwcUMgGRGr7ambVO7ads034Zuzxh5XMbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fccD9gij; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H7w1P0014998;
-	Mon, 17 Feb 2025 03:55:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=aQZC45YarKjbG9j7IH
-	XW7Lik11BDu7BTcIDKLkWl8xo=; b=fccD9gij8k0kcf6X7bFaxsWA6YnkyoOWJs
-	64vtOydWn4lyYi0+KSB9/QqFRjFQ6o937A5TtyaxyB58ZZ+0S77alT4wuDqzAkFl
-	rcz0LHQhdPrW+VzSOJ+k/451OdTzZpz5mVeDDHAlEaE5XQeKGhh1+aQj8ZyDxmdj
-	i3g1GgWw7Y9UQ+1XwB8WsRJ8mWmQ62zgPOgNFbejbH/1DuysleH6DZPiNFNGYBv9
-	JaUlVRSe8S2nSOlcwN0G73gf7PRZ+/fQf9xt1XTvoM1HW1j1c+aL5XyFPB4VDGsb
-	uENdEtuH8+20GDIJoyUyhb++Z7jc3XmmNXDtYyzoWo82RM13cJ1w==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 44uwg18har-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 03:55:02 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 09:55:01 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 09:55:01 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 14DB2822561;
-	Mon, 17 Feb 2025 09:55:01 +0000 (UTC)
-Date: Mon, 17 Feb 2025 09:55:00 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <patches@opensource.cirrus.com>,
-        Ernest Van Hoecke
-	<ernest.vanhoecke@toradex.com>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Francesco
- Dolcini" <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 1/5] of: Add of_property_read_u16_index
-Message-ID: <Z7MHdLahL9x+uB6l@opensource.cirrus.com>
-References: <20250206163152.423199-1-francesco@dolcini.it>
- <20250206163152.423199-2-francesco@dolcini.it>
+	s=arc-20240116; t=1739786159; c=relaxed/simple;
+	bh=mfPefVETAgRMxKiD80APtRBBjkcuYBiNiJnktP5O6sM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ok1xoZSvslJCRhH7wad/boSaktBzhis6t1TPV73ZOyyIzc3WLr2Z7KcaD/mtx6HEs2FBvJFWd37KU3gnfpdw2JhydW33oWhpEtCJIiFv7SoQCmf9sU1k4tOwUe8+NgXYfNPHFWKoYbKdtl4/Nh6uLvOjNIBCRWE/ZnC4UH0+khY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HLIFETDf; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739786158; x=1771322158;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mfPefVETAgRMxKiD80APtRBBjkcuYBiNiJnktP5O6sM=;
+  b=HLIFETDfetxDsox4PbfwDnAcBYLIScHFS7TWodDulggGV8GM7aiLKzKl
+   b5ave2ZpgGHvzznqq0GdpFTiXFBiEkF1DifNqpeHih2Xj/DAXQ8hP/sbI
+   GpeZiPI8GJRtl4bl0+bBjDoNBXFMIkXvVcsu4HqRc295V2YMu2rgSKIXx
+   zse22unVe4TAPjJs7J5YHpJiJrvPJknMxgaQy2NItBRTLr4bKU2BY8K18
+   et5IET2zul67x55hoNim9Lejvt/IrfJZ0u875pP56ClupOGYILfakH+xv
+   OE+GIxuWsojmoCceyur7ZiwX2S766wiwB6kjIC/mzw2LzVS2UvriqbPSB
+   A==;
+X-CSE-ConnectionGUID: gH7/8aoHTkC9O8UWcfiKhg==
+X-CSE-MsgGUID: d1sEYQRBTOiT+03BKqtH6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40584382"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="40584382"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:55:58 -0800
+X-CSE-ConnectionGUID: 4KXKF5qqSG6cHO+hXJTLgA==
+X-CSE-MsgGUID: Nxn171mhQp+cKg8TKTNXiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119288805"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.163])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:55:56 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v2 0/2] PCI: shpchp: Debug & logging cleanup
+Date: Mon, 17 Feb 2025 11:55:48 +0200
+Message-Id: <20250217095550.2789-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250206163152.423199-2-francesco@dolcini.it>
-X-Proofpoint-GUID: L0XwHZrnUsgiAFk3R-4fCOqm38TuouL_
-X-Proofpoint-ORIG-GUID: L0XwHZrnUsgiAFk3R-4fCOqm38TuouL_
-X-Authority-Analysis: v=2.4 cv=CYzy5Krl c=1 sm=1 tr=0 ts=67b30776 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=m8ToADvmAAAA:8 a=w1d2syhTAAAA:8 a=a5Ts1rH5jafQVb_QePAA:9 a=CjuIK1q_8ugA:10
- a=kCrBFHLFDAq2jDEeoMj9:22 a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 06, 2025 at 05:31:48PM +0100, Francesco Dolcini wrote:
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> 
-> There is an of_property_read_u32_index and of_property_read_u64_index.
-> This patch adds a similar helper for u16.
-> 
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
+Hi all,
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+This series cleans up debug/logging in shpchp driver.
 
-Thanks,
-Charles
+The series is an update for the only remaining patch in the pci_printk()
+removal series. To avoid breaking build, pci_printk() itself will only
+be removed in the next kernel release because both AER and shpchp used
+it and are in different topic branches.
+
+v2:
+- Split removal of logging wrappers and module parameter removal to
+  own patches
+- Explain how dynamic debugging can be enabled
+
+Ilpo Järvinen (2):
+  PCI: shpchp: Remove unused logging wrappers
+  PCI: shpchp: Remove "shpchp_debug" module parameter
+
+ drivers/pci/hotplug/shpchp.h      | 18 +-----------------
+ drivers/pci/hotplug/shpchp_core.c |  3 ---
+ 2 files changed, 1 insertion(+), 20 deletions(-)
+
+
+base-commit: d75ee0a7b0125636687a3f71c169bec04a576107
+-- 
+2.39.5
+
 
