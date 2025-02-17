@@ -1,218 +1,159 @@
-Return-Path: <linux-kernel+bounces-517379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2171FA38004
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:25:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63366A3800B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C660E1898011
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FE3189892D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C3C217658;
-	Mon, 17 Feb 2025 10:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD64216E28;
+	Mon, 17 Feb 2025 10:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ki4cB+0V"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="VoOKg8Sc"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FE1215F4B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776CD216E0B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787634; cv=none; b=o097I7oLwQ4lNh0Er+T8mdzM0omZ0jRjlAJgD6UXlA6SKgTzdVmLQXdRxJd0FCrcy8DeIoIk+cdgriKXpVCxofz0f+24fllZfhlr787oyyvBAFTRP1Yl4SC9fsc5TuBe5uHJbjcdlCrr9f6BcdNdSg1yZveOr7IpblzF9cWd0c4=
+	t=1739787727; cv=none; b=ccxX1QZ5QaC40wocvZjcLuk/6SuMpaup7/SaJlsOHFR/qF5yWKfzBqsg+lISfV10FxYg/RZl9ixzTfMJwKRGYTKhUouQHuF8QdoQYGQELaLRCTREB0tWj0QrM4H+J3B9/rZo02irNLMVZSaN4vMMfs9OHmsw+r3sksnC+oVZK2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787634; c=relaxed/simple;
-	bh=Ni8XhWFL3JofyQtJuW4RPnrReMge+P3PaWcygEu16Ig=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=AMCHgyDhK6XrfDhSo53qxTXpvlgRw1qivi0Et5BDXymGib4tHgEWc0B9iNYgLgHoMwA2B7Aa+OUQ+GAtZakpqVlIbE3ySTuohLVk0/fa6oCJ8QdOEQfHc6/FapFtT76L7sBJsQ6jF+gGSE2VPGvYiVeNz/a19K/sVnVgYW35dkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ki4cB+0V; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f2f391864so1577355f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:20:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739787629; x=1740392429; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6DTmgyKwXyxupGvGcbs4sr/KU+osTL6h5aaa2lsjPg=;
-        b=Ki4cB+0VBMFa1ZOjWkEycQB/VzeiIsPaG6sRuoaLWD4bXM4WsKbbYRlMBBrHqEAi/Y
-         IKXL22ekOc+nY2FlexSyPr4trtisG5GNJ569klNnS5AA3o4kLIW2z00/NGjWrXlI6ySJ
-         60HcBsRYF95iqnEwGBV3M+mrxzziR7RagKynBjVNZdyZPuPwMsQTLexAalr8Bb41qZNR
-         6ltt63Ol3I0dTXcsLUAIzmr4XByUNFawXvFYgU3vtClJIYjA8r+dcTleil22qVTmmlH9
-         jHCrENqTk3HFSNKwWq3pacLckSkoX0lZxPQUvX66bYfAWitFlZmv2O6AJ8CeArlRXC4h
-         GrBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787629; x=1740392429;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6DTmgyKwXyxupGvGcbs4sr/KU+osTL6h5aaa2lsjPg=;
-        b=QM7Sv9BLs5hve9sY3y3wkMaBahqEj4Ja0FDR976hUGmh9FwkmQV4pfUBysu6Rx9x8j
-         qUgBE2aMaRWzx1kpBTlbrJ3UWeBUnUVH73VWYwJ6SVy6nXqYHtmt/4FiaDgN6WDa+FAa
-         8ZqAk8EoC7C9hlHxiXUowRrNpFUsBQoEjcAZF/4FiAGtgusnNu/Zo+G8/DBRixFQ5e+w
-         48MQHG8IlYHVea1jf6fV4GVk3xQ0K4q66Y57BND483XhR0BrAnr0L1sh2iw1LrgxEwUK
-         tzLyeFPX/MmOEUzllNfJj5j/jtyjH4SnMfATGO5kbWxYtTzHEu7Iw4xuPh0Rbq8tElUn
-         CHXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUte7xv4Q5Pt/3HxmEk+K+Zl56qVlF/7FCskXq4mIkxXtXQA/5pJshX2ABJyAQB0QRTcwCrWoDw+mp6+aY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTkBLIKBLCkghOifaSc6yZXVA+VmMt3RloMKTr1jg41TWTtjmc
-	El79Po2KHt1NARgA2/7Lq6adkP6yE1PdxAKrJ2xyHpmb1D4GsTpWDdMop9e04cE=
-X-Gm-Gg: ASbGncuBns2fxw3sKqItzx0wYVYw/Z0fUuwefuOr2GWZbgwpRuY3j9fnqT3UxET47zP
-	VFceDfHlY4W92ew+6mi15G7moqlNDcE6HvC86Jng3UcZQM8hp4Z9kumhFXGuDRF29DUZB9G4Ej0
-	VzNmhMrFO0ubJ/gTwPths75NyuSCg9NUM3U6KV0JZJcPL4hADtGtoET+843nuPJ3NgvPEji7FvV
-	0R1bI27/fVYfJxAsQBWHqfs1cgSYZFR5ObFVNugO49xozbTL6BghkvdeftZL0sGNpFX3rZ/78f2
-	qQlaN4W6VWZZ0XII8Q==
-X-Google-Smtp-Source: AGHT+IGviKjWNxy/sgElxSlyaT5/wAb+sw7oOQppRq5E3qnNTYAp1n89b2Fs/XnmQnd+QyM2KMyDaA==
-X-Received: by 2002:a05:6000:1787:b0:38f:443b:48f4 with SMTP id ffacd0b85a97d-38f443b4aefmr2784345f8f.49.1739787629473;
-        Mon, 17 Feb 2025 02:20:29 -0800 (PST)
-Received: from smtpclient.apple ([23.247.139.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c07c5f357dsm516160885a.23.2025.02.17.02.20.25
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Feb 2025 02:20:29 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1739787727; c=relaxed/simple;
+	bh=jMs/nQgZnmKABPkw9jqt7Jfzzk1OWmU8OV/13GG2QpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=digewljgtD/XFGH9WVvEy5dvTEWMedKL3Dj7nxACp/DEiqCbofXk2hthyy4oqCSeLbbXb5UykPaSavONJf9X/fgHI8iK9W8eA6VojF3ph7XjDJzR66m4fUvNnXERLRTL2CnKdI1eIIuNyQw5jnRDMyMAfGFsSV1prnkYaWo+0XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=VoOKg8Sc; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 8B1FA24002B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:21:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1739787718; bh=jMs/nQgZnmKABPkw9jqt7Jfzzk1OWmU8OV/13GG2QpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=VoOKg8ScbUMn0vwJXXeE+NHJZ0a9mDWjY3CeKpA7rXlmzvqNpeipXr22cUOZkwj5W
+	 hlHqEuxydHy2X+qdRqpAo/cZQ0lKjeeiHRkh9nxqXR5EWMuKhJuMZW1Fm26Xtg1VNw
+	 tbdXTKy0CrqIUEbhY0LakzhEglbdyyiFYaoYghcIt8r4EyXEM2uxT+QJ6RRDWpBWm4
+	 OAMMipY1+hxsNKuYe7M94yopTUKCsQDL/6zirsQuwS50oW7b0kPaaMuIW9tg7PQOzY
+	 ahZGwYFab344VQG/hqYTXsssLZrxpk4bz1wWrxm03KZGWNYvnFT67CaAZfNIy7ddYs
+	 JG3RfyGnXf56g==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YxJc00sngz9rxD;
+	Mon, 17 Feb 2025 11:21:51 +0100 (CET)
+Date: Mon, 17 Feb 2025 10:21:51 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= via B4 Relay <devnull+j.ne.posteo.net@kernel.org>,
+	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
+	Scott Wood <oss@buserror.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v2 12/12] dt-bindings: mtd: raw-nand-chip: Relax node
+ name pattern
+Message-ID: <Z7MNv4NX8dSztdsP@probook>
+References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
+ <20250207-ppcyaml-v2-12-8137b0c42526@posteo.net>
+ <87o6zaurv9.fsf@bootlin.com>
+ <Z7Iqir-qaZDt6tsx@probook>
+ <87tt8svrxf.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH md-6.15 2/7] md: only include md-cluster.h if necessary
-From: Glass Su <glass.su@suse.com>
-In-Reply-To: <20250215092225.2427977-3-yukuai1@huaweicloud.com>
-Date: Mon, 17 Feb 2025 18:20:11 +0800
-Cc: song@kernel.org,
- yukuai3@huawei.com,
- linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com,
- yangerkun@huawei.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E136E905-430C-40B4-B69A-7FC9B8CF3C47@suse.com>
-References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
- <20250215092225.2427977-3-yukuai1@huaweicloud.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87tt8svrxf.fsf@bootlin.com>
+
+On Mon, Feb 17, 2025 at 10:31:08AM +0100, Miquel Raynal wrote:
+> Hello,
+> 
+> >> > In some scenarios, such as under the Freescale eLBC bus, there are raw
+> >> > NAND chips with a unit address that has a comma in it (cs,offset).
+> >> > Relax the $nodename pattern in raw-nand-chip.yaml to allow such unit
+> >> > addresses.
+> >> 
+> >> This is super specific to this controller, I'd rather avoid that in the
+> >> main (shared) files. I believe you can force another node name in the
+> >> controller's binding instead?
+> >
+> > It's a bit tricky. AFAICS, when I declare a node name pattern in my
+> > specific binding in addition to the generic binding, the result is that
+> > both of them apply, so I can't relax stricter requirements:
+> >
+> > # raw-nand-chip.yaml
+> > properties:
+> >   $nodename:
+> >     pattern: "^nand@[a-f0-9]$"
+> >
+> > # fsl,elbc-fcm-nand.yaml
+> > properties:
+> >   $nodename:
+> >     pattern: "^nand@[a-f0-9](,[0-9a-f]*)?$"
+> 
+> Well, I guess this is creating a second possible node name.
+> 
+> > # dtc
+> > /.../fsl,elbc-fcm-nand.example.dtb:
+> > nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
+> >         from schema $id:
+> > 	http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
+> 
+> What about fixing the DT instead?
+
+In this particular context under the Freescale eLBC ("enhanced Local Bus
+Controller"), nand@1,0 makes complete sense, because it refers to chip
+select 1, offset 0. The eLBC binding (which has existed without YAML
+formalization for a long time) specifies that each device address
+includes a chip select and a base address under that CS.
+
+The alternative of spelling it as nand@100000000 makes readability
+strictly worse (IMO).
+
+Due to the conflicting requirements of keeping compatibility with
+historic device trees and complying with modern DT conventions,
+I'm already ignoring a validation warning from dtc, which suggests to
+use nand@100000000 instead of nand@1,0 because the eLBC bus has
+historically been specified with compatible = ..., "simple-bus",
+so I guess the fsl,elbc-fcm-nand binding can't be perfect anyway.
+
+In any case, I'll drop this patch during further development.
 
 
+Thank you for your inputs,
 
-> On Feb 15, 2025, at 17:22, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->=20
-> From: Yu Kuai <yukuai3@huawei.com>
->=20
-> md-cluster is only supportted by raid1 and raid10, there is no need to
-> include md-cluster.h for other personalities.
->=20
-> Also move APIs that is only used in md-cluster.c from md.h to
-> md-cluster.h.
->=20
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-
-Reviewed-by: Su Yue <glass.su@suse.com>
-> ---
-> drivers/md/md-bitmap.c  | 2 ++
-> drivers/md/md-cluster.h | 7 +++++++
-> drivers/md/md.h         | 7 -------
-> drivers/md/raid1.c      | 1 +
-> drivers/md/raid10.c     | 1 +
-> 5 files changed, 11 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-> index 23c09d22fcdb..71aa7dc80e26 100644
-> --- a/drivers/md/md-bitmap.c
-> +++ b/drivers/md/md-bitmap.c
-> @@ -29,8 +29,10 @@
-> #include <linux/buffer_head.h>
-> #include <linux/seq_file.h>
-> #include <trace/events/block.h>
-> +
-> #include "md.h"
-> #include "md-bitmap.h"
-> +#include "md-cluster.h"
->=20
-> #define BITMAP_MAJOR_LO 3
-> /* version 4 insists the bitmap is in little-endian order
-> diff --git a/drivers/md/md-cluster.h b/drivers/md/md-cluster.h
-> index 470bf18ffde5..6c7aad00f5da 100644
-> --- a/drivers/md/md-cluster.h
-> +++ b/drivers/md/md-cluster.h
-> @@ -35,4 +35,11 @@ struct md_cluster_operations {
-> void (*update_size)(struct mddev *mddev, sector_t old_dev_sectors);
-> };
->=20
-> +extern int register_md_cluster_operations(const struct =
-md_cluster_operations *ops,
-> + struct module *module);
-> +extern int unregister_md_cluster_operations(void);
-> +extern int md_setup_cluster(struct mddev *mddev, int nodes);
-> +extern void md_cluster_stop(struct mddev *mddev);
-> +extern void md_reload_sb(struct mddev *mddev, int raid_disk);
-> +
-> #endif /* _MD_CLUSTER_H */
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index def808064ad8..c9bc70e6d5b4 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -19,7 +19,6 @@
-> #include <linux/wait.h>
-> #include <linux/workqueue.h>
-> #include <trace/events/block.h>
-> -#include "md-cluster.h"
->=20
-> #define MaxSector (~(sector_t)0)
->=20
-> @@ -845,11 +844,6 @@ static inline void safe_put_page(struct page *p)
->=20
-> extern int register_md_personality(struct md_personality *p);
-> extern int unregister_md_personality(struct md_personality *p);
-> -extern int register_md_cluster_operations(const struct =
-md_cluster_operations *ops,
-> - struct module *module);
-> -extern int unregister_md_cluster_operations(void);
-> -extern int md_setup_cluster(struct mddev *mddev, int nodes);
-> -extern void md_cluster_stop(struct mddev *mddev);
-> extern struct md_thread *md_register_thread(
-> void (*run)(struct md_thread *thread),
-> struct mddev *mddev,
-> @@ -906,7 +900,6 @@ extern void md_idle_sync_thread(struct mddev =
-*mddev);
-> extern void md_frozen_sync_thread(struct mddev *mddev);
-> extern void md_unfrozen_sync_thread(struct mddev *mddev);
->=20
-> -extern void md_reload_sb(struct mddev *mddev, int raid_disk);
-> extern void md_update_sb(struct mddev *mddev, int force);
-> extern void mddev_create_serial_pool(struct mddev *mddev, struct =
-md_rdev *rdev);
-> extern void mddev_destroy_serial_pool(struct mddev *mddev,
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 9d57a88dbd26..e55db07e43d4 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -36,6 +36,7 @@
-> #include "md.h"
-> #include "raid1.h"
-> #include "md-bitmap.h"
-> +#include "md-cluster.h"
->=20
-> #define UNSUPPORTED_MDDEV_FLAGS \
-> ((1L << MD_HAS_JOURNAL) | \
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index efe93b979167..3df39b2399b2 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -24,6 +24,7 @@
-> #include "raid10.h"
-> #include "raid0.h"
-> #include "md-bitmap.h"
-> +#include "md-cluster.h"
->=20
-> /*
->  * RAID10 provides a combination of RAID0 and RAID1 functionality.
-> --=20
-> 2.39.2
->=20
->=20
-
+J. Neuschäfer
 
