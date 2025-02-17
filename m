@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-517766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3290A38585
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:08:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09A5A38586
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956DF1753F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 549E8175BF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B733E223321;
-	Mon, 17 Feb 2025 14:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zdv2T8vQ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D75221575;
-	Mon, 17 Feb 2025 14:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1811921CC7E;
+	Mon, 17 Feb 2025 14:04:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387922083
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801044; cv=none; b=SnC9jrSSs+2T7cr+GYrCeIqM6UquDutmTHmVFyi3ayxWuu19bzPBIy9iHmNaKoi0w0IVzmFp4xZ5Vq3vkCRiZ12XMCMx505Hs4vcb++cedfZ7i9fxESPXIe6Iep96jnwBMOgizoEypM56HKmzY/qYEk9Gf6X0++7coHEGp6PJlA=
+	t=1739801077; cv=none; b=Ld/yJMBLTcqiOvGA2Hlvv2lMFZ5X6qiw61Fm6AxzF/q0HVvVESoS9GM5szXDiSJoqWa2to9SUNhqzobI3p7QTGDAdBOThs01S3cRnc6oGiHJlF4zTXElHkQwZVZFkEm2MN5MWUOSQ0AsqLnnjc3kp4HmEl1BkjYTns/YNLDJ2Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801044; c=relaxed/simple;
-	bh=9aREkL79Xsxr+96x5qn8It6s9YMe1H0v50kaLPRH6JQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d2sBy5pqrFQAgqMc2J17aTza+2xQtfHKVxfFP2oS1HocVZvOqsd1dqPxK1zFF6ZO514MTLX63Nrm5npcUZ+L6VOAZ0jIYb0T5OFoM+2K7D0HpE6J8HIni/6yFBdzIfLxaEiKrWOGBZ4EXESru08W+dg0a7Ub+JGCu3DliZTY9kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zdv2T8vQ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5452ed5b5b2so2704842e87.0;
-        Mon, 17 Feb 2025 06:04:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739801040; x=1740405840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wiMhV2MLOmdVTuzdxdM8/it2VeMkuWUBOlinnhDCGM=;
-        b=Zdv2T8vQ6g+vXjX0iy+U1eFUmxp9Y+lbt5r6+ynbQV90PfBWJfkGo0p+w/X+cjGVCC
-         rvcY1gEi6o1I7WRYpxSMkKkyHMAJ9r/9HaF4YGFMt4NziK7MIr7GZJKjuAm79aZmSoAX
-         IbQft953fpDb0Idhu1/sLzQv8Pehw24ukJ8CxzUX0UEjyAgV7pSI50seyRAZB6RvDv2U
-         Dddlht+gTrn1IUNEI20qS6XRxI0RnYi+2ckMBfxfG5sk3lFimXb0dqePfrNtOmyuJoNa
-         foyOgSlVpQky8hMWTodNUVYjJu7746EXB1Qp700c8ma3hul7bVZwxLtPC0F5QRc2ab8K
-         7Ktw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739801040; x=1740405840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4wiMhV2MLOmdVTuzdxdM8/it2VeMkuWUBOlinnhDCGM=;
-        b=nBIiJaIwRxWK79+GpnJ0k1hIiBd9yrmFepGPopW4GFji8713mouLz9n2hlyPvNmjCK
-         fF6LG6f79BAtXtbPKAqfoyoS2+mr50gRj+3655WOlkaTBOmfYa7Fn/H8+i/SJ2IHyYK2
-         IAwkdMmfZ8kEHm9EYAJQJkjYRh1MVoJgpy0BE4Qe6j/uXTKY9bb4/YA/6CPZfgzRs4vl
-         IjJsh05bi9P/N9SZ5MqmNzZ1DjbRI+mtyTisod1ym7WPB3zrVaw7/TnlZD3aMvfEsHl3
-         61NM85QnhIX0z5M/NxIgAN/sUd8UQglnmCTnzMHhaM5z7gOEtg/+asL/Rp0oj2sIG13M
-         sQ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFfY8bVWh/JQWjCOacgQ/EtTgrgr6I0t0Rcr6heIDJOebJKe81qEnIrGKvFQdPr6KIkW8z4u2VG8kH@vger.kernel.org, AJvYcCWeSbf5k3poEfrkQbSFRqoKcR+bK7dTjYHV3bZiwl9rB7djvCF1mPD0TCKsgfpVrHk3v3NtbI1G3wJzyIo=@vger.kernel.org, AJvYcCXQ1hZM4V46gyNuNWyoujBLC1rRRyMVFfKi4W0dLEET93mMSI4dajubFsrL2WKBLBkKW2ltHNLO0sX79MGL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6dPbqWewTkwa3umw9f99SpP1L+KxE2lui4FwcVK7oy5kgBILc
-	i9npU+06pnUAdIEQTLODqC82MuC/oEt/Ki5sl0fft2QUsCR6LhXH
-X-Gm-Gg: ASbGncuxkYcajfWlDGA7p2gu6tLIKs+XhtFWZP6LsTwxOMxrmf5f+LQE0LCbvOuaHJv
-	augYgkH1tY2T8WTI4C9Ko5AzRoFHmUP12nRWlUm2W7yKLXVx0VA+0KX8WAmErtwP/ODJsl/HA8O
-	2Kdy12wc38hezeoI7eA/guWeDyTImmefgPnec9JEyPRe9i24dj67WyWrQCr8zjcgawY6HM+nrFd
-	eL40jxSDGthZlrp5imYXtqGJNB9N66wPt0l7U9pS3ocWqaRNEGKyAFD9I2b02Dqhj00ZKzBqmKg
-	H+s2vww=
-X-Google-Smtp-Source: AGHT+IE2I2XaCaDXYttBWppjwztZE3XPtmV+/ckyma+vkI0gasU124OBkpUB+WCyZpcQozD76oi6mg==
-X-Received: by 2002:a05:6512:b12:b0:545:ea9:1a24 with SMTP id 2adb3069b0e04-5452fe2e78cmr2849929e87.14.1739801040284;
-        Mon, 17 Feb 2025 06:04:00 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309306d5f48sm8919601fa.57.2025.02.17.06.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 06:03:59 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>
-Cc: linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v4 3/3] ARM: tegra: tf101: Add al3000a illuminance sensor node
-Date: Mon, 17 Feb 2025 16:03:36 +0200
-Message-ID: <20250217140336.107476-4-clamor95@gmail.com>
+	s=arc-20240116; t=1739801077; c=relaxed/simple;
+	bh=tZmqPQHcoiiJErLx0eEk1aAs3qAh+2S/0YoS5UCOXqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jKmvUUgZHOn81wy3sIXjgQr6e/LS+97q8v2ci0gRjlSuZRyztjTK/7+40joBpjciFEQfPsayhpE6k6X1OMuw2ueRFtcPWmkMxMRU0mFKUieeHqdODzk2ZtWtZFgt+5us9zznmQ8XRjBL8rHSh3WnAuGOAyBx3+HrPSNKyagiZO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C3B9152B;
+	Mon, 17 Feb 2025 06:04:54 -0800 (PST)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C68753F6A8;
+	Mon, 17 Feb 2025 06:04:29 -0800 (PST)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Fixes for hugetlb and vmalloc on arm64
+Date: Mon, 17 Feb 2025 14:04:13 +0000
+Message-ID: <20250217140419.1702389-1-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250217140336.107476-1-clamor95@gmail.com>
-References: <20250217140336.107476-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,38 +83,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bind al3000a illuminance sensor found in ASUS TF101
+Hi All,
 
-Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This series contains some fixes for hugetlb on arm64, and is split out from v1
+of a wider series at [1]. While the last patch is technically targetting core-mm
+and is not directly related to arm64, I'd like to to go via the arm64 tree so
+that the wider performance improvement series (v2 to be posted shortly) that
+depends on this series doesn't have to be robust to the fix not being present.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-index 975ec24195ca..fcf3d6dd64a2 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-@@ -1123,6 +1123,17 @@ smart-battery@b {
- 				sbs,poll-retry-count = <10>;
- 				power-supplies = <&mains>;
- 			};
-+
-+			/* Dynaimage ambient light sensor */
-+			light-sensor@1c {
-+				compatible = "dynaimage,al3000a";
-+				reg = <0x1c>;
-+
-+				interrupt-parent = <&gpio>;
-+				interrupts = <TEGRA_GPIO(Z, 2) IRQ_TYPE_LEVEL_HIGH>;
-+
-+				vdd-supply = <&vdd_1v8_sys>;
-+			};
- 		};
- 	};
- 
--- 
+I've included maintainers/reviewers for all the arches that are (trivially)
+touched due to the API changes, hoping for some ACKs.
+
+Changes since v1 [1]
+====================
+- Added Rb from Anshuman - Thanks!
+- Added "#ifndef __PAGETABLE_PMD_FOLDED" around PUD_SIZE in flush_hugetlb_tlb_range()
+
+I've marked all of these as candidates for backport to stable.
+
+Applies on top of v6.14-rc3. All mm selftests run and pass.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20250205151003.88959-1-ryan.roberts@arm.com/
+
+Thanks,
+Ryan
+
+Ryan Roberts (4):
+  mm: hugetlb: Add huge page size param to huge_ptep_get_and_clear()
+  arm64: hugetlb: Fix huge_ptep_get_and_clear() for non-present ptes
+  arm64: hugetlb: Fix flush_hugetlb_tlb_range() invalidation level
+  mm: Don't skip arch_sync_kernel_mappings() in error paths
+
+ arch/arm64/include/asm/hugetlb.h     | 26 ++++++++++-----
+ arch/arm64/mm/hugetlbpage.c          | 48 +++++++++++++---------------
+ arch/loongarch/include/asm/hugetlb.h |  6 ++--
+ arch/mips/include/asm/hugetlb.h      |  6 ++--
+ arch/parisc/include/asm/hugetlb.h    |  2 +-
+ arch/parisc/mm/hugetlbpage.c         |  2 +-
+ arch/powerpc/include/asm/hugetlb.h   |  6 ++--
+ arch/riscv/include/asm/hugetlb.h     |  3 +-
+ arch/riscv/mm/hugetlbpage.c          |  2 +-
+ arch/s390/include/asm/hugetlb.h      | 12 ++++---
+ arch/s390/mm/hugetlbpage.c           | 10 ++++--
+ arch/sparc/include/asm/hugetlb.h     |  2 +-
+ arch/sparc/mm/hugetlbpage.c          |  2 +-
+ include/asm-generic/hugetlb.h        |  2 +-
+ include/linux/hugetlb.h              |  4 ++-
+ mm/hugetlb.c                         |  4 +--
+ mm/memory.c                          |  6 ++--
+ mm/vmalloc.c                         |  4 +--
+ 18 files changed, 87 insertions(+), 60 deletions(-)
+
+--
 2.43.0
 
 
