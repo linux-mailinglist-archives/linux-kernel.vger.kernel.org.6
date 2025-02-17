@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-517621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4C8A38343
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:44:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99EBA3841B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7720E16E766
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810853B4F65
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AED218842;
-	Mon, 17 Feb 2025 12:44:20 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B26F19F128
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16521C186;
+	Mon, 17 Feb 2025 13:06:52 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ADE215F49;
+	Mon, 17 Feb 2025 13:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739796259; cv=none; b=uoX0sCOlRxC1n+LAc82sXQRURJMlEQYjeiK7nZyCSA2oYj6xJDtQesYHuhJbjoPAhkYqZrSQLzD3BUhP1mBC4QYsDtCtZpVM9pu6D/VvkNc97XwL6UAyfNDgaGaN7O0J53KnQZF9lWOQGTTp4eEjlNk86StlqrqS1p1QqiQWyfU=
+	t=1739797612; cv=none; b=Km2BKqIHOkvdycGF7fIei6jyphauagyLNpqdX3O/yn52nxbfhFswJAAxJuzBBkFEjQbXyof9cHzJ7sAwCH6JdF52PvtCxUZcY035dBr0WUjV+1V/sMWi/9a5AKNawpZWOPvautdRcB7yhfI/FOPTxe0gRNPU94Z0ORMSBlvJCCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739796259; c=relaxed/simple;
-	bh=D4Y1T7mfxwOQ4MS09HwDhbNQiqQZcqPCW/8qshQ+Adw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Mi5xZT2F1AMCeFFa1mXSOip2ILbCyqruxSNPVczHu9RJg2/ooum3vRAGpJ/psWCc++IRjtpfs4F6cyPuPipD4Wnt2ce0rYJpBjlLRmyPahFLUu4z7u39SDyi24o4qJVv+IU2dippFSWtvFkpbjOwK7IT03vF6psj8LOTIdP+zpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d14a3f810fso29965705ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:44:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739796257; x=1740401057;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zjf1l0cPgcmh34vnjgEblNi+O3qUSdKZPLQ57K5Dj0s=;
-        b=uEL6RjhPx/gcpPOcK0AzdXjFIj9eR/u1trrPNHj9vyHtcPkVpyllmu0SCJCpYywN5J
-         Pqr7WHm6QBNTbhte31/cPAlcrwnaNdqkH7s01pMK6hp1FZthStMPigF8iEuojynHfZDr
-         V89Nx2Va4x4HBZf7K1tll06AGFNMA/au2+vK9mdgHYNJorAWy9lF94oly1nJp6n9214T
-         1AIFYDuCTU+3bCUpReS3AP6nkcP6EsrD64feP/rYPmPpMuDEtutNR43cMYxIsrpYZqUb
-         jc9UGqhBeOvDvv3Nc56tpzh0qK3AJggN1/caZjuVTpsLFaFj/vAb/FBvocOM4TxD+k3C
-         TbFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRh+FX+B6JYXOZhH1lPP6srW4acUXtblXRBWIgOvfbYjRU3GSHiTU4ToWxcFFud+f/Zzkdqbcr3qTz9BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbqtRzBbkAQRC61dOMdSaMlDMPJPJygiLOWt5DrgbMUndyP/1u
-	Gr4MxUxxZ4/7rjHK7hsib1ApoIRcfC8BH4KiC/SFJo3PQsDuma2pE6oTUrJ5I82CDPxy2M0AduF
-	Ck181p4EMrN/Llnm9yEtVzoMwkYxkKR/aEYMzC2iOY0Uok/M2005C4yE=
-X-Google-Smtp-Source: AGHT+IETYE4hEIQrhLeq61cizQjcSFArms21MhpYRV8EaUvhO7cFeXO4BwBY46Ggi30TiEV3nqR6542Tua9ti3yfsbF7UZ8JEO7B
+	s=arc-20240116; t=1739797612; c=relaxed/simple;
+	bh=nN4o3P1mouOHENLPIOBJJsndTSO4QsgADBehLhpRlW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNmQ/wR8Y3BaMXlbC+OQn67HLpVQRtFsTaHuUUswSy+8hdb0xqMs4HMXbwtWPx8irPQMmtDpslFii7LKQTzc9njVypckkDVO0VX74Us259zueBvi0lx5NrqeOJxHrdwEbzqcXqvMeRfhDH4GIUI9/8xnzcDCiAd7scFccPO9AyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51HCjfgB011690;
+	Mon, 17 Feb 2025 06:45:41 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51HCjcjw011689;
+	Mon, 17 Feb 2025 06:45:38 -0600
+Date: Mon, 17 Feb 2025 06:45:38 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-security-module@vger.kernel.org,
+        Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org, lwn@lwn.net
+Subject: Re: [Announce] Linux Security Summit North America 2025 CfP
+Message-ID: <20250217124538.GA11605@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0f:b0:3cf:f8de:7662 with SMTP id
- e9e14a558f8ab-3d2808d6db7mr86085985ab.18.1739796257282; Mon, 17 Feb 2025
- 04:44:17 -0800 (PST)
-Date: Mon, 17 Feb 2025 04:44:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b32f21.050a0220.173698.0032.GAE@google.com>
-Subject: [syzbot] Monthly bluetooth report (Feb 2025)
-From: syzbot <syzbot+list13032b763486017a9b9e@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 17 Feb 2025 06:45:41 -0600 (CST)
 
-Hello bluetooth maintainers/developers,
+On Mon, Feb 10, 2025 at 01:03:02PM -0800, James Morris wrote:
 
-This is a 31-day syzbot report for the bluetooth subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/bluetooth
+Good morning, I hope the week is starting well for everyone.
 
-During the period, 6 new issues were detected and 0 were fixed.
-In total, 58 issues are still open and 79 have already been fixed.
+> The Call for Participation for the 2025 Linux Security Summit North 
+> America (LSS-NA) is now open.
+> 
+> LSS-NA 2025 is a technical forum for collaboration between Linux 
+> developers, researchers, and end-users. Its primary aim is to foster 
+> community efforts in deeply analyzing and solving Linux operating system 
+> security challenges, including those in the Linux kernel. Presentations 
+> are expected to focus deeply on new or improved technology and how it 
+> advances the state of practice for addressing these challenges.
+>
+> Key dates:
+> 
+>     - CFP Closes:  Monday, March 10 at 11:59 PM MDT / 10:59 PM PDT
+>     - CFP Notifications: Monday, March 31
+>     - Schedule Announcement: Wednesday, April 2
+>     - Presentation Slide Due Date: Tuesday, June 24
+>     - Event Dates: Thursday, June 26 ??? Friday, June 27
+> 
+> Location: Denver, Colorado, USA (co-located with OSS).
 
-Some of the still happening issues:
+I reflected a great deal before responding to this note and finally
+elected to do so.  Given the stated desire of this conference to
+'focus deeply on new or improved technologies' for advancing the state
+of practice in addressing the security challenges facing Linux, and
+presumably by extension, the technology industry at large.
 
-Ref  Crashes Repro Title
-<1>  27541   Yes   KASAN: slab-use-after-free Read in l2cap_unregister_user
-                   https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
-<2>  5842    Yes   WARNING in call_timer_fn
-                   https://syzkaller.appspot.com/bug?extid=6fb78d577e89e69602f9
-<3>  943     Yes   general protection fault in lock_sock_nested
-                   https://syzkaller.appspot.com/bug?extid=d3ccfb78a0dc16ffebe3
-<4>  702     Yes   general protection fault in skb_release_data (2)
-                   https://syzkaller.appspot.com/bug?extid=ccfa5775bc1bda21ddd1
-<5>  242     Yes   WARNING in hci_conn_timeout (2)
-                   https://syzkaller.appspot.com/bug?extid=fc4b5b2477d4ca272907
-<6>  214     Yes   KASAN: slab-use-after-free Read in force_devcd_write
-                   https://syzkaller.appspot.com/bug?extid=bc71245e56f06e3127b7
-<7>  182     Yes   WARNING: ODEBUG bug in hci_release_dev (2)
-                   https://syzkaller.appspot.com/bug?extid=b170dbf55520ebf5969a
-<8>  137     Yes   KASAN: slab-use-after-free Read in l2cap_recv_frame
-                   https://syzkaller.appspot.com/bug?extid=5c915dc5dd417b83b348
-<9>  132     No    WARNING in l2cap_chan_del
-                   https://syzkaller.appspot.com/bug?extid=3272785b7a1fc9b510f6
-<10> 115     Yes   BUG: sleeping function called from invalid context in lock_sock_nested (3)
-                   https://syzkaller.appspot.com/bug?extid=55cd5225f71c5cff7f6f
+I'm not not sure what defines membership in the Linux 'security
+community'.  I first presented at the Linux Security Summit in 2015,
+James you were moderating the event and sitting in the first row.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+If there is a desire by the Linux Foundation to actually promote
+security innovation, it would seem the most productive use of
+everyone's time would be to have a discussion at this event focusing
+on how this can best be accomplished in the context of the current
+Linux development environment.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+If we have done nothing else with our Quixote/TSEM initiative, I
+believe we have demonstrated that Linux security development operates
+under the 'omniscient maintainer' model, a concept that is the subject
+of significant discussion in other venues of the Linux community:
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+https://lore.kernel.org/lkml/CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com/
 
-You may send multiple commands in a single email message.
+I'm not here to debate whether that is a good or bad model.  I do
+believe, that by definition, it constrains the innovation that can
+successfully emerge to something that an 'omniscient' maintainer
+understands, feels comfortable with or is not offended by.
+
+It should be lost on no one that the history of the technology
+industry has largely been one of disruptive innovation that is
+completely missed by technology incumbents.
+
+The future may be the BPF/LSM, although no one has yet publically
+demonstrated the ability to implement something on the order of
+SeLinux, TOMOYO or Apparmor through that mechanism.  It brings as an
+advantage the ability to innovate without constraints as to would be
+considered 'acceptable' security.
+
+Unfortunately, a careful review of the LSM mailing list would suggest
+that the BPF/LSM, as a solution, is not politically popular in some
+quarters of the Linux security community.  There have been public
+statements that there isn't much concern if BPF breaks, as the concept
+of having external security policy is not something that should be
+supported.
+
+We took an alternative approach with TSEM, but after two years of
+submissions, no code was ever reviewed.  I'm not here to bitch about
+that, however, the simple fact is that two years with no progress is
+an eternity in the technology industry, particularly security, and
+will serve to drive security innovation out of the kernel.
+
+One can make a reasoned and informed argument that has already
+happened.  One of the questions worthy of debate at a conference with
+the objectives stated above.
+
+I apologize if these reflections are less than popular but they are
+intended to stimulate productive discussion, if the actual intent of
+the conference organizers is to focus deeply on new and improved
+security technology.
+
+There is far more technology potentially available than there are good
+answers to the questions as to how to effectively exploit it.
+
+> James Morris
+> <jmorris@namei.org>
+
+Best wishes for a productive week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
