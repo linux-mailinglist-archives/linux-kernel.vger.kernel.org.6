@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-517299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A95A37F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F776A37F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1833AD683
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CE53B374F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A1C216610;
-	Mon, 17 Feb 2025 09:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3743216613;
+	Mon, 17 Feb 2025 09:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lujQwAiC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="MIKIQw9U"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD292165F9;
-	Mon, 17 Feb 2025 09:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF70E2163AD;
+	Mon, 17 Feb 2025 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786175; cv=none; b=hj2reX221E9mB1mBGJci2NBtaGG/ydhPGWTCXLJBr9LipZuQLTVcDQ+ZJim7Vb8IRWoPMOQvEd8Q3mkJb70RD6HaQFeWvw8IvVq9LWDQYOaPODR3a7I0bGc2WsuCBauU7LRV5B96AVp5ipOstM6tvAdZTod2wrf72YU54dE9lxQ=
+	t=1739786259; cv=none; b=c2QorVMJp8kcv75QWDT9YPBvNKZ/lBngN3Cp3MsI7kUmj647z08t9dCxZYUiG7mPVJI4ALwLxN5C4ArSiGA6lCpxauXEgYcwW94v2fL9R0v64X3/6FfdKjp2NIFjbqGbzWbX6o7/Pu/hVuuAlWO+JF0QZLbYzp6GytaPQTA3FSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786175; c=relaxed/simple;
-	bh=JKcb9cL94tNcPawYqghUvzw19gc0TQZJXoekcw5QLh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDd+2Yj9VqLi7nQrBOQjcvsYB7dH2ZCZw3DQLrsz+s13qifkoDZYhrsodU+og141/1Vvx/HksX0J0qvCVuq3x0j2W64uXKGOnEMBf8Bs5T7UXpOKmk4xFjM2/WkPoUvoa9SkOddo7Eq2m4VQgQA2Hw3vJ972dlafg5nz/xGQmgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lujQwAiC; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739786174; x=1771322174;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JKcb9cL94tNcPawYqghUvzw19gc0TQZJXoekcw5QLh4=;
-  b=lujQwAiCYpn6AnlTVWl6Lkc3QpSV79DQHyjj+kN/C0c2QWSJ3pKyPlx2
-   C4N8k7gpZJ5xd8WExRUU8p+Xx2d4yqvXmVrOAF/A8qdNOawzr3v3I9T5O
-   nzBaXnaY0HfR21MUUXhOmx2wE0RLe9O2PqIrFS/1QI3jyyj7Kiui+zhYY
-   7mkbmK1XArw56pXNnQryiYE0oH2iGZLutZJPmQOCU7WgmABoG+T+ruPIX
-   ir2KrMpfry7/L2AgDIy+yEmIpEsDzVxfLryMIpM1eDysM5dL9R31mLDbv
-   ruwBFc0Sd+6fFbHWnav3g9YbUJ33SVUFvoKg024ZiRWOndWLgsuUNN89W
-   w==;
-X-CSE-ConnectionGUID: dx5L4VXpQEmF6f7BA97Oow==
-X-CSE-MsgGUID: NUOXq1h2R1y7EbRtQAct4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40584403"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="40584403"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:56:14 -0800
-X-CSE-ConnectionGUID: jRSumhs9RsO9h6LtalkJMw==
-X-CSE-MsgGUID: E7COLFkoSWuwoLDMWYiFYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119288888"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.163])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:56:12 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v2 2/2] PCI: shpchp: Remove "shpchp_debug" module parameter
-Date: Mon, 17 Feb 2025 11:55:50 +0200
-Message-Id: <20250217095550.2789-3-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250217095550.2789-1-ilpo.jarvinen@linux.intel.com>
-References: <20250217095550.2789-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1739786259; c=relaxed/simple;
+	bh=ff/ojdVCfYwCjERwRe/r6CKIxlJq2Z0EEhLcqhySaGA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=asCUVut2Dwzgmqj/CxyfSwdzS57VGuXJ3INqDroxg2VsAxVeJK7zFabJQFMsUtfGIURYrY11TeTSo9BQG4ou+kN58oBCPTk35zqHmi36OzKgG5DUH4Uu4S4Zn4+/HHj14Ue6lOH+n0qQqk5/WZEW3ogRYemlQKe+7iA/7t54AEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=MIKIQw9U; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H6wncn032475;
+	Mon, 17 Feb 2025 03:57:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=VQnPTbRnGx3MDcwlem
+	XHsudsRqJWoOG4TTIJvD7dU94=; b=MIKIQw9UHMR+nhAJNeX77+8ZgBYF3r6t0L
+	ZynOZRXOCsPGNgM0/jaTybOXbOwRKNRBHm49LaLhRQJKazuoCzuQIk3fu3oh7Kr2
+	FGTTDRIyfsmsUgo5sQByZtdfxMfbJXTB7oj+WkZXcGFL2MK2XNnowsB7xJcFCJuO
+	YS1mwChT3ddp8HplGu+kQuonyOCsueBfwBxfuhQI9ecdm2J4erwQ2xJYUGyicC6F
+	pi7LiPmU5FFwL6C8vpdHDxWibCe2tcHxylSjOnwOND7kqkGf5KVrWBWKshEgTXeK
+	HH54jNoTuvvnW8GU8FY9oKF7Fdh3u6AQhg9IuwflgzwRmFX8IVoA==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44ts75uhpr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 03:57:06 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
+ 2025 09:57:03 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 09:57:03 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id C4BB3822561;
+	Mon, 17 Feb 2025 09:57:03 +0000 (UTC)
+Date: Mon, 17 Feb 2025 09:57:02 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        <patches@opensource.cirrus.com>,
+        Ernest Van Hoecke
+	<ernest.vanhoecke@toradex.com>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Francesco
+ Dolcini" <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 2/5] ASoC: wm8904: Don't touch GPIO configs set to
+ 0xFFFF
+Message-ID: <Z7MH7nZHq7GXRoQP@opensource.cirrus.com>
+References: <20250206163152.423199-1-francesco@dolcini.it>
+ <20250206163152.423199-3-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250206163152.423199-3-francesco@dolcini.it>
+X-Proofpoint-GUID: RxRjI2Z8tOCwjc_wg2qm43HxgoGQ0ko2
+X-Authority-Analysis: v=2.4 cv=fepXy1QF c=1 sm=1 tr=0 ts=67b307f2 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=m8ToADvmAAAA:8 a=2M6oOL_jOPCmwRCwdCkA:9 a=CjuIK1q_8ugA:10
+ a=YXXWInSmI4Sqt1AkVdoW:22 a=kCrBFHLFDAq2jDEeoMj9:22
+X-Proofpoint-ORIG-GUID: RxRjI2Z8tOCwjc_wg2qm43HxgoGQ0ko2
+X-Proofpoint-Spam-Reason: safe
 
-The "shpchp_debug" module parameter is used to enable debug logging.
-The generic ability to turn on/off debug prints dynamically covers this
-use case already so there is no need for module specific debug handling.
-The ctrl_dbg() wrapper also uses a low-level pci_printk() despite
-always using KERN_DEBUG level.
+On Thu, Feb 06, 2025 at 05:31:49PM +0100, Francesco Dolcini wrote:
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> 
+> When updating the GPIO registers, do nothing for all fields of gpio_cfg
+> that are "0xFFFF".
+> 
+> This "do nothing" flag used to be 0 to easily check whether the gpio_cfg
+> field was actually set inside pdata or left empty (default).
+> 
+> However, 0 is a valid configuration for these registers, while 0xFFFF is
+> not.
+> 
+> With this change, users can explicitly set them to 0. Not setting
+> gpio_cfg in the platform data will now lead to setting all GPIO
+> registers to 0 instead of leaving them unset.
+> 
+> No one is using this platform data with this codec.
+> 
+> The change gets the driver ready to properly set gpio_cfg from the DT.
+> 
+> Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
 
-Remove "shpchp_debug" parameter and convert ctrl_dbg() to use the
-pci_dbg().
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-From now on, shpchp can be debugged using the normal dynamic debugger
-by setting CONFIG_DYNAMIC_DEBUG=y and then either adding to kernel
-cmdline:
-
-  dyndbg="file drivers/pci/hotplug/shpchp* +p"
-
-or using this command on a running kernel:
-
-  echo 'file drivers/pci/hotplug/shpchp* +p' > /sys/kernel/debug/dynamic_debug/control
-
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/hotplug/shpchp.h      | 6 +-----
- drivers/pci/hotplug/shpchp_core.c | 3 ---
- 2 files changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
-index 10ba0bfac419..a425530e0939 100644
---- a/drivers/pci/hotplug/shpchp.h
-+++ b/drivers/pci/hotplug/shpchp.h
-@@ -34,11 +34,7 @@ extern int shpchp_poll_time;
- extern bool shpchp_debug;
- 
- #define ctrl_dbg(ctrl, format, arg...)					\
--	do {								\
--		if (shpchp_debug)					\
--			pci_printk(KERN_DEBUG, ctrl->pci_dev,		\
--					format, ## arg);		\
--	} while (0)
-+	pci_dbg(ctrl->pci_dev, format, ## arg)
- #define ctrl_err(ctrl, format, arg...)					\
- 	pci_err(ctrl->pci_dev, format, ## arg)
- #define ctrl_info(ctrl, format, arg...)					\
-diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
-index a10ce7be7f51..0c341453afc6 100644
---- a/drivers/pci/hotplug/shpchp_core.c
-+++ b/drivers/pci/hotplug/shpchp_core.c
-@@ -22,7 +22,6 @@
- #include "shpchp.h"
- 
- /* Global variables */
--bool shpchp_debug;
- bool shpchp_poll_mode;
- int shpchp_poll_time;
- 
-@@ -33,10 +32,8 @@ int shpchp_poll_time;
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- 
--module_param(shpchp_debug, bool, 0644);
- module_param(shpchp_poll_mode, bool, 0644);
- module_param(shpchp_poll_time, int, 0644);
--MODULE_PARM_DESC(shpchp_debug, "Debugging mode enabled or not");
- MODULE_PARM_DESC(shpchp_poll_mode, "Using polling mechanism for hot-plug events or not");
- MODULE_PARM_DESC(shpchp_poll_time, "Polling mechanism frequency, in seconds");
- 
--- 
-2.39.5
-
+Thanks,
+Charles
 
