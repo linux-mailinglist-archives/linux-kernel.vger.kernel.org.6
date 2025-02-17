@@ -1,174 +1,209 @@
-Return-Path: <linux-kernel+bounces-518075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5485A38988
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:41:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8A6A38997
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9908816A24D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:40:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A9C7A3D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0533F2253E9;
-	Mon, 17 Feb 2025 16:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAED22541A;
+	Mon, 17 Feb 2025 16:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bEcRaDyH"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvTZhrf9"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C89223700
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF9C2253A9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739810415; cv=none; b=RqiYBSn6uEKDAIwzxGIqgiN3gopbYlncnev787p8YcYi8yonSaQOdX/yLQAT3W8j1qdr88zIypSKRJ7EYtcZg5CVrX6giyQpjOaObf2TvJkUGaxVFkJQN1CV39c8+X9ySCMUqzcpDFn96fuk21YRxj9qQD/nGyXgiMvHtGdPmPY=
+	t=1739810507; cv=none; b=civ5eLtW3MFYxmWuV8UqFuhK6CC3LjMniTQ2cduwq1/Nm0+OU+s1q7l+hytKFssbOyl66XIGEyKoxRnUe9vlGqexcK1IKShNAfGdHoQ2TVodAI/iEYQFa5yGnWFY4jDYVOSpNJLb9pm54BcuW2JcwVzb1DHadTAUt/aLDR6TDZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739810415; c=relaxed/simple;
-	bh=qiiBfKYtJDKnU4FoewK0/2gNGi/q3dFK3BX4XEca3k0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=TjEKIfxYpNz91+G+4UMrAc5aGHh8rYBTmA/F1fDiRLBUNwO/UgC86Bm5CsGOaqJH+BZ+HroAKoCN7u+Fi8tKqStjiAsC18kXmFb6XGG6OA86w7t+GX1HiAT4k3q6S4ObvQAzfoKL2NRJJMq8kzWfB8zPBT7+2md6iTj5xidabZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bEcRaDyH; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e04861e7a6so2988368a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:40:12 -0800 (PST)
+	s=arc-20240116; t=1739810507; c=relaxed/simple;
+	bh=4GpjtyPhX2tIp7jKFxe8+OhXpy9WD8kHJbcuRQ6OQrE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xigw1rTuS1u9OE/VFkARgGMj0kCrszHBjD8EIVFj1+KwnSzPijFUfOiI1XOPqqIKq64KYguFFVSV5C7lA+n77S+YuwC4nUHiPZhkK+g2tFKmJsJlMi2KZ5i300IpcQeYcRL/+18ywXUy1SdihzBTgKWaQca1DHuCMJSScIwnKus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvTZhrf9; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e02e77ea3cso325058a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:41:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739810411; x=1740415211; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:content-language:cc:to:subject
-         :from:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h2JZWfSBbMaT7Q5T3cwzlNXztIJ5hdqGIRavswsdXRE=;
-        b=bEcRaDyHXbFuC9KzINkHocG7jmO7MrPB5d4bNFCbfVQA927NFrY3oYj+6xdVJdYGFK
-         i9n1TF4/IfBxjR23l17cpJ9HhyQObjMv6NtuwMqHMj5Y9AOtcIOnDgvbqItp0EXrTqYw
-         ZeCrO0AHti/3oYi5PzVdrJRCDCfdVNe4UMOAYy6E+i6QYj4NaxeoKoLqeBKazJKj22zR
-         dollljPol5FHx1JQLTk1YtUihyeLO/EsX5HAZq/udrgrBZE1nxRXHEK3XNADmCLMYhC7
-         Sfla/na6qTlnpYYSs2sASExew2mZKqTt+0hlrmW0FHc/3ZDMGzsT038BAoceJamwTE8d
-         SfJQ==
+        d=linaro.org; s=google; t=1739810504; x=1740415304; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tl1qk986xZ9hRS1Mx9gWyhQ2tNCZt95h0ZGTwuGdgzE=;
+        b=UvTZhrf9VfYKLukqhkHdj6jGZ73OtoZLG/DyJHH3J8qP7dksB7w5TjVcH/DkS+XBm9
+         HcwZST8jKWPuQwdk6715mZzbV7YNQ9b8Gyuv2iXb6/E7Vd9Y00R7BtEdm/U4/yBechPH
+         0BeU6ISnMumsnaTiPqbMjheyLZfLcRXvlYP9a8f+S59LWVL2ulHqwC1MlpL75E7DKeMw
+         rs28EOB1Cz7xexwe6z/FDe1dsDbz2IH6ygQqwfLCayAOyIpvVM8MUYS0g2fnKLMN2WO4
+         2rS3FCkNZCtWPmzjFIiLw7W4dBtYvleqNVmP4pY7hMFcA+HgELv9NJN+4eRjs+UkGv+r
+         gLOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739810411; x=1740415211;
-        h=content-transfer-encoding:autocrypt:content-language:cc:to:subject
-         :from:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h2JZWfSBbMaT7Q5T3cwzlNXztIJ5hdqGIRavswsdXRE=;
-        b=VTm/eNy4kHsTjUgEJAgDIJ+pAfE9eEk1h80zpjPzYUxcFPRCjEnf/yAwVwyO7TsjFb
-         rim3kdSSUKFwGSU1j4uPvpDTonUfEj7a7VIVzwY8RgBeX0TihB3cIvI1IrBiamUePCMk
-         0+LETFcfs9snSut3E5iHkMaWpp8AVKihNUn0cAEIYHl5cDvOSTEncTRWwNBVjR5EP9C+
-         fBW//47NZgeTaAgYBWzJ1XG3qZGyRSCW4dZKc83teIZcgY1/NodYFXLhQNajQ6scf+1y
-         R+r8X3DvI+6xyupTBMD5lM8cDSHrcKqjJsBJPLVqCCRWchpb9udPYZrxMtrgKRXVDVr3
-         GRpw==
-X-Gm-Message-State: AOJu0YzD4CYw+G50yG6byd3Q6u4urBzC4xOq78MORfrwj/JgMQiH+HJQ
-	89uow5jXwObqSv3V4pASqJk7pcV/GumUcYJ8ccCZ9V64F88Y227fIbY/tphcKe++NyhqVI3T6oM
-	=
-X-Gm-Gg: ASbGncu+6hCkC2lyZRvtbNq+vLiqZviCPKoU4aRXqfYjOpM+89GMzfCNZ8AGqUjCG5N
-	LCHMheeFW7R3u1JxuDGW1BavEzjFm7OGjUaYVa9BdzPziU7r1m6Rnaby2JroMl+m7wPwfqxi/7L
-	KUuDA0ueP9mTKiId3Vhiqx4QZPp5SEYFeq41N71dcALP3HIlzLru+OjCfnV4phZkdnIa2OGf4KF
-	Oxlo5VV508dX4buyzozsdxID9PCb8bCbm+oOVmw2bHcsAwy8TTvMb42WXM01nLzpqLejWVmYWYZ
-	DR+ylvrDHD2WLFNzQwjTcDcMd9tYSkXuPemwxYefknbRXDpccHIemUP/bzYNVFsqkFc9v7BsM/i
-	4
-X-Google-Smtp-Source: AGHT+IG5wpgWr3x5LOKXnFHy9ZALxD1BNYSUkLKs4X5BSI0srPY3Iy8oY1GS9/V0r7opZx4dYeuRCA==
-X-Received: by 2002:a05:6402:13c2:b0:5db:f26d:fff1 with SMTP id 4fb4d7f45d1cf-5e0361cbdacmr9582779a12.21.1739810411128;
-        Mon, 17 Feb 2025 08:40:11 -0800 (PST)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1b4e53sm7375745a12.9.2025.02.17.08.40.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 08:40:10 -0800 (PST)
-Message-ID: <945716d2-4dd4-4d38-b732-41ab8b27c5ee@suse.com>
-Date: Mon, 17 Feb 2025 17:40:09 +0100
+        d=1e100.net; s=20230601; t=1739810504; x=1740415304;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tl1qk986xZ9hRS1Mx9gWyhQ2tNCZt95h0ZGTwuGdgzE=;
+        b=avzTkaJrD4rxWWZH/KW5VQhKLDouhSY1UsFBM6KAr1vl1bXT4vBertB0lZ0wbZrlZF
+         CE9/LHEsrvPfj8aR4I8jaliI5m1lMmXXqflx8yLJkGwvQFAvp8zDTMn8ErN6qyjNfq27
+         oqzhkgT58k504iauVf/5Odj5hvqSHgRrI+4066KBHOEUPODiWf/Dy38P9hv04Jxop1I8
+         TuF4Fzc1KHoKlgQBBm00WyGiigzTDiiaDbRZTXQZlJ9rQnAlJH/4bAIICPocSVUkvPwe
+         ReXV7baDlQyZX2mO6/BBx5k4Ljvs/nb8/NWV2x/pRN8gv5ihv61z8MzNEzR8k7ocakYy
+         HS/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/fHuVzcAgTFYry17c3DmfbNc5Yko9L4dWkARIkOAQXxiV5m4fFNwpDn73jlZ0/lT5JQrUKOYDY9/Cu7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzhB97pTJeNA88VEiFqieTMUxMMjg1qqJulx7jFiR4fkMYWti3
+	im/hrk1IGrMCMo6B5wltPjom9AqztOhDH+kz1BeoUPYVqHxhqmm06PBFlPnouIc=
+X-Gm-Gg: ASbGncsm+859OtVXYk5iC9xYEelGUtw9sJ5FTWibC0ydOeIx4xjV9TyEttsRRtO6eIc
+	WPyeKgLwTAQ+FiAaCgzozscgtNtHNqyQZQwfBz2Pem6aA2+7ROYRPTFUjQOHKaeAEUrvY+GAl7d
+	VrMaj0znkzZveTNe2MwJcDwJbAd4GqBBmDJXSacQYCTxMq5uPTgZgSV6kln4X9V8Bmr1S4prMHF
+	fiuYfu/0weckhPtGl/XQiUlrPie9QWAuNZZBZ5hD6pj1YoEgptHLQRlJZ1Hx/tjphjhMYdomdMr
+	aEoFW6VvWDX+vNKseyfQ32VGXS948/4=
+X-Google-Smtp-Source: AGHT+IFcQeNVHnsKf9IkLIKYVAi4SxUUfp260hQPfDzut6VqqPWdr13KL6UsKqTMH8NkbWY8oez30A==
+X-Received: by 2002:a17:906:6a03:b0:ab7:425d:1fa2 with SMTP id a640c23a62f3a-abb70d95991mr424723366b.10.1739810503738;
+        Mon, 17 Feb 2025 08:41:43 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbac781b78sm82647966b.60.2025.02.17.08.41.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 08:41:43 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 00/16] drm/msm: Add support for SM8750
+Date: Mon, 17 Feb 2025 17:41:21 +0100
+Message-Id: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jan Beulich <jbeulich@suse.com>
-Subject: [PATCH v2] compiler: remove __ADDRESSABLE_ASM{_STR,}() again
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Juergen Gross <jgross@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALFms2cC/32NQQ6DIBBFr2Jm3WkAoVRXvUfjAhV0EisGGlJju
+ HupB+jyveS/f0C0gWyEtjog2ESR/FpAXCoYZrNOFmksDIIJxThrsJcYX3etGI4Ut8XseLNG1Vo
+ raRyHstuCdfQ5m8+u8Ezx7cN+XiT+s/9qiSPDvnZcOePk0OjHQqsJ/urDBF3O+QvwbVf7swAAA
+ A==
+X-Change-ID: 20250109-b4-sm8750-display-6ea537754af1
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+ Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3920;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=4GpjtyPhX2tIp7jKFxe8+OhXpy9WD8kHJbcuRQ6OQrE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBns2a03lqV9dIyHRAwlUHltfCOEPr1IiF36ellm
+ Mlcs/X8ZX2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7NmtAAKCRDBN2bmhouD
+ 14NnD/9a4pjkt2J6S54Y+zsdMes7Q8++B4dMo0E+BAcDVAIW+FD7aMnvRQY+gsH8ZrDSV8wrXWa
+ Zt+3ARMZ+s6bjYynoZ3saHvO8tYiCPojMUn6UPnpBQ/jAJZ7KGvukfWJ6IKN2geKNqyy4FZPaH6
+ U7ARb55Vt/7KAbdceUn1TaNEMFlzZeFWPu5jM1o1Hc+4XjrdsCfQ7lfDIFqCPJIMp7q1di1RH3n
+ sWxrXBfcEv93aAQJUj24Vf+oaq61tMLVRp+N1EN6k/n7WYcP7RCpQaEIaN6f9XKJfBeg1UIGhWY
+ slvUnjub3z53iIgvdtLYuz5/EGqm+ChSCL9fQ3o08gh62U3DgpRTJ3kddlqR8QmxJPK9Q2qMCAp
+ xvSz8WYJnLAA128U4V78rc3RVgN14inNw5LJOfa15BNYLdfRDdznWN+ol5A5EWgMlCm80EU/vUI
+ 2V+NH+57BieX1jEWvb7jE8dYiwOZuDNAJ0pBsApZaCX1J80jV5IG6gndFpyKisLY3HnH9xfy0Ci
+ AWMdNov83jiCl6ZI42MYxqPzvyO8j6gGtVTb30BoDJRz+PuWlcuR69etka/UnwBk0Pdil0fX8bK
+ JBwFHSG/eu3ORZDfeFyROJrnpQZaxdQvfIOt2uPHx+BsMpOsTlIPRvHhkBB5IX4GXt6u4nb7p2W
+ rQQJXEiVe/CnP8Q==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-__ADDRESSABLE_ASM_STR() is where the necessary stringification happens.
-As long as "sym" doesn't contain any odd characters, no quoting is
-required for its use with .quad / .long. In fact the quotation gets in
-the way with gas 2.25; it's only from 2.26 onwards that quoted symbols
-are half-way properly supported.
+Hi,
 
-However, assembly being different from C anyway, drop
-__ADDRESSABLE_ASM_STR() and its helper macro altogether. A simple
-.global directive will suffice to get the symbol "declared", i.e. into
-the symbol table. While there also stop open-coding STATIC_CALL_TRAMP()
-and STATIC_CALL_KEY().
+Dependency / Rabased on top of:
+https://lore.kernel.org/all/20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org/
 
-Fixes: 0ef8047b737d ("x86/static-call: provide a way to do very early static-call updates")
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: stable@vger.kernel.org
+Changes in v2:
+- Implement LM crossbar, 10-bit alpha and active layer changes:
+  New patch: drm/msm/dpu: Implement new v12.0 DPU differences
+- New patch: drm/msm/dpu: Add missing "fetch" name to set_active_pipes()
+- Add CDM
+- Split some DPU patch pieces into separate patches:
+  drm/msm/dpu: Drop useless comments
+  drm/msm/dpu: Add LM_7, DSC_[67], PP_[67] and MERGE_3D_5
+  drm/msm/dpu: Add handling of LM_6 and LM_7 bits in pending flush mask
+- Split DSI and DSI PHY patches
+- Mention CLK_OPS_PARENT_ENABLE in DSI commit
+- Mention DSI PHY PLL work:
+  https://patchwork.freedesktop.org/patch/542000/?series=119177&rev=1
+- DPU: Drop SSPP_VIG4 comments
+- DPU: Add CDM
+- Link to v1: https://lore.kernel.org/r/20250109-b4-sm8750-display-v1-0-b3f15faf4c97@linaro.org
+
+Description:
+=============
+I got modetest writeback working, but DSI panel on MTP8750 still shows
+darkness.
+
+Best regards,
+Krzysztof
+
 ---
-v2: Drop constructs instead of fixing them. Use STATIC_CALL_KEY().
----
-Whether the "ADDRESSABLE" in __ADDRESSABLE_xen_hypercall is still
-meaningful to keep I'm uncertain about. The situation, as said, is quite
-different in assembly, compared to C's requirements.
+Krzysztof Kozlowski (16):
+      dt-bindings: display/msm: dsi-controller-main: Combine if:then: entries
+      dt-bindings: display/msm: dsi-controller-main: Add missing minItems
+      dt-bindings: display/msm: dsi-phy-7nm: Add SM8750
+      dt-bindings: display/msm: dsi-controller-main: Add SM8750
+      dt-bindings: display/msm: dp-controller: Add SM8750
+      dt-bindings: display/msm: qcom,sm8650-dpu: Add SM8750
+      dt-bindings: display/msm: qcom,sm8750-mdss: Add SM8750
+      drm/msm/dpu: Drop useless comments
+      drm/msm/dpu: Add LM_7, DSC_[67], PP_[67] and MERGE_3D_5
+      drm/msm/dpu: Add handling of LM_6 and LM_7 bits in pending flush mask
+      drm/msm/dsi/phy: Add support for SM8750
+      drm/msm/dsi: Add support for SM8750
+      drm/msm/dpu: Add support for SM8750
+      drm/msm/dpu: Add missing "fetch" name to set_active_pipes()
+      drm/msm/dpu: Implement new v12.0 DPU differences
+      drm/msm/mdss: Add support for SM8750
 
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -242,14 +242,6 @@ static inline void *offset_to_ptr(const
- #define __ADDRESSABLE(sym) \
- 	___ADDRESSABLE(sym, __section(".discard.addressable"))
- 
--#define __ADDRESSABLE_ASM(sym)						\
--	.pushsection .discard.addressable,"aw";				\
--	.align ARCH_SEL(8,4);						\
--	ARCH_SEL(.quad, .long) __stringify(sym);			\
--	.popsection;
--
--#define __ADDRESSABLE_ASM_STR(sym) __stringify(__ADDRESSABLE_ASM(sym))
--
- /*
-  * This returns a constant expression while determining if an argument is
-  * a constant expression, most importantly without evaluating the argument.
---- a/arch/x86/include/asm/xen/hypercall.h
-+++ b/arch/x86/include/asm/xen/hypercall.h
-@@ -94,12 +94,13 @@ DECLARE_STATIC_CALL(xen_hypercall, xen_h
- #ifdef MODULE
- #define __ADDRESSABLE_xen_hypercall
- #else
--#define __ADDRESSABLE_xen_hypercall __ADDRESSABLE_ASM_STR(__SCK__xen_hypercall)
-+#define __ADDRESSABLE_xen_hypercall \
-+	__stringify(.global STATIC_CALL_KEY(xen_hypercall);)
- #endif
- 
- #define __HYPERCALL					\
- 	__ADDRESSABLE_xen_hypercall			\
--	"call __SCT__xen_hypercall"
-+	__stringify(call STATIC_CALL_TRAMP(xen_hypercall))
- 
- #define __HYPERCALL_ENTRY(x)	"a" (x)
- 
+ .../bindings/display/msm/dp-controller.yaml        |   4 +
+ .../bindings/display/msm/dsi-controller-main.yaml  | 124 +++---
+ .../bindings/display/msm/dsi-phy-7nm.yaml          |   1 +
+ .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+ .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 460 +++++++++++++++++++
+ .../drm/msm/disp/dpu1/catalog/dpu_12_0_sm8750.h    | 496 +++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           |  59 ++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  12 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  35 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         |  71 ++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |  19 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c          | 210 ++++++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.h          |  18 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |   6 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/dsi/dsi.h                      |   2 +
+ drivers/gpu/drm/msm/dsi/dsi_cfg.c                  |  25 ++
+ drivers/gpu/drm/msm/dsi/dsi_cfg.h                  |   1 +
+ drivers/gpu/drm/msm/dsi/dsi_host.c                 |  80 ++++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |   2 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c          |  79 +++-
+ drivers/gpu/drm/msm/msm_mdss.c                     |  33 ++
+ drivers/gpu/drm/msm/msm_mdss.h                     |   1 +
+ .../gpu/drm/msm/registers/display/dsi_phy_7nm.xml  |  14 +
+ 26 files changed, 1655 insertions(+), 101 deletions(-)
+---
+base-commit: 44ddcc7604ae61eadc748ccc6156bf4b98697978
+change-id: 20250109-b4-sm8750-display-6ea537754af1
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
