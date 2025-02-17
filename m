@@ -1,187 +1,116 @@
-Return-Path: <linux-kernel+bounces-518100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE5BA389FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33976A38985
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B821638B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D976A16A91F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1834122A802;
-	Mon, 17 Feb 2025 16:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c1SWIqM7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8D1225A57;
+	Mon, 17 Feb 2025 16:38:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA518225A57;
-	Mon, 17 Feb 2025 16:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F18C21D59D;
+	Mon, 17 Feb 2025 16:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739810561; cv=none; b=BGzvfXOe0SdEfFtq+jlGIVT2CTgcNXx2DOI4L9u53qYde/QBb3z4L8RTIVINxLnplvB6zGBPmkuW9BBIl+c5o62x2JbN2dyK1+xHH6N0JjWGViTrGnmxqRxfUzIq9+ymyP1kHT/4z3z3WcznWugsYdSsCUAvkSl0oyyXR3wlrIg=
+	t=1739810306; cv=none; b=S+gA2AsxButU31PPDm8yfi1vMG6CdRdbROqQhVCv3wWko0d4Etmu+RbKCmd/GpgywuXXGQ00oWet6qybCXLmLBuYoqttU0NX2S0cIYUd3bsI9lxbaUG1SMAbsO7crE9Uy6MUerkBfA/d8DXmzbbeUJMO5bFhfs1c2NIxDjHmyyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739810561; c=relaxed/simple;
-	bh=Q/y2Ura+ZZ4aJJSpOsP2M0RlMQFJRNDUTUtpYBZlPro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X8L9r2JBeEIZuNv3usyf9ogpkVtTMllUzkn9igw9xdSuEaQnqPK784ufZ7Ng0fG1aIivfiu8soWP9Oa0MxuxlfDkQNL2KZolKkGexYtX/oiIakVmYC1fKVn+SPLlBhe9S2YEW0lll/ezqfA/STVaSt/Dq1U4S1MSfevrmpk1jZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c1SWIqM7; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739810560; x=1771346560;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Q/y2Ura+ZZ4aJJSpOsP2M0RlMQFJRNDUTUtpYBZlPro=;
-  b=c1SWIqM7gHfLQ6x+cmRUSV/pE+5v8a4csJ7jO+uhm7By3gNM9EB7MgDb
-   rkQASHkeKx+ARY3Ag0KoWhu7WCuEcBgLzlarc1fmCeFrW5qFIDC0a7pYq
-   V5XX39ZX+x7e4T6zlTExIFifOZ9tWfvzY4iEkxZAkeGjwTQUO34Ckpr6V
-   Wag3MwmlK0nk/9A8MRCoFsflF6BReQhVsewvrRQsJzarqSufmBUrDBend
-   C0cichzBD3NTiZ9lbxveqRUDUKHO2GgneHF0yFZbArI+j5jOzSh66qB9/
-   Yldr74jpKmF008mQdZSaKAfZf4TbvuP5ZtOnk45mf0XG7mUOuaKHD3rfE
-   g==;
-X-CSE-ConnectionGUID: NndbcaRYT2GC5v/RGdMzDA==
-X-CSE-MsgGUID: UEVzFiioRzWH+nqvn64S6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44426586"
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
-   d="scan'208";a="44426586"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 08:42:38 -0800
-X-CSE-ConnectionGUID: DLaoWa/wSWS1Bb+Zkbv1Tw==
-X-CSE-MsgGUID: X50OseD7Tkq0w6139d7UYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="119092112"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 17 Feb 2025 08:42:31 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 98D08139; Mon, 17 Feb 2025 18:42:29 +0200 (EET)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Chan <ericchancf@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kai Huang <kai.huang@intel.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	stable@vger.kernel.org,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: [PATCHv4 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default
-Date: Mon, 17 Feb 2025 18:38:21 +0200
-Message-ID: <20250217163822.343400-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250217163822.343400-1-kirill.shutemov@linux.intel.com>
-References: <20250217163822.343400-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1739810306; c=relaxed/simple;
+	bh=gJssyFMbKSFlkJOhj2UTG0SBRegf3zS5G+kMehMWhxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tM5JhYXM1gk39mLdzk+a/65LIQv6jRZc/sZjGYq6sbX7gr/r+4v4KCrWUMA6tnQWcNcu99k8FS4h/1uEpMCXIjXmho1+TjoyFNgLMwRdj/BY+V9RmCnQTcpICNVcGeKT3iNywYpQs/ODtbWaIu9YPDGoaeWPIgrDMuV81jy71no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45FD1C4CED1;
+	Mon, 17 Feb 2025 16:38:25 +0000 (UTC)
+Date: Mon, 17 Feb 2025 11:38:44 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+Message-ID: <20250217113844.5ad7893c@gandalf.local.home>
+In-Reply-To: <20250213090819.419470-4-gmonaco@redhat.com>
+References: <20250213090819.419470-1-gmonaco@redhat.com>
+	<20250213090819.419470-4-gmonaco@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Currently memremap(MEMREMAP_WB) can produce decrypted/shared mapping:
+On Thu, 13 Feb 2025 10:08:01 +0100
+Gabriele Monaco <gmonaco@redhat.com> wrote:
 
-memremap(MEMREMAP_WB)
-  arch_memremap_wb()
-    ioremap_cache()
-      __ioremap_caller(.encrytped = false)
+> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> index 9ea4c404bd4ef..cc3be04fe9986 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -824,6 +824,19 @@ DECLARE_TRACE(sched_compute_energy_tp,
+>  		 unsigned long max_util, unsigned long busy_time),
+>  	TP_ARGS(p, dst_cpu, energy, max_util, busy_time));
+>  
+> +DECLARE_TRACE(sched_entry_tp,
+> +	TP_PROTO(bool preempt, unsigned long ip),
+> +	TP_ARGS(preempt, ip));
+> +
+> +DECLARE_TRACE(sched_exit_tp,
+> +	TP_PROTO(bool is_switch, unsigned long ip),
+> +	TP_ARGS(is_switch, ip));
+> +
+> +DECLARE_TRACE_CONDITION(sched_set_state_tp,
+> +	TP_PROTO(struct task_struct *tsk, int curr_state, int state),
+> +	TP_ARGS(tsk, curr_state, state),
+> +	TP_CONDITION(!!curr_state != !!state));
 
-In such cases, the IORES_MAP_ENCRYPTED flag on the memory will determine
-if the resulting mapping is encrypted or decrypted.
+I don't think you need to pass in state. Just have it be:
 
-Creating a decrypted mapping without explicit request from the caller is
-risky:
+	TP_CONDITION(!!(tsk->__state) != !!state));
 
-  - It can inadvertently expose the guest's data and compromise the
-    guest.
 
-  - Accessing private memory via shared/decrypted mapping on TDX will
-    either trigger implicit conversion to shared or #VE (depending on
-    VMM implementation).
+> +
+>  #endif /* _TRACE_SCHED_H */
+>  
+>  /* This part must be outside protection */
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 165c90ba64ea9..4aa6af026e05c 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -491,6 +491,19 @@ sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
+>  
+>  #endif /* CONFIG_SCHED_CORE */
+>  
+> +/* need a wrapper since we may need to trace from modules */
+> +EXPORT_TRACEPOINT_SYMBOL(sched_set_state_tp);
+> +
+> +/*
+> + * Do not call this function directly since it won't check if the tp is enabled.
+> + * Call the helper macro trace_set_current_state instead.
+> + */
+> +void __do_trace_set_current_state(int state_value)
+> +{
+> +	__do_trace_sched_set_state_tp(current, current->__state, state_value);
 
-    Implicit conversion is destructive: subsequent access to the same
-    memory via private mapping will trigger a hard-to-debug #VE crash.
+And this should not be using the internal macros of a trace point. It should be:
 
-The kernel already provides a way to request decrypted mapping
-explicitly via the MEMREMAP_DEC flag.
+	trace_sched_set_state_tp(current, state_value);
 
-Modify memremap(MEMREMAP_WB) to produce encrypted/private mapping by
-default unless MEMREMAP_DEC is specified or if the kernel runs on
-a machine with SME enabled.
+(I removed the current->__state as mentioned above).
 
-It fixes the crash due to #VE on kexec in TDX guests if CONFIG_EISA is
-enabled.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: stable@vger.kernel.org # 6.11+
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ashish Kalra <ashish.kalra@amd.com>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>
----
- arch/x86/include/asm/io.h | 3 +++
- arch/x86/mm/ioremap.c     | 8 ++++++++
- 2 files changed, 11 insertions(+)
+> +}
+> +EXPORT_SYMBOL(__do_trace_set_current_state);
+> +
 
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index ed580c7f9d0a..1a0dc2b2bf5b 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -175,6 +175,9 @@ extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, un
- extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
- #define ioremap_encrypted ioremap_encrypted
- 
-+void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags);
-+#define arch_memremap_wb arch_memremap_wb
-+
- /**
-  * ioremap     -   map bus memory into CPU space
-  * @offset:    bus address of the memory
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 8d29163568a7..a4b23d2e92d2 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -503,6 +503,14 @@ void iounmap(volatile void __iomem *addr)
- }
- EXPORT_SYMBOL(iounmap);
- 
-+void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags)
-+{
-+	if ((flags & MEMREMAP_DEC) || cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
-+		return (void __force *)ioremap_cache(phys_addr, size);
-+
-+	return (void __force *)ioremap_encrypted(phys_addr, size);
-+}
-+
- /*
-  * Convert a physical pointer to a virtual kernel pointer for /dev/mem
-  * access
--- 
-2.47.2
-
+-- Steve
 
