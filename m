@@ -1,123 +1,160 @@
-Return-Path: <linux-kernel+bounces-518240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FBAA38C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:09:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75F7A38C04
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83DB43B288F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE85D1885238
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B01E236A74;
-	Mon, 17 Feb 2025 19:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6rpn9R4"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA159236A63;
+	Mon, 17 Feb 2025 19:08:39 +0000 (UTC)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D393F22B8BC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3726236455;
+	Mon, 17 Feb 2025 19:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739819273; cv=none; b=OsmuN583xeWED4zwdD1mSmZpZARDxAkXI/WD7Pz4gV2DcN/uj827MHxGbsZOFdW+NYV8F5YC3nDJ26p7H6JeGqxcugI8403aahCFAtMmxjjzAaOaQWpHjSbuJd+YEpFG1/EY+GwehZiyO5Cme5f0M+MdBBx0fpWnqQaJk6qvbN0=
+	t=1739819319; cv=none; b=nqCbBrPvUOkOcrNbZ3Y8x/Bf66yhJruaa+nUjUlfFU/qGyfU+P090j6KmbSj9OWmoKLNaNR5TprRurWi+p01c8oKwJGYcY5oQM/vMkfUN6IdgYQdwaJBm/KfOa9DO0zGby/IOLTv0NbLCO9AgJUvIYfKp9Wtg8pzfc19ALkbpV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739819273; c=relaxed/simple;
-	bh=wDoCAtbEmJJG08E/A5bz+I3lGd68ANOK5k7c8qV1X0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=la+cOMi9WuhPafgKB+ayk7hXPrjLmKUF1KRiXJaw6SVnDBgMY7Q3y9FTr1Gc7b7fkLITwDdSRfK5lqixeKIzhv/s8qan6ziNJEYZLs4i9o/IYyCMVjZD8vUR2z9qeJJG+SSQoBTDzZH4WmiVM9/+OIB+DapThVqfFMrZkkHvC4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X6rpn9R4; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30738a717ffso41663941fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:07:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739819270; x=1740424070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ObUne2yQMezeKiKaLoIvFCZpEHW3DUQ78CPgFXgb8A=;
-        b=X6rpn9R49Vjpq0jaVvzteTRrIWYheZIL/LVbS2UfB9zQ8pi8rDFoC6JSqktjY+IFp4
-         Luy71uKLqapYzFcqzFK0q7B+bxis4X4hyiWXPkcIfsflB3umIUnlU23i51mFiFRtI5vC
-         pg8b17ivlV5CuxArz7DHTg+TSYdp/NXGCqvhB2gIJEmyFxVGRNHvJihkT1pDWpS8xYTq
-         EuzkXE89kusFktslV+Sl04CPAgLmKxiKTq+Kbf9JYUjsWERTgQnJmoUgc8RVr1MoVX5X
-         maqDs5+jjBI0BeFXL3QRG4ox1McyvqV2oryOh9ElOorijK7UOs+XSBQi0X8QeYUXbmRo
-         ZnaA==
+	s=arc-20240116; t=1739819319; c=relaxed/simple;
+	bh=WgkdyXz/h4gUCs6OL7rS7szH6rN+Xn9RvUn4fwT9GNc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DDGA4OIVoD5mnUkYLNHXEOsLGHMxFN4JWId5BSj/OcNg/kAUM9UMMK3Fs/fL9lLhvkRHdIWe/0naoXlFYFw8iU4q8+hKAzUu2FA/mZ3oQnfz1/Gwz9JRgLXfUtUrxjzCqwEEgMFKyEwWSW9GyzgWlIJ1Ga4MKl6NZA0dlGI6qnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6f4434b5305so39354397b3.3;
+        Mon, 17 Feb 2025 11:08:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739819270; x=1740424070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ObUne2yQMezeKiKaLoIvFCZpEHW3DUQ78CPgFXgb8A=;
-        b=YdM4iC2ILRCQzP3Zod+F9HOqBKMYvb48oprhnNUG3sWqRojbp7y8nCgjSgF32eF/vi
-         A65FdKiL+KRbZ4OC+AF4gU0mc3Sqf4bujyCj5F9dYc/e94GXYUlgLH095XgamFK9AX7H
-         3YesT7+i+6BZpJh1usFO/98xZ6/jfEO4JAGzdp1j7p0ivRG6xbYoOpZtKHpo3Y61Tfmj
-         h9xh2+hekln9TBmm8mUfptJR+CdJj83D8r9TOO9xd5xWc4Ee62I5Fxp0InbQ4Gg6Yt15
-         01PL7Mr3M+rOELAZMfrWJUJXux3OQXIaUUIdvPfoEa13zPVWdZ+582LxCr1XdZKxIw2F
-         wmnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK4/YOmoKKz53Yrj6ACewhaLoS00Zpou+rmyy/KMf0WRFxViewaQ7Kmum50qAChCWp6ObW146E6izhqfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws8NyuxBSjQAVxtadiuLycGQBIf/xkvZfnGhGXJMJMv3Smp9Nt
-	DF6efIjs5mK3zEFP22MRmBVD/bJwzmcwOv+RtbPWBSU+c7vrDq7mN1BDotqiKe0=
-X-Gm-Gg: ASbGncs4LBiSZ0tUg1NUDA7gK/4SDvYyf8mg+YWOAiJsZGLffCcr7lyaqhvnWSnPs3+
-	pCrYTHGNWll7nqOESw+rsOFhzB5t85j+Yt2J6+tUquIzPlXBQ/O+x6rxXPXKxnGFdaVIijcXscf
-	hMI9IUIsgdS1IE+AlAvL9ItBnR5aSNvsCCDwRMKVuEWpEpLwOzeN7LAmK4Mp1fuiAosdwXRJQzY
-	Jua3K/HitDtdUGGebkSnsXDDMXdwAiil9d83RcjTayeXYionbE+ei9OVWeTC7hnh9AybJL1wlFt
-	UjVasi6bFWreF0F20kvyRI1MJY+L5aaVYy23MIGD+YFNyIvu62456lhXPzp84ZOYRxI8thY=
-X-Google-Smtp-Source: AGHT+IG9DynPxWNwdOmU6ii3AvcgWu++/3DPvh1LUYd7jp9CBTvIMdEBiRwbV324OAhQ4qab/et7NQ==
-X-Received: by 2002:a05:6512:308b:b0:545:25c6:d6f5 with SMTP id 2adb3069b0e04-5452fe96673mr2812097e87.53.1739819269896;
-        Mon, 17 Feb 2025 11:07:49 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461ee8341fsm612141e87.133.2025.02.17.11.07.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 11:07:48 -0800 (PST)
-Date: Mon, 17 Feb 2025 21:07:46 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2 13/16] drm/msm/dpu: Add support for SM8750
-Message-ID: <qfbynkd3d5uqlzcgvcsfoi3muoij4ap3kkkwug5yd3ggxbhiic@6epod27ux5ai>
-References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
- <20250217-b4-sm8750-display-v2-13-d201dcdda6a4@linaro.org>
+        d=1e100.net; s=20230601; t=1739819316; x=1740424116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZoHEtc6NLvxTZfVznB+yP1hpkpOf050NiXXR/iSxdxA=;
+        b=EvZCJr8iJHe02s3pVS3aMPnd+VfTVs6sZQFaeLgseY4gtLtdEm0HhHGuxysrNAaZvG
+         NPPnFP8DFy4i2Y7n9EU32SMmCvAqx6e/birUUxE/ykwfvz1bpWqRLVKfSyVWLd3nz4rs
+         64GGwUIQ9ptVSo6zSU2iMeTnisqL6xgy04E5i4kzZmkqwiIqOmeMuD/O7eFVDvbhrRL2
+         lofz/42yXr9YHuTvSxqn8dJBrgfDVFIqK6RFsNgmOtYe4wUuLzMhvGqd6pK7QHwr5G3g
+         qbeUfBuRTJ28G/te3PNZMsXVf24asfke25RDQQOoqi56fJdTBf43kmS6w8AuWnHWXYYb
+         ayKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzr01blnx1hxMrjUqP4T225/tizdt/ql7Nq+OXOilxA6GG9ygZeun/mR3/0Pn/X1zwbYVsb96qe715dMarrw==@vger.kernel.org, AJvYcCVvLymNt8V5e1OUH4aOsEw6ifSQb9IE+EibDqyCW71sTvqZ2AXFS5m7pFg1WIburSwU9tqNTmK9M09a1zmc@vger.kernel.org, AJvYcCXgUPZ5V/kp2lmMRHYzPkr18L8a6DHRQNi+xzbgDNyYYdh4xjXLl8/65oe0lbnoobPFp7vnXMA6qy9MVAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq+a7xEN5wMbe5JdoPoTeMN1HevarpW/cUzxDkKxQIBBvO419r
+	MucvyRLu4VIxEat3uqKdJigtydGX7momo/s9vKZNGPu79u7nKJoz4y3HvEZY
+X-Gm-Gg: ASbGncuOzZSqmOtzS+FHQjYrCISu+upsTbcB/2Gy2IxTqY5FKPTXH8GruXLcJK780PP
+	YlHHGWaIDlfGx42SFX0bsbrtR0JeNwM+EJiv1G8sZ6DbWOJnAU5ZUl3Y/38Yh+RD/G2GmXu+80V
+	UQGDFxXkl/EzO0LyaA6nJmKO6Wa2JPGtzC0VL4OwHKzcNvDE/QLRGd8w36VgtcoFKqbRIsr2AAu
+	0vp+TryHhDNTsaiNK+PP4TdQIN3CzM4XEr6V8LYfQGbwcvdGhg3LbzyeYT8g+ApLWDy/EcveJnw
+	DE4S09HCKG+GWAMQ5sbadgqgHBa9U6vN+4OWT9+rumLcVKVhMkeV
+X-Google-Smtp-Source: AGHT+IG6FXg6nyc9zZN0uC1B+Z/cHzImnKCD8NnkHwBMHcnUcgpPESezlr8k0uSDDllYsmBZBmQPzA==
+X-Received: by 2002:a05:690c:4d89:b0:6f2:9533:8fba with SMTP id 00721157ae682-6fb5827084bmr96730387b3.1.1739819316564;
+        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb361bce8bsm22315607b3.104.2025.02.17.11.08.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f4434b5305so39354197b3.3;
+        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVQDEH4UY9riHIPaks2l48c3cUHA4GrqGyrzncTNWV7tTpnUn7ZoRtQbkX6B/YxEpwmiLzv6NdrTrAxLWRbaA==@vger.kernel.org, AJvYcCWtnvSihLFP9P1TieP3YTqDypbjnIuUULRupkLQlevtVcvK/uMoCNpRJqsW4+hqpXaxyEhEynGEKWkb8hw=@vger.kernel.org, AJvYcCXG0RytHiN7HpP1qMlZZTMAgaf0pw6ovhuAN+nqYn8MSAxQ4u6eYNt6e9fvbjYMTUS9hIBn1OKGxhXsV66S@vger.kernel.org
+X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id
+ 00721157ae682-6fb582b757emr87826527b3.18.1739819315947; Mon, 17 Feb 2025
+ 11:08:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217-b4-sm8750-display-v2-13-d201dcdda6a4@linaro.org>
+References: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
+ <20250217185000.GC1258@sol.localdomain>
+In-Reply-To: <20250217185000.GC1258@sol.localdomain>
+Reply-To: tanure@linux.com
+From: Lucas Tanure <tanure@linux.com>
+Date: Mon, 17 Feb 2025 19:08:25 +0000
+X-Gmail-Original-Message-ID: <CAJX_Q+3Cp=5WVxACFCuYDfUzndVfeewykYbxSw1f4zyKm0DvsA@mail.gmail.com>
+X-Gm-Features: AWEUYZmizRkxC2vzDxy52kCc9Y20ryP3d4RTkB0b2ddqian4SMSNyTSuh2X7VX8
+Message-ID: <CAJX_Q+3Cp=5WVxACFCuYDfUzndVfeewykYbxSw1f4zyKm0DvsA@mail.gmail.com>
+Subject: Re: crypto: fscrypt: crypto_create_tfm_node memory leak
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-fscrypt@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, 
+	"krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>, "lucas.tanure@neat.no" <lucas.tanure@neat.no>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 05:41:34PM +0100, Krzysztof Kozlowski wrote:
-> Add DPU version v12.0 support for the Qualcomm SM8750 platform.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> 1. Add CDM
-> ---
->  .../drm/msm/disp/dpu1/catalog/dpu_12_0_sm8750.h    | 496 +++++++++++++++++++++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  29 ++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
->  4 files changed, 527 insertions(+)
-> 
+On Mon, Feb 17, 2025 at 6:50=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
+wrote:
+>
+> On Mon, Feb 17, 2025 at 06:43:15PM +0000, Lucas Tanure wrote:
+> > Hi,
+> >
+> > I am working with Android 13 and V5.15 kernel. During our development,
+> > I found a memory leak using kmemleak.
+> >
+> > Steps I did to find the memleak:
+> > mount -t debugfs debugfs /sys/kernel/debug
+> > echo scan=3D5 > /sys/kernel/debug/kmemleak
+> > cat /sys/kernel/debug/kmemleak
+> >
+> > Stack I got (hundreds of them):
+> > unreferenced object 0xffffff8101d31000 (size 1024):
+> >   comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
+> >   hex dump (first 32 bytes):
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >   backtrace:
+> >     [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
+> >     [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
+> >     [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
+> >     [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
+> >     [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
+> >     [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
+> >     [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
+> >     [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
+> >     [<ffffffd32796a108>] do_mkdirat+0x88/0x204
+> >     [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
+> >     [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
+> >     [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
+> >     [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
+> >     [<ffffffd328abcf88>] el0_svc+0x28/0x90
+> >     [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
+> >     [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
+> >
+> > After checking upstream, I came up with the following:
+> > cff805b1518f  fscrypt: fix keyring memory leak on mount failure
+> >
+> > But my kernel has this patch. So I continued to dig around this and
+> > saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
+> > V5.15.
+> > I can't see the pointer tfm being used anywhere or saved, and
+> > smp_store_release doesn't kfree it.
+> > Is smp_store_release doing something with that pointer that makes this
+> > memory leak a false positive?
+> >
+> > Any help with this issue would be much appreciated.
+> > Thanks
+>
+> The pointer to the crypto_skcipher 'tfm' is stored in the fscrypt_inode_i=
+nfo
+> (previously fscrypt_info) which is stored in inode::i_crypt_info.  It get=
+s freed
+> when the inode is evicted.  I don't know why you're getting a kmemleak wa=
+rning.
+> Perhaps f2fs in that version of the kernel has a bug that is leaking inod=
+es.
+>
+Thanks. How do you check for leaking inodes? Do you have any start
+point (function) to look at?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> smp_store_release is just a fancy way of doing a store that includes a me=
+mory
+> barrier.
+>
+> - Eric
 
--- 
-With best wishes
-Dmitry
+Lucas
 
