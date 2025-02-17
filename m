@@ -1,128 +1,188 @@
-Return-Path: <linux-kernel+bounces-518194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2F5A38B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:25:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC6AA38B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342153B32F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353333B17A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB106235BF5;
-	Mon, 17 Feb 2025 18:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706EE235C00;
+	Mon, 17 Feb 2025 18:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aqfLbHSZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="L3S963Cp"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B04235359;
-	Mon, 17 Feb 2025 18:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739816737; cv=none; b=RoS7viI1sKtUoctOH7Qb1XTEeLxZiJnXLa8RDjlDCYiX90QX+imh2AdQjelz2Nkl9bxcd4DZXsosGNRG/oBrCr7UxkgUXefQWWFaDypJhVxTV0WTbTfkIu7G+Lj5HxxLRIXNHTXsXvLvjql5jplSJY2Dq7tU5cwNx42b/Xa18XE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739816737; c=relaxed/simple;
-	bh=5khgD35fjPwEHUWM6/Tc1Rdzv1qWoYBP4oYEhlwM75Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnLi3W2DgafaCPr5yrRSiwQyL+MJAxsTb8GMsyDHRB57RwbIFeR7dORcHBxIPvTEyZk4HVxa1sDSQNIelDrdmLrrceQLPWh2FupqPlsro2blr58RKGtQqYN4mDEt4em+g+rfbAOi/LVMuktT29eqUaGe1wH9ZSIYj+gs5ufz8as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aqfLbHSZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HCNVbt030844;
-	Mon, 17 Feb 2025 18:25:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=zqBWVLibSN2BnE1MhuGrsYhIzK+bPL
-	ENN2DgCYa3zGI=; b=aqfLbHSZ05m12NX0QHqoj2JANDUFRzv2NtiD1jKyEUvg6+
-	f6ISN7Y2PSuDY793sEWcDRZ0Zh9zw2SYTCEli0IDzPFXwwXo3pqdwg8iRmGTL5BT
-	p+mp6kAcCVAcwpnPfcoaQcArQnHMap4mfYPj8Aemyl+EOkVegeGfoaEJZ7Spm16c
-	pIWG4Ks0vRBrnzVzJRoU3iZbpKpfp1+0M9MVMGbNT3hqqbxHq6izSgBozhXyfetv
-	MIGqKVWH/PHvha4BRd9/eT2YX2N1skGscTUzSC35VN7uVmswsYVp/fMx3kBkQd7N
-	8PnaunHTLsUEZwQUsUKqP6QdEUS5S+UtB5vhW37g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44us5a506f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 18:25:24 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HIObQ7014538;
-	Mon, 17 Feb 2025 18:25:24 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44us5a506d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 18:25:24 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HGFOkL008133;
-	Mon, 17 Feb 2025 18:25:23 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u58tfjwf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 18:25:23 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HIPKCM40108400
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 18:25:20 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1C9020043;
-	Mon, 17 Feb 2025 18:25:19 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7BB0C20040;
-	Mon, 17 Feb 2025 18:25:19 +0000 (GMT)
-Received: from localhost (unknown [9.179.20.129])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 17 Feb 2025 18:25:19 +0000 (GMT)
-Date: Mon, 17 Feb 2025 19:25:18 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, kernel test robot <lkp@intel.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/purgatory: Use -D__DISABLE_EXPORTS
-Message-ID: <your-ad-here.call-01739816718-ext-0992@work.hours>
-References: <20250213211614.3537605-2-samitolvanen@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D272022F3BA;
+	Mon, 17 Feb 2025 18:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739816850; cv=pass; b=TcWNKqUbLHNidlcy1XFBsH+EADOsGfCnReZ1IomYPJTtPopW5GrlrfTGX4dBrfb4GHLeZwJzTiPXyEvzcwoRCCvAkCbf+odStY9NjE3+J/qimJX61WULr+9B/WKrly0P148K09SyA4Aiwn/Yx7WDA6R+p+sdQwtPrC9ApESqa0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739816850; c=relaxed/simple;
+	bh=brUsCJ9C1yYPUZkfDTaAcECjJtyYUN/2ZskLZLdWqEw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FZ1Z+Ek26UK6Tf4Cufv8LVN6DweyRWn6ZB9RgDeAA7GAiZfuv/Z6+itpibdgWdS6wK68bQIhKNilMtNARlhLtSVFQqWQfCaC7j8Z81+bVPBCcMWH+kgwu7BIhADImvKtCaMDViYRkZjfS6WholT1SOpFzVEEawiXxT4JvG67sG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=L3S963Cp; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739816796; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NoIyboKH04alw6DBfcifA+A9bKQzHCeZlHsFj7sVEeP9RjB7gS8Bt68pFgmnF0Xq8NYx3UTCwiioatjk2HsfVPQ37kiEwdvqpLXzTEzMM4yuAJOJc55JZFzT3oeaLEo46TzDO6msEaehYL3BSD8TejhKdqVkuxU5zZrw11nmEDk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739816796; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BdnCHjTgkVzDEUqv6NDj7xcfSTG6/LqP76sbmsSNqvc=; 
+	b=KLa5dBJ+JPj1J96J/xnNNHhjNpdF8ShnjlRc4wIhfXssyJnCQFJpQK+emrTFlNfQJFmPMMT6B1jkLSnBTwjIE9Ssj4MCQh5xeAYtd/HUOKYOC+3swJchjEGZpItrF2kD0wR+/BN1cFgRSHsbaGIxxmnrfDDlZ2ovAkp/GBxhtTA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739816796;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BdnCHjTgkVzDEUqv6NDj7xcfSTG6/LqP76sbmsSNqvc=;
+	b=L3S963Cpqs9aG9dMINVvSeKGMGFS78UcAy9aA8goWQecVPkOSzuuBFbwoV7HYIPA
+	AyCVuNC3aQx+qZU0BuuXOFOiFB2XpXoGQfwR9jO8+MmRmRsL7rO+X6Nowb7O6wDRelZ
+	IvV4eZox/PNcokAD2ppW3j0nT8Kuu846/j2Ly/wk=
+Received: by mx.zohomail.com with SMTPS id 173981679347726.637860042926263;
+	Mon, 17 Feb 2025 10:26:33 -0800 (PST)
+Message-ID: <cd40ca74-fe5b-4942-9da8-1117303dd0c4@collabora.com>
+Date: Mon, 17 Feb 2025 21:26:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250213211614.3537605-2-samitolvanen@google.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ULpRvCYuDWIoWXxio4zaoQsMVRNwQ262
-X-Proofpoint-GUID: HUYvxhw7rzp0YxDkpSZyF3zHGveGiFl4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_07,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- mlxlogscore=368 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- spamscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502170143
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
+ <20250215210417.60074-5-dmitry.osipenko@collabora.com>
+ <110db742-25a0-4f0c-9620-1af8885d6e1c@xs4all.nl>
+ <3d4b1c45-cc00-4714-8582-0848e38c2ec4@collabora.com>
+ <23eacfe3-cf94-45d3-a405-43185ef32512@xs4all.nl>
+ <398cffa8-5463-47ff-bdeb-3f3167b72312@collabora.com>
+Content-Language: en-US
+In-Reply-To: <398cffa8-5463-47ff-bdeb-3f3167b72312@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, Feb 13, 2025 at 09:16:14PM +0000, Sami Tolvanen wrote:
-> The object files in purgatory do not export symbols, so disable exports
-> for all the object files, not only sha256.o, with -D__DISABLE_EXPORTS.
+On 2/17/25 21:21, Dmitry Osipenko wrote:
+> On 2/17/25 18:44, Hans Verkuil wrote:
+>> On 2/17/25 16:36, Dmitry Osipenko wrote:
+>>> On 2/17/25 11:31, Hans Verkuil wrote:
+>>>> On 15/02/2025 22:04, Dmitry Osipenko wrote:
+>>>>> From: Shreeya Patel <shreeya.patel@collabora.com>
+>>>>>
+>>>>> Add initial support for the Synopsys DesignWare HDMI RX
+>>>>> Controller Driver used by Rockchip RK3588. The driver
+>>>>> supports:
+>>>>>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>>>>>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>>>>>  - CEC
+>>>>>  - EDID configuration
+>>>>>
+>>>>> The hardware also has Audio and HDCP capabilities, but these are
+>>>>> not yet supported by the driver.
+>>>>>
+>>>>> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>>>> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>>>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>>>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>>>> ---
+>>>>>  drivers/media/platform/Kconfig                |    1 +
+>>>>>  drivers/media/platform/Makefile               |    1 +
+>>>>>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>>>>>  drivers/media/platform/synopsys/Makefile      |    2 +
+>>>>>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>>>>>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>>>>>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2715 +++++++++++++++++
+>>>>>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>>>>>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+>>>>>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>>>>>  10 files changed, 3475 insertions(+)
+>>>>>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>>>>>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+>>>>>
+>>>>
+>>>> <snip>
+>>>>
+>>>>> +static ssize_t
+>>>>> +hdmirx_debugfs_if_read(u32 type, void *priv, struct file *filp,
+>>>>> +		       char __user *ubuf, size_t count, loff_t *ppos)
+>>>>> +{
+>>>>> +	struct snps_hdmirx_dev *hdmirx_dev = priv;
+>>>>> +	u8 aviif[3 + 7 * 4];
+>>>>> +	int len;
+>>>>> +
+>>>>> +	if (type != V4L2_DEBUGFS_IF_AVI)
+>>>>> +		return 0;
+>>>>> +
+>>>>> +	hdmirx_read_avi_infoframe(hdmirx_dev, aviif);
+>>>>> +
+>>>>> +	len = simple_read_from_buffer(ubuf, count, ppos,
+>>>>> +				      aviif, ARRAY_SIZE(aviif));
+>>>>> +
+>>>>> +	return len < 0 ? 0 : len;
+>>>>> +}
+>>>>
+>>>> Have you tested this with 'edid-decode -c -I /path/to/avi'? Also test that it is
+>>>> empty if there is no AVI InfoFrame (e.g. when there is no incoming video). I don't see
+>>>> a test for that in the code.
+>>>>
+>>>> I also see no sanity check regarding the length of the InfoFrame, it just outputs
+>>>> the full array, meaning you get padding as well since the AVI InfoFrame is smaller
+>>>> than ARRAY_SIZE(aviif). In fact, edid-decode will fail about that if the -c option
+>>>> is used.
+>>>>
+>>>> See tc358743_debugfs_if_read of how this is typically handled.
+>>>
+>>> I've tested with 'edid-decode -I /path/to/avi', including the empty AVI
+>>> InfoFrame. But without the '-c option'. I'd expect that debugfs should
+>>> provide a full-sized raw InfoFrame data, rather than a parsed version.
+>>> The parsed data isn't much useful for debugging purposes, IMO. I
+>>> intentionally removed the size check that tc358743_debugfs_if_read does
+>>> because it appeared wrong to me. Will re-check with '-c option', thanks!
+>>
+>> The HDMI header contains the actual length that was received. So debugfs should
+>> export the actual payload, not the maximum possible payload.
+>>
+>> It is common for hardware to reserve room in the register map for the maximum
+>> payload, but you only want to export what was actually received.
 > 
-> This fixes a build failure with CONFIG_GENDWARFKSYMS, where we would
-> otherwise attempt to calculate symbol versions for purgatory objects and
-> fail because they're not built with debugging information:
-> 
-> error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
-> make[5]: *** [../scripts/Makefile.build:207: arch/s390/purgatory/string.o] Error 1
-> make[5]: *** Deleting file 'arch/s390/purgatory/string.o'
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502120752.U3fOKScQ-lkp@intel.com/
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  arch/s390/purgatory/Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> If payload is corrupted, it should be handy to see a full payload.
+> Otherwise you won't be able to debug anything because driver returns
+> zero payload to userspace since it can't parse the header :)
 
-Applied, thank you!
+Note those tc358743 and other drivers are parsing the IF header data.
+I'm pretty sure this is not what InfoFrame debugfs is intended to do,
+Will revisit it all again in a more details for v7.
+
+-- 
+Best regards,
+Dmitry
 
