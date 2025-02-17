@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-518360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE8BA38DE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:16:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19DCA38DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620D33B38C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8DBA7A35FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC1C239085;
-	Mon, 17 Feb 2025 21:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5C723AE6D;
+	Mon, 17 Feb 2025 21:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="b63tJELx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="nrspRon2"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB4D33F7;
-	Mon, 17 Feb 2025 21:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739826983; cv=pass; b=Mv9Jrw5hxV7ZgBFfOZLiOUY30r6HMD6Cb4RsiVIDtsLgM2TCwNnV+dwffS/ImVNRfS6JtGLz49k/kqf+bUlXdQt+0+8Ic1SjgjicSyDNNp7T95e5v2f4gmsXtYUUWVaxwPK3sxsKAkoI7e5V3a45wg2W3jcacNDs6YhL+p8VzsM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739826983; c=relaxed/simple;
-	bh=DpNeZ43JpMZESKTaAtEhiubewVWb2ZRjG0DrkkSPXzk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=kOwZIMMiEfykc6iKCZycvrUW0LYIi5xODsASNWsGXOS03jnCU4Z+oScimVwy5HQ0oSVx95NHjAXesiCUh4dG8h7RYT/t4gPe9Q++NN4IaBK7Bw6dWHQ+ghGR004UWDSmXM2QS9+H5jNkvhvXHAhVbz6dcTnh1o9fGh0jshcPFPk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=b63tJELx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739826970; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=n+g1bwWIXu6miuS2Snh2p1+tt4RZgLVRF6TVYJMr6xL2UuUHi3ZW8VPa83VfOv6sqGGFYJixAEfCrDkQuDMa+abuOvedhUdYfTAvhfmy1NqqplCJWojxx52WpUt5D3myH3YO5Sj8JJeH/+YlnNQ+svdPWWSEeb40UBcn5/3vwls=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739826970; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=O/E2WxtauAk3hnXmc5LI3NlTagCxG+Frl9gBYiR41+M=; 
-	b=ite9rSoKCXhwk+grRlXFIZa7+vzQbziK77LPHJNJtOTRzx1Q3KMW/JGSvrRdL47f5PkX6nmCMatwsxwE8DI6fDCun8ol7saHozi2JxkTmbKiZR3sejNKQguUjXlMlxh3K2WjwDrOKsbC0P56crCRLfNBxokZTzkWimR+TDlKQgU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739826970;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=O/E2WxtauAk3hnXmc5LI3NlTagCxG+Frl9gBYiR41+M=;
-	b=b63tJELxGr16ymwxsAnbWgJ+C9Gq3iDyJVAbhXMlfFSwmxZES3ffP+H2YnY+Q1MG
-	nVZN2Yum2nQdeJ1h6Ev/2xeCvzUX3gnZ7DE36yGFJnggaW91mwMjQu5vXPtv9YTJhDK
-	UZJUJCL/YIUdYQ5wCm8zCgqSaOPNcSDbrkQldCyE=
-Received: by mx.zohomail.com with SMTPS id 17398269681741006.1408373826317;
-	Mon, 17 Feb 2025 13:16:08 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88A42A8C1;
+	Mon, 17 Feb 2025 21:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739826985; cv=none; b=LbJX8xxCtnHtV6etwHKowvYljknxGAfolJ7NlX9jpgxBttVg9P+30EJYhydYXTf8+/6gZYqh6+mzhmdeDXraMi1N47GfNpcYjH25BDYsKAYhnrkM8zDQl2aDGdt3GhTCG27bT+wKYN32r/7uvxiSeCBSSjlVZ6AA745+DImawY0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739826985; c=relaxed/simple;
+	bh=PPjfiOmwbpWM+RmtTmazEjgL1lGTqx2+iDorgMiSrk0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=czGeLmJIneZrm/lw+cvawsvQn2xgyWOOD8AHpREf5tGeWWS2DzYXH+0m+gVA/5GE6LFrLZ0AoCuKuT8fMkdFMYKfIBsQAO78SUQVP0D24Vdll7YMhZDRSsnCMN6P29shqksX/H/wmpGTT9xnz6YKRp3pPnAEqK/2px/MsH9/Lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=nrspRon2; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739826984; x=1771362984;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gNlaD28MqcKHrKBaRnTcGssUepgxFLXIh5MJ0Sy36b8=;
+  b=nrspRon2macj5XtbLzVQqkDVpmSaqVlbvR7ffHbVrMIEEmRRw6/kyNOE
+   fCn0iQMIObnKLkAz+nva/DhK6blmAUuaj3Zj5Q6WOBeZBfJkEhXCax2iD
+   TBsgyFlF/b8txyd/Bnd1exU5bVVPAuEJAsRJ5h1CpibG2CG39y8/OLifg
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,293,1732579200"; 
+   d="scan'208";a="719576709"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 21:16:20 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:51414]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.245:2525] with esmtp (Farcaster)
+ id 9a035a9d-6cc0-4857-950f-a90b95689e6f; Mon, 17 Feb 2025 21:16:19 +0000 (UTC)
+X-Farcaster-Flow-ID: 9a035a9d-6cc0-4857-950f-a90b95689e6f
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Mon, 17 Feb 2025 21:16:19 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.189.161) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 17 Feb 2025 21:16:16 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <purvayeshi550@gmail.com>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-ppp@vger.kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<skhan@linuxfoundation.org>,
+	<syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com>
+Subject: Re: [PATCH] ppp: Prevent out-of-bounds access in ppp_sync_txmunge
+Date: Mon, 17 Feb 2025 13:16:09 -0800
+Message-ID: <20250217211609.60862-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250216060446.9320-1-purvayeshi550@gmail.com>
+References: <20250216060446.9320-1-purvayeshi550@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH RFC 2/3] rust: make ETIMEDOUT error available
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250217-nova_timer-v1-2-78c5ace2d987@nvidia.com>
-Date: Mon, 17 Feb 2025 18:15:52 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Ben Skeggs <bskeggs@nvidia.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C46A2AAC-1FD4-45F1-9F37-CA95F261A6F2@collabora.com>
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <20250217-nova_timer-v1-2-78c5ace2d987@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWB004.ant.amazon.com (10.13.139.177) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Alex,
-
-> On 17 Feb 2025, at 11:04, Alexandre Courbot <acourbot@nvidia.com> =
-wrote:
->=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+From: Purva Yeshi <purvayeshi550@gmail.com>
+Date: Sun, 16 Feb 2025 11:34:46 +0530
+> Fix an issue detected by syzbot with KMSAN:
+> 
+> BUG: KMSAN: uninit-value in ppp_sync_txmunge
+> drivers/net/ppp/ppp_synctty.c:516 [inline]
+> BUG: KMSAN: uninit-value in ppp_sync_send+0x21c/0xb00
+> drivers/net/ppp/ppp_synctty.c:568
+> 
+> Ensure sk_buff is valid and has at least 3 bytes before accessing its
+> data field in ppp_sync_txmunge(). Without this check, the function may
+> attempt to read uninitialized or invalid memory, leading to undefined
+> behavior.
+> 
+> To address this, add a validation check at the beginning of the function
+> to safely handle cases where skb is NULL or too small. If either condition
+> is met, free the skb and return NULL to prevent processing an invalid
+> packet.
+> 
+> Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
+> Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
 > ---
-> rust/kernel/error.rs | 1 +
-> 1 file changed, 1 insertion(+)
->=20
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index =
-f6ecf09cb65f4ebe9b88da68b3830ae79aa4f182..8858eb13b3df674b54572d2a371b8ec1=
-303492dd 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -64,6 +64,7 @@ macro_rules! declare_err {
->     declare_err!(EPIPE, "Broken pipe.");
->     declare_err!(EDOM, "Math argument out of domain of func.");
->     declare_err!(ERANGE, "Math result not representable.");
-> +    declare_err!(ETIMEDOUT, "Connection timed out.");
->     declare_err!(ERESTARTSYS, "Restart the system call.");
->     declare_err!(ERESTARTNOINTR, "System call was interrupted by a =
-signal and will be restarted.");
->     declare_err!(ERESTARTNOHAND, "Restart if no handler.");
->=20
-> --=20
-> 2.48.1
->=20
->=20
+>  drivers/net/ppp/ppp_synctty.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
+> index 644e99fc3..e537ea3d9 100644
+> --- a/drivers/net/ppp/ppp_synctty.c
+> +++ b/drivers/net/ppp/ppp_synctty.c
+> @@ -506,6 +506,12 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
+>  	unsigned char *data;
+>  	int islcp;
+>  
+> +	/* Ensure skb is not NULL and has at least 3 bytes */
+> +	if (!skb || skb->len < 3) {
 
-FYI this is a conflict with =
-https://lore.kernel.org/rust-for-linux/20250207132623.168854-8-fujita.tomo=
-nori@gmail.com/=
+When is skb NULL ?
+
+
+> +		kfree_skb(skb);
+> +		return NULL;
+> +	}
+> +
+>  	data  = skb->data;
+>  	proto = get_unaligned_be16(data);
+>  
+> -- 
+> 2.34.1
 
