@@ -1,147 +1,116 @@
-Return-Path: <linux-kernel+bounces-518051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B608DA38927
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:30:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C7AA38923
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C798188A33C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410003AA5C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F2D22579C;
-	Mon, 17 Feb 2025 16:30:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24852225783;
-	Mon, 17 Feb 2025 16:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57DE2253EC;
+	Mon, 17 Feb 2025 16:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg2EuD0O"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC9F2248B6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739809806; cv=none; b=FZGBgPQPUhnGovGu6gkLYaULWkf7K4192BMxoX4rKPFomhP64M4CTqHm7sGd+Ft/gVw8AgALlRDvekc9cN4XjW4Vsc6IDEKyiNlQs3nDD7e/w3ko4vLDt/jp7oKMZ4pf/ig7+novEl2KkRAUWzbyuAsbHkhrh6PMnAZGLCFGjX0=
+	t=1739809800; cv=none; b=ZjVFY+rPXkXDk74xehdHsbPNeQWWZj9DincGYMOaim8gcXxd27JByeavl8I3lcBcc6lQFH+QuGYH6VdijeIW0RlsEywkGLPGMl1Wnm+k+iqn/er/AXtN1Alhd6IAfZZrXQKJmJUaJjrUcFKlItCXruELP73ZDqEoIPkqfnrQNi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739809806; c=relaxed/simple;
-	bh=1ET7ngNwdP/7uhiBrI0skP0NwZt8InzQ+yuq7r3vEOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWgQyjLTtwWGyO/HA8YY0igei7rSBt4KoEOqfaQXUMBC9rEMVXmjy7G0JVOOMSTEEkltxT1sv32lfSNO6cp7nrsN/2d670HhWPUlbQDQWhiSVChtBZ8+ddRggnwJtywhbG9EE5OqBF/NKCF84zz9yurI2kPuwO6mwu4qV5/3KcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C364152B;
-	Mon, 17 Feb 2025 08:30:23 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 766D73F5A1;
-	Mon, 17 Feb 2025 08:29:54 -0800 (PST)
-Message-ID: <f882ec8a-c577-4487-bf46-8c406c60aa67@arm.com>
-Date: Mon, 17 Feb 2025 16:29:36 +0000
+	s=arc-20240116; t=1739809800; c=relaxed/simple;
+	bh=WlOHhv6YPlidRlQxUGabWB/Y8llYiGYvkGB43QXy6dc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rIWSK9az06KLamBVUa0TBYd9tigp3F/W9gyW01mvfaBY2m1DPpEnvV1gGs4qErqLiGb2Y46YxkyjVPvavC4pgvlApXESjWdG80rqoLmU0oBzAXwYdkC/2FEW/b8eRcm9ksd+Lhhl9HZCRJhhu+4C73WTQktKSGxEws9ELD0Ur3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg2EuD0O; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso2811076f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739809797; x=1740414597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZQb2m4LI3eZ0whbBX38Hfb+TR1d3xUyfma8FbMenc8=;
+        b=Yg2EuD0OfHiuyZrziAMcVEg6sRwrGKcERTgKT+rq5pTR3C0WSKwhHUwtU5/IuXgA/u
+         pgGlt4CYp4/voN1WDdZndVE9ayGlLbEUqG2y4B0aQ8S32xShxjMd6oVRuVURKUb6kV5t
+         Fb1KdMcJ77v+XoFAYkSzv2dX06oGS0/KlxGg0q9WfP9aE9akYsGwQtPuhdebErdNXJXK
+         0gmT4YASNdSXFDeFDjV/cyBCeG+gXCgqvsouDIKa6brgJ9v1SgauMqKtY0W4mDE8CQKc
+         JYmKlPIfBdYdcqSuYpOqedlaBLI+EEbdGQvj65VZcKfyCDv09hfTgNJND+vwnPuNOqIj
+         263g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739809797; x=1740414597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pZQb2m4LI3eZ0whbBX38Hfb+TR1d3xUyfma8FbMenc8=;
+        b=eYJZBha5JZqP0F/Me7lh7Y92cKrHIiG0+/YbQ+ccBcI22TOr723yF/9o/yJVH5ngVG
+         28n0/MilFOm8MgTq/HKJEggm9VYv48Rvjjr4J+FyWN4iSlY6SCP/sz6NFlWVq5oGBWHV
+         /U0vlX2Ksp7Jro75zHGOIPr7RBq5fzLVKuopRy7wAxoEAjuj9v+Kx37xoKTl0cI5JVGr
+         Z6B/9Jn9e8qEilbblG9jVg0lCkXBGZ5birb5Sjpsxl1lLToiEjYIWvF5P+8d+MbFZwh2
+         x9ascb+AO/zJBsie4xCNDysBWDHmD3BxEcY5IJmFNEkKFB0dLDAVzHQm8ATKzD1l2Vdz
+         9Y0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWn03eLcztoPRX6EM388QWEZFazM7wKIZF0kv9tNa1fNQd34gLTX6FLeG9ySY+UwloatH+cefiixXkeHuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwFongIl5xAE/LBIZ/J+NwaSXA65rAuR3qaZ5xYnr8mES6aXyO
+	/52W13/REuyvuMh5CT4R1AEuMb+esqv723bfOSRHSpsTgNmppRooiljvjskcApyREaRQXnj0EMh
+	ukWtOWZupZYBizWU5zZ234TwiY04=
+X-Gm-Gg: ASbGnctXMcs4R1XcAkQp5amhRfAQRyDXBcJiERvyLGaC40+5HkfoHl+sTB70gHRI4bi
+	IBx4dny3SXEBsBbi8dakM4YLpwq8dg7tsVWmHJfT2yWu4266770Dw4dFMrlDNS6ezb7vpkNYRFs
+	E=
+X-Google-Smtp-Source: AGHT+IFPGojklZ8rX6C2jIUVXuI7Nu18SntXvHS3iftVKfpo60nJI733DAqjbgFpNf/qFXWucoMCahPUZAaAlZWrVQs=
+X-Received: by 2002:a05:6000:1fa4:b0:38f:3d10:6ab7 with SMTP id
+ ffacd0b85a97d-38f3d1072b9mr4816691f8f.23.1739809796774; Mon, 17 Feb 2025
+ 08:29:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iommu: Handle race with default domain setup
-To: Charan Teja Kalla <quic_charante@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org
-References: <cover.1739486121.git.robin.murphy@arm.com>
- <87bd187fa98a025c9665747fbfe757a8bf249c18.1739486121.git.robin.murphy@arm.com>
- <2a090f80-e145-410d-8d02-efdaf324c8c9@quicinc.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2a090f80-e145-410d-8d02-efdaf324c8c9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250217042108.185932-1-longman@redhat.com> <20250217154309.C2CMqCjE@linutronix.de>
+In-Reply-To: <20250217154309.C2CMqCjE@linutronix.de>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Mon, 17 Feb 2025 17:29:45 +0100
+X-Gm-Features: AWEUYZlZbQRUYlLo8ZMq5M3z45K6gh8vpPysxswkL9MmuffmUF5lc2K91cMG2qk
+Message-ID: <CA+fCnZekjO6ajX5YDE2VgL3pzyawdVNkJ0g6-w0Xq15zdDdLog@mail.gmail.com>
+Subject: Re: [PATCH v3] kasan: Don't call find_vm_area() in RT kernel
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, kasan-dev@googlegroups.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-rt-devel@lists.linux.dev, Nico Pache <npache@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/02/2025 12:57 pm, Charan Teja Kalla wrote:
-> Thanks a lot for posting these patches, Robin.
-> 
-> On 2/14/2025 5:18 AM, Robin Murphy wrote:
->>   drivers/iommu/iommu.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 870c3cdbd0f6..2486f6d6ef68 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -3097,6 +3097,11 @@ int iommu_device_use_default_domain(struct device *dev)
->>   		return 0;
->>   
->>   	mutex_lock(&group->mutex);
->> +	/* We may race against bus_iommu_probe() finalising groups here */
->> +	if (!group->default_domain) {
->> +		ret = -EPROBE_DEFER;
->> +		goto unlock_out;
->> +	}
-> 
-> We just hit the issue again even after picking up this patch, though
-> very hard to reproduce, on 6.6 LTS.
-> 
-> After code inspection, it seems the issue is that - default domain is
-> setup in the bus_iommu_probe() before hitting of this replay.
-> 
-> A:async client probe in platform_dma_configure(), B:bus_iommu_probe() :-
-> 
-> 1) A: sets up iommu_fwspec under iommu_probe_device_lock.
-> 
-> 2) B: Sets the dev->iommu_group under iommu_probe_device_lock. Domain
-> setup is deferred.
-> 
-> 3) A: Returns with out allocating the default domain, as
-> dev->iommu_group is set, whose checks are also made under the same
-> 'iommu_probe_device_lock'. __This miss setting of the valid dev->dma_ops__.
-> 
-> 4) B: Sets up the group->default_domain under group->mutex.
-> 
-> 5) A: iommu_device_use_default_domain(): Relies on this
-> group->default_domain, under the same mutex, to decide if need to go for
-> replay, which is skipped. This is skipping the setting up of valid
-> dma_ops and that's an issue.
-> 
-> But I don't think that the same issue exists on 6.13 because of your
-> patch, b67483b3c44e ("iommu/dma: Centralise iommu_setup_dma_ops()").
-> bus_iommu_probe():
->       list_for_each_entry_safe(group, next, &group_list, entry) {
-> 		mutex_lock(&group->mutex);
-> 		for_each_group_device(group, gdev)
-> 			iommu_setup_dma_ops(gdev->dev);
-> 		mutex_unlock(&group->mutex);
->       }
-> 
-> This makes the step4 above force to use the valid dma_iommu api, thus I
-> see no issue when there is no probe deferral.
-> 
-> So, I think we are good with this patch on 6.13.
-> 
-> Now coming back to 6.6 LTS, any ideas you have here, please?
+On Mon, Feb 17, 2025 at 4:43=E2=80=AFPM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> > --- a/mm/kasan/report.c
+> > +++ b/mm/kasan/report.c
+> > @@ -370,6 +370,34 @@ static inline bool init_task_stack_addr(const void=
+ *addr)
+> >                       sizeof(init_thread_union.stack));
+> >  }
+> >
+> > +/*
+> > + * RT kernel cannot call find_vm_area() in atomic context. For !RT ker=
+nel,
+> > + * prevent spinlock_t inside raw_spinlock_t warning by raising wait-ty=
+pe
+> > + * to WAIT_SLEEP.
+> > + */
+>
+> Do we need this comment? I lacks context of why it is atomic. And we
+> have it in the commit description.
 
-Thanks for the analysis once again! I've not looked closely at 6.6 yet, 
-but if we're all happy this looks like the right fix for mainline then 
-I'll start having a look at the backport as soon as I can (so much for 
-hoping it would be simple...)
-
-Cheers,
-Robin.
-
-> 
->>   	if (group->owner_cnt) {
->>   		if (group->domain != group->default_domain || group->owner ||
->>   		    !xa_empty(&group->pasid_array)) {
-> 
-> 
-> Thanks,
-> Charan
+I would prefer to have this in the comment, but with a full
+explanation of why this needs to be done.
 
