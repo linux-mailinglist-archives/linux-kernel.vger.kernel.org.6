@@ -1,142 +1,172 @@
-Return-Path: <linux-kernel+bounces-518457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE8DA38F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:05:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2187AA38F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775793AE4BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EBDC188E76F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62C31AB52D;
-	Mon, 17 Feb 2025 23:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C9D1AAA1F;
+	Mon, 17 Feb 2025 23:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="SH2GWsf5"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GSCJoeKW"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C58514F9E2;
-	Mon, 17 Feb 2025 23:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228014F9E2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 23:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739833495; cv=none; b=hqMXph8shdMiMOprZr28X6o4GqqG51VBm6tGTNKiY170kaSDCPxCN2mv3aTnC0dYnS8mQ/isHYC3Wdn3NqFcALtKcJtXICiZSVQBtvJ1qDOyeH9XtlpsROQ6GgTdpUBWJdp+IlwlaEiB6/WZ0ofYkXca+cE7OKnZTQWao5M3sU0=
+	t=1739833761; cv=none; b=SWj44LaDwuw4NjYZVzR9Imf7800QxJ9vij82qeX1m5xnYiP2CGqfFXAC83xjWwdKW7P+RALu2NGLicuJzM405eyVivorx+IFM+164snDKKcbUpEZomnzluzYpLcD/xgQoBC52sywEL+eIXtYKxrjatMZsC0BlEbuigqvXt195lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739833495; c=relaxed/simple;
-	bh=ua8MTgg/pMbzItmaHaOKpFahHqsd/AEYJLBn84nW3jA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J6gN4o54E1SEeUa/x9GaDiuOssARrtkYwy8loTl8zDGp3dqntrFKXtmIZu/35c2H1ry4m2QQwAVBJ333gYF2gL6SexvEdymPqZNvYE7J1hAZJdKsUe3nr7sZ+XuQLCCWnr/SNw3N/VBWHc2IlSctKcmmSzZqmcRGpEkiPuHU23o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=SH2GWsf5; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=jblptpwxyvcidg2pzm7itkg7wu.protonmail; t=1739833485; x=1740092685;
-	bh=jHdV3S2lh3pdGuk6Jd9tHkSnXo+OlTKdByZUos42qWw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=SH2GWsf5nTbSthP5aXTCrQoD0RYV0a1A5Nc2OI2T6S7756MU0q16Bxvt9Oxa71VFr
-	 8B8X3Rg4wTc5BkcLiTbCM6dt03lq7gfitfTltQkX4m5o62Lj9ZNvVosJTZIIPHSiwu
-	 9Vu47+ki+AntG/n0WY5b0gH4POvYaY657sEWFAmqyW6YCNS2rEd+5zjYkfB2w6YFDV
-	 E4Y2lmuJ7lc85IkphPI/Bs8/brv0FWaX5Z/BMjfjRd5+59I85RTKkQvVpoDQHZ5pV0
-	 ctT7QUpy8NHZg7EXj6FBEtsCOPHOT/6gnkIYCAEcnU6jlYXUF45ysqipHxUOFpMmwX
-	 glNFe3MI6B78Q==
-Date: Mon, 17 Feb 2025 23:04:39 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Fiona Behrens <me@kloenk.dev>, Charalampos Mitrodimas <charmitro@posteo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] rust: configfs: introduce rust support for configfs
-Message-ID: <354dbebd-b211-4e8f-a181-8fbacb0e89c8@proton.me>
-In-Reply-To: <87bjv0u5j0.fsf@kernel.org>
-References: <20250207-configfs-v2-0-f7a60b24d38e@kernel.org> <20250207-configfs-v2-2-f7a60b24d38e@kernel.org> <S6DKlLVx4KKevl_q2zrW69Z7oS0jwyX4DXpDZrFiIy1lKo4VYHM52aDiV82c2yf52Ecr7t9FayuqBUPR9onvZA==@protonmail.internalid> <dd63fcde-ba4c-4a6e-9bde-1af5af37e91b@proton.me> <87h64su8ux.fsf@kernel.org> <Kkrr23DbfvS1nChcwAfhrogDdCOO92FQ2-9JUCab-_6CREP4iBX8k1KuxaJb-yv_ErGv9TbzDWwBZHvaszFS7w==@protonmail.internalid> <bfd79db6-bd79-4187-8577-3ae412f36f35@proton.me> <87bjv0u5j0.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 7147e4b8455818361fecc7bff27a85c176ad257d
+	s=arc-20240116; t=1739833761; c=relaxed/simple;
+	bh=BwNPS53w4xF3ql72DmGgygVOWK2VK8uL8CyO12d8Opw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WuwMjikOe7XyNhHxtaxA6Cxz5Dx/JUq0Du4+N8mRfLsu+A5DeecwThQjK0BMI3SqmTU/TcXacvmjQXeS9lKYN/ZXjD9I9IUM0Migv9F9lA3yZcB02YybU22X8k3pUalAyG59d1Wb2zmXLrriOBhEXr9NNf7dl/9XgjJcv9tDVnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GSCJoeKW; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6f7440444efso40881017b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1739833758; x=1740438558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6+QIhhbHlQHwTRjyCuWMiGSUjUUNNx/rbC2zutM+tv4=;
+        b=GSCJoeKW/J/OzHGK6d81crM4Hf3Pgg9cTDiSWUspUjFqfSiTpv/1tqAiM1nPbqrFvg
+         hEj83r8H4FR3kef/XLywzGMEAdMwpCoAOgRQHB51yGjX8zqGc9XUXvt9uHK5O4mMuVaX
+         Uoh+OPXZdayk984XkJcMS/EoVG8f84YvDzw0dS5a8mVIn7IT4ccIDeCPIKiphDdh+KXy
+         wmahLIFk7ekLc6fvQSWgncYANgWca3ha8Xa8CEd74FRcpN3XSp4x8bboJllHxjrWobmD
+         KzTUU9MOF4Sikc3En1RMrNCD9v0PtMORfrCzMHD+Jqc550gQ8GHuJyRs7+TokwsZS18K
+         0JJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739833758; x=1740438558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6+QIhhbHlQHwTRjyCuWMiGSUjUUNNx/rbC2zutM+tv4=;
+        b=PQJvYWWlUFC9GekH7CbsY+C8dGEVMa8QKPDkKZ4ZsUCrSsrzPgSrKq2B+rQchnidbz
+         3DaYVrSVC9m6NDeuMDVh6Dvk4Vw0LgEppoaKzj4tMK4bSKFIFHsHjOapKAkjsFG2w1kz
+         wdNcXk0he5syEgQXZAvQME17xXtWEQwqdK9zTfCeA5qu4ECxynZwMrDzKtmGx79ZfTNj
+         2C2JCHZLgXf64d9rrHrdrtbtAcFgniH1dm+H8EvK1w/gx/ntE11LYA3AykRIaP21+gs7
+         R0mXZykZA+AToKKFUqrcBtHGInOw/6FxuofpLoLgRMw/wZ+L6yCSbqeg4A0WkrrX0t0Q
+         CTQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGC4VbaKwwKIPEqiyCDPKBZT5+0HL9Irffv2dMebj17In7pz+MwoH8TG+8uidFFyQr//LB1SlSDxhvBB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD86rPQzRjN73d7VPiu+C69Hh7+iIVcUhK8NVOzq92XZe6Wuwu
+	PQoKwdolYDGhZjvyQvcpYBtoDiEJADpKaF6qEBdlEyGjz9Vx7cD3jvRa/6mPGIBldqo4d6mlLjg
+	lgre/ah8SDpH+YmtS3CtiwiRwBf8Dj1mxbyOJ3lFy2caDA08=
+X-Gm-Gg: ASbGncv5VfuQwjoq/AQB1YlzYb2mGzI+/Jz3rQn7tlnwDoC/4wCi5m8s0xKgKH56btB
+	BlmMxq2FPnVf3WDZbiZRtBg+Eaoff9aEkPm3zt5oQS9c46as7lmp09rayyPtowRm1hsEE4Jl+
+X-Google-Smtp-Source: AGHT+IFfzUdHvXZltLiZdcP5irnNHzde58g8jKTvV59iWKN2XJh6XKB+iiHFvnwY7rBq3M+QXAkvQMFIiCvdcSL6hLE=
+X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id
+ 00721157ae682-6fb582b757emr93667787b3.18.1739833758239; Mon, 17 Feb 2025
+ 15:09:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250205120026.GA15809@wind.enjellic.com> <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com>
+ <20250207102024.GA6415@wind.enjellic.com> <CAHC9VhSd-5Lm4+DPWG-V5eav5k-Q1evh3oVHxgB7in2o+XMMEg@mail.gmail.com>
+ <20250217125325.GA11696@wind.enjellic.com>
+In-Reply-To: <20250217125325.GA11696@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 17 Feb 2025 18:09:06 -0500
+X-Gm-Features: AWEUYZnkc2mEsqeaY7vuZ3eTb4_LlXRnKNWXs9DjpYSUNKE9nCD1iZ7DdErZPyU
+Message-ID: <CAHC9VhQRz2ofH_HgUGw=voNyP8nYKQZwJGg_wb+hgGfXHex00Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jmorris@namei.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 17.02.25 13:20, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->> On 17.02.25 12:08, Andreas Hindborg wrote:
->>>>> +
->>>>> +/// A `configfs` subsystem.
->>>>> +///
->>>>> +/// This is the top level entrypoint for a `configfs` hierarchy. To =
-register
->>>>> +/// with configfs, embed a field of this type into your kernel modul=
-e struct.
->>>>> +#[pin_data(PinnedDrop)]
->>>>> +pub struct Subsystem<Data> {
->>>>
->>>> Usually, we don't have multi-character generics, any specific reason
->>>> that you chose `Data` here over `T` or `D`?
->>>
->>> Yes, I find it more descriptive. The patch set went through quite a bit
->>> of evolution, and the generics got a bit complicated in earlier
->>> iterations, which necessitated more descriptive generic type parameter
->>> names. It's not so bad in this version after I restricted the pointer
->>> type to just `Arc`, but I still think that using a word rather a single
->>> letter makes the code easier to comprehend at first pass.
->>
->> Makes sense. I'm not opposed to it, but I am a bit cautious, because one
->> disadvantage with using multi-character names for generics is that one
->> cannot easily see if a type is a generic or not. Maybe that is not as
->> important as I think it could be, but to me it seems useful.
->=20
-> If you use an editor with semantic highlighting, you can style the
-> generic identifiers. I am currently trying out Helix, and that is
-> unfortunately on of the features it is missing. Can't have it all I
-> guess.
+On Mon, Feb 17, 2025 at 7:53=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+> On Fri, Feb 07, 2025 at 07:29:58PM -0500, Paul Moore wrote:
+> > On Fri, Feb 7, 2025 at 5:20???AM Dr. Greg <greg@enjellic.com> wrote:
+> > > On Thu, Feb 06, 2025 at 10:48:57AM -0500, Paul Moore wrote:
+> > > > On Wed, Feb 5, 2025 at 7:01???AM Dr. Greg <greg@enjellic.com> wrote=
+:
+> > > > > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+> > > > >
+> > > > > > I believe the LSM can support both the enforcement of security =
+policy
+> > > > > > and the observation of security relevant events on a system.  I=
+n fact
+> > > > > > most of the existing LSMs do both, at least to some extent.
+> > > > > >
+> > > > > > However, while logging of security events likely needs to be
+> > > > > > asynchronous for performance reasons, enforcement of security p=
+olicy
+> > > > > > likely needs to be synchronous to have any reasonable level of
+> > > > > > assurance.  You are welcome to propose LSMs which provide
+> > > > > > observability functionality that is either sync, async, or some
+> > > > > > combination of both (? it would need to make sense to do both ?=
+), but
+> > > > > > I'm not currently interested in accepting LSMs that provide
+> > > > > > asynchronous enforcement as I don't view that as a "reasonable"
+> > > > > > enforcement mechanism.
+> > > > >
+> > > > > This is an artificial distinction that will prove limiting to the
+> > > > > security that Linux will be able to deliver in the future.
+> > > > >
+> > > > > Based on your response, is it your stated position as Linux secur=
+ity
+> > > > > maintainer, that you consider modern Endpoint Detection and Respo=
+nse
+> > > > > Systems (EDRS) lacking with respect to their ability to implement=
+ a
+> > > > > "reasonable" enforcement and assurance mechanism?
+> > >
+> > > > As stated previously: "I'm not currently interested in accepting
+> > > > LSMs that provide asynchronous enforcement as I don't view that as =
+a
+> > > > reasonable enforcement mechanism."
+> > >
+> > > You personally don't, the IT and security compliance industry does, i=
+t
+> > > seems to leave Linux security infrastructure in an interesting
+> > > conundrum.
+>
+> > Your concern over the state of the LSM has been previously noted, and
+> > I assure you I've rolled my eyes at each reference since.
+>
+> Addressed at the end of this e-mail.
+>
+> You can also see our reply to James Morris and the announcement of the
+> Linux Security Summit in Denver this summer.
 
-That is true, but there are a lot of places where Rust code is put that
-aren't my editor (git diffs/commit messages, mails, lore.kernel.org,
-github) and there it'll become more difficult to read (also people might
-not have their editor configured to highlight them).
+I did.  As Casey already mentioned, you are free to submit a proposal.
+I believe most of the program committee will remember you from your
+previous presentation.
 
-So I think we should at least consider it more.
+> > > For the record, just to be very clear as to what an LSM is allowed to
+> > > do under your administration, for our benefit and the benefit of
+> > > others ...
+>
+> > I've repeated my position once already, if any current or aspiring LSM
+> > developers are unsure about some aspect of this, they are welcome to
+> > bring their specific concerns to the list and we can discuss them.
+>
+> For the record, we did bring a specific concern to the list for
+> discussion, you removed the question and example we raised from your
+> reply.
 
->>>>> +                    // SAFETY: We are expanding `configfs_attrs`.
->>>>> +                    static [< $data:upper _ $name:upper _ATTR >]:
->>>>> +                      $crate::configfs::Attribute<$attr, $data, $dat=
-a> =3D
->>>>> +                        unsafe {
->>>>> +                            $crate::configfs::Attribute::new(c_str!(=
-::core::stringify!($name)))
->>>>> +                        };
->>>>> +                }
->>>>> +            )*
->>>>> +
->>>>> +
->>>>> +            const N: usize =3D $cnt + 1usize;
->>>>
->>>> Why do we need an additional copy? To have a zero entry at the end for=
- C
->>>> to know it's the end of the list? If so, a comment here would be very
->>>> helpful.
->>>
->>> Yes, we need space for a null terminator. I'll add a comment.
->>>
->>> We actually have a static check to make sure that we not missing this.
->>
->> Where is this static check?
->=20
-> In `Attribute::add`:
->=20
->         if I >=3D N - 1 {
->             kernel::build_error!("Invalid attribute index");
->         }
+I routinely trim replies to improve readability, especially in the
+case of large emails, and since mailing lists are archived no data is
+lost.  As far as answering questions regarding hypothetical LSMs, I
+see no reason to do so given the nature of your on-list comments of
+late.  I've provided feedback on the specifics of the TSEM approach as
+well as general feedback on async enforcement and that will have to be
+sufficient for now.
 
-Ahh I see, would be also nice to have a comment there explaining why the
-check is `>=3D N - 1`.
-
----
-Cheers,
-Benno
-
+--=20
+paul-moore.com
 
