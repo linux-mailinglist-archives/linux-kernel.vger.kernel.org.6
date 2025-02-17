@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-517630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89BFA38384
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:55:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0924BA38388
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248AF1732C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FA91886D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308BA21B90B;
-	Mon, 17 Feb 2025 12:54:22 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F6121B90F;
+	Mon, 17 Feb 2025 12:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzgUpre6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70161FCD09;
-	Mon, 17 Feb 2025 12:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1302F5B;
+	Mon, 17 Feb 2025 12:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739796861; cv=none; b=dm/0zmH2YGaQVw8Q+fV0RerAih0skkuux0NPEJOaWlyro5j7fKvNtGGOx1MPWUpgIZFDnOL5tLdtxbvuryqMpKn0A+yLBHraPkrX5HEVx82hb800loD2HARvYHgea+xP1Z5A+ubRkcKe9VSxoslv2K42lN8cKkYHuv16nS2ffEA=
+	t=1739796965; cv=none; b=j6fuLIszq8eBsULJ3zzkHC7i20K9dIKzEqZ2Q/QgjoiuqrajLWolDCdZi28icahHcHrJlWY/oundc3lKZKNB4gZNVDVJH1Odc3zScfS7hlM/wqYW1KDsDvWvk1AmqCsghUzeWSxauIR/7PZRkpEgpv3Z/qjvuJjOVvua2epdWT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739796861; c=relaxed/simple;
-	bh=rqrP6VFtF8SohgBnIBv7Pu7Pj6qh2In5FDRDJIUyJU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BrEniLuF12II410BYUoslaiNcoKRjs3HZCqAVo7LRgro8UbwtzLGnHoboqDRok4uLBwtHeLIkBzIC55IBl6ONvnLdGVOsJigWE53wAwYiRZjjnrBDY8fsg4UV9790iTNCnGMsDoSn0xMYiIwMjm3MvXrppE3YJLWFwnIZBsLz8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so6252654a12.0;
-        Mon, 17 Feb 2025 04:54:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739796857; x=1740401657;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8sy1aS+tBPBlRooFwx1utITPNqGAOTrJ/HwG7T+njuI=;
-        b=mOQs5+2/Cd9F6diwFp/XyCd7BRvip2+HjlgIJ61LrzNSOBWrOkwIeKv2EK/RXMILjZ
-         V6drxO+fLbnc197nzM1JkYeYy7AhkX6N6VRIBN4q/pvY/J1M0Zn3mONtl5G32ACXdpGz
-         888KlxNPEtNpqoogH69JlHFVuarGo6U6IE7HJ6gWoyIoHC+jttN5tIYPNXWDB6rttIzz
-         EPj8TqEB07/Ysf5lvkjm3ZunpTrVpdv2f9D9LCsPk24baezf7LFWaAJChBTvWCuh7ABo
-         p+2qT0FeNsl9ASQUMcSQmLOk7ZVsJGDHxWBIBMPVDz+O0rl27lLJjrqPnq/GQNmmzYvA
-         p4kw==
-X-Forwarded-Encrypted: i=1; AJvYcCU85R5O/AHRiuRRNVPkTc79F8TEvkkZAPcYWWBtXZpNpVIkiCkY0NucTZO8TtVD0B2MNk9m55iSxzKQysyX3eVwb+M=@vger.kernel.org, AJvYcCUpq3FVZg0VFVRx2mRSdsl5B7sXqJRqHlNVT5sbFotR2JnWhdWm4/8KYFko6PNMY3iDcta/NojyU95CLNU=@vger.kernel.org, AJvYcCV07Np8hHwP/efzGN5sUmxVTF9hfJiCYyPnqF/ATDa1ScBkJCLhnzjQAzfmaZOkU76bhASuqEXhJ1XuD5Yb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUOgwXaTKMsWnuc1JVI0ML1017+mdu9b9kRg2gUa1lIDhbCjsh
-	uPK/gvlyWRqYvfQuqY6AEg9D0uh/F58G6/NwxVCyGRBX/XiXGPZ7tPG+AATJmIk=
-X-Gm-Gg: ASbGncuRGpEtlZhASJf/c5ROFrlKqvTY2ODo3BrXq1S4iTWG/PdYJPb6gQfAMIc9r3u
-	eQaUMMKveCIFK/kGgieKRIGW1T3FvLpLc3tBgeLX6+0GEvUCmFHPs5sQXJ/id+HdnhEJKVINluk
-	6vgNDjFdnlt/UYLxUKipBXovoFMHGEr0ZG9BV+A9kOMXfAhjzBiTRWBip9VMXGc9bnYgR9PAHsI
-	6z7VXJF7mkb8G7i9NYgJm4c0g3ao2nCulY7W7ZlzkdP21AN83k9rLwBcX/WQWjA16a5yJl9tTpz
-	5x997K8flMOvh9t99OA3bXuVZUQinczdMx5AS6g8HD4cgQDRXGVH+w==
-X-Google-Smtp-Source: AGHT+IEWz13IVdwEj4RzBRHFHA0RKmjaA441kUmVdXbG84dlFu2mN78+JMhlV9Tv/HJ/mBSZmx66lw==
-X-Received: by 2002:a17:907:9716:b0:aae:fb7c:50df with SMTP id a640c23a62f3a-abb710e0cbfmr1032474466b.36.1739796856478;
-        Mon, 17 Feb 2025 04:54:16 -0800 (PST)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba9bd6e3asm81392466b.58.2025.02.17.04.54.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 04:54:16 -0800 (PST)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaec111762bso995283666b.2;
-        Mon, 17 Feb 2025 04:54:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDDTjoa5KTNZy9UG/PjCp6WmJJB0+vT2jYjkJqWDLNdkYpFWvIaeeuN1DgUHCqwMXkpq9xYAP48ik5O39@vger.kernel.org, AJvYcCV85PgRIylijagrUiAGm0NR/N412p7B862YCWiFjS0UZoK7qs3AgjJuYvtyLB7sgDGzNaxFQshllB+svTpomIRqreI=@vger.kernel.org, AJvYcCXU6GOnJmg6cfaxBH55C6LIC4Ab/5ehEGRG+USCsZIMexIDSig4kaMmLRbfp4EoHvCMjMp9QwDXJyIvyk0=@vger.kernel.org
-X-Received: by 2002:a17:907:7f27:b0:ab6:5072:6850 with SMTP id
- a640c23a62f3a-abb70bfd624mr953042966b.7.1739796855833; Mon, 17 Feb 2025
- 04:54:15 -0800 (PST)
+	s=arc-20240116; t=1739796965; c=relaxed/simple;
+	bh=UtcPCfLeZS5GfGD58kyBDLA+3TYY+n8i7oQj1TJuqBo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uaZHvCQXpvyxLddECzKqfuHWZcVVKCj/jXsLJU5e9b1lPugLFX9EW/Jf4wFUD65vvSR3DzKboBOOsSfIv1uylbSs7beIvLuqWuD3IuDkA0hqKtwofKlGGELVJZwUM0kl+EJa5uPJU3ekG0Nipfpylcs+syr4pEuguJ7sQxUyXSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzgUpre6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F52C4CEE4;
+	Mon, 17 Feb 2025 12:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739796965;
+	bh=UtcPCfLeZS5GfGD58kyBDLA+3TYY+n8i7oQj1TJuqBo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tzgUpre6GSbt82LcdJMAoz+ElzdZhUaNDers9AUplHZ7lpw1Urj2GozrxeFzSyfVD
+	 2ckMnZ0VisAjUbZlvJOHJ2CkRI6SJdhrDTzG+aOH2OOH3x5T0IYZBbpfelK2fyk3//
+	 +ftWeIGQ0h5RDAPWb6bChyy0icHUq3WQNiKC1Ooy9Ibv5YGKOtAvg++EekXtm4bUZE
+	 qjyZfArqYCoJUKPwE2eHBKUI4wa+oOzNqEDcVNqA8D1zyBeReUDgHapDslMN7OV6PE
+	 yFtFpxNRF2Zk0pc/kH5UinbQBhnRBgAPTZPWWGjJy0Rf4kSpFrNC34XrAOT7WJPF9X
+	 Yeet6LQ2/tuSQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Martin KaFai Lau <martin.lau@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	bpf@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: bpf - Add MODULE_DESCRIPTION for skcipher
+Date: Mon, 17 Feb 2025 13:55:55 +0100
+Message-Id: <20250217125601.3408746-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com> <20250217105354.551788-10-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250217105354.551788-10-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Feb 2025 13:54:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU2TefCYPj+NctRhZKdxH4nvyWNGErt0v2qjnwWw11XoQ@mail.gmail.com>
-X-Gm-Features: AWEUYZnh0zvHNpGAlYVrx_lKLntsZygJQoBX3KCOMXSoZUsDDQh_C-ahB0O1s-Y
-Message-ID: <CAMuHMdU2TefCYPj+NctRhZKdxH4nvyWNGErt0v2qjnwWw11XoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/13] serial: sh-sci: Introduced sci_of_data
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Thierry,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Mon, 17 Feb 2025 at 12:04, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> The aim here is to provide an easier support to more different SCI
-> controllers, like the RZ/T2H one.
->
-> The existing .data field of_sci_match is changed to a structure containing
-> all what that can be statically initialized, and avoid a call to
-> 'sci_probe_regmap', in both 'sci_init_single', and 'early_console_setup'.
->
-> 'sci_probe_regmap' is now assumed to be called in the only case where the
-> device description is from a board file instead of a dts.
->
-> In this way, there is no need to patch 'sci_probe_regmap' for adding new
-> SCI type, and also, the specific sci_port_params for a new SCI type can be
-> provided by an external file.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+All modules should have a description, building with extra warnings
+enabled prints this outfor the for bpf_crypto_skcipher module:
 
-Thanks for your patch!
+WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/bpf_crypto_skcipher.o
 
-Please rebase this on top of commit c1117a2fefbcce30 ("serial: sh-sci:
-Use plain struct copy in early_console_setup()") in v6.14-rc1, so
-it applies.
+Add a description line.
 
-Gr{oetje,eeting}s,
+Fixes: fda4f71282b2 ("bpf: crypto: add skcipher to bpf crypto")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ crypto/bpf_crypto_skcipher.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
+diff --git a/crypto/bpf_crypto_skcipher.c b/crypto/bpf_crypto_skcipher.c
+index b5e657415770..a88798d3e8c8 100644
+--- a/crypto/bpf_crypto_skcipher.c
++++ b/crypto/bpf_crypto_skcipher.c
+@@ -80,3 +80,4 @@ static void __exit bpf_crypto_skcipher_exit(void)
+ module_init(bpf_crypto_skcipher_init);
+ module_exit(bpf_crypto_skcipher_exit);
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Symmetric key cipher support for BPF");
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.5
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
