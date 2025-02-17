@@ -1,76 +1,51 @@
-Return-Path: <linux-kernel+bounces-518019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A54A388B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:07:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D4DA387F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925CF177CD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D653B4F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF044225773;
-	Mon, 17 Feb 2025 15:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110B42253A6;
+	Mon, 17 Feb 2025 15:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rYVdky8R"
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y5xD9hdu"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159F2225774
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0651A3167
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807752; cv=none; b=j8TfqUS5zZO5Og5pzfmyrBS+Ay4HXoMl+jICP+J7UFoIrSsa6dpEGVeAT555OZThwSvPr4sTDaRin3OTfqBTozUN8ibkj0WZpA4jn22pTZzgzoNcXyXmHjVoN7ywmrVyfDnzxAxAn8+KjTe+lv5DK8QMm5FSuNL4a6cSOVS9re0=
+	t=1739807142; cv=none; b=YIbubnzlP1zkmN81D9qTXINzjsvdADTRSeo5oax0NBkVMdrgQLd7uWqAN72pH00K0vCJwbLdufrOqUXWDcUXaeyjBLMR6ZDE5ZsAaeN6SyCIJBLgpMhOOrlA0xdKxH21OAG1WI+9wOK8fmvMTcjPTC/1iwDSTO+JnanGYGn90Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807752; c=relaxed/simple;
-	bh=aE9dHMw6iGX541XczEVRIjmcPX+oIYHH0KH8u4Kv2mE=;
+	s=arc-20240116; t=1739807142; c=relaxed/simple;
+	bh=tsw9r+8bxrOy21zst5bElWCAmeyp+ICwB6YLShUgbJ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvPozQSiZdJFiVvjrKBy+xamRkuHdQp5B17PQ66ThI2lZ9kwpm+HswjBc4xzwLSHCuEQKDgFo8mRiSoslj7b0XgA/woHhiQFwDK2nxiu2/G5BhMehUeIA39FLLMkjGTy5BrnPYbe+Qboh0SfIOPC/wkMdGwlOEJeirAGqfJVx0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=rYVdky8R; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1739807749; bh=Zpb2VQfhVcERHcagIIPwkdYYaV8LHvjypjKwYQxC+mw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rYVdky8RjZ1mE32Z9isonHtQMkEr7XYEPEDQFWIYL4SXJZAA3O7stnYwT9Ul4EdiWfHkIBdI4nir0w47GvIKUiCiRR+5aDE+k/BTHs9SuRgyX4AE1coNTR3bmu360Ojr/YywisCElxAvLD7r3dwdxZJs2r3071SgHZl3IpsoWgX8fRcXLF7FzTyjKihCzZvYJryQuH5pezOUi97tiEQEhERChd+f2twq9324AI82N9MDx3IAQ9fEsPhigIf6ZIMqHZ1Zkl3qpBDV/X0jvwHQ7dWa5FvrYwyg+gplB+1sOdMmkXOm84wEY2qRd9RPW/Fe80+2VLv31qfFiCYcE5y2fQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1739807749; bh=/ovfEp17OIJUFiH07ZtqWmnT5II0kwqPVy2UPh6yhOr=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=QUyd1Dxn1y0MJjnPt9R0XZSfIvUubIl7v2wbEQ/dg9F311LY3dxdpbxBaBuXcrSVfEUaZ25lvnTXSnUDvzN3epOwrtQj5AkFp/jZX43UD0yxtKgq8360eOkiVw/84BMG734/nTStqJpxsoHWagasSCFgac2tbtQpYhfnD4NkychfUNpNIacntPx2g1vqgwcasPxnQ4RpYYYNIVi4pNTtop/wG9RKpfGmbTamEAO9FZBOMf2qSIodPXQ+4kK1a9N2BEMP2ng532kuOImRhov0v/UpsKg9WwIgWizAh+7l+oi3HLuTLCzom/i+0d6EFawEGs5u5xj79PypGF0KqTBawg==
-X-YMail-OSG: 0bH4v6gVM1kVlS_TSOnTiejnjDb__lMixZ5mpExKR5R1ZV4lrgDoaMFwJlBf7A1
- .D9pKpWXGNcpzHzpYxETYdkpySdmghlAy_BPJYgsUkGuLoajsgSUgRlFfC3F29iVSI37QhgZ.jpc
- hargzNxKatnM9Kqk2MZsILhaaDQ9TN45P3rdRtoKEPbl47xv2uQ.Jjzq5W_9GsQ2G9rLPE7B5K0T
- fi_atr7bMCdZcVHBtRYCr3_a.7NsYj7sxPoWdskeflrmpAV7owqfX1A4ezfvX3owm9C0VccZpyQB
- V0u0wbnowo80gkD0LzPWGAlE7PcGWs_xg47ZzpS5kOSGYXIBYN10G.EdSI_dYqmx2lZ6DXiWfjiB
- R092T1xWL2ezOlPn_m71rWJMdZx6qL4FRThwAcv_vwVabRGSNGlqX9Mgbnx_HWaDn9CuEkgWe8dz
- 4D_UzHc3xTScKhyeEXROXdrKexQGRdu8DKbVtw04oenrjqGN0F_plNhYiS0euEcO1XvFEopuTq8Z
- Czpsi_VZJJngqxUuDwv1YQXj.vZ00fAviWg8IBKe3UWROXGpEUmJdt7SiDxdrbPPR.UEgLe2W7RB
- kezZNMxlok7cXCiZrwCi06TgF7O4nOV1WjDSWSDtaBolnPbRy9fd.rnoXm2eP2FF.6tSp8D.ZakW
- 8.9lem5.rDMd6ajLCQX9ymh_euc6D4oSN.DHnItPO3GPoLDBj9jkxiv6N3GvjFfrAeL7qLnv_e.6
- TASR1UaFY5neHK5p_64.wIfw.C7GCVoBxB.g.Z.tO5st_XLtdrgEbV25tH7Y6mZUuZX8QDoI3ygs
- y77sSFPVgdYJK7KNoBH7TV1rnYUiafAS1_Vz1BTzdY.qhWAbDNATdZUlB4ViSv5ZrWW2Mlk31VP.
- H6TNa9Dsex0EU937oHT.RKuX9En_dunhyAsqyxsIa8E0iZ7RdLd5A9d7FcGdHcmo8hkgu9feqIsR
- I7FyXXK3w42INkJH_6n67hXNUCoCOZiPVrJjnJPhD3y5kHOTx81HmMMvnm2gG1hFhdAZZqqXeu1b
- X4MLY2YC.IjsY2JVQePOfnagYQ5wzryd2UpHXBPxkZG39FoIA225_znarBeWhrxGr3HIo.DGyK4h
- E2LntHfomAI1e6PBnkSPYpzQ4ap.22FfjZqef0U7vnUXapg0NLwLE7UQxC2mzCsIOMqSOI21j1Ft
- G5QlRbATtmt8jQsXJFPtGFwl481iJHGXHEa_K8FltIm18RK55AH52Dl_uaG6aRFeX_N3CYlHIwkS
- 5OvC6nzaBtAU02drAmrF7jUcygEOlUkFSaq_rb2olPaMbuCHk8IXnUJXKzJ23.cyIT2eCJKiXBpZ
- OBTB5bSWcikgsrZ5M2IvVaSUWorEgZCeq46H3CqrFiqI.3pG65Qnvcsfv0iaqr3394Cin.3Q1uKb
- J55pxclHjmS40OfP7n8_qqi4xSrHtnxSGZ0SzcWTI8JO05KyKATKUh9gbsAvED608etnbAkwtucT
- mrp13y11R.GgOFXzb8boMpHAJryOAC2RXER3oIMd94OOf37P04at4sTMQ8v0FEkDEVrZraehSPBY
- 4g6ZJ1l0dsc7U7602lJ05my03m8CN_4_7VdH25cdwVD9yPbTAGstpXJbbQU0j92P1CpGUajH_0M_
- oWTPCc4fKUjgVg9IzSeAjUmLtYKiw8FNfXZCXOgwPFOYWlB7Bqm_cP3IK.4MyoWIN7gQE5qC08a_
- ksJN43kB9OiajfZiDL0jHlSgT28qIyGVN.J5ciy5_rB_bR0czT0l7BD4eutzC1eT2kWKKAUVx7wa
- xjAQNPmALGNYtaj4IFQubyFRoqjGHiGObJVfR7msH3AAzEdASUnxhO_cKeA9hx6RG86jS8XUiRR6
- cX.5NH5tTc1avVKgCSXu6PbnbGISRjybyCtsgymWV9HCEEWQhPpS3bdoHJk6ebXnTX_Fvf_yIIbY
- WLDmn693pq.tPp9878fEpIPEhrvSFBgO4x9F9cvh.jdGflbSeU05RCChH_pbj71_g1t9b4K_rGb8
- YMkC.LzylkFu2zwzCErdKgEZRK_ZHRR0BYxsawkXoA4nBF_oQsivBMPgUs3Dp4.oNrgXl_sVrq97
- tys9suoIjgcU1ThuuY0yPRQzc3Sb5IBF_NR5jdVB4uX02ZPIpO3k.FXmKJVN_VKY2ITVZNdWYSqE
- HtC3mIffrzRUgL7V2IfOXTZ5iqSZ3W8AeuKNULU2.c3nTB6.qOjRW6GmnH3joSaxqqox.R23ipBX
- jeS3ITP1fVbAClPTRTKRJeSIcA3wuq4mPm7h03nLwe89lpvT1LJ.Vp1d7JHfwsrvyCXMTyTIQZtK
- YhMkjMOneROXrQw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5be9a88d-1e33-4b5a-8ae7-c419c1a8997d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 17 Feb 2025 15:55:49 +0000
-Received: by hermes--production-gq1-5dd4b47f46-xsxj6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 48a84cd0d3819ca8b4e0fa98bc037007;
-          Mon, 17 Feb 2025 15:45:35 +0000 (UTC)
-Message-ID: <97506d0e-8487-4233-ab4f-78dc646b12cb@schaufler-ca.com>
-Date: Mon, 17 Feb 2025 07:45:34 -0800
+	 In-Reply-To:Content-Type; b=nA94oKx6TKShnudaZlDHebvQGBJPtDAeENDNhLQbAVe2oP1adcfkIxL028K+7UAhUqe2ksCoeSfyZk3FVaWEfo4F3PFPixp3VCiSyEtZBxxAYL14jsOHBTVAQQtu0H81hivIRrPwDHREwh7Y+DjRVw85tqxLzBvmMLvV2mJ+zhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y5xD9hdu; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 03CFD44336;
+	Mon, 17 Feb 2025 15:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739807138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yWwZNxenfvOgLKFPhi0+FzrFCD2XfkNHhEhnlmfmRSA=;
+	b=Y5xD9hduVxIIht9sPlil1QhKbIkejy/AL2Ff+/nwGlyP+++sX/mWMMG49UvfTAr0uXIjVH
+	sPxkQjEEeXNOQ75UwVJk2qINYibz1zXFeP0PXOpASBDdskUGftYv58WZbFe9cxQaFbL3da
+	3+p13Fvd4TUD5TOa5clwlqGMO2ifMQMjKa2AKxPVmllhtS8xbzlQCiAEjtiez/CeCtIT/n
+	NFlaz/ZpuzwpDhcWqfUWOzT+b+rBODLOaSNe6pjrW/TYZvNBmM1UTq/qs8LkHxteBSoNbI
+	lEsH6/9BP1TeG5ZdAS0GErjMNaOcBh4PXQJybFTF1gMdiCYRtcZFXk+/nAgogw==
+Message-ID: <c9378813-a6e9-4af2-9e5a-3ee5b41d8fc6@bootlin.com>
+Date: Mon, 17 Feb 2025 16:45:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,129 +53,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Announce] Linux Security Summit North America 2025 CfP
-To: "Dr. Greg" <greg@enjellic.com>, James Morris <jmorris@namei.org>
-Cc: linux-security-module@vger.kernel.org,
- Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>,
- linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
- linux-integrity@vger.kernel.org, lwn@lwn.net,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
- <20250217124538.GA11605@wind.enjellic.com>
+Subject: Re: [PATCH v3 14/14] drm/vkms: Allow to attach connectors and
+ encoders
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250217100120.7620-1-jose.exposito89@gmail.com>
+ <20250217100120.7620-15-jose.exposito89@gmail.com>
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250217124538.GA11605@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250217100120.7620-15-jose.exposito89@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
+ ggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 2/17/2025 4:45 AM, Dr. Greg wrote:
-> On Mon, Feb 10, 2025 at 01:03:02PM -0800, James Morris wrote:
->
-> Good morning, I hope the week is starting well for everyone.
->
->> The Call for Participation for the 2025 Linux Security Summit North 
->> America (LSS-NA) is now open.
->>
->> LSS-NA 2025 is a technical forum for collaboration between Linux 
->> developers, researchers, and end-users. Its primary aim is to foster 
->> community efforts in deeply analyzing and solving Linux operating system 
->> security challenges, including those in the Linux kernel. Presentations 
->> are expected to focus deeply on new or improved technology and how it 
->> advances the state of practice for addressing these challenges.
->>
->> Key dates:
->>
->>     - CFP Closes:  Monday, March 10 at 11:59 PM MDT / 10:59 PM PDT
->>     - CFP Notifications: Monday, March 31
->>     - Schedule Announcement: Wednesday, April 2
->>     - Presentation Slide Due Date: Tuesday, June 24
->>     - Event Dates: Thursday, June 26 ??? Friday, June 27
->>
->> Location: Denver, Colorado, USA (co-located with OSS).
-> I reflected a great deal before responding to this note and finally
-> elected to do so.  Given the stated desire of this conference to
-> 'focus deeply on new or improved technologies' for advancing the state
-> of practice in addressing the security challenges facing Linux, and
-> presumably by extension, the technology industry at large.
->
-> I'm not not sure what defines membership in the Linux 'security
-> community'.  I first presented at the Linux Security Summit in 2015,
-> James you were moderating the event and sitting in the first row.
->
-> If there is a desire by the Linux Foundation to actually promote
-> security innovation, it would seem the most productive use of
-> everyone's time would be to have a discussion at this event focusing
-> on how this can best be accomplished in the context of the current
-> Linux development environment.
->
-> If we have done nothing else with our Quixote/TSEM initiative, I
-> believe we have demonstrated that Linux security development operates
-> under the 'omniscient maintainer' model, a concept that is the subject
-> of significant discussion in other venues of the Linux community:
->
-> https://lore.kernel.org/lkml/CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com/
->
-> I'm not here to debate whether that is a good or bad model.  I do
-> believe, that by definition, it constrains the innovation that can
-> successfully emerge to something that an 'omniscient' maintainer
-> understands, feels comfortable with or is not offended by.
->
-> It should be lost on no one that the history of the technology
-> industry has largely been one of disruptive innovation that is
-> completely missed by technology incumbents.
->
-> The future may be the BPF/LSM, although no one has yet publically
-> demonstrated the ability to implement something on the order of
-> SeLinux, TOMOYO or Apparmor through that mechanism.  It brings as an
-> advantage the ability to innovate without constraints as to would be
-> considered 'acceptable' security.
->
-> Unfortunately, a careful review of the LSM mailing list would suggest
-> that the BPF/LSM, as a solution, is not politically popular in some
-> quarters of the Linux security community.  There have been public
-> statements that there isn't much concern if BPF breaks, as the concept
-> of having external security policy is not something that should be
-> supported.
->
-> We took an alternative approach with TSEM, but after two years of
-> submissions, no code was ever reviewed.
 
-1. Not true.
-2. I have suggested changes to the way you submit patches that will
-   make reviewing your code easier. You have ignored these suggestions.
-3. Recommendations have been made about your approach. Your arguments
-   have been heard.
 
->   I'm not here to bitch about
-> that, however, the simple fact is that two years with no progress is
-> an eternity in the technology industry, particularly security, and
-> will serve to drive security innovation out of the kernel.
->
-> One can make a reasoned and informed argument that has already
-> happened.  One of the questions worthy of debate at a conference with
-> the objectives stated above.
->
-> I apologize if these reflections are less than popular but they are
-> intended to stimulate productive discussion, if the actual intent of
-> the conference organizers is to focus deeply on new and improved
-> security technology.
+Le 17/02/2025 à 11:01, José Expósito a écrit :
+> Add a list of possible encoders to the connector configuration and
+> helpers to attach and detach them.
+> 
+> Now that the default configuration has its connector and encoder
+> correctly, configure the output following the configuration.
+> 
+> Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
-Please propose a talk for the summit. Talks have a limited duration,
-so do be concise.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
->
-> There is far more technology potentially available than there are good
-> answers to the questions as to how to effectively exploit it.
->
->> James Morris
->> <jmorris@namei.org>
-> Best wishes for a productive week.
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
->
+Thanks,
+Louis Chauvet
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
