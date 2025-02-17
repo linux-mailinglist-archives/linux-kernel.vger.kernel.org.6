@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-518246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E58A38C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:18:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A562AA38C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00799188513A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1FB16FBE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F44236433;
-	Mon, 17 Feb 2025 19:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395DA235BF5;
+	Mon, 17 Feb 2025 19:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlUj9u4U"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDOYIYOB"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D7370814;
-	Mon, 17 Feb 2025 19:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39A2187858
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739819917; cv=none; b=brURe0GyaS8GrdYzI4gOa36fofGrRqkXEFZ6QZYa8yCIGjAxqtGJvPzU2nf/hVibtsW/pKiRp6lK7KUx4b/P5ya0lPXZY/aCR5s3XrEa6dYQ29XXjAZSNx2EgRGB8j4Lb6TnakXPvU1qZY0oIH1wHGFAGZVUhM7AkjGCc4+vA0U=
+	t=1739819927; cv=none; b=G708R2RH2Z3zKwgu2y3KFSIOxzfHOVrynR91zmCVOsU6Of6z7e+cY92hI957eVWeju1YfvXyCyEYZRTPMU9Nghg6JRx0HxPVM7eII8Kn4cjIL7DBCsdQj7BOW49WbcP6onbtpQm31fo6p4EzunOfsyzrsGmZvfQy2gAgr/kBMeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739819917; c=relaxed/simple;
-	bh=VWdGS0nckRh6LxW6Vwr/hsehvBXIK3XSsfwwMsmcls0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GtxPMIrB7jIyBq6ey3Bg8+SsoeuLSISCyn0HNVExBAMT2O3G7EEy9CL4CUBafwCXdyoT4WuNeIyI6uHSH+x1/0S3KsAjGh8giiThKlPTQTAMjsgepuD1znWKmAqxZB27qHdvVw0HFPBKwbRqBxWU5NJQEota4e06dvuOVjW//Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlUj9u4U; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so946626766b.3;
-        Mon, 17 Feb 2025 11:18:35 -0800 (PST)
+	s=arc-20240116; t=1739819927; c=relaxed/simple;
+	bh=mhMQAL+ZuCppMLZz3hGC1V1w1m+yQ2xV52Svf7YNBBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7ugdc+eF5zvk+Lhml+K9KRaLLrfIm6Vukd+hCobckORecK64Bq5vJ4t4UPXCSUIDqWJA++3+piVcB59WdB6aaS2rO9pm1AdYDyUIVPv2a+o4IqSCI+4pasDB6P0Ktec0SdkQpZQfNVpOx/iEr590Tu/VF8LOGdOEdvENXKZoX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BDOYIYOB; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54527a7270eso3365400e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:18:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739819914; x=1740424714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VWdGS0nckRh6LxW6Vwr/hsehvBXIK3XSsfwwMsmcls0=;
-        b=BlUj9u4UdHHtGtxL6df327Bta7FUGKeXx4Qs1Z1rVC8DkKtJUeip1ecJTAn7JWO4cV
-         ZjXsgWwtdquF6euccQjOx02UVhiKlk11+r4wQS3BgR9eTe6MyVkENrSdfv+xPjYw9YaJ
-         V1+3DlBUFPwyv5WwDTBiRPS0H5bfe2JmnmyQ8TygGOweeP7umGm7SfH8CqhM5cof8hVF
-         YxJaLhc8M/ZYQqcwdddMHsk4FJgja17P1BelYVmWbGc+b1WqORA31Fnq0oYTdDX6t/Ur
-         EaLrEhAIiWm8QrhkI7NTZyLbNGRC6VP6AuMgYswiT0u7UGoFHAFoamUsZ3yo7zdYJqN7
-         Q7tQ==
+        d=linaro.org; s=google; t=1739819923; x=1740424723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DK+fqhLw+0oSKSvkhmUshysfw/dArV7Gb0FGu6H8pRM=;
+        b=BDOYIYOBgxrYEXkVTg9BNQkdzk2Hk/0TDeHpNhz8Rr0L2ZSG9mRKe/f1U2e3isBkKE
+         PHdjNJZ3n4CT1WlAAfTEChtcsFEYTxpA6YS1K4nmGkDq8btB6S1CQ3lMndViSv3eZz7T
+         qWoqQ50kqY7wdbOCEc2UN4bhuNT9wiCMy6Kb2I9UePtYAcacHyOrqAQ35w61DOA0Sqwo
+         HoDxN3QjiaX02qY5qi62tCUKwKjLbuJ/uzdolThFyQcrgg4cBjxaFADyNA3gEydedpv1
+         Z9hduDbGsBk0+5vsNuRWySc+f4BfP5ZAuaqf7U6bgNf7LcH7VynAMsvv1ZZgwgAF60zO
+         3CSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739819914; x=1740424714;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VWdGS0nckRh6LxW6Vwr/hsehvBXIK3XSsfwwMsmcls0=;
-        b=DUoZAFfsL+dJR7+QEg2Cl3pFUP20I2yfC4Q3xP2nQpKwgGm29/HwelNeEBcHY7TaGc
-         Jcm50kQaLob5HNVk9u3C36wkswr2pKagjuLdN2HdphENctgNuVmLs4Hguow29ibdUugq
-         ElXcrZ+jHcdyrHRS6sCU1spGKP/8WRUSZLY3ohG5F+rWQc/ITwRMs7ksqwGhvaV/Co9s
-         0qZT8uO6NuEAx5xWQBmBC+FEVntqaMGpysqK8lXwyTiNcLsFo0hxG6nkGCCQhEggaWF1
-         j1XEqp8rRF6pX3FJAEn4X6ttWfvfsxqzlNYPolT7Y5Tu+vq6c8laydRxAOkWpdrtx5Ws
-         ME/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMOM2aD0kIGV29Rthl4VjcF3quAl+0O9XDfb0uych7Sr3PmXXNv1iyhVA66Kd7m2PfO48CUm2kk96dsaKt@vger.kernel.org, AJvYcCWPejHplBrKGYpU/cjoNUeHRSfw+OYYB8hDZzi220cRigcXJwwxQVh8/ZuhB9Z9mJTej3pkS+tuf3NC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo79eMh7BzDqS9MfXmGe7bHn0rbHXHQPTeqThYMhsiWVb5h0/o
-	77z6I94Er8KMoewZwtgRYyqTL0PAOm9jKUCL2AzDbU4PdGabFP7gQYCSffR4powJSSBxQyZbk38
-	JdC6rk4w7KeFgJWWIaCZ0jnxMkxQ=
-X-Gm-Gg: ASbGncu279IQdIo2QuIJlRSCc944cc8B7aaDuiRjVbIgA19zAxqkrFKH4lQCZpBf9YX
-	UBk4HQizRFCHaUYRXwdnjgbAysO27NqstJ4oK5b6oH+I5pCXE7Q7tlaarl+hLUwOSxXD1FkIn
-X-Google-Smtp-Source: AGHT+IG2CxfIqvvksdYGJnyGY39tE/1WMs7Lmf5A33yuUSpzb293yrhMEoBka1/v12Jz/uQTrbB9oODSXUuw3+MHuqM=
-X-Received: by 2002:a17:907:86a1:b0:ab6:d7c5:124 with SMTP id
- a640c23a62f3a-abb710e1244mr1140390766b.43.1739819913736; Mon, 17 Feb 2025
- 11:18:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739819923; x=1740424723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DK+fqhLw+0oSKSvkhmUshysfw/dArV7Gb0FGu6H8pRM=;
+        b=ObCJb1Z+y1kA9J6iiL06cCUpimTJ2+wWFlGjtdtAI8bA1pLwh9CJE5WCLcdX6ZYY6A
+         k8oSjRitSEDichIHjajKFcgPdqiBaOB7GZ1QY9RDEkyI20gRlybTdmFij1za9WwIk7s8
+         /lHmU3ga4HrxQO9Dm7keW+Ra8HQHhOPXpy6ACV2k+5iht/VB0BTCF3xTZ2qOJ9njN8h7
+         QIN22LdG3ffYy0UYuQGaH+Hz3oBXOa1uAMDl9iUwYMN2yFO+TRYkSA7hfnhDBuF9CdoD
+         vypUjKDssaQoU0Ax+0fUpIFDkDVCiBDwKccYX+HK/NRfiSlvyFiasqHb/qHh4eMYZR8M
+         eBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp0HxhUMR9sAotwnIz1vXJBAU64QVkdVLAkIrUjmGU7TNYZK8hSvvk8wy/ea00FUz4L4phFKpXK53NdCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfYdrs/WYUBmnx+w5kcCL533l7tYiZYfObO7U0efxe3J9IdFOJ
+	XOlJFm46jn7CcDNTDVvy2uEtX20f4BZYsTvTIe8mxA1ppoRhHbLUCdXFODOyNuo=
+X-Gm-Gg: ASbGncsg7qKd++TQO3Od29PJLfWcXbZkjUy9gDeKAeWy2Ft0dVz18Y+cZIBqk+pMOtr
+	VJsrZWdNlrWusvvaGppV2QxC6RDUoI7oJDuBgL3aH/+UMlr3oNKh0EcvW6JpVGjOIH1R82vIS1b
+	DDX+QCpmgOzfWdKcYKqgmU3n7mVLNYZFpZTuV6cgKbcv8enz6wilDS+UiUbz5tra8+xuvKHN4sv
+	vyRoxxSJAgt6jRXWvUgD4oYYnnHrPfb1uFSDmC1aRgHi8IWDGQZNlPIrenYduYmnKCzTFxFXPaQ
+	l9zeVQyZlNOgmn6ScJFSEKkrM3Alzm/WGxYlV9BjB3Pw5GTXxfNEjWxXzARMg4DcmIEOZmI=
+X-Google-Smtp-Source: AGHT+IH7pPe9WdA9acnmeu4tM6FBkJrCmOJkB/cGc23MUQGTJZAedW80zQq+KjfFc7YHQvnbMFONmg==
+X-Received: by 2002:a19:2d11:0:b0:546:27f0:21a7 with SMTP id 2adb3069b0e04-54627f02773mr695030e87.49.1739819922816;
+        Mon, 17 Feb 2025 11:18:42 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461d4f2aa5sm694294e87.0.2025.02.17.11.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 11:18:41 -0800 (PST)
+Date: Mon, 17 Feb 2025 21:18:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 15/16] drm/msm/dpu: Implement new v12.0 DPU differences
+Message-ID: <qlotuliwnm5spneolztca7avmh2a46pz2xqlxzqbw5kwa53m6q@oyhnzz7fhay3>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-15-d201dcdda6a4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122120504.1279790-1-mastichi@gmail.com> <CACRpkdbtjS54+g-K1azE2hHeTsiyzA_gFa2NBX6QZZ3D_H5Ryg@mail.gmail.com>
- <CALieaedTCPNkMBZaaFWME9LHDE5OypcaOw0uDBK5fFFcNSO=wQ@mail.gmail.com> <CACRpkdbpWgZHUn4SouR3yL_xjhjnyC0ogb8bErDuECakyhPW_Q@mail.gmail.com>
-In-Reply-To: <CACRpkdbpWgZHUn4SouR3yL_xjhjnyC0ogb8bErDuECakyhPW_Q@mail.gmail.com>
-From: Dmitry Mastykin <mastichi@gmail.com>
-Date: Mon, 17 Feb 2025 22:18:22 +0300
-X-Gm-Features: AWEUYZkdD0f9HV-tGT7s6gTlNMFTtRlceWA_xNJCyC45Aer3U0F0VBun0lgDl-A
-Message-ID: <CALieaeeVfDe8GBFO6O_=_Z5W+y7==WWbD8x-596EAw-qMXf9ZQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mcp23s08: Get rid of spurious level interrupts
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"e.shatokhin@yadro.com" <e.shatokhin@yadro.com>, 
-	"arturas.moskvinas@gmail.com" <arturas.moskvinas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-b4-sm8750-display-v2-15-d201dcdda6a4@linaro.org>
 
-Thank you, Linus. No, I have no users. It's only a prototype, using a
-touchscreen. I think it has to be redesigned using chipset interrupt
-controller's pin instead of the expander to speed-up, although I don't
-feel touch gets slower. I spoke about hypothetical users who may use
-the expander as an interrupt controller at rates comparable to
-mcp23s08_irq() execution time, and may get less interrupts per second.
-Kind regards,
+On Mon, Feb 17, 2025 at 05:41:36PM +0100, Krzysztof Kozlowski wrote:
+> Implement new features and differences coming in v12.0 of DPU present on
+> Qualcomm SM8750 SoC:
+> 1. 10-bit color alpha.
+> 2. New CTL_PIPE_ACTIVE and CTL_LAYER_ACTIVE registers for pipes and
+>    layer mixers.
+> 2. Several differences in LM registers (also changed offsets) for LM
+>    crossbar hardware changes.
+
+I'd really prefer for this patch to be split into a logical chunks
+rather than "everything for 12.x"
+
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. New patch
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  49 +++++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  12 ++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c  |  59 +++++++-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h  |  17 +++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c   | 210 +++++++++++++++++++++++++++-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.h   |  18 +++
+>  6 files changed, 350 insertions(+), 15 deletions(-)
+> 
+
+-- 
+With best wishes
 Dmitry
-
-On Fri, Feb 14, 2025 at 12:10=E2=80=AFPM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->
-> On Fri, Feb 7, 2025 at 9:36=E2=80=AFPM Dmitry Mastykin <mastichi@gmail.co=
-m> wrote:
->
-> > I made more tests and think that this patch shouldn't be applied.
-> > It removes duplicated interrupts, but sometimes they increase the perfo=
-rmance:
-> > a new interrupt may come during handling a spurious one, and spurious o=
-ne will
-> > become valid (it's kind of a polling). I see the number of my touchscre=
-en
-> > interrupts reduced from 200 to 130 per second with this patch. It may b=
-e a bigger
-> > problem for users, than duplicated interrupts. Sorry.
->
-> Don't be sorry about that, we code and learn by our mistakes.
->
-> So is this patch causing any regression for users? Like touch
-> events being slow to react? Also the expander could be used
-> for other things than touchscreens. If it's not causing any regression
-> for users it seems like a reasonable patch.
->
-> Yours,
-> Linus Walleij
 
