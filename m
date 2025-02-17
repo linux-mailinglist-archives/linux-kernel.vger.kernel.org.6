@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-517569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B58A38287
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:59:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D20BA3827E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E76D3A50E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:57:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B781884A81
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FF4219E8C;
-	Mon, 17 Feb 2025 11:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6f87SYp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C82219A9E;
+	Mon, 17 Feb 2025 11:58:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4D217733;
-	Mon, 17 Feb 2025 11:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5676719F128
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793438; cv=none; b=ecABmzOyNTvxfx1X+IRVfCOTtPeervHMV/gWrggYx8az8gIT28CH4wWLACK/8RzAQwPRPbBFUg3F9qpzTTjDu6aZ7JRZJEXLb2ZKmGteXio1blzazv8Ib4h6/TOkE/vdj4Axe6k4P1BuLv3ZLNFIwfv4/vsKoULYNME1y8LN8Eg=
+	t=1739793499; cv=none; b=cA+5Nfe2o6lcUY6n92X7swqiBvgMI8tAVpQ0fNLVGp5hlTqVm1NwEfiiCwQT0DflimQhGNZgHIE2amrpTYeuNezmQ9vnfl6JWAwF/Bhv9nROy+afG828QORVHHElHrYcoZDWtbzfLNsLZAaZSLPodvx+nDKuNczPDBem7y/lzsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793438; c=relaxed/simple;
-	bh=HUGZHMnwHSyonTTeXcEt3TS6l+rI6EOru85XAt7Si/s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NC4Gq9OoN0xWqRhWiQUvPZxq4h5WIrNmxtfR+tzWls6BfeMm4hYRmDL7y+iks8TvDqBsMNEMcKoWJHi6X+jtBni2NP1vyIOqpCnoz81lWQXIsvmwW9p1HTaUbedE0PeYO3PxUwoDSCktIpqV1M6qyVbmJ/nDXUFZ7djUDppTReY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6f87SYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E970AC4CED1;
-	Mon, 17 Feb 2025 11:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739793437;
-	bh=HUGZHMnwHSyonTTeXcEt3TS6l+rI6EOru85XAt7Si/s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=b6f87SYpL/vdAUuEoSjhuSQ1LDS9J4ho6P+A/VQ1BjA1PMYmA4++gYwXNNm2lLyhE
-	 RBe0PUYFxVt3SKqB4+UHRescHnMskNlRo21kiGX20zDjmDmDxVuRc177p9rAE2SGuv
-	 nP/AVx8JR5C3YiHYOx4NVLH70j7EPgGxNiLv6pMHZZXa8wQNoV0TZcC/ZsDOdoB5Wx
-	 6rBSo9llUPwJiXVyQalhmPCaiIYPkAV8xIyIM3+/3y/1gl2o9zh3SLRRmwTvIX1cK/
-	 KheZDD+8w0EFZZ6jh3E2B34Xm+TrYEs2iPszyePK/3PZK/OUoLWbZAMxvP+hSrLjSp
-	 AloIkEdR9Khag==
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Hector Martin <marcan@marcan.st>, broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250208-asoc-tas2770-v1-1-cf50ff1d59a3@kernel.org>
-References: <20250208-asoc-tas2770-v1-1-cf50ff1d59a3@kernel.org>
-Subject: Re: [PATCH] ASoC: tas2770: Fix volume scale
-Message-Id: <173979343450.13947.18258886798038196730.b4-ty@kernel.org>
-Date: Mon, 17 Feb 2025 11:57:14 +0000
+	s=arc-20240116; t=1739793499; c=relaxed/simple;
+	bh=4K6gXcxJjr+/ELA0VBoOf+wv2Xuouq4wr3eDs5ggyJ4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u+KdquJgt996hFOxC6jwkxDWY+d+yDmIYOlthm5JdQRQCzUTzVjC1BY9GdaCZIDDRHFympSNPEjgk7Q+LAFzMmW5LQVo83wzxsoox1d+qEhpf8TC7Czts0bGNSvcA/4Dlp5Rc7qC7DSMgtTYcWkU1vX9+vC826diSj8A3+GXGGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tjzlC-0003zP-JD; Mon, 17 Feb 2025 12:58:02 +0100
+Message-ID: <ab721b4a96495516f5149e91f3e4764014e39ba6.camel@pengutronix.de>
+Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: improve imx8mq emmc/sd read
+ performance
+From: Lucas Stach <l.stach@pengutronix.de>
+To: ziniu.wang_1@nxp.com, adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc: imx@lists.linux.dev, s32@nxp.com, shawnguo@kernel.org,
+ s.hauer@pengutronix.de,  linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, haibo.chen@nxp.com,  kernel@pengutronix.de,
+ festevam@gmail.com, linux-arm-kernel@lists.infradead.org
+Date: Mon, 17 Feb 2025 12:58:01 +0100
+In-Reply-To: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
+References: <20250217110623.2383142-1-ziniu.wang_1@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sat, 08 Feb 2025 00:54:35 +0000, broonie@kernel.org wrote:
-> The scale starts at -100dB, not -128dB.
-> 
-> 
+Hi Luke,
 
-Applied to
+Am Montag, dem 17.02.2025 um 19:06 +0800 schrieb ziniu.wang_1@nxp.com:
+> From: Luke Wang <ziniu.wang_1@nxp.com>
+>=20
+> Compared with kernel 6.1, imx8mq eMMC/SD read performance drops by about
+> 30% with kernel 6.6.
+>=20
+> The eMMC/SD read thread will be put to sleep until the hardware completes
+> data transfer. Normally, the read thread will be woken up immediately
+> when the data transfer is completed. However, due to a known ic bug, if
+> imx8mq is in cpuidle, it will take a long time (about 500us) to exit
+> cpuidle. As a result, the read thread cannot immediately read the next
+> data block, affecting the read performance.
+>=20
+Is this really a problem with the upstream kernel? i.MX8MQ upstream
+does not use the deeper PSCI idle states, but only uses WFI, so I doubt
+that upstream is affected by this issue.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Regards,
+Lucas
 
-Thanks!
-
-[1/1] ASoC: tas2770: Fix volume scale
-      commit: 579cd64b9df8a60284ec3422be919c362de40e41
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> Kernel 6.6 uses EEVDF as the new scheduler, which affects cpu scheduling
+> and cpuidle behavior. With kernel 6.6, the cpu which the read thread
+> resides has a greater probability in cpuidle (about 80%), while with
+> kernel 6.1, the probability is only about 20-30%. For other platforms,
+> this does not have a significant impact on read performance because the
+> cpuidle exit time is very short (for example, imx93 is about 60us). But
+> for imx8mq, this results in longer waits for the thread to be woken up
+> while reading eMMC/SD, which drops performance.
+>=20
+> So for imx8mq, use the ESDHC_FLAG_PMQOS flag to request the cpu latency
+> QoS constraint. This can prevent entering cpuidle during data transfer.
+>=20
+> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+> ---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-=
+esdhc-imx.c
+> index ff78a7c6a04c..b3bf9c171d46 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -337,6 +337,15 @@ static struct esdhc_soc_data usdhc_imx8mm_data =3D {
+>  	.quirks =3D SDHCI_QUIRK_NO_LED,
+>  };
+> =20
+> +static struct esdhc_soc_data usdhc_imx8mq_data =3D {
+> +	.flags =3D ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
+> +			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
+> +			| ESDHC_FLAG_HS400 | ESDHC_FLAG_PMQOS
+> +			| ESDHC_FLAG_STATE_LOST_IN_LPMODE
+> +			| ESDHC_FLAG_BROKEN_AUTO_CMD23,
+> +	.quirks =3D SDHCI_QUIRK_NO_LED,
+> +};
+> +
+>  struct pltfm_imx_data {
+>  	u32 scratchpad;
+>  	struct pinctrl *pinctrl;
+> @@ -381,6 +390,7 @@ static const struct of_device_id imx_esdhc_dt_ids[] =
+=3D {
+>  	{ .compatible =3D "fsl,imx7ulp-usdhc", .data =3D &usdhc_imx7ulp_data, }=
+,
+>  	{ .compatible =3D "fsl,imx8qxp-usdhc", .data =3D &usdhc_imx8qxp_data, }=
+,
+>  	{ .compatible =3D "fsl,imx8mm-usdhc", .data =3D &usdhc_imx8mm_data, },
+> +	{ .compatible =3D "fsl,imx8mq-usdhc", .data =3D &usdhc_imx8mq_data, },
+>  	{ .compatible =3D "fsl,imxrt1050-usdhc", .data =3D &usdhc_imxrt1050_dat=
+a, },
+>  	{ .compatible =3D "nxp,s32g2-usdhc", .data =3D &usdhc_s32g2_data, },
+>  	{ /* sentinel */ }
 
 
