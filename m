@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-516888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F409A37954
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:58:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02737A37959
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:01:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20423A9B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE90518874D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4347814A8B;
-	Mon, 17 Feb 2025 00:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AF7DDC5;
+	Mon, 17 Feb 2025 01:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OehdSTFo"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="dVKCB49I"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCF2C8CE;
-	Mon, 17 Feb 2025 00:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03777611E;
+	Mon, 17 Feb 2025 01:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739753913; cv=none; b=QQaHZG4NH8IJdOItj/4vMYxr51s8vmQi8cA6edXOjGoKU6ELJeQuyufazfYyv+pnxfQvabcBOtP5BzIhI+E+9B/7CGSP5N5FCkm7tZsbew9/855XnC/i8eOaXawWHrdDzIDs2hyfeeV0ntMY3v+Qg3Qk1XA4N2LxwYEFJg/kQFE=
+	t=1739754090; cv=none; b=QH4hIPt4LspxlGHqokBm3qR9TtsjihrL5HitEW9opbMTJ9bcoLlGuRIMDndO1eqIB7rn8+XqVlilzg3gzyPsOpYIgFdkvy6kk9w4CXFXoEBskuMhbQcwceBY1Rptx+4wNraf7pliBpMLJAJlF9Mg7TgKTdPBYQB0zMNIS8KAFYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739753913; c=relaxed/simple;
-	bh=Jp8o8qVhIJkaOVn8N2q451ecCoVBAtz9pozCbiQhoPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUz27Pz06A/v/kONO4itffh2DzDm9e6Q67OPgIhDsXYS6Qy+/+DG71kAdEXGOMaSHDQf8Dfv5MBlwVGUETebxyEkJQSNbMtmvVKyYUjpF32u8llDnQ2PICgu8lGqX5mC9bvJ5+7FOX/avBkLDpj4CnB7QpWBQGXP8zMBz45amVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OehdSTFo; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6dd049b5428so32352936d6.2;
-        Sun, 16 Feb 2025 16:58:31 -0800 (PST)
+	s=arc-20240116; t=1739754090; c=relaxed/simple;
+	bh=197jgArcHmxjLWJHP3d90o+UVqJqNHrwpTlU4PAOVr8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nT7IAU67QAxLtbIuiPLMjpf+/cTRbhxPsHLEeJVesRtVaV+jzS3skUqfkpes4VyhwT5G6f9xbIgL6DUxZlYPIlTE4M9pZ9ZDegqrX8G1nNb9QkgpIlYOVcZRhoGrp9+rpRbIj7iu4ybbz8bmxAX+0/fZnPBhxDhuECopr6QzdF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=dVKCB49I; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739753911; x=1740358711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HXn7orZMrPjYfNUMRy6CXAqwRe5GzTPX3oZy/iJZ4Gk=;
-        b=OehdSTFoA+x0qPeb1XdusX7gQiQUVmXwlVlkkefsN8Ak1ahGfcP8RmqjJfWJx6bMCY
-         1SoMheek0W0VloIIUvDiWk2Yqb0OkIV9THZR5CH7EF/hs7jdJxs2m203GaBrlSnaPdfg
-         t/c/VpOU/CUwZW+2/1J4/+03qm2J35hpaR5YSMoHEljDnzD60DLrthEjh0CjbDUnjAcR
-         RwKUGwO8N4A+rNlL91FKVc1GlmxkXM0ISjEOkpMmGPpPfQwqTj8HoRBmlYw8eegEDl9W
-         Nd9Wv8bD8ikyLwX0jXn7DYIb9C7JD1KsvjpYrBrjuxCMSsesnbKcOmzE10SJYAwTMeav
-         3vzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739753911; x=1740358711;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HXn7orZMrPjYfNUMRy6CXAqwRe5GzTPX3oZy/iJZ4Gk=;
-        b=J4+4JJix7mlbSJMj1p+FNJT06+wB93zTh2+EopdztuayATRscQwwpxhlQ0nIPQ3BKf
-         l13QM4sG87VFqg/73HqKyEdTrzD6/WD4Zlmtb8aPjm3WT1sZwZiKyaYAVOoDubTBnGT/
-         A9qcz++jRh8drzAsvh7FwJVIUB+TktRX4TXkubxnfgMluaJQnrINlebeep26KvdpMQs0
-         6ZDf+5XJOiSXUH+6MFpzPBVgj5Ig51BLqWIiPGC9TLG0Y02/Rq02R5fXo3f/u4XzsfJ5
-         uzmKR131GqXc3jHNjZm73TVEiPLEVUnUtnIn6itnxJNBMAY8O9eC4rVSsPqOsQVHw+QB
-         gz1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKK3/I27Dilwopv1+0Ku/Y83Kpx02fsnzVSuQFs6qyPuVkrCQQxNB3pJeTb92JELDIs9dA2dTRz71E@vger.kernel.org, AJvYcCWR1abx9mXThjXYNQkMrL+Iy8qyOe4/551KeTNqB/naC3WFMoY/EamkHIbrh1ePkoXQO+pWJronZDZd@vger.kernel.org, AJvYcCXFEU2z50zT/fqo4a1XH6fVq7KRcMQlVl70zcb2T/gigRdB6uMBjOnBLGjpY+oCXuAPSTN+ZDWi@vger.kernel.org, AJvYcCXXvPT8W4AcQmLx0FywrGWk6Ih5FV/vVm1qO7HdHIHI5WDZcXcabNjBDpg9XiI9gFscaKQeDLg8yztWw44n@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfZZ/F9VZknFcjSNtfPJxj01cff3Hs+ungPcoFgbgmImWD9bxC
-	KCogGGBEDoxbmSRrVWz6hZqVXE7yF/F9wRD6yuiokBGWO37pSM95
-X-Gm-Gg: ASbGncvgTsp9X91OvZ3E8jG0BJoJinVqwg7GREH58itNtPv+cj+WiV77CgdZ6jCzk2Z
-	rzpDvH7pni6YtrmK384wJPuVuZTf8U/CbPH1BuWVeBlEEaO8WYhAaKpc+R8F2Jt2xMiB8WpTZ3o
-	bBl625GKIf83BLH86pZeNWke3VnJFtqAlQ4RUvK6895M5uQYOWqzIYxyXbm8s3X5RiGx1UW6NWs
-	shwxGDYIXhmgYsy8L+AAb6JpQ4Q3YeHCogWRJmX2y46hQKb0eeivVkmSakyAenGH5s=
-X-Google-Smtp-Source: AGHT+IEgSQyQW3zA8QJefSJEenw/B9cty6/ifR4qhZM8XgSTbrQMgAJJkDUDnzQXeXhRPzlbR81NSw==
-X-Received: by 2002:ad4:5fcb:0:b0:6e6:69d9:2bc0 with SMTP id 6a1803df08f44-6e66cd0dea0mr102261396d6.37.1739753911143;
-        Sun, 16 Feb 2025 16:58:31 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d784e99sm47187946d6.28.2025.02.16.16.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 16:58:30 -0800 (PST)
-Date: Mon, 17 Feb 2025 08:58:19 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Richard Cochran <richardcochran@gmail.com>
-Cc: Inochi Amaoto <inochiama@gmail.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH v2 0/2] clk: sophgo: add SG2044 clock controller support
-Message-ID: <pxej4mmrhvfpvbj2mxy6zoa65tfqpxrkul5amebwjtuuebrixf@mzpcxq7zc47h>
-References: <20250204084439.1602440-1-inochiama@gmail.com>
+	d=codeconstruct.com.au; s=2022a; t=1739754086;
+	bh=197jgArcHmxjLWJHP3d90o+UVqJqNHrwpTlU4PAOVr8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=dVKCB49IuOAKDBlVaPc9OJo6YDFoJZbcM/73itjicoXBVo6S2sPz98dFefq4uonsz
+	 0BOxMYXB3j2NK8CAWrVU1QDuLIi72fkv/qGyupH2DHgDsjVyyLyY/pQ9gcPQVdIRiN
+	 gh85us7w3ofG5oaX9OrRJ7r85MgpoDeJbBNtYtpOjLvnB6Sasq++sGDmHN2A0g5cLB
+	 lXnfnx/7FBFsUK91O82KNMj+2Py7brat2sbPFe1om68YHwBKdLtp+nTOyEo8RkWIJf
+	 hj+Y3J40hjbSES0Y1Q2wl0/HFqwK/O645xee/IlHgmN9ZNkmH5W0rx5iRXBl3vtwAy
+	 Z+pURH3shKXwA==
+Received: from [192.168.68.112] (ppp118-210-170-58.adl-adc-lon-bras34.tpg.internode.on.net [118.210.170.58])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0C16364E5C;
+	Mon, 17 Feb 2025 09:01:25 +0800 (AWST)
+Message-ID: <047ea26fbb5713e852431d0731e21d34af39e1c2.camel@codeconstruct.com.au>
+Subject: Re: [PATCH dev 6.6 v3] ARM: dts: aspeed: yosemite4: add I3C config
+ in DTS
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>, patrick@stwcx.xyz
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Date: Mon, 17 Feb 2025 11:31:23 +1030
+In-Reply-To: <24d2d411365004f11498777501da54d6a9c6e758.camel@codeconstruct.com.au>
+References: <20250214011556.1891113-1-marshall_zhan@wiwynn.com>
+	 <24d2d411365004f11498777501da54d6a9c6e758.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250204084439.1602440-1-inochiama@gmail.com>
 
-On Tue, Feb 04, 2025 at 04:44:33PM +0800, Inochi Amaoto wrote:
-> The clock controller of SG2044 provides multiple clocks for various
-> IPs on the SoC, including PLL, mux, div and gates. As the PLL and
-> div have obvious changed and do not fit the framework of SG2042,
-> a new implement is provided to handle these.
-> 
-> Changed from v1:
-> patch 1:
-> 1. Applied Krzysztof's tag
-> 
-> patch 2:
-> 1. Fix the build warning from bot.
-> 
-> Inochi Amaoto (2):
->   dt-bindings: clock: sophgo: add clock controller for SG2044
->   clk: sophgo: Add clock controller support for SG2044 SoC
-> 
->  .../bindings/clock/sophgo,sg2044-clk.yaml     |   40 +
->  drivers/clk/sophgo/Kconfig                    |   11 +
->  drivers/clk/sophgo/Makefile                   |    1 +
->  drivers/clk/sophgo/clk-sg2044.c               | 2271 +++++++++++++++++
->  drivers/clk/sophgo/clk-sg2044.h               |   62 +
->  include/dt-bindings/clock/sophgo,sg2044-clk.h |  170 ++
->  6 files changed, 2555 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
->  create mode 100644 drivers/clk/sophgo/clk-sg2044.c
->  create mode 100644 drivers/clk/sophgo/clk-sg2044.h
->  create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
-> 
-> --
-> 2.48.1
-> 
+On Mon, 2025-02-17 at 11:14 +1030, Andrew Jeffery wrote:
+> Hi Marshall,
+>=20
+> On Fri, 2025-02-14 at 09:15 +0800, MarshallZhan-wiwynn wrote:
+> > Set I3C config in yosemite4 DTS.
+> >=20
+> > Test plan:
+> > Tested pass with aspeed I3C patches and I3C hub driver.
+>=20
+> Can you please expand the commit message to provide details? This
+> statement is quite vague, and I don't find it terribly helpful as it
+> stands. Which aspeed patches? What tests?
 
-Hi Stephen,
+Also, you've sent this patch to the upstream lists and maintainers, but
+it appears you're intending this to be applied to the OpenBMC kernel
+fork. Please understand the difference between the two and review my
+recent response to Rush Chen:
 
-Would you like to share some suggestions on this patch?
+https://lore.kernel.org/all/9f0447151e6574d74e7fa9cbbb50d8e970059273.camel@=
+codeconstruct.com.au/
 
-Regards,
-Inochi
+Beyond that, for patches to be backported into the OpenBMC fork they
+should first be merged upstream, in which case they must be tested
+against a recent upstream tag (e.g. v6.14-r3) before they are sent. It
+will be worth reviewing the following:
+
+https://docs.kernel.org/process/development-process.html
+
+The "Submitting Patches" documentation provides a more succinct
+treatment:
+
+https://docs.kernel.org/process/submitting-patches.html
+
+If you have any questions, please feel free to contact myself or Joel
+off-list.
+
+Andrew
 
