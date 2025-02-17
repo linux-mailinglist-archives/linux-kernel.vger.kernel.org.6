@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-517842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF00CA38690
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:35:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A197AA38670
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B2F3B63F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62CF1898A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE0223330;
-	Mon, 17 Feb 2025 14:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105AF2248B0;
+	Mon, 17 Feb 2025 14:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="PNz8qJQE"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH65J6Pq"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508102222D1;
-	Mon, 17 Feb 2025 14:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE4722371A;
+	Mon, 17 Feb 2025 14:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802629; cv=none; b=alHND+XlHgVQIqOpEfMcrLoLPwNOsmtIBhX2HZyMQosoTKO0mERPekL7UTxo/JDSMvq+wtz/cGS94Uy4rGQUZjn+FBIwO3grwGoyrPGW6Kz5EfImql4I2g8w113CFZPUQp1NCN2oXgAMW2uIPp84DbW9cChkHlCItGmF/BjpBs0=
+	t=1739802638; cv=none; b=pJnnm5rHszTGBBsUVz+NDiwd+G/ZrK8xzqk0+c4xqrDg2ijUZTRQSN8/JuVAxF0vviu6uXPxn6SXr839LF3gIfLXC0cH4UsF5jpSGI7tf+B/9ZgeIcvlfJlzZGWwwUAZVhl1/mnHJBa7/AYbdMNMcIpWEMIPHiOo7FK1/aS5vHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802629; c=relaxed/simple;
-	bh=6W38HnMoM02FeD/4gKkUEkBfnJV8uKPHjWXFtps1n4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LsnFXIOnL4Js8DChSXQCAcJzrLEfYPluNZDuXyGoG7JrPSCgchYXU7ImvehAMJQp2kZ4Iispv+Qn1en/vSrvqE5u+SgXDD6TbrrmWEvKUoL+O0VSdg4rkspb4pi3kfBj5wDpjQyFMGETa5U/F/Bm2SzP6gbfv97Qe8S3HTPJw5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=PNz8qJQE; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739802556;
-	bh=ICrYfIMdRyLi6bSIUaXAWF/Sg8ouynOQp8zGu6bv2lk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=PNz8qJQEnHDT6pjQR8Oyk7mh5VYopnjiN96EKE4C4IWEE+CSrhsvdbPIIKxOR+eob
-	 WsKTHbTwotIh0xfyD6id7L4xVpgFyzCB6MQncA4Ap0WhmnOlRmCOWo/9X/T8A6J272
-	 OwvRn9CM9EOOmO0FeqxJ+QPF18f3vQJ84EbyDgrI=
-X-QQ-mid: bizesmtpip2t1739802545t9gehyg
-X-QQ-Originating-IP: gl7iPpHAs8Isdwy+RYFXbYcLmrR6vcYt3rPJ3dUqAvM=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 17 Feb 2025 22:29:03 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14437388959003599824
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: chenlinxuan@uniontech.com,
-	guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	masahiroy@kernel.org,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com
-Subject: [PATCH v3 2/2] MIPS: Eliminate Redundant KBUILD_SYM32 Checks
-Date: Mon, 17 Feb 2025 22:28:57 +0800
-Message-ID: <17393503EFD3A534+20250217142857.49414-2-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com>
-References: <8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1739802638; c=relaxed/simple;
+	bh=sY+CA8clNRQT+8d3rmvYViciBC154ua4aCipVJOVrQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kO/BJf8ZOoYfXGYuRR1hcsYUDHgIwTok4UvmET8evK3wqvnxrlCgLFN4wSdYBlzadkfkkj6tEiYXTIb0RzPmJdI715C03/LDAYZTQjOpNXLjB5vmP7t6dx6tv8VKvAz4zVeXdfNmEJP93pyXYCdqlu3de1wub0rmvaZ5A2X1sBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH65J6Pq; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-543e49a10f5so4713726e87.1;
+        Mon, 17 Feb 2025 06:30:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739802635; x=1740407435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sY+CA8clNRQT+8d3rmvYViciBC154ua4aCipVJOVrQ8=;
+        b=lH65J6PqXsTKNocXKNybVdEjmisTU1HM5SI/J8i5rrUIw6iFbEyRkWCVv3dAVm3Sqp
+         d78+qpVy8SqY7R1wdu4/P7Ymes9TWJlJ0naj9ruEg23Z6jTM5FfOhh+NJ5D9kSB7T5+f
+         dvJDWQ9UkFNmUgY25t+M1sZqQraCGjJlkFwAeMe4NFwOAoIifi0Bd0xaTIFijwD0d/T4
+         rAl7x4Af2oltUCOlEfmzO2wkqbXjScP7uL5R6Gymj+mtEPcB94VhWbVKTn6TNBG4jN0C
+         rudPVlH8sZY1pdedPsrwVa9wgFpg8jUgebIo6AqDgul5RU8wU0bVVYaIb6fu8dApb5UP
+         WvPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739802635; x=1740407435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sY+CA8clNRQT+8d3rmvYViciBC154ua4aCipVJOVrQ8=;
+        b=wcSL7ixtjShxMRjqfnUG2uP8KvckrKa51EcWxQElTSS/zzu+bT8Ai96Lzs6cUeZoVt
+         Xkz4sndu30hJl5uoMc5Odi7ctgPf1D9fBtM4zAPYD4zCpFpk0mPWpfeb/LNQ0eSKtGNv
+         myz4bfUhi2FwqcinQvJ4oqgC5yUM+BZjgB4WoNJYl/Kmthc4TmKIg2qCwVFqIGDR0x/C
+         0X8awYwCvkET4JqnU941vHOfKeWDKb3fe+AKrimoq4kxmi16qG4yMcg6MENfZJ84sNy3
+         fsSWtYHW25TsKy1pPACE62d+rv41r8rgAbkH5SBaUXnr3sxzKQDUMgjlpzLh1X+Kbu4N
+         zCqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVeszlYmjSs6MIEVVoVwe2mYjG+Xqa/zoFYJmw+NP4NiR/GLH7UrG7ZgtKkcs0xUBPKTo8elyUwaiOCP2bJAhh@vger.kernel.org, AJvYcCVdciX3akwbbF8WNYR0vvXhSrTsOoyP4TuviHdf/xQYC1sxDPFHlNpm8huT/89Oo7BKSwPdRQjuTF9wcCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQIJYPma2gG/iByRPvl1n15mdb6AGWbJpCRfrwN7iA2eqvW3AS
+	UmYm1avxZYgSYzC/hcQFYfQqBQQddN3rgEcK+w7WDWxnpqwCSa5D8VQ40G/N/yyGSDlwJlLLJAu
+	f4CBW9dyyRb10QG6aaPPAnE0gR3E=
+X-Gm-Gg: ASbGnctL11PdMnW8dZULsVVm8xYmLHKGyA6dNfyHsevDsiKgOLGDrP3lbvKFZDMP48f
+	ALvhkq34H+YTBNHmdUTKO9BhyRbRiz6L5uZLogGyOqnnbXkWDeFjdv6463+jUS4HAT5qEdqHL8D
+	aADJquRKXYJRCkYOomau0MDUgdvEWb8i0=
+X-Google-Smtp-Source: AGHT+IFO026JFAoJlQESSwcdgxRJMbNRj6JcB1YuS4pFIcRjR6IQAVsiaDlUlmG8KabgDlbneF72bHJSl1+962Y2SQg=
+X-Received: by 2002:a05:6512:10c5:b0:545:576:cbd2 with SMTP id
+ 2adb3069b0e04-5452fe27304mr2917774e87.10.1739802634481; Mon, 17 Feb 2025
+ 06:30:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MPAlP4yRn0xgrBQ8ixtC4LZjDWNuCl6ENFSYjEU1j4Gv629JDj6CXsMn
-	e3W6YZkOPxzLn33jCqXfB8reVakrmL6AcmUToFcl8ZBNmQfN7vjxtlfDPGyy96BU09nIVrG
-	Z+WldLTum0PzmVjA2jBthTjVToksdGcvsZzWCPuSBxeEt4CX1ztZv2EFQ4bFssEkd3YRhEz
-	0rPTgof0d9jYJZWnee3Yi33mcA7+9QBckYharu7N21HNWfJVvQht+MLquqnPO64kSE9Ne0N
-	9B1DIswoOt0KLgV298NOBDXIMha7F1oDn3T5RnsmFhLoySMRop4tsG3z6F6kiGx0PS8V0jH
-	lLoPe3zLCN2FRjziDFXjaAdiZ98cpb8GvMQpdQurdSvjvMVDi7YcOYnKnHCdm/THeR5ZJSW
-	KeMiG1M4zW9hb1RwnlqVEucrcW0MM9o9L/jDr+GnseVTFPnzJv+KcisKqUbLI4NIBEcI39B
-	C8z+pw5fC3YzychC8brn0DTMZSF8QKitICxoDWbLchwk7SCC2NGqLbrPCsWj2PLpjkN0vtz
-	dV9KpEYXTqi/LtmB6DX/0wK4OeTKNJEIkF0y/zIgu24dx5QDN/sQ7a0qfxJWWBSboxqS+HZ
-	Q5GaiwIkSuf6OCEkIZB9Gh4m6vmrkwtDyXFxZKPirRTV8hCn6i+Wm4cFOy6IwrzULKMQRE7
-	tHRJuoAiivETki7qYbukLj2KKA3K6Voi6S025kvRkO1ucQ2o9TJmiS2/G32D6eqQTj9xO4L
-	ofGuAzXM0mF25GLOkAAKAzLORVFDgZwnUdPhWRpk476wLfL+BU0RnWKv88YNuPVXWHYzZMD
-	ele+CNhOVpi4gnnlQwv6wTqcZy6vzC4jBRB8YWFAm+ZwkW6SJxMEpgsq8piNLAddrQOrBSt
-	axCx4GtpyRFlQxNTHPYm7xDhEUKlZ3NaALQ1KlV0xro9Fr43aTvGR4y5BkvJCrPr8lt873m
-	liOalRqh1/uX8o3GjXTofQ1pzub/kxhQ5wieOs5uEKkfAg3xXiEJ/+Dl8ZksTvlc1sKmCai
-	sNTIGInLHeExgvQqKMYHbAPvYCtBWdz4OVi/FDjVE+LDaoOf2O
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20250214-scanf-kunit-convert-v8-3-5ea50f95f83c@gmail.com>
+ <202502160245.KUrryBJR-lkp@intel.com> <CAJ-ks9kkigKG=Nf_mZrA5CA=SUV2sSyY51_rLef42T+ZxCmk1Q@mail.gmail.com>
+ <Z7JI-YtgZzmOtMDK@smile.fi.intel.com>
+In-Reply-To: <Z7JI-YtgZzmOtMDK@smile.fi.intel.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Feb 2025 09:29:58 -0500
+X-Gm-Features: AWEUYZkuvaFnvabs_GywBbkuo44d94Kql-DWL2E60D-MWBZySmrPMuLFMaMbzos
+Message-ID: <CAJ-ks9mjWOCjMOK+ktLdN0XJmRgT57CoHf_aCDLMOX6-mnKVwA@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] scanf: convert self-test to KUnit
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: kernel test robot <lkp@intel.com>, David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, oe-kbuild-all@lists.linux.dev, 
+	Linux Memory Management List <linux-mm@kvack.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Given that KBUILD_SYM32=y is a prerequisite for this statement to be
-executed, it's logically redundant to verify KBUILD_SYM32 is y again.
+On Sun, Feb 16, 2025 at 3:22=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Please, when reply, remove boielrplate stuff!
+> I have just wasted a couple of minutes to understand what's going on in t=
+he
+> message that is 2700 lines of text as the reply to the bot message which =
+was
+> ~700 lines.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index 89928d6d4b5b..c302115ea42e 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -303,7 +303,7 @@ ifdef CONFIG_64BIT
-   endif
- 
-   ifeq ($(KBUILD_SYM32), y)
--    cflags-$(KBUILD_SYM32) += -msym32 -DKBUILD_64BIT_SYM32
-+    cflags-y += -msym32 -DKBUILD_64BIT_SYM32
-   else
-     ifeq ($(CONFIG_CPU_DADDI_WORKAROUNDS), y)
-       $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
--- 
-2.47.2
-
+My apologies. I forgot what a mess a mobile email client makes.
 
