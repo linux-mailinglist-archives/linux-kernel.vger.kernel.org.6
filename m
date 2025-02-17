@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-518114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF85BA38A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:54:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B2EA38A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94F697A3CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242031893AA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E79226184;
-	Mon, 17 Feb 2025 16:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltGJKeGg"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512CB226171;
+	Mon, 17 Feb 2025 16:53:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC40225A2B;
-	Mon, 17 Feb 2025 16:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2B226163;
+	Mon, 17 Feb 2025 16:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739811257; cv=none; b=T89vF0+D3BDbl6M+iCViGje/WqiuYiGg9Kkcb7Xf1FNNDwtoOK6mgJUY6ZhvHsMNIz8BsID3NavbZ8Zu/mdqq8AzdRceMK2xFzDQjl8v9VAOd9jUNVM6Fj8WGGLt5VtZZbN0WA/n2sB8493oRGMMiwPEbHX/9C2RZtkJ/82HCjc=
+	t=1739811232; cv=none; b=dbKY+LpkiENiGXSPEJKbvsuHX2h2EKfT3Tp4sA6pKTd4LPB+PqIXqVxeSCkE15rto4es6ZyXNbTEXdm4kX7F1xPdLCvxHRAi86UtARH1jmvVqeNEbbvs7x4fOB0BWieavO2mkhhB4S7Asst2f0v8Y5jajKfKfmCokYWj70j8JUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739811257; c=relaxed/simple;
-	bh=5D/fG4ZjzKd3+HWvMQKBTbyUXZfiHa7kNagq5sB0SaA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pLIIBLsrMCvye543w4IO/j7pZUtK90hPWbkUsVVfb8+/mmg57JdLr2QTis4IJUhjX7A2CYVwsERfWmXCLX3Zh5MvBY0sUqSCkKM3lrgkZA0F87b/E/p1IaN5WfzfMM9kQP+O2uTJrpy3jCjgyCXfCJydQ08H+cnVAFyqcr/Ew4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltGJKeGg; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f3f8906c45so556658b6e.2;
-        Mon, 17 Feb 2025 08:54:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739811254; x=1740416054; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XfkHaioxJkT7EUDNRCAMw8vIe1lKe4biHbzBWeQ03dE=;
-        b=ltGJKeGgyqN5Kz5Q4GzxDNzni8cbRoQv7BmJSl/Di3ZvLFxcEHEOzjNffhsgdB4KQ0
-         gy3ObEVodZL/XBtWADCR2aoeiT4PvHioT196/C12R/Wuee/OWhefMxPwYohppeNP1SUy
-         FvwYDqkjR5W+K5ibugJJJHMd1aSqDE7J9QJglqFpHhnPxkRCbxts2FkA45sp991DWSJr
-         xs+XI9q41mQApKm68eIioeVvVbQVaoxIcCIiJa84w4H6oJB+3IJCYRaSmSHQ1kBoxk3n
-         5FR8/KxX+18yjdbyORD2X/G7NUgQaYpmvPCIH1ugoq+WGdLE2xfd4X9bqcTdWJpel1DR
-         2v4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739811254; x=1740416054;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XfkHaioxJkT7EUDNRCAMw8vIe1lKe4biHbzBWeQ03dE=;
-        b=OpUqPKn40ORvHkbD7xGpsAo+11TZgHgs2b9QfTzn/HUoVWyzaRrEwuMskT5sZX3C6B
-         hbGTEpHNPSuLTUiBV7VXf0o15WFIwavhg4KyTlQW/DC863pj6x7tTtFca17Br+olgu60
-         N6pHwTTDe8URgeJCkDf0JYtrH/xoQ2mgil/sWlmIQoiurY0jv22phOHFzFFuKvdiJ8H0
-         HPMHP/MAXQFW06A1zJ49xKLmcr2YUA8QP4/jIDDpBbUoUhadPP9OYErqdzZAZag0eN75
-         1KC2mSTVmZKWbBe53zhQeNyaZkSpNpOrfG0OZpbIuGNS60M2gAe+qdm5khQPSTt+v7IU
-         gWsg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ippo0nSiELgva+AfPgJPLB/Jg1qgL3jNEe0J1FcOyGKjpOPfz4W3lzwIl6n2DNU8zH94UAkAqAcbnAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjG+1LnX967HM0K1OdgPzpQFadx6bKQoai2cJziLXK0IpiWXDF
-	TiSTZUHPRnM1csUGVsMWX5XwtgJ3InCh3udcuFyZrCbVyWCUAOZPxBRul4fPyDV1d9vFs8j5Ddw
-	Bw4+HeA/ErPb45dWFVX9ITQbBQ6XgSnVxXD4qAw==
-X-Gm-Gg: ASbGncuzyg5KMd14alTlWk6ZwcKn5EKKc94KrCIA/cESSu13kYwGg/TajXvbXaiijYZ
-	oIt5FhaGRtScxfIqqH+QXmNgtx6CFrZWzOqUn6SJ8RW+rvrWOd/YULbbULKy/4NcShhuG+X0=
-X-Google-Smtp-Source: AGHT+IFjuJOL5PoNWhsga7Pb5rKsRqndy3lYvUnfhP6yMunEXDlb4VnolyLJdIOIy+/tKfm6SZy19JOq/XYQ/TENPgA=
-X-Received: by 2002:a05:6808:3195:b0:3ea:f809:44d0 with SMTP id
- 5614622812f47-3f3eb158d93mr7508443b6e.35.1739811254077; Mon, 17 Feb 2025
- 08:54:14 -0800 (PST)
+	s=arc-20240116; t=1739811232; c=relaxed/simple;
+	bh=1ToLr4OoA/zbx+qsnP+YnCjDKLy+mk728Wleqkl7e64=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ln3XleODZDyq9JcRaBsYV6tGGAW1+dNXeVgJHi/mx9Ut3zxWpn27eReZXdlvid/31q5tsopB0K3PanzulfALO3h4D6kcBq//DhA9fcv5DGbSZbx4LHcCthXEjsDJGrSuqLmpTV+AB/KhEf6N/OVr8v9Z7FeJ2iRrx3RZY7nYfEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D899C4CED1;
+	Mon, 17 Feb 2025 16:53:50 +0000 (UTC)
+Date: Mon, 17 Feb 2025 11:54:09 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Harshit Agarwal <harshit@nutanix.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Jon Kohler <jon@nutanix.com>, Gauri Patwardhan
+ <gauri.patwardhan@nutanix.com>, Rahul Chunduru
+ <rahul.chunduru@nutanix.com>, Will Ton <william.ton@nutanix.com>
+Subject: Re: [PATCH v2] sched/rt: Fix race in push_rt_task
+Message-ID: <20250217115409.05599bd2@gandalf.local.home>
+In-Reply-To: <20250214170844.201692-1-harshit@nutanix.com>
+References: <20250214170844.201692-1-harshit@nutanix.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Mon, 17 Feb 2025 22:24:03 +0530
-X-Gm-Features: AWEUYZn6JKqZSJ7ECKNJ35xDHo17HDqJBr83XFL6hIs-ZrQ4R901HdJ44r7L4z0
-Message-ID: <CAO9wTFgtDGMxgE0QFu7CjhsMzqOm0ydV548j4ZjYz+SCgcRY3Q@mail.gmail.com>
-Subject: [PATCH] net: dev_addr_list: add address length validation in
- __hw_addr_insert function
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, Suchit K <suchitkarunakaran@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add validation checks for hardware address length in
-__hw_addr_insert() to prevent problems with invalid lengths.
+On Fri, 14 Feb 2025 17:08:44 +0000
+Harshit Agarwal <harshit@nutanix.com> wrote:
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- net/core/dev_addr_lists.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Co-developed-by: Jon Kohler <jon@nutanix.com>
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> Co-developed-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Signed-off-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Co-developed-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
+> Tested-by: Will Ton <william.ton@nutanix.com>
+> ---
+> Changes in v2:
+> - As per Steve's suggestion, removed some checks that are done after
+>   obtaining the lock that are no longer needed with the addition of new
+>   check.
+> - Moved up is_migration_disabled check.
+> - Link to v1:
+>   https://lore.kernel.org/lkml/20250211054646.23987-1-harshit@nutanix.com/
+> ---
+>  kernel/sched/rt.c | 54 +++++++++++++++++++++++------------------------
+>  1 file changed, 26 insertions(+), 28 deletions(-)
 
-diff --git a/net/core/dev_addr_lists.c b/net/core/dev_addr_lists.c
-index 90716bd73..b6b906b2a 100644
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -21,6 +21,9 @@
- static int __hw_addr_insert(struct netdev_hw_addr_list *list,
-      struct netdev_hw_addr *new, int addr_len)
- {
-+ if (!list || !new || addr_len <= 0 || addr_len > MAX_ADDR_LEN)
-+ return -EINVAL;
-+
-  struct rb_node **ins_point = &list->tree.rb_node, *parent = NULL;
-  struct netdev_hw_addr *ha;
 
--- 
-2.48.1
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Peter or Ingo,
+
+Care to take his patch
+
+Thanks,
+
+-- Steve
 
