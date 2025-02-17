@@ -1,77 +1,123 @@
-Return-Path: <linux-kernel+bounces-517357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECE6A37FA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:15:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6872A37F69
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84ACF167E95
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC3D167F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2862163BC;
-	Mon, 17 Feb 2025 10:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C5216E1E;
+	Mon, 17 Feb 2025 10:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Sdj8FRRq"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959A381E;
-	Mon, 17 Feb 2025 10:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ugfb8tXw"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECAE2163B7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787240; cv=none; b=q5sZvo8fhvOFe3J1ERS0uOQTmvSvufpxFUHRaTcVMRO2oT3dVusQSFjtr8yf8ZHTuLyUcTvZhG49tqR1U3rBG5p4Q9SNBvtQtArWorIlXIhdnDl3RPVJMWdAEMaz7M+aVsp4hua8fRc79Hy/ll3VVctdXgoeNjXyPWFye1QcTV8=
+	t=1739786673; cv=none; b=PiU3qnoszlVqkhoYJpa2bVKsSqXvX/ymBqkK38PaeAd9OBS8bEvgIMpiCBwOwMYoLbDNzpi8Zmezncj63N7vuyKecSNOQ4tQeiGrNVshzLAfbSxXlTMsSqStAbdDgxHr0MzRmTiwbUAptFgfObiTO6aDedyJzwyrLnDB8sDv23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787240; c=relaxed/simple;
-	bh=DN5u6/wcRfEznxF73S7WX/T0Mt+WpV3G1I90L9pE16U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fp4Vo1vah2FPUmYptoVVCkO5t835VTYcFuE94OxfM0U+OIYZlN2pmJwFRr1FZ7w5bftL0SgfA4hMUTovJGlzJcAewm2Bo6YSZjBi3oYLVOaBIOAT4X9eVkdARGhx7TMElA+j+DVxm2R4Iq73yFuv98wlP3PdQBVFcbi8K9QQ5ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Sdj8FRRq; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=sBPLUR2UA484yxU8bopYqTzQvJ/EUqnBaEavQLKd1E8=;
-	b=Sdj8FRRqJNFkYSPOMDp6sQ2Gd2AmCQ3io8JjpIXl/fTIPWf5PUJ0Z+fmbVjDE7
-	z9g8yS2fSiwL35mKwequuUtW0+6YMDHpI5Got9GuayJ6SyppJiwhDZ0/Rzo+RXWC
-	1tNcnJjN85GaFyqTy0t1qWSahThl3Q5f0xAAtoZHQg9Ys=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBXf7pKCbNnB58mCQ--.17719S3;
-	Mon, 17 Feb 2025 18:02:52 +0800 (CST)
-Date: Mon, 17 Feb 2025 18:02:50 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] arm64: dts: imx8qm-mek: add audio-codec cs42888
- and related nodes
-Message-ID: <Z7MJSj2JoxT6fTIu@dragon>
-References: <20241029152614.2065950-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1739786673; c=relaxed/simple;
+	bh=U0HtHK1poZiGESOdrOrgpOi2G5JJ/usr50rmbJv/Gfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d7UZGW3sA8BRKqBtyZFWiLpuzmRWDYNiUA9RA2jvRWilxz/I72vWvTceFaL5gotl/V4aWqorKCBFDK13iEeK5hlsgSbLm531jljqFceMsl+lvvnBSVl2OoCszuNZp1LA6gsOfzBkzNiBQ1LAMPCFWts5v5VzDdGRvytulfLRvOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ugfb8tXw; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dea50ee572so6142928a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:04:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739786669; x=1740391469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9icW+RZ9BUlJeT9qDjb0oU0qZhKkpwVHO3FgIOiJAJY=;
+        b=Ugfb8tXwDraXTkCGkw1gaKp6Rm7obJgIuteSycDrPz4OdfTUVHZRbKktJ0QyVW4wjk
+         oQekwS8opN+9jqRB32121H4iMPDUNKNr8627bzGqWLroAwdZxWJwit7fxizVtSqKCUFw
+         xKyeYLIwK01gDfpbRJckezApr/CzIkenOMbDpYL6OGKarmDaiAC9swB2egudBcgYd3Tx
+         sWfnh/uf/5fnm8Z3vCEi5hNtK3hPikk7Vdwr31njOZSo0BuVf2LadDB+p81XbJO9HK4D
+         y/nAONM0McFfDCGAjaCwDBpbRg5vEdR80LhQWSi4JxZvXL1R4xhtVttFmI44GJZ1g27v
+         ZWeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739786669; x=1740391469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9icW+RZ9BUlJeT9qDjb0oU0qZhKkpwVHO3FgIOiJAJY=;
+        b=jM4iNnx8822bd9uDiZVcoviX9JztLOo2ycP+IqXeLWKcd1cMK4N+/P2jSyNWgKtxHk
+         FmUa6w9++fKYoXFZ56lqcmOd7QMCsYwZJT8xz28QyOcw/nZiSLOEgznGkE2Nw7oGkRyC
+         kghCxwzzewmYemmWVqBbcEofpTyfcWCQFHRQJ9ykkQUiN2rO+5Cz42xdkF4RTYGQ1GzX
+         YFr69HhF3OJLu7dOHkfVHyuFYmbGCtJORv31qlPxQru1Lhylc4JAKPJ/Kj+TxarLvY/h
+         pVtFxHwMc7TAUvn5Ac8zNuDU16/gxP29/Po9OOIqF9Vm8qfYAA79Bf2Rtgho7ThbrFpm
+         hdsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEhCYykX2UscvzvC4KbJsr26G07ewlD9PAyHQ7o3x5iGO/zxuHuZbCLDMMw2nSosBMOzBGWBIoFLn4l0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFc4JjXQjAZ8nbTP1ArWiNgU45smIPxiZ6wpU2pwxSGLjDRScJ
+	eTB43PNTvtd3oHhUwFDT8WFRBBQu1Wkky6cOcCwGf7ZB4E/mEfa66kMC+TL4s2M=
+X-Gm-Gg: ASbGnctvGEzW/XK8Nor8USSgbDbkq4abCHF7HONkPeKCD71xEtQ+rsvqenvR2Zp68PN
+	zajNEzrc1T02WVw3gqrUhWkA61x4gumjgO51bMdUBks7tkl574Gggs/0G0KX47z6CjFCZKKzeTj
+	iQRqO8J0axoF/SkA0Aq6ESftp5vFiq8ODrbD/XJPd0vX59OFzIlLlhtQGqnMSwdVaVJA3UWOQHl
+	uPrCDXcvmhth22osS8VfgFCnXYxvRkqea9yC+/ENv4IWpqTHgfIu6C1YDptqZLAB/0LuP0athc1
+	gr2BD/TwzpsSK9f31+I=
+X-Google-Smtp-Source: AGHT+IF6opUQlIwxb92mSmm1gEo9G17RkPSkKeifhJ7EJuyYBZxee928DaKRSRvvfQmUPMLsNyXEjg==
+X-Received: by 2002:a17:906:3087:b0:ab6:e10e:2f5 with SMTP id a640c23a62f3a-abb70d950f2mr787890566b.37.1739786669553;
+        Mon, 17 Feb 2025 02:04:29 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb952c7364sm234250066b.18.2025.02.17.02.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 02:04:29 -0800 (PST)
+Message-ID: <c8cd1730-9472-4b02-9828-d1a8221fc487@suse.com>
+Date: Mon, 17 Feb 2025 11:04:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029152614.2065950-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Mc8vCgBXf7pKCbNnB58mCQ--.17719S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIco7DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxr2ZWey6E2UhQAAsj
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v2] params: Annotate struct module_param_attrs with
+ __counted_by()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250213221352.2625-3-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250213221352.2625-3-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 11:26:13AM -0400, Frank Li wrote:
-> Add audio-codec cs42888, enable esai0 and asrc0.
+On 2/13/25 23:13, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Increment num before adding a new param_attribute to the attrs array and
+> adjust the array index accordingly. Increment num immediately after the
+> first reallocation such that the reallocation for the NULL terminator
+> only needs to add 1 (instead of 2) to mk->mp->num.
+> 
+> Use struct_size() instead of manually calculating the size for the
+> reallocation.
+> 
+> Use krealloc_array() for the additional NULL terminator.
+> 
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Applied, thanks!
+Queued on modules-next.
 
+-- 
+Thanks,
+Petr
 
