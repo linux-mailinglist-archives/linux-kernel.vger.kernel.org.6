@@ -1,85 +1,110 @@
-Return-Path: <linux-kernel+bounces-517711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6EA384B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:31:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E228AA3849C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A27E3B7B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8974718952A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F1021C9FA;
-	Mon, 17 Feb 2025 13:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4EB21CA0A;
+	Mon, 17 Feb 2025 13:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kqbgyWRn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xWEIyvI3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5F21ADB7;
-	Mon, 17 Feb 2025 13:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16111A08DB;
+	Mon, 17 Feb 2025 13:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798720; cv=none; b=niwhcAv08b/ETA/tou7dyl48l7Ut6VNzHTvqQhjop7OyxNhYWSFD8AUpfsKuHEoap91F4o6Aqf8ix2GrJNcZAeWsN+6Eu8Nw0x/caib71GAg+Vvwhh7Zm6EQyekJIWIDUcvBIHXQCs+99ABfJTk+emNqzG1NA4/mJXo2gWCoJyc=
+	t=1739798767; cv=none; b=j8CCo9P1XwcZSofd5jM+QG7aqBRf4JDTsmz2eaKimmqAJmTsflBwFt02UcW3EdOE32h77/z8jBaALh2LJ9mq8+g0nOB6O0gKby6422q50bxgJ8bXxYuLt+KIhv/Mxn+Br+85nj5qakPDg8EQdPw2k+5R/Bt375UE4pKTw9Y6FtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798720; c=relaxed/simple;
-	bh=4E5ZrM3Ckx+c725bWUKVc8Zn+UHOWHT/1ZUVfbkEHxU=;
+	s=arc-20240116; t=1739798767; c=relaxed/simple;
+	bh=43oxnBqxJyinpR9ySGaCso2MsjRwthDIeadlFWGfSYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5VSN6IW6Mrb+JeHLlqgo+O31od78eKHujhbo3jjDJv8H7vkAuLHYMsU0D6ztBT7sEi5Fts6kZkeDWfyAcQL78gawqXkiQH3xYPTVa59utm6bgFGXwCHQraDFKFBFVvxOKO1AzptBCr9sx+lsdygmTFKHHtucaiHuKwJkV79o20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kqbgyWRn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C515AC4CED1;
-	Mon, 17 Feb 2025 13:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739798720;
-	bh=4E5ZrM3Ckx+c725bWUKVc8Zn+UHOWHT/1ZUVfbkEHxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kqbgyWRnixQk4nzL777ntVGM6BgoCbGgQlwQhEQUcn2/y2x2HGMr91NbaKm4TQxJb
-	 nDci4niFERe0x22zFhNGmptP+jfBHS0QkAy5PpHVRMQ4sRBG6vxz7NsXqnh9bbPgRM
-	 RiDd91sHUWnjhqpC7xhy9MH6hNF9cx9rS0G6Bqyc=
-Date: Mon, 17 Feb 2025 14:25:16 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Stefan =?iso-8859-1?Q?N=FCrnberger?= <stefan.nuernberger@cyberus-technology.de>
-Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-	"lwn@lwn.net" <lwn@lwn.net>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"jslaby@suse.cz" <jslaby@suse.cz>
-Subject: Re: Linux 6.13.3
-Message-ID: <2025021704-region-calzone-7d24@gregkh>
-References: <2025021754-stimuli-duly-4353@gregkh>
- <a082db2605514513a0a8568382d5bd2b6f1877a0.camel@cyberus-technology.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOD5MBBzRhITSAKo0v9a9W4aLRVbNQ9ikO3/c2CfCxWwyhpP7fXALO1dnramkcTvNnxkU5OlAmZ2hsJyL3Tqfm+cbfrJLzv1FDxTguUPtDsJLi4KCoucm7Tt/eEEBCxxYuhLof+Jn5FtcPwJhqwUtW+e/Uh1GQBuYIDVEkDZ1Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xWEIyvI3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=n1lANnOPXNFw9+jCC+O+JmddS9eVCLKsMBkqQM9HxPs=; b=xWEIyvI3phTtqKVI7bTSQRyPcu
+	/NMHD76dJCeNa5jgn+xig73XONXqClF5J/EwDZ9+FeTkRFnqyVLjq5hXwd667RWD1lGbicbnXF5p0
+	ezpB0RAZGdCmgDma+ZKtx/xe8O7FOiHoSp77+dmaBtjv2fLJPg7fyXSWb8gxIAw+PEfk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tk17t-00Eycl-Uk; Mon, 17 Feb 2025 14:25:33 +0100
+Date: Mon, 17 Feb 2025 14:25:33 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
+ SG2044 SoC
+Message-ID: <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
+References: <20250216123953.1252523-1-inochiama@gmail.com>
+ <20250216123953.1252523-4-inochiama@gmail.com>
+ <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
+ <5e481b95-3cf8-4f71-a76b-939d96e1c4f3@lunn.ch>
+ <js3z3ra7fyg4qwxbly24xqpnvsv76jyikbhk7aturqigewllbx@gvus6ub46vow>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a082db2605514513a0a8568382d5bd2b6f1877a0.camel@cyberus-technology.de>
+In-Reply-To: <js3z3ra7fyg4qwxbly24xqpnvsv76jyikbhk7aturqigewllbx@gvus6ub46vow>
 
-On Mon, Feb 17, 2025 at 12:41:58PM +0000, Stefan Nürnberger wrote:
-> Please revert the commit titled
-> "vfio/platform: check the bounds of read/write syscalls" from all the
-> latest stable releases (6.13.3, 6.12.14, 6.6.78).
+> I am not sure all whether devices has this clock, but it appears in
+> the databook. So I think it is possible to move this in the core so
+> any platform with these clock can reuse it.
 
-Ah, the joys of patch :(
+Great
 
-> The backport was already included in the releases two weeks ago and the
-> new one doubles up the existing check. The full list of fixed versions
-> (back to 5.4) is correctly mentioned in the associated CVE:
-> https://www.cve.org/CVERecord/?id=CVE-2025-21687
+The next problem will be, has everybody called it the same thing in
+DT. Since there has been a lot of cut/paste, maybe they have, by
+accident.
 
-And that CVE record now shows the duplicates as well, remember, we keep
-them up to date when new stable kernels are released.
-
-I'll go revert this for the next round of kernels, but it's not really a
-problem with checking the same thing twice, so nothing is broken.
-
-thanks,
-
-greg k-h
+Thanks
+	Andrew
 
