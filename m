@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-517733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB6AA384E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3499A384ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7A73B0F87
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF6A3A3203
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504C521CA0F;
-	Mon, 17 Feb 2025 13:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091BD21CFEC;
+	Mon, 17 Feb 2025 13:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUn6I2CV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DI/U20Sj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB21321A44E;
-	Mon, 17 Feb 2025 13:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBF21CC63;
+	Mon, 17 Feb 2025 13:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739799505; cv=none; b=QJ9zUcUqn3kGf9umE/LnCU/l6sCd9W9G04kmKZJIHhqsmNJz0F77y6ikv85njDKdYM04jzWduv6H3OdvP0lwsKVx13M9+kSt+d5254KawdRYq1BvoBLJejMdm9gcGdAUKEEfEbSFfTjNCnxgPWIxHvcBOvuTLScQxSH45hk7FU8=
+	t=1739799507; cv=none; b=dojWh5DcaQqqFQCQqcf8uUIKXNfwrC2VPNxNo6sgHkPSmQaIyWg/E/y0A6FQ/MQcZD8ZdOFylxxNhY0qmhi2Uhg/3K8XMyIutGrTxSmdJSXhVz5lg+g3Mw1Apo3P3MXzk97YtxN4PSaPmo2WOYDEgL7+zq7EsTbMCKAohQ0apg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739799505; c=relaxed/simple;
-	bh=7UVLZYO1jC9r+aq/aAikU6zNFC32kIkAJxpVjI0hht8=;
+	s=arc-20240116; t=1739799507; c=relaxed/simple;
+	bh=zMdGWJp3+Q85tNq2jwMB6nkQk9pTkBBt/pztVGDMZpE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QDdvjADYBugxcNzBvPDSmr/dRzfwahNJyfoLCGhPZNnEZ7WB2tvreVQXsEO/f1gaTF2tFJsvGNK5qDctxyrg1F9Afn8q/z6CzwLBe+ulS51fzgNYhN8osZFzki7VyWaWWlRGtCI3QrOscxBGr2n8fh7qKT2dq2Im9l9Rct+x/aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUn6I2CV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0322BC4CED1;
-	Mon, 17 Feb 2025 13:38:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=BgsfTuZeD6+dZOti0DDMs+K8bXqCE6m2cpLl+MsM98YYXVXp6E/PCwyaiAiPreD6R0ts7oFrivSQU+oBSh6Y2xGeWq0m9x8ZXuv950BMBHVwyg1NRxAHPyGAi31et3wRGpUOALiAciMHPziJxEgPYTbLPhn2je1y9qbYjlDJXYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DI/U20Sj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949BDC4CEE2;
+	Mon, 17 Feb 2025 13:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739799505;
-	bh=7UVLZYO1jC9r+aq/aAikU6zNFC32kIkAJxpVjI0hht8=;
+	s=k20201202; t=1739799506;
+	bh=zMdGWJp3+Q85tNq2jwMB6nkQk9pTkBBt/pztVGDMZpE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BUn6I2CVRvkGw28MzkLgGh1TCoKYB+lYFY8DhBgUjDNQgTe0yXIFe03J8KxToiNnC
-	 fz3AaNM347Z5NcE19PsXMMnlIzzeFtDpOOpnlc7K2z1Halq1TF4TU32k+fwv/1Ai69
-	 CP4aAvU+o6qFzZXlDZ4A4o2di9J+bAn+578j0e5/OSKrSqjGnpAnFElPES7kUocQ4Z
-	 QqoSZPxYvnpiamd0nerJub03r5lJqWbzONL32NiOfw1UwWWncSfT+63+E3RtwvsYdd
-	 EHjwZBWPBCOufOq3eFJqBCFsWNX5WQakpCNN3C7s1acL/7RVVaXyXc6gtxwB21XjWP
-	 W35S1pcBF/72w==
+	b=DI/U20Sje9MbGSNT81jDaQz8QYb5EPBAVNYSC7U+p3q/fgoqfN2RTWd3LE8XV8Evm
+	 sxerrIWfVqIjm+psgGDxNAuXFu2sIBLX1QI/bAP2of5+5Gwe+A6rm3IcSmbuiXPSc5
+	 KiJo0lgR5kOv9YOlY9sh3coJ8Vsiic2FQ3pANGVNP9sQ55ER58LlJxSpDjdPxpI3Wc
+	 Q/QWJeBecnlMaXPClF1EWPrgqlVKpEUYp3nnBkB92EBdXbtwBW9cev1ceDAjopFp3N
+	 3vu/pWrGul2/qlCbHMvua2HlE0/OnGdI6L7aAENNUA+GBtlQFZLCHqw+5+1lvjIBHy
+	 TvzBDiB7uXM8w==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.orG>
-In-Reply-To: <20250208-asoc-volume-limit-v1-1-b98fcf4cdbad@kernel.org>
-References: <20250208-asoc-volume-limit-v1-1-b98fcf4cdbad@kernel.org>
-Subject: Re: [PATCH] ASoC: ops: Enforce platform maximum on initial value
-Message-Id: <173979950372.40079.2365634213946678394.b4-ty@kernel.org>
-Date: Mon, 17 Feb 2025 13:38:23 +0000
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250207163029.3365-1-laurentiumihalcea111@gmail.com>
+References: <20250207163029.3365-1-laurentiumihalcea111@gmail.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: wlf,wm8960: add 'port' property
+Message-Id: <173979950535.40079.2153617057920573361.b4-ty@kernel.org>
+Date: Mon, 17 Feb 2025 13:38:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,9 +60,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Sat, 08 Feb 2025 00:57:22 +0000, broonie@kernel.org wrote:
-> Lower the volume if it is violating the platform maximum at its initial
-> value (i.e. at the time of the 'snd_soc_limit_volume' call).
+On Fri, 07 Feb 2025 11:30:29 -0500, Laurentiu Mihalcea wrote:
+> The wm8960 codec may be used with audio graph card and thus may require an
+> additional property: 'port'. Add it.
 > 
 > 
 
@@ -72,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: ops: Enforce platform maximum on initial value
-      commit: 783db6851c1821d8b983ffb12b99c279ff64f2ee
+[1/1] ASoC: dt-bindings: wlf,wm8960: add 'port' property
+      commit: 5c7e4c4da8586d2ef55a11a9f4df626b8ea9a146
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
