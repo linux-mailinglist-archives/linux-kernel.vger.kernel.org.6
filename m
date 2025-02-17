@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-517476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8EEA38164
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:11:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7044EA38157
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD911887974
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441F716651B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775CD215F5F;
-	Mon, 17 Feb 2025 11:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB14217655;
+	Mon, 17 Feb 2025 11:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XrFy+5bp"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9CmxqLc"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D9217F36
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1A52185AC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790500; cv=none; b=El5Xvd9G3wj7T6G5X2kSeIBckTGUX7s4JfWRPXcl+mnRW8gzc1HsJHbFciBRGHwELBOozwQMVAc8r1VtlBDpWO4MOi56Z17raNDASArIUTUN2OL82GeB4bSjy8+3l/FufGjK0NH5fnSJj+moN+f5u6mxO9qHBsYXfe4Xs+BTsXU=
+	t=1739790503; cv=none; b=Ymdl+DqqeVwKS2Fm18gRLDHcXiKofhqiJ6sZ+DHW4cHtT4Qi+FKObkHdEinKBnuDbOSrvKOQYe15Og0jvdrFVdPb6ReO6EXxkm7fF+z1FXO+2Jt4QhvCSN/boRwkwJQx9bxxquqLOi+CEsw7HSE9eBHanjbme81UzYMMVW8N1nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790500; c=relaxed/simple;
-	bh=AVOb+2c2LscErEo6bEGInPvTSGXSqHinXhCYdY2r7XQ=;
+	s=arc-20240116; t=1739790503; c=relaxed/simple;
+	bh=WAzuzjM6Ks8dio2noXsYrHe/p04Duhc8IbDQx4wZxFc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZyA7Wfh/+ggHPlrkL2QpeMRjglabgOjH96t0q+mcH7M96fFbJt/a/ahH9MrT7TluLNq9rzF/TgBd29SPgs6Nt5qpGW9/wSUXFKZTg5DfkJ/3SWSQSrIEKZwrEREK9gBDgXWXgW9tYIBMvJz0OlAkBiPPGlfGwDya/TvUF2m8Rtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XrFy+5bp; arc=none smtp.client-ip=209.85.218.74
+	 To:Cc:Content-Type; b=lG5XQOPXvRktRQWICTCoF+GH+XKno8F2la379darn7c7o7q4T1GKw19loYA7ofZH9kTsZCnobf7g2qArLdLLD5Vh9PFWd7uk0MvVZppi6XhZ+FFPaMBDfkwdZNswBeOucK5D4+8M/JwGtWMZ4FhmL6vyp3NCEC+7I0C4VT0sfRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9CmxqLc; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-abbaa560224so43279366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:08:18 -0800 (PST)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5d9f21e17cfso3871628a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:08:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739790497; x=1740395297; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739790500; x=1740395300; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRwWmsv22nmRUUizlEH9+1SsyFJS3m6TMbnIpQiWyho=;
-        b=XrFy+5bpzucSIY+wIUOBlCE+9bnQlpe3uIkfZarzwU8aiQcGK7tpXKoO3nX82IIng3
-         joAyNijMRgWJuYJwjH4x9RopPkTZbTYxx/2hf25AKF7c4p+ab64OEbNDT3jocSazpY1D
-         z2mO7vBx9BZqEClMbHe+Ouo5dojPevIjnFJQc2NJtMR7fSO70G7HFPOIhBl7v/WpfvvD
-         RhV+9QbqXS0moBw2d/YNLZMwD5Kyh5dZgWHJlzIn9NltvPkB3GSTd+VEsEXaTrVKAokr
-         0mPlTOZJKSnTy7TDxHwrzxP0wc/cbpHcFdA+n99yW1ufkxPU/eGaRr6FlXYtrW8rWj09
-         SrCQ==
+        bh=Eb66uc443nDbWuK3toUJ0Z6Cs2Z06kbJxukaw4+lcIA=;
+        b=U9CmxqLc8iU+y3NiVAsmY1ePTPkhFf/abf276VQBvNcee/ArCci8t08MHggtrN7Aek
+         X2jMnEl+kvZ1kF2ONrgrmNxLUoUpMRsiCTHSvyALSIPaYMda9Dm/YtDhKiIIuDl5Kxxl
+         O/QrgI59GKmlLWopxfaZ4bFdTIfM2eTUa114TKArMrZ4RlguWxkOaw/F1yTQrcGIBQQh
+         oqpR4aUOP7vZMbbbkxE4Iq0c7swMC8yNsC3jg63LK9EI7HnQskX+tDjcxXD/Pw3wzxGN
+         R8bohBF1zr01dPzzeRsLWsfhxfhvs0fTYafD4aP5pDT1/6ZhPgskbEF0akaUMxjrioeF
+         Y9Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739790497; x=1740395297;
+        d=1e100.net; s=20230601; t=1739790500; x=1740395300;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRwWmsv22nmRUUizlEH9+1SsyFJS3m6TMbnIpQiWyho=;
-        b=hiB9/1Kp+cJdlfEjwA2fXcSeVveE4OHrlFgDuAiyX4nSf0ObNwI0jBU4YvZQ/PhsIw
-         rq1gKQ+sNcDTggCAjCk3wyAFoWMdboiETpWIO5O7EqR5e8FTkVTZ1OcJ6BuVxJja8O/C
-         rHMghdMQba5ag5CpEpj8uKUhH2fFfcHFguFp879aNA7eORsbQCBJvm7vp/qCBBKmzmqe
-         65MTrvnxY1rWUpjMib5AlJ/cnEeIcskEvLFdmvo8B41CP9XR1dzJKYXNOYyMdmEtEq/N
-         HKJicL8+DcNev0Pgy3ydWhrdYkOQt1jWR9fxjjx/+Kvco1SmoGWi6nPQoOqYBPNN+hhC
-         3Ylg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQX4feGY3ka/zohsufWUyhCdJyn7P4jxyPL+qztmE1BXCd2wpxnq4y4RjMymKKAHXwK7TjbFVn/c2umUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfNNTBH9ruVPX9BwkHg8u7oXDAfH0DQcQJD2QqzdDj9AVKf9Cq
-	LDZVc+GSdYdDZtl0lKZrJ6tPR3NPO7SRJ4T6RNqc93nasWGbYB0sjB2hxjoTfSKvSGvWzE2GLpJ
-	D5gyB+A==
-X-Google-Smtp-Source: AGHT+IFx6Gx0Ot0IIGJvBhi1ET6MC7db4xfqL+5sQ3VeS8oMEVTRYGAd8v2+6CpmbjzdrlCRkNWEChPIdvO3
-X-Received: from ejcvi10.prod.google.com ([2002:a17:907:d40a:b0:abb:9461:5184])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:1c21:b0:ab7:faca:a323
- with SMTP id a640c23a62f3a-abb70d677c5mr944634866b.39.1739790497259; Mon, 17
- Feb 2025 03:08:17 -0800 (PST)
-Date: Mon, 17 Feb 2025 12:07:32 +0100
+        bh=Eb66uc443nDbWuK3toUJ0Z6Cs2Z06kbJxukaw4+lcIA=;
+        b=f7gVAupAKvN5Shbn8YJi2fwu89p+kUsWvgRPSvJ5tsN6SePzl7huIsAGn+KvR2mVkb
+         xtn2rnU0J+bUp8j7bBcm+dYFxx+D8p6FjbJ8vonUigTa0PNuGIoxInZHcB/McYYeQKyq
+         xreDud8si/WXldkLI39WXZskBMNc6IaotEisztdkPE7P5n8EW8izFJrlck3MeBFkNDQv
+         w7oa2iZOSy4+UlB5sIkgm0y3YEtmTzAedTZIw+Egmyt3mk2J3sh2DJKao2VPklpxB1Ba
+         PAOzwpkfv7b+cNkTkTFGmHpHFSEsia65/h1DAg6ejnHF9XVBD2szk8ZyTtbVWqeRg86y
+         W5/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnRvQCnm0hbZdNXvFHmkv8GjJaD6l3zm3NAImaPSMIexRahFZ/N52TgHxmeikZ8YghqbX5a0bBn2+q6rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZancIJGipMWurvX7XpiYd1BmF3zDyWDDIkVnDDaYhU2xSHs6e
+	MmojAHuND3aXyYHmr8Zw/AL0GS89oe+sIE7f9A3FgQCkTp5TzrquJg4HQES/0XO4Nly4LvkqDMM
+	Uc2pzqQ==
+X-Google-Smtp-Source: AGHT+IGTc8d+wdd82IxUEvpomANS1pvZvlByXVXhJSapi/R0WJN57yNtVnLq30jTjFuryoqlGhXiKlbNt10m
+X-Received: from edwc19.prod.google.com ([2002:a05:6402:1213:b0:5dc:18c7:55df])
+ (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5210:b0:5de:dc08:9cc5
+ with SMTP id 4fb4d7f45d1cf-5e0360a1fb6mr8784483a12.7.1739790499947; Mon, 17
+ Feb 2025 03:08:19 -0800 (PST)
+Date: Mon, 17 Feb 2025 12:07:33 +0100
 In-Reply-To: <cover.1739790300.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1739790300.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
-Subject: [PATCH 3/4] rseq: Make rseq work with protection keys
+Message-ID: <1f0cd73072eb321fb5f6993cbcb9b2e67ba6355d.1739790300.git.dvyukov@google.com>
+Subject: [PATCH 4/4] selftests/rseq: Add test for rseq+pkeys
 From: Dmitry Vyukov <dvyukov@google.com>
 To: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
 	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
@@ -84,14 +84,8 @@ Cc: Dmitry Vyukov <dvyukov@google.com>, "Paul E. McKenney" <paulmck@kernel.org>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-If an application registers rseq, and ever switches to another pkey
-protection (such that the rseq becomes inaccessible), then any
-context switch will cause failure in __rseq_handle_notify_resume()
-attempting to read/write struct rseq and/or rseq_cs. Since context
-switches are asynchronous and are outside of the application control
-(not part of the restricted code scope), temporarily switch to
-premissive pkey register to read/write rseq/rseq_cs, similarly
-to signal delivery accesses to altstack.
+Add a test that ensures that PKEY-protected struct rseq works
+and does not lead to process kills.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -107,77 +101,90 @@ Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- kernel/rseq.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ tools/testing/selftests/rseq/Makefile    |  2 +-
+ tools/testing/selftests/rseq/pkey_test.c | 61 ++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 442aba29bc4cf..31cd94b370ef3 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -10,6 +10,7 @@
+diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+index 5a3432fceb586..9111d25fea3af 100644
+--- a/tools/testing/selftests/rseq/Makefile
++++ b/tools/testing/selftests/rseq/Makefile
+@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
  
- #include <linux/sched.h>
- #include <linux/uaccess.h>
-+#include <linux/pkeys.h>
- #include <linux/syscalls.h>
- #include <linux/rseq.h>
- #include <linux/types.h>
-@@ -403,10 +404,13 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- {
- 	struct task_struct *t = current;
- 	int ret, sig;
-+	pkey_reg_t saved;
-+	bool switched_pkey_reg = false;
+ TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
+ 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
+-		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
++		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice pkey_test
  
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
+ TEST_GEN_PROGS_EXTENDED = librseq.so
  
-+retry:
- 	/*
- 	 * regs is NULL if and only if the caller is in a syscall path.  Skip
- 	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
-@@ -419,9 +423,41 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- 	}
- 	if (unlikely(rseq_update_cpu_node_id(t)))
- 		goto error;
-+	if (switched_pkey_reg)
-+		write_pkey_reg(saved);
- 	return;
- 
- error:
-+	/*
-+	 * If the application registers rseq, and ever switches to another
-+	 * pkey protection (such that the rseq becomes inaccessible), then
-+	 * any context switch will cause failure here attempting to read/write
-+	 * struct rseq and/or rseq_cs. Since context switches are
-+	 * asynchronous and are outside of the application control
-+	 * (not part of the restricted code scope), we temporarily switch
-+	 * to premissive pkey register to read/write rseq/rseq_cs,
-+	 * similarly to signal delivery accesses to altstack.
-+	 *
-+	 * We don't bother to check if the failure really happened due to
-+	 * pkeys or not, since it does not matter (performance-wise and
-+	 * otherwise).
-+	 *
-+	 * If the restricted code installs rseq_cs in inaccessible to it
-+	 * due to pkeys memory, we still let this function read the rseq_cs.
-+	 * It's unclear what benefits the resticted code gets by doing this
-+	 * (it probably already hijacked control flow at this point), and
-+	 * presumably any sane sandbox should prohibit restricted code
-+	 * from accessing struct rseq, and this is still better than
-+	 * terminating the app unconditionally (it always has a choice
-+	 * of not using rseq and pkeys together).
-+	 */
-+	if (!switched_pkey_reg) {
-+		switched_pkey_reg = true;
-+		saved = switch_to_permissive_pkey_reg();
-+		goto retry;
-+	} else {
-+		write_pkey_reg(saved);
+diff --git a/tools/testing/selftests/rseq/pkey_test.c b/tools/testing/selftests/rseq/pkey_test.c
+new file mode 100644
+index 0000000000000..ba5c1f6e99ab5
+--- /dev/null
++++ b/tools/testing/selftests/rseq/pkey_test.c
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: LGPL-2.1
++/*
++ * Ensure that rseq works when rseq data is protected with PKEYs.
++ */
++
++#define _GNU_SOURCE
++#include <err.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <sys/syscall.h>
++#include <unistd.h>
++
++int main(int argc, char **argv)
++{
++	void *rseq;
++	unsigned long page_size;
++	int pkey, i;
++
++	pkey = pkey_alloc(0, 0);
++	if (pkey == -1) {
++		printf("[SKIP]\tKernel does not support PKEYs: %s\n",
++			strerror(errno));
++		return 0;
 +	}
- 	sig = ksig ? ksig->sig : 0;
- 	force_sigsegv(sig);
- }
++
++	/*
++	 * Prevent glibc from registering own struct rseq.
++	 * We need to know the rseq address to protect it, but also we need
++	 * it to be placed on own page that does not contain other data
++	 * (e.g. errno).
++	 */
++	if (!getenv("RSEQ_TEST_REEXECED")) {
++		setenv("RSEQ_TEST_REEXECED", "1", 1);
++		setenv("GLIBC_TUNABLES", "glibc.pthread.rseq=0", 1);
++		if (execvpe(argv[0], argv, environ))
++			err(1, "execvpe failed");
++	}
++
++	page_size = getpagesize();
++	rseq = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
++		MAP_ANON | MAP_PRIVATE, -1, 0);
++	if (rseq == MAP_FAILED)
++		err(1, "mmap failed");
++	if (pkey_mprotect(rseq, page_size, PROT_READ | PROT_WRITE, pkey))
++		err(1, "pkey_mprotect failed");
++	if (syscall(__NR_rseq, rseq, 32, 0, 0))
++		err(1, "rseq failed");
++	if (pkey_set(pkey, PKEY_DISABLE_ACCESS))
++		err(1, "pkey_set failed");
++
++	/*
++	 * If the kernel misbehaves, context switches in the following loop
++	 * will kill the process with SIGSEGV.
++	 */
++	for (i = 0; i < 10; i++)
++		usleep(100);
++	return 0;
++}
 -- 
 2.48.1.601.g30ceb7b040-goog
 
