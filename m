@@ -1,81 +1,71 @@
-Return-Path: <linux-kernel+bounces-517829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E548A38653
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:29:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB71A3864B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C5E167BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C186188CE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48E2223330;
-	Mon, 17 Feb 2025 14:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA85A221546;
+	Mon, 17 Feb 2025 14:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S4t1vLHC"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yv7irP97"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EACF21D58E;
-	Mon, 17 Feb 2025 14:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CEA21D5B0;
+	Mon, 17 Feb 2025 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802145; cv=none; b=sHb5E2hVt8J8iDgookPaN8p2mH6ccm6DSusePHDxijHGsJVs9ZpwEYqtksUwsk1lmMwz2O2owFCh+IB+SHPa5huUUmIsK0x2Cofm/bZpmMZF4BBrb4LW8VbYxvwbtFbroh3e53sRtx4jYhY1bYw+hqWPb+OMshyo6ShVOIQpErw=
+	t=1739802286; cv=none; b=Am1QlfkAr7CNEWAdt61mohFyDpSBm7Prgq7TQE3Mn5P2w9yLDkLQirmGsZ8NEZEVnbi9uAUdyUqZ0IXh0K5dP+S6wWiqVqspQa1vDrRlI5LFYqe+oChm7S0jKRkgGPxC/p+HSY3eELJKVKOG0YxCGMt/pRVnRw6oxZVU9tkI1dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802145; c=relaxed/simple;
-	bh=mbCXMdlrvkChHBaebNVBUxjlfeVxhqoXVwda21Ivn1E=;
+	s=arc-20240116; t=1739802286; c=relaxed/simple;
+	bh=yd9PnR+BwLNDAH7iL0n5kuyPV1fByt9Z80i3v6lRtAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mvvqs9iXiVqfRoICY1vXnHlUVgIqbm1QnlyiV8ufnQSDnar+DXaBl7hagtcLw0bGKcf2dtN3e+Q0eWEoOkRojn6QhBl7jdk4i3FaK+fk7vDkwlomVNHN3uFL/AJh/5u9M3mJfEzHCZTREkNq4Lw9sCaOtNS5VQrXfwE4nbjBURw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S4t1vLHC; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 478D844430;
-	Mon, 17 Feb 2025 14:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739802140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=agWMaaEU4vp0cnAil5eV67woVUsr1A/2Ld8pyt7qoFI=;
-	b=S4t1vLHCw/Kg2C8kbN3Ak0U48q7PKjHPfh+PurW6NQBhIvLAbuA7cHLbuIku/84RI3Bu8g
-	OPo4PqbadCh5mZrs+bLTE2W1Zs4gF1o4mXCI89e51kvaIGHAjlUXTNnBhVrIJgPbxU5cPv
-	P8ynGOg5eQUOXQeRpIlrQcSn8mGgJksmJ4hs8sswTyA5YGqIeezGdMzj9Se3kFXtItB31g
-	tZX0kgMGR78MftYI5rHq2rwIaPUYWGBd1o0u5N18R5ohzCfCxtEdtNJnlrUmXL1q33IpkE
-	iTTCKjdJTbzELpM4HDVjJ5xdsnbJk+hMtWlULGuaHck0mhoyA75iiQG+xC/PDg==
-Date: Mon, 17 Feb 2025 15:22:16 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Sean Anderson
- <seanga2@gmail.com>
-Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
- PHY-driven SFPs
-Message-ID: <20250217152216.5b206284@fedora.home>
-In-Reply-To: <5d618829-a9bc-4dd4-8a2e-6ce3a4acd51e@lunn.ch>
-References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
-	<20250213101606.1154014-6-maxime.chevallier@bootlin.com>
-	<Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
-	<20250217092911.772da5d0@fedora.home>
-	<5d618829-a9bc-4dd4-8a2e-6ce3a4acd51e@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=WqIrJXAHKSkEfYTN1vVj9g/BFiM4NSMkf83IXSC0oOZueJj+DQQi3xhmfxsvs7Kx8DlgGn5N2JtspTtCZ6+awK2/VRETkNhtrXFtXyK0O0bKVbYuC0yMH/FM0K/+46BhbzlWrvmzTtsAkd5y2F0m79SDv75azYSJDSP+1kkKtbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yv7irP97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244A1C4CED1;
+	Mon, 17 Feb 2025 14:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739802285;
+	bh=yd9PnR+BwLNDAH7iL0n5kuyPV1fByt9Z80i3v6lRtAc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yv7irP97jNj+AxDLGonPN8w1WPI1/tREGBuqeJ0N22uf45XRCZNLs9sxhkvMZO4ce
+	 aKG2cLJ2CPOx4w7GBgoc8acUlSk1ojWPfOLQqfczJLVEnK0wM41qBQyC3y5PF4tszr
+	 nv0pzXe4hkmRyixoRu/E7tiRLIr6VCcJFTLV/gqMUUy3a8UnfWiPUoVXmEhB0wLX2g
+	 y5Pf9l4p2dHsUAKn072S7F4zfZRm/U37sR22zDxV9GfJOJjZpQFfGo+Jtg6KtcU38F
+	 oeIxX0tvYdmmwIyWJ3NoNBtvy/ld3wZJia0q1Q6PPo01rvidRVMrTzezBZ11AOHsrP
+	 QMtTjdfhiH/Cg==
+Date: Mon, 17 Feb 2025 14:24:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <20250217142433.12183a17@jic23-huawei>
+In-Reply-To: <CAPVz0n1529ydFRHn9N3jEsS8Rhdf-c4xECkMd9TDczzBTNuJzA@mail.gmail.com>
+References: <20250215103159.106343-1-clamor95@gmail.com>
+	<20250215103159.106343-3-clamor95@gmail.com>
+	<20250216145445.1278b6ae@jic23-huawei>
+	<CAPVz0n1529ydFRHn9N3jEsS8Rhdf-c4xECkMd9TDczzBTNuJzA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,48 +73,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtt
- hhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
 
-On Mon, 17 Feb 2025 14:43:00 +0100
-Andrew Lunn <andrew@lunn.ch> wrote:
+Hi,
 
-> > One way to avoid that would be to extract out of phylink/phylib all the
-> > functions for linkmode handling that aren't tied to phylink/phylib
-> > directly, but are about managing the capabilities of each interface,
-> > linkmode, speed, duplex, etc. For phylink, that would be :
-> > 
-> > phylink_merge_link_mode
-> > phylink_get_capabilities
-> > phylink_cap_from_speed_duplex
-> > phylink_limit_mac_speed
-> > phylink_caps_to_linkmodes
-> > phylink_interface_max_speed
-> > phylink_interface_signal_rate
-> > phylink_is_empty_linkmode
-> > phylink_an_mode_str
-> > phylink_set_port_modes  
-> 
-> ...
-> 
-> > These would go into linkmode.c/h for example, and we'd have a shared set
-> > of helpers that we can use in phylink, phylib and phy_port.  
-> 
-> Please be careful with the scope of these. Heiner is going through
-> phylib and trying to reduce the scope of some of the functions we
-> exporting in include/linux/phy.h to just being available in
-> drivers/net/phy. That will help stop MAC drivers abuse them. We should
-> do the same here, limit what can actually use these helpers to stop
-> abuse.
+> > > +static int al3000a_read_raw(struct iio_dev *indio_dev,
+> > > +                         struct iio_chan_spec const *chan, int *val,
+> > > +                         int *val2, long mask)
+> > > +{
+> > > +     struct al3000a_data *data =3D iio_priv(indio_dev);
+> > > +     int ret, gain;
+> > > +
+> > > +     switch (mask) {
+> > > +     case IIO_CHAN_INFO_RAW:
+> > > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DATA, &ga=
+in);
+> > > +             if (ret < 0)
+> > > +                     return ret;
+> > > +
+> > > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK]; =20
+> >
+> > I may have misinterpreted the other thread.  IS this value in lux?
+> > If it is make this channel IIO_CHAN_INFO_PROCESSED instead.
+> > =20
+>=20
+> This is actually a really good hint, I will check if this works out
+> and if yes, then definitely will use it. Thank you.
 
-Can we consider having an header file sitting in drivers/net/phy
-directly for this kind of things ?
+=46rom your other reply it seems we have no idea of the correct scaling.
+If that is the case, then channel type should be IIO_INTENSITY as
+I assume we also have no idea if the light sensitivity curve is
+matched to that required for illuminance (which approximates the
+sensitivity of the human eye).  Various datasheets provide completely
+garbage conversion formulas btw so even if we have data this can
+be problematic. One recent sensor was using a green filter and
+saying illuminance in lux was 1.2 * green which was assuming their
+own definition of white light.
 
-Maxime
+Jonathan
+
 
