@@ -1,125 +1,156 @@
-Return-Path: <linux-kernel+bounces-517214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4F1A37DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:01:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD802A37DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:02:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6461C16E656
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09513B4E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6011B0F26;
-	Mon, 17 Feb 2025 08:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0381ACEC7;
+	Mon, 17 Feb 2025 08:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jE8vIIhf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l0Fb8Xoi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D151A4AAA;
-	Mon, 17 Feb 2025 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A92D1A5BB6;
+	Mon, 17 Feb 2025 08:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782724; cv=none; b=O4jQpPfypfXQ0WDolAdSXlbXaRFo9Pg9KxufMaAbOEttlSk7DyiiljWJcj4+vEFdolRwXsv9BinsfoFd2cuFWEdb6m1iqv8EZls9JD5imaPU+aXZr/eFzR8JIv/8ZNKolo/hU0TYK+9lB0eZMifMF4RreX3yD1EVUefAcTIzdRE=
+	t=1739782696; cv=none; b=XP9QNgT/ID65P/Y4JW/tZxCY9baSpMYpi/8Tx/1PrPr0yxThxUB8Eo9JvV0am/MEkOlxCK8gJgji6ZqNL3gvhwG9i980xypI0ztoSSD6oxkSaa04a8UsW+5BYLDJpoMTI9Oyqz/97yLuKsoxkU6BnAQCYV94T9xTwMCfma9qArI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782724; c=relaxed/simple;
-	bh=icQZctjBaNyUMIgCBFQc6IRMZ5I1Ya14Tv26LTpGTPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B/nnzORL/m1enwtUNzUiLhBwE0MswELJwI3MfPjWEdWoTeLEWBXwrYjqp0xfmRTvRTW7t7+wlCJk1JtxfkFRW92h8mHZviMN6dRgi4GS2Ig/V2ijeF7hBnwkqQ2Z0C0GujYkEtL6uxN8zE3bkUfoJUaUm2GM0ll4+RoNpC7TF4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jE8vIIhf; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739782696; c=relaxed/simple;
+	bh=YGKakBzwkxieZv4ys38XQTPOxJy5UJPJ9B7AOCv2v7o=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i7Zyy6JCTO/lZT6VAlHgUYKy57S6rXgrPnpP2lJvuVvWlgxeaABwVHYld5CT1XUUpwyETfIyaIMKzKf31c/OIVqUttBI3NRoUxFjwR1wAt1pPdcq300rFZbBo6b6Hsop9/V4F/0goFukOkGLzTeJwGyiF74PjESkIUJnE11+UCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l0Fb8Xoi; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739782723; x=1771318723;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=icQZctjBaNyUMIgCBFQc6IRMZ5I1Ya14Tv26LTpGTPY=;
-  b=jE8vIIhfUpITWCZVhvjHS8Kmz46UBnlEu3gH4PSr2mX2i6fZV0DC7W35
-   78Qnr5u8ug1u26x/jm1U9rutrBW9/62Q14/bC75Bd66qiCA6O9TkTHdyo
-   ngPqxAg3duto7DaWtuSVqHc0yScCVSxo5eM7niIbFBwEwNVL1eatYI+I+
-   HTLrfZh5NbbLEBb0Wg6i3RXUuW5Mr65zfD6mF5VbVUgTYtkERVboaRW2/
-   B5cBO1UH+R7yB7IbK/S2iDhTFAJTf+9gPtzeGcxyXtSLDCuMRFPnRw5jo
-   QVAh/hH9VPk5KV7BJnYmN2PjW67SC4v+6A47aaPwwDposNu8efkj3ubow
-   Q==;
-X-CSE-ConnectionGUID: 4iRWRtNOQ1ywg34vocKndQ==
-X-CSE-MsgGUID: sOuBm3g2TY2ZP0UODj3Wzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="40579480"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="40579480"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:58:42 -0800
-X-CSE-ConnectionGUID: zgcqOHeATSOfthLbmdfzBQ==
-X-CSE-MsgGUID: UgeUSULcSvGrFocJFJtIEQ==
+  t=1739782695; x=1771318695;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=YGKakBzwkxieZv4ys38XQTPOxJy5UJPJ9B7AOCv2v7o=;
+  b=l0Fb8XoiLvrBUfrBcF8TuJimrZam5R48L6eknyLAGEYIAzsI7DostKB8
+   iOc7sTd5SuDoxhgEyqr5kpfTTcGXmTvtoUYMvy8hGB/roYFQ/ICs17G5z
+   vxTrvV+GUeR+311IT9ADOnybvFbc2SXRYG1aMq3MurbAjC5xEAgLinRdo
+   J4EMCRzVTZelzY7fraxmJQwlVBZMERIkQdeiXWd0+YLhDChcf7DV6Cvh7
+   fvGR9FKPuHqCxCzCFk7xSNuFs5ThXwFr4r0slX9+u4YqWDCKR9MZ5BX9a
+   iotfTCbkYo/ZAhXoMQJ1Ar0TSyXrTxASW8UJ6uRqFpao1QfRn7GaSL6Ge
+   A==;
+X-CSE-ConnectionGUID: YcyO7KsjQGKVdlBfStE4NQ==
+X-CSE-MsgGUID: x1oUhVXyQ6eR0/O+ZsUhEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="39685363"
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="39685363"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:58:13 -0800
+X-CSE-ConnectionGUID: nZpr5yv9Q8uL1Yn9ziDUWg==
+X-CSE-MsgGUID: kk3aPY7SSw6NmYXGBSw26w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118697583"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:58:39 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 2/2] KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
-Date: Mon, 17 Feb 2025 16:57:31 +0800
-Message-ID: <20250217085731.19733-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250217085535.19614-1-yan.y.zhao@intel.com>
-References: <20250217085535.19614-1-yan.y.zhao@intel.com>
+   d="scan'208";a="144989919"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.163])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:58:11 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 17 Feb 2025 10:58:07 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    =?ISO-8859-15?Q?Pali_Roh=E1r?= <pali@kernel.org>, 
+    Dell.Client.Kernel@dell.com, Matthew Garrett <mjg59@srcf.ucam.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] platform/x86: dell: Use *-y instead of *-objs in
+ Makefile
+In-Reply-To: <20250214214535.4947-1-kuurtb@gmail.com>
+Message-ID: <cc0f1964-ae37-4cfb-b5d2-da2e2a97e522@linux.intel.com>
+References: <20250214214535.4947-1-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Bail out of the loop in kvm_tdp_map_page() when a VM is dead. Otherwise,
-kvm_tdp_map_page() may get stuck in the kernel loop when there's only one
-vCPU in the VM (or if the other vCPUs are not executing ioctls), even if
-fatal errors have occurred.
+On Fri, 14 Feb 2025, Kurt Borja wrote:
 
-kvm_tdp_map_page() is called by the ioctl KVM_PRE_FAULT_MEMORY or the TDX
-ioctl KVM_TDX_INIT_MEM_REGION. It loops in the kernel whenever RET_PF_RETRY
-is returned. In the TDP MMU, kvm_tdp_mmu_map() always returns RET_PF_RETRY,
-regardless of the specific error code from tdp_mmu_set_spte_atomic(),
-tdp_mmu_link_sp(), or tdp_mmu_split_huge_page(). While this is acceptable
-in general cases where the only possible error code from these functions is
--EBUSY, TDX introduces an additional error code, -EIO, due to SEAMCALL
-errors.
+> The `objs` suffix is reserved for user-space tools. Use the `y` suffix
+> instead, which is usually used for kernel drivers.
+> 
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+> Hi all,
+> 
+> I based this patch on top of the for-next branch.
+> 
+> Ilpo, if you prefer this patch to be based on top of the fixes branch,
+> let me know. I'd submit two separate patches, one for alienware-wmi, on
+> top of the for-next branch and one for the other drivers, on top of
+> fixes.
 
-Since this -EIO error is also a fatal error, check for VM dead in the
-kvm_tdp_map_page() to avoid unnecessary retries until a signal is pending.
+Thanks for the fix.
 
-The error -EIO is uncommon and has not been observed in real workloads.
-Currently, it is only hypothetically triggered by bypassing the real
-SEAMCALL and faking an error in the SEAMCALL wrapper.
+I took this through for-next branch to not make our lives unnecessarily 
+complicated. If there would be only handful of -objs, I might have decide 
+otherwise but this (wrong) pattern is really widespread so removing a few 
+drops from the ocean is not going to sound us the finish line fanfare. But 
+it's still an important step towards the right direction, regardless.
 
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/kvm/mmu/mmu.c | 4 ++++
- 1 file changed, 4 insertions(+)
+TBH, I didn't know the distinction either until Andy explained it (and 
+like you, would have just copied the pattern if one was readily 
+available). But I've never really deep dived into the kernel's build 
+system anyway.
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 08ed5092c15a..3a8d735939b5 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4700,6 +4700,10 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
- 	do {
- 		if (signal_pending(current))
- 			return -EINTR;
-+
-+		if (vcpu->kvm->vm_dead)
-+			return -EIO;
-+
- 		cond_resched();
- 		r = kvm_mmu_do_page_fault(vcpu, gpa, error_code, true, NULL, level);
- 	} while (r == RET_PF_RETRY);
+I wonder why checkpatch doesn't catch it, or does it? At least there are 
+no "objs" strings in its source.
+
 -- 
-2.43.2
+ i.
 
+> 
+> ~ Kurt
+> 
+>  drivers/platform/x86/dell/Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell/Makefile b/drivers/platform/x86/dell/Makefile
+> index 8ac9a933c770..c7501c25e627 100644
+> --- a/drivers/platform/x86/dell/Makefile
+> +++ b/drivers/platform/x86/dell/Makefile
+> @@ -5,7 +5,7 @@
+>  #
+>  
+>  obj-$(CONFIG_ALIENWARE_WMI)			+= alienware-wmi.o
+> -alienware-wmi-objs				:= alienware-wmi-base.o
+> +alienware-wmi-y					:= alienware-wmi-base.o
+>  alienware-wmi-$(CONFIG_ALIENWARE_WMI_LEGACY)	+= alienware-wmi-legacy.o
+>  alienware-wmi-$(CONFIG_ALIENWARE_WMI_WMAX)	+= alienware-wmi-wmax.o
+>  obj-$(CONFIG_DCDBAS)				+= dcdbas.o
+> @@ -14,14 +14,14 @@ obj-$(CONFIG_DELL_RBTN)				+= dell-rbtn.o
+>  obj-$(CONFIG_DELL_RBU)				+= dell_rbu.o
+>  obj-$(CONFIG_DELL_PC)				+= dell-pc.o
+>  obj-$(CONFIG_DELL_SMBIOS)			+= dell-smbios.o
+> -dell-smbios-objs				:= dell-smbios-base.o
+> +dell-smbios-y					:= dell-smbios-base.o
+>  dell-smbios-$(CONFIG_DELL_SMBIOS_WMI)		+= dell-smbios-wmi.o
+>  dell-smbios-$(CONFIG_DELL_SMBIOS_SMM)		+= dell-smbios-smm.o
+>  obj-$(CONFIG_DELL_SMO8800)			+= dell-smo8800.o
+>  obj-$(CONFIG_DELL_SMO8800)			+= dell-lis3lv02d.o
+>  obj-$(CONFIG_DELL_UART_BACKLIGHT)		+= dell-uart-backlight.o
+>  obj-$(CONFIG_DELL_WMI)				+= dell-wmi.o
+> -dell-wmi-objs					:= dell-wmi-base.o
+> +dell-wmi-y					:= dell-wmi-base.o
+>  dell-wmi-$(CONFIG_DELL_WMI_PRIVACY)		+= dell-wmi-privacy.o
+>  obj-$(CONFIG_DELL_WMI_AIO)			+= dell-wmi-aio.o
+>  obj-$(CONFIG_DELL_WMI_DESCRIPTOR)		+= dell-wmi-descriptor.o
+> 
+> base-commit: d497c47481f8e8f13e3191c9a707ed942d3bb3d7
+> 
 
