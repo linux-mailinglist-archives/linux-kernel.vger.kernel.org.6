@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-518271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3099A38CB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B7FA38CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BAD166139
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6C188EA85
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B477422B5A3;
-	Mon, 17 Feb 2025 19:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA7623872E;
+	Mon, 17 Feb 2025 19:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+/Mf2xt"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DHZOkN+6"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE36372
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C0D237713
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739821679; cv=none; b=qRrzfo8czwe7OQTqZixtMZhWLoLnI8FP901CYL5Pxp4RZuqnTLHuSEPEsrSvdG6xg6KDHUloDv9K3fvwNjWGpRsV8FK4JUX6P/F1z2zMTaD8yzMS52Iul5wAMqeI6vWeBTUFz5kGU0w4flQPvOpwI0OmpfaDKMtiY4d3tpt4ZcI=
+	t=1739821838; cv=none; b=hYF7JwsC5yMI5lXSSTDQtl8kgKyXDTLfTbebHKbH5OdzO6c5Fr0h1pzVcK/WuAxEudu1NUREwp7o5wO9IKBoN8AFV78scdBAEUwh5yeStAGhts3ncMr6/QQ/z1m6LoScLm6ZolFxICm/ga5OyA4nSTsseKYmGy+/5nvBRIAn80Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739821679; c=relaxed/simple;
-	bh=SkwZ2w0lamryusYY4ciCnWMf1D8dgvFgw4aD7cKPiwA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuKpV8USJoe/49UVRGoSWdjWW4hrxLW9PMUtnWmeNepRBwYFFnUMDNfzOC/MvIt7oGnUi+m1zKu4Y+GoBi62yXS1ooFOVxFLWa7HRNFCkoXlOiciNBRVPl6AA6AkFrSvA7QMUOYidLOnBw5z8ajiWoNOSrcEmrQYKI2bPUfUXJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+/Mf2xt; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1739821838; c=relaxed/simple;
+	bh=OtQGjZibfaoAgSCWyYg6KTXMKcn/tqRoYLIaZ14cr7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/hbG/prrj2uRAPpzNjawBXQGybAXDAyttYu1s36Exx48q10CblVRoqe7iydpeKfvSgOpDKcvSA/jyNhXpTAi3W0iSCt3Veta/yOytEifpe3x/12UB3aMccTyNd3XyoMvYTfB+v201/ZUMNtNSrcVAbOYs5l5J2yfAd+/eq4bOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DHZOkN+6; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so4727598e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:47:56 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5452c2805bcso3498304e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:50:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739821675; x=1740426475; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739821834; x=1740426634; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/HiC3hU7W8x9xtMSQInvGC02cUUR7tDCJw/WUMoZi4=;
-        b=P+/Mf2xtlHShXB1Z72BAkxlW3pqjyAz8tIoD/UxelmsAVxlbemejoARRMV3O4poskl
-         2f7hD+jfiq/KebMq4QqL5jC/5QWC5VHFJCYaVRRpQrJWOHFfUwpyTbeCxWr/rROb8SvT
-         i4cHQyP0On62yB3M0WS7l10cMExky8JoqQ5hI3Yv+DqrBqz5Lfev9DRrftfNn2HZXmyh
-         FzhRGAw1JJT2Eu/gwVFsLIQBW71tJcpdDrY6FLuH3oF2Ph5ZmrmzXeyMcyiu5fcSLXw5
-         SB4LqRmuFIU65y0/EQYpdSK+ECKc9i6VWAbWomqqFtBcSSFVq5MOyTozOEdK1gLTDoXV
-         DJTA==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7XMMxmB25I7aAKLMKpG9EtSe+ebYBtU0fhxbENZPlY=;
+        b=DHZOkN+6j4g1JB2ZqNIdmdqxxEnDt3S3x4OS3nQuRRYoCn3Qc0uOtIZsf710fFLMx5
+         uguIm4xXeaeg2VI4zzn7UQgP+FYNfghQ+wSoSTdHw3ILdyWCAD4ykXIXtOzfCyTaYm8F
+         RTW6RhptQrDFfgzaBugi2mgAKm3syyJfGKpGTqNxUQaNZrP0hHPDFtRtHi/XshvzBaV1
+         0+I+ik5xB1vBH9zN+Xq71eK46ONniwCnnok2Qps2NA6FVtPmIcoR0HbimYyeSxySJQo+
+         Wv+V6+VmK8Oxh2225P2N9pxdJcA7Sf2uj1xubqiZ46Yv9mk9ITPxESEjud/LIXAaFFVt
+         +NqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739821675; x=1740426475;
+        d=1e100.net; s=20230601; t=1739821834; x=1740426634;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p/HiC3hU7W8x9xtMSQInvGC02cUUR7tDCJw/WUMoZi4=;
-        b=CTYh/7IbzWDVOGFRUHb4JUHGeIQaXjgCXs6uP3Z62oPVK/xR+sqca+O7AqZ3AuLwSn
-         pCLBi5NgZ6H9EQ80xDJXB3QDPHtL/Wl/KcJNlAFWD8CkfyYiqiduF2CxnP4jBhf9TK9R
-         WpoF0hXkoNy0+ym6/gabXvw8+sw1e4ieRlBZ7m4yR+CBy7EtLywXZ/aUr4MgsNj1oVUi
-         X0+wsGYx26uO36Uy8mf29DEccgSWJ96kE/q8+TApPvO9Jao326R6zM320g8Ko3ZBvn4y
-         Fm+/m2JBQ31Ef7zPRcOIBDYYJwu85sm0u8Hqu+e7+17bkKErRicwqN1W5lLG93s2izqm
-         UfAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx9TRmmzF+uvjQvXAi891XoUiMgpkINGUBbkK+R/8toKuol2Mc0ZI2KcEX1KAWpepe5Jb3dgZXlk//WSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN61QUWWnGbhlhqLMYJbJr2S8ISe5J8CyvtbnEargGxjmIj/YF
-	CHTYFJhFhQC20xpeGnVnXghMoyO419GCHrw2F3+XJ491xcAj03U5cz6jOpQA+Q8=
-X-Gm-Gg: ASbGnctCK3TXk0pEadrPfwsDeu9B/ucRyfMbFS4uGc1Spf2Ks3c3R1upI11EOHctBxG
-	GrMu1rEQQZHJlY3IqN6NwFx+nW2L+RZVzN9y/gbhuaVymeFZNiRqHgQMVdq+ssut6GWrHTsZCTr
-	9DH+FjaWJqF5fhpwiUmOp8QrMjGJ9ri/YzEkmCUkxERsrdivJf2we4gfwZtUpayRCDoTzBouI0s
-	Z1tVrSC9mqdaPjeMT1tcBWwjOn1cc3IJLwDQIv2T7DYVzWePPG5fxJ6xdlQLqNfi91ohEQMBdU9
-	P19G+x7d5nRsytYfdeaH1PVuqDSOyuJkUJw/XTn3716VbwwKvwSMT7BapoZK3vZtiVTBFmg=
-X-Google-Smtp-Source: AGHT+IEyW9gnl6AxRgNf+cTRw4yWiriWXFGVNouMOXVj5teJibUT/tWX/bcCfAWYd9bPM73A2ArFrg==
-X-Received: by 2002:a05:6512:ba6:b0:545:2fa7:5a8b with SMTP id 2adb3069b0e04-5452fe3aaafmr3876097e87.27.1739821675112;
-        Mon, 17 Feb 2025 11:47:55 -0800 (PST)
+        bh=b7XMMxmB25I7aAKLMKpG9EtSe+ebYBtU0fhxbENZPlY=;
+        b=ph7rsJWYWRvqoB/gUcroMOXSnXAlEQV+yORWFvxi8F/OArp+AmcaML2eYeiEeIpwkR
+         kSPbE4wz46nCBSSou/zru89hSUhpo2X0g5UqjSUiYIX05FVe0KKEwj8y2QmKHhEzeATo
+         /dY3QxUsKj3PY3E2esHqiMIJllY5nHuOSP3wz6f63MeLTu+BM1CQQ9WiyDbzjn32reQp
+         LtvYS/Q5TgS1bRoHIwFFBZKUXIKT0PFIvBWmzJqGXjn3f47Q4TiMcSnb27UGuiGQPM/C
+         kBqLZkwWSMV4URv7Sh6TMuhuMjzEQDvrVJmCTxiSHEW2zhkAaxclF2FfXuMUFB+TbpDJ
+         oH3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVn9VR4MZUM6pljTZ4UEmsVc9hNlPgDktx1E2aBUFDrlR29iqc6Jfs6h+E3FJ+/KQzEUAF6Yc+3OYIfn/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYO8Tb7ocgday122XXoFgUjYcUkEWLzKxpFv3uvRyVOiw7NoBR
+	94AQ+S7ZOBlZej6e5yj2zvzgEstDfmQ9Fcbzl4EUKa5wZufy8uGGjBjHrr15G2g=
+X-Gm-Gg: ASbGnct/XVDrBKlzyj1Nd0/MwvEP1jGTp/btnffIKyQjV+vaZ5rkFw/UiHSR4UtoFlR
+	rH6vbvOlGoc9dC+CPkIyibHCOujvUO+mfL//TsWCpSRSIQHv/K+QzS2rTScQnve5lnI4ZIQaigW
+	kaVnf/cTPWNeqFkdBry12Y3scHMBJKNJB1faMiEh8uWTBEfQkaxjzQm7DUbDZ9vIWhQQs3Lnflh
+	lcluecSzI9fBMGIBGheLlOD5ZFZ2Eab3r57hm413SVj/k9GXGDKoksZMMcrL3kXRZhHBAJ2Jt7f
+	Hbc0+xF34oJS5ebBcVKAJiFexgZQcapPw8jx07ITq1ryrG0sLbpoSvfpZAMvYUQybmhiNZ4=
+X-Google-Smtp-Source: AGHT+IFEnXuT2usVcSoMTmal4BeyQztiA9BaCKYabRMQm3dIpVeX4YHZzzAuOaY3bq5cOJl0zMdGsg==
+X-Received: by 2002:a05:6512:1194:b0:545:ff1:bcd4 with SMTP id 2adb3069b0e04-5452fe2e442mr3602142e87.3.1739821833664;
+        Mon, 17 Feb 2025 11:50:33 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452684a9eesm1408371e87.32.2025.02.17.11.47.52
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54522858229sm1504623e87.4.2025.02.17.11.50.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 11:47:53 -0800 (PST)
-Date: Mon, 17 Feb 2025 21:47:51 +0200
+        Mon, 17 Feb 2025 11:50:32 -0800 (PST)
+Date: Mon, 17 Feb 2025 21:50:30 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 32/37] drm/bridge: Make encoder pointer deprecated
-Message-ID: <dksptjtgipcuuivp3tud5lhghoiqrak5t33m5pz4jtssegz75t@fanvtjdmy2pp>
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-32-e71598f49c8f@kernel.org>
- <nfb4fb6lzjw4j5brsh242htgw3au2moklqjalfa3zzxjsi2qn5@l3censelmgbz>
- <20250214-arrogant-strong-hoatzin-efdcd8@houat>
- <yy37e4kne7i2hl7coix6v7vajb5bm4zohod4fdzayvxr52l57u@cxturs2uxgcm>
- <Z7Nl8JiFncngynNy@phenom.ffwll.local>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/15] drm/msm/dpu: check every pipe per capability
+Message-ID: <sd3u2l4epms4ttytoc2bqrzsqfxnphqkutwkxremjon22ven72@3rohlpaxhryr>
+References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
+ <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-1-c11402574367@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,51 +91,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7Nl8JiFncngynNy@phenom.ffwll.local>
+In-Reply-To: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-1-c11402574367@linaro.org>
 
-On Mon, Feb 17, 2025 at 05:38:08PM +0100, Simona Vetter wrote:
-> On Fri, Feb 14, 2025 at 03:29:12PM +0200, Dmitry Baryshkov wrote:
-> > On Fri, Feb 14, 2025 at 02:07:18PM +0100, Maxime Ripard wrote:
-> > > On Thu, Feb 13, 2025 at 06:35:15PM +0200, Dmitry Baryshkov wrote:
-> > > > On Thu, Feb 13, 2025 at 03:43:51PM +0100, Maxime Ripard wrote:
-> > > > > Other entities (drm_connector.crtc, drm_encoder.crtc, etc.) have
-> > > > > pointer to other currently bound entities. They are all considered
-> > > > > relevant only for non-atomic drivers, and generally perceived as
-> > > > > deprecated in favour of the equivalent pointers in the atomic states.
-> > > > 
-> > > > I think there is a significant difference between mentioned fields and
-> > > > drm_bridge.encoder: the former fields are variable and can change. The
-> > > > latter one is static and set at the bridge attachment time. Nevertheless
-> > > > I think it is a good idea to deprecate it.
-> > > 
-> > > I'm sorry, it's not clear to me here what you want here either. Do you
-> > > want me to change anything to that patch?
-> > 
-> > Well... I was thinking if we should expand the commit message. Most
-> > likely it's fine though. In the end, I've r-b'ed the patch.
+On Mon, Feb 17, 2025 at 10:15:50PM +0800, Jun Nie wrote:
+> The capability stored in sblk and pipe_hw_caps is checked only for
+> SSPP of the first pipe in the pair with current implementation. That
+> of the 2nd pipe, r_pipe, is not checked and may violate hardware
+> capability. Move requirement check to dpu_plane_atomic_check_pipe()
+> for the check of every pipe.
 > 
-> I think this one is wrong, since the bridge->encoder link is static. This
-> is unlike the connector->encoder->crtc chain, which isn't, and where you
-> really want to go through the atomic states or you get funny stuff.
+> Fixes: ("dbbf57dfd04e6 drm/msm/dpu: split dpu_plane_atomic_check()")
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 71 ++++++++++++++++---------------
+>  1 file changed, 36 insertions(+), 35 deletions(-)
 > 
-> I don't think we have bridge chains with multiple connectors though, so
-> this is fairly academic and so maybe still a good idea to make this all
-> more flexible? Unless I've missed the memo and atomic bridges have
-> flexible routing, and in that case yes this shouldn't be used.
 
-No, bridges are still attached to a single encoder, however I see
-Maxime's idea in uniformity. It's easier to remember that all direct
-pointers are deprecated rather than remembering that bridge->encoder is
-static, but everything else is dynamic and should be accessed through
-the state.
-
-> 
-> Mildly confused ...
-> -Sima
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
