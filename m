@@ -1,148 +1,188 @@
-Return-Path: <linux-kernel+bounces-517167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715FBA37D34
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:29:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D19A37D36
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510017A1660
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4AF118850BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62DE1A256E;
-	Mon, 17 Feb 2025 08:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6AE19D081;
+	Mon, 17 Feb 2025 08:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LnBzlFkc"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="A0WPuDmv"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2064.outbound.protection.outlook.com [40.107.95.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515A419F115;
-	Mon, 17 Feb 2025 08:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739780968; cv=none; b=UgLhFDn9/5EEKGViZW88KkzmXHhJoMCV+EncpkZwsXvlykcjj0k8sL+ddR2mv2HKwfXwd1vQMxwLnfvYtxiWYuddSfIG+fFBvMvlrnRV9x9x3ZhELtMzqkn7fohh9cuyqW5FXMo3idjV1CK4WuGWT/TlK70YjyvTh5QWStEOfJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739780968; c=relaxed/simple;
-	bh=NgVWQqvEGgkg3GF7x4d8/TavathxvBCSBC50VSh54eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iSCdKAFAEcVfBxLDLfCP9QzDY1CivwidKHKjjFGzr0qzT1LwCojo1xsUFO6GVVGBFvYG6nJ21AJK5JLbJ4r3CObqSRaQVMC+VRNIr1f1MVET6ur3kIW7xr+X/iV07fjEslc2eJlOt/WymGJJTAZXeqyMT4xxHcnT9bW0X3cY5UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LnBzlFkc; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E51C0442AA;
-	Mon, 17 Feb 2025 08:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739780956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v5AnTb28mQKtjEHDL/Wk7VuZHdL8LuplyEfPirr+QDY=;
-	b=LnBzlFkcgZdoEtjFLY3rmc7Fv9NnY81cKg9mYY/HiYt9UxhsWLnGxsV9cIF4Abzd17XhGe
-	4kneXCqLG+QzaJNapTEBQyXVi3//cC7NdpLsTv0XhY9/D58ZsnH3ydpdOf2L7ccHO7XJ8A
-	wKjo7XpWTprsPoUai+IAO8+AXYJFX2vDlszT6+M+C2Hjp+jxk07z3k+uFp2DJslPVfeZKo
-	a3UI3mIZfkEjWMjNCMu+3dqfBqnc0acxFIPL5CS7+yDfws9QkU2fQGYfs5GFu9Y7Sfivrv
-	5khQc4Kx7WRi6T55WBGbKgEjBGPRn15o176YQsxsQvxbgJWTtOJraFEVzc5kNA==
-Date: Mon, 17 Feb 2025 09:29:11 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Sean Anderson
- <seanga2@gmail.com>
-Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
- PHY-driven SFPs
-Message-ID: <20250217092911.772da5d0@fedora.home>
-In-Reply-To: <Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
-References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
-	<20250213101606.1154014-6-maxime.chevallier@bootlin.com>
-	<Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E406101EE;
+	Mon, 17 Feb 2025 08:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739781029; cv=fail; b=hqKbj6vfh3cWj5jdOW2DohJxEvRCUM7B3vAF7Loh9jhywC/xdRdsNipaHFwjs3JOgvGyY7iD+YPQMtG3RCtEAT3RhC28/nW6Ye8o9wQWCS1f/3J4/3dBuNpwLwi0E3hIpRNIFqTJchOiMZpABqb1dFV+rdy0KhvjHj/2YCX0UiI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739781029; c=relaxed/simple;
+	bh=2V79c+yot0bSdY6N3t4zZdKSwrd9KZss1ERAzzNKlNA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cbepQ5hMZ0Ni4LwaRURiAnp86t33DvTExsgI9P9CehfxNptZrGvHTL6OuE+5Aa7dsFzU/XGRWTyK3hQYSxXT2saewxGMDYoaMsVloBRBJPKC4IfhYZIZ1VNtr0l3xiP+entIabq91HMS+rz6xgapGb2kRhODPAl6wZwtNjXsPd4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=A0WPuDmv; arc=fail smtp.client-ip=40.107.95.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fRiye0GcDAodCopOmBQN/0dafaJEJTgRecEM1ec/vb5pEAhsz+4wTJRG6kvxuFz4mA3IRTbTVuBL1TeiWVjVcpKSQrHsbdtUb7tUoOEOxik1BH1SBVmvY9Yh3rKw+37IQf2t1XzJP+Qu/QBzDnGce7Mmi00OSHxfqxbgsRbv3Cc9UlBM/uRUTKnjLODtPiborblb1JXV+l94NdIlMJDodc8w2a3h5USMuHHBJ4AvtsaqSew+4aoaf7uRkklutQO4jA1arDevdvSUAn2eYkEXmT5ZrBQW2Tz+kUmLfdSjsZCiADXRMjfEdT96J2VjpeHemjhrAQY9pgSsFBCHBL8IZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gvSTL+owNjzoQdQxqx5B+IAvThH+ybiXLgtMT7HIhx0=;
+ b=SPxpILopoJ0rlHfKMhlYRZRq9mSbhGCTiQpGvqA3HqRIEgm8zAhwCenCfEm93g543SPZFy/8VoQQLiVEp6juOeoj0EENCil92n2ebj+uhLVPOI6FR0lKHRfysk+c4Mfjnj1Ul9rsG9ct3cqnxLdxv6N4rgvcbISl3bcqvUmzVP66SGCUqQTQoZZ07hCFTIWmQQq5u/f9TwjiXGtIkhWUf6i3scW4Yf+26F4wg8fnbfRvUtQDyn3qL+ff9oNzgioR9X7PFdaeIokItPYfzGlioo5NdlSNi+puBO4ipsI8VlCQt5kGgllhaE28Sr1FqwFjvrjkQo3BfghY3bkTEsM44g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gvSTL+owNjzoQdQxqx5B+IAvThH+ybiXLgtMT7HIhx0=;
+ b=A0WPuDmvMjQ9UU4x70xs+JXacJqxWcOgb70s7gQR0tMEbRBraCscDeehiRTyxyUhUL8/99a4aO5yCP9AkS3HtlixUk/giVEvhiYMBlaxgf3vgqIJf1rpvJ6zmnwLJAcP4OuOTz1lGHlHrgp3qe+6GxjA79ld36WhsjOpu8BrS+8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by DM6PR12MB4236.namprd12.prod.outlook.com (2603:10b6:5:212::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 08:30:24 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 08:30:24 +0000
+Message-ID: <65818316-434e-4468-9ead-2e55c15b62eb@amd.com>
+Date: Mon, 17 Feb 2025 14:00:14 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v3 0/7] perf/amd/ibs: Add Zen5 support
+To: mingo@redhat.com, peterz@infradead.org
+Cc: acme@kernel.org, namhyung@kernel.org, eranian@google.com,
+ irogers@google.com, jolsa@kernel.org, bp@alien8.de, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20250205060547.1337-1-ravi.bangoria@amd.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <20250205060547.1337-1-ravi.bangoria@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2P287CA0008.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:21b::13) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehjeeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdro
- hhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DM6PR12MB4236:EE_
+X-MS-Office365-Filtering-Correlation-Id: d345fc6a-cd70-4b85-1c70-08dd4f2d5302
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTJ1M2R5aUlRSUphVmF3K01yQTlxSWV2dVlHS1pNR2RHa3dHd3VjQVJEbWR4?=
+ =?utf-8?B?N1BiT1RtdlBpUnN1c09Uc2tab04venVhN3RVT3FlRVlZZnJCR2ovWUYzVGN5?=
+ =?utf-8?B?ekxYSzNhSHFvbUU2YkJ2Y1J1S0ZmUDZDRkpOeDhLSE9Ea3BLSzlOZnlKNFlW?=
+ =?utf-8?B?UVRoSm5nbXF4dkhkekIyWjFINjAzK3RzWGEwZkd0eEpzSnVFMTY5KzN1R2VE?=
+ =?utf-8?B?U01xTXdzQTBGZFU5Y3AxVGs4QUlnSDkvcWlxc0g0bmFyY2kyMlE2MWx1QkMv?=
+ =?utf-8?B?bEovaHFtcEpSL2FpT2diKzJjdDFsWEI2aWNBeXg2MHJ2UzI4a3V6OTJvZ2tF?=
+ =?utf-8?B?T25VUEs0UXpicVNzVjdpTllPTGtsaEdXT1dDMTFBZFVvMmV4anpkRUkzZFBv?=
+ =?utf-8?B?bm5OR1d3b1JCQm1Qd1FWM3N5cVFZRGFIelpWWFVFUFBpc3pPbDNTYmtpOHZV?=
+ =?utf-8?B?MCtoSFBoZURGcnM4T0h1MGx1WWxzWWpHNllVL2Y3dlEwV1ZSSzg2K292cHRE?=
+ =?utf-8?B?elIrdTlVaVB6c1BMQTBhQUcvejRydUF1NzRPWWZRNTJoTkJ4OXByc1J1OFhj?=
+ =?utf-8?B?Y29nNVFOZUhJdVBmdWRYYzZGb1RqUjVNYlljTzUxU2lKQWU1bjUzS2xxdWlP?=
+ =?utf-8?B?cHRvN0haZE15VUpSbnB5cHYycUhIcTNmSThFZHNRWUIyR0RWVG9GUENacktu?=
+ =?utf-8?B?WGhlcmNjVUV5NUMvMkV1VjNHdXlzT2twbFNtaEo3TDZOUEFvVWxqaDA0YkNk?=
+ =?utf-8?B?Y2doTWk2bFlVcVNQNmNoMnpXeGsrSlYxSnA3QktaNkJjbmZQOXVjSWdPWlJB?=
+ =?utf-8?B?QUVQY0Z4MTJTWVhDcXh0NUtGWW9maFhnVkorSlhPRHlxZGg1NEpocXROVEhU?=
+ =?utf-8?B?NkwyWktCSVFxU1RSZzA3dTJ3cTJOSTNDeHNHalc3VDY2T0hsbTFnZzZBdkVR?=
+ =?utf-8?B?dFFBL2RZdGJTZEFMa0U5c3JNQmx1TGNEdkJGNmc1MW9QYVpidndna1c3TERH?=
+ =?utf-8?B?NzJmMHljbzFZNksxWENuVHpKVExLanlUcGpCakhIL2ptVkwyVG0yMm9xSkRE?=
+ =?utf-8?B?dnloY3ZTbE90ZVlVV05kSEZvOVRsTDV3VzRJdkkzdVd2S1dTUmVPdnpqZDRk?=
+ =?utf-8?B?K2U5dCtMVUJEN0xSR0pwajh6ZU14c2lkZGI2RUorTnRLQnRaNml0R1Q2TGth?=
+ =?utf-8?B?T2NPUW5ZRU04TWk4WDNzRDVtMXk2UHcrcmZkcmFPam5vN2FJWlcvcWdoT0d4?=
+ =?utf-8?B?a0lPWmFJczBWU3lRUmwvT1JscjA2UkFEbU5WNzdoVWYxRXlYQ3FVaUZoVjhn?=
+ =?utf-8?B?YW5ER0tVMDF5b1dzT3ZNTUZNWUpMZEFpalNCcXpOem4xVHlrdXZwQ1MrOUh6?=
+ =?utf-8?B?MW0yMExFamc5RTRkczU3Y01tNC90Ni85aWhDNkF6MkNHaG5GaXcxYnJENlFR?=
+ =?utf-8?B?OUxzYkwrcXBRQ2d4cTNDSEUySXJCYzVDQkpiU1l5ZUVDYkk3dXRmZkh2UHoy?=
+ =?utf-8?B?OVBhbDZ2RldMR0sxZVo4QkkzVWdoQ3pDU0J0RGhVTlg1aVdkQ1JrVnVMRjFv?=
+ =?utf-8?B?Y0I1RTRTbmQxQTliWW9pYmp6MjExZzk1bkhWNXo3RTBHMWU2SmhLUG5mdkdK?=
+ =?utf-8?B?MkliaHkzdTFaR2ltUk1NcUQ3UjJVbCtQYWtJYWNBeCtVTlM2RDhWcWh6VVk3?=
+ =?utf-8?B?RkZrMFdkaUpwUFhPUVNpQk1NdkZpb2t1V1FGZjVzZHpsUU1FTHpPU3RBSDAv?=
+ =?utf-8?B?WUszc0VUNVQ2NTJ3SXJMOFBvM21JZWhiOEYzRll2dER1eGlpdnROeFNPV0pS?=
+ =?utf-8?B?SlV3dDdRVEcyUE5IUW9CdDNYYW9GZGIyZXNqTGZRb2xtVURqRXQwUU9TY1Ir?=
+ =?utf-8?Q?tvmUy5d6OisJU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OFVaelBYei84TDl3VFVxZnllcFBCZUJBRjJKNncza0tWQ3FoK1piUDJYaEo4?=
+ =?utf-8?B?b0hzOTlZNjZzUlpxVzl6S1BVQjBMd0tRbC9Zayt5WFNIN21HQW9NOHg4bHJF?=
+ =?utf-8?B?YUF2WUtnb3lITjVOSDdNWncyVHZ6NGNiTDc0UFFtZmQ5L1VZSmkvVnlOT3V6?=
+ =?utf-8?B?b2FPRUhnajNBMTZOTE1sVjBTdnZjb3hmcDBJQkV2d2piYnpOOEV3SmJHazB1?=
+ =?utf-8?B?V0wvcWE1d3YxOWNlRXVUTkdtTmxlZUlDYisvNFoyR2xiSlFid3J0V3kwUjlm?=
+ =?utf-8?B?OENWWXBHcUpya0VXMjBLaVZ6NXZNWWZkUmdhMTRycVBJUDdBdnlCZlYrWkNn?=
+ =?utf-8?B?ZHpGTzdDVkpQWHJDakZSeE9LWWZUZWs5QzlDL3h1S0lmWCtHdzQ2emRxaENt?=
+ =?utf-8?B?ZVFDa2hwdGo5WmJzSENtVGhMWDdvQUVoRnVvdFpJN2ZvRDdlbXZ2SG9sbVk0?=
+ =?utf-8?B?c24yZjJabTdHaEIzSkhscWwwR3pma2dUeW92c3ZPdmFabDRiMFJRVjZHYWZp?=
+ =?utf-8?B?ZE40YTVuOXN5aURtWmxPQmJvVW5hZ1dFU3JCMUJxbjlkM0lCQ1grOVpySTRP?=
+ =?utf-8?B?MkdNM09KdjR1eTRlU1NSRDlkaFhYaXhIajNrRXd4amdpaEVscDNmV3plU3NR?=
+ =?utf-8?B?YW5peXNhLy9BaU02UndtNmJHYS9GQk43cTY1emhpUmRpcUhpMnhzTmplUDQ5?=
+ =?utf-8?B?UHA3Qm55UlZEb09pQ0pHdng3ZEhLSjJCUTZHUlgzNnY2aHFvSWhOcXBiTndq?=
+ =?utf-8?B?b2ZzWWpxSkQxd3IrNDY0aUQxeVUxSWdWK0Jya1dMQ1RUTGFFTUwrVHdHTHE0?=
+ =?utf-8?B?LzJRODJwZkJLVGNSRkoxdFBNNmhRa3ZpNFF1c0kyVC83c0tCNnZ5ODhuMkcx?=
+ =?utf-8?B?V0tTYjNudVNpQW5uRU5BZW90bGVWdWZCQ0IyRVdiRjRPUjZCSWVEeG04eldF?=
+ =?utf-8?B?ZjcrUHRJMEN1Ris2NTJzSFArdjh0blBGUHZUdFpURGNjQ0ExVmNIdUxBSE8r?=
+ =?utf-8?B?L3FUaXBaSmRSeEg0K0R1VDhFVWtGZmdLOE1IWlh4SzZiOWJjRzZvemZkQUor?=
+ =?utf-8?B?dWpIR1FWU2Z0ZitsQkdrRzhVdmFXYlVTZXdyQWdZek5MbUNPUGdFOEhpK1Fi?=
+ =?utf-8?B?YjhoaGswYkJNQnRkZ0JId0JsVEJqeHFabm1iUGZDUERmSWNVR2pITzRoRjV0?=
+ =?utf-8?B?TnhjeHM5c1kzNU04and0Sjc0K1A4YkdMd2ZjUWVMdmhTK2NQc2NPSmtvTmk5?=
+ =?utf-8?B?bWViUDYzQ3JtQm5adEdwOTV2S1ZPQnRnUHl5cTFZejM5dkVjNEVoS0RjRE9E?=
+ =?utf-8?B?TXQ0ZWo1RWhWQ1hua29OcjhhRVJZeUhhR2RwbGtMZWpINTlUVjdLd29jbFBQ?=
+ =?utf-8?B?UGkwR3hFQU56RzJzL2UveVJIcmxBcFh6ejd1Z3l3bEtuOHFnQkNLQk5iVGsv?=
+ =?utf-8?B?d2lvU3prOUhBVEJHSDBicmoycldnOFdIaEkrTjI2ZGY0RlJyVGhreEUrWGNS?=
+ =?utf-8?B?NnpocitSSzdLckJzMGZMamZ1VUEvaWhYRzRGbUd5ZncvZ2kvRkJoTUtTVEhT?=
+ =?utf-8?B?ZHh3WklndEFVb2xQMHd1eHVHQzdlYklzSE53b0t0OE5oa20vM1BUYzlkRHFD?=
+ =?utf-8?B?Ym8rR21JaDF3Y1FJL2NlbUVrZ0V4V1ZZY0V0QUJyTkhMQUtLSVJNeEN4Y09a?=
+ =?utf-8?B?TjNXRlNGeGpGbndodklOUCtIOXhxb1lDWFI5YWgrRGNVckZrVEVaODBTQzBL?=
+ =?utf-8?B?dlJRYTZ5QS9xU3RnUzFOb0lyTzMwalMvblJ2U1JtQS9mN1BpU3AyZG9kSEEz?=
+ =?utf-8?B?Wml0dmlZd3lOZS9MT0ttL2hhaGk3bW4yZ21wcFg3eWhFejdISUhLakIxcURm?=
+ =?utf-8?B?VUJ2Vmx6THZuQUVTaURuNWVPSS9YdUhTd2doOFZ5ajNsa0RVQTJCYWZtYnRF?=
+ =?utf-8?B?cVFPQ1BDS29ObGRuclN6OGJYWWJNeWU5UW9Ob1NzeHZjTTZxcEZDZVZiZFdY?=
+ =?utf-8?B?RjBQb0VVWTVucWNYdURScThsRi95Ym10UVVRVWRmQ3lZLy9KSTFacnhuaUUy?=
+ =?utf-8?B?cTE4TERpajhqbUhhTUJCWDNEMWl5a29UcXZoVXpJYlVzL3IrOFlOSlFiSGNL?=
+ =?utf-8?Q?BxCd8SyPRhi30J4J/TYzOC8lL?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d345fc6a-cd70-4b85-1c70-08dd4f2d5302
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 08:30:24.5309
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V5TB0LdrLMJxK/G2QFYFxtNQqEItI7f4Ya3HotmpASQSbDG5teRiYmkZGFEceF6o0/BWWetbhyV3ssK6M8QOJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4236
 
-Hello Russell,
-
-On Sat, 15 Feb 2025 18:57:01 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-
-> On Thu, Feb 13, 2025 at 11:15:53AM +0100, Maxime Chevallier wrote:
-> > Some PHY devices may be used as media-converters to drive SFP ports (for
-> > example, to allow using SFP when the SoC can only output RGMII). This is
-> > already supported to some extend by allowing PHY drivers to registers
-> > themselves as being SFP upstream.
-> > 
-> > However, the logic to drive the SFP can actually be split to a per-port
-> > control logic, allowing support for multi-port PHYs, or PHYs that can
-> > either drive SFPs or Copper.
-> > 
-> > To that extent, create a phy_port when registering an SFP bus onto a
-> > PHY. This port is considered a "serdes" port, in that it can feed data
-> > to anther entity on the link. The PHY driver needs to specify the
-> > various PHY_INTERFACE_MODE_XXX that this port supports.
-> > 
-> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>  
+On 05-Feb-25 11:35 AM, Ravi Bangoria wrote:
+> IBS on Zen5:
+> - introduced Load Latency filtering capability.
+> - shows DTLB and page size information differently from prior generations.
 > 
-> With this change, using phy_port requires phylink to also be built in
-> an appropriate manner. Currently, phylink depends on phylib. phy_port
-> becomes part of phylib. This patch makes phylib depend on phylink,
-> thereby creating a circular dependency when modular.
+> Incorporate these changes into IBS kernel driver as well as perf tool.
+> Also include a perf unit-test to test IBS sample period constraints.
 > 
-> I think a different approach is needed here.
+> Patches are prepared on peterz/queue/perf/core (cffa473a06d2).
 
-That's true.
+Ingo, Peter, gentle ping!
 
-One way to avoid that would be to extract out of phylink/phylib all the
-functions for linkmode handling that aren't tied to phylink/phylib
-directly, but are about managing the capabilities of each interface,
-linkmode, speed, duplex, etc. For phylink, that would be :
-
-phylink_merge_link_mode
-phylink_get_capabilities
-phylink_cap_from_speed_duplex
-phylink_limit_mac_speed
-phylink_caps_to_linkmodes
-phylink_interface_max_speed
-phylink_interface_signal_rate
-phylink_is_empty_linkmode
-phylink_an_mode_str
-phylink_set_port_modes
-
-For now all these are phylink internal and that makes sense, but if we want
-phy-driven SFP support, stackable PHYs and so on, we'll need some ways for
-the PHY to expose its media-side capabilities, and we'd reuse these.
-
-These would go into linkmode.c/h for example, and we'd have a shared set
-of helpers that we can use in phylink, phylib and phy_port.
-
-Before I go around and rearrange that, are you OK with this approach ?
-
-Maxime
+Thanks,
+Ravi
 
