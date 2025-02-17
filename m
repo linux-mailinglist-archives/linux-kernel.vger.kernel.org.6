@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-518038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7E5A388F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:15:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EE6A388FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB30167F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9E83A5D81
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0955022541D;
-	Mon, 17 Feb 2025 16:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBB5224B08;
+	Mon, 17 Feb 2025 16:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CGN7mBl2"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SmcMMC50"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3E0225404;
-	Mon, 17 Feb 2025 16:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9321B199;
+	Mon, 17 Feb 2025 16:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739808907; cv=none; b=ehTi4OkRDCreC1JX6imV9/2WLXTqrGr6ERdNeNS2REPn+PfkFicKCbRKYIxTvjsB+qHA1sGpqx7iB5RAjonTlnI+x/ymTraxwTdDKEV9KnpCbLBGCCLyioMtc3KUgEzuYeohQ95lAssSrV10mgO7cWCdnrZa8LfD+US5ZLEFuKw=
+	t=1739809007; cv=none; b=LQNrTXAAOPoTmtBi4LZCYjMHSlRrY5CdOCq+842V17wwF0zYXDt0lmLowewqH1Qw/JLADY9hx7u2Bn7tZRNcYxlAWodw2trCRRI+l7GQazAolslgTH5R0fljXgg8Vq5PChi+Tyw79FEPhW5zYDR4v0q9gnMa6X59ZFxkr1RC3Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739808907; c=relaxed/simple;
-	bh=l46BqOFjw4AhN6v4MslaecuDquLIk/2juU4bc70f7k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FrZlhvDCVBmDpoOMg1HYff5sNezPmcv1nn0Hw2z7O+lTzg5v089BHTtL9Ej/7gvEeFV0wdngwRt70ISPKfUooSgbT2U4spzx7WlkAbwjZEbNN2c9ZTZQgdBtu7xJO1DruUrYqU+ZUagZucLr9FgGwL4FpXJoqiAErKmviCOFFA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CGN7mBl2; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 31BB6442B2;
-	Mon, 17 Feb 2025 16:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739808903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sCAruAplvrh9CTzplEZWARPcYnJG6c4oelg/rF1mVsk=;
-	b=CGN7mBl2DhZF4inxJfydz6QAbL2Ah/LtgMvjvqcgbVCh1NYe54rkEMGmp4azvouUcF2WxO
-	fnNWUAzRrYkQdoBUvvchu9MisFxvr9q6hza//jR53pWbOOE2vNaOmhnvl+pTlbZMUb+PvN
-	NLK+8v260wabceWfy+1BjIKl1j+xlLg+rGbuc5bkxUDvPOhd1zv93ySEsErYZ4XtfRyYz4
-	+c/apWLc2eqDXb05/DGOnV9+E5tiIBcIeiYi3xw77/pk4LMUYkrwDxBnz414ZSsuEGbSnO
-	vP2tomFo6lRN0DLWhZEo/dLH2YsWI7N4R4QZWL5rqBZuXnXWhBbdV27DgW/zww==
-Date: Mon, 17 Feb 2025 17:15:00 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jakub Kicinski <kuba@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: pse-pd: pd692x0: Fix power limit retrieval
-Message-ID: <20250217171500.0fd4a519@kmaincent-XPS-13-7390>
-In-Reply-To: <bb058f5f-31f2-4c20-848e-54c178ecaf6c@lunn.ch>
-References: <20250217134812.1925345-1-kory.maincent@bootlin.com>
-	<bb058f5f-31f2-4c20-848e-54c178ecaf6c@lunn.ch>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739809007; c=relaxed/simple;
+	bh=AmPIqb6W/RQ7sHHTzck54ZnImJBud6fFxyIB8YUgVN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNPGicxdW35afs1kSOFny8PH4uJYs8SYF8jiE3ltZKTCv82K352h9O8tE3OdYvRblgjlJ/9/tTdI5n6jMs/oo8pCUdC2tbGXe98A9K6PgZypjlCj5cpuzdNxN5YBla9sv1uQ2gtlbO6b4e7cKan/hmmio6A5yNUaEHw3SZxk0ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SmcMMC50; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HCLeBH015205;
+	Mon, 17 Feb 2025 16:16:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=cgteneJ0Vus2miKd8v5KmTdHzgw8Ru
+	6KKzLJdtIKJ90=; b=SmcMMC50GW0v9OwZB0zHSyNxYtV7XERIK6Jt2KhuDdPOQD
+	wRZvedse+dPfk10XGrprDqkl8MVrb6NhjaUKlBvPlmQyiwzBwWnzmV3COYPh0l66
+	iDaDG69s58FPUFEdNpNfZaxTt3E+8qEdF/aw7BBEKdL9N0Ry9OMJqmnDf6jy0FeK
+	dvCk5IpnVbB81Qe9Bs9Likl4TsXoVN+EthPvRd8nugRZRPt4RfkUk1ygUTp/rsJ5
+	elWkIfPm3PqjYfoqU/1nXa7jeVvzX2AcI1Exfkc96hwOrGncNVXW4hvQ8XpCq98u
+	xSYNXW0JbrIFJpidHUmBWjo1RarIUF5rpAaNd79g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu69c07q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 16:16:45 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HFtE3i032581;
+	Mon, 17 Feb 2025 16:16:44 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu69c07j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 16:16:44 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HEOjKx013259;
+	Mon, 17 Feb 2025 16:16:43 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u7fken1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 16:16:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HGGdKW51511758
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Feb 2025 16:16:39 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A60520043;
+	Mon, 17 Feb 2025 16:16:39 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D188820040;
+	Mon, 17 Feb 2025 16:16:38 +0000 (GMT)
+Received: from osiris (unknown [9.171.53.224])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 17 Feb 2025 16:16:38 +0000 (GMT)
+Date: Mon, 17 Feb 2025 17:16:37 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Haoxiang Li <haoxiang_li2024@163.com>, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        schwidefsky@de.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] s390/sclp: Add check for get_zeroed_page()
+Message-ID: <20250217161637.21424Ce0-hca@linux.ibm.com>
+References: <20250217153146.2372134-1-haoxiang_li2024@163.com>
+ <20250217160117.21424B3d-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnu
- higqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvth
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217160117.21424B3d-hca@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: usbjZRp83svHyQjJRBvcKteDeGxxMZg6
+X-Proofpoint-ORIG-GUID: V3XVaIvsNwwoLAuwNN3QD1XP3BNLikx6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_06,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=645
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170132
 
-On Mon, 17 Feb 2025 16:24:44 +0100
-Andrew Lunn <andrew@lunn.ch> wrote:
+On Mon, Feb 17, 2025 at 05:01:17PM +0100, Heiko Carstens wrote:
+> On Mon, Feb 17, 2025 at 11:31:46PM +0800, Haoxiang Li wrote:
+> > diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
+> > index e5d947c763ea..7447076b1ec1 100644
+> > --- a/drivers/s390/char/sclp_con.c
+> > +++ b/drivers/s390/char/sclp_con.c
+> > @@ -282,6 +282,8 @@ sclp_console_init(void)
+> >  	/* Allocate pages for output buffering */
+> >  	for (i = 0; i < sclp_console_pages; i++) {
+> >  		page = (void *) get_zeroed_page(GFP_KERNEL | GFP_DMA);
+> > +		if (!page)
+> > +			return -ENOMEM;
+> >  		list_add_tail(page, &sclp_con_pages);
+> 
+> We can add this check, however if this early allocation would fail a
+> null pointer dereference would be the last problem we would have to
+> think about.
+> 
+> Anyway:
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-> On Mon, Feb 17, 2025 at 02:48:11PM +0100, Kory Maincent wrote:
-> > Fix incorrect data offset read in the pd692x0_pi_get_pw_limit callback.
-> > The issue was previously unnoticed as it was only used by the regulator
-> > API and not thoroughly tested, since the PSE is mainly controlled via
-> > ethtool.
-> >=20
-> > The function became actively used by ethtool after commit 3e9dbfec4998
-> > ("net: pse-pd: Split ethtool_get_status into multiple callbacks"),
-> > which led to the discovery of this issue.
-> >=20
-> > Fix it by using the correct data offset.
-> >=20
-> > Fixes: a87e699c9d33 ("net: pse-pd: pd692x0: Enhance with new current li=
-mit
-> > and voltage read callbacks") Signed-off-by: Kory Maincent
-> > <kory.maincent@bootlin.com> ---
-> >  drivers/net/pse-pd/pd692x0.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-> > index fc9e23927b3b..7d60a714ca53 100644
-> > --- a/drivers/net/pse-pd/pd692x0.c
-> > +++ b/drivers/net/pse-pd/pd692x0.c
-> > @@ -1047,7 +1047,7 @@ static int pd692x0_pi_get_pw_limit(struct
-> > pse_controller_dev *pcdev, if (ret < 0)
-> >  		return ret;
-> > =20
-> > -	return pd692x0_pi_get_pw_from_table(buf.data[2], buf.data[3]);
-> > +	return pd692x0_pi_get_pw_from_table(buf.data[0], buf.data[1]); =20
->=20
-> Would the issue of been more obvious if some #defines were used,
-> rather than magic numbers?
+Wait, I take that back. Now I think I remember why I didn't add error
+handling back then: the above exit would also indicate a potential
+memory leak, since this is a loop allocating several pages; so all
+already allocated pages must be freed, which would ask for even more
+completely pointless error handling.
 
-We would need lots of defines as the offset of the useful data can
-change between each command. Don't know if it would have been better.=20
-
-On my current patch priority series.
-git grep "buf\." drivers/net/pse-pd/pd692x0.c | wc -l
-29
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+This is very early code where any allocation failure would lead to a
+crash in any case. So either do the full exercise or we leave the code
+as it is.
 
