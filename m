@@ -1,180 +1,86 @@
-Return-Path: <linux-kernel+bounces-518454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7559EA38F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:52:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493AEA38F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5D83A9A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E601172A01
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD741A5B9D;
-	Mon, 17 Feb 2025 22:51:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491511A9B3B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB071A9B3B;
+	Mon, 17 Feb 2025 22:56:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A7A1A5B9D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739832714; cv=none; b=nx3CaLetfUoOeXAN4HImNyF3A94UBnb5h/UWhAlps6EWoaZuvDlCamwkqnG+Xpq9lMBvR1VdrEqIhWIGFpgLPwSFLFCEC38/tIkZ2KPIISdI87PWE1PspL5WXt3jV+zp4cdWSe4kijFd/Asuun7/VMi7uwA+UpaUtb/+ukPmYeQ=
+	t=1739832963; cv=none; b=e72dNIZt4e7mrgL8JXNIQWjSFTDlP/pHFNEOK1yYxoPcUpqFDIm0NbIo+hfr80nbMmwIKOWnQeG9hJ7u0O0kXvzRMlluxbxNic1Ie+S63RjJ+JrRkqzFqcfs8o7lJC674h6Sdqr2IJ1bPuFMvim50BjDckvYxGXXQrrP3nPpU9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739832714; c=relaxed/simple;
-	bh=bWvi8GKn6I2ofk0ZGQ7ds64lsKtnXmBW4Y6Ifs8a+2c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IFb83P6VpYnqneW5AJ6zE70SnRphEZVX1bduORi/FuKCbFhOVB3CJ+uZLpTGOfyZpnOW6fPEa1eSvDwKwSKSnaLXIwiU0YOJuWmBLplhFrJ6D+AA532mblkY20VoCH/qLvdU07UjDunVXVPShKK6FWpvndVLKNvAS0+7LRSXCrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A26841692;
-	Mon, 17 Feb 2025 14:52:11 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14E9E3F5A1;
-	Mon, 17 Feb 2025 14:51:51 -0800 (PST)
-Message-ID: <5f92761b-c7d4-4b96-9398-183a5bf7556a@arm.com>
-Date: Mon, 17 Feb 2025 23:51:45 +0100
+	s=arc-20240116; t=1739832963; c=relaxed/simple;
+	bh=/aMUd1gxNEo3Wqe/4MyrFf5qU+vJp7haVhL7aMdC9fQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NN4yOJmfvajsQ7TQ2LLbmhquMWKNAkORb3bIGkR/5eVUKtMRl3Pdw/7iD226iGrVq3lsFxzvBBFXDJpEm2ls2bmvAjud4mfC/YiMb+AlHXwcTMsiQ+9IJX97TQW1S6SbLsC0kW8NQiderC9/GgAx/ZfnW/Whpz40pdw/fEbyzyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-855959aa39dso223148639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:56:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739832961; x=1740437761;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2E+nd1u3GnCf4izEN55aQo4ClUIKm+f2lxPmjHl0omU=;
+        b=RZ6zQhbie+NYtYcWCkYHR4pVhy8KTDqPE+LeQU8fSOP+HskAi9zThw/WQAmF7m7o4y
+         PULitl/syRyTtTd5BD2krI+0fw5H6eQeFRmJzfFllWbJYhEP3BtqC6xXwDlep9ee4OOM
+         ZwZD0ihGOqhDwVlN65+qbv6n0X5eX6QmJs2MAWGtEbHq3nq7hsybJEFd/seJZ1F/XJZS
+         ZysqYsga96Ukx6WzJhIebKvjUBBctQ0MalLxdrsmSVkru3R/iw1uvdI86lNhHYqJHJVW
+         zZ/8F7KTTuYaujF5R+gRlG2IhVkPA4oLPP/gsezIQTXdhxdo7SwIpKz7FrM90unYL2w7
+         UpsA==
+X-Gm-Message-State: AOJu0YziwsKCA77Rl7QwWYzbApMOkZgiJsyEydtiLRYv90gdzmouPVlj
+	S+I4zZjLRQwMVMtGOzGfzk/8b5pDEHsoOTwI6U+XCtniq20QSf3QqNyR8kKUZgOBQF/sOxb0WHY
+	lWnyc7BIvnUV2879+tkn8yy3KG3Wcc7vPx3Wdzy5VEF2bWnj0Xauq7e8=
+X-Google-Smtp-Source: AGHT+IHX5iTrO0StciSpi4yTWcTi4JRgEVxaj6Zpy0yBPzxpTDMfDHOc622UqowoRSa3Gugklq2gGcU/NVTAHmNbXyPDQ48s6K2e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG Report: Fork benchmark drop by 30% on aarch64
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: abuehaze@amazon.com, linux-kernel@vger.kernel.org
-References: <20250205151026.13061-1-hagarhem@amazon.com>
- <4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com>
- <20250207110754.GA10452@amazon.com>
- <1ca758c7-b6ab-4880-9cc7-217093a30bbb@arm.com>
- <20250210213155.GA649@amazon.com>
- <4b48fd24-6cd5-474c-bed8-3faac096fd58@arm.com>
- <20250211214019.GA15530@amazon.com>
- <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
-Content-Language: en-US
-In-Reply-To: <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2181:b0:3d0:3851:c3cc with SMTP id
+ e9e14a558f8ab-3d2808f4b81mr78700005ab.16.1739832961486; Mon, 17 Feb 2025
+ 14:56:01 -0800 (PST)
+Date: Mon, 17 Feb 2025 14:56:01 -0800
+In-Reply-To: <Z7OjKrXLhbLzeifj@qasdev.system>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b3be81.050a0220.173698.0040.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: uninit-value in mii_nway_restart (2)
+From: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, qasdev00@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/02/2025 19:55, Dietmar Eggemann wrote:
-> On 11/02/2025 22:40, Hagar Hemdan wrote:
->> On Tue, Feb 11, 2025 at 05:27:47PM +0100, Dietmar Eggemann wrote:
->>> On 10/02/2025 22:31, Hagar Hemdan wrote:
->>>> On Mon, Feb 10, 2025 at 11:38:51AM +0100, Dietmar Eggemann wrote:
->>>>> On 07/02/2025 12:07, Hagar Hemdan wrote:
->>>>>> On Fri, Feb 07, 2025 at 10:14:54AM +0100, Dietmar Eggemann wrote:
->>>>>>> Hi Hagar,
->>>>>>>
->>>>>>> On 05/02/2025 16:10, Hagar Hemdan wrote:
->>>
->>> [...]
->>>
->>>>> The 'spawn' tasks in sched_move_task() are 'running' and 'queued' so we
->>>>> call dequeue_task(), put_prev_task(), enqueue_task() and
->>>>> set_next_task().
->>>>>
->>>>> I guess what we need here is the cfs_rq->avg.load_avg (cpu_load() in
->>>>> case of root tg) update in:
->>>>>
->>>>>   task_change_group_fair() -> detach_task_cfs_rq() -> ...,
->>>>>   attach_task_cfs_rq() -> ...
->>>>>
->>>>> since this is used for WF_FORK, WF_EXEC handling in wakeup:
->>>>>
->>>>>   select_task_rq_fair() -> sched_balance_find_dst_cpu() ->
->>>>>   sched_balance_find_dst_group_cpu()
->>>>>
->>>>> in form of 'least_loaded_cpu' and 'load = cpu_load(cpu_rq(i)'.
->>>>>
->>>>> You mentioned AutoGroups (AG). I don't see this issue on my Debian 12
->>>>> Juno-r0 Arm64 board. When I run w/ AG, 'group' is '/' and
->>>>> 'tsk->sched_task_group' is '/autogroup-x' so the condition 'if (group ==
->>>>> tsk->sched_task_group)' isn't true in sched_move_task(). If I disable AG
->>>>> then they match "/" == "/".
->>>>>
->>>>> I assume you run Ubuntu on your AWS instances? What kind of
->>>>> 'cgroup/taskgroup' related setup are you using?
->>>>
->>>> I'm running AL2023 and use Vanilla kernel 6.13.1 on m6g.xlarge AWS instance.
->>>> AL2023 uses cgroupv2 by default.
->>>>>
->>>>> Can you run w/ this debug snippet w/ and w/o AG enabled?
->>>>
->>>> I have run that and have attached the trace files to this email.
->>>
->>> Thanks!
->>>
->>> So w/ AG you see that 'group' and 'tsk->sched_task_group' are both
->>> '/user.slice/user-1000.slice/session-1.scope' so we bail for those tasks
->>> w/o doing the 'cfs_rq->avg.load_avg' update I described above.
->>
->> yes, both groups are identical so it returns from sched_move_task()
->> without {de|en}queue and without call task_change_group_fair().
-> 
-> OK.
-> 
->>> You said that there is no issue w/o AG. 
->>
->> To clarify, I meant by there's no regression when autogroup is disabled,
->> that the fork results w/o AG remain consistent with or without the commit 
->> "sched/core: Reduce cost of sched_move_task when config autogroup". However,
->> the fork results are consistently lower when AG disabled compared to when
->> it's enabled (without commit applied). This is illustrated in the tables
->> provided in the report.
-> 
-> OK, but I don't quite get yet why w/o AG the results are lower even w/o
-> eff6c8ce8d4d? Have to dig further I guess. Maybe there is more than this
-> p->se.avg.load_avg update when we go via task_change_group_fair()?
+Hello,
 
-'./Run -c 4 spawn' on AWS instance (m7gd.16xlarge) with v6.13, 'mem=16G
-maxcpus=4 nr_cpus=4' and Ubuntu '22.04.5 LTS':
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-CFG_SCHED_AUTOGROUP | sched_ag_enabled | eff6c8ce8d4d | Fork (lps)
+Reported-by: syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com
+Tested-by: syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com
 
-   	y	             1		   y            21005 (27120 **)
-	y		     0		   y            21059 (27012 **)
-	n		     -		   y            21299
-	y		     1		   n	        27745 *
-	y		     0		   n	        27493 *
-	n		     -		   n	        20928
+Tested on:
 
-(*) So here the higher numbers are only achieved when
-'sched_autogroup_exit_task() -> sched_move_task() ->
-sched_change_group() is called for the 'spawn' tasks.
+commit:         2408a807 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=120c1898580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cf1217edc1cc7da
+dashboard link: https://syzkaller.appspot.com/bug?extid=3361c2d6f78a3e0892f9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11a0a5b0580000
 
-(**) When I apply the fix from
-https://lkml.kernel.org/r/4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com.
-
-These results support the story that we need:
-
-  task_change_group_fair() -> detach_task_cfs_rq() -> ...,
-  attach_task_cfs_rq() -> ...
-
-i.e. the related 'cfs_rq->avg.load_avg' update during do_exit() so that
-WF_FORK handling in wakeup:
-
-  select_task_rq_fair() -> sched_balance_find_dst_cpu() ->
-  sched_balance_find_dst_group_cpu()
-
-can use more recent 'load = cpu_load(cpu_rq(i)' values to get a better
-'least_loaded_cpu'.
-
-The AWS instance runs systemd so shell and test run in a taskgroup other
-than root which trumps autogroups:
-
-  task_wants_autogroup()
-
-     if (tg != &root_task_group)
-       return false;
-
-     ...
-
-That's why 'group == tsk->sched_task_group' in sched_move_task() is
-true, which is different on my Juno: the shell from which I launch the
-tests runs in '/' so that the test ends up in an autogroup, i.e. 'group
-!= tsk->sched_task_group'.
-
-[...]
+Note: testing is done by a robot and is best-effort only.
 
