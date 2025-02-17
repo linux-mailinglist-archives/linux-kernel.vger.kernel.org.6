@@ -1,191 +1,150 @@
-Return-Path: <linux-kernel+bounces-516918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDA7A379AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:20:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF957A3797F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8901888A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E01188A9E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E021146580;
-	Mon, 17 Feb 2025 02:20:05 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49A354F81;
+	Mon, 17 Feb 2025 01:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NWwTB9L3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5121F16B;
-	Mon, 17 Feb 2025 02:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D91CFBC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739758804; cv=none; b=pofXbhFQqVK06e56vP2gSBuHU5ZOGXFDc/EnLTfHMyoUEHqwZPK6qPf/nq5CYv/bBb381BA7oWe6pLH5N/k/KoFLKPGvYFKdfHEQ/7JvORjYFKGJExx2Lel73cAiAMMI2RU57dD1GcYcOEgjaHIUkfo1R4IoNoHI56Kod/5XOyU=
+	t=1739756911; cv=none; b=ipeYS+K5PVZNQxZrFHyxO5SjQFkp8SibvIjQrRPp/SKG6eyls1SupY1xMZ1x2GuXkLtVZHU0YlwGTQaSFCdpubsev6S9L1P/jc8XO2GfydeWeBLsDOeJEQsUi4rYUuBUVRqoXVFj+8Ft1q+8r6wAM/XXFy4RSkgChM+6ZrIfOdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739758804; c=relaxed/simple;
-	bh=ZUsQx3FLLGpbppYk3otRvAy3SQ/yJjCZs/Y4imeQb24=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=AzFkrvRhbv3lKKNrTcznslZETYn7OUnW+e0qcZEGnmZcLOp2r5jPnaws4Zd7cCkn4MNw2hidxR5NbKo6mJJbu2HKLMOyi9tyBg+mgLC15xsS/Rg5YvPm5mdXpvyrRlwJ/a8b/wnRit8AbyeB1kYjpeMtO9WFyYCuD2LYnm/UT30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Yx5vX3JWXz4f3jR5;
-	Mon, 17 Feb 2025 10:19:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id F02E61A058E;
-	Mon, 17 Feb 2025 10:19:57 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP3 (Coremail) with SMTP id _Ch0CgD3lsHJnLJnaPALEA--.55493S2;
-	Mon, 17 Feb 2025 10:19:57 +0800 (CST)
-Subject: Re: [PATCH bpf-next] bpf: Add a retry after refilling the free list
- when unit_alloc() fails
-To: Changwoo Min <changwoo@igalia.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Tejun Heo <tj@kernel.org>,
- Andrea Righi <arighi@nvidia.com>, kernel-dev@igalia.com,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250212084851.150169-1-changwoo@igalia.com>
- <CAADnVQLRrhyOHGPb1O0Ju=7YVCNexdhwtoJaGYrfU9Vh2cBbgw@mail.gmail.com>
- <4fd39e4b-f2dc-4b7d-a3be-ec3eae8d592a@igalia.com>
- <CAADnVQL5dt7_S-zFSh-ps7uPfL2ofYs0vo1fFuFBwiz0=DV2Vw@mail.gmail.com>
- <6632e26d-996c-432e-956f-5be178722e5b@igalia.com>
- <7ea1165d-d399-4d40-ad5b-fab44e2148ca@igalia.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <a08493a4-632f-d66e-db26-727c9cf9e6c6@huaweicloud.com>
-Date: Mon, 17 Feb 2025 10:19:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1739756911; c=relaxed/simple;
+	bh=2GwrQAvpI+du66jAl7ybJ2vRX2ga2dva4adjZ6Ub7XM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DXI+RrAeIH0mMpeIG2XmZZKfgkju8MOzIppo3mtlHKHNCSa7VEnUw+ogOImjQr536t6pqL2/v/vgNXaT9yXT0lRm6CkzYQepGUUcUkqPyz+l6LEsE3lK5ECAsPP7i5201eMMxWqakifDquoZfCgcoGAtmM5n9LJpM6wUUcZ9b04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NWwTB9L3; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739756909; x=1771292909;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2GwrQAvpI+du66jAl7ybJ2vRX2ga2dva4adjZ6Ub7XM=;
+  b=NWwTB9L3l9dgIMjPpFyk+apmLSUDpvfFjcF+VOrg+t2uNeVRAWYEaV5Y
+   jHdvf9s+SRV/aHiA0xz4a7CoZ/yJgG7PVvC/IPFRkAqTbFZEOX3DepnuX
+   mRQNEYKW8ho7mdNMfoO0e8U3zL9ylSpnANBKLdQlxRrq2z25AzgfA7AUo
+   sQrYxwfyOnPNXmNwOVX1zYUQ2pUPy7glrrHMUdXeq4b7qz+chcdD3Chk2
+   iyXLhD/9xZCHaLCXgcL9IaI3nQemhjZOGrmNeSoTVtSIxSs4+C0Td7F97
+   QoeQv8n8meeVAKdqveiWxbIMnGrTPX7ztDHcWPEyaBGZcMJaZ1bSG5HEt
+   g==;
+X-CSE-ConnectionGUID: kUxdssxwQw+JghZQeD1lmQ==
+X-CSE-MsgGUID: KX7+G0MsRmK+EBGpHL7eJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51856125"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="51856125"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 17:48:28 -0800
+X-CSE-ConnectionGUID: ePYr3PJcSLCXvJq2ubhrkA==
+X-CSE-MsgGUID: xjwPS82HT+SVi3vgaGRq/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
+   d="scan'208";a="113932110"
+Received: from zhiquan-linux-dev.bj.intel.com ([10.238.156.102])
+  by orviesa006.jf.intel.com with ESMTP; 16 Feb 2025 17:48:25 -0800
+From: Zhiquan Li <zhiquan1.li@intel.com>
+To: bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com,
+	kirill.shutemov@linux.intel.com
+Cc: kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhiquan1.li@intel.com
+Subject: [PATCH v2 RESEND] crash: Export PAGE_UNACCEPTED_MAPCOUNT_VALUE to vmcoreinfo
+Date: Mon, 17 Feb 2025 10:24:35 +0800
+Message-Id: <20250217022435.4056776-1-zhiquan1.li@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7ea1165d-d399-4d40-ad5b-fab44e2148ca@igalia.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:_Ch0CgD3lsHJnLJnaPALEA--.55493S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr4DKF4DJrWkuFWxCw4xCrg_yoW5KF1rpw
-	n5KFWUJrWDCF4vgrn2qw17WFyYyay8Xw1kJrykAFyxJFsFqr1agr1UXrnIg3ZxGrs5Cr47
-	tFZ0qa43Za15X3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi,
+On Intel TDX guest, unaccepted memory is unusable free memory which is
+not managed by buddy, until it's accepted by guest.  Before that, it
+cannot be accessed by the first kernel as well as the kexec'ed kernel.
+The kexec'ed kernel will skip these pages and fill in zero data for the
+reader of vmcore.
 
-On 2/17/2025 12:04 AM, Changwoo Min wrote:
-> Hello,
->
-> >  > What is sizeof(struct bpf_cpumask) in your system?
-> >
-> > In my system, sizeof(struct bpf_cpumask) is 1032.
-> It was a wrong number. sizeof(struct bpf_cpumask) is actually 16.
->
-> On 25. 2. 16. 00:16, Changwoo Min wrote:
->> Hello,
->>
->> On 25. 2. 15. 12:51, Alexei Starovoitov wrote:
->>  > On Fri, Feb 14, 2025 at 1:24 AM Changwoo Min <changwoo@igalia.com>
->> wrote:
->>  >>
->>  >> Hello Alexei,
->>  >>
->>  >> Thank you for the comments! I reordered your comments for ease of
->>  >> explanation.
->>  >>
->>  >> On 25. 2. 14. 02:45, Alexei Starovoitov wrote:
->>  >>> On Wed, Feb 12, 2025 at 12:49 AM Changwoo Min
->> <changwoo@igalia.com> wrote:
->>  >>
->>  >>> The commit log is too terse to understand what exactly is going on.
->>  >>> Pls share the call stack. What is the allocation size?
->>  >>> How many do you do in a sequence?
->>  >>
->>  >> The symptom is that an scx scheduler (scx_lavd) fails to load on
->>  >> an ARM64 platform on its first try. The second try succeeds. In
->>  >> the failure case, the kernel spits the following messages:
->>  >>
->>  >> [   27.431380] sched_ext: BPF scheduler "lavd" disabled (runtime
->> error)
->>  >> [   27.431396] sched_ext: lavd: ops.init() failed (-12)
->>  >> [   27.431401]    scx_ops_enable.isra.0+0x838/0xe48
->>  >> [   27.431413]    bpf_scx_reg+0x18/0x30
->>  >> [   27.431418]    bpf_struct_ops_link_create+0x144/0x1a0
->>  >> [   27.431427]    __sys_bpf+0x1560/0x1f98
->>  >> [   27.431433]    __arm64_sys_bpf+0x2c/0x80
->>  >> [   27.431439]    do_el0_svc+0x74/0x120
->>  >> [   27.431446]    el0_svc+0x80/0xb0
->>  >> [   27.431454]    el0t_64_sync_handler+0x120/0x138
->>  >> [   27.431460]    el0t_64_sync+0x174/0x178
->>  >>
->>  >> The ops.init() failed because the 5th bpf_cpumask_create() calls
->>  >> failed during the initialization of the BPF scheduler. The exact
->>  >> point where bpf_cpumask_create() failed is here [1]. That scx
->>  >> scheduler allocates 5 CPU masks to aid its scheduling decision.
->>  >
->>  > ...
->>  >
->>  >> In this particular scenario, the IRQ is not disabled. I just
->>  >
->>  > since irq-s are not disabled the unit_alloc() should have done:
->>  >          if (cnt < c->low_watermark)
->>  >                  irq_work_raise(c);
->>  >
->>  > and alloc_bulk() should have started executing after the first
->>  > calloc_cpumask(&active_cpumask);
->>  > to refill it from 3 to 64
->>
->> Is there any possibility that irq_work is not scheduled right away on
->> aarch64?
+The dump tool like makedumpfile creates a page descriptor (size 24
+bytes) for each non-free page, including zero data page, but it will not
+create descriptor for free pages.  If it is not able to distinguish
+these unaccepted pages with zero data pages, a certain amount of space
+will be wasted in proportion (~1/170).  In fact, as a special kind of
+free page the unaccepted pages should be excluded, like the real free
+pages.
 
-It is a IPI. I think its priority is higher than the current process.
->>
->>  >
->>  > What is sizeof(struct bpf_cpumask) in your system?
->>
->> In my system, sizeof(struct bpf_cpumask) is 1032.
->It was a wrong number. sizeof(struct bpf_cpumask) is actually 16.
+Export the page type PAGE_UNACCEPTED_MAPCOUNT_VALUE to vmcoreinfo, so
+that dump tool can identify whether a page is unaccepted.
 
-It is indeed strange. The former guess is that bpf_cpumask may be
-greater than 4K, so the refill in irq work may fail due to memory
-fragment, but the allocation size is tiny.
->>
->>  >
->>  > Something doesn't add up. irq_work_queue() should be
->>  > instant when irq-s are not disabled.
->>  > This is not IRQ_WORK_LAZY.> Are you running PREEMPT_RT ?
->>
->> No, CONFIG_PREEMPT_RT is not set.
+Link: https://lore.kernel.org/all/20240809114854.3745464-5-kirill.shutemov@linux.intel.com/
 
-Could you please share the kernel .config file and the kernel version
-for the problem ? And if you are running the test in a QEMU, please also
-share the command line to run the qemu.
->>
->> Regards,
->> Changwoo Min
->>
->>
->
->
-> .
+Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+---
+V2 RESEND note:
+- No changes on this, just rebasd to v6.14-rc3.
+
+V1: https://lore.kernel.org/all/20250103074941.3651765-1-zhiquan1.li@intel.com/
+
+Changes since V1:
+- Rebase to v6.14-rc3.
+- Added document into admin-guide/kdump/vmcoreinfo.rst per Dave's
+  suggestion.
+- Add Kirill's Reviewed-by tag.
+---
+ Documentation/admin-guide/kdump/vmcoreinfo.rst | 2 +-
+ kernel/vmcore_info.c                           | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kdump/vmcoreinfo.rst b/Documentation/admin-guide/kdump/vmcoreinfo.rst
+index 0f714fc945ac..3b47916f1856 100644
+--- a/Documentation/admin-guide/kdump/vmcoreinfo.rst
++++ b/Documentation/admin-guide/kdump/vmcoreinfo.rst
+@@ -331,7 +331,7 @@ PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|P
+ Page attributes. These flags are used to filter various unnecessary for
+ dumping pages.
+ 
+-PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
++PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_unaccepted)
+ -----------------------------------------------------------------------------
+ 
+ More page attributes. These flags are used to filter various unnecessary for
+diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
+index 1fec61603ef3..e066d31d08f8 100644
+--- a/kernel/vmcore_info.c
++++ b/kernel/vmcore_info.c
+@@ -210,6 +210,10 @@ static int __init crash_save_vmcoreinfo_init(void)
+ 	VMCOREINFO_NUMBER(PAGE_HUGETLB_MAPCOUNT_VALUE);
+ #define PAGE_OFFLINE_MAPCOUNT_VALUE	(PGTY_offline << 24)
+ 	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
++#ifdef CONFIG_UNACCEPTED_MEMORY
++#define PAGE_UNACCEPTED_MAPCOUNT_VALUE	(PGTY_unaccepted << 24)
++	VMCOREINFO_NUMBER(PAGE_UNACCEPTED_MAPCOUNT_VALUE);
++#endif
+ 
+ #ifdef CONFIG_KALLSYMS
+ 	VMCOREINFO_SYMBOL(kallsyms_names);
+
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+-- 
+2.25.1
 
 
