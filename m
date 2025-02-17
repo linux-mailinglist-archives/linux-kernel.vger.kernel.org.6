@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-517482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78E2A38163
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:10:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380C9A3816A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081113A3418
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4A91887DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F5F216E3D;
-	Mon, 17 Feb 2025 11:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77A721766E;
+	Mon, 17 Feb 2025 11:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Co8ZHdfb"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLlSIDOK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59502192B71;
-	Mon, 17 Feb 2025 11:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D20A16EB4C;
+	Mon, 17 Feb 2025 11:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790649; cv=none; b=eu72kvjb/Rb6fit+TiJ8U6BJI2Af9TBaocTX21f3b3YUywZLkZnD0bJJB0C+8s00Z2qp8M1CLmg4JS1DVmekoRKWTqArjZIFvxadNhLGJ6yaS+xxgXKHL1AEH/b5S3cQ4VbVPMIVppQVovKBA6FTvBpi+W/gnFH1ViRSk5kmAps=
+	t=1739790920; cv=none; b=CeRHVXOE/0KlZXC1OnaG7Rmn3ByS9lX2Mda6ZpLUjkVP/31+qEUohLtILpe6HkFWTehhehEpdgL10BE0qu2bDZ/K9dMP4gaAmHWWrrV5PsCx8R598N3x/RkLtmU5ha7Fl/dnPOQG/wOufQUtMEIZvrIhsrlADQpX0uGxsrtP6ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790649; c=relaxed/simple;
-	bh=RaNMkzPUKH55P0ue/TW9YA+vTz4Djw3jHd6XdzluhRY=;
+	s=arc-20240116; t=1739790920; c=relaxed/simple;
+	bh=Hpg7QZjmh8wobkYw4CjDEQSIkL1AyleueMoYw/RF8Yw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=riNjWqa80kBNij5/gPcelA43hLykhQ7o1v2hhdeURCuo0AomTphky6gmyLO7RPvsK6THyO3vXPq9lGNrgJPy/113btjLtliK6OHA/nKEZMRMpGYf/YH8i8MRp3T1Ba85FjoyFV7uILs4r7NkBsS+c/BvptUUTd1r4CRhZrnRY1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Co8ZHdfb; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B00B740E0191;
-	Mon, 17 Feb 2025 11:10:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vDZTFrYPUGkR; Mon, 17 Feb 2025 11:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739790640; bh=F6JnE8QkoFXQpkAYcY//uc3UNHxxRKBnsdxJosKiaj4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UoBKJdXwBGdd3xlxWLppcJOtPfNS/LFyVlk6VgbWMPT9rrJwrYGpdetcUGkklDZR/hKYyzOS3v94xo4SPdvnAenCVR2L8ARq+2HAB5RJnucFJUhjifcZbqrAY9pZzmveQ0qAezSQAd+99GDDlA7NchcOhUlXDtsboamxwV2r7/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLlSIDOK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C8DDC4CED1;
+	Mon, 17 Feb 2025 11:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739790919;
+	bh=Hpg7QZjmh8wobkYw4CjDEQSIkL1AyleueMoYw/RF8Yw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Co8ZHdfbhiBhr1KZpW26veMq+CzcsXJEEp5730iFbHw3wMe062lnUQTC+wE1oiBOS
-	 sEkU77E+NAh0mj/hwMELDIrrufGnqJrEmxqAPPERcbCGAdvu1vpzGzugoPs2yITVqR
-	 Koqg/gmmryoBDvYUWabKP3FWv9aFX8l8GdRFfQzvfXMwW+ty3D/fyEAM2oE95jzaCD
-	 XBBBEPopqEBv7/MHirKbRpV6JLSC18SkTg66ldExc9emEbWjdSosM4tdKVVePChP2T
-	 1TAewfcyRMKRGGOFPTSEI1yp15N9Ej43WGhd33DcHKjbQCfgVRtOg7cNBzrYzWLAvp
-	 j6JEW7Z7n84o2SeL7GdPR0Vt92fc+weOX0RVsAGp7B9H/Y9eU6YY7olhEWiWMM0Uj9
-	 YZuJQI0nNTU3zIxNoRpdBbcQTszNo7uChDomRBnuRNIdee97NOAZTME2mF7PIUdfOv
-	 p/HqUkXC3klVZc1oe//+WSHOCuVKsndIAnZ4eocOyMfxD89pyB/RY7lsZEBSsTkVrL
-	 qZpa6g1syTqsRE4ZU/aCW5WvBSi3cIb4oahq3BRV4F64ziy4wlwfFIayueI8OzU3vY
-	 Hn3nA/jVfTVQGQoKKC0HU0yPtoA4tb8Djbz+L/UyxasaXCi9btqwufzgwn/K2RAA7y
-	 YxLwMyFR7qLJwdVlnYh2WTZo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A584540E0176;
-	Mon, 17 Feb 2025 11:10:30 +0000 (UTC)
-Date: Mon, 17 Feb 2025 12:10:29 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 3/3] x86/cpu: Enable modifying bug flags with
- {clear,set}puid
-Message-ID: <20250217111029.GIZ7MZJUGJRoeiScgn@fat_crate.local>
-References: <20250129-force-cpu-bug-v2-0-5637b337b443@google.com>
- <20250129-force-cpu-bug-v2-3-5637b337b443@google.com>
+	b=RLlSIDOKcqigbaFLj3a6Fl5sYLw15vVDUiiniVWh6MnjT6Px4sQqOeiBhp1qCPUMA
+	 foTA5x2qKNeHnVjSUZbyAN7oYutOW5kMzw/1nDM1k9Ko7afBwTxmOKXAYOoV2JWH11
+	 NV76P6+GghbSgLCBn7TF82g0h7CkLjoPSnZ0FP1EUIWYpvd8w1zutYlwEBFAihuE8g
+	 7HyHiUIBAwU8miq7u6PBs2HskmthdEdKoxYPHkRSN/sDqrfKyCeOa83zBQmhVT1Fdx
+	 186o0TAxfY1Uy/9WSyvK6BjyepmwQfgJ5V7VbA1b0mlt01Eaq95o5r3JXERynrGZN0
+	 r9ykfIYdOIv3A==
+Date: Mon, 17 Feb 2025 11:15:15 +0000
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	skhan@linuxfoundation.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
+	linux-sparse@vger.kernel.org
+Subject: Re: [PATCH net-next v2] af_unix: Fix undefined 'other' error
+Message-ID: <20250217111515.GI1615191@kernel.org>
+References: <20250210075006.9126-1-purvayeshi550@gmail.com>
+ <20250215172440.GS1615191@kernel.org>
+ <4fbba9c0-1802-43ec-99c4-e456b38b6ffd@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250129-force-cpu-bug-v2-3-5637b337b443@google.com>
+In-Reply-To: <4fbba9c0-1802-43ec-99c4-e456b38b6ffd@stanley.mountain>
 
-On Wed, Jan 29, 2025 at 03:35:41PM +0000, Brendan Jackman wrote:
-> Sometimes it can be very useful to run CPU vulnerability mitigations on
-> systems where they aren't known to mitigate any real-world
-> vulnerabilities. This can be handy for mundane reasons like debugging
-> HW-agnostic logic on whatever machine is to hand, but also for research
-> reasons: while some mitigations are focused on individual vulns and
-> uarches, others are fairly general, and it's strategically useful to
-> have an idea how they'd perform on systems where they aren't currently
-> needed.
+On Sun, Feb 16, 2025 at 10:33:38PM +0300, Dan Carpenter wrote:
+> I've added the linux-sparse@vger.kernel.org mailing list to the CC.
 > 
-> As evidence for this being useful, a flag specifically for Retbleed was
-> added in commit 5c9a92dec323 ("x86/bugs: Add retbleed=force").
+> On Sat, Feb 15, 2025 at 05:24:40PM +0000, Simon Horman wrote:
+> > My understanding is that the two static analysis tools under discussion
+> > are Smatch and Sparse, where AFAIK Smatch is a fork of Sparse.
+> > 
+> > Without this patch, when checking af_unix.c, both Smatch and Sparse report
+> > (only):
+> > 
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> > 
 > 
-> Since CPU bugs are tracked using the same basic mechanism as features,
-> and there are already parameters for manipulating them by hand, extend
-> that mechanism to support bug as well as capabilities.
+> Smatch isn't a fork of Sparse, it uses Sparse as a C front-end.
+
+Sorry for my mistake there.
+
+> This warning is really from Sparse, not Smatch.  The warning started
+> when we changed the definition of unix_sk() in commit b064ba9c3cfa
+> ("af_unix: preserve const qualifier in unix_sk()").
 > 
-> With this patch and setcpuid=srso, a QEMU guest running on an Intel host
-> will boot with Safe-RET enabled.
-
-As before. Move that sentence ...
-
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> ---
-
-... here.
-
->  arch/x86/include/asm/cpufeature.h |  1 +
->  arch/x86/kernel/cpu/common.c      | 16 ++++++++++++----
->  2 files changed, 13 insertions(+), 4 deletions(-)
+> Smatch doesn't actually use these locking annotations at all.  Instead,
+> Smatch has a giant table with all the locks listed.
+> https://github.com/error27/smatch/blob/master/smatch_locking.c
+> Smatch uses the cross function database for this as well if it's
+> available.
 > 
-> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-> index 0b9611da6c53f19ae6c45d85d1ee191118ad1895..6e17f47ab0521acadb7db38ce5934c4717d457ba 100644
-> --- a/arch/x86/include/asm/cpufeature.h
-> +++ b/arch/x86/include/asm/cpufeature.h
-> @@ -50,6 +50,7 @@ extern const char * const x86_power_flags[32];
->   * X86_BUG_<name> - NCAPINTS*32.
->   */
->  extern const char * const x86_bug_flags[NBUGINTS*32];
-> +#define x86_bug_flag(flag) x86_bug_flags[flag]
+> Unfortunately, Smatch does not parse the unix_wait_for_peer() function
+> correctly.  It sees that something is unlocked but it can't figure out
+> what.  I believe the problem is that Smatch doesn't parse
+> container_of_const().  Fixing that has been on my TODO list for a while.
+> The caller used unix_state_lock() to take the lock and that has a
+> unix_sk() in it as well.  So smatch doesn't see this lock at all that's
+> why it doesn't print a warning.
 
-Why?
+So, hypothetically, Smatch could be enhanced and there wouldn't be any
+locking warnings with this patch applied?
 
->  #define test_cpu_cap(c, bit)						\
->  	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index e26cf8789f0e1a27ad126f531e05afee0fdebbb8..d94d7ebff42dadae30f77af1ef675d1a83ba6c3f 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -1492,7 +1492,8 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
->  
->  		/*
->  		 * Handle naked numbers first for feature flags which don't
-> -		 * have names.
-> +		 * have names. It doesn't make sense for a bug not to have a
-> +		 * name so don't handle bug flags here.
->  		 */
->  		if (!kstrtouint(opt, 10, &bit)) {
->  			if (bit < NCAPINTS * 32) {
-
-It did but after
-
-  7583e8fbdc49 ("x86/cpu: Remove X86_FEATURE_NAMES")
-
-this chunk can be whacked now. Please do that in a pre-patch.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> regards,
+> dan carpenter
+> 
+> > Without this patch, when checking af_unix.c, both Smatch and Sparse report
+> > (only):
+> > 
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> >  .../af_unix.c:1511:9: error: undefined identifier 'other'
+> > 
+> > And with either v1 or v2 of this patch applied Smatch reports nothing.
+> > While Sparse reports:
+> > 
+> >  .../af_unix.c:234:13: warning: context imbalance in 'unix_table_double_lock' - wrong count at exit
+> >  .../af_unix.c:253:28: warning: context imbalance in 'unix_table_double_unlock' - unexpected unlock
+> >  .../af_unix.c:1386:13: warning: context imbalance in 'unix_state_double_lock' - wrong count at exit
+> >  .../af_unix.c:1403:17: warning: context imbalance in 'unix_state_double_unlock' - unexpected unlock
+> >  .../af_unix.c:2089:25: warning: context imbalance in 'unix_dgram_sendmsg' - unexpected unlock
+> >  .../af_unix.c:3335:20: warning: context imbalance in 'unix_get_first' - wrong count at exit
+> >  .../af_unix.c:3366:34: warning: context imbalance in 'unix_get_next' - unexpected unlock
+> >  .../af_unix.c:3396:42: warning: context imbalance in 'unix_seq_stop' - unexpected unlock
+> >  .../af_unix.c:3499:34: warning: context imbalance in 'bpf_iter_unix_hold_batch' - unexpected unlock
+> > 
+> > TBH, I'm unsure which is worse. Nor how to improve things.
 
