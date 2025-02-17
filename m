@@ -1,214 +1,139 @@
-Return-Path: <linux-kernel+bounces-518324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25346A38D43
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:24:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B864A38D4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01F1816DC1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FE457A2E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DB3238D33;
-	Mon, 17 Feb 2025 20:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F99238D3B;
+	Mon, 17 Feb 2025 20:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBcWvdg4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GzaOxka5"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F5C236A6A;
-	Mon, 17 Feb 2025 20:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF2918C907
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739823811; cv=none; b=DUeifcGkIgmA+inEcPdyl/XOrEDXF5A6bWhSI/q6iV5yXS2NeLeBpOwPDNqOljzX8VPILhcVuXNqIecHuNbDqbTJUuoFTiwX408qnvoyIJ5CF2+jgzn6RcvA2hHUXMmRjlIzj2pkuH3/BQh4qG9uK8CtQI/Mhcmir5eUi4GdAqg=
+	t=1739824085; cv=none; b=leROZAPaHYSBZIPlIAM9/yMCfAcL9sX8t4arOW/HvGZs4FMLGkmetDCUuaiuLtkYVzVf+KJSsSGJwMWNMtYdZvS1m4y1A7gxCkyv/WV+HpMyex5NqTomZGdYzUr5PNApBTLIwFzoLfwLv2LBsYgtIaOZHJpeEBhf0eF7XgZ2pNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739823811; c=relaxed/simple;
-	bh=1h9MwvGIS8D5jPJQSFET2oluXayiIP8DbSxALxBuL8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTA/5InpS6dVIZAJlKjyxZPWI2VjmHrAxEUy5vF03DqmDHSr/o417Wq5C3bs9/Mus066VQm9UDkuoYKJOe+nVuKYqAcqZoblQ8AeWoD9yhGAb4NCExT+Uat3rvYvbbYnHZUJG9QGjj2SaqqIBDNwqKCfjP8Ulxq6EhAGhFwX+nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBcWvdg4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 088A5C4CEE2;
-	Mon, 17 Feb 2025 20:23:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739823811;
-	bh=1h9MwvGIS8D5jPJQSFET2oluXayiIP8DbSxALxBuL8U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kBcWvdg4s2XQVXU6tMvldOT8u0YGKV63N6m8lJhV3QDqOEWSeg6D4vtaAN26pNwt6
-	 NytnIxoR0ic8cWTdqsIVUKDrUpCv4zJkoPimIximoeNAiNHnMZDKAyMxqXkczjptjE
-	 jrkWvkspWfdKL+QB/7fq1c1pHkRW5g7g1dFRSy8OlriZQgN7piNjhYXsebazYVF0Dr
-	 rp6zv95H3w0+q7GzYTFmvD02jmOWUC/LMDeh1659dg37mqAx7drvgs0btdoVzoyQru
-	 OtkJ80OyUYwvrmolmhal8/aiODJsjcMYupW75NiS+ST2Yrg5UZXEiTDMeM4dR+xKA7
-	 A82aVLtisto7g==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-724d1724657so3254168a34.0;
-        Mon, 17 Feb 2025 12:23:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWHDG1M/WdsHdf5pekjgMbqNQzf7N1rUP64URyYM1ZuBhzuV4XrAcNDTY35wuy8hK7BWvTbbxgfBPE=@vger.kernel.org, AJvYcCXLm9Tgz/0xgt9pUHiy6UGnqDEpIwGrCwGnBy5HQNyQ51eNQt2UUG8T76FWJ0Yjy2tqEjzhNAmtM7Mo/Nak@vger.kernel.org, AJvYcCXlazXg4oYl0sWm5dGfPusLsaAB5IpZUYJZC2Chgjmy6oom6yYBrpA2bmdQY+Uwnsb+iF+YMWoT6Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk6Ht00FOWNj7/Ko6VnettD5t4d7WEQJZ6LlAnZyqOGK6B453v
-	3bb3Y8hKFv1/UNuvLfC8BLnIOg/F2le+2UH2e+JrgJ2MQYPXNhbniO8sBb8cXZJLrvrx49j/xyw
-	IzlBZofcAjhak+wqSamLo1kmKp9w=
-X-Google-Smtp-Source: AGHT+IGPh9FNrtXp3FggoEQw9aKUrDogGptSwF6VujHcw64guqZFeUK2vTL7g5FzrFK09nm4jP3iMmPGT9ohbNt/nqw=
-X-Received: by 2002:a05:6808:2dcf:b0:3f3:fc36:25b7 with SMTP id
- 5614622812f47-3f3fc362819mr4062729b6e.19.1739823810284; Mon, 17 Feb 2025
- 12:23:30 -0800 (PST)
+	s=arc-20240116; t=1739824085; c=relaxed/simple;
+	bh=L2NP8OUYJYUeGPuMDcAIv0EzWSxkQpfpjKwYBJZoyBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dLnGLcYK2aOFbIX55Ev+35R1wFu0KvIyB/nQsAJ2vOKn5m/oHSI1Qj344gkH1V9VQtVC/5chxLVwwwlkEVRQSrZ6o7TZTYefauCe8LqNW7XUJn1MxYdwCZqTTa0xgPCnHX13WItyxZaJ7BjvxAbVXPodlZDpOIkWk3RaOPXB8BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GzaOxka5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F9B7D53;
+	Mon, 17 Feb 2025 21:26:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739823999;
+	bh=L2NP8OUYJYUeGPuMDcAIv0EzWSxkQpfpjKwYBJZoyBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GzaOxka5vwgJMKwE87khT40TcS7sXNTOsIe6I0T27OvLyS7p1Bxg2ZxEHn/5k9rWm
+	 Puj9z7WfegliHFqyIX9LU+x/e1OUQ11T0z/oP6t3f6MLVR5rAMeftjJamDsa5lXrwX
+	 AmlXOvWn8IToHowm2qdTbZ0DBU5g4T4bDKjFKx/M=
+Message-ID: <7674314f-d95a-433a-81d2-ca78bc199359@ideasonboard.com>
+Date: Mon, 17 Feb 2025 22:27:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5caa944f-c841-6f74-8e43-a278b2b93b06@suse.com>
- <20220708110325.GA5307@axis.com> <4ca77763-53d0-965a-889e-be2eafadfd2f@intel.com>
- <1937b65c-36c0-5475-c745-d7285d1a6e25@suse.com> <CAJZ5v0j0mgOcfKXRzyx12EX8CYLzowXrM8DGCH9XvQGnRNv0iw@mail.gmail.com>
- <5c37ee19-fe2c-fb22-63a2-638e3dab8f7a@suse.com> <CAJZ5v0ijy4FG84xk_n8gxR_jS0xao246eVbnFj-dXzwz=8S9NQ@mail.gmail.com>
- <Z6lzWfGbpa7jN1QD@google.com> <Z6vNV8dDDPdWUKLS@google.com>
- <CAJZ5v0i83eJWV_kvWxZvja+Js3tKbrwZ8rVVGn7vR=0qLf1mtw@mail.gmail.com> <Z7Kx2RN35QVyg8nP@google.com>
-In-Reply-To: <Z7Kx2RN35QVyg8nP@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Feb 2025 21:23:18 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hom5Ex9xCfd_qD7XyFxie1iy2L_T8vDNWF-xBMmq=9aQ@mail.gmail.com>
-X-Gm-Features: AWEUYZlAjLzs6ezGg8wnligAVPSRXEI9eSmLi9kBikLyhpmKJuoOqGOdrVjLyt4
-Message-ID: <CAJZ5v0hom5Ex9xCfd_qD7XyFxie1iy2L_T8vDNWF-xBMmq=9aQ@mail.gmail.com>
-Subject: Re: PM runtime_error handling missing in many drivers?
-To: Ajay Agarwal <ajayagarwal@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Brian Norris <briannorris@google.com>, 
-	Oliver Neukum <oneukum@suse.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Vincent Whitchurch <vincent.whitchurch@axis.com>, "jic23@kernel.org" <jic23@kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Brian Norris <briannorris@chromium.org>, 
-	Joy Chakraborty <joychakr@google.com>, Vamshi Gajjela <vamshigajjela@google.com>, 
-	Manu Gautam <manugautam@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
+ <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
+ <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 17, 2025 at 4:49=E2=80=AFAM Ajay Agarwal <ajayagarwal@google.co=
-m> wrote:
->
-> On Wed, Feb 12, 2025 at 08:29:34PM +0100, Rafael J. Wysocki wrote:
-> > On Tue, Feb 11, 2025 at 11:21=E2=80=AFPM Brian Norris <briannorris@goog=
-le.com> wrote:
-> > >
-> > > Hi Ajay,
-> > >
-> > > On Mon, Feb 10, 2025 at 09:02:41AM +0530, Ajay Agarwal wrote:
-> > > > On Wed, Jul 27, 2022 at 06:31:48PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Wed, Jul 27, 2022 at 10:08 AM Oliver Neukum <oneukum@suse.com>=
- wrote:
-> > > > > > On 26.07.22 17:41, Rafael J. Wysocki wrote:
-> > > > > > > Well, in general suspending or resuming a device is a collabo=
-rative
-> > > > > > > effort and if one of the pieces falls over, making it work ag=
-ain
-> > > > > > > involves fixing up the failing piece and notifying the others=
- that it
-> > > > > > > is ready again.  However, that part isn't covered and I'm not=
- sure if
-> > > > > > > it can be covered in a sufficiently generic way.
-> > > > > >
-> > > > > > True. But that still cannot solve the question what is to be do=
-ne
-> > > > > > if error handling fails. Hence my proposal:
-> > > > > > - record all failures
-> > > > > > - heed the record only when suspending
-> > > > >
-> > > > > I guess that would boil down to moving the power.runtime_error up=
-date
-> > > > > from rpm_callback() to rpm_suspend()?
-> > > > Resuming this discussion. One of the ways the device drivers are
-> > > > clearing the runtime_error flag is by calling pm_runtime_set_suspen=
-ded
-> > > > [1].
-> >
-> > I personally think that jumping on a 2.5 years old thread is not a
-> > good idea.  It would be better to restate the problem statement and
-> > provide the link to the previous discussion.
-> >
-> > > > To me, it feels weird that a device driver calls pm_runtime_set_sus=
-pended
-> > > > if the runtime_resume() has failed. It should be implied that the d=
-evice
-> > > > is in suspended state if the resume failed.
-> > > >
-> > > > So how really should the runtime_error flag be cleared? Should ther=
-e be
-> > > > a new API exposed to device drivers for this? Or should we plan for=
- it
-> > > > in the framework itself?
-> > >
-> > > While the API naming is unclear, that's exactly what
-> > > pm_runtime_set_suspended() is about. Personally, I find it nice when =
-a
-> > > driver adds the comment "clear runtime_error flag", because otherwise
-> > > it's not really obvious why a driver has to take care of "suspending"
-> > > after a failed resume. But that's not the biggest question here, IMO.
-> > >
-> > > The real reson I pointed you at this thread was because I think it's
-> > > useful to pursue the proposal above: to avoid setting a persistent
-> > > "runtime_error" for resume failures. This seems to just create a pitf=
-all
-> > > for clients, as asked by Vincent and Oliver upthread.
-> > >
-> > > And along this line, there are relatively few drivers that actually
-> > > bother to reset this error flag ever (e.g., commit f2bc2afe34c1
-> > > ("accel/ivpu: Clear runtime_error after pm_runtime_resume_and_get()
-> > > fails")).
-> > >
-> > > So to me, we should simply answer Rafael's question:
-> > >
-> > > (repeated:)
-> > > > > I guess that would boil down to moving the power.runtime_error up=
-date
-> > > > > from rpm_callback() to rpm_suspend()?
-> > >
-> > > Yes, I think so. (Although I'm not sure if this leaves undesirable sp=
-am
-> > > where persistent .runtime_resume() failures occur.)
-> > >
-> > > ...and then write/test/submit such a patch, provided it achieves the
-> > > desired results.
-> > >
-> > > Unless of course one of the thread participants here has some other
-> > > update in the intervening 2.5 years, or if Rafael was simply asking t=
-he
-> > > above rhetorically, and wasn't actually interested in fielding such a
-> > > change.
-> >
-> > The reason why runtime_error is there is to prevent runtime PM
-> > callbacks from being run until something is done about the error,
-> > under the assumption that running them in that case may make the
-> > problem worse.
-> >
-> > I'm not sure if I see a substantial difference between suspend and
-> > resume in that respect: If any of them fails, the state of the device
-> > is kind of unstable.  In particular, if resume fails and the device
-> > doesn't actually resume, something needs to be done about it or it
-> > just becomes unusable.
-> >
-> > Now, the way of clearing the error may not be super-convenient, which
-> > was a bit hard to figure out upfront, so I'm not against making any
-> > changes as long as there are sufficient reasons for making them.
->
-> I am thinking if we can start with a change to not check runtime_error
-> in rpm_resume, and let it go through even if the previous rpm_resume
-> attempt failed. Something like this:
->
-> ```
-> static int rpm_resume(struct device *dev, int rpmflags)
->         trace_rpm_resume(dev, rpmflags);
->
->   repeat:
-> -       if (dev->power.runtime_error) {
-> -               retval =3D -EINVAL;
-> -       } else if (dev->power.disable_depth > 0) {
-> +       if (dev->power.disable_depth > 0) {
->                 if (dev->power.runtime_status =3D=3D RPM_ACTIVE &&
->                     dev->power.last_status =3D=3D RPM_ACTIVE)
->                         retval =3D 1;
-> ```
->
-> I think setting the runtime_error in rpm_callback, i.e. for both resume
-> and suspend is still a good idea for book-keeping purposes, e.g. the
-> user reading the runtime_status of the device from sysfs.
+Hi,
 
-What would be the benefit of this change?
+On 17/02/2025 22:15, Dmitry Baryshkov wrote:
+> On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
+>> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
+>> container.
+> 
+> Is there a more common name for this format? Otherwise googling for it
+> reveals only your series.
+
+In the cover letter I mention the gstreamer names where available (this 
+particular format is not in gstreamer). AMD has these in their zynqmp 
+documentation 
+(https://docs.amd.com/r/en-US/ug1085-zynq-ultrascale-trm/Video-Packer-Format).
+
+XVUY2101010 is YUV444_10BPC in AMD docs.
+
+X403 is Y444_10LE32 in gstreamer, and YV24_10BPC in AMD docs.
+
+I'm not sure you'll have much more luck googling with those names, 
+though =).
+
+  Tomi
+
 
