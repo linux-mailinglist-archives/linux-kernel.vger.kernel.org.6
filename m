@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-517956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D4DA387F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:46:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D1CA38806
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D653B4F82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:45:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC430188CF99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110B42253A6;
-	Mon, 17 Feb 2025 15:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E92253E4;
+	Mon, 17 Feb 2025 15:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y5xD9hdu"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XkflArg0"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0651A3167
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F8622539F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807142; cv=none; b=YIbubnzlP1zkmN81D9qTXINzjsvdADTRSeo5oax0NBkVMdrgQLd7uWqAN72pH00K0vCJwbLdufrOqUXWDcUXaeyjBLMR6ZDE5ZsAaeN6SyCIJBLgpMhOOrlA0xdKxH21OAG1WI+9wOK8fmvMTcjPTC/1iwDSTO+JnanGYGn90Ms=
+	t=1739807165; cv=none; b=nnJ5eXhiYzwzT/fnj97pn8xoUXgQhKxwqLX4f4FZOn41EFKGt/TaHgHaNnjygWHK73LPzpm+ga3OqRt2kzaf58X4VmBF4CExjzYHs02HT9yCHkCa2TgBMA09m16iSwap5icwqyJtKHMxnfcNRhVM29YDsXQjm+ziMdW+dr0x0zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807142; c=relaxed/simple;
-	bh=tsw9r+8bxrOy21zst5bElWCAmeyp+ICwB6YLShUgbJ4=;
+	s=arc-20240116; t=1739807165; c=relaxed/simple;
+	bh=MY7ZcF8vbcV6356vl78VBfNy6YZyKg0q5A7kgMMVMr8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nA94oKx6TKShnudaZlDHebvQGBJPtDAeENDNhLQbAVe2oP1adcfkIxL028K+7UAhUqe2ksCoeSfyZk3FVaWEfo4F3PFPixp3VCiSyEtZBxxAYL14jsOHBTVAQQtu0H81hivIRrPwDHREwh7Y+DjRVw85tqxLzBvmMLvV2mJ+zhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y5xD9hdu; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:Content-Type; b=dI1aauhljrOxfwoTwZ+bnPxe7VhPsOI2eK8OXkk06CaDhvDIWPY3KepraDEdAN/SsoaQzfFwbvviKTbFbFkF/Nz8uZLtc/L4AN5GHnSMFVLm8bht3SUkwhVvcx1vXWqn95MY6q2pexjOixcpvayPFpLh0DAQUF6y6oNSCCfM6cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XkflArg0; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 03CFD44336;
-	Mon, 17 Feb 2025 15:45:36 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E49B4442D1;
+	Mon, 17 Feb 2025 15:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739807138;
+	t=1739807161;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yWwZNxenfvOgLKFPhi0+FzrFCD2XfkNHhEhnlmfmRSA=;
-	b=Y5xD9hduVxIIht9sPlil1QhKbIkejy/AL2Ff+/nwGlyP+++sX/mWMMG49UvfTAr0uXIjVH
-	sPxkQjEEeXNOQ75UwVJk2qINYibz1zXFeP0PXOpASBDdskUGftYv58WZbFe9cxQaFbL3da
-	3+p13Fvd4TUD5TOa5clwlqGMO2ifMQMjKa2AKxPVmllhtS8xbzlQCiAEjtiez/CeCtIT/n
-	NFlaz/ZpuzwpDhcWqfUWOzT+b+rBODLOaSNe6pjrW/TYZvNBmM1UTq/qs8LkHxteBSoNbI
-	lEsH6/9BP1TeG5ZdAS0GErjMNaOcBh4PXQJybFTF1gMdiCYRtcZFXk+/nAgogw==
-Message-ID: <c9378813-a6e9-4af2-9e5a-3ee5b41d8fc6@bootlin.com>
-Date: Mon, 17 Feb 2025 16:45:36 +0100
+	bh=igNXhN0Lf8JrZDXDZEncf2oN26Nr985vOD9D0yqUIIM=;
+	b=XkflArg0d7pCukXyiEAiNXQ3+l/i8yGEwLYJ4dIyOR3gOKVq8nojy37t2HBxBIcCtgIfed
+	Zg+mZq0ukYLbFpZEOaQJVXT0NTuSyGssRw/ODF5suESeqrHl+cARaDwxqToR1JmlaAEFMr
+	rkDOaL0CuPukGj4whTcEpXDubFVnKtgG9/+ukyf0nM90LDSUNDeIwxF8AFNlykISfwl10A
+	XyKbSy7yiYFkglqzjK6O52MBvxR2N46E252gSKq4Y2aIdiL/Yqa+XLUWb4Ih1URkVKhz3S
+	B3F/5fAZGIvkXn61dXzPNhpmBxSy3kDT9ei3z/vYHRhicLvX7HIpLMnBynHnwA==
+Message-ID: <6b29064f-104a-4f9c-a9f6-8f4a862dbcd7@bootlin.com>
+Date: Mon, 17 Feb 2025 16:45:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,15 +53,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/14] drm/vkms: Allow to attach connectors and
- encoders
+Subject: Re: [PATCH v3 08/14] drm/vkms: Allow to configure multiple planes
 To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
 Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
  maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
  airlied@gmail.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 References: <20250217100120.7620-1-jose.exposito89@gmail.com>
- <20250217100120.7620-15-jose.exposito89@gmail.com>
+ <20250217100120.7620-9-jose.exposito89@gmail.com>
 Content-Language: en-US
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
@@ -118,29 +117,75 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250217100120.7620-15-jose.exposito89@gmail.com>
+In-Reply-To: <20250217100120.7620-9-jose.exposito89@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
  ggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
 X-GND-Sasl: louis.chauvet@bootlin.com
 
+Hi José,
 
+Thanks for this new iteration!
 
 Le 17/02/2025 à 11:01, José Expósito a écrit :
-> Add a list of possible encoders to the connector configuration and
-> helpers to attach and detach them.
+> Add a list of planes to vkms_config and create as many planes as
+> configured during output initialization.
 > 
-> Now that the default configuration has its connector and encoder
-> correctly, configure the output following the configuration.
+> For backwards compatibility, add one primary plane and, if configured,
+> one cursor plane and NUM_OVERLAY_PLANES planes to the default
+> configuration.
 > 
 > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> ---
+>   .clang-format                                 |   1 +
+>   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 140 +++++++++++++++++-
+>   drivers/gpu/drm/vkms/vkms_config.c            | 127 +++++++++++++++-
+>   drivers/gpu/drm/vkms/vkms_config.h            |  75 +++++++++-
+>   drivers/gpu/drm/vkms/vkms_output.c            |  42 ++----
+>   5 files changed, 349 insertions(+), 36 deletions(-)
+> 
+> diff --git a/.clang-format b/.clang-format
+> index fe1aa1a30d40..c585d2a5b395 100644
+> --- a/.clang-format
+> +++ b/.clang-format
+> @@ -690,6 +690,7 @@ ForEachMacros:
+>     - 'v4l2_m2m_for_each_src_buf'
+>     - 'v4l2_m2m_for_each_src_buf_safe'
+>     - 'virtio_device_for_each_vq'
+> +  - 'vkms_config_for_each_plane'
+>     - 'while_for_each_ftrace_op'
+>     - 'xa_for_each'
+>     - 'xa_for_each_marked'
+> diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> index 6e07139d261c..fe6f079902fd 100644
+> --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> @@ -24,6 +24,10 @@ static void vkms_config_test_empty_config(struct kunit *test)
+>   	dev_name = NULL;
+>   	KUNIT_EXPECT_STREQ(test, vkms_config_get_device_name(config), "test");
+>   
+> +	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
 
+Instead of testing directly a "private" field (planes), can we use 
+something like:
+
+int count;
+vkms_config_for_each_plane(config, plane_cfg)
+	count++;
+ASSERT_EQ(count, 0);
+
+So we don't make config->plane "public".
+
+Same comment for connectors, crtc and encoders.
+
+With this:
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+(sorry, I did not notice this on your v2)
 
 Thanks,
 Louis Chauvet
