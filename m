@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-517890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254C0A38709
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EBEA3870C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12EDB3A3AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305EF3A4BAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40186223321;
-	Mon, 17 Feb 2025 14:55:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A466A2248A8;
+	Mon, 17 Feb 2025 14:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="cM89GE2q"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68321B199
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5371F223316
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804140; cv=none; b=GuLvsYlpaZhlaTMxVgF7kl47DPkjHxKPF9l1z+coSBrI0osl5PQfbsDjKaFDm9ntyF3pqFs3xux/6649q2wQlhilx4E5CB4+CEIqOurK7pJAM9+kn8mT3Qsdlmdp7efPXzXAZOFG8yfftxUQEOvVP5rAitIpV2LhXb8MN/gWiIo=
+	t=1739804148; cv=none; b=E/2IsZLkiGCt8Ut4HYzWMWa10PPqvSTlC28+RbBwX+EURs0M7s7eMOWxZ8YIxgMpc7Ze/5MY9Zb+6qPWqXukb0/7iqPUrwIqG038pjzXGUJbC/IvV6K5GWV1KB3ExYZgKgFCtPmGt+bRpEGvRyRE6poxSD9Wx+0MmnZK4SP4TBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804140; c=relaxed/simple;
-	bh=mCmhZKA69/c2eU7LC9F+MUZq2m9KGbt0EwRoFPfhmtA=;
+	s=arc-20240116; t=1739804148; c=relaxed/simple;
+	bh=cda0iUrha4/OfoRLCstTRgJh+1Yzv8SfT1RHe8MAAr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0boiNleDAhVaPQM3LbpHA68CPehKFpkWKaIdENPp2cpxLHvW9Xh8zxdS8VQty2C+uSnZ5etq8eAE33bAWzmY9XCghbUjr+EAFbwdVij/1Y3Xo8tqpaRVCro1jdgiyeH5Ur+/YqvEb14UcSJlR49kWBZNLDQAJuft14jqYluclE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453CDC4CED1;
-	Mon, 17 Feb 2025 14:55:35 +0000 (UTC)
-Date: Mon, 17 Feb 2025 14:55:32 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Tong Tiangen <tongtiangen@huawei.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Morse <james.morse@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, wangkefeng.wang@huawei.com,
-	Guohanjun <guohanjun@huawei.com>
-Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
-Message-ID: <Z7NN5Pa-c5PtIbcF@arm.com>
-References: <20241209024257.3618492-1-tongtiangen@huawei.com>
- <20241209024257.3618492-5-tongtiangen@huawei.com>
- <Z6zWSXzKctkpyH7-@arm.com>
- <69955002-c3b1-459d-9b42-8d07475c3fd3@huawei.com>
- <Z698SFVqHjpGeGC0@arm.com>
- <e1d2affb-5c6b-00b5-8209-34bbca36f96b@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUXLlCTaySIwwLjuZ7TjUa2QfLs1iuASwYjlEPiLgnPw929KRHmyPfTquCOUb8KExNkf90rlemi8MDwBXYcKqQbMB9+vg2olpRcd2G4r5ETRWRBR6WIMqfRmlIctOU8uT3nAHIX9g09FqcwUAAGy4P0BrYiescOL0UA2vZDX5PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=cM89GE2q; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e68943a295so2167566d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:55:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1739804145; x=1740408945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=61zWE6kfcjwEOh5eZ6HUP/yfQ2wvTQwtRwwsjzC2Ggw=;
+        b=cM89GE2qQeLQWKv57Tk3jzH730jVhvnvlSdwoeAIr0LkIcNWZ1EntqnVfPmulk4lth
+         crkD5AwuOm/H+WsdW7fvkzgPFbHCPPaDFRT2Od29EOqy94Gf60IgU/czvttUmbUW7BbA
+         /o/Lv4mW9dGacqU4GqV5hjnbJHyxASuJV9boQwIXGwtaoGFJcVIxquIK0VA1fb+h2UxV
+         ZAD7lZu0lnkuehPyVGH21uu9RH2+tqiAdCzUGrT/bBlx8QFCvJLJ3f3Xa6yMlulLHp57
+         VdyyxBTHN72+SM4wFMinvLd1Ks8MpW08/D15Rjg+GgWpdyTotPyY9Myrzu6BZVQwscqN
+         7/SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739804145; x=1740408945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=61zWE6kfcjwEOh5eZ6HUP/yfQ2wvTQwtRwwsjzC2Ggw=;
+        b=pyUsNUGlRyWImLj5z8vYljwqN46Bt0JpoY+3oaVLLRmJ55cu2HCsi5t7tFZP2SDRKy
+         +cZa6AmBFciJXr64sP2B6ooV9tYc5Z3LR5QMjUmy4QL48EGhPJXA5fTW0Nm4WqIOsYWo
+         J79vwhcq9a8BHqH35Pj4tFVSKhx4QyZInXMDrPhecG9K36kA9rNExniGBxCONf1WkDs1
+         d8ieWk2kFwctl4pHd+Dk3MVsw5XwS2hO0/d25YwzF5WUPh7wCMKopJT7g1KC2tUy1Ove
+         BEx1KAD/PVVkz9pF2BKzs5Xb0g9qC3fK0JQYWbQP4zwcbqqfvYi6S2k0cbuG8TR4SCGT
+         7RHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnsAkcOa86qSIxGK/7jy3dfeslRqstfcsqhSoykzAIkM3Nh/JTosE1XmhVYaoEicOVnjwk2bLXTFagE4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxghWYyMSlAHp1vccDCX1sn09KKpcillOMnvNRGrWZJD1UsGnu
+	J+NzfLdzW2/L7HzbBfj7UggKGF5RjOTCXRxtRfonTZWYulvSbhLovQCE9UAwWw==
+X-Gm-Gg: ASbGncuktfrk7UpVu4N7DYxGNKRaJGC4iBvsTPhseWLDpxMCPDA50slSiJLHRACdkyY
+	POWqIQiXucTJ4VcpxX86PRT16MO4QA8QUy67t1E4Ykdd2ELlOxm92nFt9iocD2gTAdlC5EfPnRO
+	/71jFgGub42MQ+N3TCyj78ScayfsVY2iie7ciGkwTlWY4sET0gHlhKZtegT15ybPBYc3uoS+KgW
+	/pLiXFOMMEk3OY2QkOMIuwi+/nrjQXKyNEAPXqiNeumLuXqFmkf/8TGyrN2x7AKLISYqrTHmsmx
+	1NRIwFT178uXJfkX
+X-Google-Smtp-Source: AGHT+IFERKSiWL+IE76LI0Jb/5d2nYVqmycpTQYeVY7DjUZwF5gEcJTAtEZcrH6lWANjZ9iaLtK2Mw==
+X-Received: by 2002:ad4:5d4b:0:b0:6e6:6048:f42c with SMTP id 6a1803df08f44-6e66cc7fe50mr144532386d6.8.1739804145160;
+        Mon, 17 Feb 2025 06:55:45 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::46b3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e67c868dd8sm14282976d6.79.2025.02.17.06.55.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 06:55:44 -0800 (PST)
+Date: Mon, 17 Feb 2025 09:55:41 -0500
+From: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+	"christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
+	"make_ruc2021@163.com" <make_ruc2021@163.com>,
+	"peter.chen@nxp.com" <peter.chen@nxp.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pawel Eichler <peichler@cadence.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] usb: xhci: lack of clearing xHC resources
+Message-ID: <7ca4737a-aac6-4a14-8629-bd5404a6f902@rowland.harvard.edu>
+References: <20250213101158.8153-1-pawell@cadence.com>
+ <PH7PR07MB95384002E4FBBC7FE971862FDDFF2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <b39d468e-beb9-4a44-8fe6-83754ffbd367@rowland.harvard.edu>
+ <PH7PR07MB95383C03E64507BED1D64222DDFB2@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e1d2affb-5c6b-00b5-8209-34bbca36f96b@huawei.com>
+In-Reply-To: <PH7PR07MB95383C03E64507BED1D64222DDFB2@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-On Mon, Feb 17, 2025 at 04:07:49PM +0800, Tong Tiangen wrote:
-> 在 2025/2/15 1:24, Catalin Marinas 写道:
-> > On Fri, Feb 14, 2025 at 10:49:01AM +0800, Tong Tiangen wrote:
-> > > 在 2025/2/13 1:11, Catalin Marinas 写道:
-> > > > On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
-> > > > > Currently, many scenarios that can tolerate memory errors when copying page
-> > > > > have been supported in the kernel[1~5], all of which are implemented by
-> > > > > copy_mc_[user]_highpage(). arm64 should also support this mechanism.
-> > > > > 
-> > > > > Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
-> > > > > architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
-> > > > > __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
-> > > > > 
-> > > > > Add new helper copy_mc_page() which provide a page copy implementation with
-> > > > > hardware memory error safe. The code logic of copy_mc_page() is the same as
-> > > > > copy_page(), the main difference is that the ldp insn of copy_mc_page()
-> > > > > contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
-> > > > > main logic is extracted to copy_page_template.S. In addition, the fixup of
-> > > > > MOPS insn is not considered at present.
-> > > > 
-> > > > Could we not add the exception table entry permanently but ignore the
-> > > > exception table entry if it's not on the do_sea() path? That would save
-> > > > some code duplication.
-> > > 
-> > > I'm sorry, I didn't catch your point, that the do_sea() and non do_sea()
-> > > paths use different exception tables?
-> > 
-> > No, they would have the same exception table, only that we'd interpret
-> > it differently depending on whether it's a SEA error or not. Or rather
-> > ignore the exception table altogether for non-SEA errors.
+On Mon, Feb 17, 2025 at 06:25:35AM +0000, Pawel Laszczak wrote:
+> >> For this scenario during enumeration of USB LS/FS device the Cadence xHC
+> >reports completion error code for xHCi commands because the devices was
+> >not property disconnected and in result the xHC resources has not been
+> >correct freed.
+> >> XHCI specification doesn't mention that device can be reset in any order so,
+> >we should not treat this issue as Cadence xHC controller bug.
+> >> Similar as during disconnecting in this case the device should be cleared
+> >starting form the last usb device in tree toward the root hub.
+> >> To fix this issue usbcore driver should disconnect all USB devices connected
+> >to hub which was reconnected while suspending.
+> >
+> >No, that's not right at all.  We do not want to disconnect these devices if
+> >there's any way to avoid it.
+> >
+> >There must be another way to tell the host controller to release the devices'
+> >resources.  Doesn't the usb_reset_and_verify_device() call do something like
+> >that anyway?  After all, the situation should be very similar to what happens
+> >when a device is simply reset.
+> >
+> >Alan Stern
 > 
-> You mean to use the same exception type (EX_TYPE_KACCESS_ERR_ZERO) and
-> then do different processing on SEA errors and non-SEA errors, right?
-
-Right.
-
-> If so, some instructions of copy_page() did not add to the exception
-> table will be added to the exception table, and the original logic will
-> be affected.
 > 
-> For example, if an instruction is not added to the exception table, the
-> instruction will panic when it triggers a non-SEA error. If this
-> instruction is added to the exception table because of SEA processing,
-> and then a non-SEA error is triggered, should we fix it?
+> Yes, I had such idea too, but the current solution is simpler.
+> I don't understand why in this case we can't do disconnect
+> The hub connected to host was physically disconnected during suspend, so 
+> It seems quite logic to make disconnection. 
+> Can you comment why we should not make disconnection?
 
-No, we shouldn't fix it. The exception table entries have a type
-associated. For a non-SEA error, we preserve the original behaviour even
-if we find a SEA-specific entry in the exception table. You already need
-such logic even if you duplicate the code for configurations where you
-have MC enabled.
+Imagine that there is a disk drive plugged into the hub, and the drive 
+is mounted with various files open or being written when the system gets 
+suspended.  While the system is asleep, the user unplugs the hub but 
+then plugs it back in before the system resumes.
 
--- 
-Catalin
+Under those circumstances, the user expects that the drive will remain 
+mounted, the files will remain open, and there won't be any data 
+corruption on the drive when the system starts running again.  But if we 
+said that all the devices below the hub were disconnected then none of 
+those things would happen and the user would lose data.
+
+Note that the same sort of thing can happen on some systems even if the 
+hub does not get unplugged, because these systems do not provide suspend 
+power to their USB controllers.  In addition, the same sort of thing 
+happens every time a system goes into S4 hibernation.  You wouldn't want 
+to force all users to unmount their USB drives whenever they hibernate 
+their systems, would you?
+
+This is why we should avoid saying that devices were disconnected during 
+suspend.
+
+Alan Stern
+
 
