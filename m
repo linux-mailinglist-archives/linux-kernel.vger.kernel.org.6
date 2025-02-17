@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-518431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26959A38EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:14:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E680FA38EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C5018837B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D6B3A6D1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AFD1AA79C;
-	Mon, 17 Feb 2025 22:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71681A83F5;
+	Mon, 17 Feb 2025 22:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XCpSqGxV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0xCenwB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD0E18787F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA1519D89E;
+	Mon, 17 Feb 2025 22:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739830416; cv=none; b=g0/nR1V5aLy8e2jlQroy6qpk4VORLF3AwV96Yd3ePr+7xTxU694t0DYvoXKnEJdxcITtglrUJbJ/lkRqCxTIqGTjLFde/i1nVuYIKqWqUKMRqay/uvzijN8bIVx888wau/suhzlq1ib9tm7HZOan1VQglWH9+pPGRSFuqtbL09M=
+	t=1739830821; cv=none; b=OTZUI7FdUFh1foDN7YAYt9tw2lCXqnbAER4YF0rGx0G6bck7iF6oAZoqnSbtAb8Q/3PfWUiu6arCP+izOMyZF8ITxWg4w5vEUp3TWzohDKWGMrh5OZw4KpF63EcFx92N0h0n7SQNn9bquDjA/Uw4dq/6MfWJHCVQ2dXPE2KSwtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739830416; c=relaxed/simple;
-	bh=IZizXcCnnJyNvGPpXrfdBPQSatvt5UguHsM/2T49HLc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=QRTfJZUFySg5gbnZukaFcssnBw1UFUp3qh9XzpSE9winj4RrUqVHavvvcjuPwPnDLa2bxdWqjz3M/JBzgnvsCamuNxF0+uI4n7lK58hOkZvNMtMlxcpjsJn4Yd3HLbtoU2v/MLIG9lUV29oh5v+DVaxrwX3fg/j9zitRuR1g09o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XCpSqGxV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739830414; x=1771366414;
-  h=date:from:to:cc:subject:message-id;
-  bh=IZizXcCnnJyNvGPpXrfdBPQSatvt5UguHsM/2T49HLc=;
-  b=XCpSqGxVNzIbDcifKqcIRAkDFoV1FUfMVsh1jFlNfRn8Ls6SAgtRaTgW
-   RGgKl+M89KsFTuIjDRFpuUY5A0NMl5waMa2RuDvyZPBJm3TsoB95S+0g5
-   dB44/GJlJqRRuQnFZIub5U6JSvkKN4paIf51eF9BLTjiV016QWVfA+7Xw
-   nZaYUB1K+KYtW6Uj8a5ngaFCH6JNTqhJ0/nK9xX1GCgcEoXotJmVQxujr
-   yRUUI3Mo8QInA5y4nhqnLLCyULLm6qF2ld9uT080mDmskTDzz0YWobcj8
-   F5vxB+pUQBBZZ/1fXHyAqE1i2pvMx+p9KILHwLtSB3AcjZV/WVWkN6SaA
-   Q==;
-X-CSE-ConnectionGUID: psXuCAlLRA2eqUkII8nMag==
-X-CSE-MsgGUID: nZ5r/JNNSlGoTl19xyxOcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51947488"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="51947488"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 14:13:34 -0800
-X-CSE-ConnectionGUID: vWTtMMXcRguxpIY+R2oYlQ==
-X-CSE-MsgGUID: WUcC/cyBTQu45bj6FJpAlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="145128511"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 17 Feb 2025 14:13:33 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tk9Mp-001DdV-0f;
-	Mon, 17 Feb 2025 22:13:31 +0000
-Date: Tue, 18 Feb 2025 06:12:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/microcode] BUILD SUCCESS
- 037e81fb9d2dfe7b31fd97e5f578854e38f09887
-Message-ID: <202502180643.4ytm8Blo-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739830821; c=relaxed/simple;
+	bh=j/tvJyrR3ovKzSfPB3LiZgR2D1Lr52JfmeGV4c6ICfk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C+M4iZi6mjOT5R7WP3x8D/4qXN23zEqps11XdJhcbeE0/yx8X6hSmnAXb6XabXbBDLAxMnjBL9UsD0P/r6O28jpAoxpLuRFhv2+EwyauBMQ4yhHwcUXee9+iCyaNB/RDrCkutppzvpKs9u4UHwxeZIhhWPdHp96JwU1Zxa81a8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0xCenwB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAgoQq025635;
+	Mon, 17 Feb 2025 22:20:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WVbOwd4rDC4+XI6orsMGTj2L4zMQLlpY8kWB5b5Dw/Q=; b=b0xCenwBs9GJuZwk
+	8mXoe4a9nGWNjbNRQitvDm1FEmbm2mOGlFKy6/UHT6p3SkDit8fWdd7w580T5YmC
+	oBUhCgOMbskTyKD2mXgeQDlXktQqXdQwJ6NZujoMDLAFgrrGoS5Jq/vgfYI5eal9
+	HlziTJ2hdjQ2vsvoFEcwARbOjwDZbuGABHrYctp77W33iNpfXgrhyCKU68DvFUUM
+	BDErvq2tTHFVzHNKqfpwPNsJtHxGjNlF5nnCWtbCfc3KUPxT4nEqVymqVkra/DWm
+	/kEX33lbxnHGxUf7iV3Htyx7lM9Q5yxGw8sOXgdBx6PF9/uzo56Jx03jIVe6CHlk
+	rttpjQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7vtxhs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:20:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HMKBPt020550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:20:11 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Feb 2025 14:20:11 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Li Liu
+	<quic_lliu6@quicinc.com>,
+        Fange Zhang <quic_fangez@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: (subset) [PATCH v2] drm/msm/dpu: correct LM pairing for SM6150
+Date: Mon, 17 Feb 2025 14:20:01 -0800
+Message-ID: <173983047014.1708530.3277590461422590844.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241217-dpu-fix-sm6150-v2-1-9acc8f5addf3@linaro.org>
+References: <20241217-dpu-fix-sm6150-v2-1-9acc8f5addf3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BQGxw8OzYKV2Ynn4CkSywsaSLwTpZKBe
+X-Proofpoint-ORIG-GUID: BQGxw8OzYKV2Ynn4CkSywsaSLwTpZKBe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 mlxscore=0 mlxlogscore=745
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502170173
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
-branch HEAD: 037e81fb9d2dfe7b31fd97e5f578854e38f09887  x86/microcode/AMD: Add get_patch_level()
 
-elapsed time: 723m
+On Tue, 17 Dec 2024 14:35:40 +0200, Dmitry Baryshkov wrote:
+> The SM6150 platform doesn't have 3DMux (MERGE_3D) block, so it can not
+> split the screen between two LMs. Drop lm_pair fields as they don't make
+> sense for this platform.
+> 
+> 
 
-configs tested: 19
-configs skipped: 125
+Applied to msm-fixes, thanks!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+[1/1] drm/msm/dpu: correct LM pairing for SM6150
+      https://gitlab.freedesktop.org/drm/msm/-/commit/24b50b7340ab
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250217    clang-19
-i386    buildonly-randconfig-002-20250217    gcc-12
-i386    buildonly-randconfig-003-20250217    clang-19
-i386    buildonly-randconfig-004-20250217    gcc-12
-i386    buildonly-randconfig-005-20250217    gcc-12
-i386    buildonly-randconfig-006-20250217    clang-19
-i386                            defconfig    clang-19
-x86_64                        allnoconfig    clang-19
-x86_64                       allyesconfig    clang-19
-x86_64  buildonly-randconfig-001-20250217    gcc-12
-x86_64  buildonly-randconfig-002-20250217    clang-19
-x86_64  buildonly-randconfig-003-20250217    clang-19
-x86_64  buildonly-randconfig-004-20250217    gcc-12
-x86_64  buildonly-randconfig-005-20250217    gcc-12
-x86_64  buildonly-randconfig-006-20250217    clang-19
-x86_64                          defconfig    gcc-11
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
 
