@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-517315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F931A37F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:03:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BBAA37F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4878A3A801B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:01:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4D61650C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC898217663;
-	Mon, 17 Feb 2025 10:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA7F217715;
+	Mon, 17 Feb 2025 10:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FC9dPITG"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgCSB/ke"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AE321661C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182CC217640
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786491; cv=none; b=LiBXy9dD8pas1MctUYpFJNts8GaTEGhjT3NpGEzVASXjZrzvkEh3YTghMaPlRWG2D7CFG4Q8Lf+Swdl1h9rnrhucmGKP6gLn8xSQ+tpwdiR2XcXIbRGt0GO4qgWHEDhZRtp+K7Mhexb9zDbur5thPg/ckdn7WfG4sNYbc1alSJU=
+	t=1739786493; cv=none; b=hyt5mREMB9cYEPExT138EYVZP8o/2g8mZo/D12l1RQTpU9eoTrjZdSNaNHHLIAdjWF7Nur+qRn0wgRJVYhsTkYNUrCkV+u+Iq3dp5nGo78vVUcRriyXXtJ2QizfO9IECa8TA+4I9oX1M5rXn6fdUvZ24txTUGwZ/dh/aFAN6x0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786491; c=relaxed/simple;
-	bh=u4vCOB9rAzLsNQV6nXfUhASxHEQbm+Ekq7VBBUVcZyM=;
+	s=arc-20240116; t=1739786493; c=relaxed/simple;
+	bh=lE2dcBc64Q45pDXeulBAcyc2a1SFMDFApIAknsuoPPg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XQHTSZCxtzzTgiMcDcXrV1MXQtHcD5UuVjD+KwncdxJs0PE6cvxqwWfMtB866NZVkI6RL1M4EKy12r0bxYdJhPso6hvS6+F8bi7k4RacWsbSA21zuZPY9/QA6lQEiVRbMhA9jcLKvCeiTWm94BX0Nr2yd9MaeO4pG629MHVWjGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FC9dPITG; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version:Content-Type; b=o0q5VCtdICRfEqLIaofYYnKZGL2CN1RuEFD9hluI40e3F9hggvrUFXrQP18sqYGY7rMaoPP5gUP3/imXFSE3zVN8b6Edd/3pW3FKnuIyzDnzJfp0NMMcLgdGDvDbOSJVcld/NnvUByh7WN4IKs8Mbr8ALAgcfnnCkXe9beeRNX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgCSB/ke; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so2332120f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:01:29 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f31f7732dso1349987f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:01:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739786488; x=1740391288; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739786489; x=1740391289; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XyJ4zhCFR8HQ/P+sh2alNxUJOEd+yUChQD9LZjyxME0=;
-        b=FC9dPITG0iaMNi/X+dKWmfqer70rZoheT5iwBerT/FIvDIiVnWaUqj1IH1Mz3eu38r
-         KFTsH3ZsmCfLKkStJOvA4SXDnVjCxIXnfsOc5vjiCrnClaTtU/XQ3VXywLGN9TqbYpA6
-         Ja9FrPAy72fmIxK832DdcRcn+2ECnA9r2pgbg1GUc4JLuXEvnLDbjxgqYHFL7VBhB/mg
-         Dh2RRs3HEkgfC1CtWgUKDQuVDFRDL6+mjdW6lomBpSwh1F3qhNdHsoEmxfOKM+lB5RUd
-         fhUm7kUa7uo4F+ut06O85MoxBlePq31fS3glWE3DSRxkzeG/S0rpH6ytPLz2Tmah4cfF
-         nx5w==
+        bh=LmDfaEOjc70HjJgnj7sLGaZRyHuUKTvYVGnXm2VRbiY=;
+        b=CgCSB/kebREW3YATw9drUaYKdhkkCqn1bmkUOn3WN//XtW7vDvFnNlz425ciqJ87Dz
+         5iqrerdaUl8pixYvzK4PP8n2Md4rOghUEMvzVt8eDKPTe1UznwYvLRR7WZpX+/8k8R87
+         lpuZkqyJRD8y5PsRKcTKowClNz33R5+GUNub2IbqN9w6J/YMHhWf6yRTJZubSYtqkf8i
+         7NYecXvZqLhtxlMZ+6r1rBe8WjKcN3QfO6YaLNpR/4L0F4OwmZpcV3gTtyLZwfT/C1dN
+         gQ7/VWtema2qrTUsm/RZIdXMMP3ezxZqk2bTraIpMnnY/7zvkFyK0EXeiURaKwOE+DeJ
+         BKnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739786488; x=1740391288;
+        d=1e100.net; s=20230601; t=1739786489; x=1740391289;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XyJ4zhCFR8HQ/P+sh2alNxUJOEd+yUChQD9LZjyxME0=;
-        b=AQha3fClHJOwtWEXGyjRo194cQTDIBBJUm1iQCVD9+yqzA3XhMLVbPBDnuCyE7Fuqr
-         iS9NUALMIBQirdQYelXcD645UKJ5SdfkqaWq9dzHq0z2rUJLscUJfyKZQkVRQ3ZtFlBF
-         F7/bySTKQMnBxjy8krzAvMLKAVp2rHyDTd7OzM5ZwhKcPyf51gHZXmx9i0dNtObq6qUh
-         tf8QK7f3xJP3zhgEcAlTqB9DrTNwubXjLQbmRVIEEFab9p4fYtrROUCWv3a50k/NvEtw
-         Z6QPI4wzou1yEb5GoEgTl5hJTUHc3rGCeEGoDmWvcTKbKsjGpYP1ZyB+gfC33SHUD/Mf
-         mLMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWB/Pq1rjvC2ucahsJ7n9DO4he+V1TeCwSnn5t6YOntTH6Ffb3DGmSsPomijmhnOVItE6NAnM2UG3giSs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRC5+YjNPoeqOb8nSdpmJ9m9ggmq/RHdDRx8rRQs6L/EvxCewh
-	1j54olJ34y1NAKg4SbsTQh1sx9nYIyi0OJmG8UpkS55idjOKBEdj1Yb1c5uB
-X-Gm-Gg: ASbGncvxTxWwn+s7a5dfNdWVNMaZ07cZ/1BY7fXDyoM4NOH1zpOaxrCAFRqA03lhHyj
-	ur1D1nsCt5l45CLnA/9oqF4pVXGVepoPNgz921fqcxw0kwlwAhrHlFvY4u7mhak4vOW8EzbnSPC
-	AQnRWCzDKgx2jSVhskVXledZUrTC45JVyYaQgOIrJFclkQklHpMX57iFOsn0aiBYZhpnV6fZhoG
-	E9zFT5KnE1kygwONCy9omjFaS1qIkb5bKpHhSrsy9ANo9ifm62vW8GS2Zkey0Mp/Lu9f0CZe+Xd
-	Y/y3ogL4c7RnQsJvWw==
-X-Google-Smtp-Source: AGHT+IEgChZS1TM0yOWscdOUtGj2+t/pNHUL4Ncpoj0PJEzTn8rZEI3vhQLyexaVQtcmkHYF3tLn/w==
-X-Received: by 2002:a05:6000:18a9:b0:38f:2193:f8c2 with SMTP id ffacd0b85a97d-38f33f34e32mr8698968f8f.31.1739786487650;
-        Mon, 17 Feb 2025 02:01:27 -0800 (PST)
+        bh=LmDfaEOjc70HjJgnj7sLGaZRyHuUKTvYVGnXm2VRbiY=;
+        b=EV9L/EYHCsofwKLtmI6IgnTRX/iknAsCO3hmFxqRiHlSr3YfAJvWg1/dk6kKQwoUR3
+         8n8UV4pTQnir9Xn6W2d5Vi7p6/y9PIn+PG1qni7HEwuZBmd5wj/DnfsDelR1JzecySgm
+         m+hlSH3M1xpc8cOnys0HhEt9AoSwwWWb2kAKhwCVyvZoaPIhEGy4QCPWDF+u3XXGT+3+
+         sXT2ViGkfTt376QBvQkGjTsvgWYX31K8Eh+eafAzmEFOvbP7zhYJhiAdeDG3GUJyHZCR
+         F5Pa4Ytheg024mXDI1p20A/AbJ8kavfT8iZ3DGivryu1mi6fBVFIStmSDuWv9v5RYIXn
+         PucA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbO57LqLLlPvT/uIuoopSAiDhWjZRLzREQD0MTXzffm/9fv0DChMeouXXOu4lzndX+iMWZhg8fDJKeDaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfdjc416CY91GXk9HcPm6Rl0OYzQ0LvEgHuMrGKGaIu6poEppU
+	PgIoTCbppiGnVruvFCwIsSHmfpQXkWxl5emDRdkYAW4ASyxPD0gR
+X-Gm-Gg: ASbGncs4LsRhY5az6GzfcZm3Yj1CKNX+u/ZvlyANFeOq879rFO1AE8CPb7jihFilagc
+	htNiqnXxJo8qgJmXIvVbBlBUtwy3BuVAIMRirHSRXywYTKfMDSvbuiG3OIMmQ9bpHb49mBDEdn9
+	VbGfzLZA/09fHEQCbzq+Bwkh5IeMjWcjNerh/Pj2edQpGr3httVVEd3j3fbslPq6+cQXyu5dQzq
+	Zad+lEEnWYEQMzhlmhWjGdavtYZyqybWSU15KnEFuRpBCPWckq26Ggnh31ciGKXx4augRD1hq+n
+	UmFBsE/Jv+e2s4dseA==
+X-Google-Smtp-Source: AGHT+IHstdjpSigFhN2igJJ+uFQJmFbHjahhv3wT/oTulr2cNaKb5gAC3MJK+5fY4aO6oDo3PD9wcQ==
+X-Received: by 2002:a05:6000:154b:b0:38d:a695:6daf with SMTP id ffacd0b85a97d-38f33c20c39mr9565959f8f.19.1739786488810;
+        Mon, 17 Feb 2025 02:01:28 -0800 (PST)
 Received: from fedora.. ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7fe6sm11591901f8f.86.2025.02.17.02.01.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7fe6sm11591901f8f.86.2025.02.17.02.01.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:01:26 -0800 (PST)
+        Mon, 17 Feb 2025 02:01:28 -0800 (PST)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: hamohammed.sa@gmail.com,
@@ -82,11 +82,10 @@ Cc: hamohammed.sa@gmail.com,
 	airlied@gmail.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
-	Arthur Grillo <arthurgrillo@riseup.net>
-Subject: [PATCH v3 03/14] drm/vkms: Add KUnit test scaffolding
-Date: Mon, 17 Feb 2025 11:01:09 +0100
-Message-ID: <20250217100120.7620-4-jose.exposito89@gmail.com>
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v3 04/14] drm/vkms: Extract vkms_config header
+Date: Mon, 17 Feb 2025 11:01:10 +0100
+Message-ID: <20250217100120.7620-5-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250217100120.7620-1-jose.exposito89@gmail.com>
 References: <20250217100120.7620-1-jose.exposito89@gmail.com>
@@ -99,106 +98,300 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add the required boilerplate to start creating KUnit test.
+Creating a new vkms_config structure will be more complex once we
+start adding more options.
 
-To run the tests:
+Extract the vkms_config structure to its own header and source files
+and add functions to create and delete a vkms_config and to initialize
+debugfs.
 
-    $ ./tools/testing/kunit/kunit.py run \
-      --kunitconfig=drivers/gpu/drm/vkms/tests
+Refactor, no functional changes.
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-Co-developed-by: Arthur Grillo <arthurgrillo@riseup.net>
-Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
 Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- drivers/gpu/drm/vkms/Kconfig                  | 15 +++++++++++++++
- drivers/gpu/drm/vkms/Makefile                 |  1 +
- drivers/gpu/drm/vkms/tests/.kunitconfig       |  4 ++++
- drivers/gpu/drm/vkms/tests/Makefile           |  3 +++
- drivers/gpu/drm/vkms/tests/vkms_config_test.c | 19 +++++++++++++++++++
- 5 files changed, 42 insertions(+)
- create mode 100644 drivers/gpu/drm/vkms/tests/.kunitconfig
- create mode 100644 drivers/gpu/drm/vkms/tests/Makefile
- create mode 100644 drivers/gpu/drm/vkms/tests/vkms_config_test.c
+ drivers/gpu/drm/vkms/Makefile                 |  3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c | 13 +++++
+ drivers/gpu/drm/vkms/vkms_config.c            | 50 +++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_config.h            | 47 +++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_drv.c               | 34 +++----------
+ drivers/gpu/drm/vkms/vkms_drv.h               | 15 +-----
+ drivers/gpu/drm/vkms/vkms_output.c            |  1 +
+ 7 files changed, 121 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_config.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_config.h
 
-diff --git a/drivers/gpu/drm/vkms/Kconfig b/drivers/gpu/drm/vkms/Kconfig
-index 9def079f685b..3c02f928ffe6 100644
---- a/drivers/gpu/drm/vkms/Kconfig
-+++ b/drivers/gpu/drm/vkms/Kconfig
-@@ -14,3 +14,18 @@ config DRM_VKMS
- 	  a VKMS.
- 
- 	  If M is selected the module will be called vkms.
-+
-+config DRM_VKMS_KUNIT_TEST
-+	tristate "KUnit tests for VKMS" if !KUNIT_ALL_TESTS
-+	depends on DRM_VKMS && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds unit tests for VKMS. This option is not useful for
-+	  distributions or general kernels, but only for kernel
-+	  developers working on VKMS.
-+
-+	  For more information on KUnit and unit tests in general,
-+	  please refer to the KUnit documentation in
-+	  Documentation/dev-tools/kunit/.
-+
-+	  If in doubt, say "N".
 diff --git a/drivers/gpu/drm/vkms/Makefile b/drivers/gpu/drm/vkms/Makefile
-index 6b0615c424f2..c23eee2f3df4 100644
+index c23eee2f3df4..d657865e573f 100644
 --- a/drivers/gpu/drm/vkms/Makefile
 +++ b/drivers/gpu/drm/vkms/Makefile
-@@ -10,3 +10,4 @@ vkms-y := \
- 	vkms_connector.o
+@@ -7,7 +7,8 @@ vkms-y := \
+ 	vkms_crtc.o \
+ 	vkms_composer.o \
+ 	vkms_writeback.o \
+-	vkms_connector.o
++	vkms_connector.o \
++	vkms_config.o
  
  obj-$(CONFIG_DRM_VKMS) += vkms.o
-+obj-$(CONFIG_DRM_VKMS_KUNIT_TEST) += tests/
-diff --git a/drivers/gpu/drm/vkms/tests/.kunitconfig b/drivers/gpu/drm/vkms/tests/.kunitconfig
-new file mode 100644
-index 000000000000..6a2d87068edc
---- /dev/null
-+++ b/drivers/gpu/drm/vkms/tests/.kunitconfig
-@@ -0,0 +1,4 @@
-+CONFIG_KUNIT=y
-+CONFIG_DRM=y
-+CONFIG_DRM_VKMS=y
-+CONFIG_DRM_VKMS_KUNIT_TEST=y
-diff --git a/drivers/gpu/drm/vkms/tests/Makefile b/drivers/gpu/drm/vkms/tests/Makefile
-new file mode 100644
-index 000000000000..9ded37b67a46
---- /dev/null
-+++ b/drivers/gpu/drm/vkms/tests/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_DRM_VKMS_KUNIT_TEST) += vkms_config_test.o
+ obj-$(CONFIG_DRM_VKMS_KUNIT_TEST) += tests/
 diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-new file mode 100644
-index 000000000000..1177e62e19cb
---- /dev/null
+index 1177e62e19cb..a7060504f3dc 100644
+--- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
 +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-@@ -0,0 +1,19 @@
+@@ -2,9 +2,22 @@
+ 
+ #include <kunit/test.h>
+ 
++#include "../vkms_config.h"
++
+ MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+ 
++static void vkms_config_test_empty_config(struct kunit *test)
++{
++	struct vkms_config *config;
++
++	config = vkms_config_create();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, config);
++
++	vkms_config_destroy(config);
++}
++
+ static struct kunit_case vkms_config_test_cases[] = {
++	KUNIT_CASE(vkms_config_test_empty_config),
+ 	{}
+ };
+ 
+diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+new file mode 100644
+index 000000000000..42caa421876e
+--- /dev/null
++++ b/drivers/gpu/drm/vkms/vkms_config.c
+@@ -0,0 +1,50 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +
-+#include <kunit/test.h>
++#include <linux/slab.h>
 +
-+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
++#include <drm/drm_print.h>
++#include <drm/drm_debugfs.h>
++#include <kunit/visibility.h>
 +
-+static struct kunit_case vkms_config_test_cases[] = {
-+	{}
++#include "vkms_config.h"
++
++struct vkms_config *vkms_config_create(void)
++{
++	struct vkms_config *config;
++
++	config = kzalloc(sizeof(*config), GFP_KERNEL);
++	if (!config)
++		return ERR_PTR(-ENOMEM);
++
++	return config;
++}
++EXPORT_SYMBOL_IF_KUNIT(vkms_config_create);
++
++void vkms_config_destroy(struct vkms_config *config)
++{
++	kfree(config);
++}
++EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy);
++
++static int vkms_config_show(struct seq_file *m, void *data)
++{
++	struct drm_debugfs_entry *entry = m->private;
++	struct drm_device *dev = entry->dev;
++	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
++
++	seq_printf(m, "writeback=%d\n", vkmsdev->config->writeback);
++	seq_printf(m, "cursor=%d\n", vkmsdev->config->cursor);
++	seq_printf(m, "overlay=%d\n", vkmsdev->config->overlay);
++
++	return 0;
++}
++
++static const struct drm_debugfs_info vkms_config_debugfs_list[] = {
++	{ "vkms_config", vkms_config_show, 0 },
 +};
 +
-+static struct kunit_suite vkms_config_test_suite = {
-+	.name = "vkms-config",
-+	.test_cases = vkms_config_test_cases,
++void vkms_config_register_debugfs(struct vkms_device *vkms_device)
++{
++	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
++			      ARRAY_SIZE(vkms_config_debugfs_list));
++}
+diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+new file mode 100644
+index 000000000000..ced10f56a812
+--- /dev/null
++++ b/drivers/gpu/drm/vkms/vkms_config.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#ifndef _VKMS_CONFIG_H_
++#define _VKMS_CONFIG_H_
++
++#include <linux/types.h>
++
++#include "vkms_drv.h"
++
++/**
++ * struct vkms_config - General configuration for VKMS driver
++ *
++ * @writeback: If true, a writeback buffer can be attached to the CRTC
++ * @cursor: If true, a cursor plane is created in the VKMS device
++ * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
++ * @dev: Used to store the current VKMS device. Only set when the device is instantiated.
++ */
++struct vkms_config {
++	bool writeback;
++	bool cursor;
++	bool overlay;
++	struct vkms_device *dev;
 +};
 +
-+kunit_test_suite(vkms_config_test_suite);
++/**
++ * vkms_config_create() - Create a new VKMS configuration
++ *
++ * Returns:
++ * The new vkms_config or an error. Call vkms_config_destroy() to free the
++ * returned configuration.
++ */
++struct vkms_config *vkms_config_create(void);
 +
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Kunit test for vkms config utility");
++/**
++ * vkms_config_destroy() - Free a VKMS configuration
++ * @config: vkms_config to free
++ */
++void vkms_config_destroy(struct vkms_config *config);
++
++/**
++ * vkms_config_register_debugfs() - Register a debugfs file to show the device's
++ * configuration
++ * @vkms_device: Device to register
++ */
++void vkms_config_register_debugfs(struct vkms_device *vkms_device);
++
++#endif /* _VKMS_CONFIG_H_ */
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index b6de91134a22..37de0658e6ee 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -27,11 +27,9 @@
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_vblank.h>
+ 
++#include "vkms_config.h"
+ #include "vkms_drv.h"
+ 
+-#include <drm/drm_print.h>
+-#include <drm/drm_debugfs.h>
+-
+ #define DRIVER_NAME	"vkms"
+ #define DRIVER_DESC	"Virtual Kernel Mode Setting"
+ #define DRIVER_MAJOR	1
+@@ -81,23 +79,6 @@ static void vkms_atomic_commit_tail(struct drm_atomic_state *old_state)
+ 	drm_atomic_helper_cleanup_planes(dev, old_state);
+ }
+ 
+-static int vkms_config_show(struct seq_file *m, void *data)
+-{
+-	struct drm_debugfs_entry *entry = m->private;
+-	struct drm_device *dev = entry->dev;
+-	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+-
+-	seq_printf(m, "writeback=%d\n", vkmsdev->config->writeback);
+-	seq_printf(m, "cursor=%d\n", vkmsdev->config->cursor);
+-	seq_printf(m, "overlay=%d\n", vkmsdev->config->overlay);
+-
+-	return 0;
+-}
+-
+-static const struct drm_debugfs_info vkms_config_debugfs_list[] = {
+-	{ "vkms_config", vkms_config_show, 0 },
+-};
+-
+ static const struct drm_driver vkms_driver = {
+ 	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
+ 	.fops			= &vkms_driver_fops,
+@@ -208,8 +189,7 @@ static int vkms_create(struct vkms_config *config)
+ 	if (ret)
+ 		goto out_devres;
+ 
+-	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
+-			      ARRAY_SIZE(vkms_config_debugfs_list));
++	vkms_config_register_debugfs(vkms_device);
+ 
+ 	ret = drm_dev_register(&vkms_device->drm, 0);
+ 	if (ret)
+@@ -231,9 +211,9 @@ static int __init vkms_init(void)
+ 	int ret;
+ 	struct vkms_config *config;
+ 
+-	config = kmalloc(sizeof(*config), GFP_KERNEL);
+-	if (!config)
+-		return -ENOMEM;
++	config = vkms_config_create();
++	if (IS_ERR(config))
++		return PTR_ERR(config);
+ 
+ 	config->cursor = enable_cursor;
+ 	config->writeback = enable_writeback;
+@@ -241,7 +221,7 @@ static int __init vkms_init(void)
+ 
+ 	ret = vkms_create(config);
+ 	if (ret) {
+-		kfree(config);
++		vkms_config_destroy(config);
+ 		return ret;
+ 	}
+ 
+@@ -275,7 +255,7 @@ static void __exit vkms_exit(void)
+ 		return;
+ 
+ 	vkms_destroy(default_config);
+-	kfree(default_config);
++	vkms_config_destroy(default_config);
+ }
+ 
+ module_init(vkms_init);
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index abbb652be2b5..af7081c940d6 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -189,20 +189,7 @@ struct vkms_output {
+ 	spinlock_t composer_lock;
+ };
+ 
+-/**
+- * struct vkms_config - General configuration for VKMS driver
+- *
+- * @writeback: If true, a writeback buffer can be attached to the CRTC
+- * @cursor: If true, a cursor plane is created in the VKMS device
+- * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
+- * @dev: Used to store the current VKMS device. Only set when the device is instantiated.
+- */
+-struct vkms_config {
+-	bool writeback;
+-	bool cursor;
+-	bool overlay;
+-	struct vkms_device *dev;
+-};
++struct vkms_config;
+ 
+ /**
+  * struct vkms_device - Description of a VKMS device
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 4b5abe159add..068a7f87ecec 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ 
++#include "vkms_config.h"
+ #include "vkms_connector.h"
+ #include "vkms_drv.h"
+ #include <drm/drm_managed.h>
 -- 
 2.48.1
 
