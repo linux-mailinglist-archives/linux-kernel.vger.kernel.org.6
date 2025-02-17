@@ -1,313 +1,130 @@
-Return-Path: <linux-kernel+bounces-517350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0CEA37F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:14:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32FBA37F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDC16C8C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:10:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C27D7A4B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE30218842;
-	Mon, 17 Feb 2025 10:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5391218596;
+	Mon, 17 Feb 2025 10:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fhBJu1rx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwOn/th6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DD221771F;
-	Mon, 17 Feb 2025 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBC11A0BF3;
+	Mon, 17 Feb 2025 10:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786935; cv=none; b=QfwjfkmdogiTm+jeeWW2+4tbWMeUxQIiKpc8e+D4Rzc6fc0KAlvLa4/uamtYDA/oeNc/cnV0VQZA3Z7NCRVBtBoNRxN7ctQaI9XQlnpuVHPZdbe6AHQ9fDiiF2Zx41gCP0ivkpclpJkssppjCOE745LiuYs3y7yLbTi/uvM+wV0=
+	t=1739786923; cv=none; b=XV4V8KOL5SOP/XjB2sCFQzdOy4GFw0mvBzQy1Hi3YvsMMUWwQSp0HjHI9q2BK5UiY5iZrfXEvO5qvu6W8zA/Mq316gqO2oVycoB0mP7cVTVf5So3cZWAVVMmGDt4mvAO1/TK6l6duY08JT8i30UckqtBiVAZqsp1fhGW6ZEfTHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786935; c=relaxed/simple;
-	bh=WaexI+GTMLB9LD3SzzT+vgAJbuAuabXPQ/ESv9lZrBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JIsP06zxxNItiAFRKCP3UDNnE+tIsPLBn9tvHHtgIq/5Gq5BCwB79lD/doDQ6sMOXZRNC0qJGxcPbtLJ5OVolbgqSRZpqGAGqMO7kBb61ZzuLiy8T4pNHLsFzoJDV7TI5G4LVUr0dvCJzR0689Qa6rMZz0Uj9Il7Rhm5cboCMF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fhBJu1rx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H03EEB032018;
-	Mon, 17 Feb 2025 10:08:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kmBx0vh9UKMEbN00/TAgFMn8gz1XFk6ODAvDM+ARmlM=; b=fhBJu1rxLrWEddFN
-	V34QJRgX5kryCAxPUBLwI87kgVgXBQBP3g6yhuMsk2xJ+ih6HO3vW4I94MkwouGz
-	UJWQokjlvEITgvba5HyfwgIMo0Q7bG8K7ip61XbuCrxYjhTQ0QMnBoiU0BrZVQsH
-	g+fBIl82BB3QKH7uhqm52DQIW6bD+/NlKgbkJQxSmt2i6WvMcsJI/l06hJRrz5yD
-	fTjLOkdmq/Jd+ay9JdWXty1XoOEuh2S1+Vm3YXQvcqU1dyoV0bdBqcFo3T6LAhrh
-	WZTUez5vo7/76Jiut4kK7rp3Dd7FOXPq8gASW0rCRNBI9v/+KXc3BiPebryZ858A
-	EZ16YQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7ws90n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:08:43 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HA8grZ002553
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:08:42 GMT
-Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
- 2025 02:08:38 -0800
-Message-ID: <abd2244b-d222-35e8-9aec-5c72ca2ace01@quicinc.com>
-Date: Mon, 17 Feb 2025 18:08:35 +0800
+	s=arc-20240116; t=1739786923; c=relaxed/simple;
+	bh=ZNRWXcvrUYv+UzJei+iE1P2u6U01QrUazRt28GOma5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DhWUrEXZ+q1oDUolLrR+l/d4XwP9yT1gfwdFiTz5Ucv4ZwI8TFZbxopcGbNpDUW3Zs+INc1vpLKumjx04W6iGDW1+Luj3OBVme+zP0EadKQp6qsaEVcvnVUQK3YLwuLXYTtURbCAmRM9g2+QyBu0L3kXiPgcuw9U5vhKUasqPaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwOn/th6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A2EC4CED1;
+	Mon, 17 Feb 2025 10:08:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739786922;
+	bh=ZNRWXcvrUYv+UzJei+iE1P2u6U01QrUazRt28GOma5k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IwOn/th6sn4+q8+HkTEeqwBejwq74qZpVOK4Q8PMonDQr2/0cyPyoloYTdznY39Ja
+	 EgQnqMR8rPXyRvZ6bmyBjzz/GLx/4A0CRjZXjEGv3LXGBaG4La6/IJNROuGPRhd8dx
+	 kP9ap7wQ2xVw41xMfnI2ceUgSIxQK8fxqgtfW0ZZC/UVd0yXjOjWFzSFZajehnKQUP
+	 FAyyKH/rV/k4xTCkNSGTQm2UITLh2KNvWVntUA1dk7rdswHcMcNmDXUiGH1Pyobsdv
+	 Fhmt1I3KTfWd20Iqi7gXx8psoFsA1GwPc7yL5iWKdh+EyTiMuI7BqWUVJHk4lSIqnF
+	 3V1Uo4Kwuh2JQ==
+Message-ID: <0c5f1dcf-1bd4-4ddd-b6c0-e3ee2b3671ea@kernel.org>
+Date: Mon, 17 Feb 2025 11:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v3 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Content-Language: en-US
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
-        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>, <quic_devipriy@quicinc.com>,
-        <konrad.dybcio@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250214104539.281846-1-quic_wenbyao@quicinc.com>
- <20250214104539.281846-3-quic_wenbyao@quicinc.com>
- <20250214144623.fvjr2bytliqhektr@thinkpad>
-From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-In-Reply-To: <20250214144623.fvjr2bytliqhektr@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sE-UBibzRpJ7ZkIp72AKVWUX3bhJeZWX
-X-Proofpoint-ORIG-GUID: sE-UBibzRpJ7ZkIp72AKVWUX3bhJeZWX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 malwarescore=0
- bulkscore=0 mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170089
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] selftests: net: Fix minor typos in MPTCP and
+ psock_tpacket tests
+Content-Language: en-GB
+To: Suchit K <suchitkarunakaran@gmail.com>, netdev@vger.kernel.org
+Cc: horms@kernel.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <CAO9wTFgN=hVJN8jUrFif0SO5hAvayrKweLDQSsmJWrE55wnTwQ@mail.gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
+ YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
+ c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
+ WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
+ CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
+ nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
+ TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
+ nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
+ VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
+ 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
+ YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
+ AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
+ EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
+ /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
+ MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
+ cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
+ iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
+ jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
+ 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
+ VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
+ BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
+ ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
+ 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
+ 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
+ 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
+ mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
+ Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
+ Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
+ Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
+ x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
+ V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
+ Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
+ HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
+ 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
+ Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
+ voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
+ KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
+ UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
+ vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
+ mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
+ JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <CAO9wTFgN=hVJN8jUrFif0SO5hAvayrKweLDQSsmJWrE55wnTwQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2/14/2025 10:46 PM, Manivannan Sadhasivam wrote:
-> On Fri, Feb 14, 2025 at 06:45:39PM +0800, Wenbin Yao wrote:
->> From: Qiang Yu <quic_qianyu@quicinc.com>
->>
->> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->> but retains register values, which means PHY setting can be skipped during
->> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->> after that.
->>
->> Hence, determine whether the PHY has been enabled in bootloader by
->> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->> available, skip BCR reset and PHY register setting to establish the PCIe
->> link with bootloader - programmed PHY settings.
->>
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 96 ++++++++++++++++--------
->>   1 file changed, 63 insertions(+), 33 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> index 219266125cf2..b3912c1a6de8 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
->>   
->>   	const struct qmp_phy_cfg *cfg;
->>   	bool tcsr_4ln_config;
->> +	bool skip_init;
->>   
->>   	void __iomem *serdes;
->>   	void __iomem *pcs;
->> @@ -3976,7 +3977,9 @@ static int qmp_pcie_init(struct phy *phy)
->>   {
->>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
->> +	void __iomem *pcs = qmp->pcs;
->>   	int ret;
->> +	bool phy_initialized;
->>   
->>   	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
->>   	if (ret) {
->> @@ -3984,10 +3987,18 @@ static int qmp_pcie_init(struct phy *phy)
->>   		return ret;
->>   	}
->>   
->> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> -	if (ret) {
->> -		dev_err(qmp->dev, "reset assert failed\n");
->> -		goto err_disable_regulators;
->> +	phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
->> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
->> +	/*
->> +	 * Toggle BCR reset for phy that doesn't support no_csr
-> s/phy/PHY. Here and below.
+Hello,
 
-Will use PHY instead.
+On 16/02/2025 13:25, Suchit K wrote:
+> Fixes minor spelling errors:
+> - `simult_flows.sh`: "al testcases" → "all testcases"
+> - `psock_tpacket.c`: "accross" → "across"
 
->
->> +	 * reset or has not been initialized
->> +	 */
->> +	if (!qmp->skip_init) {
->> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +		if (ret) {
->> +			dev_err(qmp->dev, "reset assert failed\n");
->> +			goto err_disable_regulators;
->> +		}
->>   	}
->>   
->>   	ret = reset_control_assert(qmp->nocsr_reset);
->> @@ -3998,10 +4009,12 @@ static int qmp_pcie_init(struct phy *phy)
->>   
->>   	usleep_range(200, 300);
->>   
->> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->> -	if (ret) {
->> -		dev_err(qmp->dev, "reset deassert failed\n");
->> -		goto err_assert_reset;
->> +	if (!qmp->skip_init) {
->> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
->> +		if (ret) {
->> +			dev_err(qmp->dev, "reset deassert failed\n");
->> +			goto err_assert_reset;
->> +		}
->>   	}
->>   
->>   	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->> @@ -4011,7 +4024,8 @@ static int qmp_pcie_init(struct phy *phy)
->>   	return 0;
->>   
->>   err_assert_reset:
->> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	if (!qmp->skip_init)
->> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->>   err_disable_regulators:
->>   	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
->>   
->> @@ -4023,7 +4037,10 @@ static int qmp_pcie_exit(struct phy *phy)
->>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
->>   
->> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	if (!qmp->nocsr_reset)
->> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
->> +	else
->> +		reset_control_assert(qmp->nocsr_reset);
-> I'd flip the if condition for readability:
->
-> 	if (qmp->nocsr_reset)
-> 		...
-> 	else
-> 		...
+The modifications in MPTCP (and psock_tpacket) look good to me:
 
-Will flip the if condition.
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
->>   
->>   	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
->>   
->> @@ -4042,16 +4059,22 @@ static int qmp_pcie_power_on(struct phy *phy)
->>   	unsigned int mask, val;
->>   	int ret;
->>   
->> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> -			cfg->pwrdn_ctrl);
->> +	/*
->> +	 * Write CSR register for phy that doesn't support no_csr
->> +	 * reset or has not been initialized
->> +	 */
->> +	if (!qmp->skip_init) {
-> How about:
-> 	if (qmp->skip_init)
-> 		goto skip_phy_init;
->
-> This is my personal preference btw. If anyone feels the other way, feel free
-> to drop this suggestion.
+This patch can be applied directly in the netdev tree, but I'm not sure
+the Netdev maintainers will accept that kind of small clean-up patch
+alone, see:
 
-Will use goto statements.
+ https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
 
->
->> +		qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->> +				cfg->pwrdn_ctrl);
->>   
->> -	if (qmp->mode == PHY_MODE_PCIE_RC)
->> -		mode_tbls = cfg->tbls_rc;
->> -	else
->> -		mode_tbls = cfg->tbls_ep;
->> +		if (qmp->mode == PHY_MODE_PCIE_RC)
->> +			mode_tbls = cfg->tbls_rc;
->> +		else
->> +			mode_tbls = cfg->tbls_ep;
->>   
->> -	qmp_pcie_init_registers(qmp, &cfg->tbls);
->> -	qmp_pcie_init_registers(qmp, mode_tbls);
->> +		qmp_pcie_init_registers(qmp, &cfg->tbls);
->> +		qmp_pcie_init_registers(qmp, mode_tbls);
->> +	}
->>   
->>   	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
->>   	if (ret)
->> @@ -4063,15 +4086,16 @@ static int qmp_pcie_power_on(struct phy *phy)
->>   		goto err_disable_pipe_clk;
->>   	}
->>   
->> -	/* Pull PHY out of reset state */
->> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->> +	if (!qmp->skip_init) {
-> 	if (qmp->skip_init)
-> 		goto skip_serdes_start;
-
-Will use goto statements.
-
->
->> +		/* Pull PHY out of reset state */
->> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->>   
->> -	/* start SerDes and Phy-Coding-Sublayer */
->> -	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->> -
->> -	if (!cfg->skip_start_delay)
->> -		usleep_range(1000, 1200);
->> +		/* start SerDes and Phy-Coding-Sublayer */
->> +		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
->>   
->> +		if (!cfg->skip_start_delay)
->> +			usleep_range(1000, 1200);
->> +	}
->>   	status = pcs + cfg->regs[QPHY_PCS_STATUS];
->>   	mask = cfg->phy_status;
->>   	ret = readl_poll_timeout(status, val, !(val & mask), 200,
->> @@ -4096,16 +4120,22 @@ static int qmp_pcie_power_off(struct phy *phy)
->>   
->>   	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
->>   
->> -	/* PHY reset */
->> -	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->> +	/* If a PHY supports no_csr reset but isn't enabled in the bootloader,
->> +	 * phy settings can be reused during the D3cold -> D0 cycle. So it is
-> I cannot parse this sentence. If PHY is not initialized, how can you reuse the
-> settings? Also what is the D3cold->D0 reference?
->
->> +	 * unnecessary to check qmp->skip_init.
->> +	 */
->> +	if (!qmp->nocsr_reset) {
-> 	if (qmp->nocsr_reset)
-> 		goto skip_phy_reset;
->
-> - Mani
->
+Cheers,
+Matt
 -- 
-With best wishes
-Wenbin
+Sponsored by the NGI0 Core fund.
 
 
