@@ -1,199 +1,113 @@
-Return-Path: <linux-kernel+bounces-518367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA44A38E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B04A38E0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:33:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3449A1890C2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4D91891A71
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7467383;
-	Mon, 17 Feb 2025 21:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095E21A76D4;
+	Mon, 17 Feb 2025 21:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="iSnbtykA"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="YLeO4iF3"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC0219E968
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E50B1A23B8
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739827922; cv=none; b=dQgh1WS3YhruFJU9N9KBtPfydwwPCcIe0i4CtmKyHvB2PAcItow5AgDetRe8KQ31GYTmh4KquvUGZWn1W8OJhKnjSOOqog6o0UDO/XkCw3nhSH0XKU3imkPW4vQax2XHVwqQYTaV4qXn6yDpefV4uqplCU2GyI50tzAHi6UhkRk=
+	t=1739827956; cv=none; b=R2RuWWauj52nqB4drwgrZW6gbisBId31bVv7+GnIAyfmSDDbRPRojxFhYLkaB0MSPccWfz7dks4IFVi1I9sil8Pc+01B3wVKqRmh+CVU9QnaUShx+yx5rJxxW5SC4Ui3FZtZHhoxgzSo74ZRRpLqNGbLHMMqXxyC3C+rWaJn3PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739827922; c=relaxed/simple;
-	bh=5Z3w6D6rLKLuQ6zEjNL6ikv+CipM0JHOZMCbXFfqNBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9JLnzs3CcJ4Yrnof3ZVjljeoaxjOKTDsUiyPRpHhlzZnU2eFDaOFcFZsMfLvu4FfzODxpWBOb7uqUBHdAughEDfdujT53BxmI9Y1xd/6y2tLReAc2BL+K1Ndmrr6iNB14hwg746gF6UvmcFygbfIcJWqGa853ydvoUQdugSBP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=iSnbtykA; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso9586748a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:31:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739827919; x=1740432719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QhTfy1/ybvgYfqGEX8d/5gFaFMopC4YNbC7hGVBL/4c=;
-        b=iSnbtykAPgeoaamX/D5Xv39Q6ZYYIHEVE4zgMl66cwZvyQ48oaYzC/IgKLS86w/HD5
-         CKBcfACcqxE79g5417jqRYfPLcOSB6GqY0F0IGgHXLJSrAsw+pHW+/BrFDI6sARK9/gu
-         Ykml65dgc1/utgt1Fmn5RhHyRVJuUcEvZU3xJchUB3WXLYnbSu+ReTOwGxknLjjSZHeX
-         98GJwsv/gTKG2lH8c9qcf91n5QTxQQ0DqQEQLYYDOqXZmgxu6lKi/Skz8q+fHbi/IGsU
-         A5VQDVfWr3DZcIo3115AKKu7y5dD6S6IG87n4slcw011eIp41wnUCyXKCC04ss9B4jwe
-         KEEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739827919; x=1740432719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QhTfy1/ybvgYfqGEX8d/5gFaFMopC4YNbC7hGVBL/4c=;
-        b=YDKU8HmagR7OSrHZHA9+Ye4a0zHJmXI7mKVoXDtIjIu7+zJnaBOi0/GSWR3CqwXmLt
-         wNeJw82zVQ+txIBYiaEN+a1ZuUr1UZVsDhrleclwwIBbYMJ+cjgaIttmqGVK67BwFomY
-         8B8vLjlVw4z9D5RpvsIUUb/JmhPQlPm3Q8SwZUxCDq/kYpye3TUoFFv7ex4dibZeUBaL
-         MlH2EwwgeCFtI2XIS2Cw5ziQVk4UiR1j4Uct6bdj31uvAMGWpIICen3Sllvj+3XUX34S
-         HZGLhz+3B63zdSxcPp9H2p8Ln+gXm8/0hoD+hErvSXjooGSz26ZFEAc93TIgWBIGR2V8
-         OtuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc7EvACA939WIw8FJXYlgUm/BETIL07NXjLX4cln1HqZfjIOcdqpjQoItOTbJDpXGicEFEdVUVBeB3hII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNkrBOh0kktQcWUS2zV1DNTNUNZI4SP7dE1ji0ZZr1nsB+j6N9
-	bpu58iXuxdcikIiFnt4DBxUZUusOlZmmBz2tnUz3ZxAKBwbr5c+UXlekaAu5wJA=
-X-Gm-Gg: ASbGncsMOjgw298caAvcwSdpZAtdi69WvS63xT9vDYZHEFZWnVDpInj7Y+ZagwUamC2
-	DOJCqqOx94FbDuc3/ap3b+qyp2VQ4EJ0jjNBLtY8ySQzKn/B8gamjhhcixgSH1rdpyqjOIS5/KI
-	9T/+QK86+0kaXG32UuYU25nbcU6ovGGWjSMAWNDTN1fnQzEvsjzKq0tWKMlqdz3vX1WW/iG2tbX
-	M5i14BHNNni+bg8dw5JaNvN5362IftAoIft30k3SPLKQB7c6dtb10bdoKy8K/Kx6mo9is6pYq4j
-	Fo+m3Ri4KwxmOv28r/EAfmcEvn0QhzG6nTMW+0tJurmOICwtvjIa9br8Qj92EKJnQCg=
-X-Google-Smtp-Source: AGHT+IGWbBJAtL2UtKSWCS6Jd9Ns/0Md8Y1s79IB++xb28sgasLU0+0/qaH46F3zNCw25wym7QqlJQ==
-X-Received: by 2002:a17:90b:3b4b:b0:2ee:fdf3:390d with SMTP id 98e67ed59e1d1-2fc4115087fmr15333822a91.31.1739827918683;
-        Mon, 17 Feb 2025 13:31:58 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491d4sm76091525ad.4.2025.02.17.13.31.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 13:31:58 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tk8iZ-00000002XxN-2C1Y;
-	Tue, 18 Feb 2025 08:31:55 +1100
-Date: Tue, 18 Feb 2025 08:31:55 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Luiz Capitulino <luizcap@redhat.com>,
-	Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [RFC] mm: alloc_pages_bulk: remove assumption of populating only
- NULL elements
-Message-ID: <Z7Oqy2j4xew7FW9Z@dread.disaster.area>
-References: <20250217123127.3674033-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1739827956; c=relaxed/simple;
+	bh=WqeFbzv30O7RaX+m3emlybcx2+Iz8b9iq7nsHwVXm3c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CHQ7/KsGGJnaR8NZH66hlDMuRJw7CCARQl0AUpBCziSJBOE/qIa4pFZNhbnb/KeI9PbF2paMuS1tVK5geYO9huKEX/CJp8DqNMd0ycRMriYOgPAuOpGk7RpuKAY5mmn7bLYw9G9QGLx8b2gw6CJSe4e5bK0t+LuCuB2wkLY4erA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=YLeO4iF3; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=YLeO4iF3jLlJiCs8yTJaWttLqRAHhXkgkMLxU+TnRgqCp8KUjCs0TQ38YmD2h2Pl7w9OVOHJggMexqr0Pg2JAKuZ3aoa11IvfxIUiitUII4/uSytPZYwcgsMiZuXhTW39g8AcRwcMmDV7TU1xbKRX+oCd4RpJX9B7saVE0p4noXpYBJ50ly3MUAfRXnO0DHmUrDJvWuzTMeRdFfSfTR2MILbV69baiOPgK7gl5Jbuo/Y2T6i8s/tn/kClXbuWO29r5U7gdBgN6VNb9LkHBjtfssQ+6pz3QH4SQsRnfL1JB78gbpbRty8BKznHUYSGT7zWHcv7ce1vmUfe4O1k1c0nQ==; s=purelymail3; d=purelymail.com; v=1; bh=WqeFbzv30O7RaX+m3emlybcx2+Iz8b9iq7nsHwVXm3c=; h=Feedback-ID:Received:From:Subject:Date:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 42194286;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 17 Feb 2025 21:32:32 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH 0/5] Add watchdog and USB nodes for the Exynos990 SoC
+Date: Mon, 17 Feb 2025 22:32:02 +0100
+Message-Id: <20250217-exynos990-dt-changes-febuary-v1-0-99935218cbf4@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217123127.3674033-1-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANOqs2cC/yXMQQ5AMBBA0avIrE3SNoS6iligU2ZT0kGIuLuG5
+ Ut+/g1CkUmgyW6IdLDwEhJ0nsE492EiZJcMRplSGV0hnVdYxFqFbsM/EfQ07H280A+jrguqVWE
+ dpMUayfP57dvueV7fewLUbgAAAA==
+X-Change-ID: 20250217-exynos990-dt-changes-febuary-fbc184e8049d
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739827951; l=1901;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=WqeFbzv30O7RaX+m3emlybcx2+Iz8b9iq7nsHwVXm3c=;
+ b=TIqcWcN/3cdywHBBFciP9hhZz+iljvZrBnGi/wNrATN9PZu+WWmjTtxO0upwL2m/0g0RdqYq4
+ VCAkZfdA19sApd5ckbAR8naTrWqa+qbj2ITZto9w1hvsHGXwDRZEsPU
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-On Mon, Feb 17, 2025 at 08:31:23PM +0800, Yunsheng Lin wrote:
-> As mentioned in [1], it seems odd to check NULL elements in
-> the middle of page bulk allocating, and it seems caller can
-> do a better job of bulk allocating pages into a whole array
-> sequentially without checking NULL elements first before
-> doing the page bulk allocation.
-....
+Hi all!
 
-IMO, the new API is a poor one, and you've demonstrated it clearly
-in this patch.
+This series adds the nodes to enable the watchdog and USB support for
+the Exynos990 SoC.
 
-.....
+The watchdog consists of two clusters (cl0 and cl2). Unsure why Samsung has
+skipped cl1 on this SoC. Both are enabled and working - tested on a
+device from the -x1s family.
 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 15bb790359f8..9e1ce0ab9c35 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -377,16 +377,17 @@ xfs_buf_alloc_pages(
->  	 * least one extra page.
->  	 */
->  	for (;;) {
-> -		long	last = filled;
-> +		long	alloc;
->  
-> -		filled = alloc_pages_bulk(gfp_mask, bp->b_page_count,
-> -					  bp->b_pages);
-> +		alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
-> +					 bp->b_pages + refill);
-> +		refill += alloc;
->  		if (filled == bp->b_page_count) {
->  			XFS_STATS_INC(bp->b_mount, xb_page_found);
->  			break;
->  		}
->  
-> -		if (filled != last)
-> +		if (alloc)
->  			continue;
+The USB controller of this SoC supports full-speed, high-speed and
+super-speed operation modes. Due to my inability to get any of my
+Exynos990 devices to enumerate as super-speed (even under the vendor
+kernels) only the UTMI+ setup is done - as such, only the high-speed
+mode is enabled. Dummy regulators are used in place of PMIC provided
+ones until we implement PMIC.
 
-You didn't even compile this code - refill is not defined
-anywhere.
+This series depends on the following series:
+- Watchdog commit: https://lore.kernel.org/all/20250217-exynos990-wdt-v2-0-3eb4fbc113f4@mentallysanemainliners.org
+- USB commits:
+	- https://lore.kernel.org/all/20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org/
+	- https://lore.kernel.org/all/20250214-exynos990-dwusb-v1-0-d68282c51ba8@mentallysanemainliners.org/
 
-Even if it did complile, you clearly didn't test it. The logic is
-broken (what updates filled?) and will result in the first
-allocation attempt succeeding and then falling into an endless retry
-loop.
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+Igor Belwon (5):
+      arm64: dts: exynos990: Enable watchdog timer
+      arm64: dts: exynos990: Add USB nodes
+      arm64: dts: exynos990-x1s-common: Enable USB
+      arm64: dts: exynos990-c1s: Enable USB
+      arm64: dts: exynos990-r8s: Enable USB
 
-i.e. you stepped on the API landmine of your own creation where
-it is impossible to tell the difference between alloc_pages_bulk()
-returning "memory allocation failed, you need to retry" and
-it returning "array is full, nothing more to allocate". Both these
-cases now return 0.
+ arch/arm64/boot/dts/exynos/exynos990-c1s.dts       | 16 +++++++
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts       | 16 +++++++
+ .../boot/dts/exynos/exynos990-x1s-common.dtsi      | 16 +++++++
+ arch/arm64/boot/dts/exynos/exynos990.dtsi          | 55 ++++++++++++++++++++++
+ 4 files changed, 103 insertions(+)
+---
+base-commit: 783ef70f458b28640a63dda599ae8628c3c7aa2e
+change-id: 20250217-exynos990-dt-changes-febuary-fbc184e8049d
 
-The existing code returns nr_populated in both cases, so it doesn't
-matter why alloc_pages_bulk() returns with nr_populated != full, it
-is very clear that we still need to allocate more memory to fill it.
-
-The whole point of the existing API is to prevent callers from
-making stupid, hard to spot logic mistakes like this. Forcing
-callers to track both empty slots and how full the array is itself,
-whilst also constraining where in the array empty slots can occur
-greatly reduces both the safety and functionality that
-alloc_pages_bulk() provides. Anyone that has code that wants to
-steal a random page from the array and then refill it now has a heap
-more complex code to add to their allocator wrapper.
-
-IOWs, you just demonstrated why the existing API is more desirable
-than a highly constrained, slightly faster API that requires callers
-to get every detail right. i.e. it's hard to get it wrong with the
-existing API, yet it's so easy to make mistakes with the proposed
-API that the patch proposing the change has serious bugs in it.
-
--Dave.
+Best regards,
 -- 
-Dave Chinner
-david@fromorbit.com
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
+
 
