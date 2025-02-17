@@ -1,383 +1,534 @@
-Return-Path: <linux-kernel+bounces-517171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22E4A37D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE04DA37D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6A218942CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:37:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8DE1894597
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF301A2632;
-	Mon, 17 Feb 2025 08:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D316E1A23AC;
+	Mon, 17 Feb 2025 08:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EMOy8Ad1"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010008.outbound.protection.outlook.com [52.103.68.8])
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="bJxZL/45"
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406D13D68;
-	Mon, 17 Feb 2025 08:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739781437; cv=fail; b=f7sGlbjT7jGOVAdQJdr3Sl9UbTeSgPSKCTaf+cvMv0VTtm0gsP4bKD8dzYIZr9KHpbNMAd5VyPdN638hErnxHwdtHTaaSNYLhvMxsjIZd5UFUjtO9jBrdASp2FeOaVKcPmqgweZOFNAIVUirDwN3xnI0sGdrfP0Ox4TEwH+VHYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739781437; c=relaxed/simple;
-	bh=cDDjq8Rc0W7pwnzSzNOO36t2fVDFZ5b3cylx5XxXOqU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YCpdBRkBN8gzE2be3b8lHneyLpH5L/gq9rpRR0+KKFOVBTf+phiGU5YC3kRb+uHwEgTD1dEM7pk2eK5sLyYp9iPnt589jGdYtvzR9H/zB5mKu+9R8KRAB49oMoU1TItoKZnXuvSCUibtsDUvSDuDVYAkQ6Jfval6FKGfdEm2lMo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EMOy8Ad1; arc=fail smtp.client-ip=52.103.68.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZCAOIrjCYaXyrLtWSgPlPBABkKfOnu5cyRHFrVNBs7Ue9J3KMKoGWS1vXHmaLJWd9HIRCFxxBHGhoYDXn8kqk8Ose3R3gsdDs1UsJVMizD5Xx9nUBHnsBjaitNsIuSoQDW8r0pe4Lwh8YUA3jwguvWWzjTnqJyzSIOXxLL3vcbepXaLPBWy1x3qxM6wk8j2Xu6DVixCqTGDuwvEYHe9PKv/cT6VNpSDJ+2HHpF8GM6vZVVlGEtQI7kc7I7+7LXp9i1Y8K38jvrkY7SYIktJ1Hgp43odWtbBlUv09SxXgrTuIrTplOwMlQpYsLIVevMH4UOxEIyEkuay6JuyMEOyooA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+/lmH3hliXFfrwhuPd2qi9Ax/nF386Fu4E7znrcRs5w=;
- b=XSK13fnoIzAO2ILIGO5fZnjaqO3ooE9VmArEse4uUfE3muQmxOW7iHHKVys9kJUtGBZ3B+K7aaXLgGhM1mp2RBjmDqaVOYsdJ2nOZotYQv0Tg6WZj5uDD8Gwl2bVJqaeKYtQ71xaS75Egr18F7XphXT4z93ypG7MT2n51qHJr7FGx1le/SyjHQLT8Nf/6YGLlrx/sMEOpeE+s1BHnMa1WdSLNBMb20jzTkyooTvzHWXJFqOP/XpZhCq5EBvNaPSR+KdwS2Ctvl8Qm5isqiHOPxyKDyAyDDq6L7iFBVMQabGe3ZNSFpFnc2WQ3QNnCAOX/jfq+0oGOk+QmZYCfDvAtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+/lmH3hliXFfrwhuPd2qi9Ax/nF386Fu4E7znrcRs5w=;
- b=EMOy8Ad1ETTXN73Ut++u+Ap/t4f4uy1gSDsM78yVCa7K4VKugudk9Ed+Bmlc/FuGAh1Za38tQdKuVguagXK2O+FXM1THvyHrOmaubLmN37tq0Gurb9jQv6Z2NWwWYNtvmDdIJbJC/T/mBiKfBwYUJAsVxJQ3119FziyqR7tIsL9QGuPTk/1OSScwC0wM+ud2rZCRVzc74f35ZaR5Lmjc5i6Roq/M/QukTKYn1xluaQQIqWE5j8p8/MJ0ownn8sJ/laDfFaGfLDSLHSB80kFo+c5FhVwPvemF2P8RbyS9OJ/IMtnL/IyPOle7SX9X6CW2WcNCADm9DrHTurFCaxNRKg==
-Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:6e::9)
- by MA0PR01MB6441.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:79::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 08:37:04 +0000
-Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::6e06:bc2e:85c0:c2ee]) by MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::6e06:bc2e:85c0:c2ee%2]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 08:37:04 +0000
-Message-ID:
- <MA0PR01MB56715CA3F83F4ADF298D2E4CFEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
-Date: Mon, 17 Feb 2025 16:36:59 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-To: Bjorn Helgaas <helgaas@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
- arnd@arndb.de, bhelgaas@google.com, conor+dt@kernel.org, guoren@kernel.org,
- inochiama@outlook.com, krzk+dt@kernel.org, lee@kernel.org,
- lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
-References: <20250122213303.GA1102149@bhelgaas>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250122213303.GA1102149@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0117.apcprd02.prod.outlook.com
- (2603:1096:4:92::33) To MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:6e::9)
-X-Microsoft-Original-Message-ID:
- <762afb26-e11d-4f55-a374-6bd215bb79ba@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91F31A3150
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739781445; cv=none; b=BNJg/7P5TrQhDKMxpRnBhO3k1acqo0eJBQ/2NnLm+ZOmTSzqyDD3ncE/NsSEI28v6DGPGh9YjlwAx1Bcwf5tNs4M8JYKCcGGKyXK4huiZ6TRa91k3UwhSYYZbiO1HvelIIhramMnc2L/Mxj196uM8BRaKIQFfY7PlG/Rr73lLjw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739781445; c=relaxed/simple;
+	bh=lNWv0B0HRj49OQzCdIriAzF7ipuyvLKxwCKs1Wph8dA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=MvJ6UNnRGpOsJq4uiTz6c2WeyRwoJ3p0H+f8nrtEEg/oX0tSNAqICXk/GBfKzQR0HIXmmpfBCLkxthLCsV8cvjOUTTenbbfyII2QFfTbiLUNQP8MaB8nP773Mij9yanOcNEqzkJHpXYy4Y3BhJH5DvKi2ImUcQKjO1w8MyUMg98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=bJxZL/45; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id 507098D;
+	Mon, 17 Feb 2025 09:37:14 +0100 (CET)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id pL42ijnIIRxG; Mon, 17 Feb 2025 09:37:07 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr B08C28C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1739781427; bh=00w/z1irZr59SDXawCwfFQ8h7+uo2eKgmtPxxzTpvdw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bJxZL/456B38envSqwLNvRUtXV/B/KPa2VIAy5uXugfhVSO4mBqSVl6upe2qMd+36
+	 yNW0qgit/yEQQRLuCI1YEhFL5L6FmKrg7Y44TKaZXoA/bUnQCLN6dpk5IUYj2q2teC
+	 LbA+JEwr6vwmwGdENSZMjZXBPKhGC35C4rASJdKqBOIm5UIJhUx44IjZYpdlZWud0g
+	 JqLAv6OA6nSsMmCXey/IaBInEIc5Q0TaUA6d5OMOeizRzFDqhTZNyo314QUVZrvTYT
+	 66ptEdozhOenga2PkqTCDElqsvR057kRQnxaamH9k4hi72GMnD9ZiU7AnL+HZvuCMv
+	 3MW/WdePqwGzA==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id B08C28C;
+	Mon, 17 Feb 2025 09:37:07 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0PR01MB5671:EE_|MA0PR01MB6441:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08562252-7ca3-43d9-f27f-08dd4f2e417c
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|461199028|7092599003|6090799003|5072599009|8060799006|19110799003|1602099012|4302099013|3412199025|10035399004|440099028|12091999003|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NzZ0YlJ4L2hVU1JNVEpBTGMvQ2xXSG1SNGtLZFU5QWlYNFNWVUc5ZlZzQW93?=
- =?utf-8?B?ZnBqOE1pT21YVGlQOTV6VXcyczZMbEpMZit2RmJKS2FUL0dZcGtmL2tINmVJ?=
- =?utf-8?B?K204YnlXUUgyUUFZSzdTb01ocEdPb1U5Rk9vdkpCTEVwSWlEb3hyWkJiU256?=
- =?utf-8?B?Tyt3WW1zMjJUQmJ2a2dUalNiSEhyZ2ZtZnlGS3BGeUVzMXJRemx6VmZ5bEV6?=
- =?utf-8?B?N0t1bksyMVdQNm1sTXJZUXFPYTU4YUlBcVVkRGs3bkFLdE9XeGJyZDd0Tzkx?=
- =?utf-8?B?Z0dBRHlCWHpGYVFia3hRbFExL3FjK1JCQmZPcGRrcnZFQWZqTUI1K3kzNTZx?=
- =?utf-8?B?YkNpSWRZblRnTzcrK0FUNnNSeE5PbXYvcUQveW9QeHlONC9YNmEyVmtrRXJL?=
- =?utf-8?B?SW9YcjZuWVMzSmxtVnRoQW9VMjVtU2dVY09zUzF4anVXdk9qVHBCcVB1SE4z?=
- =?utf-8?B?bkJ3em8yeFV0VStjZmRtWjBHRk0yVVVDVXM0SG1VWXpoRjhwclVmZkZtSmFX?=
- =?utf-8?B?dGliSk9hRGVkczFyQTEzYVBJUE9tRUJFdTdPSzVZWTJMaC9UeE90YW5WNENs?=
- =?utf-8?B?Z1dPVUVIRm42Qyt3YTJUWFgwZnNTb29LWWZtUnNPajQ1M0kraVdBWW1kN3d5?=
- =?utf-8?B?QjUzSk9ySDh5Ni9GdmdOUXN0Q0dlS3BGeksxcS9SUlp1Y1VyTkhpMmpNUUI0?=
- =?utf-8?B?UTQ4ZXhLVGo1SDU5b1VpV1hNK3BWSHJSdCt2Mkxvdk1yYWhyR3h3RmVOQjNn?=
- =?utf-8?B?MmJ4WmhTZm5nTVNmQjhubkdhVEN1RS9qM1pKL0d0VkFQQXp4b3FKaWg5NElM?=
- =?utf-8?B?STR5VzJ2cDFCeHN0SGQybjUvcDF1MjF0Y1NPTlM0ZVlRU1NIeFh3bStBaGJX?=
- =?utf-8?B?QTZXVmQ5cUU2anpKbFVCSEp3TXc2L0xleS8wcGhRSXBRVmU2c1NQZ1RjSHY3?=
- =?utf-8?B?NlMzYmRPOGx5aXNIT2txRlV0bzdpUzk3ck9BMW5odDNNRE4wY2l4RUNBUjdi?=
- =?utf-8?B?SWFCeWd5TDQ3RERlSHRKQXBhNDl0QmYxQUxhcWo1QzJRK0wxLy9yU1JRWThD?=
- =?utf-8?B?OE90dUh1emZSZVcrcDA0ZkFpR1p5WS9XemcwYTRsYWhpWjgwbWN6TklQMkds?=
- =?utf-8?B?dUZaVUI0M0ltOG5hMEpueFJreUgwK3B0cUIxTlM4Z2xOa0NkUUJvd2hReStW?=
- =?utf-8?B?bk1KVlBYd1h5ek9KQnBzWDhCaElXMEg5NGJJYmVxMTExTWhlQ2lYQm5YS3I2?=
- =?utf-8?B?N3lmVVExZHdiQzlPSlZoRkhtM1lSeGVLM3pkc05UbVQxT25UVFNZWmNOOEs2?=
- =?utf-8?B?ck9ZaWhOMVgxU1BaejNabGhVaEdJeHY2UW1IZWNDNElRWVlwcm1mYml6NWVz?=
- =?utf-8?B?U1NITTZ5aE4wVXdtekxyTTZGK2pObjRIbVdGUno0b1YwL0Z6cjBmYlpYWm14?=
- =?utf-8?B?UGRQTkswNFlXakNkSHVaMHg1NHlkQ3dLTHlqdERQdWdKVnJuUldpS0VXNWVj?=
- =?utf-8?B?UGJDckRJSHQyY0ZGQlBuL1dsTnBVeC81T1Rjb1ZrRUtNZ0QyYjl6dlhRUVVs?=
- =?utf-8?B?Z09NUDJ0K1Zld1ZsTkFDM1M4OVFWKzNJME9Lb1BvcW50eHpBb1l3d2h6Q3Jo?=
- =?utf-8?B?UmxEUDlkemMwZWsrUzM1aERGSGZ4bWlqMG5yS1AxQzFBRlZvZjVWb0pmSm5R?=
- =?utf-8?B?c2grTE15cnJJQzhLSGcrMU1JemhMbjJuNk1xMktHcFNvcFhrNXpEd0lHK0hp?=
- =?utf-8?B?M091OXJtbnJzbDVXWUZPMnV0NDB4dHZFTnVQNUNUUXpQUnFHRUVRODlKTk1I?=
- =?utf-8?B?eTJramMvSTVwS1BvWndEZz09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDQvV01Sai8zc01iaXRVN1JTL1NNbnZ0S3UxRmdyNTlRNzNxeUZPSGZrZ0hT?=
- =?utf-8?B?N0NacUx3ZllOWHhQdHQ3cmFmNTQ3QXlSMXVaOVpuZkhsS2krYjY4SGx6YUlY?=
- =?utf-8?B?dS90S3MxVTVZT0wzeVg1eHRVQVBOM2xTeTZRcDlnMDh0djNrdWx3bnBrbmpY?=
- =?utf-8?B?TWZyQ21kVEhScVZVNlUrUjNoVXM0RVNJMUpWTGQ1OXhlRDNxTFhTTjJHOWll?=
- =?utf-8?B?ZHVzZHhDcWxHM0NyMWJPVGRMRzZ3dUtVbzRkek9PZ2x0S25VWko0TDBhbGRG?=
- =?utf-8?B?b1lIaWJRRnAxSTFtNlBMcDh4SnRXdVN2VFd3Tk9RUk9hdDFoM2QvK0RqeDZh?=
- =?utf-8?B?VUF2QlZiTTIyaUlPeEtLQzZtRHVvOHRuelJkcDRrbGJBUjY4QWwvRHhhTTFI?=
- =?utf-8?B?TDBFVUJpUkVwRTBHS0c2a1BMYlMwWVhYSW5HSFBPeExLOCtEQXRvc3ZOdllC?=
- =?utf-8?B?TDhBM2g0NjYyVjhKamRnL2xxbm1MUjVuV3NKa0RTQUYzeXlXckxXdVErNk9p?=
- =?utf-8?B?d0Vpb0F5T0lLOWwvK0VyampYYldHNkkyaVkxNEpSQmtYWFBOY1kyWXpnSHZB?=
- =?utf-8?B?SFhyN1MxUU5oZFkwN1M2Ulo5NzJJckl1dzdZTVpGRk9vbncyNTFWUHdKT0dI?=
- =?utf-8?B?KzBMaGFYUENvc1VHdkNFL0JQeEhEMjFVVFZXbEN3ZTNPZE5YclFjblJMdjRF?=
- =?utf-8?B?aC9qd0xqRkI3MFM4SkpUN1RkOVcyYy9iUnR3REVHN1JrM0oxcFZKZnQvWWlN?=
- =?utf-8?B?L0w2aVBhTGFjY2dJbDJpeDVuRmhmQ3BCRFVQMEFiU3RNV3Zsc0xkRm5Qb1pW?=
- =?utf-8?B?MXdORXNFdlFxbndIditnL3NLVzBuMnVGUmcwVlNiYXV3bVQybkR3Y0xEemY4?=
- =?utf-8?B?emZ5QUlBWFdoQXNmd0I4dml2eWQyemtleXFDT0tNdjNoWlVNMzUvOC9WSnNl?=
- =?utf-8?B?ZyticEovcFJnRXRjL1I2ZDBQV28rN0hqQUF2MW9JdXhUVndqOUJSc2ZoQ1BK?=
- =?utf-8?B?NTRFdHlMUTRoS3REZEZLOEtrNnBwQVJwM3JHR0t6eGpCVUI2WENwbDFhVE9J?=
- =?utf-8?B?QU8rSEhpcktoK3NITHlRRjJZdVovRW9KbkdhdVBwNHgyWFlLTENWR2VOOGhh?=
- =?utf-8?B?bS9KN0psSkhqN1MvcU9rb3RpdkdXMHpEeG9RZExsUmsvSDJaNDdVYWVnL0hs?=
- =?utf-8?B?QzY5THpxeHJJSmMwZ0FSNitUOTlOUmd3aENPckVzeEw1WjJLNXgzczN5WnF0?=
- =?utf-8?B?cmhBblFYNmV5SDVmdzIwcVE0SS9YTVlvOHNKME9WVHBZL2p2cWhwSzhvODN6?=
- =?utf-8?B?TXRBZVpDa2ZmSWUyd1NzZ21neGxxRHlBUzFJME0xZ3c2LytvN0FHMWdLWFVj?=
- =?utf-8?B?SjdhZnZWWnRqRm9rUkZSalMrOWxrSjRueXB4bmdxc2xPL1lxeTk5M2VqUkpG?=
- =?utf-8?B?b1Z6bTVENnJOTytOWXhVVU5QdllBOEp2bm9VYkZNdXFsSDRMbXZySTA2UEQr?=
- =?utf-8?B?QzlQWGU0QlUzZDhIVFFrczRRT2JSVnNsUDJHeWhvM1Q0TWhvV3JHbEUwcUcr?=
- =?utf-8?B?REpUWDhIRFR4U09EUUlRczA5Q1YyK1R6K0NVa0dnWnI0dlRGQmxQWW5IK2Fp?=
- =?utf-8?B?WGREdUMvNE1PWEVCblE1Z0UrNk5iOGZhZHRVdGg5ekw5OXkxVmRtblN1ZnR3?=
- =?utf-8?B?VnNaYTBzdmxGT3d5QUQvaE1OUVE0RXU1WUxBQlZiNDU5YUlzOWtYc2ZTMk54?=
- =?utf-8?Q?215U/nFU1fmgQ9xdFZD68h8jdlDyAqwW9nwJWjX?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08562252-7ca3-43d9-f27f-08dd4f2e417c
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 08:37:04.6868
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB6441
+Date: Mon, 17 Feb 2025 09:37:07 +0100
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
+ airlied@redhat.com, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+In-Reply-To: <730652e4-3fb0-4dc5-9a95-10d167b3128c@suse.de>
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+ <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
+ <984c317de1027f5886390a65f1f66126@3xo.fr>
+ <cd7a9908-d4ba-45ca-a5cb-de8ac7ef72d0@redhat.com>
+ <7c378bfb-96e4-435d-8e6c-581d6851835f@suse.de>
+ <963e8bf72515f68e1b788383361dbe74@3xo.fr>
+ <95e8b6edb00f48776d9153555d05270a@3xo.fr>
+ <a6d28a9cd8dd7ae902d4c38cf58b622a@3xo.fr>
+ <730652e4-3fb0-4dc5-9a95-10d167b3128c@suse.de>
+Message-ID: <91f065d1c91bfc0e76eb95d8485c61dc@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
+Dear Thomas
 
-On 2025/1/23 5:33, Bjorn Helgaas wrote:
-> On Wed, Jan 15, 2025 at 03:06:57PM +0800, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> Add support for PCIe controller in SG2042 SoC. The controller
->> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
->> PCIe controller will work in host mode only.
->> + * pcie-sg2042 - PCIe controller driver for Sophgo SG2042 SoC
-> I'm guessing this is the first of a *family* of Sophgo SoCs, so
-> "sg2042" looks like it might be a little too specific if there will be
-> things like "sg3042" etc added in the future.
-As I know, SG2042 will be the only one SoC using Cadence IP from Sophgo. 
-They have switched to other IP(DWC) later.
->> +#include "../../../irqchip/irq-msi-lib.h"
-> I know you're using this path because you're relying on Marc's
-> work in progress [1].
->
-> But I don't want to carry around an #include like this in drivers/pci
-> while we're waiting for that, so I think you should use the existing
-> published MSI model until after Marc's update is merged.  Otherwise we
-> might end up with this ugly path here and no real path to migrate to
-> the published, supported one.
->
-> [1] https://lore.kernel.org/linux-riscv/20241204124549.607054-2-maz@kernel.org/
-OK, I will switch back to use the existing published MSI model.
->> + * SG2042 PCIe controller supports two ways to report MSI:
->> + *
->> + * - Method A, the PCIe controller implements an MSI interrupt controller
->> + *   inside, and connect to PLIC upward through one interrupt line.
->> + *   Provides memory-mapped MSI address, and by programming the upper 32
->> + *   bits of the address to zero, it can be compatible with old PCIe devices
->> + *   that only support 32-bit MSI address.
->> + *
->> + * - Method B, the PCIe controller connects to PLIC upward through an
->> + *   independent MSI controller "sophgo,sg2042-msi" on the SOC. The MSI
->> + *   controller provides multiple(up to 32) interrupt sources to PLIC.
-> Maybe expand "PLIC" the first time?
-Sure.
->
-> s/SOC/SoC/ to match previous uses, e.g., in commit log
-> s/multiple(up to 32)/up to 32/
-ok
->> + *   Compared with the first method, the advantage is that the interrupt
->> + *   source is expanded, but because for SG2042, the MSI address provided by
->> + *   the MSI controller is fixed and only supports 64-bit address(> 2^32),
->> + *   it is not compatible with old PCIe devices that only support 32-bit MSI
->> + *   address.
-> "Supporting 64-bit address" means supporting any address from 0 to
-> 2^64 - 1, but I don't think that's what you mean here.
->
-> I think what you mean here is that with Method B, the MSI address is
-> fixed and it can only be above 4GB.
-Yes, I will fix it.
->> +#define REG_CLEAR_LINK0_BIT	2
->> +#define REG_CLEAR_LINK1_BIT	3
->> +#define REG_STATUS_LINK0_BIT	2
->> +#define REG_STATUS_LINK1_BIT	3
->> +static void sg2042_pcie_msi_clear_status(struct sg2042_pcie *pcie)
->> +{
->> +	u32 status, clr_msi_in_bit;
->> +
->> +	if (pcie->link_id == 1)
->> +		clr_msi_in_bit = BIT(REG_CLEAR_LINK1_BIT);
->> +	else
->> +		clr_msi_in_bit = BIT(REG_CLEAR_LINK0_BIT);
-> Why not put the BIT() in the #defines for REG_CLEAR_LINK0_BIT,
-> REG_STATUS_LINK0_BIT, ...?  Then this code is slightly simpler, and
-> you can use similar style in sg2042_pcie_msi_chained_isr() instead of
-> shifting there.
-Ok, I will check this out in new version.
->> +	regmap_read(pcie->syscon, REG_CLEAR, &status);
->> +	status |= clr_msi_in_bit;
->> +	regmap_write(pcie->syscon, REG_CLEAR, status);
->> +static void sg2042_pcie_msi_irq_compose_msi_msg(struct irq_data *d,
->> +						struct msi_msg *msg)
->> +{
->> +	struct sg2042_pcie *pcie = irq_data_get_irq_chip_data(d);
->> +	struct device *dev = pcie->cdns_pcie->dev;
->> +
->> +	msg->address_lo = lower_32_bits(pcie->msi_phys) + BYTE_NUM_PER_MSI_VEC * d->hwirq;
->> +	msg->address_hi = upper_32_bits(pcie->msi_phys);
-> This seems a little suspect because adding "BYTE_NUM_PER_MSI_VEC *
-> d->hwirq" could cause overflow into the upper 32 bits.  I think you
-> should add first, then take the lower/upper 32 bits of the 64-bit
-> result.
-OK, I will check this out in new version.
->> +	if (d->hwirq > pcie->num_applied_vecs)
->> +		pcie->num_applied_vecs = d->hwirq;
-> "num_applied_vecs" is a bit of a misnomer; it's actually the *max*
-> hwirq.
-"max_applied_vecs"？
->
->> +static const struct irq_domain_ops sg2042_pcie_msi_domain_ops = {
->> +	.alloc	= sg2042_pcie_irq_domain_alloc,
->> +	.free	= sg2042_pcie_irq_domain_free,
-> Mention "msi" in these function names, e.g.,
-> sg2042_pcie_msi_domain_alloc().
-ok
->
->> +static int sg2042_pcie_init_msi_data(struct sg2042_pcie *pcie)
->> +{
->> ...
->> +	/* Program the MSI address and size */
->> +	if (pcie->link_id == 1) {
->> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_LOW,
->> +			     lower_32_bits(pcie->msi_phys));
->> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_HIGH,
->> +			     upper_32_bits(pcie->msi_phys));
->> +
->> +		regmap_read(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, &value);
->> +		value = (value & REG_LINK1_MSI_ADDR_SIZE_MASK) | MAX_MSI_IRQS;
->> +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, value);
->> +	} else {
->> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_LOW,
->> +			     lower_32_bits(pcie->msi_phys));
->> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_HIGH,
->> +			     upper_32_bits(pcie->msi_phys));
->> +
->> +		regmap_read(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, &value);
->> +		value = (value & REG_LINK0_MSI_ADDR_SIZE_MASK) | (MAX_MSI_IRQS << 16);
->> +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, value);
->> +	}
-> Would be nicer to set temporaries to the link_id-dependent values (as
-> you did elsewhere) so it's obvious that the code is identical, e.g.,
->
->    if (pcie->link_id == 1) {
->      msi_addr = REG_LINK1_MSI_ADDR_LOW;
->      msi_addr_size = REG_LINK1_MSI_ADDR_SIZE;
->      msi_addr_size_mask = REG_LINK1_MSI_ADDR_SIZE;
->    } else {
->      ...
->    }
->
->    regmap_write(pcie->syscon, msi_addr, lower_32_bits(pcie->msi_phys));
->    regmap_write(pcie->syscon, msi_addr + 4, upper_32_bits(pcie->msi_phys));
->    ...
-Ok，I will check this out.
->> +
->> +	return 0;
->> +}
->> +
->> +static irqreturn_t sg2042_pcie_msi_handle_irq(struct sg2042_pcie *pcie)
-> Which driver are you using as a template for function names and code
-> structure?  There are probably a dozen different names for functions
-> that iterate like this around a call to generic_handle_domain_irq(),
-> but you've managed to come up with a new one.  If you can pick a
-> similar name to copy, it makes it easier to compare drivers and find
-> and fix defects across them.
->
->> +{
->> +	u32 i, pos;
->> +	unsigned long val;
->> +	u32 status, num_vectors;
->> +	irqreturn_t ret = IRQ_NONE;
->> +
->> +	num_vectors = pcie->num_applied_vecs;
->> +	for (i = 0; i <= num_vectors; i++) {
->> +		status = readl((void *)(pcie->msi_virt + i * BYTE_NUM_PER_MSI_VEC));
->> +		if (!status)
->> +			continue;
->> +
->> +		ret = IRQ_HANDLED;
->> +		val = status;
-> I don't think you need both val and status.
-Yes, I will fix this.
->
->> +		pos = 0;
->> +		while ((pos = find_next_bit(&val, MAX_MSI_IRQS_PER_CTRL,
->> +					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
-> Most drivers use for_each_set_bit() here.
-Ok, I will check this out.
->> +			generic_handle_domain_irq(pcie->msi_domain,
->> +						  (i * MAX_MSI_IRQS_PER_CTRL) +
->> +						  pos);
->> +			pos++;
->> +		}
->> +		writel(0, ((void *)(pcie->msi_virt) + i * BYTE_NUM_PER_MSI_VEC));
->> +	}
->> +	return ret;
->> +}
->> +static int sg2042_pcie_setup_msi(struct sg2042_pcie *pcie,
->> +				 struct device_node *msi_node)
->> +{
->> +	struct device *dev = pcie->cdns_pcie->dev;
->> +	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
->> +	struct irq_domain *parent_domain;
->> +	int ret = 0;
-> Pointless initialization of "ret".
-Yes, I will fix this.
->> +	if (!of_property_read_bool(msi_node, "msi-controller"))
->> +		return -ENODEV;
->> +
->> +	ret = of_irq_get_byname(msi_node, "msi");
->> +	if (ret <= 0) {
->> +		dev_err(dev, "%pOF: failed to get MSI irq\n", msi_node);
->> +		return ret;
->> +	}
->> +	pcie->msi_irq = ret;
->> +
->> +	irq_set_chained_handler_and_data(pcie->msi_irq,
->> +					 sg2042_pcie_msi_chained_isr, pcie);
->> +
->> +	parent_domain = irq_domain_create_linear(fwnode, MSI_DEF_NUM_VECTORS,
->> +						 &sg2042_pcie_msi_domain_ops, pcie);
-> Wrap to fit in 80 columns like 99% of the rest of this file.
+Thanks for answer and help
 
-Ok, I will check this out.
+> All these errors don't look as if they are directly related to ast. 
+> It's something in the DRM core or Xorg.
 
-Thanks,
+Yes it's Xorg DRM issue
 
-Chen
+> That's btrfs AFAICS; so not related to ast
 
->
-> Bjorn
+That was not BTRFS, it was ACPI / PCIE (sure not related to ast) but as 
+I report this bug and bissect on the same hardware, it proof that Linux 
+6.1.85 already work on this particular hardware
+
+The actual install is working very fine on mainline so I don't want to 
+break it (and Xorg) to make Linux 6.1 work on it.
+I did installed a test system on another drive of this server during the 
+week-end so now I don't care to break Xorg or whatever on this new 
+install and I can continue bissection.
+
+Kind regards
+Nicolas Baranger
+
+Le 2025-02-17 09:11, Thomas Zimmermann a écrit :
+
+> Hi
+> 
+> Am 14.02.25 um 18:52 schrieb Nicolas Baranger:
+> 
+>> Hi Thomas, Jocelyn
+>> 
+>> Same error with linux-6.1.124 debian package ...
+>> It's reported in log as a drm bug by kernel:
+>> 
+>> ------------[ cut here ]------------
+>> BUG: the value to copy was not set!
+>> WARNING: CPU: 13 PID: 6163 at drivers/gpu/drm/drm_ioctl.c:478 
+>> drm_copy_field+0xa2/0xb0 [drm]
+> 
+> All these errors don't look as if they are directly related to ast. 
+> It's something in the DRM core or Xorg.
+> 
+>> This server had already work with Linux 6.1 in the past so I don't 
+>> know what to think...
+>> The last linux-6.1 version I'm sure that had work on this server was 
+>> 6.1.85 (according to my post here 
+>> https://bugzilla.kernel.org/show_bug.cgi?id=219480#c3)
+> 
+> That's btrfs AFAICS; so not related to ast.
+> 
+> What happens on older kernels, such as 6.0, 5.*, etc. I'd be interested 
+> in finding an old kernel with acceptable ast performance. That we can 
+> compare the code or further bisect.
+> 
+> Best regards
+> Thomas
+> 
+> Maybe I should install a new Debian system on a usb stick for doing 
+> tests
+> 
+> Going back here with next results
+> Thanks again for help
+> 
+> Kind regards,
+> Nicolas Baranger
+> 
+> Le 2025-02-14 18:03, Nicolas Baranger a écrit :
+> 
+> Hi Thomas, Jocelyn
+> 
+> Starting with 6.1.128 longterm kernel failed and it seems to be a 'drm 
+> error'
+> 
+> Xorg error :
+> 
+> (==) Log file: "/var/log/Xorg.0.log", Time: Fri Feb 14 17:32:59 2025
+> (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+> (==) No Layout section.  Using the first Screen section.
+> (==) No screen section available. Using defaults.
+> (**) |-->Screen "Default Screen Section" (0)
+> (**) |   |-->Monitor "<default monitor>"
+> (==) No monitor specified for screen "Default Screen Section".
+> a default monitor configuration.
+> (==) Automatically adding devices
+> (==) Automatically enabling devices
+> (==) Automatically adding GPU devices
+> (==) Automatically binding GPU devices
+> (==) Max clients allowed: 256, resource mask: 0x1fffff
+> (WW) The directory "/usr/share/fonts/X11/cyrillic" does not exist.
+> Entry deleted from font path.
+> (==) FontPath set to:
+> /usr/share/fonts/X11/misc,
+> /usr/share/fonts/X11/100dpi/:unscaled,
+> /usr/share/fonts/X11/75dpi/:unscaled,
+> /usr/share/fonts/X11/Type1,
+> /usr/share/fonts/X11/100dpi,
+> /usr/share/fonts/X11/75dpi,
+> built-ins
+> (==) ModulePath set to "/usr/lib/xorg/modules"
+> (II) The server relies on udev to provide the list of input devices.
+> no devices become available, reconfigure udev or disable 
+> AutoAddDevices.
+> (II) Loader magic: 0x561372a83f00
+> (II) Module ABI versions:
+> X.Org ANSI C Emulation: 0.4
+> X.Org Video Driver: 25.2
+> X.Org XInput driver : 24.4
+> X.Org Server Extension : 10.0
+> (++) using VT number 1
+> 
+> (II) systemd-logind: took control of session 
+> /org/freedesktop/login1/session/c13
+> (II) xfree86: Adding drm device (/dev/dri/card1)
+> (II) Platform probe for 
+> /sys/devices/pci0000:00/0000:00:03.0/0000:01:00.0/drm/card1
+> (II) systemd-logind: got fd for /dev/dri/card1 226:1 fd 14 paused 0
+> (EE)
+> (EE) Backtrace:
+> (EE) 0: /usr/lib/xorg/Xorg (OsLookupColor+0x139) [0x5613729f7f79]
+> (EE) 1: /lib/x86_64-linux-gnu/libc.so.6 (__sigaction+0x40) 
+> [0x7f0dad05b050]
+> (EE) 2: /lib/x86_64-linux-gnu/libc.so.6 (__nss_database_lookup+0xcd19) 
+> [0x7f0dad17m.so.2 (drmGetVe728e67a4]
+> (EE) 6: /usr/lib/xorg/Xorg (xf86PlatformDeviceCheckBusID+0x1bb) 
+> [0x5613728e6aab]
+> (EE) 7: /usr/lib/xorg/Xorg (config_fini+0x19b7) [0x5613728e3a97]
+> (EE) 8: /usr/lib/xorg/Xorg (xf86PlatformMatchDriver+0x1b5) 
+> [0x5613728e0615]
+> (EE) 9: /usr/lib/xorg/Xorg (xf86BusProbe+0x9) [0x5613728b9329]
+> (EE) 10: /usr/lib/xorg/Xorg (InitOutput+0x69a) [0x5613728c72ca]
+> (EE) 11: /usr/lib/xorg/Xorg (InitFonts+0x1ce) [0x56137288866e]
+> (EE) 12: /lib/x86_64-linux-gnu/libc.so.6 (__libc_init_first+0x8a) 
+> [0x7f0dad04624a]
+> (EE) 13: /lib/x86_64-linux-gnu/libc.so.6 (__libc_start_main+0x85) 
+> [0x7f0dad046305]
+> (EE) 14: /usr/lib/xorg/Xorg (_start+0x21) [0x561372871b71]
+> (EE)
+> (EE) Segmentation fault at address 0x0
+> (EE)
+> server error:
+> (EE) Caught signal 11 (Segmentation fault). Server aborting
+> (EE)
+> (EE)
+> consult the The X.Org Foundation support
+> at http://wiki.x.org
+> for help.
+> (EE) Please also check the log file at "/var/log/Xorg.0.log" for 
+> additional information.
+> (EE)
+> (EE) Server terminated with error (1). Closing log file.
+> 
+> Kernel trace :
+> 
+> ------------[ cut here ]------------
+> BUG: the value to copy was not set!
+> WARNING: CPU: 10 PID: 6240 at drivers/gpu/drm/drm_ioctl.c:478 
+> drm_copy_field+0xa2/0xb0 [drm]
+> Modules linked in: xt_CHECKSUM(E) xt_MASQUERADE(E) xt_conntrack(E) 
+> ipt_REJECT(E) nf_reject_ipv4(E) xt_tcpudp(E) nft_compat(E) 
+> nft_chain_nat(E) nf_tables(E) nls_utf8(E) nfnetlink(E) 
+> cpufreq_userspace(E) cifs(E) l2tp_ppp(E) cifs_arc4(E) l2tp_netlink(E) 
+> cpufreq_ondemand(E) rdma_cm(E) l2tp_core(E) iw_cm(E) ip6_udp_tunnel(E) 
+> udp_tunnel(E) cpufreq_conservative(E) ib_cm(E) pppox(E) ppp_generic(E) 
+> slhc(E) ib_core(E) cifs_md4(E) dns_resolver(E) cpufreq_powersave(E) 
+> xfrm_user(E) xfrm_algo(E) scsi_transport_iscsi(E) nvme_fabrics(E) 
+> team_mode_loadbalance(E) 8021q(E) garp(E) mrp(E) team(E) bridge(E) 
+> stp(E) llc(E) qrtr(E) openvswitch(E) nsh(E) nf_conncount(E) nf_nat(E) 
+> nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) cmac(E) 
+> algif_hash(E) algif_skcipher(E) af_alg(E) bnep(E) binfmt_misc(E) 
+> nls_ascii(E) nls_cp437(E) vfat(E) fat(E) ext4(E) mbcache(E) jbd2(E) 
+> intel_rapl_msr(E) intel_rapl_common(E) nvidia_drm(POE) 
+> snd_hda_codec_hdmi(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E)
+> nvidia_modeset(POE) intel_uncore_frequency(E) 
+> intel_uncore_frequency_common(E) sb_edac(E) btusb(E) snd_hda_intel(E) 
+> btrtl(E) snd_usb_audio(E) x86_pkg_temp_thermal(E) btbcm(E) 
+> snd_intel_dspcfg(E) snd_intel_sdw_acpi(E) intel_powerclamp(E) 
+> snd_usbmidi_lib(E) btintel(E) snd_rawmidi(E) coretemp(E) btmtk(E) 
+> snd_seq_device(E) snd_hda_codec(E) nvidia(POE) eeepc_wmi(E) 
+> snd_hda_core(E) mc(E) snd_pcsp(E) snd_hwdep(E) rapl(E) asus_wmi(E) 
+> ipmi_ssif(E) battery(E) iTCO_wdt(E) bluetooth(E) intel_cstate(E) 
+> snd_pcm(E) sparse_keymap(E) ledtrig_audio(E) snd_timer(E) 
+> intel_pmc_bxt(E) acpi_ipmi(E) platform_profile(E) intel_uncore(E) 
+> crc16(E) wmi_bmof(E) rfkill(E) mei_me(E) iTCO_vendor_support(E) 
+> ipmi_si(E) snd(E) watchdog(E) mei(E) video(E) soundcore(E) 
+> ipmi_devintf(E) ipmi_msghandler(E) joydev(E) evdev(E) sg(E) msr(E) 
+> parport_pc(E) ppdev(E) nfsd(E) lp(E) parport(E) auth_rpcgss(E) 
+> nfs_acl(E) lockd(E) grace(E) loop(E) efi_pstore(E) configfs(E) 
+> sunrpc(E) ip_tables(E) x_tables(E) autofs4(E)
+> btrfs(E) blake2b_generic(E) zstd_compress(E) efivarfs(E) raid10(E) 
+> sr_mod(E) cdrom(E) hid_logitech_hidpp(E) hid_plantronics(E) 
+> hid_logitech_dj(E) hid_generic(E) uas(E) usbhid(E) hid(E) 
+> usb_storage(E) raid456(E) async_raid6_recov(E) async_memcpy(E) 
+> async_pq(E) async_xor(E) async_tx(E) xor(E) raid1(E) raid0(E) 
+> raid6_pq(E) dm_mod(E) crc32c_intel(E) md_mod(E) sd_mod(E) ast(E) 
+> drm_vram_helper(E) drm_ttm_helper(E) ghash_clmulni_intel(E) ttm(E) 
+> sha512_ssse3(E) sha256_ssse3(E) drm_kms_helper(E) sha1_ssse3(E) ahci(E) 
+> libahci(E) xhci_pci(E) ehci_pci(E) xhci_hcd(E) ehci_hcd(E) 
+> aesni_intel(E) nvme(E) mxm_wmi(E) igb(E) libata(E) crypto_simd(E) 
+> i2c_i801(E) cryptd(E) drm(E) dca(E) i2c_smbus(E) lpc_ich(E) usbcore(E) 
+> scsi_mod(E) i2c_algo_bit(E) nvme_core(E) t10_pi(E) usb_common(E) 
+> scsi_common(E) i40e(E) wmi(E) button(E)
+> CPU: 10 PID: 6240 Comm: Xorg Tainted: P           OE 6.1.128-amd64 #0
+> Hardware name: ASUS All Series/X99-WS/IPMI, BIOS 4001 05/28/2019
+> RIP: 0010:drm_copy_field+0xa2/0xb0 [drm]
+> Code: 00 00 74 13 49 c7 45 00 00 00 00 00 eb e0 0f 0b b8 f2 ff ff ff eb 
+> d9 48 c7 c7 70 cb 17 c1 c6 05 43 17 07 00 01 e8 2e 09 57 dd <0f> 0b eb 
+> d6 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 0f 1f 44 00
+> RSP: 0018:ffffbd9941b0fba8 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffffbd9941b0fc60 RCX: 0000000000000027
+> RDX: ffff9ec3bf6a13a8 RSI: 0000000000000001 RDI: ffff9ec3bf6a13a0
+> RBP: ffff9e8487476800 R08: 0000000000000000 R09: ffffbd9941b0fa20
+> R10: 0000000000000003 R11: ffff9ec3bff15ee8 R12: ffffffffc1132570
+> R13: ffffbd9941b0fc80 R14: ffff9e85881d7200 R15: 0000000000000040
+> FS:  00007f59dd209ac0(0000) GS:ffff9ec3bf680000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000056272a2123d0 CR3: 000000010c396005 CR4: 00000000003706e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <TASK>
+> ? __warn+0x81/0xd0
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? report_bug+0xe6/0x150
+> ? handle_bug+0x41/0x70
+> ? exc_invalid_op+0x17/0x70
+> ? asm_exc_invalid_op+0x1a/0x20
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? drm_copy_field+0xa2/0xb0 [drm]
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> drm_version+0x73/0xa0 [drm]
+> drm_ioctl_kernel+0xcd/0x170 [drm]
+> drm_ioctl+0x233/0x410 [drm]
+> ? drm_ioctl_flags+0x50/0x50 [drm]
+> __x64_sys_ioctl+0x94/0xd0
+> do_syscall_64+0x59/0xb0
+> ? vfs_write+0x2b1/0x3f0
+> ? vfs_write+0x2b1/0x3f0
+> ? ksys_write+0x6f/0xf0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? __x64_sys_fcntl+0x94/0xc0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? syscall_exit_to_user_mode+0x22/0x40
+> ? do_syscall_64+0x65/0xb0
+> ? exit_to_user_mode_prepare+0x40/0x1e0
+> entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+> RIP: 0033:0x7f59dd31ccdb
+> Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 
+> 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 
+> 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+> RSP: 002b:00007fff22f5d440 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 000056272a211f10 RCX: 00007f59dd31ccdb
+> RDX: 000056272a211f10 RSI: 00000000c0406400 RDI: 000000000000000e
+> RBP: 000056272a211f10 R08: 00007f59dd3f1cc0 R09: 0000000000000070
+> R10: 00007f59dd236378 R11: 0000000000000246 R12: 00000000c0406400
+> R13: 000000000000000e R14: 000000000000000e R15: 000056272a211510
+> </TASK>
+> ---[ end trace 0000000000000000 ]---
+> 
+> Maybe my Xorg is too recent (but I hope not) as I don't want to 
+> downgrade Xorg (nor reinstall an older debian version) so I will try 
+> another kernel version...
+> 6.1.128 was build by me and maybe the 'make olddefconfig' from mainline 
+> to 6.1.128 lost too many options (for ex 
+> device-drivers/graphic-support>drm does not exist in menuconfig and I 
+> found AST module directly in device-drivers/graphic-support ...)
+> 6.1.124 exist prepackaged by Debian so it .config should be more 
+> generic so I will test it
+> 
+> Thanks again for help,
+> 
+> Kind regards
+> Nicolas Baranger
+> 
+> Le 2025-02-14 16:01, Nicolas Baranger a écrit :
+> 
+> Hi Thomas
+> 
+> Thanks again for help
+> 
+> Nicolas, if you find an old kernel version that works correctly, and if 
+> you know how to git-bisect the kernel, it would be helpful if you could 
+> bisect to the commit that introduced the problem.
+> Ok, I will try to find a working kernel and to git bisect to find the 
+> commit which introduce the problem.
+> I will start with longterm 6.1.128
+> 
+> Kind regards
+> Nicolas
+> 
+> Le 2025-02-14 13:36, Thomas Zimmermann a écrit :
+> 
+> Hi Jocelyn
+> 
+> Am 14.02.25 um 10:11 schrieb Jocelyn Falempe: On 13/02/2025 10:27, 
+> Nicolas Baranger wrote: Dear Thomas
+> 
+> Thanks for answer and help.
+> 
+> Yes, due to .date total removal in linux 6.14 (https://github.com/ 
+> torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd 
+> <https:// github.com/torvalds/linux/commit/ 
+> cb2e1c2136f71618142557ceca3a8802e87a44cd>) the last DKMS sources are :
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+> 
+> You can also find this sources in directory drivers/gpu/drm/ast_new of 
+> the tarball https://xba.soartist.net/ast-drm_nba_20250211/nba-kernel/ 
+> linux-6.14.0.1-ast1.15.1-rc2_nba0_20250212.tar.gz <https:// 
+> xba.soartist.net/ast-drm_nba_20250211/nba-kernel/linux-6.14.0.1- 
+> ast1.15.1-rc2_nba0_20250212.tar.gz>
+> 
+> I'm surprised by the fact the in-kernel driver 0.1.0 is more advanced 
+> than Aspeed version 1.15.1 because on my system it has very poor 
+> rendering and is very slow, twinkle is high and had poor colors.
+> The screen flickering is high and it's like if I was using a very old 
+> cathode ray tube monitor (In fact I'm using a SAMSUNG LCD monitor which 
+> is perfectly functionnal and which display a nice and eyes confortable 
+> picture when using ast 1.15.1 driver or the video output of the Nvidia 
+> GPU ).
+> 
+> My testing system is a test Xeon server with an AST2400 BMC with its 
+> AST VGA card as the main video output (to be able to have a screen on 
+> the BMC KVM) +a discrete NVIDIA GPU I'm using for GPGPU and 3D 
+> rendering with Nvidia prime render offload.
+> What I constat with embed kernel driver 0.1.0 is that the Xeon 
+> processor is doing the video job for example when watching a video, and 
+> it's not the case with version 1.15.1 even when displaying on the AST 
+> VGA card a vulkan rotating cube (compute by nvidia GPU with nvidia 
+> prime but display by the AST VGA card of the AST2400).
+> Note that with in-kernel version 0.1.0 it's nearly impossible to make 
+> round the vulkan cube at more than half a round by  second where it's 
+> working (very) fine for a 32MB video memory card with version 1.15.1 as 
+> you can see in the video present in the online directory
+> 
+> I'm not developer or kernel developer so be sure that I wouldn't have 
+> done all this work if the in-kernel ast version 0.1.0 was usable 
+> out-of- the-box
+> 
+> Sure you can give me a patch I will test on this server (building 
+> mainline+ast_new yesterday tooks 19 minutes on this server)
+> 
+> PS:
+> here is a 'git diff linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast 
+> linux-6.14.0.1-ast-rc2/drivers/gpu/drm/ast_new'
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ast- 
+> fullpatch.patch 
+> <https://xba.soartist.net/ast-drm_nba_20250211/nba-dump/ 
+> ast-fullpatch.patch>
+> Diff is about 250+ kb so the 2 drivers seems to have nothing to do with 
+> each others...
+> 
+> Thanks again for help
+> 
+> Kind regards
+> Nicolas
+> 
+> Le 2025-02-13 08:57, Thomas Zimmermann a écrit :
+> 
+> Hi Nicolas
+> 
+> Am 12.02.25 um 19:58 schrieb Nicolas Baranger: Dear maintener
+> That's mostly me and Jocelyn.
+> 
+> I did include ast-drm driver version 1.15.1 (in replacement of version 
+> 0.1.0) on the new mainline kernel too (6.14.0-rc2) and I issue a new 
+> dkms patch
+> 
+> Last DKMS patch had been sucessfully tested on mainline.
+> And last ast.ko version 1.15.1 included in linux tree had also been 
+> sucessfully tested
+> 
+> Online directory is updated with :
+> - new DKMS patch
+> - new DKMS srouces
+> - new DKMS debian package
+> - new tarball of mainline included ast_new ported in kernel tree
+> - new kernel debian package (mainline with ast_new)
+> 
+> NB: online directory is here: https://xba.soartist.net/ast- 
+> drm_nba_20250211/ <https://xba.soartist.net/ast-drm_nba_20250211/>
+> 
+> Please let me know what I should do to see this change in linux-next
+> I'm having a little trouble with figuring out which of the many driver 
+> sources is the relevant one. Am I correct to assume it's the one at
+> 
+> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/ 
+> nba_last_src_20250212/src/ <https://xba.soartist.net/ast- 
+> drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/>
+> 
+> About that driver: Although the official driver reports an ancient 
+> version number, it is an up-to-date driver. It is actually more up-to- 
+> date than Aspeed's package. Both drivers share source code and a few 
+> years ago there was an effort to bring the kernel's driver up to the 
+> same feature set. Since then, the kernel's driver has been updated, 
+> reworked and improved.
+> 
+> About the performance: From what I can tell, the only significant 
+> difference in these drivers is memory management. Your ast_new driver 
+> uses an older algorithm that we replaced quite a few releases ago. The 
+> old version was unreliable on systems with little video memory, so we 
+> had to replace it.  I don't know why the new code should be slower 
+> though.
+> Regarding the performances of ast driver, I remember doing profiling 
+> some times ago, and when running glxgears (with llvmpipe), 65% of the 
+> CPU time was wasted in page fault 
+> (https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L534)
+> But as this driver is mostly used for console/basic desktop usage, I 
+> didn't investigate more.
+> Now that's an interesting find. The GEM shmem helpers vunmap ASAP to 
+> make pages swappable, I think. IIRC there was a patchset circulating 
+> that implements a shrinker [1] for shmem helpers. With that in place, 
+> we'd only update the page tables if necessary. If it's really that 
+> easy, we should try to merge that.
+> 
+> [1] 
+> https://elixir.bootlin.com/linux/v6.13.2/source/include/linux/shrinker.h#L82
+> 
+> If I remember correctly, the switch to shmem, is because some devices 
+> have only 16MB of memory, and 1920x1200x32bits takes ~9MB, so it's not 
+> possible to have double buffering in this case. (And this is required 
+> by most desktop environment).
+> Exactly. There are ast devices with as little as 8 MiB of video memory. 
+> But FullHD@32bit already requires ~8 MiB. Atomic modesetting with the 
+> old memory manager requires overcommitting by a factor of 3 (to ~24 
+> MiB) to account for all corner cases. Hence we sometimes had failed 
+> display updates with lower-end devices.
+> 
+> The switch to shmem was done with "f2fa5a99ca81c drm/ast: Convert ast 
+> to SHMEM", and introduced in v6.2. So maybe if you can try with a v6.1 
+> kernel, using the built-in ast driver and report if it has better 
+> performances.
+> Nicolas, if you find an old kernel version that works correctly, and if 
+> you know how to git-bisect the kernel, it would be helpful if you could 
+> bisect to the commit that introduced the problem.
+> 
+> Best regards
+> Thomas
+> 
+> Best regards,
 
