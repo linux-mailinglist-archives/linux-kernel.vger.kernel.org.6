@@ -1,59 +1,85 @@
-Return-Path: <linux-kernel+bounces-518306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6381EA38CFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:04:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650F9A38D01
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37B1F16263C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90221886AEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D15236A98;
-	Mon, 17 Feb 2025 20:04:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F00227BAA;
-	Mon, 17 Feb 2025 20:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9C8237163;
+	Mon, 17 Feb 2025 20:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="m3nCne8t"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC2213AA5D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739822658; cv=none; b=fuX7LOWuudBGib7aBjs+wzNc1TyORGhNPNAoO8MQs1Flfvck8MrCu45P00sj38NJuSRszkStHGfd9ZK2BnPf5MHiKZDs7QVQ3FSK5C0ec8qzcZ+3Fyp9AyXGaeyZV1CRtRU++wT4KbZ/Bd3T5MvUCK9wdAnZD1epDsIg50o9+iY=
+	t=1739822752; cv=none; b=fEpAMjqY+AQpIOwC8KRUsrnHf16jGsdEQYJUO6NvZG6jWx+r8AYoSDI0jHe1N0BfNBkkVUuLHZo9ObMfeRiJUK2905SeCnPvlpJP2qPN0ma96qSFP8znWoaNMyKSf90RNf1E81amilvCd5ZJkKI8KjvelkbRjrIcyskC2tL+uLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739822658; c=relaxed/simple;
-	bh=fMBnlLxk2mqjJMmrkkTbsI+W9nTHUXVEsSQOO5LWjB8=;
+	s=arc-20240116; t=1739822752; c=relaxed/simple;
+	bh=k6DNKFKMaCUQ0DgrC2eIhHYG/gMH73GjjhFevt5GJKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtEiaixrcyPUatY0dQx+pQE3koC9ZQ+Rj3nvRsSKORIz9sFZ4XTAARVNvwkupiVpa9MQUUvnyRcxRgUfeKSF6wAlgomQ7hFIwlgGPV/LeImAbqMOodPgaM172nR6eB+KTi9kaiq2pTixAfS7JibrkQUgF6QxJyNQ0Q3LfPA66SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AB2A152B;
-	Mon, 17 Feb 2025 12:04:34 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E09D73F6A8;
-	Mon, 17 Feb 2025 12:04:14 -0800 (PST)
-Date: Mon, 17 Feb 2025 20:04:09 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 08/11] perf arm-spe: Fill branch operations and events
- to record
-Message-ID: <20250217200409.GC8144@e132581.arm.com>
-References: <20250214111936.15168-1-leo.yan@arm.com>
- <20250214111936.15168-9-leo.yan@arm.com>
- <a5d99e7f-1d8d-41f1-976d-7d67a0d5decb@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOWqlrkDo744GlvItNDLkMcNIRBwi7OSmBkFoZGJmFcbWgaBIFS3xZ3S4+r2M5aYQ45J1yPAU8+xGJ53XzM91qa4wT0g+7ocily94SIIAgEb6kvUS+5vH8EjF0Z4xNPGib2ZbP+nSU4QCxVPnyID7q5EL5+lFoEn0WxdrSk7KHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=m3nCne8t; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ddcff5a823so32758296d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1739822749; x=1740427549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCgeOMU2MhngBhzCworEtjOZ+T+D6653XM8U1/nQhGA=;
+        b=m3nCne8tCiewC8EhkbNFjLXFzgtYp1CWjAljSQmkPhhzXNZS63hJdGdijnmtlRqgxI
+         3aVlPH5wnrNDRYWv3feZQ4LB/qCdF6z8M/L0JlCw2eENLKHU9j8Zz5P+gLznyW1+Bka1
+         IhD+rQeiYarlB8qBvMcsqcLKzo5lDj+j81Sw3aiGDFMYsLc6/GqvwOhnKs4AuK+ZnfAA
+         mJCkMGhNQuZqaVrBfB6EWiZTmtnQjMfRGoAWlbPwzL7vsynjuCiwIVJohlYoQh5pYIi0
+         dlu+tRhkfem7Tltge2WtpJ2Np66+Av4Ce2Ljsj2dQPapXXAca00BExgUtLcd/zr/bkU2
+         +1hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739822749; x=1740427549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vCgeOMU2MhngBhzCworEtjOZ+T+D6653XM8U1/nQhGA=;
+        b=jw7vaZDuD3AOWkUyLWFI0d+wy6hJKbzsVFOGhhnHSg0BzjeJLvvIAJId62NmCl+zuS
+         ozoKX81uaQny5SBnU0fkUFIy33mD7bm9J8+W23hpkO02O6hCSksLffo8bzrRQ/8FYHQi
+         pKVIgxTsSTO3noWT+mpbioyj61ySEBgo8K0iSm5SO/qX5y58H0fsn4RyoYYKAa1X07vY
+         a0mAu/bo51O7thH8INdHrv5YKfvz0ltLw27GFOalkuxe+hRneIXTIqa5qBMMQQisZeV3
+         5q0wvL19S9/oNLRqDKU3HQoeQgtHs9NbacIYYji9s5/uJaZbuPBVYLNpIkp6vix+0ZeY
+         dHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHh+zKQvTTLOdBcvyTPSnDRNwgB85bysOdNUYcNfk549kFzrseNJZHM9nf6sgVKeszLzIoGNg76gNXom0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw35MfJP02xscF7nG9mB+QS06v++q+rNuwQOd9iSUruC1rfKvl
+	oOLlwVrXfA5emcDhSyNKEnZYYlNYLex/tA/6ezFOaIyLoIrusIBek+u7vI+0x5A3rKSylXB/9jE
+	v
+X-Gm-Gg: ASbGncvfl9wYfcDC+lVWLGVRGSZmMntCc40qJKjQXMF9YIaVti1fa7IsJfaNkX2J0YB
+	Fm+uadfVIFhc9Cy39Y8auBJqTaj0coq9UBlcJNiLXJhlAalVyi6QFlJsNYftT2+0DzSnQIcH0OM
+	LbusodWh/q2DDlsEfrw4VJ0PQBGD2K0cf7acVy4HX2ovecKnQdxJb2My57u5+pJAHstbotsF/P3
+	HhqMsxeRtRMQecqH98wCrjHK37+cegDXNauemoEYhXOt0f/r7QZIucxAwgMMiGYPiUPR6ufayCA
+	+uBL/6cn23PYrezg2Ir4AjnIXDWYv1l06h962sRCzd7/53EPlppue+LsfeR+V+4/2q8Wrd14Zw=
+	=
+X-Google-Smtp-Source: AGHT+IFPULOdVELO2VyJgNV5ljLKvzQJzC37IUdklvHnQ5b1U1CtrvxTzhQkTu86wiLswV9Q8uTiRQ==
+X-Received: by 2002:a05:6214:3bc9:b0:6e4:4331:aad9 with SMTP id 6a1803df08f44-6e676294de1mr124170946d6.2.1739822748947;
+        Mon, 17 Feb 2025 12:05:48 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65daffdbbsm55675956d6.99.2025.02.17.12.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 12:05:48 -0800 (PST)
+Date: Mon, 17 Feb 2025 15:05:44 -0500
+From: Gregory Price <gourry@gourry.net>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
+Message-ID: <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +88,279 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5d99e7f-1d8d-41f1-976d-7d67a0d5decb@linaro.org>
+In-Reply-To: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
 
-On Mon, Feb 17, 2025 at 04:20:57PM +0000, James Clark wrote:
 
-[...]
+The story up to now
+-------------------
+When we left the driver arena, we had created a dax device - which
+connects a Soft Reserved iomem resource to one or more `memory blocks`
+via the kmem driver.  We also discussed a bit about ZONE selection
+and default online behavior.
 
-> > diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-> > index ba807071d3c1..52bd0a4ea96d 100644
-> > --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-> > +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-> > @@ -207,6 +207,18 @@ static int arm_spe_read_record(struct arm_spe_decoder *decoder)
-> >                               break;
-> >                       case SPE_OP_PKT_HDR_CLASS_BR_ERET:
-> >                               decoder->record.op |= ARM_SPE_OP_BRANCH_ERET;
-> > +                             if (payload & SPE_OP_PKT_COND)
-> > +                                     decoder->record.op |= ARM_SPE_OP_BR_COND;
-> 
-> I think this results in memory events being synthesised for these
-> samples because of a bug in arm_spe__synth_data_source().
-> ARM_SPE_OP_BR_COND overlaps with bits from other packet types like
-> ARM_SPE_OP_LD:
-> 
->        if (record->op & ARM_SPE_OP_LD)
->                data_src.mem_op = PERF_MEM_OP_LOAD;
-> 
-> arm_spe__synth_data_source() needs to only interpret that as a data
-> source packet if ARM_SPE_OP_LDST is set. This was reported by Mike
-> Williams but you have the privilege of hitting it for real first.
+In this section we'll discuss what actually goes into memory block
+creation, how those memory blocks are exposed to kernel allocators
+(tl;dr: sparsemem / memmap / struct page), and the implications of
+the selected memory zones.
 
-Good catching.  I have added a new patch 06 to fix the bug in the
-v3 series.  Thanks for hooking up the info.
 
-Leo
+-------------------------------------
+Step 7: Hot-(un)plug Memory (Blocks).
+-------------------------------------
+Memory hotplug refers to surfacing physical memory to kernel
+allocators (page, slab, cache, etc) - as opposed to the action of
+"physically hotplugging" a device into a system (e.g. USB). 
+
+Physical memory is exposed to allocators in the form of memory blocks.
+
+A `memory block` is an abstraction to describe a physically
+contiguous region memory, or more explicitly a collection of physically
+contiguous page frames which is described by a physically contiguous
+set of `struct page` structures in the system memory-map.
+
+The system memmap is what is used for pfn-to-page (struct) and
+page(struct)-to-pfn conversions. The system memmap has `flat` and
+`sparse` modes (configured at build-time). Memory hotplug requires the
+use of `sparsemem`, which aptly makes the memory map sparse.
+
+Hot *remove* (un-plug) is distinct from Hot add (plug).  To hot-remove
+an active memory block, the pages in-use must have their data (and
+therefore mappings) migrated to another memory block. Hot-remove must
+be specifically enabled separate from hotplug.
+
+
+Build configurations affecting memory block hot(un)plug
+  CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG
+  CONFIG_SPARSEMEM
+  CONFIG_64BIT
+  CONFIG_MEMORY_HOTPLUG
+  CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_OFFLINE
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_AUTO
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_KERNEL
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_MOVABLE
+  CONFIG_MHP_MEMMAP_ON_MEMORY
+  CONFIG_ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
+  CONFIG_MIGRATION
+  CONFIG_MEMORY_HOTREMOVE
+
+During early-boot, the kernel finds all SystemRAM memory regions NOT
+marked "Special Purpose" and will create memory blocks for these
+regions by default.  These blocks are defaulted into ZONE_NORMAL
+(more on zones shortly).
+
+Memory regions present at boot marked `EFI_MEMORY_SP` have memory blocks
+created and hot-plugged by drivers.  The same mechanism is used to
+hot-add memory physically hotplugged after system boot (i.e. not present
+in the EFI Memory Map at boot time).
+
+The DAX/KMEM driver hotplugs memory blocks via the
+  `add_memory_driver_managed()`
+function.
+
+
+-------------------------------
+Step 8: Page Struct allocation.
+-------------------------------
+A `memory block` is made up of a collection of physical memory pages,
+which must have entries in the system Memory Map - which is managed by
+sparsemem on systems with memory (block) hotplug.  Sparsemem fills the
+memory map with `struct page` for hot-plugged memory.
+
+Here is a rough trace through the (current) stack on how page structs
+are populated into the system Memory Map on hotplug.
+
+```
+add_memory_driver_managed
+  add_memory_resource
+    memblock_add_node
+      arch_add_memory
+        init_memory_mapping
+          add_pages
+            __add_pages
+              sparse_add_section
+                section_activate
+                  populate_section_memmap
+                    __populate_section_memmap
+                      memmap_alloc
+                        memblock_alloc_try_nid_raw
+                          memblock_alloc_internal
+                            memblock_alloc_range_nid
+                              kzalloc_node(..., GFP_KERNEL, ...)
+```
+
+All allocatable-memory requires `struct page` resources to describe the
+physical page state.  On a system with regular 4kb size pages and 256GB
+of memory - 4GB is required just to describe/manage the memory.
+
+This is ~1.5% of the new capacity to just surface it (4/256).
+
+This becomes an issue if the memory is not intended for kernel-use,
+as `struct page` memory must be allocated in non-movable, kernel memory
+`zones`.  If hot-plugged capacity is designated for a non-kernel zone
+(ZONE_MOVABLE, ZONE_DEVICE, etc), then there must be sufficient
+ZONE_NORMAL (or similar kernel-compatible zone) to allocate from.
+
+Matthew Wilcox has a plan to reduce this cost, some details of his plan:
+https://fosdem.org/2025/schedule/event/fosdem-2025-4860-shrinking-memmap/
+https://lore.kernel.org/all/Z37pxbkHPbLYnDKn@casper.infradead.org/
+
+
+---------------------
+Step 9: Memory Zones.
+---------------------
+We've alluded to "Memory Zones" in prior sections, with really the only
+detail about these concepts being that there are "Kernel-allocation
+compatible" and "Movable" zones, as well as some relationship between
+memory blocks and memory zones.
+
+The two zones we really care about are `ZONE_NORMAL` and `ZONE_MOVABLE`.
+
+For the purpose of this reading we'll consider two basic use-cases:
+- memory block hot-unplug
+- kernel resource allocation
+
+You can (for the most part) consider these cases incompatible.  If the
+kernel allocates `struct page` memory from a block, then that block cannot
+be hot-unplugged.  This memory is typically unmovable (cannot be migrated),
+and its pages unlikely to be removed from the memory map.
+
+There are other scenarios, such as page pinning, that can block hot-unplug.
+The individual mechanisms preventing hot-unplug are less important than
+their relationship to memory zones.
+
+ZONE_NORMAL basically allows any allocations, including things like page
+tables, struct pages, and pinned memory.
+
+ZONE_MOVABLE, under normal conditions, disallows most kernel allocations.
+
+ZONE_MOVABLE does NOT make a *strong* guarantee of hut-unplug-ability.
+The kernel and privileged users can cause long-term pinning to occur - 
+even in ZONE_MOVABLE.  It should be seen as a best-attempt at providing
+hot-unplug-ability under normal conditions.
+
+
+Here's the take-away:
+
+Any capacity marked SystemRAM but not Special Purpose during early boot
+will be onlined into ZONE_NORMAL by default - making it available for
+kernel-use during boot.  There is no guarantee of being hot-unpluggable.
+
+Any capacity marked Special Purpose at boot, or hot-added (physically),
+will be onlined into a user-selected zone (Normal or Movable).
+
+There are (at least) 4 ways to select what zone to online memory blocks.
+
+Build Time:
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_*
+Boot Time:
+  memhp_default_state (boot parameter)
+udev / daxctl:
+  user policy explicitly requesting the zone
+memory sysfs
+  online_movable > /sys/bus/memory/devices/memoryN/online
+
+
+------------------------------------------
+Nuance: memmap_on_memory and ZONE_MOVABLE.
+------------------------------------------
+As alluded to in the prior sections - hot-added ZONE_MOVABLE capacity
+will consume ZONE_NORMAL capacity for its kernel resources.  This can
+be problematic if vast amounts of ZONE_MOVABLE is added on a system
+with limited ZONE_NORMAL capacity.
+
+For example, consider a system with 4GB of ZONE_NORMAL and 256GB of
+ZONE_MOVABLE.  This wouldn't work, as the entirety of ZONE_NORMAL would
+be consumed to allocate `struct page` resources for the ZONE_MOVABLE
+capacity - leaving no working memory for the rest of the kernel.
+
+The `memmap_on_memory` configuration option allows for hotplugged memory
+blocks to host their own `struct page` allocations... 
+
+                   if they're placed in ZONE_NORMAL.
+
+To enable, use the boot param: `memory_hotplug.memmap_on_memory=1`.
+
+Sparsemem allocation of memory map resources ultimately uses a
+`kzalloc_node` call, which simply allocates memory from ZONE_NORMAL with
+a *suggested* node.
+
+```
+memmap_alloc
+  memblock_alloc_try_nid_raw
+    memblock_alloc_internal
+      memblock_alloc_range_nid
+        kzalloc_node(..., GFP_KERNEL, ...)
+```
+
+The node ID passed in as an argument is a "preferred node", which means
+is insufficient space on that node exists to service the GFP_KERNEL
+allocation, it will fall back to another node.
+
+If all hot-plugged memory is added to ZONE_MOVABLE, two things occur:
+
+  1) A portion of the memory block is carved out for to allocate memmap
+     data (reducing usable size by 64b*nr_pages)
+
+  2) The memory is allocated on ZONE_NORMAL on another node..
+
+Result: Lost capacity due to the unused carve-out area for no value.
+
+--------------------------------
+The Complexity Story up til now.
+--------------------------------
+Platform and BIOS:
+  May configure all the devices prior to kernel hand-off.
+  May or may not support reconfiguring / hotplug.
+
+BIOS and EFI:
+  EFI_MEMORY_SP              - used to defer management to drivers
+
+Kernel Build and Boot:
+  CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG
+  CONFIG_SPARSEMEM
+  CONFIG_64BIT
+  CONFIG_MEMORY_HOTPLUG
+  CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_OFFLINE
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_AUTO
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_KERNEL
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE_ONLINE_MOVABLE
+  CONFIG_MHP_MEMMAP_ON_MEMORY
+  CONFIG_ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
+  CONFIG_MIGRATION
+  CONFIG_MEMORY_HOTREMOVE
+  CONFIG_EFI_SOFT_RESERVE=n  - Will always result in CXL as SystemRAM
+  nosoftreserve              - Will always result in CXL as SystemRAM
+  kexec                      - SystemRAM configs carry over to target
+  memory_hotplug.memmap_on_memory
+
+Driver Build Options Required
+  CONFIG_CXL_ACPI
+  CONFIG_CXL_BUS
+  CONFIG_CXL_MEM
+  CONFIG_CXL_PCI
+  CONFIG_CXL_PORT
+  CONFIG_CXL_REGION
+  CONFIG_DEV_DAX
+  CONFIG_DEV_DAX_CXL
+  CONFIG_DEV_DAX_KMEM
+
+User Policy
+  CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE (<=v6.13)
+  CONFIG_MHP_DEFAULT_ONLINE_TYPE       (>=v6.14)
+  memhp_default_state                  (boot param)
+  daxctl online-memory daxN.Y          (userland)
+
+Nuances
+  Early-boot resource re-use
+  Memory Block Alignment
+  memmap_on_meomry + ZONE_MOVABLE
+
+----------------------------------------------------
+Next up:
+  RAS - Poison, MCE, and why you probably want CXL=ZONE_MOVABLE
+  Interleave - RAS and Region Management
+
+~Gregory
 
