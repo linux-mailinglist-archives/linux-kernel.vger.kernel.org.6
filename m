@@ -1,267 +1,206 @@
-Return-Path: <linux-kernel+bounces-517533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A60A38213
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:42:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB6DA38214
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:42:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242C21885634
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:42:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769C57A13CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8A6218EB0;
-	Mon, 17 Feb 2025 11:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC4F218EBE;
+	Mon, 17 Feb 2025 11:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VnqY+YQK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6XkIgZP"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE95217739
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792527; cv=fail; b=bXNwpnK+eKbGtvqKjZftxGoVonIfHjA+G7D8WWQbm0IjtUGoc/SNXBKNPANsSF9QP06qkntM+izus+H+/5OrJbrtAJLjHSLTNTr8VHlNMWkCcjB35kpjSgNOr76e9SImisKiTSxzRJ/yBMlAKSW9YHYMsFZsjRJagRWzHd4ONT0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792527; c=relaxed/simple;
-	bh=TLt0H2wRs1hTV8L/ebf2XNj2Dlxu47a+iSjFkvYq+4U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mZdCYgCpVrSnYzYNKrKGkCkk55xmvdHokmCKbJnNMtM6Cc5EgPSpEfNCS4S7/I6/jqnzgzjwGrGm1wUlSN8Vm4Khbsmxl/pHIdCVEf0UNqQ6OnS8BOeDAJcA7umySDPTIR6q3B00R/wRcicLt6b8Yr0CovtRpBWPtw7kfhN9GC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VnqY+YQK; arc=fail smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EFB217739
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739792556; cv=none; b=DdXvK2ijKAFWYml3V/wcBvEU6zQ/Iyg3qecHFQS9bhXA6mJjtJKyiv+HUPCdhy8pOCH9XmBEEOzfT5QlawrYnL1CieKmoLHj2+wP4CA2KWI9ryfS715csPvsvb6ELagssC4OUyXW6X/9cgWZIKNwIbCT1DaI6oOtXsLhSZpL4HA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739792556; c=relaxed/simple;
+	bh=EVOUm37AOjkFzFBlAOQRk43gWSr2RTKYsfMxaJCFHok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RGdKPGwC15J6+7MroYMI13j5LCBjCmBBAwK9bBQi0/aK8sSDjpfJAa0Fj1yfpDxa3zoe+5E2a7I8eUgThRBxUNL7jZ+dpE28cAPAO1wM/An/CXoClpJk4eLULEF/9ZIho70PfQG/Vc4KtTu+ZSqc5ZcWOR7OavEK7jphd+TbDFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6XkIgZP; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739792526; x=1771328526;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TLt0H2wRs1hTV8L/ebf2XNj2Dlxu47a+iSjFkvYq+4U=;
-  b=VnqY+YQKT5JjrNOF9+4EuEDresy05Fy0OO+g9IOj4kQEdN8GSjm3RczO
-   tjC4jJRoIeJ2kN5RfLfwwIHY1ZmfX3SfCt/mq86pH2gGYEBugJTCADqka
-   50gP8SeD7vLpoygFBHw9mNmJb9ViqN2io7VtOaVZKMWsxV/wXLjUI3G6G
-   ougCxE/tnwSTxX/gbCeziNRbyfw3Zu2uLtPTbk4jLv7RkiYaGpuIiTCus
-   3/OqvryD3r6hB7s5AdNlwmZ+u/nZbmnwWlUT7rSEGMsc2nUSbYu5B8WDg
-   ipqhtJ25kCr1ytMa61gaBttL5pK2fUJgMfwHJrKQMxJ/1nbNEVFA4gZbw
-   A==;
-X-CSE-ConnectionGUID: U97MXHQoROmjC+NG3ci5aA==
-X-CSE-MsgGUID: NUYWjalrSaKjZNqwKQbyww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40394123"
+  t=1739792554; x=1771328554;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EVOUm37AOjkFzFBlAOQRk43gWSr2RTKYsfMxaJCFHok=;
+  b=g6XkIgZPVSFdI5V6jat4Blu/BbQdZnCnyQs5V3WzJCpgrq1PBIUUxBP8
+   lyUkxhU9R2azgcFHO6tmk20RX0mPkbFem49tl5eKRtVViKbmgAX7QmDyP
+   A7feAuZ5UQjOolPzDwf8sLBdKHIp1qsBjoDDl2hFhinLE7wuJVbGIFTeY
+   w+/nmwusgPYh+HwSCGdOeS4/5V/kfikN/mvPK/m2T0Q01E8yQJ8phwmkb
+   kh0Mhe4KkV/WywaF6HEMhtvwL8gQp7LVwlbHRBDmHMNciAk3iSZdnYASx
+   kKL4l6mBjjSUlJHxhHfD/vR2FyQLN5CSuhpDDvm/2zT0XNMahwdHzSzN+
+   Q==;
+X-CSE-ConnectionGUID: ryfYopf5RR+orxicW63xGg==
+X-CSE-MsgGUID: TGTlb5adTOWn81KO8PFrLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40394190"
 X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="40394123"
+   d="scan'208";a="40394190"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 03:42:05 -0800
-X-CSE-ConnectionGUID: dYx7Ezj2QO+yZhoBkJiL+Q==
-X-CSE-MsgGUID: ZydAcJffSgKvRGQh9krWDQ==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 03:42:34 -0800
+X-CSE-ConnectionGUID: g5Pf8II4RQ6fh8x7e2VaXQ==
+X-CSE-MsgGUID: W4pmTFrWTmOMyqjzgfripw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="114725432"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Feb 2025 03:42:04 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 17 Feb 2025 03:42:03 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 03:42:03 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.49) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 03:42:03 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FqubBqJh7zcj/mi7mA+WJmCZmtwigXIrFl+W/HnWQlB55AP6eTKI4Xu+uBbIbclIY3gxvaa/zVWYMyVyB0XNGTRRQH4DZqi5LrKJS10zCbiHTwzDQzU+aqczPL6a9B/rT8P5Ri49YrVtOuEtrEAzIdqL7RM/svgznO9l0lv+DDM+7kkhboItG2D6cbrxfsY6DpMu4cnOe8rs8aNYINqGZwX111a5qzocwRrqbmRPPll+51rTIDSzd67jF98YUpc4cWxzYIiBm6+KDuwVBzxdyD5+WYtCLSBsRMd9gHRMdAn02J4/1qDbpB7DlLMw95/eNCSEWxZg1B9F5TASNbDxvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c9LX+k9NnFHU6g+FxHRUg75fEy+O4EzkbqAAFUTPcxg=;
- b=kk6ENs1e1R+TmdDBqDru+x+0RPUWac47BNZt5lHPpY8pbLgLClUF59ia0fOb0MzzFRDWTe3ZMAHsqc8sRqoQsM/cWQRxg3bUNJfzW7U0NCP8Xd8gBeLHOnb6RT/3TN0ElZvlHGRJ4IY1R/vp1EUYe+C6saff3qDQK4Bx1271a3nxdS9cO1I5cwnxUoZ7CXyXc4GvNy34MtqorDsK+A2+kwKEnfBdZoVLv1Gv0h9saQTs2wPzx43nwWeKsAEXgeoczQfkeLfzI1KdFPjUeTwSgVuS61zpYxWtD1oYQqMgJ28X6shhbar6jqwdZGgp4puhPFelSgNzUc9283KzXJZCyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7904.namprd11.prod.outlook.com (2603:10b6:8:f8::8) by
- CO1PR11MB4852.namprd11.prod.outlook.com (2603:10b6:303:9f::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Mon, 17 Feb 2025 11:42:01 +0000
-Received: from DS0PR11MB7904.namprd11.prod.outlook.com
- ([fe80::f97d:d6b8:112a:7739]) by DS0PR11MB7904.namprd11.prod.outlook.com
- ([fe80::f97d:d6b8:112a:7739%2]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 11:42:01 +0000
-Message-ID: <9c8b047c-e4c9-4abb-88f2-f7e15b59bd9c@intel.com>
-Date: Mon, 17 Feb 2025 13:40:57 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/1] x86/vmemmap: Add missing update of PML4 table / PML5
- table entry
-To: Dave Hansen <dave.hansen@intel.com>, "Harry (Hyeonggon) Yoo"
-	<42.hyeyoo@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <osalvador@suse.de>, <byungchul@sk.com>,
-	<dave.hansen@linux.intel.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<akpm@linux-foundation.org>, <max.byungchul.park@sk.com>,
-	<max.byungchul.park@gmail.com>
-References: <20250214195151.168306-1-gwan-gyeong.mun@intel.com>
- <20250214195151.168306-2-gwan-gyeong.mun@intel.com>
- <25b9d3f5-bfe8-48a9-b11b-819d19cfae1e@intel.com>
- <Z6_d1MvorGFpxdU1@MacBook-Air-5.local>
- <0bed366e-a0e5-4d1a-b677-afad23235bcf@intel.com>
-Content-Language: en-US
+   d="scan'208";a="114725566"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO rapter.intel.com) ([10.245.246.153])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 03:42:31 -0800
 From: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-In-Reply-To: <0bed366e-a0e5-4d1a-b677-afad23235bcf@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR2P278CA0035.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:47::20) To DS0PR11MB7904.namprd11.prod.outlook.com
- (2603:10b6:8:f8::8)
+To: linux-kernel@vger.kernel.org
+Cc: osalvador@suse.de,
+	42.hyeyoo@gmail.com,
+	byungchul@sk.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	akpm@linux-foundation.org,
+	max.byungchul.park@sk.com,
+	max.byungchul.park@gmail.com
+Subject: [PATCH 0/1] x86/vmemmap: x86/vmemmap: Use direct-mapped VA instead of vmemmap-based VA
+Date: Mon, 17 Feb 2025 13:41:32 +0200
+Message-ID: <20250217114133.400063-1-gwan-gyeong.mun@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7904:EE_|CO1PR11MB4852:EE_
-X-MS-Office365-Filtering-Correlation-Id: d467796d-8a16-4e32-abfe-08dd4f48175f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MUR6VWhDMkwrbkJxOU9yQ2RieVVaZHdQVVBaeXVDOEdYcHBPM05kUHhSUXdj?=
- =?utf-8?B?ekFBWDRyZFlpcXRmMlNFYkRKbXRmM0pMdlp6TEJSV29vNldpbTNrK3E5UlFk?=
- =?utf-8?B?SXo3QjU5ZWpWSndEcGRtckhsaWVtY2lRZ3ZFQm5tVCtvMEZ6V2NRbXFZYlVk?=
- =?utf-8?B?Ujd1bmRVMmlxa012RkJpNS9YWHU4STZmN3hFR3NPSFNuaUQrOVdCQVQraXJ4?=
- =?utf-8?B?UlBpMFJpUzdwZUd3djlKL0hhTUZGUWNpZW5vTDFIcURBbzlkMEdDeGtTdG5o?=
- =?utf-8?B?NERmOGxBZGpoaGV2MERNbEhPcit5OTFTdHpueDYra213NHlZaHloZmpKRllZ?=
- =?utf-8?B?VTk2WWNlK1NqS2hubXVYbU5PaEdFcFFKVGdlaE55NnhPQ2pOaDBuWmV3V3V4?=
- =?utf-8?B?bmtMVTR4K2g2Wkh3bGRPU1RRL0xsR2tWZ044VDRXQkhyMnM0VTV2SUpZTWxR?=
- =?utf-8?B?ZFRINkFlR2k5anRiOS9FYUpkdGQ4cnNHUllxVGRnV1d2SCtQKzN4NG80TkJT?=
- =?utf-8?B?SmRsOUdRcU9SZkNKK283VmtrclUyZ2NObC95K1dvQ3puMUZ6cHNrMEVxYmMv?=
- =?utf-8?B?Z1ptblpBYmI2anJLZ2M5MkZtQnRuTmEwdzY3L0ZTOVB1NUNGVTlGb01qcCtM?=
- =?utf-8?B?QllDN3lTV0pXcElDSFBENHRDWXdmMFFNbHJDQjA1cVAydFR5bWpLMHFrK0g1?=
- =?utf-8?B?WnpnL2VMbnUycms1Z2hDVGxPOGQ1cnNOWVkvL1ZHRXFTTHlEc3JFZFBwMEtX?=
- =?utf-8?B?c3hYbHhEQ3BXWW1Td3phTVVacFhWV2tXUldNSkxtZ0xwYnBCc0Q2V2VqU2V6?=
- =?utf-8?B?VTFPRDVha0dvZHVYUG9uU09zdSs5YjBON1BZSGRnbVpGYmU3clREUUp5NFVv?=
- =?utf-8?B?Nk1TYXNKMHN1TEd5RC8yclNPVkRFdUNpMkQwSWY5SjNyNjRqMFZwY2JCY1ly?=
- =?utf-8?B?NmFLdndWMXZacjRGcnc5TENNbVZxU3lPMTB0ZXlYNW1HM2JMVFBneTFuUldQ?=
- =?utf-8?B?THpOZUl5cDVjelZJQ1ZVZXhoZXdWTGtxMmhLMTBsbjY4WVFld3lwVmZ5ZWxM?=
- =?utf-8?B?ODVYcGdFUEh5cEFqOURSUTdLUGNvT2xXRDF0R0d1MGVMalRkTFpaS2VpZGFG?=
- =?utf-8?B?QVhFV2twSWFLSHhPM0NnM2g0alBLc0RiVWJ6YnZETUorNFhOZHlSNUpoTnJu?=
- =?utf-8?B?UGkxRnhvRTdoMHRLV1B1MTlueGRYZnplaVYwdHBjaEZsYldpbVdTSlcwREli?=
- =?utf-8?B?Zk56YU9wTFNFWFRXSHYxUjZleWJ0L3dmajdZUDVyc05LdXBSSjNEaFNtOG5T?=
- =?utf-8?B?UVBnNHA2NjIveXdBTHN3RXZuOEVBWVd1SmtBNUpWbnhvZnBpNDgyRmpzaWFx?=
- =?utf-8?B?NXlpeGxDUmpIWnM1Z2ovYko3WHhUMFBrSkZUY3paT0ZsVmdqNGE3N0xFMHdy?=
- =?utf-8?B?R25vdWxRaVFJSXNqN1g5RHJBYi9Kb29STlQ5VGhyVDFhcWowMEhlUUlDZlNq?=
- =?utf-8?B?czJlL0VTcnVwM2tLc1FreUMvYUo5dU5CNlJTemQ2OFlCcjJseTNXZ2NKWUVK?=
- =?utf-8?B?L3ZudFQySUhFQ3I5cC9ZSVhuTkhOMnhjVDRvSkhmOVgvZHBEN2YrMWNlclcx?=
- =?utf-8?B?U3pwWDJLU2IzZ25WaE13RUVSNEZQLzVOdVFwa3UrVHd2eEl0TXpwSmVYU3pH?=
- =?utf-8?B?aWw5Yyt1dDh2MUQrdGNTakYxbzJZVVM1bmZjdkpjR1grMnNwRXZJdDVsRW1S?=
- =?utf-8?B?cnVDWjNNRElTSzY0TFVuOEpreDl1bmZTajJXajIyRnhJbGhnNTY2amtHc2Zy?=
- =?utf-8?B?aUxmSUxYaVFrYWNoUlhYQVJXMktORTZlNWJWMHlzaTNmbSt6NklQR2xnMHdT?=
- =?utf-8?Q?AeErIy3ZvT2mn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7904.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0czSll1NThNL3VURXNlSVkxYXhBY1E5U0JpNmVUM2dudkFhV2haOVB5WWRs?=
- =?utf-8?B?NmlDbVRJQ2lERHJ3cUNLRzk4Z1pNZkEyK1dDay9RSFVFVWZHeHJoeFlXdlJH?=
- =?utf-8?B?aGFkRlRxMGc0ejV6VWovajdCQ1cxMWpNTXMyS1NBT3d5Q2gyN29JRW12dkJS?=
- =?utf-8?B?dWI1Z0krbzc2ZFZSS3ljWFViekE3WERHLzI4cTJNVVA1UmNtc2YyRmpnb2xt?=
- =?utf-8?B?ai9tSU91Qnl5L0RCOGg4Y3p3dWovbkVSQ0tWRkpHRllrUVlYU012eERiSUln?=
- =?utf-8?B?ZjgrYlJQN1ZnK3VXWlJPZDI3N0xYcXZSSGRKOXg1MGpwdXNXMDlDdXoyWDBz?=
- =?utf-8?B?WFJLdVVXM0J5VVdjcjJFTmFGZjBjdTIvRFYrUHlDY1BselZMNUJnV2d3eFRh?=
- =?utf-8?B?TlVFcXlJVDNGSHdndWJSdWVQbllScVVqNkFRZUFrbDRIelhqenM1Qzl0NldO?=
- =?utf-8?B?dkZDcHpBMGlWMDdNT0M0NDlreE9LOEV1Ulc0TUVhUGswdzRsSitxRTdqbW00?=
- =?utf-8?B?NWZWTUxiRXVwbkRaWUdsUXZ0cGtVcWYwWVJtR0RjKzRXK2IvdEtMR3pFZW1J?=
- =?utf-8?B?ZzVtb1ZrczhXUHJzU25UbU9TcktSSkJxMjRITFFyS25NQ0xQc1lHeVZobTJY?=
- =?utf-8?B?Vm1xL2NId1p4dDdMMjA1ODJZZkNxV3poM1UyL3FaeXlET2pwc0k1bU5BVllO?=
- =?utf-8?B?S0RZM1BWbFo0VkFYdXloRS8vS1kwWWRiZ1J2RnpXbGFyd1FpaUZDL0c4bmpZ?=
- =?utf-8?B?L21BdkI2SFFObk90VFBaSFB3YVhjYThwbkJuUjdwVDRvRmI4YlBsVGY2YzlK?=
- =?utf-8?B?cXRmakFQR1ZrNWovU1g2K3I5dHdOT0NFanVDNU1hQklLcjF1UWpDRGNhR3BS?=
- =?utf-8?B?VlJYTWhwRm56eDlaakdNblArYTErWm5uSURkTnJyTjlPaVpRQno3UmJ0TUNU?=
- =?utf-8?B?Y1NoeXNad1plMmJaa01WYmtNWUhuTXpqc0VPeG9QVm5vWnhlZDhzZ3J0bnRT?=
- =?utf-8?B?SFhOMUNzcjdBSXZGVGsvdXlLZ2JPaHVMU1hPekhKdForS2pWZW40d2hqbWY1?=
- =?utf-8?B?dkVJcDd0TGJHSmEvRHlvcG1MeFRWTGJrUXY0ckZKRXJmUmRuZW9jQk5EYUd0?=
- =?utf-8?B?enlxZXBLOHNReDNmZzl2NkpKRnJHV2Jtd0FuVVI4OFYxb0ZZYnpSQUhKRndu?=
- =?utf-8?B?TWNISzdYL2s1bTZmRXdRSVJXeFVHaFNKQ0Y5MjVwT2JkMTlrVGxNbXBlZVh2?=
- =?utf-8?B?Q1RFbUx3NDBSQ2tyT2E5ZWNlWnJzd0dCZFZlMkF5NDR6RnIxZkJHQmg1VUhE?=
- =?utf-8?B?czBwRlJESzhPRVVGQ3pHZGNZbnY1WHpBK1ltd3VOdmFsNDY5ai90VDlubUlO?=
- =?utf-8?B?WmdqK2dVUGtZYnlsd1BuL1c0QnExK3NTa0FndHVWVStvMXpDaEhBNWxvZ3Jo?=
- =?utf-8?B?UWNCcWhDN3JOb3d0bFZIcU5JeTZrVUdpdEVpT2JPMDc0Ykh3ZGpJbGwyOGp0?=
- =?utf-8?B?TWFjdDg4VzQ1SlVJeWhjMDltc3pkbWdORlU1Y2E1MGR1NXlCa1kxTFp5ekZh?=
- =?utf-8?B?bEdjVTdjR0tCdUwvWGJxZ0wzTnZEM0tJSXBWeDB1Y3JjYnFuVk1JRlBiRXpN?=
- =?utf-8?B?cDBOYjltMndPSVEySlR0QUsxVzV1djdVU0c5OTlrNmJqUTFSb0l2UG9QVkVi?=
- =?utf-8?B?RHBKQUNNcTBabmQ0Rk1abnk2ZmR6dnMzVllIY0t4dGpQczJhZFNOQ1lONnFy?=
- =?utf-8?B?VlJQaVorY2Z3K2M2VzJ4elhtc2dwRVRLQmFRUGNSRVFTL1Z2ajd6N1M2T0FB?=
- =?utf-8?B?bXFTWkNoYXRmc2VVYWdNVVJCTFJMWWVkcDJMSXBqNmdqenpJQnVCNjRSTk5h?=
- =?utf-8?B?NGVnZUxhczFFZDRIOGJkNmxMREhveFR0S2l3cnlKNDhvYVlzcDc2cHFobGNl?=
- =?utf-8?B?bitYSTM5QXhGOFNacDBleWRTb05zelpmMGFTQVN3eTd6N0h4OEIrbmZoN0hI?=
- =?utf-8?B?V1VQV2JlQy9rNFpybzZtdUJWYU8zM2hadVpDUXRZVHJoeDFISk1WZW1zQ2Y2?=
- =?utf-8?B?VzM4WU4xUWZzRnM1Vy84Y2pCbm9WUTljUWowKytadVh4NGtLcEdhdC9vWEFi?=
- =?utf-8?B?c3R0ekJaMG4yNk81TUNzaTR1VUhqb1FJcnlDZTFZaEhBVHcwOWRnSG9tdldp?=
- =?utf-8?B?YUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d467796d-8a16-4e32-abfe-08dd4f48175f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7904.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 11:42:01.0073
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cxkpm2waBKSIglpGhIK1fjdTMx3DOUSV/m3uH8/0X+W3y9BrKo9ww2+nzAROXhD9m5IeYQKfpN3Yi7EPwMVcpBmAhiJA4qH0vdh9zgv36Vc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4852
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
+It addresses Oops issues when performing test of loading XE GPU driver
+module after applying the GPU SVM and Xe SVM patch series[1] and
+the Dept patch series[2].
 
+The issue occurs when loading the xe driver via modprobe [3], which adds
+a struct page for device memory via devm_memremap_pages().
+When a process leads the addition of a struct page to vmemmap
+(e.g. hot-plug), the page table update for the newly added vmemmap-based
+virtual address is updated first in init_mm's page table and then
+synchronized later.
+If the vmemmap-based virtual address is accessed through the process's page
+table before this sync, a page fault will occur.
+This patch translates vmemmap-based virtual address to direct-mapped
+virtual address and use it, if the current top-level page table is not
+init_mm's page table when accessing a vmemmap-based virtual address before
+this sync.
 
-On 2/15/25 2:29 AM, Dave Hansen wrote:
-> On 2/14/25 16:20, Harry (Hyeonggon) Yoo wrote:
->> On Fri, Feb 14, 2025 at 11:57:50AM -0800, Dave Hansen wrote:
->>> On 2/14/25 11:51, Gwan-gyeong Mun wrote:
->>>> when performing vmemmap populate, if the entry of the PML4 table/PML5 table
->>>> pointing to the target virtual address has never been updated, a page fault
->>>> occurs when the memset(start) called from the vmemmap_use_new_sub_pmd()
->>>> execution flow.
->>>
->>> "Page fault" meaning oops? Or something that we manage to handle and
->>> return from without oopsing?
->>
->> It means oops, because the kernel accesses part of vmemmap that's not
->> populated (yet) in current process's page table.
-> 
-> Your 0/1 cover letter got to me after this mail did. I see the oops
-> there clear as day now.
-> 
->> This oops was observed after increasing the size of struct page (as a part of
->> developing a debug feature), but the real cause is that page table entries are
->> only installed in init_mm's page table and then sync'd later, but in the mean
->> time the process that triggered hot-plug accesses new portion of vmemmap.
->>
->> If the process does not directly use the page table of init_mm (like swapper)
->> this oops can occur (e.g., I was able to trigger with `sudo modprobe hmm_test`
->> after increasing the size of struct page).
-> 
-> Makes sense.  Thanks for the explanation.
-> 
->>>> This fixes the problem of using the virtual address without updating the
->>>> entry in the PML4 table or PML5 table. But this is a temporary solution to
->>>> prevent page fault problems, and it requires improvement of the routine
->>>> that updates the missing entry in the PML4 table or PML5 table.
->>>
->>> Can we please skip past the band-aid and go to the real fix?
->>
->> Yes, of course it'd best to skip a temporary fix.
->> The intention is to report/discuss the problem and a fix as a starting point.
-> 
-> Do you have a better fix in mind?
-> 
-Yes, first what comes to mind right now to safely access the virtual 
-address is; translating vmemmap-based virtual address to direct-mapped 
-virtual address and use it, if the current top-level page table is not 
-init_mm's page table when accessing a vmemmap-based virtual address 
-before page table sync.
+[1] https://lore.kernel.org/dri-devel/20250213021112.1228481-1-matthew.brost@intel.com/
+[2] https://lore.kernel.org/lkml/20240508094726.35754-1-byungchul@sk.com/
+[3]
+[   49.103630] xe 0000:00:04.0: [drm] Available VRAM: 0x0000000800000000, 0x00000002fb800000
+[   49.116710] BUG: unable to handle page fault for address: ffffeb3ff1200000
+[   49.117175] #PF: supervisor write access in kernel mode
+[   49.117511] #PF: error_code(0x0002) - not-present page
+[   49.117835] PGD 0 P4D 0 
+[   49.118015] Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
+[   49.118366] CPU: 3 UID: 0 PID: 302 Comm: modprobe Tainted: G        W          6.13.0-drm-tip-test+ #62
+[   49.118976] Tainted: [W]=WARN
+[   49.119179] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[   49.119710] RIP: 0010:vmemmap_set_pmd+0xff/0x230
+[   49.120011] Code: 77 22 02 a9 ff ff 1f 00 74 58 48 8b 3d 62 77 22 02 48 85 ff 0f 85 9a 00 00 00 48 8d 7d 08 48 89 e9 31 c0 48 89 ea 48 83 e7 f8 <48> c7 45 00 00 00 00 00 48 29 f9 48 c7 45 48 00 00 00 00 83 c1 50
+[   49.121158] RSP: 0018:ffffc900016d37a8 EFLAGS: 00010282
+[   49.121502] RAX: 0000000000000000 RBX: ffff888164000000 RCX: ffffeb3ff1200000
+[   49.121966] RDX: ffffeb3ff1200000 RSI: 80000000000001e3 RDI: ffffeb3ff1200008
+[   49.122499] RBP: ffffeb3ff1200000 R08: ffffeb3ff1280000 R09: 0000000000000000
+[   49.123032] R10: ffff88817b94dc48 R11: 0000000000000003 R12: ffffeb3ff1280000
+[   49.123566] R13: 0000000000000000 R14: ffff88817b94dc48 R15: 8000000163e001e3
+[   49.124096] FS:  00007f53ae71d740(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+[   49.124698] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   49.125129] CR2: ffffeb3ff1200000 CR3: 000000017c7d2000 CR4: 0000000000750ef0
+[   49.125662] PKRU: 55555554
+[   49.125880] Call Trace:
+[   49.126078]  <TASK>
+[   49.126252]  ? __die_body.cold+0x19/0x26
+[   49.126509]  ? page_fault_oops+0xa2/0x240
+[   49.126736]  ? preempt_count_add+0x47/0xa0
+[   49.126968]  ? search_module_extables+0x4a/0x80
+[   49.127224]  ? exc_page_fault+0x206/0x230
+[   49.127454]  ? asm_exc_page_fault+0x22/0x30
+[   49.127691]  ? vmemmap_set_pmd+0xff/0x230
+[   49.127919]  vmemmap_populate_hugepages+0x176/0x180
+[   49.128194]  vmemmap_populate+0x34/0x80
+[   49.128416]  __populate_section_memmap+0x41/0x90
+[   49.128676]  sparse_add_section+0x121/0x3e0
+[   49.128914]  __add_pages+0xba/0x150
+[   49.129116]  add_pages+0x1d/0x70
+[   49.129305]  memremap_pages+0x3dc/0x810
+[   49.129529]  devm_memremap_pages+0x1c/0x60
+[   49.129762]  xe_devm_add+0x8b/0x100 [xe]
+[   49.130072]  xe_tile_init_noalloc+0x6a/0x70 [xe]
+[   49.130408]  xe_device_probe+0x48c/0x740 [xe]
+[   49.130714]  ? __pfx___drmm_mutex_release+0x10/0x10
+[   49.130982]  ? __drmm_add_action+0x85/0xd0
+[   49.131208]  ? __pfx___drmm_mutex_release+0x10/0x10
+[   49.131478]  xe_pci_probe+0x7ef/0xd90 [xe]
+[   49.131777]  ? _raw_spin_unlock_irqrestore+0x66/0x90
+[   49.132049]  ? lockdep_hardirqs_on+0xba/0x140
+[   49.132290]  pci_device_probe+0x99/0x110
+[   49.132510]  really_probe+0xdb/0x340
+[   49.132710]  ? pm_runtime_barrier+0x50/0x90
+[   49.132941]  ? __pfx___driver_attach+0x10/0x10
+[   49.133190]  __driver_probe_device+0x78/0x110
+[   49.133433]  driver_probe_device+0x1f/0xa0
+[   49.133661]  __driver_attach+0xba/0x1c0
+[   49.133874]  bus_for_each_dev+0x7a/0xd0
+[   49.134089]  bus_add_driver+0x114/0x200
+[   49.134302]  driver_register+0x6e/0xc0
+[   49.134515]  xe_init+0x1e/0x50 [xe]
+[   49.134827]  ? __pfx_xe_init+0x10/0x10 [xe]
+[   49.134926] xe 0000:00:04.0: [drm:process_one_work] GT1: GuC CT safe-mode canceled
+[   49.135112]  do_one_initcall+0x5b/0x2b0
+[   49.135734]  ? rcu_is_watching+0xd/0x40
+[   49.135995]  ? __kmalloc_cache_noprof+0x231/0x310
+[   49.136315]  do_init_module+0x60/0x210
+[   49.136572]  init_module_from_file+0x86/0xc0
+[   49.136863]  idempotent_init_module+0x12b/0x340
+[   49.137156]  __x64_sys_finit_module+0x61/0xc0
+[   49.137437]  do_syscall_64+0x69/0x140
+[   49.137681]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   49.137953] RIP: 0033:0x7f53ae1261fd
+[   49.138153] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e3 fa 0c 00 f7 d8 64 89 01 48
+[   49.139117] RSP: 002b:00007ffd0e9021e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[   49.139525] RAX: ffffffffffffffda RBX: 000055c02951ee50 RCX: 00007f53ae1261fd
+[   49.139905] RDX: 0000000000000000 RSI: 000055bfff125478 RDI: 0000000000000010
+[   49.140282] RBP: 000055bfff125478 R08: 00007f53ae1f6b20 R09: 00007ffd0e902230
+[   49.140663] R10: 000055c029522000 R11: 0000000000000246 R12: 0000000000040000
+[   49.141040] R13: 000055c02951ef80 R14: 0000000000000000 R15: 000055c029521fc0
+[   49.141424]  </TASK>
+[   49.141552] Modules linked in: xe(+) drm_ttm_helper gpu_sched drm_suballoc_helper drm_gpuvm drm_exec drm_gpusvm i2c_algo_bit drm_buddy video wmi ttm drm_display_helper drm_kms_helper crct10dif_pclmul crc32_pclmul i2c_piix4 e1000 ghash_clmulni_intel i2c_smbus fuse
+[   49.142824] CR2: ffffeb3ff1200000
+[   49.143010] ---[ end trace 0000000000000000 ]---
+[   49.143268] RIP: 0010:vmemmap_set_pmd+0xff/0x230
+[   49.143523] Code: 77 22 02 a9 ff ff 1f 00 74 58 48 8b 3d 62 77 22 02 48 85 ff 0f 85 9a 00 00 00 48 8d 7d 08 48 89 e9 31 c0 48 89 ea 48 83 e7 f8 <48> c7 45 00 00 00 00 00 48 29 f9 48 c7 45 48 00 00 00 00 83 c1 50
+[   49.144489] RSP: 0018:ffffc900016d37a8 EFLAGS: 00010282
+[   49.144775] RAX: 0000000000000000 RBX: ffff888164000000 RCX: ffffeb3ff1200000
+[   49.145154] RDX: ffffeb3ff1200000 RSI: 80000000000001e3 RDI: ffffeb3ff1200008
+[   49.145536] RBP: ffffeb3ff1200000 R08: ffffeb3ff1280000 R09: 0000000000000000
+[   49.145914] R10: ffff88817b94dc48 R11: 0000000000000003 R12: ffffeb3ff1280000
+[   49.146292] R13: 0000000000000000 R14: ffff88817b94dc48 R15: 8000000163e001e3
+[   49.146671] FS:  00007f53ae71d740(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+[   49.147097] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   49.147407] CR2: ffffeb3ff1200000 CR3: 000000017c7d2000 CR4: 0000000000750ef0
+[   49.147786] PKRU: 55555554
+[   49.147941] note: modprobe[302] exited with irqs disabled
 
-I will send a patch first with this idea.
-If you have any better ideas, please let me know.
+Gwan-gyeong Mun (1):
+  x86/vmemmap: Use direct-mapped VA instead of vmemmap-based VA
 
-Br,
-G.G.
+ arch/x86/mm/init_64.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+-- 
+2.48.1
 
 
