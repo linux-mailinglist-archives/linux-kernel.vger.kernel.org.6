@@ -1,160 +1,166 @@
-Return-Path: <linux-kernel+bounces-517452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D481A38103
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:00:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03594A38115
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95BBA7A630F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C591F188F5F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848821773C;
-	Mon, 17 Feb 2025 11:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C5F216E3D;
+	Mon, 17 Feb 2025 10:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XMxQKzGr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enH4Wm1e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285A8218585
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1988A2165E2;
+	Mon, 17 Feb 2025 10:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790016; cv=none; b=frqzBuGrt5pHScnuAZtQ96il0T0bs7LGKixb2MUE5Br0+xmLkQY8uJzC/MIIwrfOJv56NmbUKrVZ1SafG5MNd0zHp+FMAbKO1f+B6y/6Yon/NcuwdUFlnPIRzk35c5bWEy84AsUHYOiBlSlWkdV8eyXJQyAUhNdk7+w6ZZSgmbU=
+	t=1739789998; cv=none; b=diOnjcY+FHZduw6UNGM/gnZ5xmQrdNjqHfUMAVsysMelHVxRuIj5BgH4VaOFycdrG1KG/23tBk4E4OjABMW+Iwa4eRROddTRXbWdx9WwbWvGxuchvR+6AdTcsi1a9LyANRCbr81p7IPLE/OKePouo3KFDsf13vUrxYFa6qs23EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790016; c=relaxed/simple;
-	bh=dR+rep/57L3EWMjPfigCxhlyG9swRKpij/Px8i1KymU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omfmcFOXYSE/g1fHMug/caHpmafkr5qnyVJmeNHlMDO9W8a1m3T5nG+JsQyVkjGUsyFC4zmAw0QvnO2b2Pzs0t3Lds0FP6Nw5xLZq47riuOmG4uFvhSuuAxKmULAVL2rauhLBoG6fgRecZOGK/gqPsbHrVFENFv0dMpkf429oGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XMxQKzGr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739790012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqQYFCaTchuW6lwmeMd3sJwEjkrnpuASKdjJ1fvZwRE=;
-	b=XMxQKzGrFzfPk1/aGeIeIuJrV9hPxGsKIrf85yOIn4b8JR1fE7QTrXH1ZYCcxI8UduP34L
-	4xQarnSPn2/xRcMh0CbLruipE+NjLCcnQyO72P4heInOo6WP6Cd5zq0bbbltC6RCBaR5IG
-	d4Q7nygeIZglRXVzwFiJH6rLDBRmCAg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-MBnihD0DPNq7FgqQe6sdIA-1; Mon, 17 Feb 2025 06:00:10 -0500
-X-MC-Unique: MBnihD0DPNq7FgqQe6sdIA-1
-X-Mimecast-MFC-AGG-ID: MBnihD0DPNq7FgqQe6sdIA_1739790009
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f44be93a8so418444f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:00:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739790009; x=1740394809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YqQYFCaTchuW6lwmeMd3sJwEjkrnpuASKdjJ1fvZwRE=;
-        b=idnOw5sT6wjdwOdP3ZHHBCNGwnHGqM995Uu3dqDdIctkC5Vfo6+1oiwhv9l6ZOQjiP
-         5oSCbznpdM20a87yRtyGRXCXh/FcJMFMmrcGGdsEwZFcvbHuK5hBQLP0AEtgB7KbWiKM
-         DYyb4bq7dwaMQlXaEDKJqUfsorTQnzfM/HP1qWn5eF+8KXDUmIayFdkVF5OCuEJ+B5Aw
-         T0P35iGY2r4b+z2ofP4mjfdjTE7Unw6yHhD+33qjLr1XsQyGI8danITDt/LOo1G6v5LR
-         Td5PxYyiW3QvXhdFMWSmIzdZE4HO+XMPNZXzZzG8HZX/3JYfqVhBGOzcKjCkeaVOn+0l
-         ccuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlVVwDwmEtpzPNcxq+y44to4LBTVgArN6MASluRu6nggDNj+VETl6iP2BBCh2tsaaFSKOgladZ+o+087w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiIcxieqVeB6KJhgHUzUd2eaWRiD9TVcCSrqn6WUKPbfDJxMXt
-	bXJP1SDp0d6PsHtltL6pgByxT8cGiepT1TLGCwNrOFOioMzIjnLrzyRBoFZX6JcDIJ/JduUCSKh
-	cTKPWFKe2pIGoB7X+lfCFH5p8ug/KKt7i66TIF/0zRhAWMwTpJaVYqfrU7rxKAg==
-X-Gm-Gg: ASbGncspmED/dnum7Kj1q5JkXdU1WsSKwe1I/268hoYh+yHNhES/Ilt/mHmYP0H9Pvd
-	wqEntazYoK5DOTHsVur+9h3ZomUgMDPPdW9FxMrfQW6T7WkwaSmhgIdSdWhcqnCyymwLBeTCnQB
-	iJCOYG0/Xpy0uKKd1wp8DGXIWmzTIfY5oVVWF/swJfuOUX5Y850/OYslGZBTKSK4oBxIdCw7rS6
-	aF2AQoQdQaZQ8dXbl1RK3ZRouYm17wALQXOhj+GI9Ul/LxQsTicODIeTlrWmPpdmbp4J9P6S01u
-	Ssr6/ke9nYKCx2BWUKxG0GFFJqWfThQzALDNDC04Hbv7UrDTzqULZA==
-X-Received: by 2002:a5d:6dae:0:b0:38f:3b41:c944 with SMTP id ffacd0b85a97d-38f3b41cb92mr4017220f8f.11.1739790009186;
-        Mon, 17 Feb 2025 03:00:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHfTNMRvG7FzvFEHCD6J1+67oFasR/KEYRPfOfLOQYRJI8pdpwKgXLv4Rl4Qdj++N4APKt7UQ==
-X-Received: by 2002:a5d:6dae:0:b0:38f:3b41:c944 with SMTP id ffacd0b85a97d-38f3b41cb92mr4017163f8f.11.1739790008461;
-        Mon, 17 Feb 2025 03:00:08 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d5b40sm12047690f8f.68.2025.02.17.03.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 03:00:07 -0800 (PST)
-Date: Mon, 17 Feb 2025 11:59:48 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: John Fastabend <john.fastabend@gmail.com>, 
-	Jakub Sitnicki <jakub@cloudflare.com>, Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Bobby Eshleman <bobby.eshleman@bytedance.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net 2/4] vsock/bpf: Warn on socket without transport
-Message-ID: <ygqdky4py42soj6kovk5z3l65h6xpglcse4mp37jsmlm6rjwzu@dcntngtsygj3>
-References: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
- <20250213-vsock-listen-sockmap-nullptr-v1-2-994b7cd2f16b@rbox.co>
+	s=arc-20240116; t=1739789998; c=relaxed/simple;
+	bh=ZF5/FtNJqQYUzLXezQqrfcgLga0oCwWgRODIlTj730s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nZ+4Eq5rYylNNxyXwk7jA8ovZktc5ZxKSyGAJL1TNFn61owYBxFLqZPfrV+ZycOUn9iCWedp7dHF+NYsF1t3vPXDLb3Nq5MTzK/wBD6xKnuHOVGotZANd5QgpKKA/W65WN/22dduokA0y/cpIvHvgiEW9nC2pUfRFq6fFFA+tCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enH4Wm1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46DF8C4CED1;
+	Mon, 17 Feb 2025 10:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739789997;
+	bh=ZF5/FtNJqQYUzLXezQqrfcgLga0oCwWgRODIlTj730s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=enH4Wm1e9AVNFYdTnvGwXNJkRvcLP/21gPwifBRBhUkdqB+fjWMMU2Zr5uSpwfrYL
+	 ISfXv/utxiMZVRsAXKFGnGM78RO8NjYn55CpXHzoP+Op15Q5hqEMQk07NVYwzD4gcO
+	 8iqMvKmqXniTYrOg4dtM36BNVsHQOQuh6uYPcIq0G6G1W+c7lMRr3nrT3EuMXX0FRQ
+	 xsTLL6OwgwColBFDU8r2Fu69UeYCffzRlARG380kHvXQ/THjMpmtjQs+eZpaFuG8Bq
+	 iYVlmygHab/bOu8+4iKT0UP1wK+uvsOf5xQPeRxbI6ZYoFsmc+63coiXDOoaxH/6Mj
+	 XXiJDX30KcvPA==
+Message-ID: <15729df921fa8718ee173963132a370de6aae9af.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
+From: Amit Shah <amit@kernel.org>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 17 Feb 2025 11:59:53 +0100
+In-Reply-To: <2c676a9910c2d5b1332bb9baa999cdd16763a730.camel@kernel.org>
+References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+		 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
+		 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
+		 <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
+		 <k72vfex6qy53xrunz5ohe24c2upfjcdwofozszi4l3k3rm6dou@bd6swzi3v5ng>
+		 <606b16787920ff5e1807e4f8450add5889fdd1cb.camel@kernel.org>
+		 <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
+		 <6d48bcfd0c6030c92f6a5a4a91c9b62f926b3b16.camel@kernel.org>
+		 <535ivi67jdmcuhns5q4r36fjpqde3clnqq7hr26gmg33jwoxyb@ahvuhhaewh3u>
+	 <2c676a9910c2d5b1332bb9baa999cdd16763a730.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250213-vsock-listen-sockmap-nullptr-v1-2-994b7cd2f16b@rbox.co>
 
-On Thu, Feb 13, 2025 at 12:58:50PM +0100, Michal Luczaj wrote:
->In the spirit of commit 91751e248256 ("vsock: prevent null-ptr-deref in
->vsock_*[has_data|has_space]"), armorize the "impossible" cases with a
->warning.
->
->Fixes: 634f1a7110b4 ("vsock: support sockmap")
->Signed-off-by: Michal Luczaj <mhal@rbox.co>
->---
-> net/vmw_vsock/af_vsock.c  | 3 +++
-> net/vmw_vsock/vsock_bpf.c | 2 +-
-> 2 files changed, 4 insertions(+), 1 deletion(-)
->
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 53a081d49d28ac1c04e7f8057c8a55e7b73cc131..7e3db87ae4333cf63327ec105ca99253569bb9fe 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -1189,6 +1189,9 @@ static int vsock_read_skb(struct sock *sk, skb_read_actor_t read_actor)
-> {
-> 	struct vsock_sock *vsk = vsock_sk(sk);
->
->+	if (WARN_ON_ONCE(!vsk->transport))
->+		return -ENODEV;
->+
-> 	return vsk->transport->read_skb(vsk, read_actor);
-> }
->
->diff --git a/net/vmw_vsock/vsock_bpf.c b/net/vmw_vsock/vsock_bpf.c
->index f201d9eca1df2f8143638cf7a4d08671e8368c11..07b96d56f3a577af71021b1b8132743554996c4f 100644
->--- a/net/vmw_vsock/vsock_bpf.c
->+++ b/net/vmw_vsock/vsock_bpf.c
->@@ -87,7 +87,7 @@ static int vsock_bpf_recvmsg(struct sock *sk, struct msghdr *msg,
-> 	lock_sock(sk);
-> 	vsk = vsock_sk(sk);
->
->-	if (!vsk->transport) {
->+	if (WARN_ON_ONCE(!vsk->transport)) {
-> 		copied = -ENODEV;
-> 		goto out;
-> 	}
+On Mon, 2025-02-17 at 11:53 +0100, Amit Shah wrote:
+> On Fri, 2025-02-14 at 18:47 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > On Fri, Feb 14, 2025 at 05:55:41PM +0100, Amit Shah wrote:
+> > > On Fri, 2025-02-14 at 17:52 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > > Hello Amit,
+> > > >=20
+> > > > On Fri, Feb 14, 2025 at 05:37:52PM +0100, Amit Shah wrote:
+> > > > > I'm thinking of the two combinations of interest:
+> > > > > REMOTEPROC=3Dm,
+> > > > > VIRTIO_CONSOLE can be y or m.=C2=A0 Say virtcons_probe() happens
+> > > > > when
+> > > > > the
+> > > > > remoteproc module isn't yet loaded.=C2=A0 Even after later loadin=
+g
+> > > > > remoteproc, virtio console won't do anything interesting with
+> > > > > remoteproc.
+> > > >=20
+> > > > Where does the interesting thing happen if remoteproc is
+> > > > already
+> > > > loaded
+> > > > at that time? I'm not seeing anything interesting in that case
+> > > > either
+> > > > ...
+> > >=20
+> > > The code I pointed to,
+> > >=20
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/char/virtio_console.c#n1993
+> > >=20
+> > > either enables remoteproc if the module is present; or it enables
+> > > multiport, but not both at the same time.=C2=A0 If remoteproc isn't
+> > > present
+> > > when this probe routine is executed, multiport might get
+> > > enabled.=C2=A0
+> > > And
+> > > then there's no chance for remoteproc to get enabled.
+> >=20
+> > The only case where there is a difference between IS_REACHABLE and
+> > IS_ENABLED is:
+> >=20
+> > 	CONFIG_REMOTEPROC=3Dm
+> > 	CONFIG_VIRTIO_CONSOLE=3Dy
+>=20
+> Well, also if CONFIG_VIRTIO_CONSOLE=3Dm; and virtio_console.ko is
+> loaded
+> before remoteproc.ko.
+>=20
+> > Iff in this case you never want to test for MULTIPORT (even though
+> > the
+> > remoteproc module might never get loaded), then my patch is wrong.
+> >=20
+> > When creating the patch I thought there is a hard dependency on
+> > remoteproc (like calling a function that is provided by
+> > CONFIG_REMOTEPROC). I don't understand how the remoteproc stuff
+> > interacts with the virtio_console driver, is this something in
+> > userspace
+> > which then would also autoload the remoteproc module?
+>=20
+> What's happening is that multiport and remoteproc are mutually
+> exclusive in the virtio_console code.
+>=20
+> And, I'm also not sure of how remoteproc loads and configures itself.
+> Does loading remoteproc cause a load of virtio_console?=C2=A0 How?
+>=20
+> So - based on our discussions, I think your assumptions are:
+>=20
+> 1. remoteproc will load virtio_console when remoteproc is required
+> 2. virtio_console will never be loaded by itself
+> 3. General virtio_console functionality (including tty and multiport)
+> is never used when remoteproc is used
+>=20
+> I think at least 3 needs more thought/justification why it's a valid
+> assumption.=C2=A0 Documenting it in the commit msg is fine.
+>=20
+> At least assumptions 1 and 2 will cause remoteproc to not function
+> correctly with virtio_console, despite both of them being loaded
+> (because they can be loaded in the unexpected order -- virtio_console
+> before remoteproc).=C2=A0 Do you want to adjust the code so that
+> remoteproc
+> queries for already-existing virtio_console.ko, triggers the code
+> that
+> would otherwise be not triggered in virtcons_probe(), and makes
+> remoteproc functional in that case?
 
-I'm not a sockmap expert, so I don't understand why here print an
-error.
+... I just saw that virtcons_probe() doesn't have any setup in case of
+rproc.  So this last paragraph doesn't apply.
 
-Since there was already a check, I expected it to be a case that can 
-happen, but instead calling `rcvmsg()` on a socket not yet connected is 
-impossible?
+So maybe just adding some notes in the commit log about why this will
+end up working, and why rproc usage and tty+multiport usage are
+mutually exclusive (and fine) will help.
 
 Thanks,
-Stefano
 
+		Amit
 
