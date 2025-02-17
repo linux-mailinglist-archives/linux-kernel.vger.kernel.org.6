@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-517478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701B1A38158
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:09:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17046A37C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7324E7A1377
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8B2188316E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452EB217730;
-	Mon, 17 Feb 2025 11:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8FC198A36;
+	Mon, 17 Feb 2025 07:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srLFFVP4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mmq7ri2s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HPyjybcc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159215E5B8;
-	Mon, 17 Feb 2025 11:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7888F5C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790521; cv=none; b=hHaxoCKfs+72+kmiukR30Pf14vGXrNOvs9v0YwqNyb9lAVqGlSFewhFDVhIQH5kXKr3VBEey5iIm6LFgh+gRntOsGuKfTHKnYfJ24iIdNxkXvxE012l1rZmo5K/HH8z9wec86I3Jb0iHA5yW6+gnda1YQmH70Dzmi0hD8ojVhqE=
+	t=1739777886; cv=none; b=iegJV3ZK6qrLx7FZJIn1VyyecLE2Gf8eHcgxvgRk57nceKL+QMGvJzk2oGY4viUEUQomryaM5+V/w2LtsGf84R+nJ2Zm1d0D4sJlBzR2U0vLe6USuGEEVBYqC9vgLO+5NMqxyfKaz+RLitvVZ5DO2J5BdK7K3fuyVxbzpOVW5qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790521; c=relaxed/simple;
-	bh=f7HxxSip1OHtS3snSOSlajm5o6Hp86tWJqoUOgiGvOw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c914uwqnqhgIYxVU6LfNTk2ngXwr4GD18Or7HBP6BZ+dmZfNOihc8AqtToeFJJv2Z31zCDPFQX9umz/ZLdFxi/4Jx2ZSryw4tVyIhIiSDWOTW2fazlhBKURNc9KYsc40Sj7C8k7JRTpye0DeJbq6nXxI5PQvC7Y6Vmy500opAXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srLFFVP4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6494C4CED1;
-	Mon, 17 Feb 2025 11:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739790521;
-	bh=f7HxxSip1OHtS3snSOSlajm5o6Hp86tWJqoUOgiGvOw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=srLFFVP4Kig0hXER8uC7oFhCfEx/Qdaf+ULz1OXPO+SZRTAveubJNzeWXOajKU6zT
-	 ltN5fjhdQ6nZwNDT/+VsFJzbzaBGhPU5/VsxULo1zHwVg4qs9QUhcQkMxKdN3kYEpp
-	 TvkM8kDexrbUG30akqy6Lw0ASgLBk8M3KwkMt9/K0VcSXQvO71C8udMa2El2n8pDPo
-	 xlOIKVx6LuRCauNLgJLZ7NWAJj9e6Chux1ZYoxX/dqaG5F6Aqw8PkfniayVhzvKdlO
-	 szSunIXsWMknQxqyggX9WmzQYeWqOnOFzoQY74kTjL+PXMAqkNogEq5Kj7JtsXyfVX
-	 qbF474sCmy3hw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Charalampos Mitrodimas" <charmitro@posteo.net>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Joel Becker" <jlbec@evilplan.org>,  "Christoph Hellwig" <hch@lst.de>,
-  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
- <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
- <longman@redhat.com>,  "Fiona Behrens" <me@kloenk.dev>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] rust: configfs: introduce rust support for configfs
-In-Reply-To: <m2pljh7ts7.fsf@posteo.net> (Charalampos Mitrodimas's message of
-	"Sun, 16 Feb 2025 16:12:40 +0000")
-References: <20250207-configfs-v2-0-f7a60b24d38e@kernel.org>
-	<20250207-configfs-v2-2-f7a60b24d38e@kernel.org>
-	<7hDprGyxOMnSaQtcT29L1mkOUHyHbMqY2iiHmxhZMV43YjK5jqY52VPWyqiOtqZgopNrLIYnypGHOrtB4O4qwA==@protonmail.internalid>
-	<m2pljh7ts7.fsf@posteo.net>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 17 Feb 2025 08:36:26 +0100
-Message-ID: <87seodt43p.fsf@kernel.org>
+	s=arc-20240116; t=1739777886; c=relaxed/simple;
+	bh=HbY7o1txWSoh2feuXDu+61H2EnR68libmL0CyHKvVmQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uki9S14WC5DvR/eKMqBk8onDEVXZ3eKlK/AWiyUtcW/U42aRQs6vm6u2hLNERwTaachzq1QrKKIq7Nqz/1eMnNfZzfoYAb8mDlVsQy55jxxBLmZ6cbVENPyeq+uVS5u7PgXihx6o3FMS8lR3lVD4JyX4g4E7MpYe/fWaLv5pgJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mmq7ri2s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HPyjybcc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739777883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/e6hxVPR8O3eSw41KB/yWx13z8cE7qxMOk6uwUqRyOI=;
+	b=mmq7ri2soJnIuk80hlfk7lJDIEg5d+slMqE4lwALxZWl8x2hViKdViCeO4pv1gHrpxxe7b
+	vVglNQC1ZoCX+tQ0LI1KcWgwbSm/DQq6H6IDG8EgQ1wBtXXwuaRnthS78vzCM3CHs1jgzJ
+	sks0ohCLKT82SdgzS+gykqzcqLEwkxg/1pwFeddcvM5D6NZ5aJclWpILpfrDVqs4bmhAJj
+	BX8Jc9ABu6fnLwcvp27o6SMENppq/VcEb0lBye3YiSuNDHeysjK289fbouq0j/JXuaxCV4
+	3Q/5MWUdTaqQnzK7nrxaV5JhUiDhPUUtubcrcXZZ6DDdvuoQcjKpjXFAzf6IKQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739777883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/e6hxVPR8O3eSw41KB/yWx13z8cE7qxMOk6uwUqRyOI=;
+	b=HPyjybccJt0z38iBCnAO9Ze7hTvZidli6j+szvSACKwrnjiQCHVPmKwxUx+5cOZAmFQsDE
+	fpsRM3SVpVjiEqBw==
+Date: Mon, 17 Feb 2025 08:37:58 +0100
+Subject: [PATCH] riscv: mm: Don't use %pK through printk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250217-restricted-pointers-riscv-v1-1-72a078076a76@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAFXnsmcC/x3MPQqAMAxA4atIZgNt8Qe8ijhom2qWVpIignh3i
+ +M3vPeAkjApTM0DQhcr51Rh2wb8saadkEM1OON64+yIQlqEfaGAZ+ZUSBSF1V84OL8OoY9btB3
+ U/hSKfP/veXnfD1ZIhOdrAAAA
+X-Change-ID: 20250217-restricted-pointers-riscv-62ca6d5fbf14
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739777883; l=1258;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=HbY7o1txWSoh2feuXDu+61H2EnR68libmL0CyHKvVmQ=;
+ b=9CoJwe1ivfUZhZ0Du4FieuXxCrYW629ahO+fL6dRstjmrXvuC/0QbTI7562oIjXixrE6e52sx
+ S0WFfyrgan5A96bzlywW5jyteRl7ZQpvXeOnpxIMeztDZgRh+Kecapx
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-"Charalampos Mitrodimas" <charmitro@posteo.net> writes:
+Restricted pointers ("%pK") are not meant to be used through printk().
+It can unintentionally expose security sensitive, raw pointer values.
 
-> Andreas Hindborg <a.hindborg@kernel.org> writes:
->
->> diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.rs
->> new file mode 100644
->> index 0000000000000..fe896e66efb41
->> --- /dev/null
->> +++ b/samples/rust/rust_configfs.rs
->> @@ -0,0 +1,186 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Rust configfs sample.
->> +
->> +use kernel::alloc::flags;
->> +use kernel::c_str;
->
-> [...snip...]
->
->> +impl Configuration {
->> +    fn new() -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {
->> +            message: c_str!("Hello World\n"),
->> +            bar <- new_mutex!((KBox::new([0;4096], flags::GFP_KERNEL)?,0)),
->> +        })
->> +    }
->> +}
->> +
->> +impl kernel::InPlaceModule for RustConfigfs {
->> +    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
->> +        pr_info!("Rust configfs sample (init)\n");
->> +
->> +        let item_type = configfs_attrs! {
->> +            container: configfs::Subsystem<Configuration>,
->> +            data: Configuration,
->> +            child: Child,
->> +            attributes: [
->> +                message: 0,
->> +                bar: 1,
->> +            ],
->> +        };
->> +
->> +        try_pin_init!(Self {
->> +            config <- configfs::Subsystem::new(
->> +                kernel::c_str!("rust_configfs"), item_type, Configuration::new()
->
-> Hi Andreas,
->
-> One more nit I found, "kernel::c_str" is already imported in the
-> sample. So this can be changed to "c_str!("rust_configfs")".
+Use regular pointer formatting instead.
 
-Thanks!
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ arch/riscv/mm/physaddr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/riscv/mm/physaddr.c b/arch/riscv/mm/physaddr.c
+index 18706f457da7ecf84591510ea26789f7ae3e9abf..559d291fac5c62271a0e793321c97b87bf4e1b3c 100644
+--- a/arch/riscv/mm/physaddr.c
++++ b/arch/riscv/mm/physaddr.c
+@@ -12,7 +12,7 @@ phys_addr_t __virt_to_phys(unsigned long x)
+ 	 * Boundary checking aginst the kernel linear mapping space.
+ 	 */
+ 	WARN(!is_linear_mapping(x) && !is_kernel_mapping(x),
+-	     "virt_to_phys used for non-linear address: %pK (%pS)\n",
++	     "virt_to_phys used for non-linear address: %p (%pS)\n",
+ 	     (void *)x, (void *)x);
+ 
+ 	return __va_to_pa_nodebug(x);
+
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-restricted-pointers-riscv-62ca6d5fbf14
 
 Best regards,
-Andreas Hindborg
-
-
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
