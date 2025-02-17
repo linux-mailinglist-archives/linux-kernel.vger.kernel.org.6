@@ -1,126 +1,96 @@
-Return-Path: <linux-kernel+bounces-518197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248ABA38B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:28:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE94A38B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47AB31894578
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D31188F0E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11710235C0E;
-	Mon, 17 Feb 2025 18:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA1EA55;
+	Mon, 17 Feb 2025 18:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qzLfUJPw"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="OCT3O/mf"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD740235BF0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF0827706
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739816909; cv=none; b=VmHaWGf5WDwSbkHisPAberExI/Pf/CbbTVD2C9YOrqMgEQlXX5N7q98T2DVyaP/8lSbWe5jAYPjoYMtfdfZhbAEEVMcNU437yWh+tGD7Klh8xHFFfDITN7l2raFccWkRqkURP4r0JAHsX46BL6Oo7Qj1OLlSMLic3bQNjApxX+o=
+	t=1739817063; cv=none; b=PJcgnHyXtchiMk3zbHS2W5qhjci21fG9EbTacH+iBv/b/1W3D/DQcGmaloyScavkgrYbxLfy8WvfQNj3ne1+0ErtDvBKVifNWMvENE8Gf37wY2Kn64ptxEuE2DafQif/0oMAU2C1Rz+Gp16mfy3Imqs1F8CVeAu0LcAx71zXbRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739816909; c=relaxed/simple;
-	bh=hCY876bzfHPrz+2xaMfuRfH/o45M88VIOZfakkcRy5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JpdEjv7tqUhKEaclHX4kU4dS/SmotwHBmR4MNjI5ynrz1SelD5eQP6Kwa7HZldl7G7zHDhlBWaghQjjMpA54yrDhId3dWssj6xr3fbAXhR8Dvdnc3yvNHKsJPZl9atZzGQXnXao3XcIan2QPzEOZZpjKKWk3J+iSOFJLf4Vf+r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qzLfUJPw; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abb90f68f8cso292511866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:28:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739816906; x=1740421706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e+l+0lQBsKNzTpGm0qORCGiSDs//13l2fOSSxE+r8mw=;
-        b=qzLfUJPwcPB8DkidsERq+oMOmlW+KcywG2pPHuXqpYynBsPDoF9LFhMTV6Xmwlt86y
-         aN9zj2psQSl8RfCIUMXTifF3LmtJATSwxljcf/S7soK08wPkQsa1d0gxN+L94115jsN/
-         HzkWZYQc6XcPmhKorMm6oSKE0EO+YXwOAKwg2HCYAEgHkfCvkLLGSOm5Byj9TBiEWiuh
-         Nuta+15VUCd9zzWwLNvaFOk65rg3aScMijEi43ctmv4RL5AZubN+ULW9IIw6fQ6DVbG1
-         sgG2sBcKJOfl8CfFl9y/W250ybIkOGN3J1JZcCNMDowDk1/nOaaQtHfuxk1lVRFR2Z/g
-         D5Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739816906; x=1740421706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e+l+0lQBsKNzTpGm0qORCGiSDs//13l2fOSSxE+r8mw=;
-        b=p2cgdfB1jn3ylbVVFhS14G4xErAvfcUe9aFBdL5u27jbiMpdpGmPJrVDgpQTri+2gP
-         IyYL6BhXAtkpNTH8uWgyL0PJKLyS/96nosRsGjnQMPh928K3qkwod/6/MM81atf1A9FX
-         P0QljySL/p7/ny5948hpksgS6q8PJBwFY05q+V0LdVSS4zPlBrWJZ7bvLviV0o4dh/Oc
-         AdBXhTUZkkoIIZ45HXs4GseZBXC9bNdkBCn4P1FRxgB8Z+l+sDqYPeUU/pGWF5iE4NZr
-         IBE8MOF1VqRtevMqWCnVLZ27FGkxeBgAUsEjElK97TDtLX9EIlOztSXaUATwwAE7Q50E
-         BinA==
-X-Forwarded-Encrypted: i=1; AJvYcCWG6hfIY0INs3f8B/EF8PSlqAa6yApAC5B2VvCO2M7iDvVe/RdmxriROMSuxhSKoph4CaAg0hzxFenRdqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrW3oFsj5Iig5HNnhojVhkmkfeUXWdTb3msoahbsxq9ypfgjyY
-	mNWk3F/Ly4muqdM+5InpSWb9nNucCKVUBul6xNugXWs5Y5v7Y8y0Sq3XbBOtgFMtDH+yLeeeaRH
-	7mR/573S/bh9fLm41msbKvv/zi4mPTP/XYXNl
-X-Gm-Gg: ASbGncu6tG/GDC0xGHkgUO0wx8HgOUcS7j9mwWjfW/SqFPHaZPcdF0TSMF5tNR84Gkm
-	Z+rd+2qAKEJ/kEzUDaCQJEctiQhM8D4bAfqtc2/kTi89kgpm1NvGfnx/EBxMGC53cAMkuMRc4yG
-	i4lRWhW2BMcl3iq6yilAs1n+kCKLcdIw==
-X-Google-Smtp-Source: AGHT+IFjjgLMTvGHSCRWiwCYLddKG3v8fu3sqA5dCvDVOitjnq/kSTuDzxQRaYiuzB4Hayx3/fyBm1HmRPPrqarBzzI=
-X-Received: by 2002:a17:907:7f27:b0:ab7:f096:61d8 with SMTP id
- a640c23a62f3a-abb70bfc808mr1220784666b.29.1739816905780; Mon, 17 Feb 2025
- 10:28:25 -0800 (PST)
+	s=arc-20240116; t=1739817063; c=relaxed/simple;
+	bh=V++XAGw5e8HCPJB0+vZcIEAUsfypgMEYSAKLxet2gy8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lYDikrrhzlbcb6N5z8TMpopg2dSw+Wj7i0zlwUzwa79lUR9zPSMuJsLiiR2Z7zdnGKYKF2i/1clJKtI5T4eIPy5+hOH3oOcvzOrQcmuToejz4kJ8K8UPS+UYbXOQ0xI5MbuG/WnIIRFjyHA1p/28zuC43JANg2sz+rNxmA9n+oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=OCT3O/mf; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1739817059; x=1740076259;
+	bh=CK1h/qqIm1MrCSBdeD49fjjpclhLOf7AL7ArRk6/1ZE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=OCT3O/mfNa0NAnGVsbvk3nYhei8o82SvJoijg3k0PdL34QgdJAsl4yrhyQHGMsUaf
+	 HS87EepbSwhi8YX10E8tw46u2uFOoWhxG/DPlgFPn5D4W+EIDJWStp5ZFYPdrlSwpR
+	 UriQs2F2yB0DU04ky/GGkDPe54uSfHxkbSHwG4OHHxc4/ujJ0PJvpvc2eDyQtZXTKw
+	 L2mbicNPhbUTDkJumTQ+FICnZyChbHF0R6grCW9PgbShPNazmolbMhcLrVVXvbdUi9
+	 TXiyMhKv0Cx8jHBIKDIMgEhrDSe0Z1Nw5S+YvriECrj0SpyK6Dmt3L1/37WB3cTqUz
+	 APxhnCjwHEzdg==
+Date: Mon, 17 Feb 2025 18:30:54 +0000
+To: shuah@kernel.org, sagi@grimberg.me, mgurtovoy@nvidia.com, jgg@ziepe.ca, leon@kernel.org
+From: Imanol <imvalient@protonmail.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Imanol <imvalient@protonmail.com>
+Subject: [PATCH v2 v2] IB/iser: fix typos in iscsi_iser.c comments
+Message-ID: <20250217183048.9394-1-imvalient@protonmail.com>
+Feedback-ID: 28866602:user:proton
+X-Pm-Message-ID: 63d439b2a8976457afce05453090ac379a39daf0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAO9wTFgtDGMxgE0QFu7CjhsMzqOm0ydV548j4ZjYz+SCgcRY3Q@mail.gmail.com>
-In-Reply-To: <CAO9wTFgtDGMxgE0QFu7CjhsMzqOm0ydV548j4ZjYz+SCgcRY3Q@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 17 Feb 2025 19:28:14 +0100
-X-Gm-Features: AWEUYZl-8xmVnot7cSihwj5mrrH3uVZP9wHKcdzkuxM7ag-b5A1qdgu8u59YhW8
-Message-ID: <CANn89iLjxy3+mTvZpS2ZU4Y_NnPHoQizz=PRXbmj7vO7_OGffQ@mail.gmail.com>
-Subject: Re: [PATCH] net: dev_addr_list: add address length validation in
- __hw_addr_insert function
-To: Suchit K <suchitkarunakaran@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, horms@kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 5:54=E2=80=AFPM Suchit K <suchitkarunakaran@gmail.c=
-om> wrote:
->
-> Add validation checks for hardware address length in
-> __hw_addr_insert() to prevent problems with invalid lengths.
->
-> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> ---
->  net/core/dev_addr_lists.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/net/core/dev_addr_lists.c b/net/core/dev_addr_lists.c
-> index 90716bd73..b6b906b2a 100644
-> --- a/net/core/dev_addr_lists.c
-> +++ b/net/core/dev_addr_lists.c
-> @@ -21,6 +21,9 @@
->  static int __hw_addr_insert(struct netdev_hw_addr_list *list,
->       struct netdev_hw_addr *new, int addr_len)
->  {
-> + if (!list || !new || addr_len <=3D 0 || addr_len > MAX_ADDR_LEN)
-> + return -EINVAL;
-> +
+Fixes multiple occurrences of the misspelled word "occured" in the comments
+of `iscsi_iser.c`, replacing them with the correct spelling "occurred".
 
-We do not put code before variable declarations.
+This improves readability without affecting functionality.
 
-Also, why @list would be NULL, or @new being NULL ?
-This does not match the changelog.
+Signed-off-by: Imanol <imvalient@protonmail.com>
+---
+ drivers/infiniband/ulp/iser/iscsi_iser.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->   struct rb_node **ins_point =3D &list->tree.rb_node, *parent =3D NULL;
->   struct netdev_hw_addr *ha;
->
+diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/=
+ulp/iser/iscsi_iser.c
+index bb9aaff92ca3..a5be6f1ba12b 100644
+--- a/drivers/infiniband/ulp/iser/iscsi_iser.c
++++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
+@@ -393,10 +393,10 @@ static void iscsi_iser_cleanup_task(struct iscsi_task=
+ *task)
+  * @task:     iscsi task
+  * @sector:   error sector if exsists (output)
+  *
+- * Return: zero if no data-integrity errors have occured
+- *         0x1: data-integrity error occured in the guard-block
+- *         0x2: data-integrity error occured in the reference tag
+- *         0x3: data-integrity error occured in the application tag
++ * Return: zero if no data-integrity errors have occurred
++ *         0x1: data-integrity error occurred in the guard-block
++ *         0x2: data-integrity error occurred in the reference tag
++ *         0x3: data-integrity error occurred in the application tag
+  *
+  *         In addition the error sector is marked.
+  */
+--=20
+2.43.0
 
-Any syzbot report to share with us ?
 
-Also, a Fixes: tag would be needed.
 
