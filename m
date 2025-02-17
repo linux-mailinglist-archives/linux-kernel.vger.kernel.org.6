@@ -1,236 +1,229 @@
-Return-Path: <linux-kernel+bounces-517473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B469A38151
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:07:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4EDFA38152
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEF03A9D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACE63A3DE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3E2216E3D;
-	Mon, 17 Feb 2025 11:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA242135C7;
+	Mon, 17 Feb 2025 11:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAZdrRvs"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P9srBKPo"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7E88BE8;
-	Mon, 17 Feb 2025 11:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB399192B71
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790427; cv=none; b=Fp0NPpXbt0blhAXO/5y/BVdwEDtCVFmTY/0/r+78IKbZs3Qva1dWdZffyk58JXfUhfsHjNsL9jYacU9HeRcebfASBleratbnWConoITywQP9tLeRBZIHetKIw6p+8PwDmSEzgcNG3CouxYUqpLUWk7uVO6FXKMo3fiopVOMrHpE=
+	t=1739790495; cv=none; b=eew1l/vpvrGqsSleDXV44B11XxAl9jqLIRR234W8/lww2oPGuhooQcybv/fabO9/CZpkOzttTVPFWNWttRWfcsdec0S4t4H3DVYJQ3YSJLIaDBrwf3NkHAJFSpWcNP38meqwRdwZQh78OyMaypiiXfZQwrQYXR3AxP+sekekgjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790427; c=relaxed/simple;
-	bh=isFALg6CXqDl8cu7cPP7y6ryoQs71iJg27uKq5QT0gM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hzF1liwLLfowb1h463+DYc8uoVgBQmH4sV5dmkzgI1fUevqTjahlU02DQh4jV8eBdjr/H34qeXBtypIBZ+Wgfan39Eo0QECrKAPcXLXKOR7CoSmWXDiaaAka+THXu2NChmePhJdskJe0AdSLWr4q2iSR3IBlFC7eW14F7haPuy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAZdrRvs; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso7855374a91.3;
-        Mon, 17 Feb 2025 03:07:05 -0800 (PST)
+	s=arc-20240116; t=1739790495; c=relaxed/simple;
+	bh=S4gKZe3I4EYKf5E7q96ZBisfogHzg2odYiy/EqZYfU0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uTF+CRK+E+elcRBwb6C2kVAJ/V+kKD7P4EHCtDqRD5c6o/Zv4XlYwLpBm3x4Hvp/KzNC6JJu8BNs/ParKKwJwYqF1RmmebW/dgxcAi6Gpl1tpU0rlhGZUFu6KvGKxYEq9zpjNtuUkFnVZPhNkrT3C1okiuZGnOnFEKRfnvlhgJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P9srBKPo; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-abb9962ebe5so82390466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739790425; x=1740395225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=hAZdrRvsI9ZGckTj2v6B/y7q8yIQ+9rj7aorYQDpB+702JAMl2ceDej/E45gJVwB6D
-         ktkf7m9T8BQQYY+DGyOSWBkCrugg3gaZeOmUgi2PgXvwxrN/+Ko9yWIrWohNSfs8iA5j
-         B5sHxL1SXAINPJLj1Pua+EkqsC3mRAFK3YHf9UZrIzOV/PgNaeEyR5McWY/SGNdso9hl
-         T4GXKSLeyj1FUoW8xRB17nvvrmnhZ9Vyul7KKTCvkgCWx1daMUdCITXgGoUbvyRFal14
-         K0JldIu5M4lC+V635HCUT20Lgz+D5V/4tWYybHalmeoPzIJy2wgrsx+Ap5r0sxA9SfDz
-         E0+w==
+        d=google.com; s=20230601; t=1739790492; x=1740395292; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jqXqpqizOnDlMWwzZuVF9a2CR14R+qK8RMrkhnNZbmM=;
+        b=P9srBKPoA5kpPVzTgi5vbtldTY9nVWLfmX59kOp0PWs5y1B+FAvPmj6qQ6qi11FewT
+         wQaOZDRP/APWCVZax9WEwGkRAVqd9rcIgM6pfFjo7sKnSbTcCoyJndhIgcnjruTlmuF2
+         YjVuEAIZoVUtcqZ/33z1ACIAHzTDfkB4kffK3NnMPzrQSMk/5lFU/9olRnVsAViTiZri
+         TFG6gSO8CTrTNm/qxHbSPWOHFilYOVDgRz9fd3ead4AiOR1zp6b106xqrbj5BOfP7Zhf
+         8Hyg5NHU44wMiEiO450ifRMyBblMmSzwnVaQR+S4gtGBQbNPhrUkRkFNPRswqAE/CyYw
+         lAbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739790425; x=1740395225;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=EMBS3w7A+HKbX/1qYZMEtP4/AZaLwzyXYduS6Upp2CzpCJAcqmzh4Uacrcs3EXjHFI
-         yDg4PJvGs/zHsgH64CLZfbtM3PoNIz3ADSdrP4g1qzsaEJ7L1YaXJJ6hG+Xu78YCoEge
-         rbBB69eiWXYphtXBH88i1mdBXsq6olKJGHUNIRslGNbkK8s7hDeRJnUC8Pw2qLVePtw5
-         JYhVG0buytEmtAdJKPO6OShN/U57uwByA2hZ+6KlW4X8eLqYCMgMS2/3b9IyMBQi4WYR
-         Ft1eoM4pKFJX7hZeNfaL50Ui9rgnr3PU+fSUYOxhnEDlkXmWuTf3dQKJ/K71843xXADu
-         dCiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXyxDRIhEFDY4nTX+g4uCRB61OIzPTfD/yNWMybT6x/VxRSKSQuA+f1uDg3NIKnxHA1m4HxioBC88=@vger.kernel.org, AJvYcCVanH0vFySyBU6Y39zuJTHQfziHPtwSY482EVudWz2ofV7SGIsK1xVVB3/vZPwk3jkwJOaL8Zu+u3Qmu8NfhohhOedU@vger.kernel.org, AJvYcCWl7xp1q6NTeHRI7vyiZWoyLMtxCfa4hcruYHLxzPucjPSZ54dhcki4WXkrpxyumHjTc97yn23dXdvpSOVD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDl2YuvZ/1VZOaF93dbyjO1f8XXDN4RUGITXX07aIGmxT+WgxK
-	W9V8yORamX3n3Dyw2jUdsVhSjF+ByAz+rC6VS6R0iau+PrGeE3Oh
-X-Gm-Gg: ASbGncsHpJVXXqtzNxZ2fm0f3MG3uKhDtLkrb/Jr0ahkOfDJL79jnOhyybTZIAIt0jT
-	kDVZu8S9vMkSTe4Um9o2bUFhaTvsYE3SkgQAiBQGUQZ3bRiZNkZPwWTA6bgoBya2kPVvXmoOemM
-	2ps2wDWshNLGKJ49CDPRGzJnEPJBmJxrphkmKbSkmwqLC9DUz0e0ez4Ak3cdKXRR2dzVahAPZ1n
-	MF94KtVSRaoK7069awSZ7bfLxnLikeTf/o+OZlSQFIXYBA+803worF39nz9EiAXSBTBkNbYdznC
-	tfqGkdFTzQmVqZG/1dRZ8DT/sJS9ksHVuqvIalMuXzaP2QJ5
-X-Google-Smtp-Source: AGHT+IG7B4sPeRxfvU839YopNnkapoIY0Cc35bbDmNDyP3vYMcMAmVTKblMiHxI+hpJeWLYL+RCgRw==
-X-Received: by 2002:a17:90b:510c:b0:2ee:53b3:3f1c with SMTP id 98e67ed59e1d1-2fc40d14c1emr14088366a91.5.1739790425312;
-        Mon, 17 Feb 2025 03:07:05 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40c0:1035:b6f:a7b9:b8b1:950d:8c7b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ab1ff2sm7840844a91.8.2025.02.17.03.07.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 03:07:04 -0800 (PST)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	corbet@lwn.net
-Cc: skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH v3] docs: tracing: Refactor index.rst documentation
-Date: Mon, 17 Feb 2025 16:36:37 +0530
-Message-Id: <20250217110637.6640-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1739790492; x=1740395292;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jqXqpqizOnDlMWwzZuVF9a2CR14R+qK8RMrkhnNZbmM=;
+        b=FXtTolQCiP/rJZ13ZWT+AiQ12WEWbl4AR6whBPVj7d5ZfoSUtTeMtnIUzFlVMh8BN3
+         lxTbaWkRNWOQdcZuk79/ID0LZIZ1ARdgDx5InrHYkKMnbwo/XIk5mHEf6R1b/xY2xcJA
+         UpbNY7lbA2VTmVSiyhiHR827DOcZ/+j1XwcX96gMn0Ds3A7U+NS5MbdtcAXV+g5Ng/U5
+         iM0CHm3Mkdqo1vRt0CqNfmOhToibViJdsWmq+gQ2egtitzmJMcuZqqR5doMrSK1lA2nG
+         bACqwFw2rta4qXkSGM5ZKf7nd7Ol9mRfRkIifDLoynuhnL0+NTqHKjr5fO9gXXMcbU6f
+         95nw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2OkRyTb2+zY0TLHsReoi3DW+iR51k1lS+EcV9UE6if2u24CfULddz8h6xYJROwNVutSvhcyf/wdx41ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywuvBC1Y0qtMBlyji085uFCqhko9VtfpX6sWBX7z9aQeZmlAqx
+	FYIlm4xds8L7+vsEhuKZ5rrlI7feAFrn6o7+dT/W7muyc3+ndZo70/PcuZdDK/3fb8k4YRIsc3t
+	Yj1qo/w==
+X-Google-Smtp-Source: AGHT+IFC8xLiAD97i45QddBe0Hg/Sc+qBWjG9lRAlS4snl4BSDRt6sJI8o3b9u2f6re5RbXrXeuXtGDOTUDg
+X-Received: from edbb21.prod.google.com ([2002:a05:6402:1f15:b0:5e0:4a93:3dc6])
+ (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:27d2:b0:5de:5865:69ae
+ with SMTP id 4fb4d7f45d1cf-5e036173c4dmr21313063a12.29.1739790492277; Mon, 17
+ Feb 2025 03:08:12 -0800 (PST)
+Date: Mon, 17 Feb 2025 12:07:30 +0100
+In-Reply-To: <cover.1739790300.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <cover.1739790300.git.dvyukov@google.com>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+Subject: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+From: Dmitry Vyukov <dvyukov@google.com>
+To: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
+	elver@google.com
+Cc: Dmitry Vyukov <dvyukov@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Refactor Documentation/trace/index.rst to improve clarity, structure,
-and organization. Reformat sections and add appropriate headings for
-better readability.
+The API allows to switch to permissive pkey register that allows accesses
+to all PKEYs. This is functionality is already used in x86 signal delivery,
+and will be needed for rseq.
 
-Improve section grouping and refine descriptions for better usability.
-
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-V1 - https://lore.kernel.org/all/20250204133616.27694-1-purvayeshi550@gmail.com/
-V2 - https://lore.kernel.org/lkml/20250206141453.139613-1-purvayeshi550@gmail.com/
-V3 - Improve section grouping and refine descriptions.
+ arch/x86/Kconfig             |  1 +
+ arch/x86/include/asm/pkeys.h | 14 ++++++++++++++
+ arch/x86/include/asm/pkru.h  | 10 +++++++---
+ include/linux/pkeys.h        | 22 ++++++++++++++++++++++
+ mm/Kconfig                   |  2 ++
+ 5 files changed, 46 insertions(+), 3 deletions(-)
 
- Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 15 deletions(-)
-
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 2c991dc96..6b268194f 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -1,39 +1,103 @@
--==========================
--Linux Tracing Technologies
--==========================
-+================================
-+Linux Tracing Technologies Guide
-+================================
-+
-+Tracing in the Linux kernel is a powerful mechanism that allows
-+developers and system administrators to analyze and debug system
-+behavior. This guide provides documentation on various tracing
-+frameworks and tools available in the Linux kernel.
-+
-+Introduction to Tracing
-+-----------------------
-+
-+This section provides an overview of Linux tracing mechanisms
-+and debugging approaches.
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index be2c311f5118d..43af2840d098f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1881,6 +1881,7 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	depends on X86_64 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	select ARCH_HAS_PKEYS
++	select ARCH_HAS_PERMISSIVE_PKEY
+ 	help
+ 	  Memory Protection Keys provides a mechanism for enforcing
+ 	  page-based protections, but without requiring modification of the
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index 2e6c04d8a45b4..1cacfe184b9d4 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_PKEYS_H
+ #define _ASM_X86_PKEYS_H
  
- .. toctree::
-    :maxdepth: 2
++#include "pkru.h"
++
+ /*
+  * If more than 16 keys are ever supported, a thorough audit
+  * will be necessary to ensure that the types that store key
+@@ -123,4 +125,16 @@ static inline int vma_pkey(struct vm_area_struct *vma)
+ 	return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
+ }
  
--   ftrace-design
-+   debugging
-+   tracepoints
-    tracepoint-analysis
-+   ring-buffer-map
++typedef u32 pkey_reg_t;
 +
-+Core Tracing Frameworks
-+-----------------------
++static inline pkey_reg_t switch_to_permissive_pkey_reg(void)
++{
++	return write_pkru(0);
++}
 +
-+The following are the primary tracing frameworks integrated into
-+the Linux kernel.
++static inline void write_pkey_reg(pkey_reg_t val)
++{
++	write_pkru(val);
++}
 +
-+.. toctree::
-+   :maxdepth: 2
+ #endif /*_ASM_X86_PKEYS_H */
+diff --git a/arch/x86/include/asm/pkru.h b/arch/x86/include/asm/pkru.h
+index 74f0a2d34ffdd..b9bf9b7f2753b 100644
+--- a/arch/x86/include/asm/pkru.h
++++ b/arch/x86/include/asm/pkru.h
+@@ -39,16 +39,20 @@ static inline u32 read_pkru(void)
+ 	return 0;
+ }
+ 
+-static inline void write_pkru(u32 pkru)
++static inline u32 write_pkru(u32 pkru)
+ {
++	u32 old_pkru;
 +
-    ftrace
-+   ftrace-design
-    ftrace-uses
--   fprobe
-    kprobes
-    kprobetrace
-    uprobetracer
-    fprobetrace
--   tracepoints
-+   fprobe
-+   ring-buffer-design
+ 	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
+-		return;
++		return 0;
+ 	/*
+ 	 * WRPKRU is relatively expensive compared to RDPKRU.
+ 	 * Avoid WRPKRU when it would not change the value.
+ 	 */
+-	if (pkru != rdpkru())
++	old_pkru = rdpkru();
++	if (pkru != old_pkru)
+ 		wrpkru(pkru);
++	return old_pkru;
+ }
+ 
+ static inline void pkru_write_default(void)
+diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+index 86be8bf27b41b..d94a0ae7a784b 100644
+--- a/include/linux/pkeys.h
++++ b/include/linux/pkeys.h
+@@ -48,4 +48,26 @@ static inline bool arch_pkeys_enabled(void)
+ 
+ #endif /* ! CONFIG_ARCH_HAS_PKEYS */
+ 
++#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
 +
-+Event Tracing and Analysis
-+--------------------------
++/*
++ * Common name for value of the register that controls access to PKEYs
++ * (called differently on different arches: PKRU, POR, AMR).
++ */
++typedef int pkey_reg_t;
 +
-+A detailed explanation of event tracing mechanisms and their
-+applications.
++/*
++ * Sets PKEY access register to the most permissive value that allows
++ * accesses to all PKEYs. Returns the current value of PKEY register.
++ * Code should generally arrange switching back to the old value
++ * using write_pkey_reg(old_value).
++ */
++static inline pkey_reg_t switch_to_permissive_pkey_reg(void)
++{
++	return 0;
++}
 +
-+.. toctree::
-+   :maxdepth: 2
++static inline void write_pkey_reg(pkey_reg_t val) {}
++#endif /* ! CONFIG_ARCH_HAS_PERMISSIVE_PKEY */
 +
-    events
-    events-kmem
-    events-power
-    events-nmi
-    events-msr
--   mmiotrace
-+   boottime-trace
-    histogram
-    histogram-design
--   boottime-trace
--   debugging
--   hwlat_detector
--   osnoise-tracer
--   timerlat-tracer
-+
-+Hardware and Performance Tracing
-+--------------------------------
-+
-+This section covers tracing features that monitor hardware
-+interactions and system performance.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    intel_th
--   ring-buffer-design
--   ring-buffer-map
-    stm
-    sys-t
-    coresight/index
--   user_events
-    rv/index
-    hisi-ptt
-+   mmiotrace
-+   hwlat_detector
-+   osnoise-tracer
-+   timerlat-tracer
-+
-+User-Space Tracing
-+------------------
-+
-+These tools allow tracing user-space applications and
-+interactions.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   user_events
-+
-+Additional Resources
-+--------------------
-+
-+For more details, refer to the respective documentation of each
-+tracing tool and framework.
-+
-+.. only:: subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-\ No newline at end of file
+ #endif /* _LINUX_PKEYS_H */
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 1b501db064172..9e874f7713a2b 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1147,6 +1147,8 @@ config ARCH_USES_HIGH_VMA_FLAGS
+ 	bool
+ config ARCH_HAS_PKEYS
+ 	bool
++config ARCH_HAS_PERMISSIVE_PKEY
++	bool
+ 
+ config ARCH_USES_PG_ARCH_2
+ 	bool
 -- 
-2.34.1
+2.48.1.601.g30ceb7b040-goog
 
 
