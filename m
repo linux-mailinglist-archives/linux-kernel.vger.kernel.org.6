@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-518430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C46A38EE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:17:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26959A38EE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EECF3B3DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C5018837B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0EF1AAA1F;
-	Mon, 17 Feb 2025 22:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AFD1AA79C;
+	Mon, 17 Feb 2025 22:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L/otBlqE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XCpSqGxV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B721A8402;
-	Mon, 17 Feb 2025 22:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD0E18787F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739830259; cv=none; b=mpnsTUX5AcWG/Lkj+VldMZx6Ve3I7fGxwp0Al1wh9Nac07YF9/VJrg8oilA5xIO2HirwqCNxm1omqt9Ufs7mR1sAvfNQ6tzVchi8gx1eXsBIdAI9lHnLN8/zuI4NyAGGjmDkad/h6ZYsBI3//lSLUcclfPYphqZlBmx2AmheHto=
+	t=1739830416; cv=none; b=g0/nR1V5aLy8e2jlQroy6qpk4VORLF3AwV96Yd3ePr+7xTxU694t0DYvoXKnEJdxcITtglrUJbJ/lkRqCxTIqGTjLFde/i1nVuYIKqWqUKMRqay/uvzijN8bIVx888wau/suhzlq1ib9tm7HZOan1VQglWH9+pPGRSFuqtbL09M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739830259; c=relaxed/simple;
-	bh=kz2joIaUFNhKMcE7TsiNBZLC3yx9ts0wwnhOk56savA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FOH3y6Dv+MKnAgQb6o4HEHfikeAOIbN2NLVrOoOqgWSu+zK+cSZ08ygLZan7eBTAyw4Lll2Zm82iF6O7zqOyRqN5AzZXbfFfBekG40O5LuuPZjFUDnI+a6UUrZiHnE/MDZ4zV4eTlODFKDxrF0g1FLqWrCpvkFAMnwB7o/5duIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L/otBlqE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAisBn004459;
-	Mon, 17 Feb 2025 22:10:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LZO4RmAwdWvHhYb8qMLxm/nSTg9V+VwwT6x0u1skeEc=; b=L/otBlqE+gbq85BM
-	WgeeUrcJCMrF36W4W3MNERaOVQUehpx5Uka7cr1KpRacic2xBhZCLac+K2MC3P1i
-	zju9KIh6k3FjaOpD8g95dSrdM9xr7azTUYO/BX4p//ucL1OdfA7vsFrlLQ0Ck7zj
-	kWyBiVr5YLWj1JRZJ4R9qfaiQ59n67iQlnobHQDb4yyBsYpUcxLeSrzh9Zxwtfxy
-	SLV/kg0Gdt8DC+avPjcLhz27hFMyIw5G145d7c25KSoNuqBNViKe/zCcn/zHO/+R
-	4wvVPdaQkBCZay5MNZDpye56Na/9LK1sDj2HXIsXEg/YZj1W7jN/SHyan2uu/5pm
-	5Wglfw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3mg1duj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 22:10:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HMAiIR004908
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 22:10:44 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Feb 2025 14:10:44 -0800
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: (subset) [PATCH 00/35] drm/msm/dpu: rework HW block feature handling
-Date: Mon, 17 Feb 2025 14:10:26 -0800
-Message-ID: <173982978188.1706705.18136509869048284263.b4-ty@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
-References: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
+	s=arc-20240116; t=1739830416; c=relaxed/simple;
+	bh=IZizXcCnnJyNvGPpXrfdBPQSatvt5UguHsM/2T49HLc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=QRTfJZUFySg5gbnZukaFcssnBw1UFUp3qh9XzpSE9winj4RrUqVHavvvcjuPwPnDLa2bxdWqjz3M/JBzgnvsCamuNxF0+uI4n7lK58hOkZvNMtMlxcpjsJn4Yd3HLbtoU2v/MLIG9lUV29oh5v+DVaxrwX3fg/j9zitRuR1g09o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XCpSqGxV; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739830414; x=1771366414;
+  h=date:from:to:cc:subject:message-id;
+  bh=IZizXcCnnJyNvGPpXrfdBPQSatvt5UguHsM/2T49HLc=;
+  b=XCpSqGxVNzIbDcifKqcIRAkDFoV1FUfMVsh1jFlNfRn8Ls6SAgtRaTgW
+   RGgKl+M89KsFTuIjDRFpuUY5A0NMl5waMa2RuDvyZPBJm3TsoB95S+0g5
+   dB44/GJlJqRRuQnFZIub5U6JSvkKN4paIf51eF9BLTjiV016QWVfA+7Xw
+   nZaYUB1K+KYtW6Uj8a5ngaFCH6JNTqhJ0/nK9xX1GCgcEoXotJmVQxujr
+   yRUUI3Mo8QInA5y4nhqnLLCyULLm6qF2ld9uT080mDmskTDzz0YWobcj8
+   F5vxB+pUQBBZZ/1fXHyAqE1i2pvMx+p9KILHwLtSB3AcjZV/WVWkN6SaA
+   Q==;
+X-CSE-ConnectionGUID: psXuCAlLRA2eqUkII8nMag==
+X-CSE-MsgGUID: nZ5r/JNNSlGoTl19xyxOcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51947488"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="51947488"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 14:13:34 -0800
+X-CSE-ConnectionGUID: vWTtMMXcRguxpIY+R2oYlQ==
+X-CSE-MsgGUID: WUcC/cyBTQu45bj6FJpAlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="145128511"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 17 Feb 2025 14:13:33 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tk9Mp-001DdV-0f;
+	Mon, 17 Feb 2025 22:13:31 +0000
+Date: Tue, 18 Feb 2025 06:12:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/microcode] BUILD SUCCESS
+ 037e81fb9d2dfe7b31fd97e5f578854e38f09887
+Message-ID: <202502180643.4ytm8Blo-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rlyp48cn0jiv6PkP1lfCgzG4n7DNNeOI
-X-Proofpoint-ORIG-GUID: rlyp48cn0jiv6PkP1lfCgzG4n7DNNeOI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
- phishscore=0 spamscore=0 mlxlogscore=927 impostorscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170173
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
+branch HEAD: 037e81fb9d2dfe7b31fd97e5f578854e38f09887  x86/microcode/AMD: Add get_patch_level()
 
-On Sat, 14 Dec 2024 00:14:16 +0200, Dmitry Baryshkov wrote:
-> Some time ago we started the process of converting HW blocks to use
-> revision-based checks instead of having feature bits (which are easy to
-> miss or to set incorrectly). Then the process of such a conversion was
-> postponed. (Mostly) finish the conversion. The only blocks which still
-> have feature bits are SSPP, WB and VBIF. In the rare cases where
-> behaviour actually differs from platform to platform (or from block to
-> block) use unsigned long bitfields, they have simpler syntax to be
-> checked and don't involve test_bit() invocation.
-> 
-> [...]
+elapsed time: 723m
 
-Applied to msm-fixes, thanks!
+configs tested: 19
+configs skipped: 125
 
-[01/35] drm/msm/dpu: skip watchdog timer programming through TOP on >= SM8450
-        https://gitlab.freedesktop.org/drm/msm/-/commit/2f69e5458447
-[02/35] drm/msm/dpu: enable DPU_WB_INPUT_CTRL for DPU 5.x
-        https://gitlab.freedesktop.org/drm/msm/-/commit/af0a4a2090cc
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Best regards,
--- 
-Abhinav Kumar <quic_abhinavk@quicinc.com>
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250217    clang-19
+i386    buildonly-randconfig-002-20250217    gcc-12
+i386    buildonly-randconfig-003-20250217    clang-19
+i386    buildonly-randconfig-004-20250217    gcc-12
+i386    buildonly-randconfig-005-20250217    gcc-12
+i386    buildonly-randconfig-006-20250217    clang-19
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20250217    gcc-12
+x86_64  buildonly-randconfig-002-20250217    clang-19
+x86_64  buildonly-randconfig-003-20250217    clang-19
+x86_64  buildonly-randconfig-004-20250217    gcc-12
+x86_64  buildonly-randconfig-005-20250217    gcc-12
+x86_64  buildonly-randconfig-006-20250217    clang-19
+x86_64                          defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
