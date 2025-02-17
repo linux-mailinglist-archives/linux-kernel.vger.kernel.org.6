@@ -1,198 +1,280 @@
-Return-Path: <linux-kernel+bounces-517530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7F5A38216
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:42:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13904A3820A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D893B5F5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0476716B3F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24877219A9B;
-	Mon, 17 Feb 2025 11:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C99021A43C;
+	Mon, 17 Feb 2025 11:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UTJNTqvX"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMJ0FiGZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DABF21B8E0;
-	Mon, 17 Feb 2025 11:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792384; cv=fail; b=sN7SYdZ/8LIKHI1WvC5eNbU2fBD3lM8neU32G255lu/1KaCf+Orc50sgpqDeR4t4mAPixx3vWs6wDMxfOxTCSMKY65ZQk1AdM3Dcl4dnjnYpujw/scFPBgYVamY6In9ea3odlaxNYT4GvbxZZuTgXOjvLq5nvsXylKpM1DyRfmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792384; c=relaxed/simple;
-	bh=TPXMd9bmaR45ssx+cwdhLIvfXrbYOj7kTjIbXcC5cxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=orysRFdDT2Nmy+oMMJZ7lAsWIfH09ley7MWPoqXUx1BPCDG954ShUCMant3foQLnaDxGfnLYoqncgIx1TMC9HsrBdCgVzDDw27lpTx5sC0cgnJ1SVdYWRFq2kjkW99vPmg2WZv5rCAGMdtKfbD7y70ZRYfhQppR80aO32NvCySA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UTJNTqvX; arc=fail smtp.client-ip=40.107.94.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p87Ol4dyV0jalkeixfiDvkxf8XcZpmc/Z8MVei6URzseF0rvtMmBf4nWKMX0++fY3q4aS5ARAGqfQor9C0a3je3jJxOEPkhwB9xFw1L5lDRBT+QNabCWAL+RAH0QxtRMHJtnwCQinb+okNnNMGtBuH6MJsYe6U2Zl/fPl9hWcyXb5PpEwVXmj3yVTeVBP99SRJLGAo4PAoFcQEpdqKMd77Lkc6WIHcnpjOxa8bX57ShjUgi6irPHt0l/QCMfkJAPbpldEe3FvjZ+hXtlM8FhrpMFbejpL7RWLGI0Yl6e6J63yNZgZ4z6cNpd0UowWxQNdeMgKSoZDKHuDqmmjJF81w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YrXFJt30Bx7Xl/3BBJP5k03/XpVfitjhiXoNnQ0sLAM=;
- b=B9I+dlRdGGG8JH63thkXk8smJAN3mvPZ2Kz2s81ExBbz4CcmoCqlOJpCP7zxePNya7C4SeFOOld0FVmLseUyZv6USwz8CFKLFvBifxjHOtVcZ/U9It90nEvRpsaLroQ/6VzVBg4mLzANjZoVpIMcghl/sJf3PejY7LyM8Wa/ugw/oRqzWdU+7lAyWcVitW5vSZUxfCDRUlztafN8D5WmD4yNA35YtPPbmLgEEZgAJ9WcsOnVlrg3sXbBAa9a5JS8qMV8JFw2KZhH+jHiKePefcx6yZ0qZM90tYicSevY/42WnqpdQbF68W2IMr8JEB2HM5mGA3F+AIC2tPWJulNr4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YrXFJt30Bx7Xl/3BBJP5k03/XpVfitjhiXoNnQ0sLAM=;
- b=UTJNTqvXWhzdGBrMtBBalXClC6nGWAekz/Tud17hK3tjG87fqsJP3BnDkDY5oBeFLOXF7HbQdj4eusxPmzxLLxOFJVOx9xBdHfY/8JVccWm7VF9uFpVmCVZcYyFddH4FMTlnO4RoXkQ5wch9msppLPMs8nTvaGMStbVjZDI2KNU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- PH0PR12MB8128.namprd12.prod.outlook.com (2603:10b6:510:294::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Mon, 17 Feb 2025 11:39:40 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 11:39:40 +0000
-Date: Mon, 17 Feb 2025 17:09:32 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Perry Yuan <perry.yuan@amd.com>,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 10/17] cpufreq/amd-pstate-ut: Adjust variable scope
- for amd_pstate_ut_check_freq()
-Message-ID: <Z7Mf9PEVSEAnqV57@BLRRASHENOY1.amd.com>
-References: <20250215005244.1212285-1-superm1@kernel.org>
- <20250215005244.1212285-11-superm1@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215005244.1212285-11-superm1@kernel.org>
-X-ClientProxiedBy: PN3PR01CA0154.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::7) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E56219A66;
+	Mon, 17 Feb 2025 11:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739792377; cv=none; b=n/E8JgVzhxcb02vbXGrjJE+7T0R/95yInv2YSFX08fWanObrz2o0PRulRigANELfPuVwfGNmD5U+amDbvXmipoudiXBEOQ2yE1Hq9rXo9pOFRn/7+9ZL9r7WWtqF13m4y43dmhlZRdsFdLETLHPE+6XIg/W2xmQKORPOpbpvItw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739792377; c=relaxed/simple;
+	bh=NyQODyQ8uWj89RAb9qkVk3Y8Kgaz3t5HvTOO1C1MGyk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NsMvI9NH0i1r82GKoo0ysZxoQNkRjzCNI2/ycHjOPNj8oaXF/V+FIrYsHrIXhG/AT8v6qmoNeX3AIzw56vyJw0oXj3AyY4nRZI0FGsP4LuZwNtoAk7AQMfiYJzjggXmaci3To9S3O/DEzcpyOoRV8FYuyBg+6NIpeYqk5qUOFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMJ0FiGZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A4C7C4CEEF;
+	Mon, 17 Feb 2025 11:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739792377;
+	bh=NyQODyQ8uWj89RAb9qkVk3Y8Kgaz3t5HvTOO1C1MGyk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=NMJ0FiGZ2mcw/yUNudqx0kTcAis7IvjngoJJBzlOdp56o7plXfdPWt97F9+X5igjs
+	 oaPQnNbxR5fUACIWzJQVYe6+izPfrr2RwUMk0oKXcYPjG565f1VETEdeqmaLZkJ9Zv
+	 R9VrtOKqXSrFcCEqdRNFYgGz6eqaHwWvNxykNjbLvva1LznTWdZcdSt8L8l7bVeFPx
+	 urojwCmu5jMSKg3jZqno+7xwPCwi7w2Agd8K++ZoE2NVgwCbz66Nu+YvINW/1IcQ/J
+	 v1NAE8hV6+aiThI18RKVq5PooUEi+Zmz5zx9LRGoyABNZXBc+bZaPZ43ixnHGWMlrO
+	 eKWSutvOQDW/A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F59C021A9;
+	Mon, 17 Feb 2025 11:39:36 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Date: Mon, 17 Feb 2025 12:39:33 +0100
+Subject: [PATCH v7 3/5] drm: panel: Add a panel driver for the Summit
+ display
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH0PR12MB8128:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95d48895-9cba-4696-128c-08dd4f47c36d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FnewIRbCN39TgtlbaqBOrlC1pwq7Jbv3dKbKO9Zt7GGhTaItSZHztIqBa2/+?=
- =?us-ascii?Q?1vmUQCp+I0VpVRbKPkesJervduEL1jUIew3UI9dI716XkjDIgZ5PaHQ0EVXy?=
- =?us-ascii?Q?5mFv50JPhqA/w+vR8TLOI5hU3ZtNwPY2kXFXNoSW9OAAahJRVmQjJGWAz+EM?=
- =?us-ascii?Q?aqrMq6cFXRKclscXU7P/fob4ND5YdaNYInvlhkSQ50uMAxpeB71mo6wQukJT?=
- =?us-ascii?Q?obb9FwBD7DjNWpz359CxJ82OWpzx8cq3621gXJJfZzYUYGjLOl1q8P7k0Bzu?=
- =?us-ascii?Q?fxkzLboWt0mwoT3qOhmvbBshv987fN3yESnpwYQiojn74TdBHq81LABEiwMb?=
- =?us-ascii?Q?HsFFzalw2K9s8zSVaAR6UARDMfpG5sOm3pwkEQla7RbMQsRrayE8ClWonzS8?=
- =?us-ascii?Q?/BydpCAHSDTTGkBjGDmhSKPrHrXVNgv3ppe/16deNn5FKjI/atGAk4HwRaUa?=
- =?us-ascii?Q?7wel9ZF1m5s/z01jsquwFVSUcpWfk3EhGMaG/XGrM6pA9bOBv/1JlmNgnNUV?=
- =?us-ascii?Q?sFyciluopKm5Djbt3pNiUJAvbTkqNhP1+nHjQXTHuccAtjrf29yRRdqTScUk?=
- =?us-ascii?Q?jk8uYg1WYV66qLXDWbuqoEAeIx7guabuKnl6Il+Unv/QUogFwqFllsZJmhHt?=
- =?us-ascii?Q?yiEQXQ+sCmleYxqCpG0wky8INu4hKFWChgLera69i6QZqHngrJ3H54JpZC7N?=
- =?us-ascii?Q?JthXaRupBRkR8f1lNcMwDXi+Y8afWo/xH9R7SkPeuGWRv1dz6GN/EE7z5wgc?=
- =?us-ascii?Q?HKPi4e6nMz4Be6cv7zM57iBHKdzkB2/zYZMcXWnuEzF0fRspbG9Ybw+lMXGx?=
- =?us-ascii?Q?C3D+g640SPaeE/ATEuA2yUrDFOJ+SEBsUUspWO7AFTefccIk4ASY733+NbxR?=
- =?us-ascii?Q?c1Mlk+lQ5M8e/7o9LnlN5G8MVmOeXZdw2x2TMCJk+SZeDoSPPw85lE98CFvf?=
- =?us-ascii?Q?pAViZM62j4guShI8GDyerOTSfV0h4UjuIUHyAnD3Sr1BBklILRyUFhytu1IE?=
- =?us-ascii?Q?iSAKG4LkFsf5SPx6kevCFHeztxVAEpWVdmFnv1ulbADWBXCX/+oDbeHPfnW8?=
- =?us-ascii?Q?5wXxrtRzYhvEcf6y2q/xLtOAob2nsP7ksuk2DHIAq0ZzloDphPp2XXdjFG1V?=
- =?us-ascii?Q?QBpYGImq8Yjkr4i7pmaUJZR+BanW4lfGAae0ES20/S4aHiLq4gWucvtC++oD?=
- =?us-ascii?Q?3zydxXO87iw9Ux7anCknc4l7NPzuMEXUDkhoS66GKNNNhgffhPBjBr8IJ2Hg?=
- =?us-ascii?Q?0kIRCawLC0sBnuMKT6Mep+2GJWmqR4FxPmXmk4nV0a0dzkXTtIQL9MTCxu8S?=
- =?us-ascii?Q?Y2sFlBJ6pCcaG3l82mgxQ02wCFN29fZD8QXaWhvfNImwW1XxvHlS8XylzJfE?=
- =?us-ascii?Q?KPTkET3TO9mRj7G5EqDyqqiOS9lc?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WaFzzAQMeM+/S5Nb/HJNZk1gNhedAVug5u2b7olpjticSblcXyLse+k41Wzq?=
- =?us-ascii?Q?9D3Sfv8o7KfoMr24t3PQNvq9l+MnIXzgcIKJsBeRpzj2FKmDTYtM8grkXetp?=
- =?us-ascii?Q?ITIsH58uUB1l+i15n034UIY7nYAJutcsEYE59v9esqvuft5w62JE3cBqPMBd?=
- =?us-ascii?Q?eCzyJkJKZLs+I6OJk+1yekDZ+6QjpZxCTAP3mngS6GmAUXA9Rl3ybFXj4KDM?=
- =?us-ascii?Q?JfVoY3whuionFuXV6d7a7fBiSJ7ImTtgMXwVDBhdz3tZNoE5NfjL+0HyvZ6I?=
- =?us-ascii?Q?Ay53ZwAxgGUTJQUC60gbm7RE8BsO+0i6BRutp1+7LA1LkVJEvks06d8+5EtR?=
- =?us-ascii?Q?Es7vd2ksIpOReGVmg4rddn+gV9UHZeC3vjrxinYIXeNcV2fgVN/H1DdI2r/l?=
- =?us-ascii?Q?zSotkhWkpC8zRWbYR0qUWkbWiHcsANdWga0XX3ylyzLiallA4Yi0bmQ+iK6f?=
- =?us-ascii?Q?hdEl0RrujUC2CZwR8KM5X8hjGioNd6Xb/lnnXzNpIk/P+iN3FpYnwc21zauS?=
- =?us-ascii?Q?tpNDbGbB8ukeisBGxYp/IMb1VlH+dAcIO4atIm10QPhQBxzMJoiSFYUGOA4U?=
- =?us-ascii?Q?PDu1J46A7lMd7yXmclFtdAF72ocPh1f3LRhSCT1ChldQ+wJG6ZURZgZNLvTi?=
- =?us-ascii?Q?rAgTfWIPJmUrLatLIqHSI+lw5J03V85v9I8glU1HfypaA2xxJd9PiUkFvhXX?=
- =?us-ascii?Q?Q2BIZu8fLjGiOWJF5y22OB3fXdnuWkDuRujGUrce/9VnjxMlHkABx1wH6wKd?=
- =?us-ascii?Q?LjsB3PR9B8he9sbcoFpnbZEBuiXER20Dj0w+1GwTuG5n6LL6gj8RBxezvKds?=
- =?us-ascii?Q?+ASAf/7iv2O+DJrDBDY5/6k4xoRbEtMS/C2v5AWqsDt0R4dd+0zEh+P+Q9V4?=
- =?us-ascii?Q?2yGwV1G73EvumY21dGCcgJfDnC1rEVKmnarTWEy5QxB0Y5kOCXdwMnp2O0ru?=
- =?us-ascii?Q?OSan4z2twS6Zp9Ekebwzz9yPAJZ9KCfLao6MkaVi2SPvIcxjXPvkXbho3/8e?=
- =?us-ascii?Q?6QZ+iGW6f2aWLYkqWfasblQ+ntriEU/FCCeoD9mCU6DxCfsCb+yDSExPE4f9?=
- =?us-ascii?Q?jSNMd7mTNdmBrlNyBzzbFPo9RnE/a/1dGv7T2LgWKcM85uGzOZCKEV9f0z06?=
- =?us-ascii?Q?a9wLeaH3g4yP/euWD9mJUN364EShCJMyEv4QwGWxVqFriQfVZWq0JwqaqTLX?=
- =?us-ascii?Q?ywJnyGVfi3wMW+139p/hnGxR+T/pm2mowkm+UN6AfSaRKNy1BIJnlHeLg8tl?=
- =?us-ascii?Q?xycW16cXRuNCZSsRT/L09pqVPDs3mTqLcKSczgTJ2Y/LEQi+XpoXsMUjGX64?=
- =?us-ascii?Q?8g1GG6zkPqqE6DlMQRFUCvOYUn8wXki4IX/BboGABUECjRVSP2g+pJOnR83F?=
- =?us-ascii?Q?EWGgZyfB9MK0vXSb/ehQ9qNPKvekTEJrxSl0Uq54G/SaqjbU/SZP93IYOYPa?=
- =?us-ascii?Q?vopOtaMhWUsli+cA3DiHtPB4Tilvzg8DJAQgKlaJDwpopw29a3Kn3OtEEVjw?=
- =?us-ascii?Q?+bN3cLZDr5AS/cG0rENpoJfgLOlcxOv1+DTJlVN3F60n4aG0Xrs2W6i1Rqfb?=
- =?us-ascii?Q?OBHwf4xiUIG2wEPD8SZ4VgsD4gqyW48nO19OFfEQ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95d48895-9cba-4696-128c-08dd4f47c36d
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 11:39:39.9733
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: myVRK3l8AUNJpqRxHCZJXb7+mZ128Vpxyn4Eol9BOIL1cwyQxZhRyBRwWDD3Tu0e8bvhzv1cUvYvGwMWJZgraQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8128
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-adpdrm-v7-3-ca2e44b3c7d8@gmail.com>
+References: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
+In-Reply-To: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
+ Janne Grunau <j@jannau.net>
+Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alyssa Ross <hi@alyssa.is>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Nick Chan <towinchenmi@gmail.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neal Gompa <neal@gompa.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739792375; l=6135;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=mrq63iLVH9ppuvIWH/dsq2AVK1CS/dEIvxQfxlEoXcc=;
+ b=vKHPp7mU1FX257nFZXtsQv/keSlDcNozK30KxLx/ZaHUBM5t9BzSosRz0zz/viJjvAvkfx/pd
+ vb0+L0fZecEC6lVe9H3xilswkUERpRQ9Bov0jje+YyMLiDEd1ObW3PJ
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-On Fri, Feb 14, 2025 at 06:52:37PM -0600, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> The cpudata variable is only needed in the scope of the for loop. Move it
-> there.
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
 
-Makes sense.
+This is the display panel used for the touchbar on laptops that have it.
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+Co-developed-by: Nick Chan <towinchenmi@gmail.com>
+Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Neal Gompa <neal@gompa.dev>
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+---
+ drivers/gpu/drm/panel/Kconfig        |   9 +++
+ drivers/gpu/drm/panel/Makefile       |   1 +
+ drivers/gpu/drm/panel/panel-summit.c | 132 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 142 insertions(+)
 
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v2:
->  * new patch
-> 
->  drivers/cpufreq/amd-pstate-ut.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-> index b888a5877ad93..9db20ac357042 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -186,10 +186,10 @@ static int amd_pstate_ut_check_perf(u32 index)
->  static int amd_pstate_ut_check_freq(u32 index)
->  {
->  	int cpu = 0;
-> -	struct amd_cpudata *cpudata = NULL;
->  
->  	for_each_possible_cpu(cpu) {
->  		struct cpufreq_policy *policy __free(put_cpufreq_policy) = NULL;
-> +		struct amd_cpudata *cpudata;
->  
->  		policy = cpufreq_cpu_get(cpu);
->  		if (!policy)
-> -- 
-> 2.43.0
-> 
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index d7469c565d1db8b8e974dd6c45d03d9352d99d63..5085a82e4bc695e85cabbc3200859bbe10cb0f91 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -925,6 +925,15 @@ config DRM_PANEL_SIMPLE
+ 	  that it can be automatically turned off when the panel goes into a
+ 	  low power state.
+ 
++config DRM_PANEL_SUMMIT
++	tristate "Apple Summit display panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y if you want to enable support for the "Summit" display panel
++	  used as a touchbar on certain Apple laptops.
++
+ config DRM_PANEL_SYNAPTICS_R63353
+ 	tristate "Synaptics R63353-based panels"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 7dcf72646cacff11bab90c78e3b8b1f357e5f14a..10ac2e850f5cd6d6546439de75483466e4015d1a 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -89,6 +89,7 @@ obj-$(CONFIG_DRM_PANEL_SHARP_LS060T1SX01) += panel-sharp-ls060t1sx01.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7701) += panel-sitronix-st7701.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) += panel-sitronix-st7703.o
+ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
++obj-$(CONFIG_DRM_PANEL_SUMMIT) += panel-summit.o
+ obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) += panel-synaptics-r63353.o
+ obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) += panel-sony-acx565akm.o
+ obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) += panel-sony-td4353-jdi.o
+diff --git a/drivers/gpu/drm/panel/panel-summit.c b/drivers/gpu/drm/panel/panel-summit.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..e780faee18570c9970d381b3f7c65b95665469cd
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-summit.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/backlight.h>
++#include <drm/drm_device.h>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_mode.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++#include <drm/drm_probe_helper.h>
++#include <video/mipi_display.h>
++
++struct summit_data {
++	struct mipi_dsi_device *dsi;
++	struct backlight_device *bl;
++	struct drm_panel panel;
++};
++
++static int summit_set_brightness(struct device *dev)
++{
++	struct summit_data *s_data = dev_get_drvdata(dev);
++	int level = backlight_get_brightness(s_data->bl);
++
++	return mipi_dsi_dcs_set_display_brightness(s_data->dsi, level);
++}
++
++static int summit_bl_update_status(struct backlight_device *dev)
++{
++	return summit_set_brightness(&dev->dev);
++}
++
++static const struct backlight_ops summit_bl_ops = {
++	.update_status	= summit_bl_update_status,
++};
++
++static struct drm_display_mode summit_mode = {
++	.vdisplay = 2008,
++	.hdisplay = 60,
++	.hsync_start = 60 + 8,
++	.hsync_end = 60 + 8 + 80,
++	.htotal = 60 + 8 + 80 + 40,
++	.vsync_start = 2008 + 1,
++	.vsync_end = 2008 + 1 + 15,
++	.vtotal = 2008 + 1 + 15 + 6,
++	.clock = ((60 + 8 + 80 + 40) * (2008 + 1 + 15 + 6) * 60) / 1000,
++	.type = DRM_MODE_TYPE_DRIVER,
++	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_NVSYNC,
++};
++
++static int summit_get_modes(struct drm_panel *panel,
++			    struct drm_connector *connector)
++{
++	connector->display_info.non_desktop = true;
++	drm_object_property_set_value(&connector->base,
++				      connector->dev->mode_config.non_desktop_property,
++				      connector->display_info.non_desktop);
++
++	return drm_connector_helper_get_modes_fixed(connector, &summit_mode);
++}
++
++static const struct drm_panel_funcs summit_panel_funcs = {
++	.get_modes = summit_get_modes,
++};
++
++static int summit_probe(struct mipi_dsi_device *dsi)
++{
++	struct backlight_properties props = { 0 };
++	struct device *dev = &dsi->dev;
++	struct summit_data *s_data;
++	int ret;
++
++	s_data = devm_kzalloc(dev, sizeof(*s_data), GFP_KERNEL);
++	if (!s_data)
++		return -ENOMEM;
++
++	mipi_dsi_set_drvdata(dsi, s_data);
++	s_data->dsi = dsi;
++
++	ret = device_property_read_u32(dev, "max-brightness", &props.max_brightness);
++	if (ret)
++		return ret;
++	props.type = BACKLIGHT_RAW;
++
++	s_data->bl = devm_backlight_device_register(dev, dev_name(dev),
++						    dev, s_data, &summit_bl_ops, &props);
++	if (IS_ERR(s_data->bl))
++		return PTR_ERR(s_data->bl);
++
++	drm_panel_init(&s_data->panel, dev, &summit_panel_funcs,
++		       DRM_MODE_CONNECTOR_DSI);
++	drm_panel_add(&s_data->panel);
++
++	return mipi_dsi_attach(dsi);
++}
++
++static void summit_remove(struct mipi_dsi_device *dsi)
++{
++	struct summit_data *s_data = mipi_dsi_get_drvdata(dsi);
++
++	mipi_dsi_detach(dsi);
++	drm_panel_remove(&s_data->panel);
++}
++
++static int summit_suspend(struct device *dev)
++{
++	struct summit_data *s_data = dev_get_drvdata(dev);
++
++	return mipi_dsi_dcs_set_display_brightness(s_data->dsi, 0);
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(summit_pm_ops, summit_suspend,
++				summit_set_brightness);
++
++static const struct of_device_id summit_of_match[] = {
++	{ .compatible = "apple,summit" },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, summit_of_match);
++
++static struct mipi_dsi_driver summit_driver = {
++	.probe = summit_probe,
++	.remove = summit_remove,
++	.driver = {
++		.name = "panel-summit",
++		.of_match_table = summit_of_match,
++		.pm = pm_sleep_ptr(&summit_pm_ops),
++	},
++};
++module_mipi_dsi_driver(summit_driver);
++
++MODULE_DESCRIPTION("Summit Display Panel Driver");
++MODULE_LICENSE("GPL");
 
 -- 
-Thanks and Regards
-gautham.
+2.48.1
+
+
 
