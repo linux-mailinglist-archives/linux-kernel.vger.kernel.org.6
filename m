@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-517694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3B4A38466
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D3DA38470
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36151746C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C03B169C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCF621CC5D;
-	Mon, 17 Feb 2025 13:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FDB21CA00;
+	Mon, 17 Feb 2025 13:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MYTv89Ja";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nhnlbg3r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrhKH2/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254FB21C188;
-	Mon, 17 Feb 2025 13:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B25C603;
+	Mon, 17 Feb 2025 13:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798195; cv=none; b=oajJYQZQom1AesrPGnFTTghQOC3KWScjxz+dbhW1nL6u3WiMhShGA4BaKPf6XSfCf6p6YZLuGyksX5BXjVHykVaP5td+thDkvxPgB+wMqYp6tUNPHBGXP/SJcaUskzYui0XbmU+zOGq/ufxWWPRlN6G5sNnCfrLvpTA7O+ZR6Ls=
+	t=1739798342; cv=none; b=SLy3q+JfP/GCRmTEEQUFa3gqc/yUS81j1nkx7U0hzaS98LL0mkcS4//Zeya0pgOhNco2P0dhhI0+7yzZewVi4CjS14iyYtoCSUIJS1/sNz6cecEy30/53TK392aOTJl2EkMiREcBTL4vcN6DJeQ4ltEgK6oNSskGQtR4HLPwpsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798195; c=relaxed/simple;
-	bh=wyxvqAZpVxqQZ+urKOWQ+0EqdnJ4IB5u0lshrjFkqAw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QLzMqAgkKdG1VCySr4WAY4HbUllTdEUhEX4KVnd7ZrGzu3XJ9NnLxGF3sy9TylYMP1OBNQy1zDBVN9NSpumRzvaSnxmnCAVQW7QbWZ5jGq+a5bkwiqOijKq8k9HZ7+IlnGVsy49Ls3clHYPnQ0BnltezoWNU0sP3XLRPr6SuOA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MYTv89Ja; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nhnlbg3r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739798191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hbzeR8+Y7kYNnpEhwXuG2o0ayidVAVXDLH2xJ++sFq0=;
-	b=MYTv89JaLWwTZ4hqEsQ65a3p8WL38z2EgzHOFTBQUgpGy0HrA6Vs1LwodIHPhkXDF7NUhc
-	V8DGXyvNtuQmAPfEeCiooWf2I4QNw/r0Tkue4XoFcc4ffVzddVf87c+Lxa7Ev/YtIQffy2
-	TP+WBevURyfeW6nUqxjk1G6kYcohn7BfIxZNNw0nSkugf0hFkbleDLFvRMi5BPCHwZMy+y
-	FQJ6zd4wMmlmsfTW1e8RYt1ShyB8QHN+ohqsvu7zoJbe4wLyyoDyfWb8jh0QrwpXFvTuE9
-	t0LPvm4mMSSO7Yugr2TXaxoYb+ehMquBD4gzOM1o5jniTWCFJQCxijqXZI4CQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739798191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hbzeR8+Y7kYNnpEhwXuG2o0ayidVAVXDLH2xJ++sFq0=;
-	b=nhnlbg3rrME/McneTBlNPVXjK2e2zMfvWMeY7kjBlShSXXD2ZqTobgx0Aml1TDArIvvxmu
-	MDWkImDjbtw80lAA==
-Date: Mon, 17 Feb 2025 14:16:12 +0100
-Subject: [PATCH] tracing/user_events: Don't use %pK through printk
+	s=arc-20240116; t=1739798342; c=relaxed/simple;
+	bh=vDp+ULcTmetlszpVsMoQh+ubngAgcM3/x1bls2GBlOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BWxZhq0LamXtonEWQVBGwLP7t/p2xWxNd0e0/FLg0ouDotQ03HOCWWMhilExFruAmnE9KmEUw41p+XJbp22W1sr96X12rhhYVrizne3dFVYYR2WpAqA5/Ax0oPrBaYTkXJfAtzcXXkVNdX8EiiPtv8VQsb3OlDc+SkuZb7i/eBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrhKH2/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CA1C4CED1;
+	Mon, 17 Feb 2025 13:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739798341;
+	bh=vDp+ULcTmetlszpVsMoQh+ubngAgcM3/x1bls2GBlOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YrhKH2/tVMa0FpWO9g0XO8hxtLgH2+w1OP5sZmMti3kJjl78lgCth7DBm7pW2h98z
+	 HbWBNm+qq1WpHwTsvUlAr4+bMCqsSLdulE6yiJIrMIWdoZR2SOF+QcrPL18m8WgP0A
+	 N4zFFQX+GkCUy+ojnMRGLmyX+nU0vNhPH0ElHrCE8yi44Ad1pTCoNJnwMGhmqYwqLM
+	 aVEj4WrgfH5ILXv+2CrMW+rYZFJd83Ii58SIxKT3HSvrSiLRU0BmtkPwgBz7izJfsV
+	 6rP/ppMNzEsRhPAXu0wsSntZua6mcERaf44vE2XBTinKcNShc8pyt8/cMPowZfJD2q
+	 tYOuPGLYzqABg==
+Date: Mon, 17 Feb 2025 13:18:45 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v3 07/15] iio: adc: ad7606: use
+ gpiod_multi_set_value_cansleep
+Message-ID: <20250217131845.17af66a4@jic23-huawei>
+In-Reply-To: <20250210-gpio-set-array-helper-v3-7-d6a673674da8@baylibre.com>
+References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
+	<20250210-gpio-set-array-helper-v3-7-d6a673674da8@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250217-restricted-pointers-trace-v1-1-bbe9ea279848@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAJs2s2cC/x3MQQrDIBBG4auEWXdAhUbIVUoXVv8kszFhRkpBc
- vdIl9/ivU4GFRgtUyfFV0yOOuAfE+U91Q0sZZiCC08XfGSFNZXcUPg8pDaocdOUwcmtHx+iiyn
- PNPpTscrv/369r+sGfoClOWsAAAA=
-X-Change-ID: 20250217-restricted-pointers-trace-a0fb12707ac6
-To: Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739798191; l=1287;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=wyxvqAZpVxqQZ+urKOWQ+0EqdnJ4IB5u0lshrjFkqAw=;
- b=r/RcJt5aXygEOq0CjtIFIXiehHHKoVjtu7JXI7aBsbaIYYQRlJKgkBeAfl3dKOEiuEUXKwjlW
- apHuprJr5oQALJnPJYhMHz2Do8HvvdaBADzKQSr/efP+GBMNB92Z+jw
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Restricted pointers ("%pK") are not meant to be used through printk().
-It can unintentionally expose security sensitive, raw pointer values.
+On Mon, 10 Feb 2025 16:33:33 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-Use regular pointer formatting instead.
+> Reduce verbosity by using gpiod_multi_set_value_cansleep() instead of
+> gpiod_set_array_value().
+> 
+> These are not called in an atomic context, so changing to the cansleep
+> variant is fine.
+> 
+> Also drop unnecessary braces while we are at it.
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+I've applied this to the IIO tree now but won't push out as anything other than
+testing until Bartosz has dropped it. (thanks for doing that btw!)
 
-Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- kernel/trace/trace_events_user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Due to code movement it ends up being all in ad7606.c
 
-diff --git a/kernel/trace/trace_events_user.c b/kernel/trace/trace_events_user.c
-index 97325fbd62836f4fb477c4a2b2936eff544291ec..3effc6fce20e65a8077de5221eb69db04fb1a775 100644
---- a/kernel/trace/trace_events_user.c
-+++ b/kernel/trace/trace_events_user.c
-@@ -455,7 +455,7 @@ static void user_event_enabler_fault_fixup(struct work_struct *work)
- 	if (ret && ret != -ENOENT) {
- 		struct user_event *user = enabler->event;
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+index 1e8b03a518b8..87908cc51e48 100644
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -828,8 +828,7 @@ static int ad7606_write_os_hw(struct iio_dev *indio_dev, int val)
  
--		pr_warn("user_events: Fault for mm: 0x%pK @ 0x%llx event: %s\n",
-+		pr_warn("user_events: Fault for mm: 0x%p @ 0x%llx event: %s\n",
- 			mm->mm, (unsigned long long)uaddr, EVENT_NAME(user));
- 	}
+        values[0] = val & GENMASK(2, 0);
  
+-       gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+-                             st->gpio_os->info, values);
++       gpiod_multi_set_value_cansleep(st->gpio_os, values);
+ 
+        /* AD7616 requires a reset to update value */
+        if (st->chip_info->os_req_reset)
+@@ -1260,10 +1259,9 @@ static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev)
+         * in the device tree, then they need to be set to high,
+         * otherwise, they must be hardwired to VDD
+         */
+-       if (st->gpio_os) {
+-               gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+-                                     st->gpio_os->info, os);
+-       }
++       if (st->gpio_os)
++               gpiod_multi_set_value_cansleep(st->gpio_os, os);
++
+        /* OS of 128 and 256 are available only in software mode */
+        st->oversampling_avail = ad7606b_oversampling_avail;
+        st->num_os_ratios = ARRAY_SIZE(ad7606b_oversampling_avail);
 
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250217-restricted-pointers-trace-a0fb12707ac6
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  drivers/iio/adc/ad7606.c     | 3 +--
+>  drivers/iio/adc/ad7606_spi.c | 7 +++----
+>  2 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index d8e3c7a43678c57470a5118715637a68b39125c1..9a124139924e4a4fbbbd234a8514eb77024442b3 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -818,8 +818,7 @@ static int ad7606_write_os_hw(struct iio_dev *indio_dev, int val)
+>  
+>  	values[0] = val & GENMASK(2, 0);
+>  
+> -	gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+> -			      st->gpio_os->info, values);
+> +	gpiod_multi_set_value_cansleep(st->gpio_os, values);
+>  
+>  	/* AD7616 requires a reset to update value */
+>  	if (st->chip_info->os_req_reset)
+> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> index e2c1475257065c98bf8e2512bda921d6d88a3002..091f31edb6604da3a8ec4d2d5328ac6550faa22c 100644
+> --- a/drivers/iio/adc/ad7606_spi.c
+> +++ b/drivers/iio/adc/ad7606_spi.c
+> @@ -296,10 +296,9 @@ static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
+>  	 * in the device tree, then they need to be set to high,
+>  	 * otherwise, they must be hardwired to VDD
+>  	 */
+> -	if (st->gpio_os) {
+> -		gpiod_set_array_value(st->gpio_os->ndescs,
+> -				      st->gpio_os->desc, st->gpio_os->info, os);
+> -	}
+> +	if (st->gpio_os)
+> +		gpiod_multi_set_value_cansleep(st->gpio_os, os);
+> +
+>  	/* OS of 128 and 256 are available only in software mode */
+>  	st->oversampling_avail = ad7606B_oversampling_avail;
+>  	st->num_os_ratios = ARRAY_SIZE(ad7606B_oversampling_avail);
+> 
 
 
