@@ -1,970 +1,256 @@
-Return-Path: <linux-kernel+bounces-517479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A8AA3815B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:09:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB58A38167
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27B0D7A31AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E291892552
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112EE2135C7;
-	Mon, 17 Feb 2025 11:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6925217722;
+	Mon, 17 Feb 2025 11:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOuv5/Y6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qf/ScGsP"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A34F216600;
-	Mon, 17 Feb 2025 11:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790526; cv=none; b=Dv+2CSMTFEFzME/fF47O3R09oyFKQBDjhh5dWF55p2PJ1RSfEU7gXUlDUfvpOg8hP2rNpys3/FaobNz5PdJFhScoJDqJIT7lA6dMEalDA+U+8yBudcu8b0+gPoS14rCZLPJIYK8OSY02OE5eWjXIyC0ukkQCfaWHJuuArlft7Wg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790526; c=relaxed/simple;
-	bh=a2fwjbgyRHUdkihZsSLXZpLhQd3dv20UOrfRE7ma31s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JZqlevlMf923TNwu1rYOuUtai3l7cN86Vpxfe2DajdReWs68LEqwCu96DvhNwAsAyIyq8vL8Ht68YgDD/xMh5eN7GkF1l9GkE23QsBxMos2nZvWIqeDLuG2/xZr4JEVfHEEys1FwlJStCMC0AXoNnq5jByBf+nQDubcdhr62fC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOuv5/Y6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA7EEC4CED1;
-	Mon, 17 Feb 2025 11:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739790526;
-	bh=a2fwjbgyRHUdkihZsSLXZpLhQd3dv20UOrfRE7ma31s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=oOuv5/Y69XC1nDcMUkg+BaonhJCmwztp5lsPQcWVvZmoaHdfIYqYKVZhM7rOw6dKy
-	 rvt17odptvXusZkqAy480wJyQSzYqIQU9QqkHih2DLH2H8T4lJGz87ewI/VOdpX48b
-	 WJpTkOr/JkfnUePqMSA2tpr5PlUmQY1y1FUryr4K4CAsFF0rpPKSYCF6tPWhlX9cJv
-	 WL4hvnjU1CA7fhhHp2rABPoNH48ZN5OMDPfSkZGGmW9/izvZIoG5o6Yyel0rEKjeMe
-	 p40GeVTVChKHptJQMb/zb/UN4Xyi05Zpf7q7cTSicGjhKEFislMcZJgZJKUUF5WF5a
-	 DtKqA6rBgXJ6w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Joel Becker" <jlbec@evilplan.org>,
-  "Christoph Hellwig" <hch@lst.de>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Ingo Molnar" <mingo@redhat.com>,  "Will Deacon"
- <will@kernel.org>,  "Waiman Long" <longman@redhat.com>,  "Fiona Behrens"
- <me@kloenk.dev>,  "Charalampos Mitrodimas" <charmitro@posteo.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] rust: configfs: introduce rust support for configfs
-In-Reply-To: <dd63fcde-ba4c-4a6e-9bde-1af5af37e91b@proton.me> (Benno Lossin's
-	message of "Mon, 17 Feb 2025 02:17:16 +0000")
-References: <20250207-configfs-v2-0-f7a60b24d38e@kernel.org>
-	<20250207-configfs-v2-2-f7a60b24d38e@kernel.org>
-	<S6DKlLVx4KKevl_q2zrW69Z7oS0jwyX4DXpDZrFiIy1lKo4VYHM52aDiV82c2yf52Ecr7t9FayuqBUPR9onvZA==@protonmail.internalid>
-	<dd63fcde-ba4c-4a6e-9bde-1af5af37e91b@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 17 Feb 2025 12:08:22 +0100
-Message-ID: <87h64su8ux.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D19F215F5F;
+	Mon, 17 Feb 2025 11:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739790564; cv=fail; b=o0IU0l4fGbPJ+KN8njzjjuEkcDKUhL8xIS+wzs7CGPCi1ZWwKZQKdOSvGy2GEWbgz5sW83FG1sggUMM7OKDS/S4U3EMxqE9GecE2o3czb+vyzA387hORJu1oXspeTN/XK2FyxldnvxP7JWc3WVt3UAHgSc4LCp2fkxFZvtrCjLg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739790564; c=relaxed/simple;
+	bh=0k04KPrkBn/rK6tuNzzNcp8uvbI1CBk/FF5WzsfVdHQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=i6wV7QcQattkuT3oabbSvBkUf+6uhtx1ONR165YA+DAXgXT0rYCxR2W1ZoBGZlTGQ0k1KC8dMECk+CxJ/6L04MUiNOf3xYPWGm0iRpSmU00wUWOj17tCs6PWakZKs5CqMxOl0X6JyNjD8zd3UFJtcGgU7cVFG395gTqp6yh6cfk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qf/ScGsP; arc=fail smtp.client-ip=40.107.244.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QyFx0ZIw1KAkRqQMmNKVPGPaRyv+I9Pc+3mlpCwMDciidHZIfK1GoAX0DETL0tOOSyKh1Q52vL+ou0XEQrRmjcjatfSIMhwoEz2whUSNefFmGtIHRT59vcDo0sIOqdRUeiyTaaDxHCA0hlzpYaJyECyYiSchdip0S1wlWFmYiPuqv6i1tepzInAtdYMhaiqC8DN78TWHWHWcCUHru8vxfiKAUPdNl1/WG5jyHhyYdRJYlT0xI/gH7SNOn0Y3eHrLZ8A5Ttzzkw98ZRsGM3PGMYvBdvhHzMOU0RrS6hylyPJSx6xGL8H3cqPzz+15eAWeQtE1gAXV4J4b54xhzP+Vyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z73OiST/bMwt95Q6vBYk4afIzZ01/mOEJjItkHdC1rE=;
+ b=VBS8AF6+i6GJlld7RMOhCL0aRdVaKmvM/mepT9FkCG43Vow5kito8Nnf6HCF+vmmpB6NKmeM8DCe6n5uFLsVT0//MvZxr+WaDcKA8rEKF4no+A2v6cCgwPe+IoNcr0rCexxbflaoJTW7FpPcTTE6A8Dmkj7k5WtmtmZEIwuLRWwM3arneWNkZwvvTxy0ZIG+4FaOz/rl8hlOsQW/tsqkikKoRlF6PWfxLlBPlS5AsWlAL0NIDcgxzzre8iIKjkUegvRgPb0krlK3UKispHeeA5uEp0zMdmWFR2WpOn3iXrZQqh2A/kdt4yUvVYz5JFK3ksLq4KIHef3SLNoKirsvbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z73OiST/bMwt95Q6vBYk4afIzZ01/mOEJjItkHdC1rE=;
+ b=qf/ScGsP4X0FN2cdzK1ocN6dBZHjgoirnCDntY/m9D40u44tIALa0UaTFCQlfqrep+9gAcZfJJ7MgqIiDjhYfLobBQfoulheNEgwQiAZL/XInvW4Q8HSB0/dwD3dV3DiAxscEE5jWSDW9wmXk5OaMjrrjgrLAWGLjx12BtDRZrA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
+ by SA0PR12MB7003.namprd12.prod.outlook.com (2603:10b6:806:2c0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Mon, 17 Feb
+ 2025 11:09:19 +0000
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30%7]) with mapi id 15.20.8445.015; Mon, 17 Feb 2025
+ 11:09:19 +0000
+Message-ID: <01b80c04-1d64-4850-bd75-bcf73d42dd67@amd.com>
+Date: Mon, 17 Feb 2025 12:09:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: power: reset: xilinx: Make "interrupts"
+ property optional
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: git@amd.com
+References: <20250217095226.12606-1-shubhrajyoti.datta@amd.com>
+Content-Language: en-US
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ 3i3l5DA=
+In-Reply-To: <20250217095226.12606-1-shubhrajyoti.datta@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0241.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f5::6) To SJ2PR12MB8109.namprd12.prod.outlook.com
+ (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-"Benno Lossin" <benno.lossin@proton.me> writes:
-
-> On 07.02.25 15:41, Andreas Hindborg wrote:
->> This patch adds a rust API for configfs, thus allowing rust modules to u=
-se
->> configfs for configuration. The implementation is a shim on top of the C
->> configfs implementation allowing safe use of the C infrastructure from
->> rust.
->>
->> The patch enables the `const_mut_refs` feature on compilers before rustc
->> 1.83. The feature was stabilized in rustc 1.83 and is not required to be
->> explicitly enabled on later versions.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>
->> ---
->>
->> This patch is a direct dependency for `rnull`, the rust null block drive=
-r.
->> ---
->>  rust/bindings/bindings_helper.h |   1 +
->>  rust/helpers/mutex.c            |   5 +
->>  rust/kernel/configfs.rs         | 860 +++++++++++++++++++++++++++++++++=
-+++++++
->>  rust/kernel/lib.rs              |   2 +
->>  samples/rust/Kconfig            |  11 +
->>  samples/rust/Makefile           |   1 +
->>  samples/rust/rust_configfs.rs   | 186 +++++++++
->
-> Can you move the sample into its own patch?
-
-Yes.
-
-[...]
-
->> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
->> new file mode 100644
->> index 0000000000000..9d4b381b9df89
->> --- /dev/null
->> +++ b/rust/kernel/configfs.rs
->> @@ -0,0 +1,860 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! `configfs` interface.
->> +//!
->> +//! `configfs` is an in-memory pseudo file system for configuration of =
-kernel
->> +//! modules. Please see the [C documentation] for details and intended =
-use of
->> +//! `configfs`.
->> +//!
->> +//! This module does not support the following `configfs` features:
->> +//!
->> +//! - Items. All group children are groups.
->> +//! - Symlink support.
->> +//! - `disconnect_notify` hook.
->> +//! - Default groups.
->
-> For lists like this, I usually end items except the last one with a
-> comma instead of a period.
-
-If that is the right way to do it, sure. It is actually funny that you
-notice, because I searched for input on how to typeset such a list, and
-some Microsoft typesetting site told me to do it like this when some
-items are sentences [1]. I am not a native English speaker, and I have
-no idea what the correct formatting is. Commas are not mentioned at the
-resource I found.
-
-[1] https://www.microsoft.com/en-us/microsoft-365-life-hacks/writing/punctu=
-ating-bullet-point-lists
-
->
->> +//!
->> +//! See the [rust_configfs.rs] sample for a full example use of this mo=
-dule.
->
-> It could also be useful to just put the example directly here into the
-> docs instead of/additionally to having it as a sample.
-
-I don't think we should duplicate the code. As long as the link works, I
-think having it separately is fine.
-
->
->> +//!
->> +//! C header: [`include/linux/configfs.h`](srctree/include/linux/config=
-fs.h)
->> +//!
->> +//! [C documentation]: srctree/Documentation/filesystems/configfs.rst
->> +//! [rust_configfs.rs]: srctree/samples/rust/rust_configfs.rs
->> +
->> +use crate::alloc::flags;
->> +use crate::container_of;
->> +use crate::page::PAGE_SIZE;
->> +use crate::prelude::*;
->> +use crate::str::CString;
->> +use crate::sync::Arc;
->> +use crate::types::ForeignOwnable;
->> +use crate::types::Opaque;
->> +use core::cell::UnsafeCell;
->> +use core::marker::PhantomData;
->> +use core::ptr::addr_of;
->> +use core::ptr::addr_of_mut;
->
-> I usually would import this like so:
->
->     use crate::{
->         alloc::flags,
->         container_of,
->         page::PAGE_SIZE,
->         prelude::*,
->         str::CString,
->         sync::Arc,
->         types::{ForeignOwnable, Opaque},
->     };
->     use core::{
->         cell::UnsafeCell,
->         marker::PhantomData,
->         ptr::{addr_of, addr_of_mut},
->     };
->
-> To me this is more readable.
-
-I disagree with that. I don't think what you suggest is easier to read,
-and it is much more difficult to work with when rebasing and merging
-things. This was discussed elsewhere in the past without reaching a
-conclusion. I think we should come to a consensus on what style we
-should adopt for the imports.
-
->
->> +
->> +/// A `configfs` subsystem.
->> +///
->> +/// This is the top level entrypoint for a `configfs` hierarchy. To reg=
-ister
->> +/// with configfs, embed a field of this type into your kernel module s=
-truct.
->> +#[pin_data(PinnedDrop)]
->> +pub struct Subsystem<Data> {
->
-> Usually, we don't have multi-character generics, any specific reason
-> that you chose `Data` here over `T` or `D`?
-
-Yes, I find it more descriptive. The patch set went through quite a bit
-of evolution, and the generics got a bit complicated in earlier
-iterations, which necessitated more descriptive generic type parameter
-names. It's not so bad in this version after I restricted the pointer
-type to just `Arc`, but I still think that using a word rather a single
-letter makes the code easier to comprehend at first pass.
-
-Also, using a word is allowed as per the API guideline document [2]:
-
-      > concise UpperCamelCase, usually single uppercase letter: T
-
-https://rust-lang.github.io/api-guidelines/naming.html
-
->
->> +    #[pin]
->> +    subsystem: Opaque<bindings::configfs_subsystem>,
->> +    #[pin]
->> +    data: Data,
->> +}
->> +
->> +// SAFETY: We do not provide any operations on `Subsystem`.
->> +unsafe impl<Data> Sync for Subsystem<Data> {}
->> +
->> +// SAFETY: Ownership of `Subsystem` can safely be transferred to other =
-threads.
->> +unsafe impl<Data> Send for Subsystem<Data> {}
->> +
->> +impl<Data> Subsystem<Data> {
->> +    /// Create an initializer for a [`Subsystem`].
->> +    ///
->> +    /// The subsystem will appear in configfs as a directory name given=
- by
->> +    /// `name`. The attributes available in directory are specified by
->> +    /// `item_type`.
->> +    pub fn new(
->> +        name: &'static CStr,
->> +        item_type: &'static ItemType<Subsystem<Data>, Data>,
->> +        data: impl PinInit<Data, Error>,
->> +    ) -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {
->> +            subsystem <- kernel::init::zeroed().chain(
->> +                |place: &mut Opaque<bindings::configfs_subsystem>| {
->> +                    // SAFETY: All of `place` is valid for write.
->> +                    unsafe {
->> +                        addr_of_mut!((*place.get()).su_group.cg_item.ci=
-_name )
->> +                            .write(name.as_ptr().cast_mut().cast())
->> +                    };
->> +                    // SAFETY: All of `place` is valid for write.
->> +                    unsafe {
->> +                        addr_of_mut!((*place.get()).su_group.cg_item.ci=
-_type)
->> +                            .write(item_type.as_ptr())
->> +                    };
->> +                    // SAFETY: We initialized the required fields of `p=
-lace.group` above.
->> +                    unsafe { bindings::config_group_init(&mut (*place.g=
-et()).su_group) };
->> +                    // SAFETY: `place.su_mutex` is valid for use as a m=
-utex.
->> +                    unsafe { bindings::__mutex_init(
->> +                        &mut (*place.get()).su_mutex,
->> +                        kernel::optional_name!().as_char_ptr(),
->> +                        kernel::static_lock_class!().as_ptr())
->
-> Formatting for this code is weird.
->
-> (since this is inside of the `try_pin_init!` macro, rustfmt doesn't
-> format it, since `<-` isn't part of rust syntax, so it doesn't know what
-> to do. I usually fix this by replacing all `<-` with `:`, format and
-> then change things back)
-
-Such is the perils of macros. I'll try to go over it again. Perhaps we
-could make `rustfmt` understand `<-`?
-
->
-> Also, is there no function in C that does all of this initialization for
-> you?
-
-I might be able to do a little better. There is a C function that takes
-care of initialization of `ci_name` and `ci_type` as well. I can't
-recall if there was a particular reason for not using it, but I'll
-check.
-
-We have to initialize the mutex explicitly. I think the reason for not
-doing that implicitly C side is to allow it to be statically
-initialized.
-
-[...]
-
->> +
->> +impl<Data> Group<Data> {
->> +    /// Create an initializer for a new group.
->> +    ///
->> +    /// When instantiated, the group will appear as a directory with th=
-e name
->> +    /// given by `name` and it will contain attributes specified by `it=
-em_type`.
->> +    pub fn new(
->> +        name: CString,
->> +        item_type: &'static ItemType<Group<Data>, Data>,
->> +        data: impl PinInit<Data, Error>,
->> +    ) -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {
->> +            group <- kernel::init::zeroed().chain(|v: &mut Opaque<bindi=
-ngs::config_group>| {
->> +                let place =3D v.get();
->> +                let name =3D name.as_bytes_with_nul().as_ptr();
->> +                // SAFETY: It is safe to initialize a group once it has=
- been zeroed.
->> +                unsafe {
->> +                    bindings::config_group_init_type_name(place, name a=
-s _, item_type.as_ptr())
->
-> Can you replace the `as _` cast with a `.cast()`?
-
-=F0=9F=91=8D
-
-[...]
-
->> +unsafe fn get_group_data<'a, Parent>(this: *mut bindings::config_group)=
- -> &'a Parent {
->> +    // TODO
->
-> Missed this todo?
-
-Thanks. It was referring to a missing safety comment that was later put
-in place.
-
->
->> +    // SAFETY: `this` is a valid pointer.
->> +    let is_root =3D unsafe { (*this).cg_subsys.is_null() };
->> +
->> +    if !is_root {
->> +        // SAFETY: By C API contact, `this` is a pointer to a
->> +        // `bindings::config_group` that we passed as a return value in=
- from
->> +        // `make_group`. Such a pointer is embedded within a `Group<Par=
-ent>`.
->> +        unsafe { &(*Group::<Parent>::container_of(this)).data }
->> +    } else {
->> +        // SAFETY: By C API contract, `this` is a pointer to the
->> +        // `bindings::config_group` field within a `Subsystem<Parent>`.
->> +        unsafe { &(*Subsystem::container_of(this)).data }
->> +    }
->> +}
->> +
->> +struct GroupOperationsVTable<Parent, Child>(PhantomData<(Parent, Child)=
->)
->
-> Generic names?
-
-I prefer descriptive names. I don't really see the point of replacing
-with `P,C`. It would not be better.
-
->
->> +where
->> +    Parent: GroupOperations<Child =3D Child>;
->
-> No need to put this where bound on the struct definition (it is only
-> needed if the struct impls `Drop`).
-
-Right.
-
-[...]
-
->> +
->> +/// Operations implemented by `configfs` groups that can create subgrou=
-ps.
->> +///
->> +/// Implement this trait on structs that embed a [`Subsystem`] or a [`G=
-roup`].
->> +#[vtable]
->> +pub trait GroupOperations {
->> +    /// The parent data object type.
->> +    ///
->> +    /// The implementer of this trait is this kind of data object. Shou=
-ld be set
->> +    /// to `Self`.
->> +    type Parent;
->
-> If it should be set to `Self`, why does this even exist? If there are
-> cases where it isn't supposed to be `Self`, it would be good to put them
-> into the docs.
-
-Good point. I'll remove the type and use `&self` at relevant places
-instead.
-
->
->> +
->> +    /// The child data object type.
->> +    ///
->> +    /// This group will create subgroups (subdirectories) backed by thi=
-s kind of
->> +    /// object.
->> +    type Child: 'static;
->> +
->> +    /// The kernel will call this method in response to `mkdir(2)` in t=
-he
->> +    /// directory representing `this`.
->
-> This doesn't really read like a first line description of this function,
-> how about putting "Creates a new subgroup." as the first line?
-
-Good call.
-
->
->> +    ///
->> +    /// To accept the request to create a group, implementations should
->> +    /// instantiate a `CHLD` and return a `CPTR` to it. To prevent crea=
-tion,
->
-> Is there a typo in `CHLD`? What do you mean by "return a `CPTR` to it"?
-
-Sorry, it's from an older iteration of the patch set. I'll update the
-sentence. Looking forward to the day where the compiler can use AI to
-type check the docs :)
-
->
->> +    /// return a suitable error.
->> +    fn make_group(
->> +        this: &Self::Parent,
->> +        name: &CStr,
->> +    ) -> Result<impl PinInit<Group<Self::Child>, Error>>;
->> +
->> +    /// The kernel will call this method before the directory represent=
-ing
->> +    /// `_child` is removed from `configfs`.
->
-> Same thing about the one-line description, how about (with the name
-> changed below): "Prepares the given group for removal from configfs.".
-
-=F0=9F=91=8D
-
->
->> +    ///
->> +    /// Implementations can use this method to do house keeping before
->> +    /// `configfs` drops its reference to `Child`.
->> +    fn drop_item(
->
-> `drop` doesn't really fit here, I think something like `unlink_item`
-> fits better, since the child isn't actually dropped after this function
-> returns.
-
-Yea, I know. But the function is called `drop_item` on the C side of
-things. Usually we keep the C names.
-
->
->> +        _this: &Self::Parent,
->> +        _child: <Arc<Group<Self::Child>> as ForeignOwnable>::Borrowed<'=
-_>,
->
-> Just write ArcBorrow<'_, Group<Self::Child>> instead of the above?
-
-Right. An earlier version of the patch set was generic over the pointer
-type, allowing use of Box as well. The bounds became sort of wild, so I
-figured limiting to `Arc` is probably fine.
-
->
->> +    ) {
->> +        kernel::build_error!(kernel::error::VTABLE_DEFAULT_ERROR)
->> +    }
->> +}
->> +
->> +/// A `configfs` attribute.
->> +///
->> +/// An attribute appear as a file in configfs, inside a folder that rep=
-resent
->
-> Typo: appear -> appears
-
-=F0=9F=91=8D
-
->
-
-[...]
-
->> +/// Operations supported by an attribute.
->> +///
->> +/// Implement this trait on type and pass that type as generic paramete=
-r when
->> +/// creating an [`Attribute`]. The type carrying the implementation ser=
-ve no
->> +/// purpose other than specifying the attribute operations.
->> +#[vtable]
->> +pub trait AttributeOperations<const ID: u64 =3D 0> {
->> +    /// The type of the object that contains the field that is backing =
-the
->> +    /// attribute for this operation.
->> +    type Data;
->> +
->> +    /// This function is called by the kernel to read the value of an a=
-ttribute.
->
-> "Reads the value of an attribute.".
-
-=F0=9F=91=8D
-
->
->> +    ///
->> +    /// Implementations should write the rendering of the attribute to =
-`page`
->> +    /// and return the number of bytes written.
->> +    fn show(data: &Self::Data, page: &mut [u8; PAGE_SIZE]) -> Result<us=
-ize>;
->
-> Why is this not named `read` or `load`? If the C equivalent is `show`,
-> then it's fine, but otherwise I wouldn't understand why it's show/store
-> as opposed to load/store or read/write.
-
-Yes, also here naming is derived from the C counterpart. The vtable item
-is called `show`.
-
->
->> +
->> +    /// This function is called by the kernel to update the value of an=
- attribute.
->
-> Again first line doc here.
-
-=F0=9F=91=8D
-
->
->> +    ///
->> +    /// Implementations should parse the value from `page` and update i=
-nternal
->> +    /// state to reflect the parsed value. Partial writes are not suppo=
-rted and
->> +    /// implementations should expect the full page to arrive in one wr=
-ite
->> +    /// operation.
->
-> I don't understand what you're trying to say with the last sentence.
-
-I will remove the comment, it does not make sense here. I picked it up
-from C docs. It refers to how the function is exposed to user space.
-Usually writes to files are processed in chunks, and file systems cannot
-expect that all data written to a file will be passed in a single
-function call.
-
->
->> +    fn store(_data: &Self::Data, _page: &[u8]) -> Result {
->> +        kernel::build_error!(kernel::error::VTABLE_DEFAULT_ERROR)
->> +    }
->> +}
->> +
->> +/// A list of attributes.
->> +///
->> +/// This type is used to construct a new [`ItemType`]. It represents a =
-list of
->> +/// [`Attribute`] that will appear in the directory representing a [`Gr=
-oup`].
->> +/// Users should not directly instantiate this type, rather they should=
- use the
->> +/// [`kernel::configfs_attrs`] macro to declare a static set of attribu=
-tes for a
->> +/// group.
->> +#[repr(transparent)]
->> +pub struct AttributeList<const N: usize, Data>(
->> +    UnsafeCell<[*mut kernel::ffi::c_void; N]>,
->> +    PhantomData<Data>,
->> +);
->> +
->> +// SAFETY: Ownership of `AttributeList` can safely be transferred to ot=
-her threads.
->> +unsafe impl<const N: usize, Data> Send for AttributeList<N, Data> {}
->> +
->> +// SAFETY: We do not provide any operations on `AttributeList` that nee=
-d synchronization.
->> +unsafe impl<const N: usize, Data> Sync for AttributeList<N, Data> {}
->> +
->> +impl<const N: usize, Data> AttributeList<N, Data> {
->> +    #[doc(hidden)]
->
-> I normally put attributes after the documentation.
-
-Ok =F0=9F=91=8D
-
->
->> +    /// # Safety
->> +    ///
->> +    /// This function can only be called by expanding the `configfs_att=
-rs`
->
-> s/expanding//
-
-Ok.
-
->
->> +    /// macro.
->> +    pub const unsafe fn new() -> Self {
->> +        Self(UnsafeCell::new([core::ptr::null_mut(); N]), PhantomData)
->> +    }
->> +
->> +    #[doc(hidden)]
->> +    /// # Safety
->> +    ///
->> +    /// This function can only be called by expanding the `configfs_att=
-rs`
->
-> s/expanding//
-
-Ok.
-
->
->> +    /// macro.
->> +    pub const unsafe fn add<
->> +        const I: usize,
->> +        const ID: u64,
->> +        O: AttributeOperations<ID, Data =3D Data>,
->> +    >(
->> +        &'static self,
->> +        attribute: &'static Attribute<ID, O, Data>,
->> +    ) {
->> +        if I >=3D N - 1 {
->> +            kernel::build_error!("Invalid attribute index");
->> +        }
->> +
->> +        // SAFETY: This function is only called through `configfs_attrs=
-`. This
->
-> s/through `configfs_attrs`/through the `configfs_attrs` macro/
-
-Ok.
-
->
-
-[...]
-
->> +impl_item_type!(Subsystem<Data>);
->> +impl_item_type!(Group<Data>);
->> +
->> +impl<Container, Data> ItemType<Container, Data> {
->> +    fn as_ptr(&self) -> *const bindings::config_item_type {
->> +        self.item_type.get()
->> +    }
->> +}
->> +
->> +/// Define a list of configfs attributes statically.
->> +#[macro_export]
->> +macro_rules! configfs_attrs {
->
-> I see you've joined the dark side of declarative macros!
->
-> This seems like a prime candidate for replacing with a proc-macro when
-> we have syn :)
-
-Yes, I found myself wishing for `syn` very much while writing this.
-
->
->> +    (
->> +        container: $container:ty,
->> +        data: $data:ty,
->> +        attributes: [
->> +            $($name:ident: $attr:literal,)*
->
-> This syntax always requires a trailing comma. Most (IIRC all, but not
-> 100% sure) Rust syntax allows you to omit it, so it would be odd if it
-> were not the case here. You can have an optional trailing comma via:
->
->     $($name:ident: $attr:literal),* $(,)?
->
-> But as soon as you give the tokens off to the internals of the macro, I
-> would recommend sticking to always having a trailing comma or no
-> trailing comma.
-
-Makes sense, I will fix that. Perhaps after the array square brackets as we=
-ll.
-
->
->> +        ],
->> +    ) =3D> {
->> +        $crate::configfs_attrs!(
->> +            count:
->> +            @container($container),
->> +            @data($data),
->> +            @child(),
->> +            @no_child(x),
->> +            @attrs($($name $attr)*),
->> +            @eat($($name $attr,)*),
->> +            @assign(),
->> +            @cnt(0usize),
->> +        )
->> +    };
->> +    (
->> +        container: $container:ty,
->> +        data: $data:ty,
->> +        child: $child:ty,
->> +        attributes: [
->> +            $($name:ident: $attr:literal,)*
->
-> Ditto.
->
->> +        ],
->> +    ) =3D> {
->> +        $crate::configfs_attrs!(
->> +            count:
->> +            @container($container),
->> +            @data($data),
->> +            @child($child),
->> +            @no_child(),
->> +            @attrs($($name $attr)*),
->> +            @eat($($name $attr,)*),
->> +            @assign(),
->> +            @cnt(0usize),
->> +        )
->> +    };
->> +    (count:
->> +     @container($container:ty),
->> +     @data($data:ty),
->> +     @child($($child:ty)?),
->> +     @no_child($($no_child:ident)?),
->> +     @attrs($($aname:ident $aattr:literal)*),
->> +     @eat($name:ident $attr:literal, $($rname:ident $rattr:literal,)*),
->> +     @assign($($assign:block)*),
->> +     @cnt($cnt:expr),
->> +    ) =3D> {
->> +        $crate::configfs_attrs!(
->> +            count:
->> +            @container($container),
->> +            @data($data),
->> +            @child($($child)?),
->> +            @no_child($($no_child)?),
->> +            @attrs($($aname $aattr)*),
->> +            @eat($($rname $rattr,)*),
->> +            @assign($($assign)* {
->> +                const N: usize =3D $cnt;
->> +                // SAFETY: We are expanding `configfs_attrs`.
->
-> This safety comment is doing a lot of heavy lifting, since it is not at
-> all obvious what the below unsafe function will resolve to... Seems also
-> a hassle to put a full comment here explaining that
-> `[< $data:upper _ATTRS >]` is defined by the macro below and that it is
-> of type `AttributeList` etc... But maybe we should.
-
-I mean, I can put a comment saying that this will expand to a call to `Attr=
-ibute::add`?
-
->
->> +                unsafe {
->> +                    $crate::macros::paste!( [< $data:upper _ATTRS >])
->> +                        .add::<N, $attr, _>(
->> +                            & $crate::macros::paste!( [< $data:upper _ =
-$name:upper _ATTR >])
->> +                        )
->> +                };
->> +            }),
->
-> You can merge the two `paste!` invocations into one:
-
-Is that better?
-
->
->     @assign($($assign)* {
->         const N: usize =3D $cnt;
->         $crate::macros::paste! {
->             // SAFETY: see above comment
->             unsafe {
->                 [< $data:upper _ATTRS >].add::<N, $attr, _>(
->                     &[< $data:upper _ $name:upper _ATTR >]
->                 );
->             }
->         }
->     }),
->
->> +            @cnt(1usize + $cnt),
->> +        )
->> +    };
->> +    (count:
->> +     @container($container:ty),
->> +     @data($data:ty),
->> +     @child($($child:ty)?),
->> +     @no_child($($no_child:ident)?),
->> +     @attrs($($aname:ident $aattr:literal)*),
->> +     @eat(),
->> +     @assign($($assign:block)*),
->> +     @cnt($cnt:expr),
->> +    ) =3D>
->> +    {
->> +        $crate::configfs_attrs!(
->> +            final:
->> +            @container($container),
->> +            @data($data),
->> +            @child($($child)?),
->> +            @no_child($($no_child)?),
->> +            @attrs($($aname $aattr)*),
->> +            @assign($($assign)*),
->> +            @cnt($cnt),
->> +        )
->> +    };
->> +    (final:
->> +     @container($container:ty),
->> +     @data($data:ty),
->> +     @child($($child:ty)?),
->> +     @no_child($($no_child:ident)?),
->> +     @attrs($($name:ident $attr:literal)*),
->> +     @assign($($assign:block)*),
->> +     @cnt($cnt:expr),
->> +    ) =3D>
->> +    {
->> +        {
->> +            $(
->> +                $crate::macros::paste!{
->
-> Again you can coalesce all of the `paste!` invocations into a single one
-> spanning the entire output of this macro branch.
-
-Is that better? I actually tried to keep them smaller.
-
->
->> +                    // SAFETY: We are expanding `configfs_attrs`.
->> +                    static [< $data:upper _ $name:upper _ATTR >]:
->> +                      $crate::configfs::Attribute<$attr, $data, $data> =
-=3D
->> +                        unsafe {
->> +                            $crate::configfs::Attribute::new(c_str!(::c=
-ore::stringify!($name)))
->> +                        };
->> +                }
->> +            )*
->> +
->> +
->> +            const N: usize =3D $cnt + 1usize;
->
-> Why do we need an additional copy? To have a zero entry at the end for C
-> to know it's the end of the list? If so, a comment here would be very
-> helpful.
-
-Yes, we need space for a null terminator. I'll add a comment.
-
-We actually have a static check to make sure that we not missing this.
-
->
->> +            $crate::macros::paste!{
->> +                // SAFETY: We are expanding `configfs_attrs`.
->> +                static [< $data:upper _ATTRS >]:
->> +                  $crate::configfs::AttributeList<N, $data> =3D
->> +                    unsafe { $crate::configfs::AttributeList::new() };
->> +            }
->> +
->> +            $($assign)*
->> +
->> +            $(
->> +                $crate::macros::paste!{
->> +                    const [<$no_child:upper>]: bool =3D true;
->> +                };
->> +
->> +                $crate::macros::paste!{
->> +                    static [< $data:upper _TPE >] : $crate::configfs::I=
-temType<$container, $data>  =3D
->> +                        $crate::configfs::ItemType::<$container, $data>=
-::new::<N>(
->> +                            &THIS_MODULE, &[<$ data:upper _ATTRS >]
->> +                        );
->> +                }
->> +            )?
->> +
->> +            $(
->> +                $crate::macros::paste!{
->> +                    static [< $data:upper _TPE >]:
->> +                      $crate::configfs::ItemType<$container, $data>  =3D
->> +                        $crate::configfs::ItemType::<$container, $data>=
-::new_with_child_ctor::
->> +                    <N, $child>(
->> +                        &THIS_MODULE, &[<$ data:upper _ATTRS >]
->> +                    );
->> +                }
->> +            )?
->> +
->> +            &$crate::macros::paste!( [< $data:upper _TPE >] )
->> +        }
->> +    };
->> +
->> +}
->
-> I tested if multiple invocations of this macro can shadow each other and
-> the answer is no. So wrapping a const with `{}` makes it inaccessible to
-> the outside which is exactly what we need here.
-> The macro looks quite good!
-
-Well you can guess where the inspiration came from :)
-
->
-
-[...]
-
->> diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.=
-rs
->> new file mode 100644
->> index 0000000000000..fe896e66efb41
->> --- /dev/null
->> +++ b/samples/rust/rust_configfs.rs
->> @@ -0,0 +1,186 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Rust configfs sample.
->> +
->> +use kernel::alloc::flags;
->> +use kernel::c_str;
->> +use kernel::configfs;
->> +use kernel::configfs_attrs;
->> +use kernel::new_mutex;
->> +use kernel::prelude::*;
->> +use kernel::sync::Mutex;
->
-> Would merge the imports here too (rust-analyzer has a code-action for
-> that btw).
-
-I prefer it like this.
-
->
->> +
->> +module! {
->> +    type: RustConfigfs,
->> +    name: "rust_configfs",
->> +    author: "Rust for Linux Contributors",
->> +    description: "Rust configfs sample",
->> +    license: "GPL",
->> +}
->> +
->> +#[pin_data]
->> +struct RustConfigfs {
->> +    #[pin]
->> +    config: configfs::Subsystem<Configuration>,
->> +}
->> +
->> +#[pin_data]
->> +struct Configuration {
->> +    message: &'static CStr,
->> +    #[pin]
->> +    bar: Mutex<(KBox<[u8; 4096]>, usize)>,
->> +}
->> +
->> +impl Configuration {
->> +    fn new() -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {
->> +            message: c_str!("Hello World\n"),
->> +            bar <- new_mutex!((KBox::new([0;4096], flags::GFP_KERNEL)?,=
-0)),
->
-> s/;/; /
-> s/,0/, 0/
-
-=F0=9F=91=8D
-
-
-Thanks for the detailed review!
-
-
-Best regards,
-Andreas Hindborg
-
-
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|SA0PR12MB7003:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfa84636-bbd0-4377-902b-08dd4f438630
+X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cDlRdW90OVNsN3h2U0ZULzNpOC8vVVpjanRiZlNpVUplc3dhQ0JtYmNEdlFR?=
+ =?utf-8?B?ZVU2dWUzUkQzS2pHbGZPZ3FmNHhhTk5JNFFPenZnYkNzYmZwN3g4VGo0RkJN?=
+ =?utf-8?B?dEllM0xKaHNCNTFJRGhrRW83aklOZUF3WmZVWElucEVEbTkvVldKc3FzNlo0?=
+ =?utf-8?B?NFFISkNVSTZrK1VvRm51ZWtGTnpFd1NUUFc3YnFOK2cwNm9LaGpIdGIwdG1F?=
+ =?utf-8?B?WmZLTU9CcEwxc0FNVnNqd09QMzZwcDZTQmVlamQ5L3d0NTZ4VGFoOWVvK2wz?=
+ =?utf-8?B?NHdua1oyaDhUZ3psbGNOZFZpRFIrNWx2aWh1YjZNRVRUV1RWVlh4Nys3UzRx?=
+ =?utf-8?B?K0JteFRPTFRtRzE5aXVsS1F6eFd4by9rU3ZoejBtTEZzNGw1MmRxdkpXUUh1?=
+ =?utf-8?B?KzM1S2FFR2xSaGZjSEcxOWNJb0l1VGE3M1JEWTh6dHowYmV4blcxSUFRU0V1?=
+ =?utf-8?B?eHlPcjVxdE4xRkFDZU5ZZjc3MmxLUjNsNGVuSysvNG9MUGIzY3A0MmMyZGlI?=
+ =?utf-8?B?UU52cW1qcDdGbWRyMC9yYlZ3a09tazc5WGppL1pVYk1EMWxLcDcxMXo2YWJX?=
+ =?utf-8?B?WWR2WThIT3VnbENOTXpieGNPWmptdVJKSXlHeVJEcHNTM251NmdwNGhnV3d3?=
+ =?utf-8?B?OEFqTjE2ZlQzbzVXVE5PWEZMNDZWRUtvL3kzcGx2WkFlbG04Z1RUQW9YUE5n?=
+ =?utf-8?B?NzhaMVo3dDRDakpIYUZFYkh4RUtrNmJhSzQ3TUl0UVkvbVI1Z1hxTXZhZHN4?=
+ =?utf-8?B?R3YyTlg5OHBneG9XREN3K0xheGZnTW5QejVNbll4OXFnUndkS0ZRZThCWnJ4?=
+ =?utf-8?B?bGhva0tPbTVqT0FFdFlCWkNicGRKVXVwbmlTbVlITlhwa29mL2o0WTRUdXNX?=
+ =?utf-8?B?YitPUzdWNkppamNDMkhEZTdaalYra2RLSkRBalF1a0g2VHJkc1JzZVF1cTJq?=
+ =?utf-8?B?ZmdITnpvTlVvdXlaSDJJb0dNTWVRR3Y0RlpuY1hoaEJVV3QxVS92Q21yS3lC?=
+ =?utf-8?B?RCtOemJ3OE1YczZBbkdhUmpTR0hkMStIU29BOUdQRFVrUGkxQmpmTGNJUGps?=
+ =?utf-8?B?WGYzeGowYm5LRWx4c2N3RWcrNkdYeERsN2tTYlpYOVRyakk0QlZIR3lMeWR2?=
+ =?utf-8?B?OFVQRnZzZXF3NzZ5aXJyazRKbWJpOEJDK0R1ZW1seU9TcTEwSXh1YzRXcVZx?=
+ =?utf-8?B?Y3Y2MjEzWnc0TkZUNyt3QTMxcXhhaWpCUWZHUnZleVJxaHI5b3pTUVF5clIv?=
+ =?utf-8?B?eE9FK0U2ZnJNbnpFV21oNjJtVVA5VHlMaEpQTHlFajlBVWFHOFc4SHk3TEh5?=
+ =?utf-8?B?bmptZXJ0bzlHTlhzS253czQzWDR1eFRNbVdweXgyc3BaUDg4cEQ2eUVSendG?=
+ =?utf-8?B?bkQyS0JQQWVmN3ZTZ2hwNks1TDNCckVxMkVoRDZhc2JsMzdXNFRGZG9yRitX?=
+ =?utf-8?B?MnNCRnlZSXIxUW1UQTh2Y01hMFduSG5acmpyOG5SalhLaE02VFpseEpMNG91?=
+ =?utf-8?B?YklxOHpkbE5xdXh6SE1RVHJibXlNdmZtMFplREQvTmdjYkZLYTVudkY2djI4?=
+ =?utf-8?B?OVNNZjBYb1FHak0rb1cyV3hpK1k0ZWtMMExiZmcvVDcyQjZqeDRwN3BNc281?=
+ =?utf-8?B?T3BrVmpYWW1BckE0QnMzOHBtVVlGYkV1K3QrWXlaNzFyTk02QjBSdXowRmUz?=
+ =?utf-8?B?UkFmVXJZaWNQMEpnRU5xK0tHYkQ3dGVUMytHaVlBVnNMMW1oZjB5cnZDaU9q?=
+ =?utf-8?B?TkhocjBTLzkxSXYybjYxNW9OaGwyZ2tMeFdnQ0wvUEJHekZDUVJVWitUdFVV?=
+ =?utf-8?B?eGdydkFJZytQb1BtTlRaa1RmVFFVZjVMTitJYTZTMlkwcW1ZSHdKYnh2VWdH?=
+ =?utf-8?Q?s7Xsk59kUQIOe?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VEZoSTI3S3BiTEwwV1prNXJjaE5kQWY5ZHVXd2FVL0I4SVNRalpMMUNzeWJD?=
+ =?utf-8?B?UDA4TnVveGVvKy9VVEdWRDFxUWx6UzhNVkdXTzRaa211OU1UdTNQM2VZVTJz?=
+ =?utf-8?B?ekZKY3JzeDFQVk5RNXBqaGNDUCt4RHJKam1zZ0EwdFhrU2tybmh6V2dMaDdT?=
+ =?utf-8?B?aHpHM0VNMGdwOSt5amJYKzlTMW5lblpwaFJVbStFcEU0MnZJZE9HZFZmU1Nu?=
+ =?utf-8?B?VHExRVhWcllxUWJpK1pTYWt5TGl1Z0ErWGxtblZGelB0cmluaytXaWhxdGRv?=
+ =?utf-8?B?NElpMXBIa0ZjWklCNkIzc3lMYitmV3U5OTE1YkNJRE9nRGxoWk9QWm9GUEJQ?=
+ =?utf-8?B?TGdSUVNvZzNmb2E2WFRNekpxRm5RVXN1QjA2TllnNFhZQW1iS3lrZGx3T0w1?=
+ =?utf-8?B?d3l3TldLZ3k5Mm1WRlg5d2w0TjBUdHc3c3E3N0dLOFh0RjRGN2I3cW9BSERm?=
+ =?utf-8?B?MXVRRG9iV1I4STdscHZIVThXNm5Ya0hBTjdWR21yQVQ4eS9SUVhZaWh5akdB?=
+ =?utf-8?B?QTY5R1NmNkVkS1hyMy8vbzIwaWdhZVVnU2VLS2xMd3htZWZXRys2d0JQYXo5?=
+ =?utf-8?B?Y2oyMC9uNThqaEt4UnFKMzJpZEh5YmtuTVYzS2pIZnRpNC9LM2dYU2FHaTd0?=
+ =?utf-8?B?MkpwQVVNUUdEaFFMdmlXSmJ5WW90cVpSdlpmUnc5YzQxZTF6R3hXSnRYQnlP?=
+ =?utf-8?B?d3VlbXQxWHlRS2pYMzE0NnlXcEV3SE1mZkNUV09UQzhsZW5wNmphRHFwb2Ux?=
+ =?utf-8?B?eVhVNnAzSDA3WXNYQXB0V2M2YUJoTXdnMHFSV2gwVktMbG04SmV3UnhMRHJE?=
+ =?utf-8?B?Znl4NUhvazJ4RVNsUFBzcjlvK2piczJmaXBLYjdoVlU4Z2EwMUpzdWhLRlFj?=
+ =?utf-8?B?VFZuZFFsc0VTdzlKUzdiTGdMbDZmRHFXZnQ3QnpaL2pScHlYbUNlUFZkSjNh?=
+ =?utf-8?B?Y0pCRHFaNHZLWlFhZ015UzBDUU5RdFNBN2RnMkgyQ2d4RmJidFhQcHZhL29l?=
+ =?utf-8?B?cXUrQTFVVy9FWXdaUkRBWDE5Sm1UMHFXZVlURVhib1d5OVlXeStTelVWT2lk?=
+ =?utf-8?B?VHUxVllGY3QzZU1GMmFIWGxzeTBPL0trNEJpYnlOMlJDNUozVCtsbVpOVFlp?=
+ =?utf-8?B?RDhBM1ltbUFJSmFDdnlCOVg0SEtBS2psR1hEc29rY1dhdVVtdUxGc3R4eW9Z?=
+ =?utf-8?B?WG0xaGQrS0d0QnVSb2hRN1VUbm51N3pXS21rendxOXFKQWtJYkIwU0ZDdWQ2?=
+ =?utf-8?B?a2dZQUsxYzNJN01QQVkzalBrNFlyT1BLOUdPMnNhR2g3RHFsWk1LMlJxQ0lG?=
+ =?utf-8?B?T01xMThsMS9NVk5aTk53Uk1LQ1dLZ3phdmFCYkd2aHR3ZGtKVG1aVzRkYkx4?=
+ =?utf-8?B?WVpqVTc1RXFGVnlWOE9HOGpIby9WK3kwcTRhRmQ5KzJSbkk5Z202VWl5ODVD?=
+ =?utf-8?B?WUIwczlXT01HdGxXMVpMYnhEcXRUUTdvdVoxTUZMNWZzbWFNN1dmN2hzeHMx?=
+ =?utf-8?B?VUltRDd4NVlVUnFITE0xZzZmdGhvL3pXRW16QTh1Undlay9BSis3T0NIc2Nz?=
+ =?utf-8?B?VE1iK2RLV2xRc0lCTWZMb2xDUGxKQUY2bVVwQXBteUtXSFVsdk1jN0xyOUdS?=
+ =?utf-8?B?YnVpTXVGNlFISXpiNmNsQWtBRmVmQVBsQ1pkSWdZQTBuc21MR0VRbGdZVHRX?=
+ =?utf-8?B?a0ExMGJPclRFZ2VrT25jRitmblp3bG5SUVlzSU5KTGpIOGxYK3kyOWRwVU0y?=
+ =?utf-8?B?MjltY0dBZnBQdHJJWCtXT0tpTnozWGplZGRmRTJheVo1Wk8vSEovUlRqKzBR?=
+ =?utf-8?B?SExwSnJyTXV5Z1pXZHFYZDhET09pSUIyZ1JpU29uZUxyWm5heTFXMUFJcnJm?=
+ =?utf-8?B?VUxNNmlWZ0xIOElqalpKMER6Y2ZUZldCNitmMzJLVi9zRDZPYXFyTkdFaFVn?=
+ =?utf-8?B?NnhMTUJKL0V1bVdDOUl5QkUreFhxNEtBcHVhdTJMc2dQbWRmVHJjTElEUVB0?=
+ =?utf-8?B?bldiRFdScDhpcld3cjcyLzRBM0MwdkNVRmdsSTFXNzFrUlhzT2g3Q1B4clQ1?=
+ =?utf-8?B?Q0Eyb3B1cWJsWWxOeGJtWE5YcGxVZWJwVEltT1o0WXFKSm5ZQTlySnpNNzhV?=
+ =?utf-8?Q?SNu/duT01LMmwmDVqL5jCskRP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfa84636-bbd0-4377-902b-08dd4f438630
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 11:09:19.1641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WC+rr5k7SKjL3KymltitaBLZuxep2JzTdjyPfM8DDM6g6GjipwGAUXQ0uH79ggOn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7003
+
+
+
+On 2/17/25 10:52, Shubhrajyoti Datta wrote:
+> The "interrupts" property in the ZynqMP power/reset binding was previously
+> marked as required. However, there are multiple mechanisms for
+> handling power/reset events, including:
+> -Event management registration,
+> -Mailbox (mboxes),
+> -Interrupts (interrupts).
+> 
+> When event management support is available (default on Versal SoC), the
+> "interrupts" property is not used hence not required.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
+> 
+>   .../devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml       | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+> index 799831636194..079ad977b907 100644
+> --- a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+> @@ -46,7 +46,6 @@ properties:
+>   
+>   required:
+>     - compatible
+> -  - interrupts
+>   
+>   additionalProperties: false
+>   
+
+Acked-by: Michal Simek <michal.simek@amd.com>
+
+Thanks,
+Michal
 
