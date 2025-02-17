@@ -1,181 +1,157 @@
-Return-Path: <linux-kernel+bounces-517603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CE9A382F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:27:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C8FA382FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:27:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F15C170393
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08AA1893259
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F9F21A449;
-	Mon, 17 Feb 2025 12:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8E621A43D;
+	Mon, 17 Feb 2025 12:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="H2HroW0h"
-Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNqPa/Yk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B9218842
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE43F217F5C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739795239; cv=none; b=CXHUeo4uaS3xTKRUmPYkZ38nIWTwPO+Hw/EZS4jQnV0jzMTCTcldv8rOC5PivVXaC5OFIyds0DypPY3jrjas6G08Di3Us265vND18XvwUJl37FOahFAjZXE/a3FXTErTY0Ho+5qCcZTcrLYdiuSju0cuz+ONLkeNootBBIIxhkA=
+	t=1739795251; cv=none; b=Z9sRH5/MxCtdcPjXZAV5/MTv9siohmHtPweymON6mW56E1cvUedoV7iwtCt73ZKg4pcucbRtm7UPntDtB1OE6eHrgZh3ZjiE56AWSzkM39Z0E9meS1LMzSebG9HO86ePqPtbeyW++TAp4aAp8GGnbtl8tUzP7s2vVqO711aggn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739795239; c=relaxed/simple;
-	bh=+dIR+LeHo5kZKBeudNiXzL2GMb5J0NlWFTmwEAPjc9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tMZCw1hdRUzSh6qUPDqebW+nQMmvAumZ5NX/6GIuWLhKUcTLfqOrsx+JI1Jr827P34/E6n5NWndZ8qGMDRSyAE4V48n5SMh/Wmfd3nh/aYiT1luYfSUeOSuDB2O6trTxlJt6x8fMYdvMnXTQkd0GEDznBKkJ4cWDaSq9UIW1Ab0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=H2HroW0h; arc=none smtp.client-ip=17.58.6.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=Pi7+rTG0m4v7zpGViDVCQo5NVyykXLI+pXUfY4RsiVI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=H2HroW0hTMUdfZo6MiZQpBP0aiBenvObYk4BxCYgvT4X03H46ggvOUXWM2lPw2vvk
-	 w022AOgNWDITlcqbRiViKm2tcLXPgKZkB4wY1iYG7PwJdo+JBeKwV8461EdTT2SYcl
-	 XOqJZdSxDVxolxgFqNqjWQ/clrLDbg718Ej0EJWQPvOLLy/ROqQY6op6M5rSzmjw8E
-	 RstWGaeZxxxsMwBk5HEcmA7wmDjEFITFfgiiyflCgZVIYqMQeZM1ux0lNBT0RC1WOi
-	 lxem4cysWmn4ZYZvYRtkG8/X5Cl9hheDMXvbJrmd4+SRHQs97e45TjjeMiEvYkkVth
-	 6M8sFD3k9zpfg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 920DE34BA68E;
-	Mon, 17 Feb 2025 12:27:12 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 17 Feb 2025 20:26:46 +0800
-Subject: [PATCH v2] PCI: endpoint: Remove API devm_pci_epc_destroy()
+	s=arc-20240116; t=1739795251; c=relaxed/simple;
+	bh=MIwYUtXnjoepjUfjvLW564dXH5Zc3Mu+jVREsCj6b3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oms8TWdkPX6JxLRk04OuXzz31DrKCzjlBvOctDq6oTNCHEjhFEjpzHlJ+NAzyxC2b9ZyY1KhrKEQVc7nbrC+yOEeJVSbll9QuChL6k826umd9P4wjyaxX3kJdK6Y4wupU+SBLPRdISRvFRsaYxwrmDoqwy5aSzu4Xi/4FF8ZNT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNqPa/Yk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408DEC4CED1;
+	Mon, 17 Feb 2025 12:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739795251;
+	bh=MIwYUtXnjoepjUfjvLW564dXH5Zc3Mu+jVREsCj6b3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNqPa/Yk+KlWdNEOwwuagNYFcRU8YiLAo+jDc5w/rEo1470xncMv4DECtOyNVNPUL
+	 dkRRmnnAV2vfOgukrS55kqH34XHuw/kSc+NO02ST2KoWC95XCMstzP0Zc2GD8YTcsL
+	 7oYPf3AbkecKDt8uNnBP5bWibYc5wjsoJ3cR0M/tvGtKKFHkz7hvZW/yeikwd9Vl9r
+	 I8rkT+/q18cKYX/EZlQXqrCmHpHSeGqokZHlDkR/XI6/JHYXb4JxOuK+yKIcs/hjbt
+	 jm1aMnIbkeGXUSfbnZXCApDPk85lWCAJYWF0viD+8XDOU7l3ZlswK+fsmSWHz/c2z6
+	 9RW/7oBkQLcUw==
+Date: Mon, 17 Feb 2025 13:27:25 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>
+Subject: Re: [PATCH 1/1] MAINTAINERS: Remove myself
+Message-ID: <Z7MrLUlSzS_I3YPK@cassiopeiae>
+References: <20250215073753.1217002-1-kherbst@redhat.com>
+ <20250215073753.1217002-2-kherbst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-remove_api-v2-1-b169c9117045@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAUrs2cC/23MQQrCMBCF4auUWRvJpKQYV95DisRxamfRpiYal
- JK7G7t2+T943wqJo3CCY7NC5CxJwlzD7Bqg0c93VnKrDUYbqw1qFXkKmS9+EeVoQPbOOo0M9bB
- EHuS9Yee+9ijpGeJnszP+1r9MRoXq4Lm7th233tLp8RKSmfYUJuhLKV/lE89WpgAAAA==
-X-Change-ID: 20250210-remove_api-9cf1ea95901e
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pci@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: aO8HdjU9xAh7e-Xl860WkIUQwEJ0m9eN
-X-Proofpoint-ORIG-GUID: aO8HdjU9xAh7e-Xl860WkIUQwEJ0m9eN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=878
- malwarescore=0 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502170109
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215073753.1217002-2-kherbst@redhat.com>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Sat, Feb 15, 2025 at 08:37:53AM +0100, Karol Herbst wrote:
+> I was pondering with myself for a while if I should just make it official
+> that I'm not really involved in the kernel community anymore, neither as a
+> reviewer, nor as a maintainer.
+> 
+> Most of the time I simply excused myself with "if something urgent comes
+> up, I can chime in and help out". Lyude and Danilo are doing a wonderful
+> job and I've put all my trust into them.
+> 
+> However, there is one thing I can't stand and it's hurting me the most.
+> I'm convinced, no, my core believe is, that inclusivity and respect,
+> working with others as equals, no power plays involved, is how we should
+> work together within the Free and Open Source community.
+> 
+> I can understand maintainers needing to learn, being concerned on
+> technical points. Everybody deserves the time to understand and learn. It
+> is my true belief that most people are capable of change eventually. I
+> truly believe this community can change from within, however this doesn't
+> mean it's going to be a smooth process.
+> 
+> The moment I made up my mind about this was reading the following words
+> written by a maintainer within the kernel community:
+> 
+> 	"we are the thin blue line"
+> 
+> This isn't okay. This isn't creating an inclusive environment. This isn't
+> okay with the current political situation especially in the US. A
+> maintainer speaking those words can't be kept. No matter how important
+> or critical or relevant they are. They need to be removed until they
+> learn. Learn what those words mean for a lot of marginalized people. Learn
+> about what horrors it evokes in their minds.
+> 
+> I can't in good faith remain to be part of a project and its community
+> where those words are tolerated. Those words are not technical, they are
+> a political statement. Even if unintentionally, such words carry power,
+> they carry meanings one needs to be aware of. They do cause an immense
+> amount of harm.
+> 
+> I wish the best of luck for everybody to continue to try to work from
+> within. You got my full support and I won't hold it against anybody trying
+> to improve the community, it's a thankless job, it's a lot of work. People
+> will continue to burn out.
+> 
+> I got burned out enough by myself caring about the bits I maintained, but
+> eventually I had to realize my limits. The obligation I felt was eating me
+> from inside. It stopped being fun at some point and I reached a point
+> where I simply couldn't continue the work I was so motivated doing as I've
+> did in the early days.
+> 
+> Please respect my wishes and put this statement as is into the tree.
+> Leaving anything out destroys its entire meaning.
+> 
+> Respectfully
+> 
+> Karol
+> 
+> Signed-off-by: Karol Herbst <kherbst@redhat.com>
 
-Static devm_pci_epc_match() is only invoked by API devm_pci_epc_destroy()
-and the API has not had callers since 2017-04-10 when it was introduced.
+@Steven, @Masami: Can I get an ACK for taking this through the drm-misc tree?
 
-Remove both the API and the static function.
+(Not cutting any context, since you have not been copied on this one.)
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-Changes in v2:
-- Correct commit message error pointed out by Manivannan Sadhasivam.
-- Link to v1: https://lore.kernel.org/r/20250210-remove_api-v1-1-8ae6b36e3a5c@quicinc.com
----
- Documentation/PCI/endpoint/pci-endpoint.rst |  7 +++----
- drivers/pci/endpoint/pci-epc-core.c         | 25 -------------------------
- include/linux/pci-epc.h                     |  1 -
- 3 files changed, 3 insertions(+), 30 deletions(-)
+- Danilo
 
-diff --git a/Documentation/PCI/endpoint/pci-endpoint.rst b/Documentation/PCI/endpoint/pci-endpoint.rst
-index 35f82f2d45f5ef155b657e337e1eef51b85e68ac..599763aa01ca9d017b59c2c669be92a850e171c4 100644
---- a/Documentation/PCI/endpoint/pci-endpoint.rst
-+++ b/Documentation/PCI/endpoint/pci-endpoint.rst
-@@ -57,11 +57,10 @@ by the PCI controller driver.
-    The PCI controller driver can then create a new EPC device by invoking
-    devm_pci_epc_create()/pci_epc_create().
- 
--* devm_pci_epc_destroy()/pci_epc_destroy()
-+* pci_epc_destroy()
- 
--   The PCI controller driver can destroy the EPC device created by either
--   devm_pci_epc_create() or pci_epc_create() using devm_pci_epc_destroy() or
--   pci_epc_destroy().
-+   The PCI controller driver can destroy the EPC device created by
-+   pci_epc_create() using pci_epc_destroy().
- 
- * pci_epc_linkup()
- 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 9e9ca5f8e8f860a57d49ce62597b0f71ef6009ba..cf2e19b80551a2e02136a4411fc61b13e1556d7a 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -25,13 +25,6 @@ static void devm_pci_epc_release(struct device *dev, void *res)
- 	pci_epc_destroy(epc);
- }
- 
--static int devm_pci_epc_match(struct device *dev, void *res, void *match_data)
--{
--	struct pci_epc **epc = res;
--
--	return *epc == match_data;
--}
--
- /**
-  * pci_epc_put() - release the PCI endpoint controller
-  * @epc: epc returned by pci_epc_get()
-@@ -931,24 +924,6 @@ void pci_epc_destroy(struct pci_epc *epc)
- }
- EXPORT_SYMBOL_GPL(pci_epc_destroy);
- 
--/**
-- * devm_pci_epc_destroy() - destroy the EPC device
-- * @dev: device that wants to destroy the EPC
-- * @epc: the EPC device that has to be destroyed
-- *
-- * Invoke to destroy the devres associated with this
-- * pci_epc and destroy the EPC device.
-- */
--void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc)
--{
--	int r;
--
--	r = devres_release(dev, devm_pci_epc_release, devm_pci_epc_match,
--			   epc);
--	dev_WARN_ONCE(dev, r, "couldn't find PCI EPC resource\n");
--}
--EXPORT_SYMBOL_GPL(devm_pci_epc_destroy);
--
- static void pci_epc_release(struct device *dev)
- {
- 	kfree(to_pci_epc(dev));
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index e818e3fdcded95ca053db074eb75484a2876ea6b..82a26945d038d3e45e2bbbfe3c60b7ef647f247a 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -257,7 +257,6 @@ __devm_pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
- struct pci_epc *
- __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
- 		 struct module *owner);
--void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc);
- void pci_epc_destroy(struct pci_epc *epc);
- int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf,
- 		    enum pci_epc_interface_type type);
-
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250210-remove_api-9cf1ea95901e
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+> ---
+>  MAINTAINERS | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 25c86f47353de..ca31e57fa203c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7431,7 +7431,6 @@ F:	Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
+>  F:	drivers/gpu/drm/panel/panel-novatek-nt36672a.c
+>  
+>  DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS
+> -M:	Karol Herbst <kherbst@redhat.com>
+>  M:	Lyude Paul <lyude@redhat.com>
+>  M:	Danilo Krummrich <dakr@kernel.org>
+>  L:	dri-devel@lists.freedesktop.org
+> @@ -24062,7 +24061,6 @@ F:	tools/testing/selftests/ftrace/
+>  TRACING MMIO ACCESSES (MMIOTRACE)
+>  M:	Steven Rostedt <rostedt@goodmis.org>
+>  M:	Masami Hiramatsu <mhiramat@kernel.org>
+> -R:	Karol Herbst <karolherbst@gmail.com>
+>  R:	Pekka Paalanen <ppaalanen@gmail.com>
+>  L:	linux-kernel@vger.kernel.org
+>  L:	nouveau@lists.freedesktop.org
+> -- 
+> 2.48.1
+> 
 
