@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-517194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE9EA37D8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5908A37DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F7D18948AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE961885C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462A1A8405;
-	Mon, 17 Feb 2025 08:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1771AA1E4;
+	Mon, 17 Feb 2025 08:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o1ihM3c0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KXZaiGyI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395491A3148;
-	Mon, 17 Feb 2025 08:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0041A4F2F;
+	Mon, 17 Feb 2025 08:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782418; cv=none; b=EAep0mrL5a7LtqF4pRQRwOkSoVszNk5HXcTkG4jSHC/7RWyfNkPo4FgGncb7eesZBXZbFYW9061GFsg9Vk5xApo1/DLchAJkEOCYsY+Gt5ZKm7tzEUtViE8zoYbzDmbPHJjBlmyasL3/zNd4deQP04GKranyLYwG0PNDfRMSWQQ=
+	t=1739782611; cv=none; b=cX1Wh1DAKqvevLuPBAjqdw9J1BeeAEkFDwDpoBEJDEQfvhUq1nrs9ft108DYQzD08Rir1iwPbkx7eCpUny7hPmtyAcqANxBXyx38Up8crak5/Lae7pjJqlktW+WmvHTP2W+HmJevY2YhJfb1Y9JUrzp1VO2oYhFZ9XgwePHTnic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782418; c=relaxed/simple;
-	bh=NQAGRszoXd7XKuzprwEoRex28p+4g9ymhtAUqgJpjSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lT2Q7Bt9EOLRssVeVJSYaHh/O4P+Nl79iiCxSqsu4nmRUOpbD5ulHdcFq/PsF0Um5Th++S7DvI4mOfbW6JdlJ2xjwCHWnrLUQwc4FHC0pMKlcNO5oqh1MpRNoRuhJG62ta5TB3E4nCcBG5e4Lk1LL72zRPhBjr9d80TRWRQAxD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o1ihM3c0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206D3C4CED1;
-	Mon, 17 Feb 2025 08:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739782417;
-	bh=NQAGRszoXd7XKuzprwEoRex28p+4g9ymhtAUqgJpjSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o1ihM3c0k1Gi4V7VTw/MQnoWlbhwT8JF4wRDuwszLncV0NtqTgKBVUV5ct6geo/uO
-	 dFKMdvYrpnR/raXgPeWQh8w4mgoAUsR7UFNn5zifb4NSrC0s1+4GQbIs/ku9LLYwsy
-	 5F103MI4sPs5o4axCUmlCpdlvku/cfCjAlZbV5GA=
-Date: Mon, 17 Feb 2025 09:53:34 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hsin-chen Chuang <chharry@google.com>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
-	chromeos-bluetooth-upstreaming@chromium.org,
-	Hsin-chen Chuang <chharry@chromium.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs
- isoc_alt
-Message-ID: <2025021717-prepay-sharpener-37fb@gregkh>
-References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <2025021425-surgical-wackiness-0940@gregkh>
- <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+	s=arc-20240116; t=1739782611; c=relaxed/simple;
+	bh=cCeJVZnbyCxm3okPfPj18vzOfbqd689/PyAo6ALqKZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIwY09akfSzWilAZsUAm85hRlPM4fykbs4Yt6qjCHpzEYhEHsMuozRW7qTJshsrsR/qI/FjMPbbocrJfywusTYAUwSIY69HK1M8CSEJxC1h3Jh+SIgHVJdmOusdvxtn8AgKd7RZS9jlEFpShK9UsGVCXCE5/BepNBuVLkHe8iWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KXZaiGyI; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739782607; x=1771318607;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cCeJVZnbyCxm3okPfPj18vzOfbqd689/PyAo6ALqKZ4=;
+  b=KXZaiGyISRNjXPv6TazfbR7mMEuBUOINFqCUwfqPWi27bBT+E6f1XVqC
+   BL0f4+MvUvfDNAc4/Y7DN7fjUSd+x4hSjWQD5dljPcNQWIxvLK1yZDtQ8
+   4JYL/BMe/KG0ODMFKhFoGCG3t/Hy0XXmYoHVlSPHdb+juuxSkJcqpVecb
+   AZFpxPnd1fUpc+zKvNTija5/sG3Vk3hsP2dDOhnV8Wfqr//35gS70ly5z
+   3UeS/PmKTd1DQAef8klSIfPUqbCN/hHhb4aT2bvVTEWVaB0nCkncI42Ro
+   E0+TbaHbB1luWP7PB3KmlK2OHLTL+xIpnT1Ng27wewxHGyYl543RNJdLF
+   Q==;
+X-CSE-ConnectionGUID: a4/GaCORT/auveGWX25qQA==
+X-CSE-MsgGUID: settv8tWQbqZBc+yuVRhnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="57986160"
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="57986160"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:56:47 -0800
+X-CSE-ConnectionGUID: fkiXbU45RaqtTj2TfbQ9vA==
+X-CSE-MsgGUID: 5GDjRd3/R1ixa2KjIFoIFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="114691424"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:56:45 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 0/2] two KVM MMU fixes for TDX
+Date: Mon, 17 Feb 2025 16:55:35 +0800
+Message-ID: <20250217085535.19614-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
 
-On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
-> On Fri, Feb 14, 2025 at 7:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
-> > > From: Hsin-chen Chuang <chharry@chromium.org>
-> > >
-> > > Expose the isoc_alt attr with device group to avoid the racing.
-> > >
-> > > Now we create a dev node for btusb. The isoc_alt attr belongs to it and
-> > > it also becomes the parent device of hci dev.
-> > >
-> > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
-> >
-> > Wait, step back, why is this commit needed if you can change the alt
-> > setting already today through usbfs/libusb without needing to mess with
-> > the bluetooth stack at all?
-> 
-> In short: We want to configure the alternate settings without
-> detaching the btusb driver, while detaching seems necessary for
-> libusb_set_interface_alt_setting to work (Please correct me if I'm
-> wrong!)
+Hi, 
 
-I think changing the alternate setting should work using usbfs as you
-would send that command to the device, not the interface, so the driver
-bound to the existing interface would not need to be removed.
+There are two fixes to KVM MMU for TDX in response to two hypothetically
+triggered errors:
+(1) errors in tdh_mem_page_add(),
+(2) fatal errors in tdh_mem_sept_add()/tdh_mem_page_aug().
 
-Try it out and see yourself to verify this before you continue down any
-of this.  There's no need to use libfs for just a single usbfs command,
-right?
+Patch 1 handles the error in SEPT zap resulting from error (1).
+Patch 2 fixes a possible stuck in the kernel loop introduced by error (2).
+(A similar fix in SEPT SEAMCALL local retry is also required if the fix in
+patch 2 looks good to you).
 
-thanks,
+The two errors are not observed in any real workloads yet.
+The series is tested by faking the error in the SEAMCALL wrapper while
+bypassing the real SEAMCALLs.
 
-greg k-h
+Thanks
+Yan
+
+Yan Zhao (2):
+  KVM: TDX: Handle SEPT zap error due to page add error in premap
+  KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
+
+ arch/x86/kvm/mmu/mmu.c |  4 +++
+ arch/x86/kvm/vmx/tdx.c | 64 +++++++++++++++++++++++++++++-------------
+ 2 files changed, 49 insertions(+), 19 deletions(-)
+
+-- 
+2.43.2
+
 
