@@ -1,158 +1,177 @@
-Return-Path: <linux-kernel+bounces-517713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76185A38497
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:27:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650B0A3849F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7C71662B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8D89188369B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E17621CA00;
-	Mon, 17 Feb 2025 13:26:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5138721C16D;
-	Mon, 17 Feb 2025 13:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E10C21CA00;
+	Mon, 17 Feb 2025 13:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sLvYG8wM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCE821A953;
+	Mon, 17 Feb 2025 13:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798807; cv=none; b=tVOWqgRcHK0Pv1jT9pHcUcvT473B+12Tvu/Uo486BgQv41ISVE2cfzGcXivA9Etj9U9s6RFT92LfMiAPL4WCHRUlfsKeb5tbKwS592LfLEKKmB6r24z0oy6C267yrPwY5pT8wOoB41NBNTqo7sdfUct/oNDdGwa3+bkXIFh0XGw=
+	t=1739798883; cv=none; b=SPD2/uhYC32FovStLVq3Y5NyXWXPXsBzxsU/r2jMuLv5uFNWPh7OOD75MZcBPvJ5AwZwJkGmuhNsbDDE1+/XWbA8kkk/hGUDOVHHWtZp2jgVy42pK0yUPd+XFameSePvp57633btyb/Yx58mA6WSj7snm0S3b953+sckIdJuoYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798807; c=relaxed/simple;
-	bh=BZ/tkCRz/PxzCPngn4Ht5qx0+CAlN1NkPVrEsWM5/tM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSuasWHLn4SGuDmJYDBzz2ikgvAUOL7APyFKLUoJHqwkydq89//THeay4321EfGnZkdEcmunW1cAdOg92x3W7t5XDZ7yybw288al5LAZqTetHmZFSittYmPFT3hH63TMkTkNmYAkuu5zFdnpHF2LOUx4eS2M3kMzQkCTbNicVVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 653FF13D5;
-	Mon, 17 Feb 2025 05:27:03 -0800 (PST)
-Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D07CA3F6A8;
-	Mon, 17 Feb 2025 05:26:42 -0800 (PST)
-Message-ID: <3bbd1ada-0d26-4c91-b1f3-a947caf5abd0@arm.com>
-Date: Mon, 17 Feb 2025 13:26:40 +0000
+	s=arc-20240116; t=1739798883; c=relaxed/simple;
+	bh=iR0blI/6ktM2R9qE5MLCFVfaQwYvnAbZpJ+v0jJPZjM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KqLnM8P59C8rJkWqt8RUvkBC6YECHQ1wfDVsjfQzwLIKAdSRQl1qO9GRrKkDVsq/RiDqLgyW6RnnL56TTxhvSfREMmI4YGLS5K/EEiTyyHcaQLDJssO19/Kwdsi/VTe0Yq5NfybOOMPbokS8aBWcpnujNZ9k9XH5PVDpxl7DU54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sLvYG8wM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.80.185])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9418F22F;
+	Mon, 17 Feb 2025 14:26:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739798793;
+	bh=iR0blI/6ktM2R9qE5MLCFVfaQwYvnAbZpJ+v0jJPZjM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=sLvYG8wM7IG73NshFinQ7icZI6RHkyjc2UujXhvzoufh5bSmPs5GvyiEHB+5z0H0r
+	 4WfNEylhwYPgTZ5yqJm9Rl6uY9W5dgN+fw3pdkv2ZsC6NZdsdha7wYgBrcbEv7mbGX
+	 vEqW+sHSwyJkKVI6T8ps26sjOGLZI6KjVnuYpzv8=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v7 0/5] media: i2c: imx219: Fixes for blanking, pixel rate
+ and binning
+Date: Mon, 17 Feb 2025 18:57:30 +0530
+Message-Id: <20250217-imx219_fixes-v7-0-83c3c63b737e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH v1 4/5] cpuidle: menu: Eliminate outliers on both
- ends of the sample set
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
- <2301940.iZASKD2KPV@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <2301940.iZASKD2KPV@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEI5s2cC/3XM3UoDMRCG4VspOTYymUyyWY+8DxHJr81BN5LIU
+ il776YFaQnu4TvD91xYizXHxl4OF1bjmlsuS4/p6cD80S6fkefQmyEgCcCZ59MZxfyR8jk27pK
+ 1nqzSCMD65KvG26Mv3t57H3P7LvXnpq/iet2BVsGBO1LBS62Mo/iaQ7StLK7YGp59ObGrt+LdE
+ CgGA7sxOdDGaoiWYMeQj4YaDNkNkpQ8OEXCmx2D7gaiHgzqRghopJEJdJp2DPVgSBgM1Y3ZEOl
+ ghCYz7xj6z1CAQIOhu2EoJatAwjzhP8a2bb/I5pXhAwIAAA==
+X-Change-ID: 20241029-imx219_fixes-bfaac4a56200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ David Plowman <david.plowman@raspberrypi.com>, 
+ Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3594;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=iR0blI/6ktM2R9qE5MLCFVfaQwYvnAbZpJ+v0jJPZjM=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnszlK9ciQ/QlYbxurQplnreypdJHml9c0jJlaL
+ N+i8YMYTy6JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ7M5SgAKCRBD3pH5JJpx
+ RUKPD/9o5+H4pRhzq0EM7C0D6lMTxciHz7/5oLU+dy9kV/44blnhBwSIz0UmwIvp25kl8FarVRR
+ 1sbGL2REAlN2j4dnuk1YGhGFT36Ve6QfzSWrNE0Ak0BgNAAtD39q3e2oS9dn472oS6fCP/zjuhD
+ g/afjd4bAjg8/4VCshauchn6Y/UpV/nE+vQ169vSZVoBJEacsXxILhCcYlgg2C9QTsg3Iszq2eM
+ b+QBPMd0i/n+9EtmTVyKNj997dMQch/PxCMpi8afxsHCq/8kp7f7r2roIyCsX1YQzvLfR9OwCGs
+ JkOIRbWYsKZzyl3a+bFgUQd9qOauyZ20yrd/WRG9WTiL2o2zt09b7+reRww07ulH8clavJxpbQ2
+ iVbi1PoJlXhzb9oSi6AeZi/fwkKqRukQbJJA2+3rFAYYC6//oPo2Ut5toC68yCz6XUNK3k6lysr
+ ECy9lRBa2OymYVSxynfwrStMe/eqkpQUgf9gQAhR9wNHu7upDS7igaR346TVV+PjU6dv1Q16olh
+ KnN1xv/XM7MlA05YAgcj8BSNyScWDU6+HmCqwAGoPAJaPRbMwcsW18VFgiIfGgPRxiKlxdV2Acm
+ ZiYJFecwZ6X7ptUUiBgK/rsnb0LzJMqU2X6rW1xGia/qjsxwmUcZ0Hrlxb5j5SvOMmHZ4g+nm9f
+ dQrRIR+DEeLQMng==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-On 2/6/25 14:26, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Currently, get_typical_interval() attempts to eliminate outliers at the
-> high end of the sample set only (probably in order to bias the prediction
-> toward lower values), but this it problematic because if the outliers are
-> present at the low end of the sample set, discarding the highest values
-> will not help to reduce the variance.
-> 
-> Since the presence of outliers at the low end of the sample set is
-> generally as likely as their presence at the high end of the sample
-> set, modify get_typical_interval() to treat samples at the largest
-> distances from the average (on both ends of the sample set) as outliers.
-> 
-> This should increase the likelihood of making a meaningful prediction
-> in some cases.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/menu.c |   32 ++++++++++++++++++++++----------
->  1 file changed, 22 insertions(+), 10 deletions(-)
-> 
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -116,30 +116,37 @@
->   */
->  static unsigned int get_typical_interval(struct menu_device *data)
->  {
-> -	unsigned int max, divisor, thresh = UINT_MAX;
-> +	s64 value, min_thresh = -1, max_thresh = UINT_MAX;
-> +	unsigned int max, min, divisor;
->  	u64 avg, variance, avg_sq;
->  	int i;
->  
->  again:
->  	/* Compute the average and variance of past intervals. */
->  	max = 0;
-> +	min = UINT_MAX;
->  	avg = 0;
->  	variance = 0;
->  	divisor = 0;
->  	for (i = 0; i < INTERVALS; i++) {
-> -		unsigned int value = data->intervals[i];
-> -
-> -		/* Discard data points above or at the threshold. */
-> -		if (value >= thresh)
-> +		value = data->intervals[i];
-> +		/*
-> +		 * Discard the samples outside the interval between the min and
-> +		 * max thresholds.
-> +		 */
-> +		if (value <= min_thresh || value >= max_thresh)
->  			continue;
->  
->  		divisor++;
->  
->  		avg += value;
-> -		variance += (u64)value * value;
-> +		variance += value * value;
->  
->  		if (value > max)
->  			max = value;
-> +
-> +		if (value < min)
-> +			min = value;
->  	}
->  
->  	if (!max)
-> @@ -175,10 +182,10 @@
->  	}
->  
->  	/*
-> -	 * If we have outliers to the upside in our distribution, discard
-> -	 * those by setting the threshold to exclude these outliers, then
-> +	 * If there are outliers, discard them by setting thresholds to exclude
-> +	 * data points at a large enough distance from the average, then
->  	 * calculate the average and standard deviation again. Once we get
-> -	 * down to the bottom 3/4 of our samples, stop excluding samples.
-> +	 * down to the last 3/4 of our samples, stop excluding samples.
->  	 *
->  	 * This can deal with workloads that have long pauses interspersed
->  	 * with sporadic activity with a bunch of short pauses.
-> @@ -186,7 +193,12 @@
->  	if ((divisor * 4) <= INTERVALS * 3)
->  		return UINT_MAX;
->  
-> -	thresh = max;
-> +	/* Update the thresholds for the next round. */
-> +	if (avg - min > max - avg)
-> +		min_thresh = min;
-> +	else
-> +		max_thresh = max;
-> +
->  	goto again;
->  }
+This series has a few fixes for improving h/v blanking, pixel rate
+reporting and binning modes for the IMX219 sensor.
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+These patches are picked and modified (and squashed where applicable)
+from the rpi-6.6.y vendor tree.
+
+On top of those changes, this series also updates the minimum line
+length to fix some issues seen when using analog binning with RAW10
+format on higher resolutions (like 1640x1232).
+
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Changes in v7:
+- PATCH 4/5: On Dave's suggestion only update minimum LLP for
+  binned resolutions. Add a comment in code about the ADC limitation
+  with Jacopo's R-By.
+- PATCH 5/5: No functional change, but drop the get_format_bpp()
+  function and modify the get_binning() function with Jacopo's
+  suggestions
+- Link to v6: https://lore.kernel.org/r/20250204-imx219_fixes-v6-0-84ffa5030972@ideasonboard.com
+
+Changes in v6:
+- PATCH 2/5: Rename REG_FRM_LENGTH to REG_FRM_LENGTH_A, and remove HTS
+  from commit message
+- PATCH 3/5: Rename REG_LINE_LENGTH to REG_LINE_LENGTH_A, and drop
+  redundant write to the register from the table
+- Rebase series on v6.14-rc1
+- Link to v5: https://lore.kernel.org/r/20241230-imx219_fixes-v5-0-98446d816489@ideasonboard.com
+
+Changes in v5:
+- PATCH 2/5: Rename .vts_def to .fll_def
+- PATCH 4/5: Don't change PLL multipliers, only update the minimum LLP
+  size
+- PATCH 5/5: Update binned mode comments: s/30fps/60fps
+- Link to v4: https://lore.kernel.org/r/20241226-imx219_fixes-v4-0-dd28383f06f7@ideasonboard.com
+
+Changes in v4:
+- Add PATCH 2/5 to rename VTS to FRM_LENGTH
+- PATCH 3/5:
+    - Match macro names to datasheet (LINE_LENGTH instead of HTS/PPL)
+    - Improve comments in init_controls()
+    - Use prev_line_len instead of prev_hts
+- Add PATCH 4/5 to update PLL settings that fix artefacts seen when
+  using analog binning with RAW10 mode
+- PATCH 5/5:
+    - Use special "analog" binning for all resolutions and bitdepths,
+      simplifying the binning logic
+    - Don't store bin_h/bin_v in imx219 state, instead compute it
+      everytime it is needed using the crop and format.
+- Link to v3: https://lore.kernel.org/r/20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com
+
+Changes in v3:
+- PATCH 3/3: Calculate binning mode to use instead of hardcoding
+  per-resolution
+- Link to v2: https://lore.kernel.org/r/20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com
+
+Changes in v2:
+- PATCH 1/3: Add R-By from Jacopo, Dave
+- PATCH 2/3:
+    - Keep IMX219_PPL_MIN macro value in hex, matching the datasheet
+    - Fix prev_hts calculation, by moving it before updating pad format
+- PATCH 3/3:
+    - Store binning register values in enum binning_mode directly
+    - Remove unnecessary pixel_rate variable in imx219_init_controls()
+- Link to v1: https://lore.kernel.org/r/20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com
+
+---
+Dave Stevenson (1):
+      media: i2c: imx219: make HBLANK r/w to allow longer exposures
+
+David Plowman (1):
+      media: i2c: imx219: Correct the minimum vblanking value
+
+Jai Luthra (3):
+      media: i2c: imx219: Rename VTS to FRM_LENGTH
+      media: i2c: imx219: Increase minimum LLP for binned modes
+      media: i2c: imx219: Scale the pixel rate for analog binning
+
+ drivers/media/i2c/imx219.c | 171 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 107 insertions(+), 64 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20241029-imx219_fixes-bfaac4a56200
+
+Best regards,
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
