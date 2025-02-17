@@ -1,162 +1,190 @@
-Return-Path: <linux-kernel+bounces-516972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54066A37A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCDFA37A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:21:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2653E16B9FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F6D16AC59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A65154C12;
-	Mon, 17 Feb 2025 04:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6E41624D0;
+	Mon, 17 Feb 2025 04:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YlytBlLW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Npj71b4t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6B542A96
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E081542A96
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739765862; cv=none; b=r9TuNYLNk9U6k5cl5i84a/3+Fro/C8BfE74WiEqy2EeERNy/OqHmiVrxcdzFeV85htllhYfe81XvkpLCxfC5j+K4OcKashhYEY4ehdCxYyuE7DFy6aFLsfQfoGc4jUQbndEeybiYSYpXv+/+CVFqQVRa6Hw8otsDMwQkTPSdM2g=
+	t=1739766087; cv=none; b=YWS02HPq1Ls8yhgam0hHvO1tblTni07hNGa/A+9q05KYiU55ECF8zETBuHCxSQBBh+1wdNMjCIZ+/qE2LFYROvr9m/J6jh4fLYUos55u3ZbEHS21BUOy3y5OsA51PVnO+vmJ+58QDxPeM69GgDY5vIpa/9K+l8tBvThzo/fIKhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739765862; c=relaxed/simple;
-	bh=qgUDd3/F1tTTTB6/od9suhzDHm1xNMQRc9pKyrhCIFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GHDG1C8J/d6fcF2VehORoRdyR1NfrLRIqWGhzleDbWeS2gfaiN19nuxHnCME1OtRkwCNtKWCABjiyVKWEvpS8RJD5sZvgRiSugesWr6U05h6JR9+hAPeMPcvG1wn/GGEKmVJK1l9h6uFybodwKfmtE06i24MO6cdXbvO903arzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YlytBlLW; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739765860; x=1771301860;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=qgUDd3/F1tTTTB6/od9suhzDHm1xNMQRc9pKyrhCIFA=;
-  b=YlytBlLWjBIvcNmCottaY8bC6fli4FQo2FY89N3n4uVi6N02AYlMzVI8
-   8o8vvMVCeUK7HXLuyWIFBAjwiGnHN6n1EopTN6jnvDzfVOHxl+uI3K/yh
-   o9WddsVrd0IyLJSt8gb0Bmmh9CylTHXqOCcplS+yPSqu5WUJBILIv6hcW
-   ITBJQ7rLO40S/SZGBuklqqt3xiiRRURrxBAJhQL/BBo6hhxPv4D0e8m4R
-   YVj1ORfCLnrr8+awkvCh6kORbzZcpk5h7vxekhWw6yYg5xdnKut1/qnyD
-   lgcVo+MZNNH3KPCr9C3Tyhizn6qQ+E763ef/GI/agjmn6WLNRQt5wnCaF
-   g==;
-X-CSE-ConnectionGUID: ytDdWahDTFaQ0zuTxEDZuQ==
-X-CSE-MsgGUID: T663hgeIQ6GNUaB5ThG0VA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="51419579"
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="51419579"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 20:17:40 -0800
-X-CSE-ConnectionGUID: 2u3BgYT1Q1CQjcYUjIXnXQ==
-X-CSE-MsgGUID: NkhhI3KwTbCpvtYA/t1TZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="113748802"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 16 Feb 2025 20:17:38 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjsZb-001CaF-2S;
-	Mon, 17 Feb 2025 04:17:35 +0000
-Date: Mon, 17 Feb 2025 12:17:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shay Drory <shayd@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h:48:34: warning:
- '%s' directive argument is null
-Message-ID: <202502171213.m2F5fqWs-lkp@intel.com>
+	s=arc-20240116; t=1739766087; c=relaxed/simple;
+	bh=4tTD/9udTsFgVqnjNZj5Xj+O8pdGUCNNAD0cmckPo8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LnyuLR1ILSf/KfeT0ZUBI7S2k2FiFpWeGSkEWAcDvyHOFn0Yt6Dx5gIItgTHVtkLhNgzzki0mVhFv/+jib6Siw5tfuZvXzp1etVTHavgny5vxA78Fk/f0iuMkiLc7TaWZH/Cb6vaHFK2gydIMMG3+vchCFfmVxMB5kr+E/sNrG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Npj71b4t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739766084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YqbMpBl1Nw5n1bOPGE94JMKO6OVu4WYCnIOo4Qkr9yc=;
+	b=Npj71b4t3pBMdVKW8To/1dtnQbh7Kdz4wngmVhYm355AHN2AF113JhFrt/FByidNBARnil
+	A4pbgnp1QwnOnOmvx54/QKS8PPybyrty3T8L1FQAC9UhjeT7liDFszSak7a1BrDV0XsDJT
+	D9i4Y+bzuOv53eQ+gEU0zFVMHcrw8Oc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-72Bo0qNkMOOtvPEmGFO3cg-1; Sun,
+ 16 Feb 2025 23:21:21 -0500
+X-MC-Unique: 72Bo0qNkMOOtvPEmGFO3cg-1
+X-Mimecast-MFC-AGG-ID: 72Bo0qNkMOOtvPEmGFO3cg_1739766080
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2541D1800875;
+	Mon, 17 Feb 2025 04:21:19 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.83])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 31E31300018D;
+	Mon, 17 Feb 2025 04:21:15 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Nico Pache <npache@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] kasan: Don't call find_vm_area() in RT kernel
+Date: Sun, 16 Feb 2025 23:21:08 -0500
+Message-ID: <20250217042108.185932-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Shay,
+The following bug report appeared with a test run in a RT debug kernel.
 
-FYI, the error/warning still remains.
+[ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+[ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
+[ 3359.353853] preempt_count: 1, expected: 0
+  :
+[ 3359.353933] Call trace:
+  :
+[ 3359.353955]  rt_spin_lock+0x70/0x140
+[ 3359.353959]  find_vmap_area+0x84/0x168
+[ 3359.353963]  find_vm_area+0x1c/0x50
+[ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
+[ 3359.353972]  print_report+0x108/0x1f8
+[ 3359.353976]  kasan_report+0x90/0xc8
+[ 3359.353980]  __asan_load1+0x60/0x70
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0ad2507d5d93f39619fc42372c347d6006b64319
-commit: 71e084e26414b0f27d8befa1c30b74d39d9cb2a1 net/mlx5: Allocating a pool of MSI-X vectors for SFs
-date:   3 years, 8 months ago
-config: mips-randconfig-r015-20230807 (https://download.01.org/0day-ci/archive/20250217/202502171213.m2F5fqWs-lkp@intel.com/config)
-compiler: mips64el-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250217/202502171213.m2F5fqWs-lkp@intel.com/reproduce)
+Commit e30a0361b851 ("kasan: make report_lock a raw spinlock")
+changes report_lock to a raw_spinlock_t to avoid a similar RT problem.
+The print_address_description() function is called with report_lock
+acquired and interrupt disabled.  However, the find_vm_area() function
+still needs to acquire a spinlock_t which becomes a sleeping lock in
+the RT kernel. IOW, we can't call find_vm_area() in a RT kernel and
+changing report_lock to a raw_spinlock_t is not enough to completely
+solve this RT kernel problem.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502171213.m2F5fqWs-lkp@intel.com/
+Fix this bug report by skipping the find_vm_area() call in this case
+and just print out the address as is.
 
-All warnings (new ones prefixed by >>):
+For !RT kernel, follow the example set in commit 0cce06ba859a
+("debugobjects,locking: Annotate debug_object_fill_pool() wait type
+violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
+inside raw_spinlock_t warning.
 
-   In file included from include/linux/topology.h:33,
-                    from include/linux/irq.h:19,
-                    from include/asm-generic/hardirq.h:17,
-                    from arch/mips/include/asm/hardirq.h:16,
-                    from include/linux/hardirq.h:11,
-                    from include/linux/interrupt.h:11,
-                    from drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c:4:
-   include/linux/mmzone.h: In function '__nr_to_section':
-   include/linux/mmzone.h:1320:13: warning: the comparison will always evaluate as 'true' for the address of 'mem_section' will never be NULL [-Waddress]
-    1320 |         if (!mem_section[SECTION_NR_TO_ROOT(nr)])
-         |             ^
-   include/linux/mmzone.h:1306:27: note: 'mem_section' declared here
-    1306 | extern struct mem_section mem_section[NR_SECTION_ROOTS][SECTIONS_PER_ROOT];
-         |                           ^~~~~~~~~~~
-   In file included from include/linux/printk.h:409,
-                    from include/linux/kernel.h:17,
-                    from include/linux/interrupt.h:6:
-   In function 'irq_pool_alloc',
-       inlined from 'irq_pools_init' at drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c:332:19,
-       inlined from 'mlx5_irq_table_create' at drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c:437:8:
->> drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h:48:34: warning: '%s' directive argument is null [-Wformat-overflow=]
-      48 |         dev_dbg((__dev)->device, "%s:%d:(pid %d): " format,             \
-         |                                  ^~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:134:29: note: in definition of macro '__dynamic_func_call'
-     134 |                 func(&id, ##__VA_ARGS__);               \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:166:9: note: in expansion of macro '_dynamic_func_call'
-     166 |         _dynamic_func_call(fmt,__dynamic_dev_dbg,               \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:123:9: note: in expansion of macro 'dynamic_dev_dbg'
-     123 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:123:30: note: in expansion of macro 'dev_fmt'
-     123 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                              ^~~~~~~
-   drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h:48:9: note: in expansion of macro 'dev_dbg'
-      48 |         dev_dbg((__dev)->device, "%s:%d:(pid %d): " format,             \
-         |         ^~~~~~~
-   drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c:307:9: note: in expansion of macro 'mlx5_core_dbg'
-     307 |         mlx5_core_dbg(dev, "pool->name = %s, pool->size = %d, pool->start = %d",
-         |         ^~~~~~~~~~~~~
+Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ mm/kasan/report.c | 43 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 13 deletions(-)
 
+ [v3] Rename helper to print_vmalloc_info_set_page.
 
-vim +48 drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h
-
-e126ba97dba9ed Eli Cohen    2013-07-07  46  
-5a7883989b1c57 Eli Cohen    2015-10-08  47  #define mlx5_core_dbg(__dev, format, ...)				\
-27b942fbbd3107 Parav Pandit 2019-04-29 @48  	dev_dbg((__dev)->device, "%s:%d:(pid %d): " format,		\
-9e5b2fc1d39b31 Kamal Heib   2016-12-06  49  		 __func__, __LINE__, current->pid,			\
-1a91de28831a1b Joe Perches  2014-05-07  50  		 ##__VA_ARGS__)
-e126ba97dba9ed Eli Cohen    2013-07-07  51  
-
-:::::: The code at line 48 was first introduced by commit
-:::::: 27b942fbbd3107d4e969ece133925cd646239ef4 net/mlx5: Get rid of storing copy of device name
-
-:::::: TO: Parav Pandit <parav@mellanox.com>
-:::::: CC: Saeed Mahameed <saeedm@mellanox.com>
-
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 3fe77a360f1c..7c8c2e173aa4 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -370,6 +370,34 @@ static inline bool init_task_stack_addr(const void *addr)
+ 			sizeof(init_thread_union.stack));
+ }
+ 
++/*
++ * RT kernel cannot call find_vm_area() in atomic context. For !RT kernel,
++ * prevent spinlock_t inside raw_spinlock_t warning by raising wait-type
++ * to WAIT_SLEEP.
++ */
++static inline void print_vmalloc_info_set_page(void *addr, struct page **ppage)
++{
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
++		static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
++		struct vm_struct *va;
++
++		lock_map_acquire_try(&vmalloc_map);
++		va = find_vm_area(addr);
++		if (va) {
++			pr_err("The buggy address belongs to the virtual mapping at\n"
++			       " [%px, %px) created by:\n"
++			       " %pS\n",
++			       va->addr, va->addr + va->size, va->caller);
++			pr_err("\n");
++
++			*ppage = vmalloc_to_page(addr);
++		}
++		lock_map_release(&vmalloc_map);
++		return;
++	}
++	pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
++}
++
+ static void print_address_description(void *addr, u8 tag,
+ 				      struct kasan_report_info *info)
+ {
+@@ -398,19 +426,8 @@ static void print_address_description(void *addr, u8 tag,
+ 		pr_err("\n");
+ 	}
+ 
+-	if (is_vmalloc_addr(addr)) {
+-		struct vm_struct *va = find_vm_area(addr);
+-
+-		if (va) {
+-			pr_err("The buggy address belongs to the virtual mapping at\n"
+-			       " [%px, %px) created by:\n"
+-			       " %pS\n",
+-			       va->addr, va->addr + va->size, va->caller);
+-			pr_err("\n");
+-
+-			page = vmalloc_to_page(addr);
+-		}
+-	}
++	if (is_vmalloc_addr(addr))
++		print_vmalloc_info_set_page(addr, &page);
+ 
+ 	if (page) {
+ 		pr_err("The buggy address belongs to the physical page:\n");
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
