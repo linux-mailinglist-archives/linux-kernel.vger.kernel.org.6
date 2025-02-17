@@ -1,278 +1,125 @@
-Return-Path: <linux-kernel+bounces-517651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C957A383E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:07:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE47A383C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850A23B6340
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69D2168B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8797F22068F;
-	Mon, 17 Feb 2025 13:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53AB21C177;
+	Mon, 17 Feb 2025 13:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mTC7HLHF"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="m7ovJ0Cq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p/oNoCF6"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE6F21CC56;
-	Mon, 17 Feb 2025 13:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7DC21CC79;
+	Mon, 17 Feb 2025 13:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739797245; cv=none; b=RaXHB5TdP2ApJFhNnAvEO+McwpoXjvDyqsvt/yZN4g5CoNirbBCN07jrHod0yS3Laqg50NCnjR39xWDorkYcHWmY2xkEMkFaka7uxgy1GsVwkD+vhCfDlV9ohmkCdF8fyIK0UTfnqpq1KKrQZVCUs9PrkJpYE7+rzKBsEPsGK7s=
+	t=1739797312; cv=none; b=Nc4DW6S9D71XphmA7PHEMKx7/6vUtYqkO5iGn9W22T8gGzJUzDx5AmeHcRF2AnsqivcqoTCyc4lpSlCtDIVhqv5XhxxADEOh9hQz86LGyJaOJWmmx+6KW+gwos0IRnuYPgZ2JlUxSB8gFajhv/gw/pkdWhmeiAUHzSGUtoOEGS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739797245; c=relaxed/simple;
-	bh=NMGSFpvbLVobJUD1e13M0ql45DWMtAKg69Jm7hViyQg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ipS3xGhXwgxULUnhDrjHl3tSuSFU7nGEeeXS0L6hXvIluGQwOLFiNXlEdjUK1sBvbMZCtTSfIphQ3B10WAokEZ+D8AwytMxkORhaTgvwV+8GTm7Dw9b2ueRVxgTB+Nj6oZ2bQ46fF7qpR/M1qvivuwJbACmRzIU/fJkD2KouDoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mTC7HLHF; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51HD0X4N660316
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 17 Feb 2025 07:00:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739797233;
-	bh=cxjl24+pAY0WWi9V/mRb2dPReER7i3xQHXTEEuQpAaI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=mTC7HLHFzUs4zWQTw62UOThqShsee94aSviZNOKjFF7DSszfBl3mn0ZvujQUTKe3A
-	 QB3KWRs+cev27BBnwv053kFE2z/cNxtjGE1wVdFNsKm1tYB7QZFwrO/Uv0vU9wlLmK
-	 SMcwq/hgTvpDaiekP/txx+Y/tUSHD0GVr8S2Ex1I=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HD0X16056195;
-	Mon, 17 Feb 2025 07:00:33 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Feb 2025 07:00:32 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Feb 2025 07:00:32 -0600
-Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HD0Fft072350;
-	Mon, 17 Feb 2025 07:00:28 -0600
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-To: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <mripard@kernel.org>, <mchehab@kernel.org>, <jai.luthra@linux.dev>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devarsht@ti.com>, <vaishnav.a@ti.com>, <r-donadkar@ti.com>,
-        <u-kumar1@ti.com>, <y-abhilashchandra@ti.com>
-Subject: [PATCH v2 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add support for VIDIOC_LOG_STATUS
-Date: Mon, 17 Feb 2025 18:30:13 +0530
-Message-ID: <20250217130013.2802293-3-y-abhilashchandra@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
-References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
+	s=arc-20240116; t=1739797312; c=relaxed/simple;
+	bh=2jD9QuN6VW28G8GTwlxHKo4MVefLSMtcuuBQ7ppj4Do=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jlcA+8vWuG+twyo7o2udT3Z+yScAO21j8RqaWYjjPFwsGGmAUz4/fWdNxyEGwve7OsBpgSK5HeatNwWkfA4E/kYvnh2Gxag6u/hguFlMry+zLjjfPJIFAlMQKk3dWyQoG409XQPZ4OrcHBTAdUh9ePrl2ef1Sj9zb1xqjuOTuPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=m7ovJ0Cq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=p/oNoCF6; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3B76B138098A;
+	Mon, 17 Feb 2025 08:01:49 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Mon, 17 Feb 2025 08:01:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1739797309;
+	 x=1739883709; bh=fGA+ofvv0mZ+MkkWUzOVgJmFJURib3VnJcpnpL+ZHus=; b=
+	m7ovJ0CqOB+FGXNyWezZXR56R+dUPXg6y5/SjLuu+Z77Eyw6oLdhktPa22dnJyAq
+	yZszsehsAJibdRlQQ3b0hBWrx4Aekp6tOEm/kBarmM8x+58Ewc8I8T5vhjgiqP+d
+	Tkyh+51baL+h+SmlorvlQWJ+hb5nceMOegTiO2rCFxMR262XQgLMyuW17leo8SgK
+	u7e9bU4WIs9ldGbq8om4mnP8TWzwzXTp4hGfEvQ27uIQldcwqoG6H55c0LUQIN+I
+	CF+sHtRpHpEGtZMhAO+Wwsdsa81317GPh7ODhe2X5A6m1DUcmvLwdiR9/L8bCwLk
+	vwXymEPs4zjaLRZP2YfNSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1739797309; x=1739883709; bh=f
+	GA+ofvv0mZ+MkkWUzOVgJmFJURib3VnJcpnpL+ZHus=; b=p/oNoCF6+AG2rsT1U
+	oJoNbzjA2pwiZ6qSDsPpAm+UG3XX0E0me0IOaLb1y4QZes7coe/crzQCAJCjYgAi
+	O3kpT2OHrLtN3uwDpNVAgG+2hf5tT8b+EJpNI/LSJITAOahD9YngzVNtTjIeIqsD
+	CaHug9xQA7KtlZGvP+356t9HYT5JqetoOCu2PY/YKxGp6yAOQcrQSwo8uErfo/pS
+	lMkw7vWWyTnhMsmbUyXokhNnbAIhUq+mwmCMBumUFu2eO0bQfmTy2yRLzY0Cr7w2
+	RQCZR6bPUgd63iTX1s8YizTYbH1u4vjPtKGTtZM7Oa4957KmcSz42QMIKkjG3Adp
+	E3m1g==
+X-ME-Sender: <xms:PDOzZ0DdmgvgEDBJ02HcqB5xjLCi2S8W_eUnp2wxItsJbI8HXsmU3w>
+    <xme:PDOzZ2jQrdI42GeBUxtyjyxZrLXR4Gd2erb7mIdYo-Ex9f9-BucKlU92SiMqn2qff
+    YoRjXlK-eNYE1AQzbU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfekledtffefhffghfetteehuefhgfetgefhtdeu
+    feduueeltefghedtjeeifffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhitgholhgrshesfhhjrghslhgvrd
+    gvuhdprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriiihshiith
+    hofhdrkhhoiihlohifshhkiheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghorhgs
+    vghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:PDOzZ3mEfyRqMpos6wPvm0i6GQM0gnYE6rb5Tp63W4Op0L_RT3cCRw>
+    <xmx:PDOzZ6yJv22itZ9lTlorwR4ohb5cZzUIOVnxhKUYz7xpV3o1XsrRMg>
+    <xmx:PDOzZ5TqER8X68IL5Ie85fbeuYGpYQVjqbrSNqWWClkNNHLtETjKwA>
+    <xmx:PDOzZ1Z1uGxPWPR6N3eSKIWV8P7Brtd0Bo6s6a9IRoo3dLUYzxywCw>
+    <xmx:PTOzZ6RETDtBvsZ3WkggEr3Qf7EgZ8b5emkQCq69NMl3ro4FQU6xVbZ3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 830D72220073; Mon, 17 Feb 2025 08:01:48 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 17 Feb 2025 14:01:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, "Jonathan Corbet" <corbet@lwn.net>,
+ linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <b1667246-d6e3-46cb-9b76-997e6d6fe052@app.fastmail.com>
+In-Reply-To: <20250217113153.161476-1-krzysztof.kozlowski@linaro.org>
+References: <20250217113153.161476-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3] docs: kconfig: Mention IS_REACHABLE as way for optional
+ dependency
 Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7bit
 
-Enable the csi2rx_err_irq interrupt to record any errors during streaming
-and also add support for VIDIOC_LOG_STATUS ioctl. The VIDIOC_LOG_STATUS
-ioctl can be invoked from user space to retrieve the device status,
-including details about any errors.
+On Mon, Feb 17, 2025, at 12:31, Krzysztof Kozlowski wrote:
+> Several drivers express optional Kconfig dependency with FOO || !FOO,
+> but for many choices this is not suitable: lack of stubs for !FOO
+> like in HWMON.  Describe the second, less favorable way of optional
+> dependency with IS_REACHABLE by moving the code from "imply" chapter to
+> "Optional dependencies".
+>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
----
-
-Changes in v2:
-- Address Jai's review comment to get interrupt at probe instead of
-  start_stream.
-- Address Jai's review comment to change dev_warn to dev_dbg when there
-  is no interrupt defined in DT.
-
- drivers/media/platform/cadence/cdns-csi2rx.c | 102 ++++++++++++++++++-
- 1 file changed, 101 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
-index 4d64df829e75..79f0c31eaf50 100644
---- a/drivers/media/platform/cadence/cdns-csi2rx.c
-+++ b/drivers/media/platform/cadence/cdns-csi2rx.c
-@@ -57,6 +57,28 @@
- #define CSI2RX_LANES_MAX	4
- #define CSI2RX_STREAMS_MAX	4
- 
-+#define CSI2RX_ERROR_IRQS_REG			0x28
-+#define CSI2RX_ERROR_IRQS_MASK_REG		0x2C
-+
-+#define CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ	BIT(19)
-+#define CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ	BIT(18)
-+#define CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ	BIT(17)
-+#define CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ	BIT(16)
-+#define CSI2RX_FRONT_TRUNC_HDR_IRQ		BIT(12)
-+#define CSI2RX_PROT_TRUNCATED_PACKET_IRQ	BIT(11)
-+#define CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ		BIT(10)
-+#define CSI2RX_SP_INVALID_RCVD_IRQ		BIT(9)
-+#define CSI2RX_DATA_ID_IRQ			BIT(7)
-+#define CSI2RX_HEADER_CORRECTED_ECC_IRQ	BIT(6)
-+#define CSI2RX_HEADER_ECC_IRQ			BIT(5)
-+#define CSI2RX_PAYLOAD_CRC_IRQ			BIT(4)
-+
-+#define CSI2RX_ECC_ERRORS		GENMASK(7, 4)
-+#define CSI2RX_PACKET_ERRORS		GENMASK(12, 9)
-+#define CSI2RX_STREAM_ERRORS		GENMASK(19, 16)
-+#define CSI2RX_ERRORS			(CSI2RX_ECC_ERRORS | CSI2RX_PACKET_ERRORS | \
-+					CSI2RX_STREAM_ERRORS)
-+
- enum csi2rx_pads {
- 	CSI2RX_PAD_SINK,
- 	CSI2RX_PAD_SOURCE_STREAM0,
-@@ -71,6 +93,28 @@ struct csi2rx_fmt {
- 	u8				bpp;
- };
- 
-+struct csi2rx_event {
-+	u32 mask;
-+	const char *name;
-+};
-+
-+static const struct csi2rx_event csi2rx_events[] = {
-+	{ CSI2RX_STREAM3_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 3 FIFO detected" },
-+	{ CSI2RX_STREAM2_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 2 FIFO detected" },
-+	{ CSI2RX_STREAM1_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 1 FIFO detected" },
-+	{ CSI2RX_STREAM0_FIFO_OVERFLOW_IRQ, "Overflow of the Stream 0 FIFO detected" },
-+	{ CSI2RX_FRONT_TRUNC_HDR_IRQ, "A truncated header [short or long] has been received" },
-+	{ CSI2RX_PROT_TRUNCATED_PACKET_IRQ, "A truncated long packet has been received" },
-+	{ CSI2RX_FRONT_LP_NO_PAYLOAD_IRQ, "A truncated long packet has been received. No payload" },
-+	{ CSI2RX_SP_INVALID_RCVD_IRQ, "A reserved or invalid short packet has been received" },
-+	{ CSI2RX_DATA_ID_IRQ, "Data ID error in the header packet" },
-+	{ CSI2RX_HEADER_CORRECTED_ECC_IRQ, "ECC error detected and corrected" },
-+	{ CSI2RX_HEADER_ECC_IRQ, "Unrecoverable ECC error" },
-+	{ CSI2RX_PAYLOAD_CRC_IRQ, "CRC error" },
-+};
-+
-+#define CSI2RX_NUM_EVENTS		ARRAY_SIZE(csi2rx_events)
-+
- struct csi2rx_priv {
- 	struct device			*dev;
- 	unsigned int			count;
-@@ -95,6 +139,7 @@ struct csi2rx_priv {
- 	u8				max_lanes;
- 	u8				max_streams;
- 	bool				has_internal_dphy;
-+	u32				events[CSI2RX_NUM_EVENTS];
- 
- 	struct v4l2_subdev		subdev;
- 	struct v4l2_async_notifier	notifier;
-@@ -124,6 +169,24 @@ static const struct csi2rx_fmt formats[] = {
- 	{ .code	= MEDIA_BUS_FMT_BGR888_1X24,  .bpp = 24, },
- };
- 
-+static irqreturn_t csi2rx_irq_handler(int irq, void *dev_id)
-+{
-+	struct csi2rx_priv *csi2rx = dev_id;
-+	int i;
-+	u32 error_status;
-+
-+	error_status = readl(csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-+
-+	for (i = 0; i < CSI2RX_NUM_EVENTS; i++)
-+		if (error_status & csi2rx_events[i].mask)
-+			csi2rx->events[i]++;
-+
-+	writel(CSI2RX_ERRORS & error_status,
-+	       csi2rx->base + CSI2RX_ERROR_IRQS_REG);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static const struct csi2rx_fmt *csi2rx_get_fmt_by_code(u32 code)
- {
- 	unsigned int i;
-@@ -218,6 +281,8 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
- 	reset_control_deassert(csi2rx->p_rst);
- 	csi2rx_reset(csi2rx);
- 
-+	writel(CSI2RX_ERRORS, csi2rx->base + CSI2RX_ERROR_IRQS_MASK_REG);
-+
- 	reg = csi2rx->num_lanes << 8;
- 	for (i = 0; i < csi2rx->num_lanes; i++) {
- 		reg |= CSI2RX_STATIC_CFG_DLANE_MAP(i, csi2rx->lanes[i]);
-@@ -330,6 +395,8 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
- 	reset_control_assert(csi2rx->sys_rst);
- 	clk_disable_unprepare(csi2rx->sys_clk);
- 
-+	writel(0, csi2rx->base + CSI2RX_ERROR_IRQS_MASK_REG);
-+
- 	for (i = 0; i < csi2rx->max_streams; i++) {
- 		writel(CSI2RX_STREAM_CTRL_STOP,
- 		       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
-@@ -361,6 +428,21 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
- 	}
- }
- 
-+static int csi2rx_log_status(struct v4l2_subdev *sd)
-+{
-+	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(sd);
-+	unsigned int i;
-+
-+	for (i = 0; i < CSI2RX_NUM_EVENTS; i++) {
-+		if (csi2rx->events[i])
-+			dev_info(csi2rx->dev, "%s events: %d\n",
-+				 csi2rx_events[i].name,
-+				 csi2rx->events[i]);
-+	}
-+
-+	return 0;
-+}
-+
- static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
- {
- 	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
-@@ -466,7 +548,12 @@ static const struct v4l2_subdev_video_ops csi2rx_video_ops = {
- 	.s_stream	= csi2rx_s_stream,
- };
- 
-+static const struct v4l2_subdev_core_ops csi2rx_core_ops = {
-+	.log_status	= csi2rx_log_status,
-+};
-+
- static const struct v4l2_subdev_ops csi2rx_subdev_ops = {
-+	.core		= &csi2rx_core_ops,
- 	.video		= &csi2rx_video_ops,
- 	.pad		= &csi2rx_pad_ops,
- };
-@@ -665,7 +752,7 @@ static int csi2rx_probe(struct platform_device *pdev)
- {
- 	struct csi2rx_priv *csi2rx;
- 	unsigned int i;
--	int ret;
-+	int irq, ret;
- 
- 	csi2rx = kzalloc(sizeof(*csi2rx), GFP_KERNEL);
- 	if (!csi2rx)
-@@ -703,6 +790,19 @@ static int csi2rx_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_cleanup;
- 
-+	irq = platform_get_irq_byname_optional(to_platform_device(csi2rx->dev), "error");
-+
-+	if (irq < 0) {
-+		dev_dbg(csi2rx->dev, "Optional interrupt not defined, proceeding without it\n");
-+	} else {
-+		ret = devm_request_irq(csi2rx->dev, irq, csi2rx_irq_handler, 0,
-+					"csi2rx-irq", csi2rx);
-+		if (ret) {
-+			dev_err(csi2rx->dev, "Unable to request interrupt: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	ret = v4l2_subdev_init_finalize(&csi2rx->subdev);
- 	if (ret)
- 		goto err_cleanup;
--- 
-2.34.1
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
