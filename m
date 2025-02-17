@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-517957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D1CA38806
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:47:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2020A387FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC430188CF99
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B533B3A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E92253E4;
-	Mon, 17 Feb 2025 15:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB36224B0D;
+	Mon, 17 Feb 2025 15:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XkflArg0"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rb8ndbKK"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F8622539F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD28149E16
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807165; cv=none; b=nnJ5eXhiYzwzT/fnj97pn8xoUXgQhKxwqLX4f4FZOn41EFKGt/TaHgHaNnjygWHK73LPzpm+ga3OqRt2kzaf58X4VmBF4CExjzYHs02HT9yCHkCa2TgBMA09m16iSwap5icwqyJtKHMxnfcNRhVM29YDsXQjm+ziMdW+dr0x0zM=
+	t=1739807166; cv=none; b=aGz0bCQGN5vFXJfVK6vwoZD+pPOQPZQZxY1rwD2SLK1JTBGSXrN8Vixbn4G+0cVn3xRIKSucaT+C6+ASPPghXoIv17C8FgE7cy8reQ/F2O4CEq2CdsCt+CzflpKXG5Qi2SBCybvq9AGWB567RRFG74t1zWfktA0ldFwFx8dcwP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807165; c=relaxed/simple;
-	bh=MY7ZcF8vbcV6356vl78VBfNy6YZyKg0q5A7kgMMVMr8=;
+	s=arc-20240116; t=1739807166; c=relaxed/simple;
+	bh=/uqOeds0M0ID5ri9rEbpAmZsjCMNziSxoN+UzQFuIgs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dI1aauhljrOxfwoTwZ+bnPxe7VhPsOI2eK8OXkk06CaDhvDIWPY3KepraDEdAN/SsoaQzfFwbvviKTbFbFkF/Nz8uZLtc/L4AN5GHnSMFVLm8bht3SUkwhVvcx1vXWqn95MY6q2pexjOixcpvayPFpLh0DAQUF6y6oNSCCfM6cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XkflArg0; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:Content-Type; b=Nc4AlBDPqw+S3PEqrXeGNkzWJL1ZJRYnSn6gtN5JhRU8q8pP+pLUxOn207TyIS6wY9JSb6pPby5/hZKoFHVFRjlRy1qIFhxtN4kwSdq2aelE/ExO0JjINz2+jpyqB+oB+n/EpWx8IRb31Cp2X3zEW9tOtC32Oadabg2p+u+a0/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rb8ndbKK; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E49B4442D1;
-	Mon, 17 Feb 2025 15:45:40 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DFB7744339;
+	Mon, 17 Feb 2025 15:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739807161;
+	t=1739807162;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=igNXhN0Lf8JrZDXDZEncf2oN26Nr985vOD9D0yqUIIM=;
-	b=XkflArg0d7pCukXyiEAiNXQ3+l/i8yGEwLYJ4dIyOR3gOKVq8nojy37t2HBxBIcCtgIfed
-	Zg+mZq0ukYLbFpZEOaQJVXT0NTuSyGssRw/ODF5suESeqrHl+cARaDwxqToR1JmlaAEFMr
-	rkDOaL0CuPukGj4whTcEpXDubFVnKtgG9/+ukyf0nM90LDSUNDeIwxF8AFNlykISfwl10A
-	XyKbSy7yiYFkglqzjK6O52MBvxR2N46E252gSKq4Y2aIdiL/Yqa+XLUWb4Ih1URkVKhz3S
-	B3F/5fAZGIvkXn61dXzPNhpmBxSy3kDT9ei3z/vYHRhicLvX7HIpLMnBynHnwA==
-Message-ID: <6b29064f-104a-4f9c-a9f6-8f4a862dbcd7@bootlin.com>
-Date: Mon, 17 Feb 2025 16:45:37 +0100
+	bh=s3yUAotaIJfeVwD8zWHiueTUD05e9jcuB1jgWdvIKew=;
+	b=Rb8ndbKKE/ceqgKHcXmOm+XWT8Ka8La+njCQO2xceNovIyS3+pNX62JbqrQOg11oqXn+vE
+	FQVvsrMr4U0gDWIRX/v3l0ZMpjpLbrho0zwjQQVjEJxiFtClSW/lW9N7GSVa1NHAQ+bRFz
+	oNqgi/nqm8jUWuhJ5pZ+ZiNe9tnCv7S7PexxKfNOf82aNZiUecPwl0koiNh2ux1X9ry2Pa
+	HOrRrefwiU8Oy7FUavxZv46CK0ZgejyaVtjJdc1iAgWlUByMC3ButRyCrfSvlS4rSYrRqd
+	2008liNTRcBWfpjVgoymoWo553sX6YclOYdLcLQlgpjZaukxl182Ab1B3N76Pw==
+Message-ID: <09d7235e-d81d-4f40-9ad5-1f414fbb0c54@bootlin.com>
+Date: Mon, 17 Feb 2025 16:45:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,14 +53,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/14] drm/vkms: Allow to configure multiple planes
+Subject: Re: [PATCH v3 09/14] drm/vkms: Allow to configure multiple CRTCs
 To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
 Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
  maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
  airlied@gmail.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 References: <20250217100120.7620-1-jose.exposito89@gmail.com>
- <20250217100120.7620-9-jose.exposito89@gmail.com>
+ <20250217100120.7620-10-jose.exposito89@gmail.com>
 Content-Language: en-US
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
@@ -117,78 +117,60 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250217100120.7620-9-jose.exposito89@gmail.com>
+In-Reply-To: <20250217100120.7620-10-jose.exposito89@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
  ggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi José,
 
-Thanks for this new iteration!
 
 Le 17/02/2025 à 11:01, José Expósito a écrit :
-> Add a list of planes to vkms_config and create as many planes as
-> configured during output initialization.
+> Add a list of CRTCs to vkms_config and helper functions to add and
+> remove as many CRTCs as wanted.
 > 
-> For backwards compatibility, add one primary plane and, if configured,
-> one cursor plane and NUM_OVERLAY_PLANES planes to the default
-> configuration.
+> For backwards compatibility, add one CRTC to the default configuration.
+> 
+> A future patch will allow to attach planes and CRTCs, but for the
+> moment there are no changes in the way the output is configured.
 > 
 > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > ---
->   .clang-format                                 |   1 +
->   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 140 +++++++++++++++++-
->   drivers/gpu/drm/vkms/vkms_config.c            | 127 +++++++++++++++-
->   drivers/gpu/drm/vkms/vkms_config.h            |  75 +++++++++-
->   drivers/gpu/drm/vkms/vkms_output.c            |  42 ++----
->   5 files changed, 349 insertions(+), 36 deletions(-)
+>   .clang-format                                 |  1 +
+>   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 73 ++++++++++++++++-
+>   drivers/gpu/drm/vkms/vkms_config.c            | 63 ++++++++++++++-
+>   drivers/gpu/drm/vkms/vkms_config.h            | 80 +++++++++++++++++++
+>   4 files changed, 212 insertions(+), 5 deletions(-)
 > 
 > diff --git a/.clang-format b/.clang-format
-> index fe1aa1a30d40..c585d2a5b395 100644
+> index c585d2a5b395..e7a901c3617d 100644
 > --- a/.clang-format
 > +++ b/.clang-format
 > @@ -690,6 +690,7 @@ ForEachMacros:
 >     - 'v4l2_m2m_for_each_src_buf'
 >     - 'v4l2_m2m_for_each_src_buf_safe'
 >     - 'virtio_device_for_each_vq'
-> +  - 'vkms_config_for_each_plane'
+> +  - 'vkms_config_for_each_crtc'
+>     - 'vkms_config_for_each_plane'
 >     - 'while_for_each_ftrace_op'
 >     - 'xa_for_each'
->     - 'xa_for_each_marked'
 > diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-> index 6e07139d261c..fe6f079902fd 100644
+> index fe6f079902fd..6a89361601a0 100644
 > --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
 > +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-> @@ -24,6 +24,10 @@ static void vkms_config_test_empty_config(struct kunit *test)
->   	dev_name = NULL;
+> @@ -25,6 +25,7 @@ static void vkms_config_test_empty_config(struct kunit *test)
 >   	KUNIT_EXPECT_STREQ(test, vkms_config_get_device_name(config), "test");
 >   
-> +	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
+>   	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
+> +	KUNIT_EXPECT_TRUE(test, list_empty(&config->crtcs));
 
-Instead of testing directly a "private" field (planes), can we use 
-something like:
-
-int count;
-vkms_config_for_each_plane(config, plane_cfg)
-	count++;
-ASSERT_EQ(count, 0);
-
-So we don't make config->plane "public".
-
-Same comment for connectors, crtc and encoders.
-
-With this:
+Ditto, with this modification:
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-(sorry, I did not notice this on your v2)
-
-Thanks,
-Louis Chauvet
 
 -- 
 Louis Chauvet, Bootlin
