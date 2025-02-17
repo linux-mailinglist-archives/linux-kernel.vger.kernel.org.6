@@ -1,142 +1,189 @@
-Return-Path: <linux-kernel+bounces-518376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71ADAA38E29
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:36:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BC3A38E27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9021218915DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F5717364D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC7D1A841E;
-	Mon, 17 Feb 2025 21:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2C71AA1D5;
+	Mon, 17 Feb 2025 21:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cgHnbGEO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNkTDYpu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD61A8F7A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD061A5BAD;
+	Mon, 17 Feb 2025 21:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739827979; cv=none; b=WCMw14xhNOcNvMo7PguPmVURNrIRjo08ka0zOzATKIPyd1PEkwzCjBL8oSK5P8I+WF4iC4DUO+PMRVyybL0bcs8yFp8eiNarsU+MoWAu/Zk0HBgxWoVd9YsgQyvuFBISMtZvUQSZME8wWcLFXajylwzMBu5ExqPWUnULe+QCkfM=
+	t=1739828014; cv=none; b=rUsNoKEVGTktIz72kVtbqf5v13ZNfk5my9IcE4PceKPT+8Ca3ScAvddY6X/TdR4RnsmqHX5sKOu0m/qhFE2SNPsYtMS3B9FnZIgD84NJNHizd/yCQnGAI0VJ0wQLEG7lhRArhFo56bmnnSeLmZexDt3N8OTiwGOQ+Qz91EA34LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739827979; c=relaxed/simple;
-	bh=UxRYE+GnMEXy65wJRre9vuUKgKVVkSZiKNCcZ0lZ9aQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XSBgiWFjpkodep8bgmnha9tkyQujED1PZ2a0n8wE2+yA8YDmVwSpHyfrL5rTgsdKwAQIkHXzaW2N9F42gqQVGmPFEsZxP3WXDliCdO3723jnbUvyYcvGuvNNriYFzi1xgjhyPF+ryWzCW7pfQGg4PyzepHUV92cO7d+6iKa2u5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cgHnbGEO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739827976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wjr6J6DOeZeSoS3UpK+LIJot/A4kSVDwCJKjvWd8g2s=;
-	b=cgHnbGEOVvrF8+ZNs7cQbOMGcwQkJUPTRIfKLqQoK8MtHPfL7Mt3/ePW1D+O6uqB8jDXzK
-	x644pcmruSz+3b1hAz9KhG6hVR47IxH/GJL0H8nQ03A+nrdmSDpJruzXUyUMjXaYXHHckL
-	AJbklXAtp86LbEk9xwAbT8uSDCcnnfU=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-468-cCNHhSaNPtSSserz9uWFHg-1; Mon, 17 Feb 2025 16:32:55 -0500
-X-MC-Unique: cCNHhSaNPtSSserz9uWFHg-1
-X-Mimecast-MFC-AGG-ID: cCNHhSaNPtSSserz9uWFHg_1739827975
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6f46924f63eso74992017b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:32:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739827975; x=1740432775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wjr6J6DOeZeSoS3UpK+LIJot/A4kSVDwCJKjvWd8g2s=;
-        b=vx0Dg3Y3ySHOf8ZTkIaai9NknM0tXTPuSn5H+LiJA/Ava2z2pB7viXY381iO7pnjAV
-         aXzvExDRd6hN0zipM3vXk0GPgHI8kiI5i5gwjYuAqwFfWgKw/4agLDDTKiFfLDhpZ/+w
-         WZwqRC3XWyBajUevoaPPFoVxBPNlKy8v6BbaUVIsb7zedncqZt1Z5RA0E4mtr4LqaPox
-         i+zrVNDRjCasSQLcCS9wwCB20QZH79NxTIMT2J5AUBvgRpSPp1oeOC9qJaQ04Fw8zQ/v
-         uTxGUkrci0BQ2VlyeLVsYtW5ozMMeuQHUbHZ5WlhQUSZksKTFBgEvjDWQWrgladGEZnj
-         Uvtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx8jFkKQpD0lQkNc61RSudbllFEztb6B0UFs7+r5WPtV2HZhnMtYot/RcIkF9vVXhTISmatnDeStnDdgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEWmvCAolLK0/o94yN4ovzdPFhoKp+hVuT86QPkf4jzmTGHj/a
-	g4/oIXJpvryi9NYgri3J9FQBczZkrmPau/tlkmlGm2tNe2sPANXEBCnmYOGCaANgqQ4xqqWGbF3
-	wFbzZ0AVKKjg1zPbwTOXKYyy+j6qKw2JpypC+u+GRhUI6osctJzZw4iQXKZkJHNewKF0mlforz/
-	SYwoU2BHfZrq/1omZ+7YtxkoMLAmDhXIYfHsU/
-X-Gm-Gg: ASbGncup4JvH1e5D4O+R2kzaXZPAhLT2I3upu789SS6sBmDVf1cY0K7JBk96kVYNgKy
-	DglGuzpPjeGzP2byH7hQRFHtUoHUkMaxLprV0Hxtv+wUXNNsJHQ2ITXQ+0+ZA6UY4OPwQWNZ78f
-	8=
-X-Received: by 2002:a05:6902:2102:b0:e5b:45eb:dbfd with SMTP id 3f1490d57ef6-e5daa4c6821mr16623488276.11.1739827975046;
-        Mon, 17 Feb 2025 13:32:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGOkZYdxA7+HLOKnLODZz3B+t380yGAD+5tVKQqEu4d65LXrhAQ59NLa24+U3g/GCY/e81Og/sTryAx1QenBGY=
-X-Received: by 2002:a05:6902:2102:b0:e5b:45eb:dbfd with SMTP id
- 3f1490d57ef6-e5daa4c6821mr16623479276.11.1739827974804; Mon, 17 Feb 2025
- 13:32:54 -0800 (PST)
+	s=arc-20240116; t=1739828014; c=relaxed/simple;
+	bh=kudnxAtRl/tDWg4bJcLUVW1vOsh4vA4q3gFnmmnVfwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgJCmb1YBMdeDg8WY6+1DKcURYQj9tiySr7rNeovp7Qep1LDRLdmlh4d0rXQxNJgjgBfUzJZhetiSN5+5w8HThrSGYn84PRX4zZVCVxr4zBsn1DeNkgmO02FjyNoj/0ppsvR5ioONrMPRXRYr5QTzAl1p3lRRMIWi/X2Opbdhlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNkTDYpu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F1FC4CED1;
+	Mon, 17 Feb 2025 21:33:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739828014;
+	bh=kudnxAtRl/tDWg4bJcLUVW1vOsh4vA4q3gFnmmnVfwE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nNkTDYpuZG/KWMls9s4bXcfkxuJ3WK2RopCubxtg2qc6Py+Bufvtzwap/5//fa0aJ
+	 fXgezJMLxgFnFb9ag7NB9ju2Sc54Duia6rj3lXMEpg1SL2dh6S7Txlsm+YKEnKAAS7
+	 vnyyoTvih2EZ86IAboFIx1K2rZEEy15xE/b46WJ9G7uDTH+YMnSms88WuNafZhgf+P
+	 dLo4CNRHvcwKmUDXwVZY1DYTjfkhrhu9Diq5AVPoASuvp25pITHFApD//gnjRWULeQ
+	 tgBm+bSe/xeyKncUZCzuHtG51SEnTrEDb8xhJBn/uVDtXK0FpT4FnFuqeFmpnKTf7N
+	 B7FSxUG59DBPg==
+Date: Mon, 17 Feb 2025 22:33:29 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>, John Hubbard <jhubbard@nvidia.com>,
+	Ben Skeggs <bskeggs@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z7OrKX3zzjrzZdyz@pollux>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-kselftest-mm-no-hugepages-v1-0-44702f538522@kernel.org> <20250212-kselftest-mm-no-hugepages-v1-1-44702f538522@kernel.org>
-In-Reply-To: <20250212-kselftest-mm-no-hugepages-v1-1-44702f538522@kernel.org>
-From: Nico Pache <npache@redhat.com>
-Date: Mon, 17 Feb 2025 14:32:29 -0700
-X-Gm-Features: AWEUYZmwEXuqxVjY66-BVM_Ib4FZYHb37Giao24vLwf7Z76BXTlSrlgRvS3mTD8
-Message-ID: <CAA1CXcDL+WNnn57dDQSLVkHNr46hJZf2PPTO-1zgesc1j2uxTA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] selftests/mm: Fix check for running THP tests
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
 
-On Wed, Feb 12, 2025 at 10:52=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> When testing if we should try to compact memory or drop caches before we
-> run the THP or HugeTLB tests we use | as an or operator. This doesn't wor=
-k
-> since run_vmtests.sh is written in shell where this is used to pipe the
-> output of the first argument into the second. Instead use the shell's -o
-> operator.
->
-> Fixes: b433ffa8dbac ("selftests: mm: perform some system cleanup before u=
-sing hugepages")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+Hi Alex,
 
-Ah I meant to use || which i believe also works in shell. Thanks for the fi=
-x!
+On Mon, Feb 17, 2025 at 11:04:45PM +0900, Alexandre Courbot wrote:
+> Hi everyone,
+> 
+> This short RFC is based on top of Danilo's initial driver stub series
+> [1] and has for goal to initiate discussions and hopefully some design
+> decisions using the simplest subdevice of the GPU (the timer) as an
+> example, before implementing more devices allowing the GPU
+> initialization sequence to progress (Falcon being the logical next step
+> so we can get the GSP rolling).
+> 
+> It is kept simple and short for that purpose, and to avoid bumping into
+> a wall with much more device code because my assumptions were incorrect.
+> 
+> This is my first time trying to write Rust kernel code, and some of my
+> questions below are probably due to me not understanding yet how to use
+> the core kernel interfaces. So before going further I thought it would
+> make sense to raise the most obvious questions that came to my mind
+> while writing this draft:
 
-Reviewed-by: Nico Pache <npache@redhat.com>
+Thanks for sending this RFC, that makes a lot of sense.
+
+It's great to see you picking up work on Nova and Rust in the kernel in general!
+
+One nit: For the future, please make sure to copy in the folks listed under the
+RUST entry in the maintainers file explicitly.
+
+> 
+> - Where and how to store subdevices. The timer device is currently a
+>   direct member of the GPU structure. It might work for GSP devices
+>   which are IIUC supposed to have at least a few fixed devices required
+>   to bring the GSP up ; but as a general rule this probably won't scale
+>   as not all subdevices are present on all GPU variants, or in the same
+>   numbers. So we will probably need to find an equivalent to the
+>   `subdev` linked list in Nouveau.
+
+Hm...I think a Vec should probably do the job for this. Once we know the
+chipset, we know the exact topology of subdevices too.
+
+> 
+> - BAR sharing between subdevices. Right now each subdevice gets access
+>   to the full BAR range. I am wondering whether we could not split it
+>   into the relevant slices for each-subdevice, and transfer ownership of
+>   each slice to the device that is supposed to use it. That way each
+>   register would have a single owner, which is arguably safer - but
+>   maybe not as flexible as we will need down the road?
+
+I think for self-contained subdevices we can easily add an abstraction for
+pci_iomap_range() to pci::Device. I considered doing that from the get-go, but
+then decided to wait until we have some actual use for that.
+
+For where we have to share a mapping of the same set of registers between
+multiple structures, I think we have to embedd in into an Arc (unfortunately,
+we can't re-use the inner Arc of Devres for that).
+
+An alternative would be to request a whole new mapping, i.e. Devres<pci::Bar>
+instance, but that includes an inner Arc anyways and, hence, is more costly.
+
+> 
+> - On a related note, since the BAR is behind a Devres its availability
+>   must first be secured before any hardware access using try_access().
+>   Doing this on a per-register or per-operation basis looks overkill, so
+>   all methods that access the BAR take a reference to it, allowing to
+>   call try_access() from the highest-level caller and thus reducing the
+>   number of times this needs to be performed. Doing so comes at the cost
+>   of an extra argument to most subdevice methods ; but also with the
+>   benefit that we don't need to put the BAR behind another Arc and share
+>   it across all subdevices. I don't know which design is better here,
+>   and input would be very welcome.
+
+I'm not sure I understand you correctly, because what you describe here seem to
+be two different things to me.
+
+1. How to avoid unnecessary calls to try_access().
+
+This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argument. I
+think we can just call try_access() once and then propage the guard through the
+callchain, where necessary.
+
+2. Share the MMIO mapping between subdevices.
+
+This is where I can follow. How does 1. help with that? How are 1. and 2.
+related?
+
+> 
+> - We will probably need sometime like a `Subdevice` trait or something
+>   down the road, but I'll wait until we have more than one subdevice to
+>   think about it.
+
+Yeah, that sounds reasonable.
+
+> 
+> The first 2 patches are small additions to the core Rust modules, that
+> the following patches make use of and which might be useful for other
+> drivers as well. The last patch is the naive implementation of the timer
+> device. I don't expect it to stay this way at all, so please point out
+> all the deficiencies in this very early code! :)
+> 
+> [1] https://lore.kernel.org/nouveau/20250209173048.17398-1-dakr@kernel.org/
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->  tools/testing/selftests/mm/run_vmtests.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/se=
-lftests/mm/run_vmtests.sh
-> index 333c468c26991421cd8f9ce6d995f9b64b0643c7..da7e266681031d2772fb0c413=
-9648904a18e0bf9 100755
-> --- a/tools/testing/selftests/mm/run_vmtests.sh
-> +++ b/tools/testing/selftests/mm/run_vmtests.sh
-> @@ -220,7 +220,7 @@ run_test() {
->         if test_selected ${CATEGORY}; then
->                 # On memory constrainted systems some tests can fail to a=
-llocate hugepages.
->                 # perform some cleanup before the test for a higher succe=
-ss rate.
-> -               if [ ${CATEGORY} =3D=3D "thp" ] | [ ${CATEGORY} =3D=3D "h=
-ugetlb" ]; then
-> +               if [ ${CATEGORY} =3D=3D "thp" -o ${CATEGORY} =3D=3D "huge=
-tlb" ]; then
->                         echo 3 > /proc/sys/vm/drop_caches
->                         sleep 2
->                         echo 1 > /proc/sys/vm/compact_memory
->
-> --
-> 2.39.5
->
-
+> Alexandre Courbot (3):
+>       rust: add useful ops for u64
+>       rust: make ETIMEDOUT error available
+>       gpu: nova-core: add basic timer device
+> 
+>  drivers/gpu/nova-core/driver.rs    |  4 +-
+>  drivers/gpu/nova-core/gpu.rs       | 35 ++++++++++++++-
+>  drivers/gpu/nova-core/nova_core.rs |  1 +
+>  drivers/gpu/nova-core/regs.rs      | 43 ++++++++++++++++++
+>  drivers/gpu/nova-core/timer.rs     | 91 ++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/error.rs               |  1 +
+>  rust/kernel/lib.rs                 |  1 +
+>  rust/kernel/num.rs                 | 32 ++++++++++++++
+>  8 files changed, 206 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 6484e46f33eac8dd42aa36fa56b51d8daa5ae1c1
+> change-id: 20250216-nova_timer-c69430184f54
+> 
+> Best regards,
+> -- 
+> Alexandre Courbot <acourbot@nvidia.com>
+> 
 
