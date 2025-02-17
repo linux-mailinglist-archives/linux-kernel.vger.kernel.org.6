@@ -1,102 +1,47 @@
-Return-Path: <linux-kernel+bounces-517796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AABA385B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:16:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589E3A385DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B093717736A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDE83B3AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E7C21D583;
-	Mon, 17 Feb 2025 14:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tpBEUbse"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE03F21CC54;
-	Mon, 17 Feb 2025 14:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B9521D009;
+	Mon, 17 Feb 2025 14:13:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8C121CC59
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801488; cv=none; b=noBQYZruzQDdBvt5iSW2ftpqf/mwCT6ajmfzjYDmGNUQVQge35pQzwICR/K5suLDljHIbQfxth+gCVLTNbmdu7aZDPX+K0d48DA4oY+gf4E6rllEGBGvtEdWnMLBU4jEvAJztDt447VNAQQAwm1dHOvyI1z/m/mcQ05jprz8NwY=
+	t=1739801630; cv=none; b=lHxNH9RfGoPgh/P+ITvAEaChzKv5yr8hTVUYWs6OTPfxy94FR/aJ7cFPJfG0Uz2ilMY/pPmUZTdBmAHrUqjuDf0oag4V/As8r3CwCUIHH+aow6vvXqt4zvRmUEQrdA93JrFqhquE++z3HtT4P/ge10v7HWf9dnc9h0RA/l/hEYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801488; c=relaxed/simple;
-	bh=CgvLbbaqhZJh2aBng8GYA6OHX8pFtBK1DgD9dwP/Izo=;
+	s=arc-20240116; t=1739801630; c=relaxed/simple;
+	bh=BDhq3FnMyKkbbSsoUCH6vLeyIdi0qbI6Kw9qS+IRKD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OwSJEzafx0SvPK7S9TbhKpIP9gPju6hX5dxeh2pnyb5VLFB1icGxEivJWm9tTv6Y9JK3lR8ggJUliLMLZcReOZkUMvbaI3BdmMPNnzvCxoV501SWLHmIKk8GhXBmJkQ0+PhkyyUUK5ZuYO8HKmDx5tsVsDzIVCSrUB6nFT0iuWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tpBEUbse; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+Tyg8b+xD0Br85DGNOgrIPE01EZSzRbYGNzNPsDnqag=; b=tpBEUbseu3svPJZjMXU0nSpYr8
-	GmffVj6GQ869k1Jh3niah2GmA3mLVEENfzotxr/MZcFH2FhCCIZZp9Kxnz9msHHPG5C3vOB6+kUR6
-	6+RgjsyJNUEgL+6lYKHDXyLR6/ewFtS87FmKFoT6ICF87RC/fVEfuEgPooJINzuvQmyjV2AyVv+vJ
-	YbKo0YZXyP0coO8OvabMIii2bRao+9FXH6GvaO7AaWwc839h0w6a9KrOGu1gVklIfC15Ikw1Jj9vX
-	kQjlQzNDVeKcCrSDBXVW9IiUYc+OsOsTXab9schzXS/+HNDTbVhhy9fSvNf09tdiCq2hPlM2Xz3M4
-	CM1EF8aw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39042)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tk1ps-0006pq-1t;
-	Mon, 17 Feb 2025 14:11:00 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tk1pi-0006HQ-2v;
-	Mon, 17 Feb 2025 14:10:50 +0000
-Date: Mon, 17 Feb 2025 14:10:50 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
- SG2044 SoC
-Message-ID: <Z7NDakd7zpQ_345D@shell.armlinux.org.uk>
-References: <20250216123953.1252523-1-inochiama@gmail.com>
- <20250216123953.1252523-4-inochiama@gmail.com>
- <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
- <5e481b95-3cf8-4f71-a76b-939d96e1c4f3@lunn.ch>
- <js3z3ra7fyg4qwxbly24xqpnvsv76jyikbhk7aturqigewllbx@gvus6ub46vow>
- <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yd0cLzLOMlj9lUSlMHP81cZz4r18/HHCZr22/LW0QnX+QNkzXeheSltph4YeHpLoHaqmQbw5YKx3A3kvJAIQDQ20UHvoSewSDxhdq/MiUnpbLWcQNyLdScs4Au60Xax9kilVp0ssKpYB+5WZ8d0WulWODdBP4+llai8QV1yB0KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 379CA152B;
+	Mon, 17 Feb 2025 06:14:07 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D4523F6A8;
+	Mon, 17 Feb 2025 06:13:47 -0800 (PST)
+Date: Mon, 17 Feb 2025 14:13:44 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/18] firmware: arm_ffa: Refactor addition of
+ partition information into XArray
+Message-ID: <Z7NEGG3DKiMUEu83@bogus>
+References: <20250131-ffa_updates-v2-0-544ba4e35387@arm.com>
+ <20250131-ffa_updates-v2-6-544ba4e35387@arm.com>
+ <20250214045030.mfegbypq27gdl6sg@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,35 +50,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250214045030.mfegbypq27gdl6sg@vireshk-i7>
 
-On Mon, Feb 17, 2025 at 02:25:33PM +0100, Andrew Lunn wrote:
-> > I am not sure all whether devices has this clock, but it appears in
-> > the databook. So I think it is possible to move this in the core so
-> > any platform with these clock can reuse it.
+On Fri, Feb 14, 2025 at 10:20:30AM +0530, Viresh Kumar wrote:
+> On 31-01-25, 11:24, Sudeep Holla wrote:
+> > @@ -1461,39 +1480,18 @@ static int ffa_setup_partitions(void)
+> >  		    !(tpbuf->properties & FFA_PARTITION_AARCH64_EXEC))
+> >  			ffa_mode_32bit_set(ffa_dev);
+> >  
+> > -		info = kzalloc(sizeof(*info), GFP_KERNEL);
+> > -		if (!info) {
+> > +		if (ffa_xa_add_partition_info(ffa_dev->vm_id)) {
+> >  			ffa_device_unregister(ffa_dev);
+> >  			continue;
+> >  		}
+> > -		rwlock_init(&info->rw_lock);
+> > -		ret = xa_insert(&drv_info->partition_info, tpbuf->id,
+> > -				info, GFP_KERNEL);
+> > -		if (ret) {
+> > -			pr_err("%s: failed to save partition ID 0x%x - ret:%d\n",
+> > -			       __func__, tpbuf->id, ret);
+> > -			ffa_device_unregister(ffa_dev);
+> > -			kfree(info);
+> > -		}
+> > +
 > 
-> Great
+> Why extra blank line here ?
 > 
-> The next problem will be, has everybody called it the same thing in
-> DT. Since there has been a lot of cut/paste, maybe they have, by
-> accident.
 
-Tegra186: "tx"
-imx: "tx"
-intel: "tx_clk"
-rk: "clk_mac_speed"
-s32: "tx"
-starfive: "tx"
-sti: "sti-ethclk"
-
-so 50% have settled on "tx" and the rest are doing their own thing, and
-that horse has already bolted.
-
-I have some ideas on sorting this out, and I'm working on some patches
-today.
+Spurious for sure, no idea how I managed that though. Dropped it now.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Regards,
+Sudeep
 
