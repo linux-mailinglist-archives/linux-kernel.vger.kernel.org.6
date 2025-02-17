@@ -1,250 +1,110 @@
-Return-Path: <linux-kernel+bounces-517876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44996A386E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:49:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01737A386F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F61D1653F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946BB188E68E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F30F22370C;
-	Mon, 17 Feb 2025 14:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3B22333E;
+	Mon, 17 Feb 2025 14:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3KXwgO4"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="AvVaxsCp"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177BD21CA0E;
-	Mon, 17 Feb 2025 14:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739803674; cv=none; b=MNtHTYNttW6viCCa4KZjWsZ8UYLdU6plZdmJEbdKdAdTFY3iSAP3QmakZAbLyiv15xdIFbP65uXlBCAbg6amVAbmoODDwYpcEJuJHc3mVZbzpBjCPpJ6heAh37JE1A9V6F/b+dAFq03U9Ds/Xy55rv9Lb7YEQqCrIvo1fB0qLPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739803674; c=relaxed/simple;
-	bh=oGq1HKEXRFild7cOOV4DLkmQbmFmQNwy9jzM7RkUz1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sxjml+QtFqbZd3wmi/L339wHC9hxoe4SYqxrzFch2Wr9mAER0b30YLgqvIFnHZrTiGT8mjf3tGHvpWBou/SanfTNTsmM6LW4Bvv+8+Ss864MeBlTmRa74v+cUVAkiG8C6GuOiaUIjQB60rx+tED1XOeEbbWKM9OIOvhtRPyfEHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3KXwgO4; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307c13298eeso45645971fa.0;
-        Mon, 17 Feb 2025 06:47:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739803671; x=1740408471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yelQ8r3ymkQjfm9j6D5BGBZ62JnuLjJsnUbfmnDTfxs=;
-        b=k3KXwgO4xbI6b81EZxlhqLxh4Z9b3auGIYjpLx+xsNImFH1LgVAbOLNzufM+3PNxNO
-         oi/tsgDjOel+srO7MJzYVsexnwPHia5zxCrcXJSclH4r5mBW7jg0pFLJXsjyS2DJ50+C
-         30/CilJM5FRvdoNmTqNCPY6ERVHLr+XvZOtmBVYe0PNPCDANnnFZxj+b4+BjBZwPbwVa
-         DjLCs0rDmkbKAVtDewNyIiskgYlbt4/4+BNlPK8dAlLQlZ/G2nJY4zFUE7h/SxOUdBxl
-         OIuUpvkGOH4Rkk35yXVtj+5F9ckyD8gtv4IOYxs57CBBpGeKtVtd7d/OV/YRDsSgevhC
-         /LXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739803671; x=1740408471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yelQ8r3ymkQjfm9j6D5BGBZ62JnuLjJsnUbfmnDTfxs=;
-        b=Yh+Frr6aDiPqWeMreKnai34p+IgNrnDgMg9Z0LLXpgp4puxbV6lAqQDuaIxk4b2uKR
-         DhE4a8jeFx1AhvKWbX8Ed/kkhStQPWmQDGEIA9k65EsS0npLrXj5v/crwPhnDraRH12s
-         xCy7x6aCkAt5vEVBSHcs+zItb3j+BvjcGbTXNFcqFmEOKyX/CrBE/uXpFboHIS9ZfB9T
-         QHgtfoOa54poKR75FpRbb56ZNq8Ni2SmFjWwpcdI8ooy+nBishbDAts0osRbAceoLXP0
-         S8+pBepNVvc4BMysvhxplZ8HAgxP0KnxvazdAXKOVGqpucFqzVsPrM/hOr8SglGqaOoI
-         kLqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF1WWDnNt11sPyk7cl0Bd3gciE6WXcD9ELQgtQnkNXuJCTCrProco/1PWl3SPG3LfyIODT6UCOTHLQ2KPYLlU=@vger.kernel.org, AJvYcCUFSKwfFdGnU92D9FCD8ZQsMS8O7vcWw4QYVZR4UKWwZgDW5myLYEDOHCw8I5JkZmqnVrPgacW+X3DW@vger.kernel.org, AJvYcCUqGBtHdVOnAdPQMZA3i4lHcAmJ4CbOTKT7atxhjRCLpN2aC7oQiF9zUSKh0sp3RYbpiu3ilk8GUXJEFrnU@vger.kernel.org, AJvYcCW21XsBBritXjPMxxWLkYyo4b7XtPIBBKlQHuuHEg8VBK7/d+CqAZbZv48gttrjyhqhhp2kW4nsDTA/vMxT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhvZC+t229EB7RqOjN22kgkJ7czAQZmL5TnEaF3YcbA4p/tS0p
-	qTlhFOuif/G6CL/fweWpHNF231Me6sl6gSif/BWFnnZrRhZNfKZNPOYhRJFjfMdoPBDpSCq4Mkc
-	Cf3bfpFaXfvuMRXemcWW4y2oruipREws7
-X-Gm-Gg: ASbGncuXcABGXAf5zhF4D5x9FaeDo6njD1F+2IwiJDrLqzWuO+0s/ckqjHpxC0NrSlA
-	qzo4L1jEJ7WfJ9bTftw0wAB19FFCJvNdO8mSCn5LvjvjYxrfe3pdzBcPPnVp6BNJdomjk0pFOXC
-	PRlqKWG9JgUUrOVbeOojFy49K436XZDNQ=
-X-Google-Smtp-Source: AGHT+IGl++F9JEix/3p1S41cUUJSot7kHwy5rdU0vrT8bdI4ZQwvTDealantGSf3uQMwjqLGEtdxinx7X645sIp0jn0=
-X-Received: by 2002:a2e:9e1a:0:b0:302:49b6:dfaf with SMTP id
- 38308e7fff4ca-30928b7454emr23551951fa.20.1739803670897; Mon, 17 Feb 2025
- 06:47:50 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968FE2222D1;
+	Mon, 17 Feb 2025 14:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739803743; cv=pass; b=qi6ffWYND8zfh1/o1Tp6LDUhd4PI6KFV97zniC2jIas7+r04CHiJUPkN7lCtY7BeCmN1Phi6Pz819E9PdWJyWF9NArGjWuDON42BdGwNhjvsT9YfrEAWnNhii3IMX+6L/Mm23etHCLpFxeNEkR2o5OJlV8SuMWpnh7DfnNvYwXA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739803743; c=relaxed/simple;
+	bh=A/Od5TUwsJhA8mx1EQWCsKiLy7LSZWLxOCZEMDPYq5s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pySjLEYkjv4g2g9c4+Nvn0X6b6elK43317kWvYx7ght5iPltcYowAzABAi0GbpWrx8BJt2Y1DRLAWQGG27VYXdqrDnEsp7lcNIS0NEJbJbt/baW4u7VuU2rlHACYt/YX3sSzTZwM68oiILhD2DLaCBtNpEZ60D80xgo5ROqRvpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=AvVaxsCp; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739803723; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kFwAbnouE55WH7Hd9qMl4e+ZJt5V8YNf4O7eWIiCP6RWDeufhFXPXk9pOSV7uXmElyCdccFbH7Bk9c5pvzjMfaNv6Ktd7/JUZ0hEMtcfZHuui2P/mHWYH0qnDHhraEcOkz9aIDSOvVqt5Ox4htjUciS97TZhLlm8kphRLq3cwvw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739803723; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ycDqgIL5ICKkCtR/gqGg8lD2i2dQ//1wJagDW0VlWnY=; 
+	b=gJ8YEQKC+uXwyR0Vhd91ARWlUutheBOLuxUtyy2D5/u1NnXxktyVaxTaXw2oqtZSnu0y06wnPQxo0DxXjgbR7oahtNZ8Q3q1YOCdd/st7q6nFRZdf3Qq63DDqOE+TEbK26EmeAEAUwJiihwVa+ADIrNjWOnqhv8m9eklcqKA7L8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739803723;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=ycDqgIL5ICKkCtR/gqGg8lD2i2dQ//1wJagDW0VlWnY=;
+	b=AvVaxsCprakUNa8LDYcoznshpridrEdLfRU5AsfV08T3T1Y+MDsZfvNUGIiBQp72
+	GdZQ0wBu9QmeWZ/ckhdI4DjHMLU/tw0kmBL2dy8wLcOzefijO749GY3xYqrerbnD0UZ
+	biPJB0xMnKvnLuz1sd5N3Y0oTDdNs6UoAjtcrNqg=
+Received: by mx.zohomail.com with SMTPS id 1739803720959126.8844032888727;
+	Mon, 17 Feb 2025 06:48:40 -0800 (PST)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v2 0/7] Use guard() instead of rwsem locking
+Date: Mon, 17 Feb 2025 22:48:21 +0800
+Message-Id: <20250217144828.30651-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
- <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
- <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
- <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
- <Z7NJugCD3FThZpbI@cassiopeiae>
-In-Reply-To: <Z7NJugCD3FThZpbI@cassiopeiae>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Feb 2025 09:47:14 -0500
-X-Gm-Features: AWEUYZkhjWnndzObhnnMYKIbIRqYFHcYPrkL6t02LpCr5aboeg3gLJ8FDP7cjDg
-Message-ID: <CAJ-ks9mcRffgyMWxYf=anoP7XWCA1yzc74-NazLZCXdjNqZSfg@mail.gmail.com>
-Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr0801122798fd5753cde6f4ada8ba69df000067950776227fe6eefd44525e66f86efe9ff6faebccaf59f683:zu08011227e631806f9df9ff8a80c5e70c0000989082e06bb9497aa87caf93156d890a42670b0627c5c029ae:rf0801122d9ca41d22dfc2cd26847cdd9600009190e2849bc57d39899975caacecdfe26d397fb904456c934a5391abecbc80:ZohoMail
+X-ZohoMailClient: External
 
-On Mon, Feb 17, 2025 at 9:37=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Mon, Feb 17, 2025 at 09:21:00AM -0500, Tamir Duberstein wrote:
-> > On Mon, Feb 17, 2025 at 9:15=E2=80=AFAM Danilo Krummrich <dakr@kernel.o=
-rg> wrote:
-> > >
-> > > On Mon, Feb 17, 2025 at 09:02:12AM -0500, Tamir Duberstein wrote:
-> > > > > > diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> > > > > > index 6c3bc14b42ad..eb25fabbff9c 100644
-> > > > > > --- a/rust/kernel/pci.rs
-> > > > > > +++ b/rust/kernel/pci.rs
-> > > > > > @@ -73,6 +73,7 @@ extern "C" fn probe_callback(
-> > > > > >          match T::probe(&mut pdev, info) {
-> > > > > >              Ok(data) =3D> {
-> > > > > >                  let data =3D data.into_foreign();
-> > > > > > +                let data =3D data.cast();
-> > > > >
-> > > > > Same here and below, see also [2].
-> > > >
-> > > > You're the maintainer,
-> > >
-> > > This isn't true. I'm the original author, but I'm not an official mai=
-ntainer of
-> > > this code. :)
-> > >
-> > > > so I'll do what you ask here as well. I did it
-> > > > this way because it avoids shadowing the git history with this chan=
-ge,
-> > > > which I thought was the dominant preference.
-> > >
-> > > As mentioned in [2], if you do it the other way around first the "rus=
-t: types:
-> > > add `ForeignOwnable::PointedTo`" patch and then the conversion to cas=
-t() it's
-> > > even cleaner and less code to change.
-> >
-> > This is true for the two instances of `as _`,
->
-> Yes, those are the ones I talk about.
->
-> > but not for all the
-> > other instances where currently there's no cast, but one is now
-> > needed.
-> >
-> > > >
-> > > > > I understand you like this style and I'm not saying it's wrong or=
- forbidden and
-> > > > > for code that you maintain such nits are entirely up to you as fa=
-r as I'm
-> > > > > concerned.
-> > > > >
-> > > > > But I also don't think there is a necessity to convert things to =
-your preference
-> > > > > wherever you touch existing code.
-> > > >
-> > > > This isn't a conversion, it's a choice made specifically to avoid
-> > > > touching code that doesn't need to be touched (in this instance).
-> > >
-> > > See above.
-> >
-> > This doesn't address my point. I claim that
-> >
-> > @@ -246,6 +248,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-> >  ) -> c_int {
-> >      // SAFETY: The release call of a file owns the private data.
-> >      let private =3D unsafe { (*file).private_data };
-> > +    let private =3D private.cast();
-> >      // SAFETY: The release call of a file owns the private data.
-> >      let ptr =3D unsafe { <T::Ptr as ForeignOwnable>::from_foreign(priv=
-ate) };
-> >
-> > is a better diff than
-> >
-> > @@ -245,7 +245,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-> >      file: *mut bindings::file,
-> >  ) -> c_int {
-> >      // SAFETY: The release call of a file owns the private data.
-> > -    let private =3D unsafe { (*file).private_data };
-> > +    let private =3D unsafe { (*file).private_data }.cast();
-> >      // SAFETY: The release call of a file owns the private data.
-> >      let ptr =3D unsafe { <T::Ptr as ForeignOwnable>::from_foreign(priv=
-ate) };
-> >
-> > because it doesn't acquire the git blame on the existing line.
->
-> I disagree with the *rationale*, because it would also mean that if I hav=
-e
->
->   let result =3D a + b;
->
-> and it turns out that we're off by one later on, it'd be reasonable to ch=
-ange it
-> to
->
->   let result =3D a - b;
->   let result =3D result + 1;
->
-> in order to not acquire the git blame of the existing line.
+Use scoped resource management to replace open-coded locking operation
+is recommended. CXL subsystem still remains some down_read()/up_read()
+and down_write()/up_write() which can be replaced by guard() simply.
 
-Like anything, it depends. If something changes from being 0-indexed
-to 1-indexed then I'd say what you have there is perfectly reasonable:
-the 1-bias is logically separate from `a - b`. That's a fine analogy
-for what's happening in this patch.
+This patchset includes simply using guard() instead of some
+down_read()/up_read() and down_write()/up_write() cases. Besides, it
+also includes some function code cleanup after using guard().
 
-> >
-> > > >
-> > > > > I already explicitly asked you not to do so in [3] and yet you di=
-d so while
-> > > > > keeping my ACK. :(
-> > > > >
-> > > > > (Only saying the latter for reference, no need to send a new vers=
-ion of [3],
-> > > > > otherwise I would have replied.)
-> > > > >
-> > > > > [2] https://lore.kernel.org/rust-for-linux/Z7MYNQgo28sr_4RS@cassi=
-opeiae/
-> > > > > [3] https://lore.kernel.org/rust-for-linux/20250213-aligned-alloc=
--v7-1-d2a2d0be164b@gmail.com/
-> > > >
-> > > > I will drop [2] and leave the `as _` casts in place to minimize
-> > > > controversy here.
-> > >
-> > > As mentioned I think the conversion to cast() is great, just do it af=
-ter this
-> > > one and keep it a single line -- no controversy. :)
-> >
-> > The code compiles either way, so I'll leave it untouched rather than
-> > risk being scolded for sneaking unrelated changes.
->
-> Again, I never did that, but as already mentioned if it came across this =
-way,
-> please consider that I tell you now, that it wasn't meant to be.
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3 (tag: v6.14-rc2)
 
-Wasn't my intention to imply that this was something you did. It was
-meant as a general observation.
+v2:
+- Drop some local variables. (Jonathan)
+- Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
 
-> You're free to do the change (I encourage that), but that's of course up =
-to you.
+Li Ming (7):
+  cxl/core: Use guard() to replace open-coded down_read/write()
+  cxl/core: cxl_mem_sanitize() cleanup
+  cxl/memdev: cxl_memdev_ioctl() cleanup
+  cxl/core: Use guard() to drop the goto pattern of cxl_dpa_free()
+  cxl/core: Use guard() to drop goto pattern of cxl_dpa_alloc()
+  cxl/region: Drop goto pattern in cxl_dax_region_alloc()
+  cxl/region: Drop goto pattern of construct_region()
 
-I'll create a "good first issue" for it in the RfL repository.
+ drivers/cxl/core/hdm.c    | 68 +++++++++++-----------------
+ drivers/cxl/core/mbox.c   | 10 ++---
+ drivers/cxl/core/memdev.c | 17 +++----
+ drivers/cxl/core/port.c   |  8 +---
+ drivers/cxl/core/region.c | 95 +++++++++++++++++++--------------------
+ 5 files changed, 85 insertions(+), 113 deletions(-)
 
-> Subsequently, I kindly ask you though to abstain from saying that I accus=
-ed you
-> of something or do scold you. Thanks!
+-- 
+2.34.1
 
-Certainly. I'll point out, as you did, that I never said that.
 
