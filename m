@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-517915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3333A38766
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:19:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0753A38767
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 393F816EB50
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:18:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8FB37A41F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0002248A5;
-	Mon, 17 Feb 2025 15:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D541494DF;
+	Mon, 17 Feb 2025 15:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LT078Jkm"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/P9ClJ/"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F3521D5AA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0021CC71
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739805535; cv=none; b=ILehw25s8yiM6G0xnRraT/6hkkbPn0NyAcy3OC1gvzDkmzlWnekOt9EpMjBXh0x6Rcm8qzXQ81UlPE65CT9P4CpZg5KSAHuTrZoWj9sN9QCxuzfM5fBkWcpXySKRimOivxngqGnXsOPnlQ7CLr/r4Lw1doTkSPJ4oN1285RzIHg=
+	t=1739805610; cv=none; b=AOp42fdI1wDHa2gPmrQkKbb5u5rHKaPJx9jXWkRlZjY5WseBv9rV0f1+pALYI1bi+eVapDlsD3u/N0gKal6QaA2kubTih3S2jJNyIcnEdXqH8oLITcTpeVmJMM71byStwFWfQPnitvdzaYP9N/CBMxpzzZ5NcOtvMhq9tzPedzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739805535; c=relaxed/simple;
-	bh=rB1i4l2/XKVbabCGkwc2C9eIg8JP7iC5IOAbL9NDzD0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=R6KLgHws94swiDEu7ZGMLF2rnbWezAcwF0iUUHwNv+5uzcxAPQ0FpwJYq6yvHxE1eNjmOMrVamSzNQlDeCceDL13T5787XYnIuhjrwG1jFfE/xeTz97/s69475WrZgQiybGdW/I+Lkf7CC/3DP9OhVvyHgvtSAGZFaIUEPEcn7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LT078Jkm; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a51c0c24-fd21-42b3-9c4a-39ebc0751f03@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739805520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SwKI7hWDzcyDyvWSyNtpef/iRsXjDY6W/TTp8ONOqXE=;
-	b=LT078JkmIhf9Ya+xQQ/Tt1YHNAOQkvwEdc8wVWxG/bpIHisnMEng06tzN+oKxTu5erE2K+
-	YTWOZMBqK9C+pWWjxdEJnIe8vUDFqJkaK5sn2RgRojuhJA8lEGQVTNCHdGUz1a4YylBcmY
-	0L9t3nqPl37PFUX401o65DsrL5hrOZM=
-Date: Mon, 17 Feb 2025 16:18:36 +0100
+	s=arc-20240116; t=1739805610; c=relaxed/simple;
+	bh=KVWUqsJuILxtmph3ASszD0/T4+ePwGKfxLrmWToHO6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=rlhLT9AhaxIz2VF4wgoR0taPJ9HcwhG1vrKKYqsLmf7ariPCgesn1ewVvp1LwP08biKvp8vc1Uo8OACFlMyrM6JOhXoxFq36pcZ10JzdGksrcCzYOi9SPEzG1DDdqAnYibvw3tL+YqZwlV6u2rfZ+vXpij9V8Q87DIYpuhtIg6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/P9ClJ/; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4398c8c8b2cso6736195e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:20:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739805607; x=1740410407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Vvwnifg36tubUoFx4SRXf6bdS1pNp6qPvbrOrszLRWg=;
+        b=s/P9ClJ/SCQFOOYRLcGnSdI+xVnnL6+oNC37QdqnSjfOsuJzwu2QxQdJrxKW6U0Lnn
+         Vifdft24a97Ewso1NQ3hzMjkHFGFMwOc5pq8wAdWbh78BxpNE8aLSyvY9CX3+yvRYA4e
+         FuUAfI4cFv8jEnyrxFZGicH5Ofc5si2i0QyWOs7kKbKinU4CJPeBJmSYP5nMaQKN9g9U
+         SADV8xuRV5kvq3R8usNTjeEam9MnO80T1JA4NeWuVU2ih7Tqpj14sDS5KNxDVk6hgby/
+         eIwdV78KMlKwhTWRiywaYYGzEnn6ghHDV9TjL7hYD+IoVwpVmiLHxAdX2cwuFekVGqVS
+         G7tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739805607; x=1740410407;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vvwnifg36tubUoFx4SRXf6bdS1pNp6qPvbrOrszLRWg=;
+        b=fvR+E388S2+44jfVvJOBozbLnksg4fijhJi3D41o8u0JiJ33iokEOTE51JhIMtpR9F
+         nenwK0T12CQAsxc86jpQ7+RV9mSGpclHXIEGV6qDwfkLL0CMzdLR8Ratw0uXhhLWSqsz
+         oxHlozpL4divCb1cjoG1cGISYB3qJW+/VsF8Xn6szUTYzB0YkLPThkxQHK7aupHk5+0K
+         xITisNJyz87Uic69DeNVnxoP/duDXJeJQBFp5aEzgIt+fGSTQMSDSpeL9zVb0c7F4eJR
+         XGtq5xKfMcB1ZzXTU3Wf+iySzBL9Arrmg3K+C3IRn7IqP8zLedSD5MF0Dlb3/5UBe7U2
+         PwQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBl6GPSOe/uG0pF873q75/RizQxIkYuE7hVlXrtH9z/4RxGhzI9uWCIcVLKCt48twa+IQyGX3z3CCthzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOFaYl6PRW6v4hBkl5VfzjNw3QHGxC9wQGVwbyvH5fTRjrGu/q
+	PoUbnWa+OTKNMFos1Z92wDZV/+vmb/ZXdivY0LuxvG/TMepDDcdNca977TaqW/c=
+X-Gm-Gg: ASbGnctvIt8QFgmTJ1ZieKrBi5FLwJnACkS2qpu3pEpQH2/2FlPzM+7s0nGTDf7ckqx
+	9PFkxu58z8MHDiLvApJM47OaNv4d56DfSXyyDo9DMbRWzu7EdrjFT/w/hVaTBnmNnrCGbnhyXVp
+	1K4I8tRYUau0RlOkmb3hGDHItYM+d4ykkraB6h+iHdbeOwFMLOiO4xh4j0i9zJqJ1V1ZVYxeEeV
+	f9MLvU1PmhRH3/cPYFCW4KhIVtn/7brFXDNB9dDy84GuwaHvPHDIMR92hrjQBfPNhTUHDo5s3nY
+	SQ5QkrfLmxa3mTVisr4piTOXwA==
+X-Google-Smtp-Source: AGHT+IGK8c3aqu2Od/1nbLDGaZTn/4WelNNKjwdjiSMpmtbC//LMJpRvc0NRmSNiOFEHKD4MVHye/w==
+X-Received: by 2002:a05:600c:350b:b0:439:4871:afea with SMTP id 5b1f17b1804b1-4396e733560mr107174395e9.30.1739805607310;
+        Mon, 17 Feb 2025 07:20:07 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.90.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982a2f92esm37005145e9.17.2025.02.17.07.20.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 07:20:06 -0800 (PST)
+Message-ID: <ad30f769-97ee-48b0-b3e2-3bce93eaf205@linaro.org>
+Date: Mon, 17 Feb 2025 15:20:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Marco Pagani <marco.pagani@linux.dev>
-Subject: Re: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for runtime
- FPGA programming
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Nava kishore Manne <nava.kishore.manne@amd.com>, git@amd.com,
- mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com,
- robh@kernel.org, saravanak@google.com, linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
- <20241029091734.3288005-2-nava.kishore.manne@amd.com>
- <ZzwQrYeWVF6cRtgA@yilunxu-OptiPlex-7050>
- <9bfaf1cf-3313-4cb3-9963-2b4bad2d3165@redhat.com>
- <Z0fIiQPCS69O2d/n@yilunxu-OptiPlex-7050>
- <00e5c1c1-a98e-4360-b7e5-ffaa384e1036@linux.dev>
- <Z6RRAXocxWHsZZLF@yilunxu-OptiPlex-7050>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] perf cpumap: Reduce cpu size from int to int16_t
+To: Ian Rogers <irogers@google.com>
+References: <20250210191231.156294-1-irogers@google.com>
 Content-Language: en-US
-In-Reply-To: <Z6RRAXocxWHsZZLF@yilunxu-OptiPlex-7050>
-Content-Type: text/plain; charset=UTF-8
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Tim Chen
+ <tim.c.chen@linux.intel.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kyle Meyer <kyle.meyer@hpe.com>,
+ Leo Yan <leo.yan@arm.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250210191231.156294-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
 
 
-On 06/02/25 07:04, Xu Yilun wrote:
->>>> I'm currently working on an RFC to propose a rework of the fpga
->>>> subsystem in order to make it more aligned with the device model. One of
->>>> the ideas I'm experimenting with is having a bus (struct bus_type) for
->>>> fpga regions (devices) so that we can have region drivers that could
->>>> handle internal device enumeration/management whenever a new region is
->>>> configured on the fabric. Does this make sense in your opinions?
->>>
->>> mm.. I didn't fully understand the need to have a region driver, what's
->>> the issue to solve?
->>>
->>
->> Sorry for the late reply. The general idea is to handle regions in a way
->> that is more aligned with the device model without having to resort to
->> extra ops and additional devices.
->>
->> Having an fpga bus would allow us to handle enumeration using proper
->> region drivers (in the device model sense of the term, i.e., struct
->> device_driver) instead of derived region devices.
->>
->> On second thought, I think having a reconfiguration interface at the
->> fpga manager level is sounder than having it at the region level (one
->> for each region).
+On 10/02/2025 7:12 pm, Ian Rogers wrote:
+> Fewer than 32k logical CPUs are currently supported by perf. A cpumap
+> is indexed by an integer (see perf_cpu_map__cpu) yielding a perf_cpu
+> that wraps a 4-byte int for the logical CPU - the wrapping is done
+> deliberately to avoid confusing a logical CPU with an index into a
+> cpumap. Using a 4-byte int within the perf_cpu is larger than required
+> so this patch reduces it to the 2-byte int16_t. For a cpumap
+> containing 16 entries this will reduce the array size from 64 to 32
+> bytes. For very large servers with lots of logical CPUs the size
+> savings will be greater.
 > 
-> I don't think so. A firmware image may contain enumeration info, e.g.
-> of-fpga-region. And I think the fpga-region should parse these
-> enumeration info rather than fpga manager. fpga manager should only deal
-> with content writing stuff and not be exposed to user.
-
-I agree with that. In my proposal, the fpga manager should be
-responsible only for writing the image into the configuration memory
-and allocating region devices. In-region enumeration should be handled by
-the region drivers.
-
-My worry with having one reconfiguration interface for each region is
-that it does not reflect how the hardware works. To my knowledge, all
-major FPGA implementations use a DMA engine (controlled by the fpga
-manager) that performs the reconfiguration through a single port. So,
-having one interface per region might be conceptually confusing and give
-the impression that it is possible to configure regions independently in
-parallel.
-
->> With that in place, the fpga manager could request a firmware image,
->> parse it, write the content into the fpga configuration memory, and then
->> instantiate the region devices and add them to its fpga bus. Then, if
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v3. Add bounds checks as suggested by Leo Yan <leo.yan@arm.com>.
+> v2. Rebase and tweak commit message add Reviewed-by: Tim Chen
+>      <tim.c.chen@linux.intel.com>.
+> ---
+>   tools/lib/perf/cpumap.c              |  8 ++--
+>   tools/lib/perf/include/perf/cpumap.h |  3 +-
+>   tools/perf/util/cpumap.c             | 68 +++++++++++++++++++---------
+>   tools/perf/util/env.c                |  2 +-
+>   4 files changed, 54 insertions(+), 27 deletions(-)
 > 
-> I think an fpga-region is always there no matter it is cleared, being
-> reprogrammed, or working. So I don't think an fpga-region needs to be
-> re-instantated. The sub devices inside fpga-region needs
-> re-instantating. That's also why I'm hesitating to fpga bus.
 
-I think one of the issues with the current subsystem architecture is
-that it coalesces two cases: full and partial images. With partial
-images, it makes sense to keep the region devices and rerun the internal
-enumeration. With full images, I believe it makes sense to clear and
-reallocate new devices to set a new region tree.
- 
-> Thanks,
-> Yilun
-> 
->> there is a match, a specific region driver can handle the enumeration
->> within the new region.
->>
->> What do you think?
-
-Thanks,
-Marco
+Reviewed-by: James Clark <james.clark@linaro.org>
 
 
