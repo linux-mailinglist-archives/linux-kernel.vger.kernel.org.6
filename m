@@ -1,229 +1,148 @@
-Return-Path: <linux-kernel+bounces-518079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC72CA389AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:42:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693C3A389DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990E816486F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1993AD257
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B5522540C;
-	Mon, 17 Feb 2025 16:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C50225786;
+	Mon, 17 Feb 2025 16:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VZbUldbW"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yEUVKJGv"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17ED1531DC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BC8225A3F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739810490; cv=none; b=Ez0EyPHjLopJqHEvNJYe9cUtBfrq3ebfkfps4IDinQdKwJ+XwOe3dItlokVF/En9jbq1KGCGFTDm0RBtxyUZdPsYcb0zS4ad5QZaA1jShjB8pRBlvLKSrsWfZiwZSGutz2nUK1FCZtqd4r6jnMCbwzxDqPx9YnBpg3NMxYfobLI=
+	t=1739810512; cv=none; b=t9lJxRArNR1S0ls4aU8k7Iickp3VBFYcJgOFW1SADpmKkXqHUUrphOkl69N0x4QrCK5Mjw5N4WPhpxsqIz0riOoD+2z16ZlH3YWsZFsAySxvYZjxmBgGdsFQfBqqih5uooS8gH4zDh/f8UqNeOCJJKrpg0TZGbwpcdAH82vvWCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739810490; c=relaxed/simple;
-	bh=ECuRb0IYed9gtOKCSY+Zrhi/7eDVXqMMGoPWlLKABTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgDyy7n+1jnmSiKUrJiQHbuBe/NaGIl9i3lgYmopSL6xabTpkpIi20VQ498mpOvePB58Hf1V6we/1XgE21I56dSO0o1xsN5rXE1bQiLnZSErYrqj8rl5OYmMiqu2z0L2W09K4I7DltLZL/LdSno72dTWTRkfkx9zb1laz+UGFt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VZbUldbW; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so2747185e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:41:28 -0800 (PST)
+	s=arc-20240116; t=1739810512; c=relaxed/simple;
+	bh=C784ypOiHBSE0JJrZYQTBZVh6GbEkSrx2ih7B4SSF4M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=eA6532alh/tJ+TbetcGA5PkK+z6zRbla9IABKtEj75osooLDVXgt1n+fHh59dMelO0CJL3ouw63WEVIoPzhiVAfwlsLmEe5RE46UcpseMMoZjgXeTSX8kFba34xio3XHg98sVUMeXNtMTUaZ+jw3qZoy3lehyv12R1wQEMpWhQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yEUVKJGv; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dbf65c0c4fso829569a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:41:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1739810487; x=1740415287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GH7dByoQjATcMtRNPRz1qJqOaKrEwLdFgaeAEJKWfqY=;
-        b=VZbUldbW2OnaNp0UjmMg//hj7VnQmkeIDUQ7RPSUGI/Z64vlrx7HteJs15HQbPNAk3
-         vo80jecoof94YGjJCLT6CWIA5Fgz4XBi3j+P/7AkGV4QyQm4flNACbVk3C/uo80QgVTV
-         PKab1r9v6ov+ru8QPr8o995VOYHwVgTgL5df0=
+        d=linaro.org; s=google; t=1739810509; x=1740415309; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/vtiOtAPErstCZKPiDf9uSSv9XQsaanNrESzaPKJnL4=;
+        b=yEUVKJGvSgGJ2kb+fIXh44pdaHsxy+voLHvKQ4+mLZLpowDVbxPz4M4SrlmDsBSPn4
+         7OduNm/LONQTtI/Di6KpDOrvbbYA1cqEiMt0JJiBuE4x8EbVNEjLjOsaDvs9UsJMQ/fh
+         2OnsQEA3pEA1kgZPynQ9p2m2/CUVhEHOA7mrnMIyBR/PeytRyqJyw6l6Nf1bjtdK0nGH
+         teHNKmlkdEkj1bEdYbkmgpCIiFkTrzTic3KLw5cqKgWaf1HM49ZSL73BsjFn6JHlBVxc
+         R4bDDiQmCjeZEQR3j48qotOGHZdUcoKZUEevUR/Tl8KF6zz+o6o43t8tgidp6OIk3Sj9
+         biIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739810487; x=1740415287;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GH7dByoQjATcMtRNPRz1qJqOaKrEwLdFgaeAEJKWfqY=;
-        b=Kct6fKW5Tdry56knhG+eJ7frRe84dcC7xPBGjnIycO7GlC8DZ4LfsOuEIofG2y0Kqf
-         RrEQW0DQOpygt8vRP85VCVMwhNa4eq8c02w/xQVVPVSLKU+0C9ETBADrKTfKFxf0Eb3v
-         ELDEu5Yj0L0mptvN7GvgBy35UMGmgNKFmU2GNh0TprV/2acL0yaG4G53PC8gXk6+oMfb
-         XK1CGaMjFuTBYqwKjEycqXMb/XLc+d1CVuvj0RVtECQt7IW+XPBvtbMbovnnzaFvJegT
-         pPHTHp/MD3qv6gx6VyFXPULNHcIAmmOXbE1nFSCJLjyF+kP5wCCXkdzDkmY/6tXw4xV+
-         3Z6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVfojE5hGXBq+SQBt6WYb78V1/RaIORGw1NTnRLMH+GVZRCIw3Os3RMN6lFzZHyVbFpLttZ+fiQLb7+r6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHuhyeUALSn1v0847n1pkYqPuNu40yoT3t7FzaLFBzU5eSMx3x
-	rJP/QpqQdsETJ5dW4bFiFOHGRm9X71jtvnGnXnb6yT5HD2F8IEYNu6HaTtmeJck=
-X-Gm-Gg: ASbGnctmxqvw5fm1d4HwPuliO6CxLWRttpq/8t7B6uo/JOGq0KAt+lqIClCldoStUWb
-	Vqer7BuxApblgwYbZYqflB6loyhqLTuz/KNJrzC6ZoWQ8ibgE0+qwOvAYnaBYaGrvgtxqaWH00S
-	7GuCnWXi/K9cj4OYY74Y/1SlSaX6NVgDAowLy8Lq5gVH2/7rdENUs3MjUlCVMDK+Gix5sbJVOhQ
-	/zaIkfdoN78eLgewXAcTFsgeMHUoi2SH6S7/B3DZYxUoGQYGHLmARtUAVWr7qJKIZ/efrXyScrO
-	ucvsVJ/wwyaMgfGmTUJU9JJlSyY=
-X-Google-Smtp-Source: AGHT+IFRhKctt5xCG+FRKWC52l+K41KeexQa204yjGmhr/2wp4/LnFs1TbG9nQwuRUmQ3E8RWifHQw==
-X-Received: by 2002:a05:600c:2d03:b0:439:7ef0:a112 with SMTP id 5b1f17b1804b1-4397ef0a282mr45449985e9.10.1739810486832;
-        Mon, 17 Feb 2025 08:41:26 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4491sm12453272f8f.7.2025.02.17.08.41.25
+        d=1e100.net; s=20230601; t=1739810509; x=1740415309;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/vtiOtAPErstCZKPiDf9uSSv9XQsaanNrESzaPKJnL4=;
+        b=ZJQI3NKP31XND5KdimfZGGZMP04oFUYnl55zHqG7kxmIoKiLZ+ia+M8A7GWn7jF7mJ
+         9DgrtyN+F3qr51InTswYzE8oeC4GfjfvuHOB/w0kS6gHFd88s5Z4wkK/Mt/QVbHsEiiK
+         IuuLa9eBYL0AiocSkmIAlgrMZbFsE50F3ZEVW2RrSJGUGUQiBbkuCmQzUxEv3DypCxE6
+         SnhiE0gDcyD5U2lo+jIYR7zxLG8EowQPd/CDD4fj8/WXf1WNKNvoypP9SRBjm2BUKphs
+         e129iwbRkXrpwYW2llCOGRvsOJ5Al2zNS91jHstOCOJXSSE4NxB/sIWsjZLK0DuHJBa+
+         afbw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6X94hBGKaqR5INFS59Yk0xT+QvXREYdxkwKQjebm1xaVEZ0DdqdHToCTMLIkkk0g0OtL7wLRE+NHfNxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0AGfJrjhLPVWiLLYCMxSh94dgZg7BGDe6nVkj3mehIV1CYvCD
+	27WoxSIJfEZjYvG/J9YLnueNX1/CvZ4ofMtwaZipTqUGscI0K3nMSxmPEO35ig0=
+X-Gm-Gg: ASbGncv4CDSu2zeAyrS1ag1rYzvBgrWoBEP+jTrIwUcPJoELb0Qgz0WAb5F6ayKWp+N
+	cKbvjU4cMoHVaS1E+QuRkn5Y7TQsAZoG+Q8LQXGDYaHVqutHol3tp1FDaP8UvGJ5LD/tfLrsCbu
+	ENv4aDeczMvbOiGLocSf2Qz4QcUEJq6fJhPf9DVlUoAH/qPDhZqD9kPWnL32yL+4TOe4emfF1MM
+	PPwqEgR0qncc0SbYODyVLBw/TAR2yMYkb9O3qZuvnxMkM1p42KhQ8yh6kvQqZjrX83SWpeyFD+z
+	WUkkNIK/O9IYcZvMA0LuqZHNe8KkaJs=
+X-Google-Smtp-Source: AGHT+IEc2oXDKXrP/maz1R4hPJqgetc2dZKJeGvYBMYH+EpbVdo+sZPF2ut5mzR1sZ6VdIx0Xdn7lA==
+X-Received: by 2002:a17:907:1c1d:b0:ab7:6056:7a7f with SMTP id a640c23a62f3a-abb70dc5587mr338725966b.9.1739810509412;
+        Mon, 17 Feb 2025 08:41:49 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbac781b78sm82647966b.60.2025.02.17.08.41.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 08:41:26 -0800 (PST)
+        Mon, 17 Feb 2025 08:41:48 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Date: Mon, 17 Feb 2025 17:41:24 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 31/37] drm/bridge: Provide pointers to the connector
- and crtc in bridge state
-Message-ID: <Z7NmtF83adILfasi@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-31-e71598f49c8f@kernel.org>
+Subject: [PATCH v2 03/16] dt-bindings: display/msm: dsi-phy-7nm: Add SM8750
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-31-e71598f49c8f@kernel.org>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-b4-sm8750-display-v2-3-d201dcdda6a4@linaro.org>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+In-Reply-To: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+ Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=871;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=C784ypOiHBSE0JJrZYQTBZVh6GbEkSrx2ih7B4SSF4M=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBns2a5e0NkCZRyuFjhGGd9OB9EDr80fjzsYau9k
+ F/FzmPPdEqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7NmuQAKCRDBN2bmhouD
+ 134MD/wIjInrEc6QCV4vQq3wwjSnYQQEXn0cbn03E2GJmhUJwd+u6++MPxxlMWJvWnEvr20clpP
+ K9f3WSJf27U0uNd+eOMDFde4gbUV6lBemRnJjQOVjk4rPwCebZ6B6QZ6ZoN1KIns+OX1T07WcD/
+ Fr2A9Qds8uq2+7pd8zbC7b4vd6/6X4/YFUKc5eN6KhOp/PF8Jc6akNSyuyK+Rar3Jo2FiwEso/r
+ nHn0LW9ACmKdef+YqrXwcWY1EzvqxF4lEiLkm6rXsSCpsO+b/j7fZsIcibw0ttfaovuVVC/qJa3
+ EnWD3KwNnOyw7SqrdQ1oZIa7zCAwDM3zFDrTCxDhOEqZ1CAXMP6taiU3QGDFvD9bGkqHR5SFSG3
+ rfBKeN3trcQe+NQs4FHnc8+BrkGJR9Spnx72NMMrPljxOM8pxIzzvznxZFwaLqguApYoIsyHqZA
+ 3MsAyDL4grfJgOe71hOSMTurCeRtTmV0k8q3N2OUvqf4WNZCSObAM36b6mKoF1goxDUP4oaRCnq
+ Ms0vu7DLarYiN/jXeW63Ca4IkCzOGn4bsuX3+QOEZeM4K93LhFC5z5vzxvzaMz6/jZ8thof1mjn
+ KGNxxw1UZh8iF+NUe5FCgEBT+ltuBxvP8azDuescMcwtnwWGEKMdUFnWTpGGYnNG/9HZYqIopi5
+ V8wXPwbQcGqz5VA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Thu, Feb 13, 2025 at 03:43:50PM +0100, Maxime Ripard wrote:
-> Now that connectors are no longer necessarily created by the bridges
-> drivers themselves but might be created by drm_bridge_connector, it's
-> pretty hard for bridge drivers to retrieve pointers to the connector and
-> CRTC they are attached to.
-> 
-> Indeed, the only way to retrieve the CRTC is to follow the drm_bridge
-> encoder field, and then the drm_encoder crtc field, both of them being
-> deprecated.
+Add DSI PHY v7.0 for Qualcomm SM8750 SoC which is quite different from
+previous (SM8650) generation.
 
-Eh, this isn't quite how this works. So unless bridges have become very
-dynamic and gained flexible routing the bridge(->bridge->...)->encoder
-chain is static. And the crtc for an encoder you find by walking the
-connector states in a drm_atomic_state, finding the right one that points
-at your encoder, and then return the ->crtc pointer from that connector
-state.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-It's a bit bonkers, but I think it's better to compute this than adding
-more pointers that potentially diverge. Unless there's a grand plan here,
-but then I think we want some safety checks that all the pointers never
-get out of sync here.
--Sima
-
-> 
-> And for the connector, since we can have multiple connectors attached to
-> a CRTC, we don't really have a reliable way to get it.
-> 
-> Let's provide both pointers in the drm_bridge_state structure so we
-> don't have to follow deprecated, non-atomic, pointers, and be more
-> consistent with the other KMS entities.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/drm_atomic_state_helper.c |  5 +++++
->  drivers/gpu/drm/drm_bridge.c              |  5 +++++
->  include/drm/drm_atomic.h                  | 14 ++++++++++++++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> index 519228eb109533d2596e899a57b571fa0995824f..66661dca077215b78dffca7bc1712f56d35e3918 100644
-> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> @@ -777,10 +777,15 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_duplicate_state);
->   * that don't subclass the bridge state.
->   */
->  void drm_atomic_helper_bridge_destroy_state(struct drm_bridge *bridge,
->  					    struct drm_bridge_state *state)
->  {
-> +	if (state->connector) {
-> +		drm_connector_put(state->connector);
-> +		state->connector = NULL;
-> +	}
-> +
->  	kfree(state);
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
->  
->  /**
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index b6d24092674c8fa33d9b6ebab9ece0f91fb8f8ea..db2e9834939217d65720ab7a2f82a9ca3db796b0 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -812,10 +812,15 @@ static int drm_atomic_bridge_check(struct drm_bridge *bridge,
->  		bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
->  							       bridge);
->  		if (WARN_ON(!bridge_state))
->  			return -EINVAL;
->  
-> +		bridge_state->crtc = crtc_state->crtc;
-> +
-> +		drm_connector_get(conn_state->connector);
-> +		bridge_state->connector = conn_state->connector;
-> +
->  		if (bridge->funcs->atomic_check) {
->  			ret = bridge->funcs->atomic_check(bridge, bridge_state,
->  							  crtc_state, conn_state);
->  			if (ret)
->  				return ret;
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 4c673f0698fef6b60f77db980378d5e88e0e250e..293e2538a428bc14013d7fabea57a6b858ed7b47 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -1216,10 +1216,24 @@ struct drm_bridge_state {
->  	/**
->  	 * @bridge: the bridge this state refers to
->  	 */
->  	struct drm_bridge *bridge;
->  
-> +	/**
-> +	 * @crtc: CRTC the bridge is connected to, NULL if disabled.
-> +	 *
-> +	 * Do not change this directly.
-> +	 */
-> +	struct drm_crtc *crtc;
-> +
-> +	/**
-> +	 * @connector: The connector the bridge is connected to, NULL if disabled.
-> +	 *
-> +	 * Do not change this directly.
-> +	 */
-> +	struct drm_connector *connector;
-> +
->  	/**
->  	 * @input_bus_cfg: input bus configuration
->  	 */
->  	struct drm_bus_cfg input_bus_cfg;
->  
-> 
-> -- 
-> 2.48.0
-> 
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
+index 321470435e654f1d569fc54f6a810e3f70fb168c..4ac262d3feb1293c65633f3b804b4f34c518400c 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-7nm.yaml
+@@ -23,6 +23,7 @@ properties:
+       - qcom,sm8450-dsi-phy-5nm
+       - qcom,sm8550-dsi-phy-4nm
+       - qcom,sm8650-dsi-phy-4nm
++      - qcom,sm8750-dsi-phy-3nm
+ 
+   reg:
+     items:
 
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.43.0
+
 
