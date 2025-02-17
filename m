@@ -1,132 +1,143 @@
-Return-Path: <linux-kernel+bounces-517526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECDCA38206
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:41:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8845FA38212
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:42:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BD317314C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA2F1886332
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1A21A42A;
-	Mon, 17 Feb 2025 11:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156F0219A67;
+	Mon, 17 Feb 2025 11:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzxT3XhR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UmtCzBvw"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56517218EA8;
-	Mon, 17 Feb 2025 11:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A4219A97
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792377; cv=none; b=Hqbald2O8aZen7RohypQhazLnv+l/eP7GxGNa5ODMcNglF/JawiF1nFMv8vDL319/fyRSLIvvE8meotNCYs6UCYEJ/VlUmyB8GOHg2wvq5ViKOi+FOHpV8NJfvBkJuYmQWisKc2BuHO1Be9QYDJKCyk/BYhd4JQf8j3k9qT8M8Y=
+	t=1739792397; cv=none; b=RixG7p9NjsdWILaARa1DQtJh7If2H3JksuKZZ61D6nkIm2sNxBuSc6LbpmXsujUUvW7QkaBLdMPDoEOXZrwNOphrEQSOhStvyP4vdWvK7Qse7kdvPrM+V5U4acGB6dVz2Gb/uNi5w27NQusrk6wh11OaSR6nFbj9V5CXJP8vWE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792377; c=relaxed/simple;
-	bh=jgUIKutYD6JHar/7UGNU4iJs/xInxZUk3vydF/EOQVw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qKb4fN+yNVT2Fkb/Aw6caJ2qHoT0Kxm4qCYyAYEOKiqaMdTwXgAa87kJfE5CQN7HbIZQqzQwC0eGsdlZNfgP8F0sW9dTx/0iTPuSN1if6/iS9ovMlYJhEpBpXmh4ccjNLjNDA4C2T0jz4Jd0mO/fjB4gI2+a/74ulum9KyyjIFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzxT3XhR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 30806C4CEF6;
-	Mon, 17 Feb 2025 11:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739792377;
-	bh=jgUIKutYD6JHar/7UGNU4iJs/xInxZUk3vydF/EOQVw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=kzxT3XhRjCcjpnvE3++zGyD9rzcaqOjhZUt/UwNxmggVTfyXuL+FyUMHghPQJ33Uf
-	 1rvZjaF+3G9gd9m7RLw0rbRRCtWJQbY+sN8tmHdWm9fKv/eY0IlIldYXXZqadUn/w2
-	 0jTsj/baJIlu63Fd18V1qbxPzuMevn1QLyLrz+R5K59se/dSthFBOHL4D4jGGlyEGR
-	 9ERMKkptF43foAxm3qFoPVJYD3O2X35BTmsvzTzNgs6ogdQ4RuPA/Wd7EW5KplNzld
-	 bXhryTX+2FPKcjbc331ZjMf4Hqh+A5vASO01aZzSDv6rffP6bF+Ggw4d9CNEV33Oba
-	 mTH58v5bVgszA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2586CC021AB;
-	Mon, 17 Feb 2025 11:39:37 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Mon, 17 Feb 2025 12:39:35 +0100
-Subject: [PATCH v7 5/5] MAINTAINERS: Add entries for touchbar display
- driver
+	s=arc-20240116; t=1739792397; c=relaxed/simple;
+	bh=y9aptTQXNYwZKKmxoBhOneyZpOKIv8I4pxKZr3Nf0A4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mZcmcQkOH54sQLFZ1No/a5iB4/2Ki6t3O4zs7/uafvgcUTBEBwnfzyGrnHAJ8JyhAzYrDcPTfbyL/zU6TaYFpW7c63qaScspgr7KNtKdvdV7sU7/uaiqLjq0TMf1nzk6VKj19HNTv2ewR6Cmc78dTZ1FfNA2zEjsI0MUStLGJTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UmtCzBvw; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso6081797a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:39:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739792394; x=1740397194; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=55tmFZvlDhfQ4udOwAM8HxDBVvHY3WF0+nddp767ALw=;
+        b=UmtCzBvw80F1leNMUtmsQmLtwSNQck3QQ73scQ2dQa6WOzSmOaNoYwdi9NEoWNjz/B
+         O3x2wL5Ge3w+PpGPjezCc0xUvgaclFdhswBauKLt/XrQYWt3qpyvZclvuwAgyQAxqa8q
+         Te/SIUc4ZzS+2aDB58nPiHlcYTevn6XWJhBQUaRuhQtjD/tSoxAsYX4Jz2Oa5Xd6lxQJ
+         D1IkktOzEPGm3gXBziYNPtTbQA/uNS/XunJL3ES9JMfdMeteJf7hh7Fz4OF194FHkd9T
+         /E/1RxQ59nIO2eXMqtSKfYWkDJcmIyOyg2L0OIzOs+gcU/GGf5+8rQE8YLE4H98v745b
+         lhqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739792394; x=1740397194;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=55tmFZvlDhfQ4udOwAM8HxDBVvHY3WF0+nddp767ALw=;
+        b=Ye9x5H1u/pwbKljXlgkCC4+p9XlVWC7Z/hDiwCgYgQvZB+Dz4/N/g13HjIeh3+Uwr2
+         feROjzK2GZ/5g2F5aOEAyMoCXc+02thgdkDANH1PwzUfME+zwrzOjU56ZNL/PnP45mx4
+         5IATSL1URHHaxhm5Zx7jFvSSU/oCH94gixdx7acx9p4MEFiVHl3bGvEi03ZOHHg6DNwp
+         Yamj0YiOl1eZY5P93lqs+8BLMf+5aot67XP/tpV2A+7Y+qs1bSsc8tz+apdvHyh6vt43
+         10EQugM/gx893cjrKiAQFbPZRF6zQsAdhtOAYGrBbO0MbxQrAGmryI+ejj9GYa4t4Hpc
+         JB9Q==
+X-Gm-Message-State: AOJu0YyugDKHukT2hgHf/clJ0MguUQuNy3WzXdfSwRV9CBTR7Mz4DN6I
+	pLkQcz/yY7M24ZZsB4xnxprfCLd4xbvjc1w1ab5fPFIBH4dE0heldq02m7NgSDE=
+X-Gm-Gg: ASbGncuqaauY9T7F0tXIDZm4IpzfYgCPZRqIa2Bow5EJsG9w2cKuen2CaJ9EUWRYKOl
+	Ma0md5ktmFlFQgp2gyi+OZnqRcjh39VrrsRKoIlEqVSucQzbeLu73BrpopmWqFJoG4doPNEi3/B
+	LwW2BHW5UIWIL6pLu3qaIEzijR7D3t9TraKh/FJHIJ53BXVv/LjIRe4zoGK8bqP5TvDNKY7z1uK
+	CCtT7Aa66oJU/XPkEi/AnoRX0ZhDz0f+X70xQY3sqqkB321WE01tMcnN41MiTI3jiXntbNoVN7m
+	9vjjnR6AacgCqFAWBc2e6a0=
+X-Google-Smtp-Source: AGHT+IGo+bcNzZNZe9/7oqui44xN8WcwrHBLDxTE5jOoOEjQDNDVEBhQceJwnI6a/LC5g+Y2YvDAyg==
+X-Received: by 2002:a05:6402:26d1:b0:5d0:c697:1f02 with SMTP id 4fb4d7f45d1cf-5e036063de6mr22010855a12.17.1739792388094;
+        Mon, 17 Feb 2025 03:39:48 -0800 (PST)
+Received: from [192.168.0.24] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53397f47sm866703466b.127.2025.02.17.03.39.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 03:39:41 -0800 (PST)
+Message-ID: <885a9312-484a-4b60-bec0-5adf8f1e4a0e@linaro.org>
+Date: Mon, 17 Feb 2025 13:39:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH 00/10] pstore: directly mapped regions
+To: Johannes Berg <johannes@sipsolutions.net>, linux-arm-msm@vger.kernel.org,
+ linux-hardening@vger.kernel.org, kees@kernel.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ rafael@kernel.org, dakr@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
+ pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
+ senozhatsky@chromium.org, quic_mojha@quicinc.com,
+ linux-arm-kernel@lists.infradead.org, kernel@quicinc.com
+References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+ <c4b48faeae8531e670ea5909800d1a0bfed69862.camel@sipsolutions.net>
+ <b304d582-9328-4e1b-9e34-5604125b0c06@linaro.org>
+ <59333d4aa8a3bb3222967d70d10d9288cece444c.camel@sipsolutions.net>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <59333d4aa8a3bb3222967d70d10d9288cece444c.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-adpdrm-v7-5-ca2e44b3c7d8@gmail.com>
-References: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
-In-Reply-To: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
- Janne Grunau <j@jannau.net>
-Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alyssa Ross <hi@alyssa.is>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
- Neal Gompa <neal@gompa.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739792375; l=1450;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=bjGQY6YcAfvFhQstvcidH714PAZmif+zGGMT8HLhTJg=;
- b=CP5gH1NHTRgD2P0uDekGEfmEIKssn+z/69IoffnSBjcMumJcL/ltIZ3nNsYf28XV4BSrdBGq7
- abPAy+0Gi3tBOEnhmFXEFHPOtzA6nZvYx8j1STsY/VT6AWQIzzSzrXK
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
 
-Add the MAINTAINERS entries for the driver
 
-Acked-by: Sven Peter <sven@svenpeter.dev>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 2/17/25 13:19, Johannes Berg wrote:
+> On Mon, 2025-02-17 at 12:44 +0200, Eugen Hristev wrote:
+>>
+>> At this moment going through devcoredump is not something that impacts
+>> the idea of the implementation.
+> 
+> Yeah. I don't think it _should_ go through it at all.
+> 
+>> The whole reason of going through it (because things work without it as
+>> well), is to see whether this has any kind of impact or not, and if
+>> there is any kind of fit/reason of going through it.
+> 
+> So it's just a trial balloon?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a87ddad78e26f28ffd0f3433560d6db1518f9f95..895d682bcf4e351971b04c6515ebf685fd39b662 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7746,6 +7746,22 @@ F:	drivers/gpu/host1x/
- F:	include/linux/host1x.h
- F:	include/uapi/drm/tegra_drm.h
- 
-+DRM DRIVERS FOR PRE-DCP APPLE DISPLAY OUTPUT
-+M:	Sasha Finkelstein <fnkl.kernel@gmail.com>
-+R:	Janne Grunau <j@jannau.net>
-+L:	dri-devel@lists.freedesktop.org
-+L:	asahi@lists.linux.dev
-+S:	Maintained
-+W:	https://asahilinux.org
-+B:	https://github.com/AsahiLinux/linux/issues
-+C:	irc://irc.oftc.net/asahi-dev
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe-mipi.yaml
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe.yaml
-+F:	Documentation/devicetree/bindings/display/panel/apple,summit.yaml
-+F:	drivers/gpu/drm/adp/
-+F:	drivers/gpu/drm/panel/panel-summit.c
-+
- DRM DRIVERS FOR RENESAS R-CAR
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Yes, that's why it's marked as an RFC.
+> 
+>> Devcoredump is involved because the whole core registration is similar
+>> to a core area that devcoredump could use.
+> 
+> Yeah but ... 
+> 
+>> For example, would it be interesting to have a handler going through all
+>> devices, and have the dump areas already registered ?
+>> Meaning, when there is a request to generate a core dump, one could
+>> directly dump this area instead of calling back the driver, and provide
+>> that to the userspace instead of the driver calling the dev_coredumpv by
+>> its own.
+> 
+> I'll be blunt ... so you _really_ haven't understood devcoredump then?
+> 
+> It's really not doing this. It's not meant to do this... It's intended
+> to dump data from inside the device when the device crashes.
+> 
+> Please remove devcoredump involvement from this series.
 
--- 
-2.48.1
+Thank you for your feedback.
 
+> 
+> johannes
 
 
