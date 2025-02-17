@@ -1,79 +1,89 @@
-Return-Path: <linux-kernel+bounces-517749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9746EA38523
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:52:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8946A38525
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F22167010
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D013A7784
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8CC21C9F9;
-	Mon, 17 Feb 2025 13:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E60OH1gX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62802179BC;
-	Mon, 17 Feb 2025 13:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8AC21CA0E;
+	Mon, 17 Feb 2025 13:52:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12938179BC;
+	Mon, 17 Feb 2025 13:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739800329; cv=none; b=FQPFXpTgorGZSsb42m5T6WjCISA1ZjMqdkymhem9LZ6j7feeNVqPFqKwE0aeG2YbNNHruEutOc4cZKfIwbovLgWVO6vH/yDetFogsFNCnv/IQLkjkvABj99okDo3EiGYPHl8b9a7ZGLtxQDI1VRb7+o6bjFkYOmJd5+706tlsM0=
+	t=1739800378; cv=none; b=ElCOqNQuwsLy801f4LfRHpJ+prUC417geMOxABCRdnPuYM3yoEXcFIYA1iN4wry8oNsh0kIQqtumnt6pyNiUsV+q0KV0VXZt+Ngxux//o9492rdYFKVnVfypqlXNHToSypexDjvEJB2P94x5e1fLPkFaqKvbzxFEMxY7cZKtNns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739800329; c=relaxed/simple;
-	bh=dk+4Bdm4TSj5u/V4NiBQIblx2mw2lCSFWo0dOUa0rtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYMHHkBB8VmEHml6SNzK3e840PHiPzgZJnjesbbvZhrhnofrgTCvV5I7cRI2yQ/PuNPCmI3PkXvIsDE72vJu9ZIez6ZfjmsGS9DuclMHppnMv9sjvdWJHuAcbqvqU9rS+T77TYNFXJO3Gd8GWCnlqq6QnhnvPzQWIWkj7eEcqOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E60OH1gX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B486CC4CED1;
-	Mon, 17 Feb 2025 13:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739800329;
-	bh=dk+4Bdm4TSj5u/V4NiBQIblx2mw2lCSFWo0dOUa0rtU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E60OH1gXA5aQjK3LZFBT5xHF1BW8IaBO/NZ38rAQhAaCuA9wvab4WMNy4RSw003hk
-	 QkDmRmuM33eqveAL3Uf6z6RWfz94tEmfB+EgISN9ytSGXCkHWe4ZEzDJIzRNWf/p/2
-	 Ve/m9zlPvSPXngIKI2vrpL4EA9T5WwE9iUfyIhoI=
-Date: Mon, 17 Feb 2025 14:52:05 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] usb: core: Don't use %pK through printk
-Message-ID: <2025021733-strudel-curator-bfaf@gregkh>
-References: <20250217-restricted-pointers-usb-v1-0-78da55158832@linutronix.de>
- <20250217-restricted-pointers-usb-v1-1-78da55158832@linutronix.de>
+	s=arc-20240116; t=1739800378; c=relaxed/simple;
+	bh=sdCmF9l7bbBamYYK1Iuac7leIv7bdMqi54XYNTep3vE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ah5SZ4crHzkaockuNtGuL01xxdS8RYpNFy2O/ohTL1Y0RO41UIm977UfVS7pEKOmkKRMSFGCRjmB18k+UAF/cylYBxZpo9hqE6mx0ULLYbzAKe7GaFgtdmY6FTsGHYXaTGlGuk1lzL6bKlqU9X0FAKchgSU+vLa5QmewjknXe5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8114313D5;
+	Mon, 17 Feb 2025 05:53:15 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 873683F6A8;
+	Mon, 17 Feb 2025 05:52:53 -0800 (PST)
+Message-ID: <dd57c3ba-246e-414d-a9c1-eb2cff032d83@arm.com>
+Date: Mon, 17 Feb 2025 13:52:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/3] rust: add dma coherent allocator abstraction.
+To: Daniel Almeida <daniel.almeida@collabora.com>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, dakr@kernel.org, aliceryhl@google.com,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20250123104333.1340512-1-abdiel.janulgue@gmail.com>
+ <20250123104333.1340512-3-abdiel.janulgue@gmail.com>
+ <633274AD-E55C-4A90-AB72-33D3E176176F@collabora.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <633274AD-E55C-4A90-AB72-33D3E176176F@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250217-restricted-pointers-usb-v1-1-78da55158832@linutronix.de>
 
-On Mon, Feb 17, 2025 at 02:20:51PM +0100, Thomas Weiﬂschuh wrote:
-> Restricted pointers ("%pK") are not meant to be used through printk().
-> It can unintentionally expose security sensitive, raw pointer values.
+On 15/02/2025 9:40 pm, Daniel Almeida wrote:
+> Hi Abdiel
 > 
-> Use regular pointer formatting instead.
+> I noticed that there‚Äôs no API to call `dma_set_mask/dma_set_coherent_mask`.
 > 
-> Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> This should probably be included, i.e.:
+> 
+> ```
+> By default, the kernel assumes that your device can address 32-bits of DMA addressing.
+> For a 64-bit capable device, this needs to be increased, and for a device with limitations,
+> it needs to be decreased.
+> ```
 
-So really this is just a revert of 2f964780c03b ("USB: core: replace %p
-with %pK"), right?
+Oh, good point (and I'm rather ashamed I missed that!)
 
-Why not express it that way, and explain _why_ it's somehow now ok to
-use %p when previously it wasn't?
+FWIW we've been wanting to steer away from relying on the default mask 
+in new code, so it would be quite neat to actually enforce that 
+allocations fail if dma_coherent_mask hasn't been explicitly set 
+(assuming it's sufficiently cheap to keep a flag in the Device handle or 
+something like that - it's not the end of the world if it isn't practical).
 
-thanks,
-
-greg k-h
+Thanks,
+Robin.
 
