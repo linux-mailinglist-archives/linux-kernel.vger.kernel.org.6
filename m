@@ -1,316 +1,291 @@
-Return-Path: <linux-kernel+bounces-517972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA312A38841
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:50:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F075A3881B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B993B5190
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE97E188727F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2846225789;
-	Mon, 17 Feb 2025 15:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAE12253A9;
+	Mon, 17 Feb 2025 15:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XlMJ2pcq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y2+mMyHY"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C530A2253F6;
-	Mon, 17 Feb 2025 15:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781C216600;
+	Mon, 17 Feb 2025 15:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807364; cv=none; b=o8ov1yaRVeBd4sPdsScuGjj/V+tFO3agjYcNCoa2fFhstPGjHCkpV9sqXy7TQ55kVKjkHoKCb7jYb2290hWgb8gfENIF30LHyfzZNKUzgLYWuyLMvCmfei8qN3HeQK2mkMKIldKXWzeQg4x6aYRQSR5U991T89w85eQT7M7alvE=
+	t=1739807298; cv=none; b=UMPlTju6Q3QDIKp+myKIda9ZPku4tqLI9Gj8uYDjNk+S+7F8as14aG0yD31GiJZ/wI2coLwOSLMrCi4zX41UFZUEjgfE9bsVpue//eGJDUc4wD/DJZ9aIAKhTvYjRIlpQHYVRQ0IdsJRN27q7kUyHZQ3mQXC8qqCwhwlc+1CVgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807364; c=relaxed/simple;
-	bh=Ua2Y2yeYYWqWUacq0lB4aM9VeJWoVMoOTHzNqOpMOkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UlMW8h1HLlWrwPV7dl4KguA210Im9z9+ox2koKFi18OsIOarGT/OCah9QyGEQ1PXO6thlrlqRztiIZkaeAdzSEUIcg/iXtRPKI7/cEaTTDnVjGhu9cbxqBK4fB3N986jhrzFHN6/pu7BNTn3R7mRYXHjMhG6HRdUplCIRSZMYNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XlMJ2pcq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739807361;
-	bh=Ua2Y2yeYYWqWUacq0lB4aM9VeJWoVMoOTHzNqOpMOkM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XlMJ2pcqN00g1zHa8CCSDb8eZR1d9if9Cpc/PqMyqWNuhIF0elnEKVm/WerTkEk95
-	 AZyCTROAZt7SfvXYQcvRD4QxzRO6y47Ftk1NcX0sf8b2ThdCWFPWM9OpYLBJWYojod
-	 lLufxqJVaZ4df1dzJeswnsi9YjxtRBlLXv2ndCRoZtKbZlTxUITS7fQ5D5lfyxn1SF
-	 1MSiSSxrYIfBSndI099/H9v7bQPuk6vl8NNwQIMd/0BDwslhQi3hae6fH34h7To811
-	 lQLE/G5o0WOIMTwcWE9NtKswGQXRYmebAsaWxIqAIREvQcRkRPpTXF93LH2A7El9Hz
-	 PCqgxaPahVu4w==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C316117E1507;
-	Mon, 17 Feb 2025 16:49:19 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: chunkuang.hu@kernel.org
-Cc: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	ck.hu@mediatek.com,
-	jitao.shi@mediatek.com,
-	jie.qiu@mediatek.com,
-	junzhi.zhao@mediatek.com,
-	dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	dmitry.baryshkov@linaro.org,
-	lewis.liao@mediatek.com,
-	ives.chenjh@mediatek.com,
-	tommyyl.chen@mediatek.com,
-	jason-jh.lin@mediatek.com
-Subject: [PATCH v7 03/43] drm/mediatek: mtk_dpi: Use an array for pixclk factor calculation
-Date: Mon, 17 Feb 2025 16:47:56 +0100
-Message-ID: <20250217154836.108895-4-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1739807298; c=relaxed/simple;
+	bh=9axMPKOkbMsm7Rwf7o5OUBQXDBtmoYsqMxGtFJ9pkxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/yudyeIKxkBxXMGqQsp/9d+lj2CxrS4DaLHPysMKOXyFGPF1PaaSe8i+CabkDWp5lEWc9g4mBXSVjIXky6pZXpOeEwFhrmBR4e+RwnuGeCeAVRI7n8Egy/EQhT9/hisG6By9uQmEZMZK8mbGOGlS+c92CK01EH8hBLKUPyYk44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Y2+mMyHY; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.80.185])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EF901D53;
+	Mon, 17 Feb 2025 16:46:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1739807210;
+	bh=9axMPKOkbMsm7Rwf7o5OUBQXDBtmoYsqMxGtFJ9pkxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y2+mMyHYLLdfHlGvI/nHlzIO4wUU4Hs1OgbffqDITwZ/1Vkn9mzZjPPkDSTszQOeW
+	 7h4SyySGFDfeh6y6tqVDc55PEVTsrWnDoX63wkSIjZW255Vpd+l2k87fGGLaElQwou
+	 wtkA4DrYe6xhEudSoSEOT+zRsOGfm8CZtgHcOnk0=
+Date: Mon, 17 Feb 2025 21:17:57 +0530
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Naushir Patuck <naush@raspberrypi.com>, 
+	Vinay Varma <varmavinaym@gmail.com>
+Subject: Re: [PATCH v7 5/5] media: i2c: imx219: Scale the pixel rate for
+ analog binning
+Message-ID: <zrjuuu5fwjnao5zgrofbu5yygl4zsk3dgzi232cmxecnq7n3mt@urv3f2guttus>
+References: <20250217-imx219_fixes-v7-0-83c3c63b737e@ideasonboard.com>
+ <20250217-imx219_fixes-v7-5-83c3c63b737e@ideasonboard.com>
+ <sejl7xskif6rlpdsg3jhczjwe5gi6rs53ehbyka6omv2zeg7qq@4iis7i2lla5p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <sejl7xskif6rlpdsg3jhczjwe5gi6rs53ehbyka6omv2zeg7qq@4iis7i2lla5p>
 
-Setting the TVD PLL clock requires to multiply the target pixel
-clock by a specific constant factor to achieve the target PLL
-frequency, and this is done to reduce jitter to acceptable levels.
+Hi Jacopo,
 
-On all MediaTek SoCs, the factor is not retrieved by any real kind
-of calculation but rather by checking if the target pixel clock
-is less than a specified frequency, hence assigning a function
-pointer for just a bunch of if branches does enlarge the code
-size for little reason.
+Thanks for the review.
 
-Remove all SoC-specific functions, add a structure `mtk_dpi_factor`
-that holds a clock frequency and corresponding PLL factor, and
-declare the constraints for each SoC in form of an array of said
-structure.
-Instead of function pointers, this structure (and its size) is then
-assigned to each SoC's platform data.
+On Feb 17, 2025 at 15:38:12 +0100, Jacopo Mondi wrote:
+> Hi Jai
+> 
+> On Mon, Feb 17, 2025 at 06:57:35PM +0530, Jai Luthra wrote:
+> > When the analog binning mode is used for high framerate operation, the
+> > pixel rate is effectively doubled. Account for this when setting up the
+> > pixel clock rate, and applying the vblank and exposure controls.
+> >
+> > The previous logic only used analog binning for RAW8, but normal binning
+> > limits the framerate on RAW10 480p [1]. So with this patch we switch to
+> > using special binning (with 2x pixel rate) wherever possible.
+> >
+> > [1]: https://github.com/raspberrypi/linux/issues/5493
+> >
+> > Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
+> > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> > Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
+> > Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
+> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > ---
+> >  drivers/media/i2c/imx219.c | 80 +++++++++++++++++++++++++++++++---------------
+> >  1 file changed, 54 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> > index 418f88386659d494ff674d64ed69b8441d1ee2cd..f97abcc5703ea32f1d6f19a4c0a671a7e978a974 100644
+> > --- a/drivers/media/i2c/imx219.c
+> > +++ b/drivers/media/i2c/imx219.c
+> > @@ -296,13 +296,13 @@ static const struct imx219_mode supported_modes[] = {
+> >  		.fll_def = 1763,
+> >  	},
+> >  	{
+> > -		/* 2x2 binned 30fps mode */
+> > +		/* 2x2 binned 60fps mode */
+> >  		.width = 1640,
+> >  		.height = 1232,
+> >  		.fll_def = 1707,
+> >  	},
+> >  	{
+> > -		/* 640x480 30fps mode */
+> > +		/* 640x480 60fps mode */
+> >  		.width = 640,
+> >  		.height = 480,
+> >  		.fll_def = 1707,
+> > @@ -357,6 +357,45 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
+> >  	return imx219_mbus_formats[i];
+> >  }
+> >
+> > +static void imx219_get_binning(struct imx219 *imx219, u8 *bin_h, u8 *bin_v)
+> > +{
+> > +	struct v4l2_subdev_state *state =
+> > +		v4l2_subdev_get_locked_active_state(&imx219->sd);
+> > +	const struct v4l2_mbus_framefmt *format =
+> > +		v4l2_subdev_state_get_format(state, 0);
+> > +	const struct v4l2_rect *crop = v4l2_subdev_state_get_crop(state, 0);
+> > +	u32 hbin = crop->width / format->width;
+> > +	u32 vbin = crop->height / format->height;
+> > +
+> > +	*bin_h = IMX219_BINNING_NONE;
+> > +	*bin_v = IMX219_BINNING_NONE;
+> > +
+> > +	/*
+> > +	 * Use analog binning only if both dimensions are binned, as it crops
+> > +	 * the other dimension.
+> > +	 */
+> > +	if (hbin == 2 && vbin == 2) {
+> > +		*bin_h = IMX219_BINNING_X2_ANALOG;
+> > +		*bin_v = IMX219_BINNING_X2_ANALOG;
+> > +
+> > +		return;
+> > +	}
+> > +
+> > +	if (hbin == 2)
+> > +		*bin_h = IMX219_BINNING_X2;
+> > +	if (vbin == 2)
+> > +		*bin_v = IMX219_BINNING_X2;
+> > +}
+> > +
+> > +static inline u32 imx219_get_rate_factor(struct imx219 *imx219)
+> > +{
+> > +	u8 bin_h, bin_v;
+> > +
+> > +	imx219_get_binning(imx219, &bin_h, &bin_v);
+> > +
+> > +	return (bin_h & bin_v) == IMX219_BINNING_X2_ANALOG ? 2 : 1;
+> > +}
+> > +
+> >  /* -----------------------------------------------------------------------------
+> >   * Controls
+> >   */
+> > @@ -368,10 +407,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
+> >  	const struct v4l2_mbus_framefmt *format;
+> >  	struct v4l2_subdev_state *state;
+> > +	u32 rate_factor;
+> >  	int ret = 0;
+> >
+> >  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
+> >  	format = v4l2_subdev_state_get_format(state, 0);
+> > +	rate_factor = imx219_get_rate_factor(imx219);
+> >
+> >  	if (ctrl->id == V4L2_CID_VBLANK) {
+> >  		int exposure_max, exposure_def;
+> > @@ -400,7 +441,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  		break;
+> >  	case V4L2_CID_EXPOSURE:
+> >  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
+> > -			  ctrl->val, &ret);
+> > +			  ctrl->val / rate_factor, &ret);
+> >  		break;
+> >  	case V4L2_CID_DIGITAL_GAIN:
+> >  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
+> > @@ -417,7 +458,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  		break;
+> >  	case V4L2_CID_VBLANK:
+> >  		cci_write(imx219->regmap, IMX219_REG_FRM_LENGTH_A,
+> > -			  format->height + ctrl->val, &ret);
+> > +			  (format->height + ctrl->val) / rate_factor, &ret);
+> >  		break;
+> >  	case V4L2_CID_HBLANK:
+> >  		cci_write(imx219->regmap, IMX219_REG_LINE_LENGTH_A,
+> > @@ -589,7 +630,7 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+> >  	const struct v4l2_mbus_framefmt *format;
+> >  	const struct v4l2_rect *crop;
+> >  	unsigned int bpp;
+> > -	u64 bin_h, bin_v;
+> > +	u8 bin_h, bin_v;
+> >  	int ret = 0;
+> >
+> >  	format = v4l2_subdev_state_get_format(state, 0);
+> > @@ -602,7 +643,6 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+> >  	case MEDIA_BUS_FMT_SBGGR8_1X8:
+> >  		bpp = 8;
+> >  		break;
+> > -
+> >  	case MEDIA_BUS_FMT_SRGGB10_1X10:
+> >  	case MEDIA_BUS_FMT_SGRBG10_1X10:
+> >  	case MEDIA_BUS_FMT_SGBRG10_1X10:
+> > @@ -621,26 +661,7 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+> >  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
+> >  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
+> >
+> > -	switch (crop->width / format->width) {
+> > -	case 1:
+> > -	default:
+> > -		bin_h = IMX219_BINNING_NONE;
+> > -		break;
+> > -	case 2:
+> > -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> > -		break;
+> > -	}
+> > -
+> > -	switch (crop->height / format->height) {
+> > -	case 1:
+> > -	default:
+> > -		bin_v = IMX219_BINNING_NONE;
+> > -		break;
+> > -	case 2:
+> > -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> > -		break;
+> > -	}
+> > -
+> > +	imx219_get_binning(imx219, &bin_h, &bin_v);
+> >  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
+> >  	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
+> >
+> > @@ -847,6 +868,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> >  		int exposure_max;
+> >  		int exposure_def;
+> >  		int hblank, llp_min;
+> > +		int pixel_rate;
+> >
+> >  		/* Update limits and set FPS to default */
+> >  		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
+> > @@ -882,6 +904,12 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+> >  		 */
+> >  		hblank = prev_line_len - mode->width;
+> >  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
+> > +
+> > +		/* Scale the pixel rate based on the mode specific factor */
+> > +		pixel_rate = imx219_get_pixel_rate(imx219) *
+> > +			     imx219_get_rate_factor(imx219);
+> 
+> Is this correct ? imx219_set_pad_format() operates a subdev state,
+> while imx219_get_rate_factor() always operate on the active state.
+> 
+> It could be argued that controls are always 'active' so using the
+> 'active' state for both imx219_get_pixel_rate() and
+> imx219_get_rate_factor() is ok.
+> 
+> However I would rather pass to imx219_get_rate_factor() the current subdev
+> state and pass it to imx219_get_binning() as well.
+> 
 
-The "calculation" is then performed with a new static function
-mtk_dpi_calculate_factor(dpi, mode_clk) that iterates through all
-of the entries of the aforementioned array and returns the right
-factor.
+Yeah I assumed the pixel rate control only matters when changing the 
+active state, but agree that it is cleaner to pass around the subdev 
+state instead of the full internal struct as we only care about format 
+and resolution for binning calculations.
 
-If no factor is found, the lowest possible factor is returned,
-mimicking the same flow as all of the old per-SoC calculation
-functions.
+Will update in next revision.
 
-This commit brings no functional change.
+> With this
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> 
+> Thanks
+>   j
+> 
+> > +		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
+> > +					 pixel_rate, 1, pixel_rate);
+> >  	}
+> >
+> >  	return 0;
+> >
+> > --
+> > 2.48.1
+> >
+> >
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/gpu/drm/mediatek/mtk_dpi.c | 103 +++++++++++++++--------------
- 1 file changed, 52 insertions(+), 51 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index fc937490feda..41fdc193891a 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -118,9 +118,15 @@ struct mtk_dpi_yc_limit {
- 	u16 c_bottom;
- };
- 
-+struct mtk_dpi_factor {
-+	u32 clock;
-+	u8 factor;
-+};
-+
- /**
-  * struct mtk_dpi_conf - Configuration of mediatek dpi.
-- * @cal_factor: Callback function to calculate factor value.
-+ * @dpi_factor: SoC-specific pixel clock PLL factor values.
-+ * @num_dpi_factor: Number of pixel clock PLL factor values.
-  * @reg_h_fre_con: Register address of frequency control.
-  * @max_clock_khz: Max clock frequency supported for this SoCs in khz units.
-  * @edge_sel_en: Enable of edge selection.
-@@ -141,7 +147,8 @@ struct mtk_dpi_yc_limit {
-  * @edge_cfg_in_mmsys: If the edge configuration for DPI's output needs to be set in MMSYS.
-  */
- struct mtk_dpi_conf {
--	unsigned int (*cal_factor)(int clock);
-+	const struct mtk_dpi_factor *dpi_factor;
-+	const u8 num_dpi_factor;
- 	u32 reg_h_fre_con;
- 	u32 max_clock_khz;
- 	bool edge_sel_en;
-@@ -516,6 +523,20 @@ static int mtk_dpi_power_on(struct mtk_dpi *dpi)
- 	return ret;
- }
- 
-+static unsigned int mtk_dpi_calculate_factor(struct mtk_dpi *dpi, int mode_clk)
-+{
-+	const struct mtk_dpi_factor *dpi_factor = dpi->conf->dpi_factor;
-+	int i;
-+
-+	for (i = 0; i < dpi->conf->num_dpi_factor; i++) {
-+		if (mode_clk <= dpi_factor[i].clock)
-+			return dpi_factor[i].factor;
-+	}
-+
-+	/* If no match try the lowest possible factor */
-+	return dpi_factor[dpi->conf->num_dpi_factor - 1].factor;
-+}
-+
- static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 				    struct drm_display_mode *mode)
- {
-@@ -530,7 +551,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 	unsigned int factor;
- 
- 	/* let pll_rate can fix the valid range of tvdpll (1G~2GHz) */
--	factor = dpi->conf->cal_factor(mode->clock);
-+	factor = mtk_dpi_calculate_factor(dpi, mode_clk);
- 	drm_display_mode_to_videomode(mode, &vm);
- 	pll_rate = vm.pixelclock * factor;
- 
-@@ -965,48 +986,6 @@ static const struct component_ops mtk_dpi_component_ops = {
- 	.unbind = mtk_dpi_unbind,
- };
- 
--static unsigned int mt8173_calculate_factor(int clock)
--{
--	if (clock <= 27000)
--		return 3 << 4;
--	else if (clock <= 84000)
--		return 3 << 3;
--	else if (clock <= 167000)
--		return 3 << 2;
--	else
--		return 3 << 1;
--}
--
--static unsigned int mt2701_calculate_factor(int clock)
--{
--	if (clock <= 64000)
--		return 4;
--	else if (clock <= 128000)
--		return 2;
--	else
--		return 1;
--}
--
--static unsigned int mt8183_calculate_factor(int clock)
--{
--	if (clock <= 27000)
--		return 8;
--	else if (clock <= 167000)
--		return 4;
--	else
--		return 2;
--}
--
--static unsigned int mt8195_dpintf_calculate_factor(int clock)
--{
--	if (clock < 70000)
--		return 4;
--	else if (clock < 200000)
--		return 2;
--	else
--		return 1;
--}
--
- static const u32 mt8173_output_fmts[] = {
- 	MEDIA_BUS_FMT_RGB888_1X24,
- };
-@@ -1021,8 +1000,25 @@ static const u32 mt8195_output_fmts[] = {
- 	MEDIA_BUS_FMT_YUYV8_1X16,
- };
- 
-+static const struct mtk_dpi_factor dpi_factor_mt2701[] = {
-+	{ 64000, 4 }, { 128000, 2 }, { U32_MAX, 1 }
-+};
-+
-+static const struct mtk_dpi_factor dpi_factor_mt8173[] = {
-+	{ 27000, 48 }, { 84000, 24 }, { 167000, 12 }, { U32_MAX, 6 }
-+};
-+
-+static const struct mtk_dpi_factor dpi_factor_mt8183[] = {
-+	{ 27000, 8 }, { 167000, 4 }, { U32_MAX, 2 }
-+};
-+
-+static const struct mtk_dpi_factor dpi_factor_mt8195_dp_intf[] = {
-+	{ 70000 - 1, 4 }, { 200000 - 1, 2 }, { U32_MAX, 1 }
-+};
-+
- static const struct mtk_dpi_conf mt8173_conf = {
--	.cal_factor = mt8173_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8173,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8173),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 300000,
- 	.output_fmts = mt8173_output_fmts,
-@@ -1039,7 +1035,8 @@ static const struct mtk_dpi_conf mt8173_conf = {
- };
- 
- static const struct mtk_dpi_conf mt2701_conf = {
--	.cal_factor = mt2701_calculate_factor,
-+	.dpi_factor = dpi_factor_mt2701,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt2701),
- 	.reg_h_fre_con = 0xb0,
- 	.edge_sel_en = true,
- 	.max_clock_khz = 150000,
-@@ -1057,7 +1054,8 @@ static const struct mtk_dpi_conf mt2701_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8183_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 100000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1074,7 +1072,8 @@ static const struct mtk_dpi_conf mt8183_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8186_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 150000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1092,7 +1091,8 @@ static const struct mtk_dpi_conf mt8186_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8192_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 150000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1109,7 +1109,8 @@ static const struct mtk_dpi_conf mt8192_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8195_dpintf_conf = {
--	.cal_factor = mt8195_dpintf_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8195_dp_intf,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8195_dp_intf),
- 	.max_clock_khz = 600000,
- 	.output_fmts = mt8195_output_fmts,
- 	.num_output_fmts = ARRAY_SIZE(mt8195_output_fmts),
 -- 
-2.48.1
-
+Thanks,
+Jai
 
