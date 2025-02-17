@@ -1,207 +1,113 @@
-Return-Path: <linux-kernel+bounces-518258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6799DA38C5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA60A38C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CAFB171243
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713C217161F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096623716C;
-	Mon, 17 Feb 2025 19:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5962376EA;
+	Mon, 17 Feb 2025 19:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="iGDDvY0U"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zj83HgB2"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5FB158545
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF6023716E;
+	Mon, 17 Feb 2025 19:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739820530; cv=none; b=q80D795x4WrHJcVHd/6RvtMpsqo69mQ+jkv1E+tEbTV5Eu9fSZVh7oSqc5AbcSnm32/tdNK5uqMTg73bUP37VFQBF7/tkX+RWb2i5wTflg9NogIO1Ut0As4o0zqXlanenr2cpHogk73+eeLgN5C/s9m44pkJOl7MsqsehB4vDq8=
+	t=1739820614; cv=none; b=YbwhipM4aEdH6lC2n4GLkMF4qiKDJ/L0MHTKmA0rOpqkZcJs5o15rqXUbA6n0eoniYIzR3pzqd61bMtfF251UiumwVafv2e6gYfoS5yulDPBpGIy3s1w0HUMFevf8JNx7FSw/es0WB/b2ICxCUFCtCOiGJAbNztWRI3SUC3+Hvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739820530; c=relaxed/simple;
-	bh=8Se1BJZJiElrV3tnKSC6keFdf3UpAPgUA2PzexRT2sM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FQabM77Ey1GCGx7XYNw+eDBWKfJ/vbNZ7QrhhNEJq0oMPBreoN9UkG6Rfyq1+d03C4vLCYz0+FBfBae9u20OAKtEbG2g2I0tKw2WrKRITCcHIew6EKP4XxL+PZANipRFQKZ+L1+DLO4VMQTWLPEM9o0maxkdXxxu1UJ5EVbDark=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=iGDDvY0U; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c07441f14cso416214385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:28:48 -0800 (PST)
+	s=arc-20240116; t=1739820614; c=relaxed/simple;
+	bh=oWFGxE5dGctrEPb9coH4CCy8xZBZZ9CsQTMTjo0QChM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxogYylKoC9u/D4Wy0jbkc3usZ6qaEGMMgDQrNox5ZrvvTPNEdtPHmpex4d9OgNN42zuLl/OnXJOrkqjKd1XKfL2k7/mXckcKkniAqdbnBpHRC5yEBK5hqnCypmpDqbdW/q3ltTTBhTrH2yCF/Bub1bUooSdjJkaqYVLJ3/+m+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zj83HgB2; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43971025798so13054275e9.1;
+        Mon, 17 Feb 2025 11:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1739820528; x=1740425328; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AzAfbcIU/2Am+v+jnPFOtCbj7SMgMMXKSogURXBFTnU=;
-        b=iGDDvY0U78bhWRyRAdEOSaizGAzMIetpqd0IzgQ0YHfqA5JR16xbAfOHVpOw/+0VM2
-         RuVssEUPc892WsXLKQaRqKqdI3ReVYGovuD1DETH5+DoXx4d8djmdwQZM28MZ9Fhrtck
-         zaeMRhMQgdT1X+sxNVwhhGfrYHHzX73XaeiX0xrWgeT4rsJGjHKEQ/cClSvD82mZB1UF
-         fXn38gA4/C0dLJ//V+k8aXIFFJiGNUC1LE0+KmRSy+x7VSu5CI6oODVqTYJLfXi0dYAv
-         IsxZVF6sJZxMVrrTDmKbpP6dyxNGTP0zTitoBmjO3a/AjPTVdGg11Ny4vNUXXFivx4IW
-         8lvw==
+        d=gmail.com; s=20230601; t=1739820611; x=1740425411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBBGRVrDPOzL/cJXETAGl1eWZIx2QG5N8tUkdFnRiL0=;
+        b=Zj83HgB2RpQaEi7eI4ZBEUXxRArhtBBT0sZHd+fJKBxnPddj73vOBnJJcjQYsi0wWk
+         3UTUrIFoYpXuYA+1VMjt9O//FITQOeyd+nxJt3RVi58+RIBo0V/zXVN6hV1dOenYOvdR
+         b1lYUW/zqPJ4wD/y7VroHbmTi5s30xLCcVXLY7jxpa3IYIxSIwvk2jOgz0WbknKolUzp
+         r6qEhq4mkg6rxihoUz9bo7c1v8ltOOGJ008OzD90HALhaQRrc6sas8hCEkuQO1k9WGt7
+         aSROP6mVCS8cpVVYMh64Nh7BDtcP6gxTDK1xy5UB1dE1TA0s+sNuyzV/ni+BxTXY/Uom
+         atXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739820528; x=1740425328;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AzAfbcIU/2Am+v+jnPFOtCbj7SMgMMXKSogURXBFTnU=;
-        b=Msao91pep2E4er59hHAWnVQNTzTz/gh5579HTvcoNTSXsk/Z4SjfQjxLRjH6tcqnvz
-         gdOEmPmaVPaq3d6KG7s8/p/Xxffl+8kMXq8qYoOz79E2ELmfqVfnwHL9zMDFRjn73aly
-         +bVj4ldCwSI5sDppJoTIXn8WbPMr0m5rXgKyuQ9lrvduR7F9eoJrjtUcP3bceYpHQ9GD
-         7S3/f/lS+5pYhQ7YM2rPF8zxxGwUYMzClQBxOLOZB7XZqJ/FbW8v/YKUXJXYlZxdDpvU
-         cHDag1t/rct6/rynWPEwqmXe+yd4CHJrLVOtNj5pEPvPIzpWwDp/j42PltDARmFYPxfL
-         Iu3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxvoEU4AQPrOQIg6ZArzHLeV3QMcPgOZFG6qrQlT8zGZN40aVuI6DSlTagTrRor3fgp2UVElLVzWkefMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHOAAkKzPJcr9gt/xFRQB1Bfr83oxqsZScFavGfyQdQEEThMs2
-	j6M/TR/JtucNHP/UWZsrdTpbs0IyKmRqir9Fo8B7sZl9zy6Q1e8SrrYhqM2rI8M=
-X-Gm-Gg: ASbGnctNjvT9OIFWR7Z5lWuUArVsUfYvxjKS6yuyVPTuimwuX4iKM22Pm4g3tNVzxFK
-	tFuJBWPaqRKnkw0Z9M5goFFbn3hyyspUwp/EqDVf8qvsRJTcT3f1H9EVvYuuf/qlkeRlpeg3qGA
-	IwA/gUrPjYa3bvuqWIxjvMgjvV1ySm7EmKsREF6wjhP6SRraKWHn1mgXSkNZFvPf/nPE4i37EdW
-	z+VDjnDR/zbq0sfXSOrcpIMpMjVHNyBb30NtyOIn8/3MkGnqE3AeyzBDx2BAkNHr4rnJjCXIPS1
-	NP5ffXuVGEy2uvL0JRqp
-X-Google-Smtp-Source: AGHT+IF0M1JuegcbLy3i0Bijjwl67r9LgXH3tketiaHBXEgodxNXXo5qAbFCYzz/X43MZ2CJv0eXEA==
-X-Received: by 2002:a05:620a:40c1:b0:7c0:7350:9adb with SMTP id af79cd13be357-7c08a9801b5mr1443794485a.11.1739820527975;
-        Mon, 17 Feb 2025 11:28:47 -0800 (PST)
-Received: from ?IPv6:2606:6d00:11:e976::5ac? ([2606:6d00:11:e976::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c096e87af7sm193307485a.79.2025.02.17.11.28.46
+        d=1e100.net; s=20230601; t=1739820611; x=1740425411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KBBGRVrDPOzL/cJXETAGl1eWZIx2QG5N8tUkdFnRiL0=;
+        b=gHt5FQRGubKn9KvkOhbgYlKIyteW8RdnBBzf7m1fCqmsUMqX2C1avrkZzhlNm3yeGC
+         jnNpy0cvLODvvqses5giLEy8qoqRHb1oeyYq/xFrD9kRLYnSXcl5mibUS2P9AELxIQoq
+         Eusg4idyYexFYo08tUpwH68CGTWKt2WFsEx/rXwP9ouZYrrm+jjuFYqPrihmyS/kBtvU
+         HtMndRULMZT1DPM0sIsISc7eL0h420kV9f2yO18KtFop4F4I4bR45wfKEuHvi6m3SjVN
+         kCgH/zlz5yAzVZQ2XzAF75TCTloOrPvnS9y3p3YIJ+4jF0h5696r61OCxU/VPet+eMch
+         Wwsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPCWMY2ggbaYgM10VOC281GUAS9uCyHhd8hDs9l8KVyHgpl4shp+5BATxKMBdpM4EYEbkUdvJH9mo0ZVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjVjcFaSCoMIy/aDo5GPEPL8o0TBR5HCIKKCsLt16faOWledX+
+	/PaTtkThL0RYIAifkOK0IUp/+ZAs+RNETO1bixRjeduB9DP5xoZO
+X-Gm-Gg: ASbGncv57QJI0kI5AUHPpD1bO8AV0N1ZxJ7uCJPs1p9Ht8Z0rq0RGjQ87r9sxS8Ba6K
+	MLI4cvkfaVWFzc1kXsVcwQiBNy1syLgvlHSbGch/ZkjqhgWQvJJt5i4BxZhaQm9ighvioaisiJW
+	2dPUI7ZMdmknrxn6DwnEXJsKVkzBDDYwW666uhV50OEGSABiz/RLCaqX/FQJlrpfY7/qMYAOt4L
+	FbJB+cKOIMK40mkhrCCwfqzGDBot7jUBdnxxuoKm0r9RYdL/ox/7VpFE4PiLeOCj2yg2RNCgaN8
+	y+cB+o35aPSRYg==
+X-Google-Smtp-Source: AGHT+IG/GTBYMutX0ifvnaDNTHsFLz/DL9WhNAt4ojV3o2SFm28L0BvhF5nSaoivdCJhJhpmzmztPw==
+X-Received: by 2002:a05:600c:4f02:b0:439:930a:58aa with SMTP id 5b1f17b1804b1-439930a5aacmr1691095e9.0.1739820610515;
+        Mon, 17 Feb 2025 11:30:10 -0800 (PST)
+Received: from eichest-laptop ([2a02:168:af72:0:bb08:332f:1cf1:cf5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439858ec5fasm34378135e9.29.2025.02.17.11.30.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 11:28:46 -0800 (PST)
-Message-ID: <1f1e41700b16eef7fe790b9b14d6ccfd157f67ad.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: mediatek: vcodec: Enable HEVC main still picture
- decode
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Nathan Hebert <nhebert@chromium.org>, Yunfei Dong
- <yunfei.dong@mediatek.com>,  Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Mon, 17 Feb 2025 14:28:45 -0500
-In-Reply-To: <f257832e823d23c8324a9eaf7890dd4b6d50a6f0.camel@ndufresne.ca>
-References: 
-	<20250211-enable_hevc_still_picture-v1-1-0c06c0c9add2@chromium.org>
-	 <f257832e823d23c8324a9eaf7890dd4b6d50a6f0.camel@ndufresne.ca>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7RDTmljb2xhcyBEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0
- aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDA
- gQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCgzYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDi
- cVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA
- 8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udWs+iGIEExECACIFAkuzca8CGwMGCwkIBwMC
- BhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Ro
- x8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2
- xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRB
- xUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypwCfWKc9DorA9f5pyYlD5pQo6SgSoiC0J05p
- Y29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPohiBBMRAgAiBQJVwNwgAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHCZ4AJ0QwU6/G4c7h9CkMBT9ZxGLX4KSnQ
- Cgq0P7CX7hv/M7HeyfMFZe8t3vAEW0RE5pY29sYXMgRHVmcmVzbmUgKEIuIFNjLiBJbmZvcm1hdGl
- xdWUpIDxuaWNvbGFzZEBibHVlc3RyZWFrdGVjaC5jb20+iGAEExECACAFAkZjGzoCGwMGCwkIBwMC
- BBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHBl7AJ0d2lrzshMmJaik/EaDEakzEwqgxQCg0JVZM
- Zm9gRfEou1FvinuZxwf/mu0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF1ZSkgPG
- 5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkIBwMCBBU
- CCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr+E7ItOq
- ZEHAs+xabBgknYZIFPU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        Mon, 17 Feb 2025 11:30:10 -0800 (PST)
+Date: Mon, 17 Feb 2025 20:30:08 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, francesco.dolcini@toradex.com,
+	broonie@kernel.org
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1 1/2] arm64: dts: freescale: imx8mp-verdin-dahlia: add
+ Microphone Jack to sound card
+Message-ID: <Z7OOQNnlGCAfWYws@eichest-laptop>
+References: <20250217145744.179213-1-eichest@gmail.com>
+ <20250217145744.179213-2-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217145744.179213-2-eichest@gmail.com>
 
-aLe lundi 17 f=C3=A9vrier 2025 =C3=A0 13:45 -0500, Nicolas Dufresne a =C3=
-=A9crit=C2=A0:
-> Hi Nathan,
->=20
-> Le mardi 11 f=C3=A9vrier 2025 =C3=A0 16:34 -0800, Nathan Hebert a =C3=A9c=
-rit=C2=A0:
-> > Mediatek devices that support HEVC also support the main still picture
-> > profile, but today, the main still picture profile is excluded.
-> >=20
-> > This removes the skip mask for HEVC, and enables the main still
-> > picture profile decoding.
-> >=20
-> > Signed-off-by: Nathan Hebert <nhebert@chromium.org>
-> > ---
-> > On Mediatek devices that support HEVC decoding, HEVC Main Still Picture
-> > profile is also supported by the SOC and firmware. However, this
-> > capability is turned off in the vcodec driver.
-> >=20
-> > This removes the code that disables HEVC Main Still Picture profile
-> > decoding. Validation of the decoder has been done via V4L2-backed
-> > Android CTS tests on an MT8196 device.
->=20
-> While its nice to know that you are working on upcoming SoC, we need
-> confirmation that this is working on all the upstream stateless
-> decoders supported: 8183, 8186, 8192, 8195. Ideally testing on 8188,
-> which I can see has merged support without the linux-firmware file to
-> go with it.
->=20
-> I'll wait for that and Yunfei's ack before picking it. Yunfei, please
-> fix the situation with 8188 in linux-firmware, and CC me.
+On Mon, Feb 17, 2025 at 03:56:40PM +0100, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> The simple-audio-card's microphone widget currently connects to the
+> headphone jack. Routing the microphone input to the microphone jack
+> allows for independent operation of the microphone and headphones.
+> 
+> This resolves the following boot-time kernel log message, which
+> indicated a conflict when the microphone and headphone functions were
+> not separated:
+>   debugfs: File 'Headphone Jack' in directory 'dapm' already present!
+> 
+> Fixes: 874958916844 ("arm64: dts: freescale: verdin-imx8mp: dahlia: add sound card")
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-In case this is useful, we recommend providing fluster scores for the
-codec, which in that case runs some public ITU conformance vectors.
-Since most of the testing has been done with GStreamer, you may be able
-to find old report and confirm it it works. GStreamer does not
-currently filter the profile/level (on my todo), so it will try anyway.
-IPRED_B_Nokia_3 is the one vector in the base suite that expose that
-profile.
-
-resources/JCT-VC-HEVC_V1/IPRED_B_Nokia_3/IPRED_B_Nokia_3.bit
-  Stream #0:0: Video: hevc (Main Still Picture), none, 1920x1080, 25 fps, 1=
-200k tbr, 1200k tbn
-
-regards,
-Nicolas
-
->=20
-> regards,
-> Nicolas
->=20
-> > ---
-> > =C2=A0.../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_statele=
-ss.c=C2=A0=C2=A0 | 2 --
-> > =C2=A01 file changed, 2 deletions(-)
-> >=20
-> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_=
-dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec=
-_dec_stateless.c
-> > index afa224da0f41..d873159b9b30 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_sta=
-teless.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_sta=
-teless.c
-> > @@ -152,8 +152,6 @@ static const struct mtk_stateless_control mtk_state=
-less_controls[] =3D {
-> > =C2=A0			.id =3D V4L2_CID_MPEG_VIDEO_HEVC_PROFILE,
-> > =C2=A0			.def =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN,
-> > =C2=A0			.max =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10,
-> > -			.menu_skip_mask =3D
-> > -				BIT(V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_STILL_PICTURE),
-> > =C2=A0		},
-> > =C2=A0		.codec_type =3D V4L2_PIX_FMT_HEVC_SLICE,
-> > =C2=A0	},
-> >=20
-> > ---
-> > base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-> > change-id: 20250211-enable_hevc_still_picture-26b35eb08270
-> >=20
-> > Best regards,
->=20
-
+CC: Mark Brown <broonie@kernel.org>
 
