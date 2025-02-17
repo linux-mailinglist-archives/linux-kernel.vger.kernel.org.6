@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-518317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3F8A38D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3FFA38D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4662188C80C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032581894E98
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95729238D52;
-	Mon, 17 Feb 2025 20:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2B72376E1;
+	Mon, 17 Feb 2025 20:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cpEFtdSX"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2G+qrL5o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YnMClA1r"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47D219A8A;
-	Mon, 17 Feb 2025 20:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08B5149C41;
+	Mon, 17 Feb 2025 20:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739823604; cv=none; b=F5hFKCM3B8PrI1jgZx1XHWbuz1msjy5DI/JWmKz76FmkMRD72hQH8yyeGWmnBIY6RK6GbEDdTV06/NK3Q5pFILvR0R7z0juM4IczgwGQ666RdXsklQHCdhV/zSVJ5dpsmLo/B1QeA1ckquQQHuRs608S+ZWxLkp1gFKrXoDGLno=
+	t=1739823430; cv=none; b=U92gp2wGC5eXxauYhUM87D+3QvTvplub+SrxdgHiim9OLLuyb3Pn2FAu8Y+NQ8HOTNTpsskB3nEPGLNFVjEON3zTYMk40jd+sZDJeUWumVhSN09YGCSjcZbdVxttOHoZdmV+nvB91PiOZi9vLgRdemakG0JeRQQ7slIPG4Rl97A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739823604; c=relaxed/simple;
-	bh=VGPxZ+UZjJjw8SEv0KgowUz43qF+U/wYeXYgZBnh1kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MFTcSv3+HL7EPXxFvGrb+FesErgE+L5nrXOkRwWVyCApB88jEQxON/qlU4IMeyy0L/b3sZg5+SGRlLJBjes5adUkac3+YEzGC7SZtrVCwpcrLdCBB0PQ2BFqsYhKtHPesJ/nCKAczQ76491Q5vRCa0D2u9GC+3EK5swqf9iIO44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cpEFtdSX; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 2a51783161226919; Mon, 17 Feb 2025 21:19:59 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D891A9100B0;
-	Mon, 17 Feb 2025 21:19:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1739823599;
-	bh=VGPxZ+UZjJjw8SEv0KgowUz43qF+U/wYeXYgZBnh1kc=;
-	h=From:Subject:Date;
-	b=cpEFtdSXfOtC8SqUKToccmhl9nwVkQvr2n9gMzI7Yl71Om8FHLEQ/n4hJU9hbaRBq
-	 pAy9eCqWwbRtmly/16tayNc8gYGDCq2GW/QH/nl7nnQ4QAr9BOl2XwaZNv6qTwRyRj
-	 VAIZVaysGNoHoNRFCbk2mKwZekQxzKf+ZUv4M1w72W7MV+u1KnI/UAv9Tq+i4TM+oM
-	 nQjw4/0qFm+nMRdc7cDn5bm5p8TNl1gipeQRwR6M8X1OfIt5NNcED/3o47uRT6ST08
-	 8k9fg+SkbNjy2NvALALZKVH/hmX8iC/LHHjrO54G/iMlxHpEhErpQoovUDgM9lCWX5
-	 Q9DGCfRPocqNQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Bjorn Helgaas <helgaas@kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Linux ACPI <linux-acpi@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/3] PM: runtime: Introduce pm_runtime_blocked()
-Date: Mon, 17 Feb 2025 21:16:43 +0100
-Message-ID: <8497121.T7Z3S40VBb@rjwysocki.net>
-In-Reply-To: <4966939.GXAFRqVoOG@rjwysocki.net>
-References: <4966939.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1739823430; c=relaxed/simple;
+	bh=TCMw5TyEQMzsmnCQVdbCbrXXQ8ghdVjjhyoQg11Zb28=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IPvt+32lgYw/NfIrDpbl4A5p5KgMeJBdBJvOGf8kKJ8kYGMKLpYc538Q52rQgXTRAwYErCLfl6/i/mS2NoO8i/Fep9rzTEEEmaomBcq26kJ11WWbl2xHFFrJ4JRbqkrKkfEFPEIF4wS2cPZ/sRb/XFeSOzYVEsTH9+ZcEuLqSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2G+qrL5o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YnMClA1r; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739823426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4gctRK6JpfUH/NVUrTgQbZEcAERpsDJjOyl4C8mHZk=;
+	b=2G+qrL5o2KPh9BiSB32r+cpkG65yGgYM43PiS+I+r+9yB7o//wCXSz+OdgPou7RbjvJz+i
+	pvSg8MpUpLnJwFtvFvUOnpGpCh+YjXUs7NAi6HxjqnvkZB3vpT/eTWUo7amE8EbOciDl57
+	+NxJSkmtFBgpj79Y9fY+UrCEmbnupUP91upddTt93RFa/bKO4o9jQJw61hOdve4YFk3Fu3
+	Gz12ehbWyRy1mpIWB2X4BbS0v1GQvYI2M3hPpnl0L35XJmKWZmf71K9f47HOrxxvbLAZyd
+	yOTsfn1vuBZff6Xg7vekwhWNpiT15KPB128NpCMdPrAAPeuej80NNCm1ta/Uxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739823426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4gctRK6JpfUH/NVUrTgQbZEcAERpsDJjOyl4C8mHZk=;
+	b=YnMClA1rI9OiiEAFcAxg1oE84Z6NP7HFO8eayFN0SIh7UAjcCndxVweRfMwBuPyaozNBCr
+	2PJUn9N3SnPJE1DQ==
+To: Chintan Vankar <c-vankar@ti.com>, Jason Reeder <jreeder@ti.com>,
+ vigneshr@ti.com, nm@ti.com, Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ s-vadapalli@ti.com, danishanwar@ti.com, m-malladi@ti.com, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH 1/2] irqchip: ti-tsir: Add support for Timesync
+ Interrupt Router
+In-Reply-To: <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com>
+References: <20250205160119.136639-1-c-vankar@ti.com>
+ <20250205160119.136639-2-c-vankar@ti.com> <87lduin4o5.ffs@tglx>
+ <09880b14-cef1-44cd-9fa4-8840fb673c0a@ti.com> <87cyfplg8s.ffs@tglx>
+ <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com> <87jz9tjwjk.ffs@tglx>
+ <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com>
+Date: Mon, 17 Feb 2025 21:17:06 +0100
+Message-ID: <87ikp8jph9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehleefhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohephhgvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Content-Type: text/plain
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Chintan!
 
-Introduce a new helper function called pm_runtime_blocked() for
-checking the power.last_status value indicating whether or not the
-enabling of runtime PM for the given device has been blocked (which
-happens in the "prepare" phase of system-wide suspend if runtime
-PM is disabled for the given device at that point and has never
-been enabled so far).
+On Sat, Feb 15 2025 at 17:19, Chintan Vankar wrote:
+> On 14/02/25 04:13, Thomas Gleixner wrote:
+>> Two questions:
+>> 
+>>   1) For the case where no interrupt is involved, how is the routing
+>>      configured?
+>> 
+>>   2) For the case where it routes an input line to an interupt, then how
+>>      is this interrupt going to be handled by this interrupt domain which
+>>      is not connected to anything and implements an empty disfunctional
+>>      interrupt chip?
+>> 
+>
+> For both the cases above the job of Timesync INTR is to map the output
+> register with the corresponding input.
+>
+> As described in section 11.3.2.1 in the TRM at:
+> https://www.ti.com/lit/ug/spruiu1d/spruiu1d.pdf,
+> the job of the Timesync INTR is to provide a configuration of the
+> "output registers which controls the selection". Hence we just have to
+> provide configuration APIs in the Timesync INTR which programs output
+> registers of the Timesync INTR. About the handling of the interrupts,
+> the device which receives an interrupt needs to handle the interrupt.
+>
+> Could you please explain why we consider these two cases to be
+> different?
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/runtime.c |   17 +++++++++++++++++
- include/linux/pm_runtime.h   |    2 ++
- 2 files changed, 19 insertions(+)
+They are different as
 
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1555,6 +1555,23 @@
- }
- EXPORT_SYMBOL_GPL(pm_runtime_enable);
- 
-+bool pm_runtime_blocked(struct device *dev)
-+{
-+	bool ret;
-+
-+	/*
-+	 * dev->power.last_status is a bit field, so in case it is updated via
-+	 * RMW, read it under the spin lock.
-+	 */
-+	spin_lock_irq(&dev->power.lock);
-+
-+	ret = dev->power.last_status == RPM_BLOCKED;
-+
-+	spin_unlock_irq(&dev->power.lock);
-+
-+	return ret;
-+}
-+
- static void pm_runtime_disable_action(void *data)
- {
- 	pm_runtime_dont_use_autosuspend(data);
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -81,6 +81,7 @@
- extern void pm_runtime_unblock(struct device *dev);
- extern void pm_runtime_enable(struct device *dev);
- extern void __pm_runtime_disable(struct device *dev, bool regular);
-+extern bool pm_runtime_blocked(struct device *dev);
- extern void pm_runtime_allow(struct device *dev);
- extern void pm_runtime_forbid(struct device *dev);
- extern void pm_runtime_no_callbacks(struct device *dev);
-@@ -277,6 +278,7 @@
- static inline void pm_runtime_unblock(struct device *dev) {}
- static inline void pm_runtime_enable(struct device *dev) {}
- static inline void __pm_runtime_disable(struct device *dev, bool c) {}
-+static inline bool pm_runtime_blocked(struct device *dev) { return true; }
- static inline void pm_runtime_allow(struct device *dev) {}
- static inline void pm_runtime_forbid(struct device *dev) {}
- 
+  #1 Routes the signal from one IP block to another IP block
 
+     So there is no notion of an actual interrupt, but still you use the
+     interrupt domain mechanism, which requires to allocate a Linux
+     interrupt number just to configure that router.
 
+     What's the purpose of this interrupt number and the allocated
+     resources behind it?
 
+  #2 Routes the signal from an IP block to an actual interrupt "input"
+
+     Again, this requires to allocate a Linux interrupt number which is
+     disfunctional as it is not connected in the interrupt domain
+     hierarchy and just provides an interrupt chip with a name and no
+     actual functionality behind it.
+
+     So the resulting real interrupt needs yet another interrupt number
+     which then maps to something which actually can handle interrupts.
+
+So in some aspect they are not that different because both have nothing
+to do with the actual concept of interrupt management in the Linux
+kernel.
+
+From the kernel's interrupt handling POV this is a completely
+transparent piece of hardware, which is not associated to any interrupt
+handling mechanism. Just because the manual mentions INTR in the name of
+the IP block does not make it part of the actual kernel interrupt
+handling.
+
+I have no idea into which subsystem such a SoC configuration belongs to,
+but Greg might have an idea.
+
+Thanks,
+
+        tglx
 
