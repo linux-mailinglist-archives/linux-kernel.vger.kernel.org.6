@@ -1,157 +1,112 @@
-Return-Path: <linux-kernel+bounces-517604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C8FA382FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:27:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E186A38300
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08AA1893259
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5C5188583E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8E621A43D;
-	Mon, 17 Feb 2025 12:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AC721A45B;
+	Mon, 17 Feb 2025 12:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNqPa/Yk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b="NFSkMLLO"
+Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE43F217F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9871219EAD;
+	Mon, 17 Feb 2025 12:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739795251; cv=none; b=Z9sRH5/MxCtdcPjXZAV5/MTv9siohmHtPweymON6mW56E1cvUedoV7iwtCt73ZKg4pcucbRtm7UPntDtB1OE6eHrgZh3ZjiE56AWSzkM39Z0E9meS1LMzSebG9HO86ePqPtbeyW++TAp4aAp8GGnbtl8tUzP7s2vVqO711aggn4=
+	t=1739795300; cv=none; b=NTULfNuds/Iq1Zbgx7eCGMAz7jNWojrRjY0xcBStV8fwgaHDyVq0D8qGXUAxMWJmI7UKPtq+zSjQkjZrek55sOL3J6TSbnx9R6gPSe8yJOT+q6Gizf/YvNRC/my3Tk7LE+4CTeEVZ6zB528j8tkSlBSorp5dXknlYqX8lmornqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739795251; c=relaxed/simple;
-	bh=MIwYUtXnjoepjUfjvLW564dXH5Zc3Mu+jVREsCj6b3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oms8TWdkPX6JxLRk04OuXzz31DrKCzjlBvOctDq6oTNCHEjhFEjpzHlJ+NAzyxC2b9ZyY1KhrKEQVc7nbrC+yOEeJVSbll9QuChL6k826umd9P4wjyaxX3kJdK6Y4wupU+SBLPRdISRvFRsaYxwrmDoqwy5aSzu4Xi/4FF8ZNT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNqPa/Yk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408DEC4CED1;
-	Mon, 17 Feb 2025 12:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739795251;
-	bh=MIwYUtXnjoepjUfjvLW564dXH5Zc3Mu+jVREsCj6b3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pNqPa/Yk+KlWdNEOwwuagNYFcRU8YiLAo+jDc5w/rEo1470xncMv4DECtOyNVNPUL
-	 dkRRmnnAV2vfOgukrS55kqH34XHuw/kSc+NO02ST2KoWC95XCMstzP0Zc2GD8YTcsL
-	 7oYPf3AbkecKDt8uNnBP5bWibYc5wjsoJ3cR0M/tvGtKKFHkz7hvZW/yeikwd9Vl9r
-	 I8rkT+/q18cKYX/EZlQXqrCmHpHSeGqokZHlDkR/XI6/JHYXb4JxOuK+yKIcs/hjbt
-	 jm1aMnIbkeGXUSfbnZXCApDPk85lWCAJYWF0viD+8XDOU7l3ZlswK+fsmSWHz/c2z6
-	 9RW/7oBkQLcUw==
-Date: Mon, 17 Feb 2025 13:27:25 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>
-Subject: Re: [PATCH 1/1] MAINTAINERS: Remove myself
-Message-ID: <Z7MrLUlSzS_I3YPK@cassiopeiae>
-References: <20250215073753.1217002-1-kherbst@redhat.com>
- <20250215073753.1217002-2-kherbst@redhat.com>
+	s=arc-20240116; t=1739795300; c=relaxed/simple;
+	bh=RvlUp0pIHgqWEN8J+3t45WxbRXgImYVMQcmeJ+Avtdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PlLW1H/PGT6V37xONEWNy9ZhzWeRZZtREuqI6A0KMwY6oV403U8r6KRD2hZx5Q7p1fgPTjTsPfJMr/PzzF388cEZskmUo5EwCjt8jxbUSq9SK8GF7uxgtbqAv2cxGW7y0F8dF/lYOEXgXXfzWo5UFp531xp8aHkCAfuGq7x602I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk; spf=pass smtp.mailfrom=pelago.org.uk; dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b=NFSkMLLO; arc=none smtp.client-ip=46.235.227.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pelago.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=pelago.org.uk; s=mythic-beasts-k1; h=From:To:Subject:Date;
+	bh=o8Ww5RMDvSBbJqnbwfQK+oljKxs5sRZoy/vOcaUCC9c=; b=NFSkMLLOX7IWSwmNiuJt5tLqgQ
+	tSYbCr1NpHDvkB/gbr08oiKH6Qwc2DNZeRX3JpXVPlHi8mererYc+0JF5Xwmmn0HuV+N1sUIV6vjz
+	rIEFSJoKOYcRIAlh+faLg14KTIKP5Z60YPUUo+xz8ysEF7bQSBRbkC5U2Z/jUhJMEFj0QfUDK748s
+	u6zsKacaCF9mbsoBW7lm7+q6FNtPF3ewvPiywFzBr5X0TColYKrdkQhlGjrcHP3GqqJ+vhEv8vETH
+	3Id2RQUDTW2WNcXAR0VDPZwPEpofyFZAPJ5CZvESM4CYI2nWcvhqJ6kZZwJmGHV9ZC0sw4MeOh5C2
+	8ZWePZzQ==;
+Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <john-linux@pelago.org.uk>)
+	id 1tk0ER-00589X-Oz; Mon, 17 Feb 2025 12:28:16 +0000
+Message-ID: <c8556845-7d12-46aa-ab28-138da8903583@pelago.org.uk>
+Date: Mon, 17 Feb 2025 12:28:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250215073753.1217002-2-kherbst@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ALSA: hda/conexant: Add quirk for HP ProBook 450 G4
+ mute LED
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <2fb55d48-6991-4a42-b591-4c78f2fad8d7@pelago.org.uk>
+ <877c5o92sg.wl-tiwai@suse.de>
+From: John Veness <john-linux@pelago.org.uk>
+Content-Language: en-GB
+In-Reply-To: <877c5o92sg.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-BlackCat-Spam-Score: 0
 
-On Sat, Feb 15, 2025 at 08:37:53AM +0100, Karol Herbst wrote:
-> I was pondering with myself for a while if I should just make it official
-> that I'm not really involved in the kernel community anymore, neither as a
-> reviewer, nor as a maintainer.
+On 17/02/2025 12:25, Takashi Iwai wrote:
+> On Mon, 17 Feb 2025 13:15:50 +0100,
+> John Veness wrote:
+>>
+>> Allows the LED on the dedicated mute button on the HP ProBook 450 G4
+>> laptop to change colour correctly.
+>>
+>> Signed-off-by: John Veness <john-linux@pelago.org.uk>
+>> ---
+>> Re-submitted with correct tabs (I hope!)
 > 
-> Most of the time I simply excused myself with "if something urgent comes
-> up, I can chime in and help out". Lyude and Danilo are doing a wonderful
-> job and I've put all my trust into them.
-> 
-> However, there is one thing I can't stand and it's hurting me the most.
-> I'm convinced, no, my core believe is, that inclusivity and respect,
-> working with others as equals, no power plays involved, is how we should
-> work together within the Free and Open Source community.
-> 
-> I can understand maintainers needing to learn, being concerned on
-> technical points. Everybody deserves the time to understand and learn. It
-> is my true belief that most people are capable of change eventually. I
-> truly believe this community can change from within, however this doesn't
-> mean it's going to be a smooth process.
-> 
-> The moment I made up my mind about this was reading the following words
-> written by a maintainer within the kernel community:
-> 
-> 	"we are the thin blue line"
-> 
-> This isn't okay. This isn't creating an inclusive environment. This isn't
-> okay with the current political situation especially in the US. A
-> maintainer speaking those words can't be kept. No matter how important
-> or critical or relevant they are. They need to be removed until they
-> learn. Learn what those words mean for a lot of marginalized people. Learn
-> about what horrors it evokes in their minds.
-> 
-> I can't in good faith remain to be part of a project and its community
-> where those words are tolerated. Those words are not technical, they are
-> a political statement. Even if unintentionally, such words carry power,
-> they carry meanings one needs to be aware of. They do cause an immense
-> amount of harm.
-> 
-> I wish the best of luck for everybody to continue to try to work from
-> within. You got my full support and I won't hold it against anybody trying
-> to improve the community, it's a thankless job, it's a lot of work. People
-> will continue to burn out.
-> 
-> I got burned out enough by myself caring about the bits I maintained, but
-> eventually I had to realize my limits. The obligation I felt was eating me
-> from inside. It stopped being fun at some point and I reached a point
-> where I simply couldn't continue the work I was so motivated doing as I've
-> did in the early days.
-> 
-> Please respect my wishes and put this statement as is into the tree.
-> Leaving anything out destroys its entire meaning.
-> 
-> Respectfully
-> 
-> Karol
-> 
-> Signed-off-by: Karol Herbst <kherbst@redhat.com>
+> Now the patch is cleanly applicable, so I took now.
+> But, the Cc-to-stable should have been put in the patch itself (around
+> your Signed-off-by line).  I put it locally.
 
-@Steven, @Masami: Can I get an ACK for taking this through the drm-misc tree?
+Whoops, I just submitted a v3 to fix the stable CC, after "kernel test
+robot" alerted me. I hope that doesn't mess things up.
 
-(Not cutting any context, since you have not been copied on this one.)
+John
 
-- Danilo
-
-> ---
->  MAINTAINERS | 2 --
->  1 file changed, 2 deletions(-)
+> thanks,
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 25c86f47353de..ca31e57fa203c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7431,7 +7431,6 @@ F:	Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
->  F:	drivers/gpu/drm/panel/panel-novatek-nt36672a.c
->  
->  DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS
-> -M:	Karol Herbst <kherbst@redhat.com>
->  M:	Lyude Paul <lyude@redhat.com>
->  M:	Danilo Krummrich <dakr@kernel.org>
->  L:	dri-devel@lists.freedesktop.org
-> @@ -24062,7 +24061,6 @@ F:	tools/testing/selftests/ftrace/
->  TRACING MMIO ACCESSES (MMIOTRACE)
->  M:	Steven Rostedt <rostedt@goodmis.org>
->  M:	Masami Hiramatsu <mhiramat@kernel.org>
-> -R:	Karol Herbst <karolherbst@gmail.com>
->  R:	Pekka Paalanen <ppaalanen@gmail.com>
->  L:	linux-kernel@vger.kernel.org
->  L:	nouveau@lists.freedesktop.org
-> -- 
-> 2.48.1
+> Takashi
 > 
+>>
+>>  sound/pci/hda/patch_conexant.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+>> index 4985e72b9..34874039a 100644
+>> --- a/sound/pci/hda/patch_conexant.c
+>> +++ b/sound/pci/hda/patch_conexant.c
+>> @@ -1090,6 +1090,7 @@ static const struct hda_quirk cxt5066_fixups[] = {
+>>  	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+>>  	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+>>  	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
+>> +	SND_PCI_QUIRK(0x103c, 0x8231, "HP ProBook 450 G4", CXT_FIXUP_MUTE_LED_GPIO),
+>>  	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+>>  	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+>>  	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+>> -- 
+>> 2.48.1
+
 
