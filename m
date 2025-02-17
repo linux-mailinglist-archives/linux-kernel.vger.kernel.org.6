@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-517468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2481A3814F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:06:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED8CA38146
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1489616EF9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F723AC90C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4120621771F;
-	Mon, 17 Feb 2025 11:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B27218AB9;
+	Mon, 17 Feb 2025 11:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BveExQw5"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iutbun17"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AA02165E2;
-	Mon, 17 Feb 2025 11:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633A721883C;
+	Mon, 17 Feb 2025 11:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739790120; cv=none; b=ov/BJBt+o90XGIgXBWbNW0/dGZtoYyPJ13FpmmP3LQxss9K6zmY3Ex6jt8a/7vfGL0L9Spi4F75py+aYZ5ztb1L3aK39QCEtpMhIYpmIqHFhJEDCkxJwxiK0QRzRnv/Ulyaog/ufh+ZzMpHzzSjU7uyuPEJQ/ltNdSGg6iQk1k0=
+	t=1739790176; cv=none; b=blNajp0MrcuIHIw5ViF8smTkPk2F94Dnu4vlKR9w5aoDWHLuSMYTFOTXviPK7+XliokbjBioooDaZUmQ5uxV3ufEgg6lUIoReOhajFNVhrFaBFX18WCUPluGqGXxUT345GhTnXqVpWPudAEJUYGCZrasmzm/uH4UXcmtYtPG1rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739790120; c=relaxed/simple;
-	bh=Tu48/rbE2ubClX8pcW9lLN49ds9R7q4WjcD1+R9Wd3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cB129Yf1iZe97EzMyPDAjo/jAKhGM4iZZ8nI2fF2Dh66TbRrev9NXQc7LUkqpJrPjX0LCpf78SNaZfTmBhRhLm29R082yEhYEBNtutCxRBqHYuEgmijdID3FcTyCX8XikrHCWMo/TTySQOAb6EtApVgeY/9FRCN5TTQt8b/WRcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BveExQw5; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51HB1dqQ645577
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 17 Feb 2025 05:01:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739790099;
-	bh=BpLhwj82ljP6BWCPze3kv+WGHqGB/Kweoia9J1dReqA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BveExQw5MYWQ53bkpSQsvFS2hbRkI1cl9dY5MXbI95HsbRRGtjPP1nK/B0Pdb07um
-	 a87ZiVE1c9SiELSdDe0m55SzRf++EcfPubzFNil+ndbIkOys9yWXpFX0W0TsrxKvxp
-	 Elof3S/hqB9mcpwZFD/OD2+ft6ja3zmyxGWnlgX8=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HB1dhI122938;
-	Mon, 17 Feb 2025 05:01:39 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Feb 2025 05:01:38 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Feb 2025 05:01:39 -0600
-Received: from [172.24.22.234] (lt5cd2489kgj.dhcp.ti.com [172.24.22.234])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HB1Zg9077443;
-	Mon, 17 Feb 2025 05:01:35 -0600
-Message-ID: <d4a4c96a-819b-4332-9a8b-5eab0fc7e78f@ti.com>
-Date: Mon, 17 Feb 2025 16:31:34 +0530
+	s=arc-20240116; t=1739790176; c=relaxed/simple;
+	bh=Lnnx7lqkVv6ZqmP5mfgdpriJczWPd8VLGObetQMxOio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5ob88wesANzsBxJuswp0CPsrXvNvJwth31gnypiyVrIC/ZzvXSG1/e2F9KO3CvsQp4kkLAjGNW/B/zXfe/vhwuYmLkjZEWeTEuPn1eZU15TOA7ge1kGgauPpatVoAQR5v/xmarNb+AmIU5zNVLqhEuBD8424FCM9GJgywRkJac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iutbun17; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3f3f4890596so583264b6e.2;
+        Mon, 17 Feb 2025 03:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739790174; x=1740394974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lnnx7lqkVv6ZqmP5mfgdpriJczWPd8VLGObetQMxOio=;
+        b=Iutbun17Mfxm2S5U7QTUk4xD4sTeP71dO4sYEKw1BNhO9BkkAqE//5Vabh6tbDr4A1
+         qq1wExeZ+xEzVnIf0gIExIZ6o/WJlpPUa4bmT/jtjxvD6+ShmJybTWArmQlJRDZu8aWO
+         J457YYdvNVgOt8CR4u9B6cM0RGSlsJO7kxzTBjwQ7+cEBbZQMnNth72HA4XcMtY+MpJa
+         8s9ZaXr41ZTXVCR2qY1U6/szMtOAC2F0ZpZ38+VJdySs9b4sJCLlZoB2cCYYTQKTnsqA
+         5seljHueJyneX8Pi0VTw3Jn5RSthjyfWhAd3/II7dIGdJq/dEDM2Fv8KiX+ExwbeNWqK
+         M/GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739790174; x=1740394974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lnnx7lqkVv6ZqmP5mfgdpriJczWPd8VLGObetQMxOio=;
+        b=m5viS6+eDkSVd7XV6svw8pZ9PEVqsEjm9UA4jr6FurhlPtzri3K+MzA9xOsAqw9Wtp
+         XOUPYKouRea6HQCLV2OaGSD9iS/66C7Nxl5fRadrzk4GF0edUo75f3vf9htrcQnKVUwf
+         FbUow11PIvsbS5oL5QmkRHKHPMt7a9P2AegUb2qunGBWOiCYjCmInK7gD3aG4QXTU3VS
+         jLEIjW8akDB/QdVAOagJkS2sLFGXWpenPnYRaqVgrNqI6Z17W8RVq5cES+7ht6zNgdgx
+         xArE6U4+FhGPmLMRoFOcVJZMXk7d+t/M2Dui2sxcwSfojZlpGd8AeurjvrWOndGtCPiw
+         V3RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlWMFje+l204kkKYYYmsSfslpnWstZ6XsoLFjWUGEVC+cePbR2Vm6lF3rK4c+CBWl4PBhxQg0MjKWQK1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAeYCPnaV71Roq781Ih1VsLlstv9dGhfAC9EuxRyuuEPIRngRq
+	yKEO5t92NsWwd88/B48E7/EE2/1B9EcXBtXRggqv29wQr+PEAT3cIcbsM1f8mQ3Swq0Txnu2UuX
+	GeR3dsD5vBqG7f5Fx3Bbp06Z7h+vsTxwS
+X-Gm-Gg: ASbGncvnqo39Gn2X8pWDwR9nRaLIP39QKipTLHv3ZPhL+/CJl5efy1m4EId3LT1j41z
+	UPpur5T467Ckts6mAemn9ZwLdw7jqmYI5pGdJYy3VBhx8+3PXFeyAju6v9gv3dM3IshuskzL6zQ
+	==
+X-Google-Smtp-Source: AGHT+IEFEkiF/WCqbVkDsd4BcEKjAzfg2QzRNR8iqV/Jtkhr9nKPgfjEhiwrHu3SRlyw97JNkvvBkwMwlo9X63iMuQw=
+X-Received: by 2002:a05:6808:1a0f:b0:3f3:fe6e:75ed with SMTP id
+ 5614622812f47-3f3fe6e8401mr1213317b6e.22.1739790174245; Mon, 17 Feb 2025
+ 03:02:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the
- GICD size
-To: Keerthy <j-keerthy@ti.com>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <vigneshr@ti.com>, <conor+dt@kernel.org>, <kristo@kernel.org>,
-        <krzk+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20250217103814.2657-1-j-keerthy@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20250217103814.2657-1-j-keerthy@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <CAHhAz+hmga0hLQcGtOjxuB+xoOsJ9xvFvXXUWfe9HpFcMRNUpw@mail.gmail.com>
+ <a84d675e-3b42-4251-b575-9e6a28cf20bf@linaro.org>
+In-Reply-To: <a84d675e-3b42-4251-b575-9e6a28cf20bf@linaro.org>
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Mon, 17 Feb 2025 16:32:43 +0530
+X-Gm-Features: AWEUYZl_QRg_C1G3AtxNAAu9AarRZfqbY18CDpOUqmjK-osvsRYuJptIUO0fYeM
+Message-ID: <CAHhAz+iUdm2Ko6hz7jgObiL=pgZiwYFnyoCmk7wftONbKEnrEQ@mail.gmail.com>
+Subject: Re: slimbus: Inquiry on Additional SLIMbus Drivers and User Space
+ Test Utilities
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-sound@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2/17/2025 4:08 PM, Keerthy wrote:
-> Currently we get the warning:
+On Mon, Feb 17, 2025 at 3:58=E2=80=AFPM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
 >
-> "GICv3: [Firmware Bug]: GICR region 0x0000000001900000 has
-> overlapping address"
 >
-> As per TRM GICD is 64 KB. Fix it by correcting the size of GICD.
-
-Please add fixes tag
-
-Fixes: 9cc161a4509c ("arm64: dts: ti: Refactor J784s4 SoC files to a 
-common file")
-Fixes: 4664ebd8346a ("arm64: dts: ti: Add initial support for J784S4 SoC")
-
-
 >
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> On 12/02/2025 15:30, Muni Sekhar wrote:
+> > Hi all,
+> >
+> > I need to work on the SLIMbus interface on a Linux platform. As part
+> > of my study, I see that in the Linux kernel, the SLIMbus interface is
+> > managed by the drivers/slimbus directory.
+> >
+> > I would like to inquire if there are any additional device drivers
+> > required to comprehensively test the SLIMbus interface on a Linux
+> > platform beyond those listed in the drivers/slimbus directory.
 >
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> index 83bbf94b58d1..3b72fca158ad 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> @@ -193,7 +193,7 @@
->   		ranges;
->   		#interrupt-cells = <3>;
->   		interrupt-controller;
-> -		reg = <0x00 0x01800000 0x00 0x200000>, /* GICD */
-> +		reg = <0x00 0x01800000 0x00 0x10000>, /* GICD */
->   		      <0x00 0x01900000 0x00 0x100000>, /* GICR */
->   		      <0x00 0x6f000000 0x00 0x2000>,   /* GICC */
->   		      <0x00 0x6f010000 0x00 0x1000>,   /* GICH */
+> SLIMbus is used as audio transport interface on some of the Qualcomm SoCs=
+.
+> Qualcomm Codecs (WCD9335, WCD934x and some of the BT Codecs) use SLIMBus
+> as primary interface.
+>
+> w.r.t to testing, its audio end-to-end usecase.
+Thank you for the information regarding the SLIMbus interface and its
+use in audio end-to-end use cases on Qualcomm SoCs.
+
+I have a couple of follow-up questions:
+
+1. If audio is the end-to-end use case, are ALSA Utilities and the
+ALSA Library involved in this process?
+2. If so, what other ALSA drivers are used in conjunction with the
+drivers listed in the drivers/slimbus directory to comprehensively
+test the SLIMbus interface on a Linux platform?
+
+Thank you for your assistance.
+>
+> >
+> > Additionally, I am seeking information on existing user space test
+> > utilities that can be used to test the SLIMbus interface on Linux. Any
+> > references or recommendations for such utilities would be greatly
+> > appreciated.
+> Am afraid am not aware of any tools that are public.
+>
+> --srini
+> >
+> > Thank you for your time and assistance. I look forward to your response=
+.
+> >
+
+
+
+--=20
+Thanks,
+Sekhar
 
