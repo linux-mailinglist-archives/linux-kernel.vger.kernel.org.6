@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-517365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99813A37FBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:18:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A08DA37FC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE473ACD5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C5877A1372
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F2217654;
-	Mon, 17 Feb 2025 10:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1007D19E7FA;
+	Mon, 17 Feb 2025 10:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zwToEZ5d"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OO3VBxZd"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EADC217651
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2540221767B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787470; cv=none; b=qLIQ54lLEEG/5dLBLyC2qdgIJObE5WwGRFxfm/VkmQI2I2hJHQVDY/VoFqg4LBXyI/Wa6j+SBZTNSK9necPnBJDatSWieTLxVYPxCJC7Jqo6mS/0IDY5dfGpCuFKOsiNp6X08DizW9KN0cEnqtpmPv3YGCjKQFUAzBx4E45y68k=
+	t=1739787472; cv=none; b=Sv7EtnHep3FM8/yIIwd7nd//HaSdJ0uWZMoA7XdXkg5Xv34b5Ep5aInVS/5hy00rIzsIT7dwyDqTFmTF2o40ZiugNZ1e6SEqWeCRtb7JkH0q62p1y3kKw0gEKfeSti8t8sZ9zz94bLnCShPNqGNEnh6W6/Y0xGFhIOZb1ix+FCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787470; c=relaxed/simple;
-	bh=/cVyc1rh86otJZ3wkWGcQ4N27XkUc752xM+g69NmlEo=;
+	s=arc-20240116; t=1739787472; c=relaxed/simple;
+	bh=1hkKPUWrxq7K5LZ+JEA021QIrfwfKcgoOdedz+W5Q9Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cWtRuWC+fJnZ330bCeCM87yzzqK2WVyZHLtS130bpUubZ1tV2HdSTzJthd7443LzPRZw47RmEvItAAUFK27NRQpwsOi6nGBTX5lbGXADvLYBKrZZ4geiN/N1VjFS7ALJUIZ0N5GQ8TWxGUASPp8+oAEhuzjKzHge/vuX8Ow+DJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zwToEZ5d; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=EtvxsSNFeOZZ22EXfNLFbVSbkFv2YE9YgBAj3HjqhMW+D7zXDysU43jD5tPAAufemNVsrHiKxGSSYdgYAP83ngZf24d/IYMOFnBzn0/iT2Sa8u7umh7R0LHXS/P1dTi67eX81+5p+Da4cRwGclj+aDwFewG1AFR7D/nnKYbRCIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OO3VBxZd; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb8d63b447so124198766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:48 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abba1b74586so89116266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739787467; x=1740392267; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739787468; x=1740392268; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/6BYtQ0vagWpucItzriIw7qjC34OuqzM5CfNcTita1Q=;
-        b=zwToEZ5diBI6TG5Yp7XbbbcR8h7sfZJNrVqOlFEIdGyENZ8PjZXze1+6sJggc62EOr
-         +VPtaoacD1FTJcjXLTiyHjCLUYDKQePfaCWicY2V5fp8RDpkbfjl0HfJlQxLw8BOYxuX
-         w8RBwdAozE7aGJRV7v2aIyP9hMGjjsJtUoGIQfnNCMKvcc2/PzDeEAowEd0+znlUNglJ
-         hQ1FxOnc7YyFsAansc328Do7loPvoCDgdDS+uCz986oKumrg7P+lp6jvyYlAo7KD4fvX
-         s8cZuyYhZr++xg4iRb4qK0UlNJXpUvINFjPT1YuJvN6m6EvN0fXvmgvnBFhbF+ibEghd
-         J1WQ==
+        bh=UO0IV1Fa2w4jRN2VF1J5DC4vESX9Rcd9+LGQ+k/6XZk=;
+        b=OO3VBxZd2S8Aj8r1yxFIR8d5NhbGf1AJ2aOLJ0kLtZRSLbhB1k99nuC/RsU9mzdfIz
+         UG/xoi5Y/PsG04GKdC85Hs4CtQGEiuhUGl62pEK87rBcZ3BfGK/UX4FWB5FvqC6X4CAM
+         yegjLcNhdxx78BoqFgMiDF1jVQ8GME9UbnbbUiWnaWyMJEQhOD951NbFE8x+E/L9BGJY
+         AI316Ot9PtKkLIdC/pTG/U8tX5CR0lQfirAhevjpiGF66fevZ0bihC4B7ybMGeKsm7xJ
+         DfoAj3kFeWgV+h94BRlhi+jp1lFxkbOCl41ux4MtXnELW9+XTtOkMejD7DPIeHa81s9r
+         ZYLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787467; x=1740392267;
+        d=1e100.net; s=20230601; t=1739787468; x=1740392268;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/6BYtQ0vagWpucItzriIw7qjC34OuqzM5CfNcTita1Q=;
-        b=CbsRApNJZPUk17QuUVcpJmwYedXgVFU57ROca7mNeQaWTF1QWVnIMmo7oxrRDD3yVW
-         ED/tF89G86FXZd32lpKDKGyjgPYGFP+CyKmRb2fmTqIW2405McI1a4YhRA1SkMG+Ohcu
-         Y4YyTqmcWbhaeQ/AeWdGCunwh93i3PzVJDibPrZxI21A64wORXnB5z/T9tg1ZAas7b7j
-         rA7xHHjUEEdd1+wxJDJeDkw71I55nGv8i7dHS5IUtBQkkmovsCdNs49EMxuxhk4CRe1i
-         n/QBG/8kGhAbHJRS3CvZS71bKsjtiYzyC5+0h+2EACxd4aL4xUgV9N4NFb52e976LeUI
-         o24g==
-X-Gm-Message-State: AOJu0YzS1CzYyoJ/So+4LEaTuy5c/Zm3B67Ji8qGdwiWy5QbxnFavvjM
-	BLruQGgc++e5Q3IomC5l/V+DJJQ0jP1AGwAzLIebe0kK6GkcmYCkHEQCtQKLnmY=
-X-Gm-Gg: ASbGncsZzHvgJiMapco20HqCAlo3RRnSOliGGRAN480fcnVa+09p3CRcj7Y29Y6XlF9
-	BeLyinkmaN94KBaJKdqXQNnr8L+N44Wm1dFtRuFrUt2scb0cXcT88RtgkZLjSwNGz1gfg25i6QX
-	3OX+RzeSFGbMZoySgiPxCgeNCz72P69paxZTZ+f240d/brEVnhC+n1fMoWTgi2AveDJ8f63knWh
-	eUlZdJ24kOYbOuU9Qp8IZzXkYB3dtITwdbhmdem6qPMEgdtt+ywigWggssMu1Nk3aQ5oYHVvEQh
-	ZIOM6DJok39WoLH7pkWW7wCc
-X-Google-Smtp-Source: AGHT+IFgDnivD1OBw8RBeqZ1T3wvlR/UtXkBn7pRJ5OfcJBMf9SgRGM/cdk3Igb/07dwRLGbAITBVQ==
-X-Received: by 2002:a17:907:1c85:b0:abb:6ea6:161 with SMTP id a640c23a62f3a-abb70e4e28cmr925547666b.56.1739787466832;
-        Mon, 17 Feb 2025 02:17:46 -0800 (PST)
+        bh=UO0IV1Fa2w4jRN2VF1J5DC4vESX9Rcd9+LGQ+k/6XZk=;
+        b=RdGlwedTufabmg1Ig7YL5oBLey9HWVIJC3ZN6cyVUzh7ePCoXeSfUYqdLKgmpFpBkL
+         ewg7p/jFGCz4w1bfjZaovkPfurQszmIg8j0yCcTxfczKR3UnE9Ro8TMEaYpxOnkG0R4H
+         r6nI4OzKRWj5EsRks0T0AgpW0MWPv1/6Wp+qD1B3k/dychifzOgO0lC/NAJax7DC5zkU
+         jCFU7bj8wpO87xUMBLEVi1eG37uGApdf1ZcKW4ukbBZHWf3MeE8Yw5LBo63JwkYmzX+N
+         4DlSDLKN73QgmsRKisibHoKbcmaW7IFABrv7gUZS6LQOIIrgL/FQ9hc7dT0uQT0Ks9wj
+         FLPw==
+X-Gm-Message-State: AOJu0YyIj3SAR5na7cWIdpyQHOzsbTYGPWkVK5v9rbIe0ypbRkoZS5p4
+	U7Wzw2vJ9F14UpNQqq1DytCW57KSn/o1f1oZnLPvnqrb4gC4PDSB48UpRNvOvWc=
+X-Gm-Gg: ASbGnct9cm1KlCwxm2HR+isn0b6TU6Q8JtShFmIDyAV8xJmO0GluwiyPejr979E0UDt
+	KoqZbe6hphzrZLHf3JS5CDztfqUdnmIdMoRhICuyDsCvQ1xSjacVW0WuPO8Jh1gjvlU0QAKc6IO
+	INYvJ/K/Jka+sFmBXc2kulFtSDYRmmDRzc9iJKoA9GozDKUrb4jPC5c9gVOKxbi987yQm/r2Ujh
+	plrQgyeFJZ5r5jHST6se2gAfqjaIXjjoBdT8YMbGW6oj2SxdCKS/26CAuRfJRe01YJ4IGKOCW5h
+	HRyeJvKRCAi+1kzb5lFMcguk
+X-Google-Smtp-Source: AGHT+IFeqQRmHtufh/hnET9/WDBmQ08tktpUPlNNW2f16K2ts13CoRF9gAnCjQkfdJKdSGt+WA/5Ug==
+X-Received: by 2002:a17:906:3290:b0:ab7:d179:2496 with SMTP id a640c23a62f3a-abb70a791dcmr775286966b.6.1739787468349;
+        Mon, 17 Feb 2025 02:17:48 -0800 (PST)
 Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:17:46 -0800 (PST)
+        Mon, 17 Feb 2025 02:17:48 -0800 (PST)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-hardening@vger.kernel.org,
@@ -91,9 +91,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@quicinc.com,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH 01/10] pstore/zone: move pstore_device_info into zone header
-Date: Mon, 17 Feb 2025 12:16:57 +0200
-Message-ID: <20250217101706.2104498-2-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH 02/10] pstore/smem: add new pstore/smem type of pstore
+Date: Mon, 17 Feb 2025 12:16:58 +0200
+Message-ID: <20250217101706.2104498-3-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250217101706.2104498-1-eugen.hristev@linaro.org>
 References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
@@ -105,68 +105,189 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Struct pstore_device_info is used in pstore/zone, and it's
-not really connected to anything related to pstore/blk.
-To further improve on the pstore zone and allow other types of
-drivers to connect, it is logical to have this struct into
-pstore_zone.h file.
+Add shared memory type of pstore.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- include/linux/pstore_blk.h  | 14 --------------
- include/linux/pstore_zone.h | 14 ++++++++++++++
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ fs/pstore/Kconfig           |  13 ++++
+ fs/pstore/Makefile          |   3 +
+ fs/pstore/smem.c            | 115 ++++++++++++++++++++++++++++++++++++
+ include/linux/pstore_smem.h |   9 +++
+ 4 files changed, 140 insertions(+)
+ create mode 100644 fs/pstore/smem.c
+ create mode 100644 include/linux/pstore_smem.h
 
-diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
-index 924ca07aafbd..d0c8fb40c46c 100644
---- a/include/linux/pstore_blk.h
-+++ b/include/linux/pstore_blk.h
-@@ -7,20 +7,6 @@
- #include <linux/pstore.h>
- #include <linux/pstore_zone.h>
+diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+index 3acc38600cd1..84f87edf9b8f 100644
+--- a/fs/pstore/Kconfig
++++ b/fs/pstore/Kconfig
+@@ -81,6 +81,19 @@ config PSTORE_RAM
  
--/**
-- * struct pstore_device_info - back-end pstore/blk driver structure.
-- *
-- * @flags:	Refer to macro starting with PSTORE_FLAGS defined in
-- *		linux/pstore.h. It means what front-ends this device support.
-- *		Zero means all backends for compatible.
-- * @zone:	The struct pstore_zone_info details.
-- *
-- */
--struct pstore_device_info {
--	unsigned int flags;
--	struct pstore_zone_info zone;
--};
--
- int  register_pstore_device(struct pstore_device_info *dev);
- void unregister_pstore_device(struct pstore_device_info *dev);
+ 	  For more information, see Documentation/admin-guide/ramoops.rst.
  
-diff --git a/include/linux/pstore_zone.h b/include/linux/pstore_zone.h
-index 1e35eaa33e5e..284364234162 100644
---- a/include/linux/pstore_zone.h
-+++ b/include/linux/pstore_zone.h
-@@ -54,6 +54,20 @@ struct pstore_zone_info {
- 	pstore_zone_write_op panic_write;
- };
- 
-+/**
-+ * struct pstore_device_info - back-end pstore device driver structure.
-+ *
-+ * @flags:	Refer to macro starting with PSTORE_FLAGS defined in
-+ *		linux/pstore.h. It means what front-ends this device support.
-+ *		Zero means all backends for compatible.
-+ * @zone:	The struct pstore_zone_info details.
-+ *
-+ */
-+struct pstore_device_info {
-+	unsigned int flags;
-+	struct pstore_zone_info zone;
-+};
++config PSTORE_SMEM
++	tristate "Log panic/oops to a shared memory buffer"
++	depends on PSTORE
++	select PSTORE_ZONE
++	help
++	  This enables panic and oops messages to be logged to memory
++	  that is shared between different hardware blocks in the system.
++	  This shared memory can be a static ram, a part of dynamic RAM,
++	  a dedicated cache or memory area specific for crash dumps,
++	  or even a memory on an attached device.
 +
- extern int register_pstore_zone(struct pstore_zone_info *info);
- extern void unregister_pstore_zone(struct pstore_zone_info *info);
++	  if unsure, say N.
++
+ config PSTORE_ZONE
+ 	tristate
+ 	depends on PSTORE
+diff --git a/fs/pstore/Makefile b/fs/pstore/Makefile
+index c270467aeece..f2a314ca03a0 100644
+--- a/fs/pstore/Makefile
++++ b/fs/pstore/Makefile
+@@ -18,3 +18,6 @@ obj-$(CONFIG_PSTORE_ZONE)	+= pstore_zone.o
  
+ pstore_blk-objs += blk.o
+ obj-$(CONFIG_PSTORE_BLK)	+= pstore_blk.o
++
++pstore_smem-objs += smem.o
++obj-$(CONFIG_PSTORE_SMEM)	+= pstore_smem.o
+diff --git a/fs/pstore/smem.c b/fs/pstore/smem.c
+new file mode 100644
+index 000000000000..9eedd7df5446
+--- /dev/null
++++ b/fs/pstore/smem.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Implements pstore backend driver for shared memory devices,
++ * using the pstore/zone API.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/blkdev.h>
++#include <linux/string.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/pstore_smem.h>
++#include <linux/fs.h>
++#include <linux/file.h>
++#include <linux/init_syscalls.h>
++#include <linux/mount.h>
++
++/*
++ * All globals must only be accessed under the pstore_smem_lock
++ * during the register/unregister functions.
++ */
++static DEFINE_MUTEX(pstore_smem_lock);
++static struct pstore_device_info *pstore_device_info;
++
++static int __register_pstore_device(struct pstore_device_info *dev)
++{
++	int ret;
++
++	lockdep_assert_held(&pstore_smem_lock);
++
++	if (!dev) {
++		pr_err("NULL device info\n");
++		return -EINVAL;
++	}
++	if (!dev->zone.total_size) {
++		pr_err("zero sized device\n");
++		return -EINVAL;
++	}
++	if (!dev->zone.read) {
++		pr_err("no read handler for device\n");
++		return -EINVAL;
++	}
++	if (!dev->zone.write) {
++		pr_err("no write handler for device\n");
++		return -EINVAL;
++	}
++
++	/* someone already registered before */
++	if (pstore_device_info)
++		return -EBUSY;
++
++	/* zero means not limit on which backends to attempt to store. */
++	if (!dev->flags)
++		dev->flags = UINT_MAX;
++
++	/* Initialize required zone ownership details. */
++	dev->zone.name = KBUILD_MODNAME;
++	dev->zone.owner = THIS_MODULE;
++
++	ret = register_pstore_zone(&dev->zone);
++	if (ret == 0)
++		pstore_device_info = dev;
++
++	return ret;
++}
++/**
++ * register_pstore_smem_device() - register smem device to pstore
++ *
++ * @dev: smem device information
++ *
++ * Return:
++ * * 0		- OK
++ * * Others	- some error.
++ */
++int register_pstore_smem_device(struct pstore_device_info *dev)
++{
++	int ret;
++
++	mutex_lock(&pstore_smem_lock);
++	ret = __register_pstore_device(dev);
++	mutex_unlock(&pstore_smem_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(register_pstore_smem_device);
++
++static void __unregister_pstore_device(struct pstore_device_info *dev)
++{
++	lockdep_assert_held(&pstore_smem_lock);
++	if (pstore_device_info && pstore_device_info == dev) {
++		unregister_pstore_zone(&dev->zone);
++		pstore_device_info = NULL;
++	}
++}
++
++/**
++ * unregister_pstore_smem_device() - unregister smem device from pstore
++ *
++ * @dev: smem device information
++ */
++void unregister_pstore_smem_device(struct pstore_device_info *dev)
++{
++	mutex_lock(&pstore_smem_lock);
++	__unregister_pstore_device(dev);
++	mutex_unlock(&pstore_smem_lock);
++}
++EXPORT_SYMBOL_GPL(unregister_pstore_smem_device);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Eugen Hristev <eugen.hristev@linaro.org>");
++MODULE_DESCRIPTION("pstore backend for smem devices");
+diff --git a/include/linux/pstore_smem.h b/include/linux/pstore_smem.h
+new file mode 100644
+index 000000000000..f0ad23e117c4
+--- /dev/null
++++ b/include/linux/pstore_smem.h
+@@ -0,0 +1,9 @@
++#ifndef PSTORE_SMEM_H
++#define PSTORE_SMEM_H
++
++#include <linux/pstore_zone.h>
++
++int register_pstore_smem_device(struct pstore_device_info *dev);
++void unregister_pstore_smem_device(struct pstore_device_info *dev);
++
++#endif
 -- 
 2.43.0
 
