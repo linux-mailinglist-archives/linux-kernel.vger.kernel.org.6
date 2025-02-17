@@ -1,215 +1,136 @@
-Return-Path: <linux-kernel+bounces-517900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FC2A3872B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDE8A3872C
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911FA3A86A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51BC18891F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39D2248BA;
-	Mon, 17 Feb 2025 15:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31072248A5;
+	Mon, 17 Feb 2025 15:01:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B2221D58E;
-	Mon, 17 Feb 2025 15:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D136217722
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804455; cv=none; b=tQ2Pev6inBm0q2ZwaV7PUg+iq57RxDcOUfH4x2jww03QoBg4C5VYnPvvaPgpYQoDWvuePFYgiI1S/+pOP/Qbkge9VSGF82DPtLv95aTy0ukWFs1N3ZOIrMMkotGZ3oDHqTRjL/D5aezoOfXXU2DMaFW+bcKJRDkzpZc2boKgLus=
+	t=1739804487; cv=none; b=fO8wvKNcToLcur+fX37MCXc+lddobsAtc3xuBUq6uUoX5YQfZUtMka1ikOk/Pm7lB/WnQ278O8tGirU1IFW9oq1IZjl17dyCDvpq59gBoh3idQxBoiBNdSSfVpQl3If6rD9n4aQ3nVns5PmWhnSehsbakGL6KbnuHkxZtPiLsNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804455; c=relaxed/simple;
-	bh=jMq0rzaJsv+MpOoTrFRgRWYF77w0q1RbPXY+cKmV/mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+KxtSd0WdRlO0MjF2ZIijjOwGIaVakXW21rVBO7je+92SrXqQzW+/DxZPCPk1muzUyaYy4Sweq1KO15FGhflpXsgf3Nby5l4LFCBHvUwD3nQyF3P0PUE470gZJYSDqxqoIhoUA4D4eil4luHemUL/K1Wy8tJpMBoaQJRv42hHE=
+	s=arc-20240116; t=1739804487; c=relaxed/simple;
+	bh=nzXdQGhsyBPvSJ7maXdl05NaS5obRVwjLbzc+jEVw4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0ss2KnY9ATRTv5A9a4520oq8xTxjfR5om5d9Ju7iAxcSR+Fu3y8TTYaAztN7XDc+ji6z9xatRlxNVYeWx+/acDn+zGzujAS7eXIEJ/JZSHa71/nu4lyvrzx4NdOmZXXAALs1ZsZ8Hy8DLeC0bqdWrcnW6r4gX549ImBgsjRsM8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D949C152B;
-	Mon, 17 Feb 2025 07:01:11 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CF9D3F6A8;
-	Mon, 17 Feb 2025 07:00:49 -0800 (PST)
-Message-ID: <4a7823b2-2634-4148-8446-ad01a09b6880@arm.com>
-Date: Mon, 17 Feb 2025 15:00:46 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCFB5152B;
+	Mon, 17 Feb 2025 07:01:44 -0800 (PST)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D9CD3F6A8;
+	Mon, 17 Feb 2025 07:01:25 -0800 (PST)
+Date: Mon, 17 Feb 2025 15:01:23 +0000
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com, catalin.marinas@arm.com,
+	vincent.guittot@linaro.org, beata.michalska@arm.com
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, dietmar.eggemann@arm.com,
+	pierre.gondois@arm.com
+Subject: Re: [PATCH] arch_topology: init capacity_freq_ref to 0
+Message-ID: <Z7NPEic3jxLAQBTd@arm.com>
+References: <20240827154818.1195849-1-ionela.voinescu@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iommu: Get DT/ACPI parsing into the proper probe path
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Charan Teja Kalla <quic_charante@quicinc.com>
-References: <cover.1739486121.git.robin.murphy@arm.com>
- <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
- <20250214201435.GF3696814@ziepe.ca>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250214201435.GF3696814@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827154818.1195849-1-ionela.voinescu@arm.com>
 
-On 14/02/2025 8:14 pm, Jason Gunthorpe wrote:
-> On Thu, Feb 13, 2025 at 11:49:00PM +0000, Robin Murphy wrote:
-> 
->> much just calling the same path twice. At client driver probe time,
->> dev->driver is obviously set; conversely at device_add(), or a
->> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
-> 
-> Could you put the dev->driver test into iommu_device_use_default_domain()?
-> 
-> It looks like many of the cases are just guarding that call.
-> 
->> should *not* have a driver already, so we can use that as a condition to
->> disambiguate the two cases, and avoid recursing back into the IOMMU core
->> at the wrong times.
-> 
-> Which sounds like this:
-> 
->> +		mutex_unlock(&iommu_probe_device_lock);
->> +		dev->bus->dma_configure(dev);
->> +		mutex_lock(&iommu_probe_device_lock);
->> +	}
-> 
-> Shouldn't call iommu_device_use_default_domain() ?
+Hi folks,
 
-Semantically it shouldn't really be called at this stage, but it won't 
-be anyway since "to_<x>_driver(NULL)->driver_managed_dma" is not false - 
-trouble is it's also not true ;)
+I just wanted to mention that this patch still applies cleanly on
+next-20250217 as well, and it still builds/boots/works as expected.
 
-> But... I couldn't guess what the problem with calling it is?
-> 
-> In the not-probed case it will see dev->iommu_group is NULL and succeed.
-> 
-> The probed case could be prevented by checking dev->iommu_group sooner
-> in __iommu_probe_device()?
-> 
-> Anyhow, the approach seems OK
-> 
->> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->> index 9f4efa8f75a6..42b8f1833c3c 100644
->> --- a/drivers/acpi/scan.c
->> +++ b/drivers/acpi/scan.c
->> @@ -1619,6 +1619,9 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
->>   {
->>   	int err;
->>   
->> +	if (device_iommu_mapped(dev))
->> +		return 0;
-> 
-> This is unlocked and outside a driver context, it should have a
-> comment explaining why races with probe can't happen?
-
-Sure, for now this is more just an opportunistic thing - since we'll now 
-expect to come through this path twice, if we see a group assigned then 
-we know for sure that someone else already set up the fwspec for that to 
-happen, so there's definitely nothing to do here and we can skip 
-potentially waiting for iommu_probe_device_lock.
-
->> +	/*
->> +	 * For FDT-based systems and ACPI IORT/VIOT, the common firmware parsing
->> +	 * is buried in the bus dma_configure path. Properly unpicking that is
->> +	 * still a fairly big job, so for now just invoke the whole thing. Our
->> +	 * bus_iommu_probe() walk may see devices with drivers already bound,
->> +	 * but that must mean they're already configured - either probed by
->> +	 * another IOMMU, or there was no IOMMU for iommu_fwspec_init() to wait
->> +	 * for - so either way we can safely skip this and avoid worrying about
->> +	 * those recursing back here thinking they need a replay call.
->> +	 */
->> +	if (!dev->driver && dev->bus->dma_configure) {
->> +		mutex_unlock(&iommu_probe_device_lock);
->> +		dev->bus->dma_configure(dev);
->> +		mutex_lock(&iommu_probe_device_lock);
->> +	}
->> +
->> +	/*
->> +	 * At this point, either valid devices now have a fwspec, or we can
->> +	 * assume that only one of Intel, AMD, s390, PAMU or legacy SMMUv2 can
->> +	 * be present, and that any of their registered instances has suitable
->> +	 * ops for probing, and thus cheekily co-opt the same mechanism.
->> +	 */
->> +	ops = iommu_fwspec_ops(dev_iommu_fwspec_get(dev));
->> +	if (!ops)
->> +		return -ENODEV;
->> +
->>   	/* Device is probed already if in a group */
->>   	if (dev->iommu_group)
->>   		return 0;
-> 
-> This is the test I mean, if iommu_group is set then
-> dev->iommu->iommu_dev->ops is supposed to be valid too. It seems like
-> it should be done earlier..
-
-Yeah, looking at it now I'm really not sure why this ended up in this 
-order - I guess I was effectively adding the dma_configure() call to the 
-front of the existing iommu_fwspec_ops() check, and then I moved the 
-lockdep_assert() up to make more sense. But then the ops check probably 
-should have been after the group check to begin with, for much the same 
-reasoning as above. I'll sort that out for v2.
-
->> +	/*
->> +	 * And if we do now see any replay calls, they would indicate someone
->> +	 * misusing the dma_configure path outside bus code.
->> +	 */
->> +	if (dev_iommu_fwspec_get(dev) && dev->driver)
->> +		dev_WARN(dev, "late IOMMU probe at driver bind, something fishy here!\n");
-> 
-> WARN_ON_ONCE or dump_stack() to get the stack trace out?
-
-Indeed, hence dev_WARN() (!= dev_warn())
-
->> @@ -121,6 +121,9 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
->>   	if (!master_np)
->>   		return -ENODEV;
->>   
->> +	if (device_iommu_mapped(dev))
->> +		return 0;
-> 
-> Same note
-
-Ack.
-
->> @@ -151,7 +154,12 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
->>   		iommu_fwspec_free(dev);
->>   	mutex_unlock(&iommu_probe_device_lock);
->>   
->> -	if (!err && dev->bus)
->> +	/*
->> +	 * If we have reason to believe the IOMMU driver missed the initial
->> +	 * iommu_probe_device() call for dev, try to fix it up. This should
->> +	 * no longer happen unless of_dma_configure() is being misused.
->> +	 */
->> +	if (!err && dev->driver)
->>   		err = iommu_probe_device(dev);
-> 
-> This is being conservative? After some time of nobody complaining
-> it can be removed?
-
-Indeed I feel sufficiently confident about the ACPI path (which at the 
-moment is effectively arm64-only) to remove it from there already, but 
-less so about all the assorted DT platforms. That said, I guess adding a 
-new dependency on dev->driver here might still represent a change of 
-behaviour for the sketchy direct calls of of_dma_configure() outside bus 
-code, since in a lot of those the target device doesn't actually have 
-its own driver either. Maybe I need to think about this a bit more...
+I've rechecked it given that the patches at [1] seem ready to be picked
+up, and those patches depend on this one.
 
 Thanks,
-Robin.
+Ionela.
+
+[1] https://lore.kernel.org/lkml/20250131162439.3843071-1-beata.michalska@arm.com/
+
+On Tuesday 27 Aug 2024 at 16:48:18 (+0100), Ionela Voinescu wrote:
+> It's useful to have capacity_freq_ref initialized to 0 for users of
+> arch_scale_freq_ref() to detect when capacity_freq_ref was not
+> yet set.
+> 
+> The only scenario affected by this change in the init value is when a
+> cpufreq driver is never loaded. As a result, the only setter of a
+> cpu scale factor remains the call of topology_normalize_cpu_scale()
+> from parse_dt_topology(). There we cannot use the value 0 of
+> capacity_freq_ref so we have to compensate for its uninitialized state.
+> 
+> Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+> 
+> Hi,
+> 
+> This patch was previously part of the patch-set at [1], but we thought
+> it's best to separate the standalone patches in that set to make
+> further review easier on the remaining topics.
+> 
+> Based on v6.11-rc5 and tested on Juno with and without a cpufreq driver.
+> 
+> [1] https://lore.kernel.org/lkml/20240603082154.3830591-2-beata.michalska@arm.com/
+> 
+> Thanks,
+> Ionela.
+> 
+>  drivers/base/arch_topology.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> index 75fcb75d5515..c49ef1a712f4 100644
+> --- a/drivers/base/arch_topology.c
+> +++ b/drivers/base/arch_topology.c
+> @@ -28,7 +28,7 @@
+>  static DEFINE_PER_CPU(struct scale_freq_data __rcu *, sft_data);
+>  static struct cpumask scale_freq_counters_mask;
+>  static bool scale_freq_invariant;
+> -DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 1;
+> +DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 0;
+>  EXPORT_PER_CPU_SYMBOL_GPL(capacity_freq_ref);
+>  
+>  static bool supports_scale_freq_counters(const struct cpumask *cpus)
+> @@ -293,13 +293,15 @@ void topology_normalize_cpu_scale(void)
+>  
+>  	capacity_scale = 1;
+>  	for_each_possible_cpu(cpu) {
+> -		capacity = raw_capacity[cpu] * per_cpu(capacity_freq_ref, cpu);
+> +		capacity = raw_capacity[cpu] *
+> +			   (per_cpu(capacity_freq_ref, cpu) ?: 1);
+>  		capacity_scale = max(capacity, capacity_scale);
+>  	}
+>  
+>  	pr_debug("cpu_capacity: capacity_scale=%llu\n", capacity_scale);
+>  	for_each_possible_cpu(cpu) {
+> -		capacity = raw_capacity[cpu] * per_cpu(capacity_freq_ref, cpu);
+> +		capacity = raw_capacity[cpu] *
+> +			   (per_cpu(capacity_freq_ref, cpu) ?: 1);
+>  		capacity = div64_u64(capacity << SCHED_CAPACITY_SHIFT,
+>  			capacity_scale);
+>  		topology_set_cpu_scale(cpu, capacity);
+> -- 
+> 2.25.1
+> 
+> 
 
