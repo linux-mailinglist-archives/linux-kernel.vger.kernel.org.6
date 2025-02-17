@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-518213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29E9A38B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:50:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFCFEA38B81
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD323AA901
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43F51890100
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198E23643A;
-	Mon, 17 Feb 2025 18:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6CD235C16;
+	Mon, 17 Feb 2025 18:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cY4c2KC2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eIGlTgWm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D022A1E6;
-	Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D0137C35;
+	Mon, 17 Feb 2025 18:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739818202; cv=none; b=D83weKJ3hFgTyTWZyoxM2XDLXtAl9EVkWgPNxnZvO+1r7ao3S5i1F9P20+EPFyra0Yxd50bfvTnVHQCxF8gLl4atAta9oRmbEzYPeXOeN7wc9TTKW5v0bAd2bxuHtBG0GhJ+soOXNv/9nrWQGf2TgdHDBlmZM5YGcx1njDf/FWk=
+	t=1739818272; cv=none; b=qj3NMHb3Nru9dALCMYkWUgptvFzmEgx3ngTw5sUHLQM2q88UBN7AfKBWptQ+er1xrlJ6ZhIavHYu3M5pisg+EpzqXpOVUb2flV2N+GJxn5XV2pQ0v1AxrUG9oshkSdXL9FvfUpUUJg7kxY3xrI8YNbIfxVTGalRECxkrHuvPYas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739818202; c=relaxed/simple;
-	bh=bSkaPVIT6VfRE0JIpCa1oHUI1xXQj1fjU7es/My1gRM=;
+	s=arc-20240116; t=1739818272; c=relaxed/simple;
+	bh=vuJB/5h57VQjtw9euybCX9qr9FyTPUe5xNhWm1eDHkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EjQDnEEJiVnj49vYG+iof/QxY4p9zf2NnQWXrdcTE4Oe0WEvlMsSAPAfP+lSIRYOKgjAjA5HKz6gCgb8+yufBN5yvqH6azAAqCve9NF9K+EvyEEEhLgmpsc2xYYBpIw/wAAUCkmQ8zpuBKlN6tvDN7V4atlwM8+6ftLzwyzK5wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cY4c2KC2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870CCC4CED1;
-	Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739818201;
-	bh=bSkaPVIT6VfRE0JIpCa1oHUI1xXQj1fjU7es/My1gRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cY4c2KC24HnubKXjrX0Oxg25o0kMezl+Yqkk1suSt1BWnLHdJxZM5w8PjZRm12lak
-	 DVCAMefgBVLG3tNaqjG8wJFCZZtc37AsAsTXSabdrhFjKa/ULzyLolFhkR3HcFzyVT
-	 7QZjOeN0Uh3kvvqTO5rCzZ1jSla1YRc5R70ydCJ/C0Sv8YwTsVv2f6hfC3l7zyXrIV
-	 Vocghvvv5K9EWGO6dEoLjQ0fJrGmD4wRMNusQI6ePZvFBYM2kdC0E1lFBH9XvsYF0r
-	 71sV0zD4FjCp8K0blysR2qUTSfB/mOkbT6Nw5jpXc8EZ3HFSVeFDKzh+THvF/46hc0
-	 U5MGuq+iNeQFQ==
-Date: Mon, 17 Feb 2025 10:50:00 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Lucas Tanure <tanure@linux.com>
-Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>,
-	linux-fscrypt@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux-crypto@vger.kernel.org,
-	"krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>,
-	"lucas.tanure@neat.no" <lucas.tanure@neat.no>
-Subject: Re: crypto: fscrypt: crypto_create_tfm_node memory leak
-Message-ID: <20250217185000.GC1258@sol.localdomain>
-References: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHiSrchYBRdQuCeNc+nDDR0O4Ya7hY3GqqELtP/9p379HshrBR64UUXGeBh0XGJScdS2nX3741YsCm1uoMfuaKvE1WU6iuBEZbWfkWTzvidurk23ygNpia96ugWasjBLWUqqGWHXBKQZXZ25aE+TWOMTu9oLsgSYZmptUx3hRYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eIGlTgWm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=H/EzBxepApdNs1y8Fa+hAtp29RvCU6l3IVgsgmjB3qQ=; b=eIGlTgWmPTrbqy1JLcunKKGm9W
+	eOmKroTvwL1J50re4PfQk04NWhJXMSVfFm6MLeGF0+UyLs0Wck3nnNbF9Xy3qfqyzQpC41VefgAMg
+	pJHHvUbsaS/CASxFpTm8aM0kwV6KgYNCS65AclHN1CZLbs6nwo82r/MHzd2iOBXfLGHdPkjZlJSza
+	sCqevNNHfgzDMqAASjzR1dpb36xHUBaLLuK8vgMuqhwMHbC4BpsJgNnHrHvX5zBxSpuiJonZpf7q9
+	1qUMTdhYaM0zkZoZbmAwGMSzKflOznzej3ElclPkJa1kEjH8plAu2x2pCs16cGwG9jwQ3TbStqmIG
+	Efj2y11w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tk6Cx-00000001ntn-1pzI;
+	Mon, 17 Feb 2025 18:51:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 73A6E300756; Mon, 17 Feb 2025 19:51:06 +0100 (CET)
+Date: Mon, 17 Feb 2025 19:51:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	x86@kernel.org
+Subject: Re: linux-next: build warnings after merge of the crc tree
+Message-ID: <20250217185106.GA7304@noisy.programming.kicks-ass.net>
+References: <20250217170555.3d14df62@canb.auug.org.au>
+ <20250217181611.GA1258@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,64 +65,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
+In-Reply-To: <20250217181611.GA1258@sol.localdomain>
 
-On Mon, Feb 17, 2025 at 06:43:15PM +0000, Lucas Tanure wrote:
-> Hi,
+On Mon, Feb 17, 2025 at 10:16:11AM -0800, Eric Biggers wrote:
+> On Mon, Feb 17, 2025 at 05:05:55PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the crc tree, today's linux-next build (x86_84 allmodconfig)
+> > produced these warnings:
+> > 
+> > vmlinux.o: warning: objtool: crc32_x86_init+0x1c0: relocation to !ENDBR: crc32_lsb_vpclmul_avx10_256+0x0
+> > vmlinux.o: warning: objtool: crc64_x86_init+0x183: relocation to !ENDBR: crc64_msb_vpclmul_avx10_256+0x0
+> > vmlinux.o: warning: objtool: crc_t10dif_x86_init+0x183: relocation to !ENDBR: crc16_msb_vpclmul_avx10_256+0x0
+> > vmlinux.o: warning: objtool: __SCK__crc32_lsb_pclmul+0x0: data relocation to !ENDBR: crc32_lsb_pclmul_sse+0x0
+> > vmlinux.o: warning: objtool: __SCK__crc64_lsb_pclmul+0x0: data relocation to !ENDBR: crc64_lsb_pclmul_sse+0x0
+> > vmlinux.o: warning: objtool: __SCK__crc64_msb_pclmul+0x0: data relocation to !ENDBR: crc64_msb_pclmul_sse+0x0
+> > vmlinux.o: warning: objtool: __SCK__crc16_msb_pclmul+0x0: data relocation to !ENDBR: crc16_msb_pclmul_sse+0x0
+> > 
+> > I have no idea what has caused these.  Just sending to the crc tree
+> > owner (due to the symbol names) and Peter (since he made the only new
+> > change to objtool - though it doesn't look vrey related).
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
 > 
-> I am working with Android 13 and V5.15 kernel. During our development,
-> I found a memory leak using kmemleak.
-> 
-> Steps I did to find the memleak:
-> mount -t debugfs debugfs /sys/kernel/debug
-> echo scan=5 > /sys/kernel/debug/kmemleak
-> cat /sys/kernel/debug/kmemleak
-> 
-> Stack I got (hundreds of them):
-> unreferenced object 0xffffff8101d31000 (size 1024):
->   comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
->     [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
->     [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
->     [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
->     [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
->     [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
->     [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
->     [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
->     [<ffffffd32796a108>] do_mkdirat+0x88/0x204
->     [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
->     [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
->     [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
->     [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
->     [<ffffffd328abcf88>] el0_svc+0x28/0x90
->     [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
->     [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
-> 
-> After checking upstream, I came up with the following:
-> cff805b1518f  fscrypt: fix keyring memory leak on mount failure
-> 
-> But my kernel has this patch. So I continued to dig around this and
-> saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
-> V5.15.
-> I can't see the pointer tfm being used anywhere or saved, and
-> smp_store_release doesn't kfree it.
-> Is smp_store_release doing something with that pointer that makes this
-> memory leak a false positive?
-> 
-> Any help with this issue would be much appreciated.
-> Thanks
+> Thanks.  I'm wondering if this means the crc assembly functions need to use
+> SYM_TYPED_FUNC_START instead of SYM_FUNC_START.  But they are only called via
+> static_calls, not indirect calls, so previously this didn't seem to be necessary
+> even with CFI enabled.  I'll look into it.  Peter, any thoughts on this?
 
-The pointer to the crypto_skcipher 'tfm' is stored in the fscrypt_inode_info
-(previously fscrypt_info) which is stored in inode::i_crypt_info.  It gets freed
-when the inode is evicted.  I don't know why you're getting a kmemleak warning.
-Perhaps f2fs in that version of the kernel has a bug that is leaking inodes.
+I removed the ENDBR from SYM_FUNC_START() because it is insufficient vs
+CFI, so no point in having it there.
 
-smp_store_release is just a fancy way of doing a store that includes a memory
-barrier.
+If these functions are not indirectly called and only ever used through
+static_call() (as you say) you can adorn them with:
 
-- Eric
+	ANNOTATE_NOENDBR
+
+to tell objtool to STFU :-)
 
