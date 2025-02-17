@@ -1,179 +1,126 @@
-Return-Path: <linux-kernel+bounces-518061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F9DA38949
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:36:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988D1A3898A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE921886DA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4C116AC64
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790F922540C;
-	Mon, 17 Feb 2025 16:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5422253F6;
+	Mon, 17 Feb 2025 16:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iC781AQ3"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bdx70IWt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16919224AFA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A67D224AFF;
+	Mon, 17 Feb 2025 16:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739810069; cv=none; b=ZDnVVGsi4QJODDEitNxDPV2TwjUA3ewcoo9I3K/s0fE5LxcMPU4mRUBluNqZo9ejPHTm5LWSPUZQZr8ReELDQgKts8/XF38sC81BKkQarqExPfdmu2pb1CnMUCSOGDiyfAmaBZzrQ+UHVTToPVJaAPr9oUyA8BVr9TrDx1W7nVQ=
+	t=1739810423; cv=none; b=G2riKyDHqkrfAfxRmOTkcQvJ6hwNcth1SfOI3SJjJSd8FgxIlrlekrAEqx/Cxgh4wigVI5jp0PZ7piJzqp8KAOo3qxmRq6wnp0JWRZils8eckk2QuLa0q5LjHCE83nB9XeXAOyrSm9cXPjIbM89rcGgUy7cwQMsDjqezHtCPT+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739810069; c=relaxed/simple;
-	bh=sSDHAvOfCJs7TmK3HxAQtKqme6c3Swk42wJhlWBbM04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5VQmYQALr+GtzuA+j1zltQpgY1KhrQET1b4znbo+3KskVeJ37FIx8LcWcgg0UL/NzmeXZufylEmoJXcQsB/VOWKUHyJPUXZSlzlmYJbqasOtufZmrx3iBDd49oTx6849C/gYQanGyqRa9FqeoVkDSBYBli5S7syUyE71ow804A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iC781AQ3; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43932b9b09aso50088645e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739810066; x=1740414866; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LlEc/1DhhuQ6PXgaEU0RmiNtz94/GUUPYpvE7Dfmipg=;
-        b=iC781AQ3icrH2qSY+3WR4ptwjVJxI4xfHUTytstnHf1HUIc+Kp/kqpZrp5AUKG5cO2
-         6dcUcfuKGsFnjPdfZbiNVGPXfR07vxm+GXEaKDnr974O1DOZqJVZjgGaPgqk/xCURl0O
-         XeM97IpU6LwzL3IYycrWeS2VfkfSwkVNRBfYwRv/CevTPc0BH/+mU36kZD50QSitbhnk
-         WmNJU0SgcmVoJ7K58tpUyQhBiI02wuKFBX+A3qDGI0ng07izUxpAlXYyP29W7MovpSOO
-         BCgO8uoxLMx/SLbpqOFTqos9B662FwS9QXlx1IxKrkeWTdK27Dohijkfs2OdbuQ7Y3qU
-         dUOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739810066; x=1740414866;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlEc/1DhhuQ6PXgaEU0RmiNtz94/GUUPYpvE7Dfmipg=;
-        b=QzCQPkie+MFLZcMvA6CVOljjS/Gix6CIUjDp56sAtU1oCLaNRulT/5vq9d7HI/Yzlh
-         LBeem0PTx81QtsuetaAenhphWt//Rt+qzwrO8tE838E4keCnqWYiNnTih4tTIFiNC74d
-         3J1pu1I7WYkEMWmO7yjjRDdK9J+Vzj2pEnldT2192SyDMKYUoNGZTpG7dhFzdPx2C+qP
-         AqQd4WpvnJNpi27VWHqRWGfro2scAedc+aArtjKbllKoaDWN460CM6B71069vyJ+U3c6
-         6L+m35Lf/6knWvXopxQDc0KDgj9InGIfZfgIR8YZKTgaQ3eYIsu9KKiMdkLNT7HB9q1g
-         uvtw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3OffwWgUJoref2sD1nO6rG9Z49InTV9+vuD1qz2p32GWxJijk6SyO2N9be9eMFuo+X5iIdcvPP9z0+Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW5tLlqKeHG1HtLtuXz1657CvOE2c9Fk+8Yphf+bFu2qe0SKiQ
-	1e8q+fOboba5sbKbm6znXqxBbnoueAarkRqhkASIKKfdgeCA3D5x
-X-Gm-Gg: ASbGncvLLfysqsU94XvkNnbIfAarCLmdHwrzfTv6azhcZkIslU2f4TxOVUk9DpEhW/c
-	Zgs1ZXV54zXb5Q5R/YB3PoUe+b56AodEulLj2hc4+sQ/RBxRGnJxaXnt7cQYqedeG85ZDuXvmQ9
-	LQWKrohMM607xIbSekmjqKGpEgBxnBTKfVQbN1sklpI7EF739a8uH5X177t9sNAIOV4JfgKQ8vg
-	AZ0I5VXX2M7xeas/jCVmb+TXFs80oc7IQqejow3ieEs1yYgOlLZucQRHBCzHrcGXqLVw2anjEMx
-	BEBgoNFAIKgOgeY=
-X-Google-Smtp-Source: AGHT+IFMADmMY55Rroim8nNi4dr7lMdcl4XT7qcZvO7BoawuPszaqx+VZtHAReeiQxnTw3eLfeBMEA==
-X-Received: by 2002:a05:600c:3b8c:b0:431:5c3d:1700 with SMTP id 5b1f17b1804b1-4396e716f3dmr90733195e9.21.1739810065996;
-        Mon, 17 Feb 2025 08:34:25 -0800 (PST)
-Received: from fedora ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617fccfesm124645735e9.11.2025.02.17.08.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 08:34:25 -0800 (PST)
-Date: Mon, 17 Feb 2025 17:34:23 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] drm/vkms: Allow to configure multiple planes
-Message-ID: <Z7NlD8kWkUxojYWy@fedora>
-References: <20250217100120.7620-1-jose.exposito89@gmail.com>
- <20250217100120.7620-9-jose.exposito89@gmail.com>
- <6b29064f-104a-4f9c-a9f6-8f4a862dbcd7@bootlin.com>
+	s=arc-20240116; t=1739810423; c=relaxed/simple;
+	bh=XEdmeLzKffShZNKSBGP54NehTb23qsGdyVLr4uesvog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rvy2i9moGzhZ4/6hfMvIrluM6vx3PCSbaDaMUGaGhd1DgLocKUntirstOxT3jxu3bw6CFeGQoAd2heL0XDKtT5uTezx21vwpANFHhlTjuu7bdZSwQC7afXPxAHWKP6d6hYGoYEX8VC2kKygEgE5zTSx6P5ySdj03wKDOz87BbZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bdx70IWt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739810419;
+	bh=XEdmeLzKffShZNKSBGP54NehTb23qsGdyVLr4uesvog=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bdx70IWtsPSzWk58ZU9BHFu9MuYnTjnCMRWZmU8nf8WhbIXqV09f6Rtq1rXsGEiOu
+	 5EqbR5172a36TenFGFZvZw7GUNxSucYTlmxURaamBHD+bTonncihpez+piDS+iYP9/
+	 vW6sYC/HoCbS9lrX7+SC2P36fkbnu1sI2i/xGYV2lY/k2cF9y0FhPlHP5o66RQOHdl
+	 tbFfSdmEnt9RvrLDFCI6pu0PriYSGHIOwe+bkrgZ3lac37NsVckfB1odVkJuibPBCw
+	 HjyJaRTlBRjRzBxNO7wjLv4ddDiRLMqzxS5acnXYH4dpRBjNt1tm5GsR2QiQEGByh4
+	 kBrfvrXO/FBig==
+Received: from earth.mtl.collabora.ca (mtl.collabora.ca [66.171.169.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 89A0517E154F;
+	Mon, 17 Feb 2025 17:40:14 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Tim Lunn <tim@feathertop.org>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Stephen Chen <stephen@radxa.com>,
+	Elon Zhang <zhangzj@rock-chips.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v4 0/2] Add Radxa Rock 4D support
+Date: Mon, 17 Feb 2025 11:34:29 -0500
+Message-ID: <20250217164009.130286-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6b29064f-104a-4f9c-a9f6-8f4a862dbcd7@bootlin.com>
 
-Hi Louis,
+Add the basic support for the board. (Not officially released yet)
+It is based on the Rockchip rk3576 SoC, so I haven't added the
+following devices yet:
+ - VOP/HDMI
+ - UFS
+as the support for those has not been merged yet, but are close to be
+and I already validated that they work.
+It will come with another patch set.
 
-Thanks for the quick review.
+The following devices are supported and working:
+ - UART
+ - SD Card
+ - Ethernet
+ - USB
+ - RTC
 
-On Mon, Feb 17, 2025 at 04:45:37PM +0100, Louis Chauvet wrote:
-> Hi José,
-> 
-> Thanks for this new iteration!
-> 
-> Le 17/02/2025 à 11:01, José Expósito a écrit :
-> > Add a list of planes to vkms_config and create as many planes as
-> > configured during output initialization.
-> > 
-> > For backwards compatibility, add one primary plane and, if configured,
-> > one cursor plane and NUM_OVERLAY_PLANES planes to the default
-> > configuration.
-> > 
-> > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> > ---
-> >   .clang-format                                 |   1 +
-> >   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 140 +++++++++++++++++-
-> >   drivers/gpu/drm/vkms/vkms_config.c            | 127 +++++++++++++++-
-> >   drivers/gpu/drm/vkms/vkms_config.h            |  75 +++++++++-
-> >   drivers/gpu/drm/vkms/vkms_output.c            |  42 ++----
-> >   5 files changed, 349 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/.clang-format b/.clang-format
-> > index fe1aa1a30d40..c585d2a5b395 100644
-> > --- a/.clang-format
-> > +++ b/.clang-format
-> > @@ -690,6 +690,7 @@ ForEachMacros:
-> >     - 'v4l2_m2m_for_each_src_buf'
-> >     - 'v4l2_m2m_for_each_src_buf_safe'
-> >     - 'virtio_device_for_each_vq'
-> > +  - 'vkms_config_for_each_plane'
-> >     - 'while_for_each_ftrace_op'
-> >     - 'xa_for_each'
-> >     - 'xa_for_each_marked'
-> > diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-> > index 6e07139d261c..fe6f079902fd 100644
-> > --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-> > +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
-> > @@ -24,6 +24,10 @@ static void vkms_config_test_empty_config(struct kunit *test)
-> >   	dev_name = NULL;
-> >   	KUNIT_EXPECT_STREQ(test, vkms_config_get_device_name(config), "test");
-> > +	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
-> 
-> Instead of testing directly a "private" field (planes), can we use something
-> like:
-> 
-> int count;
-> vkms_config_for_each_plane(config, plane_cfg)
-> 	count++;
-> ASSERT_EQ(count, 0);
-> 
-> So we don't make config->plane "public".
-> 
-> Same comment for connectors, crtc and encoders.
+Changes since v3:
+ - Reorder nodes alphabetically
+ - Add missing cpu supply
 
-On other calls to list_empty() and also list_count_nodes() and
-list_first_entry() we are also accessing "private" fields.
+Changes since v2:
+ - Move and rename snps,reset-* props to the PHY node
+ - Rename phy@1 to phy-ethernet@1
 
-I'll create helpers in vkms_config_test.c replacing the list_* APIs with
-iterators and send v4.
+Changes since v1:
+ - Add missing dt bindings
+ - Remove clock-frequency in rtc node
+ - Add line break in pmic pinctrls
 
-Thanks!
-Jose
- 
-> With this:
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> (sorry, I did not notice this on your v2)
-> 
-> Thanks,
-> Louis Chauvet
-> 
-> -- 
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-> 
+Detlev Casanova (1):
+  dt-bindings: arm: rockchip: Add Radxa ROCK 4D board
+
+Stephen Chen (1):
+  arm64: dts: rockchip: Add Radxa ROCK 4D device tree
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3576-rock-4d.dts      | 678 ++++++++++++++++++
+ 3 files changed, 684 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+
+-- 
+2.48.1
+
 
