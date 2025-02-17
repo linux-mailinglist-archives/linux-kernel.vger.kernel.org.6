@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-517921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A06A38781
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:27:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39F7A38789
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885493B2BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717B13B328E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D4E224AE9;
-	Mon, 17 Feb 2025 15:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BEC224AFB;
+	Mon, 17 Feb 2025 15:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aMccV998"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1k1STfMO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D32A1494DF;
-	Mon, 17 Feb 2025 15:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E841494DF;
+	Mon, 17 Feb 2025 15:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806025; cv=none; b=uHcM++PiOMh1w1iY0YikQqQ20o8x5d+Hr7jFlx+MHcEx9D04z0Ml+ae2skZ7ia5tXRxa7WeYwKIekV037vxfwfQxv9Co3Ozsz4WUddRhzD779yc5FFOi7McNTmWtteC4HzSSqVvoqDEb13BPMLIrBONXvhNFYBs+HVscwis6ZLo=
+	t=1739806182; cv=none; b=bV0S0tf7T7chUsoMAODY0ONXh6EjULs3qiiq/JHH/KpakodyCGg5QW4+kpn8xyFG+GzMEEBvGqGblk35uhWwOCxU5xLJjnGzlwuVrfTL6RvmHTwSf/vpV/eAG804qQYL9F00G2edEty854QatQThfaduosDaB9UTbJUVl8+qZ7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806025; c=relaxed/simple;
-	bh=U1mjf0Tf6g1vVVmhRG2R4Tb3kAQNL/5crTroM67oZ+I=;
+	s=arc-20240116; t=1739806182; c=relaxed/simple;
+	bh=d+GskYFB5OX9ASZUN7hD4NLWJWM9+7vGlcErfaEnuJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUn8Fc85tFlrnWKJywFLFk3LfApigNO73t4gYNkV/eXDefS5tY2CQZOcrrJNDl9xZfgMANAoDfbhUDYwTEaeNXUJXUrhHT2ago6TiiVkFmd+lTWkJbhV3UkqUmxo1An4pwBLEpcAvggmK+2Igd6kx+tmSYSdp15ck8o/mO9Q3Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aMccV998; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5F26940E01A1;
-	Mon, 17 Feb 2025 15:27:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2VhwGZUpXniU; Mon, 17 Feb 2025 15:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739806014; bh=XG45Vhnc+dFMztxiq5T8wxFZgZlBWi+1l36DqM/+tMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aMccV998asM3I8wmciaAV/YAG3Ws2gaawvenMEl5XazrR+XUnjjJi2269++M8359o
-	 OMbzxLba26U8QiSIe2oCkVu/kJo6yChyEydh/aix41lH1K8RhXDFl4LFi55Qoc0J6e
-	 LVisFyCAKOJXEKg9ayH8wiuV1u1CGy+cd/KTjl9LozJQWkXOCPWRcgP38KlqiFQXe3
-	 6pXtf403cN6WjF1QLP4iSj0aWd6zyTgpD557dPc06UKpLs+RDlVN7rQUnzwznMqmPA
-	 1WmvrssqWp/axfkxy3CkS5PpQF7PEcAaQQsp2js44qv7+61WICb5DzAVaERgBSvzzE
-	 WdGYO38oGHRxnNQp2FTKdLdS95o8G9X0XbI7Ab0+/X94E92T2ler6HZvC6flAzh8iq
-	 U6fj22EtHJ9DC+aU+ZtpQIiSf8c8I8v3+sEDkwF+twXiYrUQLndLEixWCAl5/5TMPL
-	 GiHYPLdjHgahqEeOBvFYDV0BJp/LoVQn2zMAasWr5qfgbUjBSI7fON42nKWOZs10GJ
-	 RPWoKdu+ATpTQj2XNytwDqhNZvwAPKdpv+9doZfVyHKUWBmhDq8PdqyCBQk9wIOSEZ
-	 hqWTrQ1wytSOsHHYH0YGjv2sM596NsE9PgwoZzMaqN/P+BsH79RspdR7Hn9oygJouv
-	 3WP8g2rban6hTe2cyzT8+2Rk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 93A7E40E0176;
-	Mon, 17 Feb 2025 15:26:43 +0000 (UTC)
-Date: Mon, 17 Feb 2025 16:26:37 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Patrick Bellasi <derkling@google.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: Re: Re: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250217152637.GEZ7NVLR94K1fcZMJH@fat_crate.local>
-References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
- <20250213175057.3108031-1-derkling@google.com>
- <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
- <Z6_mY3a_FH-Zw4MC@google.com>
- <20250215091527.GAZ7BbL2UfeJ0_52ib@fat_crate.local>
- <Z7LNjEqZELrPmRkV@Asmaa.>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwALFBp77M4pNNFMTEGdjRv9HMKOdhS3tc5Xon6FYNoxx+GGv9K1dwMLCl+bfZa90E3UZUBl9uYa7YOgQbNzHdZ7biKrycFKxVLQjAi/lqjkvkoFru0FOa0m+xOCm6AIM0fW8Znswgsx/qNqcdmMVk+kkwScNtQi1YlNKmQshGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1k1STfMO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+P4Mpectj/6/0am8dXU2KXP02bvuc53X5h8fNZ10rK8=; b=1k1STfMOkQti3uds9OuyjOMNA5
+	vq99x42ZtFDRa8xdYiiTYeKEXC8WrkNr9VbMpkjX7UqcIDds4lMLXGbBkYYbVtRxUGGADqsx69ofd
+	f84ONF4ybMwA6zY4xseRfP1BY80QuxP58m1YwddMn6npp+0cF4wFoKssyyhv+h4aeRQc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tk33p-00F0Wh-7S; Mon, 17 Feb 2025 16:29:29 +0100
+Date: Mon, 17 Feb 2025 16:29:29 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+	Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
+ PHY-driven SFPs
+Message-ID: <f88c0ed5-c50b-4bea-81e5-41a1c8c50de7@lunn.ch>
+References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
+ <20250213101606.1154014-6-maxime.chevallier@bootlin.com>
+ <Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
+ <20250217092911.772da5d0@fedora.home>
+ <5d618829-a9bc-4dd4-8a2e-6ce3a4acd51e@lunn.ch>
+ <20250217152216.5b206284@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7LNjEqZELrPmRkV@Asmaa.>
+In-Reply-To: <20250217152216.5b206284@fedora.home>
 
-On Sun, Feb 16, 2025 at 09:47:56PM -0800, Yosry Ahmed wrote:
-> Thanks for the context, didn't realize a manual backport was needed.
+> > Please be careful with the scope of these. Heiner is going through
+> > phylib and trying to reduce the scope of some of the functions we
+> > exporting in include/linux/phy.h to just being available in
+> > drivers/net/phy. That will help stop MAC drivers abuse them. We should
+> > do the same here, limit what can actually use these helpers to stop
+> > abuse.
+> 
+> Can we consider having an header file sitting in drivers/net/phy
+> directly for this kind of things ?
 
-Feb 17 gregkh@linuxfoundation.org (:9.1K|) FAILED: patch "[PATCH] x86/cpu/kvm: SRSO: Fix possible missing IBPB on VM-Exit" failed to apply to 6.6-stable tree
-Feb 17 gregkh@linuxfoundation.org (:9.1K|) FAILED: patch "[PATCH] x86/cpu/kvm: SRSO: Fix possible missing IBPB on VM-Exit" failed to apply to 6.1-stable tree
-Feb 17 gregkh@linuxfoundation.org (:9.1K|) FAILED: patch "[PATCH] x86/cpu/kvm: SRSO: Fix possible missing IBPB on VM-Exit" failed to apply to 5.15-stable tree
-Feb 17 gregkh@linuxfoundation.org (:9.2K|) FAILED: patch "[PATCH] x86/cpu/kvm: SRSO: Fix possible missing IBPB on VM-Exit" failed to apply to 5.10-stable tree
-Feb 17 gregkh@linuxfoundation.org (:9.5K|) FAILED: patch "[PATCH] x86/cpu/kvm: SRSO: Fix possible missing IBPB on VM-Exit" failed to apply to 5.4-stable tree
+Yes, we then only need to worry about phy drivers, not MAC
+drivers. PHY driver writers tend to abuse things less.
 
--- 
-Regards/Gruss,
-    Boris.
+	Andrew
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+
+
+
+
+
+
+
+
+
 
