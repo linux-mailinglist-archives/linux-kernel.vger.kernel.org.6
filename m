@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-517187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0279CA37D7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:52:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72E4A37D7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB0A16B46A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DB60188FC33
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555231A315C;
-	Mon, 17 Feb 2025 08:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE081A76BB;
+	Mon, 17 Feb 2025 08:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CLK3jw7n";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VpC1y1vC"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y6VbQeQX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X1GBmRjl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCAB168B1;
-	Mon, 17 Feb 2025 08:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2D71A239A;
+	Mon, 17 Feb 2025 08:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782318; cv=none; b=pcjuknBgDvoVw85TXQD9uiLDaUVVP9tTsH3ifTVNSAi5M58tN3timwZ10xtZqcoIN3WO4uskQre2I2w4PlmEDhHdhYrDvqlnakZXX6P1a644PexoxtEYE0cCKab1wUdtfMR77uCfA44fGqUN2uX2Fwprm3oqBrVc9z9HOnHh81k=
+	t=1739782320; cv=none; b=ePpnnz9vA5x8y38d404iiTZ2ca7H4n4zpkOws8agrtSLG2wUH8HuiwmFsPzSDY6M74xy2nePy4DhPP6asee5wiFyZwBREAT4OnmfxDxYVkFdOocUIsRWgxcdmTrrefzfS1vKo4CuEWgbfXn6cyLm2kV9YzyuryUfES1IEUK4NRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782318; c=relaxed/simple;
-	bh=OX1YlG6p/Gn9pxQgkkJc/gP8P64Frs4hYHehaPg0jTs=;
+	s=arc-20240116; t=1739782320; c=relaxed/simple;
+	bh=CyjIe7k3+IMbCFL/LQQGLBD6rDen/ScY64+w54jewVo=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=cEXpzxZkFcCEWJHNo/W9AaTjfx5DoS544XaiYfuGYHaP/Cs/KPh94Mbj7rV6+bimExun2RgrTTMAwioVNOeJAH3JyBd4Fq6kaTA3/3yeuW8h77g/GShTRjeeJOcaO9mwrxKsJYj71SNRw1JUfKn+m4btkgk6v6T+eSa/9ddsUjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CLK3jw7n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VpC1y1vC; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=EYsZCK3w9IZXn+zl2gYPhDdravD3idZYOza/9sxJh03g856r+No20prDp42/AZwgU2Luw/4RI8lpbgz99EQy4Vebvygrvv2lzH5HnxcQHjgJUhm33dGZE/eMWzuWwGE8ViwYb/njCXHtNReuTGYuaRXgaXJEK4ahONy9rz/Bb8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y6VbQeQX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X1GBmRjl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Feb 2025 08:51:54 -0000
+Date: Mon, 17 Feb 2025 08:51:55 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739782315;
+	s=2020; t=1739782316;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vk6PEiBFsSk/OJHjGmxBkQaJ5UX+EOnKSFZA6zEoMI4=;
-	b=CLK3jw7nzaNL4TX7A4Teru52LnLfMd1oHwfWBC/xjuWXgONkHFOUScJ2GEG7ecV14jIrNd
-	rs/a+r6HkwUY/AOlZ5qsV7BAfDXQCvI0iC2Uxd4vUOuOnCvAGCnryvr2/AEjzFXonELcxZ
-	EXl6+90KyGhk81cydjOSg0EmaqYZD713QVAsUJZCm9rIcW5Z0Lalg/eCk5JQsi5RkWLiBU
-	vZbL2Yx4EOOdqmHnf+v8yNOvmgNE23PjOVbFdX3zcsByVYe3bRGVLNw/eBfGHNXt4Knf+6
-	Oph81Vh3zQUjmo+LI8R39+bushKQYH81zYmYXHBlz5aF/+eOPWxcD7EIQM1Ahg==
+	bh=zjgnbjAxTQ6rHkQ2QmkC3TfqKV2NrHediErt5xaQ6n0=;
+	b=Y6VbQeQXtxcsS07NrA0/zcWhrVLyBxcU2qzGtpOYaX76gmST/miH6HPSY3WqDuTDoumxPJ
+	KWnX1z0T12cu4qmSfVyP9elnvJ5mSWqEwv+OymdTe88v6tH22+MgXTZQE0pJ1gJFZe9F2n
+	9RZoX4mJ721yPv5GHO/HI0+fKdJEPMHnywfAchdA6UkuC9grsUWkv8SCkyezaIXFy1cY1R
+	Ww7Gx40fXurUsRsZM8LZISGmCx7DyqKTWCnpXHQTVExZ9mw4+Qdnbg/cgnBkMXUhl8LH+P
+	StZ++Yy+7U+ZxjmYMHRSYQjIFsip/FHES7sOOsz5IwvKEI0wyoVtYeCMHR83Zg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739782315;
+	s=2020e; t=1739782316;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vk6PEiBFsSk/OJHjGmxBkQaJ5UX+EOnKSFZA6zEoMI4=;
-	b=VpC1y1vCc4bHu7H4G40+4l9vMn9TBwvHtU2pQ9Ud0oEb+H3DbIsSfTTzy9tVyLBRd+Q/KP
-	EOvyOo0/QrmmnsDQ==
+	bh=zjgnbjAxTQ6rHkQ2QmkC3TfqKV2NrHediErt5xaQ6n0=;
+	b=X1GBmRjlRMJ6CC6/OCpusZMxbIb9P7/78gPOfO1e0t+LK6FPUKqJ+LRvg/wZA36pqpMPLE
+	WOz3PeZRIPy2h1Bg==
 From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/microcode] x86/microcode/AMD: Merge early_apply_microcode()
- into its single callsite
+Subject: [tip: x86/microcode] x86/microcode/AMD: Remove ugly linebreak in
+ __verify_patch_section() signature
 Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250211163648.30531-4-bp@kernel.org>
-References: <20250211163648.30531-4-bp@kernel.org>
+In-Reply-To: <20250211163648.30531-2-bp@kernel.org>
+References: <20250211163648.30531-2-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173978231454.10177.18358000269632162246.tip-bot2@tip-bot2>
+Message-ID: <173978231585.10177.3897050426518699504.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,109 +82,36 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/microcode branch of tip:
 
-Commit-ID:     dc15675074dcfd79a2f10a6e39f96b0244961a01
-Gitweb:        https://git.kernel.org/tip/dc15675074dcfd79a2f10a6e39f96b0244961a01
+Commit-ID:     7103f0589ac220eac3d2b1e8411494b31b883d06
+Gitweb:        https://git.kernel.org/tip/7103f0589ac220eac3d2b1e8411494b31b883d06
 Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 23 Jan 2025 12:46:45 +01:00
+AuthorDate:    Thu, 23 Jan 2025 13:14:34 +01:00
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 17 Feb 2025 09:42:34 +01:00
+CommitterDate: Mon, 17 Feb 2025 09:42:13 +01:00
 
-x86/microcode/AMD: Merge early_apply_microcode() into its single callsite
+x86/microcode/AMD: Remove ugly linebreak in __verify_patch_section() signature
 
 No functional changes.
 
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20250211163648.30531-4-bp@kernel.org
+Link: https://lore.kernel.org/r/20250211163648.30531-2-bp@kernel.org
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 60 ++++++++++++----------------
- 1 file changed, 26 insertions(+), 34 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index f831c06..90f93b3 100644
+index a5dac7f..4a62625 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -512,39 +512,6 @@ static bool __apply_microcode_amd(struct microcode_amd *mc, unsigned int psize)
- 	return true;
- }
- 
--/*
-- * Early load occurs before we can vmalloc(). So we look for the microcode
-- * patch container file in initrd, traverse equivalent cpu table, look for a
-- * matching microcode patch, and update, all in initrd memory in place.
-- * When vmalloc() is available for use later -- on 64-bit during first AP load,
-- * and on 32-bit during save_microcode_in_initrd() -- we can call
-- * load_microcode_amd() to save equivalent cpu table and microcode patches in
-- * kernel heap memory.
-- *
-- * Returns true if container found (sets @desc), false otherwise.
-- */
--static bool early_apply_microcode(u32 old_rev, void *ucode, size_t size)
--{
--	struct cont_desc desc = { 0 };
--	struct microcode_amd *mc;
--
--	scan_containers(ucode, size, &desc);
--
--	mc = desc.mc;
--	if (!mc)
--		return false;
--
--	/*
--	 * Allow application of the same revision to pick up SMT-specific
--	 * changes even if the revision of the other SMT thread is already
--	 * up-to-date.
--	 */
--	if (old_rev > mc->hdr.patch_id)
--		return false;
--
--	return __apply_microcode_amd(mc, desc.psize);
--}
--
- static bool get_builtin_microcode(struct cpio_data *cp)
+@@ -246,8 +246,7 @@ static bool verify_equivalence_table(const u8 *buf, size_t buf_size)
+  * On success, @sh_psize returns the patch size according to the section header,
+  * to the caller.
+  */
+-static bool
+-__verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize)
++static bool __verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize)
  {
- 	char fw_name[36] = "amd-ucode/microcode_amd.bin";
-@@ -582,8 +549,19 @@ static bool __init find_blobs_in_containers(struct cpio_data *ret)
- 	return found;
- }
- 
-+/*
-+ * Early load occurs before we can vmalloc(). So we look for the microcode
-+ * patch container file in initrd, traverse equivalent cpu table, look for a
-+ * matching microcode patch, and update, all in initrd memory in place.
-+ * When vmalloc() is available for use later -- on 64-bit during first AP load,
-+ * and on 32-bit during save_microcode_in_initrd() -- we can call
-+ * load_microcode_amd() to save equivalent cpu table and microcode patches in
-+ * kernel heap memory.
-+ */
- void __init load_ucode_amd_bsp(struct early_load_data *ed, unsigned int cpuid_1_eax)
- {
-+	struct cont_desc desc = { };
-+	struct microcode_amd *mc;
- 	struct cpio_data cp = { };
- 	u32 dummy;
- 
-@@ -597,7 +575,21 @@ void __init load_ucode_amd_bsp(struct early_load_data *ed, unsigned int cpuid_1_
- 	if (!find_blobs_in_containers(&cp))
- 		return;
- 
--	if (early_apply_microcode(ed->old_rev, cp.data, cp.size))
-+	scan_containers(cp.data, cp.size, &desc);
-+
-+	mc = desc.mc;
-+	if (!mc)
-+		return;
-+
-+	/*
-+	 * Allow application of the same revision to pick up SMT-specific
-+	 * changes even if the revision of the other SMT thread is already
-+	 * up-to-date.
-+	 */
-+	if (ed->old_rev > mc->hdr.patch_id)
-+		return;
-+
-+	if (__apply_microcode_amd(mc, desc.psize))
- 		native_rdmsr(MSR_AMD64_PATCH_LEVEL, ed->new_rev, dummy);
- }
- 
+ 	u32 p_type, p_size;
+ 	const u32 *hdr;
 
