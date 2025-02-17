@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-517685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F9FA38454
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:17:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69145A38476
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71063174D18
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:14:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B993B7A60
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F5D21CC69;
-	Mon, 17 Feb 2025 13:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6AE21C9E6;
+	Mon, 17 Feb 2025 13:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h3l1/k/O"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJUDj7Uq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF1D21C19E;
-	Mon, 17 Feb 2025 13:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF2821C192;
+	Mon, 17 Feb 2025 13:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798010; cv=none; b=qiaCutV5zTeZJniBDi7cNETtrlnxjZ3wXIB8SbTHRJTm8kDSLQ2YEa0/ElmF24fJxNYagUeQR4N+0VNChl1zKKK33oSUvIL+CecZDsGSeZsC1Dtt+1hhVBOqpK0FsTH+IfNrW7DHDHCJYMjNjw9SUlph0Ji/c3BuQ1mL6n88H8c=
+	t=1739798041; cv=none; b=kq2fcbXbbBNCM7lu7QI8HGkEw5Fzp2dVIkiYr8hx6M7g7qlvKKGGf+Wdo4K6SBp25KU8xzKcvGvO1Oeh57NvsIPfTRpveXwZs2de6+lVUdH5Z6jGUwEBeLR9x0wbKznShlZP3nJ5ASo3urfcpOubEyC4C5PDPUm5pXZSED5OfFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798010; c=relaxed/simple;
-	bh=/Qj/NoOlFutO0wEcWfBTyUizqtHvMPVlYhAQkYbV1yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+9tx2TZm2PnxETFbyRUFvfrCTGB6lRjXy6HgYr/MJlfo4Panx9v3TrHL9xNPQcw1zv5bFPqQz2pzUtz1he68VFg5u0tdtFLRyn/efnMaxwy8C6xXdpSB5bZ8d/0qza7bdEf3sri4Bm8agKbkKBHu2DKbChZmAue7PsBOSQ/y7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h3l1/k/O; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sx6hFMIPXfm6dAtS5cNhSjXA/ycePeZapi16K1yeE78=; b=h3l1/k/OvC4Jc0nxZY4uLEWjP4
-	9/SAjCROevxT8NWT6f/geMBF4JoCXsJMEHe06SaTC0krSeJ0RA/4iZUUNtguf5gzUseZ7dzkrGWNA
-	fUmfLbvdQm3bP+eoAPUDZsdXSaRub6M/tv1b2BRS0uRDy1AUJIDjesgqHra9wBNAWgR/fVw+8ubRA
-	2oWnMaB5wBbTdRuSc2l02MSMES+GEs1axrIODGXcubIjhXJVq+Sm+ZH4F3kVvNssu9pMnfIAcerQw
-	kcMWBNGQHxSDQs+RVPx3AydmpZJlhqgTiOkMZb/8Naw8Pf9GQHLL5T5FHUyJq6ff3z7ck1Lp9ueQl
-	VCALhX3g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tk0w6-00000001pRD-0kW3;
-	Mon, 17 Feb 2025 13:13:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0E159300756; Mon, 17 Feb 2025 14:13:21 +0100 (CET)
-Date: Mon, 17 Feb 2025 14:13:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
-	jannh@google.com, jmill@asu.edu, joao@overdrivepizza.com,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	luto@kernel.org, samitolvanen@google.com,
-	scott.d.constable@intel.com, x86@kernel.org
-Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
-Message-ID: <20250217131321.GO14028@noisy.programming.kicks-ass.net>
-References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
- <c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
- <202502131224.D6F5A235@keescook>
- <6641d1e0-7151-4857-bb0e-db555d4cdf50@citrix.com>
- <202502131248.B6CC333@keescook>
- <20250214095751.GF21726@noisy.programming.kicks-ass.net>
- <20250215210729.GA25168@noisy.programming.kicks-ass.net>
- <20250217130629.37f556b0@pumpkin>
+	s=arc-20240116; t=1739798041; c=relaxed/simple;
+	bh=w4r9lnxn7sqsNE3KWaJopKWBLuYC6f5wRbkt5y/Q6Pk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fw6zTztUOKRKD+Gt+g1SyfFYx0ONu+wxbQ3TWnTNut032X5bio7H/96BGVND0gUUQ2P+jCOMsg0vipVlu9mZLoxZou02+h8CPHNNcj/aZioKd83ZRWMiVoAispN3AbphkJJzKRwe2VWRxS3yQ/JLndDT+uureYPUQaIq0zlI5mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJUDj7Uq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA71C4CED1;
+	Mon, 17 Feb 2025 13:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739798040;
+	bh=w4r9lnxn7sqsNE3KWaJopKWBLuYC6f5wRbkt5y/Q6Pk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oJUDj7UqvID+hjCoFOi6b1ew4PuLIGJ/kN0fcMYxfWsRTpsUNKBRylxR7QDmtIors
+	 FoH7905zTMw7WZmqWD+yZa+i/VzrXe8x2imsUTHr8EiUMpFK4k64HvXTuDIA6bcxTi
+	 mdDK1xecw4i7y/INz0XuWiY1S4NnUOhgOUEyTZFSqlBPz6PZ3TVEZOgQp3QXmanhDm
+	 F5ioEtci9GJ5i/guQu6NfujdlvjCvyP2nq9aQz0yiuiXlKCJdVqlOUGkDwNoKdYNL6
+	 awmDMcipzdQYImjIGDoPANUt/MR3Syn2q/tBkFBVgIFSAPXzZjDOEx4nGmgXEdjaO0
+	 9pte0NiscM8NQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Nihar Chaithanya <niharchaithanya@gmail.com>,
+	Rohit Chavan <roheetchavan@gmail.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] static: gpib: hp82341: add MODULE_DESCRIPTION
+Date: Mon, 17 Feb 2025 14:13:35 +0100
+Message-Id: <20250217131356.3759347-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217130629.37f556b0@pumpkin>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 01:06:29PM +0000, David Laight wrote:
-> On Sat, 15 Feb 2025 22:07:29 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Fri, Feb 14, 2025 at 10:57:51AM +0100, Peter Zijlstra wrote:
-> > > On Thu, Feb 13, 2025 at 12:53:28PM -0800, Kees Cook wrote:
-> > >   
-> > > > Right, the "if they can control a function pointer" is the part I'm
-> > > > focusing on. This attack depends on making an indirect call with a
-> > > > controlled pointer. Non-FineIBT CFI will protect against that step,
-> > > > so I think this is only an issue for IBT-only and FineIBT, but not CFI
-> > > > nor CFI+IBT.  
-> > > 
-> > > Yes, the whole caller side validation should stop this.  
-> > 
-> > And I think we can retro-fit that in FineIBT. Notably the current call
-> > sites look like:
-> > 
-> > 0000000000000060 <fineibt_caller>:
-> >   60:   41 ba 78 56 34 12       mov    $0x12345678,%r10d
-> >   66:   49 83 eb 10             sub    $0x10,%r11
-> >   6a:   0f 1f 40 00             nopl   0x0(%rax)
-> >   6e:   41 ff d3                call   *%r11
-> >   71:   0f 1f 00                nopl   (%rax)
-> 
-> I tried building a fineibt kernel (without LTO) and that isn't what I
-> see in the object files.
-> (I not trying to run it, just do some analysis.)
-> While the call targets have a 16 byte preamble it is all nops apart
-> from a final 'mov $hash,%rax'.
-> The call site loads $-hash and adds -4(target) and checks for zero.
-> It is too small to be patchable into the above.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Right after that comes the retpoline site, which is another 6 bytes
-(assuming you have indirect-branch-cs-prefix, which all kCFI enabled
-compilers should have).
+One more description turned out to be missing
 
-You need to go read arch/x86/kernel/alternative.c search for FineIBT
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/gpib/hp_82341/hp_82341.o
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/staging/gpib/hp_82341/hp_82341.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/gpib/hp_82341/hp_82341.c b/drivers/staging/gpib/hp_82341/hp_82341.c
+index 800f99c05566..cf5cd1edc41d 100644
+--- a/drivers/staging/gpib/hp_82341/hp_82341.c
++++ b/drivers/staging/gpib/hp_82341/hp_82341.c
+@@ -16,6 +16,7 @@
+ #include <linux/isapnp.h>
+ 
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("GPIB driver for hp 82341a/b/c/d boards");
+ 
+ static unsigned short read_and_clear_event_status(gpib_board_t *board);
+ static void set_transfer_counter(struct hp_82341_priv *hp_priv, int count);
+-- 
+2.39.5
 
 
