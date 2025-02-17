@@ -1,278 +1,213 @@
-Return-Path: <linux-kernel+bounces-516877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22BCA3792D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B123DA3792F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA9B188AF90
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6878B188E67B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4336BC2C9;
-	Mon, 17 Feb 2025 00:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C73C2C9;
+	Mon, 17 Feb 2025 00:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="HBeC/nrI"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DmYi+Jd+"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA58F182BC;
-	Mon, 17 Feb 2025 00:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739751918; cv=none; b=W3g5uE/24MmzWSM3FiOql+F2gVzQX8U2Rkb0vnEilaZI6RppL/wid7pobsPxXLP241JF3pFe6RAgo+UrwP2bz2HrXmJpJu1oKiEITrkqY1KjxW+aEB5+VBXtZMlA8UjD9u+0+1pWnvx9EwupI6rZvDgKCdd54vnONLvkayL4zAA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739751918; c=relaxed/simple;
-	bh=Uo2KVxU4UmXc9VhyrMc8Oxo8xX5Nh+L8NJ06hBNOhs8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DmJa4CM9IFybPvwNmc6zodX+lwMhJnpjsLM47nwK0BK533Wjz4bosjO1RCiWGaNd3RWo/QSCOeetuZ1ccS+Osg70CQPH0mItiP26nOhfcq5uRpzQrL8exEbqJkvGaXV/M5HSst5X3syyzvFiNG4vRwtqBTiVtMGywmN1IA0k/WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=HBeC/nrI; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1739751912;
-	bh=Uo2KVxU4UmXc9VhyrMc8Oxo8xX5Nh+L8NJ06hBNOhs8=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=HBeC/nrInBooqZJLpNlOfHkeEwbWVmtRzFeKIKccLKE2tIFQ1TDxKL07NROWJEvig
-	 t8OkVn8vPOmMp0vHUowaAzNe/KtayxNvkttBdrScJVMoBMlOISa8eMwCv7p7SBjW4W
-	 H7zJVDxPs7JOIj+BDZyN1l+r6ICg8EvOwCKtKXFeB+dbKP8CWslrFAvRVC5qtpcCxH
-	 ECyR4+bkROfLazcUnj7Rx0ZeljMeKRapesFtf5mIGdPycHR/JUvdPFQAGgHB5qgWgi
-	 mn+ReAtKB3RxqukdGUYMbvc1GULqFLfOSuJZWXwcUr0nyL9VqAr5uQ0ERS8bGYzC3P
-	 V+YwxYXdcIozw==
-Received: from [192.168.68.112] (ppp118-210-170-58.adl-adc-lon-bras34.tpg.internode.on.net [118.210.170.58])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2DC9272F1E;
-	Mon, 17 Feb 2025 08:25:10 +0800 (AWST)
-Message-ID: <31c7189bc04ed8c5cce463951b717bed6a2ccf9a.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v6] media: dt-bindings: aspeed,video-engine: Convert to
- json schema
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Jammy Huang <jammy_huang@aspeedtech.com>, eajames@linux.ibm.com, 
- mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org,  joel@jms.id.au, andrew@aj.id.au,
- linux-media@vger.kernel.org,  openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
-Date: Mon, 17 Feb 2025 10:55:09 +1030
-In-Reply-To: <20250213015338.3243171-1-jammy_huang@aspeedtech.com>
-References: <20250213015338.3243171-1-jammy_huang@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EFEDDAD;
+	Mon, 17 Feb 2025 00:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739752091; cv=fail; b=WFmAFz/59OZZcGZmRkGPSgnV/EmYAepER9d/gHFQvcsc7+ZZSwhD7BXOkJtHx0bsUlZ9LadVdevOxG3hNkGfUHTK9El4SSswXstWVJfLYqUKr3p+/X1TxOswpRfaqtYKdbW1hdZV+vFLHDonAg8MlHIomxef2kwS4h8bvyS0Phs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739752091; c=relaxed/simple;
+	bh=20fBs55NW3kycLGJn5k0Rhs8gEagCL5b3sGhFYga0ng=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Bu+FPE22LCIIdU/6etOVuUq6VXdRTQeTtbX+v2iHR6IkLQIYlnpfBMSMrSG3YYOUBycXdit+niJteFJDAzzWsHlabQZg0YPjHLch4g51OSGiDeVvdxZ5PQiCyvU3vF0ERJqmCNGQbAYkbWJznxunXUmrTdz9YUamUXq2lPjMpfw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DmYi+Jd+; arc=fail smtp.client-ip=40.107.220.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jZay6C6wTY92//a0jOLY1yskJxLdtERiy35d6WwaqRoKnXjOXoDyRSrUZTtLJtfuc849LldNTgrJMiSbgDj6YfDdhiwUywNQ5ty6rlQUBehcs+m9uv42KlJrRNaEgUs9xrVnW9ZXaQq/ZzG52EY2gdEKObbFXyrdiSCs70/IVecD5zD4Ws7PDpkitYaMmiqx7FsU5tQdHmeX+ZbvFRZ0jsz9PLJNJxk+2zAfEA9qVf2pxl/2zJeiL5ftMHcXhRSQHjzQhWd9r1nu+f+SJfPyFhkWOkfFA5UnNvmBRZTe88zwEQ6+3ntKflQd/rBfy4yOeFvWplin+Dt0ImFIUTcy6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PeOqopaOf9g+BmvFlaXVFTkk5rnlbECDIAdT3tV3hLY=;
+ b=KbnqSuu7CUtjwiQyHWv16cZOVh09uvQYtQbGKfLSe2GbuCRnpr/hyav4JD27qhZFFOf3aXzs5a9xma92s3BkJ9NEyCwZ1B3W3EPAAPojojIP2e3jj9EG6qBPBDQuhe5iVCw6i4y5750/mG2qJDZbbNugPMj9Uaa1gGnouSJL66Ma7dde0MVm7b5LzhSCttqEXeb7tu395fvrOql2jJdKzbIR0K7ZCxxYSdlPmCqAXof+9c8kjFrw5+rjefdlB4h//5jqy98h0DV6CRkHIrfNS7X+rRw77wXaLKvHrRnfoFGiVd+sWurHq4EbQWJhB088MBRykO/m1LQzlv+k0aClzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PeOqopaOf9g+BmvFlaXVFTkk5rnlbECDIAdT3tV3hLY=;
+ b=DmYi+Jd+THgavnMd+nEr5zeSrKcGXd/2zpaGffkN3ffqdX9EHUYiUwkm6q5s9PEFNNyzzBVZT1zvIvlY6iqyrB71ot4mB9yIcAlWMybdMiet0Be2lVXUBaD1EU2eT3MmiXbgjFSPYCp9c0PgEO+2308sVj6KJAviyQgrFsVSVTm3iB1q7t9D4AaJumh+oTvBnwtEuYXruc3jiJYbNEoeqLUjY7RHpqrCcEJ5biAjAQ/mX32bD4uytSDeZFlAJ74DI/tX5wNqpby+mekIB7CUmZHrY4BOHOampfNvnzuJxLn/whmU2A3SdAullWVj1aoEb+s5JBIAgNiGEYzmgGsSRA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
+ by SA1PR12MB7443.namprd12.prod.outlook.com (2603:10b6:806:2b7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 00:28:06 +0000
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6%6]) with mapi id 15.20.8445.013; Mon, 17 Feb 2025
+ 00:28:05 +0000
+Message-ID: <e123e1c9-21d1-4136-a26a-931135c477d3@nvidia.com>
+Date: Mon, 17 Feb 2025 02:27:59 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] infiniband: iscsi_iser: fix typos in comments
+To: Imanol <imvalient@protonmail.com>, shuah@kernel.org, sagi@grimberg.me,
+ jgg@ziepe.ca, leon@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250216235602.177904-1-imvalient@protonmail.com>
+Content-Language: en-US
+From: Max Gurtovoy <mgurtovoy@nvidia.com>
+In-Reply-To: <20250216235602.177904-1-imvalient@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0384.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::36) To CY5PR12MB6369.namprd12.prod.outlook.com
+ (2603:10b6:930:21::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|SA1PR12MB7443:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0a50b4d-37b6-4abe-b659-08dd4ee9f236
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djB4RHNLeUJDSGM1WVJ4ZmY0SGMzdGFlaDI3TklZWHNSZFhBS1Z4YTFDeDgx?=
+ =?utf-8?B?V2lFdys1bWoyM2IxeHNWV3Z2MkptRzN1NUJYYkYvWXdSWEIrOG5BN2xJYktx?=
+ =?utf-8?B?ZUVDUTU0empWUDkwcU9FWmJFSXV2cXdYL3UydnZIeU4ySXhIaWV5UCtnck5q?=
+ =?utf-8?B?SWRjRXB1d05sd0ZkSjd5ZC9BVXlIREVsTStCVUhBZDB6VzZ3V09GM2NwelFu?=
+ =?utf-8?B?OTRHYno1c2NIZE9nOTFCS01sc0xqOFdIa1JvTWdyakVPSnBML1NHS2lRYUt5?=
+ =?utf-8?B?Uk5aa1hZcDhyMGR4cU1sN0xXSm9iZ0V3a2szYk1tQ1pNT2lPVDllb05BWGd1?=
+ =?utf-8?B?M3NjWFlpS0JRK1hvY0FzT1FLY2swY1Q4cGtmWTZ2NnFRNVNOTUhIcFl1bkRB?=
+ =?utf-8?B?eStGN2NBNy9pbkRlTU9zdThaVi9UWTBScjRqZVF0NEF3VVRYSFg0MHkxcnlK?=
+ =?utf-8?B?THZPWkdaZmpCb3hDMUZRZ2RDa2htNU1MQVduak8ybFhVNmxVU1BuMDVmWXVu?=
+ =?utf-8?B?R3hyaE5BdzdycVBNRVNLcm5jd3JVSHdiNlptdjltNGFaS1NBdGVuaHI0bVh2?=
+ =?utf-8?B?NjhVcUFKSDE4RHNZWUVraDFIbXNOTE9GYUhYMTBjRXN4anlpMjBhVzdMSXUy?=
+ =?utf-8?B?b0VYMncrMTVjVVFoVTIwUWxTYTd4OC9mckZ6aVhMY3Z1K08vMW1qRlBXTkVs?=
+ =?utf-8?B?VW1BMHlRZzhOZGFINGY3bzlYTllDWGNDM3RsenJyRXYrYnkrMzRzRDhTdVVS?=
+ =?utf-8?B?cDMxallWblZjenRaSHhOR3JETDJ1cDVjS3NaNFhROUNVSG1rUEJwVHgwaGdl?=
+ =?utf-8?B?V0ZFMmtZbmVxaHYyUVVVWWh1MW1NRTV3RHVZT1UzL3JvMmxFNzhscVdBRmRw?=
+ =?utf-8?B?eTdGNjMzU3JRWGdjMjZGRUhFMEJBNkpVTUdyTGFwaCtHMmFTSXRMb0dlajB0?=
+ =?utf-8?B?N1ZXTnZubVRTa3F5bUFNSmVMZ0lPdGRtMUV6c1VJYTh1WTVzWGVrdkorVEgv?=
+ =?utf-8?B?Wk44TDBnblp2VTdoQlp1UXRBQVB2aXRCdG9RMWhFYzhEdjJMQnRJZWFCTy9L?=
+ =?utf-8?B?TFJLUi9wVXBuUG5BL1JIN1VpcGJoYmJHU2x3NUdZZTVSYnJLOEpzZlpJWnJT?=
+ =?utf-8?B?d3h5b3Y2QzhvL1pkUTlRRzFQMUwwT3gzZGZjUWEvMldReDRhSS8xa3UvVlNY?=
+ =?utf-8?B?d1p1NXR1dDFmNHEyQThiOHk4L2IrOXJSNXdWYVVzNnNhRFhzL3dFbCtKcTZ3?=
+ =?utf-8?B?OTVVYnJsL2FVVW95cXJUZ0c0aXk5RythYU93NndMbDRYclJnVC9RTldralRo?=
+ =?utf-8?B?V3l3RVphWUJySmxaaUJrYzZ4emEwcjlKTFpzbXB0R0ZuWGhFWVhWbDNaRUdQ?=
+ =?utf-8?B?aSs0bXdDTEpjQSt6bzQ3cjJDck1sMmdCSUcwZ2VmYW5NQXJoWEVscENibEJS?=
+ =?utf-8?B?WFRYMFFlUFpTanFxTWhUaXZNb3NSeFNKSjNkRk5vY0VRZGQ1c1NFZzUxTlc2?=
+ =?utf-8?B?YlpxMy9wb0pxaXVTSS9CTWk0ODkweGppRW5XVGlkcExGc2V2TkpneU52cktL?=
+ =?utf-8?B?UjlCbUhVdFlVVWVXK2ZXUVJQRW15OHlzWmJkNW0vNkJnYW1qMThOaEtMTWM1?=
+ =?utf-8?B?YlY2NE12TVZDYTliWHgyUUNTQktWRE5qQXRCTHc5TlVySjUySE5tQzUrVVVI?=
+ =?utf-8?B?NXFlYlVXbnhwbFpaK1FCZEJ2VWgxVmgza1R6TXRDRHF6Ujg3dVRtbXh3SlJC?=
+ =?utf-8?B?MFZuZEJab2htdGNBcVZUa3YvOWFRcVNhdTVHOFU1VEJpUmtYbUt6N0k3WjRs?=
+ =?utf-8?B?TWVhZEkzaGdBR0tGeWxCQmpudXhTblFzMWtXQmZrZWtCNStQOTZpN2x6L1pp?=
+ =?utf-8?Q?azz1beNS2AIsx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MWQ1OENyYW95Wk9FZlN1Qk1XdXhmVHpHVXBMR1ZjZUdrQytMb2dJZTBCTHRx?=
+ =?utf-8?B?bWJnbkRDc1RwSXpGc0ZGVWkvQXcra3ZscjBUK0ZiUEZxb0xnSG9leXlpT3cr?=
+ =?utf-8?B?OXU5aGxmeitoZkVHenFvejhTL0g0YTBnWDVsQjFFNFhtcnFQM1VlTTNFMXpO?=
+ =?utf-8?B?WlZQZHBLRHB5V041WXhNaU9zcDNEcmIxRVFNZkJkc0ZMTDY5aFlyMjJOUktp?=
+ =?utf-8?B?S3VpcmJxUVVyZkwwTm83elA1ZWlKbUxCZWp5aS9TQi8zcVFqcEx1ekxjdXFw?=
+ =?utf-8?B?cExLL1lUTDNCbzlsWEQ5a0NLLzBZTHo5Yk1IU05kVjhYSHBocjJZWUV5WHlr?=
+ =?utf-8?B?RXh1V1pscTRpdmhkaFE0ZVoxVzVWMzN2S2RkaVp4RXlLY0hhNC9WZ1VGY1Y4?=
+ =?utf-8?B?Z3p1MWh5VkMvVXJ3UmtQQk4yZDdWeUJoUUlNYkZMTkQ3Y1pyWlEvdjRJV2tU?=
+ =?utf-8?B?ZmN2cG12Zjc4R1RMSEhHK1hNRXZLeWpyL3lkUTVqNnFaN2FKbHBUdm1MR09J?=
+ =?utf-8?B?eDkyKzVyeHhMRGFkd0xaMkNOY3ZGSEU2MklSZDgyM3AwTDdqUnNkR0tSOU9C?=
+ =?utf-8?B?eUhTRWsrdFMwNWVMZzFUcGszbXFNQmI0OUZLOFQ0N2JScVJRdUVHeElWaGhp?=
+ =?utf-8?B?NjZpa0M0dXBVdDRpdkRTdFRQVzZOZ0Frbnovc3hIcXRYMFQrdjFoRmZGdGdU?=
+ =?utf-8?B?TjVIRUdkb3M4ZkdIa3JObWhycFMrNlJ0ZWR4NTJIZ25qd2k2b1pNd2I3OWdv?=
+ =?utf-8?B?T0FrakoxYWhqY0hySWN0aDVtMkxtdXc3VStVWlJ0bW82VkhEbXVIUDQ0bVdq?=
+ =?utf-8?B?NG95V3E5V0xGODYxUGU1c1dQOWRFYis2bm9Vc1U2bzVKNnVVUFRMVXA0ZDFh?=
+ =?utf-8?B?Rk1iN1RONWF5dXVxZjdhMWM2OVAwMmNmVytVbGdCUUhQMzRRMlNNZURoNENi?=
+ =?utf-8?B?NmNVYnI1eWNrcWN0OEdnZHg5dE85eGhvbXB2L2liQlpQeFhxeXdOT2laYUpR?=
+ =?utf-8?B?VjhWNmxTOERmL1d6RmxKZUxacFBPdGV4K1hKNFlWS3lkUEZLR3A0UEV1bVYv?=
+ =?utf-8?B?OEFVUm1hT2ppS0d5VUVGWGYyck9EZ3pKQ1lzUUNMN1hTdVFWTHhKcFZSQnRw?=
+ =?utf-8?B?YzdBL3BYejhvb1NQK2pabHlXM3M4TGRZcEpVYUhZRzNzbldUU0ZQV3hxVkRZ?=
+ =?utf-8?B?enJuM0xqZmFKRFlraUdrVjlXWDVDSFBoaUJUeHNLR3gyT2lJTWhPQm5LVDhi?=
+ =?utf-8?B?OFM1VGNQYUxRTVNFVm8wdXdhTllTTzRzWUZ0K0U2aFZmMHE4dG9ON0I4amdj?=
+ =?utf-8?B?dldudi8wb0tYMlVZNGFnNlhkeFF2ZXEyTXhCa1l4SnFmczFlZysyZFdadFRp?=
+ =?utf-8?B?NEJCaFVBNy9EM1RDVXh0bmZBRVBRUVV6ak9qQXJmV2tEZ3lMbGJYTk9vN0FX?=
+ =?utf-8?B?MTNYT0MrZDYzbFB4TEN4aTBEZURtM21ySTBtRkNWbHlDd1VqYVJQV3ZQNTVL?=
+ =?utf-8?B?ZW9aVmdPWFI0bGhyS3dsTVorb3NoVThlbHoxbnkwT2NXSGZJeU9sQ3Q3S3BK?=
+ =?utf-8?B?Ryt6aGNhWTM4cVViT0Iza3lOL1A4MHNnOGdFbEV2NUVCUThWZGJsSW5UWmtG?=
+ =?utf-8?B?S2pwMktCVEtMLy93MVhyRFhkNmoyYlRrRGgvV2hHUEJuR3NGSlViakVjTWpT?=
+ =?utf-8?B?L01OcTRYS0NQeGphZFFYQVFxVWdPUGsyRWEvRkR0WEpZdlhWN1JsNWUvT2NW?=
+ =?utf-8?B?em8xK0tpY3o1Ly9Qc2tFSmh1Mmw2dlV5ZldaY3JCRTZLbnYrV2RodlI2Q2p0?=
+ =?utf-8?B?am1kOUc1NHBEaXB0RmFtOFl5UkZyNzZZK3FBMnhGUXBLd0ZRVXVFQTI1V201?=
+ =?utf-8?B?NmIzdklXMGNWMXhFeFI3cWcrQmx1Z3h5V1A1bk1HdktXczZJWFVtckQrWG1p?=
+ =?utf-8?B?QlJMU3pzUlVkanZaTWZ5a3VsSkY0NjUyQkxxOVFUSHFoRTcwdjV4V2R5bDJZ?=
+ =?utf-8?B?OFhzakpadjdnZ1hiU24vMGdGa2ZxTTdJcjFMRW1iaFh6WEFISlhEZFVhWTFo?=
+ =?utf-8?B?R2xkcFB4R0xjeWdjaFlQbUNhRjNnZ1VNeGdsNWJnNjdya3JoVWVYV0d2RGRS?=
+ =?utf-8?Q?H7BYniMVBeCJQte1Udkxs2AGL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0a50b4d-37b6-4abe-b659-08dd4ee9f236
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 00:28:05.6972
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ig4K7sECMtZfVwlcqG0CykUPoUQ2EBZtahXxBF9aO9M7ILrVnwyZj+aXPD4UxCxdQAfhYA0d/nKDVoAtv46mjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7443
 
-On Thu, 2025-02-13 at 09:53 +0800, Jammy Huang wrote:
-> Convert aspeed-video.txt to yaml format.
-> Update aspeed-video.txt to aspeed,video-engine.yaml in MAINTAINER file.
->=20
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+
+On 17/02/2025 1:56, Imanol wrote:
+> Fixes multiple occurrences of the misspelled word "occured" in the comments
+> of `iscsi_iser.c`, replacing them with the correct spelling "occurred".
+>
+> This improves readability without affecting functionality.
+>
+> Signed-off-by: Imanol <imvalient@protonmail.com>
 > ---
-> =C2=A0v6:
-> =C2=A0 - Remove new properties in example.
->=20
-> =C2=A0v5:
-> =C2=A0 - Don't put additional changes in this commit.
->=20
-> =C2=A0v4:
-> =C2=A0 - Keep | after phandle description to fix dt_binding_check error.
->=20
-> =C2=A0v3:
-> =C2=A0 - Add Additional changes into comments.
-> =C2=A0 - Remove | after phandle description
->=20
-> =C2=A0v2:
-> =C2=A0 - Update patch subject
-> =C2=A0 - Add NOTE for false positive warning
-> ---
-> =C2=A0.../bindings/media/aspeed,video-engine.yaml=C2=A0=C2=A0 | 70 ++++++=
-+++++++++++++
-> =C2=A0.../bindings/media/aspeed-video.txt=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 ---------
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- |=C2=A0 2 +-
-> =C2=A03 files changed, 71 insertions(+), 34 deletions(-)
-> =C2=A0create mode 100644 Documentation/devicetree/bindings/media/aspeed,v=
-ideo-engine.yaml
-> =C2=A0delete mode 100644 Documentation/devicetree/bindings/media/aspeed-v=
-ideo.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/media/aspeed,video-engine.=
-yaml b/Documentation/devicetree/bindings/media/aspeed,video-engine.yaml
-> new file mode 100644
-> index 000000000000..682bba20778c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/aspeed,video-engine.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/aspeed,video-engine.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ASPEED Video Engine
-> +
-> +maintainers:
-> +=C2=A0 - Eddie James <eajames@linux.ibm.com>
-> +
-> +description:
-> +=C2=A0 The Video Engine (VE) embedded in the ASPEED SOCs can be configur=
-ed to
-> +=C2=A0 capture and compress video data from digital or analog sources.
-> +
-> +properties:
-> +=C2=A0 compatible:
-> +=C2=A0=C2=A0=C2=A0 enum:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2400-video-engine
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2500-video-engine
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2600-video-engine
-> +
-> +=C2=A0 reg:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> +
-> +=C2=A0 clocks:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 2
-> +
-> +=C2=A0 clock-names:
-> +=C2=A0=C2=A0=C2=A0 items:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: vclk
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: eclk
-> +
-> +=C2=A0 resets:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> +
-> +=C2=A0 interrupts:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> +
-> +=C2=A0 memory-region:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> +=C2=A0=C2=A0=C2=A0 description: |
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Phandle to the reserved memory nodes to b=
-e associated with the
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VE. VE will acquires memory space for 3 p=
-urposes:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1. JPEG header
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2. Compressed result
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 3. Temporary transformed imag=
-e data
-> +
-> +required:
-> +=C2=A0 - compatible
-> +=C2=A0 - reg
-> +=C2=A0 - clocks
-> +=C2=A0 - clock-names
-> +=C2=A0 - interrupts
+>   drivers/infiniband/ulp/iser/iscsi_iser.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
+> index bb9aaff92ca3..a5be6f1ba12b 100644
+> --- a/drivers/infiniband/ulp/iser/iscsi_iser.c
+> +++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
+> @@ -393,10 +393,10 @@ static void iscsi_iser_cleanup_task(struct iscsi_task *task)
+>    * @task:     iscsi task
+>    * @sector:   error sector if exsists (output)
+>    *
+> - * Return: zero if no data-integrity errors have occured
+> - *         0x1: data-integrity error occured in the guard-block
+> - *         0x2: data-integrity error occured in the reference tag
+> - *         0x3: data-integrity error occured in the application tag
+> + * Return: zero if no data-integrity errors have occurred
+> + *         0x1: data-integrity error occurred in the guard-block
+> + *         0x2: data-integrity error occurred in the reference tag
+> + *         0x3: data-integrity error occurred in the application tag
+>    *
+>    *         In addition the error sector is marked.
+>    */
 
-This should list `resets` as well, as that wasn't optional in the text
-binding.
+We usually use: "IB/iser:" prefix in the commit msg subject.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +=C2=A0 - |
-> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/clock/ast2600-clock.h>
-> +
-> +=C2=A0=C2=A0=C2=A0 video@1e700000 {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "aspeed,ast260=
-0-video-engine";
+Can you please replace "infiniband: iscsi_iser: fix typos in comments" 
+with "IB/iser: fix typos in iscsi_iser.c comments" ?
 
-I guess it's not much of a concern that the example is different...
+Other than that, looks good.
 
-Andrew
-
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x1e700000 0x1000>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&syscon ASPEED_CL=
-K_GATE_VCLK>,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 <&syscon ASPEED_CLK_GATE_ECLK>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "vclk", "eclk=
-";
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupts =3D <GIC_SPI 7 IRQ=
-_TYPE_LEVEL_HIGH>;
-> +=C2=A0=C2=A0=C2=A0 };
-> diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/D=
-ocumentation/devicetree/bindings/media/aspeed-video.txt
-> deleted file mode 100644
-> index d2ca32512272..000000000000
-> --- a/Documentation/devicetree/bindings/media/aspeed-video.txt
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -* Device tree bindings for Aspeed Video Engine
-> -
-> -The Video Engine (VE) embedded in the Aspeed AST2400/2500/2600 SOCs can
-> -capture and compress video data from digital or analog sources.
-> -
-> -Required properties:
-> - - compatible:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"asp=
-eed,ast2400-video-engine" or
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"aspeed,a=
-st2500-video-engine" or
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"aspeed,a=
-st2600-video-engine"
-> - - reg:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0contains the offset and length of the VE memory region
-> - - clocks:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0clock specifiers for the syscon clocks associated with
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0the VE (o=
-rdering must match the clock-names property)
-> - - clock-names:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"vclk" and "eclk"
-> - - resets:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0reset specifier for the syscon reset associated with
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0the VE
-> - - interrupts:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0the =
-interrupt associated with the VE on this platform
-> -
-> -Optional properties:
-> - - memory-region:
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0phandle to a memory region to =
-allocate from, as defined in
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Documentation/devicetree/bindi=
-ngs/reserved-memory/reserved-memory.txt
-> -
-> -Example:
-> -
-> -video-engine@1e700000 {
-> -=C2=A0=C2=A0=C2=A0 compatible =3D "aspeed,ast2500-video-engine";
-> -=C2=A0=C2=A0=C2=A0 reg =3D <0x1e700000 0x20000>;
-> -=C2=A0=C2=A0=C2=A0 clocks =3D <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon A=
-SPEED_CLK_GATE_ECLK>;
-> -=C2=A0=C2=A0=C2=A0 clock-names =3D "vclk", "eclk";
-> -=C2=A0=C2=A0=C2=A0 resets =3D <&syscon ASPEED_RESET_VIDEO>;
-> -=C2=A0=C2=A0=C2=A0 interrupts =3D <7>;
-> -=C2=A0=C2=A0=C2=A0 memory-region =3D <&video_engine_memory>;
-> -};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 896a307fa065..7e59daa1e89d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3549,7 +3549,7 @@ M:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0E=
-ddie James <eajames@linux.ibm.com>
-> =C2=A0L:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0linux-media@vger.kernel.org
-> =C2=A0L:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0openbmc@lists.ozlabs.org=C2=A0(mode=
-rated for non-subscribers)
-> =C2=A0S:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Maintained
-> -F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Documentation/devicetree/bindings/media/=
-aspeed-video.txt
-> +F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Documentation/devicetree/bindings/media/=
-aspeed,video-engine.yaml
-> =C2=A0F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0drivers/media/platform/aspeed/
-> =C2=A0
-> =C2=A0ASUS EC HARDWARE MONITOR DRIVER
->=20
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+Acked-by: Max Gurtovoy <mgurtovoy@nvidia.com>
 
 
