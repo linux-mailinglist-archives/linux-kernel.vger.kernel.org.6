@@ -1,236 +1,202 @@
-Return-Path: <linux-kernel+bounces-518137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A839AA38A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:12:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2D3A38A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BC817229C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A951894654
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0672288FB;
-	Mon, 17 Feb 2025 17:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61567228C93;
+	Mon, 17 Feb 2025 17:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/XJYMfn"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIWaS7QY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87DF2288F2;
-	Mon, 17 Feb 2025 17:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A3615666D;
+	Mon, 17 Feb 2025 17:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739812347; cv=none; b=GJ4xNLgykZB8cjOGk4OTC6lKMq9ApvncfuoMfmYxNJUphZGkYlFdIcf1bvLQuzrd7OucctjLShQ+NB84ugenvvMZOkYsNdHR5utXvYfm24oGXxOEadxZA9SpuyH7ZeB7wchJBp10BLUk/+ZwuUzLHstRQ1svnxf37crbnZea+0c=
+	t=1739812389; cv=none; b=VdNSkvAtiNqVk41Di7DAKyxfyVVXOBatxKaG9OIA4Jl/o6Iq/i9HL2Y7BUvdxPmAyR2kTp8u1oXY2zgXznEQVoFOXfZ93VjciW9XC9Jdh8OGwLTfs+YhNAvbUJbQXIvb+fT9zczht0YMq4CK36zfSFnooKANSd2s5tQshmQMNAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739812347; c=relaxed/simple;
-	bh=LVOQlz5VRkih/xMybEkYpUEaER1BzHL5Ayhs0FOll6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EbOhz6CG1KKe6JVARNo4zDMk39Ie1xl2J/Tqs1enwudQKco/hL/LvtnkACxhdA2ahxWG2ob5FjQO06hBB013XPfVMU8dKNv6tudbwxueYQj0VpMCxpejqwV13NmLyrsP6CADRfhhXGqRtcp9rFEVsVwNgq0Hka+/vZjrKSHrx2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/XJYMfn; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-307325f2436so37489171fa.0;
-        Mon, 17 Feb 2025 09:12:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739812344; x=1740417144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jbNIFLkQGKx8gMtazppTvQVDaVLm+keOHDU+VX7GYjs=;
-        b=E/XJYMfnEUsUJkZrbzLqNYL6psM+WQl4ZwadjayA98MHeYVZmX600eAknQT5UMo6uj
-         PRoEYFoTKDggZAJ08M/Zr5i4+dPgT5j0TcA7EH/kK1qLBpCMJvdDgBTx78lOCjzBVWN9
-         QNEZzI81cQE/4qaR28ZVgoTk/RAXACnmdEwwWmB5UiTrUD8Q8WEaHa490wJ6Z36Y9XIr
-         hW6VjDHylMqdZAz19CzJCvshwe1JaslYEFL7NYC5PnEN80gutCQ3yBUCewv8mM3DNNFL
-         xbYGQRL/nO4kp3jS5jdJt6bBGNTka7TYDn+34/TSP2v5X1H7GJ66m7hWQTEMyPDYdWm3
-         PMSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739812344; x=1740417144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jbNIFLkQGKx8gMtazppTvQVDaVLm+keOHDU+VX7GYjs=;
-        b=VUpJjyNCgrUC48LgX7UX595UgkwFi/h5ao/LlnALrn68E82vtIUM3n1ggxqkVBVUke
-         IKbb1H7wYGfByEQBFOxpCzmpyY0WyIdJ7sdsg9YSOVzzLQLd7PDjdzMHIt37lpnsOX7p
-         jVafbBHmK04DXD5TolUfQuXYqpm23xlD2LakY+EHVs2uZfjyYfhnSwpJTtkcpRbQ4hs/
-         x8WkCg3NpPdzHmX+jTbsdVDon4d/VK8+fKCSNHQPbKg7ZMtjBlrirSIzFo+lVYLcl8GI
-         DdQqK9Z0YA0W8Kbuvp7DbCJPcoVx81FGR20NKs7BkWcwL/X4lp8GYQuCmJrGK/WvigYF
-         dhKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJyjcwwSe5novt8wLZsrDCdIQ/n5bryky0GF/9ScguLS/fvzEXknGcMBI5H2ZMVHxKguqc4TwrxCBXzp9P@vger.kernel.org, AJvYcCWVJsGrA6bKGcYh3yqtmoYsEq6ARp4KlxfxjMzfF/9NjE3QAGfBHdPQgOjJk8r4W37wOLYG4LaKv06DtBMNEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQuZJb8WzmN+1MP8lJHS57afEJvRt2GujZWLmYHLvHcygZRXo
-	0k9QXUvDeJV1KbVf6L7TDeNb1Uuhppu0rEL/7U0K3yrCxqRUw98Pj2lMdw/Eqy+Si+g/1O522eV
-	3FOtGwuH69IvOxuPsPjEPir8as9Y=
-X-Gm-Gg: ASbGnctx6jWio8KO8ojBoe6P2QID84G8RFyd+qMPeAsynccWN8H5sT8WXDWhFUoOhsj
-	X5sTR7DIDi35mnKe8adUATVoEoG/r3zDPgVwq9HFfT0U9X1wZPBUZREpTJxBjM5dd8hlmPQCB
-X-Google-Smtp-Source: AGHT+IHjy4r+IzmE9EhuRmSMzfEdSQ8U3VGlqITFFstaR8PRZDd3RbzoZ6F7x5rkaVJbCaO78HffFEzUZo9jbKIUiWg=
-X-Received: by 2002:a2e:9f54:0:b0:308:f860:7c1 with SMTP id
- 38308e7fff4ca-30927b1b22amr29120861fa.30.1739812342599; Mon, 17 Feb 2025
- 09:12:22 -0800 (PST)
+	s=arc-20240116; t=1739812389; c=relaxed/simple;
+	bh=3lWesCkplc+7D1TnzAGo7WBSdfHQJbWlOLbUrY+d2gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPdJX5D8iamxUjFrhAx/Y4T6gbWs6VrBT6jtbP5Jy2g2iHjI/L5982VauPjFxD6S9ykLEa98cjwypW7jm8b9w+viiI2p1oXgW3qW1qZryGE4gJXGBLUN3c6D14juw2UEKRmdfRWUCLwuakKO+wFGtvgyHoOiQ6kzocDu3vyA4vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIWaS7QY; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739812387; x=1771348387;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3lWesCkplc+7D1TnzAGo7WBSdfHQJbWlOLbUrY+d2gA=;
+  b=FIWaS7QYbne3+3u0Hczt8OUffqnEgeTns6fGakhg/HH3mUwMPbGdsL5h
+   9ZgZfbmE416xfm/Akv22UKOjaHlNhxXWkF3BQOjYV8E/hhGxXbLCrhyIs
+   gdS6ItghtYWiN7epKi50zgu0hc/hTQKr+2rjH8jLuFL3NElswtCesCLZz
+   392CsgdlOmus5OMvxx0ppFM42oK9q7jNizTRc5kY/WfbRqY4Q7fWRo2NS
+   7RBgBl6Tujt9BMTFuU2NXT0RFdxLi/8Wk9JpMMEwOYkvnc4k+BE3U/j4f
+   sEp3P9zYJRj3x1fyhqdNSHBZdF6t6d0IEweb0RVuRh9ExpQFn+j50I6KB
+   Q==;
+X-CSE-ConnectionGUID: IkS7lH7PS1CzrmdOOfzTDA==
+X-CSE-MsgGUID: PxCA5iovRnaz23+Tn5+2Fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="39694671"
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
+   d="scan'208";a="39694671"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 09:13:06 -0800
+X-CSE-ConnectionGUID: yYjSLLRgSPywq10YkdoXzA==
+X-CSE-MsgGUID: gYiqN45KQKWy1wwSNas2ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
+   d="scan'208";a="114104777"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 17 Feb 2025 09:13:04 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tk4g0-001DNj-2n;
+	Mon, 17 Feb 2025 17:13:00 +0000
+Date: Tue, 18 Feb 2025 01:12:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <superm1@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	"(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <linux-kernel@vger.kernel.org>,
+	linux-pm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 11/17] cpufreq/amd-pstate: Replace all AMD_CPPC_*
+ macros with masks
+Message-ID: <202502180139.g2a2yoPe-lkp@intel.com>
+References: <20250215005244.1212285-12-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <675d01e9.050a0220.37aaf.00be.GAE@google.com> <67af8747.050a0220.21dd3.004c.GAE@google.com>
- <20250214152358.7ba29d10229e2155c0899774@linux-foundation.org> <CAMgjq7DQm+nwTWMdWQ66WW84O6YnhRQvZEjaY3EeXZ5-iKXo-A@mail.gmail.com>
-In-Reply-To: <CAMgjq7DQm+nwTWMdWQ66WW84O6YnhRQvZEjaY3EeXZ5-iKXo-A@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 18 Feb 2025 01:12:04 +0800
-X-Gm-Features: AWEUYZlr5OT-vFG04O05Y9RY-JrYRxb2uhKVomssed7apCq-exWeAz-LivZSVcg
-Message-ID: <CAMgjq7AqZaRuu+udJd7MyU2n3eF7wKX8bjDugFrdHYd2Lq=EXQ@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
-To: Andrew Morton <akpm@linux-foundation.org>, kent.overstreet@linux.dev
-Cc: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>, 
-	chengming.zhou@linux.dev, hannes@cmpxchg.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, sashal@kernel.org, 
-	shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com, willy@infradead.org, 
-	yuzhao@google.com, zhengqi.arch@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215005244.1212285-12-superm1@kernel.org>
 
-On Mon, Feb 17, 2025 at 12:13=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> On Sat, Feb 15, 2025 at 7:24=E2=80=AFAM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
-> >
-> > On Fri, 14 Feb 2025 10:11:19 -0800 syzbot <syzbot+38a0cbd267eff2d286ff@=
-syzkaller.appspotmail.com> wrote:
-> >
-> > > syzbot has found a reproducer for the following issue on:
-> >
-> > Thanks.  I doubt if bcachefs is implicated in this?
-> >
-> > > HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of http=
-s://g..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D148019a45=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc776e555c=
-fbdb82d
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D38a0cbd267e=
-ff2d286ff
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12328bf=
-8580000
-> > >
-> > > Downloadable assets:
-> > > disk image (non-bootable): https://storage.googleapis.com/syzbot-asse=
-ts/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vm=
-linux-128c8f96.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc=
-9f/bzImage-128c8f96.xz
-> > > mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da78=
-3f97cf/mount_3.gz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> > > Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
-> > >
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+=
-0x39e/0x4d0 mm/list_lru.c:96
-> >
-> >         VM_WARN_ON(!css_is_dying(&memcg->css));
->
-> I'm checking this, when last time this was triggered, it was caused by
-> a list_lru user did not initialize the memcg list_lru properly before
-> list_lru reclaim started, and fixed by:
-> https://lore.kernel.org/all/20241222122936.67501-1-ryncsn@gmail.com/T/
->
-> This shouldn't be a big issue, maybe there are leaks that will be
-> fixed upon reparenting, and this new added sanity check might be too
-> lenient, I'm not 100% sure though.
->
-> Unfortunately I couldn't reproduce the issue locally with the
-> reproducer yet. will keep the test running and see if it can hit this
-> WARN_ON.
+Hi Mario,
 
-So far I am still unable to trigger this VM_WARN_ON using the
-reproducer, and I'm seeing many other random crashes.
+kernel test robot noticed the following build errors:
 
-But after I changed the .config a bit adding more debug configs
-(SLAB_FREELIST_HARDENED, DEBUG_PAGEALLOC), following crash showed up
-and will be triggered immediately after I start the test:
+[auto build test ERROR on amd-pstate/linux-next]
+[also build test ERROR on amd-pstate/bleeding-edge]
+[cannot apply to rafael-pm/linux-next rafael-pm/bleeding-edge tip/x86/core linus/master v6.14-rc3 next-20250217]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[ T1242] BUG: unable to handle page fault for address: ffff888054c60000
-[ T1242] #PF: supervisor read access in kernel mode
-[ T1242] #PF: error_code(0x0000) - not-present page
-[ T1242] PGD 19e01067 P4D 19e01067 PUD 19e04067 PMD 7fc5c067 PTE
-800fffffab39f060
-[ T1242] Oops: Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
-[ T1242] CPU: 1 UID: 0 PID: 1242 Comm: kworker/1:1H Not tainted
-6.14.0-rc2-00185-g128c8f96eb86 #2
-[ T1242] Hardware name: Red Hat KVM/RHEL-AV, BIOS
-1.16.0-4.module+el8.8.0+664+0a3d6c83 04/01/2014
-[ T1242] Workqueue: bcachefs_btree_read_complete btree_node_read_work
-[ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
-[ T6058] bcachefs (loop2): empty btree root xattrs
-[ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
-48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
-ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
-[ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
-[ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: 0000000000006c31
-[ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: ffff888054c5ff90
-[ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: 1ffff1100cbc0035
-[ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: ffff888054c2009e
-[ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: ffff888054c200a0
-[ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
-knlGS:0000000000000000
-[ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: 00000000000006f0
-[ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ T1242] Call Trace:
-[ T1242]  <TASK>
-[ T1242]  bch2_btree_node_read_done+0x1d20/0x53a0
-[ T1242]  btree_node_read_work+0x54d/0xdc0
-[ T1242]  process_scheduled_works+0xaf8/0x17f0
-[ T1242]  worker_thread+0x89d/0xd60
-[ T1242]  kthread+0x722/0x890
-[ T1242]  ret_from_fork+0x4e/0x80
-[ T1242]  ret_from_fork_asm+0x1a/0x30
-[ T1242]  </TASK>
-[ T1242] Modules linked in:
-[ T1242] ---[ end trace 0000000000000000 ]---
-[ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
-[ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
-48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
-ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
-[ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
-[ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: 0000000000006c31
-[ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: ffff888054c5ff90
-[ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: 1ffff1100cbc0035
-[ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: ffff888054c2009e
-[ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: ffff888054c200a0
-[ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
-knlGS:0000000000000000
-[ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: 00000000000006f0
-[ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ T1242] Kernel panic - not syncing: Fatal exception
-[ T1242] Kernel Offset: disabled
-[ T1242] Rebooting in 86400 seconds..
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/cpufreq-amd-pstate-Show-a-warning-when-a-CPU-fails-to-setup/20250215-085903
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git linux-next
+patch link:    https://lore.kernel.org/r/20250215005244.1212285-12-superm1%40kernel.org
+patch subject: [PATCH v2 11/17] cpufreq/amd-pstate: Replace all AMD_CPPC_* macros with masks
+config: i386-randconfig-063-20250216 (https://download.01.org/0day-ci/archive/20250218/202502180139.g2a2yoPe-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250218/202502180139.g2a2yoPe-lkp@intel.com/reproduce)
 
-It's caused by the memmove_u64s_down in validate_bset_keys of
-fs/bcachefs/btree_io.c:
--> memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(i) - (u64 *) k)=
-;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502180139.g2a2yoPe-lkp@intel.com/
 
-The bkey_p_next(k) is RSI: ffff888054c60000 and it's causing an out of
-border access.
-(u64 *) vstruct_end(i) - (u64 *) k is RCX: 0000000000006c31, if added
-to RDI this should cause an out of border write as well.
+All errors (new ones prefixed by >>):
 
-This seems to indicate there is an out of border memory modification?
-And maybe it corrupted other subsystems? The slight change to .config
-changed the layout so it's causing a fault, maybe previously this just
-went on silently.
-I don't know much about bcachefs, will be grateful if bcachefs people
-could help have a look.
+>> drivers/cpufreq/amd-pstate-ut.c:145:19: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     145 |                         highest_perf = FIELD_GET(AMD_CPPC_HIGHEST_PERF_MASK, cap1);
+         |                                        ^
+   1 error generated.
+
+
+vim +/FIELD_GET +145 drivers/cpufreq/amd-pstate-ut.c
+
+   105	
+   106	/*
+   107	 * check if performance values are reasonable.
+   108	 * highest_perf >= nominal_perf > lowest_nonlinear_perf > lowest_perf > 0
+   109	 */
+   110	static int amd_pstate_ut_check_perf(u32 index)
+   111	{
+   112		int cpu = 0, ret = 0;
+   113		u32 highest_perf = 0, nominal_perf = 0, lowest_nonlinear_perf = 0, lowest_perf = 0;
+   114		u64 cap1 = 0;
+   115		struct cppc_perf_caps cppc_perf;
+   116		struct amd_cpudata *cpudata = NULL;
+   117		union perf_cached cur_perf;
+   118	
+   119		for_each_possible_cpu(cpu) {
+   120			struct cpufreq_policy *policy __free(put_cpufreq_policy) = NULL;
+   121	
+   122			policy = cpufreq_cpu_get(cpu);
+   123			if (!policy)
+   124				continue;
+   125			cpudata = policy->driver_data;
+   126	
+   127			if (get_shared_mem()) {
+   128				ret = cppc_get_perf_caps(cpu, &cppc_perf);
+   129				if (ret) {
+   130					pr_err("%s cppc_get_perf_caps ret=%d error!\n", __func__, ret);
+   131					return ret;
+   132				}
+   133	
+   134				highest_perf = cppc_perf.highest_perf;
+   135				nominal_perf = cppc_perf.nominal_perf;
+   136				lowest_nonlinear_perf = cppc_perf.lowest_nonlinear_perf;
+   137				lowest_perf = cppc_perf.lowest_perf;
+   138			} else {
+   139				ret = rdmsrl_safe_on_cpu(cpu, MSR_AMD_CPPC_CAP1, &cap1);
+   140				if (ret) {
+   141					pr_err("%s read CPPC_CAP1 ret=%d error!\n", __func__, ret);
+   142					return ret;
+   143				}
+   144	
+ > 145				highest_perf = FIELD_GET(AMD_CPPC_HIGHEST_PERF_MASK, cap1);
+   146				nominal_perf = FIELD_GET(AMD_CPPC_NOMINAL_PERF_MASK, cap1);
+   147				lowest_nonlinear_perf = FIELD_GET(AMD_CPPC_LOWNONLIN_PERF_MASK, cap1);
+   148				lowest_perf = FIELD_GET(AMD_CPPC_LOWEST_PERF_MASK, cap1);
+   149			}
+   150	
+   151			cur_perf = READ_ONCE(cpudata->perf);
+   152			if (highest_perf != cur_perf.highest_perf && !cpudata->hw_prefcore) {
+   153				pr_err("%s cpu%d highest=%d %d highest perf doesn't match\n",
+   154					__func__, cpu, highest_perf, cpudata->perf.highest_perf);
+   155				return -EINVAL;
+   156			}
+   157			if (nominal_perf != cur_perf.nominal_perf ||
+   158			   (lowest_nonlinear_perf != cur_perf.lowest_nonlinear_perf) ||
+   159			   (lowest_perf != cur_perf.lowest_perf)) {
+   160				pr_err("%s cpu%d nominal=%d %d lowest_nonlinear=%d %d lowest=%d %d, they should be equal!\n",
+   161					__func__, cpu, nominal_perf, cpudata->perf.nominal_perf,
+   162					lowest_nonlinear_perf, cpudata->perf.lowest_nonlinear_perf,
+   163					lowest_perf, cpudata->perf.lowest_perf);
+   164				return -EINVAL;
+   165			}
+   166	
+   167			if (!((highest_perf >= nominal_perf) &&
+   168				(nominal_perf > lowest_nonlinear_perf) &&
+   169				(lowest_nonlinear_perf >= lowest_perf) &&
+   170				(lowest_perf > 0))) {
+   171				pr_err("%s cpu%d highest=%d >= nominal=%d > lowest_nonlinear=%d > lowest=%d > 0, the formula is incorrect!\n",
+   172					__func__, cpu, highest_perf, nominal_perf,
+   173					lowest_nonlinear_perf, lowest_perf);
+   174				return -EINVAL;
+   175			}
+   176		}
+   177	
+   178		return 0;
+   179	}
+   180	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
