@@ -1,133 +1,117 @@
-Return-Path: <linux-kernel+bounces-517135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAFCA37C8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F2AA37C90
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:53:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34956168305
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7DC11687A5
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0945819D89E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFAD192D80;
 	Mon, 17 Feb 2025 07:53:31 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9C515382E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10016192D76
 	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739778810; cv=none; b=b9D5Q/3jEKVqN5+TbwJ9T9ZwFIvFWeEF+Z6Ch1t2JD9U4H/XOmaBpIE6VHdefTjAlK0B6b3lJUoiEYzo4liPl7AENmeb0JccN/Hx0ZawvpDkvcRPlvTQSvEa38U1kR9J3RfLiM4H49QS3QfqXXacgwXuLzyCFhEVJf+cdR8ccbo=
+	t=1739778810; cv=none; b=BqJ9wyuiI5rQl3biMTAh01B6E7ERZvNAqbzz7s+lTL+40JaDVSz8jlefWlr0SJVwbklJYfzJ0U2PLR7ZIIBTuu8ZdJA1K1NYD1AMl/4uu+i/fkCeLXNKwbEfyPdRtrp7zHNf7j9OWgnrNMQpdew0Mty7a70Pmjy7A11JRq7V5Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739778810; c=relaxed/simple;
-	bh=UWNlBGhn8gTQXtaqcjBINb2qBYAx79VzujnWrdSJMn8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=co3RKSUbF50dBc47R7F1RihGC++1yIKh4fnRXkSdq2+dFTt/MVRQqMsPMnU1wqPH77lBT4F9GLQHrZULSDq3kJeM2cD6JYzrEOXVcR3wdgDCj48s3tOYu+xbpkSYbeQMn9rej4QLramtl/KzFaODoWVW+LdOwNSNWWX2/iPipLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+	bh=0eB6pfik9lPrKnBrPr5YRGNnZCcmDvEsBLomBFwCLzw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HmglxmmJS/kPSu/Yv93stArsN29Hm28DjmOQgrALJbKO8VTUZyrvMqxbDthruChnCGsLE1aHvosArqIg6lFGVy/RZAyyzlvjuZkyVhQlO98qK4xg2RzJ+TmwJkqlOpuRyyKlnAJ7f1fQ/iDKxkohcYAZ7ss0WpTf+WCzLcQqAgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d18e28a0c1so77565915ab.3
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d054d79dacso79547745ab.2
         for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:53:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1739778808; x=1740383608;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xa6eOaAMR3+Qxml1oXlPvkHdgNoOKtRK2JU98N4ptAU=;
-        b=FgwHWpoqIKXOYGGxbLIvCh/WdxOfx/WmNLHXhyjTKf7RiINi6C7LrOSG/1dc5+2NUy
-         ZrG6xz640NbJmQCO7rCGilM6iTezmMdqoUxYcVtOUhHSJbhvyefXt1jskHBPnWJLUSKg
-         PDKuGhl62AhAAJ4PDgJR/0Gg/hHTB1HXbW3QB57b68z6zEhxiQTTJ2EfUnZMuKwCO4pQ
-         R/qMDJh9Q4mgnVaynlFSG4dtH+4p4SxrielNZy4+ersyme8zJC93HNiidFc4R7dhQLBk
-         pcHw9p4e+eExo03z5nHXjOmfJNjPrgjlyPTNAuHqAENsIMvtQfM4/+GYCs6HYttUiE9g
-         c1NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOP5WgIn8xFdWFeuXRoL4FM4mb9THT3ivcvNIhzu6gTc1iksWukIM1UWKI70RZ+WblHB4p90rRUxNCXrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvdCFlOpSdERyIN+027GW9i25zjsUdLplBAhqBHk1onf5K722p
-	fXZDcAwkXgKm9hEXtbm7IQrZ9ekUvkRO12q5FcSs2k0viOyj5pITTwrgv6v9v2U3nnGatGBseoc
-	J1ccuzGGVUOMyEXiZh+xk0eLin32lJrLuGb7fAHa8GiiWcVKnFpvMUSY=
-X-Google-Smtp-Source: AGHT+IFqV+nU2Qz57UdH0pXY1vNYRVAam7Zie7skMf8m4Bc3k0pqLhD+EAGmuDvZkjK3Q07MmDfQ7ZWdi+3ssKl5WOM1ekSOBsqE
+        bh=OnjOPcPtQJidYYXAir6799pgHthwAAAi4v1nTbaniHg=;
+        b=TunawwK9Oxv0ULIVOS/TR1jWBmw3gA8JDIQIFEFrD5ilLZmO71X8xtreKIMHq6Jlsf
+         aKMtXjQESC9JxBIhTpWwSlzTvvRVx8WUawdvN0SKkV5DLlhZFvJLHq49wSmdj85igRAa
+         cApUoFqZ9Xo68yJJ7gO5RDeTrnCepknNX6ybTN5x/H6ifygrq31jG0B/czSLMynl+YlH
+         /ytjDDVacjLNZ1nVEcVqSX0btLXI1SROCiIl3SEZIoJXsKpU9aQTKq3Hx0MJJsfe0rw7
+         CCBgaL60BwKImFbg8Z5HWS9/ygrMKF+tjz/3igE0GB0YUHGJQGfN7RIfIZkO8yi/zn5I
+         brMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNF7R+kl2/HXO+ghBSPvIf80zZ5gJ6qvozSW0nt4QOZYgvQ2EcJPJE+F3T/JZJ8YDEGZeUijrwn0gDRY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqYm2LkTqvdVBDMJUX9q5FTVkxfF6NxaHhM6fz2e9sQn9boRBw
+	gQK4DIlWWLAqGyNqF6AEZNfIizt2hm//dDaLO37hxYchL4+rQ1QI9wnTYljBAGuZDX/FWfs68TI
+	fRsLDegJNC0Y3JBA0MeXN3XoQM1dGlTRIcZow88/v1caM/J+SPT0l5yM=
+X-Google-Smtp-Source: AGHT+IHUJpTvEOY7k+3N0NKWON1rIkG0PuVtRogPOq4lO3+Q5V6JgBp9PpQFV246dsEQo5Da/Bkt6x18R8Y0eY73CR4Sa7BdehDk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4b:b0:3cf:c773:6992 with SMTP id
- e9e14a558f8ab-3d280906241mr91745345ab.12.1739778807973; Sun, 16 Feb 2025
- 23:53:27 -0800 (PST)
-Date: Sun, 16 Feb 2025 23:53:27 -0800
+X-Received: by 2002:a05:6e02:240b:b0:3d2:75bc:730 with SMTP id
+ e9e14a558f8ab-3d2809d9587mr73860745ab.19.1739778808203; Sun, 16 Feb 2025
+ 23:53:28 -0800 (PST)
+Date: Sun, 16 Feb 2025 23:53:28 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b2eaf7.050a0220.173698.001f.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_reconstruct_snapshots
-From: syzbot <syzbot+b4cb4a6988aced0cec4b@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <67b2eaf8.050a0220.173698.0020.GAE@google.com>
+Subject: [syzbot] [crypto?] KASAN: use-after-free Read in crypto_poly1305_update
+From: syzbot <syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, davem@davemloft.net, 
+	herbert@gondor.apana.org.au, hpa@zytor.com, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+HEAD commit:    ba643b6d8440 Merge tag 'irq_urgent_for_v6.14_rc3' of git:/..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13c44bf8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4cb4a6988aced0cec4b
+console output: https://syzkaller.appspot.com/x/log.txt?x=176ea898580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+dashboard link: https://syzkaller.appspot.com/bug?extid=d587b24799bd8c2d32f4
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5d9b0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112099a4580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150557df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eea898580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/419cba1a156b/disk-128c8f96.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0fa327c9a058/vmlinux-128c8f96.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5ad066f8a08b/bzImage-128c8f96.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/77719351875e/mount_0.gz
-
-The issue was bisected to:
-
-commit c986dd7ecba185ad2a36b0815940f34deb2a8170
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Oct 10 01:28:11 2024 +0000
-
-    bcachefs: Improve check_snapshot_exists()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1568e098580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1768e098580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1368e098580000
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ba643b6d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b6a86fb77c0b/vmlinux-ba643b6d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c4725da84fe0/bzImage-ba643b6d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/769f8967e4f1/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b4cb4a6988aced0cec4b@syzkaller.appspotmail.com
-Fixes: c986dd7ecba1 ("bcachefs: Improve check_snapshot_exists()")
+Reported-by: syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com
 
-bcachefs (loop0): scanning for missing backpointers in 6/128 buckets
- done
-bcachefs (loop0): reconstruct_snapshots...
-snapshot node 4294905343 from tree 4294905343 missing, recreating
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/bkey_types.h:210!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5822 Comm: syz-executor354 Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:bkey_s_c_to_subvolume fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:check_snapshot_exists fs/bcachefs/snapshot.c:884 [inline]
-RIP: 0010:bch2_reconstruct_snapshots+0x35a5/0x35b0 fs/bcachefs/snapshot.c:1001
-Code: 08 a9 fd e9 e3 cb ff ff e8 88 51 44 fd e8 f3 fa a8 fd 4c 89 ef 89 de e8 29 68 cc ff e8 74 51 44 fd 90 0f 0b e8 6c 51 44 fd 90 <0f> 0b e8 84 e7 82 07 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003dfee20 EFLAGS: 00010293
-RAX: ffffffff847d6594 RBX: 0000000000000009 RCX: ffff88807c9d5a00
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000015
-RBP: ffffc90003dff428 R08: ffffffff847d56ba R09: 0000000000000000
-R10: ffffc90003dfe820 R11: fffff520007bfd11 R12: ffff8880250865c0
-R13: 0000000000000000 R14: ffff888029330230 R15: 1ffff11004a10cb8
-FS:  000055558bf6c380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055da28eea000 CR3: 000000005d824000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+==================================================================
+BUG: KASAN: use-after-free in crypto_poly1305_update+0x28/0x40 arch/x86/crypto/poly1305_glue.c:230
+Read of size 8 at addr ffff888049757390 by task syz-executor358/5305
+
+CPU: 0 UID: 0 PID: 5305 Comm: syz-executor358 Not tainted 6.14.0-rc2-syzkaller-00346-gba643b6d8440 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
 Call Trace:
  <TASK>
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
- bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
- bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ crypto_poly1305_update+0x28/0x40 arch/x86/crypto/poly1305_glue.c:230
+ bch2_checksum+0x5fa/0x780 fs/bcachefs/checksum.c:239
+ bch2_btree_node_read_done+0x1402/0x6180 fs/bcachefs/btree_io.c:1130
+ btree_node_read_work+0x6dc/0x1380 fs/bcachefs/btree_io.c:1358
+ bch2_btree_node_read+0x2433/0x29f0
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1789 [inline]
+ bch2_btree_root_read+0x626/0x7b0 fs/bcachefs/btree_io.c:1811
+ read_btree_roots+0x3d3/0xa70 fs/bcachefs/recovery.c:581
+ bch2_fs_recovery+0x260f/0x3de0 fs/bcachefs/recovery.c:928
  bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
  bch2_fs_get_tree+0xdb7/0x17a0 fs/bcachefs/fs.c:2203
  vfs_get_tree+0x90/0x2b0 fs/super.c:1814
@@ -138,32 +122,32 @@ Call Trace:
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe1e5e912ea
+RIP: 0033:0x7fd8b49b71ba
 Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff4e8847f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fff4e884810 RCX: 00007fe1e5e912ea
-RDX: 00004000000058c0 RSI: 0000400000005900 RDI: 00007fff4e884810
-RBP: 0000400000005900 R08: 00007fff4e884850 R09: 000000000000592e
-R10: 0000000001000000 R11: 0000000000000282 R12: 00004000000058c0
-R13: 00007fff4e884850 R14: 0000000000000003 R15: 0000000001000000
+RSP: 002b:00007fff5a4d7e78 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff5a4d7e90 RCX: 00007fd8b49b71ba
+RDX: 0000400000000000 RSI: 0000400000000200 RDI: 00007fff5a4d7e90
+RBP: 0000400000000000 R08: 00007fff5a4d7ed0 R09: 000000000000f634
+R10: 0000000002a08414 R11: 0000000000000282 R12: 0000400000000200
+R13: 00007fff5a4d7ed0 R14: 0000000000000003 R15: 0000000002a08414
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bkey_s_c_to_subvolume fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:check_snapshot_exists fs/bcachefs/snapshot.c:884 [inline]
-RIP: 0010:bch2_reconstruct_snapshots+0x35a5/0x35b0 fs/bcachefs/snapshot.c:1001
-Code: 08 a9 fd e9 e3 cb ff ff e8 88 51 44 fd e8 f3 fa a8 fd 4c 89 ef 89 de e8 29 68 cc ff e8 74 51 44 fd 90 0f 0b e8 6c 51 44 fd 90 <0f> 0b e8 84 e7 82 07 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003dfee20 EFLAGS: 00010293
-RAX: ffffffff847d6594 RBX: 0000000000000009 RCX: ffff88807c9d5a00
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000015
-RBP: ffffc90003dff428 R08: ffffffff847d56ba R09: 0000000000000000
-R10: ffffc90003dfe820 R11: fffff520007bfd11 R12: ffff8880250865c0
-R13: 0000000000000000 R14: ffff888029330230 R15: 1ffff11004a10cb8
-FS:  000055558bf6c380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ff36f26038 CR3: 000000005d824000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x49757
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 ffffea000125d5c8 ffffea000125d5c8 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffff888049757280: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888049757300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff888049757380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                         ^
+ ffff888049757400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888049757480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
 
 ---
@@ -173,7 +157,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
