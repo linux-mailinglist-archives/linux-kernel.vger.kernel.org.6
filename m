@@ -1,221 +1,265 @@
-Return-Path: <linux-kernel+bounces-517067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A0CA37B92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:37:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF756A37B98
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA027A38D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE4716838F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C851ACEDE;
-	Mon, 17 Feb 2025 06:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9D9190059;
+	Mon, 17 Feb 2025 06:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X6lW/RTl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fDmX9kF5"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2080.outbound.protection.outlook.com [40.107.220.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A14D198A36
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739774106; cv=none; b=rgNRmRx4RTlyepn2pEszgMnsf3ysi0uO0GqBZJ99vSG/QrwsTinV4W44MnEBiOIIq7Re7BddIG8mJwafpFYOrv24Nb53DiJ1126rHkIZUTAq3csaXL2CcM9YwJdMPhn470uo75jD2e+T87jpRWFXcuSheytQguVtq/OZX8Czq90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739774106; c=relaxed/simple;
-	bh=RBJ8SVlEdgIi33jmgw1hem9IHbgCNgZQ5wzw7AEiy5g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XhAJCHZa51SugIHvK0fb3wyFLOgW15uNHLGjrWlCp61IQ2LV1mTNOdoWWCzWzd4a7GxBew5K0hmWs391prDI4kkppdcbCSm4NhynVjmfckAUpwy4eGimkui3Ug7dDOOp5tlI4jdW6pI8LzpSov2fzrTfgjMm8PdROVQzgb/TMk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X6lW/RTl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H03Dra031995
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:35:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7UDfNKFG393gXzpXTFQgYOudK9v3C70LFzGo8/QFzEw=; b=X6lW/RTlx2B4mUbJ
-	uyievDNAqxoSk16rOKKN3tfTS1jtAA1M86yfRcxjS+cKlCs5dL38lO7em5vnOxMK
-	H0Mwkk15WZUQupLdfsM9wDvYh7KVUZ6JpDMpEbaf92GHRwtnpHFQ9a8+EkrT2dwu
-	HVH7G1R93EzIj48YhL/RTrtFyJBGR9pZ8n/JdfoZ0L8g1xhZPi2QSPqmQ3c2HxmP
-	wTgM3ruL2HVT4zLS2EN5+c0Ts0kj/xkezaWIvYLckN4so39dVtAjoAXghjdLvSUw
-	+JvH84+iIKhyTaSLTtZYCeVWyexJ6hl5ErLIJe25g9VlHe61AijS1sdrsSJg2Wzx
-	P/urvw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7wrq1a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:35:03 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f46b7851fcso13410101a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:35:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739774102; x=1740378902;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7UDfNKFG393gXzpXTFQgYOudK9v3C70LFzGo8/QFzEw=;
-        b=G88L7DNUVqK2wxBdQNigQ+sBs6UPstEvFDyGlHEHEg4LZ6yNJci0dSt7n50XZcsAwP
-         i/iNLRqsDtxryLqG9xQvvRUeSoCGNyQH42zFS08MldlJGxCaLDd9QWniz1dDCukCrJ+E
-         1YbllbYSq8XEq2DC6MgD5calDR4WYXrIbqCwGqWnZ4dvyEgQBxGNUMVlgHY33ATID8rN
-         J06GgCUl0jtALy5XF0onbRpyVAmZlYigiS5Jmu7B8ypshW3pdeLSeNGb/sZk2ZC7e/EL
-         JfGHdHLVf7Qh+P4OlTuhFM1a7mQXOp6Wm4kAK/sqeBnZt+D6pZI+QOm+k9L8Zx3a6LUV
-         FMjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGEOx240QDtVoBWqhz57etyP+uVqsODPCajL7w9UGN1T0h0ufAl2qdTCDKiCP8P4/+G2P2bq/MM4FAQsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT0godqVctnayDk8iPtLQVV6RS05dOzE22O+EdcnMsUtc9qXMe
-	AnfVLE+fzD5Wvxh1J39R6DbxE3JmnoQVSw3JkikDaO8peYB3ZcgZ9TmkNtfVXyIRph6xbgMCJLs
-	ZCkNHh1FvtSPEwKwbYnN5ZcZQjzeVRU+T5XcUUptSzoGN4awzsARcTmk2yqv81sU=
-X-Gm-Gg: ASbGncvclaqByX86NCKTH5WJgbpH3QI52rX7vSNS+BJEQ3NQh9S8tjCOQO/ISqzEelw
-	rZ54usRrwM7n7TS07YeGMxZ8UskWUG3Ts5xDpDaxHpb13zw0ZeBIPe7rTNLKtzj3bTKWYpg3xQo
-	hcEbqeG4RUFJJZPH9A+DDnxJMUhVz4Ua+C2xFPEWt8xKCawQ5fxwb8LzXka+XB0pTiGZv3jUSgU
-	JdQIesWyoyeCGyxysYVdfqRAedK72mCuQMqvOsj/7qQG7WqvhLeQJfEbZ+gQng2uNO9r1MH+n7c
-	/UEZVQD4xcizVvpBeEIihvBGz2+HlOfbo1OSyL6c
-X-Received: by 2002:a05:6a00:4b16:b0:732:1eb2:7bf3 with SMTP id d2e1a72fcca58-7326190da79mr13548563b3a.21.1739774101997;
-        Sun, 16 Feb 2025 22:35:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IELGz3GfyEeU6Trxoq5KbbF54Mp2aAMym3Xjbg6o2A/BhSQ+4SDY7/QVTEr7x4pCB17FhXW0A==
-X-Received: by 2002:a05:6a00:4b16:b0:732:1eb2:7bf3 with SMTP id d2e1a72fcca58-7326190da79mr13548522b3a.21.1739774101600;
-        Sun, 16 Feb 2025 22:35:01 -0800 (PST)
-Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73263b79287sm3771800b3a.29.2025.02.16.22.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 22:35:01 -0800 (PST)
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Mon, 17 Feb 2025 12:04:15 +0530
-Subject: [PATCH 8/8] wifi: ath11k: add support for MHI bandwidth scaling
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B8C18BC1D;
+	Mon, 17 Feb 2025 06:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739774354; cv=fail; b=Ar0VdVBD5+pNQP/c9hD79DF1sjpv8xPOpIriZNKPtoFngSyCIm4yZK6/4fuxv+jAO1VTd3mbrSSBUs18Oipj1dvfvlGL3SaF+9zZsr22Lg46p10X66JId6RcJFyhIpN0nYRKNBK6UesqhVpae8ULbUvwU8XXuD2yI3aO+lmOTOA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739774354; c=relaxed/simple;
+	bh=wgTEy2x5zGO+qw16LyBRJzWqvVIyaFm4FpiYXlFIMEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cIpy1RROAtLZEIpcGnl002tjDeX+nHZV6BD+bxhld2eIYxvSg/049D2r2oAhCVTE7hZpJfsflgA2WVtJli5MWFK5omA3W90241lytiZTX27FTXBygB2IT4WkGkf2pgpc1N9GNmviiB1n5r92N8i9N2wC2u81puDN1w4rL7jQTkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fDmX9kF5; arc=fail smtp.client-ip=40.107.220.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H5c6bRMDTnSiLRSDpDuk5tyfAPa1R7x89rH/M+QxPZK7yjkE7F4tuNN1xCl+AhMDaspzaAsRZJ9sSLcQL7Bo/2Yv+Pr/bbM84cGlwtFto3eGDpVnsR5FtwAbN6ezKOLC2Jqd8U9eP0y3pnWCQ95BJ+sz8APIloYIbkRKpXAVxGYa8A8Wq66fSXuS82YtJGoQens5UrszHK82Nu5o2uEgZPA6zvpnC0sffSQpJ1d9fcq6CKGFUdJvlFP2/niRehs+WTkpnxhRk7zn8IPdsCHIEXD3ye5RFJb4JmNb7ISJM/tNH4NOAaJ6HaIev8kYmJzokL2CM2sEWuMCQqySroO1FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TqsOlFrK2boGFTRir6sGXZdYS33G7leiLs0oygQYz6I=;
+ b=jBCcKnV0GTNmrwvq5N4denVBQZqKamEOsuMJXMjyGuuV0N4Kwz5RTV7xeFLSH3xHgzxG4+HUeYjlJ6cfCvHS0R6kIEYcMYHfnaGswXJ0twql3BLxRP6YZRL7Bmg2Xh3BqyXpxSRTi1nDeCazf0znj343F4zLwaWJ/5mCt4IlUMgCNSXFN9h8dMfaN1upiDEw+msRkoHuSZrpbZVqHiShnmgTfWffeB2paqbQneub4+6028NjOKdOiQ1ULfHqHzTLMInyD6ot6T00BVSV41yM2fW3xTjvnN6sTSAkxVkzWEJNa9YqZV1S0YFJznHwLGvIIC5qB+aVJjtvLJ4ijWIbIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TqsOlFrK2boGFTRir6sGXZdYS33G7leiLs0oygQYz6I=;
+ b=fDmX9kF5cyfSEVlCV+Vc83gVlQPC47yw+iHq5ERpk10nyc5rrSDhwBZV2ikMg6YmG2EnaPeMqt7BuByW45lsF0qH7zTY6uude3eeX5AnolRpllH4TW+j9U720dIODPdU6yMl4a+ybBiMCDsh0cdJB69wXprsY6TDu2BvyfpNNpg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ IA0PR12MB7751.namprd12.prod.outlook.com (2603:10b6:208:430::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 06:39:10 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 06:39:10 +0000
+Date: Mon, 17 Feb 2025 12:08:59 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 02/17] cpufreq/amd-pstate: Drop min and max cached
+ frequencies
+Message-ID: <Z7LZg8oq3LqfKZID@BLRRASHENOY1.amd.com>
+References: <20250215005244.1212285-1-superm1@kernel.org>
+ <20250215005244.1212285-3-superm1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215005244.1212285-3-superm1@kernel.org>
+X-ClientProxiedBy: PN3PR01CA0171.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::14) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-mhi_bw_up-v1-8-9bad1e42bdb1@oss.qualcomm.com>
-References: <20250217-mhi_bw_up-v1-0-9bad1e42bdb1@oss.qualcomm.com>
-In-Reply-To: <20250217-mhi_bw_up-v1-0-9bad1e42bdb1@oss.qualcomm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        quic_jjohnson@quicinc.com, quic_pyarlaga@quicinc.com,
-        quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
-        quic_mrana@quicinc.com,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739774050; l=2713;
- i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=b+t07/zpN1OKXOmnB0/fJYpVmV3Y/hIRHKddZUlsHzc=;
- b=VEDY9epxk1pHB6IUS9ig0ZBJnc9Og8yA0SyFxac0uwlu+rLcCA8hWDA3dBuU+0yAWzPuxnCwM
- jPTL5VNdQzuAtFkqpfGWxw/zT4ul1ZBck4W3SG6iKqrfNgd56e/GdnW
-X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
- pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-GUID: W9JPDExvEPkaybPHN2aEywYrBfKP3h9U
-X-Proofpoint-ORIG-GUID: W9JPDExvEPkaybPHN2aEywYrBfKP3h9U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_03,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
- bulkscore=0 mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170056
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|IA0PR12MB7751:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb9bdb26-e54c-4c00-87d8-08dd4f1dc8cb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0JoLv+mc11uojPFpt5Dd4pDqwo61P87C39S1/TrvqFW/oWVvvcBBW7VgJU5L?=
+ =?us-ascii?Q?cASACPhkjLbw6DWevUV2lpPvOqU02tpL0B5qymD9IiASeF2U3PrOcbHBecqn?=
+ =?us-ascii?Q?gTH1Yds/kfgX9ix+TWTIFyfdOQhrpGQQvmJqQRGXmuoZ/z7MO1zxunamyZ36?=
+ =?us-ascii?Q?bmZzUVY36xCfaHSCSwTGyMb9OkB5pjv5BsC5DTz7T2QNg3UfS5gaI1DWifN4?=
+ =?us-ascii?Q?z2gfBALFoNW7SL8Y13+DXMXEjHLms5BVpA2cWNIk4+ffSgqSGRjyGrwqwM6u?=
+ =?us-ascii?Q?Espc9Du096m0d9wVA/35zJgvOceu4QReXuHxWLMAdFA+5iO38npszCbrPuWV?=
+ =?us-ascii?Q?95SE6RbCktff2B9QEANIk1Jv3xuWI1NIOO3ND2PywsTnrLCcO1LTkS4YKQfj?=
+ =?us-ascii?Q?zuaDoeF0Bcnsv/Gm1xlaMjxItzlm+FCwVol5otFaBv8uZWZT0sOjDWMYidBe?=
+ =?us-ascii?Q?kQrm6y6QJ+yRbkjZUgvZ4SMGQfaI+usR+q/pq10IXBDA4CnVXw4j5QNGkILM?=
+ =?us-ascii?Q?tR+IWiXRETEaOBcYlEL0SEL+Tdn1ftKDg4vUaY2/MEqpCNqQ6nYGGbEXnlqM?=
+ =?us-ascii?Q?aW/0OwvASeU6tJtpciIjQI32RupHJkxk6dDKkSa1orDjNz390FtofiogaPAG?=
+ =?us-ascii?Q?1r+/qw/kKCxNWKY7Tn2bhoLEhp0xH7NXbs8+EV5aUoWBuCJJO9mwI0pxpvtU?=
+ =?us-ascii?Q?p7AfAsadeuBtkZRcj6/EVoNXIxa67mXiFD4imb0C9HFNmK/7o5NO9wlfyu4R?=
+ =?us-ascii?Q?1Uo5mOLyLYA1PaUVVw/hgCAwGqTo34oXOmjdOv4AfqwnPs+7e7Es97mmktJG?=
+ =?us-ascii?Q?xlYcsjl/WiyLhRSCKrv3xdVjRvLAFGz9OJ3+8Jy88N52vUVK3YaB92xlo5HY?=
+ =?us-ascii?Q?TS/QpPliSsOZ28aU9K1khbQPqypF8ZQIMMoHld1/HOflij+YRviw13HHlGR7?=
+ =?us-ascii?Q?vT6oEPc0ZHVrViToBfEferRi8i3e2IaJr25TAeuLJ6ypkVGby2QIL+CDQR9V?=
+ =?us-ascii?Q?rFagbJvfbsoscD1VChYnoN/J1irSSmbOvCSfkZ2y0EZ8z3zP/NjICzxuTUx8?=
+ =?us-ascii?Q?O4jvQenNzfngszxjSTAPsZgjYFXNK9+Pcwwy3zsvoatHZSgsPQ1Q6lHIXGqG?=
+ =?us-ascii?Q?muQkUGpo621aLZxs4Z9ozBAA2efVwATEK9gPmX9QHma246x64V2UsQOpGCVs?=
+ =?us-ascii?Q?2lh1nRZDqjtgoptiCfpz3TLU+VNFo+/pjRDztNrPNE66eYDycxW59Q3td/3W?=
+ =?us-ascii?Q?MOfdF2L2qA0aHak1/piJh5dwuovr65QJxTHJCreprup8gVbV8igSMSUFZ2uz?=
+ =?us-ascii?Q?QNn9soYaFpK3uDqoJQQlhyKXPayzpaVI2leXgeO7maGQIlumxGo8srxPUWUO?=
+ =?us-ascii?Q?ei6+aI+KouFOUqxVZ4Lq0m88MoNQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Vuhn4xm2gz/imcUlZ1fJYXdCBYggKbvpmJfV4XFJmWpChsDyru0FOafydWBh?=
+ =?us-ascii?Q?Wcjjk9kscJyU+raFDc7S3bKb3VjFNHq7+6/XqmSPoeq2+bD27SrrwmjRb9EP?=
+ =?us-ascii?Q?92mpDwcUnaC2ludMqPUclqgLy/G5tTJUQlJu0msTDXs5VtMp0jAPRsA+uoxf?=
+ =?us-ascii?Q?f4gCJg3HuJf4Mvu68mzhI/JXFq90Za1nT822/lvCmVL+PQ54YymlC5MIiBPI?=
+ =?us-ascii?Q?HvJFGBucwZvKyIXg0RpOjTEWwHmEv+E9OcGls0Td+TOQz+VV9o9KjY5JlRSS?=
+ =?us-ascii?Q?HO4qmmGmX/E/1eYvmFIklsY0idMTh7cptsXGHo9sjLYpqn64yP1bYJz4/M4H?=
+ =?us-ascii?Q?59rSRhrKda7rUXGnNmB43Ox1NsoKt9l50EqTnr0v2jGsThtNH1AM+1ywqYS5?=
+ =?us-ascii?Q?eqtTdKyD7Kcfmfm7s6HEurmQl/dws2kMnc2NOZzlbwy+x2YUWZqvql3pE5Uw?=
+ =?us-ascii?Q?Bt359kwrwM3N6AiH21cjnhIkZpZWgHliD7dkgu4kAKpwQey4jAvA1vjpeksh?=
+ =?us-ascii?Q?fTYjb9XsxGShG2WXZ0Y+GjammlRMie1MwpXslPQSmHxq5oAY97MMLzg7DXYx?=
+ =?us-ascii?Q?V8upFHPmc0HvfzcqnlDCON1kq8A1vldiKv3WxLZd3Pd1cRC2FP2hgfUHlCeL?=
+ =?us-ascii?Q?GuLsXN2t0+a/B7E+PA8zuq1Syo30k2woCjxiqqOCpcasDXRbF4vDawUglWNp?=
+ =?us-ascii?Q?zdGeyhQM0UepPPV8k2SkTJg1docW0FqBPMam0noekr46fvqzZGXqIRgJkgTh?=
+ =?us-ascii?Q?rH+fvpTV9KmEK/nR/YANbc+PD50tIal5OdAc5F0F7MUHTuGyU5BvMT/8qK/G?=
+ =?us-ascii?Q?RpawoEO4bA/qSRU8UAdrvmIE/5SR03bhQEsbBMOx6L05ngz//XzBU2njSPrA?=
+ =?us-ascii?Q?kiokhqIkNB5gZz5NRs43jcfIgAEqO+ZsNTkYQzsAFRFe0LHfy5ibF3q2sHz9?=
+ =?us-ascii?Q?ei2jtkRhQZR2sj09d2y2HvwQE6xascn/Uv+f9fwSXwHbAFNPWkm6ymQqrgrE?=
+ =?us-ascii?Q?vyHk0I2izFF5uJCGonbsZCGf5Ppa+JNvLBvVYjsbRyfAyg3+AXSqnsSwgiYk?=
+ =?us-ascii?Q?AoNpBfy4to3U2Bu9FKg6sbuW2uK0qG9BQ4PyEJJTQ2qCSY1JwxHJ3ERBKHzS?=
+ =?us-ascii?Q?l4VZQI/TdqQ1zTg9X7Xt0VPp+cxNGIL2KNXroTu4pEkb/UXdCQdcNqD2RfhP?=
+ =?us-ascii?Q?zffL3OkXY/IrvYRThvxFSLeJ4vKzwP0cjF2LQ9dLGhrRKF7ZkMRNPrD937SS?=
+ =?us-ascii?Q?wHaV13Z2mSH2CgNj4/RrA5kcngco+bOTlT2EB4ylVa4mut+zIRoK5/v4HZJC?=
+ =?us-ascii?Q?p0xoz7rfJoQeKKWjJHnwW2yuaUoczmIsRKCb4HC+I5AI3BH8/qoVEdm6rf4Y?=
+ =?us-ascii?Q?JcFxzDszgzNm1QGmX8GYXcMf/Qye5RXDGx/FTxXA/BG0TGQsDixKHriqVrlN?=
+ =?us-ascii?Q?EkgBpDjQtimlVrsdUj6MLVmx3XKEvlwafgB2scc/iv8FgpAj18WUkMxlbZhs?=
+ =?us-ascii?Q?srwAWV8MXfEko66a9pbBusytCc2x+2Bd2KFj1Z1KsfqoSckdKiDKodv5hQn2?=
+ =?us-ascii?Q?hMwko55UcXqdRRQwyQ8WXZ5J60F4a6ess9RlSPkT?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb9bdb26-e54c-4c00-87d8-08dd4f1dc8cb
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 06:39:10.1470
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xNSY7K83Qf1LOHY742eDaVrThVq7vN3lmp5ut8g5vFUZhzOkYf5EKP5okHBFoj7zluyz4HdjkAxxh9sNWtQBow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7751
 
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Hello Mario,
 
-Add support for MHI bandwidth scaling, which will reduce power consumption
-if WLAN operates with lower bandwidth. This feature is only enabled for
-QCA6390.
+On Fri, Feb 14, 2025 at 06:52:29PM -0600, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> Use the perf_to_freq helpers to calculate this on the fly.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> --
+> v2:
+>  * Keep cached limits
+> ---
 
-Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
-Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
----
- drivers/net/wireless/ath/ath11k/mhi.c | 41 +++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+[..snip..]
 
-diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
-index 6e45f464a429..03cdbe93949a 100644
---- a/drivers/net/wireless/ath/ath11k/mhi.c
-+++ b/drivers/net/wireless/ath/ath11k/mhi.c
-@@ -20,6 +20,7 @@
- #define MHI_TIMEOUT_DEFAULT_MS	20000
- #define RDDM_DUMP_SIZE	0x420000
- #define MHI_CB_INVALID	0xff
-+#define MHI_BW_SCALE_CHAN_DB 126
- 
- static const struct mhi_channel_config ath11k_mhi_channels_qca6390[] = {
- 	{
-@@ -73,6 +74,17 @@ static struct mhi_event_config ath11k_mhi_events_qca6390[] = {
- 		.client_managed = false,
- 		.offload_channel = false,
- 	},
-+	{
-+		.num_elements = 8,
-+		.irq_moderation_ms = 0,
-+		.irq = 1,
-+		.mode = MHI_DB_BRST_DISABLE,
-+		.data_type = MHI_ER_BW_SCALE,
-+		.priority = 2,
-+		.hardware_event = false,
-+		.client_managed = false,
-+		.offload_channel = false,
-+	},
- };
- 
- static const struct mhi_controller_config ath11k_mhi_config_qca6390 = {
-@@ -313,6 +325,33 @@ static void ath11k_mhi_op_write_reg(struct mhi_controller *mhi_cntrl,
- 	writel(val, addr);
- }
- 
-+static int ath11k_mhi_op_get_misc_doorbell(struct mhi_controller *mhi_cntrl,
-+					   enum mhi_er_data_type type)
-+{
-+	if (type == MHI_ER_BW_SCALE)
-+		return MHI_BW_SCALE_CHAN_DB;
-+
-+	return -EINVAL;
-+}
-+
-+static int ath11k_mhi_op_bw_scale(struct mhi_controller *mhi_cntrl,
-+				  struct mhi_link_info *link_info)
-+{
-+	struct ath11k_base *ab = dev_get_drvdata(mhi_cntrl->cntrl_dev);
-+	struct pci_dev *pci_dev = to_pci_dev(ab->dev);
-+	struct pci_dev *pdev;
-+	u8 speed = pcie_link_speed[link_info->target_link_speed];
-+
-+	if (!pci_dev)
-+		return -EINVAL;
-+
-+	pdev = pci_upstream_bridge(pci_dev);
-+	if (!pdev)
-+		return -ENODEV;
-+
-+	return pcie_set_target_speed(pdev, speed, true);
-+}
-+
- static int ath11k_mhi_read_addr_from_dt(struct mhi_controller *mhi_ctrl)
- {
- 	struct device_node *np;
-@@ -389,6 +428,8 @@ int ath11k_mhi_register(struct ath11k_pci *ab_pci)
- 	mhi_ctrl->status_cb = ath11k_mhi_op_status_cb;
- 	mhi_ctrl->read_reg = ath11k_mhi_op_read_reg;
- 	mhi_ctrl->write_reg = ath11k_mhi_op_write_reg;
-+	mhi_ctrl->bw_scale = ath11k_mhi_op_bw_scale;
-+	mhi_ctrl->get_misc_doorbell = ath11k_mhi_op_get_misc_doorbell;
- 
- 	switch (ab->hw_rev) {
- 	case ATH11K_HW_QCN9074_HW10:
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -717,7 +717,7 @@ static int amd_pstate_cpu_boost_update(struct cpufreq_policy *policy, bool on)
+>  	int ret = 0;
+>  
+>  	nominal_freq = READ_ONCE(cpudata->nominal_freq);
+> -	max_freq = READ_ONCE(cpudata->max_freq);
+> +	max_freq = perf_to_freq(cpudata, READ_ONCE(cpudata->highest_perf));
+>  
+>  	if (on)
+>  		policy->cpuinfo.max_freq = max_freq;
+> @@ -901,35 +901,25 @@ static u32 amd_pstate_get_transition_latency(unsigned int cpu)
+>  static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>  {
+>  	int ret;
+> -	u32 min_freq, max_freq;
+> -	u32 nominal_freq, lowest_nonlinear_freq;
+> +	u32 min_freq, nominal_freq, lowest_nonlinear_freq;
+>  	struct cppc_perf_caps cppc_perf;
+>  
+>  	ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (quirks && quirks->lowest_freq)
+> -		min_freq = quirks->lowest_freq;
+> -	else
+> -		min_freq = cppc_perf.lowest_freq;
+> -
+>  	if (quirks && quirks->nominal_freq)
+>  		nominal_freq = quirks->nominal_freq;
+>  	else
+>  		nominal_freq = cppc_perf.nominal_freq;
+>  
+> -	min_freq *= 1000;
+>  	nominal_freq *= 1000;
+> -
+>  	WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+
+So cpudata->nominal_freq will be in KHz here.
+
+
+> -	WRITE_ONCE(cpudata->min_freq, min_freq);
+> -
+> -	max_freq = perf_to_freq(cpudata, cpudata->highest_perf);
+> -	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+>  
+> -	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+> -	WRITE_ONCE(cpudata->max_freq, max_freq);
+> +	if (quirks && quirks->lowest_freq) {
+> +		min_freq = quirks->lowest_freq;
+> +	} else
+> +		min_freq = cppc_perf.lowest_freq;
+>
+
+Since cppc_perf exposes the frequency values in MHz, min_freq is in MHz.
+
+>  	/**
+>  	 * Below values need to be initialized correctly, otherwise driver will fail to load
+> @@ -937,12 +927,15 @@ static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>  	 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
+>  	 * Check _CPC in ACPI table objects if any values are incorrect
+>  	 */
+> -	if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
+> -		pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
+> -			min_freq, max_freq, nominal_freq);
+> +	if (nominal_freq <= 0) {
+> +		pr_err("nominal_freq(%d) value is incorrect\n",
+> +			nominal_freq);
+>  		return -EINVAL;
+>  	}
+>  
+> +	lowest_nonlinear_freq = perf_to_freq(cpudata, cpudata->lowest_nonlinear_perf);
+
+Since lowest_nonlinear_freq will be computed using cpudata->nominal_freq, the former will be in KHz.
+
+> +	WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+> +
+>  	if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+And thus since lowest_nonlinear_freq is in KHz and min_freq is in MHz, this check will always be true.
+
+Shouldn't the min_freq be multiplied by 1000 ? 
+   
+
+>  		pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
+>  			lowest_nonlinear_freq, min_freq, nominal_freq);
+
 
 -- 
-2.34.1
-
+Thanks and Regards
+gautham.
 
