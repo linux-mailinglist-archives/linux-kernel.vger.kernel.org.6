@@ -1,222 +1,181 @@
-Return-Path: <linux-kernel+bounces-517551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81AA2A38242
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:51:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2322A3825D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB111886AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB573A8AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C84C21883E;
-	Mon, 17 Feb 2025 11:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8B219A73;
+	Mon, 17 Feb 2025 11:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHJSnr9M"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGH0L7hQ"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0EB217733
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86469C2EF;
+	Mon, 17 Feb 2025 11:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793088; cv=none; b=neijFxE/Dd5yaIGqI5pnZS69JqUDYApWEtfTP10zJvjl+GulgNHhgnPUxpoqYXGHuJuBqpwTvra/3o5PctU9MnYqQKsNUTWGLzvPvlxf/FD3Tv7h5AdHHnW4gqa2FRdM15xsl8j8Omr2oIF1nQEcy+Ad3qV96ajcrYvGRDy/bYo=
+	t=1739793130; cv=none; b=A50gW0pb5UUnMKvdMzny95KHnbbYx732KOJxe6SpaFEdRe75VQ4EtnazAhBkw7Fos3moM70v/90uqUi4Bi68jH9lHLEiMcBN5RSJE07fm+dD0ERHBNl6KYjn/8VvSaSunS2Mse2wR8lCWZuJtJKSy7rT9YXoaSSSDLg2OZmepRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793088; c=relaxed/simple;
-	bh=YsS0x3alkz+uADboN3Hi2gyIMnCLX42kRHxLemzP7mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RikTbGqWenJQreQCXcLbUgLwdM6qmewmakgidTlOC2VTFaJtQJU7d0pJNZm3zG/+9KjgosjmcrtWSV/Np1i3sqIe4WwOUqBS1w8mBF5raRM9FA0ThhpD3XqwGdul7T5E7On901IgAPssDxuvmJUAb/ISv0xseXZYFhJrIBn4CTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHJSnr9M; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f3ef11abfso38953f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:51:25 -0800 (PST)
+	s=arc-20240116; t=1739793130; c=relaxed/simple;
+	bh=Kw5fJhdscUiWMv2LJOfvfRwT8rtKmlYtNBGe3hviB8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlLnXzEthmhNC86h6rpB5fTEin9Ox2bkOZXT4BiRbVKyRXPOquRhEonjUCwJPYpa/X4cp0qw1NsPyyV5ZW2zhB8hrDV+FqJp3ZiYtYFMrDydvVRJTQqoG7msLjId/+pBf9J4Owt0unKvFPlVV2cE6aDSM5xUTLkU2755+0yP3UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGH0L7hQ; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fa8c788c74so849066a91.2;
+        Mon, 17 Feb 2025 03:52:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739793084; x=1740397884; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=boBaE8FsMd5PXMpwiaXXEagFXKd5QEZ8O/kcdHJADSE=;
-        b=pHJSnr9Mxh+XO60csTpPv0uJK7mdb0/tc6eBDqvJvLi3SRneZmnyFDnQTcYIJLT0DP
-         uSWOY1XJrl51dRgjhQJyy3NRUkTZw4ZOo/KCX2mc4OtX1q9ZEdS7VhG4tyUBG4QAl7TZ
-         UzvM1y2S+lM7ltjgJc+jrUrAtvbbjyud02XZefRTc8DZelmiQK6BzsTjTfnLvZN3YKuq
-         OMNh+KNkaIEUNB6GmBQF5RSC/PqumO4ivIeNHg25vuuXFpblXPuQNukL7tibw5fyUbvT
-         1bR4WXQOkVS/YQG2TNv3M5008+fbQT2UZJ3/zOHp0hgE7XrtbLskDuKLyslbHpw3qJKm
-         DCBg==
+        d=gmail.com; s=20230601; t=1739793127; x=1740397927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OmSK00H6Xgl6mtiFppglnB1vB4Wc6DbTip45Aa90tU4=;
+        b=AGH0L7hQN86/vaqgijUzrakFrF+OnKMcV4qhQznYGm9wPYKiAtASKrCPFzXCsmEzXV
+         Dev+o2WqvbkFYsMxU2INYxha1lMGrwHxQuoRGzrzWeub3vaBlGg0eHOI9Lo3kEIdPoAd
+         r5oix1s01zwEbGCuIavscE0DIHgduAAg0QWm0d3x27vO8K0D/uQmZhKg3tjbZgxDRLSv
+         6dWORb+DCj0Qb+V1rPBr7reg7EIUuWmYN1o1cQ/WWjdg9YfTjU34WO3YyMqwuLQYmScz
+         kI8sLCjnk2sSh6gglZoLSMeutr4DPTgmdPG6Sehu0TgKtHeifUK1YHImJXGVU22P0gtf
+         z2fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739793084; x=1740397884;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739793127; x=1740397927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=boBaE8FsMd5PXMpwiaXXEagFXKd5QEZ8O/kcdHJADSE=;
-        b=PU5BNuHKef98fJNV5LPSufQvRIx0l1hyhuRcxhIlkiXQqa8lKh6n1KdLS8aGxCqiI4
-         Eh0YHtovCTHadiU3dnntvf+6+2DwPfuJgYWKVPp6huHPD+9gbwee0fQERpcL72AqQeYP
-         iSkb/zhAV1J7VyqkS6ppI+DD0Jp1hK7PmmQU0sKBkLdIdmzGyxdOozMMclpIuEMkxzoM
-         8p7lnbbT2+q+EsWGHL+LYTX7t4IBcQVkxMuHsWNKCcavxS6tAkhmEDCEKutxUiheEIdj
-         6BnUDJr8SY4G4Hn00WJgZDzwu2yHLp+OE5rexnmavMQKCCCkYTSWZD8NCC2FCEulH7wT
-         fhRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJjUcNS9SlR0rgNSlQiVpBa8yt5YTboVjDZhXAsiKKjPiFEbOQPora6mLEn+b4zBcmR290gLYj4+v9t+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypRP5UlfYcmkl8QN79PVAAkFTO3r2RofHIPy4Df9NcYnMcMS+o
-	k+RJXH3oPaZBjS7DiM/3SqpJkW4iUWRDuFzdVOnMpOIpqVav01VKGIavewV6axM=
-X-Gm-Gg: ASbGncvisFOFGV8dZyP6JSEd6fACJ6ScZ5goBDfPoGqfzC1TrqxNPKNYYa5lslItlkC
-	jpKA31SLEZtu9IlItG3QCBypu1s3p0QwhhsoNOvuYINNAXoXjglDVCerQADaMDGPSud/JuXpceD
-	7pah72kaE8oenqHMiUGALHcTffFf9ST7HdZfxK3Tn/g174cFHS1MFv6SAdgdBbhiG/Pdg4ge2FX
-	XR7SS0ISvAZLUSeoUnjc7Y5LGPxs2T+UB20Thtow/lAwsitDlgBP10B45vxpWmdoQb1tFr5y06g
-	KyuwoGcNT3Yhgv/xOwzJ0M7SreZpkKY8GPo=
-X-Google-Smtp-Source: AGHT+IGi9yee6Kch5zdJ4lFrZTfsijfYVXzBLjsh/4rp46Su5Z2UqTtgWBeW4d6pbu+ipSku6+B+DQ==
-X-Received: by 2002:a05:6000:1f87:b0:38d:e078:4393 with SMTP id ffacd0b85a97d-38f33f38ce7mr3015012f8f.6.1739793084535;
-        Mon, 17 Feb 2025 03:51:24 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395aef82edsm146414205e9.38.2025.02.17.03.51.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 03:51:23 -0800 (PST)
-Message-ID: <0e3068a7-29be-47c8-ab6f-caecccf275fd@linaro.org>
-Date: Mon, 17 Feb 2025 12:51:22 +0100
+        bh=OmSK00H6Xgl6mtiFppglnB1vB4Wc6DbTip45Aa90tU4=;
+        b=uCSK3ro7+8ltTZ9z2LFemwBLUX+PqO7/fZV6I9422r+Ei5HX+xc48y4+wcvHm7O8Qm
+         DHiWlbza4Lj9bz8iIJOWB+vYF9O0auQUePDZNEArgfrNgSW0VG57Fl3OcFZNGI7ACOPd
+         kau8PcxJ3v7Udf1Umqu90G7j3cHSe6skale6TIXtdSjdWtPJm8Fnph9UTnhMZhn+/2SJ
+         7J0wx24dEBcUaCepNEucRSbLltsUEhcrH3tiZsnbWj+LYa/yWauaz8mqZTNPlf/zYrkg
+         cm80WCxP2ntaXwkoQyADBbkgzM8z4zU313iaiCNCNdMcB5EJ3m/HWXl5wUnd2OeOa/y+
+         DtTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKM1JITDssKddt9ElMD8YR1HxyypehkdW4rFfx43LxUbUQGwgVuhZbF3Ry1G5Zfmm1/Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxV5/4FFgz20gbnvAOX6Vz9ShvXwi5JadLNUt7vNg2dZH4daYv
+	CiNqTUUdjDg8azNZOyD6PDqcJnZuEOPF5t22FLaM8mABKLHHPHqT1u/XcJ8JI0c=
+X-Gm-Gg: ASbGnctVWtAv2fPZyaddgalBaqzeokP9kEOD8el1ySTjBDfJ6NASb7foUK7KQAfwEa5
+	YPMDfpIp6OQZMjztcd4NNYu/jd3QXkFk3GtLwKvrPPKqMVkcZ0WhjF74diG89RcGs5nUi4Hpl3d
+	ogAT68cfCgnJi0TlX/xuGX4m+OChB7OV0fO9ncKm4rDSfdWry8thpZ/NIR48gcNUnVltOadbFKu
+	0G3xDY1J/ktYxuSx1PRmEYpRrHMdisBrCNmL6HnP2k6navE2omFM7aLSNN6f4NlXQ57ehuWUBbP
+	wwfGFgE68X4YLksAhrdq
+X-Google-Smtp-Source: AGHT+IE8IQDgwXJku33E4AoG0sCymiFSgxVeEQxBNgMT4EYT1oyzstS+HSA0ywbqYD5tyyHS6VR35Q==
+X-Received: by 2002:a17:90b:2d85:b0:2f2:a9bd:afe9 with SMTP id 98e67ed59e1d1-2fc40d12e58mr5560254a91.2.1739793127457;
+        Mon, 17 Feb 2025 03:52:07 -0800 (PST)
+Received: from rock-5b.. ([221.220.131.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13b9145esm7850482a91.33.2025.02.17.03.52.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 03:52:07 -0800 (PST)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	bpf@vger.kernel.org
+Subject: [PATCH] tools/Makefile: remove pci target
+Date: Mon, 17 Feb 2025 19:51:52 +0800
+Message-ID: <20250217115159.537920-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] drm/msm/dsi/phy: Define PHY_CMN_CLK_CFG[01]
- bitfields and simplify saving
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
-References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
- <20250214-drm-msm-phy-pll-cfg-reg-v3-4-0943b850722c@linaro.org>
- <vuqd6hfiobmbnll7flgltiivhbhksgz6r4uaxlmsp6dvfgmirv@mt5zkhgfl5ak>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <vuqd6hfiobmbnll7flgltiivhbhksgz6r4uaxlmsp6dvfgmirv@mt5zkhgfl5ak>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/02/2025 16:20, Dmitry Baryshkov wrote:
-> On Fri, Feb 14, 2025 at 04:08:44PM +0100, Krzysztof Kozlowski wrote:
->> Add bitfields for PHY_CMN_CLK_CFG0 and PHY_CMN_CLK_CFG1 registers to
->> avoid hard-coding bit masks and shifts and make the code a bit more
->> readable.  While touching the lines in dsi_7nm_pll_save_state()
->> resulting cached->pix_clk_div assignment would be too big, so just
->> combine pix_clk_div and bit_clk_div into one cached state to make
->> everything simpler.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> Changes in v3:
->> 1. Use FIELD_GET
->> 2. Keep separate bit_clk_div and pix_clk_div
->> 3. Rebase (some things moved to previous patches)
->>
->> Changes in v2:
->> 1. New patch
->> ---
->>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             | 12 +++++++-----
->>  drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml |  1 +
->>  2 files changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> index 798168180c1ab6c96ec2384f854302720cb27932..a8a5b41b63fb78348038c8f9fbb141aab2b07c7a 100644
->> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> @@ -572,11 +572,11 @@ static void dsi_7nm_pll_save_state(struct msm_dsi_phy *phy)
->>  	cached->pll_out_div &= 0x3;
->>  
->>  	cmn_clk_cfg0 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG0);
->> -	cached->bit_clk_div = cmn_clk_cfg0 & 0xf;
->> -	cached->pix_clk_div = (cmn_clk_cfg0 & 0xf0) >> 4;
->> +	cached->bit_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0__MASK, cmn_clk_cfg0);
->> +	cached->pix_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4__MASK, cmn_clk_cfg0);
->>  
->>  	cmn_clk_cfg1 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
->> -	cached->pll_mux = cmn_clk_cfg1 & 0x3;
->> +	cached->pll_mux = cmn_clk_cfg1 & DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK;
-> 
-> FIELD_GET.
+Commit e19bde2269ca ("selftests: Move PCI Endpoint tests from tools/pci to
+ Kselftests") moves tools/pci directory to
+ tools/testing/selftests/pci_endpoint, which will cause build failure
+when running "make pci" under tools:
 
-Ack
+linux/tools$ make pci
+  DESCEND pci
+make[1]: *** No targets specified and no makefile found.  Stop.
+make: *** [Makefile:73: pci] Error 2
 
-> 
->>  
->>  	DBG("DSI PLL%d outdiv %x bit_clk_div %x pix_clk_div %x pll_mux %x",
->>  	    pll_7nm->phy->id, cached->pll_out_div, cached->bit_clk_div,
->> @@ -598,7 +598,8 @@ static int dsi_7nm_pll_restore_state(struct msm_dsi_phy *phy)
->>  	dsi_pll_cmn_clk_cfg0_write(pll_7nm,
->>  				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0(cached->bit_clk_div) |
->>  				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4(cached->pix_clk_div));
->> -	dsi_pll_cmn_clk_cfg1_update(pll_7nm, 0x3, cached->pll_mux);
->> +	dsi_pll_cmn_clk_cfg1_update(pll_7nm, DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK,
->> +				    cached->pll_mux);
-> 
-> DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL(cached->pll_mux)
-> 
->>  
->>  	ret = dsi_pll_7nm_vco_set_rate(phy->vco_hw,
->>  			pll_7nm->vco_current_rate,
->> @@ -739,7 +740,8 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
->>  		u32 data;
->>  
->>  		data = readl(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
->> -		writel(data | 3, pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
->> +		writel(data | DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK,
-> 
-> data | DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL(3)
-Ack
+This patch updates the top level tools/Makefile to remove reference to
+building, installing and cleaning pci components.
 
-Best regards,
-Krzysztof
+Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+Fixes: e19bde2269ca ("selftests: Move PCI Endpoint tests from tools/pci to Kselftests")
+---
+
+ tools/Makefile | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 278d24723b74..5e1254eb66de 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -25,7 +25,6 @@ help:
+ 	@echo '  leds                   - LEDs  tools'
+ 	@echo '  nolibc                 - nolibc headers testing and installation'
+ 	@echo '  objtool                - an ELF object analysis tool'
+-	@echo '  pci                    - PCI tools'
+ 	@echo '  perf                   - Linux performance measurement and analysis tool'
+ 	@echo '  selftests              - various kernel selftests'
+ 	@echo '  sched_ext              - sched_ext example schedulers'
+@@ -69,7 +68,7 @@ acpi: FORCE
+ cpupower: FORCE
+ 	$(call descend,power/$@)
+ 
+-counter firewire hv guest bootconfig spi usb virtio mm bpf iio gpio objtool leds wmi pci firmware debugging tracing: FORCE
++counter firewire hv guest bootconfig spi usb virtio mm bpf iio gpio objtool leds wmi firmware debugging tracing: FORCE
+ 	$(call descend,$@)
+ 
+ bpf/%: FORCE
+@@ -123,7 +122,7 @@ all: acpi counter cpupower gpio hv firewire \
+ 		perf selftests bootconfig spi turbostat usb \
+ 		virtio mm bpf x86_energy_perf_policy \
+ 		tmon freefall iio objtool kvm_stat wmi \
+-		pci debugging tracing thermal thermometer thermal-engine
++		debugging tracing thermal thermometer thermal-engine
+ 
+ acpi_install:
+ 	$(call descend,power/$(@:_install=),install)
+@@ -131,7 +130,7 @@ acpi_install:
+ cpupower_install:
+ 	$(call descend,power/$(@:_install=),install)
+ 
+-counter_install firewire_install gpio_install hv_install iio_install perf_install bootconfig_install spi_install usb_install virtio_install mm_install bpf_install objtool_install wmi_install pci_install debugging_install tracing_install:
++counter_install firewire_install gpio_install hv_install iio_install perf_install bootconfig_install spi_install usb_install virtio_install mm_install bpf_install objtool_install wmi_install debugging_install tracing_install:
+ 	$(call descend,$(@:_install=),install)
+ 
+ selftests_install:
+@@ -163,7 +162,7 @@ install: acpi_install counter_install cpupower_install gpio_install \
+ 		perf_install selftests_install turbostat_install usb_install \
+ 		virtio_install mm_install bpf_install x86_energy_perf_policy_install \
+ 		tmon_install freefall_install objtool_install kvm_stat_install \
+-		wmi_install pci_install debugging_install intel-speed-select_install \
++		wmi_install debugging_install intel-speed-select_install \
+ 		tracing_install thermometer_install thermal-engine_install
+ 
+ acpi_clean:
+@@ -172,7 +171,7 @@ acpi_clean:
+ cpupower_clean:
+ 	$(call descend,power/cpupower,clean)
+ 
+-counter_clean hv_clean firewire_clean bootconfig_clean spi_clean usb_clean virtio_clean mm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean firmware_clean debugging_clean tracing_clean:
++counter_clean hv_clean firewire_clean bootconfig_clean spi_clean usb_clean virtio_clean mm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean firmware_clean debugging_clean tracing_clean:
+ 	$(call descend,$(@:_clean=),clean)
+ 
+ libapi_clean:
+@@ -219,7 +218,7 @@ clean: acpi_clean counter_clean cpupower_clean hv_clean firewire_clean \
+ 		perf_clean selftests_clean turbostat_clean bootconfig_clean spi_clean usb_clean virtio_clean \
+ 		mm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+ 		freefall_clean build_clean libbpf_clean libsubcmd_clean \
+-		gpio_clean objtool_clean leds_clean wmi_clean pci_clean firmware_clean debugging_clean \
++		gpio_clean objtool_clean leds_clean wmi_clean firmware_clean debugging_clean \
+ 		intel-speed-select_clean tracing_clean thermal_clean thermometer_clean thermal-engine_clean \
+ 		sched_ext_clean
+ 
+-- 
+2.43.0
+
 
