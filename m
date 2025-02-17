@@ -1,320 +1,198 @@
-Return-Path: <linux-kernel+bounces-518202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944A0A38B5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42357A38B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61DE8188F1FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF573B27F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6863723643F;
-	Mon, 17 Feb 2025 18:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CC4236427;
+	Mon, 17 Feb 2025 18:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gSJmK003"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6oLmxjp"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4723642B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739817496; cv=fail; b=PKZQ26M8MKZcHRQYRPKueJBWlkfoVFgWTxfa8aBUn5/7ytG8AvJuvLzj4qtLPAFA9ajJZS7NJ3NS36S7NsG6N2Ry37x+WeFGq1PyEQI+gfQRVmsJLSRJNAgyjsAGxPg8mZ1Iq3BqmpnMEN/O0nPwS2ein40ZIb3FwK0PtYTKN2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739817496; c=relaxed/simple;
-	bh=CFz3QexjusFaCouZT7biffI13dt13YhFqjzjcPZ33+E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CC2nmCyr9KSKmpvxdtBG1IspMM46SSHI4zzHQv+flVXAjko26//gPECkwPtMFAxuCNYh6F6T/1mpVWBdV09/HsFJ8BfAlZGYrXFYHjJOh8HBy/2r28bYiMVOTyE79HDrsaLjw2z5sUH6D+WbG53KfUG576T+SSx1WYdpj4Lua6Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gSJmK003; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739817494; x=1771353494;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=CFz3QexjusFaCouZT7biffI13dt13YhFqjzjcPZ33+E=;
-  b=gSJmK003AvCxgb3Rw3QS1QUn1FTvWV75xRFzum78DrObvrhPpSggVpWv
-   S+XrBYTS9Az+B78RkSgPOCVDzlehJ7s/1YhlpGYPMAlrHiD2O0N7wzdNJ
-   BiJqQ5DCn+yEB3lGqGVWtbEb/lbVATtbOUp0W2WSzS3djCtesMWyXSt6/
-   YnjkDvzAeMVut7ZsXMe8h1XCryLP/0zSIeb+Dx5RXHD2MdkGXoJ+Lj8pr
-   RfgWawOgviKkDwkMKMjKULg5S182tI8hyckaq1LI2yT2QWOfygytWkzFX
-   1VtK3AKCMd50jRwNhB4Rqjc3lv7Slx9ujLKpzzPwpdz5/R7mQ70w1G8qI
-   w==;
-X-CSE-ConnectionGUID: p7hjDADZRZWkJGyS3GD/Uw==
-X-CSE-MsgGUID: MZUVQK7lSKazkxhJCUXuog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40214126"
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
-   d="scan'208";a="40214126"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 10:38:14 -0800
-X-CSE-ConnectionGUID: 6rBB0pooTYyJwpVire+I9g==
-X-CSE-MsgGUID: isLAIaGlRWix1d3Hz0A3wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
-   d="scan'208";a="114386506"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 10:38:13 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Mon, 17 Feb 2025 10:38:12 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Mon, 17 Feb 2025 10:38:12 -0800
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.45) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 10:38:12 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SSJRo5CDU1O9HFg6TyIQTfxgFbsKNUvRiLSz2xx8hyjsLN3CTVh+hBZyvx/6TtDe9huXWqeDhFsyisjYzwlZT2e9CZq/F/ujOKxvoHbW1boKPRH5mMfdQ62sl7K512N119Mb4/niAuf3kfRPXlk2hXrvme4mCgmfJy2I9B9kyb211FrT/JNX9LHwmKVv0llsqrSTAy/NCWwqhQqKCO16uuN4yBds0S7uhGxMxXkHYBVnLHZYcY0Fy20Xhl1KOhnlp4poTq4+aEIfNr+7pxR6oPrsCMkclf1tKqMXd7rS+ljxOeqc7J1NSoQ6yy1UXbUIVRHA9fN9xOmM0eqShzkwRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FJOr/W5XvA4Jct+SudYeYcMy2N3Q46HCp6mZjRtE/Vg=;
- b=g6gNxNCkKzGDI35i+whcD+OU5Loq5gJCH351R8a/vZhvN3npd2PG1pHnoLy86DZSZDjkI4/ZrLaNDLTdRF19XICQ8r0nT/T3OfcUP5T3jpBThbEwNl7Hz4GwgG/h9WLGc0S1Ai2bCpeo/mL7iY1XPbMGY9O/NyYfi+vksii9PUz49EbraTzxlLKX/Wjh13uRO8jjnfntmmHDcYwdSEv5KtFD5YJKK53xADISZPHVMjDtgYQNSnGTy7NHrKaav5N0THsBrDZlzc7fNjiO3O//EX3tZQ3Sg+0U8NTL4M5nIBT0mrFOrHcWXbc9RDSia+JRrtvSS/n7ssgnmymB4hmAXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by DS7PR11MB7860.namprd11.prod.outlook.com (2603:10b6:8:e9::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.13; Mon, 17 Feb 2025 18:37:42 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%4]) with mapi id 15.20.8445.015; Mon, 17 Feb 2025
- 18:37:41 +0000
-Date: Mon, 17 Feb 2025 19:37:12 +0100
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-CC: Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>, Andrey Ryabinin
-	<ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, "Dmitry
- Vyukov" <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	<kasan-dev@googlegroups.com>, <llvm@lists.linux.dev>, Catalin Marinas
-	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, Alexandre Ghiti <alexghiti@rivosinc.com>, Will Deacon
-	<will@kernel.org>, Evgenii Stepanov <eugenis@google.com>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/9] kasan: sw_tags: Use arithmetic shift for shadow
- computation
-Message-ID: <kmibbbrtlwds6td64hloau7pf3smqth4wff33soebvujohsvli@kni5dtvpwsxf>
-References: <CA+fCnZeBEe3VWm=VfYvG-f4eh2jAFP-p4Xn4SLEeFCGTudVuEw@mail.gmail.com>
- <e7t5yzfw3dq5stp5xjy5yclcx6ikne4vwz7d6w2ukfw2b7gr6t@oomoynf3b2jl>
- <zjuvfdbl7q76ahdxk3lrgaznk7vjj43f5ftzfgrnca6dqtcd5x@5qj24womzgyq>
- <CA+fCnZfySpeRy0FCFidLdUUeqp97eBdjAqQyYPpz1WxYwcsW9A@mail.gmail.com>
- <aqhm7lc57srsfuff3bceb3dcmsdyxksb7t6bgwbqi54ppevpoh@apolj3nteaz6>
- <CA+fCnZdjTkreTcoo+J8wMhwDuAFM4g33U5BFy0OPtE0UCvyJbQ@mail.gmail.com>
- <CA+fCnZcoVdfXVN8VBFLx835cV0eGAT6Ewror2whLW761JnHjNQ@mail.gmail.com>
- <sjownmnyf4ygi5rtbedan6oauzvyk2d7xcummo5rykiryrpcrt@kasomz5imkkm>
- <tuwambkzk6ca5mpni7ev5hvr47dkbk6ru3vikplx67hyvqj2sw@rugqv7vhikxb>
- <CA+fCnZcHnWr0++8omB5ju8E3uSK+s+JOFZ3=UqgtVEcBzrm2Lg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZcHnWr0++8omB5ju8E3uSK+s+JOFZ3=UqgtVEcBzrm2Lg@mail.gmail.com>
-X-ClientProxiedBy: DUZPR01CA0075.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c2::7) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354B718BBB9;
+	Mon, 17 Feb 2025 18:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739817512; cv=none; b=EFmyIhkle/2+AZKw/hpXp8Vrp2/Qlj5JqIwycK9/RTFA7QDA159a+Izo9NL9Juma1mMrf/9bByh7C0onZLcKQY/kcRaCqwVuzEJtacVKwK2XBCXTDgwxuWJrIOh2tBw31GstwzS+v35K0NMZ9aKWD67UyorNIifghjeH+hwHRcs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739817512; c=relaxed/simple;
+	bh=p+MoBa72KVvlqi6aWicJbmnoV900cQSrVhXyOT9Hi1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S82kS0d5iQeAaiguUgG2eOtwqUHAUdszh5SHvrlRcjeibT0EtIVepaAi/dvEo5a554r50KUMv8ETvfUY5oP5K8nf4n5giSEVPUVfCZ9UKQEfA3/Yok5YWosk3cq55dI9emnAMNkLGQdAFk5Jt5PJc2wABjaKB9KZ0IIEw6cesnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6oLmxjp; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43937cf2131so31186385e9.2;
+        Mon, 17 Feb 2025 10:38:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739817509; x=1740422309; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KFKUweoSkQnhokyuzvXsHWDn9zurQi5MHISz9Qh6rtw=;
+        b=S6oLmxjpCo3T60jePrFlk2m0b2oYPeIkTaalkBYcjjDo9LMnhF80mIYnDo3vsdmejp
+         LFdnHQJ104CWo1L3M73S5c6ggzmE5zNB+oox+IIu8tRsw8N658jqc4szvNhWNlD+7ET2
+         5j1DRBvqsmkkI98KdCiEPPVzcZlakObImD3lxFIxD6fLvWXGb3qrw2PzxZ5WQUmEoBrW
+         ovHxxCYiZ43yr0nAF/1joS40BlkRk9t175aUwFWRtJ+ZuOVK6TB2Mhj1nW1sMm5i7Dxa
+         q3JLejc7PVdK6QHOrcBsO3gfTe09QqBpxRgEOYbKn54UhR+SgzCmhyyddp3K6kfjLX+h
+         nNGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739817509; x=1740422309;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KFKUweoSkQnhokyuzvXsHWDn9zurQi5MHISz9Qh6rtw=;
+        b=cTt1E1gh2ah8ZwX+lx03JSH0Z297Re1H26Uccj+qqYp8xdjKAMvUqS/zy0FU+QoD50
+         DFevBRn0occ4i0YioLiV0PQTAu7B9XvTgcIEGBcgjWKMgL+wX3iyD87bO2+ge1WYd6xF
+         3C986i6+OYMMlV7Rhy0MhS7ZxfBDW9Xjba1QOsicscYNul56h/iy9DxikJ2IscD1Qgre
+         yLK/Ws1EDyBYOHVhyd1EiD5glHTt6jGw3JzcSko3i40RIXczo2MkrWsHegrtg11k9shk
+         79cs0HSaRsSN5A1ERcrgyxxqIxgZQxz94R0J3AAZNJWIsdTx4vhIQRM53fyYXKLWshlI
+         8Gow==
+X-Forwarded-Encrypted: i=1; AJvYcCVUUnXP5NGYKXIKAu55+jRnOwxqoZnGgUDhZqorSz4iNOHog9VwZn4drZ9wnK+R3Bq5wCpHFMX2aZA9PtxdYcc=@vger.kernel.org, AJvYcCXgXEp+/iXaRAR8jgojmShfWQlo4pLQ/iE+FIWuxDwOVlhKSMCEQDy+YUSTnEXl3NiCILYsRF485RjMndkB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVKuq6gZNVF6OgdrbCm5FJ0kyoGoBpF2zHjrBrv3Xyk6m0pqW+
+	pGIsYwMhnW28+8b7ny2uwpjnyNDE6Vxv1R/LoiAtJKUzynRhdcaF
+X-Gm-Gg: ASbGnct4b7EKCzoeEorwCBYa2XcJ8GRmq2Idbhj3rpBoiiizjEAH1PXZC4AcxFZ1Ic3
+	DiiwIXFhM5O49lxj1K2UMyFCp0YWNv43zeW0BXDHcBkRtlLhr/HfjVjDEmRPknGl9gVX1iVTmeX
+	ns9F9ZVHUJLFLunZ3RJ5D1ivhaW5vjj36yq0cFcPW0OCbFMZvMRBaoWFByVsheH8fDajb0PeBog
+	G5MVeuMh4hXVWWHOgI1fMFYqbNtetMgdTwfXseLo3+IHEmIGsYaMIyStTS0tVoKq+qgMAUI49Mu
+	OoLT2OXgqkU54lUYMICt0w86+t5UFEvQHx4DPkk4fp1L0vneur8zdw==
+X-Google-Smtp-Source: AGHT+IF31l27x2012sCEF7nXPo644NzxlM+P1KouFIGxbulaIz9leaxA8lB5fjyvrHRAmNdhYHT8aA==
+X-Received: by 2002:a05:600c:1d23:b0:434:9934:575 with SMTP id 5b1f17b1804b1-4396e6fe730mr120415665e9.16.1739817509258;
+        Mon, 17 Feb 2025 10:38:29 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43982bcc607sm40993705e9.16.2025.02.17.10.38.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 10:38:28 -0800 (PST)
+Date: Mon, 17 Feb 2025 18:38:27 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kees Cook <kees@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
+ jannh@google.com, jmill@asu.edu, joao@overdrivepizza.com,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ luto@kernel.org, samitolvanen@google.com, scott.d.constable@intel.com,
+ x86@kernel.org
+Subject: Re: [RFC] Circumventing FineIBT Via Entrypoints
+Message-ID: <20250217183827.41da5f52@pumpkin>
+In-Reply-To: <20250217131321.GO14028@noisy.programming.kicks-ass.net>
+References: <CAG48ez09JuZPt112nnE6N=hS6cfCLkT-iHUAmidQ-QGNGMVoBw@mail.gmail.com>
+	<c46f5614-a82e-42fc-91eb-05e483a7df9c@citrix.com>
+	<202502131224.D6F5A235@keescook>
+	<6641d1e0-7151-4857-bb0e-db555d4cdf50@citrix.com>
+	<202502131248.B6CC333@keescook>
+	<20250214095751.GF21726@noisy.programming.kicks-ass.net>
+	<20250215210729.GA25168@noisy.programming.kicks-ass.net>
+	<20250217130629.37f556b0@pumpkin>
+	<20250217131321.GO14028@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|DS7PR11MB7860:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1cec8ee-d1c9-40ca-7e93-08dd4f822979
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eGdXbG1CV014dmlZd1Y3bXVlQUV5MWpuOEFSUHZiVXZ5N2k0aGJNbXI3VlNR?=
- =?utf-8?B?L3J2Z0JuQ0VHSG04Snh3dk5SUWpaTXB3UkNtZUpnZGpqZnNaM3hkZ0VSWXZy?=
- =?utf-8?B?cFh6WmcyblpOZEF3SzF2cUV0NmVCV0poM2dzRmJBOWluck1iSldnVFRSQ2ta?=
- =?utf-8?B?RDVCejA3Uyt3aHFIRWhpSk5xeWhicThYODJNVHhEc3hjRW1JVi9SNk11VDVG?=
- =?utf-8?B?SzYxblJZYStRd3V2MFlqQVJoL01ReG14VUpDY1pmbWlkWFphMTFsZXdYQ1Nx?=
- =?utf-8?B?ZHhRMDc5VWhySVpHNjdPeSsrSFRYbjlqM3FzZFd3RkFEcnBWZGREeHFFVmZ5?=
- =?utf-8?B?MnVGWGloK2pIVmQwOEwrcitBY3hIL0k0cU45YzVNQ2xEOGE3cnhFRXAyUFMy?=
- =?utf-8?B?N2JVOHFzQThwb2JIRnhaYVk5d3ZYcnlKWDNDM2ZPLy96aXk4K1FiOGN3bUY2?=
- =?utf-8?B?OEU2czNDUVNua0htby9nVTJJSWc4aExJaDZYZU5jNUplR3RzUEpmMStLWGN2?=
- =?utf-8?B?STROMGtXaGZaWm1ab3lPcGdLQlNjdTJHR0gxOGl2TGpmR2N3QytPM29GSkNK?=
- =?utf-8?B?VEozTU5TT0MvNVdQOVhvVEpEd0ZLMXBYdEIyeDdUMlRkNWNTd3BDa2hjWnUx?=
- =?utf-8?B?UEJ3VnhRNGx4UVlSQjNkdjVmSU9YcERlUkFXK1dMS2xVbm1aTllBazFjdTFP?=
- =?utf-8?B?Nk5nTWZTeFhYdDVqOUVEb3ZJV2RXTGdCU0dRRm4wYTlxbmVrVnJZOUpDRXpW?=
- =?utf-8?B?d2RsYTJCSWJOQWZvVXZvRCtuL1QxRHhFRjNlNmFqNGxnWlFjajQ1L1FDNzRq?=
- =?utf-8?B?Qml2R0Y0eHg1MlppMkUxUWNCVzA5WlBCYXAvRk11aGQ0bElYNXJFYUVXSUpX?=
- =?utf-8?B?Y2tkRHhQc0VNKzVDTFNSSUh6MFJ0UU1OTmJadjVuZzE5RWxkZHErM21sam9O?=
- =?utf-8?B?bGtzdTRMYUF2L25VWGV4UzlTc29ReGxPYXU1K29ydHJ6UzI2MmpoaGoxWFk5?=
- =?utf-8?B?TWkyWnZOSnlCOTdUYnE0Ty84U3EybEZYeEJsY1NRMG1HNTdIL0dNLzZxVVZ6?=
- =?utf-8?B?eVoya0x6bnd2bDRUTlJWYTdNaGJXMjRRUytSTkpmbTh4bWFJekM3R1NvZjZ2?=
- =?utf-8?B?emVmVWlienRZNEFxN09qNmxLMTFaa0FTeWJ0N3Npa2wwREpqUG1waXlSVjZ5?=
- =?utf-8?B?bjlCWXBFckVoTGIxeWQwUnlQR09UbG5NcHpKRkNlN0FPbXVKZzV3SEZzaXhX?=
- =?utf-8?B?QmFRd2RmWXNGNU1rM2wxVDdPRythMlBjZUUyL3FQSzV6bHZhYlQrVjFhTHhx?=
- =?utf-8?B?aDdVaG1RUmg5djNzSkFwcDNQRURBazBaNDIzazJnWU83MVZQMjFDVFhFL1VU?=
- =?utf-8?B?MjdYdkczelpyRDY1a3VVZTh5OGV6YmRhVDhoTEEvUHlqOXJIMlZMSlFkYWQ2?=
- =?utf-8?B?ZnRKQnRtanV6Vi9sTWQ2OW1iTHBJYmNCY1l3ME5rTTFKV3pDMkRvMWN3YnhZ?=
- =?utf-8?B?RGlNUDNPb2p6WTVhQnRmSXFYOW9GbVY4OFdyYWhBenRlUmNkTE5WV1JlcW1L?=
- =?utf-8?B?aHlLSXhSbjlLMjZaOGp0U2g2c3FvWmZvN2hUVThJTlY2c3EzSFdTRm9YVllD?=
- =?utf-8?B?aFRTbU13SVdHT1hXcXl5VkJYU3VWVko4anFEMk5UQU1DZ3hRdmxzU1V6ek0r?=
- =?utf-8?B?RXVWczJqeWNmaDlvRkZOWHZyZHRsSENGSzA0K1NBZXMyU0xyRitzYUxENFUy?=
- =?utf-8?B?ODhkSkZoTVVZZTZ0L0RhWWk0cEtQMWdUZG00YmxLMHA1MGNnUnRHTG1uaVd2?=
- =?utf-8?B?dHFTNVZrdW5sZ1llaVlWS0h4bXZ3NW1wdlc2Rm5FcjROYjVnK1NZWGlXcWd0?=
- =?utf-8?Q?KXXem+9otIMea?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N2hUTk1pcVZ4OXZ2eitrN0J2aTZtOU5qdWlvTmdyL3pzVWJkSTZTSVRLVjNj?=
- =?utf-8?B?bjQwd3dKQ1hqNGR4dDJtQVVWbU1KYTdaSDRJY3hhaHF1VHVkVCszMFhkSVdn?=
- =?utf-8?B?YzM0NTU1M1ErZ3dTYVRyL0JJdFY0YVVzWDV6eDJhWW5XRHdTdjcvRUxPS09u?=
- =?utf-8?B?clRmNndMVS9pdHNLb2N1VkpaVVJpeE1wOCtoVURoY1p0c2N6bzdrWFhyUVNY?=
- =?utf-8?B?TmZmRnQ1ODN0djVTRS9iYXdOdjczcHdJb3pnZkhKT2FBdFAxQUZZRm55MGdY?=
- =?utf-8?B?bW9uZVFsMzFaM2pzVjF2ZUFubFozS1VybHVId2o5d2lHOStTODNReG5QdlRW?=
- =?utf-8?B?S3M4UHdhd1FQVEhqdUFCVFl6RVNXdHozVkFxb0hSNVJIdlBvaDcxdmhxVE5o?=
- =?utf-8?B?eUV5aFdFa05ZZ2pCSDhRSHRtd0ZJeWcrM0duRjBNenp3THZTSFNiY0tydjFq?=
- =?utf-8?B?NjlzZitOR25WalBKVWh0UTUwSkJDYUdUdytSNW40bi9KTUQ5a1hhOXVkWTM2?=
- =?utf-8?B?WXBpdU84RDhrU1l6WWJ0c1pQUkxxbThLUlg3M0xPSXQ4N1dGcG8xZGs1Z0Rx?=
- =?utf-8?B?L0tvc2kzWVpncnhkSnhoT0hoSm5BS2RkajJMbTdGQWRJdmg1NTRmZDhTTU1n?=
- =?utf-8?B?dkQwWXdvek5pMzRhOGlCVG9IR0tjNFZBNGtMWUhEVmNsZzRhZDN2ejhqc0FE?=
- =?utf-8?B?ZWwycTRhampvUzExMEl6d2xJMDJDZ0J4Szc3TkszTXVOcnJBOFVBeGJ2a1hj?=
- =?utf-8?B?d3FUeW1DV2ZtZFFzbUtuWEVhM1RWN0ovaHRTQk9HNFprSlNYQjYxdWUwUDNX?=
- =?utf-8?B?elZyNXMyTU9xVmRKSkZ5WFZmY01MeHpkb2NQN24xeUMrMjRqbWs3SGNVbE9z?=
- =?utf-8?B?alpCZjE4SkgzVms4MkdGa2luZG9uUGVmemtQVFRTdjRxWXhHcEhWYTd4Wkty?=
- =?utf-8?B?RjAwa0RUWWN6Rko4QnFUTlg2T0dIRVh4MkpVT25FTXI3SHg1Si9lU0ZpRkdk?=
- =?utf-8?B?ejJaeDhIWXdaVng1Z0hFcG1XSm5uRnBsWWhHNjNUK3ZzaFNiOUYzLzJSbkp2?=
- =?utf-8?B?V1QvK0RhMHNKcGRJemt6R1V2Q2Nab2Fkc0pCWmd1UUMzRUcwNzBJUWw3eXlZ?=
- =?utf-8?B?VURkM1c4Wmh2VTJKSllNYmVmK1ZYL09lbFhhdk5KUVJmL00wTlluNndvQzRB?=
- =?utf-8?B?bFoyQzVKVFRrZnBFTENOdStxcFRzeFkrWlpUdnU3WGpGZ2hHa0FUWm0rblky?=
- =?utf-8?B?WFAvVksxTGFsbTRUU1M4elp3aUJKTFI3L1dyRnZ0REdBblI4ZittdG16L3Vj?=
- =?utf-8?B?K1ZRV2pBUTVzbGQ1UzVmUHd0YTl5OS9RZHBvMm1BQ3cvc0RGZVZLRDdBUlFt?=
- =?utf-8?B?UXREU3A0UEg2K2lnR1ZPTm1xZVpUT042VFB3cmlyTWxzaERtTzZMLzMxWHNh?=
- =?utf-8?B?RVgzbXRhRHlCbW5qakRJeXZyTlUyUGNPZWhmcURjNWNhdkNLbVoyMTlYNDBE?=
- =?utf-8?B?UVBZN0ZrdG1GNk5vTFZVQ2RSMG1haHp6WUROMTlFZTFyNkxaL3A5NTZ0cFRu?=
- =?utf-8?B?YmREbW5DbmtyOGlIVFV3TFdxSWFRY1R0UlhIZUh4d1prRzY5S3JEeVBIc0R5?=
- =?utf-8?B?eUtiem84RmpnTmdhZjFCVHZYRC9TTlVkZjJxbzRTcFI5Y3NsYWlmTURpcm1i?=
- =?utf-8?B?YXZpT0dQWE5MbUlxdTVYUjFQTEFMZjRRUW9CVzdsdjZJbE1kNHl3T3lFQTZR?=
- =?utf-8?B?QXRRZldvOHNsSWlEU1ZWME5BTUdJQlk4VDVWMW5qS3d5NDlJSE9qWGdpVDJX?=
- =?utf-8?B?clYxZytNTDMwN1dnODhIOXFLSmloa1BHdEhCbmZzdkFEcjVtbnNxb3pvR3ZE?=
- =?utf-8?B?VW5QTnU5YTRDZXlGZFJlVXUvM3Y5UG9oQm9Vak5FR2Y2WVNGSWNuM29MazRu?=
- =?utf-8?B?ZGxPSnBCd2h3c2l6WUtmaGtjT0dMWTFPaGNSK2FDVUhRcGlWZFZRNHlmSUJL?=
- =?utf-8?B?VUxqTjVyRm9GWEx4QUttZlBUMEFtMTNjaEhZQ1JQaHVtUkluMEdrZTBpMHlX?=
- =?utf-8?B?Z0RlbTNrcVVXMnNYWlNQUU9leklqOEpOajduWTdleTQvdWNDcGE0eVcxeGdR?=
- =?utf-8?B?OWtzbmpZTWZGcnp1Z01taC9Mc3c2Z1dlRlBMRExiZk9veSt4a3BlNDc5TTc2?=
- =?utf-8?Q?tXRZJgVTLDWquoa2f7MFFGA=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1cec8ee-d1c9-40ca-7e93-08dd4f822979
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 18:37:41.8862
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gnde02ZQefCeJ+Vw4RcdDaUi3QdNfeuWsahKFtY7vOH5FAnhL0rMt16LRV+DdRwkLaDbTxAwwsLo9YwZtOgNwMRPaIeglJfI86jin5AV+1E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7860
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-17 at 17:13:23 +0100, Andrey Konovalov wrote:
->On Fri, Feb 14, 2025 at 9:21 AM Maciej Wieczor-Retman
-><maciej.wieczor-retman@intel.com> wrote:
->>
->> On 2025-02-13 at 17:20:22 +0100, Maciej Wieczor-Retman wrote:
->> >On 2025-02-13 at 02:28:08 +0100, Andrey Konovalov wrote:
->> >>On Thu, Feb 13, 2025 at 2:21 AM Andrey Konovalov <andreyknvl@gmail.com> wrote:
->> >>>
->> >>> On Tue, Feb 11, 2025 at 7:07 PM Maciej Wieczor-Retman
->> >>> <maciej.wieczor-retman@intel.com> wrote:
->> >>> >
->> >>> > I did some experiments with multiple addresses passed through
->> >>> > kasan_mem_to_shadow(). And it seems like we can get almost any address out when
->> >>> > we consider any random bogus pointers.
->> >>> >
->> >>> > I used the KASAN_SHADOW_OFFSET from your example above. Userspace addresses seem
->> >>> > to map to the range [KASAN_SHADOW_OFFSET - 0xffff8fffffffffff]. Then going
->> >>> > through non-canonical addresses until 0x0007ffffffffffff we reach the end of
->> >>> > kernel LA and we loop around. Then the addresses seem to go from 0 until we
->> >>> > again start reaching the kernel space and then it maps into the proper shadow
->> >>> > memory.
->> >>> >
->> >>> > It gave me the same results when using the previous version of
->> >>> > kasan_mem_to_shadow() so I'm wondering whether I'm doing this experiment
->> >>> > incorrectly or if there aren't any addresses we can rule out here?
->> >>>
->> >>> By the definition of the shadow mapping, if we apply that mapping to
->> >>> the whole 64-bit address space, the result will only contain 1/8th
->> >>> (1/16th for SW/HW_TAGS) of that space.
->> >>>
->> >>> For example, with the current upstream value of KASAN_SHADOW_OFFSET on
->> >>> x86 and arm64, the value of the top 3 bits (4 for SW/HW_TAGS) of any
->> >>> shadow address are always the same: KASAN_SHADOW_OFFSET's value is
->> >>> such that the shadow address calculation never overflows. Addresses
->> >>> that have a different value for those top 3 bits are the once we can
->> >>> rule out.
->> >>
->> >>Eh, scratch that, the 3rd bit from the top changes, as
->> >>KASAN_SHADOW_OFFSET is not a that-well-aligned value, the overall size
->> >>of the mapping holds.
->> >>
->> >>> The KASAN_SHADOW_OFFSET value from my example does rely on the
->> >>> overflow (arguably, this makes things more confusing [1]). But still,
->> >>> the possible values of shadow addresses should only cover 1/16th of
->> >>> the address space.
->> >>>
->> >>> So whether the address belongs to that 1/8th (1/16th) of the address
->> >>> space is what we want to check in kasan_non_canonical_hook().
->> >>>
->> >
->> >Right, I somehow forgot that obviously the whole LA has to map to 1/16th of the
->> >address space and it shold stay contiguous.
->> >
->> >After rethinking how the mapping worked before and will work after making stuff
->> >signed I thought this patch could make use of the overflow?
->> >
->> >From what I noticed, all the Kconfig values for KASAN_SHADOW_OFFSET should make
->> >it so there will be overflow when inputing more and more positive addresses.
->> >
->> >So maybe we should first find what the most negative and most positive (signed)
->> >addresses map to in shadow memory address space. And then when looking for
->> >invalid values that aren't the product of kasan_mem_to_shadow() we should check
->> >
->> >       if (addr > kasan_mem_to_shadow(biggest_positive_address) &&
->> >           addr < kasan_mem_to_shadow(smallest_negative_address))
->> >               return;
->> >
->> >Is this correct?
->>
->> I suppose the original code in the patch does the same thing when you change the
->> || into &&:
->>
->>         if (addr < KASAN_SHADOW_OFFSET - max_shadow_size / 2 &&
->>             addr >= KASAN_SHADOW_OFFSET + max_shadow_size / 2)
->>                 return;
->>
->> kasan_mem_to_shadow(0x7FFFFFFFFFFFFFFF) -> 0x07ff7fffffffffff
->> kasan_mem_to_shadow(0x8000000000000000) -> 0xf7ff800000000000
->
->I'm a bit lost with these calculations at this point. Please send the
->full patch, including the new values for KASAN_SHADOW_OFFSET (do I
->understand correctly that you want to change them?). It'll be easier
->to look at the code.
+On Mon, 17 Feb 2025 14:13:21 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Sorry, this thread became a little bit confusing. No, I think the
-KASAN_SHADOW_OFFSET values are fine. I just wanted to embrace the idea of
-overflow for the purpose of the check in kasan_non_canonical_hook().
+> On Mon, Feb 17, 2025 at 01:06:29PM +0000, David Laight wrote:
+> > On Sat, 15 Feb 2025 22:07:29 +0100
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >   
+> > > On Fri, Feb 14, 2025 at 10:57:51AM +0100, Peter Zijlstra wrote:  
+> > > > On Thu, Feb 13, 2025 at 12:53:28PM -0800, Kees Cook wrote:
+> > > >     
+> > > > > Right, the "if they can control a function pointer" is the part I'm
+> > > > > focusing on. This attack depends on making an indirect call with a
+> > > > > controlled pointer. Non-FineIBT CFI will protect against that step,
+> > > > > so I think this is only an issue for IBT-only and FineIBT, but not CFI
+> > > > > nor CFI+IBT.    
+> > > > 
+> > > > Yes, the whole caller side validation should stop this.    
+> > > 
+> > > And I think we can retro-fit that in FineIBT. Notably the current call
+> > > sites look like:
+> > > 
+> > > 0000000000000060 <fineibt_caller>:
+> > >   60:   41 ba 78 56 34 12       mov    $0x12345678,%r10d
+> > >   66:   49 83 eb 10             sub    $0x10,%r11
+> > >   6a:   0f 1f 40 00             nopl   0x0(%rax)
+> > >   6e:   41 ff d3                call   *%r11
+> > >   71:   0f 1f 00                nopl   (%rax)  
+> > 
+> > I tried building a fineibt kernel (without LTO) and that isn't what I
+> > see in the object files.
+> > (I not trying to run it, just do some analysis.)
+> > While the call targets have a 16 byte preamble it is all nops apart
+> > from a final 'mov $hash,%rax'.
+> > The call site loads $-hash and adds -4(target) and checks for zero.
+> > It is too small to be patchable into the above.  
+> 
+> Right after that comes the retpoline site, which is another 6 bytes
+> (assuming you have indirect-branch-cs-prefix, which all kCFI enabled
+> compilers should have).
 
-But I'll put down my train of thought about the overflow + calculations in the
-patch message.
+I'm building with clang 18.1.18 - should be new enough.
+I may not have retpolines enabled, a typical call site is (from vmlinux.o):
+    3628:       48 89 c6                mov    %rax,%rsi
+    362b:       41 ba 83 c5 2c af       mov    $0xaf2cc583,%r10d
+    3631:       44 03 51 fc             add    -0x4(%rcx),%r10d
+    3635:       74 02                   je     3639 <vc_handle_exitcode+0x739>
+    3637:       0f 0b                   ud2
+    3639:       ff d1                   call   *%rcx
+    363b:       4c 89 f6                mov    %r14,%rsi
 
->
->Feel free to send this patch separately from the rest of the series,
->so that we can finalize it first.
+That one has three targets, one is:
+000000000008a5c0 <__cfi_kvm_sev_es_hcall_prepare>:
+   8a5c0:       90                      nop
+   8a5c1:       90                      nop
+   8a5c2:       90                      nop    
+   8a5c3:       90                      nop    
+   8a5c4:       90                      nop    
+   8a5c5:       90                      nop    
+   8a5c6:       90                      nop    
+   8a5c7:       90                      nop    
+   8a5c8:       90                      nop    
+   8a5c9:       90                      nop    
+   8a5ca:       90                      nop
+   8a5cb:       b8 7d 3a d3 50          mov    $0x50d33a7d,%eax
+    
+000000000008a5d0 <kvm_sev_es_hcall_prepare>:
+   8a5d0:       0f 1f 44 00 00          nopl   0x0(%rax,%rax,1) 8a5d1: R_X86_64_NONE    __fentry__-0x4
+   8a5d5:       48 8b 46 28             mov    0x28(%rsi),%rax
 
-I have the x86 tag-based series basically ready (just need to re-read it) so I
-think I can send it as whole with this patch and 3 others from this series.
+I think that if I had endbra enabled objtool would remove them from non-exported
+functions whose address isn't taken.
+But none of the 'mov $hash,%eax' get removed - and I think they should suffer
+the same fate.
 
--- 
-Kind regards
-Maciej Wieczór-Retman
+I'm not sure why I don't have endbra though.
+I did remove a lot of the mitigations from the config I copied to add the caller
+side fineibt (I think) hash checks.
+After all this is a local system I want to run fast, not a semi-public one
+someone might try to hack.
+
+> You need to go read arch/x86/kernel/alternative.c search for FineIBT
+
+I found some stuff in one of the docs.
+Didn't read that bit of source.
+
+What I was hoping to obtain was a list of the valid target functions for
+each indirect call site.
+With the stack offset of the call (which objtool knows) and a lot of 'shaking'
+an real estimate of max stack depth can be determined.
+(and recursive loops found.)
+
+	David
+ 
+
 
