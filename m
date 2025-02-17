@@ -1,146 +1,234 @@
-Return-Path: <linux-kernel+bounces-517076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D67A37BB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:00:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03150A37BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B2F188D5D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB873A9EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CD81917D7;
-	Mon, 17 Feb 2025 07:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB2219048F;
+	Mon, 17 Feb 2025 07:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Iu5lZhp"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="qPK+yJh3"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65E318801A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36134C70;
+	Mon, 17 Feb 2025 07:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739775628; cv=none; b=MUc9rjla53AGRCTjZfxpSuGyjTPwlauDx83+lnkBZM5DESvuJ0s4BidHE9kY6isWoQQVjwDFlKW+D/N5guVM3QumEs8oAUQToqrUPI16XUouvBFZgW0TcmvL6d3+zPuAjmNeP+Q+ML6wDNZ0ttCnRaFGUSMnQ1UQrC8yhzIyEpk=
+	t=1739775772; cv=none; b=ujlGtydeIR6G6rLTTkGAo9ruGLJfVkEqCdYCLMQJX/JrBKNKOZMhP4fYIggRMzlrYpkKuVDSCyYHhJmqQ1W0C4YqlRrA9EhcwlwPS3J1WoZLCBe/KcWNhEzLy4YJy/v8O78GQUy0f5rBAWHiQ3deLEIGvAp/m9hOY+H+jhppFFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739775628; c=relaxed/simple;
-	bh=5ku9a0cNd6n1jVDY2opaLBcc6omI+m94Vuf0uuS+FK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SV34/lptf6frRFOwaHe/cvtJVFunyrU9WryakXA+Ac36mJcDwBjctZdwn54IaBhTYHBn00TYr2lAWqw+i6laave6L0DvulbjfUjM9d4/KvJ5Y2oHtv0thtrVcslJnIX06rAT4ODB9264QSNBjv7L6q6vL+SyEeEHAHsL1t9FqfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Iu5lZhp; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fc3a14f6fbso2822812a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739775626; x=1740380426; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/kidt/+m/QUXKGxp/hFK00u7EvOABsDl7T7sblEpXY=;
-        b=0Iu5lZhp3oLwNXOWDpAh9qG4reljezTP6+Ugp0Y21NRZP6kaEI8hRR6UwB5R5eA3tM
-         RbLeJBI4Wa591x0TXv9oCRRjd62tRnkuqsmJaQn7+2ylVVuNWoQGoXwMWGCQbaKZM8cq
-         ti88dvtvqp3gBbVxe2BnPVlDUAAUZJGq3V9zDBlz8oFy38CxpQdOZoxpGpvki8XmPc4G
-         PAEE7RFe0UM5KI31Uejma7+r1I1IRrNEqOzYhIE5xkMrT6TzCcKjE0T44A0qwTJH4LUg
-         bEOy1O+qmuhDvFuY/MZdi2ZY7t9W22pulxloias2jGcf0xG+FTahRQo4HMZckhdN6mHm
-         mA8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739775626; x=1740380426;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S/kidt/+m/QUXKGxp/hFK00u7EvOABsDl7T7sblEpXY=;
-        b=eXNlUchPQ0howGywM8B3jXgMAVX84I5bdOvfpLrXhanRdm5emecoxXRWeaNV48dvk7
-         3H+u99+oqz3uVyJHQu9YobrRsg2i/o1+Qhc7yEGwsdJ1lyroPbwPe/M05t/7RFJDoQHA
-         e37MuyaJQQTvEmLIkT4xth66HfOh40BJKXy7zGssXRz6R7hZAv6ztGo/dD9PpAijaSDi
-         9s66qO+LISar4x9h8kidpQuOB0PEy4pBwGKzf89WN4jivT3oqKCuSOdXfkCTZab3PML4
-         tHrU77WdIC2+pEZhDNMJJTZajvqJwL2V9mb/GIXXi6w8fcHJYMVG69+dZhh9fi3TMztE
-         PUug==
-X-Forwarded-Encrypted: i=1; AJvYcCUySUenCwaW4vMctBGRrOF69J/gw2TF1IEkbtGDL+63kjkCJ2MI6bfRDmbmutvK97MHwaO1ydwWjJ3RyI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKHHPyCQyQF473g1t5yuqmR5A+Lz9VThpF2SVdxjm0e2Wl35zJ
-	8mRTkzBiJlG6EldO7kv/3FTKe9KU6aLEeygIEc4Od45o4oWL0jhb4ukMqN8WvG7trJg0xUqAvrd
-	KgAFGOaCweoJsKv+JDwZAFXsMcg70kXDildnm
-X-Gm-Gg: ASbGncsrPUm2PzLy2jTcGBu48lwSwQ+7v7gFfOeOn6F26buU/eXDQHBMNswkaIqti1/
-	CrqS24SOVKNSkM735bwhQdsf+5vThlvj9tCLfngvoDBeO3ePlboEKZ7tGInMBcbvQvyTQM9Jl50
-	3ZAA1FyU6i9mNmnZwnlNdogkhl5DId
-X-Google-Smtp-Source: AGHT+IHD12v4dEhaZ62sRSteKflMrr3lpwkcPBcQw2wsLcwG7ZT2n4vyQUXQL25K8qzbpy/wSsxQInpfI87dALr0jmY=
-X-Received: by 2002:a17:90a:ec8d:b0:2fc:3264:3666 with SMTP id
- 98e67ed59e1d1-2fc41153decmr12093928a91.30.1739775625488; Sun, 16 Feb 2025
- 23:00:25 -0800 (PST)
+	s=arc-20240116; t=1739775772; c=relaxed/simple;
+	bh=CnMACyq8fVyIC6o/qW1rsSrblNpgU9XLuyA5xGMStqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XtM0aiPF9juWN1JqxoEBPh73aFJ7g4eh62KvQrVdhOTbOvIdlSheG2n6LT2OInOLeFD3cgpCNpyBEBgmfkZ2b8viGUF5/2NbOoMRSw7I8wrpY/57rwadAIWhcFl6uoLsgi0cJVwCaruTlmLliGtUUD9x6lTXZyOkQXMb2oUCqYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=qPK+yJh3; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739775724;
+	bh=tEaf1fdlKHQ41IMwoFr6kAyWu7BQC3uaiiT0Z+Tp1vk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=qPK+yJh3VI328ujJERmfE0AbHl0xq7idc6Cu/wtEllCf+vaueYRadZsV/agWa4on4
+	 PmsR/hK3LQsjw9s5zOn/8js02rsCa9ppghL16ar2Lg5mw7fy6m1enVuVlQ7slPQOs2
+	 dTGS52qt1hGJ8GQk5A+oWbr5KwHq2CcFDHa6SBBY=
+X-QQ-mid: bizesmtpip3t1739775691t5lavpw
+X-QQ-Originating-IP: TBtoORpur2h6g4UaoSd3UoAbLMVGet+CdXOJtAvKbqw=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 17 Feb 2025 15:01:29 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6567153048782771633
+From: WangYuli <wangyuli@uniontech.com>
+To: cassel@kernel.org
+Cc: chenhuacai@kernel.org,
+	chenhuacai@loongson.cn,
+	dlemoal@kernel.org,
+	jiaxun.yang@flygoat.com,
+	kernel@xen0n.name,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	WangYuli <wangyuli@uniontech.com>,
+	Jie Fan <fanjie@uniontech.com>,
+	Erpeng Xu <xuerpeng@uniontech.com>
+Subject: Re: Re: [PATCH] ahci: Marvell controllers prefer DMA for ATAPI
+Date: Mon, 17 Feb 2025 15:01:20 +0800
+Message-ID: <36B40EDC960C005C+20250217070120.666907-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <Zt6l6DVeDGzb5W7N@ryzen.lan>
+References: <Zt6l6DVeDGzb5W7N@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213200228.1993588-1-longman@redhat.com> <20250214195242.2480920-1-longman@redhat.com>
-In-Reply-To: <20250214195242.2480920-1-longman@redhat.com>
-From: Marco Elver <elver@google.com>
-Date: Mon, 17 Feb 2025 08:00:00 +0100
-X-Gm-Features: AWEUYZkyCYAFeX-s3finstA3GzhMKKZ63CjP0dxLIlHJtFCqcCRgDj5s5rXnCbc
-Message-ID: <CANpmjNOMnSXGBUWyycUziKcxcN=Vb5_qvyrrATHZoKgVacpAgQ@mail.gmail.com>
-Subject: Re: [PATCH v4.1 4/4] locking/lockdep: Add kasan_check_byte() check in lock_acquire()
-To: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Ob+TdET2B71e5ulmgkXCW/ALvBh1Qk50Fw2/F7D0yEfDpn7hXosZRLzi
+	aWC5Ga/PoseFquZrV/AeJTJYlnZPJNDae1z6DRTewKSkQYWz8FxxMU0bnGjp3atFGVqsi5g
+	tJF7LjZ1ncLl40hE3JJk7O6mW2mreplYRCSshyHo5o3C7Pe6qJZwFzB9wfZS09hDNOwsxqk
+	iL6tvLgEe5eamt6bahbeFobaVo0qx4UVM1g0VGjRFB//nwoAIgoap7oetkDLBvk+NAy5erF
+	h/DGW2iD7nduCe2PF5nT7hQN+AWc0pgOrAhqYb+/sJhHeiwZdkzINbcRl0/Dt03GahqnuyZ
+	N80S5+zwgWoOsYxEXOsqNCgg1hmYnRuEVtJOv9GXZ4aQSmJTDyavaBLANITyBi0d9YOK3sx
+	rypBHIFoF2DYPYQBfL4omu6bEeyXYclAFhMWx3WxhSZUFE2OC0W9RX7NKWgKs88kVv9tIVa
+	sDWhYDull3GaoREvOtddWkitpLwG4/z25FhB62n+EKczOSVoJlinIzh6i9AkKM3656CCa7w
+	eOGd9k5nbUOvBlJQ9adq+10VzU63CbznGhOPXpuTV4zxnAy2t5CSYJBjrMx2Y37Rpcl3LkN
+	MP+owCu/aJ1QWfcusixGVNQfzlxyq5WAcwDtc+epJyrFaF/z7nC9OturBTLnArGRE+C4FTo
+	aIcHEjmqzN8y3ACUN4Gj1h0E8mn2D5CsLnAnmXcNiVpxYcaP+uiWpj6bK/MYdZ6IEsB5bkU
+	5NVp/kH5nC8pH9/tUfnDDsDssGBt36bWOdTbNguPeJ+GiFnXL43JKYGLzw9Y5v578arZGZA
+	iS9yT7qGOBOSG+7CIaHmAeai/7cKS7rIxQqjZ/NhyiPKQGyNrBMoJd8ND/In1UJFLDSCIGz
+	ENJ8tK1+8M/Kt7hgZ8u0Q+3/YqFUVytcwQsiuogPRnuiR9I4PRc9d34+b6sXysQef19oMfr
+	vLz3z9ZQdvPNC6iMTxeHWbENPEityy79z0i8TWGZMi9gkMA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Fri, 14 Feb 2025 at 20:53, Waiman Long <longman@redhat.com> wrote:
->
-> KASAN instrumentation of lockdep has been disabled as we don't need
-> KASAN to check the validity of lockdep internal data structures and
-> incur unnecessary performance overhead. However, the lockdep_map pointer
-> passed in externally may not be valid (e.g. use-after-free) and we run
-> the risk of using garbage data resulting in false lockdep reports.
->
-> Add kasan_check_byte() call in lock_acquire() for non kernel core data
-> object to catch invalid lockdep_map and print out a KASAN report before
-> any lockdep splat, if any.
->
-> Suggested-by: Marco Elver <elver@google.com>
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Reported-by: WangYuli <wangyuli@uniontech.com>
 
-Reviewed-by: Marco Elver <elver@google.com>
+Hi all,
 
-> ---
->  kernel/locking/lockdep.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 8436f017c74d..b15757e63626 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -57,6 +57,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/context_tracking.h>
->  #include <linux/console.h>
-> +#include <linux/kasan.h>
->
->  #include <asm/sections.h>
->
-> @@ -5830,6 +5831,14 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
->         if (!debug_locks)
->                 return;
->
-> +       /*
-> +        * As KASAN instrumentation is disabled and lock_acquire() is usually
-> +        * the first lockdep call when a task tries to acquire a lock, add
-> +        * kasan_check_byte() here to check for use-after-free and other
-> +        * memory errors.
-> +        */
-> +       kasan_check_byte(lock);
-> +
->         if (unlikely(!lockdep_enabled())) {
->                 /* XXX allow trylock from NMI ?!? */
->                 if (lockdep_nmi() && !trylock) {
-> --
-> 2.48.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/kasan-dev/20250214195242.2480920-1-longman%40redhat.com.
+During testing, we observed that reading CDs on an INSPUR CE3000F desktop
+computer (with a Phytium FT2000/4 processor [1]) running deepin 23 [2]
+distribution is very slow, taking over a minute.
+
+Further testing revealed that mounting the device from the command line is
+fast.
+  e.g., executing "time mount /dev/sr0 /mnt" returns a value of only 0.898s.
+
+However, deepin's dde-file-manager reads more than just mounting when opening
+the optical drive; it also reads disc information (such as capacity, etc.).
+
+After using udisksctl to first mount and then unmount the disc to reset its
+state, and then using the cd_sessions tool to read disc information, we used
+strace to monitor system calls, testing commands are as follows:
+  udisksctl mount -b /dev/sr0
+  udisksctl unmount -b /dev/sr0
+  strace -Ttt cd_sessions /dev/sr0
+and found that openat was blocked for 42 seconds, and at this point, the
+process had entered kernel space.
+
+[1]. https://www.phytium.com.cn/homepage/production/6/
+[2]. https://cdimage.deepin.com/releases/23/arm64/deepin-desktop-community-23-arm64.iso
+
+
+TEST REPORT:
+
+For this patch, before its introduction, with original system-integrated optical
+drives capable of recognizing discs, the total execution time for cd_sessions was
+92.4 seconds, including 31.6 seconds for openat and 60.6 seconds for ioctl.
+
+With LITE-ON optical drives, under the same condition of disc recognition, the
+total execution time for cd_sessions was 108.2 seconds, with openat taking 45.4
+seconds and ioctl taking 62.9 seconds.
+
+With RITEK optical drives, also when discs were recognizable, the total
+cd_sessions execution time was 98.2 seconds, with openat at 36.7 seconds and ioctl
+at 60.8 seconds.
+
+After the patch was introduced, the time to read disc information (using cd_sessions)
+with all optical drives was reduced to less than 0.5 seconds.
+
+I've tried different pairings of optical drives and SATA controllers, and the test
+results were consistent across the board. The Marvell 88SE9215 controller consistently
+emerges as the source of the problem, no matter the optical drive tested.
+
+Devices lists are as follow:
+
+
+CD-ROM DRIVER LIST:
+  1. original system-integrated optical drive
+           *-cdrom
+                description: DVD writer
+                product: DVD A  DH16AFSH
+                vendor: ATAPI
+                physical id: 0
+                bus info: scsi@2:0.0.0
+                logical name: /dev/cdrom
+                logical name: /dev/sr0
+                version: DC2M
+                capabilities: removable audio cd-r cd-rw dvd dvd-r
+                configuration: ansiversion=5 status=ready
+              *-medium
+                   physical id: 0
+                   logical name: /dev/cdrom
+  2. a LITE-ON optical drive
+           *-cdrom
+                description: DVD writer
+                product: DVD-RW DH16AFSH
+                vendor: PLDS
+                physical id: 0
+                bus info: scsi@2:0.0.0
+                logical name: /dev/cdrom
+                logical name: /dev/sr0
+                version: DL3M
+                capabilities: removable audio cd-r cd-rw dvd dvd-r
+                configuration: ansiversion=5 status=nodisc
+  3. a RITEK optical drive
+           *-cdrom
+                description: DVD writer
+                product: DH-16AFSH SUPDRV
+                vendor: RIDATA
+                physical id: 0
+                bus info: scsi@2:0.0.0
+                logical name: /dev/cdrom
+                logical name: /dev/sr0
+                version: NWDN
+                capabilities: removable audio cd-r cd-rw dvd dvd-r
+                configuration: ansiversion=5 status=nodisc
+
+
+SATA Controllers LIST:
+  1. INSPUR CE3000F
+        *-sata
+             description: SATA controller
+             product: 88SE9215 PCIe 2.0 x1 4-port SATA 6 Gb/s Controller
+             vendor: Marvell Technology Group Ltd.
+             physical id: 0
+             bus info: pci@0000:03:00.0
+             logical name: scsi2
+             logical name: scsi3
+             version: 11
+             width: 32 bits
+             clock: 33MHz
+             capabilities: sata pm msi pciexpress ahci_1.0 bus_master cap_list rom emulated
+             configuration: driver=ahci latency=0
+             resources: irq:43 ioport:2020(size=8) ioport:2030(size=4) ioport:2028(size=8) ioport:2034(size=4) ioport:2000(size=32) memory:58140000-581407ff memory:58100000-5813ffff
+  2. Maxsun MS-WS W680 D4
+             Hardware Class: storage
+             Model: "Intel SATA controller"
+             Vendor: pci 0x8086 "Intel Corporation"
+             Device: pci 0x7ae2 
+             Revision: 0x11
+             Driver: "ahci"
+             Driver Modules: "ahci"
+             Memory Range: 0x82100000-0x82101fff (rw,non-prefetchable)
+             Memory Range: 0x82102800-0x821028ff (rw,non-prefetchable)
+             Memory Range: 0x82102000-0x821027ff (rw,non-prefetchable)
+             IRQ: 166 (no events)
+             Module Alias: "pci:v00008086d00007AE2sv00000000sd00000000bc01sc06i01"
+             Driver Info #0:
+               Driver Status: ahci is active
+               Driver Activation Cmd: "modprobe ahci"
+             Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+
+Tested-by: Jie Fan <fanjie@uniontech.com>
+Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+Tested-by: WangYuli <wangyuli@uniontech.com>
+
+Currently, due to the limited hardware I have access to, I'm unsure if this is a Marvell
+88SE9215's specific issue or a general Marvell SATA controller problem.
+
+So, I think it's reasonable to add a quirk to handle this for the Marvell 88SE9215 now.
+
+Thanks,
+--
+WangYuli
 
