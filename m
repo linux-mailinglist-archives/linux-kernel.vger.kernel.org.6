@@ -1,303 +1,144 @@
-Return-Path: <linux-kernel+bounces-516885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3EDA37947
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:51:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957DEA3793B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BB33AC8F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670DA1686E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BD8DDC1;
-	Mon, 17 Feb 2025 00:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFA6D528;
+	Mon, 17 Feb 2025 00:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="dkgQdio0"
-Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="eGFM9ojn"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FDC7483;
-	Mon, 17 Feb 2025 00:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739753458; cv=fail; b=L1iMHCYq+xxSuW+jgcKr5Nwk+JDmiVjCOI35gDef6ufsVoryEnYsDhGYS84t8Ogy7z5358ewQAgucsnGjM64VLpHraVGfcuD31UE6Vig1xlPEu91obIT+PDAzgER1Q5gNmk3dK+txNuWrOZ1Lx2fDRRiJ1ZDg0GqFJkOgOOKjL0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739753458; c=relaxed/simple;
-	bh=iYtd1r1XLtDtR3BPEbjR585GNtbHHHLn7/nOtlNsV7w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rj/blt+XHGopez2LE7ZWajz/hGLGoAgot8Q/iksZTifTo17g7PITpHMiBCkHjxfdm8+kFmXNtmc59unUaL7lPHW1QnKU0JHYbTvQA7KSM9GPhzbAOhIGEzyNtdQ8+CS5zPo+hG1iXYGuoiK9fu04CMY2B8OP0QIqqeWjbaErJ74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=dkgQdio0; arc=fail smtp.client-ip=209.222.82.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2044.outbound.protection.outlook.com [104.47.55.44]) by mx-outbound-ea18-150.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 17 Feb 2025 00:40:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DQusfoeXdIC2/172AVF3M5BusddskOcPjvNKI6B3EzhsesthKq3sFlb4mJXSHeM1CVCLZ5c9TJsVDgBNQStkhkWIIHU5NWpjrsP6C0Mj9QgCj7KWTOHnSD74iAr2sIPbZmBM/oJaMeN6rpkjMdrl5uGK61Wj/3mXm3k7tzvrtiucpGgKDOLea4ONjaGszHqao6Ei0TnhMlNeUXsothn0wIsnFppXRNq+Du2tvC2XGxnJU3GY2q8sfutP5Vgw0NEEVgXhwjSQ9UtwqkHZqbDsaSbBOWmuQDj431oVhRPZqHDBmKmI/MBRdY65HG+vBDWlhYEIf2aMJMl7nBZKAsbbdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dLZXDTHk3vK0Ai4Akb24AXjXn53eh11wbT4EMjqtnsk=;
- b=av8L8PMAL7ggO360c4wBveGSSrzTCLiyEFWuM29bPwqbY3TnyXN6W0orxlwpNRlKN+i8eDTF2nwQnZxAUiPQb9JdJVQ1fEaDakHuv4cyS1mN3NdUrR4x9zuHkyBGALaWXtaMD5lEuEyU37PlAmZ8UnYaRrNiV1U6snpkCNKbxtSUnGWsQkHXDMMnGhtHwmhecY6+44Js0A4yWcO53man06+1iPGCj9OvXxLQkxPcOX6dPwFs9quUev6YYlBuImSr2MhbTkX5o2fxnKsiymA/WnpK5GmqB120FjBRhbMCP7B20gSOal9IJK10NM0W1ZA7INglnxeVFDl2qrHJYZNmEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dLZXDTHk3vK0Ai4Akb24AXjXn53eh11wbT4EMjqtnsk=;
- b=dkgQdio0U2lmtA2SnHBid7chFsP6nQHuzERDM0np+wcC5g7hcEKQ/pu3uGo/j7LiimrHrCPSHdSBmj715iT4PA3xv+j8xIR5ldq0R0OaLWCnDBscpNiyysFVdcULylJZEoB6iwbm0XHD/PPzraszy6ho9uixOG7BqXVoDq0FVPM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-Received: from MN2PR19MB3872.namprd19.prod.outlook.com (2603:10b6:208:1e8::8)
- by PH7PR19MB7533.namprd19.prod.outlook.com (2603:10b6:510:27c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Mon, 17 Feb
- 2025 00:40:11 +0000
-Received: from MN2PR19MB3872.namprd19.prod.outlook.com
- ([fe80::739:3aed:4ea0:3911]) by MN2PR19MB3872.namprd19.prod.outlook.com
- ([fe80::739:3aed:4ea0:3911%5]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 00:40:11 +0000
-Message-ID: <3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
-Date: Mon, 17 Feb 2025 01:40:06 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for all
- inodes
-To: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dave Chinner <david@fromorbit.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250216165008.6671-1-luis@igalia.com>
- <20250216165008.6671-3-luis@igalia.com>
-From: Bernd Schubert <bschubert@ddn.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250216165008.6671-3-luis@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR3P251CA0010.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:102:b5::17) To MN2PR19MB3872.namprd19.prod.outlook.com
- (2603:10b6:208:1e8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BCA2745C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739752858; cv=none; b=Fu8a7FbM+JV8vPKtm3eoXsxJUrqZYOjXpFVEVFZ70cVA3ZamaFJmNZF77NaESRpI0UrCaixNtOj8lMWVG9dElNx+XhrcumNj1E7NxCtqzN0rdTlJoCTuwXlU1XZu74x99Uyi0m35rkPKRYecgQNCdu1NDoc2sbbbrO3NR2Ronpg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739752858; c=relaxed/simple;
+	bh=VP88tVjGFUz2xXhw248F15t6bV2Dtb3FpAxcTyu+dpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XU/xXy/1ChnVfR1elWr/yQMw1k0ibA+H06AfR5sxIRuT+BZU7inlGl9HmbRsM0uQ3CUGx/P//75wn1kwCPO3z6qLaBV9CofFm7QUDW/BEHb5cxOZ69xzo8wcjRWxngvSbxefo1yH0/OXlXdpdrlK7hGAHVF1XOM+QbUflTalBto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=eGFM9ojn; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C03213F516
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739752854;
+	bh=47VWApMddME6n7729BSWTK2/mvuv99AvhCZBYLgXjOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=eGFM9ojnVtI2yJ9EjKKH34ss2KS2HOdM0QWZ27g6E1Hvce3I/BWaj+MqNHbzICvVU
+	 j/oaB+ogpd+LjthaUNZhjydk7AEeXeTlDsk9JscX+4kYv7sW5iCkGedHEGxe4HnmjF
+	 QdIKLjbju9v17P/5gKqRMWDtv4h/60GIETp+x+ZiiY8srDtqmNiHGXFF3X+cNCYWWt
+	 U99zNZcpfhoyf7DTuzhoOYMo5/JxFmInilTaLyGG6eCOgKDfj0EksvNABM2pMoTsaB
+	 AhW18XFBAaF8gtxXOc6vbIOOpR+G48sECtQcajVwZPMjrAxM0a0DbHSxVw11tPr8DH
+	 L1+fUM1NiiZtw==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220ff7d7b67so38996705ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 16:40:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739752853; x=1740357653;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=47VWApMddME6n7729BSWTK2/mvuv99AvhCZBYLgXjOo=;
+        b=kj3xk0FJDqhP1O2pO7XZFwg1wlBC5RjCsVKVD23uze9bhiiNURgrABcncUUB/VDehg
+         tsXGI9Z1HF1k9xCNo9wmWxJCjSno+Nd/g0O79qQEsQ+6AYuuLXiiFEypKclB2T2TIsUn
+         FpEbe8ryuEuKqVFnpbqimF/11pbAfXvKha7tq7rXny5Vom1PsrfRuI0+GtHywaVHsC8Z
+         W9fmgWM2sHfOfOsPWkXxEDtO+r2ZUWUJFC0sgkO31kBohSyvC7bdLTC+aq7wVkuiLxo/
+         Jj8GOPcgKCV6lYbw0c63kimdr+GZ2P93XkZQQujCIO8TZbEnl8fyhdbaV/akNtlMIgHt
+         Il5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXr0tUhAvgfLBjFjx89wJPLpdiCfBREoY/x0VbinKO0vKuPdbEotgTgLEWT7BuY+PV3qcGP5tZAoUTCZ70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuP8yneNHsqOkJqaqyvkaMEmVgSEWnZe3ZxJ8lkcIKcfcxt/21
+	k75bbGVoISYMzxqWAjI92K3/4oVRenJ0QVLON+bnpXfk4pBFC81/IpsOd95LIMDzRg0pF3zCSjU
+	MrbUAk3v768XMAn3H/QO+Gsg/oAgiMl/uxuuZ++8tc0sDgmESg+xPrf+ksakV5rEi9RvJRYiuTS
+	vZ5g==
+X-Gm-Gg: ASbGncuEs/5qjfnyQefpM2qeqa1uo+k0TfKBntIBFXpbCHr/oWcIjScGcT+sJuX7NT+
+	mpyVZkflLGK+ueh+wQZt1GWc3Y6xE3xy26J+yadeqtsNBGX3AA6girJI5ID9ceA8kxiLH0CvH3r
+	uQvelaYUxWozSakmZpp+gH+Xd1sbc4Xu73gEFvZaySKVx1rZKKkuHWFnWGXl8riuO+8sBHEZr7l
+	r0eJ4JYIcpCf7fU4E1ej2eOK3au78RlhzavE7iDChSoJ7IaY5uo74XS64nYIA3jafY3C4rrydWE
+	K0FL5gHs4cLOu6NqxD6tO87qOYP2WM+6V03uBdFC/Eb14aplvTcpzATwDwI=
+X-Received: by 2002:a05:6a21:e8d:b0:1e6:509c:1664 with SMTP id adf61e73a8af0-1ee8cc25d50mr13918084637.39.1739752853196;
+        Sun, 16 Feb 2025 16:40:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFScrHC6XdIdbfDrLHwEns3mPcJitW3jb1ZLyXBDYDk0pzUh81zMMmvwYvMQtgSGxYT03IcPQ==
+X-Received: by 2002:a05:6a21:e8d:b0:1e6:509c:1664 with SMTP id adf61e73a8af0-1ee8cc25d50mr13918059637.39.1739752852886;
+        Sun, 16 Feb 2025 16:40:52 -0800 (PST)
+Received: from acelan-precision5470 (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732621c4762sm3593444b3a.172.2025.02.16.16.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 16:40:50 -0800 (PST)
+Date: Mon, 17 Feb 2025 08:40:45 +0800
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: En-Wei Wu <en-wei.wu@canonical.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, 
+	quic_tjiang@quicinc.com, kuan-ying.lee@canonical.com, anthony.wong@canonical.com
+Subject: Re: [PATCH v3 0/2] Bluetooth: btusb: Fix QCA dump packet handling
+ and improve SKB safety
+Message-ID: <jyxfdjkcwsu6sqmqfuyelhlwsr4dbzxirfloalvklppvu6qmss@tdhoypgttcdc>
+Mail-Followup-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
+	En-Wei Wu <en-wei.wu@canonical.com>, marcel@holtmann.org, luiz.dentz@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, 
+	quic_tjiang@quicinc.com, kuan-ying.lee@canonical.com, anthony.wong@canonical.com
+References: <20241205071727.36710-1-en-wei.wu@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR19MB3872:EE_|PH7PR19MB7533:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c04fb82-13b6-4a93-2ba1-08dd4eeba224
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z0dleEx3S3VZT0VJeTJ5cHhpUG1mNEdZV1pqRTFUckZNdlVKS3JWZjFmVjMw?=
- =?utf-8?B?VEVEL1dpVWpmTDIxQTJBQ1JpOVdwZnd2Vnh0MVZaZC9neDRuNXZ6STlZVkM1?=
- =?utf-8?B?Q1pIbHR1cTBReXFoUk1XcXpjcEhDaGhrcUpMVnZHd3NQTHA1WGY2SFRMd0No?=
- =?utf-8?B?U1NYckQ4RVp2dWZaRUZvaXpURTVwYmhCcVlwWHpaZUtndUF3ZXc2ZGM4SmxI?=
- =?utf-8?B?UXp0Rjl1TmNHalI1LytGN05hYnk5Nk1nNElhQUs3VHdIcnp6NnpQQVB4TTB1?=
- =?utf-8?B?bzR0THdQS0h4QnIzcnhUUWQ0M1ErVlV3YjdwcDByOHNOUTNjRmxVZmlFS1Av?=
- =?utf-8?B?ZWc1RWRxcnBNT3VIK1NMZHhtbkVtdHRiWTEweGNubjlzWGRQZW1ackw2Y21W?=
- =?utf-8?B?QkZOZGdpY0tveUlIOWhNZVkwT1JGOHNpY0daV0NqZGRaN3BUdW9qUlY0RXdt?=
- =?utf-8?B?V2sxdmtJWXhuSUlabDRUNTcrTlBUbXlBeS9DVkhJTFNZZGdLNzl4UEM2SkdE?=
- =?utf-8?B?K25Ed3FrdzhITGh4M0ZLRFQrMlV0S2RjZXlaWlViR1VWNndQQjk0ZCtiWkdE?=
- =?utf-8?B?K01MYkkxdWt5UGRwOVkyVG9nZzlYQWVrMmQwaUc3UUt0MzB1QWdNZ0ZWVnlt?=
- =?utf-8?B?UzZmNHQ2aExWVSt5T2FnaUswclRQZm5FQjJsNkhnRkE0cXJUem1vSEtvUUcy?=
- =?utf-8?B?Zmtsd3hLSkJqTTZDTi9SbGptRG13QkkzZlQvVzdGdUh2TGdRclVCNjlONStn?=
- =?utf-8?B?Qjl4ekFIZEtOM3dDMjViZ3BFQXVHMFRSNCs0RVg4R0VJUXEzYVRHWTZsVzh2?=
- =?utf-8?B?NEZJMWJ6SFFQeEhvWGsxVXdIQmpuN1NvSWFsWTdrRTM2SXVaZnRtRkFYdVJ6?=
- =?utf-8?B?V0N3S01ZYnFJY2dhdjJpQnRCT3AyNWRhUXFQTHVZSlZRVVJLSzZhRTE3cnBq?=
- =?utf-8?B?TU5CU29ZRkhSZ1E0UlFONXdpY2VKZy9EbVN5SFp4VzVwejJjZVU5cjQ0VlJV?=
- =?utf-8?B?elJMUnNhanRHNmdOOTB4dFRCZFRoVXhpVUJ1amt6VmdZVjhFeWl5ZmVwRlNx?=
- =?utf-8?B?VDcvdDBESXJKbGFqeVB5Tm80cmtVMCtaZVJHOHl4ZjkzL1Zpd2FxWFVLWGRF?=
- =?utf-8?B?MUREZEZXTU5MeGpPYnlVODNEUGY5Njd5Y1A5U0E3ZkV2aDc2QVZ5N0I3cGht?=
- =?utf-8?B?SndKaXNSRzY5Z2ZSOEJVU1lDVmJnaXluYUNyTU12WWpHM2p3Vzc5VGpaSlQ0?=
- =?utf-8?B?Mi83K3BLOFB6am5lbk5IL3hmdlhSQVNWS0MvRnR3WGd1eitNWFVBVGhSK1Nl?=
- =?utf-8?B?aUkyTDNnVlRraFJmUmYwWitsUzZNZ1ZvZE5QUGRQMjF1OENyT0V3dzkzVnUv?=
- =?utf-8?B?Y2FOc29YelJUb3F1SjNCTWFVajk2L1ZCSWVuUXhBeGcwOVZpT3psM0xBT2Zm?=
- =?utf-8?B?N1VINEZ0QTNGQTRoRFZsQVR4TmdFZW9JQ2xrUmJTUmwybldtZjE5b2hSTjV3?=
- =?utf-8?B?cEtxMWNGTkRWdS9GY2lRSkdrNS9kM3M5MkVMUVk1L1Y5N1BEWDR4eDJXZnFu?=
- =?utf-8?B?a09qNzh4VzBIN1dsMXg5QThCMEdjaU1CTUNPeXVSUG93aW9TVmh0YnpVekpI?=
- =?utf-8?B?M0hXcnJ3Skg3MmVTQmF6T3MzcFJRdm1aa0xJeCtKNUtMRUZ2ckRjL2pyYlFy?=
- =?utf-8?B?MFVrbW5LZXVxMUpHelJLZ1h6NTMrb0psS1orNnZEdUIvTk5jUjJJRFJWVHcw?=
- =?utf-8?B?M0kyb1pjQ0tJRm9YTjB6azdPTFIvQXBxdjU2TFpjenJzU1ZqdGVXMENyTkRs?=
- =?utf-8?B?QW5kcDdzOUZRZDNaZkdubHpLRHgvcGhMS2dwVFJJMlNuS1dMaDdiL3hSRENM?=
- =?utf-8?Q?inj0aWBhfW/Kl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR19MB3872.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SE5NeUJaTWRkQnFzQTdvZmRuRk5TTDNQNnFYc3dPYWdCck5UMTRJRlhFUWdY?=
- =?utf-8?B?cC9tMkFlMGtRZ0UyQWJKdXl4RmVZdVZZUlB1alUreU9RVXZGajRqbmJkbkhP?=
- =?utf-8?B?M001dE5qaU81TUhNVmlXTFBOZ0p6V2pkT0tWcHI4N20vVEJNN2ZXNWxHN2k2?=
- =?utf-8?B?UVEyVkY4MzZFNjJiWW9uNXB0Uk5aMEtpS054Wk9OdWVDMExtRUx3YytmM29R?=
- =?utf-8?B?K3M5NUVXNGRET0J3b1hwczU0NnU4MFVJb1VQcndXaG5VbnQwR3haRFI2M3Fz?=
- =?utf-8?B?YTNoZTRKMG9DRk9rOGdnMi8zQkxkbUZzcHZkcTZIZVBwdkJRNGk1aUE5Zld2?=
- =?utf-8?B?NGlzVWNjaVVVMDZUdXl2QXViczc1QUFJYVk1OWZSL1k4L3BQS1NSY2d3V0Qz?=
- =?utf-8?B?QVRsWnNJWjNEbCs4MVlqSldwaVlPM0dOSFVzRWJxb3VTOFJ5RXNralBSbCta?=
- =?utf-8?B?UGpCVGhwYkM2WFZ2U2ltdWZFbmpZZ21kUVU1TXNtb1NrajJkRWtjT0FjTmYy?=
- =?utf-8?B?YmxXTHNkaE9yMzc1SHV4UXk3SFZHUk51ajd3N1k1Z2c5UkI3SG5ITGsyaVFz?=
- =?utf-8?B?dHF6anJqSlJHV3UrdUNiQ1hsYU5FY1FmV3ZBS0t5a0EvZHFkVG1hSWlXdU5W?=
- =?utf-8?B?azk4OVJnZ2RMYmY4Q25nMVllYWxPWFhqbG96cEdMVWd0TGxPRG5PWXNKb1ZS?=
- =?utf-8?B?b1IyNlFRR1FPK2ZZY0YwY2JTK2p4NHExS2RVMEdJTkhyOGFxZ1FHNjBaOHlv?=
- =?utf-8?B?bWVzWUQrWVhlNDFsL1BDSlNidEJacEk2SkthLzRUTm5IVlQ0YzcxaXA3OXNL?=
- =?utf-8?B?NEZlNWMyVm1ZNVRiUUlPOHNwbU5hL2tOY3NxM0F0YTBDdkluVWgzM1kwei9u?=
- =?utf-8?B?dks5RjZmMkVxVmJxMGlyaUF2eTlvNjlaUWVxNWdMMWVFdzFFam8vL3JtbFVm?=
- =?utf-8?B?alFvajNpVjVLVERpbzcwenBVTHlTaFVDUzZxOW5yd085bnJaYUMydTYvMWUv?=
- =?utf-8?B?dkhVWDZIaUtTKzl2Zkd1ZDhpV0djSzg3Q21UQ29jTDVuWDRFdktLZW5SV2Vu?=
- =?utf-8?B?bEVoeXUwYlRERDdLMXFON210L2tUbnpqL1BoUTRBcWxPOHpRcjZ5ZTBUZXlh?=
- =?utf-8?B?cTh6RWxkL3M3R0VUTHZyVnlIM0Rub3lHRE1oWURJV3c4QmQxTnFyRC94aVhq?=
- =?utf-8?B?VEdzbjZ3UHRJMkxGNzd2RTVySlRBejlhTDFsc29iUXczaG9TeXZ1MGRXVE1a?=
- =?utf-8?B?Sll2dEI4RDFianBHMk9Ray9KVm9DV240RWVCVlNqaXEzdUQ4K0VUWTBxRHFu?=
- =?utf-8?B?U3NhMUdRVVNmVVp0YTBtc3VmSDhJb1dod2NKTVlaRnUrNXRIMndrT3NLTWxn?=
- =?utf-8?B?UXIxaEZOVWVNaG9QQTdpUkJlcERoZExFaDgxOEdiZGRYbXpTMm5HUk5teVhH?=
- =?utf-8?B?eXpsRGhxS0E5cTZyclM0SnQ0b1JhSHBLY0hxWC9MT1JQcjRKRTNrbTRlSTFF?=
- =?utf-8?B?eUR2SEpLVHoyd0gyR2ppVUd1TWQwQVV0RU50NXZydXhESWttL25FNGhyK1hU?=
- =?utf-8?B?N1RKN3lOMXlDK1RqVUJZaTBjTk1hSFE2S0JLaC9ZVEl0d1dzMDUzdlZIZGNo?=
- =?utf-8?B?VWk4bmJYdlVjQUVkcG0rbUhnZGRqbjE1SFVTK0NnTTE5SllXeUpFdFNXVThD?=
- =?utf-8?B?ajBKYWxtZkhNSG03Y1BQenQzaDlYbW0yUVN4SW5FK29oVHl5U29BcFFOYmkr?=
- =?utf-8?B?NCtQZDVzNi94anczQVY5NUJjUVhTOVd3aXNSNXIxblJoUTJMYktqREdiaStO?=
- =?utf-8?B?OTN2Skl3bllnc2RtS1Q5Nzh6VkMzZEZybG5icndFWldRV21raGp1OVdFaFRL?=
- =?utf-8?B?SHI3NnFGME93ZmNJbDU0bFQ3SmliVXRIdUc5ckcwOGhXUGt4Qm5yTy9JQVVJ?=
- =?utf-8?B?aWRrQzh3aDFFRWI5eVVnczVQam4wMnU0elFhNmhDdHBUOHJTMTlCMFJaenNI?=
- =?utf-8?B?THdYTGw3ZGpwZjVZZGgrWHdaWG82NVVHWjZEQkMvZjdwUTFMRlU5MHpyL0I3?=
- =?utf-8?B?OUJab0pib0w0aVQxb3BHL1MyQzhNZDZjTk5yeGlxSVNyQVVJdG1uVU9Yd2N4?=
- =?utf-8?B?MHpyTkxoMTQwVEFVWXpjMlNNc0hOR0x0N0txdWxsWDhuZEd5UkNqRlR2SWNj?=
- =?utf-8?Q?jyy/BCp0oUI/0AmwxFSFChSchA1pYgvzwbS66XVIpHvs?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	B7YbnlKIztfS3YqIel0gnQi0seZR0x5XqyP+nhrG0GD3dZ0bxDNr7tmQZ7r0LaP1v4ip2uhSPsY4HBgwiW6dr5wCMSS4nsp99qxwWh9/LEPoxwK7k78DZo+VJmNUir8MwOyBm+sKnl3mftniXvhwHzj7vOaB2vN5FoN2ip/H+HdJkaEwy4QA7iUOkvyTa7XaAH0NS631bWiXEFa03XabtbOLfcKbgQpQi70A2HOYoJ0ek2GpLXODshQEoXenUVl5uGhzztAPsO+MZ6CtkgqWxSu8qPDRwId+0Ko3n00oKefnEbwMy3NPfqZ8wQdGe10f861dR/XkYNcSZgTd1HkOR/zy1qhNHLCFueRTaCLzE3UkOIo1+OLPMz4hnPYr0T+fXaI/5lTw9/a1zE/COAGg783eZ9Bo3vXqPAHLTbE0ux8YmWHOK/uK1gqllz0uhh98lGXMao9CZ+wUtdED4T3yp9LoOJGmxFx6bpxMYU130VWnwnxHRxxsTZJDVu0TBJm/D0SjfmQbEXrW0V1278iGen9GQwDgMKMxm+ManZAjFd71yUtyxAPCrrBu8l98QDY/hzaMX1x8LtN+G5hCSswZQ/KgYj/ZY9N8eDEq/Ta9ce0nTKYO6n5vs/mYtGkdNusA/vtwgVCSVUSNfb6S6othWw==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c04fb82-13b6-4a93-2ba1-08dd4eeba224
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR19MB3872.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 00:40:11.2160
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dqyv7byHptrA15Z0P73JLcWPGvJrBELI9HOWso9mbbHx2d2dpl7QBqcfFfA0gTK3u+ATOr1ZCE8sHCodMBgZzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR19MB7533
-X-BESS-ID: 1739752815-104758-15691-124873-1
-X-BESS-VER: 2019.3_20250210.2243
-X-BESS-Apparent-Source-IP: 104.47.55.44
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsZAAGRlAAUNkk2NUkzTUkzSzM
-	ySk4B0sqlJqlliYqJFSqqBmbGhUm0sAJc/5lNBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.262567 [from 
-	cloudscan23-23.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205071727.36710-1-en-wei.wu@canonical.com>
 
+On Thu, Dec 05, 2024 at 03:17:25PM +0800, En-Wei Wu wrote:
+> This patch series fixes a NULL pointer dereference in the QCA firmware dump
+> handling and improves the safety of SKB buffer handling. The problem occurs
+> when processing firmware crash dumps from WCN7851/WCN6855 Bluetooth
+> controllers, where incorrect return value handling leads to premature SKB
+> freeing and subsequent NULL pointer dereference.
+A gentle ping.
+Please help to review this patch series.
+Thanks.
 
-
-On 2/16/25 17:50, Luis Henriques wrote:
-> Currently userspace is able to notify the kernel to invalidate the cache
-> for an inode.  This means that, if all the inodes in a filesystem need to
-> be invalidated, then userspace needs to iterate through all of them and do
-> this kernel notification separately.
 > 
-> This patch adds a new option that allows userspace to invalidate all the
-> inodes with a single notification operation.  In addition to invalidate
-> all the inodes, it also shrinks the sb dcache.
+> The series is split into two parts:
+> - Patch 1 fixes the NULL pointer dereference by correcting return value
+>   handling and splits dump packet detection into separate ACL and event
+>   functions
+> - Patch 2 improves SKB safety by using proper buffer access methods and
+>   adding state restoration on error paths
 > 
-> Signed-off-by: Luis Henriques <luis@igalia.com>
-> ---
->  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
->  include/uapi/linux/fuse.h |  3 +++
->  2 files changed, 36 insertions(+)
+> Changes in v3:
+> - Use skb_pull_data() for safe packet header access
+> - Split dump packet detection into separate ACL and event helpers
 > 
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index e9db2cb8c150..01a4dc5677ae 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, u64 nodeid,
->  	return NULL;
->  }
->  
-> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
-> +{
-> +	struct fuse_mount *fm;
-> +	struct inode *inode;
-> +
-> +	inode = fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
-> +	if (!inode || !fm)
-> +		return -ENOENT;
-> +
-> +	/* Remove all possible active references to cached inodes */
-> +	shrink_dcache_sb(fm->sb);
-> +
-> +	/* Remove all unreferenced inodes from cache */
-> +	invalidate_inodes(fm->sb);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Notify to invalidate inodes cache.  It can be called with @nodeid set to
-> + * either:
-> + *
-> + * - An inode number - Any pending writebacks within the rage [@offset @len]
-> + *   will be triggered and the inode will be validated.  To invalidate the whole
-> + *   cache @offset has to be set to '0' and @len needs to be <= '0'; if @offset
-> + *   is negative, only the inode attributes are invalidated.
-> + *
-> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are invalidated
-> + *   and the whole dcache is shrinked.
-> + */
->  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
->  			     loff_t offset, loff_t len)
->  {
-> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
->  	pgoff_t pg_start;
->  	pgoff_t pg_end;
->  
-> +	if (nodeid == FUSE_INVAL_ALL_INODES)
-> +		return fuse_reverse_inval_all(fc);
-> +
->  	inode = fuse_ilookup(fc, nodeid, NULL);
->  	if (!inode)
->  		return -ENOENT;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 5e0eb41d967e..e5852b63f99f 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -669,6 +669,9 @@ enum fuse_notify_code {
->  	FUSE_NOTIFY_CODE_MAX,
->  };
->  
-> +/* The nodeid to request to invalidate all inodes */
-> +#define FUSE_INVAL_ALL_INODES 0
-> +
->  /* The read buffer is required to be at least 8k, but may be much larger */
->  #define FUSE_MIN_READ_BUFFER 8192
->  
-
-
-I think this version might end up in 
-
-static void fuse_evict_inode(struct inode *inode)
-{
-	struct fuse_inode *fi = get_fuse_inode(inode);
-
-	/* Will write inode on close/munmap and in all other dirtiers */
-	WARN_ON(inode->i_state & I_DIRTY_INODE);
-
-
-if the fuse connection has writeback cache enabled.
-
-
-Without having it tested, reproducer would probably be to run
-something like passthrough_hp (without --direct-io), opening
-and writing to a file and then sending FUSE_INVAL_ALL_INODES.
-
-
-
-Thanks,
-Bernd
-
+> Changes in v2:
+> - Fixed typo in the title
+> - Re-flowed commit message line to fit 72 characters
+> - Added blank line before btusb_recv_acl_qca()
+> 
+> En-Wei Wu (2):
+>   Bluetooth: btusb: avoid NULL pointer dereference in skb_dequeue()
+>   Bluetooth: btusb: Improve SKB safety in QCA dump packet handling
+> 
+>  drivers/bluetooth/btusb.c | 120 +++++++++++++++++++++++---------------
+>  1 file changed, 74 insertions(+), 46 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
 
