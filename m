@@ -1,167 +1,113 @@
-Return-Path: <linux-kernel+bounces-516993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52148A37ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:07:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA5AA37ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A9E3AED82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C952188CEC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B25481720;
-	Mon, 17 Feb 2025 05:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF311624F9;
+	Mon, 17 Feb 2025 05:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LdeJaGXX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YN9PezDd"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E6A42AB4
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B014F9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739768831; cv=none; b=C8vMREduas2/KBRliYYiMz4padKq7kAAtMXyzKXsC9z9J4x8LrsH3TfpHLth/4AEUi3vsUHz3MXsoFeoGQ3OTRilUrM+EMchD+J6TctOUn4WTDK47RQLyL6hxyJrHUj+5JAI9TSsvWjiw3J1mja/k8pybUxZdSvC8BYVj9wo3a0=
+	t=1739768862; cv=none; b=VgDmD/LcgHU8TQrudyeJYS1U/YSYQb6vW3EAcOBV4cJq+ADbQUnK19WNoUDKNmdhbk3EtX2zkJ2YPx7t8DJyQ9yOMyLtiJBdVBa8B1C50CEpYDkGoKb/UDQbut1+zVJH6UBlhn0w4QWKt7KEGdUJCwPcZX9z9e9426WRquXLnzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739768831; c=relaxed/simple;
-	bh=CSy5ckSyA5JAv4fYcoW3lC/yeXennFXdTEMrJ8s/154=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBOQo3N0GZu1YPkZhoebyE7bOQTnVr2/WnBStCH19TPWqVfMp8uHIYjxEEWKA30T4oC2mPCOg0UWkjDqOay7lKAPO1JPw2TQAASEaiKK25vd7Fxs1yz6GF/hucdhmSKJBPOff6heaArR/j1ptL9o5RKrO/eRKt8PsYQL8JMXiOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LdeJaGXX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H02t8X026149
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:07:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0R/KOAq/S4y6EYh/T627pPSHsXVDL1m4GNT7r04SCVY=; b=LdeJaGXXrkXDHNvu
-	YNGWnAWNVikabqCvG5xGWV/L1iYLbR1tfJe4MGg8T3o+9e/gHoNYl/nU0nveK2og
-	N66o0UxBWUBKdGwCt3oQlvLh82USpixyqqP1GJ4hA/5FEPY7LNWIXgFLPyBO9lKJ
-	JkOMnIxv7mI48l+zHJAUbtLoH35euxSriuFS+AVc5IWYEOvonwynxPGiHgcKdl3/
-	rxsmw5cBUW8aPz7BnmH38Nsn2UyBB2aQp0KKHADhObBFipWwCM72DQtEa5CHDi4Q
-	JsEbz27IEzZ7W+ZbM/u4hmnMSrI2TglCXt2NnoOh6oL4cTrKPmRXI+Xwt48t6PAN
-	iWHzTw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7sggp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:07:09 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fc1a70935fso7308488a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 21:07:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739768828; x=1740373628;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0R/KOAq/S4y6EYh/T627pPSHsXVDL1m4GNT7r04SCVY=;
-        b=MCXn3fXT0frAdnAkKoTNM2oqQlo32cb2NuhpmquUrSIAEgY/yFVhQkFZmaEmVNlxBA
-         x9zoLzuVSY6nPZSaNwRci6cRubkz+54rOkXoT25shfBi9KBhm25ZpqSpKlbl7BjR4u5P
-         zrizpAn4LZl5+Rd3f6gEFEuoizOlvHzs8/D0ecRVK7NsY3abMrCUam91pR7ww/SNQihW
-         sis6SUko7RJp4znaM80vP1kOIOVWeSX+RyfA5GLSot9ivWsNPPVuBY4fkkJaOVKQrHJg
-         X79OkeKNNiBFqEMOi3rvd2tpE04ntC5uA6TeLrxQQ/bOHG2zBHzScTofNHmCTbUIkLDJ
-         bYrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoa1DM0Qoxk7GUF0f7gsegRhpF9NgQuM9/D/3S1K68sLqZ0eSC5bJp5BSsVgnGGLw7pusNdtkXY2Mqf88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNkX8cqGE/CFlZS4yU4Hv1BvkN66vEMeYYwlwafXhsbERJmbQN
-	HBUEdfA/Jl86RVpZ+Pt5lWL7F9383mB/wMI2mzyFuE/f3Zohih8LeDHPltNG5/Bhw/z1XfB0SRL
-	s6ZkeE144zOdftvY5K7Ybcs6NYFxKQHlxnR74VEF5obh8xthhkql3ivN15Q8X+PU=
-X-Gm-Gg: ASbGncuDF3dKmOyURGIpNYEO9RxM85UsRyvrk+aCiQsdigjXbnGmBJWVZcjbUtv3qH+
-	K8KrB7qvaD+WsaSbiHGJWc0ZI8zDZZDf6loMsZRgUUn4+5v+Pca3zmNujI0sHcJTxlS63yNqGEK
-	8f6FP6DDTaQ77PgfltkChHsauuEHDyVSjggUSFqmFzbhoslAMY2T0I7y4wSdVd5qkWNPa+bW9+J
-	zn3hFnMUmqzu0MW0Bohakwr80amOdeWYxa+FLNqGWhCgxSG9birr5yXz1/L+rzZ+ekbwo62QxWV
-	L8YflsXczd7OMflqNBbTqteY1VpR6Nfjrw==
-X-Received: by 2002:a17:90b:1a87:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2fc40f10271mr11703746a91.8.1739768828233;
-        Sun, 16 Feb 2025 21:07:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGwSz7haFl7RirhCQxbLPQqkYiRlM2NrbpC48FXOn9NMtN3O0PPg+0BR+p2kcOs+NWEa3zreA==
-X-Received: by 2002:a17:90b:1a87:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2fc40f10271mr11703710a91.8.1739768827818;
-        Sun, 16 Feb 2025 21:07:07 -0800 (PST)
-Received: from [10.92.199.34] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d468sm62169425ad.167.2025.02.16.21.07.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 21:07:07 -0800 (PST)
-Message-ID: <e278784b-b0e7-9d4d-d7c3-accf8f335de1@oss.qualcomm.com>
-Date: Mon, 17 Feb 2025 10:37:01 +0530
+	s=arc-20240116; t=1739768862; c=relaxed/simple;
+	bh=dCoGZoHz33mF8BFIMrxziCXQKSpSSpH/w9T+t4bTYmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IymO0/zvkJub6tQmyaMMczP/M3XIWZF5zXaV5amUJOSqNxqE1Cg5OMxUylcxajloxe+tZRiCPPCjggVaZFqvLf30ssbJGykDO9Qi5JQnHV4rNtHwR4Cw3BoPV0NeQ42qrtTxD86cebRAW34Uc7yYeZZUsNAg4U23LSmeZhClJ+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YN9PezDd; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H1803c013348;
+	Mon, 17 Feb 2025 05:07:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=dCoGZoHz33mF8BFIMrxziCXQKSpSSp
+	H/w9T+t4bTYmw=; b=YN9PezDdqTGANXaJMdyjLe3wzBNKOR/omfHc5SZR9LSvEG
+	6hHUinPhy5mwPHaVYta0y5wOVClQKW/odzDdQcxif/UTMvSyjnkwkw7sdvWwg75c
+	jz8W6QM60Bwtx9Kd9tk6dNQONpiytcqj1LwLbA2dpYk+8sEaOYOTcbVE9Xcmf0JT
+	fGA8QhYrko+CkpJ2RaRDjH+59f+xWyjRd0Tt8mQf3gavY3QrCvm4cIG/bgMId7eg
+	9Rq6qi5HnrEgcNL60JAuJT+o/eFL3DdPixo7cr4OWt6cvAkMsBHrWevdLZfLsH5O
+	JsbrKTZYgL6GpNyr/XsS3JCzgwzmisDazzwqBzWw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu698sjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 05:07:17 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51H52JJx011882;
+	Mon, 17 Feb 2025 05:07:17 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu698sjd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 05:07:17 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51H0tOia013259;
+	Mon, 17 Feb 2025 05:07:16 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u7fkcamy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 05:07:16 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51H57C4N38863358
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Feb 2025 05:07:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D81D82004B;
+	Mon, 17 Feb 2025 05:07:12 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 463DF2004F;
+	Mon, 17 Feb 2025 05:07:09 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.124.221.81])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 17 Feb 2025 05:07:09 +0000 (GMT)
+Date: Mon, 17 Feb 2025 10:37:04 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen@kernel.org, maddy@linux.ibm.com, clg@kaod.org,
+        brking@linux.vnet.ibm.com, vaibhav@linux.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] powerpc/pseries/msi: Avoid reading PCI device
+ registers in reduced power state
+Message-ID: <lbbob6ac7qxgu5aot2sbti6frkhr4zsugshkfb32e7uxjevgbg@n7sxmbdqcorn>
+References: <20250206100956.438888-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 4/4] PCI: qcom: Enable ECAM feature
-Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-        quic_vpernami@quicinc.com, mmareddy@quicinc.com
-References: <20250210225431.GA21989@bhelgaas>
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250210225431.GA21989@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 80_yh_tQQHHPVfT0bg8VwtkSvQZ40rSD
-X-Proofpoint-ORIG-GUID: 80_yh_tQQHHPVfT0bg8VwtkSvQZ40rSD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206100956.438888-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4qBhL7N7Y2YycLOldJqiwaM-VulYZUI7
+X-Proofpoint-ORIG-GUID: LKK_szV8Hjl3iIGNP-dBIuNs6AG_uMnP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-17_02,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=972
- clxscore=1015 priorityscore=1501 adultscore=0 spamscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502170041
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=396
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170041
 
+Hello,
+Please review this patch and let me know if there are any issues with
+the same.
 
-
-On 2/11/2025 4:24 AM, Bjorn Helgaas wrote:
-> On Fri, Feb 07, 2025 at 04:58:59AM +0530, Krishna Chaitanya Chundru wrote:
->> The ELBI registers falls after the DBI space, PARF_SLV_DBI_ELBI register
->> gives us the offset from which ELBI starts. so use this offset and cfg
->> win to map these regions instead of doing the ioremap again.
-> 
->> +	/* Set the ECAM base */
->> +	writel_relaxed(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
->> +	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
->> +
->> +	/*
->> +	 * The only device on root bus is the Root Port. Any access other than that
->> +	 * should not go out of the link and should return all F's. Since the iATU
->> +	 * is configured for the buses which starts after root bus, block the transactions
->> +	 * starting from function 1 of the root bus to the end of the root bus (i.e from
->> +	 * dbi_base + 4kb to dbi_base + 1MB) from going outside the link.
-> 
-> 99% of this file fits in 80 columns.  Wrap comments to do the same.
-> 
-> The text doesn't quite make sense because accesses to devices on the
-> root bus *never* involve a link.  Only Root Ports have links and the
-> links all lead to buses other than the root bus.
-Hi Bjorn,
-
-As part of enumeration PCIe sw will look read the vendor id's and device
-id's under PCIe bus0 to see if there is any multi root ports etc..like
-bus0 device1, bus0 device2.
-
-In the first 1MB only first 4kb is used as config space for root port,
-remaining memory acts as PCIe memory i.e if we access this memory the
-transactions will go outside the link which can trigger some unknown
-error.
-
-if there is read request for vendor id for bus0 device2 PCIe sw will
-try to access after 4kb region which can cause unknown errors.
-So we need to block these transaction from going through PCIe link.
-
-I will update the comment description in the next patch.
-
-- Krishna Chaitanya.
+Thanks,
+Gautam
 
