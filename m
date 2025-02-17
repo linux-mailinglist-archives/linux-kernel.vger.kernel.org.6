@@ -1,185 +1,139 @@
-Return-Path: <linux-kernel+bounces-517795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAFDA385BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:17:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AABA385B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610303A6469
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B093717736A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BD922332C;
-	Mon, 17 Feb 2025 14:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E7C21D583;
+	Mon, 17 Feb 2025 14:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Sl5pYVI3"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tpBEUbse"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A562222B1;
-	Mon, 17 Feb 2025 14:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801372; cv=fail; b=X3LjNQxnThTD2NDBtztBvYwK9xqRGNgMl4nWP/Lzzs0lY3K8VTZ9hM90QvY08kawI+FZc27V1GrYm3/Klz4fKhMDRXjjtdm9e+W38cCmjYKoCu1qxtLW8R2uzSIH1IwGyUO658/ZcH7nN7qBKYBpIcdOPciAsAMT1wqaQEOa3qM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801372; c=relaxed/simple;
-	bh=b893FQdrXhuJYbjNuhZs8nrWnNdnX0uj7q+keyuUcRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=P8iMbjLRetL8ZhvSFxNyt+J3fm6j15ukgMIn9FyrhEfHyyStnCVlH8BUGqWngmoGcNk3L8LzK9wEoHv5t9qAp2s73eufPj7/3MBdQQ0NdAfRNL7Djc2m5bndKvZ9Hp8N984JKH8m4v6i1aht0+N3crj5Wyh3rlCtNvy0Kn4dBHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Sl5pYVI3; arc=fail smtp.client-ip=40.107.92.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mneg+cwYP7If6rf7N3bkdQXpr4EPsXZELY17nzAVOoY4Wp8Y5GZAC4xIFn5lAZ0npVj5OPJcZzpjxiPnHuklx689XN+GpZG4d9GsaCMnwm7zgY4qwHJnLdT9AbcHSDH046oYIao3vQX8c6BptzT/jHEXnO4QwUn2ybgjjKg4Wimdiyyf0E3DYC31dkOpRM7ahrT8MfGrDyT0QHX9sdDn0YqzljTwjzCJNfXvkK8k7mbloJ3z/My9DCE/cpHw2Q1EpMiyqfR29xxfRW/MdzKYH60n51cVXUxlvoozGPjW/tL7zv4MgkVssX7vM4riaIILNksyPnLdfPGpCyBJbGmqPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qGxI08ZxGocOAfaXsucvC3sG18vxILHitVvkICiE+14=;
- b=WDrHF7OMqz7M+IQcoxcbxTWnVe2tWB9LLVm7oe3c8kVo8XiK8t6npHqgthxI0lPswDCeAgCNUWv299nP0xuN//iozd27Tsr2hUjzE97h2mCA3ch4J7WlyOz7l2jpa0/wmgvfyhsw5AMk5AkrrFOMjhOvBAeJTtryIvyofuDl1bAEIiskxPNVg7Y3YApoHF56NeSyq9raWQy70OWAPhX9YYY/OHt4DLnSetAgxY5JMJw4Eh/wMnbdp7DMEPiBhH7LQDlLHgVt7L9QtkJNuQpYhHOAqIrzAg1Kg9x+SrDcectpnJNdaGF5t69u95Ixb57vy/0T1X3Y4hjfSeVUnf3xag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qGxI08ZxGocOAfaXsucvC3sG18vxILHitVvkICiE+14=;
- b=Sl5pYVI3WNYfowisRnQYj+2Tj5/7vlOkKyI32nBsmAGj79HRD+McSRssqrzbYRnUKTzqJnaS7M8ha8v+TpdFvjaLhybuawcB9XSVdGX7jnQsPtouGX8+9TJolmrJ9rKg1WE2oJXKfaJ2XHlpokl5UtRKw27Oyj4UqYVTlpoMJv0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6354.namprd12.prod.outlook.com (2603:10b6:208:3e2::11)
- by LV8PR12MB9270.namprd12.prod.outlook.com (2603:10b6:408:205::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 14:09:27 +0000
-Received: from IA1PR12MB6354.namprd12.prod.outlook.com
- ([fe80::baf9:26a2:9fab:4514]) by IA1PR12MB6354.namprd12.prod.outlook.com
- ([fe80::baf9:26a2:9fab:4514%4]) with mapi id 15.20.8445.019; Mon, 17 Feb 2025
- 14:09:27 +0000
-Date: Mon, 17 Feb 2025 09:09:23 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, "Luck, Tony" <tony.luck@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 02/16] x86/mce/amd: Remove return value for
- mce_threshold_create_device()
-Message-ID: <20250217140923.GC591070@yaz-khff2.amd.com>
-References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
- <20250213-wip-mca-updates-v2-2-3636547fe05f@amd.com>
- <CY8PR11MB71345FB3EA6A7AE492D62E5589FB2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR11MB71345FB3EA6A7AE492D62E5589FB2@CY8PR11MB7134.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BL6PEPF00013E02.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1001:0:18) To IA1PR12MB6354.namprd12.prod.outlook.com
- (2603:10b6:208:3e2::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE03F21CC54;
+	Mon, 17 Feb 2025 14:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739801488; cv=none; b=noBQYZruzQDdBvt5iSW2ftpqf/mwCT6ajmfzjYDmGNUQVQge35pQzwICR/K5suLDljHIbQfxth+gCVLTNbmdu7aZDPX+K0d48DA4oY+gf4E6rllEGBGvtEdWnMLBU4jEvAJztDt447VNAQQAwm1dHOvyI1z/m/mcQ05jprz8NwY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739801488; c=relaxed/simple;
+	bh=CgvLbbaqhZJh2aBng8GYA6OHX8pFtBK1DgD9dwP/Izo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OwSJEzafx0SvPK7S9TbhKpIP9gPju6hX5dxeh2pnyb5VLFB1icGxEivJWm9tTv6Y9JK3lR8ggJUliLMLZcReOZkUMvbaI3BdmMPNnzvCxoV501SWLHmIKk8GhXBmJkQ0+PhkyyUUK5ZuYO8HKmDx5tsVsDzIVCSrUB6nFT0iuWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tpBEUbse; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+Tyg8b+xD0Br85DGNOgrIPE01EZSzRbYGNzNPsDnqag=; b=tpBEUbseu3svPJZjMXU0nSpYr8
+	GmffVj6GQ869k1Jh3niah2GmA3mLVEENfzotxr/MZcFH2FhCCIZZp9Kxnz9msHHPG5C3vOB6+kUR6
+	6+RgjsyJNUEgL+6lYKHDXyLR6/ewFtS87FmKFoT6ICF87RC/fVEfuEgPooJINzuvQmyjV2AyVv+vJ
+	YbKo0YZXyP0coO8OvabMIii2bRao+9FXH6GvaO7AaWwc839h0w6a9KrOGu1gVklIfC15Ikw1Jj9vX
+	kQjlQzNDVeKcCrSDBXVW9IiUYc+OsOsTXab9schzXS/+HNDTbVhhy9fSvNf09tdiCq2hPlM2Xz3M4
+	CM1EF8aw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39042)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tk1ps-0006pq-1t;
+	Mon, 17 Feb 2025 14:11:00 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tk1pi-0006HQ-2v;
+	Mon, 17 Feb 2025 14:10:50 +0000
+Date: Mon, 17 Feb 2025 14:10:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
+ SG2044 SoC
+Message-ID: <Z7NDakd7zpQ_345D@shell.armlinux.org.uk>
+References: <20250216123953.1252523-1-inochiama@gmail.com>
+ <20250216123953.1252523-4-inochiama@gmail.com>
+ <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
+ <5e481b95-3cf8-4f71-a76b-939d96e1c4f3@lunn.ch>
+ <js3z3ra7fyg4qwxbly24xqpnvsv76jyikbhk7aturqigewllbx@gvus6ub46vow>
+ <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6354:EE_|LV8PR12MB9270:EE_
-X-MS-Office365-Filtering-Correlation-Id: efb644f8-5091-4145-1624-08dd4f5cb07e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Y+zKQ3JYlLJwqjjiz8N7e98eCEThDE9zQXAXYsL9mH32IgWB//p6kFPFc/N5?=
- =?us-ascii?Q?7RMbbaSf+GGNNKWGk+Z0b0Kk1w5ITFQFyfLJ/6tlEpTAWN/F2BL1juGdCdrR?=
- =?us-ascii?Q?uMW6H/3n2boj1QxJBEeGJVgVSmckupe3kvXFu9JdE9K+rdiljvqkzTdTd37i?=
- =?us-ascii?Q?FXQUblpRxSXTm1W3q7wCFc5YqhQZjLinpvzNRmgZzPTW3pnkiYS2kf/eEmiw?=
- =?us-ascii?Q?NzuSXDZ9Ab5+dzLyosuDLcVHhX+F5NooxOQuDDwsPxaw09Q/IpdRuROaKXxO?=
- =?us-ascii?Q?eE/C2s2sHjL6SBXH0GJ8Jbn7D7ZLFBEkQ4j2iW4wUeBD8/nHl4U+EAeqTfv1?=
- =?us-ascii?Q?rg/fV5hfm5nxZsP4OFuHepOrxuQO4Xz+4AbRa+hLyQKVqUKzj88hFomw7u4O?=
- =?us-ascii?Q?KFMzAes42nGTCoOOVw7SbU0/c5agBnRadM2fyp1r9Tyy7B/oQsLKfj/XRT0F?=
- =?us-ascii?Q?DmQu9naIKoz2kOp3126vycG38KjUpSrAKbvm9+zH6NkGP9OVcN7OgTvtXFVc?=
- =?us-ascii?Q?/+RNTkgnG7CfA7MYK+x67TlG14DOGTt/tPYH/iurS0VsAlD/fQUmhFkbObyr?=
- =?us-ascii?Q?ChQtcokh1iBaFpi2Qyks/KnkFTp1K/2lPFMG076YxBmDVer+01zzeHW1legH?=
- =?us-ascii?Q?kbLgq9TFpn30wWpswep1UnZkkZAAuTjpdLkRG/DODucwY2z5s+sUxZgLH6ZR?=
- =?us-ascii?Q?eOQtCA+MCaMfFRaZHID5KA+kRJJwlhf4TqRVTDe+0c0g2KADbshf/NQlmuFu?=
- =?us-ascii?Q?hOd5jrpK3GxdRKpcY2tRdk4sy5x8FAVf3EV5sZf08XNs+d7aCGu5TwcULh5b?=
- =?us-ascii?Q?wmc0leJ2adlgNPdY7e3JfAK4K+oY6LqMgKMtz2dwGCNljvfXkaZDCwAHrT6t?=
- =?us-ascii?Q?isYSvDlakdkp56uxT50msjnMIV8iM6t2JzAro/lhxpy8pBZlrXR+SXBSNyg9?=
- =?us-ascii?Q?Ubmq27oAeC1KGIxI3UajOlbK+3a6X4x5EFmAAqI1SAPoTFlWKF8Jdvy4cq/5?=
- =?us-ascii?Q?GlJEEvIHKXqMYIPchvmdx66LrVwbAlHkkrYqlovx2Qd6qKuicbXyKLcWBYI/?=
- =?us-ascii?Q?Bgf38PiW4kYUwAsM7cpf/Aseo8/QhS6kvZJsmdHN/8UN3jiPhnur7tXeQyJF?=
- =?us-ascii?Q?k2Hwv12jeGC8yQsaMkyUQyeYO2Ps+X4PiEhlpb/pztqHI35uovg7fjsyeQGD?=
- =?us-ascii?Q?jukczv8pwG8asTNqAax3xyHfbpm7rWJLp3sQKF2rIIrumWxngOyGLpS0AeCe?=
- =?us-ascii?Q?gs8LWxMDgffnE7oDWptmGCMCKc/nZALkQfe5lM07qPGP1B9lSRIjRylv/bG1?=
- =?us-ascii?Q?wBU3q/HWtOKC7k9XlYi60zTDO0FRxBwP7zj3v/cOhd21pMChwA1BQDSfs/6F?=
- =?us-ascii?Q?O1R68LiT+7ufEP+8/59+U/WoCAIc?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6354.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eFLtaVtaOo/K95LzQW0XyuTsdlmPXtZrp112ACMPKx/v1N7ptNNNYk1e+lSX?=
- =?us-ascii?Q?WD9WPJHZIbEtDWvvV6qAzjYNzLGffDMAy2dOy3i/mO1akaK1ar7yCR1saP2v?=
- =?us-ascii?Q?eEC7rvGnni1xTe589JEtZwsT2PqOoJ8HQSHND1K5Gg50gnK67MQzvabShrpY?=
- =?us-ascii?Q?nGmQ82TPVICxLGS6PUM6+hQN60WYqTT/X6jDAv0iEXfkO/uU16lL8fG9d4nn?=
- =?us-ascii?Q?pmUP6mlqva7v9+aRSZQQxDkhwcg+zq8NMZ7GvlmYe3STjoJ5zonz96qvr3Xo?=
- =?us-ascii?Q?0tOO4JTjjybX4RLq72PjKZYH47ap592CHeLHzuMCDi+nYXiUv0krXohdEPMS?=
- =?us-ascii?Q?2OSBCGo/9crop0Rd8LoeUIvf6qbD4wz30KeP6sS8Tl6yAmRBNkCcU419g1O5?=
- =?us-ascii?Q?5lwELgA5kwUPwBLpgfgxmElpI1AUcq23nXWwA3jVtU5ANJ0bXdKJPdV8V4Ft?=
- =?us-ascii?Q?Pb4W/ow8PzbUDa9pg2Qxl3O/zxtMlwQyQyVP8uOv2eZtv3mgqlddarYzpRrq?=
- =?us-ascii?Q?25PZTjc+ypCrzcr2k5cAd8jxJLSZPI+CwRSIlkT64BSjThKbhFDqEtVbTCNc?=
- =?us-ascii?Q?klXaTBqZEJwi9bIGbg7fhWyJyEihKyUn2qKJK5WIYykutAxv1CRASpyQUHIx?=
- =?us-ascii?Q?EsL38WKY+971JKMV4aqRGbn8FP1HuAFDjUeW7pqlR2W3jMhDQxWKc3VA2mvU?=
- =?us-ascii?Q?m3ETqj8dBSbRFoFxrHCUVK1jJRASFcVo25f0uvZWRIfjqmnGwRP2ej0u5C5d?=
- =?us-ascii?Q?xJBAfJo0uKoL7oG2R/qiOGtVa4asRCTGrQwT6RMJiM+E5sXCCqB+ic6Ynees?=
- =?us-ascii?Q?H17gvmyfT/XXz+5fdBBHZlhz7iufNSk78nhpnDpIs4WQ71XaU3VjVKcazhiZ?=
- =?us-ascii?Q?z2iwrnUva36z+gCyGPFI4odknTRzZWQC0M63Aw+RGXTKeyQ3Bp2oxO1Ris3S?=
- =?us-ascii?Q?ZhoQmW9GcySgsKEmbkHLXlqvIzW8PbaITpkwxXW9EQXLFs1EL8zpbmB2gZrs?=
- =?us-ascii?Q?/37yxbY2qTBwljUweHvX98mIx8+C1S6rIPNO9vkCWTNFjvurzDnfO1ULpdkQ?=
- =?us-ascii?Q?+C1qhAe3aCL53czInCA7G7bxoGENsiPJJkr9o1hPfrYnYO5y2FFSARHTSDMn?=
- =?us-ascii?Q?TtB53ZKXbrUNm50EGgV6Q/wUAv/crQO4UWodqlLNdqZPXFRQp4ErN6xW94As?=
- =?us-ascii?Q?QxyyRz5QSNVPRx9kwXz3rKIsqQsUuhKHMLK90PSSILBgi2wnt0OlAre0vMVp?=
- =?us-ascii?Q?5qqej+1j7L3FSCewQ+92ldy/6IFFqfK2+A45hmZHAoNYJ9YJcZ00K1BPrUAq?=
- =?us-ascii?Q?cKtHZqGC9rW+BUU1TdNiUggG5enk3UJGmK/feUVo11eb96AMKIy+agjamG4+?=
- =?us-ascii?Q?2IRWOSTN+DJbM2jpMjMElu32G0QXNepfESUu+VvPXkgSzMgwCexqrn07WhKH?=
- =?us-ascii?Q?NbS0Zfh+LWePFGDhUIJyyHIPni3uDntUpQThVRtRhLtvqTSVKLiaYqOV2quh?=
- =?us-ascii?Q?JBge5VRR3kSpejyDuon9ZmkhGWEcAbHnvqT1NOs5QZsFgwgKwE40H2lmWsiS?=
- =?us-ascii?Q?rCSB/ieY94AGpcwXoNTZEA2TgdtpeBYyVliHYZpq?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efb644f8-5091-4145-1624-08dd4f5cb07e
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6354.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 14:09:27.4930
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Pcj4D/ytMDic9o23pqWZaVXX4Zx/TiW6+s5hPjRZkm8qWSNbqEIXU58FRLPN6nY2sRDZd7bq+/OYs43EFi91Wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9270
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Feb 17, 2025 at 07:11:52AM +0000, Zhuo, Qiuxu wrote:
-> > From: Yazen Ghannam <yazen.ghannam@amd.com>
-> > Sent: Friday, February 14, 2025 12:46 AM
-> > To: x86@kernel.org; Luck, Tony <tony.luck@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-edac@vger.kernel.org;
-> > Smita.KoralahalliChannabasappa@amd.com; Yazen Ghannam
-> > <yazen.ghannam@amd.com>
-> > Subject: [PATCH v2 02/16] x86/mce/amd: Remove return value for
-> > mce_threshold_create_device()
-> > 
-> > The return value is no longer checked, so set return type to 'void'.
-> >
+On Mon, Feb 17, 2025 at 02:25:33PM +0100, Andrew Lunn wrote:
+> > I am not sure all whether devices has this clock, but it appears in
+> > the databook. So I think it is possible to move this in the core so
+> > any platform with these clock can reuse it.
 > 
-> This change can also be applied to mce_threshold_remove_device().
+> Great
 > 
-> > Also, move function declarations to internal.h, since this function is only used
-> > within the MCE subsystem.
-> 
-> This change can also be applied to mce_threshold_remove_device().
-> 
-> So, can we also apply the two changes above for mce_threshold_remove_device() 
-> in this patch?
-> 
+> The next problem will be, has everybody called it the same thing in
+> DT. Since there has been a lot of cut/paste, maybe they have, by
+> accident.
 
-Yes, good point. I can include these updates.
+Tegra186: "tx"
+imx: "tx"
+intel: "tx_clk"
+rk: "clk_mac_speed"
+s32: "tx"
+starfive: "tx"
+sti: "sti-ethclk"
 
-Thanks,
-Yazen
+so 50% have settled on "tx" and the rest are doing their own thing, and
+that horse has already bolted.
+
+I have some ideas on sorting this out, and I'm working on some patches
+today.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
