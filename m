@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-517807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C1FA385D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:17:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCA2A385E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 371767A460E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEC91885B8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1010421D00A;
-	Mon, 17 Feb 2025 14:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EA822069C;
+	Mon, 17 Feb 2025 14:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VcZFJksI"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VGL4KcQP"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE3322259D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D91121D5BC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739801832; cv=none; b=gchB0PThYot7+XsZvZDXA1OfG3gvbGjvUnw/8AzFS205QCj+f0obLmcr4c89oheOKLuFWGyFyS+SmEtiizTmoGchR0BCR4p9lSLbXTUV8utJrhYlxVGtHgo1Cfy0XzDGR/yNKYCBS8w0R/g0LwPrSF0KOVcF70nMJKT7FY/13Uc=
+	t=1739801838; cv=none; b=bBvUG6QJiqrWu2rPS5Kn/8qMIQ+j7Q9vKuh5N+AR4+RufPcQE9lgUKDtr8St+MqT85TbVLntRHC19NYkyg926a8dHAAsd6wc1S+fgxENQMjl64PMkhJCZ1uzxI20LXoWWCUwYu1s9KBIoDAORvZgtR+M/QVJeRC6lqONvJkqEi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739801832; c=relaxed/simple;
-	bh=BbqtIHW7JPzSyRGmtZOcXUwUkV9c75Bm5PqICVDkcB0=;
+	s=arc-20240116; t=1739801838; c=relaxed/simple;
+	bh=94sGM0uG9AA2R84ut2aXyN09vsNy3Mf9Tf086GLox/k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LFryd0qnoHNroDNFlp3ws+wGDdJmawcuvqE5RS+Fiu75NQ5xw3WbH/Url9mrqOxdIRTHlaWIFenxuTOB94iqucrjf+QFYy3Qv4aVXV5YXCdih1ZVhQSah3rEywXNji6so+Phe4lj4+guAQOP2K/XEZjkAxbAA7fP+uqwzOk7gXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VcZFJksI; arc=none smtp.client-ip=209.85.214.177
+	 In-Reply-To:To:Cc; b=SnEg8JLH9QN7X7FdL9qoxb9j+CHGRK3nvi8jgXTRYDFNb306sSIS/uScLOaPEyqcVKaZ3ZF2N1Qi09QXXpqpvUxk6cI633EylBkka0QRgp0Rwor3SKo9sIlNXA59qFyf68GSTxDtoHIu4dWzjW830b+63X+j2s7TE6oAhzVb7wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VGL4KcQP; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220c8eb195aso91173845ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:17:10 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220bff984a0so77671375ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:17:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739801830; x=1740406630; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739801836; x=1740406636; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qq+zAHNdvdZOSJ//3Q5rS+vuxV2fvoAwakzSqW6Ri/w=;
-        b=VcZFJksIRg0Oj6nsQTPFHCvx6M5wYuXpaIOBNHqNMirihpgkXxkcRw0T25ksClGws9
-         EgDNTag4j83ZPmA0xYSJcpj/bhD5fjNuWOnPq8RgzeZEQgKjax37lGMN6d1VJbsDh/aU
-         vkVQWVkqSd9pybnDR0q96kdGXI96TKfHx5uwZVvRFdYiH677tPP6o5I17YOzLqLw+wge
-         EIxPMSf4pKfQqcP5sFwXqUVfqNSzm5TJ4qgCmk71I6urA6anpTEFVALPNRZ5l9cEeBL9
-         c8ZbQYRf6wy8fFLlOISLEpcksZI+31ztmHyaCRkAyGXIqO9WnCVVQVNckaLnefM+xnmF
-         fa9Q==
+        bh=IpxTAQa8072dELfu5kZ4WUb4EfPVG9CirHn3aioqsaY=;
+        b=VGL4KcQPs4oZTZFyWu+DZFgbcjC0PYlfGONo5IOsV5p2KSJqORoKlo/fF2t2uZ2SVc
+         5BIJAbvjCQkytl1/+tJSdnEB+mayekf8cylRujxKret47HpHIrPejBipxDObNbgpScFo
+         uZHiM7RRvmsFN78CpAp8neoQXtOrdz9qrX+StAzJraS6pAOx1GidKJ21wDtyM2/gaSnX
+         U22BbA2CojNZrr6tN6D4xq/wxXhIZZb1w61jAktzQYGXYCWQBP1s48gtXMapkvPv2D4R
+         4CzO8Mcn/HY6Vup0H9/lUVeuvu1izXkBtRW9NWbSwgZ0/mLNKZgERJvT4GOWoMBOMyEK
+         +9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739801830; x=1740406630;
+        d=1e100.net; s=20230601; t=1739801836; x=1740406636;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qq+zAHNdvdZOSJ//3Q5rS+vuxV2fvoAwakzSqW6Ri/w=;
-        b=wQwahAMK66ZGrLAyas5q2RKBYIzDBLE7FWZOY6zlIY8EApA1505ywCPotoKxGJzd7T
-         ruZuVNz/3uudJyw2cYWoiuGCTJUd0SCp1PKQXSdaoSFR9DyJbg0wVpSwi+2cnK5TRE+U
-         M5ZW9LdkD3S0EfQvTHc/p3KSMdM28HHPpki0Z1X6dJC1zJGcjALsLWOhBO6izk7JVvyB
-         bLAAjWhSVDQw/S1ChJOmVvvntMv3RMuTb1ENmJy1hZtZknJvv2MdC0NVsfmqGhoFqYtd
-         gpJz+q/CBFIV8/zJHet3D9Ilamyur0/v/QH4ZjZWXWrBmF1i8aLOAnFbDOxjmX35AIdH
-         WUSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbZT7QHRJbgAS3Soswq+c34kjvyC0ivEWf1/IKh1mbj2M/hIyk/Dp2XskpgXgUh4CqEjzpISoxHX8KtdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyIs5DE564c+PjY/lQjWf+IbonunS6RssBc47sa9m5aS7Gptmc
-	BSIzJJTD/ShcUW9xlnJbNXlZEUBpI7aDB5Wt0AjP3QxqhKqGB0dcAHdl1y9kGHDkl4QJZjeL49K
-	qFatUeQ==
-X-Gm-Gg: ASbGncvQ9BiNMDI7nc+c0NHM85i5gp730iDVOXrQ+rf5AevzOoEpdWGmvH6EsAWcXtk
-	D0Zj0yIu11/E+64JaUW/558HB6zgAPk2uV1vtzTgn2Wd4BsyBhR4cnppjD/a8bFaEWeESVNQdGi
-	wwqSArwZlZR97oRyB+Zoa9yQCtigAuP5m8k55W6eM4lIg4Hf8q0ignI2Ii1mdwT8Zu3RkMK0G9X
-	vELRvy1SMkL1UdrhF/LqvDBH2FDOZWG5tJBFgu0pJGE+8Qao/SdXUOaBZ7Dr4ibzaHba/yjvkGu
-	dn9dZfAKvCfv
-X-Google-Smtp-Source: AGHT+IE9VGK9EgU1CxOnB42kWoFCngkyiKxATWGlwXIJ1zEtEGlL0r8wzHMxqCOdBQTbkw6fFe4mgA==
-X-Received: by 2002:a17:903:28c:b0:220:f030:376b with SMTP id d9443c01a7336-22104057e3amr166616685ad.21.1739801830048;
-        Mon, 17 Feb 2025 06:17:10 -0800 (PST)
+        bh=IpxTAQa8072dELfu5kZ4WUb4EfPVG9CirHn3aioqsaY=;
+        b=TaU/cCbYQ9uvs9hCeA6VqxXtC3ISUxc3k7ml548CKfr6WbpJ4+G7UJ6VkwAzmNlSKM
+         nfr42zHaSnhGLLG8xJeeN+zfRxSyHn44hLHSz88r3q0k51/3lf0N1ZAfCaMiHLAUJO6Q
+         z+71ZGoDxXgeT/RqQcBZkx/Q0EM68nwe3c0NBlknuWioxg5Sl/AHvj593X+WN7UIfJAo
+         1IOZU3t8VdDznILOYWnrz9fwbGqZU1TyfFvYMkDi9ieav9v/Xhsvdbi9YOrG0o6dzCZs
+         t9tx6w3ewfKacJwzJf88FfEYcp034oUUucZSEKtE9eNKUmnr94yahYwAgjRgniH3RASw
+         2bmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRqVrh5BWAMwgBsvrqVWBBDMt9Szr7igRQ23vx56bF8N1Hz6ONsqXcSBvUGX9ZPJ40STi3wBpKW7Tz6jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7m8xlgjGdzSzGYHL/aVQ8JhE3FfTXNp7ghv0TtH2xHVHp25b0
+	SUjp5AX7ZBLc9dYwKnJ1AjYqQGTnUk1tSW1dmWlWeQSFfkmad813ZQH/SKt6PM237Ild+UVLKuy
+	6rnN1Gw==
+X-Gm-Gg: ASbGncvjRY0AH4NMH7Kz2Et+XMn/MbxceQihnet/S3/z8zxC4TzxSRr/FShP/F9cLol
+	awyx3/UOcN4Gt6VZiEYMC6FStd43cSu1F8iwCIEHWZso36YVTbuvKfAaniP0ywSzhSPm6NBXhwf
+	8Ewr3aXT9fcwdOJBDHFmr3naYTyFvwnt8njZh5rqtxJGsSW22hyHCmkp+z54UBo75ogumS9olMf
+	+8aw8dbFDoSmHSDQP2VGi84axwV4OiSnjud20kqBxv5+3GI4dCXYUIcs/LETMFwpzhNwhagEOcc
+	miWh98uznkJZ
+X-Google-Smtp-Source: AGHT+IFZHeIA0CD4UYx9Z3ngew6444gPSr2M1ZAt7fuz/lLqxs6zXEfEO8224qriYfC42F0X0mlf2A==
+X-Received: by 2002:a17:903:41c8:b0:220:c86d:d7eb with SMTP id d9443c01a7336-221040a9a24mr171158235ad.36.1739801836664;
+        Mon, 17 Feb 2025 06:17:16 -0800 (PST)
 Received: from [127.0.1.1] ([112.65.12.217])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5366984sm71900845ad.60.2025.02.17.06.17.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5366984sm71900845ad.60.2025.02.17.06.17.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 06:17:09 -0800 (PST)
+        Mon, 17 Feb 2025 06:17:16 -0800 (PST)
 From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 17 Feb 2025 22:15:54 +0800
-Subject: [PATCH v6 05/15] drm/msm/dpu: decide right side per last bit
+Date: Mon, 17 Feb 2025 22:15:55 +0800
+Subject: [PATCH v6 06/15] drm/msm/dpu: fix mixer number counter on
+ allocation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-5-c11402574367@linaro.org>
+Message-Id: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-6-c11402574367@linaro.org>
 References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
 In-Reply-To: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -96,56 +97,44 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Jun Nie <jun.nie@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739801787; l=1985;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739801787; l=1305;
  i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=BbqtIHW7JPzSyRGmtZOcXUwUkV9c75Bm5PqICVDkcB0=;
- b=ndip+BiznQsCLk3gFRiHk2aOU+/6Y0wWrn1S88SeHOm2qcGPMaxjsFB0wWvmm9AhF3VwCkouo
- jobG/vDz4dhD4siduIn5Zlp9SCqd/s42zjGoVLwDm7AnDuDb+ikuCak
+ bh=94sGM0uG9AA2R84ut2aXyN09vsNy3Mf9Tf086GLox/k=;
+ b=sBcqZRv0ogKjajSPG9ugvgn2jWTjkmdxAHujjheTZRukMN9BXeN5vr1uB92ILnxrl+DGsaYQe
+ zZd+h+j/wt+B5YZPhX5R72j8qaa2kWdGJpXRN6qzh7cAXO+14YMKzTs
 X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
  pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-Currently, only one pair of mixers is supported, so a non-zero counter
-value is sufficient to identify the correct mixer within that pair.
-However, future implementations may involve multiple mixer pairs. With
-the current implementation, all mixers within the second pair would be
-incorrectly selected as right mixer. To correctly select the mixer
-within a pair, test the least significant bit of the counter. If the
-least significant bit is not set, select the mixer as left one;
-otherwise, select the mixer as right one for all pairs.
+Current code only supports usage cases with one pair of mixers at
+most. To support quad-pipe usage case, two pairs of mixers need to
+be reserved. The lm_count for all pairs is cleared if a peer
+allocation fails in current implementation. Reset the current lm_count
+to an even number instead of completely clearing it. This prevents all
+pairs from being cleared in cases where multiple LM pairs are needed.
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 7191b1a6d41b3a96f956d199398f12b2923e8c82..41c9d3e3e3c7c0c74ac9007a1ea6dcdde0b05f97 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -369,11 +369,10 @@ static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
- static void _dpu_crtc_program_lm_output_roi(struct drm_crtc *crtc)
- {
- 	struct dpu_crtc_state *crtc_state;
--	int lm_idx, lm_horiz_position;
-+	int lm_idx;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+index 24e085437039e677e0fb4bbd755a8cb3852300a4..3b3660d0b166d9b0e947b2c918e37adaae8b76d2 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+@@ -321,7 +321,11 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ 		if (!rm->mixer_blks[i])
+ 			continue;
  
- 	crtc_state = to_dpu_crtc_state(crtc->state);
+-		lm_count = 0;
++		/*
++		 * Reset lm_count to an even index. This will drop the previous
++		 * primary mixer if failed to find its peer.
++		 */
++		lm_count &= ~1;
+ 		lm_idx[lm_count] = i;
  
--	lm_horiz_position = 0;
- 	for (lm_idx = 0; lm_idx < crtc_state->num_mixers; lm_idx++) {
- 		const struct drm_rect *lm_roi = &crtc_state->lm_bounds[lm_idx];
- 		struct dpu_hw_mixer *hw_lm = crtc_state->mixers[lm_idx].hw_lm;
-@@ -384,7 +383,7 @@ static void _dpu_crtc_program_lm_output_roi(struct drm_crtc *crtc)
- 
- 		cfg.out_width = drm_rect_width(lm_roi);
- 		cfg.out_height = drm_rect_height(lm_roi);
--		cfg.right_mixer = lm_horiz_position++;
-+		cfg.right_mixer = lm_idx & 0x1;
- 		cfg.flags = 0;
- 		hw_lm->ops.setup_mixer_out(hw_lm, &cfg);
- 	}
+ 		if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
 
 -- 
 2.34.1
