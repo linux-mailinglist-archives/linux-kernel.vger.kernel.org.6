@@ -1,276 +1,279 @@
-Return-Path: <linux-kernel+bounces-517038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EDFA37B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:13:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A4AA37B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5CC57A29F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD2E16C0DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062FB18DB25;
-	Mon, 17 Feb 2025 06:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A0318FDA9;
+	Mon, 17 Feb 2025 06:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+rdaDlD"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoMpOWwD"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2881720
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3711991A1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739772789; cv=none; b=RuuSYXlY0GSxo7M7YkghmssrDUe/frWkBjEgekqEVVMi9b1F5peRakgq4iqg1SxD9YouR7nr37qVC0gbuwTYX2vPjprBNTctf44BLQ37oAlbl0AFyvNTS6sROGz7cLHQoxRhyjyza8plmwGvju3Iz8+YA2xr4Ntm5nyhXRmA2ZY=
+	t=1739772806; cv=none; b=EP/6Fiytr0mtgzPq7I4727ySZT8jrp1focFRoIgtwMAEGcV03pJDOWqPSuXjBrpcwm19UPTbccqCHSD85qOVEBheuQ+DKtWoCYoYgUfJkGNM20cN8CjQpCoH2dYoTLRl6da1w6+xJ4SKqRB2Svpna+0VuJDFUwJcweCC7fcd/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739772789; c=relaxed/simple;
-	bh=gP/DhI4MQzs/dlT7ZaFU923WgrWtY1c1HT7wI1ePtA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUu+piC/0KQiaQojwTLmGRLZKXE4rk/p2i1NUPQCgj3S76V1X+9hxtKpOQnYeceuFjyn5KcWiV9GX1x3wrogL1zkm6PdxdkNZp7bL4bI4XMbB2rE7I9py3Z3i8nor3D9+TWKVpkFJYTssMoDXtAn+mJaYvaaLungik7Ap56gj9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d+rdaDlD; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4bd35d4407aso672030137.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:13:07 -0800 (PST)
+	s=arc-20240116; t=1739772806; c=relaxed/simple;
+	bh=Q4IiBCYtEpEAtIMWxJ1HpzqrHOcKLqjdGZ6Ot0Uawqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ErUJQi57J6euFAsWq2YcPTFGI0deh16vLJty0Rvxc8j5FKjn/yDkzt5i2wUBNZLw3O5ZoRbFgAU20j+rvB81Pmf6o6pB01jU+kDVdaWxIF3M7cZl0LTbmKbyXaRvduPEkpd28CVriIgQSwKIB2zGgOzI+T7cS89EwcZf013ILCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoMpOWwD; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21f2339dcfdso59691245ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:13:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739772786; x=1740377586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739772804; x=1740377604; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MnZw/Q+2O7o0YRtcX5JOGAgQhTQPBSaQtuZqXRvPz8U=;
-        b=d+rdaDlDHExgUoRZpQ0jw7IQNkmjMTftI3gbiENVsiHuA3NbP5q4Q+FwhJT6DwErHt
-         AnlvTvmqNn4iQgIxNy7au1rPSOM+8Z65D/LN4675QSymnnBA8fS0FNLw13h5Uj4B+mnC
-         PtwDJXoj2pa7zxfTUsiT+bBD0SjgDFQAxsoTwFUUNe3zrlkSY33q2Wt26azEnEhWmMZM
-         r3qkdvmJVqlWk3vETlBzi6Da9QMrdweKjuJHK2UlHI/6oa8HQGntYZaxgQ6RvyNtlSSp
-         X5M9lCsmiagGB0B0r4FdsszC4ytbbSPrkImYEHMaw9kpTOQ9uxFdsxCaY1fMGPUJTwTm
-         CEYw==
+        bh=Cm0nvNkFrSwzSJgsa8SfQgEJnPTsraa5R0Oj78qJLKY=;
+        b=IoMpOWwDzkwdyCLdzXaPPAA4RqtagGdEQXexmfMeG25k2XaQKWAaDnxNZPYzDwyuuV
+         N12gsAbKXRdLQCJi9B+QbVsrn8zgxPH9De6ZPoWpaOZmTU3NF7fDYS1ZWKD8NUX32KcA
+         Ja9i9SsH2j6bR/H8b10aPK5VCx/7rZFFzql+Eqpe3WJtwJq7RvYF3k6zopFvFtGtoO75
+         AIwtlsKx7n3CglteyzDCPtrLg+3PtdWiTAqe0mvYClAtzAI15qE6AVdv7jbYwPZ2q9k4
+         jEpxjxHXNi0UgiAaCODCi+xU6oOyP5CVQMssgfdANydNC1/V5LlBPk3eh8moKbIi81dc
+         FEJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739772786; x=1740377586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MnZw/Q+2O7o0YRtcX5JOGAgQhTQPBSaQtuZqXRvPz8U=;
-        b=Qhu06m2xFu/9W/C0kMacEbMQ3TYDUEVIv+K+iiSs1vL+WaGb/bQcPPEOXc09Tkkh0K
-         j4uaVNL3AirNsHV3dcvRU0Jgdf6gM+EOJW6kqXpzifE2GuWAKsa4qMYW0UfBmUfXgTsS
-         a/k9Yfy5gtRnELGlSbRFU5frvUrhAc1y2XzwZyDYQBY0of4lp0/26EKXZHasMXg4uuyP
-         rLRaBkww5q0pKy2e+rJ38xb9aK7D+ZlIyuFxKzSdrDAotFBN+SHJjxR21+quGD4ut8NI
-         31z3TOb0ZHbuE4CVx4rVWCUxe5yHBU8xzszHHs+X1lYZZ85ZdKPH1Km+SU7kYstRsgL6
-         1bsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzF1W5S/y+F/EgOMlMeHsAKLs0fol44qATdIu0DfRVdAAb3Xgayu1Jpk3ywJOrv/8y5Rmp8IORWoEBoHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfPY0+UJlwMnukO3BGMCx1JVAgj6NT2ns7eSIqXvvqhKFtIIQb
-	1Mv7t8+/T6ZrmD4fwlJtz8lncZG7kOpZ4H9DcEP6kTfyboglECJbw0+OPeCrN/MZ7utweC/NTzD
-	vLg/DpubduXi+tjyUc8lpxqrGQUBSU77gkSObdg==
-X-Gm-Gg: ASbGnctxTlryyIPWbBD0haI9t43mpyPbyRT8kvHFpr4yvEUYMrmIokgHA9XKua9j8jA
-	vh4Ya0E1VcF31k9a6bzIjC+coHQEx/+dyTfnRdgou0hWhRLMOBCfuF1jIKL0s6a5EJ6031f0iQw
-	==
-X-Google-Smtp-Source: AGHT+IHc7dJI6eafhkqnIan6daijofUVFUvH3V4pTfdEga1AHuyGIsGH9uwlauqjjjaAaHI1sy0aprZ+BW4OP8MJfMs=
-X-Received: by 2002:a05:6102:c89:b0:4bb:eb4a:f9f2 with SMTP id
- ada2fe7eead31-4bd3fcc5af7mr3186375137.9.1739772786167; Sun, 16 Feb 2025
- 22:13:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739772804; x=1740377604;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Cm0nvNkFrSwzSJgsa8SfQgEJnPTsraa5R0Oj78qJLKY=;
+        b=Dw9FqLzNmcAA/b/dSt+l9yyR/8/MPfNf3nNBFr6JiG6nelTebW4nSKyPuTVAi9ynxs
+         mxCX7ot0w9X/HXQ96CNgF7f546p5WrSepar1qGsowJSwEr5lw4flhBeEv7TOMF81KfcT
+         BvqMIWl4f9Ls4okdwS1Iw+XpNMVaI6dKwabnfgvmbbWyqSInbBYtpi5LEXoCtRHpRYKN
+         xeku+FzABIGnO779l0h+3r2+2zLhdEr1QPhTNX41ykLs6v0LgrO5KXlY/pYtWh8Dfrnm
+         ly4X5fzuX4++Ma8+R7ASTDtXNepkBquiOQMowOp5jIl5Kq0jM815oeMbv19UbyVJyzaW
+         8W2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUauwWASYb+oonvL8Vv4X4vdybCRgW/J2gaikCL05fRc8dR3fRyY8ktOGY2S80csvnrMohBxgY8ielkw8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY8ysldJPw+cNHANtEU35SeLPtJeD87SjGiOqM2ClQX0ifIpVf
+	0VJCvVAlc7LOY+UF74//wNYOHFhAZL1rSIcemhcEUNV9xSO6UbIU
+X-Gm-Gg: ASbGncv+3To3+rPMs9RyUCGbgF/21ubN+e7a9LxsfG5gWo5nwQMcrQCmUsrP1xgbkaA
+	YOSEvDmpiIhMnwLmY6Ks7zpDP45VQhpyg7n+pHorX94+9RLbihbZfIwoXu6WUnMW2X/ZicDxd86
+	dPebK8xDkAMORNRyC6jRdiKU1AJ0od/iEOMh6l/huoLaxELrUuDk1kfkoAfHLK/wY2i58uruzMf
+	2VT0ouNca+Tsjqw5zZSMAHEmeN6e8RznCyLpNkm51tjCPz0uu/yINwrI8cZv1kKUaONJoVB0HZh
+	FwWsIYyZR6vbspIWASt4Op3hscjwDttp91w=
+X-Google-Smtp-Source: AGHT+IFxfaysRUIPQrPibCbrGQEvLzxiRRrHei2NCGy6uFJfG/iQLk4Yh9ACUvXIBtDJCdCQIhu+Rg==
+X-Received: by 2002:a17:902:ecc4:b0:215:8847:4377 with SMTP id d9443c01a7336-221045c8b55mr106950725ad.15.1739772803999;
+        Sun, 16 Feb 2025 22:13:23 -0800 (PST)
+Received: from [10.125.192.21] ([103.165.80.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5367ecbsm64679305ad.59.2025.02.16.22.13.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Feb 2025 22:13:23 -0800 (PST)
+Message-ID: <5b6d669a-4fb9-5d24-6e08-1dc121438194@gmail.com>
+Date: Mon, 17 Feb 2025 14:13:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
- <20250212205613.4400a888@collabora.com> <CAFA6WYOaGEPj0xNEDBCoEmjJreEHChjQ2hyXRJ_CYoGhiBonfw@mail.gmail.com>
- <20250213093557.278f5d19@collabora.com> <CAFA6WYOJkSRsH-15QdqXNMd08Q=Dg4NkRd1Cr9LXA+5nozTF6g@mail.gmail.com>
- <20250213134008.4cbef142@collabora.com> <CAPj87rM5Y=-Jgf4mwukicF6Yb-vccn2fpG2X1jNq0upH2+cAEQ@mail.gmail.com>
- <CAHUa44G9hw-z6wzxg=HkVAxPKEW1yES5JTEqRWMvJUJAtcUDkQ@mail.gmail.com>
- <CAPj87rPHnME5Osgnf5-FSAu22mDpLj=dzvhi_NqEcOwr1ThgGw@mail.gmail.com>
- <CAHUa44Gs0D1fBD0=+EDgcQUMeDv4knci9trUkYEc1J98qFV7HQ@mail.gmail.com>
- <CAFA6WYOuTwRPEh3L7+hMyARB_E73xmp+OwhKyS-r4+ryS7=9sw@mail.gmail.com> <20250214164856.0d2ead8a@collabora.com>
-In-Reply-To: <20250214164856.0d2ead8a@collabora.com>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Mon, 17 Feb 2025 11:42:55 +0530
-X-Gm-Features: AWEUYZnqsQNR6HgNOQ-KCjeibuktCio21DDJEy1SbMXh6xWHOITZYYTdEw2pDRY
-Message-ID: <CAFA6WYPc6EHQwcPuMZRm4C1P6SoDrCzEPUmju_meupB6NXQ1sg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] TEE subsystem for restricted dma-buf allocations
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, Daniel Stone <daniel@fooishbar.org>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Florent Tomasin <florent.tomasin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH v2] sched/core: Prioritize migrating eligible tasks in
+ sched_balance_rq()
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, peterz@infradead.org, mingo@kernel.org,
+ juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>
+References: <20241223091446.90208-1-jiahao.kernel@gmail.com>
+ <597384e3-6519-b10e-081b-30c3f89b6e3f@gmail.com>
+ <CAKfTPtAf2dJmdDxnznA9GH2DOp2C0FKkmyMQwFjzOFiXNq7YJA@mail.gmail.com>
+ <d0a4beb1-3a35-a510-aa9f-813492751cc4@gmail.com>
+ <CAKfTPtCUMHjcHk2QZBC0OXY0OwkMzAX4-h94z4k_4f9df7Z_=w@mail.gmail.com>
+ <e2f32928-bd54-a6cc-d6ee-c4578cb7aaa1@gmail.com>
+ <CAKfTPtB02uJK6+e8UXiC=9RyRa3RA=LQ6Y3aqa7+PTX=BVPUcg@mail.gmail.com>
+ <56d9d6cc-021e-4bd5-7254-aa39c9845500@gmail.com>
+ <CAKfTPtAHTTt7mJeBBU4wxrAWrzngKTfp9yXBiwhncaHKXA1yrw@mail.gmail.com>
+ <53082ec4-d862-6135-8d22-44dd2742156a@gmail.com>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <53082ec4-d862-6135-8d22-44dd2742156a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Feb 2025 at 21:19, Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
->
-> On Fri, 14 Feb 2025 18:37:14 +0530
-> Sumit Garg <sumit.garg@linaro.org> wrote:
->
-> > On Fri, 14 Feb 2025 at 15:37, Jens Wiklander <jens.wiklander@linaro.org=
-> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Thu, Feb 13, 2025 at 6:39=E2=80=AFPM Daniel Stone <daniel@fooishba=
-r.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Thu, 13 Feb 2025 at 15:57, Jens Wiklander <jens.wiklander@linaro=
-.org> wrote:
-> > > > > On Thu, Feb 13, 2025 at 3:05=E2=80=AFPM Daniel Stone <daniel@fooi=
-shbar.org> wrote:
-> > > > > > But just because TEE is one good backend implementation, doesn'=
-t mean
-> > > > > > it should be the userspace ABI. Why should userspace care that =
-TEE has
-> > > > > > mediated the allocation instead of it being a predefined range =
-within
-> > > > > > DT?
-> > > > >
-> > > > > The TEE may very well use a predefined range that part is abstrac=
-ted
-> > > > > with the interface.
-> > > >
-> > > > Of course. But you can also (and this has been shipped on real
-> > > > devices) handle this without any per-allocation TEE needs by simply
-> > > > allocating from a memory range which is predefined within DT.
-> > > >
-> > > > From the userspace point of view, why should there be one ABI to
-> > > > allocate memory from a predefined range which is delivered by DT to
-> > > > the kernel, and one ABI to allocate memory from a predefined range
-> > > > which is mediated by TEE?
-> > >
-> > > We need some way to specify the protection profile (or use case as
-> > > I've called it in the ABI) required for the buffer. Whether it's
-> > > defined in DT seems irrelevant.
-> > >
-> > > >
-> > > > > >  What advantage
-> > > > > > does userspace get from having to have a different codepath to =
-get a
-> > > > > > different handle to memory? What about x86?
-> > > > > >
-> > > > > > I think this proposal is looking at it from the wrong direction=
-.
-> > > > > > Instead of working upwards from the implementation to userspace=
-, start
-> > > > > > with userspace and work downwards. The interesting property to =
-focus
-> > > > > > on is allocating memory, not that EL1 is involved behind the sc=
-enes.
-> > > > >
-> > > > > From what I've gathered from earlier discussions, it wasn't much =
-of a
-> > > > > problem for userspace to handle this. If the kernel were to provi=
-de it
-> > > > > via a different ABI, how would it be easier to implement in the
-> > > > > kernel? I think we need an example to understand your suggestion.
-> > > >
-> > > > It is a problem for userspace, because we need to expose acceptable
-> > > > parameters for allocation through the entire stack. If you look at =
-the
-> > > > dmabuf documentation in the kernel for how buffers should be alloca=
-ted
-> > > > and exchanged, you can see the negotiation flow for modifiers. This
-> > > > permeates through KMS, EGL, Vulkan, Wayland, GStreamer, and more.
-> > >
-> > > What dma-buf properties are you referring to?
-> > > dma_heap_ioctl_allocate() accepts a few flags for the resulting file
-> > > descriptor and no flags for the heap itself.
-> > >
-> > > >
-> > > > Standardising on heaps allows us to add those in a similar way.
-> > >
-> > > How would you solve this with heaps? Would you use one heap for each
-> > > protection profile (use case), add heap_flags, or do a bit of both?
->
-> I would say one heap per-profile.
->
 
-And then it would have a per vendor multiplication factor as each
-vendor enforces memory restriction in a platform specific manner which
-won't scale.
 
-> >
-> > Christian gave an historical background here [1] as to why that hasn't
-> > worked in the past with DMA heaps given the scalability issues.
-> >
-> > [1] https://lore.kernel.org/dri-devel/e967e382-6cca-4dee-8333-39892d532=
-f71@gmail.com/
->
-> Hm, I fail to see where Christian dismiss the dma-heaps solution in
-> this email. He even says:
->
-> > If the memory is not physically attached to any device, but rather just
-> memory attached to the CPU or a system wide memory controller then
-> expose the memory as DMA-heap with specific requirements (e.g. certain
-> sized pages, contiguous, restricted, encrypted, ...).
+On 2025/1/20 13:48, Hao Jia wrote:
+> 
+> 
+> On 2025/1/16 19:26, Vincent Guittot wrote:
+>> On Wed, 15 Jan 2025 at 12:55, Hao Jia <jiahao.kernel@gmail.com> wrote:
+>>>
+>>>
+>>>
+>>> On 2025/1/15 17:28, Vincent Guittot wrote:
+>>>> On Wed, 15 Jan 2025 at 09:55, Hao Jia <jiahao.kernel@gmail.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 2025/1/14 16:07, Vincent Guittot wrote:
+>>>>>> On Tue, 14 Jan 2025 at 04:18, Hao Jia <jiahao.kernel@gmail.com> 
+>>>>>> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2025/1/14 00:40, Vincent Guittot wrote:
+>>>>>>>> On Mon, 13 Jan 2025 at 10:21, Hao Jia <jiahao.kernel@gmail.com> 
+>>>>>>>> wrote:
+>>>>>>>>>
+>>>>>>>>> Friendly ping...
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 2024/12/23 17:14, Hao Jia wrote:
+>>>>>>>>>> From: Hao Jia <jiahao1@lixiang.com>
+>>>>>>>>>>
+>>>>>>>>>> When the PLACE_LAG scheduling feature is enabled and
+>>>>>>>>>> dst_cfs_rq->nr_queued is greater than 1, if a task is
+>>>>>>>>>> ineligible (lag < 0) on the source cpu runqueue, it will
+>>>>>>>>>> also be ineligible when it is migrated to the destination
+>>>>>>>>>> cpu runqueue. Because we will keep the original equivalent
+>>>>>>>>>> lag of the task in place_entity(). So if the task was
+>>>>>>>>>> ineligible before, it will still be ineligible after
+>>>>>>>>>> migration.
+>>>>>>>>>>
+>>>>>>>>>> So in sched_balance_rq(), we prioritize migrating eligible
+>>>>>>>>>> tasks, and we soft-limit ineligible tasks, allowing them
+>>>>>>>>>> to migrate only when nr_balance_failed is non-zero to
+>>>>>>>>>> avoid load-balancing trying very hard to balance the load.
+>>>>>>>>
+>>>>>>>> Could you explain why you think it's better to balance eligible 
+>>>>>>>> tasks
+>>>>>>>> in priority and potentially skip a load balance ?
+>>>>>>>
+>>>>>>> In place_entity(), we maintain the task's original equivalent 
+>>>>>>> lag, even
+>>>>>>> if we migrate the task to dst_rq, this does not change its 
+>>>>>>> eligibility
+>>>>>>> attribute.
+>>>>>>
+>>>>>> Yes, but you don't answer the question why it's better to select an
+>>>>>> eligible task vs a non eligible task.
+>>>>>>
+>>>>>>>
+>>>>>>> When there are multiple tasks on src_rq, and the dst_cpu has some
+>>>>>>> runnable tasks, migrating ineligible tasks to dst_rq will not 
+>>>>>>> allow them
+>>>>>>> to run. Therefore, such task migration is inefficient. We should
+>>>>>>
+>>>>>> Why is it inefficient ? load balance is about evenly balancing the
+>>>>>> number of tasks or the load between CPUs, it never says that the 
+>>>>>> newly
+>>>>>> migrated task should run immediately
+>>>>>
+>>>>>
+>>>>> My initial thought is that when we need to migrate some tasks during
+>>>>> load balancing, at the current point in time, migrating ineligible 
+>>>>> tasks
+>>>>> to dst_cpu means they definitely cannot run there. Therefore, I prefer
+>>>>> to keep them on src_cpu to reduce the overhead of dequeueing and
+>>>>> enqueueing ineligible tasks.
+>>>>
+>>>> Sorry but I still don't get why it's important and would make a
+>>>> difference. They are all runnable but ineligible tasks got more
+>>>> runtime than other at that point in time so there is no real
+>>>> difference
+>>>
+>>>
+>>> I adopt a lazy strategy for ineligible tasks. At the current point in
+>>> time, even if we migrate ineligible tasks to the dst CPU, they still
+>>> have to wait on the dst CPU until they become eligible. We do not see
+>>> clear benefits from migrating ineligible tasks, but their dequeueing and
+>>> enqueueing would instead incur overhead.
+>>
+>> But your explanation doesn't make sense.
+>> Not migrating an ineligible task only make sense for delayed_dequeue
+>> tasks because they don't really want to run but only exhaust their lag
+>> but this is already taken into account by
+>> 61b82dfb6b7e ("sched/fair: Do not try to migrate delayed dequeue task")
+>>
+> 
+> Thank you for your suggestion.
+> 
+> Yes, as you mentioned, this commit 61b82dfb6b7e ("sched/fair: Do not try 
+> to migrate delayed dequeue task") reduces the migration of 
+> delayed_dequeue tasks, but it doesn't work for ineligible RUNNING tasks 
+> and when the migration_type is migrate_load.
+> 
+> 
+>> Did you run your benchmark on top of this change ?
+> 
+> My previous benchmark tests were based on the torvalds/linux/master 
+> branch, which does not include commit 61b82dfb6b7e ("sched/fair: Do not 
+> try to migrate delayed dequeue task"). I will include this commit and 
+> retest on my machine after my leave ends.
+> 
 
-I am not saying Christian dismissed DMA heaps but rather how
-scalability is an issue. What we are proposing here is a generic
-interface via TEE to the firmware/Trusted OS which can perform all the
-platform specific memory restrictions. This solution will scale across
-vendors.
+I'm really sorry for being away for so long. I have retested the 
+hackbench on my machine, which includes the commit 61b82dfb6b7e 
+("sched/fair: Do not try to migrate delayed dequeue task"). Based on the 
+hackbench test results, this patch still brings a slight performance 
+improvement.
 
->
-> >
-> > >
-> > > > If we
-> > > > have to add different allocation mechanisms, then the complexity
-> > > > increases, permeating not only into all the different userspace API=
-s,
-> > > > but also into the drivers which need to support every different
-> > > > allocation mechanism even if they have no opinion on it - e.g. Mali
-> > > > doesn't care in any way whether the allocation comes from a heap or
-> > > > TEE or ACPI or whatever, it cares only that the memory is protected=
-.
-> > > >
-> > > > Does that help?
-> > >
-> > > I think you're missing the stage where an unprotected buffer is
-> > > received and decrypted into a protected buffer. If you use the TEE fo=
-r
-> > > decryption or to configure the involved devices for the use case, it
-> > > makes sense to let the TEE allocate the buffers, too. A TEE doesn't
-> > > have to be an OS in the secure world, it can be an abstraction to
-> > > support the use case depending on the design. So the restricted buffe=
-r
-> > > is already allocated before we reach Mali in your example.
-> > >
-> > > Allocating restricted buffers from the TEE subsystem saves us from
-> > > maintaining proxy dma-buf heaps.
->
-> Honestly, when I look at dma-heap implementations, they seem
-> to be trivial shells around existing (more complex) allocators, and the
-> boiler plate [1] to expose a dma-heap is relatively small. The dma-buf
-> implementation, you already have, so we're talking about a hundred
-> lines of code to maintain, which shouldn't be significantly more than
-> what you have for the new ioctl() to be honest.
+vanilla: Includes commit 61b82dfb6b7e ("sched/fair: Do not try to 
+migrate delayed dequeue task"), but does not include my patch.
 
-It will rather be redundant vendor specific code under DMA heaps
-calling into firmware/Trusted OS to enforce memory restrictions as you
-can look into Mediatek example [1]. With TEE subsystem managing that
-it won't be the case as we will provide a common abstraction for the
-communication with underlying firmware/Trusted OS.
+patched: Includes both the above commit and my patch.
 
-[1] https://lore.kernel.org/linux-arm-kernel/20240515112308.10171-1-yong.wu=
-@mediatek.com/
 
-> And I'll insist on what
-> Daniel said, it's a small price to pay to have a standard interface to
-> expose to userspace. If dma-heaps are not used for this kind things, I
-> honestly wonder what they will be used for...
+hackbench-process-pipes
+                       vanilla                  patched
+Amean     1       0.4087 (   0.00%)      0.4003 (   2.04%)
+Amean     4       1.7033 (   0.00%)      1.7100 (  -0.39%)
+Amean     7       2.9020 (   0.00%)      2.8750 (   0.93%)
+Amean     12      4.2543 (   0.00%)      4.2980 (  -1.03%)
+Amean     21      5.8633 (   0.00%)      5.7507 (   1.92%)
+Amean     30      7.3757 (   0.00%)      7.2887 (   1.18%)
+Amean     48     10.5360 (   0.00%)     10.2647 (   2.58%)
+Amean     79     16.5480 (   0.00%)     15.9820 (   3.42%)
+Amean     96     19.7873 (   0.00%)     19.1347 (   3.30%)
 
-Let's try not to forcefully find a use-case for DMA heaps when there
-is a better alternative available. I am still failing to see why you
-don't consider following as a standardised user-space interface:
 
-"When user-space has to work with restricted memory, ask TEE device to
-allocate it"
+hackbench-process-sockets
+                       vanilla                  patched
+Amean     1       0.7520 (   0.00%)      0.7377 (   1.91%)
+Amean     4       2.5760 (   0.00%)      2.5103 (   2.55%)
+Amean     7       4.3927 (   0.00%)      4.2653 (   2.90%)
+Amean     12      7.3923 (   0.00%)      7.1427 (   3.38%)
+Amean     21     12.3733 (   0.00%)     11.9760 (   3.21%)
+Amean     30     17.2617 (   0.00%)     16.7987 (   2.68%)
+Amean     48     28.8577 (   0.00%)     28.1980 (   2.29%)
+Amean     79     50.0687 (   0.00%)     49.0887 (   1.96%)
+Amean     96     62.1603 (   0.00%)     61.1177 (   1.68%)
 
--Sumit
+FYI.
+
+After the performance tests, I added some code in the can_migrate_task() 
+to count the different reasons why tasks could not be migrated during 
+the hackbench run.
+
+
+hit_delayed_dequeue_cnt: Hit if (p->se.sched_delayed) && 
+(env->migration_type != migrate_load)
+
+
+hit_ineligible_cnt: Did not hit "hit_delayed_dequeue" && 
+!env->sd->nr_balance_failed && task_is_ineligible_on_dst_cpu()
+
+
+Count results:
+
+hit_delayed_dequeue_cnt    378432
+hit_ineligible_cnt        1862099
+
+
+
+Thanks,
+Hao
 
