@@ -1,531 +1,220 @@
-Return-Path: <linux-kernel+bounces-517253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9918A37E40
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:17:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86232A37E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF31166182
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0FA27A2F7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C51FE45E;
-	Mon, 17 Feb 2025 09:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EB91FE47B;
+	Mon, 17 Feb 2025 09:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfuvwoCc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jPMcr1vm"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E168A1DDC2D;
-	Mon, 17 Feb 2025 09:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DC01FDA97
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739783850; cv=none; b=PAkBJsP9sknisFBR4eCAs/tGD95nUa1tjj7kn4eGZrC1pqaYqiXmYjQ3E4tA4ZurwC54tkBe/Sh5kYPr+hz874UJUePd7On9Ie5I70icLeral0BC8+4wprCYfdwwBjYXX1BN1gdxbghMzUTy8QDZj1cAbuszSzzvDbCvyKY5jSw=
+	t=1739783901; cv=none; b=NUh0PBx9JC3RJQvXqlvw+XQkBlDQag9PYUatd5R1hh9RQGZ5wpyqUFJYI7Mxu7ZiW1MTgkioypQVI9i0tnm3XTGI9HjFZfJ/Aty4637vXl0jb5y7sfGW3JapTdl/5xbEemQVEfCeaTRO9KBgptQlxsI7En7ySEIE8Hj5Oezmmn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739783850; c=relaxed/simple;
-	bh=TvGHmdvF3ljWOvq4seMnN7J3/rxmiWgmAWhXOIkoSEc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XiMsw47U9Owi+3yKHPTkd2XLxsVk9hBr3SXBQ6AS4wqw7C2xUNgAMoWbq+NLKStmUhVvX2uJKcROdOUQxCP6zZYiSvkEAPu952xgb7N5QbJ5o6WiZ0zYdBzQTgaJUtyPMpD5lo5DvcQUfeRTX9zN2FsjD0iM/Y7lAW9qorl8jn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfuvwoCc; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739783849; x=1771319849;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=TvGHmdvF3ljWOvq4seMnN7J3/rxmiWgmAWhXOIkoSEc=;
-  b=gfuvwoCcc60lrVTB4f1sT78xHXIw0MhViTijlwTsPz28Oxqlf8hdi171
-   nD081QzP9pnXm8HRJvLU7KuxUWav2S/elKm4q7J/Yu1/MZEti+hF8vhJm
-   IVM2UgLvLbbwn8rG3JJrr0uRNUxtblcXQRDysVf3T2sLOEOiV8iw3PoIN
-   pyvxVpoGpi6ioZohg8V8Gdlv0mb9/0+EnapY9B/DwE3sExK0cV6BCcUd9
-   9y5lC8FHtlDDcM1I1HIxp6AhRJH5qTfijNZbpo+I1hm2BIJ8tCYmC0xZl
-   BoVlVzvtPWPLkiT1lCLttFemYp0gbQXqUbBAfTYF5/RbXHRnpw/sSdBY6
-   g==;
-X-CSE-ConnectionGUID: 6BAY14pAQi6QX62j3p+WeA==
-X-CSE-MsgGUID: M6Ys6ePMTiKgET+g/PxedA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="62928595"
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="62928595"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:17:27 -0800
-X-CSE-ConnectionGUID: kyPJwz6xRl+pIP+RLzO6Hw==
-X-CSE-MsgGUID: OSO7r+lFRKGFZagjFd1Wlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118209589"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.163])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 01:17:21 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 17 Feb 2025 11:17:17 +0200 (EET)
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rob Herring <robh@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
-    Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, 
-    mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-    ath11k@lists.infradead.org, quic_jjohnson@quicinc.com, 
-    quic_pyarlaga@quicinc.com, quic_vbadigan@quicinc.com, 
-    quic_vpernami@quicinc.com, quic_mrana@quicinc.com
-Subject: Re: [PATCH 6/8] bus: mhi: host: Add support for Bandwidth scale
-In-Reply-To: <20250217-mhi_bw_up-v1-6-9bad1e42bdb1@oss.qualcomm.com>
-Message-ID: <0ec7933e-d580-1b21-2754-e2d4e4cd5ba7@linux.intel.com>
-References: <20250217-mhi_bw_up-v1-0-9bad1e42bdb1@oss.qualcomm.com> <20250217-mhi_bw_up-v1-6-9bad1e42bdb1@oss.qualcomm.com>
+	s=arc-20240116; t=1739783901; c=relaxed/simple;
+	bh=JyC3DsKd7jW/3RxPZY6kje384o9WR4UklJlEwhSelB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMkyrvm98IUzTECW6ToyTvXjj89Y8zfj4yqx/b7ssPRILBS8bxHhYXGrj1cfdJt7gE4P0Oz2GMaePAqtw9Okigov/T/ZE+/kZ1p+incB8V6jo2pTm2O8lHPkw5zhLftD3NXNo10RakbJqfHdvP952Ikp6LasFiv67c5VM+rkbRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jPMcr1vm; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e461015fbd4so3061395276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:18:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739783898; x=1740388698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ZzX8tGLTQD9vuUORGnzCnOyePntqbaoJmyRLXunXls=;
+        b=jPMcr1vmY3apL9c5u/R2qyhrqVgPM/RRvtk7Yx5yHYdGM+26MXPwDHG6fen85aavXk
+         qCiBc4T0MdIRQF4aB12GT6dA1RnMTDOwZSWIfDERKzEwUaQO35Oq3iBW83Y45/KDr0Ja
+         oCxvojbj2rRF4Iy/rMaP4LRtYI/8neG++xCNUUr3mL+aHIpZJmgtFBLjerO1TzkoJolu
+         yrNKkUl6oAjiBKgjz4kO+D5cmwSXG+b3KYTDNEE0pt/0urbNQApNfVFp1+BGTZE6ChsI
+         sN0302cZqjs8KYSvV0So7soVbTyNyEUmjxYbp0yX9S8qxzBBSymNctXJ6Wrcxg4w7bRy
+         oFAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739783898; x=1740388698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ZzX8tGLTQD9vuUORGnzCnOyePntqbaoJmyRLXunXls=;
+        b=LmyTlghpIXcpKbNaxFdyeffTwlEtZO1on7LhLIsAMCiHj06zxKpYdQPcJ2kdENCrET
+         VWaKnuvvZGJIUQ0yeC0muewAlLh5KWe0vpQOwD+mFuWBo4vH3TusyYNJYPue3aAIsk6N
+         /1QKKLUQsyMJnXb/AieirQig+Oc9eB3BUBIkMzPo/ethL8nutTf6hwQAJBuQOSMJRHFO
+         SGOsHH6i0ImANzK1hcwyuvh5NNXrglX+iL4MDpUXh6h36A2RBRuaHVBJZ6tJKmGzzHcI
+         wxkVhMiF+hLbzsSddnJYmZny1/X7F/AggJ7DpgyqT2lI0Nnfq43WHPjU853LLktL6kjk
+         XoSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtE4F6h7/huuqb7Butz23XG5ruDhmuheA5RV8Jgupqxa4wWFJoAvm9Oay2bMpF99JiNGrZUABt0kMNTkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkOoM7hJV5/Cn5h79Uwui9/lRCg97HvVxQlnwNT/L7NxElIGSV
+	TtdC8+JnuOViYnoQOglsXng/DdRYDtcIlqrCpoKT4yMTTBHvmsNhg7554omgKK33hBt+MoydvL8
+	nnMvuJKB+3khpsnbo/zhZuqZ+OW7l7kGeUZLo
+X-Gm-Gg: ASbGncvsTxKyrJ+RJQWVQGIgz0jfsSgO1eJ7OgA/qUENq3T4lUdhMewsBJcfokalTme
+	1kNtO6THHm7FIKQnYcAtSgzLw9tR+H7CI8x4m5th/uSAvO71qduslH5yeTunWZQRTj340PyA+hw
+	==
+X-Google-Smtp-Source: AGHT+IH3Yhhhb5o4OOHhwkCE2P+VxdpO+BObbKbP0i7sGJ2qYMSa9fy76gnizP4Jt2bIUOnaBYsc2ith6LgrCmWmmNs=
+X-Received: by 2002:a05:6902:1102:b0:e58:98d0:2d27 with SMTP id
+ 3f1490d57ef6-e5dc90265a1mr5427194276.7.1739783898211; Mon, 17 Feb 2025
+ 01:18:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
+ <2025021425-surgical-wackiness-0940@gregkh> <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+ <2025021705-speckled-ooze-c4d0@gregkh>
+In-Reply-To: <2025021705-speckled-ooze-c4d0@gregkh>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Mon, 17 Feb 2025 17:17:50 +0800
+X-Gm-Features: AWEUYZl7o3FAHCQLs9yJwCOplO6bcmFh381n0TsGn9s_rXdfVZOBNJ4tE-ab4D0
+Message-ID: <CADg1FFd3nWiZqA8huodnsjezgrAL-p9t2BLHf3MzO3cJD6xZ+w@mail.gmail.com>
+Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs isoc_alt
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Feb 2025, Krishna Chaitanya Chundru wrote:
+On Mon, Feb 17, 2025 at 4:53=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
+> > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
+> > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > >
+> > > > Expose the isoc_alt attr with device group to avoid the racing.
+> > > >
+> > > > Now we create a dev node for btusb. The isoc_alt attr belongs to it=
+ and
+> > > > it also becomes the parent device of hci dev.
+> > > >
+> > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to cont=
+rol USB alt setting")
+> > >
+> > > Wait, step back, why is this commit needed if you can change the alt
+> > > setting already today through usbfs/libusb without needing to mess wi=
+th
+> > > the bluetooth stack at all?
+> >
+> > In short: We want to configure the alternate settings without
+> > detaching the btusb driver, while detaching seems necessary for
+> > libusb_set_interface_alt_setting to work (Please correct me if I'm
+> > wrong!)
+>
+> I think changing the alternate setting should work using usbfs as you
+> would send that command to the device, not the interface, so the driver
+> bound to the existing interface would not need to be removed.
+>
+> Try it out and see yourself to verify this before you continue down any
+> of this.  There's no need to use libfs for just a single usbfs command,
+> right?
 
-> As per MHI spec sec 14, MHI supports bandwidth scaling to reduce power
-> consumption. MHI bandwidth scaling is advertised in devices that contain
-> the bandwidth scaling capability registers. If enabled, the device
-> aggregates bandwidth requirements and sends them to the host in the form
-> of an event. After the host performs the bandwidth switch, it sends an
-> acknowledgment by ringing a doorbell.
-> 
-> if the host supports bandwidth scaling events, then it must set
-> BW_CFG.ENABLED bit, set BW_CFG.DB_CHAN_ID to the channel ID to the
-> doorbell that will be used by the host to communicate the bandwidth
-> scaling status and BW_CFG.ER_INDEX to the index for the event ring
-> to which the device should send bandwidth scaling request in the
-> bandwidth scaling capability register.
-> 
-> As part of mmio init check if the bw scale capability is present or not,
-> if present advertise host supports bw scale by setting all the required
-> fields.
-> 
-> MHI layer will only forward the bw scaling request to the controller
-> driver, it is responsibility of the controller driver to do actual bw
-> scaling and then pass status to the MHI. MHI will response back to the
-> device based up on the status of the bw scale received.
-> 
-> Add a new get_misc_doorbell() to get doorbell for misc capabilities to
-> use the doorbell with mhi events like MHI BW scale etc.
-> 
-> Use workqueue & mutex for the bw scale events as the pci_set_target_speed()
-> which will called by the mhi controller driver can sleep.
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/bus/mhi/common.h        |  14 ++++++
->  drivers/bus/mhi/host/init.c     |  64 ++++++++++++++++++++++++-
->  drivers/bus/mhi/host/internal.h |   7 ++-
->  drivers/bus/mhi/host/main.c     | 102 +++++++++++++++++++++++++++++++++++++++-
->  drivers/bus/mhi/host/pm.c       |  10 +++-
->  include/linux/mhi.h             |  13 +++++
->  6 files changed, 204 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
-> index eedac801b800..b900199fab10 100644
-> --- a/drivers/bus/mhi/common.h
-> +++ b/drivers/bus/mhi/common.h
-> @@ -208,6 +208,20 @@
->  #define MHI_RSCTRE_DATA_DWORD1		cpu_to_le32(FIELD_PREP(GENMASK(23, 16), \
->  							       MHI_PKT_TYPE_COALESCING))
->  
-> +/* MHI Bandwidth scaling offsets */
-> +#define BW_SCALE_CFG_OFFSET		(0x04)
-> +#define BW_SCALE_CFG_CHAN_DB_ID_SHIFT	(25)
-> +#define BW_SCALE_CFG_ENABLED_MASK	BIT(24)
-> +#define BW_SCALE_CFG_ENABLED_SHIFT	(24)
-> +#define BW_SCALE_CFG_ER_ID_SHIFT	(19)
-> +
-> +#define BW_SCALE_CAP_ID			(3)
-> +#define MHI_TRE_GET_EV_BW_REQ_SEQ(tre)	(((tre)->dword[0] >> 8) & 0xFF)
+I will give it a try. Great thanks for this suggestion!
 
-This looks open-coded FIELD_GET(). Add the field define and use 
-FIELD_GET() with it.
+>
+> thanks,
+>
+> greg k-h
 
-> +
-> +#define MHI_BW_SCALE_RESULT(status, seq)	(((status) & 0xF) << 8 | \
-> +						((seq) & 0xFF))
 
-2x FIELD_PREP().
+On Mon, Feb 17, 2025 at 4:55=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
+> > On Fri, Feb 14, 2025 at 7:37=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
+> > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > >
+> > > > Expose the isoc_alt attr with device group to avoid the racing.
+> > > >
+> > > > Now we create a dev node for btusb. The isoc_alt attr belongs to it=
+ and
+> > > > it also becomes the parent device of hci dev.
+> > > >
+> > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to cont=
+rol USB alt setting")
+> > >
+> > > Wait, step back, why is this commit needed if you can change the alt
+> > > setting already today through usbfs/libusb without needing to mess wi=
+th
+> > > the bluetooth stack at all?
+> >
+> > In short: We want to configure the alternate settings without
+> > detaching the btusb driver, while detaching seems necessary for
+> > libusb_set_interface_alt_setting to work (Please correct me if I'm
+> > wrong!)
+> >
+> > Background:
+> > The Bluetooth Core Specification defines a protocol for the operating
+> > system to communicate with a Bluetooth chipset, called HCI (Host
+> > Controller Interface) (Host=3DOS, Controller=3Dchipset).
+> > We could say the main purpose of the Linux Bluetooth drivers is to set
+> > up and get the HCI ready for the "upper layer" to use.
+> >
+> > Who could be the "upper layer" then? There are mainly 2: "Control" and
+> > "User" channels.
+> > Linux has its default Bluetooth stack, BlueZ, which is splitted into 2
+> > parts: the kernel space and the user space. The kernel space part
+> > provides an abstracted Bluetooth API called MGMT, and is exposed
+> > through the Bluetooth HCI socket "Control" channel.
+> > On the other hand Linux also exposes the Bluetooth HCI socket "User"
+> > channel, allowing the user space APPs to send/receive the HCI packets
+> > directly to/from the chipset. Google's products (Android, ChromeOS,
+> > etc) use this channel.
+> >
+> > Now why this patch?
+> > It's because the Bluetooth spec defines something specific to USB
+> > transport: A USB Bluetooth chipset must/should support these alternate
+> > settings; When transferring this type of the Audio data this alt must
+> > be used, bla bla bla...
+> > The Control channel handles this in the kernel part. However, the
+> > applications built on top of the User channel are unable to configure
+> > the alt setting, and I'd like to add the support through sysfs.
+>
+> So the "problem" is that Google doesn't want to use BlueZ, which is
+> fine, you do you :)
+>
+> But how does BlueZ handle this same problem today?  What api to the
+> kernel does it use to change the interface that you can't also do with
+> your "BlueZ replacement"?
+>
+> Surely this isn't a new issue suddenly, but if it is, it needs to be
+> solved so BOTH userspace stacks can handle it.
 
-> +#define	MHI_BW_SCALE_NACK			0xF
-> +
->  enum mhi_pkt_type {
->  	MHI_PKT_TYPE_INVALID = 0x0,
->  	MHI_PKT_TYPE_NOOP_CMD = 0x1,
-> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-> index 0b14b665ed15..f15c79f85d13 100644
-> --- a/drivers/bus/mhi/host/init.c
-> +++ b/drivers/bus/mhi/host/init.c
-> @@ -496,10 +496,56 @@ static int mhi_get_capability_offset(struct mhi_controller *mhi_cntrl, u32 capab
->  	return -ENXIO;
->  }
->  
-> +/* to be used only if a single event ring with the type is present */
-> +static int mhi_get_er_index(struct mhi_controller *mhi_cntrl,
-> +			    enum mhi_er_data_type type)
-> +{
-> +	struct mhi_event *mhi_event = mhi_cntrl->mhi_event;
-> +	int i;
-> +
-> +	/* find event ring for requested type */
-> +	for (i = 0; i < mhi_cntrl->total_ev_rings; i++, mhi_event++) {
-> +		if (mhi_event->data_type == type)
-> +			return mhi_event->er_index;
-> +	}
-> +
-> +	return -ENOENT;
-> +}
-> +
-> +static int mhi_init_bw_scale(struct mhi_controller *mhi_cntrl,
-> +			     int bw_scale_db)
-> +{
-> +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-> +	u32 bw_cfg_offset, val = 0;
-> +	int ret, er_index;
-> +
-> +	ret = mhi_get_capability_offset(mhi_cntrl, BW_SCALE_CAP_ID,
-> +					&bw_cfg_offset);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* No ER configured to support BW scale */
-> +	er_index = mhi_get_er_index(mhi_cntrl, MHI_ER_BW_SCALE);
-> +	if (er_index < 0)
-> +		return er_index;
-> +
-> +	bw_cfg_offset += BW_SCALE_CFG_OFFSET;
-> +
-> +	/* advertise host support */
-> +	val = ((bw_scale_db << BW_SCALE_CFG_CHAN_DB_ID_SHIFT) |
-> +		BW_SCALE_CFG_ENABLED_MASK | (er_index << BW_SCALE_CFG_ER_ID_SHIFT));
+BlueZ handles that in their MGMT command, that is, through Control
+channel -> BlueZ kernel space code -> driver callbacks.
+Once a Bluetooth chipset is opened with the User channel, it can't be
+used with the Control channel simultaneously, and vice versa.
 
-Please name the fields with defines and use FIELD_PREP(). And remove 
-_SHIFT ending defines. 
+>
+> thanks,
+>
+> greg k-h
 
-Also make the file does correct #include for FIELD_PREP/GET if not yet 
-there.
-
-> +	mhi_write_reg(mhi_cntrl, mhi_cntrl->regs, bw_cfg_offset, val);
-> +
-> +	dev_info(dev, "Bandwidth scaling setup complete. Event ring:%d\n",
-> +		 er_index);
-
-This sound like dev_dbg() to me. What's the value for user in normal 
-scenarios?
-
-> +	return 0;
-> +}
-> +
->  int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
->  {
->  	u32 val;
-> -	int i, ret;
-> +	int i, ret, doorbell;
->  	struct mhi_chan *mhi_chan;
->  	struct mhi_event *mhi_event;
->  	void __iomem *base = mhi_cntrl->regs;
-> @@ -633,6 +679,16 @@ int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
->  		return ret;
->  	}
->  
-> +	if (mhi_cntrl->get_misc_doorbell)
-> +		doorbell = mhi_cntrl->get_misc_doorbell(mhi_cntrl, MHI_ER_BW_SCALE);
-> +
-> +	if (doorbell > 0) {
-> +		ret = mhi_init_bw_scale(mhi_cntrl, doorbell);
-> +		if (!ret)
-> +			mhi_cntrl->bw_scale_db = base + val + (8 * doorbell);
-> +		else
-> +			dev_warn(dev, "BW scale setup failure\n");
-
-Is it okay to return 0 in this case?
-
-> +	}
->  	return 0;
->  }
->  
-> @@ -778,6 +834,9 @@ static int parse_ev_cfg(struct mhi_controller *mhi_cntrl,
->  		case MHI_ER_CTRL:
->  			mhi_event->process_event = mhi_process_ctrl_ev_ring;
->  			break;
-> +		case MHI_ER_BW_SCALE:
-> +			mhi_event->process_event = mhi_process_bw_scale_ev_ring;
-> +			break;
->  		default:
->  			dev_err(dev, "Event Ring type not supported\n");
->  			goto error_ev_cfg;
-> @@ -1012,9 +1071,12 @@ int mhi_register_controller(struct mhi_controller *mhi_cntrl,
->  
->  		mhi_event->mhi_cntrl = mhi_cntrl;
->  		spin_lock_init(&mhi_event->lock);
-> +		mutex_init(&mhi_event->mutex);
->  		if (mhi_event->data_type == MHI_ER_CTRL)
->  			tasklet_init(&mhi_event->task, mhi_ctrl_ev_task,
->  				     (ulong)mhi_event);
-> +		else if (mhi_event->data_type == MHI_ER_BW_SCALE)
-> +			INIT_WORK(&mhi_event->work, mhi_process_ev_work);
->  		else
->  			tasklet_init(&mhi_event->task, mhi_ev_task,
->  				     (ulong)mhi_event);
-> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
-> index 3134f111be35..bf7c6a7c9383 100644
-> --- a/drivers/bus/mhi/host/internal.h
-> +++ b/drivers/bus/mhi/host/internal.h
-> @@ -241,6 +241,8 @@ struct mhi_event {
->  	struct mhi_ring ring;
->  	struct db_cfg db_cfg;
->  	struct tasklet_struct task;
-> +	struct work_struct work;
-> +	struct mutex mutex;
->  	spinlock_t lock;
->  	int (*process_event)(struct mhi_controller *mhi_cntrl,
->  			     struct mhi_event *mhi_event,
-> @@ -403,7 +405,8 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
->  				struct mhi_event *mhi_event, u32 event_quota);
->  int mhi_process_ctrl_ev_ring(struct mhi_controller *mhi_cntrl,
->  			     struct mhi_event *mhi_event, u32 event_quota);
-> -
-> +int mhi_process_bw_scale_ev_ring(struct mhi_controller *mhi_cntrl,
-> +				 struct mhi_event *mhi_event, u32 event_quota);
->  /* ISR handlers */
->  irqreturn_t mhi_irq_handler(int irq_number, void *dev);
->  irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *dev);
-> @@ -419,5 +422,5 @@ void mhi_unmap_single_no_bb(struct mhi_controller *mhi_cntrl,
->  			    struct mhi_buf_info *buf_info);
->  void mhi_unmap_single_use_bb(struct mhi_controller *mhi_cntrl,
->  			     struct mhi_buf_info *buf_info);
-> -
-> +void mhi_process_ev_work(struct work_struct *work);
->  #endif /* _MHI_INT_H */
-> diff --git a/drivers/bus/mhi/host/main.c b/drivers/bus/mhi/host/main.c
-> index 4de75674f193..a6732bbead44 100644
-> --- a/drivers/bus/mhi/host/main.c
-> +++ b/drivers/bus/mhi/host/main.c
-> @@ -472,7 +472,10 @@ irqreturn_t mhi_irq_handler(int irq_number, void *dev)
->  		if (mhi_dev)
->  			mhi_notify(mhi_dev, MHI_CB_PENDING_DATA);
->  	} else {
-> -		tasklet_schedule(&mhi_event->task);
-> +		if (mhi_event->data_type == MHI_ER_BW_SCALE)
-> +			queue_work(mhi_cntrl->hiprio_wq, &mhi_event->work);
-> +		else
-> +			tasklet_schedule(&mhi_event->task);
->  	}
->  
->  	return IRQ_HANDLED;
-> @@ -1049,6 +1052,103 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
->  	return count;
->  }
->  
-> +/* dedicated bw scale event ring processing */
-> +int mhi_process_bw_scale_ev_ring(struct mhi_controller *mhi_cntrl,
-> +				 struct mhi_event *mhi_event, u32 event_quota)
-> +{
-> +	struct mhi_event_ctxt *er_ctxt = &mhi_cntrl->mhi_ctxt->er_ctxt[mhi_event->er_index];
-> +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
-> +	struct mhi_ring *ev_ring = &mhi_event->ring;
-> +	dma_addr_t ptr = le64_to_cpu(er_ctxt->rp);
-> +	u32 response = MHI_BW_SCALE_NACK;
-> +	struct mhi_ring_element *dev_rp;
-> +	struct mhi_link_info link_info;
-> +	int ret = -EINVAL;
-> +
-> +	if (unlikely(MHI_EVENT_ACCESS_INVALID(mhi_cntrl->pm_state))) {
-> +		ret =  -EIO;
-> +		goto exit_bw_scale_process;
-> +	}
-> +
-> +	if (!MHI_IN_MISSION_MODE(mhi_cntrl->ee))
-> +		goto exit_bw_scale_process;
-> +
-> +	if (!is_valid_ring_ptr(ev_ring, ptr)) {
-> +		dev_err(dev,
-> +			"Event ring rp points outside of the event ring\n");
-> +		ret =  -EIO;
-> +		goto exit_bw_scale_process;
-> +	}
-> +
-> +	dev_rp = mhi_to_virtual(ev_ring, ptr);
-> +
-> +	/* if rp points to base, we need to wrap it around */
-> +	if (dev_rp == ev_ring->base)
-> +		dev_rp = ev_ring->base + ev_ring->len;
-> +	dev_rp--;
-> +
-> +	/* fast forward to currently processed element and recycle er */
-> +	ev_ring->rp = dev_rp;
-> +	ev_ring->wp = dev_rp - 1;
-> +	if (ev_ring->wp < ev_ring->base)
-> +		ev_ring->wp = ev_ring->base + ev_ring->len - ev_ring->el_size;
-> +	mhi_recycle_ev_ring_element(mhi_cntrl, ev_ring);
-> +
-> +	if (WARN_ON(MHI_TRE_GET_EV_TYPE(dev_rp) != MHI_PKT_TYPE_BW_REQ_EVENT)) {
-> +		dev_err(dev, "!BW SCALE REQ event\n");
-> +		goto exit_bw_scale_process;
-> +	}
-> +
-> +	link_info.target_link_speed = MHI_TRE_GET_EV_LINKSPEED(dev_rp);
-> +	link_info.target_link_width = MHI_TRE_GET_EV_LINKWIDTH(dev_rp);
-> +	link_info.sequence_num = MHI_TRE_GET_EV_BW_REQ_SEQ(dev_rp);
-> +
-> +	dev_info(dev, "Received BW_REQ with seq:%d link speed:0x%x width:0x%x\n",
-> +		 link_info.sequence_num,
-> +		 link_info.target_link_speed,
-> +		 link_info.target_link_width);
-> +
-> +	/* bring host and device out of suspended states */
-> +	ret = mhi_device_get_sync(mhi_cntrl->mhi_dev);
-> +	if (ret)
-> +		goto exit_bw_scale_process;
-> +
-> +	mhi_cntrl->runtime_get(mhi_cntrl);
-> +
-> +	ret = mhi_cntrl->bw_scale(mhi_cntrl, &link_info);
-> +	if (!ret)
-> +		response = 0;
-> +
-> +	response = MHI_BW_SCALE_RESULT(response, link_info.sequence_num);
-> +
-> +	write_lock_bh(&mhi_cntrl->pm_lock);
-> +	mhi_write_reg(mhi_cntrl, mhi_cntrl->bw_scale_db, 0, response);
-> +	write_unlock_bh(&mhi_cntrl->pm_lock);
-> +
-> +	mhi_cntrl->runtime_put(mhi_cntrl);
-> +	mhi_device_put(mhi_cntrl->mhi_dev);
-> +
-> +exit_bw_scale_process:
-> +	dev_info(dev, "exit er_index:%u ret:%d\n", mhi_event->er_index, ret);
-
-There's zero value for normal user with something as obscure as 
-this, make it dev_dbg().
-
-> +	return ret;
-> +}
-> +
-> +void mhi_process_ev_work(struct work_struct *work)
-> +{
-> +	struct mhi_event *mhi_event = container_of(work, struct mhi_event,
-> +						   work);
-> +
-> +	struct mhi_controller *mhi_cntrl = mhi_event->mhi_cntrl;
-> +
-> +	if (unlikely(MHI_EVENT_ACCESS_INVALID(mhi_cntrl->pm_state)))
-> +		return;
-> +
-> +	mutex_lock(&mhi_event->mutex);
-
-guard()()
-
-> +	mhi_event->process_event(mhi_cntrl, mhi_event, U32_MAX);
-> +	mutex_unlock(&mhi_event->mutex);
-> +}
-> +
->  void mhi_ev_task(unsigned long data)
->  {
->  	struct mhi_event *mhi_event = (struct mhi_event *)data;
-> diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
-> index 11c0e751f223..9c848ca582f0 100644
-> --- a/drivers/bus/mhi/host/pm.c
-> +++ b/drivers/bus/mhi/host/pm.c
-> @@ -523,7 +523,10 @@ static void mhi_pm_disable_transition(struct mhi_controller *mhi_cntrl,
->  		if (mhi_event->offload_ev)
->  			continue;
->  		disable_irq(mhi_cntrl->irq[mhi_event->irq]);
-> -		tasklet_kill(&mhi_event->task);
-> +		if (mhi_event->data_type == MHI_ER_BW_SCALE)
-> +			cancel_work_sync(&mhi_event->work);
-> +		else
-> +			tasklet_kill(&mhi_event->task);
->  	}
->  
->  	/* Release lock and wait for all pending threads to complete */
-> @@ -670,7 +673,10 @@ static void mhi_pm_sys_error_transition(struct mhi_controller *mhi_cntrl)
->  	for (i = 0; i < mhi_cntrl->total_ev_rings; i++, mhi_event++) {
->  		if (mhi_event->offload_ev)
->  			continue;
-> -		tasklet_kill(&mhi_event->task);
-> +		if (mhi_event->data_type == MHI_ER_BW_SCALE)
-> +			cancel_work_sync(&mhi_event->work);
-> +		else
-> +			tasklet_kill(&mhi_event->task);
->  	}
->  
->  	/* Release lock and wait for all pending threads to complete */
-> diff --git a/include/linux/mhi.h b/include/linux/mhi.h
-> index 059dc94d20bb..d9bf88c35d14 100644
-> --- a/include/linux/mhi.h
-> +++ b/include/linux/mhi.h
-> @@ -102,10 +102,12 @@ struct image_info {
->   * struct mhi_link_info - BW requirement
->   * target_link_speed - Link speed as defined by TLS bits in LinkControl reg
->   * target_link_width - Link width as defined by NLW bits in LinkStatus reg
-> + * sequence_num - used by device to track bw requests sent to host
->   */
->  struct mhi_link_info {
->  	unsigned int target_link_speed;
->  	unsigned int target_link_width;
-> +	int sequence_num;
->  };
->  
->  /**
-> @@ -183,10 +185,12 @@ enum mhi_ch_ee_mask {
->   * enum mhi_er_data_type - Event ring data types
->   * @MHI_ER_DATA: Only client data over this ring
->   * @MHI_ER_CTRL: MHI control data and client data
-> + * @MHI_ER_BW_SCALE: MHI controller bandwidth scale functionality
->   */
->  enum mhi_er_data_type {
->  	MHI_ER_DATA,
->  	MHI_ER_CTRL,
-> +	MHI_ER_BW_SCALE,
->  };
->  
->  /**
-> @@ -299,6 +303,7 @@ struct mhi_controller_config {
->   * @bhi: Points to base of MHI BHI register space
->   * @bhie: Points to base of MHI BHIe register space
->   * @wake_db: MHI WAKE doorbell register address
-> + * @wake_db: MHI BW_SCALE doorbell register address
->   * @iova_start: IOMMU starting address for data (required)
->   * @iova_stop: IOMMU stop address for data (required)
->   * @fw_image: Firmware image name for normal booting (optional)
-> @@ -355,6 +360,8 @@ struct mhi_controller_config {
->   * @write_reg: Write a MHI register via the physical link (required)
->   * @reset: Controller specific reset function (optional)
->   * @edl_trigger: CB function to trigger EDL mode (optional)
-> + * @get_misc_doobell: function to get doorbell used for MISC feature like BW scale etc (optional)
-> + * @bw_scale: CB function for passing BW scale info (optional)
->   * @buffer_len: Bounce buffer length
->   * @index: Index of the MHI controller instance
->   * @bounce_buf: Use of bounce buffer
-> @@ -376,6 +383,7 @@ struct mhi_controller {
->  	void __iomem *bhi;
->  	void __iomem *bhie;
->  	void __iomem *wake_db;
-> +	void __iomem *bw_scale_db;
->  
->  	dma_addr_t iova_start;
->  	dma_addr_t iova_stop;
-> @@ -440,6 +448,11 @@ struct mhi_controller {
->  	void (*reset)(struct mhi_controller *mhi_cntrl);
->  	int (*edl_trigger)(struct mhi_controller *mhi_cntrl);
->  
-> +	int (*get_misc_doorbell)(struct mhi_controller *mhi_cntrl,
-> +				 enum mhi_er_data_type type);
-> +	int (*bw_scale)(struct mhi_controller *mhi_cntrl,
-> +			struct mhi_link_info *link_info);
-> +
->  	size_t buffer_len;
->  	int index;
->  	bool bounce_buf;
-> 
-> 
-
--- 
- i.
-
+--=20
+Best Regards,
+Hsin-chen
 
