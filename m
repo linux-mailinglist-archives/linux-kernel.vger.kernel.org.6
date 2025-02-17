@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-517566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B4E7A38274
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:56:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE824A38279
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C23169C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850251895ED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABAA219EAD;
-	Mon, 17 Feb 2025 11:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10B219A97;
+	Mon, 17 Feb 2025 11:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpDAZZ4k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt6UZJpg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8CA216607
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FAA217733
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793332; cv=none; b=iw+BoE3g8AP/F5DyQefixgKteqNev8lBw4YDBkYUUqPmARxqkyhsSVCiBEXx18iqENZUEN112PsE5bL0kYsybdrMj12eR7/2PJJYlNstxmWfjuRncQf/6kYCwcQmLY8gSWwyaLCx5iLHe9WYDzEt4rk0igoFGUNBBoqukBv0xZ0=
+	t=1739793375; cv=none; b=HBlcm/CHPPBG9rtYFaka5OU/jt1d2uR8u0d9cfYstMY9q6rg0yjJUf8ktUjRPkLOyF410gjc6rO7SSGIoD+a4siJKGlABjL6oZXlaAYXCsaj2zPFbYMRRkpFoOmvZgz1NKpwJWOmxoCfC4/gSRWkVFFswqeAQCuuKyIZOnv/2sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793332; c=relaxed/simple;
-	bh=fsu/JikjB1SDf12gpEflh4DfexxT1SP8RZ2/ROh7TuM=;
+	s=arc-20240116; t=1739793375; c=relaxed/simple;
+	bh=BwweQqmHmd4epRmfYOdDtMF+OmsJru6LslOEtC7cpwg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eqvq7A7CTR9x2dVKwuIffNhwHCjtuXWOnJNcuokznIUuWN2V4fpiRMu51f/xk/kFWkbl3oNjIY43D5GIqFiH7lnMPNmssjcfqb8YOUHEJ/CXsKj9Y+X0uhgYoHn3y4zYZGgeSaJ85fvkq7NCrel9XwIIUjaSPw9Em/Sli7kJZ38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpDAZZ4k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 794CDC4CEE2;
-	Mon, 17 Feb 2025 11:55:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=V7EECFQaojAgAJaogCteKCxd2nK90EZpZ1GuPIQsqyeD1U8AVifdhGl2lBOVu+GYBikPwKRhZbKCcF6aDZ9VHqRvbja1bAxLwQZ0DRtn7SRUoq7Jm5PwzjQOmH4gx8N5yhEhhn0nCdgHpeJ1LJKCUyrSjzh9Df3D9qJUkh86euw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt6UZJpg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89027C4CED1;
+	Mon, 17 Feb 2025 11:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739793331;
-	bh=fsu/JikjB1SDf12gpEflh4DfexxT1SP8RZ2/ROh7TuM=;
+	s=k20201202; t=1739793375;
+	bh=BwweQqmHmd4epRmfYOdDtMF+OmsJru6LslOEtC7cpwg=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dpDAZZ4k3OAS1fOV2ronUMP6okm88+lQadboKGBTj/uDVvT4NHxs1EsTQsIOEaj09
-	 N42XA58mHy2reeosv/r0/HU9nmQxrGkY4gd6HURc/5ZNUWXGRHbnGrs0KcmEhn6Htm
-	 G4BycBhLTn5MONzLKvZxomE/7eaqjMxLOi6muOCSrnPcwl6HesuVSVGGhX1WlBVxBE
-	 XRzNV9p7wRAWKX7xsoctm1nkmGXOUSlVXreZZCc3jO/+/qgyBIKX0PbhV3i1ik/vGS
-	 D6G6Xk6EKbpfpM1Kid+v5g0sEi5cNxGU9vbpODFb2u5kvoHpisZtTrG+y+Ah0ZjQ0s
-	 hsH6J459CNJnA==
-Message-ID: <78dc2cee-2d87-42a9-8e0b-2199c653def4@kernel.org>
-Date: Mon, 17 Feb 2025 12:55:27 +0100
+	b=Xt6UZJpgjp6XnRyJ8w+VHIRjSmSrMzxbjB2jGloRyTEDP4W5+ybqqZycj1VYFZFhM
+	 ZA1ULlLKBeWrugAxyWVAtuGgbQKlPyQ2V0et3uefRn6MBLzmw8x2t2esuDbAHxiGIm
+	 0OGWDNbOLWi5aDCP88F3sUHDCasg8U1GSMg8saSIi2eqG98GdG/DwSo9KRRF2/nut5
+	 Dr0aGWtKDJdo681qI6tDZCIPcaidEH3myuRdhsN+m20NNlJi3Qm5GZlBMMaBukdfbO
+	 I25aLbOXnvwvd92zK89uGApLIoRHcmQpglftRoXeXcYIK4odc3bpqK9x+I7bHaPRXr
+	 44Rjdy9Lr1B8Q==
+Message-ID: <6ab0afc3-dcfa-4ae8-a695-b8b3864c0a6e@kernel.org>
+Date: Mon, 17 Feb 2025 12:56:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v0 1/3] dt-binding: aspeed: Add LPC PCC controller
-To: Kevin Chen <kevin_chen@aspeedtech.com>, "joel@jms.id.au"
- <joel@jms.id.au>, "andrew@codeconstruct.com.au"
- <andrew@codeconstruct.com.au>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "elbadrym@google.com" <elbadrym@google.com>
-References: <20250117095217.661070-1-kevin_chen@aspeedtech.com>
- <20250117095217.661070-2-kevin_chen@aspeedtech.com>
- <bad78886-2577-476f-a80f-e189a178b26e@kernel.org>
- <PSAPR06MB4949CB5CE2E08B98B368160589FF2@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v1 1/3] dt-binding: aspeed: Add LPC PCC controller
+To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, chiawei_wang@aspeedtech.com,
+ linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250217114831.3225970-1-kevin_chen@aspeedtech.com>
+ <20250217114831.3225970-2-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,47 +102,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <PSAPR06MB4949CB5CE2E08B98B368160589FF2@PSAPR06MB4949.apcprd06.prod.outlook.com>
+In-Reply-To: <20250217114831.3225970-2-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/02/2025 09:46, Kevin Chen wrote:
->> On 17/01/2025 10:52, Kevin Chen wrote:
->>> Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
->>>
->>> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
->>> ---
->>
->> Patchsets start from 1, not 0.
-> Agree, I will resend the patchsets of v1.
+On 17/02/2025 12:48, Kevin Chen wrote:
+> Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
 > 
->>
->> This wasn't tested as it has obvious errors, so no review. Test your patches
->> before you send them.
-> Agree, I will run "make dtbs_check W=1" and " make dt_binding_check " to check result is clean before the next commits.
-> 
->>
->>
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people and lists
->> to CC. It might happen, that command when run on an older kernel, gives you
->> outdated entries. Therefore please be sure you base your patches on recent
->> Linux kernel.
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of people, so
->> fix your workflow. Tools might also fail if you work on some ancient tree (don't,
->> instead use mainline) or work on fork of kernel (don't, instead use mainline).
->> Just use b4 and everything should be fine, although remember about `b4 prep
->> --auto-to-cc` if you added new patches to the patchset.
->>
->> You missed at least devicetree list (maybe more), so this won't be tested by
->> automated tooling. Performing review on untested code might be a waste of
->> time.
->>
->> Please kindly resend and include all necessary To/Cc entries.
->> </form letter>
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/mfd/aspeed-lpc.yaml   | 36 +++++++++++++++++++
 
-How did you implement this feedback?
+Nothing improved. You will not get different review.
+
+Also, provide detailed changelog explaining how you fixed here
+previously reported issues.
+
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
 Best regards,
 Krzysztof
