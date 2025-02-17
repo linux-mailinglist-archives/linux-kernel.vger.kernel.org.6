@@ -1,849 +1,234 @@
-Return-Path: <linux-kernel+bounces-518358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CAAA38DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:09:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35ACCA38DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:08:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7E03ACDEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C13B331B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548BC239588;
-	Mon, 17 Feb 2025 21:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953EB23AE95;
+	Mon, 17 Feb 2025 21:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="algXobVO"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OU8sYveV"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA9D23875A;
-	Mon, 17 Feb 2025 21:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739826507; cv=pass; b=Xk5f3r57lMM+vR27jky2lBnxRr5P70eEHdnlqM1Lz/KxD84v585HcHVTF1q2YFVPto/GNhysh3PiaTRvvNYFkMLu8vLFRGQKZPGBoZxvnJDXZfsaWLzP9DKEYH8g7QRdSE3aCpYxU3gLdTTfN198eNpsPjwJ8sV6C1OFfs135yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739826507; c=relaxed/simple;
-	bh=UvoFp2AhuIMJiIgtSTAPdnhZPJDE7uVNmeKLM7X/yUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=alG/LzFDETgANllSPADx0dC7PXg1pSadXTP95KS4LuRpmr0l96f616s0ARh4C8tvaU6ZwZdO8NRISEENIZSEI8EDWRLuHgHQ9yatnZBUiopXM8f4g9wRsVZ707QdqiUXjitwr24Ar9G1ZWDf4IuYhQQ8tXcaUQ+UvTNWnh8JSwo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=algXobVO; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739826431; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HhEkljVKt39ADhG7pp+dqbGTT2q7if2wkDiRssx+77m+TCv5yQWlptgQq70M/15KF5QfvgP7VA1LQ/yEWIBJt3PyOUzbhZnKsB9Dba5eYGu4XChfkK64MoRAamby2k0Zq3HFkYMhBRHN8WWC7PWhSEU3i5+YKz6g/wOIrVoHUzs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739826431; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pRQFZzYtqTLP27umhcyhFHsYIAfHuroONaDM4I1jd5w=; 
-	b=Kebtp9LRVQKzodiwzXLGuDfZ2vzdbO18J6ccG7YaHwwhDFEe6qHnkIgm+MfYElUQItIS7A9nqJrL9Yzt31dUpa1pACZ7hAclDU+cyQQLUXckFStI5AQukCPWRhannJXQdcaRmikwnwyFfVJsoo8iRb26PGu8lM/1c7O9I9rqnzs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739826431;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=pRQFZzYtqTLP27umhcyhFHsYIAfHuroONaDM4I1jd5w=;
-	b=algXobVOj51O8xtX5tt2RqXkyTnRGowyqWAgMIPS4vyEgfT+Z8oPj+1Y1c0BqlmI
-	25hZMBTEemqk2Lb84AZ1Ex7Ao64Pl9svnT+NBpjhrMjLK8d65UVAq4jq1i9Bv17u7PV
-	33agMumaXmn/Ac9lPiVLLBn1tYhzvEcn4RpFLCTE=
-Received: by mx.zohomail.com with SMTPS id 17398264292801003.4427564452692;
-	Mon, 17 Feb 2025 13:07:09 -0800 (PST)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Chris Morgan <macromorgan@hotmail.com>,
- Kever Yang <kever.yang@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
- Tim Lunn <tim@feathertop.org>, FUKAUMI Naoki <naoki@radxa.com>,
- Michael Riesch <michael.riesch@wolfvision.net>,
- Stephen Chen <stephen@radxa.com>, Elon Zhang <zhangzj@rock-chips.com>,
- Alexey Charkov <alchark@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v4 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device tree
-Date: Mon, 17 Feb 2025 16:07:06 -0500
-Message-ID: <1914418.tdWV9SEqCh@earth>
-In-Reply-To: <01b72ad6-67bc-472e-b04d-c9fd42d37d8d@kwiboo.se>
-References:
- <20250217164009.130286-1-detlev.casanova@collabora.com>
- <20250217164009.130286-3-detlev.casanova@collabora.com>
- <01b72ad6-67bc-472e-b04d-c9fd42d37d8d@kwiboo.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC3E238D42
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739826475; cv=none; b=uctSyucrHGLc1FN9u+oke2eVlmP2051vE4HkpTnSpbpk/GX0YdBBvQ6W119FyGenma3vlZ/W6qGi9YTJ94ogWztCoHbRW89IeiucIcUsQPyDmfCIbt5XF0qAFMQF0bVLfuhBY7mUfme6JFg+4JDmDSR65OmFEyV1j0rpXfpzomg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739826475; c=relaxed/simple;
+	bh=7nmgVP/dRvT4mUIpaGaZSJ8l8wA+CYdvsKbXITlL46Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fM1LCyoMZZO5TAslOAQ5PNmR9fgb+YIquCENdx3vU3avuV4VNLaXI1BZfEKeoatbKXuqIIi3U6HY1eDKnMuUkN/yTn5h4skmk0mZvjSvnXsAE+9aPwBhig254az9H5iETI8OEAGQS1dZJJ8WjnjacVGYQypzjSaz6+b5bWWNDc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OU8sYveV; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a2d4b61e4so12258391fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:07:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1739826471; x=1740431271; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxAGuJZvVpihlkn5sQuDmNUvGY3NqHPUH3zDQ8Mjtgs=;
+        b=OU8sYveV8JW/bRThjG4SfxNRjKHqm/RLfnlvsONyVoC85uKj8TNQzSNeeXyC/RA4hi
+         BaYJCz+PUGW4V49WWBvBbGcUZqyFjvWiWPVH8BFgV0kkv0WpVWyS1hAM/p+ejKpeq22B
+         yBr49sDipTKkhKzv8xal4oAD0aZD7ycKDKbaU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739826471; x=1740431271;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OxAGuJZvVpihlkn5sQuDmNUvGY3NqHPUH3zDQ8Mjtgs=;
+        b=hbwjnNFD5xJoFxpIv4E8mZTIOpLZZAAvPEQ1tY555YUuBPvOAoyv8SSqQ9f7wQjiAS
+         VSW4dUM73hpSFaxS3yP25VVVMGcmOb7tKXcEIgFQAGUVUzVjzjPkhnALT9Va201z/RSZ
+         FzWuT7bBwEmOAt8S34GTavUqYRZyCEaRj4EX0+a5Zxt4cHiLCD0Qb5woQ2OGx3xLfSGT
+         ywQ1h6Eu7OJGqkWIZfLTEQ2ukw2Y77M4jzjmxddYmW/4ieaValFez+y5YLpVNwPboGSS
+         FCCQ4l5whmT/6RYFTRPjNMPDvUmmiiuL1LiS0tpylcMfWbzV9QR3M1zPIKQw9xGHjCni
+         v/vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLAM+sLMYWWOf1is6ZS01KP5WtkJ76oMt/Un0te17UXVhm0KlY1BZ+faFJAKefuUXc5S77ajCR3v8fIlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw33VpfvLV02oKOqKAEk3y5dqj1HRyNEPR6MA3VnYGT/AVg6Ute
+	tuNghT9C6lCBjzVN7C/p27Tr5+wD29Tmt4m44FSS0REzGnbBX5fCv59bi2yWZPaygA/NQCG78li
+	ubTs8CXrSaceGvGTF3Tv2jbpFYaKjZdZh8hYW
+X-Gm-Gg: ASbGnctyWMoNUTykYBoZ1JVROUaXx4Ryl6UD6YhbiNt9rIf7oQCtqh7dxUWeOkuGjjO
+	Jf+5auSjwGIQa4gzGgShmMqRBegJlg0Y0BvIE3Vsh81Qbz/hpjZuHbAUUsqMHKzL6gDnmsE7s+s
+	ezwxBBAQjn7wMNGkClt4iOo3A33qmN
+X-Google-Smtp-Source: AGHT+IETynsnWXFFoobhNYG6kug3sx2y2J8eck7h+JszqxvDS2xVQtW0RdMXvdFDFC9n5vAIVJ+y3VDSKkTxDfKl/eE=
+X-Received: by 2002:a2e:9a89:0:b0:302:29a5:6e21 with SMTP id
+ 38308e7fff4ca-30927a2d1b2mr29062351fa.3.1739826470909; Mon, 17 Feb 2025
+ 13:07:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+References: <20250217141837.2366663-1-haoxiang_li2024@163.com>
+In-Reply-To: <20250217141837.2366663-1-haoxiang_li2024@163.com>
+From: Guruswamy Basavaiah <guruswamy.basavaiah@broadcom.com>
+Date: Tue, 18 Feb 2025 02:37:39 +0530
+X-Gm-Features: AWEUYZmpt2f5hkCvEnrd6qnO79Fx2QhABAiaPRpC8SsHYZPuHseVCWzRUuHZ9TI
+Message-ID: <CAOgUPBu-c8HwYV0A-Wdga3z8P9+CY3=YUVg73qvq6OkeQ4=2Ag@mail.gmail.com>
+Subject: Re: [PATCH] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: kuba@kernel.org, louis.peens@corigine.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, qmo@kernel.org, 
+	daniel@iogearbox.net, bpf@vger.kernel.org, oss-drivers@corigine.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000cafa83062e5cea00"
 
-Hi Jonas,
+--000000000000cafa83062e5cea00
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, 17 February 2025 12:08:47 EST Jonas Karlman wrote:
-> Hi Detlev,
-> 
-> On 2025-02-17 17:34, Detlev Casanova wrote:
-> > From: Stephen Chen <stephen@radxa.com>
-> > 
-> > The Radxa ROCK 4D board is based on the Rockchip rk3576 SoC.
-> > 
-> > The device tree adds support for basic devices:
-> >  - UART
-> >  - SD Card
-> >  - Ethernet
-> >  - USB
-> >  - RTC
-> > 
-> > It has 4 USB ports but only 3 are usable as the top left one is used
-> > for maskrom.
-> > 
-> > It has a USB-C port that is only used for powering the board.
-> > 
-> > Signed-off-by: Stephen Chen <stephen@radxa.com>
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
-> >  .../boot/dts/rockchip/rk3576-rock-4d.dts      | 678 ++++++++++++++++++
-> >  2 files changed, 679 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile
-> > b/arch/arm64/boot/dts/rockchip/Makefile index
-> > def1222c1907e..a112aeb37948a 100644
-> > --- a/arch/arm64/boot/dts/rockchip/Makefile
-> > +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> > @@ -132,6 +132,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=
-> > rk3568-wolfvision-pf5-display-vz.dtbo> 
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
-> > 
-> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
-> > 
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
-> >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-> > b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts new file mode 100644
-> > index 0000000000000..b499effd50396
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-> > @@ -0,0 +1,678 @@
-> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > +/*
-> > + * Copyright (c) 2024 Radxa Computer (Shenzhen) Co., Ltd.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/leds/common.h>
-> > +#include <dt-bindings/pinctrl/rockchip.h>
-> > +#include <dt-bindings/pwm/pwm.h>
-> > +#include <dt-bindings/soc/rockchip,vop2.h>
-> > +#include <dt-bindings/usb/pd.h>
-> > +#include "rk3576.dtsi"
-> > +
-> > +/ {
-> > +	model = "Radxa ROCK 4D";
-> > +	compatible = "radxa,rock-4d", "rockchip,rk3576";
-> > +
-> > +	aliases {
-> > +		ethernet0 = &gmac0;
-> 
-> Should mmc alias be added here?
+Hi Haoxiang,
+Nitpick: The brackets `{}` in the `if (!skb)` check are not required
+for a single-statement block. As per the Linux kernel coding style,
+it's preferable to omit them unless necessary for readability.
+Guru
+
+On Mon, Feb 17, 2025 at 7:53=E2=80=AFPM Haoxiang Li <haoxiang_li2024@163.co=
+m> wrote:
 >
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path = "serial0:1500000n8";
-> > +	};
-> > +
-> > +	leds: leds {
-> > +		compatible = "gpio-leds";
-> > +
-> > +		power-led {
-> > +			color = <LED_COLOR_ID_GREEN>;
-> > +			function = LED_FUNCTION_STATUS;
-> > +			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> > +			linux,default-trigger = "default-on";
-> > +		};
-> > +
-> > +		user-led {
-> > +			color = <LED_COLOR_ID_BLUE>;
-> > +			function = LED_FUNCTION_HEARTBEAT;
-> > +			gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
-> > +			linux,default-trigger = "heartbeat";
-> > +		};
-> > +	};
-> 
-> pinctrl should probably be added for the leds above.
-> 
-> > +
-> > +	vcc_12v0_dcin: regulator-vcc-12v0-dcin {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <12000000>;
-> > +		regulator-max-microvolt = <12000000>;
-> > +		regulator-name = "vcc_12v0_dcin";
-> > +	};
-> > +
-> > +	vcc_1v1_nldo_s3: regulator-vcc-1v1-nldo-s3 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <1100000>;
-> > +		regulator-max-microvolt = <1100000>;
-> > +		regulator-name = "vcc_1v1_nldo_s3";
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_1v2_ufs_vccq_s0: regulator-vcc-1v2-ufs-vccq-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <1200000>;
-> > +		regulator-max-microvolt = <1200000>;
-> > +		regulator-name = "vcc_1v2_ufs_vccq_s0";
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_1v8_s0: regulator-vcc-1v8-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <1800000>;
-> > +		regulator-max-microvolt = <1800000>;
-> > +		regulator-name = "vcc_1v8_s0";
-> > +		vin-supply = <&vcc_1v8_s3>;
-> > +	};
-> > +
-> > +	vcc_1v8_ufs_vccq2_s0: regulator-vcc1v8-ufs-vccq2-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <1800000>;
-> > +		regulator-max-microvolt = <1800000>;
-> > +		regulator-name = "vcc_1v8_ufs_vccq2_s0";
-> > +		vin-supply = <&vcc_1v8_s3>;
-> > +	};
-> > +
-> > +	vcc_2v0_pldo_s3: regulator-vcc-2v0-pldo-s3 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <2000000>;
-> > +		regulator-max-microvolt = <2000000>;
-> > +		regulator-name = "vcc_2v0_pldo_s3";
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_3v3_pcie: regulator-vcc-3v3-pcie {
-> > +		compatible = "regulator-fixed";
-> > +		enable-active-high;
-> > +		gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
-> 
-> If I am not mistaken gpios is the preferred property name?
+> Add check for the return value of nfp_app_ctrl_msg_alloc() in
+> nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
+>
+> Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+>  drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/=
+ethernet/netronome/nfp/bpf/cmsg.c
+> index 2ec62c8d86e1..09ea1bc72097 100644
+> --- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
+> +++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
+> @@ -20,6 +20,9 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned in=
+t size)
+>         struct sk_buff *skb;
+>
+>         skb =3D nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
+> +       if (!skb) {
+> +               return NULL;
+> +       }
+>         skb_put(skb, size);
+>
+>         return skb;
+> --
+> 2.25.1
+>
+>
 
-Hehe, looking at the rk3588-rock-5b dts, both "gpio" and "gpios" are used, 
-I'll use the second one.
+--000000000000cafa83062e5cea00
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> This should probably also have pinctrl props.
-
-Yes, I'll fix all those pinctrl issues.
-
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "vcc_3v3_pcie";
-> > +		startup-delay-us = <5000>;
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_3v3_rtc_s5: regulator-vcc-3v3-rtc-s5 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "vcc_3v3_rtc_s5";
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_3v3_s0: regulator-vcc-3v3-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "vcc_3v3_s0";
-> > +		vin-supply = <&vcc_3v3_s3>;
-> > +	};
-> > +
-> > +	vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		regulator-name = "vcc_3v3_ufs_s0";
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> > +
-> > +	vcc_5v0_device: regulator-vcc-5v0-device {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <5000000>;
-> > +		regulator-max-microvolt = <5000000>;
-> > +		regulator-name = "vcc_5v0_device";
-> > +		vin-supply = <&vcc_12v0_dcin>;
-> > +	};
-> > +
-> > +	vcc_5v0_host: regulator-vcc-5v0-host {
-> > +		compatible = "regulator-fixed";
-> > +		enable-active-high;
-> > +		gpio = <&gpio0 RK_PD3 GPIO_ACTIVE_HIGH>;
-> 
-> Same here.
-> 
-> > +		pinctrl-names = "default";
-> > +		pinctrl-0 = <&usb_host_pwren>;
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <5000000>;
-> > +		regulator-max-microvolt = <5000000>;
-> > +		regulator-name = "vcc5v0_host";
-> > +		vin-supply = <&vcc_5v0_device>;
-> > +	};
-> > +
-> > +	vcc_5v0_sys: regulator-vcc-5v0-sys {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-always-on;
-> > +		regulator-boot-on;
-> > +		regulator-min-microvolt = <5000000>;
-> > +		regulator-max-microvolt = <5000000>;
-> > +		regulator-name = "vcc_5v0_sys";
-> > +		vin-supply = <&vcc_12v0_dcin>;
-> > +	};
-> > +};
-> > +
-> > +&combphy1_psu {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&cpu_b0 {
-> > +	cpu-supply = <&vdd_cpu_big_s0>;
-> > +};
-> > +
-> > +&cpu_b1 {
-> > +	cpu-supply = <&vdd_cpu_big_s0>;
-> > +};
-> > +
-> > +&cpu_b2 {
-> > +	cpu-supply = <&vdd_cpu_big_s0>;
-> > +};
-> > +
-> > +&cpu_b3 {
-> > +	cpu-supply = <&vdd_cpu_big_s0>;
-> > +};
-> > +
-> > +&cpu_l0 {
-> > +	cpu-supply = <&vdd_cpu_lit_s0>;
-> > +};
-> > +
-> > +&cpu_l1 {
-> > +	cpu-supply = <&vdd_cpu_lit_s0>;
-> > +};
-> > +
-> > +&cpu_l2 {
-> > +	cpu-supply = <&vdd_cpu_lit_s0>;
-> > +};
-> > +
-> > +&cpu_l3 {
-> > +	cpu-supply = <&vdd_cpu_lit_s0>;
-> > +};
-> > +
-> > +&gmac0 {
-> > +	phy-mode = "rgmii-id";
-> > +	clock_in_out = "output";
-> > +
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&eth0m0_miim
-> > +		     &eth0m0_tx_bus2
-> > +		     &eth0m0_rx_bus2
-> > +		     &eth0m0_rgmii_clk
-> > +		     &eth0m0_rgmii_bus
-> > +		     &ethm0_clk0_25m_out>;
-> > +
-> > +	phy-handle = <&rgmii_phy0>;
-> > +	status = "okay";
-> > +};
-> 
-> The extra blank lines is probably not needed in above node?
-> Props is also not sorted in this node, phy-handle and phy-mode should
-> probably be placed next to each other.
-> 
-> > +
-> > +&gpu {
-> > +	mali-supply = <&vdd_gpu_s0>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&i2c1 {
-> > +	status = "okay";
-> > +
-> > +	pmic@23 {
-> > +		compatible = "rockchip,rk806";
-> > +		reg = <0x23>;
-> > +
-> > +		gpio-controller;
-> > +
-> > +		interrupt-parent = <&gpio0>;
-> > +		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
-> > +
-> > +		pinctrl-names = "default";
-> > +		pinctrl-0 = <&pmic_pins
-> > +			     &rk806_dvs1_null
-> > +			     &rk806_dvs2_null
-> > +			     &rk806_dvs3_null>;
-> > +
-> > +		system-power-controller;
-> > +
-> > +		vcc1-supply = <&vcc_5v0_sys>;
-> > +		vcc2-supply = <&vcc_5v0_sys>;
-> > +		vcc3-supply = <&vcc_5v0_sys>;
-> > +		vcc4-supply = <&vcc_5v0_sys>;
-> > +		vcc5-supply = <&vcc_5v0_sys>;
-> > +		vcc6-supply = <&vcc_5v0_sys>;
-> > +		vcc7-supply = <&vcc_5v0_sys>;
-> > +		vcc8-supply = <&vcc_5v0_sys>;
-> > +		vcc9-supply = <&vcc_5v0_sys>;
-> > +		vcc10-supply = <&vcc_5v0_sys>;
-> > +		vcc11-supply = <&vcc_2v0_pldo_s3>;
-> > +		vcc12-supply = <&vcc_5v0_sys>;
-> > +		vcc13-supply = <&vcc_1v1_nldo_s3>;
-> > +		vcc14-supply = <&vcc_1v1_nldo_s3>;
-> > +		vcca-supply = <&vcc_5v0_sys>;
-> > +
-> > +		#gpio-cells = <2>;
-> 
-> This should probably be sorted next to gpio-controller.
-
-It's not unusual to put # props at the end. but I can move it up if it is 
-preferred.
-
-> > +
-> > +		rk806_dvs1_null: dvs1-null-pins {
-> > +			pins = "gpio_pwrctrl1";
-> > +			function = "pin_fun0";
-> > +		};
-> > +
-> > +		rk806_dvs1_pwrdn: dvs1-pwrdn-pins {
-> > +			pins = "gpio_pwrctrl1";
-> > +			function = "pin_fun2";
-> > +		};
-> > +
-> > +		rk806_dvs1_rst: dvs1-rst-pins {
-> > +			pins = "gpio_pwrctrl1";
-> > +			function = "pin_fun3";
-> > +		};
-> > +
-> > +		rk806_dvs1_slp: dvs1-slp-pins {
-> > +			pins = "gpio_pwrctrl1";
-> > +			function = "pin_fun1";
-> > +		};
-> > +
-> > +		rk806_dvs2_dvs: dvs2-dvs-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun4";
-> > +		};
-> > +
-> > +		rk806_dvs2_gpio: dvs2-gpio-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun5";
-> > +		};
-> > +
-> > +		rk806_dvs2_null: dvs2-null-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun0";
-> > +		};
-> > +
-> > +		rk806_dvs2_pwrdn: dvs2-pwrdn-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun2";
-> > +		};
-> > +
-> > +		rk806_dvs2_rst: dvs2-rst-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun3";
-> > +		};
-> > +
-> > +		rk806_dvs2_slp: dvs2-slp-pins {
-> > +			pins = "gpio_pwrctrl2";
-> > +			function = "pin_fun1";
-> > +		};
-> > +
-> > +		rk806_dvs3_dvs: dvs3-dvs-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun4";
-> > +		};
-> > +
-> > +		rk806_dvs3_gpio: dvs3-gpio-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun5";
-> > +		};
-> > +
-> > +		rk806_dvs3_null: dvs3-null-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun0";
-> > +		};
-> > +
-> > +		rk806_dvs3_pwrdn: dvs3-pwrdn-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun2";
-> > +		};
-> > +
-> > +		rk806_dvs3_rst: dvs3-rst-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun3";
-> > +		};
-> > +
-> > +		rk806_dvs3_slp: dvs3-slp-pins {
-> > +			pins = "gpio_pwrctrl3";
-> > +			function = "pin_fun1";
-> > +		};
-> > +
-> > +		regulators {
-> > +			vdd_cpu_big_s0: dcdc-reg1 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-enable-ramp-delay = <400>;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <950000>;
-> > +				regulator-name = "vdd_cpu_big_s0";
-> > +				regulator-ramp-delay = <12500>;
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_npu_s0: dcdc-reg2 {
-> > +				regulator-boot-on;
-> > +				regulator-enable-ramp-delay = <400>;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <950000>;
-> > +				regulator-name = "vdd_npu_s0";
-> > +				regulator-ramp-delay = <12500>;
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_cpu_lit_s0: dcdc-reg3 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <950000>;
-> > +				regulator-name = "vdd_cpu_lit_s0";
-> > +				regulator-ramp-delay = <12500>;
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<750000>;
-> > +				};
-> > +			};
-> > +
-> > +			vcc_3v3_s3: dcdc-reg4 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <3300000>;
-> > +				regulator-max-microvolt = <3300000>;
-> > +				regulator-name = "vcc_3v3_s3";
-> > +				regulator-state-mem {
-> > +					regulator-on-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<3300000>;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_gpu_s0: dcdc-reg5 {
-> > +				regulator-boot-on;
-> > +				regulator-enable-ramp-delay = <400>;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <900000>;
-> > +				regulator-name = "vdd_gpu_s0";
-> > +				regulator-ramp-delay = <12500>;
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<850000>;
-> > +				};
-> > +			};
-> > +
-> > +			vddq_ddr_s0: dcdc-reg6 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-name = "vddq_ddr_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_logic_s0: dcdc-reg7 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <800000>;
-> > +				regulator-name = "vdd_logic_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vcc_1v8_s3: dcdc-reg8 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <1800000>;
-> > +				regulator-name = "vcc_1v8_s3";
-> > +				regulator-state-mem {
-> > +					regulator-on-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<1800000>;
-> > +				};
-> > +			};
-> > +
-> > +			vdd2_ddr_s3: dcdc-reg9 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-name = "vdd2_ddr_s3";
-> > +				regulator-state-mem {
-> > +					regulator-on-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_ddr_s0: dcdc-reg10 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <550000>;
-> > +				regulator-max-microvolt = <1200000>;
-> > +				regulator-name = "vdd_ddr_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vcca_1v8_s0: pldo-reg1 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <1800000>;
-> > +				regulator-name = "vcca_1v8_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vcca1v8_pldo2_s0: pldo-reg2 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <1800000>;
-> > +				regulator-name = "vcca1v8_pldo2_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdda_1v2_s0: pldo-reg3 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1200000>;
-> > +				regulator-max-microvolt = <1200000>;
-> > +				regulator-name = "vdda_1v2_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vcca_3v3_s0: pldo-reg4 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <3300000>;
-> > +				regulator-max-microvolt = <3300000>;
-> > +				regulator-name = "vcca_3v3_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vccio_sd_s0: pldo-reg5 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <3300000>;
-> > +				regulator-name = "vccio_sd_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vcca1v8_pldo6_s3: pldo-reg6 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <1800000>;
-> > +				regulator-max-microvolt = <1800000>;
-> > +				regulator-name = "vcca1v8_pldo6_s3";
-> > +				regulator-state-mem {
-> > +					regulator-on-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<1800000>;
-> > +				};
-> > +			};
-> > +
-> > +			vdd_0v75_s3: nldo-reg1 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <750000>;
-> > +				regulator-max-microvolt = <750000>;
-> > +				regulator-name = "vdd_0v75_s3";
-> > +				regulator-state-mem {
-> > +					regulator-on-in-suspend;
-> > +					regulator-suspend-microvolt = 
-<750000>;
-> > +				};
-> > +			};
-> > +
-> > +			vdda_ddr_pll_s0: nldo-reg2 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <850000>;
-> > +				regulator-max-microvolt = <850000>;
-> > +				regulator-name = "vdda_ddr_pll_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdda0v75_hdmi_s0: nldo-reg3 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <837500>;
-> > +				regulator-max-microvolt = <837500>;
-> > +				regulator-name = "vdda0v75_hdmi_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdda_0v85_s0: nldo-reg4 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <850000>;
-> > +				regulator-max-microvolt = <850000>;
-> > +				regulator-name = "vdda_0v85_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +
-> > +			vdda_0v75_s0: nldo-reg5 {
-> > +				regulator-always-on;
-> > +				regulator-boot-on;
-> > +				regulator-min-microvolt = <750000>;
-> > +				regulator-max-microvolt = <750000>;
-> > +				regulator-name = "vdda_0v75_s0";
-> > +				regulator-state-mem {
-> > +					regulator-off-in-suspend;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&i2c2 {
-> > +	status = "okay";
-> > +
-> > +	hym8563: rtc@51 {
-> > +		compatible = "haoyu,hym8563";
-> > +		reg = <0x51>;
-> > +		clock-output-names = "hym8563";
-> > +		interrupt-parent = <&gpio0>;
-> > +		interrupts = <RK_PB0 IRQ_TYPE_LEVEL_LOW>;
-> > +		pinctrl-names = "default";
-> > +		pinctrl-0 = <&hym8563_int>;
-> > +		wakeup-source;
-> > +		#clock-cells = <0>;
-> 
-> This should probably be sorted next to clock-output-names.
-
-Same for # props.
-
-> > +	};
-> > +};
-> > +
-> > +&mdio0 {
-> > +	rgmii_phy0: ethernet-phy@1 {
-> > +		compatible = "ethernet-phy-ieee802.3-c22";
-> > +		reg = <0x1>;
-> > +		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
-> > +		reset-assert-us = <20000>;
-> > +		reset-deassert-us = <100000>;
-> > +		reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
-> 
-> Pinctrl should probably be added here.
-> 
-> > +	};
-> > +};
-> > +
-> > +&pinctrl {
-> > +	hym8563 {
-> > +		hym8563_int: hym8563-int {
-> > +			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO 
-&pcfg_pull_up>;
-> 
-> This does not match (A0 vs B0) the pin used in rtc@51.
-
-This probably explains the errors I've seen with the rtc.
-
-> > +		};
-> > +	};
-> > +
-> > +	leds {
-> > +		led_rgb_g: led-green-en {
-> > +			rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO 
-&pcfg_pull_none>;
-> > +		};
-> > +		led_rgb_r: led-red-en {
-> > +			rockchip,pins = <4 RK_PB1 RK_FUNC_GPIO 
-&pcfg_pull_none>;
-> > +		};
-> 
-> These are unreferenced and does not match the pin used by gpio leds.
-> 
-> > +	};
-> > +
-> > +	usb {
-> > +		usb_host_pwren: usb-host-pwren {
-> > +			rockchip,pins = <4 RK_PD3 RK_FUNC_GPIO 
-&pcfg_pull_none>;
-> 
-> This does not match the pin used in the regulator.
-
-I'll fix the pinctrl issues, I had to improve my understanding of those a bit 
-:)
-
-let me know for those # props.
-
-Regards,
-Detlev.
-
-
+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
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGczCCBFug
+AwIBAgIMUk0VAZ2+ny3UPjcLMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI0MTEyODA2NDY0MloXDTI2MTEyOTA2NDY0MlowgbcxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzEWMBQGA1UEChMNQlJPQURDT00gSU5DLjEcMBoGA1UEAxMTR3VydXN3YW15IEJhc2F2YWlh
+aDEvMC0GCSqGSIb3DQEJARYgZ3VydXN3YW15LmJhc2F2YWlhaEBicm9hZGNvbS5jb20wggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDT0Ds+7uJK45uIzSpcStEgsoGtSBSCM3BYtj8H4WsF
+Ryh4F5x2LhrSFVgvxip1dFM6bqyyLEY82kyxQJSChQ6uFDmhMvf0RLnnLq/bG76MmUGYjFksgx42
+HffC6RhAfZ4rFPHuMTzPdyLnEitTcdBZRZmqtA4TSc/va0ZYpt2NXER42km8pBBJnEUoXWUauk/B
+wE/SJP0UDZHDpR0HTDO+2ul9LeMEGfSKAMWjTnBmC17rCqOM72hW8DJti66bHFRtCHg28L3wRK82
+V4Qk3hqSXX7fETAbc98s08Hx2V/psvw2XJjLa0jcBQcswvSQl0S3Z/k1UN4VBO3I9qP6x4JzAgMB
+AAGjggHhMIIB3TAOBgNVHQ8BAf8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAC
+hjpodHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMu
+Y3J0MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVj
+YTIwMjMwZQYDVR0gBF4wXDAJBgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQw
+MgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1Ud
+EwQCMAAwQQYDVR0fBDowODA2oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2
+c21pbWVjYTIwMjMuY3JsMCsGA1UdEQQkMCKBIGd1cnVzd2FteS5iYXNhdmFpYWhAYnJvYWRjb20u
+Y29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8GA1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCS
+MB0GA1UdDgQWBBTbuVbn7YM8LkfptiejPCXAA9xe6DANBgkqhkiG9w0BAQsFAAOCAgEAfTu20v5U
+JUB1TEHI7Qt8ajW/ToLpU3/BtFFwMne3hQsbEPpJPhBY133wtFoS01K3AFcl6rdOVThpp007r+eb
+bb5KR/oYokEvw2seZ1y33ZqGNQdZDTSzXOXKrm9ATwWRjN7dNhTrr9Of8BS9Kjx6V+O8KRlaoWVI
+GT/t6ubwmFNk9mKNec4RRcDTlu36nJmdwPMu6X2+kxTFRoLpcyIdL9fMkXOIT/JAIyKMURNqKDtz
+InPPvNHgGN9/FYJbqNFj2q5tPbxJbDGfs3i1ulPRTOADhIVwWFrY7MgNMOwcJY8AYO/URDWA3MeZ
+RCvfoIKBHeMgabWapnlLWsOpXJhlnZoSvrw37fkFVc9a/EnUIdXzDs3M20m8jYigf3zK7/lQkoye
+vssiDIcz473ViH6gaZEPN83DN7L1VKgrQ8zHF3qw8ctyH9i7xpWbqZ635JzaNqbZ0eXaA4nNfuCo
+EIsyrGT5sPSvWx8v+OcgMeh00XLvHBZfGAtf64NIedRqamOfuC3W/zpQrnmqr0IDj/tOgoaKBz3N
+KSy5T8E4NeNfiVxB7tOFWQms7pAzfD0OQiUHcjfNLra5uqQlafXezxKKGHeshKukKz8Q7mfV6ES4
+cZtIbMMXwd6jsxAj+vDw9BeG0/M49qmEZ9Rteb6dXnObIte8gDtK41NjSWH1Yslg2YsxggJkMIIC
+YAIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQD
+Ex9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAyMDIzAgxSTRUBnb6fLdQ+NwswDQYJYIZIAWUD
+BAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIC4PcS7KHtbYF2jzuAzHvX02z7OSdtYpU/2yV9P9Hc/I
+MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxNzIxMDc1MVow
+aQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAK
+BggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG
+9w0BAQEFAASCAQBXPwp2edAG950shMh8qrVzNRlbXYs0n/3MPMlwhHWTSK1DpMNvJJBErfIN3DiD
+DEmdDGcgBeealljc0U48/dUCnO+QsF6PmH9O2i8NYsGBx72XJzx8MmBrhhelrmf3xsJ8ygOtrTuf
+0MeIxBsIwLQoHYoi/EjQrGWCb9o6OvW/a4/vJsLE/WRYG/vpl7LZbFjMDLfCxkYLC60i/5JzvOtr
+gkBz3hTY7ksQqjlnEZhlIFNHftpKlmHC1eOshBUhssjnUSJI4AQpUkurhXULEQA2wRcB95YSs3Ao
+PJmfivVo8KSomkOYcXqTDs0LvdKJgpYLH1LPF+Fit7x6+ANMZube
+--000000000000cafa83062e5cea00--
 
