@@ -1,70 +1,76 @@
-Return-Path: <linux-kernel+bounces-517543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34A1A38230
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:47:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E5EA3823D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618981886017
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:47:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8B33A8DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6336F219A97;
-	Mon, 17 Feb 2025 11:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714F218EB3;
+	Mon, 17 Feb 2025 11:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="W7ceVPNH"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LCGt1pVQ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14E5217658;
-	Mon, 17 Feb 2025 11:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700DC19F128;
+	Mon, 17 Feb 2025 11:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792847; cv=none; b=h69YkleSjVXA5R7W3QmVgwEeNk+szhTNHz2MVLmTMVLBAlLgbIMZgMc8uRNJi1c5U6XTdpMZXDoF3GcSaLlVfzAcK7kfeVVTu9lQuuK8NT87uzjnDc92j0jWpk9IR0HdYQak9DOmUr236CEsTMjMv+SEaYcejWi+NoV8D75hRLw=
+	t=1739792874; cv=none; b=UrAbNBPdLnfdoXNC3InDUfkjLYWipZNCnlqJPi6DoHRSvwhBbFiTjNGuEog0P6fZIPOqajkUfqGom1rA6cW4ShCvwmFjZryQvRV5BUGDD7+YAPQGIl4NFjl4qUNjP6rHXOJa74256efI1Y7xcQ4xzuzq8yu76W5ifkJcshtXe0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792847; c=relaxed/simple;
-	bh=Il7tAuv1+o/Rgah2OsNYKIONSog4emk/AfdvgwD24gQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Kg2DRKmPrSuquu865UfZk/1VYv+amB9B3ViHxr0ddUUVzAf1/qU+cvlODjbdkmwkuOve9MB3XkZ9/Y6m5jIoq0yMU9X1mD2piWMkupo/rN8hgZbF5TdBcfvq3J66ETwKcGq8n9wzjtk7IKewiVJgQnwBpEuj+ncHvMeNjJhc3T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=W7ceVPNH; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=WW+jlNZQwR6ON4RwN88Lnc81jUel2BnuIXGB0NXqJS0=; b=W7ceVPNHXjFqQbuyxsRl9uBVDM
-	l7/YFqd//TevDy2SmLxEuQR7Qud5S7YTRCn+QsGdoqcCfBMF/rppsBvmAIL6jrFm0tucoPCq+KHL2
-	XZg7yAE+BWykTnpVq4x9rs7jLTeSZCZfucgpS3L921o3hPJUgEcMKOiBo6QnkRGzWPSLmfcjG1EdO
-	xL0WA9czq/219JEmk9uuqBUtXa2NPw0UOhTaCJ4Bh7uwD4t4v3qWAItfCufD/cMkLyO3mjhGfH17l
-	dsqACZi2CAcQikgqhMD7WZ4ehahMnTP6a40pZ/uctqA00TACxjUawADg41TM8J/DHtKvOyGuO8Oo4
-	Row5q28Q==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tjzaZ-0065DD-Dv; Mon, 17 Feb 2025 12:47:09 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Dave Chinner <david@fromorbit.com>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Matt Harvey
- <mharvey@jumptrading.com>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for
- all inodes
-In-Reply-To: <847288fa-b66a-4f3d-9f50-52fa293a1189@ddn.com> (Bernd Schubert's
-	message of "Mon, 17 Feb 2025 10:29:32 +0000")
-References: <20250216165008.6671-1-luis@igalia.com>
-	<20250216165008.6671-3-luis@igalia.com>
-	<3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
-	<87r03wx4th.fsf@igalia.com>
-	<847288fa-b66a-4f3d-9f50-52fa293a1189@ddn.com>
-Date: Mon, 17 Feb 2025 11:47:09 +0000
-Message-ID: <87ldu4x076.fsf@igalia.com>
+	s=arc-20240116; t=1739792874; c=relaxed/simple;
+	bh=EATzCimgjn+g/Uv0wR7R6AhaRYLHlFo0WlAdBq1fwK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbJwE8hDBdEWsf1oPtYNVpjgFZDO4mAVccIgrAfxoXiVwt2wHlsLuo4nehQEs8zneGAoFMXHL/9tFPdeItX02L6tc3TtY/rwytFtPqBWrOukf45O9Bb5q+xDThuMKi8zoepujT8meR7Y+SRi66Fr4whaGE2M8pzBwTpYuBCjT0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LCGt1pVQ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2ECD040E01AE;
+	Mon, 17 Feb 2025 11:47:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sMvrFybU7wvA; Mon, 17 Feb 2025 11:47:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739792866; bh=wpiM446cAiz/uog6GHwtTOYsK66olPLoas/UNj+19ps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LCGt1pVQ33eEJiM6SmhdFTTbcl6HfJ7QNBZcur8jGG361PFLoEntH2qxm3HTCfUhX
+	 TEknhRYAYLNkpOR70xZSNolcEsMZ0Sy6yvSonXiQYNE0r0P1uqle0zJmfOaK/+cHMy
+	 xPSDtNsZ4Ge2GyCGSVGoJCq7Yj0tLpNKk0Le7/9baiW/EhNycpkz2qDxOcCtTk1i55
+	 G/Zx+C8CaooSu6Zp6DJXcrzqR6wewXqS5o1urtB9QKZzMpCLD/reb2wtEMxoFiazhc
+	 eDb5GzXSWURba4KQAJ7PdEFsYMfuWbIAiyG/0hMpG50ERgnY+FuDpplEpis6t9b7Zo
+	 l0ZaNVfWeRK6gdKrJPzO5zpjXf02VkHj5FOY4Gnb71ZonaybGJgAMWnOTASZe6n3Yd
+	 1XPHh6FMebQDTZSlrDQb5Ncys4E1k5k5j4txtacnu2T5wgoXffs0tZq8eQbM1CIUrV
+	 0gq9WKNNFzdfZS1eVol5D9R6+2rzu0WLcmrHomBKyUY7F71pn8g9CCwbZtOPQh4XFy
+	 PS5xrcA6c4VCVlSSw8f/eAqiLTMr/RPIIFqk6xmF1YoYiPLckgGaurmZgB4/uHJ0e4
+	 f00Jr5ZlJkFWenkhRTI6ph59QKzceMRizijt7Yq9R7cnfpmAdncPySg3UPkgI86qlV
+	 QycYECRwRCOwcmF2pdlI8DAA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 24DC440E01A1;
+	Mon, 17 Feb 2025 11:47:41 +0000 (UTC)
+Date: Mon, 17 Feb 2025 12:47:35 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v2 1/3] x86/mce/inject: Remove call to mce_notify_irq()
+Message-ID: <20250217114735.GAZ7Mh12l48HmAXXm7@fat_crate.local>
+References: <20250210154707.114219-1-nik.borisov@suse.com>
+ <20250210154707.114219-2-nik.borisov@suse.com>
+ <20250216161050.GBZ7IOCofLUUelomR4@fat_crate.local>
+ <8cce2725-9efe-44e8-b071-f921874d7649@suse.com>
+ <ff06575b-079b-4016-9a28-5b439beb0ff5@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,161 +78,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <ff06575b-079b-4016-9a28-5b439beb0ff5@suse.com>
 
-On Mon, Feb 17 2025, Bernd Schubert wrote:
+On Mon, Feb 17, 2025 at 01:20:55PM +0200, Nikolay Borisov wrote:
+> Actually there is no loss of functionality since after an MCE is injected
+> the early notifier will correctly call the usermode helper. So I
+> think the following change log better reflects the situation:
+> 
+> 
+>     x86/mce/inject: Remove call to mce_notify_irq()
+>     The call to mce_notify_irq() has been there since the initial version of
+>     the soft inject mce machinery, introduced in ea149b36c7f5 ("x86,
+>     mce: add basic error injection infrastructure"). At that time it was
+>     functional since injecting an MCE resulted in the following call chain:
+>     raise_mce()
+>       ->machine_check_poll()
+>           ->mce_log() - sets notfiy_user_bit
+>     ->mce_notify_user() (current mce_notify_irq) consumed the bit and called the
+>     usermode helper.
+>     However, with the introduction of 011d82611172 ("RAS: Add a Corrected Errors Collector")
+>     the code got moved around and the user mode helper began to be called
+>     via the early notifier (mce_first_notifier()) rendering the remaining call
+>     in raise_local() defunct as the mce_need_notify bit (ex notify_user) is
+>     only being set from the early notifier.
+>     Remove the noop call and make mce_notify_irq static. No functional
+>     changes.
 
-> On 2/17/25 11:07, Luis Henriques wrote:
->> On Mon, Feb 17 2025, Bernd Schubert wrote:
->>=20
->>> On 2/16/25 17:50, Luis Henriques wrote:
->>>> Currently userspace is able to notify the kernel to invalidate the cac=
-he
->>>> for an inode.  This means that, if all the inodes in a filesystem need=
- to
->>>> be invalidated, then userspace needs to iterate through all of them an=
-d do
->>>> this kernel notification separately.
->>>>
->>>> This patch adds a new option that allows userspace to invalidate all t=
-he
->>>> inodes with a single notification operation.  In addition to invalidate
->>>> all the inodes, it also shrinks the sb dcache.
->>>>
->>>> Signed-off-by: Luis Henriques <luis@igalia.com>
->>>> ---
->>>>  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
->>>>  include/uapi/linux/fuse.h |  3 +++
->>>>  2 files changed, 36 insertions(+)
->>>>
->>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>>> index e9db2cb8c150..01a4dc5677ae 100644
->>>> --- a/fs/fuse/inode.c
->>>> +++ b/fs/fuse/inode.c
->>>> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *fc, =
-u64 nodeid,
->>>>  	return NULL;
->>>>  }
->>>>=20=20
->>>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
->>>> +{
->>>> +	struct fuse_mount *fm;
->>>> +	struct inode *inode;
->>>> +
->>>> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
->>>> +	if (!inode || !fm)
->>>> +		return -ENOENT;
->>>> +
->>>> +	/* Remove all possible active references to cached inodes */
->>>> +	shrink_dcache_sb(fm->sb);
->>>> +
->>>> +	/* Remove all unreferenced inodes from cache */
->>>> +	invalidate_inodes(fm->sb);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Notify to invalidate inodes cache.  It can be called with @nodeid =
-set to
->>>> + * either:
->>>> + *
->>>> + * - An inode number - Any pending writebacks within the rage [@offse=
-t @len]
->>>> + *   will be triggered and the inode will be validated.  To invalidat=
-e the whole
->>>> + *   cache @offset has to be set to '0' and @len needs to be <=3D '0'=
-; if @offset
->>>> + *   is negative, only the inode attributes are invalidated.
->>>> + *
->>>> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are inv=
-alidated
->>>> + *   and the whole dcache is shrinked.
->>>> + */
->>>>  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
->>>>  			     loff_t offset, loff_t len)
->>>>  {
->>>> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *fc,=
- u64 nodeid,
->>>>  	pgoff_t pg_start;
->>>>  	pgoff_t pg_end;
->>>>=20=20
->>>> +	if (nodeid =3D=3D FUSE_INVAL_ALL_INODES)
->>>> +		return fuse_reverse_inval_all(fc);
->>>> +
->>>>  	inode =3D fuse_ilookup(fc, nodeid, NULL);
->>>>  	if (!inode)
->>>>  		return -ENOENT;
->>>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->>>> index 5e0eb41d967e..e5852b63f99f 100644
->>>> --- a/include/uapi/linux/fuse.h
->>>> +++ b/include/uapi/linux/fuse.h
->>>> @@ -669,6 +669,9 @@ enum fuse_notify_code {
->>>>  	FUSE_NOTIFY_CODE_MAX,
->>>>  };
->>>>=20=20
->>>> +/* The nodeid to request to invalidate all inodes */
->>>> +#define FUSE_INVAL_ALL_INODES 0
->>>> +
->>>>  /* The read buffer is required to be at least 8k, but may be much lar=
-ger */
->>>>  #define FUSE_MIN_READ_BUFFER 8192
->>>>=20=20
->>>
->>>
->>> I think this version might end up in=20
->>>
->>> static void fuse_evict_inode(struct inode *inode)
->>> {
->>> 	struct fuse_inode *fi =3D get_fuse_inode(inode);
->>>
->>> 	/* Will write inode on close/munmap and in all other dirtiers */
->>> 	WARN_ON(inode->i_state & I_DIRTY_INODE);
->>>
->>>
->>> if the fuse connection has writeback cache enabled.
->>>
->>>
->>> Without having it tested, reproducer would probably be to run
->>> something like passthrough_hp (without --direct-io), opening
->>> and writing to a file and then sending FUSE_INVAL_ALL_INODES.
->>=20
->> Thanks, Bernd.  So far I couldn't trigger this warning.  But I just found
->> that there's a stupid bug in the code: a missing iput() after doing the
->> fuse_ilookup().
->>=20
->> I'll spend some more time trying to understand how (or if) the warning y=
-ou
->> mentioned can triggered before sending a new revision.
->>=20
->
-> Maybe I'm wrong, but it calls=20
->
->    invalidate_inodes()
->       dispose_list()
->         evict(inode)
->            fuse_evict_inode()
->
-> and if at the same time something writes to inode page cache, the
-> warning would be triggered?=20
-> There are some conditions in evict, like inode_wait_for_writeback()
-> that might protect us, but what is if it waited and then just
-> in the right time the another write comes and dirties the inode
-> again?
+Ah, there was that. We're doing a serious dance just to log an error, that's
+for sure.
 
-Right, I have looked into that too but my understanding is that this can
-not happen because, before doing that wait, the code does:
+Yeah, that makes sense.
 
-	inode_sb_list_del(inode);
+Thx.
 
-and the inode state will include I_FREEING.
+-- 
+Regards/Gruss,
+    Boris.
 
-Thus, before writing to it again, the inode will need to get added back to
-the sb list.  Also, reading the comments on evict(), if something writes
-into the inode at that point that's likely a bug.  But this is just my
-understanding, and I may be missing something.
-
-Cheers,
---=20
-Lu=C3=ADs
+https://people.kernel.org/tglx/notes-about-netiquette
 
