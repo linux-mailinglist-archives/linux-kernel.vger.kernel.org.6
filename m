@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-517850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60E4A3867E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:34:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF82A3867A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B674188729A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:34:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141427A341D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AED5222581;
-	Mon, 17 Feb 2025 14:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92B221D5B6;
+	Mon, 17 Feb 2025 14:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="X49o8xJy"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REXlLDW2"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B1656B81;
-	Mon, 17 Feb 2025 14:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD521A953;
+	Mon, 17 Feb 2025 14:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802840; cv=none; b=MmsvSy7Y+BT9JyyXk9xzizi2pmlwpKrZkRQmxqrWA/kijh6h/5u7py1mbg2AjrIIFcCmqGuxGjUT41VoiGMeX9Q/4NzZOrBlG+XMWjdO4sYwaiPFl0nDfPx4Rmy6mmoGUZcpfbg7R1uRk8F+PcllMeE4S++lclMdCs5MCI26aZc=
+	t=1739802840; cv=none; b=RfKZfIm2II0GX9DuEQ/23+WvmyIY3pTUdkwTMnJnxkwzWpZdxotLuQtElUYxc7CEUkGqQflh9RzLX3AcGXKSZTehCrWUziyaDE7tyhDVH0MPCedNtoxLa0OPKs62gRoapLWPo3PNMMfTUUr201cyJzAzlFv5EXgJVk9Axj+jI9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739802840; c=relaxed/simple;
-	bh=oOzTrJn4cqq1Ti5AP6YeTm7zo2qDVBTeWc/YGRAyb+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kH0BIF35v2VDDzDT1pHraW8UB6iKmefpWR5dn+ry17bsOgAT0FFDVtgw6mVFr8jBBeaEssDb7ZvSaTZvYgPbPVbJMHtztkvv6WqYwy7gKXlDbZPNjc5EYX31HXL4eLhr1sX3Ttbe1PD4I6UoEBKxhbqMVvfn1MiCuz6IPS0RZQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=X49o8xJy; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=j4YfzZyj7vkcD3SCN4L4GGNfCjFE9FR8KFVGORtDRkQ=; b=X49o8xJyLo64xwkvS3Z0DwKYKI
-	MUbiT1h0JiTIFhstAoG3Ep6byovmYPCT8L5LdMCvkdD81fEuLDXm+P2IF0/Dr3zcj2CoMAS5+j/rM
-	m5jKvicEr40u8rmgJHkGr1QdNxfHDqTRb14csicnrpOQYMSujOidVAB1ynFHh7oZRiaZDW59JQlCn
-	+vlGm/kcOpA+BH36UsB09DVEZA7hz5xc4fsUbdpXyje8yv/62IoUz96xcxpHiJbu/MJyR/fefFwhP
-	7ljxtm+2Y3ESwyJSysFh/Wye3fks7ENaPmGahpS7qPRGN+f7claxKzF3MzVeHx6tWEFG9Gyh0lIL6
-	KjuxCP/w==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tk2Bq-0003zV-DR; Mon, 17 Feb 2025 15:33:42 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: cristian.ciocaltea@collabora.com, Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: airlied@gmail.com, andy.yan@rock-chips.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- hjc@rock-chips.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
-Subject:
- Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source to VOP2
- on RK3588
-Date: Mon, 17 Feb 2025 15:33:41 +0100
-Message-ID: <5190979.MSiuQNM8U4@diego>
-In-Reply-To: <20250217024437.35155-1-liujianfeng1994@gmail.com>
-References:
- <20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com>
- <20250217024437.35155-1-liujianfeng1994@gmail.com>
+	bh=s4FZcldSfuvs/OAiBQjChQlCVE02/dSY8r/d3fNaChQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UUzvUcqzp2MGAvXUd7vjhwkqz7i9MCwdUGfk0aj4il6dUF/s7Wpvu4wj5bU2tHJjsW8T5JJ+Ed2Dhtel1MsbLJjRzLxZZbb/gD7guSzBOlPC5wY2hxRgV+jmO7OChlcLSqD7b+XQB6ZN/UB8pw+gIqRrFvoojVAV2PBZ7LkDuNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REXlLDW2; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so30279895e9.0;
+        Mon, 17 Feb 2025 06:33:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739802837; x=1740407637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3eDcVTpKoU3IaebilmiBpD0xiEz596IPX2MkPMQ7FA=;
+        b=REXlLDW2MUSBve2NxQ9Zt8/8GmpHZwRzUhm3pWMq7M7kMibmQnBqR76Mhfd9oD9n+W
+         3W5DgbkKlMa2pmP+xbJoHi2MrULZcceLlIeppQTzr4jsgEHHkdkdOrczhpdS4rYHAM9+
+         6QRH5K9Wht32XvBJgnHpmpOtewKRKrK70KmnAWnCXA7vjosEB8ID/m3l2F/k98Z3gKRE
+         xc8hUadkd7sfBF7aUaUIP+LYOjFv3GL+YA2rAcfqug2QbABXAjLt89vfGTdmMkusl3Mj
+         wMl8xUNFSZB1+KCnHZEEq31E379dF0mcrQXDZyt2FZVX3AQZV7tB5ifUMFkNq4G3bhI3
+         bncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739802837; x=1740407637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f3eDcVTpKoU3IaebilmiBpD0xiEz596IPX2MkPMQ7FA=;
+        b=uOT58X99nw9PzUHAoaBGCzJjaSsPj1bIvTQsyYKLx76t77sPfO/bSeePL4iY68RZil
+         3bTy464M5HvJ5mmTRPchoPEiA8OYlYXfiqgPvU5Ua8WG/q/FryM8B76f0KXB2Bx6/69R
+         Vg+dTEmKt/SdRb+GmkuqVKqzPFoysbovyYqfslSgek3qNJVTkxqxkLpR1o8g+88343/c
+         ZK1+Tj6uTSKy6ClvC68yoh/s6/i8NWpNvtOf5yivnNfMXsXUx3x0TzqlInd42DdteWGU
+         12+7stEToMWB4fP8mH+iRLlQGPH2bwqymqA7TO7W6YeT2CVVE3H2xxWN90BME4orIg7i
+         g++w==
+X-Forwarded-Encrypted: i=1; AJvYcCUH2RXABnliDM+eiD6pMhEYDTHklMovUYIt2KGwUzVz4VqFA5VyFm8v2IUhSuXPIEhv0aUvFjDKoX5StCE=@vger.kernel.org, AJvYcCUvseboXT9QMcvMrakNTcrNlKXmAV9dhIkPtnwPQFEX+oqIvLL8/nDIQ3XX1oh2cfdzeBqwaWpeWnFP@vger.kernel.org, AJvYcCXxONeiFpT1V63QDbGNNllj7EvcOJvnGVr+yOz+IuxfzBYmP+UFPerVqAqFcgaoT83fKD2uM7FR5dnoI7cC@vger.kernel.org, AJvYcCXxUvhcSGpDpNqXfOSVPgIsxcB0Xa7keRVFfvFEvSKwtxZy3N2PYutqg82GI2b6zkbUyTL1VmIZkgvx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbCEwxvnyJ+REI1w89TyuU1GvyACQb+oGUoVx8CW2VOJXuVtG7
+	kB+qPT8BoPxxXHnzghfL06GNhoGwFXc+XHCTRPmP/5c69iRX9Pqrtr3MpB8DxlEoNHd4eSNIMkR
+	oTUB5BlHzw5NkmMxKRgY/T5s9hIo=
+X-Gm-Gg: ASbGncvm4KOz7/ZpK3EjHPhZ6EfWiz+I1IO6AV7HzxiYiSCDeOy5U9G4yB0HsLxsO3K
+	8PDuHTxaAlupE4Rt2kpASuhWzf93ThDcEVnUnuBdiUyrgdjU0WK9+CM+7PEhTXhMEBW/28V6pxQ
+	==
+X-Google-Smtp-Source: AGHT+IEuERBuQnmdvYeQnbEgjpz5oivYR2/NeU+ZeDZj6y5f79re8Qc/hjfZmskbo4J7XhuGBCBKQIQ5nW0sf7jKqYI=
+X-Received: by 2002:a05:600c:4e88:b0:439:8bb3:cf8e with SMTP id
+ 5b1f17b1804b1-4398bb3d119mr16449985e9.20.1739802836742; Mon, 17 Feb 2025
+ 06:33:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250217140336.107476-1-clamor95@gmail.com> <20250217143006.1f043a0e@jic23-huawei>
+In-Reply-To: <20250217143006.1f043a0e@jic23-huawei>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 17 Feb 2025 16:33:45 +0200
+X-Gm-Features: AWEUYZnoYmWGH7uRDOTDGMyupdg6fWLMPQSMtlg1TZj4Q1o16qSOkRPpRU7P2Zg
+Message-ID: <CAPVz0n1FKe_ujAHyn=f1+12pV4r3GZpaZKPZe+caE79L3dn9tg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] iio: light: add al3000a als support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
+	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Montag, 17. Februar 2025, 03:44:37 MEZ schrieb Jianfeng Liu:
-> Hi Cristian,
-> 
-> On Sat, 15 Feb 2025 02:55:39 +0200, Cristian Ciocaltea wrote:
-> >The HDMI1 PHY PLL clock source cannot be added directly to vop node in
-> >rk3588-base.dtsi, along with the HDMI0 related one, because HDMI1 is an
-> >optional feature and its PHY node belongs to a separate (extra) DT file.
+=D0=BF=D0=BD, 17 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:30 Jona=
+than Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Mon, 17 Feb 2025 16:03:33 +0200
+> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+>
+> > AL3000a is an illuminance sensor found in ASUS TF101 tablet.
+> Hi Svyatoslav,
+>
+> Just a small request.  Please reduce rate of sending new versions.
+> That tends to give time for discussions on earlier versions to progress
+> and for more reviewers to see the current version.
+>
+> I'd suggest at least 3-4 days between versions.  It's great to
+> responsive to reviewers of course!
+>
+> Jonathan
+>
+>
+
+Once you are satisfied with amount of time patch will hang, let me
+know, I will upload new version. Thank you.
+
 > >
-> >Therefore, add the HDMI1 PHY PLL clock source to VOP2 by overwriting its
-> >clocks & clock-names properties in the extra DT file.
-> 
-> There are boards that only use hdmi1 such as ROCK 5 ITX. So there are two
-> choices for this board:
-> 
-> 1, Enable hdptxphy0 as dependency of vop although it is not really used.
-> 
-> 2, Overwrite vop node at board dts to make it only use hdptxphy1 like:
-> 
-> &vop {
-> 	clocks = <&cru ACLK_VOP>,
-> 		 <&cru HCLK_VOP>,
-> 		 <&cru DCLK_VOP0>,
-> 		 <&cru DCLK_VOP1>,
-> 		 <&cru DCLK_VOP2>,
-> 		 <&cru DCLK_VOP3>,
-> 		 <&cru PCLK_VOP_ROOT>,
-> 		 <&hdptxphy1>;
-> 	clock-names = "aclk",
-> 		      "hclk",
-> 		      "dclk_vp0",
-> 		      "dclk_vp1",
-> 		      "dclk_vp2",
-> 		      "dclk_vp3",
-> 		      "pclk_vop",
-> 		      "pll_hdmiphy1";
-> };
-> 
-> What do you think of these two method?
-
-Going by the code in patch1 (+drm-misc) we have:
-  vop2->pll_hdmiphy0 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy0");
-+
-  vop2->pll_hdmiphy1 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy1");
-
-So the clock-reference to hdptxphy0 should just result in vop2->pll_hdmiphy0
-being NULL and thus ignored further on?
-
-
+> > ---
+> > Changes on switching from v3 to v4:
+> > - return write function directly
+> > - clean up and fix i2c_device_id
+> >
+> > Changes on switching from v2 to v3:
+> > - droped linux/iio/sysfs.h
+> > - set driver name directly
+> > - switched to IIO_CHAN_INFO_PROCESSED
+> > - split al3000a_set_pwr into 2 functions
+> > - added i2c_device_id
+> > - improved code formatting
+> >
+> > Changes on switching from v1 to v2:
+> > - sort compatible alphabetically in schema
+> > - clarify commit descriptions
+> > - convert to use regmap
+> > - arrangle lux conversion table in rows of 8
+> > - add more used headers
+> > - improve code formatting
+> > ---
+> >
+> > Svyatoslav Ryhel (3):
+> >   dt-bindings: iio: light: al3010: add al3000a support
+> >   iio: light: Add support for AL3000a illuminance sensor
+> >   ARM: tegra: tf101: Add al3000a illuminance sensor node
+> >
+> >  .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+> >  .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+> >  drivers/iio/light/Kconfig                     |  10 +
+> >  drivers/iio/light/Makefile                    |   1 +
+> >  drivers/iio/light/al3000a.c                   | 209 ++++++++++++++++++
+> >  5 files changed, 235 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/iio/light/al3000a.c
+> >
+>
 
