@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-518142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50167A38A82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:25:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC52A38A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FF165EE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF6718906D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5678D229B11;
-	Mon, 17 Feb 2025 17:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F011229B1F;
+	Mon, 17 Feb 2025 17:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjPYV0q8"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ca44laX1"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510434EB51;
-	Mon, 17 Feb 2025 17:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A944EB51;
+	Mon, 17 Feb 2025 17:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739813063; cv=none; b=RJZWPp1NL5+Wwd2RDhReIzmgH+hYZJyarLNxLWsFl9rd9QKayap3BIJMCQt4eFBR22zqdltSNnRkpnDI9xDCopPza2h6nHsL3iyIVjkGZFzOQhjFfn91YQVRe3taiGBCaifI0JI1nj7a0xaY+9cdy5AsIyMPhfaTaflhLuy7ZWE=
+	t=1739813106; cv=none; b=H3fQwni3byJ3q7+vkkEjqLmklW6ZoBqmJs5Hd71gNl2918W0lFEgpnky/a+UvkfLUMqitygLPaRcRqToUsm3SGyVTHAQkl5fDWmE+2FsSNTDX312GqQ8j0Rh3gmZllV/9tqFNIdAEbohW925gFkiJI847LFQXltiRU4XSIB1p2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739813063; c=relaxed/simple;
-	bh=g0vm1YkGweGh3dE9ZFPmqaZKrH9a9CGcXL6grPYiiW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjsvN9YfUDal8NyPdUGo2OvUgvgMsfBqyJG69qvYoZgm8ozFvQqH3VOro6lU+F5C+sd8RFbAlj6dBHMqwIiXznn1PU3iFvuUogXr7phn9KSmXrxeaG14a9DJhAbNDLoePHSfaZTspaX/EHO6Edbk83bLn/43sbwqiorAkhIEECw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjPYV0q8; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1739813106; c=relaxed/simple;
+	bh=FcpGYvmdtwwhIJ4dHydo5UqPEJfKoMifDwgHkRA98O8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lm0msnTa5iMS1IRcqRX4hSobuRzvo4uW4KxCcJuAuzWtZeK4fw++a1OrQieN7XOx52nKj15+GGyYoMPp+4nskOQVw6tHW75IEAvGS+nTVxyRLAffdRD1v6Pfy1rg9mzm4ioTSnswgmsezZbTdGiMRfdbdY4JxPxy8q6WQ0uR3So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ca44laX1; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f678a27787so39246527b3.1;
-        Mon, 17 Feb 2025 09:24:22 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so1050166a91.1;
+        Mon, 17 Feb 2025 09:25:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739813061; x=1740417861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=trmHvlmyg8wXRQZMDpykG9IBwhlaXbIm3VRL+oM3rwM=;
-        b=ZjPYV0q8EJcoN7EKrqcvLNCcRDpgNogtzKffZSDWXnSHysbhoK0tOm5urvHf6EX94D
-         IqCp4B8fsCLby8nNcGqfib2cQC6ao6OB+qvKtmW0JbpE9iSU0zfTiweqzojwJFswPkVp
-         FoEl1RGNEDZHSIReTvlpkH/5HfN4XvYgHC3PFz6caXij2e+07ZvdAGA3AYxzc0wYWEhf
-         vEEQmjkvSVRisQfwgiIZJkEC3xffAX9fcnbRDl85KC+ZXswVU9n/DJX87VZIdekV6POd
-         C5gsjVd8tKG6qpY1fTnNXuKWBHAWLOYf6hXITvj+w5T1YljGW08tAs7SmGwC7Cbv51ed
-         IjTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739813061; x=1740417861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1739813104; x=1740417904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=trmHvlmyg8wXRQZMDpykG9IBwhlaXbIm3VRL+oM3rwM=;
-        b=A4PwgPRsr5zFatsGux2nVmGRdOsX+nQYIXq1zB/ujboTJM7OKJfq7pvCR6nl7661Ke
-         VER7C19+AlOSrYrcx0vA7vdc35rIMzpw7YLI1NZge1UshZWdeNCaX9r6ya7BDBF54u4T
-         Jf1G2mWCFtFcvDw6FnKB+LM96mFV8KL12ppLbjOhWlPaEj2LmxiSymz4qrLJ9dEslrI8
-         wJgcMkRV6x0EgSD50nXe1m5B9aNptzk+k83VjvXdJ9zJLPc5d409hcwm2h4/ocyD4lyL
-         7i04aVW+RAoNfnZJu7oBeKYXYQIRwUCfC25aO88tYQY3qJN3t7Qqektl1vPjUMmKhvFl
-         jyzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBLLj+9Q58+kWFrviQqnx+8b8MndQUbaM4Zi9lL1rUNXSIkhk428/p7Ag9SZvWr1XsNZ4=@vger.kernel.org, AJvYcCUUtTvX2Z456jdIkgeoKpkWxLSOPvrKNYLRsdCWqA/Bv23Z4Uix0xt/84OvJ0xo7hfpYgfvkENUtfZndsAW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwsE4ZP3U3WJix82yfOaXaRbJar5Vg2oMz6NhvsYuWRBnA2VXe
-	QE4Ky27z+XdNTzr1OPh5gw4ce6vO7ZZ0GPNLu0R+G4klTd0kiRjm
-X-Gm-Gg: ASbGncvoeyRYSWhCJ84cHaSWv85zYt5gh1Qo5bCBm05fB3OtDPkM2hZB+wBxpJim18V
-	4tTBqlZhis+7r/Rd+siyFwWS8bieafjN+FMsPDiPYY8hdQ1v9YkJ5/keRy6TPWu5uXCblHCePFe
-	LfHrCF6HACWEMO2Ut7pWw1M7cZAiE8W/j3+zugfz1MHocA114Ea3/IFFYi8xuaMclYpzJLrTjdd
-	JJMtkmyBvglmGiWlZRlbivPV6XBTXglr9w6Nh4WZ1OFq2iJEI1Gy/hM3rlPmaPglT8KNeMz/mR8
-	Zjl2s+Tbdj5ppyz8/wTghcfM1yDYT0dEUT3ShTgmPdWzj1sPg9M=
-X-Google-Smtp-Source: AGHT+IGq8UykHWtvtSX+h4LucnpHiIbU/Cxz2bTgynb88Ucfpgy2hDrjBlOmfdLAP6jih5kIFQaWTQ==
-X-Received: by 2002:a05:690c:6505:b0:6f9:8916:3b69 with SMTP id 00721157ae682-6fb58269c2bmr74644857b3.5.1739813061142;
-        Mon, 17 Feb 2025 09:24:21 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb745ea189sm7187477b3.98.2025.02.17.09.24.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 09:24:20 -0800 (PST)
-Date: Mon, 17 Feb 2025 12:24:19 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, Ian May <ianm@nvidia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] sched_ext: idle: Introduce node-aware idle cpu kfunc
- helpers
-Message-ID: <Z7Nww_e-aHXsfXcS@thinkpad>
-References: <20250214194134.658939-1-arighi@nvidia.com>
- <20250214194134.658939-9-arighi@nvidia.com>
- <Z6-1mQMBhq4OOlvB@thinkpad>
- <Z7M8h8jGEPoPmmiT@gpd3>
+        bh=FcpGYvmdtwwhIJ4dHydo5UqPEJfKoMifDwgHkRA98O8=;
+        b=Ca44laX1FuqU+mEewq/Z9xb6PIgwS6D1ZhpbXtg2psk7BCRMl9168ywwS5mPaI0Vaz
+         QdVe1BEkbilNp6+Ad+XO+JmzOuzqSuqXwwRHZZ7P8pYq0DX1HxkRxgl/KYpEiuohebsk
+         W4fiFLWS6+qSdK4TU2SayBeXUlSWP7/udyhJsoU5CXtr+RNGbXodLNd9bmkbVILi2p+u
+         oYzsFj9jEVl75q3AGJyTqEOKGXRZMa1Y6zGAC61C+o97ghKEQ4zGJx+AwnSL6RSlBSy0
+         9Vj6yAKZ1uFBnVSbVtkLkRpK/vpTdxgt5jidiX9K16DWoAfFRsIWsT0740ZDPKsrlYxS
+         Ek7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739813104; x=1740417904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FcpGYvmdtwwhIJ4dHydo5UqPEJfKoMifDwgHkRA98O8=;
+        b=fw9rZVVU1mwQMexsYWnWvWKiQQsWZbPPGW1aPEFZKgvldVDvn05atYvn/qTuMJJ2bW
+         Etz/OOxu4rXuWobd0pRA0izmAyhQt+i3HVrP+p/THmDnDj3A07LOdGonM3IiEFDfGrcx
+         XeWSIsYI81OuNFumnbmPAg9p1TXaHTg/PKk8BaDyu/Nm0JIf3fMtxgGLNjrur0DbcJFW
+         T/hYsZILwxhEcwOIv/4PTKiVezkiRsiEpKLHBmvU7IyDyY26BlFIwAP6RAIzjY2Y2DWn
+         jnJJm0FFfvLNZUSKuKgQTZMtMYOqt5ragh/LAIQqZcXKwCzL+2NhgQdm3ule/FohK+F0
+         V3Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7QnFVJKmD3lYVd/zWXnsdiqlO++eKtLZEq9OdZOwD99LoeXhThqhqFBp8jXo+25lmfYNpfcpRthnX+8K2@vger.kernel.org, AJvYcCWpLJAT1zOc61L57w0G5DpVNxgDZe58hrp/W0ppUUaUU8voS3v/NWJkMfUDvR8p4qLQFDDmKtZo3ZnimXxR@vger.kernel.org, AJvYcCWscz9l48NdnQ+lgfNEOSOfFDTHZzl3AaP47QHvj2J9rNuqGv2sIkFwmptorvaoSnhgvsO0N2nwjmbI@vger.kernel.org, AJvYcCXRLe4gBXeSkikiPfJf5o/9wcEg596Qf/6QPRYiv4leZQDcsWO3lI0skWrU7/xdwdjXDYUlCty/SOuTuHn5yx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywv2MBquZ7wzlCbzKN6XbixMaET1GM5kGJw0IyMAhHLMrPlRcb
+	yl/i6X9iIGUMEvZ7Qao3jkoxca9cpMPpNZygJbJtLg3L7a1+Bfw3QQSBPqCd9xMREmBQpw1U1pS
+	K4/RtluiI9awxb56fYL4y6/WYvGk=
+X-Gm-Gg: ASbGncvowQgtqv7ffouJsYuDGMaMw1Rga/BjAVdHKaJD/h3jh6aoYSiRkBj0BRZFiPR
+	J1E5xu9LGMHJLw3akiPLgGssOnCEMp36ttP3eJDjg1jg1Ra1JWF4Gt83EUpd3mFitPQh/t+KH
+X-Google-Smtp-Source: AGHT+IGfwCTeqstsgIsiK/MKQ/iUTmSLXB7VCe5xjH1OnjLFDvxLl/DUXxKb+UsY5FqLU1Cu/EIytJpEOjkXgoF3fu8=
+X-Received: by 2002:a17:90b:2fc3:b0:2fa:6055:17e7 with SMTP id
+ 98e67ed59e1d1-2fc41173947mr6075604a91.8.1739813104405; Mon, 17 Feb 2025
+ 09:25:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7M8h8jGEPoPmmiT@gpd3>
+References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
+ <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+ <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
+ <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
+ <CANiq72kAhw6XwPzGu+FrF64PZ9P_eSzX3gqG9CLvy7YJnbXgoQ@mail.gmail.com> <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 17 Feb 2025 18:24:52 +0100
+X-Gm-Features: AWEUYZkbsI3FPn2Xmxj8TJ-MBdTZiQo90g9XW-TdOOtJ4TRiM_QuFvTbEcwSBR0
+Message-ID: <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
+Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 02:41:27PM +0100, Andrea Righi wrote:
-> On Fri, Feb 14, 2025 at 04:28:57PM -0500, Yury Norov wrote:
-> > On Fri, Feb 14, 2025 at 08:40:07PM +0100, Andrea Righi wrote:
-> ...
-> > > +/**
-> > > + * scx_bpf_get_idle_cpumask_node - Get a referenced kptr to the
-> > > + * idle-tracking per-CPU cpumask of a target NUMA node.
-> > > + *
-> > > + * Returns an empty cpumask if idle tracking is not enabled, if @node is
-> > > + * not valid, or running on a UP kernel. In this case the actual error will
-> > > + * be reported to the BPF scheduler via scx_ops_error().
-> > > + */
-> > > +__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
-> > > +{
-> > > +	node = validate_node(node);
-> > > +	if (node < 0)
-> > > +		return cpu_none_mask;
-> > > +
-> > > +#ifdef CONFIG_SMP
-> > > +	return idle_cpumask(node)->cpu;
-> > > +#else
-> > > +	return cpu_none_mask;
-> > > +#endif
-> > 
-> > Here you need to check for SMP at the beginning. That way you can
-> > avoid calling validate_node() if SMP is disabled.
-> 
-> As mentioned in the other email, I'm not sure if we want to skip
-> validate_node() in the UP case.
-> 
-> I guess the question is: should we completely ignore the node argument,
-> since it doesn't make sense in the UP case, or should we still validate it,
-> given that node == 0 is still valid in this scenario?
+On Mon, Feb 17, 2025 at 6:11=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Only my personal experience with git blame. The `.cast()` call itself
+> is boilerplate that arises from the difference in types between the
+> abstractions and the bindings; my opinion is that a user of git blame
+> is more likely to be interested in the rationale accompanying the
+> implementation rather than that of the type shuffle.
 
-Ok, I see. You don't promote the error from validate_node(), but you
-print something inside.
+I understand the rationale -- what I meant to ask is if you saw that
+rule in kernel documentation or similar, because I could be missing
+something, but I don't think we do that in the kernel.
+
+So if you have a change like that, please just change the line, rather
+than adding new ones just for `git blame`.
+
+Cheers,
+Miguel
 
