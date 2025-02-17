@@ -1,420 +1,188 @@
-Return-Path: <linux-kernel+bounces-517382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BA4A38014
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE02A3800E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB57163527
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBD33B4D5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BE9213224;
-	Mon, 17 Feb 2025 10:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F01217659;
+	Mon, 17 Feb 2025 10:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZZd+oiON"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNt34BP3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE92918DB1C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06385217641;
+	Mon, 17 Feb 2025 10:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787874; cv=none; b=CRgZxlgdBoBfdrKRIcQfqssir4qP+YYSXuKOoXTlzAf8s4LXA9MAZHklq16/5GGYjfbji7V7UcoFNgnDGPrJjCKpl4ozAAuxxg4VLyu4G4TsD6xejBhuq+bNkLCLs/YgDV22A8KI42RX9Iqb7UxOBvAGT/l7dnDYwoaHyb8Pvfo=
+	t=1739787876; cv=none; b=BDaheSZqAxRYMe70A+hLIg9Zu9GEyuvR4p1PnGzMRVEpWuQikrzqoba9VLXsUH4LKU7WkIJSD9tIjFvUO689teyXtXaCCA/qzU2znb+byMiein20sD7HErXpPwGfJWL9/YWbthnowNPgvlhi8udWYtP5BoUqEHp1SNjc/OYKloI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787874; c=relaxed/simple;
-	bh=Oa/be5s3xggDuaX9fvCMIZruPgSM0aIozNLh1Fs2UjA=;
+	s=arc-20240116; t=1739787876; c=relaxed/simple;
+	bh=2XgjyaibevkLd3BgI0CWKCePkbYl0zCD5CgShziuagI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VT99Z795tvBbuf2y6JIO9JW1fQWQ+GJh+QhsD8O5e/bSdgEMNCKQDzogahRwz5Qy/Avhm/yGgUdmQkMJU2b1TZKeX4LuwImLxhy0FpkbonYz6sCnloG1QaYr7F74iL0iIGToN5qHs6gjgRUN2QHSYDFyjkC8S9pxbuCXnhlMysk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZZd+oiON; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5452c1daabeso2263650e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:24:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739787869; x=1740392669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d1DlyzfZPCWK55pzxX6TJoiWYHgMaXFWIiyI9xAGPgI=;
-        b=ZZd+oiONYVTKkKFeRljDGZh2LIbzVuhJ6z7UwMT0BfmorYqwNRcqRlfX7FRJQzF8PN
-         t4ljcwuyWjqzp6ffPd477pmDdhgmungnKHca7WKxDP0ltz2Xrae3t/q3YLXs6dLsxrsu
-         5AExsZ7yqeQ9MI1YjaGtM9owl+eIjDI0tTZx0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787869; x=1740392669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1DlyzfZPCWK55pzxX6TJoiWYHgMaXFWIiyI9xAGPgI=;
-        b=w9b8I/mpPzIs3XDaBHxfdn78k3QMB/Kh4C4apGQsjCJ+87tOk3K52fYdNDeptNPijy
-         jNmIs68X1NMUITPdIOHlAUnDdc3bYy3/K9zKSiBwdcZ9b7SgcQo7Wc3l5nvAbjcwkhlG
-         HhgqWnZlShDxV6xkRqJWxUTJt2wxNnE1LPvif/jxl+CHRWMyErJ0r5d8hShVzUn3GCdd
-         anv0W66jxLGdevJcUng46CIRYBkRjN1lyDjEwcVLjcbFLySSzeOaVG2Y5T4e3Ov9GYi6
-         fxhFtBBeNQJGBeScIFYZlw9K4DZUnDIU19ZKhFqlsuT9HLk0XMeygbpdWB409LhRKIi5
-         nsHQ==
-X-Gm-Message-State: AOJu0YxqydPnr30tIsS7DB0Ti5Nt8w0V23OrZTq7uCzkTmvPJ2yva7DT
-	BSf4eNfrRajyKZCy6t4nIYZe+tSfmAgQoAP2878M5kU+oiGN5Q3nIa5XuuZolGhg9H8Vnzdguci
-	dXHN4Oq+ZExzIOy933vRN0xLLDcF/NJemKKn4
-X-Gm-Gg: ASbGncuyKVK5cimsZr8+AbVjUc5qvEXke5G5QGYKakuRp6hmcjTEH43D60CDT8LXql7
-	XDASO+w9keOc18L+FXwT/Ra8RRvvs4PTntz4M0Nvml8YCSqk3s1uRDMSRPkNmWpV4BaLWbO440V
-	oHMX4js4zJ53vln06eLJAGYfjK
-X-Google-Smtp-Source: AGHT+IE3i0Mznvv4AsHVZT8Dj/f1n9k/WLI0IP0WQ84pkRHFqFusZH4zNFJ+0GmwxW5RsHUWiqkpQfCi3IN0/dhZ7xI=
-X-Received: by 2002:a05:6512:1155:b0:545:296e:ac1d with SMTP id
- 2adb3069b0e04-5452fe95f54mr2682853e87.51.1739787868862; Mon, 17 Feb 2025
- 02:24:28 -0800 (PST)
+	 To:Cc:Content-Type; b=AyNHZzTgJiod0UE33lIkJu4h9FY2zfG5DI7WL8adR0uRTY060BaRsmZPKlQtGwwyiXjqJqxjJD/gAdqAVojNa0vbRC+9fvovCl93GsKFGmcyaPr1ClZ1HYbW0SQ3vS7ObCxoOw7ZKLHgjWIEda0klducfJxcm3+Z10Am0QkBsOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNt34BP3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764D0C4CEEB;
+	Mon, 17 Feb 2025 10:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739787875;
+	bh=2XgjyaibevkLd3BgI0CWKCePkbYl0zCD5CgShziuagI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pNt34BP3DUIgqM083Xiuk3qMRdZwYHyt+ySXoVgw+xfA85ssNQv6cwzLq8RkY8znw
+	 slAsgxUy8SF0fybbBxVHzzImJMHYCn4lTC+GjIHPiiAlMbnDeWwrWp0K24oVLt7nof
+	 j+dm4mP6hn7FoJjjTWk9Qk0igtwQrS6Rgh77/SnawpLlcmu5eBZOz4WgEyxILc03WC
+	 CK7B3INaV7Wpg3dPPOvgDoRc2c/WxvE3m2Wznz1ZJ0xQWiSNNo1VWtvg7xDfMjLnHI
+	 iIcSQLrhPmVlPYkZWLxJ1tbEgZxiHvvTZyYM6oOptexeQStEjBm/HhRiAK14mCgPic
+	 w4DhosXGg1OTA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5461a485a72so985208e87.0;
+        Mon, 17 Feb 2025 02:24:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVyyAx9wgUO/y5g5zwIwbQ7RIFk5Xl6mc5a95K1uKczHL8VUvHOVEWKALTCJU7y+FZbgedywR2pgVyMDdE=@vger.kernel.org, AJvYcCW6aCvYGWAV2U1eyhy2A6Cf5w6LeJXIBdgJwYRhQ84ncet/iilA3M6FgrtuSlPF3CGv3GiLR+80B3P0lmOO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwndznjtTE01yjXb4Z0uW8GjQScSzkcfnkMBgQFVVS3sJjWQivA
+	0jIw4fYhuer++gkSY4/WPSfR+w45J1d8vU4TcsXJqdCx2quhjv9H9cNuH5PplKGlRwfo44JLPll
+	ApSIyeXE16I895wA0kcTOaujFaIw=
+X-Google-Smtp-Source: AGHT+IGlu/99eOx0GKpTYlmGIocV4kOjh8X2T+M9LU7PB/WElcm+M+f2Wps38pfRl0wNH3YwFJQND46FyeFiIa/853I=
+X-Received: by 2002:a05:6512:eaa:b0:545:c08:e17b with SMTP id
+ 2adb3069b0e04-5452fe5bec6mr2762443e87.23.1739787873807; Mon, 17 Feb 2025
+ 02:24:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115063555.32492-1-ot_cathy.xu@mediatek.com>
- <20250115063555.32492-2-ot_cathy.xu@mediatek.com> <nmyxygrya6cpalmirsunvkx32uox3kjxd4l5ggdhjtj7edyizz@yodolm5ktboo>
- <f7ba63c8afcef1d1925d51e35e4b81f0d0e773ff.camel@mediatek.com>
- <d04bc250-2104-4e02-9bf8-5785f4444c8d@kernel.org> <d11076d3eb2f92018fd3e26cae665a47f71ca838.camel@mediatek.com>
- <b212d05d-de3b-41b2-bc48-c6b79ae54a8b@kernel.org> <bec17d1e215a11daa1fdede78c8070c8e1763c72.camel@mediatek.com>
- <e7d49bda-8aaa-4897-8117-ab889fb27be0@collabora.com> <8ca2e369be804697ef71491dfd366cf6afcca9bd.camel@mediatek.com>
- <CAGXv+5EYMM=hn8nKig3iHqD3KhxHVQyteweL-OiSoCV8mD2iew@mail.gmail.com> <81368f21fabb9d6a6ee29bba0542e921b3636016.camel@mediatek.com>
-In-Reply-To: <81368f21fabb9d6a6ee29bba0542e921b3636016.camel@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 17 Feb 2025 18:24:17 +0800
-X-Gm-Features: AWEUYZm4KUwGawqhHvCsHclABlWLLfJKFpFZMVEY_E4rBjH-DyVCVrr2frjLpEs
-Message-ID: <CAGXv+5FSj-FY87Zo7EFec87fLHszO7776dZiinYP-iZm+Hry9w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: mediatek: add support for mt8196
-To: =?UTF-8?B?Q2F0aHkgWHUgKOiuuOWNjuWptyk=?= <ot_cathy.xu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	=?UTF-8?B?TGVpIFh1ZSAo6Jab56OKKQ==?= <Lei.Xue@mediatek.com>, 
-	"krzk@kernel.org" <krzk@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	=?UTF-8?B?V2VuYmluIE1laSAo5qKF5paH5b2sKQ==?= <Wenbin.Mei@mediatek.com>, 
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>, 
-	=?UTF-8?B?R3VvZG9uZyBMaXUgKOWImOWbveagiyk=?= <Guodong.Liu@mediatek.com>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "sean.wang@kernel.org" <sean.wang@kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <67b2eaf8.050a0220.173698.0020.GAE@google.com>
+In-Reply-To: <67b2eaf8.050a0220.173698.0020.GAE@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 17 Feb 2025 11:24:22 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGGtE1j4tX5EOn_nH3CCsne4tTP2MH88-zMzz_1YjEbkA@mail.gmail.com>
+X-Gm-Features: AWEUYZln9QGEVCTtUPZqLWNHe-h9z0bV8yJUH349i-dCKfRfB0LQSYkc3yYwCJU
+Message-ID: <CAMj1kXGGtE1j4tX5EOn_nH3CCsne4tTP2MH88-zMzz_1YjEbkA@mail.gmail.com>
+Subject: Re: [syzbot] [crypto?] KASAN: use-after-free Read in crypto_poly1305_update
+To: syzbot <syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, davem@davemloft.net, 
+	herbert@gondor.apana.org.au, hpa@zytor.com, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 5:45=E2=80=AFPM Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=A9=
-=B7) <ot_cathy.xu@mediatek.com> wrote:
->
-> On Tue, 2025-01-21 at 18:03 +0800, Chen-Yu Tsai wrote:
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >
-> >
-> > On Tue, Jan 21, 2025 at 5:58=E2=80=AFPM Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=
-=A9=B7) <
-> > ot_cathy.xu@mediatek.com> wrote:
-> > >
-> > > On Mon, 2025-01-20 at 13:42 +0100, AngeloGioacchino Del Regno
-> > > wrote:
-> > > > External email : Please do not click links or open attachments
-> > > > until
-> > > > you have verified the sender or the content.
-> > > >
-> > > >
-> > > > Il 20/01/25 10:17, Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=A9=B7) ha scritt=
-o:
-> > > > > On Thu, 2025-01-16 at 11:20 +0100, Krzysztof Kozlowski wrote:
-> > > > > > External email : Please do not click links or open
-> > > > > > attachments
-> > > > > > until
-> > > > > > you have verified the sender or the content.
-> > > > > >
-> > > > > >
-> > > > > > On 16/01/2025 09:18, Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=A9=B7) wro=
-te:
-> > > > > > > On Thu, 2025-01-16 at 08:28 +0100, Krzysztof Kozlowski
-> > > > > > > wrote:
-> > > > > > > > External email : Please do not click links or open
-> > > > > > > > attachments
-> > > > > > > > until
-> > > > > > > > you have verified the sender or the content.
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > On 16/01/2025 03:20, Cathy Xu (=E8=AE=B8=E5=8D=8E=E5=A9=B7)=
- wrote:
-> > > > > > > > > > > +          bias-pull-down:
-> > > > > > > > > > > +            oneOf:
-> > > > > > > > > > > +              - type: boolean
-> > > > > > > > > > > +              - enum: [100, 101, 102, 103]
-> > > > > > > > > > > +                description: mt8196 pull down
-> > > > > > > > > > > PUPD/R0/R1
-> > > > > > > > > > > type
-> > > > > > > > > > > define value.
-> > > > > > > > > > > +              - enum: [200, 201, 202, 203, 204,
-> > > > > > > > > > > 205,
-> > > > > > > > > > > 206,
-> > > > > > > > > > > 207]
-> > > > > > > > > > > +                description: mt8196 pull down RSEL
-> > > > > > > > > > > type
-> > > > > > > > > > > define
-> > > > > > > > > > > value.
-> > > > > > > > > >
-> > > > > > > > > > Not much improved.
-> > > > > > > > >
-> > > > > > > > >    I have removed the content related to 'resistance
-> > > > > > > > > value', we
-> > > > > > > > > use
-> > > > > > > > > 'RSEL' instead of 'resistance value'.
-> > > >
-> > > > This is wrong.
-> > >
-> > >   Sorry, I think I may not have expressed myself clearly. What I
-> > > meant
-> > > is that the attribute 'mediatek,rsel-resistance-in-si-unit' is not
-> > > supported. In the dts, can write the resistance value, for example:
-> > > bias-pull-up=3D<1000>, but can't use 'mediatek,rsel-resistance-in-si-
-> > > unit
-> > > =3D <xxx>'.
-> >
-> > `mediatek,rsel-resistance-in-si-unit` is supported in
-> > drivers/pinctrl/mediatek/pinctrl-paris.c
-> >
-> > Angelo is requesting that you continue that support and make it
-> > exclusive, i.e. not support the RSEL macro magic numbers, and
-> > _only_ support ohm values, in the device tree.
-> >
-> > ChenYu
->
->   Thank you for your response. Can I understand that in next version, I
-> should remove the RSEL macro magic numbers and add `mediatek,rsel-
-> resistance-in-si-unit`?
+#syz set subsystems: bcachefs
 
-You should remove the RSEL macro magic numbers, and add an option to
-|struct mtk_pin_soc| so that the argument to "bias-pull-up" are always
-treated as values in SI units as if "mediatek,rsel-resistance-in-si-unit"
-was set in the DT.
-
-ChenYu
-
-> >
-> > > > > > > >
-> > > > > > > > So the value in Ohms was removed? I assume above do not
-> > > > > > > > have
-> > > > > > > > known
-> > > > > > > > value
-> > > > > > > > in Ohms?
-> > > > > > >
-> > > > > > >    Yes, value in Ohns was removed, no code have knowm
-> > > > > > > value.
-> > > > > >
-> > > > > > Does the hardware have known value in Ohms?
-> > > >
-> > > > It does.
-> > > >
-> > > > >
-> > > > >    What do you mean by 'hardware'? When writing to the rsel
-> > > > > register,
-> > > > > the value written is 0-7.
-> > > > >
-> > > >
-> > > > Hardware means "the pin controller of the mt8196 SoC" :-)
-> > > >
-> > > > Anyway.
-> > > >
-> > > > The RSEL registers' function is to select a specific resistance
-> > > > value
-> > > > to
-> > > > pullup/down a pin, or a group of pins.
-> > > >
-> > > > Devicetree bindings require to specify values in known units, so
-> > > > in
-> > > > device tree
-> > > > you *need* to specify the RSEL resistance in Ohms.
-> > > >
-> > > > You cannot specify RSEL register value in device-tree. That's
-> > > > unacceptable.
-> > > >
-> > > > Regards,
-> > > > Angelo
-> > >
-> > >  Yes, I understand what you mean. However, I was referring to
-> > > writing
-> > > the rsel register in the driver, not in dts.
-> > >
-> > > >
-> > > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > > +            description: |
-> > > > > > > > > > > +              For pull down type is normal, it
-> > > > > > > > > > > doesn't
-> > > > > > > > > > > need
-> > > > > > > > > > > add
-> > > > > > > > > > > RSEL & R1R0.
-> > > > > > > > > > > +              For pull down type is PUPD/R0/R1
-> > > > > > > > > > > type,
-> > > > > > > > > > > it
-> > > > > > > > > > > can
-> > > > > > > > > > > add
-> > > > > > > > > > > R1R0 define to
-> > > > > > > > > > > +              set different resistance. It can
-> > > > > > > > > > > support
-> > > > > > > > > > > "MTK_PUPD_SET_R1R0_00" &
-> > > > > > > > > > > +              "MTK_PUPD_SET_R1R0_01" &
-> > > > > > > > > > > "MTK_PUPD_SET_R1R0_10"
-> > > > > > > > > > > &
-> > > > > > > > > > > +              "MTK_PUPD_SET_R1R0_11" define in
-> > > > > > > > > > > mt8196.
-> > > > > > > > > > > +              For pull down type is PD/RSEL, it
-> > > > > > > > > > > can
-> > > > > > > > > > > add
-> > > > > > > > > > > RSEL
-> > > > > > > > > > > define to set
-> > > > > > > > > > > +              different resistance. It can support
-> > > > > > > > > > > +              "MTK_PULL_SET_RSEL_000" &
-> > > > > > > > > > > "MTK_PULL_SET_RSEL_001" &
-> > > > > > > > > > > +              "MTK_PULL_SET_RSEL_010" &
-> > > > > > > > > > > "MTK_PULL_SET_RSEL_011" &
-> > > > > > > > > > > +              "MTK_PULL_SET_RSEL_100" &
-> > > > > > > > > > > "MTK_PULL_SET_RSEL_101" &
-> > > > > > > > > > > +              "MTK_PULL_SET_RSEL_110" &
-> > > > > > > > > > > "MTK_PULL_SET_RSEL_111"
-> > > > > > > > > > > define in
-> > > > > > > > > > > +              mt8196.
-> > > > > > > > > > > diff --git a/include/dt-bindings/pinctrl/mt8196-
-> > > > > > > > > > > pinfunc.h
-> > > > > > > > > > > b/include/dt-bindings/pinctrl/mt8196-pinfunc.h
-> > > > > > > > > > > new file mode 100644
-> > > > > > > > > > > index 000000000000..bf0c8374407c
-> > > > > > > > > > > --- /dev/null
-> > > > > > > > > > > +++ b/include/dt-bindings/pinctrl/mt8196-pinfunc.h
-> > > > > > > > > > > @@ -0,0 +1,1572 @@
-> > > > > > > > > > > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-
-> > > > > > > > > > > Clause
-> > > > > > > > > > > */
-> > > > > > > > > > > +/*
-> > > > > > > > > > > + * Copyright (C) 2025 Mediatek Inc.
-> > > > > > > > > > > + * Author: Guodong Liu <Guodong.Liu@mediatek.com>
-> > > > > > > > > > > + */
-> > > > > > > > > > > +
-> > > > > > > > > > > +#ifndef __MT8196_PINFUNC_H
-> > > > > > > > > > > +#define __MT8196_PINFUNC_H
-> > > > > > > > > > > +
-> > > > > > > > > > > +#include <dt-bindings/pinctrl/mt65xx.h>
-> > > > > > > > > > > +
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_GPIO0 (MTK_PIN_NO(0) |
-> > > > > > > > > > > 0)
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_DMIC1_CLK
-> > > > > > > > > > > (MTK_PIN_NO(0) |
-> > > > > > > > > > > 1)
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_SPI3_A_MO
-> > > > > > > > > > > (MTK_PIN_NO(0) |
-> > > > > > > > > > > 3)
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_FMI2S_B_LRCK
-> > > > > > > > > > > (MTK_PIN_NO(0)
-> > > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > 4)
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_SCP_DMIC1_CLK
-> > > > > > > > > > > (MTK_PIN_NO(0) |
-> > > > > > > > > > > 5)
-> > > > > > > > > > > +#define PINMUX_GPIO0__FUNC_TP_GPIO14_AO
-> > > > > > > > > > > (MTK_PIN_NO(0)
-> > > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > 6)
-> > > > > > > > > >
-> > > > > > > > > > I do not see how you resolved my comment from v1. In
-> > > > > > > > > > v2 I
-> > > > > > > > > > reminded
-> > > > > > > > > > about
-> > > > > > > > > > it, so you responded that yopu will change something,
-> > > > > > > > > > but
-> > > > > > > > > > I
-> > > > > > > > > > do
-> > > > > > > > > > not
-> > > > > > > > > > see
-> > > > > > > > > > any changes.
-> > > > > > > > > >
-> > > > > > > > > > So explain: how did you resolve my comment?
-> > > > > > > > > >
-> > > > > > > > > > These two examples where you claim you will change
-> > > > > > > > > > something,
-> > > > > > > > > > but
-> > > > > > > > > > send
-> > > > > > > > > > the same. I skipped the rest of the patch.
-> > > > > > > > >
-> > > > > > > > >    Thank you for your patient response, here is my
-> > > > > > > > > explanation
-> > > > > > > > > for
-> > > > > > > > > you
-> > > > > > > > > question:
-> > > > > > > > >
-> > > > > > > > >    In v1, I undertand that you meant I didn't sent a
-> > > > > > > > > real
-> > > > > > > > > binding,
-> > > > > > > > > and
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > The comment is under specific lines, so I said these
-> > > > > > > > defines
-> > > > > > > > are
-> > > > > > > > not
-> > > > > > > > a
-> > > > > > > > real binding. You sent them again, but they are still not
-> > > > > > > > bindings,
-> > > > > > > > because they are not used in the driver. Maybe the usage
-> > > > > > > > is
-> > > > > > > > convoluted,
-> > > > > > > > so which part of implementation are these connecting with
-> > > > > > > > DTS?
-> > > > > > > > IOW,
-> > > > > > > > which part of driver relies on the binding?
-> > > > > > >
-> > > > > > >    I got you. This binding define many macros, which will
-> > > > > > > be
-> > > > > > > used
-> > > > > > > for
-> > > > > > > 'pinmux' setting in the DTS. The usage like this:
-> > > > > > >
-> > > > > > >    adsp_uart_pins: adsp-uart-pins {
-> > > > > > >                  pins-tx-rx {
-> > > > > > >                          pinmux =3D
-> > > > > > > <PINMUX_GPIO35__FUNC_O_ADSP_UTXD0>,
-> > > > > > >                                   <PINMUX_GPIO36__FUNC_I1_A
-> > > > > > > DSP_
-> > > > > > > URXD0
-> > > > > > > > ;
-> > > > > > >
-> > > > > > >                  };
-> > > > > > >          };
-> > > > > >
-> > > > > >
-> > > > > > That's DTS, not driver, so not a binding. Drop the header
-> > > > > > from
-> > > > > > bindings.
-> > > > >
-> > > > >    Sorry, I don't quite understand the relationship between
-> > > > > binding
-> > > > > and
-> > > > > driver. Driver will parse this macro to get gpio number and
-> > > > > function.
-> > > > >
+On Mon, 17 Feb 2025 at 08:53, syzbot
+<syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com> wrote:
 >
-> ************* MEDIATEK Confidentiality Notice
->  ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including it=
-s
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or beli=
-eve
+> Hello,
 >
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+> syzbot found the following issue on:
+>
+> HEAD commit:    ba643b6d8440 Merge tag 'irq_urgent_for_v6.14_rc3' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=176ea898580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d587b24799bd8c2d32f4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150557df980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eea898580000
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ba643b6d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b6a86fb77c0b/vmlinux-ba643b6d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c4725da84fe0/bzImage-ba643b6d.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/769f8967e4f1/mount_0.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in crypto_poly1305_update+0x28/0x40 arch/x86/crypto/poly1305_glue.c:230
+> Read of size 8 at addr ffff888049757390 by task syz-executor358/5305
+>
+> CPU: 0 UID: 0 PID: 5305 Comm: syz-executor358 Not tainted 6.14.0-rc2-syzkaller-00346-gba643b6d8440 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:489
+>  kasan_report+0x143/0x180 mm/kasan/report.c:602
+>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>  __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+>  crypto_poly1305_update+0x28/0x40 arch/x86/crypto/poly1305_glue.c:230
+>  bch2_checksum+0x5fa/0x780 fs/bcachefs/checksum.c:239
+>  bch2_btree_node_read_done+0x1402/0x6180 fs/bcachefs/btree_io.c:1130
+>  btree_node_read_work+0x6dc/0x1380 fs/bcachefs/btree_io.c:1358
+>  bch2_btree_node_read+0x2433/0x29f0
+>  __bch2_btree_root_read fs/bcachefs/btree_io.c:1789 [inline]
+>  bch2_btree_root_read+0x626/0x7b0 fs/bcachefs/btree_io.c:1811
+>  read_btree_roots+0x3d3/0xa70 fs/bcachefs/recovery.c:581
+>  bch2_fs_recovery+0x260f/0x3de0 fs/bcachefs/recovery.c:928
+>  bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
+>  bch2_fs_get_tree+0xdb7/0x17a0 fs/bcachefs/fs.c:2203
+>  vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+>  do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+>  do_mount fs/namespace.c:3900 [inline]
+>  __do_sys_mount fs/namespace.c:4111 [inline]
+>  __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fd8b49b71ba
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff5a4d7e78 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007fff5a4d7e90 RCX: 00007fd8b49b71ba
+> RDX: 0000400000000000 RSI: 0000400000000200 RDI: 00007fff5a4d7e90
+> RBP: 0000400000000000 R08: 00007fff5a4d7ed0 R09: 000000000000f634
+> R10: 0000000002a08414 R11: 0000000000000282 R12: 0000400000000200
+> R13: 00007fff5a4d7ed0 R14: 0000000000000003 R15: 0000000002a08414
+>  </TASK>
+>
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x49757
+> flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+> raw: 04fff00000000000 ffffea000125d5c8 ffffea000125d5c8 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner info is not present (never set?)
+>
+> Memory state around the buggy address:
+>  ffff888049757280: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>  ffff888049757300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> >ffff888049757380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>                          ^
+>  ffff888049757400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>  ffff888049757480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ==================================================================
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
