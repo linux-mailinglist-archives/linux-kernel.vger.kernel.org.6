@@ -1,136 +1,188 @@
-Return-Path: <linux-kernel+bounces-518347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305BAA38DB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:56:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12B1A38D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6E8188B41F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0408D3B44FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51537239068;
-	Mon, 17 Feb 2025 20:56:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27AE239070;
+	Mon, 17 Feb 2025 20:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VqmmJZ4e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0E238D35
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A002238D35
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739825775; cv=none; b=gaN/yQcUWDs9hquNRNW9SCjlVSyq8fuhiFG1ZvGFF0Jz2SUddyxrJksCOaWhPWkXSrQoKLXLJXW9HL4B3ysF7ldGTpbg/tN0tmXCPwRuI1P3/5VMYtgif3j7bORIjYmuQpNhjVvkaaXJrmmU0dCcluxpX5W0FtF4c38cTu5QfW4=
+	t=1739825064; cv=none; b=toJDu4pvePpVKTlqNysR8AYBVXpFqsfk2lWN8K/33HZqVeFwaN6x3eLksSxmoR7smkfslHs435+ej4Zj85KcXQIq0kYTZsv1EQtolEX5FyktL+Ob4+WXe1a01+leepnNQBmlFoZg4o1S39cID9pfzDERoIdG2lIrRug0Dc4Z89I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739825775; c=relaxed/simple;
-	bh=7xlQqT6SyHmrrrZ7lcI+lzDoY6cGIt6c6FPPGn5CXb4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ISGK5ivVyDNYgHs4eYy02iJigFr3sR2zR7WdVWIwBk7HRaekCQa62yDiLtmzQwP97pyrvet0A1qr/9JZVsH8K1x1qYlU95BLcx2lAIsFg3Y0vzhAt9R2YtipGbFUURDpd2nKJCi/HSldKR0vZ59ErdxMoqesRmP5wAghHwLx2dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89U-00028h-TM; Mon, 17 Feb 2025 21:55:40 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89S-001THa-1I;
-	Mon, 17 Feb 2025 21:55:38 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uX-000W9t-2Z;
-	Mon, 17 Feb 2025 21:40:13 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 17 Feb 2025 21:39:52 +0100
-Subject: [PATCH v3 12/12] reboot: retire hw_protection_reboot and
- hw_protection_shutdown helpers
+	s=arc-20240116; t=1739825064; c=relaxed/simple;
+	bh=RFK2Noe38zdkgY0PuZD37xTp5S6DnnP5D4TgwgXWHn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqqDKENPAIjou2ydn6kB/n9EnEMwMa/t2SJSsFIzlJ1i1AhdrLxxQm+yy5p0fDCL6wf52q/StxSTNLARFB2uRwl/9MkjOy4FDc5MlqI4xpJ3681adFyHKCV0YTjPou2Lw1dOHBf5CDpZCjgUrx3gEhTn2q25ma1gn16P6WAPCRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VqmmJZ4e; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739825061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2QmrLCQEQpkTfPHbNiLQH+djwRd+v9Lt5IkB8rbHV3Y=;
+	b=VqmmJZ4eGiKSHx1klf8edb9QFVmS8/DkuHprTSQCt8Ce2DOfijW5arB+EhB89LO5EmLrmD
+	l36LXeS4MuyQ3pwQFZQSz0rE5DeRDurcppTaZN3+p+z18od3af/wSRZz4pJpgFiMDKsrM8
+	M/FK7AAWGNesS03Vxpeak6wva/Hl6S4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-yUKzqEUaPyaxt_hlM-890A-1; Mon,
+ 17 Feb 2025 15:44:17 -0500
+X-MC-Unique: yUKzqEUaPyaxt_hlM-890A-1
+X-Mimecast-MFC-AGG-ID: yUKzqEUaPyaxt_hlM-890A_1739825055
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05AF618EB2C3;
+	Mon, 17 Feb 2025 20:44:15 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.80.243])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C115B1800362;
+	Mon, 17 Feb 2025 20:44:11 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Nico Pache <npache@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v4] kasan: Don't call find_vm_area() in a PREEMPT_RT kernel
+Date: Mon, 17 Feb 2025 15:44:02 -0500
+Message-ID: <20250217204402.60533-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-hw_protection-reboot-v3-12-e1c09b090c0c@pengutronix.de>
-References: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
-In-Reply-To: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Fabio Estevam <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, 
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
- kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The hw_protection_reboot and hw_protection_shutdown functions mix
-mechanism with policy: They let the driver requesting an emergency
-action for hardware protection also decide how to deal with it.
+The following bug report was found when running a PREEMPT_RT debug kernel.
 
-This is inadequate in the general case as a driver reporting e.g. an
-imminent power failure can't know whether a shutdown or a reboot would
-be more appropriate for a given hardware platform.
+ BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+ in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
+ preempt_count: 1, expected: 0
 
-With the addition of the hw_protection parameter, it's now possible to
-configure at runtime the default emergency action and drivers are
-expected to use hw_protection_trigger to have this parameter dictate
-policy.
+ Call trace:
+  rt_spin_lock+0x70/0x140
+  find_vmap_area+0x84/0x168
+  find_vm_area+0x1c/0x50
+  print_address_description.constprop.0+0x2a0/0x320
+  print_report+0x108/0x1f8
+  kasan_report+0x90/0xc8
 
-As no current users of either hw_protection_shutdown or
-hw_protection_shutdown helpers remain, remove them, as not to tempt
-driver authors to call them.
+Since commit e30a0361b851 ("kasan: make report_lock a raw spinlock"),
+report_lock was changed to raw_spinlock_t to fix another similar
+PREEMPT_RT problem. That alone isn't enough to cover other corner cases.
 
-Existing users now either defer to hw_protection_trigger or call
-__hw_protection_trigger with a suitable argument directly when
-they have inside knowledge on whether a reboot or shutdown would
-be more appropriate.
+print_address_description() is always invoked under the
+report_lock. The context under this lock is always atomic even on
+PREEMPT_RT. find_vm_area() acquires vmap_node::busy.lock which is a
+spinlock_t, becoming a sleeping lock on PREEMPT_RT and must not be
+acquired in atomic context.
 
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Don't invoke find_vm_area() on PREEMPT_RT and just print the address.
+Non-PREEMPT_RT builds remain unchanged. Add a DEFINE_WAIT_OVERRIDE_MAP()
+macro to tell lockdep that this lock nesting is allowed because the
+PREEMPT_RT part (which is invalid) has been taken care of. This macro
+was first introduced in commit 0cce06ba859a ("debugobjects,locking:
+Annotate debug_object_fill_pool() wait type violation").
+
+Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
+Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/reboot.h | 10 ----------
- 1 file changed, 10 deletions(-)
+ mm/kasan/report.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/reboot.h b/include/linux/reboot.h
-index 79e02876f2ba2b5508f6f26567cbcd5cbe97a277..aa08c3bbbf59a9dec65d775d280902b1455427c2 100644
---- a/include/linux/reboot.h
-+++ b/include/linux/reboot.h
-@@ -211,16 +211,6 @@ static inline void hw_protection_trigger(const char *reason, int ms_until_forced
- 	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_DEFAULT);
+ [v4] Use Andrey's suggestion of a kasan_find_vm_area() helper and
+ update comment and commit log as suggested by Andrey and Sebastian.
+
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 3fe77a360f1c..8357e1a33699 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -370,6 +370,36 @@ static inline bool init_task_stack_addr(const void *addr)
+ 			sizeof(init_thread_union.stack));
  }
  
--static inline void hw_protection_reboot(const char *reason, int ms_until_forced)
--{
--	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_REBOOT);
--}
--
--static inline void hw_protection_shutdown(const char *reason, int ms_until_forced)
--{
--	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_SHUTDOWN);
--}
--
- /*
-  * Emergency restart, callable from an interrupt handler.
-  */
-
++/*
++ * This function is invoked with report_lock (a raw_spinlock) held. A
++ * PREEMPT_RT kernel cannot call find_vm_area() as it will acquire a sleeping
++ * rt_spinlock.
++ *
++ * For !RT kernel, the PROVE_RAW_LOCK_NESTING config option will print a
++ * lockdep warning for this raw_spinlock -> spinlock dependency. This config
++ * option is enabled by default to ensure better test coverage to expose this
++ * kind of RT kernel problem. This lockdep splat, however, can be suppressed
++ * by using DEFINE_WAIT_OVERRIDE_MAP() if it serves a useful purpose and the
++ * invalid PREEMPT_RT case has been taken care of.
++ */
++static inline struct vm_struct *kasan_find_vm_area(void *addr)
++{
++	static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
++	struct vm_struct *va;
++
++	if (IS_ENABLED(CONFIG_PREEMPT_RT))
++		return NULL;
++
++	/*
++	 * Suppress lockdep warning and fetch vmalloc area of the
++	 * offending address.
++	 */
++	lock_map_acquire_try(&vmalloc_map);
++	va = find_vm_area(addr);
++	lock_map_release(&vmalloc_map);
++	return va;
++}
++
+ static void print_address_description(void *addr, u8 tag,
+ 				      struct kasan_report_info *info)
+ {
+@@ -399,7 +429,7 @@ static void print_address_description(void *addr, u8 tag,
+ 	}
+ 
+ 	if (is_vmalloc_addr(addr)) {
+-		struct vm_struct *va = find_vm_area(addr);
++		struct vm_struct *va = kasan_find_vm_area(addr);
+ 
+ 		if (va) {
+ 			pr_err("The buggy address belongs to the virtual mapping at\n"
+@@ -409,6 +439,8 @@ static void print_address_description(void *addr, u8 tag,
+ 			pr_err("\n");
+ 
+ 			page = vmalloc_to_page(addr);
++		} else {
++			pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
+ 		}
+ 	}
+ 
 -- 
-2.39.5
+2.48.1
 
 
