@@ -1,110 +1,199 @@
-Return-Path: <linux-kernel+bounces-518115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156A8A38A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:56:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AF0A38A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2F116483B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD173A7B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415E922652C;
-	Mon, 17 Feb 2025 16:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RFhTmS3X"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30911226522
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17996226535;
+	Mon, 17 Feb 2025 16:57:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D36226528;
+	Mon, 17 Feb 2025 16:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739811406; cv=none; b=ODbIDfjIi0/G0s6C8pbzG850XGvcteMsAv1sguyrFvWEAIDV5W5RuIQJos4M+3pl2+HMfBz1KIzTwrAtUReNQ/6uDnsCeAi94JGuQyBJ+ohQ5RIIUryzTM0zZP3/UDbbfi0brV1TnH4vn+no2fSLlrOC96OgHUeKgo2N/8Flrzs=
+	t=1739811422; cv=none; b=VUDjg+HCTFphd7gZ1ERb6LmX/3S/nYUvncRMDspVzlQEo/li7QhnjgyJeY4uZl37QDFi0vJi/51HE31u0WFBiJ9Xr/Dn/AlmpqcUqUvpOzVUiUYxuC5MTNNrUmMXQq+M/x8E6Prr4hovbN29FF4u/xr5vD+AM2q1vlndPbfEzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739811406; c=relaxed/simple;
-	bh=+1QvmTeltNCy0ewISfLGnEHCX0liAeBHZC9vjnmbvGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlpVkBqPYEIcvwP9BqE7oe4TwOt7Md9toOt3qabP26Dro65RqHDgyHwJjkJHuByYlF9Fep8FnnosHLgeBW595QMULZmwCfgXPrqbuTCOdrY18YCXD9T153OkOQzIyXscoauyCEZie3jKXoOZf9aZWf1gwqaD8lXIvj5LfrmUUBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RFhTmS3X; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-471fbfe8b89so88661cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:56:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739811404; x=1740416204; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qSRpBN359hHX+cCE/TztrmjJSk1+HscqPfr/QXbduM=;
-        b=RFhTmS3XyGNNFtKnyy7CBpgAD4vGAWzQbfz3Lv7wF+ULUyiSAi7GMglIlUhD61JK0T
-         9r0/2hoR4i6gnqPZHLT9rhVJ2kuKcE49Ho5innQO42sOf3xoxDlc3u98aqWYh1bubqCf
-         h48CSx2YY5hDfRcl+umICAH+aGLQAGrPObiZnahHGDquBdeR/9O6lvJzJxGYQP/kDXIn
-         1jUP0DjYX2RZYpfnkKhjza4JIXePNBEGWLze2MC0x5/HjRtAgIKYkM6qVyD5Z71YfquM
-         dYFkkqVRLVT05jwjVVax28cZrVzbI/Elh8SwYT8ykxwkVSNAsotZ1+wxe8NDh+lvUVJU
-         ZlZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739811404; x=1740416204;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/qSRpBN359hHX+cCE/TztrmjJSk1+HscqPfr/QXbduM=;
-        b=cozJ/hpnE2fPHVfAjbWTdq1lUEpEPi+5zM/tY7yFviOFRj3vKixvgBawD4w5n7Q4HH
-         ReBh3EvbABTaBBVTo8IQtkzZclJcbaxATART8Ta1do8mxhwIltL93i1ZsFLlOH0CZ6lZ
-         MZmLXyFUcwl1KsZC28Tqkk44mzinrMqaJGZDsLxZRSDCNsSx5Ms0yRG2oLl/iRa0F+YR
-         CuwIq18YaZJVwgushR4L4sjrgTkFOQimww8WHDJPjCz2ZNWO0j8UBXKv4NLO9+aVRq/m
-         yBrHqyXo/GVhkGjT9C8RrlCcROvViuVR8sUZvu3RcjKpb+klPpZXR5ZzlE/370P0tn34
-         fGwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAyiZf/nN8ubVgbF/v56C7qwxDdq+5hNJM1p5NGO68BvleL+Sh6Oi8NTd/o7esi1fIZo1NdC9HNmNd7us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1hP+Va0fbVGbcw9/zwkb5o9j/23OUy7CRnRXo7LaBjmoxYfIe
-	p7QZp6QII8TI9buRsEsUGJhLfcvdHNVzHE4wOKPEjpfFWlsQ7pESs4BiVx20CiaiEGMVfZhWk3v
-	mppy0ACfeQVh0IyQe48uNDs9PgaXT+7DdrlZs
-X-Gm-Gg: ASbGncsC29H+4Z/PgYloHOoDxweo28+0IzHETBM/Mnn96526QQlphL2LqWWNtZlsa1U
-	Unlx9f3yjGNSAsBNmpX9Ezt6a3Yrog2GcxCVkpoCGyP5oJKJJ3qIcVJrmJGlSGWQG0onwBxjdiz
-	GgXTsIxTHP89BkOajbQvne1DrYGb4=
-X-Google-Smtp-Source: AGHT+IHCtMfDw98unx789UAqr8x+szvL570MR31u78p51rZTiegX2ScDlDe+ywsfBL4Sg33XW0YMbvVNgXrwIIoDMqc=
-X-Received: by 2002:a05:622a:54e:b0:471:badd:bd2f with SMTP id
- d75a77b69052e-471dc6602d2mr7637521cf.0.1739811403868; Mon, 17 Feb 2025
- 08:56:43 -0800 (PST)
+	s=arc-20240116; t=1739811422; c=relaxed/simple;
+	bh=+Slhdyr87sEDrXnPmfmh/DMOQQHysATe1TTy7flwAmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rq8UFvNo7tEv3tVgFo6L2HK3abnfmyIgIIhSWg8FEnT8cqSO+WSyzSLku5MI6v/HWlyx4oE/X5ZRIpDvYmU50TWiACdQXlFGloy2hJSNFR5OjZvT/Yw8xqW0cT8yhtWu4/oA6bD9/Oyl/PMeSuMMLlIEuyRjWbUWiZa3MyafHtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B13F152B;
+	Mon, 17 Feb 2025 08:57:18 -0800 (PST)
+Received: from [10.122.18.64] (unknown [10.122.18.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 042953F5A1;
+	Mon, 17 Feb 2025 08:56:58 -0800 (PST)
+Message-ID: <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
+Date: Mon, 17 Feb 2025 10:56:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129-force-cpu-bug-v2-0-5637b337b443@google.com>
- <20250129-force-cpu-bug-v2-3-5637b337b443@google.com> <20250217111029.GIZ7MZJUGJRoeiScgn@fat_crate.local>
-In-Reply-To: <20250217111029.GIZ7MZJUGJRoeiScgn@fat_crate.local>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Mon, 17 Feb 2025 17:56:32 +0100
-X-Gm-Features: AWEUYZl87gmBfs2wNkKiO_BAOR84Ep0eGh95DvqtW1gZo2AtnCOxVeh-iiek0-Y
-Message-ID: <CA+i-1C3fetiBYVbfpAbQEAnogzdza25pu2DosCiTT9YkXwt0yw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2 3/3] x86/cpu: Enable modifying bug flags with {clear,set}puid
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>, linux-integrity@vger.kernel.org,
+ jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca, sudeep.holla@arm.com,
+ rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jens Wiklander <jens.wiklander@linaro.org>,
+ Rob Herring <robh@kernel.org>
+References: <20250210232227.97761-1-stuart.yoder@arm.com>
+ <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
+ <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+ <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+ <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
+ <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
+ <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com> <Z7LGbZsOh_w-HRY2@sumit-X1>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <Z7LGbZsOh_w-HRY2@sumit-X1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 at 12:10, Borislav Petkov <bp@alien8.de> wrote:
-> > @@ -1492,7 +1492,8 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
-> >
-> >               /*
-> >                * Handle naked numbers first for feature flags which don't
-> > -              * have names.
-> > +              * have names. It doesn't make sense for a bug not to have a
-> > +              * name so don't handle bug flags here.
-> >                */
-> >               if (!kstrtouint(opt, 10, &bit)) {
-> >                       if (bit < NCAPINTS * 32) {
->
-> It did but after
->
->   7583e8fbdc49 ("x86/cpu: Remove X86_FEATURE_NAMES")
->
-> this chunk can be whacked now. Please do that in a pre-patch.
 
-Er, hold on, what chunk can be whacked? Do you mean delete the ability
-to set clearcpuid by number? There are still features with no name.
+
+On 2/16/25 11:17 PM, Sumit Garg wrote:
+> On Thu, Feb 13, 2025 at 09:19:58AM -0600, Stuart Yoder wrote:
+>>
+>>
+>> On 2/12/25 11:31 PM, Sumit Garg wrote:
+>>> + Rob
+>>>
+>>> On Thu, 13 Feb 2025 at 03:25, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2/12/25 1:39 AM, Sumit Garg wrote:
+>>>>> On Tue, 11 Feb 2025 at 21:39, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>>>
+>>>>>> Hi Sumit,
+>>>>>>
+>>>>>> On 2/11/25 12:45 AM, Sumit Garg wrote:
+>>>>>>> + Jens
+>>>>>>>
+>>>>>>> Hi Stuart,
+>>>>>>>
+>>>>>>> On Tue, 11 Feb 2025 at 04:52, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>>>>>
+>>>>>>>> These patches add support for the CRB FF-A start method defined
+>>>>>>>> in the TCG ACPI specification v1.4 and the FF-A ABI defined
+>>>>>>>> in the Arm TPM Service CRB over FF-A (DEN0138) specification.
+>>>>>>>> (https://developer.arm.com/documentation/den0138/latest/)
+>>>>>>>
+>>>>>>> Nice to have a specification standardizing interface to TPM
+>>>>>>> managed/implemented by the firmware. Care to add corresponding kernel
+>>>>>>> documentation under Documentation/security/tpm/.
+>>>>>>
+>>>>>> Yes, I can add some documentation there.
+>>>>>>
+>>>>>>> BTW, we already have drivers/char/tpm/tpm_ftpm_tee.c, so do you see
+>>>>>>> possibilities for an abstraction layer on top of communication channel
+>>>>>>> based on either FF-A or TEE or platform bus?
+>>>>>>
+>>>>>> I think the CRB and OP-TEE based messaging approaches for interacting
+>>>>>> with a TZ-based TPM are fundamentally different and I don't see how
+>>>>>> to harmonize them through some abstraction.
+>>>>>>
+>>>>>> The OP-TEE TPM protocol copies the TPM command into a temp shared memory
+>>>>>> buffer and sends a message to the TPM referencing that buffer.
+>>>>>>
+>>>>>> The CRB uses a permanently shared memory carve-out that in addition
+>>>>>> to the command/response data has other fields for locality control,
+>>>>>> command control, status, TPM idle, etc. The only 'message' needed is
+>>>>>> something to signal 'start'.  Any OS that is FF-A aware and has a
+>>>>>> CRB driver can simply add a new start method, which is what this
+>>>>>> patch series does.
+>>>>>
+>>>>> Okay, I see how the CRB driver is closely tied to the ACPI based
+>>>>> systems.
+>>>>
+>>>> The CRB driver is currently probed based on ACPI, but it fundamentally
+>>>> doesn't have to be.  If there was a DT binding for CRB-based
+>>>> TPMs the different start methods would be defined there and the
+>>>> CRB driver could support that.
+>>>>
+>>>
+>>> Can't we rather enable the CRB driver itself probed based on FF-A bus
+>>> and rather dynamically discover the shared memory buffer via FF-A
+>>> instead? AFAIU, FF-A provides you with a discovery framework for
+>>> firmware bits.
+>>
+>> Yes, you could do this. But, then the TPM CRB drivers in all the
+>> ACPI-based OSes (Linux, Windows) and hypervisors need to be
+>> taught this new method of discovery. Adding new start methods is
+>> reasonably straightforward, but changing the basic discovery
+>> mechanism is a much bigger change.
+> 
+> We will be teaching every other OS or hypervisor about FF-A
+> communication regardless. So it's rather about if we want to do it
+> properly leveraging auto discovery mechanisms supported by FF-A or not.
+> 
+>>
+>>> But if we still want to overload ACPI or DT with the
+>>> discoverable firmware bits then it seems like an overkill here.
+>>
+>> I think it would make sense to do ACPI based discovery or FF-A
+>> based discovery, but doing both I think would be overkill.  For
+>> ease of OS integration ACPI is the way to go.  And, potentially
+>> device tree in the future.
+> 
+> Encoding firmware bits in ACPI/DT can be seen as an easy upstream path
+> in the shorter run. But when the ACPI/DT becomes overloaded with
+> information that has to be passed from firmware to the OS rather than
+> purely describing hardware to the OS, it's ABI maintainability becomes
+> complex. We are already dealing with DT ABI compatibility challenges
+> especially the forward compatibility, so let's not make it even worse
+> with firmware information that can be discovered automatically.
+
+The TCG defined ACPI table has the following:
+    -Physical address of the TPM
+    -Start method
+    -Start method specific parameters
+    -event log address
+
+This has been in place 8+ years and this is what OSes expect.
+The start method advertises the mechanism a driver uses to
+signal the TPM that something has changed in the CRB, and
+this allows different types of TPM implementations:
+    -memory mapped
+    -signal via ACPI
+    -signal via ARM SMC (legacy)
+    -signal via Pluton mailbox
+    -signal via FF-A
+
+I don't see this as overloading the ACPI table, it's just what
+the OS needs to know.
+
+The TPM does not know (and should not know) the address of
+the event log. An FF-A based TPM has no way to know this.
+
+I don't see how changing TPM discovery to be via FF-A directly
+would improve maintainability.
+
+> The other benefit of auto discovery is that platform enablement becomes
+> really smooth. Once the firmware starts supporting a particular feature
+> like TPM over FF-A then the OS can discover and support it.
+
+If we added new CRB/FF-A ABIs to get the CRB physical address,
+start method specific parameters, event log, it would mean that
+all OSes and hypervisors need to re-architect their CRB drivers
+or create new FF-A specific CRB drivers.  That will not smooth
+enablement for TPMs.  And I don't see advantages for
+maintainability.
+
+Thanks,
+Stuart
+
+
 
