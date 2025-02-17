@@ -1,302 +1,205 @@
-Return-Path: <linux-kernel+bounces-518182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A135A38B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:09:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01C9A38B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8B9188D7B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:09:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D7E170F4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD4D235368;
-	Mon, 17 Feb 2025 18:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C752323537B;
+	Mon, 17 Feb 2025 18:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjZgsUZf"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="h9Q9Ldcv"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D29B17DE2D;
-	Mon, 17 Feb 2025 18:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8B422F383
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739815783; cv=none; b=u3iQxiLOvZPlC0sQRQSNMHrKcrP024dbiGGPu6ZxySD2J3LX0SDCWnhderqrN4thVPy/LTsUdpS8Iy3A7GnM1Q24N3dtq4ibYtVVWaW+1AdQZ96+S05r8FUaugzlpvuvndhpVohqaOqkfkFvVy9HLTv9Un12qxjadFoKznM5pwo=
+	t=1739815862; cv=none; b=IqvFr20Nq/F0Qh2dWUUT33Vbf/YhteE+Boc5GYy6lBxx5yqbSzx1MHYOSZ8h6kJSDFqHKCGBCT/X56B+1Qzsu/EsveUcmLeA6wLvMNWKTALlHCbQwFieUe68ZL/4UBNa11cVUc5IswFPqRRkwAgZSCMOSxMAz1aLAbqAQ++JXe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739815783; c=relaxed/simple;
-	bh=hrECPnQjvkNFaLkB3vTdWo3+U8QZaG1Avwkchi8qhXk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=fj0goPCfdi57judf8105cv3RtCTQOoJmOfcDpO3cJUq01pjG/P+4ZVfxBLztjRbnGuNnzHPoc0zpVLclmVar7Xyo9k5RjIK8+guQdrEgg+w2rxQierru8G+jN55Rc8czFDi229drBGbmYrLLKLrID3sVN0cjAAbe8NIfMT/iYhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjZgsUZf; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-471c8bcb4a9so35693361cf.2;
-        Mon, 17 Feb 2025 10:09:41 -0800 (PST)
+	s=arc-20240116; t=1739815862; c=relaxed/simple;
+	bh=+LVuhMm4/4IRWnEOXMkAQzqq62/PlHDeymErvUeBidk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AQWohsOhE9BSjZtVqnQTJlaDHcZaj1gCwTTd7ExwhP7nyzVOe3Dwh/Mw4nSVHii5Y2AtUgWC1WCPGmmAa25La+uH9tT8QBh8oMIW4ULYFYVQmQu1G/VOifKdrHaxriG+90IssMqmpn66ekOFxSNdoBWw+yJhXwRAWzCr+wZLZG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=h9Q9Ldcv; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so31981095e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:10:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739815781; x=1740420581; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hBvfsEoCpRp8ZXnjv3d99RtE+foKSh1IThRWfJK/Q1Y=;
-        b=OjZgsUZfR3gA9oJa89YIDni9eXJ4wiou2mN2LHca5VzCs9W7D9OipcsmoBnh0lnA0t
-         ayY5YFjxG/T4pCz4Ea/DjdpSC/DrWSEgp/IgYWUjXNf2oDhTTnNqThwJs/DZSyQDUswF
-         t3mKkwor4LRNx30boAzSuWrN9Ye4tqxsIpZnjhA0lY88EPSQr/I9YlymXuTMf+a6hU6a
-         Ms2qAfSFNtEjc85LuZ1sVQ/xn53aMTHWKy4syMjOJLrHocJJH/3AfBEAYwuveLnhJ90B
-         jeiNR8Nf7l+QYLPvlw3ZpIswuvhhL2XW6eXPs+brnzXIxj2YPKgx+WEY5rgA8Hf4KMBs
-         51iQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739815858; x=1740420658; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYdQMpmWfwfRPZrNOq/JI6U8Fyr73ByGTD+9Af1nU7I=;
+        b=h9Q9LdcvKJavN/GMUzW7WoMBUj9hTQJkk6CNQ25jgzMyqIbEpobg08+aZqKeuJGovz
+         ci0Rf3Epyn59Xo0hYLEbCMF5drcL/2u+Misdyw3PIIRNMkqSacU/YWvag6kJqfo25RGA
+         sOZnQ7QjLyKGg67A3GqD/tYAjCRiGA+2Mb7QpUCN1sMBNT75BlR1i5Vo0GowlhkoCOpJ
+         LpvymOZwvGsxWaMsn9HwRatf63LNma+EjSfTKmcJ2P6o6zp0VjftAkLR3H9YbgXxOUnz
+         DgdDq2+WdFSs5lUDhIrGmolWKJjxTm1DkGn0IMeBaWcVXaL0LsqqAXNjvqgQRu4+HZEX
+         FUag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739815781; x=1740420581;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hBvfsEoCpRp8ZXnjv3d99RtE+foKSh1IThRWfJK/Q1Y=;
-        b=fAZVI39ZlNK6YusO7fJO1An7OKxDMAlPNHdWt/anE7kbCPcSin5SveZHqsGinCiYgq
-         bCAJLIREXVzWL+2eXYRZuW8r92fzC04o++wltkwXvspiDQxcwvYaeeeEjfxjEDnw4eU2
-         ISwi1BBROhMwk7TL+Qgd5t7NagdtYuXqxfcAqXUAJ1wHFFdNr4DwYCUs3ZQxERjOfyiE
-         opV+yroZ4InpfRooZcwzDLL4AIGQUZ1/vXCaqZHfG3RilWeTQUN3ioJk/kMYEDgqZDgl
-         nknU3T0KZRnj19Bcy9k+14JpDx4uXWbKQYn5ffCUsU8rQY2yL4rPDSVoweY+cB1alfeq
-         oDlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAPH3B4+XvL64S1aEPR58mgEaI3BbEe/Kb6qDj1uz/utkudg205y7AP+AoZrhN9IAf6iVCxfFy4rPZqEKC@vger.kernel.org, AJvYcCUP1tGVugxvYHNbi/D4hJIYkT3TMplqOtDOjSwwyP9AADnANVKyaNRIAzS8ApKKsnnvPU+zuzV0akR+wngQew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEtiYFS68pdSVoVjQiQi1FxSPFtOPZZKKuMotQTUYWy4zrWpDJ
-	cRyfc7hPcENUE8p4ox/mkUkCxJ6gG8h3yLX1bF4pwF+CjBVryu+y
-X-Gm-Gg: ASbGncuqw3TEvyLR8b7j4w23J9VJqu0qcOwPNWAmVKc1yZjZRa6IkntOEyjda/TCIxq
-	ds0Kt6Tvssnv3u+N5s0oOIW7ZoYl5ONPiHaFPuR0kFbU5qs04qbzZXGmkavvQAaIGaxH2Dm1b7G
-	enmsvmVTVXJ5iMklhesYSQoQVM6+hzPxGj2gd5m2c/T74O0oWu4+RrGV3ZawR6S7fDAZBVbvRnI
-	MFFB6OL+s4fvyLat75FLZ12e7KixYxTlPBS1Hb1ajSJsQ7DjkJcfoD2p98yoDU6pMJg3bw45P8=
-X-Google-Smtp-Source: AGHT+IGhJsLlaMGVyjQKswJlt4842mDizRXe8sPXgfti6SvtW3a0UatpCKcesp5hYfUDlG6jGkBP1A==
-X-Received: by 2002:ad4:5f0a:0:b0:6e6:6aa5:2326 with SMTP id 6a1803df08f44-6e66ccdadc1mr131234836d6.24.1739815780925;
-        Mon, 17 Feb 2025 10:09:40 -0800 (PST)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f31fdsm54379876d6.69.2025.02.17.10.09.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Feb 2025 10:09:40 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1739815858; x=1740420658;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WYdQMpmWfwfRPZrNOq/JI6U8Fyr73ByGTD+9Af1nU7I=;
+        b=TDsCVZwQHraArzmCPqU6BJ6sf70C/n1SsDeaYc4cR3SysiPJRtYXKFxOLBKinCxgx3
+         z8CNvsrKf9DrZQul0cR1aH/ErCstu3GyLdqX59i+2j1eqRYV3NX13i6Yn5OvNoQSkOHu
+         Lnw/j6H48Er5N1dwxNH5VK4+ShhYelyF/Dvi95IcRJR9JvcEUsthOrdtDAF7tur9stnt
+         5V4S4YLpviVhpm1qQP7pIVPYZJs1Rbdi23eqEFV9jEZZtvUXM7ATjCz2Q+wtEG0T3jbc
+         kLVtB78u/LAqzEMUM2WpesjI4dk73xk82RkM9MZzJobciwwbO8dPjGBxynMjaJajLiRd
+         k91A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOjTM20jiA8/x35qnk8748huDz30K1aeSWKglW+mVU/8V7EKgEdE4aOcoHGedq07sXvzHlcCwmsSR7IqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw80xcBJUcTvNgFL0TZUmoGLneMK5EQJzyWg9XsjcLxuF/Jk9AX
+	arnYDeI5ieJuV68ybjO7xfHMqsCQxf9LvTj6n+Xqs9Oj+WpUsaDiN/QNc6lqgY0=
+X-Gm-Gg: ASbGncuKa+jX07andxNCJDxGDRb108PAACKiS0tW/yCMIohkCrSN4sEmkyrifuIxkPP
+	/icj6XDcNdzuLnP+oLqU0JhwDWUHjlCJdRHW3D0eCbIJjm9qG58KSRoUmhxfImHKPRyGTdXNI/i
+	3KuPH9rVXcTj79taZNWWgxKQvYqaqPLEPn589YpBUSmqN4MwB3IhTTCj89zJ+23liG5WxClTzsE
+	p2GDkgyFjrYqIZbwAplBbGDfK8plrMV9D39BwjQbiiDvTGPFnBfhbt+tjBIn2rJnhSN3Kl163Go
+	vvImYH68ZlhMsw==
+X-Google-Smtp-Source: AGHT+IFTAKZ9BquOVY29sEYMChLDnuqHcqVlSqR4NiZlMjD4bUMe9qRI5EU9r/6iyIf02WCX+Y2KzA==
+X-Received: by 2002:a5d:4cca:0:b0:38a:2b34:e13e with SMTP id ffacd0b85a97d-38f33f28c01mr7768806f8f.18.1739815856721;
+        Mon, 17 Feb 2025 10:10:56 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:a529:8667:e9bd:7f7])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395afaf052sm155075695e9.13.2025.02.17.10.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 10:10:55 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>,  Ira Weiny
+ <ira.weiny@intel.com>,  "Rafael J. Wysocki" <rafael@kernel.org>,  Stephen
+ Boyd <sboyd@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Danilo Krummrich
+ <dakr@kernel.org>,  Conor Dooley <conor.dooley@microchip.com>,  Daire
+ McNamara <daire.mcnamara@microchip.com>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Douglas Anderson <dianders@chromium.org>,
+  Andrzej Hajda <andrzej.hajda@intel.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>,  Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>,  Jonas Karlman
+ <jonas@kwiboo.se>,  Jernej Skrabec <jernej.skrabec@gmail.com>,  Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>,  David
+ Airlie <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Hans de
+ Goede <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,  Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>,  Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>,  Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+  Michael Turquette <mturquette@baylibre.com>,  Abel Vesa
+ <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Shawn Guo
+ <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
+  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
+  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
+ helpers
+In-Reply-To: <2025021501-tamer-sank-142a@gregkh> (Greg Kroah-Hartman's message
+	of "Sat, 15 Feb 2025 07:53:12 +0100")
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+	<20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
+	<2025021437-washout-stonewall-d13e@gregkh>
+	<1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
+	<2025021501-tamer-sank-142a@gregkh>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Mon, 17 Feb 2025 19:10:54 +0100
+Message-ID: <1jikp8xx01.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <CAMgjq7AqZaRuu+udJd7MyU2n3eF7wKX8bjDugFrdHYd2Lq=EXQ@mail.gmail.com>
-Date: Tue, 18 Feb 2025 02:09:21 +0800
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- kent.overstreet@linux.dev,
- syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>,
- chengming.zhou@linux.dev,
- hannes@cmpxchg.org,
- linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-mm@kvack.org,
- mhocko@suse.com,
- muchun.song@linux.dev,
- roman.gushchin@linux.dev,
- sashal@kernel.org,
- shakeel.butt@linux.dev,
- syzkaller-bugs@googlegroups.com,
- willy@infradead.org,
- yuzhao@google.com,
- zhengqi.arch@bytedance.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <751557A5-5417-497D-95FF-62E7CFCCDC59@gmail.com>
-References: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
- <67af8747.050a0220.21dd3.004c.GAE@google.com>
- <20250214152358.7ba29d10229e2155c0899774@linux-foundation.org>
- <CAMgjq7DQm+nwTWMdWQ66WW84O6YnhRQvZEjaY3EeXZ5-iKXo-A@mail.gmail.com>
- <CAMgjq7AqZaRuu+udJd7MyU2n3eF7wKX8bjDugFrdHYd2Lq=EXQ@mail.gmail.com>
-To: Kairui Song <ryncsn@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Feb 18, 2025, at 01:12, Kairui Song <ryncsn@gmail.com> wrote:
->=20
-> On Mon, Feb 17, 2025 at 12:13=E2=80=AFAM Kairui Song =
-<ryncsn@gmail.com> wrote:
->>=20
->> On Sat, Feb 15, 2025 at 7:24=E2=80=AFAM Andrew Morton =
-<akpm@linux-foundation.org> wrote:
->>>=20
->>> On Fri, 14 Feb 2025 10:11:19 -0800 syzbot =
-<syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com> wrote:
->>>=20
->>>> syzbot has found a reproducer for the following issue on:
->>>=20
->>> Thanks.  I doubt if bcachefs is implicated in this?
->>>=20
->>>> HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of =
-https://g..
->>>> git tree:       upstream
->>>> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D148019a4580000
->>>> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3Dc776e555cfbdb82d
->>>> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3D38a0cbd267eff2d286ff
->>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils =
-for Debian) 2.40
->>>> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D12328bf8580000
->>>>=20
->>>> Downloadable assets:
->>>> disk image (non-bootable): =
-https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_dis=
-k-128c8f96.raw.xz
->>>> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96=
-.xz
->>>> kernel image: =
-https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96=
-.xz
->>>> mounted in repro: =
-https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
->>>>=20
->>>> IMPORTANT: if you fix the issue, please add the following tag to =
-the commit:
->>>> Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
->>>>=20
->>>> ------------[ cut here ]------------
->>>> WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 =
-lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
->>>=20
->>>        VM_WARN_ON(!css_is_dying(&memcg->css));
->>=20
->> I'm checking this, when last time this was triggered, it was caused =
-by
->> a list_lru user did not initialize the memcg list_lru properly before
->> list_lru reclaim started, and fixed by:
->> =
-https://lore.kernel.org/all/20241222122936.67501-1-ryncsn@gmail.com/T/
->>=20
->> This shouldn't be a big issue, maybe there are leaks that will be
->> fixed upon reparenting, and this new added sanity check might be too
->> lenient, I'm not 100% sure though.
->>=20
->> Unfortunately I couldn't reproduce the issue locally with the
->> reproducer yet. will keep the test running and see if it can hit this
->> WARN_ON.
->=20
-> So far I am still unable to trigger this VM_WARN_ON using the
-> reproducer, and I'm seeing many other random crashes.
->=20
-> But after I changed the .config a bit adding more debug configs
-> (SLAB_FREELIST_HARDENED, DEBUG_PAGEALLOC), following crash showed up
-> and will be triggered immediately after I start the test:
->=20
-> [ T1242] BUG: unable to handle page fault for address: =
-ffff888054c60000
-> [ T1242] #PF: supervisor read access in kernel mode
-> [ T1242] #PF: error_code(0x0000) - not-present page
-> [ T1242] PGD 19e01067 P4D 19e01067 PUD 19e04067 PMD 7fc5c067 PTE
-> 800fffffab39f060
-> [ T1242] Oops: Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
-> [ T1242] CPU: 1 UID: 0 PID: 1242 Comm: kworker/1:1H Not tainted
-> 6.14.0-rc2-00185-g128c8f96eb86 #2
-> [ T1242] Hardware name: Red Hat KVM/RHEL-AV, BIOS
-> 1.16.0-4.module+el8.8.0+664+0a3d6c83 04/01/2014
-> [ T1242] Workqueue: bcachefs_btree_read_complete btree_node_read_work
-> [ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
-> [ T6058] bcachefs (loop2): empty btree root xattrs
-> [ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
-> 48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
-> ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
-> [ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
-> [ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: =
-0000000000006c31
-> [ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: =
-ffff888054c5ff90
-> [ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: =
-1ffff1100cbc0035
-> [ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: =
-ffff888054c2009e
-> [ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: =
-ffff888054c200a0
-> [ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
-> knlGS:0000000000000000
-> [ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: =
-00000000000006f0
-> [ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: =
-0000000000000000
-> [ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: =
-0000000000000400
-> [ T1242] Call Trace:
-> [ T1242]  <TASK>
-> [ T1242]  bch2_btree_node_read_done+0x1d20/0x53a0
-> [ T1242]  btree_node_read_work+0x54d/0xdc0
-> [ T1242]  process_scheduled_works+0xaf8/0x17f0
-> [ T1242]  worker_thread+0x89d/0xd60
-> [ T1242]  kthread+0x722/0x890
-> [ T1242]  ret_from_fork+0x4e/0x80
-> [ T1242]  ret_from_fork_asm+0x1a/0x30
-> [ T1242]  </TASK>
-> [ T1242] Modules linked in:
-> [ T1242] ---[ end trace 0000000000000000 ]---
-> [ T1242] RIP: 0010:validate_bset_keys+0xae3/0x14f0
-> [ T1242] Code: 49 39 df 0f 87 fc 09 00 00 e8 79 54 a8 fd 41 0f b7 c6
-> 48 8b 4c 24 68 48 8d 04 c1 4c 29 f8 48 c1 e8 03 89 c1 48 89 de 4c 89
-> ff <f3> 48 a5 48 8b bc 24 c8 00 00 08
-> [ T1242] RSP: 0018:ffffc900070a72c0 EFLAGS: 00010206
-> [ T1242] RAX: 000000000000ec0f RBX: ffff888054c20110 RCX: =
-0000000000006c31
-> [ T1242] RDX: 0000000000000000 RSI: ffff888054c60000 RDI: =
-ffff888054c5ff90
-> [ T1242] RBP: ffffc900070a7570 R08: ffff888065e001af R09: =
-1ffff1100cbc0035
-> [ T1242] R10: dffffc0000000000 R11: ffffed100cbc0036 R12: =
-ffff888054c2009e
-> [ T1242] R13: dffffc0000000000 R14: 000000000000ec0f R15: =
-ffff888054c200a0
-> [ T1242] FS:  0000000000000000(0000) GS:ffff88807ea00000(0000)
-> knlGS:0000000000000000
-> [ T1242] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ T1242] CR2: ffff888054c60000 CR3: 000000006cea6000 CR4: =
-00000000000006f0
-> [ T1242] DR0: 0000000000000000 DR1: 0000000000000000 DR2: =
-0000000000000000
-> [ T1242] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: =
-0000000000000400
-> [ T1242] Kernel panic - not syncing: Fatal exception
-> [ T1242] Kernel Offset: disabled
-> [ T1242] Rebooting in 86400 seconds..
->=20
-> It's caused by the memmove_u64s_down in validate_bset_keys of
-> fs/bcachefs/btree_io.c:
-> -> memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(i) - (u64 =
-*) k);
+On Sat 15 Feb 2025 at 07:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
+[...]
 
-Might need this.
+>> 
+>> >
+>> >> +							int id)
+>> >> +{
+>> >> +	struct auxiliary_device *auxdev;
+>> >> +	int ret;
+>> >> +
+>> >> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
+>> >> +	if (!auxdev)
+>> >> +		return ERR_PTR(-ENOMEM);
+>> >
+>> > Ick, who cares what the error value really is?  Why not just do NULL or
+>> > a valid pointer?  That makes the caller much simpler to handle, right?
+>> >
+>> 
+>> Sure why not
 
-diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-index e71b278672b6..fb53174cb735 100644
---- a/fs/bcachefs/btree_io.c
-+++ b/fs/bcachefs/btree_io.c
-@@ -997,7 +997,7 @@ static int validate_bset_keys(struct bch_fs *c, =
-struct btree *b,
-                }
- got_good_key:
-                le16_add_cpu(&i->u64s, -next_good_key);
--               memmove_u64s_down(k, bkey_p_next(k), (u64 *) =
-vstruct_end(i) - (u64 *) k);
-+               memmove_u64s_down(k, bkey_p_next(k), (u64 *) =
-vstruct_end(i) - (u64 *) bkey_p_next(k));
-                set_btree_node_need_rewrite(b);
-        }
- fsck_err:
+I have tried the 'NULL or valid' approach. In the consumers,
+which mostly return an integer from their various init function, I got
+this weird to come up with one from NULL. EINVAL, ENOMEM, etc ... can't
+really pick one.
 
->=20
-> The bkey_p_next(k) is RSI: ffff888054c60000 and it's causing an out of
-> border access.
-> (u64 *) vstruct_end(i) - (u64 *) k is RCX: 0000000000006c31, if added
-> to RDI this should cause an out of border write as well.
->=20
-> This seems to indicate there is an out of border memory modification?
-> And maybe it corrupted other subsystems? The slight change to .config
-> changed the layout so it's causing a fault, maybe previously this just
-> went on silently.
-> I don't know much about bcachefs, will be grateful if bcachefs people
-> could help have a look.
->=20
+It is actually easier to pass something along.
 
+>> 
+>> >> +
+>> >> +	auxdev->id = id;
+>> >> +	auxdev->name = devname;
+>> >> +	auxdev->dev.parent = dev;
+>> >> +	auxdev->dev.platform_data = platform_data;
+>> >> +	auxdev->dev.release = auxiliary_device_release;
+>> >> +	device_set_of_node_from_dev(&auxdev->dev, dev);
+>> >> +
+>> >> +	ret = auxiliary_device_init(auxdev);
+>> >
+>> > Only way this will fail is if you forgot to set parent or a valid name.
+>> > So why not check for devname being non-NULL above this?
+>> 
+>> If auxiliary_device_init() ever changes it would be easy to forget to
+>> update that and lead to something nasty to debug, don't you think ?
+>
+> Yes, this is being more defensive, I take back my objection, thanks.
+>
+>> >> +	if (ret) {
+>> >> +		kfree(auxdev);
+>> >> +		return ERR_PTR(ret);
+>> >> +	}
+>> >> +
+>> >> +	ret = __auxiliary_device_add(auxdev, modname);
+>> >> +	if (ret) {
+>> >> +		/*
+>> >> +		 * NOTE: It may look odd but auxdev should not be freed
+>> >> +		 * here. auxiliary_device_uninit() calls device_put()
+>> >> +		 * which call the device release function, freeing auxdev.
+>> >> +		 */
+>> >> +		auxiliary_device_uninit(auxdev);
+>> >
+>> > Yes it is odd, are you SURE you should be calling device_del() on the
+>> > device if this fails?  auxiliary_device_uninit(), makes sense so why not
+>> > just call that here?
+>> 
+>> I'm confused ... I am call auxiliary_device_uninit() here. What do you
+>> mean ? 
+>
+> Oh wow, I got this wrong, sorry, I was thinking you were calling
+> auxiliary_device_destroy().  Nevermind, ugh, it was a long day...
+>
+
+No worries
+
+> thanks,
+>
+> greg k-h
+
+-- 
+Jerome
 
