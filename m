@@ -1,94 +1,93 @@
-Return-Path: <linux-kernel+bounces-517342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D45A37F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:11:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0040A37F6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470581674F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A844B3AA01D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936E721858A;
-	Mon, 17 Feb 2025 10:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC0C21884B;
+	Mon, 17 Feb 2025 10:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XHsffdNj"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J22Q+xZQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4165121766A;
-	Mon, 17 Feb 2025 10:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F532217679
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786815; cv=none; b=YFINC+Nv1rV9+HnURn5HftcNY5PD3hcmPG1rFfy5uU/cnv7RpxnBki1QuaNYz+A5Sk1N2tcPUBdwdV3u/WAW7ENq8825yxqX2c2G2UjabYm8BfY1CzUrG6XmkYD6n2123+S/riZrYJEZWFenA9XWu3QUrHQtsK5tnhqvbMAueHc=
+	t=1739786817; cv=none; b=A09LdtRMwL4XrYQloSd4Ir8aa7t4KGvwmDWRZk524KJRKXiyJC2NTuHEffSQwu/6K4wiwOtBMdXsTlYIL2xgRygd9obO790bD7LqccxNmji5/pq4WCEJq2KFa1eCH6H4yKepenwpBOYV6wo6cwGBu3SZrphkNtYSShTsCs0XrJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786815; c=relaxed/simple;
-	bh=558d9/IVBYnUtRILUcTAq7bt9vxz/+fiXDjqRWuB0eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PmmkeZx+Tkk1L1QxO75ZoDfJzR2wNwVpFlzQ9gU3Xx+mP3qQ+M9zD/z7z6OzBA00naqvyLLy5NJKc0uRdayYtt7moY4oi1kX80ru+lkD6dctVEIlja8+NvCrcW6da0J7rVKeskw6lSB7BudoTxkysJJDFfGvMb/e6cMuw9z53rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XHsffdNj; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H18nQ3015205;
-	Mon, 17 Feb 2025 10:06:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=hfJFI3kZ5VCZCB7Js
-	iW1N0I9+4gi+bwnuBr+APbwOWM=; b=XHsffdNjZW9RU6XdKadUkM7y5zlbzMBE1
-	FDBJ2nSkVyq/CBNy+m4vIPUp4c3sLDOxNWfeIUrjm5DNVbA6VQ/iJq06Ks3+0sMM
-	3oVLBXF5+MSwMWmSIW4g3VET5imQNGDUP8UrKV0Uz9beE6aQimq8u3I0hr2Zj2FQ
-	iLARE46GOFDZ4MbZqvwItbS+CrArxxhcXPqgUpEcjfhVET2ERBVdXwtT4oAmjdri
-	3PceJXI72DYj7q7gI31sC2lyYO3j6FXMiB5wLL+5wjlVVnVP487NuN+852+Uao2d
-	KFD6Cp6kSZpfHxBcjOxFfT1kFSQXcFChJEy6edICb7vuixn7AqSgA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu69a51n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:06:30 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51H8MxO4001633;
-	Mon, 17 Feb 2025 10:06:29 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u5mynnna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:06:29 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HA6Pjg55443788
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 10:06:25 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8465E20063;
-	Mon, 17 Feb 2025 10:06:25 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 476F82006A;
-	Mon, 17 Feb 2025 10:06:25 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Feb 2025 10:06:25 +0000 (GMT)
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Eric Farman <farman@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        Jason Herne <jjherne@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Holger Dengler <dengler@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
-Subject: [PATCH 2/2] s390/vfio-ccw: make mdev_types not look like a fake flex array
-Date: Mon, 17 Feb 2025 11:06:14 +0100
-Message-ID: <20250217100614.3043620-3-pasic@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250217100614.3043620-1-pasic@linux.ibm.com>
-References: <20250217100614.3043620-1-pasic@linux.ibm.com>
+	s=arc-20240116; t=1739786817; c=relaxed/simple;
+	bh=Biw6DUxzk939fJknAJPcsYdiS9No9FiyXZeyYUMpkmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z8EKYoVTHkebZcQ9OPEbEoI35OjdTeSkJIenf+6afGPQz6ccPodGjKwtzsZFf/SejDFFWhXrGP57fRv/UYnadz/bnjt6CGFPQQHiZMMnH6+IbudS8XZUoQdzI6crwd98/9bjMVL8M9lKdplknPyjkhiX09wte8RnhOXhe04sz3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J22Q+xZQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739786813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7uYWhEd1/c+mNMCq30U6Kc7sDjWCoVhIrgohc+6hGoc=;
+	b=J22Q+xZQ3vOyF6bsHnE58G3RsyEsQ9eHT22rkXJoXGR9jNdQJetfsfRobVMQPsQQLNMO6H
+	E2HuUi1ykCGDR/pbKU0Xv+P7tYSvwF1ICnRtPEeZRfG+sNW+k/Lp5xkjqQSZCAQ9nO9nau
+	nMsVuSGgFL8O0aiFiLEePEKZhXWp4qQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-p5jhmzO0NS2W1Zp9RXPLxA-1; Mon, 17 Feb 2025 05:06:52 -0500
+X-MC-Unique: p5jhmzO0NS2W1Zp9RXPLxA-1
+X-Mimecast-MFC-AGG-ID: p5jhmzO0NS2W1Zp9RXPLxA_1739786811
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38f338525e1so864068f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:06:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739786811; x=1740391611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7uYWhEd1/c+mNMCq30U6Kc7sDjWCoVhIrgohc+6hGoc=;
+        b=NwD2yZhCgayRg2PGvQULpeGXpIGKo+EkxxB58SzaHBKMzVLai4G0MJ8efB08HMfRIN
+         THWq9KGwhiDXYAY5tSOqwaS9O98f1uM029w3mokw9XJ4vpaP4ypoLiHa+CixtN/MwoRd
+         lqbbLjr2FKrH5cgOXjD1xbwas/+IuswrlUo0LYyvSCXWG+RzokxB4DSjmKyDG2Skzbmt
+         XYbTDw2UGNozJgYJeBv2MSh+umUfjCk6/XF5wAFDs+Zk7GjFgKEo0KFYh/RyV+1s/zYU
+         XvSuYPYYIjkVVHM1z50hr9yNt7eQoMXtzV6CTmS48HAaFGl9v+sSCl5t8dO/eXWd4skC
+         XIjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbbWLAH1X4lKycAvxHPrnEn8JVpnoXfKTqgkvGLijqC8kQmJo9qJozyPyRlFtv/dl7AA0voSIgV5KW8nU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwERwphkM8dAsfQVmvH0CfIWjaMQpkemKHNRfUW/55447wgnyaU
+	DxuSWbkJilEFqA7YjqT2lBIXePtQVPHYY3DUtCyq0SEKRIpzxQ89i+voF1JXAekJwES05adSkLb
+	FknTtMIJD56ZUXRG0juFOsgW8S9VaRhL/+wlsbXnGX7s9agw0Z75bXY6MVA05zvgHGmwxIbn7
+X-Gm-Gg: ASbGncvPq+b45i+T/tXUP0Sck3l/S0d2cB0e1KjsRgHD4yikc+Kzdn8D2lEtH8tukoc
+	QYNqt3lR+mvAMQdiNpPuV7eQJm1E96JWSO7Zvk48R+k0rNs6PZv6vkd9lqRx8Z+8mxRRCfmJLBV
+	QWsiZZRYDlwpy/h3Qs4MckNXEo8yyl8+BSOLhh2Soo1zTTtluJJEeOmiFFj0gV9pyeBhODbiDiZ
+	s/o8fwGKI17Awf5ZXLEUzy8Fx7JO3VbEYsVQIw9xVFFzM70jSVl36or5OZ3BSFfOtaP72QfCee+
+	gDlhTnjNCOwhpwzMml/F63+3N6b+DRR+KZNGY/o/RhkpqmytgRcq
+X-Received: by 2002:a05:6000:4025:b0:38f:4176:7c25 with SMTP id ffacd0b85a97d-38f41768063mr2940023f8f.2.1739786810971;
+        Mon, 17 Feb 2025 02:06:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF17aX5wN9RpvCFSTEz6ASI7aS8LQfB/Yvz3pfn6bQCqV1ymw293EC3qwrkdzNkvfNshhjdBA==
+X-Received: by 2002:a05:6000:4025:b0:38f:4176:7c25 with SMTP id ffacd0b85a97d-38f41768063mr2939994f8f.2.1739786810613;
+        Mon, 17 Feb 2025 02:06:50 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc50sm12020780f8f.34.2025.02.17.02.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 02:06:49 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
+Date: Mon, 17 Feb 2025 11:06:43 +0100
+Message-ID: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,102 +95,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Nisoc6HnoD0j1Gl5QcbaBTgUpqRHKjHX
-X-Proofpoint-ORIG-GUID: Nisoc6HnoD0j1Gl5QcbaBTgUpqRHKjHX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=888
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170088
 
-The vfio-ccw driver and the vfio parent device provided by it (parent)
-support just a single mdev_type, and this is not likely to change any
-time soon. To match the mdev interfaces nicely initially the choice was
-made that mdev_types (which gets passed into mdev_register_parent())
-shall be an array of pointers to struct mdev_type with a single element,
-and to make things worse it ended up being the last member.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Now the problem with that is that before C99 the usual way to get
-something similar to a flexible array member was to use a trailing array
-of size 0 or 1. This is what I called fake flex array. For a while now
-the community is trying to get rid of fake flex arrays. And while
-mdev_types was not a fake flex array but an array of size one, because
-it can easily be and probably was mistaken for a fake flex array it got
-converted into a real C99 flex array with a compile time known constant
-size of one.
+Commit db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory") adds
+a file entry to the non-existing file scripts/test_fortify.sh. Probably,
+this entry intends to refer to ./lib/test_fortify/test_fortify.sh, though.
+As that file is already covered by the entry lib/test_fortify/*, there is
+no need for a separate file entry. So, drop the unnecessary file entry to
+the test_fortify script.
 
-As per [1] it was established that "only fake flexible arrays should be
-transformed into C99 flex-array members". Since IMHO the entire point of
-flex arrays is being flexible about the array size at run time, a C99
-flex array is a poor fit for mdev_types.  But an array of a size one is
-a poor fit as well for the reason stated above, let us try to get rid of
-the flex array without introducing back the one sized array.
+Further, this commit misses to adjust the entry referring to
+lib/usercopy_kunit.c, which is moved to lib/tests. So, also adjust that
+file entry.
 
-So, lets make mdev_types a pointer to struct mdev_type and pass in the
-address of that pointer as the 4th formal parameter of
-mdev_register_parent().
+Fixes: db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory")
 
-[1] https://lore.kernel.org/lkml/85863d7a-2d8b-4c1b-b76a-e2f40834a7a8@embeddedor.com/
-
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-Tested-by: Eric Farman <farman@linux.ibm.com>
-
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I've also considered switching up the order in which the members
-mdev_types and mdev_type are defined in struct vfio_ccw_parent but
-decided against that because that could look to somebody like
-well known mistake that can be made when using fake flex arrays.
----
- drivers/s390/cio/vfio_ccw_drv.c     | 6 +++---
- drivers/s390/cio/vfio_ccw_private.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index 914dde041675..6ff5c9cfb7ed 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -171,7 +171,7 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
- 		return -ENODEV;
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 53cf3cbf33c9..15632a34b740 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9070,7 +9070,6 @@ F:	include/linux/fortify-string.h
+ F:	lib/test_fortify/*
+ F:	lib/tests/fortify_kunit.c
+ F:	lib/tests/memcpy_kunit.c
+-F:	scripts/test_fortify.sh
+ K:	\bunsafe_memcpy\b
+ K:	\b__NO_FORTIFY\b
  
--	parent = kzalloc(struct_size(parent, mdev_types, 1), GFP_KERNEL);
-+	parent = kzalloc(sizeof(*parent), GFP_KERNEL);
- 	if (!parent)
- 		return -ENOMEM;
- 
-@@ -186,10 +186,10 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
- 
- 	parent->mdev_type.sysfs_name = "io";
- 	parent->mdev_type.pretty_name = "I/O subchannel (Non-QDIO)";
--	parent->mdev_types[0] = &parent->mdev_type;
-+	parent->mdev_types = &parent->mdev_type;
- 	ret = mdev_register_parent(&parent->parent, &sch->dev,
- 				   &vfio_ccw_mdev_driver,
--				   parent->mdev_types, 1);
-+				   &parent->mdev_types, 1);
- 	if (ret)
- 		goto out_unreg;
- 
-diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
-index b62bbc5c6376..0501d4bbcdbd 100644
---- a/drivers/s390/cio/vfio_ccw_private.h
-+++ b/drivers/s390/cio/vfio_ccw_private.h
-@@ -79,7 +79,7 @@ struct vfio_ccw_parent {
- 
- 	struct mdev_parent	parent;
- 	struct mdev_type	mdev_type;
--	struct mdev_type	*mdev_types[];
-+	struct mdev_type	*mdev_types;
- };
- 
- /**
+@@ -12613,7 +12612,7 @@ F:	arch/*/configs/hardening.config
+ F:	include/linux/overflow.h
+ F:	include/linux/randomize_kstack.h
+ F:	kernel/configs/hardening.config
+-F:	lib/usercopy_kunit.c
++F:	lib/tests/usercopy_kunit.c
+ F:	mm/usercopy.c
+ F:	security/Kconfig.hardening
+ K:	\b(add|choose)_random_kstack_offset\b
 -- 
-2.45.2
+2.48.1
 
 
