@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-517947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B395BA387DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:43:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AF8A387D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9E23B5D28
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81243173DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7622822756A;
-	Mon, 17 Feb 2025 15:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6041422757F;
+	Mon, 17 Feb 2025 15:39:46 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618EC226865
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AEF226888
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806785; cv=none; b=RDd7U3FYsz0UTLsHDPxvSOlU1SWFzlqTzbGIhvyy6ngH2SUzrNZegeWH8pvKGqdqzHRQk5w8edPNl05PIxD9AS/fyryRnUMBjnjESVXpwaPPnu3hRr9Xj82MFoIsxirqyIvASjVTuXFTEyeK7cHxjAEDEgzHC0HvVRWVCTGmAVM=
+	t=1739806786; cv=none; b=rfaDWpdczVUw0cQ4T2LRsV96zZQI8hBmc8V0NZu6IPMbukI9vVbnVGo+8Ssmb1F3fdvDLhHGF7CDLr5XVsIaGxodHPrLfCY7A6A+EgWIr/NuFHd9lDXcLIfyZ1TDjAw/fPYIsN64uZff997aIePUgsmcxqbW9y28il8V9G6drdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806785; c=relaxed/simple;
-	bh=uPUgv0mLk6mKXfHHZQoNabuM20DP7Tz7q35RqzDweLQ=;
+	s=arc-20240116; t=1739806786; c=relaxed/simple;
+	bh=a+m7Jcn3/5rOXkUlDE7zE4WFeovCOPzxO6ncEsdu46s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=HXM6VA+GrY8gYpH+e2iMb+a9ufYAxe8bFYza33fF4m71KccOFWA/SMjs7lh2V6GEby2PtJoEU/ohgmzexGWeLAUsNtTkfC1RLEIy1AD9rXE4GDzTe9++N1OYAvyMwEXvGJvkV7ADcUxZ6zntqpPYAi2tVNI/utYSvxQkq7b2P2w=
+	 In-Reply-To:To; b=VVnsZcUhWyKgqVdJKvbBCjvIarYm00h8S4f6Z4YdK3mCRe3Q6rhM6XCKQ6UpSiUHQDHR9Yvaial8MH15Za4HngF3JDlIX4RM2MK/KYJWyHXGdxJIAZq3mCflPUObEu4RS/mqo8mMnPu1QsPbUSQAAJhCZ7xGNnKwlUFzy8T62O0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60D17152B;
-	Mon, 17 Feb 2025 07:40:02 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6731D1063;
+	Mon, 17 Feb 2025 07:40:03 -0800 (PST)
 Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CADB3F6A8;
-	Mon, 17 Feb 2025 07:39:42 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 832F23F6A8;
+	Mon, 17 Feb 2025 07:39:43 -0800 (PST)
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Feb 2025 15:38:55 +0000
-Subject: [PATCH v3 14/19] firmware: arm_ffa: Refactoring to prepare for
- framework notification support
+Date: Mon, 17 Feb 2025 15:38:56 +0000
+Subject: [PATCH v3 15/19] firmware: arm_ffa: Stash ffa_device instead of
+ notify_type in notifier_cb_info
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,168 +44,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-ffa_updates-v3-14-bd1d9de615e7@arm.com>
+Message-Id: <20250217-ffa_updates-v3-15-bd1d9de615e7@arm.com>
 References: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 In-Reply-To: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4846; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=uPUgv0mLk6mKXfHHZQoNabuM20DP7Tz7q35RqzDweLQ=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gvD8PSV3+oN/oLts63Djl+9M8FM/+AD4Tm4
- RUvVdWfSM+JAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLwAKCRAAQbq8MX7i
- mCZzEAC11Ij+667T8JKp6Kyu6monTKkZrfb3AWWtDbtEje5z0cOlnp1MZsCtbCv2VCOuS1BFr8z
- 3QAstRQ9c9sxuqufHmJi8qzAk5qvGVpyBi7V3fE6yc7vqWhw27AkLxTaQ2EabDhSJ4vv8lr6jbh
- DB2Xu771Vfxc6gzOsKA3yfbuZsNubgCHiGAcEzmaI5OHqRzhXtsuxTnPMVNKRczfAn06WC3iMQX
- EXxfrVu7A0h1ZH0Dn35iUbw+Ik1uUFU1srjbYjRL9XLQAlQXEC1/BcqAcDZ8UJGjRsvGFRhspFP
- ggWvcJw1h09vJMlcEsOef+r1tLoQA6T8YjmOqrK3YeWCWGhjoDBznZuO6kA/fBEWuSSh660uk02
- oqFiEDVUYWTnDAutSnCtbKeULjeFKhXEF3+F9e2+SFEAGHEdrVTERpsLE8xxLMFhlAEMnH87KiS
- 3bJn+DVRQVQeqzBAs2TbAFWihsv864XltAXLYhe4ahxfjsyuQWuqtL6N7lhMF18D/Gnwn8Ph2Hm
- r7FXMVd7nuv7CqxUolOOtmvF+q7SeUHn+RjB4JimCxs9LE9eH9UrGeES94HhntMKc243wjUkIfE
- lRepaxWUjglAtzPqHavoU3nALbJXR/t0/e9rY07oaWL/PbM4PHCbougw/UF3B3dr9dvGGJTLLll
- kvDIxl0L4JOkhqw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3541; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=a+m7Jcn3/5rOXkUlDE7zE4WFeovCOPzxO6ncEsdu46s=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gvxHscpAJVylxg3E1rCxo/gAykEC9AxaQ4z
+ GS5AInoSeWJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLwAKCRAAQbq8MX7i
+ mMhtEACupYnhbABfRgAxOCIJthXbvk3V50VSPi3g8KQTIZwbypXqE5qWfBx+h9MM3j0AhJo1wzL
+ e5Uw2G6k4bf+hh/X15ck5WKRLvsRALiDAhJo/PDd+g7/MD0zpFqcziJf9MLbA1zjXmydB0D9YKn
+ AKFFDVh66J4BMHNKgJggC7xM+VjL3ipmixLruOX1UBENUkQY6rxwYl5bJ4/LAeFHXNWh85XYi5t
+ BDyxdKci1QqmWhL9dq09vjytFTIsX/AvdmLe0BsrA8aytCfoqgZVICkcdKELQvYlJQuXogiYusO
+ 0iPApcNZ21A37xIYxJbl6xnUhmREDtDYFhkqR5rD8Jjl2MkzyWdLYLs9GmrenFJBs7BGovb/WQu
+ kYNYR86C/LL6ZKAbzzKrnmOiw0WKcf8460R4w+ZXEfVWHmecC0i2PZH/A9/2uoxZJF2vONc7Tbi
+ pYLJl8HkqkFQk68aoTBqPsPbnhqQ0GTHKp6sGC4MILHZQaGhPF/LJWPbtqJ9R91NFXgB/5AWvoC
+ jBnTao4tfQNep8mYTZhP6JJIH0yuj+FEXyJWYinL5WO/9NrVXI9uqLqJz3Rmqs/KwLK3aMPWerE
+ LGvP7b5hQQQ/I4ofvKzn8c7SQnPfSOI/fE0170p35Pd22j2K0ZfuXjUEEeUo95D3UzcWrlPcGHb
+ cQ8bhRJuIEgOZzg==
 X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
  fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-Currently, the framework notifications are not supported at all.
-handle_notif_callbacks() doesn't handle them though it is called with
-framework bitmap. Make that explicit by adding checks for the same.
+Currently, we store the type of the notification in the notifier_cb_info
+structure that is put into the hast list to identify if the notification
+block is for the secure partition or the non secure VM.
 
-Also, we need to further classify the framework notifications as Secure
-Partition Manager(SPM) and NonSecure Hypervisor(NS_HYP). Extend/change
-notify_type enumeration to accommodate all the 4 type and rejig the
-values so that it can be reused in the bitmap enable mask macros.
-
-While at this, move ffa_notify_type_get() so that it can be used in
-notifier_hash_node_get() in the future.
-
-No functional change.
+In order to support framework notifications to reuse the hash list and
+to avoid creating one for each time, we need store the ffa_device pointer
+itself as the same notification ID in framework notifications can be
+registered by multiple FF-A devices.
 
 Tested-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_ffa/driver.c | 57 +++++++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 23 deletions(-)
+ drivers/firmware/arm_ffa/driver.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index 43e033edd6c7cd16322c204e882a84cfe45abbba..0abbf08bc8d39c701947366bdf9c8fac8e64cf64 100644
+index 0abbf08bc8d39c701947366bdf9c8fac8e64cf64..5863272f45d9c075d8e86d45a90ac6b1fb743c98 100644
 --- a/drivers/firmware/arm_ffa/driver.c
 +++ b/drivers/firmware/arm_ffa/driver.c
-@@ -807,6 +807,13 @@ static int ffa_notification_bitmap_destroy(void)
- 	return 0;
- }
+@@ -1116,9 +1116,9 @@ static int ffa_memory_lend(struct ffa_mem_ops_args *args)
  
-+enum notify_type {
-+	SECURE_PARTITION,
-+	NON_SECURE_VM,
-+	SPM_FRAMEWORK,
-+	NS_HYP_FRAMEWORK,
-+};
-+
- #define NOTIFICATION_LOW_MASK		GENMASK(31, 0)
- #define NOTIFICATION_HIGH_MASK		GENMASK(63, 32)
- #define NOTIFICATION_BITMAP_HIGH(x)	\
-@@ -830,10 +837,17 @@ static int ffa_notification_bitmap_destroy(void)
- #define MAX_IDS_32				10
- 
- #define PER_VCPU_NOTIFICATION_FLAG		BIT(0)
--#define SECURE_PARTITION_BITMAP			BIT(0)
--#define NON_SECURE_VM_BITMAP			BIT(1)
--#define SPM_FRAMEWORK_BITMAP			BIT(2)
--#define NS_HYP_FRAMEWORK_BITMAP			BIT(3)
-+#define SECURE_PARTITION_BITMAP_ENABLE		BIT(SECURE_PARTITION)
-+#define NON_SECURE_VM_BITMAP_ENABLE		BIT(NON_SECURE_VM)
-+#define SPM_FRAMEWORK_BITMAP_ENABLE		BIT(SPM_FRAMEWORK)
-+#define NS_HYP_FRAMEWORK_BITMAP_ENABLE		BIT(NS_HYP_FRAMEWORK)
-+#define FFA_BITMAP_ENABLE_MASK			\
-+	(SECURE_PARTITION_BITMAP_ENABLE | SPM_FRAMEWORK_BITMAP_ENABLE)
-+
-+#define FFA_SECURE_PARTITION_ID_FLAG		BIT(15)
-+
-+#define SPM_FRAMEWORK_BITMAP(x)			NOTIFICATION_BITMAP_LOW(x)
-+#define NS_HYP_FRAMEWORK_BITMAP(x)		NOTIFICATION_BITMAP_HIGH(x)
- 
- static int ffa_notification_bind_common(u16 dst_id, u64 bitmap,
- 					u32 flags, bool is_bind)
-@@ -1098,16 +1112,8 @@ static int ffa_memory_lend(struct ffa_mem_ops_args *args)
- 	return ffa_memory_ops(FFA_MEM_LEND, args);
- }
- 
--#define FFA_SECURE_PARTITION_ID_FLAG	BIT(15)
--
- #define ffa_notifications_disabled()	(!drv_info->notif_enabled)
- 
--enum notify_type {
--	NON_SECURE_VM,
--	SECURE_PARTITION,
--	FRAMEWORK,
--};
--
  struct notifier_cb_info {
  	struct hlist_node hnode;
++	struct ffa_device *dev;
  	ffa_notifier_cb cb;
-@@ -1166,6 +1172,14 @@ static int ffa_notification_unbind(u16 dst_id, u64 bitmap)
- 	return ffa_notification_bind_common(dst_id, bitmap, 0, false);
+ 	void *cb_data;
+-	enum notify_type type;
+ };
+ 
+ static int ffa_sched_recv_cb_update(u16 part_id, ffa_sched_recv_cb callback,
+@@ -1187,17 +1187,18 @@ notifier_hash_node_get(u16 notify_id, enum notify_type type)
+ 	struct notifier_cb_info *node;
+ 
+ 	hash_for_each_possible(drv_info->notifier_hash, node, hnode, notify_id)
+-		if (type == node->type)
++		if (type == ffa_notify_type_get(node->dev->vm_id))
+ 			return node;
+ 
+ 	return NULL;
  }
  
-+static enum notify_type ffa_notify_type_get(u16 vm_id)
-+{
-+	if (vm_id & FFA_SECURE_PARTITION_ID_FLAG)
-+		return SECURE_PARTITION;
-+	else
-+		return NON_SECURE_VM;
-+}
-+
- /* Should be called while the notify_lock is taken */
- static struct notifier_cb_info *
- notifier_hash_node_get(u16 notify_id, enum notify_type type)
-@@ -1209,14 +1223,6 @@ update_notifier_cb(int notify_id, enum notify_type type, ffa_notifier_cb cb,
- 	return 0;
- }
+ static int
+-update_notifier_cb(int notify_id, enum notify_type type, ffa_notifier_cb cb,
++update_notifier_cb(struct ffa_device *dev, int notify_id, ffa_notifier_cb cb,
+ 		   void *cb_data, bool is_registration)
+ {
+ 	struct notifier_cb_info *cb_info = NULL;
++	enum notify_type type = ffa_notify_type_get(dev->vm_id);
+ 	bool cb_found;
  
--static enum notify_type ffa_notify_type_get(u16 vm_id)
--{
--	if (vm_id & FFA_SECURE_PARTITION_ID_FLAG)
--		return SECURE_PARTITION;
--	else
--		return NON_SECURE_VM;
--}
--
+ 	cb_info = notifier_hash_node_get(notify_id, type);
+@@ -1211,7 +1212,7 @@ update_notifier_cb(int notify_id, enum notify_type type, ffa_notifier_cb cb,
+ 		if (!cb_info)
+ 			return -ENOMEM;
+ 
+-		cb_info->type = type;
++		cb_info->dev = dev;
+ 		cb_info->cb = cb;
+ 		cb_info->cb_data = cb_data;
+ 
+@@ -1226,7 +1227,6 @@ update_notifier_cb(int notify_id, enum notify_type type, ffa_notifier_cb cb,
  static int ffa_notify_relinquish(struct ffa_device *dev, int notify_id)
  {
  	int rc;
-@@ -1299,6 +1305,9 @@ static void handle_notif_callbacks(u64 bitmap, enum notify_type type)
- 	int notify_id;
- 	struct notifier_cb_info *cb_info = NULL;
+-	enum notify_type type = ffa_notify_type_get(dev->vm_id);
  
-+	if (type == SPM_FRAMEWORK || type == NS_HYP_FRAMEWORK)
-+		return;
-+
- 	for (notify_id = 0; notify_id <= FFA_MAX_NOTIFICATIONS && bitmap;
- 	     notify_id++, bitmap >>= 1) {
- 		if (!(bitmap & 1))
-@@ -1318,16 +1327,18 @@ static void notif_get_and_handle(void *unused)
- 	int rc;
- 	struct ffa_notify_bitmaps bitmaps;
+ 	if (ffa_notifications_disabled())
+ 		return -EOPNOTSUPP;
+@@ -1236,7 +1236,7 @@ static int ffa_notify_relinquish(struct ffa_device *dev, int notify_id)
  
--	rc = ffa_notification_get(SECURE_PARTITION_BITMAP |
--				  SPM_FRAMEWORK_BITMAP, &bitmaps);
-+	rc = ffa_notification_get(FFA_BITMAP_ENABLE_MASK, &bitmaps);
+ 	mutex_lock(&drv_info->notify_lock);
+ 
+-	rc = update_notifier_cb(notify_id, type, NULL, NULL, false);
++	rc = update_notifier_cb(dev, notify_id, NULL, NULL, false);
  	if (rc) {
- 		pr_err("Failed to retrieve notifications with %d!\n", rc);
- 		return;
+ 		pr_err("Could not unregister notification callback\n");
+ 		mutex_unlock(&drv_info->notify_lock);
+@@ -1255,7 +1255,6 @@ static int ffa_notify_request(struct ffa_device *dev, bool is_per_vcpu,
+ {
+ 	int rc;
+ 	u32 flags = 0;
+-	enum notify_type type = ffa_notify_type_get(dev->vm_id);
+ 
+ 	if (ffa_notifications_disabled())
+ 		return -EOPNOTSUPP;
+@@ -1274,7 +1273,7 @@ static int ffa_notify_request(struct ffa_device *dev, bool is_per_vcpu,
+ 		return rc;
  	}
  
-+	handle_notif_callbacks(SPM_FRAMEWORK_BITMAP(bitmaps.arch_map),
-+			       SPM_FRAMEWORK);
-+	handle_notif_callbacks(NS_HYP_FRAMEWORK_BITMAP(bitmaps.arch_map),
-+			       NS_HYP_FRAMEWORK);
- 	handle_notif_callbacks(bitmaps.vm_map, NON_SECURE_VM);
- 	handle_notif_callbacks(bitmaps.sp_map, SECURE_PARTITION);
--	handle_notif_callbacks(bitmaps.arch_map, FRAMEWORK);
- }
- 
- static void
+-	rc = update_notifier_cb(notify_id, type, cb, cb_data, true);
++	rc = update_notifier_cb(dev, notify_id, cb, cb_data, true);
+ 	if (rc) {
+ 		pr_err("Failed to register callback for %d - %d\n",
+ 		       notify_id, rc);
 
 -- 
 2.34.1
