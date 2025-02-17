@@ -1,607 +1,202 @@
-Return-Path: <linux-kernel+bounces-517241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E06A37E1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3941BA37E1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9835188EA9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3A9188D4D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55D61A76D4;
-	Mon, 17 Feb 2025 09:11:32 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E531A4AAA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF53C1A8403;
+	Mon, 17 Feb 2025 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZbbQQmyg"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3171AA1C8
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739783492; cv=none; b=DV2fEqUxguZXlTKY6n2I8HjJXB3WdY6WcEEfgvCIndwW5dV/ETFRxXhGEiLUMkaXFuvS/mM82/HlpiGcm0ci8PLrSjO4mscNTwB2EJVo6SJjH+tM9+73/4Q2uZdAERxRpiS4o/z6TZFBO5eTlJ3YR89vwrOmoraohCKBciVSr8M=
+	t=1739783511; cv=none; b=DwsZk4T1xZpduezSApiE0xNJ74pre8TM2LbdZsJpGwf6vvk/1MwmDoYrnWaMPiriyVv34qYhH8OMcRz+cA6wC6ggmizBcFMEHKiEiCEvGK0HHSTvSMzwbqeV8UWv78A5Ippa3b6yer9jbct0a7y0h7849gHP7Zr+F0RUZM0VAMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739783492; c=relaxed/simple;
-	bh=zZikJWfPdEMiq5MukwQLOEi8g93mbIb/2HZCjPQlDtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bRS7NHsY61Ptzt/cMV/0Ai7kCTBkIMwdk41y3pWMDmUkTrX11R8QwSknnGCkJgxE7/X6OrXwPVkpqE78UATwcZlQIYUp2FvtD+SRccnTDRB/K0DYx7iFISuYYCy3b+amg8d+zgkXG/QF9vuseH8rBLM1FGPuccOd3I+CxHscvko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 6B31472C97D;
-	Mon, 17 Feb 2025 12:11:28 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id 49E5C7CCB3A; Mon, 17 Feb 2025 11:11:28 +0200 (IST)
-Date: Mon, 17 Feb 2025 11:11:28 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Alexey Gladkov <legion@kernel.org>,
-	Eugene Syromyatnikov <evgsyr@gmail.com>,
-	Mike Frysinger <vapier@gentoo.org>,
-	Renzo Davoli <renzo@cs.unibo.it>,
-	Davide Berardi <berardi.dav@gmail.com>,
-	strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/6] selftests/ptrace: add a test case for
- PTRACE_SET_SYSCALL_INFO
-Message-ID: <20250217091127.GG18175@strace.io>
+	s=arc-20240116; t=1739783511; c=relaxed/simple;
+	bh=Yeiz2kj64kEbfNbt5aYOJ/jGd8dP6KZ2dsWH1WXTr3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DSV8BkGjcI+3vUrgMpL6oLzDGuzgKiGfgH+80oocFX39GNIy1H72QU/02B2e0zPJtw0bxmV6ZoKrZHQWevwTZRYUJab/RwA7NImMYhgk0TYQ/ImDezgpdZaye2Azf2g3bfEWDWCkO7CpTkvlXIzxkndZ8UwqNKBZOrcrlbaTj2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZbbQQmyg; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abb8e405640so150840966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:11:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739783508; x=1740388308; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AYoZrFVwEGY8opk8QO/5pLPuklVAIKXU/foFnheb5eQ=;
+        b=ZbbQQmygWQx2e0hy6mI60EeRPBPR5AugsyozbiN1USnGevfCleVm2jA6fTIrGrPj4t
+         7w9CJNsIrFV4wwY/NhPy6FFKIGWyOpTwzhvHioe4wFjmeen5jLiqOQRKL99KFeBauw0G
+         pGvwlU3wM2TzDSiIBNKCh/0ulBAFJO1IgXZedBvARPe5Y2yvPwVpBQpkh5EO8OX9Ca6k
+         Gn/616eWMYZVsN7tITQfo+fZIU+EO6TyD3n1KH03QfMs7UEr7/zHq1IjhRoAIeQnjhAx
+         RxFzJ70RB4hZO4wje8wDOJJfHRGZKEUkZNknIvLxUqzFGI4jrrmv7IA9xDHm497jRuLM
+         gpsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739783508; x=1740388308;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AYoZrFVwEGY8opk8QO/5pLPuklVAIKXU/foFnheb5eQ=;
+        b=ldyZxdM/+39t3aOe8ulOYZhxxtbgodUm5DzU9vBDDcn81fZjy51ZciN4P1Un14NNVD
+         tMtsOH5vBakRNPG2FA89dkGSLDwL5G8nlvELcc8KV/msD2hgS3LCWGZrQjTNua55vf/5
+         ntaGM7Vm3gro4tKCkrnoOA6vBsnJoM2C7rlAJA7h1U//oTozomyywFeGCFw0ugJHc7oW
+         2nE+ZtkWTWJdUQFeaBoYiao1BHnN96mXvGDQnCVV4R/grVy7gERupfmdRp15jcU+OC1e
+         bZOpHIRLgfKfKMog/zCoPgG/y8aqGNY+mK9ej6vwY8bV+Gbym6R9OqBfxwxARtPHIMSu
+         JavQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtX7mIzb3yxk0aqjbhfeeZvIZUXd8ifylnMFH7TUgruyMazR9vnXLnkD9LnNq7rus+1KH4W+btFF9rTSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyBmpOHY5i/OIZJIiabpenNtNvHV9ZFBE5Y1KinzZSNzYdyA4s
+	lM5fd6S6aToK/9EuRcJlrOIklesZv8nOntSc7y7MjQPDDQcMiuMPcfazRr4XXqc=
+X-Gm-Gg: ASbGncu8j0a9Ly1Qbn4j5XlYoVUlLmZE8jvnVSl/xmNX6NcQ9r25Bz2o9BhUg61HkOJ
+	ZtB5yMtqNPcle99oKo81BCWz4WIaC80eqBSLDHuoUMa71hUgW6K4eWqKP/afVQZhcRVsIKNTpMP
+	3wvbJsVKZEgBVLjSMpHDIlahPClrHO8oJMyrbdhJEG4KGopxxDC5w2JRS7tNEfVRddXInZOq6OI
+	U79YKxyzSNqieRiua9LHpD5pvMDqMSJfL8Dcp5Jbow6JJeks4OuFnGACBY66RpVCJZ7aF1PJ2Jr
+	Z2MSuKqcE5A2NmOexmNRBbc=
+X-Google-Smtp-Source: AGHT+IH0ZSgjgJTIia6iqC6h5c4cn2rdeaWssWndx+F3YgQmZCBCBDS670k/uUUFdqaubd4pzdmRhg==
+X-Received: by 2002:a17:907:7842:b0:ab7:cfe7:116f with SMTP id a640c23a62f3a-abb70d96544mr908000266b.46.1739783507597;
+        Mon, 17 Feb 2025 01:11:47 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.25])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9b81aacdsm162495766b.104.2025.02.17.01.11.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 01:11:47 -0800 (PST)
+Message-ID: <a1dff4af-d771-4424-869f-15d3b6bca013@tuxon.dev>
+Date: Mon, 17 Feb 2025 11:11:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217090834.GA18175@strace.io>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: at91: Split up per SoC
+ partially
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Ryan Wanner <ryan.wanner@microchip.com>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20250210164506.495747-1-ada@thorsis.com>
+ <20250210164506.495747-2-ada@thorsis.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250210164506.495747-2-ada@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Check whether PTRACE_SET_SYSCALL_INFO semantics implemented in the
-kernel matches userspace expectations.
+Hi, Alexander,
 
-Signed-off-by: Dmitry V. Levin <ldv@strace.io>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
----
- tools/testing/selftests/ptrace/Makefile       |   2 +-
- .../selftests/ptrace/set_syscall_info.c       | 519 ++++++++++++++++++
- 2 files changed, 520 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/ptrace/set_syscall_info.c
+On 10.02.2025 18:44, Alexander Dahl wrote:
+> Before adding even more new indexes creating more holes in the
+> clk at91 drivers pmc_data->chws arrays, split this up.
+> 
+> This is a partial split up only for SoCs affected by upcoming changes
+> and by that PMC_MAIN + x hack, others could follow by the same scheme.
+> 
+> Binding splitup was proposed for several reasons:
+> 
+> 1) keep the driver code simple, readable, and efficient
+> 2) avoid accidental array index duplication
+> 3) avoid memory waste by creating more and more unused array members.
+> 
+> Old values are kept to not break dts, and to maintain dt ABI.
+> 
+> Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+> 
+> Notes:
+>     v2:
+>     - new patch, not present in v1
+> 
+>  .../dt-bindings/clock/microchip,sam9x60-pmc.h | 19 +++++++++++
+>  .../dt-bindings/clock/microchip,sam9x7-pmc.h  | 25 +++++++++++++++
+>  .../clock/microchip,sama7d65-pmc.h            | 32 +++++++++++++++++++
+>  .../dt-bindings/clock/microchip,sama7g5-pmc.h | 24 ++++++++++++++
+>  4 files changed, 100 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/microchip,sam9x60-pmc.h
+>  create mode 100644 include/dt-bindings/clock/microchip,sam9x7-pmc.h
+>  create mode 100644 include/dt-bindings/clock/microchip,sama7d65-pmc.h
+>  create mode 100644 include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> 
 
-diff --git a/tools/testing/selftests/ptrace/Makefile b/tools/testing/selftests/ptrace/Makefile
-index 1c631740a730..c5e0b76ba6ac 100644
---- a/tools/testing/selftests/ptrace/Makefile
-+++ b/tools/testing/selftests/ptrace/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -std=c99 -pthread -Wall $(KHDR_INCLUDES)
- 
--TEST_GEN_PROGS := get_syscall_info peeksiginfo vmaccess get_set_sud
-+TEST_GEN_PROGS := get_syscall_info set_syscall_info peeksiginfo vmaccess get_set_sud
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/ptrace/set_syscall_info.c b/tools/testing/selftests/ptrace/set_syscall_info.c
-new file mode 100644
-index 000000000000..4198248ef874
---- /dev/null
-+++ b/tools/testing/selftests/ptrace/set_syscall_info.c
-@@ -0,0 +1,519 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2018-2025 Dmitry V. Levin <ldv@strace.io>
-+ * All rights reserved.
-+ *
-+ * Check whether PTRACE_SET_SYSCALL_INFO semantics implemented in the kernel
-+ * matches userspace expectations.
-+ */
-+
-+#include "../kselftest_harness.h"
-+#include <err.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <asm/unistd.h>
-+#include <linux/types.h>
-+#include <linux/ptrace.h>
-+
-+#if defined(_MIPS_SIM) && _MIPS_SIM == _MIPS_SIM_NABI32
-+/*
-+ * MIPS N32 is the only architecture where __kernel_ulong_t
-+ * does not match the bitness of syscall arguments.
-+ */
-+typedef unsigned long long kernel_ulong_t;
-+#else
-+typedef __kernel_ulong_t kernel_ulong_t;
-+#endif
-+
-+struct si_entry {
-+	int nr;
-+	kernel_ulong_t args[6];
-+};
-+struct si_exit {
-+	unsigned int is_error;
-+	int rval;
-+};
-+
-+static unsigned int ptrace_stop;
-+static pid_t tracee_pid;
-+
-+static int
-+kill_tracee(pid_t pid)
-+{
-+	if (!pid)
-+		return 0;
-+
-+	int saved_errno = errno;
-+
-+	int rc = kill(pid, SIGKILL);
-+
-+	errno = saved_errno;
-+	return rc;
-+}
-+
-+static long
-+sys_ptrace(int request, pid_t pid, unsigned long addr, unsigned long data)
-+{
-+	return syscall(__NR_ptrace, request, pid, addr, data);
-+}
-+
-+#define LOG_KILL_TRACEE(fmt, ...)				\
-+	do {							\
-+		kill_tracee(tracee_pid);			\
-+		TH_LOG("wait #%d: " fmt,			\
-+		       ptrace_stop, ##__VA_ARGS__);		\
-+	} while (0)
-+
-+static void
-+check_psi_entry(struct __test_metadata *_metadata,
-+		const struct ptrace_syscall_info *info,
-+		const struct si_entry *exp_entry,
-+		const char *text)
-+{
-+	unsigned int i;
-+	int exp_nr = exp_entry->nr;
-+#if defined __s390__ || defined __s390x__
-+	/* s390 is the only architecture that has 16-bit syscall numbers */
-+	exp_nr &= 0xffff;
-+#endif
-+
-+	ASSERT_EQ(PTRACE_SYSCALL_INFO_ENTRY, info->op) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->arch) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->instruction_pointer) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->stack_pointer) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_nr, info->entry.nr) {
-+		LOG_KILL_TRACEE("%s: syscall nr mismatch", text);
-+	}
-+	for (i = 0; i < ARRAY_SIZE(exp_entry->args); ++i) {
-+		ASSERT_EQ(exp_entry->args[i], info->entry.args[i]) {
-+			LOG_KILL_TRACEE("%s: syscall arg #%u mismatch",
-+					text, i);
-+		}
-+	}
-+}
-+
-+static void
-+check_psi_exit(struct __test_metadata *_metadata,
-+	       const struct ptrace_syscall_info *info,
-+	       const struct si_exit *exp_exit,
-+	       const char *text)
-+{
-+	ASSERT_EQ(PTRACE_SYSCALL_INFO_EXIT, info->op) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->arch) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->instruction_pointer) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->stack_pointer) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_exit->is_error, info->exit.is_error) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_exit->rval, info->exit.rval) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+}
-+
-+TEST(set_syscall_info)
-+{
-+	const pid_t tracer_pid = getpid();
-+	const kernel_ulong_t dummy[] = {
-+		(kernel_ulong_t) 0xdad0bef0bad0fed0ULL,
-+		(kernel_ulong_t) 0xdad1bef1bad1fed1ULL,
-+		(kernel_ulong_t) 0xdad2bef2bad2fed2ULL,
-+		(kernel_ulong_t) 0xdad3bef3bad3fed3ULL,
-+		(kernel_ulong_t) 0xdad4bef4bad4fed4ULL,
-+		(kernel_ulong_t) 0xdad5bef5bad5fed5ULL,
-+	};
-+	int splice_in[2], splice_out[2];
-+
-+	ASSERT_EQ(0, pipe(splice_in));
-+	ASSERT_EQ(0, pipe(splice_out));
-+	ASSERT_EQ(sizeof(dummy), write(splice_in[1], dummy, sizeof(dummy)));
-+
-+	const struct {
-+		struct si_entry entry[2];
-+		struct si_exit exit[2];
-+	} si[] = {
-+		/* change scno, keep non-error rval */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 0, tracer_pid }
-+			}
-+		},
-+
-+		/* set scno to -1, keep error rval */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					-1,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 1, -ENOSYS }, { 1, -ENOSYS }
-+			}
-+		},
-+
-+		/* keep scno, change non-error rval */
-+		{
-+			{
-+				{
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 0, tracer_pid + 1 }
-+			}
-+		},
-+
-+		/* change arg1, keep non-error rval */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						(uintptr_t) "",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_chdir,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, 0 }, { 0, 0 }
-+			}
-+		},
-+
-+		/* set scno to -1, change error rval to non-error */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					-1,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 1, -ENOSYS }, { 0, tracer_pid }
-+			}
-+		},
-+
-+		/* change scno, change non-error rval to error */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 1, -EISDIR }
-+			}
-+		},
-+
-+		/* change scno and all args, change non-error rval */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_splice,
-+					{
-+						splice_in[0], 0, splice_out[1], 0,
-+						sizeof(dummy), SPLICE_F_NONBLOCK
-+					}
-+				}
-+			}, {
-+				{ 0, sizeof(dummy) }, { 0, sizeof(dummy) + 1 }
-+			}
-+		},
-+
-+		/* change arg1, no exit stop */
-+		{
-+			{
-+				{
-+					__NR_exit_group,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_exit_group,
-+					{
-+						0, dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, 0 }, { 0, 0 }
-+			}
-+		},
-+	};
-+
-+	long rc;
-+	unsigned int i;
-+
-+	tracee_pid = fork();
-+
-+	ASSERT_LE(0, tracee_pid) {
-+		TH_LOG("fork: %m");
-+	}
-+
-+	if (tracee_pid == 0) {
-+		/* get the pid before PTRACE_TRACEME */
-+		tracee_pid = getpid();
-+		ASSERT_EQ(0, sys_ptrace(PTRACE_TRACEME, 0, 0, 0)) {
-+			TH_LOG("PTRACE_TRACEME: %m");
-+		}
-+		ASSERT_EQ(0, kill(tracee_pid, SIGSTOP)) {
-+			/* cannot happen */
-+			TH_LOG("kill SIGSTOP: %m");
-+		}
-+		for (i = 0; i < ARRAY_SIZE(si); ++i) {
-+			rc = syscall(si[i].entry[0].nr,
-+				     si[i].entry[0].args[0],
-+				     si[i].entry[0].args[1],
-+				     si[i].entry[0].args[2],
-+				     si[i].entry[0].args[3],
-+				     si[i].entry[0].args[4],
-+				     si[i].entry[0].args[5]);
-+			if (si[i].exit[1].is_error) {
-+				if (rc != -1 || errno != -si[i].exit[1].rval)
-+					break;
-+			} else {
-+				if (rc != si[i].exit[1].rval)
-+					break;
-+			}
-+		}
-+		/*
-+		 * Something went wrong, but in this state tracee
-+		 * cannot reliably issue syscalls, so just crash.
-+		 */
-+		*(volatile unsigned char *) (uintptr_t) i = 42;
-+		/* unreachable */
-+		_exit(i + 1);
-+	}
-+
-+	for (ptrace_stop = 0; ; ++ptrace_stop) {
-+		struct ptrace_syscall_info info = {
-+			.op = 0xff	/* invalid PTRACE_SYSCALL_INFO_* op */
-+		};
-+		const size_t size = sizeof(info);
-+		const int expected_entry_size =
-+			(void *) &info.entry.args[6] - (void *) &info;
-+		const int expected_exit_size =
-+			(void *) (&info.exit.is_error + 1) -
-+			(void *) &info;
-+		int status;
-+
-+		ASSERT_EQ(tracee_pid, wait(&status)) {
-+			/* cannot happen */
-+			LOG_KILL_TRACEE("wait: %m");
-+		}
-+		if (WIFEXITED(status)) {
-+			tracee_pid = 0;	/* the tracee is no more */
-+			ASSERT_EQ(0, WEXITSTATUS(status)) {
-+				LOG_KILL_TRACEE("unexpected exit status %u",
-+						WEXITSTATUS(status));
-+			}
-+			break;
-+		}
-+		ASSERT_FALSE(WIFSIGNALED(status)) {
-+			tracee_pid = 0;	/* the tracee is no more */
-+			LOG_KILL_TRACEE("unexpected signal %u",
-+					WTERMSIG(status));
-+		}
-+		ASSERT_TRUE(WIFSTOPPED(status)) {
-+			/* cannot happen */
-+			LOG_KILL_TRACEE("unexpected wait status %#x", status);
-+		}
-+
-+		ASSERT_LT(ptrace_stop, ARRAY_SIZE(si) * 2) {
-+			LOG_KILL_TRACEE("ptrace stop overflow");
-+		}
-+
-+		switch (WSTOPSIG(status)) {
-+		case SIGSTOP:
-+			ASSERT_EQ(0, ptrace_stop) {
-+				LOG_KILL_TRACEE("unexpected signal stop");
-+			}
-+			ASSERT_EQ(0, sys_ptrace(PTRACE_SETOPTIONS, tracee_pid,
-+						0, PTRACE_O_TRACESYSGOOD)) {
-+				LOG_KILL_TRACEE("PTRACE_SETOPTIONS: %m");
-+			}
-+			break;
-+
-+		case SIGTRAP | 0x80:
-+			ASSERT_LT(0, ptrace_stop) {
-+				LOG_KILL_TRACEE("unexpected syscall stop");
-+			}
-+			ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+						      tracee_pid, size,
-+						      (uintptr_t) &info))) {
-+				LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1: %m");
-+			}
-+			if (ptrace_stop & 1) {
-+				/* entering syscall */
-+				const struct si_entry *exp_entry =
-+					&si[ptrace_stop / 2].entry[0];
-+				const struct si_entry *set_entry =
-+					&si[ptrace_stop / 2].entry[1];
-+
-+				/* check ptrace_syscall_info before the changes */
-+				ASSERT_EQ(expected_entry_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1"
-+							": entry stop mismatch");
-+				}
-+				check_psi_entry(_metadata, &info, exp_entry,
-+						"PTRACE_GET_SYSCALL_INFO #1");
-+
-+				/* apply the changes */
-+				info.entry.nr = set_entry->nr;
-+				for (i = 0; i < ARRAY_SIZE(set_entry->args); ++i)
-+					info.entry.args[i] = set_entry->args[i];
-+				ASSERT_EQ(0, sys_ptrace(PTRACE_SET_SYSCALL_INFO,
-+							tracee_pid, size,
-+							(uintptr_t) &info)) {
-+					LOG_KILL_TRACEE("PTRACE_SET_SYSCALL_INFO: %m");
-+				}
-+
-+				/* check ptrace_syscall_info after the changes */
-+				memset(&info, 0, sizeof(info));
-+				info.op = 0xff;
-+				ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+							      tracee_pid, size,
-+							      (uintptr_t) &info))) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO: %m");
-+				}
-+				ASSERT_EQ(expected_entry_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2"
-+							": entry stop mismatch");
-+				}
-+				check_psi_entry(_metadata, &info, set_entry,
-+						"PTRACE_GET_SYSCALL_INFO #2");
-+			} else {
-+				/* exiting syscall */
-+				const struct si_exit *exp_exit =
-+					&si[ptrace_stop / 2 - 1].exit[0];
-+				const struct si_exit *set_exit =
-+					&si[ptrace_stop / 2 - 1].exit[1];
-+
-+				/* check ptrace_syscall_info before the changes */
-+				ASSERT_EQ(expected_exit_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1"
-+							": exit stop mismatch");
-+				}
-+				check_psi_exit(_metadata, &info, exp_exit,
-+						"PTRACE_GET_SYSCALL_INFO #1");
-+
-+				/* apply the changes */
-+				info.exit.is_error = set_exit->is_error;
-+				info.exit.rval = set_exit->rval;
-+				ASSERT_EQ(0, sys_ptrace(PTRACE_SET_SYSCALL_INFO,
-+							tracee_pid, size,
-+							(uintptr_t) &info)) {
-+					LOG_KILL_TRACEE("PTRACE_SET_SYSCALL_INFO: %m");
-+				}
-+
-+				/* check ptrace_syscall_info after the changes */
-+				memset(&info, 0, sizeof(info));
-+				info.op = 0xff;
-+				ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+							      tracee_pid, size,
-+							      (uintptr_t) &info))) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2: %m");
-+				}
-+				ASSERT_EQ(expected_exit_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2"
-+							": exit stop mismatch");
-+				}
-+				check_psi_exit(_metadata, &info, set_exit,
-+						"PTRACE_GET_SYSCALL_INFO #2");
-+			}
-+			break;
-+
-+		default:
-+			LOG_KILL_TRACEE("unexpected stop signal %u",
-+					WSTOPSIG(status));
-+			abort();
-+		}
-+
-+		ASSERT_EQ(0, sys_ptrace(PTRACE_SYSCALL, tracee_pid, 0, 0)) {
-+			LOG_KILL_TRACEE("PTRACE_SYSCALL: %m");
-+		}
-+	}
-+
-+	ASSERT_EQ(ptrace_stop, ARRAY_SIZE(si) * 2);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-ldv
+[ ...]
+
+> diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> new file mode 100644
+> index 0000000000000..ad69ccdf9dc78
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * The constants defined in this header are being used in dts and in
+> + * at91 sama7g5 clock driver.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
+> +#define _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
+> +
+> +#include <dt-bindings/clock/at91.h>
+> +
+> +/* old from before bindings splitup */
+> +#define SAMA7G5_PMC_MCK0	PMC_MCK		/* 1 */
+> +#define SAMA7G5_PMC_UTMI	PMC_UTMI	/* 2 */
+> +#define SAMA7G5_PMC_MAIN	PMC_MAIN	/* 3 */
+> +#define SAMA7G5_PMC_CPUPLL	PMC_CPUPLL	/* 4 */
+> +#define SAMA7G5_PMC_SYSPLL	PMC_SYSPLL	/* 5 */
+> +
+> +#define SAMA7G5_PMC_AUDIOPMCPLL	PMC_AUDIOPMCPLL	/* 9 */
+> +#define SAMA7G5_PMC_AUDIOIOPLL	PMC_AUDIOIOPLL	/* 10 */
+> +
+> +#define SAMA7G5_PMC_MCK1	PMC_MCK1	/* 13 */
+> +
+> +#endif
+
+I would have expected this to be something like:
+
+#ifndef __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
+#define __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
+
+/* Core clocks. */
+#define SAMA7G5_MCK0			1
+#define SAMA7G5_UTMI			2
+#define SAMA7G5_MAIN			3
+#define SAMA7G5_CPUPLL			4
+#define SAMA7G5_SYSPLL			5
+#define SAMA7G5_DDRPLL			6
+#define SAMA7G5_IMGPLL			7
+#define SAMA7G5_BAUDPLL			8
+
+// ...
+
+#define SAMA7G5_MCK1			13
+
+#endif /* __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__ */
+
+Same for the other affected SoCs.
+
+The content of include/dt-bindings/clock/at91.h would be limited eventually
+only to the PMC clock types.
+
+The other "#define PMC_*" defines will eventually go to SoC specific
+bindings. "#define AT91_PMC_*" seems to not belong here anyway and these
+would in the end removed, as well.
+
+Thank you,
+Claudiu
 
