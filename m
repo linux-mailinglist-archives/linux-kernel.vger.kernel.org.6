@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-517424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B707A38082
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEF8A38085
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D7F3AD0DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BEB3AA193
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B962165E2;
-	Mon, 17 Feb 2025 10:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF931215F68;
+	Mon, 17 Feb 2025 10:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="AO+cO6aE"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tf4StfT7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F21B18B492;
-	Mon, 17 Feb 2025 10:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2694323CE;
+	Mon, 17 Feb 2025 10:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789127; cv=none; b=RF5+dI9opgKvLAk09Z3hWeKO5xzs7eCFHze9SRpRNPBa1gOq1gXJYzN5NHK9JGOOxM0L8Kfy7jeXI/KRMI9ttSSH5XZTLommK/wP4Jhgz8DrXBWxJaLu4HOVk8xnPznAZLuvjtMfJI9CqelL8zeZoqwRVQJ08wWnYTJJtS1jvFc=
+	t=1739789233; cv=none; b=CrsH5ldMrR+rb395S1c5K3b0dsh87eNmSv63ZZ4lIKbB72kOL49iopYuHyI4G9lmq4/4lTX2Otp35FgV4ys8S2J9jE6Z/QCHl4UHBl5MTTyECkwclatwJt8b7vkqn8d78oPat7dpHK84EzG7WDCkiAHWvi6iBHAVuD322SMkQJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789127; c=relaxed/simple;
-	bh=cHMTH5ThduHPdm1u7j3eIF7LX5+Lv5c07rwUKurCD78=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8aDO6fHMlz7IH3NCYI0rt8qFKhCnvq2O5sk/8HxIWURbpnVEUclEPhYJ5eWCruo5FAMAdpEbALsA8qRyoKmxV3h+q1smbXGpyY9tcN2tIZPD3UbklyQRCdhSYV/dFhVmdP46hur5bpJubfXvCbCIqA+fL2Nuf/En2qrZB5Ng9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=AO+cO6aE; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H6wnfW032475;
-	Mon, 17 Feb 2025 04:45:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=Z+adAFYoeuvQiptLGn
-	Wx4ye3m2CIyBhfhF/WV6K8hz4=; b=AO+cO6aEhe0qmccdB88MmK6uUW6dRrbTFh
-	zaiDAESSgfE3MJMz9XG7l70fYPZ68I8AKpvFEn6gl4KiQ8aQPGO4avSvfdVDYSET
-	5aBIZp/kzX2DJLZtDavOR6jG3MSlRCLIL2AJG7zjsGG0U/gapEbCPiFLdGf5l94A
-	qOSBDSs9Z6PdYDeDsfG1ji6GEJvuHeOFIaTQCF1Vuf3Nc+u2+WOYToBCxq/+AzMR
-	idxPqgg+Eqhnb911H2p6HVRreX/T7k2Jdtp1ALVWAbtC7DmZDxO61PsTsAUL06S4
-	emu/RQzxAYNYUnxTrkfHPBFkmoajmb+RcGS9I8YrTDr5OKaWwESQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44ts75um9y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 04:45:10 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 10:45:08 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 10:45:08 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 8F39E822561;
-	Mon, 17 Feb 2025 10:45:08 +0000 (UTC)
-Date: Mon, 17 Feb 2025 10:45:07 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm_hubs: Use str_enable_disable() in
- wm_hubs_update_class_w()
-Message-ID: <Z7MTM8ylhVSz5+0d@opensource.cirrus.com>
-References: <20250210115804.53504-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1739789233; c=relaxed/simple;
+	bh=m0eu/J6cjoH/9kExBeNQUyT4sDALyThgc8mo3UQVqPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJVkJYpj4x46cMsbZGl1DBsZZ5MwZDhPVCBRTNhGboIdIH7x4KhrsxNeWDLA1ih/RHP2cpK4RmVszb5NzPImImZtYqZxHjEimMT+KHvnJKxIhdUa7iqTgB1syaRr8D6Bn8COscPh7sOi2cMj5ljUUTjI9/QPMUoCklMYcwybBh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tf4StfT7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F34C4CED1;
+	Mon, 17 Feb 2025 10:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739789232;
+	bh=m0eu/J6cjoH/9kExBeNQUyT4sDALyThgc8mo3UQVqPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tf4StfT7ijmySEOzvZRxt4MetwcA28DYA0UrfZuAECjFeXsDetNJOfNfUPDzJT/8x
+	 U02GpjZKJFIrXfllc6dt+Ea6TNSTphfxemHaecRKTkyEhlwk/U4rA+4PZCrBNA37uR
+	 fU5IFh5f//mY46kBHNrkEZeHAQ1zRVrRBsRPuI0uxOZmlQKVUuEqZagF0719JOwn8a
+	 3DGBQTOzhfTQinCrrPeDYzrKjSayojA4LyOsfcWqnjJn8cCbpy/9DSS25uP0sHN//U
+	 N8Sv5yWbRJ1H4hfSCXwml5BDs97dDKyfZKiJCvN5xW9jxSVX9PZzaY3tJsniY1Ga6q
+	 BbRj479VCxIkA==
+Date: Mon, 17 Feb 2025 11:47:08 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3 RFC v2] change ->mkdir() and vfs_mkdir() to return a
+ dentry
+Message-ID: <20250217-gummihammer-kryptisch-548d0dab31a3@brauner>
+References: <20250217053727.3368579-1-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250210115804.53504-3-thorsten.blum@linux.dev>
-X-Proofpoint-GUID: d1pyz2tdppd4YM11vnQI4DLOVDFQO27e
-X-Authority-Analysis: v=2.4 cv=fepXy1QF c=1 sm=1 tr=0 ts=67b31336 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=XYB6A2eQeqfmdjx3t9EA:9 a=CjuIK1q_8ugA:10 a=vyftHvtinYYA:10
- a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-ORIG-GUID: d1pyz2tdppd4YM11vnQI4DLOVDFQO27e
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20250217053727.3368579-1-neilb@suse.de>
 
-On Mon, Feb 10, 2025 at 12:58:03PM +0100, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_enable_disable() helper
-> function.
+On Mon, Feb 17, 2025 at 04:30:02PM +1100, NeilBrown wrote:
+> Here is a second attempt at this change.  Guided by Al I have handled
+> other file systems which don't return a hashed positive dentry on success.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
+> It is not always possible to provide a reliable answer.  One example is
+> that cifs might find, after successfully creating a directory, that the
+> name now leads to a non-directory (due to a race with another client).
+> So callers of vfs_mkdir() need to cope with successful mkdir but no
+> usable dentry.  There is nothing they can do to recover and must
+> continue gracefully.  This failre mode is detected by the returned
+> dentry being unhashed.
+> 
+> ORIGINAL DESCRIPTION - updated to reflect changes.
+> 
+> This is a small set of patches which are needed before we can make the
+> locking on directory operations more fine grained.  I think they are
+> useful even if we don't go that direction.
+> 
+> Some callers of vfs_mkdir() need to operate on the resulting directory
+> but cannot be guaranteed that the dentry will be hashed and positive on
+> success - another dentry might have been used.
+> 
+> This patch changes ->mkdir to return a dentry, changes several
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Thanks for doing that.
 
-Thanks,
-Charles
+> filesystems to return the correct dentry, and changes vfs_mkdir() to
+> return that dentry, only performing a lookup as a last resort.
+> 
+> I have not Cc: the developers of all the individual filesystems NFS.  I
+> or kernel-test-robot have build-tested all the changes.  If anyone sees
+> this on fs-devel and wants to provide a pre-emptive ack I will collect
+> those and avoid further posting for those fs.
+
+Once I'll merge this into async.dir it'll show up in fs-next which means
+it'll get additional xfstest testing.
 
