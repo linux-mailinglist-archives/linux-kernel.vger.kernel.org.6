@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-517500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC82EA381A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:28:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE46A381AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7744016A702
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230D03B25A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBC2217F33;
-	Mon, 17 Feb 2025 11:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD612185A8;
+	Mon, 17 Feb 2025 11:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1kMivnV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ77auKP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6AF217713
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4D2217F5C;
+	Mon, 17 Feb 2025 11:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739791699; cv=none; b=D+0ZiNvxhifvl4sInMTpFTaUa/Tg2CCM8RDueLe8//IF2PZx+K8hh5D3EWtmRn941nlXjWgjfVX4URH2gjMdjbvlHa6fg8240VRmkPwm/M6r1oa7grQcjA0FAZwsb9bUW0khmpQrheT7924nnqTn7V7qy//SWqlljIFeVXCIvro=
+	t=1739791758; cv=none; b=YcRCr21ht7wBsxkY+urrxdgrlnFQ/s8yD81sSqeuKrZT0KeGC+enGPBdqEVtOupN+PEsBjHV+PUepwKNGXo7UF28ORzPSZSxLsb2KK5T2jk/ac8K2RI7t2i3+cqCQiARGKiZBnHPQZfiqSxY2VPvE6CV6SwQrBIdTxYQsKvMmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739791699; c=relaxed/simple;
-	bh=D6bBaw3pzPm9sUurgmo05ZfpFaM0hDZ8jBH8Yj6VcVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sH9XRqgJnJBhBhXO4cXTCpUVTTSXAEPyPXL9cJieBgiL3grnN+R60McDk+h+yo04Oe3dBAuWCnOzOW+B6l+5dzUHtEKUJBxSfJacJ+u+L1qBcHnH+hshKaqc5DU6p04tX9Cspw1MUXLUzcZlNwt4rcCRe+xvzetKYIp7/bvCGAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1kMivnV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEB2C4CED1;
-	Mon, 17 Feb 2025 11:28:16 +0000 (UTC)
+	s=arc-20240116; t=1739791758; c=relaxed/simple;
+	bh=qkv3HKQas5OClAlP9ioHPxV9oFCI17HlCuoCYUoE89M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WB2DKnU89Yjr029ugs1lJ7BKNxoHpKvSZMOm9dnzcOXyLcXB/IGugzNEHc1KZxw8aJaMi135CWUCO9U2OTNlppufBLG621uSgUfklO9ez7hi0wGdrC0+GsNIxVCBk06dv3N5eu4OTS9SRYf69faJZkqLHT+MvdrwMCW9a5JPgi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ77auKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EDC6C4CED1;
+	Mon, 17 Feb 2025 11:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739791699;
-	bh=D6bBaw3pzPm9sUurgmo05ZfpFaM0hDZ8jBH8Yj6VcVQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Q1kMivnV1CFv1j0+aRxvvNWr21DAiL8zGo3NR1vuxVSwTuycA9wgfv1eFVaIT11B0
-	 qORDih+jdNyWOymSS3p7VWe/o5j/MPRsxAf36a2Jqhf9kZDcOqdwEdusXs2W8tj9bE
-	 6krWE1jbJqXXkkqVtQPtpBdg1NGFVQw4FSD5nb29YO9xJ2pjDDaSU8n2X4F/vfBL2s
-	 awU46cxn5heA8ZH9o4+UmTvAdYYXGtVhH++xGGMaf/xA/BWt1gonWBvqgQ+riTos1B
-	 WRJUK7texV4PU3+wlXNqz8OcJhJJ0DtPiovAp1t+fT2icOAC+bLWWJyIPj9DWd44qX
-	 6ghkzIuhcFyjQ==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <christian@brauner.io>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] binder: remove unneeded <linux/export.h> inclusion from binder_internal.h
-Date: Mon, 17 Feb 2025 20:27:51 +0900
-Message-ID: <20250217112756.1011333-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1739791758;
+	bh=qkv3HKQas5OClAlP9ioHPxV9oFCI17HlCuoCYUoE89M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QQ77auKPsH2NTHcg32ORVuCQCWAhfIxaEZurFSxtgYy2rhP7Mt+7C8TxgTAH+kBbe
+	 V8KWU54WQzYTADkGMFOeESM4pF794i138j6MUhCKsjutgKSXd40lRXaeYceqAbbFOx
+	 41H72VbHNsghwbyFjfvI9sSZbQZw027jFM0ROc++u9NxzCIgQ1WuF0iRIr9h+SVda1
+	 zXWAy9rzwyYOtN8vPubLjsseT8/zPOiLmTcEKfijHBtgaAAz8HSeZEvBJxjzmDTlQb
+	 obnYXdr2RAFQUAEAvsEuq+FUcuDjirWeuHFrmAHPWVKulAjkUxLzj5YCPBYjzVDSY0
+	 mJXMpUgNW7fMA==
+Date: Mon, 17 Feb 2025 12:29:13 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: chenhuacai@kernel.org, chenhuacai@loongson.cn, dlemoal@kernel.org,
+	jiaxun.yang@flygoat.com, kernel@xen0n.name,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jie Fan <fanjie@uniontech.com>, Erpeng Xu <xuerpeng@uniontech.com>
+Subject: Re: Re: [PATCH] ahci: Marvell controllers prefer DMA for ATAPI
+Message-ID: <Z7MdiTptmxgiRXML@ryzen>
+References: <Zt6l6DVeDGzb5W7N@ryzen.lan>
+ <36B40EDC960C005C+20250217070120.666907-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36B40EDC960C005C+20250217070120.666907-1-wangyuli@uniontech.com>
 
-binder_internal.h is included only in the following two C files:
+Hello WangYuli,
 
-  $ git grep binder_internal.h
-  drivers/android/binder.c:#include "binder_internal.h"
-  drivers/android/binderfs.c:#include "binder_internal.h"
+On Mon, Feb 17, 2025 at 03:01:20PM +0800, WangYuli wrote:
 
-Neither of these files use the EXPORT_SYMBOL macro, so including
-<linux/export.h> is unnecessary.
+[...]
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+> Tested-by: Jie Fan <fanjie@uniontech.com>
+> Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+> Tested-by: WangYuli <wangyuli@uniontech.com>
 
- drivers/android/binder_internal.h | 1 -
- 1 file changed, 1 deletion(-)
+It is a bit weird to see Tested-by tags here, since your email does not
+contain an actual patch.
 
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-index e4eb8357989c..6a66c9769c6c 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -3,7 +3,6 @@
- #ifndef _LINUX_BINDER_INTERNAL_H
- #define _LINUX_BINDER_INTERNAL_H
- 
--#include <linux/export.h>
- #include <linux/fs.h>
- #include <linux/list.h>
- #include <linux/miscdevice.h>
--- 
-2.43.0
 
+> 
+> Currently, due to the limited hardware I have access to, I'm unsure if this is a Marvell
+> 88SE9215's specific issue or a general Marvell SATA controller problem.
+> 
+> So, I think it's reasonable to add a quirk to handle this for the Marvell 88SE9215 now.
+
+I agree.
+
+Feel free to submit a patch that adds a quirks for Marvell 88SE9215.
+
+
+Kind regards,
+Niklas
 
