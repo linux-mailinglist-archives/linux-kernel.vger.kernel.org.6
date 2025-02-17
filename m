@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-517722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F3DA384AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:30:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66319A384BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69C2164622
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7611896719
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61C321CA1E;
-	Mon, 17 Feb 2025 13:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC25A21CC62;
+	Mon, 17 Feb 2025 13:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3O/hCav"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4LHnJ1c"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA26E56A;
-	Mon, 17 Feb 2025 13:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDED6216E35;
+	Mon, 17 Feb 2025 13:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739799016; cv=none; b=rZldUIdUuERWK9lizEvPMGKM6HIC8OHdPDzA7R4xhD37ecGQlJ24THQEbN2uIXmwo9CTjcYn8HLO58ENCzm428Sbp4IV6tAXPZfrO5kAPMIP/b1pbtwjs9r9B5IMkouXsAUbF6ZTaFf4HNg5kx0X3yUnPtFufboe0o4R/B/qRFo=
+	t=1739799027; cv=none; b=g493jJ2ecLRu6zN3xsbiuIjIo7T7IZMYtdAiI5jWfzD5jC/qnDOv86dC9Bp/b8QrZvz62H/vAHsJID4ida0vApMafYCMuiuE8e0b3oLrxYmYQlKytRzad0Zlb0cCOxF3yQ7v9pWxnObezsmKXgFxp0Lm7R+bPpa3JMmOd33g3DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739799016; c=relaxed/simple;
-	bh=XXa7AUUG+cGtasNDMbljkjjyV26PgkSjBCpEcoVphE4=;
+	s=arc-20240116; t=1739799027; c=relaxed/simple;
+	bh=77G+qwzoFLoNAsQ3YZKaFAwVbGfr3rRsvhGhU7TMI/g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJZoytEgzqO/4boLX89WPl20kOG9lwfvqx0kwnkM1kyL45gH9V51/jY87PUfNShbefoCxe/BnZadTcu+33XoU34NRgonHra0+TFoGRIv86Amlr/17OzG/3RF2v+iaQMZmuPGfOP3jdFl11R7+69kzzQ/Vd6nsCqUAZjVPGNI2mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3O/hCav; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D44C4AF0B;
-	Mon, 17 Feb 2025 13:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739799015;
-	bh=XXa7AUUG+cGtasNDMbljkjjyV26PgkSjBCpEcoVphE4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P3O/hCav6DFZYfmmK1JShf6kGShnVOLPqBmeSQcj2+lIyZHr/WtpOi58PAx99baTF
-	 MtFoLiFExOvQwiSuQ+L4ALk+QF1cyDPSQWUnrk9vIDQgZeTEjqjxozbpX2xuEAicvY
-	 u3RDWoSf6N4Nr/zy/P/Ig5HDJ6A2NWYrq+3ERzE6OTeTu0pf6oK0mjjMrwFEXtcDnG
-	 4v/COUPes3JFNpSut1SsJfDnMtESW1DFGt4vZX7HfeOzpxR4ZShQge+M7SveWJBF39
-	 tytixFfQ664FR5mVjgHQuN4i6EyahV2TpZgqXhjVvN+gM2JK7awCVifj7Y2mw+P4mb
-	 KFrrzkNnOLQRw==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb90c20baeso174060566b.1;
-        Mon, 17 Feb 2025 05:30:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7GchMbFNS66BlwIMDcCTzn71FGLcGhNlvAKsnalsJSH/BurdqonEzvGHhanNAr7Wm0yCMT9cW59c=@vger.kernel.org, AJvYcCVFLYpNlI0O2CekhHB/HuXsEQqYtU9Hfdma+mG+9hnCk/hZHbFUCex1FDFbO1x9ueH1Apzztxd7AgJ2mU7Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4vcQDWGoxfeINVEpaevTS4jLrAm9LHjauV5DClYLRFG8mEW8/
-	k9gs//5d+5gG4YfJVRyJD5AGSVFlZDPs6p5Rs/5SF6wUcsy9O4WVbrAbJC0x5zaGezRMPzwpaK7
-	mPTGLypVipkQcK0OgvxeKuksu+80=
-X-Google-Smtp-Source: AGHT+IExGxNayX+m0YzrWvqhyVbO7x3K/DWzjOIq1ZwgmykqnbHYztqt4Tfh7roiNWV1TcIihG279p1i2GCFbYSezI0=
-X-Received: by 2002:a17:907:7752:b0:aa6:79fa:b47d with SMTP id
- a640c23a62f3a-abb7091cedcmr805613866b.1.1739799014337; Mon, 17 Feb 2025
- 05:30:14 -0800 (PST)
+	 To:Cc:Content-Type; b=WLCuFj47I2ebglJhIBnDFezYl8I4M1KlSEpf7IMiy4HjW7Ph8sizkvCxNFZBN3jDfaqNzGzQ0r8IXGFA5xnSFTk+laJgktgwEF1IHZwh3pPK6Hw3zIwhx5/w8rp9Yv4wd7na57iBmDufFakEKVLCT0D8JdDpUTdMODrzkPK12oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4LHnJ1c; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e5dcc411189so789506276.0;
+        Mon, 17 Feb 2025 05:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739799024; x=1740403824; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=77G+qwzoFLoNAsQ3YZKaFAwVbGfr3rRsvhGhU7TMI/g=;
+        b=Z4LHnJ1cC3JOhEYpgCV2iBJQ+xIdZkdmK4uQWmtKzqCRk11oiYFBxqypKKaO8ocXDN
+         ub0wZ3dpH9NmNFKtNGTOb/ADVI8MTpHL8KIALpMWygVZPEF5Z8wWB/Z2bGH10LH8D2LZ
+         mkD5mPAFB3ovjS3vdH8FKzUovJApNd9GxQbG08Fg73mGRjxA7qaE1R7pIOxzfaByFYaM
+         8YNedZNpCCZ0yaY3wp1B0u0cYKuYr8iwU3j12Tlur83a1TvoktO5og0q5ORUPhrBtgOj
+         GmvPEA0oth00q0DXVP8ykL+9PgQKUjyWPTkvUUxsGPU/vVYkQIy/hCiGHhoTI3G7JiqC
+         LFqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739799024; x=1740403824;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=77G+qwzoFLoNAsQ3YZKaFAwVbGfr3rRsvhGhU7TMI/g=;
+        b=H7xbK58Tl0DQtQ2pDa6UriTdX87vHdebZQCJneB8WLejUApvCo1eimG9r+jr/PgonJ
+         EElmjHtj/Zton0AJGWAMz7AZf4AXZGEfxc/EUrqI1hpqaCc7S0zmWWSpaW88rHfwK7Dw
+         XtL9TWcZ/Ar/yhV9/SvHdRSIxDVEo7Qo9te5YoM+uHF9MfL0X1pdeuI4YjYlTOGW+Y/6
+         +SjDNwUg5+olJgfGcv2PaRCTnZXnMwTarpoz7GGC6WLzhirRZ/ehEa0NPfFxZIEa7Msv
+         eEFrtZ07tQJa5Pzn+iOIJnES05cc/usD0pLwUpYEyv2vKVufKdRQbhpispDdxKUkEpS0
+         N5Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc+/4PGFw8ajDz65xjfyPfm0BVi8fGY1mZgkdzIJkcYk0eg2XgEp+W7Zf6c9DpttfWG+2ITG5JREO0@vger.kernel.org, AJvYcCXwwRY6G9TiEaojx/I049j38HaJeJAkFuLeeW3wpBhpNfKKgsV/IDei3dsbvcUVRYumVm3pMYdFhOhHAEkC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8XPoRRhH91Yf9BKCA+zOS/cBhH0/rf8glf83LdcfqBslCRCvh
+	lherTqAzASn0+9wr42aYbjP9kMco1twPPR5cHeU+6hcgIjblIRJ/m58tZj+5csuI4OvdOic10Pc
+	inF+vy+qEF0NMuZSJ6m9q5bf7/O4=
+X-Gm-Gg: ASbGncscJBUWvfELZbCBMh6jF4VyldLjabk7om7DubcQGLY8ZIzhzFvSN1tr50OqLIh
+	FzKOuWr90rpoh6BEFINjNbHR0DWLhJXkAwjai9Pe3HoEE7Iu6b3FVN8lpHi5ziwmcsLh5+cKqmQ
+	==
+X-Google-Smtp-Source: AGHT+IEB+MJzs+GIv2z74KvmTn3I75FACBN5SxbyoNwzXh0aK5QoppHOlpFhtMuTvychYCVQsoczFA/mnvfT2jm3ops=
+X-Received: by 2002:a05:6902:3387:b0:e5d:bf09:452c with SMTP id
+ 3f1490d57ef6-e5dc932727fmr6866952276.49.1739799024419; Mon, 17 Feb 2025
+ 05:30:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zt6l6DVeDGzb5W7N@ryzen.lan> <36B40EDC960C005C+20250217070120.666907-1-wangyuli@uniontech.com>
- <Z7MdiTptmxgiRXML@ryzen>
-In-Reply-To: <Z7MdiTptmxgiRXML@ryzen>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 17 Feb 2025 21:30:03 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5PKf4VAt8SrAf+cwxbgMz4Zuv4XeyK269KHkCKu7F4Bw@mail.gmail.com>
-X-Gm-Features: AWEUYZkA9QwD70vDYGw0krv0S-QePZsOvQR7rENzif5Xtsk0AbuyVLWDiaonp1E
-Message-ID: <CAAhV-H5PKf4VAt8SrAf+cwxbgMz4Zuv4XeyK269KHkCKu7F4Bw@mail.gmail.com>
-Subject: Re: Re: [PATCH] ahci: Marvell controllers prefer DMA for ATAPI
-To: Niklas Cassel <cassel@kernel.org>
-Cc: WangYuli <wangyuli@uniontech.com>, chenhuacai@loongson.cn, dlemoal@kernel.org, 
-	jiaxun.yang@flygoat.com, kernel@xen0n.name, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jie Fan <fanjie@uniontech.com>, 
-	Erpeng Xu <xuerpeng@uniontech.com>
+References: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com> <20250217-adpdrm-v7-2-ca2e44b3c7d8@gmail.com>
+ <40e59cf1-86da-4c1d-aafd-f409d8179167@suse.de>
+In-Reply-To: <40e59cf1-86da-4c1d-aafd-f409d8179167@suse.de>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Mon, 17 Feb 2025 14:30:13 +0100
+X-Gm-Features: AWEUYZmCQ2KktIIoXJ32NnC-FVTPM5zygmYh9xHWyp5QfVtkMZOiANCC-UiM5nc
+Message-ID: <CAMT+MTS016CLK7cawdF2kKv2tpGH-N4p3rqGLBPLkPv4A=j67g@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] drm: adp: Add Apple Display Pipe driver
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	asahi@lists.linux.dev, Janne Grunau <j@jannau.net>, linux-arm-kernel@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alyssa Ross <hi@alyssa.is>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Neal Gompa <neal@gompa.dev>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi, Niklas,
+On Mon, 17 Feb 2025 at 14:22, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Unless the described problem really happens
+> in practice, I'd drop this workaround. There's no point in working
+> around legacy userspace in modern drivers.
 
-On Mon, Feb 17, 2025 at 7:29=E2=80=AFPM Niklas Cassel <cassel@kernel.org> w=
-rote:
->
-> Hello WangYuli,
->
-> On Mon, Feb 17, 2025 at 03:01:20PM +0800, WangYuli wrote:
->
-> [...]
->
-> > Tested-by: Jie Fan <fanjie@uniontech.com>
-> > Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-> > Tested-by: WangYuli <wangyuli@uniontech.com>
->
-> It is a bit weird to see Tested-by tags here, since your email does not
-> contain an actual patch.
-I think Yuli means I can add these names to the V2 patch, because I
-only tested Loongson, others are tested by them.
-
->
->
-> >
-> > Currently, due to the limited hardware I have access to, I'm unsure if =
-this is a Marvell
-> > 88SE9215's specific issue or a general Marvell SATA controller problem.
-> >
-> > So, I think it's reasonable to add a quirk to handle this for the Marve=
-ll 88SE9215 now.
->
-> I agree.
->
-> Feel free to submit a patch that adds a quirks for Marvell 88SE9215.
-OK, I will send V2 as soon as possible, sorry for the long delay.
-
-Huacai
-
->
->
-> Kind regards,
-> Niklas
+This workaround was put in place after we noticed x11 either preventing
+the userspace daemon from working, or breaking itself. So, yes,
+it does happen in practice.
 
