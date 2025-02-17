@@ -1,524 +1,205 @@
-Return-Path: <linux-kernel+bounces-517587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33094A382BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:15:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29047A37FA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD7C3AACE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C571697C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341C421C188;
-	Mon, 17 Feb 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFC9216600;
+	Mon, 17 Feb 2025 10:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="W/a71XPn"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UdadqqZG"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2061.outbound.protection.outlook.com [40.107.96.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDC4219EAB;
-	Mon, 17 Feb 2025 12:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794477; cv=none; b=dwesTZVMsRyKzx2MeWEmKSyC5tHBNiULTX1qHKcUa2+sV6mycQNua/mNWZr7nY1a5mtX87EEgQudLjCp6vrZPj+PwT1KG9Spp5WKroULTlM3FSbs+ogfqZg1oKXynAq5kNsxyAiaOIihYbHw/S7y68ERvyLJ4B3fAZhcGZKyKos=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794477; c=relaxed/simple;
-	bh=lMZLzmF2PdQKduE10w/URx4iFnh3U0UN6Gf8WvyXOn0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cG59qBtDlH32D19sITMvyUwEqnCjCA3LFfmqDj+YwghyjHhorg6NiUVR1xOWZW7ZxPqyiOTEALqIwkF4ZG8Ey8q5WDedBMm8UBiovZ7/NNidTYzWHWjwMU+7S7+zhmQinckyyzC/RwzwQmC2dD9OETzxVqNvNhFlY9XszlpGG/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=W/a71XPn; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAcs4P013394;
-	Mon, 17 Feb 2025 07:14:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=FgT9b
-	xnN1VGc+k0UfPRqKHHgxEpDeG6M0U5SxujJg+w=; b=W/a71XPnDxUHt5jA/mC7Q
-	XejlRF5E3omcymhQjCRKb8Ps6oyMRecvH1dNeS7To69Khe9TL17B3I6ZZd63PmdB
-	ipUZC3dyEI9SNlNugqD4Fea56qlUlD6Vgj+m7CnMBqN0N2gsOxFq9ke7oYfspK8L
-	a4+RiCU/y8Rmz3Uw314ycCBvsKuNZ/yyKc0O+Ah5S/j7csR+3KaUl62MRjFli/OR
-	rylKBZVmA33l36wTACR52p91Rb+4DrMaxNDENaM1niJNcnHGGSiN7MyrMNbU+sep
-	nZK3t77jFnIQelLrJwct9owtRbZFm8yH/djs/QDqsPpddCL6WEeh7TNyt3972fnD
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 44trqcyw3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 07:14:21 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 51HCEKCb017831
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Feb 2025 07:14:20 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 17 Feb
- 2025 07:14:20 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 17 Feb 2025 07:14:20 -0500
-Received: from desktop-robi.ad.analog.com ([10.48.65.85])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51HCDZMU016764;
-	Mon, 17 Feb 2025 07:14:14 -0500
-From: Robert Budai <robert.budai@analog.com>
-To: Nuno Sa <nuno.sa@analog.com>,
-        Ramona Gradinariu
-	<ramona.gradinariu@analog.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Robert Budai <robert.budai@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: [PATCH v8 6/6] docs: iio: add documentation for adis16550 driver
-Date: Mon, 17 Feb 2025 12:12:19 +0200
-Message-ID: <20250217101221.600898-7-robert.budai@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217101221.600898-1-robert.budai@analog.com>
-References: <20250217101221.600898-1-robert.budai@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C563185955;
+	Mon, 17 Feb 2025 10:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739787263; cv=fail; b=oOTEU3+tSS91ZiVx1BJwoiHsTibhCuoTAhj8eANFdZf8o/dGNdodfEQdbuhEhpk4qT0YUHQa5g5n2AsKOb8Q/g9yUdsKlAGbsU7KeNOy17qMPNWGm7B88WsegHtImy6c246mqoLpPlKFjUHzONhH++e16s3FUziXq1kPf1sps/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739787263; c=relaxed/simple;
+	bh=XcQJYM2ovAXIvYBd7onapktuMRpRwWvnhkYW4Ost9dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GIRzh9l76FFiyO9Tz1ksJG6b3faNhg4p0v0rtbKbmDqzJuSTsoMRElCIVXul0oL7TXlHr7vaOSbzTSvaK1ZNERwdejl97b4M8st2qaO1K2Ym1SDSHhyw2Emr9TusGomHjjdAnqeOtp5Wr4a0JPQZXGr91SaCNgTZyHM+4Eqby4k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UdadqqZG; arc=fail smtp.client-ip=40.107.96.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rIALCyYrI7YwbUn914NY5ijHXjJeQjaOX81F+Txy3nRrCdcUq9Jxcg8MEh41C99As4jQpT/rcquVtJp4Grfva/lueENh54JglZ4fJoXsxrvgOZa1BetZPsmlnJLkW0Ajk5eF/G89xn47Vk5w5DBe9lwjXpDbbtwJc8bdxAFLp9BIXpZZQupUTMP82isf0G4s28GLpPWY6v0DyNtNtY9IiCDwXQcjc7CV8UJdO/ZZ42aYdWwuM4AeT6J4TbrsaBD7PqXkVqb07avSBpqc62hmHmc9ggylEWpgx8P64LXoDZlHhqZtuiiyDySlZ3ggYqYjJDw7q7IMxroat7TL2K70hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b7W+GHSV/5Rwna1Y320z/Op+b92DFZtHp8tzKUXLIac=;
+ b=ggzjmMkapv3cZ7IDZJGsjphcfCPDyNt4GkKJuq/CRZwlQ7E8UCQy2mj55nCA9YxNGBR9Utzn6IerKLEDEbA+fX4GNmPsCXorIje/2/3eyH/aaXl+385OLf5YUpTS5HWga3+BzT9UWrBAjUS0ysB5QcWM7Szp9w6R/d5sJJrTUVNExDS2g/y8jLKGFPmz55/PlFhwrPOdMfGIp9sqre2RS5xi/HYKLwLD9Ap1+F6IEtXSnZR8cZmBcB1V82wrKNl+0Dou5EMr5nncP1/Q1NMxXE4/PrqZ82mx7fbfvT7+JBJWAHJSPNq0axPq23mbwX/OOS4BF0BGAQPP1vI7jMOjEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b7W+GHSV/5Rwna1Y320z/Op+b92DFZtHp8tzKUXLIac=;
+ b=UdadqqZG3ChEExnT4cH/Mv8MexkB+qiY6rVP+E4eJEiubATt7tAKEO/OmbS3fWqjCF/asUlApr6CbwzXfDWDRLNBKyOqlzmGCuGP+FNxH6izQbf6cyw9frtX9PoD/AJA3ZpFsq7iHDNxF8icNGuxnpUQOdrnX1zxla0nbLtgSV0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ DM3PR12MB9351.namprd12.prod.outlook.com (2603:10b6:8:1ac::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.18; Mon, 17 Feb 2025 10:14:19 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%3]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 10:14:19 +0000
+Date: Mon, 17 Feb 2025 15:44:12 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 07/17] cpufreq/amd-pstate-ut: Allow lowest nonlinear
+ and lowest to be the same
+Message-ID: <Z7ML9DCvuM3yVNgN@BLRRASHENOY1.amd.com>
+References: <20250215005244.1212285-1-superm1@kernel.org>
+ <20250215005244.1212285-8-superm1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215005244.1212285-8-superm1@kernel.org>
+X-ClientProxiedBy: PN3PR01CA0037.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:98::16) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=a5XK9VSF c=1 sm=1 tr=0 ts=67b3281d cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=gAnH3GRIAAAA:8 a=fAjUVFDDO8eWv5JNfJ0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-GUID: ktEeUqSGt9BsSDW70z4EDTZ1tZ8Ob_eH
-X-Proofpoint-ORIG-GUID: ktEeUqSGt9BsSDW70z4EDTZ1tZ8Ob_eH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- spamscore=0 mlxscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502170107
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DM3PR12MB9351:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8f7a9a0-4ead-4784-da40-08dd4f3bd77f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PmsqIVAzFjcEMf2YUPWjahC/McXPv53APK/2K9S38evbup1lKyGmYK+199td?=
+ =?us-ascii?Q?MW2XUUOTBTIbspi4pqlmS9WtMMOMKnRpjfbgoFFN1/J72d+vDVnKbqZUjmgz?=
+ =?us-ascii?Q?5V47aZzrH2PTwMceSYJkplRzLZiDr56BPk9p0VN1G46NZ/f3yxkJszM5dPfA?=
+ =?us-ascii?Q?Yrt7vUFkZO4Jj/j6u3qzjOM5CRAABEdIlw+fKZxAPqbf8yWnTJzfNn23R0T+?=
+ =?us-ascii?Q?mOvLYmr9sG16q/AQZn9IyJryoshIJ4NFWlXMSlAvEk6xW0willU5TpnheO8l?=
+ =?us-ascii?Q?lOdc7kYkUb5gDgZXORkrEhByGSwj9zwG1E9549oBD6ZEUF2FAPVEDSBBFtgT?=
+ =?us-ascii?Q?ur+DwQyAGhLNoX3v9d8FJVYyezV4yUvfbppFVp+h9Zbg5rSsnEJCh5hQ23zV?=
+ =?us-ascii?Q?cDyEziKdpucRQWKycbhkugwQ1ExKH3ck9Bt2qm4VQRsJBpjAuDvMjaRWG9Da?=
+ =?us-ascii?Q?QRrKeln/AbPt4ZdAYkVkKybvzYwKAEPfgydgBYK6kdDVasUlWTMnSghNy8Fd?=
+ =?us-ascii?Q?P/8CP5bBZvOEJo6oj8TN7s+V8V/3ZTXGLmG5xrZ/KGuE81nuA2XpkwnBS4A/?=
+ =?us-ascii?Q?ZO39Iwo2eG0WYFnTLEl99lt9c8W+TCF39ZI2Ws3UBMhtoW7uDrheXATTe8Wq?=
+ =?us-ascii?Q?ptbD4jFnqpGR9BKQn7YMuN0lEI034oU7axlzljeQjxsfGwMYSjM1H18v9tdH?=
+ =?us-ascii?Q?dTRiLvbeX5oSvU8usK8yA+CqHV3cXOgLRnCJ5bxMHk1L6gKttMBBVe1WJT+8?=
+ =?us-ascii?Q?IIPttXKdE3aiB9M0IIrN8cNtcWumtdsZ62jj8pMxj05U4l0cHIAglEU2JQFe?=
+ =?us-ascii?Q?cMh4abfmaqYTGFFDleLsOQIOTsMhSSL0r7SdsJAcNoPw86CLuncXGKyQsMSv?=
+ =?us-ascii?Q?k75xZujPWkBHt3GHLyn+58K8QVPLvNdO28ICkdX8SrVZKmXbFde3XV0BTmDH?=
+ =?us-ascii?Q?BIvPVgjPDgiH5MVPx+PuH0Exp4h5Bkl2sdClDsi2Rvpq9DZrxzl3c+eEBIjn?=
+ =?us-ascii?Q?tPySSFQsBYy5zk0jGvVXnpsnaboTRIOdQ3kz9Xa/sMe5LS20GamzunntRoUr?=
+ =?us-ascii?Q?flmPvXen0cwtoU/tJSQpoXYIvVOyd9/F3n25cyopRveEvL5rUituOydxbzmp?=
+ =?us-ascii?Q?YLHg3cAYaVEFd4k5ARXNf+17pPn0vUGHrdeEXQoHDOZckJ3PLI/x/fWJBZ4H?=
+ =?us-ascii?Q?W8hiFu2McI7bARDjJT9ZPSQCjRTVRWBJXxyJxLvQvMPI7SCogc3ZM33CVnM1?=
+ =?us-ascii?Q?7JyJdnj97RVWA1l+8VLfJg1AaHGHaZqXxyTFBhI3+k1vxPMk8s57jYQDGBHz?=
+ =?us-ascii?Q?wMFTVdg/q8+dle15/shhqp+aR3El3A0e5MV/5ekCJ7QE6VtC31VldSrGNlpt?=
+ =?us-ascii?Q?1UiR/cNZGJgbLCS7VLqrd6WLGOkK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pXV7iSR8EXzX6VYnWpqPXWETYOm0uMPxvPzKQ3bGc4R2ef1RRgoKdRQwMl80?=
+ =?us-ascii?Q?Et4217wOxmpBoFph0gAhPFaD2d9r2G/4I3OpNXOoSzPRdx8RwERLcI508JUK?=
+ =?us-ascii?Q?9UXHzSsqKs6a78zjk+8w0qIcZiFPfeRI426eQnY0RNRYTNijacNGiayjonI5?=
+ =?us-ascii?Q?B1ZB+GLzEKkP0c3yvzTu2gJ4idTBpHpstf8GpGXHvwXYspefcNHJ6IyFdAYc?=
+ =?us-ascii?Q?upNijCRtmk/CDf08jJjfJeaOwLn1/EtFNC/T5PtBIj+84aXz8CVr9Rl38cD9?=
+ =?us-ascii?Q?X1nJwr0XAA77aecR2D17jyQhlq58ev8xTBblj6wV5ShhU4sruiuGNOB9v94C?=
+ =?us-ascii?Q?fFRLl0x7o+DmG09uiRr7cKsad+Hq2V2vdX9gR5V8cgMviwamZ7Dr9/+3yg8h?=
+ =?us-ascii?Q?F7wsA5rAGuJ+hRMw426n5CgRssM2uD1FNcTt4rGbwHLypUTbUA4KoeGsail8?=
+ =?us-ascii?Q?KBvj2c+5j0q0yCpa/11Xampbtp40vzonhb5CV1meje5SXzX3BPo2WKfvXjYS?=
+ =?us-ascii?Q?3b5OBderuQrGUc2WQ4PfwqUNL7tR9GaKf8ajS8LTFBnszw88orG6jGhOaBQ9?=
+ =?us-ascii?Q?8ATQEpcrnzsIEDpio8tnV0L4WAtFWeAab+vLGe9mbBYVQ2oBLlDTBK1CY40M?=
+ =?us-ascii?Q?F42JbFt4pTYeKyGik3Xmce4ZjPUjmL15LZawGzhPGqvJJXlH0X6ZXBYcHx5G?=
+ =?us-ascii?Q?Xxg8qEsMrpVHGeY4c+6VW0azJcUo7fgWKd9QbzvZ+HKVqxh7xG3UjoBo1rWh?=
+ =?us-ascii?Q?2Eif2eRfIi/ELQVt4IdzLSTySN16Y7ikrth6gKqSW564KN56FmjGRNj7mK5p?=
+ =?us-ascii?Q?quiAFBIj5zS43ovYIoLIXb2ikOXu8ycOZ/7P9IU391gb+x7E3ur8R/48hsKT?=
+ =?us-ascii?Q?B4EKWdOpabmkk5BtsLJJSOtMvnfbDb/jumKZ9r0yvmPQlk3Z/feC+TjzS2QJ?=
+ =?us-ascii?Q?WFWCmouLTnC0J4vMjTLLaSir0zGb0hvjdRAYBMMa48ltx2X4+aT14w2vh8Bt?=
+ =?us-ascii?Q?Wf6VLYGUWW4sryQ1cECrTBMlQDoV055t2vGkK3zi5f3XXHIJnTuI8rUeiipm?=
+ =?us-ascii?Q?WIoZu7SNWnBnDfKZ+SQx3SWa+/NqumM38LXmY6aG/wV+CFkt/fRGDiQGUDZ3?=
+ =?us-ascii?Q?HbXZnF6KLubj19+UJaOvzDE/zrJsaWX6jVCzgzgdBgJpWCy2Yz+kv1FEpkCO?=
+ =?us-ascii?Q?6FP98wMpUe8UIXX516H9emtKj3DyDzneJ4NQC0lwuE451Rwwrd8UY1vE5oXk?=
+ =?us-ascii?Q?c/YbepNFz51bukhwhg1Sba4Cy3aJQBY86JXoPbK7uiHKmYxYu3Plxeg2wNgX?=
+ =?us-ascii?Q?QSmmas84KqQp0x636mkBeBUNuc1wnZo1Yitit533SE9GOMOcAhr1zJyvzZ9i?=
+ =?us-ascii?Q?sAiG6NuKjr4s0Gr2u3L3xn8z0gP4rjhR5q1Tewj6yLp1jgcULbgBysKVgPdd?=
+ =?us-ascii?Q?+2jQepA4pqKMijbcyySDCqdIwZNAtzgF9tF28ZosKtHxCTS0ek05RbZOqY7T?=
+ =?us-ascii?Q?7KVxzYcbgVJAhfIDn/OBiFk1+49iroxPfu/1n47jU/JaY+rjVWldybzWC6n0?=
+ =?us-ascii?Q?wcYF3w5ha19u/tCszaSSGvcqBofedxiP1FUugCjg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8f7a9a0-4ead-4784-da40-08dd4f3bd77f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 10:14:19.7155
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ebNTi99S9Ycurq40UuK3J6w+vA3hSFgWH9c8C9lbpxAzLrWH0r6gv0EXj97RiFHCBzXBgJ7Ap4pPwxLeIInx8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9351
 
-Add documentation for adis16550 driver which describes the driver device
-files and shows how the user may use the ABI for various scenarios
-(configuration, measurement, etc.).
+On Fri, Feb 14, 2025 at 06:52:34PM -0600, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> Several Ryzen AI processors support the exact same value for lowest
+> nonlinear perf and lowest perf.  Loosen up the unit tests to allow this
+> scenario.
 
-Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-Signed-off-by: Robert Budai <robert.budai@analog.com>
----
+LGTM
 
-v8:
-- corrected subsection numbering
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
- Documentation/iio/adis16550.rst | 376 ++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst     |   1 +
- 2 files changed, 377 insertions(+)
- create mode 100644 Documentation/iio/adis16550.rst
-
-diff --git a/Documentation/iio/adis16550.rst b/Documentation/iio/adis16550.rst
-new file mode 100644
-index 000000000..25db7b806
---- /dev/null
-+++ b/Documentation/iio/adis16550.rst
-@@ -0,0 +1,376 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================
-+ADIS16550 driver
-+================
-+
-+This driver supports Analog Device's IMUs on SPI bus.
-+
-+1. Supported devices
-+====================
-+
-+* `ADIS16550 <https://www.analog.com/ADIS16550>`_
-+
-+The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
-+and a triaxis accelerometer. The factory calibration characterizes each sensor for
-+sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
-+compensation formulas that provide accurate sensor measurements.
-+
-+2. Device attributes
-+====================
-+
-+Accelerometer, gyroscope measurements are always provided. Furthermore, the
-+driver offers the capability to retrieve the delta angle and the delta velocity
-+measurements computed by the device.
-+
-+The delta angle measurements represent a calculation of angular displacement
-+between each sample update, while the delta velocity measurements represent a
-+calculation of linear velocity change between each sample update.
-+
-+Finally, temperature data are provided which show a coarse measurement of
-+the temperature inside of the IMU device. This data is most useful for
-+monitoring relative changes in the thermal environment.
-+
-+Each IIO device, has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
-+where X is the IIO index of the device. Under these folders reside a set of
-+device files, depending on the characteristics and features of the hardware
-+device in questions. These files are consistently generalized and documented in
-+the IIO ABI documentation.
-+
-+The following tables show the adis16550 related device files, found in the
-+specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
-+
-++-------------------------------------------+----------------------------------------------------------+
-+| 3-Axis Accelerometer related device files | Description                                              |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_scale                            | Scale for the accelerometer channels.                    |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency    | Bandwidth for the accelerometer channels.                |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibbias                      | Calibration offset for the X-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibscale                     | Calibration scale for the X-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_raw                            | Raw X-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibbias                      | Calibration offset for the Y-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibscale                     | Calibration scale for the Y-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_raw                            | Raw Y-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibbias                      | Calibration offset for the Z-axis accelerometer channel. |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibscale                     | Calibration scale for the Z-axis accelerometer channel.  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_raw                            | Raw Z-axis accelerometer channel value.                  |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_scale                    | Scale for delta velocity channels.                       |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_x_raw                    | Raw X-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_y_raw                    | Raw Y-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+| in_deltavelocity_z_raw                    | Raw Z-axis delta velocity channel value.                 |
-++-------------------------------------------+----------------------------------------------------------+
-+
-++--------------------------------------------+------------------------------------------------------+
-+| 3-Axis Gyroscope related device files      | Description                                          |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_scale                           | Scale for the gyroscope channels.                    |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_filter_low_pass_3db_frequency   | Scale for the gyroscope channels.                    |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_calibbias                     | Calibration offset for the X-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_calibscale                    | Calibration scale for the X-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_x_raw                           | Raw X-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_calibbias                     | Calibration offset for the Y-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_calibscale                    | Calibration scale for the Y-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_y_raw                           | Raw Y-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_calibbias                     | Calibration offset for the Z-axis gyroscope channel. |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_calibscale                    | Calibration scale for the Z-axis gyroscope channel.  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_anglvel_z_raw                           | Raw Z-axis gyroscope channel value.                  |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_scale                         | Scale for delta angle channels.                      |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_x_raw                         | Raw X-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_y_raw                         | Raw Y-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+| in_deltaangl_z_raw                         | Raw Z-axis delta angle channel value.                |
-++--------------------------------------------+------------------------------------------------------+
-+
-++----------------------------------+-------------------------------------------+
-+| Temperature sensor related files | Description                               |
-++----------------------------------+-------------------------------------------+
-+| in_temp0_raw                     | Raw temperature channel value.            |
-++----------------------------------+-------------------------------------------+
-+| in_temp0_offset                  | Offset for the temperature sensor channel.|
-++----------------------------------+-------------------------------------------+
-+| in_temp0_scale                   | Scale for the temperature sensor channel. |
-++----------------------------------+-------------------------------------------+
-+
-++----------------------------+--------------------------------------------------------------------------------+
-+| Miscellaneous device files | Description                                                                    |
-++----------------------------+--------------------------------------------------------------------------------+
-+| name                       | Name of the IIO device.                                                        |
-++----------------------------+--------------------------------------------------------------------------------+
-+| sampling_frequency         | Currently selected sample rate.                                                |
-++----------------------------+--------------------------------------------------------------------------------+
-+
-+The following table shows the adis16550 related device debug files, found in the
-+specific device debug folder path ``/sys/kernel/debug/iio/iio:deviceX``.
-+
-++----------------------+-------------------------------------------------------------------------+
-+| Debugfs device files | Description                                                             |
-++----------------------+-------------------------------------------------------------------------+
-+| serial_number        | The serial number of the chip in hexadecimal format.                    |
-++----------------------+-------------------------------------------------------------------------+
-+| product_id           | Chip specific product id (16550).                                       |
-++----------------------+-------------------------------------------------------------------------+
-+| flash_count          | The number of flash writes performed on the device.                     |
-++----------------------+-------------------------------------------------------------------------+
-+| firmware_revision    | String containing the firmware revision in the following format ##.##.  |
-++----------------------+-------------------------------------------------------------------------+
-+| firmware_date        | String containing the firmware date in the following format mm-dd-yyyy. |
-++----------------------+-------------------------------------------------------------------------+
-+
-+Channels processed values
-+-------------------------
-+
-+A channel value can be read from its _raw attribute. The value returned is the
-+raw value as reported by the devices. To get the processed value of the channel,
-+apply the following formula:
-+
-+.. code-block:: bash
-+
-+        processed value = (_raw + _offset) * _scale
-+
-+Where _offset and _scale are device attributes. If no _offset attribute is
-+present, simply assume its value is 0.
-+
-+The adis16550 driver offers data for 5 types of channels, the table below shows
-+the measurement units for the processed value, which are defined by the IIO
-+framework:
-+
-++--------------------------------------+---------------------------+
-+| Channel type                         | Measurement unit          |
-++--------------------------------------+---------------------------+
-+| Acceleration on X, Y, and Z axis     | Meters per Second squared |
-++--------------------------------------+---------------------------+
-+| Angular velocity on X, Y and Z axis  | Radians per second        |
-++--------------------------------------+---------------------------+
-+| Delta velocity on X. Y, and Z axis   | Meters per Second         |
-++--------------------------------------+---------------------------+
-+| Delta angle on X, Y, and Z axis      | Radians                   |
-++--------------------------------------+---------------------------+
-+| Temperature                          | Millidegrees Celsius      |
-++--------------------------------------+---------------------------+
-+
-+Usage examples
-+--------------
-+
-+Show device name:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat name
-+        adis16550
-+
-+Show accelerometer channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_raw
-+        6903851
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_y_raw
-+        5650550
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_z_raw
-+        104873530
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_scale
-+        0.000000095
-+
-+- X-axis acceleration = in_accel_x_raw * in_accel_scale = 0.655865845 m/s^2
-+- Y-axis acceleration = in_accel_y_raw * in_accel_scale = 0.53680225 m/s^2
-+- Z-axis acceleration = in_accel_z_raw * in_accel_scale = 9.96298535 m/s^2
-+
-+Show gyroscope channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_x_raw
-+        193309
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_raw
-+        -763676
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_z_raw
-+        -358108
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_scale
-+        0.000000003
-+
-+- X-axis angular velocity = in_anglvel_x_raw * in_anglvel_scale = 0.000579927 rad/s
-+- Y-axis angular velocity = in_anglvel_y_raw * in_anglvel_scale = −0.002291028 rad/s
-+- Z-axis angular velocity = in_anglvel_z_raw * in_anglvel_scale = −0.001074324 rad/s
-+
-+Set calibration offset for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 5000 > in_accel_x_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        5000
-+
-+Set calibration offset for gyroscope channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo -5000 > in_anglvel_y_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_anglvel_y_calibbias
-+        -5000
-+
-+Set sampling frequency:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        4000.000000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1000 > sampling_frequency
-+        1000.000000
-+
-+Set bandwidth for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 100 > in_accel_filter_low_pass_3db_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        100
-+
-+Show serial number:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat serial_number
-+        0x000000b6
-+
-+Show product id:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat product_id
-+        16550
-+
-+Show flash count:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat flash_count
-+        13
-+
-+Show firmware revision:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat firmware_revision
-+        1.5
-+
-+Show firmware date:
-+
-+.. code-block:: bash
-+
-+        root:/sys/kernel/debug/iio/iio:device0> cat firmware_date
-+        28-04-2021
-+
-+3. Device buffers
-+=================
-+
-+This driver supports IIO buffers.
-+
-+The device supports retrieving the raw acceleration, gyroscope, delta velocity,
-+delta angle and temperature measurements using buffers.
-+
-+However, when retrieving acceleration or gyroscope data using buffers, delta
-+readings will not be available and vice versa. This is because the device only
-+allows to read either acceleration and gyroscope data or delta velocity and
-+delta angle data at a time and switching between these two burst data selection
-+modes is time consuming.
-+
-+Usage examples
-+--------------
-+
-+Set device trigger in current_trigger, if not already set:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat trigger/current_trigger
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo adis16550-dev0 > trigger/current_trigger
-+        root:/sys/bus/iio/devices/iio:device0> cat trigger/current_trigger
-+        adis16550-dev0
-+
-+Select channels for buffer read:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_x_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_y_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_deltavelocity_z_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_temp0_en
-+
-+Set the number of samples to be stored in the buffer:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 10 > buffer/length
-+
-+Enable buffer readings:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
-+
-+Obtain buffered data:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-+        ...
-+        0000cdf0  00 00 0d 2f 00 00 08 43  00 00 09 09 00 00 a4 5f  |.../...C......._|
-+        0000ce00  00 00 0d 2f 00 00 07 de  00 00 08 db 00 00 a4 4b  |.../...........K|
-+        0000ce10  00 00 0d 2f 00 00 07 58  00 00 08 a3 00 00 a4 55  |.../...X.......U|
-+        0000ce20  00 00 0d 2f 00 00 06 d6  00 00 08 5c 00 00 a4 62  |.../.......\...b|
-+        0000ce30  00 00 0d 2f 00 00 06 45  00 00 08 37 00 00 a4 47  |.../...E...7...G|
-+        0000ce40  00 00 0d 2f 00 00 05 d4  00 00 08 30 00 00 a3 fa  |.../.......0....|
-+        0000ce50  00 00 0d 2f 00 00 05 d0  00 00 08 12 00 00 a3 d3  |.../............|
-+        0000ce60  00 00 0d 2f 00 00 05 dd  00 00 08 2e 00 00 a3 e9  |.../............|
-+        0000ce70  00 00 0d 2f 00 00 05 cc  00 00 08 51 00 00 a3 d5  |.../.......Q....|
-+        0000ce80  00 00 0d 2f 00 00 05 ba  00 00 08 22 00 00 a3 9a  |.../......."....|
-+        0000ce90  00 00 0d 2f 00 00 05 9c  00 00 07 d9 00 00 a3 40  |.../...........@|
-+        0000cea0  00 00 0d 2f 00 00 05 68  00 00 07 94 00 00 a2 e4  |.../...h........|
-+        0000ceb0  00 00 0d 2f 00 00 05 25  00 00 07 8d 00 00 a2 ce  |.../...%........|
-+        ...
-+
-+See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+data is structured.
-+
-+4. IIO Interfacing Tools
-+========================
-+
-+See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+interfacing tools.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 5710f5b9e..039ed2d75 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -26,6 +26,7 @@ Industrial I/O Kernel Drivers
-    ad7944
-    adis16475
-    adis16480
-+   adis16550
-    adxl380
-    bno055
-    ep93xx_adc
 -- 
-2.34.1
+Thanks and Regards
+gautham.
 
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2:
+>  * New patch
+> 
+>  drivers/cpufreq/amd-pstate-ut.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
+> index 9f790c7254d52..0f0b867e271cc 100644
+> --- a/drivers/cpufreq/amd-pstate-ut.c
+> +++ b/drivers/cpufreq/amd-pstate-ut.c
+> @@ -184,7 +184,7 @@ static void amd_pstate_ut_check_perf(u32 index)
+>  
+>  		if (!((highest_perf >= nominal_perf) &&
+>  			(nominal_perf > lowest_nonlinear_perf) &&
+> -			(lowest_nonlinear_perf > lowest_perf) &&
+> +			(lowest_nonlinear_perf >= lowest_perf) &&
+>  			(lowest_perf > 0))) {
+>  			amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+>  			pr_err("%s cpu%d highest=%d >= nominal=%d > lowest_nonlinear=%d > lowest=%d > 0, the formula is incorrect!\n",
+> @@ -217,7 +217,7 @@ static void amd_pstate_ut_check_freq(u32 index)
+>  
+>  		if (!((policy->cpuinfo.max_freq >= cpudata->nominal_freq) &&
+>  			(cpudata->nominal_freq > cpudata->lowest_nonlinear_freq) &&
+> -			(cpudata->lowest_nonlinear_freq > policy->cpuinfo.min_freq) &&
+> +			(cpudata->lowest_nonlinear_freq >= policy->cpuinfo.min_freq) &&
+>  			(policy->cpuinfo.min_freq > 0))) {
+>  			amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+>  			pr_err("%s cpu%d max=%d >= nominal=%d > lowest_nonlinear=%d > min=%d > 0, the formula is incorrect!\n",
+> -- 
+> 2.43.0
+> 
 
