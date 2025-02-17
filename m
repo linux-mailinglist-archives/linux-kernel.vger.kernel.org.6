@@ -1,180 +1,202 @@
-Return-Path: <linux-kernel+bounces-518468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCE0A38F92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C5CA38F95
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2172E1710C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D8116A356
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A371ADC81;
-	Mon, 17 Feb 2025 23:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NESdsBBL"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698ED14D444;
-	Mon, 17 Feb 2025 23:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0D31ACED5;
+	Mon, 17 Feb 2025 23:23:22 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD3214D444;
+	Mon, 17 Feb 2025 23:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739834528; cv=none; b=qwVXfG1J0k1XVtl7JevFh8ANj4ZfZ0A7tCbkD7w5SvzLBZhmYNxJHdvgofdLAqWILc+Z6KtjIQowu8Hc/4ZNk2hH0dx41i66xzrlDmgy4xjaGCoyx7MBVBvzS1EU/J1qfxMi6KsHxJK7SfT9dqrW4tkR2TW8mhzDNB6WJnNNLAQ=
+	t=1739834602; cv=none; b=DEGlufwUnnOJ/BHlEKgsFHVQ20N3y6IFAGOATjDMYvvdnDgfEluK+/0zBrqP9V9Y8gFJ1kFcswIMk0+dA2QsPGWyOPfnMCKrn48oBKu88/daOyxpI7XAzmUOWbAvv++sNQzI0R7tZazmtqdpeasakkKxj3eoRl2suK1lNmIknGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739834528; c=relaxed/simple;
-	bh=f83O3KxdUX2e1SDP+npF3Cm47CLmohfTTXT+mmIhBIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwOh+uGx3U6SGGTnNSBeNxtldVL0BJnQlN86f9OmJyW7GUCGjRlhfNRmZvl11Jj0bKf74KY7Cyi5buchiJYKLxq1aoQNQlccjNQqkH5bNIe2iURB7n4KEXO7BPhepFKSupHVBJ8pnwZ5y0m3glQ80ADyHxAOBKLc/nr95mK60tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=NESdsBBL; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=z4zZA+SHhnpmJYDOp0NswBWcZOVtoN7RDeuxjfGWwYM=; b=NESdsBBLeV/I0kXm45xJYp1bTL
-	oWkZIdEUuBRoCa45X0wQa6fuOpZrM5lGjcanXPnllxXNH6pTn1/m/7yaJSbv+O7Ymg8dAVt6f6Wfy
-	bTaDLLNYsjGRf6lT0m/MGUsLjIfJH8mjAgK522uHle1UDz8LcWyCv9GGcplS0nfP5EJExAltRINzo
-	559KURpSKhEvCcEG6EkJCXOKVEhh1HF/8QUJ+jAMhz8We6zWJ8UKFVmvqyELxtyrh+n7v4aMZoSpb
-	zbBToIGKwNOQVgqeJzR0WJabFApK02ghl42zyjJ6ciFTq1R2nXF2o6jG0J5tRuff5bcvWFqPSewg1
-	TGBaTskA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58678)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tkAQk-0008Gn-2z;
-	Mon, 17 Feb 2025 23:21:39 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tkAQb-0006c4-02;
-	Mon, 17 Feb 2025 23:21:29 +0000
-Date: Mon, 17 Feb 2025 23:21:28 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add glue layer for Sophgo
- SG2044 SoC
-Message-ID: <Z7PEeGmNvlYD33rZ@shell.armlinux.org.uk>
-References: <20250216123953.1252523-1-inochiama@gmail.com>
- <20250216123953.1252523-4-inochiama@gmail.com>
- <Z7IIht2Q-iXEFw7x@shell.armlinux.org.uk>
- <5e481b95-3cf8-4f71-a76b-939d96e1c4f3@lunn.ch>
- <js3z3ra7fyg4qwxbly24xqpnvsv76jyikbhk7aturqigewllbx@gvus6ub46vow>
- <24eecc48-9061-4575-9e3b-6ef35226407a@lunn.ch>
- <Z7NDakd7zpQ_345D@shell.armlinux.org.uk>
- <rsysy3p5ium5umzz34rtinppcu2b36klgjdtq5j4lm3mylbqbz@z44yeje5wgat>
+	s=arc-20240116; t=1739834602; c=relaxed/simple;
+	bh=ohyx9wFz5bUQOgsQJ/OchrFfpmMIXOcu8vqb+spn4xo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cpKCt2kIYCbpHhW1WCiwuoPH08k/FYVZg0DEyblehR+oq/V1MKTyPFTqhQ+9K7LAWpwaHiyBAWFNUEWgTJXTtMOGrgoJ/xEQKQlnKpVmEIWfUQUyqDAVBholACR/e/vPDc+QGny5MQMI7V/w151ml4+v+3pJaSCLDIN1lOhk3c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 737F692009C; Tue, 18 Feb 2025 00:23:11 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 6D6CC92009B;
+	Mon, 17 Feb 2025 23:23:11 +0000 (GMT)
+Date: Mon, 17 Feb 2025 23:23:11 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-mips@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] tools/nolibc: add support for N64 and N32 ABIs
+In-Reply-To: <3080562c-7cfd-4f66-9f62-9a99552d283f@t-8ch.de>
+Message-ID: <alpine.DEB.2.21.2502172208570.65342@angie.orcam.me.uk>
+References: <20250212-nolibc-mips-n32-v1-1-6892e58d1321@weissschuh.net> <alpine.DEB.2.21.2502161523290.65342@angie.orcam.me.uk> <3080562c-7cfd-4f66-9f62-9a99552d283f@t-8ch.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rsysy3p5ium5umzz34rtinppcu2b36klgjdtq5j4lm3mylbqbz@z44yeje5wgat>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Feb 18, 2025 at 06:50:24AM +0800, Inochi Amaoto wrote:
-> On Mon, Feb 17, 2025 at 02:10:50PM +0000, Russell King (Oracle) wrote:
-> > On Mon, Feb 17, 2025 at 02:25:33PM +0100, Andrew Lunn wrote:
-> > > > I am not sure all whether devices has this clock, but it appears in
-> > > > the databook. So I think it is possible to move this in the core so
-> > > > any platform with these clock can reuse it.
-> > > 
-> > > Great
-> > > 
-> > > The next problem will be, has everybody called it the same thing in
-> > > DT. Since there has been a lot of cut/paste, maybe they have, by
-> > > accident.
-> > 
-> > Tegra186: "tx"
-> > imx: "tx"
-> > intel: "tx_clk"
-> > rk: "clk_mac_speed"
-> > s32: "tx"
-> > starfive: "tx"
-> > sti: "sti-ethclk"
-> > 
+Hi Thomas,
+
+> thanks for your feedback!
+
+ You're welcome.  Sadly little MIPS-fu seems still available nowadays and 
+for me it's often too easy to miss MIPS-related topics in the mailing list 
+flood.
+
+> >  Why is this code breaking stack alignment just to have to fix it up two 
+> > instructions down the line?  Or is it that the incoming $sp is not aligned 
+> > in the first place (in which case we're having a deeper problem).
 > 
-> The dwc-qos-eth also use clock name "tx", but set the clock with
-> extra calibration logic.
+> nolibc itself does not assume that $sp is aligned.
+> Maybe Willy can explain the historical background.
 
-Yep, that's what I meant by "Tegra186" above.
+ I'm all ears.
 
-> > so 50% have settled on "tx" and the rest are doing their own thing, and
-> > that horse has already bolted.
+> The System V ABI MIPS supplement [0] says the following:
+> 
+> The registers listed below have the specified contents at process entry:
+> 	...
+> 
+> 	$sp The stack pointer holds the address of the bottom of the stack, which
+> 	must be doubleword (8 byte) aligned.
+> 	...
+> 
+> However "process entry" is main(), while this code is running before main.
+
+ Umm, no, process entry definitely is not main(); if you refer to the 
+somewhat obsolete and inaccurate MIPS psABI, then please note that the 
+paragraph right above your quote says:
+
+$2	A non-zero value specifies a function pointer the application 
+	should register with atexit(BA_OS).  If $2 contains zero, no 
+	action is required.
+
+and one immediately below it says:
+
+$31	The return address register is set to zero so that programs that 
+	search backward through stack frames (stack backtracing) recognize 
+	the last stack frame, that is, a stack frame with a zero in the 
+        saved $31 slot.
+
+and there is more on the initial process stack earlier on, including the 
+location of the auxiliary vector.  All it making it clear it's not main() 
+this specification refers to, but the entry point from the OS kernel (then 
+of course you're aware already it's o32 it talks about; n64/n32 requires 
+16 bytes, but then again we only have secondary references[1][2], in this 
+case for SGI IRIX).
+
+> The kernel always aligns the stack to a multiple of 16 bytes.
+> See the usage of STACK_ROUND() in fs/binfmt_elf.c.
+> 
+> So I guess we could remove the manual alignment.
+> (At least for alignments of 16 bytes and less)
+
+ I think they all need to go then, but then stack pointer adjustments have 
+to be made in multiples of the alignment required by the psABI of course.
+
+> > > +
+> > > +		/* ABI requires current function address in $t9 */
+> > > +#if defined(_ABIO32) || defined(_ABIN32)
+> > > +		"lui $t9, %hi(_start_c)\n"
+> > >  		"ori $t9, %lo(_start_c)\n"
+> > > +#else
+> > > +		"lui  $t9, %highest(_start_c)\n"
+> > > +		"ori  $t9, %higher(_start_c)\n"
+> > > +		"dsll $t9, 0x10\n"
+> > > +		"ori  $t9, %hi(_start_c)\n"
+> > > +		"dsll $t9, 0x10\n"
+> > > +		"ori  $t9, %lo(_start_c)\n"
 > > 
+> >  This could be optimised using a temporary (e.g. $at, but I guess any will 
+> > do as I gather we don't have any ABI abnormalities here).
 > 
-> The "rx" clock in s32 also uses the same logic. I think the core also
-> needs to take it, as this rx clock is also mentioned in the databook.
+> clang rejects manual usage of $at without ".set noat".
+> So $t0 is simpler.
 
-The "rx" clock on s32 seems to only be set to 125MHz, and the driver
-seems to be limited to RGMII.
+ It's always `.set at' that's required to use $at by hand; it's been so 
+long before clang was even thought of.  Or you could use LA and DLA macros 
+for o32/n32 and n64 respectively for the assembler to do all this stuff 
+for you in the default `.set reorder' mode (assuming that clang is not 
+completely broken here).
 
-This seems weird as the receive clock is supposed to be supplied by the
-PHY, and is recovered from the media (and thus will be 2.5, 25 or
-125MHz as determined by the PHY.) So, I'm not sure that the s32 "rx"
-clock is really the clk_rx_i clock supplied to the DWMAC core.
-
-Certainly on stm32mp151, it states that ETH_RX_CLK in RGMII mode will
-be 2.5, 25 or 125MHz provided by the PHY, and the clock tree indicates
-that ETH_RX_CLK in RGMII mode will be routed directly to the clk_rx_i
-input on the DWMAC(4) core.
-
-> > I have some ideas on sorting this out, and I'm working on some patches
-> > today.
+> > > +#endif
+> > > +
+> > >  		"jalr $t9\n"             /* transfer to c runtime
+> > > */
+> > >  		" nop\n"                 /* delayed slot
+> > 
+> >  On an unrelated matter JALR above ought to be JAL (or otherwise there's 
+> > no point in using the .cprestore pseudo-op).  And I fail to see why this 
+> > code has to be "noreorder" (except for the .cpload piece, of course), it's 
+> > just asking for troubles.
 > 
-> Great, Could you cc me when you submit them? So I can take it and
-> change my series.
+> Thanks for the hints.
+> 
+> Without "noreorder", is the manually addition of the delayed slot "nop"
+> still necessary?
 
-Will do - I'm almost at that point, I have three other cleanup patches
-I will be sending before hand, so I'll send those out and then this
-series as RFC.
+ It's not.  It's for the `.set noreorder' mode only, to fill the branch 
+delay slot by hand.  Otherwise it'll become just a useless instruction 
+following the call sequence and executed after return.
 
-The only platform drivers I've left with a call to rgmii_clock() are
-sti, imx (for imx93 only as that does extra fiddling after setting the
-clock and I'm not sure if there's an ordering dependency there) and
-the rk platforms.
+> These points also apply to the existing O32 implementation, right?
 
-Five platforms converted, three not, and hopefully your platform can
-also use the helper as well!
+ Correct.  Sadly it's the first time I see this code.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+ Overall I find it a bit of a chimera: it uses `.set noreorder' and 
+explicit relocations on one hand, and then high-level assembly `.cpload' 
+and `.cprestore' pseudo-ops on the other, effectively mixing the two 
+styles of assembly.
+
+ The pseudo-ops come from times when using assembly macros was the norm 
+and are there to support that coding model where macros rely on these 
+pseudo-ops, and before the use of explicit relocations became the norm at 
+least for GCC.  In the absence of assembly macros you can write code 
+expansions for these pseudo-ops by hand, just as what GCC does nowadays 
+(in the `-mexplicit-relocs' mode, which is usually the default).
+
+ But due to architecture variations it's very hard to write handcoded 
+assembly in the `.set noreorder' mode: you need to take care of all the 
+data dependencies that appear due to the lack of interlocking between 
+pipeline stages, which results in code that either works correctly 
+everywhere, but is suboptimal for newer architecture revisions, or code 
+that works better with newer architecture revisions, but is actually 
+broken with earlier ones.
+
+ About the only typical case where you do want to use `.set noreorder' is 
+to schedule a branch delay slot by hand due to a data anti-dependency 
+between the two instructions.  Patchable/self-modifying code is a less 
+frequent case.  And I had literally one case in my entire career where I 
+wanted to actually jump to a branch delay slot instruction (it's still 
+there in arch/mips/include/asm/div64.h, in do_div64_32(); see label #2).
+
+ Also it appears no code in this function actually relies on $gp having 
+been set up, so perhaps this stuff can just be discarded in the first 
+place?
+
+References:
+
+[1] "MIPSpro 64-Bit Porting and Transition Guide", 
+    <https://irix7.com/techpubs/007-2391-006.pdf>
+
+[2] "MIPSpro N32 ABI Handbook", 
+    <https://irix7.com/techpubs/007-2816-004.pdf>
+
+  Maciej
 
