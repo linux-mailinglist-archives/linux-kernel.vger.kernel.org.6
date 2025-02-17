@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-518461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B840A38F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:19:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8070AA38F87
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A18172769
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9799172972
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D71B0421;
-	Mon, 17 Feb 2025 23:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ED61B0F0A;
+	Mon, 17 Feb 2025 23:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vg/kiVR4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCWn+Si1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3145D1AE01C;
-	Mon, 17 Feb 2025 23:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA6E1AAA1F;
+	Mon, 17 Feb 2025 23:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739834287; cv=none; b=UoPzUlrmmF6Iha04kq3GBBJiWg53OWpVZmL7tohIKIh+4uybcMrGlIzrLuPWodqR4nSlpSTCqYBRfBChogfZ9Wy05kUfSOJeRHa/3CgGW6lx1tqTC4C1dvPtHGteWcuwYWsCfrxJLAnk36JqCdUD7nhXFE28SlDMsQ3AKgZHtTA=
+	t=1739834288; cv=none; b=T/y4yUB2V4rrUMpyv8F2f9HCEqar99E12cU3KroxybqmpVDkuakhuWcLPqG01bKLsFSa/7lL4DNLeChRD2Wvn6n2aBUg/nx17xJD3X9rYOqhn7SvV/icUJ0NMSvclojqBiPOZy86y09hOuC7HsIWESERSvrJc0+Kgvxbcz8DAVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739834287; c=relaxed/simple;
-	bh=J4+qBi6Z3BTv/cG5EqfyHKOUwMClU9CQQwCsGOkKg7k=;
+	s=arc-20240116; t=1739834288; c=relaxed/simple;
+	bh=WxRSXlQocu9WEzHt6sN6+QF8YyFOo9r+uyTx4yS5Alw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pRyG2cwtP46yYXaIVpzEkkat0WaJJnO5r0JWly1omYfyab/DmEhFp+x3XOzFn7r1nT53sp9T+BYteSN4XJcJiwyDkG9rkEmlSiCqc55BKNlenwmfj6s85JLh7TZsuqkh9wVEAPcD6xjCAjOUBIV/JXL1skGgJkLphOnL6EgGx+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vg/kiVR4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B4F5C4CEEA;
-	Mon, 17 Feb 2025 23:18:03 +0000 (UTC)
+	 MIME-Version; b=seL6p2i6Y29K+mp08KoqzWBoRuus8XNfxi01+i0SuKONShMXfkWRzGqaGnfgUsobTq7WEeD2l28fOVRvnGer8bbotnUCMVsfdqxMypQ2wBCUPo9I1oM8nZL27xHvW+3sQFK0qXf7TmjkJox4uYeZRtMw80oqfXh509ERCvQeuro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCWn+Si1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E338CC4CEE7;
+	Mon, 17 Feb 2025 23:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739834285;
-	bh=J4+qBi6Z3BTv/cG5EqfyHKOUwMClU9CQQwCsGOkKg7k=;
+	s=k20201202; t=1739834288;
+	bh=WxRSXlQocu9WEzHt6sN6+QF8YyFOo9r+uyTx4yS5Alw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vg/kiVR4cirr0hG5Z3UC/RQmY1oV3otn/8fYbf9TGFiab/sskM5P/hdKn5O373cne
-	 c8Tj2iXvteu/upyy8zK3tBZNNwxKMgPow1cwPYdp9P6dRaMMN+2B2cDSXM5UPng1Xp
-	 HCVwnOJenm0yIwxwFy5wy9/aELrHhPRiife265IXl5moD6sSx1zYgf8MgKeoWJqHcY
-	 wRRYtWMDChGcCX1i4kNTuPjqgP6UT+ablSW5eiUz9hg5c4xmM/cA3EQRs6gXs0QQXz
-	 vHpaq1vM4Oy1tX1T5dbJGItS6pWuVred9seoT3UmLAng1CTLMuC2rT0x3UulAje6Dx
-	 Z7T3BL7i0BOOg==
+	b=LCWn+Si1DTDRrON1vZbmLnviLwEBMhhyhhsVMLLaRFIWy0QPoljsJqRqcgjZEGPyd
+	 LLBh7DtcBHK6A5pRmLj4yO5T9vP1doLWq5bKY22Hfty8selMz5+gFP5EN6xslrAzSL
+	 nt52y2PSZ5PCMOJ138kfMwajxECOQCbSnD5u83m42NxiwCFWw2JFI32MpW8oSzRdiA
+	 CGFhNTu7qYDUtdc0zhK1preI5f9WNhbFho0oIzpyKd7r9ukuYmLZhoiObbTW5QRnsF
+	 1DNbcsWsqTUQjurHPaY1Tdyh1u63BMY4it6+P4c3IXXDJpCLnr2tsOoAS7ZwQ0lPTP
+	 5JgTZ0bXyJe+Q==
 From: Mario Limonciello <superm1@kernel.org>
 To: Yazen Ghannam <yazen.ghannam@amd.com>,
 	Borislav Petkov <bp@alien8.de>,
@@ -69,9 +69,9 @@ Cc: Mario Limonciello <mario.limonciello@amd.com>,
 	linux-kernel@vger.kernel.org (open list:AMD NODE DRIVER),
 	linux-sound@vger.kernel.org (open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...),
 	sound-open-firmware@alsa-project.org (moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS)
-Subject: [PATCH 2/7] ASoC: amd: acp: rembrandt: Use AMD_NODE
-Date: Mon, 17 Feb 2025 17:17:42 -0600
-Message-ID: <20250217231747.1656228-3-superm1@kernel.org>
+Subject: [PATCH 3/7] ASoC: amd: acp: acp70: Use AMD_NODE
+Date: Mon, 17 Feb 2025 17:17:43 -0600
+Message-ID: <20250217231747.1656228-4-superm1@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250217231747.1656228-1-superm1@kernel.org>
 References: <20250217231747.1656228-1-superm1@kernel.org>
@@ -94,77 +94,88 @@ provided ones.
 Tested by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
 Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 ---
- sound/soc/amd/acp/Kconfig         |  1 +
- sound/soc/amd/acp/acp-rembrandt.c | 28 ++++++++++++++--------------
- 2 files changed, 15 insertions(+), 14 deletions(-)
+ sound/soc/amd/acp/Kconfig     |  1 +
+ sound/soc/amd/acp/acp70.c     | 28 ++++------------------------
+ sound/soc/sof/amd/pci-acp70.c |  1 -
+ 3 files changed, 5 insertions(+), 25 deletions(-)
 
 diff --git a/sound/soc/amd/acp/Kconfig b/sound/soc/amd/acp/Kconfig
-index 53793ec7c7b49..2bb78a748c79d 100644
+index 2bb78a748c79d..a649f49864059 100644
 --- a/sound/soc/amd/acp/Kconfig
 +++ b/sound/soc/amd/acp/Kconfig
-@@ -58,6 +58,7 @@ config SND_AMD_ASOC_REMBRANDT
+@@ -82,6 +82,7 @@ config SND_AMD_ASOC_ACP70
+ 	tristate "AMD ACP ASOC Acp7.0 Support"
+ 	depends on X86 && PCI
+ 	depends on ACPI
++	depends on AMD_NODE
+ 	select SND_SOC_AMD_ACP_PCM
  	select SND_SOC_AMD_ACP_I2S
  	select SND_SOC_AMD_ACP_PDM
- 	select SND_SOC_AMD_ACP_LEGACY_COMMON
-+	depends on AMD_NODE
- 	depends on X86 && PCI
- 	help
- 	  This option enables Rembrandt I2S support on AMD platform.
-diff --git a/sound/soc/amd/acp/acp-rembrandt.c b/sound/soc/amd/acp/acp-rembrandt.c
-index 2648256fa129c..e727754a8231c 100644
---- a/sound/soc/amd/acp/acp-rembrandt.c
-+++ b/sound/soc/amd/acp/acp-rembrandt.c
-@@ -22,6 +22,8 @@
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
+diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
+index 9e23729fd1a71..ef3f6504bc7f5 100644
+--- a/sound/soc/amd/acp/acp70.c
++++ b/sound/soc/amd/acp/acp70.c
+@@ -23,6 +23,8 @@
+ #include "amd.h"
+ #include "acp-mach.h"
  
 +#include <asm/amd_node.h>
 +
- #include "amd.h"
- #include "../mach-config.h"
- #include "acp-mach.h"
-@@ -31,7 +33,6 @@
- #define MP1_C2PMSG_69 0x3B10A14
- #define MP1_C2PMSG_85 0x3B10A54
- #define MP1_C2PMSG_93 0x3B10A74
--#define HOST_BRIDGE_ID 0x14B5
+ #define DRV_NAME "acp_asoc_acp70"
  
- static struct acp_resource rsrc = {
- 	.offset = 0,
-@@ -166,21 +167,20 @@ static struct snd_soc_dai_driver acp_rmb_dai[] = {
+ #define CLK7_CLK0_DFS_CNTL_N1		0X0006C1A4
+@@ -137,29 +139,6 @@ static struct snd_soc_dai_driver acp70_dai[] = {
+ },
+ };
  
- static int acp6x_master_clock_generate(struct device *dev)
- {
--	int data = 0;
+-static int acp70_i2s_master_clock_generate(struct acp_dev_data *adata)
+-{
 -	struct pci_dev *smn_dev;
-+	int data, rc;
- 
--	smn_dev = pci_get_device(PCI_VENDOR_ID_AMD, HOST_BRIDGE_ID, NULL);
--	if (!smn_dev) {
--		dev_err(dev, "Failed to get host bridge device\n");
+-	u32 device_id;
+-
+-	if (adata->acp_rev == ACP70_PCI_ID)
+-		device_id = 0x1507;
+-	else if (adata->acp_rev == ACP71_PCI_ID)
+-		device_id = 0x1122;
+-	else
 -		return -ENODEV;
--	}
-+	rc = amd_smn_write(0, MP1_C2PMSG_93, 0);
-+	if (rc)
-+		return rc;
-+	rc = amd_smn_write(0, MP1_C2PMSG_85, 0xC4);
-+	if (rc)
-+		return rc;
-+	rc = amd_smn_write(0, MP1_C2PMSG_69, 0x4);
-+	if (rc)
-+		return rc;
- 
--	smn_write(smn_dev, MP1_C2PMSG_93, 0);
--	smn_write(smn_dev, MP1_C2PMSG_85, 0xC4);
--	smn_write(smn_dev, MP1_C2PMSG_69, 0x4);
--	read_poll_timeout(smn_read, data, data, DELAY_US,
--			  ACP_TIMEOUT, false, smn_dev, MP1_C2PMSG_93);
+-
+-	smn_dev = pci_get_device(PCI_VENDOR_ID_AMD, device_id, NULL);
+-
+-	if (!smn_dev)
+-		return -ENODEV;
+-
+-	/* Set clk7 DFS clock divider register value to get mclk as 196.608MHz*/
+-	smn_write(smn_dev, CLK7_CLK0_DFS_CNTL_N1, CLK0_DIVIDER);
+-
 -	return 0;
-+	return read_poll_timeout(smn_read_register, data, data > 0, DELAY_US,
-+				 ACP_TIMEOUT, false, MP1_C2PMSG_93);
- }
+-}
+-
+ static int acp_acp70_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -215,7 +194,8 @@ static int acp_acp70_audio_probe(struct platform_device *pdev)
  
- static int rembrandt_audio_probe(struct platform_device *pdev)
+ 	dev_set_drvdata(dev, adata);
+ 
+-	ret = acp70_i2s_master_clock_generate(adata);
++	/* Set clk7 DFS clock divider register value to get mclk as 196.608MHz*/
++	ret = amd_smn_write(0, CLK7_CLK0_DFS_CNTL_N1, CLK0_DIVIDER);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to set I2S master clock as 196.608MHz\n");
+ 		return ret;
+diff --git a/sound/soc/sof/amd/pci-acp70.c b/sound/soc/sof/amd/pci-acp70.c
+index 3647ec992e95f..d886bdf3a1128 100644
+--- a/sound/soc/sof/amd/pci-acp70.c
++++ b/sound/soc/sof/amd/pci-acp70.c
+@@ -28,7 +28,6 @@
+ #define ACP70_REG_END			0x125C000
+ 
+ static const struct sof_amd_acp_desc acp70_chip_info = {
+-	.host_bridge_id = HOST_BRIDGE_ACP70,
+ 	.pgfsm_base	= ACP70_PGFSM_BASE,
+ 	.ext_intr_enb = ACP70_EXTERNAL_INTR_ENB,
+ 	.ext_intr_cntl = ACP70_EXTERNAL_INTR_CNTL,
 -- 
 2.43.0
 
