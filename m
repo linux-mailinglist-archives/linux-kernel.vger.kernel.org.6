@@ -1,99 +1,313 @@
-Return-Path: <linux-kernel+bounces-517348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FF3A37F9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:15:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0CEA37F92
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C0AE188BF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDC16C8C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABFD217F28;
-	Mon, 17 Feb 2025 10:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE30218842;
+	Mon, 17 Feb 2025 10:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DOf0OuFb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fhBJu1rx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF9217713;
-	Mon, 17 Feb 2025 10:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DD221771F;
+	Mon, 17 Feb 2025 10:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786893; cv=none; b=WmEDcAubd2b4zy2Uq1tsTcgWydK3h7O5dbj8QX33lq5qGe0Ttk5Y88ne3hVXK3CEUuuwYC9neU3fUcZxut0DRhiPBBGiAkZmzVBTIE86dnB/gyAcwTk0d8hYbiB2DcdruuJiCgRAjUrxeKxWKueo9wcGWUdV7tAlBrFzrlBhmp8=
+	t=1739786935; cv=none; b=QfwjfkmdogiTm+jeeWW2+4tbWMeUxQIiKpc8e+D4Rzc6fc0KAlvLa4/uamtYDA/oeNc/cnV0VQZA3Z7NCRVBtBoNRxN7ctQaI9XQlnpuVHPZdbe6AHQ9fDiiF2Zx41gCP0ivkpclpJkssppjCOE745LiuYs3y7yLbTi/uvM+wV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786893; c=relaxed/simple;
-	bh=QJhMMvbsGbb9IG1/WGxalDSRUdxAS06UI2IeVEOIOvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0yj+xCoBBZZke+X8qgfkomPPoJRpgA5RLo5GzYn/yhDzQfroklwKd30O90FeaIhjAlo2alELcKOQ97fiUj47kBzUTXl6WZO3IAlR++kxU38jMM9+G3ZjbawO23PukA9elG6Es3WWGFnSF7/Um4J9NymUrdKtnfmRV0qGQSj3iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DOf0OuFb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Hw1hJQCbl8Z4ry3SD9KqSPmH+QbC3B7QYj7POJLYcWI=; b=DOf0OuFbIVh5MtbmOHngba6QPq
-	5YEy2aTZMacwyGrR4qAwdfFeVd+EUNPBsQNMO3kJybjmunT3URm1zZfqyZcnh951R+YASaSQTA0NZ
-	wQAfMwm+mwM+846S4drYIDbXmUqTawnjZ/rtgXW7s1cPIly0BzdvkrU65Tok3bZty2jG9/v8+GGFI
-	D5v4ZrbAD7u74k/ieqMdLLo+4umR/oHCwamvY19vm5c9+Q4LIfnFUVtK70bTJstZqg/NqpRjoSXOn
-	Xp2sI9NkzMIsbtr/Be7lB4XUXHNeYbGeUaQtYFkXrRHvzcjbGDfDZTfzn4XUnc62ssFFBHB9FWKRO
-	0XnCe6CA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41180)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tjy2e-00067U-2a;
-	Mon, 17 Feb 2025 10:07:56 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tjy2a-00067e-1i;
-	Mon, 17 Feb 2025 10:07:52 +0000
-Date: Mon, 17 Feb 2025 10:07:52 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v4] net: ethernet: mediatek: add EEE support
-Message-ID: <Z7MKeEKOzmA5JEjU@shell.armlinux.org.uk>
-References: <20250217094022.1065436-1-dqfext@gmail.com>
+	s=arc-20240116; t=1739786935; c=relaxed/simple;
+	bh=WaexI+GTMLB9LD3SzzT+vgAJbuAuabXPQ/ESv9lZrBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JIsP06zxxNItiAFRKCP3UDNnE+tIsPLBn9tvHHtgIq/5Gq5BCwB79lD/doDQ6sMOXZRNC0qJGxcPbtLJ5OVolbgqSRZpqGAGqMO7kBb61ZzuLiy8T4pNHLsFzoJDV7TI5G4LVUr0dvCJzR0689Qa6rMZz0Uj9Il7Rhm5cboCMF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fhBJu1rx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H03EEB032018;
+	Mon, 17 Feb 2025 10:08:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kmBx0vh9UKMEbN00/TAgFMn8gz1XFk6ODAvDM+ARmlM=; b=fhBJu1rxLrWEddFN
+	V34QJRgX5kryCAxPUBLwI87kgVgXBQBP3g6yhuMsk2xJ+ih6HO3vW4I94MkwouGz
+	UJWQokjlvEITgvba5HyfwgIMo0Q7bG8K7ip61XbuCrxYjhTQ0QMnBoiU0BrZVQsH
+	g+fBIl82BB3QKH7uhqm52DQIW6bD+/NlKgbkJQxSmt2i6WvMcsJI/l06hJRrz5yD
+	fTjLOkdmq/Jd+ay9JdWXty1XoOEuh2S1+Vm3YXQvcqU1dyoV0bdBqcFo3T6LAhrh
+	WZTUez5vo7/76Jiut4kK7rp3Dd7FOXPq8gASW0rCRNBI9v/+KXc3BiPebryZ858A
+	EZ16YQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7ws90n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 10:08:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HA8grZ002553
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 10:08:42 GMT
+Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
+ 2025 02:08:38 -0800
+Message-ID: <abd2244b-d222-35e8-9aec-5c72ca2ace01@quicinc.com>
+Date: Mon, 17 Feb 2025 18:08:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217094022.1065436-1-dqfext@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3 2/2] phy: qcom: qmp-pcie: Add PHY register retention
+ support
+Content-Language: en-US
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
+        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
+        <manivannan.sadhasivam@linaro.org>, <quic_devipriy@quicinc.com>,
+        <konrad.dybcio@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250214104539.281846-1-quic_wenbyao@quicinc.com>
+ <20250214104539.281846-3-quic_wenbyao@quicinc.com>
+ <20250214144623.fvjr2bytliqhektr@thinkpad>
+From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+In-Reply-To: <20250214144623.fvjr2bytliqhektr@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sE-UBibzRpJ7ZkIp72AKVWUX3bhJeZWX
+X-Proofpoint-ORIG-GUID: sE-UBibzRpJ7ZkIp72AKVWUX3bhJeZWX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_04,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 malwarescore=0
+ bulkscore=0 mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170089
 
-On Mon, Feb 17, 2025 at 05:40:21PM +0800, Qingfang Deng wrote:
-> Add EEE support to MediaTek SoC Ethernet. The register fields are
-> similar to the ones in MT7531, except that the LPI threshold is in
-> milliseconds.
-> 
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+On 2/14/2025 10:46 PM, Manivannan Sadhasivam wrote:
+> On Fri, Feb 14, 2025 at 06:45:39PM +0800, Wenbin Yao wrote:
+>> From: Qiang Yu <quic_qianyu@quicinc.com>
+>>
+>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
+>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
+>> but retains register values, which means PHY setting can be skipped during
+>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
+>> after that.
+>>
+>> Hence, determine whether the PHY has been enabled in bootloader by
+>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
+>> available, skip BCR reset and PHY register setting to establish the PCIe
+>> link with bootloader - programmed PHY settings.
+>>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 96 ++++++++++++++++--------
+>>   1 file changed, 63 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> index 219266125cf2..b3912c1a6de8 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
+>>   
+>>   	const struct qmp_phy_cfg *cfg;
+>>   	bool tcsr_4ln_config;
+>> +	bool skip_init;
+>>   
+>>   	void __iomem *serdes;
+>>   	void __iomem *pcs;
+>> @@ -3976,7 +3977,9 @@ static int qmp_pcie_init(struct phy *phy)
+>>   {
+>>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	void __iomem *pcs = qmp->pcs;
+>>   	int ret;
+>> +	bool phy_initialized;
+>>   
+>>   	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>>   	if (ret) {
+>> @@ -3984,10 +3987,18 @@ static int qmp_pcie_init(struct phy *phy)
+>>   		return ret;
+>>   	}
+>>   
+>> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "reset assert failed\n");
+>> -		goto err_disable_regulators;
+>> +	phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
+>> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
+>> +	/*
+>> +	 * Toggle BCR reset for phy that doesn't support no_csr
+> s/phy/PHY. Here and below.
 
-Thanks for reworking this.
+Will use PHY instead.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>
+>> +	 * reset or has not been initialized
+>> +	 */
+>> +	if (!qmp->skip_init) {
+>> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "reset assert failed\n");
+>> +			goto err_disable_regulators;
+>> +		}
+>>   	}
+>>   
+>>   	ret = reset_control_assert(qmp->nocsr_reset);
+>> @@ -3998,10 +4009,12 @@ static int qmp_pcie_init(struct phy *phy)
+>>   
+>>   	usleep_range(200, 300);
+>>   
+>> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "reset deassert failed\n");
+>> -		goto err_assert_reset;
+>> +	if (!qmp->skip_init) {
+>> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "reset deassert failed\n");
+>> +			goto err_assert_reset;
+>> +		}
+>>   	}
+>>   
+>>   	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
+>> @@ -4011,7 +4024,8 @@ static int qmp_pcie_init(struct phy *phy)
+>>   	return 0;
+>>   
+>>   err_assert_reset:
+>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +	if (!qmp->skip_init)
+>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>>   err_disable_regulators:
+>>   	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>>   
+>> @@ -4023,7 +4037,10 @@ static int qmp_pcie_exit(struct phy *phy)
+>>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>>   
+>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +	if (!qmp->nocsr_reset)
+>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +	else
+>> +		reset_control_assert(qmp->nocsr_reset);
+> I'd flip the if condition for readability:
+>
+> 	if (qmp->nocsr_reset)
+> 		...
+> 	else
+> 		...
 
-Thanks!
+Will flip the if condition.
 
+>>   
+>>   	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
+>>   
+>> @@ -4042,16 +4059,22 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   	unsigned int mask, val;
+>>   	int ret;
+>>   
+>> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
+>> -			cfg->pwrdn_ctrl);
+>> +	/*
+>> +	 * Write CSR register for phy that doesn't support no_csr
+>> +	 * reset or has not been initialized
+>> +	 */
+>> +	if (!qmp->skip_init) {
+> How about:
+> 	if (qmp->skip_init)
+> 		goto skip_phy_init;
+>
+> This is my personal preference btw. If anyone feels the other way, feel free
+> to drop this suggestion.
+
+Will use goto statements.
+
+>
+>> +		qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
+>> +				cfg->pwrdn_ctrl);
+>>   
+>> -	if (qmp->mode == PHY_MODE_PCIE_RC)
+>> -		mode_tbls = cfg->tbls_rc;
+>> -	else
+>> -		mode_tbls = cfg->tbls_ep;
+>> +		if (qmp->mode == PHY_MODE_PCIE_RC)
+>> +			mode_tbls = cfg->tbls_rc;
+>> +		else
+>> +			mode_tbls = cfg->tbls_ep;
+>>   
+>> -	qmp_pcie_init_registers(qmp, &cfg->tbls);
+>> -	qmp_pcie_init_registers(qmp, mode_tbls);
+>> +		qmp_pcie_init_registers(qmp, &cfg->tbls);
+>> +		qmp_pcie_init_registers(qmp, mode_tbls);
+>> +	}
+>>   
+>>   	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
+>>   	if (ret)
+>> @@ -4063,15 +4086,16 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   		goto err_disable_pipe_clk;
+>>   	}
+>>   
+>> -	/* Pull PHY out of reset state */
+>> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>> +	if (!qmp->skip_init) {
+> 	if (qmp->skip_init)
+> 		goto skip_serdes_start;
+
+Will use goto statements.
+
+>
+>> +		/* Pull PHY out of reset state */
+>> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>>   
+>> -	/* start SerDes and Phy-Coding-Sublayer */
+>> -	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
+>> -
+>> -	if (!cfg->skip_start_delay)
+>> -		usleep_range(1000, 1200);
+>> +		/* start SerDes and Phy-Coding-Sublayer */
+>> +		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START);
+>>   
+>> +		if (!cfg->skip_start_delay)
+>> +			usleep_range(1000, 1200);
+>> +	}
+>>   	status = pcs + cfg->regs[QPHY_PCS_STATUS];
+>>   	mask = cfg->phy_status;
+>>   	ret = readl_poll_timeout(status, val, !(val & mask), 200,
+>> @@ -4096,16 +4120,22 @@ static int qmp_pcie_power_off(struct phy *phy)
+>>   
+>>   	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
+>>   
+>> -	/* PHY reset */
+>> -	qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>> +	/* If a PHY supports no_csr reset but isn't enabled in the bootloader,
+>> +	 * phy settings can be reused during the D3cold -> D0 cycle. So it is
+> I cannot parse this sentence. If PHY is not initialized, how can you reuse the
+> settings? Also what is the D3cold->D0 reference?
+>
+>> +	 * unnecessary to check qmp->skip_init.
+>> +	 */
+>> +	if (!qmp->nocsr_reset) {
+> 	if (qmp->nocsr_reset)
+> 		goto skip_phy_reset;
+>
+> - Mani
+>
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+With best wishes
+Wenbin
+
 
