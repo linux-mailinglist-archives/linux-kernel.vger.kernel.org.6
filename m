@@ -1,135 +1,222 @@
-Return-Path: <linux-kernel+bounces-517550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA97DA38241
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:51:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AA2A38242
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9338C3ACAF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB111886AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A4A217733;
-	Mon, 17 Feb 2025 11:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C84C21883E;
+	Mon, 17 Feb 2025 11:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d7f8KX1C"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHJSnr9M"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358CB15442A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0EB217733
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739792976; cv=none; b=BrCAltVm0Hwqh9AsxaK7tg/hti/+cgP6puYvLWczyogouah446PAGtdVbbuTOTVVTmlYz0Pe4wprCr5SCh1o3Qb3/dh+zPkL/HarHdRdnTLwHfa5C4oIFnH/3UpXBRcyLWZI/+MCOkLp5r4NzqfUDnodmrfzDC9XLEbNJk6lSn8=
+	t=1739793088; cv=none; b=neijFxE/Dd5yaIGqI5pnZS69JqUDYApWEtfTP10zJvjl+GulgNHhgnPUxpoqYXGHuJuBqpwTvra/3o5PctU9MnYqQKsNUTWGLzvPvlxf/FD3Tv7h5AdHHnW4gqa2FRdM15xsl8j8Omr2oIF1nQEcy+Ad3qV96ajcrYvGRDy/bYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739792976; c=relaxed/simple;
-	bh=Tv0bbYCjjiOES2U0rJz4jhs01v/xcXZaW174R6bsYAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6+ZlTytkJmx/6epcqGG6FsxFj4GqA3Ug04vrkniF4v3SiYcNJqGLjDE1+qLnR9XyJF+pBHPit9oK2g+RutcOfvCUn7QzwANjMnqxcUuK84TRJ0IxNWKEClebixZhhNuduFnOzjsoEU0BtGwkw6N5vC9CidwYDn3/Ir4GF/HBz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d7f8KX1C; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAhZhM031817;
-	Mon, 17 Feb 2025 11:49:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6VE/YKHk61QZsITRD6hDcs2KO3WHGS
-	0y8q5SqEQEFjQ=; b=d7f8KX1CQZjBh7IEXyOOkl0VcCKBB0sglrpU2KGooC5LjJ
-	ZbbY84XgRERAnLoTPNfH3k6aZZrlkENSLRn1z7P8Y1D2r3L5U/XwGbUCG3GuiNjY
-	dOpvuUd3+C58Z/7cyynRhaR0tf1tTwVF6DNcEziYmihMp5IivWXDHK8bXi0WAs3B
-	7/8gGt6oEFjwaL7PvD0AAorMnpwmbUXvpJAjF7+utnurs0ZETC7ESS6jIrOV376Y
-	YncKSuLtHsVm9LG+LGWfDWmoN5XK75ex4/9KvN46mqeLkTGRa24to3cNXyMQHJLr
-	vjYOSB313ypkWBE5hToatXNs4vUgRH08apDeknwg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44us5a2yj0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 11:49:25 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51H8rAAi003954;
-	Mon, 17 Feb 2025 11:49:24 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u68nnw4v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 11:49:24 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HBnKYS45809924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 11:49:21 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D40982004B;
-	Mon, 17 Feb 2025 11:49:20 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 484AB20040;
-	Mon, 17 Feb 2025 11:49:20 +0000 (GMT)
-Received: from osiris (unknown [9.171.53.224])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 17 Feb 2025 11:49:20 +0000 (GMT)
-Date: Mon, 17 Feb 2025 12:49:18 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [GIT PULL] ftrace: Updates for v6.14
-Message-ID: <20250217114918.10397-A-hca@linux.ibm.com>
-References: <20250119193134.0ebd56bc@gandalf.local.home>
+	s=arc-20240116; t=1739793088; c=relaxed/simple;
+	bh=YsS0x3alkz+uADboN3Hi2gyIMnCLX42kRHxLemzP7mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RikTbGqWenJQreQCXcLbUgLwdM6qmewmakgidTlOC2VTFaJtQJU7d0pJNZm3zG/+9KjgosjmcrtWSV/Np1i3sqIe4WwOUqBS1w8mBF5raRM9FA0ThhpD3XqwGdul7T5E7On901IgAPssDxuvmJUAb/ISv0xseXZYFhJrIBn4CTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHJSnr9M; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f3ef11abfso38953f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739793084; x=1740397884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=boBaE8FsMd5PXMpwiaXXEagFXKd5QEZ8O/kcdHJADSE=;
+        b=pHJSnr9Mxh+XO60csTpPv0uJK7mdb0/tc6eBDqvJvLi3SRneZmnyFDnQTcYIJLT0DP
+         uSWOY1XJrl51dRgjhQJyy3NRUkTZw4ZOo/KCX2mc4OtX1q9ZEdS7VhG4tyUBG4QAl7TZ
+         UzvM1y2S+lM7ltjgJc+jrUrAtvbbjyud02XZefRTc8DZelmiQK6BzsTjTfnLvZN3YKuq
+         OMNh+KNkaIEUNB6GmBQF5RSC/PqumO4ivIeNHg25vuuXFpblXPuQNukL7tibw5fyUbvT
+         1bR4WXQOkVS/YQG2TNv3M5008+fbQT2UZJ3/zOHp0hgE7XrtbLskDuKLyslbHpw3qJKm
+         DCBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739793084; x=1740397884;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=boBaE8FsMd5PXMpwiaXXEagFXKd5QEZ8O/kcdHJADSE=;
+        b=PU5BNuHKef98fJNV5LPSufQvRIx0l1hyhuRcxhIlkiXQqa8lKh6n1KdLS8aGxCqiI4
+         Eh0YHtovCTHadiU3dnntvf+6+2DwPfuJgYWKVPp6huHPD+9gbwee0fQERpcL72AqQeYP
+         iSkb/zhAV1J7VyqkS6ppI+DD0Jp1hK7PmmQU0sKBkLdIdmzGyxdOozMMclpIuEMkxzoM
+         8p7lnbbT2+q+EsWGHL+LYTX7t4IBcQVkxMuHsWNKCcavxS6tAkhmEDCEKutxUiheEIdj
+         6BnUDJr8SY4G4Hn00WJgZDzwu2yHLp+OE5rexnmavMQKCCCkYTSWZD8NCC2FCEulH7wT
+         fhRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJjUcNS9SlR0rgNSlQiVpBa8yt5YTboVjDZhXAsiKKjPiFEbOQPora6mLEn+b4zBcmR290gLYj4+v9t+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypRP5UlfYcmkl8QN79PVAAkFTO3r2RofHIPy4Df9NcYnMcMS+o
+	k+RJXH3oPaZBjS7DiM/3SqpJkW4iUWRDuFzdVOnMpOIpqVav01VKGIavewV6axM=
+X-Gm-Gg: ASbGncvisFOFGV8dZyP6JSEd6fACJ6ScZ5goBDfPoGqfzC1TrqxNPKNYYa5lslItlkC
+	jpKA31SLEZtu9IlItG3QCBypu1s3p0QwhhsoNOvuYINNAXoXjglDVCerQADaMDGPSud/JuXpceD
+	7pah72kaE8oenqHMiUGALHcTffFf9ST7HdZfxK3Tn/g174cFHS1MFv6SAdgdBbhiG/Pdg4ge2FX
+	XR7SS0ISvAZLUSeoUnjc7Y5LGPxs2T+UB20Thtow/lAwsitDlgBP10B45vxpWmdoQb1tFr5y06g
+	KyuwoGcNT3Yhgv/xOwzJ0M7SreZpkKY8GPo=
+X-Google-Smtp-Source: AGHT+IGi9yee6Kch5zdJ4lFrZTfsijfYVXzBLjsh/4rp46Su5Z2UqTtgWBeW4d6pbu+ipSku6+B+DQ==
+X-Received: by 2002:a05:6000:1f87:b0:38d:e078:4393 with SMTP id ffacd0b85a97d-38f33f38ce7mr3015012f8f.6.1739793084535;
+        Mon, 17 Feb 2025 03:51:24 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395aef82edsm146414205e9.38.2025.02.17.03.51.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 03:51:23 -0800 (PST)
+Message-ID: <0e3068a7-29be-47c8-ab6f-caecccf275fd@linaro.org>
+Date: Mon, 17 Feb 2025 12:51:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250119193134.0ebd56bc@gandalf.local.home>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -rxccJEI6JG-gvtXzl07rIx4QZx6uwgH
-X-Proofpoint-GUID: -rxccJEI6JG-gvtXzl07rIx4QZx6uwgH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxlogscore=774 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- spamscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502170101
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] drm/msm/dsi/phy: Define PHY_CMN_CLK_CFG[01]
+ bitfields and simplify saving
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
+References: <20250214-drm-msm-phy-pll-cfg-reg-v3-0-0943b850722c@linaro.org>
+ <20250214-drm-msm-phy-pll-cfg-reg-v3-4-0943b850722c@linaro.org>
+ <vuqd6hfiobmbnll7flgltiivhbhksgz6r4uaxlmsp6dvfgmirv@mt5zkhgfl5ak>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <vuqd6hfiobmbnll7flgltiivhbhksgz6r4uaxlmsp6dvfgmirv@mt5zkhgfl5ak>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Steven, Masami,
-
-On Sun, Jan 19, 2025 at 07:31:34PM -0500, Steven Rostedt wrote:
-> ftrace updates for v6.14:
+On 14/02/2025 16:20, Dmitry Baryshkov wrote:
+> On Fri, Feb 14, 2025 at 04:08:44PM +0100, Krzysztof Kozlowski wrote:
+>> Add bitfields for PHY_CMN_CLK_CFG0 and PHY_CMN_CLK_CFG1 registers to
+>> avoid hard-coding bit masks and shifts and make the code a bit more
+>> readable.  While touching the lines in dsi_7nm_pll_save_state()
+>> resulting cached->pix_clk_div assignment would be too big, so just
+>> combine pix_clk_div and bit_clk_div into one cached state to make
+>> everything simpler.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+>>
+>> Changes in v3:
+>> 1. Use FIELD_GET
+>> 2. Keep separate bit_clk_div and pix_clk_div
+>> 3. Rebase (some things moved to previous patches)
+>>
+>> Changes in v2:
+>> 1. New patch
+>> ---
+>>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             | 12 +++++++-----
+>>  drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml |  1 +
+>>  2 files changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> index 798168180c1ab6c96ec2384f854302720cb27932..a8a5b41b63fb78348038c8f9fbb141aab2b07c7a 100644
+>> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> @@ -572,11 +572,11 @@ static void dsi_7nm_pll_save_state(struct msm_dsi_phy *phy)
+>>  	cached->pll_out_div &= 0x3;
+>>  
+>>  	cmn_clk_cfg0 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG0);
+>> -	cached->bit_clk_div = cmn_clk_cfg0 & 0xf;
+>> -	cached->pix_clk_div = (cmn_clk_cfg0 & 0xf0) >> 4;
+>> +	cached->bit_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0__MASK, cmn_clk_cfg0);
+>> +	cached->pix_clk_div = FIELD_GET(DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4__MASK, cmn_clk_cfg0);
+>>  
+>>  	cmn_clk_cfg1 = readl(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
+>> -	cached->pll_mux = cmn_clk_cfg1 & 0x3;
+>> +	cached->pll_mux = cmn_clk_cfg1 & DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK;
 > 
-> - Have fprobes built on top of function graph infrastructure
+> FIELD_GET.
 
-this seems to cause a regression:
+Ack
 
-When I run tools/testing/selftests/ftrace/ftracetest I now end up with all
-functions being enabled for ftrace after the test suite ran:
+> 
+>>  
+>>  	DBG("DSI PLL%d outdiv %x bit_clk_div %x pix_clk_div %x pll_mux %x",
+>>  	    pll_7nm->phy->id, cached->pll_out_div, cached->bit_clk_div,
+>> @@ -598,7 +598,8 @@ static int dsi_7nm_pll_restore_state(struct msm_dsi_phy *phy)
+>>  	dsi_pll_cmn_clk_cfg0_write(pll_7nm,
+>>  				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_3_0(cached->bit_clk_div) |
+>>  				   DSI_7nm_PHY_CMN_CLK_CFG0_DIV_CTRL_7_4(cached->pix_clk_div));
+>> -	dsi_pll_cmn_clk_cfg1_update(pll_7nm, 0x3, cached->pll_mux);
+>> +	dsi_pll_cmn_clk_cfg1_update(pll_7nm, DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK,
+>> +				    cached->pll_mux);
+> 
+> DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL(cached->pll_mux)
+> 
+>>  
+>>  	ret = dsi_pll_7nm_vco_set_rate(phy->vco_hw,
+>>  			pll_7nm->vco_current_rate,
+>> @@ -739,7 +740,8 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
+>>  		u32 data;
+>>  
+>>  		data = readl(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
+>> -		writel(data | 3, pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
+>> +		writel(data | DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL__MASK,
+> 
+> data | DSI_7nm_PHY_CMN_CLK_CFG1_DSICLK_SEL(3)
+Ack
 
-$ wc -l /sys/kernel/debug/tracing/enabled_functions
-50779 /sys/kernel/debug/tracing/enabled_functions
-
-$ cat /sys/kernel/debug/tracing/enabled_functions
-...
-down (1)           
-down_interruptible (1)           
-down_killable (1)           
-
-$ cat /sys/kernel/debug/tracing/current_tracer
-nop
-
-Bisected to commit 4346ba160409 ("fprobe: Rewrite fprobe on function-graph
-tracer"). Before this commit there were no ftrace enabled functions after the
-test suite finished:
-
-$ wc -l /sys/kernel/debug/tracing/enabled_functions
-0 /sys/kernel/debug/tracing/enabled_functions
-
-This is on s390 with defconfig.
+Best regards,
+Krzysztof
 
