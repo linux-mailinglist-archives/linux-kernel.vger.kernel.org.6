@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-517347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFD1A37F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:15:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FF3A37F9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA68189559C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C0AE188BF6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF288217703;
-	Mon, 17 Feb 2025 10:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABFD217F28;
+	Mon, 17 Feb 2025 10:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TqBgJJoo"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DOf0OuFb"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70864217F24;
-	Mon, 17 Feb 2025 10:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF9217713;
+	Mon, 17 Feb 2025 10:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739786878; cv=none; b=lWFerPoVxX5bBQwu+PTrynZ376yDtBAHqihdsML92+dX7JuDgxSyr9TJJCRIPkCjrOZ6rMOVhfLBIQJAW/FzDNmTNZm5AChiMNybrIU1LsZByp919N9NpxXMl5AImD1w81CL7Y43tkIEFGoODwNnE9HCdWo9wLgIxnOJ5TivxfQ=
+	t=1739786893; cv=none; b=WmEDcAubd2b4zy2Uq1tsTcgWydK3h7O5dbj8QX33lq5qGe0Ttk5Y88ne3hVXK3CEUuuwYC9neU3fUcZxut0DRhiPBBGiAkZmzVBTIE86dnB/gyAcwTk0d8hYbiB2DcdruuJiCgRAjUrxeKxWKueo9wcGWUdV7tAlBrFzrlBhmp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739786878; c=relaxed/simple;
-	bh=WTEkBJbEoohvOnLs8ZG8ZjIpCctoGaPaGiS99nzNFK0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SouZbqk9zSTE6M2Ywn6Tr3qRx0yLf7RD/9HsGiSQey22rnm77un9af1pcei8aV+BSgnpWaPPPzkxRcsa6YSqXWAcjEBMdRQZ9l61SKbGTqt5+j4IS2tm64ZREtb7Y5ICtLb2QwrHP2xFmz674yDI30v+Au+DVl+FpZRNEKq6xUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TqBgJJoo; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H7w1Pk014998;
-	Mon, 17 Feb 2025 04:07:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=wakwyFHAJCVvGbhqrn
-	JLBZqnmDFS/vx4KyMQ/0AZRz8=; b=TqBgJJooCiD0i3nqRH/tNYo9ETb0kO2R9f
-	r2ZCPpXFcLEPuvhAO4cEV0+MP8sXyjkGyO9bxQvmg3k7t5Ovl4aAyAp+yoLG5hYF
-	guDr+YvW9d1A9ivbdqbUVIi/A3VIgnOd3SNmQIK8J+E7V6CLtNBI5GzrMrhD+OeL
-	9vgjF9av3PsEu4L7rkpqi4Qnfy6EP+hhXXK/IiSgxyIkJhLNktjdo+EcQA9cKkds
-	Ku9hIhJLnBhWFLxj7KAyJVyHHdWwoBDz3zW4xbBlBysaWQXCSbzF5snxl1QykDdL
-	gcEHgLCMOLgZ9HLN+uEwxxHMPAA+iAtF9apRPc2/WjnwDhuKWh9A==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 44uwg18j61-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 04:07:38 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 10:07:37 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 10:07:37 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id ECD59822561;
-	Mon, 17 Feb 2025 10:07:36 +0000 (UTC)
-Date: Mon, 17 Feb 2025 10:07:35 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <patches@opensource.cirrus.com>,
-        Ernest Van Hoecke
-	<ernest.vanhoecke@toradex.com>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Francesco
- Dolcini" <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 4/5] ASoC: wm8904: get platform data from DT
-Message-ID: <Z7MKZ11fRNN5XS90@opensource.cirrus.com>
-References: <20250206163152.423199-1-francesco@dolcini.it>
- <20250206163152.423199-5-francesco@dolcini.it>
+	s=arc-20240116; t=1739786893; c=relaxed/simple;
+	bh=QJhMMvbsGbb9IG1/WGxalDSRUdxAS06UI2IeVEOIOvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0yj+xCoBBZZke+X8qgfkomPPoJRpgA5RLo5GzYn/yhDzQfroklwKd30O90FeaIhjAlo2alELcKOQ97fiUj47kBzUTXl6WZO3IAlR++kxU38jMM9+G3ZjbawO23PukA9elG6Es3WWGFnSF7/Um4J9NymUrdKtnfmRV0qGQSj3iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DOf0OuFb; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Hw1hJQCbl8Z4ry3SD9KqSPmH+QbC3B7QYj7POJLYcWI=; b=DOf0OuFbIVh5MtbmOHngba6QPq
+	5YEy2aTZMacwyGrR4qAwdfFeVd+EUNPBsQNMO3kJybjmunT3URm1zZfqyZcnh951R+YASaSQTA0NZ
+	wQAfMwm+mwM+846S4drYIDbXmUqTawnjZ/rtgXW7s1cPIly0BzdvkrU65Tok3bZty2jG9/v8+GGFI
+	D5v4ZrbAD7u74k/ieqMdLLo+4umR/oHCwamvY19vm5c9+Q4LIfnFUVtK70bTJstZqg/NqpRjoSXOn
+	Xp2sI9NkzMIsbtr/Be7lB4XUXHNeYbGeUaQtYFkXrRHvzcjbGDfDZTfzn4XUnc62ssFFBHB9FWKRO
+	0XnCe6CA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41180)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tjy2e-00067U-2a;
+	Mon, 17 Feb 2025 10:07:56 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tjy2a-00067e-1i;
+	Mon, 17 Feb 2025 10:07:52 +0000
+Date: Mon, 17 Feb 2025 10:07:52 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next v4] net: ethernet: mediatek: add EEE support
+Message-ID: <Z7MKeEKOzmA5JEjU@shell.armlinux.org.uk>
+References: <20250217094022.1065436-1-dqfext@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250206163152.423199-5-francesco@dolcini.it>
-X-Proofpoint-GUID: zFVgUBsuYQTWAFBp4JceVwXbSnEn3_pf
-X-Proofpoint-ORIG-GUID: zFVgUBsuYQTWAFBp4JceVwXbSnEn3_pf
-X-Authority-Analysis: v=2.4 cv=CYzy5Krl c=1 sm=1 tr=0 ts=67b30a6a cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=w1d2syhTAAAA:8 a=m8ToADvmAAAA:8 a=dvSm-TvE4kW1qXnr-8MA:9 a=CjuIK1q_8ugA:10
- a=YXXWInSmI4Sqt1AkVdoW:22 a=kCrBFHLFDAq2jDEeoMj9:22
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20250217094022.1065436-1-dqfext@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Feb 06, 2025 at 05:31:51PM +0100, Francesco Dolcini wrote:
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+On Mon, Feb 17, 2025 at 05:40:21PM +0800, Qingfang Deng wrote:
+> Add EEE support to MediaTek SoC Ethernet. The register fields are
+> similar to the ones in MT7531, except that the LPI threshold is in
+> milliseconds.
 > 
-> Read in optional codec-specific properties from the device tree.
-> 
-> The platform_data structure is not populated when using device trees.
-> This change parses optional dts properties to populate it.
-> 
-> - wlf,in1l-as-dmicdat1
-> - wlf,in1r-as-dmicdat2
-> - wlf,gpio-cfg
-> - wlf,mic-cfg
-> - wlf,drc-cfg-regs
-> - wlf,drc-cfg-names
-> - wlf,retune-mobile-cfg-regs
-> - wlf,retune-mobile-cfg-names
-> - wlf,retune-mobile-cfg-rates
-> 
-> Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Thanks for reworking this.
 
-Thanks,
-Charles
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
