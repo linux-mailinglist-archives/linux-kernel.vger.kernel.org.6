@@ -1,168 +1,86 @@
-Return-Path: <linux-kernel+bounces-518226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1470AA38BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:58:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F7BA38BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1325A16AEE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6552F189416F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF52A236A8B;
-	Mon, 17 Feb 2025 18:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fn836Kyj"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2838B236457;
+	Mon, 17 Feb 2025 18:58:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF4E137C35;
-	Mon, 17 Feb 2025 18:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE3D137C35
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739818629; cv=none; b=E/Gt3yfH6NXE/EJeUdbDTDAQJp3edkSFJ/tEhWJ+q+3tgLPz/BlXAWOzX5e4mkagyg/53WUDXBdB+DWLs01iM0A4fjUE1yqbwXTUz8pmmEL8sOXrqAiInTlRDPnogmmtLZBGVGoCE5vDl+YDiOvMayJvXA99mLojSth79QB6sMQ=
+	t=1739818687; cv=none; b=tj4ogcStxwhEELP+zhv1gkzyIpYO1e3C1gv26K2if0nSoTECSM6Gkwpgx9D8DlUDgPryT+kyf7cTdUKkwPbR8ya7j3N+TiVcuASXPcg9nnMS/p3yi910hgUomx74LJ6DcEMNRUTu753TN0pHRo8c6PxjI3ZNR077Zr6Kz0qxEmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739818629; c=relaxed/simple;
-	bh=ybBMECw0YGy4dsTmdwJykp5GlzhNOh0oFywmEilIRwc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kxnb5sVYHWmoq7BzIi86nHQDlPJmLvvwcGvP1ZWiuCCJmjZjCFBLW/PFV9W9GPk+aoMcvHOLD+lBeBDktsx6tjk+D92Xbn4Ae2W0DSrIvBTd3hmhx5/diKmOOyXMoirlkv5ADKYTU7f4AXQjqRpK7r6swsiizGLzK/n4PyySA+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fn836Kyj; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-220f4dd756eso55566475ad.3;
-        Mon, 17 Feb 2025 10:57:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739818627; x=1740423427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Au02HYyvdD3cDBoAFDGp2IR6X2qTDapqyH1lQuENtSs=;
-        b=Fn836KyjTxfEBWtqk/L0Zbz2UwOn1knvtnYWEn2VChlCkZ57F7lkGGM+g2mm22pOLo
-         Std8mHpiL85VPiaBL0wCCj9KVx6njK8gW14y0Vi6iNuIjfQguH7GI2aVP9Kh5ot7xS97
-         9vDzlcbHw7hqKGZaAJnXeHWo9+mAL9KWIf1PLTv4p1Zu3ZtxQynf9hKi+bRmx/jcyCkk
-         6aPUmO/Le4FlD30RsnYBbo1JaaT/1bx4Hq6ujKWuUX/zjCbYTWJxgSw/9WAfEqbJKO5P
-         sHPRNlexerooygbla1kfA3TDIa+lXG6JZGG20d2cGIuwKN+TQ8TnFPhiT9MMDq3utp6s
-         IFnA==
+	s=arc-20240116; t=1739818687; c=relaxed/simple;
+	bh=YDqps0J4C1dQJWutldi+uXtzFj/5V5pzZ9Ss6hAUGkY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PsK8vOrUqt5WoVIA6QlGNpCGByan0B1ZZwuDAoKpnHTyiFQjvyW/+elJnPDdnGLhq+mJiqRcvQXL2gpUs6bVAnF3WwA7/BuCiIxfck5reobUGgpQbhu/0bCIkO3uxjWyzXHmOoYiAOW4MsAbJ3KhG8qFYjUNAynqZKsIWsQIygU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d2a1d674a2so9127825ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:58:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739818627; x=1740423427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Au02HYyvdD3cDBoAFDGp2IR6X2qTDapqyH1lQuENtSs=;
-        b=dHJE0VHnRbzoYnhKmb6IRWBpZdtw909ofQcrWVAuAIL3eoA5O2I/3AEXPDJpUcdxHe
-         Fq1Lz4s5f6O06CYo2bAWY3mkWfqSTIuNIqaExFR3OyCxzXJGBlQRWkYnrbXwbP7IJzDZ
-         OLndpEqV+4LefwGedViOa0BAKJ6V3vTWZA/4uO5ORoXlnGWsBhyK8BT14LCW0m2VdObJ
-         FgeajX0Pvk+fPdSEDzatMsjFX2qvzg/knPtqxfrPFBCF7mxk3U4O6LPxyJBZkeJBcUGG
-         M+E64olDWIZCgCOjDLa1Evp21q4ucM1fmp5oKPT3wWRU/z53hsmpFr8trMo/I2D/w1oH
-         Cf2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWN/Fu+nUiXcCzJi3oZz6cyAA5Tjoiv7axjOSTb0G9unJgSacn+Ro4njV5BXLx+h+3biNE524HHP6k3UEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg/ldGOBAg1xtqNN3cHacI3YHP8Z3EAd6qAv0Oj33kB5FIDRNo
-	1cqvCF9T4XKxRT6C5Hwapa1wO4VoWTISBBuLz+H7exLF7u08mlEN
-X-Gm-Gg: ASbGncvvl/0qvXtWLEH/3IGTkxn80EYKCTBBKFlam54yF72h+9XKPW4IH+3Ya4Xbje4
-	F/PVnH9CnCzQeUMODZBBe3Z8TyPFDxA65+Ta/fybNt3YPwGuxnWiUeKyWwRcT9ntnDWo4TuGX3X
-	Lc34TkMsgVl//gmNguOmYQkbb1ke5XljPsl40pgQnYCqnPNcgE7qdkO9XP+6KHGWgs/8D/hECpc
-	9WFSGMKGuGot/u2SGxaCKve5NxNwmh5YxTD7IRS/UQ9PvO38DCvn35fsQpao0ov19bnHYj0iYIA
-	Dxe8jPaMRGnk2HGGKB3QyxwP
-X-Google-Smtp-Source: AGHT+IFOhan14Wy2+WrKf8Vdkw6a0PHT8R0sUluOnGYPkceQV6h0yfrC3hG64CDbQCE1wjGC7voV6w==
-X-Received: by 2002:a17:903:2cb:b0:21f:6cb2:e949 with SMTP id d9443c01a7336-221040d87c9mr175691245ad.52.1739818626934;
-        Mon, 17 Feb 2025 10:57:06 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.159.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536b047sm74658515ad.101.2025.02.17.10.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 10:57:06 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: christophe.jaillet@wanadoo.fr,
-	bhelgaas@google.com,
-	scott@spiteful.org
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Subject: [PATCH V2] PCI: cpci: remove unused fields
-Date: Mon, 17 Feb 2025 15:56:38 -0300
-Message-Id: <20250217185638.398925-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1739818685; x=1740423485;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v4TvGlUsNtGo4unWeNBOP3y9zaLBmcNgQQFAijZv/sA=;
+        b=mmNDdqK7yljYjI9GDpsOcKRVHn4lDo4dSDRJgYINhOm0nobkPFtSS8KyKy4y4o/s5c
+         hQUP0o216gRwvAyh6932C2jX/2LtRjhxRdWJ1B3uFfIMDF/ZlV2n0HZTcw2RGamilceB
+         NucedbHcydUT0j/xA38H9r8dDsRha5/yoGlr3mWAiz5uyPLXDUtl+AguWfDfF4Bq1BPv
+         HlTf/ZpgPU+/uivYHIcZjeo2bYL7w8r/gbfmB/v7w0LW8odM1MQrwUGgyfFQZSoIiLgn
+         gkXKmNhCQ9y/1ak0I2NigbjdPpd9GHpAu1JolZu6xFOUsP+zXV0RoAhU+J9fPzxTMLmX
+         AOVw==
+X-Gm-Message-State: AOJu0YzWDMhMxX83wsaOZ/jzE5DKR2S3DZ5j0x0Eu4CRL2LKVRem/am4
+	s5Dj+d0+uY+UpO/nnglp/+a7KRDiiC3kmGLomDeJL+0/Q2fsI2slHhUfB18KaZrdnVJDhzoVmOa
+	SibmPAOJE2SYT1xwr641ac1CjTibSeZCv8vpAfD62kxvOF0uBiFI5Fzs=
+X-Google-Smtp-Source: AGHT+IHRQyPrWfvZLwv7BHw6Q+oJxKURK+13fKCpMGyU+C/5mUWpmp9BlMV2oK13cYC9UdGFJ2ZqfWzOI1NaxGWdEzy0JYaW9DGo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a4d:b0:3d0:4a82:3f43 with SMTP id
+ e9e14a558f8ab-3d28078e655mr91748005ab.5.1739818685539; Mon, 17 Feb 2025
+ 10:58:05 -0800 (PST)
+Date: Mon, 17 Feb 2025 10:58:05 -0800
+In-Reply-To: <20250217181634.343035-1-zoo868e@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b386bd.050a0220.173698.003c.GAE@google.com>
+Subject: Re: [syzbot] [can?] WARNING in ucan_probe
+From: syzbot <syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zoo868e@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-The `get_power()` and `set_power()` function pointers in the
-`cpci_hp_controller ops` struct were declared but never implemented by
-any driver. To improve code readability and reduce resource usage,
-remove this pointers.
+Hello,
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
---- 
-v2 changes
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-- Remove uneccessary SLOT_ENABLE constant
-- Remove uneccessary flags fields
----
- drivers/pci/hotplug/cpci_hotplug.h      |  2 --
- drivers/pci/hotplug/cpci_hotplug_core.c | 17 ++---------------
- 2 files changed, 2 insertions(+), 17 deletions(-)
+Reported-by: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+Tested-by: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
 
-diff --git a/drivers/pci/hotplug/cpci_hotplug.h b/drivers/pci/hotplug/cpci_hotplug.h
-index 03fa39ab0c88..a31d6b62f523 100644
---- a/drivers/pci/hotplug/cpci_hotplug.h
-+++ b/drivers/pci/hotplug/cpci_hotplug.h
-@@ -44,8 +44,6 @@ struct cpci_hp_controller_ops {
- 	int (*enable_irq)(void);
- 	int (*disable_irq)(void);
- 	int (*check_irq)(void *dev_id);
--	u8  (*get_power)(struct slot *slot);
--	int (*set_power)(struct slot *slot, int value);
- };
- 
- struct cpci_hp_controller {
-diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
-index d0559d2faf50..dd93e53ea7c2 100644
---- a/drivers/pci/hotplug/cpci_hotplug_core.c
-+++ b/drivers/pci/hotplug/cpci_hotplug_core.c
-@@ -71,13 +71,10 @@ static int
- enable_slot(struct hotplug_slot *hotplug_slot)
- {
- 	struct slot *slot = to_slot(hotplug_slot);
--	int retval = 0;
- 
- 	dbg("%s - physical_slot = %s", __func__, slot_name(slot));
- 
--	if (controller->ops->set_power)
--		retval = controller->ops->set_power(slot, 1);
--	return retval;
-+	return 0;
- }
- 
- static int
-@@ -109,12 +106,6 @@ disable_slot(struct hotplug_slot *hotplug_slot)
- 	}
- 	cpci_led_on(slot);
- 
--	if (controller->ops->set_power) {
--		retval = controller->ops->set_power(slot, 0);
--		if (retval)
--			goto disable_error;
--	}
--
- 	slot->adapter_status = 0;
- 
- 	if (slot->extracting) {
-@@ -129,11 +120,7 @@ disable_slot(struct hotplug_slot *hotplug_slot)
- static u8
- cpci_get_power_status(struct slot *slot)
- {
--	u8 power = 1;
--
--	if (controller->ops->get_power)
--		power = controller->ops->get_power(slot);
--	return power;
-+	return 1;
- }
- 
- static int
--- 
-2.34.1
+Tested on:
 
+commit:         0ad2507d Linux 6.14-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11723bf8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7d8c418e8317899e88c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=160f75a4580000
+
+Note: testing is done by a robot and is best-effort only.
 
