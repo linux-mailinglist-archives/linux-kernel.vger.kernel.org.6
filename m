@@ -1,218 +1,169 @@
-Return-Path: <linux-kernel+bounces-517888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BFAA38704
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:54:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC340A386F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C223AFAFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC853A1369
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4866E224AE8;
-	Mon, 17 Feb 2025 14:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1122248B9;
+	Mon, 17 Feb 2025 14:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="TW/TVcc6"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FuKbJGTP"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1C42248AC;
-	Mon, 17 Feb 2025 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739803949; cv=pass; b=jjpMF52PiuwBPtvR0qr4kyo3NcwrVioWx/F1TV0NuF6CAvEnq9a46BOjofix7pvtiwrluVj9Zeew5oZMOQA2kcDbYHrrdeZW/teBN0xl0beYHdERbzd7BmB2JaBSrf5gDO1W0znbYiPHotOMWuJ/bZfFygGWrn17yCkIoboRT0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739803949; c=relaxed/simple;
-	bh=JRmCF9LjmJYKWivhjQ6n8IMZFxSXDeNdiP8wgPC7wg0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EkkZGQ5h2PeTNLYz7333gduhTT6310n1Xw+Yf2bS4icVps5TRLkmzLVBaNgsTMop9vkrL06p/f5NO5Hds9AsKS5rSYz3Ja6PbUDC/MM6Tn5TFSiD6nzecyGU5ZHxB5UZDSZG8YHaZjEYQrve5MZrYeVi5LVkBr6NE0DEAYL/QJ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=TW/TVcc6; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739803806; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UqiwUddfNdEJ/ycmxXdmA38GekVPzC7NL83fV3PdbunGGkpW6BZWqBg/mz4jExLuehulmOar8psrWw0AZbsH72dDH27ioAcXgTbXsgeHcZ6/rrK+tTd2mNjcbO2xbVWmAqf5A0pFyBRk7+poykB50JNs3/2ifC24z6Dl7xirPkI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739803806; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=u5TjcDD2fVC5Z7fmg3HTZT6iZIZPELI9FVatCCA70pE=; 
-	b=JCObFY58kyM/3qfU+hAY6rnwKW7vc+YW4EJSIFVrDEIYBrnt1IWnU5SsVQk2qb+aJ+nwSCz7UDsB0QUl6NQYQ3W8xl64UBR2HE9MMg2j71WMMuIfSZHFBwdsqAgaegonNS2m3xWjK/aDb2xJDxFxPEXZEePKmSuZGSPUv3x6idU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739803806;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=u5TjcDD2fVC5Z7fmg3HTZT6iZIZPELI9FVatCCA70pE=;
-	b=TW/TVcc6KoDGSDzqzNLWxrpINcDFMI7E9zZAO83NE9Ib/LB7/BNAkA69CRhKCD6d
-	93doKC2o251DrvXKPZqiYwJTWJLFEbjIBzH3lgtaC8xKsCR51yPPrjuhxxDK4KycWja
-	mphbbfrvlBGGnOzb889zmvUy7BLnwTRS+jLz5sac=
-Received: by mx.zohomail.com with SMTPS id 173980380247995.30722494540043;
-	Mon, 17 Feb 2025 06:50:02 -0800 (PST)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v2 7/7] cxl/region: Drop goto pattern of construct_region()
-Date: Mon, 17 Feb 2025 22:48:28 +0800
-Message-Id: <20250217144828.30651-8-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217144828.30651-1-ming.li@zohomail.com>
-References: <20250217144828.30651-1-ming.li@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11528223324;
+	Mon, 17 Feb 2025 14:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739803782; cv=none; b=jO+TDoeabCgusOW1QBc3FvVKW6Wq7uEtS1BJUmwbQuGA0iBLdJ09uoSfiL7S78jsPKSzzhkPI72hvMdYUeiBaaKLIcvwPH0ItPntZUuXp29pDj6hNxUP+zVCe02zLHaUfJq25oUy/v43r3fT9Wq+H6JNrshdAj6PLcgYRI7RR0c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739803782; c=relaxed/simple;
+	bh=noBWesDhIHu2UKaR18tw6XBMmfBZeqYD391YNtBjELo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NPxJ3CPMev7TwTi0X2hg75EaLEP4pXpJdPlRczduxu9yY/7Of3khN+34zcK30tvotYBSgkeWv6E5dowT9e2Sh1iGctAk+hwjxoEgCFSZLSy38dgzKtQUf11CKv/7cpELtTwJ7PDu3SDJumcrruE2oYfUM48s8u2qC9HvW1+F0T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FuKbJGTP; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 64A4A44430;
+	Mon, 17 Feb 2025 14:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739803777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PCSw3bmWjwYwuAQWl8doOYDVdqtoYKvVbYaoog5r6cI=;
+	b=FuKbJGTPideoR9c6VeuSbGxTWhWv12fvminuJ8DDMWnRMjtEVQxnV/c1g4jtSw+pBHf3A6
+	RQBlVhGKexKMWaPV/8ju+UkrJ4fsyEhpPDWgeSW8hNw3tJkQRjPC9cU+sOxOlNvfA/by7C
+	h3P+/mW1/rFJ8UnPvJzgZHg52sj3CdJtWQc0TXqfKYgM0+7f+eZZ+hqZV5jTXhMHl06IU3
+	Ln8wHc7cu4kdYfBxzCeKT2Wd5Puw1/vFTMCGyOSWgqfOOP2CXY5j0yg5IO3/FFnlK0npwb
+	jvf1FZ3mskLOe3QP0WqZIcWoA2+0A9b1MUBCanwxV9yTMgSLsDf+eYpxkyErmA==
+Date: Mon, 17 Feb 2025 15:49:34 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Sean Anderson
+ <seanga2@gmail.com>
+Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
+ PHY-driven SFPs
+Message-ID: <20250217154934.76ec03e5@fedora.home>
+In-Reply-To: <Z7NF6ciz4RHMaGo6@shell.armlinux.org.uk>
+References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
+	<20250213101606.1154014-6-maxime.chevallier@bootlin.com>
+	<Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
+	<20250217092911.772da5d0@fedora.home>
+	<Z7NF6ciz4RHMaGo6@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270a1b3a40a4862390f0c7011f0000a6533c9e532b319b72bcea67a4ff7b47a766f9ac6b7a87cf67:zu08011227637483a4a31eb2f0b8ceb2e6000059b8d4e13f7089160e231c8be7dbb43f030a73e70a3b9635e1:rf0801122d5c87afa6af03d5275597f33e000026a3925e33887a0b88a34465cb4731f8771e61e7a209610abb740fad050b8a:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeeikecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Some operations need to be protected by the cxl_region_rwsem in
-construct_region(). Currently, construct_region() uses down_write() and
-up_write() for the cxl_region_rwsem locking, so there is a goto pattern
-after down_write() invoked to release cxl_region_rwsem.
+On Mon, 17 Feb 2025 14:21:29 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-construct region() can be optimized to remove the goto pattern. The
-changes are creating a new function called construct_auto_region() which
-will include all checking and operations protected by the
-cxl_region_rwsem, and using guard(rwsem_write) to replace down_write()
-and up_write() in construct_auto_region().
+> On Mon, Feb 17, 2025 at 09:29:11AM +0100, Maxime Chevallier wrote:
+> > Hello Russell,
+> > 
+> > On Sat, 15 Feb 2025 18:57:01 +0000
+> > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> >   
+> > > On Thu, Feb 13, 2025 at 11:15:53AM +0100, Maxime Chevallier wrote:  
+> > > > Some PHY devices may be used as media-converters to drive SFP ports (for
+> > > > example, to allow using SFP when the SoC can only output RGMII). This is
+> > > > already supported to some extend by allowing PHY drivers to registers
+> > > > themselves as being SFP upstream.
+> > > > 
+> > > > However, the logic to drive the SFP can actually be split to a per-port
+> > > > control logic, allowing support for multi-port PHYs, or PHYs that can
+> > > > either drive SFPs or Copper.
+> > > > 
+> > > > To that extent, create a phy_port when registering an SFP bus onto a
+> > > > PHY. This port is considered a "serdes" port, in that it can feed data
+> > > > to anther entity on the link. The PHY driver needs to specify the
+> > > > various PHY_INTERFACE_MODE_XXX that this port supports.
+> > > > 
+> > > > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>    
+> > > 
+> > > With this change, using phy_port requires phylink to also be built in
+> > > an appropriate manner. Currently, phylink depends on phylib. phy_port
+> > > becomes part of phylib. This patch makes phylib depend on phylink,
+> > > thereby creating a circular dependency when modular.
+> > > 
+> > > I think a different approach is needed here.  
+> > 
+> > That's true.
+> > 
+> > One way to avoid that would be to extract out of phylink/phylib all the
+> > functions for linkmode handling that aren't tied to phylink/phylib
+> > directly, but are about managing the capabilities of each interface,
+> > linkmode, speed, duplex, etc. For phylink, that would be :
+> > 
+> > phylink_merge_link_mode
+> > phylink_get_capabilities
+> > phylink_cap_from_speed_duplex
+> > phylink_limit_mac_speed
+> > phylink_caps_to_linkmodes
+> > phylink_interface_max_speed
+> > phylink_interface_signal_rate
+> > phylink_is_empty_linkmode
+> > phylink_an_mode_str
+> > phylink_set_port_modes
+> > 
+> > For now all these are phylink internal and that makes sense, but if we want
+> > phy-driven SFP support, stackable PHYs and so on, we'll need some ways for
+> > the PHY to expose its media-side capabilities, and we'd reuse these.
+> > 
+> > These would go into linkmode.c/h for example, and we'd have a shared set
+> > of helpers that we can use in phylink, phylib and phy_port.
+> > 
+> > Before I go around and rearrange that, are you OK with this approach ?  
+> 
+> I'm not convinced. If you're thinking of that level of re-use, you're
+> probably going to miss out on a lot of logic that's in phylink. Maybe
+> there should be a way to re-use phylink in its entirety between the
+> PHY and SFP.
+> 
+> Some of the above (that deal only with linkmodes) would make sense
+> to move out though.
 
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
-v2:
-- Rename __construct_region() to construct_auto_region(). (Jonathan and Dave)
----
- drivers/cxl/core/region.c | 71 +++++++++++++++++++++------------------
- 1 file changed, 39 insertions(+), 32 deletions(-)
+Yeah I'm thinking about moving only stuff that is phylink-independent
+and only deals with linkmodes indeed. I'll spin a quick series to see
+what it looks like then :)
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 320a3f218131..7a9e51aba9f4 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -3216,49 +3216,31 @@ static int match_region_by_range(struct device *dev, const void *data)
- 	return 0;
- }
- 
--/* Establish an empty region covering the given HPA range */
--static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
--					   struct cxl_endpoint_decoder *cxled)
-+static int construct_auto_region(struct cxl_region *cxlr,
-+				 struct cxl_root_decoder *cxlrd,
-+				 struct cxl_endpoint_decoder *cxled)
- {
- 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
--	struct cxl_port *port = cxlrd_to_port(cxlrd);
- 	struct range *hpa = &cxled->cxld.hpa_range;
- 	struct cxl_region_params *p;
--	struct cxl_region *cxlr;
- 	struct resource *res;
- 	int rc;
- 
--	do {
--		cxlr = __create_region(cxlrd, cxled->mode,
--				       atomic_read(&cxlrd->region_id));
--	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
--
--	if (IS_ERR(cxlr)) {
--		dev_err(cxlmd->dev.parent,
--			"%s:%s: %s failed assign region: %ld\n",
--			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
--			__func__, PTR_ERR(cxlr));
--		return cxlr;
--	}
--
--	down_write(&cxl_region_rwsem);
-+	guard(rwsem_write)(&cxl_region_rwsem);
- 	p = &cxlr->params;
- 	if (p->state >= CXL_CONFIG_INTERLEAVE_ACTIVE) {
- 		dev_err(cxlmd->dev.parent,
- 			"%s:%s: %s autodiscovery interrupted\n",
- 			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
- 			__func__);
--		rc = -EBUSY;
--		goto err;
-+		return -EBUSY;
- 	}
- 
- 	set_bit(CXL_REGION_F_AUTO, &cxlr->flags);
- 
- 	res = kmalloc(sizeof(*res), GFP_KERNEL);
--	if (!res) {
--		rc = -ENOMEM;
--		goto err;
--	}
-+	if (!res)
-+		return -ENOMEM;
- 
- 	*res = DEFINE_RES_MEM_NAMED(hpa->start, range_len(hpa),
- 				    dev_name(&cxlr->dev));
-@@ -3281,7 +3263,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 
- 	rc = sysfs_update_group(&cxlr->dev.kobj, get_cxl_region_target_group());
- 	if (rc)
--		goto err;
-+		return rc;
- 
- 	dev_dbg(cxlmd->dev.parent, "%s:%s: %s %s res: %pr iw: %d ig: %d\n",
- 		dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev), __func__,
-@@ -3290,14 +3272,39 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 
- 	/* ...to match put_device() in cxl_add_to_region() */
- 	get_device(&cxlr->dev);
--	up_write(&cxl_region_rwsem);
- 
--	return cxlr;
-+	return 0;
-+}
- 
--err:
--	up_write(&cxl_region_rwsem);
--	devm_release_action(port->uport_dev, unregister_region, cxlr);
--	return ERR_PTR(rc);
-+/* Establish an empty region covering the given HPA range */
-+static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
-+					   struct cxl_endpoint_decoder *cxled)
-+{
-+	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-+	struct cxl_port *port = cxlrd_to_port(cxlrd);
-+	struct cxl_region *cxlr;
-+	int rc;
-+
-+	do {
-+		cxlr = __create_region(cxlrd, cxled->mode,
-+				       atomic_read(&cxlrd->region_id));
-+	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
-+
-+	if (IS_ERR(cxlr)) {
-+		dev_err(cxlmd->dev.parent,
-+			"%s:%s: %s failed assign region: %ld\n",
-+			dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
-+			__func__, PTR_ERR(cxlr));
-+		return cxlr;
-+	}
-+
-+	rc = construct_auto_region(cxlr, cxlrd, cxled);
-+	if (rc) {
-+		devm_release_action(port->uport_dev, unregister_region, cxlr);
-+		return ERR_PTR(rc);
-+	}
-+
-+	return cxlr;
- }
- 
- int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
--- 
-2.34.1
+Thanks,
+
+Maxime
 
 
