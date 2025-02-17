@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-518303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5A8A38CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:03:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6444EA38CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D6B174BF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4D87A4E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081DC23770D;
-	Mon, 17 Feb 2025 20:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12111225798;
+	Mon, 17 Feb 2025 20:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pxwta0y8"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="lbLsLX7M"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9DC235C11
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE47522B8BC;
+	Mon, 17 Feb 2025 20:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739822428; cv=none; b=tMAQjUqcFAJ6v+CCfXJFlLXT64lcYE5MMDsHSa4sZjpFUDR/03V879+1XjdyhFh1bm0jpVz70tpTBOZPwI34VgLupB2zyU3by1H1YgygpNM2SdYg5LtkYCuEMvURRc7I3XCh/8FVGcBIeWV651vFEvfqNImZFJj/D/uDhAlA/Mc=
+	t=1739822593; cv=none; b=f37Ah8H6AS3hP7RjetHRcmseGcph76+NQaz6Z8HFlCxaXxBenoRukI9Cvp0lr8PqrnASWDj8mddS36jA/p6hUGUj6YqtREnrBlxhutm2Ih5/DaLecNVK2ol0Auu7DNcR9VekZEXh+8jquHa85RKoc8DbhUYcIxVaPr8rdtWA67E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739822428; c=relaxed/simple;
-	bh=YHEvzk9S5CFELMOEHTtph2rlFu4VkRtoPj93+QGVF1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojrKPblEwnEHGp12jhgRr69HbvLz/XkdLvtWeejw7hm4Xzn0+HQxraizTgi1oYZ4eDLc5HZYJ54K8Y4VZ5s/jpXo3OQinJjK8YXa1oUy6K2lw/DVi6KVc2ePFVCBYNIO0b0L9hxi6KDdAgFy5A+ab2eLFfxJ3Ww3DP/ZspfvVRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pxwta0y8; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54527a7270eso3398955e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739822424; x=1740427224; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpqEL8DpAJMrJ/rNxfQI3uKIUT/9KC6tNWKUzxHa+5g=;
-        b=pxwta0y8ScDL8+J7TnP1QGMKJ0T4Fmf8F1E4AqqGNnm+XaNCBUtUYYCwFYxvK1gDou
-         nTQ/nzEABq22wS5W7epinkjWlJHBK8MteuLWdyN3f8oNDoJLbw9m2NclW7MpjaTEGUEX
-         BuI2TvnSwxIMNvMAbzzserfC4EWqHNG11tWmir4ye7aPw1TTs30yO1jU9SQVSMB2JBiV
-         KdBcHmmcsdlJeyA0bQmGfRQYzE73yfHQTC0ZDvZ0qZL+ho50cTwQtjvE8KIU8Q3cZhbp
-         l4MNxOf009TFTFHP5vvBeFEqRZC71p2RvCT9lLK9Co4M3d6GoLcPmz1C1sRkBxa/sNf+
-         pDaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739822424; x=1740427224;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gpqEL8DpAJMrJ/rNxfQI3uKIUT/9KC6tNWKUzxHa+5g=;
-        b=eh78z29DDKxUj24uP7ttb1QdvqiY9V7byFWerBQw2cspZ2mJLKpZcZef8jbBnTTqpM
-         SID5hoZ+QttGR3n8WI96XqfepQzPdIcoHYiRmmiexdHcXPyp5HBF/sssVU+wY0gnyRnY
-         LMIOrcKXYqghGXMymcWXHPsfIiPDbjdf02IKeF6UE8uQplF56v0JS8tl28MTfJRM/dga
-         Wla1lqMBeztmkszCqWQiz4YkHCVhUVxvRyWtB1L+KLJ5hPDncWKKqqjF+STSKRaqll9u
-         5XBW89ExbkWzWwpPObXytJtAT/VJdI9weP6SUOyocisfcRyRywruesfFt01YC4ngdHft
-         0LQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoB1Q5vhqLHMu1nF3kX/49F9a+hTgJLWeZ5Xb4KaQF8fu8d7Z1nMJ0r20qD471NT3kbZAA6z4SLbSoe/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5BQiPXaa+9NNo9VWD8uHRFoNQIPBJ3ZwumLIBb243zEQaEE4
-	zJ4kCENwBQcBRFmlr4kcn0+P4//r2PnEqgNujcPjHQVJtzkis3TdYt+qqFnGlSg=
-X-Gm-Gg: ASbGncvq/93NXwvecV19c0xMxG7+RyjC43dxVeOOlYEB1KuF38TlJxGEppYCz/1XJbg
-	w81Mfg/amMNITBGgeWuzEmSjfFNF56YdAx0JCzDhtSGL8JY+m0bvWfGweGaidwAua8DIB9nHrgj
-	SWAofTQHdPB9ucfmYBO57imUmlJIJ1bpEjXC2KFDj6VnvqnyZNff1hAAHwpVO17yT5O6OIfbMN/
-	2HlDL9q3rS2T3GqMNnrhLjE4aEooJa40eqcL+Z4Zv/TryvCovUllDc2TOQ3TPWjnyTx0wzJDXTj
-	zAuHhfvT1bFOlGvpNNiM/UaD/ksHp8KqMD2g6OxfrfwIx7yCr9IC0cXWxGy38gDMgDJJoUs=
-X-Google-Smtp-Source: AGHT+IHfYFHYucbMv9ssVZrygfyI/KAzMXlRnYVSK6/tZCdLiSCDTSlyjiu2Y9vqwm/0Wc+nrvZGmQ==
-X-Received: by 2002:a05:6512:2398:b0:545:2c86:17e6 with SMTP id 2adb3069b0e04-5452fe2f270mr3457419e87.5.1739822424412;
-        Mon, 17 Feb 2025 12:00:24 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54525784de2sm1436453e87.109.2025.02.17.12.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 12:00:23 -0800 (PST)
-Date: Mon, 17 Feb 2025 22:00:20 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Vishal Sagar <vishal.sagar@amd.com>, 
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 02/11] drm/fourcc: Add DRM_FORMAT_XV15/XV20
-Message-ID: <e5ujn5lhj5vuvkbavoc3oppt3cpxnr7mm2vwh6liojmpxkfy2d@grpmckvbl5h4>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-2-90d0fe106995@ideasonboard.com>
+	s=arc-20240116; t=1739822593; c=relaxed/simple;
+	bh=Czt6dzLaaJYi0aLl1SqokBZut9L0657qGVnXG8CtbZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XEq8QyfvZe/fyU60dmFOTylN5PwmKSsjfjnvUfItMBEs/oSe++RjhpjSUjD+8loGzsdVlrQqidE3taqEZxWRLzSZHJnUdTFP35ic/Q/gBrGXvoIPhcaibsoYj+jzsHBcU91yWaLfy5NlpMHeerw9u9N/W3nk7IsPkkir78IWcsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=lbLsLX7M; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 09ce3472b20f4a40; Mon, 17 Feb 2025 21:03:02 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 280BB9100B0;
+	Mon, 17 Feb 2025 21:03:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1739822582;
+	bh=Czt6dzLaaJYi0aLl1SqokBZut9L0657qGVnXG8CtbZk=;
+	h=From:Subject:Date;
+	b=lbLsLX7MVn+NzaOcOJjkjHD64cWTdjK0qVqzMQmQ/PlRzT+NqmQmiF9ghU9kjsxf0
+	 YzxuK51DdxYF2SPp2NBKHWbK4UjxH+u3CM1f3fhcx4ya5iZAIDum4sAtn+/UEc2C3i
+	 lD4zOAagiPPK7rgOZFeQTXJI3nqufg5xeC5aml1vXJ0bFTpO3IprrrthQHutpw/LBa
+	 c5V/ht0HaUI42V+krFnakW/mU3HQljHsCMdpVuKMJKQggN/OP52GRqAdwYlMRrXf79
+	 Kwgx9OrnYMigNlhymXvTl3fYN6tMrfaDgwG6uzLQapP6c0yFnB1j4PsB09p9+RZbca
+	 YRBUUgmMaic8g==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>
+Subject:
+ [PATCH v1] PM: Rearrange documentation related to __pm_runtime_disable()
+Date: Mon, 17 Feb 2025 21:03:01 +0100
+Message-ID: <12617588.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212-xilinx-formats-v3-2-90d0fe106995@ideasonboard.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehleefudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On Wed, Feb 12, 2025 at 04:56:06PM +0200, Tomi Valkeinen wrote:
-> Add two new pixel formats:
-> 
-> DRM_FORMAT_XV15 ("XV15")
-> DRM_FORMAT_XV20 ("XV20")
-> 
-> The formats are 2 plane 10 bit per component YCbCr, with the XV15 2x2
-> subsampled whereas XV20 is 2x1 subsampled.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->  drivers/gpu/drm/drm_fourcc.c  | 8 ++++++++
->  include/uapi/drm/drm_fourcc.h | 8 ++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 1e9afbf6ef99..bb0a2294573b 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -346,6 +346,14 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_P030,            .depth = 0,  .num_planes = 2,
->  		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
->  		  .hsub = 2, .vsub = 2, .is_yuv = true},
-> +		{ .format = DRM_FORMAT_XV15,		.depth = 0,
-> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
-> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
-> +		  .vsub = 2, .is_yuv = true },
-> +		{ .format = DRM_FORMAT_XV20,		.depth = 0,
-> +		  .num_planes = 2, .char_per_block = { 4, 8, 0 },
-> +		  .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 }, .hsub = 2,
-> +		  .vsub = 1, .is_yuv = true },
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-It might be beneficial to use the same formatting as previous entries,
-it simplifies reviewing. If the patchset is resent, it would be nice to
-get that fixed..
+There are only two callers of __pm_runtime_disable(), one of which is
+device_suspend_late() and the other is pm_runtime_disable() that has
+its own kerneldoc comment and there are no plans to add any more of
+them.  Since they use different values of the __pm_runtime_disable()
+second parameter, the actual code behavior is different in each case,
+but it is all documented in the __pm_runtime_disable() kerneldoc comment
+which is not particularly straightforward.
 
-However the patch looks correct, so
+For this reason, move the information from the __pm_runtime_disable()
+kerneldoc comment to the pm_runtime_disable() one and into a separate
+comment in device_suspend_late() and remove the __pm_runtime_disable()
+kerneldoc comment altogether.
+
+No functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c    |    4 ++++
+ drivers/base/power/runtime.c |   14 --------------
+ include/linux/pm_runtime.h   |   15 +++++++++++----
+ 3 files changed, 15 insertions(+), 18 deletions(-)
+
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1404,6 +1404,10 @@
+ 	TRACE_DEVICE(dev);
+ 	TRACE_SUSPEND(0);
+ 
++	/*
++	 * Disable runtime PM for the device without checking if there is a
++	 * pending resume request for it.
++	 */
+ 	__pm_runtime_disable(dev, false);
+ 
+ 	dpm_wait_for_subordinate(dev, async);
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1460,20 +1460,6 @@
+ }
+ EXPORT_SYMBOL_GPL(pm_runtime_barrier);
+ 
+-/**
+- * __pm_runtime_disable - Disable runtime PM of a device.
+- * @dev: Device to handle.
+- * @check_resume: If set, check if there's a resume request for the device.
+- *
+- * Increment power.disable_depth for the device and if it was zero previously,
+- * cancel all pending runtime PM requests for the device and wait for all
+- * operations in progress to complete.  The device can be either active or
+- * suspended after its runtime PM has been disabled.
+- *
+- * If @check_resume is set and there's a resume request pending when
+- * __pm_runtime_disable() is called and power.disable_depth is zero, the
+- * function will wake up the device before disabling its runtime PM.
+- */
+ void __pm_runtime_disable(struct device *dev, bool check_resume)
+ {
+ 	spin_lock_irq(&dev->power.lock);
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -556,11 +556,18 @@
+  * pm_runtime_disable - Disable runtime PM for a device.
+  * @dev: Target device.
+  *
+- * Prevent the runtime PM framework from working with @dev (by incrementing its
+- * "blocking" counter).
++ * Prevent the runtime PM framework from working with @dev by incrementing its
++ * "disable" counter.
+  *
+- * For each invocation of this function for @dev there must be a matching
+- * pm_runtime_enable() call in order for runtime PM to be enabled for it.
++ * If the counter is zero when this function runs and there is a pending runtime
++ * resume request for @dev, it will be resumed.  If the counter is still zero at
++ * that point, all of the pending runtime PM requests for @dev will be canceled
++ * and all runtime PM operations in progress involving it will be waited for to
++ * complete.
++ *
++ * For each invocation of this function for @dev, there must be a matching
++ * pm_runtime_enable() call, so that runtime PM is eventually enabled for it
++ * again.
+  */
+ static inline void pm_runtime_disable(struct device *dev)
+ {
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-
-
->  	};
->  
->  	unsigned int i;
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index e41a3cec6a9e..ead756a71825 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -304,6 +304,14 @@ extern "C" {
->  #define DRM_FORMAT_RGB565_A8	fourcc_code('R', '5', 'A', '8')
->  #define DRM_FORMAT_BGR565_A8	fourcc_code('B', '5', 'A', '8')
->  
-> +/*
-> + * 2 plane 10 bit per component YCrCb
-> + * index 0 = Y plane, [31:0] x:Y2:Y1:Y0 2:10:10:10 little endian
-> + * index 1 = Cb:Cr plane, [63:0] x:Cr2:Cb2:Cr1:x:Cb1:Cr0:Cb0 2:10:10:10:2:10:10:10 little endian
-> + */
-> +#define DRM_FORMAT_XV15		fourcc_code('X', 'V', '1', '5') /* 2x2 subsampled Cr:Cb plane 2:10:10:10 */
-> +#define DRM_FORMAT_XV20		fourcc_code('X', 'V', '2', '0') /* 2x1 subsampled Cr:Cb plane 2:10:10:10 */
-> +
->  /*
->   * 2 plane YCbCr
->   * index 0 = Y plane, [7:0] Y
-> 
-> -- 
-> 2.43.0
-> 
-
--- 
-With best wishes
-Dmitry
 
