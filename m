@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-517368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2ECA37FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:19:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094D7A37FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E253B04D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:18:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF11A188A3AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DCD2185B3;
-	Mon, 17 Feb 2025 10:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429B4218AB2;
+	Mon, 17 Feb 2025 10:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zPwTTUmy"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qf+kVBpn"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEF6216394
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703F8218584
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787473; cv=none; b=S3VneiU8+XqMKKa+W6l6aZ8q5KRvFG8mHc1Px2nZGe+ZRbRhPWA1qHGq5QMLotJPHiK8SOpHt0oxK5fmLwyj/2cHTP93drt5jYJCSiyud5+5ms+6ixHqxpMdqe2B5K3hm6SuHJjBWcTnUtPcObUtyjFoXPMmp01H0Rt3Z1Aio28=
+	t=1739787476; cv=none; b=OTsO3IhXEbVdD5CDkQNlT8X5mFRfXPzgha210wEwLM1GIjPXQvgDJQLUnFprQSr+Mcb45OO2ZafoffBRC/6jFjUxCrLN/bISffPYe/Pe1nr3p8MSJHe3HeijT0h7v5UTRq9lTaoGxCAvsUpvdt6SxYN0PsqESXQs2BMahc3J1zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787473; c=relaxed/simple;
-	bh=eFWO0XMyikPo+vVZcTF2JAqlcgoQWkxVrK0g2v9jJKI=;
+	s=arc-20240116; t=1739787476; c=relaxed/simple;
+	bh=qZuC7gqK3WcrD0D+coZGKMDI2mB55tzfLWIMdlAFyjg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gH8rQd6VgANnSfhq/i+hkrHoWVQVz49skG/RABAaySovGkiBkNtFkcGe6151l8Pjyy+OiRs27pkTq9zvC8yk2vIkhqoEKIiTujC2HwIfY6Aj5d139EHi9YgzBbSlscYGoyxk6NM80E2cj0UO/uen3yFOuaYWHkqhlXpklPEhiAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zPwTTUmy; arc=none smtp.client-ip=209.85.218.53
+	 MIME-Version; b=Oom1akNfAN1Zt9Ms26NZ/j4ct3/tnPXqEjqcvxBRXfR7xvYyWxUmAKicbVfHkwHNBqZVUPUSQq30M+gWMBAJO4yhLkGS7nqTBOGd0bsEh89APIBNg3AKrvLlYexEvl2Fd/ODi9t42OfWHVjzreYk5e7qV6wY1jmOuQI51LQj9Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qf+kVBpn; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb8e405640so160924866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:51 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38de1a5f039so3987048f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739787470; x=1740392270; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739787472; x=1740392272; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wXzcU5MFpNvV+1Iapr36hDkhqv8Rk3kBwf8g/lXGurs=;
-        b=zPwTTUmyqxl8VMtjBdDo5Z0YJvwXoHjP2sQO66sKway7vNYc9urrz8FNQAlzj/uzx7
-         Pbp9TmHC85rN1Fk99yTi73gziiFWdU3MykNYvfvIsvRJs286tb7fCHJgPPO7JTJ1/s1B
-         9L5Zfr04QeGGLYb+p2/NmgrbuXJqEocRQ8NGtCasqnEYnhVg/Y8EdfR821SzYnqz5SgA
-         7zdTgWnWBsUKj4sQOFApoImt828PARcfnVGbem6mpTi/msqZTRcei0sDndEN8NhOgoXk
-         WOhDW2TF0UjhciJkoBZy5eZq3PGzZZ5Lja+R/AK83o1k6w1+WSR1z5iT+SfZQqCQhCc4
-         1XZg==
+        bh=QifBQ/xg2RCUDrB4vfDq4gu1LJ6B/77pKMAfIESueUs=;
+        b=qf+kVBpncy34FC7bO2z9mojDXe9X2yIqPsq6y76Q6r26W8QXO9H8rhGDTTuNDZbrbB
+         /aaEvTV2uznjRgon9i0sGXZ2ttSgXWO/3XRKNVFY0UxqYgpIbC7SEqYFJwBbFmZ02yb/
+         sTV/CyVcHAN1PlMfXQz6Hde2ieMhan2p428sE4LMGiudGAiFuI3/dz7XMMNxxHXsWpAL
+         0kGu0XEKlUOm0bu19yNYc7RLyB3BToZsKVe2897M4uZm5q567NaxUGXlMh0hpyl60QQp
+         XnA1VKUlitlYVluh8UHZV8CCpvpTjTNoFRcfL47xM8phYHgocNZpDMq/2JsAhzA9G64H
+         QxfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787470; x=1740392270;
+        d=1e100.net; s=20230601; t=1739787472; x=1740392272;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wXzcU5MFpNvV+1Iapr36hDkhqv8Rk3kBwf8g/lXGurs=;
-        b=Jw2/8eQz1AhKWbTSCvQPi8eRTFwT+54Uvm69+iccC3XKOXmMSjFFJacAcdPKFkq7SU
-         +/vP7gecDq1c8t1xtteufB3Zvy9G6REEu7qGUZd+o4Zx5VfbXTlXGFhsO1tryY1PdlqP
-         e7Nt8uH/7Zs2mzOsW5iRxrLOgsbY0adM/UDPoVIsErBIEASO5Ic2+GAAZA6wDRLf9ZMM
-         RsSDPu/zvWQC1TtW89TZfhPY8YfMQ6aDXTyiNlYJ/Us1ZRy+X5VzfIiNNEPVUqP6q57/
-         FMSB3dyRG/jHICowwfMQj3/SFCnD/h4XhYcx4MsBT1Pycilsz7vu1wTsTTxckYNpJxeK
-         slkA==
-X-Gm-Message-State: AOJu0Yx93BEFzFkbD6Fnk9LYJXMltQivl911OP28dbKEu9wB0aygxWYt
-	18do46vEAw42f895KZvw6AZUqxR0yrcKJ3rMujjrCE7wMTBZn/pzQ4BuCXmDn36XSGMTaxfc3/O
-	tfkY=
-X-Gm-Gg: ASbGnctF49TW55vdvtZWEQY60DLPt1IFVlqZLCRiBaCwHk2u7x4StoNkTgxrZELTIOo
-	8WyehJj2Dg78eo1KTDxAYfnz0pAsEV88mhVlWDWsyqmd2UTljjmH61bb7saSfgceRuFMPdtEusF
-	6zX96ytVjmrigOxbhe1m5PQJYJabimby6d2n1R1h1dXfoyksJ2ZMr/2HtPnliksDzjlREFW0tJ0
-	Z6cTKIgdk4K8lLdH6RGl6DN6ra1kTkb1Hc84jVyiSkNJ1rgpiD59thoPzWvJG59q4lzGs/Se3W8
-	2vClFpmPmiX3FPl3SQnOVPhh
-X-Google-Smtp-Source: AGHT+IFlpcMLdWWAy879FRRX8kAbYx+cTtUPfK71e6uWIwxDjhZr04LaUoJwILHRa7T4Dh47h6Jv7g==
-X-Received: by 2002:a17:907:d27:b0:aba:5f40:7f2e with SMTP id a640c23a62f3a-abb70d95048mr848206466b.45.1739787470024;
-        Mon, 17 Feb 2025 02:17:50 -0800 (PST)
+        bh=QifBQ/xg2RCUDrB4vfDq4gu1LJ6B/77pKMAfIESueUs=;
+        b=pOp1oVDfSYyBa/lxnVp+OXNHkbuKPBOw9zZ2qz/NJOe4ryXB1wWl/JYl/Dn8VXqS8Y
+         xAXTf2XGzCDqeUzSMIRjRaH7ENMCiB3AEm9Vl12lWLcCrN8IM3qtQWJM8k60E8QOlgzx
+         4C1jwg79HqsEjNQfUVeqyMt1gBzaOL5bthCl/V5kH31lcKvKjIidei6OGbz85ZqYPI/+
+         1Gtk1tD/vFi0yrC/FJee/ms16HHhsf8KPRYi7ST6p7y/5Ic1Hw7IVt3AVMlTsz7aS0Hl
+         QWQm+SzjmItxHwFZVstHEtM6dzjZmrGmlcCA8S417t/3WlxoqapP1tGBqvdbngfTL44r
+         rYmg==
+X-Gm-Message-State: AOJu0YxbA5CtjvlSKx/zKcg+3UtD3DdZGIeDm4SZatNYx98TwxNqI+cF
+	iR3RvCxQ2ux7k/Asjk6iVgfyh+k3BkYB+zEK4U0k0kttgg73iTY2fPaTNmMRMnM=
+X-Gm-Gg: ASbGnct/MUYy7u4pZaChha0LI8srII9DCxl+YOAaGBXTi8O7xptUUsWjP1HqZ+omdDi
+	bJpTdqBMPQnPYDl+IGsw+uFiC7Ea4bYm53/vgQPXoIjD5VI4iPVlBSA8khwwV0pD3n2mnF1LKbG
+	x2phrAdgEbEbS+YWV2A+t6Dc8p9aNDGYnN4fvod2l/geEjZWIyqHVuXCaOL2uvA2Y/mZQVipEGp
+	tkTebqTlqRtbLrjbYYuV6YaYig5rl54/DSWdAdNPlsNMmIDCH/XI7PBtUQ1iSqzJ9rWkY113xGQ
+	hkzNK+3uwmGov/uopbPYnaip
+X-Google-Smtp-Source: AGHT+IHXaznwSyo3YbfYL/R4+3M72WRvyCNEfigOhBxj8g1XzyEDxhWvwflhOeb8uHLrPz5EryyeQA==
+X-Received: by 2002:a5d:5f4a:0:b0:38f:4244:68cb with SMTP id ffacd0b85a97d-38f42446bfbmr3184326f8f.12.1739787471737;
+        Mon, 17 Feb 2025 02:17:51 -0800 (PST)
 Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:17:49 -0800 (PST)
+        Mon, 17 Feb 2025 02:17:51 -0800 (PST)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-hardening@vger.kernel.org,
@@ -92,9 +91,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@quicinc.com,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH 03/10] pstore/zone: introduce directly mapped zones
-Date: Mon, 17 Feb 2025 12:16:59 +0200
-Message-ID: <20250217101706.2104498-4-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH 04/10] qcom: smem: add pstore smem backend
+Date: Mon, 17 Feb 2025 12:17:00 +0200
+Message-ID: <20250217101706.2104498-5-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250217101706.2104498-1-eugen.hristev@linaro.org>
 References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
@@ -106,254 +105,540 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Directly mapped zones have a different semantic from usual pstore zones.
-Such zones use a pointer to data in their buffer struct, instead of
-keeping the buffer locally.
-The data pointer and size is then passed to the backend for further use.
-Having a different semantics, backends supporting only these do not offer
-read/write ops, and only new register_dmr and unregister_dmr ops.
-Ofcourse, a backend could support both classic zones and directly mapped.
-Directly mapped zones have the advantage of not being passed through
-in the event of a crashed, but rather at registration time.
+Add support for pstore smem backend in the qcom smem driver.
+This backend resorts to minidump regions behind the scenes.
 
+Co-developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- fs/pstore/platform.c        |  1 +
- fs/pstore/smem.c            |  6 ++---
- fs/pstore/zone.c            | 45 ++++++++++++++++++++++++++++---------
- include/linux/pstore.h      |  4 ++++
- include/linux/pstore_zone.h |  3 +++
- 5 files changed, 45 insertions(+), 14 deletions(-)
+ drivers/soc/qcom/Kconfig       |   9 +
+ drivers/soc/qcom/Makefile      |   6 +-
+ drivers/soc/qcom/smem_md.c     | 306 +++++++++++++++++++++++++++++++++
+ drivers/soc/qcom/smem_pstore.c | 112 ++++++++++++
+ include/linux/soc/qcom/smem.h  |  43 +++++
+ 5 files changed, 474 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/soc/qcom/smem_md.c
+ create mode 100644 drivers/soc/qcom/smem_pstore.c
 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index f56b066ab80c..e20e60b88727 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -51,6 +51,7 @@ static const char * const pstore_type_names[] = {
- 	"powerpc-common",
- 	"pmsg",
- 	"powerpc-opal",
-+	"directly-mapped",
- };
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 58e63cf0036b..e1c71f713c05 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -180,6 +180,15 @@ config QCOM_SMEM
+ 	  The driver provides an interface to items in a heap shared among all
+ 	  processors in a Qualcomm platform.
  
- static int pstore_new_entry;
-diff --git a/fs/pstore/smem.c b/fs/pstore/smem.c
-index 9eedd7df5446..684ecc20cae5 100644
---- a/fs/pstore/smem.c
-+++ b/fs/pstore/smem.c
-@@ -36,15 +36,15 @@ static int __register_pstore_device(struct pstore_device_info *dev)
- 		pr_err("NULL device info\n");
- 		return -EINVAL;
- 	}
--	if (!dev->zone.total_size) {
-+	if (!dev->zone.total_size && !dev->zone.dmapped_cnt) {
- 		pr_err("zero sized device\n");
- 		return -EINVAL;
- 	}
--	if (!dev->zone.read) {
-+	if (!dev->zone.read && !dev->zone.dmapped_cnt) {
- 		pr_err("no read handler for device\n");
- 		return -EINVAL;
- 	}
--	if (!dev->zone.write) {
-+	if (!dev->zone.write && !dev->zone.dmapped_cnt) {
- 		pr_err("no write handler for device\n");
- 		return -EINVAL;
- 	}
-diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
-index 5fa2fa2e7aa7..affa4370208c 100644
---- a/fs/pstore/zone.c
-+++ b/fs/pstore/zone.c
-@@ -113,6 +113,7 @@ struct psz_context {
- 	struct pstore_zone *ppsz;
- 	struct pstore_zone *cpsz;
- 	struct pstore_zone **fpszs;
-+	struct pstore_zone **dmszs;
- 	unsigned int kmsg_max_cnt;
- 	unsigned int kmsg_read_cnt;
- 	unsigned int kmsg_write_cnt;
-@@ -120,6 +121,7 @@ struct psz_context {
- 	unsigned int console_read_cnt;
- 	unsigned int ftrace_max_cnt;
- 	unsigned int ftrace_read_cnt;
-+	unsigned int dmapped_max_cnt;
- 	/*
- 	 * These counters should be calculated during recovery.
- 	 * It records the oops/panic times after crashes rather than boots.
-@@ -1148,6 +1150,8 @@ static void psz_free_all_zones(struct psz_context *cxt)
- 		psz_free_zone(&cxt->cpsz);
- 	if (cxt->fpszs)
- 		psz_free_zones(&cxt->fpszs, &cxt->ftrace_max_cnt);
-+	if (cxt->dmszs)
-+		psz_free_zones(&cxt->dmszs, &cxt->dmapped_max_cnt);
- }
- 
- static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
-@@ -1160,9 +1164,9 @@ static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
- 	if (!size)
- 		return NULL;
- 
--	if (*off + size > info->total_size) {
--		pr_err("no room for %s (0x%zx@0x%llx over 0x%lx)\n",
--			name, size, *off, info->total_size);
-+	if (*off + size > info->total_size && type != PSTORE_TYPE_DMAPPED) {
-+		pr_err("no room for %s type %d (0x%zx@0x%llx over 0x%lx)\n",
-+			name, type, size, *off, info->total_size);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-@@ -1170,7 +1174,8 @@ static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
- 	if (!zone)
- 		return ERR_PTR(-ENOMEM);
- 
--	zone->buffer = kmalloc(size, GFP_KERNEL);
-+	zone->buffer = kmalloc(type == PSTORE_TYPE_DMAPPED ?
-+			       sizeof(struct psz_buffer) : size, GFP_KERNEL);
- 	if (!zone->buffer) {
- 		kfree(zone);
- 		return ERR_PTR(-ENOMEM);
-@@ -1179,7 +1184,10 @@ static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
- 	zone->off = *off;
- 	zone->name = name;
- 	zone->type = type;
--	zone->buffer_size = size - sizeof(struct psz_buffer);
-+	if (zone->type == PSTORE_TYPE_DMAPPED)
-+		zone->buffer_size = 0;
-+	else
-+		zone->buffer_size = size - sizeof(struct psz_buffer);
- 	zone->buffer->sig = type ^ PSZ_SIG;
- 	zone->oldbuf = NULL;
- 	atomic_set(&zone->dirty, 0);
-@@ -1188,8 +1196,9 @@ static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
- 
- 	*off += size;
- 
--	pr_debug("pszone %s: off 0x%llx, %zu header, %zu data\n", zone->name,
--			zone->off, sizeof(*zone->buffer), zone->buffer_size);
-+	pr_debug("pszone %s: off 0x%llx, %zu header, %zu data %s\n", zone->name,
-+			zone->off, sizeof(*zone->buffer), zone->buffer_size,
-+			zone->type == PSTORE_TYPE_DMAPPED ? " dmapped " : "");
- 	return zone;
- }
- 
-@@ -1206,7 +1215,7 @@ static struct pstore_zone **psz_init_zones(enum pstore_type_id type,
- 	if (!total_size || !record_size)
- 		return NULL;
- 
--	if (*off + total_size > info->total_size) {
-+	if (*off + total_size > info->total_size && type != PSTORE_TYPE_DMAPPED) {
- 		pr_err("no room for zones %s (0x%zx@0x%llx over 0x%lx)\n",
- 			name, total_size, *off, info->total_size);
- 		return ERR_PTR(-ENOMEM);
-@@ -1245,6 +1254,15 @@ static int psz_alloc_zones(struct psz_context *cxt)
- 	int err;
- 	size_t off_size = 0;
- 
-+	cxt->dmszs = psz_init_zones(PSTORE_TYPE_DMAPPED, &off,
-+			info->dmapped_cnt,
-+			1, &cxt->dmapped_max_cnt);
-+	if (IS_ERR(cxt->dmszs)) {
-+		err = PTR_ERR(cxt->dmszs);
-+		cxt->dmszs = NULL;
-+		goto free_out;
++config QCOM_SMEM_PSTORE
++	bool "Qualcomm Shared Memory(SMEM) Pstore backend"
++	depends on QCOM_SMEM
++	select PSTORE
++	select PSTORE_SMEM
++	help
++	  Say y here to enable the shared memory driver to register itself
++	  as a pstore backend.
++
+ config QCOM_SMD_RPM
+ 	tristate "Qualcomm Resource Power Manager (RPM) over SMD"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index acbca2ab5cc2..304b031ed70e 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -23,8 +23,10 @@ obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
+ qcom_rpmh-y			+= rpmh-rsc.o
+ qcom_rpmh-y			+= rpmh.o
+ obj-$(CONFIG_QCOM_SMD_RPM)	+= rpm-proc.o smd-rpm.o
+-obj-$(CONFIG_QCOM_SMEM) +=	smem.o
+-obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
++obj-$(CONFIG_QCOM_SMEM) += qcom_smem.o
++qcom_smem-y += smem.o
++qcom_smem-$(CONFIG_QCOM_SMEM_PSTORE) += smem_pstore.o smem_md.o
++obj-$(CONFIG_QCOM_SMEM_STATE)	+= smem_state.o
+ CFLAGS_smp2p.o := -I$(src)
+ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+diff --git a/drivers/soc/qcom/smem_md.c b/drivers/soc/qcom/smem_md.c
+new file mode 100644
+index 000000000000..2b665ecc5695
+--- /dev/null
++++ b/drivers/soc/qcom/smem_md.c
+@@ -0,0 +1,306 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/hwspinlock.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/devcoredump.h>
++#include <linux/sizes.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/soc/qcom/socinfo.h>
++#include <linux/dma-mapping.h>
++#include <linux/pstore_smem.h>
++#include <linux/pstore_zone.h>
++#include <linux/pstore.h>
++
++#define MAX_NUM_ENTRIES	  201
++#define MAX_STRTBL_SIZE	  (MAX_NUM_ENTRIES * MAX_REGION_NAME_LENGTH)
++
++#define MAX_NUM_OF_SS           10
++#define MAX_REGION_NAME_LENGTH  16
++#define SBL_MINIDUMP_SMEM_ID	602
++#define MINIDUMP_REGION_VALID	   ('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
++#define MINIDUMP_SS_ENCR_DONE	   ('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
++#define MINIDUMP_SS_ENABLED	   ('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
++#define MINIDUMP_REGION_INVALID	   ('I' << 24 | 'N' << 16 | 'V' << 8 | 'A' << 0)
++#define MINIDUMP_REGION_INIT	   ('I' << 24 | 'N' << 16 | 'I' << 8 | 'T' << 0)
++#define MINIDUMP_REGION_NOINIT	   0
++
++#define MINIDUMP_SS_ENCR_REQ	   (0 << 24 | 'Y' << 16 | 'E' << 8 | 'S' << 0)
++#define MINIDUMP_SS_ENCR_NOTREQ	   (0 << 24 | 0 << 16 | 'N' << 8 | 'R' << 0)
++#define MINIDUMP_SS_ENCR_START	   ('S' << 24 | 'T' << 16 | 'R' << 8 | 'T' << 0)
++
++#define MINIDUMP_APSS_DESC	   0
++
++/**
++ * struct minidump - Minidump driver data information
++ * @apss_data: APSS driver data
++ * @md_lock: Lock to protect access to APSS minidump table
++ */
++struct minidump {
++	struct device		*dev;
++	struct minidump_ss_data	*apss_data;
++	struct mutex		md_lock;
++};
++
++/**
++ * struct minidump_region - Minidump region
++ * @name		: Name of the region to be dumped
++ * @seq_num:		: Use to differentiate regions with same name.
++ * @valid		: This entry to be dumped (if set to 1)
++ * @address		: Physical address of region to be dumped
++ * @size		: Size of the region
++ */
++struct minidump_region {
++	char	name[MAX_REGION_NAME_LENGTH];
++	__le32	seq_num;
++	__le32	valid;
++	__le64	address;
++	__le64	size;
++};
++
++/**
++ * struct minidump_subsystem - Subsystem's SMEM Table of content
++ * @status : Subsystem toc init status
++ * @enabled : if set to 1, this region would be copied during coredump
++ * @encryption_status: Encryption status for this subsystem
++ * @encryption_required : Decides to encrypt the subsystem regions or not
++ * @region_count : Number of regions added in this subsystem toc
++ * @regions_baseptr : regions base pointer of the subsystem
++ */
++struct minidump_subsystem {
++	__le32	status;
++	__le32	enabled;
++	__le32	encryption_status;
++	__le32	encryption_required;
++	__le32	region_count;
++	__le64	regions_baseptr;
++};
++
++/**
++ * struct minidump_global_toc - Global Table of Content
++ * @status : Global Minidump init status
++ * @md_revision : Minidump revision
++ * @enabled : Minidump enable status
++ * @subsystems : Array of subsystems toc
++ */
++struct minidump_global_toc {
++	__le32				status;
++	__le32				md_revision;
++	__le32				enabled;
++	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
++};
++/**
++ * struct minidump_ss_data - Minidump subsystem private data
++ * @md_ss_toc: Application Subsystem TOC pointer
++ * @md_regions: Application Subsystem region base pointer
++ */
++struct minidump_ss_data {
++	struct minidump_subsystem *md_ss_toc;
++	struct minidump_region	  *md_regions;
++};
++
++static struct minidump *md;
++
++static void qcom_md_add_region(const struct qcom_minidump_region *region)
++{
++	struct minidump_subsystem *mdss_toc = md->apss_data->md_ss_toc;
++	struct minidump_region *mdr;
++	unsigned int region_cnt;
++
++	region_cnt = le32_to_cpu(mdss_toc->region_count);
++	mdr = &md->apss_data->md_regions[region_cnt];
++	strscpy(mdr->name, region->name, sizeof(mdr->name));
++	mdr->address = cpu_to_le64(region->phys_addr);
++	mdr->size = cpu_to_le64(region->size);
++	mdr->valid = cpu_to_le32(MINIDUMP_REGION_VALID);
++	region_cnt++;
++	mdss_toc->region_count = cpu_to_le32(region_cnt);
++}
++
++static int qcom_md_get_region_index(struct minidump_ss_data *mdss_data,
++				    const struct qcom_minidump_region *region)
++{
++	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
++	struct minidump_region *mdr;
++	unsigned int i;
++	unsigned int count;
++
++	count = le32_to_cpu(mdss_toc->region_count);
++	for (i = 0; i < count; i++) {
++		mdr = &mdss_data->md_regions[i];
++		if (!strcmp(mdr->name, region->name))
++			return i;
 +	}
 +
- 	off_size += info->pmsg_size;
- 	cxt->ppsz = psz_init_zone(PSTORE_TYPE_PMSG, &off, info->pmsg_size);
- 	if (IS_ERR(cxt->ppsz)) {
-@@ -1302,7 +1320,7 @@ int register_pstore_zone(struct pstore_zone_info *info)
- 	int err = -EINVAL;
- 	struct psz_context *cxt = &pstore_zone_cxt;
- 
--	if (info->total_size < 4096) {
-+	if (info->total_size < 4096 && !info->dmapped_cnt) {
- 		pr_warn("total_size must be >= 4096\n");
- 		return -EINVAL;
- 	}
-@@ -1312,7 +1330,7 @@ int register_pstore_zone(struct pstore_zone_info *info)
- 	}
- 
- 	if (!info->kmsg_size && !info->pmsg_size && !info->console_size &&
--	    !info->ftrace_size) {
-+	    !info->ftrace_size && !info->dmapped_cnt) {
- 		pr_warn("at least one record size must be non-zero\n");
- 		return -EINVAL;
- 	}
-@@ -1345,7 +1363,7 @@ int register_pstore_zone(struct pstore_zone_info *info)
- 	 * if no @read, pstore may mount failed.
- 	 * if no @write, pstore do not support to remove record file.
- 	 */
--	if (!info->read || !info->write) {
-+	if (!info->dmapped_cnt && (!info->read || !info->write)) {
- 		pr_err("no valid general read/write interface\n");
- 		return -EINVAL;
- 	}
-@@ -1365,6 +1383,7 @@ int register_pstore_zone(struct pstore_zone_info *info)
- 	pr_debug("\tpmsg size : %ld Bytes\n", info->pmsg_size);
- 	pr_debug("\tconsole size : %ld Bytes\n", info->console_size);
- 	pr_debug("\tftrace size : %ld Bytes\n", info->ftrace_size);
-+	pr_debug("\tdmapped areas : %ld\n", info->dmapped_cnt);
- 
- 	err = psz_alloc_zones(cxt);
- 	if (err) {
-@@ -1406,6 +1425,10 @@ int register_pstore_zone(struct pstore_zone_info *info)
- 		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
- 		pr_cont(" ftrace");
- 	}
-+	if (info->dmapped_cnt) {
-+		cxt->pstore.flags |= PSTORE_FLAGS_DMAPPED;
-+		pr_cont(" dmapped");
++	return -ENOENT;
++}
++
++static int qcom_md_region_unregister(const struct qcom_minidump_region *region)
++{
++	struct minidump_ss_data *mdss_data = md->apss_data;
++	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
++	struct minidump_region *mdr;
++	unsigned int region_cnt;
++	unsigned int idx;
++	int ret;
++
++	ret = qcom_md_get_region_index(mdss_data, region);
++	if (ret < 0) {
++		dev_err(md->dev, "%s region is not present\n", region->name);
++		return ret;
 +	}
- 	pr_cont("\n");
++
++	idx = ret;
++	mdr = &mdss_data->md_regions[0];
++	region_cnt = le32_to_cpu(mdss_toc->region_count);
++	/*
++	 * Left shift all the regions exist after this removed region
++	 * index by 1 to fill the gap and zero out the last region
++	 * present at the end.
++	 */
++	memmove(&mdr[idx], &mdr[idx + 1], (region_cnt - idx - 1) * sizeof(*mdr));
++	memset(&mdr[region_cnt - 1], 0, sizeof(*mdr));
++	region_cnt--;
++	mdss_toc->region_count = cpu_to_le32(region_cnt);
++
++	return 0;
++}
++
++static int qcom_md_region_register(const struct qcom_minidump_region *region)
++{
++	struct minidump_ss_data *mdss_data = md->apss_data;
++	struct minidump_subsystem *mdss_toc = mdss_data->md_ss_toc;
++	unsigned int num_region;
++	int ret;
++
++	ret = qcom_md_get_region_index(mdss_data, region);
++	if (ret >= 0) {
++		dev_info(md->dev, "%s region is already registered\n", region->name);
++		return -EEXIST;
++	}
++
++	/* Check if there is a room for a new entry */
++	num_region = le32_to_cpu(mdss_toc->region_count);
++	if (num_region >= MAX_NUM_ENTRIES) {
++		dev_err(md->dev, "maximum region limit %u reached\n", num_region);
++		return -ENOSPC;
++	}
++
++	qcom_md_add_region(region);
++
++	return 0;
++}
++
++static bool qcom_minidump_valid_region(const struct qcom_minidump_region *region)
++{
++	return region &&
++		strnlen(region->name, MINIDUMP_MAX_NAME_LENGTH) < MINIDUMP_MAX_NAME_LENGTH &&
++			region->virt_addr &&
++			region->size &&
++			IS_ALIGNED(region->size, 4);
++}
++
++/**
++ * qcom_minidump_region_register() - Register region in APSS Minidump table.
++ * @region: minidump region.
++ *
++ * Return: On success, it returns 0 and negative error value on failure.
++ */
++int qcom_minidump_region_register(const struct qcom_minidump_region *region)
++{
++	int ret;
++
++	if (!qcom_minidump_valid_region(region))
++		return -EINVAL;
++
++	mutex_lock(&md->md_lock);
++	ret = qcom_md_region_register(region);
++
++	mutex_unlock(&md->md_lock);
++	return ret;
++}
++
++/**
++ * qcom_minidump_region_unregister() - Unregister region from APSS Minidump table.
++ * @region: minidump region.
++ *
++ * Return: On success, it returns 0 and negative error value on failure.
++ */
++int qcom_minidump_region_unregister(const struct qcom_minidump_region *region)
++{
++	int ret;
++
++	if (!qcom_minidump_valid_region(region))
++		return -EINVAL;
++
++	mutex_lock(&md->md_lock);
++	ret = qcom_md_region_unregister(region);
++
++	mutex_unlock(&md->md_lock);
++	return ret;
++}
++
++
++static int qcom_apss_md_table_init(struct minidump_subsystem *mdss_toc)
++{
++	struct minidump_ss_data *mdss_data;
++
++	mdss_data = devm_kzalloc(md->dev, sizeof(*mdss_data), GFP_KERNEL);
++	if (!mdss_data)
++		return -ENOMEM;
++
++	mdss_data->md_ss_toc = mdss_toc;
++	mdss_data->md_regions = devm_kcalloc(md->dev, MAX_NUM_ENTRIES,
++					     sizeof(*mdss_data->md_regions),
++					     GFP_KERNEL);
++	if (!mdss_data->md_regions)
++		return -ENOMEM;
++
++	mdss_toc = mdss_data->md_ss_toc;
++	mdss_toc->regions_baseptr = cpu_to_le64(virt_to_phys(mdss_data->md_regions));
++	mdss_toc->enabled = cpu_to_le32(MINIDUMP_SS_ENABLED);
++	mdss_toc->status = cpu_to_le32(1);
++	mdss_toc->region_count = cpu_to_le32(0);
++
++	/* Tell bootloader not to encrypt the regions of this subsystem */
++	mdss_toc->encryption_status = cpu_to_le32(MINIDUMP_SS_ENCR_DONE);
++	mdss_toc->encryption_required = cpu_to_le32(MINIDUMP_SS_ENCR_NOTREQ);
++
++	md->apss_data = mdss_data;
++
++	return 0;
++}
++
++int qcom_smem_md_init(struct device *dev)
++{
++	struct minidump_global_toc *mdgtoc;
++	size_t size;
++	int ret;
++
++	md = devm_kzalloc(dev, sizeof(*md), GFP_KERNEL);
++
++	md->dev = dev;
++
++	mdgtoc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, &size);
++	if (IS_ERR(mdgtoc)) {
++		ret = PTR_ERR(mdgtoc);
++		dev_err(md->dev, "Couldn't find minidump smem item %d\n", ret);
++	}
++
++	if (size < sizeof(*mdgtoc) || !mdgtoc->status) {
++		ret = -EINVAL;
++		dev_err(md->dev, "minidump table is not initialized %d\n", ret);
++	}
++
++	mutex_init(&md->md_lock);
++
++	ret = qcom_apss_md_table_init(&mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
++	if (ret)
++		dev_err(md->dev, "apss minidump initialization failed %d\n", ret);
++	return ret;
++}
+diff --git a/drivers/soc/qcom/smem_pstore.c b/drivers/soc/qcom/smem_pstore.c
+new file mode 100644
+index 000000000000..a322a320e435
+--- /dev/null
++++ b/drivers/soc/qcom/smem_pstore.c
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <linux/hwspinlock.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/devcoredump.h>
++#include <linux/sizes.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/soc/qcom/socinfo.h>
++#include <linux/dma-mapping.h>
++#include <linux/pstore_smem.h>
++#include <linux/pstore_zone.h>
++#include <linux/pstore.h>
++
++static LIST_HEAD(apss_md_rlist);
++struct md_region_list {
++	struct qcom_minidump_region md_region;
++	struct list_head list;
++};
++
++static struct qcom_smem_pstore_context {
++	struct pstore_device_info dev;
++} oops_ctx;
++
++static int register_smem_region(const char *name, int id, void *vaddr,
++				   phys_addr_t paddr, size_t size)
++{
++	struct qcom_minidump_region *md_region;
++	int ret;
++
++	struct md_region_list *mdr_list =
++		kzalloc(sizeof(*mdr_list), GFP_KERNEL);
++	if (!mdr_list)
++		return -ENOMEM;
++	md_region = &mdr_list->md_region;
++
++	scnprintf(md_region->name, sizeof(md_region->name), "K%d%.8s", id, name);
++	md_region->virt_addr = vaddr;
++	md_region->phys_addr = paddr;
++	md_region->size = size;
++	ret = qcom_minidump_region_register(md_region);
++	if (ret < 0) {
++		pr_err("failed to register region in minidump: err: %d\n", ret);
++		return ret;
++	}
++
++	list_add(&mdr_list->list, &apss_md_rlist);
++	return 0;
++}
++
++static int unregister_smem_region(void *vaddr,
++					phys_addr_t paddr, size_t size)
++{
++	int ret = -ENOENT;
++	struct md_region_list *mdr_list;
++	struct md_region_list *tmp;
++
++	list_for_each_entry_safe(mdr_list, tmp, &apss_md_rlist, list) {
++		struct qcom_minidump_region *region;
++
++		region = &mdr_list->md_region;
++		if (region->virt_addr == vaddr) {
++			ret = qcom_minidump_region_unregister(region);
++			list_del(&mdr_list->list);
++			goto unregister_smem_region_exit;
++		}
++	}
++
++unregister_smem_region_exit:
++	pr_err("failed to unregister region in minidump: err: %d\n", ret);
++
++	return ret;
++}
++
++static int qcom_smem_register_dmr(char *name, int id, void *area, size_t size)
++{
++	return register_smem_region(name, id, area, virt_to_phys(area), size);
++}
++
++static int qcom_smem_unregister_dmr(void *area, size_t size)
++{
++	return unregister_smem_region(area, virt_to_phys(area), size);
++}
++
++int qcom_register_pstore_smem(struct device *dev)
++{
++	int ret;
++
++	struct qcom_smem_pstore_context *ctx = &oops_ctx;
++
++	ctx->dev.flags = PSTORE_FLAGS_DMAPPED;
++	ctx->dev.zone.register_dmr = qcom_smem_register_dmr;
++	ctx->dev.zone.unregister_dmr = qcom_smem_unregister_dmr;
++	ctx->dev.zone.dmapped_cnt = 2;
++
++	ret = register_pstore_smem_device(&ctx->dev);
++	if (ret)
++		dev_warn(dev, "Could not register pstore smem device.");
++
++	return 0;
++}
++
++void qcom_unregister_pstore_smem(void)
++{
++	struct qcom_smem_pstore_context *ctx = &oops_ctx;
++
++	unregister_pstore_smem_device(&ctx->dev);
++}
+diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
+index f946e3beca21..376822f13a4f 100644
+--- a/include/linux/soc/qcom/smem.h
++++ b/include/linux/soc/qcom/smem.h
+@@ -17,4 +17,47 @@ int qcom_smem_get_feature_code(u32 *code);
  
- 	err = pstore_register(&cxt->pstore);
-diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-index fed601053c51..8360d94c96b6 100644
---- a/include/linux/pstore.h
-+++ b/include/linux/pstore.h
-@@ -39,6 +39,7 @@ enum pstore_type_id {
- 	PSTORE_TYPE_PMSG	= 7,
- 	PSTORE_TYPE_PPC_OPAL	= 8,
+ int qcom_smem_bust_hwspin_lock_by_host(unsigned int host);
  
-+	PSTORE_TYPE_DMAPPED	= 9,
- 	/* End of the list */
- 	PSTORE_TYPE_MAX
- };
-@@ -199,6 +200,8 @@ struct pstore_info {
- 	int		(*write_user)(struct pstore_record *record,
- 				      const char __user *buf);
- 	int		(*erase)(struct pstore_record *record);
-+	int		(*register_dmr)(struct pstore_record *record);
-+	int		(*unregister_dmr)(struct pstore_record *record);
- };
- 
- /* Supported frontends */
-@@ -206,6 +209,7 @@ struct pstore_info {
- #define PSTORE_FLAGS_CONSOLE	BIT(1)
- #define PSTORE_FLAGS_FTRACE	BIT(2)
- #define PSTORE_FLAGS_PMSG	BIT(3)
-+#define PSTORE_FLAGS_DMAPPED	BIT(4)
- 
- extern int pstore_register(struct pstore_info *);
- extern void pstore_unregister(struct pstore_info *);
-diff --git a/include/linux/pstore_zone.h b/include/linux/pstore_zone.h
-index 284364234162..a74d0cc75577 100644
---- a/include/linux/pstore_zone.h
-+++ b/include/linux/pstore_zone.h
-@@ -48,10 +48,13 @@ struct pstore_zone_info {
- 	unsigned long pmsg_size;
- 	unsigned long console_size;
- 	unsigned long ftrace_size;
-+	unsigned long dmapped_cnt;
- 	pstore_zone_read_op read;
- 	pstore_zone_write_op write;
- 	pstore_zone_erase_op erase;
- 	pstore_zone_write_op panic_write;
-+	int (*register_dmr)(char *, int, void *, size_t);
-+	int (*unregister_dmr)(void *, size_t);
- };
- 
- /**
++#ifdef CONFIG_QCOM_SMEM_PSTORE
++int qcom_register_pstore_smem(struct device *dev);
++void qcom_unregister_pstore_smem(void);
++
++#define MINIDUMP_MAX_NAME_LENGTH	12
++
++/**
++ * struct qcom_minidump_region - Minidump region information
++ *
++ * @name:	Minidump region name
++ * @virt_addr:  Virtual address of the entry.
++ * @phys_addr:	Physical address of the entry to dump.
++ * @size:	Number of bytes to dump from @address location,
++ *		and it should be 4 byte aligned.
++ */
++struct qcom_minidump_region {
++	char		name[MINIDUMP_MAX_NAME_LENGTH];
++	void		*virt_addr;
++	phys_addr_t	phys_addr;
++	size_t		size;
++};
++
++int qcom_minidump_region_unregister(const struct qcom_minidump_region *region);
++int qcom_minidump_region_register(const struct qcom_minidump_region *region);
++
++int qcom_smem_md_init(struct device *dev);
++
++#else
++
++static inline int qcom_register_pstore_smem(struct device *dev)
++{
++	return 0;
++}
++
++static inline void qcom_unregister_pstore_smem(void)
++{
++}
++
++static inline int qcom_smem_md_init(struct device *dev)
++{
++	return 0;
++}
++#endif
+ #endif
 -- 
 2.43.0
 
