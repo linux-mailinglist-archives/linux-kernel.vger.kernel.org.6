@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-518471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DA4A38FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:33:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ABEA38FAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E782188C455
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B51B167275
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF171A8404;
-	Mon, 17 Feb 2025 23:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ACC1ADFEB;
+	Mon, 17 Feb 2025 23:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JEO/bCNB"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i4xJ/Xei"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E493D19E999;
-	Mon, 17 Feb 2025 23:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AF815666D;
+	Mon, 17 Feb 2025 23:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739835221; cv=none; b=Iqpfzc8/HHCHluGicAEiTbpEVYLL2fngpMh/ykqRD14sji1zHlePvbv6QkiutwNiyiE6TDZRcjlAOod1TdzXodPRTHnFCL0aEDwEq0VdCXJmuh7OMyOwMw5AqwK70kVvXnGJA0nOV6dXcEClq8RBlSdJwAnrzrLDK0gnSz+D5gg=
+	t=1739835399; cv=none; b=MCA6oo57jhhhrneU8Zfmnu2N/oAOCel5w6mI962X4VeyBDnsQhRDuLBC48AsAJVzJ5PkOjWMw8EqG2FLt2cloeoXE18ZvJgiAQXbcg8OnP6F2AGFhp2JVL+loJ5azOmUa2iJmuMLPZS75c71/qcoxIDGqsd1D8Lz1tL+4Xg8PVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739835221; c=relaxed/simple;
-	bh=LdoZzq7qtMiglzhu00kRaJtsesikQFQgmqj4oShgtzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENvPmfIV9nViH5oshmSA3pYhL5DxMCNM7J14SN4oNXzfK7dyaz8wnh26sg3roPOE2bR5VPnRnvv82KjuOWgmwQa26uy+sU+VhPX406TXMO9p+OSJakmjW0u0lDmQ3hfxawxn3Cz2kVfHhTjl1ayfoKfBPB4ZCBoXFmiTR2ONlQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JEO/bCNB; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739835218;
-	bh=LdoZzq7qtMiglzhu00kRaJtsesikQFQgmqj4oShgtzQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JEO/bCNBZRdX7mbbM65vYVr4iQyWDeUcojAo9kKT3nJWtW9bZsprxtF2kpXRSeUpO
-	 /v4uzzlJeo1l68SC389qUGWLSL8D6a8q76DWWoSw/OMbq4l+yvrPP+AreJPqV5eW2b
-	 V1ISv89z9tPP8yI8Ggb/BYCgu98EnxTtmOrDhmAobhI5omeOMTJiO/4OOmEajWUCpH
-	 JY7KP94rvSz5hip/8oAZ//z4w1Ef1MPWauAagzgqzWqB+Ojmk0NTJZpQq71/SC7N4I
-	 hsZ76kKXobhqrhEza/hNUdtDeue+AWq3nAGeOhWg7gpZMDpA1OtoDkdjYn13cX5lbw
-	 lCGnQBTCaDC2A==
-Received: from [192.168.1.143] (144.232.221.87.dynamic.jazztel.es [87.221.232.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9D17617E1553;
-	Tue, 18 Feb 2025 00:33:36 +0100 (CET)
-Message-ID: <1b3234ce-4526-4735-b9c0-c242e6cc3cf0@collabora.com>
-Date: Tue, 18 Feb 2025 01:33:34 +0200
+	s=arc-20240116; t=1739835399; c=relaxed/simple;
+	bh=b1NMjktdEW4cyABcNC8DJFFrZN0i8dJK7f9UZQsgBQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fe4neDXpylDvfED7mU4u4puR24hImxS9kowmQGYdIDf2x6gnBsmtb0gBMs5+CR/WCp2n6TAhfLmJhXeHe1srKFp7WeaSoXvBwyO/NUjlKrYnHJNNhFFn+x0zwSpxYgyApOZ08KIkWoSsdLt8S2+vNM7gkzcN2SxvbT/jDHik0ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i4xJ/Xei; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAUAi7007123;
+	Mon, 17 Feb 2025 23:36:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bn8aLTOaSFfuTe1I2/VjlP8wLE0nfFKiGqo53Bp2LZA=; b=i4xJ/Xei9wH4mVst
+	VWi5xRtLEkHZnaF7ifzKK/2SDuDN+rB2k/MeO5Uc5zEyctjF776iTCUMxqTWCdfX
+	8Eemjs1HH9pFiURVOcR6BT1/8YtbkXdgqA53CxqCIo2nG6R8is+UG6NDc+Ed9D3N
+	tP+oKQ8q3Wq7s4wD/kUgBbmRhB6CCOqBySjLC5aMCxA4zq3DEhGydHzrWE6kcri4
+	nvLHk7JFs2WY+JHVo7lHtGtdHPRAoCgPwGsMHuYMLrWZUIQjLZkh3wi8TyamMspg
+	Xe38dpT9vkxgpUxrwzGIWEGJAS4jr3fV9eabwKWr7QHQlbzeZrejFlRLmjbheZJ+
+	EiFtAw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3du1p9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 23:36:32 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HNaWsA008837
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 23:36:32 GMT
+Received: from [10.4.85.56] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
+ 2025 15:36:29 -0800
+Message-ID: <6594f69e-f4ba-4d2b-a3d6-7eb5c8f95ac4@quicinc.com>
+Date: Tue, 18 Feb 2025 10:36:27 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,74 +64,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source
- to VOP2 on RK3588
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: airlied@gmail.com, andy.yan@rock-chips.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- hjc@rock-chips.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
-References: <20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com>
- <20250217024437.35155-1-liujianfeng1994@gmail.com> <5190979.MSiuQNM8U4@diego>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: Re: [PATCH v2 2/8] tee: add close_context to TEE driver operation
+To: Jens Wiklander <jens.wiklander@linaro.org>
+CC: Sumit Garg <sumit.garg@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com>
+ <20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-2-297eacd0d34f@quicinc.com>
+ <20250217093546.GA2637163@rayden>
 Content-Language: en-US
-In-Reply-To: <5190979.MSiuQNM8U4@diego>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <20250217093546.GA2637163@rayden>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: b1WFPEjf1AapS7mGgJWW9bwsRUorAjq9
+X-Proofpoint-GUID: b1WFPEjf1AapS7mGgJWW9bwsRUorAjq9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170179
 
-On 2/17/25 4:33 PM, Heiko Stübner wrote:
-> Am Montag, 17. Februar 2025, 03:44:37 MEZ schrieb Jianfeng Liu:
->> Hi Cristian,
->>
->> On Sat, 15 Feb 2025 02:55:39 +0200, Cristian Ciocaltea wrote:
->>> The HDMI1 PHY PLL clock source cannot be added directly to vop node in
->>> rk3588-base.dtsi, along with the HDMI0 related one, because HDMI1 is an
->>> optional feature and its PHY node belongs to a separate (extra) DT file.
->>>
->>> Therefore, add the HDMI1 PHY PLL clock source to VOP2 by overwriting its
->>> clocks & clock-names properties in the extra DT file.
->>
->> There are boards that only use hdmi1 such as ROCK 5 ITX. So there are two
->> choices for this board:
->>
->> 1, Enable hdptxphy0 as dependency of vop although it is not really used.
->>
->> 2, Overwrite vop node at board dts to make it only use hdptxphy1 like:
->>
->> &vop {
->> 	clocks = <&cru ACLK_VOP>,
->> 		 <&cru HCLK_VOP>,
->> 		 <&cru DCLK_VOP0>,
->> 		 <&cru DCLK_VOP1>,
->> 		 <&cru DCLK_VOP2>,
->> 		 <&cru DCLK_VOP3>,
->> 		 <&cru PCLK_VOP_ROOT>,
->> 		 <&hdptxphy1>;
->> 	clock-names = "aclk",
->> 		      "hclk",
->> 		      "dclk_vp0",
->> 		      "dclk_vp1",
->> 		      "dclk_vp2",
->> 		      "dclk_vp3",
->> 		      "pclk_vop",
->> 		      "pll_hdmiphy1";
->> };
->>
->> What do you think of these two method?
+
+
+On 2/17/2025 8:35 PM, Jens Wiklander wrote:
+> Hi,
 > 
-> Going by the code in patch1 (+drm-misc) we have:
->   vop2->pll_hdmiphy0 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy0");
-> +
->   vop2->pll_hdmiphy1 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy1");
+> On Sun, Feb 02, 2025 at 06:43:30PM -0800, Amirreza Zarrabi wrote:
+>> The tee_context can be used to manage TEE user resources, including
+>> those allocated by the driver for the TEE on behalf of the user.
+>> The release() callback is invoked only when all resources, such as
+>> tee_shm, are released and there are no references to the tee_context.
+>>
+>> When a user closes the device file, the driver should notify the
+>> TEE to release any resources it may hold and drop the context
+>> references. To achieve this, a close_context() callback is
+>> introduced to initiate resource release in the TEE driver when
+>> the device file is closed.
+>>
+>> Relocate teedev_ctx_get, teedev_ctx_put, tee_device_get, and
+>> tee_device_get functions to tee_drv.h to make them accessible
+>> outside the TEE subsystem.
+>>
+>> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+>> ---
+>>  drivers/tee/tee_core.c    |  7 +++++++
+>>  drivers/tee/tee_private.h |  6 ------
+>>  include/linux/tee_core.h  | 11 +++++++++--
+>>  include/linux/tee_drv.h   |  6 ++++++
+>>  4 files changed, 22 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+>> index 24edce4cdbaa..721522fe5c63 100644
+>> --- a/drivers/tee/tee_core.c
+>> +++ b/drivers/tee/tee_core.c
+>> @@ -79,6 +79,7 @@ void teedev_ctx_get(struct tee_context *ctx)
+>>  
+>>  	kref_get(&ctx->refcount);
+>>  }
+>> +EXPORT_SYMBOL_GPL(teedev_ctx_get);
+>>  
+>>  static void teedev_ctx_release(struct kref *ref)
+>>  {
+>> @@ -96,11 +97,15 @@ void teedev_ctx_put(struct tee_context *ctx)
+>>  
+>>  	kref_put(&ctx->refcount, teedev_ctx_release);
+>>  }
+>> +EXPORT_SYMBOL_GPL(teedev_ctx_put);
+>>  
+>>  void teedev_close_context(struct tee_context *ctx)
+>>  {
+>>  	struct tee_device *teedev = ctx->teedev;
+>>  
+>> +	if (teedev->desc->ops->close_context)
+>> +		teedev->desc->ops->close_context(ctx);
+>> +
+>>  	teedev_ctx_put(ctx);
+>>  	tee_device_put(teedev);
+>>  }
+>> @@ -1037,6 +1042,7 @@ void tee_device_put(struct tee_device *teedev)
+>>  	}
+>>  	mutex_unlock(&teedev->mutex);
+>>  }
+>> +EXPORT_SYMBOL_GPL(tee_device_put);
+>>  
+>>  bool tee_device_get(struct tee_device *teedev)
+>>  {
+>> @@ -1049,6 +1055,7 @@ bool tee_device_get(struct tee_device *teedev)
+>>  	mutex_unlock(&teedev->mutex);
+>>  	return true;
+>>  }
+>> +EXPORT_SYMBOL_GPL(tee_device_get);
+>>  
+>>  /**
+>>   * tee_device_unregister() - Removes a TEE device
+>> diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+>> index 9bc50605227c..d3f40a03de36 100644
+>> --- a/drivers/tee/tee_private.h
+>> +++ b/drivers/tee/tee_private.h
+>> @@ -14,12 +14,6 @@
+>>  
+>>  int tee_shm_get_fd(struct tee_shm *shm);
+>>  
+>> -bool tee_device_get(struct tee_device *teedev);
+>> -void tee_device_put(struct tee_device *teedev);
+>> -
+>> -void teedev_ctx_get(struct tee_context *ctx);
+>> -void teedev_ctx_put(struct tee_context *ctx);
+>> -
+>>  struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t size);
+>>  struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
+>>  					  unsigned long addr, size_t length);
+>> diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+>> index a38494d6b5f4..8a4c9e30b652 100644
+>> --- a/include/linux/tee_core.h
+>> +++ b/include/linux/tee_core.h
+>> @@ -65,8 +65,9 @@ struct tee_device {
+>>  /**
+>>   * struct tee_driver_ops - driver operations vtable
+>>   * @get_version:	returns version of driver
+>> - * @open:		called when the device file is opened
+>> - * @release:		release this open file
+>> + * @open:		called for a context when the device file is opened
+>> + * @close_context:	called when the device file is closed
+>> + * @release:		called to release the context
+>>   * @open_session:	open a new session
+>>   * @close_session:	close a session
+>>   * @system_session:	declare session as a system session
+>> @@ -76,11 +77,17 @@ struct tee_device {
+>>   * @supp_send:		called for supplicant to send a response
+>>   * @shm_register:	register shared memory buffer in TEE
+>>   * @shm_unregister:	unregister shared memory buffer in TEE
+>> + *
+>> + * The context given to @open might last longer than the device file if it is
+>> + * tied to other resources in the TEE driver. @close_context is called when the
+>> + * client closes the device file, even if there are existing references to the
+>> + * context. The TEE driver can use @close_context to start cleaning up.
+>>   */
+>>  struct tee_driver_ops {
+>>  	void (*get_version)(struct tee_device *teedev,
+>>  			    struct tee_ioctl_version_data *vers);
+>>  	int (*open)(struct tee_context *ctx);
+>> +	void (*close_context)(struct tee_context *ctx);
+>>  	void (*release)(struct tee_context *ctx);
+>>  	int (*open_session)(struct tee_context *ctx,
+>>  			    struct tee_ioctl_open_session_arg *arg,
+>> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+>> index a54c203000ed..d5f0c70ac95c 100644
+>> --- a/include/linux/tee_drv.h
+>> +++ b/include/linux/tee_drv.h
+>> @@ -96,6 +96,12 @@ struct tee_param {
+>>  	} u;
+>>  };
+>>  
+>> +bool tee_device_get(struct tee_device *teedev);
+>> +void tee_device_put(struct tee_device *teedev);
+>> +
+>> +void teedev_ctx_get(struct tee_context *ctx);
+>> +void teedev_ctx_put(struct tee_context *ctx);
+>> +
 > 
-> So the clock-reference to hdptxphy0 should just result in vop2->pll_hdmiphy0
-> being NULL and thus ignored further on?
+> Now that these functions are available to all the backend drivers,
+> please add some documentation for them so it more clear how they are
+> supposed to be used.
+> 
+> Thanks,
+> Jens
 
-Yep, that is the intended behavior.
+Ack.
 
-@Jianfeng: Did you encounter any particular issue with the current approach?
+> 
+>>  /**
+>>   * tee_shm_alloc_kernel_buf() - Allocate kernel shared memory for a
+>>   *                              particular TEE client driver
+>>
+>> -- 
+>> 2.34.1
+>>
 
 
