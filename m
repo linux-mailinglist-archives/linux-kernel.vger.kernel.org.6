@@ -1,111 +1,114 @@
-Return-Path: <linux-kernel+bounces-518180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EDFA38B0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:07:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C20A38B10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:08:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7181892767
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:07:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08BC83B1BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298D423536F;
-	Mon, 17 Feb 2025 18:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA4723536F;
+	Mon, 17 Feb 2025 18:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFL62sY7"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXk86ekM"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB7D17DE2D;
-	Mon, 17 Feb 2025 18:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AFE17DE2D;
+	Mon, 17 Feb 2025 18:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739815641; cv=none; b=OxFtX2FzmEJdcqaOgLkFpYH9K2qtOL8Y6PBo7qw0Qw013q3tZ8Wg9JOic8bgwl1e0vmTWCa1Lco9ugDY1ooQZ1hTwx/U3QqznngirTXaLHo3wgyVOjkGDsJgsEm1fdqc/nsPFmI97KKDyQuch+OLeX/CnYSvgXrtG44VQhWcj4k=
+	t=1739815688; cv=none; b=S/82n15AHw5tNS131cCEsp/2+/ug8cyP3afvUw1ZVOjcdl2rHhS/ssUQkXQmkJnoX7v4RsHn87/73Bd5En04HvqLRvVM7FRBLpZUQAb8QH2ILF+s+yQY3NkXmsUKAcgvkebiBe95t+12Lerc6gWyHuGqMk7GvkXwMRmNnHZaOtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739815641; c=relaxed/simple;
-	bh=jNbkbQgyN9p6wmiXECxbEDooxhQxvwmXxm/5M1lcUdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=li0mErE/l4wSmDepG9A4Lh4Q1Q6+lZJOWAJ8r0iJW+8MTX9VeabcD4U2MjvAkjwcBP+Jd9CjVlb0iUlbQ47kFYcVFTHHQ42VbN6+OJnGtRmhWu0YnQwHJK61Nov46MRbCE4xmB3kb0CXybXEzAoaZqWxVG/DmgfKM/xmXZrhMOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFL62sY7; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1739815688; c=relaxed/simple;
+	bh=0cgiwHdJUiqDd905XAXqkQAM/6cAJN9rNptm0Rl0Vog=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T6vicPkxbPQaREHwyhxmENGjrXMpHSjTw2SJ3DPYpEpSLVtKcQPYlaSUtAcTS6RcvHOHwHS0UhYP6AKhznf0BO5o6HB4QjPmzxirOVCGdZzO33jny43yNhxgGtjz8Pd0ZjtKrEZmSv/BVuQTIrCZ6kMvw+P9TGNd8sVdR2vaLsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXk86ekM; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fc0ab102e2so1061324a91.1;
-        Mon, 17 Feb 2025 10:07:19 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43962f7b0e4so28290255e9.3;
+        Mon, 17 Feb 2025 10:08:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739815638; x=1740420438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jNbkbQgyN9p6wmiXECxbEDooxhQxvwmXxm/5M1lcUdY=;
-        b=ZFL62sY7ooit4p7N+bEF3FSV7VCCGTzW/zYRb711eizaCP+VajJFy6cTZSsLsvmXDY
-         fEseWSqYeC1FJ/lqtQQHNMSvUQ76jICX0EFFSNGuIP1RGtOXGwmA2tIXU35F/wufs+cQ
-         iUAIB2dI550004zS7N1iIJYoMkQ+TqWRG/meV55CRhsLYlJhC9dBUAJOZuOUbUVy98DA
-         /bIHZB4YMmZX+gAg4PhSIbQFSpEoM8ylEnZs3nilv2z+E2XdnD9nBJLXVDMyzrGw3qy9
-         Qn3GK3u9/vMSni5c+N8cVaOvH6AaDdXVf7X92I0X6PZXonch0lqDc1q1f1nOV8WD6vBs
-         26Bg==
+        d=gmail.com; s=20230601; t=1739815685; x=1740420485; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjBgXZkOH3whhpyjfxwclXrAjddu2E5bK4wpZeedqEg=;
+        b=VXk86ekMLeeafrM0xi+lPrCMdM0hQu602k45bP48TGTddDBfBuz6ib1n2GWKzQ3vlq
+         u9pbmanYLDCHgUgysrTjXJ8h/BKGuvcifUe5thJ8JNnlsga4wJ0b8a32ge/10AXrTSAZ
+         ljtFS5KErhZKEK6PfWrZrLPlHc1Snk+6aD+O7W927IPiyb83GyzRIiGYP7rKcORsiF3x
+         YbIGFxe4tUId8edMHx+d6Hi3dmOIAzUy71Zcw+hdIFufaoxlYezMNEA049dNmIECKr3n
+         9cF2jw8D8TGFM6mkG/SqvKM3TFVn55RxOv9oQCY4Y6ziaG0xQsvq/ogb80huhJlQm5X/
+         HGkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739815638; x=1740420438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNbkbQgyN9p6wmiXECxbEDooxhQxvwmXxm/5M1lcUdY=;
-        b=qDb/0nCr7TbSyJZzUFQGKUhRwMWs6OZ2RtYXdTcWVUsPVsmmXk9oce2Lzp4t6NQPDC
-         RGgG4NzCqeTRuGtyuNVX0Y5xJdcNPqrTA9HUMMRntlRJaiX8qgrdj7Ma7GVK2wSvlFyC
-         L49J5ZNNo/UhmSVYH5E6Saqpf5+3m7pNwb/Om6Ry5PeJ6EijG1fOm0zev6yzqHvA4ItJ
-         n5UrUKaTeVOg3SxorFglowDpaJCu2SzW5QGISbx+IMybTmRjJnQYdjmJk5v8KAj5YDaZ
-         Bf4iqcGg9fQh7iLRFGQO3J2pJdh6X+RxAFFiyvxyVTef7p6JixH+jhZprZbjuW8//j2n
-         NzFA==
-X-Forwarded-Encrypted: i=1; AJvYcCURM/YdoenY/AdEVKwI00UsabVT/r6ZW2LvjFm827R1ZQ5bGXaTtafL9gHbFgbx2KB3dNh2V086jaPCuQQ=@vger.kernel.org, AJvYcCUxOoPWfbbJ7vLh0bYNVbFmC2NKqg5p90gNd+u/YAtnWMHX7tIUtNKnlfen7/oRgLz2IXJ0qx5eItdZD0LOI2k=@vger.kernel.org, AJvYcCWRELuq0M4KEXMlQKc4asB3ql02+egXN6N/iCnK1ErKyyK3jnvIkHa/ylJqiuUmbia8NSVcKDcudqnBVGU/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWjMm/ssjv/Y9XyAlyEwWAt+GQ9IhYIVNrcWTyIn0G9c0pcq7N
-	soGTzrK37vXEiZfZ6TFmStzVtkzxV5xdZT5V0XtJhq584+B/EqlsKAGtrpdvQqtOEO26K2ob3pC
-	juWZShuV2r0dPw3Yukz7ZZGZqpHg=
-X-Gm-Gg: ASbGncsUPfTbcjxdLj/uRavsrr3UsmCZBNe4T76MKKzbleK+kRQM0p7VdD/xbehvOij
-	XwCeDKNGKfd072lKgQmceCHwZitCVzmA+SPENd7TLMH3HM9g8v0rlAVcdnIIchupVMs2lj9/J
-X-Google-Smtp-Source: AGHT+IGPfaM4CjtvNt+6ENhZ89pBtXp973gZc0Wei5OtOunt4SljfXggcfufBMvvS2uVItRFMbPkG8/KBFd0PXM2qdA=
-X-Received: by 2002:a17:90b:1e05:b0:2ee:6563:20b5 with SMTP id
- 98e67ed59e1d1-2fc407909c6mr6384938a91.0.1739815637758; Mon, 17 Feb 2025
- 10:07:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739815685; x=1740420485;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjBgXZkOH3whhpyjfxwclXrAjddu2E5bK4wpZeedqEg=;
+        b=jl6+pX03KlHlQjzwvCjbvICOzgYe3Vuw2s/svRVM6X8tDsNHnB5RKrR/QZFK4JRPzU
+         tAgd7AcT1bs4t0ZEquNmDwH6aaLGqNneJdPL+SzetTZJd3bTqSl+E4UVcp2ouAa1R4h9
+         A21xj98Zkt28m0vFt140M9gohOVugr64aM/BJiFhd1qPdvzyr4/CluSS4QmNsbWBgg1l
+         1PGbj/iVOU4Hyzui+tLTpzBcEuqDv3or5a+ZxMkGH/9C419vngpdfr/dkUC38c4elygo
+         BDq6j5dpcvB2vvZ0wu4oVy6GQJFBM8anvngHxzSql3oz6fOkTDkLPlKBV2SCBTI3/nor
+         a++g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjIFtgVzNLYz44389BIakaDxRjGXmMVI7TLQzHqYx51b3Uz/ecyAFdvU1+pT8dXOGFw9s43ObQ3/4HVH3mYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSBjkliU8oAoDdmMm+PnVvK+rWBEX6GSEvylwWt45IvCaasNps
+	VK4/mY4l/0rR8mIrlTHphG29xAHjIIpF0DO6OdCzdYLirzl8kUwlFtW9XA==
+X-Gm-Gg: ASbGnctXKVfsJ1hP03TseVvhaUB710oNodVgoX+XHwTAz/j6GGFt+ikGLf2ax66EPvQ
+	vVLmWsWAU/DfuI1jURG1Ar6Iktt0GsnKxwQeynVoqRjGOqcG22fkUQPhJtIcbbibFGST82pFIBO
+	1h4ztTOewPvVkbqBRHGxbqRTQMPj1LNe8epLGj2+MCQO4fD6jOX37Wavg6tEW3KD0UThdAtAj2F
+	Us3DBFoOY6bsqx0UR/2NUWlDqUPWUkchKDoZ4hnCI42YlnvGCM7UbjiWecWaf+8dHM5UJjlZlo2
+	+tuhkiOUF0orO8lY
+X-Google-Smtp-Source: AGHT+IGVVM2BqVoNfvQ36nc2E02wxjyOaOlr3JaZKfNm3XH15asvLolOrMOVBHPAx7AiQHGsADj2tA==
+X-Received: by 2002:a05:600c:5125:b0:439:44eb:2d84 with SMTP id 5b1f17b1804b1-4396e6c9315mr82494435e9.9.1739815684676;
+        Mon, 17 Feb 2025 10:08:04 -0800 (PST)
+Received: from Red ([2a01:cb1d:894:1200:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4395a04ee48sm160267705e9.3.2025.02.17.10.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 10:08:04 -0800 (PST)
+Date: Mon, 17 Feb 2025 19:08:02 +0100
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: kvalo@kernel.org, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: unknow Network controller: Intel Corporation Device 093c (rev 3a)
+Message-ID: <Z7N7AvQvv8k4OY-o@Red>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216213827.3752586-1-benno.lossin@proton.me> <20250216213827.3752586-2-benno.lossin@proton.me>
-In-Reply-To: <20250216213827.3752586-2-benno.lossin@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 17 Feb 2025 19:07:04 +0100
-X-Gm-Features: AWEUYZnbpsfDS7WwJYbRnxqcBmd4ydrbxCtodLqMmz_46ELmEpvkblvuPWcl8QU
-Message-ID: <CANiq72kwME8D2P5C2mbwmTpxekR8u_kdW6GDVz8WERi_NvRZYw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: enable `too-long-first-doc-paragraph` clippy lint
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, Feb 16, 2025 at 10:38=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> Introduced in Rust 1.82.0 [1], this lint ensures that the first line of
+Hello
 
-We will need to ignore unknown lints so that it does not warn on older
-compilers.
+I have a thinkpad t460s laptop with an unknow network device.
+Since the laptop does not have wifi, I suspect it is the wifi card.
 
-We should probably do it conditionally instead -- it requires some
-rework to do it for everything, but we can easily do it for kernel code.
+The laptop is running Debian bookworm, and I tried to update pci.ids, no more information.
 
-I can tweak it and put this patch into my warning rework series -- I
-had to send the v2 of that anyway. Sounds good?
+lspci -vx give:
+03:00.0 Network controller: Intel Corporation Device 093c (rev 3a)
+	Subsystem: Intel Corporation Device 2181
+	Flags: fast devsel, IRQ 255, IOMMU group 10
+	Memory at f1100000 (64-bit, non-prefetchable) [disabled] [size=8K]
+	Capabilities: [c8] Power Management version 3
+	Capabilities: [d0] MSI: Enable- Count=1/1 Maskable- 64bit+
+	Capabilities: [40] Express Endpoint, MSI 00
+	Capabilities: [100] Advanced Error Reporting
+	Capabilities: [140] Device Serial Number aa-bb-cc-ff-ff-dd-ee-ff
+	Capabilities: [14c] Latency Tolerance Reporting
+	Capabilities: [154] L1 PM Substates
+00: 86 80 3c 09 00 00 10 00 3a 00 80 02 00 00 00 00
+10: 04 00 10 f1 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 81 21
+30: 00 00 00 00 c8 00 00 00 00 00 00 00 ff 01 00 00
 
-Thanks!
+I see no loading problem, nor firmware missing message in dmesg.
 
-Cheers,
-Miguel
+Regards
 
