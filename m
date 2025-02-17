@@ -1,189 +1,162 @@
-Return-Path: <linux-kernel+bounces-518054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C926A38930
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:33:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76249A38932
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206F5168271
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057E7169510
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A96225391;
-	Mon, 17 Feb 2025 16:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C4C2253A5;
+	Mon, 17 Feb 2025 16:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VsaGquXt"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xqTvzjDc"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F961531DC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02C6223703
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739809996; cv=none; b=NStJ2ywlcX4qk0wQ1UEmOjyCDlnB6L51zlQfMkuGe0n4oawjQiCJc1DiGFR1R6VlDyQqFGSqGOzIz5tymAC4YfD9iQ5mMTBURkbVAxNEhWdEPX53EPY7S2aUbqne/9eeaXzvc1aH3FbprEzt6Vpz6HKpPButn8fcQSSrgat+l2Q=
+	t=1739810007; cv=none; b=CqiHESu5Lw2juBvBa/DZSoQy0TtFCaoM0BB9erarGE7VvvArENyDcI/DIw4iXUQw5DDQNYmjZTvFrly8yx//HcqrYehcTpTts0ukrOe2cvyUFHuvXFHUoWK0hoou7CIR44T9YJeM7fuA+DavpfhUHnG9TGr4/S+vvrjnH6uf950=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739809996; c=relaxed/simple;
-	bh=H8l6qCQ+mNtrI8kqGjISP8leCltr9JTRR9DjIJekAQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U19dMv4xDupiyVgdbCdG9M4FGz9Q7MYyldGj7aggZ/+lXHajFvNFO4SEuEIbAW2lyN7t0EGGW0yz19norvrWUhLPE9VgzWsEcY/v6ZtKwaG4/e0Ju+hGlyQnY/Na2TKTXAEzzTQ7H3aU8de+1w/djVMh1Rus0y3mJvcG7AgK4UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VsaGquXt; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f26a82d1dso2099643f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:33:14 -0800 (PST)
+	s=arc-20240116; t=1739810007; c=relaxed/simple;
+	bh=4qpDfRcDD8rpnDxbcaskjP+/WL6+Dtw2w1ZGPGG7i30=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cGOfG2hoXfL3H+yn7PuzoVZEHIeMHsRYH0VGaJ1rALjRP7oBd5apnru/coS+TkETmiW7+Cd4Z2dVTj/ZLD2jK1RqHzTBMl2PzzQTr1jm3OTqp0vMx/bK6jAeDrFrYNeycdQnfDofN59uvUa8WpuDbtuGIj0oP7oYlY/DitrzSi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xqTvzjDc; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30738a717ffso40367611fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:33:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1739809993; x=1740414793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Czo+abDjGEXjXRngmG8KE7G58bH+0TPX+ShC6kAE364=;
-        b=VsaGquXtyP72PHSxl59S+5AbSs9/bnUsF9BWYpG4muKX7c+CzOOVfm4XRsGglolacc
-         dAiF4ZRytBZaJMP5EzHwLkLaGxWz23b8E1e4JYBDphfP3UfnJWDquSmCkNvNY9jDWt8Q
-         CzqBz/bZSRLmDfY92kqoRpGjl0uF/EZ+97qq0=
+        d=linaro.org; s=google; t=1739810004; x=1740414804; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WLOzMbRbvqHluJB1TavYrDE4kHT0ZcZQYTNvV1k0mqQ=;
+        b=xqTvzjDcWnRTq/algWdr6nRHwoT093xJCu5zAUqylDVeuHLTClU5tEBB8sM8f/yQgB
+         A5Eec5nv76SS5GSPTL3HwziGC0SMrTITwcAAHA4b6aHFToWBjSvWblo++TXlzTuSZxap
+         TRMa3jhfNi6iSTjorcc/9FCFXVkKh8Yhz6DNzreBbNasC3nAQzNDy2KcEjk7akAKiH7d
+         DYYia89CzUGIpK4M8YpkO/CH8zcBKx9E+l/qmGL2o0Lyh7NyYvIk7X/1Ta0CdxjFp4IU
+         YzBKEc9KwA72cthMyypFY6sgmsZRHCxcpR8JHwmzJ7i4IcY7Wjajt/mbsbHT7xhQ9jQi
+         8nSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739809993; x=1740414793;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Czo+abDjGEXjXRngmG8KE7G58bH+0TPX+ShC6kAE364=;
-        b=PxiWHMsX+2+ISdTelDKDUnv8lAg6H3ASrFFdQtTtI9X14nPtscCFrz7cbn8Acid042
-         qB7An0r334+MsaB2WyjchaldOQu3eZp3hLHgc90FBmSpwRuAD6TEt1gz1xLTqNM7T2Sa
-         JXpPE2w7yO0dZ8TC8B7EpMMhCp+23fDkZTDv9Vu0bmU886L1c7JqdIpFLaByHgZjguzc
-         g/YqZNRNNliyREXOFDr/2XCoinDHi3C9TFGdBaYG6IAj+sRAAPiJ4nZdy+L5R9Xan8XS
-         A+VjH6ZAoDCfgrumy7fSpdMa98ZjUgfKVRMBV0N40RMIFmdWhqqlC2RU+MrV3avaGWKR
-         P63g==
-X-Forwarded-Encrypted: i=1; AJvYcCVfLR5c/4CIzJlFTFH//ZbqbWCmUlEVZ3Fbrd9FksUUusmKoyuh8a1xmNFCVXW1EkBMnLRCyFL8y21i4/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8jxIw/gzzEcYBZryFlpTfI+t44rfZaAq/ezY+eK44OCwFhqL
-	CEAK5jD5psrggSvurRrj/DnTpQUNwvqz8BTBaBdXM0BwPNQfVxaB2RhzGfR60zisFtu9RFL0pm3
-	5
-X-Gm-Gg: ASbGncuOmgJfsBgODwhCboGwowx2ACtJmplf4bo6RhQGDEnH5pePsHWAAmXB2toTVrx
-	OQlcEHjWwp85MScUVll/eRnzCRX4HC6cGWOwX+/mCULmDu+nlTBa5FTFGy2p+y/AFqybgnYdZ6n
-	vD0xGDqg2naIzGJB9aE75/y2JWkNtYsVtar5901f1wR8IMJs3D/ihPM59CHhxwqDPingT6YM9/9
-	UOPE9aK8r3iuOYzW48mceSFAspV/p2DfMyE6mDAMKmvRZVmhlDX+qsbRyt6fI0C1G/xCE9/Cz2a
-	LINF03HzzkDL2EcC3qv8sxJohIU=
-X-Google-Smtp-Source: AGHT+IF/zPnB9i/djSQzx6Nft2LwuPmMRw3hmVUFnih+2dJwvP4POCL/t/vyntRmA+wiKTPgwSfABw==
-X-Received: by 2002:a5d:452e:0:b0:385:e1eb:a7af with SMTP id ffacd0b85a97d-38f33f57dc0mr7697565f8f.48.1739809993189;
-        Mon, 17 Feb 2025 08:33:13 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439858ec5fasm30572795e9.29.2025.02.17.08.33.10
+        d=1e100.net; s=20230601; t=1739810004; x=1740414804;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WLOzMbRbvqHluJB1TavYrDE4kHT0ZcZQYTNvV1k0mqQ=;
+        b=QsBrOLaE+1Kf60kbXaCQm25/CJs9h9AW7eY3Z1U9MI36ryiviFdzJVkLdutt5PKqzI
+         5heq67oafVUwbjC6HTHQ/JACeuGU5tqRBf0uVpcTUp8xSc3zrJJqxW9OUEWHNNTQv7Xq
+         P2zYVgsi2fnSb6W31uohv96CYA7GLSC9/NEoKo1StWkhnsffdemGj8TYO2VgDzxNd2ju
+         u5clNCh41vPYBFcnOFy9+bQ0Qd56pXeLSye6qOsVsgJPTPMrnx3yeYnhavP4FCg1lnZP
+         NvwAKxGsEvMBNmV9awytwEgfWOsKF1FCfsxtZoK9biaCCGr7teeBjBKm62IuWM3Ag856
+         95bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpUKMM1OLnnyl1uIgGGTt1F6TmUfikbMFIHwsPoPkyOhsAfELknnHauRC5gB2l8mwEVEJWtE4uzqoeVJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqmiwwbZvvt5bOXYCOGmRvGHVlq+eHNlXE2LA75OV3f2OZJVA+
+	hXc75AyNhiK0yXD4/VGZ+6+in8u2JMGuLv9t2CMw0cC51TwaC4vrv+DCiwbSGjI=
+X-Gm-Gg: ASbGncubULjwW/PD8oSOHLzrGoEsvvPWgNhLza/3as+9AfrzhJEmYTKRnRRpV1SpDp9
+	++5w8JAKIUxqKNcYU6zJcD5rrqCSWWShGtl8AAGoKP+FVCAEv7PV9E/ZdPAHOGGCy04fzp6+WS2
+	iuysPP83gFhBySNEDcs/X4p/yGUe9sKOpatMHTBXdMVWm52SEhqxk0Yc8rqQDk4fzYZU6TCx4Rf
+	KvHRFtEXKdSFJvmTllcbJCnQftTPkLjPfeMqo7O6MBkSx6NVfyrJYJ+wYuf78K0MpB3d+tOTR6s
+	IjO1AqAwgeFMD8sm+f3mS5Uvg9lMPM0SI5WSx7JEC/xFPycKjymspPU1G2s=
+X-Google-Smtp-Source: AGHT+IG+0pmtp48iCr/EbOP92Rs4BjASg3/mObcBvYZ2tPeo7PxhFJQdbU7GaEfnUdcFKdzGgL5Jrw==
+X-Received: by 2002:ac2:4e94:0:b0:545:3031:b4d7 with SMTP id 2adb3069b0e04-5453031b4efmr2234341e87.6.1739810003866;
+        Mon, 17 Feb 2025 08:33:23 -0800 (PST)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00--782.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::782])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a2cef18d1sm5695991fa.76.2025.02.17.08.33.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 08:33:11 -0800 (PST)
-Date: Mon, 17 Feb 2025 17:33:09 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v3 01/37] drm/atomic: Document history of drm_atomic_state
-Message-ID: <Z7NkxTHVQzzSHv1B@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org>
- <20250213-bridge-connector-v3-1-e71598f49c8f@kernel.org>
+        Mon, 17 Feb 2025 08:33:22 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 0/5] nvmem: qfprom: add Qualcomm SAR2130P support
+Date: Mon, 17 Feb 2025 18:33:17 +0200
+Message-Id: <20250217-sar2130p-nvmem-v5-0-2f01049d1eea@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213-bridge-connector-v3-1-e71598f49c8f@kernel.org>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM1ks2cC/3XMwWoDIRSF4VcJrmvxXnWMXfU9QhbqXBOhmQkaJ
+ CHMu8cZKKRIl+fA9z9ZoZyosK/dk2WqqaR5akN/7Fg4u+lEPI1tMxSoQIDhxWUEKa58qhe6cB3
+ 3ehit9d4b1tA1U0z3LXg4tn1O5Tbnx9avsL7/pipw4EMIEs3euhiG7580uTx/zvnE1lbFN4+9R
+ y64UTIAGvARx87LX68FCNV52byzioQ3I2F0nVfv3nZeNT9IaaSNpCPAH78sywsy5F6hbQEAAA=
+ =
+X-Change-ID: 20241017-sar2130p-nvmem-5f856d99bbb7
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1864;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=4qpDfRcDD8rpnDxbcaskjP+/WL6+Dtw2w1ZGPGG7i30=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBns2TQawH2nAp/nSh6nOUrWAqp/WHYv4Ng5MZFZ
+ ccIr2pYTuiJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZ7Nk0AAKCRAU23LtvoBl
+ uB3tEADFABwNctrtW/gV4OgRQiF0KPoexGdrPC4Z+mjcM0/QVKaNgC/BlJ0yYKJoqKrUNrRwno/
+ WFNxCsYlS31SibJ/VxwxVcq3a/wW7YCVn6xmjGb7P820RMuxAbIueGSuvmTn+xORlg7ws2YahQ1
+ Q+/jH7TKa89U/bsX/jeKJl+Oc4sfWc0dApkkHwI0qsqXq7JPGLrlg/WlBhShDMFu36rDRfzVZel
+ 8KFJGMT14IiLVhEMwqsoEd1zjcnaMEeG5rm3ACnFCIi5CNcVYWt7qRS0z3iQFmKXnLZqx5RmX0R
+ Cjym8zB/ei6JqGdzAyHLYi9qlKXdiMtPmL3cIUaxkZv5b/TS8vNq6i4pwWMs67imD0jGAOYOiPn
+ 4Juw+RtBRb88n9SeqUzpofTiqdurzD81ZfvVqfipUNxUHi2yd70hhFTi1ernPMCPwk3CO6YonEn
+ JYlEMpvH702g6D8MSBsb8RQhYy2Bg77dJkpuZ1T1al7ws2TJHb+BqyWMmgRN3nAk9X6TIL8Uzy/
+ c+C+QimwPrSyWQCdhef+pUGRwIXPEaaoDFgEELKWkWnDUvrYe9aeuyWFiny2e4IHZQTinD74KRg
+ cLKY3DRdQ1/RTflC15v5Z3Va4t70RheeRttJfj57dOjCWjA+CD/B60yK73TEfWbNSu5r2kXS1B1
+ ZeqKkRXm+ain5Lw==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Feb 13, 2025 at 03:43:20PM +0100, Maxime Ripard wrote:
-> After some discussions on the mailing-list for an earlier revision of
-> the series, it was suggested to document the evolution of
-> drm_atomic_state and its use by drivers to explain some of the confusion
-> one might still encounter when reading the framework code.
-> 
-> Suggested-by: Simona Vetter <simona.vetter@ffwll.ch>
-> Link: https://lore.kernel.org/dri-devel/Z4jtKHY4qN3RNZNG@phenom.ffwll.local/
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Qualcomm SAR2130P is one of the platforms which require 4-byte reads
+when accessing the QFPROM data. Fix several omission in the NVMEM core,
+rework the QFPROM driver to use readl() instead of readb() and finally
+add compatible string for the QFPROM as present on the Qualcomm
+SAR2130P.
 
-Thanks for documenting that little bit of lore!
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v5:
+- Expanded fixed-cell schema to allow starting bit greater than 7
+  (Srini)
+- Dropped the applied schema patch (Rob)
+- Link to v4: https://lore.kernel.org/r/20250109-sar2130p-nvmem-v4-0-633739fe5f11@linaro.org
 
-Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
+Changes in v4:
+- Fix conition for bits vs bytes overflow (Akhil)
+- Link to v3: https://lore.kernel.org/r/20250104-sar2130p-nvmem-v3-0-a94e0b7de2fa@linaro.org
 
-Cheers, Sima
+Changes in v3:
+- Reworked the qfprom driver to specify stride and word size (Srinivas)
+- Link to v2: https://lore.kernel.org/r/20241027-sar2130p-nvmem-v2-0-743c1271bf2d@linaro.org
 
-> ---
->  include/drm/drm_atomic.h | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 1ded9a8d4e84d7d9879d7f60a876ba9d69785766..4c673f0698fef6b60f77db980378d5e88e0e250e 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -355,10 +355,41 @@ struct __drm_private_objs_state {
->   * these.
->   *
->   * States are added to an atomic update by calling drm_atomic_get_crtc_state(),
->   * drm_atomic_get_plane_state(), drm_atomic_get_connector_state(), or for
->   * private state structures, drm_atomic_get_private_obj_state().
-> + *
-> + * NOTE: struct drm_atomic_state first started as a single collection of
-> + * entities state pointers (drm_plane_state, drm_crtc_state, etc.).
-> + *
-> + * At atomic_check time, you could get the state about to be committed
-> + * from drm_atomic_state, and the one currently running from the
-> + * entities state pointer (drm_crtc.state, for example). After the call
-> + * to drm_atomic_helper_swap_state(), the entities state pointer would
-> + * contain the state previously checked, and the drm_atomic_state
-> + * structure the old state.
-> + *
-> + * Over time, and in order to avoid confusion, drm_atomic_state has
-> + * grown to have both the old state (ie, the state we replace) and the
-> + * new state (ie, the state we want to apply). Those names are stable
-> + * during the commit process, which makes it easier to reason about.
-> + *
-> + * You can still find some traces of that evolution through some hooks
-> + * or callbacks taking a drm_atomic_state parameter called names like
-> + * "old_state". This doesn't necessarily mean that the previous
-> + * drm_atomic_state is passed, but rather that this used to be the state
-> + * collection we were replacing after drm_atomic_helper_swap_state(),
-> + * but the variable name was never updated.
-> + *
-> + * Some atomic operations implementations followed a similar process. We
-> + * first started to pass the entity state only. However, it was pretty
-> + * cumbersome for drivers, and especially CRTCs, to retrieve the states
-> + * of other components. Thus, we switched to passing the whole
-> + * drm_atomic_state as a parameter to those operations. Similarly, the
-> + * transition isn't complete yet, and one might still find atomic
-> + * operations taking a drm_atomic_state pointer, or a component state
-> + * pointer. The former is the preferred form.
->   */
->  struct drm_atomic_state {
->  	/**
->  	 * @ref:
->  	 *
-> 
-> -- 
-> 2.48.0
-> 
+Changes in v2:
+- Picked up required patch from QCLinux.
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-nvmem-v1-1-6cc32789afc6@linaro.org
 
+---
+Dmitry Baryshkov (5):
+      dt-bindings: nvmem: fixed-cell: increase bits start value to 31
+      nvmem: core: fix bit offsets of more than one byte
+      nvmem: core: verify cell's raw_len
+      nvmem: core: update raw_len if the bit reading is required
+      nvmem: qfprom: switch to 4-byte aligned reads
+
+ .../bindings/nvmem/layouts/fixed-cell.yaml         |  2 +-
+ drivers/nvmem/core.c                               | 36 +++++++++++++++++-----
+ drivers/nvmem/qfprom.c                             | 26 ++++++++++++----
+ 3 files changed, 49 insertions(+), 15 deletions(-)
+---
+base-commit: 253c82b3a2cec22bf9db65645f934fbe095899a3
+change-id: 20241017-sar2130p-nvmem-5f856d99bbb7
+
+Best regards,
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
