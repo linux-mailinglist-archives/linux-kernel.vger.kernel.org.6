@@ -1,85 +1,51 @@
-Return-Path: <linux-kernel+bounces-517624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C61EA38351
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:46:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE37A38335
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8ED16F9B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512E31884A11
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235821B91D;
-	Mon, 17 Feb 2025 12:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB1921B8EC;
+	Mon, 17 Feb 2025 12:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pvfESW+j"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sh6F76jQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF321771F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C06218842;
+	Mon, 17 Feb 2025 12:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739796372; cv=none; b=YSiV7KPZ1kTkkcF6bsjuKoRriEIOx3WNXpVdNMOC1mUdGtjeHwpBsetmJoSt60R1x9VfSMYqVsUSl0FiNzKncugoDzZ7iRxRLEmca1kkPb9YQup9P61U/KpRpEQUoQ+lBW8kYpQXdB13O1D5q+rdaTARt5/rsn7re5D0WS9503Q=
+	t=1739796104; cv=none; b=MdtWt8lVSrLbmMm5LZK4rRPimUAk4BaI5sVPn1NCTOs+NQZmziYIr31C3D/FZb9Z9/aG71fMYyJroHgNCTE+vXno6zX5D9k6qxF+xf/49yy6wM0uRRaoWzo12w9PIVVry0NHUeor48DfX1gXrbVkWe8LMDatchnzbnz1acRU+aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739796372; c=relaxed/simple;
-	bh=OKyVddpfzq6J5MZuiHsnrNWTLGHm9r5FfbDv9UjwuDU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LdHp30uD1zoFF7YBz/EBC/8OzPvpRfKCTi4apI8SSGTAWX/NKaNbPS2jSFQQxSepe5iNDtZZsVxi8wxkoblodJA/4luhwQ6FALD/AWJNh0iwzNRcAHWu4mxfAGprngnX35EWLHX/nwLicgyfu9/WrPeY+sM64mKB/tYExOiSTs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pvfESW+j; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d18bf1c8faso10904415ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739796369; x=1740401169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y63/9QE/uFB5mV8manNhYs6WWs7kN5JgLdRnQ9vVGgU=;
-        b=pvfESW+jSnr9Xs5HqcjPEi0NIBDh49Xvt/Zp++aT42GFP6Az0OIGxPCisqfEJW3F3d
-         Dydn5UNxS9l/wyZfqqq23n/N8v9sNUaD1aZJx2NANGKZFmRO94WrCl1HkPL6ujDpt2Mm
-         4tU6s3nh+0CSC/0o8dRoU1hbFnIYhQ/aS1hdfcOrjKHyv7LAdwhddCD7j5ZE9APxIybj
-         PK8cc+gv7kHrRodrofQspvAXlBz7U6ngNpb5RTbMPLMxwn2CnomnAxJhxWZosAehaOEy
-         THojlQmpuuk1dZdxHnr1o0FAapVShra1WuSdEijRgnNal4hMBvSVYanEz6K9qQAocr+Q
-         tD3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739796369; x=1740401169;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y63/9QE/uFB5mV8manNhYs6WWs7kN5JgLdRnQ9vVGgU=;
-        b=TQuN2OksR8HafBJmtJd/WjJDSLaDCUx9t4WDYDeMrjbpYtYbuUFFZAt4SQNzSz7jkV
-         UC/0C2QX9vKu2k5QcfdjoJRLvu0dQRiucr/tjZF2cJgkgNV7WGYBTrN2cHx8LURbUV06
-         X4fvBF2q/kgdoLof3Nn9kV6oCwnHleRZPqQ/voT6t/TNVbGR/AyiLh9VozLARfEt9naP
-         NFSwwEcWxNJjL5MhQIyWzdnS/r6gnJDezLyukZE2E01AdyE93C9NZk2fmCWq19nL5dmj
-         aqsMJLwzdLcjwynCgcxNmYjPHj/2/WcJ0SlO9QwNXNWc4EiXuSxB1qxNbYQTw+9sx7rM
-         pwng==
-X-Forwarded-Encrypted: i=1; AJvYcCUScdvo9PRjgev74grdgSbljEJSFHr60Z8dNG8flZyGmBv9hJ3NXkS9NZWflad+zIIY0foj/qtelO/MNqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFYzG+VWRQtu0A9qVSnHuWaRMmw9HZcMCFwrgE2pTzPhxKyUop
-	QJwox39YIxzg6uZhLAxQsfjwtAWreO9YH2i8lz1XLcDchPu7Z0FsbTS2abV/16k=
-X-Gm-Gg: ASbGncssVdIR2jlB/63sSe8dfhSIl3s8SctvcC0f96jD//T7RxxtUjDaeN7vshC/3C0
-	GXyyqVO0SUcq/nNimI66yBp1FQdrILsyUBWBmC8oxm5DifcEQsgSUmgyhLifTuxATSBI7oy5VSh
-	0yfx29oSgAdvwUSJoI1ajnEH+2Iw2g6eeqYr+kfc93ThaVfnYCXUpMkbqpPEN2gNSGkAxgfkj8j
-	jmJ/Zu8lJy8ec8MEwuAyyT1vvaso8sp5hID2VxTVi2N6a7LxwAU1PnWG4r90ygLEH81KN+pkqER
-	aUa1270=
-X-Google-Smtp-Source: AGHT+IGEDg7u3KsXfy/iTIcoq5+KTCNmFv9bFZ1Lj3LHC6ibcTWOosE8CCxUMPtVbeSoXZYlgZ2IGA==
-X-Received: by 2002:a05:6e02:3042:b0:3cf:bc71:94ee with SMTP id e9e14a558f8ab-3d2809df962mr77765605ab.14.1739796369401;
-        Mon, 17 Feb 2025 04:46:09 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee81857773sm1247159173.66.2025.02.17.04.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 04:46:08 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250217022511.1150145-1-csander@purestorage.com>
-References: <20250217022511.1150145-1-csander@purestorage.com>
-Subject: Re: [PATCH v2 1/2] io_uring: introduce type alias for io_tw_state
-Message-Id: <173979636811.644986.8851861360440313307.b4-ty@kernel.dk>
-Date: Mon, 17 Feb 2025 05:46:08 -0700
+	s=arc-20240116; t=1739796104; c=relaxed/simple;
+	bh=PTSy1ip0l95HNNQQE+rcttEDB0KFrDuEV+630qcL2IM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HllivKs3RILMTCPI7X5Yusz0cgoahYHBVjsN2KaOlMOgbeBGA06TboQbel35i22A4Q1PGeSO5Z+kquyW/bwvC9QgYmEligKxYK4Ge+IwL0hwfVmtsUq8ifbK3d6BBi24ymWqpT7n9lKbCjmAHtieENHODidw3F2YFpc5GyfWM3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sh6F76jQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 339C3C4CED1;
+	Mon, 17 Feb 2025 12:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739796104;
+	bh=PTSy1ip0l95HNNQQE+rcttEDB0KFrDuEV+630qcL2IM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Sh6F76jQz7E1gO+yNlIQ6DDxuf9whY05qkY8fjCPWO99FgrecMh6KarVSka6B12wH
+	 +GwAWRa5NycHMmHv6b5spvRBGtT8lZKi9udOaoIfOyUDILIjAx4DaOdVWGtAYpGK8R
+	 BUOZmT2Ho0P3cvvTS3gYuS016ENmSmYg4cGDS9gwrK7XcryJGRTZFSYbd9c161BTS8
+	 h2ZUkAIkjIR9E7tjMGL5lOhqDkgELJ9zu5w5ry8VqsZ6CCHVPJ0KEs+uIvPsH8I6Nt
+	 DY6uxXbE3cUgn9QGv0J88tzpti6r/z7KH+LRgRNt1m2yA56kI+qCuN72bdFDcAlCK0
+	 PinA5vLFGvihQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E95C021A9;
+	Mon, 17 Feb 2025 12:41:44 +0000 (UTC)
+From: PavithraUdayakumar-adi via B4 Relay <devnull+pavithra.u.analog.com@kernel.org>
+Subject: [PATCH RESEND v5 0/2] Add support for MAX31331 RTC
+Date: Mon, 17 Feb 2025 18:17:15 +0530
+Message-Id: <20250217-add_support_max31331_fix_8-v1-0-16ebcfc02336@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,30 +54,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+X-B4-Tracking: v=1; b=H4sIANMvs2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDI0Nz3cSUlPji0oKC/KKS+NzECmNDY2PD+LTMingL3UTLxDQTc4MU0+R
+ EYyWgAQVFqUAJsOHRSkGuwa5+LgplpkqxtbUAZvihj3cAAAA=
+X-Change-ID: 20250217-add_support_max31331_fix_8-a9af470d5ca3
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ PavithraUdayakumar-adi <pavithra.u@analog.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739796453; l=1888;
+ i=pavithra.u@analog.com; s=20241220; h=from:subject:message-id;
+ bh=PTSy1ip0l95HNNQQE+rcttEDB0KFrDuEV+630qcL2IM=;
+ b=GEPLWHzuMBYTO6EresIlfpo7HAopxkDf6L5smseqo1eSfTDrJKoO9S/ltULxyNfxkr6IJzyks
+ x2FXYLOP0zYDemNc9ckp+qoqoj65TD4aTngiFvOU/ZoI1tVIusTxSaY
+X-Developer-Key: i=pavithra.u@analog.com; a=ed25519;
+ pk=RIhZrdpg71GEnmwm1eNn95TYUMDJOKVsFd37Fv8xf1U=
+X-Endpoint-Received: by B4 Relay for pavithra.u@analog.com/20241220 with
+ auth_id=303
+X-Original-From: PavithraUdayakumar-adi <pavithra.u@analog.com>
+Reply-To: pavithra.u@analog.com
 
+This patch series introduces support for the Maxim MAX31331 RTC.
+It includes:
 
-On Sun, 16 Feb 2025 19:25:04 -0700, Caleb Sander Mateos wrote:
-> In preparation for changing how io_tw_state is passed, introduce a type
-> alias io_tw_token_t for struct io_tw_state *. This allows for changing
-> the representation in one place, without having to update the many
-> functions that just forward their struct io_tw_state * argument.
-> 
-> Also add a comment to struct io_tw_state to explain its purpose.
-> 
-> [...]
+1. Device Tree bindings documentation for MAX31331.
+2. The driver implementation for the MAX31331 RTC.
 
-Applied, thanks!
+---
+Resend v5:
+- [PATCH RESEND v5 2/2]: Added id as a member of struct chip_desc in v4 [Nuno Sa], the patch requires a review. 
+- Rebase v6.14-rc3                                    
+- Link to v5: https://lore.kernel.org/r/20250131-add_support_max31331_fix_7-v1-0-d29d5de3d562@analog.com
 
-[1/2] io_uring: introduce type alias for io_tw_state
-      commit: bcf8a0293a019bb0c4aebafdebe9a1e7a923249a
-[2/2] io_uring: pass struct io_tw_state by value
-      commit: 94a4274bb6ebc5b4293559304d0f00928de0d8c0
+Changes in v5:
+- Removed the commit description stating max31331 and max31335 are compatible.
+- Rebase v6.13
+- Link to v4: https://lore.kernel.org/all/20250119-add_support_max31331_fix_5-v1-0-73f7be59f022@analog.com/
+---
+Changes in v4:
+- Reverted the I2C address change for MAX31335 RTC (0x69) and removed it from the property register;
+  will include it in a separate fix.
+- Added id as a member of struct chip_desc [Nuno Sa]
+- Rebase on v6.13-rc7
+- Link to v3: https://lore.kernel.org/all/20250109-add_support_max31331_fix_3-v1-0-a74fac29bf49@analog.com/
+---
+Changes in v3:
+- Added missing spaces in driver code
+- Removed binding for checking address
+- Rebase on v6.13-rc6
+- Link to v2: https://lore.kernel.org/all/20250103-add_support_max31331_fix-v1-0-8ff3c7a81734@analog.com/
+---
+
+Signed-off-by: PavithraUdayakumar-adi <pavithra.u@analog.com>
+
+---
+PavithraUdayakumar-adi (2):
+      dt-bindings: rtc: max31335: Add max31331 support
+      rtc: max31335: Add driver support for max31331
+
+ .../devicetree/bindings/rtc/adi,max31335.yaml      |   4 +-
+ drivers/rtc/rtc-max31335.c                         | 165 +++++++++++++++------
+ 2 files changed, 125 insertions(+), 44 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-add_support_max31331_fix_8-a9af470d5ca3
 
 Best regards,
 -- 
-Jens Axboe
-
+PavithraUdayakumar-adi <pavithra.u@analog.com>
 
 
 
