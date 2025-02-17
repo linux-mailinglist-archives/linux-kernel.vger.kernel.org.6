@@ -1,288 +1,105 @@
-Return-Path: <linux-kernel+bounces-517908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5885BA38740
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 053F6A38745
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1980E188C875
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9D9188C7FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723A2236F6;
-	Mon, 17 Feb 2025 15:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gCg6LPAR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7274722489A;
+	Mon, 17 Feb 2025 15:11:55 +0000 (UTC)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908341758B;
-	Mon, 17 Feb 2025 15:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC9153BE4;
+	Mon, 17 Feb 2025 15:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739805048; cv=none; b=izbaQMSwh6jZylZbAb061s1CivkEGj1xU4MGI5EIuCoXALmfi2O+La1fnoRYd5GxoprFvSF66e+Y48Uv8yisgu3gtpd2gwx3n/2S9lA8BRg6E8TSkOnymIw7d/SpJCwqeatFkKXvISU9jXXacxB9KwTQNYlZnk3OH0/FvhkHMKQ=
+	t=1739805115; cv=none; b=H3PdofwlbaE3h2N517Nh69J2I6dybN8o6tR2UblZUm5iSTGjNy49xTRiJjkDVcKIle37K8zZSob5uS0+aGpLS//L3Bhe//pEVNQJXwqwpPm8d9JnM61jpBbdFlHIFjhpTnE/V9jIB/P4ZeiIwZaIFfubL2mgCKL1oYZ8pKgSSJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739805048; c=relaxed/simple;
-	bh=xsqdmzcQVf4MaVLIq+wCHoFk6tUjSd/ZSKbG3ogYrWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTfivkZKspik3fhfNlOz/7p+HIQD7+FAPVkGSJ2jpzS5YfTQbnXGUbQun5UanoUTC9JbvVVWoR7CZsf+IApIkCEa0HknKK/seaaoNuWHVHLV4v7MZkx5Z677VodJJeO6godKIHrcFLLuPHFYcVLjnMucuwUl1hlNpiPkOuRHqUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gCg6LPAR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739805044;
-	bh=xsqdmzcQVf4MaVLIq+wCHoFk6tUjSd/ZSKbG3ogYrWM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gCg6LPARAAeFfI2o/RKgT8DMH4oTejs18JXRaXx2LyQKw5onjWYm9SgVsTmBjPtlM
-	 pZWDyv7bH5FcAr67KlV6y7JpHgCKmyv/dwZLbmFbcqsKh3xTC1dSYNCj6YUEdBo8uY
-	 PNSUtM/3XMyuSIDauvfhgKhSYDF/MaD8CFxq+jiirWhK9uIUhMJVIuGsPMXRZKUGPl
-	 aLg9QsQpfv3CrBejxijBgMz3pn5/IU5EKfERRN8PE5ImgR6lBE0FnzXYdoImGYlbN7
-	 olEHbagdWKOn1eroAwABeGcg3Te/CbsLbM2gp3sx2GzLoxVYtAZmN7AUCYexsBv5lf
-	 uieOeFJKyMGVQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5437217E0CD1;
-	Mon, 17 Feb 2025 16:10:43 +0100 (CET)
-Message-ID: <358623c0-a81a-4a17-8979-f11de5b71675@collabora.com>
-Date: Mon, 17 Feb 2025 16:10:42 +0100
+	s=arc-20240116; t=1739805115; c=relaxed/simple;
+	bh=CX0cKuWIN/izcmRShlftpFObnQaAOxE9smmXy7S4rN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LYmyWZmC4V7oxDIky215ws4aU2wAjs5bDjL0WjuTZSAk8n6DwW/xiV8PeCsjoQ93AuURxp9WE3MLBimsgpP6765OKgpdLnKCtH62GxxCt2YRfUpiBwCvQv3vvNwD1ihOj6P40h9+z1btHOHhM8zvkvlzFGdMG/+f4x1pSk7Eaw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30a29f4bd43so13223831fa.0;
+        Mon, 17 Feb 2025 07:11:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739805109; x=1740409909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CX0cKuWIN/izcmRShlftpFObnQaAOxE9smmXy7S4rN8=;
+        b=iFUdX6H2WJ4tNge5kwtZkgtcafLDYRl6iQkytXA/jigtHf+orWvYrJsn6TpFDBPEVH
+         M4ySPH9ww+R2SwiKmD6n/NUg17IY8xPNOEhpZsZqz2u67Ha7xjHQ6bzr9XFxOb95FNgU
+         A2vKDtKRlw7srC8I3n1ULyk7eB99UEQpgP1RESfvLmhxNZvrXdHY4pD983EnAKfoepXr
+         c2ytzu+SSdD+v66ldVo2b1P2A76vleDpRzSojUJEJIEFh+roBOgB6hknVx/kzKsM9xF0
+         YvySV00MEm+PW6yyJi4OgO0a2iK4HnScaqk2Hw5+ddZFTchyWOYnYdBcs2TGjMjiuKSO
+         UTFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYoTML8GH7qySOQLr8GAUV3WYUiEbM7cGUj3H5W5xqoWcEA45yJdckILOnejgipfQ25+Ad9NgLMO24fdmP@vger.kernel.org, AJvYcCV1VQKpefQiQ+bBRSkmws9yxhmbBJgvTeABGq9P6xyMtQ9ZPs7IWnWjytCvHhkduIC5CPEDq7DtLkEf@vger.kernel.org, AJvYcCWzjH/Sv/DS51CG0qUvA7LUNhLJw34bzobrPIVFBL6ETidCn/URbjLAT4wRgbM5yXLm9I3wtzioJry8xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxywsegRZfioq7sSF6t2KSVHrdVpQIwjViAwUaK8dRssiNFnJgL
+	YFBQh02McPMRniBzr1iWdBQecEjgH4m7nP99kuyMkelQV68mhx8JqHOhA6U8
+X-Gm-Gg: ASbGncuAfRQcpJHRuOzxF9XJBUj1KtivHiJ4OrO2WMMCALIcEA1NKqvmUercWt1119U
+	+4lNGkP3w09pLtRuFV8YD0mXUFJrmW80N8UhOpSmW/uBbSsa2sGpnpUcK7lT8Z/JkYL89YfaZQz
+	CzMENTHZu+D9krFUTK7GomsRoR5gPbPyo0/x4YKVrTxZ1XolUopdQmLt6WLhWSi0WyzFZ9DRAUN
+	UogJiUCR6ynApJCgAzh4qeVggbKE6U5HLmJp5GwWVX3IPWoKBpUcr+PPdJQprd0oguc6415RtY5
+	vuue0UtVmyhnAyGl24eVkYqm7RMJPbTRD4jvDF3TpqhzzHyM
+X-Google-Smtp-Source: AGHT+IHj++LTeIzgNST746kkDxodEu67oATgfZGueeInGzoWvyYEL5TkAsuwx5AUOYyg7LdHQBAQkg==
+X-Received: by 2002:a2e:380f:0:b0:306:10d6:28ad with SMTP id 38308e7fff4ca-30927a2e2a2mr23540951fa.8.1739805109320;
+        Mon, 17 Feb 2025 07:11:49 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30922dc69bdsm13543631fa.12.2025.02.17.07.11.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 07:11:49 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3072f8dc069so45721231fa.3;
+        Mon, 17 Feb 2025 07:11:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUxVmwRrvOH0h6OVhImMgIsOcfcAcHbwX/Z+Mz+3jMDYITgyEp/z1CDvC76GB5RebOvnaiyk3IhVlKjTlUc@vger.kernel.org, AJvYcCVPX8LpOyuDPFBXxZPwg8KpX2wSguIRbP8hhXCxmEN01CTtDYNEf8V7/Koi5ns+nAi4UdlDrXyPw1Kilw==@vger.kernel.org, AJvYcCXOXWo2+igayphfla5YxFcKWKPEmjUEJQJDqOYukPRj6o40h4oo247TiODB2EAtDXOSsAr8ym07hWpz@vger.kernel.org
+X-Received: by 2002:a2e:8757:0:b0:308:eb58:657d with SMTP id
+ 38308e7fff4ca-30927952830mr26737901fa.0.1739805108110; Mon, 17 Feb 2025
+ 07:11:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 41/42] drm/mediatek: mtk_hdmi_v2: Add debugfs ops and
- implement ABIST
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "robh@kernel.org" <robh@kernel.org>,
- "jie.qiu@mediatek.com" <jie.qiu@mediatek.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
- <mripard@kernel.org>, =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
- <jitao.shi@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- =?UTF-8?B?TGV3aXMgTGlhbyAo5buW5p+P6YieKQ==?= <Lewis.Liao@mediatek.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?VG9tbXlZTCBDaGVuICjpmbPlvaXoia8p?= <TommyYL.Chen@mediatek.com>,
- =?UTF-8?B?SXZlcyBDaGVuamggKOmZs+S/iuW8mCk=?= <Ives.Chenjh@mediatek.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "junzhi.zhao@mediatek.com" <junzhi.zhao@mediatek.com>
-References: <20250211113409.1517534-1-angelogioacchino.delregno@collabora.com>
- <20250211113409.1517534-42-angelogioacchino.delregno@collabora.com>
- <0541a9bedef16763cc0279127ab258015b9a8a82.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0541a9bedef16763cc0279127ab258015b9a8a82.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250214003734.14944-1-andre.przywara@arm.com> <20250214003734.14944-3-andre.przywara@arm.com>
+In-Reply-To: <20250214003734.14944-3-andre.przywara@arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 17 Feb 2025 23:11:35 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66gSuv6egek05QfpRZNH=Rn-eZXxQ_GVfDWpJ-HuojX_w@mail.gmail.com>
+X-Gm-Features: AWEUYZnwpP6pvAEUU7QbWQG6w8gtn-pOi6TW3aQOb0FOCh7uCxrlelNQmMUxnZU
+Message-ID: <CAGb2v66gSuv6egek05QfpRZNH=Rn-eZXxQ_GVfDWpJ-HuojX_w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] pinctrl: sunxi: increase number of GPIO bank regulators
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 14/02/25 06:21, CK Hu (胡俊光) ha scritto:
-> On Tue, 2025-02-11 at 12:34 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>
->>
->> Implement the Automated Built-In Self-Test ABIST functionality
->> provided by the HDMIv2 IP and expose it through the "hdmi_abist"
->> debugfs file.
->>
->> Write "1" to this file to activate ABIST, or "0" to deactivate.
-> 
-> Describe what we would see when activate ABIST.
-> Give some example of when to use it.
-> 
+On Fri, Feb 14, 2025 at 8:40=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> By design, the Allwinner pinctrl IP always supported up to 11 GPIO banks,
+> though no SoC ever used more than 9 banks so far.
+> The Allwinner A523 has pins in all 11 banks, which exceeds the number of
+> per-bank regulators that we currently support, as this was set to 9.
+>
+> Increase the size of the array to hold up to 11 regulator structs, to
+> support pins in bank J and K as well.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Sure, I will.
-
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c | 123 +++++++++++++++++++++++++
->>   1 file changed, 123 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->> index 36b7f8d8d218..f4a086b92dae 100644
->> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->> @@ -1170,6 +1170,128 @@ static int mtk_hdmi_v2_hdmi_write_infoframe(struct drm_bridge *bridge,
->>          return 0;
->>   }
->>
->> +static int mtk_hdmi_v2_set_abist(struct mtk_hdmi *hdmi, bool enable)
->> +{
->> +       struct drm_display_mode *mode = &hdmi->mode;
->> +       int abist_format = -EINVAL;
->> +       bool interlaced;
->> +
->> +       if (!enable) {
->> +               regmap_clear_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
->> +               return 0;
->> +       }
->> +
->> +       if (!mode->hdisplay || !mode->vdisplay)
->> +               return -EINVAL;
->> +
->> +       interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
->> +
->> +       switch (mode->hdisplay) {
->> +       case 720:
->> +               if (mode->vdisplay == 480)
->> +                       abist_format = 2;
->> +               else if (mode->vdisplay == 576)
->> +                       abist_format = 11;
->> +               break;
->> +       case 1280:
->> +               if (mode->vdisplay == 720)
->> +                       abist_format = 3;
->> +               break;
->> +       case 1440:
->> +               if (mode->vdisplay == 480)
->> +                       abist_format = interlaced ? 5 : 9;
->> +               else if (mode->vdisplay == 576)
->> +                       abist_format = interlaced ? 14 : 18;
->> +               break;
->> +       case 1920:
->> +               if (mode->vdisplay == 1080)
->> +                       abist_format = interlaced ? 4 : 10;
->> +               break;
->> +       case 3840:
->> +               if (mode->vdisplay == 2160)
->> +                       abist_format = 25;
->> +               break;
->> +       case 4096:
->> +               if (mode->vdisplay == 2160)
->> +                       abist_format = 26;
->> +               break;
->> +       default:
->> +               break;
->> +       }
->> +       if (!abist_format)
-> 
-> abist_format's initial value is -EINVAL, so this checking would never be true.
-> Let abist_format's initial value be zero.
-> 
-
-No, because abist_format 0 is a valid format.
-
-I'll change this to
-
-if (abist_format < 0)
-	return abist_format;
-
-Thanks!
-
-Regards,
-Angelo
-
-> Regards,
-> CK
-> 
->> +               return -EINVAL;
->> +
->> +       regmap_update_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_VIDEO_FORMAT,
->> +                          FIELD_PREP(HDMI_ABIST_VIDEO_FORMAT, abist_format));
->> +       regmap_set_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
->> +       return 0;
->> +}
->> +
->> +static int mtk_hdmi_v2_debug_abist_show(struct seq_file *m, void *arg)
->> +{
->> +       struct mtk_hdmi *hdmi = m->private;
->> +       bool en;
->> +       u32 val;
->> +       int ret;
->> +
->> +       if (!hdmi)
->> +               return -EINVAL;
->> +
->> +       ret = regmap_read(hdmi->regs, TOP_CFG00, &val);
->> +       if (ret)
->> +               return ret;
->> +
->> +       en = FIELD_GET(HDMI_ABIST_ENABLE, val);
->> +
->> +       seq_printf(m, "HDMI Automated Built-In Self Test: %s\n",
->> +                  en ? "Enabled" : "Disabled");
->> +
->> +       return 0;
->> +}
->> +
->> +static ssize_t mtk_hdmi_v2_debug_abist_write(struct file *file,
->> +                                            const char __user *ubuf,
->> +                                            size_t len, loff_t *offp)
->> +{
->> +       struct seq_file *m = file->private_data;
->> +       int ret;
->> +       u32 en;
->> +
->> +       if (!m || !m->private || *offp)
->> +               return -EINVAL;
->> +
->> +       ret = kstrtouint_from_user(ubuf, len, 0, &en);
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (en < 0 || en > 1)
->> +               return -EINVAL;
->> +
->> +       mtk_hdmi_v2_set_abist((struct mtk_hdmi *)m->private, en);
->> +       return len;
->> +}
->> +
->> +static int mtk_hdmi_v2_debug_abist_open(struct inode *inode, struct file *file)
->> +{
->> +       return single_open(file, mtk_hdmi_v2_debug_abist_show, inode->i_private);
->> +}
->> +
->> +static const struct file_operations mtk_hdmi_debug_abist_fops = {
->> +       .owner = THIS_MODULE,
->> +       .open = mtk_hdmi_v2_debug_abist_open,
->> +       .read = seq_read,
->> +       .write = mtk_hdmi_v2_debug_abist_write,
->> +       .llseek = seq_lseek,
->> +       .release = single_release,
->> +};
->> +
->> +static void mtk_hdmi_v2_debugfs_init(struct drm_bridge *bridge, struct dentry *root)
->> +{
->> +       struct mtk_hdmi *dpi = hdmi_ctx_from_bridge(bridge);
->> +
->> +       debugfs_create_file("hdmi_abist", 0640, root, dpi, &mtk_hdmi_debug_abist_fops);
->> +}
->> +
->>   static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
->>          .attach = mtk_hdmi_v2_bridge_attach,
->>          .detach = mtk_hdmi_v2_bridge_detach,
->> @@ -1189,6 +1311,7 @@ static const struct drm_bridge_funcs mtk_v2_hdmi_bridge_funcs = {
->>          .hdmi_tmds_char_rate_valid = mtk_hdmi_v2_hdmi_tmds_char_rate_valid,
->>          .hdmi_clear_infoframe = mtk_hdmi_v2_hdmi_clear_infoframe,
->>          .hdmi_write_infoframe = mtk_hdmi_v2_hdmi_write_infoframe,
->> +       .debugfs_init = mtk_hdmi_v2_debugfs_init,
->>   };
->>
->>   /*
->> --
->> 2.48.1
->>
-> 
-
-
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
