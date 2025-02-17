@@ -1,75 +1,103 @@
-Return-Path: <linux-kernel+bounces-517206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D121CA37DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:01:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCA2A37DB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655FD3A9F08
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD5A3B4304
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55221A8413;
-	Mon, 17 Feb 2025 08:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722321A4F12;
+	Mon, 17 Feb 2025 08:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c4TUdz1A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZIahCw1J"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385AB1A8403;
-	Mon, 17 Feb 2025 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6091A1A314C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782677; cv=none; b=dLMzyB5mUUoT0Idg42IvguLBGCPxRoiEApcPH6Mdki4nWHkRfQWEmygTugZM/gyLbgpqlwBGK1L0LlL/tNXGWvyrv0vukUbnTKi+1OoNdNTonWnEZWfW5V27XTrcPXSZP6jHYEWbGC1XGYhjXKicpKz54ZXaGxp+v/KCBjMpNo4=
+	t=1739782671; cv=none; b=IKI/MszEpKUiTkm4nVyTkjmKrJK//rK/tw2VOG10pZTENubunhtXjd5uupX3A2D2Q+u0ws6ZWYWFDmgDaiTpniBR0g21PzXqE+FnT4ISCqhJyaI2aFIpwFYUglIFG907gaNxoElIKaAezp/m0wuzOSmWnvesLMxn6TCDl3N+2oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782677; c=relaxed/simple;
-	bh=9macul4XblzTUxF7kH52KxnULiDZU5dKGC5irFFJUOk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OabgWJQ3aRwQ4muh/EAtawijOjMTOez2sfvPqKK/Q4sN9hN1QM8bskrv8m5foFm/RYUh9WYPO4hRWDpMoAy0pugsBRbdW/HOvU8qtaRHbaex3dwiNEBX0Q/7PKPbdc0zMKu8AYQiYl39Ga8nD/KFzTWNJB5KjyO6Uy22FqUHuX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c4TUdz1A; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739782675; x=1771318675;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9macul4XblzTUxF7kH52KxnULiDZU5dKGC5irFFJUOk=;
-  b=c4TUdz1AXfqhEFMJK95NX4srtXHHvg6Dnin5dKIZoY3lxYM9aO6RINL1
-   BSlg9NN8WO5Z9LapVByVMRTHrKULbuHh2It9PeDQFe5+IcpZYh95bM1Bk
-   +ninZhVB9IXDe7NnzeQx0MRZoC0IdUFu3haJCP0Uk/Sfe9HfvE9PfkokT
-   AvByQLQPSvJs5YmGtJEzsWDeVrSw9SaNO/gYiM/Oo1l3B4Q1CPQWq7e6L
-   c6F/CTfWZWRm8svvYYTwO5Pb/TcYG/jWutiL3cHw7UpqNmO+ZOrSCFZKQ
-   b+cJyJyhPbo6A0WdZ3VeUb+qC8sKAB8h7aHQtDsCnyVseaXL+d+8ar0no
-   g==;
-X-CSE-ConnectionGUID: w+Z0h93hQx2mTIV9Lsu6DQ==
-X-CSE-MsgGUID: EPsV3rM5S7m8ZS89JzGISQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="51883271"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="51883271"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:57:55 -0800
-X-CSE-ConnectionGUID: 2UL39tiWTj2Ft/EMC0StjQ==
-X-CSE-MsgGUID: 8XYbJa9ZRB24OQfBNNigXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="144989824"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 00:57:52 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
+	s=arc-20240116; t=1739782671; c=relaxed/simple;
+	bh=TOkbHcros14ROwgOg6vnJZdWVFcQKalF8GD+k0BJQN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PG4TldGNH3pArmxGSDb4KRJKj18hawkZgVh2Y9jgOnSVt0OCSxLucYGN2yREeA6Qbn6GsQuGaFUYJnXcG7YigpgjW79M5ByD+bAnnU4+8YJxF0y1byVv6IsmU5SpeGBri9W1itEbCp+fVeB4slqyHFXFGJuu1qjmVfnHXMjWCMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZIahCw1J; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-221206dbd7eso15636755ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:57:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1739782669; x=1740387469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f84RxVQSOLpB8f+3Kw6/tfkLcBysycUkVkvuR3ETJMc=;
+        b=ZIahCw1JZv9WZdiwIBBma/GOTxWoezQXMU+xk7kOR021S6YxOlaPRkxrxughcxMhw3
+         UmpgiRtSKMc/WHXtIhTPhun+wVbieLlLYEnPG6xJpz4F4m6HRujqVK0oPLV8SqF4McCV
+         EG8L1t3OzfgSoHq8DBSAq5OQNZAsncx4L178vzdXqXSVjG0YFGiJThhEQpUJdTW2z2F/
+         rZ8mAdH/sj6j0yWFqZ6xy0mxLvsCffNFMRor60FBprXQj3UfHLHFiKwRlQXmeq18jDZC
+         Bhl7K8JlYghpWU3GszxnYQT1KzXGAov4OBNvJ3ndl+A5OJ5xlRr4JiwmYPs8xwTVCW11
+         yDOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739782669; x=1740387469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f84RxVQSOLpB8f+3Kw6/tfkLcBysycUkVkvuR3ETJMc=;
+        b=aoHnrlsg/3D2LtTQDcLCYsdJ/6g7v9GP+p7CTQVbK08hKAO8HuJzld9/g6LwnZupTj
+         uBUcUUrQOcknezLWirX2V6Ob2nzAGFC1smiBIFFCnw/0ApGiGzd0mztbtuPAl5c1p6Yd
+         7+CFUtyW2WM2idp+B0YRQ7zRpVIRkSCT+s/FKcHnGCY4jHWh3zfmTA0eEbMeaTB+atnl
+         Wu2oZQgx/I8xlLm2QemhxqbhonkP3zmO75v+5Q+yFOPPhWxrW9Ua2M82jSoUFhqsMIN0
+         NABi1HJazRiMRN8n/AKiOhuGyqXpe4pWKcM5A8XYdHtLQ3lsgsjSfQKenXSiRLu0GcM4
+         DnOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIoYi6/RlcslgINu7hf01TMTPwjJvmCmyuSFZJnr48mNU45SGKFA2tYS1CuqKPpDnHoTfuFEXBce3/lcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhHp3fkMayQzBAnOd003NRnifwPLmjbJHXFUPuIa4Adz5ktQXT
+	5OFjmpTojSGBqxUGG+XTsViJZf7TKkfMW9FrXgq6XOWjr+/lScpM7ufeaWuFuuw=
+X-Gm-Gg: ASbGncud6UkUxzcMkxd+ps8hvvY+MmVNfUj+lTEMA6HhuDB7G+tI18H1iVl4ADs0MdJ
+	vOcBo/E6dmcLp4lue4L4zaBu5osX33BbqrBo0oFKfNT2Pe6RgSuGGvAL1l6+/Y3XHjSEmpKmui+
+	EqKlNFx4t9djxCLxOyFWUgPxE/ZxWyZNx6Y+fasgU+I6Yi4Qkjfe4fuXfXpIZwHq9V74s5h9/in
+	MJbUm+6i5cvgIVVu4cmrgKVTrk7CUpn4bZb9lxoJObKj9g9CkFnBNmjPZBOdDblfvpdhgBcOgDM
+	JG2YbG5pC2qTWwNWU6pOurdj3sVcv5fRf105RjqEBKTV3xBjFqifvXk=
+X-Google-Smtp-Source: AGHT+IF82L3fcPzRQrN7o7ULHVaO9xfwesocSc13p9Vkcov8kHTq/Q8PStQAxAacABCzFd34cRy1kw==
+X-Received: by 2002:a05:6a21:e8d:b0:1ee:7ddf:f40c with SMTP id adf61e73a8af0-1ee8cb499ccmr13555954637.11.1739782669344;
+        Mon, 17 Feb 2025 00:57:49 -0800 (PST)
+Received: from anup-ubuntu-vm.localdomain ([122.171.22.227])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242546867sm7632018b3a.24.2025.02.17.00.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 00:57:48 -0800 (PST)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: hpa@zytor.com,
+	Marc Zyngier <maz@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 1/2] KVM: TDX: Handle SEPT zap error due to page add error in premap
-Date: Mon, 17 Feb 2025 16:56:42 +0800
-Message-ID: <20250217085642.19696-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250217085535.19614-1-yan.y.zhao@intel.com>
-References: <20250217085535.19614-1-yan.y.zhao@intel.com>
+	imx@lists.linux.dev,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v6 00/10] RISC-V IMSIC driver improvements
+Date: Mon, 17 Feb 2025 14:26:46 +0530
+Message-ID: <20250217085657.789309-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,161 +106,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the handling of SEPT zap errors caused by unsuccessful execution of
-tdh_mem_page_add() in KVM_TDX_INIT_MEM_REGION from
-tdx_sept_drop_private_spte() to tdx_sept_zap_private_spte(). Introduce a
-new helper function tdx_is_sept_zap_err_due_to_premap() to detect this
-specific error.
+This series is based on recent discussion on LKML:
+https://lore.kernel.org/lkml/20241114161845.502027-18-ajones@ventanamicro.com/
 
-During the IOCTL KVM_TDX_INIT_MEM_REGION, KVM premaps leaf SPTEs in the
-mirror page table before the corresponding entry in the private page table
-is successfully installed by tdh_mem_page_add(). If an error occurs during
-the invocation of tdh_mem_page_add(), a mismatch between the mirror and
-private page tables results in SEAMCALLs for SEPT zap returning the error
-code TDX_EPT_ENTRY_STATE_INCORRECT.
+It primarily focuses on moving to RISC-V IMSIC driver use common MSI
+lib and GENERIC_PENDING_IRQ.
 
-The error TDX_EPT_WALK_FAILED is not possible because, during
-KVM_TDX_INIT_MEM_REGION, KVM only premaps leaf SPTEs after successfully
-mapping non-leaf SPTEs. Unlike leaf SPTEs, there is no mismatch in non-leaf
-PTEs between the mirror and private page tables. Therefore, during zap,
-SEAMCALLs should find an empty leaf entry in the private EPT, leading to
-the error TDX_EPT_ENTRY_STATE_INCORRECT instead of TDX_EPT_WALK_FAILED.
+PATCH1 & PATCH2: Preparatory patches
+PATCH3: Updates IMSIC driver to use MSI lib
+PATCH4 to PATCH5: Preparatory patches for moving to GENERIC_PENDING_IRQ
+PATCH6 to PATCH10: Patches to use GENERIC_PENDING_IRQ in IMSIC driver
 
-Since tdh_mem_range_block() is always invoked before tdh_mem_page_remove(),
-move the handling of SEPT zap errors from tdx_sept_drop_private_spte() to
-tdx_sept_zap_private_spte(). In tdx_sept_zap_private_spte(), return 0 for
-errors due to premap to skip executing other SEAMCALLs for zap, which are
-unnecessary. Return 1 to indicate no other errors, allowing the execution
-of other zap SEAMCALLs to continue.
+These patches can also be found in the riscv_imsic_imp_v6 branch at:
+https://github.com/avpatel/linux.git
 
-The failure of tdh_mem_page_add() is uncommon and has not been observed in
-real workloads. Currently, this failure is only hypothetically triggered by
-skipping the real SEAMCALL and faking the add error in the SEAMCALL
-wrapper. Additionally, without this fix, there will be no host crashes or
-other severe issues.
+Changes since v5:
+ - Rebased upon Linux-6.14-rc1
+ - Drop PATCH6 since it is already merged
+ - Update commit description of PATCH1
 
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/kvm/vmx/tdx.c | 64 +++++++++++++++++++++++++++++-------------
- 1 file changed, 45 insertions(+), 19 deletions(-)
+Changes since v4:
+ - Updated PATCH4 with better irq_force_complete_move() implementation
+   provided by Thomas.
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 8cad38e8e0bc..86c0653d797e 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1616,20 +1616,6 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
- 		tdx_no_vcpus_enter_stop(kvm);
- 	}
- 
--	if (unlikely(kvm_tdx->state != TD_STATE_RUNNABLE &&
--		     err == (TDX_EPT_WALK_FAILED | TDX_OPERAND_ID_RCX))) {
--		/*
--		 * Page is mapped by KVM_TDX_INIT_MEM_REGION, but hasn't called
--		 * tdh_mem_page_add().
--		 */
--		if ((!is_last_spte(entry, level) || !(entry & VMX_EPT_RWX_MASK)) &&
--		    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
--			atomic64_dec(&kvm_tdx->nr_premapped);
--			tdx_unpin(kvm, page);
--			return 0;
--		}
--	}
--
- 	if (KVM_BUG_ON(err, kvm)) {
- 		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
- 		return -EIO;
-@@ -1667,8 +1653,41 @@ int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
- 	return 0;
- }
- 
-+/*
-+ * Check if the error returned from a SEPT zap SEAMCALL is due to that a page is
-+ * mapped by KVM_TDX_INIT_MEM_REGION without tdh_mem_page_add() being called
-+ * successfully.
-+ *
-+ * Since tdh_mem_sept_add() must have been invoked successfully before a
-+ * non-leaf entry present in the mirrored page table, the SEPT ZAP related
-+ * SEAMCALLs should not encounter err TDX_EPT_WALK_FAILED. They should instead
-+ * find TDX_EPT_ENTRY_STATE_INCORRECT due to an empty leaf entry found in the
-+ * SEPT.
-+ *
-+ * Further check if the returned entry from SEPT walking is with RWX permissions
-+ * to filter out anything unexpected.
-+ *
-+ * Note: @level is pg_level, not the tdx_level. The tdx_level extracted from
-+ * level_state returned from a SEAMCALL error is the same as that passed into
-+ * the SEAMCALL.
-+ */
-+static int tdx_is_sept_zap_err_due_to_premap(struct kvm_tdx *kvm_tdx, u64 err,
-+					     u64 entry, int level)
-+{
-+	if (!err || kvm_tdx->state == TD_STATE_RUNNABLE)
-+		return false;
-+
-+	if (err != (TDX_EPT_ENTRY_STATE_INCORRECT | TDX_OPERAND_ID_RCX))
-+		return false;
-+
-+	if ((is_last_spte(entry, level) && (entry & VMX_EPT_RWX_MASK)))
-+		return false;
-+
-+	return true;
-+}
-+
- static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
--				     enum pg_level level)
-+				     enum pg_level level, struct page *page)
- {
- 	int tdx_level = pg_level_to_tdx_sept_level(level);
- 	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-@@ -1686,12 +1705,18 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
- 		err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
- 		tdx_no_vcpus_enter_stop(kvm);
- 	}
-+	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level) &&
-+	    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
-+		atomic64_dec(&kvm_tdx->nr_premapped);
-+		tdx_unpin(kvm, page);
-+		return 0;
-+	}
- 
- 	if (KVM_BUG_ON(err, kvm)) {
- 		pr_tdx_error_2(TDH_MEM_RANGE_BLOCK, err, entry, level_state);
- 		return -EIO;
- 	}
--	return 0;
-+	return 1;
- }
- 
- /*
-@@ -1769,6 +1794,7 @@ int tdx_sept_free_private_spt(struct kvm *kvm, gfn_t gfn,
- int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 				 enum pg_level level, kvm_pfn_t pfn)
- {
-+	struct page *page = pfn_to_page(pfn);
- 	int ret;
- 
- 	/*
-@@ -1779,8 +1805,8 @@ int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
- 		return -EINVAL;
- 
--	ret = tdx_sept_zap_private_spte(kvm, gfn, level);
--	if (ret)
-+	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
-+	if (ret <= 0)
- 		return ret;
- 
- 	/*
-@@ -1789,7 +1815,7 @@ int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 	 */
- 	tdx_track(kvm);
- 
--	return tdx_sept_drop_private_spte(kvm, gfn, level, pfn_to_page(pfn));
-+	return tdx_sept_drop_private_spte(kvm, gfn, level, page);
- }
- 
- void tdx_deliver_interrupt(struct kvm_lapic *apic, int delivery_mode,
+Changes since v3:
+ - Dropped PATCH1 of v3 series and updated last patch of this series
+   to handle the intermediate state for non-atomic MSI update.
+ - Added new PATCH6 in this series to remove stale kconfig option
+   GENERIC_PENDING_IRQ_CHIPFLAGS.
+
+Changes since v2:
+ - Rebased upon Linux-6.14-rc1
+ - Dropped PATCH5 of v2 series since that patch is already merged
+
+Changes since v1:
+ - Changed series subject
+ - Expand this series to use GENERIC_PENDING_IRQ in IMSIC driver
+
+Andrew Jones (1):
+  irqchip/riscv-imsic: Set irq_set_affinity for IMSIC base
+
+Anup Patel (6):
+  genirq: Introduce irq_can_move_in_process_context()
+  RISC-V: Select GENERIC_PENDING_IRQ
+  irqchip/riscv-imsic: Separate next and previous pointers in IMSIC
+    vector
+  irqchip/riscv-imsic: Implement irq_force_complete_move() for IMSIC
+  irqchip/riscv-imsic: Replace hwirq with irq in the IMSIC vector
+  irqchip/riscv-imsic: Special handling for non-atomic device MSI update
+
+Thomas Gleixner (3):
+  irqchip/irq-msi-lib: Optionally set default irq_eoi/irq_ack
+  irqchip/riscv-imsic: Move to common MSI lib
+  genirq: Introduce common irq_force_complete_move() implementation
+
+ arch/riscv/Kconfig                         |   1 +
+ arch/x86/kernel/apic/vector.c              | 231 ++++++++++-----------
+ drivers/irqchip/Kconfig                    |   8 +-
+ drivers/irqchip/irq-gic-v2m.c              |   1 +
+ drivers/irqchip/irq-imx-mu-msi.c           |   1 +
+ drivers/irqchip/irq-msi-lib.c              |  11 +-
+ drivers/irqchip/irq-mvebu-gicp.c           |   1 +
+ drivers/irqchip/irq-mvebu-odmi.c           |   1 +
+ drivers/irqchip/irq-mvebu-sei.c            |   1 +
+ drivers/irqchip/irq-riscv-imsic-early.c    |  14 +-
+ drivers/irqchip/irq-riscv-imsic-platform.c | 197 +++++++++---------
+ drivers/irqchip/irq-riscv-imsic-state.c    | 152 ++++++++++----
+ drivers/irqchip/irq-riscv-imsic-state.h    |  12 +-
+ include/linux/irq.h                        |   7 +-
+ include/linux/msi.h                        |  11 +
+ kernel/irq/internals.h                     |   2 +
+ kernel/irq/migration.c                     |  21 ++
+ 17 files changed, 389 insertions(+), 283 deletions(-)
+
 -- 
-2.43.2
+2.43.0
 
 
