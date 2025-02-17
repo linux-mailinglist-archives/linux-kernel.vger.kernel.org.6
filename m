@@ -1,234 +1,182 @@
-Return-Path: <linux-kernel+bounces-518357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ACCA38DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:08:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CD4A38DE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C13B331B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78528167E6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953EB23AE95;
-	Mon, 17 Feb 2025 21:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B2D239099;
+	Mon, 17 Feb 2025 21:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OU8sYveV"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MiKsUqiZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC3E238D42
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739826475; cv=none; b=uctSyucrHGLc1FN9u+oke2eVlmP2051vE4HkpTnSpbpk/GX0YdBBvQ6W119FyGenma3vlZ/W6qGi9YTJ94ogWztCoHbRW89IeiucIcUsQPyDmfCIbt5XF0qAFMQF0bVLfuhBY7mUfme6JFg+4JDmDSR65OmFEyV1j0rpXfpzomg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739826475; c=relaxed/simple;
-	bh=7nmgVP/dRvT4mUIpaGaZSJ8l8wA+CYdvsKbXITlL46Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fM1LCyoMZZO5TAslOAQ5PNmR9fgb+YIquCENdx3vU3avuV4VNLaXI1BZfEKeoatbKXuqIIi3U6HY1eDKnMuUkN/yTn5h4skmk0mZvjSvnXsAE+9aPwBhig254az9H5iETI8OEAGQS1dZJJ8WjnjacVGYQypzjSaz6+b5bWWNDc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OU8sYveV; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30a2d4b61e4so12258391fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:07:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739826471; x=1740431271; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxAGuJZvVpihlkn5sQuDmNUvGY3NqHPUH3zDQ8Mjtgs=;
-        b=OU8sYveV8JW/bRThjG4SfxNRjKHqm/RLfnlvsONyVoC85uKj8TNQzSNeeXyC/RA4hi
-         BaYJCz+PUGW4V49WWBvBbGcUZqyFjvWiWPVH8BFgV0kkv0WpVWyS1hAM/p+ejKpeq22B
-         yBr49sDipTKkhKzv8xal4oAD0aZD7ycKDKbaU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739826471; x=1740431271;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OxAGuJZvVpihlkn5sQuDmNUvGY3NqHPUH3zDQ8Mjtgs=;
-        b=hbwjnNFD5xJoFxpIv4E8mZTIOpLZZAAvPEQ1tY555YUuBPvOAoyv8SSqQ9f7wQjiAS
-         VSW4dUM73hpSFaxS3yP25VVVMGcmOb7tKXcEIgFQAGUVUzVjzjPkhnALT9Va201z/RSZ
-         FzWuT7bBwEmOAt8S34GTavUqYRZyCEaRj4EX0+a5Zxt4cHiLCD0Qb5woQ2OGx3xLfSGT
-         ywQ1h6Eu7OJGqkWIZfLTEQ2ukw2Y77M4jzjmxddYmW/4ieaValFez+y5YLpVNwPboGSS
-         FCCQ4l5whmT/6RYFTRPjNMPDvUmmiiuL1LiS0tpylcMfWbzV9QR3M1zPIKQw9xGHjCni
-         v/vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLAM+sLMYWWOf1is6ZS01KP5WtkJ76oMt/Un0te17UXVhm0KlY1BZ+faFJAKefuUXc5S77ajCR3v8fIlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw33VpfvLV02oKOqKAEk3y5dqj1HRyNEPR6MA3VnYGT/AVg6Ute
-	tuNghT9C6lCBjzVN7C/p27Tr5+wD29Tmt4m44FSS0REzGnbBX5fCv59bi2yWZPaygA/NQCG78li
-	ubTs8CXrSaceGvGTF3Tv2jbpFYaKjZdZh8hYW
-X-Gm-Gg: ASbGnctyWMoNUTykYBoZ1JVROUaXx4Ryl6UD6YhbiNt9rIf7oQCtqh7dxUWeOkuGjjO
-	Jf+5auSjwGIQa4gzGgShmMqRBegJlg0Y0BvIE3Vsh81Qbz/hpjZuHbAUUsqMHKzL6gDnmsE7s+s
-	ezwxBBAQjn7wMNGkClt4iOo3A33qmN
-X-Google-Smtp-Source: AGHT+IETynsnWXFFoobhNYG6kug3sx2y2J8eck7h+JszqxvDS2xVQtW0RdMXvdFDFC9n5vAIVJ+y3VDSKkTxDfKl/eE=
-X-Received: by 2002:a2e:9a89:0:b0:302:29a5:6e21 with SMTP id
- 38308e7fff4ca-30927a2d1b2mr29062351fa.3.1739826470909; Mon, 17 Feb 2025
- 13:07:50 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67721448D5;
+	Mon, 17 Feb 2025 21:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739826679; cv=pass; b=otcN3SCtZb+OcPiMx82OvHdgcc6OBggjV7GJJjfjv5YgtukMFP+Z6PzxXk2ogNB2f7WbYSHbxVD5fkPy7a3Ls3h8gDA3rJXWaHrSWIJjaBiBTFcsVOT/tADh9NeJPf3EB6je8HwnG/Z+2ITF9nIR78twDH+wI2gaVDYTvsRCzE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739826679; c=relaxed/simple;
+	bh=fU5VJ+9FSxjtto12On1vcEoFYNBFTttwWr8V3UeEtRE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TE2t4xPE59aDB8BpQZ6j+sFCTfaKnHHxW3jumqR9eI+JqXihJsKTzZMHogulHq+vW+muUs3YXSDXr3aNu4Bc/tcnXnsOHtOAl+tO0jEEcxKRPFw+JcsYz6lWY7Pw3aeLa3MyAkHtC3qn+6bcUOPts/fD/tGDtEaWgHGzrNVlFL4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MiKsUqiZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739826666; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GxER9xBoXYNVmMpPkOezEl7juVUEqPvT7QqXQVkDYZiibyzEWtRrl3exdEGUy0WxeZyPJGEt/5hvRk+vPFOlNPBTz71BhmFP1jYZuSCj0RgcdpBf+m/4PigyU7ikLyy/rRHGUjkS1/W2QF17FY6Q1oHaYUKJ5H09XTLbK5Lucbs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739826666; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=DSt9e2QeY4CPWpSX1AlnM+9a4nL9IwkcpgU0QN6Orh0=; 
+	b=aKpGchhcwmfuIGjm8Bv9QjkRh3Evvn9BrzqMbYHC17597wTXeBxxhMj7P8dbptuh/eFgCaAm/TDHx0sBog3Cso68zvIQq2pD+85e3vWdu9mysD+8elD571FYS9E86YUKFdi7o4zwus1ozCckW9KY/wqCJmjGPQ/61Im4QsnJoOw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739826666;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=DSt9e2QeY4CPWpSX1AlnM+9a4nL9IwkcpgU0QN6Orh0=;
+	b=MiKsUqiZ0eYLZaSt+Mpd49aUC2/JCSAYVpwJXydEGfwUXZSXiipCOrgCZQNLgHme
+	KnILX4AqKWFk/NxWLDZDZK95o5Bmbwhw6GiARR2feXkoJFx1m/S82YSgeUJHbCmWTFF
+	AY5Hdw8Zcx6aZKylqOCcbxSEwto4N0WvoLkvMLM8=
+Received: by mx.zohomail.com with SMTPS id 1739826663606129.21187338334676;
+	Mon, 17 Feb 2025 13:11:03 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250217141837.2366663-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250217141837.2366663-1-haoxiang_li2024@163.com>
-From: Guruswamy Basavaiah <guruswamy.basavaiah@broadcom.com>
-Date: Tue, 18 Feb 2025 02:37:39 +0530
-X-Gm-Features: AWEUYZmpt2f5hkCvEnrd6qnO79Fx2QhABAiaPRpC8SsHYZPuHseVCWzRUuHZ9TI
-Message-ID: <CAOgUPBu-c8HwYV0A-Wdga3z8P9+CY3=YUVg73qvq6OkeQ4=2Ag@mail.gmail.com>
-Subject: Re: [PATCH] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: kuba@kernel.org, louis.peens@corigine.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, qmo@kernel.org, 
-	daniel@iogearbox.net, bpf@vger.kernel.org, oss-drivers@corigine.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000cafa83062e5cea00"
-
---000000000000cafa83062e5cea00
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH RFC 1/3] rust: add useful ops for u64
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+Date: Mon, 17 Feb 2025 18:10:47 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ Ben Skeggs <bskeggs@nvidia.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <C1FF4314-C013-4AE1-A94E-444AFACDB4AC@collabora.com>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <20250217-nova_timer-v1-1-78c5ace2d987@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-Hi Haoxiang,
-Nitpick: The brackets `{}` in the `if (!skb)` check are not required
-for a single-statement block. As per the Linux kernel coding style,
-it's preferable to omit them unless necessary for readability.
-Guru
+Hi Alex,=20
 
-On Mon, Feb 17, 2025 at 7:53=E2=80=AFPM Haoxiang Li <haoxiang_li2024@163.co=
-m> wrote:
->
-> Add check for the return value of nfp_app_ctrl_msg_alloc() in
-> nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
->
-> Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> On 17 Feb 2025, at 11:04, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> It is common to build a u64 from its high and low parts obtained from
+> two 32-bit registers. Conversely, it is also common to split a u64 =
+into
+> two u32s to write them into registers. Add an extension trait for u64
+> that implement these methods in a new `num` module.
+
+Thank you for working on that. I find myself doing this manually =
+extremely often indeed.
+
+
+>=20
+> It is expected that this trait will be extended with other useful
+> operations, and similar extension traits implemented for other types.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->  drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/=
-ethernet/netronome/nfp/bpf/cmsg.c
-> index 2ec62c8d86e1..09ea1bc72097 100644
-> --- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> +++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> @@ -20,6 +20,9 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned in=
-t size)
->         struct sk_buff *skb;
->
->         skb =3D nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
-> +       if (!skb) {
-> +               return NULL;
-> +       }
->         skb_put(skb, size);
->
->         return skb;
-> --
-> 2.25.1
->
->
+> rust/kernel/lib.rs |  1 +
+> rust/kernel/num.rs | 32 ++++++++++++++++++++++++++++++++
+> 2 files changed, 33 insertions(+)
+>=20
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index =
+496ed32b0911a9fdbce5d26738b9cf7ef910b269..8c0c7c20a16aa96e3d3e444be3e03878=
+650ddf77 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -59,6 +59,7 @@
+> pub mod miscdevice;
+> #[cfg(CONFIG_NET)]
+> pub mod net;
+> +pub mod num;
+> pub mod of;
+> pub mod page;
+> #[cfg(CONFIG_PCI)]
+> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
+> new file mode 100644
+> index =
+0000000000000000000000000000000000000000..5e714cbda4575b8d74f50660580dc4c5=
+683f8c2b
+> --- /dev/null
+> +++ b/rust/kernel/num.rs
+> @@ -0,0 +1,32 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Numerical and binary utilities for primitive types.
+> +
+> +/// Useful operations for `u64`.
+> +pub trait U64Ext {
+> +    /// Build a `u64` by combining its `high` and `low` parts.
+> +    ///
+> +    /// ```
+> +    /// use kernel::num::U64Ext;
+> +    /// assert_eq!(u64::from_u32s(0x01234567, 0x89abcdef), =
+0x01234567_89abcdef);
+> +    /// ```
+> +    fn from_u32s(high: u32, low: u32) -> Self;
+> +
+> +    /// Returns the `(high, low)` u32s that constitute `self`.
+> +    ///
+> +    /// ```
+> +    /// use kernel::num::U64Ext;
+> +    /// assert_eq!(u64::into_u32s(0x01234567_89abcdef), (0x1234567, =
+0x89abcdef));
+> +    /// ```
+> +    fn into_u32s(self) -> (u32, u32);
+> +}
+> +
+> +impl U64Ext for u64 {
+> +    fn from_u32s(high: u32, low: u32) -> Self {
+> +        ((high as u64) << u32::BITS) | low as u64
+> +    }
+> +
+> +    fn into_u32s(self) -> (u32, u32) {
 
---000000000000cafa83062e5cea00
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I wonder if a struct would make more sense here.
 
-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
-tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
-2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
-phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
-a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
-ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
-07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
-SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
-rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGczCCBFug
-AwIBAgIMUk0VAZ2+ny3UPjcLMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
-ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
-MDIzMB4XDTI0MTEyODA2NDY0MloXDTI2MTEyOTA2NDY0MlowgbcxCzAJBgNVBAYTAlVTMRMwEQYD
-VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
-MDExNzEWMBQGA1UEChMNQlJPQURDT00gSU5DLjEcMBoGA1UEAxMTR3VydXN3YW15IEJhc2F2YWlh
-aDEvMC0GCSqGSIb3DQEJARYgZ3VydXN3YW15LmJhc2F2YWlhaEBicm9hZGNvbS5jb20wggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDT0Ds+7uJK45uIzSpcStEgsoGtSBSCM3BYtj8H4WsF
-Ryh4F5x2LhrSFVgvxip1dFM6bqyyLEY82kyxQJSChQ6uFDmhMvf0RLnnLq/bG76MmUGYjFksgx42
-HffC6RhAfZ4rFPHuMTzPdyLnEitTcdBZRZmqtA4TSc/va0ZYpt2NXER42km8pBBJnEUoXWUauk/B
-wE/SJP0UDZHDpR0HTDO+2ul9LeMEGfSKAMWjTnBmC17rCqOM72hW8DJti66bHFRtCHg28L3wRK82
-V4Qk3hqSXX7fETAbc98s08Hx2V/psvw2XJjLa0jcBQcswvSQl0S3Z/k1UN4VBO3I9qP6x4JzAgMB
-AAGjggHhMIIB3TAOBgNVHQ8BAf8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAC
-hjpodHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMu
-Y3J0MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVj
-YTIwMjMwZQYDVR0gBF4wXDAJBgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQw
-MgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1Ud
-EwQCMAAwQQYDVR0fBDowODA2oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2
-c21pbWVjYTIwMjMuY3JsMCsGA1UdEQQkMCKBIGd1cnVzd2FteS5iYXNhdmFpYWhAYnJvYWRjb20u
-Y29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8GA1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCS
-MB0GA1UdDgQWBBTbuVbn7YM8LkfptiejPCXAA9xe6DANBgkqhkiG9w0BAQsFAAOCAgEAfTu20v5U
-JUB1TEHI7Qt8ajW/ToLpU3/BtFFwMne3hQsbEPpJPhBY133wtFoS01K3AFcl6rdOVThpp007r+eb
-bb5KR/oYokEvw2seZ1y33ZqGNQdZDTSzXOXKrm9ATwWRjN7dNhTrr9Of8BS9Kjx6V+O8KRlaoWVI
-GT/t6ubwmFNk9mKNec4RRcDTlu36nJmdwPMu6X2+kxTFRoLpcyIdL9fMkXOIT/JAIyKMURNqKDtz
-InPPvNHgGN9/FYJbqNFj2q5tPbxJbDGfs3i1ulPRTOADhIVwWFrY7MgNMOwcJY8AYO/URDWA3MeZ
-RCvfoIKBHeMgabWapnlLWsOpXJhlnZoSvrw37fkFVc9a/EnUIdXzDs3M20m8jYigf3zK7/lQkoye
-vssiDIcz473ViH6gaZEPN83DN7L1VKgrQ8zHF3qw8ctyH9i7xpWbqZ635JzaNqbZ0eXaA4nNfuCo
-EIsyrGT5sPSvWx8v+OcgMeh00XLvHBZfGAtf64NIedRqamOfuC3W/zpQrnmqr0IDj/tOgoaKBz3N
-KSy5T8E4NeNfiVxB7tOFWQms7pAzfD0OQiUHcjfNLra5uqQlafXezxKKGHeshKukKz8Q7mfV6ES4
-cZtIbMMXwd6jsxAj+vDw9BeG0/M49qmEZ9Rteb6dXnObIte8gDtK41NjSWH1Yslg2YsxggJkMIIC
-YAIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQD
-Ex9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAyMDIzAgxSTRUBnb6fLdQ+NwswDQYJYIZIAWUD
-BAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIC4PcS7KHtbYF2jzuAzHvX02z7OSdtYpU/2yV9P9Hc/I
-MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDIxNzIxMDc1MVow
-aQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAK
-BggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG
-9w0BAQEFAASCAQBXPwp2edAG950shMh8qrVzNRlbXYs0n/3MPMlwhHWTSK1DpMNvJJBErfIN3DiD
-DEmdDGcgBeealljc0U48/dUCnO+QsF6PmH9O2i8NYsGBx72XJzx8MmBrhhelrmf3xsJ8ygOtrTuf
-0MeIxBsIwLQoHYoi/EjQrGWCb9o6OvW/a4/vJsLE/WRYG/vpl7LZbFjMDLfCxkYLC60i/5JzvOtr
-gkBz3hTY7ksQqjlnEZhlIFNHftpKlmHC1eOshBUhssjnUSJI4AQpUkurhXULEQA2wRcB95YSs3Ao
-PJmfivVo8KSomkOYcXqTDs0LvdKJgpYLH1LPF+Fit7x6+ANMZube
---000000000000cafa83062e5cea00--
+Just recently I had to debug an issue where I forgot the
+right order for code I had just written. Something like:
+
+let (pgcount, pgsize) =3D foo(); where the function actually
+returned (pgsize, pgcount).
+
+A proper struct with `high` and `low` might be more verbose, but
+it rules out this issue.
+
+> +        ((self >> u32::BITS) as u32, self as u32)
+> +    }
+> +}
+>=20
+> --=20
+> 2.48.1
+>=20
+
+=E2=80=94 Daniel
+>=20
+
 
