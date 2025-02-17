@@ -1,145 +1,393 @@
-Return-Path: <linux-kernel+bounces-517269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A56A37E8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:31:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D1FA37EA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B564E188D357
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8BE18923E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5B8215F50;
-	Mon, 17 Feb 2025 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fK/H46QJ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94A22163AB;
+	Mon, 17 Feb 2025 09:31:58 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BF921519C;
-	Mon, 17 Feb 2025 09:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB2721639A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784677; cv=none; b=ulOktqqRNfoXDIsk2NBqhnfPAOBrnjIH1BcyyW7IcRRSX+LFfWtVj4mIwt8WUxL2X3KIftuWNO+Xx3ylICEzuueG2qIkB8tGvj0B2Xi0+yXKCq3y3QAAxjwj4YCUaHShJzR7n21qBtvIVvqsBrk1V1/i0CR2Jjfg3cbppCqXqcw=
+	t=1739784718; cv=none; b=k8udl/ZEzXTsecnYyZznqtt69eehlL4rd0RMKP8W50+c6pUnzLGyltR22k0V/+iLEbPyQekTrNw2pLfx5xGBApOp/pH0CTT0Xqt4XMFKDPAWV6wTY8Bl25X19psF4AliRNVfQWXG8iGg1ufcj36CawQ0+VFQdDkMAK8JQPpM4Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784677; c=relaxed/simple;
-	bh=BF3BWMnRAgV+XVc7QLQRap/ja+b/weSZ+YkZOb083OM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FppWIrHncgthL/3PAW17LeknnXOPLzh+HVIqoKzujxJs+Vft7irobBNoGbojA8Mk0psF/vWiF/Jhb9+rbku5knZ9XCmA8FuxdUNGyaerS75h/Kd3IB3AZnnxgK/Hy1utkQobRzd+aZDJJBFJlZglMcETZmy7mFfel2hXRSsJSqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fK/H46QJ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D2C04328A;
-	Mon, 17 Feb 2025 09:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739784672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gzSgtFsogf3LvL+ai4nE5Lt4B+3+Fu9VUwcYPOuEIZQ=;
-	b=fK/H46QJFMLPMcRVkjjcBvXz3suQapWq9E5PCchE4muxik4Ug0FIztPKlE1SGb5DuDwz5a
-	Uoo/64V/Eik/EAM40u63rxPdOzMTUc5FKFGxbkaMwRtBN5QXugz6xEKYFf59C2CPI3qGmh
-	u2dWyZ6LCPd2sA0i6Nm2l6QZWCbNwHDiaPP9GOa9zcetatAYq2HNqRYOpUPYEdK/9SEZcv
-	QBSU/EiTcIELPURB8EgJ9MV8wakky8b0GJorTq/QHU9O5rUi5u4wERdnNw3OTb4gL4kLQh
-	1ripd4J1y7IWjqrj7Anhj4dIEqUdf7WF3Tl1AosWjOQZfn//HL8/QDLv01yDpA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: J. =?utf-8?Q?Neusch=C3=A4fer?= <j.ne@posteo.net>
-Cc: J. =?utf-8?Q?Neusch=C3=A4fer?= via B4 Relay
- <devnull+j.ne.posteo.net@kernel.org>,
-  devicetree@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,  Krzysztof
- Kozlowski <krzk@kernel.org>,  imx@lists.linux.dev,  Scott Wood
- <oss@buserror.net>,  Madhavan Srinivasan <maddy@linux.ibm.com>,  Michael
- Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,
-  Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
- <naveen@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Damien Le Moal
- <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>,  Herbert Xu
- <herbert@gondor.apana.org.au>,  "David S. Miller" <davem@davemloft.net>,
-  Lee Jones <lee@kernel.org>,  Vinod Koul <vkoul@kernel.org>,  Lorenzo
- Pieralisi <lpieralisi@kernel.org>,  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,
-  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,  Bjorn Helgaas
- <bhelgaas@google.com>,  J. =?utf-8?Q?Neusch=C3=A4fer?=
- <j.neuschaefer@gmx.net>,  Wim Van
- Sebroeck <wim@linux-watchdog.org>,  Guenter Roeck <linux@roeck-us.net>,
-  Mark Brown <broonie@kernel.org>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-ide@vger.kernel.org,  linux-crypto@vger.kernel.org,
-  dmaengine@vger.kernel.org,  linux-pci@vger.kernel.org,
-  linux-watchdog@vger.kernel.org,  linux-spi@vger.kernel.org,
-  linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v2 12/12] dt-bindings: mtd: raw-nand-chip: Relax node
- name pattern
-In-Reply-To: <Z7Iqir-qaZDt6tsx@probook> ("J. =?utf-8?Q?Neusch=C3=A4fer=22'?=
- =?utf-8?Q?s?= message of "Sun, 16
-	Feb 2025 18:12:26 +0000")
-References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
-	<20250207-ppcyaml-v2-12-8137b0c42526@posteo.net>
-	<87o6zaurv9.fsf@bootlin.com> <Z7Iqir-qaZDt6tsx@probook>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 17 Feb 2025 10:31:08 +0100
-Message-ID: <87tt8svrxf.fsf@bootlin.com>
+	s=arc-20240116; t=1739784718; c=relaxed/simple;
+	bh=nw34p0kUOprw/9zU0R4qhsKxSlou6Sfwx7PrPs90/OM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fgfFIKUEBNmS9PX2cgviaXeD0hOC5vqIoyTt89ZyYMtGeMybH/kyumiU/8L5TL1W8VTMVQL/iIcUr+o3vPMPL+jGHGE+zGvNU5dI7Iu86IBbYjQCKDETgWpnvSwzQhWSnEYQZxvYGvfNhUGze3fT/7+282PZtJe3No3R5NdZNqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh247.corpemail.net
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id PDX00143;
+        Mon, 17 Feb 2025 17:31:43 +0800
+Received: from localhost.localdomain (10.94.10.240) by
+ jtjnmail201604.home.langchao.com (10.100.2.4) with Microsoft SMTP Server id
+ 15.1.2507.39; Mon, 17 Feb 2025 17:31:42 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [v2] erofs: get rid of erofs_kmap_type
+Date: Mon, 17 Feb 2025 04:31:41 -0500
+Message-ID: <20250217093141.2659-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkedtgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdevhffgtdfhhefggeeftdeiffduiedtgffftddutdehteejhfevieelveegveetnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefledprhgtphhtthhopehjrdhnvgesphhoshhtvghordhnvghtpdhrtghpthhtohepuggvvhhnuhhllhdojhdrnhgvrdhpohhsthgvohdrnhgvtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoi
- ihlrggsshdrohhrghdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehoshhssegsuhhsvghrrhhorhdrnhgvthdprhgtphhtthhopehmrgguugihsehlihhnuhigrdhisghmrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain
+tUid: 202521717314390236f9de244629bbe98a4a41f0267b2
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hello,
+Since EROFS_KMAP_ATOMIC is no longer valid, get rid of erofs_kmap_type too.
 
->> > In some scenarios, such as under the Freescale eLBC bus, there are raw
->> > NAND chips with a unit address that has a comma in it (cs,offset).
->> > Relax the $nodename pattern in raw-nand-chip.yaml to allow such unit
->> > addresses.
->>=20
->> This is super specific to this controller, I'd rather avoid that in the
->> main (shared) files. I believe you can force another node name in the
->> controller's binding instead?
->
-> It's a bit tricky. AFAICS, when I declare a node name pattern in my
-> specific binding in addition to the generic binding, the result is that
-> both of them apply, so I can't relax stricter requirements:
->
-> # raw-nand-chip.yaml
-> properties:
->   $nodename:
->     pattern: "^nand@[a-f0-9]$"
->
-> # fsl,elbc-fcm-nand.yaml
-> properties:
->   $nodename:
->     pattern: "^nand@[a-f0-9](,[0-9a-f]*)?$"
+Signed-off-by: Bo Liu <liubo03@inspur.com>
+---
+ fs/erofs/data.c     | 17 ++++++++---------
+ fs/erofs/dir.c      |  2 +-
+ fs/erofs/fileio.c   |  2 +-
+ fs/erofs/fscache.c  |  2 +-
+ fs/erofs/inode.c    |  6 +++---
+ fs/erofs/internal.h | 10 ++--------
+ fs/erofs/namei.c    |  2 +-
+ fs/erofs/super.c    |  8 ++++----
+ fs/erofs/xattr.c    | 12 ++++++------
+ fs/erofs/zdata.c    |  4 ++--
+ fs/erofs/zmap.c     |  6 +++---
+ 11 files changed, 32 insertions(+), 39 deletions(-)
 
-Well, I guess this is creating a second possible node name.
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 0cd6b5c4df98..1d2cb0fa1baf 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -25,8 +25,7 @@ void erofs_put_metabuf(struct erofs_buf *buf)
+ 	buf->page = NULL;
+ }
+ 
+-void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
+-		  enum erofs_kmap_type type)
++void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap)
+ {
+ 	pgoff_t index = offset >> PAGE_SHIFT;
+ 	struct folio *folio = NULL;
+@@ -43,10 +42,10 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
+ 			return folio;
+ 	}
+ 	buf->page = folio_file_page(folio, index);
+-	if (!buf->base && type == EROFS_KMAP)
+-		buf->base = kmap_local_page(buf->page);
+-	if (type == EROFS_NO_KMAP)
++	if (!need_kmap)
+ 		return NULL;
++	if (!buf->base)
++		buf->base = kmap_local_page(buf->page);
+ 	return buf->base + (offset & ~PAGE_MASK);
+ }
+ 
+@@ -65,10 +64,10 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+ }
+ 
+ void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+-			 erofs_off_t offset, enum erofs_kmap_type type)
++			 erofs_off_t offset, bool need_kmap)
+ {
+ 	erofs_init_metabuf(buf, sb);
+-	return erofs_bread(buf, offset, type);
++	return erofs_bread(buf, offset, need_kmap);
+ }
+ 
+ static int erofs_map_blocks_flatmode(struct inode *inode,
+@@ -135,7 +134,7 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
+ 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize +
+ 		    vi->xattr_isize, unit) + unit * chunknr;
+ 
+-	kaddr = erofs_read_metabuf(&buf, sb, pos, EROFS_KMAP);
++	kaddr = erofs_read_metabuf(&buf, sb, pos, true);
+ 	if (IS_ERR(kaddr)) {
+ 		err = PTR_ERR(kaddr);
+ 		goto out;
+@@ -312,7 +311,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+ 
+ 		iomap->type = IOMAP_INLINE;
+-		ptr = erofs_read_metabuf(&buf, sb, mdev.m_pa, EROFS_KMAP);
++		ptr = erofs_read_metabuf(&buf, sb, mdev.m_pa, true);
+ 		if (IS_ERR(ptr))
+ 			return PTR_ERR(ptr);
+ 		iomap->inline_data = ptr;
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index c3b90abdee37..1d3bb8746ab1 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -58,7 +58,7 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+ 		struct erofs_dirent *de;
+ 		unsigned int nameoff, maxsize;
+ 
+-		de = erofs_bread(&buf, dbstart, EROFS_KMAP);
++		de = erofs_bread(&buf, dbstart, true);
+ 		if (IS_ERR(de)) {
+ 			erofs_err(sb, "fail to readdir of logical block %u of nid %llu",
+ 				  erofs_blknr(sb, dbstart), EROFS_I(dir)->nid);
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index 0ffd1c63beeb..bec4b56b3826 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -112,7 +112,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 			void *src;
+ 
+ 			src = erofs_read_metabuf(&buf, inode->i_sb,
+-						 map->m_pa + ofs, EROFS_KMAP);
++						 map->m_pa + ofs, true);
+ 			if (IS_ERR(src)) {
+ 				err = PTR_ERR(src);
+ 				break;
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index ce3d8737df85..9c9129bca346 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -276,7 +276,7 @@ static int erofs_fscache_data_read_slice(struct erofs_fscache_rq *req)
+ 		size_t size = map.m_llen;
+ 		void *src;
+ 
+-		src = erofs_read_metabuf(&buf, sb, map.m_pa, EROFS_KMAP);
++		src = erofs_read_metabuf(&buf, sb, map.m_pa, true);
+ 		if (IS_ERR(src))
+ 			return PTR_ERR(src);
+ 
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index d4b89407822a..4936bd43c438 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -42,7 +42,7 @@ static int erofs_read_inode(struct inode *inode)
+ 	blkaddr = erofs_blknr(sb, inode_loc);
+ 	ofs = erofs_blkoff(sb, inode_loc);
+ 
+-	kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), EROFS_KMAP);
++	kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), true);
+ 	if (IS_ERR(kaddr)) {
+ 		erofs_err(sb, "failed to get inode (nid: %llu) page, err %ld",
+ 			  vi->nid, PTR_ERR(kaddr));
+@@ -82,8 +82,8 @@ static int erofs_read_inode(struct inode *inode)
+ 				goto err_out;
+ 			}
+ 			memcpy(copied, dic, gotten);
+-			kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr + 1),
+-						   EROFS_KMAP);
++			kaddr = erofs_read_metabuf(&buf, sb,
++					erofs_pos(sb, blkaddr + 1), true);
+ 			if (IS_ERR(kaddr)) {
+ 				erofs_err(sb, "failed to get inode payload block (nid: %llu), err %ld",
+ 					  vi->nid, PTR_ERR(kaddr));
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 686d835eb533..f955793146f4 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -199,11 +199,6 @@ enum {
+ 	EROFS_ZIP_CACHE_READAROUND
+ };
+ 
+-enum erofs_kmap_type {
+-	EROFS_NO_KMAP,		/* don't map the buffer */
+-	EROFS_KMAP,		/* use kmap_local_page() to map the buffer */
+-};
+-
+ struct erofs_buf {
+ 	struct address_space *mapping;
+ 	struct file *file;
+@@ -387,11 +382,10 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
+ 			  erofs_off_t *offset, int *lengthp);
+ void erofs_unmap_metabuf(struct erofs_buf *buf);
+ void erofs_put_metabuf(struct erofs_buf *buf);
+-void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
+-		  enum erofs_kmap_type type);
++void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap);
+ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb);
+ void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+-			 erofs_off_t offset, enum erofs_kmap_type type);
++			 erofs_off_t offset, bool need_kmap);
+ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
+ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		 u64 start, u64 len);
+diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
+index c94d0c1608a8..f7cf4f41af28 100644
+--- a/fs/erofs/namei.c
++++ b/fs/erofs/namei.c
+@@ -100,7 +100,7 @@ static void *erofs_find_target_block(struct erofs_buf *target,
+ 		struct erofs_dirent *de;
+ 
+ 		buf.mapping = dir->i_mapping;
+-		de = erofs_bread(&buf, erofs_pos(dir->i_sb, mid), EROFS_KMAP);
++		de = erofs_bread(&buf, erofs_pos(dir->i_sb, mid), true);
+ 		if (!IS_ERR(de)) {
+ 			const int nameoff = nameoff_from_disk(de->nameoff, bsz);
+ 			const int ndirents = nameoff / sizeof(*de);
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 827b62665649..3dc86d931ef1 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -94,7 +94,7 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
+ 	int len, i, cnt;
+ 
+ 	*offset = round_up(*offset, 4);
+-	ptr = erofs_bread(buf, *offset, EROFS_KMAP);
++	ptr = erofs_bread(buf, *offset, true);
+ 	if (IS_ERR(ptr))
+ 		return ptr;
+ 
+@@ -110,7 +110,7 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
+ 	for (i = 0; i < len; i += cnt) {
+ 		cnt = min_t(int, sb->s_blocksize - erofs_blkoff(sb, *offset),
+ 			    len - i);
+-		ptr = erofs_bread(buf, *offset, EROFS_KMAP);
++		ptr = erofs_bread(buf, *offset, true);
+ 		if (IS_ERR(ptr)) {
+ 			kfree(buffer);
+ 			return ptr;
+@@ -141,7 +141,7 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+ 	struct erofs_deviceslot *dis;
+ 	struct file *file;
+ 
+-	dis = erofs_read_metabuf(buf, sb, *pos, EROFS_KMAP);
++	dis = erofs_read_metabuf(buf, sb, *pos, true);
+ 	if (IS_ERR(dis))
+ 		return PTR_ERR(dis);
+ 
+@@ -255,7 +255,7 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	void *data;
+ 	int ret;
+ 
+-	data = erofs_read_metabuf(&buf, sb, 0, EROFS_KMAP);
++	data = erofs_read_metabuf(&buf, sb, 0, true);
+ 	if (IS_ERR(data)) {
+ 		erofs_err(sb, "cannot read erofs superblock");
+ 		return PTR_ERR(data);
+diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
+index df2777e05661..9cf84717a92e 100644
+--- a/fs/erofs/xattr.c
++++ b/fs/erofs/xattr.c
+@@ -81,7 +81,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
+ 	it.pos = erofs_iloc(inode) + vi->inode_isize;
+ 
+ 	/* read in shared xattr array (non-atomic, see kmalloc below) */
+-	it.kaddr = erofs_bread(&it.buf, it.pos, EROFS_KMAP);
++	it.kaddr = erofs_bread(&it.buf, it.pos, true);
+ 	if (IS_ERR(it.kaddr)) {
+ 		ret = PTR_ERR(it.kaddr);
+ 		goto out_unlock;
+@@ -102,7 +102,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
+ 	it.pos += sizeof(struct erofs_xattr_ibody_header);
+ 
+ 	for (i = 0; i < vi->xattr_shared_count; ++i) {
+-		it.kaddr = erofs_bread(&it.buf, it.pos, EROFS_KMAP);
++		it.kaddr = erofs_bread(&it.buf, it.pos, true);
+ 		if (IS_ERR(it.kaddr)) {
+ 			kfree(vi->xattr_shared_xattrs);
+ 			vi->xattr_shared_xattrs = NULL;
+@@ -183,7 +183,7 @@ static int erofs_xattr_copy_to_buffer(struct erofs_xattr_iter *it,
+ 	void *src;
+ 
+ 	for (processed = 0; processed < len; processed += slice) {
+-		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
++		it->kaddr = erofs_bread(&it->buf, it->pos, true);
+ 		if (IS_ERR(it->kaddr))
+ 			return PTR_ERR(it->kaddr);
+ 
+@@ -286,7 +286,7 @@ static int erofs_getxattr_foreach(struct erofs_xattr_iter *it)
+ 
+ 	/* 2. handle xattr name */
+ 	for (processed = 0; processed < entry.e_name_len; processed += slice) {
+-		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
++		it->kaddr = erofs_bread(&it->buf, it->pos, true);
+ 		if (IS_ERR(it->kaddr))
+ 			return PTR_ERR(it->kaddr);
+ 
+@@ -330,7 +330,7 @@ static int erofs_xattr_iter_inline(struct erofs_xattr_iter *it,
+ 	it->pos = erofs_iloc(inode) + vi->inode_isize + xattr_header_sz;
+ 
+ 	while (remaining) {
+-		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
++		it->kaddr = erofs_bread(&it->buf, it->pos, true);
+ 		if (IS_ERR(it->kaddr))
+ 			return PTR_ERR(it->kaddr);
+ 
+@@ -367,7 +367,7 @@ static int erofs_xattr_iter_shared(struct erofs_xattr_iter *it,
+ 	for (i = 0; i < vi->xattr_shared_count; ++i) {
+ 		it->pos = erofs_pos(sb, sbi->xattr_blkaddr) +
+ 				vi->xattr_shared_xattrs[i] * sizeof(__le32);
+-		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
++		it->kaddr = erofs_bread(&it->buf, it->pos, true);
+ 		if (IS_ERR(it->kaddr))
+ 			return PTR_ERR(it->kaddr);
+ 
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index d771e06db738..ad674eee400a 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -832,7 +832,7 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
+ 	} else {
+ 		void *mptr;
+ 
+-		mptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, EROFS_NO_KMAP);
++		mptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, false);
+ 		if (IS_ERR(mptr)) {
+ 			ret = PTR_ERR(mptr);
+ 			erofs_err(sb, "failed to get inline data %d", ret);
+@@ -967,7 +967,7 @@ static int z_erofs_read_fragment(struct super_block *sb, struct folio *folio,
+ 	buf.mapping = packed_inode->i_mapping;
+ 	for (; cur < end; cur += cnt, pos += cnt) {
+ 		cnt = min(end - cur, sb->s_blocksize - erofs_blkoff(sb, pos));
+-		src = erofs_bread(&buf, pos, EROFS_KMAP);
++		src = erofs_bread(&buf, pos, true);
+ 		if (IS_ERR(src)) {
+ 			erofs_put_metabuf(&buf);
+ 			return PTR_ERR(src);
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 689437e99a5a..75daac513050 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -31,7 +31,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 	struct z_erofs_lcluster_index *di;
+ 	unsigned int advise;
+ 
+-	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, EROFS_KMAP);
++	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, true);
+ 	if (IS_ERR(di))
+ 		return PTR_ERR(di);
+ 	m->lcn = lcn;
+@@ -146,7 +146,7 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
+ 	else
+ 		return -EOPNOTSUPP;
+ 
+-	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, EROFS_KMAP);
++	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, true);
+ 	if (IS_ERR(in))
+ 		return PTR_ERR(in);
+ 
+@@ -561,7 +561,7 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
+ 		goto out_unlock;
+ 
+ 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
+-	h = erofs_read_metabuf(&buf, sb, pos, EROFS_KMAP);
++	h = erofs_read_metabuf(&buf, sb, pos, true);
+ 	if (IS_ERR(h)) {
+ 		err = PTR_ERR(h);
+ 		goto out_unlock;
+-- 
+2.31.1
 
-> # dtc
-> /.../fsl,elbc-fcm-nand.example.dtb:
-> nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
->         from schema $id:
-> 	http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
-
-What about fixing the DT instead?
-
-> (I changed the second pattern to nand-fail@... and dtc warned about it
->  mismatching too.)
->
-> Perhaps I'm missing a DT-schema trick to override a value/pattern.
->
-> Alternatively (pending discussion on patch 11/12), I might end up not
-> referencing raw-nand-chip.yaml.
-
-Ok.
-
-Thanks,
-Miqu=C3=A8l
 
