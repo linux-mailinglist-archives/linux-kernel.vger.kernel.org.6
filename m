@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-518311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F1A38D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:15:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E783A38D15
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CB53AFD6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08667A2626
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB6B19E82A;
-	Mon, 17 Feb 2025 20:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449AB237703;
+	Mon, 17 Feb 2025 20:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U3TLBvo+"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDK02/CC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41415149C41
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB53149C41;
+	Mon, 17 Feb 2025 20:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739823331; cv=none; b=VuVOVT8h48Ljb3FzGgUFM9UtdfyQw4+NCbxByM86wQmvN2JF+l/vzWNlYWsoqTyXW4tF37Usjvt1xn2VjRa2BwHChaLZKsoafdRcOMdYKitJJRaYM0ur64Tj28ZmoIEt3ZQwiK2MysGuIqL33pypx2fK6V0CE+ydpF1+LV8y2Do=
+	t=1739823368; cv=none; b=e4ts5DHqvomVQazSErKTO/nE361Hwp/l2my7hsPXf+Lf2NAw+2dG736SMhzwg0ibsJYFHoHkhe6O3hTuE1FFIt3NS9N5VHNj7BW2nD8Jl0gZ8ouprLhOgx9HHnLL8rNPt8bSvt0dg3FHIeOfIEqilRHuKHUszkg2Vn/1TmOsivM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739823331; c=relaxed/simple;
-	bh=8hgtSq+DKZ5LHKar18MniLjf8PSgDafS9oaF0lbKPmE=;
+	s=arc-20240116; t=1739823368; c=relaxed/simple;
+	bh=aFKj1rf14/ci2zLh79/Xl5E9PDaxp9QushJOhxMjPjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfET469Kipv2xYovCvzge+7Dtcqllpn+wdTiYnUcwwJ40PceKGuvwiw6nFuW+YaMHwlWKnFqiu8am4sI5uAUJSHilXH8AFtoRSv+OBQITDpxGh9bY7Udg/khiCWGqj0txYH+Af3rGYEb0X1gUjLqR3XzZVRb9zaFGzwF5M7hur0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U3TLBvo+; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54622940ef7so1358132e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:15:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739823327; x=1740428127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eRkHg5Ucp6RGHWusT3IEAggViQD31EKhbXy2GP0vglI=;
-        b=U3TLBvo+Yr5tVxjsHUdnQFTP+C02TPJLU5VRJZNiEWxLiKUUwHLrOBhigjOFQljk9x
-         jLXhiL0dIhDHWOdJDnidHL4Q9BoM4De1YwT7FtiN/8pDbfh6fOxA/RT8MupG8jxpMgXo
-         kiVxMpEpSbxWD42TAbbdnAzE+kTRaWQXVbNvip5JxYRyZrBd8jGJG7+3G1c9y11cednk
-         Xilbmswl+xsHEs8Z83ZWRbxnjD7+4A9c1QfM9gnwUw2KvkgbKHjzawMVoCVgktwycuNC
-         Z8Q7F5dupYg+lrZzfQy+sn3SA9QsCsZwY6fAx6sk6mmXl0ONoZZ3tFibj61i3GRFCEkG
-         ryMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739823327; x=1740428127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eRkHg5Ucp6RGHWusT3IEAggViQD31EKhbXy2GP0vglI=;
-        b=qNmqe+0TlXooSWWTV78X7WGCmtOJQR0LSIfAxxCtwQC6qFXK+xo2p16era8Lf8Nmdk
-         nIUvfcz4zMULec6UyOKwg/YCpCW/AG1/YEOr54lJOchTap52eoW2TgvTw5vgjfEPppU8
-         39ematbk+xmmM10tnpN2xfV7F5sCxF4Ue7VhHo7XoPFUXi5svMcvvzT20ZaNZDNb79Fy
-         t3QVfVMG2h9Vtex8P76XhJI/gEI9+ieChg7wAcWIrFtadbzistT0q4B2esGPcdmKxZLo
-         GaLCzvfg0nY/8Bs2IlNxk6qXHu+u0bPMDA1F2Q0eB5n+hG3FibBfyLqIJCL6e9LYiW9Q
-         hJ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJfUXOPTrt47eIfdIPkO7nPnwCxhvrzi9XHGvPG4fRH5xKVBMw9kd9LF854r8gAhGt7oLJpJj8M0k7y8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL9IQ44/YD0FsxkJcy5sbvfUWsQe8PymbyA2mhbhAooVjZigDl
-	8BExlCUPtkZFfONiBJ0+VHjANU7VFQ5cjNXSL5KNGUc37vYFy9Y6JlikSS2M8jc=
-X-Gm-Gg: ASbGnctgfgntAoyYtst+SL6M/iuUB4btfTxPm++Ljq7CvljyyRxc5VYd09NvUeZTpks
-	qwPzYcuOS1FW4I5eOdOcqYdtJEwROtIjYIXbOXWb3bLyF6jT9Hgs/rZtylWDqQ1GB6HH8reSxUX
-	Y1r5lP+ohW8+OhsR4GfoYG7E5iRjuoapt2rBc4mVO5rarRwi4I0aXRtNQYxkp5pWd+v7EgA8SBW
-	IVBThpFPfxFsDd9EU7Yc/loy/kEsq2tNYk1ds4pC+svOIiszAYJnVF9Wi74oRGmHKFQ40PZL6Kl
-	jBuZs6XClC8r864v8M8qUmEPRIcwoQ7bVrLIcv90/0cRgrrrXrUsPfzeViN1sQK0i/RGvAI=
-X-Google-Smtp-Source: AGHT+IHN4TQQDcSOwXKpfuPORhrxQ9cJeq7yFtgX9iUm7RPvnEU4xWfa1ad7OdRTHhcIA1rKUqRDiA==
-X-Received: by 2002:a05:6512:3ba9:b0:545:1233:d4f9 with SMTP id 2adb3069b0e04-5452fe66b4fmr2845657e87.30.1739823327250;
-        Mon, 17 Feb 2025 12:15:27 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54620544eacsm565555e87.136.2025.02.17.12.15.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 12:15:25 -0800 (PST)
-Date: Mon, 17 Feb 2025 22:15:23 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Vishal Sagar <vishal.sagar@amd.com>, 
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 06/11] drm/fourcc: Add DRM_FORMAT_XVUY2101010
-Message-ID: <bdpw2g65uor77tijlhpabodog7haqvdcemnr3wzqkooerzuib5@hfdn5zsrbkgg>
-References: <20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com>
- <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHXwrqfdNwozjXpdKfnoe7/625bKihSO0lzzU67gUDEV4Ky990AlTvlE+seE6V1OrgaE173HK/lu9s5je79f2A9SAqvD/vFXq83QmAc6/jUmUfO34xm9+Fo2tSv5cdKrQlBwNYuVV3qXHC5jOGtmZ5HCCddjNftySoEOT7o5xOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDK02/CC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739823367; x=1771359367;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aFKj1rf14/ci2zLh79/Xl5E9PDaxp9QushJOhxMjPjc=;
+  b=DDK02/CCN0e/cHiuPgVqmlcq+yKyjCV7NcokY5VRna58ljjVBPwSZA9x
+   MPZhnG1ORHIwKS+lDa041v5IZdczl14VHNt2lsUNJeDFf3nadX+RMTuwH
+   VYfBKIDSU7R/Z1k3+J5gXCy0BfPliT6+J2kr/1dZ0HzbU+PsONetqThM+
+   m/HkycH3PAXsppCwPyiTw54FZ8cEDcR0OWLjfAYcZ4U6YTtqqTAqVd8q/
+   mPykzPIkV6CRw2ECaXlyH3wY0gotw94AuKmPcyF8betT2LN6Bjek2c6iz
+   jwbVYCOC3oI7s7qN5Klz7s+jMo17waNiG/cL724gxpIeRX/iEUSws003k
+   w==;
+X-CSE-ConnectionGUID: clbeycvgSSOxZtxExYNtmg==
+X-CSE-MsgGUID: tATNWy9jSE2FPOtTWn1VAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44165852"
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
+   d="scan'208";a="44165852"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 12:16:06 -0800
+X-CSE-ConnectionGUID: iNnZr2dlT9ySEHSxnFMtAw==
+X-CSE-MsgGUID: WDYuwL+ESluM62DgzQKDQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,293,1732608000"; 
+   d="scan'208";a="113945290"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 12:16:01 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tk7X3-0000000CVY9-3Ayc;
+	Mon, 17 Feb 2025 22:15:57 +0200
+Date: Mon, 17 Feb 2025 22:15:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <Z7OY_b3I1eyxpsIk@smile.fi.intel.com>
+References: <20250217140336.107476-1-clamor95@gmail.com>
+ <20250217140336.107476-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,52 +94,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212-xilinx-formats-v3-6-90d0fe106995@ideasonboard.com>
+In-Reply-To: <20250217140336.107476-3-clamor95@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Feb 12, 2025 at 04:56:10PM +0200, Tomi Valkeinen wrote:
-> Add XVUY2101010, a 10 bits per component YCbCr format in a 32 bit
-> container.
+On Mon, Feb 17, 2025 at 04:03:35PM +0200, Svyatoslav Ryhel wrote:
+> AL3000a is a simple I2C-based ambient light sensor, which is
+> closely related to AL3010 and AL3320a, but has significantly
+> different way of processing data generated by the sensor.
 
-Is there a more common name for this format? Otherwise googling for it
-reveals only your series.
+LGTM, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->  drivers/gpu/drm/drm_fourcc.c  | 1 +
->  include/uapi/drm/drm_fourcc.h | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index cc7e1ef4ef21..07b03b0fe9ad 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -280,6 +280,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_VYUY,		.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_XYUV8888,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_VUY888,          .depth = 0,  .num_planes = 1, .cpp = { 3, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
-> +		{ .format = DRM_FORMAT_XVUY2101010,     .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
->  		{ .format = DRM_FORMAT_Y210,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_Y212,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index f936cac2aebc..7e8aa3bd52b9 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -246,6 +246,7 @@ extern "C" {
->  #define DRM_FORMAT_XVUY8888	fourcc_code('X', 'V', 'U', 'Y') /* [31:0] X:Cr:Cb:Y 8:8:8:8 little endian */
->  #define DRM_FORMAT_VUY888	fourcc_code('V', 'U', '2', '4') /* [23:0] Cr:Cb:Y 8:8:8 little endian */
->  #define DRM_FORMAT_VUY101010	fourcc_code('V', 'U', '3', '0') /* Y followed by U then V, 10:10:10. Non-linear modifier only */
-> +#define DRM_FORMAT_XVUY2101010	fourcc_code('X', 'Y', '3', '0') /* [31:0] x:Cr:Cb:Y 2:10:10:10 little endian */
->  
->  /*
->   * packed Y2xx indicate for each component, xx valid data occupy msb
-> 
-> -- 
-> 2.43.0
-> 
+...
+
+> +static void al3000a_set_pwr_off(void *_data)
+> +{
+> +	struct al3000a_data *data = _data;
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CONFIG_DISABLE);
+> +	if (ret)
+> +		dev_err(dev, "failed to write system register\n");
+> +
+> +	ret = regulator_disable(data->vdd_supply);
+> +	if (ret)
+> +		dev_err(dev, "failed to disable vdd power supply\n");
+
+I dunno what we can do on errors, but at least user will be informed what was
+failed.
+
+> +}
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
