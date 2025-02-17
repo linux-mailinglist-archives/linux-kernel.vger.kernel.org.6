@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-517106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003F0A37C3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:31:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38D9A37C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80121887C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D2F1889A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568F4197A8F;
-	Mon, 17 Feb 2025 07:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3523C19995E;
+	Mon, 17 Feb 2025 07:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCjhtPLJ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IU3cbEYq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0104F8F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCE118DF86;
+	Mon, 17 Feb 2025 07:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739777488; cv=none; b=GTdsaVaLPm9guaIXebsQbf7Jvkb6vib4RvYgJjfHcDwfxWpCjirFSJYoXzvqO7SB4SV1s/iDeKC5y8GpyMIsSj9JsB6WqoJVtjVyp3FRz6gPb9GrvShadgmNmm7TjSocNeGDkVXJ/i3vg8lx5MpliFmWAUpnMtyZOXLgmuRwam4=
+	t=1739777514; cv=none; b=shOMbo4k1Opl9GMCaul0fqlCDbk9Sx22wQn9OYM09OZHjCP9kQaOcAHC8jofpdPkD8E5302aSYhuwux6W+02A8m0PLoeMc6ksZhN+iVaKnWCH57QiyDvQtwKB0SQQ2E9nXYLr210r4qr/Rsx/Mv4sERKHqJxKToZub4KNl51yWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739777488; c=relaxed/simple;
-	bh=5LfAzuERriSmpQuSJeDzYhRoc6w7MgsIIf2LhY1/C1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Oi8bzjrhDLXpYbmfMLoJ6gDjjaSWtOVA/eQFneeN274dlS/3R8phSDsfg4rhtgwkazq1x/m2TU/qJQTMcbbP2iqMPQ1NTWi4V7oaGh74H+quD/o0wfZmJ3RqqrtSkPPYqqr3MC8tqaMs9jGfdZHwNxFQstGyjuHw2JXFWtaaDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCjhtPLJ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abb999658fbso79979866b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:31:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739777485; x=1740382285; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
-        b=YCjhtPLJ8c3VCtW0f/7lU7w575uDXecEJoK9/RYmdF9yX3i7UWH43dJFHLCYjDRqt3
-         XfKJq9o59ldaSNBogGV4zRa+c7ZnzzOwdD1DwZvTfeGdwPvUNK8xbbZCwDGU9lrJzJio
-         +hokEWi5YihR8Y7VH4n/lHv3zvX45DYFDK1KiDjm59lHjkDkApXJKLA970PiNCSm3LY9
-         2y/g/9bbstz4yWgRhZgIz49fodywQ4T5nxuPDmH+0jP1r6NMyOEz3WAEMb0B7HRVu3wG
-         gZ51Z9Us9SguU82050e99U/iT2CCKC/B28VBiQ4BXcn8nW9jyIMfQScVXnuUHeryHmFs
-         p63g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739777485; x=1740382285;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
-        b=P8kyKGRlUv1O4DC1I5zCM44xDVG8lw54f1zuboG6febzz5XqW+lHaw1GtovaN3QBl8
-         U0QA99Z1ga19cvlSzDqi43YbQ/L6hlMBRhK/le4hFuRRVGPvLTkKj1/4J+FX+gp5U7xX
-         fuhgi6hBjJbfpkePvGQUDmBoVjftiYHp4TJHjje8ybU1ZWN6+Nd+RXfaBvts/fPGFdRo
-         AaV7hUgYfmatw1bdCWEs89Kikp+Et4O69os9tpS/w0y2e0yamzElEei8yJmsHD0yKPRj
-         yNAo+sZhvuhGCOrOflX66xmN76DOHJeLnAQi0D6DW3fe3H5r7PGc38nb+4eYGilzHSUD
-         UVTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaOl+6SgLHIwn/0KfpWuU5Rn+S7TxWgyzIYF0OB8enco18Ts8/t6l0dxiC2w8wYx/oV7rc5s+ilBn+Vlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqDQ2GmHnhwDdVUbWDOeh7t8/0NrMsPqQR6mP1SShVGbJBSUZc
-	UInSfVYs6mzAXpIXWILXH8J3ejeVlwyhUe7lp7jEoO6GWJPryVvXHWpLzpiTlg4=
-X-Gm-Gg: ASbGncu53KoqdgTgH/iDlCJa77jLqki+PVEw4RlQ1EtYkTkHloYnHiyDpZ0TNszbCmk
-	7hSCL6rNNBWrJIJt9ruGyrC5ZATUYR5QCVobDGYRtK+dyNRrd/vwATu+Ly4P9NO2ao3Hc/AZ0ll
-	S+PMuGoM277LMXmD6nUBS925kPMaWDGmgJxlLgquJ6tA2EkQP9fTEwwZNiymln2em0k+8xs+QjQ
-	169VlYRablDVL1qbQsK0D4PKXQiLgTPj9u4L2N4/i8Xb1x8xq3vnjIFZ/VouLucfBV8451DpLac
-	IrercDETXg/xewYvw9yh
-X-Google-Smtp-Source: AGHT+IHnHjxlo58ZzOxdeP7u7lyqoH4uJ6/5PcUK9k1FokcbI7i8gKzpjfAHODR2Y8cP+hgufV5HRA==
-X-Received: by 2002:a05:6402:3589:b0:5dc:9589:9f64 with SMTP id 4fb4d7f45d1cf-5e03602f759mr19286982a12.13.1739777485351;
-        Sun, 16 Feb 2025 23:31:25 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba532322c4sm830991766b.34.2025.02.16.23.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 23:31:24 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:31:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Timur Tabi <ttabi@nvidia.com>, Dave Airlie <airlied@redhat.com>,
-	Ben Skeggs <bskeggs@nvidia.com>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/nouveau: Fix error pointer dereference in
- r535_gsp_msgq_recv()
-Message-ID: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
+	s=arc-20240116; t=1739777514; c=relaxed/simple;
+	bh=4Dwuc9WiZ1k2pmniN6lQGfsv8ylh1rFZMcHg0ghFFJk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IVu3JtakqDQYuPUKmObFM90kXwVtYCKrf31Ev/f/Soo3yGSZD9V7/Oohbwune6e9N45sm8IvO5rE1L1Vg3KyNlLh2gZM49tBQD/1BV0T39v5pgqXrMa703vWT80p09/fltgBwIgeOuYqWVutXgR1EVnG+nUQ18d4FFZZ/14w2T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IU3cbEYq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939F9C4CED1;
+	Mon, 17 Feb 2025 07:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739777514;
+	bh=4Dwuc9WiZ1k2pmniN6lQGfsv8ylh1rFZMcHg0ghFFJk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IU3cbEYqlIx2EX7yHm5TINEvSKuAKUMYLNOb4Llh/L/WPun6erjh1+TI96+SOq78B
+	 gvRDIqkvqFBGnr2kpFGnigvc1GvtyNOYbM0tuckVIuZrDMMOtqwHPu45O879z6T6kP
+	 k6+1xH867VFSOMhpBAzlh9+pjv4M2eJYY0nKGn6D45YlIURw5qk614/U1nQpq66bfZ
+	 5qw5j6SJa/9EVHlSFKueKeJrz8/vfA388yqUElor2f+11XTAaoo3udYWJWUakmtXeC
+	 nkxuAYsiW7xEf+XWd4hERkDTGS8UnRUPKJtxQjo3RsAa7LiloGdjJpzABFSiizdf2W
+	 f7ZmvAElcMRiQ==
+From: Roger Quadros <rogerq@kernel.org>
+Subject: [PATCH net-next 0/5] net: ethernet: ti: am65-cpsw: drop multiple
+ functions and code cleanup
+Date: Mon, 17 Feb 2025 09:31:45 +0200
+Message-Id: <20250217-am65-cpsw-zc-prep-v1-0-ce450a62d64f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOHlsmcC/x2MQQ5AMBAAvyJ7tkmVKr4iDlKLPaimbRDi7xrHm
+ WTmgUCeKUCXPeDp4MC7TVDkGZh1tAshT4lBCqmELCoct1qhceHE26Dz5FCUjdS10i3pElKX5Mz
+ X/+zBUkRLV4ThfT+Bc8zhbQAAAA==
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>, 
+ Md Danish Anwar <danishanwar@ti.com>
+Cc: srk@ti.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, Roger Quadros <rogerq@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1103; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=4Dwuc9WiZ1k2pmniN6lQGfsv8ylh1rFZMcHg0ghFFJk=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnsuXltlGSEAdQBwDIAKP2KBCfDwIeHRbuXhayD
+ JxO9//0DrqJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZ7Ll5QAKCRDSWmvTvnYw
+ kwbYD/4+fZilffxaWgy4SA+Elw8wanK51v8dZcnotRawL9HNaxc4516zfKAVPFENe7PrW236TuV
+ ptw6Na9c6ol9CyvJG7HNyBwbPlK3zly2CxUbpR34Cj7KBVZATyCqGDoujmeTiKWyyDzk2Zxuyly
+ ewWHoCPmlL5bNtVwKm0QrD63Ca/BvLOOp6sLOP7Z4SxN4JhVvDVZrDq38xynBjqNrE8T/cGTtlE
+ 0TI0AAecWZE9xlPfa2tkQiXzdLWqYqkOKQTKqVWeOvjqcERkoH/4atS6ec/uDZd4nmoWaq1RhY0
+ ehIL6x/W/E/FL4zL9TFhDxGP31XMrdUgCMQAmQhWTeKfAW4Uzs8/lruIx2J4TJR1Boj38IhPs9J
+ FIXMi1Ff+H9rqky3eiC9isiHIkEicoCEJhx+cRQ5Eu4pQP2DdyopLpxpnrmFNKliFvnCsUCKYRs
+ n29iM+PZSijMEIYTHokqrgj/XpnWBMWJpxDSBneel3fJ/eB5iVwG/XBpDcDKzDoudxYbnSH8LPe
+ +5Af0Rbk3Ld8JnTNR13AnXRrDPNorm9f5XGEAfyq0H0yVPEOzazs7C+jmw3caq2cnctT2PUez9a
+ 8UoX53sWOrEDRjDHyTqyrlbdVh3iyee/xVmZTEMs6TRKwqLDBCIlKgWnIFH9Sa2yjFh5jbVzPJs
+ DRqrYpfy6cNyghw==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-If "rpc" is an error pointer then return directly.  Otherwise it leads
-to an error pointer dereference.
+We have 2 tx completion functions to handle single-port vs multi-port
+variants. Merge them into one function to make maintenance easier.
 
-Fixes: 50f290053d79 ("drm/nouveau: support handling the return of large GSP message")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+We also have 2 functions to handle TX completion for SKB vs XDP.
+Get rid of them too.
+
+Also do some minor cleanups.
+
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 1 +
- 1 file changed, 1 insertion(+)
+Roger Quadros (5):
+      net: ethernet: ti: am65-cpsw: remove am65_cpsw_nuss_tx_compl_packets_2g()
+      net: ethernet: ti: am65_cpsw: remove cpu argument am65_cpsw_run_xdp
+      net: ethernet: ti: am65-cpsw: use return instead of goto in am65_cpsw_run_xdp()
+      net: ethernet: ti: am65_cpsw: move am65_cpsw_put_page() out of am65_cpsw_run_xdp()
+      net: ethernet: ti am65_cpsw: Drop separate TX completion functions
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-index 2075cad63805..db2602e88006 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-@@ -348,6 +348,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
- 	if (IS_ERR(buf)) {
- 		kvfree(info.gsp_rpc_buf);
- 		info.gsp_rpc_buf = NULL;
-+		return buf;
- 	}
- 
- 	if (expected <= max_rpc_size)
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 211 +++++++++----------------------
+ drivers/net/ethernet/ti/am65-cpsw-nuss.h |   8 ++
+ 2 files changed, 71 insertions(+), 148 deletions(-)
+---
+base-commit: 489b31c6cf29fff5b1f5c48625770f45cea90ada
+change-id: 20250214-am65-cpsw-zc-prep-038276579e73
+
+Best regards,
 -- 
-2.47.2
+Roger Quadros <rogerq@kernel.org>
 
 
