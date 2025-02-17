@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-516958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E88A37A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:54:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B79AA37A38
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF183AF0B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3693B16D7A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909251624C5;
-	Mon, 17 Feb 2025 03:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E537154423;
+	Mon, 17 Feb 2025 03:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SbtO2gjl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pC/UAdbo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SbtO2gjl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pC/UAdbo"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DofaAc/y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2858E82899
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DB4C2C9;
+	Mon, 17 Feb 2025 03:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739764442; cv=none; b=reaKbhRxYh0zbZS5rjs77caqlu5QMYQ2cSg5lGrYOpbx0Ws9LuAXriWhp7YPbK8L3qxlJwkQOHZ4xJ6hdpVpMFtD+g1yBtyRj+C0yLOxi3fFZkw6Es0qof76CY8wuf0dJujcZbl/taa90x896oRIO8J2HwW22y6psOuvAsiwiSQ=
+	t=1739764613; cv=none; b=In0pH9HVWgCh8hpWygJPddu3wLj18offm1gEFOn7jlVl40h7aWnEUibmxcPav17OjSmU0ldXVPUeUrSz7yywTIWMoFUvDeAhoQkoIDO1KWifdcaU2WHxb3k4GqZiM3m1ubnomSRFThydhONgIYzW7zOS2JsTFxiuRme1kR7C8Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739764442; c=relaxed/simple;
-	bh=xQedsCPSFhtHw6QVp+EHduhxYmC5oWUg5T7GxRBi3IY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=mofWwwrmBiCQodwHINKJbbuKDVbmFNLlGo3fxZ+3MviM6COQ+kjJoydSa23pjCoCPYkSzw6Hr5a7NoabMSGpPgUKC7NSZkYJSZV33DBzkD0iXYQ5a74dxTOprUf5zWGfOSwKhJOt3foj6CUecAYzT/m3k/TT47Xh0nWm8/d6HUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SbtO2gjl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pC/UAdbo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SbtO2gjl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pC/UAdbo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1739764613; c=relaxed/simple;
+	bh=HL9f+syMQDsFWUoQOD69NgzQ668GNBmX4e8GA0zddxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ueD0gGhOnxG+SmTwWkRTMCuPHeZMwjzjSs0cVNAZ+zSNJeEgOpnp00zmTXtjLAR6r3Neym/EWVrNnuAgtSo64MFHgv98YYgYLJ2loqXDF25Imu3nZiM9I9P/M4VFYkSKn0uAKULhkZgCEDJ/07Uo+Ri6bw4CP8kMgeKj+TAGMUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DofaAc/y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739764604;
+	bh=6WSqKaFUzHhGRhLRQ9fZfQ+P24a/r+GzPC8WLMsu8qE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DofaAc/ygLDCrbHDSyfN+LHlAvJIlsCv+zqgByPfJH0Lsf/DujncT41U6lw6JDg/t
+	 dxHvGnknPH3arPLdLCoaWxnYdabA3ukbS8BtgpR8tNWmyLkH6Fw16GVXk9YvcUrRls
+	 e8XF+pFvmotW2Eunv8b0x7TyeIoOr0bx1qMybLky7lkn2diddbz1G/4IdeX7VSSoSV
+	 nY2APp6NUngUznqVlLHqCyn7RnTYIvYRjrT5DEcxPnoSC/uKM1C8v+zxMOEcH693ZG
+	 N582MoGT70uPnQSCos4xWYbVIq2Cb9TQh+SHxMjFtGeFQFywhoA7VX7UG6/dlVKbK0
+	 aZQhqFfYdULsQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 04A4D2115F;
-	Mon, 17 Feb 2025 03:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739764439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keg1qJuuA789j7Ba4lkiMaAbdgqyTR7GNNcXfWjDZGE=;
-	b=SbtO2gjlRW4a5ChiHpK4R3YV8cXedBUMCUIuZny0PbSY0u293kTdYS7Lizopb2xd07E92h
-	m/jQK623tU9QPGmkJow+L5eIJuMBhAe2Z0s9F/tzS2jhmOyiAozK9LoG1nIZfdERLlRyQC
-	oNBOBzul4HP1CYRx2bjna7HaEO8ARho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739764439;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keg1qJuuA789j7Ba4lkiMaAbdgqyTR7GNNcXfWjDZGE=;
-	b=pC/UAdboh2TmGXFGrInv2kNMRoOIT6xqTa7MDwreFRAfmnUfm0hla0tF8Zd9WVg5MzzJHt
-	+uscuXdjYm5lNtCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SbtO2gjl;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="pC/UAdbo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739764439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keg1qJuuA789j7Ba4lkiMaAbdgqyTR7GNNcXfWjDZGE=;
-	b=SbtO2gjlRW4a5ChiHpK4R3YV8cXedBUMCUIuZny0PbSY0u293kTdYS7Lizopb2xd07E92h
-	m/jQK623tU9QPGmkJow+L5eIJuMBhAe2Z0s9F/tzS2jhmOyiAozK9LoG1nIZfdERLlRyQC
-	oNBOBzul4HP1CYRx2bjna7HaEO8ARho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739764439;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keg1qJuuA789j7Ba4lkiMaAbdgqyTR7GNNcXfWjDZGE=;
-	b=pC/UAdboh2TmGXFGrInv2kNMRoOIT6xqTa7MDwreFRAfmnUfm0hla0tF8Zd9WVg5MzzJHt
-	+uscuXdjYm5lNtCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9607E1363A;
-	Mon, 17 Feb 2025 03:53:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nY2BEtSysmfPWgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 17 Feb 2025 03:53:56 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yx83b1jbCz4wgp;
+	Mon, 17 Feb 2025 14:56:43 +1100 (AEDT)
+Date: Mon, 17 Feb 2025 14:56:42 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron
+ <Jonathan.Cameron@Huawei.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>, David Lechner <dlechner@baylibre.com>,
+ Guillaume Stols <gstols@baylibre.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the gpio-brgl tree with the iio tree
+Message-ID: <20250217145642.410f6a1c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3} Change ->mkdir() and vfs_mkdir() to return a dentry
-In-reply-to: <20250214060039.GB1977892@ZenIV>
-References:
- <20250214052204.3105610-1-neilb@suse.de>, <20250214060039.GB1977892@ZenIV>
-Date: Mon, 17 Feb 2025 14:53:52 +1100
-Message-id: <173976443235.3118120.11496260792280593655@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 04A4D2115F
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: multipart/signed; boundary="Sig_/ETjtAXRq3b4IjRiUOkWULIK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, 14 Feb 2025, Al Viro wrote:
-> On Fri, Feb 14, 2025 at 04:16:40PM +1100, NeilBrown wrote:
-> > This is a small set of patches which are needed before we can make the
-> > locking on directory operations more fine grained.  I think they are
-> > useful even if we don't go that direction.
-> > 
-> > Some callers of vfs_mkdir() need to operation on the resulting directory
-> > but cannot be guaranteed that the dentry will be hashed and positive on
-> > success - another dentry might have been used.
-> > 
-> > This patch changes ->mkdir to return a dentry, changes NFS in particular
-> > to return the correct dentry (I believe it is the only filesystem to
-> > possibly not use the given dentry), and changes vfs_mkdir() to return
-> > that dentry, removing the look that a few callers currently need.
-> > 
-> > I have not Cc: the developers of all the individual filesystems - only
-> > NFS.  I have build-tested all the changes except hostfs.  I can email
-> > them explicitly if/when this is otherwise acceptable.  If anyone sees
-> > this on fs-devel and wants to provide a pre-emptive ack I will collect
-> > those and avoid further posting for those fs.
-> 
-> 1) please, don't sprinkle the PTR_ERR_OR_ZERO() shite all over the place.
-> Almost always the same thing can be done without it and it ends up
-> being cleaner.  Seriously.
+--Sig_/ETjtAXRq3b4IjRiUOkWULIK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've removed several PTR_ERR_OR_ZERO() calls.  Some times that could be
-seen as a slight improvement, other times possibly a slight negative
-(depending on how one feels about PTR_ERR_OR_ZERO of course).  I have
-left three as I cannot see how to remove them without making the code
-significant more clumsy.  If you find the remaining few to still be
-objectionable I would be happy to see what alternate you would propose.
+Hi all,
 
-Your other feedback has been quite helpful - thanks.
+Today's linux-next merge of the gpio-brgl tree got a conflict in:
 
-NeilBrown
+  drivers/iio/adc/ad7606_spi.c
 
+between commit:
 
-> 
-> 2) I suspect that having method instances return NULL for "just use the
-> argument" would would be harder to fuck up; basically, the same as for
-> ->lookup() instances.  I'll try to tweak it and see what falls out...
-> 
-> 3) I'm pretty sure that NFS is *not* the only filesystem that returns
-> unhashed negative in some success cases; will need to go over the instances
-> to verify that, though.
-> 
+  d2477887f667 ("iio: adc: ad7606: move software functions into common file=
+")
 
+from the iio tree and commit:
+
+  8203bc81f025 ("iio: adc: ad7606: use gpiod_multi_set_value_cansleep")
+
+from the gpio-brgl tree.
+
+I fixed it up (code was moved so I used the former version of this file
+and applied the following merge resolution patch) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+=46rom a1072aac97bdaf3042fe2def4d7e6e7fa928cfbd Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Feb 2025 14:52:30 +1100
+Subject: [PATCH] fix up for "iio: adc: ad7606: use gpiod_multi_set_value_ca=
+nsleep"
+
+interacting with commit
+
+  d2477887f667 ("iio: adc: ad7606: move software functions into common file=
+")
+
+from the iio tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/iio/adc/ad7606.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+index cb3de1bd15b4..7d83bb320249 100644
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -1259,10 +1259,9 @@ static int ad7606b_sw_mode_setup(struct iio_dev *ind=
+io_dev)
+ 	 * in the device tree, then they need to be set to high,
+ 	 * otherwise, they must be hardwired to VDD
+ 	 */
+-	if (st->gpio_os) {
+-		gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+-				      st->gpio_os->info, os);
+-	}
++	if (st->gpio_os)
++		gpiod_multi_set_value_cansleep(st->gpio_os, os);
++
+ 	/* OS of 128 and 256 are available only in software mode */
+ 	st->oversampling_avail =3D ad7606b_oversampling_avail;
+ 	st->num_os_ratios =3D ARRAY_SIZE(ad7606b_oversampling_avail);
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ETjtAXRq3b4IjRiUOkWULIK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmeys3oACgkQAVBC80lX
+0GwLPwf/Vm8RAVS4wYoBjAGzMTl0fH//QQTldi0Lwc93QWYUsOXPW39BAb+uheSZ
+Cts1fErqPU/ifcwBZJqDwA23SXQm1tW2vVf+fc7OI0qt/F7+T5mE4OE7kArHB4s3
+TlOUaIShSY77UMTwUA45c2VlRLvnpXbXdJWouL6hfxVmq6UrHOKb9BAKYhGgMmiQ
+38wxkbvJgxw2typLvkKfHo4y7CVXfJtejS3W3PV0HMzBg/h+XHRGKWh2Z3ZA2yCq
+2zK4Vxg19tSBfqIdx4Q5Azii4pLkWhldLBh/zB9/GAyLrOPtTHASBmo7T4sOyaj6
+rOj+lq4ConYNazta9rYikd8e9Ti/KA==
+=uP9N
+-----END PGP SIGNATURE-----
+
+--Sig_/ETjtAXRq3b4IjRiUOkWULIK--
 
