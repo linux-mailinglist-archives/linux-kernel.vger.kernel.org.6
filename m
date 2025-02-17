@@ -1,133 +1,164 @@
-Return-Path: <linux-kernel+bounces-517157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA749A37CD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:13:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9B9A37CDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A07716AE04
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580C73AEBFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448AC19F13F;
-	Mon, 17 Feb 2025 08:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F5D19E968;
+	Mon, 17 Feb 2025 08:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mGBbQZe9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="swhK/EsN"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F9418F2EA;
-	Mon, 17 Feb 2025 08:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A2419CD13
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739779976; cv=none; b=lQakALDAff4QqYu+AbLs4SNvSJKTzjZ6rQyfqrsXBtBpfAstIZ0U6JONj4zOh9oryosgJD70+EfJT9cgU2SWO3S01j8XkuJZu7+/X58g+6FLoccMRdhqwLbyBoAZdWXde5fhFo3oGEcbyo1ZYzPE6udSy+Ndov2U8otOUyTz3PI=
+	t=1739780030; cv=none; b=LOhS2uNI7nElTu+EpiRG69m34+jtuQj6A5E88UKSAqc04rlOfGsNihBCt86blwySLBR9hrNIUIRXzRDJl+DO0J+k8hxLtAyaPU8735vqgXgDo4FwJb+Z3KGhsdwjrblEIz77824GekGgVyygpXSPFVXlGlW0N/95YErrgHDdvcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739779976; c=relaxed/simple;
-	bh=9vBf6PHSw2DclbWEGznCOiYAGAY/r4Uos7XN/FYSSNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HSuplLEnUBtcTVeLHmhI3Ps3ljv9xOJW0WR2S2mbu4hZDxrKTeoa73x1IAEs1dGhLspj19XzBWlQsnRk5sgcy1J7zXCbbiSHKdAPJAd/lTk6FvzBK4ksjXWRu0gmyJOI57Wa+1D6L5qyIYRDGsMYRPNRVLhSbO7buhJ3CsuZjT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mGBbQZe9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H043m2019710;
-	Mon, 17 Feb 2025 08:12:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5xRVJ1YevyiW1l2CaOUFUwAyZv+xv67AGIg/GfedxXw=; b=mGBbQZe9QZSZInp9
-	pt87237NtDM6mqOnObyJlU+XUC5M8mWohb0mkgcx/oEvSEMfP6IJo9d6IfTB0aht
-	LRCVBl92t7boJFnGzrsNGtISG4phQrXm+gR/pxXKA/9kRTjSgAH51t0tAeOh9ovM
-	ixG1j6DOzRcBMNtSv0ro7dXbXC1iKa5b7cVIt/g1UCYupdQxJvv5dVLoSoLYwAwt
-	w0RbAXhhSUiUYe2kCnJrd3iEGqkTCCc4QrFiDhyV7W9fQ4R5kEGuNfLsSWaG3SQB
-	JVefYj+il43Zpur6JBFi+YeZO2NffalcZcUABvzUwe4SQRS7faPDIOXKlprnNMjF
-	VDVF/w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7urxu7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 08:12:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51H8Cnvf011978
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 08:12:49 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
- 2025 00:12:45 -0800
-Message-ID: <4206de50-2970-a93b-867a-03ae6cdcedd3@quicinc.com>
-Date: Mon, 17 Feb 2025 13:42:42 +0530
+	s=arc-20240116; t=1739780030; c=relaxed/simple;
+	bh=2vvsH++oEpgrzni4cOBmpiTecWbiP1mZzNBQJfLduOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qY13u1AdsZIoxVw7+t39iYB1o1fZpKOQaW/XgSQKeJr5sR3xrq10dTJDrdBX+eS2CLNFQ7S2XZKt7GSWn5QVbdJ2j7WImrUnfGc35byehStb3TcXq0EbzQSmEFXn8nITJRdVQ07fdYGU3Let5Y6Ou9NQ711Vm0LRx4iwgl8+/FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=swhK/EsN; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e545c1e8a15so4065854276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:13:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739780028; x=1740384828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vUvD6Wb4bKbXDA5rYCKjnBSk2CkpRNTlFl4Z6+I6yk=;
+        b=swhK/EsNTxGla0Xy7CyXAsMcXkOOXrL3RuJNT0MbNVkZX066uW4mOHMDkroiohShaA
+         K5NzmeUU05YkhxJHxW926A3xsZmXAmr2hFtqbP87YkVMLg8XNuGL8BXWutOughgF11Y6
+         ge+o7WwJ2I7rf3hNqUMA17sghumRwYx0YllNUWNI1i23O8RFgt5iODqNl3MZcSRPU13H
+         YE1VZO/jr85NSp4OrVN3gu/Yzv0KkrNGfNyThEbaNUkZWpZq2pvMKDFbP1ZV/+/pDoYc
+         EQR+0SRJcFR/vIc3r636iCVsxDy+T0NUHP7VwQgpipwiGw3boUboab++ZaSmecz4rYKE
+         Xdyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739780028; x=1740384828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9vUvD6Wb4bKbXDA5rYCKjnBSk2CkpRNTlFl4Z6+I6yk=;
+        b=SRfbkD1kstPLwmvur2L7EEKBB2FscOmSHfGo7nR3TN7miW/vgCMPz5d1R3DHhPulGI
+         U5r21ZA09/631x19GXCikjzjecO2vsEyDNx7KwCgwFt7W0jp/uOm5kD7Cshcgx1GCBri
+         pQE7SgCY/fYFg2XCCopHWCwyK6byHjncTNkacmHnyNTlcg6Nh2NvNGjsZ+jNVDpEVxeu
+         Xxqw7TWjRt1D7DTlIaVs1HvjNf0shMKiXogEFUVkHbIQGYoQDRje4r+wnqr+H1TO/oVq
+         zFOP5pv1uTFVYACbaiQtK63ubvxEeImn30nNx9XdfLDypYkzZBUYxKoJwDnK1XXFf78J
+         W2rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOdCg9N2vZDGEm4e0Tet58Yf8bUISUGLD71VZDDoXdCfWKzEClJ9qgfIcCtVkmT8LXgU0FGYA6G5tj4Yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytTibX6LeGvqt54f5eT59HAPv5aZeribnbFxkBpe6DGxXpnrOf
+	mpmK4Xmqry1+c8V1XdfmPZLhWeS5COcuGZIFOth8u2vSeJX7IgSazb+Dqa/tboqyGk9jDohpl7i
+	34jYIW53JU4uY+i/YstErCKyQSUiR6kX/OoBsRw==
+X-Gm-Gg: ASbGncswWQ8O6nEalK4C9EnmCVZqO2dxsJ9MO7DAxzK2A10kgDhXQo+PPVnhPFl7qOd
+	pac6KUJ+JXwF3KVWQf9zZTFx0n7X+J6Nub9f0vm0zh7bz9tXUVt+eVbp33mgml7wHCjPX6vnCOo
+	HalqjN6mMHd3rAy0JwY9QywAtN+Q==
+X-Google-Smtp-Source: AGHT+IGhG4JmDjohhAOxK6zQC2HkB4OQJvmeeLoUtAY1aE04jtCBv0KkcdwOEK/nu8lJGd5cCt6O3CicDfDqEiyc1HQ=
+X-Received: by 2002:a05:6902:72e:b0:e5d:dced:9ce3 with SMTP id
+ 3f1490d57ef6-e5ddced9e5amr3523969276.25.1739780027735; Mon, 17 Feb 2025
+ 00:13:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH next] media: iris: fix error code in
- iris_load_fw_to_memory()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <a1d9e082-a4d5-4440-996f-7ee7e850de60@stanley.mountain>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <a1d9e082-a4d5-4440-996f-7ee7e850de60@stanley.mountain>
+References: <20250217145642.410f6a1c@canb.auug.org.au>
+In-Reply-To: <20250217145642.410f6a1c@canb.auug.org.au>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Mon, 17 Feb 2025 09:13:36 +0100
+X-Gm-Features: AWEUYZmKr-hV9zmc9eGWoJMPooRZiXyITAh8y2fKaHgSl5uWAQAPKS7Kw6ypn9I
+Message-ID: <CACMJSesMvFBd3cvCZgD+02puEMbNgrxKgSvJtu23rt6fAAOMvw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the gpio-brgl tree with the iio tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Angelo Dureghello <adureghello@baylibre.com>, 
+	David Lechner <dlechner@baylibre.com>, Guillaume Stols <gstols@baylibre.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VgubdHpLUZe94Q8YIvhITZ4x8kCuY0bO
-X-Proofpoint-ORIG-GUID: VgubdHpLUZe94Q8YIvhITZ4x8kCuY0bO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_04,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 spamscore=0 clxscore=1011 malwarescore=0 bulkscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170071
 
-
-
-On 2/17/2025 1:38 PM, Dan Carpenter wrote:
-> Return -ENOMEM if memremap() fails.  Don't return success.
-> 
-> Fixes: d19b163356b8 ("media: iris: implement video firmware load/unload")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, 17 Feb 2025 at 04:56, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the gpio-brgl tree got a conflict in:
+>
+>   drivers/iio/adc/ad7606_spi.c
+>
+> between commit:
+>
+>   d2477887f667 ("iio: adc: ad7606: move software functions into common file")
+>
+> from the iio tree and commit:
+>
+>   8203bc81f025 ("iio: adc: ad7606: use gpiod_multi_set_value_cansleep")
+>
+> from the gpio-brgl tree.
+>
+> I fixed it up (code was moved so I used the former version of this file
+> and applied the following merge resolution patch) and can carry the fix
+> as necessary. This is now fixed as far as linux-next is concerned, but
+> any non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+>
+> From a1072aac97bdaf3042fe2def4d7e6e7fa928cfbd Mon Sep 17 00:00:00 2001
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 17 Feb 2025 14:52:30 +1100
+> Subject: [PATCH] fix up for "iio: adc: ad7606: use gpiod_multi_set_value_cansleep"
+>
+> interacting with commit
+>
+>   d2477887f667 ("iio: adc: ad7606: move software functions into common file")
+>
+> from the iio tree.
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  drivers/media/platform/qcom/iris/iris_firmware.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
-> index 7c493b4a75db..f1b5cd56db32 100644
-> --- a/drivers/media/platform/qcom/iris/iris_firmware.c
-> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-> @@ -53,8 +53,10 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
->  	}
->  
->  	mem_virt = memremap(mem_phys, res_size, MEMREMAP_WC);
-> -	if (!mem_virt)
-> +	if (!mem_virt) {
-> +		ret = -ENOMEM;
->  		goto err_release_fw;
-> +	}>
->  	ret = qcom_mdt_load(dev, firmware, fw_name,
->  			    pas_id, mem_virt, mem_phys, res_size, NULL);
+>  drivers/iio/adc/ad7606.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index cb3de1bd15b4..7d83bb320249 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -1259,10 +1259,9 @@ static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev)
+>          * in the device tree, then they need to be set to high,
+>          * otherwise, they must be hardwired to VDD
+>          */
+> -       if (st->gpio_os) {
+> -               gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+> -                                     st->gpio_os->info, os);
+> -       }
+> +       if (st->gpio_os)
+> +               gpiod_multi_set_value_cansleep(st->gpio_os, os);
+> +
+>         /* OS of 128 and 256 are available only in software mode */
+>         st->oversampling_avail = ad7606b_oversampling_avail;
+>         st->num_os_ratios = ARRAY_SIZE(ad7606b_oversampling_avail);
+> --
+> 2.45.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-Thanks for the fix.
-Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Jonathan,
 
-Thanks,
-Dikshita
+I'm repeating my offer here - I can drop the iio patches from my queue
+and let you pick them up to avoid conflicts in next and during the
+merge window. How does it sound? It's still pretty early into the
+release cycle so I'm fine with rebasing my branch.
+
+Bart
 
