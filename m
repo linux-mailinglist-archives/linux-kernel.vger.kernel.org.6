@@ -1,158 +1,202 @@
-Return-Path: <linux-kernel+bounces-517823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF964A38632
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:26:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FD6A38643
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F8417671D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D68C161DA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E57322333C;
-	Mon, 17 Feb 2025 14:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15296224AE4;
+	Mon, 17 Feb 2025 14:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNMisclN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+jYD+cy"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AEB21D58E;
-	Mon, 17 Feb 2025 14:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD0D21D5B7;
+	Mon, 17 Feb 2025 14:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802037; cv=none; b=ghsJ84JJbvEjn1pLraskZUSay2mICNNiCKpMoxG6QGKQmfxNSBCqsz4p3XJMdz6KGmJsYXSnJeiJH4TAJCOiuZYoYxlKCUOwEp66Gq+zUWFsgOV6gZn6HeLMV4fRdCl3nknSeeMSekCO1FkF2p2YzL0rdb2ZXMJqVMF40umH+QQ=
+	t=1739802100; cv=none; b=FKUkRDzSCV6es3WWN5ykKy0sRgy8oXfLSSK4Cp2aQ1TSMDb2WwRQa0SSNpiueWP+KE4Z/kgnTdujaDIjBybLmqXLi0Pz7h3gUbypMSYb/qGVO81CD4HnPKFLYlSoFoR3rlLgim4IjqpLszKg2uwxCsyqjLHKdFiZV4K09odzeXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802037; c=relaxed/simple;
-	bh=WoX4rkGG8IX4/MIvEe5QvsSw6rLdg3EL18aXO3EDuMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZ3eUv5hWzJmHKKKMuxTxfvBfCUACdOQ/pdFazMuqDdub/1mIedZ+/SV1/0KV8V1ZZozEsTlCHdyaFPqQlj3rxeGX7xUle0OJxLRfY5RWlEg7efpQtuuI2k2s6nai05iiNmpuHNBdAeReJVXi2LDCtopGY17PYZOoM0o2F/pzas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNMisclN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B73C4CED1;
-	Mon, 17 Feb 2025 14:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739802036;
-	bh=WoX4rkGG8IX4/MIvEe5QvsSw6rLdg3EL18aXO3EDuMU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SNMisclN05MapFH/wKCmpUrZeGa+QVxql7qMOrY0rIxLL5MMys4qWhoV8ypiOpsbi
-	 px1sxpeIRv8w+8fMbwvJh7HxHdMoxBVrWlpAEnnuLZCtZ5yHT12xmPlmqWAuryVV45
-	 RUBNyy7pz8AHu9IpL8O50oIFhbwaaZMuMz61GRPI+z+i8O7maWjReDJmqqJWpA3lhM
-	 G6hiidczzudm0qnpPLr5OYuVtp8rpcmGIdF7QoEYQpLNPrAVDiCkdxWJEtvHxTHXnE
-	 X2bZM7D/qdyHIoWm+8H9wd04aXRdKlqPPTRN7CtZUWs6acrGOL80Z8Yedk+QBAn3dz
-	 wdueL70DUbZ7g==
-Date: Mon, 17 Feb 2025 14:20:24 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: David Heidelberg <david@ixit.cz>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250217142024.1a7bea7e@jic23-huawei>
-In-Reply-To: <CAPVz0n2s1mxuheAadhFMHnmm6DtdMYzLHaBQDB_TEF--tWktrw@mail.gmail.com>
-References: <20250215103159.106343-1-clamor95@gmail.com>
-	<20250215103159.106343-3-clamor95@gmail.com>
-	<1597453a-31fc-49eb-8b69-efeb8805c67a@ixit.cz>
-	<CAPVz0n1T_jXXDhm6gF7gDDqZ=b6abR1Tqk=5kLo=Ws4FF2EVJw@mail.gmail.com>
-	<20250216144436.70ff78c3@jic23-huawei>
-	<CAPVz0n2s1mxuheAadhFMHnmm6DtdMYzLHaBQDB_TEF--tWktrw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739802100; c=relaxed/simple;
+	bh=b+BDOtY28PRoYUYE8yr+F9bF1GHEoL0VulzesibFOz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ca/m8HsQXzpUIQ6vi8gAUPNQZTj9QTs8MJlE/bN7fMQ9dMFB6A7vZZiglrqGj6KTdGVNKqdlMSQn1hak25oqVHxMOWmy6J4lxy78RcZGMw/dDEwLJqpSAU/SYgY4RsaKZ49xDDwp1lACwFHPg6IDj9I12CpN3CeaCUu3U8QEe6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+jYD+cy; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5461a485aa2so1297730e87.2;
+        Mon, 17 Feb 2025 06:21:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739802097; x=1740406897; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X9y3f/0SpkUJYLfXQqSfBBJ/f7tgfpTc4dQswGoOc8M=;
+        b=D+jYD+cyIdo6F8YzfrrkUDusUnYWQW/GXPUW9j12F6rVxGmbs7QaZeD8HI/xewPGXn
+         CfGEuH6CvX3T7yvuQ+Trtz7eaTrpVgb02lPGKlZxKjA5PbfHR4NX/ceHYNN9M3ozmtEa
+         Hc/tIr6bDq/JiN3hM7ahU8EgsDV4fA7EiB03DlZit43FdB1r/dyNXNZmrND6L7ge9djG
+         3h639IWPDxOeDJCUsNd540qZtGSwd+gSPUWXnaVnI8OqGmXYytab5Qs6jT4hj0y4NIu0
+         ReM7kDRJGZcursTslCvjo5LftF1GSaaYdsMUjgNLyjUHmtd1nw2xRZPkhp1DDvXRpdt6
+         8OPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739802097; x=1740406897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X9y3f/0SpkUJYLfXQqSfBBJ/f7tgfpTc4dQswGoOc8M=;
+        b=oU+sF8Yu/r9ngFIvjMzXCmTOUfHAhaGF3TcwAYwMvwUp9NRkwlAdITJxjRrTwnPUca
+         Nkq5nrsiXJmYp93krx34ZwdrduJ1IuHLFW5KkyaBD+sQMrm/wrCY8IPRL5kCBYdcBbcB
+         b/eY9x3UZ0F1DYwWmocGe3ddw9G8xEPYJKGZsfJ2VyxnycAI+FQwK2+aNuvAg4BZvUX1
+         tTwIORaOAYzCyPCR87qiaqlUAO0s/K/8MR3DauSSQIWJR1J+WnvV2iDxOu+nXJrQV0/1
+         WgyfPFF5tL4cgrNtswoPcnNhyLyUiWqnHXPK4wxqVBhDPytXqkS2Drs5v45c2a0vmIk+
+         KwRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVboVPg6kAWedoCw9zwl6nW0gNQThMlNLa2HNuY/vZptbK6TY7rsnG9+nFONvqVYqGoeui4UBcVBt+DJQ8s4s4=@vger.kernel.org, AJvYcCWVnVmVoUG7gyzx02I9VMjM9mX1BLzWUYMAh16XkLiU9WeBjtNjRwuE9JQfgqg73e6+V7JqfsVthMh9G2ul@vger.kernel.org, AJvYcCWrN7SrxunwsAzYZA+EETF2amxRrz0yNLicqIAFgUHCPFSQRYIc09vA3V4zytFVO2lVoAqti/LxqwwS@vger.kernel.org, AJvYcCXquTER0VAGj8A7jX1CXIpdwOYmC0SJq8SbfFDb++tQA9f71v4oKykdDtdwbhtSKvBJwB+B7mvGCVp92fnw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7gjcLJobEoCcp1tcDtMKlz3Cnh6AFk+kZR/8lFTC04zKBbGlW
+	WioVMOWxChD7UdADmwGmkFGjQbLEh4K7L9PfRwuxa19p+JW/xmN+Puu7JO5bo6VQqRV+8HJDqe+
+	lfYnRjEf4o0fAaiMFKUpg+jj2hM4=
+X-Gm-Gg: ASbGnct4niDMqKQEvqjcQXn0A5m3g5DtZIOZleKrOAe178DdB3BQkXB/fnL8IoEJ4Nx
+	ILl+5ECWnuOVum6KX17WeaQL1CfG744KV7B6wQR+8k+BU/HY6ZijaO9F3hdft6t2tL1VNhhFKqQ
+	Sk36JajIhuv4jwirRwUobiz9JXHyf1i9A=
+X-Google-Smtp-Source: AGHT+IHhtX8lyyXmg8SrYa93Wy6T7OyCMr/8E0Vv+nyULl+zxuUh3oHTtIYdD4cTdU1J+8n2uF+C3K3dJb4b0t4B/Qk=
+X-Received: by 2002:a05:6512:6ce:b0:545:c89:2bc9 with SMTP id
+ 2adb3069b0e04-5452fe8fd0emr3279031e87.43.1739802096408; Mon, 17 Feb 2025
+ 06:21:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
+ <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+ <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
+ <Z7NEZfuXSr3Ofh1G@cassiopeiae>
+In-Reply-To: <Z7NEZfuXSr3Ofh1G@cassiopeiae>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Feb 2025 09:21:00 -0500
+X-Gm-Features: AWEUYZlLWtUHaT2OrSDFV3xDEpeuj4fhWmWRhd94UqW6lapme1fdjrZlxF0hTIc
+Message-ID: <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
+Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 16 Feb 2025 16:47:52 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-
-> =D0=BD=D0=B4, 16 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:44 Jo=
-nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > =20
-> > > > > +
-> > > > > +static int al3000a_read_raw(struct iio_dev *indio_dev,
-> > > > > +                         struct iio_chan_spec const *chan, int *=
-val,
-> > > > > +                         int *val2, long mask)
-> > > > > +{
-> > > > > +     struct al3000a_data *data =3D iio_priv(indio_dev);
-> > > > > +     int ret, gain;
-> > > > > +
-> > > > > +     switch (mask) {
-> > > > > +     case IIO_CHAN_INFO_RAW:
-> > > > > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DATA,=
- &gain);
-> > > > > +             if (ret < 0)
-> > > > > +                     return ret;
-> > > > > +
-> > > > > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK]; =20
-> > > >
-> > > > Why did you chosen to do post-processing in the RAW channel instead
-> > > > doing it in INFO_SCALE (same as al3010 does)?
-> > > > =20
+On Mon, Feb 17, 2025 at 9:15=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Mon, Feb 17, 2025 at 09:02:12AM -0500, Tamir Duberstein wrote:
+> > > > diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> > > > index 6c3bc14b42ad..eb25fabbff9c 100644
+> > > > --- a/rust/kernel/pci.rs
+> > > > +++ b/rust/kernel/pci.rs
+> > > > @@ -73,6 +73,7 @@ extern "C" fn probe_callback(
+> > > >          match T::probe(&mut pdev, info) {
+> > > >              Ok(data) =3D> {
+> > > >                  let data =3D data.into_foreign();
+> > > > +                let data =3D data.cast();
 > > >
-> > > From my observation INFO_SCALE will just perform multiplication of RAW
-> > > to SCALE. In this case values which are read are not actual raw values
-> > > of illumination. Next is my assumption (since there is no datasheet),
-> > > but values obtained from register are similar to values from adc
-> > > thermal sensors, they need be converted via reference table to get
-> > > actual data. =20
+> > > Same here and below, see also [2].
 > >
-> > Please add a comment somewhere here to say that we don't know the
-> > relationship of these values to illuminance hence providing
-> > _RAW and _SCALE would not be helpful.
-> > =20
->=20
-> We do know relationship of these values to illuminance thanks to
-> conversion table provided.
+> > You're the maintainer,
+>
+> This isn't true. I'm the original author, but I'm not an official maintai=
+ner of
+> this code. :)
+>
+> > so I'll do what you ask here as well. I did it
+> > this way because it avoids shadowing the git history with this change,
+> > which I thought was the dominant preference.
+>
+> As mentioned in [2], if you do it the other way around first the "rust: t=
+ypes:
+> add `ForeignOwnable::PointedTo`" patch and then the conversion to cast() =
+it's
+> even cleaner and less code to change.
 
-Then convention is treat them not as IIO_LIGHT but as IIO_INTENSITY
-which is unit free.  IIO_LIGHT is only for when we know the value
-we are providing to userspace is illuminance and measured in Lux.
+This is true for the two instances of `as _`, but not for all the
+other instances where currently there's no cast, but one is now
+needed.
 
-Jonathan
-
-
->=20
-> > > =20
-> > > > Except this, LGTM.
-> > > >
-> > > > Documentation and DT patch:
-> > > >
-> > > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
-> > > > > +
-> > > > > +             return IIO_VAL_INT;
-> > > > > +     case IIO_CHAN_INFO_SCALE:
-> > > > > +             *val =3D 1;
-> > > > > + =20
 > >
-> > Don't do this.  The above lack of known relationship has to be
-> > expressed by not providing the _scale attribute.
-> > =20
-> > > > > +             return IIO_VAL_INT;
-> > > > > +     default:
-> > > > > +             return -EINVAL;
-> > > > > +     }
-> > > > > +}
-> > > > > +
-> > > > > +static const struct iio_info al3000a_info =3D {
-> > > > > +     .read_raw       =3D al3000a_read_raw,
-> > > > > +}; =20
+> > > I understand you like this style and I'm not saying it's wrong or for=
+bidden and
+> > > for code that you maintain such nits are entirely up to you as far as=
+ I'm
+> > > concerned.
+> > >
+> > > But I also don't think there is a necessity to convert things to your=
+ preference
+> > > wherever you touch existing code.
 > >
-> > =20
+> > This isn't a conversion, it's a choice made specifically to avoid
+> > touching code that doesn't need to be touched (in this instance).
+>
+> See above.
 
+This doesn't address my point. I claim that
+
+@@ -246,6 +248,7 @@ impl<T: MiscDevice> VtableHelper<T> {
+ ) -> c_int {
+     // SAFETY: The release call of a file owns the private data.
+     let private =3D unsafe { (*file).private_data };
++    let private =3D private.cast();
+     // SAFETY: The release call of a file owns the private data.
+     let ptr =3D unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private)=
+ };
+
+is a better diff than
+
+@@ -245,7 +245,7 @@ impl<T: MiscDevice> VtableHelper<T> {
+     file: *mut bindings::file,
+ ) -> c_int {
+     // SAFETY: The release call of a file owns the private data.
+-    let private =3D unsafe { (*file).private_data };
++    let private =3D unsafe { (*file).private_data }.cast();
+     // SAFETY: The release call of a file owns the private data.
+     let ptr =3D unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private)=
+ };
+
+because it doesn't acquire the git blame on the existing line.
+
+> >
+> > > I already explicitly asked you not to do so in [3] and yet you did so=
+ while
+> > > keeping my ACK. :(
+> > >
+> > > (Only saying the latter for reference, no need to send a new version =
+of [3],
+> > > otherwise I would have replied.)
+> > >
+> > > [2] https://lore.kernel.org/rust-for-linux/Z7MYNQgo28sr_4RS@cassiopei=
+ae/
+> > > [3] https://lore.kernel.org/rust-for-linux/20250213-aligned-alloc-v7-=
+1-d2a2d0be164b@gmail.com/
+> >
+> > I will drop [2] and leave the `as _` casts in place to minimize
+> > controversy here.
+>
+> As mentioned I think the conversion to cast() is great, just do it after =
+this
+> one and keep it a single line -- no controversy. :)
+
+The code compiles either way, so I'll leave it untouched rather than
+risk being scolded for sneaking unrelated changes.
 
