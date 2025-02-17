@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-517407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35972A38057
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:38:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1DAA38067
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:39:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBAB7A2F41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14FD43AF613
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1624F217668;
-	Mon, 17 Feb 2025 10:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CC423CE;
+	Mon, 17 Feb 2025 10:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="1e8nsgRy"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rTfblvDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194391917D7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDB12135AF;
+	Mon, 17 Feb 2025 10:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788639; cv=none; b=N01DM1CuM1vJ6gGlhMTxt0LxaAC2vRpPGTK25KSJU69GFG187V21Ek1sHIUg7zluoZVCd2HEMWaE7kchUVZoJGZYS3S38TTmZ9wwHscALOSuyVfV/7cpCzkh0rk6B890lzOuZVF8DR+SsBwiRAwOgP2SoGW5S9vQM8/X/uLRCj4=
+	t=1739788662; cv=none; b=UCj9bK5hH2eigD8pFz4c8jL946cM8v2Ch5pXewp9WsRupG0XigkH4PcVP56rnRc2xB7GosTPh0sN+m2Jox0QLb9M0Q2zU5ay8UI8lgLxrCwCWZ7jD05IAZEdEUmLV6+Dtwch8Lelh0rkN060p+yFyQWgfs5MrV+aVdvx6/Ui4dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788639; c=relaxed/simple;
-	bh=dtbILtLxMaUl8l2yPdhhHAGatYs4PRjliukECJuJak8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f+ovcMN/uX+v08xwDzb10FpqR+m00SYGuYqx1VWyY8OAB9QtqIE9Eaw2iJRTeyPdYN65UDvy5Eij2SXLFRhpOCuN+biCOtkleJhZY97jxDJcap3puHgcjttMtIEalMMkxqFwF7SUzLSayTxZv0OEzh8Hv061RA1GIVAgPesZONc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=1e8nsgRy; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3ce76b8d5bcso39718435ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:37:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1739788637; x=1740393437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U/4vfKOluL1Eg686lBWaj194kh5dTDmMHAYz+CjFLAs=;
-        b=1e8nsgRyoAu7BopQM+4mk4O8hjOS6rE4Ba7aGPZLwi/+Z29YwM1VQaL1CARDI6u03s
-         YJ9sjVFHA980uaOUoL58HJ/ZLjqnVE5+Q+3BE5vhU6bZ/OdWfksvZeFVgp8jDOM5FMEa
-         x/i+WYcPI1K2t4Xi7wngNQFqQWdyBf8AHDLVvlznc9MSuV/2tzhq5DsdP51YgvktIPLA
-         QU98kyQ0NJtZ9kOYXD7b92BdYKxxfBIZsl/KLtBsWKfbn2Zjl5lWNSHWQH6xcLPe8efl
-         Wz4qvK+KgyZKMjiAHfZmfAvdkFSziVsUiLiEnubcdYa3lZjhix8LLgRLNHKNJ7se1V7b
-         LuEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739788637; x=1740393437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U/4vfKOluL1Eg686lBWaj194kh5dTDmMHAYz+CjFLAs=;
-        b=uoMUOSgIxS0j3X0CLjkXB97eObTQ7oxHDg0oJ17EVko0nr06WJt8UDsM6+D4qQBMB2
-         JjqJJTJSNbIv9mhXJyQlJ8eNEaWFVEHU/gFCB9UM2QBJobqFozQ3r5lq84oPuHt760Ef
-         +antqxdlku0wivzBDIo7vMxwSZPj9O+6wMTYfb6U/u4RbaXtrmnG+EnCwMt8bm+4jcw8
-         4UagtNb8HsLNWXE2T8cGSRLo/px9ZmGvDQVyFdMSvgf1D4N+wixL9C3ra2s5xf1QdWiL
-         X4X+6ogP4UfRkjsAZFpg0M5nkgE8WnOvQSHEIMYstXjo1rjuKTZG8UZTxH1Xs0AQR1Bn
-         JOLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBCrntLZ4inZLkNmDdzYs9IWYotffC4YZgTGS8yfY3EoUWDNhocApZq+EMwFFtqZsa3tfTehjSldcM2P4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz16D8hnocUIVfscn56drwX/gFhvG+2TO1sNclRvUkMNxYmWGPm
-	EFbDBEuakqBFjPgatl9jLOq9/dpmOyIT/puslbxuBm4B2ZpEhZ8cpsIP/uOzF8W8HRXDLsFoRs4
-	NCvipgnzVKVb6ZCZTkPs3Rgts2c/DD9RMboYJQQ==
-X-Gm-Gg: ASbGnct7bK1YhrcSVvnQpswGESxHZp212yccu/+80N3T0ZQuDYchimIjBGRjMXTvwaF
-	9myGdGCZbB4JcxVUrqVJG7U6saY+nklQAosLJowRfYEVb3WMd9sgjsmsufoRLZhrI/XsGbakyCQ
-	==
-X-Google-Smtp-Source: AGHT+IGSgdNxJGmNM6uEFns6lOMjpsz78qALluZZkDvBBvFmGCBC14C1R6jfhNyS8tBwA04k2Qxv26XqVPutxJOehyI=
-X-Received: by 2002:a05:6e02:330f:b0:3d1:9f4d:131 with SMTP id
- e9e14a558f8ab-3d28077166fmr81057795ab.1.1739788637040; Mon, 17 Feb 2025
- 02:37:17 -0800 (PST)
+	s=arc-20240116; t=1739788662; c=relaxed/simple;
+	bh=iBLZunpQkV0eZdxdtQfqi1BGUSJgxcqK7ZA6bk5kouU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKhHjlp1IZcZ9NNy1hXeeWnu/zs6+xlZS3ZhfxzXQjxPp18yk9km48g08I8FWRfMw2xAX9NRQa3CkWx5AeVmR5h/5GonFUhQoS5OzUsUH4UyKIKp70LBPUiNON9F3TiwLwnrMce1pfU2+NLRxznQocaqfasiJzFPdj4pRgJose8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rTfblvDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4CE6C4CED1;
+	Mon, 17 Feb 2025 10:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739788662;
+	bh=iBLZunpQkV0eZdxdtQfqi1BGUSJgxcqK7ZA6bk5kouU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rTfblvDOzgaTeG81ekV4S99YU+TvTo2R+fz49RpuptwKBb3cvBUZg1hVfq0oAdFkn
+	 44sDsfwBZuJpO9omKEB5Fun91iemr6L6c8XjZMby6ThdYOUrv+57fpKlcsPQuSsljK
+	 CclLKBmgOJBExu9FwJRysBxF5bx0CG1GkENthEcY=
+Date: Mon, 17 Feb 2025 11:37:39 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ravi Kumar kairi <kumarkairiravi@gmail.com>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kuba@kernel.org,
+	dan.carpenter@linaro.org, rmk+kernel@armlinux.org.uk
+Subject: Re: [PATCH v3 0/4] staging:gpib:agilent_82350b: Code cleanup,
+ spelling fixes
+Message-ID: <2025021728-overboard-eloquence-f0fa@gregkh>
+References: <20250217103046.54294-1-kumarkairiravi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217084506.18763-7-ajones@ventanamicro.com> <20250217084506.18763-9-ajones@ventanamicro.com>
-In-Reply-To: <20250217084506.18763-9-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 17 Feb 2025 16:07:04 +0530
-X-Gm-Features: AWEUYZm9T-78sMEKcz3AEQRarONAs9iFjfd-t2ah-PgfAHb_xncGPr7rpaa4a5k
-Message-ID: <CAAhSdy2NxgiE4O0BV5nivTzhUSDH-vo+zqvxb39hga3K4-DgFQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] riscv: KVM: Fix hart suspend_type use
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, cleger@rivosinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250217103046.54294-1-kumarkairiravi@gmail.com>
 
-On Mon, Feb 17, 2025 at 2:15=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> The spec says suspend_type is 32 bits wide and "In case the data is
-> defined as 32bit wide, higher privilege software must ensure that it
-> only uses 32 bit data." Mask off upper bits of suspend_type before
-> using it.
->
-> Fixes: 763c8bed8c05 ("RISC-V: KVM: Implement SBI HSM suspend call")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
-
-> ---
->  arch/riscv/kvm/vcpu_sbi_hsm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/vcpu_sbi_hsm.c b/arch/riscv/kvm/vcpu_sbi_hsm.=
-c
-> index 13a35eb77e8e..3070bb31745d 100644
-> --- a/arch/riscv/kvm/vcpu_sbi_hsm.c
-> +++ b/arch/riscv/kvm/vcpu_sbi_hsm.c
-> @@ -9,6 +9,7 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/wordpart.h>
->  #include <asm/sbi.h>
->  #include <asm/kvm_vcpu_sbi.h>
->
-> @@ -109,7 +110,7 @@ static int kvm_sbi_ext_hsm_handler(struct kvm_vcpu *v=
-cpu, struct kvm_run *run,
->                 }
->                 return 0;
->         case SBI_EXT_HSM_HART_SUSPEND:
-> -               switch (cp->a0) {
-> +               switch (lower_32_bits(cp->a0)) {
->                 case SBI_HSM_SUSPEND_RET_DEFAULT:
->                         kvm_riscv_vcpu_wfi(vcpu);
->                         break;
-> --
+On Mon, Feb 17, 2025 at 04:00:34PM +0530, Ravi Kumar kairi wrote:
+> From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+> 
+> This patch series addresses the following changes:
+> 1. Fixing spelling mistakes such as "havn't" → "haven't"
+> 2. Removing unnecessary commented-out code
+> 3. Cleaning up whitespace and formatting inconsistencies
+> 4. Removing an empty line in if{} which was causing it to be read as a single line
+> 
+> These are minor changes aimed at improving code readability and maintainability.
+> 
+> I appreciate your time in reviewing this series. and I'm deeply sorry
+> for the spam beacuse I messed up last time I sumbiited
+> Thanks,
+> Ravi Kumar Kairi (4):
+>   staging:gpib:agilent_82350b: Fixed spelling error
+>   staging:gpib:agilent_82350b: Removed commented out code
+>   staging:gpib:agilent_82350b:Removed blank line
+>   staging:gpib:agilent_82350b: Fix Indent issue with block
+> 
+>  .../staging/gpib/agilent_82350b/agilent_82350b.c | 16 +---------------
+>  1 file changed, 1 insertion(+), 15 deletions(-)
+> 
+> -- 
 > 2.48.1
->
+> 
+> 
+
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
