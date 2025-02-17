@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-518212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18743A38B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:49:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29E9A38B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E118516CB9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD323AA901
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7604D236422;
-	Mon, 17 Feb 2025 18:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198E23643A;
+	Mon, 17 Feb 2025 18:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JnBMPZyv"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cY4c2KC2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E079137C35;
-	Mon, 17 Feb 2025 18:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D022A1E6;
+	Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739818170; cv=none; b=PJZOSz90cPK+SntlvDHXM6XKIVZ7+lfCkTax1K7OAD9JbvST6vYoU6ZE/0uDEbvD/yw50OkQSCiuv9vWIsfYvbKK5Hq3iA5goYtn1SScT46pKcm3Ohxi/A9fyYaTmFRt0jEfWKzmrVW70rvIplk7F4hIZB3+g4Vh896UL+Q6+5s=
+	t=1739818202; cv=none; b=D83weKJ3hFgTyTWZyoxM2XDLXtAl9EVkWgPNxnZvO+1r7ao3S5i1F9P20+EPFyra0Yxd50bfvTnVHQCxF8gLl4atAta9oRmbEzYPeXOeN7wc9TTKW5v0bAd2bxuHtBG0GhJ+soOXNv/9nrWQGf2TgdHDBlmZM5YGcx1njDf/FWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739818170; c=relaxed/simple;
-	bh=Qjc7TYtwuP5S8eF5xw8fAL1wSrrRYAT8EsRMIW3urrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6UvAn7AyfleMubnxa7TNMwFZl+8osPDfWEVNbNp2vgLVRvSp8p1kGYobciny02ABebcWHEFJkOTpZTHNX5v2NMmyYveR2SbArDIEOEEH4bgA/ojILv5n+deKeOjNdPFApFhPirMi5vsheQV8bIq2v/XHqElodcZzkod2OYIgZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JnBMPZyv; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LAJQ+WKaLn6Gl95bYJ40go1UYLyHIHVr8Un+ZxoOpuI=; b=JnBMPZyvFwZu2rvtTuaOKoUeyy
-	TbQDDInNiHgNYIQH7tDgnEECz2UDh+8swtJyoSTftQAJrBIiyz4V/T7oRdAVim+bkYPUc4syERr6W
-	hO5UCs74XE3PMUOzegOSXxpSNosvLpjvnqVYmi1mxN5dz3JnDvGvrOrR7qltWYW+5CNArx268BGfq
-	BI4ZrFyWPk9X08+Zo75Bg4PEiLtKuwwpkUNeUbTivwQSa/W0852wxEiKXjuEaZb29GaNYWwKh77jw
-	bYq25Bq+jocDzPDqdlQSnT+icnzJjbMJSVra4G8xInA7eXI0ggG5X2TA5bZVWDLoclRoacxtYPnHe
-	JItzhFAQ==;
-Received: from [187.106.40.249] (helo=[192.168.0.71])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tk6B8-006wsW-W2; Mon, 17 Feb 2025 19:49:21 +0100
-Message-ID: <3bcf3eac-555c-6f30-8e32-b8c39967eefe@igalia.com>
-Date: Mon, 17 Feb 2025 15:49:13 -0300
+	s=arc-20240116; t=1739818202; c=relaxed/simple;
+	bh=bSkaPVIT6VfRE0JIpCa1oHUI1xXQj1fjU7es/My1gRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjQDnEEJiVnj49vYG+iof/QxY4p9zf2NnQWXrdcTE4Oe0WEvlMsSAPAfP+lSIRYOKgjAjA5HKz6gCgb8+yufBN5yvqH6azAAqCve9NF9K+EvyEEEhLgmpsc2xYYBpIw/wAAUCkmQ8zpuBKlN6tvDN7V4atlwM8+6ftLzwyzK5wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cY4c2KC2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870CCC4CED1;
+	Mon, 17 Feb 2025 18:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739818201;
+	bh=bSkaPVIT6VfRE0JIpCa1oHUI1xXQj1fjU7es/My1gRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cY4c2KC24HnubKXjrX0Oxg25o0kMezl+Yqkk1suSt1BWnLHdJxZM5w8PjZRm12lak
+	 DVCAMefgBVLG3tNaqjG8wJFCZZtc37AsAsTXSabdrhFjKa/ULzyLolFhkR3HcFzyVT
+	 7QZjOeN0Uh3kvvqTO5rCzZ1jSla1YRc5R70ydCJ/C0Sv8YwTsVv2f6hfC3l7zyXrIV
+	 Vocghvvv5K9EWGO6dEoLjQ0fJrGmD4wRMNusQI6ePZvFBYM2kdC0E1lFBH9XvsYF0r
+	 71sV0zD4FjCp8K0blysR2qUTSfB/mOkbT6Nw5jpXc8EZ3HFSVeFDKzh+THvF/46hc0
+	 U5MGuq+iNeQFQ==
+Date: Mon, 17 Feb 2025 10:50:00 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Lucas Tanure <tanure@linux.com>
+Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>,
+	linux-fscrypt@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-crypto@vger.kernel.org,
+	"krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>,
+	"lucas.tanure@neat.no" <lucas.tanure@neat.no>
+Subject: Re: crypto: fscrypt: crypto_create_tfm_node memory leak
+Message-ID: <20250217185000.GC1258@sol.localdomain>
+References: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/tsc: Always save/restore TSC sched_clock on
- suspend/resume
-To: linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, rostedt@goodmis.org,
- kernel-dev@igalia.com, kernel@gpiccoli.net, stable@vger.kernel.org,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-References: <20250215210314.351480-1-gpiccoli@igalia.com>
-Content-Language: en-US
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20250215210314.351480-1-gpiccoli@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
 
-On 15/02/2025 17:58, Guilherme G. Piccoli wrote:
-> TSC could be reset in deep ACPI sleep states, even with invariant TSC.
-> That's the reason we have sched_clock() save/restore functions, to deal
-> with this situation. But happens that such functions are guarded with a
-> check for the stability of sched_clock - if not considered stable, the
-> save/restore routines aren't executed.
+On Mon, Feb 17, 2025 at 06:43:15PM +0000, Lucas Tanure wrote:
+> Hi,
 > 
-> On top of that, we have a clear comment on native_sched_clock() saying
-> that *even* with TSC unstable, we continue using TSC for sched_clock due
-> to its speed. In other words, if we have a situation of TSC getting
-> detected as unstable, it marks the sched_clock as unstable as well,
-> so subsequent S3 sleep cycles could bring bogus sched_clock values due
-> to the lack of the save/restore mechanism, causing warnings like this:
+> I am working with Android 13 and V5.15 kernel. During our development,
+> I found a memory leak using kmemleak.
 > 
-> [22.954918] ------------[ cut here ]------------
-> [22.954923] Delta way too big! 18446743750843854390 ts=18446744072977390405 before=322133536015 after=322133536015 write stamp=18446744072977390405
-> [22.954923] If you just came from a suspend/resume,
-> [22.954923] please switch to the trace global clock:
-> [22.954923]   echo global > /sys/kernel/tracing/trace_clock
-> [22.954923] or add trace_clock=global to the kernel command line
-> [22.954937] WARNING: CPU: 2 PID: 5728 at kernel/trace/ring_buffer.c:2890 rb_add_timestamp+0x193/0x1c0
+> Steps I did to find the memleak:
+> mount -t debugfs debugfs /sys/kernel/debug
+> echo scan=5 > /sys/kernel/debug/kmemleak
+> cat /sys/kernel/debug/kmemleak
 > 
-> Notice that the above was reproduced even with "trace_clock=global".
+> Stack I got (hundreds of them):
+> unreferenced object 0xffffff8101d31000 (size 1024):
+>   comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
+>     [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
+>     [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
+>     [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
+>     [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
+>     [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
+>     [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
+>     [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
+>     [<ffffffd32796a108>] do_mkdirat+0x88/0x204
+>     [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
+>     [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
+>     [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
+>     [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
+>     [<ffffffd328abcf88>] el0_svc+0x28/0x90
+>     [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
+>     [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
 > 
-> The fix for that is to _always_ save/restore the sched_clock on suspend
-> cycle _if TSC is used_ as sched_clock - only if we fallback to jiffies
-> the sched_clock_stable() check becomes relevant to save/restore the
-> sched_clock.
+> After checking upstream, I came up with the following:
+> cff805b1518f  fscrypt: fix keyring memory leak on mount failure
 > 
+> But my kernel has this patch. So I continued to dig around this and
+> saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
+> V5.15.
+> I can't see the pointer tfm being used anywhere or saved, and
+> smp_store_release doesn't kfree it.
+> Is smp_store_release doing something with that pointer that makes this
+> memory leak a false positive?
+> 
+> Any help with this issue would be much appreciated.
+> Thanks
 
-Hi folks, I would like to ask if possible to add the following tag:
+The pointer to the crypto_skcipher 'tfm' is stored in the fscrypt_inode_info
+(previously fscrypt_info) which is stored in inode::i_crypt_info.  It gets freed
+when the inode is evicted.  I don't know why you're getting a kmemleak warning.
+Perhaps f2fs in that version of the kernel has a bug that is leaking inodes.
 
-Debugged-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+smp_store_release is just a fancy way of doing a store that includes a memory
+barrier.
 
-Cascardo helped me a lot on debugging this issue but I forgot to add it
-earlier, so nothing more fair than add it now!
-
-Thanks,
-
-
-Guilherme
-
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> [...]
+- Eric
 
