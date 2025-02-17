@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-518446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D502A38F38
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:50:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935F5A38F49
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648663ADA99
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FA7169AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278341ABEC5;
-	Mon, 17 Feb 2025 22:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Fflo9QK7"
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E1B1A5B9D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873C01B4257;
+	Mon, 17 Feb 2025 22:50:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2321B0411;
+	Mon, 17 Feb 2025 22:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739832598; cv=none; b=FcvKeaXXtXw8VXRKNvGGVVckDS1FfaIINCmkG6bNzVs4k/IS8RGRpAScL2q4c4xEOgqNC+eb4yOhSDR4I/VAaNmGbERrB8k3D1VqkypmZ6nT1QE2BAM9Fe9QH5S1DFlAJnRRL/7MiumZ0x7mu8Ry2QKLJNoMjnUCXpwiIEXeF+4=
+	t=1739832602; cv=none; b=VR45x0S1YflENRVaW9cgj5xwsIIWi44LK8TjRmdUhL3GvHMulQLH1X2XFJt+CHRsoOhyiwj1K8k6rOeb8FDWyN+AHbyz5evVFvSDXIUPZNYHDwrBocVGCDe87rOY084kUkaaVBuf9Qn2/857mRLR25EQT5A1Sif1tbAREVVowk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739832598; c=relaxed/simple;
-	bh=UQFqrnjwwEQrn7+9uZEXrxJvHu9Ovq1ztyrLAcjSCxs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=onF+VjZ1BECxP30FY95cTo4/Pz+z4xIKxPDwyEfB6CpHdgSZqS3rkd0dVbj+WUT9xF4k6AU53M6w7FN0GC9WlN8zmIv162nSOCRRRk1jhQfdxH4gloN3fCsau2/X6FHAUIu3ahwnrSKJExRFMGv5q9kyffAJFYXAtQtwL5WIrWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Fflo9QK7; arc=none smtp.client-ip=79.135.106.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1739832588; x=1740091788;
-	bh=UQFqrnjwwEQrn7+9uZEXrxJvHu9Ovq1ztyrLAcjSCxs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Fflo9QK7937qcX0C92R3OU38ZpSx/hrkuq4rnMm/Q7VEjUhq+IYYBoS4y1sFOjFr3
-	 HF6W53CAH0Gpred2S7Ev5UyCmPlih97wgs5lcSWpY1YSp2hCLoqy8IXnMZ8uUN1RjN
-	 wd/FAH39ZtF/LNE17ErNNr/vA2zhxAjnizjNs+X+r+83UuZVQzxLRJaZNQ/sRfeyLx
-	 fSKV+RWwVBcB0C4GunAcBcFjosnBmLRzw+2N+i/eRQ1jVzj/yZ4SP2gMdU06x9XKzO
-	 /6bzjzUs+pZ94czjEEbSS7f8FAvW47RHLt8hbV5zILt4eLsJGcLhbeZAtyODNI0l3n
-	 EStGe0gMZoQlg==
-Date: Mon, 17 Feb 2025 22:49:45 +0000
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: enable `too-long-first-doc-paragraph` clippy lint
-Message-ID: <6b914549-ed4f-4b8b-b6c7-9013e5c4c29e@proton.me>
-In-Reply-To: <CANiq72kwME8D2P5C2mbwmTpxekR8u_kdW6GDVz8WERi_NvRZYw@mail.gmail.com>
-References: <20250216213827.3752586-1-benno.lossin@proton.me> <20250216213827.3752586-2-benno.lossin@proton.me> <CANiq72kwME8D2P5C2mbwmTpxekR8u_kdW6GDVz8WERi_NvRZYw@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d0461f8aaf5f2e9623df850323039ba8cd6fffd4
+	s=arc-20240116; t=1739832602; c=relaxed/simple;
+	bh=jUSUz00ESf+S26jtK/k3pKofGf7cV8jQzbW7nQEsROM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qvM90/3CyGn8xK6EizZCy3jZ1DbRsGrxhdwiBlJmErAfA4FGuip51BVLO2svLoQgAob1rb4BZtsELU0B7fBFPnlSQ8wjJxknbaOMDWgUUJ58CKX5n83/AMbXCLVc/hRhH96WE1iZdVyEakxE+IN9vejj0bEpVucv+pU69NajWTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC6B72573;
+	Mon, 17 Feb 2025 14:50:17 -0800 (PST)
+Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5A50F3F5A1;
+	Mon, 17 Feb 2025 14:49:58 -0800 (PST)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: linux-integrity@vger.kernel.org,
+	jarkko@kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	sudeep.holla@arm.com,
+	rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 5/5] Documentation: tpm: add documentation for the CRB FF-A interface
+Date: Mon, 17 Feb 2025 16:49:46 -0600
+Message-Id: <20250217224946.113951-6-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250217224946.113951-1-stuart.yoder@arm.com>
+References: <20250217224946.113951-1-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 17.02.25 19:07, Miguel Ojeda wrote:
-> On Sun, Feb 16, 2025 at 10:38=E2=80=AFPM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>
->> Introduced in Rust 1.82.0 [1], this lint ensures that the first line of
->=20
-> We will need to ignore unknown lints so that it does not warn on older
-> compilers.
->=20
-> We should probably do it conditionally instead -- it requires some
-> rework to do it for everything, but we can easily do it for kernel code.
+Add documentation providing details of how the CRB driver interacts
+with FF-A.
 
-Ah yeah forgot about that. That's a good point.
-
-> I can tweak it and put this patch into my warning rework series -- I
-> had to send the v2 of that anyway. Sounds good?
-
-Sure!
-
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
 ---
-Cheers,
-Benno
+ Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
+
+diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
+new file mode 100644
+index 000000000000..0184193da3c7
+--- /dev/null
++++ b/Documentation/security/tpm/tpm_ffa_crb.rst
+@@ -0,0 +1,65 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++========================
++TPM CRB over FF-A Driver
++========================
++
++The TPM Command Response Buffer (CRB) interface is a standard TPM interface
++defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
++The CRB provides a structured set of control registers a client uses when
++interacting with a TPM as well as a data buffer for storing TPM commands and
++responses. A CRB interface can be implemented in:
++
++- hardware registers in a discrete TPM chip
++
++- in memory for a TPM running in isolated environment where shared memory
++  allows a client to interact with the TPM
++
++The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
++that defines interfaces and protocols for the following purposes:
++
++- Compartmentalize firmware into software partitions that run in the Arm
++  Secure world environment (also know as TrustZone)
++
++- Provide a standard interface for software components in the Non-secure
++  state, for example OS and Hypervisors, to communicate with this firmware.
++
++A TPM can be implemented as an FF-A secure service.  This could be a firmware
++TPM or could potentially be a TPM service that acts as a proxy to a discrete
++TPM chip. An FF-A based TPM abstracts hardware details (e.g. bus controller
++and chip selects) away from the OS and can protect locality 4 from access
++by an OS.  The TCG-defined CRB interface is used by clients to interact
++with the TPM service.
++
++The Arm TPM Service Command Response Buffer Interface Over FF-A [3]_
++specification defines FF-A messages that can be used by a client to signal
++when updates have been made to the CRB.
++
++How the Linux CRB driver interacts with FF-A is summarized below:
++
++- The tpm_crb_ffa driver registers with the FF-A subsystem in the kernel
++  with an architected TPM service UUID defined in the CRB over FF-A spec.
++
++- If a TPM service is discovered by FF-A, the probe() function in the
++  tpm_crb_ffa driver runs, and the driver initializes.
++
++- The probing and initialization of the Linux CRB driver is triggered
++  by the discovery of a TPM advertised via ACPI.  The CRB driver can
++  detect the type of TPM through the ACPI 'start' method.  The start
++  method for Arm FF-A was defined in TCG ACPI v1.4 [4]_.
++
++- When the CRB driver performs its normal functions such as signaling 'start'
++  and locality request/relinquish it invokes the tpm_crb_ffa_start() funnction
++  in the tpm_crb_ffa driver which handles the FF-A messaging to the TPM.
++
++References
++==========
++
++.. [1] **TCG PC Client Platform TPM Profile (PTP) Specification**
++   https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
++.. [2] **Arm Firmware Framework for Arm A-profile (FF-A)**
++   https://developer.arm.com/documentation/den0077/latest/
++.. [3] **Arm TPM Service Command Response Buffer Interface Over FF-A**
++   https://developer.arm.com/documentation/den0138/latest/
++.. [4] **TCG ACPI Specification**
++   https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
+-- 
+2.34.1
 
 
