@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-517020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CE9A37B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:44:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAD2A37B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FF2188B939
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1473ABFD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3355185B67;
-	Mon, 17 Feb 2025 05:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE9518A6A6;
+	Mon, 17 Feb 2025 05:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4K0D5YVM"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xwBhU6Qv"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8256137750
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD6E29A2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739771037; cv=none; b=izt+Udj5nYGAkonHJk6ZRq7RbGXSNI1CK5j7YZDERQydwSF9ziSDUErCK+7pTahct1mNKmO+mYJ9r0q3xPjth1BFC5R3LvfB1Wz6LcBzu/Hi02xUo2OzyDlhPKLfKTmyoq3azQx7GYXhbn+S+G2+W5sFqupEjmpdwDTZGAdW6zU=
+	t=1739771162; cv=none; b=QRTQpd4O31hEp1zloGSCUyZYFVn3eIiaAgLLq/b3T3sKve4XjPEFsjCBrYL5jf6XJkOgWhUjQQ07oO3pzsSvKxvQ60d4UXOeYM6r2yag5zsiK7PSzfHvBXU6/TN13igH3Lg+1Wkk48fiWhjiJ3rtytVPxVxfMDMAlqoAaiZZkKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739771037; c=relaxed/simple;
-	bh=m2nxmlGiCOW1ssdyHolEPPp2zAKvYhXgcwhTcSkeLSs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pRQvj0cFLrf5YOyPHBWGg70d1ppMZqsqCY0XY9H+9Ii5TLqg5cLmK2iaHNSSm0FUCfMMuV1hqhLSPDwxpRqFkHT1VcufJeuxA2nhHVQGwRgkjI72gXYOCMr4iWTBiGwJmKRgr4Q06j2ZjWWsKSO8Sp3nqrywWEroj3Si1WJqhz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4K0D5YVM; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1739771162; c=relaxed/simple;
+	bh=36v6jqmZpCEsxa7KW4JPCPXZ3N7MYiG6GwfdqHuGqxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ufvPNNR8GtJoqOtE3HNq/zJikf1nT73J2KkpdX3p1GQiCvQRdrnEWALaY8O8rXf9xwazjyKYK/AWA0Zmq1jE2Z+cvCXfyYZJXNNGikS5Y4TnHi0Fx0X7ZHsbzZMqrn/ZMMibM2uHM0nCBe84EzLlHyS10kVuXMC36iD3wdwsAow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xwBhU6Qv; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc5888c192so2189941a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 21:43:55 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-471f1dd5b80so94481cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 21:46:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739771035; x=1740375835; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DFoMPtCCzyh77IMw9FPLeBJxc6vEmk29NKQF2BraGR8=;
-        b=4K0D5YVMk2kiTufXoFmP+iAaFa3JrZ1M62gtTI/tGq0I4KoCLIXQyDifEbHX0xnMB7
-         rfcx//y7Lo+8l0PZpnddHsPAjBd7sKx8ArNpsb6imjolnH/NmyewpiLIPkZGd5D0KLfB
-         /Jl9KsceAf/onjegp8Qg8/J+d+lKuXezu2f3T58pK0DgtwTgEA3NFyFpvwmAvj4naZeB
-         yUlG9q5sjOoVzn0QoCpsb8Tg32ifmIfZbhokmwxJ5lC/ErknUqwbCDlWl8W82COiCQl5
-         9aTNRZVD6G8HtESR7whw+Q0MprdtHfe//bEVjJ4MRmvnXazHVwPOQrg4g+8aDMc/tZa4
-         6DSA==
+        d=google.com; s=20230601; t=1739771159; x=1740375959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JgEtP7ZCj/iec489kglaPIikfWIGYspzrrfhJsqEWyQ=;
+        b=xwBhU6QvlljIJXmjO2X7SCFQ/EhagSbhJL1Cti21f6E8vBUNEtT5t6NXlEvK1PJwE2
+         51n8d0ICkNUMa5kyhjVsCGvBpe1TqINIsWm6MYJDhdrU0DuXWM8zW5RsAUpZaJiDEFGc
+         Xhq4He7zw7kM7jjImzCDeJDh6b/wslGUGca6y2IgWMxC4/4hASeJbn8JMp6iyrLo3/4l
+         BDoMfPfbFojIGriNnqJ86keGV2TYzRvsw7opClCnwutS4hZROtH7M8IDyPS7/UGRns2E
+         WbugO3ONirEhuIBEYM9ixiV+jSuHVBc4VKv6VbZjw+aaBiTggZN0jyv3lKmWST/23xaj
+         ZLGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739771035; x=1740375835;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DFoMPtCCzyh77IMw9FPLeBJxc6vEmk29NKQF2BraGR8=;
-        b=Y63sNofkS3PGpJf5o03CyRs3UJB02gMMeQJR9IzQ+IuaFm45nZFnV+S3BII2Vl3nzy
-         7IaJiaeXZtPbD/A8MQZYgLmouHtfa3ebgyz2VlprFND/A2XC1gulh8XOK+A54rePOv5+
-         agVp2TkeDEXt4O8DMqGYUATranc0EMGRC3CGmITO5cW2w6wxEdaaAmJt9Rs5WJo6jqZD
-         p6FBGSGAUrhrBPk9TFOdGB2QzbnMUVAGicKHH5B/xevu+xzyiy3TMkO7cW8hxPgFapli
-         LSHQHKzpQI1ZMtxExdODVjTYe6m3Ne6teaiAjJJ2l/aaMqeEpy7GrRvUhXevBziUNZMq
-         7TBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBoqbGvsyJqX0sI8/IesG7oFRQd8VSrsmXB8b4VRVDp+sSYQdCDVZXsD3+fAcqCO8XXX6ovyfnquCaayY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7xtwSyXAW2uQkzkFMH5jLH6gqZf3A/C6YihlXX+3gJax3TZvP
-	DCIr53KH157K9bPUIs9ICjuMW00ZwV/z81DMpo4JlT4nvJQb+GpG6irO5iHqbEVDTzL5ciY0/cM
-	kXg==
-X-Google-Smtp-Source: AGHT+IEOIn9RYGtvux1lrk967wEHGTTg9GGTSq1zzpxzbOkqMJ5gnRYyBgUANO0B80gvOdywOZtFGtHaqtI=
-X-Received: from pfbfh25.prod.google.com ([2002:a05:6a00:3919:b0:730:5761:84af])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:13a1:b0:730:8e2c:e53b
- with SMTP id d2e1a72fcca58-732617802eamr10978562b3a.5.1739771034988; Sun, 16
- Feb 2025 21:43:54 -0800 (PST)
-Date: Sun, 16 Feb 2025 21:43:51 -0800
+        d=1e100.net; s=20230601; t=1739771159; x=1740375959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JgEtP7ZCj/iec489kglaPIikfWIGYspzrrfhJsqEWyQ=;
+        b=PnrPh8pA0fTxdIHykMY8vqCGOQT+ikSjkYDpZwB6KGBogUx/A8MISLM6uRIplBtTs6
+         /GnY1Q3o7AXzLQtweFZOGhbVBFxwyc4pYYGSHbn2j8SL9DPi2pplRqnyggHRKgST/UbE
+         3YJ7jWw9Srb4vnfx2pZB/QgYSYmd7+8fkJu1m78lBCgGkG1fX4/mhFQ47gKkMWPLNf3i
+         LTYEpHVT+FXfrkaVMTLPq+rm8FJcxw0gIZWk4FidylfNoKue1/BntKeaoA7zoeDHSBsq
+         HRqVxtCY24h0r9rpPuK9AStNiVOV3dG6k/zOXOJGlOnfNr/Rs5Z0vVcEOTPLPtAFXNlH
+         w/tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Aqd2TREmdtwu9dnbNQzByMcrrjEyPEm3+9VW431N41OOFYQATui6yBjSfS221W6WyIVcYYB3By6Y11U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzGja4zIBsDWlkT3S4ZJkXc7B1PDSE3DjR8cOjzUmues3R3phJ
+	JoDMJtRM3q9DSzQHxwQSwuWBef9FiZVFRN5GqA39gKkPn37iEy6YdH5DFtMLX3q4TLC5vEqRimx
+	GRSFrbZOjSmyQr9or2icFzIVnXQ9f4RRE/WcJ
+X-Gm-Gg: ASbGncttxXUNNq5ZSQas1Oa9Q7ETUFTV7bj7IDyDNGHCM+/9T/PFb+ameiVwnTGQVY/
+	LbUafzOm9ynsET5G56k8b/A85pXjAGoHyITwn1u6AqEgRBzsOlZsh++wlOrJ//P0ZI0K19fmuB/
+	m7IaTvF7Y+c8UvUPhe4vD5emNvWAc=
+X-Google-Smtp-Source: AGHT+IFWZTc7y7L0UDRu1d2wIAjRGiucn5vcsQ3bASYdK/8KN/JZXov27MH9PO3Rjj5rtaREOTBbM2DXstTopUX+pjw=
+X-Received: by 2002:ac8:7dc6:0:b0:471:8b2d:c155 with SMTP id
+ d75a77b69052e-471dde5eb1cmr4061821cf.1.1739771159280; Sun, 16 Feb 2025
+ 21:45:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250217054351.2973666-1-surenb@google.com>
-Subject: [PATCH 1/1] fixup! tools: remove atomic_set_release() usage in tools/
+MIME-Version: 1.0
+References: <20250217101453.34720e6f@canb.auug.org.au> <CAJuCfpEXqT-aHU39XMTtf-omJJUcQXtNF6RHmZ2bddqcVN0G=A@mail.gmail.com>
+In-Reply-To: <CAJuCfpEXqT-aHU39XMTtf-omJJUcQXtNF6RHmZ2bddqcVN0G=A@mail.gmail.com>
 From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	jannh@google.com, surenb@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel test robot <lkp@intel.com>
+Date: Sun, 16 Feb 2025 21:45:48 -0800
+X-Gm-Features: AWEUYZkLtcptRikPsV9k3V5QK8ESQI9OLOXmwPu4xnUTngqpDm7EjFewi9OLT4M
+Message-ID: <CAJuCfpHR_NA+RERHRi3m1vwJVdDkcpd9Vd4XfM35gTnHeUmOag@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the mm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Userspace versions of both atomic_set_release() and atomic_set() get
-translated into uatomic_set(). To avoid extra definitions of
-atomic_set_release(), replace its usage inside refcount_set_release()
-with atomic_set(). This results in no functional changes.
+On Sun, Feb 16, 2025 at 3:22=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Sun, Feb 16, 2025 at 3:14=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.o=
+rg.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the mm tree, today's linux-next build (powerpc native per=
+f)
+> > failed like this:
+> >
+> > In file included from threadmap.c:4:
+> > tools/include/linux/refcount.h: In function 'refcount_set_release':
+> > tools/include/linux/refcount.h:65:9: error: implicit declaration of fun=
+ction 'atomic_set_release'; did you mean 'refcount_set_release'? [-Wimplici=
+t-function-declaration]
+> >    65 |         atomic_set_release(&r->refs, n);
+> >       |         ^~~~~~~~~~~~~~~~~~
+> >       |         refcount_set_release
+> > tools/include/linux/refcount.h:65:9: error: nested extern declaration o=
+f 'atomic_set_release' [-Werror=3Dnested-externs]
+> > cc1: all warnings being treated as errors
+> >
+> > (and several more similar)
+> >
+> > Caused by commit
+> >
+> >   1465347e498f ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
+> >
+> > from the mm-unstable branch of the mm tree.
+> >
+> > I have reverted that commit for today.
+>
+> Thanks! I'll see if I can fix it quickly. I must be missing this
+> function under tools/ in some specific config.
 
-Fixes: 1465347e498f ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502170049.sHfzQwpv-lkp@intel.com/
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- tools/include/linux/refcount.h   | 2 +-
- tools/testing/vma/linux/atomic.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+I just posted a fix at:
+https://lore.kernel.org/all/20250217054351.2973666-1-surenb@google.com/
 
-diff --git a/tools/include/linux/refcount.h b/tools/include/linux/refcount.h
-index 1ace03e1a4f8..1f30956e070d 100644
---- a/tools/include/linux/refcount.h
-+++ b/tools/include/linux/refcount.h
-@@ -62,7 +62,7 @@ static inline void refcount_set(refcount_t *r, unsigned int n)
- 
- static inline void refcount_set_release(refcount_t *r, unsigned int n)
- {
--	atomic_set_release(&r->refs, n);
-+	atomic_set(&r->refs, n);
- }
- 
- static inline unsigned int refcount_read(const refcount_t *r)
-diff --git a/tools/testing/vma/linux/atomic.h b/tools/testing/vma/linux/atomic.h
-index 683383d0f2bf..788c597c4fde 100644
---- a/tools/testing/vma/linux/atomic.h
-+++ b/tools/testing/vma/linux/atomic.h
-@@ -7,7 +7,6 @@
- #define atomic_inc(x) uatomic_inc(x)
- #define atomic_read(x) uatomic_read(x)
- #define atomic_set(x, y) uatomic_set(x, y)
--#define atomic_set_release(x, y) uatomic_set(x, y)
- #define U8_MAX UCHAR_MAX
- 
- #ifndef atomic_cmpxchg_relaxed
-
-base-commit: b2a64caeafad6e37df1c68f878bfdd06ff14f4ec
--- 
-2.48.1.601.g30ceb7b040-goog
-
+>
+> >
+> > --
+> > Cheers,
+> > Stephen Rothwell
 
