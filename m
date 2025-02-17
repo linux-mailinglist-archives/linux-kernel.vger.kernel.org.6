@@ -1,78 +1,64 @@
-Return-Path: <linux-kernel+bounces-517085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF61A37BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:09:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2697A37BE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79A8C7A23B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FEC116B2D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0F619ABC2;
-	Mon, 17 Feb 2025 07:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huhWcwDq"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2EA18DB1C;
+	Mon, 17 Feb 2025 07:11:38 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BC518C33B;
-	Mon, 17 Feb 2025 07:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D514C70
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739776140; cv=none; b=FfasQOZUzE69lIFH/u8ZZsas8R5LRWod61Hr7P7WFYim67GTHg23gu5Hiha9FoAqmjwSKtj0VofNwF+MpDocoxHtdCY2qAcKLX6tEU5zISdBiZgVXXJwZqKf04NMN3CSSsMpRh7wuewBcgdRZKxK43zJwNp1Zdi5sJqRQhBZfbM=
+	t=1739776298; cv=none; b=jqp1I0I+6jseThON2460luwbJd5TbJhavWNtJMgXMdl3d3qaAsJD7MuE6+qwYYi9nVjlt9t54yepTu3LRbVPnJfRSgt7OaSFxDK1fNhfNjrzGcVBhEOQ6WqIwhjnuTL9tNSdhXqD4ldgRRxu7/B+SV2It/ha+ib7lWYbIFj3i/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739776140; c=relaxed/simple;
-	bh=TIaLHfraef5v7lrUC7vTH4c6nnspd2dBgVOKfBQ9ud8=;
+	s=arc-20240116; t=1739776298; c=relaxed/simple;
+	bh=HfFlznV0nBxoLPm5hCaDqxRmAugufTREXGTkETPmjNQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Thw226FHZR3ewcxeHrCXB4MgEnf+m7oZ/jQfJMEY4+zxkRI5iaqL9URcJiAnAYCZACvK+b4J8U4HmOb1z1pYT5WzrM1sL7YsDB+auoRassQ7qieqYnKNY2PdSkQe+KRZCX90OfEDBRmTxVdsIgyi3nARTxqhvLjPUcseNdYHHsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huhWcwDq; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 In-Reply-To:Content-Type; b=C/1l0SC8KduSqD8/J29uHD+Rx/wZdnZJHjYjEHP5UR/2hMvpop0mYFXYX4HDR0FxQenHm+yXw5v0JRDq5KmH7Ezu+83019OjwdX2fBRy3g2UjHi+IMzDMUiflxTXos3Lc79ieMV0ZG7Fo6dlOBsac6Lmrfm+uOH/stn79KyU0jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-309311e7b39so14477371fa.2;
-        Sun, 16 Feb 2025 23:08:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739776136; x=1740380936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4alR9jTjsGdGSAcz4k2e3lKB3D23SrVBvx805wKurZo=;
-        b=huhWcwDqzN9JQpPfSH3HKFfJj8D2722bcGmIUoAFbdYpMVvRJ7mj931V01uPu1Gerd
-         Lc3RuglewXfUUqFBT9UURdExVwLIEwzV3fBoaQfebcA+nY1MdwOOM8tMh76vyxrZup9K
-         yN3SMW+GsmMwsNwpJ0l5JIlPyYNv7QRDWaa0Mgv8nZS/b7ZqAuTqgGTNd6XyQw56A7/d
-         hidTY59tiPnPlhhdT3OgDTDrQ2UM1JNHJ0E94Emg7wQ09YswBM7MucYvqGjqEDVCR8q8
-         HMIx48Zvt1P9W5TDjuOvfLEkeYB0/65Sh7YZl3ODnIXDbVRhLDwQGFC/GT0OPQQ2PhkU
-         ZqWg==
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso25237235e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 23:11:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739776136; x=1740380936;
+        d=1e100.net; s=20230601; t=1739776295; x=1740381095;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4alR9jTjsGdGSAcz4k2e3lKB3D23SrVBvx805wKurZo=;
-        b=VSRuPh2AlQRj55fu5oB8kNcvtaCZJcVhNHVKF0R/keUzNoSiFoWh8G97SX8TQABJEI
-         u7S/44NiUbg58wizAhu5EhbwgZ7NJlJGK7aWR/IswrUIOJ7GVpTKArxMDZf10hG0brKl
-         fQj+t0fwxLBSre+uzwgpfp0EU3nIryDIxAA/ePm0uTEDFR7VX8A/Al0RHoPHLTRZu04R
-         KaRV+QlH+Q1fULTmQdwGg1IkmjyUZlc0cjQi4jXEpWGJzIsUHD4E+1ig9OMe5pA5DRhf
-         J3MUxa90rj4MyOlqKqZsFMRoMOGV/4UBW0ZtTBAyxcvv55P7GkkOY0VF5OlcrwhzQbYo
-         I0gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3CXhTsWohgkcRWB7C2k5Vys1S7yoSkBXShxcp+ruhvU2xDhpaQadqzYBjE8/CL54bu9+LC5eon8jdr1J7@vger.kernel.org, AJvYcCUn/YfSkr8KV1nhwyv1/RhpRh8e1nVZmz3tHKdov/uBHm0pz2j8Xm623aq4HxWs/EVZ7qpdPlJHESOG@vger.kernel.org, AJvYcCXM/3YWUB4SR/uTGMp8J8DfmtdlOljMx756YW/wuviPZRZf/XrpqSC07cJUjnlK3puoDP5QY3WlN/nj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpzP9qOktiQ2KtYrmOEyGq+UmxKOLK2mPCrin3JHTWn/hn5oVP
-	OOlLWyKYY8ssBoPgib0/xFSpbz4ya15pZ5GaHxdzecXHYUIY6c+L9iWOmA==
-X-Gm-Gg: ASbGncuRdlBht9aJLmXNLs7InnEI5+7jcTFqxyH15PiH1s2XoR5HZDIdoHjEPR2jNvC
-	A6I0Z7Pr1GKiujhE2DnLPJj9q5xOiDBSlrJLskzhuQBlW+d+rlheHE8NtOGf9cMjMJ6L+t+3XLl
-	xeJ2u6/JuKwCxQqveVh0yAY78A5pSIAMVFds5AfMFI7GyzTPKHDp9QD4HJLxiTHKLpECcPbB1Xp
-	uYC54P9w4uTqxAWEZ6EtCOwvTJ2g1jhDToMKqHAT5jecfZ9pxvun6RXHcserZPPijWMDu9h20va
-	MUWbhAbGcj2NrsT+9N9ssjuhZtQfE+U2gdqhRS47M5sSuUODo9ePADeK4ijNKLR/2+MmDibG
-X-Google-Smtp-Source: AGHT+IFgezEO09iFpVK/dt0sEVIkF8nUioSGzkMyj5imKGMIO75UpW1jej2OEUPMhzHh6rCLIfJIjQ==
-X-Received: by 2002:a19:8c4e:0:b0:545:5be:a6b5 with SMTP id 2adb3069b0e04-5452fea6145mr2388706e87.49.1739776136039;
-        Sun, 16 Feb 2025 23:08:56 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545315629c8sm786592e87.223.2025.02.16.23.08.52
+        bh=HfFlznV0nBxoLPm5hCaDqxRmAugufTREXGTkETPmjNQ=;
+        b=VkzZ1kFGLS8Th2Dfe/8pZ7hQiM9DSCQShGvh/H3VrXX6xAXSOl5ukAPYK0SoT/EwCa
+         Xd6qmhfjU6LYVBu4a0sYtO8gsiqMX/dd0yJhEVve4oWUzwRstXVjqy6WjpmGSrK8FiNI
+         GDlvZkx1JC6DXi74bu+n96hkI+5xEu3EfRnJ0dXWb35/a5BIWyOMmHYe8tIUsnOgbt5D
+         zu6szEFQa+1rMR0X6GA0vZv2Iy7ZHqjGuCgapcTz63LOhdfs1QbhBxayxxnzUxEhLlKz
+         ZWNAgDTFstZ6SuYJmD2UDGX9NH2kr+0FgxCIJyjCieHmHxwa39POfl2MZYrUR7U0myP/
+         iIxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuqdGl5yzCE76sfoc1rt+h84PPkEmRabx2Wm44oo9LPU+hPFaQ6NmcPuZbbsbaCcMarHQ76abjfye3Ac8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDfCQBlLrwor5n5LEjexzXRbj2byHxm4ZkmFac1NKsAcSigqiZ
+	h4bf93Illggm6hEaO73KDFsPNDvLamf/VUYMaPRPHaXCziB4ecPu
+X-Gm-Gg: ASbGncuJqAJ/pLJvT0fxepkPYahRZDX+ZGiB1hRjACQjU9FdJZzX50rd+3wnF5Jlfds
+	l4blbHb2J4VYV9LR+xa9XKDnujLYBLA+6V1B4Fdbzio71jK/TqCJnPV67bH8I1FyPktq5OQR2yl
+	L8ywKIm836VKxgu3yQ7YkAk2EVRN9d5ibOXwMYNot7xdLC58nqcWMTil+M6y2AQmQR3tIMM41BW
+	qlk7x5EWGF3Nth5FGqeVyoO6GoQmpK2O6mMmmMOrGw6akptLSSfyPBDEqgFvcbEXi5Xs3XskEdK
+	xy6idkmZI4SMV7qWopktHkFiDNLGwPSrxk8QdAtC7WxYLql8pR6NlTRUzQ==
+X-Google-Smtp-Source: AGHT+IGBf7m9jJ8orGHtq7A3pyZr+hSkuDb8hp74BO/+yVf2IY+GcYDHhiDbWgtrJSrqMucrs83p3A==
+X-Received: by 2002:a5d:5f4e:0:b0:38d:ce70:8bc8 with SMTP id ffacd0b85a97d-38f33f119d1mr6992192f8f.9.1739776294470;
+        Sun, 16 Feb 2025 23:11:34 -0800 (PST)
+Received: from [10.50.4.206] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dd5acsm11580225f8f.35.2025.02.16.23.11.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Feb 2025 23:08:54 -0800 (PST)
-Message-ID: <28b9dda3-6fb6-49b5-90bd-716eb35a3104@gmail.com>
-Date: Mon, 17 Feb 2025 09:08:51 +0200
+        Sun, 16 Feb 2025 23:11:34 -0800 (PST)
+Message-ID: <dda59c66-2868-45fe-b943-2c7cf6d99893@grimberg.me>
+Date: Mon, 17 Feb 2025 09:11:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,140 +66,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] iio: adc: add helpers for parsing ADC nodes
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1738761899.git.mazziesaccount@gmail.com>
- <337895af7418a8e4b20b5a9322344b68082508ae.1738761899.git.mazziesaccount@gmail.com>
- <20250208164111.28ec9f2d@jic23-huawei>
- <ed0e43d8-9ab4-4614-9079-8a592ca8b185@gmail.com>
- <20250211190714.4db240d2@jic23-huawei>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250211190714.4db240d2@jic23-huawei>
+Subject: Re: [PATCH v4] nvme-tcp: fix connect failure on receiving partial
+ ICResp PDU
+To: Caleb Sander <csander@purestorage.com>, Hannes Reinecke <hare@suse.de>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Maurizio Lombardi <mlombard@redhat.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250124184311.1642797-1-csander@purestorage.com>
+ <9ea74200-7cbc-4a30-9503-864dcec9b45d@suse.de>
+ <CADUfDZoT7JW+d+j6YNmWJ3CKZ45gbvcUSsE6boZwE1C3iXw2_g@mail.gmail.com>
+ <f75c62ce-04a7-4bc0-ae77-8ed80842bf37@suse.de>
+ <CADUfDZrvHmYQgqu5GiQDrAg_MOEiRigCLCmBSO6jeyd1z+Q-JQ@mail.gmail.com>
+ <3bcc6e3f-5172-40d4-a4d4-b0f914b9406b@grimberg.me>
+ <CADUfDZq3ZqpP9hZhgG1gzyyggG6SCQiHqHdgbm95TU2oZ5QFUQ@mail.gmail.com>
+ <17d0b30a-758c-4a84-9879-0a070656f15e@suse.de>
+ <CADUfDZqy4tO5DxWejvBN7-xBVfCfKae4PDq70NYsgMhU+kkJ-A@mail.gmail.com>
+ <CADUfDZp5E-oc+ikHQxvFyR7nLPWiOjqKQudC04roarn5ps9w1A@mail.gmail.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <CADUfDZp5E-oc+ikHQxvFyR7nLPWiOjqKQudC04roarn5ps9w1A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/02/2025 21:07, Jonathan Cameron wrote:
-> On Tue, 11 Feb 2025 10:52:51 +0200
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> Hi Jonathan,
->>
->> Thanks for the review and all the comments!
->>
->> Just a note that I am currently spending some quality time with
->> rebuilding the floor of my house. Leaking floor drain can cause a bit of
->> a work... :rolleyes: So, my time with upstream work is a bit limited -
->> although writing an occasional bug or two can help one to keep the
->> balance ;)
 
-The good thing when doing manual labour is that one can run thinking 
-processes at the background - and has no time to reply instantly. XD So, 
-I've been thinking about this quite a bit while installing new floor...
 
-...
 
->>
->> Right, thanks.
->>
->>>> +			u32 ch;
->>>> +
->>>> +			ret = fwnode_property_read_u32(child, "reg", &ch);
->>>> +			if (ret)
->>>> +				return ret;
->>>
->>> In general the association between reg and channel is more complex.
->>> We need to deal with a reasonable subset of cases (single-channel, diff-channels
->>> etc) where it isn't the case that chan == chan->channel.
->>
->> I guess this is right. I, however, lacked of knowledge on how the
->> differential channels etc. are handled :) Hence I just implemented what
->> I believe is "the most common" approach, while leaving the rest to be
->> implemented by those who need it.
->>
->> Still, I agree that a generic looking API which silently produces bad
->> results for a few of the use-cases is not nice. By the very minimum we
->> should check if single-channel, diff-channels properties are present,
->> and then error out with a warning print. That should give a good hint
->> for those driver writers who are trying to use API for something
->> unsupported.
->>
->> Also, restrictions should be mentioned in the documentation.
->>
->> Do you think we should use some more specific function naming, like
->> "_simple" - suffix?
-> 
-> No to _simple. I think this needs to handle those cases before we
-> take it at all  They should all have enough docs in adc.yaml to
-> work out what happens.
-> 
+On 10/02/2025 19:24, Caleb Sander wrote:
+> Gentle ping on this patch. Sagi reviewed it, and I don't hear any
+> additional comments from Hannes.
 
-I am thinking it would be conceptually better to provide small helper 
-(like the *_simpe() ) - which handled only specific properties. We can 
-additionally provide '*_differential()' helper and potentially some 
-'*_full()' helper which covers both cases.
-
-Rationale is that:
-  - writing _simple() helper is simpler. So is understanding it.
-  - Devices may not support differential inputs. Drivers for those
-   devices would want to call helper which does not accept the
-   'differential' channel config. Parsing the differential channel
-   information successfully and filling it in iio_chan_spec would be an
-   error for those drivers.
-
-> The most complex cases are all Analog Devices parts and those
-> folk are very active on linux-iio so it should be easy to get
-> them to review a series using it.
-> 
-> I don't think it is going to be particularly hard to generalise
-> this.
-> 
-> We may end up with a variant that takes a 'per channel' callback
-> to fill in more data + a private pointer of some type as often
-> those are putting data in a parallel array of extra info about
-> the channels.  Let's see what it looks like.
-
-I was playing with this thought for a bit. I do love the regulator 
-framework's '.of_parse_cp' which the driver can fill in the regulator 
-desc. It's a pointer to function which is called by a regulator core 
-after it locates the regulator node so the driver can handle regulator 
-specific properties and do relevant configs in the registers.
-
-I some sense the use case is similar - PMICs usually contain multiple 
-regulators, each having own node. Being able to 'offload' locating the 
-node to the regulator-core is often very handy for drivers.
-
-I thought we could maybe add .fwnode_parse_chan_cp field in the iio_info 
-structure. Idea being that it'd be a function which would be called for 
-each channel - and it would probably be useful on other areas in IIO 
-besides the ADCs.
-
-Problem is that the number of channels may not be known prior parsing 
-the device-tree. So, here is kind of a chicken-egg problem with 
-populating the iio_chan_spec. Furthermore, locating the channel node in 
-device-tree may not be 'standard enough' throughout all the different 
-IIO areas.
-
-What comes to a devicetree parsing helper which takes a pointer to a 
-device specific configuration function as argument - my initial feeling 
-is that it might get a bit overly complex to be user-friendly.
-
-Hence, I'd keep this simple and provided small-but-usefull _simple() ;)
-
-Well, if others aren't convinced by the usefulness of these helpers - 
-then I'll probably just squash it into bd79124 driver and be done with 
-this :) Later if I work for another ADC variant I might export it as 
-'rohm_adc_helper' with an internal to IIO header :)
-
-Thanks for the opinions / discussion!
-
-Yours,
-  -- Matti
-
+Caleb, lets resend it with review tags from me and Hannes.
 
