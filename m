@@ -1,91 +1,181 @@
-Return-Path: <linux-kernel+bounces-517602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D5CA382EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:26:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CE9A382F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77858171F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F15C170393
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E622217F5C;
-	Mon, 17 Feb 2025 12:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F9F21A449;
+	Mon, 17 Feb 2025 12:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b="EY5mGSWv"
-Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="H2HroW0h"
+Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E862218842;
-	Mon, 17 Feb 2025 12:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B9218842
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739795158; cv=none; b=A4+vpsN6AJIZPlvtCQQ8UdlSX3T8KYMSP2Y7ytl8GbV/ryHLuzyzjx3regxhbkpBkXyWNpnE1VlKG0TpzAGUk7KdcUlL1GexXMScHeUZ8ai2T+ErDZKdM3w5BVwyr2uwQNorPPyQJZkDWGL7+p2fX2vZVWnI5ja7/B+cTDoRWZg=
+	t=1739795239; cv=none; b=CXHUeo4uaS3xTKRUmPYkZ38nIWTwPO+Hw/EZS4jQnV0jzMTCTcldv8rOC5PivVXaC5OFIyds0DypPY3jrjas6G08Di3Us265vND18XvwUJl37FOahFAjZXE/a3FXTErTY0Ho+5qCcZTcrLYdiuSju0cuz+ONLkeNootBBIIxhkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739795158; c=relaxed/simple;
-	bh=lFJsXlgEY82n+SX5Ibkp2jyxFTxnjgwhZlkrhHi3tzc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=l84grobQbuVKX7IZP7Y3xHVMxboVi70iTIxknLE9keCmlpcElEcJ/T9AEPHVW63RXixhueo7v04V+MSioLY4MqhtcqKMNCotexZY/eWvzIwxnmF8MSJqcvSVKr0KbdHGKc2JI+YWWqsvsE6zqSDagibC7/7Pp9JGIwtJ3myPouM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk; spf=pass smtp.mailfrom=pelago.org.uk; dkim=pass (2048-bit key) header.d=pelago.org.uk header.i=@pelago.org.uk header.b=EY5mGSWv; arc=none smtp.client-ip=46.235.227.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pelago.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pelago.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=pelago.org.uk; s=mythic-beasts-k1; h=To:Subject:From:Date;
-	bh=CviyWBmyPdnlT0TjppgyZxk7v9bpeFzOVnWOqtTK928=; b=EY5mGSWv+YCfGvTHU/IXarZcEY
-	Au0oDEgJ5aPk3Zop3VG4pnVNJWNIEAeT9QZkMK3rw4S7s8oEopKqz9Vj2bRAB4/H7hT1bQwtItQD7
-	JVLj0yxsU8zZI+90M4dKYyT1mFU5/Jg8TUlWqv923esjM+9pOWYur1EJQYH+alwO3D/dnSkA3iXYo
-	W/LQQYtCYhBm2OaceFdmG9WHHyOjvJW7ExC2P7Z1mRocy0a5oA00ursKWzQQ8v7PGkolg6x41uBuf
-	6SzofvjELAk4BhGamfVrCKtIKB47WAyWVq/imvHzsGf0Usjmx+AaDSLXkW+GSRLUvg4eoeWoc+TaA
-	8ejpt/rg==;
-Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <john-linux@pelago.org.uk>)
-	id 1tk0CA-0057lr-AK; Mon, 17 Feb 2025 12:25:54 +0000
-Message-ID: <690b6c31-67b3-42c5-86a0-0efe3640724e@pelago.org.uk>
-Date: Mon, 17 Feb 2025 12:25:53 +0000
+	s=arc-20240116; t=1739795239; c=relaxed/simple;
+	bh=+dIR+LeHo5kZKBeudNiXzL2GMb5J0NlWFTmwEAPjc9w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tMZCw1hdRUzSh6qUPDqebW+nQMmvAumZ5NX/6GIuWLhKUcTLfqOrsx+JI1Jr827P34/E6n5NWndZ8qGMDRSyAE4V48n5SMh/Wmfd3nh/aYiT1luYfSUeOSuDB2O6trTxlJt6x8fMYdvMnXTQkd0GEDznBKkJ4cWDaSq9UIW1Ab0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=H2HroW0h; arc=none smtp.client-ip=17.58.6.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=Pi7+rTG0m4v7zpGViDVCQo5NVyykXLI+pXUfY4RsiVI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=H2HroW0hTMUdfZo6MiZQpBP0aiBenvObYk4BxCYgvT4X03H46ggvOUXWM2lPw2vvk
+	 w022AOgNWDITlcqbRiViKm2tcLXPgKZkB4wY1iYG7PwJdo+JBeKwV8461EdTT2SYcl
+	 XOqJZdSxDVxolxgFqNqjWQ/clrLDbg718Ej0EJWQPvOLLy/ROqQY6op6M5rSzmjw8E
+	 RstWGaeZxxxsMwBk5HEcmA7wmDjEFITFfgiiyflCgZVIYqMQeZM1ux0lNBT0RC1WOi
+	 lxem4cysWmn4ZYZvYRtkG8/X5Cl9hheDMXvbJrmd4+SRHQs97e45TjjeMiEvYkkVth
+	 6M8sFD3k9zpfg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 920DE34BA68E;
+	Mon, 17 Feb 2025 12:27:12 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Mon, 17 Feb 2025 20:26:46 +0800
+Subject: [PATCH v2] PCI: endpoint: Remove API devm_pci_epc_destroy()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: John Veness <john-linux@pelago.org.uk>
-Subject: [PATCH v3] ALSA: hda/conexant: Add quirk for HP ProBook 450 G4 mute
- LED
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: en-GB
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-BlackCat-Spam-Score: 0
+Message-Id: <20250217-remove_api-v2-1-b169c9117045@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAUrs2cC/23MQQrCMBCF4auUWRvJpKQYV95DisRxamfRpiYal
+ JK7G7t2+T943wqJo3CCY7NC5CxJwlzD7Bqg0c93VnKrDUYbqw1qFXkKmS9+EeVoQPbOOo0M9bB
+ EHuS9Yee+9ijpGeJnszP+1r9MRoXq4Lm7th233tLp8RKSmfYUJuhLKV/lE89WpgAAAA==
+X-Change-ID: 20250210-remove_api-9cf1ea95901e
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pci@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: aO8HdjU9xAh7e-Xl860WkIUQwEJ0m9eN
+X-Proofpoint-ORIG-GUID: aO8HdjU9xAh7e-Xl860WkIUQwEJ0m9eN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=878
+ malwarescore=0 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502170109
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Allows the LED on the dedicated mute button on the HP ProBook 450 G4
-laptop to change colour correctly.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: John Veness <john-linux@pelago.org.uk>
+Static devm_pci_epc_match() is only invoked by API devm_pci_epc_destroy()
+and the API has not had callers since 2017-04-10 when it was introduced.
+
+Remove both the API and the static function.
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Correct commit message error pointed out by Manivannan Sadhasivam.
+- Link to v1: https://lore.kernel.org/r/20250210-remove_api-v1-1-8ae6b36e3a5c@quicinc.com
+---
+ Documentation/PCI/endpoint/pci-endpoint.rst |  7 +++----
+ drivers/pci/endpoint/pci-epc-core.c         | 25 -------------------------
+ include/linux/pci-epc.h                     |  1 -
+ 3 files changed, 3 insertions(+), 30 deletions(-)
+
+diff --git a/Documentation/PCI/endpoint/pci-endpoint.rst b/Documentation/PCI/endpoint/pci-endpoint.rst
+index 35f82f2d45f5ef155b657e337e1eef51b85e68ac..599763aa01ca9d017b59c2c669be92a850e171c4 100644
+--- a/Documentation/PCI/endpoint/pci-endpoint.rst
++++ b/Documentation/PCI/endpoint/pci-endpoint.rst
+@@ -57,11 +57,10 @@ by the PCI controller driver.
+    The PCI controller driver can then create a new EPC device by invoking
+    devm_pci_epc_create()/pci_epc_create().
+ 
+-* devm_pci_epc_destroy()/pci_epc_destroy()
++* pci_epc_destroy()
+ 
+-   The PCI controller driver can destroy the EPC device created by either
+-   devm_pci_epc_create() or pci_epc_create() using devm_pci_epc_destroy() or
+-   pci_epc_destroy().
++   The PCI controller driver can destroy the EPC device created by
++   pci_epc_create() using pci_epc_destroy().
+ 
+ * pci_epc_linkup()
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 9e9ca5f8e8f860a57d49ce62597b0f71ef6009ba..cf2e19b80551a2e02136a4411fc61b13e1556d7a 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -25,13 +25,6 @@ static void devm_pci_epc_release(struct device *dev, void *res)
+ 	pci_epc_destroy(epc);
+ }
+ 
+-static int devm_pci_epc_match(struct device *dev, void *res, void *match_data)
+-{
+-	struct pci_epc **epc = res;
+-
+-	return *epc == match_data;
+-}
+-
+ /**
+  * pci_epc_put() - release the PCI endpoint controller
+  * @epc: epc returned by pci_epc_get()
+@@ -931,24 +924,6 @@ void pci_epc_destroy(struct pci_epc *epc)
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_destroy);
+ 
+-/**
+- * devm_pci_epc_destroy() - destroy the EPC device
+- * @dev: device that wants to destroy the EPC
+- * @epc: the EPC device that has to be destroyed
+- *
+- * Invoke to destroy the devres associated with this
+- * pci_epc and destroy the EPC device.
+- */
+-void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc)
+-{
+-	int r;
+-
+-	r = devres_release(dev, devm_pci_epc_release, devm_pci_epc_match,
+-			   epc);
+-	dev_WARN_ONCE(dev, r, "couldn't find PCI EPC resource\n");
+-}
+-EXPORT_SYMBOL_GPL(devm_pci_epc_destroy);
+-
+ static void pci_epc_release(struct device *dev)
+ {
+ 	kfree(to_pci_epc(dev));
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index e818e3fdcded95ca053db074eb75484a2876ea6b..82a26945d038d3e45e2bbbfe3c60b7ef647f247a 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -257,7 +257,6 @@ __devm_pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+ struct pci_epc *
+ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+ 		 struct module *owner);
+-void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc);
+ void pci_epc_destroy(struct pci_epc *epc);
+ int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf,
+ 		    enum pci_epc_interface_type type);
 
 ---
-Re-submitted with correct stable CC'ing method hopefully! Sorry, I'm
-still new to this.
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250210-remove_api-9cf1ea95901e
 
- sound/pci/hda/patch_conexant.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 4985e72b9..34874039a 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -1090,6 +1090,7 @@ static const struct hda_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
-+	SND_PCI_QUIRK(0x103c, 0x8231, "HP ProBook 450 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+Best regards,
 -- 
-2.48.1
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
