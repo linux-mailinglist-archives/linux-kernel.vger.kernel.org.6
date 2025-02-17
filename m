@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-517590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66D5A382D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:19:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 243AAA382D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E963AC14D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B88DA3AC295
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666121A436;
-	Mon, 17 Feb 2025 12:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E4F21A94F;
+	Mon, 17 Feb 2025 12:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gnQfqixc"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="djEOSibu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B9E16C850;
-	Mon, 17 Feb 2025 12:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794772; cv=none; b=r0/u6Fzxvx+8VvVNPKU54skia9YTvbZC6S7x5OyHvTVjrEWphxzCzKbHb5WkPZ0H7huc6Qhs8sYzxT9Bcbvtzx9mudi4UES53/J1nlOvs165JbTyymf+AQ1G/aIYJgtMRGhIdFMHp/O9GXPrHR6TAws84BPOo6r/O5zZFuVSu38=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794772; c=relaxed/simple;
-	bh=9kgC/V3qNkmeNamkYMHdidfNovuDvLGnvK/bhGmeUsE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=eaBVt1XJ0ZERkZY21LeuoPcF4VvdtAlWYDX9MO55DksgCkAgFdIWzTXhjXbUxMpS58V0yFAixVKdRzO73S5UiJSjiJShFMYsYb5rP8mIVINJ27ETb3oYgjVPGHiZrwW03LrjQ9GQ87jcZNWaxt5AZk3VoVPx0w5iSezUBPlHh54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gnQfqixc; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 73786443DE;
-	Mon, 17 Feb 2025 12:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739794762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tUryUHsSyNveCM8ra3eNAsj4HLJFnzA9/YVXKHA+TZA=;
-	b=gnQfqixcQkY+shV5lUNMH6t6Zxf8MFytJsH2aF+as31qt7dlRjeQ4KfHt+iaagb/6+Xmx9
-	iIQpzny1DLfxc0eRKDM48JkP9tdsAgpU+YOr8YCLUvVcyh2Sy8tuMnULiQsSUHPQpEMZPy
-	GozCbrh+Pl+w33v0SX5eUSchob5owlIAs3F06UAoyHgfTNFEetF1O/Lrn1YYmQ3O3cQfOL
-	3k0QjMNr6wApZL4fS3pu88DtO+L68GdgKR6W/GHGGvaP2K+p4l6bdLr6/BJBvizmwg9F26
-	6I3dY6mBDPPiuxIZv4/R0IpGnvjSsrot2Wb3nsOIfMTeS83cpqaDsnPwTa4/dw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E73218842;
+	Mon, 17 Feb 2025 12:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739794844; cv=pass; b=ew2V2i0a9edksFJQ8OAEVRgshR7LCX5ZYuekihHqxkEiBAO2HNOFm0lzpOTipCJjH+rjr29YuBGMBmBUL2Kd4PFhUQ0ikapu5Jce5ATBWXWja6m2IVmhZulyE5bcGIJMEVvU1Z3D4qBKxcCwSMijOM+gmFWCKMNYrCgzWWFGOxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739794844; c=relaxed/simple;
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=dOHkYHlhk3S72PmGaz3dn7bYuQms900Oz11RDuy4Lbu+ALxO8IoEEa4gcWugv1sJzzphyGMb3B1x2wKOV1Mr7iK6TZDHgwTwWXzHgG1BIMfVL2Hbf1+zuv/ZzQbyDzDpAl2YVwh8A/61P1Q7F2L5taiiGZgFGalZqA0JOg56mu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=djEOSibu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739794815; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GuXIgRTKfl5pnsPmwHwiTzLe4SKUWKrV3qrYKBVJ2X8sRCVcOuVzlCNMdH4r3KbF5TN//FC6nnkG+1czD1/CHFHD9xyTDn+6pCnPsMTJ+W+BZ/wvb3jp6E6rWwW5pxiockASliDqWtccqobD1r2xh0id+AeOEWTyIhVbL0eHHOE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739794815; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=; 
+	b=ADkVlSunrvisvHSJYruzGBvyLQ0JgTHRlE/8vCx56tYr24gRa3DCSq80RNUK4T0PWGZE3OjJtI2cM1bXTRpYCSKVM5wwg9AizxM//2xDuScLGsnYhcN58eVj6P79DJ6uoz/GZqfCYIDvFUJg13cNtXuhQW//gDCGhD0X96w3AmE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739794814;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
+	b=djEOSibu6AvPYJWLed81y8oFIIl+78SQKw0jnPrX35Z1OOKFsiIFsRQylmZKUE8M
+	dtr3PomY7yEBu3dJZ0ZufI17rO3ko6MGJ61Z/gh+bEpLMjP3Om/MH2xFrJBqFIEvahF
+	NgyLjsXX4BdU4y11ScItRUafA22XF2vBa9ha8eL8=
+Received: by mx.zohomail.com with SMTPS id 1739794812898824.9432494406607;
+	Mon, 17 Feb 2025 04:20:12 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
+ framework
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+Date: Mon, 17 Feb 2025 09:19:51 -0300
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Danilo Krummrich <dakr@redhat.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ linux-pm@vger.kernel.org,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>,
+ Rob Herring <robh@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 17 Feb 2025 13:19:19 +0100
-Message-Id: <D7UPRQW1B51Y.1GI2GOM7XBJOA@bootlin.com>
-Subject: Re: [PATCH v4 04/10] gpio: regmap: Allow to provide request and
- free callbacks
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Sander Vanheule" <sander@svanheule.net>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
- <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-4-8a35c6dbb966@bootlin.com>
- <e6194c5ed4f305f2150ab89a91a998028ac687c0.camel@svanheule.net>
-In-Reply-To: <e6194c5ed4f305f2150ab89a91a998028ac687c0.camel@svanheule.net>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtohepshgrnhguvghrsehsvhgrnhhhvghulhgvrdhnvghtpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpt
- hhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+Message-Id: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On Sun Feb 16, 2025 at 2:17 PM CET, Sander Vanheule wrote:
-> Hi Mathieu,
->
-> On Fri, 2025-02-14 at 12:49 +0100, Mathieu Dubois-Briand wrote:
-> > Allows to populate the gpio_regmap_config structure with request() and
-> > free() callbacks to set on the final gpio_chip structure.
-> >=20
-> > Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com=
->
-> > ---
-> > =C2=A0drivers/gpio/gpio-regmap.c=C2=A0 | 2 ++
-> > =C2=A0include/linux/gpio/regmap.h | 7 +++++++
-> > =C2=A02 files changed, 9 insertions(+)
-> >=20
-> > diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> > index 05f8781b5204..ba72c23bcf97 100644
-> > --- a/drivers/gpio/gpio-regmap.c
-> > +++ b/drivers/gpio/gpio-regmap.c
-> > @@ -261,6 +261,8 @@ struct gpio_regmap *gpio_regmap_register(const stru=
-ct
-> > gpio_regmap_config *config
-> > =C2=A0	chip->names =3D config->names;
-> > =C2=A0	chip->label =3D config->label ?: dev_name(config->parent);
-> > =C2=A0	chip->can_sleep =3D regmap_might_sleep(config->regmap);
-> > +	chip->request =3D config->request;
-> > +	chip->free =3D config->free;
-> > =C2=A0
-> > =C2=A0	chip->request =3D gpiochip_generic_request;
-> > =C2=A0	chip->free =3D gpiochip_generic_free;
->
-> You probably have a bad rebase here, as the chip->{request,free} function=
-s are immediately
-> overwritten by gpiochip_generic_{request,free}. Perhaps those can actuall=
-y be used if you
-> provide a pinctrl driver for the MFD.
->
+Hi Viresh
 
-Thanks, indeed I missed this rebase issue. It's fixed now.
+> On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>=20
+> This adds very basic bindings for the clk framework, implements only
+> clk_get() and clk_put(). These are the bare minimum bindings required
+> for many users and are simple enough to add in the first attempt.
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I am missing clk_prepare_enable/clk_disable_unprepare.
 
+Otherwise I see no way of enabling and disabling clks. IMHO I would also
+consider these as =E2=80=9Cbare minimum=E2=80=9D.
+
+=E2=80=94 Daniel=
 
