@@ -1,171 +1,85 @@
-Return-Path: <linux-kernel+bounces-517710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630E7A38494
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:27:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6EA384B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550C518861A0
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A27E3B7B2E
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC98C21ADB7;
-	Mon, 17 Feb 2025 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F1021C9FA;
+	Mon, 17 Feb 2025 13:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eyTAC92q"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kqbgyWRn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1B1A08DB
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5F21ADB7;
+	Mon, 17 Feb 2025 13:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798706; cv=none; b=sX438Zfwv949Ynsbw9eFheBUBAEGtJ2oA4RkkRUqK4vx1KoLwMWtjkKDA/YBja2mu5u3u4x5G8UQpQwxLqNIclDDOyBHxoKqOrur1bws33P7dnrbzx87gdqS3+xxlp8NFKR5tngYUwT/otnfRoPzyOhd5Y4vJiLWqI96GIRnSUc=
+	t=1739798720; cv=none; b=niwhcAv08b/ETA/tou7dyl48l7Ut6VNzHTvqQhjop7OyxNhYWSFD8AUpfsKuHEoap91F4o6Aqf8ix2GrJNcZAeWsN+6Eu8Nw0x/caib71GAg+Vvwhh7Zm6EQyekJIWIDUcvBIHXQCs+99ABfJTk+emNqzG1NA4/mJXo2gWCoJyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798706; c=relaxed/simple;
-	bh=/IxJ3NIw21C6bPgo5OoXJUUJgi1LWRyeVZJoDftgUuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQyZKhXudpNVSQMz45RWu8EkJ52AVALa9NetVb4Q56bT5EjilU+criCWdfO3oh14zH+kmJ0N6GhUFOD72iWizNBFYsjijIsbHIR5qUawzRfJY4HAOiYVv7ybRPYfg3vCBJfYuSA4J7HCuF7uYoq6F/c9xMDrR1w3VyW5sntj3kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eyTAC92q; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5461a485aa2so1253008e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:25:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739798702; x=1740403502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QiVy1LLX/U1j468xBgrLR30ZUfJCR/waZMXhb8yr69M=;
-        b=eyTAC92quW21+ZsY2EpTqJJPuo+/qjonIFQnTJaQ7o6RvbJfyt13pZLuXlznWnNZMt
-         4TAIllzj/JN3sN8WdMjxCqg04WYOo88xL2tWznMiMTL3HqTk6rgrl2KBQxD2zKbgWEam
-         uW6GmAY0SYML9jXE7HjYQ6Fnf+JnsQl+XnWVTy6EcwqvNvyA9B/vJ+EkQhPcpVecW+7A
-         GWcs1kD7Nf4C5GUrcJvd/IUJJ59YJbQJAmGyVQAkqqZ8aT6xudq7kg0g8rHVWKm6H35Q
-         b/CziyXb53YcIjZb+ktUTSxCqKjCeWH9E1h4w92KEGQNSk793OfDsh0YhaxyGsukU2g3
-         6cVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739798702; x=1740403502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QiVy1LLX/U1j468xBgrLR30ZUfJCR/waZMXhb8yr69M=;
-        b=eZIBrnhoLusbOL+WiBOmxtyGwDMwYioviuWP7W7fURpH8YsypQmwOLe57JxKd36XgJ
-         2x/XT5SzCoWHscq+2a7tpBRuG2yKxeKRB6GA7o4ZvIoSEnJ3X48kzprzVmhvigTGQBBX
-         15Vk/CyOjbHxFAaq2P1SzS6nhYYJsP21MIVmYLqd+mf341xSzX9M8KITPQDVCekD1+ws
-         5KPosIQ/Q3yMuPIhncXZwfWh1vORjmsA0eQT/061bA7BwsZwzuFWaFRQs2L8eByTAXkA
-         b3V9VtXWK/ipKFlCCgzlpHnDwIEJVlm11Hi/EE8V0WREff64qgOQ5+2k/9bSJJ6ddeT1
-         iniA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKta2QxIIfyVLaQ44CmQG9lmV8SRiLpJrywFF+/6idQw1VETcifXmyGxC4de/EfMmtoVNTbpBuhI98Rxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIbfK7LaVqjz7wkgR4pOTx4RiV3tJcf63sDhoc1lXUzLszC63f
-	XR5IPikz2FETvWoZ6dUrywRajXZBlDomEdjsq5LItnnSR7ywbwjPZEgUqibohzEUEjKS3kO6pX4
-	tK3FOG0anfI5RWJmeTO6SVC8Fv5PSE9IBLnZpvQ==
-X-Gm-Gg: ASbGnctQ4vWwEdfvYKVB+VrtpKLYvcK12GUPMVcOt3anhWdQncIR4WkfIWJeolsuaQG
-	PquvnPnjq0r6nHvZzJUJ495cdf7gfBoZtkGJwKzs+tHrQUqLmwOFT8D8u5tgGwO2S+Xbm70vsbH
-	XzqJObHeHBhvWnj4rc+Gn/2dmG3Q==
-X-Google-Smtp-Source: AGHT+IEb6JHw/5PakMZCVTYAlw84c60jmNtNM9WQpCnIP/Vmd74RSHMRaGMUWCimKY7la7twkBPZRBodM2VgArHLkgI=
-X-Received: by 2002:a05:6512:2396:b0:545:bb6:8e32 with SMTP id
- 2adb3069b0e04-5452fe2eb21mr2817688e87.12.1739798702259; Mon, 17 Feb 2025
- 05:25:02 -0800 (PST)
+	s=arc-20240116; t=1739798720; c=relaxed/simple;
+	bh=4E5ZrM3Ckx+c725bWUKVc8Zn+UHOWHT/1ZUVfbkEHxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5VSN6IW6Mrb+JeHLlqgo+O31od78eKHujhbo3jjDJv8H7vkAuLHYMsU0D6ztBT7sEi5Fts6kZkeDWfyAcQL78gawqXkiQH3xYPTVa59utm6bgFGXwCHQraDFKFBFVvxOKO1AzptBCr9sx+lsdygmTFKHHtucaiHuKwJkV79o20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kqbgyWRn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C515AC4CED1;
+	Mon, 17 Feb 2025 13:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739798720;
+	bh=4E5ZrM3Ckx+c725bWUKVc8Zn+UHOWHT/1ZUVfbkEHxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kqbgyWRnixQk4nzL777ntVGM6BgoCbGgQlwQhEQUcn2/y2x2HGMr91NbaKm4TQxJb
+	 nDci4niFERe0x22zFhNGmptP+jfBHS0QkAy5PpHVRMQ4sRBG6vxz7NsXqnh9bbPgRM
+	 RiDd91sHUWnjhqpC7xhy9MH6hNF9cx9rS0G6Bqyc=
+Date: Mon, 17 Feb 2025 14:25:16 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Stefan =?iso-8859-1?Q?N=FCrnberger?= <stefan.nuernberger@cyberus-technology.de>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"lwn@lwn.net" <lwn@lwn.net>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"jslaby@suse.cz" <jslaby@suse.cz>
+Subject: Re: Linux 6.13.3
+Message-ID: <2025021704-region-calzone-7d24@gregkh>
+References: <2025021754-stimuli-duly-4353@gregkh>
+ <a082db2605514513a0a8568382d5bd2b6f1877a0.camel@cyberus-technology.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
- <173952845012.57797.11986673064009251713.b4-ty@linaro.org>
- <CAHp75VcjAFEdaDQAMXVMO96uxwz5byWZvybhq2fdL9ur4WP3rg@mail.gmail.com>
- <CAMRc=MefPRs-REL=OpuUFJe=MVbmeqqodp+wCxLCE8CQqdL4gQ@mail.gmail.com>
- <20250216142313.743af564@jic23-huawei> <CAMRc=Meq639NMz6TuOw=xQ_A8VDwA5OXoXU47JNt7x0C7jDtGQ@mail.gmail.com>
- <20250217131110.5803b68b@jic23-huawei>
-In-Reply-To: <20250217131110.5803b68b@jic23-huawei>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 17 Feb 2025 14:24:51 +0100
-X-Gm-Features: AWEUYZmts5pHMv-WTAD5H0ycHChA4PeALdc-KhHeVO2LZrBUG0P1He-nzm1gLUk
-Message-ID: <CAMRc=McM-f3NKGGPs9UCzDyOO2Fw_N+2HzyTPajcZiPTAUXDUw@mail.gmail.com>
-Subject: Re: (subset) [PATCH v3 00/15] gpiolib: add gpiod_multi_set_value_cansleep
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, David Lechner <dlechner@baylibre.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a082db2605514513a0a8568382d5bd2b6f1877a0.camel@cyberus-technology.de>
 
-On Mon, Feb 17, 2025 at 2:11=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sun, 16 Feb 2025 16:55:04 +0100
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> > On Sun, Feb 16, 2025 at 3:23=E2=80=AFPM Jonathan Cameron <jic23@kernel.=
-org> wrote:
-> > >
-> > > On Fri, 14 Feb 2025 15:37:48 +0100
-> > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > >
-> > > > On Fri, Feb 14, 2025 at 3:35=E2=80=AFPM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Feb 14, 2025 at 12:21=E2=80=AFPM Bartosz Golaszewski <brg=
-l@bgdev.pl> wrote:
-> > > > > > On Mon, 10 Feb 2025 16:33:26 -0600, David Lechner wrote:
-> > > > > > > This series was inspired by some minor annoyance I have exper=
-ienced a
-> > > > > > > few times in recent reviews.
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > [07/15] iio: adc: ad7606: use gpiod_multi_set_value_cansleep
-> > > > > >         commit: 8203bc81f025a3fb084357a3d8a6eb3053bc613a
-> > > > > > [08/15] iio: amplifiers: hmc425a: use gpiod_multi_set_value_can=
-sleep
-> > > > > >         commit: e18d359b0a132eb6619836d1bf701f5b3b53299b
-> > > > > > [09/15] iio: resolver: ad2s1210: use gpiod_multi_set_value_cans=
-leep
-> > > > > >         commit: 7920df29f0dd3aae3acd8a7115d5a25414eed68f
-> > > > > > [10/15] iio: resolver: ad2s1210: use bitmap_write
-> > > > > >         commit: a67e45055ea90048372066811da7c7fe2d91f9aa
-> > > > >
-> > > > > FWIW, Jonathan usually takes care of patch queue on weekends.
-> > > > > But whatever, it's not my business after all :-)
-> > > > >
-> > > >
-> > > > Too many conflicting suggestions. I just picked up all Acked patche=
-s. =C2=AF\_(=E3=83=84)_/=C2=AF
-> > >
-> > > Resolution of any issues 'should' be easy enough. Let's keep an eye o=
-n how
-> > > it goes as other series hit Linux next.  Might be a little work to be=
- done there
-> > > and by Linus in next merge window.
-> > >
-> > > Jonathan
-> > >
-> >
-> > I'm totally fine with removing the iio commits from my queue if you
-> > prefer to take them.
-> >
-> Hi Bartosz,
->
-> That's probably going to prove slightly less painful, so please do.
-> I'll merge in that immutable tag and pick them up once you've dropped the=
-m.
->
+On Mon, Feb 17, 2025 at 12:41:58PM +0000, Stefan Nürnberger wrote:
+> Please revert the commit titled
+> "vfio/platform: check the bounds of read/write syscalls" from all the
+> latest stable releases (6.13.3, 6.12.14, 6.6.78).
 
-Done, you can push your branch out and the next "next" should be ok now.
+Ah, the joys of patch :(
 
-Bart
+> The backport was already included in the releases two weeks ago and the
+> new one doubles up the existing check. The full list of fixed versions
+> (back to 5.4) is correctly mentioned in the associated CVE:
+> https://www.cve.org/CVERecord/?id=CVE-2025-21687
+
+And that CVE record now shows the duplicates as well, remember, we keep
+them up to date when new stable kernels are released.
+
+I'll go revert this for the next round of kernels, but it's not really a
+problem with checking the same thing twice, so nothing is broken.
+
+thanks,
+
+greg k-h
 
