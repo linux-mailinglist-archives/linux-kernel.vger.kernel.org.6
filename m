@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-517372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E4DA37FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B67A37FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0CD171F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9F7172FBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B6E219A6F;
-	Mon, 17 Feb 2025 10:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE6921A425;
+	Mon, 17 Feb 2025 10:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZsEMpFNt"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sCKS6Tup"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67254218AC1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA60218EB3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787480; cv=none; b=t+e6DXrQnjxK3LGfncreHbN1rqAps0BkpiLgL8D40qjrXnkWXh6p1ilmreub6iDdWKiWvdc9wk0U8ReO0/Sovj0uItL7kXPLzCj5Uyfqt0SoeqfPdtYzq2D6bkFuS6rxAEU8ViJeQhBbSBwVat4z3NZuiVz4bcsmhaBwu0ZOu6o=
+	t=1739787482; cv=none; b=al1MYBa+FF8SOOrcN/9/DsjpAgyehWFH66DljtUn1woI6+phyzBz871N0p8IZDMdSR8XEFRK8IBWkaXlwTziD/E+nVS82l1girj/i7gusxqAMYJ7NuYVlwx1IlB8j5WQqoBiUYm9c9WSSSub7sesHoLUiapSGAS+A1DHa1sR30s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787480; c=relaxed/simple;
-	bh=61J2pu5l3ndGn9woBnkjvneIE/RD9R+0X2yrx5ajIWM=;
+	s=arc-20240116; t=1739787482; c=relaxed/simple;
+	bh=6JLAQiXiBCTaZy1rpRUfOhG9JvPaEfv2VkDTKVoBVm8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NPTEsYOs1hWLSjWznf6D9Wdiu3/uC8R18/uOQOpV9L+BLLHdMvNKjdzcZEui39+cGODHyPwFnNZSPDOXNG6g6Q1dUb1kTwHuV7316Ism28V6gtq1Y+z2SJhEKWuBtd6kdP1sr9ffZ6kNAFekRNNckSgzQaqZ7CFGkzyUOIponU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZsEMpFNt; arc=none smtp.client-ip=209.85.208.42
+	 MIME-Version; b=uBZeDJECGRnrsc00cPkLZDW7hl2bPEoQbvKdbpdqbziOGOyre02kvssTtWy8N0q62QjtZkf0LggB3f4b2JgtvtqFP2cRrissCBTnoggMiCI4XDBIDJZqItK4zNNT+eePzWGrXEBFbK2f7JDb4d97gmSjfw+Q639I3BIbCQr3gvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sCKS6Tup; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de63846e56so8072862a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:58 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abb90c20baeso145531666b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:17:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739787477; x=1740392277; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739787478; x=1740392278; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ldGwrx2cT3RoWK8xQPpncYSf7C74wmzaVDctYgnNzT8=;
-        b=ZsEMpFNtgC8tqQQhhiNG9KGHmENdgB4rAu9TzSfsY1MSvj3kXgq+zR+OVmeyE23lfY
-         hIOT3cC2fIbGcc3Hzbf1dVsmey8oQxNt9XMXlNncyUSDe1Rvj2UouxOZ4iGlTzGRBfoC
-         pZksizHBgwUvweaz535oIlBw/CTWRn9nfeek0P3NytAJ/ck1PqSOG75pFOD7fYRIh3gG
-         O6nwqs5eEGWqJfIuGCDSIw9uRuAMXV92lTqoOVNC9s8i3VuzuxUFB+lS3gs5+9o1ecq/
-         Leib4/k/6UMbNc6yq9iTHWf3RDatAVe5pYDPb+fGwOIwr77wjdmuRPqiVrJlBvBC5gUk
-         uP5Q==
+        bh=6Td102jvjcyxJvAztEsXWW/VUH0CMT8UhqkeVVK6uLU=;
+        b=sCKS6Tuprl/dYZRp9WH3Ijo33jFNfIf/A37scAt5+zGyFA1t+uzX6VWzy2Up4AaaEP
+         rIvRcQHGHZUbwSR5zhg8CbBGfkP8xJVOgV+XG1iaPVUnt7bdlbMIbxu+7E6hkJL95owb
+         4jakP3fTtCzUU08ui5gj3dUUZZlN8wqCS5xLsI68ZmyXObdD7fTiC/hzaqC5Pv835ARc
+         x8umw/067y4wYYJOzbupwclrgqd2DynTVu1X/79YPj9TaEfcK1DI+qPy5it45oOXHoZD
+         mQtENqCGQBZA4XZq0gV7F4UhlOqLU8UzNB+97CT4YxhBJyvf6M6TYMK+6+1uqR+Cauag
+         9xjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787477; x=1740392277;
+        d=1e100.net; s=20230601; t=1739787478; x=1740392278;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ldGwrx2cT3RoWK8xQPpncYSf7C74wmzaVDctYgnNzT8=;
-        b=G8TkH6x08/Lqoyn0Xph0iCrmD4kI/EXsMm7bCIgzfalbWbBbcEDHqswUqtT/r28scK
-         Wu7hpDsj8wkZWieusWYNTxJoQez/T+l+KqlmgNOu7D+07kqnccvp3ZgXUu9VaaHOsHcf
-         K1w0vXALk8KS3OWk+/ad3tB+s6VxWW33+NojSBHgL++kJBUcY0vyESPm1OiEogEjkDSc
-         suct4wmIPQ3gGpeA9yIcRNZ+n1S2/OMMRwvkInPyrqoX/cXeAkCRifZPtzsSVoJXQyB3
-         Emvch201+KQfjm/Mpdu6mS/9iiJUvsLCyamGwaUTk2G5VbWQMLCPKFZuR9QLXuZdNKd/
-         RT6Q==
-X-Gm-Message-State: AOJu0YxN++EXerBwuuHltMO/pDECpKkIM4PD/zSai1qd4jsA/CCjtvjC
-	AJ94C33Tf4NbOpiO/PL5Tbqw6FQW0ajUQp9YwVKR5pp9YCC4Hnj9aX2R6bT4tWjTRf8Dc9OWgaS
-	ZGBQ=
-X-Gm-Gg: ASbGnctw4n2e68RUeIO72pMN5xU4VRkInCyaMwFfHu1VvSlP05f8k51FTUxfYFgzSjj
-	ajrk1q1izi0zBMAhrAh+vll/8HBJM5Q+vX35eUCqP7bPW9tDwi4VMN++2502XM2cA6DHuW38u0R
-	6Ccz9aSgNzMgU8rqWKKh1BIHrAxZUfHjWu7TWqczv5Pg9BSagI2FuXZN9L6OigFSRyAUBhlXChB
-	uLikWT3L1mieNMYD2KRauin6MH2DkjF1GRc/z/GHpff+gkQuPr0RiZIWVotu0fRgPkD2Ebj2xgj
-	7BXoYAnlhECXMoJDQB2uHWo2
-X-Google-Smtp-Source: AGHT+IGLJ6wBq1Q2Otx2cXUsLqwI686ZT/K4uXqflhPHhYRM3ByDKMZpdTFQUXVBYhqRHLkwN7a7fQ==
-X-Received: by 2002:a17:907:78b:b0:ab7:c115:68fd with SMTP id a640c23a62f3a-abb70e61a23mr916824766b.53.1739787476706;
-        Mon, 17 Feb 2025 02:17:56 -0800 (PST)
+        bh=6Td102jvjcyxJvAztEsXWW/VUH0CMT8UhqkeVVK6uLU=;
+        b=ADtUuS88G9OZt5qoq7SXYXG0EDZx/1wRLswfxEZumcdo9TUNB0YLSz+8ssHYoDR2w6
+         iNm7D/HjzKvSZ+Ku93QU86Wvc5Pg5vxGrVdqzwhZzx+xoWWMS1FGuPyaELEEX3vGT8NN
+         drFPvTcDCEw9BWK3iKDoxjn2HIWo0dsDpeyxpg5y6GTAbkgOs1Neeb1xhuvKhgt4VKxY
+         6yZd/As20LoT0zti3bK4f6BAh15heXNySCN3Xgcx39na7YJvMqGWHkCbsKy42OmgKzMf
+         MLiP0FYvkPoqFAOBPWt1kkheM72Sz5gXuhdGLLZAnkhRm2KbkP65rxQefhZrlf1Gqxc8
+         OuRQ==
+X-Gm-Message-State: AOJu0YzwWSn8NPreWuOJfwbOQKdlUic+qnZ8jqU6VX8BHme2XWqs+kl5
+	hz8Hi7oh3oU+rSherNx2848BJpAyeiXBr3oSpKiLox1nNdnuRBG7rSQzetcqXvA=
+X-Gm-Gg: ASbGncsL62rx/2FIM1eycQTJpnPJAXBjMO6bhmDTYT0Gt3CnJMl9gO9eJqNZf70Ag3S
+	CJhNUODc8gtkLmNS8RPJldklOmDAvZY1ZFDoBGKBt1enJ8P+QoTG2EwVLT3bnFjkZg3B7pBPrbk
+	wXDhAsh4aFrIopfYmepKBd4tNIs2dPohKE3/18icyx8AyDZ6Jt5jHlCiEOftgIA6J4TkXqzg/qb
+	qUYvbC/ph7QJgRpt3I3yaLUPGn0Ipo0H3iNCONlwg3Icqe7tIybKrqtry3CPALwvDL7gzb1uod+
+	EH1JAvUcCqNtQN63Q4Ka9vIz
+X-Google-Smtp-Source: AGHT+IHY65P+Xz4TNjemyphPqqQ9+ru/mohlrB5vFIKJf/R1MNkDOblIAzwWX9YVxAvz0IWpeGk+4w==
+X-Received: by 2002:a17:907:7752:b0:aa6:79fa:b47d with SMTP id a640c23a62f3a-abb7091cedcmr752835166b.1.1739787478322;
+        Mon, 17 Feb 2025 02:17:58 -0800 (PST)
 Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.55
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm308583266b.174.2025.02.17.02.17.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:17:56 -0800 (PST)
+        Mon, 17 Feb 2025 02:17:57 -0800 (PST)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-hardening@vger.kernel.org,
@@ -92,9 +91,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@quicinc.com,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH 07/10] printk: export symbols for buffer address and length functions
-Date: Mon, 17 Feb 2025 12:17:03 +0200
-Message-ID: <20250217101706.2104498-8-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH 08/10] pstore: register kmsg into directly mapped zones if available
+Date: Mon, 17 Feb 2025 12:17:04 +0200
+Message-ID: <20250217101706.2104498-9-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250217101706.2104498-1-eugen.hristev@linaro.org>
 References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
@@ -106,33 +105,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-log_buf_addr_get() and log_buf_len_get() can be reused in another module,
-export the symbols.
+If dmapped zones are available, register the log buffer into one zone.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- kernel/printk/printk.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/pstore/platform.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 07668433644b..022947f9b61d 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -588,12 +588,14 @@ char *log_buf_addr_get(void)
- {
- 	return log_buf;
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 32448d9dd316..9a5c1d6d5031 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -452,11 +452,22 @@ static void pstore_register_kmsg(void)
+ 	kmsg_dump_register(&pstore_dumper);
  }
-+EXPORT_SYMBOL_GPL(log_buf_addr_get);
  
- /* Return log buffer size */
- u32 log_buf_len_get(void)
++static int pstore_register_kmsg_dmapped(void)
++{
++	return pstore_register_core_area("dmesg", log_buf_addr_get(),
++					 log_buf_len_get());
++}
++
+ static void pstore_unregister_kmsg(void)
  {
- 	return log_buf_len;
+ 	kmsg_dump_unregister(&pstore_dumper);
  }
-+EXPORT_SYMBOL_GPL(log_buf_len_get);
  
- /*
-  * Define how much of the log buffer we could take at maximum. The value
++static int pstore_unregister_kmsg_dmapped(void)
++{
++	return pstore_unregister_core_area("dmesg", log_buf_addr_get(),
++					   log_buf_len_get());
++}
+ #ifdef CONFIG_PSTORE_CONSOLE
+ static void pstore_console_write(struct console *con, const char *s, unsigned c)
+ {
+@@ -582,6 +593,9 @@ int pstore_register(struct pstore_info *psi)
+ 		pstore_dumper.max_reason = psinfo->max_reason;
+ 		pstore_register_kmsg();
+ 	}
++	if (psi->flags & PSTORE_FLAGS_DMAPPED)
++		if (pstore_register_kmsg_dmapped())
++			pr_warn("Registering kmsg as dmapped failed.\n");
+ 	if (psi->flags & PSTORE_FLAGS_CONSOLE)
+ 		pstore_register_console();
+ 	if (psi->flags & PSTORE_FLAGS_FTRACE)
+@@ -628,6 +642,8 @@ void pstore_unregister(struct pstore_info *psi)
+ 		pstore_unregister_console();
+ 	if (psi->flags & PSTORE_FLAGS_DMESG)
+ 		pstore_unregister_kmsg();
++	if (psi->flags & PSTORE_FLAGS_DMAPPED)
++		pstore_unregister_kmsg_dmapped();
+ 
+ 	/* Stop timer and make sure all work has finished. */
+ 	del_timer_sync(&pstore_timer);
 -- 
 2.43.0
 
