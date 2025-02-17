@@ -1,91 +1,77 @@
-Return-Path: <linux-kernel+bounces-518265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60A1A38C9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:43:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE828A38C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B2067A4FB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91D237A1F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD358237179;
-	Mon, 17 Feb 2025 19:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12D5237194;
+	Mon, 17 Feb 2025 19:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="lV84h0Em"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9eV/lZL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F5C22B5A3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09643158545;
+	Mon, 17 Feb 2025 19:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739821331; cv=none; b=EAM4qXoota6n1CKB3Q6gTh4qxs5e4Bh9ymzLzTFNym7/c+vsDGkxDEPvKCIXFz457T9DLJeWEHRQJF4Hb3nRDyeD5iWq6GiDKt7d0Ce51COafVZAp1462zP7a5XwlB446cjPxAp4Xt5ae9Yg3a4GNmmBOiZ1FICHwWtNAsk8Neg=
+	t=1739821398; cv=none; b=pyQR4Yv1OAIxT7btn2Xz8w+zHugerWdmYmBrqYO+1pvZXsf29RN1luFZ8ABijFqt8NzIGYeaVrZMnP6vWuljT2JeEn2BwDCIJhLtjaEhHEVSRL6T5ydI65/Dm4VzmXRuyckNRPpM0Rb/KQHIz3pEEgRV8ExgzsvqzWd2hREatCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739821331; c=relaxed/simple;
-	bh=yYX/SR79Dqqvmyu22HwNz7TvqcDwF99ty5EMBfajVJ8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=WOT0MBD6Fn6Ol4Rcyh7/6LD781S8pqljj5hGE5nHV9NhrVd6d9KszcEI2VqPKX0oB75wGxE5PVm8MwC6KtmxpFx+CgdkZPbTWvNDVHXlHDXjbIMwzxiNfAFnjrROa74Vi89DrLtddJeHxBhhRF4xClyj72hAgpRhV5YBaToQSFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=lV84h0Em; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=lV84h0Em5ss0x1cbUHkV9HfjfNbc7ITWw815Cn+d5bkyDMCBn1w8amYBUCiORLxa/A3A7DKFELl9AjTM2c56k8sRH0lTWKWVvPamC3tNTp4hN85EAzjX/X0Ljr3o0P6N6A1mQ8L/vqp6klsd57+6q4zo0dVvK5cJAxxG7PNyAJPsBPaNQMiTx/zeeEHWrMOzoCm1Ql30ALtXwiC0enryFJh6a8YVGHKL1iXeUbHTMXb1V3i4IBmEiJFvPiXe5WHDnpSFTwVgARsgcRjjcn1z7Nj0K8aK4ssNenRZntLdeJnhiPQSfT7JM34rBw6rRpZS0AQ3rUikmPAHlBvNL7jDMQ==; s=purelymail3; d=purelymail.com; v=1; bh=yYX/SR79Dqqvmyu22HwNz7TvqcDwF99ty5EMBfajVJ8=; h=Feedback-ID:Received:Date:Subject:From:To;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1182872981;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 17 Feb 2025 19:41:34 +0000 (UTC)
+	s=arc-20240116; t=1739821398; c=relaxed/simple;
+	bh=ThLrCm+7YW6B/mbul4nWe78MpCxp1xpJcUfQPIV2LMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eB9LJO4pn6FLZxZp+V4gg9Yv2auLYu4sCxK+QR2VeQePrBLueDABseEDQoRP/aFLlmGvD8FFdjG28tSnkBcgevY/Fo3sXnwpJ6AQde7JFeXsY+rLO9lJggWJ3K9chSAe4KyewD8MY/FCmRHspqQT0C4a5UBAtNz/i5FNSqlW6C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9eV/lZL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED419C4CED1;
+	Mon, 17 Feb 2025 19:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739821395;
+	bh=ThLrCm+7YW6B/mbul4nWe78MpCxp1xpJcUfQPIV2LMo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=g9eV/lZLkGejx9mnawdrWgjQVSyjZWDC+l0vQCubvW6ddQea3qSuewgFwGdiToy12
+	 NuWfCtcPmnI3gV97fq62t4qa5mSTMnqbwCZX/9C9kge82ut3R7IoZ/nw+NE9aTdGgr
+	 iaPhbuX/nHxVx0k3vkY+h1+c2Pj0IHoeAXQbeVeeayAQ5+M3/M4+RXTppGEhArUuP/
+	 NblLK9kCwthMb2MSJUJLYK7ZSLkVDCHUsIvUDynHS5qLTmgpa08yX/KUk5BgMuvUbO
+	 0WBi4SMNKvCrlOQSGgGsAeONrpGgaeph4E1m8ReFHmD12gnXs7uSunzHve3rpiIMD1
+	 EjdNL0SqZQO2A==
+Message-ID: <0897d31e-c0ec-4b89-a459-0c5fdd17bd55@kernel.org>
+Date: Mon, 17 Feb 2025 13:43:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 17 Feb 2025 20:41:32 +0100
-Message-Id: <D7UZ6BSEU6DD.2QRKZBTKMPD9F@mentallysanemainliners.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>,
- <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH 0/2] watchdog: Exynos990 WDT enablement
-From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
-To: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>, "Wim Van
- Sebroeck" <wim@linux-watchdog.org>, "Guenter Roeck" <linux@roeck-us.net>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>
-X-Mailer: aerc 0.20.0
-References: <20250217-exynos990-wdt-v1-0-9b49df5256b0@mentallysanemainliners.org>
-In-Reply-To: <20250217-exynos990-wdt-v1-0-9b49df5256b0@mentallysanemainliners.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: add gpio led and memory
+ node
+To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250217120124.3502476-1-niravkumar.l.rabara@intel.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20250217120124.3502476-1-niravkumar.l.rabara@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon Feb 17, 2025 at 8:05 PM CET, Igor Belwon wrote:
-> Hi all!
-> This series enables the two clusters of the Exynos990 watchdog timer
-> to be used. Weirdly enough, this SoC is missing the cl1 cluster, it has
-> the cl0 cluster and then jumps over to cl2. As such, new cluster index
-> code has been added to accomodate this oddity.
->
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
-> Igor Belwon (2):
->       dt-bindings: watchdog: samsung-wdt: Add exynos990-wdt compatible
->       watchdog: s3c2410_wdt: Add exynos990-wdt compatible data
->
->  .../devicetree/bindings/watchdog/samsung-wdt.yaml  |  9 +++--
->  drivers/watchdog/s3c2410_wdt.c                     | 39 ++++++++++++++++=
-+++++-
->  2 files changed, 44 insertions(+), 4 deletions(-)
-> ---
-> base-commit: 253c82b3a2cec22bf9db65645f934fbe095899a3
-> change-id: 20250217-exynos990-wdt-0e9100ec5f99
->
-> Best regards,
+On 2/17/25 06:01, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> 
+> Add GPIO led and memory node for Agilex5 devkit.
 
-Please ignore this patchset. I did not test the bindings with my device
-tree changes - as such, I did not account for the cluster-index being
-more than 1. I will send a fixed v2 shortly. My apologies.
+Looks like you added LED and memory nodes, and enabled the GPIO. Please 
+word this commit log correctly..
+
+THanks,
+
+Dinh
+
 
