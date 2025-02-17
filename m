@@ -1,206 +1,333 @@
-Return-Path: <linux-kernel+bounces-516987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A5EA37AA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:46:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E37DA37AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 502227A3133
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E115216B9BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DD4155A52;
-	Mon, 17 Feb 2025 04:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="dljL2xg8"
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010014.outbound.protection.outlook.com [52.103.67.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705A933E7;
-	Mon, 17 Feb 2025 04:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739767571; cv=fail; b=VXnvW2GLJoMe6MJg++jnvHn9cFqCrO8MROANYVUwsDWdGID7SuBhv2wnXwfcmC8XNVOckwjWhKaOG6rTN+4Ym4YCQPJR6qL5jnekW09C1F4O+aAAJOai/M0r1w5cRHN6yPg8F0asZIv4E0MF1qoi7lVv/sRuSrgKV11mW6bOhsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739767571; c=relaxed/simple;
-	bh=+VtLlWv+YwI/aimC78OdPDfFn3BDbMX0HN5xNe+Z+IM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jYqzfbTVCIAECrUBtxV/gs3DqujwbxBq8YVUkAEAIpvvFZ596GvaJyTJVOUbbD1asFpM3Q73rWOwem2wOIr1JNNm+ZfpONexclRv8jWvZ1+R0SFMuJYM7+9s6WzE0yoKygfY0ti71sW7WE2sSi2rEchUOFI5RDDQ8GDyyfedzFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=dljL2xg8; arc=fail smtp.client-ip=52.103.67.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u2/KdwA9Pz/Q4aUIQhc/MuL4PyrSh8iCLZxSpvKe5HvROCIBqMl6WhRdB2m2ZEJA3w3X59kkZh6V9cqQqR4f0d2mk+27JCaAfUv+inYuf7albXLovPKWwWxzxDjImSC/hxlhVZFdtda/lIRGHxoi/BtGR81HtNXF3y6eUSFx2GIMq3vDcGXNDmNv7iQGCo6S3kxT8do1TuouM7WtJ2n2Pi/wgtLMxY3NxtidVtl6Scd/nPk5wWyRhvqM/psnDGC5AJO8rVCGtezmeCPD0loKc/BYuVT6NEayM2sR5x4aC36WNB+1iZSfQ8RFpIMF+3hQnDX4X/fGkl4vl2QlhcHYzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3QZKEjEKBo8oYsc7+EbtlMnsVJbLMOrMAibEg3sso4w=;
- b=DD5ffCxVV+YuJebxqyPBUFoMEU+dKnp9cb1R5B2m0/mv++vPxvE1jU8bbfgjd3gYDoOv2kQKMZFet3WEzqYSCUdWhGoeyGDM5m3gsrJzU/TnhFfY16OErX+nXU1rFGU+7LxT4C0WF3Da3zBuStTfluv53tJN1RZ6ajJucMsadAyTV1xt7XkUcVBLl3AQfD1SpVvkRumnphYNOPDOPo9N9a07KzonK36q0cScQVh8/X/22x9gWmg7iaOAl2BbPC+uF0sbJpIos5fKXTvdADq1WkP0YjjoE2ktZhwwM7vzXVAbBnQRJay1JQ+y84oi95AtfVjLGm+9Xov3vLzSLlekDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3QZKEjEKBo8oYsc7+EbtlMnsVJbLMOrMAibEg3sso4w=;
- b=dljL2xg8f/uJH+UDF9uyoWTxPhZwlfSrNkpiRwCjBopbeR0SO0NkGaZXLZUHjUsSC01GBKAVVdx47lvksTbcRyHW6pGktvxgROTaECatd/YWAw6ncFHd/dwOPcY92KhuIlibkQhVjmxbxCE7NAxmeqH6hE1Q85zIp1PL7pPPxQJ60sT6EREz5L04BPIOIAUOJsJZmDtfbo8vxj3yUZOziVrdj+dvRAetz6IvHRTiTYjDG6GL8mm5kfpHgrzx61oPvE/+HzGUmMa7WnQqdfd9pXomfEwzpgo0ex/KWO3J+HcT6cWQjWPhov7SqWDwb31FfUsIRI+S9DSGXuBDvNQAgg==
-Received: from PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:110::10)
- by PN3PR01MB7015.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:ab::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 04:46:05 +0000
-Received: from PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::972:abe8:752:bbde]) by PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::972:abe8:752:bbde%6]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 04:46:05 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
-	<kekrby@gmail.com>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 3/3] HID: appletb-kbd: Fix inconsistent indentation and
- pass -ENODEV to dev_err_probe
-Thread-Topic: [PATCH v4 3/3] HID: appletb-kbd: Fix inconsistent indentation
- and pass -ENODEV to dev_err_probe
-Thread-Index: AQHbgPbauH2mSAtX0k+7dZzv5BNdGQ==
-Date: Mon, 17 Feb 2025 04:46:05 +0000
-Message-ID: <25CD58FB-ED22-4CBC-8166-7340D1E1B4B1@live.com>
-References: <8365C1B3-3A38-4F6E-955B-D6BBABA6B00A@live.com>
-In-Reply-To: <8365C1B3-3A38-4F6E-955B-D6BBABA6B00A@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN0PR01MB9608:EE_|PN3PR01MB7015:EE_
-x-ms-office365-filtering-correlation-id: d7942f7c-67c8-442b-57e2-08dd4f0dfd1e
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|19110799003|7092599003|8060799006|461199028|15080799006|19061999003|4302099013|440099028|3412199025|10035399004|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?V1+4Rtjj1ztnv+KsArv26dWUrt6YvTWBlMhfWQPZ27m1yCHfhM3JtnVd2KAu?=
- =?us-ascii?Q?ederoCMbozMUr85dQvqCdMBcr5yxFGdILUIzIBi7fauZticICeK17w2OXnyF?=
- =?us-ascii?Q?a+FbOwaM8sxlqWkkIB6eMzHhf7MwgohzpHtfBQIWg6vkITlZ7jtH+qfMu1SG?=
- =?us-ascii?Q?y6Yzg4qk1VbQUCVouNGZZz5lhgx8gXOmHQRoweYQGywg3JComERNk42EnJw9?=
- =?us-ascii?Q?e44bIMPgB8b0LNKRW8auGbnuPGUjiaav06MYVkKkZNIIuXMVw3KKS+IEzc60?=
- =?us-ascii?Q?dQOPhJnVkWfwdM2+6qBH6G5/xKOOKrtpZ3b6rhwzfNDdcVKbYyr+GKYFgVPN?=
- =?us-ascii?Q?uaZiJ0QxpXEdeLYAuO3MzfLStMKb1R1eoIl5TUG0otj7NHB27cpMhmuYMl5o?=
- =?us-ascii?Q?sNzFUeFydXNO9D5NwYZORJgAiZHE5iT8DEeIO/I/eDahzEJ/lSxESLSOhqet?=
- =?us-ascii?Q?eblq6kBwgPK1ShhCzgyMwJtZfQI8LOyEsXHOLtOlUAIxB8vAcKCVKg32yIDe?=
- =?us-ascii?Q?/MTVU5GERB8R7DIevQMfhw+eEqtwY5ihhJCkbGJjEsIrbuswRC3g7Vf51tw2?=
- =?us-ascii?Q?FFTVCH1LvAh2/hFMCe2JqKSHQRxAeUOH2pkJAVxCQTfKb44WRm5DPgqgne14?=
- =?us-ascii?Q?LLzEdoq47GZtw86USEQTkSzx0hktQRiFSWLyxiQrT0yfgJtYqMZVKaTEDB1o?=
- =?us-ascii?Q?ej5wxQ+AmI/lr0S2OgixgoHMkFhdhqGTevAKGp7UrXBt+BAsvfFHEnJR9ndy?=
- =?us-ascii?Q?UTm1azNwlqHoFwi+i2e+lgjlDfYz69enMzLsM5Y4wvn06Hr7bkhE/LQJqYNZ?=
- =?us-ascii?Q?pmtqZIY83mV5EMvwlzBRcDekQamukxNDA0SjJ5k33WNhbRb6y2imlg6Jalz5?=
- =?us-ascii?Q?e2R+jx7u3Hsjgkv4L4Vw+NB2S99HEQQBUGQiAEKQrXxBW0UzR0W6pVV+aEU7?=
- =?us-ascii?Q?RrEoVtAJ01yOUIQygpQr7PbYj9UkQ3sCdXjf2QtE7vpcqIhnel2hrNDAApf5?=
- =?us-ascii?Q?DU6AETu8Hk8rW5vgjyJ2eh6cT6s0lHnog+p04gh97RYhR8/37VO06AxVDUwf?=
- =?us-ascii?Q?Zz8n7FeECy+nnbaZYculAf576psiq8CM2fVvLKGYquEqt6z8KZw+7aO9KPdW?=
- =?us-ascii?Q?F7S9Qnrkopc70Umj0fvnNO733hbsjQ8liX66NybAklPMOZHCwtPC9GMteWQa?=
- =?us-ascii?Q?isca/n7jH3JMq/zvGuAKNuqrGFfAl943RJD62C0ygam/3LBVhq78cZ0+CRv5?=
- =?us-ascii?Q?pOImA3oW49PzHUsPQct/1U3vv0l9GsA12FZLuZKdJA=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?iIgKjXuB94vCJVkHVqM9JjjUaJ2nrznZ92qKzl/h6LfqwOi8JLIfQW6PWDyK?=
- =?us-ascii?Q?wrLvazC2l6e3nBQ0jU8n6tvH1/M4U9V0VB5d8sOufM5eaX/cBn9YQBXkfy/Q?=
- =?us-ascii?Q?UneIqdHBUz6o+eInHXRCfK8XqxDkDDJdw5JRFyfYhpXTM3+O44X9uTUr5M42?=
- =?us-ascii?Q?6i6zGXu9qHPBXWD75T2sLB1psLb1kSt4trHglPneMnIK7Pq55u3TpXLoiEZC?=
- =?us-ascii?Q?akP3BhgfSaaq4RBGYoMAy9XYyasyL/T3cbVTdMmHXzy09VEpqoNSXB3/MhJ2?=
- =?us-ascii?Q?hbPO6ARbEtZe8dQ266xsQr0brkRWFEsrwbVS6pzYK4zRiuWibM4QZ/T5TEpx?=
- =?us-ascii?Q?AoSNUhbTs/1uzsK8/vhfs0edKubVleLBXkpmraGqXkr1fyAIhlvP1j4vjKH0?=
- =?us-ascii?Q?/UfqD/hA/3f8upeF69zNYIGG0QL1KFx1FhEdvO3wbZQfJDXoX0yDzPge38Zp?=
- =?us-ascii?Q?IDeXyRQUSoi+Q1vHLgT67qK5v3xIvLKXG2T7+qtzMgzmfQh9lCHlKvaGMYWR?=
- =?us-ascii?Q?cHNxaJZwDFnIe4/YB+Xo+1U6hg8I0S4Q9Xhfa2wwGZz/Onh4VlFUt5N238fM?=
- =?us-ascii?Q?RVXlikJ5H/p4fVhUpM84YuO28Rr8G/M9r51pNd3nISX+WU0jiCwS/CxMQJnJ?=
- =?us-ascii?Q?2PTqNZUOuKNX+WzsNN+0RbpH0YyBI4dIM0h0YcmeXUc81FYHsdPjZquHZLNm?=
- =?us-ascii?Q?kTr6FkcfzQGXrxkBLVIAHMrDLkG3JXO2C4rpzVGwtC9pHRzn0vyPFwfnqg5o?=
- =?us-ascii?Q?T0LYGJMKaMD/XCyNQK34KA2NWI2j57UbI+2fktfsdjn4bBwfZDJAcm4ODY9B?=
- =?us-ascii?Q?xRi4OqNYDcg0mrwLxUvnQqFfMboF3oIQfiHEO6pejbcOujMVhQ9wEwvbmIYu?=
- =?us-ascii?Q?GphvQLxFZYyJyByK4789smFVcslCkhqgmS0oUBnV+QI8aI8U8IEDb+FOFw9L?=
- =?us-ascii?Q?U39pQX+ipB/YnsM42rgjX+tukDlYY5Bpm0s6i5IQqd/H7/DJ1fjXtTuwAVlY?=
- =?us-ascii?Q?yh0SLGW6Trdj28ZYiwTEsZ8Ld8fBhe6+SFsYiTJ0GVgpdux/dmYyiSBN/hZy?=
- =?us-ascii?Q?PoEz9Ic8BVlwhfMxFfUshNvu02Wa+MhAi4VgePIslMJlskpjTiG2Ays4vGHv?=
- =?us-ascii?Q?SEJVsJiyjMH+bfoGUw1GYMZPt22PfvNd3Z9Ye9rQKRO0FtX4tAc0lbPNIAgL?=
- =?us-ascii?Q?VTo3W+W7J+0f5IiP6SzdSi27jSA+yoboQXPtztzRJ9uUZeAOASC1wL8fBGyg?=
- =?us-ascii?Q?Uz4pMXFNp3Gd0PALBvGmcxSgw9o3cut505vWTHsngecZwm968Q4dRtcM9mP2?=
- =?us-ascii?Q?nZu55jb0v2IIuyMN5aeLZWt0?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FAD119E17DC02244AD0AF1660C89C743@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EC51531F9;
+	Mon, 17 Feb 2025 04:48:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8E33E7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739767716; cv=none; b=IN96ajNGdByNBB2s3dcUVMC57zFkq5Elw4ORjKmfDx8uSJo+B/khvUMg73SzjWzrYsS8gMVi4KkUeiJn4poDj8hGVFtzujt6gGqiX/U8A+xtnLRTnxHTYEfcU+oROCiENQSMaONPbBqpz1XcFbAjjkTnSI4RhRiFC5xLK8lAOQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739767716; c=relaxed/simple;
+	bh=tAnRQNx2hBIHinDuk0YGXpJJ46RiZ6/vfFidQ1n6swg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Br19SKUyzxRE9dz9gVDFsCzXTIJkuFH1eSxX3zJoC8VxF6gGrwXsTK/ba0JKQovSSrU27tUiydRxkBSgYJQW1YvVUR7tw/4bh+hgulHBC05meBRHF09FTuwmlfFGR+KFK4lyvyQG3lfu+2Pb+uL49nQYxPI1WkLSX93R0JZ8XRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 723011063;
+	Sun, 16 Feb 2025 20:48:53 -0800 (PST)
+Received: from [10.162.16.135] (unknown [10.162.16.135])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 745A53F59E;
+	Sun, 16 Feb 2025 20:48:29 -0800 (PST)
+Message-ID: <77dfb8ae-2a57-4d76-a3d2-8a486dd9721b@arm.com>
+Date: Mon, 17 Feb 2025 10:18:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB9608.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7942f7c-67c8-442b-57e2-08dd4f0dfd1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Feb 2025 04:46:05.6059
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB7015
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 16/16] arm64/mm: Defer barriers when updating kernel
+ mappings
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-17-ryan.roberts@arm.com>
+ <9bc5527e-16f4-45cc-aced-55b1ace6c143@arm.com>
+ <a5d66063-c3a0-46fc-ab88-21ae2448c9f0@arm.com>
+ <0052097e-2284-4f9e-b37c-2ca2de527667@arm.com>
+ <43d852bb-ab5f-40be-b188-166c57ab795c@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <43d852bb-ab5f-40be-b188-166c57ab795c@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Aditya Garg <gargaditya08@live.com>
 
-The following warnings were flagged by the kernel test robot:
 
-drivers/hid/hid-appletb-kbd.c:405 appletb_kbd_probe() warn: inconsistent in=
-denting
-drivers/hid/hid-appletb-kbd.c:406 appletb_kbd_probe() warn: passing zero to=
- 'dev_err_probe'
+On 2/13/25 15:08, Ryan Roberts wrote:
+> On 13/02/2025 05:30, Anshuman Khandual wrote:
+>>
+>>
+>> On 2/10/25 16:42, Ryan Roberts wrote:
+>>> On 10/02/2025 08:03, Anshuman Khandual wrote:
+>>>>
+>>>>
+>>>> On 2/5/25 20:39, Ryan Roberts wrote:
+>>>>> Because the kernel can't tolerate page faults for kernel mappings, when
+>>>>> setting a valid, kernel space pte (or pmd/pud/p4d/pgd), it emits a
+>>>>> dsb(ishst) to ensure that the store to the pgtable is observed by the
+>>>>> table walker immediately. Additionally it emits an isb() to ensure that
+>>>>> any already speculatively determined invalid mapping fault gets
+>>>>> canceled.> 
+>>>>> We can improve the performance of vmalloc operations by batching these
+>>>>> barriers until the end of a set up entry updates. The newly added
+>>>>> arch_update_kernel_mappings_begin() / arch_update_kernel_mappings_end()
+>>>>> provide the required hooks.
+>>>>>
+>>>>> vmalloc improves by up to 30% as a result.
+>>>>>
+>>>>> Two new TIF_ flags are created; TIF_KMAP_UPDATE_ACTIVE tells us if we
+>>>>> are in the batch mode and can therefore defer any barriers until the end
+>>>>> of the batch. TIF_KMAP_UPDATE_PENDING tells us if barriers are queued to
+>>>>> be emited at the end of the batch.
+>>>>
+>>>> Why cannot this be achieved with a single TIF_KMAP_UPDATE_ACTIVE which is
+>>>> set in __begin(), cleared in __end() and saved across a __switch_to().
+>>>
+>>> So unconditionally emit the barriers in _end(), and emit them in __switch_to()
+>>> if TIF_KMAP_UPDATE_ACTIVE is set?
+>>
+>> Right.
+>>
+>>>
+>>> I guess if calling _begin() then you are definitely going to be setting at least
+>>> 1 PTE. So you can definitely emit the barriers unconditionally. I was trying to
+>>> protect against the case where you get pre-empted (potentially multiple times)
+>>> while in the loop. The TIF_KMAP_UPDATE_PENDING flag ensures you only emit the
+>>> barriers when you definitely need to. Without it, you would have to emit on
+>>> every pre-emption even if no more PTEs got set.
+>>>
+>>> But I suspect this is a premature optimization. Probably it will never occur. So
+>>
+>> Agreed.
+> 
+> Having done this simplification, I've just noticed that one of the
+> arch_update_kernel_mappings_begin/end callsites is __apply_to_page_range() which
+> gets called for user space mappings as well as kernel mappings. So actually with
+> the simplification I'll be emitting barriers even when only user space mappings
+> were touched.
 
-This patch aims at fixing those warnings.
+Right, that will not be desirable.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202502152006.fBBCdEr3-lkp@int=
-el.com/
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-input/6263a1a2-4d50-41db-aa54-cfcb3e0=
-523a4@stanley.mountain/
-Fixes: 93a0fc489481 ("HID: hid-appletb-kbd: add support for automatic brigh=
-tness control while using the touchbar")
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-appletb-kbd.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> I think there are a couple of options to fix this:
+> 
+> - Revert to the 2 flag approach. For the user space case, I'll get to _end() and
+> notice that no barriers are queued so will emit nothing.
+> 
+> - Only set TIF_KMAP_UPDATE_ACTIVE if the address range passed to _begin() is a
+> kernel address range. I guess that's just a case of checking if the MSB is set
+> in "end"?
+> 
+> - pass mm to _begin() and only set TIF_KMAP_UPDATE_ACTIVE if mm == &init_mm. I
+> guess this should be the same as option 2.
+> 
+> I'm leaning towards option 2. But I have a niggling feeling that my proposed
+> check isn't quite correct. What do you think?
 
-diff --git a/drivers/hid/hid-appletb-kbd.c b/drivers/hid/hid-appletb-kbd.c
-index e45cc3ac4..d4b95aa3e 100644
---- a/drivers/hid/hid-appletb-kbd.c
-+++ b/drivers/hid/hid-appletb-kbd.c
-@@ -402,13 +402,13 @@ static int appletb_kbd_probe(struct hid_device *hdev,=
- const struct hid_device_id
- 	}
-=20
- 	kbd->backlight_dev =3D backlight_device_get_by_name("appletb_backlight");
--		if (!kbd->backlight_dev)
--			dev_err_probe(dev, ret, "Failed to get backlight device\n");
--		else {
--			backlight_device_set_brightness(kbd->backlight_dev, 2);
--			timer_setup(&kbd->inactivity_timer, appletb_inactivity_timer, 0);
--			mod_timer(&kbd->inactivity_timer, jiffies + msecs_to_jiffies(appletb_tb=
-_dim_timeout * 1000));
--		}
-+	if (!kbd->backlight_dev) {
-+		dev_err_probe(dev, -ENODEV, "Failed to get backlight device\n");
-+	} else {
-+		backlight_device_set_brightness(kbd->backlight_dev, 2);
-+		timer_setup(&kbd->inactivity_timer, appletb_inactivity_timer, 0);
-+		mod_timer(&kbd->inactivity_timer, jiffies + msecs_to_jiffies(appletb_tb_=
-dim_timeout * 1000));
-+	}
-=20
- 	kbd->inp_handler.event =3D appletb_kbd_inp_event;
- 	kbd->inp_handler.connect =3D appletb_kbd_inp_connect;
---=20
-2.43.0
+Option 2 and 3 looks better than the two flags approach proposed earlier. But is
+not option 3 bit more simplistic than option 2 ? Does getting struct mm argument
+into these function create more code churn ?
 
+> 
+> Thanks,
+> Ryan
+> 
+> 
+>>
+>>> I'll simplify as you suggest.
+>>>
+>>> Thanks,
+>>> Ryan
+>>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>>> ---
+>>>>>  arch/arm64/include/asm/pgtable.h     | 65 +++++++++++++++++++---------
+>>>>>  arch/arm64/include/asm/thread_info.h |  2 +
+>>>>>  arch/arm64/kernel/process.c          | 20 +++++++--
+>>>>>  3 files changed, 63 insertions(+), 24 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>>>>> index ff358d983583..1ee9b9588502 100644
+>>>>> --- a/arch/arm64/include/asm/pgtable.h
+>>>>> +++ b/arch/arm64/include/asm/pgtable.h
+>>>>> @@ -39,6 +39,41 @@
+>>>>>  #include <linux/mm_types.h>
+>>>>>  #include <linux/sched.h>
+>>>>>  #include <linux/page_table_check.h>
+>>>>> +#include <linux/pgtable_modmask.h>
+>>>>> +
+>>>>> +static inline void emit_pte_barriers(void)
+>>>>> +{
+>>>>> +	dsb(ishst);
+>>>>> +	isb();
+>>>>> +}
+>>>>
+>>>> There are many sequence of these two barriers in this particular header,
+>>>> hence probably a good idea to factor this out into a common helper.
+>>>>>> +
+>>>>> +static inline void queue_pte_barriers(void)
+>>>>> +{
+>>>>> +	if (test_thread_flag(TIF_KMAP_UPDATE_ACTIVE)) {
+>>>>> +		if (!test_thread_flag(TIF_KMAP_UPDATE_PENDING))
+>>>>> +			set_thread_flag(TIF_KMAP_UPDATE_PENDING);
+>>>>> +	} else
+>>>>> +		emit_pte_barriers();
+>>>>> +}
+>>>>> +
+>>>>> +#define arch_update_kernel_mappings_begin arch_update_kernel_mappings_begin
+>>>>> +static inline void arch_update_kernel_mappings_begin(unsigned long start,
+>>>>> +						     unsigned long end)
+>>>>> +{
+>>>>> +	set_thread_flag(TIF_KMAP_UPDATE_ACTIVE);
+>>>>> +}
+>>>>> +
+>>>>> +#define arch_update_kernel_mappings_end arch_update_kernel_mappings_end
+>>>>> +static inline void arch_update_kernel_mappings_end(unsigned long start,
+>>>>> +						   unsigned long end,
+>>>>> +						   pgtbl_mod_mask mask)
+>>>>> +{
+>>>>> +	if (test_thread_flag(TIF_KMAP_UPDATE_PENDING))
+>>>>> +		emit_pte_barriers();
+>>>>> +
+>>>>> +	clear_thread_flag(TIF_KMAP_UPDATE_PENDING);
+>>>>> +	clear_thread_flag(TIF_KMAP_UPDATE_ACTIVE);
+>>>>> +}
+>>>>>  
+>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>  #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
+>>>>> @@ -323,10 +358,8 @@ static inline void __set_pte_complete(pte_t pte)
+>>>>>  	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
+>>>>>  	 * or update_mmu_cache() have the necessary barriers.
+>>>>>  	 */
+>>>>> -	if (pte_valid_not_user(pte)) {
+>>>>> -		dsb(ishst);
+>>>>> -		isb();
+>>>>> -	}
+>>>>> +	if (pte_valid_not_user(pte))
+>>>>> +		queue_pte_barriers();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void __set_pte(pte_t *ptep, pte_t pte)
+>>>>> @@ -791,10 +824,8 @@ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
+>>>>>  
+>>>>>  	WRITE_ONCE(*pmdp, pmd);
+>>>>>  
+>>>>> -	if (pmd_valid_not_user(pmd)) {
+>>>>> -		dsb(ishst);
+>>>>> -		isb();
+>>>>> -	}
+>>>>> +	if (pmd_valid_not_user(pmd))
+>>>>> +		queue_pte_barriers();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void pmd_clear(pmd_t *pmdp)
+>>>>> @@ -869,10 +900,8 @@ static inline void set_pud(pud_t *pudp, pud_t pud)
+>>>>>  
+>>>>>  	WRITE_ONCE(*pudp, pud);
+>>>>>  
+>>>>> -	if (pud_valid_not_user(pud)) {
+>>>>> -		dsb(ishst);
+>>>>> -		isb();
+>>>>> -	}
+>>>>> +	if (pud_valid_not_user(pud))
+>>>>> +		queue_pte_barriers();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void pud_clear(pud_t *pudp)
+>>>>> @@ -960,10 +989,8 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
+>>>>>  
+>>>>>  	WRITE_ONCE(*p4dp, p4d);
+>>>>>  
+>>>>> -	if (p4d_valid_not_user(p4d)) {
+>>>>> -		dsb(ishst);
+>>>>> -		isb();
+>>>>> -	}
+>>>>> +	if (p4d_valid_not_user(p4d))
+>>>>> +		queue_pte_barriers();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void p4d_clear(p4d_t *p4dp)
+>>>>> @@ -1098,10 +1125,8 @@ static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
+>>>>>  
+>>>>>  	WRITE_ONCE(*pgdp, pgd);
+>>>>>  
+>>>>> -	if (pgd_valid_not_user(pgd)) {
+>>>>> -		dsb(ishst);
+>>>>> -		isb();
+>>>>> -	}
+>>>>> +	if (pgd_valid_not_user(pgd))
+>>>>> +		queue_pte_barriers();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void pgd_clear(pgd_t *pgdp)
+>>>>> diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
+>>>>> index 1114c1c3300a..382d2121261e 100644
+>>>>> --- a/arch/arm64/include/asm/thread_info.h
+>>>>> +++ b/arch/arm64/include/asm/thread_info.h
+>>>>> @@ -82,6 +82,8 @@ void arch_setup_new_exec(void);
+>>>>>  #define TIF_SME_VL_INHERIT	28	/* Inherit SME vl_onexec across exec */
+>>>>>  #define TIF_KERNEL_FPSTATE	29	/* Task is in a kernel mode FPSIMD section */
+>>>>>  #define TIF_TSC_SIGSEGV		30	/* SIGSEGV on counter-timer access */
+>>>>> +#define TIF_KMAP_UPDATE_ACTIVE	31	/* kernel map update in progress */
+>>>>> +#define TIF_KMAP_UPDATE_PENDING	32	/* kernel map updated with deferred barriers */
+>>>>>  
+>>>>>  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+>>>>>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+>>>>> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+>>>>> index 42faebb7b712..1367ec6407d1 100644
+>>>>> --- a/arch/arm64/kernel/process.c
+>>>>> +++ b/arch/arm64/kernel/process.c
+>>>>> @@ -680,10 +680,10 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>>>>>  	gcs_thread_switch(next);
+>>>>>  
+>>>>>  	/*
+>>>>> -	 * Complete any pending TLB or cache maintenance on this CPU in case
+>>>>> -	 * the thread migrates to a different CPU.
+>>>>> -	 * This full barrier is also required by the membarrier system
+>>>>> -	 * call.
+>>>>> +	 * Complete any pending TLB or cache maintenance on this CPU in case the
+>>>>> +	 * thread migrates to a different CPU. This full barrier is also
+>>>>> +	 * required by the membarrier system call. Additionally it is required
+>>>>> +	 * for TIF_KMAP_UPDATE_PENDING, see below.
+>>>>>  	 */
+>>>>>  	dsb(ish);
+>>>>>  
+>>>>> @@ -696,6 +696,18 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>>>>>  	/* avoid expensive SCTLR_EL1 accesses if no change */
+>>>>>  	if (prev->thread.sctlr_user != next->thread.sctlr_user)
+>>>>>  		update_sctlr_el1(next->thread.sctlr_user);
+>>>>> +	else if (unlikely(test_thread_flag(TIF_KMAP_UPDATE_PENDING))) {
+>>>>> +		/*
+>>>>> +		 * In unlikely event that a kernel map update is on-going when
+>>>>> +		 * preemption occurs, we must emit_pte_barriers() if pending.
+>>>>> +		 * emit_pte_barriers() consists of "dsb(ishst); isb();". The dsb
+>>>>> +		 * is already handled above. The isb() is handled if
+>>>>> +		 * update_sctlr_el1() was called. So only need to emit isb()
+>>>>> +		 * here if it wasn't called.
+>>>>> +		 */
+>>>>> +		isb();
+>>>>> +		clear_thread_flag(TIF_KMAP_UPDATE_PENDING);
+>>>>> +	}
+>>>>>  
+>>>>>  	/* the actual thread switch */
+>>>>>  	last = cpu_switch_to(prev, next);
+>>>
+> 
 
