@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-518186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095FAA38B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380A3A38B31
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D611893B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:16:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1D71893D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8373226870;
-	Mon, 17 Feb 2025 18:16:46 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A2C235BF1;
+	Mon, 17 Feb 2025 18:20:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E124C38FB0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 18:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF654229B18;
+	Mon, 17 Feb 2025 18:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739816206; cv=none; b=kqyS4fmS36iINnV61urfXKmNrsXH7kR5TFWrJjQUOU/LcDH3T7Wz8Vu0AZKKganbr9+DPNGSHzZcGtSpBh3lM/PSOIhaT+TLl2jozenW3Ds/O3W4ihG206r+uVsgoOL00FwRcETRaIq564cvxOVqeGwuezQoPV4KT2N/VRhq0mc=
+	t=1739816408; cv=none; b=kIk9F1djGtTMiqT0wTH25HcSxZzlq9M693gFOmYVlR7QRVEemX6N4PQIoXCyg/hUS8+FfCNOGHYH4Pn3Rxm+W6l6zgatmwuyLkfSgfYnSRbHtYX3OHWVbWiz05mvN6fEN7dmbQ4adt05WIBIqqRQdbP00UU9RaJQyahYZEMAAlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739816206; c=relaxed/simple;
-	bh=M3aNmsZjJZLYUGS3ElWTUS/mfTa/4pNcn72ELrVEzHo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TZr1w3lhZVpxXv4BwcUNTlDcOdtJtPm+8OX7hAXYvh0slvBS2eqbUnO2SGG3gnkQppEQAxtbIcikd4AxJVhTNcg9RVPxzMmukb1mEymfNh2GwjZS2PMDKpAJTI62yrXi4+sSgbVxzI6HJgpXgzxVgWN/u6cc/qjw2GZgC1L6vQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2a1d6747aso5419175ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:16:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739816204; x=1740421004;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MfUM4i3woVf0UXugrGrKwiS5qCUgW9J4SSBSO0ly1Js=;
-        b=Ag1IAXfEdJAuVoRQ5U2JxWz+wgQOa81sHjsGJnt5hM7mfAMHr6/afQwRaiZNE9YdmN
-         qTy1Ly8VEF/rrDnNWdivSON8Z/8EVqjajiAnHrg4JNpZhn2qzfS7nAOkEwffE5euUtlb
-         ozrsVSaIUcFZcYZkBavJ9/5I0P+sZXKgzcufsFSji6dSfqGgvIoh1SRx59eJEy14Mph/
-         1uRwnzQSYGhTRg619qYrG7lOWQhWqeIO7mD3UEfzUCU7PEwS4iqcmr5feZY/jHCcW317
-         lQsR1AJ0oqIfBr5jC8ZoWCVqVUMJGtQxHKCkCpJX0Sgnf1RGAg/lv2a1gLOP2xsSVpQn
-         5oBw==
-X-Gm-Message-State: AOJu0YygPPx8LdpXUkpzo7bgPbzKNHJb3XVxh6jukbkzW+fW0Zj7Yg8P
-	KW99JSNQPqwOJPIPiT2JdEeoqSchIWIxjGqEpa++l7kvvN5Zx8qSfPsF1COtnZ/F6WndqoWQFT4
-	tU57k6ujq+xjQo9H2KtUBba/cqvMpiwpRvWFzT+ikHmjgQtJuombDXzA=
-X-Google-Smtp-Source: AGHT+IFOkXEYq/drTj63U7Tzdfzj0HJgcb8Kmb6pZ9Jfbh5QgBn1dZ9wzEuuF9irlON4YpQVJ4TEn9YQB762hSZUgrc4O31VPT0B
+	s=arc-20240116; t=1739816408; c=relaxed/simple;
+	bh=7v9JiuvwjKhG5Dg3ZHjNC2SWZm0sNugydy6hsXZgOqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uX1803TV6yNk71bjPyMSQ2CVHdc4oYZmZ2cKR6VsJOsKM+WOS17FuKm2pTSYoBSOHcoEYWo9qfjKooM4rKl3mGPB25AYEcmlYdsPiN+nJeVhaJ77CfEBuv8NtYUHAFA+419D7ZXaJFByfvYWS45olks8gYZR7nu4TQShkle9LTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C0DC4CED1;
+	Mon, 17 Feb 2025 18:20:03 +0000 (UTC)
+Date: Mon, 17 Feb 2025 18:20:01 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Ionela Voinescu <ionela.voinescu@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Beata Michalska <beata.michalska@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, will@kernel.org, viresh.kumar@linaro.org,
+	sumitg@nvidia.com, yang@os.amperecomputing.com,
+	vanshikonda@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, ptsm@linux.microsoft.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v10 2/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+Message-ID: <Z7N90XZTICfLZCm_@arm.com>
+References: <20250131162439.3843071-1-beata.michalska@arm.com>
+ <20250131162439.3843071-3-beata.michalska@arm.com>
+ <CAJZ5v0g+yax=pT4m_2MTd9kUwbk5VBp2wkctTYJpFRU3myEjPQ@mail.gmail.com>
+ <Z7NOcd3IamyMTjbH@arm.com>
+ <Z7NQrBvnfYwXva1W@arm.com>
+ <Z7NeTrorAqDxa8QM@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b08:b0:3d0:26a5:b2c with SMTP id
- e9e14a558f8ab-3d281fe0962mr59564755ab.8.1739816203976; Mon, 17 Feb 2025
- 10:16:43 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:16:43 -0800
-In-Reply-To: <67b323a4.050a0220.173698.002b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b37d0b.050a0220.173698.003a.GAE@google.com>
-Subject: Re: [syzbot] [PATCH] can: ucan: Correct the size parameter
-From: syzbot <syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7NeTrorAqDxa8QM@bogus>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, Feb 17, 2025 at 04:05:34PM +0000, Sudeep Holla wrote:
+> On Mon, Feb 17, 2025 at 03:07:24PM +0000, Ionela Voinescu wrote:
+> > On Monday 17 Feb 2025 at 14:57:53 (+0000), Catalin Marinas wrote:
+> > > On Mon, Feb 17, 2025 at 12:52:44PM +0100, Rafael J. Wysocki wrote:
+> > > > On Fri, Jan 31, 2025 at 5:25 PM Beata Michalska <beata.michalska@arm.com> wrote:
+> > > > >
+> > > > > Currently the CPUFreq core exposes two sysfs attributes that can be used
+> > > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> > > > > and scaling_cur_freq. Both provide slightly different view on the
+> > > > > subject and they do come with their own drawbacks.
+> > > > >
+> > > > > cpuinfo_cur_freq provides higher precision though at a cost of being
+> > > > > rather expensive. Moreover, the information retrieved via this attribute
+> > > > > is somewhat short lived as frequency can change at any point of time
+> > > > > making it difficult to reason from.
+> > > > >
+> > > > > scaling_cur_freq, on the other hand, tends to be less accurate but then
+> > > > > the actual level of precision (and source of information) varies between
+> > > > > architectures making it a bit ambiguous.
+> > > > >
+> > > > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
+> > > > > distinct interface, exposing an average frequency of a given CPU(s), as
+> > > > > reported by the hardware, over a time frame spanning no more than a few
+> > > > > milliseconds. As it requires appropriate hardware support, this
+> > > > > interface is optional.
+> > > > >
+> > > > > Note that under the hood, the new attribute relies on the information
+> > > > > provided by arch_freq_get_on_cpu, which, up to this point, has been
+> > > > > feeding data for scaling_cur_freq attribute, being the source of
+> > > > > ambiguity when it comes to interpretation. This has been amended by
+> > > > > restoring the intended behavior for scaling_cur_freq, with a new
+> > > > > dedicated config option to maintain status quo for those, who may need
+> > > > > it.
+> > > > 
+> > > > In case anyone is waiting for my input here
+> > > > 
+> > > > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> > > > 
+> > > > for this and the previous patch and please feel free to route them
+> > > > both through ARM64.
+> > > 
+> > > Thanks Rafael. I indeed plan to take them through the arm64 tree.
+> > 
+> > Just a mention that this set depends on the patch that Beata linked at
+> > [6]. That patch applies cleanly on next-20250217 and it still
+> > builds/boots/works as expected.
+> 
+> Ah I see it is indeed dependent. Just responded on the other thread before
+> reading this. So it is better if Catalin picks up [6] as well. Sorry for
+> the confusion.
 
-***
+I picked that one as well. I'll do some tests and push them out later
+today or tomorrow morning.
 
-Subject: [PATCH] can: ucan: Correct the size parameter
-Author: zoo868e@gmail.com
+Thanks.
 
-According to the comment, the size parameter is only required when
-@dst is not an array, or when the copy needs to be smaller than
-sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
-correct size should be sizeof(union ucan_ctl_payload).
-
-#syz test
-
-Signed-off-by: Matt Jan <zoo868e@gmail.com>
----
- drivers/net/can/usb/ucan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index 39a63b7313a4..1ccef00388ae 100644
---- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -1533,7 +1533,7 @@ static int ucan_probe(struct usb_interface *intf,
- 	if (ret > 0) {
- 		/* copy string while ensuring zero termination */
- 		strscpy(firmware_str, up->ctl_msg_buffer->raw,
--			sizeof(union ucan_ctl_payload) + 1);
-+			sizeof(union ucan_ctl_payload));
- 	} else {
- 		strcpy(firmware_str, "unknown");
- 	}
 -- 
-2.25.1
-
+Catalin
 
