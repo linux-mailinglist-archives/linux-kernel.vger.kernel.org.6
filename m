@@ -1,197 +1,234 @@
-Return-Path: <linux-kernel+bounces-517506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0CBA381C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:32:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F3AA381DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4026816D40D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345063B567D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D9A218ADD;
-	Mon, 17 Feb 2025 11:32:51 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E182163AD;
-	Mon, 17 Feb 2025 11:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE96219EAD;
+	Mon, 17 Feb 2025 11:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gsjLuHyJ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DF8218ACC;
+	Mon, 17 Feb 2025 11:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739791970; cv=none; b=aE8oaLeRmicbl/au2qhA3xhlgf1HJqfQOIup43V+HYy/rXgphQoS2IPSAGO/YaVowjlidF0BY5iVy+HUeMDSsKyUYGngwYGBtf+cUNNk1qc3Nm4TcxAiHLqFFwaVJK/PB8yt7noZhaAszHv46UiKWTJINuRYpraMmYjVh9RWHoo=
+	t=1739791996; cv=none; b=GeUUjOUUtOXeyLjSd36a775EOnSP+4Wq340CIDJCQN6Gp6LHLzJlT/UmOVRcAIHlGcvu1AnLIEJi8W261FJyLi83rDWaifUBiTJQiM2Ft3/htCzz6CdcHEvKaZoXnZ+yHDfxiJwLvo0dWfgquH6KzWFTzudMme1be8cm9FbDHD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739791970; c=relaxed/simple;
-	bh=DFLb6IVl4mNW1EFPqfdN70EXUJGhhe9sYcXcWWXebkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PBUvdLuNkKIWhJ3PVdWaYbrIBEeURp7NWhAygKBZj9YkN2EXHnxtuzYXxn4fXAhp++UpIDlKX9GEZxJBa2PRCI59USPROvfsHnmYqnfo/0lVOFPJKWeFu3Vo1O1HqCyDux7YftC5NnMa8CL6QjjGi1RERvr5juRRfY+sRGW1s5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: QJcZQBhaSOuQ2U9P3L7JdA==
-X-CSE-MsgGUID: e4yTUGrxTImScQgZokNf6w==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Feb 2025 20:32:46 +0900
-Received: from [10.24.1.21] (unknown [10.24.1.21])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 49E3940763E9;
-	Mon, 17 Feb 2025 20:32:44 +0900 (JST)
-Message-ID: <8b88aff0-aae1-4edb-9249-860d598d5c16@bp.renesas.com>
-Date: Mon, 17 Feb 2025 11:32:42 +0000
+	s=arc-20240116; t=1739791996; c=relaxed/simple;
+	bh=WG6oFMu0mavX59UOQ/nB/6Igb8jBzB7sBymod9A4D/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lvzlcuijiGnUgM2n6WTKUqNI1SNraGUb/V+x8uuON3yYHwLHg7zw8dp0P8lECgDG6ugmxp49YuN/cJR1ZmrOEX7KDu6cff1D1oSOfn15yiDTxciJKj+1kevWLP6m5Wd0s1PPJS8CUTQu8b7wUkxMOXyDgG1x37+5WBZ95HvvWzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gsjLuHyJ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H9KCAK014827;
+	Mon, 17 Feb 2025 11:32:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=IWw1qBEFfYIm6QclJ1UrfL1To/oRw0rQiumIkfQdu
+	D4=; b=gsjLuHyJ4DTXNHcjB8Mg1o+pvLwSRG2zJjjP1JvxmUPrqF/xwJ17p3f1D
+	rKCAyLA1HfeHeK1L1yxDqE1+xZ0ozA2h3lUmEMgWb0utnxxqLs4PaAyfqL2+qmUT
+	78UmvUEZourmF1OT2Ypvs+ma5od3adqcWmDDtz5xj7GTEn4KBKMIpb9kq8y6wrYc
+	KoXg0TTCFADLSeTtl2mILmyGvHJs+ufO8kql1H1+2iL8Z1Jh253onrPE5TTjNW2W
+	L8eUzM91ao2xkeY5OL+lIhsQEd8V9L6SQwiWbtgbLPiHwVkLF/9L6ETWB8kUR6VD
+	xSeHWiR7L8A6sOB6ZBqy5Yxszwejw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ujutkv08-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 11:32:54 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HBF4LT025482;
+	Mon, 17 Feb 2025 11:32:54 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ujutkv06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 11:32:54 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51H92rKt000498;
+	Mon, 17 Feb 2025 11:32:53 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u6rknrus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 11:32:53 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HBWnmp45416852
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Feb 2025 11:32:49 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 723F720043;
+	Mon, 17 Feb 2025 11:32:49 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9030C20040;
+	Mon, 17 Feb 2025 11:32:48 +0000 (GMT)
+Received: from IBM-PW0CRK36.ibm.com (unknown [9.179.18.115])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Feb 2025 11:32:48 +0000 (GMT)
+From: Tobias Huschle <huschle@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, sshegde@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: [RFC PATCH v2 0/3] sched/fair: introduce new scheduler group type group_parked
+Date: Mon, 17 Feb 2025 12:32:49 +0100
+Message-Id: <20250217113252.21796-1-huschle@linux.ibm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/13] serial: sh-sci: Fix a comment about SCIFA
-Content-Language: en-GB
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
- <20250217105354.551788-8-thierry.bultel.yh@bp.renesas.com>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20250217105354.551788-8-thierry.bultel.yh@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------01sWo6aOdjt1db8EPZoQCs2Q"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jisq5b9NzwsiHEJVlQjp-AErtlLHVOEf
+X-Proofpoint-GUID: HMGIeooP4puJgdixk0Z1y-LE4DyO9FLr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 clxscore=1011 mlxlogscore=999
+ malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170101
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------01sWo6aOdjt1db8EPZoQCs2Q
-Content-Type: multipart/mixed; boundary="------------qH2zvFRoMbay6H9t04GHo7s4";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Message-ID: <8b88aff0-aae1-4edb-9249-860d598d5c16@bp.renesas.com>
-Subject: Re: [PATCH v2 07/13] serial: sh-sci: Fix a comment about SCIFA
-References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
- <20250217105354.551788-8-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250217105354.551788-8-thierry.bultel.yh@bp.renesas.com>
+Changes to v1
 
---------------qH2zvFRoMbay6H9t04GHo7s4
-Content-Type: multipart/mixed; boundary="------------s4dpGfJq0FX0RGypHTVDQ5xI"
+parked vs idle
+- parked CPUs are now never considered to be idle
+- a scheduler group is now considered parked iff there are parked CPUs 
+  and there are no idle CPUs, i.e. all non parked CPUs are busy or there
+  are only parked CPUs. A scheduler group with parked tasks can be
+  considered to not be parked, if it has idle CPUs which can pick up
+  the parked tasks.
+- idle_cpu_without always returns that the CPU will not be idle if the 
+  CPU is parked
 
---------------s4dpGfJq0FX0RGypHTVDQ5xI
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+active balance, no_hz, queuing
+- should_we_balance always returns true if a scheduler groups contains 
+  a parked CPU and that CPU has a running task
+- stopping the tick on parked CPUs is now prevented in sched_can_stop_tick
+  if a task is running
+- tasks are being prevented to be queued on parked CPUs in ttwu_queue_cond
 
-On 17/02/2025 10:52, Thierry Bultel wrote:
-> The comment was correct when it was added, at that time RZ/T1 was
-> the only SoC in the RZ/T line. Since then, further SoCs have been
-> added with RZ/T names which do not use the same SCIFA register
-> layout and so the comment is now misleading.
->=20
-> So we update the comment to explicitly reference only RZ/T1 SoCs.
->=20
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
->  drivers/tty/serial/sh-sci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 924b803af440..b8f9034f891a 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -291,7 +291,7 @@ static const struct sci_port_params sci_port_params=
-[SCIx_NR_REGTYPES] =3D {
->  	},
-> =20
->  	/*
-> -	 * The "SCIFA" that is in RZ/A2, RZ/G2L and RZ/T.
-> +	 * The "SCIFA" that is in RZ/A2, RZ/G2L and RZ/T1.
->  	 * It looks like a normal SCIF with FIFO data, but with a
->  	 * compressed address space. Also, the break out of interrupts
->  	 * are different: ERI/BRI, RXI, TXI, TEI, DRI.
+cleanup
+- removed duplicate checks for parked CPUs
 
-Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+CPU capacity
+- added a patch which removes parked cpus and their capacity from 
+  scheduler statistics
 
---=20
-Paul Barker
---------------s4dpGfJq0FX0RGypHTVDQ5xI
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Original description:
 
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
+Adding a new scheduler group type which allows to remove all tasks 
+from certain CPUs through load balancing can help in scenarios where
+such CPUs are currently unfavorable to use, for example in a 
+virtualized environment.
 
---------------s4dpGfJq0FX0RGypHTVDQ5xI--
+Functionally, this works as intended. The question would be, if this
+could be considered to be added and would be worth going forward 
+with. If so, which areas would need additional attention? 
+Some cases are referenced below.
 
---------------qH2zvFRoMbay6H9t04GHo7s4--
+The underlying concept and the approach of adding a new scheduler 
+group type were presented in the Sched MC of the 2024 LPC.
+A short summary:
 
---------------01sWo6aOdjt1db8EPZoQCs2Q
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Some architectures (e.g. s390) provide virtualization on a firmware
+level. This implies, that Linux kernels running on such architectures
+run on virtualized CPUs.
 
------BEGIN PGP SIGNATURE-----
+Like in other virtualized environments, the CPUs are most likely shared
+with other guests on the hardware level. This implies, that Linux
+kernels running in such an environment may encounter 'steal time'. In
+other words, instead of being able to use all available time on a
+physical CPU, some of said available time is 'stolen' by other guests.
 
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ7MeWgUDAAAAAAAKCRDbaV4Vf/JGvdFJ
-AP9JZp2/jU1Bv8acfiXD9Xob8a+WURoXntZ7+s8T+dakbgEA3ZjSJzVdj5wcYBHNSpRrFu7FpLRN
-xR+C+QyVe/el9w8=
-=D9VZ
------END PGP SIGNATURE-----
+This can cause side effects if a guest is interrupted at an unfavorable
+point in time or if the guest is waiting for one of its other virtual 
+CPUs to perform certain actions while those are suspended in favour of 
+another guest.
 
---------------01sWo6aOdjt1db8EPZoQCs2Q--
+Architectures, like arch/s390, address this issue by providing an
+alternative classification for the CPUs seen by the Linux kernel.
+
+The following example is arch/s390 specific:
+In the default mode (horizontal CPU polarization), all CPUs are treated
+equally and can be subject to steal time equally. 
+In the alternate mode (vertical CPU polarization), the underlying
+firmware hypervisor assigns the CPUs, visible to the guest, different
+types, depending on how many CPUs the guest is entitled to use. Said
+entitlement is configured by assigning weights to all active guests.
+The three CPU types are:
+    - vertical high   : On these CPUs, the guest has always highest
+                        priority over other guests. This means
+                        especially that if the guest executes tasks on
+                        these CPUs, it will encounter no steal time.
+    - vertical medium : These CPUs are meant to cover fractions of
+                        entitlement.
+    - vertical low    : These CPUs will have no priority when being
+                        scheduled. This implies especially, that while
+                        all other guests are using their full
+                        entitlement, these CPUs might not be ran for a
+                        significant amount of time.
+
+As a consequence, using vertical lows while the underlying hypervisor
+experiences a high load, driven by all defined guests, is to be avoided.
+
+In order to consequently move tasks off of vertical lows, introduce a
+new type of scheduler groups: group_parked.
+Parked implies, that processes should be evacuated as fast as possible
+from these CPUs. This implies that other CPUs should start pulling tasks
+immediately, while the parked CPUs should refuse to pull any tasks
+themselves.
+Adding a group type beyond group_overloaded achieves the expected
+behavior. By making its selection architecture dependent, it has
+no effect on architectures which will not make use of that group type.
+
+This approach works very well for many kinds of workloads. Tasks are
+getting migrated back and forth in line with changing the parked
+state of the involved CPUs.
+
+There are a couple of issues and corner cases which need further
+considerations:
+- rt & dl:      Realtime and deadline scheduling require some additional 
+                attention. 
+- ext:          Probably affected as well. Needs some conceptional
+                thoughts first.
+- raciness:     Right now, there are no synchronization efforts. It needs
+                to be considered whether those might be necessary or if
+                it is alright that the parked-state of a CPU might change
+                during load-balancing. 
+
+Patches apply to tip:sched/core
+
+The s390 patch serves as a simplified implementation example.
+
+Tobias Huschle (3):
+  sched/fair: introduce new scheduler group type group_parked
+  sched/fair: adapt scheduler group weight and capacity for parked CPUs
+  s390/topology: Add initial implementation for selection of parked CPUs
+
+ arch/s390/include/asm/smp.h    |   2 +
+ arch/s390/kernel/smp.c         |   5 ++
+ include/linux/sched/topology.h |  19 ++++++
+ kernel/sched/core.c            |  13 ++++-
+ kernel/sched/fair.c            | 104 ++++++++++++++++++++++++++++-----
+ kernel/sched/syscalls.c        |   3 +
+ 6 files changed, 130 insertions(+), 16 deletions(-)
+
+-- 
+2.34.1
+
 
