@@ -1,111 +1,154 @@
-Return-Path: <linux-kernel+bounces-516923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5566A379C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:36:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689E9A37A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 073FD7A2F77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4079F16E41D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F9D1487D5;
-	Mon, 17 Feb 2025 02:36:13 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C25618B495;
+	Mon, 17 Feb 2025 04:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="THB3WQuR"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B6084D0E;
-	Mon, 17 Feb 2025 02:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C79188904
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739759773; cv=none; b=jYjPxjS9axVVTAfWvRipVkhEH0vx5ogYU5juIVYirwFRY8EYelZwgWV0Qq8PP8/WuZkZTgDGx46mih8hqHmnnH5SkqummB8RQj06MpPR/hb06nrQCCyYw78e7NcM2cuLArHphmJHvgqb+rKzQB+WDi5nPdcJ5G1farFThmwRfrQ=
+	t=1739765295; cv=none; b=aRte7O4b8z90WT/q4zpUHEK3Kaj39rMvnpuEn/cRQwj2hFCZd77GhEEznrbvTknH0QidolzjvhnykBQwaznkpvBcjLNngcXwnoHprvw9Neda7GgRleDsqnzUQf1p96w4TM1zS8d5L5dCzcowiUV+Q4Sp4K3biWtjT6qBBjjZq7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739759773; c=relaxed/simple;
-	bh=5Je1TcOPfL5lsh3I7rTPOoi/YIo85AytXCjFmzZDMeA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nBUnalOW/u3FY24pMgiUDhzzB30iiw2X5US+qQz2aSgquIMRGU+Y7Fdp5mKA+bl6/zsKga6tjr3VajJXEYvwc3sRci8Ge6NF03pKVzoGPKn0CfdW7kcrBt11LhQsib6+Gs4IrUh1Mc7jikreFxhudcBbe90pz7Vt/2RZyWglQJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowACnrNCCoLJnHiEBDg--.38765S2;
-	Mon, 17 Feb 2025 10:35:55 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: bhelgaas@google.com,
-	arnd@arndb.de,
-	treding@nvidia.com
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] PCI: fix reference leak in pci_register_host_bridge()
-Date: Mon, 17 Feb 2025 10:35:45 +0800
-Message-Id: <20250217023545.2248438-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739765295; c=relaxed/simple;
+	bh=i/PwgKMCBCZLfEHQsGsntQ1fEhhQoS94549m2nz6EA4=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=HRfDbeQs3qvGJZsa9LRUMscBTeXTtNAx96igNcLGEm4ZHXzVz2nsMKReLLqseoQ+zkZZpnoJUiVHpZdN9S1OmM+9bFCxn+zw60F9iFzuiWQJ1C9qcd2E41Z8RXQJSDoRu1tFgr4fPh9QNImzXQjbkROki6Wa5idJ7ErQQ3+7ucE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=THB3WQuR; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250217040803epoutp020f4e60ad7b637930343efdddc7f80598~k407SdHSW2975229752epoutp02C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:08:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250217040803epoutp020f4e60ad7b637930343efdddc7f80598~k407SdHSW2975229752epoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739765283;
+	bh=q4FEvnHmy+mB9MbRC/88U70doteoss0rejRbFKfqfQk=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=THB3WQuRNek7ifCXOT8QGTh0l7OeOwTmw2+XSDdbKXaCrq8lZ84tsfB2yJvSy6DTg
+	 P8ZMjqjBSo6UirKm7A4dq2j5a4Af3G7J1uiPpikrn4VOvHWrIrVQIZktiMZZZQKAOs
+	 aKC+tWmXQVvi9g0QK5oL40QsKuiAxWcgrHPmybV0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20250217040803epcas2p4bf4912fef65c350a72e533852c54683c~k4060pky53087230872epcas2p4G;
+	Mon, 17 Feb 2025 04:08:03 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Yx8Jg1dbtz4x9Pv; Mon, 17 Feb
+	2025 04:08:03 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACnrNCCoLJnHiEBDg--.38765S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFy3ZF43Jrb_yoWkArXEgr
-	109Fy7Zr48G3Zagr13ArnxZrn2k3ZrWrWfGr48tFZ7AayrXFZIg3ZxZryYyr17Can8Zr1D
-	JF1UXr4DCr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3AFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
-	YI8I648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUY3kuUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Mime-Version: 1.0
+Subject: RE:(2) [PATCH] scsi: ufs: Fix incorrect bit assignment for
+ temperature notifications
+Reply-To: keosung.park@samsung.com
+Sender: Keoseong Park <keosung.park@samsung.com>
+From: Keoseong Park <keosung.park@samsung.com>
+To: Avri Altman <Avri.Altman@sandisk.com>, Keoseong Park
+	<keosung.park@samsung.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>, "beanhuo@micron.com"
+	<beanhuo@micron.com>, "linux@roeck-us.net" <linux@roeck-us.net>, Daejun Park
+	<daejun7.park@samsung.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Bao D .
+ Nguyen" <quic_nguyenb@quicinc.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <PH7PR16MB61965AFF2D91331975BBD24EE5FE2@PH7PR16MB6196.namprd16.prod.outlook.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <1891546521.01739765283208.JavaMail.epsvc@epcpadp2new>
+Date: Mon, 17 Feb 2025 11:39:00 +0900
+X-CMS-MailID: 20250217023900epcms2p6d07e63f7ede68a88b53daf7a17f4062a
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250214105219epcms2p3a60810a14e6181092cb397924ce36019
+References: <PH7PR16MB61965AFF2D91331975BBD24EE5FE2@PH7PR16MB6196.namprd16.prod.outlook.com>
+	<1891546521.01739535602406.JavaMail.epsvc@epcpadp1new>
+	<CGME20250214105219epcms2p3a60810a14e6181092cb397924ce36019@epcms2p6>
 
-Once device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
+> + Bao
+>
+>> According to the UFS specification, the bit positions for
+>> `UFS_DEV_HIGH_TEMP_NOTIF` and `UFS_DEV_LOW_TEMP_NOTIF` were
+>> incorrectly assigned. This patch corrects the bit assignment to align wi=
+th the
+>> specification.
+>>=20
+>> If this issue is not fixed, devices that support both high and low tempe=
+rature
+>> notifications may function correctly, but devices that support only one =
+of
+>> them may fail to trigger the corresponding exception event.
+>>=20
+>> Fixes: e88e2d32200a ("scsi: ufs: core: Probe for temperature notificatio=
+n
+>> support")
+>> Signed-off-by: Keoseong Park <keosung.park@samsung.com>
+> Already noticed by Bao D. Nguyen - see https://protect2.fireeye.com/v1/ur=
+l?k=3D81dbf2a5-e050e79f-81da79ea-74fe4860008a-0424961c73a03c70&q=3D1&e=3Dfc=
+fc99c7-cb2b-4f68-8ef4-e2760c685fec&u=3Dhttps%3A%2F%2Fwww.spinics.net%2Flist=
+s%2Flinux-scsi%2Fmsg202162.html
+>
+> Thanks,
+> Avri
+>
 
-device_register() includes device_add(). As comment of device_add()
-says, 'if device_add() succeeds, you should call device_del() when you
-want to get rid of it. If device_add() has not succeeded, use only
-put_device() to drop the reference count'.
+Hi Avri,
 
-Found by code review.
+Thank you for the update. I wasn=E2=80=99t aware that Bao D. Nguyen=E2=80=
+=99s patch had already been applied. =20
+I appreciate the heads-up, and I=E2=80=99ll make sure to check the latest p=
+atches more carefully next time. =20
 
-Cc: stable@vger.kernel.org
-Fixes: 37d6a0a6f470 ("PCI: Add pci_register_host_bridge() interface")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch description.
----
- drivers/pci/probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Best Regards,
+Keoseong
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b6536ed599c3..03dc65cf48f1 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1017,8 +1017,10 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	name = dev_name(&bus->dev);
- 
- 	err = device_register(&bus->dev);
--	if (err)
-+	if (err) {
-+		put_device(&bus->dev);
- 		goto unregister;
-+	}
- 
- 	pcibios_add_bus(bus);
- 
--- 
-2.25.1
-
+>> ---
+>>  include/ufs/ufs.h | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h index
+>> d335bff1a310..8a24ed59ec46 100644
+>> --- a/include/ufs/ufs.h
+>> +++ b/include/ufs/ufs.h
+>> @@ -385,8 +385,8 @@ enum {
+>>=20
+>>  /* Possible values for dExtendedUFSFeaturesSupport */  enum {
+>> -=09UFS_DEV_LOW_TEMP_NOTIF=09=09=3D BIT(4),
+>> -=09UFS_DEV_HIGH_TEMP_NOTIF=09=09=3D BIT(5),
+>> +=09UFS_DEV_HIGH_TEMP_NOTIF=09=09=3D BIT(4),
+>> +=09UFS_DEV_LOW_TEMP_NOTIF=09=09=3D BIT(5),
+>>  =09UFS_DEV_EXT_TEMP_NOTIF=09=09=3D BIT(6),
+>>  =09UFS_DEV_HPB_SUPPORT=09=09=3D BIT(7),
+>>  =09UFS_DEV_WRITE_BOOSTER_SUP=09=3D BIT(8),
+>> --
+>> 2.25.1
+>>=20
+>>=20
+>
 
