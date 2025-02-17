@@ -1,131 +1,318 @@
-Return-Path: <linux-kernel+bounces-517606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFE0A38304
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A32E1A38321
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14F447A232C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 066EB7A2B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83401219EA0;
-	Mon, 17 Feb 2025 12:30:06 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616F421C178;
+	Mon, 17 Feb 2025 12:38:57 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA6C21ADA4;
-	Mon, 17 Feb 2025 12:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F627218E85;
+	Mon, 17 Feb 2025 12:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739795406; cv=none; b=AWilwrOSGYj/0aTsko/XrwAVV4hB/N181dv7pRpIn+PmP1UbKjUumzcTjDilQn1b32HKfG7Ua3N8XkFHhdtAlVgVi51O/J69wf+ppEkqMy5VrZuIYC8148xz391Ni7SDcmJTATT+q8bFpt05qmjvZYkTfb52sZNLdtE1GfJ0F10=
+	t=1739795936; cv=none; b=pDYCS0ya6uVxa916Vo1XVaI+CMl2huP86jQRl+HlhPyOl7BQdMLjaSMTtO4FTPFQBH/7YxQez0nzrLJSX+KwcXx+mtA8+YKTPd2dPoW8s2k0HMhQeu84MVXTETIbLI1qLd9vuPVSRJ37RiIJ4bwy2WDPgnKS4i6XKRT/iNdfMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739795406; c=relaxed/simple;
-	bh=J3SFBAZDXUNNlAhhsULZrSD2zJqCg4VZ25hYd8Ta7G8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M8IAoyuw5wvTkpZgAzAT4PuCiEhU4LoKzFCFXLt8yzOJXp/bJQ0VaOug6/q/xG2qyzhYhDVWAFxW4byC1av9QYEmzNKWPJIkCe2l/qB551FgKoa8eINga4MO5NJKukgC4bOJ3mH3kKbkU3qEbq4BlMe0JLqZzYHH3dyLBhsCDIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb7aecd39fso305505466b.0;
-        Mon, 17 Feb 2025 04:30:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739795402; x=1740400202;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I1TIWEZalxxCgY45eBOSHh9u1O+DAvz4HdaYIIkamHg=;
-        b=jQaylfzax9r15NJ8ROFIxyrT7hoe8CShkT6eh1i2qnMLXe7cM3QHSDHizd0fgqNx5e
-         /qrep1w2+xpGBS7fdne2yLb/1I/xjTc6yWRE7U8rRANh2JhgPNka+MxqybBNC9lcGCXw
-         OyDhBPulaaie8F4IEG4LGjHcv47Xz1VKEMDWwRUb22BYhsGHS7HRh4EvCw4/DVAa3IHk
-         /HZGCH/ixb1D3c1oYY7SBeuFBeRLQmFoLspiAxcxjnDMVIVJyNsbFscweM7H2qRKhlZT
-         A7ytx7qSdz63FTQaUFhStjFAEykD4Dcz4ls/1IYb6MhsV1qbWiJC1KLLPvB09c+TfNO9
-         QURQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUb87Ex/bNZ9DXzLxm5BD4Ryrli2sbe1QI026GcUy3OkzmdmBzXZi7DrcNHKosS6K6uE6jkun3B21FgZRBbXFMvKig=@vger.kernel.org, AJvYcCV2hFe1VU8ZCwC1zasUObtzi5ENIISLkxdXtW0NQDJnk4DVrI1ocRLRj88k+BsoUjjF6Ojkae5oWvMayQLh@vger.kernel.org, AJvYcCWjWYglyfwvVU10+7J67usVux/sIb+iemG7NOJ0NONRap1zHLmpLVYRrhIqyOXG3k1/mkoGDCSVQIavmAuN@vger.kernel.org, AJvYcCXnq0te/RH2kmpCI6T8PK/GFP34JOH98dmKEkqSuGZeICsA1/lRQ6lC1XAnDWQZMoPlfxPpsAXL+LwL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD/FvH8QMSP/pd7PM5M8fhd4cjEHPYnwq3nIHeLbNaooX94bq/
-	022nKt6zkWUw4Fs9WV2efIb2zEprPSmRMHlDZZkAsK4rZpsq44IsngrPxWuCIFg=
-X-Gm-Gg: ASbGnct5qat9p2xedn6xZmU1nIu+78nfsf+by1bEwLJfm9hdfk5POk897PQmxGrzEGA
-	Z7PFCxLFRLZzl14+qL3AqJ0eKkQvOIJHklfgxqFNJh5yP4a/sQDx2CocII6K35zdRhxzX229LdV
-	+nBBOnCfVmBTP3iUyt9teBdArD4zZgWydi1NDHXaA8dubEC65bYra+MSoGAp8W3fuNwSAEA7s85
-	l5bnvU85jSPoUpAeE2jzWbQtjIGaiVLJqzWeaVEs0Gnj+dfGUpirnKFA/Vyh7qzz0VOt0R2Xt7m
-	EFS5ERLZJuvKptIe+6Wpuc6WzvlHAacH2vgHIaZCXC2muz/Zjh8kYQ==
-X-Google-Smtp-Source: AGHT+IFyU5wJtXXUs4IqnPMunIdCvLam5pfngNR55xHL/oCfHQ5msYgeLsv1nO/TBmFAHxED+IvCzg==
-X-Received: by 2002:a17:907:7706:b0:ab7:b9b5:6104 with SMTP id a640c23a62f3a-abb706ffef2mr756802466b.5.1739795401768;
-        Mon, 17 Feb 2025 04:30:01 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53398364sm876166466b.128.2025.02.17.04.30.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 04:30:01 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab771575040so1048512166b.1;
-        Mon, 17 Feb 2025 04:30:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1fxaxIpxea+rNPLIr8I9nkxEiMMJZ6Zv/fGwvrPzSmGJdmwhuhWG1+6zRntBKCgeSDgvahYW06fVvMrCt@vger.kernel.org, AJvYcCUGMFVr8EHfljmLPz+1ILvPR5ku+SMJCYTBUpF76eo27L6lI4PrdFqAIuSrv1/bMCcaug0ubJoskeyVmrAq@vger.kernel.org, AJvYcCUL3wdtm/QS3gsOnootuDb1uTIEstChA7gvU73fIOwobcTO/B4rBVxXVEUpiyDgMmj7Ybp+pgWXpjXr@vger.kernel.org, AJvYcCVwDBOZHPDj816E0Cmp4QFcoo2L3maJ0qL5fZnv2VQ0p0Ax7J30IVKyVlsFKIRbQ7lWh5Byc7LV6V835I5PoidMViE=@vger.kernel.org
-X-Received: by 2002:a17:907:3d9e:b0:abb:5b02:9e7 with SMTP id
- a640c23a62f3a-abb708f2d26mr963945066b.12.1739795401012; Mon, 17 Feb 2025
- 04:30:01 -0800 (PST)
+	s=arc-20240116; t=1739795936; c=relaxed/simple;
+	bh=jtBh+0XSHsZRj0wRyLE3pJ+jqzyYvfhHbJnuhElAk/8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eKPc86+aSc3P9VLQRt5j2AlrcTTVJCifvm/7TCoYQxWuxutfT6EbYGfSfVVbseNpgRv+vLXwg+WicObMuSPZolpc7hiSRnHcFAMx1OXfSXVHpeyIY4ezmIdT1cPWq1rzdtbgP3qEb0b3fuM/t0QfuGPNTNS5PmFZ/g3IFmCePQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YxMYZ2qlTz1wn6x;
+	Mon, 17 Feb 2025 20:34:58 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 505561A0188;
+	Mon, 17 Feb 2025 20:38:51 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 17 Feb 2025 20:38:50 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian
+	<kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>, Chris
+ Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep
+ Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>, "Darrick J.
+ Wong" <djwong@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Trond Myklebust
+	<trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Chuck Lever
+	<chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown
+	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+CC: Yunsheng Lin <linyunsheng@huawei.com>, Luiz Capitulino
+	<luizcap@redhat.com>, Mel Gorman <mgorman@techsingularity.net>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+	<linux-erofs@lists.ozlabs.org>, <linux-xfs@vger.kernel.org>,
+	<linux-mm@kvack.org>, <netdev@vger.kernel.org>, <linux-nfs@vger.kernel.org>
+Subject: [RFC] mm: alloc_pages_bulk: remove assumption of populating only NULL elements
+Date: Mon, 17 Feb 2025 20:31:23 +0800
+Message-ID: <20250217123127.3674033-1-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
- <20250217105354.551788-4-thierry.bultel.yh@bp.renesas.com> <CAMuHMdWfTsocOwuqDQZOBN7-wGMrrSc=cfJau+U1tx3Pwe+VHA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWfTsocOwuqDQZOBN7-wGMrrSc=cfJau+U1tx3Pwe+VHA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Feb 2025 13:29:47 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUs3uv-yhJxVTot7t3BjXcMDm=sWu-MTRv=-D5PrqX_zg@mail.gmail.com>
-X-Gm-Features: AWEUYZk8HXdwA6QdcVV6UVVVAVy0o-P-gKkZGawCKYB8YbY4M9JB3uv5mL3juaM
-Message-ID: <CAMuHMdUs3uv-yhJxVTot7t3BjXcMDm=sWu-MTRv=-D5PrqX_zg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/13] dt-bindings: serial: Add compatible for Renesas
- RZ/T2H SoC in sci
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi Thierry,
+As mentioned in [1], it seems odd to check NULL elements in
+the middle of page bulk allocating, and it seems caller can
+do a better job of bulk allocating pages into a whole array
+sequentially without checking NULL elements first before
+doing the page bulk allocation.
 
-On Mon, 17 Feb 2025 at 13:20, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 17 Feb 2025 at 11:54, Thierry Bultel
-> <thierry.bultel.yh@bp.renesas.com> wrote:
-> > Document RZ/T2H (a.k.a r9a09g077) in SCI binding.
-> >
-> > Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > +++ b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > @@ -20,6 +20,7 @@ properties:
-> >                - renesas,r9a07g043-sci     # RZ/G2UL and RZ/Five
-> >                - renesas,r9a07g044-sci     # RZ/G2{L,LC}
-> >                - renesas,r9a07g054-sci     # RZ/V2L
-> > +              - renesas,r9a09g077-sci     # RZ/T2H
->
-> As the RZ/T2H SCI does not work with a generic SCI driver, it cannot
-> use renesas,sci as a fallback, but needs its own section.
->
-> >            - const: renesas,sci            # generic SCI compatible UART
+Remove the above checking also enable the caller to not
+zero the array before calling the page bulk allocating API,
+which has about 1~2 ns performance improvement for the test
+case of time_bench_page_pool03_slow() for page_pool in a
+x86 vm system, this reduces some performance impact of
+fixing the DMA API misuse problem in [2], performance
+improves from 87.886 ns to 86.429 ns.
 
-As the RZ/T2H SCI does support RTS/CTS, the line
+1. https://lore.kernel.org/all/bd8c2f5c-464d-44ab-b607-390a87ea4cd5@huawei.com/
+2. https://lore.kernel.org/all/20250212092552.1779679-1-linyunsheng@huawei.com/
+CC: Jesper Dangaard Brouer <hawk@kernel.org>
+CC: Luiz Capitulino <luizcap@redhat.com>
+CC: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+---
+ drivers/vfio/pci/virtio/migrate.c |  2 --
+ fs/btrfs/extent_io.c              |  8 +++++---
+ fs/erofs/zutil.c                  | 12 ++++++------
+ fs/xfs/xfs_buf.c                  |  9 +++++----
+ mm/page_alloc.c                   | 32 +++++--------------------------
+ net/core/page_pool.c              |  3 ---
+ net/sunrpc/svc_xprt.c             |  9 +++++----
+ 7 files changed, 26 insertions(+), 49 deletions(-)
 
-  uart-has-rtscts: false
-
-needs to become conditional.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/vfio/pci/virtio/migrate.c b/drivers/vfio/pci/virtio/migrate.c
+index ba92bb4e9af9..9f003a237dec 100644
+--- a/drivers/vfio/pci/virtio/migrate.c
++++ b/drivers/vfio/pci/virtio/migrate.c
+@@ -91,8 +91,6 @@ static int virtiovf_add_migration_pages(struct virtiovf_data_buffer *buf,
+ 		if (ret)
+ 			goto err_append;
+ 		buf->allocated_length += filled * PAGE_SIZE;
+-		/* clean input for another bulk allocation */
+-		memset(page_list, 0, filled * sizeof(*page_list));
+ 		to_fill = min_t(unsigned int, to_alloc,
+ 				PAGE_SIZE / sizeof(*page_list));
+ 	} while (to_alloc > 0);
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index b2fae67f8fa3..d0466d795cca 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -626,10 +626,12 @@ int btrfs_alloc_page_array(unsigned int nr_pages, struct page **page_array,
+ 	unsigned int allocated;
+ 
+ 	for (allocated = 0; allocated < nr_pages;) {
+-		unsigned int last = allocated;
++		unsigned int new_allocated;
+ 
+-		allocated = alloc_pages_bulk(gfp, nr_pages, page_array);
+-		if (unlikely(allocated == last)) {
++		new_allocated = alloc_pages_bulk(gfp, nr_pages - allocated,
++						 page_array + allocated);
++		allocated += new_allocated;
++		if (unlikely(!new_allocated)) {
+ 			/* No progress, fail and do cleanup. */
+ 			for (int i = 0; i < allocated; i++) {
+ 				__free_page(page_array[i]);
+diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
+index 55ff2ab5128e..1c50b5e27371 100644
+--- a/fs/erofs/zutil.c
++++ b/fs/erofs/zutil.c
+@@ -85,13 +85,13 @@ int z_erofs_gbuf_growsize(unsigned int nrpages)
+ 
+ 		for (j = 0; j < gbuf->nrpages; ++j)
+ 			tmp_pages[j] = gbuf->pages[j];
+-		do {
+-			last = j;
+-			j = alloc_pages_bulk(GFP_KERNEL, nrpages,
+-					     tmp_pages);
+-			if (last == j)
++
++		for (last = j; last < nrpages; last += j) {
++			j = alloc_pages_bulk(GFP_KERNEL, nrpages - last,
++					     tmp_pages + last);
++			if (!j)
+ 				goto out;
+-		} while (j != nrpages);
++		}
+ 
+ 		ptr = vmap(tmp_pages, nrpages, VM_MAP, PAGE_KERNEL);
+ 		if (!ptr)
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 15bb790359f8..9e1ce0ab9c35 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -377,16 +377,17 @@ xfs_buf_alloc_pages(
+ 	 * least one extra page.
+ 	 */
+ 	for (;;) {
+-		long	last = filled;
++		long	alloc;
+ 
+-		filled = alloc_pages_bulk(gfp_mask, bp->b_page_count,
+-					  bp->b_pages);
++		alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - refill,
++					 bp->b_pages + refill);
++		refill += alloc;
+ 		if (filled == bp->b_page_count) {
+ 			XFS_STATS_INC(bp->b_mount, xb_page_found);
+ 			break;
+ 		}
+ 
+-		if (filled != last)
++		if (alloc)
+ 			continue;
+ 
+ 		if (flags & XBF_READ_AHEAD) {
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 579789600a3c..e0309532b6c4 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4541,9 +4541,6 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
+  * This is a batched version of the page allocator that attempts to
+  * allocate nr_pages quickly. Pages are added to the page_array.
+  *
+- * Note that only NULL elements are populated with pages and nr_pages
+- * is the maximum number of pages that will be stored in the array.
+- *
+  * Returns the number of pages in the array.
+  */
+ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+@@ -4559,29 +4556,18 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 	struct alloc_context ac;
+ 	gfp_t alloc_gfp;
+ 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
+-	int nr_populated = 0, nr_account = 0;
+-
+-	/*
+-	 * Skip populated array elements to determine if any pages need
+-	 * to be allocated before disabling IRQs.
+-	 */
+-	while (nr_populated < nr_pages && page_array[nr_populated])
+-		nr_populated++;
++	int nr_populated = 0;
+ 
+ 	/* No pages requested? */
+ 	if (unlikely(nr_pages <= 0))
+ 		goto out;
+ 
+-	/* Already populated array? */
+-	if (unlikely(nr_pages - nr_populated == 0))
+-		goto out;
+-
+ 	/* Bulk allocator does not support memcg accounting. */
+ 	if (memcg_kmem_online() && (gfp & __GFP_ACCOUNT))
+ 		goto failed;
+ 
+ 	/* Use the single page allocator for one page. */
+-	if (nr_pages - nr_populated == 1)
++	if (nr_pages == 1)
+ 		goto failed;
+ 
+ #ifdef CONFIG_PAGE_OWNER
+@@ -4653,24 +4639,16 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 	/* Attempt the batch allocation */
+ 	pcp_list = &pcp->lists[order_to_pindex(ac.migratetype, 0)];
+ 	while (nr_populated < nr_pages) {
+-
+-		/* Skip existing pages */
+-		if (page_array[nr_populated]) {
+-			nr_populated++;
+-			continue;
+-		}
+-
+ 		page = __rmqueue_pcplist(zone, 0, ac.migratetype, alloc_flags,
+ 								pcp, pcp_list);
+ 		if (unlikely(!page)) {
+ 			/* Try and allocate at least one page */
+-			if (!nr_account) {
++			if (!nr_populated) {
+ 				pcp_spin_unlock(pcp);
+ 				goto failed_irq;
+ 			}
+ 			break;
+ 		}
+-		nr_account++;
+ 
+ 		prep_new_page(page, 0, gfp, 0);
+ 		set_page_refcounted(page);
+@@ -4680,8 +4658,8 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 	pcp_spin_unlock(pcp);
+ 	pcp_trylock_finish(UP_flags);
+ 
+-	__count_zid_vm_events(PGALLOC, zone_idx(zone), nr_account);
+-	zone_statistics(zonelist_zone(ac.preferred_zoneref), zone, nr_account);
++	__count_zid_vm_events(PGALLOC, zone_idx(zone), nr_populated);
++	zone_statistics(zonelist_zone(ac.preferred_zoneref), zone, nr_populated);
+ 
+ out:
+ 	return nr_populated;
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index f5e908c9e7ad..ae9e8c78e4bb 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -536,9 +536,6 @@ static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool *pool,
+ 	if (unlikely(pool->alloc.count > 0))
+ 		return pool->alloc.cache[--pool->alloc.count];
+ 
+-	/* Mark empty alloc.cache slots "empty" for alloc_pages_bulk */
+-	memset(&pool->alloc.cache, 0, sizeof(void *) * bulk);
+-
+ 	nr_pages = alloc_pages_bulk_node(gfp, pool->p.nid, bulk,
+ 					 (struct page **)pool->alloc.cache);
+ 	if (unlikely(!nr_pages))
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index ae25405d8bd2..6321a4d2f2be 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -663,9 +663,10 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
+ 		pages = RPCSVC_MAXPAGES;
+ 	}
+ 
+-	for (filled = 0; filled < pages; filled = ret) {
+-		ret = alloc_pages_bulk(GFP_KERNEL, pages, rqstp->rq_pages);
+-		if (ret > filled)
++	for (filled = 0; filled < pages; filled += ret) {
++		ret = alloc_pages_bulk(GFP_KERNEL, pages - filled,
++				       rqstp->rq_pages + filled);
++		if (ret)
+ 			/* Made progress, don't sleep yet */
+ 			continue;
+ 
+@@ -674,7 +675,7 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
+ 			set_current_state(TASK_RUNNING);
+ 			return false;
+ 		}
+-		trace_svc_alloc_arg_err(pages, ret);
++		trace_svc_alloc_arg_err(pages, filled);
+ 		memalloc_retry_wait(GFP_KERNEL);
+ 	}
+ 	rqstp->rq_page_end = &rqstp->rq_pages[pages];
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.33.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
