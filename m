@@ -1,275 +1,153 @@
-Return-Path: <linux-kernel+bounces-517102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7FDA37C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:28:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797D0A37C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEA5188D812
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:28:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682D1188DBAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0506B19DF62;
-	Mon, 17 Feb 2025 07:27:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDD219D8A0;
-	Mon, 17 Feb 2025 07:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0312E1991A1;
+	Mon, 17 Feb 2025 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RrGPv7El";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eaLYpoU/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4EB198E84;
+	Mon, 17 Feb 2025 07:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739777259; cv=none; b=WwUWjrMuc1EC/TAaYkojscIAiertN7UfzF0xij5lZP5kxNmbiyV7/DhuU6QYO3sBRrxIFs2PkhY0kdApF2JalllkgBILQh7YRH1knv3ii4OziCy7fpiDTw09rMfXZ626HODfWzm9ai6jvS/QxeQdDh7aOhC8SeV6JxtdUOx3zsQ=
+	t=1739777281; cv=none; b=LAIxoYHBcf5h/2VocxFmElzP2GwxiFrhSRCjQB0K/2Clqh2ezRY0bj+8IXPt6A/whNuE8KT4KIK9R+jMEDovs4qhjLwhkESzDi7xsaR4CKlBe8ncz1enZKUOqz/bABwVp7wOQ/QQFKIGPCUZD3DnmaKHbErAoZCyp+nzhDs/ttg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739777259; c=relaxed/simple;
-	bh=UeWwVPWbzIIAgtLdrtpQdDnl7IKv66IredifQ9C1934=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fw65lCVq56SOQFBNSEjKWltpz8qG45BYepzFiLSk4UboINYamDnkGuUjopvZ/IVnAgEuDqNF2KRuK8plPk02G/OKQE1beyvCtghPUnhjDn42UuYc6uXT8G8V8PLRUAEuh3R1+DqLvEPMFCtlrZ+S3TrdsY2gRZM/Ko7DRCLshuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD608FEC;
-	Sun, 16 Feb 2025 23:27:55 -0800 (PST)
-Received: from [10.162.41.27] (K4MQJ0H1H2.blr.arm.com [10.162.41.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A61563F6A8;
-	Sun, 16 Feb 2025 23:27:23 -0800 (PST)
-Message-ID: <021f76c6-f9d5-4685-814f-4d6c573b22e6@arm.com>
-Date: Mon, 17 Feb 2025 12:57:20 +0530
+	s=arc-20240116; t=1739777281; c=relaxed/simple;
+	bh=3Mlel136TcYtZin15fAFGGDRy94Qs+xjXkzgX9G5iEs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mHU0t7b5ZfFQ3hxyVzVBiwt722Q1NBa/wZnw6Ep3bjc2EyFCXgJ6A32Us6Eltj/4LT/SOcb2baFa3El/KDmWop1Ikfz/xxEzazX481Sh4XjSLb5j6/OToUe2CPGWVJO8Tbm0wOqlnTbZwT5ZiCBeCGLfrbOQ1RzS2cftr3x43T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RrGPv7El; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eaLYpoU/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739777276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mOeqpsxy3WOUCAs+hjzPwYFoK5hFisvXwlEv1uvfwCo=;
+	b=RrGPv7ElJvmZkJHC9JMOvvs0KsrPavr6eLHi6KjYkiwV1rLYkOvpRwfHdv+7TVm3GyNekU
+	rUjvXlEqU3WgA6wuYjfRDu5PV1cmDlc44Ye5XsS5Xd2p1tDMrO5DdYo25KcKmenSY1OtUa
+	u1kBI+87/EZYcE7qqe3Sm1QbZYcXacf/1z+PpZ0ByjDt7Dm0FbGEdTTjQkUGAycjiO+NMG
+	ZVYhEsfm41097iWMnI1q5m7Y26xFZGjH7aZg5oycP9Fjc05s9ustYckAdDcjkJKzB3+0Sn
+	T/TjHlvDcdJ3Ihbbe4L6fIsANmDmbvwpLmch0gdt/ZVGxpE8hgIYbqTxfe54TA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739777276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mOeqpsxy3WOUCAs+hjzPwYFoK5hFisvXwlEv1uvfwCo=;
+	b=eaLYpoU/bG+VqTo30Cyx4kBpKaNblpAJaq5ZVA5+33werYvYsxbGC//XGRQVpOuJ484iHF
+	k6C5rTxkAdUdnPBQ==
+Date: Mon, 17 Feb 2025 08:27:54 +0100
+Subject: [PATCH v2] kbuild: userprogs: use correct lld when linking through
+ clang
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 6/9] khugepaged: introduce khugepaged_scan_bitmap for
- mTHP support
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, sunnanyong@huawei.com, usamaarif642@gmail.com,
- audra@redhat.com, akpm@linux-foundation.org, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, tiwai@suse.de
-References: <20250211003028.213461-1-npache@redhat.com>
- <20250211003028.213461-7-npache@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250211003028.213461-7-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250217-kbuild-userprog-fixes-v2-1-4da179778be0@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAPnksmcC/4WNQQ6CMBBFr0Jm7Zi2gqAr72FYUDuFiaQlLTQYw
+ t2tXMDl+z/v/w0iBaYI92KDQIkje5dBnQp4DZ3rCdlkBiVUJZS84FsvPBpcsjcF36PllSKWVtT
+ 6qjpqZAPZnQIdRVafbeaB4+zD57hJ8pf+W0wSBVpVVVaXdW1uzWNkt8zBO17PhqDd9/0LH+vBS
+ L4AAAA=
+X-Change-ID: 20250213-kbuild-userprog-fixes-4f07b62ae818
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739777275; l=2552;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=3Mlel136TcYtZin15fAFGGDRy94Qs+xjXkzgX9G5iEs=;
+ b=9lTve4IZ+M57ebksbuM1zX0+WyirxLUzJ8hYNgka0PhEtqWh46bybjwMLxmltatxmQo5h3vJu
+ gy7XkPzgquPDbpuV9l/tJ0BVJLsIpgVgNHWJRiPH/LiDM7PZRfVlpv+
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+The userprog infrastructure links objects files through $(CC).
+Either explicitly by manually calling $(CC) on multiple object files or
+implicitly by directly compiling a source file to an executable.
+The documentation at Documentation/kbuild/llvm.rst indicates that ld.lld
+would be used for linking if LLVM=1 is specified.
+However clang instead will use either a globally installed cross linker
+from $PATH called ${target}-ld or fall back to the system linker, which
+probably does not support crosslinking.
+For the normal kernel build this is not an issue because the linker is
+always executed directly, without the compiler being involved.
 
+Explicitly pass --ld-path to clang so $(LD) is respected.
+As clang 13.0.1 is required to build the kernel, this option is available.
 
-On 11/02/25 6:00 am, Nico Pache wrote:
-> khugepaged scans PMD ranges for potential collapse to a hugepage. To add
-> mTHP support we use this scan to instead record chunks of fully utilized
-> sections of the PMD.
-> 
-> create a bitmap to represent a PMD in order MTHP_MIN_ORDER chunks.
-> by default we will set this to order 3. The reasoning is that for 4K 512
-> PMD size this results in a 64 bit bitmap which has some optimizations.
-> For other arches like ARM64 64K, we can set a larger order if needed.
-> 
-> khugepaged_scan_bitmap uses a stack struct to recursively scan a bitmap
-> that represents chunks of utilized regions. We can then determine what
-> mTHP size fits best and in the following patch, we set this bitmap while
-> scanning the PMD.
-> 
-> max_ptes_none is used as a scale to determine how "full" an order must
-> be before being considered for collapse.
-> 
-> If a order is set to "always" lets always collapse to that order in a
-> greedy manner.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->   include/linux/khugepaged.h |  4 ++
->   mm/khugepaged.c            | 89 +++++++++++++++++++++++++++++++++++---
->   2 files changed, 86 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
-> index 1f46046080f5..1fe0c4fc9d37 100644
-> --- a/include/linux/khugepaged.h
-> +++ b/include/linux/khugepaged.h
-> @@ -1,6 +1,10 @@
->   /* SPDX-License-Identifier: GPL-2.0 */
->   #ifndef _LINUX_KHUGEPAGED_H
->   #define _LINUX_KHUGEPAGED_H
-> +#define MIN_MTHP_ORDER	3
-> +#define MIN_MTHP_NR	(1<<MIN_MTHP_ORDER)
-> +#define MAX_MTHP_BITMAP_SIZE  (1 << (ilog2(MAX_PTRS_PER_PTE * PAGE_SIZE) - MIN_MTHP_ORDER))
-> +#define MTHP_BITMAP_SIZE  (1 << (HPAGE_PMD_ORDER - MIN_MTHP_ORDER))
->   
->   extern unsigned int khugepaged_max_ptes_none __read_mostly;
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 3776055bd477..c8048d9ec7fb 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -94,6 +94,11 @@ static DEFINE_READ_MOSTLY_HASHTABLE(mm_slots_hash, MM_SLOTS_HASH_BITS);
->   
->   static struct kmem_cache *mm_slot_cache __ro_after_init;
->   
-> +struct scan_bit_state {
-> +	u8 order;
-> +	u16 offset;
-> +};
-> +
->   struct collapse_control {
->   	bool is_khugepaged;
->   
-> @@ -102,6 +107,15 @@ struct collapse_control {
->   
->   	/* nodemask for allocation fallback */
->   	nodemask_t alloc_nmask;
-> +
-> +	/* bitmap used to collapse mTHP sizes. 1bit = order MIN_MTHP_ORDER mTHP */
-> +	DECLARE_BITMAP(mthp_bitmap, MAX_MTHP_BITMAP_SIZE);
-> +	DECLARE_BITMAP(mthp_bitmap_temp, MAX_MTHP_BITMAP_SIZE);
-> +	struct scan_bit_state mthp_bitmap_stack[MAX_MTHP_BITMAP_SIZE];
-> +};
-> +
-> +struct collapse_control khugepaged_collapse_control = {
-> +	.is_khugepaged = true,
->   };
->   
->   /**
-> @@ -851,10 +865,6 @@ static void khugepaged_alloc_sleep(void)
->   	remove_wait_queue(&khugepaged_wait, &wait);
->   }
->   
-> -struct collapse_control khugepaged_collapse_control = {
-> -	.is_khugepaged = true,
-> -};
-> -
->   static bool khugepaged_scan_abort(int nid, struct collapse_control *cc)
->   {
->   	int i;
-> @@ -1112,7 +1122,8 @@ static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
->   
->   static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   			      int referenced, int unmapped,
-> -			      struct collapse_control *cc)
-> +			      struct collapse_control *cc, bool *mmap_locked,
-> +				  u8 order, u16 offset)
->   {
->   	LIST_HEAD(compound_pagelist);
->   	pmd_t *pmd, _pmd;
-> @@ -1130,8 +1141,12 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   	 * The allocation can take potentially a long time if it involves
->   	 * sync compaction, and we do not need to hold the mmap_lock during
->   	 * that. We will recheck the vma after taking it again in write mode.
-> +	 * If collapsing mTHPs we may have already released the read_lock.
->   	 */
-> -	mmap_read_unlock(mm);
-> +	if (*mmap_locked) {
-> +		mmap_read_unlock(mm);
-> +		*mmap_locked = false;
-> +	}
->   
->   	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
->   	if (result != SCAN_SUCCEED)
-> @@ -1266,12 +1281,71 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->   out_up_write:
->   	mmap_write_unlock(mm);
->   out_nolock:
-> +	*mmap_locked = false;
->   	if (folio)
->   		folio_put(folio);
->   	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result);
->   	return result;
->   }
->   
-> +// Recursive function to consume the bitmap
-> +static int khugepaged_scan_bitmap(struct mm_struct *mm, unsigned long address,
-> +			int referenced, int unmapped, struct collapse_control *cc,
-> +			bool *mmap_locked, unsigned long enabled_orders)
-> +{
-> +	u8 order, next_order;
-> +	u16 offset, mid_offset;
-> +	int num_chunks;
-> +	int bits_set, threshold_bits;
-> +	int top = -1;
-> +	int collapsed = 0;
-> +	int ret;
-> +	struct scan_bit_state state;
-> +
-> +	cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
-> +		{ HPAGE_PMD_ORDER - MIN_MTHP_ORDER, 0 };
-> +
-> +	while (top >= 0) {
-> +		state = cc->mthp_bitmap_stack[top--];
-> +		order = state.order + MIN_MTHP_ORDER;
-> +		offset = state.offset;
-> +		num_chunks = 1 << (state.order);
-> +		// Skip mTHP orders that are not enabled
-> +		if (!test_bit(order, &enabled_orders))
-> +			goto next;
-> +
-> +		// copy the relavant section to a new bitmap
-> +		bitmap_shift_right(cc->mthp_bitmap_temp, cc->mthp_bitmap, offset,
-> +				  MTHP_BITMAP_SIZE);
-> +
-> +		bits_set = bitmap_weight(cc->mthp_bitmap_temp, num_chunks);
-> +		threshold_bits = (HPAGE_PMD_NR - khugepaged_max_ptes_none - 1)
-> +				>> (HPAGE_PMD_ORDER - state.order);
-> +
-> +		//Check if the region is "almost full" based on the threshold
-> +		if (bits_set > threshold_bits
-> +			|| test_bit(order, &huge_anon_orders_always)) {
-> +			ret = collapse_huge_page(mm, address, referenced, unmapped, cc,
-> +					mmap_locked, order, offset * MIN_MTHP_NR);
-> +			if (ret == SCAN_SUCCEED) {
-> +				collapsed += (1 << order);
-> +				continue;
-> +			}
+Fixes: 7f3a59db274c ("kbuild: add infrastructure to build userspace programs")
+Cc: stable@vger.kernel.org # needs wrapping in $(cc-option) for < 6.9
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Reproducer, using nolibc to avoid libc requirements for cross building:
 
-If collapse_huge_page() fails due to hugepage_vma_revalidate() or 
-find_pmd_or_thp_or_none(), you should exit.
+$ tail -2 init/Makefile
+userprogs-always-y += test-llvm
+test-llvm-userccflags += -nostdlib -nolibc -static -isystem usr/ -include $(srctree)/tools/include/nolibc/nolibc.h
 
+$ cat init/test-llvm.c
+int main(void)
+{
+	return 0;
+}
 
-> +		}
-> +
-> +next:
-> +		if (state.order > 0) {
-> +			next_order = state.order - 1;
-> +			mid_offset = offset + (num_chunks / 2);
-> +			cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
-> +				{ next_order, mid_offset };
-> +			cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
-> +				{ next_order, offset };
-> +			}
-> +	}
-> +	return collapsed;
-> +}
-> +
->   static int khugepaged_scan_pmd(struct mm_struct *mm,
->   				   struct vm_area_struct *vma,
->   				   unsigned long address, bool *mmap_locked,
-> @@ -1440,7 +1514,7 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
->   	pte_unmap_unlock(pte, ptl);
->   	if (result == SCAN_SUCCEED) {
->   		result = collapse_huge_page(mm, address, referenced,
-> -					    unmapped, cc);
-> +					    unmapped, cc, mmap_locked, HPAGE_PMD_ORDER, 0);
->   		/* collapse_huge_page will return with the mmap_lock released */
->   		*mmap_locked = false;
->   	}
-> @@ -2856,6 +2930,7 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
->   	mmdrop(mm);
->   	kfree(cc);
->   
-> +
->   	return thps == ((hend - hstart) >> HPAGE_PMD_SHIFT) ? 0
->   			: madvise_collapse_errno(last_fail);
->   }
+$ make ARCH=arm64 LLVM=1 allnoconfig headers_install init/
+
+Validate that init/test-llvm builds and has the correct binary format.
+---
+Changes in v2:
+- Use --ld-path instead of -fuse-ld
+- Drop already applied patch
+- Link to v1: https://lore.kernel.org/r/20250213-kbuild-userprog-fixes-v1-0-f255fb477d98@linutronix.de
+---
+ Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 96407c1d6be167b04ed5883e455686918c7a75ee..b41c164533d781d010ff8b2522e523164dc375d0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1123,6 +1123,11 @@ endif
+ KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+ KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+ 
++# userspace programs are linked via the compiler, use the correct linker
++ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
++KBUILD_USERLDFLAGS += --ld-path=$(LD)
++endif
++
+ # make the checker run with the right architecture
+ CHECKFLAGS += --arch=$(ARCH)
+ 
+
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250213-kbuild-userprog-fixes-4f07b62ae818
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
