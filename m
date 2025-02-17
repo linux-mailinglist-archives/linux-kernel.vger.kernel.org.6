@@ -1,145 +1,118 @@
-Return-Path: <linux-kernel+bounces-518314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3FFA38D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D561A38D1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032581894E98
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:17:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8241888B60
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2B72376E1;
-	Mon, 17 Feb 2025 20:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6901236A98;
+	Mon, 17 Feb 2025 20:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2G+qrL5o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YnMClA1r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOHL/NLt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08B5149C41;
-	Mon, 17 Feb 2025 20:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F85C149C41
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739823430; cv=none; b=U92gp2wGC5eXxauYhUM87D+3QvTvplub+SrxdgHiim9OLLuyb3Pn2FAu8Y+NQ8HOTNTpsskB3nEPGLNFVjEON3zTYMk40jd+sZDJeUWumVhSN09YGCSjcZbdVxttOHoZdmV+nvB91PiOZi9vLgRdemakG0JeRQQ7slIPG4Rl97A=
+	t=1739823553; cv=none; b=fPf7EaoEO8zOeEIfEnPxKwrn6kV4roEC1m+eQzsxziYFYeMlq25xMufK9Z4eyRZdYzpnkyMHtRyORhEBtIK9bIfY3xtd1r9XeAMsVoUeVg2dxGX/QA7luFw9mGFLpZIMC5QypQoQVTPK1VhnftsXJl+Gh6bSQ8RCpStT6I0maKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739823430; c=relaxed/simple;
-	bh=TCMw5TyEQMzsmnCQVdbCbrXXQ8ghdVjjhyoQg11Zb28=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IPvt+32lgYw/NfIrDpbl4A5p5KgMeJBdBJvOGf8kKJ8kYGMKLpYc538Q52rQgXTRAwYErCLfl6/i/mS2NoO8i/Fep9rzTEEEmaomBcq26kJ11WWbl2xHFFrJ4JRbqkrKkfEFPEIF4wS2cPZ/sRb/XFeSOzYVEsTH9+ZcEuLqSCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2G+qrL5o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YnMClA1r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739823426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B4gctRK6JpfUH/NVUrTgQbZEcAERpsDJjOyl4C8mHZk=;
-	b=2G+qrL5o2KPh9BiSB32r+cpkG65yGgYM43PiS+I+r+9yB7o//wCXSz+OdgPou7RbjvJz+i
-	pvSg8MpUpLnJwFtvFvUOnpGpCh+YjXUs7NAi6HxjqnvkZB3vpT/eTWUo7amE8EbOciDl57
-	+NxJSkmtFBgpj79Y9fY+UrCEmbnupUP91upddTt93RFa/bKO4o9jQJw61hOdve4YFk3Fu3
-	Gz12ehbWyRy1mpIWB2X4BbS0v1GQvYI2M3hPpnl0L35XJmKWZmf71K9f47HOrxxvbLAZyd
-	yOTsfn1vuBZff6Xg7vekwhWNpiT15KPB128NpCMdPrAAPeuej80NNCm1ta/Uxw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739823426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B4gctRK6JpfUH/NVUrTgQbZEcAERpsDJjOyl4C8mHZk=;
-	b=YnMClA1rI9OiiEAFcAxg1oE84Z6NP7HFO8eayFN0SIh7UAjcCndxVweRfMwBuPyaozNBCr
-	2PJUn9N3SnPJE1DQ==
-To: Chintan Vankar <c-vankar@ti.com>, Jason Reeder <jreeder@ti.com>,
- vigneshr@ti.com, nm@ti.com, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S.
- Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
- s-vadapalli@ti.com, danishanwar@ti.com, m-malladi@ti.com, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH 1/2] irqchip: ti-tsir: Add support for Timesync
- Interrupt Router
-In-Reply-To: <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com>
-References: <20250205160119.136639-1-c-vankar@ti.com>
- <20250205160119.136639-2-c-vankar@ti.com> <87lduin4o5.ffs@tglx>
- <09880b14-cef1-44cd-9fa4-8840fb673c0a@ti.com> <87cyfplg8s.ffs@tglx>
- <dda464e2-d442-4e20-bc6d-cea854c5f17f@ti.com> <87jz9tjwjk.ffs@tglx>
- <4238ddcc-d6ab-41a3-8725-b948f013a5b9@ti.com>
-Date: Mon, 17 Feb 2025 21:17:06 +0100
-Message-ID: <87ikp8jph9.ffs@tglx>
+	s=arc-20240116; t=1739823553; c=relaxed/simple;
+	bh=vDJ8pRB/Q6DFIX5K/8i7KfCxR64ZIpaCUA0jL1aLzS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2NUPI7lK2U0+MeXFl024c8kIjWAYMwQCv8WWIS5F9dPT//yChtOr26oZz70kPNjww0Xl0k7AfGIt+h8QeTQtUxIrmw2ykSFXkU3Pf7NN5STR9pENjV2grvkJV49lg5QvJp30tucKspRXVzuAaI7UtzWZwLpQsM4QQwCnZn75uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOHL/NLt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A6CC4CED1;
+	Mon, 17 Feb 2025 20:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739823552;
+	bh=vDJ8pRB/Q6DFIX5K/8i7KfCxR64ZIpaCUA0jL1aLzS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MOHL/NLtTeDA4bBAKKGRpCIS9vecC24KZNfiIH2j7thBSWODDL6MhMXzrudOOUmpN
+	 f/1LUgGf6f8n0pl5fNlZKJ41WPI8TQo+xf6EoZvjR/4/UysPrQrtZNFv4+BBFOHsOk
+	 Wq+zuqLnqH+lNeoP76WQjL6dodI4kcMzs39Aq5oZCA+RvFAdSKesT5A96nacZA/K29
+	 yY/6Hw86hJ3cwALswJNx3anKq8sXmjROuj9mmGTx5+eURS+Lw4Yj4bBqCt9FCyg69M
+	 IUiFYRew9+xoYGK86e8eNzutyt2fv+NvJuwEeWl4uVy/GVA+srpJvCWz0R7EvMWdKx
+	 82TGNvx60BdcQ==
+Date: Mon, 17 Feb 2025 12:19:10 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
+References: <20250108202515.385902-1-david.kaplan@amd.com>
+ <20250108202515.385902-21-david.kaplan@amd.com>
+ <20250211180752.pfsjvz62bztpnmoi@jpoimboe>
+ <LV3PR12MB9265804700AB74A446F5220F94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Chintan!
+On Mon, Feb 17, 2025 at 05:33:24PM +0000, Kaplan, David wrote:
+> So actually this doesn't quite work because the code in
+> arch/x86/mm/pti.c has to call cpu_mitigate_attack_vector in order to
+> check if PTI is required (it checks if user->kernel mitigations are
+> needed).  That's the only use of the attack vectors outside of bugs.c.
+> 
+> The original code (using a function and WARN_ON_ONCE) can work, or I
+> could perhaps create a pti-specific function in bugs.c that the pti
+> code can query.  But right now I don't think there is any pti-related
+> code in bugs.c at all.
+> 
+> Any suggestion?
 
-On Sat, Feb 15 2025 at 17:19, Chintan Vankar wrote:
-> On 14/02/25 04:13, Thomas Gleixner wrote:
->> Two questions:
->> 
->>   1) For the case where no interrupt is involved, how is the routing
->>      configured?
->> 
->>   2) For the case where it routes an input line to an interupt, then how
->>      is this interrupt going to be handled by this interrupt domain which
->>      is not connected to anything and implements an empty disfunctional
->>      interrupt chip?
->> 
->
-> For both the cases above the job of Timesync INTR is to map the output
-> register with the corresponding input.
->
-> As described in section 11.3.2.1 in the TRM at:
-> https://www.ti.com/lit/ug/spruiu1d/spruiu1d.pdf,
-> the job of the Timesync INTR is to provide a configuration of the
-> "output registers which controls the selection". Hence we just have to
-> provide configuration APIs in the Timesync INTR which programs output
-> registers of the Timesync INTR. About the handling of the interrupts,
-> the device which receives an interrupt needs to handle the interrupt.
->
-> Could you please explain why we consider these two cases to be
-> different?
+Hm.  We *could* put the cpu_mitigate_attack_vector() macro in bugs.h and
+make the array global (and possibly exported).  That way anybody could
+call it, but it would still have the compile-time check.
 
-They are different as
 
-  #1 Routes the signal from one IP block to another IP block
+However... should these not actually be arch-generic options, like
+mitigations= already is?  It would make for a more consistent user
+interface across arches.
 
-     So there is no notion of an actual interrupt, but still you use the
-     interrupt domain mechanism, which requires to allocate a Linux
-     interrupt number just to configure that router.
+They could even be integrated into the "mitigations=" interface.  The
+options could be combined in any order (separated by commas):
 
-     What's the purpose of this interrupt number and the allocated
-     resources behind it?
+  mitigations=user_kernel,user_user
+  mitigations=guest_host,user_kernel
+  ...etc...
 
-  #2 Routes the signal from an IP block to an actual interrupt "input"
+And e.g., "mitigations=off" would simply disable all the vectors.
 
-     Again, this requires to allocate a Linux interrupt number which is
-     disfunctional as it is not connected in the interrupt domain
-     hierarchy and just provides an interrupt chip with a name and no
-     actual functionality behind it.
+That would remove ambiguity created by combining mitigations= with
+mitigate_* and would make it easier for all the current
+cpu_mitigations_off() callers: only one global enable/disable interface
+to call instead of two.  Any code calling cpu_mitigations_off() should
+probably be calling something like cpu_mitigate_attack_vector() instead.
 
-     So the resulting real interrupt needs yet another interrupt number
-     which then maps to something which actually can handle interrupts.
+cpu_mitigations_off() and cpu_mitigations_auto_nosmt() could be
+deprecated in favor of more vector-specific interfaces, and could be
+removed once all the arches stop using them.  They could be gated by a
+temporary ARCH_USES_MITIGATION_VECTORS option.  As could the per-vector
+cmdline options.
 
-So in some aspect they are not that different because both have nothing
-to do with the actual concept of interrupt management in the Linux
-kernel.
+Thoughts?
 
-From the kernel's interrupt handling POV this is a completely
-transparent piece of hardware, which is not associated to any interrupt
-handling mechanism. Just because the manual mentions INTR in the name of
-the IP block does not make it part of the actual kernel interrupt
-handling.
-
-I have no idea into which subsystem such a SoC configuration belongs to,
-but Greg might have an idea.
-
-Thanks,
-
-        tglx
+-- 
+Josh
 
