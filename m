@@ -1,121 +1,207 @@
-Return-Path: <linux-kernel+bounces-518257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC97EA38C5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:28:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6799DA38C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90E03B2323
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:28:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CAFB171243
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A586C237179;
-	Mon, 17 Feb 2025 19:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096623716C;
+	Mon, 17 Feb 2025 19:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnXfAEOf"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="iGDDvY0U"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB333158545;
-	Mon, 17 Feb 2025 19:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5FB158545
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739820486; cv=none; b=pm7adSuoxrzZ2AwkNey10RgEn4IDgkJGeFC5tm6yh9wsTamQMD3VAVplEF6Yx+ohHl7B58sGWB+5RCuqh3hgmtkLFJeKZM4Ryyec7lcOZE6Fxopips1/kS3k1bhcrmCsPQsPq0qnYsU5x2o2MPfxh514vn6m469sI+DPef/qRtk=
+	t=1739820530; cv=none; b=q80D795x4WrHJcVHd/6RvtMpsqo69mQ+jkv1E+tEbTV5Eu9fSZVh7oSqc5AbcSnm32/tdNK5uqMTg73bUP37VFQBF7/tkX+RWb2i5wTflg9NogIO1Ut0As4o0zqXlanenr2cpHogk73+eeLgN5C/s9m44pkJOl7MsqsehB4vDq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739820486; c=relaxed/simple;
-	bh=LyT3d6pl8dOc75wJyXTBCKMnpWMCbXDQzq4dj6p5KzQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O9l49PIzsawZLsL2jrlyb2ELC4klYPjlV+IWE3Y18+UrHmqqzwqX4zXvmgLidLlHSHczExlKbGYf0mDPCHUGtF7ge77VpWnuuYv6gJoarnf0AUCAh5TBIEXBS7gEXte2k7zZFXolbIbgG4wuUAYWZPnW1UzQEfgtgVvUnpmiPlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnXfAEOf; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f3eafbbfefso1155386b6e.1;
-        Mon, 17 Feb 2025 11:28:04 -0800 (PST)
+	s=arc-20240116; t=1739820530; c=relaxed/simple;
+	bh=8Se1BJZJiElrV3tnKSC6keFdf3UpAPgUA2PzexRT2sM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FQabM77Ey1GCGx7XYNw+eDBWKfJ/vbNZ7QrhhNEJq0oMPBreoN9UkG6Rfyq1+d03C4vLCYz0+FBfBae9u20OAKtEbG2g2I0tKw2WrKRITCcHIew6EKP4XxL+PZANipRFQKZ+L1+DLO4VMQTWLPEM9o0maxkdXxxu1UJ5EVbDark=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=iGDDvY0U; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c07441f14cso416214385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:28:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739820483; x=1740425283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSJoXMSD/BhPuUY7LHZWqmM96m17Q8MN8Qrypab4Q8g=;
-        b=FnXfAEOfaxqpgfWnoBgV/icWCacp0fmSxCt+gJPHNmWVEVeXEnyXKGkpFwNmtBZVK2
-         5KgwEz74zJrPAC5VSag3VR/0qvExDU11ZBWbvw95RuN/qRoskeTvAO93frLn+FUhBjJi
-         6e7fZ7OPQA9yGIlpfZYbKYF+4lsLD7sNrw0G1+CGjKG/KFKKg7sxxx2vrIs8PHHcfBme
-         YULSmKvJJ4iZ1q5RZoA5+OaijqZCgTzmEwoanKEPrZ2jNvxmA3kux/OZ3kk5o+0Zvag/
-         bChKYKZDKlySbZgW4jM3YuCkmcCxi8nSxs191aGA4v8WgNK9nWj/elf1MmsVY/SZyVIS
-         Tt4A==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1739820528; x=1740425328; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AzAfbcIU/2Am+v+jnPFOtCbj7SMgMMXKSogURXBFTnU=;
+        b=iGDDvY0U78bhWRyRAdEOSaizGAzMIetpqd0IzgQ0YHfqA5JR16xbAfOHVpOw/+0VM2
+         RuVssEUPc892WsXLKQaRqKqdI3ReVYGovuD1DETH5+DoXx4d8djmdwQZM28MZ9Fhrtck
+         zaeMRhMQgdT1X+sxNVwhhGfrYHHzX73XaeiX0xrWgeT4rsJGjHKEQ/cClSvD82mZB1UF
+         fXn38gA4/C0dLJ//V+k8aXIFFJiGNUC1LE0+KmRSy+x7VSu5CI6oODVqTYJLfXi0dYAv
+         IsxZVF6sJZxMVrrTDmKbpP6dyxNGTP0zTitoBmjO3a/AjPTVdGg11Ny4vNUXXFivx4IW
+         8lvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739820483; x=1740425283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iSJoXMSD/BhPuUY7LHZWqmM96m17Q8MN8Qrypab4Q8g=;
-        b=vmgy56Y7HCHrvb53MM0/LWQpa2G01l6enN040FI8vnU3/BfI6Eg85dARmeyCoX4hmv
-         bHbVwvaq0wlmnnr39gwOP7MWtoU1pKjkxSK6pVOpPbB6J5oWqR/Hcmg1O0Yk3jBoqSi9
-         +1Fz0O44EwcNEkTKoXqjVIx7tBmbW+2r/fNXi/FqiSbu9W5lTttCTQEljI6vTz6+xpEu
-         nXCfUlBgvKB+Z/5E3WlDpM1ycyND9ej/EqOgL9L8kDGeeJg29H/3sjUs8X0hVXehDen+
-         FKnegvfvih8VBnMVzZ8O+ZfSihcCWKFDrY41KARe95o7ltM6cVyf/RqG05hb7jD/5xtu
-         0Ycg==
-X-Forwarded-Encrypted: i=1; AJvYcCUc59WlhgB6x8MOL+Sr0H3ejjUFgzodtgw0fRw5wUtM+lffpaQtHrYQ7Br/iis4l266L66/KwPWSoLYZxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgx+mhOcm4a+CwhDXd6WAZ6DiOewKbaM333CCVqKRkXoF+we8p
-	46eUAlXYLHnLcZLsAbe5wqo8pQ8XOW8UDa/LX8YyyJRCP3eUfijXht4+UxVo36S75KZnzcSrGh/
-	Yl+GWeCa9YR8omlUr2ry5SiKQ6dk=
-X-Gm-Gg: ASbGnctLhgq/um1sWagXT/qZiQsdPrDMYX125OGiMsnsPQ4aqFBucLf4uXHwoeDvQl1
-	08UpQVI6Y24PRS8gHeZDVmeLyTdIEGXALZoYXKHiZ272mI/p+98x6lDYm7fDN9zaUn6toZCoDE9
-	Lq9HOT/uv/DwdiQA==
-X-Google-Smtp-Source: AGHT+IGm9ugh/+vpeMXgXD2bHB5XzwZQCk7bMHiXA+RGS1g0x8Sg2j2oG3t6qoSbMODV4oAyTqQJtgMhF+ZMFpErejM=
-X-Received: by 2002:a05:6808:38cd:b0:3ea:6533:f19d with SMTP id
- 5614622812f47-3f3eb14109fmr6828138b6e.30.1739820482207; Mon, 17 Feb 2025
- 11:28:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739820528; x=1740425328;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AzAfbcIU/2Am+v+jnPFOtCbj7SMgMMXKSogURXBFTnU=;
+        b=Msao91pep2E4er59hHAWnVQNTzTz/gh5579HTvcoNTSXsk/Z4SjfQjxLRjH6tcqnvz
+         gdOEmPmaVPaq3d6KG7s8/p/Xxffl+8kMXq8qYoOz79E2ELmfqVfnwHL9zMDFRjn73aly
+         +bVj4ldCwSI5sDppJoTIXn8WbPMr0m5rXgKyuQ9lrvduR7F9eoJrjtUcP3bceYpHQ9GD
+         7S3/f/lS+5pYhQ7YM2rPF8zxxGwUYMzClQBxOLOZB7XZqJ/FbW8v/YKUXJXYlZxdDpvU
+         cHDag1t/rct6/rynWPEwqmXe+yd4CHJrLVOtNj5pEPvPIzpWwDp/j42PltDARmFYPxfL
+         Iu3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXxvoEU4AQPrOQIg6ZArzHLeV3QMcPgOZFG6qrQlT8zGZN40aVuI6DSlTagTrRor3fgp2UVElLVzWkefMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHOAAkKzPJcr9gt/xFRQB1Bfr83oxqsZScFavGfyQdQEEThMs2
+	j6M/TR/JtucNHP/UWZsrdTpbs0IyKmRqir9Fo8B7sZl9zy6Q1e8SrrYhqM2rI8M=
+X-Gm-Gg: ASbGnctNjvT9OIFWR7Z5lWuUArVsUfYvxjKS6yuyVPTuimwuX4iKM22Pm4g3tNVzxFK
+	tFuJBWPaqRKnkw0Z9M5goFFbn3hyyspUwp/EqDVf8qvsRJTcT3f1H9EVvYuuf/qlkeRlpeg3qGA
+	IwA/gUrPjYa3bvuqWIxjvMgjvV1ySm7EmKsREF6wjhP6SRraKWHn1mgXSkNZFvPf/nPE4i37EdW
+	z+VDjnDR/zbq0sfXSOrcpIMpMjVHNyBb30NtyOIn8/3MkGnqE3AeyzBDx2BAkNHr4rnJjCXIPS1
+	NP5ffXuVGEy2uvL0JRqp
+X-Google-Smtp-Source: AGHT+IF0M1JuegcbLy3i0Bijjwl67r9LgXH3tketiaHBXEgodxNXXo5qAbFCYzz/X43MZ2CJv0eXEA==
+X-Received: by 2002:a05:620a:40c1:b0:7c0:7350:9adb with SMTP id af79cd13be357-7c08a9801b5mr1443794485a.11.1739820527975;
+        Mon, 17 Feb 2025 11:28:47 -0800 (PST)
+Received: from ?IPv6:2606:6d00:11:e976::5ac? ([2606:6d00:11:e976::5ac])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c096e87af7sm193307485a.79.2025.02.17.11.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 11:28:46 -0800 (PST)
+Message-ID: <1f1e41700b16eef7fe790b9b14d6ccfd157f67ad.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: mediatek: vcodec: Enable HEVC main still picture
+ decode
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Nathan Hebert <nhebert@chromium.org>, Yunfei Dong
+ <yunfei.dong@mediatek.com>,  Tiffany Lin <tiffany.lin@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Mon, 17 Feb 2025 14:28:45 -0500
+In-Reply-To: <f257832e823d23c8324a9eaf7890dd4b6d50a6f0.camel@ndufresne.ca>
+References: 
+	<20250211-enable_hevc_still_picture-v1-1-0c06c0c9add2@chromium.org>
+	 <f257832e823d23c8324a9eaf7890dd4b6d50a6f0.camel@ndufresne.ca>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7RDTmljb2xhcyBEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0
+ aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDA
+ gQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCgzYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDi
+ cVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA
+ 8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udWs+iGIEExECACIFAkuzca8CGwMGCwkIBwMC
+ BhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Ro
+ x8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2
+ xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRB
+ xUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypwCfWKc9DorA9f5pyYlD5pQo6SgSoiC0J05p
+ Y29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPohiBBMRAgAiBQJVwNwgAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHCZ4AJ0QwU6/G4c7h9CkMBT9ZxGLX4KSnQ
+ Cgq0P7CX7hv/M7HeyfMFZe8t3vAEW0RE5pY29sYXMgRHVmcmVzbmUgKEIuIFNjLiBJbmZvcm1hdGl
+ xdWUpIDxuaWNvbGFzZEBibHVlc3RyZWFrdGVjaC5jb20+iGAEExECACAFAkZjGzoCGwMGCwkIBwMC
+ BBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHBl7AJ0d2lrzshMmJaik/EaDEakzEwqgxQCg0JVZM
+ Zm9gRfEou1FvinuZxwf/mu0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF1ZSkgPG
+ 5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkIBwMCBBU
+ CCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr+E7ItOq
+ ZEHAs+xabBgknYZIFPU=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAO9wTFgtDGMxgE0QFu7CjhsMzqOm0ydV548j4ZjYz+SCgcRY3Q@mail.gmail.com>
- <CANn89iLjxy3+mTvZpS2ZU4Y_NnPHoQizz=PRXbmj7vO7_OGffQ@mail.gmail.com>
- <CAO9wTFjaLBbrT7JKBBN=2NMhSRmxzPk_jLSuG=i6Y5anZJnvEA@mail.gmail.com> <CANn89iJmOKiALL9r_9+nyy5bdYwMUEX+LAkmswMyWwNC53yEew@mail.gmail.com>
-In-Reply-To: <CANn89iJmOKiALL9r_9+nyy5bdYwMUEX+LAkmswMyWwNC53yEew@mail.gmail.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Tue, 18 Feb 2025 00:57:51 +0530
-X-Gm-Features: AWEUYZk6r48x4i6IsxlCjOkM41q_b0hCqVHzJlcqW8Q7g_cEV57CFYtfCJPJNiU
-Message-ID: <CAO9wTFhbK-Ckc3bq9X0qdKiyHVqsQgtzSu4RGzkd1d1aAK0vwg@mail.gmail.com>
-Subject: Re: [PATCH] net: dev_addr_list: add address length validation in
- __hw_addr_insert function
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, horms@kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Thank you so much for the feedback. I appreciate your time and effort
-in reviewing and providing feedback.
+aLe lundi 17 f=C3=A9vrier 2025 =C3=A0 13:45 -0500, Nicolas Dufresne a =C3=
+=A9crit=C2=A0:
+> Hi Nathan,
+>=20
+> Le mardi 11 f=C3=A9vrier 2025 =C3=A0 16:34 -0800, Nathan Hebert a =C3=A9c=
+rit=C2=A0:
+> > Mediatek devices that support HEVC also support the main still picture
+> > profile, but today, the main still picture profile is excluded.
+> >=20
+> > This removes the skip mask for HEVC, and enables the main still
+> > picture profile decoding.
+> >=20
+> > Signed-off-by: Nathan Hebert <nhebert@chromium.org>
+> > ---
+> > On Mediatek devices that support HEVC decoding, HEVC Main Still Picture
+> > profile is also supported by the SOC and firmware. However, this
+> > capability is turned off in the vcodec driver.
+> >=20
+> > This removes the code that disables HEVC Main Still Picture profile
+> > decoding. Validation of the decoder has been done via V4L2-backed
+> > Android CTS tests on an MT8196 device.
+>=20
+> While its nice to know that you are working on upcoming SoC, we need
+> confirmation that this is working on all the upstream stateless
+> decoders supported: 8183, 8186, 8192, 8195. Ideally testing on 8188,
+> which I can see has merged support without the linux-firmware file to
+> go with it.
+>=20
+> I'll wait for that and Yunfei's ack before picking it. Yunfei, please
+> fix the situation with 8188 in linux-firmware, and CC me.
 
-On Tue, 18 Feb 2025 at 00:51, Eric Dumazet <edumazet@google.com> wrote:
->
-> On Mon, Feb 17, 2025 at 8:05=E2=80=AFPM Suchit K <suchitkarunakaran@gmail=
-.com> wrote:
-> >
-> > Hi Eric,
-> > Thanks for the feedback! I'm new to kernel development and still
-> > finding my way around.
-> > I wasn't working from a syzbot report on this one; I was just
-> > exploring the code and felt there is no parameter validation. I went
-> > ahead and made this change based on that impression. I realized my
-> > changelog should have been more generic. Sorry about that. Also since
-> > it's not based on a syzbot report, is it good to have this change?
-> > Your insights and suggestions would be most welcome. I will make the
-> > required changes accordingly.
-> > Thanks.
->
-> I think these checks are not necessary.
->
-> 1) The caller (dev_addr_mod) provides non NULL pointers,
->     there is no point adding tests, because if one of them was NULL,
->     a crash would occur before hitting this function.
->
-> 2) Your patch would silently hide a real issue if for some reason
-> dev->addr_len was too big.
+In case this is useful, we recommend providing fluster scores for the
+codec, which in that case runs some public ITU conformance vectors.
+Since most of the testing has been done with GStreamer, you may be able
+to find old report and confirm it it works. GStreamer does not
+currently filter the profile/level (on my todo), so it will try anyway.
+IPRED_B_Nokia_3 is the one vector in the base suite that expose that
+profile.
+
+resources/JCT-VC-HEVC_V1/IPRED_B_Nokia_3/IPRED_B_Nokia_3.bit
+  Stream #0:0: Video: hevc (Main Still Picture), none, 1920x1080, 25 fps, 1=
+200k tbr, 1200k tbn
+
+regards,
+Nicolas
+
+>=20
+> regards,
+> Nicolas
+>=20
+> > ---
+> > =C2=A0.../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_statele=
+ss.c=C2=A0=C2=A0 | 2 --
+> > =C2=A01 file changed, 2 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_=
+dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec=
+_dec_stateless.c
+> > index afa224da0f41..d873159b9b30 100644
+> > --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_sta=
+teless.c
+> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_sta=
+teless.c
+> > @@ -152,8 +152,6 @@ static const struct mtk_stateless_control mtk_state=
+less_controls[] =3D {
+> > =C2=A0			.id =3D V4L2_CID_MPEG_VIDEO_HEVC_PROFILE,
+> > =C2=A0			.def =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN,
+> > =C2=A0			.max =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10,
+> > -			.menu_skip_mask =3D
+> > -				BIT(V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_STILL_PICTURE),
+> > =C2=A0		},
+> > =C2=A0		.codec_type =3D V4L2_PIX_FMT_HEVC_SLICE,
+> > =C2=A0	},
+> >=20
+> > ---
+> > base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> > change-id: 20250211-enable_hevc_still_picture-26b35eb08270
+> >=20
+> > Best regards,
+>=20
+
 
