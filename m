@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-517946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD2FA387DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:42:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B395BA387DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5343B54C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9E23B5D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443D9226882;
-	Mon, 17 Feb 2025 15:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7622822756A;
+	Mon, 17 Feb 2025 15:39:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61084224B17
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618EC226865
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806783; cv=none; b=JdyZZq3lG2ZOdq3UqjP8X9gi/ddjT0uEeV9TjV68wtU+/d5TZ5XNMo7aQYXMbEuaLzdHT9Uym16ZDCarzD5+aC009mMtHb8i9yNM7Lp07HbcNlfVfteVY7zePUuniGhiEG1PxCLCeUIIvkMDgkcZjy8vh8STAJfj9Rq5UPp00Qk=
+	t=1739806785; cv=none; b=RDd7U3FYsz0UTLsHDPxvSOlU1SWFzlqTzbGIhvyy6ngH2SUzrNZegeWH8pvKGqdqzHRQk5w8edPNl05PIxD9AS/fyryRnUMBjnjESVXpwaPPnu3hRr9Xj82MFoIsxirqyIvASjVTuXFTEyeK7cHxjAEDEgzHC0HvVRWVCTGmAVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806783; c=relaxed/simple;
-	bh=aidoWnRBdKS/bzj9yzmy9eXwgGR2HXGsyDF1QbYB0U0=;
+	s=arc-20240116; t=1739806785; c=relaxed/simple;
+	bh=uPUgv0mLk6mKXfHHZQoNabuM20DP7Tz7q35RqzDweLQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=ofLNi/8Z7qJFujzoTJhGmBuonyH8IKbBRxCqsgZ9b6TszZ6p8nQOy6dP7qbZfGtYK4brNu/sAQMFH0kmqA6KMjHsc0tyQQKEPJvIvB+NhG7SC9T7SiMOhdBqSHu1hmXjHxVq0VyY0hzuFHiuGhy/CUf4Fu93TwokXkB3vUPgL1A=
+	 In-Reply-To:To; b=HXM6VA+GrY8gYpH+e2iMb+a9ufYAxe8bFYza33fF4m71KccOFWA/SMjs7lh2V6GEby2PtJoEU/ohgmzexGWeLAUsNtTkfC1RLEIy1AD9rXE4GDzTe9++N1OYAvyMwEXvGJvkV7ADcUxZ6zntqpPYAi2tVNI/utYSvxQkq7b2P2w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A6F01063;
-	Mon, 17 Feb 2025 07:40:01 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60D17152B;
+	Mon, 17 Feb 2025 07:40:02 -0800 (PST)
 Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 765B53F6A8;
-	Mon, 17 Feb 2025 07:39:41 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CADB3F6A8;
+	Mon, 17 Feb 2025 07:39:42 -0800 (PST)
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Feb 2025 15:38:54 +0000
-Subject: [PATCH v3 13/19] firmware: arm_ffa: Remove unnecessary declaration
- of ffa_partitions_cleanup()
+Date: Mon, 17 Feb 2025 15:38:55 +0000
+Subject: [PATCH v3 14/19] firmware: arm_ffa: Refactoring to prepare for
+ framework notification support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,98 +44,168 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-ffa_updates-v3-13-bd1d9de615e7@arm.com>
+Message-Id: <20250217-ffa_updates-v3-14-bd1d9de615e7@arm.com>
 References: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 In-Reply-To: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1988; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=aidoWnRBdKS/bzj9yzmy9eXwgGR2HXGsyDF1QbYB0U0=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gv6fDyFE6SRIJTmRZSK7AGzajqpMcsbZ1Mf
- is3SarX/ISJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLwAKCRAAQbq8MX7i
- mGnKD/9nTGkCjRYMkNvtTNTZ+ba+EFDlgHhfCUjpG1zmPMjavtH3ijDKfC9w9dt9Nu9p4L5bn+c
- vjNaZ3Zui8C5Ui6FJjDyRaUm2O77nu73bYwuaD6t/mXHDwCh2hN1shp4KHrBtzR9u3lP3RhpkvR
- 8gyGvDLNZfsRn+MyR9ClEqn4gWCaMnQLdlsWOnlQsYn2ss0vYYh4f5GLzPRINldNr13B4OpVaL3
- cD4vLjg8PHUNxv/No8Hy/InZvjwKMlpoOrCPxav/psSaQmbNKS/fmyXIkdxZfpZRe0tBKSEVsH5
- ZNqjbVjvUPV/h5Z+MczXV3hFoeNXJ5+3t7GFIQ5eyPi607V+LXSk7FuMTO4iIGnTDo5LxM5almQ
- blkjh/bIhVzvudwKKaxoLW0rihZ0cX3fW2DWf2jh1BaDMatQ5Kkhf3/Q9GIAqzw7LfsiDG5z9h/
- lGOWelMNCGy8YfjqkRLLbreFvaHFDqrMotSOBr6qQn5NZhriUDI9a/smuUllOZytYj8Ssyx7dEb
- LQLQhixX5ofSIDos2BbQaMnXxxW+XiyQ4y+K0Pvot+88jcjR9BEES0MApcRJDt4Euh22Cokfp8q
- BIY7vHs01M0rnP99lBSAFAMAlAJLs43BsbS/fXsidFQpQQNe0xKOnAu6XCGs29HM+hpAquJjkRE
- sgK1MQ/qfLcMVkw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4846; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=uPUgv0mLk6mKXfHHZQoNabuM20DP7Tz7q35RqzDweLQ=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gvD8PSV3+oN/oLts63Djl+9M8FM/+AD4Tm4
+ RUvVdWfSM+JAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLwAKCRAAQbq8MX7i
+ mCZzEAC11Ij+667T8JKp6Kyu6monTKkZrfb3AWWtDbtEje5z0cOlnp1MZsCtbCv2VCOuS1BFr8z
+ 3QAstRQ9c9sxuqufHmJi8qzAk5qvGVpyBi7V3fE6yc7vqWhw27AkLxTaQ2EabDhSJ4vv8lr6jbh
+ DB2Xu771Vfxc6gzOsKA3yfbuZsNubgCHiGAcEzmaI5OHqRzhXtsuxTnPMVNKRczfAn06WC3iMQX
+ EXxfrVu7A0h1ZH0Dn35iUbw+Ik1uUFU1srjbYjRL9XLQAlQXEC1/BcqAcDZ8UJGjRsvGFRhspFP
+ ggWvcJw1h09vJMlcEsOef+r1tLoQA6T8YjmOqrK3YeWCWGhjoDBznZuO6kA/fBEWuSSh660uk02
+ oqFiEDVUYWTnDAutSnCtbKeULjeFKhXEF3+F9e2+SFEAGHEdrVTERpsLE8xxLMFhlAEMnH87KiS
+ 3bJn+DVRQVQeqzBAs2TbAFWihsv864XltAXLYhe4ahxfjsyuQWuqtL6N7lhMF18D/Gnwn8Ph2Hm
+ r7FXMVd7nuv7CqxUolOOtmvF+q7SeUHn+RjB4JimCxs9LE9eH9UrGeES94HhntMKc243wjUkIfE
+ lRepaxWUjglAtzPqHavoU3nALbJXR/t0/e9rY07oaWL/PbM4PHCbougw/UF3B3dr9dvGGJTLLll
+ kvDIxl0L4JOkhqw==
 X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
  fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-In order to keep the uniformity, just move the ffa_partitions_cleanup()
-before it's first usage and drop the unnecessary forward declaration.
+Currently, the framework notifications are not supported at all.
+handle_notif_callbacks() doesn't handle them though it is called with
+framework bitmap. Make that explicit by adding checks for the same.
+
+Also, we need to further classify the framework notifications as Secure
+Partition Manager(SPM) and NonSecure Hypervisor(NS_HYP). Extend/change
+notify_type enumeration to accommodate all the 4 type and rejig the
+values so that it can be reused in the bitmap enable mask macros.
+
+While at this, move ffa_notify_type_get() so that it can be used in
+notifier_hash_node_get() in the future.
 
 No functional change.
 
 Tested-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_ffa/driver.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/firmware/arm_ffa/driver.c | 57 +++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index ad2f6b410e4431bb133fa0f05dd3eec802f5ee07..43e033edd6c7cd16322c204e882a84cfe45abbba 100644
+index 43e033edd6c7cd16322c204e882a84cfe45abbba..0abbf08bc8d39c701947366bdf9c8fac8e64cf64 100644
 --- a/drivers/firmware/arm_ffa/driver.c
 +++ b/drivers/firmware/arm_ffa/driver.c
-@@ -114,7 +114,6 @@ struct ffa_drv_info {
- };
- 
- static struct ffa_drv_info *drv_info;
--static void ffa_partitions_cleanup(void);
- 
- /*
-  * The driver must be able to support all the versions from the earliest
-@@ -1452,6 +1451,22 @@ static int ffa_xa_add_partition_info(int vm_id)
- 	return ret;
+@@ -807,6 +807,13 @@ static int ffa_notification_bitmap_destroy(void)
+ 	return 0;
  }
  
-+static void ffa_partitions_cleanup(void)
++enum notify_type {
++	SECURE_PARTITION,
++	NON_SECURE_VM,
++	SPM_FRAMEWORK,
++	NS_HYP_FRAMEWORK,
++};
++
+ #define NOTIFICATION_LOW_MASK		GENMASK(31, 0)
+ #define NOTIFICATION_HIGH_MASK		GENMASK(63, 32)
+ #define NOTIFICATION_BITMAP_HIGH(x)	\
+@@ -830,10 +837,17 @@ static int ffa_notification_bitmap_destroy(void)
+ #define MAX_IDS_32				10
+ 
+ #define PER_VCPU_NOTIFICATION_FLAG		BIT(0)
+-#define SECURE_PARTITION_BITMAP			BIT(0)
+-#define NON_SECURE_VM_BITMAP			BIT(1)
+-#define SPM_FRAMEWORK_BITMAP			BIT(2)
+-#define NS_HYP_FRAMEWORK_BITMAP			BIT(3)
++#define SECURE_PARTITION_BITMAP_ENABLE		BIT(SECURE_PARTITION)
++#define NON_SECURE_VM_BITMAP_ENABLE		BIT(NON_SECURE_VM)
++#define SPM_FRAMEWORK_BITMAP_ENABLE		BIT(SPM_FRAMEWORK)
++#define NS_HYP_FRAMEWORK_BITMAP_ENABLE		BIT(NS_HYP_FRAMEWORK)
++#define FFA_BITMAP_ENABLE_MASK			\
++	(SECURE_PARTITION_BITMAP_ENABLE | SPM_FRAMEWORK_BITMAP_ENABLE)
++
++#define FFA_SECURE_PARTITION_ID_FLAG		BIT(15)
++
++#define SPM_FRAMEWORK_BITMAP(x)			NOTIFICATION_BITMAP_LOW(x)
++#define NS_HYP_FRAMEWORK_BITMAP(x)		NOTIFICATION_BITMAP_HIGH(x)
+ 
+ static int ffa_notification_bind_common(u16 dst_id, u64 bitmap,
+ 					u32 flags, bool is_bind)
+@@ -1098,16 +1112,8 @@ static int ffa_memory_lend(struct ffa_mem_ops_args *args)
+ 	return ffa_memory_ops(FFA_MEM_LEND, args);
+ }
+ 
+-#define FFA_SECURE_PARTITION_ID_FLAG	BIT(15)
+-
+ #define ffa_notifications_disabled()	(!drv_info->notif_enabled)
+ 
+-enum notify_type {
+-	NON_SECURE_VM,
+-	SECURE_PARTITION,
+-	FRAMEWORK,
+-};
+-
+ struct notifier_cb_info {
+ 	struct hlist_node hnode;
+ 	ffa_notifier_cb cb;
+@@ -1166,6 +1172,14 @@ static int ffa_notification_unbind(u16 dst_id, u64 bitmap)
+ 	return ffa_notification_bind_common(dst_id, bitmap, 0, false);
+ }
+ 
++static enum notify_type ffa_notify_type_get(u16 vm_id)
 +{
-+	struct ffa_dev_part_info *info;
-+	unsigned long idx;
-+
-+	/* Clean up/free all registered devices */
-+	ffa_devices_unregister();
-+
-+	xa_for_each(&drv_info->partition_info, idx, info) {
-+		xa_erase(&drv_info->partition_info, idx);
-+		kfree(info);
-+	}
-+
-+	xa_destroy(&drv_info->partition_info);
++	if (vm_id & FFA_SECURE_PARTITION_ID_FLAG)
++		return SECURE_PARTITION;
++	else
++		return NON_SECURE_VM;
 +}
 +
- static int ffa_setup_partitions(void)
- {
- 	int count, idx, ret;
-@@ -1509,22 +1524,6 @@ static int ffa_setup_partitions(void)
- 	return ret;
+ /* Should be called while the notify_lock is taken */
+ static struct notifier_cb_info *
+ notifier_hash_node_get(u16 notify_id, enum notify_type type)
+@@ -1209,14 +1223,6 @@ update_notifier_cb(int notify_id, enum notify_type type, ffa_notifier_cb cb,
+ 	return 0;
  }
  
--static void ffa_partitions_cleanup(void)
+-static enum notify_type ffa_notify_type_get(u16 vm_id)
 -{
--	struct ffa_dev_part_info *info;
--	unsigned long idx;
--
--	/* Clean up/free all registered devices */
--	ffa_devices_unregister();
--
--	xa_for_each(&drv_info->partition_info, idx, info) {
--		xa_erase(&drv_info->partition_info, idx);
--		kfree(info);
--	}
--
--	xa_destroy(&drv_info->partition_info);
+-	if (vm_id & FFA_SECURE_PARTITION_ID_FLAG)
+-		return SECURE_PARTITION;
+-	else
+-		return NON_SECURE_VM;
 -}
 -
- /* FFA FEATURE IDs */
- #define FFA_FEAT_NOTIFICATION_PENDING_INT	(1)
- #define FFA_FEAT_SCHEDULE_RECEIVER_INT		(2)
+ static int ffa_notify_relinquish(struct ffa_device *dev, int notify_id)
+ {
+ 	int rc;
+@@ -1299,6 +1305,9 @@ static void handle_notif_callbacks(u64 bitmap, enum notify_type type)
+ 	int notify_id;
+ 	struct notifier_cb_info *cb_info = NULL;
+ 
++	if (type == SPM_FRAMEWORK || type == NS_HYP_FRAMEWORK)
++		return;
++
+ 	for (notify_id = 0; notify_id <= FFA_MAX_NOTIFICATIONS && bitmap;
+ 	     notify_id++, bitmap >>= 1) {
+ 		if (!(bitmap & 1))
+@@ -1318,16 +1327,18 @@ static void notif_get_and_handle(void *unused)
+ 	int rc;
+ 	struct ffa_notify_bitmaps bitmaps;
+ 
+-	rc = ffa_notification_get(SECURE_PARTITION_BITMAP |
+-				  SPM_FRAMEWORK_BITMAP, &bitmaps);
++	rc = ffa_notification_get(FFA_BITMAP_ENABLE_MASK, &bitmaps);
+ 	if (rc) {
+ 		pr_err("Failed to retrieve notifications with %d!\n", rc);
+ 		return;
+ 	}
+ 
++	handle_notif_callbacks(SPM_FRAMEWORK_BITMAP(bitmaps.arch_map),
++			       SPM_FRAMEWORK);
++	handle_notif_callbacks(NS_HYP_FRAMEWORK_BITMAP(bitmaps.arch_map),
++			       NS_HYP_FRAMEWORK);
+ 	handle_notif_callbacks(bitmaps.vm_map, NON_SECURE_VM);
+ 	handle_notif_callbacks(bitmaps.sp_map, SECURE_PARTITION);
+-	handle_notif_callbacks(bitmaps.arch_map, FRAMEWORK);
+ }
+ 
+ static void
 
 -- 
 2.34.1
