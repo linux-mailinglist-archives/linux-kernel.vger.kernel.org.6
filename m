@@ -1,177 +1,286 @@
-Return-Path: <linux-kernel+bounces-517144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFEA37CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:04:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA6DA37CB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD9A188EF8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAE41893C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DCB19EED2;
-	Mon, 17 Feb 2025 08:04:21 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E7F1990C3;
+	Mon, 17 Feb 2025 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tvhjxXRE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tfkPmbmj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tvhjxXRE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tfkPmbmj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D9418DB36
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5FC18DB28
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739779461; cv=none; b=r3uFv2tHPNNYyOnxKh5gtQgvy4OAn3GHrAknolU/FjuBf4+c4BoHorqabzPF7OezB+2YOPB6lcorp40ZNtFAHtkmsoyM5aWS9SpgBaNtcCBtI5ReEivy1nBzJrUGuXjCG28nAgvt+gOsOUqhEtPWIrZqKTCEQFqVam2PI2P/PsA=
+	t=1739779473; cv=none; b=pi4eEquHvI59DXsFjvagTLOTAOlu2h5lIFeF0hsStC9/NNRfPiv76RUKBfO8Kob0nnkHbrtwotxGoUIoNJC5QB2KzeYv6iDsT5amCW4zLPVIv9De/v9G1NiXhvIkQM+0LMLBnyj8LSeChfoyqk/APo6hIFudaoqioYI/9RlEW2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739779461; c=relaxed/simple;
-	bh=v5qa6EXa3AkMnte+yhdeeG8IN5mrAAkic6DLZsC/w9c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JMZB8AzbvH8Xpeo8mjMjkRA3WFvFQr96O75mHfkPyRO4OiicRLqnAWk32EUo1/yVNiQWi0yNKiHsWnzir2i/aXNdBj3EcjUf6DXS5xgwQjnXwOvoK2iIpe06JDDBWSA300ErHPeSeE9UXJQkcWMX9NT4Xq5EMbYKyVmdJgGffIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d18a553f42so86310025ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:04:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739779458; x=1740384258;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=24t5/djZSZfcZjD8u1O2QysKNhx5mUob/NH/sHlKHu8=;
-        b=HvvhmkleFNxwo+g9vMTsjMPf1fWBkFHK8q+EtCa11xZsOeWRLJ/fieeFv4dms2fKut
-         js7oj0+s4FfITJQfJbkpeYTtNsHddqqERhFqnBdEr+k2BDpaNDpOFEj7qo2IuA10ImOg
-         zJ8Q1aVwc6255lkXPf/7BN92ernOhSorhkg+0qeXPegG0JdWN2Jgyj/LFtY+AVYBtX9W
-         5eth6jtabK228TnI+X2Kj1RieJFqZOc29dLxjW3/qAoc/+A38+uhPGc+cRz2RRf19/kD
-         fknKf1ArhPa61raRUo0a+b/Tm/46hLi10aVPKZ8YkWzrIXzmiyMLNiHYBLg+xbMlg8qF
-         TMmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVffwEKxxMk/Gk06Ku29ffRomTwMmy/ierKkJS0UXDndD8367ZOvlorSDkIJL+Ue1b3nEvSaGrLvBo6p0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq2kjy0m9SoXi6zW4mdbXcC/0anQo0JU6zfmM+DjVOwJGxnoc6
-	MfMTrmBnzdjXIJln1uod4Lvso4MJQPDtQoqn0vEiXFxpTNRPKPBUdvM3A2VOlD8cuIjM3BOfLeF
-	29jXbUNDjKjO8+TV6Av5LIPxq1kOh5HgD2TVI7mEi6WhDVNORndrrpME=
-X-Google-Smtp-Source: AGHT+IHJ25HfSVubo1Ec0fUPOkdV39ESq+Fv9jpazGfTkrT6K5LWsVUIAmNKR2Fp0dsfKJw50s/ne0yCx4MIJYt8sypcXCkRm2ng
+	s=arc-20240116; t=1739779473; c=relaxed/simple;
+	bh=e+NHkqu0XUnISeGWpo7rUjk26NZiV1HdJ1ijYf8qlCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VWq/niwPQOJrlLUWtxg2d3CWvpm2PJ2Auj+0ox5avdaWwlfIT4vGFmXcaStRLxbvppW88houvlr/fCmkulbeB47xMPhkGVr4dyg7iz2wsJqeSnWrbj9IcHYjLfao5UeQWTIlS1BJpsDUYjrdnt/7wXeR57vQ57t1nJ/X48L2cEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tvhjxXRE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tfkPmbmj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tvhjxXRE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tfkPmbmj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 79C4E1F397;
+	Mon, 17 Feb 2025 08:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739779469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NwP/KFPDJoRYJCbBNMnc8T3qUJwOR0LhVvJQygwxFok=;
+	b=tvhjxXRE0kB/CSK3nHS+AlrHy8dZ7lbr0gu1Vj4+6GvVXWaCmeHxoObiwfJgjtnsWoCL62
+	wmklLsP2Kt0SwkCsGrQUuSx4kPm4+VTSx/YqT2woBqysKHUocy9xjKsT7ABGXqZJRwRJyJ
+	jYRqjK5gbnUqSChUcpuiELnQ/jXvIbQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739779469;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NwP/KFPDJoRYJCbBNMnc8T3qUJwOR0LhVvJQygwxFok=;
+	b=tfkPmbmj01UxMb5l80r5xFwLAotQn5XyZjy9vivsnbVzy4BbuCCNB+SEsu+TSGAoNLW0aE
+	XkWCNlPh8oYjzqBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tvhjxXRE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=tfkPmbmj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739779469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NwP/KFPDJoRYJCbBNMnc8T3qUJwOR0LhVvJQygwxFok=;
+	b=tvhjxXRE0kB/CSK3nHS+AlrHy8dZ7lbr0gu1Vj4+6GvVXWaCmeHxoObiwfJgjtnsWoCL62
+	wmklLsP2Kt0SwkCsGrQUuSx4kPm4+VTSx/YqT2woBqysKHUocy9xjKsT7ABGXqZJRwRJyJ
+	jYRqjK5gbnUqSChUcpuiELnQ/jXvIbQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739779469;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NwP/KFPDJoRYJCbBNMnc8T3qUJwOR0LhVvJQygwxFok=;
+	b=tfkPmbmj01UxMb5l80r5xFwLAotQn5XyZjy9vivsnbVzy4BbuCCNB+SEsu+TSGAoNLW0aE
+	XkWCNlPh8oYjzqBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 21027133F9;
+	Mon, 17 Feb 2025 08:04:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SOPdA43tsmdwIAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 17 Feb 2025 08:04:29 +0000
+Message-ID: <3df4e526-66a4-4dcd-8c6e-adacd9a2a5aa@suse.de>
+Date: Mon, 17 Feb 2025 09:04:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:330f:b0:3d1:9f4d:131 with SMTP id
- e9e14a558f8ab-3d28077166fmr77977085ab.1.1739779458676; Mon, 17 Feb 2025
- 00:04:18 -0800 (PST)
-Date: Mon, 17 Feb 2025 00:04:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b2ed82.050a0220.173698.0025.GAE@google.com>
-Subject: [syzbot] [bcachefs?] WARNING: locking bug in start_creating
-From: syzbot <syzbot+d2f57500f15e9df86c90@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 10/10] drm/tiny: add driver for Apple Touch Bars in
+ x86 Macs
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch"
+ <daniel@ffwll.ch>, Jiri Kosina <jikos@kernel.org>,
+ "bentiss@kernel.org" <bentiss@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <thomas@t-8ch.de>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
+ Kerem Karabay <kekrby@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com>
+ <3C9E8938-32EC-44AC-A783-3BFDE2F01290@live.com>
+ <8d0296fe-536f-4a9a-bd9e-624bb4cd8703@suse.de>
+ <1C5F4A8E-018C-4A39-B8EE-CDDDF9FABD7A@live.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <1C5F4A8E-018C-4A39-B8EE-CDDDF9FABD7A@live.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 79C4E1F397
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[live.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,t-8ch.de,vger.kernel.org,lists.freedesktop.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Hello,
+Hi Aditya,
 
-syzbot found the following issue on:
+the code looks correct overall. There's one place where I think it 
+fails. See below.
 
-HEAD commit:    224e74511041 Merge tag 'kbuild-fixes-v6.14-2' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=155b35a4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2f57500f15e9df86c90
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a6a898580000
+Am 15.02.25 um 14:43 schrieb Aditya Garg:
+[...]
+> DEFINE_DRM_GEM_FOPS(appletbdrm_drm_fops);
+> @@ -484,10 +537,38 @@ static const struct drm_driver appletbdrm_drm_driver = {
+> static int appletbdrm_setup_mode_config(struct appletbdrm_device *adev)
+> {
+> 	struct drm_connector *connector = &adev->connector;
+> +	struct drm_plane *primary_plane;
+> +	struct drm_crtc *crtc;
+> +	struct drm_encoder *encoder;
+> 	struct drm_device *drm = &adev->drm;
+> 	struct device *dev = adev->dev;
+> 	int ret;
+>
+> +	primary_plane = &adev->primary_plane;
+> +	ret = drm_universal_plane_init(drm, primary_plane, 0,
+> +				       &appletbdrm_primary_plane_funcs,
+> +				       appletbdrm_primary_plane_formats,
+> +				       ARRAY_SIZE(appletbdrm_primary_plane_formats),
+> +				       NULL,
+> +				       DRM_PLANE_TYPE_PRIMARY, NULL);
+> +	if (ret)
+> +		return ret;
+> +	drm_plane_helper_add(primary_plane, &appletbdrm_primary_plane_helper_funcs);
+> +
+> +	crtc = &adev->crtc;
+> +	ret = drm_crtc_init_with_planes(drm, crtc, primary_plane, NULL,
+> +					&appletbdrm_crtc_funcs, NULL);
+> +	if (ret)
+> +		return ret;
+> +	drm_crtc_helper_add(crtc, &appletbdrm_crtc_helper_funcs);
+> +
+> +	encoder = &adev->encoder;
+> +	ret = drm_encoder_init(drm, encoder, &appletbdrm_encoder_funcs,
+> +			       DRM_MODE_ENCODER_DAC, NULL);
+> +	if (ret)
+> +		return ret;
+> +	encoder->possible_crtcs = drm_crtc_mask(crtc);
+> +
+> 	ret = drmm_mode_config_init(drm);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6b4272577622/disk-224e7451.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ec492843be2b/vmlinux-224e7451.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/013e7903deef/bzImage-224e7451.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/9956c6b4c5e1/mount_0.gz
+Try to do drmm_mode_config_init() first. The initialization of planes, 
+crtcs and encoders requires it. See [1] for how other drivers order 
+these calls.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d2f57500f15e9df86c90@syzkaller.appspotmail.com
+> 	if (ret)
+> 		return dev_err_probe(dev, ret, "Failed to initialize mode configuration\n");
+> @@ -530,13 +611,13 @@ static int appletbdrm_setup_mode_config(struct appletbdrm_device *adev)
+> 	if (ret)
+> 		return dev_err_probe(dev, ret, "Failed to set non-desktop property\n");
+>
+> -	ret = drm_simple_display_pipe_init(drm, &adev->pipe, &appletbdrm_pipe_funcs,
+> -					   appletbdrm_formats, ARRAY_SIZE(appletbdrm_formats),
+> -					   NULL, &adev->connector);
+> +	ret = drm_connector_attach_encoder(connector, encoder);
+> +
+> 	if (ret)
+> 		return dev_err_probe(dev, ret, "Failed to initialize simple display pipe\n");
+>
+> -	drm_plane_enable_fb_damage_clips(&adev->pipe.plane);
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5950 at kernel/locking/lockdep.c:234 hlock_class kernel/locking/lockdep.c:234 [inline]
-WARNING: CPU: 0 PID: 5950 at kernel/locking/lockdep.c:234 check_wait_context kernel/locking/lockdep.c:4852 [inline]
-WARNING: CPU: 0 PID: 5950 at kernel/locking/lockdep.c:234 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5178
-Modules linked in:
-CPU: 0 UID: 0 PID: 5950 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-00390-g224e74511041 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4852 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5178
-Code: 00 00 83 3d 81 36 9f 0e 00 75 23 90 48 c7 c7 e0 a2 2a 8c 48 c7 c6 e0 a5 2a 8c e8 07 c2 e4 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90004216a90 EFLAGS: 00010046
-RAX: 6e3266fa0e7ed500 RBX: 0000000000000a0b RCX: ffff88807f24bc00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000040a0b R08: ffffffff81817d42 R09: 1ffffffff1d4294c
-R10: dffffc0000000000 R11: fffffbfff1d4294d R12: ffff88807f24c6d4
-R13: 0000000000000014 R14: 1ffff1100fe498f6 R15: ffff88807f24c7b0
-FS:  0000555560a1b500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555575ca0608 CR3: 0000000034c76000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- start_creating+0x130/0x310 fs/debugfs/inode.c:387
- debugfs_create_dir+0x25/0x430 fs/debugfs/inode.c:586
- ieee80211_debugfs_add_netdev net/mac80211/debugfs_netdev.c:1005 [inline]
- ieee80211_debugfs_recreate_netdev+0x1b6/0x14d0 net/mac80211/debugfs_netdev.c:1035
- ieee80211_if_add+0xef9/0x1780 net/mac80211/iface.c:2188
- ieee80211_register_hw+0x3708/0x42e0 net/mac80211/main.c:1604
- mac80211_hwsim_new_radio+0x2ae8/0x4a40 drivers/net/wireless/virtual/mac80211_hwsim.c:5558
- hwsim_new_radio_nl+0xece/0x2290 drivers/net/wireless/virtual/mac80211_hwsim.c:6242
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb1f/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2543
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- __sys_sendto+0x363/0x4c0 net/socket.c:2187
- __do_sys_sendto net/socket.c:2194 [inline]
- __se_sys_sendto net/socket.c:2190 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2190
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f57e038ec7c
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007ffd2d011db0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f57e10d4620 RCX: 00007f57e038ec7c
-RDX: 0000000000000024 RSI: 00007f57e10d4670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffd2d011e04 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f57e10d4670 R15: 0000000000000000
- </TASK>
+> +	drm_plane_helper_add(primary_plane, &appletbdrm_primary_plane_helper_funcs);
 
+This line can be removed. You've already set the plane helpers a few 
+lines above.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +	drm_plane_enable_fb_damage_clips(&adev->primary_plane);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+And this call should better be done next to the plane init. The code at 
+[1] again gives you an example of the preferable order.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards
+Thomas
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+[1] 
+https://elixir.bootlin.com/linux/v6.13.2/source/drivers/gpu/drm/tiny/bochs.c#L606
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>
+> 	drm_mode_config_reset(drm);
+>
+>
+> The commit history having both old and new revisions of the driver is here:
+>
+> https://github.com/AdityaGarg8/apple-touchbar-drv/blob/atomic/usr/src/apple-touchbar-advanced-0.1/appletbdrm.c
+>
+> Thanks
+> Aditya
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-If you want to undo deduplication, reply with:
-#syz undup
 
