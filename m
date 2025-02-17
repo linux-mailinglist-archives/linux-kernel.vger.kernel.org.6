@@ -1,154 +1,106 @@
-Return-Path: <linux-kernel+bounces-517746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35560A38512
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:48:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF43A3851A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291271886135
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B92716D9FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C652F215F6B;
-	Mon, 17 Feb 2025 13:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6726F21770B;
+	Mon, 17 Feb 2025 13:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2CQAxdN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AMvYTjNw"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AE0179BC;
-	Mon, 17 Feb 2025 13:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0A748F;
+	Mon, 17 Feb 2025 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739800087; cv=none; b=M7ZdOyFLEN4aSYpLYen5s36tVS0+XN+S9Ope9CoUHgp/AvpK5YKUr7JuffAhnXYeebU9FOvXwyf1IxjkYiK8SmNpIm6TK0gtUITbhcadVX5HoO8G88f6C9a3wgZ/rEBF/v+BgaQLAoAyH71ZV1/pc75+cQjc/k4DhN2+nHsYWbM=
+	t=1739800108; cv=none; b=M8VCuu0Z/GziVgkc4e9IByMgXLId22+PTWDgVl87Ff5xKStwb+J/DOEKLEYiTe+aTI/y1FhUMu0BAfdgGB/Tplf7rQIC9xrThWj595anNkHCP6dv2BmIB2myZVTpZ6kAVMJKYJShFJkQQ5BscDMF+enmrNseM5qVnn0goPc02T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739800087; c=relaxed/simple;
-	bh=L8OCN1cUiLRiv9P1I7bfcU+HLKCa8ZIv8qOYNs8TFCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IDdqr0jAxHs+OjXLU+qysjYj52BTUi7q9+FTTwHAJCJ7/Y+dQRfZbLrr3yXj9dRI3pGqXY62z2RqFEqG3a8qqDj31eihL7UEkAGwBd3NvtxCcaczbpja0m8x2/zzFhwpzl2dyR03zxVvAq6R7xIcDsDHqjzHcb5L/QlV7+pjB1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2CQAxdN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AEAEC4CEE7;
-	Mon, 17 Feb 2025 13:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739800086;
-	bh=L8OCN1cUiLRiv9P1I7bfcU+HLKCa8ZIv8qOYNs8TFCQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r2CQAxdNAA90959zy5dtp01imhYusxAZN1YJtlkU7HEY/26WTYyjHC3wt08inR5XS
-	 k1H7f3FsPhsqebwuMDPz8F3h/Tp4ndjOq5GMyHxiIMSOcyagfFqiVWCsHpaHRsBM9x
-	 2KihCPLfPZNL3bsTCDNeZYcwoNsPicDvBMna5tLSqxB8rdC3IypN+gLMCgKwNG4Ty6
-	 VA/0a/l0JYopS7z4pHGyv4ZSPnP+lWADWqMiPsJd3vtoqlN2dehSLJhAeDmkRB5/hb
-	 VhQG4ML1x/gi/h/tKaEfw2AIL2hQKm4HMS7nJ2gaKWVSbkUm24CqPKKaR+3q6XpxbP
-	 D2XcnCr2P9uZw==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7272cc739f7so30902a34.1;
-        Mon, 17 Feb 2025 05:48:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUXvXe5ghcFK4pnL3Z7J+zNAzw6VbCropJlbZe1qecdYowgRSUFZdEdSr1EUiMyCm7CcmCe7jJXFIM=@vger.kernel.org, AJvYcCVqZJeHc/0RdAwe+A7PiarQOdIr/oNhkCtgFwN/3WiPJOA6zrSiPyuT6jvqC6+KX4UOnWKU5aSFQU02Vys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrME5IYa+bjFY2ZjrpZrtcNULpCw5mHo25ryr2nNqPTzQl7ysF
-	ee2Eb7JY1QoHGwJmdH99Ki+5lhFW4ImI5rOpGRSRvbnKGFF+PpdOVFa0N6rMPmTTaOqjv9H9reX
-	UhWdhgh8fuITCncfBSuCV5Hg1a8M=
-X-Google-Smtp-Source: AGHT+IF4QDX+pkNaLhTeKO5r4AlLlH+oGgzolJUPo0/f9q0W438NMECwqDRAmg6kv5e+6w0OLzk2fSvdbKTFcWq5VWY=
-X-Received: by 2002:a05:6808:1817:b0:3f3:adab:2012 with SMTP id
- 5614622812f47-3f3d91581f9mr10573633b6e.15.1739800085922; Mon, 17 Feb 2025
- 05:48:05 -0800 (PST)
+	s=arc-20240116; t=1739800108; c=relaxed/simple;
+	bh=QT9wgBW9Yu+jHnvM0+mY6bn230FRmCK2bCA1BlAfwDA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jc4ju6wc3FtM8m14vny7ZEKEhzA2psFQJj5wXcl+eRuVxmD7Elb9YOe76YcGW0ZeCXxQPrZ7zzZm1PrOLUEywdeS6nzet3LttUrm416/kw/msZ+4jvyZnOaAHKcIqCcrMGCIAjKunSR0OcUjKLSHS2T7pTVWwX1R3ZekJu0ZxOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AMvYTjNw; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F0E82443F7;
+	Mon, 17 Feb 2025 13:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739800104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DZNFSzJF17STaw7FqO1S5Zitm8jZzZb7Hu9FHODJy34=;
+	b=AMvYTjNwYFwLL5LsITJSr8ewL04ehCufHI00J6MAmkTSYPi0rolBM5/o9qJvUYgkgSVInk
+	Kitw9HPA05lCbh+6aNcPa4gFNTPFCOTzh48Eql2f/epgj19mI1iIrQBf/oPFVe3YUMpfiK
+	bs+fhZuTgeLhOx3k7CHUeJyIMkpXArE3+RacxzsZz7LUgV+MZUUerlsZBO61g+aqhEUy6Q
+	PuGvNjq8jmhjgpAU5whguTIC+0H2pMw/KpLS3xz3Q/SbsRNouK/nE/02QX0F+nJgWIw8Qi
+	UF286bry9KngVsk4GvUHJw8+at1W75bXXD5LEg2odg3WKxEjnODUhagzr3BN2g==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] net: pse-pd: pd692x0: Fix power limit retrieval
+Date: Mon, 17 Feb 2025 14:48:11 +0100
+Message-Id: <20250217134812.1925345-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1916668.tdWV9SEqCh@rjwysocki.net> <7770672.EvYhyI6sBW@rjwysocki.net>
- <20f09309-bd96-4b29-9602-4f969547dc51@arm.com>
-In-Reply-To: <20f09309-bd96-4b29-9602-4f969547dc51@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Feb 2025 14:47:54 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hbthUx6BkCmfpESjz6YTA4rN2iF8TFFRM=4gY500UcSw@mail.gmail.com>
-X-Gm-Features: AWEUYZnA1943DQlhWqO4DxwAbzmHpOgNYwqLjuVpwzLtZo_5iVIDwEf-izmcA38
-Message-ID: <CAJZ5v0hbthUx6BkCmfpESjz6YTA4rN2iF8TFFRM=4gY500UcSw@mail.gmail.com>
-Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Aboorva Devarajan <aboorvad@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeehiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegudegvdeklefhheefueeiieegteegteeuudegteduvdevffeikefgjeekgfdukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddrrddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvg
+ hgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, Feb 17, 2025 at 2:39=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 2/6/25 14:29, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > When giving up on making a high-confidence prediction,
-> > get_typical_interval() always returns UINT_MAX which means that the
-> > next idle interval prediction will be based entirely on the time till
-> > the next timer.  However, the information represented by the most
-> > recent intervals may not be completely useless in those cases.
-> >
-> > Namely, the largest recent idle interval is an upper bound on the
-> > recently observed idle duration, so it is reasonable to assume that
-> > the next idle duration is unlikely to exceed it.  Moreover, this is
-> > still true after eliminating the suspected outliers if the sample
-> > set still under consideration is at least as large as 50% of the
-> > maximum sample set size.
-> >
-> > Accordingly, make get_typical_interval() return the current maximum
-> > recent interval value in that case instead of UINT_MAX.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > --- a/drivers/cpuidle/governors/menu.c
-> > +++ b/drivers/cpuidle/governors/menu.c
-> > @@ -190,8 +190,19 @@
-> >        * This can deal with workloads that have long pauses intersperse=
-d
-> >        * with sporadic activity with a bunch of short pauses.
-> >        */
-> > -     if ((divisor * 4) <=3D INTERVALS * 3)
-> > +     if (divisor * 4 <=3D INTERVALS * 3) {
-> > +             /*
-> > +              * If there are sufficiently many data points still under
-> > +              * consideration after the outliers have been eliminated,
-> > +              * returning without a prediction would be a mistake beca=
-use it
-> > +              * is likely that the next interval will not exceed the c=
-urrent
-> > +              * maximum, so return the latter in that case.
-> > +              */
-> > +             if (divisor >=3D INTERVALS / 2)
-> > +                     return max;
-> > +
-> >               return UINT_MAX;
-> > +     }
-> >
-> >       /* Update the thresholds for the next round. */
-> >       if (avg - min > max - avg)
-> >
->
-> You might want to amend the description at the top of menu.c then given t=
-hat
-> this now returns something without any meaning in a statistical significa=
-nce
-> way. Similar to admin-guide doc.
+Fix incorrect data offset read in the pd692x0_pi_get_pw_limit callback.
+The issue was previously unnoticed as it was only used by the regulator
+API and not thoroughly tested, since the PSE is mainly controlled via
+ethtool.
 
-OK, I'll send a documentation update patch on top of this.
+The function became actively used by ethtool after commit 3e9dbfec4998
+("net: pse-pd: Split ethtool_get_status into multiple callbacks"),
+which led to the discovery of this issue.
 
-> As reported by the tests, this does improve performance a lot in scenario=
-s of
-> short intervals (where passing the statistical test is hard).
+Fix it by using the correct data offset.
 
-Yes, that pretty much is what the SPECjbb critical-jOPS improvement means.
+Fixes: a87e699c9d33 ("net: pse-pd: pd692x0: Enhance with new current limit and voltage read callbacks")
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+ drivers/net/pse-pd/pd692x0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Teo exploits the idle state residencies for this (i.e. as long as they fa=
-ll
-> into the same bin, they are equal for our means), this can be viewed as t=
-he
-> menu equivalent to it, without relying on idle states.
->
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+index fc9e23927b3b..7d60a714ca53 100644
+--- a/drivers/net/pse-pd/pd692x0.c
++++ b/drivers/net/pse-pd/pd692x0.c
+@@ -1047,7 +1047,7 @@ static int pd692x0_pi_get_pw_limit(struct pse_controller_dev *pcdev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return pd692x0_pi_get_pw_from_table(buf.data[2], buf.data[3]);
++	return pd692x0_pi_get_pw_from_table(buf.data[0], buf.data[1]);
+ }
+ 
+ static int pd692x0_pi_set_pw_limit(struct pse_controller_dev *pcdev,
+-- 
+2.34.1
 
-Thank you!
 
