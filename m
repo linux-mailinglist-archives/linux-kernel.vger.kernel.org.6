@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-518193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8E5A38B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A5A38B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9363B0274
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1DC3B3373
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED42235C11;
-	Mon, 17 Feb 2025 18:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083DC235BE1;
+	Mon, 17 Feb 2025 18:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qkdj9jrX"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrBKNuLM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6AE235359;
-	Mon, 17 Feb 2025 18:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D808235BF0;
+	Mon, 17 Feb 2025 18:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739816693; cv=none; b=VDBl+TXnuGfw3bZe6zoefm2IQIsnYvVXcvm2uPBH+kuHYToBYvidHsWYSAkV05S6MQsYhGBgCyN7u1DMlPJofPMG6jVcEXOt+heumDJEq7lLgDm5rvHYdw6aRXOufvq5iLMDCxUoF1oaQVKmsNWRSXY80wfUo+NOLQ0HP93BZZQ=
+	t=1739816679; cv=none; b=CLRNJ1Gc8Q2BgH6JX/p1vLL8nG79H56G71ZEbHF+klyOirYD7nVMw/K/ECtNUfn7TnLROunMMaAvXGr8yz170+b5002JOLHUaO9Yw9loe05MaHVG217Am1aXqabJyE3cAadmEqHE7+6Xg7Uwp0DZn2lIOfAdmgytCmKzBmZJJ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739816693; c=relaxed/simple;
-	bh=gn0QjBFQOKxAe0g2/k4/mFmZgvlOFoIke7zUVB/fbtQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ulgf3xT3WMF6p71j8V/FObKpCyYBhWZwq+ch+DFdeZsCSdGbsS1uNujJ+kjU1dJDFLcRtJ4R+5CWnH9A8luudCnb/zgwLBDfZnbASL+ieb1CbZxa14A7r7trm2xTAw4w0JSnMZDW/0PWBfHmpx5QILuVJoSOSGZB025mvLcx5fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qkdj9jrX; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30a2594435dso15502831fa.1;
-        Mon, 17 Feb 2025 10:24:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739816689; x=1740421489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gn0QjBFQOKxAe0g2/k4/mFmZgvlOFoIke7zUVB/fbtQ=;
-        b=Qkdj9jrXvkxhEG/7VdXZl08gHjKcB0RVLY8IpEQzaptz4rDNGYrJUm0i0ZGSXUeYen
-         vbiQBDsBIhwxuRpB5k3KeUQJjw7cip4L+icdd2Tg9IlJ50/7qHojElWO5uf61yw0wrZi
-         tLBb79ou73siNbiROR0sZ6D+5WwQREsgAxTeZ4Q+184EZI4QfMRqJBWyUcwZPNemKXX+
-         F8OEQXrzaQ7xPgtbxNxdhR4+WQ4LRd7n8DUS46T+I060Xz+JN++NGxEQpnY1/ccb7W4A
-         uD8SBlPIdFXekRzc86i9IK8tJRuQhaGV1od5C7roQU8NKqDbToxsM2aVfXYuNVzXRjKe
-         M+HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739816689; x=1740421489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gn0QjBFQOKxAe0g2/k4/mFmZgvlOFoIke7zUVB/fbtQ=;
-        b=nS4tz/Q8nUSCG7W+U3HBulgnIkbpQgAVTbWKBpPT764O5eQFMy9WieJU1/4J6pdMOW
-         L2ClcqkNekiW2/FQZ7ketQE7qmNIkVX1De+Pv5soGK85ni1wPSWEtoXhV694la35bBmJ
-         NVdQ4ssv2C4rE9D8eScIdlC02IFbk8YuzlxSG83DS5UiqePN1jrj3ysSj9FRDFOQBUGQ
-         Ah5u612FwSkPeXyE+Fbrx0kDgV8xFXb0moVt2eRkUk0Bmc+F1jDi9zHU6yyoQWAu9YWw
-         NrSwtAaENgHN57Ss/JSSej9ohEzHotzkQN5jZ245WUwOsqQq9c5bRhHB0qy80fF069aw
-         E4lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm3qyVrxErnHIyaXeHPetURWb0I+g+QSNe6E1HBip2RayN7xk8ueOg0Wf1U7nwEU7SptgTEk4eIHtD@vger.kernel.org, AJvYcCVyn+pBBL9nfjeQuu8x4kRg5h7lgoVs/2gCGyqVQCgHfnVx3kzoUjt2zu+EzosenWmdu2BbmCoVDIn3nNVU@vger.kernel.org, AJvYcCWzdzl8DQp8QgeyLCDwgKrivPyipN58rUQE905e8MGahYMJV+rll4OvCX9e+6sttyy8cIPPFrWhjfk1LWAt@vger.kernel.org, AJvYcCXYFGr/8h3Qd/59LSbO2nzrejvIc10wC2dUvRiJ8Ysk6s1qrqC189CG//g37XXiFCsGstOuVISq0Uw4eF4u2GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTCuSTJ9PJoWrBhwfB+4ggrmXtZPjYjDzsdgLiEUu0qfqZRNsc
-	viEQdI21YUgCGyMDpd0TS7Ey+Pyw00EQPwT+Fec5tSS3hKRcyYk0Tj23jYFasK7toRjn8Kqtpz/
-	vlQs8cSEK80QYtBlCXLza/9zrZ+0=
-X-Gm-Gg: ASbGnctWT8wLJoBpJffctQyl/GRL6OaAUrh4lse/D7VxkrzPXgCa/Lmg9C9+a1VhpnO
-	kmxE/Tqh1Eat5fx7xdxVTstTXV493Reb5UklmlXcZyv8B41mXqqRqIiz/cB8b8s96acjERkuIsI
-	dBOmiHH+4PMBHo4S7YmxvcdgERsQ3tPk8=
-X-Google-Smtp-Source: AGHT+IF5nUcc45TCNyTyJENRSlv8p48gA51c8C9Bfv5GRzkgcYG1j+d6OpNURrgeLJQwKLz8eBbpQln2PvkXNQmB4Zc=
-X-Received: by 2002:a2e:9517:0:b0:308:ee65:7f44 with SMTP id
- 38308e7fff4ca-309288ca32dmr27136571fa.8.1739816688951; Mon, 17 Feb 2025
- 10:24:48 -0800 (PST)
+	s=arc-20240116; t=1739816679; c=relaxed/simple;
+	bh=dcwzxtOsebPRYaT47Ci4qA40e9Jf4rUjg3IbUYkLncE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Jf3ZJvP/eESgajKX1A0DmRdcMn+UHyusCaNH2yvMunmztKPAuBDYs3a3EBF17LwoTRI9vNEZq7EhzSfgut9GoFkdYNvRys7/Ibq1XdWXq6XPC6/NF/jTLi3sGpVOzZs8ZMhikeMupx4CecBImNJKvHAAr/ptWIT7Vv1lloDNzfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrBKNuLM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8861C4CED1;
+	Mon, 17 Feb 2025 18:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739816678;
+	bh=dcwzxtOsebPRYaT47Ci4qA40e9Jf4rUjg3IbUYkLncE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YrBKNuLM8rLmx+95+HufFztYWSA39erHM9nbXFJ92OoJOPpQWpvx9FM4YI33ZdVFo
+	 AsOs/1pWO/1bu5KLrcNbr+VGino9sFq1bxIEsISLVUxzPADMFYmfss3CdGVkJ9etWW
+	 UfgZFqCVcXAIbSuPLmx+4/fvv6AlAJFlRe55hcbvbYAaGuFOg4BUl1LWuO1D0VPlDr
+	 6kwQ2L8cRGTa8DWiFHcfPg8UAyAbiV6ibn9XA8bV2ho0F5tkIeVyULX9yUqSOacDKy
+	 dlQIxxfwETF68/tNoC2xvdtEVa4zqTW53MP++5mpwq97ou+cZ5zWXFVxfzEal9Knoh
+	 TiscRlyUw+Evg==
+From: SeongJae Park <sj@kernel.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	oe-lkp@lists.linux.dev,
+	lkp@intel.com,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org
+Subject: Re: [linus:master] [mm/damon/sysfs]  9a5aa3349b: kernel-selftests.damon.damos_quota_goal.py.fail
+Date: Mon, 17 Feb 2025 10:24:35 -0800
+Message-Id: <20250217182435.45244-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <202502171423.b28a918d-lkp@intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
- <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
- <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
- <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
- <CANiq72kAhw6XwPzGu+FrF64PZ9P_eSzX3gqG9CLvy7YJnbXgoQ@mail.gmail.com>
- <CAJ-ks9mFT1Gaao+OrdYF+hg6Sp=XghyHWu1VTALdeMJPwkX=Uw@mail.gmail.com>
- <CANiq72kFpDt230zBugN12q978LRSJiZB5dJZszWkL2p7XqQ52w@mail.gmail.com>
- <CANiq72kjAx4a20cnE3XrJ-z4K=8pCRuc+TOa+WtcuUsdZ22tSA@mail.gmail.com>
- <CAJ-ks9nZNzrPbK577ibUUjs_aE_o5QrpZbRuwCTEKuuSKG6ZHQ@mail.gmail.com> <CANiq72mUW_PBmwjTqx2vH4Xucykea9MRhpDMs3OvwLJ6zdN8+A@mail.gmail.com>
-In-Reply-To: <CANiq72mUW_PBmwjTqx2vH4Xucykea9MRhpDMs3OvwLJ6zdN8+A@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Feb 2025 13:24:12 -0500
-X-Gm-Features: AWEUYZm8nj7xTn7dcDtYCzihPsz3j2vH6bg1FPlz6OV-5OeM_FPCxoMkLLZucoE
-Message-ID: <CAJ-ks9nB8Y_i7szABOgJbG1vZS45XsL5f9LU4zSf2S7bpoZ4TA@mail.gmail.com>
-Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 1:13=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Feb 17, 2025 at 6:44=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > I agree with you that optimizing for git blame while pessimizing for
-> > normal readers is not what we should do. I don't agree that putting
-> > boilerplate on its own line is a pessimization for the normal reader -
-> > in my opinion it is the opposite. Trivial expressions of the form
->
-> But that is a different argument, unrelated to `git blame`, no?
+Hello,
 
-Yes it is. I suppose I misunderstood your objection to this rationale,
-along with
+On Mon, 17 Feb 2025 15:01:23 +0800 kernel test robot <oliver.sang@intel.com> wrote:
 
-> So if you have a change like that, please just change the line, rather
-than adding new ones just for `git blame`.
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "kernel-selftests.damon.damos_quota_goal.py.fail" on:
+> 
+> commit: 9a5aa3349b9428ae451b22c331d0d9a9cfc7ac90 ("mm/damon/sysfs: use damon_call() for update_schemes_effective_quotas")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> [test failed on linus/master      0ad2507d5d93f39619fc42372c347d6006b64319]
+> [test failed on linux-next/master 0ae0fa3bf0b44c8611d114a9f69985bf451010c3]
+> 
+> in testcase: kernel-selftests
+> version: kernel-selftests-x86_64-7ff71e6d9239-1_20250215
+> with following parameters:
+> 
+> 	group: damon
+> 
+> 
+> 
+> config: x86_64-dcg_x86_64_defconfig-kselftests
+> compiler: gcc-12
+> test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202502171423.b28a918d-lkp@intel.com
+> 
+> 
+> 
+> # timeout set to 300
+> # selftests: damon: damos_quota_goal.py
+> # score: 0, effective quota: 0 -> 16 (-1.000x)
+> # score: 15000, effective quota: 16 -> 1 (0.062x)
+> # score: 5000, effective quota: 1 -> 5 (5.000x)
+> # score: 18000, effective quota: 1 -> 1 (1.000x)
+> # efective bytes not changed: 1
+> not ok 7 selftests: damon: damos_quota_goal.py # exit=1
 
-as an objection to the decision, so I was giving additional rationale.
+Thank you for this report!  I just posted a fix[1] for this case.  Please refer
+to the patch for details including the root cause.
 
-> What I was saying is that, if the only reason one is adding a line is
-> for `git blame`, then it shouldn't be done.
->
-> But, of course, if there is a different, good reason to add a line,
-> then it should be done.
->
-> In other words, `git blame` does not play a role here.
->
-> I mean, a reasonable person could say it should at least have a small
-> weight into the decision, sure. But I don't think we currently do that
-> and it makes decisions even more complex...
+[1] https://lore.kernel.org/20250217182304.45215-1-sj@kernel.org
 
-Unclear where this leaves us so I'll just go with .cast() in-line.
+
+Thanks,
+SJ
+
+> 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250217/202502171423.b28a918d-lkp@intel.com
+> 
+> 
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
