@@ -1,168 +1,156 @@
-Return-Path: <linux-kernel+bounces-517933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F193A387D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:41:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1610A387C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C00118940F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65079173888
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD21224B09;
-	Mon, 17 Feb 2025 15:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="fSWAuBxn"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F2E148FE6;
-	Mon, 17 Feb 2025 15:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806712; cv=pass; b=UPZ8NecVXybQZTHgzosbm9KHofHynEjnXrJbw9ektbc285/yvk4gPLwU/HYhZRyJORvCA+q63BTBj6htCdVl1vIa+V1P7s2f26lyeGCyPw7dDH8r7m0ugGz5epN4Oj6ziPq0/RCxNSmW4DxAQl4phDljezISeYmlQJXt3m4Hy+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806712; c=relaxed/simple;
-	bh=FxP2NJGW8IKb8On5/Rt5ho1+D6LTtLfpxLtWMQyluac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZetrQpjegsLrB2RMCRsBODXx5MVoe1oFn2Mni6DZ0NaPjaqMUNvN1RIJOJ78x5kw2id6BbJaPvFA3B+ty20AxAfcMMpcsPotj9HfHKIvSMmOQSEb/c1JgPw4KXAEcEXJc40pbhfZPZw7QVP3ytXT6uHPsFP3QM8N66W5Mifi0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=fSWAuBxn; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739806625; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=U5dOO/B20cbaS6mc5vlDkgll/xMS9rbnN1ODcBfyAvrw1Jb4sFsNwAVheem87ob3aTly3IH7xB/BnCY/LbZWN1jFXWoWtzjyNRb+O1PU90w9PNqlSg03Yuiuk34pFU7E3HMzlV19xXYGlrXfktVWHucO2IWKe1j5AUQ9VFUZUUM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739806625; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oyaLc7ouQgrclKFXXRsc/O0tx1PN1BYemSd7LjEmjmk=; 
-	b=BJMfU8wLusVoJqMqSRaUpUvR/ystx6kc+bLiEevs/AbYOlsSC3eLR0MqhOSrHEOXkYOD5Z6LCkyjLj4QfOX5toVP0hdgp1aSXjYfGIeO6/EVL2Wx7t/JNjLl+YsRdDOrn/OP/GKVRVdt4T95Ci7d8Q9/Ru2V3V6AAQRIHELE9Ok=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739806625;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=oyaLc7ouQgrclKFXXRsc/O0tx1PN1BYemSd7LjEmjmk=;
-	b=fSWAuBxnkdi+Ek3h2Bvc2L9HvjKgG/Fbhdhh6BuZPGOu8zmTyeddLjYZ8LOnyMyz
-	ucTtiWmgVm7WLZtPzahICPHDgxqF8yM7q8oN2GY5sw/dkAOd+VTEcA1ltN5au38ECDw
-	Cr1Fn+UAYYn+tmIYUpi6WN4EEcDsdmFs17bH8cwk=
-Received: by mx.zohomail.com with SMTPS id 1739806622732599.8439504742172;
-	Mon, 17 Feb 2025 07:37:02 -0800 (PST)
-Message-ID: <3d4b1c45-cc00-4714-8582-0848e38c2ec4@collabora.com>
-Date: Mon, 17 Feb 2025 18:36:56 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854CD224B11;
+	Mon, 17 Feb 2025 15:39:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C31E148FE6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739806772; cv=none; b=tZK+dbkRbrrJgIVn6TS4QRMI3CJYVvFBFcBSbMjXCfRLs6ZY1BT5EWuSIMCd0/q6d15AofriyzxxDqA7anCZ9UIUMoPT6ZwKDOZVw3DiFt3gd6oTF9A8wNAhJ6n1tbVcDygkyv3Lw4LOzgqSSLhiZKvC2Lc8q5klRWD9GNothm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739806772; c=relaxed/simple;
+	bh=RhTnNYTfj2ffvvqL8JaHV8Axj4MhUpAhKy1ZgSM7abE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To; b=pH7iQf10rBznBKXUJ9/Q5R7GSQJL6oPLOaLOvG3j5gu00R74jLj+Lh8MVyPHBizni6A0E47hhxYHIM0QNxE4SsvkBWyjjQSXAPueJlQpE1Qpz5o942E68lQU7BJqjN0SdK3xCrknMujZvYsSYHCLJuf9JCWlBqfzNZx87o4dbn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04CAB152B;
+	Mon, 17 Feb 2025 07:39:48 -0800 (PST)
+Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E9393F6A8;
+	Mon, 17 Feb 2025 07:39:27 -0800 (PST)
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v3 00/19] firmware: arm_ffa: Framework notification support
+ + other updates and fixes
+Date: Mon, 17 Feb 2025 15:38:41 +0000
+Message-Id: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] media: platform: synopsys: Add support for HDMI
- input driver
-To: Hans Verkuil <hverkuil@xs4all.nl>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
-References: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
- <20250215210417.60074-5-dmitry.osipenko@collabora.com>
- <110db742-25a0-4f0c-9620-1af8885d6e1c@xs4all.nl>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <110db742-25a0-4f0c-9620-1af8885d6e1c@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-B4-Tracking: v=1; b=H4sIAAZYs2cC/23MSwrCMBSF4a2UjI3k5ia+Ru5DRNLmxmbQpiQ1K
+ KV7Ny2ICA7Pge+fWKLoKbFTNbFI2Scf+jJwU7GmNf2duLdlMymkAikVd87cHoM1IyUOYucsWnd
+ Eq1kRQyTnn2vtci279WkM8bXGMyzv/04GLrgAiWhqgwR0NrHbNqFjSyXLj9QCEH6lLFIrVRtFq
+ PGw/8p5nt9c5vTu3gAAAA==
+X-Change-ID: 20241224-ffa_updates-106fd3df93d5
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3957; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=RhTnNYTfj2ffvvqL8JaHV8Axj4MhUpAhKy1ZgSM7abE=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gtlQjXSIZZ1QilM4KEtRmZZGA/mabcIzQyM
+ HMQGh7ifgWJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLQAKCRAAQbq8MX7i
+ mMaTEADXtL3GaYTyX9jBF0qryyucuCDMc0PT3DNxvYndxYVB4X0pWfMLajZqMB4sjbJe0NXpy2e
+ M1OKrlAp/6C6X7aLkGEvzELgzlHPdk4VLjw+vG3hBKsTc7Ej4iqORfSASIwUwV/xYN/CWri4xD4
+ z3KH3Soj20Fb4858gGph5P+++ZJR+66onbTrI/b0GXesqd+s0pwoZ2eO5ggnZkNlIEo0lM+kxPI
+ vPX698S4vQbZJvT85v+Pv80er/XZZswj3Yj4g+8XZrdESjEY6tEOc5LbOl20nuX/ZL/TERV9opt
+ JCqX6vWN8IMFcAbUPACK6//3HR+Fwm/CYrBN2RMHeN6NkQ1z3m+fB5qV17IIloqp3RJ0rzxudam
+ ZcqyVlwOct5e3HMTiiLQ4aGZJqQrxvMpLefMXKexOcg/lqChxNRKD/V7fHnAGW34QTt1IhW5wd/
+ 88IbTg4+sm4KCThcBYus4OnnqkxXTDW7jV47np0p0GT2jv/GrpqKyv+nqmyElLyiHXH6IqGXja2
+ Atp7moVDW9TKpS4i/L77rlbTDh/EcmGUNZMLxH8WkZVNAUJ3A1YLFbN6gnRN+vrur6FsWzBxyD6
+ xS0ZtVvKbf0u7OfLYTO2a6GjO5p68CuF72QMzEMbipl02u50YhBUP+fUVjOcm+tEOCd0DT1+x03
+ hB98ma3NAwS0IuQ==
+X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
+ fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-On 2/17/25 11:31, Hans Verkuil wrote:
-> On 15/02/2025 22:04, Dmitry Osipenko wrote:
->> From: Shreeya Patel <shreeya.patel@collabora.com>
->>
->> Add initial support for the Synopsys DesignWare HDMI RX
->> Controller Driver used by Rockchip RK3588. The driver
->> supports:
->>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
->>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
->>  - CEC
->>  - EDID configuration
->>
->> The hardware also has Audio and HDCP capabilities, but these are
->> not yet supported by the driver.
->>
->> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
->> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
->> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
->> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->> ---
->>  drivers/media/platform/Kconfig                |    1 +
->>  drivers/media/platform/Makefile               |    1 +
->>  drivers/media/platform/synopsys/Kconfig       |    3 +
->>  drivers/media/platform/synopsys/Makefile      |    2 +
->>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
->>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
->>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2715 +++++++++++++++++
->>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
->>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
->>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
->>  10 files changed, 3475 insertions(+)
->>  create mode 100644 drivers/media/platform/synopsys/Kconfig
->>  create mode 100644 drivers/media/platform/synopsys/Makefile
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
->>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
->>
-> 
-> <snip>
-> 
->> +static ssize_t
->> +hdmirx_debugfs_if_read(u32 type, void *priv, struct file *filp,
->> +		       char __user *ubuf, size_t count, loff_t *ppos)
->> +{
->> +	struct snps_hdmirx_dev *hdmirx_dev = priv;
->> +	u8 aviif[3 + 7 * 4];
->> +	int len;
->> +
->> +	if (type != V4L2_DEBUGFS_IF_AVI)
->> +		return 0;
->> +
->> +	hdmirx_read_avi_infoframe(hdmirx_dev, aviif);
->> +
->> +	len = simple_read_from_buffer(ubuf, count, ppos,
->> +				      aviif, ARRAY_SIZE(aviif));
->> +
->> +	return len < 0 ? 0 : len;
->> +}
-> 
-> Have you tested this with 'edid-decode -c -I /path/to/avi'? Also test that it is
-> empty if there is no AVI InfoFrame (e.g. when there is no incoming video). I don't see
-> a test for that in the code.
-> 
-> I also see no sanity check regarding the length of the InfoFrame, it just outputs
-> the full array, meaning you get padding as well since the AVI InfoFrame is smaller
-> than ARRAY_SIZE(aviif). In fact, edid-decode will fail about that if the -c option
-> is used.
-> 
-> See tc358743_debugfs_if_read of how this is typically handled.
+This bundle of changes mainly have FF-A framework notification support
+along with other minor updates and fixes.
 
-I've tested with 'edid-decode -I /path/to/avi', including the empty AVI
-InfoFrame. But without the '-c option'. I'd expect that debugfs should
-provide a full-sized raw InfoFrame data, rather than a parsed version.
-The parsed data isn't much useful for debugging purposes, IMO. I
-intentionally removed the size check that tc358743_debugfs_if_read does
-because it appeared wrong to me. Will re-check with '-c option', thanks!
+It adds support to allow multiple UUIDs per partition to register
+individual SRI callback, to handle Rx buffer full framework notification
+in particular and general framework/interface to extend in the future.
 
--- 
+It also adds support for passing UUID in FFA_MSG_SEND2 which improves
+the multiple UUID/services per partition support in the driver and
+an helper to check if a partition can receive REQUEST2 messages or not.
+
+It also improves cleaning up the partitions by adding unregistration of
+the devices as well as handles the presence of host partition in the
+partition info.
+
+It also contain fixes big-endian support in couple of functions:
+__ffa_partition_info_regs_get() and __ffa_partition_info_get().
+Big-endian support is still not complete. Only these changes can be
+verified at the moment without any additional application or testing
+support changes.
+
+Regarding the FF-A versions, it upgrades the driver version to v1.2
+and rejects any higher major version than the driver version as
+incompatible.
+
+It also fixes the mis-alignment with sync_send_receive{,2} function
+prototypes.
+
+It replaces UUID buffer to standard UUID format in the ffa_partition_info
+structure and fixes a typo in some FF-A bus macros.
+
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+Changes in v3:
+- Dropped spurious extra blank line in ffa_setup_partitions()
+- Fixed issue with Xarray erase in ffa_partitions_cleanup()
+- Used kmemdup() instead of kmalloc() + memcpy()
+- Extend support to read non-secure notification bitmaps
+- Added Viresh's Tested-by tag
+- Link to v2: https://lore.kernel.org/r/20250131-ffa_updates-v2-0-544ba4e35387@arm.com
+
+Changes in v2:
+- No changes in the patches sent as v1 itself.
+- Addition of framework notification support and other updates as listed
+  above
+- Link to v1: https://lore.kernel.org/r/20241224-ffa_updates-v1-0-01233aba3e1e@arm.com
+
+---
+Sudeep Holla (18):
+      firmware: arm_ffa: Replace SCMI by FF-A in the macro
+      firmware: arm_ffa: Replace UUID buffer to standard UUID format
+      firmware: arm_ffa: Align sync_send_receive{,2} function prototypes
+      firmware: arm_ffa: Fix big-endian support in __ffa_partition_info_get()
+      firmware: arm_ffa: Fix big-endian support in __ffa_partition_info_regs_get()
+      firmware: arm_ffa: Handle the presence of host partition in the partition info
+      firmware: arm_ffa: Unregister the FF-A devices when cleaning up the partitions
+      firmware: arm_ffa: Helper to check if a partition can receive REQUEST2 messages
+      firmware: arm_ffa: Add support for passing UUID in FFA_MSG_SEND2
+      firmware: arm_ffa: Upgrade FF-A version to v1.2 in the driver
+      firmware: arm_ffa: Reject higher major version as incompatible
+      firmware: arm_ffa: Remove unnecessary declaration of ffa_partitions_cleanup()
+      firmware: arm_ffa: Refactoring to prepare for framework notification support
+      firmware: arm_ffa: Stash ffa_device instead of notify_type in notifier_cb_info
+      firmware: arm_ffa: Add support for {un,}registration of framework notifications
+      firmware: arm_ffa: Add support for handling framework notifications
+      firmware: arm_ffa: Allow multiple UUIDs per partition to register SRI callback
+      firmware: arm_ffa: Handle ffa_notification_get correctly at virtual FF-A instance
+
+Viresh Kumar (1):
+      firmware: arm_ffa: Refactor addition of partition information into XArray
+
+ drivers/firmware/arm_ffa/bus.c    |  13 +-
+ drivers/firmware/arm_ffa/driver.c | 526 ++++++++++++++++++++++++++++----------
+ include/linux/arm_ffa.h           |  22 +-
+ 3 files changed, 418 insertions(+), 143 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20241224-ffa_updates-106fd3df93d5
+
 Best regards,
-Dmitry
+-- 
+Regards,
+Sudeep
+
 
