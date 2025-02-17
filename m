@@ -1,77 +1,128 @@
-Return-Path: <linux-kernel+bounces-518266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE828A38C9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:43:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC80A38CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91D237A1F5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E704B1892C10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12D5237194;
-	Mon, 17 Feb 2025 19:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942272376E1;
+	Mon, 17 Feb 2025 19:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9eV/lZL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="ocExaFjs"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09643158545;
-	Mon, 17 Feb 2025 19:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3442376E7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739821398; cv=none; b=pyQR4Yv1OAIxT7btn2Xz8w+zHugerWdmYmBrqYO+1pvZXsf29RN1luFZ8ABijFqt8NzIGYeaVrZMnP6vWuljT2JeEn2BwDCIJhLtjaEhHEVSRL6T5ydI65/Dm4VzmXRuyckNRPpM0Rb/KQHIz3pEEgRV8ExgzsvqzWd2hREatCg=
+	t=1739821467; cv=none; b=WYf9goWPR/E5h5ML3PWMQvqZ6jkuZgkUaKtqbFnDCSSZijan3Rq3BhALbu7wOHdHHL0GNBLi16pi68s7CaSGvVcYecMsJ43VXLpS+NL9YiWOIY288dKKCoubRA6VsamPQUdefubdi+Gm092oFgH6FZVgAH8lfdckJ8C4vF6JOIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739821398; c=relaxed/simple;
-	bh=ThLrCm+7YW6B/mbul4nWe78MpCxp1xpJcUfQPIV2LMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eB9LJO4pn6FLZxZp+V4gg9Yv2auLYu4sCxK+QR2VeQePrBLueDABseEDQoRP/aFLlmGvD8FFdjG28tSnkBcgevY/Fo3sXnwpJ6AQde7JFeXsY+rLO9lJggWJ3K9chSAe4KyewD8MY/FCmRHspqQT0C4a5UBAtNz/i5FNSqlW6C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9eV/lZL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED419C4CED1;
-	Mon, 17 Feb 2025 19:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739821395;
-	bh=ThLrCm+7YW6B/mbul4nWe78MpCxp1xpJcUfQPIV2LMo=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=g9eV/lZLkGejx9mnawdrWgjQVSyjZWDC+l0vQCubvW6ddQea3qSuewgFwGdiToy12
-	 NuWfCtcPmnI3gV97fq62t4qa5mSTMnqbwCZX/9C9kge82ut3R7IoZ/nw+NE9aTdGgr
-	 iaPhbuX/nHxVx0k3vkY+h1+c2Pj0IHoeAXQbeVeeayAQ5+M3/M4+RXTppGEhArUuP/
-	 NblLK9kCwthMb2MSJUJLYK7ZSLkVDCHUsIvUDynHS5qLTmgpa08yX/KUk5BgMuvUbO
-	 0WBi4SMNKvCrlOQSGgGsAeONrpGgaeph4E1m8ReFHmD12gnXs7uSunzHve3rpiIMD1
-	 EjdNL0SqZQO2A==
-Message-ID: <0897d31e-c0ec-4b89-a459-0c5fdd17bd55@kernel.org>
-Date: Mon, 17 Feb 2025 13:43:13 -0600
+	s=arc-20240116; t=1739821467; c=relaxed/simple;
+	bh=IgmrKZQ+U6jM19WQ1y4s62f1uaoWol9FnsSA1ZFXU+4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tQZmS3os1CYaRizu7AlzLJi6GylhGBFVM8JBlJI6eueoGLStWjJjRq9//JAE7rLeNAZVZ8q+Sv0AczrMS3aGS3FKgQMJeXpdA2l78WihaJP5kKr/Ca3bizUEkfKMiemwAN+uVvcEjEpalfI+gOs6wdeD3dadHFMNxNuMihOnxTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=ocExaFjs; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=ocExaFjsgLFVQzh8ijKBYhiO9N1lKDnf3zFjEDFvKJwAYlJT8gGMCucPkiD/jb2oyZYBV9oLWOAwWuO8+mhv//oT1tq/MYqYNYjs6eov+EY5lGc6I7zuKbUKg4zXyyss3Y9ro4VsAoZ+ppbnUC5Cm33AydgVOI4kVMyHBIi1kn4P+YMQfJkH+j9NEWmdTBwedT+IqOfVEiG/Mib81I6Be3fdrzb1qvFGXXnwu0Zvur6Y5fePvzn6dsY78JtM/OEvNUokWGpV9w+Z/S9gMPwjeuSn6QhX+XZng5NwvyLyTh2ct0QegEl8giXyINQHwvBQqqQqaUmKV6qM2MkB17DAPw==; s=purelymail3; d=purelymail.com; v=1; bh=IgmrKZQ+U6jM19WQ1y4s62f1uaoWol9FnsSA1ZFXU+4=; h=Feedback-ID:Received:From:Date:Subject:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1112335277;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 17 Feb 2025 19:44:15 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Date: Mon, 17 Feb 2025 20:44:04 +0100
+Subject: [PATCH v2] dt-bindings: usb: samsung,exynos-dwc3 Add exynos990
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: socfpga: agilex5: add gpio led and memory
- node
-To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250217120124.3502476-1-niravkumar.l.rabara@intel.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250217120124.3502476-1-niravkumar.l.rabara@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-exynos990-bindings-usb3-v2-1-3b3f0809f4fb@mentallysanemainliners.org>
+X-B4-Tracking: v=1; b=H4sIAIORs2cC/4WNQQqDMBBFryJZNyWJWk1XvUdxEXXUAZ1Ixooi3
+ r2pF+jyPfjvH4IhILB4JocIsCKjpwjmlohmcNSDxDayMMrkyuhMwraTZ2uVrJFapJ7lh+tUPrp
+ SdYW2mU4LEddzgA63q/yuIg/Iiw/7dbTqn/3fXLXUMoW8NYXRjS2b1wS0uHHc2RFMDmlEgsB3H
+ 3pRnef5BbmVk/LPAAAA
+X-Change-ID: 20250214-exynos990-bindings-usb3-6f80f7194137
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739821453; l=1933;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=IgmrKZQ+U6jM19WQ1y4s62f1uaoWol9FnsSA1ZFXU+4=;
+ b=B6t7KTHxA+iuFtJA+yAANoa5OJat58KmWVxgOUSKRZvxMNtbaoOTTAlv4dPWmlT5LWwh2Pu8k
+ q6eEIZ+JUKrDuBKPF+X1xlb64anSsoZh8AOFx9Q0WEbW2fD/l12oaJy
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-On 2/17/25 06:01, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> 
-> Add GPIO led and memory node for Agilex5 devkit.
+Add a compatible for the exynos990-dwusb3 node. It's compatible with the
+exynos850 variant when using the highspeed mode.
 
-Looks like you added LED and memory nodes, and enabled the GPIO. Please 
-word this commit log correctly..
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+The Exynos990 SoC embeds a DWC3 USB3 DRD controller.
 
-THanks,
+The controller's design is compatible with the Exynos850 design
+for high-speed mode.
 
-Dinh
+This patchset adds in the new exynos990-dwusb3 compatible.
+---
+Changes in v2:
+- bindings: re-check, fix picking the dwusb3 compatible
+- Link to v1: https://lore.kernel.org/r/20250214-exynos990-bindings-usb3-v1-1-3e5d2721c98c@mentallysanemainliners.org
+---
+ .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml     | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
+index 2b3430cebe99106f3b6201ab31d4d9e3fcc55627..f11e767a8abe1d2fb7faa6d6b5be09970c5c9b37 100644
+--- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
+@@ -11,12 +11,16 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - google,gs101-dwusb3
+-      - samsung,exynos5250-dwusb3
+-      - samsung,exynos5433-dwusb3
+-      - samsung,exynos7-dwusb3
+-      - samsung,exynos850-dwusb3
++    oneOf:
++      - enum:
++          - google,gs101-dwusb3
++          - samsung,exynos5250-dwusb3
++          - samsung,exynos5433-dwusb3
++          - samsung,exynos7-dwusb3
++          - samsung,exynos850-dwusb3
++      - items:
++          - const: samsung,exynos990-dwusb3
++          - const: samsung,exynos850-dwusb3
+ 
+   '#address-cells':
+     const: 1
+
+---
+base-commit: 5cbcf2652f4cd84eac21f5e88fe2a0baecc601fb
+change-id: 20250214-exynos990-bindings-usb3-6f80f7194137
+
+Best regards,
+-- 
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
 
 
