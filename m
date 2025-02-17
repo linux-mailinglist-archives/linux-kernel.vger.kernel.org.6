@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-518439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF618A38F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:29:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A304A38F19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3E3188C111
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB343ADF43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06011AA1F4;
-	Mon, 17 Feb 2025 22:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5062A1A8F7A;
+	Mon, 17 Feb 2025 22:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWbYDc4I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9nLc2mv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F1019F115;
-	Mon, 17 Feb 2025 22:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CCE1A3BD8;
+	Mon, 17 Feb 2025 22:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739831387; cv=none; b=Co+zjZwVWvu4ZBRCj6n/cJ2qN3OmvglaIIdyO4ZX+QzNPOTOy8KQ4Fz1Icy1Bd2rofy1d3n/1wgUsh1++t047P02oDts6WtnqXgE+ODZYQaMQ+J43PYH8MuKTxaI3Aai9tFVb4ZHbVew6tQzG24rYazzf8I8THLS8qcDDsCMzw8=
+	t=1739831540; cv=none; b=k422EZeNUSPNSGEadLA4kDRvVzgp2tr6c3GRrYwFTH+bL+wSdNDuk/Jw9Ifvi8DOQX3cnToGc2f2dPttMY8YE2Lz4XtOJvXKIsgHM6IVAVrCqASa5zW6+bRjcT//UsKlyvzLtIwZw6u1Qy4qtpHiEha9QBXrc+GQJMOd7FygFcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739831387; c=relaxed/simple;
-	bh=l2diEQnJlWhhlB32ExiFPYSIR4DSsw4YcZ3zO9O5nDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiKzBv/5E5kgn04wwMtkr8Eo/BVQk+pQfmAwQ3Nt7tLmqICGQpZldp09I6c1ND3/6bj2Wmk9qtIWJOWzefwbFRleKdYJBKgao0gNEc6NluyCIKGqJEMFmG7OVZ8e2HLIj7s6MzhC+kc/foqDnD+6fotOHniBJs+I2ndKBlgbg5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWbYDc4I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D544C4CED1;
-	Mon, 17 Feb 2025 22:29:43 +0000 (UTC)
+	s=arc-20240116; t=1739831540; c=relaxed/simple;
+	bh=qFKTkNpONgMg3NBCN3xgNv0kFxCr4BNqkB66XUagtOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YEe5tBQP7RVyC8EkyMm9OTMToYGYQJk/PJYUALiBXEVfFehGAa5WC2NQjkkyzb343/6ts4bdw5GDdDFIwVC5H7+v8lhCDUGnxEQz4FBhx9Y2Q6AFahCyneQ0BMtn/B77SwH1SwtGUsVFaRqWlYjFwT4zrVMnXAug3zzgAMMwXDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9nLc2mv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED494C4CED1;
+	Mon, 17 Feb 2025 22:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739831386;
-	bh=l2diEQnJlWhhlB32ExiFPYSIR4DSsw4YcZ3zO9O5nDw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XWbYDc4IT8t/UB7OrOs0IGbsVwtvDlBWzy+p3q83HQGkKU0t8uuOGKu8D0uiIBvmx
-	 KV1AC4S7hcqfSK/BwmLwmr5iO6/ZL9jN6EcbsX3aST8IWYjKCcGOtiWlHdZgnHyFUe
-	 31YRqQKoeG0NtCMaBBjr6wiaCxl21g6YUV/CScL4GHdacnWTWHBHldscqowwCtfGsY
-	 etr/ovFsEjxpLI38irMcqw2tmJCZFfTzENGmOrCTPkcgrZC5T0M5F399WgI8umHS/Y
-	 bLDwhQxV2UG3fxUF1w/t9KSEtOYIwSiUU4I4zC123A8YSmW1KAyzP78av9J0rLIya1
-	 liUUJU0+/6fBA==
-Date: Mon, 17 Feb 2025 23:29:40 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	Fiona Behrens <me@kloenk.dev>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] rust: io: rename `io::Io` accessors
-Message-ID: <Z7O4VHWZPk1yNwC7@pollux>
-References: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
- <2244CEBA-3AF2-4572-B32E-8BA9F86417C9@collabora.com>
- <CANiq72n=a+TjXNe13HuiuiLA+TE4pfMk6SB49AjpHkYju4pVag@mail.gmail.com>
+	s=k20201202; t=1739831539;
+	bh=qFKTkNpONgMg3NBCN3xgNv0kFxCr4BNqkB66XUagtOY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=j9nLc2mvL4bhKycMPuEB8L5O7B9VRy48+8XxJdGCVbGE1ebPUKKJbwWdZMLEIw176
+	 Ar8ntIbx9QHcCdlwff9SXKalnWXHOqNpY+FdwHSeal83r+t0GvwCczyxMPI0DAe1GG
+	 TFY0JqI5YK3O9m3K32ahSHDx5DcjKamwXZFLeTJQ+xId4Qep9kIkHf83n9VCatAanA
+	 6D4eZzKK2mxhdimM07IXk4RsHJnHsZONkKv7ngzuLQXIQZ3cxtMU2IUH04ks72/IVU
+	 yIK1LsaXe4v7p/Sx/cL9LBkMJJ2w3eurxg3jpwaW+g1sfv/d84Pv7vZUaVjlakHyIC
+	 mmAJ1nmEAIMlw==
+From: SeongJae Park <sj@kernel.org>
+To: Marcelo Moreira <marcelomoreira1905@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org,
+	linux-mm@kvack.org,
+	damon@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH] Docs/mm/damon: Fix spelling and grammar in monitoring_intervals_tuning_example.rst
+Date: Mon, 17 Feb 2025 14:32:15 -0800
+Message-Id: <20250217223215.36040-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250217215512.12833-1-marcelomoreira1905@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72n=a+TjXNe13HuiuiLA+TE4pfMk6SB49AjpHkYju4pVag@mail.gmail.com>
 
-On Mon, Feb 17, 2025 at 10:59:58PM +0100, Miguel Ojeda wrote:
-> On Mon, Feb 17, 2025 at 10:37 PM Daniel Almeida
-> <daniel.almeida@collabora.com> wrote:
-> >
-> > IMHO, the `writel` and `readl` nomenclature is extremely widespread, so it’s a bit confusing to see this renamed.
+On Mon, 17 Feb 2025 18:54:31 -0300 Marcelo Moreira <marcelomoreira1905@gmail.com> wrote:
+
+> This patch fixes some spelling and grammar mistakes in the documentation,
+> improving the readability.
 > 
-> We could generate `#[doc(alias = "...")]`s if that helps -- it would
-> appear if you type `writel` in the search, for instance.
+> - multipled  -> multiplied
+> - idential   -> identical
+> - minuts     -> minutes
+> - efficieny  -> efficiency
 
-This is a good idea, I think.
+Nice catch!  Thank you for fixing these!
 
 > 
-> (I guess the rename could be justified (just a bit) by the fact that
-> in Rust we are using fixed-width integers and so on more...)
+> Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
 
-This is a good reason too. My main reason for proposing this was that if we back
-the trait with both MMIO and PIO `writel` and `readl` nomenclature might falsely
-be read as if it is limited to MMIO.
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
