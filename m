@@ -1,111 +1,149 @@
-Return-Path: <linux-kernel+bounces-517851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B224DA3868A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1830A386B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E3B188AE9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906793B7226
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF516224896;
-	Mon, 17 Feb 2025 14:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68273221DBE;
+	Mon, 17 Feb 2025 14:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4d1Znh9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Whd1gznZ"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2502206AA;
-	Mon, 17 Feb 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7CD2222D1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802846; cv=none; b=rph7Vdp11KH36Y0+s57ZITRSFQPi/OaAP6uO3fEqabc4EqkM9wcGMurC5QZOi0cxpKlu3LLzR/fnq7ernELOjJGBGrBKHZjknR80WtnZ4h4zfdDut1kl2QrRydV8frNe0XW4hXY1L5PpKopJyT4M8MuJVTsgYt1BG1W8J/1inkg=
+	t=1739802858; cv=none; b=q1UhyVp7v8DUUscqNwUfT5+Xy1CzqSdDJ62V++9TINQc1znYaWS23h9hbprJOL1+GmKE3e7IalM/NojgeRvPKA5DNM9jSfMAJE3A6Tb1xno0apk+XDPPoy5bj1gC3xRojGWfOECOs5lgbRlIW7/kVN2jaIXE2eF9Dgi8wmmfin4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802846; c=relaxed/simple;
-	bh=XY2i7Z29CGAJyZKZqHFlYtn1pUICHedIw7cetxRZ664=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=POuXV/D8i7i4d4dYy5hWn3bCJIenmY0yG9/3rEqmSIor2j2DfctZQ9EnQYKsw6TvZh84mOevCydWKoLUE/Hp/8IxwUutMt2CjOzayy/nTOCEyF4lOoswnnrZiISvkRcujPpuAojihstw1iVS/sivcy6OYiuwfLS+mXMZhZP6rac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4d1Znh9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563F9C4CED1;
-	Mon, 17 Feb 2025 14:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739802845;
-	bh=XY2i7Z29CGAJyZKZqHFlYtn1pUICHedIw7cetxRZ664=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I4d1Znh95QpR8t2oVRecTwi1sfhGF8p51KwkAYCHatAqQH4MDa6JXDoMO7QJN+jtb
-	 rYKrw40qNsLEiBA30PhBVaLjaSFgIWBoSk6i/2XJhFtITFE73U5Enc19JKuUNhtTQD
-	 veLLeNB/sB/zpD8rZ1SghjKrVgBBD+gaDb/iQdj1sfBL067jccp2nIfPnumTUbY0sJ
-	 qpTqCK5E5mf4fS80HoAhC937pWgPhFB0w5BKn3W1TwAWWPkp3GeBMfjCdvmROmNfgw
-	 wfs8xNCe983soniHHMzo1uRJ4tRMT9VlQOkOnPwvlRCDkkPvoYtm6dHVNmhl/MdnjT
-	 ltp1jGatypeFQ==
-Date: Mon, 17 Feb 2025 14:33:54 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Robert Budai <robert.budai@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, "Ramona
- Gradinariu" <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [RESEND PATCH v8 0/6] Add support for ADIS16550
-Message-ID: <20250217143354.0d1c4a2d@jic23-huawei>
-In-Reply-To: <20250217105753.605465-1-robert.budai@analog.com>
-References: <20250217105753.605465-1-robert.budai@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739802858; c=relaxed/simple;
+	bh=+dQh08J2Wrw7tq8kkvKhIgSeuAw3wVHIEItqCvMFpSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RuyDXyKZHBio5waz+yFzPkNcv9m0rCGOGqWTwtXMFPbvoaElZLyS4/jQdPMldLwtxQdUlI311X++Jy0Mi0XSg+3DRGX3CtQgOSAGz3iY7sTnp83ebe3aqSArl6ZgVToPpupgn4Tn47vZkbYz8nR+z3SzSA/S/xGvjn0ATeYU2o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Whd1gznZ; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6C5AA3F31E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739802855;
+	bh=fFzE+iQ7/6Nth8qy0xHPs/Cj4g/jlkWpDyJC+gk/5Yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=Whd1gznZS7qjCZPmEOH+BNQXqEuduvatVPqITjO/P2eeXAHjtWPa6E8unkIOR+KW6
+	 eN/CCGITrJfpzylyDPgrwjvfCrNbAdvulHnoa8RGvDKyPXIJk0jLNesmYSnp+4GlWA
+	 IOC0I9M7NIPHBOQuZldKwgs8iPJa3BdZ4UNxYp4JlmdLKs5lmCjV6/T+zN9j6F8UEA
+	 F3XVDlgX4QZ7MTNzFh1zOkHoHW2EZ+xebnx7pXwFw6HzXKE5rZAvRdvsjN9eVkA7OV
+	 KBjjsFWeE/csgWZXrO3wDfKd3Lhm/Pq4VNolYwzro5W5Co3Fz6h53v/QkMZl3HcVnU
+	 ueNpHmashDuYA==
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fc2fee4425so9529656a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:34:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739802854; x=1740407654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFzE+iQ7/6Nth8qy0xHPs/Cj4g/jlkWpDyJC+gk/5Yg=;
+        b=JjzIWwOVGsEeSBPtqB8D+BlsXnZPM963a2o9dUEVX6aYKahAXXCsbxExmYqiIw0/d3
+         uhGdo0t2H1YZHczAWLaab3wqCNgkKl4EuChUvCnwXYL5LnSB2t0m7bycZy5+k/lbeJw/
+         ZWcRv2PqR2sS9usRZz0HL8nLmlM0MWWP/mqixFcnXV7T4GmT67A4UDBvHXZ2JOPew6g6
+         TJ1zXP3ZPR/iOwUrdWqmEjvhdJT7Koq3GM7ykBG/Z6Ryorn5cENs4XeLEu0uSXwd4Rsy
+         hNvxLYY+35iV9HCbP3axfVSlpLHQWLtRCmLOPUsQeaYIrM124ReCYtA14zoXqd7tRBHi
+         4Lnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWReILzD9xC1be6K5E2ZUAFV9jOwnPqEy3MsGl0hCwv1dp8lW7dMWO0ObKgB0/Vz0s05wkz4C/V5e5Q4mg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysWFqlyWQ5duhZ8CQ33q6WX7ytq4o8DSxjuTG4lv8tr8H0JCaF
+	L5GSpHbiPkf54YQNv8+g/IdAuLvdqKrmoeRzh91S7/Ugi+B69n5c+qL0/2rojY4NXmL+lSy0OVh
+	LlIe4o6cW0Cux8RNY+aNE5fDRvWfWgZHke6mHwqt6lljXUjWbhkJQwbGGHw2VqKSNRsPuPYH005
+	iv7g==
+X-Gm-Gg: ASbGnctf3fQDPiC7xWkm2WCMvvjwNGrGw6M41DydFlWzzoLXvjXnLNuNmUiv2C/7NF1
+	CkLjToeinYV06dbOaXYD+Ce/lMNPHfN7mnAvWmA9YCW6Mt5YREc181diQ+ZNx6DFlzfXEcMCpvk
+	I5o6g3UpFxdKjA1NU34Wg3St7AAv/zXhCCEIns4YJTCA91jHR4Zi7MsEEzmbfMAG2KGKV5bRsjF
+	Oms6ugcr+bdITTOLsYdpYEE5qfUChWBzzriSEMMeQJc+jlS7pi1ooyceap+fSbwAW2zZlm1aFY2
+	oCyB2Hg=
+X-Received: by 2002:a05:6a00:1a89:b0:730:9946:5972 with SMTP id d2e1a72fcca58-7326177f450mr15128561b3a.1.1739802853703;
+        Mon, 17 Feb 2025 06:34:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHzREazoIMmolG1CVLrZY207BcM9g0sp5SvtvoFagvZGNZkcgfkEhbB+UfODQIu0yZpQ0fDBg==
+X-Received: by 2002:a05:6a00:1a89:b0:730:9946:5972 with SMTP id d2e1a72fcca58-7326177f450mr15128543b3a.1.1739802853432;
+        Mon, 17 Feb 2025 06:34:13 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:a6da:1fd8:6ba3:4cf3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732642d908esm4592726b3a.159.2025.02.17.06.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 06:34:13 -0800 (PST)
+Date: Mon, 17 Feb 2025 23:34:10 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/13] gpio: aggregator: reorder functions to prepare
+ for configfs introduction
+Message-ID: <4ce6vzqsmjk4l7m4riraurpgmdhhvdq7e3spkgo5nvnt5uvgav@6aloxueo7ypw>
+References: <20250216125816.14430-1-koichiro.den@canonical.com>
+ <20250216125816.14430-2-koichiro.den@canonical.com>
+ <CAMuHMdWZy22ckxoLOWH4x40VE4pRsBCfMDXJZ5ZYcu-ABFKRWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWZy22ckxoLOWH4x40VE4pRsBCfMDXJZ5ZYcu-ABFKRWg@mail.gmail.com>
 
-On Mon, 17 Feb 2025 12:57:44 +0200
-Robert Budai <robert.budai@analog.com> wrote:
-
-> The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
-> and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combines
-> industry leading MEMS only technology with signal conditioning that optimizes
-> dynamic performance. The factory calibration characterizes each sensor for
-> sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
-> compensation formulas that provide accurate sensor measurements.
+On Mon, Feb 17, 2025 at 02:07:53PM GMT, Geert Uytterhoeven wrote:
+> On Sun, 16 Feb 2025 at 13:58, Koichiro Den <koichiro.den@canonical.com> wrote:
+> > Reorder functions in drivers/gpio/gpio-aggregator.c to prepare for the
+> > configfs-based interface additions in subsequent commits. Arrange the
+> > code so that the configfs implementations will appear above the existing
+> > sysfs-specific code, since the latter will partly depend on the configfs
+> > interface implementations when it starts to expose the settings to
+> > configfs.
+> >
+> > The order in drivers/gpio/gpio-aggregator.c will be as follows:
+> >
+> > * Basic gpio_aggregator/gpio_aggregator_line representations
+> > * Common utility functions
+> > * GPIO Forwarder implementations
+> > * Configfs interface implementations
+> > * Sysfs interface implementations
+> > * Platform device implementations
+> > * Module init/exit implementations
+> >
+> > This separate commit ensures a clean diff for the subsequent commits.
+> >
+> > No functional change.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 > 
-Hi Robert,
+> My
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> is still valid.
 
-The cover letter of any RESEND should always start with why you are doing so.
-If this was for the tiny fixup you mentioned it should have been v9 and
-not have been sent for a few days at least.  If everything else is fine
-I don't mind making that sort of fixup whilst applying anyway!
+Thank you, let me add the tag to the two commits in v4 since they remain
+unchanged.
 
-Jonathan
+Koichiro
 
-
-> Robert Budai (6):
->   iio: imu: adis: Add custom ops struct
->   iio: imu: adis: Add reset to custom ops
->   iio: imu: adis: Add DIAG_STAT register
->   dt-bindings: iio: Add adis16550 bindings
->   iio: imu: adis16550: add adis16550 support
->   docs: iio: add documentation for adis16550 driver
 > 
->  .../bindings/iio/imu/adi,adis16550.yaml       |   74 ++
->  Documentation/iio/adis16550.rst               |  376 ++++++
->  Documentation/iio/index.rst                   |    1 +
->  MAINTAINERS                                   |   10 +
->  drivers/iio/imu/Kconfig                       |   13 +
->  drivers/iio/imu/Makefile                      |    1 +
->  drivers/iio/imu/adis.c                        |   35 +-
->  drivers/iio/imu/adis16550.c                   | 1149 +++++++++++++++++
->  include/linux/iio/imu/adis.h                  |   34 +-
->  9 files changed, 1680 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
->  create mode 100644 Documentation/iio/adis16550.rst
->  create mode 100644 drivers/iio/imu/adis16550.c
+> Gr{oetje,eeting}s,
 > 
-
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
