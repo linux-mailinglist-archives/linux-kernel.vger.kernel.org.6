@@ -1,238 +1,468 @@
-Return-Path: <linux-kernel+bounces-516932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4C2A379E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192CAA379F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 03:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8018E1663EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292C93AEA60
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DBB5477F;
-	Mon, 17 Feb 2025 02:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DzenUUVT"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D035A145323;
+	Mon, 17 Feb 2025 02:53:11 +0000 (UTC)
+Received: from n169-113.mail.139.com (n169-113.mail.139.com [120.232.169.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4846BF
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5B8C2C9;
+	Mon, 17 Feb 2025 02:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739760581; cv=none; b=MQ7YpE79paQYBOsjfOY2JscmQBuK6e9xg52DMyxLGHGiJpkCpWf7ons+NYg+oyghM73N1XrMSbPZ3wnlpjRNKQD7XrntVmZwo95gcb5BanWzqI7ZA/yXYtPhRdmK+5uUUkAMqEvyGN58G7bt5DbuLrTO8t7cGsYvNQXJkjiAVK4=
+	t=1739760791; cv=none; b=cPvM5koJa5/I2EJxxVXhAVzKSxtcmvJ72tlvNplJQHF95jP3kvcc9SPsrJ7KeLbz+emW7Sw4AdrGP8BBbGWf/yKXmnvDk9JddAtQbPb/3R6YjSzgTyKQ+iTTIeQFcy2CjFldGROK21hS2GXvCQx187QK3O3LpY9WXBzfwFShIac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739760581; c=relaxed/simple;
-	bh=OPkOrqOU3T2OquUtXl1dDwsvVSDYWn7LrdDhRAKERJA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FfTCANZAz2eErhtEUOKmG9GoUsBBiTNY3DPUwX4l3Q3dVWKt6qLMF3LN6GrpUg1C5JeljGI/tsI0bqdB+NKmGInph1rCXms6Cs3Q1c0CdUb46PsMQRiX0XbNmuPfgb/w2FzFrnkfw12n5Nm7pJHouY0CQLXxuW6Lk7rhpKuZMl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DzenUUVT; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-221206dbd7eso11427955ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 18:49:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1739760579; x=1740365379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pyusY8LOZ2yGcku6OPIUO2n+8tkrExwGCuVjXg24M28=;
-        b=DzenUUVT/hFLaUqVR0fcv5bIbblD2pMqJCTkmAHsdOHdOHX7zDRfJaRqLW+YFzrP49
-         ++IdiX+hxsAjpsVv8Vh+ff2/PwT91rmLQ65ogtK4WcKvTi/FLBu2sB/bONlkbv2d4tn8
-         fOiQ+hBxa8U1U2S7WBeduVAKXGd8jhLFZKtOo3yl6kbZUkKR4kKAfOnao4l3om9ErFwO
-         fo9INhroezscPTJMmcxbPiUJADeCQkpD6s00RbbWWT3/i+ZWJencmB0fyTQC9jaQAtwO
-         Uy2PQ99DTCgvY7QCPFHJY2eFr6kXZrUeiIMSMhohP9bugdbIr1zbAYE/ujbc1rQP3df8
-         JhAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739760579; x=1740365379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pyusY8LOZ2yGcku6OPIUO2n+8tkrExwGCuVjXg24M28=;
-        b=oOtfZm2FYqbGHCA5VQfY/x12xAuz7/78U9pvb6WzS3PmM3CK7z3wsuJ5NW3ndRiaEZ
-         VUWRN/d9AWqlzD3oZ0v9dlbMHkcBFFgvEu1et0DRPwREYa/YrTbRoAB5w1X8QMlusY36
-         wD7UBj+yqmPZd8+lAd+FsT7Krx0f/5U2C6EzOb3/HeO+rlRilw8lrrZinSFHnPz4c5R6
-         nYRvJ6H23NsQ8V9Icj7B0s0ovNuU8oVKnxo8D1EeyRgaJouStUwEsothYeHoPslPhpxr
-         Lb/AL1Oaam5Iih44Vj1zSrVGecO1fC23kom1bpCnKZE9FWV/qpaquKvLMQMpZ9iGPYtC
-         fg7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUm4shshQV2CIGStIELAlPoe/pjZrm+XkdCEoy6na3iwfHx741W4Gi6BtXcw12HDVoCuzey3qAYm0gasOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg0S42/PERO9mxBSIVen77YPB0Dx9rv7ZLl5mj1uw/Q7tnR8Z8
-	AJKMuYb0m1szJ0g4gpzVmvQBuCsVbTGtbdJ9EnAMCKgRjMnYGx/h7Yz14jk+MKc=
-X-Gm-Gg: ASbGnct8KbbnvZ7dgJu/L2RjCaTRgWrsOy3CQY9wKQxe1uzoqKx6D8itJAHRzIAhtPX
-	x1A9DDW5YxKMcgmzI8HlKn6lLFkxPATHJbvtN0NsPSa9QO6H8EbECG0R6EBh6xp5fcJgVeGPniT
-	J/MWKWHD384xLUdH14kSQQ61kEYqdNWMfzkg1fm2HkvIvJT8cKFOnCjk0160RQHiC5lcFi6DGU6
-	p3SWH2XfyjJcxcHdmQi0trXsvUWFHqCWlJAKUd7DANiTSF9/RjrQXD8U3+AgrcL2Ej+j9q3kyjf
-	UARswd0OoGHwpCU8qt2k2mE0d7varCSGq9t/+pSA+rCR/caCEVhseQs=
-X-Google-Smtp-Source: AGHT+IFciXt96/01ZBgsdmjwKLN9qYlNk8Q0caweyaAHGXTWtcDu/3P5N7kTsRChFbonsJzIjM6PrA==
-X-Received: by 2002:a17:902:d58b:b0:21f:7821:55b0 with SMTP id d9443c01a7336-22103f064b5mr135755745ad.14.1739760578735;
-        Sun, 16 Feb 2025 18:49:38 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.179])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d000sm61823135ad.111.2025.02.16.18.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 18:49:38 -0800 (PST)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: linux@armlinux.org.uk,
-	ezra@easyb.ch,
-	david@redhat.com,
-	hughd@google.com,
-	ryan.roberts@arm.com,
-	akpm@linux-foundation.org,
-	muchun.song@linux.dev
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Ezra Buehler <ezra.buehler@husqvarnagroup.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] arm: pgtable: fix NULL pointer dereference issue
-Date: Mon, 17 Feb 2025 10:49:24 +0800
-Message-Id: <20250217024924.57996-1-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+	s=arc-20240116; t=1739760791; c=relaxed/simple;
+	bh=8eNyrvGDwIQCMe+OdTkvWa8Eeam+uefyA8Cm8CPNLps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cQC+w//2xEMTH7q+pC1FaEdSUESgxyDCtL1gCKl7M/DSsjv/QBbe1KxowdLc27BP/5AO/SkDrKk+gBIlI1g6Y1q5pevBjxLhvGQnuoW/RQtEVCUjkOoYO1dImenS2IUczR64uIeIfxkU3S7w6mMvryfxB9Sf05lsISiRUMpOL5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG:00000000
+Received:from [10.103.132.232] (unknown[123.114.236.252])
+	by rmsmtp-lg-appmail-32-12046 (RichMail) with SMTP id 2f0e67b2a4876ce-90021;
+	Mon, 17 Feb 2025 10:52:57 +0800 (CST)
+X-RM-TRANSID:2f0e67b2a4876ce-90021
+Message-ID: <4699f64a-14d9-49df-9a3c-8546d4201527@139.com>
+Date: Mon, 17 Feb 2025 10:52:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] platform/x86:lenovo-wmi-hotkey-utilities.c: Supportfor
+ mic and audio mute LEDs
+To: Armin Wolf <W_Armin@gmx.de>, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ kuurtb@gmail.com, dongeg1@lenovo.com,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+References: <20250215023525.17233-1-xy-jackie@139.com>
+ <90ba69f5-7575-4d0c-bfd3-5aa404fa9b32@gmx.de>
+Content-Language: en-US
+From: Jackie Dong <xy-jackie@139.com>
+In-Reply-To: <90ba69f5-7575-4d0c-bfd3-5aa404fa9b32@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-When update_mmu_cache_range() is called by update_mmu_cache(), the vmf
-parameter is NULL, which will cause a NULL pointer dereference issue in
-adjust_pte():
+On 2/16/25 01:51, Armin Wolf wrote:
+> Am 15.02.25 um 03:33 schrieb Jackie Dong:
+> 
+>> Implement Lenovo utility data WMI calls needed to make LEDs
+>> work on Ideapads that support this GUID.
+>> This enables the mic and audio LEDs to be updated correctly.
+>>
+>> Tested on below samples.
+>> ThinkBook 13X Gen4 IMH
+>> ThinkBook 14 G6 ABP
+>> ThinkBook 16p Gen4-21J8
+>> ThinkBook 16 G8 IRL
+>> ThinkBook 16 G7+ ASP
+>>
+>> Signed-off-by: Jackie Dong <xy-jackie@139.com>
+>> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+>> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>>
+>> ---
+>> Changes in v8:
+>>   - Update MAINTAINERS for this driver
+>>   - Added Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>>   - Added Reviewed-by: Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>>
+>> Changes in v7:
+>>   - Replaced spaces by tab for items in enum hotkey_set_feature
+>>   - Directly return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev)
+>>   - Added Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+>>
+>> Changes in v6:
+>>   - Rename lenovo-super-hotkey-wmi.c to lenovo-wmi-hotkey-utilities
+>>   - Update LENOVO_WMI_HOTKEY_UTILITIES item description and add select
+>>     NEW_LEDS, LEDS_CLASS based on reviewer's suggestion.
+>>   - Align items in enum hotkey_set_feature
+>>   - Drop some brances and return error message directly
+>>   - Check return value of lenovo_super_hotkey_wmi_led_init() in
+>>     lenovo_super_hotkey_wmi_leds_setup
+>>
+>> Changes in v5:
+>>   - Take out union acpi_object *obj __free(kfree) = output.pointer from
+>>     if-else block
+>>   - Remove lsk_wmi_context_lud_keys related source code
+>>
+>> Changes in v4:
+>>   - Add related head files include cleanup.h, dev_printk.h, device.h,
+>>     module.h
+>>   - Replaced kfree() by __free()
+>>   - Remove double free for obj
+>>   - Remove wpriv->cdev[led_type].dev = dev
+>>   - Remove *wpriv = *(const struct lenovo_super_hotkey_wmi_private 
+>> *)context
+>>   - Remove wpriv->event == LSH_WMI_EVENT_LUD_KEYS
+>>   - Remove lenovo_super_hotkey_wmi_remove() for unnecessary
+>>
+>> Changes in v3:
+>>   - Changed the name of the Kconfig entry to LENOVO_SUPER_HOTKEY_WMI
+>>   - Renamed everything in this driver which contains the name "ideapad"
+>>     to instead contain the name of this driver.
+>>   - Moved struct wmi_device *led_wdev in lenovo_super_hotkey_wmi_private,
+>>     and use container_of() to the led_wdev pointer.
+>>   - Replaced sizeof(struct wmi_led_args) by sizeof(led_arg)
+>>   - Added condtions checking for obj && obj->type == ACPI_TYPE_INTEGER
+>>     and free the ACPI object after get the required value.
+>>   - Removed led_classdev_unregister() after led_reg_failed label, but
+>>     add lenovo_super_hotkey_wmi_remove(struct wmi_device *wdev) to free
+>>     resource.
+>>   - Removed IDEAPAD_WMI_EVENT_FN_KEYS/IDEAPAD_WMI_EVENT_LUD_KEYS related
+>>     source codes and only keep LUD_WMI_METHOD_GUID.
+>>
+>> Changes in v2:
+>>   - Update code layout and formatting as recommended in review
+>>   - Improved error handling in ideapad_wmi_led_init
+>>   - Separated a WMI driver named lenovo-super-hotkey-wmi.c from
+>>     ideapad-lap.c, it's only for Lenovo Super Hotkey WMI devices.
+>>
+>>   MAINTAINERS                                   |   6 +
+>>   drivers/platform/x86/Kconfig                  |  11 +
+>>   drivers/platform/x86/Makefile                 |   1 +
+>>   .../x86/lenovo-wmi-hotkey-utilities.c         | 222 ++++++++++++++++++
+>>   4 files changed, 240 insertions(+)
+>>   create mode 100644 drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 25c86f47353d..793ffb25ea74 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -13149,6 +13149,12 @@ S:    Maintained
+>>   W:    http://legousb.sourceforge.net/
+>>   F:    drivers/usb/misc/legousbtower.c
+>>
+>> +LENOVO WMI HOTKEY UTILITIES DRIVER
+>> +M:    Jackie Dong <xy-jackie@139.com>
+>> +L:    platform-driver-x86@vger.kernel.org
+>> +S:    Maintained
+>> +F:    drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> +
+>>   LETSKETCH HID TABLET DRIVER
+>>   M:    Hans de Goede <hdegoede@redhat.com>
+>>   L:    linux-input@vger.kernel.org
+>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+>> index 0258dd879d64..715bcfbe992f 100644
+>> --- a/drivers/platform/x86/Kconfig
+>> +++ b/drivers/platform/x86/Kconfig
+>> @@ -475,6 +475,17 @@ config IDEAPAD_LAPTOP
+>>         This is a driver for Lenovo IdeaPad netbooks contains drivers for
+>>         rfkill switch, hotkey, fan control and backlight control.
+>>
+>> +config LENOVO_WMI_HOTKEY_UTILITIES
+>> +    tristate "Lenovo Hotkey Utility WMI extras driver"
+>> +    depends on ACPI_WMI
+>> +    depends on IDEAPAD_LAPTOP
+>> +    select NEW_LEDS
+>> +    select LEDS_CLASS
+>> +    help
+>> +      This driver provides WMI support for Lenovo customized hotkeys 
+>> function,
+>> +      such as LED control for audio/mic mute event for Ideapad, YOGA, 
+>> XiaoXin,
+>> +      Gaming, ThinkBook and so on.
+>> +
+>>   config LENOVO_YMC
+>>       tristate "Lenovo Yoga Tablet Mode Control"
+>>       depends on ACPI_WMI
+>> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/ 
+>> Makefile
+>> index e1b142947067..131fcf974477 100644
+>> --- a/drivers/platform/x86/Makefile
+>> +++ b/drivers/platform/x86/Makefile
+>> @@ -61,6 +61,7 @@ obj-$(CONFIG_UV_SYSFS)       += uv_sysfs.o
+>>   # IBM Thinkpad and Lenovo
+>>   obj-$(CONFIG_IBM_RTL)        += ibm_rtl.o
+>>   obj-$(CONFIG_IDEAPAD_LAPTOP)    += ideapad-laptop.o
+>> +obj-$(CONFIG_LENOVO_WMI_HOTKEY_UTILITIES)    += lenovo-wmi-hotkey- 
+>> utilities.o
+>>   obj-$(CONFIG_LENOVO_YMC)    += lenovo-ymc.o
+>>   obj-$(CONFIG_SENSORS_HDAPS)    += hdaps.o
+>>   obj-$(CONFIG_THINKPAD_ACPI)    += thinkpad_acpi.o
+>> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/ 
+>> drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> new file mode 100644
+>> index 000000000000..9df7145620a0
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> @@ -0,0 +1,222 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Lenovo Super Hotkey Utility WMI extras driver for Ideapad laptop
+>> + *
+>> + *  Copyright (C) 2025    Lenovo
+>> + */
+>> +
+>> +#include <linux/cleanup.h>
+>> +#include <linux/dev_printk.h>
+>> +#include <linux/device.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/wmi.h>
+>> +
+>> +/* Lenovo Super Hotkey WMI GUIDs */
+>> +#define LUD_WMI_METHOD_GUID    "CE6C0974-0407-4F50-88BA-4FC3B6559AD8"
+>> +
+>> +/* Lenovo Utility Data WMI method_id */
+>> +#define WMI_LUD_GET_SUPPORT 1
+>> +#define WMI_LUD_SET_FEATURE 2
+>> +
+>> +#define WMI_LUD_GET_MICMUTE_LED_VER   20
+>> +#define WMI_LUD_GET_AUDIOMUTE_LED_VER 26
+>> +
+>> +#define WMI_LUD_SUPPORT_MICMUTE_LED_VER   25
+>> +#define WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER 27
+>> +
+>> +/* Input parameters to mute/unmute audio LED and Mic LED */
+>> +struct wmi_led_args {
+>> +    u8 id;
+>> +    u8 subid;
+>> +    u16 value;
+>> +};
+>> +
+>> +/* Values of input parameters to SetFeature of audio LED and Mic LED */
+>> +enum hotkey_set_feature {
+>> +    MIC_MUTE_LED_ON        = 1,
+>> +    MIC_MUTE_LED_OFF    = 2,
+>> +    AUDIO_MUTE_LED_ON    = 4,
+>> +    AUDIO_MUTE_LED_OFF    = 5,
+>> +};
+>> +
+>> +#define LSH_ACPI_LED_MAX 2
+>> +
+>> +struct lenovo_super_hotkey_wmi_private {
+>> +    struct led_classdev cdev[LSH_ACPI_LED_MAX];
+>> +    struct wmi_device *led_wdev;
+>> +};
+>> +
+>> +enum mute_led_type {
+>> +    MIC_MUTE,
+>> +    AUDIO_MUTE,
+>> +};
+>> +
+>> +static int lsh_wmi_mute_led_set(enum mute_led_type led_type, struct 
+>> led_classdev *led_cdev,
+>> +                enum led_brightness brightness)
+>> +
+>> +{
+>> +    struct lenovo_super_hotkey_wmi_private *wpriv = 
+>> container_of(led_cdev,
+>> +            struct lenovo_super_hotkey_wmi_private, cdev[led_type]);
+>> +    struct wmi_led_args led_arg = {0, 0, 0};
+>> +    struct acpi_buffer input;
+>> +    acpi_status status;
+>> +
+>> +    switch (led_type) {
+>> +    case MIC_MUTE:
+>> +        led_arg.id = brightness == LED_ON ? MIC_MUTE_LED_ON : 
+>> MIC_MUTE_LED_OFF;
+>> +        break;
+>> +    case AUDIO_MUTE:
+>> +        led_arg.id = brightness == LED_ON ? AUDIO_MUTE_LED_ON : 
+>> AUDIO_MUTE_LED_OFF;
+>> +        break;
+>> +    default:
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    input.length = sizeof(led_arg);
+>> +    input.pointer = &led_arg;
+>> +    status = wmidev_evaluate_method(wpriv->led_wdev, 0, 
+>> WMI_LUD_SET_FEATURE, &input, NULL);
+>> +    if (ACPI_FAILURE(status))
+>> +        return -EIO;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int lsh_wmi_audiomute_led_set(struct led_classdev *led_cdev,
+>> +                     enum led_brightness brightness)
+>> +
+>> +{
+>> +    return lsh_wmi_mute_led_set(AUDIO_MUTE, led_cdev, brightness);
+>> +}
+>> +
+>> +static int lsh_wmi_micmute_led_set(struct led_classdev *led_cdev,
+>> +                   enum led_brightness brightness)
+>> +{
+>> +    return lsh_wmi_mute_led_set(MIC_MUTE, led_cdev, brightness);
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type 
+>> led_type, struct device *dev)
+>> +{
+>> +    struct lenovo_super_hotkey_wmi_private *wpriv = 
+>> dev_get_drvdata(dev);
+>> +    struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+>> +    struct acpi_buffer input;
+>> +    int led_version, err = 0;
+>> +    unsigned int wmiarg;
+>> +    acpi_status status;
+>> +
+>> +    switch (led_type) {
+>> +    case MIC_MUTE:
+>> +        wmiarg = WMI_LUD_GET_MICMUTE_LED_VER;
+>> +        break;
+>> +    case AUDIO_MUTE:
+>> +        wmiarg = WMI_LUD_GET_AUDIOMUTE_LED_VER;
+>> +        break;
+>> +    default:
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    input.length = sizeof(wmiarg);
+>> +    input.pointer = &wmiarg;
+>> +    status = wmidev_evaluate_method(wpriv->led_wdev, 0, 
+>> WMI_LUD_GET_SUPPORT, &input, &output);
+>> +    if (ACPI_FAILURE(status))
+>> +        return -EIO;
+>> +
+>> +    union acpi_object *obj __free(kfree) = output.pointer;
+>> +    if (obj && obj->type == ACPI_TYPE_INTEGER)
+>> +        led_version = obj->integer.value;
+>> +    else
+>> +        return -EIO;
+>> +
+>> +    wpriv->cdev[led_type].max_brightness = LED_ON;
+>> +    wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
+>> +
+>> +    switch (led_type) {
+>> +    case MIC_MUTE:
+>> +        if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
+>> +            return -EIO;
+>> +
+>> +        wpriv->cdev[led_type].name = "platform::micmute";
+>> +        wpriv->cdev[led_type].brightness_set_blocking = 
+>> &lsh_wmi_micmute_led_set;
+>> +        wpriv->cdev[led_type].default_trigger = "audio-micmute";
+>> +
+>> +        err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
+>> +        if (err < 0)
+>> +            goto led_reg_failed;
+>> +
+>> +        break;
+>> +    case AUDIO_MUTE:
+>> +        if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
+>> +            return -EIO;
+>> +
+>> +        wpriv->cdev[led_type].name = "platform::mute";
+>> +        wpriv->cdev[led_type].brightness_set_blocking = 
+>> &lsh_wmi_audiomute_led_set;
+>> +        wpriv->cdev[led_type].default_trigger = "audio-mute";
+>> +
+>> +        err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
+>> +        if (err < 0)
+>> +            goto led_reg_failed;
+> 
+> Hi,
+> 
+> please deduplicate the LED registration code. You can do that by calling 
+> devm_led_classdev_register()
+> after the switch statement.
+> 
+>> +
+>> +        break;
+>> +    default:
+>> +        dev_err(dev, "Unknown LED type %d\n", led_type);
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    return 0;
+>> +
+>> +led_reg_failed:
+>> +    dev_err(dev, "Could not register mute LED %d : %d\n", led_type, 
+>> err);
+>> +    return err;
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_leds_setup(struct device *dev)
+>> +{
+>> +    int err;
+>> +
+>> +    err = lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    err = lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int lenovo_super_hotkey_wmi_probe(struct wmi_device *wdev, 
+>> const void *context)
+>> +{
+>> +    struct lenovo_super_hotkey_wmi_private *wpriv;
+>> +
+>> +    wpriv = devm_kzalloc(&wdev->dev, sizeof(*wpriv), GFP_KERNEL);
+>> +    if (!wpriv)
+>> +        return -ENOMEM;
+>> +
+>> +    dev_set_drvdata(&wdev->dev, wpriv);
+>> +    wpriv->led_wdev = wdev;
+>> +    return lenovo_super_hotkey_wmi_leds_setup(&wdev->dev);
+>> +}
+>> +
+>> +static const struct wmi_device_id lenovo_super_hotkey_wmi_id_table[] = {
+>> +    { LUD_WMI_METHOD_GUID, NULL }, /* Utility data */
+>> +    { }
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(wmi, lenovo_super_hotkey_wmi_id_table);
+>> +
+>> +static struct wmi_driver lenovo_super_hotkey_wmi_driver = {
+>> +     .driver = {
+>> +         .name = "lenovo_super_hotkey_wmi",
+> 
+> The name of the driver and the associated data structures still contains 
+> "super_hotkey"
+> when the module is being called "lenovo-wmi-hotkey-utilities".
+> 
+> Please rename the driver and the data structures to better match the 
+> module name.
+> 
+> Thanks,
+> Armin Wolf
+> 
+Hi Armin,
+Sorry to miss your mails due to my mail settings.
+I'll update it in next revison.
+Thanks for your comments.
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000030 when read
-Hardware name: Atmel AT91SAM9
-PC is at update_mmu_cache_range+0x1e0/0x278
-LR is at pte_offset_map_rw_nolock+0x18/0x2c
-Call trace:
- update_mmu_cache_range from remove_migration_pte+0x29c/0x2ec
- remove_migration_pte from rmap_walk_file+0xcc/0x130
- rmap_walk_file from remove_migration_ptes+0x90/0xa4
- remove_migration_ptes from migrate_pages_batch+0x6d4/0x858
- migrate_pages_batch from migrate_pages+0x188/0x488
- migrate_pages from compact_zone+0x56c/0x954
- compact_zone from compact_node+0x90/0xf0
- compact_node from kcompactd+0x1d4/0x204
- kcompactd from kthread+0x120/0x12c
- kthread from ret_from_fork+0x14/0x38
-Exception stack(0xc0d8bfb0 to 0xc0d8bff8)
+Jackie Dong
+>> +         .probe_type = PROBE_PREFER_ASYNCHRONOUS
+>> +     },
+>> +     .id_table = lenovo_super_hotkey_wmi_id_table,
+>> +     .probe = lenovo_super_hotkey_wmi_probe,
+>> +     .no_singleton = true,
+>> +};
+>> +
+>> +module_wmi_driver(lenovo_super_hotkey_wmi_driver);
+>> +
+>> +MODULE_INFO(depends, "wmi,ideapad-laptop");
+>> +MODULE_AUTHOR("Jackie Dong <dongeg1@lenovo.com>");
+>> +MODULE_DESCRIPTION("Lenovo Super Hotkey Utility WMI extras driver");
+>> +MODULE_LICENSE("GPL");
 
-To fix it, do not rely on whether 'ptl' is equal to decide whether to hold
-the pte lock, but decide it by whether CONFIG_SPLIT_PTE_PTLOCKS is
-enabled. In addition, if two vmas map to the same PTE page, there is no
-need to hold the pte lock again, otherwise a deadlock will occur. Just add
-the need_lock parameter to let adjust_pte() know this information.
-
-Reported-by: Ezra Buehler <ezra.buehler@husqvarnagroup.com>
-Closes: https://lore.kernel.org/lkml/CAM1KZSmZ2T_riHvay+7cKEFxoPgeVpHkVFTzVVEQ1BO0cLkHEQ@mail.gmail.com/
-Fixes: fc9c45b71f43 ("arm: adjust_pte() use pte_offset_map_rw_nolock()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Acked-by: David Hildenbrand <david@redhat.com>
----
-Changes in v3:
- - move pmd_start_addr and pmd_end_addr to the top and initialize directly
-   (David Hildenbrand)
- - collect an Acked-by
-
-Changes in v2:
- - change Ezra's email address (Ezra Buehler)
- - some cleanups (David Hildenbrand)
-
- arch/arm/mm/fault-armv.c | 37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mm/fault-armv.c b/arch/arm/mm/fault-armv.c
-index 2bec87c3327d2..39fd5df733178 100644
---- a/arch/arm/mm/fault-armv.c
-+++ b/arch/arm/mm/fault-armv.c
-@@ -62,7 +62,7 @@ static int do_adjust_pte(struct vm_area_struct *vma, unsigned long address,
- }
- 
- static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
--		      unsigned long pfn, struct vm_fault *vmf)
-+		      unsigned long pfn, bool need_lock)
- {
- 	spinlock_t *ptl;
- 	pgd_t *pgd;
-@@ -99,12 +99,11 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
- 	if (!pte)
- 		return 0;
- 
--	/*
--	 * If we are using split PTE locks, then we need to take the page
--	 * lock here.  Otherwise we are using shared mm->page_table_lock
--	 * which is already locked, thus cannot take it.
--	 */
--	if (ptl != vmf->ptl) {
-+	if (need_lock) {
-+		/*
-+		 * Use nested version here to indicate that we are already
-+		 * holding one similar spinlock.
-+		 */
- 		spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
- 		if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
- 			pte_unmap_unlock(pte, ptl);
-@@ -114,7 +113,7 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
- 
- 	ret = do_adjust_pte(vma, address, pfn, pte);
- 
--	if (ptl != vmf->ptl)
-+	if (need_lock)
- 		spin_unlock(ptl);
- 	pte_unmap(pte);
- 
-@@ -123,9 +122,10 @@ static int adjust_pte(struct vm_area_struct *vma, unsigned long address,
- 
- static void
- make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
--	      unsigned long addr, pte_t *ptep, unsigned long pfn,
--	      struct vm_fault *vmf)
-+	      unsigned long addr, pte_t *ptep, unsigned long pfn)
- {
-+	const unsigned long pmd_start_addr = ALIGN_DOWN(addr, PMD_SIZE);
-+	const unsigned long pmd_end_addr = pmd_start_addr + PMD_SIZE;
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct vm_area_struct *mpnt;
- 	unsigned long offset;
-@@ -141,6 +141,14 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
- 	 */
- 	flush_dcache_mmap_lock(mapping);
- 	vma_interval_tree_foreach(mpnt, &mapping->i_mmap, pgoff, pgoff) {
-+		/*
-+		 * If we are using split PTE locks, then we need to take the pte
-+		 * lock. Otherwise we are using shared mm->page_table_lock which
-+		 * is already locked, thus cannot take it.
-+		 */
-+		bool need_lock = IS_ENABLED(CONFIG_SPLIT_PTE_PTLOCKS);
-+		unsigned long mpnt_addr;
-+
- 		/*
- 		 * If this VMA is not in our MM, we can ignore it.
- 		 * Note that we intentionally mask out the VMA
-@@ -151,7 +159,12 @@ make_coherent(struct address_space *mapping, struct vm_area_struct *vma,
- 		if (!(mpnt->vm_flags & VM_MAYSHARE))
- 			continue;
- 		offset = (pgoff - mpnt->vm_pgoff) << PAGE_SHIFT;
--		aliases += adjust_pte(mpnt, mpnt->vm_start + offset, pfn, vmf);
-+		mpnt_addr = mpnt->vm_start + offset;
-+
-+		/* Avoid deadlocks by not grabbing the same PTE lock again. */
-+		if (mpnt_addr >= pmd_start_addr && mpnt_addr < pmd_end_addr)
-+			need_lock = false;
-+		aliases += adjust_pte(mpnt, mpnt_addr, pfn, need_lock);
- 	}
- 	flush_dcache_mmap_unlock(mapping);
- 	if (aliases)
-@@ -194,7 +207,7 @@ void update_mmu_cache_range(struct vm_fault *vmf, struct vm_area_struct *vma,
- 		__flush_dcache_folio(mapping, folio);
- 	if (mapping) {
- 		if (cache_is_vivt())
--			make_coherent(mapping, vma, addr, ptep, pfn, vmf);
-+			make_coherent(mapping, vma, addr, ptep, pfn);
- 		else if (vma->vm_flags & VM_EXEC)
- 			__flush_icache_all();
- 	}
--- 
-2.20.1
 
 
