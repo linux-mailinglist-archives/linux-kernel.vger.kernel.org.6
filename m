@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-518039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EE6A388FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:17:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C96A388F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9E83A5D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EF6166980
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBB5224B08;
-	Mon, 17 Feb 2025 16:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D212253F7;
+	Mon, 17 Feb 2025 16:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SmcMMC50"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9n556lQ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9321B199;
-	Mon, 17 Feb 2025 16:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643382253F6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739809007; cv=none; b=LQNrTXAAOPoTmtBi4LZCYjMHSlRrY5CdOCq+842V17wwF0zYXDt0lmLowewqH1Qw/JLADY9hx7u2Bn7tZRNcYxlAWodw2trCRRI+l7GQazAolslgTH5R0fljXgg8Vq5PChi+Tyw79FEPhW5zYDR4v0q9gnMa6X59ZFxkr1RC3Y8=
+	t=1739809011; cv=none; b=uVYy0++uLknwowPsslwKV6TDcsLCJKv8OPzA/liRPlemSXsKlYctayJjC2u7TVKgTD2nr9rp4pyrNauZ15pDgKr8gMEFgTu+oyB7dTxP1/flWGHRyZjNL1Jn/ay1+Ob84M64AlfZBle/Zn6T0tOkUlQspckl2oqjN4UOOMz2Pg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739809007; c=relaxed/simple;
-	bh=AmPIqb6W/RQ7sHHTzck54ZnImJBud6fFxyIB8YUgVN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNPGicxdW35afs1kSOFny8PH4uJYs8SYF8jiE3ltZKTCv82K352h9O8tE3OdYvRblgjlJ/9/tTdI5n6jMs/oo8pCUdC2tbGXe98A9K6PgZypjlCj5cpuzdNxN5YBla9sv1uQ2gtlbO6b4e7cKan/hmmio6A5yNUaEHw3SZxk0ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SmcMMC50; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HCLeBH015205;
-	Mon, 17 Feb 2025 16:16:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=cgteneJ0Vus2miKd8v5KmTdHzgw8Ru
-	6KKzLJdtIKJ90=; b=SmcMMC50GW0v9OwZB0zHSyNxYtV7XERIK6Jt2KhuDdPOQD
-	wRZvedse+dPfk10XGrprDqkl8MVrb6NhjaUKlBvPlmQyiwzBwWnzmV3COYPh0l66
-	iDaDG69s58FPUFEdNpNfZaxTt3E+8qEdF/aw7BBEKdL9N0Ry9OMJqmnDf6jy0FeK
-	dvCk5IpnVbB81Qe9Bs9Likl4TsXoVN+EthPvRd8nugRZRPt4RfkUk1ygUTp/rsJ5
-	elWkIfPm3PqjYfoqU/1nXa7jeVvzX2AcI1Exfkc96hwOrGncNVXW4hvQ8XpCq98u
-	xSYNXW0JbrIFJpidHUmBWjo1RarIUF5rpAaNd79g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu69c07q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:16:45 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HFtE3i032581;
-	Mon, 17 Feb 2025 16:16:44 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uu69c07j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:16:44 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HEOjKx013259;
-	Mon, 17 Feb 2025 16:16:43 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u7fken1a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:16:43 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HGGdKW51511758
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 16:16:39 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5A60520043;
-	Mon, 17 Feb 2025 16:16:39 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D188820040;
-	Mon, 17 Feb 2025 16:16:38 +0000 (GMT)
-Received: from osiris (unknown [9.171.53.224])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 17 Feb 2025 16:16:38 +0000 (GMT)
-Date: Mon, 17 Feb 2025 17:16:37 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Haoxiang Li <haoxiang_li2024@163.com>, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        schwidefsky@de.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] s390/sclp: Add check for get_zeroed_page()
-Message-ID: <20250217161637.21424Ce0-hca@linux.ibm.com>
-References: <20250217153146.2372134-1-haoxiang_li2024@163.com>
- <20250217160117.21424B3d-hca@linux.ibm.com>
+	s=arc-20240116; t=1739809011; c=relaxed/simple;
+	bh=eNm1u1yD/tJFz/hLpTn/D+kXMNvH4H8jyHqOFpKjcAc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jNRpENg+EgQYQr85M7RvIH8SHpsaOeX6qlousMiuubbomTX0QutRdwzrLfzzsj0iY22jUMdwLD/WyjSBXAB6YVSGh5mBd+maDQEoAWR2TkV6+CFyma8f7ZiA4d+Ln5TKcwL6vndQmk+Agvlaws0Dn4B145ma/d3YSWZQ3Y2xVzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9n556lQ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so14266885a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739809010; x=1740413810; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5q6MivojjuRSczcqRyW+HMzmo6ZNPyUvZ6S6j+sB8Xw=;
+        b=h9n556lQlUNjCudWJsDPKxD/LFp2onGLCZYcfnt/4koV9JPhQtpgt3swzZeMdOCdiZ
+         A/SlyXKhrnuji+YQJVECsav4NcOazmbtzeiQcueOG2qQwlih32wF+Z8HxSZmtzhyPGgE
+         7ieLA+ZampSZw/3dYgN8JavOuJ5GQp4dF+A3Jr8MMvpSJ/pJomXUhSnkhFAD9sOpEsvJ
+         YrFFMrAYo/pELBDs3a2kLHW9n1niOz+sp6DYPKVaUgfYGUmbNnMGaCis+t1ThOkizJgz
+         jEtHi37idHhvac64gIaQMdrPdQ5a9BGjIiqrU38eJ+rI+diluPsDMivrZLeG+esg8dLf
+         jR1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739809010; x=1740413810;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5q6MivojjuRSczcqRyW+HMzmo6ZNPyUvZ6S6j+sB8Xw=;
+        b=Wp2CYwugDy1snuQytrGCBOKi1DnFBJ1q536GniU3JnPyqP5pHV/X1ijekkJ7sc0ZA2
+         G9Lxvjk5kgKbmjGcd0BQvVPbWfAYt2PYgBKFzcuI66QGjroA5uwS1HDmept2G/lSJj5J
+         8IVKeArf1leepC8+E5r1aZrVnJT6zs2ZIASheqAx4I9/0qh42XYJBBCEzUvCxqvMfAOR
+         FdVER7GOJIDF+JkO22KiFHNQj1O1W7/kJFJgmCcQ2vx4Hzbf00ZTxio/7i0wvmVrs1Bf
+         67gz93djjaw17UqC4OU70qEBn6nj0sk/mRuhC5/gS5C7eHxwLvV2yAy8DFjUAkZGxGn6
+         VDag==
+X-Forwarded-Encrypted: i=1; AJvYcCWKS5SK/LHz8kYimE3CLFM6tSn2GD3fW84kpDeOWBsPqo9PB9HQbJJ/+ky4275niTHKU2ZwQwe6hILF7Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT8bf4+o8JEpUz54sAFTm8p5Kdue5V9A9VrtC2rrPMWJ2+DPBY
+	sEs9sfBK2VZupO27xQAZuc9Mh5u2dOsAbdwZrcm6VpITRFOC0Kd3fbpuRZ7ZI1vyY0eDQ/BcYSx
+	Wnw==
+X-Google-Smtp-Source: AGHT+IGBglkMg+gN/OfYbI0/G0RB1yR6u09nwC0KxK8TRXKTMyOYGrP0GW8JQQ7P0pyS5IO7JZ2ZKcUkw/o=
+X-Received: from pjd6.prod.google.com ([2002:a17:90b:54c6:b0:2fc:8b7:f422])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b84:b0:2ee:9b2c:3253
+ with SMTP id 98e67ed59e1d1-2fc4115060dmr14701220a91.30.1739809009706; Mon, 17
+ Feb 2025 08:16:49 -0800 (PST)
+Date: Mon, 17 Feb 2025 08:16:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217160117.21424B3d-hca@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: usbjZRp83svHyQjJRBvcKteDeGxxMZg6
-X-Proofpoint-ORIG-GUID: V3XVaIvsNwwoLAuwNN3QD1XP3BNLikx6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=645
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170132
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250217161645.3137927-1-surenb@google.com>
+Subject: [PATCH 1/1] fixup! docs: fix title underlines in refcount-vs-atomic.rst
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: sfr@canb.auug.org.au, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 17, 2025 at 05:01:17PM +0100, Heiko Carstens wrote:
-> On Mon, Feb 17, 2025 at 11:31:46PM +0800, Haoxiang Li wrote:
-> > diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
-> > index e5d947c763ea..7447076b1ec1 100644
-> > --- a/drivers/s390/char/sclp_con.c
-> > +++ b/drivers/s390/char/sclp_con.c
-> > @@ -282,6 +282,8 @@ sclp_console_init(void)
-> >  	/* Allocate pages for output buffering */
-> >  	for (i = 0; i < sclp_console_pages; i++) {
-> >  		page = (void *) get_zeroed_page(GFP_KERNEL | GFP_DMA);
-> > +		if (!page)
-> > +			return -ENOMEM;
-> >  		list_add_tail(page, &sclp_con_pages);
-> 
-> We can add this check, however if this early allocation would fail a
-> null pointer dereference would be the last problem we would have to
-> think about.
-> 
-> Anyway:
-> Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Fix title underlines for newly updated refcount-vs-atomic.rst
 
-Wait, I take that back. Now I think I remember why I didn't add error
-handling back then: the above exit would also indicate a potential
-memory leak, since this is a loop allocating several pages; so all
-already allocated pages must be freed, which would ask for even more
-completely pointless error handling.
+Fixes: 03b412c8b184 ("refcount: provide ops for cases when object's memory can be reused")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ Documentation/core-api/refcount-vs-atomic.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This is very early code where any allocation failure would lead to a
-crash in any case. So either do the full exercise or we leave the code
-as it is.
+diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
+index 9551a7bbfd38..94e628c1eb49 100644
+--- a/Documentation/core-api/refcount-vs-atomic.rst
++++ b/Documentation/core-api/refcount-vs-atomic.rst
+@@ -87,7 +87,7 @@ Memory ordering guarantee changes:
+ 
+ 
+ case 2) - non-"Read/Modify/Write" (RMW) ops with release ordering
+--------------------------------------------
++-----------------------------------------------------------------
+ 
+ Function changes:
+ 
+@@ -139,7 +139,7 @@ Memory ordering guarantees changes:
+ 
+ 
+ case 6) - increment-based RMW ops with acquire ordering that return a value
+------------------------------------------------------
++---------------------------------------------------------------------------
+ 
+ Function changes:
+ 
+
+base-commit: b2a64caeafad6e37df1c68f878bfdd06ff14f4ec
+-- 
+2.48.1.601.g30ceb7b040-goog
+
 
