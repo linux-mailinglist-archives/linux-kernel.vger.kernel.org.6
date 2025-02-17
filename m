@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-517906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AAFA3873A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:07:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7570BA3873D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C751657EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76D116BAF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC8221CC52;
-	Mon, 17 Feb 2025 15:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC052236F6;
+	Mon, 17 Feb 2025 15:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bTqp06vg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VBeGTy0X"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fMYzlZeB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF76215F5F;
-	Mon, 17 Feb 2025 15:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3A2153BE4;
+	Mon, 17 Feb 2025 15:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804863; cv=none; b=aGJDim67ONiInAXwWGQGDLioWJcYuzHdioGWB9ilfbUaBA7ScMCNYJa2QSvaOKoKJMMMI5BWqx00EG0MeizWPTylXJFsosBZPdTL/F6hm5OUar2JlNGy5MqOn35RWJxtXxJvGfuqPTUt01V6/u5u1nbIgBL/jI70LsRzCT8yoLw=
+	t=1739804986; cv=none; b=aN5S9M+0uuSVcBbERR8WyJC7x2UwUxtgaujV8Fdwd/j81SrJmCsUuGHA8IzQevlX0bztALYqs9pka4/t9pl+JjmNkSJ5P1Ecolaf6F4LP4XaCrSh/pX5qQvZS45RblvcFVThQlmHmP1sb6H6BqU+aEXPcBWcbkWwvOOZtnq5l9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804863; c=relaxed/simple;
-	bh=8ZiN31LP5BVgq89nMTLaROYbbv/RwwT44ovHsNPvNpU=;
+	s=arc-20240116; t=1739804986; c=relaxed/simple;
+	bh=J8Q+ouyUGMJmAIQWvjqhkuaXP2nvzroCE42M6Pt219k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUN1W2ToWAdgNgCTV5Eln3kAdoW45l4gQIy3ioM8zAwdlWPMjtj2+F6ndE8892huq/br+h3bGkJSyqyG1Qw2217kWXfp6rGjgq0sIKY++zIUozElUpnXDU1omav81H6UjZe/m6T4W6KXKOn2l/D2wE+tKvzNOFRRMlAZvkqMAVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bTqp06vg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VBeGTy0X; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Feb 2025 16:07:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739804860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Knv1vu5PAfwQiS1RIXnJO+yB8gCyXMieOHUw7GMHhYI=;
-	b=bTqp06vgOJhrCoOy/QMoKKBr0pfrH3J6lmAYhCoHggTSBY4k7jRQPoE4rhiuohKl3syYDk
-	Y8ZrDo0fkNO03XBZmguRU0xeq2N2O3aP1CguVcPRz88ixLvV45wCoAUcAysqVxQSQYe9fQ
-	uxqvOOlreVYP99lw60NSVksIooHY6A2hHAGj2miXDoLmsiZVERyKsyQPVavcn24lGvFTul
-	fmIVhd1FpXlGNYsKSRQGrpef4e8nk8ru5ezKvymz3/AxgP5nGr/m4mQ7+GPM1qUc87C4c2
-	OVCpL26f0gg/fktZE/kifX4j9NTWN4xM8GdFDDSTaKJaFdKBphQoExRxoicZ7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739804860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Knv1vu5PAfwQiS1RIXnJO+yB8gCyXMieOHUw7GMHhYI=;
-	b=VBeGTy0XeqG45/4i3+DGubyOCuOPvbHpxGcVSn9zmbCKNCwgsHnz/pulSpR2ySjmZojqs9
-	X3urzTzC73tygEDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce
- localtry_lock_t
-Message-ID: <20250217150739.JyUlaKxI@linutronix.de>
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz>
- <20250217141956._01BcsrG@linutronix.de>
- <bbb29d35-0a7b-4b19-b0c4-5b2e899b7b5e@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDYJ0g+zlPiDY8SpBI0AmrFVHgmgqAsd5nPgKdNp9nLZmGKMrGu5coTHdX84UFoJNrTyDX3sGSTptMnNzwsGzqripxRvMCVJm44TCD0w3dzS1x98QWxV7mW67DWF0q9bvMNqCLaPiiKkhsACXzdKb5+o2ZpnN2v0xYnqRfdt/w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fMYzlZeB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H5POVp000551;
+	Mon, 17 Feb 2025 15:09:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=rsGbBDyvPWvIey+H276PvvAAydIWC3
+	3Gz/fReaevlwQ=; b=fMYzlZeB6XhR/l/RGfD95AAgjY82DvsfdN5W3L8JCQPI1G
+	F3X0kn/wPRHDArHIsynunCkhsdo8FZQHXAaqu4WfbVmZePmSIQAHEIZZLExMTAmJ
+	heVvPGLCyVTIyVO4KHSs/ZU828s9MikeCZEpS31B67w4QkDL27eRpNs0gxpUkkAF
+	75PQQo+CHGi4w21BQjwMDeSH8+RetcbKCxLK8qYShLvz9rsq0xmKRxtl22wfFIxk
+	5sZgBYtJdtlhuf/XwHFCsxzK1eIsFjq6JlxEXN5G2u+nBJzs7qJp/a65cvb/5Bnl
+	1OQxkibEiNRlb3vaQPHh/aYqk9WxPWkF35a4kFgw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uxx7ttm1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 15:09:40 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HF9dwQ025781;
+	Mon, 17 Feb 2025 15:09:39 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uxx7ttku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 15:09:39 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HDUAnl032326;
+	Mon, 17 Feb 2025 15:09:38 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44u6rkphs0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 15:09:38 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HF9YtM17760608
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Feb 2025 15:09:34 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6979558063;
+	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 563A458056;
+	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
+Received: from localhost (unknown [9.61.91.157])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Feb 2025 15:09:34 +0000 (GMT)
+Date: Mon, 17 Feb 2025 09:09:34 -0600
+From: Nick Child <nnac123@linux.ibm.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, haren@linux.ibm.com, ricklind@us.ibm.com,
+        nick.child@ibm.com, jacob.e.keller@intel.com
+Subject: Re: [PATCH 1/3] hexdump: Implement macro for converting large buffers
+Message-ID: <Z7NRLmcWJFNkyHGN@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
+References: <20250214162436.241359-1-nnac123@linux.ibm.com>
+ <20250214162436.241359-2-nnac123@linux.ibm.com>
+ <20250215163612.GR1615191@kernel.org>
+ <20250215174039.20fbbc42@pumpkin>
+ <20250215174635.3640fb28@pumpkin>
+ <20250216093204.GZ1615191@kernel.org>
+ <20250216112430.29c725c5@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bbb29d35-0a7b-4b19-b0c4-5b2e899b7b5e@suse.cz>
+In-Reply-To: <20250216112430.29c725c5@pumpkin>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mAASe0gVh-_z6flf8QwL2q88tVmvwtbu
+X-Proofpoint-ORIG-GUID: YBrXGj0-RBG-NJDkjB0Pja_eQ5z7wPAv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_06,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ adultscore=0 bulkscore=0 clxscore=1015 suspectscore=0 mlxlogscore=400
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170126
 
-On 2025-02-17 15:35:11 [+0100], Vlastimil Babka wrote:
-> > spin_trylock() is not safe due to explicit locking in the underneath
-> > rt_spin_trylock() implementation. Removing this explicit locking and
-> > attempting only "trylock" is undesired due to PI implications.
+Thank you David and Simon for testing and review!
+
+On Sun, Feb 16, 2025 at 11:24:30AM +0000, David Laight wrote:
 > 
-> Just to be sure, you're suggesting how to reword that sentence in the
-> changelog to make it more precise right?
-
-Yes, just a reword. Everything else is fine by me. It just feels odd ack
-my own patch.
-
-> Alexei will you incorporate that in your version?
+> I just changed the prototypes (include/linux/printk.h) to make both
+> rowsize and groupsize 'unsigned int'.
+> The same change in lib/hexdump.c + changing the local 'i, linelen, remaining'
+> to unsigned int and it all compiled.
 > 
-> >> Note there is no need to use local_inc for acquired variable,
-> >> since it's a percpu variable with strict nesting scopes.
-> >> 
-> >> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> >> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > 
-> > Other than that, thank you two ;)
+> FWIW that hexdump code is pretty horrid (especially if groupsize != 1).
 > 
-> Thank you too :)
-> 
-> Do you agree with my fixups and addition here?
-> https://lore.kernel.org/all/efc30cf9-8351-4889-8245-cc4a6893ebf4@suse.cz/
 
-Yes, looks good.
+Given this discussion and my own head-scratching, I think I will take a
+closer look at hex_dump_to_buffer.
 
-Sebastian
+I was trying to avoid editing this function due the number of callers it
+has across the kernel. But I think we can get away with keeping the
+API (but change args to uint's) and editing the body of the function
+to always iterate byte-by-byte, addding space chars where necessary. At the
+cost of a few more cycles, this will allow for more dynamic values
+for rowsize and groupsize and shorten the code up a bit. This would also
+address the "Side question" in my cover letter. Will send a v3
+regardless if I can figure that out or not.
+
+The return value of hex_dump_to_buffer on error still irks me a bit but
+I don't think that can easily be changed.
+
+Thanks again!
 
