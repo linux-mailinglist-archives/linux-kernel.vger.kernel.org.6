@@ -1,88 +1,49 @@
-Return-Path: <linux-kernel+bounces-518026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244FBA388C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:08:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E7DA388C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40528179CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BAE3A9D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60186226179;
-	Mon, 17 Feb 2025 16:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nzyn4iKb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1798D225413;
-	Mon, 17 Feb 2025 16:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9108225767;
+	Mon, 17 Feb 2025 16:01:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8CC21ADD3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 16:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739808087; cv=none; b=ZuEhz3GdbPkrHmfalnwbiejOtp7+NrbIPR2s6axWb3Xg8Hf42YqxlEJ8CSDUvRMDPeOWfUHBrP9sdspCzQJTVAzv7JCXTA5abo3fPpc22v0n/nITtI4/GoaO2ZnbUTGTaLRJ0NBViYW3MpAiD0BHZsuHsJQTw7elprA+Rirl2GQ=
+	t=1739808086; cv=none; b=RwcfYhGdTdrt8ikDiNf9dUVJnvC0cY+aQFVMqVJa0iW4w38nu6um1U/dZA1a5B20HwUHGR7p/4IjGIWcfZuoPUSVsorvW/RhLSaPfkOjlAISEYjx24bW+fz/Qyw5xfBidaOjLRBY5CTiVrWVK6hva4z1pNcesLp72r0lj3q0pfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739808087; c=relaxed/simple;
-	bh=IuVTqzQkxtSgLrHGsZfIOOA0G7iyiJzOcS14TT2AgaU=;
+	s=arc-20240116; t=1739808086; c=relaxed/simple;
+	bh=r0QIMlwoya25c+HjOjrYyIAvdoQ1xo2/pvGD2Bvp+Zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ld2odzp8xQohDoI+AEfMjMSMBUdT7kVt2+MGwHGWm1XrV53LnLwqhLaww48h5D/W3+kKYotyym/n03DE+Yr4cBEjshhtFcXjFxIYzknqDDUWB71ljJhcxzWZhx0RwvZBlrR2Vpd015HwFvDoL7edgxIC0ritI7Ei+qN1BxHbZSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nzyn4iKb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HDgVX8012418;
-	Mon, 17 Feb 2025 16:01:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=SoehcMeZOdOgd49RfeiQ5M429ABE1P
-	ZNhcT8Mtuo+Y4=; b=Nzyn4iKbBDOz0i1unhkV8jYiWDeHxFsP4KHdKeQMG6cFlt
-	mpF0HuGrvZLNiDC94BVGMKWKD+7DHD1GJkGCHndTsWtyf3ad19GPCS5uXmHLZG55
-	3GXQozCMEXC07Zrb2sXHmWL3YrV26wA9bT7tW5WKIdu/vo7TnJ5TWv+YHvE5BRr0
-	JztZv9iNNoN1HkROvuWrfDW34eZJkGC7/SJ9nGpiTjp10qSvpeWL6HWw3YMFMHZ7
-	9ClCxh8RbuuY8X9pUwNtGb/BD3me97KMLQqK7LjIaauHNBepLeOXslXQr1glstz1
-	o7YFvVbqcxs/wtRMFCT0sldt0XCEbofjO233vlUA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uuy03kn3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:01:24 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51HG1OIQ025147;
-	Mon, 17 Feb 2025 16:01:24 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44uuy03kn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:01:24 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51HC0ghZ008164;
-	Mon, 17 Feb 2025 16:01:23 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u58tf014-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 16:01:23 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51HG1IFR55378300
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 16:01:18 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C2E3E20040;
-	Mon, 17 Feb 2025 16:01:18 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6018C20043;
-	Mon, 17 Feb 2025 16:01:18 +0000 (GMT)
-Received: from osiris (unknown [9.171.53.224])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 17 Feb 2025 16:01:18 +0000 (GMT)
-Date: Mon, 17 Feb 2025 17:01:17 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, schwidefsky@de.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] s390/sclp: Add check for get_zeroed_page()
-Message-ID: <20250217160117.21424B3d-hca@linux.ibm.com>
-References: <20250217153146.2372134-1-haoxiang_li2024@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRgyoVzjGYS9RUlc87L9p554iaNEMdyfiSfs19I7BmsCsTJWlcbSXmzctYURsSN/XT25BrQ58un67Kdd0Q+C/uUiNtItSKVKcKZ21i90BfIeyYDxGBQaZ2KWIb2+J8i60Pmcr4vZdkG0ihOUpsaTMoEMFFj4QMAG98N/ieppdaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5133C152B;
+	Mon, 17 Feb 2025 08:01:43 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 677C03F5A1;
+	Mon, 17 Feb 2025 08:01:22 -0800 (PST)
+Date: Mon, 17 Feb 2025 16:01:19 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ionela Voinescu <ionela.voinescu@arm.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<catalin.marinas@arm.com>, <vincent.guittot@linaro.org>,
+	<beata.michalska@arm.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <dietmar.eggemann@arm.com>,
+	<pierre.gondois@arm.com>
+Subject: Re: [PATCH] arch_topology: init capacity_freq_ref to 0
+Message-ID: <Z7NdT2OBJPRveDHQ@bogus>
+References: <20240827154818.1195849-1-ionela.voinescu@arm.com>
+ <Z7NPEic3jxLAQBTd@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,46 +52,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217153146.2372134-1-haoxiang_li2024@163.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: b5OYOY0KcivQa3x2-argEvWA6JiQ4sbc
-X-Proofpoint-ORIG-GUID: NFaKHgijFbTpfRZ82bIXgcYm51ePZ0aV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_06,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=513 spamscore=0
- adultscore=0 phishscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170132
+In-Reply-To: <Z7NPEic3jxLAQBTd@arm.com>
 
-On Mon, Feb 17, 2025 at 11:31:46PM +0800, Haoxiang Li wrote:
-> Add check for the return value of get_zeroed_page() in
-> sclp_console_init() to prevent null pointer dereference.
+On Mon, Feb 17, 2025 at 03:01:23PM +0000, Ionela Voinescu wrote:
+> Hi folks,
 > 
-> Fixes: 4c8f4794b61e ("[S390] sclp console: convert from bootmem to slab")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  drivers/s390/char/sclp_con.c | 2 ++
->  1 file changed, 2 insertions(+)
+> I just wanted to mention that this patch still applies cleanly on
+> next-20250217 as well, and it still builds/boots/works as expected.
 > 
-> diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
-> index e5d947c763ea..7447076b1ec1 100644
-> --- a/drivers/s390/char/sclp_con.c
-> +++ b/drivers/s390/char/sclp_con.c
-> @@ -282,6 +282,8 @@ sclp_console_init(void)
->  	/* Allocate pages for output buffering */
->  	for (i = 0; i < sclp_console_pages; i++) {
->  		page = (void *) get_zeroed_page(GFP_KERNEL | GFP_DMA);
-> +		if (!page)
-> +			return -ENOMEM;
->  		list_add_tail(page, &sclp_con_pages);
+> I've rechecked it given that the patches at [1] seem ready to be picked
+> up, and those patches depend on this one.
+>
 
-We can add this check, however if this early allocation would fail a
-null pointer dereference would be the last problem we would have to
-think about.
+Is there a dependency on [1] ?
 
-Anyway:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Either way, if Catalin is happy to pick it up along with [1], that would
+be best and easiest.
+
+If not and there are not dependencies, then we can ask Greg to pick up.
+Which means you need to repost with him cc-ed ? Lets wait and see if
+Catalin is happy to pick up before reposting though.
+
+--
+Regards,
+Sudeep
 
