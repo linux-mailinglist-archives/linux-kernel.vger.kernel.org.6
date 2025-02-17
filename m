@@ -1,393 +1,158 @@
-Return-Path: <linux-kernel+bounces-517278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D1FA37EA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:35:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D07EA37EAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8BE18923E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777EE3AB102
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94A22163AB;
-	Mon, 17 Feb 2025 09:31:58 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4687217670;
+	Mon, 17 Feb 2025 09:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qgo4L2Ww"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB2721639A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7639E216393;
+	Mon, 17 Feb 2025 09:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784718; cv=none; b=k8udl/ZEzXTsecnYyZznqtt69eehlL4rd0RMKP8W50+c6pUnzLGyltR22k0V/+iLEbPyQekTrNw2pLfx5xGBApOp/pH0CTT0Xqt4XMFKDPAWV6wTY8Bl25X19psF4AliRNVfQWXG8iGg1ufcj36CawQ0+VFQdDkMAK8JQPpM4Os=
+	t=1739784711; cv=none; b=MwK6VIy5yNuJNGacxck3q4wrVGblDUQSCHBnpd8Zyo3Hf3uVj+MRor/JFiCeLV9DgL+arVOTJBDBVe2qCeUqWDsb4KCwDEt3J6ctZQI8ioyfrqtPsaNNymTCZ4oA4PHCi9Dvsmzdc95gaeExTSFjCaUdkz4fw6WeNqW8NQgyAgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784718; c=relaxed/simple;
-	bh=nw34p0kUOprw/9zU0R4qhsKxSlou6Sfwx7PrPs90/OM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fgfFIKUEBNmS9PX2cgviaXeD0hOC5vqIoyTt89ZyYMtGeMybH/kyumiU/8L5TL1W8VTMVQL/iIcUr+o3vPMPL+jGHGE+zGvNU5dI7Iu86IBbYjQCKDETgWpnvSwzQhWSnEYQZxvYGvfNhUGze3fT/7+282PZtJe3No3R5NdZNqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from ssh247.corpemail.net
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id PDX00143;
-        Mon, 17 Feb 2025 17:31:43 +0800
-Received: from localhost.localdomain (10.94.10.240) by
- jtjnmail201604.home.langchao.com (10.100.2.4) with Microsoft SMTP Server id
- 15.1.2507.39; Mon, 17 Feb 2025 17:31:42 +0800
-From: Bo Liu <liubo03@inspur.com>
-To: <xiang@kernel.org>, <chao@kernel.org>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [v2] erofs: get rid of erofs_kmap_type
-Date: Mon, 17 Feb 2025 04:31:41 -0500
-Message-ID: <20250217093141.2659-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1739784711; c=relaxed/simple;
+	bh=qwwfQspqK1CIaepn5O3N48Xj/62KJzh4txop3uOMjDc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=chTNivSwqLwR5/3x6ZH7tX7xwhMAQ40YfO0l4amueTiViafZ5OtscfJML6KzWX/ev561uTV//4/filAo6gLLB1lssDAYFBr/QlaOD3Fm/kRqtd4BXtJr2OOkxt7gnDN8AA0nt2lAlI6n7wy9Trxyb77009LSjYfNX4sJfMSHags=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qgo4L2Ww; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso615422566b.3;
+        Mon, 17 Feb 2025 01:31:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739784708; x=1740389508; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qwwfQspqK1CIaepn5O3N48Xj/62KJzh4txop3uOMjDc=;
+        b=Qgo4L2WwhX7vWcVUGZ1DzQicBwRJuBsoC+tuYs9WiR8y/KBF6byNaAUgx38YNqo3FX
+         dNNVrd+ivRzKttSSN1hsikdg2tGuZH+ZWMhmXZcT/4K4gRUk2RJYZUHxcyMfPxJrMiPy
+         EamgI6VG9CkcK4S4uShN2u1Dn160vBo+kE4mu7oSnPrvGvEm+X3s7A+TtzjbPWT41cm+
+         vYXwkXY71eiX6pxKJkJO2N4EsPjig3pAKVPe9ORWoVftJGB1x5955pSO/Cr2ZYar+Vyp
+         tSJDFvffLQBp0k4+AgIjf3/p6KAMqaT8EkpYFYVsTs4DU/Ygw+0und4dbMzrXb6wtFlv
+         SArQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739784708; x=1740389508;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qwwfQspqK1CIaepn5O3N48Xj/62KJzh4txop3uOMjDc=;
+        b=U4Q6Nlfy2lEKwHf6N1mWoPZzd4Qpz9suWifVoTIiMRvdWh5nuC9s299LyhqWOJJ83d
+         PEh+qf0y0cnUVCdV0cJ4/EjoJ/t1Jpn8q1MA6AdmwrjqepRlNNNl6omwNfrTA+aUXBFt
+         vqV6AgXR6CXprVK2jeAGDt78lYrMn2Mvc+8TBVv3EyrXVi1c5omqInPJ8YNzzdEJNtG9
+         rRaoldBJ8bT332SniBd61lwv5ELhunORcBc55FQj0nwJNj0N0NMne11ZuZw8wjTe+UAF
+         ltI+Z8Hah/2ObD1NuTycFJDB6MQ4lGD1flGIlO586FImEAxvJImrA0RflPvbWPM7Rx4g
+         IBnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz3+BJOhKwf9gYyE2u9OOHNKx+DiPZyAuje2Ihk+Ms3M1e/T36UttMNFa4HdU3msVQagMceLWpuxqB@vger.kernel.org, AJvYcCVKkQpBeOgIGD8mJApjiEpg1A6jrlRIwYeoq6uoL+PrRnvGOHb4nJAINYD03rzSocjahd0F3l2m2c68@vger.kernel.org, AJvYcCVwzKVHenWfxSeV1xqOAE/F7dQudMUvlj4A79MiUthe47qRlmjkctaNu59Fv8ixUL5z8Fv5koLRBmbO+jYr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO96En12Dtl7AiffaYNE0V0tFN8nY3rDKCBA0szY+lKafXUNPM
+	Alz8H7g9fC6WrvjnwdR3pt4R+D6opiPCnYe4ZSPDrNBcJ4Q+I19N
+X-Gm-Gg: ASbGnctlQk9jGzvtD+dAKCjv4f6VyxFBVW/65zjFJdT7Ts7n4xTpR2YObmoJwbuAhET
+	YNOr3nKjXc5DpzbbQ9mPbj+axXxUP+uHQBHdntplKswo/AAmOHZ4X2gys2XxYjLX/CYDQjpZvsi
+	TFCnfeojGiTcD2vH6UjQL4I9USSEYZXtUYh6GV3HYBeFO1G6ku4ai7e5MGpXUGgZL1LZABT50U+
+	8PzFnCsvFVZHgAlE1qwOEDCrIjuDUhgLissIuat7b4GQMlOhkaifimMvWfJZxX/iU7QorKLQS2i
+	oHPSW/KY4oZbH1C14zM9zYUhUO88X3RE
+X-Google-Smtp-Source: AGHT+IF19rIOBPRe3FreKmfKhGzofepgR2PC8/BYqtWn5SXsysFWGgg87ztwsvGb53f3Baqru+RpWg==
+X-Received: by 2002:a17:907:3d8e:b0:ab7:4641:a72d with SMTP id a640c23a62f3a-abb70de28admr913177666b.51.1739784707261;
+        Mon, 17 Feb 2025 01:31:47 -0800 (PST)
+Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba64fbabfsm75995966b.172.2025.02.17.01.31.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 01:31:46 -0800 (PST)
+Message-ID: <3ba76f2162841ab91ef823315e7ce4b5b7526984.camel@gmail.com>
+Subject: Re: [PATCH v11 1/3] dt-bindings: rtc: sophgo: add RTC support for
+ Sophgo CV1800 series SoC
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>, Jingbao Qiu
+	 <qiujingbao.dlmu@gmail.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, dlan@gentoo.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ devicetree@vger.kernel.org, 	linux-riscv@lists.infradead.org,
+ linux-rtc@vger.kernel.org
+Date: Mon, 17 Feb 2025 10:31:43 +0100
+In-Reply-To: <MA0PR01MB567164E6BE03750F2200CBDBFEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+References: <20250213215655.2311793-1-alexander.sverdlin@gmail.com>
+	 <20250213215655.2311793-2-alexander.sverdlin@gmail.com>
+	 <MA0PR01MB567164E6BE03750F2200CBDBFEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-tUid: 202521717314390236f9de244629bbe98a4a41f0267b2
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Since EROFS_KMAP_ATOMIC is no longer valid, get rid of erofs_kmap_type too.
+Hi Chen!
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- fs/erofs/data.c     | 17 ++++++++---------
- fs/erofs/dir.c      |  2 +-
- fs/erofs/fileio.c   |  2 +-
- fs/erofs/fscache.c  |  2 +-
- fs/erofs/inode.c    |  6 +++---
- fs/erofs/internal.h | 10 ++--------
- fs/erofs/namei.c    |  2 +-
- fs/erofs/super.c    |  8 ++++----
- fs/erofs/xattr.c    | 12 ++++++------
- fs/erofs/zdata.c    |  4 ++--
- fs/erofs/zmap.c     |  6 +++---
- 11 files changed, 32 insertions(+), 39 deletions(-)
+On Mon, 2025-02-17 at 17:26 +0800, Chen Wang wrote:
+> > Add RTC devicetree binding for Sophgo CV1800 SoC.
+> >=20
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> > ---
+> > =C2=A0=C2=A0 .../bindings/rtc/sophgo,cv1800-rtc.yaml=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 53 +++++++++++++++++++
+> > =C2=A0=C2=A0 1 file changed, 53 insertions(+)
+> > =C2=A0=C2=A0 create mode 100644 Documentation/devicetree/bindings/rtc/s=
+ophgo,cv1800-rtc.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.ya=
+ml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> > new file mode 100644
+> > index 000000000000..b36b51a69166
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800-rtc.yaml
+> > @@ -0,0 +1,53 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800-rtc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Real Time Clock of the Sophgo CV1800 SoC
+> > +
+> > +description:
+> > +=C2=A0 Real Time Clock (RTC) is an independently powered module
+> > +=C2=A0 within the chip, which includes a 32KHz oscillator and a
+> > +=C2=A0 Power On Reset/POR submodule. It can be used for time display
+> > +=C2=A0 and timed alarm generation. In addition, the hardware state
+> > +=C2=A0 machine provides triggering and timing control for chip
+> > +=C2=A0 power on, off, and reset.
+> > +
+> > +maintainers:
+> > +=C2=A0 - Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+>=20
+> I guess Jingbao will not take this role. If he doesn't raise any=20
+> objections, please just change this.
+>=20
+> Jingbao, do you have any comment on this?
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 0cd6b5c4df98..1d2cb0fa1baf 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -25,8 +25,7 @@ void erofs_put_metabuf(struct erofs_buf *buf)
- 	buf->page = NULL;
- }
- 
--void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
--		  enum erofs_kmap_type type)
-+void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap)
- {
- 	pgoff_t index = offset >> PAGE_SHIFT;
- 	struct folio *folio = NULL;
-@@ -43,10 +42,10 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
- 			return folio;
- 	}
- 	buf->page = folio_file_page(folio, index);
--	if (!buf->base && type == EROFS_KMAP)
--		buf->base = kmap_local_page(buf->page);
--	if (type == EROFS_NO_KMAP)
-+	if (!need_kmap)
- 		return NULL;
-+	if (!buf->base)
-+		buf->base = kmap_local_page(buf->page);
- 	return buf->base + (offset & ~PAGE_MASK);
- }
- 
-@@ -65,10 +64,10 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
- }
- 
- void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
--			 erofs_off_t offset, enum erofs_kmap_type type)
-+			 erofs_off_t offset, bool need_kmap)
- {
- 	erofs_init_metabuf(buf, sb);
--	return erofs_bread(buf, offset, type);
-+	return erofs_bread(buf, offset, need_kmap);
- }
- 
- static int erofs_map_blocks_flatmode(struct inode *inode,
-@@ -135,7 +134,7 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
- 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize +
- 		    vi->xattr_isize, unit) + unit * chunknr;
- 
--	kaddr = erofs_read_metabuf(&buf, sb, pos, EROFS_KMAP);
-+	kaddr = erofs_read_metabuf(&buf, sb, pos, true);
- 	if (IS_ERR(kaddr)) {
- 		err = PTR_ERR(kaddr);
- 		goto out;
-@@ -312,7 +311,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
- 
- 		iomap->type = IOMAP_INLINE;
--		ptr = erofs_read_metabuf(&buf, sb, mdev.m_pa, EROFS_KMAP);
-+		ptr = erofs_read_metabuf(&buf, sb, mdev.m_pa, true);
- 		if (IS_ERR(ptr))
- 			return PTR_ERR(ptr);
- 		iomap->inline_data = ptr;
-diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-index c3b90abdee37..1d3bb8746ab1 100644
---- a/fs/erofs/dir.c
-+++ b/fs/erofs/dir.c
-@@ -58,7 +58,7 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
- 		struct erofs_dirent *de;
- 		unsigned int nameoff, maxsize;
- 
--		de = erofs_bread(&buf, dbstart, EROFS_KMAP);
-+		de = erofs_bread(&buf, dbstart, true);
- 		if (IS_ERR(de)) {
- 			erofs_err(sb, "fail to readdir of logical block %u of nid %llu",
- 				  erofs_blknr(sb, dbstart), EROFS_I(dir)->nid);
-diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-index 0ffd1c63beeb..bec4b56b3826 100644
---- a/fs/erofs/fileio.c
-+++ b/fs/erofs/fileio.c
-@@ -112,7 +112,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
- 			void *src;
- 
- 			src = erofs_read_metabuf(&buf, inode->i_sb,
--						 map->m_pa + ofs, EROFS_KMAP);
-+						 map->m_pa + ofs, true);
- 			if (IS_ERR(src)) {
- 				err = PTR_ERR(src);
- 				break;
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index ce3d8737df85..9c9129bca346 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -276,7 +276,7 @@ static int erofs_fscache_data_read_slice(struct erofs_fscache_rq *req)
- 		size_t size = map.m_llen;
- 		void *src;
- 
--		src = erofs_read_metabuf(&buf, sb, map.m_pa, EROFS_KMAP);
-+		src = erofs_read_metabuf(&buf, sb, map.m_pa, true);
- 		if (IS_ERR(src))
- 			return PTR_ERR(src);
- 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index d4b89407822a..4936bd43c438 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -42,7 +42,7 @@ static int erofs_read_inode(struct inode *inode)
- 	blkaddr = erofs_blknr(sb, inode_loc);
- 	ofs = erofs_blkoff(sb, inode_loc);
- 
--	kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), EROFS_KMAP);
-+	kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), true);
- 	if (IS_ERR(kaddr)) {
- 		erofs_err(sb, "failed to get inode (nid: %llu) page, err %ld",
- 			  vi->nid, PTR_ERR(kaddr));
-@@ -82,8 +82,8 @@ static int erofs_read_inode(struct inode *inode)
- 				goto err_out;
- 			}
- 			memcpy(copied, dic, gotten);
--			kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr + 1),
--						   EROFS_KMAP);
-+			kaddr = erofs_read_metabuf(&buf, sb,
-+					erofs_pos(sb, blkaddr + 1), true);
- 			if (IS_ERR(kaddr)) {
- 				erofs_err(sb, "failed to get inode payload block (nid: %llu), err %ld",
- 					  vi->nid, PTR_ERR(kaddr));
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 686d835eb533..f955793146f4 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -199,11 +199,6 @@ enum {
- 	EROFS_ZIP_CACHE_READAROUND
- };
- 
--enum erofs_kmap_type {
--	EROFS_NO_KMAP,		/* don't map the buffer */
--	EROFS_KMAP,		/* use kmap_local_page() to map the buffer */
--};
--
- struct erofs_buf {
- 	struct address_space *mapping;
- 	struct file *file;
-@@ -387,11 +382,10 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
- 			  erofs_off_t *offset, int *lengthp);
- void erofs_unmap_metabuf(struct erofs_buf *buf);
- void erofs_put_metabuf(struct erofs_buf *buf);
--void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
--		  enum erofs_kmap_type type);
-+void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap);
- void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb);
- void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
--			 erofs_off_t offset, enum erofs_kmap_type type);
-+			 erofs_off_t offset, bool need_kmap);
- int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
- int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		 u64 start, u64 len);
-diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
-index c94d0c1608a8..f7cf4f41af28 100644
---- a/fs/erofs/namei.c
-+++ b/fs/erofs/namei.c
-@@ -100,7 +100,7 @@ static void *erofs_find_target_block(struct erofs_buf *target,
- 		struct erofs_dirent *de;
- 
- 		buf.mapping = dir->i_mapping;
--		de = erofs_bread(&buf, erofs_pos(dir->i_sb, mid), EROFS_KMAP);
-+		de = erofs_bread(&buf, erofs_pos(dir->i_sb, mid), true);
- 		if (!IS_ERR(de)) {
- 			const int nameoff = nameoff_from_disk(de->nameoff, bsz);
- 			const int ndirents = nameoff / sizeof(*de);
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 827b62665649..3dc86d931ef1 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -94,7 +94,7 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
- 	int len, i, cnt;
- 
- 	*offset = round_up(*offset, 4);
--	ptr = erofs_bread(buf, *offset, EROFS_KMAP);
-+	ptr = erofs_bread(buf, *offset, true);
- 	if (IS_ERR(ptr))
- 		return ptr;
- 
-@@ -110,7 +110,7 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
- 	for (i = 0; i < len; i += cnt) {
- 		cnt = min_t(int, sb->s_blocksize - erofs_blkoff(sb, *offset),
- 			    len - i);
--		ptr = erofs_bread(buf, *offset, EROFS_KMAP);
-+		ptr = erofs_bread(buf, *offset, true);
- 		if (IS_ERR(ptr)) {
- 			kfree(buffer);
- 			return ptr;
-@@ -141,7 +141,7 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
- 	struct erofs_deviceslot *dis;
- 	struct file *file;
- 
--	dis = erofs_read_metabuf(buf, sb, *pos, EROFS_KMAP);
-+	dis = erofs_read_metabuf(buf, sb, *pos, true);
- 	if (IS_ERR(dis))
- 		return PTR_ERR(dis);
- 
-@@ -255,7 +255,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 	void *data;
- 	int ret;
- 
--	data = erofs_read_metabuf(&buf, sb, 0, EROFS_KMAP);
-+	data = erofs_read_metabuf(&buf, sb, 0, true);
- 	if (IS_ERR(data)) {
- 		erofs_err(sb, "cannot read erofs superblock");
- 		return PTR_ERR(data);
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index df2777e05661..9cf84717a92e 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -81,7 +81,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
- 	it.pos = erofs_iloc(inode) + vi->inode_isize;
- 
- 	/* read in shared xattr array (non-atomic, see kmalloc below) */
--	it.kaddr = erofs_bread(&it.buf, it.pos, EROFS_KMAP);
-+	it.kaddr = erofs_bread(&it.buf, it.pos, true);
- 	if (IS_ERR(it.kaddr)) {
- 		ret = PTR_ERR(it.kaddr);
- 		goto out_unlock;
-@@ -102,7 +102,7 @@ static int erofs_init_inode_xattrs(struct inode *inode)
- 	it.pos += sizeof(struct erofs_xattr_ibody_header);
- 
- 	for (i = 0; i < vi->xattr_shared_count; ++i) {
--		it.kaddr = erofs_bread(&it.buf, it.pos, EROFS_KMAP);
-+		it.kaddr = erofs_bread(&it.buf, it.pos, true);
- 		if (IS_ERR(it.kaddr)) {
- 			kfree(vi->xattr_shared_xattrs);
- 			vi->xattr_shared_xattrs = NULL;
-@@ -183,7 +183,7 @@ static int erofs_xattr_copy_to_buffer(struct erofs_xattr_iter *it,
- 	void *src;
- 
- 	for (processed = 0; processed < len; processed += slice) {
--		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
-+		it->kaddr = erofs_bread(&it->buf, it->pos, true);
- 		if (IS_ERR(it->kaddr))
- 			return PTR_ERR(it->kaddr);
- 
-@@ -286,7 +286,7 @@ static int erofs_getxattr_foreach(struct erofs_xattr_iter *it)
- 
- 	/* 2. handle xattr name */
- 	for (processed = 0; processed < entry.e_name_len; processed += slice) {
--		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
-+		it->kaddr = erofs_bread(&it->buf, it->pos, true);
- 		if (IS_ERR(it->kaddr))
- 			return PTR_ERR(it->kaddr);
- 
-@@ -330,7 +330,7 @@ static int erofs_xattr_iter_inline(struct erofs_xattr_iter *it,
- 	it->pos = erofs_iloc(inode) + vi->inode_isize + xattr_header_sz;
- 
- 	while (remaining) {
--		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
-+		it->kaddr = erofs_bread(&it->buf, it->pos, true);
- 		if (IS_ERR(it->kaddr))
- 			return PTR_ERR(it->kaddr);
- 
-@@ -367,7 +367,7 @@ static int erofs_xattr_iter_shared(struct erofs_xattr_iter *it,
- 	for (i = 0; i < vi->xattr_shared_count; ++i) {
- 		it->pos = erofs_pos(sb, sbi->xattr_blkaddr) +
- 				vi->xattr_shared_xattrs[i] * sizeof(__le32);
--		it->kaddr = erofs_bread(&it->buf, it->pos, EROFS_KMAP);
-+		it->kaddr = erofs_bread(&it->buf, it->pos, true);
- 		if (IS_ERR(it->kaddr))
- 			return PTR_ERR(it->kaddr);
- 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index d771e06db738..ad674eee400a 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -832,7 +832,7 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
- 	} else {
- 		void *mptr;
- 
--		mptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, EROFS_NO_KMAP);
-+		mptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, false);
- 		if (IS_ERR(mptr)) {
- 			ret = PTR_ERR(mptr);
- 			erofs_err(sb, "failed to get inline data %d", ret);
-@@ -967,7 +967,7 @@ static int z_erofs_read_fragment(struct super_block *sb, struct folio *folio,
- 	buf.mapping = packed_inode->i_mapping;
- 	for (; cur < end; cur += cnt, pos += cnt) {
- 		cnt = min(end - cur, sb->s_blocksize - erofs_blkoff(sb, pos));
--		src = erofs_bread(&buf, pos, EROFS_KMAP);
-+		src = erofs_bread(&buf, pos, true);
- 		if (IS_ERR(src)) {
- 			erofs_put_metabuf(&buf);
- 			return PTR_ERR(src);
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 689437e99a5a..75daac513050 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -31,7 +31,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
- 	struct z_erofs_lcluster_index *di;
- 	unsigned int advise;
- 
--	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, EROFS_KMAP);
-+	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, true);
- 	if (IS_ERR(di))
- 		return PTR_ERR(di);
- 	m->lcn = lcn;
-@@ -146,7 +146,7 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- 	else
- 		return -EOPNOTSUPP;
- 
--	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, EROFS_KMAP);
-+	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, true);
- 	if (IS_ERR(in))
- 		return PTR_ERR(in);
- 
-@@ -561,7 +561,7 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
- 		goto out_unlock;
- 
- 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
--	h = erofs_read_metabuf(&buf, sb, pos, EROFS_KMAP);
-+	h = erofs_read_metabuf(&buf, sb, pos, true);
- 	if (IS_ERR(h)) {
- 		err = PTR_ERR(h);
- 		goto out_unlock;
--- 
-2.31.1
+New version will look rather like this:
+https://lore.kernel.org/linux-devicetree/20250216180924.2506416-1-alexander=
+.sverdlin@gmail.com/
+
+But I'll be happy to take you suggestion and replace my name in the
+new version with someone more afiliated with Sophgo ;-)
+
+--=20
+Alexander Sverdlin.
 
 
