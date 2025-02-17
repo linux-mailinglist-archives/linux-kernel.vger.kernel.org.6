@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-518013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA9DA38883
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:59:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BB5A38869
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71A37A35D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:57:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3017416ED82
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19E1230268;
-	Mon, 17 Feb 2025 15:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SzvRfy6Z"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4732229B1D;
+	Mon, 17 Feb 2025 15:49:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EAC224B1F;
-	Mon, 17 Feb 2025 15:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F6E229B0B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807425; cv=none; b=dl8/IAR05Cllpx38CWjAm3PfSq0n0wiyvIgrtdqAMrfTWSV0o+1tlBiEA/yLHAjGA2mleOZEhBiW+Ti7nptXUhcCRhT8CkkY2JlUkJ2Vl76KXkA4gc7pQQq7Rrmjrma9lQC1tynFHzUYn8546nhpM+AX+hNuqWjy25paMGy/l0s=
+	t=1739807390; cv=none; b=ic++MwdIXFrcNB8zvgxFP9tRHUgYwJ01fAbh+LxwN0yVkBLzx/XV0WtXPHadzmBxxDuhHMjzpWZtF+nWb0kSOwILwIQ2/oL2kAIskLhNzNC8/qRhLbUPEBflLZRM+CKTmQyxSIwUtVBpeEGlGehquc9Puh3d0QmXFCOOIYlGf+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807425; c=relaxed/simple;
-	bh=AQORTGEMJRTeOzgv2ykstrnHNuBXQ26g7MQ0Fgeka9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eYgFYfMHoZ99C0s0As0rILUrgadcLKb4MpY6em/w+N/1AQTy8qqEAWTFmED/kVXhrYyZtcJv3UZvugrmikY+K79B7sUbnvTsHD2041j9iw6upC56hpFW5Wpg9pHrmwKSMR3XxjwkJgnbjAtvaVw/ON77ct1IeXJEOV/K9emFZs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SzvRfy6Z; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739807421;
-	bh=AQORTGEMJRTeOzgv2ykstrnHNuBXQ26g7MQ0Fgeka9U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SzvRfy6ZQONbwRZseCTd/qCY7RuJC4UB+shUIvg0Khs7nJiydSU1+hJry2rGmR5tw
-	 R6D8ddUHGrBllZDZiSpgzoliaVf0HQbZ0GEHAzXEhAxoaIy9ycMovZOI/5Q2oJRTwV
-	 c1wShv8q4z+/7EwNYJBb+2qk4J/cWYONbmv4ss3CZylqoVZfeftOg4Oq1B10nPxKx8
-	 V8HKzXMfgQWIRDWKckRK3frVokC7eLL3coJUsAnWX66AlRT+bZWe19bfRCBKI9EmhH
-	 WigkB6Bj9IrqH2anWw+p9WXO6GIfENJMa2R7yxpYo2IzXmnMDaDu2yXJXecWN+wV5U
-	 k8BKruPfNSHqw==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 588CB17E155A;
-	Mon, 17 Feb 2025 16:50:20 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: chunkuang.hu@kernel.org
-Cc: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	ck.hu@mediatek.com,
-	jitao.shi@mediatek.com,
-	jie.qiu@mediatek.com,
-	junzhi.zhao@mediatek.com,
-	dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	dmitry.baryshkov@linaro.org,
-	lewis.liao@mediatek.com,
-	ives.chenjh@mediatek.com,
-	tommyyl.chen@mediatek.com,
-	jason-jh.lin@mediatek.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 43/43] drm/mediatek/hdmi: Use syscon_regmap_lookup_by_phandle_args
-Date: Mon, 17 Feb 2025 16:48:36 +0100
-Message-ID: <20250217154836.108895-44-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
-References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1739807390; c=relaxed/simple;
+	bh=+T9+QSLbqVaktqQ4lOnMjR9OoKYV0X4W7fjhcNuiSPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nwf1Rvki+JlBhiLMxaE4jKes1Xx7c2xHNFxVZ5FyNxBYKKL7JB13V0r/yd7X+aWSAa8S6wHrNVhkDSW3QqFjiMT9tjVGTgsbv6iiC9NuwESAus2op0KNo2PxuIwAG1k2maHL2/2bJ1vwu5H4eKaTV7LsOFJBX34JL8S7M6Cw+Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB18C4CED1;
+	Mon, 17 Feb 2025 15:49:47 +0000 (UTC)
+Date: Mon, 17 Feb 2025 10:50:07 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Harshit Agarwal <harshit@nutanix.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>, Gauri
+ Patwardhan <gauri.patwardhan@nutanix.com>, Rahul Chunduru
+ <rahul.chunduru@nutanix.com>, Will Ton <william.ton@nutanix.com>
+Subject: Re: [PATCH v2] sched/rt: Fix race in push_rt_task
+Message-ID: <20250217105007.45ba8cb4@gandalf.local.home>
+In-Reply-To: <20250213175435.114441-1-harshit@nutanix.com>
+References: <9C390C10-8741-4992-8E29-303C907C8C00@nutanix.com>
+	<20250213175435.114441-1-harshit@nutanix.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
-syscon_regmap_lookup_by_phandle() combined with getting the syscon
-argument.  Except simpler code this annotates within one line that given
-phandle has arguments, so grepping for code would be easier.
+FYI,
 
-There is also no real benefit in printing errors on missing syscon
-argument, because this is done just too late: runtime check on
-static/build-time data.  Dtschema and Devicetree bindings offer the
-static/build-time check for this already.
+You should always send a new patch version as a separate thread. That's
+because they can get lost in the thread and makes it harder for maintainers
+to know what the next version of the patch is. I've picked the wrong patch
+version before because there was another version sent that I missed.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-[Angelo: Rebased over HDMIv2/DDCv2 series cleanups]
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+On Thu, 13 Feb 2025 17:54:34 +0000
+Harshit Agarwal <harshit@nutanix.com> wrote:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-index 784bc05c9541..00a638a3caf4 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-@@ -269,12 +269,9 @@ static int mtk_hdmi_get_cec_dev(struct mtk_hdmi *hdmi, struct device *dev, struc
- 	 * MMSYS_CONFIG device and the register offset of the HDMI_SYS_CFG
- 	 * registers it contains.
- 	 */
--	hdmi->sys_regmap = syscon_regmap_lookup_by_phandle(np, "mediatek,syscon-hdmi");
-+	hdmi->sys_regmap = syscon_regmap_lookup_by_phandle_args(np, "mediatek,syscon-hdmi",
-+								1, &hdmi->sys_offset);
- 	if (IS_ERR(hdmi->sys_regmap))
--		return PTR_ERR(hdmi->sys_regmap);
--
--	ret = of_property_read_u32_index(np, "mediatek,syscon-hdmi", 1, &hdmi->sys_offset);
--	if (ret)
- 		return dev_err_probe(dev, ret,
- 				     "Failed to get system configuration registers\n");
- 
--- 
-2.48.1
+> Solution
+> ========
+> The solution here is fairly simple. After obtaining the lock (at 4a),
+> the check is enhanced to make sure that the task is still at the head of
+> the pushable tasks list. If not, then it is anyway not suitable for
+> being pushed out. The fix also removes any conditions that are no longer
+> needed.
+> 
+> Testing
+> =======
+> The fix is tested on a cluster of 3 nodes, where the panics due to this
+> are hit every couple of days. A fix similar to this was deployed on such
+> cluster and was stable for more than 30 days.
 
+May also want to add:
+
+  Since 'is_migration_disabled()' a faster check than the others, it was moved
+  to be the first check for consistency.
+
+> 
+> Co-developed-by: Jon Kohler <jon@nutanix.com>
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> Co-developed-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Signed-off-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Co-developed-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
+> Tested-by: Will Ton <william.ton@nutanix.com>
+> ---
+
+You can add here (after the above three dashes), how this version is
+different from the last version. The text below the dashes and before the
+patch is ignored by git, but is useful for reviewers. For instance:
+
+Changes since v1: https://lore.kernel.org/all/20250211054646.23987-1-harshit@nutanix.com/
+
+- Removed the redundant checks that task != pick_next_pushable_task() already has
+
+
+Notice I added a link to the previous version. This helps find the previous
+version without having to make this version a reply to it.
+
+>  kernel/sched/rt.c | 54 +++++++++++++++++++++++------------------------
+>  1 file changed, 26 insertions(+), 28 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 4b8e33c615b1..4762dd3f50c5 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1885,6 +1885,27 @@ static int find_lowest_rq(struct task_struct *task)
+>  	return -1;
+>  }
+>  
+
+Otherwise,
+
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Peter, could you pick this up?
+
+-- Steve
 
