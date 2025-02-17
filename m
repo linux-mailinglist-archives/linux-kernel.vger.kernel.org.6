@@ -1,234 +1,237 @@
-Return-Path: <linux-kernel+bounces-517079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03150A37BC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:03:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C73A37BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:01:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB873A9EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EEE3A9B8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB2219048F;
-	Mon, 17 Feb 2025 07:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65001885B4;
+	Mon, 17 Feb 2025 07:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="qPK+yJh3"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cwIu6DRO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36134C70;
-	Mon, 17 Feb 2025 07:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739775772; cv=none; b=ujlGtydeIR6G6rLTTkGAo9ruGLJfVkEqCdYCLMQJX/JrBKNKOZMhP4fYIggRMzlrYpkKuVDSCyYHhJmqQ1W0C4YqlRrA9EhcwlwPS3J1WoZLCBe/KcWNhEzLy4YJy/v8O78GQUy0f5rBAWHiQ3deLEIGvAp/m9hOY+H+jhppFFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739775772; c=relaxed/simple;
-	bh=CnMACyq8fVyIC6o/qW1rsSrblNpgU9XLuyA5xGMStqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XtM0aiPF9juWN1JqxoEBPh73aFJ7g4eh62KvQrVdhOTbOvIdlSheG2n6LT2OInOLeFD3cgpCNpyBEBgmfkZ2b8viGUF5/2NbOoMRSw7I8wrpY/57rwadAIWhcFl6uoLsgi0cJVwCaruTlmLliGtUUD9x6lTXZyOkQXMb2oUCqYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=qPK+yJh3; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739775724;
-	bh=tEaf1fdlKHQ41IMwoFr6kAyWu7BQC3uaiiT0Z+Tp1vk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qPK+yJh3VI328ujJERmfE0AbHl0xq7idc6Cu/wtEllCf+vaueYRadZsV/agWa4on4
-	 PmsR/hK3LQsjw9s5zOn/8js02rsCa9ppghL16ar2Lg5mw7fy6m1enVuVlQ7slPQOs2
-	 dTGS52qt1hGJ8GQk5A+oWbr5KwHq2CcFDHa6SBBY=
-X-QQ-mid: bizesmtpip3t1739775691t5lavpw
-X-QQ-Originating-IP: TBtoORpur2h6g4UaoSd3UoAbLMVGet+CdXOJtAvKbqw=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 17 Feb 2025 15:01:29 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6567153048782771633
-From: WangYuli <wangyuli@uniontech.com>
-To: cassel@kernel.org
-Cc: chenhuacai@kernel.org,
-	chenhuacai@loongson.cn,
-	dlemoal@kernel.org,
-	jiaxun.yang@flygoat.com,
-	kernel@xen0n.name,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>,
-	Jie Fan <fanjie@uniontech.com>,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: Re: Re: [PATCH] ahci: Marvell controllers prefer DMA for ATAPI
-Date: Mon, 17 Feb 2025 15:01:20 +0800
-Message-ID: <36B40EDC960C005C+20250217070120.666907-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <Zt6l6DVeDGzb5W7N@ryzen.lan>
-References: <Zt6l6DVeDGzb5W7N@ryzen.lan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320DB4C70
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 07:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739775703; cv=fail; b=T0pUQPNxtSOC/q6mol9pB8Es3Qzw82YAusTQvtOFh0p+PTw2P8Qk51hxBOHF68WinZXpAST9F/UxYzGGq/TvEclgOxUvarkeNl4OepepIkSD8x3O4Cx4utmnxnN8uKLP2qLdtgTuolla1OQowznraW6i3698AkbqnElqiJGwlNU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739775703; c=relaxed/simple;
+	bh=1ayfZ1YuX+UQdfuJzl1X72oRdqusFzuWIYQ/2r4+Esg=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=EWJRbjuzKF8NySedgqqzGaoFvN9HhPqvbfmHdobcu1IXQLhBuucq0oXP43ZDvBnKES/7fzUrxuKOTujnjhwRSwZ1GZj8FdKkZJTbzzA0tGqUw31uKE/lwTiSK5zGvpKj4H1xf3Z9gwaKyDbZPvZDRFHaxciBdiaKbcHVchEn2hQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cwIu6DRO; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739775702; x=1771311702;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1ayfZ1YuX+UQdfuJzl1X72oRdqusFzuWIYQ/2r4+Esg=;
+  b=cwIu6DROVZsGJgTEcFbl0nWcWeWG+f1N1HtkVD/IsKO1wPZPGz8lZjZu
+   ficH+l9epj9VJ+aFc+xsHh3oMQU6jWDnfP7DtZkbDKFJ/W1lenE40TbTq
+   bM3la0lNAbTP5Sb65F9ovswo+VqFMx8MXu5UdGdmkYza0+VlScm9zQxYC
+   wT4FaX6X4GwjcCf77ifgZMJgXXBbPZ1+lNvlwd6qsQ1XAtEWJBSIOj+yq
+   3GA6M1CmLkO3SA/iXxPOWtxbdOp1mR0f/wS8vAL9C/lbWdRk1y3iIpxJp
+   QHKHsTB5qCg+t4RQGC+O9E6Q8RYjvtqWlrXjsw1Muh7npxN48+ir6V8u6
+   A==;
+X-CSE-ConnectionGUID: 1NL2a5iXS6GL94cIBgrNYg==
+X-CSE-MsgGUID: fAzzuisbS1yT7h9068wFZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="44207587"
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="44207587"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 23:01:41 -0800
+X-CSE-ConnectionGUID: db1hQdvoRtyskOH4jS4oJg==
+X-CSE-MsgGUID: MiJb5tLbS72l/Ve6w0r5Rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="113779817"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Feb 2025 23:01:41 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Sun, 16 Feb 2025 23:01:40 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Sun, 16 Feb 2025 23:01:40 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.45) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Sun, 16 Feb 2025 23:01:39 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x79BrUMXvx2WbD0iRNDdMk1jnTBbmRaBQ52a4pf6j8s9zOgWuAUOY466pEJmk3JY8efexpOAy8x8c9OizrocCOkXW1X9ZnQTIXLkRe+9SC04mIhzpg9SHBTVNG16xPGU8IfuUg2GpnuCqZSNGAj56y9GAmwhjcvg9T5LpS9h0IZpAycRcNHTAZTDwRAfCuZs2FuE5p29h/ndTsLYlQH6aZkWZclGEF0Ce6Uzj+qC3mVzIGzB0Nd5j8rZNcdlCQH/kxseOHFEgE9i+3wbKdJPa4GsdfIavLQJVdqzYcSRfKx4wXS+CyU1KdJa87gBgzmQgftF3jSzOziQR0RQS0U2Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TZ5eOrDCHhTNHlNKlXono5UirOZBMKZI7uVRBo8syhg=;
+ b=sVqxJc8x849wuRXDVJKiVqZPKthAQcajr/fQhcL7zybxd7Of1w7ox8JyEVJtc0nDlH+qDzTXMY8BKs2MlwzcoDKF0Wsun6ooLRgYIClcgMq5UhrCClOkiCa346hlGEWfyQjf5HnN4i/jPIf8Tqi13O9YdUXFQxnn4nK2VXmvN8etmMXuoah5fHzmQJtgY1gAAO/eM/vOLib/Rylq3AVsjL1woQpbaJuAGJPj4jkhAudgcfDTwy6KTEJxy/yO2LUXxHncqt5dRZJvqGIinahB2bXD3N4CCKuAlSrnTGu1xG+PBoSs/bWzTyzs7Juhb5DkP5aOZxX7sBC2VzSkslR5mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SJ2PR11MB7473.namprd11.prod.outlook.com (2603:10b6:a03:4d2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Mon, 17 Feb
+ 2025 07:01:33 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%3]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 07:01:33 +0000
+Date: Mon, 17 Feb 2025 15:01:23 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: SeongJae Park <sj@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+	<damon@lists.linux.dev>, <linux-mm@kvack.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [mm/damon/sysfs]  9a5aa3349b:
+ kernel-selftests.damon.damos_quota_goal.py.fail
+Message-ID: <202502171423.b28a918d-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI2PR02CA0041.apcprd02.prod.outlook.com
+ (2603:1096:4:196::20) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Ob+TdET2B71e5ulmgkXCW/ALvBh1Qk50Fw2/F7D0yEfDpn7hXosZRLzi
-	aWC5Ga/PoseFquZrV/AeJTJYlnZPJNDae1z6DRTewKSkQYWz8FxxMU0bnGjp3atFGVqsi5g
-	tJF7LjZ1ncLl40hE3JJk7O6mW2mreplYRCSshyHo5o3C7Pe6qJZwFzB9wfZS09hDNOwsxqk
-	iL6tvLgEe5eamt6bahbeFobaVo0qx4UVM1g0VGjRFB//nwoAIgoap7oetkDLBvk+NAy5erF
-	h/DGW2iD7nduCe2PF5nT7hQN+AWc0pgOrAhqYb+/sJhHeiwZdkzINbcRl0/Dt03GahqnuyZ
-	N80S5+zwgWoOsYxEXOsqNCgg1hmYnRuEVtJOv9GXZ4aQSmJTDyavaBLANITyBi0d9YOK3sx
-	rypBHIFoF2DYPYQBfL4omu6bEeyXYclAFhMWx3WxhSZUFE2OC0W9RX7NKWgKs88kVv9tIVa
-	sDWhYDull3GaoREvOtddWkitpLwG4/z25FhB62n+EKczOSVoJlinIzh6i9AkKM3656CCa7w
-	eOGd9k5nbUOvBlJQ9adq+10VzU63CbznGhOPXpuTV4zxnAy2t5CSYJBjrMx2Y37Rpcl3LkN
-	MP+owCu/aJ1QWfcusixGVNQfzlxyq5WAcwDtc+epJyrFaF/z7nC9OturBTLnArGRE+C4FTo
-	aIcHEjmqzN8y3ACUN4Gj1h0E8mn2D5CsLnAnmXcNiVpxYcaP+uiWpj6bK/MYdZ6IEsB5bkU
-	5NVp/kH5nC8pH9/tUfnDDsDssGBt36bWOdTbNguPeJ+GiFnXL43JKYGLzw9Y5v578arZGZA
-	iS9yT7qGOBOSG+7CIaHmAeai/7cKS7rIxQqjZ/NhyiPKQGyNrBMoJd8ND/In1UJFLDSCIGz
-	ENJ8tK1+8M/Kt7hgZ8u0Q+3/YqFUVytcwQsiuogPRnuiR9I4PRc9d34+b6sXysQef19oMfr
-	vLz3z9ZQdvPNC6iMTxeHWbENPEityy79z0i8TWGZMi9gkMA==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
-
-Reported-by: WangYuli <wangyuli@uniontech.com>
-
-Hi all,
-
-During testing, we observed that reading CDs on an INSPUR CE3000F desktop
-computer (with a Phytium FT2000/4 processor [1]) running deepin 23 [2]
-distribution is very slow, taking over a minute.
-
-Further testing revealed that mounting the device from the command line is
-fast.
-  e.g., executing "time mount /dev/sr0 /mnt" returns a value of only 0.898s.
-
-However, deepin's dde-file-manager reads more than just mounting when opening
-the optical drive; it also reads disc information (such as capacity, etc.).
-
-After using udisksctl to first mount and then unmount the disc to reset its
-state, and then using the cd_sessions tool to read disc information, we used
-strace to monitor system calls, testing commands are as follows:
-  udisksctl mount -b /dev/sr0
-  udisksctl unmount -b /dev/sr0
-  strace -Ttt cd_sessions /dev/sr0
-and found that openat was blocked for 42 seconds, and at this point, the
-process had entered kernel space.
-
-[1]. https://www.phytium.com.cn/homepage/production/6/
-[2]. https://cdimage.deepin.com/releases/23/arm64/deepin-desktop-community-23-arm64.iso
-
-
-TEST REPORT:
-
-For this patch, before its introduction, with original system-integrated optical
-drives capable of recognizing discs, the total execution time for cd_sessions was
-92.4 seconds, including 31.6 seconds for openat and 60.6 seconds for ioctl.
-
-With LITE-ON optical drives, under the same condition of disc recognition, the
-total execution time for cd_sessions was 108.2 seconds, with openat taking 45.4
-seconds and ioctl taking 62.9 seconds.
-
-With RITEK optical drives, also when discs were recognizable, the total
-cd_sessions execution time was 98.2 seconds, with openat at 36.7 seconds and ioctl
-at 60.8 seconds.
-
-After the patch was introduced, the time to read disc information (using cd_sessions)
-with all optical drives was reduced to less than 0.5 seconds.
-
-I've tried different pairings of optical drives and SATA controllers, and the test
-results were consistent across the board. The Marvell 88SE9215 controller consistently
-emerges as the source of the problem, no matter the optical drive tested.
-
-Devices lists are as follow:
-
-
-CD-ROM DRIVER LIST:
-  1. original system-integrated optical drive
-           *-cdrom
-                description: DVD writer
-                product: DVD A  DH16AFSH
-                vendor: ATAPI
-                physical id: 0
-                bus info: scsi@2:0.0.0
-                logical name: /dev/cdrom
-                logical name: /dev/sr0
-                version: DC2M
-                capabilities: removable audio cd-r cd-rw dvd dvd-r
-                configuration: ansiversion=5 status=ready
-              *-medium
-                   physical id: 0
-                   logical name: /dev/cdrom
-  2. a LITE-ON optical drive
-           *-cdrom
-                description: DVD writer
-                product: DVD-RW DH16AFSH
-                vendor: PLDS
-                physical id: 0
-                bus info: scsi@2:0.0.0
-                logical name: /dev/cdrom
-                logical name: /dev/sr0
-                version: DL3M
-                capabilities: removable audio cd-r cd-rw dvd dvd-r
-                configuration: ansiversion=5 status=nodisc
-  3. a RITEK optical drive
-           *-cdrom
-                description: DVD writer
-                product: DH-16AFSH SUPDRV
-                vendor: RIDATA
-                physical id: 0
-                bus info: scsi@2:0.0.0
-                logical name: /dev/cdrom
-                logical name: /dev/sr0
-                version: NWDN
-                capabilities: removable audio cd-r cd-rw dvd dvd-r
-                configuration: ansiversion=5 status=nodisc
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SJ2PR11MB7473:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbc7ef27-6774-418d-bf32-08dd4f20e95b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?vqHix3ANli/SCNo9fufn9tSjRGwIFVqXYg2v/IYL0TUDxEDVU/weRBzqdhA+?=
+ =?us-ascii?Q?8JFLxXGDCqVIRuqrcm2IVmKPprUUsD5wE0O+TDIBAqs0ArwPRemWe7mxH8YO?=
+ =?us-ascii?Q?EF9u6tKTbHXTHOsKMGC0+4oqvJd8bLwBjW1GqqIunNb1uQCNlfkvB+HP106U?=
+ =?us-ascii?Q?5p5brVN9gQd9S9RHy2Zj7RJZlZF0IRSuy/8XaboZ9reiIu8if+p91X4seOPY?=
+ =?us-ascii?Q?vX8tTJAHldw7ZWyDEIGl0tTVnz7UrHNbYldLQ93AOPG/imKwab28TTuIogcM?=
+ =?us-ascii?Q?hb4B2DUgZfC0zNzQfxTdQ4uxBIGROLmXYHs2CFH6ozmtO6cHuVaY7dfMM572?=
+ =?us-ascii?Q?3f0N6h7b2raisVBNJS+IFJ03RXed4H6XqvCKbNRqfxd8AneHckDl0akkxu91?=
+ =?us-ascii?Q?FErVGzKUjluvgCeofJbq7AiMch1nFeVn/0ArXEygPeCrgMitS/cG5FtTQsPM?=
+ =?us-ascii?Q?YbU1QZQwnyS9w25ekWQpjPAhJf3i9o0OYaoWlDnaZAlFfjf2H8ts9ih+4pLr?=
+ =?us-ascii?Q?BcyhlNDGkx+IOWTpbnEHsxaskGt8PtXDIr4aq9z4GLokeHKfuS9yCvgX4KNC?=
+ =?us-ascii?Q?QLcaF9C6JypQkOkQripeJzrHYsnELoJVS8jO8a82T49owZjrmfpDFUB7I+rl?=
+ =?us-ascii?Q?VgLtZ2vSl8GQtCJqtNUVQyovAOO8WBmkNHBLngmx6ph+P2gCRS3zqiYxqZYE?=
+ =?us-ascii?Q?jLcCxnQ6uZcrUd9Fm/gtnC3MV/EkXURjFW4zEh3T0ae94klqkdsp9Nl10vNl?=
+ =?us-ascii?Q?rNFvxPaCMND1owxINcrd5/M9oleNy9BYzYTNP8Jv1r7LI0i2ZTzmb6vlT8K5?=
+ =?us-ascii?Q?NO7PepbTOcqqcZZYji35BNlAIBpOlsHwnb9KxoFXZD4rH8V4Rz8nO5bl8pHq?=
+ =?us-ascii?Q?gj3AFPVoDITWcX1l11RJ1T+ddl6ZGIKcZHVVto3P0UQXXBhmN3MEkN+1R4uB?=
+ =?us-ascii?Q?/5gXt6laXCG2SRboesEFNUCxTLiEhIhz8TIVwX29rtcDsmfGW99rnAdzrNz4?=
+ =?us-ascii?Q?xGQ8JxVlpzijFzcmHq5JnBNfKENZsBAwlH4SeE/sQtM9fG0fJ+VmWYgev1Eb?=
+ =?us-ascii?Q?kbu+qxE3BFdhJIqNw3Yrdzv3QmrituMmTwXcjbLRVGYPKg6Wlm0epa3CF1pK?=
+ =?us-ascii?Q?6Y3fYA8XdVBwYPH0ew0NVfZwp95vlmPvMlRf70rT3dded2aI3e9bfD/jAy/I?=
+ =?us-ascii?Q?B47t9uV6u/g1QU9f3qiw2q78wnsrFyqs0rlbpK3J9FNsZZk4A7NEaZtxjp3r?=
+ =?us-ascii?Q?wrLQXsy32dFCIWiMZcRE2yJc+lPG2x0TFso1NnPh+uy9gtnAh3LMU+vauKDf?=
+ =?us-ascii?Q?g9b0Qq5UvBSsI1yaNFbTufRjpsC6E4Dar/9v2zWlBynxuw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jF4G7ZsF0ujmkx8pZ5WJPHmWlJNP8zL/F/5V9UuNp6IABhKAtszvboLs6/Vg?=
+ =?us-ascii?Q?nBJJL1qav/hJdwDrdvCPdhYNMgHp+1GcpmTTZ48KTpwUI1ZX51AHg25k8tfz?=
+ =?us-ascii?Q?OxgM44LKsZE8BAf5PsqoW6klUZH85jYUdbX0GtX0DO2JIWPClwoKHViVNWYi?=
+ =?us-ascii?Q?xP+TWNTFbjz/kXlTQ1nZI2zyTb3EQYda3xQVBRhXCeJrXCN1k7sAtxe2Bf5G?=
+ =?us-ascii?Q?AeCkgicG6VHaOvA+jI83iItz7S9kgGcC1ZvMVp+cLwDphe1qizOK5SlwD9ND?=
+ =?us-ascii?Q?HWXEDij9wQbRVIhnjccuBROJSHswkdtHsYLL8SSRNi9GzLM39RFRBDvfclGh?=
+ =?us-ascii?Q?ktIT2F29DftwT7BOLKLqn1O/9kJRlSTSBc+p7Hp8qpRnB3bv1nP5eftW7V6X?=
+ =?us-ascii?Q?3d58RCZyIawE/QfNusDcuQGp0oeRvU0XGawmDEQbQ6jv7oD4UkmBJm/wQNRf?=
+ =?us-ascii?Q?ss2nkSCaLb44SzzOVWLQ/4UISrs95rg4KJNmi9oFVOlRpfxWgrH8o15lppi1?=
+ =?us-ascii?Q?sbgjkMZQuGumnG/MMj6rWWe7lIBGnalj9HIqV164OprsyyUIEjdtJLadJIah?=
+ =?us-ascii?Q?PHS0PwDsXW1TUwh7B7ehOx7Scu2qSIEymmQzHAyYZLveBoKbMs5Ftt70M8id?=
+ =?us-ascii?Q?dXuGH5RNvUDqpUZw11eG65OTwGOQC+SZk3qJfl3NLNPRDuLAfxbn+IaJ+CpN?=
+ =?us-ascii?Q?v7A22GPp50ljS+0EGqctyzCFQhCHrQwQesXso7nCyqbRDp/2mTQtKHipiST7?=
+ =?us-ascii?Q?kFIh8vnYxDoRtecLTauvk5X9/uiUlwLs9wQO3en7BANzZTXnC1pQSSsRy9V3?=
+ =?us-ascii?Q?ESXl+pwzR6ZxBaB3b87EFjJgrnT/jGiqMU+f04NPfHyUbBjbBdfJWpPwy3OK?=
+ =?us-ascii?Q?Cd3HBViWbhFglgU4/dPESLS/2SqgqtkQ46OmhSLA4bAYHAVvrB0RBzBxKSke?=
+ =?us-ascii?Q?/p0IrAV/1gaw4DBqGKElw100uHBS/A8wWvXVXL1/I/oFipxvBGmfEGsTHj12?=
+ =?us-ascii?Q?SJVVJZ7uvfVne6cyM0/a/b1TT42VrNh6p2l2B8Wz/72gxS6TtotxHa6MjdZT?=
+ =?us-ascii?Q?UeZrOv/cnn3PtCBKqEFY7/2heccsOWeNHqSzB8u6MjNy1ykwmAFbbZ6FnyN4?=
+ =?us-ascii?Q?Ow4UpYo6h7ximoRrtY+wLZiv0CPL6/uCXUtwpODNM6DDKQtuQ48T5/sbNY1/?=
+ =?us-ascii?Q?9eyNFpyWIzQjUFflJAJFoUkHsNbJUx/fvxI/ty78esxfoTm1SgXvUIbuZVTi?=
+ =?us-ascii?Q?ArrT8oqFMWHimhJbVtYbRGeyOmFZj2rdGd8a9ICt6+NJr6Nk66ouHL724ZD2?=
+ =?us-ascii?Q?cYjLAucVkzjQMxZQP2NV1acV5vfyjZRd0jWhPE+0AQH9Ja9HvdH36CyL7Cjm?=
+ =?us-ascii?Q?tb+1t5SunNg29NP+qahCed2ChIN4CWFJCOHyB2YRSLN76wOw3YJN7sVeTzrd?=
+ =?us-ascii?Q?lw4aJw9S0SSwN8xH0nJOwRQ3eC3OK9hmrFKlv0lbyMJfKGLwC31VCabR1/3F?=
+ =?us-ascii?Q?5426k3L7wYKidtp3FkJJWfFjM1/qYE77SS3TAOB1cVe/uM765Lbmc61AwnKW?=
+ =?us-ascii?Q?aDjkQzTWPWPM6ny53cJrhyyIwWXv9QoCAyn8k+LVeJwWYaSfxrDGZBRT2/Fz?=
+ =?us-ascii?Q?Rg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbc7ef27-6774-418d-bf32-08dd4f20e95b
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 07:01:32.9987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tt5e41ps5fsg4TkN1rCh7ttjVLhens4Zg7nMfooFCdFQNTjRghqpgtyM26JkDdvKKCn0VsQlvlZ4gR2Tz3oYmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7473
+X-OriginatorOrg: intel.com
 
 
-SATA Controllers LIST:
-  1. INSPUR CE3000F
-        *-sata
-             description: SATA controller
-             product: 88SE9215 PCIe 2.0 x1 4-port SATA 6 Gb/s Controller
-             vendor: Marvell Technology Group Ltd.
-             physical id: 0
-             bus info: pci@0000:03:00.0
-             logical name: scsi2
-             logical name: scsi3
-             version: 11
-             width: 32 bits
-             clock: 33MHz
-             capabilities: sata pm msi pciexpress ahci_1.0 bus_master cap_list rom emulated
-             configuration: driver=ahci latency=0
-             resources: irq:43 ioport:2020(size=8) ioport:2030(size=4) ioport:2028(size=8) ioport:2034(size=4) ioport:2000(size=32) memory:58140000-581407ff memory:58100000-5813ffff
-  2. Maxsun MS-WS W680 D4
-             Hardware Class: storage
-             Model: "Intel SATA controller"
-             Vendor: pci 0x8086 "Intel Corporation"
-             Device: pci 0x7ae2 
-             Revision: 0x11
-             Driver: "ahci"
-             Driver Modules: "ahci"
-             Memory Range: 0x82100000-0x82101fff (rw,non-prefetchable)
-             Memory Range: 0x82102800-0x821028ff (rw,non-prefetchable)
-             Memory Range: 0x82102000-0x821027ff (rw,non-prefetchable)
-             IRQ: 166 (no events)
-             Module Alias: "pci:v00008086d00007AE2sv00000000sd00000000bc01sc06i01"
-             Driver Info #0:
-               Driver Status: ahci is active
-               Driver Activation Cmd: "modprobe ahci"
-             Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+Hello,
+
+kernel test robot noticed "kernel-selftests.damon.damos_quota_goal.py.fail" on:
+
+commit: 9a5aa3349b9428ae451b22c331d0d9a9cfc7ac90 ("mm/damon/sysfs: use damon_call() for update_schemes_effective_quotas")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master      0ad2507d5d93f39619fc42372c347d6006b64319]
+[test failed on linux-next/master 0ae0fa3bf0b44c8611d114a9f69985bf451010c3]
+
+in testcase: kernel-selftests
+version: kernel-selftests-x86_64-7ff71e6d9239-1_20250215
+with following parameters:
+
+	group: damon
 
 
-Tested-by: Jie Fan <fanjie@uniontech.com>
-Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-Tested-by: WangYuli <wangyuli@uniontech.com>
 
-Currently, due to the limited hardware I have access to, I'm unsure if this is a Marvell
-88SE9215's specific issue or a general Marvell SATA controller problem.
+config: x86_64-dcg_x86_64_defconfig-kselftests
+compiler: gcc-12
+test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
 
-So, I think it's reasonable to add a quirk to handle this for the Marvell 88SE9215 now.
+(please refer to attached dmesg/kmsg for entire log/backtrace)
 
-Thanks,
---
-WangYuli
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202502171423.b28a918d-lkp@intel.com
+
+
+
+# timeout set to 300
+# selftests: damon: damos_quota_goal.py
+# score: 0, effective quota: 0 -> 16 (-1.000x)
+# score: 15000, effective quota: 16 -> 1 (0.062x)
+# score: 5000, effective quota: 1 -> 5 (5.000x)
+# score: 18000, effective quota: 1 -> 1 (1.000x)
+# efective bytes not changed: 1
+not ok 7 selftests: damon: damos_quota_goal.py # exit=1
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20250217/202502171423.b28a918d-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
