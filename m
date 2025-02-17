@@ -1,302 +1,503 @@
-Return-Path: <linux-kernel+bounces-518302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D05A38CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:03:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5B2A38CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681C918981F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EBA174820
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E228F2405E0;
-	Mon, 17 Feb 2025 19:59:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858A623ED70;
-	Mon, 17 Feb 2025 19:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739822392; cv=none; b=Q7vvoTfLTeyUI/UTJyWJ5O8VtiKtwem6GMpXZPzdZ9sNIzv7cC1/PlbjZtN+NfFZ7FV030/axK905iwGdoVCQ+MBr/u7CFFtTsI5XGQgm67cfUmqolcSnNBY9W8ntOwI384dGdfWKK+Azxg30mk+7OcyrSCpMmDW/WYSKdZglIQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739822392; c=relaxed/simple;
-	bh=FI4M+NdBukzqBXF/rdRTV7sGCrvsk+uVDIPEDVDlbIc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ImmIu+0w42sZkxOAWZ1NBJdXjWkdmgxFvI0mulcJn4L4D4MhOocdQZu6VGgASgphmPYwbQbSnrIxNoag7wT5tU/BUvRx26sVoW8DBSda1VngmlCIABs8M7ZjnE6nen/Vwl6dmWFIjkX8QWwEbgnryFnwqQPjccgcfYzEiC99xX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E91D152B;
-	Mon, 17 Feb 2025 12:00:09 -0800 (PST)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CA5A73F6A8;
-	Mon, 17 Feb 2025 11:59:47 -0800 (PST)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Graham Woodward <graham.woodward@arm.com>,
-	Paschalis.Mpeis@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v3 12/12] perf arm-spe: Support previous branch target (PBT) address
-Date: Mon, 17 Feb 2025 19:59:08 +0000
-Message-Id: <20250217195908.176207-13-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217195908.176207-1-leo.yan@arm.com>
-References: <20250217195908.176207-1-leo.yan@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187FA23FC4C;
+	Mon, 17 Feb 2025 19:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="mPjRh7Br"
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022080.outbound.protection.outlook.com [40.107.193.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C3023F28F;
+	Mon, 17 Feb 2025 19:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739822391; cv=fail; b=URTJMRfCb9LLzw6w8xrOlLiNkzEbyhoi2E9ewPHkP9y8865pKLuJkH5vC8JSVpLnien6vbzSuarAcCy4CEZJK2YjzjDEDnzolM8IoohS31BNtX5sZQtWkwnfe+H5umcsScd/u1qEFKYsjTDivs+PuGupmdc8TkzuIvrVfYwNb0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739822391; c=relaxed/simple;
+	bh=30Vw1PUw5W45rgcHVp8yr5y1afKdmVBqj7B+xISWjxQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cqqv7MmPo5GhwQeYAz61ja/o2XyDi/wJwuGwkMoEyTZTPOvg13ASyJAeYSByjYOrC6NIieQAz2pO30gzAIZrHTqdIjQ0EnO5nLR4QXiPz7h4TKcPyg9BSNRGp+oM2MkgfoCyZY2nA9lhUvLPrWTyNs7P0n6ikPAnw8xicc74crg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=mPjRh7Br; arc=fail smtp.client-ip=40.107.193.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eXZ8xBM02BAPCTBvQ0YRZOmoaGTAaYeYeqwrlF8OUL7rUBnh8DbnuJnM3dfGnWPUIUDbc2yNJYnCGvUOGvrh983de6bF1sk9NdDXyc6enTpdUZ1pau4Nda4q9s4iSSLAmV2O6cULCpwimV5iN2ifnrPXXfXLVSW6Xj6nprUDH2VHL5mnaqYZIAAuPw2a9ErNNfYYuuY4hrE9Kr46Jh5K95hX7P2Y3tVwYUcL1BmNp5G38wVmdkZbfrlNB2nnDsFBIJPDJG1CmpOOZKrhUZ2lRVj5yhhWqgybbaoc4C5mivNngcuuEAC2+Bxc8L4qeKTXUWIlpUhnfWA5bNf9KwTyDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6FRC8uTDSCp/0ImtkBn4lTLtxfuHEHOtwhiQM+BSqKU=;
+ b=v1rJAWV1/PFq9lk3IhltGyTAxQPQyeB56XYIn9TOB7Fjh93Kp4wJbtsPiqyUK6zv/l4BFwNRFlHMnKcua7Jm7hjh+25DFmvhYI6b5PkEWP8Pa9fWmuKdk1yCz/xGF01ZFeuVO8FqPvmLhBU7Eow8SFaWGv7vYziBF17MdGNdfP7kJUZmWFnb/ZAoO4TAmxNBzqXsML6Z2khz2dmCGvfEZs+KKz32tHAEYfSQ6gEq7C07X3NIyXirpz5DZAVIyZLyKIpZ1yj1O7kVoPQY6B82hDUF0ftc6GMY9n+vcQWf4EyAR5Appo8JFGtbntwpgR0reQ1M8zWAwL7+I2hMFAHvuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6FRC8uTDSCp/0ImtkBn4lTLtxfuHEHOtwhiQM+BSqKU=;
+ b=mPjRh7BrOf+EGeNVVLlfnBg/IjGHnNDFeR5LsMTwDWJPPvBC/Qv3KM/ndU0mlgNWz2ONaHMcMXpd/9qf7qZIjeXqzr8hI/QybmE57pC3SeWl0XyVAVzaIP6Uv4cjnTK01m80dbCpnwUfWWl/hs4GdSB8n07o7v4WfW1q6TFwc5SpZkBOghoH4dEJUNPAYF1Q7Tr9XfZ9EAm74GHbhFoSI4aDAg0pl3K9eOUBkH1gIC6bevPNonF1e245y/RW2lHSzHM1PdaPLpfSWzrnMlhRFn7ftiadxqvmH+UTrNA5LvfvvNOtJs11uazVYGGHfcKh5/3BiG2ELSEMmsf1QGgSHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB9650.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:af::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Mon, 17 Feb
+ 2025 19:59:47 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
+ 19:59:47 +0000
+Message-ID: <822a9d2b-a9f3-45b4-8cad-077489015301@efficios.com>
+Date: Mon, 17 Feb 2025 14:59:46 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] rseq/selftests: Add test for mm_cid compaction
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>
+References: <20250217112317.258716-1-gmonaco@redhat.com>
+ <20250217112317.258716-3-gmonaco@redhat.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250217112317.258716-3-gmonaco@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQ1P288CA0007.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:9e::12) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB9650:EE_
+X-MS-Office365-Filtering-Correlation-Id: 383b5c6c-9ee6-47a1-e2d1-08dd4f8da144
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V0hCNUJjQ0xVWDdBQUhjVS82U1Q0TGZRb2llam1yTmlxQklGMmF3SXhWSTZO?=
+ =?utf-8?B?ME1qUlB6UkFHalFuT2dNU3ZWcTlKZk1lb0hyRjJlSHlQeEpNc2hXcWcvQ25o?=
+ =?utf-8?B?Q0p3Y0xGUVNOMnBMWnlMTTIyZjZ5VUppc081dTR0bHg1WFN4YlRGMEd3V2FZ?=
+ =?utf-8?B?UUxIZGtnVy9YaGxKcXpuN1VBcTl2cVJQWGFLbU1TNEhOQmVSS01Lbk51WkRp?=
+ =?utf-8?B?dUV4ZXZJaXhxWkhPUE9sRVk4aWFQWlMra1RjRGNQdDR1VTVHK2YySjl1VmJ4?=
+ =?utf-8?B?TDFEeld0QTF4a0VZWm5adGNDWXRRNzZ4Z2R1S1dDdGEvTUtSYXFBeFhHaWVP?=
+ =?utf-8?B?WWMrbjVGN2JuaTdPRHNZdVVZaTVLdzlpc3lDK3MrR01aM3ZHSlgxNk9mY2ts?=
+ =?utf-8?B?TGZVRDNiTVlKN0F5N3lkc3NNaGE3N0UrOUhyeFFEYXZKYkYvZ21LYmEraUo4?=
+ =?utf-8?B?Y3RjWlVMQzYwT0h1eHlkTE9talcwZVBkSTdPUjlPWjVHOFQvWmV6TFhUeURV?=
+ =?utf-8?B?YzRoY0ZSTEd0bW4vRSs1NGo5bit4VzR6NGYyNGtibVNVNStxVWdiM0d1bG5K?=
+ =?utf-8?B?STF0d3FZdkdQODJnUVFiU3orcGR5Zy9YUWRKSi9saytQeWNrTHVPUGdUK3k3?=
+ =?utf-8?B?VmtraHkvRHJtb21OV0drbFJGMzN6S3dNb0VyRlN5OEJ5T1RCekJEbTVxSTZY?=
+ =?utf-8?B?Nk82Z3llZmJNZ3JBajVXS1Y3b28wWHJQYmZJODBOZ1BDeFFyVncwc3plSFov?=
+ =?utf-8?B?UEdOMmFaUTZRRUtRY3FKQ1djUkc4VHRkdEFGei90SWRmQjlKV05jQUJ6MEw2?=
+ =?utf-8?B?ZlQ0NFYvT2h2NnNtdkVuZXQ0N3RsdnRVT2lmdFJwRzMxaGJBNUQ2SHNCUDF4?=
+ =?utf-8?B?QTJOdVBFUU43MUhoMFNHQkMwMVIvRnVmWUxJMUhISVY4dGJGK0IwWjFER0hv?=
+ =?utf-8?B?Y1FkZzVTODlaT01Bb2MvVEZBZy9nUWIrNXVDRDFPNTdRN0pnMlJ4ejBOTlRj?=
+ =?utf-8?B?WEM0STU2bTZ6Z3JTVERnWXlzcktXbVZvTzVIN1NoL2tJVVVIUlRPckp1ZTI5?=
+ =?utf-8?B?czhxRXJYRm00VFUvT21vWHN4bGRYTVU1VUZlbDU0Sk42MmpZZ2J6bEhsczBa?=
+ =?utf-8?B?U3BmamUyZVlMMyt2bzhQYVRmOHRQVDA2VFA0bTlOc3dNNDA3YmhXY3RhUkgv?=
+ =?utf-8?B?dy9nWEJHazBudTRDcnBmNFZUQk4yUUhsVS9uVjEzckNIck9iSVo5UHhvdWsy?=
+ =?utf-8?B?dUh3blcxR2RVSVF3alVlNjN3UXVvbUNTNUFkeHorZjEyVGdHcElVZjVJRTRL?=
+ =?utf-8?B?TWtTWCsxaE5GSS96TVkvcWtnaldHK0x6djBLY3U0dzlNOXZEdjNLS25Qc0kv?=
+ =?utf-8?B?QTh3RVY3c05tZzRVSHV3aGlZMHI3S293d044NGNmVDEvNDFBWU9JN3FrcWVq?=
+ =?utf-8?B?N2hUejd1encrZlBPWEJHSFFZQ3BKSzU2dHNqYW13NVQ5QWVYMnJMK3RIWVBO?=
+ =?utf-8?B?M21YZWJML1NWZDlITFpzb0ZlK3VYWHE4eTByR3FGeDFNQ21ia2c1MGpTTHpa?=
+ =?utf-8?B?dG5VQWY0TlZXWkhyUy9pNGd3ZzQ0MFNMN1ZNR3NjeGVGZGtMd05Ec0RmRU1y?=
+ =?utf-8?B?S01yVDBDVWhZc2xOdXhmQkIyY2pJdU1ZLy9pVlUyV2Q4ekVMUVZCS3lvVW54?=
+ =?utf-8?B?NlIyd2h0U3Y3dmx5VXNhbUFnaVNQNFVVc3RaU0V2ZlE5L2s3WE9yS0RsVisz?=
+ =?utf-8?Q?jznG7hvZwwexdIdB6boMJ7O68Ea9gadpfglvjlb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SnR4d2p1aXRzclhXSGpkaHliek4vK0xWQ0ZySnI3L3Q4aXRZUzdUZHBTdWNz?=
+ =?utf-8?B?U0dBUFM5WWZNZWoyRE10ck5OZU54WmlGYnVObHJlTi9paVBORUNKaXZPSEly?=
+ =?utf-8?B?MmI5RVZpVEhaQlc5M25aVmFjV1l0SDQ1Q2dleElSL1FUeE1RRG5sWkNUQlZy?=
+ =?utf-8?B?eFYrTnFkbjY3UkpSNlhRSlFMaXNvZ2tIRFMrdGhXYkJhcEZLV1Q1Tk9uUW01?=
+ =?utf-8?B?MnRoOHM1NlIxRC9HQUxsbE5OM2FVcXNmTG1FZFlGdUdhbmVsSHliMDZQWFh0?=
+ =?utf-8?B?RVBZaE1XTkJySEIzYVpVME1sKy80MUl1N2JyYURrQjJUVFlsK0JqVVNRVWxu?=
+ =?utf-8?B?SkQyU1RBTll1TWQwd09Jb2pzZlhKMHZaV2ZTV0lFUU5aN2s2N1hRRnFoTkpR?=
+ =?utf-8?B?K2JMOXlrMStKRlRBTDBUTUJYNnYzQTdoRUpsYWltL1pKRnprcUVJaS85dlVx?=
+ =?utf-8?B?T0tNTVNaYitTSFFhU2s3TGdwTE1veXFEQnZzOU1BaXhCNGdhY1FkaDQ0N0Zp?=
+ =?utf-8?B?OVZ2SjhCOFFHbTVBaTBRd1ZZWGRha25ITmx4alphYmV2dzRRWmkvcVJYcXlG?=
+ =?utf-8?B?RGNHczk0eU9vR25oYjY0MUgyZVJzQ253dkVLMHk3dFVyc1RpMjJPNEJzZllx?=
+ =?utf-8?B?SWhnNXBKdzFTZ3FMSEowSU1Qa2gyajY0WEVEYmU5elVMWnpKMUoyUXg4YUl0?=
+ =?utf-8?B?YkdmeDVXYmovUFBpamQ2MDVQWHJXRVV3VnljWUhkSWcxVEtlNXJhTWtNZ2N6?=
+ =?utf-8?B?YjJwRFdyaU1lL25HR3VuVlppOXVZbnRtRlRYL2JEaFp0Y0NaeXhFamV0QlNv?=
+ =?utf-8?B?Mm5ZSHVCSGh5eXFoalhYZktPSG1za1VxeDM2eUZSM3U4QmxOYm9Sdkh6K0pM?=
+ =?utf-8?B?eDVQcUdSY0krV0pTQzZ2bERaSVJScGJJVFBjL1l1M3YxSVl4Sjd2SXowNEls?=
+ =?utf-8?B?MGV3aHBJNG45V3dwRE1iblQ4ZUlvaVZEVGt6b3J0UTlDaEJNWWszVFZCa0tN?=
+ =?utf-8?B?Q2hxeWdQNzU2NkJ1cGdQZWpLcW5ibFRxVFRiMXRERys5VHBSSVcvU2xpRjV4?=
+ =?utf-8?B?UWNjWCtKQ21ZbWdCcS9FM2UzQncrTlBJZWsrM0VpUUdjQ0JOaWxQYit1M2Za?=
+ =?utf-8?B?WXFTa3dXYW9qbVQ3emZBWG5pb21VNFlUZmRhWkJGT3FWVzU4aTI5OHdBcWFh?=
+ =?utf-8?B?bEovWG9uNEI0MHZSTHRHUzFraW1OcFJMNnNpV0IxcVJxZmpwMDYwWHZXNGZ0?=
+ =?utf-8?B?ZHNBRSs0WXhVMmg2Q0FxQXUxZVQyeEhwTlMzR3pzVkkwMnRxMlJTUHpBTE5j?=
+ =?utf-8?B?dm1qUU1QbU9DUEthaGZ2aDhhYlF4blNDVE5GampNQ3NiWU1MM1FPZERsSkhI?=
+ =?utf-8?B?NXlCOVVJQXlXUUdYZmJQMm1HUCszNDZGbndWODNhVXd5MHFGZmhESXRwbXdv?=
+ =?utf-8?B?cnFPdTMvQlY0OEVkajlKdkIwdWdWbHZwb2JJVENQVHNZVDBZZnJhQ0ErTXpG?=
+ =?utf-8?B?ZnZCcGl6YktDZTNNMytxYW5RVmdkSUNNN285cmhveExwdUVxcjNVVG9XVjNl?=
+ =?utf-8?B?a2ljMElqeDEzNTVjYlkxdUxmZ3ZxK0ZmNW5xY3NoZVp6bmRoY3V6RWY2NFBu?=
+ =?utf-8?B?cDFacTdKN3pOcFZQWFJvL0FzdWowQ3pQcnE4VTIvQlp1NGpjSFR5SlhnMytP?=
+ =?utf-8?B?U2h2Nmg3OXcvSTRycmM2MFlURmcwblJBYTQwOEJ1UEhXN1prZ3pwK0Z3TXJO?=
+ =?utf-8?B?M1dkVHBRNEZyT3hMVFYyVFd2eE1XYk9ydGhQNVJySGZDYkloend2cUdWRnZV?=
+ =?utf-8?B?TDZTTXRuT2hFTS81a1QybHVWaXJGNXpobXJpMjVraGRzZlljQ2RmL0RxcFNV?=
+ =?utf-8?B?RElaOXRxNXhKUXI3aUp0TDk3bnNiY1g2R094VWhZTEVsR2tqWXNDVTVwcmpJ?=
+ =?utf-8?B?dkZwaUQ5eS9jU0UvbVh5S3duRGh6RTVIN0NCWUFJbUVrcGlPd3dZbTRyL2J2?=
+ =?utf-8?B?M0YzNHFQZGJtK2d6UTNvcWlVYm5WbzN4Vlc3YXlYMlBRYmREd3FsbmJvc1dx?=
+ =?utf-8?B?TEkzeGpuVm5HZUd6U2RjeGFVTWNFejlkTWRpWUw5REZScVFjMTNJQmtSNks3?=
+ =?utf-8?B?U1ZUZnpqNm5wbWUyY000Y2JTMUJRU2NYK1ZKaTBFRTJUTGtPTU5ZbVJ3djRN?=
+ =?utf-8?Q?m2L5EaiMlzRlFAFSyz+IgBw=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 383b5c6c-9ee6-47a1-e2d1-08dd4f8da144
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 19:59:47.1906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /hhZsSKz3nB4bEpZEXja6SAkbdeuA92HWXrTEfcxzwDycBlTZOJL7zHX1EieVxWxFoqhf8FGYw8e8N3CVaQ2U1gSD91S0hcrpnZVXjnR4q8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB9650
 
-When FEAT_SPE_PBT is implemented, the previous branch target address
-(named as PBT) before the sampled operation, will be recorded.
+On 2025-02-17 06:23, Gabriele Monaco wrote:
+> A task in the kernel (task_mm_cid_work) runs somewhat periodically to
+> compact the mm_cid for each process. Add a test to validate that it runs
+> correctly and timely.
+> 
+> The test spawns 1 thread pinned to each CPU, then each thread, including
+> the main one, runs in short bursts for some time. During this period, the
+> mm_cids should be spanning all numbers between 0 and nproc.
+> 
+> At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
+> is selected to be the new leader, all other threads terminate.
+> 
+> After some time, the only running thread should see 0 as mm_cid, if that
+> doesn't happen, the compaction mechanism didn't work and the test fails.
+> 
+> Since mm_cid compaction is less likely for tasks running in short
+> bursts, we increase the likelihood by just running a busy loop at every
+> iteration. This compaction is a best effort work and this behaviour is
+> currently acceptable.
 
-This commit first introduces a 'prev_br_tgt' field in the record for
-saving the PBT address in the decoder.
+I'm wondering what we can do to make this compaction scheme more
+predictable.
 
-If the current operation is a branch instruction, by combining with PBT,
-it can create a chain with two consecutive branches.  As the branch
-stack stores branches in descending order, meaning a newer branch is
-stored in a lower entry in the stack.  Arm SPE stores the latest branch
-in the first entry of branch stack, and the previous branch coming from
-PBT is stored into the second entry.
+The situation here is caused by the fact that the CID compaction
+only happens on scheduler tick. If the workload is periodic and
+runs in short bursts, chances are that the scheduler tick never
+issue task_tick_mm_cid() for a given process, so no compaction.
 
-Otherwise, if current operation is not a branch, the last branch will be
-saved for PBT only.  PBT lacks associated information such as branch
-source address, branch type, and events.  The branch entry fills zeros
-for the corresponding fields and only set its target address.
+So task_tick_mm_cid() basically does:
 
-After:
+void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
+{
+         struct callback_head *work = &curr->cid_work;
+         unsigned long now = jiffies;
 
-  perf script -f --itrace=bl -F flags,addr,brstack
-  jcc                   ffff800080187914 0xffff8000801878fc/0xffff800080187914/P/-/-/1/COND/-  0x0/0xffff8000801878f8/-/-/-/0//-
-  jcc                   ffff8000802d12d8 0xffff8000802d12f8/0xffff8000802d12d8/P/-/-/1/COND/-  0x0/0xffff8000802d12ec/-/-/-/0//-
-  jcc                   ffff8000813fe200 0xffff8000813fe20c/0xffff8000813fe200/P/-/-/1/COND/-  0x0/0xffff8000813fe200/-/-/-/0//-
-  jcc                   ffff8000813fe200 0xffff8000813fe20c/0xffff8000813fe200/P/-/-/1/COND/-  0x0/0xffff8000813fe200/-/-/-/0//-
-  jmp                   ffff800081410980 0xffff800081419108/0xffff800081410980/P/-/-/1//-  0x0/0xffff800081419104/-/-/-/0//-
-  return                ffff80008036e064 0xffff80008141ba84/0xffff80008036e064/P/-/-/1/RET/-  0x0/0xffff80008141ba60/-/-/-/0//-
-  jcc                   ffff8000803d54f0 0xffff8000803d54e8/0xffff8000803d54f0/P/-/-/1/COND/-  0x0/0xffff8000803d54e0/-/-/-/0//-
-  jmp                   ffff80008015e468 0xffff8000803d46dc/0xffff80008015e468/P/-/-/1//-  0x0/0xffff8000803d46c8/-/-/-/0//-
-  jmp                   ffff8000806e2d50 0xffff80008040f710/0xffff8000806e2d50/P/-/-/1//-  0x0/0xffff80008040f6e8/-/-/-/0//-
-  jcc                   ffff800080721704 0xffff8000807216b4/0xffff800080721704/P/-/-/1/COND/-  0x0/0xffff8000807216ac/-/-/-/0//-
+         if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
+             work->next != work)
+                 return;
+         if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
+                 return;
 
-Reviewed-by: Ian Rogers <irogers@google.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- .../util/arm-spe-decoder/arm-spe-decoder.c    |   5 +-
- .../util/arm-spe-decoder/arm-spe-decoder.h    |   1 +
- tools/perf/util/arm-spe.c                     | 114 ++++++++++--------
- 3 files changed, 70 insertions(+), 50 deletions(-)
+         /* No page allocation under rq lock */
+         task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
+}
 
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-index 52bd0a4ea96d..688fe6d75244 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-@@ -28,7 +28,8 @@ static u64 arm_spe_calc_ip(int index, u64 payload)
- 
- 	/* Instruction virtual address or Branch target address */
- 	if (index == SPE_ADDR_PKT_HDR_INDEX_INS ||
--	    index == SPE_ADDR_PKT_HDR_INDEX_BRANCH) {
-+	    index == SPE_ADDR_PKT_HDR_INDEX_BRANCH ||
-+	    index == SPE_ADDR_PKT_HDR_INDEX_PREV_BRANCH) {
- 		ns = SPE_ADDR_PKT_GET_NS(payload);
- 		el = SPE_ADDR_PKT_GET_EL(payload);
- 
-@@ -181,6 +182,8 @@ static int arm_spe_read_record(struct arm_spe_decoder *decoder)
- 				decoder->record.virt_addr = ip;
- 			else if (idx == SPE_ADDR_PKT_HDR_INDEX_DATA_PHYS)
- 				decoder->record.phys_addr = ip;
-+			else if (idx == SPE_ADDR_PKT_HDR_INDEX_PREV_BRANCH)
-+				decoder->record.prev_br_tgt = ip;
- 			break;
- 		case ARM_SPE_COUNTER:
- 			if (idx == SPE_CNT_PKT_HDR_INDEX_TOTAL_LAT)
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-index 85b688a97436..5d232188643b 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-@@ -89,6 +89,7 @@ struct arm_spe_record {
- 	u32 latency;
- 	u64 from_ip;
- 	u64 to_ip;
-+	u64 prev_br_tgt;
- 	u64 timestamp;
- 	u64 virt_addr;
- 	u64 phys_addr;
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index ed89b7dbc244..2a9775649cc2 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -237,8 +237,9 @@ static struct arm_spe_queue *arm_spe__alloc_queue(struct arm_spe *spe,
- 	if (spe->synth_opts.last_branch) {
- 		size_t sz = sizeof(struct branch_stack);
- 
--		/* Allocate one entry for TGT */
--		sz += sizeof(struct branch_entry);
-+		/* Allocate up to two entries for PBT + TGT */
-+		sz += sizeof(struct branch_entry) *
-+			min(spe->synth_opts.last_branch_sz, 2U);
- 		speq->last_branch = zalloc(sz);
- 		if (!speq->last_branch)
- 			goto out_free;
-@@ -362,68 +363,83 @@ static void arm_spe_prep_sample(struct arm_spe *spe,
- 
- static void arm_spe__prep_branch_stack(struct arm_spe_queue *speq)
- {
-+	struct arm_spe *spe = speq->spe;
- 	struct arm_spe_record *record = &speq->decoder->record;
- 	struct branch_stack *bstack = speq->last_branch;
- 	struct branch_flags *bs_flags;
-+	unsigned int last_branch_sz = spe->synth_opts.last_branch_sz;
-+	bool have_tgt = !!(speq->flags & PERF_IP_FLAG_BRANCH);
-+	bool have_pbt = last_branch_sz >= (have_tgt + 1U) && record->prev_br_tgt;
- 	size_t sz = sizeof(struct branch_stack) +
--		    sizeof(struct branch_entry) /* TGT */;
-+		    sizeof(struct branch_entry) * min(last_branch_sz, 2U) /* PBT + TGT */;
-+	int i = 0;
- 
- 	/* Clean up branch stack */
- 	memset(bstack, 0x0, sz);
- 
--	if (!(speq->flags & PERF_IP_FLAG_BRANCH))
-+	if (!have_tgt && !have_pbt)
- 		return;
- 
--	bstack->entries[0].from = record->from_ip;
--	bstack->entries[0].to = record->to_ip;
-+	if (have_tgt) {
-+		bstack->entries[i].from = record->from_ip;
-+		bstack->entries[i].to = record->to_ip;
- 
--	bs_flags = &bstack->entries[0].flags;
--	bs_flags->value = 0;
-+		bs_flags = &bstack->entries[i].flags;
-+		bs_flags->value = 0;
- 
--	if (record->op & ARM_SPE_OP_BR_CR_BL) {
--		if (record->op & ARM_SPE_OP_BR_COND)
--			bs_flags->type |= PERF_BR_COND_CALL;
--		else
--			bs_flags->type |= PERF_BR_CALL;
--	/*
--	 * Indirect branch instruction without link (e.g. BR),
--	 * take this case as function return.
--	 */
--	} else if (record->op & ARM_SPE_OP_BR_CR_RET ||
--		   record->op & ARM_SPE_OP_BR_INDIRECT) {
--		if (record->op & ARM_SPE_OP_BR_COND)
--			bs_flags->type |= PERF_BR_COND_RET;
--		else
--			bs_flags->type |= PERF_BR_RET;
--	} else if (record->op & ARM_SPE_OP_BR_CR_NON_BL_RET) {
--		if (record->op & ARM_SPE_OP_BR_COND)
--			bs_flags->type |= PERF_BR_COND;
--		else
--			bs_flags->type |= PERF_BR_UNCOND;
--	} else {
--		if (record->op & ARM_SPE_OP_BR_COND)
--			bs_flags->type |= PERF_BR_COND;
--		else
--			bs_flags->type |= PERF_BR_UNKNOWN;
--	}
-+		if (record->op & ARM_SPE_OP_BR_CR_BL) {
-+			if (record->op & ARM_SPE_OP_BR_COND)
-+				bs_flags->type |= PERF_BR_COND_CALL;
-+			else
-+				bs_flags->type |= PERF_BR_CALL;
-+		/*
-+		 * Indirect branch instruction without link (e.g. BR),
-+		 * take this case as function return.
-+		 */
-+		} else if (record->op & ARM_SPE_OP_BR_CR_RET ||
-+			   record->op & ARM_SPE_OP_BR_INDIRECT) {
-+			if (record->op & ARM_SPE_OP_BR_COND)
-+				bs_flags->type |= PERF_BR_COND_RET;
-+			else
-+				bs_flags->type |= PERF_BR_RET;
-+		} else if (record->op & ARM_SPE_OP_BR_CR_NON_BL_RET) {
-+			if (record->op & ARM_SPE_OP_BR_COND)
-+				bs_flags->type |= PERF_BR_COND;
-+			else
-+				bs_flags->type |= PERF_BR_UNCOND;
-+		} else {
-+			if (record->op & ARM_SPE_OP_BR_COND)
-+				bs_flags->type |= PERF_BR_COND;
-+			else
-+				bs_flags->type |= PERF_BR_UNKNOWN;
-+		}
- 
--	if (record->type & ARM_SPE_BRANCH_MISS) {
--		bs_flags->mispred = 1;
--		bs_flags->predicted = 0;
--	} else {
--		bs_flags->mispred = 0;
--		bs_flags->predicted = 1;
--	}
-+		if (record->type & ARM_SPE_BRANCH_MISS) {
-+			bs_flags->mispred = 1;
-+			bs_flags->predicted = 0;
-+		} else {
-+			bs_flags->mispred = 0;
-+			bs_flags->predicted = 1;
-+		}
-+
-+		if (record->type & ARM_SPE_BRANCH_NOT_TAKEN)
-+			bs_flags->not_taken = 1;
- 
--	if (record->type & ARM_SPE_BRANCH_NOT_TAKEN)
--		bs_flags->not_taken = 1;
-+		if (record->type & ARM_SPE_IN_TXN)
-+			bs_flags->in_tx = 1;
- 
--	if (record->type & ARM_SPE_IN_TXN)
--		bs_flags->in_tx = 1;
-+		bs_flags->cycles = min(record->latency, 0xFFFFU);
-+		i++;
-+	}
- 
--	bs_flags->cycles = min(record->latency, 0xFFFFU);
-+	if (have_pbt) {
-+		bs_flags = &bstack->entries[i].flags;
-+		bs_flags->type |= PERF_BR_UNKNOWN;
-+		bstack->entries[i].to = record->prev_br_tgt;
-+		i++;
-+	}
- 
--	bstack->nr = 1;
-+	bstack->nr = i;
- 	bstack->hw_idx = -1ULL;
- }
- 
-@@ -1584,8 +1600,8 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
- 	}
- 
- 	if (spe->synth_opts.last_branch) {
--		if (spe->synth_opts.last_branch_sz > 1)
--			pr_debug("Arm SPE supports only one bstack entry (TGT).\n");
-+		if (spe->synth_opts.last_branch_sz > 2)
-+			pr_debug("Arm SPE supports only two bstack entries (PBT+TGT).\n");
- 
- 		attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
- 		/*
+So typically we have a "time_before()" check that is hit and
+paces the execution of this task_work every 100ms or so.
+
+If we have periodic tasks, that means those tasks are necessarily
+preempted so they are not current when the tick happens. If the
+task cares about compaction of mm_cid, it means it has returned
+to userspace after that preemption.
+
+Sooo, we happen to have code in kernel/rseq.c called exactly at
+that point:
+
+__rseq_handle_notify_resume()
+
+I wonder if we could perhaps just call task_tick_mm_cid() (or a version
+of it renamed to something more meaningful) from
+__rseq_handle_notify_resume() ? By combining time_before() checks from
+the scheduler tick and at return to userspace after preemption, AFAIU
+we'd be handling the periodic workload correctly, and therefore this
+test for mm_cid compaction could check for more robust guarantees.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+> 
+> The test never fails if only 1 core is available, in which case, we
+> cannot test anything as the only available mm_cid is 0.
+> 
+> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>   tools/testing/selftests/rseq/.gitignore       |   1 +
+>   tools/testing/selftests/rseq/Makefile         |   2 +-
+>   .../selftests/rseq/mm_cid_compaction_test.c   | 208 ++++++++++++++++++
+>   3 files changed, 210 insertions(+), 1 deletion(-)
+>   create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+> 
+> diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
+> index 16496de5f6ce4..2c89f97e4f737 100644
+> --- a/tools/testing/selftests/rseq/.gitignore
+> +++ b/tools/testing/selftests/rseq/.gitignore
+> @@ -3,6 +3,7 @@ basic_percpu_ops_test
+>   basic_percpu_ops_mm_cid_test
+>   basic_test
+>   basic_rseq_op_test
+> +mm_cid_compaction_test
+>   param_test
+>   param_test_benchmark
+>   param_test_compare_twice
+> diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+> index 5a3432fceb586..ce1b38f46a355 100644
+> --- a/tools/testing/selftests/rseq/Makefile
+> +++ b/tools/testing/selftests/rseq/Makefile
+> @@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
+>   
+>   TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
+>   		param_test_benchmark param_test_compare_twice param_test_mm_cid \
+> -		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
+> +		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice mm_cid_compaction_test
+>   
+>   TEST_GEN_PROGS_EXTENDED = librseq.so
+>   
+> diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
+> new file mode 100644
+> index 0000000000000..8808500466d02
+> --- /dev/null
+> +++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
+> @@ -0,0 +1,208 @@
+> +// SPDX-License-Identifier: LGPL-2.1
+> +#define _GNU_SOURCE
+> +#include <assert.h>
+> +#include <pthread.h>
+> +#include <sched.h>
+> +#include <stdint.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <stddef.h>
+> +
+> +#include "../kselftest.h"
+> +#include "rseq.h"
+> +
+> +#define VERBOSE 0
+> +#define printf_verbose(fmt, ...)                    \
+> +	do {                                        \
+> +		if (VERBOSE)                        \
+> +			printf(fmt, ##__VA_ARGS__); \
+> +	} while (0)
+> +
+> +/* 0.5 s */
+> +#define RUNNER_PERIOD 500000
+> +/* Number of runs before we terminate or get the token */
+> +#define THREAD_RUNS 5
+> +
+> +/*
+> + * Number of times we check that the mm_cid were compacted.
+> + * Checks are repeated every RUNNER_PERIOD.
+> + */
+> +#define MM_CID_COMPACT_TIMEOUT 10
+> +
+> +struct thread_args {
+> +	int cpu;
+> +	int num_cpus;
+> +	pthread_mutex_t *token;
+> +	pthread_barrier_t *barrier;
+> +	pthread_t *tinfo;
+> +	struct thread_args *args_head;
+> +};
+> +
+> +static void __noreturn *thread_runner(void *arg)
+> +{
+> +	struct thread_args *args = arg;
+> +	int i, ret, curr_mm_cid;
+> +	cpu_set_t cpumask;
+> +
+> +	CPU_ZERO(&cpumask);
+> +	CPU_SET(args->cpu, &cpumask);
+> +	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
+> +	if (ret) {
+> +		errno = ret;
+> +		perror("Error: failed to set affinity");
+> +		abort();
+> +	}
+> +	pthread_barrier_wait(args->barrier);
+> +
+> +	for (i = 0; i < THREAD_RUNS; i++)
+> +		usleep(RUNNER_PERIOD);
+> +	curr_mm_cid = rseq_current_mm_cid();
+> +	/*
+> +	 * We select one thread with high enough mm_cid to be the new leader.
+> +	 * All other threads (including the main thread) will terminate.
+> +	 * After some time, the mm_cid of the only remaining thread should
+> +	 * converge to 0, if not, the test fails.
+> +	 */
+> +	if (curr_mm_cid >= args->num_cpus / 2 &&
+> +	    !pthread_mutex_trylock(args->token)) {
+> +		printf_verbose(
+> +			"cpu%d has mm_cid=%d and will be the new leader.\n",
+> +			sched_getcpu(), curr_mm_cid);
+> +		for (i = 0; i < args->num_cpus; i++) {
+> +			if (args->tinfo[i] == pthread_self())
+> +				continue;
+> +			ret = pthread_join(args->tinfo[i], NULL);
+> +			if (ret) {
+> +				errno = ret;
+> +				perror("Error: failed to join thread");
+> +				abort();
+> +			}
+> +		}
+> +		pthread_barrier_destroy(args->barrier);
+> +		free(args->tinfo);
+> +		free(args->token);
+> +		free(args->barrier);
+> +		free(args->args_head);
+> +
+> +		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
+> +			curr_mm_cid = rseq_current_mm_cid();
+> +			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
+> +				       curr_mm_cid, sched_getcpu());
+> +			if (curr_mm_cid == 0)
+> +				exit(EXIT_SUCCESS);
+> +			/*
+> +			 * Currently mm_cid compaction is less likely for tasks
+> +			 * running in short bursts: increase likelihood by just
+> +			 * running for some time doing nothing.
+> +			 */
+> +			for (int j = 0; j < 0xffff; j++)
+> +				for (int k = 0; k < 0xffff; k++)
+> +					asm("");
+> +			usleep(RUNNER_PERIOD);
+> +		}
+> +		exit(EXIT_FAILURE);
+> +	}
+> +	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
+> +		       sched_getcpu(), curr_mm_cid);
+> +	pthread_exit(NULL);
+> +}
+> +
+> +int test_mm_cid_compaction(void)
+> +{
+> +	cpu_set_t affinity;
+> +	int i, j, ret = 0, num_threads;
+> +	pthread_t *tinfo;
+> +	pthread_mutex_t *token;
+> +	pthread_barrier_t *barrier;
+> +	struct thread_args *args;
+> +
+> +	sched_getaffinity(0, sizeof(affinity), &affinity);
+> +	num_threads = CPU_COUNT(&affinity);
+> +	tinfo = calloc(num_threads, sizeof(*tinfo));
+> +	if (!tinfo) {
+> +		perror("Error: failed to allocate tinfo");
+> +		return -1;
+> +	}
+> +	args = calloc(num_threads, sizeof(*args));
+> +	if (!args) {
+> +		perror("Error: failed to allocate args");
+> +		ret = -1;
+> +		goto out_free_tinfo;
+> +	}
+> +	token = malloc(sizeof(*token));
+> +	if (!token) {
+> +		perror("Error: failed to allocate token");
+> +		ret = -1;
+> +		goto out_free_args;
+> +	}
+> +	barrier = malloc(sizeof(*barrier));
+> +	if (!barrier) {
+> +		perror("Error: failed to allocate barrier");
+> +		ret = -1;
+> +		goto out_free_token;
+> +	}
+> +	if (num_threads == 1) {
+> +		fprintf(stderr, "Cannot test on a single cpu. "
+> +				"Skipping mm_cid_compaction test.\n");
+> +		/* only skipping the test, this is not a failure */
+> +		goto out_free_barrier;
+> +	}
+> +	pthread_mutex_init(token, NULL);
+> +	ret = pthread_barrier_init(barrier, NULL, num_threads);
+> +	if (ret) {
+> +		errno = ret;
+> +		perror("Error: failed to initialise barrier");
+> +		goto out_free_barrier;
+> +	}
+> +	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
+> +		if (!CPU_ISSET(i, &affinity))
+> +			continue;
+> +		args[j].num_cpus = num_threads;
+> +		args[j].tinfo = tinfo;
+> +		args[j].token = token;
+> +		args[j].barrier = barrier;
+> +		args[j].cpu = i;
+> +		args[j].args_head = args;
+> +		if (!j) {
+> +			/* The first thread is the main one */
+> +			tinfo[0] = pthread_self();
+> +			++j;
+> +			continue;
+> +		}
+> +		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
+> +		if (ret) {
+> +			errno = ret;
+> +			perror("Error: failed to create thread");
+> +			abort();
+> +		}
+> +		++j;
+> +	}
+> +	printf_verbose("Started %d threads.\n", num_threads);
+> +
+> +	/* Also main thread will terminate if it is not selected as leader */
+> +	thread_runner(&args[0]);
+> +
+> +	/* only reached in case of errors */
+> +out_free_barrier:
+> +	free(barrier);
+> +out_free_token:
+> +	free(token);
+> +out_free_args:
+> +	free(args);
+> +out_free_tinfo:
+> +	free(tinfo);
+> +
+> +	return ret;
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	if (!rseq_mm_cid_available()) {
+> +		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
+> +		return -1;
+> +	}
+> +	if (test_mm_cid_compaction())
+> +		return -1;
+> +	return 0;
+> +}
+
+
 -- 
-2.34.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
