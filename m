@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-518326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C04A38D4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:29:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF85A38D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 21:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E97F7A2C03
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0492B171829
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED4C238D3B;
-	Mon, 17 Feb 2025 20:29:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09C8237706;
+	Mon, 17 Feb 2025 20:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oXFl8d9z"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0861C18C907
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF217404E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739824186; cv=none; b=J0wqjxZzPAzWshVDTnpxhUY/l9qX0Ef7ZInPVTuI0ePZykNOYR1aCGIgGal4Gg5BUA6nVH3BwtOAYmd2ixhwNWwNG9KrPDc5WJPFOwmjbAfxbDp/q+FmNIBm7owTGOocx0DxqzUi5bnOlDqe4IM0uEW56S8a5kj/y0iy5S6ZQb4=
+	t=1739824362; cv=none; b=hwuENQYOssHFALLuohFSNrIqXAjf91P5biRoTwoXjMRTIozxzosymTHti5csTxUi9CwPqxGXcMx+RmbDVX73sONURs3a24wKb7eIMr2SaOtfc29qRMJ5sZFcK86I/tPgSbAhpMM6HyliD+NNQp1VrYcFKSOAYX6GO9rqKvXuV5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739824186; c=relaxed/simple;
-	bh=7/tkDJZ9ZybcmZHWmM5zv/YdxlQUxK7ZO5bAtX5158I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ln9vzBXBPjqRP2p0pKJYBeNd47lSwD3Gfp3or2Xv6tDJ0NfvKLVixwbHbTjgRScMzAlRYcpxvZ81l71YATRqAF1WVLJxMPJ9h/5V2r2//ZnylwZvwgpy1xii8/L4pejV+FPPnE7rHyAxfaQIPHIf6xf3oEPPH+vRsyMYL+5mH+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B824C4CED1;
-	Mon, 17 Feb 2025 20:29:45 +0000 (UTC)
-Date: Mon, 17 Feb 2025 12:29:43 -0800
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Stefano Stabellini <sstabellini@kernel.org>
-Subject: Re: [PATCH v2] compiler: remove __ADDRESSABLE_ASM{_STR,}() again
-Message-ID: <20250217202943.p57k76tpwpx7aw6q@jpoimboe>
-References: <945716d2-4dd4-4d38-b732-41ab8b27c5ee@suse.com>
+	s=arc-20240116; t=1739824362; c=relaxed/simple;
+	bh=2htEmpCLitWuFojd6Br41Qj7YGgsq7kvZml7PH9wjKY=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=HKMJoQuNQz9l77iyCsdYzmrH95iG2wqMfl7dzssRAjdJH9QNl1lts8Mt5iqHxq/Rhe7A39JnGxP+zb6ZpSbKOEgzUhTC+Oi4rd43JYfk9zPs031Wu1fgWZxxfVI5iPQq7MzmIyUb+wQUi11gIgBPvKQ7A+QLb+kC8eTdsFSLRmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oXFl8d9z; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <945716d2-4dd4-4d38-b732-41ab8b27c5ee@suse.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739824348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JYtoD69KFLVbOsuGYYgyc74+hUVe2DJa6zqPj49fVaI=;
+	b=oXFl8d9z5cAqbfIkMZhRuQ0L7zOM37IT2RF14JQ1piNIUcx4SYRlWeYVCrswoVlEvNszGg
+	qfpQv+eEfKRfH63qeO6qzfgJ34LMCQAs+6Maqd3A/+F0MlM8uQ6qy9E4CY8a+WQ6EPWuXB
+	43K1di0mG4TzLQy7/S3gsthicC1PpuU=
+Date: Mon, 17 Feb 2025 20:32:26 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yosry Ahmed" <yosry.ahmed@linux.dev>
+Message-ID: <f16941c6a33969a373a0a92733631dc578585c93@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] x86/bugs: KVM: Add support for SRSO_MSR_FIX
+To: "Borislav Petkov" <bp@alien8.de>
+Cc: "Sean Christopherson" <seanjc@google.com>, "Patrick Bellasi"
+ <derkling@google.com>, "Paolo Bonzini" <pbonzini@redhat.com>, "Josh
+ Poimboeuf" <jpoimboe@redhat.com>, "Pawan Gupta"
+ <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Patrick Bellasi" <derkling@matbug.net>,
+ "Brendan Jackman" <jackmanb@google.com>
+In-Reply-To: <20250217202048.GIZ7OaIOWLH9Y05U-D@fat_crate.local>
+References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
+ <20250213175057.3108031-1-derkling@google.com>
+ <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+ <20250215125307.GBZ7COM-AkyaF8bNiC@fat_crate.local>
+ <Z7LQX3j5Gfi8aps8@Asmaa.>
+ <20250217160728.GFZ7NewJHpMaWdiX2M@fat_crate.local>
+ <Z7OUZhyPHNtZvwGJ@Asmaa.>
+ <20250217202048.GIZ7OaIOWLH9Y05U-D@fat_crate.local>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Feb 17, 2025 at 05:40:09PM +0100, Jan Beulich wrote:
-> __ADDRESSABLE_ASM_STR() is where the necessary stringification happens.
-> As long as "sym" doesn't contain any odd characters, no quoting is
-> required for its use with .quad / .long. In fact the quotation gets in
-> the way with gas 2.25; it's only from 2.26 onwards that quoted symbols
-> are half-way properly supported.
-> 
-> However, assembly being different from C anyway, drop
-> __ADDRESSABLE_ASM_STR() and its helper macro altogether. A simple
-> .global directive will suffice to get the symbol "declared", i.e. into
-> the symbol table. While there also stop open-coding STATIC_CALL_TRAMP()
-> and STATIC_CALL_KEY().
-> 
-> Fixes: 0ef8047b737d ("x86/static-call: provide a way to do very early static-call updates")
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> Cc: stable@vger.kernel.org
-> ---
-> v2: Drop constructs instead of fixing them. Use STATIC_CALL_KEY().
-> ---
-> Whether the "ADDRESSABLE" in __ADDRESSABLE_xen_hypercall is still
-> meaningful to keep I'm uncertain about. The situation, as said, is quite
-> different in assembly, compared to C's requirements.
+February 17, 2025 at 12:20 PM, "Borislav Petkov" <bp@alien8.de> wrote:
+>=20
+>=20On Mon, Feb 17, 2025 at 11:56:22AM -0800, Yosry Ahmed wrote:
+>=20
+>=20>=20
+>=20> I meant IBPB + MSR clear before going to userspace, or IBPB + MSR c=
+lear
+> >  before a context switch.
+> >=20
+>=20
+> Basically what I said already:
+>=20
+>=20"Yes, let's keep it simple and do anything more involved *only* if it=
+ is
+> really necessary."
 
-The .global still makes it "addressable", so IMO it's named
-appropriately.
-
-Thanks!
-
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-
--- 
-Josh
+Right, I agree as I mentioned earlier (assuming the perf hit is 1-2%), ju=
+st wanted to clarify what I meant.
 
