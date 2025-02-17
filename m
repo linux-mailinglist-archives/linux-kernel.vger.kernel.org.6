@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-517200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343C3A37DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A49A37DA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C791887782
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09041894B99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20F1AA795;
-	Mon, 17 Feb 2025 08:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CBE1A841E;
+	Mon, 17 Feb 2025 08:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yo0pUhoV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3kXDG27F"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246821A5BAD;
-	Mon, 17 Feb 2025 08:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B631A3152
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 08:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739782546; cv=none; b=HBQBgXRkQ9ylWTUkg7qCI3h4M9W1OJiPq6D2SDbg8UHKj26LbW3/3kr844grvhXZbAAqw2xOmNSvWX40YEImWd9zcZUB0G2adGAmEpGSqT3WAXR/rAnqGY+XfKz8DAHE9m+Sz68O7/ESSF/uf/1QBcvHX7ukMQOWIijdkzfgQPo=
+	t=1739782580; cv=none; b=gT5ELQHfgEZlJ15dG1rjT+kVpndmBTwTsay9OwFnuqB3vrA1k4eVz375OqSEjZcF9LYT6V+BkgxL1kDH6fKwQq5c7dz8ADRVGRB39uONNG129Om0j4o/Rxa6DYP5dOqN0rziXmAAhtZwWhI9Vda7xYusT/t2dsCE+zyCnmsgFl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739782546; c=relaxed/simple;
-	bh=EFEkJhwmsl3bE4JjyU5jJiAhM1TmuoUEGGWs/FNGWnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cqZbDmjGREEKMk5rUOwVn58bRWVkSUeAPczOLbOrJ3KqslDvKT1kr6IalzHnVfNjIPvl5Y5CrPKCsAmv8hHWkVcb4HXePLRKzRMy9F8aFonMxc7tCB3eIhbjAj/1fBygzcd94awmG4W0RG+x3KsvWk46bQ0mttd67Vh9TNDGkPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yo0pUhoV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9EBC4CED1;
-	Mon, 17 Feb 2025 08:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739782545;
-	bh=EFEkJhwmsl3bE4JjyU5jJiAhM1TmuoUEGGWs/FNGWnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yo0pUhoVFd0aJzWxdHo4ZXreXR6IglCbU7SJLVBMqq/pEZjzyKTx0UeF1sCQ+S3Og
-	 kDg+yxTY63/5tpJ/RPLud90voPYhYnyCzKCpPzl31brSYScbr2ivzccyvxIwQIKe8b
-	 d29cH5pvYTpB3Fn6jGnLFPPkvfSDFqEMtYD3Aj/Y=
-Date: Mon, 17 Feb 2025 09:55:42 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hsin-chen Chuang <chharry@google.com>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
-	chromeos-bluetooth-upstreaming@chromium.org,
-	Hsin-chen Chuang <chharry@chromium.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5] Bluetooth: Fix possible race with userspace of sysfs
- isoc_alt
-Message-ID: <2025021705-speckled-ooze-c4d0@gregkh>
-References: <20250214191615.v5.1.If6f14aa2512336173a53fc3552756cd8a332b0a3@changeid>
- <2025021425-surgical-wackiness-0940@gregkh>
- <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+	s=arc-20240116; t=1739782580; c=relaxed/simple;
+	bh=rSMNGwh035t1vgisSjnlcCCc7am/GET8bwd1o2yn6sQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLJkrIsjqM8RxYs4KCsWHfkd+2v1fla+jHRuP7CrioWwRHNqn5UyvR4No4Ho7mEd98fMDfLxbM3IM/p573szMvkiFg+nb8l6MQOzpnPPaMWoW09gw7Bxjc+NMIwcTwOpevwWsyiQOrdtzbU40ujd9M2jw6g9GW9fGD6A69mS04k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3kXDG27F; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb86beea8cso233469866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739782577; x=1740387377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r9fzVMy3EuccpMQqhxoX/SOE/CZjtz9LlygVskmK9lA=;
+        b=3kXDG27FWhT01M9JuWjMzmHn/xX5xJ1D35SOGgD/Qt2sXLqcz78n06P2+dRPzNKLU4
+         KCwi8wdqZwuCB8T5U4hfc8YMt17moYxzPBFwFqX/wra+TCbrNidcB2yFQKjr4UISVbYx
+         HTXBbWPOWAMmSvpTl8n4U6n0YhyXB7qv3e4gHj1clb7+OuLPMC07aulYbi2ZMJGZZnS9
+         ocR3Cr84l5dp0qBzLXGYt2iKIUhaOyPMTatqJX9WFZuYio2sw+X6TbWmZwY0R5P9me5H
+         3BfRDl3KEtnyqGR7SN1rkpnGvyDbZ8QiJp8nH/mYVBGJc3oyo66HnA9FbLlwoCShxVZu
+         kfQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739782577; x=1740387377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r9fzVMy3EuccpMQqhxoX/SOE/CZjtz9LlygVskmK9lA=;
+        b=JQcl/1K3ZMWLuLvsVD/4ZGhsNsUM4k8Rz9UkCTspvdDKpNBbLludwqYOv6jvDvmmzp
+         xe1lIVcpCoAIMDopu1l9GBZHzT+dkyPK2SozjxwLnMwiIaPm4QrsKI5nsriKdZOe9Eay
+         Fg8izl9VelIpJ+wh0hnRFQ9VHBZhDDhDNlXKKS9LdTQRIAiZaFAxACgMbdUvKwBP3HHO
+         313OvprZCKYBK+b9LFy/sf3D1kZ1PkAzqbHDwrFMGM027AxVpiyHYcLeAFcks3OCdlwM
+         8urJvj956bO4l67gpHEEBOhPqOIpn9yolNJ9wKlMCvFuanrwyYMxGOYuN+RNy+6KIHEE
+         4/bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA+fPE1qU/5xsaq1UIPaSQXZ5H2PV/OR1Dek28etqSYHeX7YQ23d+coURNiFPdtQL43uumG82N6xJ9SKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+JqbPnlJe4W5OvZex/wzteS0MnTlencBkMxCPLH3y0AtxxBYx
+	5atRaFSnx0dRqMnPVZIG2GK05Om7o2UUA63rWGizhoVpqfzhAmBE+nWGmmR9FdtM5QwYyEw0ghR
+	P98sRouZePI6hHtfmqlqsgNAq+NsPVGkH33Sm
+X-Gm-Gg: ASbGnctCCwbpmclji5zdFclKY9eKMmD40zCWSCYz7EUzu4EjZmWV2sn1XD4Bo2jtSFA
+	x8As4o5c0YobM3cT+qQq4+z/i1VM81tlxTxhCceIZd92suMrVbzwcB3D/OvySPuDUd+xji0R6dQ
+	==
+X-Google-Smtp-Source: AGHT+IHWt5SAAYDeYXdUcNKwcxZAqv+io1rowGJTMwarJM+W2ClYHlji61lLGs7htKHDg+kp7YH72yhKYU7FCuLtiYE=
+X-Received: by 2002:a17:906:da07:b0:ab7:c43f:8382 with SMTP id
+ a640c23a62f3a-abb70dd3789mr751029266b.31.1739782577285; Mon, 17 Feb 2025
+ 00:56:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADg1FFd3H0DLV-WX8jTB1VGyOZYEzchP99QvYxWmg1XCOo1ttg@mail.gmail.com>
+References: <20250216163016.57444-1-enjuk@amazon.com> <20250216190642.31169-1-kuniyu@amazon.com>
+In-Reply-To: <20250216190642.31169-1-kuniyu@amazon.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 17 Feb 2025 09:56:06 +0100
+X-Gm-Features: AWEUYZkLYy697Q1BcHQ0_hIbyfhdXPfDJNufGWgNEXRfNDqTFi2VIYf4X2t432o
+Message-ID: <CANn89i+ap-8BB_XKfcjMnXLR0ae+XV+6s_jacPLUd8rqSgyayA@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] neighbour: Replace kvzalloc() with kzalloc()
+ when GFP_ATOMIC is specified
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: enjuk@amazon.com, davem@davemloft.net, gnaaman@drivenets.com, 
+	horms@kernel.org, joel.granados@kernel.org, kohei.enju@gmail.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, lizetao1@huawei.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 04:44:35PM +0800, Hsin-chen Chuang wrote:
-> On Fri, Feb 14, 2025 at 7:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+On Sun, Feb 16, 2025 at 8:07=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+>
+> From: Kohei Enju <enjuk@amazon.com>
+> Date: Mon, 17 Feb 2025 01:30:16 +0900
+> > Replace kvzalloc()/kvfree() with kzalloc()/kfree() when GFP_ATOMIC is
+> > specified, since kvzalloc() doesn't support non-sleeping allocations su=
+ch
+> > as GFP_ATOMIC.
 > >
-> > On Fri, Feb 14, 2025 at 07:16:17PM +0800, Hsin-chen Chuang wrote:
-> > > From: Hsin-chen Chuang <chharry@chromium.org>
-> > >
-> > > Expose the isoc_alt attr with device group to avoid the racing.
-> > >
-> > > Now we create a dev node for btusb. The isoc_alt attr belongs to it and
-> > > it also becomes the parent device of hci dev.
-> > >
-> > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+> > With incompatible gfp flags, kvzalloc() never falls back to the vmalloc
+> > path and returns immediately after the kmalloc path fails.
+> > Therefore, using kzalloc() is sufficient in this case.
 > >
-> > Wait, step back, why is this commit needed if you can change the alt
-> > setting already today through usbfs/libusb without needing to mess with
-> > the bluetooth stack at all?
-> 
-> In short: We want to configure the alternate settings without
-> detaching the btusb driver, while detaching seems necessary for
-> libusb_set_interface_alt_setting to work (Please correct me if I'm
-> wrong!)
-> 
-> Background:
-> The Bluetooth Core Specification defines a protocol for the operating
-> system to communicate with a Bluetooth chipset, called HCI (Host
-> Controller Interface) (Host=OS, Controller=chipset).
-> We could say the main purpose of the Linux Bluetooth drivers is to set
-> up and get the HCI ready for the "upper layer" to use.
-> 
-> Who could be the "upper layer" then? There are mainly 2: "Control" and
-> "User" channels.
-> Linux has its default Bluetooth stack, BlueZ, which is splitted into 2
-> parts: the kernel space and the user space. The kernel space part
-> provides an abstracted Bluetooth API called MGMT, and is exposed
-> through the Bluetooth HCI socket "Control" channel.
-> On the other hand Linux also exposes the Bluetooth HCI socket "User"
-> channel, allowing the user space APPs to send/receive the HCI packets
-> directly to/from the chipset. Google's products (Android, ChromeOS,
-> etc) use this channel.
-> 
-> Now why this patch?
-> It's because the Bluetooth spec defines something specific to USB
-> transport: A USB Bluetooth chipset must/should support these alternate
-> settings; When transferring this type of the Audio data this alt must
-> be used, bla bla bla...
-> The Control channel handles this in the kernel part. However, the
-> applications built on top of the User channel are unable to configure
-> the alt setting, and I'd like to add the support through sysfs.
+> > Fixes: 41b3caa7c076 ("neighbour: Add hlist_node to struct neighbour")
+>
+> This commit followed the old hash_buckets allocation, so I'd add
+>
+>   Fixes: ab101c553bc1 ("neighbour: use kvzalloc()/kvfree()")
+>
+> too.
+>
+> Both commits were introduced in v6.13, so there's no difference in terms
+> of backporting though.
+>
+> Also, it would be nice to CC mm maintainers in case they have some
+> comments.
 
-So the "problem" is that Google doesn't want to use BlueZ, which is
-fine, you do you :)
-
-But how does BlueZ handle this same problem today?  What api to the
-kernel does it use to change the interface that you can't also do with
-your "BlueZ replacement"?
-
-Surely this isn't a new issue suddenly, but if it is, it needs to be
-solved so BOTH userspace stacks can handle it.
-
-thanks,
-
-greg k-h
+Oh well, we need to trigger neigh_hash_grow() from a process context,
+or convert net/core/neighbour.c to modern rhashtable.
 
