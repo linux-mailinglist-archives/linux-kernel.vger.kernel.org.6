@@ -1,218 +1,210 @@
-Return-Path: <linux-kernel+bounces-517279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D27A37EA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:34:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191BCA37EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B28165DB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130781704B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B4721519F;
-	Mon, 17 Feb 2025 09:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C751215F6B;
+	Mon, 17 Feb 2025 09:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+6YlaKA"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eh7+/9Gu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6C4215766;
-	Mon, 17 Feb 2025 09:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB762215766
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784746; cv=none; b=sXsQHKR5m+oFl0WzvrU9IEECysQeARqHtaU8ueHUGg3bCQlTXyJwvJEW3KvGwXtjdmOUO6H8ybcSAVupq0RCiZSBu5vs3XZbiOx3wmrVJfMl72QPqJF6ih1KsViE3n2+wVzvhvgNWfsgX606Q1DbbnRgGvBniJ0MbZBkHg/OgzU=
+	t=1739784769; cv=none; b=bKsoPwYhvPQOLkddV45LOGttEYQ/zNaFdHiAuQ8pMO4dPlkT5z4dP9r11V4dGFMXb8/tpj0umoi2nHL+QEarQbJs1ZivlRWc1CujckLkwaSYGLkH+cQUKYoYp4ifDv1PLu6bgNIvoeG+3223NbI3UxDLzOEtDZg48D1E8TrsUog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784746; c=relaxed/simple;
-	bh=HUlJWNcvr8rqj8RDvx4vwOPQLHal/5LBmOUDIQw1ARI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FdXlJ4iQ7R3WbM3XbtlBCc/9eDkLjgzC4BAMTDQ0bcT3nrailrePmU/pVZv6dyUH0PClmwhE0cra3/odnMKuP9bRhtVlTo2kPmjMrPf56cXmErPiWfP4HCm0fV7u2KKgUr23I+5IDCWh29IJpfAP08crGmmIskCBUDwcSZh/ki0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+6YlaKA; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abb7a6ee2deso233735466b.0;
-        Mon, 17 Feb 2025 01:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739784743; x=1740389543; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HUlJWNcvr8rqj8RDvx4vwOPQLHal/5LBmOUDIQw1ARI=;
-        b=P+6YlaKA4m7w9R9WGJCtrxZyZyxD6KQm0Q+RaEvoxzHLblzX/Vi4CfqL5RJJPy1c1w
-         T8qWAsueu8TTUcANT8ZrdaBu2x1xArfjrzkbtItfLLYOykpbrb52viAQlDYl0Ezb4rSH
-         vT7ye8/ljs9bkWAR0JcHigg6nJ2DmNkDf0fPK3STd1C1vGe3n8AMJUOPNL/nCyDRnRnn
-         wY9TClh873x7cnhqsJ/1ZuQyiZwa6RraU7T8HVzldtEEqPEaKIUcJf9wnzVSrM8UGi0s
-         cXh5n6CNTtrBfNfW+vEQthwLHWCvxDGVGmqcJrpDf38zY3OZjsN/cyaYwc71MgD+53bD
-         1IIA==
+	s=arc-20240116; t=1739784769; c=relaxed/simple;
+	bh=C18oNuSiRM+TIpqOyHblP4q4/wiZKl1/Sm7Ge/iJ9oU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gJf03qJwLQ+4WcdPK1QOzMiUU5+uChuyT79LZ53xCmm+Py6DLk4o1wX7tIUiR2OieM1xVsMpQJLHYdxLdXvScywSh8hCmik2sUxPb9ZAGf9eQMq7EFoiapOj0XGKHUtVg1J1AZeUy0ytgq4I7t+gvpzOBE9CRLXB0OxOj/60vT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eh7+/9Gu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739784766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Eeb7nv1cNhGbfxr+l0PpfHS4x7aSgl8Mgbc1lpE/bK0=;
+	b=eh7+/9Gu+dPqZCr6N+lIS6fCNtVLv6EWSLuTbrbTmcdzFZsF7TusghKLeiAzG9wgPGxYk8
+	DyPUCCDfbtEDFAPqbRZBlOuBPH/AlNeol72tmpb5SMDTAHpfClPIi1bBoK9VowOVLDq+Xa
+	RCnUbeuRovNMeSWpW8SwGwlod6hzEZ0=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-376-ItTJFymgPhmF4F3UyYj7xA-1; Mon, 17 Feb 2025 04:32:45 -0500
+X-MC-Unique: ItTJFymgPhmF4F3UyYj7xA-1
+X-Mimecast-MFC-AGG-ID: ItTJFymgPhmF4F3UyYj7xA_1739784764
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa6b904a886so361384366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:32:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739784743; x=1740389543;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HUlJWNcvr8rqj8RDvx4vwOPQLHal/5LBmOUDIQw1ARI=;
-        b=TZGRybqc72qKeq/+iByBBo40A+fuyGXo/D1T3Mylw6DHwmrwxQ3Fpi63pf5Vk/WZ5Q
-         nyuXS+1XIVoC9DD9kO16nIQA+9wMwfvjwYcF2HDZG8/briF82QzUYR4s9SvT/5AzzZ2P
-         9k9NJybQ7NO4N0vcRbylo6TSUom4MBZKPNgCkV6PEkyU16LRhyUNZJ/wQHG36x6DHxfq
-         yoeeXt70SMXQbWOeAfPYUWwYFC07OZlQ28jC25bDsZbzVMgE84HkR24o+6yAYQ7nrC7F
-         vWf2MNe8tzTbKT+IVnDZUY4UEiooKrvBCcbjNqJsQKc8ZyCq0Hz5mqft+B01VR+f++Ke
-         iqww==
-X-Forwarded-Encrypted: i=1; AJvYcCU1fJHsEBIOpUWol1zsX7F6vHRycaBN3H/kd1kZDGEclg71ZhkwFvj2Y0/KF2FoqjnFoRvrainLn3uV1A==@vger.kernel.org, AJvYcCUPCZsKDUhRaL8gTqg9+ktBKWTK+vqYF/+1YPOxwIix6CHj9thgWHm/I0b/50TvH2lTh5F5bmr3ojbf@vger.kernel.org, AJvYcCVBZeXYh9EEBGq6R7ShIiKmEeDrobBcAYqfCEc2fedAQPXxEJXZ3vAIUNHVCm72zLMoJ7a8r4aoY96W@vger.kernel.org, AJvYcCVRSV7tWx8Ek9U19f3sxBWU8yw+vW9/k7wZ1PdXqI5osEUnj0HHyuoJVknDqU02yO7WCo464lROlHhUcJ7Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDVUNVxRZPDLmROoZl8e9eTJnNUgaqp+KOIzYWVF5PY4PJujuU
-	knbDx2fEo0+SWW3lCGRUA4AIY+HAEtmQyp5j3+XVbtvLIhqmsTVU6iMQi6FKucA=
-X-Gm-Gg: ASbGnctu12UTKP+zhgyKeCfstw7Et99f58aLuVVLxeJ6VhD4xxF2eVc4rv6EZ12/R+O
-	BLA1+258C9RnDrT9ZgQbTh5r4ebLilznq4DMUhDNJ255kr6OXv2j+tPkr5WA/nA09Rlko+gJ8Lv
-	iHmOwCLX+gH1/7GRYT72Kb8Ztdu7UXFijKRhSRowsA++soibTdvn03CDfJWzaE/9Anp4c5LxMWZ
-	9b3H3LdGHfFrI2uGFnfx8WRAsvIpZuBjwhTzSK7Os8g4gCniJhVbfPaBlQSLq91eGxyw+wT3ZEA
-	ebV2O06VgMZV1I9kpKHhDh5PnScZM9fIgGHzY6Ci3tO+SYRwrbbw6wgsZxQivX8=
-X-Google-Smtp-Source: AGHT+IFeH6Wktt/xfN2WBdLEobo9pLVyAWcoYAOXCOS3EAy5kk4fOKN+rE/Uo0oJPKzo/KUfKXgagQ==
-X-Received: by 2002:a17:906:57cc:b0:abb:9a1e:47cb with SMTP id a640c23a62f3a-abb9a1e4826mr281763866b.55.1739784742437;
-        Mon, 17 Feb 2025 01:32:22 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbae3512a6sm4128766b.179.2025.02.17.01.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 01:32:21 -0800 (PST)
-Message-ID: <bf069d43ed76b68c91130233b264089c3f7b2514.camel@gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>, Linus Walleij
-	 <linus.walleij@linaro.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,  "linux-gpio@vger.kernel.org"	
- <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"	
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"	
- <linux-kernel@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>,
- Peter Rosin <peda@axentia.se>
-Date: Mon, 17 Feb 2025 09:32:25 +0000
-In-Reply-To: <PH0PR03MB71419BE3FCE2DAE8AB72B79EF9FB2@PH0PR03MB7141.namprd03.prod.outlook.com>
-References: <20250213-for_upstream-v2-0-ec4eff3b3cd5@analog.com>
-	 <20250213-for_upstream-v2-2-ec4eff3b3cd5@analog.com>
-	 <CACRpkdZR8X17Bn-i2anqjxf0Gk60V175F7Xfwytkhy7_K+LsSA@mail.gmail.com>
-	 <880631da17a6d8ed4afe5a8c453fd4f7d0e4fca5.camel@gmail.com>
-	 <CACRpkda+CDRMYKmjw7kewenkteLhPYb040E4B=ZG6pgdy=65pg@mail.gmail.com>
-	 <PH0PR03MB71419BE3FCE2DAE8AB72B79EF9FB2@PH0PR03MB7141.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+        d=1e100.net; s=20230601; t=1739784764; x=1740389564;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Eeb7nv1cNhGbfxr+l0PpfHS4x7aSgl8Mgbc1lpE/bK0=;
+        b=b+bQHRpyxNuk6LKdM36njuYJjMDvyaMJXG83OHoqNuUBfbnyDEQGBmlCwg6fcg82CW
+         AuVNkiKK2CsGN3em9oq3fTI7k3uvIPv9Ixx4UP2h1Y1mYqAXgBOUw4a4Pceb3n4VKm47
+         VS16jQjOfgVaQv/7TyQXXQ7eeca82z+Pg5fkhN87LoEZbpQu5vDXIbJlynvDIOLDLdKF
+         EdUllJ+7HXUO7eaOaWZXl0P9S9E5zZ4SxCQxSsJwhMzdNeNtIzINQRZVwKhChMLqqI5/
+         oLs/cXHsJse2pFnZ+xw2BwM2cjlS4SwT94/9ZXkRUQ3d0LxaLyxVVHrUf93rFKybq/fg
+         Tw8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6iBi9wb6v1jrbA7BCWnTtQGgoxcEdbhyDQst6FUZlYBR9bpfYuH1Ot63F2Yu2AiCGSow1hXb7OiMMrNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYRGGUkJ0EzYtKNumaKReBDV5oOdwr+ZEtJlXw91Olwo96kQMl
+	lPzy19pIGKJRREm5hiKEBa6qQFUDZFlSuEVUu7KopEbyOFlcf93CYhEydqmTdTqcKWaDc1HeWp6
+	+77N6YSfr10SzRkku8X5/2YDYuna8WQwWoqe9mGC6F1EpP+BgMFZ6k/bwzTbBCg==
+X-Gm-Gg: ASbGncuLDhsAnbWXzaIa0yIQjsTnUP5Wgs5Y9YVURYtLV3chEq7taxyCta1c2p0rHzn
+	6SbpipbK6A3w5N023whWOWg0iV9B3HQf4iRg5AD5kEzYPvf9/FXja8ajwdPrYHhp8PLwCbWft03
+	MzojCOUNp1+OTQKXaT+vcYa4paQ6IOvdAj8Jn+kJrQAf/YndvH5ak1SnYoqgAgce6um4CdJRrR5
+	RijaqTzTkWtfk7OAkYu0syqCOxfNZw46StLNLUygACbvXdz/HzRumBq+4PiO01e3TT5unteAj2f
+	eKw5awwVNvqrZj/31qyR8sFuTecek1i1s4Q26+LuNkySDe0tplryIgFSz5S1xEwuKKl7whN6PBT
+	0sWBRlpnAl4WGV1Zn6b2Y3aOvB5sQqg==
+X-Received: by 2002:a17:906:31d6:b0:ab7:e943:4c1 with SMTP id a640c23a62f3a-abb7091ab36mr780765966b.11.1739784763548;
+        Mon, 17 Feb 2025 01:32:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH3Wgg/IfmYVp/LsQNMw7j+PPvq4aGzaMQEi/BT3iuWyQBhHI1flKgzEnpyKaqJ/zoXhyrMhQ==
+X-Received: by 2002:a17:906:31d6:b0:ab7:e943:4c1 with SMTP id a640c23a62f3a-abb7091ab36mr780753066b.11.1739784761522;
+        Mon, 17 Feb 2025 01:32:41 -0800 (PST)
+Received: from ?IPV6:2003:cb:c739:900:900f:3c9e:2f7b:5d0a? (p200300cbc7390900900f3c9e2f7b5d0a.dip0.t-ipconnect.de. [2003:cb:c739:900:900f:3c9e:2f7b:5d0a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53376bb3sm864425066b.109.2025.02.17.01.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 01:32:40 -0800 (PST)
+Message-ID: <76a9a0dc-4d2f-430c-a2be-a2371f3108d7@redhat.com>
+Date: Mon, 17 Feb 2025 10:32:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/17] mm/rmap: convert make_device_exclusive_range()
+ to make_device_exclusive()
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, nouveau@lists.freedesktop.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ damon@lists.linux.dev, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+ <jglisse@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ SeongJae Park <sj@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Peter Xu <peterx@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Simona Vetter <simona.vetter@ffwll.ch>
+References: <20250210193801.781278-1-david@redhat.com>
+ <20250210193801.781278-4-david@redhat.com>
+ <20250210210001.5dc68b38eb1bfa44d0fd78f6@linux-foundation.org>
+ <48fd75b9-696e-402c-95bd-55f2f0e24dfc@redhat.com>
+ <vclmxoorivzhamd4smaaeyamdeangj3aqlbl27muzxuljasdrg@t4jj77rmiozu>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <vclmxoorivzhamd4smaaeyamdeangj3aqlbl27muzxuljasdrg@t4jj77rmiozu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-02-17 at 07:02 +0000, Paller, Kim Seer wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Linus Walleij <linus.walleij@linaro.org>
-> > Sent: Saturday, February 15, 2025 7:22 AM
-> > To: Nuno S=C3=A1 <noname.nuno@gmail.com>; Jonathan Cameron
-> > <jic23@kernel.org>
-> > Cc: Paller, Kim Seer <KimSeer.Paller@analog.com>; Bartosz Golaszewski
-> > <brgl@bgdev.pl>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; linux-
-> > gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-iio <linux-iio@vger.kernel.org>
-> > Subject: Re: [PATCH v2 2/2] gpio: gpio-adg1414: New driver
-> >=20
-> > [External]
-> >=20
-> > Let's check with Jonathan Cameron (IIO maintainer) on this as well.
-> > He might have ideas.
-> >=20
-> > For reference, the datasheet:
-> > https://www.analog.com/media/en/technical-documentation/data-
-> > sheets/adg1414.pdf
-> >=20
-> > (By the way: add the datasheet to a special Datasheet: tag in the
-> > commit please!)
-> >=20
-> > On Fri, Feb 14, 2025 at 2:17=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail=
-.com> wrote:
-> > > On Fri, 2025-02-14 at 00:25 +0100, Linus Walleij wrote:
-> >=20
-> > > > Now, the kernel does not have switch subsystem I think,
-> > > > so this is something like a special case, so we might be
-> > > > compelled to make an exception, if the users will all be in
-> > >=20
-> > > Exactly, since we could not find anything, the best fit seemed like t=
-he
-> > > gpio
-> > > subsystem. I was the one suggesting it since a new subsystem for a si=
-mple
-> > device
-> > > like this looked excessive. If we had more devices that would fit suc=
-h a
-> > > class
-> > > of devices, maybe it would make more sense to start thinking on such =
-a
-> > > subsystem?
-> > >=20
-> > > > say userspace and make use of this switch for factory lines
-> > > > or similar.
-> > >=20
-> > > Kim should know better again (about usecases) but I would also assume=
- this
-> > is
-> > > for userspace use.
-> >=20
-> > Actually the GPIO documentation Documentation/driver-api/gpio/using-
-> > gpio.rst
-> > even talks about this for userspace use cases:
-> >=20
-> > "The userspace ABI is intended for one-off deployments. Examples are
-> > prototypes,
-> > factory lines, maker community projects, workshop specimen, production
-> > tools,
-> > industrial automation, PLC-type use cases, door controllers, in short a
-> > piece
-> > of specialized equipment that is not produced by the numbers, requiring
-> > operators to have a deep knowledge of the equipment and knows about the
-> > software-hardware interface to be set up. They should not have a natura=
-l fit
-> > to any existing kernel subsystem and not be a good fit for an operating
-> > system,
-> > because of not being reusable or abstract enough, or involving a lot of=
- non
-> > computer hardware related policy."
-> >=20
-> > If this is the usecase, like controlling an external switch for such th=
-ings,
-> > using the GPIO subsystem might actually be reasonable in my opinion,
-> > (even if the DT bindings end up in their own category).
-> >=20
-> > If the switches control stuff related to computer machinery (i.e. integ=
-rated
-> > into a laptop to switch on/off the fans...) then no. So it depends on h=
-ow
-> > and where it will be used.
->=20
-> In my case, this is a userspace use case. The ADG1414 was used to control=
- the
-> ADMFM2000 Microwave Downconverter device. According to the ADMFM2000
-> datasheet, it requires control over 14 digital pins, which can be set hig=
-h or
-> low [1].
-> While these pins could be directly controlled using GPIO, the evaluation =
-board
-> for
-> the ADMFM2000 is designed to use the ADG1414 switch for this purpose [2].
-> ADG1414 is an SPI controlled switch that allows switching of these digita=
-l
-> control lines.
->=20
+On 17.02.25 01:01, Alistair Popple wrote:
+> On Tue, Feb 11, 2025 at 09:33:54AM +0100, David Hildenbrand wrote:
+>> On 11.02.25 06:00, Andrew Morton wrote:
+>>> On Mon, 10 Feb 2025 20:37:45 +0100 David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>>> The single "real" user in the tree of make_device_exclusive_range() always
+>>>> requests making only a single address exclusive. The current implementation
+>>>> is hard to fix for properly supporting anonymous THP / large folios and
+>>>> for avoiding messing with rmap walks in weird ways.
+>>>>
+>>>> So let's always process a single address/page and return folio + page to
+>>>> minimize page -> folio lookups. This is a preparation for further
+>>>> changes.
+>>>>
+>>>> Reject any non-anonymous or hugetlb folios early, directly after GUP.
+>>>>
+>>>> While at it, extend the documentation of make_device_exclusive() to
+>>>> clarify some things.
+>>>
+>>> x86_64 allmodconfig:
+>>>
+>>> drivers/gpu/drm/nouveau/nouveau_svm.c: In function 'nouveau_atomic_range_fault':
+>>> drivers/gpu/drm/nouveau/nouveau_svm.c:612:68: error: 'folio' undeclared (first use in this function)
+>>>     612 |                 page = make_device_exclusive(mm, start, drm->dev, &folio);
+>>>         |                                                                    ^~~~~
+>>> drivers/gpu/drm/nouveau/nouveau_svm.c:612:68: note: each undeclared identifier is reported only once for each function it appears in
+>>
+>> Ah! Because I was carrying on the same branch SVM fixes [1] that are
+>> getting surprisingly little attention so far.
+> 
+> I believe this has been picked up in drm-misc-fixes now:
+> 
+> https://lore.kernel.org/dri-devel/Z69eloo_7LM6NneO@cassiopeiae/
 
-AFAICT the mux subsystem does not have any userspace so it would already no=
-t fit
-the above usecase. We could add a simple setter sysfs interface if Peter th=
-inks
-this belongs to the mux subsystem...
+Yes. Both trees should merge without conflicts. However, we can later 
+get rid of the now-superfluous page_folio() that was required in the drm 
+fix.
 
-Let's see what Peter has to say about this.
+-- 
+Cheers,
 
-What about misc devices? I mean, if there's no agreement...=20
-
-- Nuno S=C3=A1
+David / dhildenb
 
 
