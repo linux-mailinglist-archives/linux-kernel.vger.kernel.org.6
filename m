@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-517990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BB5A38869
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:55:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE7FA388AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3017416ED82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247F2176538
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4732229B1D;
-	Mon, 17 Feb 2025 15:49:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA18235BFF;
+	Mon, 17 Feb 2025 15:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqTC94z/"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F6E229B0B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550BE225385;
+	Mon, 17 Feb 2025 15:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807390; cv=none; b=ic++MwdIXFrcNB8zvgxFP9tRHUgYwJ01fAbh+LxwN0yVkBLzx/XV0WtXPHadzmBxxDuhHMjzpWZtF+nWb0kSOwILwIQ2/oL2kAIskLhNzNC8/qRhLbUPEBflLZRM+CKTmQyxSIwUtVBpeEGlGehquc9Puh3d0QmXFCOOIYlGf+8=
+	t=1739807450; cv=none; b=ZuN60XtTMpLxtrmVj8MyXEWQBBklAPvfFuo5K0WALof8DKaykeU9zOIuzW2ygboCYtEjakwe+49AHWguITnMOOr6l76HsYuLuOmsz+VwFRu/tFpcUxcKXWLHMiQEGP1BnQdeNBhJXtZD87riEbBATenJsagBhobGWiG9j/pTpXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807390; c=relaxed/simple;
-	bh=+T9+QSLbqVaktqQ4lOnMjR9OoKYV0X4W7fjhcNuiSPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nwf1Rvki+JlBhiLMxaE4jKes1Xx7c2xHNFxVZ5FyNxBYKKL7JB13V0r/yd7X+aWSAa8S6wHrNVhkDSW3QqFjiMT9tjVGTgsbv6iiC9NuwESAus2op0KNo2PxuIwAG1k2maHL2/2bJ1vwu5H4eKaTV7LsOFJBX34JL8S7M6Cw+Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB18C4CED1;
-	Mon, 17 Feb 2025 15:49:47 +0000 (UTC)
-Date: Mon, 17 Feb 2025 10:50:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Harshit Agarwal <harshit@nutanix.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>, Gauri
- Patwardhan <gauri.patwardhan@nutanix.com>, Rahul Chunduru
- <rahul.chunduru@nutanix.com>, Will Ton <william.ton@nutanix.com>
-Subject: Re: [PATCH v2] sched/rt: Fix race in push_rt_task
-Message-ID: <20250217105007.45ba8cb4@gandalf.local.home>
-In-Reply-To: <20250213175435.114441-1-harshit@nutanix.com>
-References: <9C390C10-8741-4992-8E29-303C907C8C00@nutanix.com>
-	<20250213175435.114441-1-harshit@nutanix.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1739807450; c=relaxed/simple;
+	bh=eNseTvayRYPpE5U3sQCGXSLB+tmkH6DD9wRv8Ufkz6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWE8Q2NkrPtRjQYxaJHu/0Sfe9nodPKcrZl1IfsVU67j9MzJhYxNs5qjhV3m3vtu//eHLsdmQoZYnukrZvEtcEARdm8K25NfQCg6YXt4urqGAElBm4SvRxeE5aE/hYd+V97ELbKNzhC15b1tWo2x8E7UBZZ+YN8OaDD7yI97wkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqTC94z/; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3098088c630so16920891fa.1;
+        Mon, 17 Feb 2025 07:50:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739807446; x=1740412246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eNseTvayRYPpE5U3sQCGXSLB+tmkH6DD9wRv8Ufkz6I=;
+        b=LqTC94z/4cLIWFGJVzsyzG3am7hxwj/vqEG3aD0lFrSUqjnvnbaboMa2mnGf4G9ymG
+         Rv96ztitm75K04n5Ephps+XlztK6NB131h2sZj16UbnuBJSxGaiPcnERKN+fwIJmq7Bm
+         56eZUjtIgNoKX6rJbDCgBLvhhjxUWtkdOt+Y4IWWxRfoQzSkVvZG+yzsv7uAbG9gHfzW
+         cP5aIpdq1DlMcJqBaxpTT1YBxQnWEBcSwdZCZHddtvmPsbyp8rWVNQONoGwJT8WjyoZI
+         HeaJCdRyQ1FiI8IlJymSN6ar47OSeM7nDVaVOOLUOvkMa6NaHkmFLrKsEJK//3geSOOf
+         K/Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739807446; x=1740412246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eNseTvayRYPpE5U3sQCGXSLB+tmkH6DD9wRv8Ufkz6I=;
+        b=VKlU6WeDDQLeOOYifQWO1TNgPwso9ZVRUJKwLQo1xKKaqGnPVydSaNPP6EfIS9+1Tn
+         uIZ85HbJY9T1poFmkb1FtpbH6dMJM9nqAPkfCsLSdH9d/OohKLsEFdvLUpu+oDYx3K6F
+         EqHWZRww+/Wvbl1peqygCcNnkBd3CPLyQWayC9xIxRcQlgGtBlvHDOHCDnSjEjdPRF4A
+         HBhKUq0Phegyrs3RVB4kqu1qO5Tbza1IEj2W7S9IM/z3HZ2xEZd+YSPv2B4pmIUQ9nnw
+         e4L4lbiorPww0WeEfK5VbITQMNHK9xpCSeyO+AlnlIARmqLvB+mov0cD97G1FTyCOCen
+         8Ovg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRicJ4I5cM8khtNW6eIby8MOxbY/kMNzfCkYWS3LLguNYDs2D8V+YmTrqXXE1+N5kpeYP/n7Y9mtuXWgL9Y3w=@vger.kernel.org, AJvYcCVcoW7+GF9Z8OOLs/FtnSyPlhE5StrF67v2YVfQ8oDYTuWoeSKzsNv92Xg8FtoHHwapr4jh0ZYXptFObBnX@vger.kernel.org, AJvYcCW+UJhwX88Nhlunshc62tTHDYXXtpz1lzOde3rugBBczHYEPAOg91X9txISmvGZrxJFDWEQGxqrj1ofWsJJ@vger.kernel.org, AJvYcCWSO7b3LwK3J7y79YnAFpg5byluHS/UT4YJfLbVwDh6V2dlSJFdgJCcgQorTgQgLGULsUPhlrEduPre@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDN9xJqMeVA8/L725jAXbPASYAc4umUEKswVAvLDu2ImWyjTIu
+	8qTPUAlLB3TpZ7KeXjYZmqBDMXvKhDTxZtnDCB+2hypNc6fjaqOlguGRkPW06op9joG3qLXPmPK
+	bWcnvU/zKP3P4+om9wyLNLpMkOUY=
+X-Gm-Gg: ASbGncsm4yJYZUsO9fsNh1Sl/2k2LeSwAVyelE8o8Gu0Tw2IL+kZ/60a3upGUKtmj76
+	UoBxFGQtFYVmDtOQjOEdJmcYRlGniASfirGtGtCqWE/9eWbToCi+S3JP31SZG+q5jdtqz3suPsX
+	4X9dyLEHZiPFxa2scCY9YU2uAujLkHAcE=
+X-Google-Smtp-Source: AGHT+IEWLfgkl+FCjuMBS3fn68xkWa9P5Ave195MYSwc/MJOtRAv0opVrES6jV9kKRAbbt4TWs7/lOLJt5HP6IpU86I=
+X-Received: by 2002:a2e:8615:0:b0:304:588a:99ce with SMTP id
+ 38308e7fff4ca-3092797efe8mr25693211fa.0.1739807446155; Mon, 17 Feb 2025
+ 07:50:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com>
+ <20250207-rust-xarray-bindings-v16-2-256b0cf936bd@gmail.com>
+ <Z7MnxKSSNY7IyExt@cassiopeiae> <CAJ-ks9=OG2zPPPPfZd5KhGKgNsv3Qm9iHr2eWXFeL7Zv16QVdw@mail.gmail.com>
+ <Z7NEZfuXSr3Ofh1G@cassiopeiae> <CAJ-ks9=TrFHiLFkRfyawNquDY2x6t3dwGi6FxnfgFLvQLYwc+A@mail.gmail.com>
+ <Z7NJugCD3FThZpbI@cassiopeiae> <CAJ-ks9mcRffgyMWxYf=anoP7XWCA1yzc74-NazLZCXdjNqZSfg@mail.gmail.com>
+ <Z7NNDucW1-kEdFem@cassiopeiae>
+In-Reply-To: <Z7NNDucW1-kEdFem@cassiopeiae>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Feb 2025 10:50:10 -0500
+X-Gm-Features: AWEUYZkTMjeFzOHSQCr11RKK9P9i9z6qVWK7CwCD_YdiJtL8GAwsKrnf2C3CTM0
+Message-ID: <CAJ-ks9kZJt=eB0NU-PcXiygjORhhbEhGYEr9g3Mgjcf2-os06w@mail.gmail.com>
+Subject: Re: [PATCH v16 2/4] rust: types: add `ForeignOwnable::PointedTo`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Feb 17, 2025 at 9:52=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Mon, Feb 17, 2025 at 09:47:14AM -0500, Tamir Duberstein wrote:
+> > On Mon, Feb 17, 2025 at 9:37=E2=80=AFAM Danilo Krummrich <dakr@kernel.o=
+rg> wrote:
+> > > You're free to do the change (I encourage that), but that's of course=
+ up to you.
+> >
+> > I'll create a "good first issue" for it in the RfL repository.
+>
+> That's a good idea -- thanks.
 
-FYI,
+What do you think about enabling clippy::ptr_as_ptr?
+https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
 
-You should always send a new patch version as a separate thread. That's
-because they can get lost in the thread and makes it harder for maintainers
-to know what the next version of the patch is. I've picked the wrong patch
-version before because there was another version sent that I missed.
-
-On Thu, 13 Feb 2025 17:54:34 +0000
-Harshit Agarwal <harshit@nutanix.com> wrote:
-
-> Solution
-> ========
-> The solution here is fairly simple. After obtaining the lock (at 4a),
-> the check is enhanced to make sure that the task is still at the head of
-> the pushable tasks list. If not, then it is anyway not suitable for
-> being pushed out. The fix also removes any conditions that are no longer
-> needed.
-> 
-> Testing
-> =======
-> The fix is tested on a cluster of 3 nodes, where the panics due to this
-> are hit every couple of days. A fix similar to this was deployed on such
-> cluster and was stable for more than 30 days.
-
-May also want to add:
-
-  Since 'is_migration_disabled()' a faster check than the others, it was moved
-  to be the first check for consistency.
-
-> 
-> Co-developed-by: Jon Kohler <jon@nutanix.com>
-> Signed-off-by: Jon Kohler <jon@nutanix.com>
-> Co-developed-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
-> Signed-off-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
-> Co-developed-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
-> Signed-off-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
-> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
-> Tested-by: Will Ton <william.ton@nutanix.com>
-> ---
-
-You can add here (after the above three dashes), how this version is
-different from the last version. The text below the dashes and before the
-patch is ignored by git, but is useful for reviewers. For instance:
-
-Changes since v1: https://lore.kernel.org/all/20250211054646.23987-1-harshit@nutanix.com/
-
-- Removed the redundant checks that task != pick_next_pushable_task() already has
-
-
-Notice I added a link to the previous version. This helps find the previous
-version without having to make this version a reply to it.
-
->  kernel/sched/rt.c | 54 +++++++++++++++++++++++------------------------
->  1 file changed, 26 insertions(+), 28 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 4b8e33c615b1..4762dd3f50c5 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1885,6 +1885,27 @@ static int find_lowest_rq(struct task_struct *task)
->  	return -1;
->  }
->  
-
-Otherwise,
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-Peter, could you pick this up?
-
--- Steve
+Do we currently enable any non-default clippy lints?
 
