@@ -1,189 +1,156 @@
-Return-Path: <linux-kernel+bounces-517954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D71EA387EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:45:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBA0A38801
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E66F3B3AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF442188AAE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D160C224B1F;
-	Mon, 17 Feb 2025 15:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YnKadfTX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3GcX1TfL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4661225388;
+	Mon, 17 Feb 2025 15:44:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B82224B0E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61028224AFF;
+	Mon, 17 Feb 2025 15:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806994; cv=none; b=Ax8wl7fUhIBzEMMqxBvK1woA/2jjUJJk8rUonB7B3qdD3NAEYFwHalSWQrXpmBv0o0oIxQXRiwnHgkwhGaYg8AtRWgvHy1omfUOltW9APIybm11GQYrjiFKK4F0fJncaGXSfXUliezg3AUnFm7mAB9jH9vvUdj6sGk4MGOKoi1g=
+	t=1739807064; cv=none; b=ECfnNO/CY2Ft5QoQVnHwmUiwEd8TP2zz2eX0ZMV/C49iYBXs4rCp9a+E3F0gCKMAcQG/+d3WrqxQQnXjItX1zDiQ/Q48QAS5vS5Ltg9rIVxeK4rQNI4NPo37rYMcRPnH9BcIi6qfdjIvSdLsFW6k63dV9cEOvPvoJOcgnAehBAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806994; c=relaxed/simple;
-	bh=k72aroVKQHh1qZFv7vxVhrfZHBO93j0J4DPoF4u/cxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOxxBpsRnKy188Jz4Ip9XHw2z4Zis/FHx8EIW3u9cjQkLsJsxYpKk9G6vw5ly/YnZOJAJOY4SlP9ZhVijFUrhAthjk9G19XYKy9zEQBsI3pDZnGlXpNGkDwgjgdnPSgJ7srj9DLVZF6WOSoiEtXBNEKzElLhtA1uZUqujICtxNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YnKadfTX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3GcX1TfL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Feb 2025 16:43:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739806990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JDZt4WFEIPWOyU577sCBTfPji3aQbE2kJD7pIg8nvy0=;
-	b=YnKadfTXTur9oD1IV7BrFIiQCYgNj8IqZWEi8ygsR16NH0CuI5iBiMerEGSnyNfg/FVPuz
-	WH8HO2XU9JgkDxMQcXPbg7cXEvM6o9fQADFiGitdo6GaExrsGWvhUE7tQ87LnHAfg38cn0
-	e4VqU8hT9BLh1e39iP1uxacmZ+9Z1MXMLYSj710sQyDg6G8mCO04pa0sFX+qnYN4IL1HdA
-	WVsRfzMNM9uxcuZJ7gieoSkS7LC2jebPBtmnAkojEbSeIG2iQ3oVxy5FkVyR6/Ii8zUQdh
-	NJRkya0NEay/ccXX4uQ8FIs861548PohmRq7K1eqki+ntJTBSQECu4X1DxATlw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739806990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JDZt4WFEIPWOyU577sCBTfPji3aQbE2kJD7pIg8nvy0=;
-	b=3GcX1TfLYYuULHDnpmsHLPgysv2FFLSMXuP01TS2qoaN4wCmgEdQT9GPQNgmEyyQbzxuHs
-	1/A5lFpbM0g05xBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Waiman Long <longman@redhat.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, Nico Pache <npache@redhat.com>
-Subject: Re: [PATCH v3] kasan: Don't call find_vm_area() in RT kernel
-Message-ID: <20250217154309.C2CMqCjE@linutronix.de>
-References: <20250217042108.185932-1-longman@redhat.com>
+	s=arc-20240116; t=1739807064; c=relaxed/simple;
+	bh=iadKPwYhMT6m0BkbJmcOE34dgVzqbtXiyfGTt9wBGKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P21ynsDUrtVbHKxC7i9+UQknDsTKfXMMWRGJSRha2vrTuh7mNKgBFkzKhIyT0+XyfDAIgNq2tiXKtakebfl4Jc+lA87oMMou0t0IW/8NNuHAXtDQQlkjH48uF07QFKp+TKVIc41azYjlWLBV5Z3JYL+Mxqrm4krtUrxN5gqzajU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E46EC4CED1;
+	Mon, 17 Feb 2025 15:44:20 +0000 (UTC)
+Message-ID: <23eacfe3-cf94-45d3-a405-43185ef32512@xs4all.nl>
+Date: Mon, 17 Feb 2025 16:44:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217042108.185932-1-longman@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+Content-Language: en-US
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
+ <20250215210417.60074-5-dmitry.osipenko@collabora.com>
+ <110db742-25a0-4f0c-9620-1af8885d6e1c@xs4all.nl>
+ <3d4b1c45-cc00-4714-8582-0848e38c2ec4@collabora.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <3d4b1c45-cc00-4714-8582-0848e38c2ec4@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-02-16 23:21:08 [-0500], Waiman Long wrote:
-
-I would skip the first part. The backtrace is not really helpful here.
-
-> The following bug report appeared with a test run in a RT debug kernel.
+On 2/17/25 16:36, Dmitry Osipenko wrote:
+> On 2/17/25 11:31, Hans Verkuil wrote:
+>> On 15/02/2025 22:04, Dmitry Osipenko wrote:
+>>> From: Shreeya Patel <shreeya.patel@collabora.com>
+>>>
+>>> Add initial support for the Synopsys DesignWare HDMI RX
+>>> Controller Driver used by Rockchip RK3588. The driver
+>>> supports:
+>>>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>>>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>>>  - CEC
+>>>  - EDID configuration
+>>>
+>>> The hardware also has Audio and HDCP capabilities, but these are
+>>> not yet supported by the driver.
+>>>
+>>> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>> ---
+>>>  drivers/media/platform/Kconfig                |    1 +
+>>>  drivers/media/platform/Makefile               |    1 +
+>>>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>>>  drivers/media/platform/synopsys/Makefile      |    2 +
+>>>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>>>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>>>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2715 +++++++++++++++++
+>>>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>>>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+>>>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>>>  10 files changed, 3475 insertions(+)
+>>>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>>>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+>>>
+>>
+>> <snip>
+>>
+>>> +static ssize_t
+>>> +hdmirx_debugfs_if_read(u32 type, void *priv, struct file *filp,
+>>> +		       char __user *ubuf, size_t count, loff_t *ppos)
+>>> +{
+>>> +	struct snps_hdmirx_dev *hdmirx_dev = priv;
+>>> +	u8 aviif[3 + 7 * 4];
+>>> +	int len;
+>>> +
+>>> +	if (type != V4L2_DEBUGFS_IF_AVI)
+>>> +		return 0;
+>>> +
+>>> +	hdmirx_read_avi_infoframe(hdmirx_dev, aviif);
+>>> +
+>>> +	len = simple_read_from_buffer(ubuf, count, ppos,
+>>> +				      aviif, ARRAY_SIZE(aviif));
+>>> +
+>>> +	return len < 0 ? 0 : len;
+>>> +}
+>>
+>> Have you tested this with 'edid-decode -c -I /path/to/avi'? Also test that it is
+>> empty if there is no AVI InfoFrame (e.g. when there is no incoming video). I don't see
+>> a test for that in the code.
+>>
+>> I also see no sanity check regarding the length of the InfoFrame, it just outputs
+>> the full array, meaning you get padding as well since the AVI InfoFrame is smaller
+>> than ARRAY_SIZE(aviif). In fact, edid-decode will fail about that if the -c option
+>> is used.
+>>
+>> See tc358743_debugfs_if_read of how this is typically handled.
 > 
-> [ 3359.353842] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-> [ 3359.353848] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 140605, name: kunit_try_catch
-> [ 3359.353853] preempt_count: 1, expected: 0
->   :
-> [ 3359.353933] Call trace:
->   :
-> [ 3359.353955]  rt_spin_lock+0x70/0x140
-> [ 3359.353959]  find_vmap_area+0x84/0x168
-> [ 3359.353963]  find_vm_area+0x1c/0x50
-> [ 3359.353966]  print_address_description.constprop.0+0x2a0/0x320
-> [ 3359.353972]  print_report+0x108/0x1f8
-> [ 3359.353976]  kasan_report+0x90/0xc8
-> [ 3359.353980]  __asan_load1+0x60/0x70
+> I've tested with 'edid-decode -I /path/to/avi', including the empty AVI
+> InfoFrame. But without the '-c option'. I'd expect that debugfs should
+> provide a full-sized raw InfoFrame data, rather than a parsed version.
+> The parsed data isn't much useful for debugging purposes, IMO. I
+> intentionally removed the size check that tc358743_debugfs_if_read does
+> because it appeared wrong to me. Will re-check with '-c option', thanks!
+
+The HDMI header contains the actual length that was received. So debugfs should
+export the actual payload, not the maximum possible payload.
+
+It is common for hardware to reserve room in the register map for the maximum
+payload, but you only want to export what was actually received.
+
+Regards,
+
+	Hans
+
 > 
-> Commit e30a0361b851 ("kasan: make report_lock a raw spinlock")
-> changes report_lock to a raw_spinlock_t to avoid a similar RT problem.
 
-s/to avoid.*//. This has nothing to do with the problem at hand.
-
-> The print_address_description() function is called with report_lock
-> acquired and interrupt disabled.  However, the find_vm_area() function
-> still needs to acquire a spinlock_t which becomes a sleeping lock in
-> the RT kernel. IOW, we can't call find_vm_area() in a RT kernel and
-> changing report_lock to a raw_spinlock_t is not enough to completely
-> solve this RT kernel problem.
-
-This function is always invoked under the report_lock which is a
-raw_spinlock_t. The context under this lock is always atomic even on
-PREEMPT_RT. find_vm_area() acquires vmap_node::busy.lock which is a
-spinlock_t, becoming a sleeping lock on PREEMPT_RT and must not be
-acquired in atomic context.
-
-> Fix this bug report by skipping the find_vm_area() call in this case
-> and just print out the address as is.
-
-Please use PREEMPT_RT instead of RT.
-
-Don't invoke find_vm_area() on PREEMPT_RT and just print the address.
-Non-PREEMPT_RT builds remain unchanged. Add a DEFINE_WAIT_OVERRIDE_MAP()
-is to tell lockdep that this lock nesting allowed because the PREEMPT_RT
-part (which is invalid) has been taken care of.
-
-> For !RT kernel, follow the example set in commit 0cce06ba859a
-> ("debugobjects,locking: Annotate debug_object_fill_pool() wait type
-> violation") and use DEFINE_WAIT_OVERRIDE_MAP() to avoid a spinlock_t
-> inside raw_spinlock_t warning.
-
-
-> Fixes: e30a0361b851 ("kasan: make report_lock a raw spinlock")
-> Signed-off-by: Waiman Long <longman@redhat.com>
-
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-> ---
->  mm/kasan/report.c | 43 ++++++++++++++++++++++++++++++-------------
->  1 file changed, 30 insertions(+), 13 deletions(-)
-> 
->  [v3] Rename helper to print_vmalloc_info_set_page.
-> 
-> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> index 3fe77a360f1c..7c8c2e173aa4 100644
-> --- a/mm/kasan/report.c
-> +++ b/mm/kasan/report.c
-> @@ -370,6 +370,34 @@ static inline bool init_task_stack_addr(const void *addr)
->  			sizeof(init_thread_union.stack));
->  }
->  
-> +/*
-> + * RT kernel cannot call find_vm_area() in atomic context. For !RT kernel,
-> + * prevent spinlock_t inside raw_spinlock_t warning by raising wait-type
-> + * to WAIT_SLEEP.
-> + */
-
-Do we need this comment? I lacks context of why it is atomic. And we
-have it in the commit description.
-
-> +static inline void print_vmalloc_info_set_page(void *addr, struct page **ppage)
-> +{
-> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> +		static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
-> +		struct vm_struct *va;
-> +
-> +		lock_map_acquire_try(&vmalloc_map);
-> +		va = find_vm_area(addr);
-> +		if (va) {
-> +			pr_err("The buggy address belongs to the virtual mapping at\n"
-> +			       " [%px, %px) created by:\n"
-> +			       " %pS\n",
-> +			       va->addr, va->addr + va->size, va->caller);
-> +			pr_err("\n");
-> +
-> +			*ppage = vmalloc_to_page(addr);
-> +		}
-> +		lock_map_release(&vmalloc_map);
-> +		return;
-> +	}
-> +	pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
-> +}
-> +
->  static void print_address_description(void *addr, u8 tag,
->  				      struct kasan_report_info *info)
->  {
-
-Sebastian
 
