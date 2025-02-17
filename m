@@ -1,86 +1,105 @@
-Return-Path: <linux-kernel+bounces-517898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819B6A38725
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:01:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EDBA3871E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAC63B47C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C93716DEED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361052253A4;
-	Mon, 17 Feb 2025 14:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="ihS6qqtz"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B111B224B1A;
+	Mon, 17 Feb 2025 14:58:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9C6224AE4;
-	Mon, 17 Feb 2025 14:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E1B224B02;
+	Mon, 17 Feb 2025 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804282; cv=none; b=rJiLFY8n23BjYDSObeCD2PBarfXB7nX/WEs9Y8quYZH19pE4eOU8IgtgukVMkGC1ldeP+sJp8OWc12SECgOAJJjPxWavTXz+CTm9/p/VZNHIA5XqQFhperVwO09sBgtfYtCOhWDPmV6f8Z1VlQ960tT+pOPvw9R/CE1zBwdQy78=
+	t=1739804280; cv=none; b=Dtk/zToRZ5MXsf+qx69L2P5xZBkRuIVPzbR0IJIn4gq/gnMLBlULER6rrz2gjTEKyNq33dYcaJUplm5A+RY72K/mOVTPXBMiQNmILwwZ1o6/vWBSbSTTGc/EdmofpKD+AyBA2RXyxeAFpVKSw6UMkTiZTbYITWRrUyAV9NEgkfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804282; c=relaxed/simple;
-	bh=oFREPRNZa45E3UdEZrVYc6OmAJuZkoV5lwsXCtv0TpA=;
+	s=arc-20240116; t=1739804280; c=relaxed/simple;
+	bh=i5qIBPFIfSleKeqPnmWgDXFsvCA3yOtMTPrnhYV6Cqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1QtQCp580xlWflcPC/ZzUFUCunoUEH71jAVv8iPRKMGjyNnCqG0YMxj5CgXnYleIZs/Pi+NmsAIH1K/Jz3EQj7lwLDvbulvcZ6jmJtd2YJ3pCdKA4FnIL87bC7vGfbnz9qV8zCU8yMUwKoRCAz7j49PWAK17fk+YWrFlEvRDbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=ihS6qqtz; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9F86D1F956;
-	Mon, 17 Feb 2025 15:57:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1739804271;
-	bh=/J0M76EHLwXF8izY2or6AGdmLcAi2R2p1SP1NPe54No=; h=From:To:Subject;
-	b=ihS6qqtzYLa/4UrM8vEANaKhv1K7W1vu7YaxW8dYNBgTwm2rKEoIclP+vhsPulaic
-	 kRnr2LMnwa2np2SKRJ9s+YxpxV2uexOEOv2XZr7KNXYPwH8S0auBu6tK8bbvKo4TtH
-	 AFLHOixqW3ZR7DDS8fNw0IbqJoHUkEZEalN9U7P+jCCrSrJ1dht4ol0S0LeYlwkY9r
-	 lg3Ug4pPzMvuDMcmkkHHlTxIkBx60RRWJIXirXPiIF06ypLffwE6Zx8l7powv5rVTu
-	 wtVwouWalc1KBJWXJygaaIgcoX/U+sec1UjJktIzd5wERFd7NGfXsFYUm2GihJI5wH
-	 zsN9rwUu82//Q==
-Date: Mon, 17 Feb 2025 15:57:46 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jai.luthra@linux.dev,
-	francesco.dolcini@toradex.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62-verdin-dahlia: add Microphone
- Jack to sound card
-Message-ID: <20250217145746.GA55060@francesco-nb>
-References: <20250217144643.178222-1-eichest@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5rO2SYwjHeE7QXaUxO1ge8gT+ZOpkHWAjerKGO2j0XbtJywaxhm3npOLSTkNHWfVffSxOMD+KSRSRs9Nqs/0C1BCLuCOQtIJ0VyLcDvI6kpyG4r8nD3AXWjhdVaPainUmVNjn4nh5ZDnm+zxrA0AbEUMvHwUbgbV0W4wbjlJCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58F0C4CEE4;
+	Mon, 17 Feb 2025 14:57:55 +0000 (UTC)
+Date: Mon, 17 Feb 2025 14:57:53 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Beata Michalska <beata.michalska@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	viresh.kumar@linaro.org, sumitg@nvidia.com,
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com, zhanjie9@hisilicon.com,
+	ptsm@linux.microsoft.com, Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v10 2/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+Message-ID: <Z7NOcd3IamyMTjbH@arm.com>
+References: <20250131162439.3843071-1-beata.michalska@arm.com>
+ <20250131162439.3843071-3-beata.michalska@arm.com>
+ <CAJZ5v0g+yax=pT4m_2MTd9kUwbk5VBp2wkctTYJpFRU3myEjPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250217144643.178222-1-eichest@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0g+yax=pT4m_2MTd9kUwbk5VBp2wkctTYJpFRU3myEjPQ@mail.gmail.com>
 
-On Mon, Feb 17, 2025 at 03:46:04PM +0100, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On Mon, Feb 17, 2025 at 12:52:44PM +0100, Rafael J. Wysocki wrote:
+> On Fri, Jan 31, 2025 at 5:25 PM Beata Michalska <beata.michalska@arm.com> wrote:
+> >
+> > Currently the CPUFreq core exposes two sysfs attributes that can be used
+> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> > and scaling_cur_freq. Both provide slightly different view on the
+> > subject and they do come with their own drawbacks.
+> >
+> > cpuinfo_cur_freq provides higher precision though at a cost of being
+> > rather expensive. Moreover, the information retrieved via this attribute
+> > is somewhat short lived as frequency can change at any point of time
+> > making it difficult to reason from.
+> >
+> > scaling_cur_freq, on the other hand, tends to be less accurate but then
+> > the actual level of precision (and source of information) varies between
+> > architectures making it a bit ambiguous.
+> >
+> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
+> > distinct interface, exposing an average frequency of a given CPU(s), as
+> > reported by the hardware, over a time frame spanning no more than a few
+> > milliseconds. As it requires appropriate hardware support, this
+> > interface is optional.
+> >
+> > Note that under the hood, the new attribute relies on the information
+> > provided by arch_freq_get_on_cpu, which, up to this point, has been
+> > feeding data for scaling_cur_freq attribute, being the source of
+> > ambiguity when it comes to interpretation. This has been amended by
+> > restoring the intended behavior for scaling_cur_freq, with a new
+> > dedicated config option to maintain status quo for those, who may need
+> > it.
 > 
-> The simple-audio-card's microphone widget currently connects to the
-> headphone jack. Routing the microphone input to the microphone jack
-> allows for independent operation of the microphone and headphones.
+> In case anyone is waiting for my input here
 > 
-> This resolves the following boot-time kernel log message, which
-> indicated a conflict when the microphone and headphone functions were
-> not separated:
->   debugfs: File 'Headphone Jack' in directory 'dapm' already present!
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 > 
-> Fixes: f5bf894c865b ("arm64: dts: ti: verdin-am62: dahlia: add sound card")
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> for this and the previous patch and please feel free to route them
+> both through ARM64.
 
-Cc:stable@vger.kernel.org
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Thanks Rafael. I indeed plan to take them through the arm64 tree.
 
-Francesco
+-- 
+Catalin
 
