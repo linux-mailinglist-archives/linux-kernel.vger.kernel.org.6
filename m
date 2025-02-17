@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-517738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEFDA384DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:40:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831C7A384DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A514172CF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A3116F7A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A93E21CC56;
-	Mon, 17 Feb 2025 13:39:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9155028C;
-	Mon, 17 Feb 2025 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7527D21CC67;
+	Mon, 17 Feb 2025 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nT6bAF9+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA56A21A44D;
+	Mon, 17 Feb 2025 13:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739799555; cv=none; b=cCAwBTHw0dI13H4ii9P3jv6kPH6n6XW/3iVNV1dHYy+vS0UqMY4hsG4XQs0e8/nSe4NxcCQAhTWyJw326fA8LdISKHz+heVbgMNB6JEr1ihP6CB0cS3VK1B/8DT8JhjUi1ubXZ1QZSarj+MqqaZUm0JsD1U/KT72K9X0+Upe0K0=
+	t=1739799587; cv=none; b=sV6wk6U2vk65ka15H/6MiKqVsHqNhf6BX9Y468yapBZh0yvM6XPFVeOckeOk3Z8iYtOmC/+vIjVPZQ0x3ruDamID/egAkZ6Z/Lf5fr7zJU/VJ0VF9IHy9vsO9Qpgd1duB4Fg7IW1GBy9puxuXnpc9j/sjmaK9/1Jtjv1n7P+gnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739799555; c=relaxed/simple;
-	bh=aj8DaIOuqHpHQ1w5i8X1HUdJ0j22lLabCTNqGcBBVBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQAFDl5q2HITi7f8rpy8fgIRG4Pg6QQQoVYuNhoRpA5vuLrVba+jSZl91UiVF+tm8eDdxLuZeSdCUHAwF6kYDsnguxV8GUfluQ0c9jfIQAm8/stf4ygnkoq8wBv8BuAmviXMQQQWFfM0b8hwOQpKbiGsaRQgtTpmisQkkP/U66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52F6213D5;
-	Mon, 17 Feb 2025 05:39:32 -0800 (PST)
-Received: from [10.1.35.42] (e127648.arm.com [10.1.35.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDB3D3F6A8;
-	Mon, 17 Feb 2025 05:39:11 -0800 (PST)
-Message-ID: <20f09309-bd96-4b29-9602-4f969547dc51@arm.com>
-Date: Mon, 17 Feb 2025 13:39:09 +0000
+	s=arc-20240116; t=1739799587; c=relaxed/simple;
+	bh=3tet+bNClnYznOPy0FtmvKL+eOAqldSfcdXv8GyJpIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+3wUdx3OCSVA5cUuw288uqngYijHYj5uPn8d1+NsIQZ70azWBho6AshTb2FuCYsyQg6kEiZKaetVPp7KMnBKH4a30lgR2P/0p/QrNOFnU4PGy1DxS4cCzI7KJPiFANrupV50sAxMFyF0d9MPX4LORXU7jY4+iNh2UISu/DhEz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nT6bAF9+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D28AC4CED1;
+	Mon, 17 Feb 2025 13:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739799587;
+	bh=3tet+bNClnYznOPy0FtmvKL+eOAqldSfcdXv8GyJpIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nT6bAF9+c8lOKdOOyHWLXjR9cwYCAqXugmR2F9fLh+kw+4OWzDU4qBcTu1kL3zynV
+	 hC5qv026/frON/Idc0Lul0lJUgiMXGt0Cdv3DrNJhGQW0/9wvKtyxv3cu7Io/Fqj97
+	 FfXnJprpgHZfFOQxdtG0gW0aVAnIelHLlsEJOncGUTHD/TlxcW19C8+y01tG93ILel
+	 clWh31SHQ1FFjv4unowr8YJuEW9LyUOybvLX6I+1EbuopTD+wb7IONWfP1qysSzXAD
+	 scmrtGZJyb6+efRrU5Is/OcAnPOAGkufGZ6W3EReZMHdpSI5ph94/QTU96qmYmdGP9
+	 UirzHYPU1iSdg==
+Date: Mon, 17 Feb 2025 14:39:44 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: anna-maria@linutronix.de, tglx@linutronix.de, jstultz@google.com,
+	sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, netdev@vger.kernel.org,
+	andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev
+Subject: Re: [PATCH v10 6/8] MAINTAINERS: rust: Add TIMEKEEPING and TIMER
+ abstractions
+Message-ID: <Z7M8IDI_caXqBvMp@localhost.localdomain>
+References: <20250207132623.168854-1-fujita.tomonori@gmail.com>
+ <20250207132623.168854-7-fujita.tomonori@gmail.com>
+ <20250217.091008.1729482605084144345.fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful
- information
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
- <7770672.EvYhyI6sBW@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <7770672.EvYhyI6sBW@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250217.091008.1729482605084144345.fujita.tomonori@gmail.com>
 
-On 2/6/25 14:29, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Le Mon, Feb 17, 2025 at 09:10:08AM +0900, FUJITA Tomonori a écrit :
+> On Fri,  7 Feb 2025 22:26:21 +0900
+> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
 > 
-> When giving up on making a high-confidence prediction,
-> get_typical_interval() always returns UINT_MAX which means that the
-> next idle interval prediction will be based entirely on the time till
-> the next timer.  However, the information represented by the most
-> recent intervals may not be completely useless in those cases.
+> > Add Rust TIMEKEEPING and TIMER abstractions to the maintainers entry
+> > respectively.
+> > 
+> > Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> > ---
+> >  MAINTAINERS | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index c8d9e8187eb0..987a25550853 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -10353,6 +10353,7 @@ F:	kernel/time/sleep_timeout.c
+> >  F:	kernel/time/timer.c
+> >  F:	kernel/time/timer_list.c
+> >  F:	kernel/time/timer_migration.*
+> > +F:	rust/kernel/time/delay.rs
+> >  F:	tools/testing/selftests/timers/
+> >  
+> >  HIGH-SPEED SCC DRIVER FOR AX.25
+> > @@ -23852,6 +23853,7 @@ F:	kernel/time/timeconv.c
+> >  F:	kernel/time/timecounter.c
+> >  F:	kernel/time/timekeeping*
+> >  F:	kernel/time/time_test.c
+> > +F:	rust/kernel/time.rs
+> >  F:	tools/testing/selftests/timers/
 > 
-> Namely, the largest recent idle interval is an upper bound on the
-> recently observed idle duration, so it is reasonable to assume that
-> the next idle duration is unlikely to exceed it.  Moreover, this is
-> still true after eliminating the suspected outliers if the sample
-> set still under consideration is at least as large as 50% of the
-> maximum sample set size.
+> TIMERS and TIMEKEEPING maintainers,
 > 
-> Accordingly, make get_typical_interval() return the current maximum
-> recent interval value in that case instead of UINT_MAX.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -190,8 +190,19 @@
->  	 * This can deal with workloads that have long pauses interspersed
->  	 * with sporadic activity with a bunch of short pauses.
->  	 */
-> -	if ((divisor * 4) <= INTERVALS * 3)
-> +	if (divisor * 4 <= INTERVALS * 3) {
-> +		/*
-> +		 * If there are sufficiently many data points still under
-> +		 * consideration after the outliers have been eliminated,
-> +		 * returning without a prediction would be a mistake because it
-> +		 * is likely that the next interval will not exceed the current
-> +		 * maximum, so return the latter in that case.
-> +		 */
-> +		if (divisor >= INTERVALS / 2)
-> +			return max;
-> +
->  		return UINT_MAX;
-> +	}
->  
->  	/* Update the thresholds for the next round. */
->  	if (avg - min > max - avg)
-> 
+> You would prefer to add rust files to a separate entry for Rust? Or
+> you prefer a different option?
 
-You might want to amend the description at the top of menu.c then given that
-this now returns something without any meaning in a statistical significance
-way. Similar to admin-guide doc.
-As reported by the tests, this does improve performance a lot in scenarios of
-short intervals (where passing the statistical test is hard).
-Teo exploits the idle state residencies for this (i.e. as long as they fall
-into the same bin, they are equal for our means), this can be viewed as the
-menu equivalent to it, without relying on idle states.
+It's probably a better idea to keep those rust entries to their own sections.
+This code will be better handled into your more capable hands.
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-
+Thanks.
 
