@@ -1,141 +1,192 @@
-Return-Path: <linux-kernel+bounces-517627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13899A38375
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:52:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0A1A3837E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB3D172355
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E283ACCC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A122821B8F8;
-	Mon, 17 Feb 2025 12:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ti2MQg0m"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4421FCD09
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527B21B8F5;
+	Mon, 17 Feb 2025 12:53:55 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D4B186E2D;
+	Mon, 17 Feb 2025 12:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739796755; cv=none; b=Y8k5IgdJ/SehfuvCkvYNG15F99EM5wREMAdoVgR+fpOfQFlIef93/mlvpMWNUFwlvWocR694Kp+gpEcmgfXNW1JAYBapVoawRkXpdeQYthrZC/guCeJIvOp8JJ27sXBsppcpItxClQBsfyij04VW053KjrRdPoLbjw+I94/4zE8=
+	t=1739796835; cv=none; b=fRmBEzhkAl9zx3xj6aQrUJdUK/7t+ZQAgMJYWSLZ7HOKQbN1ThGWQq1OTnkkIcjo0VIpZgaUAMzSl4N1JdfITqvJcj7FpMPT7INseOHeIgElSf7ueDwDvnjLqRQjl8u1GzaZpIdKMOm2XMsZZXIKBZIzXoD2XIA41e91m5nZZ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739796755; c=relaxed/simple;
-	bh=4cACiLEYYr8YRJ3XzHa2YQ3pT6PaX+HTa+ntXXOksSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cr6KACj5Bmpu82Uo748XgveZCQewN5UhgtRGOd4k+zZhuPCWljVvCLP8BnTo2fuSZHVYO/XR+yuRvsMzroygaJxTMV+8+pSpVX1iXKxFH48DU/Uf/wITnGZwE20BI1fKyyH51aCTiRKlpJkYaq+iERMCxpo7HDFeJesvOTL3tXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ti2MQg0m; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 872103F516
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739796751;
-	bh=s+2SaUWzMvUfSiNt+NXq0m9a6gNqN22bx5NADQSxlGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=ti2MQg0mWo1R8u42ozYJ/umbSwxvkE2OyKA80zRUM+XYNUvzMifJE/nbZyJ9GztuA
-	 Jam7AGIhjNa+6rxhNNLnHNODsMZJC8FSH2ly23d9hC+HlCJZwgnGQiT8g7eZXXM/Xk
-	 gQpYlaQKa2sjC/gKqlMfi6pDHQJX9dIFK9/oqN7N2SQe5+aVaytfLwOsi2JNITkqbo
-	 qQt6AWldR/d5aw11n6DoPPg6mimCQ3qCPAqAGFzbqyrZ+pyRlvvnx5flL3xgcp2Kpq
-	 wpMe4nQHYC6BkUESM1KtyQzN/PfhsGCBFpIj2hZx/6YfuX7kMhHbxpi4qOJEnURbtw
-	 rzWUUtSXssurA==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-220cad2206eso89305885ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:52:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739796750; x=1740401550;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+2SaUWzMvUfSiNt+NXq0m9a6gNqN22bx5NADQSxlGw=;
-        b=oJrxGy5QmwbggQQ4GYrSbu+PVbpLYNtsVpbqMN5vGxWjJXvuvsBHBCFmUaIqaWmC36
-         81XFgSQal/18Y1NL/VJ6C9uDDBagXdDon+lrPMO5BnWMsaAAs1hPZkqLb4/UNtZwwKgb
-         lqhN1Ak40qPVN4PY5WhV1xu2MF3Pe0M/Q7CVXuPaIpK8TnfoKn+hmDY1MDU3ktsUzs3M
-         WTR/dKnkEefBnAi6L+0iTnvoLSNBjRWOM4XI+Dpljl1a3Hmx8IzizykcktT+9qm0PhVo
-         kx8GWkzXYdndzgURXtiKLBV0wgBmZr0m1oYPshft/b7WaPbZoDOegvOBmPcG5JDcFxLI
-         8GLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPiwdsrILr1ZZ6Pir/j4dpXZPG5P5An84qm6ikyMGy0OM3Epu4ldxCSrtD/LDORERVILOPI9zllQu3z+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXcrE2Jyq8VqOS9l6azqSBDtbGqwygM0nK53if9oPBOhIGHBDY
-	Qr+h4atXUUlLNPmQqXtdq2NZFuhdXPLGQdI23/ozcFHHGO4xdLtcT4KaL4eeKGQsoZ2O10qt8af
-	oabsNu+mhQfOx/l88Yk1WappMNeTRNveZTDrC/bqXjhPEV6TESidpBrq1Is6sHwV3kfIenmNEi4
-	Cu0Q==
-X-Gm-Gg: ASbGncvPYn1qtCxh+YcbU4+6pBxNYlrU62yuD/UszxUj1YjJF21g8R3Gr+L92+YyJ8g
-	pEqxBnxOKc/W8apSIhmG1YbpNo65nv0JZBWh1+Fni4PZFV6v0ezTEzDBJcoE4ZVa10csK8Jma/A
-	AHkszjxD9VbITXSiLg1SQNLuDYuQpeGUQ0qpUVYmejnTBWXcNja7/WIOtXDi8TyV+ztNqE/lOaT
-	KEW5omYnzN2BLBiHvhRgsOuaTwP1bI/79CL5e2UIhXR63W6olT5H/lA6QC4t6CnuzwPZJBk14k9
-	OJcXss0=
-X-Received: by 2002:a17:902:c94e:b0:21f:6fb9:9299 with SMTP id d9443c01a7336-2210404a859mr156408785ad.27.1739796750000;
-        Mon, 17 Feb 2025 04:52:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGMbDRI/eqmP12xeqgTEQrGMQASyS3MKQlMIr/reZp0+U4L/JqMmchDaU3atyv0A9DB8o3LaQ==
-X-Received: by 2002:a17:902:c94e:b0:21f:6fb9:9299 with SMTP id d9443c01a7336-2210404a859mr156408525ad.27.1739796749687;
-        Mon, 17 Feb 2025 04:52:29 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:a6da:1fd8:6ba3:4cf3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d62dsm69697615ad.149.2025.02.17.04.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 04:52:29 -0800 (PST)
-Date: Mon, 17 Feb 2025 21:52:26 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-gpio@vger.kernel.org, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] gpio: aggregator: cancel deferred probe for
- devices created via configfs
-Message-ID: <4heguj7r4dv5rsbfaokwkslkexqf5r52nm37splnvqwxsfsiig@irvcosdnabjy>
-References: <20250203031213.399914-1-koichiro.den@canonical.com>
- <20250203031213.399914-10-koichiro.den@canonical.com>
- <CAMRc=Meb633zVgemPSeNtnm8oJmk=njcr2CQQbD5UJd=tBC5Zg@mail.gmail.com>
- <CAMuHMdU24x9pxEjBHTKxySxwr-L+iKXSUNFxpM9hvaSTNAWDuQ@mail.gmail.com>
- <5mffw5s3p5biu726cfn6hrgcxiamawxz4qna4jajww3evoievd@itffjdnhijxb>
- <CAMRc=MdjiyzBzdQpYK=qGwS=j55W5mujoTWruRP9DeOv11Y8rg@mail.gmail.com>
+	s=arc-20240116; t=1739796835; c=relaxed/simple;
+	bh=N5IYCV85xRfC1EIyuiDLVV0pgkZOgYDqjCXPZrBvI3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6Qvmj06V3CC3XLcxhY52Iw5ZcEqV9IyHJHvI+tDT5Oox5285AimD8E7d9L+qbFRgasmvvqQ4sRORbHEpaCTuyDb2QL3BCYqXqqqugeqCsZhOgjWyTQM8yTPe6JrT4wreLO7jyd4UymXVjqJpG9A8nODMCWhFAplLaTcdFgYcq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51HCrQoN011735;
+	Mon, 17 Feb 2025 06:53:26 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51HCrPE1011734;
+	Mon, 17 Feb 2025 06:53:25 -0600
+Date: Mon, 17 Feb 2025 06:53:25 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+Message-ID: <20250217125325.GA11696@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250205120026.GA15809@wind.enjellic.com> <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com> <20250207102024.GA6415@wind.enjellic.com> <CAHC9VhSd-5Lm4+DPWG-V5eav5k-Q1evh3oVHxgB7in2o+XMMEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdjiyzBzdQpYK=qGwS=j55W5mujoTWruRP9DeOv11Y8rg@mail.gmail.com>
+In-Reply-To: <CAHC9VhSd-5Lm4+DPWG-V5eav5k-Q1evh3oVHxgB7in2o+XMMEg@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 17 Feb 2025 06:53:26 -0600 (CST)
 
-On Sun, Feb 16, 2025 at 04:58:51PM GMT, Bartosz Golaszewski wrote:
-> On Sun, Feb 16, 2025 at 2:15 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+On Fri, Feb 07, 2025 at 07:29:58PM -0500, Paul Moore wrote:
+
+Good morning to everyone.
+
+> On Fri, Feb 7, 2025 at 5:20???AM Dr. Greg <greg@enjellic.com> wrote:
+> > On Thu, Feb 06, 2025 at 10:48:57AM -0500, Paul Moore wrote:
+> > > On Wed, Feb 5, 2025 at 7:01???AM Dr. Greg <greg@enjellic.com> wrote:
+> > > > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+> > > >
+> > > > > I believe the LSM can support both the enforcement of security policy
+> > > > > and the observation of security relevant events on a system.  In fact
+> > > > > most of the existing LSMs do both, at least to some extent.
+> > > > >
+> > > > > However, while logging of security events likely needs to be
+> > > > > asynchronous for performance reasons, enforcement of security policy
+> > > > > likely needs to be synchronous to have any reasonable level of
+> > > > > assurance.  You are welcome to propose LSMs which provide
+> > > > > observability functionality that is either sync, async, or some
+> > > > > combination of both (? it would need to make sense to do both ?), but
+> > > > > I'm not currently interested in accepting LSMs that provide
+> > > > > asynchronous enforcement as I don't view that as a "reasonable"
+> > > > > enforcement mechanism.
+> > > >
+> > > > This is an artificial distinction that will prove limiting to the
+> > > > security that Linux will be able to deliver in the future.
+> > > >
+> > > > Based on your response, is it your stated position as Linux security
+> > > > maintainer, that you consider modern Endpoint Detection and Response
+> > > > Systems (EDRS) lacking with respect to their ability to implement a
+> > > > "reasonable" enforcement and assurance mechanism?
 > >
-> > >
-> > > On one hand, I agree that it would make some scenarios simpler, and
-> > > let us propagate an error code to the sysfs writer in case of failure.
-> > >
-> > > On the other hand, it would change user behavior. Currently people can
-> > > configure a GPIO aggregator, and load the driver module for the parent
-> > > gpiochip later, relying on deferred probing to bring up everything
-> > > when it is ready.
+> > > As stated previously: "I'm not currently interested in accepting
+> > > LSMs that provide asynchronous enforcement as I don't view that as a
+> > > reasonable enforcement mechanism."
 > >
-> > Thank you both for your insights, Bartosz and Geert. I've just sent v3
-> > (https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canonical.com/)
-> > which retains the current behavior, to not suprise anyone now.
-> > I'm now considering whether we might eventually deprecate the sysfs
-> > interface in the future. Doing so could simplify the codebase and bring it
-> > in line with gpio-sim and gpio-virtuser.
+> > You personally don't, the IT and security compliance industry does, it
+> > seems to leave Linux security infrastructure in an interesting
+> > conundrum.
+
+> Your concern over the state of the LSM has been previously noted, and
+> I assure you I've rolled my eyes at each reference since.
+
+Addressed at the end of this e-mail.
+
+You can also see our reply to James Morris and the announcement of the
+Linux Security Summit in Denver this summer.
+
+> > For the record, just to be very clear as to what an LSM is allowed to
+> > do under your administration, for our benefit and the benefit of
+> > others ...
+
+> I've repeated my position once already, if any current or aspiring LSM
+> developers are unsure about some aspect of this, they are welcome to
+> bring their specific concerns to the list and we can discuss them.
+
+For the record, we did bring a specific concern to the list for
+discussion, you removed the question and example we raised from your
+reply.
+
+Let me re-state the example and question for the benefit of everyone
+reading along at home.
+
+An LSM encodes a description of each security event it handles that is
+designed to be consumed by an application running in userspace or on a
+dedicated device that analyzes the events.  If the application or
+device detects an anomalous event or pattern of events it takes action
+to protect the system.
+
+Would such an LSM be permitted to exist?
+
+If the answer to the previous question is yes, at what level of event
+resolution can the remediative action be taken?
+
+We will look forward to the ensueing discussion.
+
+> > > > If this is the case, your philosophy leaves Linux in a position that
+> > > > is inconsistent with how the industry is choosing to implement
+> > > > security.
 > >
-> 
-> Heh, yeah you'd think so. You can watch my talk[1] on how easy it is
-> to remove sysfs interfaces. :)
+> > > In this case perhaps TSEM is not well suited for the upstream Linux
+> > > kernel and your efforts are better spent downstream, much like the
+> > > industry you appear to respect.
+> >
+> > Fascinating response from someone given the privilege of
+> > maintainership status of a sub-system in a project whose leadership
+> > preaches the need to always work with and submit to upstream.
+> >
+> > Even more fascinating when that individual publically states that he
+> > is employed by the largest technology company in the world because of
+> > that companies desire to promote the health and well being of the
+> > Linux eco-system and community.
 
-Well, I just meant new_device/delete_device in this context so my
-impression was that it would not be that hard. Anyhow, honestly speaking I
-haven't looked through it thoroughly yet. Thank you!
+> I would suggest that your interpretation of my previous comments are
+> a bit "off" in my opinion, but who am I to argue with a view that
+> sees my comments as this fascinating!
+>
+> Jokes aside, to be clear I didn't tell you not to continue to post
+> newer revisions of TSEM, I simply suggested that based on the
+> choices you've made in designing and developing TSEM, it may be
+> better suited to a downstream solution and not the upstream Linux
+> kernel.  However, perhaps continuing to post a LSM that has not been
+> accepted upstream due to inherent design decisions is perfectly in
+> keeping with a LSM that relishes references to Don Quixote.
 
-Koichiro
+Since we seem to be on the precipice of closing down the discussion on
+the relevancy of LSM development moving forward, a final comment for
+the record.
 
-> 
-> Bartosz
-> 
-> [1] https://fosdem.org/2025/schedule/event/fosdem-2025-5288-the-status-of-removing-sys-class-gpio-and-the-global-gpio-numberspace-from-the-kernel/
+We were not tilting at windmills when we started this effort two years
+ago, we fully understood that we would be involved in a long game.
+
+Our objectives were to either:
+
+1.) Provide Linux security development with infrastructure for a more
+generic and safer security modeling architecture that is consistent
+with the current and emerging threat environment and counter-offensive
+technologies.
+
+or
+
+2.) Document that upstream Linux security development is not a
+suitable venue for analyzing and solving these and upcoming security
+challenges.
+
+Two outcomes were possible, either outcome was acceptable, the second
+seems to be the one that is eventuating.
+
+> paul-moore.com
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
