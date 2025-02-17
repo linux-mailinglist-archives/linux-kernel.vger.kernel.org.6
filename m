@@ -1,244 +1,87 @@
-Return-Path: <linux-kernel+bounces-518451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F64FA38F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:51:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D502A38F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:50:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0637618932F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648663ADA99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EE01B423E;
-	Mon, 17 Feb 2025 22:50:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B011AB52F;
-	Mon, 17 Feb 2025 22:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278341ABEC5;
+	Mon, 17 Feb 2025 22:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Fflo9QK7"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E1B1A5B9D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 22:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739832600; cv=none; b=tCVWDjNou461gww5iC+6RLObnPtaly0159ocU2Vhtc3ATRE7e+ycHlChn9sU30lomEDnDESvZ3HKexMjH6W8yGkzNlfiRpxtZyquH7IpIklf+5oSwNOHnAXmvIbrJpQ55khavUosRE83uQKbZA40Q3p/i5B/kj2vmYYP0dxkJfo=
+	t=1739832598; cv=none; b=FcvKeaXXtXw8VXRKNvGGVVckDS1FfaIINCmkG6bNzVs4k/IS8RGRpAScL2q4c4xEOgqNC+eb4yOhSDR4I/VAaNmGbERrB8k3D1VqkypmZ6nT1QE2BAM9Fe9QH5S1DFlAJnRRL/7MiumZ0x7mu8Ry2QKLJNoMjnUCXpwiIEXeF+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739832600; c=relaxed/simple;
-	bh=RwgnJrk8/WSejT6lyDxXavaWjS19HMB75cMW1JIStXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RHGPubtsKyeR8FPBAJ2R6WaWdTeOGwMDM4711RQOszW0rsvejqPNLp+KAY5b/HhpPt7VCNo8HtQxfFaXXRBuDM3T5aCNzWXSc4e35KZsTOAx/qwRlEve83z7uDAXRaI96oXfeBYAnkCP2jQOmIIrL78Mo0jKqXQQ+IvKYYLdeXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56DF224E9;
-	Mon, 17 Feb 2025 14:50:17 -0800 (PST)
-Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 040283F5A1;
-	Mon, 17 Feb 2025 14:49:57 -0800 (PST)
-From: Stuart Yoder <stuart.yoder@arm.com>
-To: linux-integrity@vger.kernel.org,
-	jarkko@kernel.org,
-	peterhuewe@gmx.de,
-	jgg@ziepe.ca,
-	sudeep.holla@arm.com,
-	rafael@kernel.org,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/5] tpm_crb: add support for the Arm FF-A start method
-Date: Mon, 17 Feb 2025 16:49:45 -0600
-Message-Id: <20250217224946.113951-5-stuart.yoder@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217224946.113951-1-stuart.yoder@arm.com>
-References: <20250217224946.113951-1-stuart.yoder@arm.com>
+	s=arc-20240116; t=1739832598; c=relaxed/simple;
+	bh=UQFqrnjwwEQrn7+9uZEXrxJvHu9Ovq1ztyrLAcjSCxs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=onF+VjZ1BECxP30FY95cTo4/Pz+z4xIKxPDwyEfB6CpHdgSZqS3rkd0dVbj+WUT9xF4k6AU53M6w7FN0GC9WlN8zmIv162nSOCRRRk1jhQfdxH4gloN3fCsau2/X6FHAUIu3ahwnrSKJExRFMGv5q9kyffAJFYXAtQtwL5WIrWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Fflo9QK7; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1739832588; x=1740091788;
+	bh=UQFqrnjwwEQrn7+9uZEXrxJvHu9Ovq1ztyrLAcjSCxs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Fflo9QK7937qcX0C92R3OU38ZpSx/hrkuq4rnMm/Q7VEjUhq+IYYBoS4y1sFOjFr3
+	 HF6W53CAH0Gpred2S7Ev5UyCmPlih97wgs5lcSWpY1YSp2hCLoqy8IXnMZ8uUN1RjN
+	 wd/FAH39ZtF/LNE17ErNNr/vA2zhxAjnizjNs+X+r+83UuZVQzxLRJaZNQ/sRfeyLx
+	 fSKV+RWwVBcB0C4GunAcBcFjosnBmLRzw+2N+i/eRQ1jVzj/yZ4SP2gMdU06x9XKzO
+	 /6bzjzUs+pZ94czjEEbSS7f8FAvW47RHLt8hbV5zILt4eLsJGcLhbeZAtyODNI0l3n
+	 EStGe0gMZoQlg==
+Date: Mon, 17 Feb 2025 22:49:45 +0000
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: enable `too-long-first-doc-paragraph` clippy lint
+Message-ID: <6b914549-ed4f-4b8b-b6c7-9013e5c4c29e@proton.me>
+In-Reply-To: <CANiq72kwME8D2P5C2mbwmTpxekR8u_kdW6GDVz8WERi_NvRZYw@mail.gmail.com>
+References: <20250216213827.3752586-1-benno.lossin@proton.me> <20250216213827.3752586-2-benno.lossin@proton.me> <CANiq72kwME8D2P5C2mbwmTpxekR8u_kdW6GDVz8WERi_NvRZYw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: d0461f8aaf5f2e9623df850323039ba8cd6fffd4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The TCG ACPI spec v1.4 defines a start method for the
-TPMs implemented with the Arm CRB over FF-A ABI.
+On 17.02.25 19:07, Miguel Ojeda wrote:
+> On Sun, Feb 16, 2025 at 10:38=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>>
+>> Introduced in Rust 1.82.0 [1], this lint ensures that the first line of
+>=20
+> We will need to ignore unknown lints so that it does not warn on older
+> compilers.
+>=20
+> We should probably do it conditionally instead -- it requires some
+> rework to do it for everything, but we can easily do it for kernel code.
 
-Add support for the FF-A start method, and use interfaces
-provided by the ffa_crb driver to interact with the
-FF-A based TPM.
+Ah yeah forgot about that. That's a good point.
 
-Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+> I can tweak it and put this patch into my warning rework series -- I
+> had to send the v2 of that anyway. Sounds good?
+
+Sure!
+
 ---
- drivers/char/tpm/tpm_crb.c | 71 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 66 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 31db879f1324..2a57650ba9b4 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -19,6 +19,7 @@
- #ifdef CONFIG_ARM64
- #include <linux/arm-smccc.h>
- #endif
-+#include "tpm_crb_ffa.h"
- #include "tpm.h"
- 
- #define ACPI_SIG_TPM2 "TPM2"
-@@ -100,6 +101,8 @@ struct crb_priv {
- 	u32 smc_func_id;
- 	u32 __iomem *pluton_start_addr;
- 	u32 __iomem *pluton_reply_addr;
-+	u8 ffa_flags;
-+	u8 ffa_attributes;
- };
- 
- struct tpm2_crb_smc {
-@@ -110,6 +113,14 @@ struct tpm2_crb_smc {
- 	u32 smc_func_id;
- };
- 
-+/* CRB over FFA start method parameters in TCG2 ACPI table */
-+struct tpm2_crb_ffa {
-+	u8 flags;
-+	u8 attributes;
-+	u16 partition_id;
-+	u8 reserved[8];
-+};
-+
- struct tpm2_crb_pluton {
- 	u64 start_addr;
- 	u64 reply_addr;
-@@ -122,7 +133,8 @@ static inline bool tpm_crb_has_idle(u32 start_method)
- {
- 	return start_method == ACPI_TPM2_START_METHOD ||
- 	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD ||
--	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC;
-+	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC ||
-+	       start_method == ACPI_TPM2_CRB_WITH_ARM_FFA;
- }
- 
- static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-@@ -261,13 +273,20 @@ static int crb_cmd_ready(struct tpm_chip *chip)
- static int __crb_request_locality(struct device *dev,
- 				  struct crb_priv *priv, int loc)
- {
--	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
--		    CRB_LOC_STATE_TPM_REG_VALID_STS;
-+	u32 value = CRB_LOC_STATE_LOC_ASSIGNED | CRB_LOC_STATE_TPM_REG_VALID_STS;
-+	int rc;
- 
- 	if (!priv->regs_h)
- 		return 0;
- 
- 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
-+
-+	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
-+		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_LOCALITY_REQUEST, loc);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
- 				 TPM2_TIMEOUT_C)) {
- 		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
-@@ -287,14 +306,21 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
- static int __crb_relinquish_locality(struct device *dev,
- 				     struct crb_priv *priv, int loc)
- {
--	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
--		   CRB_LOC_STATE_TPM_REG_VALID_STS;
-+	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED | CRB_LOC_STATE_TPM_REG_VALID_STS;
- 	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
-+	int rc;
- 
- 	if (!priv->regs_h)
- 		return 0;
- 
- 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
-+
-+	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
-+		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_LOCALITY_REQUEST, loc);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
- 				 TPM2_TIMEOUT_C)) {
- 		dev_warn(dev, "TPM_LOC_STATE_x.Relinquish timed out\n");
-@@ -443,6 +469,11 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 		rc = tpm_crb_smc_start(&chip->dev, priv->smc_func_id);
- 	}
- 
-+	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
-+		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
-+		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
-+	}
-+
- 	if (rc)
- 		return rc;
- 
-@@ -452,6 +483,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
- static void crb_cancel(struct tpm_chip *chip)
- {
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
-+	int rc;
- 
- 	iowrite32(CRB_CANCEL_INVOKE, &priv->regs_t->ctrl_cancel);
- 
-@@ -459,6 +491,12 @@ static void crb_cancel(struct tpm_chip *chip)
- 	     priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) &&
- 	     crb_do_acpi_start(chip))
- 		dev_err(&chip->dev, "ACPI Start failed\n");
-+
-+	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
-+		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, chip->locality);
-+		if (rc)
-+			dev_err(&chip->dev, "FF-A Start failed\n");
-+	}
- }
- 
- static bool crb_req_canceled(struct tpm_chip *chip, u8 status)
-@@ -616,6 +654,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	 * stuff that puts the control area outside the ACPI IO region.
- 	 */
- 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
-+	    priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA ||
- 	    priv->sm == ACPI_TPM2_MEMORY_MAPPED) {
- 		if (iores &&
- 		    buf->control_address == iores->start +
-@@ -737,6 +776,7 @@ static int crb_acpi_add(struct acpi_device *device)
- 	struct tpm_chip *chip;
- 	struct device *dev = &device->dev;
- 	struct tpm2_crb_smc *crb_smc;
-+	struct tpm2_crb_ffa *crb_ffa;
- 	struct tpm2_crb_pluton *crb_pluton;
- 	acpi_status status;
- 	u32 sm;
-@@ -775,6 +815,27 @@ static int crb_acpi_add(struct acpi_device *device)
- 		priv->smc_func_id = crb_smc->smc_func_id;
- 	}
- 
-+	if (sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
-+		if (buf->header.length < (sizeof(*buf) + sizeof(*crb_ffa))) {
-+			dev_err(dev,
-+				FW_BUG "TPM2 ACPI table has wrong size %u for start method type %d\n",
-+				buf->header.length,
-+				ACPI_TPM2_CRB_WITH_ARM_FFA);
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+		crb_ffa = ACPI_ADD_PTR(struct tpm2_crb_ffa, buf, sizeof(*buf));
-+		priv->ffa_flags = crb_ffa->flags;
-+		priv->ffa_attributes = crb_ffa->attributes;
-+		rc = tpm_crb_ffa_init();
-+		if (rc) {
-+			if (rc == -ENOENT) {  // FF-A driver is not available yet
-+				rc = -EPROBE_DEFER;
-+			}
-+			goto out;
-+		}
-+	}
-+
- 	if (sm == ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON) {
- 		if (buf->header.length < (sizeof(*buf) + sizeof(*crb_pluton))) {
- 			dev_err(dev,
--- 
-2.34.1
+Cheers,
+Benno
 
 
