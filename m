@@ -1,148 +1,292 @@
-Return-Path: <linux-kernel+bounces-517445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBE5A380EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:58:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC5EA380FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 394F47A39DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6316C189791C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AB3218E83;
-	Mon, 17 Feb 2025 10:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFFC219A67;
+	Mon, 17 Feb 2025 10:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkMMbn59"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTnPBV0I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4011721859A;
-	Mon, 17 Feb 2025 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5D6217711;
+	Mon, 17 Feb 2025 10:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789789; cv=none; b=dC1Axv9GZWKd3O4e2EYutfE+6Vg90x+/385a6mxd2BG0e3aSJFC0MZLNEShTOqg2Perq2nvcJhXiviMjUzVCbBLqyRdTj4i1sPoudtcTBshzA5kLSzdHm6ctf1WSnpjgSAQqEfYy6PTSW1MoiCEjPas6oks0QFQuW9PRmRnmbVI=
+	t=1739789794; cv=none; b=M8aGGBBBWh9s/K0rEFFV4eMQF4rS7eTsvktLKhfAuLXcrGLDDYN86dORisrcF4Q+40rZ5C2XjC7ys+/KrwbkM/gbLO6WRX36fi+uW9mPtlSSmJyFVyCbTQRAVfffaX+re+02f5yw/rU/izwQvrUEZSF9Wx3O6/PU6TsBxNRjS5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789789; c=relaxed/simple;
-	bh=dRiBU8bLHN+PKEp+BzJxh4xI8Uvh7i6S8PS8NsvM9so=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eXI0FiKz9dL83m4c4fe8lvXGA/Pr03olS4p3nEMIN2wBtY6jA2zILTVoXAuq7p69XPHRhKC68jUjN05sNCu7scro61l71WfnBzMhKWx9tnlDKAywbdpyZxJXNi5AjuRw1Fuwq46CsQqRfIjR/rSrnOJu2ie571h3Av99JsHqnFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkMMbn59; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30737db1ab1so38405821fa.1;
-        Mon, 17 Feb 2025 02:56:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739789785; x=1740394585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wPmQbo/PCv0pK4oZriNkiOu24KqYFPM+bg/Ekpuf9vA=;
-        b=ZkMMbn59wc5qMdK1X0wOv8UQASb0cP4R1XEmf0o6jNvuVh7ypGZQTf0kg65MbRO10Q
-         Q5vfPTR1PiR2+Q2lhREXFy9FDHJk0Yf5atk/Y6KYcCLQ4uZ906KtqZQuoGTW66Z2LvPY
-         mosXON17PwFQXW4w8XaHBud4hMJykpFPR5ZSuQ+uHtUGZfPGtWYj1rAK5q6gFW42Oy8a
-         jynVHWRwP+bY7zWur8gD+2ue1m/4nL/YRlFYbnAAkT7jLuuVuhUzT8lysvFF819nhZpD
-         sc1r6sw5sZPnZq4ZnA+GzOksGtw3WpxuHIlK+cSF0DRyrvditPAdDgpLwH0F5jRcwJKc
-         lq/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739789785; x=1740394585;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wPmQbo/PCv0pK4oZriNkiOu24KqYFPM+bg/Ekpuf9vA=;
-        b=hHHOIsy9vqKf+ba9foRFpdLpnnHqgWZ764DO+HvUMP7rl3qteaPytAbjFsf65pCVnD
-         nZZoW24VIN6E6urqnThTRSEB0QUw25PqX+0R5/yrbBLLZxckEj5TAs/v9qYUpJqTuaNt
-         Bzgn3jyLSJm8gryVu20+LhlmX58TkGAlO3j3ZLBYyLRikptiDID0BqO8hIki5yyeG9ai
-         7v2Bxks7JzbMwvq6YnNqW31EQ43LGQxkqq2TVjyOPDdWl2aOsaozgvGvgCDeABSLueP0
-         Y7VbKU2qL2ED2u9cs9bub2NumD0LnCkeljhzuZq15Co4hCOfQ6u2TICtgQrJMzJ13/Vb
-         2E2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjAloeTsWx/qfsYAG6cGIaw+SSnBDluQehazOP09Yqurrn5jhnCZFC108jnkqKKHgvFWtOvxjklLM@vger.kernel.org, AJvYcCWGnlub0oDG+1PxWlbaZ6YZkn38am6yPhaqhng3t6Brs+XBez8wZfVTIxFbWUaeJyheMuZVoK0EwS8PurU=@vger.kernel.org, AJvYcCXuME5JR9cakGTSE8Ap7matBhxXc0Sc4r6vMhVLLkuM+sCECSkjx3fJ2e+amH9v+x7czit1Ldyq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7tKUjUh5WVat1EofoWjVpyun8WsdjbQFKS9oPIYpWpk43Farl
-	7Nq6OeqUocPC4/Zz3QvT+TV75dyajOVd1vQHRG40rRVmR5H0CZvY
-X-Gm-Gg: ASbGncveLHkxTZovEOyLZowz7YMXGRc9M17NVvIMrpNAsorbR3gB33As5HwT82r5BNF
-	xZBvBjDWE/jCfe1+l+wWh2NIs+2kQl/wm7ctOPF7ulPNXzl0/AQbot5VCXPbstYcTGHfEgteK+9
-	DQTMee5t3PoA6HMfVHY/vozSmN2YbRif/NEYW3l8Jerl6o08u97h6pPm1rPrcoxLV9h+KZ7vLMz
-	3AtCnRP14yBpUupmd1sLaG1dCmwXMRKfLh0EAypoSZ5qKptickSpsNNjU/5JQZnsW6/pzckkXrH
-	beYFnQmMzcEjmYh/mre8YA5e7VGp7btDfn+DU6XmpA==
-X-Google-Smtp-Source: AGHT+IGCLD07lgk2Kg1aAIH+wi2GPpBO2RQDWyZh6vRvrBRHJbeM9LlJ/S5M4qlz79h4I9QIIJOKrQ==
-X-Received: by 2002:a05:6512:ea1:b0:545:ae6:d73d with SMTP id 2adb3069b0e04-5452fe767f3mr2775645e87.45.1739789785193;
-        Mon, 17 Feb 2025 02:56:25 -0800 (PST)
-Received: from fedora.intra.ispras.ru (morra.ispras.ru. [83.149.199.253])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452b496aafsm1157086e87.29.2025.02.17.02.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:56:24 -0800 (PST)
-From: Fedor Pchelkin <boddah8794@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Fedor Pchelkin <boddah8794@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Saranya Gopal <saranya.gopal@intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Pearson <mpearson@squebb.ca>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] usb: typec: ucsi: increase timeout for PPM reset operations
-Date: Mon, 17 Feb 2025 13:54:40 +0300
-Message-ID: <20250217105442.113486-3-boddah8794@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250217105442.113486-1-boddah8794@gmail.com>
-References: <20250217105442.113486-1-boddah8794@gmail.com>
+	s=arc-20240116; t=1739789794; c=relaxed/simple;
+	bh=hDLOgY+mA75Ymn1iBk9Z4iLCk4JLS5jTuILN+eQ4yqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s3rpXXu/RKjmu0tclFka90+E0iPYd48dQ5HcoFA3cJjXn59Zr3GVld7PF2AQf3qeP1c5ZJHcs2i340eRYZ1eUz82cGguoNy58977xBEtldf7wpsyUE1qv8+ticYm305iyR8YUdQ4J6WSzWkMu5IAkMXze38+IU9xQCe5wCvbw5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTnPBV0I; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739789792; x=1771325792;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hDLOgY+mA75Ymn1iBk9Z4iLCk4JLS5jTuILN+eQ4yqo=;
+  b=lTnPBV0IU4esVwvCGq4KRZo+9bXio1nrGTEUv4NX6IZDNQhT5Py21+RG
+   YNHAKJbkSQzp5e9xDCehLqnw31RCIOBkLsW1u46nO27yj8S1tK+PjOlNC
+   U7qgblQJSDzvL2aOYeZ4A9fbC/nugJGpZ9CsILCBLeceUlFvq3aIc1Bk5
+   R/jeAvgo/zZMZZkYNFK7uwOQCGO/kjht2j+9sKxGUF6rsqvhIRahlJs6b
+   qdZN9bE5kUhTvp//zPh0rDFQWx2oEVX2il+d9aGOWnhecsDVM6fZat/jW
+   nRmM1GDvR/DiW1nbjxA9SIPVQ2vP5qKzC/k3HzDa8nT9AiBrzZhIs6r+9
+   g==;
+X-CSE-ConnectionGUID: KZcytm0MRSaymEoNWZXFJw==
+X-CSE-MsgGUID: SVhxAqNqShOzkIdQRQPAlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="39695321"
+X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
+   d="scan'208";a="39695321"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 02:56:31 -0800
+X-CSE-ConnectionGUID: Y7CuIuy7RWWBpOkgyg8jpA==
+X-CSE-MsgGUID: aFmpx/LzTN6y0ale2QzYlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="119012041"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 17 Feb 2025 02:56:23 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tjynV-001D0p-0I;
+	Mon, 17 Feb 2025 10:56:21 +0000
+Date: Mon, 17 Feb 2025 18:55:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	quic_jjohnson@quicinc.com, quic_pyarlaga@quicinc.com,
+	quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
+	quic_mrana@quicinc.com,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 6/8] bus: mhi: host: Add support for Bandwidth scale
+Message-ID: <202502171823.5VC7a1E6-lkp@intel.com>
+References: <20250217-mhi_bw_up-v1-6-9bad1e42bdb1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-mhi_bw_up-v1-6-9bad1e42bdb1@oss.qualcomm.com>
 
-It is observed that on some systems an initial PPM reset during the boot
-phase can trigger a timeout:
+Hi Krishna,
 
-[    6.482546] ucsi_acpi USBC000:00: failed to reset PPM!
-[    6.482551] ucsi_acpi USBC000:00: error -ETIMEDOUT: PPM init failed
+kernel test robot noticed the following build warnings:
 
-Still, increasing the timeout value, albeit being the most straightforward
-solution, eliminates the problem: the initial PPM reset may take up to
-~8000-10000ms on some Lenovo laptops. When it is reset after the above
-period of time (or even if ucsi_reset_ppm() is not called overall), UCSI
-works as expected.
+[auto build test WARNING on 0ad2507d5d93f39619fc42372c347d6006b64319]
 
-Moreover, if the ucsi_acpi module is loaded/unloaded manually after the
-system has booted, reading the CCI values and resetting the PPM works
-perfectly, without any timeout. Thus it's only a boot-time issue.
+url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-Chaitanya-Chundru/PCI-update-current-bus-speed-as-part-of-pci_bus_add_devices/20250217-144050
+base:   0ad2507d5d93f39619fc42372c347d6006b64319
+patch link:    https://lore.kernel.org/r/20250217-mhi_bw_up-v1-6-9bad1e42bdb1%40oss.qualcomm.com
+patch subject: [PATCH 6/8] bus: mhi: host: Add support for Bandwidth scale
+config: x86_64-buildonly-randconfig-006-20250217 (https://download.01.org/0day-ci/archive/20250217/202502171823.5VC7a1E6-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250217/202502171823.5VC7a1E6-lkp@intel.com/reproduce)
 
-The reason for this behavior is not clear but it may be the consequence
-of some tricks that the firmware performs or be an actual firmware bug.
-As a workaround, increase the timeout to avoid failing the UCSI
-initialization prematurely.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502171823.5VC7a1E6-lkp@intel.com/
 
-Fixes: b1b59e16075f ("usb: typec: ucsi: Increase command completion timeout value")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <boddah8794@gmail.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
-Add Heikki's Reviewed-by tag.
+All warnings (new ones prefixed by >>):
 
- drivers/usb/typec/ucsi/ucsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> drivers/bus/mhi/host/init.c:682:6: warning: variable 'doorbell' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     682 |         if (mhi_cntrl->get_misc_doorbell)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/bus/mhi/host/init.c:685:6: note: uninitialized use occurs here
+     685 |         if (doorbell > 0) {
+         |             ^~~~~~~~
+   drivers/bus/mhi/host/init.c:682:2: note: remove the 'if' if its condition is always true
+     682 |         if (mhi_cntrl->get_misc_doorbell)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     683 |                 doorbell = mhi_cntrl->get_misc_doorbell(mhi_cntrl, MHI_ER_BW_SCALE);
+   drivers/bus/mhi/host/init.c:548:22: note: initialize the variable 'doorbell' to silence this warning
+     548 |         int i, ret, doorbell;
+         |                             ^
+         |                              = 0
+   1 warning generated.
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 0fe1476f4c29..7a56d3f840d7 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -25,7 +25,7 @@
-  * difficult to estimate the time it takes for the system to process the command
-  * before it is actually passed to the PPM.
-  */
--#define UCSI_TIMEOUT_MS		5000
-+#define UCSI_TIMEOUT_MS		10000
- 
- /*
-  * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
+
+vim +682 drivers/bus/mhi/host/init.c
+
+   544	
+   545	int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
+   546	{
+   547		u32 val;
+   548		int i, ret, doorbell;
+   549		struct mhi_chan *mhi_chan;
+   550		struct mhi_event *mhi_event;
+   551		void __iomem *base = mhi_cntrl->regs;
+   552		struct device *dev = &mhi_cntrl->mhi_dev->dev;
+   553		struct {
+   554			u32 offset;
+   555			u32 val;
+   556		} reg_info[] = {
+   557			{
+   558				CCABAP_HIGHER,
+   559				upper_32_bits(mhi_cntrl->mhi_ctxt->chan_ctxt_addr),
+   560			},
+   561			{
+   562				CCABAP_LOWER,
+   563				lower_32_bits(mhi_cntrl->mhi_ctxt->chan_ctxt_addr),
+   564			},
+   565			{
+   566				ECABAP_HIGHER,
+   567				upper_32_bits(mhi_cntrl->mhi_ctxt->er_ctxt_addr),
+   568			},
+   569			{
+   570				ECABAP_LOWER,
+   571				lower_32_bits(mhi_cntrl->mhi_ctxt->er_ctxt_addr),
+   572			},
+   573			{
+   574				CRCBAP_HIGHER,
+   575				upper_32_bits(mhi_cntrl->mhi_ctxt->cmd_ctxt_addr),
+   576			},
+   577			{
+   578				CRCBAP_LOWER,
+   579				lower_32_bits(mhi_cntrl->mhi_ctxt->cmd_ctxt_addr),
+   580			},
+   581			{
+   582				MHICTRLBASE_HIGHER,
+   583				upper_32_bits(mhi_cntrl->iova_start),
+   584			},
+   585			{
+   586				MHICTRLBASE_LOWER,
+   587				lower_32_bits(mhi_cntrl->iova_start),
+   588			},
+   589			{
+   590				MHIDATABASE_HIGHER,
+   591				upper_32_bits(mhi_cntrl->iova_start),
+   592			},
+   593			{
+   594				MHIDATABASE_LOWER,
+   595				lower_32_bits(mhi_cntrl->iova_start),
+   596			},
+   597			{
+   598				MHICTRLLIMIT_HIGHER,
+   599				upper_32_bits(mhi_cntrl->iova_stop),
+   600			},
+   601			{
+   602				MHICTRLLIMIT_LOWER,
+   603				lower_32_bits(mhi_cntrl->iova_stop),
+   604			},
+   605			{
+   606				MHIDATALIMIT_HIGHER,
+   607				upper_32_bits(mhi_cntrl->iova_stop),
+   608			},
+   609			{
+   610				MHIDATALIMIT_LOWER,
+   611				lower_32_bits(mhi_cntrl->iova_stop),
+   612			},
+   613			{0, 0}
+   614		};
+   615	
+   616		dev_dbg(dev, "Initializing MHI registers\n");
+   617	
+   618		/* Read channel db offset */
+   619		ret = mhi_get_channel_doorbell_offset(mhi_cntrl, &val);
+   620		if (ret)
+   621			return ret;
+   622	
+   623		if (val >= mhi_cntrl->reg_len - (8 * MHI_DEV_WAKE_DB)) {
+   624			dev_err(dev, "CHDB offset: 0x%x is out of range: 0x%zx\n",
+   625				val, mhi_cntrl->reg_len - (8 * MHI_DEV_WAKE_DB));
+   626			return -ERANGE;
+   627		}
+   628	
+   629		/* Setup wake db */
+   630		mhi_cntrl->wake_db = base + val + (8 * MHI_DEV_WAKE_DB);
+   631		mhi_cntrl->wake_set = false;
+   632	
+   633		/* Setup channel db address for each channel in tre_ring */
+   634		mhi_chan = mhi_cntrl->mhi_chan;
+   635		for (i = 0; i < mhi_cntrl->max_chan; i++, val += 8, mhi_chan++)
+   636			mhi_chan->tre_ring.db_addr = base + val;
+   637	
+   638		/* Read event ring db offset */
+   639		ret = mhi_read_reg(mhi_cntrl, base, ERDBOFF, &val);
+   640		if (ret) {
+   641			dev_err(dev, "Unable to read ERDBOFF register\n");
+   642			return -EIO;
+   643		}
+   644	
+   645		if (val >= mhi_cntrl->reg_len - (8 * mhi_cntrl->total_ev_rings)) {
+   646			dev_err(dev, "ERDB offset: 0x%x is out of range: 0x%zx\n",
+   647				val, mhi_cntrl->reg_len - (8 * mhi_cntrl->total_ev_rings));
+   648			return -ERANGE;
+   649		}
+   650	
+   651		/* Setup event db address for each ev_ring */
+   652		mhi_event = mhi_cntrl->mhi_event;
+   653		for (i = 0; i < mhi_cntrl->total_ev_rings; i++, val += 8, mhi_event++) {
+   654			if (mhi_event->offload_ev)
+   655				continue;
+   656	
+   657			mhi_event->ring.db_addr = base + val;
+   658		}
+   659	
+   660		/* Setup DB register for primary CMD rings */
+   661		mhi_cntrl->mhi_cmd[PRIMARY_CMD_RING].ring.db_addr = base + CRDB_LOWER;
+   662	
+   663		/* Write to MMIO registers */
+   664		for (i = 0; reg_info[i].offset; i++)
+   665			mhi_write_reg(mhi_cntrl, base, reg_info[i].offset,
+   666				      reg_info[i].val);
+   667	
+   668		ret = mhi_write_reg_field(mhi_cntrl, base, MHICFG, MHICFG_NER_MASK,
+   669					  mhi_cntrl->total_ev_rings);
+   670		if (ret) {
+   671			dev_err(dev, "Unable to write MHICFG register\n");
+   672			return ret;
+   673		}
+   674	
+   675		ret = mhi_write_reg_field(mhi_cntrl, base, MHICFG, MHICFG_NHWER_MASK,
+   676					  mhi_cntrl->hw_ev_rings);
+   677		if (ret) {
+   678			dev_err(dev, "Unable to write MHICFG register\n");
+   679			return ret;
+   680		}
+   681	
+ > 682		if (mhi_cntrl->get_misc_doorbell)
+   683			doorbell = mhi_cntrl->get_misc_doorbell(mhi_cntrl, MHI_ER_BW_SCALE);
+   684	
+   685		if (doorbell > 0) {
+   686			ret = mhi_init_bw_scale(mhi_cntrl, doorbell);
+   687			if (!ret)
+   688				mhi_cntrl->bw_scale_db = base + val + (8 * doorbell);
+   689			else
+   690				dev_warn(dev, "BW scale setup failure\n");
+   691		}
+   692		return 0;
+   693	}
+   694	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
