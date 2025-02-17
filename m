@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-517992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C006AA38884
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:59:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93C8A38872
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B22E1888F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD6F3B38AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9722A4EC;
-	Mon, 17 Feb 2025 15:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2410522A7F0;
+	Mon, 17 Feb 2025 15:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iI+GvUGp"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Kqr14EBC"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55004229B3C;
-	Mon, 17 Feb 2025 15:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA6E22A4D3;
+	Mon, 17 Feb 2025 15:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739807393; cv=none; b=rXvy6IyD/8lxoCyimB9h1XUgfDLgtxe3P/ENDKH8Y59+cZU0XkbvLBULWgc3I/yMAHUp6f1qFIeWQ3H4XenK3PT4+CpkuEZACZlbvk+46FF8CepyYxDJaL21AEqYJPlT0OndNQsTTZximb7NVlN5VQmrDSv+vNvuIlMbVljGh5M=
+	t=1739807394; cv=none; b=qGElL6setGjwelAEcSHsAtYalYDEzZx2ARBPLkoNR9HnE+AQECkLPEdRZwYCpT3ow7vwMfPXT52lg/BYGxAY/P5m3C2c8GgbDoFGiSUXD2nA3iYXmwzVjMIQ/yqiCM7guYom11K9B/j95WXLzKm7W24n7me6TGVqYjuRuBCrjrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739807393; c=relaxed/simple;
-	bh=t16i+0C+ZcahRk+Jk9rLi/G14zxkWnJj+r87u3FvDm4=;
+	s=arc-20240116; t=1739807394; c=relaxed/simple;
+	bh=IGLnu8udYQTnGjy++8XEPCHJ60TM8dI2yrfyPOUYAbY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=esiPYhIvT82Y7iQaSpcVu7oNVsjAtTWH2o478slt4n54hx8kc8F1thRkbS9wj4urKROBgmFroImS6Nd5QghArUl2ns4LdQvrYWNJsNQfPhhXuO3IFVGYnb3ayB5ob1riUnYBQnYO6F94IWXh09CH0VllqLoO5ragnbUzUZOT29c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iI+GvUGp; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=jFOoVRmqrWbLMdxkgl5A7DMkZGRuAgRk+5RdUwfm10ND4GNihlCZNznq03KOf81BvzFbqQdcuu6IlyZZ6c7slcCLUgGj6gKGyWTrlEwYSvVhESP27zDyqbNtVDBEQcp0u8VNJjknWkOno6cQB2CQGV249dIhRt2NuhyCyNBKY58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Kqr14EBC; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739807389;
-	bh=t16i+0C+ZcahRk+Jk9rLi/G14zxkWnJj+r87u3FvDm4=;
+	s=mail; t=1739807391;
+	bh=IGLnu8udYQTnGjy++8XEPCHJ60TM8dI2yrfyPOUYAbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iI+GvUGpJPp8gk9ZzMtLp11dgfNqQgZLlzM8UFKYQPfJEp6rNrlBR5W86vIYMRA6x
-	 /jcnzS+F6MYJhIlSXRZDHf+dozBePR00lQ7PPb1loehJbm+ktoaq11/JOyW+y3lSSY
-	 6cZvKBBYLygnrzJ3ibKj6XUzLTVzG9bwkRtNCy7qANA7+6agTNuEvGtRGplz0wHV+V
-	 8s+xO4DcEFc5ra6EY391Hc7gSxOQGd6LlrTGmIStnUdV2HvzdARr7wJD2/HY6gmpwY
-	 p62M/7jhcsI1MpoISDF/wYkaRmW16Tzm13AHFVfhmxtCQ3R7m/4rGV2xb46KMTBlGj
-	 1p8tBa/k6fwWQ==
+	b=Kqr14EBCc56mUomsEFeQYOmQ2Y+VSB/+ncKF/9hsrrPtnxI80LNkERmTv6bO0wyxC
+	 R9tbQG3gsHbIYXVBjgvqnUjJ6sxsZHHd8Yd5wv7FQsdDYL9m4P/FqRIZtgr/NLi7IO
+	 /3hwei6Jmu9513mXRefyvVtaZdIOmP4BnNpQY9sEBlTlv3hQ8ro6kPgCb7Bjf5qY42
+	 fjiwYW0aZ7GGW24cAD43jJNmHcjmdYiUAj3AeRsDWHL0QkmVkJhc3Q0WMHN2DRP4Pp
+	 njLIPs+8vuu2Of+PQo9qD6bgIjoc6ELRvE0FDNus9y/zhbRP4vDi2lmjZtB7RMyLIQ
+	 wV2LMoW4LLDsA==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 97D0F17E1568;
-	Mon, 17 Feb 2025 16:49:48 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1E88E17E1562;
+	Mon, 17 Feb 2025 16:49:50 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -75,9 +75,9 @@ Cc: p.zabel@pengutronix.de,
 	ives.chenjh@mediatek.com,
 	tommyyl.chen@mediatek.com,
 	jason-jh.lin@mediatek.com
-Subject: [PATCH v7 22/43] drm/mediatek: mtk_hdmi: Move plugged_cb/codec_dev setting to new function
-Date: Mon, 17 Feb 2025 16:48:15 +0100
-Message-ID: <20250217154836.108895-23-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v7 23/43] drm/mediatek: mtk_hdmi: Move N/CTS setting to new function
+Date: Mon, 17 Feb 2025 16:48:16 +0100
+Message-ID: <20250217154836.108895-24-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
 References: <20250217154836.108895-1-angelogioacchino.delregno@collabora.com>
@@ -89,47 +89,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for splitting common bits of this driver, move the
-mutex-protected cable plugged callback and codec device setting
-to a new function called mtk_hdmi_audio_set_plugged_cb().
+In preparation for splitting common bits of this driver, moving
+the hdmi_rec_n_table struct array, and the hdmi_recommended_n(),
+hdmi_mode_clock_to_hz(), hdmi_expected_cts() functions, add one
+function called mtk_hdmi_get_ncts() that sets both N and CTS in
+a single call.
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 25ea3f3d982b..69db6b19017d 100644
+index 69db6b19017d..e9f2f15e98fa 100644
 --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
 +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1597,17 +1597,22 @@ static int mtk_hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
- 	return 0;
+@@ -682,6 +682,13 @@ static unsigned int hdmi_expected_cts(unsigned int audio_sample_rate,
+ 				     128 * audio_sample_rate);
  }
  
--static int mtk_hdmi_audio_hook_plugged_cb(struct device *dev, void *data,
--					  hdmi_codec_plugged_cb fn,
-+static void mtk_hdmi_audio_set_plugged_cb(struct mtk_hdmi *hdmi, hdmi_codec_plugged_cb fn,
- 					  struct device *codec_dev)
- {
--	struct mtk_hdmi *hdmi = data;
--
- 	mutex_lock(&hdmi->update_plugged_status_lock);
- 	hdmi->plugged_cb = fn;
- 	hdmi->codec_dev = codec_dev;
- 	mutex_unlock(&hdmi->update_plugged_status_lock);
++static void mtk_hdmi_get_ncts(unsigned int sample_rate, unsigned int clock,
++			      unsigned int *n, unsigned int *cts)
++{
++	*n = hdmi_recommended_n(sample_rate, clock);
++	*cts = hdmi_expected_cts(sample_rate, clock, *n);
 +}
 +
-+static int mtk_hdmi_audio_hook_plugged_cb(struct device *dev, void *data,
-+					  hdmi_codec_plugged_cb fn,
-+					  struct device *codec_dev)
-+{
-+	struct mtk_hdmi *hdmi = data;
+ static void do_hdmi_hw_aud_set_ncts(struct mtk_hdmi *hdmi, unsigned int n,
+ 				    unsigned int cts)
+ {
+@@ -712,8 +719,7 @@ static void mtk_hdmi_hw_aud_set_ncts(struct mtk_hdmi *hdmi,
+ {
+ 	unsigned int n, cts;
  
-+	mtk_hdmi_audio_set_plugged_cb(hdmi, fn, codec_dev);
- 	mtk_hdmi_update_plugged_status(hdmi);
+-	n = hdmi_recommended_n(sample_rate, clock);
+-	cts = hdmi_expected_cts(sample_rate, clock, n);
++	mtk_hdmi_get_ncts(sample_rate, clock, &n, &cts);
  
- 	return 0;
+ 	dev_dbg(hdmi->dev, "%s: sample_rate=%u, clock=%d, cts=%u, n=%u\n",
+ 		__func__, sample_rate, clock, n, cts);
 -- 
 2.48.1
 
