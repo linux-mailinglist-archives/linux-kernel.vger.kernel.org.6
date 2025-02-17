@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-517386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54F0A38024
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:29:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6BFA3802C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12A63A2154
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A143165A6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362881802DD;
-	Mon, 17 Feb 2025 10:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FCC216E20;
+	Mon, 17 Feb 2025 10:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aKdVlrzk"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c9BqSAYQ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFD1216E14
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34ED91A0BF3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788064; cv=none; b=lzj2uZi63PChT1MeeDA/0ThbX4z+p1CzyFi6RbuFIidyT0EVGY15lIgQzSSW4DW7wmficJk1U5TYP1YETwWs2yvhpdgUI3sJsohpnoAGlLoWNn9U86wDkUWwydJcTLF68h0Cr1IrZkD5iZwi8A2rsdUhltGpbcvue78RbT4lcQQ=
+	t=1739788097; cv=none; b=T8V9HCYSwLp7lqWVg49Qk1XOTrEtnrVmj4jwjKcwEHjwzp4YZ5akHwWihasnhVlZ3I4tbBDYX8Zru8iZVXC3hJPVS9AUh3srF453ViNvOnrnVl7a523nxubH/7psdwlm4GqjONbtFCdfZjO+yxx+/XofFus5taixusk9gcvzG3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788064; c=relaxed/simple;
-	bh=EK+112KzZRYcpPHXSL1MB9m3HLKRqSwNI05I9TJltSw=;
+	s=arc-20240116; t=1739788097; c=relaxed/simple;
+	bh=/tbE/6bofLFvTTFaIWPVlRkXqkLFjJy/iQGfTIefy5k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G8BTe0RJhEXkwXNXU1yoXaBaZtl42oCPomMtsHs5pqS7tT1IXoeQvbdViO+AAdGM3LYVliHXA2hEfTTZ9shsEAfiRZwiAC871AGji8zNgj4NWKKxzwCTaF5j1Ku7SrKOMJr6BYz7Q8XFaeVfsK0ivOLOyaI24DWm1iV2XP2/f1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aKdVlrzk; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so7622203a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:27:42 -0800 (PST)
+	 In-Reply-To:Content-Type; b=tYR0T5AAkdDcNOEF00MTmH3Bx20rt/onj8wOtRXS5giGMCq5QXjRYlvdEWZC3BCx7JmxPF6aMIac+NKdyOXtwKv4nCGh8yo/b1dezCGu1lIqy97SdGybdWdfr+jflf2YzJrRFx73kDWEpIK5EmpZ9lRXnQx2VbDahUNZZbKU2Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c9BqSAYQ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f24fc466aso2980627f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:28:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739788061; x=1740392861; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739788094; x=1740392894; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aUsyjtdwJudOrq2BVYPPPLmXtZGANjt6rB5YxXGDCHQ=;
-        b=aKdVlrzktnUkea5HDMMTnv4ZhtKw1+cqiE2E7M/JLSD9dR1je6nfLe2j2xbFdPKUqM
-         3bX9gCAsdlslWcmwZ4MWquO/rzZjSjbtzutHhQT3MSFvuG3rgIcKmS6luCa7Js+op8Jk
-         7o5ZJ90RwwoC1O6PT9CuXGfxrkugtmxsnj+3HCq0lD4cy9GqvIoiK09QGSLZ2eE44FtZ
-         I4bTF1qy/Powhb6dEiItCyRjdDDHnutTYmqReZH/Zg2KeF7/8nJPL2DcFpDwZnlhWRHK
-         P31pQEMDuFWtXqk+LJkbqWC1fIYDPkBQpwFrXzuiWVarEsZEFPTdt8h7T1stS2K27QEa
-         YsCQ==
+        bh=x5k0YAQWlcMkdFoy5wN4OYZdW7RLZWqkzJWRxM1XOHM=;
+        b=c9BqSAYQJNbTdRubzSqeZTAydVyhjf7FZqJ7sL1WEAw3FmHBeEtb4dBloU029u0IkP
+         KznupS+NgmhZhrQ1TxI/Tza4PPGQ4ybAAy+x7qIqml7XAb7sHpwtsr7HNllRRjyTwFH9
+         lZX2o5M/rzyNEpzYoeJc9uJcIuItvoQA5RevC6lpKI8dryRoOKznB+J+i9FSVwyceDJE
+         AX8vD1L4oogT3K39I5O0adejfYyP8Ya5NFgnpzsjMbCLsDWGMBYaUPDP5YUL4FId/B1M
+         Uxo+vfi+VJM89jtmsiGJDH2eDqXvyX8xpjFiF5r+CDXON7l9SpJ7God9ktJvIiXYNqCA
+         R85Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739788061; x=1740392861;
+        d=1e100.net; s=20230601; t=1739788094; x=1740392894;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUsyjtdwJudOrq2BVYPPPLmXtZGANjt6rB5YxXGDCHQ=;
-        b=uLjy7gUbW7aC8vWSnHLpjx5xdz6tT9hoeOi/D44Be1ScyG2Xgj09f46gJF5Q+oqBcj
-         d0SlK9u5ry5H5Ici429x8QAzz60SjH4+i1IF3PM6YI5+pYSDB53X4vwuzv/lVJZprtRp
-         xeMTQXcv5aAWosjQG49JMzvYrKYz8Vs5NR3xhPs1p8ta9P8BbmVuSE8WpBFEsujNYFNa
-         tGHjfa6oLchXbO0mr99kXcKH4lPW/NBiq9itHW1ikyfV6QX9Qn/iNNzxciznU7AhTWzd
-         LScGSM+qnc1eXyRluaXGIZC5jbAWkQjcfOa24e2HUiLcHhRBiL5+EIWXnzQiHpll2Tsu
-         4vEw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/pup1g2cjho5Wq7TAAUDmjkq2nLn74ojfh/8xnA4ZR0cel2lwi1AC3HaGPxzGfXVLNPxjIHaauXNrsm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSIwyLbRvF0/+QvVqQFoBYjQTc1uE+ujNnu608sWoO+xRByYpt
-	GLjtvX2PSp5I7SzivqnLBMiK46XZGB+g09dy0OxNgNHFidF+dsQ8vYBGsroME1k=
-X-Gm-Gg: ASbGncty08obgMtFxiUsmD94AfwOf7uVvwKt/TPhuxRfTDw4TLc1gCAYW4I3HP/DW79
-	T5gEO/goF4+WspV/ivJLUpo1cOap1SIFNnIwIBPJucTc4ZhDpReJ0Tcfn/6PBPxA7MV1KN7t0A5
-	C/UdoAiuztjW2fPPqLZW3z7ZzEhh4+kohrHtuOnSW8H9FeUAB2ZbtbIZVDug87WAaQjoQLIE6p9
-	EpIHRi1F6+h9PONOw0VtfgPzmGprABHzy4yAYxw8dBrdTJj587/9dV9azhsgHBO3A5H4suBlN6R
-	d31B5WUS9BEBfr8o6kk=
-X-Google-Smtp-Source: AGHT+IE+SP8oa6aMi/Tazd2StJ2PQQ1xliUBBqg3M956avxBmZaXfoRNcJbotwH3UYKzBBxyZyxzjA==
-X-Received: by 2002:a17:907:80b:b0:aba:519b:f774 with SMTP id a640c23a62f3a-abb70df5d81mr943214466b.52.1739788060920;
-        Mon, 17 Feb 2025 02:27:40 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8b1767e8sm309892566b.174.2025.02.17.02.27.39
+        bh=x5k0YAQWlcMkdFoy5wN4OYZdW7RLZWqkzJWRxM1XOHM=;
+        b=IDmtP51xREe07HtSd1iB0sSG8asyvkba0fN3VrhUFhbgzYeZjpGGqKM1Iq0+Cf3T3x
+         jawjFdcoK4zmGnTuWIUXINyYn0hFTNy9pgbZpVQu9qfAGMsVx31rkJb/N+om1mPMwgTB
+         eorE1vXW20Janf7zPPc0dRZRKIjcX1gxk19WMA6W43KVjWcDBkrcEtLk2SRLeu+C9trI
+         NP+Ssd0Lp/SSettv+OJHbEhCOHMBrrUWlwuoL/z8EYiIkI3dWofxRqvCV+lerxEZXHDV
+         ZSsqCPCF+zq2K6S0fk8TO0Xj/ZK2V9yxPdFKe6AaruSwmY1ppWr38oRFjCbq/JZ/tUXM
+         Havg==
+X-Gm-Message-State: AOJu0YyodL135C3OpeIFW5RpZGM9/hPTHDrxnfZcu4MRxuRaiUNBV5Jn
+	tR/DBOWSqlP6ZtbFSmpW0DbgoQEK93TPo4WTbZZaTHnXhGOU2PhEY6bzYQFPIhs=
+X-Gm-Gg: ASbGncsc/Fv0lAMvcCewYUtecVes8N5ZLTLEe1gsAKg5fZeP7/qvTYV65hoM667ke4c
+	n5WmE49NHg580MrzQuSwZVRWPthG62Qb6dHzP4iBe3sN5HnGxWAD7LjH0ugG2izUaiRaV5G4Jv0
+	Cy+7UiCf05uTyfbRg7V3t1E8auJ9PNnIbK5kldA2ssJcFxeWGrVjhCXnn68DfxMO87IqQxtxn5O
+	uJUebxyco86uONoP7BTjTxceXkTkJMKpLgv+YwBP5sH//Gt8EGcOmFN59e+8X3Ckk+LB08Uei+m
+	0oh3YmqDvy+CTab62s8os10HjswgYEbIUQ==
+X-Google-Smtp-Source: AGHT+IHpqsdVbmm/HQGzzmmgtWuf6jaTYYJyq1nnyX8GcmtaTiwQE7xQqrOfOpDXWHSh+HLHHuaqog==
+X-Received: by 2002:a05:6000:1f87:b0:38f:2c10:da07 with SMTP id ffacd0b85a97d-38f340735d8mr8822723f8f.45.1739788094465;
+        Mon, 17 Feb 2025 02:28:14 -0800 (PST)
+Received: from [192.168.68.111] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-439831f626dsm22252005e9.0.2025.02.17.02.28.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 02:27:40 -0800 (PST)
-Message-ID: <7798e5f7-11bb-4ef0-8956-1208827cb097@suse.com>
-Date: Mon, 17 Feb 2025 11:27:39 +0100
+        Mon, 17 Feb 2025 02:28:14 -0800 (PST)
+Message-ID: <a84d675e-3b42-4251-b575-9e6a28cf20bf@linaro.org>
+Date: Mon, 17 Feb 2025 10:28:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,41 +79,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/6] rust: add parameter support to the `module!` macro
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Luis Chamberlain <mcgrof@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>,
- Greg KH <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org
-References: <20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org>
- <20250211-module-params-v3-v6-6-24b297ddc43d@kernel.org>
+Subject: Re: slimbus: Inquiry on Additional SLIMbus Drivers and User Space
+ Test Utilities
+To: Muni Sekhar <munisekharrms@gmail.com>, linux-sound@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <CAHhAz+hmga0hLQcGtOjxuB+xoOsJ9xvFvXXUWfe9HpFcMRNUpw@mail.gmail.com>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250211-module-params-v3-v6-6-24b297ddc43d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <CAHhAz+hmga0hLQcGtOjxuB+xoOsJ9xvFvXXUWfe9HpFcMRNUpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/11/25 16:57, Andreas Hindborg wrote:
-> This patch includes changes required for Rust kernel modules to utilize
-> module parameters. This code implements read only support for integer
-> types without `sysfs` support.
+
+
+On 12/02/2025 15:30, Muni Sekhar wrote:
+> Hi all,
 > 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> I need to work on the SLIMbus interface on a Linux platform. As part
+> of my study, I see that in the Linux kernel, the SLIMbus interface is
+> managed by the drivers/slimbus directory.
+> 
+> I would like to inquire if there are any additional device drivers
+> required to comprehensively test the SLIMbus interface on a Linux
+> platform beyond those listed in the drivers/slimbus directory.
 
-For what it's worth, this looks reasonable to me from the modules
-perspective.
+SLIMbus is used as audio transport interface on some of the Qualcomm SoCs.
+Qualcomm Codecs (WCD9335, WCD934x and some of the BT Codecs) use SLIMBus 
+as primary interface.
 
-Acked-by: Petr Pavlu <petr.pavlu@suse.com> # from modules perspective
+w.r.t to testing, its audio end-to-end usecase.
 
--- 
-Thanks,
-Petr
+> 
+> Additionally, I am seeking information on existing user space test
+> utilities that can be used to test the SLIMbus interface on Linux. Any
+> references or recommendations for such utilities would be greatly
+> appreciated.
+Am afraid am not aware of any tools that are public.
+
+--srini
+> 
+> Thank you for your time and assistance. I look forward to your response.
+> 
 
