@@ -1,213 +1,265 @@
-Return-Path: <linux-kernel+bounces-516878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B123DA3792F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:28:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E63DA37938
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6878B188E67B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:28:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CDC3AD1B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 00:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C73C2C9;
-	Mon, 17 Feb 2025 00:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DA7DDCD;
+	Mon, 17 Feb 2025 00:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DmYi+Jd+"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fi1dfshK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pSrwCnPk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fi1dfshK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pSrwCnPk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EFEDDAD;
-	Mon, 17 Feb 2025 00:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739752091; cv=fail; b=WFmAFz/59OZZcGZmRkGPSgnV/EmYAepER9d/gHFQvcsc7+ZZSwhD7BXOkJtHx0bsUlZ9LadVdevOxG3hNkGfUHTK9El4SSswXstWVJfLYqUKr3p+/X1TxOswpRfaqtYKdbW1hdZV+vFLHDonAg8MlHIomxef2kwS4h8bvyS0Phs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739752091; c=relaxed/simple;
-	bh=20fBs55NW3kycLGJn5k0Rhs8gEagCL5b3sGhFYga0ng=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Bu+FPE22LCIIdU/6etOVuUq6VXdRTQeTtbX+v2iHR6IkLQIYlnpfBMSMrSG3YYOUBycXdit+niJteFJDAzzWsHlabQZg0YPjHLch4g51OSGiDeVvdxZ5PQiCyvU3vF0ERJqmCNGQbAYkbWJznxunXUmrTdz9YUamUXq2lPjMpfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DmYi+Jd+; arc=fail smtp.client-ip=40.107.220.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jZay6C6wTY92//a0jOLY1yskJxLdtERiy35d6WwaqRoKnXjOXoDyRSrUZTtLJtfuc849LldNTgrJMiSbgDj6YfDdhiwUywNQ5ty6rlQUBehcs+m9uv42KlJrRNaEgUs9xrVnW9ZXaQq/ZzG52EY2gdEKObbFXyrdiSCs70/IVecD5zD4Ws7PDpkitYaMmiqx7FsU5tQdHmeX+ZbvFRZ0jsz9PLJNJxk+2zAfEA9qVf2pxl/2zJeiL5ftMHcXhRSQHjzQhWd9r1nu+f+SJfPyFhkWOkfFA5UnNvmBRZTe88zwEQ6+3ntKflQd/rBfy4yOeFvWplin+Dt0ImFIUTcy6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PeOqopaOf9g+BmvFlaXVFTkk5rnlbECDIAdT3tV3hLY=;
- b=KbnqSuu7CUtjwiQyHWv16cZOVh09uvQYtQbGKfLSe2GbuCRnpr/hyav4JD27qhZFFOf3aXzs5a9xma92s3BkJ9NEyCwZ1B3W3EPAAPojojIP2e3jj9EG6qBPBDQuhe5iVCw6i4y5750/mG2qJDZbbNugPMj9Uaa1gGnouSJL66Ma7dde0MVm7b5LzhSCttqEXeb7tu395fvrOql2jJdKzbIR0K7ZCxxYSdlPmCqAXof+9c8kjFrw5+rjefdlB4h//5jqy98h0DV6CRkHIrfNS7X+rRw77wXaLKvHrRnfoFGiVd+sWurHq4EbQWJhB088MBRykO/m1LQzlv+k0aClzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PeOqopaOf9g+BmvFlaXVFTkk5rnlbECDIAdT3tV3hLY=;
- b=DmYi+Jd+THgavnMd+nEr5zeSrKcGXd/2zpaGffkN3ffqdX9EHUYiUwkm6q5s9PEFNNyzzBVZT1zvIvlY6iqyrB71ot4mB9yIcAlWMybdMiet0Be2lVXUBaD1EU2eT3MmiXbgjFSPYCp9c0PgEO+2308sVj6KJAviyQgrFsVSVTm3iB1q7t9D4AaJumh+oTvBnwtEuYXruc3jiJYbNEoeqLUjY7RHpqrCcEJ5biAjAQ/mX32bD4uytSDeZFlAJ74DI/tX5wNqpby+mekIB7CUmZHrY4BOHOampfNvnzuJxLn/whmU2A3SdAullWVj1aoEb+s5JBIAgNiGEYzmgGsSRA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
- by SA1PR12MB7443.namprd12.prod.outlook.com (2603:10b6:806:2b7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 00:28:06 +0000
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6%6]) with mapi id 15.20.8445.013; Mon, 17 Feb 2025
- 00:28:05 +0000
-Message-ID: <e123e1c9-21d1-4136-a26a-931135c477d3@nvidia.com>
-Date: Mon, 17 Feb 2025 02:27:59 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] infiniband: iscsi_iser: fix typos in comments
-To: Imanol <imvalient@protonmail.com>, shuah@kernel.org, sagi@grimberg.me,
- jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250216235602.177904-1-imvalient@protonmail.com>
-Content-Language: en-US
-From: Max Gurtovoy <mgurtovoy@nvidia.com>
-In-Reply-To: <20250216235602.177904-1-imvalient@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0384.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a3::36) To CY5PR12MB6369.namprd12.prod.outlook.com
- (2603:10b6:930:21::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53653DDAB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 00:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739752317; cv=none; b=SE+GUYfUNrHSfH4NzolXHx5snjjUSbsPcDHOgKlzacChFgrQFJD25anVQ1S3qxcCflnlZ3iQQBKePY3FP8dIYekLV36XopinrQxr5qkeWJViWO/EeRGnfIQECmpQhpF9HD6C3g7C3IR+JXpFDSitgatjn6hCmcn06FW5jK1JssY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739752317; c=relaxed/simple;
+	bh=KwMIwTtEgqkBxPoRYfiGZZihHYlwyh9anoAd0cyVNss=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=B0J+TtE7BYWuWEiLP+PXt73NSK8p5Qxo9IAjhYuVILONPBR/WXp7WgJR5jAK+Po2y/sH82xhYgcRhv0BznPqk0Qgi4D+FS1Hx3RvlDc54a4XQXvNSRqThAbEMi8yus96cwIbMB+Xv7N0Vx4uGNFQlz9K9xn4LbIEhoYGgs1nr2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fi1dfshK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pSrwCnPk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fi1dfshK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pSrwCnPk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D7892115D;
+	Mon, 17 Feb 2025 00:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739752313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDN8UHUTae59jTCSm0EyRLxcAx2q1HELSoPmrLn+oWs=;
+	b=Fi1dfshK7whVwhwFs32h4NBm4SJ+U1CqiJxTXiPuqkmxGiMPQmH2YpfQJRw8xRBymKxbs3
+	UGqwr1FgT+wlDvl8VOsmyQ8IcFdvAEuIwrJ9szj94FsmF4nApbQVEI7FczcP26QdNrkk/e
+	egUUBC9T9tEVFxgJ6hMBZo2qDrMxMyg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739752313;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDN8UHUTae59jTCSm0EyRLxcAx2q1HELSoPmrLn+oWs=;
+	b=pSrwCnPkEyVkBcNTbv71gUvB+x8Ptn4xmQwJPcNefO2nNF+bKe62VW9i5oWofO8mUxlqre
+	okwphMR69SWSpSCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1739752313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDN8UHUTae59jTCSm0EyRLxcAx2q1HELSoPmrLn+oWs=;
+	b=Fi1dfshK7whVwhwFs32h4NBm4SJ+U1CqiJxTXiPuqkmxGiMPQmH2YpfQJRw8xRBymKxbs3
+	UGqwr1FgT+wlDvl8VOsmyQ8IcFdvAEuIwrJ9szj94FsmF4nApbQVEI7FczcP26QdNrkk/e
+	egUUBC9T9tEVFxgJ6hMBZo2qDrMxMyg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1739752313;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDN8UHUTae59jTCSm0EyRLxcAx2q1HELSoPmrLn+oWs=;
+	b=pSrwCnPkEyVkBcNTbv71gUvB+x8Ptn4xmQwJPcNefO2nNF+bKe62VW9i5oWofO8mUxlqre
+	okwphMR69SWSpSCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 693A1136AD;
+	Mon, 17 Feb 2025 00:31:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XnY+CHeDsmcWKAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 17 Feb 2025 00:31:51 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|SA1PR12MB7443:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0a50b4d-37b6-4abe-b659-08dd4ee9f236
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?djB4RHNLeUJDSGM1WVJ4ZmY0SGMzdGFlaDI3TklZWHNSZFhBS1Z4YTFDeDgx?=
- =?utf-8?B?V2lFdys1bWoyM2IxeHNWV3Z2MkptRzN1NUJYYkYvWXdSWEIrOG5BN2xJYktx?=
- =?utf-8?B?ZUVDUTU0empWUDkwcU9FWmJFSXV2cXdYL3UydnZIeU4ySXhIaWV5UCtnck5q?=
- =?utf-8?B?SWRjRXB1d05sd0ZkSjd5ZC9BVXlIREVsTStCVUhBZDB6VzZ3V09GM2NwelFu?=
- =?utf-8?B?OTRHYno1c2NIZE9nOTFCS01sc0xqOFdIa1JvTWdyakVPSnBML1NHS2lRYUt5?=
- =?utf-8?B?Uk5aa1hZcDhyMGR4cU1sN0xXSm9iZ0V3a2szYk1tQ1pNT2lPVDllb05BWGd1?=
- =?utf-8?B?M3NjWFlpS0JRK1hvY0FzT1FLY2swY1Q4cGtmWTZ2NnFRNVNOTUhIcFl1bkRB?=
- =?utf-8?B?eStGN2NBNy9pbkRlTU9zdThaVi9UWTBScjRqZVF0NEF3VVRYSFg0MHkxcnlK?=
- =?utf-8?B?THZPWkdaZmpCb3hDMUZRZ2RDa2htNU1MQVduak8ybFhVNmxVU1BuMDVmWXVu?=
- =?utf-8?B?R3hyaE5BdzdycVBNRVNLcm5jd3JVSHdiNlptdjltNGFaS1NBdGVuaHI0bVh2?=
- =?utf-8?B?NjhVcUFKSDE4RHNZWUVraDFIbXNOTE9GYUhYMTBjRXN4anlpMjBhVzdMSXUy?=
- =?utf-8?B?b0VYMncrMTVjVVFoVTIwUWxTYTd4OC9mckZ6aVhMY3Z1K08vMW1qRlBXTkVs?=
- =?utf-8?B?VW1BMHlRZzhOZGFINGY3bzlYTllDWGNDM3RsenJyRXYrYnkrMzRzRDhTdVVS?=
- =?utf-8?B?cDMxallWblZjenRaSHhOR3JETDJ1cDVjS3NaNFhROUNVSG1rUEJwVHgwaGdl?=
- =?utf-8?B?V0ZFMmtZbmVxaHYyUVVVWWh1MW1NRTV3RHVZT1UzL3JvMmxFNzhscVdBRmRw?=
- =?utf-8?B?eTdGNjMzU3JRWGdjMjZGRUhFMEJBNkpVTUdyTGFwaCtHMmFTSXRMb0dlajB0?=
- =?utf-8?B?N1ZXTnZubVRTa3F5bUFNSmVMZ0lPdGRtMUV6c1VJYTh1WTVzWGVrdkorVEgv?=
- =?utf-8?B?Wk44TDBnblp2VTdoQlp1UXRBQVB2aXRCdG9RMWhFYzhEdjJMQnRJZWFCTy9L?=
- =?utf-8?B?TFJLUi9wVXBuUG5BL1JIN1VpcGJoYmJHU2x3NUdZZTVSYnJLOEpzZlpJWnJT?=
- =?utf-8?B?d3h5b3Y2QzhvL1pkUTlRRzFQMUwwT3gzZGZjUWEvMldReDRhSS8xa3UvVlNY?=
- =?utf-8?B?d1p1NXR1dDFmNHEyQThiOHk4L2IrOXJSNXdWYVVzNnNhRFhzL3dFbCtKcTZ3?=
- =?utf-8?B?OTVVYnJsL2FVVW95cXJUZ0c0aXk5RythYU93NndMbDRYclJnVC9RTldralRo?=
- =?utf-8?B?V3l3RVphWUJySmxaaUJrYzZ4emEwcjlKTFpzbXB0R0ZuWGhFWVhWbDNaRUdQ?=
- =?utf-8?B?aSs0bXdDTEpjQSt6bzQ3cjJDck1sMmdCSUcwZ2VmYW5NQXJoWEVscENibEJS?=
- =?utf-8?B?WFRYMFFlUFpTanFxTWhUaXZNb3NSeFNKSjNkRk5vY0VRZGQ1c1NFZzUxTlc2?=
- =?utf-8?B?YlpxMy9wb0pxaXVTSS9CTWk0ODkweGppRW5XVGlkcExGc2V2TkpneU52cktL?=
- =?utf-8?B?UjlCbUhVdFlVVWVXK2ZXUVJQRW15OHlzWmJkNW0vNkJnYW1qMThOaEtMTWM1?=
- =?utf-8?B?YlY2NE12TVZDYTliWHgyUUNTQktWRE5qQXRCTHc5TlVySjUySE5tQzUrVVVI?=
- =?utf-8?B?NXFlYlVXbnhwbFpaK1FCZEJ2VWgxVmgza1R6TXRDRHF6Ujg3dVRtbXh3SlJC?=
- =?utf-8?B?MFZuZEJab2htdGNBcVZUa3YvOWFRcVNhdTVHOFU1VEJpUmtYbUt6N0k3WjRs?=
- =?utf-8?B?TWVhZEkzaGdBR0tGeWxCQmpudXhTblFzMWtXQmZrZWtCNStQOTZpN2x6L1pp?=
- =?utf-8?Q?azz1beNS2AIsx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MWQ1OENyYW95Wk9FZlN1Qk1XdXhmVHpHVXBMR1ZjZUdrQytMb2dJZTBCTHRx?=
- =?utf-8?B?bWJnbkRDc1RwSXpGc0ZGVWkvQXcra3ZscjBUK0ZiUEZxb0xnSG9leXlpT3cr?=
- =?utf-8?B?OXU5aGxmeitoZkVHenFvejhTL0g0YTBnWDVsQjFFNFhtcnFQM1VlTTNFMXpO?=
- =?utf-8?B?WlZQZHBLRHB5V041WXhNaU9zcDNEcmIxRVFNZkJkc0ZMTDY5aFlyMjJOUktp?=
- =?utf-8?B?S3VpcmJxUVVyZkwwTm83elA1ZWlKbUxCZWp5aS9TQi8zcVFqcEx1ekxjdXFw?=
- =?utf-8?B?cExLL1lUTDNCbzlsWEQ5a0NLLzBZTHo5Yk1IU05kVjhYSHBocjJZWUV5WHlr?=
- =?utf-8?B?RXh1V1pscTRpdmhkaFE0ZVoxVzVWMzN2S2RkaVp4RXlLY0hhNC9WZ1VGY1Y4?=
- =?utf-8?B?Z3p1MWh5VkMvVXJ3UmtQQk4yZDdWeUJoUUlNYkZMTkQ3Y1pyWlEvdjRJV2tU?=
- =?utf-8?B?ZmN2cG12Zjc4R1RMSEhHK1hNRXZLeWpyL3lkUTVqNnFaN2FKbHBUdm1MR09J?=
- =?utf-8?B?eDkyKzVyeHhMRGFkd0xaMkNOY3ZGSEU2MklSZDgyM3AwTDdqUnNkR0tSOU9C?=
- =?utf-8?B?eUhTRWsrdFMwNWVMZzFUcGszbXFNQmI0OUZLOFQ0N2JScVJRdUVHeElWaGhp?=
- =?utf-8?B?NjZpa0M0dXBVdDRpdkRTdFRQVzZOZ0Frbnovc3hIcXRYMFQrdjFoRmZGdGdU?=
- =?utf-8?B?TjVIRUdkb3M4ZkdIa3JObWhycFMrNlJ0ZWR4NTJIZ25qd2k2b1pNd2I3OWdv?=
- =?utf-8?B?T0FrakoxYWhqY0hySWN0aDVtMkxtdXc3VStVWlJ0bW82VkhEbXVIUDQ0bVdq?=
- =?utf-8?B?NG95V3E5V0xGODYxUGU1c1dQOWRFYis2bm9Vc1U2bzVKNnVVUFRMVXA0ZDFh?=
- =?utf-8?B?Rk1iN1RONWF5dXVxZjdhMWM2OVAwMmNmVytVbGdCUUhQMzRRMlNNZURoNENi?=
- =?utf-8?B?NmNVYnI1eWNrcWN0OEdnZHg5dE85eGhvbXB2L2liQlpQeFhxeXdOT2laYUpR?=
- =?utf-8?B?VjhWNmxTOERmL1d6RmxKZUxacFBPdGV4K1hKNFlWS3lkUEZLR3A0UEV1bVYv?=
- =?utf-8?B?OEFVUm1hT2ppS0d5VUVGWGYyck9EZ3pKQ1lzUUNMN1hTdVFWTHhKcFZSQnRw?=
- =?utf-8?B?YzdBL3BYejhvb1NQK2pabHlXM3M4TGRZcEpVYUhZRzNzbldUU0ZQV3hxVkRZ?=
- =?utf-8?B?enJuM0xqZmFKRFlraUdrVjlXWDVDSFBoaUJUeHNLR3gyT2lJTWhPQm5LVDhi?=
- =?utf-8?B?OFM1VGNQYUxRTVNFVm8wdXdhTllTTzRzWUZ0K0U2aFZmMHE4dG9ON0I4amdj?=
- =?utf-8?B?dldudi8wb0tYMlVZNGFnNlhkeFF2ZXEyTXhCa1l4SnFmczFlZysyZFdadFRp?=
- =?utf-8?B?NEJCaFVBNy9EM1RDVXh0bmZBRVBRUVV6ak9qQXJmV2tEZ3lMbGJYTk9vN0FX?=
- =?utf-8?B?MTNYT0MrZDYzbFB4TEN4aTBEZURtM21ySTBtRkNWbHlDd1VqYVJQV3ZQNTVL?=
- =?utf-8?B?ZW9aVmdPWFI0bGhyS3dsTVorb3NoVThlbHoxbnkwT2NXSGZJeU9sQ3Q3S3BK?=
- =?utf-8?B?Ryt6aGNhWTM4cVViT0Iza3lOL1A4MHNnOGdFbEV2NUVCUThWZGJsSW5UWmtG?=
- =?utf-8?B?S2pwMktCVEtMLy93MVhyRFhkNmoyYlRrRGgvV2hHUEJuR3NGSlViakVjTWpT?=
- =?utf-8?B?L01OcTRYS0NQeGphZFFYQVFxVWdPUGsyRWEvRkR0WEpZdlhWN1JsNWUvT2NW?=
- =?utf-8?B?em8xK0tpY3o1Ly9Qc2tFSmh1Mmw2dlV5ZldaY3JCRTZLbnYrV2RodlI2Q2p0?=
- =?utf-8?B?am1kOUc1NHBEaXB0RmFtOFl5UkZyNzZZK3FBMnhGUXBLd0ZRVXVFQTI1V201?=
- =?utf-8?B?NmIzdklXMGNWMXhFeFI3cWcrQmx1Z3h5V1A1bk1HdktXczZJWFVtckQrWG1p?=
- =?utf-8?B?QlJMU3pzUlVkanZaTWZ5a3VsSkY0NjUyQkxxOVFUSHFoRTcwdjV4V2R5bDJZ?=
- =?utf-8?B?OFhzakpadjdnZ1hiU24vMGdGa2ZxTTdJcjFMRW1iaFh6WEFISlhEZFVhWTFo?=
- =?utf-8?B?R2xkcFB4R0xjeWdjaFlQbUNhRjNnZ1VNeGdsNWJnNjdya3JoVWVYV0d2RGRS?=
- =?utf-8?Q?H7BYniMVBeCJQte1Udkxs2AGL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0a50b4d-37b6-4abe-b659-08dd4ee9f236
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 00:28:05.6972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ig4K7sECMtZfVwlcqG0CykUPoUQ2EBZtahXxBF9aO9M7ILrVnwyZj+aXPD4UxCxdQAfhYA0d/nKDVoAtv46mjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7443
+From: "NeilBrown" <neilb@suse.de>
+To: "Venkat Rao Bagalkote" <venkat88@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ "Michael Ellerman" <mpe@ellerman.id.au>, sfr@canb.auug.org.au,
+ brauner@kernel.org
+Subject: Re: [linux-next-20250214]Kernel OOPs while running LTP test
+ readahead02 on 6.14.0-rc2-next-20250214
+In-reply-to: <05d7e0d6-d96a-404c-b872-d5501c475780@linux.vnet.ibm.com>
+References: <05d7e0d6-d96a-404c-b872-d5501c475780@linux.vnet.ibm.com>
+Date: Mon, 17 Feb 2025 11:31:48 +1100
+Message-id: <173975230824.3118120.428933249171112846@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -8.30
+X-Spam-Flag: NO
 
 
-On 17/02/2025 1:56, Imanol wrote:
-> Fixes multiple occurrences of the misspelled word "occured" in the comments
-> of `iscsi_iser.c`, replacing them with the correct spelling "occurred".
->
-> This improves readability without affecting functionality.
->
-> Signed-off-by: Imanol <imvalient@protonmail.com>
-> ---
->   drivers/infiniband/ulp/iser/iscsi_iser.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.c b/drivers/infiniband/ulp/iser/iscsi_iser.c
-> index bb9aaff92ca3..a5be6f1ba12b 100644
-> --- a/drivers/infiniband/ulp/iser/iscsi_iser.c
-> +++ b/drivers/infiniband/ulp/iser/iscsi_iser.c
-> @@ -393,10 +393,10 @@ static void iscsi_iser_cleanup_task(struct iscsi_task *task)
->    * @task:     iscsi task
->    * @sector:   error sector if exsists (output)
->    *
-> - * Return: zero if no data-integrity errors have occured
-> - *         0x1: data-integrity error occured in the guard-block
-> - *         0x2: data-integrity error occured in the reference tag
-> - *         0x3: data-integrity error occured in the application tag
-> + * Return: zero if no data-integrity errors have occurred
-> + *         0x1: data-integrity error occurred in the guard-block
-> + *         0x2: data-integrity error occurred in the reference tag
-> + *         0x3: data-integrity error occurred in the application tag
->    *
->    *         In addition the error sector is marked.
->    */
+Thanks for the report. I've posted a revised version of that patch which
+adds the missing error check on the result of ->lookup.
 
-We usually use: "IB/iser:" prefix in the commit msg subject.
+NeilBrown
 
-Can you please replace "infiniband: iscsi_iser: fix typos in comments" 
-with "IB/iser: fix typos in iscsi_iser.c comments" ?
 
-Other than that, looks good.
-
-Acked-by: Max Gurtovoy <mgurtovoy@nvidia.com>
+On Mon, 17 Feb 2025, Venkat Rao Bagalkote wrote:
+> Greetings!!!
+>=20
+>=20
+> I am observing kernel oops on IBM Power system while running LTP test=20
+> readahead02 on 6.14.0-rc2-next-20250214 kernel.
+>=20
+>=20
+> By Reverting the below patch, issue is not seen.
+>=20
+>  =C2=A0=C2=A0=C2=A0 Revert "VFS: add common error checks to lookup_one_qstr=
+_excl()"
+>=20
+>  =C2=A0=C2=A0=C2=A0 This reverts commit 22d9d5e93d0eaf7e8662602713b24e9b617=
+1759f
+>=20
+>=20
+> Please help to fix this issue and request to add the below tag.
+>=20
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+>=20
+>=20
+> Traces:
+>=20
+> [ 2154.427377] BUG: Unable to handle kernel data access at=20
+> 0xffffffffffffffdc
+> [ 2154.427390] Faulting instruction address: 0xc00000000062a560
+> [ 2154.427397] Oops: Kernel access of bad area, sig: 11 [#1]
+> [ 2154.427402] LE PAGE_SIZE=3D64K MMU=3DHash SMP NR_CPUS=3D8192 NUMA pSeries
+> [ 2154.427410] Modules linked in: dns_resolver(E) tun(E) brd(E)=20
+> overlay(E) exfat(E) vfat(E) fat(E) loop(E) sctp(E) ip6_udp_tunnel(E)=20
+> udp_tunnel(E) ext4(E) mbcache(E) jbd2(E) dm_mod(E) bonding(E) tls(E)=20
+> nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) nft_fib(E)=20
+> nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) nft_reject(E)=20
+> nft_ct(E) nft_chain_nat(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E)=20
+> nf_defrag_ipv4(E) ip_set(E) rfkill(E) nf_tables(E) nfnetlink(E) hvcs(E)=20
+> pseries_rng(E) hvcserver(E) vmx_crypto(E) drm(E)=20
+> drm_panel_orientation_quirks(E) xfs(E) sr_mod(E) cdrom(E) sd_mod(E)=20
+> lpfc(E) sg(E) nvmet_fc(E) nvmet(E) ibmvscsi(E) scsi_transport_srp(E)=20
+> ibmveth(E) nvme_fc(E) nvme_fabrics(E) bnx2x(E) nvme_core(E) be2net(E)=20
+> mdio(E) scsi_transport_fc(E) fuse(E) [last unloaded: hwpoison_inject(E)]
+> [ 2154.427514] CPU: 30 UID: 0 PID: 784383 Comm: rename10 Tainted:=20
+> G=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OE=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 6.14.0-rc2-next-20250214 #1
+> [ 2154.427524] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+> [ 2154.427528] Hardware name: IBM,8375-42A POWER9 (architected) 0x4e0202=20
+> 0xf000005 of:IBM,FW950.80 (VL950_131) hv:phyp pSeries
+> [ 2154.427534] NIP:=C2=A0 c00000000062a560 LR: c00000000062a618 CTR:=20
+> c00800000dbb4a10
+> [ 2154.427540] REGS: c00000054af579b0 TRAP: 0380=C2=A0=C2=A0 Tainted: G=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> OE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (6.14.0-rc2-next-20250214)
+> [ 2154.427547] MSR:=C2=A0 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>=C2=A0 CR:=
+=20
+> 2802222f=C2=A0 XER: 20040000
+> [ 2154.427561] CFAR: c00000000062a61c IRQMASK: 0
+> [ 2154.427561] GPR00: c00000000062a618 c00000054af57c50 c000000001677600=20
+> 0000000000000000
+> [ 2154.427561] GPR04: c0000003c48560b0 00000000000a0000 0000000000000000=20
+> c000000002cfaa88
+> [ 2154.427561] GPR08: 0000000000002710 0000000000000000 0000000000000000=20
+> 6161616161616161
+> [ 2154.427561] GPR12: c00800000dbb4a10 c00000000f75af00 0000000000000000=20
+> 0000000000000000
+> [ 2154.427561] GPR16: 0000000000000000 00000000000a0000 0000000000000000=20
+> 0000000000000000
+> [ 2154.427561] GPR20: 0000000000100000 0000000000000002 00000000000a0000=20
+> 0000000000000000
+> [ 2154.427561] GPR24: fffffffffffff000 ffffffffffffff9c ffffffffffffff9c=20
+> c0000005488e1c28
+> [ 2154.427561] GPR28: c00000054af57d08 c0000005484eae00 00000000000a0000=20
+> ffffffffffffffdc
+> [ 2154.427627] NIP [c00000000062a560] lookup_one_qstr_excl+0x50/0x148
+> [ 2154.427639] LR [c00000000062a618] lookup_one_qstr_excl+0x108/0x148
+> [ 2154.427646] Call Trace:
+> [ 2154.427649] [c00000054af57c50] [c00000000062a618]=20
+> lookup_one_qstr_excl+0x108/0x148 (unreliable)
+> [ 2154.427659] [c00000054af57ca0] [c00000000063510c]=20
+> do_renameat2+0x360/0x63c
+> [ 2154.427666] [c00000054af57de0] [c000000000635570] sys_rename+0x5c/0x74
+> [ 2154.427672] [c00000054af57e10] [c000000000033638]=20
+> system_call_exception+0x138/0x330
+> [ 2154.427681] [c00000054af57e50] [c00000000000d05c]=20
+> system_call_vectored_common+0x15c/0x2ec
+> [ 2154.427690] --- interrupt: 3000 at 0x7fffa1580804
+> [ 2154.427697] NIP:=C2=A0 00007fffa1580804 LR: 00007fffa1580804 CTR:=20
+> 0000000000000000
+> [ 2154.427702] REGS: c00000054af57e80 TRAP: 3000=C2=A0=C2=A0 Tainted: G=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> OE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (6.14.0-rc2-next-20250214)
+> [ 2154.427708] MSR:=C2=A0 800000000280f033=20
+> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>=C2=A0 CR: 44002228=C2=A0 XER: 00000000
+> [ 2154.427725] IRQMASK: 0
+> [ 2154.427725] GPR00: 0000000000000026 00007ffff0fb00d0 00007fffa1757200=20
+> 000000001002df18
+> [ 2154.427725] GPR04: 0000000010051698 0000000000000047 0000000000000000=20
+> 0000000000000000
+> [ 2154.427725] GPR08: 0000000010012b3c 0000000000000000 0000000000000000=20
+> 0000000000000000
+> [ 2154.427725] GPR12: 0000000000000000 00007fffa181a560 0000000000000000=20
+> 0000000010032300
+> [ 2154.427725] GPR16: 0000000010032a70 0000000010033100 0000000010033104=20
+> 0000000010032a98
+> [ 2154.427725] GPR20: 00000000100328c8 0000000010032f70 0000000010031a00=20
+> 0000000000000000
+> [ 2154.427725] GPR24: 0000000010052830 0000000010053cac 0000000010054544=20
+> 0000000010050690
+> [ 2154.427725] GPR28: 0000000010053cb0 0000000000000000 000000001002df48=20
+> 00007fffa1813570
+> [ 2154.427786] NIP [00007fffa1580804] 0x7fffa1580804
+> [ 2154.427790] LR [00007fffa1580804] 0x7fffa1580804
+> [ 2154.427794] --- interrupt: 3000
+> [ 2154.427798] Code: fbc1fff0 fbe1fff8 7c9d2378 7c7c1b78 7cbe2b78=20
+> f8010010 f821ffb1 f8410018 4bfffee9 eb7d0030 7c7f1b79 41820064=20
+> <813f0000> 75290038 40820038 77de0002
+> [ 2154.427820] ---[ end trace 0000000000000000 ]---
+> [ 2154.591618] pstore: backend (nvram) writing error (-1)
+>=20
+>=20
+> Regards,
+>=20
+> Venkat.
+>=20
+>=20
 
 
