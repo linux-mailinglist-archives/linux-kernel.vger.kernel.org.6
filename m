@@ -1,195 +1,251 @@
-Return-Path: <linux-kernel+bounces-518129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823C0A38A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:08:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CE5A38A4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069951893460
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B563AAB79
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 17:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176FE227BAE;
-	Mon, 17 Feb 2025 17:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BFF227E9A;
+	Mon, 17 Feb 2025 17:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LZafiCsE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wWxd7Y1Z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LZafiCsE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wWxd7Y1Z"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ObMf5Gzw"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85FC227B9D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA00227B9B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739811985; cv=none; b=OKxozIEFN0rt9zwkaliXQpz6GPqXzYs/X/OCZGhJgbxPfmGMJ3V2Ecc5JEFZPjrPK0odygX8VjPg8qFB0M0I4H/eqqFyljSdqhoYeWctMXxatrNk/2TmJfgbZBbWByvMc3XJkKJF1XTpW4eZEqNiXo3bwuJ0sR4/ZSMc90JPinM=
+	t=1739811998; cv=none; b=FOldqxqyBCFM/sOwaO/XjodXo5HF/WPB8h/kbiWL8aVoiz1hzk/Ejd0SNofXfMphf/tJKcXjYki6X277g96W2yZEj5AU9HqiS+SGBVFx/CctEvNYMOJRgOmytOaRIEhxIRuZ/wfk4ej72H9w+P0ffBH4zF2Pg/5yPRA5eh/U0zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739811985; c=relaxed/simple;
-	bh=xKTOsm+aRmCVcbcAETDeHyhHCbkXZ+Vl8gmezhhwm24=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X54KyVtboDZxdJk/dsjAQ3KYQQkC8ExUB7cKPYJZKdE2tT3C+Q/84JwodsM5K+Q7VTL1OnBmaeSHKM3X5XyP5BXRc+reDpo8UBoL0uYhtS+5A9FFzHMBMzYFhAiSfuqCZhP+T1EQw27C/JM2jSgRBSCubsNlvj5JnSqMCWEbn1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LZafiCsE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wWxd7Y1Z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LZafiCsE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wWxd7Y1Z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D8CE2118A;
-	Mon, 17 Feb 2025 17:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739811982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UfDVsuLhacxyBJCagIZzUENSwreQL/lZSF/d20A7WmM=;
-	b=LZafiCsE5HLEO+7oWNb26SZu8Lla3/3PPFm286VmO9V9xaGNsaRUhvjoCQq7ORwkw1CCkb
-	sw/0vhxJAtg/MklmyItPyVV5LsknMxANH6LVN/4RFvVj95K6d7aZelBPsbIrZXSMcfxaaE
-	vyRgka4ctYe5rvON3mAl6/CH1PQumBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739811982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UfDVsuLhacxyBJCagIZzUENSwreQL/lZSF/d20A7WmM=;
-	b=wWxd7Y1ZYjLTOSy2kZpOvBrsycxRG0zeXWMkgB15NtAglEfyMeTsqKM9tttzrgBR2t3rK4
-	xdXhTMpCmYFAchCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=LZafiCsE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wWxd7Y1Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739811982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UfDVsuLhacxyBJCagIZzUENSwreQL/lZSF/d20A7WmM=;
-	b=LZafiCsE5HLEO+7oWNb26SZu8Lla3/3PPFm286VmO9V9xaGNsaRUhvjoCQq7ORwkw1CCkb
-	sw/0vhxJAtg/MklmyItPyVV5LsknMxANH6LVN/4RFvVj95K6d7aZelBPsbIrZXSMcfxaaE
-	vyRgka4ctYe5rvON3mAl6/CH1PQumBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739811982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UfDVsuLhacxyBJCagIZzUENSwreQL/lZSF/d20A7WmM=;
-	b=wWxd7Y1ZYjLTOSy2kZpOvBrsycxRG0zeXWMkgB15NtAglEfyMeTsqKM9tttzrgBR2t3rK4
-	xdXhTMpCmYFAchCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9488D1379D;
-	Mon, 17 Feb 2025 17:06:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qY0dIY1ss2cZXgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 17 Feb 2025 17:06:21 +0000
-Date: Mon, 17 Feb 2025 18:06:16 +0100
-Message-ID: <8734gc8prr.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: Takashi Iwai <tiwai@suse.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] ALSA: usb-audio: drain may fail with multi-port close race
-In-Reply-To: <20250217111647.3368132-1-jkeeping@inmusicbrands.com>
-References: <20250217111647.3368132-1-jkeeping@inmusicbrands.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1739811998; c=relaxed/simple;
+	bh=mYp5Sj5UPBxYrtnV5/mk4HQjUiUwX0r4EowrjY9Gekw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJPL1D9l7fgmGrXhSC8vs0JkFIuXWBGBSrUzy/H8U58fjIZN1iJD6diy0iNp1lwlqQ4sWFzd7ADPnsjZY+laKH2gHrl7wfG9hb45vcI9JXx6unb8ogMHZ7voqOG3BVyrxHUF8TyNZZbZ2yQL9k4TIVGxHT7QMm8rsvIQ7sCwPO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ObMf5Gzw; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 763494429E;
+	Mon, 17 Feb 2025 17:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739811994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kXmtF9adxT5K8M6lrNCGAflj6XU9FKlmgo4NBogXxDw=;
+	b=ObMf5GzwTAS4Ljt/wVoi4bOEgUY0i2BDL7tpSwO4Smv9F2wOTmPK5MaVLOexlRIdalbC0W
+	66ii7s39Mn3XiKu+orOBZmg13s3qJAe8SI1krvRbXV5z9XNN6MOBS2sC4JnncMaf5I3mMv
+	BgTSuSKNAzErqwFwzdL47/fdMpNjgRI22qE8boBAY/aMXUYGi1RlXZb0aUYaBJk9NGcYuB
+	ZkuPPxn/kICDmOUUBkPvj3vO4hx1FTa8UMqY8xJgCRIIRgPmwIv28YN46We3rE9sTNkL/D
+	chsQT4mXeKPgErxT22KZ814yVCaEWEBJvJKyNkPAGrzvEZHziOM0/H+/1nm+gA==
+Message-ID: <f9bf1485-52ca-403b-96f9-6ed827a09c24@bootlin.com>
+Date: Mon, 17 Feb 2025 18:06:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 0D8CE2118A
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/14] drm/vkms: Allow to configure multiple planes
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250217100120.7620-1-jose.exposito89@gmail.com>
+ <20250217100120.7620-9-jose.exposito89@gmail.com>
+ <6b29064f-104a-4f9c-a9f6-8f4a862dbcd7@bootlin.com> <Z7NlD8kWkUxojYWy@fedora>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <Z7NlD8kWkUxojYWy@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehkeeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeivedtfeegtdekheethedttddtfefhhfegjeeljeejleduvdfhudegvdekheevnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehmr
+ ggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Mon, 17 Feb 2025 12:16:46 +0100,
-John Keeping wrote:
-> 
-> I'm seeing a bug where data sometimes fails to send on USB MIDI devices
-> with multiple ports which seems to be a result of a race around closing
-> ports introduced by commit 0125de38122f0 ("ALSA: usb-audio: Cancel
-> pending work at closing a MIDI substream").
-> 
-> The scenario is essentially this program:
-> 
-> 	snd_rawmidi_t *port0, *port1;
-> 	snd_rawmidi_open(NULL, &port0, "hw:0,0,0", 0);
-> 	snd_rawmidi_open(NULL, &port1, "hw:0,0,1", 0);
-> 
-> 	snd_rawmidi_write(port0, data, len);
-> 
-> 	snd_rawmidi_close(port1);
-> 	snd_rawmidi_close(port0);
-> 
-> What happens seems to be the following:
-> 
-> 	write(port0)
-> 	`- snd_usbmidi_output_trigger
-> 	   `- queue_work()
->         close(port1)
-> 	`- snd_usbmidi_output_close
-> 	   `- cancel_work_sync()	# Work has not yet started here
-> 	close(port0)
-> 	`- snd_rawmidi_drain_output
-> 	   # Times out because nothing is processing outbound data!
-> 
-> The two ports interact like this because they are on the same endpoint,
-> so should the work only be cancelled when the last endpoint is closed?
-
-How about the following patch work?
-It's a band-aid, but should suffice.  The callback is already
-protected with rawmidi open_mutex.
 
 
-thanks,
+Le 17/02/2025 à 17:34, José Expósito a écrit :
+> Hi Louis,
+> 
+> Thanks for the quick review.
+> 
+> On Mon, Feb 17, 2025 at 04:45:37PM +0100, Louis Chauvet wrote:
+>> Hi José,
+>>
+>> Thanks for this new iteration!
+>>
+>> Le 17/02/2025 à 11:01, José Expósito a écrit :
+>>> Add a list of planes to vkms_config and create as many planes as
+>>> configured during output initialization.
+>>>
+>>> For backwards compatibility, add one primary plane and, if configured,
+>>> one cursor plane and NUM_OVERLAY_PLANES planes to the default
+>>> configuration.
+>>>
+>>> Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+>>> ---
+>>>    .clang-format                                 |   1 +
+>>>    drivers/gpu/drm/vkms/tests/vkms_config_test.c | 140 +++++++++++++++++-
+>>>    drivers/gpu/drm/vkms/vkms_config.c            | 127 +++++++++++++++-
+>>>    drivers/gpu/drm/vkms/vkms_config.h            |  75 +++++++++-
+>>>    drivers/gpu/drm/vkms/vkms_output.c            |  42 ++----
+>>>    5 files changed, 349 insertions(+), 36 deletions(-)
+>>>
+>>> diff --git a/.clang-format b/.clang-format
+>>> index fe1aa1a30d40..c585d2a5b395 100644
+>>> --- a/.clang-format
+>>> +++ b/.clang-format
+>>> @@ -690,6 +690,7 @@ ForEachMacros:
+>>>      - 'v4l2_m2m_for_each_src_buf'
+>>>      - 'v4l2_m2m_for_each_src_buf_safe'
+>>>      - 'virtio_device_for_each_vq'
+>>> +  - 'vkms_config_for_each_plane'
+>>>      - 'while_for_each_ftrace_op'
+>>>      - 'xa_for_each'
+>>>      - 'xa_for_each_marked'
+>>> diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+>>> index 6e07139d261c..fe6f079902fd 100644
+>>> --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+>>> +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+>>> @@ -24,6 +24,10 @@ static void vkms_config_test_empty_config(struct kunit *test)
+>>>    	dev_name = NULL;
+>>>    	KUNIT_EXPECT_STREQ(test, vkms_config_get_device_name(config), "test");
+>>> +	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
+>>
+>> Instead of testing directly a "private" field (planes), can we use something
+>> like:
+>>
+>> int count;
+>> vkms_config_for_each_plane(config, plane_cfg)
+>> 	count++;
+>> ASSERT_EQ(count, 0);
+>>
+>> So we don't make config->plane "public".
+>>
+>> Same comment for connectors, crtc and encoders.
+> 
+> On other calls to list_empty() and also list_count_nodes() and
+> list_first_entry() we are also accessing "private" fields.
 
-Takashi
+True, I forgot those, thanks for noticing
 
--- 8< --
---- a/sound/usb/midi.c
-+++ b/sound/usb/midi.c
-@@ -1144,8 +1144,11 @@ static int snd_usbmidi_output_open(struct snd_rawmidi_substream *substream)
- static int snd_usbmidi_output_close(struct snd_rawmidi_substream *substream)
- {
- 	struct usbmidi_out_port *port = substream->runtime->private_data;
-+	struct snd_usb_midi *umidi = substream->rmidi->private_data;
- 
--	cancel_work_sync(&port->ep->work);
-+	/* cancel at the last close */
-+	if (umidi->opened[0] == 1)
-+		cancel_work_sync(&port->ep->work);
- 	return substream_open(substream, 0, 0);
- }
- 
+> I'll create helpers in vkms_config_test.c replacing the list_* APIs with
+> iterators and send v4.
+
+I think we should not create helpers we don't use in the vkms driver 
+itself, so we don't increase the surface API in vkms_config.c
+
+You can simply create helpers in vkms_config_test.c that use the 
+existing vkms_config API:
+
+int vkms_config_*_count(config) {
+	int count = 0;
+	vkms_config_for_each_*(config, _) {
+		count++;
+	}
+	return count;
+}
+
+struct vkms_config_* vkms_config_*_first(config) {
+	vkms_config_for_each_*(config, item)
+		return item;
+	return NULL;
+}
+
+If we ever need to use those helpers in the vkms driver, we can easily 
+move them at that time. Until then, the only "public" API we advertise 
+for vkms_config is vkms_config_for_each_* (so if we need to refactor, it 
+will be easier).
+
+Thanks,
+Louis Chauvet
+
+> Thanks!
+> Jose
+>   
+>> With this:
+>> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> (sorry, I did not notice this on your v2)
+>>
+>> Thanks,
+>> Louis Chauvet
+>>
+>> -- 
+>> Louis Chauvet, Bootlin
+>> Embedded Linux and Kernel engineering
+>> https://bootlin.com
+>>
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
