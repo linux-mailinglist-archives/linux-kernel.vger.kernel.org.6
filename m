@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-517411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233B4A38063
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:39:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E274A3805D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D513B7A452E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC551168CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A030101FF;
-	Mon, 17 Feb 2025 10:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BF115C0;
+	Mon, 17 Feb 2025 10:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="th7plpvS"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w4WyOWBo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D031715C0;
-	Mon, 17 Feb 2025 10:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DDE18DB1C;
+	Mon, 17 Feb 2025 10:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788727; cv=none; b=ut6f1dRu/8Mla3+SfOV1v13UZkGTQ44lh3l0kCObbMcNF8wrKDrc7jOAkZVYwk+mSl1mMkIKbdP1q3Iu/J+BpbY+6HlDcHGhbRhX7MiWh5TUQThbqZggWsoh/TUgXQHQG7faHVWIIWeifZwWzWFyDPxfNr8YHlk2+a45YSTxdgM=
+	t=1739788702; cv=none; b=nMGhK5nrieFCZ+HkrCbbAkXBrAlhOz/QpP4WZ9kNNZ0+8SjZv7W2YGweDBtCf4zbZy0NM2YiOA/L7Dxj5mDwufcT/wif03czr55UNLN5aZDCHQiT5Ma9EkK3Sky1Rb8U+B66CM3BMwd/dFC7BE1UPI3pZVhhQYcxbm1bTntnQ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788727; c=relaxed/simple;
-	bh=wbUe4GKVlpXeQll898aCi86dsk8T74monqyicKRWj1g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XEagCjd54Gj7XyRFijIxjjpJ5+kmOJwnMRlVCERkh//H9G0J6I1pEIQfbv1XU5z1UQcx1p0r47esepVCitBSyvQh2XnvuZ1ddh0dOVEyoyvZ17vcIp5KumhPMiEgOve70lJaNSdgDMgubEurAEwHr6NopG1FOFuDKkB5M8TZ6z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=th7plpvS; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51HAcWYH1338030
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Feb 2025 04:38:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739788712;
-	bh=RnkB0lMKqmJYB0j8S/qL/mNwpGucnwjbOHxfTNKAOoc=;
-	h=From:To:CC:Subject:Date;
-	b=th7plpvSE7vmNp+XTc40HVTUwIjW7i57yob23ziU650u/Hw+0R1+TPeFzdQ+Hor9N
-	 3V5h+0vnwjUXsjUtzleYUePUY2DbJnV5NWciEzN+/xysY2otd3OLcCaofyD+Ey2tDn
-	 dSUFdWwNVA6JPyLbxXiJaPuvxV+54oMq4aNZe5Mc=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51HAcWln042498
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Feb 2025 04:38:32 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Feb 2025 04:38:31 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Feb 2025 04:38:31 -0600
-Received: from ubuntu.myguest.virtualbox.org ([10.249.128.48])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HAcRh7023531;
-	Mon, 17 Feb 2025 04:38:28 -0600
-From: Keerthy <j-keerthy@ti.com>
-To: <robh+dt@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
-        <conor+dt@kernel.org>, <kristo@kernel.org>, <krzk+dt@kernel.org>
-CC: <j-keerthy@ti.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
-Date: Mon, 17 Feb 2025 16:08:14 +0530
-Message-ID: <20250217103814.2657-1-j-keerthy@ti.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1739788702; c=relaxed/simple;
+	bh=P+H05808aiNqFsj5MnruhlOm4+JjX49IFRHjRCltGHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ei4ZImkcEd3cvuBsuARNHnp9kI5PEZxknFdoQaA1S2dfgWWHR2VK5CfOGIuLBkascAYjqLsIZOs4RFt5p3U/tl8fcUePprcSNdy1Zl5r5ab/ExD29odL2SMw8sBzFtzYvlt8PjBf1Hh8Y39ZdBbIvIYwVsePx5TMQ4WrNgHP7Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w4WyOWBo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF4FC4CED1;
+	Mon, 17 Feb 2025 10:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739788702;
+	bh=P+H05808aiNqFsj5MnruhlOm4+JjX49IFRHjRCltGHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=w4WyOWBogh31p7NN+1tV42XyGQsVLQrQwT+0NIQR8Cab7gFmM0q/p0ByvhZueX1Vm
+	 Fsjv97RMMWIzoaEGN8L0A1gVi93AZ7WvJMm5HUBriMhfHHU6N9XRDXalFuW3vnRD4f
+	 s/MEo9FobbUTitZ711zEY3XOGliAejS2mNtD1xnA=
+Date: Mon, 17 Feb 2025 11:38:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ravi Kumar kairi <kumarkairiravi@gmail.com>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kuba@kernel.org,
+	dan.carpenter@linaro.org, rmk+kernel@armlinux.org.uk
+Subject: Re: [PATCH v3 3/4] [PATCH V2 3/4]
+ staging:gpib:agilent_82350b:Removed blank line
+Message-ID: <2025021751-keg-cackle-44b6@gregkh>
+References: <20250217103046.54294-1-kumarkairiravi@gmail.com>
+ <20250217103046.54294-4-kumarkairiravi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217103046.54294-4-kumarkairiravi@gmail.com>
 
-Currently we get the warning:
+On Mon, Feb 17, 2025 at 04:00:37PM +0530, Ravi Kumar kairi wrote:
+> From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+> 
+> removed few empty lines that were causing checkpatch script warnings
+> 
+> Signed-off-by: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+> ---
+>  drivers/staging/gpib/agilent_82350b/agilent_82350b.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
+> index 7936c7285d..b6871eb3c8 100644
+> --- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
+> +++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
+> @@ -176,7 +176,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
+>  
+>  	event_status = read_and_clear_event_status(board);
+>  
+> -
+>  #ifdef EXPERIMENTAL
+>  	pr_info("ag_ac_wr: wait for previous BO to complete if any\n");
+>  	retval = wait_event_interruptible(board->wait,
+> @@ -193,8 +192,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
+>  	*bytes_written += num_bytes;
+>  	if (retval < 0)
+>  		return retval;
+> -
+> -
 
-"GICv3: [Firmware Bug]: GICR region 0x0000000001900000 has
-overlapping address"
+Why did you remove both lines here?  One is fine.
 
-As per TRM GICD is 64 KB. Fix it by correcting the size of GICD.
+And your subject line needs an extra ' ' in it, right?
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 83bbf94b58d1..3b72fca158ad 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -193,7 +193,7 @@
- 		ranges;
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
--		reg = <0x00 0x01800000 0x00 0x200000>, /* GICD */
-+		reg = <0x00 0x01800000 0x00 0x10000>, /* GICD */
- 		      <0x00 0x01900000 0x00 0x100000>, /* GICR */
- 		      <0x00 0x6f000000 0x00 0x2000>,   /* GICC */
- 		      <0x00 0x6f010000 0x00 0x1000>,   /* GICH */
--- 
-2.17.1
-
+greg k-h
 
