@@ -1,307 +1,176 @@
-Return-Path: <linux-kernel+bounces-517292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A67A37EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:48:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C4AA37F03
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3353AD8A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3663B16F226
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0E215F67;
-	Mon, 17 Feb 2025 09:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA77A216E00;
+	Mon, 17 Feb 2025 09:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HG/crocv"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="z6cLmWKV"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07C4215197;
-	Mon, 17 Feb 2025 09:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739785696; cv=none; b=sVmcMzDuC8wNlskAKCNc4yOZUjcaT6JqUr2YN+eIB7LeEueOW8E8TecbX9JP3FqezdsD0yU02nhX63jV5S3lQLiN803MSr4GmDQVJdGeoXlAB0xePBq2hHyK3cX2+3yd2dQqdCMptJ9yPoayBZz06IDUugR5XprV3hN5DIhv50k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739785696; c=relaxed/simple;
-	bh=Ol+LO05peUoIHHc4y2q7vedCdV5t6QRNAdlO0AqfKr4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=j3QJcG9Y8N6KH7qnw96s790ro0+7Hu/lZlqP4YKOEZlEW7iBLdlDjdT+2KzlWiAM2JNzhnjm9/gAUbnJPf6jWNjNnR7tkPdGu5Q7jzu7q+IaagNsLRxIGcAGDCsSdY5C+wBEy8ehYIazZ7ekt2jsGSIgnJFWBCz+P96N8rlUZDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HG/crocv; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbae92be71so2313866b.2;
-        Mon, 17 Feb 2025 01:48:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739785693; x=1740390493; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fnZT6ZOq0Mk/tb82Bl5SiBs0WKnPFXIEG0Jtf01o8LM=;
-        b=HG/crocv3yfRMgbYQ9PSs6h8nos2WzqUbRpt0V0T2t9FpuWz4HMYMg126ga2upgW7G
-         67cS1ynrS5F4LnpuAwNlpHCtzOFPVZbhlmq6K2B1fTtD8Us9jUgfzZ8C8GkpFg83sOap
-         XCyPYglgWzE63LLcJz5g1wg3xmDSLWaMoXz0ushJab9l0AF8ozu7Sz1SpCAlbSTaES4x
-         3G3A005neti9o9U5tx/NOs3AYiCBxNrwJAp1uMw76htVEeyRveAmE59X3Jnby+yGJLcd
-         Ws32Dph8Bpsxze01v8GE6MF94pNipokhDw5VrZUA0lbWR5aBmjOkNWtqQk3zT/om/u+k
-         9y3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739785693; x=1740390493;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fnZT6ZOq0Mk/tb82Bl5SiBs0WKnPFXIEG0Jtf01o8LM=;
-        b=kul8pOD7ucbrAURE5y1KNutk6Nz7VQw1TOIRrwn8qncIWfeJe6ZmEeJjcMh0sUhxOO
-         b1qZP/VEgpjBRQy3olOHoccyz67VXYbCsg6+Tqyw50FGLU2DZs20Vv1l078m/X0Y5bFy
-         5x/7dtGhkB3MzJWk07Dg2dYp+H7M5Oc+UNvdC/q2BU71Ldl32y8yYtbvB/CyLsa23YJI
-         ozqqsp/U56yZXPXkrRFI9ciGG+aLrBckVXBIzZqpzGSrnMaQOL0bZ5XDgmV79368vT2K
-         Qzx4Awolj7n+wc3RHYYCaVfM/yuZCPOnG4OdG26DCYH+5Zhh44WJyfXYw6PqgrMg2/bT
-         K6mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuEsTaSz+6yJbWtz0jUP5u6LNpStCo5o1bjYQRRBVXS3n2MTmPVMKsHmQonGGlfJ7rXQF4G3zvFW7YwsEN@vger.kernel.org, AJvYcCV/W/aMP4/xZPPrJ4D+6nBoxv7IRA8x45FielfWIACFDu2j5jn3El7psvGc0f058XDixPYpAkQhDQnE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVLCfmfgIh+62NSOPgUWFZwGYiZ973E+3bdvVnqG+p8fSibaef
-	DXV0gu4pNWA6JWiRv5i1f+2d/swLV7DHp/B5blCfBhT7tBwf9Ssg
-X-Gm-Gg: ASbGncu9JzDCnVGK+rk5hpaGgWN1r4M3BGWwp5Jx5zls26Dr8jgdwh/EB4tywYPT4HE
-	T3O2NLIfymj4EYetvQgoGEiWWWaATvBgFk5smErZlmlFzlO2HTQ1ncuNEVu65Er5X8rrH5scr/T
-	qX2dorBVUleEU9ALAmCQWHW1OKCEzdO5xk971M4izLAZIh6l9VgyxsNaS/VYAbiTAFnDbYzKCES
-	BHhjIgAa4Mb4POduKCgr7mGeZZvCU6WVQfk1C+hwIqlvh4OyTcd4rgq2JPMep6CxbzrcxbrxzUC
-	yALJd+/1rFE6dFUJ9Bnn3w9cFFyrLXaqkFwsLHWlLCUjP/zgKZctWn+sOLc8DiR+ZJ9FrYNz
-X-Google-Smtp-Source: AGHT+IE7UjRmly5ZRe5H57cBCYRfro4iVdDEYEpGmSZjMPaWgTgD+u8eMLWweNc3hp3YASP3wNo/5w==
-X-Received: by 2002:a05:6402:13c9:b0:5e0:68de:ab93 with SMTP id 4fb4d7f45d1cf-5e068deabbbmr2293237a12.21.1739785692680;
-        Mon, 17 Feb 2025 01:48:12 -0800 (PST)
-Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322b9sm856628766b.37.2025.02.17.01.48.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Feb 2025 01:48:12 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703212163B5;
+	Mon, 17 Feb 2025 09:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739786039; cv=fail; b=cjIbumK7TBH4PXJCo6k1nonzGFT6M3kcOBvSDcl22tjXV+0lAh84mpHCJTzEf8StJXQi5Lzg15+TggM060OVifeUNRfYL+CCA00ly+vIttSpy/7xri2U2dbfsa1eLjEcQCoyr7/Zbr4uA37bv7WFFqD2Hzyr+BkFhLQe8vwBrJc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739786039; c=relaxed/simple;
+	bh=YcTAihBIjQ6JnXB2nvgiBZnEc63u7hwfSzLJHeElnkw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=orgAbwtyGvGzc9auSp7Uy6HImMhdVdgqMyd4HVxi0bmPByGZRW6LtTBFf4N+zKsTQ90tQeiSEqa3MgonKM/depifQatqhRYLnNlq/3mMgm1oClpXc+zLjR/Q8hzB6uzSmYMVbGfdVK1ROdqO74JZuV5GNq6kzQ5pFZ9zPvRA7IE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=z6cLmWKV; arc=fail smtp.client-ip=40.107.93.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Brq2t8O0WMLJ+QR/rECDEAMH59X9zvB2cHELPtoepGgKgjLxbUFuNf7/PWtCgQpTTfOaWmx7kTz+c0b0S8HtPhWfDIRgrqlIdE93AZz2vdNDzjv21JmNL8Ad8emiRZsxKA6RTcFSjZ38uIci7I0YlBc1voLnKWjjwwa+FQJjDl7vVe012FjPgiYlaT0vJz+6F3nBcFvjM+5D0mdd32QT8N13vssnXs8y73CFKOzCb1fI47VroYk8+u9WC5RW9PEQEpsbLDjZXI4uiBWlUJ8Isn6SFqhXjG4S7af+cSY+lWFfTmFEkwjteq7w0rSxA4FXGozjm+L+IGnv0YHUXPnp9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0YxsblgvyhPceRn9CV3F5txUITBVLC+2fUBTAYKfjRI=;
+ b=AHWawrIZyV4nCXYamqSb6ngPqPk0GQLLnok0Ao2MFBIHSwGKXqBf18YfrvRO7WFiq32SzKoO1+bxfM/IbrbUfHhyaobObGQtg8Tk9rI6bA30B/2nDbWNVJpHDK6fe0abAkZukUTmkK3xK/586zUG5zKEJATKOikdxNccdHQtmtI3T6RtdzPG+ZpEVQH1QK9lSzQcsOoXqLVyWVU422mZdhHH66Q2hYVjsGz+URl6itUtGUdJZW7n8AN0tOYjqA3EndddmuSjnSDIpBGMgPViQFrsfRdOjwkjTPqPszCB0HGe6NDpXLtCeR2B8Ds7Tzw7LgmDFbwE66v/Voyh8ClQzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0YxsblgvyhPceRn9CV3F5txUITBVLC+2fUBTAYKfjRI=;
+ b=z6cLmWKVtZnxAHNNB7cqCK3l9lJRlu4sEPcx+jsxjQhfI1dVWFac3EOv0iH4zx2yYcV5KGX5G7jVvuO31f11FYyNNzINLx99iMNNvaB+RiGsgnM7L7D51TZFvgKAim1gzn9CRrCM32wCJ+ZmoLqLzC4E/xDBTkUEXjoOibCndj0=
+Received: from PH0PR07CA0082.namprd07.prod.outlook.com (2603:10b6:510:f::27)
+ by SJ2PR12MB9243.namprd12.prod.outlook.com (2603:10b6:a03:578::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
+ 2025 09:53:52 +0000
+Received: from CY4PEPF0000EDD1.namprd03.prod.outlook.com
+ (2603:10b6:510:f:cafe::65) by PH0PR07CA0082.outlook.office365.com
+ (2603:10b6:510:f::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.17 via Frontend Transport; Mon,
+ 17 Feb 2025 09:53:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EDD1.mail.protection.outlook.com (10.167.241.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Mon, 17 Feb 2025 09:53:51 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Feb
+ 2025 03:53:51 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Feb
+ 2025 03:53:49 -0600
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 17 Feb 2025 03:53:47 -0600
+From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>, <linux-pm@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <git@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Subject: [PATCH] dt-bindings: power: reset: xilinx: Make "interrupts" property optional
+Date: Mon, 17 Feb 2025 15:22:26 +0530
+Message-ID: <20250217095226.12606-1-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <20250217023521.35071-1-liujianfeng1994@gmail.com>
-Date: Mon, 17 Feb 2025 10:48:00 +0100
-Cc: conor+dt@kernel.org,
- devicetree@vger.kernel.org,
- heiko@sntech.de,
- krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- robh@kernel.org,
- sfr@canb.auug.org.au
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <975CFBEF-4E37-41E4-BE3F-7294FE7E4D3F@gmail.com>
-References: <2FE649E5-61FE-4299-81D1-F838298A04A5@gmail.com>
- <20250217023521.35071-1-liujianfeng1994@gmail.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD1:EE_|SJ2PR12MB9243:EE_
+X-MS-Office365-Filtering-Correlation-Id: e40f48e0-e215-4a1d-5e04-08dd4f38fc09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ukk2D6JmChjmxVv267/CAnSOS/0yc5rpljo44X9Wa/iMfCSxIy77Guv5YvW9?=
+ =?us-ascii?Q?e120eXxr/0qk3ysWNWFQZXEwQX/S1iALHewRVFkrZQUIY7Zr86qSnkF/Cvfr?=
+ =?us-ascii?Q?JJoLfHzNDM7+q45OGT9Z33+EYiVRw8WXIWvLg9GZO0cHG2a/3+G2PKkuzaCI?=
+ =?us-ascii?Q?oh+BDpck8FElu3xQSYHkdXpVL9pXeXD3rT5qZmcsDs54o1oPfBUzLKBTmM/y?=
+ =?us-ascii?Q?NGhT86m8AOsRtN/ItQiD/ykNAKSKHJLTWFgXK7C6Y4wzPfcayFy78dRUM71h?=
+ =?us-ascii?Q?f+cmfGGn1y7W6UMC7w82cri0ZY8bIiz7QHISPdcB9YAd2j1x/iQtd6ARKHPP?=
+ =?us-ascii?Q?eNNfzVUoHMmBNW4rxjAlRE+wMpccdwztrKQ7twlfMEU+Lzebw48yCrnz/kS+?=
+ =?us-ascii?Q?1t3h36rdIjs2x+ksAECA0zFtgXEKqpk+gu32MyAqnlQbSZSCtKH/17NaKS5v?=
+ =?us-ascii?Q?4VKwmhd3dyLKLDR1+HQSZB2nczLXRB5H0QbmsXYnaUDZZeW9Kd5mdWkSHwYp?=
+ =?us-ascii?Q?fBWtX1ekuoBewRhf5NLoylKFR/5htKBxtEAZH7jM9lR2mX5zEfwRpFNCIZGh?=
+ =?us-ascii?Q?YxJtBsMWZeCUwozb5FR+JjdSzs4O1H9tpprVSor3xDGx4zAmKItNTuQymhGo?=
+ =?us-ascii?Q?3jCBiAEqvTgvbm5fMjmcKLlBGf6hhj/KgwSoDU25rMcgns4wwaR+iqrkA/zP?=
+ =?us-ascii?Q?GcKcdJKibEtPQ8IHsP57/ZvhySRcz6gTgsfxfF0CX+sxTxWKqbtD2vj2zxEQ?=
+ =?us-ascii?Q?yqqi4WFXRhI0WM/rPiHjJG3xqEr0zPgWppPw7Y2IvhrWyZsTmBVrn1ss+TBR?=
+ =?us-ascii?Q?7KKJxjdYtTurcONHJycKdxvrJdu8H9MKvLHf2of8C3THNMyCsrpyeYQB4FWx?=
+ =?us-ascii?Q?XZZqgXZsvEpghRRcOY/tRUbun+PUBy6e+lvGuYZve10qVNyk/QZJLWcblNOj?=
+ =?us-ascii?Q?kd7enDn0l+z9cgqsvEOcJ4pBeyrrne3qHCV+hdSQKczAGcPSd0ZBhAwhMHBo?=
+ =?us-ascii?Q?G+Pbz+GvfsM/2+JRSqqjm32H0Uy5s3GGTGV//vCI7UcSN4YsKz/wQo7xEnWe?=
+ =?us-ascii?Q?Pp5P1naqhn2Bgv436XGopiTwClNgq59l5XWYutM3bCYJRir1FlVuJdC+qEzt?=
+ =?us-ascii?Q?0VjYHmGTWv5VseRQh74OGRCZaDa1+uNnE8oUuY8OPUOUzR2vNKsGoY2W24TC?=
+ =?us-ascii?Q?uXlJb3u0KU1ASONmRlRofgCjgW7ihXmAjAy03EQCixzW/pq1IoiX5kC0gg8U?=
+ =?us-ascii?Q?3XMeGXAtEfAnUjUtnE6ZHvIFDsf8iNZ4Fmi8tC54teDcKkF7vVtbNAe5DiK2?=
+ =?us-ascii?Q?CzdgXLA0SilruOs/MMLWZayca5sp0EEeHw4ESWjtYVVaNsx/9oaFlxrRtUvP?=
+ =?us-ascii?Q?DXC3LCAXbANIxZC5p5o9K+WA70J6kibvAz/reglPSPjlmsAfeTg/N3hw/z+h?=
+ =?us-ascii?Q?nboghxL0cfe2/SgTy7NQdmW0Ma2/ei3QTbAShjvufsC7jHcBSMxpN4FFmHrF?=
+ =?us-ascii?Q?ViwayYn2wOpOj8A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 09:53:51.9994
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e40f48e0-e215-4a1d-5e04-08dd4f38fc09
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9243
 
+The "interrupts" property in the ZynqMP power/reset binding was previously
+marked as required. However, there are multiple mechanisms for
+handling power/reset events, including:
+-Event management registration,
+-Mailbox (mboxes),
+-Interrupts (interrupts).
 
+When event management support is available (default on Versal SoC), the
+"interrupts" property is not used hence not required.
 
-> Wiadomo=C5=9B=C4=87 napisana przez Jianfeng Liu =
-<liujianfeng1994@gmail.com> w dniu 17 lut 2025, o godz. 03:35:
->=20
-> Hi,
->=20
-> On Sun, 16 Feb 2025 20:53:27 +0100, Piotr Oniszczuk wrote:
->> [    0.531139] rockchip-drm display-subsystem: bound fdea0000.hdmi =
-(ops dw_hdmi_qp_rockchip_ops)
->=20
-> It seems that hdmi qp driver is built in kernel, while armbian builds =
-it
-> as module. I don't know if this is related. And here is the dmesg =
-output
-> of drm on armbian:
->=20
-> jfliu@rock-5-itx:~$ sudo dmesg |grep drm
-> [    2.190256] panthor fb000000.gpu: [drm] clock rate =3D 198000000
-> [    2.191470] panthor fb000000.gpu: [drm] mali-g610 id 0xa867 major =
-0x0 minor 0x0 status 0x5
-> [    2.191478] panthor fb000000.gpu: [drm] Features: L2:0x7120306 =
-Tiler:0x809 Mem:0x301 MMU:0x2830 AS:0xff
-> [    2.191482] panthor fb000000.gpu: [drm] shader_present=3D0x50005 =
-l2_present=3D0x1 tiler_present=3D0x1
-> [    2.195853] panthor fb000000.gpu: [drm] Firmware protected mode =
-entry not be supported, ignoring
-> [    2.196019] panthor fb000000.gpu: [drm] Firmware git sha: =
-814b47b551159067b67a37c4e9adda458ad9d852
-> [    2.196407] panthor fb000000.gpu: [drm] CSF FW using interface =
-v1.1.0, Features 0x0 Instrumentation features 0x71
-> [    2.221006] [drm] Initialized panthor 1.3.0 for fb000000.gpu on =
-minor 0
-> [    2.566800] rockchip-drm display-subsystem: bound fdd90000.vop (ops =
-rockchip_drm_fini [rockchipdrm])
-> [    2.567523] rockchip-drm display-subsystem: bound fdea0000.hdmi =
-(ops rockchip_drm_fini [rockchipdrm])
-> [    2.567882] [drm] Initialized rockchip 1.0.0 for display-subsystem =
-on minor 1
-> [    2.740995] rockchip-drm display-subsystem: [drm] fb0: =
-rockchipdrmfb frame buffer device
->=20
->> Is it possible to provide me url with kernel package you are using =
-(wich works ok for you)?
->=20
-> I'm working on 6.14-rc2 now and this patch is included in this armbian =
-pr:
-> https://github.com/armbian/build/pull/7835
->=20
-> And here is the kernel deb I built, which is confirmed working:
-> =
-https://cdn.haguro.top/share/kernel-rockchip64-edge_6.14-rc2-rock5itx-hdmi=
-1_arm64.tar
->=20
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+---
 
-many thx for providing me .deb
-this is very helpful!
+ .../devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml       | 1 -
+ 1 file changed, 1 deletion(-)
 
-I manually installed it on my sd card and sill getting:
-
-root@myth-frontend-56b0f018b5e0:~ # uname -a
-Linux myth-frontend-56b0f018b5e0 6.14.0-rc2-edge-rockchip64 #4 SMP =
-PREEMPT Mon Feb 10 04:45:03 CST 2025 aarch64 GNU/Linux
-root@myth-frontend-56b0f018b5e0:~ # dmesg | grep drm
-[    6.996022] panthor fb000000.gpu: [drm] clock rate =3D 198000000
-[    7.002431] panthor fb000000.gpu: [drm] mali-g610 id 0xa867 major 0x0 =
-minor 0x0 status 0x5
-[    7.003155] panthor fb000000.gpu: [drm] Features: L2:0x7120306 =
-Tiler:0x809 Mem:0x301 MMU:0x2830 AS:0xff
-[    7.003972] panthor fb000000.gpu: [drm] shader_present=3D0x50005 =
-l2_present=3D0x1 tiler_present=3D0x1
-[    7.185792] panthor fb000000.gpu: [drm] Firmware protected mode entry =
-not be supported, ignoring
-[    7.186635] panthor fb000000.gpu: [drm] Firmware git sha: =
-814b47b551159067b67a37c4e9adda458ad9d852
-[    7.187616] panthor fb000000.gpu: [drm] CSF FW using interface =
-v1.1.0, Features 0x0 Instrumentation features 0x71
-[    7.188861] [drm] Initialized panthor 1.3.0 for fb000000.gpu on minor =
-0
-[    7.225079] rockchip-drm display-subsystem: bound fdd90000.vop (ops =
-vop2_component_ops [rockchipdrm])
-[    7.227485] rockchip-drm display-subsystem: bound fdea0000.hdmi (ops =
-dw_hdmi_qp_rockchip_ops [rockchipdrm])
-[    7.228666] [drm] Initialized rockchip 1.0.0 for display-subsystem on =
-minor 1
-[    7.229327] rockchip-drm display-subsystem: [drm] Cannot find any =
-crtc or sizes
-[    7.230466] rockchip-drm display-subsystem: [drm] Cannot find any =
-crtc or sizes
-root@myth-frontend-56b0f018b5e0:~ #
-
-but why roobi os works ok on hdmi1 on this board?
-
-btw: looking on dri debug i see following:
-
-root@myth-frontend-56b0f018b5e0:~ # cat /sys/kernel/debug/dri/1/state
-plane[32]: Cluster0-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D0
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[38]: Cluster1-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D1
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[44]: Cluster2-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D2
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[50]: Cluster3-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D3
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[56]: Esmart0-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D4
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[62]: Esmart1-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D5
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[68]: Esmart2-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D6
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-plane[74]: Esmart3-win0
-        crtc=3D(null)
-        fb=3D0
-        crtc-pos=3D0x0+0+0
-        src-pos=3D0.000000x0.000000+0.000000+0.000000
-        rotation=3D1
-        normalized-zpos=3D7
-        color-encoding=3DITU-R BT.601 YCbCr
-        color-range=3DYCbCr limited range
-        color_mgmt_changed=3D0
-crtc[80]: video_port1
-        enable=3D0
-        active=3D0
-        self_refresh_active=3D0
-        planes_changed=3D0
-        mode_changed=3D0
-        active_changed=3D0
-        connectors_changed=3D0
-        color_mgmt_changed=3D0
-        plane_mask=3D0
-        connector_mask=3D0
-        encoder_mask=3D0
-        mode: "": 0 0 0 0 0 0 0 0 0 0 0x0 0x0
-connector[82]: HDMI-A-1
-        crtc=3D(null)
-        self_refresh_aware=3D0
-        interlace_allowed=3D0
-        ycbcr_420_allowed=3D0
-        max_requested_bpc=3D8
-        colorspace=3DDefault
-        broadcast_rgb=3DAutomatic
-        is_limited_range=3Dn
-        output_bpc=3D0
-        output_format=3DRGB
-        tmds_char_rate=3D0
-root@myth-frontend-56b0f018b5e0:~ #
- =20
-
+diff --git a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+index 799831636194..079ad977b907 100644
+--- a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
++++ b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+@@ -46,7 +46,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - interrupts
+ 
+ additionalProperties: false
+ 
+-- 
+2.17.1
 
 
