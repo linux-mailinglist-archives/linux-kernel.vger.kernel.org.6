@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-517027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657D9A37B18
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:58:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B4BA37B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36BB016ADE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170B03AA362
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172A318C932;
-	Mon, 17 Feb 2025 05:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4DE18C933;
+	Mon, 17 Feb 2025 05:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hLIfBT6E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j6YEceJO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2C185B67;
-	Mon, 17 Feb 2025 05:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAE9433A8;
+	Mon, 17 Feb 2025 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739771931; cv=none; b=hSSYbnFxbr+3/XQb57HOS2aDTjohboQB20Fl1ySH+4AMhwPayD+qpNwNJEK6c0RBnhly0KOmDK+8C5bFpULO1HBWw/AmiimWM5c6JRpqviL6No1gRW1PEzlrnsYYio6XSvisuqpdhURRUZ6mtng7cKYHKDGJ9gFBmjkb7dprm34=
+	t=1739771769; cv=none; b=F2Bkp8SfL11mq/lmkzwtW0T0TDlaadeeqacXhCtizuaBS1mGa53IVorV818miUn5lkBxKKKnwYM1GcKAQXwlWSqxhy8SwTON2jVsXqXzz3mGyAhMRAlfyfaAVqi2KTipUcWwn3126RdHBzg5V609o0og+ccLrFNirQOwvJyk+10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739771931; c=relaxed/simple;
-	bh=pMgpc6HC7nxifpscxz3EGmrjoCJUYcrNonuhhGwdVeg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=YQ6/j2w0SIULdycG7euSQgKWLp/HHhl6KMvG4apgjAKJ9Xn23qTHaKU1W1fhWLFl0s+n9v2VWA5CZg4Bhb94LGjQAZz8YSmJwdTFkHRfR3AbgQaao0EcVEU9/cs01TraOo5gF+61smFsdVBlqz0P7CDfwIA0adjPQViA1JXG8Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hLIfBT6E; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739771930; x=1771307930;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pMgpc6HC7nxifpscxz3EGmrjoCJUYcrNonuhhGwdVeg=;
-  b=hLIfBT6EJFg2jPM82BK6kfqdpNmBU8VJqZ2f8MU6rJaV7tztiAhwxfP8
-   sACEb3PDSEpBn8i+warEy2idApe5WTrFqtCgKcLo9KGASl1YQ/7i5jyA5
-   JUW7h5mAaaKbDhl503Idp2fM2MukTeY5WuwEm8ySWC8jQ5ci02fzPB3RG
-   ESKtisbo3erhH3RZn+M9b4K5u16DwHgRx5QlGUjczsAF+NmXjwn710D+T
-   pyD6ruxEHiAFP7UwnEXykYCaXeWpB6Jv6BPqPed32/VwNjKT4PXR8sZWf
-   2eGBJf0LBtYKco+32kgJTqD89ZjQfaaLgIqnknA8J6eQznYXLzm9aaj8l
-   w==;
-X-CSE-ConnectionGUID: VPOrQwudT/aQ7vtZ4zgHCQ==
-X-CSE-MsgGUID: Ydx0vtlVQCm0ruIWXFBiKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="28042123"
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="28042123"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 21:58:49 -0800
-X-CSE-ConnectionGUID: HF9UUoHERhGp2oCvltl2YQ==
-X-CSE-MsgGUID: qzsSmBxHRsqSlPI5vKo5/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,292,1732608000"; 
-   d="scan'208";a="119136460"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa004.fm.intel.com with ESMTP; 16 Feb 2025 21:58:46 -0800
-From: niravkumar.l.rabara@intel.com
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	niravkumar.l.rabara@intel.com,
-	nirav.rabara@altera.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: socfpga: agilex5: add VGIC maintenance interrupt
-Date: Mon, 17 Feb 2025 13:55:11 +0800
-Message-Id: <20250217055511.3473717-1-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739771769; c=relaxed/simple;
+	bh=b+8hriF469cfb+t94uCSbE5w+P/WRPLJmthYrEtAgr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gJZZozqS+kIWA0xYr/339G1Ug4PslyoH/8QI64mOIePDgGTPiOAUWHtGtrTwG5gAOHz4fEhQJDn1q7G2QRAcXIUuwkCOFhy0IcF8BhYiHmypsgbRf6rgK581E9GDOaCZ1Iq+Gnp9I6wna1hUdPde6TCjrDOW+LeFgEfW1+ZtBI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j6YEceJO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H031RR018869;
+	Mon, 17 Feb 2025 05:55:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eHguWXkBimmyRN92Oh4qZPvucUjc1G+/2HYqq30agk0=; b=j6YEceJO0uy52dyl
+	7YvsPWT/lH4EWYRC5BKXLRWbkBzY+IZ/2I/cQbyjX2WhHmKCurvz/1MZCWeBrcoE
+	0lOXYA7TN2/HZsxvtPFawBVGDp9SZNXuEgYqB9/NMS/mloTlFpuRDN5qwadNYLaZ
+	YpItCCc5ReHO/c+FGXcTA77UXXLJdB5oV1gEFtYELkCSoRFN0NhvAPbkniOagtk3
+	nNyDGIqhGTk5ULK2MUZJM2/4EENxRvgTqeZvdFwDcyQzjBcFG4Uvip0GwOyFDNYu
+	PXlnigXU3JhZ4juw9kp4H7LA2OMYLUuNC3s/MLjDDGj3K/myBYaKL/MTqXEYXqWq
+	oefQig==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7srku3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 05:55:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51H5tf5M026998
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 05:55:41 GMT
+Received: from [10.151.36.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Feb
+ 2025 21:55:36 -0800
+Message-ID: <80746729-2b32-9a13-93f5-8d5c222ce4d8@quicinc.com>
+Date: Mon, 17 Feb 2025 11:25:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [GIT PULL] mtd: topic branch for spi with Qcom changes
+To: Mark Brown <broonie@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <richard@nod.at>,
+        <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        "Tudor
+ Ambarus" <Tudor.Ambarus@linaro.org>,
+        Frieder Schrempf
+	<frieder.schrempf@kontron.de>,
+        Michael Walle <michael@walle.cc>,
+        "Pratyush
+ Yadav" <pratyush@kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <87jzbp9hnt.fsf@bootlin.com> <87bjwkoxwh.fsf@bootlin.com>
+ <96bdefb1-4607-4a4a-8bed-b4d9b5971171@sirena.org.uk>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <96bdefb1-4607-4a4a-8bed-b4d9b5971171@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jgdh1FUKxTE_jVPzebr2GOblQCrCd6wj
+X-Proofpoint-ORIG-GUID: jgdh1FUKxTE_jVPzebr2GOblQCrCd6wj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_03,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 spamscore=0 clxscore=1011
+ mlxscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170049
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+Hi Mark,
 
-Add VGIC maintenance interrupt and interrupt-parent property for
-interrupt controller, required to run Linux in virtualized environment.
+On 1/6/2025 9:06 PM, Mark Brown wrote:
+> On Mon, Jan 06, 2025 at 02:49:18PM +0100, Miquel Raynal wrote:
+>> On 24/12/2024 at 17:20:38 +01, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> 
+>>> I'm merging the Qcom series, in case you need a topic branch to apply
+>>> the spi bits (binding and driver), here it is.
+> 
+>> There is a breakage on x86 with this series, I'm applying another patch
+>> from Md Sadre Alam on top, so I'd suggest to not merge this branch and
+>> wait for the next cycle to take the spi bits if you're happy with them.
+> 
+> Thanks for the heads up - I didn't pull it yet so as you suggest I can
+> just leave it and pick things up from mainline.
+The QPIC raw nand patches are available in the linux-next. could you 
+please pick the QPIC SPI NAND patches [1]
+[1] 
+https://lore.kernel.org/all/20241120091507.1404368-7-quic_mdalam@quicinc.com/
 
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index 51c6e19e40b8..75397e84bd2c 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -75,8 +75,11 @@ intc: interrupt-controller@1d000000 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		interrupt-controller;
-+		interrupt-parent = <&intc>;
- 		#redistributor-regions = <1>;
- 		redistributor-stride = <0x0 0x20000>;
-+		/* VGIC maintenance interrupt */
-+		interrupts = <GIC_PPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		its: msi-controller@1d040000 {
- 			compatible = "arm,gic-v3-its";
--- 
-2.25.1
-
+Thanks,
+Alam.
 
