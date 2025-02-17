@@ -1,200 +1,121 @@
-Return-Path: <linux-kernel+bounces-518429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343E6A38EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:13:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C46A38EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 23:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180F01892893
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EECF3B3DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 22:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C091E1E0489;
-	Mon, 17 Feb 2025 22:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0EF1AAA1F;
+	Mon, 17 Feb 2025 22:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISTODcCf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L/otBlqE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37111DFE0C;
-	Mon, 17 Feb 2025 22:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B721A8402;
+	Mon, 17 Feb 2025 22:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739830072; cv=none; b=usOiig4xn6l0Zfm6sc5TqZG7gezWBKyy1V0vo6ouZ9EpvHmS9yBQdbdDg6Ysw4LX01TMhMDxnwGgCG/gGOEb2tLGCfZPHE1xEvPtkaUStTKUZMNAK1MH39HI/OQFkYYZj8Nr1iVfW3kBBF6nQPnXxzCo9d0sd11GaXzkdkirvDQ=
+	t=1739830259; cv=none; b=mpnsTUX5AcWG/Lkj+VldMZx6Ve3I7fGxwp0Al1wh9Nac07YF9/VJrg8oilA5xIO2HirwqCNxm1omqt9Ufs7mR1sAvfNQ6tzVchi8gx1eXsBIdAI9lHnLN8/zuI4NyAGGjmDkad/h6ZYsBI3//lSLUcclfPYphqZlBmx2AmheHto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739830072; c=relaxed/simple;
-	bh=4+EsuSMFzTIZV2rxHQ6HUvxk96Xy8TbFkE5Q3qjs4jE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FVyhd8/qZLgW9YBBRshyzEhu7wjQmNpNmHdZqRiGryA35zjNIbYRAl2KLbykmpPANmFUyPUeV0QbXSZocn3WEpuOx+edO1On3SEIVsJGnzL2w0zd0LcvlvBeAj0C7N/xBMxgZRb8lCDQMol/abKYiate1/DfyoWzeyu/3ODoRIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISTODcCf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B717DC4CEE2;
-	Mon, 17 Feb 2025 22:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739830071;
-	bh=4+EsuSMFzTIZV2rxHQ6HUvxk96Xy8TbFkE5Q3qjs4jE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ISTODcCfT3+LXIpktjC4BHK0QpysWBO1ZrlTYxBnFi3+Q9kjYi05Z5uDkz66MgJAs
-	 LVwH5vJ+4PezW6S3p2Yukqr8g45Gq4wghqDiT3M7S1743ptkL2vENSakipKBfUfntL
-	 unqGuWfMF5fB96czgT3nNGd8TeWctPET9UFPJTwYC6CtIg+IU5MGQklAKrFw4PR5F0
-	 QuIQwz4TZwfZIh5SOvNYzUjKZ6s/7Sdhap2FBkO/WG1rJRc4y9Z9t0vOxD25Dp+tvv
-	 XoTxCWkqU9DYXgxuY1zamQ2XeTwTHigPDVH6UmhSFD96yEK/fIO/6qspxsDtqJRaCu
-	 7UG49967Ku9QA==
-From: Mario Limonciello <superm1@kernel.org>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Subject: [PATCH v3 18/18] cpufreq/amd-pstate: Stop caching EPP
-Date: Mon, 17 Feb 2025 16:07:07 -0600
-Message-ID: <20250217220707.1468365-19-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250217220707.1468365-1-superm1@kernel.org>
-References: <20250217220707.1468365-1-superm1@kernel.org>
+	s=arc-20240116; t=1739830259; c=relaxed/simple;
+	bh=kz2joIaUFNhKMcE7TsiNBZLC3yx9ts0wwnhOk56savA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FOH3y6Dv+MKnAgQb6o4HEHfikeAOIbN2NLVrOoOqgWSu+zK+cSZ08ygLZan7eBTAyw4Lll2Zm82iF6O7zqOyRqN5AzZXbfFfBekG40O5LuuPZjFUDnI+a6UUrZiHnE/MDZ4zV4eTlODFKDxrF0g1FLqWrCpvkFAMnwB7o/5duIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L/otBlqE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HAisBn004459;
+	Mon, 17 Feb 2025 22:10:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LZO4RmAwdWvHhYb8qMLxm/nSTg9V+VwwT6x0u1skeEc=; b=L/otBlqE+gbq85BM
+	WgeeUrcJCMrF36W4W3MNERaOVQUehpx5Uka7cr1KpRacic2xBhZCLac+K2MC3P1i
+	zju9KIh6k3FjaOpD8g95dSrdM9xr7azTUYO/BX4p//ucL1OdfA7vsFrlLQ0Ck7zj
+	kWyBiVr5YLWj1JRZJ4R9qfaiQ59n67iQlnobHQDb4yyBsYpUcxLeSrzh9Zxwtfxy
+	SLV/kg0Gdt8DC+avPjcLhz27hFMyIw5G145d7c25KSoNuqBNViKe/zCcn/zHO/+R
+	4wvVPdaQkBCZay5MNZDpye56Na/9LK1sDj2HXIsXEg/YZj1W7jN/SHyan2uu/5pm
+	5Wglfw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3mg1duj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:10:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HMAiIR004908
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 22:10:44 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Feb 2025 14:10:44 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Vinod Koul <vkoul@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: (subset) [PATCH 00/35] drm/msm/dpu: rework HW block feature handling
+Date: Mon, 17 Feb 2025 14:10:26 -0800
+Message-ID: <173982978188.1706705.18136509869048284263.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
+References: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rlyp48cn0jiv6PkP1lfCgzG4n7DNNeOI
+X-Proofpoint-ORIG-GUID: rlyp48cn0jiv6PkP1lfCgzG4n7DNNeOI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_08,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=927 impostorscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502170173
 
-From: Mario Limonciello <mario.limonciello@amd.com>
 
-EPP values are cached in the cpudata structure per CPU. This is needless
-though because they are also cached in the CPPC request variable.
+On Sat, 14 Dec 2024 00:14:16 +0200, Dmitry Baryshkov wrote:
+> Some time ago we started the process of converting HW blocks to use
+> revision-based checks instead of having feature bits (which are easy to
+> miss or to set incorrectly). Then the process of such a conversion was
+> postponed. (Mostly) finish the conversion. The only blocks which still
+> have feature bits are SSPP, WB and VBIF. In the rare cases where
+> behaviour actually differs from platform to platform (or from block to
+> block) use unsigned long bitfields, they have simpler syntax to be
+> checked and don't involve test_bit() invocation.
+> 
+> [...]
 
-Drop the separate cache for EPP values and always reference the CPPC
-request variable when needed.
+Applied to msm-fixes, thanks!
 
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 27 ++++++++++++++-------------
- drivers/cpufreq/amd-pstate.h |  1 -
- 2 files changed, 14 insertions(+), 14 deletions(-)
+[01/35] drm/msm/dpu: skip watchdog timer programming through TOP on >= SM8450
+        https://gitlab.freedesktop.org/drm/msm/-/commit/2f69e5458447
+[02/35] drm/msm/dpu: enable DPU_WB_INPUT_CTRL for DPU 5.x
+        https://gitlab.freedesktop.org/drm/msm/-/commit/af0a4a2090cc
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 4660dd3f04796..48ec5e6527c68 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -268,8 +268,6 @@ static int msr_update_perf(struct cpufreq_policy *policy, u8 min_perf,
- 	}
- 
- 	WRITE_ONCE(cpudata->cppc_req_cached, value);
--	if (epp != cpudata->epp_cached)
--		WRITE_ONCE(cpudata->epp_cached, epp);
- 
- 	return 0;
- }
-@@ -318,7 +316,6 @@ static int msr_set_epp(struct cpufreq_policy *policy, u8 epp)
- 	}
- 
- 	/* update both so that msr_update_perf() can effectively check */
--	WRITE_ONCE(cpudata->epp_cached, epp);
- 	WRITE_ONCE(cpudata->cppc_req_cached, value);
- 
- 	return ret;
-@@ -335,9 +332,12 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 	struct cppc_perf_ctrls perf_ctrls;
-+	u8 epp_cached;
- 	u64 value;
- 	int ret;
- 
-+
-+	epp_cached = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 	if (trace_amd_pstate_epp_perf_enabled()) {
- 		union perf_cached perf = cpudata->perf;
- 
-@@ -348,10 +348,10 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- 					  FIELD_GET(AMD_CPPC_MAX_PERF_MASK,
- 						    cpudata->cppc_req_cached),
- 					  policy->boost_enabled,
--					  epp != cpudata->epp_cached);
-+					  epp != epp_cached);
- 	}
- 
--	if (epp == cpudata->epp_cached)
-+	if (epp == epp_cached)
- 		return 0;
- 
- 	perf_ctrls.energy_perf = epp;
-@@ -360,7 +360,6 @@ static int shmem_set_epp(struct cpufreq_policy *policy, u8 epp)
- 		pr_debug("failed to set energy perf value (%d)\n", ret);
- 		return ret;
- 	}
--	WRITE_ONCE(cpudata->epp_cached, epp);
- 
- 	value = READ_ONCE(cpudata->cppc_req_cached);
- 	value &= ~AMD_CPPC_EPP_PERF_MASK;
-@@ -1203,9 +1202,11 @@ static ssize_t show_energy_performance_preference(
- 				struct cpufreq_policy *policy, char *buf)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
--	u8 preference;
-+	u8 preference, epp;
-+
-+	epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
--	switch (cpudata->epp_cached) {
-+	switch (epp) {
- 	case AMD_CPPC_EPP_PERFORMANCE:
- 		preference = EPP_INDEX_PERFORMANCE;
- 		break;
-@@ -1568,7 +1569,7 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
- 	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
- 		epp = 0;
- 	else
--		epp = READ_ONCE(cpudata->epp_cached);
-+		epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
- 	perf = READ_ONCE(cpudata->perf);
- 
-@@ -1604,22 +1605,22 @@ static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 	union perf_cached perf = READ_ONCE(cpudata->perf);
- 	int ret;
-+	u8 epp;
-+
-+	epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
- 
- 	pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
- 
- 	ret = amd_pstate_cppc_enable(policy);
- 	if (ret)
- 		return ret;
--
--
--	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, cpudata->epp_cached, false);
-+	ret = amd_pstate_update_perf(policy, 0, 0, perf.highest_perf, epp, false);
- 	if (ret)
- 		return ret;
- 
- 	cpudata->suspended = false;
- 
- 	return 0;
--
- }
- 
- static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
-index 1a52582dbac9d..13918853f0a82 100644
---- a/drivers/cpufreq/amd-pstate.h
-+++ b/drivers/cpufreq/amd-pstate.h
-@@ -100,7 +100,6 @@ struct amd_cpudata {
- 	bool	hw_prefcore;
- 
- 	/* EPP feature related attributes*/
--	u8	epp_cached;
- 	u32	policy;
- 	bool	suspended;
- 	u8	epp_default;
+Best regards,
 -- 
-2.43.0
-
+Abhinav Kumar <quic_abhinavk@quicinc.com>
 
