@@ -1,355 +1,131 @@
-Return-Path: <linux-kernel+bounces-517497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AB5A3819A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:24:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E838A381A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D24188BD8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6266E1700F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9345217F40;
-	Mon, 17 Feb 2025 11:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KS8Dus4r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F2F2135C7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211EB217F40;
+	Mon, 17 Feb 2025 11:26:06 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951462135C7;
+	Mon, 17 Feb 2025 11:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739791423; cv=none; b=V7lqiikAx9jaRLOfXddxAdlPo8DKNTbUK246DABxeIW1LY8lROHy0Q42KJgAa68FAkRPcjPX39sTxaIaO+5nU3X9W9JOBX0sSUWgcxWq6svGqexyaWt4xbiaHNcGDnb/NMNb5tMaESw6AnlMQFn/AA4L/tXR0kRzUxrB298gv4o=
+	t=1739791565; cv=none; b=i8EBZ89mrmUJGwX9qCnYSOqfCv2PwWEgg848EQj3JKoWaoXioB24i6EfbH/qvxXIAqR2CXNRzJH1U4K5/LzsOdOWXsyZBlnX7l0u8SXneCz7klf5V4LJ1EHWfPJVwf6tmF/Q/J8f0h2LtLJH3IAqnDuITiaAbsmwmRCBMjT8hv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739791423; c=relaxed/simple;
-	bh=sIfXqq6LgX08DnF2ZKJioqs25c99aohveTdkwtTDipY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F4nApDbdDks+hSsecCH0hm0GKf+Jvvot1e5lyte/ywUGq9ejgSSNM3S6yLd8MebGBSBNuMwApbTiLNZD1CJ9O2c0pQtnHsvPxHS2YrPHNCJg8dqLX+HLRaZCHOuducHw+M6zvTe1H+4QBqiTddn0kQHvWzLoLuU3X/rPTzPhftU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KS8Dus4r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739791420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e7SDIYW07YQZs6j+00IUK84Snt1dAMAtfJPlH6mtonk=;
-	b=KS8Dus4rX+ZD1wsSoRxnan8TTKGm4oLi1vv+M+u0Zv4SJHoX6dIjSESN1A9S/8uR5Xkk+W
-	rkUE0aQ3EZZs+WXNbFluGw1aDacPcaP7cBZp/htHFt7iDqc0BslqxI1sE1unWotsc/NsMz
-	uC0fUfwGWnL3/0uahz9eYfkO1WJzGTo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-xVzBnSylOfy1UFIzXwO6tQ-1; Mon,
- 17 Feb 2025 06:23:34 -0500
-X-MC-Unique: xVzBnSylOfy1UFIzXwO6tQ-1
-X-Mimecast-MFC-AGG-ID: xVzBnSylOfy1UFIzXwO6tQ_1739791413
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 48E96180087C;
-	Mon, 17 Feb 2025 11:23:33 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.190])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 377481955BCB;
-	Mon, 17 Feb 2025 11:23:29 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 2/2] rseq/selftests: Add test for mm_cid compaction
-Date: Mon, 17 Feb 2025 12:23:17 +0100
-Message-ID: <20250217112317.258716-3-gmonaco@redhat.com>
-In-Reply-To: <20250217112317.258716-1-gmonaco@redhat.com>
-References: <20250217112317.258716-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1739791565; c=relaxed/simple;
+	bh=zwrZXcz8kUFQtW0/zwqY0uqd82Wgg/WRh74T4km+69A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFSKAlK1l+PEOg47MdCNm/a6/kzPd+BMUekaMuWUBY3HVmkXhHDEa/LM8WzRf7cE2DJZ2JyyaODaCwIJNSAV70FteMMqeFhRFYzFE/Qqy23TrK72iWzMRi8tZIp/gqkAz5FETtXGFrQkukqvHOH4TKK5UgDTmdppPsBuIII76AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 17 Feb 2025 20:24:53 +0900
+Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
+	by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id AB7E52019C91;
+	Mon, 17 Feb 2025 20:24:53 +0900 (JST)
+Received: from iyokan2.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Mon, 17 Feb 2025 20:24:53 +0900
+Received: from [10.212.246.222] (unknown [10.212.246.222])
+	by iyokan2.css.socionext.com (Postfix) with ESMTP id D11C294B21;
+	Mon, 17 Feb 2025 20:24:52 +0900 (JST)
+Message-ID: <2dda0bd7-abdb-446b-b1ba-cd5245d18da0@socionext.com>
+Date: Mon, 17 Feb 2025 20:24:52 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] misc: pci_endpoint_test: Avoid issue of interrupts
+ remaining after request_irq error
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Krzysztof Wilczynski <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
+ <20250210075812.3900646-2-hayashi.kunihiko@socionext.com>
+ <20250214172138.setswcgqz3dbf65t@thinkpad>
+Content-Language: en-US
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+In-Reply-To: <20250214172138.setswcgqz3dbf65t@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A task in the kernel (task_mm_cid_work) runs somewhat periodically to
-compact the mm_cid for each process. Add a test to validate that it runs
-correctly and timely.
+Hi Manivannan,
 
-The test spawns 1 thread pinned to each CPU, then each thread, including
-the main one, runs in short bursts for some time. During this period, the
-mm_cids should be spanning all numbers between 0 and nproc.
+On 2025/02/15 2:21, Manivannan Sadhasivam wrote:
+> On Mon, Feb 10, 2025 at 04:58:08PM +0900, Kunihiko Hayashi wrote:
+>> After devm_request_irq() fails with error in
+>> pci_endpoint_test_request_irq(), pci_endpoint_test_free_irq_vectors() is
+>> called assuming that all IRQs have been released.
+>>
+>> However some requested IRQs remain unreleased, so there are still
+>> /proc/irq/* entries remaining and we encounters WARN() with the following
+> 
+> s/we encounters/this results in WARN()
 
-At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
-is selected to be the new leader, all other threads terminate.
+I see. I'll fix it.
 
-After some time, the only running thread should see 0 as mm_cid, if that
-doesn't happen, the compaction mechanism didn't work and the test fails.
+>> message:
+>>
+>>      remove_proc_entry: removing non-empty directory 'irq/30', leaking at
+>>      least 'pci-endpoint-test.0'
+>>      WARNING: CPU: 0 PID: 202 at fs/proc/generic.c:719 remove_proc_entry
+>>      +0x190/0x19c
+>>
+>> And show the call trace that led to this issue:
+> 
+> You can remove this backtrace.
 
-Since mm_cid compaction is less likely for tasks running in short
-bursts, we increase the likelihood by just running a busy loop at every
-iteration. This compaction is a best effort work and this behaviour is
-currently acceptable.
+I'll add more information instead.
 
-The test never fails if only 1 core is available, in which case, we
-cannot test anything as the only available mm_cid is 0.
+> 
+>>
+>>      [   12.050005] Call trace:
+>>      [   12.051226]  remove_proc_entry+0x190/0x19c (P)
+>>      [   12.053448]  unregister_irq_proc+0xd0/0x104
+>>      [   12.055541]  free_desc+0x4c/0xd0
+>>      [   12.057155]  irq_free_descs+0x68/0x90
+>>      [   12.058984]  irq_domain_free_irqs+0x15c/0x1bc
+>>      [   12.061161]  msi_domain_free_locked.part.0+0x184/0x1d4
+>>      [   12.063728]  msi_domain_free_irqs_all_locked+0x64/0x8c
+>>      [   12.066296]  pci_msi_teardown_msi_irqs+0x48/0x54
+>>      [   12.068604]  pci_free_msi_irqs+0x18/0x38
+>>      [   12.070564]  pci_free_irq_vectors+0x64/0x8c
+>>      [   12.072654]  pci_endpoint_test_ioctl+0x870/0x1068
+>>      [   12.075006]  __arm64_sys_ioctl+0xb0/0xe8
+>>      [   12.076967]  invoke_syscall+0x48/0x110
+>>      [   12.078841]  el0_svc_common.constprop.0+0x40/0xe8
+>>      [   12.081192]  do_el0_svc+0x20/0x2c
+>>      [   12.082848]  el0_svc+0x30/0xd0
+>>      [   12.084376]  el0t_64_sync_handler+0x144/0x168
+>>      [   12.086553]  el0t_64_sync+0x198/0x19c
+>>      [   12.088383] ---[ end trace 0000000000000000 ]---
+>>
+>> To solve this issue, set the number of remaining IRQs to test->num_irqs
+>> and release IRQs in advance by calling pci_endpoint_test_release_irq().
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: e03327122e2c ("pci_endpoint_test: Add 2 ioctl commands")
+>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Thank you,
+
 ---
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../selftests/rseq/mm_cid_compaction_test.c   | 208 ++++++++++++++++++
- 3 files changed, 210 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
-
-diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
-index 16496de5f6ce4..2c89f97e4f737 100644
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -3,6 +3,7 @@ basic_percpu_ops_test
- basic_percpu_ops_mm_cid_test
- basic_test
- basic_rseq_op_test
-+mm_cid_compaction_test
- param_test
- param_test_benchmark
- param_test_compare_twice
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb586..ce1b38f46a355 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
- 
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
--		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
-+		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice mm_cid_compaction_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-new file mode 100644
-index 0000000000000..8808500466d02
---- /dev/null
-+++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-@@ -0,0 +1,208 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stddef.h>
-+
-+#include "../kselftest.h"
-+#include "rseq.h"
-+
-+#define VERBOSE 0
-+#define printf_verbose(fmt, ...)                    \
-+	do {                                        \
-+		if (VERBOSE)                        \
-+			printf(fmt, ##__VA_ARGS__); \
-+	} while (0)
-+
-+/* 0.5 s */
-+#define RUNNER_PERIOD 500000
-+/* Number of runs before we terminate or get the token */
-+#define THREAD_RUNS 5
-+
-+/*
-+ * Number of times we check that the mm_cid were compacted.
-+ * Checks are repeated every RUNNER_PERIOD.
-+ */
-+#define MM_CID_COMPACT_TIMEOUT 10
-+
-+struct thread_args {
-+	int cpu;
-+	int num_cpus;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	pthread_t *tinfo;
-+	struct thread_args *args_head;
-+};
-+
-+static void __noreturn *thread_runner(void *arg)
-+{
-+	struct thread_args *args = arg;
-+	int i, ret, curr_mm_cid;
-+	cpu_set_t cpumask;
-+
-+	CPU_ZERO(&cpumask);
-+	CPU_SET(args->cpu, &cpumask);
-+	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to set affinity");
-+		abort();
-+	}
-+	pthread_barrier_wait(args->barrier);
-+
-+	for (i = 0; i < THREAD_RUNS; i++)
-+		usleep(RUNNER_PERIOD);
-+	curr_mm_cid = rseq_current_mm_cid();
-+	/*
-+	 * We select one thread with high enough mm_cid to be the new leader.
-+	 * All other threads (including the main thread) will terminate.
-+	 * After some time, the mm_cid of the only remaining thread should
-+	 * converge to 0, if not, the test fails.
-+	 */
-+	if (curr_mm_cid >= args->num_cpus / 2 &&
-+	    !pthread_mutex_trylock(args->token)) {
-+		printf_verbose(
-+			"cpu%d has mm_cid=%d and will be the new leader.\n",
-+			sched_getcpu(), curr_mm_cid);
-+		for (i = 0; i < args->num_cpus; i++) {
-+			if (args->tinfo[i] == pthread_self())
-+				continue;
-+			ret = pthread_join(args->tinfo[i], NULL);
-+			if (ret) {
-+				errno = ret;
-+				perror("Error: failed to join thread");
-+				abort();
-+			}
-+		}
-+		pthread_barrier_destroy(args->barrier);
-+		free(args->tinfo);
-+		free(args->token);
-+		free(args->barrier);
-+		free(args->args_head);
-+
-+		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
-+			curr_mm_cid = rseq_current_mm_cid();
-+			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
-+				       curr_mm_cid, sched_getcpu());
-+			if (curr_mm_cid == 0)
-+				exit(EXIT_SUCCESS);
-+			/*
-+			 * Currently mm_cid compaction is less likely for tasks
-+			 * running in short bursts: increase likelihood by just
-+			 * running for some time doing nothing.
-+			 */
-+			for (int j = 0; j < 0xffff; j++)
-+				for (int k = 0; k < 0xffff; k++)
-+					asm("");
-+			usleep(RUNNER_PERIOD);
-+		}
-+		exit(EXIT_FAILURE);
-+	}
-+	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
-+		       sched_getcpu(), curr_mm_cid);
-+	pthread_exit(NULL);
-+}
-+
-+int test_mm_cid_compaction(void)
-+{
-+	cpu_set_t affinity;
-+	int i, j, ret = 0, num_threads;
-+	pthread_t *tinfo;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	struct thread_args *args;
-+
-+	sched_getaffinity(0, sizeof(affinity), &affinity);
-+	num_threads = CPU_COUNT(&affinity);
-+	tinfo = calloc(num_threads, sizeof(*tinfo));
-+	if (!tinfo) {
-+		perror("Error: failed to allocate tinfo");
-+		return -1;
-+	}
-+	args = calloc(num_threads, sizeof(*args));
-+	if (!args) {
-+		perror("Error: failed to allocate args");
-+		ret = -1;
-+		goto out_free_tinfo;
-+	}
-+	token = malloc(sizeof(*token));
-+	if (!token) {
-+		perror("Error: failed to allocate token");
-+		ret = -1;
-+		goto out_free_args;
-+	}
-+	barrier = malloc(sizeof(*barrier));
-+	if (!barrier) {
-+		perror("Error: failed to allocate barrier");
-+		ret = -1;
-+		goto out_free_token;
-+	}
-+	if (num_threads == 1) {
-+		fprintf(stderr, "Cannot test on a single cpu. "
-+				"Skipping mm_cid_compaction test.\n");
-+		/* only skipping the test, this is not a failure */
-+		goto out_free_barrier;
-+	}
-+	pthread_mutex_init(token, NULL);
-+	ret = pthread_barrier_init(barrier, NULL, num_threads);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to initialise barrier");
-+		goto out_free_barrier;
-+	}
-+	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
-+		if (!CPU_ISSET(i, &affinity))
-+			continue;
-+		args[j].num_cpus = num_threads;
-+		args[j].tinfo = tinfo;
-+		args[j].token = token;
-+		args[j].barrier = barrier;
-+		args[j].cpu = i;
-+		args[j].args_head = args;
-+		if (!j) {
-+			/* The first thread is the main one */
-+			tinfo[0] = pthread_self();
-+			++j;
-+			continue;
-+		}
-+		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
-+		if (ret) {
-+			errno = ret;
-+			perror("Error: failed to create thread");
-+			abort();
-+		}
-+		++j;
-+	}
-+	printf_verbose("Started %d threads.\n", num_threads);
-+
-+	/* Also main thread will terminate if it is not selected as leader */
-+	thread_runner(&args[0]);
-+
-+	/* only reached in case of errors */
-+out_free_barrier:
-+	free(barrier);
-+out_free_token:
-+	free(token);
-+out_free_args:
-+	free(args);
-+out_free_tinfo:
-+	free(tinfo);
-+
-+	return ret;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	if (!rseq_mm_cid_available()) {
-+		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
-+		return -1;
-+	}
-+	if (test_mm_cid_compaction())
-+		return -1;
-+	return 0;
-+}
--- 
-2.48.1
-
+Best Regards
+Kunihiko Hayashi
 
