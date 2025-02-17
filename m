@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-517691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E90A3844F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:16:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA06A38459
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8067A1DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F99A175637
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0A72222D1;
-	Mon, 17 Feb 2025 13:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4AD22259D;
+	Mon, 17 Feb 2025 13:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNEOQQQN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DGRCHdDl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sE590qr1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A0221CC63;
-	Mon, 17 Feb 2025 13:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9921D58E;
+	Mon, 17 Feb 2025 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739798054; cv=none; b=g74rUHhxv7Kss244l66wl5eGFqIhajsPJ8C+AcnjHfPNkraDZjZTLJ8ZtNf7WFrOka7d9H/8bN7sz2oS1KZ4+JCYRDx9s4SNHzFWhaIlIyeBPXCLZ72TC4QEjAJ2phg72KBNnxAmP2tQbUZTEpoyLXdFji/Ve35fqJe4Ca8nTk4=
+	t=1739798046; cv=none; b=kMCtxEhH3FNzjGbRJxHFc8+rymBRPa4Vc4VWQ+fh0GpVdrQVVcQHfNJTfctPZxK2VFot0IZaBK/bYUmMVRwZmXe9KMdeRLLzcVWkKyIfjDX1DzicqSvWvByeKwdQBptq52tSro+7Qun4UPIXKFymXvaAqFDcEuFThRPW+5CFVg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739798054; c=relaxed/simple;
-	bh=ySqiz0pjBVTXrwnEWcMGf3+QUDYTSHcCYNOVUDsh4CA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HyulnYv1qT1TJtkbWq5sujU1lCro1DvvPS/1GKSKS4Qoo59Kmaol0WkETKnYt1DpHHk6C8I2uBhxDao1KcnY0mqDYF39E++Isd4bGfY3k1BZgsGGBpr/GI5AE4OvF77KyRayXk0OZvJDphlzmyyd/ZcmJ9GWLOv6AS+JsQ3a99Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNEOQQQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF74C4CEE2;
-	Mon, 17 Feb 2025 13:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739798053;
-	bh=ySqiz0pjBVTXrwnEWcMGf3+QUDYTSHcCYNOVUDsh4CA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZNEOQQQN4Z94Xe+g+xxcrlNGxcPvJGgF7c2BIhXRdGEMWDQYT+XNCnN9dJrSMgKi9
-	 0QzGryUCtGeygMS7sASgyjgTNCz1OwrlVSmhORJki57jxwSMlMbz1OAyYNUXQeVsjC
-	 yLRLE6qCksg72TAGGfb878xfvtLpUmC4R0lgIptGDNQVhFqpNkl6NQSU51ATinprz4
-	 91hY71WHL2CQmudWVxTelWNFGxJ7RwsdocHJFTbIthFQfk2irOrDikCHtk5SfjF+Fu
-	 zMS5I5v9Sjj8E3r46oiutMt7/FaJa3bd5lOigRjD8zJpHqj8Oyw6p5JY5KuXVfOMGs
-	 6g0Qg+fzZnRbA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Nihar Chaithanya <niharchaithanya@gmail.com>,
-	Rohit Chavan <roheetchavan@gmail.com>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] [v2] staging: gpib: comment out pnp_device_id tables
-Date: Mon, 17 Feb 2025 14:13:36 +0100
-Message-Id: <20250217131356.3759347-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250217131356.3759347-1-arnd@kernel.org>
-References: <20250217131356.3759347-1-arnd@kernel.org>
+	s=arc-20240116; t=1739798046; c=relaxed/simple;
+	bh=T3j+AYNu9upsSFRF5dhT7V0Vi97Ed+N9htp0EsDIQJM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DVBwGQqUdmzVnSYNZ3xpdPO1Ce8F4VauKAR6nTA8ztxIoGhtwkRfieWN4FAX92tsal5ALKgYe6z5GNh31wWK9B6IxsoeIddIcJRQ/IIYd87XT/LCd3Z5UQ+oTVa1hH0vAokzkEMmooYp5gMEcL45zSOyyekRViDDzavLmzdtezU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DGRCHdDl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sE590qr1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739798042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Fmtlx2EnEL7LBpnjLPYYhL0crulD1yNwRs5P9WAM/0=;
+	b=DGRCHdDlnrIwpt2GOdp5wboYwtxMEZ/iN/eHHWYhtiMXN+Bo5BiLMhYVFokOaj7t8tbRcf
+	PRqklElLoBReM7bQgST7jWvHPCXDzPIxyXm1vxWxAe19JqtpAs4hL7UcCzHx2WuDcxflZr
+	Y/klFFC7DJy+EXFwo6i3T0NM9HbIe2+JSstHedjsftGnvypDXf4VzkFfKQ9p2AF0I69T32
+	ePXgwvWGpIv07hXp/w1KUILDGzDqv+nm1azL2knO/ycLAv9JZH9rk/x7BWkFLe2K6Ng1hs
+	/SDWLtTPJf+C4/fQnRkw82El8JmQFGyMSWLfdSHPmsPM0qIcLXt1Df1s1G8G6Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739798042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Fmtlx2EnEL7LBpnjLPYYhL0crulD1yNwRs5P9WAM/0=;
+	b=sE590qr1pRljibC0euLNnkODpzZE2nlryOOk/bxo08kdW5v5r8wyu67BWNLLH9Qdp3EjaE
+	hgkdj2oaWY4dEXCg==
+Subject: [PATCH 0/2] KVM: s390: Don't use %pK through debug printing or
+ tracepoints
+Date: Mon, 17 Feb 2025 14:13:55 +0100
+Message-Id: <20250217-restricted-pointers-s390-v1-0-0e4ace75d8aa@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABM2s2cC/x3MywqDQAxG4VeRrBsYZ6gSX6V04eVvzWaUZCiC+
+ O4OXX6Lc05ymMJpaE4y/NR1yxXto6F5HfMXrEs1xRCfIbY9G7yYzgUL75vmAnP2JIETJE1dP4p
+ IRzXfDR89/uvX+7puRiNlp2oAAAA=
+X-Change-ID: 20250217-restricted-pointers-s390-3e93b67a9996
+To: Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Janosch Frank <frankja@linux.ibm.com>, 
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+ David Hildenbrand <david@redhat.com>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739798042; l=956;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=T3j+AYNu9upsSFRF5dhT7V0Vi97Ed+N9htp0EsDIQJM=;
+ b=dqogSa5t7A9u/cS3WyJYvfjprx1m0h+qPLyEIyiOXCNTkVMAcLQxEhswSLmmKOlYeH1zP8Zo8
+ 2sCGR1Es68ZAuHyERqQZ9j69EyMeZjq4s/2Sz/TcTKFz/diVktBwrZM
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-From: Arnd Bergmann <arnd@arndb.de>
+Restricted pointers ("%pK") are only meant to be used when directly
+printing to a file from task context.
+Otherwise it can unintentionally expose security sensitive, raw pointer values.
 
-This variable is not referenced in either of these two drivers driver,
-causing a warning when they are built-in and W=1 warnings are enabled
-with gcc:
+Use regular pointer formatting instead.
 
-drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1507:35: error: 'tnt4882_pnp_table' defined but not used [-Werror=unused-const-variable=]
- 1507 | static const struct pnp_device_id tnt4882_pnp_table[] = {
-      |                                   ^~~~~~~~~~~~~~~~~
-drivers/staging/gpib/hp_82341/hp_82341.c:811:35: error: 'hp_82341_pnp_table' defined but not used [-Werror=unused-const-variable=]
-  811 | static const struct pnp_device_id hp_82341_pnp_table[] = {
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
 
-The MODULE_DEVICE_TABLE() entry does have the effect of loading
-the module when the PNP device is detected, so it is still needed
-for the modular case.
-
-Ideally the drivers should be converted to pnp_register_driver(),
-which would lead to the ID table actually being used.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- drivers/staging/gpib/hp_82341/hp_82341.c    | 3 +++
- drivers/staging/gpib/tnt4882/tnt4882_gpib.c | 3 +++
- 2 files changed, 6 insertions(+)
+Thomas Weißschuh (2):
+      KVM: s390: Don't use %pK through tracepoints
+      KVM: s390: Don't use %pK through debug printing
 
-diff --git a/drivers/staging/gpib/hp_82341/hp_82341.c b/drivers/staging/gpib/hp_82341/hp_82341.c
-index cf5cd1edc41d..72a91228ea36 100644
---- a/drivers/staging/gpib/hp_82341/hp_82341.c
-+++ b/drivers/staging/gpib/hp_82341/hp_82341.c
-@@ -809,11 +809,14 @@ static void hp_82341_detach(gpib_board_t *board)
- 	hp_82341_free_private(board);
- }
- 
-+#if 0
-+/* unused, will be needed when the driver is turned into a pnp_driver */
- static const struct pnp_device_id hp_82341_pnp_table[] = {
- 	{.id = "HWP1411"},
- 	{.id = ""}
- };
- MODULE_DEVICE_TABLE(pnp, hp_82341_pnp_table);
-+#endif
- 
- static int __init hp_82341_init_module(void)
- {
-diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-index 2e1c3cbebaca..df92e9959fe1 100644
---- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-+++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-@@ -1390,11 +1390,14 @@ static struct pci_driver tnt4882_pci_driver = {
- 	.probe = &tnt4882_pci_probe
- };
- 
-+#if 0
-+/* unused, will be needed when the driver is turned into a pnp_driver */
- static const struct pnp_device_id tnt4882_pnp_table[] = {
- 	{.id = "NICC601"},
- 	{.id = ""}
- };
- MODULE_DEVICE_TABLE(pnp, tnt4882_pnp_table);
-+#endif
- 
- #ifdef GPIB_PCMCIA
- static gpib_interface_t ni_pcmcia_interface;
+ arch/s390/kvm/intercept.c  |  2 +-
+ arch/s390/kvm/interrupt.c  |  8 ++++----
+ arch/s390/kvm/kvm-s390.c   | 10 +++++-----
+ arch/s390/kvm/trace-s390.h |  4 ++--
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-restricted-pointers-s390-3e93b67a9996
+
+Best regards,
 -- 
-2.39.5
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
