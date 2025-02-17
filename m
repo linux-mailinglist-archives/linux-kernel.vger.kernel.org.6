@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-517952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C0FA387E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:44:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D9AA387E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911933B09A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241EF1647DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D0F228389;
-	Mon, 17 Feb 2025 15:39:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BED227B9D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 15:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3FF2253F1;
+	Mon, 17 Feb 2025 15:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8yIdhF7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F34224AF9;
+	Mon, 17 Feb 2025 15:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806790; cv=none; b=oTLvat0JwWqzbBP7LKLXz0/elCVgmS06J8XEodKql/slAciTpnYVIO7DpMMOohw1IzSdOsYXbq/EAE+l3VOSDzvuHepsU5tRvcX1fSEpStWWYgQVDzJjW9ETqkcOXWfa7X0xSt/PC1D31ZAjsdLNj4xYd2TQFO07VVP/OWvVKxY=
+	t=1739806834; cv=none; b=jyrY6AW20dc6VcJO/Kcjcgpv7Pg4+n+3iWwLUwbBf2m8o0mDeZiOKGV8c3gd/cr4KwdVPnZKkJRvYLKIYELd8hB6pMVHda1GLo6RRXcgyXIa8aWdkiBHFg0fiESZ6jts/5yahUfv2+SORzoOQZxhyp8+kwN4p0EwhjWebGajnEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806790; c=relaxed/simple;
-	bh=glQcibRPZ3LfxkYdcYsdlJeo9DnLI2cUT7CIltYuAok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=aIAW5BkFnU589vf61EQIY6dW98PmZTNN/EI/yrfygMzF5mK8CA8PvVCkN7fVm50xg2nSBhtbiNq9ZTr1JPRcQfb4pN33ACwSfHQaRsU39JijNDYbKHSIm2D4CYkU5kNvMOIz0nIuybD+ixWuMO6iyw18L8qv9k8EMOIc4WD9wcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80045152B;
-	Mon, 17 Feb 2025 07:40:07 -0800 (PST)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C5153F6A8;
-	Mon, 17 Feb 2025 07:39:47 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Feb 2025 15:39:00 +0000
-Subject: [PATCH v3 19/19] firmware: arm_ffa: Handle ffa_notification_get
- correctly at virtual FF-A instance
+	s=arc-20240116; t=1739806834; c=relaxed/simple;
+	bh=Xy3shhobRgfXOO0gcUvi6Q58ojxHN3hZzhyPOJq5uwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hs3G6I7o2gxJhCXsTyAPVDSicN6JW/qU0BVoy4SAfpNeweEyINv+ERLHudwYW+ia9yWfnBjBvXlG0/yYnNOoTWGFThx0JrWTbT3M8DF+GIgGigeIpqFvOnNjnKO7661k8LUgnSZDmU1/qnnAl5FPxLTAVGMO9BjA/o6ByMZIj+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8yIdhF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B73E2C4CED1;
+	Mon, 17 Feb 2025 15:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739806834;
+	bh=Xy3shhobRgfXOO0gcUvi6Q58ojxHN3hZzhyPOJq5uwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W8yIdhF74bOEhqirSfBNy8zhuEjIjNVbMYoFkBGoT+ASgpLuGQaYuwwqrMbH6l1os
+	 1aYxp5U3HCMYU2X5AXWxppScyE3DtJ10/YM1zUM2GD9HYX3znrjOj5Q1dkZUmDHDDS
+	 FOm7VoQCiAjXpMxno43YGHS0qBeyxCFqoPRcgt4D5qgYjTMtU/Zn728mUuVfSaKmuJ
+	 XeIPeqsSnqkuuUE/A3xPy84ZEnNVn+t821TufyYfRk2ycY2YuMeDB/0ghQeWlFKcqo
+	 REZ3ogFby/kp2BSmmxSgDzDS87JLJO4ulzA0ERLbXJjc0j2Qn7qvQI4MZnv9/qh0lP
+	 xbFm4YqY2RQHQ==
+Date: Mon, 17 Feb 2025 15:40:28 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add rx checksum offload
+ supported in this module
+Message-ID: <20250217154028.GM1615191@kernel.org>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-ffa_updates-v3-19-bd1d9de615e7@arm.com>
-References: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
-In-Reply-To: <20250217-ffa_updates-v3-0-bd1d9de615e7@arm.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3134; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=glQcibRPZ3LfxkYdcYsdlJeo9DnLI2cUT7CIltYuAok=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBns1gvLiiYeNuHpZrc1TNX2jkRDa6aSrZvzKVhn
- Z9uHQpPgVaJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ7NYLwAKCRAAQbq8MX7i
- mLB8D/4jUASnurXChQYVGRrJFk2N+5zQlPN+hwPXF6W7okyL28JUVvKWTGrshQ28N/O2uns8NLM
- RJaSHgSMXPDsVpxbbshCUYUFBnzZ+9IXzIJCkNGzwGVHmM9aLGWGw7wAHo6JEJ74uJhcrJ2xb47
- v3ZsSbyZx5gkxcakkKmXCr1mh/kTvv2m4opFRULoItyeKWrtFJSkTKkmlhNz4sh4kWroV7KGJEV
- CzgsmbHAnofrupMXj402hYBCgEVM+msMEhlPv9bHodefo+Z4VcY5hzHVtdpc8yjDL7JTvAKOPhL
- cQtj4/fzj/vfVRGsHV1I8WzzUWhEisxSPBWkkATj6itSJOMjH6tWx+xc29vYwi/Ro60t7QKv4Yk
- zUdvEx1WThdhKkwLTp+b+z6Sb8xyyNSM1aRO+w2GNvvu1xu3XqOwtp+AhIZz8TtTE6QEpwOsSH5
- KGt3YYu/x0wKZu+Z2w8vmWbOnpKQbt3GT8cp+xAg6sNElC2IsqCWB1nNVMZYWs8bV52I0qGk5Ow
- Lm39R/o9Crxvgz8TNtqLZnGeq3rPgJPpkR/Fx0ZZO1lDtN8+20yBQS3MGNWQz5ujq91tO0Jk74a
- 4jfTgLsA4vzWl4bn2ipkWLdh+k2Z4gdichiq5VX8xXVT7Y7miU6WakJiNOoOfJ8yShRUlzF2+CC
- 2k4JyvqmWgsjuJQ==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213035529.2402283-4-shaojijie@huawei.com>
 
-Currently it is assumed that the driver always calls ffa_notification_get()
-at the NS physical FF-A instance to request the SPMC to return pending
-SP or SPM Framework notifications. However, in order to support the driver
-invoking ffa_notification_get() at virtual FF-A instance, we need to make
-sure correct bits are enabled in the bitmaps enable flag.
+On Thu, Feb 13, 2025 at 11:55:25AM +0800, Jijie Shao wrote:
+> This patch implements the rx checksum offload feature
+> including NETIF_F_IP_CSUM NETIF_F_IPV6_CSUM and NETIF_F_RXCSUM
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-It is expected to have hypervisor framework and VM notifications bitmap
-to be zero at the non-secure physical FF-A instance.
+...
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/arm_ffa/driver.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> index 8c631a9bcb6b..aa1d128a863b 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+> @@ -202,8 +202,11 @@ static int hbg_napi_tx_recycle(struct napi_struct *napi, int budget)
+>  }
+>  
+>  static bool hbg_rx_check_l3l4_error(struct hbg_priv *priv,
+> -				    struct hbg_rx_desc *desc)
+> +				    struct hbg_rx_desc *desc,
+> +				    struct sk_buff *skb)
+>  {
+> +	bool rx_checksum_offload = priv->netdev->features & NETIF_F_RXCSUM;
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index db6334f0c532566565246173373d8f0a42c836af..f3ca703a44413b6394559c68b12fda6a75acadf0 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -841,8 +841,12 @@ enum notify_type {
- #define NON_SECURE_VM_BITMAP_ENABLE		BIT(NON_SECURE_VM)
- #define SPM_FRAMEWORK_BITMAP_ENABLE		BIT(SPM_FRAMEWORK)
- #define NS_HYP_FRAMEWORK_BITMAP_ENABLE		BIT(NS_HYP_FRAMEWORK)
--#define FFA_BITMAP_ENABLE_MASK			\
-+#define FFA_BITMAP_SECURE_ENABLE_MASK		\
- 	(SECURE_PARTITION_BITMAP_ENABLE | SPM_FRAMEWORK_BITMAP_ENABLE)
-+#define FFA_BITMAP_NS_ENABLE_MASK		\
-+	(NON_SECURE_VM_BITMAP_ENABLE | NS_HYP_FRAMEWORK_BITMAP_ENABLE)
-+#define FFA_BITMAP_ALL_ENABLE_MASK		\
-+	(FFA_BITMAP_SECURE_ENABLE_MASK | FFA_BITMAP_NS_ENABLE_MASK)
- 
- #define FFA_SECURE_PARTITION_ID_FLAG		BIT(15)
- 
-@@ -914,9 +918,15 @@ static int ffa_notification_get(u32 flags, struct ffa_notify_bitmaps *notify)
- 	else if (ret.a0 != FFA_SUCCESS)
- 		return -EINVAL; /* Something else went wrong. */
- 
--	notify->sp_map = PACK_NOTIFICATION_BITMAP(ret.a2, ret.a3);
--	notify->vm_map = PACK_NOTIFICATION_BITMAP(ret.a4, ret.a5);
--	notify->arch_map = PACK_NOTIFICATION_BITMAP(ret.a6, ret.a7);
-+	if (flags & SECURE_PARTITION_BITMAP_ENABLE)
-+		notify->sp_map = PACK_NOTIFICATION_BITMAP(ret.a2, ret.a3);
-+	if (flags & NON_SECURE_VM_BITMAP_ENABLE)
-+		notify->vm_map = PACK_NOTIFICATION_BITMAP(ret.a4, ret.a5);
-+	if (flags & SPM_FRAMEWORK_BITMAP_ENABLE)
-+		notify->arch_map = SPM_FRAMEWORK_BITMAP(ret.a6);
-+	if (flags & NS_HYP_FRAMEWORK_BITMAP_ENABLE)
-+		notify->arch_map = PACK_NOTIFICATION_BITMAP(notify->arch_map,
-+							    ret.a7);
- 
- 	return 0;
- }
-@@ -1444,12 +1454,19 @@ static void handle_fwk_notif_callbacks(u32 bitmap)
- 	kfree(buf);
- }
- 
--static void notif_get_and_handle(void *unused)
-+static void notif_get_and_handle(void *cb_data)
- {
- 	int rc;
--	struct ffa_notify_bitmaps bitmaps;
-+	u32 flags;
-+	struct ffa_drv_info *info = cb_data;
-+	struct ffa_notify_bitmaps bitmaps = { 0 };
-+
-+	if (info->vm_id == 0) /* Non secure physical instance */
-+		flags = FFA_BITMAP_SECURE_ENABLE_MASK;
-+	else
-+		flags = FFA_BITMAP_ALL_ENABLE_MASK;
- 
--	rc = ffa_notification_get(FFA_BITMAP_ENABLE_MASK, &bitmaps);
-+	rc = ffa_notification_get(flags, &bitmaps);
- 	if (rc) {
- 		pr_err("Failed to retrieve notifications with %d!\n", rc);
- 		return;
+nit: I think this would be better expressed in a way that
+     rx_checksum_offload is assigned a boolean value (completely untested).
 
--- 
-2.34.1
+	bool rx_checksum_offload = !!(priv->netdev->features & NETIF_F_RXCSUM);
 
+> +
+>  	if (likely(!FIELD_GET(HBG_RX_DESC_W4_L3_ERR_CODE_M, desc->word4) &&
+>  		   !FIELD_GET(HBG_RX_DESC_W4_L4_ERR_CODE_M, desc->word4)))
+>  		return true;
 
