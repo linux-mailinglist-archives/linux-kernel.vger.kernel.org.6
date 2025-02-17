@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-517660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99EBA3841B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:12:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E29FA3834E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810853B4F65
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB83A96B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16521C186;
-	Mon, 17 Feb 2025 13:06:52 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ADE215F49;
-	Mon, 17 Feb 2025 13:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55A521B8F6;
+	Mon, 17 Feb 2025 12:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="v1URe8uT"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944C31FCD09
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 12:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739797612; cv=none; b=Km2BKqIHOkvdycGF7fIei6jyphauagyLNpqdX3O/yn52nxbfhFswJAAxJuzBBkFEjQbXyof9cHzJ7sAwCH6JdF52PvtCxUZcY035dBr0WUjV+1V/sMWi/9a5AKNawpZWOPvautdRcB7yhfI/FOPTxe0gRNPU94Z0ORMSBlvJCCU=
+	t=1739796372; cv=none; b=rsdHJi3NXow50bILyWPS5OxnxfVul6uPt612NMyLeHYFK1j8VQswYmS9acJrznevtj9TYqR//4lrO76v2Vu2rLkEfbjG0XCUTJQ0Nl2WhULOrATDeDRTBChulQDX6+q+4L7F/rSioE4rDbO1GSbZsIVjHVE0jbHTymPYNeXm+cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739797612; c=relaxed/simple;
-	bh=nN4o3P1mouOHENLPIOBJJsndTSO4QsgADBehLhpRlW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNmQ/wR8Y3BaMXlbC+OQn67HLpVQRtFsTaHuUUswSy+8hdb0xqMs4HMXbwtWPx8irPQMmtDpslFii7LKQTzc9njVypckkDVO0VX74Us259zueBvi0lx5NrqeOJxHrdwEbzqcXqvMeRfhDH4GIUI9/8xnzcDCiAd7scFccPO9AyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51HCjfgB011690;
-	Mon, 17 Feb 2025 06:45:41 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51HCjcjw011689;
-	Mon, 17 Feb 2025 06:45:38 -0600
-Date: Mon, 17 Feb 2025 06:45:38 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-security-module@vger.kernel.org,
-        Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org, lwn@lwn.net
-Subject: Re: [Announce] Linux Security Summit North America 2025 CfP
-Message-ID: <20250217124538.GA11605@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
+	s=arc-20240116; t=1739796372; c=relaxed/simple;
+	bh=WzkMpLwgZbZ/aW+9gub5iOXsySgmY1VT4Ax4KZ+L30A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YBnBEcUiaz3T65Hc83LBjxeRgxCkvXy5rGLt37EGfpvMFQam/G2/ahbNisjWnpwDWvZSyvNdY7m0XFt9gWDQ5QOZvBLZ6DfTe5sMorAWTU8bRrK8KZ/WykBRU0XOV7T22JGjjJVgQrY0rsW1IqecRx3ME4LearAGe3D4xPSwML8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=v1URe8uT; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d191bfeafbso16623455ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:46:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739796368; x=1740401168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8bNS0FjTwJ6SMd4nioB5wMEX5T9yYEM2Nyv0ek9XFpg=;
+        b=v1URe8uT6w764mIOYQLp4BjEBriRRHHWHfvqu8tUSQZxJE3yvJeztI1xGzgGSv2qbn
+         mQ77msszRHJ0+IGZB2lH0W6/L1C4A9I1InMJujKD14RTRSoSn1JiZ6OYcOvkVpC3UHY5
+         D8CCvhUG08dtnDwdcgLhsC9QOv5lTW/J2mRYegxbw7eN95Z94lR2TyLcfFtlziy3eyfT
+         j747xzrHiB62vdPcg0+uEPW4H6Oiro5NdKm2GP4fmCYR0BtPZUpC4+AxbIerxGRSM2iB
+         U6mlOzaKeAfsXfpOocC25rirkpxRQhScraosAOiRdt8W6mCVq9+zMJHITm+Z0W09Wr/i
+         7A8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739796368; x=1740401168;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8bNS0FjTwJ6SMd4nioB5wMEX5T9yYEM2Nyv0ek9XFpg=;
+        b=qgYdQ5IzH0ofuZCxu1JJE4ACWjL1ZfcY9hFjS3TuKUcYuUpxX7q/dSVN0TKahtY1ev
+         3I1KwmyePYg/CEl4WVdTqpPDyvNce6AS8SqgKTFSO7zH//c8sQWSnFo1awA9CSJMBRhB
+         pusLVQBU0LYS9B0R5uA0whpgH9HYZ8NiPDi41djyZy9wn0bRr+dyHxd0fuvSJTVuGmyB
+         VVBpxN0rWhQzD8yxFQBY/o5RnCo4UWPSBogsj1zqWrH4K9gLTHyuTrTAqzRhLMBwt2DJ
+         5TxPG59OeTcLGKS7ZnUeEiuezHrPmET6c0CWu7pCgHlNxlrE2lUiQK4HMvBXieryBibc
+         2HuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRHYZnhdNJIagfry7qGxcXnHvF7+Sdg+QjACRZSHjYa3StE6NUFxsNkYBXAbjvOuvQddpfjfqfJGmHFho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcgQ57jxr7//9cac6ABX3bLOEedhfz7XN3QyZZ1MaQeiLsTBAv
+	7QT9Ezt69HUjWKg8vQeVLgvHWDZCgxYLA30nco3itSa2uhh8QJPyqkGCLrk02gM=
+X-Gm-Gg: ASbGncukiTp9nRX70CZKd+/LLYhYyh82lOasGvV8dPUkbCScSWhFQ/E4/fpt98greBJ
+	hzfTv+0TNQZsTKIF2z8gJEQJZskyiPWgVe4MlWtVWK4vLHCbhMh7vmQdU5+wwOu5TFPf+nueQvx
+	caRPgceCmGiUo2BI5ygvxfpqDDiFSwPDjM/Cjx72WnM0rkFeNVyJMTPxmQwf/kWVthLAhFxrvpj
+	ks3HkDEY8bOlSzoaSV19/FUs1oS3WvAxJbBVwWVcdrwjpewwSGbPbZMIOGvP3Xm9Yy/+g6b4zJP
+	qSNWewc=
+X-Google-Smtp-Source: AGHT+IEaa0F1D+BEXNyGvpeYbIUoErtzcPoM1QWVnN2aAi4+nV83Sy5/0J39XasoQ/EEFqFiIqVd5Q==
+X-Received: by 2002:a05:6e02:378e:b0:3d0:23f6:2eed with SMTP id e9e14a558f8ab-3d2807b0595mr54037885ab.11.1739796368011;
+        Mon, 17 Feb 2025 04:46:08 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ee81857773sm1247159173.66.2025.02.17.04.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 04:46:07 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250216225900.1075446-1-csander@purestorage.com>
+References: <20250216225900.1075446-1-csander@purestorage.com>
+Subject: Re: [PATCH] io_uring/rsrc: avoid NULL check in io_put_rsrc_node()
+Message-Id: <173979636710.644986.8096661613228249151.b4-ty@kernel.dk>
+Date: Mon, 17 Feb 2025 05:46:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 17 Feb 2025 06:45:41 -0600 (CST)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-On Mon, Feb 10, 2025 at 01:03:02PM -0800, James Morris wrote:
 
-Good morning, I hope the week is starting well for everyone.
-
-> The Call for Participation for the 2025 Linux Security Summit North 
-> America (LSS-NA) is now open.
+On Sun, 16 Feb 2025 15:58:59 -0700, Caleb Sander Mateos wrote:
+> Most callers of io_put_rsrc_node() already check that node is non-NULL:
+> - io_rsrc_data_free()
+> - io_sqe_buffer_register()
+> - io_reset_rsrc_node()
+> - io_req_put_rsrc_nodes() (REQ_F_BUF_NODE indicates non-NULL buf_node)
 > 
-> LSS-NA 2025 is a technical forum for collaboration between Linux 
-> developers, researchers, and end-users. Its primary aim is to foster 
-> community efforts in deeply analyzing and solving Linux operating system 
-> security challenges, including those in the Linux kernel. Presentations 
-> are expected to focus deeply on new or improved technology and how it 
-> advances the state of practice for addressing these challenges.
->
-> Key dates:
+> Only io_splice_cleanup() can call io_put_rsrc_node() with a NULL node.
+> So move the NULL check there.
 > 
->     - CFP Closes:  Monday, March 10 at 11:59 PM MDT / 10:59 PM PDT
->     - CFP Notifications: Monday, March 31
->     - Schedule Announcement: Wednesday, April 2
->     - Presentation Slide Due Date: Tuesday, June 24
->     - Event Dates: Thursday, June 26 ??? Friday, June 27
-> 
-> Location: Denver, Colorado, USA (co-located with OSS).
+> [...]
 
-I reflected a great deal before responding to this note and finally
-elected to do so.  Given the stated desire of this conference to
-'focus deeply on new or improved technologies' for advancing the state
-of practice in addressing the security challenges facing Linux, and
-presumably by extension, the technology industry at large.
+Applied, thanks!
 
-I'm not not sure what defines membership in the Linux 'security
-community'.  I first presented at the Linux Security Summit in 2015,
-James you were moderating the event and sitting in the first row.
+[1/1] io_uring/rsrc: avoid NULL check in io_put_rsrc_node()
+      commit: 496f56bf9f1acf11ce14489f34d81ba6e4023f42
 
-If there is a desire by the Linux Foundation to actually promote
-security innovation, it would seem the most productive use of
-everyone's time would be to have a discussion at this event focusing
-on how this can best be accomplished in the context of the current
-Linux development environment.
+Best regards,
+-- 
+Jens Axboe
 
-If we have done nothing else with our Quixote/TSEM initiative, I
-believe we have demonstrated that Linux security development operates
-under the 'omniscient maintainer' model, a concept that is the subject
-of significant discussion in other venues of the Linux community:
 
-https://lore.kernel.org/lkml/CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com/
 
-I'm not here to debate whether that is a good or bad model.  I do
-believe, that by definition, it constrains the innovation that can
-successfully emerge to something that an 'omniscient' maintainer
-understands, feels comfortable with or is not offended by.
-
-It should be lost on no one that the history of the technology
-industry has largely been one of disruptive innovation that is
-completely missed by technology incumbents.
-
-The future may be the BPF/LSM, although no one has yet publically
-demonstrated the ability to implement something on the order of
-SeLinux, TOMOYO or Apparmor through that mechanism.  It brings as an
-advantage the ability to innovate without constraints as to would be
-considered 'acceptable' security.
-
-Unfortunately, a careful review of the LSM mailing list would suggest
-that the BPF/LSM, as a solution, is not politically popular in some
-quarters of the Linux security community.  There have been public
-statements that there isn't much concern if BPF breaks, as the concept
-of having external security policy is not something that should be
-supported.
-
-We took an alternative approach with TSEM, but after two years of
-submissions, no code was ever reviewed.  I'm not here to bitch about
-that, however, the simple fact is that two years with no progress is
-an eternity in the technology industry, particularly security, and
-will serve to drive security innovation out of the kernel.
-
-One can make a reasoned and informed argument that has already
-happened.  One of the questions worthy of debate at a conference with
-the objectives stated above.
-
-I apologize if these reflections are less than popular but they are
-intended to stimulate productive discussion, if the actual intent of
-the conference organizers is to focus deeply on new and improved
-security technology.
-
-There is far more technology potentially available than there are good
-answers to the questions as to how to effectively exploit it.
-
-> James Morris
-> <jmorris@namei.org>
-
-Best wishes for a productive week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
 
