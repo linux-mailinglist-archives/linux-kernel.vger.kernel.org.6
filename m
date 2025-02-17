@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-516983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CB3A37A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D82A37A98
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 05:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F5C3AD4B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300923AD0BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 04:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372A515382E;
-	Mon, 17 Feb 2025 04:32:32 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBB715C0;
-	Mon, 17 Feb 2025 04:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7FA14A4DF;
+	Mon, 17 Feb 2025 04:33:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F4D15C0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 04:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739766751; cv=none; b=G9mPFMkg81xWbXGOFDc2Y2sh9P3ukqZpxQe1pLump6+o0EXCFc6TP13r2SreW282ZEFWkK4N38GAeIvkNhGramnrVB32e1eBo3yVaiQBWVkzMkTr5vshklhkg5z0JBM7rJ/i2DUC+4YnZlAtoqHMpEBrbxSpxDVzdq60xrzU67M=
+	t=1739766820; cv=none; b=nW464E/gA1yVmDlnpM3XF7HzNI8/ZieZitv3O8OsiPwmuzR0BcsCl5iC2JBjwPdb2u52B+6a6wg0KmyBbaI7Rw78xxEEuMqk7J/P8+CPjWF5LmfyDgQR9JByoHCydv/QA8JYaulFMGU/skOFALoAa1+aQic9wFKNHpcnpSLLBTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739766751; c=relaxed/simple;
-	bh=5z5piMPEs9n2Pqlr3VYVgUvga0fGL8oZ7szaXczF8pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+pG3LZPOtlB5iOVedah8CroBjivSu1R+6kFrFY+eGcl6odET/Fxg4pXHavYPi6Hb8EyspPlpCLJKSQHg3paNWmSSDYCicD9jYxB9NuTsOz/rCQyuz3H4HAn1nsYCDVCxAUlvmiEQKChCeV/3Pz8mSlvCl7i5wxPka9huEJGd24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrADnyO2au7JnojqEAA--.2063S2;
-	Mon, 17 Feb 2025 12:31:22 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wCXIO+Yu7JnnveMAA--.31239S2;
-	Mon, 17 Feb 2025 12:31:21 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dongliang Mu <dzm91@hust.edu.cn>
-Subject: [PATCH] MAINTAINERS: add reviewer for Chinese translations
-Date: Mon, 17 Feb 2025 12:31:08 +0800
-Message-ID: <20250217043109.3571459-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739766820; c=relaxed/simple;
+	bh=ngdiaS6kobfS+FwjdswoDTh9JXleLpuviZIZEQj80fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lxhi6PsOePHBNZETIEaFjNrtWy2hsDZcBb4I5dpzHUBLdwoxEjOD1KueRHb80UTPzndushXiRdY0MKhYq5rq7AXmGB+yK1i5KCL+4jf2HpZ78ghw4IlpBODjxZ4GceM5mERgTOZ/lOi4fAWB5CSWQjfPI+u+xjYFnhfw9ns/+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3077E1063;
+	Sun, 16 Feb 2025 20:33:58 -0800 (PST)
+Received: from [10.162.16.135] (unknown [10.162.16.135])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C2B43F59E;
+	Sun, 16 Feb 2025 20:33:34 -0800 (PST)
+Message-ID: <72f188c5-c078-4ff5-81a6-3a0c8b2edaea@arm.com>
+Date: Mon, 17 Feb 2025 10:03:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrADnyO2au7JnojqEAA--.2063S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF15Kr4xKrWDtF13Cw17Wrg_yoW3trb_Ar
-	48JFW2vryDJF1IqayvgF93Jr1Fvw48CF1kA3ZIk39rAa4DtayDXFyqg3s29r15G3yxuFy5
-	Xas7J3sxWr9F9jkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbv8YjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
-	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
-	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
-	v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
-	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
-	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxAIw2
-	8IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
-	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU0X_-JUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 12/16] arm64/mm: Support huge pte-mapped pages in vmap
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Steve Capper <steve.capper@linaro.org>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250205151003.88959-1-ryan.roberts@arm.com>
+ <20250205151003.88959-13-ryan.roberts@arm.com>
+ <9a0d3009-18fc-4b53-941a-b6d830fce36a@arm.com>
+ <21da59a8-165d-4423-a00d-d5859f42ec11@arm.com>
+ <0dd74f57-902a-4a6d-9f77-31963b5953d1@arm.com>
+ <d6af21f1-e539-4fa6-a3f8-c4859b1325c5@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <d6af21f1-e539-4fa6-a3f8-c4859b1325c5@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dongliang Mu has translated a substantial portion of kernel documentation
-into Chinese, developed scripts/checktransupdate.py utility to automate
-tracking of translated content updates, and actively reviewed patches.
 
-Thus, add Dongliang Mu as a reviewer for the translations of
-Chinese Documentation.
 
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On 2/13/25 14:39, Ryan Roberts wrote:
+> 
+>>>>> +#define arch_vmap_pte_range_map_size arch_vmap_pte_range_map_size
+>>>>> +static inline unsigned long arch_vmap_pte_range_map_size(unsigned long addr,
+>>>>> +						unsigned long end, u64 pfn,
+>>>>> +						unsigned int max_page_shift)
+>>>>> +{
+>>>>> +	if (max_page_shift < CONT_PTE_SHIFT)
+>>>>> +		return PAGE_SIZE;
+>>>>> +
+>>>>> +	if (end - addr < CONT_PTE_SIZE)
+>>>>> +		return PAGE_SIZE;
+>>>>> +
+>>>>> +	if (!IS_ALIGNED(addr, CONT_PTE_SIZE))
+>>>>> +		return PAGE_SIZE;
+>>>>> +
+>>>>> +	if (!IS_ALIGNED(PFN_PHYS(pfn), CONT_PTE_SIZE))
+>>>>> +		return PAGE_SIZE;
+>>>>> +
+>>>>> +	return CONT_PTE_SIZE;
+>>>>
+>>>> A small nit:
+>>>>
+>>>> Should the rationale behind picking CONT_PTE_SIZE be added here as an in code
+>>>> comment or something in the function - just to make things bit clear.
+>>>
+>>> I'm not sure what other size we would pick?
+>>
+>> The suggestion was to add a small comment in the above helper function explaining
+>> the rationale for various conditions in there while returning either PAGE_SIZE or
+>> CONT_PTE_SIZE to improve readability etc.
+> 
+> OK I've added the following:
+> 
+> /*
+>  * If the block is at least CONT_PTE_SIZE in size, and is naturally
+>  * aligned in both virtual and physical space, then we can pte-map the
+>  * block using the PTE_CONT bit for more efficient use of the TLB.
+>  */
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25c86f47353d..ae45135deb9e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5405,6 +5405,7 @@ F:	Documentation/dev-tools/checkpatch.rst
- CHINESE DOCUMENTATION
- M:	Alex Shi <alexs@kernel.org>
- M:	Yanteng Si <siyanteng@loongson.cn>
-+R:	Dongliang Mu <dzm91@hust.edu.cn>
- S:	Maintained
- F:	Documentation/translations/zh_CN/
- 
--- 
-2.43.0
-
+Sounds good, thanks !
 
