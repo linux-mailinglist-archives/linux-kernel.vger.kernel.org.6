@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-517419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE3AA38077
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:44:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF61DA38079
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6E87A50DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931B516A827
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78943217657;
-	Mon, 17 Feb 2025 10:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A26D217728;
+	Mon, 17 Feb 2025 10:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="LmYVUA+T"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gqnefQHw"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB5216E1E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407C217715
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789058; cv=none; b=ujvRsTqXpxxsVFuAD14Tk2v/5vhQ5m0SYMOg1VHnr2QoVTU/MrePL0If9dXEUNqLcFzMjIgNUzQlRFKLYjiG8jJPM9Vh1844ArJsy0VpvNchdsdo2/q0p5JOuJm2jmPRaGYaGxiCp9rtaVoNb4DzpwZ6SlkOMoIzm7VMOerDS0M=
+	t=1739789062; cv=none; b=dmx00gDKaupKQw6i3DbVj/WaJaFZZ2lvPn5NvceKPq7qB88d3rV7/sWHZy7BsoQE4/z52iMns71id0JwuwsDkpWu7WRI0N5XleW21XuguqkoCRLDoeGH6lfe1lD82xbftC1OyWOkvECNUW7WuN3qDSiI2JAajTf8+kCHy0slBhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789058; c=relaxed/simple;
-	bh=D0MOkPWP2WN17C0xDRNnf0+yyPZKfDZ1qJT410554nU=;
+	s=arc-20240116; t=1739789062; c=relaxed/simple;
+	bh=uQ8LmxvfpYhFeZGPSSIszHgvVvDG6OuDw4JIDrK+H50=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OrJhSIYXq1TeO8rBhjJLVs0t9/tEI7GyvsgUUp09oUzMo1Ry5RwEcPqA1KNhsnWJSCqEsX0o+9RIK9KNMJKHjafKsWFhPg5FOY3S/jaNsOXGm1WP6qS9DPYPUGSDXkbWXjHw9oxctnu0KspcUeF2Vxxj/2nuHxiw7xgOYOR+jcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=LmYVUA+T; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85527b814abso57825739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:44:17 -0800 (PST)
+	 To:Cc:Content-Type; b=osfMM98wMfoPfgL4KGaze5fiM5WDJ63qrMfUYKJGWoUxGYKIuIc2fHSyr3K3fYHnpaqLqPThWJzDhw9KnZeSiDzfJont+vq+3eKErmIs/Nrxl1GsONTkLDl3WWMHngDcdFhGdqmuksfxT/KKxGQ8P+9c07usgQCypGZBjMaUZew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gqnefQHw; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-546237cd3cbso709520e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:44:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1739789056; x=1740393856; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739789057; x=1740393857; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KEC9IKTHffK3WvFzTVA0qo6PFNnuHBV9vhhQNHZZ8nE=;
-        b=LmYVUA+Tj+NDjrdPhsGWPrj1g+2HJVDT/CgTmxfUZJizho8FlBR8GSgYYeVu0djQx7
-         pRIwm6LPtZ6X1/mRfBjErYmPm+Xvg35pPNnYTkviQ6ByyGd/nbOoby/HzGfu5ScFWJzs
-         CYVU4gpFWw1UKKC68onDKmT5JajZCLeV0Wy/957bXZ0FW4GN5i1K6e2CHxNDqzKqi9pZ
-         uvojgxQ/XVhzF4EEnqrJfs/QsdUAqjTLJi4Nk7hAweIYLXHldxmEZKwi1dtJmXJRQHwZ
-         NiLuMplnOBCnhilquvJdWxqeWTOAFoOhdZYrbOF4n0U5BsF+910STC0X9XTW8xOM12kZ
-         aFSA==
+        bh=Yt+oE3wM3YFlQ1Z57+Zha3HANGstrZZPpE/lwoni22w=;
+        b=gqnefQHw/p1Lzp9YgOSNM+D/KD0P971LjlG/wSam0i4UqPKDUTKvy299i1YD7oMmsG
+         oyyNC6QM1wt9/tu8vN0K0jrg2euoMoma45b6axtx27rYrrVVDO7LINDmBReA1lARsPOY
+         1mrM6THSQLnD8/x5+J0IXoBfdvDqYgD53tpuZTW7Z/dAvgielD7gRJHP7MGXHdru3B53
+         7VWtfWe6aHPrEn/65oBGltkklF8N+NM47IzxQju+SPQ+Fgha2C0kTGIGFjvdbAqAlJOQ
+         RdQvnpNtZx8jI/IIl0F40+Ba+Lg0IIxn+McNpyrMaclf38wjB+Zptv0JvKwu/e+dz4eE
+         vmqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739789056; x=1740393856;
+        d=1e100.net; s=20230601; t=1739789057; x=1740393857;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KEC9IKTHffK3WvFzTVA0qo6PFNnuHBV9vhhQNHZZ8nE=;
-        b=X8y9UPg+ZI+VxKIhAyasaGjcPIKQp7KKg8MmrJjc8LFVeVogmgvh3vEqhVQnr9JYfu
-         6CIopiO8QowXO7kEb8Uay6E9PmBjt4pUtpFBC80e7NA53EferSXy4sbyyFFFH5uC+Xyy
-         cD0TwpEucaUBVBx2oXacMThi6NlbUEUsXmrh/oxMy7f0KL6ayFCQ48SC9b74Xw8kdVMj
-         iTfgqrFOIp++2owdvqL6LT8AaSojIOiU24ws73mW6Me3nehGhfN0SgBPatZuS5pksCMN
-         sJod0ly25ss0HywrH9COTGN16NgFAge9IPw9rpFgEuwOGneigYHU40s439PODTLza4qT
-         /c4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWvTUMiXCXYuUoGyt+nat/tDTccyvgEZYnjfAQyqhfr/QBf4hnZHGBGJ5MvdMg49jx24X5JPzs2K/oBgrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZqWsvIHQaOE9kDocDYDf9FRWWP8SgHGpYTD3rSqGc63IG1Sb0
-	YMLTVy//sfq1/a2iO2hMweLxuZcmdHzHWrssw6txwWbGj0pbJsTjxdEkGFghFTPxrbuAf4W8V6A
-	cRVYL32qc3CW5FU4gwBYLUT8aVqnaxz5MMvsurA==
-X-Gm-Gg: ASbGncsOThMv83vfZilfcSgb0MlXiVTkaSHiF4xi4xFTiTAUg+BhkVeIakE29rKEPPv
-	b6BeQt+DqDWnzvSLFACuMmBeuN+ehXHLj2wqlPVI8QbDI4FTf2WkGDYm6VIE6KwTmH+QpJ2bPhQ
-	==
-X-Google-Smtp-Source: AGHT+IEx965Kes7J9PFe/fEC2qu7c1lQXF8r1O+rb4FsIYIqeAylTS8U1CDqrpwteAP6QAUGVznUvUBjnd38LJ5N3iE=
-X-Received: by 2002:a05:6e02:2181:b0:3d1:4b97:4f2d with SMTP id
- e9e14a558f8ab-3d280763f51mr58551715ab.5.1739789056483; Mon, 17 Feb 2025
- 02:44:16 -0800 (PST)
+        bh=Yt+oE3wM3YFlQ1Z57+Zha3HANGstrZZPpE/lwoni22w=;
+        b=MfDxp9N2FuIBrvoZGI6Zmiiv3pjJKHFQdANjw/oBeCKdTvhZZ8kVeL7gKKySj1qB57
+         ocxD2inaPZ8vcX/migDTWVsqZ9orh6ySCbeFa4hW48XJuf8l8YhUmMpbd7pvY1jZGdlW
+         iQbV5zalmSomsJ7lYf+UX/FhQWf4gWzlKPHNPD1nVmCx5rzXdQUZhLIll1pLMSOzPG5t
+         xndjtZKwOCRrG6KwKdsVf2erdZ/32rN6ExpHjz0/zet3j+bDwKvh1umzfJ/FNfRUrFhU
+         g4YU+w7UR6zP1eCYbJuakBTlGTNJynm1lZVuCRygfHbseu/dZzn9ieIEerOnWNNHNg/0
+         INmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVbbCcQgx99VtMaDvC2BO5nur4YTk1QkCTh+UUUbEb3UMksLtEXQlQwOlT6/gF3s6LH155TxMFJVt55m8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiciBTZ8NMUXmuqclGv3FdEpqtK4MAOKSxh2nt6O0nodh3qZEI
+	GiK7u5FlJS5uyFsFVr2BTKe+6o3PJhyS1PqxwS/8ZMeC3wIhY5PNAP92sogyQvvAI2AbXDBjVy+
+	rcjyz6mZvVX8v7B/21q570GjpSxIXzYghUsAQxg==
+X-Gm-Gg: ASbGnctUe8Oa9CPle1zo98KSWpx02oix/MO3CiMLqVgr7df3ct2N/b9uqBlgG1HLvGs
+	eT+s80dl37tjCzhzqsGde3M1lsNl5SVbizquBLMJMJzvVntNYeNAiY64GdOofijhpdJgBfQdc3d
+	HaXwsO2VszgRD03xMLX/Y2BwgVcw==
+X-Google-Smtp-Source: AGHT+IEI62f9UnsAynh4esWgzwohOE4sUhXWxtq04rEtJUZH4Mqg9mRbapKQMak9tdDKZrC7n7AB8cELUFuTE56te7A=
+X-Received: by 2002:a05:6512:ba6:b0:545:532:fd2f with SMTP id
+ 2adb3069b0e04-5452fe3659bmr2985562e87.12.1739789057229; Mon, 17 Feb 2025
+ 02:44:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217084506.18763-7-ajones@ventanamicro.com> <20250217084506.18763-11-ajones@ventanamicro.com>
-In-Reply-To: <20250217084506.18763-11-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 17 Feb 2025 16:14:05 +0530
-X-Gm-Features: AWEUYZkbD0BHzIgdISlWzpxxTEzeWANGopBZGPKVtWrdTFLAAwqfFFUQyuGlYn8
-Message-ID: <CAAhSdy2y-hsdNLQf3YVGkC-v7ZdK1NpR6TDnJRoce+qD+7m3Wg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] riscv: KVM: Fix SBI TIME error generation
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, cleger@rivosinc.com
+References: <20250212085918.6902-1-brgl@bgdev.pl> <CAMRc=MdFwe2onYhwY__n-kAOSrXKKDWJ38hpbYb0711Nx60DHw@mail.gmail.com>
+ <20250212155512.GE2274105@google.com> <CAMRc=Met68e5c16ShiJ1mHQM-GSvautN_whVMGh53g3mx7OQSg@mail.gmail.com>
+In-Reply-To: <CAMRc=Met68e5c16ShiJ1mHQM-GSvautN_whVMGh53g3mx7OQSg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 17 Feb 2025 11:44:05 +0100
+X-Gm-Features: AWEUYZk49jy-1w_HUmYZg1lf98RZBZpWb5ihSxJcd1tcR0YWBhgjwZ0Wbzi5FwQ
+Message-ID: <CAMRc=MfRW9ZxjoRunjqgz1xkFWRS1KyDJeTy7zrRGhoAC63dVA@mail.gmail.com>
+Subject: Re: [PATCH] leds: aw200xx: don't use return with gpiod_set_value() variants
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 2:15=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
+On Wed, Feb 12, 2025 at 5:39=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> When an invalid function ID of an SBI extension is used we should
-> return not-supported, not invalid-param.
+> On Wed, Feb 12, 2025 at 4:55=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Wed, 12 Feb 2025, Bartosz Golaszewski wrote:
+> >
+> > > On Wed, Feb 12, 2025 at 9:59=E2=80=AFAM Bartosz Golaszewski <brgl@bgd=
+ev.pl> wrote:
+> > > >
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > While it now returns void, it will soon be converted to return an
+> > > > integer instead. Don't do `return gpiod_set...`.
+> > > >
+> > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > Closes: https://lore.kernel.org/oe-kbuild-all/202502121512.CmoMg9Q7=
+-lkp@intel.com/
+> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > ---
+> > > >  drivers/leds/leds-aw200xx.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200x=
+x.c
+> > > > index 08cca128458c..fe223d363a5d 100644
+> > > > --- a/drivers/leds/leds-aw200xx.c
+> > > > +++ b/drivers/leds/leds-aw200xx.c
+> > > > @@ -379,7 +379,7 @@ static void aw200xx_enable(const struct aw200xx=
+ *const chip)
+> > > >
+> > > >  static void aw200xx_disable(const struct aw200xx *const chip)
+> > > >  {
+> > > > -       return gpiod_set_value_cansleep(chip->hwen, 0);
+> > > > +       gpiod_set_value_cansleep(chip->hwen, 0);
+> > > >  }
+> > > >
+> > > >  static int aw200xx_probe_get_display_rows(struct device *dev,
+> > > > --
+> > > > 2.45.2
+> > > >
+> > >
+> > > Lee, Pavel:
+> > >
+> > > If this is OK for you, can you please provide me with an immutable
+> > > branch so that I can pull it into the GPIO tree? It seems it's the
+> > > only such use-case in the tree apart from the gpio.h header that I ca=
+n
+> > > fix locally. Alternatively you can just Ack this and let me take it
+> > > through the GPIO tree.
+> >
+> > I'm okay with it, but why do you need it?
+> >
 >
-> Fixes: 5f862df5585c ("RISC-V: KVM: Add v0.1 replacement SBI extensions de=
-fined in v0.2")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> For historical reasons gpiod_set_value() and its variants don't have a
+> return value. However, we now support all kinds of hardware that can
+> fail to set a line value: I2C, SPI, USB (hot-unpluggable chips), etc.
+> I want to rework the GPIO subsystem to make these functions return int
+> and become able to indicate failures. Build-bot complained about my
+> series[1] and pointed at this driver after the interface for
+> gpiod_set_value_cansleep() changed in patch 1. This is why I want to
+> fix it, get it into my tree and then pick up the series.
+>
+> Sorry for not explaining it in detail earlier.
+>
+> Bart
+>
+> [1] https://lore.kernel.org/linux-gpio/20250211-gpio-set-retval-v1-0-52d3=
+d613d7d3@linaro.org/
 
-LGTM.
+Is it fine for you if I take it through the GPIO tree? Could you
+please leave your Ack under the patch if so?
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
-
-> ---
->  arch/riscv/kvm/vcpu_sbi_replace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/vcpu_sbi_replace.c b/arch/riscv/kvm/vcpu_sbi_=
-replace.c
-> index 74e3a38c6a29..5fbf3f94f1e8 100644
-> --- a/arch/riscv/kvm/vcpu_sbi_replace.c
-> +++ b/arch/riscv/kvm/vcpu_sbi_replace.c
-> @@ -21,7 +21,7 @@ static int kvm_sbi_ext_time_handler(struct kvm_vcpu *vc=
-pu, struct kvm_run *run,
->         u64 next_cycle;
->
->         if (cp->a6 !=3D SBI_EXT_TIME_SET_TIMER) {
-> -               retdata->err_val =3D SBI_ERR_INVALID_PARAM;
-> +               retdata->err_val =3D SBI_ERR_NOT_SUPPORTED;
->                 return 0;
->         }
->
-> --
-> 2.48.1
->
+Thanks in advance,
+Bartosz
 
