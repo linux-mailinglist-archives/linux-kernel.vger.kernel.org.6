@@ -1,123 +1,96 @@
-Return-Path: <linux-kernel+bounces-517499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91666A381A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:27:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC82EA381A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFA73A4448
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7744016A702
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34494217F48;
-	Mon, 17 Feb 2025 11:26:50 +0000 (UTC)
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA992135C7;
-	Mon, 17 Feb 2025 11:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBC2217F33;
+	Mon, 17 Feb 2025 11:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1kMivnV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6AF217713
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739791609; cv=none; b=aKoOlcE5uW6U1GBMLkF4bpEn7LmPl4ozdeCVAP+bG2QJsCG+z3s3E8SUX3vOcxlXpGXSkqTdaMSHYnun9GeI9M2glYi7UVeu+62ldlYqMyvZAcGqk+o0N11kjFnUa05dR4D0nuhmfDUOkc07Ez326JQeseggq08eAABhrd5p54E=
+	t=1739791699; cv=none; b=D+0ZiNvxhifvl4sInMTpFTaUa/Tg2CCM8RDueLe8//IF2PZx+K8hh5D3EWtmRn941nlXjWgjfVX4URH2gjMdjbvlHa6fg8240VRmkPwm/M6r1oa7grQcjA0FAZwsb9bUW0khmpQrheT7924nnqTn7V7qy//SWqlljIFeVXCIvro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739791609; c=relaxed/simple;
-	bh=OuMrnB1xAZdhRcTfUDDYRq3ryHgXLtSqmCrg3cU93EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srp3aKoz/yDWjdc8+ALDwCCUu/32J5FrmPDQmdozD4Sl76CDm/WKcVX3SbdcSJlTq7T2z18aRA3oxMweBv/2rq3wH9SVDE08yMzCSeF/UhO7ihMSfgnsQDblG/Q6NqjTxXjLsbXGt6anAUy1+JayF7zpbO1S/D2DYJfepuxNq8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 17 Feb 2025 20:26:46 +0900
-Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
-	by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id 08C9720090C2;
-	Mon, 17 Feb 2025 20:26:46 +0900 (JST)
-Received: from iyokan2.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Mon, 17 Feb 2025 20:26:46 +0900
-Received: from [10.212.246.222] (unknown [10.212.246.222])
-	by iyokan2.css.socionext.com (Postfix) with ESMTP id 10655398;
-	Mon, 17 Feb 2025 20:26:45 +0900 (JST)
-Message-ID: <36cc27be-4ba7-4d65-b32b-2a1e0b03b161@socionext.com>
-Date: Mon, 17 Feb 2025 20:26:44 +0900
+	s=arc-20240116; t=1739791699; c=relaxed/simple;
+	bh=D6bBaw3pzPm9sUurgmo05ZfpFaM0hDZ8jBH8Yj6VcVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sH9XRqgJnJBhBhXO4cXTCpUVTTSXAEPyPXL9cJieBgiL3grnN+R60McDk+h+yo04Oe3dBAuWCnOzOW+B6l+5dzUHtEKUJBxSfJacJ+u+L1qBcHnH+hshKaqc5DU6p04tX9Cspw1MUXLUzcZlNwt4rcCRe+xvzetKYIp7/bvCGAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1kMivnV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEB2C4CED1;
+	Mon, 17 Feb 2025 11:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739791699;
+	bh=D6bBaw3pzPm9sUurgmo05ZfpFaM0hDZ8jBH8Yj6VcVQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q1kMivnV1CFv1j0+aRxvvNWr21DAiL8zGo3NR1vuxVSwTuycA9wgfv1eFVaIT11B0
+	 qORDih+jdNyWOymSS3p7VWe/o5j/MPRsxAf36a2Jqhf9kZDcOqdwEdusXs2W8tj9bE
+	 6krWE1jbJqXXkkqVtQPtpBdg1NGFVQw4FSD5nb29YO9xJ2pjDDaSU8n2X4F/vfBL2s
+	 awU46cxn5heA8ZH9o4+UmTvAdYYXGtVhH++xGGMaf/xA/BWt1gonWBvqgQ+riTos1B
+	 WRJUK7texV4PU3+wlXNqz8OcJhJJ0DtPiovAp1t+fT2icOAC+bLWWJyIPj9DWd44qX
+	 6ghkzIuhcFyjQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <christian@brauner.io>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH] binder: remove unneeded <linux/export.h> inclusion from binder_internal.h
+Date: Mon, 17 Feb 2025 20:27:51 +0900
+Message-ID: <20250217112756.1011333-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] misc: pci_endpoint_test: Fix irq_type to convey
- the correct type
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Krzysztof Wilczynski <kw@linux.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250210075812.3900646-1-hayashi.kunihiko@socionext.com>
- <20250210075812.3900646-4-hayashi.kunihiko@socionext.com>
- <20250214172533.szrbreiv45c3g5lo@thinkpad>
-Content-Language: en-US
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-In-Reply-To: <20250214172533.szrbreiv45c3g5lo@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Manivannan,
+binder_internal.h is included only in the following two C files:
 
-On 2025/02/15 2:25, Manivannan Sadhasivam wrote:
-> On Mon, Feb 10, 2025 at 04:58:10PM +0900, Kunihiko Hayashi wrote:
->> There are two variables that indicate the interrupt type to be used
->> in the next test execution, "irq_type" as global and test->irq_type.
->>
->> The global is referenced from pci_endpoint_test_get_irq() to preserve
->> the current type for ioctl(PCITEST_GET_IRQTYPE).
->>
->> The type set in this function isn't reflected in the global "irq_type",
->> so ioctl(PCITEST_GET_IRQTYPE) returns the previous type.
->> As a result, the wrong type will be displayed in "pcitest" as follows:
->>
->>      # pcitest -i 0
->>      SET IRQ TYPE TO LEGACY:         OKAY
->>      # pcitest -I
->>      GET IRQ TYPE:           MSI
->>
-> 
-> Could you please post the failure with kselftest that got merged into
-> v6.14-rc1?
+  $ git grep binder_internal.h
+  drivers/android/binder.c:#include "binder_internal.h"
+  drivers/android/binderfs.c:#include "binder_internal.h"
 
-The kselftest doesn't call GET_IRQTYPE, so current kselftest doesn't fail.
+Neither of these files use the EXPORT_SYMBOL macro, so including
+<linux/export.h> is unnecessary.
 
-If necessary, I can add GET_IRQTYPE test after SET_IRQTYPE of each
-interrupt test prior to this patch.
-
-         pci_ep_ioctl(PCITEST_SET_IRQTYPE, 0);
-         ASSERT_EQ(0, ret) TH_LOG("Can't set Legacy IRQ type");
-
-+       pci_ep_ioctl(PCITEST_GET_IRQTYPE, 0);
-+       ASSERT_EQ(0, ret) TH_LOG("Can't get Legacy IRQ type");
-
-However, pci_ep_ioctl() returns zero if OK, the return value should be
-changed to the actual return value.
-
-  #define pci_ep_ioctl(cmd, arg)                 \
-  ({                                             \
-         ret = ioctl(self->fd, cmd, arg);        \
--       ret = ret < 0 ? -errno : 0;             \
-+       ret = ret < 0 ? -errno : ret;           \
-  })
-
-Before applying the patch, this test fails.
-
-#  RUN           pci_ep_basic.LEGACY_IRQ_TEST ...
-# pci_endpoint_test.c:104:LEGACY_IRQ_TEST:Expected 0 (0) == ret (1)
-# pci_endpoint_test.c:104:LEGACY_IRQ_TEST:Can't get Legacy IRQ type
-# LEGACY_IRQ_TEST: Test terminated by assertion
-#          FAIL  pci_ep_basic.LEGACY_IRQ_TEST
-
-Thank you,
-
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
-Best Regards
-Kunihiko Hayashi
+
+ drivers/android/binder_internal.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+index e4eb8357989c..6a66c9769c6c 100644
+--- a/drivers/android/binder_internal.h
++++ b/drivers/android/binder_internal.h
+@@ -3,7 +3,6 @@
+ #ifndef _LINUX_BINDER_INTERNAL_H
+ #define _LINUX_BINDER_INTERNAL_H
+ 
+-#include <linux/export.h>
+ #include <linux/fs.h>
+ #include <linux/list.h>
+ #include <linux/miscdevice.h>
+-- 
+2.43.0
+
 
