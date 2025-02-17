@@ -1,126 +1,182 @@
-Return-Path: <linux-kernel+bounces-518188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380A3A38B31
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:20:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 236CCA38B34
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1D71893D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC849189408A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A2C235BF1;
-	Mon, 17 Feb 2025 18:20:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93F9235BF7;
+	Mon, 17 Feb 2025 18:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="hUUIdwp3"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF654229B18;
-	Mon, 17 Feb 2025 18:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739816408; cv=none; b=kIk9F1djGtTMiqT0wTH25HcSxZzlq9M693gFOmYVlR7QRVEemX6N4PQIoXCyg/hUS8+FfCNOGHYH4Pn3Rxm+W6l6zgatmwuyLkfSgfYnSRbHtYX3OHWVbWiz05mvN6fEN7dmbQ4adt05WIBIqqRQdbP00UU9RaJQyahYZEMAAlo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739816408; c=relaxed/simple;
-	bh=7v9JiuvwjKhG5Dg3ZHjNC2SWZm0sNugydy6hsXZgOqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uX1803TV6yNk71bjPyMSQ2CVHdc4oYZmZ2cKR6VsJOsKM+WOS17FuKm2pTSYoBSOHcoEYWo9qfjKooM4rKl3mGPB25AYEcmlYdsPiN+nJeVhaJ77CfEBuv8NtYUHAFA+419D7ZXaJFByfvYWS45olks8gYZR7nu4TQShkle9LTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C0DC4CED1;
-	Mon, 17 Feb 2025 18:20:03 +0000 (UTC)
-Date: Mon, 17 Feb 2025 18:20:01 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Ionela Voinescu <ionela.voinescu@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Beata Michalska <beata.michalska@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, will@kernel.org, viresh.kumar@linaro.org,
-	sumitg@nvidia.com, yang@os.amperecomputing.com,
-	vanshikonda@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, ptsm@linux.microsoft.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v10 2/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <Z7N90XZTICfLZCm_@arm.com>
-References: <20250131162439.3843071-1-beata.michalska@arm.com>
- <20250131162439.3843071-3-beata.michalska@arm.com>
- <CAJZ5v0g+yax=pT4m_2MTd9kUwbk5VBp2wkctTYJpFRU3myEjPQ@mail.gmail.com>
- <Z7NOcd3IamyMTjbH@arm.com>
- <Z7NQrBvnfYwXva1W@arm.com>
- <Z7NeTrorAqDxa8QM@bogus>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE622F3BA;
+	Mon, 17 Feb 2025 18:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739816538; cv=pass; b=pzWvtY6f1TXY4Cfrsc7swab9TjKXJaRTl8yly3ZAFFTnTyXZK7+N/W2TdVju2tcqYnrBfXCx4VryuV1YwRWK0HnMZiFUQMnBDDekCDTIW00TKwfsZ2I7998PDFfFnVh3J6sJZ168HkhBPlYu1i93IqEqNEF2Q+szeU5IPrACeT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739816538; c=relaxed/simple;
+	bh=j4LI1IWXqRpV1w/6NbQE5p5kYPblT4w+CTNi8ISSl44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fZRjLCKAW3Px6Wanzi858NelvXaeiVjyT2JoAp417YR/ProX7N7r2v2Q6VhUzF9pflMj3P6+Q5vXYTp9vAV8PQLomihuSUlMgmydh1kUNTVWwnz1clBk7Tt+ysFAzhoq5Ulr3aK8lQZQarmrc+PHXUsE6c1h5Fy/KaHVwohEjmA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=hUUIdwp3; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1739816483; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FSDI6hvzppjHNfMqf1bT2xk8SDepDX6IlhW1DlUnW+L4T120jQc2hxnAcGk9fmBtj/cqvOW5wzeHuL9dWN1o9PjFGK2pTWnVnRE/NihBgclGYJ1lMrlZuzPBraxUvmxYK+ouYnirdRegEbpiMvj4WgYqZuHZXjfHr88CtnUydHk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739816483; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=I4gPtRebb+yuMWszCxvF8QdrCp+aDjd19oW25HRljLU=; 
+	b=QvDl393MFB0XSQnZisbMFl2vSE/PM+NI1ufAQi+ZRhABgJDY/9R7lQ4RLryknIjHfWW/90k49PS54cMti9svHV0iwmV/KhYoNi4HK1tu2noDHJ2Kb48pff7XIOyXnxv3YevMfSi82bs/Ci37sPV938GnDREMXFQT+2k/ZT0lEeQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739816483;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=I4gPtRebb+yuMWszCxvF8QdrCp+aDjd19oW25HRljLU=;
+	b=hUUIdwp3y/ZuPBUCyoodXLwxupQoyW0nbKs1vaVl6D8xA65ZRQ4oJbly2oQnOtL+
+	7TyIvhi99nyGGgUtWPmbi6JvVk2rNsEix8U6/nK9wVZK3gl2qSx7MyAo38afKgsOf8S
+	apP+nZkViFrgoiT8W6WR9bTqtlKT6fFo5QverGoQ=
+Received: by mx.zohomail.com with SMTPS id 1739816481776736.929364556648;
+	Mon, 17 Feb 2025 10:21:21 -0800 (PST)
+Message-ID: <398cffa8-5463-47ff-bdeb-3f3167b72312@collabora.com>
+Date: Mon, 17 Feb 2025 21:21:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7NeTrorAqDxa8QM@bogus>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250215210417.60074-1-dmitry.osipenko@collabora.com>
+ <20250215210417.60074-5-dmitry.osipenko@collabora.com>
+ <110db742-25a0-4f0c-9620-1af8885d6e1c@xs4all.nl>
+ <3d4b1c45-cc00-4714-8582-0848e38c2ec4@collabora.com>
+ <23eacfe3-cf94-45d3-a405-43185ef32512@xs4all.nl>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <23eacfe3-cf94-45d3-a405-43185ef32512@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Mon, Feb 17, 2025 at 04:05:34PM +0000, Sudeep Holla wrote:
-> On Mon, Feb 17, 2025 at 03:07:24PM +0000, Ionela Voinescu wrote:
-> > On Monday 17 Feb 2025 at 14:57:53 (+0000), Catalin Marinas wrote:
-> > > On Mon, Feb 17, 2025 at 12:52:44PM +0100, Rafael J. Wysocki wrote:
-> > > > On Fri, Jan 31, 2025 at 5:25 PM Beata Michalska <beata.michalska@arm.com> wrote:
-> > > > >
-> > > > > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > > > > and scaling_cur_freq. Both provide slightly different view on the
-> > > > > subject and they do come with their own drawbacks.
-> > > > >
-> > > > > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > > > > rather expensive. Moreover, the information retrieved via this attribute
-> > > > > is somewhat short lived as frequency can change at any point of time
-> > > > > making it difficult to reason from.
-> > > > >
-> > > > > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > > > > the actual level of precision (and source of information) varies between
-> > > > > architectures making it a bit ambiguous.
-> > > > >
-> > > > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > > > > distinct interface, exposing an average frequency of a given CPU(s), as
-> > > > > reported by the hardware, over a time frame spanning no more than a few
-> > > > > milliseconds. As it requires appropriate hardware support, this
-> > > > > interface is optional.
-> > > > >
-> > > > > Note that under the hood, the new attribute relies on the information
-> > > > > provided by arch_freq_get_on_cpu, which, up to this point, has been
-> > > > > feeding data for scaling_cur_freq attribute, being the source of
-> > > > > ambiguity when it comes to interpretation. This has been amended by
-> > > > > restoring the intended behavior for scaling_cur_freq, with a new
-> > > > > dedicated config option to maintain status quo for those, who may need
-> > > > > it.
-> > > > 
-> > > > In case anyone is waiting for my input here
-> > > > 
-> > > > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-> > > > 
-> > > > for this and the previous patch and please feel free to route them
-> > > > both through ARM64.
-> > > 
-> > > Thanks Rafael. I indeed plan to take them through the arm64 tree.
-> > 
-> > Just a mention that this set depends on the patch that Beata linked at
-> > [6]. That patch applies cleanly on next-20250217 and it still
-> > builds/boots/works as expected.
+On 2/17/25 18:44, Hans Verkuil wrote:
+> On 2/17/25 16:36, Dmitry Osipenko wrote:
+>> On 2/17/25 11:31, Hans Verkuil wrote:
+>>> On 15/02/2025 22:04, Dmitry Osipenko wrote:
+>>>> From: Shreeya Patel <shreeya.patel@collabora.com>
+>>>>
+>>>> Add initial support for the Synopsys DesignWare HDMI RX
+>>>> Controller Driver used by Rockchip RK3588. The driver
+>>>> supports:
+>>>>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>>>>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>>>>  - CEC
+>>>>  - EDID configuration
+>>>>
+>>>> The hardware also has Audio and HDCP capabilities, but these are
+>>>> not yet supported by the driver.
+>>>>
+>>>> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>>> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+>>>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>>> ---
+>>>>  drivers/media/platform/Kconfig                |    1 +
+>>>>  drivers/media/platform/Makefile               |    1 +
+>>>>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>>>>  drivers/media/platform/synopsys/Makefile      |    2 +
+>>>>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>>>>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>>>>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2715 +++++++++++++++++
+>>>>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>>>>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+>>>>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>>>>  10 files changed, 3475 insertions(+)
+>>>>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>>>>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>>>>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+>>>>
+>>>
+>>> <snip>
+>>>
+>>>> +static ssize_t
+>>>> +hdmirx_debugfs_if_read(u32 type, void *priv, struct file *filp,
+>>>> +		       char __user *ubuf, size_t count, loff_t *ppos)
+>>>> +{
+>>>> +	struct snps_hdmirx_dev *hdmirx_dev = priv;
+>>>> +	u8 aviif[3 + 7 * 4];
+>>>> +	int len;
+>>>> +
+>>>> +	if (type != V4L2_DEBUGFS_IF_AVI)
+>>>> +		return 0;
+>>>> +
+>>>> +	hdmirx_read_avi_infoframe(hdmirx_dev, aviif);
+>>>> +
+>>>> +	len = simple_read_from_buffer(ubuf, count, ppos,
+>>>> +				      aviif, ARRAY_SIZE(aviif));
+>>>> +
+>>>> +	return len < 0 ? 0 : len;
+>>>> +}
+>>>
+>>> Have you tested this with 'edid-decode -c -I /path/to/avi'? Also test that it is
+>>> empty if there is no AVI InfoFrame (e.g. when there is no incoming video). I don't see
+>>> a test for that in the code.
+>>>
+>>> I also see no sanity check regarding the length of the InfoFrame, it just outputs
+>>> the full array, meaning you get padding as well since the AVI InfoFrame is smaller
+>>> than ARRAY_SIZE(aviif). In fact, edid-decode will fail about that if the -c option
+>>> is used.
+>>>
+>>> See tc358743_debugfs_if_read of how this is typically handled.
+>>
+>> I've tested with 'edid-decode -I /path/to/avi', including the empty AVI
+>> InfoFrame. But without the '-c option'. I'd expect that debugfs should
+>> provide a full-sized raw InfoFrame data, rather than a parsed version.
+>> The parsed data isn't much useful for debugging purposes, IMO. I
+>> intentionally removed the size check that tc358743_debugfs_if_read does
+>> because it appeared wrong to me. Will re-check with '-c option', thanks!
 > 
-> Ah I see it is indeed dependent. Just responded on the other thread before
-> reading this. So it is better if Catalin picks up [6] as well. Sorry for
-> the confusion.
+> The HDMI header contains the actual length that was received. So debugfs should
+> export the actual payload, not the maximum possible payload.
+> 
+> It is common for hardware to reserve room in the register map for the maximum
+> payload, but you only want to export what was actually received.
 
-I picked that one as well. I'll do some tests and push them out later
-today or tomorrow morning.
-
-Thanks.
+If payload is corrupted, it should be handy to see a full payload.
+Otherwise you won't be able to debug anything because driver returns
+zero payload to userspace since it can't parse the header :)
 
 -- 
-Catalin
+Best regards,
+Dmitry
 
