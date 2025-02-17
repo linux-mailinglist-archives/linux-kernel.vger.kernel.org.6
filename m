@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-517562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E1FA3827C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:57:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB34A3826F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7743B6DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:54:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CA1165778
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA52221A43D;
-	Mon, 17 Feb 2025 11:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="QAClIXWv"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7E521A42F;
+	Mon, 17 Feb 2025 11:55:19 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197FC2EF
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7824B218EB3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793284; cv=none; b=qsjeUj4YOOAlxAdpyKwHHduFB7X1U5lXo1yG0r/+pp8a5pvLkHh9o5BPs0TtO2GMi0wicLY2jvt2eN279Nc3uf9YD+4fCUvtR9km6wuyT56C68DPGpBFG32IEUFJCr/Dq+3XZsp+cUB3nkBmiLaU4D2mYQYUOY0T/+LCdSAvQNg=
+	t=1739793319; cv=none; b=ai5NlwJyU4Dyv6XU6JDLrsHVLu7bA21j17hAnmR+aMv0lt7s0eWKEhHKIy6WLxuCjnvDt/eNnYjat9oyLfDgYnPCIifu+d1tZ1LDpEA3Ov3APIjXBsNoqJVZSN3x3KQIXDQfIo5G74f5mHcKUvyjvkMZpsHQA4/IqK0TY5Z4Qzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793284; c=relaxed/simple;
-	bh=CNZT+25ePdrVoRVjO98eXznFTfieoFVKs8XN57JBj0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rEzMJ1xOx2eesoJtaNaesrctc3aKrJnGHlL34oLSgUzA8saO6fj2NSLny5oye/gvjuBPySBL3K3COG59kZa+9iqrOujIr7MfRzx7zogNo3rtBOW0WlSFWzUlpByBEHohtz1Qbj295pfXbbroYGcswCWkyebdsS2ljW2x5N0+8n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=QAClIXWv; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaec111762bso981464166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:54:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1739793280; x=1740398080; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ODoUNIzhz8wbS9RlnqshxBZqUZSt9lnSSqoVHSSyPbo=;
-        b=QAClIXWvVYY01roVLlcpb9TTJ86LJOq+KhJTDD2k/6ImP4iy7SZyLNBPkRBaigkkSr
-         U4utWB2Diy9ewkOktgrDjUpHf7j5YLSavn1NquBdjaPHgtYiJpqv+49QQXP5qMg8mApU
-         9eZjKzhr5JZgxON733sTMGNZcikGleNrP4kmjg4LNcV2zhyJGBoUBXGdkBIoR84WEzZQ
-         /60jp5D5QEoyCsUrnimWYUS7fsA+ASbotSf+9yXvll5ehzTDP3kQhedo8r7DosQN5k0G
-         z7m03Xdlv1ArqJvXwy9IRLIi4WV7wmi31FfXN1RnqaECNz25G5YjArUVRyK5bVZEri9B
-         Dp0w==
+	s=arc-20240116; t=1739793319; c=relaxed/simple;
+	bh=ILp6NWLJjwn2+wYDs/55/nIpNNTPnEsZR6bwXdUBTGI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XNzVGoPnpIBm5sKN3rtbhUdr3Qbt5BcSbQZUK4b3/myFls738v5AxdKuyDtyyvJCramsTkzk2NxU5yXhn2x3ukiFwqjEzQFOgQ9p+r4BuvlJo9vJuM3oPp9dVvKsnpA5ryRbCFct+7X25S5JJB8DlVOJpnXsWKk1ugnwALVEcDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d13fb2256fso31014955ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 03:55:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739793280; x=1740398080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODoUNIzhz8wbS9RlnqshxBZqUZSt9lnSSqoVHSSyPbo=;
-        b=JSwdE2bUxIOxTxBvd429v5IxZ2uveGe0zfkRIguf841Od5vWQ0KuTkmZDMZkPlGUBq
-         Tpa66hlA7a3dWLXa6O7Xh3R2bhvLGESNJWYQ2s52LnrXPHBdf2Dc+R/JwDpwrjrp8Fxo
-         nqKC0B9LvNvycSWZgnSlwE4o0GajPqQ6r0L5NVFhcOVsu5yl05fhZ2Th6fv5Q4n0lXHa
-         e0N9y6N71dAKW0xVmmzXNtIneEHldYOMLUI2luSSc6gE34IB5zRQ66V5X2AYJFgoSe5/
-         qPsowwYpGKm0JmX+g3SCocICgUOPTBF2FylFHnXDRuiWQFp67EL42SfQoBWLFQMfmUxx
-         oBKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUvCw8lDOwef26bMc1U7FA90CKhvVirPY5NDMiYBo9YoS/AGn3f01ZcWzDiwg71pO5pQzWyU1X7m92A+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/cqcvdPlvqQxt/F5+s01M76gOhCNq7zwHyAftFvE7QzChIh/P
-	WV+9mwsBi4VZ/9iGqxJasRP9xlgPuhjTAp3zDCKxzhpB88oTLD9jP6BOf3v5rv4=
-X-Gm-Gg: ASbGnctIjPQtu4F41WtoosdtsgU6H96p/Ozv9P7SRaD2yR96Xg5YacHTBkxrz8CObXj
-	QZWHaijkhVM5hSs1ekurJwFhndT88YlWGGIRT7mWcTxmk4Pan6ZjpN+uNfY5/poU+mhyLnvVXk5
-	4EV/VGACm+varB2bD1n1/jxsGrl7poSN5zIdOaSli4kvue6AyxF9oQ01gg4cutEnn9DFx1hICB2
-	+dCp5KrSWeZuU7qzSVQxeODAAWnP26JI9uPoV7TvhRWtOwCXhSaA82IM/hd3unXqPvh2uzdDVQf
-	/NKc4VOd2k+UaeO8f6WQxIq1KfKXGmmPIiqGwe12juBThck=
-X-Google-Smtp-Source: AGHT+IH5LYB6p/HXb8BGQs5I7Qwcm3npFyWcKGxO91RFb9WWl38/bVbziniG96GtqAkw2iimohL1RQ==
-X-Received: by 2002:a17:907:72c8:b0:ab7:be66:792f with SMTP id a640c23a62f3a-abb7112e046mr1020984366b.49.1739793279612;
-        Mon, 17 Feb 2025 03:54:39 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba9bd6e22sm71743666b.121.2025.02.17.03.54.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 03:54:39 -0800 (PST)
-Message-ID: <37bf04ee-954e-461f-9e37-210a8c5a790a@blackwall.org>
-Date: Mon, 17 Feb 2025 13:54:38 +0200
+        d=1e100.net; s=20230601; t=1739793316; x=1740398116;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+lbVHv9nkluAVpd1VJ6PZljCLsy3EjbT3NB72IM2Efs=;
+        b=hjW86HlPEB3+cJoSSKTYVD1+s4iV+jNZHhstA8dCam2MgXsS+dDgiD6rvoylrmxw3Q
+         EGdnSH1dh9IIwgAO21rHH1NL/Vo7CdHnhJca8iskp0/g9tTTlgEZ0GCFg29Xkg+qQdn7
+         MGmQu27T7gzvEYiMlKL6Pyh//8lQK1nOBlQKA2MzC34lqX+viOSfdlTjkIaImnlWtaPc
+         TMD7S0EmjFXkAq8xlsFJMBqkudV+siTWQc9yCfAIQiNtyIW6XT38OwRAwUYXgPrQooyy
+         sAMkPJ+iaKcqD4g2b7ibrg3iLpsEBEgfRAQc/ikmo6aA0g4eWallBhLMFTX7dgICTkKc
+         OyWA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1OHdeBECMXt55mHqui3JlHOsMxOyrBPCqaPJ6DufaWM7FJ46TAQWaRz36g1dFk7SRY/1SQpl9bop3Fhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdujoNCrS12aPrsw/Zy3boKJ4l/XjCkRYQpqx69Jgpg0Ur99av
+	nSMsEwnke1pk7kgcqHq3qrjuh8jtQS9U+VVVw9Ka99bQqcARDPTj+k0LmoCZHRsnRjijtyt+OQw
+	+FXZ6UcFA1FF97LgxPxiGKcC7W+0GJnKFTlXZHFRO9t5Vin44qWH1VI8=
+X-Google-Smtp-Source: AGHT+IGVc4wtbO074YxvTM6HOoNeAUM7xoiuJHzKiJhlLb1qhI95g/SyTCL0NkKSJYwaUb5UtCjq5ejGormVjjOYiSi427J4CH8G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bridge: locally receive all multicast packets if
- IFF_ALLMULTI is set
-To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
- Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250217112621.66916-1-nbd@nbd.name>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250217112621.66916-1-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cd82:0:b0:3cf:b3ab:584d with SMTP id
+ e9e14a558f8ab-3d2809209f9mr67293775ab.13.1739793316624; Mon, 17 Feb 2025
+ 03:55:16 -0800 (PST)
+Date: Mon, 17 Feb 2025 03:55:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b323a4.050a0220.173698.002a.GAE@google.com>
+Subject: [syzbot] [usb?] KMSAN: uninit-value in mii_nway_restart (2)
+From: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/17/25 13:26, Felix Fietkau wrote:
-> If multicast snooping is enabled, multicast packets may not always end up on
-> the local bridge interface, if the host is not a member of the multicast
-> group. Similar to how IFF_PROMISC allows all packets to be received locally,
-> let IFF_ALLMULTI allow all multicast packets to be received.
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
->  net/bridge/br_input.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> index 232133a0fd21..7fa2da6985b5 100644
-> --- a/net/bridge/br_input.c
-> +++ b/net/bridge/br_input.c
-> @@ -155,6 +155,8 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
->  			pkt_type = BR_PKT_MULTICAST;
->  			if (br_multicast_rcv(&brmctx, &pmctx, vlan, skb, vid))
->  				goto drop;
-> +			if (br->dev->flags & IFF_ALLMULTI)
-> +				local_rcv = true;
->  		}
->  	}
->  
+Hello,
 
-This doesn't look like a bug fix, IMO it should be for net-next.
+syzbot found the following issue on:
 
-Also you might miss a mcast stat increase, see the multicast code
-below, the only case that this would cover is the missing "else"
-branch of:
-                       if ((mdst && mdst->host_joined) ||
-                            br_multicast_is_router(brmctx, skb)) {
-                                local_rcv = true;
-                                DEV_STATS_INC(br->dev, multicast);
-                        }
+HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11546098580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=264db44f1897cdc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=3361c2d6f78a3e0892f9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d9d9b0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1039d9b0580000
 
-So I'd suggest to augment the condition and include this ALLMULTI check there,
-maybe with a comment to mention that all other cases are covered by the current
-code so people are not surprised.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7aa6f3aa12c5/disk-128c8f96.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7ca2c0dbfd2f/vmlinux-128c8f96.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/aa690978a38e/bzImage-128c8f96.xz
 
-By the way what is the motivation for supporting this flag? I mean you can
-make the bridge mcast router and it will receive all mcast anyway.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com
 
-Thanks,
- Nik
+=====================================================
+BUG: KMSAN: uninit-value in mii_nway_restart+0x119/0x1e0 drivers/net/mii.c:468
+ mii_nway_restart+0x119/0x1e0 drivers/net/mii.c:468
+ ch9200_bind+0x238/0xeb0 drivers/net/usb/ch9200.c:354
+ usbnet_probe+0xdb0/0x3eb0 drivers/net/usb/usbnet.c:1761
+ usb_probe_interface+0xd33/0x12e0 drivers/usb/core/driver.c:396
+ really_probe+0x4dc/0xd90 drivers/base/dd.c:658
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:800
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:830
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:958
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:462
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1030
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1079
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:537
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3665
+ usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:250
+ usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:291
+ really_probe+0x4dc/0xd90 drivers/base/dd.c:658
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:800
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:830
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:958
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:462
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1030
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1079
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:537
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3665
+ usb_new_device+0x15f0/0x2470 drivers/usb/core/hub.c:2652
+ hub_port_connect drivers/usb/core/hub.c:5523 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5663 [inline]
+ port_event drivers/usb/core/hub.c:5823 [inline]
+ hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5905
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
+Local variable buff created at:
+ ch9200_mdio_read+0x3c/0x100 drivers/net/usb/ch9200.c:180
+ mii_nway_restart+0x8a/0x1e0 drivers/net/mii.c:466
+
+CPU: 1 UID: 0 PID: 3067 Comm: kworker/1:2 Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Workqueue: usb_hub_wq hub_event
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
