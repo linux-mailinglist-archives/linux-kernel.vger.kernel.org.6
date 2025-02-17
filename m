@@ -1,168 +1,104 @@
-Return-Path: <linux-kernel+bounces-517826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10792A38646
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:27:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA832A38614
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BEA165E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:23:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAA617A12C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F812253B7;
-	Mon, 17 Feb 2025 14:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TNNthJYg"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92662179BC;
-	Mon, 17 Feb 2025 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E4A22540E;
+	Mon, 17 Feb 2025 14:21:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A22253F0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 14:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802101; cv=none; b=XHXIjvNn2C7fWz5ekN2E9bJEsrxLSPAqM6/z+HoxgiJL9beHhd/sZ54C2/KVX5VKLKd5EBsx3OA1AbKRWqCpeEzRTEI8MiZC1cSLY/7HQ2Jw764C/i8qcUdL0y57bAA9RtQ7bkobz1Cydpdhq8NcWts7WqujTwgXYvB5PrpAVnQ=
+	t=1739802104; cv=none; b=jg3wfLGiRQnJRKGfwykPwTylmqDy7g3npyHqlBsELTfDup6o2QnAJOJ/ZPA/SKF/ifO8lNKfsVwybh22bZ/MiE4/51Q0ezmqYnaM4BhYu1cD2odvHug+gJJOoODTZRq1+ohGMWL2DnwJBWhY8u8zX7RHsrWcDw8ziD0ZRfqPEEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802101; c=relaxed/simple;
-	bh=BJglNCLgDoRehZkHvYuLehjrYWHHpDkp1i8i+gd9c34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbuUQ/QUxYSDXBAVxS8oLqppsgMAzzKX9dTuvYaMZ0Mg1e+S/7NaOAcddXHf5pH812brmKGjj0BoD20BQ5i3W28VOfCKV2baBHZro5IOfJZMpCy2ynGxbt6d8Y3S7kFuz6VeJ1ywfW70LzOgYJCRpVpvcm4sfxkzojevxh5tfZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=TNNthJYg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2m1Fn2cs47esDRZLqZGoIEgYTLep9xsmVfAdq3qlyCs=; b=TNNthJYgcXpz/nfrJyCILETGwQ
-	rwYd+O4HWS9Wz2Hx0R2/UB7Zc5pp7aFjK0L0RIKIQPZvFGURXiAiCrPE4443CBWM0ghjrYNdXlBW7
-	ula/FZXItczt+kvnzMLFpG+pyZFKLt4LLlydYktUYCTacN41yN/uy5ubtFk2R3/TUo+l94TY2Wx89
-	oQs2teE7o/Dth/kCDTq5EGlww4MzUT5xuVsh2/L8gZjaER0FPr6vJQcSHL8MlxfpBSNT/qwv6sotg
-	jHFFSFAwR/TkqbX4rP9f7m+bOdrAiRvcwmx2ueqM83+BbHWknD+lmSSPuxB+h3xCoKHRT5Fsa8ivB
-	ozJ2Xulg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42956)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tk205-0006sW-2T;
-	Mon, 17 Feb 2025 14:21:34 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tk201-0006Hd-1e;
-	Mon, 17 Feb 2025 14:21:29 +0000
-Date: Mon, 17 Feb 2025 14:21:29 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	Sean Anderson <seanga2@gmail.com>
-Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
- PHY-driven SFPs
-Message-ID: <Z7NF6ciz4RHMaGo6@shell.armlinux.org.uk>
-References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
- <20250213101606.1154014-6-maxime.chevallier@bootlin.com>
- <Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
- <20250217092911.772da5d0@fedora.home>
+	s=arc-20240116; t=1739802104; c=relaxed/simple;
+	bh=E4zvNQWCavlUJV5y8SHPVS/vYYKox7gU6pj8X+vtYPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hIUa08irHKnYMajw/1le6VKxA6QtOgQ7ij/WEuQxOlDDSeulrZ+jnVp65XE30g655IWmJjJTAhRGfvv2THPjZK6c4l3Q2vwv6xBRCpm22Ofcz482zpD5PYacbZarYSVdsfBGc/oJUYuOqS7Hhf9FsvbqyXYiuaBm9jQm2ogIxTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9023F152B;
+	Mon, 17 Feb 2025 06:22:01 -0800 (PST)
+Received: from [10.1.38.151] (XHFQ2J9959.cambridge.arm.com [10.1.38.151])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 937303F6A8;
+	Mon, 17 Feb 2025 06:21:41 -0800 (PST)
+Message-ID: <271c6277-baab-4b69-97ea-d6c80f873fe5@arm.com>
+Date: Mon, 17 Feb 2025 14:21:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217092911.772da5d0@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/hugetlb: Consistently use pud_sect_supported()
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250217065414.49489-1-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250217065414.49489-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 17, 2025 at 09:29:11AM +0100, Maxime Chevallier wrote:
-> Hello Russell,
+On 17/02/2025 06:54, Anshuman Khandual wrote:
+> Let's be consistent in using pud_sect_supported() for PUD_SIZE sized pages.
+> Hence change hugetlb_mask_last_page() and arch_make_huge_pte() as required.
 > 
-> On Sat, 15 Feb 2025 18:57:01 +0000
-> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> This patch applies on v6.14-rc3
 > 
-> > On Thu, Feb 13, 2025 at 11:15:53AM +0100, Maxime Chevallier wrote:
-> > > Some PHY devices may be used as media-converters to drive SFP ports (for
-> > > example, to allow using SFP when the SoC can only output RGMII). This is
-> > > already supported to some extend by allowing PHY drivers to registers
-> > > themselves as being SFP upstream.
-> > > 
-> > > However, the logic to drive the SFP can actually be split to a per-port
-> > > control logic, allowing support for multi-port PHYs, or PHYs that can
-> > > either drive SFPs or Copper.
-> > > 
-> > > To that extent, create a phy_port when registering an SFP bus onto a
-> > > PHY. This port is considered a "serdes" port, in that it can feed data
-> > > to anther entity on the link. The PHY driver needs to specify the
-> > > various PHY_INTERFACE_MODE_XXX that this port supports.
-> > > 
-> > > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>  
-> > 
-> > With this change, using phy_port requires phylink to also be built in
-> > an appropriate manner. Currently, phylink depends on phylib. phy_port
-> > becomes part of phylib. This patch makes phylib depend on phylink,
-> > thereby creating a circular dependency when modular.
-> > 
-> > I think a different approach is needed here.
+>  arch/arm64/mm/hugetlbpage.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> That's true.
-> 
-> One way to avoid that would be to extract out of phylink/phylib all the
-> functions for linkmode handling that aren't tied to phylink/phylib
-> directly, but are about managing the capabilities of each interface,
-> linkmode, speed, duplex, etc. For phylink, that would be :
-> 
-> phylink_merge_link_mode
-> phylink_get_capabilities
-> phylink_cap_from_speed_duplex
-> phylink_limit_mac_speed
-> phylink_caps_to_linkmodes
-> phylink_interface_max_speed
-> phylink_interface_signal_rate
-> phylink_is_empty_linkmode
-> phylink_an_mode_str
-> phylink_set_port_modes
-> 
-> For now all these are phylink internal and that makes sense, but if we want
-> phy-driven SFP support, stackable PHYs and so on, we'll need some ways for
-> the PHY to expose its media-side capabilities, and we'd reuse these.
-> 
-> These would go into linkmode.c/h for example, and we'd have a shared set
-> of helpers that we can use in phylink, phylib and phy_port.
-> 
-> Before I go around and rearrange that, are you OK with this approach ?
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index 98a2a0e64e25..5b7cfdba9c93 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -342,7 +342,9 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
+>  	switch (hp_size) {
+>  #ifndef __PAGETABLE_PMD_FOLDED
+>  	case PUD_SIZE:
+> -		return PGDIR_SIZE - PUD_SIZE;
+> +		if (pud_sect_supported())
+> +			return PGDIR_SIZE - PUD_SIZE;
+> +		break;
+>  #endif
+>  	case CONT_PMD_SIZE:
+>  		return PUD_SIZE - CONT_PMD_SIZE;
+> @@ -364,7 +366,8 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+>  	switch (pagesize) {
+>  #ifndef __PAGETABLE_PMD_FOLDED
+>  	case PUD_SIZE:
+> -		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
+> +		if (pud_sect_supported())
+> +			entry = pud_pte(pud_mkhuge(pte_pud(entry)));
 
-I'm not convinced. If you're thinking of that level of re-use, you're
-probably going to miss out on a lot of logic that's in phylink. Maybe
-there should be a way to re-use phylink in its entirety between the
-PHY and SFP.
+If this was to get called with PUD_SIZE for a config that doesn't fold the PMD
+and which pud_sect_supported() returns false, we will now return the entry
+unmodified and will not emit the warning that the default case emits. I think we
+should at least either modify the entry (so that it is safe) or emit the
+warning. Doing neither seems less defensive than the current situation.
 
-Some of the above (that deal only with linkmodes) would make sense
-to move out though.
+>  		break;
+>  #endif
+>  	case CONT_PMD_SIZE:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
