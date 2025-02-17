@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-516895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582EBA3796B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEBBA3796D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A597516BFE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C88B16CCF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA00EAFA;
-	Mon, 17 Feb 2025 01:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZIqYNGFm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF2F101EE;
+	Mon, 17 Feb 2025 01:14:51 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DBCDDC5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCAA748F;
+	Mon, 17 Feb 2025 01:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739754562; cv=none; b=Ma+eDVKrd9qnoWBVFrfgkFUAT7k5JJseSsfEArFO0UrOJLgR55WycTlAsJiyqW7o/q2d9Bt/UCLzvCkGR4/Auq8Yt3uSHEFz0o2E4I1mziEuuY3jR6Twb8TX/4zedbxBR4a5vKSupDPaIV5BS8Ztu8obHxPc0IX5VY2MiMYSMZo=
+	t=1739754890; cv=none; b=imE+0Y8QyZVQWZPRkLVKoptU+vLQeI/2CvBvdxDv4nlMKZKCf2nt/8AjM/pEFt7kwjI9kGJHAfLQrmpfdFiUOpJfFMBPjPY3IDcy/+1mP8pHs6QLfM3EmUs7qIq9y/mGYO1g7xCttuP1rrbv8cBhQmhK7WfpuPuotOZ0kRGFd0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739754562; c=relaxed/simple;
-	bh=IyP9K/2xv4Wu5JcOU6n0ubuJzXLjZvryxyFocxIL09c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i8/cv+rv2lYeSK011xR5FM0/NVRhKoworNl0AkxTfPNBain3jvFL9JHqaFChfWBV6uC47KOgnplMoHMl7Zjpr+7jr1Ekia7YZEQbqzuQvVFc9yKT4cDlFz4JsCv/SAKVODJHp4ywotLqn/oqFCdNPr+ECbyoBWQGBN0fVCI8boY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZIqYNGFm; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739754559; x=1771290559;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IyP9K/2xv4Wu5JcOU6n0ubuJzXLjZvryxyFocxIL09c=;
-  b=ZIqYNGFmrlho9HAVWEX4yuJvm8T7wsWShezP04YKzg2dS9IkJpyyfr8w
-   K30BH5s9FNLwyY3FXZ1C2NcLofRh26UF5iqOFfEujLBMWl3Kj8feBckR7
-   u/rr0VmgIylOVAxc62yVMqamRlTXoTw4XSz946ZZKXo8pGYkol7j+xKx6
-   zi64mw+K29QTPL6/gvIDh+DjWz+VZ1PD36jhwEW6XoftKaqKmzXXHFDgN
-   mUk88lnX9AED7UywjhT7dA8NXfSELcv+mTs6qoZVDOkxEwOuXRZZa/DRt
-   E5YRgJ9/3lKoP/cYvougqPm2M1r/KXTmdZwD5COvbdinbPeHQRQ2b7pcz
-   Q==;
-X-CSE-ConnectionGUID: srU0G54GTn2g9wAjMmZ8Tw==
-X-CSE-MsgGUID: YztWpcVIQ1+2aywrKLnJ0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11347"; a="51410563"
-X-IronPort-AV: E=Sophos;i="6.13,291,1732608000"; 
-   d="scan'208";a="51410563"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2025 17:09:19 -0800
-X-CSE-ConnectionGUID: HhaaUKYyReacNHhiBpzScg==
-X-CSE-MsgGUID: iUPkY01LQ3yGCEIvsPrunQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118133064"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 16 Feb 2025 17:09:17 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tjpdL-001CQv-14;
-	Mon, 17 Feb 2025 01:09:15 +0000
-Date: Mon, 17 Feb 2025 09:08:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Duyck <alexanderduyck@fb.com>
-Subject: mm/page_frag_cache.c:46 encoded_page_decode_page() warn: unsigned
- '_x' is never less than zero.
-Message-ID: <202502170903.Daw5Q7fC-lkp@intel.com>
+	s=arc-20240116; t=1739754890; c=relaxed/simple;
+	bh=Xc4ZDjM6qkTP61hpIwCxFbetr8CspWnqI9JLtZ9zaXs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S1gXhhwFUM+gEd4gPvJXVYdmXc0+o+zV17ctpFi5T32rgR4bzCYky3HiKflwyZm1Tx5dJJ3FxTpQ1zDcTy2H7M81VoshyHo6ysCD0J+R09lWBVixVn721vblI+EkRA9CFjta1/OICcie1NRFG1TZyN3rzR3WOGLjkcimfv0p2xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADn7ChzjbJnCEy0DQ--.20851S2;
+	Mon, 17 Feb 2025 09:14:36 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: linux@armlinux.org.uk,
+	gregkh@linuxfoundation.org,
+	elder@kernel.org,
+	sumit.garg@linaro.org,
+	make24@iscas.ac.cn
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH v5 RESEND] [ARM] fix reference leak in locomo_init_one_child()
+Date: Mon, 17 Feb 2025 09:14:26 +0800
+Message-Id: <20250217011426.2239159-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADn7ChzjbJnCEy0DQ--.20851S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw13CF4fuFW7AryDGFg_yoW8Wry7pa
+	s7Cas8trWUWr4vgFW0qFn7ZFyUGayIkw45GrW8C340g3s0vrWIqFy0ga429w1UXrWkAFnY
+	vF4xXw4UG3WUCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0ad2507d5d93f39619fc42372c347d6006b64319
-commit: 0c3ce2f50261cd2f654d931eeb933c370a3a7d7a mm: page_frag: reuse existing space for 'size' and 'pfmemalloc'
-date:   3 months ago
-config: riscv-randconfig-r073-20250213 (https://download.01.org/0day-ci/archive/20250217/202502170903.Daw5Q7fC-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 14.2.0
+Once device_register() failed, we should call put_device() to
+decrement reference count for cleanup. Or it could cause memory leak.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502170903.Daw5Q7fC-lkp@intel.com/
+As comment of device_register() says, 'NOTE: _Never_ directly free
+@dev after calling this function, even if it returned an error! Always
+use put_device() to give up the reference initialized in this function
+instead.'
 
-New smatch warnings:
-mm/page_frag_cache.c:46 encoded_page_decode_page() warn: unsigned '_x' is never less than zero.
+Found by code review.
+Cc: stable@vger.kernel.org
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v5:
+- modified the bug description as suggestions;
+Changes in v4:
+- deleted the redundant initialization;
+Changes in v3:
+- modified the patch as suggestions;
+Changes in v2:
+- modified the patch as suggestions.
+---
+ arch/arm/common/locomo.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Old smatch warnings:
-include/linux/mm.h:1275 virt_to_head_page() warn: unsigned '_x' is never less than zero.
-
-vim +/_x +46 mm/page_frag_cache.c
-
-    43	
-    44	static struct page *encoded_page_decode_page(unsigned long encoded_page)
-    45	{
-  > 46		return virt_to_page((void *)encoded_page);
-    47	}
-    48	
-
+diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
+index cb6ef449b987..45106066a17f 100644
+--- a/arch/arm/common/locomo.c
++++ b/arch/arm/common/locomo.c
+@@ -223,10 +223,8 @@ locomo_init_one_child(struct locomo *lchip, struct locomo_dev_info *info)
+ 	int ret;
+ 
+ 	dev = kzalloc(sizeof(struct locomo_dev), GFP_KERNEL);
+-	if (!dev) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!dev)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * If the parent device has a DMA mask associated with it,
+@@ -254,10 +252,9 @@ locomo_init_one_child(struct locomo *lchip, struct locomo_dev_info *info)
+ 			NO_IRQ : lchip->irq_base + info->irq[0];
+ 
+ 	ret = device_register(&dev->dev);
+-	if (ret) {
+- out:
+-		kfree(dev);
+-	}
++	if (ret)
++		put_device(&dev->dev);
++
+ 	return ret;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
