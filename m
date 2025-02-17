@@ -1,273 +1,148 @@
-Return-Path: <linux-kernel+bounces-517428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1341AA380C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF85A380CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062EC3B4F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E861B3B553B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AFD21660D;
-	Mon, 17 Feb 2025 10:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6111521764B;
+	Mon, 17 Feb 2025 10:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tSUQytZg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i+JJnmf1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rqdRjxYl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4lHxSGIK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHBQk5eh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB272165E2
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71621661C;
+	Mon, 17 Feb 2025 10:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789572; cv=none; b=V+fZxVwtV++gtaMSjw1GsL5EBdjfqxmD9GTQBqhDhcdE8LLRapVbAInraRMp0ExX3UHIQM194fKzc8oQGVJQmxQlap5bCEPnRwdTgasIpJhzuBNZe0ZyYtLgAkq7aZRYH7OmhgNN9lhhY+87zBkhm3uuRD9/hjTSq4pjT5oRtWY=
+	t=1739789584; cv=none; b=HPy9JBRGLAfKNVKtRyErU3HsjBkh+99Np7cFcwS0d6JnJUr/4tDAM1kt90MJqZWaNoDKOz1SJ2Y9Ncc9uhh6Q6n1UA0LCSBsQ2kylDFwjyJVXABi7hZ1gC1EzVi2vaNqP5opKDZG22JX1savqQPOPqsETa/+4Tj5FHJs4iisAzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789572; c=relaxed/simple;
-	bh=XsPofMlwaGD3zcR39VFyUslgAULhSgkeXoKsp62uwO0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QPCCBIgWbRmev6WGzpHR3ZxiWDZduv7JH+MSV/ChXfzYZcD6pt8wgrCVhSxtEVDHrBJmWccwhSuCgNEd3lJ+TQAY1OQa2jP31gv2X2cUvRv+ADpiFGL0ZW7vNDlVLTq4Mrd7pQ7h0emUN+IFVXmbIa0mjx7a6a7ovrh2yR+ZsCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tSUQytZg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i+JJnmf1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rqdRjxYl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4lHxSGIK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E21F61F74B;
-	Mon, 17 Feb 2025 10:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739789567; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5eHS7xZ358IVZ2DZTp3DR6SGgQGl4CshkWErAir12E=;
-	b=tSUQytZgwDLWwvLgCQeWCPXTCn/oOabGy+jtQGzEWnkfVfGc/BY1O+aIgRiooS86Wqz6wr
-	fM+hUoJNZvOswA8HhKj215DhpH0Vb5CFoeJ4xkmw/H9Y3gIs2xZeh7OMSfjXZiQcgdDg5J
-	xDpZqEVdUsFSe4SF9vJdohHvlcfiKYQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739789567;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5eHS7xZ358IVZ2DZTp3DR6SGgQGl4CshkWErAir12E=;
-	b=i+JJnmf1bMJNV1+mgw78zAeo4xGP8ZuQO2jWr9nPW13DVBq4c39YBhi+DdsTeCsZqOosrk
-	ZF5a4qojTOze6xCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rqdRjxYl;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4lHxSGIK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739789566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5eHS7xZ358IVZ2DZTp3DR6SGgQGl4CshkWErAir12E=;
-	b=rqdRjxYl0kgb7uILke1B+MxyOwZ/ATlMFhYuaUAz0SMpxJYt6SZBB9xvb2Ixx6Gd833Vt0
-	uivMEZg1mFz6M2SzeAD9Hcv12U22OP8ZR9DtCdQuGoR68M3D8qDKWBp6Xf8SB2gfEMiHOR
-	SETnAT4h8/P33Y3yJJkNLjpsCzF3jE0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739789566;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5eHS7xZ358IVZ2DZTp3DR6SGgQGl4CshkWErAir12E=;
-	b=4lHxSGIKFh47xVx5d9UIvN8Xfgx/9vcy7Tr+tN3iGXkrG8GGD+IEZvQMavHGfnPTG1ixEJ
-	+wmuHEJ6fsIn2XCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E3051379D;
-	Mon, 17 Feb 2025 10:52:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4oEEDP4Us2fpWAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 17 Feb 2025 10:52:46 +0000
-Date: Mon, 17 Feb 2025 11:52:45 +0100
-Message-ID: <87h64s972a.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	Oder Chiou <oder_chiou@realtek.com>,
-	Shuming Fan <shumingf@realtek.com>,
-	Qiu Wenbo <qiuwenbo@kylinos.com.cn>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1739789584; c=relaxed/simple;
+	bh=EKDu0FFdU5glr/+Aae4x0n+uySneQaiQRnxmjB8Z6eY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gOEKTXzpA/jYE5PZ56kh7dZqtWB/0RT/TMx0bwoWY9N0iKQtFaMmERKMjCmaJnxPsMS3Gx+kE5PECJyyB8njMF/WuqsbVZhKo5jgifE+aDzTnU4jMu0GH422AcynvSaLxUQq8QucsD3K2c7VFohxdVpgh9q9LoS80r6HJBCtOmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHBQk5eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0107CC4CED1;
+	Mon, 17 Feb 2025 10:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739789584;
+	bh=EKDu0FFdU5glr/+Aae4x0n+uySneQaiQRnxmjB8Z6eY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JHBQk5ehp4JSqdqpfeH4t8LADleAWhe+XrCu9fd+Su5wgXvaRVchX/fPqRiDO9+dg
+	 8fj7pFcOraXxJPGeAFIzXf191fPwzEaxZFS8qd7d+rDkQAq0Ft5JFASEQZ3oBC7+Mn
+	 /xQgLf8GWBtNPk3d74qZdTltgT2K+S+E2J8FdvUeeuAG8e4u6ZDFtdxayFAdTR/ADY
+	 R2hjOyIoqVke/ZV+2A8qbCAmBUOtZmBaVbvh5vHhcannBUsVnLBrrwRAyp4c5ZGOZ1
+	 gTz3y2iIobXbfWKUXotKbatennlFOY8kGGoXnIhwejK4R+j1qqB/30jh9aDzyPIn1E
+	 vtJW61RLRYwDQ==
+Message-ID: <2c676a9910c2d5b1332bb9baa999cdd16763a730.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
+From: Amit Shah <amit@kernel.org>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable PC beep passthrough for HP EliteBook 855 G7
-In-Reply-To: <a02344f2-3b99-41ea-af64-8d2bcb01e435@maciej.szmigiero.name>
-References: <7461f695b4daed80f2fc4b1463ead47f04f9ad05.1739741254.git.mail@maciej.szmigiero.name>
-	<87jz9o99ef.wl-tiwai@suse.de>
-	<a02344f2-3b99-41ea-af64-8d2bcb01e435@maciej.szmigiero.name>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+Date: Mon, 17 Feb 2025 11:53:01 +0100
+In-Reply-To: <535ivi67jdmcuhns5q4r36fjpqde3clnqq7hr26gmg33jwoxyb@ahvuhhaewh3u>
+References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+	 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
+	 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
+	 <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
+	 <k72vfex6qy53xrunz5ohe24c2upfjcdwofozszi4l3k3rm6dou@bd6swzi3v5ng>
+	 <606b16787920ff5e1807e4f8450add5889fdd1cb.camel@kernel.org>
+	 <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
+	 <6d48bcfd0c6030c92f6a5a4a91c9b62f926b3b16.camel@kernel.org>
+	 <535ivi67jdmcuhns5q4r36fjpqde3clnqq7hr26gmg33jwoxyb@ahvuhhaewh3u>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: E21F61F74B
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
 
-On Mon, 17 Feb 2025 11:17:31 +0100,
-Maciej S. Szmigiero wrote:
-> 
-> On 17.02.2025 11:02, Takashi Iwai wrote:
-> > On Sun, 16 Feb 2025 22:31:03 +0100,
-> > Maciej S. Szmigiero wrote:
-> >> 
-> >> PC speaker works well on this platform in BIOS and in Linux until sound
-> >> card drivers are loaded. Then it stops working.
-> >> 
-> >> There seems to be a beep generator node at 0x1a in this CODEC
-> >> (ALC269_TYPE_ALC215) but it seems to be only connected to capture mixers
-> >> at nodes 0x22 and 0x23.
-> >> If I unmute the mixer input for 0x1a at node 0x23 and start recording
-> >> from its "ALC285 Analog" capture device I can clearly hear beeps in that
-> >> recording.
-> >> 
-> >> So the beep generator is indeed working properly, however I wasn't able to
-> >> figure out any way to connect it to speakers.
-> >> 
-> >> However, the bits in the "Passthrough Control" register (0x36) seems to
-> >> work at least partially: by zeroing "B" and "h" and setting "S" I can at
-> >> least make the PIT PC speaker output appear either in this laptop speakers
-> >> or headphones (depending on whether they are connected or not).
-> >> 
-> >> 
-> >> There are some caveats, however:
-> >> * If the CODEC gets runtime-suspended the beeps stop so it needs HDA beep
-> >> device for keeping it awake during beeping.
-> >> 
-> >> * If the beep generator node is generating any beep the PC beep passthrough
-> >> seems to be temporarily inhibited, so the HDA beep device has to be
-> >> prevented from using the actual beep generator node - but the beep device
-> >> is still necessary due to the previous point.
-> >> 
-> >> * In contrast with other platforms here beep amplification has to be
-> >> disabled otherwise the beeps output are WAY louder than they were on pure
-> >> BIOS setup.
-> >> 
-> >> 
-> >> Unless someone (from Realtek probably) knows how to make the beep generator
-> >> node output appear in speakers / headphones using PC beep passthrough seems
-> >> to be the only way to make PC speaker beeping actually work on this
-> >> platform.
-> >> 
-> >> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> >> ---
-> >> 
-> >> Since more than 6 weeks has now passed since the previous version of this
-> >> patch was posted, yet no better or other solution was provided I'm
-> >> re-submitting an updated version of the original patch.
-> >>      This solution has been working fine for me on this platform
-> >> all that time,
-> >> without any obvious issues.
-> >>      Changes from v1:
-> >> * Correct the typo in !IS_ENABLED(CONFIG_INPUT_PCSPKR) code that the
-> >> kernel test robot found.
-> >>      * Change codec_warn() into dev_warn_once(hda_codec_dev(codec))
-> >> to avoid spamming the kernel log at runtime PM CODEC re-init.
-> > 
-> > This is really a thing to be checked by Realtek people at first, as
-> > it's very vendor-specific thing.
-> > 
-> > Kailang, please check this.
-> 
-> Realtek people has been asked to comment/provide alternative solution
-> 3 times in last 6 weeks:
-> On the original v1 submission, by your message from Jan 12, by my
-> message on Feb 2.
-> 
-> Looking at https://lore.kernel.org/linux-sound/?q=f%3Arealtek
-> it seems Kailang sent two e-mails about unrelated cases to linux-sound
-> during that time.
-> 
-> To be honest, I don't understand why Realtek people don't comment
-> on this since I would think that's a rather simple matter without any
-> truly confidential aspects but on the other hand this fact should *not*
-> permanently block fixing PC beep on this platform.
-> 
-> So I think there should be some deadline here for the vendor response -
-> like 1 month more or so?
+On Fri, 2025-02-14 at 18:47 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> On Fri, Feb 14, 2025 at 05:55:41PM +0100, Amit Shah wrote:
+> > On Fri, 2025-02-14 at 17:52 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > Hello Amit,
+> > >=20
+> > > On Fri, Feb 14, 2025 at 05:37:52PM +0100, Amit Shah wrote:
+> > > > I'm thinking of the two combinations of interest: REMOTEPROC=3Dm,
+> > > > VIRTIO_CONSOLE can be y or m.=C2=A0 Say virtcons_probe() happens
+> > > > when
+> > > > the
+> > > > remoteproc module isn't yet loaded.=C2=A0 Even after later loading
+> > > > remoteproc, virtio console won't do anything interesting with
+> > > > remoteproc.
+> > >=20
+> > > Where does the interesting thing happen if remoteproc is already
+> > > loaded
+> > > at that time? I'm not seeing anything interesting in that case
+> > > either
+> > > ...
+> >=20
+> > The code I pointed to,
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/char/virtio_console.c#n1993
+> >=20
+> > either enables remoteproc if the module is present; or it enables
+> > multiport, but not both at the same time.=C2=A0 If remoteproc isn't
+> > present
+> > when this probe routine is executed, multiport might get enabled.=C2=A0
+> > And
+> > then there's no chance for remoteproc to get enabled.
+>=20
+> The only case where there is a difference between IS_REACHABLE and
+> IS_ENABLED is:
+>=20
+> 	CONFIG_REMOTEPROC=3Dm
+> 	CONFIG_VIRTIO_CONSOLE=3Dy
 
-Sorry, I don't like that kind of attitude.
+Well, also if CONFIG_VIRTIO_CONSOLE=3Dm; and virtio_console.ko is loaded
+before remoteproc.ko.
 
-If the patch were perfectly fine, I'd have already taken.  But there
-is a thing that can't be validated without the confirmation from the
-vendor, and that's not what we can accept because it's supposed to
-work on your machine -- that's only one special use case, and it
-doesn't qualify to prove the safety.
+> Iff in this case you never want to test for MULTIPORT (even though
+> the
+> remoteproc module might never get loaded), then my patch is wrong.
+>=20
+> When creating the patch I thought there is a hard dependency on
+> remoteproc (like calling a function that is provided by
+> CONFIG_REMOTEPROC). I don't understand how the remoteproc stuff
+> interacts with the virtio_console driver, is this something in
+> userspace
+> which then would also autoload the remoteproc module?
 
-In general, Kailang (and Realtek) has been helpful over decades for
-HD-audio stuff development, but they might be busy sometimes.  Let's
-keep asking until catching their attention, at first.
+What's happening is that multiport and remoteproc are mutually
+exclusive in the virtio_console code.
 
-> > And, except for that, I'm still concerned by the behavior change.
-> 
-> AFAIK most sound card drivers in ALSA were developed without any docs,
-> and the register that's being changed is unofficially documented in ALSA:
-> https://docs.kernel.org/sound/hd-audio/realtek-pc-beep.html
-> 
-> Also, the behavior change is clearly limited to this single laptop
-> platform (HP EliteBook 855 G7) so the "blast radius" is very limited.
+And, I'm also not sure of how remoteproc loads and configures itself.=20
+Does loading remoteproc cause a load of virtio_console?  How?
 
-If you were the only user of this laptop in the world, I wouldn't be
-concerned, sure :)  But certainly that's not the case.
+So - based on our discussions, I think your assumptions are:
 
-> > Also the caveat you mentioned about the runtime PM raises some doubt,
-> > too.
-> 
-> I think it's simply because the CODEC get re-initialized when it comes
-> out of runtime PM sleep so if we print a message there then it would
-> be printed each time the CODEC resumed from runtime PM sleep.
-> 
-> That's why I changed to print this hint about CONFIG_INPUT_PCSPKR
-> just once per CODEC device.
+1. remoteproc will load virtio_console when remoteproc is required
+2. virtio_console will never be loaded by itself
+3. General virtio_console functionality (including tty and multiport)
+is never used when remoteproc is used
 
-Well, but this runtime PM has to be turned off manually, otherwise the
-beep gets broken, right?  This is already some trade-off, so it's not
-super trivial to apply the suggested change blindly.
+I think at least 3 needs more thought/justification why it's a valid
+assumption.  Documenting it in the commit msg is fine.
 
-I thought that the input beep infrastructure may work with multiple
-input beep devices, and it usually triggers the all beep devices?
-If so, you can still keep the HD-audio beep (even though it doesn't do
-actually output) so that it can manage the runtime PM of HD-audio
-device at beeping, too.
+At least assumptions 1 and 2 will cause remoteproc to not function
+correctly with virtio_console, despite both of them being loaded
+(because they can be loaded in the unexpected order -- virtio_console
+before remoteproc).  Do you want to adjust the code so that remoteproc
+queries for already-existing virtio_console.ko, triggers the code that
+would otherwise be not triggered in virtcons_probe(), and makes
+remoteproc functional in that case?
 
-
-thanks,
-
-Takashi
+		Amit
 
