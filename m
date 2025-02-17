@@ -1,78 +1,39 @@
-Return-Path: <linux-kernel+bounces-517899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC750A38726
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FC2A3872B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 16:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8519A3A64BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911FA3A86A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 15:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8521C22371E;
-	Mon, 17 Feb 2025 14:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeXF8cOQ"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B48333F7;
-	Mon, 17 Feb 2025 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39D2248BA;
+	Mon, 17 Feb 2025 15:00:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B2221D58E;
+	Mon, 17 Feb 2025 15:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804348; cv=none; b=SaUVw/k0t9nkoV9ts9jNCRcKPL9EFytOVU4ss9U1UtgCFqsitlop7EsPBVxn5EG/Op7KOWhRFbrkbJkU/ZVOOwF7dkbqD1/WKVsTG7ja60FhfW9yTu0M505Z8rtY1mtlGvzCLwvzorrOONsKsryUMJAuugQkcxcpOrAiJ6hxPro=
+	t=1739804455; cv=none; b=tQ2Pev6inBm0q2ZwaV7PUg+iq57RxDcOUfH4x2jww03QoBg4C5VYnPvvaPgpYQoDWvuePFYgiI1S/+pOP/Qbkge9VSGF82DPtLv95aTy0ukWFs1N3ZOIrMMkotGZ3oDHqTRjL/D5aezoOfXXU2DMaFW+bcKJRDkzpZc2boKgLus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804348; c=relaxed/simple;
-	bh=ERnk50qO8ESnP0PF7hrTKoSofKjNzmyUIRNoPQMEOnM=;
+	s=arc-20240116; t=1739804455; c=relaxed/simple;
+	bh=jMq0rzaJsv+MpOoTrFRgRWYF77w0q1RbPXY+cKmV/mA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wa8EBw09vr1IwhKs032Pvtn7lVi4njCLzqqM8jjmBrZDNWx2Rf65vbozS0fE/hBKltaAgKiEGa4XDiNblHvdSy6F9EQcH/o0wTQuOFw+uHO52Uqs01SdK/f34CO+gMgrh+KGyP8iJ2a4omG6VJiImsYNJ4pmC5LppDKktyawsSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeXF8cOQ; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so3304495a12.0;
-        Mon, 17 Feb 2025 06:59:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739804345; x=1740409145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V3nen2ZQWjVU3j6z5FoLCBIj9fu+yhn4VYwilHW5oo4=;
-        b=DeXF8cOQeISpsJuQBWMbZUhOpVZb2UrtRgP1Rbz7/e88hxrS0PTGb7T5gjdPuIegvP
-         GYoWxQ93Akd1WsSlxMCPBt48Uf2H26Fw9/E5T9DmLxt6yjSPXsokMjv2qWO4rzBPqGxJ
-         6dYl53r8zjW+tsM9H0DWuZe0sYoihLlrzM2TkyazbDW57X1+zBj8u85XMonvjifiMgqc
-         hylOGkNqNR8r8wnn1yufFBb3PYDUducn+c0OWlpr6IwJHfB5qv8xyiBEGAPPC/W8OuI7
-         vNE2PHfAJ3/exmgmTrdS4e78uheRAxwOERQsyrtZn2cVO/BQUVJskT6IDLrG4KocK5nP
-         pFRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739804345; x=1740409145;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3nen2ZQWjVU3j6z5FoLCBIj9fu+yhn4VYwilHW5oo4=;
-        b=Y1nawCb7WP+aZ+qMbPFLQKiCeo12jg9ZXJavJdJR1KfpZCvoWoRmPKfsElFtYtEPMX
-         Jecu9YhfigleE1ezbMy94ZJ/KyPK0UYr4/gJt+dA0Z88G5dqB5yQLw9HGrf2xInKwExz
-         NrPbH+m+xTufQXqAq1hzFYZIc+lEf+wVQM2OZZcojiMgnRb79HzAbl9YCdCsAZVmOEWk
-         81bR2vvp/nCqjCgeE7U9DfAj8sSchPb8mYIMhusNAm6RxlPRkGCO3gyzvm+kXvPzNB2A
-         +P6xI7i1otHgkTWkrP1l6eziYggT2teD/yLTM0gozreI4Uq7RLtMBlJMzH1au8KDEQ/P
-         aL9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPETRCeQyUbFkKjAiJzzpwDrEkK51yTc2O64KUhR7FoKNJ9BDFuCbC27aUaygadCao5YCgAAi6kGl5YBxK7vUn@vger.kernel.org, AJvYcCVe4wGqAm9lZq9EcDKWymsDw4Pq8KFgyJFgSgUPezoVurTUvuuYtioNoSDfP2qpFzlC/sHYvBFL0fOMtJHw@vger.kernel.org, AJvYcCVg4v/oPqVORtlkHhGECd3lDBxfv1KJHzia3kspjR0D2vkUoUHXif50Wdr/UJAbVd+LxhlEkC2la/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3v6xGtE9/RKngydLCvjfyukVEp7lj9ETRvhwUcTPwKmdLPr4u
-	Bm/ncFR8Qr3M//KI81LH0eHIZRSEc7xh9uTRIhOb3oRYckqIU6la
-X-Gm-Gg: ASbGncsfDlhAliFVb2As1hAuP84BdpjgQitT7GiXxxTMzKtjJPea/Ybt3Nyhsr1KpDQ
-	fqBz6FPLlvMsDe70Zrp2JluyjRSEpfN9KsNj7u/zIi59cPiOQrXgfnxSUOtq6lmf3cXcWCSwAcd
-	EQEGvz/c3jx1O0pjcnB7sjgu5+rk9q4gA/ZkwoYyJlLxmdLS/W1xvCP6oPM2LuaRfc2jHAFb2zn
-	FamKfrRy2lU7d5K/n9IyiYS1eh5mdH+Sr1dKZx/zwFPV1pr7Op/OzQVPtzqJ5Ut75l70yceKOdl
-	bccizY/asdIfvDhL2Ea/YOIpe8Lj8ZIdA6xMjx3NeN38gV+YZcDuY3Mw+8TEww==
-X-Google-Smtp-Source: AGHT+IHnTe7KbjcGi7WwFaMqNdoMpfbMfKQ+td8TFe4oH2WZRF5Wq21aBNuVyz43A+JwkZE5XJcgAQ==
-X-Received: by 2002:a05:6402:2114:b0:5de:bdbd:6f19 with SMTP id 4fb4d7f45d1cf-5e036171605mr9768671a12.27.1739804344242;
-        Mon, 17 Feb 2025 06:59:04 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1126:4:fb:39c9:9a24:d181? ([2620:10d:c092:500::7:6466])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e05168c467sm2448555a12.48.2025.02.17.06.59.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 06:59:03 -0800 (PST)
-Message-ID: <c4d7c1e0-e83b-4666-8bfb-1220b59251c2@gmail.com>
-Date: Mon, 17 Feb 2025 14:59:02 +0000
+	 In-Reply-To:Content-Type; b=l+KxtSd0WdRlO0MjF2ZIijjOwGIaVakXW21rVBO7je+92SrXqQzW+/DxZPCPk1muzUyaYy4Sweq1KO15FGhflpXsgf3Nby5l4LFCBHvUwD3nQyF3P0PUE470gZJYSDqxqoIhoUA4D4eil4luHemUL/K1Wy8tJpMBoaQJRv42hHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D949C152B;
+	Mon, 17 Feb 2025 07:01:11 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CF9D3F6A8;
+	Mon, 17 Feb 2025 07:00:49 -0800 (PST)
+Message-ID: <4a7823b2-2634-4148-8446-ad01a09b6880@arm.com>
+Date: Mon, 17 Feb 2025 15:00:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,63 +41,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 1/5] mm: defer THP insertion to khugepaged
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
- audra@redhat.com, akpm@linux-foundation.org, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, tiwai@suse.de,
- baolin.wang@linux.alibaba.com, corbet@lwn.net, shuah@kernel.org
-References: <20250211004054.222931-1-npache@redhat.com>
- <20250211004054.222931-2-npache@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250211004054.222931-2-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/2] iommu: Get DT/ACPI parsing into the proper probe path
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
+ <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, Charan Teja Kalla <quic_charante@quicinc.com>
+References: <cover.1739486121.git.robin.murphy@arm.com>
+ <c2f0ae276fd5a18e1653bae8bb0c51670e35b283.1739486121.git.robin.murphy@arm.com>
+ <20250214201435.GF3696814@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250214201435.GF3696814@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/02/2025 00:40, Nico Pache wrote:
-> setting /transparent_hugepages/enabled=always allows applications
-> to benefit from THPs without having to madvise. However, the pf handler
-> takes very few considerations to decide weather or not to actually use a
-> THP. This can lead to a lot of wasted memory. khugepaged only operates
-> on memory that was either allocated with enabled=always or MADV_HUGEPAGE.
+On 14/02/2025 8:14 pm, Jason Gunthorpe wrote:
+> On Thu, Feb 13, 2025 at 11:49:00PM +0000, Robin Murphy wrote:
 > 
-> Introduce the ability to set enabled=defer, which will prevent THPs from
-> being allocated by the page fault handler unless madvise is set,
-> leaving it up to khugepaged to decide which allocations will collapse to a
-> THP. This should allow applications to benefits from THPs, while curbing
-> some of the memory waste.
+>> much just calling the same path twice. At client driver probe time,
+>> dev->driver is obviously set; conversely at device_add(), or a
+>> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
 > 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  include/linux/huge_mm.h | 15 +++++++++++++--
->  mm/huge_memory.c        | 31 +++++++++++++++++++++++++++----
->  2 files changed, 40 insertions(+), 6 deletions(-)
+> Could you put the dev->driver test into iommu_device_use_default_domain()?
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 93e509b6c00e..fb381ca720ea 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -44,6 +44,7 @@ enum transparent_hugepage_flag {
->  	TRANSPARENT_HUGEPAGE_UNSUPPORTED,
->  	TRANSPARENT_HUGEPAGE_FLAG,
->  	TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
-> +	TRANSPARENT_HUGEPAGE_DEFER_PF_INST_FLAG,
+> It looks like many of the cases are just guarding that call.
+> 
+>> should *not* have a driver already, so we can use that as a condition to
+>> disambiguate the two cases, and avoid recursing back into the IOMMU core
+>> at the wrong times.
+> 
+> Which sounds like this:
+> 
+>> +		mutex_unlock(&iommu_probe_device_lock);
+>> +		dev->bus->dma_configure(dev);
+>> +		mutex_lock(&iommu_probe_device_lock);
+>> +	}
+> 
+> Shouldn't call iommu_device_use_default_domain() ?
 
-No strong preference, but maybe just TRANSPARENT_HUGEPAGE_DEFER_FLAG might be better?
+Semantically it shouldn't really be called at this stage, but it won't 
+be anyway since "to_<x>_driver(NULL)->driver_managed_dma" is not false - 
+trouble is it's also not true ;)
 
+> But... I couldn't guess what the problem with calling it is?
+> 
+> In the not-probed case it will see dev->iommu_group is NULL and succeed.
+> 
+> The probed case could be prevented by checking dev->iommu_group sooner
+> in __iommu_probe_device()?
+> 
+> Anyhow, the approach seems OK
+> 
+>> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+>> index 9f4efa8f75a6..42b8f1833c3c 100644
+>> --- a/drivers/acpi/scan.c
+>> +++ b/drivers/acpi/scan.c
+>> @@ -1619,6 +1619,9 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+>>   {
+>>   	int err;
+>>   
+>> +	if (device_iommu_mapped(dev))
+>> +		return 0;
+> 
+> This is unlocked and outside a driver context, it should have a
+> comment explaining why races with probe can't happen?
+
+Sure, for now this is more just an opportunistic thing - since we'll now 
+expect to come through this path twice, if we see a group assigned then 
+we know for sure that someone else already set up the fwspec for that to 
+happen, so there's definitely nothing to do here and we can skip 
+potentially waiting for iommu_probe_device_lock.
+
+>> +	/*
+>> +	 * For FDT-based systems and ACPI IORT/VIOT, the common firmware parsing
+>> +	 * is buried in the bus dma_configure path. Properly unpicking that is
+>> +	 * still a fairly big job, so for now just invoke the whole thing. Our
+>> +	 * bus_iommu_probe() walk may see devices with drivers already bound,
+>> +	 * but that must mean they're already configured - either probed by
+>> +	 * another IOMMU, or there was no IOMMU for iommu_fwspec_init() to wait
+>> +	 * for - so either way we can safely skip this and avoid worrying about
+>> +	 * those recursing back here thinking they need a replay call.
+>> +	 */
+>> +	if (!dev->driver && dev->bus->dma_configure) {
+>> +		mutex_unlock(&iommu_probe_device_lock);
+>> +		dev->bus->dma_configure(dev);
+>> +		mutex_lock(&iommu_probe_device_lock);
+>> +	}
+>> +
+>> +	/*
+>> +	 * At this point, either valid devices now have a fwspec, or we can
+>> +	 * assume that only one of Intel, AMD, s390, PAMU or legacy SMMUv2 can
+>> +	 * be present, and that any of their registered instances has suitable
+>> +	 * ops for probing, and thus cheekily co-opt the same mechanism.
+>> +	 */
+>> +	ops = iommu_fwspec_ops(dev_iommu_fwspec_get(dev));
+>> +	if (!ops)
+>> +		return -ENODEV;
+>> +
+>>   	/* Device is probed already if in a group */
+>>   	if (dev->iommu_group)
+>>   		return 0;
+> 
+> This is the test I mean, if iommu_group is set then
+> dev->iommu->iommu_dev->ops is supposed to be valid too. It seems like
+> it should be done earlier..
+
+Yeah, looking at it now I'm really not sure why this ended up in this 
+order - I guess I was effectively adding the dma_configure() call to the 
+front of the existing iommu_fwspec_ops() check, and then I moved the 
+lockdep_assert() up to make more sense. But then the ops check probably 
+should have been after the group check to begin with, for much the same 
+reasoning as above. I'll sort that out for v2.
+
+>> +	/*
+>> +	 * And if we do now see any replay calls, they would indicate someone
+>> +	 * misusing the dma_configure path outside bus code.
+>> +	 */
+>> +	if (dev_iommu_fwspec_get(dev) && dev->driver)
+>> +		dev_WARN(dev, "late IOMMU probe at driver bind, something fishy here!\n");
+> 
+> WARN_ON_ONCE or dump_stack() to get the stack trace out?
+
+Indeed, hence dev_WARN() (!= dev_warn())
+
+>> @@ -121,6 +121,9 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
+>>   	if (!master_np)
+>>   		return -ENODEV;
+>>   
+>> +	if (device_iommu_mapped(dev))
+>> +		return 0;
+> 
+> Same note
+
+Ack.
+
+>> @@ -151,7 +154,12 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
+>>   		iommu_fwspec_free(dev);
+>>   	mutex_unlock(&iommu_probe_device_lock);
+>>   
+>> -	if (!err && dev->bus)
+>> +	/*
+>> +	 * If we have reason to believe the IOMMU driver missed the initial
+>> +	 * iommu_probe_device() call for dev, try to fix it up. This should
+>> +	 * no longer happen unless of_dma_configure() is being misused.
+>> +	 */
+>> +	if (!err && dev->driver)
+>>   		err = iommu_probe_device(dev);
+> 
+> This is being conservative? After some time of nobody complaining
+> it can be removed?
+
+Indeed I feel sufficiently confident about the ACPI path (which at the 
+moment is effectively arm64-only) to remove it from there already, but 
+less so about all the assorted DT platforms. That said, I guess adding a 
+new dependency on dev->driver here might still represent a change of 
+behaviour for the sketchy direct calls of of_dma_configure() outside bus 
+code, since in a lot of those the target device doesn't actually have 
+its own driver either. Maybe I need to think about this a bit more...
+
+Thanks,
+Robin.
 
