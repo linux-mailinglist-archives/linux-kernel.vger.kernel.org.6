@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-516898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-516900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411BCA37975
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89060A37979
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 02:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607D43AC4AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2ABB3AE8D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 01:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3049D2FB;
-	Mon, 17 Feb 2025 01:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2332940D;
+	Mon, 17 Feb 2025 01:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OdCRoxjZ"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Z7sUvIgT"
+Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E193FF1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317CF847B;
+	Mon, 17 Feb 2025 01:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739755087; cv=none; b=FkmKhtEcybySTNQkhykcqkzrMJJi3vj4XqhcnAqdfaazQBa36fHplhNZfhkhmtisH+lPxjbGgBZrqkctYW1PBuPgPIu5gzZJ+n1XnhZ60NGs8bb8JTkIrRcYg9/Hs5BRu02IxqDD008r5G8+sWh5Fl+Ta2bsTqSdorYvrEwZjMg=
+	t=1739756088; cv=none; b=q+y/DGfZoLhcfJJZmbYte1fCSjAJpVoim83Eg7Fy7w8lD5WgCnFBXZiW6tlPlEZMETQoITfqTDf3oFhLur44FWgguFY8zB+ARVhgjZTYxM7KScUOxweszXTuxH4YgBdfb0bZN7L5tBYGnwHjHUoEobWBYaAmSvmu1H6PrbMWKVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739755087; c=relaxed/simple;
-	bh=7f407Lo2g3gsncGdxdUhAy8BgEsSWpHxtWAdpdhjSpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JT99ZhAbURHtcx0FzYGnOEGohY25qI7/YDP0YEzBTLykKCGeBx4i6D3vVJcnI99UJtbVMvPBMnTtauFhruNulHvhDz6wPPoSYYp5yOVrQsP14RHcqCTzaRpbK1PuU5qWWlenR2owAYu4SsbYR5NJ7KTWj/gduX8D2KVYQKkJqSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OdCRoxjZ; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E0F943F2BC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739755082;
-	bh=ui1flzHXiVuKwiE9omlY3oi6AgKrvot52UwxHm2SiEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=OdCRoxjZQI+LRl6v8cbj4EivkottCCxIYNQg8HnDWfzct3vN5T4X085lVxJnmCxXR
-	 PbblE8XT4WsRRjodiiVV25/T9LY/cPOaOpxxhhRWYpA/UMifcCp8Hx6pgaMSOTVByT
-	 ZJqjv5Son51K1m7GQqGXPYqyL584yk4CR7OM5CZi3DiGT81IIFzpgfQf5Wzv4+rtMR
-	 d2qY9SGrgg07qi+BESFPZspjCaCLbE34vp1AA1QpnnPxyxzBE03HSI92KVl1YOTKr/
-	 dP/j1SmEQqWSiaxbQgB/sckmmmuJ1Q5cVP432HcMfncTjl9OzFZsqeEjX9uM0vVZ+h
-	 FGU1p0McGOzwA==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22112e86501so19735595ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 17:18:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739755081; x=1740359881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ui1flzHXiVuKwiE9omlY3oi6AgKrvot52UwxHm2SiEk=;
-        b=qpxbi5PU3FUi6vLmvLTjOdLmLfIY3wa3LICscgJW73WGsa6kXEIOkVERfkSqPL5Kui
-         JnQf+1/xofA3++QqzHGAVYK82Z20fTklZ5hlcKJDQdZMYsRXh9svYaccWf9peKYfMBmU
-         9wgSQhO5euaWtzdSES8kEixyoSzimjAJKnezwjzZolyNbx/ox7VCwQWksjzJu+m6Euhf
-         KmfM2AIIw8yx/WB1DiiRyAFZAfnCNz3fzbB1XlYlghUaalZP5lAqwtGaQRzJoHiyr5kT
-         3CEJ0TWgriYN7ALHbOsjhiRXHvRO+Db3jZlEW/m/BxVhCw+nCyrstHoIrmw3CgOrHGRZ
-         mZ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXK9aLSmT1ckZgUVqi0uWET27dzd/3jMZzco11/aKvhJcdutIS8AeW2J8+iLxIQKRAzLcuq7NFS7Z89Ng0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE/RAZUBhv0FpqJf6LL4MYZIqNQiUolo/Qgv/oQuN1zCFKOKkN
-	YKZ09Bpn04DXu4WYTYP+YRHj7sYozvZN1fXFTb2M+nf3/LUqnCuCSghzJuYrwfLOoobYOe7MwV/
-	TNShESu44sxDxLkEvK8O24fheU76zJWhu+ukRZPI78YIBfyJD0Q4CyjVeWGqoDB4m+Aoz+GpCvO
-	0enw==
-X-Gm-Gg: ASbGncum5X2aPcve1vCoMtAsV9XNsLHDkkBOMimzXO+L4ulU7C7zUoy16a6NWAFWV62
-	IxBeyE5JDAUcQZd3c/1vcyP1p/XQKtDMeS49FLNybpzM+0qOMw56ZTtHNI1PTAUxpAmnLyF2NfQ
-	2cCv+fCNI6EE1P6OgE9/pt29sR/ezet0YU2DHV8Ma33SDt7CO2kTktkzd1LEzV6dLdi0h4Sght6
-	fH2O+80/9altm/fmVFAmoEjcMKlxCybxI71IwfPN1Ov4RYiIYbg2Qls4VxEuELlL9UQwdn34Qca
-	PyJKCxY=
-X-Received: by 2002:a17:902:e88a:b0:220:cd13:d0ec with SMTP id d9443c01a7336-221040cf8admr142170205ad.48.1739755081128;
-        Sun, 16 Feb 2025 17:18:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEHSeCB0jEBp3IuDtsx4DIWufoGram6CvP+4Ft237RAu6sGc7Ua4Wjn+A68RGMCSDFsWk9J+g==
-X-Received: by 2002:a17:902:e88a:b0:220:cd13:d0ec with SMTP id d9443c01a7336-221040cf8admr142169925ad.48.1739755080840;
-        Sun, 16 Feb 2025 17:18:00 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:a6da:1fd8:6ba3:4cf3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556f97dsm61021755ad.172.2025.02.16.17.18.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 17:18:00 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:17:58 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/13] Introduce configfs-based interface for
- gpio-aggregator
-Message-ID: <dc2w6gxdp3rhlhy6hvwocp76zdjh4jhdljhoijbub5q76f4xgw@ulfvg2s3rvub>
-References: <20250216125816.14430-1-koichiro.den@canonical.com>
- <CAMRc=Mef-cg_xt_+mEAyxY_9RfK4=qWEbt_GebeT2mu_8GWVxw@mail.gmail.com>
- <qw5epzoexlteotpuulafg4fyjatlsjjko3ldnzjezoumhodgko@a72wjsaw6fgz>
+	s=arc-20240116; t=1739756088; c=relaxed/simple;
+	bh=e4/AAbisHJachlaK+66eVdcu+K5OGrjNBbTmBBovcOQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=pSWFIM/ILbnYaYXhNbGLUE9ONxhFvTI19QfshTUsroHa+ROIPKLbxgvw95+9ndMUGTEJlP1rKbf4O0G4pR3vIuMFV8YKG2O1nhciqCRePAC4ciePSAN0MgCucqaBQkzY9IbhAwb35ZN9Om73mkJYpgA28oz9+TWEHrMItGEAtyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Z7sUvIgT; arc=none smtp.client-ip=203.205.221.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1739755773;
+	bh=pP07imU1yRZo5VJuVB+0B4Te8JSt7A3ydHeyAZRXe2k=;
+	h=From:To:Cc:Subject:Date;
+	b=Z7sUvIgT4e3HJIYcHrL6/0jBGEFDVgmv/+mHAeGKSyryBNUQ2jMh8AyPAxWV8NQaV
+	 S1iFe1z/2jJaTUg2zPg2hzFLwG9ruWCe6NE+0GMHeKSqJNWgxt9ZGUZc65RREljTDA
+	 WfdUrI2QYmoszWvnD8iuP+hoQHi99H9NWA+FIcO4=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 75F9AABE; Mon, 17 Feb 2025 09:29:31 +0800
+X-QQ-mid: xmsmtpt1739755771trd9me21x
+Message-ID: <tencent_30122FBA93E93911578208176E68AA00C807@qq.com>
+X-QQ-XMAILINFO: M0yQCYO1Pk4BQK9MwsPiXqLGdYYZSCLOPPfcpbnW81QswNSiwoPu1fQRPn7F4g
+	 Mydr584M1QsAx8p9vJW2dNlaGgSs9qjxzUQoqGMgEXOKNDptenroPhnIdT7wOUzWwiCRjhyfexyk
+	 TfYjGCNFByNDY6+DQ68CGxbWvmgRgPbVmxef1Yh3jlTSixjrFchIAGSh6SaHI14zkLLM3m5I+/Kh
+	 ZQbL6/7GqFUrphyQwokQVvJkqsh1oRCKJz6klboLy/nEMeQhd7Q4icPHtOy4bXoMvMHrq6pfGkWg
+	 ImYQA7TkTp+/IVwx8k7vJLN2yRL6HAj/DXjzr3oao5WcMkc12OFmm8OY4fIffYrNtNpl6Yg5WLzz
+	 yk6y0BkDvpFi7hN2FllxQ2WHuWFl1fi29fC2vi2XKycICaR17lRkskAhDBE3F9Mk0wglksHagyU6
+	 FB8NjSuJzycDlj2INNuygQBkdFTwRj9ApcHaLMyasP1Iqd0hGrKRd9OUTodpMSAlZkF1NBEXH1Nv
+	 ymbMLU2prsmupp2Rq3wqCkA9aupjiejnS7QaUy5VO0grngJJoZfWJyeSRJMC8WLVHE1vigZ91ez2
+	 GYHGccGvDCW5WpLW2fIPGSX+7Uoc4NMhNZqCUXfFbvAAgNmdsc3EuyphnzemUi6UrI7BDRxUSZ++
+	 lOPyhTidGDJ5IrDdHWly5ByE4VPXNT7coAzK9926lFvsy8MqYS0sRTdCaC4MyYUxzH7zmYDcf+99
+	 qMVY3fT7gcmgRUEqxaoKA0k/oGVrQwB1dessQJ4A34X93QMKQNxPZZxwyHNNtOG8GCxOD7kxnQAZ
+	 CxwEIzKlVS5C/c6TRERMAQ6SK1XRdzsEmR1Fgy8XwJ1vp9gFSZscNiZeUNHdDtVK30/1s14ouo4J
+	 p8EheVKqazUI0RO3xJHOSNook+sCdapEXcuTDEjTslQlXx1l866VpYw4r9KxpXXx9ty88vwRblqw
+	 S3aqY4Miq4Snich5DAvT97+HhukaXt526TtBBLBgJIAq9yfTIGlw==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: xiaopeitux@foxmail.com
+To: andrew+netdev@lunn.ch,
+	maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH V2] net: freescale: ucc_geth: make ugeth_mac_ops be static const
+Date: Mon, 17 Feb 2025 09:29:30 +0800
+X-OQ-MSGID: <05ccd0ec9dda47a7bb26b78ef41fea2f2ce675c8.1739755552.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <qw5epzoexlteotpuulafg4fyjatlsjjko3ldnzjezoumhodgko@a72wjsaw6fgz>
 
-On Mon, Feb 17, 2025 at 10:07:03AM GMT, Koichiro Den wrote:
-> On Sun, Feb 16, 2025 at 04:56:59PM GMT, Bartosz Golaszewski wrote:
-> > On Sun, Feb 16, 2025 at 1:58 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > >
-> > > This patch series introduces a configfs-based interface to gpio-aggregator
-> > > to address limitations in the existing 'new_device' interface.
-> > >
-> > > The existing 'new_device' interface has several limitations:
-> > >
-> > >   Issue#1. No way to determine when GPIO aggregator creation is complete.
-> > >   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
-> > >   Issue#3. No way to trace a GPIO line of an aggregator back to its
-> > >            corresponding physical device.
-> > >   Issue#4. The 'new_device' echo does not indicate which virtual
-> > >            gpiochip<N> was created.
-> > >   Issue#5. No way to assign names to GPIO lines exported through an
-> > >            aggregator.
-> > >
-> > > Although Issue#1 to #3 could technically be resolved easily without
-> > > configfs, using configfs offers a streamlined, modern, and extensible
-> > > approach, especially since gpio-sim and gpio-virtuser already utilize
-> > > configfs.
-> > >
-> > > This v3 patch series includes 13 patches:
-> > >
-> > >   Patch#1-7: Prepare for Patch#8
-> > >              * #1: Prepare for the following patches.
-> > >              * #2: Fix an issue that was spotted during v3 preparation.
-> > >              * #3: Add gpio-pseudo.[ch] to reduce code duplications.
-> > >              * #4: Update gpio-sim to use gpio-pseudo.[ch].
-> > >              * #5: Update gpio-virtuser to use gpio-pseudo.[ch].
-> > >              * #6: Update gpio-aggregator to use gpio-pseudo.[ch].
-> > >              * #7: Add aggr_alloc() to reduce code duplication.
-> > 
-> > Please don't ram this new functionality into an unrelated series.
-> > Split it into the gpio-pseudo code, factoring out common parts and
-> > converting existing drivers, then send the aggregator series saying it
-> > depends on the former. Otherwise it gets way too complex to review.
-> 
-> Ok, I'll do so.
-> Thanks,
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-Should Patch#2 also be split off into another submission?
+sparse warning:
+    sparse: symbol 'ugeth_mac_ops' was not declared. Should it be
+static.
 
-Koichiro
+Add static to fix sparse warnings and add const. phylink_create() will
+accept a const struct.
 
-> 
-> Koichiro
-> 
-> > 
-> > Bartosz
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202502141128.9HfxcdIE-lkp@intel.com/
+Fixes: 53036aa8d031 ("net: freescale: ucc_geth: phylink conversion")
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+
+changlog:
+V2:change to add 'const' suggestion from Andrew Lunn's review.
+---
+ drivers/net/ethernet/freescale/ucc_geth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index f47f8177a93b..ed4f57701485 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -3408,7 +3408,7 @@ static int ucc_geth_parse_clock(struct device_node *np, const char *which,
+ 	return 0;
+ }
+ 
+-struct phylink_mac_ops ugeth_mac_ops = {
++static const struct phylink_mac_ops ugeth_mac_ops = {
+ 	.mac_link_up = ugeth_mac_link_up,
+ 	.mac_link_down = ugeth_mac_link_down,
+ 	.mac_config = ugeth_mac_config,
+-- 
+2.25.1
+
 
