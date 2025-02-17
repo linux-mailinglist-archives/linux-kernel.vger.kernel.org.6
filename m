@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-517725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4CFA384CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A876A384D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93E73A053C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183BE3A6B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1949021CA17;
-	Mon, 17 Feb 2025 13:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1360A21CC7E;
+	Mon, 17 Feb 2025 13:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xO+aqqle"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BLwPzHCZ"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430C91E515
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 13:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ACA216E35;
+	Mon, 17 Feb 2025 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739799099; cv=none; b=fEPpoXfK+eS88ajgny271208C5Q6ZnFtEkxXPLEz1Y7hIHnLpL1S3aB1efm4TiGPpe9Zk+1fb2zcf0DQMjyHMjf24Y7JIi84284UbHmO8wgzQYnLokUSMb10OLHV4guPQGfrB06mveOtbKNJxsksG8euqY1GDM4qC/PIuNbWZLw=
+	t=1739799166; cv=none; b=elZBUoju6pf6bwIP/wE6KrtWi7quqMdaeOef5WW7RIRF8Sj3b56CrfNvSsU/K8fNJl7nZNdKt3WyMlejvJ3mWW7sNweR7jyPgG97BK9V78BQnbPhwJQ4vyfGkQdqPAMAEGix47gozBBFNWMbrxCFOF+KS/qiELlVLfdUNCUjiPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739799099; c=relaxed/simple;
-	bh=pfta4Pm4pk5IpJlxB0EEt/X0m5YBmHer64jfAMzh9PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6jkZd2XGI6zYGXsW+TL0GVn8KTd9fCZPifnB36mZQuqxwiMzyoCXYN0fEaJ6LxBSxOgTFT0JxuEBR2He4N4l/zpTwrfiDIDGsMu38jTli6oI2IXah1krl0zCx9ljiAqPKLeyEUgV6syR0wVR9x0mwlQazAtelgAurXVdTBUrq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xO+aqqle; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso5462101a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 05:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739799095; x=1740403895; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HePxZ4NzY+6vqhU8FtuMDirnS9ZXHHg6wU/jN8842aw=;
-        b=xO+aqqle/xNfjq6cUmiYRqqW/iUdU6Jvo1QbF8RX26d5i55gM/OxCPFH3VVsdcssoZ
-         TFxQ+prhTMBcXH6XwiXJSdRCPZbrLV3+EE7JFamCPxYE392MpXQgAbzASj8PKlFMZPrf
-         E7pFp43wOquABKiiKxzNPdmGqKXkPXub0GYNYRS7hCbBqKP6KPmlg0mRmdLNIsL6a4u6
-         KIeZQUp7brDUxjpLcgS6ZUIVaI9hHDylVHPApjDDFiW+arw/eXKheGbDJ19BQm162oRU
-         x/b6jzmYbIbRbdnfJEzol4nMSB7bAnuenlZjBdE6kKLa0R1HXc3H0bxzxiEjCL6SaFKD
-         tf/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739799095; x=1740403895;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HePxZ4NzY+6vqhU8FtuMDirnS9ZXHHg6wU/jN8842aw=;
-        b=ZmXBDxJsuFDAsjEo8dj/m39eghQ3QVMLA2E+8JTM/Ni6QBUJi2bfXsnbB5b7gzw7sx
-         ufPFfjI8IhgU4MY8snj1VNMN+G/70zL/D/h91hmKHFncZ2vmlFoPDuxKiXv3EUxa0R9w
-         Et3+hR08WMUe5NRsVPjDvZVEoUUhjf4/sUHAR2IC8aXTg12J5jzLj56r76MEJgQve0Gt
-         WRDUiSo24vAHEMMdIw0EYXoBQRR7cZYLLKyCnOc6iPfP+uwEtIUuF/3ZxvEhsB+7It1u
-         /GIgSXTRRwTSQE22G9bJodzVaDGfvDv0XvTYdskdMvjv57pcUsKimSl1oFKlGb+/rNp3
-         ewBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQRw4abxHSr3N9M+jPx+Tui8WBWvcbFBqt+ZwLapacw13WbewDkZRcZQU72sMYJ+CrvJcUd1MhoNfdKls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvnVnw1QNMtljKAAdiJt2bmx5lqX3Frtxpic403UdGHk+7xhMp
-	QnYUIsft80RJY0y/bmkiEbtm0S9H0KARMh7DmYuUL10yKYXUKkNzZwRdcn1C80Y=
-X-Gm-Gg: ASbGncszZ5qmiIuL9Y49LnHc/3n//g+1zzQatip4hpJzIi1UmZ8hP2EoTwlhgbx2Krv
-	B8LckSkeLXHmbvXJMRlW8dulVHoEsCklqqwBD8XpH5GPjZRukJLp7494I6iMKw5oM3GS/wND0jN
-	Y31W/3+alqEbTwuwe6Y2nkT1B8OReft9zJxeBAY3QQV8Wm9o9Uh4QEFmemM+CbvAYEuRZ670c2P
-	SSAvTUJiFQYoUpQ8IAZHeA2mbpYELFxvVGVJeJ2pLtJbkLOyia3Ie0D1p6jCnvbbUgOo0tky0le
-	0NcF3zTQec6+u9wI0WL+
-X-Google-Smtp-Source: AGHT+IFh9Z5T9/NZ6mle03lBLTwxdm39QVeknchTQU0+AZJXPlmONlIdxst1Xno5kyJLM8pO7oAAVQ==
-X-Received: by 2002:a17:907:7842:b0:ab7:63fa:e48f with SMTP id a640c23a62f3a-abb70bcb84emr885152766b.26.1739799095507;
-        Mon, 17 Feb 2025 05:31:35 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb9751553fsm241554166b.86.2025.02.17.05.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 05:31:35 -0800 (PST)
-Date: Mon, 17 Feb 2025 16:31:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ravi Kumar kairi <kumarkairiravi@gmail.com>
-Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kuba@kernel.org, rmk+kernel@armlinux.org.uk
-Subject: Re: [PATCH v3 2/4] [PATCH V2 2/4] staging:gpib:agilent_82350b:
- Removed commented out code
-Message-ID: <629f57dc-d6c7-48ca-8b05-f1d0169eb454@stanley.mountain>
-References: <20250217103046.54294-1-kumarkairiravi@gmail.com>
- <20250217103046.54294-3-kumarkairiravi@gmail.com>
+	s=arc-20240116; t=1739799166; c=relaxed/simple;
+	bh=/peew0N0sYIEeywo5Qi44geS0So+iTeYQWeqk48ZKnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRA/6K15Pn3oJpYdf6lolyu0DnsijuC4y0zmKWTCRiBVn+0OsHDE/gVJY4rDAg+NcPUs0rhJrVUDhXe5m2naLacizcg46LisEDwea7Btknx4aw/oLCaH1/P2vjvKiHwe5RLb2CyCUZSsK7oDU0APGjesnqMMLRqkfSTo2CUIHts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BLwPzHCZ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Mrpii7aiMFOF7c2Q6EMdLlKuMvw80fO9NyNXLvoPESc=; b=BLwPzHCZ3fpXoGLIsCiP6VAtW6
+	LLBuHDxjXuAdlJFXzuCssgP5PIfzC6JxtER4jdCVEqSIK5f6IoTkF+FPQb7LOeAiOzh/KAmPVgjCC
+	aodPuc+u+czzSm/2+ovwXyajjF0ukMCDWc0P1YF4GTroTY3TlcQKIzADrgHn45JsEtB+4Q1Zm4Ljo
+	+58ZorSLEMUid5hiv509t6Mvw9I+xga/Pqwy+xNzXUeEdD+xYn35k1wnd/mVlA7PwwI5BW1pUyqeC
+	6xe85OTJ4lTJboqVlJovWaZhAPNoHmJld10MA5lmfCjx4sv18mhMQRp3C1b+ylwTduiAKiJiCp2dJ
+	O253GvcQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tk1EV-006AK6-QT; Mon, 17 Feb 2025 14:32:29 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Matt Harvey <mharvey@jumptrading.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v6 0/2] fuse: allow notify_inval for all inodes
+Date: Mon, 17 Feb 2025 13:32:26 +0000
+Message-ID: <20250217133228.24405-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217103046.54294-3-kumarkairiravi@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 04:00:36PM +0530, Ravi Kumar kairi wrote:
-> From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
-> 
-> Removed commented out debugging code to make code look cleaner as
-> spcified by TODO
-> 
-> Signed-off-by: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
-> ---
->  drivers/staging/gpib/agilent_82350b/agilent_82350b.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-> index 5a74a22015..7936c7285d 100644
-> --- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-> +++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
-> @@ -176,7 +176,6 @@ static int agilent_82350b_accel_write(gpib_board_t *board, uint8_t *buffer, size
->  
->  	event_status = read_and_clear_event_status(board);
->  
-> -	//pr_info("ag_ac_wr: event status 0x%x tms state 0x%lx\n", event_status, tms_priv->state);
->  
+Hi!
 
-Same comments as for v2.
+In this version, invalidate_inodes() needs to be exported to be used by
+fuse_reverse_inval_all().  This is a big simplification of this function,
+which now simply calls shrink_dcache_sb() and invalidate_inodes().
 
-You're not supposed to mix delete comments with delete duplicate blank
-lines but at the same time, you can't introduce NEW double blank line
-warnings.
+It's clear that inodes still being referenced will not be invalidated --
+but that's already the case for the single inode NOTIFY_INVAL_INODE fuse
+operation.  
 
-regards,
-dan carpenter
+* Changes since v5
+- Added missing iput() in function fuse_reverse_inval_all()
+
+* Changes since v4
+- Replaced superblock inodes iteration by a single call to
+  invalidate_inodes().  Also do the shrink_dcache_sb() first. (Dave Chinner)
+
+* Changes since v3
+- Added comments to clarify semantic changes in fuse_reverse_inval_inode()
+  when called with FUSE_INVAL_ALL_INODES (suggested by Bernd).
+- Added comments to inodes iteration loop to clarify __iget/iput usage
+  (suggested by Joanne)
+- Dropped get_fuse_mount() call -- fuse_mount can be obtained from
+  fuse_ilookup() directly (suggested by Joanne)
+
+(Also dropped the RFC from the subject.)
+
+* Changes since v2
+- Use the new helper from fuse_reverse_inval_inode(), as suggested by Bernd.
+- Also updated patch description as per checkpatch.pl suggestion.
+
+* Changes since v1
+As suggested by Bernd, this patch v2 simply adds an helper function that
+will make it easier to replace most of it's code by a call to function
+super_iter_inodes() when Dave Chinner's patch[1] eventually gets merged.
+
+[1] https://lore.kernel.org/r/20241002014017.3801899-3-david@fromorbit.com
+
+
+Luis Henriques (2):
+  vfs: export invalidate_inodes()
+  fuse: add new function to invalidate cache for all inodes
+
+ fs/fuse/inode.c           | 34 ++++++++++++++++++++++++++++++++++
+ fs/inode.c                |  1 +
+ fs/internal.h             |  1 -
+ include/linux/fs.h        |  1 +
+ include/uapi/linux/fuse.h |  3 +++
+ 5 files changed, 39 insertions(+), 1 deletion(-)
 
 
