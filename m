@@ -1,219 +1,124 @@
-Return-Path: <linux-kernel+bounces-517258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E037BA37E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:23:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E699A37E5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 432257A21C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59A716B11E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABDD212D65;
-	Mon, 17 Feb 2025 09:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5yuaOwr"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3649212D68;
+	Mon, 17 Feb 2025 09:24:51 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CC8212B35
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC85212B29
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 09:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784207; cv=none; b=t6eFFgBAu2ltTnESzpfna9swNlNd2QCJdbc2JCSXM3PqpDwf+ASOywkSxuZIPBxNATvYjoWoPR6pJv4UVwaiwTc+0ME6puQNBh21Y6N5dHIYlAzPzQFw4zboKmuiIrn7IYlJf5nGPb+VfZf24/EMdLfXDS58/WGQO9t4G9vsK58=
+	t=1739784291; cv=none; b=ZGzCbmSOzIanN+29g6MQh45vdivpyKUhHt0vuvkTb+crjfMRic+dkYqVYvFnDQlOFWgg6hlC7o1TpUCPwOKyAVFfgk7YorfQCeRITIrht/fpodNAej2whXuC4LUx6u1ZSebS+8Oq96FNkGUiXGtjVUqTbtzW+7jcl4/Mq68A3F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784207; c=relaxed/simple;
-	bh=YyAb2o+midSz/xUfsuWZ78M8LuO/O3F2doh/TSB64WU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZT40WVzbiPFF/xz1fFzd1AM1n6v1VUA9Z5TCaGaDDMGsbfqD+gexs3reY7MyZhUnE202FZ8C1ISPtIMMYms52AzMbwFFXmxqy2VbGz+2Lx9KBCe4uVp7lISje2GUw5sL55QWdYaor/h6MbrVonyRbnaogIvdbK1BKr+WNXfow5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A5yuaOwr; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f1e8efef5so2119788f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 01:23:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739784204; x=1740389004; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yFdEGk76Z8IF8jmdF4E6VELhXn1U7cH2XbnMNEOUO1Q=;
-        b=A5yuaOwrLh8DWQNUnYLOjs0W9kjFWcSCYlv7FQKN5a6H2VBmxDZrE9raCVgkw945Aj
-         lLOMCMep8pjCTusavOJU7kNp4xCW7MZMLV/sg0oDgai7kHDF6Kck3HQtlELGp62Ldw2Z
-         N6NaZJHMlCawdbi8JMoygQmaXATlxFzt9IVwILHIUlIn+cUK3eOEWHvIywBpw7kkPWpW
-         3IScIoVIjZWX4nHC4QdjKNYlqPifKV9cDynF2/L1QZ/e9ZabzbqVhw6cnX9fXu6l7mtu
-         dAqt3Z6ZqNvKmch91tr0iaMD8Q3aj952NICvWvwUIqAA9NERO05qTBksFsGd7GR9aQfJ
-         VmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739784204; x=1740389004;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFdEGk76Z8IF8jmdF4E6VELhXn1U7cH2XbnMNEOUO1Q=;
-        b=HWjPs77iYgFV5JL2VzRn2Ww5YRhLRbaHO3g2PCWzGkewjQYapGI+Ei1UXpj62C3de+
-         YxWPEYdOJ2SOXtQP4YJkjwKVYLbsclbrvd7d3ur7yZeb3YomWDpHYe7k0moRFYOYOyM9
-         sx/FN9VulGGN9hxWRxXw9XplQJzOvb63qQBAVqDgIRHFhL0PcHMiPagbHiPNUefqegBM
-         HQmN8umHCmpIVrXiVOrbMeBOR97CXaTEh81rv3d9/x7KsTDrkkZuG5HkK3ycQaktNBLp
-         fLaTsWVSsFweLudbf7N5FRqCbqWMbyUM4V7+rySW7hg7Yt8LkIenOCqLMZHn0bKE6gEq
-         HmGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcN6jowO95gxjQfuipPYXpEd0+CThWJW+nA3TpdQN/jDqmcwRSXaVyNRscz/OFfXo0KrTB7mPC1pREkIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTxLoQpZr1b0eQYcO2wSyUCsaChdRNnDhI2t6Z8vk9jW1Ph3nu
-	o6cS58togcScojczMeSJMt2aBJchwjEzRs/RQLVqFhsiv75DfKorpCmkghAMajc=
-X-Gm-Gg: ASbGncv/qaRVlnSKxmWJ5CVVPx/BUiEolaJIeJBHAlshwFeusQ/FG5dPtOQU/r6cE42
-	Cj02bvqgkxncpGJ5fBKlNLyM12TFoVjFHMfhRWdYBZQQa0zMFxTprvlUhro9/tNoiXKNptC+hMX
-	S9q2ydaZapHSR0vFWjlRKmhefC9TPb8ya/e+meZ7dtJf8wrJm7oD8EuG3MqX2tKisoHAaDni1h5
-	QadnGDPR1qbzJ2gAi+lucTz1roODX6OUrY7Hip8oug9yPca64EEyIz2VuJ8K9y0KiS0xeNvRUch
-	6atijiBsp97OPwccuBd6Rs5Y9A==
-X-Google-Smtp-Source: AGHT+IHIAU1bziAKxZvRP07ZCo+6IKM9hGRF5YvWCGZkvCvo55+fOBkWCNJRs18IttuXSjIV+ShShQ==
-X-Received: by 2002:a05:6000:1865:b0:38f:4d20:4a0a with SMTP id ffacd0b85a97d-38f4d204b59mr531618f8f.28.1739784203790;
-        Mon, 17 Feb 2025 01:23:23 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8273sm11466058f8f.89.2025.02.17.01.23.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 01:23:23 -0800 (PST)
-Message-ID: <8ee69b17-e7ac-4f73-abbe-93f4e29fe51d@linaro.org>
-Date: Mon, 17 Feb 2025 09:23:21 +0000
+	s=arc-20240116; t=1739784291; c=relaxed/simple;
+	bh=GCBDsD8hfPY99hvJlya7hExxmO6UCU2izMf6ZNn0YfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRSITq8Wbvgob8IGsc3nBoeQNH5lkK3NyRxMA+jnEd/ZUC/+nquGFSbQ8kSJ4yEuBdlreZfaGKlvuQS2kAvwUrTSFtNSD+LflMTrH39cazsGFG+8j0xqpT5180U6/KEUpBVLnK8lM6TfMRixYS6cgDv0Q1cgMdgYbRPm8IWfKz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2C19A68BEB; Mon, 17 Feb 2025 10:24:46 +0100 (CET)
+Date: Mon, 17 Feb 2025 10:24:45 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: kernel test robot <lkp@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Carlos Maiolino <cem@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-riscv@lists.infradead.org
+Subject: Re: fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x'
+ is never less than zero.
+Message-ID: <20250217092445.GA29568@lst.de>
+References: <202502171326.j4Xd3I0j-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/7] Coresight: Introduce a new struct coresight_path
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20250207064213.2314482-1-quic_jiegan@quicinc.com>
- <20250207064213.2314482-5-quic_jiegan@quicinc.com>
- <a633f52c-81e8-4c0d-aca7-cc18360866eb@linaro.org>
- <4b521b49-7104-4f25-82cb-4f9be7b235f4@quicinc.com>
- <b61af324-7488-4a4f-9f9e-2ecb004fc4c7@linaro.org>
- <5e6edfce-ef2e-48d2-ad0c-0120606394fb@quicinc.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <5e6edfce-ef2e-48d2-ad0c-0120606394fb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202502171326.j4Xd3I0j-lkp@intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Mon, Feb 17, 2025 at 01:53:08PM +0800, kernel test robot wrote:
+> New smatch warnings:
+> fs/xfs/xfs_buf.c:1534 xfs_buf_submit_bio() warn: unsigned '_x' is never less than zero.
 
+Looks like this is an issue in the riscv virt_to_page implementation
+which also shows up in various other places.  Any chance this could get
+fixed in the riscv code?
 
-On 17/02/2025 1:14 am, Jie Gan wrote:
 > 
+> Old smatch warnings:
+> fs/xfs/xfs_linux.h:283 kmem_to_page() warn: unsigned '_x' is never less than zero.
+> fs/xfs/xfs_buf.c:761 xfs_buf_get_map() error: we previously assumed 'bp' could be null (see line 743)
+> arch/riscv/include/asm/atomic.h:218 arch_atomic_fetch_add_unless() warn: inconsistent indenting
 > 
-> On 2/14/2025 7:09 PM, James Clark wrote:
->>
->>
->> On 14/02/2025 1:34 am, Jie Gan wrote:
->>>
->>>
->>> On 2/14/2025 12:00 AM, James Clark wrote:
->>>>
->>>>
->>>> On 07/02/2025 6:42 am, Jie Gan wrote:
->>>>> Add 'struct coresight_path' to store the data that is needed by
->>>>> coresight_enable_path/coresight_disable_path. The structure will be
->>>>> transmitted to any required devices to enable related 
->>>>> funcationalities.
->>>>>
->>>>> The trace_id will be allocated after the path is built. Consequently,
->>>>> The ETM3x and ETM4x devices will directly read the trace_id from path
->>>>> which result in etm_read_alloc_trace_id and etm4_read_alloc_trace_id
->>>>> being deleted.
->>>>>
->>>>> Co-developed-by: James Clark <james.clark@linaro.org>
->>>>> Signed-off-by: James Clark <james.clark@linaro.org>
->>>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>>>> ---
->>>>>   drivers/hwtracing/coresight/coresight-core.c  | 106 ++++++++++++ 
->>>>> +-----
->>>>>   drivers/hwtracing/coresight/coresight-dummy.c |   5 +-
->>>>>   .../hwtracing/coresight/coresight-etm-perf.c  |  30 +++--
->>>>>   .../hwtracing/coresight/coresight-etm-perf.h  |   2 +-
->>>>>   drivers/hwtracing/coresight/coresight-etm.h   |   1 -
->>>>>   .../coresight/coresight-etm3x-core.c          |  54 ++-------
->>>>>   .../coresight/coresight-etm4x-core.c          |  54 ++-------
->>>>>   drivers/hwtracing/coresight/coresight-etm4x.h |   1 -
->>>>>   drivers/hwtracing/coresight/coresight-priv.h  |  12 +-
->>>>>   drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
->>>>>   drivers/hwtracing/coresight/coresight-sysfs.c |  17 ++-
->>>>>   drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
->>>>>   include/linux/coresight.h                     |  12 +-
->>>>>   13 files changed, 143 insertions(+), 157 deletions(-)
->>>>>
->>>> [...]
->>>>> @@ -352,7 +352,7 @@ static void *etm_setup_aux(struct perf_event 
->>>>> *event, void **pages,
->>>>>        * CPUs, we can handle it and fail the session.
->>>>>        */
->>>>>       for_each_cpu(cpu, mask) {
->>>>> -        struct list_head *path;
->>>>> +        struct coresight_path *path;
->>>>>           struct coresight_device *csdev;
->>>>>           csdev = per_cpu(csdev_src, cpu);
->>>>> @@ -405,15 +405,15 @@ static void *etm_setup_aux(struct perf_event 
->>>>> *event, void **pages,
->>>>>               cpumask_clear_cpu(cpu, mask);
->>>>>               continue;
->>>>>           }
->>>>> -
->>>>>           /* ensure we can allocate a trace ID for this CPU */
->>>>> -        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
->>>>> >perf_sink_id_map);
->>>>> -        if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->>>>> +        trace_id = coresight_path_assign_trace_id(path, 
->>>>> CS_MODE_PERF);
->>>>> +
->>>>> +        /* Can be 0 and valid, ETE doesn't need an ID */
->>>>> +        if (trace_id < 0) {
->>>>
->>>> Not sure why I wrote it like this, but I think we should leave it as 
->>>> it was with !IS_VALID_CS_TRACE_ID(). Even with ETE it calls the 
->>>> trace ID allocator, so nothing has changed here.
->>>>
->>> Sure, Will restore. For ETE or ETM, we dont need traverse the path, 
->>> just directly allocate the trace id based on cpu id.
->>>
->>> Jie
->>>
->>>
->>
->> Sorry I meant to only keep the !IS_VALID_CS_TRACE_ID() bit. We still 
->> need to call the new coresight_path_assign_trace_id() otherwise it 
->> doesn't get assigned to the path. I saw that got removed in v11.
->>
->>
-> Sorry for the misunderstanding, I was focused on "nothing has changed 
-> here", lol.
+> vim +/_x +1534 fs/xfs/xfs_buf.c
 > 
-> I got your point here.
-> So the updated codes should be:
-> ...
->                  /* ensure we can allocate a trace ID for this CPU */
->                  trace_id = coresight_path_assign_trace_id(path, 
-> CS_MODE_PERF);
->                  if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->                          cpumask_clear_cpu(cpu, mask);
->                          coresight_release_path(path);
->                          continue;
->                  }
-> ...
+>   1518	
+>   1519	static void
+>   1520	xfs_buf_submit_bio(
+>   1521		struct xfs_buf		*bp)
+>   1522	{
+>   1523		unsigned int		size = BBTOB(bp->b_length);
+>   1524		unsigned int		map = 0, p;
+>   1525		struct blk_plug		plug;
+>   1526		struct bio		*bio;
+>   1527	
+>   1528		bio = bio_alloc(bp->b_target->bt_bdev, bp->b_page_count,
+>   1529				xfs_buf_bio_op(bp), GFP_NOIO);
+>   1530		bio->bi_private = bp;
+>   1531		bio->bi_end_io = xfs_buf_bio_end_io;
+>   1532	
+>   1533		if (bp->b_flags & _XBF_KMEM) {
+> > 1534			__bio_add_page(bio, virt_to_page(bp->b_addr), size,
+>   1535					bp->b_offset);
+>   1536		} else {
+>   1537			for (p = 0; p < bp->b_page_count; p++)
+>   1538				__bio_add_page(bio, bp->b_pages[p], PAGE_SIZE, 0);
+>   1539			bio->bi_iter.bi_size = size; /* limit to the actual size used */
+>   1540	
+>   1541			if (xfs_buf_is_vmapped(bp))
+>   1542				flush_kernel_vmap_range(bp->b_addr,
+>   1543						xfs_buf_vmap_len(bp));
+>   1544		}
+>   1545	
+>   1546		/*
+>   1547		 * If there is more than one map segment, split out a new bio for each
+>   1548		 * map except of the last one.  The last map is handled by the
+>   1549		 * remainder of the original bio outside the loop.
+>   1550		 */
+>   1551		blk_start_plug(&plug);
+>   1552		for (map = 0; map < bp->b_map_count - 1; map++) {
+>   1553			struct bio	*split;
+>   1554	
+>   1555			split = bio_split(bio, bp->b_maps[map].bm_len, GFP_NOFS,
+>   1556					&fs_bio_set);
+>   1557			split->bi_iter.bi_sector = bp->b_maps[map].bm_bn;
+>   1558			bio_chain(split, bio);
+>   1559			submit_bio(split);
+>   1560		}
+>   1561		bio->bi_iter.bi_sector = bp->b_maps[map].bm_bn;
+>   1562		submit_bio(bio);
+>   1563		blk_finish_plug(&plug);
+>   1564	}
+>   1565	
 > 
-> 
-> Thanks,
-> Jie
-
-Yes that looks good.
-
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+---end quoted text---
 
