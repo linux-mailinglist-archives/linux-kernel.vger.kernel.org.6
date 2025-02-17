@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-517069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E59A37B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:40:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA21EA37B9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 07:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087B43ADE79
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F86D1688E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 06:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61330190059;
-	Mon, 17 Feb 2025 06:39:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D318DB3A;
-	Mon, 17 Feb 2025 06:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C425F18FDDF;
+	Mon, 17 Feb 2025 06:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2ceBBCA"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9742A18DB3A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 06:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739774366; cv=none; b=MvhFv4cOXTE13nwLGSWf0CxJ+EpTSjIMhavYMLthdxXAzFS2poH7JiANY/MjLn4gj/HjGF9ojWc42BtwMlKsD2IcQcpR9XITSIODKAUFPNblbOt8pDUPVFVbF1Vw0+kwpkUjNUwh+rEX9CbqiwCenPhuWRgw3Fn3LoQHA2MHae0=
+	t=1739774466; cv=none; b=TVdg1P8SzynN5cPdvzRjQCzegNwfse2q9zweYI2LYs9Ard3J6GlRkJImfFAx9kNpypSR4USUdIK3S8SGto8MjLNw313Nzb4Gdx2f+fyqfRaPDe+UhZIuSPaMDA0S9xCBQGsuaPsuCnmPrfNWmi51u7e83o2rGsIaSYzO0SASZ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739774366; c=relaxed/simple;
-	bh=1ygNsLOXbxIHY3FpCR4Lwf8Cf9fnupC7i0/rcObujDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eH9eorwlrdPy7GWCm9YozohrgGs65WXu9uSkwbognmwLhVcB4suPgwZPnB35yzDppfG4jQYkw8JuRG1whd1mJw0ivLtQGwMBdFxm/xs4PBh/AeMMjUE9R/RyYWkmDZT7oBlo/+TQpN0m4pXpbCNW59/udQusPR4rHIAq1oUUpg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC90C1063;
-	Sun, 16 Feb 2025 22:39:41 -0800 (PST)
-Received: from [10.162.41.27] (K4MQJ0H1H2.blr.arm.com [10.162.41.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73A0A3F59E;
-	Sun, 16 Feb 2025 22:39:09 -0800 (PST)
-Message-ID: <fae7019f-517f-4ad2-a5c2-2e839e5087ce@arm.com>
-Date: Mon, 17 Feb 2025 12:09:06 +0530
+	s=arc-20240116; t=1739774466; c=relaxed/simple;
+	bh=QyVtFU0xdpInEPYan+aOJEYUTEb5vp2F9nMoL/TtoMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rNggD819tVBySihiM9PcKx+9G6knhm04BLMVskUBTW1rzCXsyJSI8xbtQH39tp7FnReHu7aYdWMJd5Fa8wXiYCAhtTVt112rEgVfzD3t6iUiKJXGSjwm4nAu9g+NDeDn9krxIYRYKcd1fxfTifaTuDOS/ODu22GlFE+7djV4X/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2ceBBCA; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb81285d33so247381666b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Feb 2025 22:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739774463; x=1740379263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9BlNWjMvH32bt0VwRarRhttzzRaU06jOP281HprHsXs=;
+        b=G2ceBBCAhFSd+DPf1GQ5rwb1jvZOuSXSNdhk9U3+11FpL7Is5WJGaE20lRNSsJ9zEa
+         jdbevtcIjojhe4rMXtxn9E3/HE0JfPz+zvyf01KrSxR1gd6z5i/k95ctzBNDvn32DFF2
+         g2Z8vdOIOP9wWsRSN3TXfSo7z8a950M/j4ltLp8w1/pO2j7c6F2NpXUMZzsRFIEJ7Glm
+         LlKiIL7SRx984Bdhm45FuFH0r13zIWM1bN7h4Xndc5gLXMu2azkLsbjjwdUfMCzAr1MC
+         PJLP4S5/PcqhL77x58SMXh0FT0FUkLo2ocpwlABzV+xSbA3t803wmom1z5qCfQkMqMFo
+         Y9tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739774463; x=1740379263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9BlNWjMvH32bt0VwRarRhttzzRaU06jOP281HprHsXs=;
+        b=gs68CyzxWyDKHjCPJwge+PLiVpAjR3pbHDfEJvO8qDw+pru00jKrEiCyqGddic9lhr
+         hIyTDU8SCx3q8GV/W+DmFVijMFZKa7vXTMs+VcG2qHwLggFoFELxQDVvRGFec1g5xnRf
+         /RRJTxf0oXJm8U7Qsmb8lzZ2+aP+vpSv5BorgaoVjGBle+RQ4r+AAvrO7s/lLS4tYLRk
+         foieHU8eCp4pqE7O29LRymggEwv4d4fdtt+S44+7X9/jjf0EVcFQ85q0AgaXsqnxImPe
+         VSDCR6laGAkhWtpprV3ieQ7KzhioGh9n0VsOh8O20xFfrlguM6O6+KBX+ESeFYZovVMo
+         6g6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUD2Po6K5lFIBAukBd/0lzqn+UK6QTmSSgyBJUYI2iuI3ByjU0vs4nZAAIefLUB/aKkJT5C7Yyl0qALE5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfJV8iRl1cwc0BdfmiDnYAaXkHJKcgMYtkkVbMEguuLiLF4gWe
+	22cRjJ4DqHTuaLhZlNyRfGSePCgd69NZrNduNzxn8IXGN4/bR/fW6+gnVfg9GKZC3m0X8QRCpQz
+	YkZjrKWGENx8YEkfC+dNQn5hrHTc=
+X-Gm-Gg: ASbGncsZ2axc/9dRjdJWc5wN8928kEv63/DzfMcPG2HZqzUq8NyXzid+DEJ5g6ghbz1
+	C2XIxjI0JTf9J9uCEE042jHiV67O8KWiIZ/AaLe00oc8ufW2VkUCe/vgWDsQiaHOCMJL3OFmU
+X-Google-Smtp-Source: AGHT+IHEblpWy0E8o/GwtXXK/ARtPn4+t2mJ/jkAoJv43EWaA0zUoUZ//XGdmh3n9p1/b1WAK7vkij5W6JHPpq2qDSI=
+X-Received: by 2002:a17:906:7312:b0:ab7:6c4b:920a with SMTP id
+ a640c23a62f3a-abb70a7a67emr862003466b.6.1739774462705; Sun, 16 Feb 2025
+ 22:41:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, sunnanyong@huawei.com, usamaarif642@gmail.com,
- audra@redhat.com, akpm@linux-foundation.org, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, tiwai@suse.de
-References: <20250211003028.213461-1-npache@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20250211003028.213461-1-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250211143910.16775-1-sebott@redhat.com> <20250211143910.16775-2-sebott@redhat.com>
+ <Z7BoydkyT_h0gwOV@linux.dev> <CAE2XoE_8ihJZQF856w-_F+cgJW7fLWGz7M7Ztoxzw2vE51_m1A@mail.gmail.com>
+ <87v7tb17os.wl-maz@kernel.org> <CAE2XoE9=hjP+qpsy+FcYcSDectDajiXjtcMCVpacSo4cFOo=tQ@mail.gmail.com>
+ <86jz9psqwd.wl-maz@kernel.org> <CAE2XoE8i=jPgSea5jXY0eOxas9Y_2pa7QheqS1xuw2qeTQDNyw@mail.gmail.com>
+ <87pljh1zgj.wl-maz@kernel.org>
+In-Reply-To: <87pljh1zgj.wl-maz@kernel.org>
+Reply-To: luoyonggang@gmail.com
+From: =?UTF-8?B?572X5YuH5YiaKFlvbmdnYW5nIEx1byk=?= <luoyonggang@gmail.com>
+Date: Mon, 17 Feb 2025 14:40:51 +0800
+X-Gm-Features: AWEUYZnfZwhUG_EoRZ2LP7nC3OQtiJSnvldFjppzrrBppJQq32TWm_4wX3cJYI4
+Message-ID: <CAE2XoE9Xc0CeNiRZnwANU2Q9Mbg6f0hCOyrkNA+h5Jp-2mrsBA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] KVM: arm64: Allow userspace to change MIDR_EL1
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Sebastian Ott <sebott@redhat.com>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, 
+	Cornelia Huck <cohuck@redhat.com>, Eric Auger <eric.auger@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+> Well, there is no magic. If you don't write to VPIDR_EL2, not much
+> will happen. You need to apply Oliver's change instead of the first
+> patch in this series.
+
+Thanks, after applying Oliver's change, it's working, my concern post
+at the beginning is to ask if
+ Oliver's can resolve the issue:)
+Now after testing Oliver's change, it's working, thanks
+Sebastian,Oliver and Marc Zyngier:)
+
+My test result now is:
+```
+/home/lygstate/work/qemu/build:/usr/local/sbin:/usr/local/bin:/usr/sbin:/us=
+r/bin:/sbin:/bin
+/home/lygstate/work/qemu/build/qemu-system-aarch64
++ qemu-system-aarch64 -cpu host,aarch64=3Doff -accel kvm -m 1024M -smp 1
+-M virt,gic-version=3D3,midr=3D0x412fd050 -nographic -monitor none -serial
+stdio -kernel /home/lygstate/work/debian/arm64-kvm-hello-world/bare-metal-a=
+arch32-qemu/hello_world.elf
+Get MIDR EL1 origin:0x410fd083
+Set MIDR EL1:0x412fd050
+Get MIDR EL1:0x412fd050
+Hello World midr:0x412fd050
+```
+
+
+>
+>         M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
 
 
 
-On 11/02/25 6:00 am, Nico Pache wrote:
-> The following series provides khugepaged and madvise collapse with the
-> capability to collapse regions to mTHPs.
-> 
-> To achieve this we generalize the khugepaged functions to no longer depend
-> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pages
-> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
-> using a bitmap. After the PMD scan is done, we do binary recursion on the
-> bitmap to find the optimal mTHP sizes for the PMD range. The restriction
-> on max_ptes_none is removed during the scan, to make sure we account for
-> the whole PMD range. max_ptes_none will be scaled by the attempted collapse
-> order to determine how full a THP must be to be eligible. If a mTHP collapse
-> is attempted, but contains swapped out, or shared pages, we dont perform the
-> collapse.
-> 
-> With the default max_ptes_none=511, the code should keep its most of its
-> original behavior. To exercise mTHP collapse we need to set max_ptes_none<=255.
-> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "creep" and
-> constantly promote mTHPs to the next available size.
-
-How does creep stop when max_ptes_none <= 255?
-
-> 
-> Patch 1:     Some refactoring to combine madvise_collapse and khugepaged
-> Patch 2:     Refactor/rename hpage_collapse
-> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
-> Patch 6-9:   The mTHP patches
-> 
-> ---------
->   Testing
-> ---------
-> - Built for x86_64, aarch64, ppc64le, and s390x
-> - selftests mm
-> - I created a test script that I used to push khugepaged to its limits while
->     monitoring a number of stats and tracepoints. The code is available
->     here[1] (Run in legacy mode for these changes and set mthp sizes to inherit)
->     The summary from my testings was that there was no significant regression
->     noticed through this test. In some cases my changes had better collapse
->     latencies, and was able to scan more pages in the same amount of time/work,
->     but for the most part the results were consistant.
-> - redis testing. I tested these changes along with my defer changes
->    (see followup post for more details).
-> - some basic testing on 64k page size.
-> - lots of general use. These changes have been running in my VM for some time.
-> 
-> Changes since V1 [2]:
-> - Minor bug fixes discovered during review and testing
-> - removed dynamic allocations for bitmaps, and made them stack based
-> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
-> - Updated trace events to include collapsing order info.
-> - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
-> - No longer require a chunk to be fully utilized before setting the bit. Use
->     the same max_ptes_none scaling principle to achieve this.
-> - Skip mTHP collapse that requires swapin or shared handling. This helps prevent
->     some of the "creep" that was discovered in v1.
-> 
-> [1] - https://gitlab.com/npache/khugepaged_mthp_test
-> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redhat.com/
-> 
-> Nico Pache (9):
->    introduce khugepaged_collapse_single_pmd to unify khugepaged and
->      madvise_collapse
->    khugepaged: rename hpage_collapse_* to khugepaged_*
->    khugepaged: generalize hugepage_vma_revalidate for mTHP support
->    khugepaged: generalize alloc_charge_folio for mTHP support
->    khugepaged: generalize __collapse_huge_page_* for mTHP support
->    khugepaged: introduce khugepaged_scan_bitmap for mTHP support
->    khugepaged: add mTHP support
->    khugepaged: improve tracepoints for mTHP orders
->    khugepaged: skip collapsing mTHP to smaller orders
-> 
->   include/linux/khugepaged.h         |   4 +
->   include/trace/events/huge_memory.h |  34 ++-
->   mm/khugepaged.c                    | 422 +++++++++++++++++++----------
->   3 files changed, 306 insertions(+), 154 deletions(-)
-> 
-
+--=20
+         =E6=AD=A4=E8=87=B4
+=E7=A4=BC
+=E7=BD=97=E5=8B=87=E5=88=9A
+Yours
+    sincerely,
+Yonggang Luo
 
