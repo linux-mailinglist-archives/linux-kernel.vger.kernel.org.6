@@ -1,160 +1,125 @@
-Return-Path: <linux-kernel+bounces-518242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75F7A38C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:09:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37689A38C15
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 20:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE85D1885238
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9C83B399B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA159236A63;
-	Mon, 17 Feb 2025 19:08:39 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E675236A74;
+	Mon, 17 Feb 2025 19:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NOaO5h1+"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3726236455;
-	Mon, 17 Feb 2025 19:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022B8228CBA
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 19:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739819319; cv=none; b=nqCbBrPvUOkOcrNbZ3Y8x/Bf66yhJruaa+nUjUlfFU/qGyfU+P090j6KmbSj9OWmoKLNaNR5TprRurWi+p01c8oKwJGYcY5oQM/vMkfUN6IdgYQdwaJBm/KfOa9DO0zGby/IOLTv0NbLCO9AgJUvIYfKp9Wtg8pzfc19ALkbpV4=
+	t=1739819313; cv=none; b=LT33fcYJCAAmA5XLWcqdPDIVyzGadsHE3iXxRDtqVHfdfqyER6PJ/WWrQNd62SjmXvur1IbpG+lJTy5J5Fby8rN6a1HaGfU6L5NDIXl4CVXcA1nuNCLdUp68plxxHqjn1nOh/UXiwRTzu9xAyIk+8v/q7Qzqzw7UNYlmlR3Pkh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739819319; c=relaxed/simple;
-	bh=WgkdyXz/h4gUCs6OL7rS7szH6rN+Xn9RvUn4fwT9GNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DDGA4OIVoD5mnUkYLNHXEOsLGHMxFN4JWId5BSj/OcNg/kAUM9UMMK3Fs/fL9lLhvkRHdIWe/0naoXlFYFw8iU4q8+hKAzUu2FA/mZ3oQnfz1/Gwz9JRgLXfUtUrxjzCqwEEgMFKyEwWSW9GyzgWlIJ1Ga4MKl6NZA0dlGI6qnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6f4434b5305so39354397b3.3;
-        Mon, 17 Feb 2025 11:08:37 -0800 (PST)
+	s=arc-20240116; t=1739819313; c=relaxed/simple;
+	bh=Oo7Lrcl2ZPC6VhucruHTwVeLY63vJvWzZsAVRWNt6Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9KVGMt4mEvGpJ81vNC/nMvXC7r7WxWaToSDMAH9hvXdy8r/qb84OAEujbGOmDQMhST5DlwyI9UWyG3CaPZb71NFt/PEDwsBAEpDdAWKQO5NId+9hppQXGVbXiEvicqoJ92977RxuuX4jjGYOTmbnyXdu2imzeDDwsgEghT9QVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NOaO5h1+; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-546237cd3cbso1236335e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 11:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739819310; x=1740424110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wdRXWfwJ/W21WH+kqrSD6iNAMN48NhyL/UJXo71GHvM=;
+        b=NOaO5h1+ZbcRANW28dsryouRppVIC4WVVrnetnm1lpGqzlRpdjn8eZUhdXmudHEYEJ
+         liLuanI9DAORgGUAabEsXzA7S9Cc+Qhy+rFHwTRx9C2EWZ7spOQ+GJ6TxMHxTiKbHnUt
+         WCGKe2rpJtRcYRuCwou2Pr00v8JFcFg/o/au9KZ4+nqmgDvae35JW3v/8UtguKgByeqJ
+         Yw0sFZeU5BV5itUXc/2k98xbH1OT1lpDd5sp6StXVPGqVoBf//aLzBV9DCV9JVuFmRRt
+         imRolMyIys59TGj9dAFcgNY4Iws2lOD/eWg/+i0vQAXG2JELH09yQCdPN82gmOutPgfM
+         pV9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739819316; x=1740424116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZoHEtc6NLvxTZfVznB+yP1hpkpOf050NiXXR/iSxdxA=;
-        b=EvZCJr8iJHe02s3pVS3aMPnd+VfTVs6sZQFaeLgseY4gtLtdEm0HhHGuxysrNAaZvG
-         NPPnFP8DFy4i2Y7n9EU32SMmCvAqx6e/birUUxE/ykwfvz1bpWqRLVKfSyVWLd3nz4rs
-         64GGwUIQ9ptVSo6zSU2iMeTnisqL6xgy04E5i4kzZmkqwiIqOmeMuD/O7eFVDvbhrRL2
-         lofz/42yXr9YHuTvSxqn8dJBrgfDVFIqK6RFsNgmOtYe4wUuLzMhvGqd6pK7QHwr5G3g
-         qbeUfBuRTJ28G/te3PNZMsXVf24asfke25RDQQOoqi56fJdTBf43kmS6w8AuWnHWXYYb
-         ayKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzr01blnx1hxMrjUqP4T225/tizdt/ql7Nq+OXOilxA6GG9ygZeun/mR3/0Pn/X1zwbYVsb96qe715dMarrw==@vger.kernel.org, AJvYcCVvLymNt8V5e1OUH4aOsEw6ifSQb9IE+EibDqyCW71sTvqZ2AXFS5m7pFg1WIburSwU9tqNTmK9M09a1zmc@vger.kernel.org, AJvYcCXgUPZ5V/kp2lmMRHYzPkr18L8a6DHRQNi+xzbgDNyYYdh4xjXLl8/65oe0lbnoobPFp7vnXMA6qy9MVAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq+a7xEN5wMbe5JdoPoTeMN1HevarpW/cUzxDkKxQIBBvO419r
-	MucvyRLu4VIxEat3uqKdJigtydGX7momo/s9vKZNGPu79u7nKJoz4y3HvEZY
-X-Gm-Gg: ASbGncuOzZSqmOtzS+FHQjYrCISu+upsTbcB/2Gy2IxTqY5FKPTXH8GruXLcJK780PP
-	YlHHGWaIDlfGx42SFX0bsbrtR0JeNwM+EJiv1G8sZ6DbWOJnAU5ZUl3Y/38Yh+RD/G2GmXu+80V
-	UQGDFxXkl/EzO0LyaA6nJmKO6Wa2JPGtzC0VL4OwHKzcNvDE/QLRGd8w36VgtcoFKqbRIsr2AAu
-	0vp+TryHhDNTsaiNK+PP4TdQIN3CzM4XEr6V8LYfQGbwcvdGhg3LbzyeYT8g+ApLWDy/EcveJnw
-	DE4S09HCKG+GWAMQ5sbadgqgHBa9U6vN+4OWT9+rumLcVKVhMkeV
-X-Google-Smtp-Source: AGHT+IG6FXg6nyc9zZN0uC1B+Z/cHzImnKCD8NnkHwBMHcnUcgpPESezlr8k0uSDDllYsmBZBmQPzA==
-X-Received: by 2002:a05:690c:4d89:b0:6f2:9533:8fba with SMTP id 00721157ae682-6fb5827084bmr96730387b3.1.1739819316564;
-        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb361bce8bsm22315607b3.104.2025.02.17.11.08.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f4434b5305so39354197b3.3;
-        Mon, 17 Feb 2025 11:08:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQDEH4UY9riHIPaks2l48c3cUHA4GrqGyrzncTNWV7tTpnUn7ZoRtQbkX6B/YxEpwmiLzv6NdrTrAxLWRbaA==@vger.kernel.org, AJvYcCWtnvSihLFP9P1TieP3YTqDypbjnIuUULRupkLQlevtVcvK/uMoCNpRJqsW4+hqpXaxyEhEynGEKWkb8hw=@vger.kernel.org, AJvYcCXG0RytHiN7HpP1qMlZZTMAgaf0pw6ovhuAN+nqYn8MSAxQ4u6eYNt6e9fvbjYMTUS9hIBn1OKGxhXsV66S@vger.kernel.org
-X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id
- 00721157ae682-6fb582b757emr87826527b3.18.1739819315947; Mon, 17 Feb 2025
- 11:08:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739819310; x=1740424110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wdRXWfwJ/W21WH+kqrSD6iNAMN48NhyL/UJXo71GHvM=;
+        b=LPinicy2FNddGRsof2HpM9BrSZcSNhQSm2d2nexmR5101zb+zlTYppeHke1uNLNymL
+         fhn4p/4K1Pwyr+KwGw2W9tckHTjEde5gGlIIbT04IZ39/Ox0TB1JZVBJtbj0MmJ+SKgg
+         3kQ/i9RJMJDTYO9+7sBazOwT2N2N7NobLxH/JSbf0BwONHX2qFhwxcW3ftG5P1BJcIFm
+         Hsj60MP1W/rTCOEFhPWnMFIwVXczBeVrVDwkKa84aPq761gresZjsxeutL0c7QMCp+gN
+         9cRG31x/RzwMivz8pncaXzixlQWr2aQyh0TYFIoAX+1zLiY1DbOzGoinFVHSJ27zJvBh
+         yC7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXhfRyy3shxzFl7FqgXoplbovNnwY+uZ64cTJlYba0b7kMhNSUajpGujDKKyCzFemmIWhqBIeRrvGx8pOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmqJIokoYiaS4t0RPyf0lwGBCRpH429xjceOwAXnM79p8F5zbh
+	3FhHLN+V1IZoID3ZBeoD+Ql57S0+kLzb+vkxcBL4d3usTw+vRP7+hdCPY1FYwI4=
+X-Gm-Gg: ASbGncvEUjTFgkIEOk0YYoDKOPGBlhL+Zc/393q3axeEIBlveyA8xwyFdtiQtKsMAv6
+	U+NRwwutWnZsJr1aXUU7MNSmwlqd7Mso2IA9ypEEhsFJsFKC7h9WjnBr679v5wAm+RQHXW8MlpD
+	XtWFIJdsYQ6GBrB6zWugkFrStM6Ozc23aB7o35C2uTZVU2ol64hxM1rqy3Av1ouj/NwrXnAFDd0
+	0EzyfBpXhGpm3v28wkvWmntXlF4BM9/gSyKEiO+8Oz8HerSwH6/ALCI+UMlAmLLfOgb9DguUZxV
+	EkSNDx6xhqOLeX3FDjIf2Jh5W5NAWqvbYzYK+nv8DiU0LCh5napJncZT5Y/AVTGfyqEghXU=
+X-Google-Smtp-Source: AGHT+IHamycJDA8JS60gP7tbbymnAwBhYuHbKpt67zrHM+Y3j+U5GzOFbCQPJZF1gEw20AZA/az6qQ==
+X-Received: by 2002:a05:6512:2823:b0:545:4cb:b25d with SMTP id 2adb3069b0e04-5452fe37326mr3178556e87.13.1739819310163;
+        Mon, 17 Feb 2025 11:08:30 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54526dc0461sm1398133e87.246.2025.02.17.11.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 11:08:28 -0800 (PST)
+Date: Mon, 17 Feb 2025 21:08:26 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 14/16] drm/msm/dpu: Add missing "fetch" name to
+ set_active_pipes()
+Message-ID: <hnarfrrealmd6uma6ahbnw6v63yqtjw5a4idkp44mu73t6gyfm@4zcb6xkbpwry>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-14-d201dcdda6a4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
- <20250217185000.GC1258@sol.localdomain>
-In-Reply-To: <20250217185000.GC1258@sol.localdomain>
-Reply-To: tanure@linux.com
-From: Lucas Tanure <tanure@linux.com>
-Date: Mon, 17 Feb 2025 19:08:25 +0000
-X-Gmail-Original-Message-ID: <CAJX_Q+3Cp=5WVxACFCuYDfUzndVfeewykYbxSw1f4zyKm0DvsA@mail.gmail.com>
-X-Gm-Features: AWEUYZmizRkxC2vzDxy52kCc9Y20ryP3d4RTkB0b2ddqian4SMSNyTSuh2X7VX8
-Message-ID: <CAJX_Q+3Cp=5WVxACFCuYDfUzndVfeewykYbxSw1f4zyKm0DvsA@mail.gmail.com>
-Subject: Re: crypto: fscrypt: crypto_create_tfm_node memory leak
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-fscrypt@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, 
-	"krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>, "lucas.tanure@neat.no" <lucas.tanure@neat.no>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-b4-sm8750-display-v2-14-d201dcdda6a4@linaro.org>
 
-On Mon, Feb 17, 2025 at 6:50=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> On Mon, Feb 17, 2025 at 06:43:15PM +0000, Lucas Tanure wrote:
-> > Hi,
-> >
-> > I am working with Android 13 and V5.15 kernel. During our development,
-> > I found a memory leak using kmemleak.
-> >
-> > Steps I did to find the memleak:
-> > mount -t debugfs debugfs /sys/kernel/debug
-> > echo scan=3D5 > /sys/kernel/debug/kmemleak
-> > cat /sys/kernel/debug/kmemleak
-> >
-> > Stack I got (hundreds of them):
-> > unreferenced object 0xffffff8101d31000 (size 1024):
-> >   comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
-> >   hex dump (first 32 bytes):
-> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >   backtrace:
-> >     [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
-> >     [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
-> >     [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
-> >     [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
-> >     [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
-> >     [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
-> >     [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
-> >     [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
-> >     [<ffffffd32796a108>] do_mkdirat+0x88/0x204
-> >     [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
-> >     [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
-> >     [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
-> >     [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
-> >     [<ffffffd328abcf88>] el0_svc+0x28/0x90
-> >     [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
-> >     [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
-> >
-> > After checking upstream, I came up with the following:
-> > cff805b1518f  fscrypt: fix keyring memory leak on mount failure
-> >
-> > But my kernel has this patch. So I continued to dig around this and
-> > saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
-> > V5.15.
-> > I can't see the pointer tfm being used anywhere or saved, and
-> > smp_store_release doesn't kfree it.
-> > Is smp_store_release doing something with that pointer that makes this
-> > memory leak a false positive?
-> >
-> > Any help with this issue would be much appreciated.
-> > Thanks
->
-> The pointer to the crypto_skcipher 'tfm' is stored in the fscrypt_inode_i=
-nfo
-> (previously fscrypt_info) which is stored in inode::i_crypt_info.  It get=
-s freed
-> when the inode is evicted.  I don't know why you're getting a kmemleak wa=
-rning.
-> Perhaps f2fs in that version of the kernel has a bug that is leaking inod=
-es.
->
-Thanks. How do you check for leaking inodes? Do you have any start
-point (function) to look at?
+On Mon, Feb 17, 2025 at 05:41:35PM +0100, Krzysztof Kozlowski wrote:
+> The set_active_pipes() callback configures CTL_FETCH_PIPE_ACTIVE and
+> newer DPU v12.0 comes with CTL_PIPE_ACTIVE, thus rename it to
+> set_active_fetch_pipes() to better match the purpose.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. New patch
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c   | 12 ++++++------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c |  6 +++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h |  2 +-
+>  3 files changed, 10 insertions(+), 10 deletions(-)
+> 
 
-> smp_store_release is just a fancy way of doing a store that includes a me=
-mory
-> barrier.
->
-> - Eric
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Lucas
+-- 
+With best wishes
+Dmitry
 
