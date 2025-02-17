@@ -1,427 +1,260 @@
-Return-Path: <linux-kernel+bounces-517400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF5AA3804D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:36:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253BDA38046
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 11:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6AD93B3C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03BB47A2588
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B367721764D;
-	Mon, 17 Feb 2025 10:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E662215F68;
+	Mon, 17 Feb 2025 10:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="T5yjlt5c"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011029.outbound.protection.outlook.com [52.103.68.29])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gu9z0zao"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A7818C907;
-	Mon, 17 Feb 2025 10:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788459; cv=fail; b=WzkywPFRuGRWcL4v753RGh80LcBhFsHcwIEUzG8rOYLS3A3ssQ+/N6m0haBczf5zXNXyKtBA83bG8u+5s/AmTk7gWr5wrNF0ziaiyOrR9Szz9Z//b6VThZhfPkBQKPg4xiAPIeyWC09QIovWtoZogmIXpVu884X85MTx5qALwSs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788459; c=relaxed/simple;
-	bh=bsAR8kIQZo2mwBXDtauSCZ+aTJ600FbvOKNaDqZ6xAE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hmXNPFhIU1B0l8nGEmz66Efej392wIpfroH8ff2hu2x/FjpxzkZJesA9Pawi70dj/f4FGJz+A38edjEFH7GYNKpzjAB9418V+lLEj49FTik7DLCsT77DhCel4kUYoxIXB0+yi/PqNHEGALpWJlsbefb9bkCl1spSAsJVETRsE04=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=T5yjlt5c; arc=fail smtp.client-ip=52.103.68.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pfmBPQKvJBqPKbBPzgrtxQKbfyqafbfbAUC0CYhXm/CFP3REIqBzN8kdIfgVP54ZHNfw5IqdDKs8nzIc7YmlvYEMTjdEADzIkVIfhcuNIEIiY62yz2blT/ovYcwxoAwPc3LmmoQu8+o7cw+evjk0nBKFnX8OAyGx+d084RTdOmD7dhznB8LzQLGvGihp/QqTuep0OHOwZGgwPC/8rpRlgZs+8qXOrs6vitrmFeYV/ncMxnFfs4nS+sVrHYxSokBDJQrhjmQmCmXd1YMHTc5ZqgTa4tR/SqpVjLkcPi4Vcfboq7Vh/ArDaEf0BkCDM+drSl40GiiaO8LxcV7pNkaehw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vwf97nhjhEq1iebpPiDv/S44bsLkbtpVZG0DxAHDNQ0=;
- b=yZfk7bj/vBroodWnQecbdP4uDryIyaWfCCJVYCkAZPGsfP/vArebhODQ8/U9UgqdF9rdQW+mvjS3j6uOs6DyS74f8FvMlwS4nubqgQTX2swdjY5fy5heXN+dzncY7BsC8MknewzeJ8vNuf6Gx05j4eJXCtgRsuMsFnpOUCFavRF86lOWccu+tkxpbUYbrPJ4UCB3qvsGzY2CCZGpmFVkAWVe650MI5XazeSn7ePxshI4gad6fPZoDdYL+u/7wd4YY0um5oBob2y0TD44pyUSlxBbQxZRt3xkfSYrlyIjNoeClmYrPBviHeXqlz2LwfzGM0+SS4fPKA149P0BG6IiCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vwf97nhjhEq1iebpPiDv/S44bsLkbtpVZG0DxAHDNQ0=;
- b=T5yjlt5c8H7eI9VP8uz6uyj7ozw/gEI0vOvMILwQtsR5Uv7Uopv3RoiCzHdWGgvce4uvUFPzyBso48Qy9IssYF2GeU078e978y2iZs/LRqaJSSPcOz81HIPCv3+C7k29c1ROmjZKDb4KEN37I/DoirimpjneNgyoCSZv7KIhPXyYTL27Jhl4uyuYf1lwNpehvohx4SbimKqdcsOJabU3tEw2NJMWIwR17GtRc1fsBHJ6/bsKF/6KgFswPhRyhPaX0RECUjBCKYIMB6yWA2Ub1MQYkXLVYCWzOdI43vpmPiXyXLFurYV8Q/l1jeuPu223hC3mniHSFj65DKI/xvyCYw==
-Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:6e::9)
- by PNZPR01MB4351.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 10:34:10 +0000
-Received: from MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::6e06:bc2e:85c0:c2ee]) by MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::6e06:bc2e:85c0:c2ee%2]) with mapi id 15.20.8445.017; Mon, 17 Feb 2025
- 10:34:10 +0000
-Message-ID:
- <MA0PR01MB5671D4A748A88CABFF0FAB20FEFB2@MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM>
-Date: Mon, 17 Feb 2025 18:34:07 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] dt-bindings: rtc: sophgo: add RTC support for Sophgo
- CV1800 series SoC
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- devicetree@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR06CA0004.apcprd06.prod.outlook.com
- (2603:1096:4:186::20) To MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:6e::9)
-X-Microsoft-Original-Message-ID:
- <719fc543-143b-4c20-81ce-66d2c92df1ed@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748F3155321
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739788489; cv=none; b=G9x8K+BmyoDa+yo0KeFP88M7H9Mo8CMAPj6Uwai/WxxYoJVj/U8HanMN/Kn/dFUVojRraAcu4vyVfETMLtmnZK4Dr9RsF2ujIhi7NSBt/U49JjsvMl/w3RGMEr9HUe/GXRZoEhrDDjXLRTnx/BIOaS6LM1XsWgHbruFKnGqoaLM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739788489; c=relaxed/simple;
+	bh=b5QQRnYVSAkR2gluU8sVN2rGpkjWzxnVKnGetCMJnPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qtuSpvFOJZEp7xe17OiAFEcMmfPMi1zOeC9ZK3aJvbzEWrYl6m3E7xsnHXQfMKmMjcGww/Gbo2xtlpo9afJ1tWrHSKvIpC8t0JgzMUko8dnDBeuoYSfotPiSehBR3uv981gdg9tD+/oVFMN81G6UJthryvkLxSfNw9fWn7GWTk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gu9z0zao; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H03RS2027346;
+	Mon, 17 Feb 2025 10:34:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zEF/t1yOI2x4Lz67WwMMmiTHnzEvQPEcnkfnDYR7dWk=; b=gu9z0zaoxsOYLrS5
+	2CvVceT25iEGKFC5fjfdDxDyjp8phH6Fwb1kAAvBn0LEl3j2OqorvVr0JtdxeHYl
+	g7hzwlS8TJXpccP+O4enNvFTEpAx90IqkcvxqcCiPGCwcyArreJ6AzEU0rVy0nGn
+	J87/Rs0Ku6bD25nKWUrm+9RF/M284BQjnTWxgLKN2Ms8vyzZvW+4kbJC3/JhEaXj
+	1dcpsv6nvZZ1O5SQAZc0hqHDvQvyMFNPax5fkA/0Felh1//l4bdJ2hRw0RD+6vDN
+	OavnTJqJwtLoF3EoElPlSkuDfk8Mac318hwqXmlKxDKtB0ADzjoLxE3Av9k0hEq/
+	0lSy7A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7shce8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 10:34:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HAYMuD002859
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 10:34:22 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
+ 2025 02:34:18 -0800
+Message-ID: <ce2bd045-3e3a-42bf-9a48-9ad806ff3765@quicinc.com>
+Date: Mon, 17 Feb 2025 18:34:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0PR01MB5671:EE_|PNZPR01MB4351:EE_
-X-MS-Office365-Filtering-Correlation-Id: e6dcad20-3a3d-474a-7b63-08dd4f3e9d4a
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|15080799006|461199028|7092599003|6090799003|5072599009|8060799006|3412199025|440099028|10035399004|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dU1SQUgzWjE0R0FPc0xUSlljZzRQVUpBRVlZRGpSQUxkRE1OZ3dzUERaM1RE?=
- =?utf-8?B?RTUrcFhJKzhGbVllaEpPeEpsMEF0OFNZQWRvMUkyL0EzVHJzcEhFQ2NvRU4r?=
- =?utf-8?B?eDlTN090ZktjNVBtM1hnRFdORXduQTB3dkw4RUk2TldQaE5oTmY5R3Vwbis2?=
- =?utf-8?B?SVJaeGt0dHd4YUdCY3U5bGZxWnZsRGRxck5USVVhZWtsQmNVUUZrdXZKaC8z?=
- =?utf-8?B?eTh2ck4vczB4YUtMQ0tmazdocFdXKy9Mdk1Yam9XR2x2RFZqVk9PWUNBaUlW?=
- =?utf-8?B?VnFPYWV6ZVpZbk90eEg5aTVjdFpkMkMyT2J3dHFtRW1mN2syL1Z5c29WZHhm?=
- =?utf-8?B?L2hKVDRER0QzTTBZMER5UlFZS1ltb2h3bjdEVmtVcjB3QWZnTFBQTWwzelQ0?=
- =?utf-8?B?YXBGVWNNb0pMQ0xqdGUxL25rcm1FSU05UU9xeEpTVGYwOE54Rjc4NG10YTZy?=
- =?utf-8?B?QitXdUlIeWR3M1Q2SHV0eTdQVWhSMCt4UmVram9lUE1VVWp1VVJrV3FCTlRJ?=
- =?utf-8?B?SGJwUXRlWlkrelJqVFVzLzM3M2VlbFBxSlNaWFVXVHVkWmwxMjQ0dlVFRUM4?=
- =?utf-8?B?c3B0d0hqZ2MwL2dYQ3BQMzZNUHc2TVBHVXRMYUU4bWtCRnphWHowMUIrWEdN?=
- =?utf-8?B?ZFN4amtiaWgrRFY1UUl0MlhKTGJlZWRKTDc4Wk5IM2xqNk53Qk1xTTI5TVJS?=
- =?utf-8?B?ckNZSDdoRFVqSkRyZ0FWRERuOFM3ZUNNOEpYYkFza2VVd0cxZHBGY0Q4eE4r?=
- =?utf-8?B?cmdsdDUxbnMxamI2VFhpWjFkdFBxMUM1QjVablkvc2VLblMvTWRxWlhEb25S?=
- =?utf-8?B?THk5dy9iUzU1MXF4ZlIvSjFhOC9XZFh6Y3FxWUxwMmNMVmZXbTY0RHNSL29p?=
- =?utf-8?B?cHorNHpOOFI4NkZLNkpTTGxlMUtnR0t4MVdObGliL1JrTE5VMXlkaU91d2xQ?=
- =?utf-8?B?WGxlMjlMSmtsKzZIVUcyQmhqRHF4TFBDZXI2WlpENGZKclE1L2hUdnhKdDcx?=
- =?utf-8?B?TFRSR3hVNnJCSEpNQlFYL2xSOWNaMXBvZ2tibXRmR1NCUStDdUVKbWpiRENm?=
- =?utf-8?B?STJBN0FpMVlRSlBGQ3U4SWY0NzJQZjN4bVdKRzlOekZMeEtORDloSGxLd1lQ?=
- =?utf-8?B?b2NDWU51SGpBNDV1bnNxSzFrSlBrWUdqYVZUbEVVZFZtQWpyZ2UyU0pEVFZN?=
- =?utf-8?B?VTErczJVVGN5dTF1MG9zem1PaERoNlRPVFpiS1VrWDlPeUVhWVNady9TM2Mw?=
- =?utf-8?B?ekRKekRwMktYWG4yTTNYUzI2ajdnalA2VWdza1R2S0R5bnpXS2tjZWNvb1Fk?=
- =?utf-8?B?QlljWlR1ZHAzYVVtcmJxUUNWWEJvWG9oeFBQeVpTckVCWlRWY1VMVzZpa25r?=
- =?utf-8?B?VWRKQ2VOMWs2RjgxWlBFbU03akVpTXladjRjRG4rOEcrWGpLc0RGb0QwL1VX?=
- =?utf-8?B?ZUJ3R3BKdnRPQUF4YUdVNGVwWWpFSUpPeW1sUWNOUHlWTUMxVXpUOTc0YWJv?=
- =?utf-8?B?eDNlVTl5VjNhQ01hQldDMy9QT1kzUWFRWHBzdndsNzVpOExibzNYODVEWXo4?=
- =?utf-8?Q?DKNUz+t0v4PU7uXqfiQrP+eNEFsjHTuMMLgIrHkSO51kuf?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?STJHczRubmROZEc2K2Zva0ZXa3QybVIreUMwZXBsdGllcUNwa2RqREgxN3VW?=
- =?utf-8?B?N3AycEV4cEs3MGNCRitZWVc1YmhHbHFZT3h4UDk3ZnZ2emFKTlorRkRMVHpj?=
- =?utf-8?B?VisvSzlsS2d5Zjd5OXpiSGRrSnI2OCtQdzd0ODVnbVplUHA3Q1E2aUFvdUgv?=
- =?utf-8?B?RjlYSGg3SG5xbWlwRE8vS2xZLzVxRHNRdk93UjF5THZKM0Y4Rmo0MC85NVpB?=
- =?utf-8?B?bm12SUNmZWNMK2xrbW01Q21hY3VrOGZCa3ZQYzFGZlFrSkl2bXZxOWZqNXgy?=
- =?utf-8?B?OENLNXZxZnM3bkNLSGk3TzdHUzBINzJyb0ZQUW4zUXpUWmJZL0xnRkVxbHdv?=
- =?utf-8?B?Z09ScnhvL2RTckx6bW5WaitjVW5vL1RwaEE2ZjcvdVdQV0p4OURYbnFIbWFR?=
- =?utf-8?B?SlBtZFBodEphaHJEV0g0dFJpUEZsVlNlaC9HandQZHdqcEFXcUY5dzB6RkEz?=
- =?utf-8?B?QmV5cUhwZS96MGV1WVhML1NhcVUrazFVVGtQWnZDOC9aUCtFcGNRazh5NG1G?=
- =?utf-8?B?eHJDcU50YmZnSGdDWFZaTUpVUUhnNGpZNldpK2xJVG16S05NQi9udHduNTcx?=
- =?utf-8?B?MWtYazlCVWJWaTJnWkdPNkhaNlBadnpBNDVVbWNxdGxiYWR0NDlHdVBrMUZZ?=
- =?utf-8?B?QWFnRzJFcWwrMVFhVndGVm5PdjB5Skp6ZVd3SFBzU09PamlVSkZKNDg5b0xC?=
- =?utf-8?B?WU9jb0VNRG4xSEdjVzZnbUJ1VTNaYVhTNDBLS3JhU1hQS00xUmpVWnRYVTJU?=
- =?utf-8?B?dTMxUlEva3FUNGROc0V4ekpUZGpyRDRITklIRDdzZVdrYmdadkdNelRjc3kv?=
- =?utf-8?B?V05FMTUrRGZQOFd6c2drbVJMQVpHMDZoLzhUUXpEOUo3VlJHYWtwMGEwZEtq?=
- =?utf-8?B?MkhBaUw2Sy9wekI0bDlESHhjZ1R0Tkh2YkxNTFJtWUM4endDNlRTVzU2UEk3?=
- =?utf-8?B?WjBHRkl2ajBMUnI1czJIRENSOFhkeG9qSkxyUFdJT3ZtTmtVZjlBemZGdWtM?=
- =?utf-8?B?TkJUaVg0UkJ5Z3ZJNU45ZWkyaXpyRWhsVG45M2hkMDNJZWZoNzduYzROK0xJ?=
- =?utf-8?B?RnNsbDd0dzVVblZzTWlHSHd3T2hCcFRGdjcveTZldXkvcjZ4VWdNQkJhS2JS?=
- =?utf-8?B?Q1FBaXZDbEwxY3VPRktpakwvZm1IbEJpNVJielpnMytWdVV4N2hRb3owaWdF?=
- =?utf-8?B?eG5vaWlUa0psRTlTT2x3ek16RVpzMldUKzZ0eTFrWnQvK0NsTlVXeHRjOVVI?=
- =?utf-8?B?am5TNnJ5dFZDN0Q1b3lPRVpIUEMrcmRWOGhZUTZkMXlRTzhsV1pGNzc2Z3F0?=
- =?utf-8?B?b1JHdFZsMThMa0FJWENmYVROcjFqYnRwRzRhSk5kZnhsRXVqL1lLOGY0cTAw?=
- =?utf-8?B?Q3JaYTJ4Tncveng5bTNSTDFoZDVUSUJnWktwa0MreWJERzlVRnc1VWI2M2pj?=
- =?utf-8?B?TWNxeEpta0JadkVtS2ZkWTdLOThSVVhwZWNoR2FaSlVjNmdpb1IvM2RIclg3?=
- =?utf-8?B?TU8yQmJBVnZjT2NJdGxGeUxtZkhaa1RuTURmVlRaSzQ4eHNpR1RFQ01rMmFq?=
- =?utf-8?B?V2M1Nld0NG1DZmJ4RVcyTWpycGtXaFBTYWpmMVdpUVhvMWNiTEd5NnZjdnBK?=
- =?utf-8?B?aU1xNVN3TXErbHppLytobDA0bjU5SFRzSlVyWXJKR205ZHl4VVNkdWdGSTNO?=
- =?utf-8?B?TXFWc1lwUTlzWEVFMXBKQWxZWjRvMEhWaUxXN2FIUXptOVlCRkZJM3RZeDVD?=
- =?utf-8?Q?5x+slawyyMr3Mp9WMVslAPcGQ+AjbCpB8iokFqn?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6dcad20-3a3d-474a-7b63-08dd4f3e9d4a
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB5671.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 10:34:10.4698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNZPR01MB4351
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] arm64: mm: Populate vmemmap at the page level if not
+ section aligned
+To: David Hildenbrand <david@redhat.com>, <anshuman.khandual@arm.com>,
+        <catalin.marinas@arm.com>
+CC: <will@kernel.org>, <ardb@kernel.org>, <ryan.roberts@arm.com>,
+        <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
+        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>
+References: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
+ <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
+Content-Language: en-US
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: y2LJ5ii9FP1h9mkiK860PuGsQdhLpovy
+X-Proofpoint-ORIG-GUID: y2LJ5ii9FP1h9mkiK860PuGsQdhLpovy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ clxscore=1015 priorityscore=1501 adultscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502170093
 
 
-On 2025/2/17 2:09, Alexander Sverdlin wrote:
-> Add RTCSYS devicetree binding for Sophgo CV1800 SoC.
->
-> The RTC (Real Time Clock) is an independently powered module in the chip.
-> It contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which
-> can be used for time display and scheduled alarm produce. In addition, the
-> hardware state machine provides triggering and timing control for chip
-> power-on, power-off and reset.
->
-> Furthermore, the 8051 subsystem is located within RTCSYS and is
-> independently powered. System software can use the 8051 to manage wake
-> conditions and wake the system while the system is asleep, and communicate
-> with external devices through peripheral controllers.
->
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
-> QUESTION:
->
-> I'm unsure about reg properties in the subnodes (child devices) of
-> RTCSYS:
-> - they will not be used anyway by the drivers because they genuinely
-> overlap (the whole point of going MFD) -- therefore the drivers will do
-> syscon_node_to_regmap(pdev->dev.parent->of_node)
-> - as I understood from the history of MFD dt bindings' submissions, regs
-> are encouraged, if can be specified
-> - overlapping regs cause dt_binding_check warnings:
-> Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/pmu@0)
-> Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
->
-> Shall I remove the MMIO resources from the actual devices or rather ignore the warnings?
->
->   .../bindings/mfd/sophgo,cv1800b-rtcsys.yaml   | 222 ++++++++++++++++++
->   1 file changed, 222 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
->
-> diff --git a/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
-> new file mode 100644
-> index 000000000000..2dc7c2df15c1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
-> @@ -0,0 +1,222 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/sophgo,cv1800b-rtcsys.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+On 2025/2/17 17:44, David Hildenbrand wrote:
+> On 17.02.25 10:29, Zhenhua Huang wrote:
+>> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
+>> to 27, making one section 128M. The related page struct which vmemmap
+>> points to is 2M then.
+>> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
+>> vmemmap to populate at the PMD section level which was suitable
+>> initially since hot plug granule is always one section(128M). However,
+>> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+>> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
+>> existing arm64 assumptions.
+>>
+>> The first problem is that if start or end is not aligned to a section
+>> boundary, such as when a subsection is hot added, populating the entire
+>> section is wasteful.
+>>
+>> The Next problem is if we hotplug something that spans part of 128 MiB
+>> section (subsections, let's call it memblock1), and then hotplug 
+>> something
+>> that spans another part of a 128 MiB section(subsections, let's call it
+>> memblock2), and subsequently unplug memblock1, vmemmap_free() will clear
+>> the entire PMD entry which also supports memblock2 even though memblock2
+>> is still active.
+>>
+>> Assuming hotplug/unplug sizes are guaranteed to be symmetric. Do the
+>> fix similar to x86-64: populate to pages levels if start/end is not 
+>> aligned
+>> with section boundary.
+>>
+>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+>> ---
+>>   arch/arm64/mm/mmu.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index b4df5bc5b1b8..eec1666da368 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -1178,7 +1178,8 @@ int __meminit vmemmap_populate(unsigned long 
+>> start, unsigned long end, int node,
+>>   {
+>>       WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
+>> -    if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES))
+>> +    if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) ||
+>> +        (end - start < PAGES_PER_SECTION * sizeof(struct page)))
+>>           return vmemmap_populate_basepages(start, end, node, altmap);
+>>       else
+>>           return vmemmap_populate_hugepages(start, end, node, altmap);
+> 
+> Yes, this does mimic what x86 does. That handling does look weird, 
+> because it
+> doesn't care about any address alignments, only about the size, which is 
+> odd.
+> 
+> I wonder if we could do better and move this handling
+> into vmemmap_populate_hugepages(), where we already have a fallback
+> to vmemmap_populate_basepages().
+
+Hi David,
+
+I had the same doubt initially.
+After going through the codes, I noticed for vmemmap_populate(), the 
+arguments "start" and "end" passed down should already be within one 
+section.
+early path:
+for_each_present_section_nr
+	__populate_section_memmap
+		..
+		vmemmap_populate()
+
+hotplug path:
+__add_pages
+	section_activate
+		vmemmap_populate()
+
+Therefore.. focusing only on the size seems OK to me, and fall back 
+solution below appears unnecessary?
+
+BTW, I have few more doubt about the original codes below, but they're 
+not bugs, so I have not raised them. Please correct me if it's incorrect.
+
+> 
+> Something like:
+> 
+> One thing that confuses me is the "altmap" handling in x86-64 code: in 
+> particular
+> why it is ignored in some cases. So that might need a bit of thought / 
+> double-checking.
+> 
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 01ea7c6df3036..57542313c0000 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1546,10 +1546,10 @@ int __meminit vmemmap_populate(unsigned long 
+> start, unsigned long end, int node,
+>          VM_BUG_ON(!PAGE_ALIGNED(start));
+>          VM_BUG_ON(!PAGE_ALIGNED(end));
+> 
+> -       if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> -               err = vmemmap_populate_basepages(start, end, node, NULL);
+> -       else if (boot_cpu_has(X86_FEATURE_PSE))
+> +       if (boot_cpu_has(X86_FEATURE_PSE))
+>                  err = vmemmap_populate_hugepages(start, end, node, 
+> altmap);
+> +       else
+> +               err = vmemmap_populate_basepages(start, end, node, NULL);
+>          else if (altmap) {
+>                  pr_err_once("%s: no cpu support for altmap allocations\n",
+>                                  __func__);
+> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> index 3287ebadd167d..8b217265b25b1 100644
+> --- a/mm/sparse-vmemmap.c
+> +++ b/mm/sparse-vmemmap.c
+> @@ -300,6 +300,10 @@ int __weak __meminit vmemmap_check_pmd(pmd_t *pmd, 
+> int node,
+>          return 0;
+>   }
+> 
+> +/*
+> + * Try to populate PMDs, but fallback to populating base pages when ranges
+> + * would only partially cover a PMD.
+> + */
+>   int __meminit vmemmap_populate_hugepages(unsigned long start, unsigned 
+> long end,
+>                                           int node, struct vmem_altmap 
+> *altmap)
+>   {
+> @@ -313,6 +317,9 @@ int __meminit vmemmap_populate_hugepages(unsigned 
+> long start, unsigned long end,
+>          for (addr = start; addr < end; addr = next) {
+
+This for loop appears to be redundant for arm64 as well, as above 
+mentioned, a single call to pmd_addr_end() should suffice.
+
+>                  next = pmd_addr_end(addr, end);
+> 
+> +               if (!IS_ALIGNED(addr, PMD_SIZE) || !IS_ALIGNED(next, 
+> PMD_SIZE))
+> +                       goto fallback;
 > +
-> +title: Cvitek CV18xx/Sophgo SG200x Real Time Clock module
-> +
-> +maintainers:
-> +  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> +  - sophgo@lists.linux.dev
-> +
-> +description:
-> +  The RTC (Real Time Clock) is an independently powered module in the chip. It
-> +  contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which can
-> +  be used for time display and scheduled alarm produce. In addition, the
-> +  hardware state machine provides triggering and timing control for chip
-> +  power-on, power-off and reset.
-> +
-> +  Furthermore, the 8051 subsystem is located within RTCSYS and is independently
-> +  powered. System software can use the 8051 to manage wake conditions and wake
-> +  the system while the system is asleep, and communicate with external devices
-> +  through peripheral controllers.
-> +
-> +  Technical Reference Manual available at
-> +    https://github.com/sophgo/sophgo-doc/releases/download/sg2000-trm-v1.01/sg2000_trm_en.pdf
-https://github.com/sophgo/sophgo-doc/tree/main/SG200X/TRM would be better.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - sophgo,cv1800b-rtcsys
-> +      - const: simple-mfd
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges: true
-> +
-> +patternProperties:
-> +  "^mcu@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      The 8051 subsystem is located within RTCSYS and is independently powered.
-> +      System software can use the 8051 to manage wake conditions and wake the
-> +      system while the system is asleep, and communicate with external devices
-> +      through peripheral controllers.
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - sophgo,cv1800b-rtc-dw8051
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        maxItems: 1
-> +
-> +      resets:
-> +        maxItems: 1
-> +
-> +      sram:
-> +        $ref: /schemas/types.yaml#/definitions/phandle
-> +        maxItems: 1
-> +        description: The SRAM controller to host the code/data
-> +
-> +    required:
-> +      - compatible
-> +      - clocks
-> +
-> +  "^pmu@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      Power-On-Reset (POR) sub-module, hardware state machine providing
-> +      triggering and timing control for chip power-on, power-off and reset.
-> +      Supports battery low voltage detection and interrupt generation, as
-> +      well as button-triggered wake up from sleep.
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - sophgo,cv1800b-rtc-pmu
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        maxItems: 1
-> +
-> +      interrupts:
-> +        items:
-> +          - description: long button press interrupt
-> +          - description: vbat detection interrupt
-> +
-> +      interrupt-names:
-> +        items:
-> +          - const: longpress
-> +          - const: vbat
-> +
-> +    required:
-> +      - compatible
-> +
-> +  "^rtc@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      The RTC (Real Time Clock) is an independently powered module in the chip.
-> +      Its calibration module uses a 25MHz crystal oscillator clock to calibrate
-> +      32KHz oscillator.
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - sophgo,cv1800b-rtc
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        maxItems: 1
-> +
-> +      interrupts:
-> +        items:
-> +          - description: alarm interrupt
-> +
-> +      interrupt-names:
-> +        items:
-> +          - const: alarm
-> +
-> +    required:
-> +      - compatible
-> +      - clocks
-> +      - interrupts
-> +
-> +  "^sram@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      Provide 2KB of SRAM, which can host software code or temporary data.
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - sophgo,cv1800b-rtc-sram
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - compatible
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-> +
-> +additionalProperties:
-> +  type: object
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sophgo,cv1800.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtcsys@5025000 {
-> +        compatible = "sophgo,cv1800b-rtcsys", "simple-mfd", "syscon";
-> +        reg = <0x5025000 0x2000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0 0x5025000 0x2000>;
-> +
-> +        mcu@0 {
-> +            compatible = "sophgo,cv1800b-rtc-dw8051";
-> +            reg = <0x0 0x1000>;
-> +            clocks = <&clk CLK_SRC_RTC_SYS_0>;
-> +            sram = <&rtc_sram>;
-> +        };
-> +
-> +        pmu@0 {
-> +            compatible = "sophgo,cv1800b-rtc-pmu";
-> +            reg = <0x0 0x2000>;
-> +            interrupts = <18 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <19 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-names = "longpress", "vbat";
-> +        };
-> +
-> +        rtc@0 {
-> +            compatible = "sophgo,cv1800b-rtc";
-> +            reg = <0 0x2000>;
-> +            interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-names = "alarm";
-> +            clocks = <&clk CLK_RTC_25M>;
-> +        };
-> +
-> +        rtc_sram: sram@0 {
-> +            compatible = "sophgo,cv1800b-rtc-sram";
-> +            reg = <0x0 0x1000>;
-> +        };
-> +    };
+>                  pgd = vmemmap_pgd_populate(addr, node);
+>                  if (!pgd)
+>                          return -ENOMEM;
+> @@ -346,6 +353,7 @@ int __meminit vmemmap_populate_hugepages(unsigned 
+> long start, unsigned long end,
+>                          }
+>                  } else if (vmemmap_check_pmd(pmd, node, addr, next))
+>                          continue;
+> +fallback:
+>                  if (vmemmap_populate_basepages(addr, next, node, altmap))
+>                          return -ENOMEM;
+
+It seems we have no chance to call populate_basepages here?
+
+>          }
+> 
+> 
+
 
