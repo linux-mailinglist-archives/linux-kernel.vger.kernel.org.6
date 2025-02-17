@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-518205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6421CA38B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:39:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54063A38B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 19:44:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D161885CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01E07A3C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 18:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2136236425;
-	Mon, 17 Feb 2025 18:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpzMSWlk"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB84236A6D;
+	Mon, 17 Feb 2025 18:43:30 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93471188A3B;
-	Mon, 17 Feb 2025 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F8188A3B;
+	Mon, 17 Feb 2025 18:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739817577; cv=none; b=jmPQo+JxPXr51WvXimPyX414pnTPu5u42jHv+yj7jy+ZnW+AHKtEjGi1ZpyFLssk8fIDDsltBNjhybbwjrkk4KCjiY17Fh6gmANwF6nP8pPQVFGON509D4fQvZ6yI60ZkJfqKdfPElVwcZ2pv2RULUewEKY7O6tfT58LwkamVaI=
+	t=1739817809; cv=none; b=lZC4yY4Cfewei7YQ6LvPYV08CHxIHkj3Lok3vF0Noggz/ya4bEp6Xenytodne2X6b9slCcVIUZGY/hEkKnoAStwohKp1R2O6C79SWxBbyHJxN+WGWIMTWnQ+5NZYkUT6NLCozn4oTz4HRtRlCHKariqCAln/Q3OJH8z8ZSMZ1M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739817577; c=relaxed/simple;
-	bh=ibeLQkqGZnHUGDV4imgix8149aTc0doBQb1jJhxFPpI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t/u5JQ+tliqIXMpka/+oA6TTygGHlNSZOYIJBVn3boZeW1i7smSEZfjOxuq/t9cSxvDvieqXceNIG5ZBVtUDxIFKmbJ0B+93jT9kWkYC+7y6MUXWDQ8OLo+qAG4u/8AnqFwpFig4sem/ddOI8wydk0mJnNOLVgRXKZ/Twz6t+tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VpzMSWlk; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1739817809; c=relaxed/simple;
+	bh=RUgkl8+qiiUJqMZDSidbtp6rukdJhBWi9YsrZQib35w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kd6KzreW8vbax0gu2frR7VDyDM+8LXUdDkDFF89sXEmBcQDVsuAW0gByCyIrJpimLEn+p15UfMVuOlvmKEcaeOTigO52UfSqT7ySPAfkA6UY2y/oj9X4wHWdTvREQ128USStGG+jdCtGh0BSxlge7+oRmWplsHlRHbM1oWITeBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso51486215e9.1;
-        Mon, 17 Feb 2025 10:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739817574; x=1740422374; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rjNjpm7nad/tLGA41YlKQjUrQeFd8i+8MRCd6+CzP/8=;
-        b=VpzMSWlk2UD8ReX1wS9AafF0n0OoyznTrSrnE0G6w3fjC3NZ13aa7F+oAZLU2sngBv
-         sr0zsSu+UxU0V4Vl0ylFNXpuM1wFNfAbpXs1UqqE9W2QWtE1TG3JZ6aMlemP1w8bfmP2
-         BkNXlwjRiIt1fz2Po0jJNxYC31f45RiUyJfexuR/zjsKNAX7lhjGW6eTOOjmhhsPVbEB
-         7yYc96wuELvmncFAY1wC7qoOuJ/8PQh8IlnysOTmkN20TDW9f2SGnM4ePbD6f8Nqqca2
-         DaphyWfbRZt+MbNJkwskqk5NygI3uPLxc65Ee1r+XHDp2xzkzywqQc/M5U0ehJOFO9ZC
-         bx+Q==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fb3a611afdso30948817b3.0;
+        Mon, 17 Feb 2025 10:43:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739817574; x=1740422374;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rjNjpm7nad/tLGA41YlKQjUrQeFd8i+8MRCd6+CzP/8=;
-        b=C1PdmgOBKNB6XwoVrymOJ/yRCleNLCkZjGh1bLF1B/IjKo4vO1Efg7EXQAJU7u1O5w
-         HkNajcf9QByf7QsbkZJaGweHBqTQbuOMQgyL/DDxGY6oIR5lahTxeJh+/3O0AztuGpWl
-         WtLu1bEMm3awEaxMILkhhNCWqcFhvm1uW6+pPhkwKBjfWjR+q9N12mKJk1FiQfYBQvpw
-         hN2xcqTdiqZtPz+e7uZK2gBKfSeEvIOQZ+Za6C8vi+2gQtD2fvtBWozVRqn1L6L5hSxq
-         JyxCCEGm4IYQt6XxgNy0Zc+mXjcsOByGDuuIIwIwJCfuYQDVFB/wHqNoyBk6b/SVjcX/
-         AUQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Q9sfmmxtwO0d5Gh80ajE9jUJozFumMTB/vxMe9bUT3MN8FxO2Na8ubE5pLqsCq4Tw6n1fz6qUYFfQjg=@vger.kernel.org, AJvYcCVQYOvjTP0Yy0gA53ihX6ROVV45QBFxqoF2lSBxAPvLXAFox08jV8HoPH7qy+V5st+lEq/3duYhZ/JyDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye4K1uXsPgjvp+0t8ZJ1hPr3w1RecACXlMf6CB9EUwqPv1AYGc
-	9c7E4U/xEl/TIPp2cTD8C0WXyzb31CQ0L+/bY6dhAi9HPIr5eMBB
-X-Gm-Gg: ASbGncsLNIefH+uJtRnrwEOhEsJAafKpzrsVhNqSXoBmnX/I1ab/spoWgMzgSQurT8t
-	R0E+xI0A9fPGBHrO6Ficz84dEYCotApJi7M47xJuulav0mG0jdUFFRjvtZS7UmbeqnxpkV251vd
-	3XccI155zp3G+3VZLaGVmwnRsk2vYyu8g9hQbeRhi/XsnuzUGyUQ5NlroqK6v57rBJFWNDqdTBe
-	Qs3F4uptCplse7OK7jWvX2gLDq/i50BHiNfzjZw/je1q2dUTShJYXN2HxPJjQ05c5heAbRnlbJv
-	C+RVdn09rmOwQFWOdw==
-X-Google-Smtp-Source: AGHT+IFy2DKmv5AimZPDn79UVjPBJtoJqNpgKNKnT1JmYQ4gXVlOFt00P5a94eu6EJnw/XHRnqTPPQ==
-X-Received: by 2002:a05:600c:a384:b0:439:88bb:d023 with SMTP id 5b1f17b1804b1-43988bbd481mr46336695e9.11.1739817573545;
-        Mon, 17 Feb 2025 10:39:33 -0800 (PST)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43987088ecbsm28775975e9.31.2025.02.17.10.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 10:39:32 -0800 (PST)
-Message-ID: <1fdfb9221f1cab04881d91e1e2d56ba97054a580.camel@gmail.com>
-Subject: Re: [PATCH] scsi: ufs: core: Fix memory crash in case arpmb command
- failed
-From: Bean Huo <huobean@gmail.com>
-To: Arthur Simchaev <arthur.simchaev@sandisk.com>, martin.petersen@oracle.com
-Cc: avri.altman@sandisk.com, Avi.Shchislowski@sandisk.com,
- beanhuo@micron.com,  linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, bvanassche@acm.org
-Date: Mon, 17 Feb 2025 19:39:30 +0100
-In-Reply-To: <20250217164330.245612-1-arthur.simchaev@sandisk.com>
-References: <20250217164330.245612-1-arthur.simchaev@sandisk.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=1e100.net; s=20230601; t=1739817807; x=1740422607;
+        h=cc:to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PFc6FgN8m4J2TWKi8vdlYPk5a0hg89Z1mc2OwblTl34=;
+        b=gbMMu0skd/lWQcbgtLBlZZEP2qIFatvbX3AXZ3eyogj/gzuQi9Os6uuTzrOncaNTUQ
+         T0aZgy4kosVR4ChLawkDn78XAJuNO3H/Q8GIktCKZXSlpb3zR6OXiILVcBel/NMT5T7S
+         QBBg0s5LDcE6H3ywb+Xku0faozxFOGnzpG4SL1BqKjrGT8s8F8b7ezGDYeK88fB3nEPA
+         /4qtN/EM5hbGvPOdwk8v//WR2FlUrFB4y5kOGUVn3qvfAPt/M5nDmJKu8EMrs0ienLgP
+         fMrCnrO9ufjpa7xQosbnY7hjOQSY/RXixyetoMc6fsiXYbul2LtJ7EIoToyB/ANesWfm
+         KXGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURc5lKXQaeDuVb5JyYZgtQwK9v9dKEeWTkVG0txD6k+uc2hqhOGOdctNMOmzIlriHMqUMPd5zn+sDGvn5L@vger.kernel.org, AJvYcCXYwHu0CUHW8j+PVUJHckmjvv6LbKrqdWyRsiwjd7+mGX6YUc67G6Gkf9pty40my/Ahy4QjgKXnHW+TE92MfA==@vger.kernel.org, AJvYcCXzaE8/wQXywp8iyNhshTq5aCcP1Htw+3oRSqKhiki+H34x8F2YNx6QNDQx9WmJd4jXbTgTZXxQzoVwL10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0UePy/f8n82y1bHWiI9vdW408Efl/KlKMbN86O6S9qJrBVqYU
+	4HMX2cmZJf2RfbE3dmJqG/48A5FKY6M8QNMfDxZ0usIX341AQLKY/qkV+gjK
+X-Gm-Gg: ASbGncunxQVT4xED1ThF0n7+RP+XxUuY7G1v/W6Hi9a2cCQdnvXFECXoEMd1VI7+KP6
+	FsOiSrFsI5Dd4fzvq3KEwxveDjV8+uhuIre54Ok0+k9NnATNSPHF58G85Ef9fZBMY65qkgOBM8U
+	djZqVMxWLLuKwyaoPcBC0fMlE1CS6TU0nVHPUO1jtclSkhUWQ40gETZeJQRF2aQL+xN+EiBeURC
+	WOhIdS8/MTtaSJuSKJVct7gGRKkKQp765+CnRhFwrWmFuo89kO+gDM70K7f+C1FFbo2HkyU3bOo
+	pfwwlOieWipUbgDi5x7CtYLsiqdXQccWbfreRUKi8570a+cUa+WB
+X-Google-Smtp-Source: AGHT+IFDW2YQz9xie7jp11jQsm49Vx5YDGdLya1FoWyEe161ZR/tmEfYh+OINbggTTULDGCAq8rCPQ==
+X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id 00721157ae682-6fb582b757emr87012937b3.18.1739817806773;
+        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb7ca441e0sm5968497b3.100.2025.02.17.10.43.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ef7c9e9592so35457747b3.1;
+        Mon, 17 Feb 2025 10:43:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUaMNq+YdlRUvU7EotQ03CBRTHexY4wu3+XJ0aY8+krIzMAL0Le2MJY6p+mzps2Wbmz2Pm5mv9rUvHGlDY=@vger.kernel.org, AJvYcCVNPRCAuGtSYhrzdQebmSfG6t44n12wbFSzYIWq2kn2Unh1HJGKf7NyvH+R3AJijmDQ96HFFRgmFeliD/Wf@vger.kernel.org, AJvYcCXDPSRAgTCQS+W3oHpRlzT3TSZMbc+HLFIf3H1Vukr+6E5yAAoEUtwpIp7BgxV0fBHUTXo+IasBktl9fGqk/g==@vger.kernel.org
+X-Received: by 2002:a05:690c:9217:b0:6fb:91a9:94d9 with SMTP id
+ 00721157ae682-6fb91a9969emr5116087b3.2.1739817806159; Mon, 17 Feb 2025
+ 10:43:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Reply-To: tanure@linux.com
+From: Lucas Tanure <tanure@linux.com>
+Date: Mon, 17 Feb 2025 18:43:15 +0000
+X-Gmail-Original-Message-ID: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
+X-Gm-Features: AWEUYZl_7IlOgzFB-KpkD13HgqA2BIMZysbWNtof4L3UoLqK50-0X4pW8xCZseE
+Message-ID: <CAJX_Q+24svAcoyxqcUu4z2g08bJeRFEmzYtVK1paoZ0xBX_uTA@mail.gmail.com>
+Subject: crypto: fscrypt: crypto_create_tfm_node memory leak
+To: kernelnewbies <kernelnewbies@kernelnewbies.org>, linux-fscrypt@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+Cc: "krzysztof.opasiak@neat.no" <krzysztof.opasiak@neat.no>, 
+	"lucas.tanure@neat.no" <lucas.tanure@neat.no>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-02-17 at 18:43 +0200, Arthur Simchaev wrote:
-> In case the device doesn't support arpmb, the kernel get memory crash
-> due to copy user data in bsg_transport_sg_io_fn level. So in case
-> ufshcd_send_bsg_uic_cmd returned error, do not change the job's
-> reply_len.
->=20
-> Memory crash backtrace:
-> 3,1290,531166405,-;ufshcd 0000:00:12.5: ARPMB OP failed: error code -
-> 22
+Hi,
 
+I am working with Android 13 and V5.15 kernel. During our development,
+I found a memory leak using kmemleak.
 
-It is Advanced RPMB access and not related to the UIC command,=C2=A0
+Steps I did to find the memleak:
+mount -t debugfs debugfs /sys/kernel/debug
+echo scan=5 > /sys/kernel/debug/kmemleak
+cat /sys/kernel/debug/kmemleak
 
-If the deivce didn't support advanced rpmb, got return -EINVAL(-22).=C2=A0
+Stack I got (hundreds of them):
+unreferenced object 0xffffff8101d31000 (size 1024):
+  comm "binder:1357_2", pid 1357, jiffies 4294899464 (age 394.468s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffd327cac060>] crypto_create_tfm_node+0x64/0x228
+    [<ffffffd3279f8c4c>] fscrypt_prepare_key+0xbc/0x230
+    [<ffffffd3279f9758>] fscrypt_setup_v1_file_key+0x48c/0x510
+    [<ffffffd3279f8394>] fscrypt_setup_encryption_info+0x210/0x43c
+    [<ffffffd3279f8108>] fscrypt_prepare_new_inode+0x128/0x1a4
+    [<ffffffd327bcc878>] f2fs_new_inode+0x27c/0x89c
+    [<ffffffd327bce7c4>] f2fs_mkdir+0x78/0x278
+    [<ffffffd32796a3bc>] vfs_mkdir+0x138/0x204
+    [<ffffffd32796a108>] do_mkdirat+0x88/0x204
+    [<ffffffd32796a068>] __arm64_sys_mkdirat+0x40/0x58
+    [<ffffffd3274be5d4>] invoke_syscall+0x60/0x150
+    [<ffffffd3274be528>] el0_svc_common+0xc8/0x114
+    [<ffffffd3274be3f0>] do_el0_svc+0x28/0x98
+    [<ffffffd328abcf88>] el0_svc+0x28/0x90
+    [<ffffffd328abcefc>] el0t_64_sync_handler+0x88/0xec
+    [<ffffffd32741164c>] el0t_64_sync+0x1b8/0x1bc
 
-In this case, in bsg_transport_sg_io_fn,=C2=A0
+After checking upstream, I came up with the following:
+cff805b1518f  fscrypt: fix keyring memory leak on mount failure
 
-if (job->result < 0) {
-	job->reply_len =3D sizeof(u32);=20
+But my kernel has this patch. So I continued to dig around this and
+saw the function fscrypt_prepare_key in fs/crypto/keysetup.c for
+V5.15.
+I can't see the pointer tfm being used anywhere or saved, and
+smp_store_release doesn't kfree it.
+Is smp_store_release doing something with that pointer that makes this
+memory leak a false positive?
 
-then:
+Any help with this issue would be much appreciated.
+Thanks
 
- int len =3D min(hdr->max_response_len, job->reply_len);=20
-	if (copy_to_user(uptr64(hdr->response), job->reply, len))
-
-
-It looks like you didn't initialize the correct response buffer from
-user space.
-
-Could you rephrase your commit message, add a Fixes tag, and resubmit?
-
-
-Kind regards,
-Bean
+Lucas Tanure
 
