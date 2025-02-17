@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-517447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F9AA38106
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:00:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E71A383A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324B71657EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 10:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 366C07A2F32
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5CB217733;
-	Mon, 17 Feb 2025 10:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A106921C172;
+	Mon, 17 Feb 2025 12:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="iYQY7nTu"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="qjVZpAJv"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21F21771B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 10:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635D821C17E;
+	Mon, 17 Feb 2025 12:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739789840; cv=none; b=HncDgF5PUnvkxHmTaOqHS3MTfW7Y8gp2ExF5zx50Fws8URNz4BYeIdRLswPzfQ08ZJYI2lREywHY02+xa7qORxSMbPgzdpDjl4c473ToxVqU5sE4ihTcrjLl9a9k/dQxbdRxku4AdcQ2TNC5BMs7m/682IoGJxmPrMcFuSCebd4=
+	t=1739797172; cv=none; b=MV9BY1m9syv/fPD227jxSTuFa9XlzKXWNFLjSNfE4l7VDw6xSGHIngupJ9aeN+dbXGrfNkVL29R7klKBHChkIAbdX36pY3DwU+7FTcV+Gc/QDQlIO234o2oQSR8fw/mZ3Qqm68VGvo6dVGJp1zAw6v4DX/HXvkxy9Ay8C6eAIC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739789840; c=relaxed/simple;
-	bh=kDOoIRjHVfHyTXmfCni8DIKhMZzUPwGTSzjeKFPj7pU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=thdYWIdp/xsqwxIS3Yxcw8WxygbTaS3axvRW8/yWQbDvI1D5kiyqLoIHjsj2fK1qAgCWZ582HbMHxa3ZZkYhsDHdFuY6jQA70H/VqNP0AnY0Ij9A6SSAwrO4Ids06D3nDCbZm+HtHYE2bTJcwRz1W6g5S+O7q4xFWLphhGkKTlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=iYQY7nTu; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d2858ce82fso4670965ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 02:57:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1739789838; x=1740394638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vsTtMyTsJbWMVKOlmUKSf/JarHtELa1O22QRRoXh8xk=;
-        b=iYQY7nTuMdlP/CofJygSUrvl4TP8sjgmW/RCfsgvNoJjk0maNU+TeHPijjiw2kZFRC
-         55diBPrClmBu5u772chLLeSzGCAbVWbNfeDkFSAxo6kInMRpX4gUGBECwZyeeLPpBqEN
-         T20Ym7sIbpl4/HEMEVVa+HtV7QF0TWlKbcG4oFg4W55mtW00FNLWiJh6VXpiX8RPKEKc
-         4qD9oZi8rtJgMPm/EkB+dXXm5K++cWC6ALhrenN3j7rvDDHT8ZQcTFw6gFg+TCcZqMuS
-         wBmyEC4MdKwS2kOCxVrvBOaeUiS90WR7KR1xqiHvK2RunprvamM6NAPzocWsSDdB/uiN
-         B3CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739789838; x=1740394638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vsTtMyTsJbWMVKOlmUKSf/JarHtELa1O22QRRoXh8xk=;
-        b=DPdtZ7ZJANOZSKHQ5eaV1GTLT6SkUcNeCm/S8NIeCeEINpVunjOvQLnLMcnVGhMMu9
-         qBqhqeMs3qsWdJDZjo6gdd5gtk38SvVeviR1ve2jqAecByeNtzEg1aKz3JLSvYgZDgfE
-         u9UVLBjB9o7g1r3DE0AeTC5yf4jICErbDkrsG9HkDW9I1DJKnFLbFAGBbi76ULOikrx7
-         n4GjbH0bR/G4HX0XdmsfOoVkLqxGDK5bNEcfOF2P6SNlVcNetjDqSOZdxVWkWc0SOrCG
-         NrMFX7TxNmfzPSppvGHuMNCXLkRoYJrrwb2hxRqdqCeyn9Cux2fC0FyMczjXYa4kz8uk
-         U4Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ3jYyN1YF4Mpzh/F0IUWGr7x4yWg7qQt2o5V1voTqavTMhkowUimNDwJhRazWXgQIqESFadiWFbSH7PI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1y1sAhqLzvIN0BLLUh3nCfXHAyE17xgOySOBpCAaWdUuv/Bvc
-	8JvcmQtfiFJFKjcY3b4Afsu4xnd7k7Q4pa/vaa0mkbL4krA/ez2yxg1iIhaslS4p2V5Ax3rankg
-	nU+KgCMzs8DRJm/+xMXbyVndxZtyy9JYK0DXnpw==
-X-Gm-Gg: ASbGnculo5aXNk3ZLu6FKWuEM9nVLRcDDowjqGAGKG/lO7kW4W2wh9AB5lck3l8KrOw
-	ac8X36BVKe4+GDEDYoabT6X8KqiT52VS6bFunr49Hx0DPVWHWUCtysy5VoFk3GPsk6aj/6dooBA
-	==
-X-Google-Smtp-Source: AGHT+IF4wt3+bCr8smM4abSpg9jynt5wH6JghaDNkG3zGRYN1zSsdl+CZBbn8XESByuGwGBk4yMvzbUqkz5buCnYAwM=
-X-Received: by 2002:a05:6e02:20cf:b0:3d1:a3d0:d064 with SMTP id
- e9e14a558f8ab-3d281755de7mr70090045ab.0.1739789837889; Mon, 17 Feb 2025
- 02:57:17 -0800 (PST)
+	s=arc-20240116; t=1739797172; c=relaxed/simple;
+	bh=w4qUqGu+pnae/CodpYx0ogkuKuGj2dZyD24Fd0C1thM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qePrcFIU5gHLBhenAvU5p/XKERszJshwNerTxpfN04sVIorVHJmY7LoQd/Kfrl+HzQ7lTTGQA+JUGPWiU+NUNnFeIf9kPOy5+WMRuR7mxSOohOaW/dKoLOZIpw+D0F3UeY/ZfsxxfupA7V+OCzwUebPBY3XHMV8HWh8Bm1113fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=qjVZpAJv; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HA0AP7030330;
+	Mon, 17 Feb 2025 07:59:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=NDHtPjXfrkrLO78RC509HQt7UeV
+	gB+a/yBdbiL+s/rU=; b=qjVZpAJv8d5dy02jovx0OawjPSnJXSB9JuKlOEBw5Tc
+	Y58WFUGAe9cRvutXeU2+yNvmVLhew/KDnNCYf+kksShsdUpYZyQl61cFy5hhB+N3
+	2R5W4lJR68gV4vf/ZVp6FVjhhy12ysL0r4q+3rSKBCvjUtgWJvRqnnCh5umIjccs
+	L2QexyeTXRbWT/8tK3/yBH4cOgPGV0k3emTZvGjY1Bt7ZU4+S6ryKGqoeBB3LohY
+	/3Dj8o7KNr6Woh9zKwUP+lXRRL02nRHZgDqnK/hlP0aJKZ+nuBAzrlWtGjhfszP1
+	hslswiNAXmnJr6v03brxeZDxJTIw9osXW9A940wbixQ==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 44v2ysrkub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Feb 2025 07:59:15 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 51HCxEp4012185
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Feb 2025 07:59:14 -0500
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 17 Feb 2025 07:59:14 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 17 Feb 2025 07:59:14 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 17 Feb 2025 07:59:14 -0500
+Received: from desktop-robi.ad.analog.com ([10.48.65.85])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 51HCx3Eq018359;
+	Mon, 17 Feb 2025 07:59:05 -0500
+From: Robert Budai <robert.budai@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Nuno Sa <nuno.sa@analog.com>,
+        "Ramona
+ Gradinariu" <ramona.gradinariu@analog.com>,
+        Antoniu Miclaus
+	<antoniu.miclaus@analog.com>,
+        Robert Budai <robert.budai@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "Jonathan Corbet" <corbet@lwn.net>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+Subject: [RESEND PATCH v8 0/6] Add support for ADIS16550
+Date: Mon, 17 Feb 2025 12:57:44 +0200
+Message-ID: <20250217105753.605465-1-robert.budai@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217084506.18763-7-ajones@ventanamicro.com> <20250217084506.18763-12-ajones@ventanamicro.com>
-In-Reply-To: <20250217084506.18763-12-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 17 Feb 2025 16:27:07 +0530
-X-Gm-Features: AWEUYZlXyegh4HuBYLBwZJ9Tly4L0bQenOk0JsQZ_Py81_lO9EAqEQBtXwOwjmo
-Message-ID: <CAAhSdy23nJq4Uj9amQ9T4iXtNoCSFLnOjjyp7pm6KdNbH7xkmA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] riscv: KVM: Fix SBI sleep_type use
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, cleger@rivosinc.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: USUwmwpAzYaJI1JtDR4r62nDSNRUELh1
+X-Proofpoint-ORIG-GUID: USUwmwpAzYaJI1JtDR4r62nDSNRUELh1
+X-Authority-Analysis: v=2.4 cv=ELj800ZC c=1 sm=1 tr=0 ts=67b332a3 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=TpNKFGk_wJGFTPuD7poA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ lowpriorityscore=1 clxscore=1015 bulkscore=1 phishscore=0 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2501170000
+ definitions=main-2502170113
 
-On Mon, Feb 17, 2025 at 2:15=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> The spec says sleep_type is 32 bits wide and "In case the data is
-> defined as 32bit wide, higher privilege software must ensure that it
-> only uses 32 bit data." Mask off upper bits of sleep_type before
-> using it.
->
-> Fixes: 023c15151fbb ("RISC-V: KVM: Add SBI system suspend support")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
+and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combines
+industry leading MEMS only technology with signal conditioning that optimizes
+dynamic performance. The factory calibration characterizes each sensor for
+sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
+compensation formulas that provide accurate sensor measurements.
 
-LGTM.
+Robert Budai (6):
+  iio: imu: adis: Add custom ops struct
+  iio: imu: adis: Add reset to custom ops
+  iio: imu: adis: Add DIAG_STAT register
+  dt-bindings: iio: Add adis16550 bindings
+  iio: imu: adis16550: add adis16550 support
+  docs: iio: add documentation for adis16550 driver
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+ .../bindings/iio/imu/adi,adis16550.yaml       |   74 ++
+ Documentation/iio/adis16550.rst               |  376 ++++++
+ Documentation/iio/index.rst                   |    1 +
+ MAINTAINERS                                   |   10 +
+ drivers/iio/imu/Kconfig                       |   13 +
+ drivers/iio/imu/Makefile                      |    1 +
+ drivers/iio/imu/adis.c                        |   35 +-
+ drivers/iio/imu/adis16550.c                   | 1149 +++++++++++++++++
+ include/linux/iio/imu/adis.h                  |   34 +-
+ 9 files changed, 1680 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+ create mode 100644 Documentation/iio/adis16550.rst
+ create mode 100644 drivers/iio/imu/adis16550.c
 
-Regards,
-Anup
+-- 
+2.34.1
 
-> ---
->  arch/riscv/kvm/vcpu_sbi_system.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/vcpu_sbi_system.c b/arch/riscv/kvm/vcpu_sbi_s=
-ystem.c
-> index 5d55e08791fa..bc0ebba89003 100644
-> --- a/arch/riscv/kvm/vcpu_sbi_system.c
-> +++ b/arch/riscv/kvm/vcpu_sbi_system.c
-> @@ -4,6 +4,7 @@
->   */
->
->  #include <linux/kvm_host.h>
-> +#include <linux/wordpart.h>
->
->  #include <asm/kvm_vcpu_sbi.h>
->  #include <asm/sbi.h>
-> @@ -19,7 +20,7 @@ static int kvm_sbi_ext_susp_handler(struct kvm_vcpu *vc=
-pu, struct kvm_run *run,
->
->         switch (funcid) {
->         case SBI_EXT_SUSP_SYSTEM_SUSPEND:
-> -               if (cp->a0 !=3D SBI_SUSP_SLEEP_TYPE_SUSPEND_TO_RAM) {
-> +               if (lower_32_bits(cp->a0) !=3D SBI_SUSP_SLEEP_TYPE_SUSPEN=
-D_TO_RAM) {
->                         retdata->err_val =3D SBI_ERR_INVALID_PARAM;
->                         return 0;
->                 }
-> --
-> 2.48.1
->
 
