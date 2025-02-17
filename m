@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-517641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A96A383A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:00:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3048A383D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 14:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58101894E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 12:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074433A6DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 13:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A350821C183;
-	Mon, 17 Feb 2025 12:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D96421CA1C;
+	Mon, 17 Feb 2025 13:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="RaLMBegg"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BRSpZbcy"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D626B21B8FE;
-	Mon, 17 Feb 2025 12:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF6421C180;
+	Mon, 17 Feb 2025 13:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739797154; cv=none; b=MGGeBWFkIGCiZYMsB1WWm0BkVjxBQmKSqJI1+kuVI2McJvwcjg8K1AhffjWj8FGCAbaPuduNa6eq/ft6zVSfWTF1MtkreMaj33fj3GESYRlrStmKdnKYpVeBC/E8TKmyA/09FNX732zD+plYlBodKPBV14yGBL08a9Q729RWZCI=
+	t=1739797236; cv=none; b=kpy2XX95KGNQ0t5hKrptN9XL5LEiEGQSOt/GUOK4QPBb9Sz6+uIUOiwHTO66WIkDf79pF6iB9MGjFUDE6IkRgDefdaprLDiJ6SwHSUO5XVLvOh4fEtVfXTI0AmvMa9X2ssktYISNT+O6GlBb9kGLgyQ5pGPVEg3WR/WfwmosLb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739797154; c=relaxed/simple;
-	bh=i+N2nth154zGkAult6jW7Vlqawpmm2vMrGQqF2gKW00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vBNAL9+WrWWrzd66/k14dLgJl1R/yb0UZAjGTsnHAJrj4rSdMDsSDT7AUBDWaKGucphZpgYz9X51iGFgNeJXCSEyoaQ/IG2mlKUcgsUnAuZIq0BJaNbHqXsK5etVxNLkSJEpPP3/fRlvCDulvTgkrk5JFc1grTtRyQpnS8t0SKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=RaLMBegg; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=crn1rBRCBq9NeaYIfa5zc62UtYSOR+W5jBXVKOJnYzE=; b=RaLMBegg3btEsFm0frqsfkJNTd
-	x+sEC64wp6y8JWfSatJP8P3Gs0B839+YWcpFlgDxJu7Vs/+XkZszFggc+cOaOeu7wB2kS7X9xT6La
-	1hGQNQJXvd/5eOEMFBuK8bfqFvwl38d4Lur3Lqx7/FDWt5uL3cUj/Z3XvgoS7Crhqzqo=;
-Received: from p5b206ef1.dip0.t-ipconnect.de ([91.32.110.241] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1tk0hx-006HRj-0H;
-	Mon, 17 Feb 2025 13:58:45 +0100
-Message-ID: <7932cd23-571e-4646-b5dd-467ec8106695@nbd.name>
-Date: Mon, 17 Feb 2025 13:58:44 +0100
+	s=arc-20240116; t=1739797236; c=relaxed/simple;
+	bh=LaU7PgRal3vyeYiORGinKefrlg9KOh1cTwQ2BsiRs24=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oAxJXkHVZDbTIL0keZZMv7nbMkpfmYQSfgWrP2joAODR27jlQuI2sTkRi+SExMsgelLVllXWkQEEK0/oO9U87GXIZxpw1OFjomTdt0E+jrH4wOCWgHcL9Yc8DcWmJUE1GdY/1cIkXEXNIe8KF78er3WK4LfuIicdLqbyWQ82BhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BRSpZbcy; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51HD0KBI1355358
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Feb 2025 07:00:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739797220;
+	bh=J2HYyvasZCADPfSQPuqiL0PeVC/rs8L2xMJZCLQVjLI=;
+	h=From:To:CC:Subject:Date;
+	b=BRSpZbcy8HAkFDFjKZerrarznEnjiv2Dh1PRJxoaLk0WlrmE6XqqOGOI2q2ztwcRR
+	 D9B6htW5Y0NS3nOwKDDm4+OcdXOu1i2Qnjs1k15wUJzdpGtkBhe3ptc72cvT+Jx/3H
+	 Bx6hnqB+MvuJyLis3URoiEWnlz6CtQMpt5U8T14s=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51HD0K5n119600
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Feb 2025 07:00:20 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Feb 2025 07:00:20 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Feb 2025 07:00:20 -0600
+Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51HD0Ffr072350;
+	Mon, 17 Feb 2025 07:00:16 -0600
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+To: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <mripard@kernel.org>, <mchehab@kernel.org>, <jai.luthra@linux.dev>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devarsht@ti.com>, <vaishnav.a@ti.com>, <r-donadkar@ti.com>,
+        <u-kumar1@ti.com>, <y-abhilashchandra@ti.com>
+Subject: [PATCH v2 0/2]  Enable support for error detection in CSI2RX
+Date: Mon, 17 Feb 2025 18:30:11 +0530
+Message-ID: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bridge: locally receive all multicast packets if
- IFF_ALLMULTI is set
-To: Nikolay Aleksandrov <razor@blackwall.org>, netdev@vger.kernel.org,
- Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250217112621.66916-1-nbd@nbd.name>
- <37bf04ee-954e-461f-9e37-210a8c5a790a@blackwall.org>
-Content-Language: en-US
-From: Felix Fietkau <nbd@nbd.name>
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <37bf04ee-954e-461f-9e37-210a8c5a790a@blackwall.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 17.02.25 12:54, Nikolay Aleksandrov wrote:
-> On 2/17/25 13:26, Felix Fietkau wrote:
->> If multicast snooping is enabled, multicast packets may not always end up on
->> the local bridge interface, if the host is not a member of the multicast
->> group. Similar to how IFF_PROMISC allows all packets to be received locally,
->> let IFF_ALLMULTI allow all multicast packets to be received.
->> 
->> Signed-off-by: Felix Fietkau <nbd@nbd.name>
->> ---
->>  net/bridge/br_input.c | 2 ++
->>  1 file changed, 2 insertions(+)
->> 
->> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
->> index 232133a0fd21..7fa2da6985b5 100644
->> --- a/net/bridge/br_input.c
->> +++ b/net/bridge/br_input.c
->> @@ -155,6 +155,8 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
->>  			pkt_type = BR_PKT_MULTICAST;
->>  			if (br_multicast_rcv(&brmctx, &pmctx, vlan, skb, vid))
->>  				goto drop;
->> +			if (br->dev->flags & IFF_ALLMULTI)
->> +				local_rcv = true;
->>  		}
->>  	}
->>  
-> 
-> This doesn't look like a bug fix, IMO it should be for net-next.
-> 
-> Also you might miss a mcast stat increase, see the multicast code
-> below, the only case that this would cover is the missing "else"
-> branch of:
->                         if ((mdst && mdst->host_joined) ||
->                              br_multicast_is_router(brmctx, skb)) {
->                                  local_rcv = true;
->                                  DEV_STATS_INC(br->dev, multicast);
->                          }
-> 
-> So I'd suggest to augment the condition and include this ALLMULTI check there,
-> maybe with a comment to mention that all other cases are covered by the current
-> code so people are not surprised.
-Will do, thanks.
+This patch series enables the csi2rx_err_irq interrupt to record any errors
+that occur during streaming. It also adds support for the VIDIOC_LOG_STATUS
+ioctl, which outputs the current device status to the kernel log.
 
-> By the way what is the motivation for supporting this flag? I mean you can
-> make the bridge mcast router and it will receive all mcast anyway.
+The IRQ handler records any errors encountered during streaming.
+Additionally, VIDIOC_LOG_STATUS can be invoked from user space to retrieve
+the latest status.
 
-OpenWrt uses a user space daemon for DHCPv6/RA/NDP handling, and in 
-relay mode it sets the ALLMULTI flag in order to receive all relevant 
-queries on the network.
-This works for normal network interfaces and non-snooping bridges, but 
-not snooping bridges (unless, as you pointed out, multicast routing is 
-enabled).
+Changelog:
+Changes in v2:
+- Address Krzysztof's review comment to remove flexibility while adding
+  interrupts.
+- Address Jai's review comment to drop support VIDIOC_LOG_STATUS on a
+  video node.
+- Address Jai's review comment to get interrupt at probe instead of
+  start_stream.
+- Address Jai's review comment to change dev_warn to dev_dbg when there
+  is no interrupt defined in DT.
 
-- Felix
+V1: https://lore.kernel.org/all/20250212131244.1397722-1-y-abhilashchandra@ti.com/
+
+Logs with interrupt in DT: https://gist.github.com/Yemike-Abhilash-Chandra/fb887bda738da91ea2a24690cd7b0818
+Logs without interrupt in DT: https://gist.github.com/Yemike-Abhilash-Chandra/18347df18041e43b78e9738263d77aa9
+
+
+Yemike Abhilash Chandra (2):
+  dt-bindings: media: cdns,csi2rx.yaml: Add optional interrupts for
+    cdns-csi2rx
+  media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add
+    support for VIDIOC_LOG_STATUS
+
+ .../bindings/media/cdns,csi2rx.yaml           |  10 ++
+ drivers/media/platform/cadence/cdns-csi2rx.c  | 102 +++++++++++++++++-
+ 2 files changed, 111 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
