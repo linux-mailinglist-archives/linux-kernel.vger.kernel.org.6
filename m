@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-517166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-517167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB10A37D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:28:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715FBA37D34
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 09:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF24B3AF1AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:28:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510017A1660
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Feb 2025 08:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685171A0BC5;
-	Mon, 17 Feb 2025 08:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62DE1A256E;
+	Mon, 17 Feb 2025 08:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kI37DV1k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LnBzlFkc"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C94192B63;
-	Mon, 17 Feb 2025 08:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515A419F115;
+	Mon, 17 Feb 2025 08:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739780915; cv=none; b=Y9RzSdxE6j8VDv1NwqZQ5OZs0Zxc0Uq318t+5v2tDAuLUe/Va6VBrTPVf9rDul5nImANV3nJ4g3keiDhziC1GojRDIupxGTVF50T0+EhTd5fTtQ/cdRbdV2fFh+v4fOHmsy0u1uKZYs9VlmrHI+CRdMXyWg5+l4CIzrTS+q1vrY=
+	t=1739780968; cv=none; b=UgLhFDn9/5EEKGViZW88KkzmXHhJoMCV+EncpkZwsXvlykcjj0k8sL+ddR2mv2HKwfXwd1vQMxwLnfvYtxiWYuddSfIG+fFBvMvlrnRV9x9x3ZhELtMzqkn7fohh9cuyqW5FXMo3idjV1CK4WuGWT/TlK70YjyvTh5QWStEOfJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739780915; c=relaxed/simple;
-	bh=soPhO3N7MHBcOo/fyThjUq/a3H8+8UMv+M5v6EkhmQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dwl2u6AfEtD+JHDaVywOw+V80lUhoNFfcf8PhvDAys+/h0hok7rYPzzeKC4w9if/0bDH1MnlOZaStg38DT1eGBjsgr8eb2hN672WWZop0wrAt/4xzDNeLFRvEx++ms3xYfFCYnxwz+9Mk9QXR5bBhqC4bLPcSzFmpKV+NRFFngg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kI37DV1k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F627C4CED1;
-	Mon, 17 Feb 2025 08:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739780915;
-	bh=soPhO3N7MHBcOo/fyThjUq/a3H8+8UMv+M5v6EkhmQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kI37DV1kM+lShISKzbO7jg97ZU4prmocK8dLBCpgPUHBfMuyuQQg2KiYNASnjaJTl
-	 J9c1whtA/R1nq7PgF/LRQf0ipHqZXVwHx3wuQ/GaYUapUwVbF4XfCRzb6mwYEjz9Lm
-	 rCbn9Gx6xOIjRL1iik2xqOu9puL6XlPgliKWa6JCshpe8xy6FdzW4czqUeqZrqeW68
-	 6RaBTLE8XYoliygxVx29hkLBQlK6xdKhRjhVVK9aXjnm9iZQBaOt/5qp30BAuRmKam
-	 Tdjb9aSA7qAJgBDn0RCcRQkWH/sJ1Azy5RD7jt3fRqxgEwZAooO0bOEWRdD0woWPj2
-	 k2VM3+dWlzzdw==
-Date: Mon, 17 Feb 2025 09:28:30 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Ruiwu Chen <rwchen404@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, kees@kernel.org, joel.granados@kernel.org, 
-	zachwade.k@gmail.com
-Subject: Re: [PATCH] drop_caches: re-enable message after disabling
-Message-ID: <20250217-diskette-obskur-a3529a2f6a7f@brauner>
-References: <20250216101729.2332-1-rwchen404@gmail.com>
+	s=arc-20240116; t=1739780968; c=relaxed/simple;
+	bh=NgVWQqvEGgkg3GF7x4d8/TavathxvBCSBC50VSh54eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iSCdKAFAEcVfBxLDLfCP9QzDY1CivwidKHKjjFGzr0qzT1LwCojo1xsUFO6GVVGBFvYG6nJ21AJK5JLbJ4r3CObqSRaQVMC+VRNIr1f1MVET6ur3kIW7xr+X/iV07fjEslc2eJlOt/WymGJJTAZXeqyMT4xxHcnT9bW0X3cY5UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LnBzlFkc; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E51C0442AA;
+	Mon, 17 Feb 2025 08:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739780956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v5AnTb28mQKtjEHDL/Wk7VuZHdL8LuplyEfPirr+QDY=;
+	b=LnBzlFkcgZdoEtjFLY3rmc7Fv9NnY81cKg9mYY/HiYt9UxhsWLnGxsV9cIF4Abzd17XhGe
+	4kneXCqLG+QzaJNapTEBQyXVi3//cC7NdpLsTv0XhY9/D58ZsnH3ydpdOf2L7ccHO7XJ8A
+	wKjo7XpWTprsPoUai+IAO8+AXYJFX2vDlszT6+M+C2Hjp+jxk07z3k+uFp2DJslPVfeZKo
+	a3UI3mIZfkEjWMjNCMu+3dqfBqnc0acxFIPL5CS7+yDfws9QkU2fQGYfs5GFu9Y7Sfivrv
+	5khQc4Kx7WRi6T55WBGbKgEjBGPRn15o176YQsxsQvxbgJWTtOJraFEVzc5kNA==
+Date: Mon, 17 Feb 2025 09:29:11 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Sean Anderson
+ <seanga2@gmail.com>
+Subject: Re: [PATCH net-next v4 05/15] net: phy: Create a phy_port for
+ PHY-driven SFPs
+Message-ID: <20250217092911.772da5d0@fedora.home>
+In-Reply-To: <Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
+References: <20250213101606.1154014-1-maxime.chevallier@bootlin.com>
+	<20250213101606.1154014-6-maxime.chevallier@bootlin.com>
+	<Z7DjfRwd3dbcEXTY@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250216101729.2332-1-rwchen404@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehjeeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Sun, Feb 16, 2025 at 06:17:29PM +0800, Ruiwu Chen wrote:
-> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
-> but there is no interface to enable the message, only by restarting
-> the way, so I want to add the 'echo 0 > /proc/sys/vm/drop_caches'
-> way to enabled the message again.
-> 
-> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
-> ---
->  fs/drop_caches.c | 7 +++++--
->  kernel/sysctl.c  | 2 +-
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d45ef541d848..c90cfaf9756d 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -57,7 +57,7 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  	if (ret)
->  		return ret;
->  	if (write) {
-> -		static int stfu;
-> +		static bool stfu;
+Hello Russell,
 
-Please the change and change that to something explicitly like "silent".
+On Sat, 15 Feb 2025 18:57:01 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
->  
->  		if (sysctl_drop_caches & 1) {
->  			lru_add_drain_all();
-> @@ -73,7 +73,10 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  				current->comm, task_pid_nr(current),
->  				sysctl_drop_caches);
->  		}
-> -		stfu |= sysctl_drop_caches & 4;
-> +		if (sysctl_drop_caches == 0)
-> +			stfu = false;
-> +		else if (sysctl_drop_caches == 4)
-> +			stfu = true;
->  	}
->  	return 0;
->  }
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index cb57da499ebb..f2e06e074724 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2088,7 +2088,7 @@ static const struct ctl_table vm_table[] = {
->  		.maxlen		= sizeof(int),
->  		.mode		= 0200,
->  		.proc_handler	= drop_caches_sysctl_handler,
-> -		.extra1		= SYSCTL_ONE,
-> +		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_FOUR,
->  	},
->  	{
-> -- 
-> 2.27.0
+> On Thu, Feb 13, 2025 at 11:15:53AM +0100, Maxime Chevallier wrote:
+> > Some PHY devices may be used as media-converters to drive SFP ports (for
+> > example, to allow using SFP when the SoC can only output RGMII). This is
+> > already supported to some extend by allowing PHY drivers to registers
+> > themselves as being SFP upstream.
+> > 
+> > However, the logic to drive the SFP can actually be split to a per-port
+> > control logic, allowing support for multi-port PHYs, or PHYs that can
+> > either drive SFPs or Copper.
+> > 
+> > To that extent, create a phy_port when registering an SFP bus onto a
+> > PHY. This port is considered a "serdes" port, in that it can feed data
+> > to anther entity on the link. The PHY driver needs to specify the
+> > various PHY_INTERFACE_MODE_XXX that this port supports.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>  
 > 
+> With this change, using phy_port requires phylink to also be built in
+> an appropriate manner. Currently, phylink depends on phylib. phy_port
+> becomes part of phylib. This patch makes phylib depend on phylink,
+> thereby creating a circular dependency when modular.
+> 
+> I think a different approach is needed here.
+
+That's true.
+
+One way to avoid that would be to extract out of phylink/phylib all the
+functions for linkmode handling that aren't tied to phylink/phylib
+directly, but are about managing the capabilities of each interface,
+linkmode, speed, duplex, etc. For phylink, that would be :
+
+phylink_merge_link_mode
+phylink_get_capabilities
+phylink_cap_from_speed_duplex
+phylink_limit_mac_speed
+phylink_caps_to_linkmodes
+phylink_interface_max_speed
+phylink_interface_signal_rate
+phylink_is_empty_linkmode
+phylink_an_mode_str
+phylink_set_port_modes
+
+For now all these are phylink internal and that makes sense, but if we want
+phy-driven SFP support, stackable PHYs and so on, we'll need some ways for
+the PHY to expose its media-side capabilities, and we'd reuse these.
+
+These would go into linkmode.c/h for example, and we'd have a shared set
+of helpers that we can use in phylink, phylib and phy_port.
+
+Before I go around and rearrange that, are you OK with this approach ?
+
+Maxime
 
