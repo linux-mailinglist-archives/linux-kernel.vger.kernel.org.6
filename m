@@ -1,244 +1,163 @@
-Return-Path: <linux-kernel+bounces-518713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954DFA393AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:06:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FE8A393AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BAB3B32CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779423AC108
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8369C1ACEB5;
-	Tue, 18 Feb 2025 07:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180C41B0406;
+	Tue, 18 Feb 2025 07:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eePwfrfl"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SKekFb1V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE7033E4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC13033E4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739862373; cv=none; b=uG1JkVUCiwXyujau3vRwN12FjRXFf20Rt3nGgQGdjIs+TQB8ko+WMW/JhVYQtLI5M0MXvlwXp0Rz/OnJ1+mGuauK33R184f00Ri0+DcjMKpD26X9SI4aCcYzLDYmaXgQLiICm1ZNGkjUAf6gjkr5CxXbAomtDJrtdDkP1hqM2wE=
+	t=1739862412; cv=none; b=LMr7suTQhDUyG9KnxPLmk9bl/nYe6EJdh7ZL0vZnMxyjwtJfLvzVxhHtyxvhyHlqa/adJwutQrblmEfL+J/KVvPogTAg15j6EKLsVfCaTywaNdp/+mgnBSYTHGRwGh381/CvkM1j6iJIkdInU24uvB9MY+e4ueJXVS6eSzun/VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739862373; c=relaxed/simple;
-	bh=OxOLf6nGovmG96Y/Nc9k1PszSMNWPW6wXkxHlnHygO8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=UnmFck9cuvAqqDf/3hY7CQ+1qWTZ4AHiOBbNXtW4vHegHDTMSbzafzOY6aXoKR8nid0/a5GdA3JGw80H5l6h095hKOij+SZuHQMTCWPSZKrMDPZYypnzNL284jwLaoCZzq856CPPCn5yVw8Lf0iPQXOJA8qdG4guMN8AdeZvIlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eePwfrfl; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739862366;
+	s=arc-20240116; t=1739862412; c=relaxed/simple;
+	bh=nLVhocii7It84oP8E7zPtfLE2O6O72hT3XqDMzeA2Ck=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D21nC9Fot0n1zxNAgTH9UB67KvU3VKTLU7pZmd/XH2n14C19Sjx0qeApffmKi7PwrI5twGyBNEB3wyg7HlMnzKiygv4oJT2slVPXLs8V1h8NRO6MQCumBcdcGFdPZFvOGoopIW+IrOQawbZLr39Mi4/shnUf7ygkn2vInuTpaz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SKekFb1V; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739862409;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eyl6WgjL1XiGk5qWO8immzuKe7Gz2yvBndli/Sz5Ra0=;
-	b=eePwfrflks+k1sWQ9Br10G/dZioRG/ePOtfm+PclxERTgdiQdzvUwZKwwCFC+pD5s95h2K
-	2Jm/Szj8OYfQADNmhKehNbcsXfktHNIv5hRhRuGX37RxYJkSKAzQkmrZd3MD9hxG4qNjKB
-	vTv9jTagJvvUOgFCWrciO9vjDPBiO5E=
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HXAuPVdEAvFPuxLiXceyoEIdgydrp1/DHy6puhvJS8Q=;
+	b=SKekFb1VtPCsUgjbHuVwFx0lhYrD/bDe5+cdc0xrp3sQrPv3rFIDHlpx4wQ+2shiIZz7gV
+	lANpxyz7Wgwfsnd5dx2sxNcvYBxI1tzRyanu8o3sN2Af9o3siMLdaZcRjVKb9EsXN53VIx
+	R4Um93WKmSkRT/NxQ8YaX3oxSVYojBo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-204-WEL_EYIRMjezb_VuOA67LA-1; Tue, 18 Feb 2025 02:06:47 -0500
+X-MC-Unique: WEL_EYIRMjezb_VuOA67LA-1
+X-Mimecast-MFC-AGG-ID: WEL_EYIRMjezb_VuOA67LA_1739862407
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f29b4d4adso2308834f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 23:06:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739862407; x=1740467207;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXAuPVdEAvFPuxLiXceyoEIdgydrp1/DHy6puhvJS8Q=;
+        b=c/Gq4IgV33BhGRn3tQ9NfeoA8rlBC+tpaHumHz6y73qRvglTmbiwg+QMUCEP8NEL71
+         ERJ0b+W3qPSwEdy1AqqtLZO+tgsW9vaZJEjwb44NkVSbRwvXT8jtBsPfYggOT8va9jeY
+         tOMgEgDW0+1C15wATrxxqIvwgfRbllsDuK7BK+MyYJ47K1i0n+9DC9xGFFXPNQuP6Qkg
+         HF6U0T19kdWBIxoFDY6BTsPgXzyPeT4GiE6FSovUjzXgtxFW1/7e5wwaclTinia3EF3j
+         B9qbdYR8Uksq4vvL20sFks5sGNz48P9VTAevqcVk+sX0p+ZNv1TcfMQ7F3kzgzTRCpWh
+         P/EA==
+X-Gm-Message-State: AOJu0Yx3eGIVx60mjzrk2Ribu/ibWNYC7+QghKoNGXIlg72T8pfBGSgI
+	FV8nDlMv+4PbuKXwNTfOm3VlMGCqzCaUg2BHfZwfBPblJRV8DMMRVXszLG/8082igqGMMBFYucY
+	7wC5APeNsJp6uvFZqWd+M6zUOM0kHk4/mZyHEf4HHVooT+RL6e1avLsoLzXSFHQ==
+X-Gm-Gg: ASbGncv3KW7M+y1fkroe4srfKPYthwo1tLqx1s1Tl26WTcKtYpwdDP1Ban5go5a1t+T
+	h2PVtV8h49+Nv/YWu1ZBtRKxJ1SduZKcBIJrCbxQTfE1iycoSV5Jnyq00Ai0bqOT0MZnFDiHGK6
+	2E4nY+OkgqrDAUCiOmrJwHxV+PBgPavPnWvcFolU9Nrre3zaIsPt56BLoeOm8m0bd16HPy9AHVJ
+	k5VYVuICsEH1ak9EsoxLYZf7RTv+m7S8btHhXFwPtpJq6QGgCjL4LZYosg9orR6IUTaIhlSdXDR
+	baMLawr0C7561KXRaMZp4vPfihW07D4=
+X-Received: by 2002:a5d:518b:0:b0:38f:2f88:b034 with SMTP id ffacd0b85a97d-38f33f4e284mr9078448f8f.42.1739862406712;
+        Mon, 17 Feb 2025 23:06:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFDVOrLB4SIRjherMTEcmhlgcnodEoU6RQbfFJA+eEr9lfODG7fwZ2FnVVkhdYR/PU3kKvwEg==
+X-Received: by 2002:a5d:518b:0:b0:38f:2f88:b034 with SMTP id ffacd0b85a97d-38f33f4e284mr9078420f8f.42.1739862406348;
+        Mon, 17 Feb 2025 23:06:46 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258cccdesm14150414f8f.26.2025.02.17.23.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 23:06:45 -0800 (PST)
+Message-ID: <98ff750749a78c50d882f24e89fdc10ab145fa5d.camel@redhat.com>
+Subject: Re: [PATCH v2 03/11] sched: Add sched tracepoints for RV task model
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org, Juri
+ Lelli <juri.lelli@redhat.com>
+Date: Tue, 18 Feb 2025 08:06:43 +0100
+In-Reply-To: <20250217121647.0b9ead66@gandalf.local.home>
+References: <20250213090819.419470-1-gmonaco@redhat.com>
+		<20250213090819.419470-4-gmonaco@redhat.com>
+		<20250217113844.5ad7893c@gandalf.local.home>
+		<20250217164917.GB40464@noisy.programming.kicks-ass.net>
+	 <20250217121647.0b9ead66@gandalf.local.home>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH V2] mm/hugetlb: wait for hugepage folios to be freed
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <1739604026-2258-1-git-send-email-yangge1116@126.com>
-Date: Tue, 18 Feb 2025 15:05:29 +0800
-Cc: akpm@linux-foundation.org,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- 21cnbao@gmail.com,
- david@redhat.com,
- baolin.wang@linux.alibaba.com,
- osalvador@suse.de,
- liuzixing@hygon.cn
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BEEBE7BB-E242-40F0-B752-E878865B56EB@linux.dev>
-References: <1739604026-2258-1-git-send-email-yangge1116@126.com>
-To: yangge1116@126.com
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
 
 
 
-> On Feb 15, 2025, at 15:20, yangge1116@126.com wrote:
+On Mon, 2025-02-17 at 12:16 -0500, Steven Rostedt wrote:
+> On Mon, 17 Feb 2025 17:49:17 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 >=20
-> From: Ge Yang <yangge1116@126.com>
+> > On Mon, Feb 17, 2025 at 11:38:44AM -0500, Steven Rostedt wrote:
+> >=20
+> > > > +void __do_trace_set_current_state(int state_value)
+> > > > +{
+> > > > +	__do_trace_sched_set_state_tp(current, current-
+> > > > >__state, state_value);=C2=A0=20
+> > >=20
+> > > And this should not be using the internal macros of a trace
+> > > point. It should be:
+> > >=20
+> > > 	trace_sched_set_state_tp(current, state_value);
+> > >=20
+> > > (I removed the current->__state as mentioned above).=C2=A0=20
+> >=20
+> > But the static branch is already in the caller, no point
+> > duplicating
+> > that.
 >=20
-> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer =
-freeing
-> of HugeTLB pages"), which supports deferring the freeing of HugeTLB =
-pages,
-> the allocation of contiguous memory through cma_alloc() may fail
-> probabilistically.
+> Regardless, you should not be using internals of the tracepoints.
+> That can
+> change at any time and is not reliable (as the kernel test robot
+> pointed out).
 >=20
-> In the CMA allocation process, if it is found that the CMA area is =
-occupied
-> by in-use hugepage folios, these in-use hugepage folios need to be =
-migrated
-> to another location. When there are no available hugepage folios in =
-the
-> free HugeTLB pool during the migration of in-use HugeTLB pages, new =
-folios
-> are allocated from the buddy system. A temporary state is set on the =
-newly
-> allocated folio. Upon completion of the hugepage folio migration, the
-> temporary state is transferred from the new folios to the old folios.
-> Normally, when the old folios with the temporary state are freed, it =
-is
-> directly released back to the buddy system. However, due to the =
-deferred
-> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately =
-leading
-> to the failure of cma_alloc().
+> It's a static branch, who cares if it's added twice? One is used to
+> jump to
+> the function, the other is for the tracepoint logic itself.
 >=20
-> Here is a simplified call trace illustrating the process:
-> cma_alloc()
->    ->__alloc_contig_migrate_range() // Migrate in-use hugepage
->        ->unmap_and_move_huge_page()
->            ->folio_putback_hugetlb() // Free old folios
->    ->test_pages_isolated()
->        ->__test_page_isolated_in_pageblock()
->             ->PageBuddy(page) // Check if the page is in buddy
+> There's several places that do this.
 >=20
-> To resolve this issue, we have implemented a function named
-> wait_for_hugepage_folios_freed(). This function ensures that the =
-hugepage
-> folios are properly released back to the buddy system after their =
-migration
-> is completed. By invoking wait_for_hugepage_folios_freed() before =
-calling
-> PageBuddy(), we ensure that PageBuddy() will succeed.
+> Perhaps, in the future we could create a normal API that will always
+> call
+> the tracepoint, but until then, let's not use code that wasn't meant
+> for
+> that purpose.
 >=20
-> Fixes: b65d4adbc0f0 ("mm: hugetlb: defer freeing of HugeTLB pages")
+> -- Steve
+>=20
 
-The actual blamed commit should be the
+Mmh I get your point.=C2=A0We definitely don't want this piece of code to
+break whenever something changes in the tracepoint API..
 
-commit c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in =
-non-task context")
+I will revert the change and prepare a V3
 
-which is the first to introducing the delayed work to free the hugetlb =
-pages.
-It was removed by commit db71ef79b59bb2 and then was brought back by =
-commit
-b65d4adbc0f0 immediately.
-
-> Signed-off-by: Ge Yang <yangge1116@126.com>
-> ---
->=20
-> V2:
-> - flush all folios at once suggested by David
->=20
-> include/linux/hugetlb.h |  5 +++++
-> mm/hugetlb.c            |  8 ++++++++
-> mm/page_isolation.c     | 10 ++++++++++
-> 3 files changed, 23 insertions(+)
->=20
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 6c6546b..04708b0 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, =
-struct huge_bootmem_page *m);
->=20
-> int isolate_or_dissolve_huge_page(struct page *page, struct list_head =
-*list);
-> int replace_free_hugepage_folios(unsigned long start_pfn, unsigned =
-long end_pfn);
-> +void wait_for_hugepage_folios_freed(void);
-> struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
-> 				unsigned long addr, bool =
-cow_from_owner);
-> struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int =
-preferred_nid,
-> @@ -1092,6 +1093,10 @@ static inline int =
-replace_free_hugepage_folios(unsigned long start_pfn,
-> 	return 0;
-> }
->=20
-> +static inline void wait_for_hugepage_folios_freed(void)
-> +{
-> +}
-> +
-> static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct =
-*vma,
->   			unsigned long addr,
->   			bool cow_from_owner)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 30bc34d..36dd3e4 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2955,6 +2955,14 @@ int replace_free_hugepage_folios(unsigned long =
-start_pfn, unsigned long end_pfn)
-> return ret;
-> }
->=20
-> +void wait_for_hugepage_folios_freed(void)
-
-We usually use the "hugetlb" term now instead of "huge_page" to =
-differentiate with THP.
-So I suggest naming it as wait_for_hugetlb_folios_freed().
-
-> +{
-> + 	struct hstate *h;
-> +
-> + 	for_each_hstate(h)
-> + 		flush_free_hpage_work(h);
-
-Because all hstate use the shared work to defer the freeing of hugetlb =
-pages, we only
-need to flush once. Directly useing flush_work(&free_hpage_work) is =
-enough.
-
-> +}
-> +
-> typedef enum {
-> 	/*
-> * For either 0/1: we checked the per-vma resv map, and one resv
-> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> index 8ed53ee0..f56cf02 100644
-> --- a/mm/page_isolation.c
-> +++ b/mm/page_isolation.c
-> @@ -615,6 +615,16 @@ int test_pages_isolated(unsigned long start_pfn, =
-unsigned long end_pfn,
-> int ret;
->=20
-> 	/*
-> +	 * Due to the deferred freeing of HugeTLB folios, the hugepage =
-folios may
-> +	 * not immediately release to the buddy system. This can cause =
-PageBuddy()
-> +	 * to fail in __test_page_isolated_in_pageblock(). To ensure =
-that the
-> +	 * hugepage folios are properly released back to the buddy =
-system, we
-
-hugetlb folios.
-
-Muchun,
-Thanks.
-
-> +	 * invoke the wait_for_hugepage_folios_freed() function to wait =
-for the
-> +	 * release to complete.
-> +	 */
-> + 	wait_for_hugepage_folios_freed();
-> +
-> + 	/*
-> 	 * Note: pageblock_nr_pages !=3D MAX_PAGE_ORDER. Then, chunks of =
-free
-> 	 * pages are not aligned to pageblock_nr_pages.
-> 	 * Then we just check migratetype first.
-> --=20
-> 2.7.4
->=20
+Thanks,
+Gabriele
 
 
