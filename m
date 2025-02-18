@@ -1,166 +1,110 @@
-Return-Path: <linux-kernel+bounces-519700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E1FA3A0D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:12:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6BAA3A0D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5271892BDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8893A4669
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA6A26B2A9;
-	Tue, 18 Feb 2025 15:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s0SyCJUD"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23134269AF4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EFC26B943;
+	Tue, 18 Feb 2025 15:11:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666C326B2BF;
+	Tue, 18 Feb 2025 15:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891466; cv=none; b=oPQbwjENIY74GM9Jx5zeab2eXP5iW4je+haY4SFth/+o1pBUQzrRji0siegedrA2CkC/TX2aJM83rczYvZzYqGw20/BbPzWt+3WOAldBhF3KXihPxidpPjk00Oya7u1S+0f1kLQxIHQbtJr4VX6y36VO1BnoVCPKqqi39kHXNCU=
+	t=1739891470; cv=none; b=aUpF/Ej7ovZlf6i+QARV2o2QZOqT7etfMmu9Ztt5xdO7E8VqoxNf+dFuySnMKM5t1z9N1YZHn1zn29Ay9nHBknGBx17XMrUdV1ZbW5KpkqXJiO6+fD86CTfYtICS0ku+vGszalaPO5mWK/UlxZfIIuDCSfvuQ+4gCifDkdRPALI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891466; c=relaxed/simple;
-	bh=88FsyI5JnCmURjrJRtmdJlv7tK97eylnGJVKIrbdaHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsHpjorwc2kJRmG5MxdPyTaSD7Hz+wrADhjzGBtz7AznAtzi3za/ImSYWtpYkM500ieHu23mtajFC9HC3TeUtRw+okWFOjGwnekVQWMG/S0pSgH+ThMBfRsOXz9HJkOxwH5Pa3/fVTEQpVX2Sm0kedldQ0FCDwm80oImc62GFa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s0SyCJUD; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30613802a59so58688011fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739891463; x=1740496263; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yaF1e+ZDI4o7HUbfg08d49EhpMbXTxxHxUMXWJw0jGU=;
-        b=s0SyCJUDwW6aqjMuDNa6E99yRHYgfEypf8nR/5fyp/YvrqzV5k5uPCSBK6B6o5ur9V
-         pK8bhB7avlx0a8M4v7CJcJ0W2ZhJSLKMxFgygUIUCoa4Tx3hptNQ04s2fufo5yd9sQWU
-         n46QT8pIYqB+YmJQzxwEeYP5phe8chmYFpojy4wXQXCgN5tpMw9bwPSc5aztHECuY7at
-         IS88SzTUcjHDXxN+HALUgktN8o+FxKn+aYD5GW6psVTuqgIxVXJhcmh65LLCy2DYGJBN
-         NQlIK1+fGp1n1I/s9KDRD1fBlBdPgEdCeklGzcGwWD+eOe4+QOZPcfjzJBaaxvA1MNHh
-         L+SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739891463; x=1740496263;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yaF1e+ZDI4o7HUbfg08d49EhpMbXTxxHxUMXWJw0jGU=;
-        b=Xv6D79SJRctSOQWKohNBIli24c1ETnBSwmQRstWZyzZiYobo9fEfgvTuRkZArp34WX
-         QERNGfChpXQr14+cFPFchW94KnhIGELa96HR8isESrket/IlAT90CsB0f7jOn/Ne+2x+
-         /WVqcWm5y7qtkbyr6yIUm9Rwd0AXgUhW2M1KsSs+2YIKcmXicy6SkA5zekkrf71EJnyw
-         qenl2tD6Qq60P49ubNjr6w/ApbvyR7rCYaR1uSC3sVY5F6/C8Q8QTWXcz2RhS+t8l1W6
-         B4sKIk0HNKkEov+wSxiU9t5dhZPZ6qIYmEhdWBHLu0til2XVnhV5Qt60lyLwMz81f43y
-         k6fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpEgWs9ALKndeeukVr6ZD1O5jNrbXvu6KxjU0/opLHAwNmQAVxzPRSWP9wo5O7OEKQm1KQGY0Rruu2rG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcYP9KlBe/M3BzQEnlVPDM6Sgpxmh94TyTFfMLP0q/O6hO4rR1
-	LK3eVmgEaJ5flaZIqQ+byRoBIEcvUcEgIKU8NkJv/O7vlKbYhBji36EsEpLfhVcuG+7dp/4oi0L
-	o/F1ADibDtW3mvO7APAKz64YTgAzjX1R5rcz2
-X-Gm-Gg: ASbGncvqC0zi8hXtXqpspSFlw3xms6ALo3ZYkxWh3ell0aQUSv/gbViXHyzXA87SpDV
-	PEg7hKDdprZFQhikaeTSH+BQ9ciD86a7EPycrbQrSKhdvhOtrKhRZDN7BeIl01ad647BFDPHWzE
-	MN/GHkxVsKeHW5y9n6geTt4i8mfA==
-X-Google-Smtp-Source: AGHT+IHpjq/htlflcz+BOGXILOgtcgl1rT56T/ncJcPogbP2nYGjXfTEcTyL3S2eReOnwyD1UPZlIzWdSUt/GcLkmrs=
-X-Received: by 2002:a2e:8657:0:b0:308:fedf:8c12 with SMTP id
- 38308e7fff4ca-30927a2ce8cmr42700271fa.5.1739891463042; Tue, 18 Feb 2025
- 07:11:03 -0800 (PST)
+	s=arc-20240116; t=1739891470; c=relaxed/simple;
+	bh=FEnQfhgHSqo3Q7zro/Iiqg4tKjB4Eaf1e6s01EGT+o4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4FN98rmxS+N1tA9FdIbRAx1otB/AbreW/O+fkrNb2qIlLZFqEDiBtAX5e8F744i/1aKzPqdrrIavNYNkdHVLhiE75Thp1ZLed9wfDSF/HW5FKkyFVM2/Rb4CLlmEAsP325bdge1BZapsHnuwoeArU/+2rSpJnjvx7zpR/wTHm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C2ED13D5;
+	Tue, 18 Feb 2025 07:11:26 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA19D3F6A8;
+	Tue, 18 Feb 2025 07:11:04 -0800 (PST)
+Date: Tue, 18 Feb 2025 15:11:01 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 1/8] dt-bindings: arm: Add Morello compatibility
+Message-ID: <Z7SjBWme-HhNYwtV@bogus>
+References: <20250213180309.485528-1-vincenzo.frascino@arm.com>
+ <20250213180309.485528-2-vincenzo.frascino@arm.com>
+ <CACRpkda-J_NHC7Te=Shk0A-35qWms3xeM2MggdGM0ze3Gt0KMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739790300.git.dvyukov@google.com> <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
- <f68741e0-0cc8-4faa-8144-e1786b9591f1@efficios.com> <CACT4Y+Ym7=9mLS8b=Rq6cyHMgyboMqh15nqkRfgru-qFVTx_0A@mail.gmail.com>
- <cf7af2a8-c004-481b-ad2e-6aa991aacb67@efficios.com>
-In-Reply-To: <cf7af2a8-c004-481b-ad2e-6aa991aacb67@efficios.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 18 Feb 2025 16:10:51 +0100
-X-Gm-Features: AWEUYZkhtgINqZrVndnQoWNfcUuweH7pVGdghkWfoeMeJsTqvByZCWbWc9wbXTk
-Message-ID: <CACT4Y+Z3PCBWDdR5PifXoMBSYJ-cdUmzLRdgbjTUG+A2S8Qq1g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	aruna.ramakrishna@oracle.com, elver@google.com, 
-	"Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkda-J_NHC7Te=Shk0A-35qWms3xeM2MggdGM0ze3Gt0KMw@mail.gmail.com>
 
-On Tue, 18 Feb 2025 at 15:57, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Fri, Feb 14, 2025 at 11:38:54AM +0100, Linus Walleij wrote:
+> Hi Vincenzo,
 >
-> On 2025-02-18 02:55, Dmitry Vyukov wrote:
-> > On Mon, 17 Feb 2025 at 21:21, Mathieu Desnoyers
-> [...]
-> >>
-> >>    we still let this function read the rseq_cs.
-> >>> +      * It's unclear what benefits the resticted code gets by doing this
-> >>
-> >> restricted
-> >>
-> >>> +      * (it probably already hijacked control flow at this point), and
-> >>> +      * presumably any sane sandbox should prohibit restricted code
-> >>> +      * from accessing struct rseq, and this is still better than
-> >>> +      * terminating the app unconditionally (it always has a choice
-> >>> +      * of not using rseq and pkeys together).
-> >>
-> >> Note that because userspace can complete an rseq critical section
-> >> without clearing the rseq_cs pointer, this could happen simply because
-> >> the kernel is preempting the task after it has:
-> >>
-> >> 1) completed an rseq critical section, without clearing rseq_cs,
-> >> 2) changed pkey.
-> >>
-> >> So allowing this is important, and I would remove the comment about
-> >> hijacked control flow and such. This can happen with normal use of the
-> >> ABI.
-> >
-> > Thanks for the review!
-> >
-> > I've addressed all comments in the series in v2.
-> >
-> > I've reworded this paragraph to simplify sentences, but I still kept
-> > the note aboud malicious rseq_cs.
-> >
-> > If we would not be circumventing normal protection, then, yes, these
-> > cases would be the same. But since we are circumventing protection
-> > that otherwise exists, I think it's important to think about
-> > potentially malicious cases. In this context inaccessible rseq_cs
-> > values that resulted from normal execution are very different from
-> > malicious onces. Normal ones will point to a fixed set of real
-> > well-formed rseq_cs objects, while malicious ones may point to
-> > god-knows-where in an attempt of an attacker to do things we can't
-> > even imagine right now (e.g. rseq_cs overlapping with protected crypto
-> > keys).
-> >
-> > It's as if a particular instance of copy_to_user would allow
-> > user-space to write arbitrary kernel memory, and memory of other
-> > processes circumventing all normal protections. In that context we
-> > would need to be very careful regarding what we actually allow.
+> thanks for your patch!
 >
-> I'm considering that we should clear the rseq_cs pointer whenever
-> userspace issues pkey_mprotect.
+> On Thu, Feb 13, 2025 at 7:03 PM Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
 >
-> This would ensure that no legitimate scenario can trigger a load
-> from a rseq_cs area which has the wrong pkey, and therefore we
-> could accept read/write from/to a struct rseq which has the wrong
-> pkey, but kill the process if trying to read/write from a
-> struct rseq_cs with the wrong key. This would prevent userspace
-> from making the kernel read/write from/to memory with the wrong
-> pkey through a pointer it controls (rseq_cs pointer).
+> > Add compatibility to Arm Morello System Development Platform.
+> >
+> > Note: Morello is at the same time the name of an Architecture [1], an SoC
+> > [2] and a Board [2].
+> > To distinguish in between Architecture/SoC and Board we refer to the first
+> > as arm,morello and to the second as arm,morello-sdp.
+> >
+> > [1] https://developer.arm.com/Architectures/Morello
+> > [2] https://www.morello-project.org/
+> >
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml | 4 ++++
 >
-> Thoughts ?
+> I was thinking, that since the .dtsi and .dts files are not reusing
+> any of the Juno .dtsi (correct me if I'm wrong!) this should not
+> be in vexpress-juno.yaml, instead perhaps you should create a new
+> morello.yaml file?
+>
 
-I am not following.
+It is me who suggested to put it along with other vexpress stuff as I
+wasn't sure how much of vexpress bindings will be reused here when
+Vincenzo started this. I agree it can be a separate binding on its own
+as I don't see much commonality now with the vexpress bindings.
 
-There are pkey_mprotect calls, then independently installs on rseq_cs
-pointers that happen concurrently and after pkey_mprotect, and
-independent set of pkey_set calls that happens concurrently and after
-the previous 2.
-I don't see how doing something at the pkey_mprotect call for the
-single thread avoids any scenarios.
-Moreover, pkey 0 is preinstalled for all pages, but access to it can
-be revoked in future.
+Just a note, though the file is named arm,vexpress-juno.yaml, it also
+carries bindings for all Vexpress based Arm Ltd boards(both 32-bit and
+64-bit ones), but they all use common vexpress bindings in general.
+
+I just thought of highlighting that so that the expectation to reuse
+this file is not to check commonality in juno dtsi files but to check
+the vexpress binding reuse. Hope we are aligned with that.
+
+--
+Regards,
+Sudeep
 
