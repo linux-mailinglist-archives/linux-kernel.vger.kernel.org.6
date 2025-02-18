@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-519475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689EAA39D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:24:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518D8A39D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DCE3A2D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDAA188391A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4A026770F;
-	Tue, 18 Feb 2025 13:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6DA268682;
+	Tue, 18 Feb 2025 13:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AYpRsrYd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHwnMVDY"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02949230D2F;
-	Tue, 18 Feb 2025 13:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773B026770F;
+	Tue, 18 Feb 2025 13:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739884721; cv=none; b=W8Jbe6VbQjNj2ff2pPfdZndF/e/s6g7kcnfYQkYT4N8+skXQ/mjtLy57h8ahMSA9UOfNQlONttTVnJapiBPrSSD845utoFE7FUsfBBqcGbTJqkU6UuJbojeQstdB9wlTdtPvwkjTEzUyPeLdGXqpr7Rr4cBviVXcqiGucDBQcx0=
+	t=1739884864; cv=none; b=AgR16W7Um0eaM20cH+n5M5hldIFAfHLsb2z9QwiQi6dw+3Fh1ScZ5cM4J61WHKd+5svjU02cRCEZcjad+7sUV+ns1iKN3CmRscTRpsbTPs1qc0P22IIH0Exjgpea2bcHEZDQ1Ou+T7/wT5/7K8csuikIKuxtUSaJ7Nrchy1mdms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739884721; c=relaxed/simple;
-	bh=FPWHPpu0oh2a3YB49PZMeRnbaB9j7/2z74Gs213PxMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZ3lEe7ArruhPWzB8UEIIdSPZLmyo+S9CqJ/9945MbPu5Qw+YebHP+WBO0OK7iqEwOcG35HUwzOno9LNCyvLdVLEDqKn+CU1pXwOXmUsD9KdojYI/18bNIhfZNHzsumNGDleOeUWgatMCS9+02noIDAPczMV1k2EChTXG8JGXu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AYpRsrYd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739884718;
-	bh=FPWHPpu0oh2a3YB49PZMeRnbaB9j7/2z74Gs213PxMM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AYpRsrYdp8B3SpEganL2jKb8Bs73o8Tn+ptsaTezupvmkOLsCMRb0NJW+Qy6PiEwE
-	 OqyREqyyT7zX7wl/QvPmk2ihB0UqByW6nErSSkS4sRhEp9aiJPPWtxyFfnf+UqLsi8
-	 YC7oePKC9WKeq3bZI7VphNuCq0mYxBFjZlNOqNasFpnnSryDt1KK3o4r0wquxiB+v5
-	 Gg2/Zkuzk6Ii9d4MWQyxwlErJjxsVvzwepBA/tVJaQzpXa9DNe8rIickZG79CkQOPK
-	 Qc5MGaavU0xUguPKekofn8VFtZCjUpwnkeDzvHSD2BiU4ZAbSiWkaON3VDXkN6BE3f
-	 DcjsGH6vLF4Xw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1EC9017E0657;
-	Tue, 18 Feb 2025 14:18:37 +0100 (CET)
-Message-ID: <0ec8b0a5-d9b0-4090-a6b0-22537f449176@collabora.com>
-Date: Tue, 18 Feb 2025 14:18:36 +0100
+	s=arc-20240116; t=1739884864; c=relaxed/simple;
+	bh=pXw/VUZk2/2TbrEzlxvJbX2hPbKCJ0toaMiiUQlOMPE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=okrMzQViv95MZOmx6Tw6ctJVYvG2OC+hhCJgIXoE+9/sXn0L17/eIQeyeXOay82oOkSh1RcpprA56yCm8nrmWYnE3Y/uG/LUS2ienIuypnPus3LYq5nB2QnOEq7lgEx+NO/VdaNAyFpAfak8joTYkqdwdU+aX11+sw+rBXrjvGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHwnMVDY; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso819826066b.3;
+        Tue, 18 Feb 2025 05:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739884861; x=1740489661; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pXw/VUZk2/2TbrEzlxvJbX2hPbKCJ0toaMiiUQlOMPE=;
+        b=SHwnMVDYOCe5t2OwaQtkqMWgOCu5ipFFxkBzVfpQ4aABypu1LtuATA7lL6EYpZZM+J
+         VJTv3FV/VCExsWP1KcyYAsX3ec7viaPTJLpFggYmNQO4W9M04k5Io98BFg57OAWGNykO
+         jFRCeB6+CnW3RhQAiEeTyyYW+4FpI4aIyz76aiOWDGAVZRhYUakSoxkwnz1uv6nw9Wo6
+         8i2qEMy6ZXauHncDAOdUGVPh/AZIVTKDBbVC5Cd6e3mYmww7GrxmhHz7ECVsLkO+3L3A
+         CzhtqqDv7/v92MzTSPatzU99pHPhisD2zjybrchthKBAr2OuKk2lcRAwJX6MQk46WpFJ
+         DBPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739884861; x=1740489661;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pXw/VUZk2/2TbrEzlxvJbX2hPbKCJ0toaMiiUQlOMPE=;
+        b=kHX2hVA+ap0h40e/rKy659EErxPrd0j0NLVM1eilgWBCO100oqzG6wBLjnNISrJBxq
+         7t8I2CGijsQrQ94lB7kiagESwytTqekwpbPnQUsg8pjsdDC5ewhDfr1qU2vsEY9jghhb
+         uHnshmnhfy6fCZfGkIACLvZe0AXjcTGc8h0uoZ4jF3PT5iv5/xUalMEDJqZ94N6oeTuD
+         PUwzbm0eVcy1K3wcZb8iEsFFiMy/Bgn1oJB0IBeMkryUmwifFiwNFuBD4UKpVQhsrJyr
+         s+fT173kd+Yc6OXwhG3XlcvwLhXwO/dl2Yj4iVRfsIT/f0FBLrLkrOQD8KR2lNZEqi8A
+         r+6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXLffcEOTMEWUy6ZymMVeWqL49AsIKmeDFFCB98r809o264qjsN3nknAgwlQpUodyR0+IzQZGtHVEAL@vger.kernel.org, AJvYcCXSAKJamFbMTn0vNmPfFD9wTCvSQlHoxexZPeKvW840Z5CzcD+OtWbR8/ZYzlrWL9SFlp8dq/cw0vI15hel@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOlMsAQmsUCxB0LvlnuNNmlDglbOWdsUTcQgJ3NVrM6UfPY3wN
+	B9A8yH+WfaYOuYT70kMTOIKYIcONsJnzR0ShcbIYcLCDVv7k0/HX
+X-Gm-Gg: ASbGnctpYmOtSZufMTkMrotSiB2Y9+b4N2LcO+9Zop0UFxwnRd/baEe9byYaxYb0eRM
+	+sqOHLBQsmk5C/1MwxoTNYIa34nWUcp84GcRYFdHMdJFwQz+tV+V2U9oruHd7goNuaRx/TeVvnj
+	kPIS8k3KRr3+PDl/aoAaYj5Y02Bv1G5ICXGwGhRv+kqzmh5VOVkuK3RpBLEEvFyho2dCgCcXxMd
+	bgnWjv6K5JpAUts0wUDb9VA/PV0qsPkmb6QPI+q14XEucB4qRqLFTQStnPqau2Z/OiCmIbZvYKy
+	S+ZxWWwHfAcgkwzfAPDpcu2YEc9ian0sTJMivfZ7xDjEdiLozFhREMy3H1nExH3F+vYHwUZF
+X-Google-Smtp-Source: AGHT+IGfAz1/Ln9aF9MylRqFz1gstkfkLiDTO4oAQvkajZW5cUBk1t7bUxgvzU80gmDZNx8cT63axw==
+X-Received: by 2002:a17:906:1757:b0:abb:b136:a402 with SMTP id a640c23a62f3a-abbb136a75amr388377666b.18.1739884860519;
+        Tue, 18 Feb 2025 05:21:00 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb4d3ef3c0sm714890366b.41.2025.02.18.05.20.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2025 05:21:00 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] ASoC: mediatek: mt6359-accdet: Add compatible
- property
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, Andrew Perepech <andrew.perepech@mediatek.com>
-References: <20250214-mt6359-accdet-dts-v1-0-677a151b9b4c@collabora.com>
- <20250214-mt6359-accdet-dts-v1-4-677a151b9b4c@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250214-mt6359-accdet-dts-v1-4-677a151b9b4c@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH] arm64: dts: rockchip: add hdmi1 support to ROCK 5 ITX
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <20250217132146.604090-1-liujianfeng1994@gmail.com>
+Date: Tue, 18 Feb 2025 14:20:48 +0100
+Cc: conor+dt@kernel.org,
+ devicetree@vger.kernel.org,
+ heiko@sntech.de,
+ krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ robh@kernel.org,
+ sfr@canb.auug.org.au
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AEAB639A-1EA6-4FA1-AAC6-C382FB280487@gmail.com>
+References: <975CFBEF-4E37-41E4-BE3F-7294FE7E4D3F@gmail.com>
+ <20250217132146.604090-1-liujianfeng1994@gmail.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-Il 14/02/25 18:18, Nícolas F. R. A. Prado ha scritto:
-> Add a compatible property and add it to the module device table for the
-> mt6359-accdet platform driver to allow automatic module loading and
-> probing when the compatible is present in DT.
-> 
-> Co-developed-by: Andrew Perepech <andrew.perepech@mediatek.com>
-> Signed-off-by: Andrew Perepech <andrew.perepech@mediatek.com>
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->   sound/soc/codecs/mt6359-accdet.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/sound/soc/codecs/mt6359-accdet.c b/sound/soc/codecs/mt6359-accdet.c
-> index ed34cc15b80e856356c07fd53af22207124e0d19..6f07db879c6a56ce4843954f51bb9602373e4aa5 100644
-> --- a/sound/soc/codecs/mt6359-accdet.c
-> +++ b/sound/soc/codecs/mt6359-accdet.c
-> @@ -1047,9 +1047,19 @@ static int mt6359_accdet_probe(struct platform_device *pdev)
->   	return ret;
->   }
->   
-> +const struct of_device_id accdet_of_match[] = {
-> +	{
-> +		.compatible = "mediatek,mt6359-accdet",
-> +	}, {
-> +		/* sentinel */
-> +	},
 
-Compress that stuff please...
 
-	{ .compatible .. },
-	{ /* sentinel */ }
-};
+> Wiadomo=C5=9B=C4=87 napisana przez Jianfeng Liu =
+<liujianfeng1994@gmail.com> w dniu 17 lut 2025, o godz. 14:21:
+>=20
+> Hi,
+>=20
+> On Mon, 17 Feb 2025 10:48:00 +0100, Piotr Oniszczuk wrote:
+>> I manually installed it on my sd card and sill getting:
+>=20
+> I have built a armbian bookworm minimal image, you can test it in case
+> there are hardware related issues:
+> =
+http://cdn.haguro.top/share/Armbian-unofficial_25.02.0-trunk_Rock-5-itx_bo=
+okworm_edge_6.14.0-rc2_minimal.img.xz
+>=20
+> Best regards,
+> Jianfeng
 
-after which:
+Many thx!
+This is very kind!
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I flashed, booted =E2=80=A6. and have exactly the same symptoms & logs =
+like on my previous email :-(
 
-> +};
-> +MODULE_DEVICE_TABLE(of, accdet_of_match);
-> +
->   static struct platform_driver mt6359_accdet_driver = {
->   	.driver = {
->   		.name = "pmic-codec-accdet",
-> +		.of_match_table = accdet_of_match,
->   	},
->   	.probe = mt6359_accdet_probe,
->   };
-> 
+Being desperate I reflowed hdmi ports board area and - believe or not - =
+this seems to help (albeit don=E2=80=99t know for how long :-)
+Now hdmi1 works nicely.
+
+Jianfeng, many thx for your persistence with my hw mess=E2=80=A6. =20
+
+
 
 
 
