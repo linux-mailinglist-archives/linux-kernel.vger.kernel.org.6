@@ -1,91 +1,69 @@
-Return-Path: <linux-kernel+bounces-520114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF72A3A5E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:41:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73081A3A5F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF42B189875B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F26171EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A11EB5C3;
-	Tue, 18 Feb 2025 18:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039F31EB5F9;
+	Tue, 18 Feb 2025 18:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIkr4LKr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsAtfCe3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0922356D6;
-	Tue, 18 Feb 2025 18:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE0F17A30E;
+	Tue, 18 Feb 2025 18:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903984; cv=none; b=hcsQZQ/7S3x0RcmmGN7CtUfQwSymljFba9mQppFTvGTyl+5dO5xY/+uu/hircyZo7A+cfm4/GiaGe6M/fkIf4FsCep76/39OOKkJjOVLvrCQEhnT0AW9Cm9RMWkSm0o0/aWpXbS4kyVWTjoWFBm0tyLkt4npPIJUUEdKMsbkNG0=
+	t=1739904061; cv=none; b=iS64ZJ161D/Nj9fN1E6+eX49rTEGw10MJr3igr0Y7fxw7TnOwNbhO/lBs9SZpR3Xcd8xKCqdAREWLvwFE2eh/T8xwzth/WbH2mNFORDTxzXHZi2F4X3Gq8rMtvBa2/l9JvtPN36AokpWvRUWG0cmhTc/6lw8DUCxGy/vSKelRgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903984; c=relaxed/simple;
-	bh=Ou8KiLZLHzNrLWIVPdXFzquRxMgMgDClrgJgKs9eQE8=;
+	s=arc-20240116; t=1739904061; c=relaxed/simple;
+	bh=iSn5qlkSLrvY9fduNUiNVom2UONzE20CK92zMJiRyX0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miK+t550iztEXXaXYIqBlcKm3EtDDul/datYPxGO3FxmQbEwm/u00ldIfpd+R7wtIUZDhvOnXKXMBAhCPWLnbAPv8tBgGR8/OVvCTEx759HaELmc8sRGjbYKjOgL+hUuuoSipLPkKp74GDTgXP3EtNzChMwYgn5weHi49NVfiWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIkr4LKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7189AC4CEE2;
-	Tue, 18 Feb 2025 18:39:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HG2qwFPZ11xrxpBtfgB15Tm0EFC5w2te6LE18IXIHgK/S4io1mxS4r+M14azoJA46cpAW41wy5990vtt9ovK6/eYMAZbQpB588aE7tZy2xHHNxxX7+G83viKbSNop9l5L2NSVOf8j1GErJ2jJ9/tHpl9N02LOuc5T8dW07NRCEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsAtfCe3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D09C4CEE2;
+	Tue, 18 Feb 2025 18:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739903984;
-	bh=Ou8KiLZLHzNrLWIVPdXFzquRxMgMgDClrgJgKs9eQE8=;
+	s=k20201202; t=1739904061;
+	bh=iSn5qlkSLrvY9fduNUiNVom2UONzE20CK92zMJiRyX0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vIkr4LKr95n1sgWF9eEKIJtFMEX2I2pw8roaOiQU1XD153ZTLXDZ/mxRjmNnouq8f
-	 hCJAs1u7Lcmk1DsOmrf5X9sqrHdn6+BqgSxvoB9xQ48YhhDZVUkd095jxxSj64Q2A/
-	 dE3jGIV9Deg1JrO11Pjdtednrud/M5DAzOcVuvzGlWsSFobWfDsfA609icoCTjThG5
-	 H/5ftZ/mejgknk5xj8NRzZnmoBZ5pOHD/RKFznLFZlPXb0HoCZZWt/f/eqU1XMqgJh
-	 Ws4wCzl1lxD2gu5weFETthkXl8KvnCMevgDaweHSnsnVdtPAmnXTW9MWORDWIHj5bF
-	 MHI/IZhPoLTIw==
-Date: Tue, 18 Feb 2025 19:39:40 +0100
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	b=BsAtfCe3TAKsKWVtlrXywIPoIXoilqgNSNTs7nYiJc7ox+cXZyshjoUv90wT0Osem
+	 gKt4dti+h3LbR+hjEVOSXF7DiCIUmTSBgEf3brOEfXA+gBYKnfp9lAHfcjIqppqwNt
+	 O5iJVnxAaW2giwyDCoTCa9J6qAIjM/78Mf9KEXnbHmNtRjFQJlDkwRmqVWBmvInh9W
+	 gOgfC4YJKTDkZQCamXcn2rQd2ZGzCemGdD3+fRrh1A8cslNK2eJQAq5fYaKg/lVd1P
+	 /An9oyr5gEw/rirR+v1fnVuI/KKCf5++5RsZhyZBnRErWxl5d3wj7xTVZYK0ET9teO
+	 nEMH/LLtJf9gw==
+Date: Tue, 18 Feb 2025 10:40:59 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: Puranjay Mohan <puranjay@kernel.org>, Weinan Liu <wnliu@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Quentin Monnet <qmo@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
-	Linux Power Management <linux-pm@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] tools: Unify top-level quiet infrastructure
-Message-ID: <Z7TT7Jw5QDx2G81v@x1>
-References: <20250203-quiet_tools-v1-0-d25c8956e59a@rivosinc.com>
- <CAADnVQKTqRBQBA-yxB9EYPMgayP3rOE4iDhg+QD++2d=jxfY=Q@mail.gmail.com>
- <Z6JdwSsAk1xCiSrn@ghost>
- <Z6JksXDRh8OSAh-u@google.com>
- <CAADnVQKmKf6wY3dg+PfAxtrrFWGO7D-m83dEndjWksPfWDt5wQ@mail.gmail.com>
- <Z6Khl1rHIAb7wOXw@ghost>
- <CAEf4Bza5nKk6_fVY2vmJjZgPb40zB+R3REy8==ZLc98eg1iHTA@mail.gmail.com>
- <Z6pF5pkH_bqvDwMK@ghost>
- <CAEf4BzYqOtfOiYcHWRP44rwkrdzi3aMkjgD1-Td5DVAOLV=2kA@mail.gmail.com>
+	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
+	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
+	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+Message-ID: <20250218184059.iysrvtaoah6e4bu4@jpoimboe>
+References: <mb61py0yaz3qq.fsf@kernel.org>
+ <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
+ <20250214080848.5xpi2y2omk4vxyoj@jpoimboe>
+ <CAPhsuW6dxPtgqZaHrZEVhQXwm2+sETreZnGybZXVKYKfG9H6tg@mail.gmail.com>
+ <20250214193400.j4hp45jlufihv5eh@jpoimboe>
+ <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
+ <20250214232342.5m3hveygqb2qafpp@jpoimboe>
+ <CAPhsuW48h11yLuU7uHuPgYNCzwaxVKG+TaGOZeT7fR60+brTwA@mail.gmail.com>
+ <20250218063702.e2qrpjk4ylhnk5s7@jpoimboe>
+ <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,148 +73,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYqOtfOiYcHWRP44rwkrdzi3aMkjgD1-Td5DVAOLV=2kA@mail.gmail.com>
+In-Reply-To: <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
 
-On Mon, Feb 10, 2025 at 04:23:49PM -0800, Andrii Nakryiko wrote:
-> On Mon, Feb 10, 2025 at 10:31 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> >
-> > On Wed, Feb 05, 2025 at 05:28:19PM -0800, Andrii Nakryiko wrote:
-> > > On Tue, Feb 4, 2025 at 3:24 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > >
-> > > > On Tue, Feb 04, 2025 at 11:02:42PM +0000, Alexei Starovoitov wrote:
-> > > > > On Tue, Feb 4, 2025 at 7:04 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > >
-> > > > > > Hello,
-> > > > > >
-> > > > > > On Tue, Feb 04, 2025 at 10:34:41AM -0800, Charlie Jenkins wrote:
-> > > > > > > On Tue, Feb 04, 2025 at 05:18:42PM +0000, Alexei Starovoitov wrote:
-> > > > > > > > On Tue, Feb 4, 2025 at 12:10 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > > > > > > >
-> > > > > > > > > The quiet infrastructure was moved out of Makefile.build to accomidate
-> > > > > > > > > the new syscall table generation scripts in perf. Syscall table
-> > > > > > > > > generation wanted to also be able to be quiet, so instead of again
-> > > > > > > > > copying the code to set the quiet variables, the code was moved into
-> > > > > > > > > Makefile.perf to be used globally. This was not the right solution. It
-> > > > > > > > > should have been moved even further upwards in the call chain.
-> > > > > > > > > Makefile.include is imported in many files so this seems like a proper
-> > > > > > > > > place to put it.
-> > > > > > > > >
-> > > > > > > > > To:
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > > > > > > > ---
-> > > > > > > > > Charlie Jenkins (2):
-> > > > > > > > >       tools: Unify top-level quiet infrastructure
-> > > > > > > > >       tools: Remove redundant quiet setup
-> > > > > > > > >
-> > > > > > > > >  tools/arch/arm64/tools/Makefile           |  6 -----
-> > > > > > > > >  tools/bpf/Makefile                        |  6 -----
-> > > > > > > > >  tools/bpf/bpftool/Documentation/Makefile  |  6 -----
-> > > > > > > > >  tools/bpf/bpftool/Makefile                |  6 -----
-> > > > > > > > >  tools/bpf/resolve_btfids/Makefile         |  2 --
-> > > > > > > > >  tools/bpf/runqslower/Makefile             |  5 +---
-> > > > > > > > >  tools/build/Makefile                      |  8 +-----
-> > > > > > > > >  tools/lib/bpf/Makefile                    | 13 ----------
-> > > > > > > >
-> > > > > > > > Nack.
-> > > > > > > > libbpf and bpftool are synced independently to github
-> > > > > > > > and released from there.
-> > > > > > > > This change breaks it.
-> > > > > >
-> > > > > > Sorry, I overlooked this part and merged a change that touched the
-> > > > > > common files into the perf tree.
-> > > > > >
-> > > > > > f2868b1a66d4f40f ("perf tools: Expose quiet/verbose variables in Makefile.perf")
-> > > > > >
-> > > > > > Unfortunately, it's already in v6.14-rc1.
-> > > > > >
-> > > > > > >
-> > > > > > > Can you explain how it breaks it? Currently bpftool and resolve_btfids
-> > > > > > > don't build quietly so this was an attempt to fix that.
-> > > > > >
-> > > > > > So I think you will need something like this for v6.14.  Again, sorry
-> > > > > > about the trouble.
-> > > > >
-> > > > > Just revert f2868b1a66d4f40f that created this mess.
-> > > >
-> > > > Why are you opposed to unifying this helpers among the various projects
-> > > > in tools? Can you explain what about this breaks the Github syncing flow
-> > > > and why it cannot be resolved? It doesn't make sense to duplicate "Q="
-> > > > in every Makefile anybody ever wants to add to tools just because bpf
-> > > > syncing isn't robust.
-> > >
-> > > Alexei's concern about Github mirrors of bpftool and libbpf isn't
-> > > valid. Github versions of those projects use their own independent
-> > > Makefiles anyways, so your change doesn't break that aspect.
-> > >
-> > > But your change *does* break both libbpf's and bpftool's make output
-> > > *in the kernel repo*. With this patch we basically don't have "quiet"
-> > > mode anymore:
-> > >
-> > > $ git co f2868b1a66d4f40f07e985b0beead606b2753602
-> > > HEAD is now at f2868b1a66d4 perf tools: Expose quiet/verbose variables
-> > > in Makefile.perf
-> > > $ git log --oneline -n1
-> > > f2868b1a66d4 (HEAD) perf tools: Expose quiet/verbose variables in Makefile.perf
-> > > $ pwd
-> > > /home/andriin/linux/tools/lib/bpf
-> > > $ make
-> > >   gcc -Wp,-MD,/data/users/andriin/linux/tools/lib/bpf/staticobjs/.libbpf.o.d
-> > > -Wp,-MT,/data/users/andriin/linux/tools/lib/bpf/staticobjs/libbpf.o -g
-> > > -O2 -std=gnu89 -Wbad-function-cast -Wdeclaration-after-statement
-> > > -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarations
-> > > -Wmissing-prototypes -Wnested-externs -Wno-system-headers
-> > > -Wold-style-definition -Wpacked -Wredundant-decls -Wstrict-prototypes
-> > > -Wswitch-default -Wswitch-enum -Wundef -Wwrite-strings -Wformat
-> > > -Wno-type-limits -Wstrict-aliasing=3 -Wshadow -Wno-switch-enum -Werror
-> > > -Wall -I/data/users/andriin/linux/tools/lib/bpf/
-> > > -I/data/users/andriin/linux/tools/include
-> > > -I/data/users/andriin/linux/tools/include/uapi
-> > > -I/data/users/andriin/linux/tools/arch/x86/include -fvisibility=hidden
-> > > -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D"BUILD_STR(s)=#s" -c -o
-> > > /data/users/andriin/linux/tools/lib/bpf/staticobjs/libbpf.o libbpf.c
-> > > ^Cmake[2]: *** [/data/users/andriin/linux/tools/build/Makefile.build:86:
-> > > /data/users/andriin/linux/tools/lib/bpf/staticobjs/libbpf.o] Interrupt
-> > > make[1]: *** [Makefile:165:
-> > > /data/users/andriin/linux/tools/lib/bpf/staticobjs/libbpf-in.o]
-> > > Interrupt
-> > > make: *** [Makefile:143: all] Interrupt
-> > >
-> > > $ git co HEAD~
-> > > Previous HEAD position was f2868b1a66d4 perf tools: Expose
-> > > quiet/verbose variables in Makefile.perf
-> > > HEAD is now at e9cbc854d8b1 perf config: Add a function to set one
-> > > variable in .perfconfig
-> > > $ make
-> > >   CC      /data/users/andriin/linux/tools/lib/bpf/staticobjs/libbpf.o
-> > > ^C
-> > >
-> > > So, can you please check and fix?
-> >
-> > I think I am misunderstanding what you are saying. The patch that we are
-> > discussing on is the patch to fix this? You are showing the output from
-> > the patch that is being fixed in this series.
+On Tue, Feb 18, 2025 at 10:20:10AM -0800, Song Liu wrote:
+> Hi Josh,
 > 
-> Ah, it's me getting confused. It was the earlier perf commit that
-> broke all this, makes sense. I just double-checked with your patches
-> applied locally. It indeed fixes the issue, LGTM.
+> On Mon, Feb 17, 2025 at 10:37 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > On Mon, Feb 17, 2025 at 08:38:22PM -0800, Song Liu wrote:
+> > > On Fri, Feb 14, 2025 at 3:23 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > > Poking around the arm64 module code, arch/arm64/kernel/module-plts.c
+> > > > is looking at all the relocations in order to set up the PLT.  That also
+> > > > needs to be done for klp relas, or are your patches already doing that?
+> > >
+> > > I don't think either version (this set and my RFC) added logic for PLT.
+> > > There is some rela logic on the kpatch-build side. But I am not sure
+> > > whether it is sufficient.
+> >
+> > The klp relas looked ok.  I didn't see any signs of kpatch-build doing
+> > anything wrong.  AFAICT the problem is that module-plts.c creates PLT
+> > entries for regular relas but not klp relas.
 > 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> In my tests (with printk) module-plts.c processes the .
+> klp.rela.vmlinux..text.copy_process section just like any other .rela.*
+> sections. Do we need special handling of the klp.rela.* sections?
 
-Thanks, b4 didn't pick this one, probably because you provided the Ack
-for a previous version of this series, but the patch in it is the same
-as in v2, so I'm keeping it, ok?
+Ok, I see how it works now:
 
-Also since you applied the patches and tested it, can I promote the tag
-to Tested-by you?
+klp_write_section_relocs()
+	apply_relocate_add()
+		module_emit_plt_entry()
+  
+If that code is working correctly then I'm fresh out of ideas...
 
-Humm, there is a slight difference, checking that in the e-mails
-thread...
-
-+  quiet = quiet_
-+  Q = @
-
-The above doesn´t  have spaces surrounding the = sign, lemme see...
-
-- Arnaldo
+-- 
+Josh
 
