@@ -1,200 +1,167 @@
-Return-Path: <linux-kernel+bounces-518783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF8A3947F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:07:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AB2A3948C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DA3188E0F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88005171736
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7C22ACF7;
-	Tue, 18 Feb 2025 08:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jf1SZCwg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O/5UskKI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jf1SZCwg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="O/5UskKI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAAE22AE4E;
+	Tue, 18 Feb 2025 08:08:22 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6034922ACCE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB001FECAD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866057; cv=none; b=R3zOf+Y2u1A7fJC8v20j/zGsy4AHHNAp0Agjh4Mok+2SzQF7uhuR0c/NwMzGLLEd3pbqi7TPYDSPZ/NZtSwsCBzkg2C4mqXC5A+eOS52QCNfBQG1vtjuevTfNcxhklYrq9hlwiaJW+prZIuyvg/vEjJfbmhHEEK4m5J5dfj3/gY=
+	t=1739866102; cv=none; b=D66UCHNu2tq7Uzdnqh9IjujuW7JErF4s3/WPLfmbsqTg1/7pnHYysRZaTxnQHFiO7PfQafkgdFXnuidNP+jhTxg4Rf4YbsIS3i0xvnF87n5TDrSylbWzSoQkVwO5SmxjJbPwDUJj7Phho5sgEYS3S/A4YgDSussixsnd1jfYzME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866057; c=relaxed/simple;
-	bh=n8hdxqea0Cii7OvjC4177i8E3IGatQMn5FrjuusoBws=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UjzUHefnk+LAjsyxC3uxF26bpTTitgfiruxfSymCi0zOwgnkNeJ1NF8DWQ6c4jRGnntt0KAs4kkoPtKn03EfaPuH6EJyNhaEqMkAFRMZtgHgs2FaYkqZEKSEPdx6jtXJzY9e+yMGpFOuLUKtyQ546/YKXZcafmsmPytU5/pvAhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jf1SZCwg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O/5UskKI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jf1SZCwg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=O/5UskKI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E6F91F396;
-	Tue, 18 Feb 2025 08:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739866048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
-	b=Jf1SZCwgLmk8GfWDRpkOrvOl/QIM3TVKeZvbvnJhYnkyGtlZWs+Jn59GVY2JQr7HbM3K9P
-	Wpp59uJaBLcAxYM0EI1UFLQ2uRP3L24IUcAhrD4Cu5u/DfNlk4+CUIoCpY8EMA730s77iJ
-	TffB2+Qn2rRyDkrJVIAGhRwC+SED0iA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739866048;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
-	b=O/5UskKIHAr2Oq0o9YYLVhqkxf51VbheQrA5g/PJWQ62DQJ2HUhaxBbQBSQJARfk6kdC+v
-	ha8ttrSvmfVeSlAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739866048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
-	b=Jf1SZCwgLmk8GfWDRpkOrvOl/QIM3TVKeZvbvnJhYnkyGtlZWs+Jn59GVY2JQr7HbM3K9P
-	Wpp59uJaBLcAxYM0EI1UFLQ2uRP3L24IUcAhrD4Cu5u/DfNlk4+CUIoCpY8EMA730s77iJ
-	TffB2+Qn2rRyDkrJVIAGhRwC+SED0iA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739866048;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8rH66VwakmIVEj/znEtIpDflz8sHWMRIsQr8wdgyxk=;
-	b=O/5UskKIHAr2Oq0o9YYLVhqkxf51VbheQrA5g/PJWQ62DQJ2HUhaxBbQBSQJARfk6kdC+v
-	ha8ttrSvmfVeSlAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D648E132C7;
-	Tue, 18 Feb 2025 08:07:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A8v0ML8/tGc4VQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 18 Feb 2025 08:07:27 +0000
-Date: Tue, 18 Feb 2025 09:07:26 +0100
-Message-ID: <87zfij65hd.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Takashi Iwai <tiwai@suse.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] ALSA: usb-audio: drain may fail with multi-port close race
-In-Reply-To: <Z7OCJ2DikMvhAxVf-jkeeping@inmusicbrands.com>
-References: <20250217111647.3368132-1-jkeeping@inmusicbrands.com>
-	<8734gc8prr.wl-tiwai@suse.de>
-	<Z7OCJ2DikMvhAxVf-jkeeping@inmusicbrands.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1739866102; c=relaxed/simple;
+	bh=j6H6oVqYMGS6D3VJkggcAv1qxGcui/OzylaqNBXvkrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iSSarN7+rnYj14Pnc9EblK/SesN287UfS8FkDP6CGJWDriFeDur8XghRljKhXdjBaz4BAVsWa4SM3HLoVdwGZT3qQVbxfczhe20mPTVkr2hV+GxAm3CBKRpvjdEP0LmrS1fOWVsAL9XLJQlAdhJVUag86B1d9jf0auzm6257AJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5209f22ecfeso717285e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:08:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739866098; x=1740470898;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H9MwgkOHrsarAXnf9TuQkNcaIA+s+1gcKpDOdbCbxlU=;
+        b=F/3Rt+VSvj4jQq+2n4+YLao0GCrxlg/1TjfX3gEy8nuppdw/OUQsfDTLQg8bVwXBkT
+         AOPrO7pj6GfVT5r+QccmSN9lSp7Gi80JHOZfz24mSe3SRM7FriV/5NepH+KdNl1OOm4D
+         0RDb8qk9Uw0+ZfMIJvrCS1JziaHSH5Nvt3molvU7bg5kvul1OweFGP0q1Sw1XH14yeha
+         LOQh3pIcsGkKuqKlSe/a8uDaFihqpWMijExPY5ARza44e/wnWRn2/0PmS4bPWFQLl8Yg
+         M5bmB20RiW4zD87JH+bPFL+QOjCjqQX+ekYTpoKBbIGrDVVJu7NwCRa5Yz2bmbyGGczA
+         ZGYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZTLJU90HRpWIbFnQLa04rMhTYvub/NN+KKwMqj9I/ShIfFZI5lK1PU07nY00I1cWLKPm+ka4oTzLgTXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlLMKKGKmH0KeYWqOPH/EZkKOT2UG2oUevECyoK/f+IvS/oiTt
+	NgpcSxs4Vhk9vl/5Q4TzT+jSWc+NMSfd+716pX/3F6MUxXq8qhFbQ0MXw7rhxTc=
+X-Gm-Gg: ASbGnctMAce1AjOii80XqmI3BbkKerGsvLxSPmqTEvcr8NhwJ89AgYQ2MJ1vItOyUcO
+	2/LenTAl1h0zLshIlgggbmXXqy/NkNoCW/mVljSWOpcVO71zRYYWtg8kHG27Qf+IR0imIXpqRO3
+	4NWl8/isXRjhgQWM4vgEd3sqXXQkFIRyqbArUZ3yL5myx3aoX9+e+8ccICsX10yR45ac1M3Ro2O
+	XjnF5oSwyPclD2PURLeQ7BWF4ia7yll52k+BocuXIlj3ZzeFBwqSbm+/8BfocU3ywqQgdJlgG93
+	nWTj0fbn/0hEiRKD86j2NdDC8KO+6wTE7xLdEWRkD5euVQaKxMNRfw==
+X-Google-Smtp-Source: AGHT+IGuLRL5X9liyyEm3RoSQsY+4vNFI0AceAHn9Jm7Aud5b1nng3rdID33fj4QvimEuIC/M6vtUg==
+X-Received: by 2002:a05:6122:488a:b0:519:fcf2:ef51 with SMTP id 71dfb90a1353d-5209dbc02a2mr6325312e0c.5.1739866097837;
+        Tue, 18 Feb 2025 00:08:17 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520a8496db7sm1376462e0c.2.2025.02.18.00.08.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 00:08:17 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4be55c93be1so360486137.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:08:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWEGkz0W0el3gSbnsFCBYrWIxCppiLkgxRSeme5KU7SHsRf0Rz9tG8oS1o2nwMJrhiwBDDQI+oGG7kWRn8=@vger.kernel.org
+X-Received: by 2002:a05:6102:f10:b0:4bb:d45c:7f4b with SMTP id
+ ada2fe7eead31-4bd3fd72a27mr7350475137.11.1739866096976; Tue, 18 Feb 2025
+ 00:08:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <202502072019.LYoCR9bF-lkp@intel.com> <2421077.NG923GbCHz@camazotz>
+ <Z68CX3HMEUW00WYi@rli9-mobl> <9791da8a-fb5f-46d0-a86f-66738293d155@app.fastmail.com>
+In-Reply-To: <9791da8a-fb5f-46d0-a86f-66738293d155@app.fastmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 09:08:04 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU3MazCqD6PaeyLTW1P8mVZr6BVEConT713cTHe830bTQ@mail.gmail.com>
+X-Gm-Features: AWEUYZnH9dq957HqwTY97HF9xwG7uxLoVu7EqjIV6dduDusvg_uATVUem4tufXg
+Message-ID: <CAMuHMdU3MazCqD6PaeyLTW1P8mVZr6BVEConT713cTHe830bTQ@mail.gmail.com>
+Subject: Re: include/linux/thread_info.h:259:25: error: call to
+ '__bad_copy_to' declared with attribute error: copy destination size is too small
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Philip Li <philip.li@intel.com>, Elizabeth Figura <zfigura@codeweavers.com>, 
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 17 Feb 2025 19:38:31 +0100,
-John Keeping wrote:
-> 
-> On Mon, Feb 17, 2025 at 06:06:16PM +0100, Takashi Iwai wrote:
-> > On Mon, 17 Feb 2025 12:16:46 +0100,
-> > John Keeping wrote:
-> > > 
-> > > I'm seeing a bug where data sometimes fails to send on USB MIDI devices
-> > > with multiple ports which seems to be a result of a race around closing
-> > > ports introduced by commit 0125de38122f0 ("ALSA: usb-audio: Cancel
-> > > pending work at closing a MIDI substream").
-> > > 
-> > > The scenario is essentially this program:
-> > > 
-> > > 	snd_rawmidi_t *port0, *port1;
-> > > 	snd_rawmidi_open(NULL, &port0, "hw:0,0,0", 0);
-> > > 	snd_rawmidi_open(NULL, &port1, "hw:0,0,1", 0);
-> > > 
-> > > 	snd_rawmidi_write(port0, data, len);
-> > > 
-> > > 	snd_rawmidi_close(port1);
-> > > 	snd_rawmidi_close(port0);
-> > > 
-> > > What happens seems to be the following:
-> > > 
-> > > 	write(port0)
-> > > 	`- snd_usbmidi_output_trigger
-> > > 	   `- queue_work()
-> > >         close(port1)
-> > > 	`- snd_usbmidi_output_close
-> > > 	   `- cancel_work_sync()	# Work has not yet started here
-> > > 	close(port0)
-> > > 	`- snd_rawmidi_drain_output
-> > > 	   # Times out because nothing is processing outbound data!
-> > > 
-> > > The two ports interact like this because they are on the same endpoint,
-> > > so should the work only be cancelled when the last endpoint is closed?
-> > 
-> > How about the following patch work?
-> > It's a band-aid, but should suffice.  The callback is already
-> > protected with rawmidi open_mutex.
-> 
-> Yes, this patch fixes it and is
-> 
-> Tested-by: John Keeping <jkeeping@inmusicbrands.com>
+Hi Arnd,
 
-Thank you for quick testing!
+On Fri, 14 Feb 2025 at 12:26, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Feb 14, 2025, at 09:44, Philip Li wrote:
+> > On Mon, Feb 10, 2025 at 02:39:46PM -0600, Elizabeth Figura wrote:
+> >> On Friday, 7 February 2025 06:11:47 CST kernel test robot wrote:
+> >> >    In file included from include/linux/spinlock.h:60,
+> >> >                     from include/linux/wait.h:9,
+> >> >                     from include/linux/wait_bit.h:8,
+> >> >                     from include/linux/fs.h:6,
+> >> >                     from drivers/misc/ntsync.c:11:
+> >> >    In function 'check_copy_size',
+> >> >        inlined from 'copy_from_user' at include/linux/uaccess.h:207:7,
+> >> >        inlined from 'setup_wait' at drivers/misc/ntsync.c:888:6:
+> >> > >> include/linux/thread_info.h:259:25: error: call to '__bad_copy_to' declared with attribute error: copy destination size is too small
+> >> >      259 |                         __bad_copy_to();
+> >> >          |                         ^~~~~~~~~~~~~~~
+> >>
+> >> This was caught before and mentioned in [1]. The suggestion there of changing "args->count" to "count" doesn't help.
+> >>
+> >> Somehow gcc 12 thinks that the array_size(count, sizeof(*fds)) parameter is constant, although it's finnicky and depends on exactly where __builtin_constant_p() is evaluated.
+> >>
+> >> The bug goes away with gcc 13. Is this worth trying to work around? I don't have any ideas for how to do so.
+> >
+> > Thanks for the info, at bot side, we will ignore this error to
+> > avoid further reporting on old gcc.
+>
+> gcc-12 isn't really "old", we support gcc-5 through gcc-14 at the moment.
+>
+> Maybe the change below would address it? (Not sure I handled the
+> "+1" right here, but something like that should make it obvious
+> to the compiler what the check is).
+>
+>       Arnd
+>
+> diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
+> index 055395cde42b..ae13aae9194b 100644
+> --- a/drivers/misc/ntsync.c
+> +++ b/drivers/misc/ntsync.c
+> @@ -873,6 +873,7 @@ static int setup_wait(struct ntsync_device *dev,
+>  {
+>         int fds[NTSYNC_MAX_WAIT_COUNT + 1];
+>         const __u32 count = args->count;
+> +       size_t size = count * sizeof(fds[0]);
 
-Looking at the code again, I think the suggested fix isn't right.
-It still allows some pending work accessing the freed object.
+array_size(), to keep the multiplication overflow check?
 
-Could you test the following one-liner instead?
+>         struct ntsync_q *q;
+>         __u32 total_count;
+>         __u32 i, j;
+> @@ -880,15 +881,14 @@ static int setup_wait(struct ntsync_device *dev,
+>         if (args->pad || (args->flags & ~NTSYNC_WAIT_REALTIME))
+>                 return -EINVAL;
+>
+> -       if (args->count > NTSYNC_MAX_WAIT_COUNT)
+> +       if (size >= sizeof(fds))
+>                 return -EINVAL;
+>
+>         total_count = count;
+>         if (args->alert)
+>                 total_count++;
+>
+> -       if (copy_from_user(fds, u64_to_user_ptr(args->objs),
+> -                          array_size(count, sizeof(*fds))))
+> +       if (copy_from_user(fds, u64_to_user_ptr(args->objs), size))
+>                 return -EFAULT;
+>         if (args->alert)
+>                 fds[count] = args->alert;
 
+Gr{oetje,eeting}s,
 
-Takashi
+                        Geert
 
--- 8< --
---- a/sound/usb/midi.c
-+++ b/sound/usb/midi.c
-@@ -1145,7 +1145,7 @@ static int snd_usbmidi_output_close(struct snd_rawmidi_substream *substream)
- {
- 	struct usbmidi_out_port *port = substream->runtime->private_data;
- 
--	cancel_work_sync(&port->ep->work);
-+	flush_work(&port->ep->work);
- 	return substream_open(substream, 0, 0);
- }
- 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
