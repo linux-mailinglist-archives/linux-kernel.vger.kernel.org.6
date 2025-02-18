@@ -1,148 +1,137 @@
-Return-Path: <linux-kernel+bounces-519398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FEAA39C64
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:43:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13015A39C6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB407A1D26
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9781A188C2D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D0224818C;
-	Tue, 18 Feb 2025 12:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950852500CE;
+	Tue, 18 Feb 2025 12:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZNx5BYbL"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkUS4ir7"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E57F2475F2;
-	Tue, 18 Feb 2025 12:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B48241108
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739882617; cv=none; b=Tq2nCe8wY0Zwh0ObyGFGYXxV5+Y7EMyTMwwP+73py7hZW1u5BOgsJS9V8BFxQOSTb9Gh3ytRaPqB4m5CHbFAwYYGncdhpnzerDmRXdNMMW3YrvH059Oo/dxtIGgaXS12J5Fz1Wily9+N6gI2VLQMjnVijfU91zmbgZUa45Jj4OE=
+	t=1739882745; cv=none; b=eHiXgiLl1EB45S7aR72CR1t8In6kOcOsl9x7hPWGzeyrde0Fyi7OGBCHUbGXV1bNYJXsg+mbPDzWTa79R7feYOMZDz3JlGYp4I/85kEyiSBM+vabSyI76hlFy0MrzB1AshLJOap4qJGkNCptEcV5x6mr/qgDY1u5srxdTlvXK3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739882617; c=relaxed/simple;
-	bh=PPfx+qN+r3fsPzBvaolV7hOKBn7l6DYQD6YgdMuZ/SI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=as0wjBgkdgwtiyq7Z+pE+F/+nbmp4MIKCWFZsx68XrS8cFp8kkkcs38afGqxKPgLeVyRBgqBYv1B1/hmm9/6XJmO/NAZACR7/j5VlIQMSqy0tO2FHj85c5mDoOUL7Bj5LaG11Jkt9WznCNI60TMdK9lZwNotOi3mglzAofilXss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZNx5BYbL; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=q3sgjaww3zf6jjt5pzlzd6ux3u.protonmail; t=1739882607; x=1740141807;
-	bh=8nsvnyARfLGt6tPfX961veuIV9VExo8yct+FDPP2mDI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=ZNx5BYbL9RA91zzUIBpyXgcwhSHUGEJJ62FPKJ/ni2mbVu4fDzxJ+3N608wx+Z4VV
-	 wyhDLZXIS5LPCGmcQDzVA3kHiRJBukQ5IZFZUjQEttI9uXG69wnHBAVW+5yiAFoXU/
-	 j7Hsm3yjfJpTSA2bECMDKUMWh1IAD1Hg364bn2XnQ+1+t01Bw99HBnRirfBVh+0KHE
-	 921f5TtLBtG6vv5RRw+jhBuqsnOoG/r4C7j8hSlIOe9I2oSPBb+esjkXgPubAPeCtk
-	 W7uLhY/SrY5HMUq+K4zK/fXV2D6DtT7KGDY59IXXohyoBmZwBiYrzw6Ap7YT8FvxGg
-	 7vk6JAU8w7NYA==
-Date: Tue, 18 Feb 2025 12:43:21 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>, Gary Guo <gary@garyguo.net>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Luis Chamberlain <mcgrof@kernel.org>, Trevor Gross <tmgross@umich.edu>, Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, Greg KH <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org
-Subject: Re: [PATCH v6 2/6] rust: str: implement `Index` for `BStr`
-Message-ID: <86474714-24a5-49ff-9767-23e25afee7d3@proton.me>
-In-Reply-To: <87wmdnfqt0.fsf@kernel.org>
-References: <20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org> <20250211-module-params-v3-v6-2-24b297ddc43d@kernel.org> <kW0CDyK5M8DuLPr_1HwIXcnVP4x8evlFoq0BOjldchTZqkGiqzNJ-dtpV7s5QHLbbmm6cW529GeDTo_GoDKfdQ==@protonmail.internalid> <20250211164004.6de768c3@eugeo> <87lduc44c3.fsf@kernel.org> <2m_bB1GvgxV0DoM1PIggnkJD83g9AA6EeW5bgH1JmfZBG1P8D_DE966KAg53gCK8KmWgjpdCUPU6T-5xuZ-FYg==@protonmail.internalid> <20250212090914.6ef7e83b@eugeo> <87wmdnfqt0.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 7deb9b54b3c5e867e75199ddc60dac1ad16802d2
+	s=arc-20240116; t=1739882745; c=relaxed/simple;
+	bh=RavdE/UlQvRgShqHGge32zjyJ+SYqS72qfeGAshiLRs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BooBmZvrAkmQi1QDoWeuibS47tPTaL1rRhG0m6Csx3bkOTWsHEy2K88isXlxSCmEARO+Z/XPJtsdbAIRT0QtVuV1HX29YI/dT/XAhpM7H0ptvBG58mAlWtnG9iTXkc2s6L7pNyRxpfktetksU66t4PQFX4tY1m+QVl5mayd722Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MkUS4ir7; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30920855d5bso42032871fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:45:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739882741; x=1740487541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BjM/WutdghfOa1rqYy4L0lCjsN+xham0bipKmB62Pf4=;
+        b=MkUS4ir7m+6XKgARQxZhSntv5f//M+3bJzDqGKE4tnKsdFadrqvVj6Vw1LMiMroWZm
+         +x1hq4uKZ28jE3x9hQiHfJQHg1Dmt43vQ6kaNksw5grLVZiQL3aq4/k2/7nKgJqrsM3X
+         TiGjAOyCQU4vMt66z8/2qqUHLAUCWjNsRwmsGZEQghHOs25e9Y3z8dME+NtoUb1MrCS1
+         kTBTC3R/qP/swbMQrAQdLX93j0SPfPV30j3lFPYDc7B1L1yVGWRzB7QLqmf7EliidzSJ
+         AxzXLGyh7psbRy8MvWSRVhvo1yKdGUKb7Md9ZtYDIsXxquRIN2IwbUxhfDnHyGg4TVsA
+         Dj8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739882741; x=1740487541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BjM/WutdghfOa1rqYy4L0lCjsN+xham0bipKmB62Pf4=;
+        b=s+hhR678IsT+XWC5j9Pl8Bv5EiGZk8Y0ZKEXiuQRexnxcUXthyItl8Ze/4iO2BNUDs
+         oEesT8LKOHM3h6SBCgX6z8cPYokHKG0rj91QgZLy6VdwLP24E+Dv6gnXCbs3GYZDWAmj
+         oGHHXlXqXwBiJoTa21pryw9REGxq4f94EK9NECDsWZ6b/p0WllPTjOojzRF0m6PmEyBY
+         YEUt4ohyKC62YeuQm5eTaj34bkbiuMh7KyGCXXlsWbLU0CYAxKiO5PkrfuM4jFV9DNWw
+         gHL+qgin8KfvHb6d4nvxmgR+mD3tWFb6h0cNyp3BlHAdWOLzwJU6dxLcw0K1QAt6TLo4
+         nCLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFnEDCMwYVj3D+eEUejqrhzKKdugsprAtWAHBz+41Hp7/njnWPJaYx5sfT89yQUzpLy5+lG/UFpoNfYK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGZsT3yx7r2T7Fg6LFP8oFHwauf6q1qbKIhDxem/ua9e2Pd378
+	29YXfE/20KTFMiKj5U2NQXxoTx8/rJ2yOcN040i6DB1Dt1ntUrV2iCPf73InC2WP6Q==
+X-Gm-Gg: ASbGnctfComrVfjtXRhoOhh7sQ/78E1SKPXmIIpo/kK9/2XDsNEax05o6mw3O/MPPC2
+	oxQhcIexoqfyyQPcQp3yMAcGtoLhCukwbg8QmmCz3B93q3s1M0yg+v+pdHM3l0iPKMSdBQIY1SI
+	Gv6QtSxAUO6TI+slBnYDFIHIbUy7f8B6KoBe0Xlde1FDuppkfxzjZS2Pdv5NkGsmQuBUIpCDJ0t
+	OuoFYfmni5QkyqiPCysIqredus/uG0KcfKTwtTBLrRb6OT3pyCG6rTmmKnaorqBBtoXS0+oren7
+	lFkBZ/0BSDlVwfYZadpfNsU6AO3apH+0/FebvOlQF4EUqX+htY4/d0SJFQ==
+X-Google-Smtp-Source: AGHT+IENyW2umSDB5pOJx7840FOiWwuBpfLSj8lgmLXbWx7P6AbWicT9TJtBU9iAjWywalwJYLCE5A==
+X-Received: by 2002:a2e:918e:0:b0:308:e9ae:b5b1 with SMTP id 38308e7fff4ca-309288dd513mr39040061fa.9.1739882740962;
+        Tue, 18 Feb 2025 04:45:40 -0800 (PST)
+Received: from rand-ubuntu-development.dl.local (mail.confident.ru. [85.114.29.218])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309259213e0sm14449281fa.58.2025.02.18.04.45.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 04:45:40 -0800 (PST)
+From: Rand Deeb <rand.sec96@gmail.com>
+To: Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Cc: deeb.rand@confident.ru,
+	lvc-project@linuxtesting.org,
+	voskresenski.stanislav@confident.ru,
+	Rand Deeb <rand.sec96@gmail.com>
+Subject: [PATCH 5.10.y] fs/jfs: Prevent integer overflow in AG size calculation
+Date: Tue, 18 Feb 2025 15:44:28 +0300
+Message-Id: <20250218124428.1638816-1-rand.sec96@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 18.02.25 12:14, Andreas Hindborg wrote:
-> "Gary Guo" <gary@garyguo.net> writes:
->=20
->> On Tue, 11 Feb 2025 21:24:44 +0100
->> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->>> "Gary Guo" <gary@garyguo.net> writes:
->>>
->>>> On Tue, 11 Feb 2025 16:57:36 +0100
->>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>>>
->>>>> The `Index` implementation on `BStr` was lost when we switched `BStr`=
- from
->>>>> a type alias of `[u8]` to a newtype. This patch adds back `Index` by
->>>>> implementing `Index` for `BStr` when `Index` would be implemented for
->>>>> `[u8]`.
->>>>>
->>>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>>>> ---
->>>>>  rust/kernel/str.rs | 11 +++++++++++
->>>>>  1 file changed, 11 insertions(+)
->>>>>
->>>>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->>>>> index 002dcddf7c768..1eb945bed77d6 100644
->>>>> --- a/rust/kernel/str.rs
->>>>> +++ b/rust/kernel/str.rs
->>>>> @@ -114,6 +114,17 @@ fn eq(&self, other: &Self) -> bool {
->>>>>      }
->>>>>  }
->>>>>
->>>>> +impl<Idx> Index<Idx> for BStr
->>>>> +where
->>>>> +    Idx: core::slice::SliceIndex<[u8], Output =3D [u8]>,
->>>>
->>>> I think I'd prefer
->>>>
->>>> =09[T]: Index<Idx>,
->>>
->>> Is that equivalent?
->>
->> Sorry, I meant `[u8]: Index<Idx>`. This makes more semantic sense that
->> "what ever can index a byte slice, it can also index BStr". This is
->> also how our CStr and the array primitive type implements its Index
->> operation.
->>
->> They should be equivalent as libcore does
->>
->> =09impl<T, I> Index<I> for [T] where I: SliceIndex<[T]> { ... }
->>
->=20
-> What I originally wrote is `Idx` must be usable as an index for `[u8]`,
-> yielding `[u8]` when indexing.
->=20
-> The new one you suggest, I parse as `[u8]` should be indexable by `Idx`.
-> This is less info. The compiler will also complain about the missing info=
-:
->=20
-> error[E0308]: mismatched types
->    --> /home/aeh/src/linux-rust/module-params/rust/kernel/str.rs:141:26
->     |
-> 141 |         BStr::from_bytes(&self.0[index])
->     |         ---------------- ^^^^^^^^^^^^^^ expected `&[u8]`, found `&<=
-[u8] as Index<Idx>>::Output`
->     |         |
->     |         arguments to this function are incorrect
->     |
->     =3D note: expected reference `&[u8]`
->                found reference `&<[u8] as Index<Idx>>::Output`
->     =3D help: consider constraining the associated type `<[u8] as Index<I=
-dx>>::Output` to `[u8]`
->=20
-> If I constrain the output it's all fine again:
->=20
->     [u8]: Index<Idx, Output =3D [u8]>,
->=20
->=20
-> But as I said, I don't think it matters which direction we put this?
+The JFS filesystem calculates allocation group (AG) size using 1 << 
+l2agsize in dbExtendFS(). When l2agsize exceeds 31 (possible with >2TB 
+aggregates on 32-bit systems), this 32-bit shift operation causes undefined
+behavior and improper AG sizing.
 
-I think it's better to depend on `Index` compared to `SliceIndex`.
+On 32-bit architectures:
+- Left-shifting 1 by 32+ bits results in 0 due to integer overflow
+- This creates invalid AG sizes (0 or garbage values) in 
+sbi->bmap->db_agsize
+- Subsequent block allocations would reference invalid AG structures
+- Could lead to: 
+  - Filesystem corruption during extend operations
+  - Kernel crashes due to invalid memory accesses
+  - Security vulnerabilities via malformed on-disk structures
 
+Fix by casting to s64 before shifting:
+bmp->db_agsize = (s64)1 << l2agsize;
+
+This ensures 64-bit arithmetic even on 32-bit architectures. The cast 
+matches the data type of db_agsize (s64) and follows similar patterns in 
+JFS block calculation code.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
 ---
-Cheers,
-Benno
+ fs/jfs/jfs_dmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index ef220709c7f5..eedea23d70ff 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -3465,7 +3465,7 @@ int dbExtendFS(struct inode *ipbmap, s64 blkno,	s64 nblocks)
+ 	oldl2agsize = bmp->db_agl2size;
+ 
+ 	bmp->db_agl2size = l2agsize;
+-	bmp->db_agsize = 1 << l2agsize;
++	bmp->db_agsize = (s64)1 << l2agsize;
+ 
+ 	/* compute new number of AG */
+ 	agno = bmp->db_numag;
+-- 
+2.34.1
 
 
