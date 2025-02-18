@@ -1,90 +1,169 @@
-Return-Path: <linux-kernel+bounces-520332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225E4A3A8B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:24:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497D4A3A8EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146273A58DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBC9B7A1F6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DA1BCA05;
-	Tue, 18 Feb 2025 20:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAFB1D0F5A;
+	Tue, 18 Feb 2025 20:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ojJkG+AC"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMZb6sDn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3F71B85CC;
-	Tue, 18 Feb 2025 20:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA7A1DED48;
+	Tue, 18 Feb 2025 20:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910279; cv=none; b=XYUrFKyUES2Mk9qEwQk4X1vHB3mkPrSzEuJsT7daHODlk624v6CvIVzg4UTO6SXV4NrUH7Dg6TUDc3eaGwGF17Q/6+P+yf5kfJgh2O2z02WXpi9pem5agAZQaFkYZRuM/KmgT11GT7peeEZXqd0YJimHP2mqKo+wHpBsxfborvw=
+	t=1739910327; cv=none; b=srKQybZr6P/roK7gNt16VgWQ0DwsC7W0Tfm/X7P4t5PXyiXyf7iTOw+0mv6/jMSU5rWd973UEIqAg+m6OhdqOrYf+ZU9Bm2e6xM4GkgNEzPvkwPrzVT1CMZlCUPTSGebZuZQshTboMBNIWNmRQpNk1Lgh5//arHPA5x9Xa6K+bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910279; c=relaxed/simple;
-	bh=4DkPl/uIKWli6sVtAuJSieBXxIdn9s6IGRaS2Pr9ilM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OICD8K0sS1dOoDbajcuVGXvL1nLXPnwtLyLQezKuikXnxdB+/FW4nMnqqv6hZ0Fut/xZtw8Pjl58SGl3Unej+6MOGXiOf6utZ/MHUYkZB8r5IFv4XYYsRylQwHx486uGT1jy8Ajl16vGgODQszrEvMCOsOQ/OT/LCIKmJ2KcUkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ojJkG+AC; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 52511411AF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739910276; bh=ybkMF4J/vHwO4z2dt7srdkkRKShhkd5wEGE0vV1SgEY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ojJkG+ACpvQ/kuXxSMeCbR/PvjoclHReIf6Y6dPCwa7erzzJ8ZgGeOY6jROB/Yc2v
-	 YgtQf7A2u6DkKokLa3ZiIeM3Hu/aAsvJpL/2GwfbcpHHYZOqi11Y9PVKKjHdIYOqq+
-	 Dx+Yv9Yn1G3WYSShpLbZPq3vbmYT+oCavpuhtQneV7m3TlUtee7UNvBkBTdMGN3DkG
-	 wGc71yY91sGYtuDI8bdijchRg/DWZndFJSR0vm2YZ10QWxdSBTvGUpvmIcg0EgP9HX
-	 wCIKHRZNbEBtYDbUrvVQx26OZVtJNJtZOB7x/10NHkPwSKtoaSHx8E7mFepm1lPGX5
-	 XCEj2VTt6mbFA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 52511411AF;
-	Tue, 18 Feb 2025 20:24:36 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Carlos Bilbao
- <carlos.bilbao@kernel.org>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel-docs: Add book to process/kernel-docs.rst
-In-Reply-To: <20250218154303.45595-1-lorenzo.stoakes@oracle.com>
-References: <20250218154303.45595-1-lorenzo.stoakes@oracle.com>
-Date: Tue, 18 Feb 2025 13:24:35 -0700
-Message-ID: <87y0y3ngqk.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1739910327; c=relaxed/simple;
+	bh=W40fmn0GF/iCbSU8PYbR+qEbaLnLwXnRe7e9jdruoeM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IunqpRLupgPfouf/13v+NcErbgQQW2Ju6KHzEsuZpwdNWMux1c5GyZBJv9vgtY6NSYMcdJwNpSlXr9i2Y1oQfTKmBRayVB++M7WMWFH3jchnHXHHyfRAvHZqkmTJBX+cVPBEJJZb6CsDDk2N/2ocN60/IYOI1E2BCL676b7mre8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMZb6sDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD42C4CEE2;
+	Tue, 18 Feb 2025 20:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739910327;
+	bh=W40fmn0GF/iCbSU8PYbR+qEbaLnLwXnRe7e9jdruoeM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lMZb6sDnL8H7R4cjwdG/lbPUVUzv5W75M6qDtkQc/4RPhjBCMm9LMFDEtLrYG7iiq
+	 mPV94YxilUrlmyPVPgqPOHQ7e5DV9kAbvPYGYKL9MAGSceWzE+u7x3RqLyEJ6imjwL
+	 92n1L7ZInzV5N2Vo6at940mICAspthhWM+Ww7LRxo8KNI9/MrfvYhszAtx/rphw0xg
+	 jb9hGFqZ0RU48inID6mdZpbKXD32S+he6kxv/xW6wdvhSQRuN1mLxdsggNHJiCOR9u
+	 0+Iow2IMrP9DpecbT0sQBNVdThovErJWsHX92JKlHZRBP19EETX57ZpokbqFNaqx5h
+	 FJviz7EVvTKDg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Sybil Isabel Dorsett <sybdorsett@proton.me>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	hmh@hmh.eng.br,
+	hdegoede@redhat.com,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 15/31] platform/x86: thinkpad_acpi: Fix invalid fan speed on ThinkPad X120e
+Date: Tue, 18 Feb 2025 15:24:35 -0500
+Message-Id: <20250218202455.3592096-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250218202455.3592096-1-sashal@kernel.org>
+References: <20250218202455.3592096-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.3
+Content-Transfer-Encoding: 8bit
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+From: Sybil Isabel Dorsett <sybdorsett@proton.me>
 
-> Add a reference to my new book, The Linux Memory Manager, an in-depth
-> exploration of the memory management subsystem, to
-> process/kernel-docs.rst.
->
-> This is not yet published, but the full draft is available on pre-order, so
-> it seems worthwhile adding it here. The situation is made clear in the
-> 'notes' section.
->
-> The 'pre-release' was made available in February 2025, and full release is
-> scheduled for Fall 2025. The book's ISBN-13 is 978-1718504462.
->
-> The document will be updated upon release to reflect this.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  Documentation/process/kernel-docs.rst | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+[ Upstream commit 1046cac109225eda0973b898e053aeb3d6c10e1d ]
 
-Applied, thanks.
+On ThinkPad X120e, fan speed is reported in ticks per revolution
+rather than RPM.
 
-jon
+Recalculate the fan speed value reported for ThinkPad X120e
+to RPM based on a 22.5 kHz clock.
+
+Based on the information on
+https://www.thinkwiki.org/wiki/How_to_control_fan_speed,
+the same problem is highly likely to be relevant to at least Edge11,
+but Edge11 is not addressed in this patch.
+
+Signed-off-by: Sybil Isabel Dorsett <sybdorsett@proton.me>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Link: https://lore.kernel.org/r/20250203163255.5525-1-sybdorsett@proton.me
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 2cfb2ac3f465a..05d77f87e235e 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -7883,6 +7883,7 @@ static struct ibm_struct volume_driver_data = {
+ 
+ #define FAN_NS_CTRL_STATUS	BIT(2)		/* Bit which determines control is enabled or not */
+ #define FAN_NS_CTRL		BIT(4)		/* Bit which determines control is by host or EC */
++#define FAN_CLOCK_TPM		(22500*60)	/* Ticks per minute for a 22.5 kHz clock */
+ 
+ enum {					/* Fan control constants */
+ 	fan_status_offset = 0x2f,	/* EC register 0x2f */
+@@ -7938,6 +7939,7 @@ static int fan_watchdog_maxinterval;
+ 
+ static bool fan_with_ns_addr;
+ static bool ecfw_with_fan_dec_rpm;
++static bool fan_speed_in_tpr;
+ 
+ static struct mutex fan_mutex;
+ 
+@@ -8140,8 +8142,11 @@ static int fan_get_speed(unsigned int *speed)
+ 			     !acpi_ec_read(fan_rpm_offset + 1, &hi)))
+ 			return -EIO;
+ 
+-		if (likely(speed))
++		if (likely(speed)) {
+ 			*speed = (hi << 8) | lo;
++			if (fan_speed_in_tpr && *speed != 0)
++				*speed = FAN_CLOCK_TPM / *speed;
++		}
+ 		break;
+ 	case TPACPI_FAN_RD_TPEC_NS:
+ 		if (!acpi_ec_read(fan_rpm_status_ns, &lo))
+@@ -8174,8 +8179,11 @@ static int fan2_get_speed(unsigned int *speed)
+ 		if (rc)
+ 			return -EIO;
+ 
+-		if (likely(speed))
++		if (likely(speed)) {
+ 			*speed = (hi << 8) | lo;
++			if (fan_speed_in_tpr && *speed != 0)
++				*speed = FAN_CLOCK_TPM / *speed;
++		}
+ 		break;
+ 
+ 	case TPACPI_FAN_RD_TPEC_NS:
+@@ -8786,6 +8794,7 @@ static const struct attribute_group fan_driver_attr_group = {
+ #define TPACPI_FAN_NOFAN	0x0008		/* no fan available */
+ #define TPACPI_FAN_NS		0x0010		/* For EC with non-Standard register addresses */
+ #define TPACPI_FAN_DECRPM	0x0020		/* For ECFW's with RPM in register as decimal */
++#define TPACPI_FAN_TPR		0x0040		/* Fan speed is in Ticks Per Revolution */
+ 
+ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+ 	TPACPI_QEC_IBM('1', 'Y', TPACPI_FAN_Q1),
+@@ -8815,6 +8824,7 @@ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+ 	TPACPI_Q_LNV3('R', '0', 'V', TPACPI_FAN_NS),	/* 11e Gen5 KL-Y */
+ 	TPACPI_Q_LNV3('N', '1', 'O', TPACPI_FAN_NOFAN),	/* X1 Tablet (2nd gen) */
+ 	TPACPI_Q_LNV3('R', '0', 'Q', TPACPI_FAN_DECRPM),/* L480 */
++	TPACPI_Q_LNV('8', 'F', TPACPI_FAN_TPR),		/* ThinkPad x120e */
+ };
+ 
+ static int __init fan_init(struct ibm_init_struct *iibm)
+@@ -8885,6 +8895,8 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 
+ 			if (quirks & TPACPI_FAN_Q1)
+ 				fan_quirk1_setup();
++			if (quirks & TPACPI_FAN_TPR)
++				fan_speed_in_tpr = true;
+ 			/* Try and probe the 2nd fan */
+ 			tp_features.second_fan = 1; /* needed for get_speed to work */
+ 			res = fan2_get_speed(&speed);
+-- 
+2.39.5
+
 
