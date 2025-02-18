@@ -1,313 +1,149 @@
-Return-Path: <linux-kernel+bounces-518663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9795CA392C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:41:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B867A392D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BE0169CA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297C63AA4F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990F1B0F1B;
-	Tue, 18 Feb 2025 05:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC681B4250;
+	Tue, 18 Feb 2025 05:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zh7oGQ8x"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Tx+U7mGh"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138C17333F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723BF1AC435;
+	Tue, 18 Feb 2025 05:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857264; cv=none; b=aOC8s6JfK73gtZDYa3/lHzXt75jp1qonKeKv4yGQuKKNeiilIzxQejHyFg/YsR2bBJqHXiGPngMaADcmMv3vAOGLfTAPIy2dpg8fiHkQD2MOcXCXIGVM3o/gPG4feTYhraJM7nsUslynZ6h1O4PIgJZAP5SNdvXqPksCGMsM3S0=
+	t=1739857457; cv=none; b=B50XJHuKn/C367hj7vDWLMHXzuSDsW+hyvRZuPinmS7hZ8kiw5svQak7B8mPNPZ7g9dnjqjCrYmbfavN8QJyJICyWVu7+RGNjo3q6EoEKq4XjDFe2EjUT1UbXSegqC65nJU3cnZ1CNJtH1H6MKyqypeO9Ivdn4EAquHCzYHEtRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739857264; c=relaxed/simple;
-	bh=t3Oa6WJ3xwJqIKsDLQjt36wU6ohjsaRiFpJTjT8oImM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8jCCYpJhABFlMyRP4VXwm/EeDJo16rlJGTatsqOJM1pWMxQFmZURax5WSPbHP1t8eazR3SiI5Ccg+0wp8dn1ED1G1VCLro1KqXrk8Wys4LN/PrFEEBhFHcml+/4m5N1X0d/bq4GXzy+5eiSrgDbWxia2iFgeGJmqgDiZwW3/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zh7oGQ8x; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4be707fffbcso247361137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739857262; x=1740462062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MifYh++JAuvD0qZvmXaJQvX960rDJK4fzbBnF35BdDY=;
-        b=Zh7oGQ8xZDtBIyn4b4w36j/ZKs1rnkW7HgbQsfhvoSnM8Hx0w9kUY25aKaEqOJp4nW
-         Y5BCSXLVZxANiwvcH5PM19qwyilVSGk14PCL6ZF+N25aOSouAn1EFcdi+7EYTF9sP6vh
-         6o5+Uz5vlnCnYPuHNDX7poU8CwKUxpv+X+sQ3Zdumxp6inX+FOEZbXAwKt6ghfDLFx7O
-         vQVrE8Gt8hRjdkwVFsi/QXFbGztMmPnBZ8OJIFym0ZbF7jE4SZjMrgG06++TGyIacZz7
-         KHTMmmlqjiysfp3xLdO/wDnTFg5En442AUHwKkhO2/v8ZyuRofrdXYzMohFCggITZjhe
-         2rKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739857262; x=1740462062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MifYh++JAuvD0qZvmXaJQvX960rDJK4fzbBnF35BdDY=;
-        b=P+Doa4sKmDCDBAOnV1AwkXNMXfNKU9eS04kdyxF6qhp7g76HVNkHnZrxuXA5zZ0otE
-         o8AduDzl99lvzeSyO0bQsiR6kiXScEsRr3Ekntrx1NzAgSZddt1hEZ7PV0MClYgmXzqk
-         6XBgxQZ3iKCQow6Iooe+tE6YaF4DZx7/0TD+Ygx/+QxpkIcVZDS7GdPzSjSX9tVTzQFM
-         QbVplY35WqaeC5OfSssccbNGezIxw43Y/yG4fpkWHSXdXzPZHngBSx/Mc3cVnDnsG/Oz
-         CJytlJ3zPwNjWa2e6XYsZc3pZJmyxR7/rKv+WDeKgbWCwl3TRmBz1fv2SWvwntZZwl4G
-         1kbw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1S9nXxXxIhioRfpy7r647f7+eJsjQsqSbgY7L5mwGLZNclY0vRCpQC7ErW1L+mGm5PCrLVO5aENK6T/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhkXmfvcs+7goSw9PQaz6lmMJcVeLehp34ep4ref9cuUKkbFII
-	54Ctp7fYEkcG6yZ/KIWMgDNjHKQTNORtri/T/ipWBzppIaL1/pY+rG6hFeBC7kts0g94dTYZs1E
-	Xon3NXfZcTLA+mBoZ6xp6YqHTipBvhNbkAmk=
-X-Gm-Gg: ASbGncsoV5shjNtFlVq8hJS5UHHz+g3QWtEOTiQte2OZLbIs13juT2DUxCBUqPJpmpO
-	WXXQJ2fP1hgD9RbLsFDbhBqLN5RcWbgSo7Zmcwonsr4Uvt9mcAn4VQLVcOdQgXaAnWQNS8BDi
-X-Google-Smtp-Source: AGHT+IGR7ulYUkokYF6mOlYBL+Q9buDJnVmvFe9JxfmdfiSj3xbT9BLP20AyUrpmZXe7JuKrQ3wm4zhEQsRVNWwXQ4Q=
-X-Received: by 2002:a05:6102:442b:b0:4bb:cf25:c5a7 with SMTP id
- ada2fe7eead31-4bd3fd4882amr6529257137.7.1739857261737; Mon, 17 Feb 2025
- 21:41:01 -0800 (PST)
+	s=arc-20240116; t=1739857457; c=relaxed/simple;
+	bh=NjTnQrwVYaPQmm1749o3ihBn7oY4d8WefyF8GFbSymw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QC9cBAJbwKfHBcexqd35bxZ0u9jeqwOzxdl7XCD9b0MQOcGSwS1CCzZiqjx3mBY4x3em9LzQX/5YF5mTakEwrLiNO6FsJ/BIdMFx/bcSM+S3k2M/+/FotCRdsiPnOlGOcuo/RZvbu5w5jcn5ydGxwmfkGW2E3Su9vQdsCBqOoU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Tx+U7mGh; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5ed603c8edbb11ef8eb9c36241bbb6fb-20250218
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=wKLpxBKCBvfsCSLQzgV9GkKPk2DekUh6tb2OhIr92UU=;
+	b=Tx+U7mGh/qJc6QcaG2K+CKMfDug7CnWBBQrz/Dc6OtcAUK+P5jOP+l50DKSLX4bYkjedb3r7fLxUJFYvEHocsj0Y/fJTjKMLoh94l2WjYwcGktgb56lrd4bgzGHjy7KJH9d8ZzKljX3T0+fouobinO5xUHNyPLGAf+Dv+q6ga5E=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:e16f2907-08fc-48a8-ac91-7236452cdfcd,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:60aa074,CLOUDID:234e7ba3-3e52-4e5b-a515-5e42bbdb1515,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5ed603c8edbb11ef8eb9c36241bbb6fb-20250218
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 4715822; Tue, 18 Feb 2025 13:44:07 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Tue, 18 Feb 2025 13:44:06 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Tue, 18 Feb 2025 13:44:06 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
+	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
+	<singo.chang@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xavier Chang
+	<xavier.chang@mediatek.com>, Xiandong Wang <xiandong.wang@mediatek.com>,
+	Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
+Subject: [PATCH v4 0/8] Add GCE support for MT8196
+Date: Tue, 18 Feb 2025 13:41:45 +0800
+Message-ID: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8be2606fa114184a17a48f9859ec592@honor.com> <CAGsJ_4zUbwFP+gf-Y70uGQeO08uAJn2RKj=h9nsV83GvfgVA0A@mail.gmail.com>
- <ef92dcc88e914c9c8d8dbcc3adbb06bb@honor.com>
-In-Reply-To: <ef92dcc88e914c9c8d8dbcc3adbb06bb@honor.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 18 Feb 2025 18:40:49 +1300
-X-Gm-Features: AWEUYZmrzTbh2ql9JksTax0dFkC3yuh-suhge5VV8sP3McTaFwVSAJzAWWlPK10
-Message-ID: <CAGsJ_4w4iewqi0a+WN0bEVRV-r_EopJcSNDWObLSeRDd4CJhaQ@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: Fix possible NULL pointer dereference in __swap_duplicate
-To: gaoxu <gaoxu2@honor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, yipengxiang <yipengxiang@honor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Thank you!
+This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
+driver and related subsystems. The changes include adding compatible
+names and iommus property, updating driver data to accommodate hardware
+changes, and modifying the usage of CMDQ APIs to support non-subsys ID
+hardware.
 
-On Tue, Feb 18, 2025 at 3:51=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
->
-> >
-> > On Sat, Feb 15, 2025 at 10:05=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote=
-:
-> > >
-> > > Add a NULL check on the return value of swp_swap_info in
-> > > __swap_duplicate to prevent crashes caused by NULL pointer dereferenc=
-e.
-> > >
-> > > The reason why swp_swap_info() returns NULL is unclear; it may be due
-> > > to CPU cache issues or DDR bit flips. The probability of this issue i=
-s
-> > > very small, and the stack info we encountered is as follows=EF=BC=9A
-> > > Unable to handle kernel NULL pointer dereference at virtual address
-> > > 0000000000000058
-> > > [RB/E]rb_sreason_str_set: sreason_str set null_pointer Mem abort info=
-:
-> > >   ESR =3D 0x0000000096000005
-> > >   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > >   SET =3D 0, FnV =3D 0
-> > >   EA =3D 0, S1PTW =3D 0
-> > >   FSC =3D 0x05: level 1 translation fault Data abort info:
-> > >   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
-> > >   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > >   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0 user pgtable: 4k=
- pages,
-> > > 39-bit VAs, pgdp=3D00000008a80e5000 [0000000000000058]
-> > > pgd=3D0000000000000000, p4d=3D0000000000000000,
-> > > pud=3D0000000000000000
-> > > Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP Skip md ftrac=
-e
-> > > buffer dump for: 0x1609e0 ...
-> > > pc : swap_duplicate+0x44/0x164
-> > > lr : copy_page_range+0x508/0x1e78
-> > > sp : ffffffc0f2a699e0
-> > > x29: ffffffc0f2a699e0 x28: ffffff8a5b28d388 x27: ffffff8b06603388
-> > > x26: ffffffdf7291fe70 x25: 0000000000000006 x24: 0000000000100073
-> > > x23: 00000000002d2d2f x22: 0000000000000008 x21: 0000000000000000
-> > > x20: 00000000002d2d2f x19: 18000000002d2d2f x18: ffffffdf726faec0
-> > > x17: 0000000000000000 x16: 0010000000000001 x15: 0040000000000001
-> > > x14: 0400000000000001 x13: ff7ffffffffffb7f x12: ffeffffffffffbff
-> > > x11: ffffff8a5c7e1898 x10: 0000000000000018 x9 : 0000000000000006
-> > > x8 : 1800000000000000 x7 : 0000000000000000 x6 : ffffff8057c01f10
-> > > x5 : 000000000000a318 x4 : 0000000000000000 x3 : 0000000000000000
-> > > x2 : 0000006daf200000 x1 : 0000000000000001 x0 : 18000000002d2d2f Cal=
-l
-> > > trace:
-> > >  swap_duplicate+0x44/0x164
-> > >  copy_page_range+0x508/0x1e78
-> >
-> > This is really strange since we already have a swap entry check before =
-calling
-> > swap_duplicate().
-> >
-> > copy_nonpresent_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-> >                 pte_t *dst_pte, pte_t *src_pte, struct vm_area_struct
-> > *dst_vma,
-> >                 struct vm_area_struct *src_vma, unsigned long addr, int
-> > *rss) {
-> >         unsigned long vm_flags =3D dst_vma->vm_flags;
-> >         pte_t orig_pte =3D ptep_get(src_pte);
-> >         pte_t pte =3D orig_pte;
-> >         struct folio *folio;
-> >         struct page *page;
-> >         swp_entry_t entry =3D pte_to_swp_entry(orig_pte);
-> >
-> >         if (likely(!non_swap_entry(entry))) {
-> >                 if (swap_duplicate(entry) < 0)
-> >                         return -EIO;
-> > ...
-> > }
-> >
-> > likely the swap_type is larger than MAX_SWAPFILES so we get a NULL?
-> >
-> > static struct swap_info_struct *swap_type_to_swap_info(int type) {
-> >         if (type >=3D MAX_SWAPFILES)
-> >                 return NULL;
-> >
-> >         return READ_ONCE(swap_info[type]); /* rcu_dereference() */ }
-> >
-> > But non_swap_entry() guarantees that swp_type is smaller than
-> > MAX_SWAPFILES.
-> >
-> > static inline int non_swap_entry(swp_entry_t entry) {
-> >         return swp_type(entry) >=3D MAX_SWAPFILES; }
-> >
-> > So another possibility is that we have an overflow of swap_info[] where=
- type is <
-> > MAX_SWAPFILES but is not a valid existing swapfile?
-> In the log of this issue, there is a printed entry: get_swap_device:
-> Bad swap file entry 18000000002d2d2f.
-> It can be calculated that swp_type(18000000002d2d2f) =3D 6.
-> In the Android 15-linux6.6:
-> system: MAX_SWAPFILES =3D 28, nr_swapfiles =3D 1.
-> Since swp_type(18000000002d2d2f)=3D6 is less than MAX_SWAPFILES but great=
-er
-> than nr_swapfiles, the value of this entry is abnormal.
->
-> static unsigned int nr_swapfiles;
-> static struct swap_info_struct *swap_info[MAX_SWAPFILES];
-> swap_info is a static array, with its values initialized to 0.
-> The size of the array is MAX_SWAPFILES, and the size of valid values in t=
-he array is
-> nr_swapfiles. Therefore, when we validate the validity of swp_type(entry)=
-,
-> we should compare it with nr_swapfiles, not MAX_SWAPFILES.
-> The code for validating swp_type may need to be modified as follows:
+---
+Change in v4:
+1. Remove dt-binding header and add a gce header in dts folder.
+2. Remove dot in sign-off name.
+3. Change addr type from u32 to dma_addr_t for cmdq_reg_shift_addr() and
+   cmdq_reg_revert_addr().
 
-That might be true, but on a normal system, we only need to distinguish
-between a swap entry and a migrate entry. Therefore, comparing with
-MAX_SWAPFILES is sufficient.
+Change in v3:
+1. Merge 2 dt-bindings pathes together and add more detail commit message.
+2. Change type u32 to phys_addr_t for pa_base of struct cmdq_client_reg.
+3. Remove cmdq_subsys_is_valid() and subsys_num in CMDQ driver.
+4. Add CMDQ_SUBSYS_INVALID to check subsys instead of using
+   cmdq_subsys_is_invalid().
+5. Make use of CMDQ_THR_SPR0 define to the parameter of CMDQ APIs.
+6. Rebase on the new MACRO in mtk-mdp3-comp.h.
 
-> static inline int non_swap_entry(swp_entry_t entry)
-> {
-> -       return swp_type(entry) >=3D MAX_SWAPFILES;
-> +       return swp_type(entry) >=3D nr_swapfiles;
-> }
->
-> static struct swap_info_struct *swap_type_to_swap_info(int type)
-> {
-> -       if (type >=3D MAX_SWAPFILES)
-> +       if (type >=3D nr_swapfiles)
->                 return NULL;
->
->         return READ_ONCE(swap_info[type]); /* rcu_dereference() */
-> }
-> >
-> > I don't see how the current patch contributes to debugging or fixing an=
-ything
-> > related to this dumped stack. Can we dump swp_type() as well?
-> >
-> > >  copy_process+0x1278/0x21cc
-> > >  kernel_clone+0x90/0x438
-> > >  __arm64_sys_clone+0x5c/0x8c
-> > >  invoke_syscall+0x58/0x110
-> > >  do_el0_svc+0x8c/0xe0
-> > >  el0_svc+0x38/0x9c
-> > >  el0t_64_sync_handler+0x44/0xec
-> > >  el0t_64_sync+0x1a8/0x1ac
-> > > Code: 9139c35a 71006f3f 54000568 f8797b55 (f9402ea8) ---[ end trace
-> > > 0000000000000000 ]--- Kernel panic - not syncing: Oops: Fatal
-> > > exception
-> > > SMP: stopping secondary CPUs
-> > >
-> > > The patch seems to only provide a workaround, but there are no more
-> > > effective software solutions to handle the bit flips problem. This
-> > > path will change the issue from a system crash to a process exception=
-,
-> > > thereby reducing the impact on the entire machine.
-> > >
-> > > Signed-off-by: gao xu <gaoxu2@honor.com>
-> > > ---
-> > > v1 -> v2:
-> > > - Add WARN_ON_ONCE.
-> > > - update the commit info.
-> > > v2 -> v3: Delete the review tags (This is my issue, and I apologize).
-> > > ---
-> > >
-> > > mm/swapfile.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/mm/swapfile.c b/mm/swapfile.c index 7448a3876..a0bfdba94
-> > > 100644
-> > > --- a/mm/swapfile.c
-> > > +++ b/mm/swapfile.c
-> > > @@ -3521,6 +3521,8 @@ static int __swap_duplicate(swp_entry_t entry,
-> > unsigned char usage, int nr)
-> > >         int err, i;
-> > >
-> > >         si =3D swp_swap_info(entry);
-> > > +       if (WARN_ON_ONCE(!si))
-> >
-> > I mean, printk something related to swp_type(). This is really strange,=
- but the
-> > current stack won't help with debugging.
-> The log can find info related to "get_swap_device: Bad swap file entry xx=
-x"
-> when an entry encounters an exception.
-> Add a print info log like the following:
-> pr_err("%s%08d\n", Bad swap type, swp_type(entry));
+Change in v2:
+1. Remove the constant and fix warning in dt-bindings.
+2. Remove the pa_base parameter of CMDQ APIs and related modification.
+3. Move subsys checking to client drivers and use 2 alternative
+   CMDQ APIs to achieve the same functionality.
 
-This is really strange. It would be better to have the entire PTE value
-dumped so we can determine if a bit-flip occurred on critical bits like
-PTE_PRESENT.
+---
 
-In that case, a present PTE could be misinterpreted as a swap entry.
+Jason-JH Lin (8):
+  dt-bindings: mailbox: mediatek: Add support for MT8196 GCE mailbox
+  arm64: dts: mediatek: Add GCE header for MT8196
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for unsupported subsys ID
+    hardware
+  soc: mediatek: mtk-cmdq: Add mminfra_offset compatibility for DRAM
+    address
+  soc: mediatek: Add programming flow for unsupported subsys ID hardware
+  drm/mediatek: Add programming flow for unsupported subsys ID hardware
+  media: mediatek: mdp3: Add programming flow for unsupported subsys ID
+    hardware
 
-On arm64,
-/*
- * Encode and decode a swap entry:
- *      bits 0-1:       present (must be zero)
- *      bits 2:         remember PG_anon_exclusive
- *      bits 3-7:       swap type
- *      bits 8-57:      swap offset
- *      bit  58:        PTE_PROT_NONE (must be zero)
- */
+ .../mailbox/mediatek,gce-mailbox.yaml         |   4 +
+ arch/arm64/boot/dts/mediatek/mt8196-gce.h     | 612 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  33 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            |  90 ++-
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |  18 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |  79 ++-
+ drivers/soc/mediatek/mtk-cmdq-helper.c        |  53 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |  14 +-
+ drivers/soc/mediatek/mtk-mutex.c              |  11 +-
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |   2 +
+ include/linux/soc/mediatek/mtk-cmdq.h         |   3 +
+ 11 files changed, 876 insertions(+), 43 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-gce.h
 
-#define __SWP_TYPE_SHIFT        3
-#define __SWP_TYPE_BITS         5
-#define __SWP_OFFSET_BITS       50
-#define __SWP_TYPE_MASK         ((1 << __SWP_TYPE_BITS) - 1)
-#define __SWP_OFFSET_SHIFT      (__SWP_TYPE_BITS + __SWP_TYPE_SHIFT)
-#define __SWP_OFFSET_MASK       ((1UL << __SWP_OFFSET_BITS) - 1)
+-- 
+2.43.0
 
-_swp_type is bits3-7.
-
-For a present pte,  bits 3-7 are:
-AP[7-6], NS[5], AttributeIndex[4-2].
-
-> >
-> > > +               return -EINVAL;
-> > >
-> > >         offset =3D swp_offset(entry);
-> > >         VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset %
-> > SWAPFILE_CLUSTER);
-> > > --
-> > > 2.17.1
-
-Thanks
-Barry
 
