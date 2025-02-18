@@ -1,93 +1,197 @@
-Return-Path: <linux-kernel+bounces-520302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF05A3A847
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66689A3A85C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F32A1173882
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E0E175301
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95861EFFA1;
-	Tue, 18 Feb 2025 19:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbTc2t7G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58B321B9E4;
+	Tue, 18 Feb 2025 20:01:05 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557BA1EFF89;
-	Tue, 18 Feb 2025 19:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A211BD017
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908785; cv=none; b=VyAL72XQ1d7rCmxRVhf5Xf0fhCAWR8fABG9DLMBD/8XBkY3KCvMc8/4qByb0XVeWP1mHdP7NQ+GDbn7+3qts0+wIb+ErVseFHyBVk+XPhi2rTl2rKyg+nx5+yZXlJmbHyczA3rQS5gqfzz6Gq7occwJG+1o4z3RjfiCVpQCN2/M=
+	t=1739908865; cv=none; b=uE1suKOktVQrCFG7E041bthiPrYYQiXUKg4OV9vhuOcNqafpYQrkOMnQVPXnvfGOOyyl0JhsJU/KLr45gWB/uFKAGVxSOK05zBb++1Y86qjobPb7eY1TTXPF7bh9ybwovOWZcTWn4cPK19NcakHkWMAzWXS3YjTnjjcs/mT9s7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908785; c=relaxed/simple;
-	bh=FuctMuwAg8JVrJdwwuHP0XTPxGYEKWPG9v+jRV46Sb8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ho/RYKIDM24/Za3KXheHhlhsS+XeHrETR6y9oNezxvhHHia+9yCzV1MFlOTrurp3E1VuqaQdEEW3v6Rj4y79ALbE9766MD3tRlk7/YTTe+da6F5j0qagCTmfiMo/AmKoMR60oUQcGehbA2qwy1zMMPofC/jw1QpnIbs88USF+t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbTc2t7G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED30C4CEE8;
-	Tue, 18 Feb 2025 19:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739908784;
-	bh=FuctMuwAg8JVrJdwwuHP0XTPxGYEKWPG9v+jRV46Sb8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=lbTc2t7GtYMaQPI70izSx4+yNGGor1/R2vTV0dzH9hSTolTJLatOCMXjVxM4S9stS
-	 PfxOj0aBS3NW9dkS/s+1xeMFjq4dftSZUxfiy3EQeE4CpIIqXRbRFl21cWe8wa0VJQ
-	 sZm+4qh37rTSMItGoL71jkbMH/+xOq1iMWI+0kG1jmaMGyeA9DfTyiiCpZApnOjgN0
-	 Plt2QKtmidotn4HADi6DDg3MbM6WbAtb4OMMEXzQMjcMNpCPqcDteA3GVTrhFUmCpo
-	 rqZj6I5uRgCY5XznwA5w12Ijabr5a1N6fps/ifsxjKZ1/kVDNPDolR2z86o0rc9uf/
-	 LQ6ZeKovheVUQ==
-Date: Tue, 18 Feb 2025 20:59:42 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    "bentiss@kernel.org" <bentiss@kernel.org>, 
-    Alex Henrie <alexhenrie24@gmail.com>, 
-    "jose.exposito89@gmail.com" <jose.exposito89@gmail.com>, 
-    "bruners@gmail.com" <bruners@gmail.com>, 
-    "seobrien@chromium.org" <seobrien@chromium.org>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] HID: apple: Use common table for MacBook Pro fn
- mapping
-In-Reply-To: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
-Message-ID: <p3r8538q-11op-32q6-43p7-2n3941126n51@xreary.bet>
-References: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
+	s=arc-20240116; t=1739908865; c=relaxed/simple;
+	bh=FBSfEGYH2ZiVrBk3EUUtprvTuUDL1NDKmAgDmSRWais=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=T8aRGyDZwCdmIgn/I2CDIb54KI89CF6H0tpnR5sn1PwqJRAAnuQMGmv+SM2lXrQZB+zqiGhMEI4kmUIT6f4IjPjbq5Q709qrcaiwauGe+wieDQBbI4jzYX95NAPCsZhi76J6h0voeSqPgWIFyl8RXfZ9IrLK6XrDtIvPGKex7gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce81a40f5cso102912555ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:01:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739908863; x=1740513663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+NZM+gNQqcZkHg9LTy+tSpeuLQlSmLIA5zm2oEvQqzQ=;
+        b=Eno42SrREFTN9Ng7Xb4zDd2mx1eAN7SsQxqSzNvX2HijPf8nO4t8k7o8qhs3/vEjwP
+         yENj0RSWlwd6yOIt7wASYZE+w4pSV12QD6fPkhI35S55ejbr0F1wPMCTJ0k1wIytErlc
+         sIhWFyKs558DKYrZr9CAoMDAs2po2zbjeLz9IcmD3lJEtWz7SRY4lKgBvxNtOVaOEthO
+         jok/oRWuBcsAK7gevWSlwGvh3UY8PmClbV5YXlj8wwAgsALypMbgWjbAqFQB2TC9Jfo4
+         dr5QLakPnFtV9LIIDzF7/SKPOuvg60+tGFrFrGfCS9akZrxcwRh1t5eg2HNAHqtLHO1z
+         ZVIw==
+X-Gm-Message-State: AOJu0Yx8Isi3cBjrdMhIPT15cC/xQxKbj/OruqxT7TvjKaIURUOAjKEK
+	Fdx8Fh6QXvBM0NObpKo7Bb1tS0Ljxdz7H0K7wqKk44UYAuLKnvfrH4QCR9AzmpA3xhu+7JpUsNO
+	YYvCeP0et9cuhBAHbho2MU+PkExkX5jLZRlriUNjEOpr8i/nBjmuM+plF5w==
+X-Google-Smtp-Source: AGHT+IErqQYFY6eMeAHFRzwMBpI8eDixNme6y2n/A18e58XTNfExyuS0+A4iEu+ROlnYTWUY8AD4hwsYrjEBOR4gLjbyWHz+18Na
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:12c8:b0:3cf:b626:66c2 with SMTP id
+ e9e14a558f8ab-3d280921393mr124222045ab.19.1739908862513; Tue, 18 Feb 2025
+ 12:01:02 -0800 (PST)
+Date: Tue, 18 Feb 2025 12:01:02 -0800
+In-Reply-To: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b4e6fe.050a0220.14d86d.000d.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
+From: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 14 Feb 2025, Aditya Garg wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> From: Aditya Garg <gargaditya08@live.com>
+***
+
+Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
+Author: mmpgouride@gmail.com
+
+
+
+> On Feb 15, 2025, at 02:11, syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com> wrote:
 > 
-> The only difference between the fn mapping of the MacBook Pros with esc key
-> and those without is of the presence of KEY_GRAVE in the translation table.
+> syzbot has found a reproducer for the following issue on:
 > 
-> We can easily use a flag instead of writing the whole table again to omit
-> it from the models that have an esc key.
+> HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=148019a4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12328bf8580000
 > 
-> Additionally, APPLE_IGNORE_MOUSE quirk was unused in this driver, so has
-> been removed in this commit.
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
 > 
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5459 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
+> Code: e9 19 fe ff ff e8 72 f2 b5 ff 4c 8b 7c 24 08 45 84 f6 0f 84 40 ff ff ff e9 22 01 00 00 e8 5a f2 b5 ff eb 05 e8 53 f2 b5 ff 90 <0f> 0b 90 eb 97 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 71 fd ff ff 48
+> RSP: 0018:ffffc9000d70f3a0 EFLAGS: 00010293
+> RAX: ffffffff820bc50d RBX: 0000000000000000 RCX: ffff8880382d4880
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffff8880351ac054 R08: ffffffff820bc49f R09: 1ffffffff2079b8e
+> R10: dffffc0000000000 R11: fffffbfff2079b8f R12: ffffffff820bc19e
+> R13: ffff88801ee9a798 R14: 0000000000000000 R15: ffff8880351ac000
+> FS:  000055557d70b500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff6826de40 CR3: 000000005680c000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <TASK>
+> list_lru_del+0x58/0x1f0 mm/list_lru.c:202
+> list_lru_del_obj+0x17b/0x250 mm/list_lru.c:223
+> d_lru_del fs/dcache.c:481 [inline]
+> to_shrink_list+0x136/0x340 fs/dcache.c:904
+> select_collect+0xce/0x1b0 fs/dcache.c:1472
+> d_walk+0x1f5/0x750 fs/dcache.c:1295
+> shrink_dcache_parent+0x144/0x3b0 fs/dcache.c:1527
+> d_invalidate+0x11c/0x2d0 fs/dcache.c:1632
+> proc_invalidate_siblings_dcache+0x3fb/0x6e0 fs/proc/inode.c:142
+> release_task+0x168e/0x1830 kernel/exit.c:279
+> wait_task_zombie kernel/exit.c:1249 [inline]
+> wait_consider_task+0x1a14/0x2e60 kernel/exit.c:1476
+> do_wait_thread kernel/exit.c:1539 [inline]
+> __do_wait+0x1b0/0x850 kernel/exit.c:1657
+> do_wait+0x1e9/0x550 kernel/exit.c:1691
+> kernel_wait4+0x2a7/0x3e0 kernel/exit.c:1850
+> __do_sys_wait4 kernel/exit.c:1878 [inline]
+> __se_sys_wait4 kernel/exit.c:1874 [inline]
+> __x64_sys_wait4+0x134/0x1e0 kernel/exit.c:1874
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f93f3983057
+> Code: 89 7c 24 10 48 89 4c 24 18 e8 45 1b 03 00 4c 8b 54 24 18 8b 54 24 14 41 89 c0 48 8b 74 24 08 8b 7c 24 10 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 89 44 24 10 e8 95 1b 03 00 8b 44
+> RSP: 002b:00007fff6826e9b0 EFLAGS: 00000293 ORIG_RAX: 000000000000003d
+> RAX: ffffffffffffffda RBX: 0000000000000019 RCX: 00007f93f3983057
+> RDX: 0000000040000001 RSI: 00007fff6826ea1c RDI: 00000000ffffffff
+> RBP: 00007fff6826ea1c R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000001388
+> R13: 00000000000927c0 R14: 000000000002f011 R15: 00007fff6826ea70
+> </TASK>
+> 
+> 
 > ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
 
-Why am I getting v1, [RESEND v1] and v2 in the timespan of 1 day without 
-any documentation whatsoever what are the changes between the individual 
-submission and why do we have so many of them?
+#syz test
 
-Thanks in advance for clarification,
+iff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+index e71b278672b6..907868b53d1f 100644
+--- a/fs/bcachefs/btree_io.c
++++ b/fs/bcachefs/btree_io.c
+@@ -727,14 +727,14 @@ static int validate_bset(struct bch_fs *c, struct bch_dev *ca,
+                     btree_node_unsupported_version,
+                     "BSET_SEPARATE_WHITEOUTS no longer supported");
+ 
+-       if (!write &&
+-           btree_err_on(offset + sectors > (ptr_written ?: btree_sectors(c)),
+-                        -BCH_ERR_btree_node_read_err_fixable,
+-                        c, ca, b, i, NULL,
+-                        bset_past_end_of_btree_node,
+-                        "bset past end of btree node (offset %u len %u but written %zu)",
+-                        offset, sectors, ptr_written ?: btree_sectors(c)))
++       if (!write && offset + sectors > (ptr_written ?: btree_sectors(c))) {
+                i->u64s = 0;
++               btree_err(-BCH_ERR_btree_node_read_err_fixable,
++                         c, ca, b, i, NULL,
++                         bset_past_end_of_btree_node,
++                         "bset past end of btree node (offset %u len %u but written %zu)",
++                         offset, sectors, ptr_written ?: btree_sectors(c));
++       }
+ 
+        btree_err_on(offset && !i->u64s,
+                     -BCH_ERR_btree_node_read_err_fixable,
+@@ -997,7 +997,7 @@ static int validate_bset_keys(struct bch_fs *c, struct btree *b,
+                }
+ got_good_key:
+                le16_add_cpu(&i->u64s, -next_good_key);
+-               memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(i) - (u64 *) k);
++               memmove_u64s_down(k, (u64 *) k + next_good_key, (u64 *) vstruct_end(i) - (u64 *) k);
+                set_btree_node_need_rewrite(b);
+        }
+ fsck_err:
 
--- 
-Jiri Kosina
-SUSE Labs
+
 
 
