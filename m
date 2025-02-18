@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-520500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F328EA3AAA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA5EA3AABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3289B3AD75D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:17:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9403AC7D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385221CCEE2;
-	Tue, 18 Feb 2025 21:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3281C7001;
+	Tue, 18 Feb 2025 21:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4hUXw18"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESL3MmvY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21833286280;
-	Tue, 18 Feb 2025 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E2E286294;
+	Tue, 18 Feb 2025 21:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913463; cv=none; b=DUuOH4e+wuhVa1rxxRwX9DAllt1eCNDlpWpPQp54y3LI4vw2ba+C7Z5kugPf+WUhTXMVJ/87lrth86CjRSbCG5kmHuirDBskl2vzgCtCLT70uOCTQvt7AQ2Y2hfkUZukVLSHY0mDrMHLioXihQ/pklWEXTY2+zViQieu67+KxtE=
+	t=1739913682; cv=none; b=R6BZgjnpGer/ILjTEc52srkdGo58lbosjeAVO4C4AAW8tZlkqVa/qb6MZdNUbE/NAX0eDHPmhNFdEGZph2pqYuY4p0Ou1iJPl8m3LFz3M292QK9Y7Fr10ijZzbPYgO+Pj8UAzW0x5+bWqLaXwig9LTsr5h6du2qGUmtHCSkeDJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913463; c=relaxed/simple;
-	bh=zIhBcr24QrlJV5vSHWIFsWcq/BbGAUz3t/Cp90kL/KA=;
+	s=arc-20240116; t=1739913682; c=relaxed/simple;
+	bh=H97NOaITxO0txt0Xyc0RqlV6PqN91lQG7cGzJqI9UGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcvTKoTXYE+TxOUkVXQz1awG6/ol3G6mmEXHZk08B43xnSkYIOve/1QcPt8OxjP0b/6kKcrRlU3Lj5l+Wm6rAg7oXxT7VUy4EcheKKZvXgXXiSe98AbeqSP5IxJEnKTcSn1xdEb8Sz9Il+mMoc3dsXK/YwxLIoFyZ6NUQMbkdnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4hUXw18; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22128b7d587so49871945ad.3;
-        Tue, 18 Feb 2025 13:17:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739913461; x=1740518261; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2/gk7oAOnU9fWd/TFGkNr0DWmSFXVkHFebKUPmAYkIU=;
-        b=A4hUXw184KKPOtdVk+GzoBf8j259LGnOgvigIHJ12x8imbkmd6tCgVGOQGRUVvliT1
-         vDBmBqaCnHI6MKmoZBuDnoH6/gn3vYBfnyaj81+/IpjHSvPEegOzouTD5G8gF6UdGD+h
-         mzIiWWC8UpXPSolPYYtQLyD/eKw8Ypl+d42UzwGJGNYGSfxDeQumfynBFM2O7vvBYTUz
-         T/wB/8WGXlEAXAEdaEPKNp/LrpfWzqVuZpK0r1aIS7Je+BD0vJ0Sn7fsY8WAC4rEQdfP
-         JHv74yK4NjOmUnc/4V6hmRKVI0k13tHpBcjI24+PkcP1edagULUGcUaCm8lyyWaOmowV
-         +SSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739913461; x=1740518261;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2/gk7oAOnU9fWd/TFGkNr0DWmSFXVkHFebKUPmAYkIU=;
-        b=J4eapVZGnOzP4MzlfpItRxa25GGKsDLMDVvzCVcRuQbPFHifoHZ6JIFzQAoxF+GCIp
-         YSaJxJFzuhhoROTCfzX2f0qfKH2HrFnjHlZDsAfMsLFb/tYtaShKxGH9zJ2Gq+GgF/rS
-         QoCyq9nBQ/V9ob8mz68jqM5bnc2whK8jOHwKLqt+KbleExxJ0Q9miA4txSpcJ66AbHji
-         a9r7Mu2tMMuPn2vSD8I1v9JDf+HIwasDwLw9n9t3Rx0N7EE2cV45iY6qPXK/toe6/vCs
-         OXOJsqH0+DbGFfIoNKpVoctuCY2y3s3QYeiogLmJJTvjF7IhBD3D6oWHBcqiLB3NeBMs
-         Qz1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVls3IWyc0N/U6QWgfgIQdDM7fDTYBBCIa5qtu7kHUz3ljICxG4JD84WPAtoLssxrmQI+XpB166YJ+50no=@vger.kernel.org, AJvYcCVuN4a+eoXKI3B4BdWF1B+cyoev0C+z5IW+Xvnt62+LON5HI8ZMrsngpc9VBw0uJqAMupoMoFwV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIdWIbkNCL3z5W3yFz91S5Pt4hz4RDseUE4UvJylPCaU5NYewi
-	wGkQ8RpZ8zFuY5aFmX7REWknJnStO8PF3wzaPL2O0EGTMC3qaCE=
-X-Gm-Gg: ASbGncsVs6ApEOw437MDNTs1VEpzwWritEyg8LLn/s+RECYcnXupVjFW0n61QrzOoRQ
-	zmCMUG9rqywSIMjXbj0rcaJcvbLXmghfcYb/9vcPxqzg8Sxzi0S4GsYyGuimT+sPECHSV63M6ov
-	VefRqut7COLt1LqXopr4QNRZJSq8H6cxOXzo1ke0IpLCVVNON8Nc3AuGMSu8X6b0zpn5khJjY6V
-	6CstZAHH6/oCFQwmf43I/Bp5QS/AIXtxvBx0hH89ixSUW7L+dQ2J0EmfPD6nHycWExQ50KbmB24
-	VUnllP2uyjDMsEw=
-X-Google-Smtp-Source: AGHT+IHo/2S84pM+IZsmeby5LAyYGggucs82TzObRa8T2oKSxpSsz8hZBB1d/1AVPPRG0RsOTHWVBw==
-X-Received: by 2002:a05:6a20:7486:b0:1ee:c463:23cf with SMTP id adf61e73a8af0-1eed4e83ba3mr1071753637.13.1739913459746;
-        Tue, 18 Feb 2025 13:17:39 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73265678abasm6827031b3a.27.2025.02.18.13.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 13:17:39 -0800 (PST)
-Date: Tue, 18 Feb 2025 13:17:38 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	ncardwell@google.com, kuniyu@amazon.com, dsahern@kernel.org,
-	horms@kernel.org, willemb@google.com, kaiyuanz@google.com
-Subject: Re: [PATCH net] tcp: devmem: properly export MSG_CTRUNC to userspace
-Message-ID: <Z7T48iNrBvnc8TZq@mini-arch>
-References: <20250218194056.380647-1-sdf@fomichev.me>
- <CAHS8izP7fGd+6jvT7q1dRxfmRGbVSQwhwW=pFMpc21YtGqQm4A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkMQ+HVw9NWeB12xDYKiG5rSmXCv5w2kzXWz7kCoHMIdpXl/Fu0TGGYkUSdV/GLCaLiCaTe4dbi+simf/w9eH6u7U7xghrt9An9RuUbWnjXSitCH97cG59rS5aAuqbONntFh0FB3EJVR37z2dipx+s6eQI5KIMJKhYJFOEYRQYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESL3MmvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F8DC4CEE2;
+	Tue, 18 Feb 2025 21:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739913682;
+	bh=H97NOaITxO0txt0Xyc0RqlV6PqN91lQG7cGzJqI9UGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ESL3MmvYejhFG0p7DiQf5UDyM672YT6+AaKwUOc+zTdVNMVU1CIdvn69zl2+T7Vl8
+	 M7TUZmEhAWevPIe+IU+ARpqRHN4rc/39+TR87K2/w+kz2jm46QshdYdnqDokdauKAH
+	 GFpTPNNvqqFsYdOcAT/47w9PlautlNrYhjKVwuBrXIBVhTAKzOD3puR1XdjtO+/Jma
+	 CXyoIghl7CKnRQ+Sm0OTJpvhTAbFG7aow33ZZMty6Pa5x4RBpyDDNii+/Om+Bq8xlm
+	 s2g55SdwjFfFqVmiFTi/EiJB+Kn6Nc6m2xTvby1+Vmk2jvCsoD2qlrMiWnGpubjaAd
+	 8NhB07wQ+JsMg==
+Date: Tue, 18 Feb 2025 13:21:20 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org
+Subject: Re: [PATCH 5/8] module: Add module_for_each_mod() function
+Message-ID: <Z7T50DxEL7NYkr8H@bombadil.infradead.org>
+References: <20250205225031.799739376@goodmis.org>
+ <20250205225103.760856859@goodmis.org>
+ <20250206142817.91853f475c681bc2ef7ca962@kernel.org>
+ <20250206102720.0fd57129@gandalf.local.home>
+ <20250214173017.07b0b250@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izP7fGd+6jvT7q1dRxfmRGbVSQwhwW=pFMpc21YtGqQm4A@mail.gmail.com>
+In-Reply-To: <20250214173017.07b0b250@gandalf.local.home>
 
-On 02/18, Mina Almasry wrote:
-> On Tue, Feb 18, 2025 at 11:40 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
-> >
-> > Currently, we report -ETOOSMALL (err) only on the first iteration
-> > (!sent). When we get put_cmsg error after a bunch of successful
-> > put_cmsg calls, we don't signal the error at all. This might be
-> > confusing on the userspace side which will see truncated CMSGs
-> > but no MSG_CTRUNC signal.
-> >
-> > Consider the following case:
-> > - sizeof(struct cmsghdr) = 16
-> > - sizeof(struct dmabuf_cmsg) = 24
-> > - total cmsg size (CMSG_LEN) = 40 (16+24)
-> >
-> > When calling recvmsg with msg_controllen=60, the userspace
-> > will receive two(!) dmabuf_cmsg(s), the first one will
+On Fri, Feb 14, 2025 at 05:30:17PM -0500, Steven Rostedt wrote:
+> On Thu, 6 Feb 2025 10:27:20 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> The intended API in this scenario is that the user will receive *one*
-> dmabuf_cmgs. The kernel will consider that data in that frag to be
-> delivered to userspace, and subsequent recvmsg() calls will not
-> re-deliver that data. The next recvmsg() call will deliver the data
-> that we failed to put_cmsg() in the current call.
+> > > BTW, do we really need to disable preempt or is it enough to call
+> > > rcu_read_lock()?  
+> > 
+> > Bah, as I expected this function to be changed, I didn't spend too much
+> > time on looking at its implementation. I just cut and pasted how the other
+> > loops worked. But yes, it should not be disabling preemption. In fact, I
+> > think the module code itself should not be disabling preemption!
+> > 
+> > I'll have to go and look into that.
 > 
-> If you receive two dmabuf_cmsgs in this scenario, that is indeed a
-> bug. Exposing CMSG_CTRUNC could be a good fix. It may indicate to the
-> user "ignore the last cmsg we put, because it got truncated, and
-> you'll receive the full cmsg on the next recvmsg call". We do need to
-> update the docs for this I think.
+> It really looks like it requires preempt_disable(), as the code in
+> kernel/module/main.c has in several places:
 > 
-> However, I think a much much better fix is to modify put_cmsg() so
-> that we only get one dmabuf_cmsgs in this scenario, if possible. We
-> could add a strict flag to put_cmsg(). If (strict == true &&
-> msg->controlllen < cmlen), we return an error instead of putting a
-> truncated cmsg, so that the user only sees one dmabuf_cmsg in this
-> scenario.
+> 	preempt_disable();
 > 
-> Is this doable?
+> 	list_for_each_entry_rcu(mod, &modules, list) {
+> 		[..]
+> 	}
+> 
+> 	preempt_enable();
+> 
+> Or
+> 
+> 	module_assert_mutex_or_preempt();
+> 
+> 	[..]
+> 
+> 	list_for_each_entry_rcu(mod, &modules, list,
+> 				lockdep_is_held(&module_mutex)) {
+> 
+> 
+> So it looks like it either requires preempt_disable or holding the
+> module_mutex.
+> 
+> As I need to call this with trace_types_lock held, and there's a place
+> where trace_types_lock is within a module callback, I don't think it's safe
+> to take that lock in that loop, otherwise we have the ABBA deadlock.
+> 
+> Luis,
+> 
+> Is this patch OK, and also is there any plan to move the module code to
+> using just rcu_read_lock instead of preempt_disable?
 
-Instead of modifying put_cmsg(), I can have an extra check before
-calling it to make sure the full entry fits. Something like:
+The patch is not OK, you're looking at old code, look at
+modules-next and as Petr suggested look at Sebastian's recently
+merged work.
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2498,6 +2498,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
- 				offset += copy;
- 				remaining_len -= copy;
- 
-+				if (msg.msg_controllen < CMSG_LEN(sizeof(dmabuf_cmsg))) {
-+					err = -ETOOSMALL;
-+					goto out;
-+				}
-+
- 				err = put_cmsg(msg, SOL_SOCKET,
- 					       SO_DEVMEM_DMABUF,
- 					       sizeof(dmabuf_cmsg),
+git remote add korg-modules git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
 
-WDYT? I'll still probably remove '~MSG_CTRUNC' parts as well to avoid
-confusion.
+  Luis
 
