@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-519419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915F6A39CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:00:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29596A39CA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59048171CF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23AF117474B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4C0265CCC;
-	Tue, 18 Feb 2025 12:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537B723FC54;
+	Tue, 18 Feb 2025 13:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GZUYwJ3+"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7pQPjRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A508D264A91;
-	Tue, 18 Feb 2025 12:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB320265CD8;
+	Tue, 18 Feb 2025 13:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883589; cv=none; b=KFTYRLGkHi2nXR21yAvaFJl5QMM/Rly3Mmgc4UIvUhjfcKniq3Oecguacb3T3gvfawUDPFqWLn9cn68dUx/c8z/JbQ+LTFw5JsIXdjZTvw6ja79PvZWqOyI4L0aYk7SbTixHzXeqelrsvTNjYNYpBd2Sbvaw6oRnfYYtAz8PjI4=
+	t=1739883604; cv=none; b=cn4GNvt73rgu7YG4wtkl1DssV04mvgoGFEiXrB6UmFlFuIl5LOihXLSMKltRVSnOyZM6XYKw4y7DUs0epfyyNqY9G1shELjErQb8o2vuUT07nUDAsmaCpgGTz0Dtz8hwjFVrpseX4ti/mUeZ3mXywlsE+GtOSNSivUoFR5S+Nss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883589; c=relaxed/simple;
-	bh=13OK0ly+Y9D7D0IsatLoyzRKM7fn6t6uu4z+wld9J4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WCYRhapmJSXDQFipTNxX9FbUmfWPaRGDINeaX0qP89EvEKeC+uIvQmTjz3txFzKMG4q2ZcfJ7gQUP4fFkedvf0+k/DhjC07GDf2Kta6PF9h+vypytkOQfOjUo4NAzhapHvsAnU3RZbSiLHbRG3OAhYW9qYOGSuVy9bY5Pif75uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GZUYwJ3+; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739883575;
-	bh=A+GxPdGU6RxcKTKTUjnNUysJyqMdd00HP+fC5NjA62U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=GZUYwJ3+bXdfxtq0uJgjZLIOlHmk1KmGfAu7iS079B/3NS4rerTpgEOh1jYXtS5kf
-	 Jhb6ajRPLmnZ77orbIKOIK8urS5/DIntl9x5A9cBWk8dCKLOUoWYc/MVqq53+ukicm
-	 MJuIfDBsH+UGIg72FResiDnNskNeGyYfrnJ2C3Yw=
-X-QQ-mid: bizesmtpip3t1739883526tocs40p
-X-QQ-Originating-IP: zfAGLJ/ZbWNea6zi7EMvGF1miZNnL7+mFFbIV8HnI1I=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 18 Feb 2025 20:58:45 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16123507562462357034
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: chenlinxuan@uniontech.com,
-	guanwentao@uniontech.com,
+	s=arc-20240116; t=1739883604; c=relaxed/simple;
+	bh=wkaSrmI42WJ8eWLGud2n2+KIp1RZrA0hZp27Cs/S1os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfCcIYgMv1i3lpO6KMCigUZAMUy9GeNUJIMwbGYz9opW8BpD079xnTTAneSLXXVZ+caUEEWKvY/HU6uC9mR9RyQIdoi0xFbQRUpbuLRo3jfJFCzwSa1yFYQmPLoFGcs1UH+6QbvvADG8UNSDaF9RHmdBUq3hNtIsillPbn3xFRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7pQPjRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DD6C4CEE2;
+	Tue, 18 Feb 2025 13:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739883604;
+	bh=wkaSrmI42WJ8eWLGud2n2+KIp1RZrA0hZp27Cs/S1os=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k7pQPjRGFqpUEqRUTP8WqTqJCGC/2YTh4O27TLV9vm126m4kCoOmAwS97lD/hjjfw
+	 eCtd7SYs2FOAaiy98MHm/EiZNAdqpX8f3W6vFgr/+SkgeghmtrI73iWz3DsGG3S09u
+	 C5agCd2n5J5fVOjYeqleodcKLIt19zk4686f4ISRXgpNG5AVC2JkzO6PriMJ3aBObU
+	 zh3wFF5VVhuazFapG98U/CLt2pNZfAuBuwwHYjxmBEIOAFgMsEqW4ZJ1e+y0pAb2Oi
+	 C7oEiICDHx0gjW8ej342Ub7FXaO9wciu2y5xaS+YIkbyt3uzKGG7UEzOCCmH4KRK0k
+	 +qJ9HTixag9FQ==
+Date: Tue, 18 Feb 2025 12:59:59 +0000
+From: Simon Horman <horms@kernel.org>
+To: Piotr Wejman <wejmanpm@gmail.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com
-Subject: [PATCH 5/7] MIPS: dec: Remove dec_irq_dispatch()
-Date: Tue, 18 Feb 2025 20:58:42 +0800
-Message-ID: <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
-References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Subject: Re: [PATCH iwl-next v3] net: e1000e: convert to ndo_hwtstamp_get()
+ and ndo_hwtstamp_set()
+Message-ID: <20250218125959.GS1615191@kernel.org>
+References: <20250216155729.63862-1-wejmanpm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N8VH26L7kmdizyDMymZ7/E9YiRux5mfMF0iOMYTYHBk8AJ5PyxtC/GFY
-	n27MRIUVmQ2G1DdJQtsjsjCbq8iwtNwdPgO8NnopwXIJQA6OXma4bwyKfSvByTon72KrYJa
-	xrSNFAfE4fkZn6TRkszyPG14oSZG8fRMPvK8A5f3nb4CPLzeXoCDjrA3E+7Ibo42aBxtkAj
-	iZOlYFIy2K83ZPhC3NDtuh2LOF8IE+ssAFhN/gJ4L41jNQu+5NkfGsginvYf8riI48rF1iJ
-	u66atdkWGq/SO6vlt866QH2VwY/RDLyaTteR8GvcGuszDz46sWoi1roHSYHKXIJrv7VBUzi
-	KDagpm1JZJUPvN4eKKzSGgsMeg+d16tWXwvC3LuXPFOmf+rpQ4rcqCUSEm38gNtq+NK3Ybg
-	4n0Yoc62BqaUCQ8ZU86XhJmxOeU79d6PeVy2ftBzi5tkQD6fuQMToEGLjZEBhoaRoeQiWpq
-	aLiyhdkAXD7xaUZrxTOyN7IyIKZPqQ5vaj+g0Mqh06dck6GoEbzpgLeE5N1CSIEZ43lwtT/
-	Ny1qvX6cW1urdTSPbvJR1gmLcPp+5Es4v6hkQmFCC4kgGs2EgyLQxoVb4oXoAqUe0Mjda8h
-	Uq4Zh5y2/UhKEdo5RT4SgZbbi1tn8uZbdKw3Mu8tx2ihvx1Qlvk8Hg1bl49pB/cNvGYCyyY
-	zYwrIXFhTeuUkA90ItXgNbvoQMi8gsHRdhgsV/vkS/+LdlaMl05U+ADwo9xQsQVYQrugd7F
-	OUwbp2Uj4jT29u8DvooOdJg1UdxQ+I3U9C6PmDrVFgq5IYoAt/+EsTvG2cySzoMAPK+nkdr
-	QAevBg6mbcHuPke9C+u3Hju18A6bwXf8ITB95gerRClayl1BN5hr4/vyFO5jqYHoZ2xi6jg
-	4PMOfaA23/N3E6wKgtFFA1MvRHaz1NudISPjhuAwWksNP71rtypyRiYgvug8NbW2oAgKEoH
-	bn72DVRxmKyJLMz+GGt+Gon8gozAw2WAtLnieHnTfpmA0PmjqTZln1Ec4LEbJjGMws3nluK
-	EGwFJ/pEEaCDbM5SUMbESv593Qllw2Rb7L3B5cK+IVWX0wOssHZekqpVKEY4rd7Kic3vXDi
-	dXgiSg3T/DncSz82xaq5qE=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216155729.63862-1-wejmanpm@gmail.com>
 
-Currently, dec_irq_dispatch() is exclusively invoked by int-handler.S.
-Inline the do_IRQ call into int-handler.S to silence the compiler
-warning.
+On Sun, Feb 16, 2025 at 04:57:28PM +0100, Piotr Wejman wrote:
+> Update the driver to use the new hardware timestamping API added in commit
+> 66f7223039c0 ("net: add NDOs for configuring hardware timestamping").
+> Use Netlink extack for error reporting in e1000e_config_hwtstamp.
+> Align the indentation of net_device_ops.
+> 
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Piotr Wejman <wejmanpm@gmail.com>
 
-Fix follow error with gcc-14 when -Werror:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-arch/mips/dec/setup.c:780:25: error: no previous prototype for ‘dec_irq_dispatch’ [-Werror=missing-prototypes]
-  780 | asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
-      |                         ^~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[7]: *** [scripts/Makefile.build:207: arch/mips/dec/setup.o] Error 1
-make[6]: *** [scripts/Makefile.build:465: arch/mips/dec] Error 2
-make[5]: *** [scripts/Makefile.build:465: arch/mips] Error 2
-make[5]: *** Waiting for unfinished jobs....
-make[4]: *** [Makefile:1992: .] Error 2
-make[3]: *** [debian/rules:74: build-arch] Error 2
-dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
-make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
-make[1]: *** [/mnt/83364c87-f5ee-4ae8-b862-930f1bd74feb/Projects/CommitUpstream/LinuxKernel/Temp/linux/Makefile:1625: bindeb-pkg] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+...
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/dec/int-handler.S | 2 +-
- arch/mips/dec/setup.c       | 6 ------
- 2 files changed, 1 insertion(+), 7 deletions(-)
+> @@ -3932,7 +3939,11 @@ static void e1000e_systim_reset(struct e1000_adapter *adapter)
+>  	spin_unlock_irqrestore(&adapter->systim_lock, flags);
+>  
+>  	/* restore the previous hwtstamp configuration settings */
+> -	e1000e_config_hwtstamp(adapter, &adapter->hwtstamp_config);
+> +	ret_val = e1000e_config_hwtstamp(adapter, &adapter->hwtstamp_config, &extack);
 
-diff --git a/arch/mips/dec/int-handler.S b/arch/mips/dec/int-handler.S
-index 011d1d678840..a0b439c90488 100644
---- a/arch/mips/dec/int-handler.S
-+++ b/arch/mips/dec/int-handler.S
-@@ -277,7 +277,7 @@
- 		 srlv	t3,t1,t2
- 
- handle_it:
--		j	dec_irq_dispatch
-+		j	do_IRQ
- 		 nop
- 
- #if defined(CONFIG_32BIT) && defined(CONFIG_MIPS_FP_SUPPORT)
-diff --git a/arch/mips/dec/setup.c b/arch/mips/dec/setup.c
-index 56a7ecf06b7b..6ba4c4973c9a 100644
---- a/arch/mips/dec/setup.c
-+++ b/arch/mips/dec/setup.c
-@@ -771,9 +771,3 @@ void __init arch_init_irq(void)
- 			pr_err("Failed to register halt interrupt\n");
- 	}
- }
--
--asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
--{
--	do_IRQ(irq);
--	return 0;
--}
--- 
-2.47.2
+nit: If there is a v4 for some other reason, please consider line-wrapping
+     the above to avoid lines that are more than 80 columns wide.
 
+	ret_val = e1000e_config_hwtstamp(adapter, &adapter->hwtstamp_config,
+					 &extack);
+
+> +	if (ret_val) {
+> +		if (extack._msg)
+> +			e_err("%s\n", extack._msg);
+> +	}
+>  }
+>  
+>  /**
+> @@ -6079,8 +6090,8 @@ static int e1000_change_mtu(struct net_device *netdev, int new_mtu)
+>  	return 0;
+>  }
+>  
+> -static int e1000_mii_ioctl(struct net_device *netdev, struct ifreq *ifr,
+> -			   int cmd)
+> +static int e1000_ioctl(struct net_device *netdev, struct ifreq *ifr,
+> +		       int cmd)
+
+nit: And conversely, if there is a v4 for some other reason,
+     please consider merging the above two lines into one.
+
+...
 
