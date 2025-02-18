@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-519883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EC9A3A321
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:47:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FB8A3A323
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5C9188DDDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC4717065C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948E026F449;
-	Tue, 18 Feb 2025 16:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE926FA48;
+	Tue, 18 Feb 2025 16:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pXXKbITS"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="RalTmpSc"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F79D192B89
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDAB26F46E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897214; cv=none; b=qYmVXiETdxEGhE9CDxMlqG1gv+JeSy3SuviXtFIka41x/IUcuBAYsLULsRlUMJK4WEqP9Pn6lxSKKqR5uQLzW1e2ci3LjtIwTb29VtupbvuntzPltKwcjy+cm4zBJadlXns/F0gT8uXwcxvQ87EEY8xaLx5j5cRCZjcNbyRVRpg=
+	t=1739897218; cv=none; b=LT4TjbXPoNyItFXjMtoaU4Bm4lIpdyhG4qEz0U1jknBOW7Okh0m1x8mfJ9hVienCOnztENxnukh2nigzK6yIPXKyjaHcXuywUVCmvtuzRFYfmwliOadwNJcSLE4mOLLTtLooGjIXq/sma4SOCYL1SUXGKfrewsZCQfZUSPgYPm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897214; c=relaxed/simple;
-	bh=hB7UW+PmNq3DmiGSuXn2nDlFpRK2UeweO6ZapX8GizQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fS6AKScsBd3DQxbEEqT7/P0q4xYNZue148F2eFFdyOc6SkqoRVCLnkaEeSjN8V9rGWuXH1PLmeNXulzl3lOsYjbd92xhEMXorwlFtje/RSUjXv3LgF1Yah8z4Muucv2i55ZLWpE5xOo1Iv68ulYr6NdALn2jP5room9u/gMxyBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pXXKbITS; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc318bd470so8432715a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:46:52 -0800 (PST)
+	s=arc-20240116; t=1739897218; c=relaxed/simple;
+	bh=MZLc1vPrgmDcKl9SEwy6+fpehOypZuSO4hdHhZEBSRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+Cgjp5AyQ0D/XP2HcJGLovi2+Atd1uM0MzPVVDjWXHAt0t0wsXyyCaq84DBbeyEy2tsqlx5n6CIlfJWNfu27bEnFmHYAI9fY2NELy+2MnbRzXBrZgIsIK8rNxQc0FQXUIPIN/EezR1dfiGIhXFAZ1NK/QSYgA2kCWLGLSWBGps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=RalTmpSc; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fc20e0f0ceso7382461a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:46:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739897212; x=1740502012; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Mlx8JusrMvAxwGjao1rFJfj7oaa3+n+hmVGabdbHNaw=;
-        b=pXXKbITSI6TOA4VSCLmLd/h5XRhbobs2AO25gn2eUyc6kR0f5Rm97nBnXief5kSebY
-         d2K+/M0CQnixHpHDj3r0OJWOHzKi1VXaxuF6YX/mfEWw3sGb/ZShK9wQs2CgTrn0pJS4
-         S62g1i1KWq+mQYRf9v3HxSxphLFRqkJKTqPo1qgKzAtmAWeJdFGRf1CEReY6id6N3aoO
-         S0R3BYpjLNGz+GY/DFSHpNPOZZNw/GNYn7iYb90k/M5bqK0GXXIHgFFglpnddzKG05yu
-         nbRwRTzpre9uoX63Q0O8P5tF2R/Mo99CUC3wLE2V4crTyeSArngJz+oINXaCXre9jGpA
-         hLgw==
+        d=fooishbar.org; s=google; t=1739897215; x=1740502015; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IOylOGK8+KXVlSKwEjhOkQ9Uo6qP5iYjwH/vqYLvpOc=;
+        b=RalTmpScLjyiC+N4iXsQMNbQ8bVRya1AWIDNCCCblJTg7YBq4QFusGKatXRiZ0yShi
+         m+zYz7a+DhZYh1ZDXY6VjQO1ycViTKzrqKBkH0wQfZ5meqO0RS/QAiJXoPqbysVoTWE6
+         rSul2DhaVwxHgOksDsPvqGZ4fUNN7MPBHuVBXqi4p4uJlOffL1AHHU21OC8zgbKpQnpX
+         3hoqhXG2clL2MVGg5ROE5KycKIHN+QjStek6O3vBppnRSE1f9MM3DSbCxajxpawVT4W1
+         vEvqEvQA5cqZjR1QmCJPjlvterOyRRrUGtjjwsdSDwJB5tRGwHhPTMhCndqEwmWO2OxK
+         XUKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739897212; x=1740502012;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mlx8JusrMvAxwGjao1rFJfj7oaa3+n+hmVGabdbHNaw=;
-        b=CM1qzm78BCIzVXrDkLtLgGsISH4pki7XMvGSSsX+z62G5OPxE/GqDutWTPlOI99Bbd
-         pzguxxNUqGpoUfv3Yc1BPx3YJ5I+EM7Ym5uwRReckCTSxzFA0R0mGM41RfnBU+HJ3Hzf
-         +j9Qa56rhyahDOnmz6ZaivsqIEmzP9ME8iXPSfJ/3OHjrW5lmx9NcaY6I1OiufM+aJb/
-         nGb0S4JKnJjqPXhACvgQlXi17qrgD3Y5ZSsIFvsCcoU0+tfbFoaZ4IrFzAANmpGdLtsa
-         /0k1bBp/krx3HDQOoD0bOXnmNX53COWEO3t4VXDNnxHYmxAkqDuMGKXZ5ABIc4hFlS1R
-         CeuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa1HvrmMd17DsHwk2JBm5KXHbvqGKthu6MFTT+kUNniO8ewf2uTsnSackRPjHeyDr6IF+afdAma5K5keU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhTdf6uhQeRhiynV2QSMCmOJTKak2+zRQwph3N61r+fJfVqrko
-	rEiGPh1pM54l8VcBW5tvsQS3YIOv8CIpJ4O37Xw/DtnFMlk+ge2FKffVV6013R8FgJbQUIMncY7
-	JC7efMPhJ
-X-Google-Smtp-Source: AGHT+IGQ565WwS0bcE+njAMsD6uuxc/9MmPyUG5Iox2HfLd6QcEJEWMbyoxQA9aBfz/ryG5Dk17Q7F6AH9dpiw==
-X-Received: from pjbpl3.prod.google.com ([2002:a17:90b:2683:b0:2fa:1481:81f5])
- (user=krakauer job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2b4d:b0:2fa:226e:8491 with SMTP id 98e67ed59e1d1-2fc40f1027cmr21526874a91.9.1739897211731;
- Tue, 18 Feb 2025 08:46:51 -0800 (PST)
-Date: Tue, 18 Feb 2025 08:45:55 -0800
+        d=1e100.net; s=20230601; t=1739897215; x=1740502015;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IOylOGK8+KXVlSKwEjhOkQ9Uo6qP5iYjwH/vqYLvpOc=;
+        b=GCpQlgj+SrZCS7ZK79iJIKX9Q04OXFY5QtsyNZXMUEQeGtUYfDcySeFGGkcUJjCeIp
+         FR3zzoX1Rc/IeFDOBOim+tptUK6J7MqaHojX272EcEgoqXDOg19ugLSjve1amSGyhgTK
+         HgwvEeCbcQVuC2y83+AZWwSVi979P4QGrhyxFoO1FcmPW4ahzYintxlDPNJPpBhAS3jC
+         GNK+QRfiV92New/6ApAIpXHfx5+ZIFnuTmMX876l74oq69iZdlS+G1OPw0UWaDkTbC/z
+         5/RtHC62j/lyMpLWJtvwEOBu5gfQiImyfZrn+RxXhTrZMXtgsIGDq4wZua0vs6JnUIom
+         rJkQ==
+X-Gm-Message-State: AOJu0YygybxqdIx2mGwn1YnVqblK8gzMSpVowK+BizrRq/75ngsUSu21
+	Ftt1eRAMy7r6oCW22QnAEbfJM6aTM9EyqeVO79zUh7abXl3h8dwFmOi5M21HQjH4MO4TfuRRNZJ
+	Nq4B4lFGgf9HAKJB2KgjpWkaZuT5txhErbuE2ug==
+X-Gm-Gg: ASbGncs7P53ZbSgq+9kb4sL5LSW9m8YndQQl8qDMVxkTgaINrrSkO4j3YOIhmNlK8bN
+	0P2iWDJGWopM/cZrL6khFHzgw6i0V6oxK+nu13PB2oX30pnh+Qp/qzsbkIxFuOGUSFLnNwQ==
+X-Google-Smtp-Source: AGHT+IGHwzBsO/GBPkHZczfaNaO/9Fri81n9XYQ1ztlxgGE0CRA4HOyjovvD+vqgo/EOu8/IM5aMJO/ERmz9uK+U4xE=
+X-Received: by 2002:a17:90b:2783:b0:2ee:b875:6d30 with SMTP id
+ 98e67ed59e1d1-2fcb5a17ccfmr165222a91.9.1739897215586; Tue, 18 Feb 2025
+ 08:46:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250218164555.1955400-1-krakauer@google.com>
-Subject: [PATCH] selftests/net: deflake GRO tests and fix return value and output
-From: Kevin Krakauer <krakauer@google.com>
-To: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	Kevin Krakauer <krakauer@google.com>
+MIME-Version: 1.0
+References: <20250218143527.1236668-1-jens.wiklander@linaro.org>
+In-Reply-To: <20250218143527.1236668-1-jens.wiklander@linaro.org>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Tue, 18 Feb 2025 16:46:41 +0000
+X-Gm-Features: AWEUYZkKtmN_-KWMeq06D2l9RZUatLIu9Ka5J6k3tL8rcVyNTYGe730GhgI3bME
+Message-ID: <CAPj87rN7QQ2XRa4KnaH9MZrvyRcRWWrihSKousR1j7GD+bEQtg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] TEE subsystem for restricted dma-buf allocations
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>
 Content-Type: text/plain; charset="UTF-8"
 
-GRO tests are timing dependent and can easily flake. This is partially
-mitigated in gro.sh by giving each subtest 3 chances to pass. However,
-this still flakes on some machines.
+On Tue, 18 Feb 2025 at 14:35, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+> This can be tested on a RockPi 4B+ with the following steps:
+> repo init -u https://github.com/jenswi-linaro/manifest.git -m rockpi4.xml \
+>         -b prototype/sdp-v5
+> repo sync -j8
+> cd build
+> make toolchains -j$(nproc)
+> make all -j$(nproc)
+> # Copy ../out/rockpi4.img to an SD card and boot the RockPi from that
+> # Connect a monitor to the RockPi
+> # login and at the prompt:
+> gst-launch-1.0 videotestsrc ! \
+>         aesenc key=1f9423681beb9a79215820f6bda73d0f \
+>                 iv=e9aa8e834d8d70b7e0d254ff670dd718 serialize-iv=true ! \
+>         aesdec key=1f9423681beb9a79215820f6bda73d0f ! \
+>         kmssink
+>
+> The aesdec module has been hacked to use an OP-TEE TA to decrypt the stream
+> into restricted DMA-bufs which are consumed by the kmssink.
 
-Set the device's napi_defer_hard_irqs to 50 so that GRO is less likely
-to immediately flush. This already happened in setup_loopback.sh, but
-wasn't added to setup_veth.sh. This accounts for most of the reduction
-in flakiness.
+Thanks so very much for putting this together btw. This is the exact
+thing we were just starting on, but you beat us to it by a few weeks
+it seems. It's awesome to have an implementation of 'real' (if
+useless) SVP, so we can actually exercise these codepaths in open
+generic code.
 
-We also increase the number of chances for success from 3 to 6.
-
-`gro.sh -t <test>` now returns a passing/failing exit code as expected.
-
-gro.c:main no longer erroneously claims a test passes when running as a
-server.
-
-Tested: Ran `gro.sh -t large` 100 times with and without this change.
-Passed 100/100 with and 64/100 without. Ran inside strace to increase
-flakiness.
-
-Signed-off-by: Kevin Krakauer <krakauer@google.com>
----
- tools/testing/selftests/net/gro.c         | 8 +++++---
- tools/testing/selftests/net/gro.sh        | 5 +++--
- tools/testing/selftests/net/setup_veth.sh | 1 +
- 3 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-index b2184847e388..d5824eadea10 100644
---- a/tools/testing/selftests/net/gro.c
-+++ b/tools/testing/selftests/net/gro.c
-@@ -1318,11 +1318,13 @@ int main(int argc, char **argv)
- 	read_MAC(src_mac, smac);
- 	read_MAC(dst_mac, dmac);
- 
--	if (tx_socket)
-+	if (tx_socket) {
- 		gro_sender();
--	else
-+	} else {
-+		/* Only the receiver exit status determines test success. */
- 		gro_receiver();
-+		fprintf(stderr, "Gro::%s test passed.\n", testname);
-+	}
- 
--	fprintf(stderr, "Gro::%s test passed.\n", testname);
- 	return 0;
- }
-diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
-index 02c21ff4ca81..703173f8c8a9 100755
---- a/tools/testing/selftests/net/gro.sh
-+++ b/tools/testing/selftests/net/gro.sh
-@@ -21,7 +21,7 @@ run_test() {
-   # Each test is run 3 times to deflake, because given the receive timing,
-   # not all packets that should coalesce will be considered in the same flow
-   # on every try.
--  for tries in {1..3}; do
-+  for tries in {1..6}; do
-     # Actual test starts here
-     ip netns exec $server_ns ./gro "${ARGS[@]}" "--rx" "--iface" "server" \
-       1>>log.txt &
-@@ -100,5 +100,6 @@ trap cleanup EXIT
- if [[ "${test}" == "all" ]]; then
-   run_all_tests
- else
--  run_test "${proto}" "${test}"
-+  exit_code=$(run_test "${proto}" "${test}")
-+  exit $exit_code
- fi;
-diff --git a/tools/testing/selftests/net/setup_veth.sh b/tools/testing/selftests/net/setup_veth.sh
-index 1f78a87f6f37..9882ad730c24 100644
---- a/tools/testing/selftests/net/setup_veth.sh
-+++ b/tools/testing/selftests/net/setup_veth.sh
-@@ -12,6 +12,7 @@ setup_veth_ns() {
- 
- 	[[ -e /var/run/netns/"${ns_name}" ]] || ip netns add "${ns_name}"
- 	echo 1000000 > "/sys/class/net/${ns_dev}/gro_flush_timeout"
-+	echo 50 > "/sys/class/net/${ns_dev}/napi_defer_hard_irqs"
- 	ip link set dev "${ns_dev}" netns "${ns_name}" mtu 65535
- 	ip -netns "${ns_name}" link set dev "${ns_dev}" up
- 
--- 
-2.48.1
-
+Cheers,
+Daniel
 
