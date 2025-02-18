@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-518923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BC0A3961D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:53:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E50A39632
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E817D188774F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F869175141
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F0E22C336;
-	Tue, 18 Feb 2025 08:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8303E1E25F7;
+	Tue, 18 Feb 2025 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bKKdcgpH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IcKf2uAz"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BD81EB1A6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D4122D4FE
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739868747; cv=none; b=kKV3jpTSTnvAZqYNn4stDUIBKX4OW+LUJ0zyjuTyFTYBxjjjQshcVLDZjO3NWIaqHQqnpkFgE1Mq/ucyKgG2vxveamSpX7ktWdwUzNPQkHEvqPEhW/DDPqJngGbAjcCDjCUrYCK/JN0C8Fp6ZgMIBUUM2xyRgzvDqj2kbPNlnTc=
+	t=1739868731; cv=none; b=X4K/JuT6ZIUxqtJtnc06UCFBtysU3r6VJcQ4wuRi/nWmieBCoq19RrQGfAH8aJoW+vVwkOu+k8pswY0FrMk1gBt2Eb1yvs+GYRQdPNWA+xhQRs92WEXoBHPTW0Ac65KTtNJjYX2dYoiDyp/vPlrs5LK78Huc9vDa/hjyG2ui5H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739868747; c=relaxed/simple;
-	bh=aKJBr3Dd2EAHMdbQa3POvki4e+uMax+JgUvBzWoMvz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpMGf1sQrs5y6146IkUsPe1gvl0rrpuj4E99G8TgMtWyC79EpCarIF6eDzPoJbMiyoQ/2SfZkVUzHGNefyR5/4Z+g7Uej8z/Q0UiUfgF2F3v7z/8O//mBksfsXNEY/joAVWNMgO8mAKndln+fag6qZVlCyzdbtSG7PhEXAmb92o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bKKdcgpH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7083740E0192;
-	Tue, 18 Feb 2025 08:52:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Zsra0a39qJQn; Tue, 18 Feb 2025 08:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739868739; bh=Jsv8YmgNP20b7Ra7WyYeyfLNrpRy0hgEpMyauFp6jlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bKKdcgpHlDIMFrM6gac2tjqGDX7/0SV/LsGU911pdapy+cH8cRzfDSBK52ENIAQkH
-	 euUCA7dmZBFEygIp1FKcywXfBgbJyN/A4SS1VpWcFwqqVryPXib01GT3816jqjNSE0
-	 De5wwlmumBVhET+am3gEwruYZdq/e2kxZ0n9KGNRgUxVDnX2+r9nxbJ0rVIoXgNyNg
-	 qKRXZug8CZJIj8x0RhoRQ2uT/8Pc2OwDCWpmdyCFMaiWTDsXFpHhEUQ7pmFd88SeuO
-	 Ca2/uGHlVFUU/uxFeWOmPJMw5I7jva1eQWL1LNPYdJHLKqOaLaC7sITt9AIt8NImmY
-	 /vYSkCOhQTQXvud1vcYJtZOLFHvvfCqEGqCeAJDf5E5gAZXT4VtaQ9twgyidPBf+uk
-	 hgXYWvAXZTjM+3bywMtaNNtmLE7CnOO9DlrzRcBIc7JCRLqiaosGiLRTIhff+kXtC9
-	 iJa3YbyEQ6pzo4WAqxjx6Ws8jurI6lu/pPYcjYuvehwHw3L1g7YysvjJbCbyikRy7B
-	 zb4r7N14uWlNovtcXMNqxHJOzVlSFjekvnMsPxbe75nHFACXgBcDAsYe3KpMYkeTB+
-	 Y7sCVG09TRG7Q/1ZKK7XQF170rpKmKdr6RVx0vpFyIJgVN1dVA+rg34qsiOqTHYb3Q
-	 9fMKMfJMIoTodeqvRfEC/SoA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2033B40E00C9;
-	Tue, 18 Feb 2025 08:52:09 +0000 (UTC)
-Date: Tue, 18 Feb 2025 09:52:03 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: "Kaplan, David" <David.Kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
-References: <20250108202515.385902-1-david.kaplan@amd.com>
- <20250108202515.385902-21-david.kaplan@amd.com>
- <20250211180752.pfsjvz62bztpnmoi@jpoimboe>
- <LV3PR12MB9265804700AB74A446F5220F94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
- <LV3PR12MB9265249E8D0FD3920C42A1A994FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
- <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
+	s=arc-20240116; t=1739868731; c=relaxed/simple;
+	bh=hohWpCiWYl0GtjqjZvwmp0qm84o88J+U82iLURk3iYI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nqKW75yMOYNDTzL+PD7tL9AY6KSkHZsYbdG5zi1lT1LCC0DOHW6pAwClhGPwh+UM+g8mpal9qtIweu3iHV8r/FuREmJUQH4/1XcAgfNxKeo5u7tv3s3IJkc8Il82bfRASmzTry908YnGCH2cQBhjwQhB/N8OyWf6acyUrRpT348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IcKf2uAz; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a823036so54088335e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739868728; x=1740473528; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5BxUQzEBXqVbjM46JfdgSswKF0/4bTgi+k8v6ADAZU=;
+        b=IcKf2uAzJdixDAPIRJX20sttXX4Zh50YvEtuaXY/RyypRMLu8k++/tNOZpNzSpCJgg
+         XFSfIO0RJaQy0y4Odxa1Ds2VFsanooUgDFqERNeC9VbosDQvZGa42i9dY89QdO0RUU+X
+         zswOLsO9VPk2zZ6ELQHO6s497EJiTLuGgKq/9TgLKyHdLkNj4OZ/hbp2/9sNIlaWNMkf
+         PlqJ1QH0pA+8QAZQrNseJxV+KZLYNawLehV9967xJqM4wTKJfutc1egHwFG95SyGClyl
+         liq91RmRAO50rC4ChEcZ6U4FlrW82QQZivaHN8JNdCQFm1GKU7gvUCRnH2P9q36kl6Gi
+         Q+iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739868728; x=1740473528;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T5BxUQzEBXqVbjM46JfdgSswKF0/4bTgi+k8v6ADAZU=;
+        b=xNd0FDb1HJSOyocuYzZEXlEnylL2CQYhtyX7XXb+3qRRrnI19ujArJOErTrf5eQgF7
+         HN5r7x9JkXxF8HsWur2dFBl4F5IlRz2FknJYsuSDTvh8T7qfSotjbFimqIpBaaZC74ZQ
+         b26RBnPejUphJ4l1OeL1ZRPfbdzuoqIjO07WThTQ1MnD+gDkyqheJxOQ9UHrqCBFpnby
+         ni7idJPjq5XSWoKGZqNFziIKklGlL5oslA7Sd60fgrinpxWhUdqfgkGP2NKwmP64jlMB
+         NdvPybNl02x396UEacCo2Gh0AMYiElOUMQKSuUYmKQVuoc8h5wFatOs4+Q/MxuZkeSlx
+         YlKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhhiDfWHFRNaVWCu+of92/oKXC8RiTLiM574qXKJPP9QEPnbpRwpoKcQichZaq8wBa5z1hcP/cdgC98YU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuA9gfLCn7CZl+44wXacwQnI5YWGWuxKm+nX1A5b2bgadrOTNe
+	W65l6Kc3mQTax2skrOJKEkJNjOQLcmq2G3fUqIWvt2T0n9pg9qLgSSQjHO359Xc=
+X-Gm-Gg: ASbGnctHrNrFZnFPreSb/P8j46PvZ0+y+renRPuK9fVYD5IJVETelEaszOakogFTfYQ
+	ltYer0OHGo1XPGz0zivfpmtg/3fN/GW+iiWRil1jgJKqRYULIqFVhXVzVhE2HV4UqeyZofj4BCI
+	Bfq3QrJvS7kLuIo1c3DpSLx52erT7rNcGWCJ/VTHfQWe+c4bSium9TCPJKc1tvU17Td/KsSw6i1
+	eecQWY+zkhjcAzCQo7uMWLijGKyNDBuV7C3A/xXnx9WWGPwp//AQXH7nHcp9E7Z9E7dS3ENlwlO
+	cifP+PpWtDuig1XDhxcKpYuXnge7SP1lDg==
+X-Google-Smtp-Source: AGHT+IHQey7aBKjO/+bZ8evsTyt3LBHAHH8MDbvNvER7wVei0OIq3d9tcLNdJqfWdMZRdCMypqcS3Q==
+X-Received: by 2002:a05:600c:3b1b:b0:439:9595:c8e7 with SMTP id 5b1f17b1804b1-4399595cbb1mr12314565e9.0.1739868728258;
+        Tue, 18 Feb 2025 00:52:08 -0800 (PST)
+Received: from [192.168.68.111] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439872b5a46sm43381535e9.32.2025.02.18.00.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 00:52:07 -0800 (PST)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250217-sar2130p-nvmem-v5-0-2f01049d1eea@linaro.org>
+References: <20250217-sar2130p-nvmem-v5-0-2f01049d1eea@linaro.org>
+Subject: Re: [PATCH v5 0/5] nvmem: qfprom: add Qualcomm SAR2130P support
+Message-Id: <173986872682.63312.17862303711697418550.b4-ty@linaro.org>
+Date: Tue, 18 Feb 2025 08:52:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
-On Mon, Feb 17, 2025 at 11:05:01PM -0800, Josh Poimboeuf wrote:
-> IMO, make them generic from the start, then there's less churn and it's
-> easy to port the other arches.
+
+On Mon, 17 Feb 2025 18:33:17 +0200, Dmitry Baryshkov wrote:
+> Qualcomm SAR2130P is one of the platforms which require 4-byte reads
+> when accessing the QFPROM data. Fix several omission in the NVMEM core,
+> rework the QFPROM driver to use readl() instead of readb() and finally
+> add compatible string for the QFPROM as present on the Qualcomm
+> SAR2130P.
 > 
-> If we went with putting everything in "mitigations=", making them
-> generic would be the obvious way to go anyway.
+> 
+> [...]
 
-Just to make sure we're all on the same page: we obviously cannot enable
-and test and support a mitigaion on another arch like, say, arm64, or so.
+Applied, thanks!
 
-This needs to come from the respective arch maintainers themselves and they'll
-have to say, yes, pls, enable it and we'll support it. We should not go "oh,
-this would be a good idea to do on all arches" without hearing from them
-first, even if it is a good idea on its face.
+[1/5] dt-bindings: nvmem: fixed-cell: increase bits start value to 31
+      commit: f5175dd69428ab517c8d68e772c4d287b6570d8e
+[2/5] nvmem: core: fix bit offsets of more than one byte
+      commit: d5d9e982a0886a1a99a1a8ef5320c57e257b4fb0
+[3/5] nvmem: core: verify cell's raw_len
+      commit: 11ccaa3121119eeff9ab9d537e0cf6be3b10698b
+[4/5] nvmem: core: update raw_len if the bit reading is required
+      commit: eca73df072715efb5e880514bb8395e0a4e74a59
+[5/5] nvmem: qfprom: switch to 4-byte aligned reads
+      commit: 4770132f37dbf327d25455d226e54fafbef6a5c4
 
-That's why those are x86-only as they should be initially.
-
-Thx.
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
