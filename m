@@ -1,74 +1,113 @@
-Return-Path: <linux-kernel+bounces-520130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33C1A3A60A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CECA3A625
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB463AF166
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05973B5521
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3858A2356D3;
-	Tue, 18 Feb 2025 18:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C2917A314;
+	Tue, 18 Feb 2025 18:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jRy8tA/q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Hv4RSM01"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638902356BA;
-	Tue, 18 Feb 2025 18:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B0316C850;
+	Tue, 18 Feb 2025 18:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904486; cv=none; b=et2xPfkAqcgkXOIsqYFRAZFeUUTwzD6ll4yM6fmJY6nWuSuB/CiTa04qWPd06ozur+Sp1VNA9A8REYVHhi8izRSMpv9hzs6D3eIwBb0zGgtLeamQOm6xhJCoiBVpf9+ZlNCtMz76HxVBA3uDO/d+SdDqHKCaL/Pd13JRYWfsqiQ=
+	t=1739904564; cv=none; b=CRwc2/HA8HZSPq7kJNq60whd+YvVYG5ZY3hqeUy1wafslTQAhqRFQFg0lndpyIAXQVSzLv5/h56SRee82iE9VkA4ekWCJhgSxcMOAHanRY9Y84QtfQ1DLMUs3Pplx14MnkkC5Zt/XvOUpWQe9fHz/W+namCHe2GtzAFbfD7vZAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904486; c=relaxed/simple;
-	bh=eQku/ltOrPfhbzsZOdgcUSqfg47tSUXUyWsAxYA3rZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKvYLpFmUyUANLAZNO8iseqJBxfYWddHOHG5prul/23IRaxWlFHvuCXAreyoJHpUgihzlbLejEl5e0nC48HiiAKt8a6nciFAQ538Zz502Bi08xMUmblQRkAW8qiMwLg/A807arZ/NmKhpvdJ/8AIZSbNjhRPoOC8Xo+tRF3UO68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jRy8tA/q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F6AC4CEE2;
-	Tue, 18 Feb 2025 18:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739904485;
-	bh=eQku/ltOrPfhbzsZOdgcUSqfg47tSUXUyWsAxYA3rZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jRy8tA/qSZVnwOZRRQgd556dMJkJJ9fFKmaPxIsj7CPf9WEZvMyIbqHIYF+1UEIOd
-	 XIDJ9mrmL2CMft7Zod1J/3XR459taQb1/F03PkKdv5WB1P3CKbrqiwxPwVA+zlucel
-	 ddla6NAAohMlSjZuP1Lap1NhH6TFOJGU/jCY7+ws=
-Date: Tue, 18 Feb 2025 19:48:02 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Madhur Kumar <madhurkumar004@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: sm750fb: Fix CamelCase and remove volatile
- warnings
-Message-ID: <2025021843-subsector-decipher-e7cf@gregkh>
-References: <20250218184343.20585-1-madhurkumar004@gmail.com>
+	s=arc-20240116; t=1739904564; c=relaxed/simple;
+	bh=mu4DL52dax5XNXsfxCOUhTgjTpU2ZBw1b0womh5uByM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pKaS0fJ1QDREQxckrYhVAzMmFpRcmbO1rhxtZdr6Yl8PBpN4bq5wqcy38x0iNbumLNSBO7ozi1/yZEUmn3pS0OA+sSMSHBRXcXHQbdgYhthpQdM7ym38HprjrsKdDXzbvPlG/O5EZXxMChJFzxtEoTQtXJlgeSaa7aQvqcKvQQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Hv4RSM01; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7431825F75;
+	Tue, 18 Feb 2025 19:49:21 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id SBDZ0cCM_kBQ; Tue, 18 Feb 2025 19:49:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1739904557; bh=mu4DL52dax5XNXsfxCOUhTgjTpU2ZBw1b0womh5uByM=;
+	h=From:Subject:Date:To:Cc;
+	b=Hv4RSM013Sz9Np6jahU4+eKmOsRGWTHAO3QNvIoS6wZg+ZwInOpG1cGZCdD+w5jwN
+	 xpL4FyadDiFwJdv6TAOTbr1iKwy5yIJUpS0oYyOXlSvwqV60b24XEF3LYQYypgPVWm
+	 hiv0pWleGiUBbJ74IXh7Lowe2IL1LPZYXHbm3bNRvtYlcumJU7I7eUcZ0QTXvzj3UP
+	 H5SizG2B2nZIokOYOwXtFW6C9gEZim7LmnNOj7YOk8Hos7PT+0OnjR5PaHsVyxtBAM
+	 UTFDEtxo1Fkr/i+CE78VlltbEpYEI2zRw38AFTk7p+UtBLwf9I9XVXYShZuhrNjquz
+	 XAEK/2tj9iOqg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v2 0/3] Introduce pin controller support for Exynos7870
+Date: Wed, 19 Feb 2025 00:18:56 +0530
+Message-Id: <20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218184343.20585-1-madhurkumar004@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABjWtGcC/22NQQqDMBBFryKzbsokVUe76j2Ki6pRB0oikyCKe
+ PemQnddvgf//R2CFbYB7tkOYhcO7F0Cc8mgm15utIr7xGDQFGjwpuy6OR+oIlQzuy7KWyGZshh
+ I11hqSMNZ7MDrGX02iScO0ct2fiz6a3+5/F9u0QoVUVtXiJTXLT16DuJ9vHoZoTmO4wNsWGwLt
+ gAAAA==
+X-Change-ID: 20250203-exynos7870-pinctrl-07265f719061
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739904552; l=1290;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=mu4DL52dax5XNXsfxCOUhTgjTpU2ZBw1b0womh5uByM=;
+ b=PzYnIM2lWsCoLkGa3R8NJ+kI6BmF8pgCNCKA0dWf36zvs4RCqb0sv2q+AkgsNSQZ0eC6dF+lu
+ OkC9Rpdsl2IDeRsyPVPJuDIV/cA6OEJ9nCsaYptnVqcbNJUXTEEt+cF
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Wed, Feb 19, 2025 at 12:13:42AM +0530, Madhur Kumar wrote:
-> Fixed multiple coding style issues in sm750fb:
-> - Replaced CamelCase variable names with snake_case.
-> - Removed incorrect use of volatile in memory-mapped IO.
-> 
-> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
-> ---
+Add support for exynos7870 in the pinctrl driver. Also, document the
+ALIVE pin controller's wakeup interrupt compatible.
 
-For some reason you sent this out again and ignored my bot's previous
-review?
+This patch series is a part of Exynos7870 upstreaming.
 
-confused,
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v2:
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-pinctrl-v1-0-77b9800749b7@disroot.org
 
-greg k-h
+---
+Kaustabh Chakraborty (3):
+      dt-bindings: pinctrl: samsung: add exynos7870-pinctrl compatible
+      dt-bindings: pinctrl: samsung: add exynos7870-wakeup-eint compatible
+      pinctrl: samsung: add support for exynos7870 pinctrl
+
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   2 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 141 +++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |  29 +++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 6 files changed, 176 insertions(+)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250203-exynos7870-pinctrl-07265f719061
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
