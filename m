@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-518505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EADA3901D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:04:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FB1A39020
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25AF07A1FE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8623AEA31
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751451E526;
-	Tue, 18 Feb 2025 01:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ACD21348;
+	Tue, 18 Feb 2025 01:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AhWYI/XA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gyop8Ast"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4185B1DFCB;
-	Tue, 18 Feb 2025 01:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A4E182CD;
+	Tue, 18 Feb 2025 01:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739840685; cv=none; b=BTmWc08TfhNqMWqEYhVWv+JUIouml0MkGc7g2wMJ/kZTKdHbobZxo6WeeSJ8rvkj/vsWN2swueROZbGxk7GiGhyCeSZ1evQRIKLX7dz2BPDIkw3ojSaL62ec+dw8O/mFMd77NGGWDGBjmnTkFSvcK6CxS81LuO8NHhODZxH3yIY=
+	t=1739840854; cv=none; b=B4Zz4wGi0jki5wtGB9crr9OlGJP8MhGDeErU7zgRTeHXeubZ7uIFIalFbHi6gFnBHaUWZ3N8Cf2pWbQqtoAro2uKHwOC9+Q+ED8Pie4xcBxMEq0dqfRtn4P+r+vG5sswcOnqmjfsLRlSJ8tznNjqEi6I5jMnrRLympEWubXwDPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739840685; c=relaxed/simple;
-	bh=aaoQ8gKgzJPVqQSmP8gQjMPdFUpl9dkYQ0T4GzWMGEU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=syNFFRAaBQM8eSiCYf3z9FMDmDIP0YoK/nm/CF7JShICyyBWifpCXKiiAG3MABLhMOUBouO6Z8Xw8CG1kfATfADjVxC333GnZ2tdr8Wltc0U25cRdJcLlIHJ1j/tInsUrLZP5J4RwJqn/B/K4Ok9mfXMHdMCTpTRvB8Z3uwqQ+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AhWYI/XA; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739840684; x=1771376684;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aaoQ8gKgzJPVqQSmP8gQjMPdFUpl9dkYQ0T4GzWMGEU=;
-  b=AhWYI/XA9P5c46DS5XLYVqi//f/r458BNc/QZIxZbshn0jAJSXNgGbHP
-   WzPEKL0NuxHfi4vKZllbSYBXTiatGxiGpT02Ruys2yQqDNBnN9pqJ4MZU
-   4+KfP6BwfB2y/iwejVR3+lQx3KoZh9O10L/604xBTmMvT7pwnb8P/9nNF
-   MxhUf2Pvc8sTbrQMDPgZd8NqJU4gVGbcdT2/vGouwjGLunEs6ghi1uYPE
-   /yvhLYMc5B/eYS8POc4voP4qwszE2974GCPWfVyWSNRGyUuoiR9p3gRWv
-   6tKNOSJKMMzk0B1YYjDtlu3ANwHA+/YmqFRtB+9TFTfIOsGQbd6f+TnWc
-   A==;
-X-CSE-ConnectionGUID: PiEvdFp9Qi6P9/S30qoX1Q==
-X-CSE-MsgGUID: rXhrls/KRZKpTMuQymRGVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44450371"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="44450371"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 17:04:44 -0800
-X-CSE-ConnectionGUID: y0CgsUqRQZKsWXnRUlndvg==
-X-CSE-MsgGUID: xDGLRu3gRn+SMexcvUh5ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="114894122"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa009.fm.intel.com with ESMTP; 17 Feb 2025 17:04:42 -0800
-From: niravkumar.l.rabara@intel.com
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	niravkumar.l.rabara@intel.com,
-	nirav.rabara@altera.com,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1739840854; c=relaxed/simple;
+	bh=DjZbwtUu4qc5qmET7mQWy/0oHXhFFINUI5DZ7Y9r+3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UlEMX5pCwRSoa4ho4bHjlS6ZZcVkjO/+TM9212NXiF1dy5tG3dki0C86mm109oFzzt6ligrNI/WzUe2mqqPWz66qByMrMbk+yEbo2IDfmX6j9TWtn/mdrngnDEnOV65qqYVG5DLxI/iG5iwcXTr9WLzaG/kL6LaJPt9SLzYD4pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gyop8Ast; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2f833af7a09so7089842a91.2;
+        Mon, 17 Feb 2025 17:07:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739840851; x=1740445651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLt+zHrqCVEKW2UCu+GntMnRPnZVGS1Cdi5ly3ppDJo=;
+        b=Gyop8Asth0QT12uco12vYf8AlP53COy5auXpeD4f31OG0YQ6dpzQIJegvP9JLsYm8L
+         A4bpnYlK+Ekbckk1PZy9DHSWhRnriumC7DGEBF1xXlA7wEsgbF6Guj1jd2czpACqeOU+
+         hnSai9qriAxw42be5XkK5GJWwoWQwQ9pxgwLXkeKho3Rzqw5OJtfcwnCb7kjTnAGdhsG
+         S+Dl0WKdLkt0WkpayBykGbCy2w3ybMdDXtLnxF3iy/oQ0rWT7zLJshAgyl4AJN45Owd2
+         hVg2S0hYvLrD9mvCTLrxgz7+hW6N+Z7xNeP1jy4AKIMAk3gsJ21b94I45QViGgcp126a
+         tHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739840851; x=1740445651;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iLt+zHrqCVEKW2UCu+GntMnRPnZVGS1Cdi5ly3ppDJo=;
+        b=ja+y8z5nv/FGWUs9tubmRDZufxadaPxvUtlfbgjEZ44WTSckoHTtvzsYjUZMaR03oQ
+         1HfRhnOKg7O+DVgg68/3X0QY1ZwXV+9jztIkD5d2ReALAN/AedDnet1Je26ebEucEB7l
+         8W/8nhjlwb/jp/v4ZQ2eG5Sv1VScKsDufOZ93UeSxTRjrUqNHV3zi+THOnpfQHnLsNp0
+         evVaWldJdeIdYT0L1u2aTxqWQ4tyaWj5pcHlPbApukf2UTWesusLnpzVSC4M+8DGSiNq
+         /BLZ+l+rXX/Dwx28cXOIuXc2+MHRFvR4/AhxQ8Xk4xCiiAuVohuAYgoZ6f5KQYaJU9jY
+         +N0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzzNrWp2vECheIaRW0SfTfYkNlOWWFm7xP218VpNKOksb6NXpDWB4H9Xa8pcgFzaKBlcdvnC7R12NS+eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmqoPv4jjfunUU1Rw9xdFuYh7xoutWU8SG3lHcpwagKToG7bfb
+	I6CuXh9jjZIE2hURZxKVmIAFYEUDxbn/yJ2Uu54IfCQXysXmBMOyF223J7+UBqM=
+X-Gm-Gg: ASbGncv6UNhljNo2+nnrMnGg2Y7bwQRSVcI57s6tPu9sjJD5uG9b6k5YrMV/8G2MgLA
+	yYdLAHM6gft29ey6JLdx7HR+uuBJzBJQEXTbQenMKWH8bdn2f+yvVHmLTtc7ye2OGsLuAYs/ExS
+	An0C2k48UcvFrN4drxW5GaHr8xBpb3vE5ap4JVcI4VZZMaT8m8Jsrn7R047uTLUQSdUeLbJr7Dv
+	Wrn/8DR1TR5KG3GiFTT7oo++1I0UInL/Uu0p84ZscwrTC+4cfpBn4PE2HRPVhnjZ1MAHbh70jwA
+	PY+bVuVz
+X-Google-Smtp-Source: AGHT+IH4OoVAMaTevbSOD4NAnydCBLKXfYO6Y/ztVCktUzZz3JGCobsK7cQQj7+kj/OqnerR0+uXMA==
+X-Received: by 2002:a17:90b:54c7:b0:2ee:693e:ed7c with SMTP id 98e67ed59e1d1-2fc4115400fmr19719010a91.33.1739840851433;
+        Mon, 17 Feb 2025 17:07:31 -0800 (PST)
+Received: from test.. ([47.246.98.206])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2fc13ad2d00sm8747614a91.21.2025.02.17.17.07.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 17:07:31 -0800 (PST)
+From: Jin Guojie <guojie.jin@gmail.com>
+To: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arm64: dts: socfpga: agilex5: add led and memory nodes
-Date: Tue, 18 Feb 2025 09:01:06 +0800
-Message-Id: <20250218010106.3536113-1-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
+Cc: Jin Guojie <guojie.jin@gmail.com>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] [PATCH v4] cgroup/cpuset: fmeter_getrate() returns 0 when memory_pressure disabled
+Date: Tue, 18 Feb 2025 01:03:16 +0000
+Message-Id: <20250218010316.1950017-1-guojie.jin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+When running LTP's cpuset_memory_pressure program, an error can be
+reproduced by the following steps:
 
-Add LED and memory nodes, and enabled GPIO0 for Agilex5 devkit.
+(1) Create a cgroup, enable cpuset subsystem, set memory limit, and
+then set cpuset_memory_pressure to 1
+(2) In this cgroup, create a process to allocate a large amount of
+memory and generate pressure counts
+(3) Set cpuset_memory_pressure to 0
+(4) Check cpuset.memory_pressure: LTP thinks it should be 0, but the
+kernel returns a value of 1, so LTP determines it as FAIL
 
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+This patch modifies fmeter_getrate() to determine whether to return 0
+based on cpuset_memory_pressure_enabled.
+
+Signed-off-by: Jin Guojie <guojie.jin@gmail.com>
+Acked-by: Michal Koutný <mkoutny@suse.com>
+Acked-by: Waiman Long <longman@redhat.com>
 ---
+ kernel/cgroup/cpuset-v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v3:
-  * Update commit log for better clarity.
-
-Changes in v2:
-  * Add mising blank line.
-  * Changed the name to led-0 instad of led1.
-
- .../boot/dts/intel/socfpga_agilex5_socdk.dts  | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk.dts
-index c533e5a3a610..e106e48f1e3f 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk.dts
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk.dts
-@@ -15,6 +15,26 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			label = "hps_led0";
-+			gpios = <&porta 11 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the reg */
-+		reg = <0x0 0x80000000 0x0 0x0>;
-+	};
-+};
-+
-+&gpio0 {
-+	status = "okay";
- };
+diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
+index 25c1d7b77e2f..14564e91e2b3 100644
+--- a/kernel/cgroup/cpuset-v1.c
++++ b/kernel/cgroup/cpuset-v1.c
+@@ -108,7 +108,7 @@ static int fmeter_getrate(struct fmeter *fmp)
+ 	fmeter_update(fmp);
+ 	val = fmp->val;
+ 	spin_unlock(&fmp->lock);
+-	return val;
++	return cpuset_memory_pressure_enabled ? val : 0;
+ }
  
- &gpio1 {
+ /*
 -- 
-2.25.1
+2.34.1
 
 
