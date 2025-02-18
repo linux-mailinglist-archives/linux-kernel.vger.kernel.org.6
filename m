@@ -1,104 +1,137 @@
-Return-Path: <linux-kernel+bounces-519525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFA7A39D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:36:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78472A39DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2028C188B14E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAD9168AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3926FD98;
-	Tue, 18 Feb 2025 13:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA30426A1B8;
+	Tue, 18 Feb 2025 13:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4hpbTSP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F0FzXyX2"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C58B26FA44;
-	Tue, 18 Feb 2025 13:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5D326A0E0;
+	Tue, 18 Feb 2025 13:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885350; cv=none; b=uXz95558ODBy5MR1dGEjGLI453Y7yLFFilS22g6PRcwvC0XF7Q8QmZzDpSBZpcmtMtu4qGG5lqQfgefDCkyLgfmZ6diqpR9ZPYUd5YxCmns9a/s98WdkUvEQfhm6tq8C1CEdNqyV9yhbIUOSzEE3bNrEl1OP4bHtERQBVNdeWQM=
+	t=1739885375; cv=none; b=dyvRsaTRRhwbYzcrgrT7a2ZkC6d+SpLj2sIf8F2RB5ora3dDF6CqM53yYNNRN047qeT1ahYUTPzso2GzH5bRIdFS37xdMcP9WLIZmmVTbQEZfhtXTW/+vGyPHXE8mqf+KiGZ0HEaBMFJCr3e6NeNy6SgrNyfqLfCEUYMGPSxrkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885350; c=relaxed/simple;
-	bh=D+giwnx2fldVt2NPCnwByiTTAhof1N0hesdxo6LjBJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQsQ2hI/fUD5LIOEdezEzyGf/nT6xaIcaraYh1xSL9OoYQk7fxno6bN827V4wGk7dwYCcmSMYNUkyc6TTzYtpG09fv8KxsHcbiFh0O01uIFckjrS1KyGgmOUpHfY8ijVupU3cUCmaj9N0Kdk3+msdXwURIi5QT1W4LFzos65t8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4hpbTSP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD522C4CEE6;
-	Tue, 18 Feb 2025 13:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739885350;
-	bh=D+giwnx2fldVt2NPCnwByiTTAhof1N0hesdxo6LjBJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d4hpbTSPtTh3MMtyZt88Vf46BaWKT+sSyPtxQJOZqD89A4ZQO8FsNVncvcAR0Lhz5
-	 /nFUVxvSTo1BXCTN23SgZDvUOE33B2Li0fZsPelUexQlviKxP/aM8oaeY5FcY/Y2FM
-	 lf8s495WAAbSt7lBcgTW2XhIfbFQtbSyWMu9yveB1RQvJboxBzdfYNFArpytp079Cn
-	 DP8Z1sJSYTZnrqRbuUn9DPsNn+HxZhx4abMPO+6QvN689nHDFsuS56VcmBVokRu55C
-	 s/PMGVlT6YzQkJKAsNQ9l5+2ZEDWFnLSjwoVV2MQBw15SaHVzcZuP2+X6TFXOj2Qu8
-	 GCs/vV5uSsDvg==
-Date: Tue, 18 Feb 2025 13:29:05 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Peter Seiderer <ps.report@gmx.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Artem Chernyshev <artem.chernyshev@red-soft.ru>,
-	Nam Cao <namcao@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH net-next v5 8/8] net: pktgen: use defines for the various
- dec/hex number parsing digits lengths
-Message-ID: <20250218132905.GV1615191@kernel.org>
-References: <20250213110025.1436160-1-ps.report@gmx.net>
- <20250213110025.1436160-9-ps.report@gmx.net>
- <20250214201145.2f824428@kernel.org>
- <20250216091739.GW1615191@kernel.org>
- <20250217094740.76a25671@kernel.org>
+	s=arc-20240116; t=1739885375; c=relaxed/simple;
+	bh=Qhw7xz3QE6C5sz/1TvP2I0rfQnWItujEDhsFqK78yGc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qtRydnSYa0WxRyZAaNB02BXGkAqNj/35qiWIm76WHQKFnPT9ALSvID6EshJ0me9z54kiw4DcdffnomtiWg4EfM5U/d0I12PiZXw+tJHx04kdNE+zCAkRoi1fL9pUWkAkV0adCyNRj0HYQt+Bs6QR4qivJcSu3yrfRradn+l3QcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F0FzXyX2; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739885371;
+	bh=Qhw7xz3QE6C5sz/1TvP2I0rfQnWItujEDhsFqK78yGc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=F0FzXyX2pRpCvAuq6fvRu7z2M92/3+no6svgawt51AQjO3TnfjzLlH1OrOiLLoNx5
+	 XK2vQ4i0Jkv0qTViG4WAJsBBtO+L1f3PeDSEMBq+TSx/1o7Fr0BcxmwQXn0OAzvn8+
+	 rzRRDoj678ijhDtXhK4k1wOS727PEHtQ+LG1UHGQSqdK82MsVAxZ2hqi0lWKn3Uw8v
+	 uQ8CCiIiNfTJ63+vog6Ll01N2qWRwhuMRYkZxLZaj3/5t4AKQ1BChZBXhWFaBb2Pmc
+	 39w7cKPA0tZ6/x67lcSxand4i57Rzcy9dzVjpg49KPhhU1j9VuB8c7kiJOjdnP/5qW
+	 wb7rwLAaG31nQ==
+Received: from apertis-1.home (2a01cb088CcA73006086F5f072c6a07a.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:8cca:7300:6086:f5f0:72c6:a07a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4FB8D17E0657;
+	Tue, 18 Feb 2025 14:29:31 +0100 (CET)
+Message-ID: <f5940c764af6587b97d39fdb9b64ec9bfe09b4e8.camel@collabora.com>
+Subject: Re: [PATCH 2/5] media/i2c: max96717: implement the
+ .get_frame_desc() operation
+From: Julien Massot <julien.massot@collabora.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Tue, 18 Feb 2025 14:29:30 +0100
+In-Reply-To: <20250207112958.2571600-3-laurentiu.palcu@oss.nxp.com>
+References: <20250207112958.2571600-1-laurentiu.palcu@oss.nxp.com>
+	 <20250207112958.2571600-3-laurentiu.palcu@oss.nxp.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217094740.76a25671@kernel.org>
 
-On Mon, Feb 17, 2025 at 09:47:40AM -0800, Jakub Kicinski wrote:
-> On Sun, 16 Feb 2025 09:17:39 +0000 Simon Horman wrote:
-> > On Fri, Feb 14, 2025 at 08:11:45PM -0800, Jakub Kicinski wrote:
-> > > On Thu, 13 Feb 2025 12:00:25 +0100 Peter Seiderer wrote:  
-> > > > Use defines for the various dec/hex number parsing digits lengths
-> > > > (hex32_arg/num_arg calls).  
-> > > 
-> > > I don't understand the value of this patch, TBH.
-> > > 
-> > > Example:
-> > > 
-> > > +#define HEX_2_DIGITS 2
-> > > 
-> > > -		len = hex32_arg(&user_buffer[i], 2, &tmp_value);
-> > > +		len = hex32_arg(&user_buffer[i], HEX_2_DIGITS, &tmp_value);
-> > > 
-> > > The word hex is already there.
-> > > There is still a two.
-> > > I don't think the new define has any explanatory power?
-> > > 
-> > > Previous 7 patches look ready indeed.  
-> > 
-> > This one is on me. I felt the magic number 2 and so on
-> > was unclear. But if you prefer the code as-is that is fine by me too.
-> 
-> I agree that it's a bit hard to guess what the call does and what 
-> the arguments are. To me at least, the constants as named don't help. 
-> We can get a third opinion, or if none is provided skip the patch for
-> now?
+Hi,
 
-Yes, I see your point.
-No objections from me to skipping this patch.
+On Fri, 2025-02-07 at 13:29 +0200, Laurentiu Palcu wrote:
+> Since the max96717 serializer can work with various sensors, we need to
+> implement the .get_frame_desc() callback to get the VCs and DTs for the
+> incoming stream(s).
+>=20
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> ---
+> =C2=A0drivers/media/i2c/max96717.c | 21 +++++++++++++++++++++
+> =C2=A01 file changed, 21 insertions(+)
+>=20
+> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> index b1116aade0687..6a668a004c717 100644
+> --- a/drivers/media/i2c/max96717.c
+> +++ b/drivers/media/i2c/max96717.c
+> @@ -575,12 +575,33 @@ static int max96717_disable_streams(struct v4l2_sub=
+dev *sd,
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +static int max96717_get_frame_desc(struct v4l2_subdev *sd, unsigned int =
+pad,
+> +				=C2=A0=C2=A0 struct v4l2_mbus_frame_desc *fd)
+> +{
+> +	struct max96717_priv *priv =3D sd_to_max96717(sd);
+> +	int ret;
+> +	struct v4l2_mbus_frame_desc source_fd;
+> +
+> +	if (pad !=3D MAX96717_PAD_SOURCE)
+> +		return -EINVAL;
+> +
+Please check priv->source_sd first, we support the case where we only have =
+a test pattern from
+the serializer. Then we can simply return the result of v4l2_subdev_call.
+
+        return v4l2_subdev_call(priv->source_sd, pad, get_frame_desc,
+			       priv->source_sd_pad, fd);
+
+> +	ret =3D v4l2_subdev_call(priv->source_sd, pad, get_frame_desc,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->source_sd_pad, &source_fd)=
+;
+> +	if (ret)
+> +		return ret;
+> +
+> +	*fd =3D source_fd;
+> +
+> +	return 0;
+> +}
+> +
+> =C2=A0static const struct v4l2_subdev_pad_ops max96717_pad_ops =3D {
+> =C2=A0	.enable_streams =3D max96717_enable_streams,
+> =C2=A0	.disable_streams =3D max96717_disable_streams,
+> =C2=A0	.set_routing =3D max96717_set_routing,
+> =C2=A0	.get_fmt =3D v4l2_subdev_get_fmt,
+> =C2=A0	.set_fmt =3D max96717_set_fmt,
+> +	.get_frame_desc =3D max96717_get_frame_desc,
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct v4l2_subdev_core_ops max96717_subdev_core_ops =
+=3D {
+
+Regards,
+--=20
+Julien
 
