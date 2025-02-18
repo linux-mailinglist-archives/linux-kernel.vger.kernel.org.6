@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-519622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF0CA39FD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:32:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBD9A39FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA323A55D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65C01889B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A9226AA81;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04CD26D5C3;
 	Tue, 18 Feb 2025 14:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z45Xk+GA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D4026AAAA;
-	Tue, 18 Feb 2025 14:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D649726A1A6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888865; cv=none; b=mEBerpG7jP1cmcvEkCBkUKFuPNwtGkTUo5ZUP+NXiYfWG4FoMaGXNYcbG5DFHdJCOJaajASF19WUs8aoneqLIG+l3khoEaGXpLjbfeIKvuDX0Oc4C5/VgYTqGEDOD643VSSmxK+gDPbDtTBg1pLGqi0q/anEW+cC1GhfV2kCnFA=
+	t=1739888866; cv=none; b=OZxXxQmEPFA+8qoi9E7b+h9y4rhuduyuNPa42H8T1sONrrW5M/gHINO7uDVx2vMijNeSq1MJhtr5ZCH08Lis1AcG7m3Dct0V0KyEQYb7Z8P7EP+8Ex7KA12v6SsUE1Blz4Q7lI1YSaW3Su6XJWGvcwHPbEp1yjseTpryEigDCpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888865; c=relaxed/simple;
-	bh=3rgyOH9/26VcayvUAl8fp+rwStdFKTqhMgSME8hwOF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nDXZbblcHKlNE5BEO7egH5PfZ/aiIVtMqbbX6SDLZXuNq9zyKtXUpuM8BjNQxlm4QMS7BuDwFWQoUPezdt1kDk0sBkdKTh6hzDtetBwhoC3T+kGo4JlRTjVKeL+c1DXAmJfUWWp1iNcedknMx0A21C5zTzmoxkJUpP27udV1ugI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z45Xk+GA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51ICp3sp003065;
-	Tue, 18 Feb 2025 14:27:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n9StW93AuXkZCvTTk7MV8gn/vtGlMrxPbQD13sZg6xE=; b=Z45Xk+GAQNqay8hU
-	5vFIZsDPNjyqV1BQLfMXCzRRAMAtvqwhUWSU6DUtkPb4LF4Tav0C1Zrj2jWbHO2p
-	YFOu6KuOuNgh7EqOfYx0brTd85UcMczUoBuPsqUNQeNMdgzu6Pu9q1N56iF/iAhX
-	59m8f9LAOn8aJCMhKllChlHm4u+2QvCCkmdKGur0m66aNImxN/q3MMUM3CWwydHD
-	CKrg+l2cK96KCAHGMAva7yqUpWLghqQ3Nr0zmXZE0fGHYf/uYSoGnOQc5eBBye5h
-	hEOjdH+zqbRHUhSqrHUcUNpW7Ra5LC683tx1VPfOhHxGeA6RuWbwM9wnR0Odr1UD
-	+/iiuQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7tw587-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 14:27:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IERbJ0026562
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 14:27:37 GMT
-Received: from [10.213.98.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
- 2025 06:27:33 -0800
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-Date: Tue, 18 Feb 2025 19:56:50 +0530
-Subject: [PATCH 5/5] arm64: dts: qcom: Add MXC power domain to videocc
- nodes
+	s=arc-20240116; t=1739888866; c=relaxed/simple;
+	bh=S4XgtmNUByEmZZeVuy1IrEWQ986N2dY34e1tfciwELM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQTZbzN88zB2GIFGklQy1jZqpVqwOiS78BFYyHDQXPkfDH4mrFiibaUgaKdrgzwUNsT8KS/YyB8u8OEondQvxS8q8nr6gDu3wPH7c3B3N2hhIN9C/6JPY5+VR17uak1eL7PfFlrZQ9dhzRzO8H2oan4FPKIVGQFGb7dbTAI6PME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkOZZ-0004om-Gj; Tue, 18 Feb 2025 15:27:41 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkOZZ-001bjn-0N;
+	Tue, 18 Feb 2025 15:27:41 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C0AF33C5DE5;
+	Tue, 18 Feb 2025 14:27:40 +0000 (UTC)
+Date: Tue, 18 Feb 2025 15:27:40 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Matt Jan <zoo868e@gmail.com>, 
+	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com, linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+Message-ID: <20250218-daring-melodic-meerkat-3f5953-mkl@pengutronix.de>
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
+ <20250217190404.354574-1-zoo868e@gmail.com>
+ <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
+ <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
+ <b174cc40-d08b-42a5-89fc-9fdac2b15ea9@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250218-videocc-pll-multi-pd-voting-v1-5-cfe6289ea29b@quicinc.com>
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
-In-Reply-To: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Vn4iktO0PAaQ8dE0xNnSJHtCQY_ngKHR
-X-Proofpoint-ORIG-GUID: Vn4iktO0PAaQ8dE0xNnSJHtCQY_ngKHR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_07,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- mlxscore=0 mlxlogscore=470 clxscore=1011 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502180109
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xt57c3apzbfb5oxv"
+Content-Disposition: inline
+In-Reply-To: <b174cc40-d08b-42a5-89fc-9fdac2b15ea9@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Videocc requires both MMCX and MXC rails to be powered ON
-to configure the video PLLs on SM8450, SM8550 and SM8650
-platforms. Hence add MXC power domain to videocc node on
-these platforms.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 3 ++-
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+--xt57c3apzbfb5oxv
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+MIME-Version: 1.0
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 9c809fc5fa45a98ff5441a0b6809931588897243..4f8dca8fc64212191780067c5d8815e3a2bb137f 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -3136,7 +3136,8 @@ videocc: clock-controller@aaf0000 {
- 			reg = <0 0x0aaf0000 0 0x10000>;
- 			clocks = <&rpmhcc RPMH_CXO_CLK>,
- 				 <&gcc GCC_VIDEO_AHB_CLK>;
--			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>,
-+					<&rpmhpd RPMHPD_MXC>;
- 			required-opps = <&rpmhpd_opp_low_svs>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index eac8de4005d82f246bc50f64f09515631d895c99..a039ae71e1b7bba8124128d19de5e00c65217770 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -2889,7 +2889,8 @@ videocc: clock-controller@aaf0000 {
- 			reg = <0 0x0aaf0000 0 0x10000>;
- 			clocks = <&bi_tcxo_div2>,
- 				 <&gcc GCC_VIDEO_AHB_CLK>;
--			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>,
-+					<&rpmhpd RPMHPD_MXC>;
- 			required-opps = <&rpmhpd_opp_low_svs>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 86684cb9a9325618ddb74458621cf4bbdc1cc0d1..32af2a0f7a0030f155b7d8c93faeffa384a42768 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -3524,7 +3524,8 @@ videocc: clock-controller@aaf0000 {
- 			reg = <0 0x0aaf0000 0 0x10000>;
- 			clocks = <&bi_tcxo_div2>,
- 				 <&gcc GCC_VIDEO_AHB_CLK>;
--			power-domains = <&rpmhpd RPMHPD_MMCX>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>,
-+					<&rpmhpd RPMHPD_MXC>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
+On 18.02.2025 23:26:01, Vincent Mailhol wrote:
+> >> @@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *int=
+f,
+> >>
+> >>         /* initialisation complete, log device info */
+> >>         netdev_info(up->netdev, "registered device\n");
+> >> -       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
+> >> +       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
+> >> +                        sizeof(up->ctl_msg_buffer->fw_info));
+> >> +       netdev_info(up->netdev, "firmware string: %s\n",
+> >> +                   up->ctl_msg_buffer->fw_info);
+> >=20
+> > We could also use the:
+> >=20
+> >     printf("%.*s", sizeof(up->ctl_msg_buffer->fw_info), up->ctl_msg_buf=
+fer->fw_info);
+> >=20
+> > format string trick to only print a limited number of chars of the given
+> > string.
+>=20
+> Indeed. But after the renaming of ucan_device_request_in() into
+> ucan_get_fw_info(), it makes slightly more sense to me to have this new
+> function to handle the string NUL termination logic rather than to
+> deffer it to the format string.
 
--- 
-2.34.1
+ACK, makes sense!
 
+> But thanks for the suggestion.
+>=20
+> > But I'm also fine with your solution. Either way, please send a
+> > proper patch :)
+>=20
+> Will do so right now!
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--xt57c3apzbfb5oxv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0mNkACgkQDHRl3/mQ
+kZy11wf8C+c4LQWcDA8hNVoF5iYJwt+Gu5qvPzenFbzEq3vVSdX6nbcuzlomLEPG
+PDQWMiIwDEqkEG/sOKtBq+SDLLo+4YXxHh0azxTMuVN12aqtANkzUsRRGStOw7U5
+SsnfG5ffS+yQMhYaAaO0cuKCB3VidreGkkGvWgf8kjDgWuTInp0DRLEBTAXvXn1v
+imSQBcRKb2BoWvxg6VD4D0wJQJQskagVU76sDXvh237hy41h1jX6bfJrbBelGMXp
+xlxQ9J8YwfTrnduOswGVdZ60sXVaqBY13ewoqLF3U3y5J4zXfp9MhGTt7U1BW7iK
+5Nv1AjihdgIyV++QfF53Z4mI6YaCBA==
+=JsfW
+-----END PGP SIGNATURE-----
+
+--xt57c3apzbfb5oxv--
 
