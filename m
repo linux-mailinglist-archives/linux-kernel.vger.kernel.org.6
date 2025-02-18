@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-519510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC19EA39D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:32:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE3A39D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F511891721
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB36D7A4D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9385826B2A9;
-	Tue, 18 Feb 2025 13:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9A326E643;
+	Tue, 18 Feb 2025 13:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oojFB0Up"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oitTKfF7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561A26B2A8;
-	Tue, 18 Feb 2025 13:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB85A26E635;
+	Tue, 18 Feb 2025 13:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885293; cv=none; b=YBqYvyagKRV5SiKlelVHorjkV6HROiajPzeJmhwPxd96zsxnpRP53ZKaerZkdafTFNpnFP2nPlQD6Ga00bef01Mx8Pks2JdtUOFjkGOIQ05ZhH89Zk0IQ168so8hhfpVIOyPQ/BfukxgS9dA5mEuv/BqN+dtZn5MYqZpdY7IBh0=
+	t=1739885328; cv=none; b=kx74OSX8uO5ZajdWO2iAE9DMur8USxrJdlpgnW3uZGQptq+navsiuUQFcMrAw51MzLKhweWoc87SNn8tWZV202LBNR0Lu9wKe/Z3dcOlzfDPiQ74nscEyaq/GErE6vM5vLVFN2pfBYmB2gnUmer0Zk5xXRd7GRoawRcTlijoiz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885293; c=relaxed/simple;
-	bh=3m8fQyyEUwu/wXRv42ZRgQGKOJiZ2h/DVDw/+PrbPak=;
+	s=arc-20240116; t=1739885328; c=relaxed/simple;
+	bh=5zKmv+EsEhW1FYM93252zgD+dCvrJvBVgpU7OYF8fdU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pTxy25DdGyQ3SCphdhgNBhS1sbSF4fF9QxJ/D54H0VWUGx5SthTcR0EbCgsC6D2K9L43F0ZUERMoeaFmLBKH/V6t6KyhEo6EerdRmdvq0M9ydpKMnfQdOLP7UtVyjTCBVavhHsZwfhRNxs0f4hz7VmGLWSZXTy3UjcPK1AIVXYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oojFB0Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26E2C4CEE9;
-	Tue, 18 Feb 2025 13:28:08 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=EodF2rBkzRQ7k+zbNlIoKqYbQoo/WwHrcoKMmjGKfUT0MgGUzO0K8NPoIudg3e/THlcjXq2TRklKXBnFXZ6uZSc48OnH/4sWZtiR5w329Va0owW4xUqb2h0TH82977PDRqwluVwEjtUzKLhdd2Gg8U+ozAWj5WnxFE511FSNufs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oitTKfF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E062C4CEE6;
+	Tue, 18 Feb 2025 13:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739885292;
-	bh=3m8fQyyEUwu/wXRv42ZRgQGKOJiZ2h/DVDw/+PrbPak=;
+	s=k20201202; t=1739885327;
+	bh=5zKmv+EsEhW1FYM93252zgD+dCvrJvBVgpU7OYF8fdU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=oojFB0Up4YkV669kWHdw7XaNbThpcKkyKlJyjcKvq3DJzGWz6w1sI2k25Nd39ovaf
-	 NLTm2x7jMNWgBw5gW6lDCyxdvBHIFP/dB95AicR5XCmFiiux8JrJiZR68wmC0oFhtw
-	 h4Q+9+09TIJvDSXcNUDtHKMdgtsmI1xZoYb3lnQKYkiokfdwc0wWdwkt1DK+E0deVF
-	 mc2apgBOgsIdwRVJG1nAnr2lNDJMC541Z5KiGyGKfoJDOY/nYbN+jJKhxvvR3tQ6Mp
-	 ui/cIWfHJB9F+q58M+Qigf/AeohH1Yp9AZOo+54tG6/1qDlqb5hEgXq2QMquktcLaO
-	 1w2sn5fTXHq2A==
+	b=oitTKfF7Z/+2zadTAfeF9FNl5r2SHiM3vti+nv+Pkk9u3XtHbQwD1o9vYfCIOZ/9/
+	 +m6+IMf2phg8uIXNqWX0O448Bavz0mnQ3WQhEpAgQ2hJd1o9IF8xOWIZ5Whmov+Nls
+	 S9ccFK8bTv0ymFHwVL2x/XE4igYMnbhwEvdw4yvQrgwPiMNptKkH3tjAKd0g/4PUvt
+	 k0DvrDu8MsLmeVqzoIHqBF/Igf6fxVSst6CoR6K6udhFHCgKEuD1upWYqBfwJZU9gN
+	 Q/+T3l2KrdW9Z2D4wCDH1AAlgRZb6H+58lW5nnlhUiILvSlRCBM1Eexz5AmQAvp9n3
+	 JCvaQZPvwU+Ig==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 18 Feb 2025 14:27:10 +0100
-Subject: [PATCH v8 05/14] rust: hrtimer: allow timer restart from timer
- handler
+Date: Tue, 18 Feb 2025 14:27:11 +0100
+Subject: [PATCH v8 06/14] rust: hrtimer: add `UnsafeHrTimerPointer`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-hrtimer-v3-v6-12-rc2-v8-5-48dedb015eb3@kernel.org>
+Message-Id: <20250218-hrtimer-v3-v6-12-rc2-v8-6-48dedb015eb3@kernel.org>
 References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
 In-Reply-To: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, 
@@ -69,94 +68,72 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
  Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2433; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=3m8fQyyEUwu/wXRv42ZRgQGKOJiZ2h/DVDw/+PrbPak=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBntIqz2gUH5s8VTdU5zwWYcKc8wrTt/Am6FW7RL
- b6BHWOfanaJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7SKswAKCRDhuBo+eShj
- d6lFD/9kF0CQioS0AzCQ9jYv5jIoGEJvPRrKkhsRm1QwQG/uSoszsFnhiCdya1B1XY15vO00wjA
- zuv67CLDNLj4eWPrWwbV4ViQAKrARkvFgSeUNsFP39NXs+44fcVlEjBnYF9XFvZOqDXygdjs0A/
- iEzxqMWJQJXPACbgWIc1tGFtz41UPdw4p+yII6EVM05IobbNEipKyW69dqf0j2fAuSZmCvasL9o
- TLNmASsydn64aOnS5bJV2jCwTgmn4udV064wojl3Yk/x2hQRXpj6ZmZGCuE2DT6gs2SyKH4Sbvm
- W7UMwJvIQJSRa3TKJcWxr+odpUOL5oFkDPCBx8TsCNNrojk/WGTpNV/6U9hXWpjHPOdYD6QaYYH
- 2p4wq1H9AkN3r+/ItqxCPbvqwE8/6iMkW9z1A8muWsZmly/kVYV6S25uvnDqZkCaAqd1GnDTAK6
- ukUJCJuPuCNSb8NGlLX0V1HTtRqyke+3GtEvSueyy7XsChep/JwLXTmLEyDdIObYFhPqqQsnU18
- T4Ll6dSvPKQwJt2+K2Rd51bvpYSJGTXRcUmFXjIqrNlpY/1lXD0+Z8F46stRAheZ69v/47Nvjsq
- c2IIx+Zr6Fj1lReB4QQKQyagO6auqmLr+/CdK1lFDnyneRfEeMwNWEr/PDJkM+bPPJbpcuwItZg
- KX8LgXebRjkpd6Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2069; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=5zKmv+EsEhW1FYM93252zgD+dCvrJvBVgpU7OYF8fdU=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBntIq0OJaXqxS62j07wi5/IylZb66zoyJOV8Xr4
+ +bvuk2yc9+JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7SKtAAKCRDhuBo+eShj
+ d6YBEAC6aFhdy1ccGG1znaRc0mI3LCTPOEmpVuk7wTYbx3AqM8u8vggaUbWnT6XG8pr6oMH+Sx4
+ q9KMrSATex8oC8fsR7WZ/prg7pTqJmLSxx8AbcElYxfu21+Ii3/OxP/TyGfP2TEGJfmmPhU14ba
+ fPO8QmzIB573TE+tmmOdqgWzP3j1VVYrvT5lyQgWuOm7hDk2aH+bEb5E/szTSCUwO7FvBOhbbej
+ Fq3BRBC3+ocq12uOE4sNCoPSC8ayhOhMbKGBitCMbuHmtbtgQaP7cgKRWrjU/m+9RF6DgfPtCGk
+ CL+nWrn2ZmSdnijjZfGvOP1s0ARu8ldtbOdLNEcCP99lNraED1qkaEqUhhGF9zsANvGJObFj4xq
+ +xRvC6Wl9aJSMXQ0OrnB2IqopbTVAgfO4Zctz5fc9ebUe495bPCFJrhJk0iKtKvPRNloo8WcvCX
+ G2qnWvTptXZblxOUeQStnJEQnWxMN6uSmMmHO/dwwXwxEWBiKlshEGqscnerUm+jD0Lxge4Brna
+ yJQHTbbqeNqhFCRYmS9g2PFah6sJahsf+JfQLiIG+R7LAYd/R8ifnARa8MjZT7lOnbz1azdk/oI
+ NoYnfLSVEygEUEtGv95gdbnZcRls4bvOiYGmvoGCelef7BbveSGdxkIEZsfEiGT6uUvSOBbTIwD
+ AF1ZCeLeb7BYCSA==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-This patch allows timer handlers to report that they want a timer to be
-restarted after the timer handler has finished executing.
-
-Also update the `hrtimer` documentation to showcase the new feature.
+Add a trait to allow unsafely queuing stack allocated timers.
 
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/time/hrtimer.rs     | 28 +++++++++++++++++++++++++++-
- rust/kernel/time/hrtimer/arc.rs |  4 +---
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ rust/kernel/time/hrtimer.rs | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index b2a3130bc21d7..e342193f985eb 100644
+index e342193f985eb..196794089f033 100644
 --- a/rust/kernel/time/hrtimer.rs
 +++ b/rust/kernel/time/hrtimer.rs
-@@ -183,7 +183,7 @@ pub trait HrTimerCallback {
-     type CallbackTargetParameter<'a>;
- 
-     /// Called by the timer logic when the timer fires.
--    fn run(this: Self::CallbackTargetParameter<'_>)
-+    fn run(this: Self::CallbackTargetParameter<'_>) -> HrTimerRestart
-     where
-         Self: Sized;
- }
-@@ -278,6 +278,32 @@ unsafe fn start(self_ptr: *const Self, expires: Ktime) {
-     }
+@@ -157,6 +157,37 @@ pub trait HrTimerPointer: Sync + Sized {
+     fn start(self, expires: Ktime) -> Self::TimerHandle;
  }
  
-+/// Restart policy for timers.
-+pub enum HrTimerRestart {
-+    /// Timer should not be restarted.
-+    NoRestart,
-+    /// Timer should be restarted.
-+    Restart,
++/// Unsafe version of [`HrTimerPointer`] for situations where leaking the
++/// [`HrTimerHandle`] returned by `start` would be unsound. This is the case for
++/// stack allocated timers.
++///
++/// Typical implementers are pinned references such as [`Pin<&T>`].
++///
++/// # Safety
++///
++/// Implementers of this trait must ensure that instances of types implementing
++/// [`UnsafeHrTimerPointer`] outlives any associated [`HrTimerPointer::TimerHandle`]
++/// instances.
++pub unsafe trait UnsafeHrTimerPointer: Sync + Sized {
++    /// A handle representing a running timer.
++    ///
++    /// # Safety
++    ///
++    /// If the timer is running, or if the timer callback is executing when the
++    /// handle is dropped, the drop method of [`Self::TimerHandle`] must not return
++    /// until the timer is stopped and the callback has completed.
++    type TimerHandle: HrTimerHandle;
++
++    /// Start the timer after `expires` time units. If the timer was already
++    /// running, it is restarted at the new expiry time.
++    ///
++    /// # Safety
++    ///
++    /// Caller promises keep the timer structure alive until the timer is dead.
++    /// Caller can ensure this by not leaking the returned [`Self::TimerHandle`].
++    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
 +}
 +
-+impl From<bindings::hrtimer_restart> for HrTimerRestart {
-+    fn from(value: u32) -> Self {
-+        match value {
-+            bindings::hrtimer_restart_HRTIMER_NORESTART => Self::NoRestart,
-+            _ => Self::Restart,
-+        }
-+    }
-+}
-+
-+impl From<HrTimerRestart> for bindings::hrtimer_restart {
-+    fn from(value: HrTimerRestart) -> Self {
-+        match value {
-+            HrTimerRestart::NoRestart => bindings::hrtimer_restart_HRTIMER_NORESTART,
-+            HrTimerRestart::Restart => bindings::hrtimer_restart_HRTIMER_RESTART,
-+        }
-+    }
-+}
-+
- /// Use to implement the [`HasHrTimer<T>`] trait.
- ///
- /// See [`module`] documentation for an example.
-diff --git a/rust/kernel/time/hrtimer/arc.rs b/rust/kernel/time/hrtimer/arc.rs
-index d1c90631d0036..109eded0e73be 100644
---- a/rust/kernel/time/hrtimer/arc.rs
-+++ b/rust/kernel/time/hrtimer/arc.rs
-@@ -82,8 +82,6 @@ impl<T> RawHrTimerCallback for Arc<T>
-         // timer. This `T` is contained in an `Arc`.
-         let receiver = unsafe { ArcBorrow::from_raw(data_ptr) };
- 
--        T::run(receiver);
--
--        bindings::hrtimer_restart_HRTIMER_NORESTART
-+        T::run(receiver).into()
-     }
- }
+ /// Implemented by [`HrTimerPointer`] implementers to give the C timer callback a
+ /// function to call.
+ // This is split from `HrTimerPointer` to make it easier to specify trait bounds.
 
 -- 
 2.47.0
