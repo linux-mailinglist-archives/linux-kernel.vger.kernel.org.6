@@ -1,130 +1,300 @@
-Return-Path: <linux-kernel+bounces-519534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A2FA39DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:42:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A827A39DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7B67A4A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2873718949BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF27F269D03;
-	Tue, 18 Feb 2025 13:33:13 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B5526A0AF;
+	Tue, 18 Feb 2025 13:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aPxKwgPs"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2072.outbound.protection.outlook.com [40.107.220.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B060623BF9A;
-	Tue, 18 Feb 2025 13:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885593; cv=none; b=lO42VZCBjSgNmrPGOCk+OhuVfx23vXppJiYFB0G8spXRv9mdjoTEq6JoQRHfCoqITXAd78HabHl1RQz4KMn3NVQywKIpWcu+3FSkaehoHMb5AL81Rix6c7UFDG48TELz9haE3lipctBOFbO4caMR4LNVc9CStJxH9AWBit4sVw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885593; c=relaxed/simple;
-	bh=zw9wPD0cZ2Lg1Lu+CaJQbG9ZVlJ4oAHyJaPkVTDGwck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gP6p8moEBvOuc0ijC0w/jSsRq78mx/t8CG9QjgMrssxEwcUDjumwHbBTrLf8xMU5ggWulb9+4uLAP9rIoLgUBu6xygGKRj8ZFAH6hoSz9LGwI8JDRrWwKKAjlAmFO6Z3va9ekwAW/pKLGpt+DIvvLY7lwA4BBTwjdqveLh6+bt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb90f68f8cso448455166b.3;
-        Tue, 18 Feb 2025 05:33:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739885590; x=1740490390;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWiUlVTiHOeTkc4pIfg7w83qDgdyows487uF1rjzqiU=;
-        b=qM5/T9GE6GodZ21wedeB25hK6aP/rIXEUhXYYDgXNc31CfhtgPGyO9+3lTPW0RSDhz
-         CjEsOuINR9xv2jY9OySISRHtcJ9cBXJK3fiduKtJkusC/tcLIQY/RJYKEi4pu6Pqev1D
-         +TDFlwZzpCJe8Ip+knnPKOm6ux9NShK9fE8GeeONUcTd6FBo28lFpwBfP+/OixcZZfLk
-         Spcz1N1Ep0Wv1pnNyMfa5jjCC6KyYhhdq4vqzwkNDVIs6cHOGhezYUkaqVB2DlE9Ussr
-         2XH+fHaGL8doGlkhu8UPknoNj5VEGYx+2rmlnKuMPbTYftjWJhcLkOUm2XPcOXjO4guV
-         MY6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZFAXYQEIu6h1s5gINrT/JT0+0Kxey0w1lojDmY779gTZHsx1L5ufA7QSoRn0/9B5wMlaF+FtQrZTCL9I=@vger.kernel.org, AJvYcCWfymFj6Bc3ojHYWoJxcl7ICvC5kas6ORxSSydJFBvBg4ySlQ/QMov571GdIAPXiwspQozCG7KdECvkLFssJ/7i4kp+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGmgwrNHCf9pcsnToL0DqpGJ4GwjPYknfL9z45dWRVMNb3wob2
-	kABz5aV0ZlKXppyr3G4VoWn9igdkgJB9RVqzEoAcs+CASiIz4lq2
-X-Gm-Gg: ASbGncvAfywzWzFOHH4cEMkkipyUkPwYHgXh/7IUmdAOkA+m4eAJEsbmGcxOG+OTkb8
-	uPcTssa8m8Jh20Z2I31INa7+EZsgUj81XyFG3TDio2S9WT60j/ETrx40ymk5d2pst1QVBddamUV
-	veW7DV7PplEZwr0jtCVWbsRfPfUU3BACt/dIXeikkn4rWRXnZhGkZm5242vz6u/k21PylEOtNpw
-	vv7FbZdd2iIITejBXifvDvfE2SxDMP6p5KIeOz/RvOGDG/upff+bJJRZ+BrB5l96n01eZ85QdpJ
-	XB2N4Q==
-X-Google-Smtp-Source: AGHT+IFda2Nj++VmsOMVFkxsPwtVMktXaY7BoajbEeCSOP7w+ytjkjbjYtnmMKjhRF5VvfmGgiymLQ==
-X-Received: by 2002:a17:906:6a03:b0:ab7:4632:e3df with SMTP id a640c23a62f3a-abb70c266e1mr1481278566b.31.1739885589578;
-        Tue, 18 Feb 2025 05:33:09 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbaa99f283sm254406166b.32.2025.02.18.05.33.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 05:33:09 -0800 (PST)
-Date: Tue, 18 Feb 2025 05:33:06 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, kernel-team@meta.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>
-Subject: Re: [PATCH net-next v2] trace: tcp: Add tracepoint for
- tcp_cwnd_reduction()
-Message-ID: <20250218-honored-pronghorn-of-focus-ffabb2@leitao>
-References: <20250214-cwnd_tracepoint-v2-1-ef8d15162d95@debian.org>
- <cc84f98f-d3d6-499e-9d2f-47eaeb56aad3@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC026A09A;
+	Tue, 18 Feb 2025 13:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739885711; cv=fail; b=CBksw8o0+asJj0KsbGRq3nrJqF0I69nFTUm3gIzDJBHOQrkpSr94wE9adbVnh4UHpra7TfpwQ+r2G3Q2mvJIeo5SeWtCV9p0FSS07mHIGqlaiZ67c/gM2t7JfzV67L2ENrMbsLApFmeLivtL0eESKvR2fxIASdN0fhAIb7fXfvc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739885711; c=relaxed/simple;
+	bh=mGVhY9ZggvuhNS+m4iqVgk0NIl4g4DUozx69bZTlRuY=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=EGBRcYlnO6SMrJHEKdVFB4rcUIzaS2wOJNqLyBuLh54qt1dRgFE4HGe+QkSYEuVcWcBmQxpO7l6pzyGdNGscQZhqmYa+PjF8H1fxZ/6+g6VdTrIUgGmv6lq7x+Ahc9igz3zEtJStLoZNeTVmhybWBhcbCxTyh3neJNIcOUXWo+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aPxKwgPs; arc=fail smtp.client-ip=40.107.220.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lngtYH/uVad2CrEFokVYaWI4DMPe7eEKKoSxiyUrnJ7956LxKd5atAm7dCy6g+o/SSIZNk20M8Tu4xGlmYZoSNB6FhrV1yoxneOR72i9vGufbS1WSL2sVrJUhq48UtFefodI+4sSFF3PFJp+z3sxF2K7tjNbv3N9RZ7tbrfuuskrCVLl0XZnj6rByar36SoJa/Gn2seZ6GXPeTQZa928sZs4u2foAx0EtwZqbh2W9tugXAgzeMbScaVnkD/Y4DCsIB+n4gETI5X0ZL//HqggtgTYIl98URKcx4UiINBMEEk1kFnecH1gtcDzZXcglm6FNmxOHfLOQW6hXtMpf7xwPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dKe11YKkiL4j+iFYIOy4W/xpRtlCxtPt21QyPDH6ytY=;
+ b=e1wr62TCC9v8mHDnIFUQmFKdRJ+xvYA8t+oLPJ5E9d5vHUmVX5GEUhitd7S3mtOd98Uxf/VAhXxb/74Tq2P62NzS2RF0KN/IFNXpbH0HSK41ZHOlFeTmdoLqZMoEhdCdVfX/lqp6vfPA1IMmknXqbNx45B9PU35rLY7geVU1DGKYAIpomID8zRKG0PhIVtMHgjCwNvJZ4RmAfYIsrCBHORVZ5LuRr5RVBxl/M1bB9n1O1fi7S5OGChe7H3H+iWGwkNzJuvLpMO0bpQg2F7hn7OkmEGdLL3rr4GSyDK75DvVdHk2iDWm+NhDn+WnSB0I/2DDHOSecEMqDUPxxIpKqmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dKe11YKkiL4j+iFYIOy4W/xpRtlCxtPt21QyPDH6ytY=;
+ b=aPxKwgPsm23MbGldANbmmJvCswvZK99VGViww0VMC+vg8Em2rm3DGyPVKPqpnZ0qEng281ADDLiA9PFdKgRR33Z1DrTzz7DsEI9phYrpT627WHjeyLKIKPvfqmYwclb+ykQyedmWggx6x6+7Cp4LMgBS4DGUda3ryn+fu7t8kI+ZE7gRGdsntjSOJV/9UoJuWFKWvIm8e9EVQGfHMwo2GXjXm8NyzVcFCsVXytfIyornIHQB0w2i2U1+e4kXw4BxTp09FDcOZN+fVKjaIPAArg1GphXXMuA3SD2og+LmAjObmZQ5MKztYA5eip6M8gEGsyIgYdE/Ho5bVLoI4uVRTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH3PR12MB9193.namprd12.prod.outlook.com (2603:10b6:610:195::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.17; Tue, 18 Feb
+ 2025 13:35:06 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 13:35:06 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 18 Feb 2025 22:35:03 +0900
+Message-Id: <D7VM09MPOS3J.2B45SGKHY5QG0@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "David Airlie" <airlied@gmail.com>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux>
+In-Reply-To: <Z7OrKX3zzjrzZdyz@pollux>
+X-ClientProxiedBy: OS7PR01CA0190.jpnprd01.prod.outlook.com
+ (2603:1096:604:250::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc84f98f-d3d6-499e-9d2f-47eaeb56aad3@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB9193:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6764883c-1290-45e8-a95d-08dd50210e79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZGg1cXZiLzRvdmp3R1hKQkhWb05pWFdGZUFMeFRBSXlaS09oNFRlZlB1Vlh6?=
+ =?utf-8?B?bTF2TDRGd0ordHlJQld2aDRXeC9yTDFVNWRwME9MbGs5UVdpaVdQTWZIL1lm?=
+ =?utf-8?B?S2JJemxWUUJHSWROeUIweUltbXc0clUxTEF3WXlkQjEzcWdUNHloS0RTSTZy?=
+ =?utf-8?B?c1RLMnpnU0dZa1BBaG1oa0QzZXEyWDJUOTRLRW5KNG55SFpUWE03ZmRNUm5K?=
+ =?utf-8?B?b0YvSkhYdXRydWVIZEpEeFAvMXdSdW9RcnhwMXNBbE54Uys0YTdHSzBCd1V4?=
+ =?utf-8?B?QmZ3Z2wwRUZEbU1WMFkrNDJRRk5Sb1VGdnVVcHE0RVFmNUtNUEpnREtwZVNx?=
+ =?utf-8?B?QnRZclJnYXByMFFwQ3VtejIvS3Fic2xKTkFPQmVBb1IzdUdOcUFzTmpBVTVO?=
+ =?utf-8?B?UGRmWld2bS9HUmNUNXBMWnZTSnhxNWMrMlpXdDVQelk3RlEyUktQd1ExaW1m?=
+ =?utf-8?B?ZzhYaU04aVJOcURUUlRmbTQwTEo0V2xQWEF1M0EweTRiQnFIcmowUUxZVEVF?=
+ =?utf-8?B?YURmcEhtMDVBZWkrTnJWemNyamg1Z0xwSzJOMDVxY2Ztd1lQbGtZS01iekJ4?=
+ =?utf-8?B?YWxENzlFMUtCZFBmK08za1NYM0dFWmFpbUdINnVpTndpYVAwYUJWb0ltTnRj?=
+ =?utf-8?B?eDBKaGttYk5kbDZSd011MmQ0WkMxZ1JEUFVKK2ljNFE1K0o3dlVDWVZvTDcv?=
+ =?utf-8?B?ZVlFamJsN09GejQ1bXhPL2RrbXgwbk0zenJSWjFrMlVzYW9SR1pkQ0dPYUtX?=
+ =?utf-8?B?LzZ3SFJvWldzcS8rcHdseUUrY2FNQkJkdm5jdllZMjk4TCt5RHNRNjZNeWxR?=
+ =?utf-8?B?TURtT0srd25iaWlGT1VyUDVMcGd3b0V5d2ZGWVlwSllsQmtkMWs3cDk3dlJX?=
+ =?utf-8?B?dERkQjRwanNhZ3hQbmM0cGhsR1hCK3ZRUGw3TnlTdmpLdmN5QThod3lLSFk0?=
+ =?utf-8?B?UVJDMExxa2lJTjVLUkVlN3N0UTIwdUZ3VFVma1o1Z1J4bFdJQVF5UisyV1V1?=
+ =?utf-8?B?enpIRVdaVHl5bW1YTlBLMGY4UldmYkhBSzFMMHg5RmRhQVZSY1RzUjZXMGla?=
+ =?utf-8?B?SlZDYnZNZ3NjaU05R0ZNNUZTQURLTHVEYkJzSjh2Nyt0VnpVWWYyWkhQRzUw?=
+ =?utf-8?B?MlpkV1hkRHllZ2VXc1F2eHEraWNkSjZJVGpkdDRTWVhlb1JCSERlQmE0RVF6?=
+ =?utf-8?B?Q1Z0b1FvclhWNnE2WnFlS3pJTmxiTnRpYThqelVhUWZGZWdSdDdQTUdBeU1m?=
+ =?utf-8?B?WGhKUU42eWJJWm9rdkY3YUp6YnZjdmtINFREYkJtVkx4NWgxaFNlcW0wbitS?=
+ =?utf-8?B?eXNrVHhUbVcvZjhUUGwrbnhGenFwUHpEVWs5YzlKMkxMUHRRQmhmVmdxamhW?=
+ =?utf-8?B?anRDU0RNRDVmU05UWFNXRXEvS2xUS29aK1FFQ0o2VXRxeGpmYmJ2c2MxR3RJ?=
+ =?utf-8?B?eVJKS1RSN0h5dmQrNWpJaGh5R3RJdlBQYm02N05VR3FOMFhHYUp1YTl0Zmgr?=
+ =?utf-8?B?ZFQxa1RRUVV5bWV1MDN3aGNDNjBXaVhwTlA2YWlhVjM4T3E3RjFGbkNhNExC?=
+ =?utf-8?B?dU5KbDNDSTA1eDR0NEJZVmVzNmdoT3Y3WUpydUhZckc0MTkxbG13ZEFSRW9O?=
+ =?utf-8?B?V0RnemthSUpmK3JScXU2Um9JQWRvdXVLM2pta3h4clZldmtRZ08vNy9IaU5L?=
+ =?utf-8?B?b1A1QS9wNlZlZGMyQThnVVJEZTlwZ1c3Y2xwMVhQaTJzVXlMWnA4WTJydy9K?=
+ =?utf-8?B?SzY3QTBidjNCMGZDT3dXdXI1MDlaL0txSFdnOWlGNDNqczFYOFFEd0ptQnpD?=
+ =?utf-8?B?cW5LMENqR1EwSUNGMHZtUTlHdklMVVpyaUxKNmpjRytpckZ0S3JlTTFTQWc5?=
+ =?utf-8?Q?UvRmmyPfxYs0y?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NllwdC9sNm4wQzIwVWhJQUlwbTl3R2c1aXF5SmprbnZQY2NwSmFpZUhWOVdl?=
+ =?utf-8?B?WlRabkU0U1F3dGpwRk40WE40VXVscjR5U051bllnM2kydUNVTGswVDMzN3FN?=
+ =?utf-8?B?Skgwb0UxYXVpVHR4UW1ud3pKeXQ3citRQ2pSalZxYVk4SVhISGNaMmdzWkJ5?=
+ =?utf-8?B?V09PZndjZnlqZG41dkxFQW1NL2Q2UkhjMnQ4MHNrTTRoNGpPcGNrWHFsdmh2?=
+ =?utf-8?B?clppOUlKUXhTS3puMGREQ0xXRTZVL0lMRC81MThWUG9zbDFCZjRRWHd2ZUNw?=
+ =?utf-8?B?K3NVRXdBdXN3RjVBcHhQVDVDRy9lcWFIMzh2cytIUDd1SzRXak1jUkZidzNl?=
+ =?utf-8?B?c09XVnpOV3B5RHhEWkhFeE84RUUrdTUxRGxpMldwUWE5cFpMSitVRDN3ZWND?=
+ =?utf-8?B?ZW13MFJreVFOZGoxK29JcjgvSkpaOXlBLytsdUczVWpsYWZGcENzaVh5Zjli?=
+ =?utf-8?B?S0tiTFdHRmp0RHNBR0o4VUVaNm9uelBSdzRuL0hUb2p2NFRIMnFYbnZ0RFN4?=
+ =?utf-8?B?N09tSllPUXo1dnEzS0FkZjFvY0pvOGpYd05PSWRyLzZqUkxoYTF4RSt5UVRG?=
+ =?utf-8?B?ZWpNZmNIMDVuZ3lMWUpvaE1QV2NmOUlxUUpLUXNrdHJxcTgxaTdaNWRvZmVv?=
+ =?utf-8?B?TW5sSmZRd3AycWlibCtpNzlNZlZ6YVFPTkpaazJHWU95U0xFT1pFeEJveFlK?=
+ =?utf-8?B?VEx2Y1BERHpwT0pBbVZtU3U5R2hwWGkvcG05dGw2WlJBOXJ1dEZxbVkxbSsr?=
+ =?utf-8?B?bkc2WnpSRDVDdEdNZmZmeE9BakZ0RVBJL3NxTzEzK01yd0QvVEVGcG9IUjlT?=
+ =?utf-8?B?NEpXc3dScFlRMkJIUmNZMXNkbkFlR0c2T3Ayd3JielFPNXltRXZydjZNZEl4?=
+ =?utf-8?B?VE03bTN0Q3VSclZrS0gyd0ttMW12V2xZZWF3UVRPM2ErUEROZUVQQzRKY1I2?=
+ =?utf-8?B?cW81dkJDL3dOOEVEQjRQZ2xUWVpmOTc0OGh4Q0VHQUw5NWFBTzJpOFhVbTJ6?=
+ =?utf-8?B?N1pMK21EaEczekFEV0lJbnZzN3dWbUxlWmFCQUZYZlBPMWZXSUZqQ1I2T2tM?=
+ =?utf-8?B?RXpDT0xtS2MvYURHVE8yWXA5cHdDOXFYbXJtNXhPNkhsbEQyOUtxYUZwNUNj?=
+ =?utf-8?B?NzhRT2FERTZyK0JzdWozRVJCdjBkcGVHMXJyam56SGZQbkpyQm5xSTc4VUZX?=
+ =?utf-8?B?ZmdmMmtXYS9WVVdUeENSV1JYcHJkR0phRkRFY3FVam04ZzhSM2tRVVFNQUk2?=
+ =?utf-8?B?V3g2bEFycThtSW5rYzB6QVdieWNQZXVXbnViNXFXZkNNYkFLZG9qaU5mT1NH?=
+ =?utf-8?B?R1ArdWdQVHB0aGNlM01CQTdUcnNIZU1lRktBSTNyNXo2dU9UWngvbFRTdUJu?=
+ =?utf-8?B?dDdoTUJOUFZnTFIzS2RYLzZFSkpycitpME9XSFYzWnpKdi9udVNrdjAvRkQx?=
+ =?utf-8?B?Zi9nUnV1QmZDL1lJemptdnV2UGRMMlRkbVRTemNwYURPYWlZV0hOSXVPV0d0?=
+ =?utf-8?B?WW9JaEJIQ1hEb1pyQy9idlliWXp4ZlUwZ3hCUldTbjY4UW1oNUtwMEhTYzMw?=
+ =?utf-8?B?d3h2YWRramt6b3ZPU2huT2dMYVo4bExQUTEvRlhtcFN0bDdORlpuRXRFaC9p?=
+ =?utf-8?B?TjZ4QTQvV01NYUxmV3IxR1A5elYrN25vSVhFYWZvTHNoSm5tTGQ2elV6SElG?=
+ =?utf-8?B?NS9YbnhkTFd0Z2VWZGhwSkxOSzBkanUyLytCbGJPb0NwLzg1L2ErV1JHYU40?=
+ =?utf-8?B?Mk55Nks4ZloyQnQ4d0R4TG8wNlI1MzFBODBUT0txbDdPUjFpSjh6eld6cklh?=
+ =?utf-8?B?ZEkrbjlzaE9qcGdpd29HKzlQQm5ibGxMLzlNbmZrNjl1NlhydFJENFdoc2Q0?=
+ =?utf-8?B?c05RWWFOQjlOKzVNVHQxZkhmY3lLMVQ1VjNDSVEvS0JSOTNjQ1krZXJPOEVU?=
+ =?utf-8?B?ays5bnVhS0FtTXk1SHU0L0V5QTRadldDaWlGZkpYL0dlektZVC9Dd1U2bFV6?=
+ =?utf-8?B?V3N4NDl1OHBRTnBtSFptM293Rm80Rngzb2pmQklPUTAwc21HUjJoQkpEOEti?=
+ =?utf-8?B?QjN6VkxlRDQ5Q25IVDd0ZisyMEo3cjFrZG16Z3ZxN3M0OGZyZk55S2E0RUlP?=
+ =?utf-8?B?WTJwWHIweWovdEtKdE5TS1oxbzdmNEJ6VmtmeFhWckpsL3pQaklIblVFNmU5?=
+ =?utf-8?Q?oNE6SYChN81+QyoKSwjOyLorAnM4EuxioTdTki2AIpNS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6764883c-1290-45e8-a95d-08dd50210e79
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 13:35:06.6142
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r3LdU+wRf1BoGW+Ahv3bUmyx3DFfuEntjj++A30NhNLtWUFrDgYxKK/OkCGjOMtvY777hBgtTuuNhCUT0J2rng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9193
 
-Hello Paolo,
+Hi Danilo,
 
-On Tue, Feb 18, 2025 at 01:53:15PM +0100, Paolo Abeni wrote:
-> On 2/14/25 6:07 PM, Breno Leitao wrote:
-> > Add a lightweight tracepoint to monitor TCP congestion window
-> > adjustments via tcp_cwnd_reduction(). This tracepoint enables tracking
-> > of:
-> > - TCP window size fluctuations
-> > - Active socket behavior
-> > - Congestion window reduction events
-> > 
-> > Meta has been using BPF programs to monitor this function for years.
-> > Adding a proper tracepoint provides a stable API for all users who need
-> > to monitor TCP congestion window behavior.
-> > 
-> > Use DECLARE_TRACE instead of TRACE_EVENT to avoid creating trace event
-> > infrastructure and exporting to tracefs, keeping the implementation
-> > minimal. (Thanks Steven Rostedt)
-> > 
-> > Given that this patch creates a rawtracepoint, you could hook into it
-> > using regular tooling, like bpftrace, using regular rawtracepoint
-> > infrastructure, such as:
-> > 
-> > 	rawtracepoint:tcp_cwnd_reduction_tp {
-> > 		....
-> > 	}
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> > ---
-> > Changes in v2:
-> > - Close the parenthesis in a new line to honor the tcp.h format (Jakub).
-> > - Add the bpftrace example in the commit message (Jakub)
-> > - Link to v1: https://lore.kernel.org/r/20250207-cwnd_tracepoint-v1-1-13650f3ca96d@debian.org
-> 
-> For future similar situations, note that it's expected to carry-on the
-> tag already collected in the previous versions, since the delta is only
-> cosmetic.
+On Tue Feb 18, 2025 at 6:33 AM JST, Danilo Krummrich wrote:
+> Hi Alex,
+>
+> On Mon, Feb 17, 2025 at 11:04:45PM +0900, Alexandre Courbot wrote:
+>> Hi everyone,
+>>=20
+>> This short RFC is based on top of Danilo's initial driver stub series
+>> [1] and has for goal to initiate discussions and hopefully some design
+>> decisions using the simplest subdevice of the GPU (the timer) as an
+>> example, before implementing more devices allowing the GPU
+>> initialization sequence to progress (Falcon being the logical next step
+>> so we can get the GSP rolling).
+>>=20
+>> It is kept simple and short for that purpose, and to avoid bumping into
+>> a wall with much more device code because my assumptions were incorrect.
+>>=20
+>> This is my first time trying to write Rust kernel code, and some of my
+>> questions below are probably due to me not understanding yet how to use
+>> the core kernel interfaces. So before going further I thought it would
+>> make sense to raise the most obvious questions that came to my mind
+>> while writing this draft:
+>
+> Thanks for sending this RFC, that makes a lot of sense.
+>
+> It's great to see you picking up work on Nova and Rust in the kernel in g=
+eneral!
+>
+> One nit: For the future, please make sure to copy in the folks listed und=
+er the
+> RUST entry in the maintainers file explicitly.
 
-That is fair. I simply forgot about it. Sorry about it.
+Ack. I tend to get nervous as the list of recipients increases and
+reduce it to the people I believe will be strictly interested, but will
+refrain from doing that in the future.
 
+>
+>>=20
+>> - Where and how to store subdevices. The timer device is currently a
+>>   direct member of the GPU structure. It might work for GSP devices
+>>   which are IIUC supposed to have at least a few fixed devices required
+>>   to bring the GSP up ; but as a general rule this probably won't scale
+>>   as not all subdevices are present on all GPU variants, or in the same
+>>   numbers. So we will probably need to find an equivalent to the
+>>   `subdev` linked list in Nouveau.
+>
+> Hm...I think a Vec should probably do the job for this. Once we know the
+> chipset, we know the exact topology of subdevices too.
+>
+>>=20
+>> - BAR sharing between subdevices. Right now each subdevice gets access
+>>   to the full BAR range. I am wondering whether we could not split it
+>>   into the relevant slices for each-subdevice, and transfer ownership of
+>>   each slice to the device that is supposed to use it. That way each
+>>   register would have a single owner, which is arguably safer - but
+>>   maybe not as flexible as we will need down the road?
+>
+> I think for self-contained subdevices we can easily add an abstraction fo=
+r
+> pci_iomap_range() to pci::Device. I considered doing that from the get-go=
+, but
+> then decided to wait until we have some actual use for that.
+
+Yeah, my comment was just to check whether this makes sense at all, we
+can definitely live without it for now. Would be a nice safety addition
+though IMHO.
+
+>
+> For where we have to share a mapping of the same set of registers between
+> multiple structures, I think we have to embedd in into an Arc (unfortunat=
+ely,
+> we can't re-use the inner Arc of Devres for that).
+>
+> An alternative would be to request a whole new mapping, i.e. Devres<pci::=
+Bar>
+> instance, but that includes an inner Arc anyways and, hence, is more cost=
+ly.
+
+Another way could be to make the owning subdevice itself implement the
+required functionality through a method that other devices could call as
+needed.
+
+>
+>>=20
+>> - On a related note, since the BAR is behind a Devres its availability
+>>   must first be secured before any hardware access using try_access().
+>>   Doing this on a per-register or per-operation basis looks overkill, so
+>>   all methods that access the BAR take a reference to it, allowing to
+>>   call try_access() from the highest-level caller and thus reducing the
+>>   number of times this needs to be performed. Doing so comes at the cost
+>>   of an extra argument to most subdevice methods ; but also with the
+>>   benefit that we don't need to put the BAR behind another Arc and share
+>>   it across all subdevices. I don't know which design is better here,
+>>   and input would be very welcome.
+>
+> I'm not sure I understand you correctly, because what you describe here s=
+eem to
+> be two different things to me.
+>
+> 1. How to avoid unnecessary calls to try_access().
+>
+> This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argum=
+ent. I
+> think we can just call try_access() once and then propage the guard throu=
+gh the
+> callchain, where necessary.
+>
+> 2. Share the MMIO mapping between subdevices.
+>
+> This is where I can follow. How does 1. help with that? How are 1. and 2.
+> related?
+
+The idea was that by having the Gpu device secure access to the Bar and
+pass a reference to the guard (or to the Bar itself since the guard
+implements Deref, as I mentioned in [1]), we can avoid the repeated
+calls to try_access() AND "share" the Bar between all the subdevices
+through an argument instead of e.g. wrapping it into another Arc that
+each subdevice would store.
+
+But as Dave pointed out, it looks like this won't work in practice
+anyway, so we can probably drop that idea...
+
+[1] https://lore.kernel.org/nouveau/D7Q79WJZSFEK.R9BX1V85SV1Z@nvidia.com/
 
