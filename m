@@ -1,285 +1,192 @@
-Return-Path: <linux-kernel+bounces-519105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FBDA39829
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:07:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2B5A39811
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB703AF730
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:02:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5AC87A4780
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F1F233D8C;
-	Tue, 18 Feb 2025 10:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F98A23498F;
+	Tue, 18 Feb 2025 09:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="D0H00fvI"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="skjPJG3q"
+Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9063222E418;
-	Tue, 18 Feb 2025 10:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3919234962;
+	Tue, 18 Feb 2025 09:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872945; cv=none; b=TSpQx/dzNtjKydIaZ2WYw5jXlnSN+IoChZn7u0vKM1rX9D8rhedMmPJGh1hUlZGsk3/V4taC66hlCyHFjFWLWyMXYZmJyeDbPdZZdqYfLtjarDFLQs8VB/dqs4AH9i+EgwCuhHlc/GCn5w/hj+lnc2P+SvuUBofEIig9amGzMng=
+	t=1739872733; cv=none; b=m2fd6BC9rJ+E6msvBSKMaRj7xUEw5YxjBtPInqqV+NtcvwoVqzR3xFfBbSWUwdfSDZGrUPJnxUJbQOyFRtmBLHz1vtQLHbWr+iDijdeXOlyfhznHKq4g58INkZi92IrH6C0y+b9XEFDGvBAyk0wubsAfQRkzz9/jhJWKnTia3dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872945; c=relaxed/simple;
-	bh=KcYf2uC2/W7sQaR55x+wPX1K7PZeTePGGmDYjov+33Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z5drQaIGx1sf2GZaEUu6SLxF9Gc4ryJYZUy/V4yH+k+/QPaWEUMCLFiZgrLkVpzNxrUTWNvrVQ0C0oX41TkIk6suhxQduWCRbRS7qYkk1kRUCugVOsy3U12jWqlaSDNpVCxyJ4Vi37h9Jw9n6cuCUm1O1BsZU/8tSPrx342UFnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=D0H00fvI; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51I94PEF032546;
-	Tue, 18 Feb 2025 11:01:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	z3wEKkLu5QCqpmQjBX/R1HGC8LIFTH2BqVnQP1sjqLY=; b=D0H00fvIP3QIekZK
-	zmcNw2hxSvyJ63GJgCKeaFJHyAkaymoqU8byOStBxukUNjVDkmDV6rHdgE6H271Z
-	qOYDVxpJ7B2kc2WK7BbmCCxGQEdCUGHEr6p2Vq0qwIkgQraZmVCXqNaX1vIFqMxV
-	YalAPaALoY9wXaCaRWZcCB3kFHqRpCgmqzOIAwF6+GL+A+rYJM6ugbOA0i9RgCzw
-	kRuD3z3pczuM0itP5OQrUR6Y/yBE2dLx39R+KsyzG6nZSU2oB2C4shacURfM0B2d
-	0FwQ7TgI83joO3CEEoUD0KjvVEbOhKtUtTbJzGI7S9XsY+0bJgIu0zF1xJkfg0iX
-	wAO3qw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44tm1ub3ch-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 11:01:45 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D07F540046;
-	Tue, 18 Feb 2025 11:00:29 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6E8D73AF671;
-	Tue, 18 Feb 2025 10:58:23 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 18 Feb
- 2025 10:58:22 +0100
-Message-ID: <5dde0e21-eddb-4bbf-a246-a2760792eb59@foss.st.com>
-Date: Tue, 18 Feb 2025 10:58:22 +0100
+	s=arc-20240116; t=1739872733; c=relaxed/simple;
+	bh=/5c9NpxXM4pSZx9SBXZ0Bku0kkqiwO9j8xWtCl97MGc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Bzd0kut14udFZqTGmpRK4SvaFNo21JyV4QDjGADYyRKDSwo5YJXf9l9XZVTHOfJLM43je0143j93e7yyVlLBo3q6MViXCc5YdxP8t0tdtrKA0EIt0VIdlQr43YzmAfY/gOrauZQGk9cbtH6M73xC9q/zxEgSzW//1SprFaH7azw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=skjPJG3q; arc=none smtp.client-ip=162.240.238.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=IplbbsjtQNJ9e6AF522ZXUvBfXM+LfwzW90At7QJSew=; b=skjPJG3qHyyrQxKdigVU5Yrf/3
+	Yj1J/c5z6dFoGQWIMJTz4LBoTxUbW8gsCvnA4wrW7EZhOq66KKLmF+eUxYtNF0/HOxlgJn5x9roGh
+	5TeDGN3kOkGFJ8y8IQFZR39DRkbtQeRdu7QKAw+YKlU0G+JbpWpKyzpA3xItlRY2rqL349W98C9Mg
+	WegKmZcHRR3VkNP4DPHhdZzVHw02BBXWB0OuikiFV0Zr5Ibng073GjDtPHAVyf6sSNrSKfAylxAAK
+	TcjfojLRd+Ix+3zdxJ1yc/08VFtBY1EGx3p9oIi+SrbylPcIA5adTn/LlD1AVu/CKdCaEhXgpXt7o
+	p1+xvIRg==;
+Received: from [122.175.9.182] (port=27501 helo=zimbra.couthit.local)
+	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parvathi@couthit.com>)
+	id 1tkKND-0007xL-1i;
+	Tue, 18 Feb 2025 15:28:40 +0530
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id AEF9617821C8;
+	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 85C9C17823D4;
+	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SPe3V9-vo6EN; Tue, 18 Feb 2025 15:28:29 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 41B8D17821C8;
+	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
+Date: Tue, 18 Feb 2025 15:28:29 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org, 
+	richardcochran@gmail.com, basharath <basharath@couthit.com>, 
+	schnelle@linux.ibm.com, diogo ivo <diogo.ivo@siemens.com>, 
+	m-karicheri2@ti.com, horms@kernel.org, 
+	jacob e keller <jacob.e.keller@intel.com>, m-malladi@ti.com, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, afd@ti.com, 
+	s-anna@ti.com, linux-arm-kernel@lists.infradead.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pratheesh <pratheesh@ti.com>, 
+	Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth@ti.com, srk@ti.com, 
+	rogerq@ti.com, krishna <krishna@couthit.com>, 
+	pmohan <pmohan@couthit.com>, mohan <mohan@couthit.com>
+Message-ID: <1901840071.600762.1739872709135.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250214164422.1bb58a89@fedora.home>
+References: <20250214054702.1073139-1-parvathi@couthit.com> <20250214073757.1076778-5-parvathi@couthit.com> <20250214164422.1bb58a89@fedora.home>
+Subject: Re: [PATCH net-next v3 04/10] net: ti: prueth: Adds link detection,
+ RX and TX support.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] dt-bindings: memory-controllers: Add STM32 Octo
- Memory Manager controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christophe.kerello@foss.st.com>
-References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
- <20250210131826.220318-4-patrice.chotard@foss.st.com>
- <20250213-adorable-conscious-pogona-4114cf@krzk-bin>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20250213-adorable-conscious-pogona-4114cf@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_03,2025-02-18_01,2024-11-22_01
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
+Thread-Topic: prueth: Adds link detection, RX and TX support.
+Thread-Index: ruvuX5QuiCck3qy25K/1ke8txq1XdQ==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
 
+Hi,
 
-On 2/13/25 09:00, Krzysztof Kozlowski wrote:
-> On Mon, Feb 10, 2025 at 02:18:21PM +0100, patrice.chotard@foss.st.com wrote:
->> From: Patrice Chotard <patrice.chotard@foss.st.com>
->>
->> Add bindings for STM32 Octo Memory Manager (OMM) controller.
->>
->> OMM manages:
->>   - the muxing between 2 OSPI busses and 2 output ports.
->>     There are 4 possible muxing configurations:
->>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
->>         output is on port 2
->>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
->>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
->>         OSPI2 output is on port 1
->>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
->>   - the split of the memory area shared between the 2 OSPI instances.
->>   - chip select selection override.
->>   - the time between 2 transactions in multiplexed mode.
->>
->> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->> ---
->>  .../memory-controllers/st,stm32mp25-omm.yaml  | 201 ++++++++++++++++++
->>  1 file changed, 201 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
->> new file mode 100644
->> index 000000000000..c897e6bf490d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
->> @@ -0,0 +1,201 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/memory-controllers/st,stm32mp25-omm.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: STM32 Octo Memory Manager (OMM)
->> +
->> +maintainers:
->> +  - Patrice Chotard <patrice.chotard@foss.st.com>
->> +
->> +description: |
->> +  The STM32 Octo Memory Manager is a low-level interface that enables an
->> +  efficient OCTOSPI pin assignment with a full I/O matrix (before alternate
->> +  function map) and multiplex of single/dual/quad/octal SPI interfaces over
->> +  the same bus. It Supports up to:
->> +    - Two single/dual/quad/octal SPI interfaces
->> +    - Two ports for pin assignment
->> +
->> +properties:
->> +  compatible:
->> +    const: st,stm32mp25-omm
->> +
->> +  "#address-cells":
->> +    const: 2
->> +
->> +  "#size-cells":
->> +    const: 1
->> +
->> +  ranges:
->> +    description: |
->> +      Reflects the memory layout with four integer values per OSPI instance.
->> +      Format:
->> +      <chip-select> 0 <registers base address> <size>
->> +    minItems: 2
->> +    maxItems: 2
->> +
->> +  reg:
->> +    items:
->> +      - description: OMM registers
->> +      - description: OMM memory map area
->> +
->> +  reg-names:
->> +    items:
->> +      - const: regs
->> +      - const: memory_map
->> +
->> +  memory-region:
->> +    description: |
->> +      Memory region shared between the 2 OCTOSPI instance.
->> +      One or two phandle to a node describing a memory mapped region
->> +      depending of child number.
->> +    minItems: 1
->> +    maxItems: 2
->> +
->> +  memory-region-names:
->> +    description: |
->> +      OCTOSPI instance's name to which memory region is associated
->> +    items:
->> +      enum: [ospi1, ospi2]
->> +    minItems: 1
->> +    maxItems: 2
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  access-controllers:
->> +    maxItems: 1
->> +
->> +  st,syscfg-amcr:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: |
->> +      The Address Mapping Control Register (AMCR) is used to split the 256MB
->> +      memory map area shared between the 2 OSPI instance. The Octo Memory
->> +      Manager sets the AMCR depending of the memory-region configuration.
->> +      The memory split bitmask description is:
->> +        - 000: OCTOSPI1 (256 Mbytes), OCTOSPI2 unmapped
->> +        - 001: OCTOSPI1 (192 Mbytes), OCTOSPI2 (64 Mbytes)
->> +        - 010: OCTOSPI1 (128 Mbytes), OCTOSPI2 (128 Mbytes)
->> +        - 011: OCTOSPI1 (64 Mbytes), OCTOSPI2 (192 Mbytes)
->> +        - 1xx: OCTOSPI1 unmapped, OCTOSPI2 (256 Mbytes)
->> +    items:
->> +      - description: phandle to syscfg
->> +      - description: register offset within syscfg
->> +      - description: register bitmask for memory split
->> +
->> +  st,omm-req2ack-ns:
->> +    description: |
->> +      In multiplexed mode (MUXEN = 1), this field defines the time in
->> +      nanoseconds between two transactions.
+> On Fri, 14 Feb 2025 13:07:51 +0530
+> parvathi <parvathi@couthit.com> wrote:
 > 
-> default: ?
+>> From: Roger Quadros <rogerq@ti.com>
+>> 
+>> Changes corresponding to link configuration such as speed and duplexity.
+>> IRQ and handler initializations are performed for packet reception.Firmware
+>> receives the packet from the wire and stores it into OCMC queue. Next, it
+>> notifies the CPU via interrupt. Upon receiving the interrupt CPU will
+>> service the IRQ and packet will be processed by pushing the newly allocated
+>> SKB to upper layers.
+>> 
+>> When the user application want to transmit a packet, it will invoke
+>> sys_send() which will inturn invoke the PRUETH driver, then it will write
+>> the packet into OCMC queues. PRU firmware will pick up the packet and
+>> transmit it on to the wire.
+>> 
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+>> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+> 
+> 
+>> +/* update phy/port status information for firmware */
+>> +static void icssm_emac_update_phystatus(struct prueth_emac *emac)
+>> +{
+>> +	struct prueth *prueth = emac->prueth;
+>> +	u32 phy_speed, port_status = 0;
+>> +	enum prueth_mem region;
+>> +	u32 delay;
+>> +
+>> +	region = emac->dram;
+>> +	phy_speed = emac->speed;
+>> +	icssm_prueth_write_reg(prueth, region, PHY_SPEED_OFFSET, phy_speed);
+>> +
+>> +	delay = TX_CLK_DELAY_100M;
+>> +
+>> +	delay = delay << PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_SHIFT;
+>> +
+>> +	if (emac->port_id) {
+>> +		regmap_update_bits(prueth->mii_rt,
+>> +				   PRUSS_MII_RT_TXCFG1,
+>> +				   PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
+>> +				   delay);
+>> +	} else {
+>> +		regmap_update_bits(prueth->mii_rt,
+>> +				   PRUSS_MII_RT_TXCFG0,
+>> +				   PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
+>> +				   delay);
+>> +	}
+>> +
+>> +	if (emac->link)
+>> +		port_status |= PORT_LINK_MASK;
+>> +
+>> +	writeb(port_status, prueth->mem[region].va + PORT_STATUS_OFFSET);
+>> +}
+>> +
+>>  /* called back by PHY layer if there is change in link state of hw port*/
+>>  static void icssm_emac_adjust_link(struct net_device *ndev)
+>>  {
+>> @@ -369,6 +426,8 @@ static void icssm_emac_adjust_link(struct net_device *ndev)
+>>  		emac->link = 0;
+>>  	}
+>>  
+>> +	icssm_emac_update_phystatus(emac);
+>> +
+> 
+> It looks to me like emac->link, emac->speed and emac->duplex are only
+> used in icssm_emac_update_phystatus(). If you consider either passing
+> these as parameters to the above function, or simply merge
+> icssm_emac_update_phystatus() into your adjust_link callback, you can get
+> rid of these 3 attributes entirely. It even looks like emac->duplex is
+> simply unused.
+> 
 
-Yes, i will add the default value
+Sure, we will address this in the next version.
 
-> 
->> +
->> +  st,omm-cssel-ovr:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      Configure the chip select selector override for the 2 OCTOSPIs.
->> +      - 0: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS1
->> +      - 1: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS1
->> +      - 2: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS2
->> +      - 3: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS2
->> +    minimum: 0
->> +    maximum: 3
-> 
-> default: ?
-
-ditto
-
-> 
->> +
->> +  st,omm-mux:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      Configure the muxing between the 2 OCTOSPIs busses and the 2 output ports.
->> +      - 0: direct mode, default
-> 
-> Don't repeat constraints in free form text.
-> 
-ok
-
->> +      - 1: mux OCTOSPI1 and OCTOSPI2 to port 1
->> +      - 2: swapped mode
->> +      - 3: mux OCTOSPI1 and OCTOSPI2 to port 2
->> +    minimum: 0
->> +    maximum: 3
-> 
-> default: ?
-
-i will add the default value as well
-
-Thanks 
-Patrice
-
-> 
-> None of them are required, so usually we expect defaults.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+Thanks and Regards,
+Parvathi.
 
