@@ -1,220 +1,229 @@
-Return-Path: <linux-kernel+bounces-519606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2010FA39E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:18:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0285BA39E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:20:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A623A3889
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A38C1897396
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D95269D1E;
-	Tue, 18 Feb 2025 14:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6658426A0A0;
+	Tue, 18 Feb 2025 14:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o8gTPDpL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t3nAOjk7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o8gTPDpL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t3nAOjk7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bRXlK96h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A31266F19
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01A2269D1B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888299; cv=none; b=n+ehOlWieMCCUNbSNZ8aXVyW9RJPpnSyAEwl/5NO32hIqYH0VplI2EOp+aOeNPSYSoN42ez9ZM1jTYNIE/AONJ6MOeoL1qW4qUbSQqetZwzcgfim8KCdeByomWNfEbp1wy+ddEgAnl8cNJ1/2s4DCzDoyKIA0Rh6VOZOJU13/3w=
+	t=1739888327; cv=none; b=uDzHK5XGgnw7HFHhesgOOIbQ0aWlrrYY7BCkiIsdhz0m89/gxOqDKuYMJaNyZhlZhEbvRUZUC/uu7Yt2Wm7wCKQKx8Ad3pI0UeNrnXP613FntDAEg8ZQmkoeV5PJD3Hs6Sm+2qB7kALmr8EukPCoVMIT1T7ii+VEqmH151zPGOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888299; c=relaxed/simple;
-	bh=EEBSTvW0Senalm8U/aGpxQ0Jqzh99h+lPOsHlFUHLTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBmW3bJF45/u0LgwctIygpFDCr0VGpm/oWCWye2UZiJ7USw3NKaec8rak8bw9lNwmN/erZvZW/Ue4Q6zZ4fLwHDt8Dy7VgH9WNqVuOjOB8W9k6Mrs9LkdLdPNqqhmza9k2/jWTbKdmouECzwavRcDWEeJMxTD83i+sy37zlpoPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o8gTPDpL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t3nAOjk7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o8gTPDpL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t3nAOjk7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 76EC61F442;
-	Tue, 18 Feb 2025 14:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739888295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pKy3uUOm9ZXQ33TOui+wwTs1eIWK6u2ZjCPnnwJn8Y=;
-	b=o8gTPDpL3KJnpwxve1IkZ3cNG6mPUyWzS3Nj8mBntNPzyfJkj8x0eDCmbT4fGOr0BjAqnK
-	3CX/vZW8trTl1TayoIBOqAqHg+VdQ474N3BdmAlDeSGsVgHUGbE29zNLqiSArZvjezxklY
-	AroAeuwrc3ehGmarmm5H16+5v9L1vcA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739888295;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pKy3uUOm9ZXQ33TOui+wwTs1eIWK6u2ZjCPnnwJn8Y=;
-	b=t3nAOjk7mIIB01lowymN5gv/nh+YgKOLQdUlh6C4BEAOxYWqp8dOqG7jrCZbRVEuKNlusP
-	HbWQ67/Yvq99pJCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=o8gTPDpL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=t3nAOjk7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739888295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pKy3uUOm9ZXQ33TOui+wwTs1eIWK6u2ZjCPnnwJn8Y=;
-	b=o8gTPDpL3KJnpwxve1IkZ3cNG6mPUyWzS3Nj8mBntNPzyfJkj8x0eDCmbT4fGOr0BjAqnK
-	3CX/vZW8trTl1TayoIBOqAqHg+VdQ474N3BdmAlDeSGsVgHUGbE29zNLqiSArZvjezxklY
-	AroAeuwrc3ehGmarmm5H16+5v9L1vcA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739888295;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pKy3uUOm9ZXQ33TOui+wwTs1eIWK6u2ZjCPnnwJn8Y=;
-	b=t3nAOjk7mIIB01lowymN5gv/nh+YgKOLQdUlh6C4BEAOxYWqp8dOqG7jrCZbRVEuKNlusP
-	HbWQ67/Yvq99pJCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CBD3132C7;
-	Tue, 18 Feb 2025 14:18:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QlQbEqeWtGejXgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 18 Feb 2025 14:18:15 +0000
-Message-ID: <69673396-96a2-4aa3-a958-c3ba0e52be45@suse.cz>
-Date: Tue, 18 Feb 2025 15:18:14 +0100
+	s=arc-20240116; t=1739888327; c=relaxed/simple;
+	bh=Ylh6BzLP55i04wVfiFq0UdGu/ctOqdofDLlmv68+FsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgTrphHSJAnf2s3rFsczQMuhUDJescQj9t7u2Hpfuae2rZUEoNwOeKhIcS+hk5FEslgGoGyBQMzo2HU0mDU3Eq6kTY8WaiXcErGcozWkWzCwuGLzg1zWsWJqFcijgrATa7PWs+4R8AD/BOFE2i33jCEyLDo9zrshX1Ul3kCM4Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bRXlK96h; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739888324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DBhsPO91wIOuIx7V5POaYr34tBMgM6YIQ+GqBqORH08=;
+	b=bRXlK96hUDR5bzmcPbOPpjiXxn2RIpXJlb7bM/p0Aw9YMVXB5V7wKn2n7KRKLLyp7INYLY
+	dLpBojmaqZ6GdarV6hRZRp0DqixPpddOWnv5vUkc7SSFfurS4uPzPiVOWTI+qY2IA/U1OQ
+	6lRdEjDAmB1rWZbJI3caa+lXYHaBzd4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-RNr94hMnPU6g3ntB6LjTUQ-1; Tue, 18 Feb 2025 09:18:43 -0500
+X-MC-Unique: RNr94hMnPU6g3ntB6LjTUQ-1
+X-Mimecast-MFC-AGG-ID: RNr94hMnPU6g3ntB6LjTUQ_1739888322
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-439385b08d1so48560445e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:18:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739888322; x=1740493122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DBhsPO91wIOuIx7V5POaYr34tBMgM6YIQ+GqBqORH08=;
+        b=MWEpbaid4FeHZSxSX0oHqU6zyqGXBLTH4AY/ZPcACUasyvPnmU5ZrarNDbrcW8MshS
+         0Ow9LK9vF/XWlnG4AjAwSjT8f02xFl2jC4QdPc42yFlEShqpx1E3FolrZs+jTurLs2sT
+         EpZZRA9V3RL8ww24nHxu8s/1AXnIDnUz00cubrtEKIw+x+AdqIC2YmzNxjgKflsTGWKM
+         sp2y5aQDzUpPb6vVX+c+/WJgTtrhttp6WIoEOvPvIus9JXpcojLZrHIpwKgOfBo3GhCz
+         pgjoFFy/3+StqzpO8EpNpkC+9ljKs7/NTsqjK+ZyJp7MFf8MnmREmdn6WpzPrYbcRbha
+         qUWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLQJKWNyunHMau4lJpz/pf9CqVnkI6SYcOaTeT+CvoaZ/yhTp9nCc3YLz0byuvAc07p+4N31c76i9noIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqxLLAgaln734jelWf3RSNJtK6LnDtvIoVp/Xe8YY0+psfbuPa
+	k7Ezb26sH17WykWrT4HdVf+TaFRlp0aEzbbydATIfN8svVNBWHn20LDcuv/sAggi+yyupwmWwv2
+	v0i2Kcm8cEputSuzzl3DnhOvmCVgTBNpoKofImga9GRlX8lf20O0cfIECiBlkeg==
+X-Gm-Gg: ASbGncvdcdSE2RwbUzflyDisQb5rgtpWN93GGrcRZqMB3l1N0CWVZMi/5nPFXy3b6yD
+	RF3kxN4rjfu4U040ehvMg5aaL2r/9YeFO4nCZQTKn+OabAceTCqhvVOKK0sdUaFcwo4FC95lh4F
+	0633uW8IUT4BM0my0nI1kvlpDzcAKH/TrzVjuAYiMYMdg9LOHD99p6OR8S7dtbpWuIMKXBm1uKA
+	ihZydMrIWEqPVhzisMd1vbNXGO50sLybX3yEh+z14i7H5I1br1KKXJ6JraI02cGI9RwbKAnB8Es
+	Ho8/LPFaIUCgnQfLZjP41CWUsE76qiXOTg==
+X-Received: by 2002:a05:600c:4f03:b0:438:a240:c63 with SMTP id 5b1f17b1804b1-4396e6978f1mr108096635e9.2.1739888321808;
+        Tue, 18 Feb 2025 06:18:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHz+8srgi2drXTmMyM1NYHrwhlKtyRHpPGxtjZL4L3zCFR0eLaPU7DhmwvLMH2MoF6LIUl/tw==
+X-Received: by 2002:a05:600c:4f03:b0:438:a240:c63 with SMTP id 5b1f17b1804b1-4396e6978f1mr108096425e9.2.1739888321363;
+        Tue, 18 Feb 2025 06:18:41 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1b8471sm185070475e9.37.2025.02.18.06.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 06:18:40 -0800 (PST)
+Date: Tue, 18 Feb 2025 15:18:38 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
+ <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
+ <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
+ <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
+ <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
+ <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
+ <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] tools/selftests: add file/shmem-backed mapping guard
- region tests
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <90c16bec5fcaafcd1700dfa3e9988c3e1aa9ac1d.1739469950.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <90c16bec5fcaafcd1700dfa3e9988c3e1aa9ac1d.1739469950.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 76EC61F442
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
 
-On 2/13/25 19:17, Lorenzo Stoakes wrote:
-> Extend the guard region self tests to explicitly assert that guard regions
-> work correctly for functionality specific to file-backed and shmem
-> mappings.
+On 18/02/25 15:12, Dietmar Eggemann wrote:
+> On 18/02/2025 10:58, Juri Lelli wrote:
+> > Hi!
+> > 
+> > On 17/02/25 17:08, Juri Lelli wrote:
+> >> On 14/02/25 10:05, Jon Hunter wrote:
+> > 
+> > ...
+> > 
+> >> At this point I believe you triggered suspend.
+> >>
+> >>> [   57.290150] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> >>> [   57.335619] tegra-xusb 3530000.usb: Firmware timestamp: 2020-07-06 13:39:28 UTC
+> >>> [   57.353364] dwc-eth-dwmac 2490000.ethernet eth0: Link is Down
+> >>> [   57.397022] Disabling non-boot CPUs ...
+> >>
+> >> Offlining CPU5.
+> >>
+> >>> [   57.400904] dl_bw_manage: cpu=5 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4 type=DYN span=0,3-5
+> >>> [   57.400949] CPU0 attaching NULL sched-domain.
+> >>> [   57.415298] span=1-2
+> >>> [   57.417483] __dl_sub: cpus=3 tsk_bw=52428 total_bw=157284 span=0,3-5 type=DYN
+> >>> [   57.417487] __dl_server_detach_root: cpu=0 rd_span=0,3-5 total_bw=157284
+> >>> [   57.417496] rq_attach_root: cpu=0 old_span=NULL new_span=1-2
+> >>> [   57.417501] __dl_add: cpus=3 tsk_bw=52428 total_bw=157284 span=0-2 type=DEF
+> >>> [   57.417504] __dl_server_attach_root: cpu=0 rd_span=0-2 total_bw=157284
+> >>> [   57.417507] CPU3 attaching NULL sched-domain.
+> >>> [   57.454804] span=0-2
+> >>> [   57.456987] __dl_sub: cpus=2 tsk_bw=52428 total_bw=104856 span=3-5 type=DYN
+> >>> [   57.456990] __dl_server_detach_root: cpu=3 rd_span=3-5 total_bw=104856
+> >>> [   57.456998] rq_attach_root: cpu=3 old_span=NULL new_span=0-2
+> >>> [   57.457000] __dl_add: cpus=4 tsk_bw=52428 total_bw=209712 span=0-3 type=DEF
+> >>> [   57.457003] __dl_server_attach_root: cpu=3 rd_span=0-3 total_bw=209712
+> >>> [   57.457006] CPU4 attaching NULL sched-domain.
+> >>> [   57.493964] span=0-3
+> >>> [   57.496152] __dl_sub: cpus=1 tsk_bw=52428 total_bw=52428 span=4-5 type=DYN
+> >>> [   57.496156] __dl_server_detach_root: cpu=4 rd_span=4-5 total_bw=52428
+> >>> [   57.496162] rq_attach_root: cpu=4 old_span=NULL new_span=0-3
+> >>> [   57.496165] __dl_add: cpus=5 tsk_bw=52428 total_bw=262140 span=0-4 type=DEF
+> >>> [   57.496168] __dl_server_attach_root: cpu=4 rd_span=0-4 total_bw=262140
+> >>> [   57.496171] CPU5 attaching NULL sched-domain.
+> >>> [   57.532952] span=0-4
+> >>> [   57.535143] rq_attach_root: cpu=5 old_span= new_span=0-4
+> >>> [   57.535147] __dl_add: cpus=5 tsk_bw=52428 total_bw=314568 span=0-5 type=DEF
+> >>
+> >> Maybe we shouldn't add the dl_server contribution of a CPU that is going
+> >> to be offline.
+> > 
+> > I tried to implement this idea and ended up with the following. As usual
+> > also pushed it to the branch on github. Could you please update and
+> > re-test?
+> > 
+> > Another thing that I noticed is that in my case an hotplug operation
+> > generating a sched/root domain rebuild ends up calling dl_rebuild_
+> > rd_accounting() (from partition_and_rebuild_sched_domains()) which
+> > resets accounting for def and dyn domains. In your case (looking again
+> > at the last dmesg you shared) I don't see this call, so I wonder if for
+> > some reason related to your setup we do the rebuild by calling partition_
+> > sched_domains() (instead of partition_and_rebuild_) and this doesn't
+> > call dl_rebuild_rd_accounting() after partition_sched_domains_locked() -
+> > maybe it should? Dietmar, Christian, Peter, what do you think?
 > 
-> In addition to testing all of the existing guard region functionality that
-> is currently tested against anonymous mappings against file-backed and
-> shmem mappings (except those which are exclusive to anonymous mapping), we
-> now also:
+> Yeah, looks like suspend/resume behaves differently compared to CPU hotplug.
 > 
-> * Test that MADV_SEQUENTIAL does not cause unexpected readahead behaviour.
-> * Test that MAP_PRIVATE behaves as expected with guard regions installed in
->   both a shared and private mapping of an fd.
-> * Test that a read-only file can correctly establish guard regions.
-> * Test a probable fault-around case does not interfere with guard regions
->   (or vice-versa).
-> * Test that truncation does not eliminate guard regions.
-> * Test that hole punching functions as expected in the presence of guard
->   regions.
-> * Test that a read-only mapping of a memfd write sealed mapping can have
->   guard regions established within it and function correctly without
->   violation of the seal.
-> * Test that guard regions installed into a mapping of the anonymous zero
->   page function correctly.
+> On my Juno [L b b L L L]
+>                 ^^^
+>                 isolcpus=[2,3]
+> 
+> # ps2 | grep DLN
+>    98    98 S 140      0   - DLN sugov:0
+>    99    99 S 140      0   - DLN sugov:1
+> 
+> # taskset -p 98; taskset -p 99
+> pid 98's current affinity mask: 39
+> pid 99's current affinity mask: 6
+> 
+> 
+> [   87.679282] partition_sched_domains() called
+> ...
+> [   87.684013] partition_sched_domains() called
+> ...
+> [   87.687961] partition_sched_domains() called
+> ...
+> [   87.689419] psci: CPU3 killed (polled 0 ms)
+> [   87.689715] __dl_bw_capacity() mask=2-5 cap=1024
+> [   87.689739] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+> [   87.689757] dl_bw_manage: cpu=2 cap=0 fair_server_bw=52428
+> total_bw=209712 dl_bw_cpus=1 type=DEF span=2-5
+> [   87.689775] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+> [   87.689789] dl_bw_manage() cpu=2 cap=0 overflow=1 return=-16
+> [   87.689864] Error taking CPU2 down: -16                       <-- !!!
+> ...
+> [   87.690674] partition_sched_domains() called
+> ...
+> [   87.691496] partition_sched_domains() called
+> ...
+> [   87.693702] partition_sched_domains() called
+> ...
+> [   87.695819] partition_and_rebuild_sched_domains() called
+> 
 
-Impressive.
-
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Ah, OK. Did you try with my last proposed change?
 
 
