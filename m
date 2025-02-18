@@ -1,218 +1,214 @@
-Return-Path: <linux-kernel+bounces-518733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94326A393DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:37:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9AEA393E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1347D16DD2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FC33A8F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239451B87E2;
-	Tue, 18 Feb 2025 07:37:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE5E1BAEDC;
+	Tue, 18 Feb 2025 07:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNB0nGFi"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28021B85E4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B743B1B422A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739864263; cv=none; b=kDFSZ7z1JI20i17Fw8x1TDFpHSXQ0jcx9KrWeKNDdEYSUpqbfQuyeqr7zJiGk/G9FrVkA4l5m6+y3YXUcce1fiYK/wH9oJArpRRGcY0kPoJZo5q8UycW+aNLElPj2/8VMoexaRCUEIsGaIsr24DdphoKdkzXeYWkc6suPAOSftc=
+	t=1739864491; cv=none; b=MmXBYOK6TuqHY8RlBLm7x9UUbitxGkXMZlqc6MDrS2CWiF78qJ1J5dly+erAU4aZdpuqYaexNdWxSpMmHDRlsyX1NVJgSaB9fm2Q9ei2lOuEPodq8xjBNoU0b004QmVxpJ16pkYltSRP/lvRtE2hZZYY6eq9h831BRcDBI7F+xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739864263; c=relaxed/simple;
-	bh=DUoJQlVlnERLhUSNoTxyxiAkOJwMamJa+WF47ELS5bE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6Q+UUJBdtL4LXc6bx95E6++W/RskKA5wd6RddQot9vT2+g1o/vhIzEcugO1nLDgS0m8lpLe8Ym3xBiN3q7+YIxZJ6icFqRzM0W633qOpa5HzGJAoTN09O7FAENntYdDh3TP1ByI78FlBsytkfBh/0wfhHMT+QX/aQKMpraoqWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkIAe-0006zz-Cf; Tue, 18 Feb 2025 08:37:32 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkIAd-001Y2U-2P;
-	Tue, 18 Feb 2025 08:37:31 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 5FA283C56E7;
-	Tue, 18 Feb 2025 07:37:31 +0000 (UTC)
-Date: Tue, 18 Feb 2025 08:37:30 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Matt Jan <zoo868e@gmail.com>, 
-	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com, linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
-Subject: Re: [PATCH] can: ucan: Correct the size parameter
-Message-ID: <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
-References: <67b323a4.050a0220.173698.002b.GAE@google.com>
- <20250217190404.354574-1-zoo868e@gmail.com>
- <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
+	s=arc-20240116; t=1739864491; c=relaxed/simple;
+	bh=xLCsJkXwDb09eKDZH/4vw1UfU/79jGQqZds8l7xfmz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLSF5EKqJddZXCe+285nAjuETb/3NGFkV1fCLzDiABW4+D7xcBHll/sLPCivKDLgbOIwOwmJNbLoBASURYvu1SFfOht2r9q9IaCUYaEJzv6axOzK4lyLeaeGr9JPsC+1TKZH9k6GqG1oPKKDSMvKXfJ6CLjAdJXEZ7AkC8DytaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uNB0nGFi; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e41e17645dso52686096d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 23:41:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739864488; x=1740469288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLCsJkXwDb09eKDZH/4vw1UfU/79jGQqZds8l7xfmz0=;
+        b=uNB0nGFi0FIatgxwvHQGHPuUfdK04qmHnL7spQvvoRtB/0GpFCofVqOHlM6Yn6jJrC
+         6knaZ3vtopwgaWnvh/NHTgOeq1ekNQjLeRVgaGmDBSuCfa5Q82L70lMbILqLh01Hp2wd
+         qsMHl7hyj3s504BIqM+uBGGtNWbEKgi1xQ08cdcl228Rm+OkOoMqd2eqkzWVGkFVjG0m
+         5hGjJbxDz90aOb4BYgkpWhfoGkuExAmJtpSTe+X4SPS9bNtCWePEphM4Qpbf3rYQ/1Z/
+         +QojmlPouUBdqPXt9HoAkuE1fIbEOdFOG7X3Gf7ufVzIKdn9Pp+YtQTTyyDm7YImjSQG
+         hGEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739864488; x=1740469288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xLCsJkXwDb09eKDZH/4vw1UfU/79jGQqZds8l7xfmz0=;
+        b=EXp7PmZQFSY1eFe/ybL5oO5x11VlulxTqniyCz07ONbxVBw1fGKwsqZM9CXxUTs1ao
+         CRM9fg/bCGe5rzyZYn7H6cT4XEFeqI0LfgzggWgy3ryTQ2UPOJoEqmxo0FJLssqTMcwt
+         rQ3YA8xZe/hcB0MetYPcALXsH5T0fxaHkTXlDJuv25PXy/I2cafLrZVVYZfZXpMnOJ5e
+         k9rSMdGraL7qhbA8Zp+DeKl27tjsWpd9jfrCfdOrxvsDw7PysTZjna9O4L7vpr/RaGJw
+         euCWLqhjLJgUM++hT3qxC6QXI71GDSPJ69m8duMHTZ7x6RbaFliEYAnVGPT+WclWZn5G
+         kETw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr+aw6fJG5qZEfy6lFfpcEvE9BCpKcVBOz7aqgw1Wlo+zlaDfVeonsLS3BAGlTjDA8e9Qyq8nlZNwLHes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuDNkS+v6kH59LEkKbvfRwyxksT7c+omFfi0gpCbqAGLsnMvcz
+	c0XDDnTRSojEBeyeos5vuSPfB6O2516YT8XduA7zY89wq5iu5IVYy3TEZ8btGCElRjmxYMB3tvZ
+	83EHLBz/eOnaEExNVrffgvaptM9ld/JA78I4t
+X-Gm-Gg: ASbGnctPrRTlKWXSCx6u3ahmXk0Ayr7tKzUa/5PgK6zSCLkDKMh6fma78PrsyEi+dsr
+	tXK5OH2tbJ3UzxW8NMMUZysnoUO6CxvbXhgLe8HOQVFfbm9cmQf+510wOFZs6JEAkz2BWRZ5qog
+	==
+X-Google-Smtp-Source: AGHT+IHlbszPPYw9+g2xxid6iEtrbF/hynF0NT1zT2p31zGky0Ry7FOa+jjqmFDNLjyLmre0RIpWVJlOGFVmaru4Ojk=
+X-Received: by 2002:a05:6214:300e:b0:6e4:7307:51af with SMTP id
+ 6a1803df08f44-6e66cd0b058mr204225386d6.36.1739864488529; Mon, 17 Feb 2025
+ 23:41:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h4vmx37zg34x3jwu"
-Content-Disposition: inline
-In-Reply-To: <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250217140008.1941287-1-kevin.brodsky@arm.com>
+In-Reply-To: <20250217140008.1941287-1-kevin.brodsky@arm.com>
+From: David Gow <davidgow@google.com>
+Date: Tue, 18 Feb 2025 15:41:16 +0800
+X-Gm-Features: AWEUYZmJSzsbaQeedqgjs9EmCCwD3cqlBfMelDHfo71GgjY0GqWMWj0bud_5_GA
+Message-ID: <CABVgOSk3PxgPi-ZWiXeZy751Pra8O1OspsJGk_fotxVcmJ8SHw@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Clarify kunit_skip() argument name
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000d2043b062e65c486"
 
+--000000000000d2043b062e65c486
+Content-Type: text/plain; charset="UTF-8"
 
---h4vmx37zg34x3jwu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: ucan: Correct the size parameter
-MIME-Version: 1.0
+On Mon, 17 Feb 2025 at 22:00, Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+>
+> kunit_skip() and kunit_mark_skipped() can only be passed a pointer
+> to a struct kunit, not struct kunit_suite (only kunit_log() actually
+> supports both). Rename their first argument accordingly.
+>
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Cc: linux-kselftest@vger.kernel.org
+> ---
 
-On 18.02.2025 11:22:11, Vincent Mailhol wrote:
-> On 18/02/2025 at 04:04, Matt Jan wrote:
-> > According to the comment, the size parameter is only required when
-> > @dst is not an array, or when the copy needs to be smaller than
-> > sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
-> > correct size should be sizeof(union ucan_ctl_payload).
->=20
-> While this fix is correct, I think that the root cause is that
-> up->ctl_msg_buffer->raw is not NUL terminated.
->=20
-> Because of that, a local copy was added, just to reintroduce the NUL
-> terminating byte.
->=20
-> I think it is better to just directly terminate up->ctl_msg_buffer->raw
-> and get rid of the firmware_str local variable and the string copy.
->=20
-> So, what about this:
->=20
-> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-> index 39a63b7313a4..268085453d24 100644
-> --- a/drivers/net/can/usb/ucan.c
-> +++ b/drivers/net/can/usb/ucan.c
-> @@ -186,7 +186,7 @@ union ucan_ctl_payload {
->          */
->         struct ucan_ctl_cmd_get_protocol_version cmd_get_protocol_version;
->=20
-> -       u8 raw[128];
-> +       char fw_info[128];
->  } __packed;
->=20
->  enum {
-> @@ -424,18 +424,19 @@ static int ucan_ctrl_command_out(struct ucan_priv *=
-up,
->                                UCAN_USB_CTL_PIPE_TIMEOUT);
->  }
->=20
-> -static int ucan_device_request_in(struct ucan_priv *up,
-> -                                 u8 cmd, u16 subcmd, u16 datalen)
-> +static void ucan_get_fw_info(struct ucan_priv *up, char *fw_info,
-> size_t size)
->  {
-> -       return usb_control_msg(up->udev,
-> -                              usb_rcvctrlpipe(up->udev, 0),
-> -                              cmd,
-> -                              USB_DIR_IN | USB_TYPE_VENDOR |
-> USB_RECIP_DEVICE,
-> -                              subcmd,
-> -                              0,
-> -                              up->ctl_msg_buffer,
-> -                              datalen,
-> -                              UCAN_USB_CTL_PIPE_TIMEOUT);
-> +       int ret;
-> +
-> +       ret =3D usb_control_msg(up->udev, usb_rcvctrlpipe(up->udev, 0),
-> +                             UCAN_DEVICE_GET_FW_STRING,
-> +                             USB_DIR_IN | USB_TYPE_VENDOR |
-> USB_RECIP_DEVICE,
-> +                             0, 0, fw_info, size - 1,
-> +                             UCAN_USB_CTL_PIPE_TIMEOUT);
-> +       if (ret > 0)
-> +               fw_info[ret] =3D '\0';
-> +       else
-> +               strcpy(fw_info, "unknown");
->  }
->=20
->  /* Parse the device information structure reported by the device and
-> @@ -1314,7 +1315,6 @@ static int ucan_probe(struct usb_interface *intf,
->         u8 in_ep_addr;
->         u8 out_ep_addr;
->         union ucan_ctl_payload *ctl_msg_buffer;
-> -       char firmware_str[sizeof(union ucan_ctl_payload) + 1];
->=20
->         udev =3D interface_to_usbdev(intf);
->=20
-> @@ -1527,17 +1527,6 @@ static int ucan_probe(struct usb_interface *intf,
->          */
->         ucan_parse_device_info(up, &ctl_msg_buffer->cmd_get_device_info);
->=20
-> -       /* just print some device information - if available */
-> -       ret =3D ucan_device_request_in(up, UCAN_DEVICE_GET_FW_STRING, 0,
-> -                                    sizeof(union ucan_ctl_payload));
-> -       if (ret > 0) {
-> -               /* copy string while ensuring zero termination */
-> -               strscpy(firmware_str, up->ctl_msg_buffer->raw,
-> -                       sizeof(union ucan_ctl_payload) + 1);
-> -       } else {
-> -               strcpy(firmware_str, "unknown");
-> -       }
-> -
->         /* device is compatible, reset it */
->         ret =3D ucan_ctrl_command_out(up, UCAN_COMMAND_RESET, 0, 0);
->         if (ret < 0)
-> @@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *intf,
->=20
->         /* initialisation complete, log device info */
->         netdev_info(up->netdev, "registered device\n");
-> -       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
-> +       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
-> +                        sizeof(up->ctl_msg_buffer->fw_info));
-> +       netdev_info(up->netdev, "firmware string: %s\n",
-> +                   up->ctl_msg_buffer->fw_info);
+Thanks. We probably should support skipping (the rest of) a suite, but
+let's not pretend we do when we don't!
 
-We could also use the:
+Reviewed-by: David Gow <davidgow@google.com>
 
-    printf("%.*s", sizeof(up->ctl_msg_buffer->fw_info), up->ctl_msg_buffer-=
->fw_info);
+Cheers,
+-- David
 
-format string trick to only print a limited number of chars of the given
-string. But I'm also fine with your solution. Either way, please send a
-proper patch :)
+--000000000000d2043b062e65c486
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---h4vmx37zg34x3jwu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0OLUACgkQDHRl3/mQ
-kZw9uwgAmpOyOf1wkR0AGLIlgvqr34+Zhb618ewFvznR16Bn0/6VoNBDGUlQFzYA
-0oS7rdFuA+Zv8DdfWg98kUyNiZ9E+2cIkqTioUAqzZVHgeFeD8aZrwxJa13tYkoi
-0xHizIC58c5u6jdOcBvNagyt73qX0wYtEiUhEcGJiRl8BP2mApjv69rmdHkE76pA
-hvld1rwWUYI1MB2nip8YRxYhpt4YCQfIX9VDcmIX6W76JJJGN2efLwoCGChmMyXA
-Vac3DjnvluwxFcLP1JlbdlYUusrqRwK8ruzKHP2gpkqDCdL278RBV2+Mq9TXgGWH
-SW+l/BA8hcxXzRJAUeDrYAzBa/+73Q==
-=01QG
------END PGP SIGNATURE-----
-
---h4vmx37zg34x3jwu--
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+YE9NAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFHgsCGkO2Hex
+N6ybc+GeQEb6790qMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQAs
+exV05yVDmPhHRqOq9lAbfWOUvEf8zydxabZUHna6bayb83jD2eb9nMGGEprfuNBRmFg35sgF1TyN
++ieuQakvQYmY8tzK49hhHa2Y3qhGCTqYTHO3ypHvhHsZiGbL0gmdgB9P8ssVIws//34ae99GUOxo
+XKTxPwwsQ5Arq42besv3/HXAW+4nRAT8d3ht5ZWCHc5rjL/vdGzu7PaYo3u0da69AZ8Sh4Gf5yoc
+QANr2ZkMrxXbLmSmnRvbkQrzlZp2YbTFnczx46429D6q75/FNFOL1vAjxtRAPzkyACvW0eKvchza
+TMvvD3IWERLlcBL5yXpENc3rI8/wVjqgAWYxlFg1b/4b/TCgYe2MZC0rx4Uh3zTIbmPNiHdN6QZ9
+oDiYzWUcqWZ5jCO4bMKNlVJXeCvdANLHuhcC8FONj5VzNgYXs6gWkp9/Wt6XnQPX4dF4JBa8JdL/
+cT46RJIzoiJHEx/8syO5FparZHIKbkunoq6niPsRaQUGeqWc56H4Z1sQXuBJN9fhqkIkG0Ywfrwt
+uFrCoYIRlx4rSVHpBIKgnsgdm0SFQK72MPmIkfhfq9Fh0h8AjhF73sLO7K5BfwWkx1gwMySyNY0e
+PCRYr6WEVOkUJS0a0fui693ymMPFLQAimmz8EpyFok4Ju066StkYO1dIgUIla4x61auxkWHwnzGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAcDMKctW1GQKDKqEUSh4
+pjANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgvqcGNHvtFSeAZv69xwF/ovRGRyyB
+4VYvwkAOSjYsPUowGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+MjE4MDc0MTI4WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAG9yFIG+nnA6Nawz7JYwbEv0sPhDuDRM0TZTLG80SpgBNnbD
+XbO+h59L/nLubPlVs1wx+NJhyFbLBaYYIOAtjBSnN9I5w8C2GVq3tUARYPYqR6Uc4/3uE5kZzC8H
+BLdemQThw1m3clMWUsKYvZ82rBM7xlP3z0zx/X7m+EMRNE7gOb8aYXcXud1OHYrvtxKwAHMhurtL
+hJDpSfNrndedlRoX2g8sy5IRYnh71FDw/6uOuybbWmYB3Qh6LeuzB5L5wdHohgNbkgq5OeA2EE6u
+MP6ei3/nclXkFozHXADRebi2zKDh0afO0SDIOyJmtPsJFNxxrczpTtbOgQ5g82zt7Wk=
+--000000000000d2043b062e65c486--
 
