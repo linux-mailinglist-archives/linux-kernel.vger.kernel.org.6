@@ -1,251 +1,229 @@
-Return-Path: <linux-kernel+bounces-518687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166F0A3934A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:59:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8995A39350
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D789170348
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 921FC7A3008
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFB91B041F;
-	Tue, 18 Feb 2025 05:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26D61B0F26;
+	Tue, 18 Feb 2025 06:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oRHY3T2D"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UdDclgqy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED68749C;
-	Tue, 18 Feb 2025 05:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739858341; cv=none; b=S+uYmSb70k02p8rpJeh2zIqttS7rtxPHbmWL8bxOcHku2ZvR3pU+OWApXf51MXUzP/XcBJErBUBWQs7tr/FSdseaG0f1KSXR7nNhu3cdrtlYnNwVcM9q8f3lnxYBUHRNMQM2x7Wl9ira8O8RT7w96n55YZ8sq7sQ7cowjnh2BME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739858341; c=relaxed/simple;
-	bh=CEVJqpctOMdfCysXFks3+xB0utmM69RdwWx2wPnB110=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rihCt97Gj26PfT4d7VEqjfvlwWjqY0OQK1wCvI1j2atknmNkHFgBOTyylkTZK26TZ9+QsrbcKOAcIVUSwGE8NoUJnISRx2wilPt/y3zn9qVlhnrTKyv9vLDGsZPd8BV/5+r4zUNeKQV4MjLRmwZAOQw0ntZP9T12txsJLRq2GV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oRHY3T2D; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HFddcH020021;
-	Tue, 18 Feb 2025 05:58:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=tjVxHI
-	8p+Dwo9AwyLlaVxDg1pLMBBHhFN5oRVlEBrGk=; b=oRHY3T2Dro3K+EtlSRLH1t
-	nl5+cJln+aLYxg2mqCQsCwdP8O8mG6+YjHd6krlclOVnCxoPI0rMtXAGYtvotECz
-	lTyTEdJynzeBFwuocgeb2nKN80cntn+EN/Vy25M30be1uS4hM8TL7+LQBIcrv16t
-	wt+JX2GydVxGdfBk0Cyip3ubfIstDVvEsPSWXiqxXSRU1SFKugIned4ihBSp6Dc/
-	0/afxTEODdBbZbquZztZBF3/jZiaXuM2YFk8uK/maKj+s3yhHAkmJ34z8+WduRIK
-	uDKdPl7vkEhF6Fy98VvDAYyjcLklKR/JQnb4CmmEpZ50JCFTe/uhatQ1Hx2vPMCw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44v7xub15p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 05:58:44 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51I5pjSO003681;
-	Tue, 18 Feb 2025 05:58:44 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44v7xub15k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 05:58:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51I52mgT008148;
-	Tue, 18 Feb 2025 05:58:43 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u58thqv9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 05:58:43 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51I5wfH330933560
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 05:58:41 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9BB0720043;
-	Tue, 18 Feb 2025 05:58:41 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 05AFB20040;
-	Tue, 18 Feb 2025 05:58:39 +0000 (GMT)
-Received: from [9.124.222.120] (unknown [9.124.222.120])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Feb 2025 05:58:38 +0000 (GMT)
-Message-ID: <cc6996cc-c5c1-429d-ade0-9978b859f207@linux.ibm.com>
-Date: Tue, 18 Feb 2025 11:28:38 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906AE10E5;
+	Tue, 18 Feb 2025 06:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739858657; cv=fail; b=Qbicr1qHvXZ2hDJWi9sgPZCbPutOx5Dg1CoGAZJsbKBmQw5tOhwAaBdD+l3LBQ/1XoRXC27nrynInZV2lzxNCNBIMT5d8be4/v65Xg0n8iVX74YyL8hRR4riUFTFwCUOyyA46PWU2TvRxVozKOlry0mkMY0vneVgmP1527u0SW4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739858657; c=relaxed/simple;
+	bh=76EAaMnzsftCPOqiHZo5UUvkNX+7hgw5cX0SQjobRpI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nEDd+RPV8/EuIfnA88tG764XyRuDU+2XGsTk4TX/CNLcMmI85uwz6fxRy0/nk9R6r76Na0PqW8cIU10glAP4ZW5ZeGo5NoSdGXHi3lIVfDga6Po+otWNAIQEcUdwjgK/bdhAt8XMmHnkr/PtRj9qDr9SG80Wqi5XxNTwTrEWBVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UdDclgqy; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739858656; x=1771394656;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=76EAaMnzsftCPOqiHZo5UUvkNX+7hgw5cX0SQjobRpI=;
+  b=UdDclgqy+vIf0P5ictyvDIkf0v5uAUTR9X3B/JiQLGQ4KvKf9a9dy/fu
+   woEPLnFWSIX9rARBpXchT2SyZIKrWTSpYuYMQr9awRDzmNDsvxUGzC5cU
+   PoZ7LUFWaWGTkzYzxr/2HUDoePB0VFdh91a6mYfq+74IDDldtXMClyUFU
+   kzWJW3TU8bb9QvFRkYoLKnKGJZCrc6spjIrYEJljQxC12ypwMmwDfhuEp
+   xjpyLCuYpS1cACReuNUyWn7taWocfrXJlfgHwWmPp6WCXibSRHKAnALes
+   7RUx6GwrGjHy+pzY7ObAVZkcpFuT1+3/5K6Nhwrgut1BCsoYGx3vJiF+q
+   A==;
+X-CSE-ConnectionGUID: ss4bHKSfTZOXexfkepysHQ==
+X-CSE-MsgGUID: yGzd6vfFTCO+IWzmW8sEaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51160987"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
+   d="scan'208";a="51160987"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 22:04:15 -0800
+X-CSE-ConnectionGUID: wAiYjgltTWuRgdnwJgujjQ==
+X-CSE-MsgGUID: pY52qAxVRRiYMO/jGx0sLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
+   d="scan'208";a="114498705"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 22:04:14 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Mon, 17 Feb 2025 22:04:13 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Mon, 17 Feb 2025 22:04:13 -0800
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 17 Feb 2025 22:04:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QZs9C1figf1LOmcajGc3SlKTENrQsDTFzsvbnia9JIRJtHQacHsoxkJTEYNpe6SzLbzFD7gWvFU70CBzG5YQET7edheQHxgALl/TJL57XYMttqL2WuyBP32yG8PHamStonSykj8lHyZIyKAyrNGzY1M/wwjhFMD5fClNuUg6ptGRdCxWvLKGY3V8xDjRMHFG6gkSz0YK3d4I1LhQyAdT09z81eauASH3YwolC//hUlkB/7PQbQhWFUGwz6wKUd3cmyvh+mEZFNkZ25fJsBqe5YkNtOroqZ8vfnzJm2c+C+oxdA4W6sqQg9IZWfnddrRzcyCyYxiN+t+4jxukIBSBXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=76EAaMnzsftCPOqiHZo5UUvkNX+7hgw5cX0SQjobRpI=;
+ b=ls1KXqr22n4sIx6ZSRPVPrullQDiEFTwevqCE9uYoYAH6mPj/roP6B8BMZf7wgWrWqVlV4xdQi/LTsAjzNyX5VJpISz06w2sMU+HHCSQ/1PCySwuYjGrvZ6w/+zMoeT0iE7T4JrGCnF0Xt/z6sdFGf70E49mti44wVJKVzpadPfpG2lBOdmQfAomg1o5EY2OjfLm3it+Ntc010jbuVtvqYgDYuz6gxAbdAKcAF4jZg0Rk6ugdaGCVNu+O74u3GE4/oX2E3qNaReoDdzltzBbNbcjLTeShWLAdD7vXTiR3CIMO4G7WARHlF2Hl+aXXHpK9NNgvNJhmNuKTUOX82asqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by PH7PR11MB8011.namprd11.prod.outlook.com (2603:10b6:510:24a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 06:03:42 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d%4]) with mapi id 15.20.8422.012; Tue, 18 Feb 2025
+ 06:03:42 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: Yazen Ghannam <yazen.ghannam@amd.com>, "x86@kernel.org" <x86@kernel.org>,
+	"Luck, Tony" <tony.luck@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"Smita.KoralahalliChannabasappa@amd.com"
+	<Smita.KoralahalliChannabasappa@amd.com>
+Subject: RE: [PATCH v2 10/16] x86/mce: Separate global and per-CPU quirks
+Thread-Topic: [PATCH v2 10/16] x86/mce: Separate global and per-CPU quirks
+Thread-Index: AQHbfjfFfcwhoaKyI06fFY9NnIDF+bNMliVQ
+Date: Tue, 18 Feb 2025 06:03:42 +0000
+Message-ID: <CY8PR11MB713455D3FE3A60DF09F5404D89FA2@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
+ <20250213-wip-mca-updates-v2-10-3636547fe05f@amd.com>
+In-Reply-To: <20250213-wip-mca-updates-v2-10-3636547fe05f@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|PH7PR11MB8011:EE_
+x-ms-office365-filtering-correlation-id: 30576122-08fc-49f7-69f0-08dd4fe1ff49
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?M0Y1NTh6WCtndDlLdkViYmk3aTk5ekJtNGhRNmp1dGN4cmR3bllGRFBSS01Z?=
+ =?utf-8?B?WGRjQmFQRnkxYm5ZL3ZoSENCQ0tlVy9tSVdSUk1sQUdIQkhsU2xwNzZxTm5r?=
+ =?utf-8?B?dnNZOWdlZGUwYVNNZGhIdi9vTTdtUkRWVnBpKzZ1T3NkekdYeHVKNkk0cGNy?=
+ =?utf-8?B?ZkVTUVZSUmN6b0o5V3RXUWtJU1BUdkVvbTkxVkI5bDBUYTFzR1MrK0dINUc2?=
+ =?utf-8?B?MmZCTEhoZjlmbUx0K1NKM2duRmhWRmhFUXJGdjRBNmpCOGMwME1iTU9OL2J1?=
+ =?utf-8?B?enhybWFWTlJHWlo0SG9MWk9HcUFBcnlGeHdYU2RrdE9IUlJ0VW54NDlUc0tE?=
+ =?utf-8?B?Y0NFd0JQc3hKa0greXllenNTdUF3TlA5K3NXVW5ZTkFIdG1Gemw1NDlrMFA2?=
+ =?utf-8?B?bUV6TFY2d1lScDJXc0xzcW55SWNCWjk5akF5NWg0ZkRGK0NrM005b3pGNVh3?=
+ =?utf-8?B?ZHNoc0cvMHlwNlg5N0NjYUdsVlQyVDdkaWpDNC9sTWREbmRRditqWWYyTXhT?=
+ =?utf-8?B?MmhtSFY5Z3dEMGp3UUlZcmowdW5RNkdvd2M0NFc5c05TRDVRZnFYZGFSRStU?=
+ =?utf-8?B?dlBDaFdqYUR0ZmpZQTlVakV0QldSc2VpOW5RRk00QyswbCs5b0hhQy9HN3pJ?=
+ =?utf-8?B?eFlDTnRxeVJtRVluakgrUWdhaUhJTlJxeXFScEYyRXEvZTE4eFZNQUJwTVEw?=
+ =?utf-8?B?aFVVOEFsa09QSGFWN2FxQW9zSmtqQ055T0U4Y3NvT3RKc1lIU2V4bzhMYUlv?=
+ =?utf-8?B?Y1Rtakc3d01sU2hLVk9BT1Azb1hOTHppcU1oYXFTekVHaXVWL25VRm9YZEtN?=
+ =?utf-8?B?NjM5Wm82SzY5Q0RCYm16ZEhlelAyNG9oTkFFQjVoTnVtVWd5S09kclMxZDVP?=
+ =?utf-8?B?a25nVmFjT2RQMDJGUkcyU3ZrS1VVbmw2MU1neU5ydlNRWTJYS2E5b2locDdM?=
+ =?utf-8?B?anJiRU45T1U4d3FsSmRiTlN6Y3dsRFNHa1RNWS94bUljbTFyTHg3RVJjZFRC?=
+ =?utf-8?B?cE9YaEdPTjJUMjROMnEyWUd1L1oxTjRhMDJsN2dnUEtJU1dlY3Q5UmxlVGlO?=
+ =?utf-8?B?STlzOWpGRkJhaWlPTzU0bFc0b3Y1M3VwNEVKYzlsTDBWZVFrcmZSTEx0cXly?=
+ =?utf-8?B?MERpODhXWEdOSE9xc0F1RWNLek9ELy8yeHFZejQwQTEyR1JRcVV4K0h6QzJp?=
+ =?utf-8?B?eUo0YzhCbW5FMXR0WVZsdzdVVitJc1YzQzJxT3ZlcEtLSXFyaE9aNysraitG?=
+ =?utf-8?B?SUtMbTZUL1hPM25RaXVVdm5VeGpZdVlFNlB0TWE4L2dQeW9pSkh6OGsreXY0?=
+ =?utf-8?B?aGd1WkpsVXZ2OXdIL0ZMcVJ4NTdGdmkxU3BScWFjNGw1NXZXaCtwbGFhY1Yr?=
+ =?utf-8?B?RnNGbmkzSWFNMWZRZjNMOFRwc25GR1hIRVcrTlRXN1BYV3BxT3RobjdLRlND?=
+ =?utf-8?B?bEV2eEdOVkV1SEhIbUVkLzBCT01PcUgwNjBSTThNY1orSWR5aEs0MWNXakNG?=
+ =?utf-8?B?ZWg4UGUxSjJGTEJaR1llbUtUL3AvL1VBcG9PS2NObGowZEoxSzZNdWIzMEMv?=
+ =?utf-8?B?dXBRTkRHQ1dJdnVPSHRIcGJZeEhEREdGdlhHM2Z1WkxpRWMwanozdGF0bGds?=
+ =?utf-8?B?a21PZFZPMTVML3N0cDhOa2JUbFZwaWlCZnBmM0cwMUpxVXFTM2VSNE5JbDVl?=
+ =?utf-8?B?VHFxcHpGSXJ4dGVYU1JlMktFN0Q1TzhHMEJsdDVGM3p0SkRQaXlSYmZrakRh?=
+ =?utf-8?B?RE1LeERLTm9NUzFvc3JqVnRlck4wVXRDdk05NlIwQzBWdkJnTlpiQ0ExM2JF?=
+ =?utf-8?B?ODBnMEd0Qlp3bmc4Nm1yaitVS1luaDVHNStjZmE2bG5LQWZjNmdDalV1Mnlh?=
+ =?utf-8?B?U3F1a2E3Q0pjWVZoTUhBZjloTW9LS0x5S3kvdDhIRTNRREJsczhCQTNnS3ls?=
+ =?utf-8?Q?k4tlrH8XrfBdws+NPYkQ9pgCN7FfuPKS?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?c2VieTRSWnB2VHFHUGdKdGV0OUp0UHBPRXN4UGpJa1ZuNjVqQkFCWmdpZ3hL?=
+ =?utf-8?B?NncyMFdnZjdwVC90THpPa2ZoSUE5a043TzJjRTdEakhoY2RFM3dYSEN0VDZz?=
+ =?utf-8?B?QjdHZlRKMXpzSzluM3lnVm85NHhNbXhNeVlCcmFJWnUva3JWUlE3YlNjdjgy?=
+ =?utf-8?B?dDNxZitiYVBPdllkUnAyYmowZ2pJS3NmTDIzbEx6d1dha1ZNSjkwUjVkazdx?=
+ =?utf-8?B?bEl1ckFtdzQreWdBZ284WDFUWGwwVlI1TWU5QnhScG5mZUpINkkwODhaZ3g1?=
+ =?utf-8?B?eC92VDVtQ2J2c2xpVG1Fd0dpOEhTSVVJcE0vZ01xdVN5M251NStleHBGNm9H?=
+ =?utf-8?B?ZWdmQ1pFUGVyZzgxUjFtN0liaG40aTVBdDZlQUUrdmhqdXVlTVdvcDFUekQy?=
+ =?utf-8?B?VE5CNkV0bC9WRytUZC9QSWttdXFtYTJkTlZ5YSsvTDh5ZVI1U25hbjlBQ2tR?=
+ =?utf-8?B?cVRTcDAxV3o0bndGWmNKQ1VNaXk5bVNoaXNhZE1CZjVITkJxejBiTW1sNWNQ?=
+ =?utf-8?B?QTRET2FuNVZMRTdWZlJ6MzdsMXpWR3N5Z3NGcFl6Um5acVB0Vi9vMUJRRUFl?=
+ =?utf-8?B?bnA1djlBd2ZKUTU1YlVVYldXV0xkZlFaMnI4TlRjRDJsNm9oQjRLa3hTWXpM?=
+ =?utf-8?B?aUdWK0crTTZ3SExNclpEYkcxb1FyRytkZmVUQ1RwUExUVCtSZHZGWnJuN3d2?=
+ =?utf-8?B?cHNxcVl6a3BpZFU2U1ZYaXprZk1GZEE5OTkwUXpDZTlGdHlNYWwvRGNSd1RG?=
+ =?utf-8?B?OEZXajJDOEdpTGdhaU40bktxNnhYcXZCSFp5Z1N4SWxuSFlBUk9UYXhBYi90?=
+ =?utf-8?B?eTRocGt1ekVKR3dIOFhKb1RyMTVmK1E4ZjBSMWNVOTFmVlljcnVpQ051anhj?=
+ =?utf-8?B?cFc3bzZUYUd5Z3RyemFOS3poNHNEekFDR2J1OHF6WlZpRlRGRkFyN0VHNmky?=
+ =?utf-8?B?V3NlUTRodExrdnhKOEZ6ZjI3VUlITUZ1bllISTlyM1VYWVRVaEFka3h0K1Y3?=
+ =?utf-8?B?KzhhZ0I4ejVRUGdYMEdtUndMbUZGRTN1OWp4ZUU1RjdkaUE1ckRabk1JVjkv?=
+ =?utf-8?B?Vmgxc1hmeXFGN2k0UlpGL2lXVE9XeEFCWWEvODZEd0dGejdCRklXc1ludHNH?=
+ =?utf-8?B?dlRnOGZremhWd05CaENIRC82WDV1eWJEY3hmazN3Z0VQZUhnb2ZUZ21aLzNY?=
+ =?utf-8?B?TUI0THIwZDhSNHV5KzdEUnZUVGptWXRqcmRMeWhvZytGMGxIVUpxUjkrL0NW?=
+ =?utf-8?B?Uk1oRzhrRmF3SnYwTEtXRnRNVlFJM1ltZzVTTUdiaVJ5ZW9vR1l5R21meis0?=
+ =?utf-8?B?N0VleFJJNjgvMWRPeWRHTVlCaUhMdHMxdVRVdFlEWUNLWlRIMUdwY3hQWEQ0?=
+ =?utf-8?B?WFJhdllFaWo0a01TSm43UUdtaEdxTW0zK3FMOHR6akJCRGJ3Nkg2bTFwOUpk?=
+ =?utf-8?B?eU1KNjE2dGtTOHpiVGxaTHlHV3BoWlIrMDlpV0hQSURUWlUreGV6M3I0S0Vv?=
+ =?utf-8?B?a3Y3RCtIZHpLSUIxZjdMa1lhd2N1U0hpWkVFN2xVV1o1Q1hDQ3Rpb1RyMDZN?=
+ =?utf-8?B?Wlk2Mk42ZDQzaHVlMk9rV1VDMCt0Y1hGYTBMQm1CelVjczUxbXdtdnhFLzE2?=
+ =?utf-8?B?OUNuOEVUSVkxcmVuZTdTcFJHSU56cWYrbnF0Z3dUbnVVWlo3MU41enplK0NL?=
+ =?utf-8?B?RFUvZDR3dlB1bUV6dUd5RXQ5UDYydFdsbFI5aDZqOGE5REU1MXVDeUk3OU1E?=
+ =?utf-8?B?WDUySG5aNGtnZmdscXBUc05mWmh0eGN4dkEwaElzYkcvY1AwU1ViK1g5QVow?=
+ =?utf-8?B?ZGFwYUZjYjJLdWdJbzErTEdrZ1BuVy80VS9KYXY4MVlGYUo4aFJkd25oQ1pl?=
+ =?utf-8?B?cXVIekRDNEpWTnlJckZlaXRZYWlUMXJuT3h6SEJWUWZzejdXdTRZOWJxVWwv?=
+ =?utf-8?B?Z0pIYVZrdDYwNjhQV0drNVkwczdyRzhFdmo1Qkkya0VnZmhKOGZKdm5HcVlv?=
+ =?utf-8?B?Rm9LMHZrWDk1V0tGNkcrbnRZaEV6blpva2gwVW5MelFvTGdjSzVNNFkwVUVH?=
+ =?utf-8?B?NG52WFIvYm94Z2tjTkY0Sm9nZ2g5V1ZTZUc2RHV3WVYrT3YrMUtzMXluaDF5?=
+ =?utf-8?Q?HorUen0Ej5KhgyR4kGOB8aUUo?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/3] sched/fair: introduce new scheduler group type
- group_parked
-To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org
-References: <20250217113252.21796-1-huschle@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250217113252.21796-1-huschle@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Swk8pcBcXOq8yXLxc2f4gxkz7F_GouNO
-X-Proofpoint-GUID: Lka8UfRi4Fvf0hl-0fYnSZi1AmeqmgsS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_01,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 priorityscore=1501
- spamscore=0 adultscore=0 impostorscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502180039
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30576122-08fc-49f7-69f0-08dd4fe1ff49
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2025 06:03:42.5153
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bXSFP3Y3rdp0rNPMrGUjRlntBa8ofWWkcY+6vCcMf8rxuhkSTO5PT2IXc2owfNLMgpY+EbLXuF3xTWv11+x/Ew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8011
+X-OriginatorOrg: intel.com
 
-
-
-On 2/17/25 17:02, Tobias Huschle wrote:
-> Changes to v1
-> 
-> parked vs idle
-> - parked CPUs are now never considered to be idle
-> - a scheduler group is now considered parked iff there are parked CPUs
->    and there are no idle CPUs, i.e. all non parked CPUs are busy or there
->    are only parked CPUs. A scheduler group with parked tasks can be
->    considered to not be parked, if it has idle CPUs which can pick up
->    the parked tasks.
-> - idle_cpu_without always returns that the CPU will not be idle if the
->    CPU is parked
-> 
-> active balance, no_hz, queuing
-> - should_we_balance always returns true if a scheduler groups contains
->    a parked CPU and that CPU has a running task
-> - stopping the tick on parked CPUs is now prevented in sched_can_stop_tick
->    if a task is running
-> - tasks are being prevented to be queued on parked CPUs in ttwu_queue_cond
-> 
-> cleanup
-> - removed duplicate checks for parked CPUs
-> 
-> CPU capacity
-> - added a patch which removes parked cpus and their capacity from
->    scheduler statistics
-> 
-> 
-> Original description:
-> 
-> Adding a new scheduler group type which allows to remove all tasks
-> from certain CPUs through load balancing can help in scenarios where
-> such CPUs are currently unfavorable to use, for example in a
-> virtualized environment.
-> 
-> Functionally, this works as intended. The question would be, if this
-> could be considered to be added and would be worth going forward
-> with. If so, which areas would need additional attention?
-> Some cases are referenced below.
-> 
-> The underlying concept and the approach of adding a new scheduler
-> group type were presented in the Sched MC of the 2024 LPC.
-> A short summary:
-> 
-> Some architectures (e.g. s390) provide virtualization on a firmware
-> level. This implies, that Linux kernels running on such architectures
-> run on virtualized CPUs.
-> 
-> Like in other virtualized environments, the CPUs are most likely shared
-> with other guests on the hardware level. This implies, that Linux
-> kernels running in such an environment may encounter 'steal time'. In
-> other words, instead of being able to use all available time on a
-> physical CPU, some of said available time is 'stolen' by other guests.
-> 
-> This can cause side effects if a guest is interrupted at an unfavorable
-> point in time or if the guest is waiting for one of its other virtual
-> CPUs to perform certain actions while those are suspended in favour of
-> another guest.
-> 
-> Architectures, like arch/s390, address this issue by providing an
-> alternative classification for the CPUs seen by the Linux kernel.
-> 
-> The following example is arch/s390 specific:
-> In the default mode (horizontal CPU polarization), all CPUs are treated
-> equally and can be subject to steal time equally.
-> In the alternate mode (vertical CPU polarization), the underlying
-> firmware hypervisor assigns the CPUs, visible to the guest, different
-> types, depending on how many CPUs the guest is entitled to use. Said
-> entitlement is configured by assigning weights to all active guests.
-> The three CPU types are:
->      - vertical high   : On these CPUs, the guest has always highest
->                          priority over other guests. This means
->                          especially that if the guest executes tasks on
->                          these CPUs, it will encounter no steal time.
->      - vertical medium : These CPUs are meant to cover fractions of
->                          entitlement.
->      - vertical low    : These CPUs will have no priority when being
->                          scheduled. This implies especially, that while
->                          all other guests are using their full
->                          entitlement, these CPUs might not be ran for a
->                          significant amount of time.
-> 
-> As a consequence, using vertical lows while the underlying hypervisor
-> experiences a high load, driven by all defined guests, is to be avoided.
-> 
-> In order to consequently move tasks off of vertical lows, introduce a
-> new type of scheduler groups: group_parked.
-> Parked implies, that processes should be evacuated as fast as possible
-> from these CPUs. This implies that other CPUs should start pulling tasks
-> immediately, while the parked CPUs should refuse to pull any tasks
-> themselves.
-> Adding a group type beyond group_overloaded achieves the expected
-> behavior. By making its selection architecture dependent, it has
-> no effect on architectures which will not make use of that group type.
-> 
-> This approach works very well for many kinds of workloads. Tasks are
-> getting migrated back and forth in line with changing the parked
-> state of the involved CPUs.
-> 
-> There are a couple of issues and corner cases which need further
-> considerations:
-> - rt & dl:      Realtime and deadline scheduling require some additional
->                  attention.
-
-I think we need to address atleast rt, there would be some non percpu 
-kworker threads which need to move out of parked cpus.
-
-> - ext:          Probably affected as well. Needs some conceptional
->                  thoughts first.
-> - raciness:     Right now, there are no synchronization efforts. It needs
->                  to be considered whether those might be necessary or if
->                  it is alright that the parked-state of a CPU might change
->                  during load-balancing.
-> 
-> Patches apply to tip:sched/core
-> 
-> The s390 patch serves as a simplified implementation example.
-
-
-Gave it a try on powerpc with the debugfs file. it works for 
-sched_normal tasks.
-
-> 
-> Tobias Huschle (3):
->    sched/fair: introduce new scheduler group type group_parked
->    sched/fair: adapt scheduler group weight and capacity for parked CPUs
->    s390/topology: Add initial implementation for selection of parked CPUs
-> 
->   arch/s390/include/asm/smp.h    |   2 +
->   arch/s390/kernel/smp.c         |   5 ++
->   include/linux/sched/topology.h |  19 ++++++
->   kernel/sched/core.c            |  13 ++++-
->   kernel/sched/fair.c            | 104 ++++++++++++++++++++++++++++-----
->   kernel/sched/syscalls.c        |   3 +
->   6 files changed, 130 insertions(+), 16 deletions(-)
-> 
-
+PiBGcm9tOiBZYXplbiBHaGFubmFtIDx5YXplbi5naGFubmFtQGFtZC5jb20+DQo+IFsuLi5dDQo+
+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2ludGVsLmMNCj4gKysrIGIvYXJjaC94ODYv
+a2VybmVsL2NwdS9tY2UvaW50ZWwuYw0KPiBAQCAtNDY4LDggKzQ2OCwyMyBAQCBzdGF0aWMgdm9p
+ZCBpbnRlbF9pbWNfaW5pdChzdHJ1Y3QgY3B1aW5mb194ODYgKmMpDQo+ICAJfQ0KPiAgfQ0KPiAN
+Cj4gK3N0YXRpYyB2b2lkIGludGVsX2FwcGx5X3F1aXJrcyhzdHJ1Y3QgY3B1aW5mb194ODYgKmMp
+IHsNCj4gKwkvKg0KPiArCSAqIFNETSBkb2N1bWVudHMgdGhhdCBvbiBmYW1pbHkgNiBiYW5rIDAg
+c2hvdWxkIG5vdCBiZSB3cml0dGVuDQo+ICsJICogYmVjYXVzZSBpdCBhbGlhc2VzIHRvIGFub3Ro
+ZXIgc3BlY2lhbCBCSU9TIGNvbnRyb2xsZWQNCj4gKwkgKiByZWdpc3Rlci4NCj4gKwkgKiBCdXQg
+aXQncyBub3QgYWxpYXNlZCBhbnltb3JlIG9uIG1vZGVsIDB4MWErDQo+ICsJICogRG9uJ3QgaWdu
+b3JlIGJhbmsgMCBjb21wbGV0ZWx5IGJlY2F1c2UgdGhlcmUgY291bGQgYmUgYQ0KPiArCSAqIHZh
+bGlkIGV2ZW50IGxhdGVyLCBtZXJlbHkgZG9uJ3Qgd3JpdGUgQ1RMMC4NCg0KSXMgaXQgYmV0dGVy
+IHRvIGFkZCB0aGUgZm9sbG93aW5nIGRlc2NyaXB0aW9uIGhlcmU/IFNvIHRoYXQgaXQncyBjbGVh
+cg0Kd2UgZG9uJ3QgYXBwbHkgdGhlIHF1aXJrcyBmb3Igb2xkZXIgQ1BVcy4NCg0KICAgIE9sZGVy
+IENQVXMgKHByaW9yIHRvIGZhbWlseSA2KSBjYW4ndCByZWFjaCB0aGlzIHBvaW50IGFuZCBhbHJl
+YWR5IHJldHVybiBlYXJseSANCiAgICBkdWUgdG8gdGhlIGNoZWNrIG9mIF9fbWNoZWNrX2NwdV9h
+bmNpZW50X2luaXQoKS4NCg0KPiArCSAqLw0KPiArCWlmIChjLT54ODZfdmZtIDwgSU5URUxfTkVI
+QUxFTV9FUCAmJg0KPiB0aGlzX2NwdV9yZWFkKG1jZV9udW1fYmFua3MpKQ0KPiArCQl0aGlzX2Nw
+dV9wdHIobWNlX2JhbmtzX2FycmF5KVswXS5pbml0ID0gZmFsc2U7IH0NCj4gKw0KWy4uLl0NCg0K
+TEdUTS4gVGhhbmtzLg0KDQogICAgUmV2aWV3ZWQtYnk6IFFpdXh1IFpodW8gPHFpdXh1LnpodW9A
+aW50ZWwuY29tPg0KDQoNCg0KDQo=
 
