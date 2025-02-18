@@ -1,401 +1,359 @@
-Return-Path: <linux-kernel+bounces-519879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AD9A3A313
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:43:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF06A3A317
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D97E188C153
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4F43AE208
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F1526E14E;
-	Tue, 18 Feb 2025 16:43:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BAF26F442;
+	Tue, 18 Feb 2025 16:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WdSBBiO1";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xs8mJMSq"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB2224113C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896984; cv=none; b=CQY0RJ3of50SiJVLxL7RY4DUiSggITep4a37dTsf+rwco9iLdebH8MLjNn20UfdYEPN9I0W+ySqk8353lNYwuO09Gpn65WL0DWi2fTKqfrTjjyUTHG5qavNc9SRZcdZvm/1O6HTvutixXzLFBYY83s1nOLGcdK769oomxgvlByw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896984; c=relaxed/simple;
-	bh=HaJ8ECQLllyu3DHtXp8YQXCvWJr8Qr0K9njivXqPOWI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=P8GyHM3JB8I3gSElheGHk5fIG0Vn+I3J3j/xUWjR5ipW2cOqnTtDdlnuF5NE1afMYogJqHVESfCzRR5qqLxfwBmcSnMl+5LE+cvpedZ5w5vJu5HR//f4VUSQb2FYh+Q9+8LJ9psHUSTeWS1xd7g1ChcrpbBRE6HsZzNIxXxXHoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso34873525ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:43:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739896982; x=1740501782;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xvoZP9Ew3j0xNkhRmwHcC+W0OQle1YYhza32F6A4EYE=;
-        b=uxxp7n6bBMpesi+GLCKO3cCK+pKmXqoo85ycbRhg3d5xQX+DyKb1lNLgGtxqmwwE7/
-         X//RI24SPJeKnQelB2figK676zyhghdUUimXlzDVDihrNcI4sFB8zYqNtn0siJ8N/0k5
-         3jGB1LnnC0+rXkxds0j/YCWDZrWVLT36voJxbSbvhiX5xrfwt45IqUwteBfuQz1M8wsR
-         h+m5bVs2uWX9IA2inQ8S+2Nk10oJl07wqH0PKQDJDAOfBmniH0RUFreFsu81oFhGs3o1
-         g1nWRIqjIv4NvtXmuR3eHzdtqT6ke1BIog5axgOzUehavV8LnbjDJAK3UgbSL6rwopm2
-         ITrA==
-X-Gm-Message-State: AOJu0YzScgzxvDiboxd4fIpGpLX/tI796HKEFPNZI5aqWCR/hL6FOgC0
-	khw5smG1rt+9bALVDwTEmHH6gmuGevrv3ESJIv677igGEUvUao64hVb7fOatGJrTBXy1Xmi8nYz
-	jsuHsvIy1BEilMoDURNAQlea+q8SrmaFXlvkLEPnMq5/KUfpND/dKbVM=
-X-Google-Smtp-Source: AGHT+IEedm73BDXylXme+oRdKpuSLgKeUhzR8AZXfQgBWEuC2X/olrwtIRAcJaYyfF+pjeQDy7k77gsREBDBlYUssc0i7+X5+OrY
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3077F24336D;
+	Tue, 18 Feb 2025 16:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739897059; cv=fail; b=gviusrZqntrBP/qHOhOVgnaSqp9T5sRCqO+0Rc4NrRn7S4qYB+/vLWTTqmB3BygkCOAB7pNELOEpV5SCwrluFiSUfvQxEQQWm2jUiuNZvf6WmUEgXXoIkRjDzRoH0Ow7Fy6BaSYBsGsRyyNWeU4uV+b4y69ZktMRPaGi72rMT6E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739897059; c=relaxed/simple;
+	bh=q2Yfo0RFmtw4O4fdMVdi2IQMZ+0AdwT8s2ZGTF/9FhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Y641J4MxaUiU0FF+/CkZWBYflr50UUej23iO10lc+M3WcMgY47bo3ecAYxhHFCAc8PO8+6WrSDmu6aw9T8rhQkcGXsWJJjsXYFZyGCWXfxaGptLxk2DFMqmPzUPOj2fRNR0qQQkx+lRP2tYhER1ZgRfa8S4o87FrpWcINOHnHgI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WdSBBiO1; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xs8mJMSq; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IGMYOB010336;
+	Tue, 18 Feb 2025 16:43:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=pXdTRremb+BSGiDNjU
+	9teXf3saAWStgCnbAiFLIYGUU=; b=WdSBBiO1aFc29xhBtn9Y6R5o4FPF2jceOO
+	X18A2aU5boimFKEPuMCjAuFPj3g18YzdrfyEDzlt49gyNbnPYs7LzN1GdfypqosS
+	1SOoB0e9QUqYz5BYmze9fWt7NczQmsxSjzccXB0KHoe2eIQO1ZoieQXXrC2JvulI
+	G6sOXq/KJ4eYI5JPe5159/MAMkeUwzc5ZnGSFSaoBFpQo2bDPA0hgtou8n0N8WCm
+	grA7YLcseNJJcAeKDc+jKDnSSJh45afThymDxKEv2LISG6tF/X5KcJWGEfMQOY/H
+	A9lwV7bqYVzLHusn9VOMJ/1J97ipP7BFyvfCFRqggCBn73ENJdwg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44tjhsf113-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 16:43:53 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51IFo0CR036687;
+	Tue, 18 Feb 2025 16:43:52 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2043.outbound.protection.outlook.com [104.47.51.43])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44thc994yj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 16:43:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yxcNGWaKX17Lq0s2QvwhGn1lH74WyUFMVMTx79kanmI4hIEbek7Vm80AOgjXS6yon43KFCWpVQkVI8no02qbvSX2O4vkTRRRmsZtZVDCK7IiqJMQWEqvTD9z+Nq6audXyOstdgoplQgjwTIp27FqPjzDk6dlFmN22DD7nbO6aJpR7GaPOQ+ktIHdl45ogPK+hzInmnjC2CQjulr1orzF+yuJRJqW05zI/Rf1RU6uHGJyuOOXTPCuZrmS3S1POBbNl3rl21tAm/MLrcHWQadUa0Q4itV/FZLBN6W+VjkjivWLdS1PAVW1G4VzHh2yKcQW2Ji5eC3zAGFMEQxoEUM36Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pXdTRremb+BSGiDNjU9teXf3saAWStgCnbAiFLIYGUU=;
+ b=pOvoBnL7VX1OPEh1SmOO//ZMGCmp+/CuQjh5N0WvSXZiNbFzQLaTtOetPrd084QYPXzgpoyRay6lvRkFlaEAOfIjni/YmVwGfCnGAMFOn3+1C+TGdj7+oAte+uHeisgJqne/G+A5kE9nfTH0fv6xjDldayDy2k5kT7VPYOcuO4V1+kAcc9nNC7EGyfAf3d/r+butmW3cLi3Amjjq9KPP2SRN/PmhMv9O3/YXBkR2oEsnx5U8/L5lm8KbVexI7Mx15CPxXEwvkGvvWdSVNC1LJQHR9xBQ/3ewM/UjhMzSQ83gQ/2lDC/dekmeACYfhb95DSSdaJfg7JgoyaiT2rShog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pXdTRremb+BSGiDNjU9teXf3saAWStgCnbAiFLIYGUU=;
+ b=xs8mJMSqv4VDT/QDaVFAnxfbHfnQVellltLU/2fDcCMFFP5EIXLRHJaNsjcVSdpeoyxS/RC2diXDRkPLHZSobgvt6rjwugAPe2FZqHz+gU/Z3F4ETW8OwTFvFp+1DfscPbbGmZOr5JIR4t7Av3m9OjMsvyz8/Mnnei+cG6gMrOw=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by CH3PR10MB6715.namprd10.prod.outlook.com (2603:10b6:610:148::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 16:43:49 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 16:43:49 +0000
+Date: Tue, 18 Feb 2025 16:43:46 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Juan Yescas <jyescas@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
+ mappings
+Message-ID: <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <fbfae348-909b-48fa-9083-67696b02f15e@suse.cz>
+ <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
+ <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
+ <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
+ <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
+X-ClientProxiedBy: LO4P265CA0232.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::14) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cf:b0:3d0:4700:db18 with SMTP id
- e9e14a558f8ab-3d28091909fmr139438285ab.20.1739896981901; Tue, 18 Feb 2025
- 08:43:01 -0800 (PST)
-Date: Tue, 18 Feb 2025 08:43:01 -0800
-In-Reply-To: <20250218162931.958387-1-n.zhandarovich@fintech.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b4b895.050a0220.6ca4a.0001.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING in usbnet_start_xmit/usb_submit_urb (2)
-From: syzbot <syzbot+d693c07c6f647e0388d3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, n.zhandarovich@fintech.ru, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|CH3PR10MB6715:EE_
+X-MS-Office365-Filtering-Correlation-Id: 801bf217-9838-4732-09c6-08dd503b6b77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Aqy5lOiWfGFn7b4ZQHNfkrUHKRG18SrAAod8fIWQ6qpDXGMMf4CKG4L8lIaP?=
+ =?us-ascii?Q?4nvuz0HN5Q3PwBlVYA6dYwvUH4wU89oOlBsD+e9vTkvPHvWRr9SimXKOjQr1?=
+ =?us-ascii?Q?Va+ODKFgLC9Pf0PNO1ky1AgNjkbyWDvTo3PySPBILNVo13nnUZucGRYI0NWh?=
+ =?us-ascii?Q?WxXTiDa0owJZxgsrV6HSS//xyLPXtIE0l8cCJRyBnSxrOnN4L7cVMSnX0gRn?=
+ =?us-ascii?Q?vhhGH+pWCjwgn+hbHFRXXHkvdY2FXCJQfLGIDf5EH6hFTQ+oWisvYjy/uvji?=
+ =?us-ascii?Q?RnMbWueQAMfR5ildWc1grrZHXD4DMGrICJmcL0I6H3uuDELzeCXoMu7WR+Yo?=
+ =?us-ascii?Q?+mdNavvqnXl1qvqUbPlJlRpq9QlOA3+gE3+ONHAbmj/9hxZCViftiu3A1zVk?=
+ =?us-ascii?Q?4lGE8BgRnQAfYAijuDF/uM81jFzCCfLltEjh40efuVt/YnURhq+VvD/baSNL?=
+ =?us-ascii?Q?vfE90bmEMpsNjRwp9hBgtlIHs9q7w0CIjWDSgdF2llzv5fRXgUft1pAhXNof?=
+ =?us-ascii?Q?N5OnW4dJ070MEzc8nHtbBlhCBw47CxT5FawcpGW9pWPtN23in/v1G+ss5W3I?=
+ =?us-ascii?Q?P9aQrZjkTYftYaVdKSh/JeqtVRiSU8wCMmsyYQgLtqMfN4zwPaQ7tj8jiElE?=
+ =?us-ascii?Q?cuAl85Y6GF8hSpb+wXb0RuoSoc5/cuUv8x4j54sKE58oxmEdsWPiFouYDc6a?=
+ =?us-ascii?Q?L5Vaj5mzWhuU4zlXe8+9C4Npn3CnzmmD07l0A5OFhx7Y3LRPp9psXw4HHXfS?=
+ =?us-ascii?Q?mPMg5Xo8q8/83zgdmO+TNSUvXEuGVKrOLJO8TG7LPtMnF0mFNc6pv0URi3Ql?=
+ =?us-ascii?Q?orf1s43Eex6hCARWfjMRFtGrWZ2yPJ9yv+A1OJppjPj+PPsdfxqkVGJR8I5i?=
+ =?us-ascii?Q?1nFJp61Ml7iEHmG/tpBXYoXn5O1b7e4tQEVm00zbRuegvHeUErkzMkPzw6eh?=
+ =?us-ascii?Q?eshaRb3fLISrP5b8k732ircZ63mnt1rSOZKyqBgOB13O6+gvkRX/o5rzoyqV?=
+ =?us-ascii?Q?rYFjtMBivYIQZX7g1ZUN+iKD035h/xEmCq4dUCwSkN2mcmlVSDg4Dz6tkfsw?=
+ =?us-ascii?Q?/vLPSMBArq5nYDTwL/OtNORbMrQYYPSOh0+bmktgTlls+c7I1yuVGcl5XvZa?=
+ =?us-ascii?Q?cBmqM4ggRdjYYF05WLo5laMmIMtmBrZ2MznTWT+QN4FaUfr9WOqniEhxdVxE?=
+ =?us-ascii?Q?CaGR5SEan5IBTkO4dvHVHWve+hRpflIBSxjonI7kTP6HUpnzR5tFV6e5DNaK?=
+ =?us-ascii?Q?ElKa8+lxetB1rQOmb7Ih+OxL5sJkDzhw1a3xpi5Q+s6pBi2eWsYQdW8nfqkp?=
+ =?us-ascii?Q?NoHHIHdeZ/PtY+2UOEFMMBKnjal/ZCXNNTuaQsd751yVM/+FpklMJvuSq8Cw?=
+ =?us-ascii?Q?w8MSKG8eoabmBSBHd1oHkXK8/wEs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WuE5VE3sLJ5nvl0EbCpELLttBceha6I4eK+XcvdMoZDa9LqFODQGdrsX2NNk?=
+ =?us-ascii?Q?p4sYYYB2drZuOc+M0xI1Qnz3obKdJzz4vMwVxH2lWHyMt374w3NtmeAMnYIr?=
+ =?us-ascii?Q?GPenTuM3AFMae5gxIeqYHZvGQXzHFdi/ZAx9lqHsaqwrq7d+fU6FmwqJdCde?=
+ =?us-ascii?Q?k/1P0JYYnjMBkTt38F35f4zDDEw3a6NYN+ZrckuVwNNC3V5mIqGrh8TLa3uo?=
+ =?us-ascii?Q?iaIJTSdO3sdjnVznKuC5y8JnBjk4YfeDuiCSteX4pKgynUXnHOPgKOOkw5Fe?=
+ =?us-ascii?Q?kqEX0dkyR9747QVDwvs9VQTSxlYQ4k3rJWZ16XdTs18+5Nv5+e+T4lTXSzBP?=
+ =?us-ascii?Q?22bppObeiCMUOg9c7WJ+kSNTUjI1L8K/KxsU7plUdvxI6usAH6pgZGLMV2b1?=
+ =?us-ascii?Q?BIaYe9ekUvFwWJEGCglQU9AIH7z4sLggDS3dyJn/mKW/5SP076xVoXAqkWbi?=
+ =?us-ascii?Q?tswFUmdA3+MXz+sgQRN0n1SC7o6nzdWJWM8RR/Cp6/r1b/CS51wgRZP5z7ll?=
+ =?us-ascii?Q?/c0E2/kpFw+bFFbglpx++bmZ9eNMn6RE8WfEl315Nov3+GBUwnDxu4HJ7bO9?=
+ =?us-ascii?Q?nTNvODhQugELvhVnyWRKvYzsb1/xniAQ+fYSwPIAYybNYil3TDLRF8/FIynq?=
+ =?us-ascii?Q?vGilbID6yxBradqx3zpWZxOoJ+bUZCqFTRPx7DrgAOLGMIYXAHfum8u0rHsU?=
+ =?us-ascii?Q?vpTiat52KYdn4koI2RGPiAmlj72ifUlsUJDYr2W6MP2NvXStkGMbtr/dzLMr?=
+ =?us-ascii?Q?TjXE7ynR1t+4jW9gMyWjBV8+1c3mJl7bOgA8tI9Qxts3xVqEzSJ4GAQgnL3r?=
+ =?us-ascii?Q?NHvv/CvlEFf1iJVywB3tSgoPcvWmKiocw8y+jtEYReNREWez8Iv8fTeQ0cdn?=
+ =?us-ascii?Q?Al4VJguxaTqVBWK9iGwNw8SHAaz34S7Bdp5UEO0XU182UIW/eRDlUcHlurEZ?=
+ =?us-ascii?Q?jqC+6voQutbNHm9v0XM3zrfw2ruImlN+rHPC3bdUoj9e6u61435QhHja74Lg?=
+ =?us-ascii?Q?SkCP8MR9p+XlydrPtgQAPQpy7R2OvRr+LtJ+AcuvZBs5r+GSwdSxxJYprxAp?=
+ =?us-ascii?Q?uYZGdmJc9TY3ZeVhb7g112KLIu2ATV8a743Fe+rU2ebLkF3/okxy7wc2zVW8?=
+ =?us-ascii?Q?szUyq9FsL7N5Hni7ov8hVTfHepw5HoVxsmYBVBrptsfO17gGUniQtofeFkfL?=
+ =?us-ascii?Q?vTgsBPXAieJF8HnozPhtwTBnfb+IaWDF9M0M5rafdH2ctf3Lsq5LDOcPANk0?=
+ =?us-ascii?Q?NXT3m/dIRHRC/V5NBRDY/b4T+DCkTY1mv4nBw9TBoV1at5+QDpcYgrCM75yK?=
+ =?us-ascii?Q?S1witv2rKcCShLYTiqzJHJOhvtaL/azCV+Tn+9aCyI2Mpmc5fziDcSgxC1TH?=
+ =?us-ascii?Q?xgiXLwx7QIRC/HlQz67nO6QM0/bzjyQCe3NZF2stNjiGvhnxNI4mVNt+G4aZ?=
+ =?us-ascii?Q?KLDT+Ikm92pxof9e72ZeEZTwdXfb+0JofCpire+w+MIREfATFwcgTdbmPMkj?=
+ =?us-ascii?Q?ZQ3Nlzsjn+anZaCAYhYuh+QD7oCm2F6rMflqUWb9ku5q3khLyVsL9wLa2Yj0?=
+ =?us-ascii?Q?QHM6qb67M8Yvg1q66keaSoZ7y3zghW7uFVVr9Jzxo1d3yJJgc/T6FR6ktIcZ?=
+ =?us-ascii?Q?ww=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	97JRN41LImXwxnWGu4nw+LuX45CONw6yOkodtRzNTWZJ6L9262K9yHGCa6jc2mtJFcUJyvM2Sz1ZlhaZSu/l/hRJlT1DdaEaJVsIsWO5Zpq01MDVk8X/3HIe8rPKa6mcugXcCg2upBubFpg9tLQmVclu8Ypko5p2DJtd0GeVaNYuUNNHJEPFSH8ZkhkNmghjCz49xXYymrrfI3bNGTSVU8SVb23u7pUfPTPsTgrTzqTrQ1huTz04LUQMzp8nUgxh7u39fbijzw3J1lLK0R8njkcBaEhZdfzvuhJGBk8JlUZu+Bq1JqdU+Y3eywkA3bzWZjwdIB1Va8Oo2hjg7rkM19taaZQkgd84hKiuGQyJ/ZNxogQ0bfus8D8DIO7CD5kfx4KObW8vCCPpqneRSLMIrUAG/6G8w23VkE8SaZryGcOEcSSnYL4qTSy6BR2hkGlPWOErxl2Xq01h2MYhFxPiSohzmopp3ZlGvsrxaMsKqXMAgjrrainje9a+TumBFjl/1njtOn3fNyzB48sZ+tAwqw/146eUgRG5TwHwBx2IqPikXpUkuTaPThHsRQS2x3DYYeBFP0wCpJCccYyPFzn3dgvLlJEAn37tl9BR8yZ+zn0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 801bf217-9838-4732-09c6-08dd503b6b77
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 16:43:49.4031
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fTzJ9XUKWX0aifeUyKXJcZzR6XZ5lnIHTSte99UDrweH3i1eI/ksda3RoN9tIPXFiI6NhBmCkxEjZZ1wX4ROPN/eaHpIK5VNiL0z8U8e3Zk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6715
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_08,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
+ spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2501170000
+ definitions=main-2502180120
+X-Proofpoint-GUID: k_bhFq9vmiVi5g8v2XGg6wTONbKKDohz
+X-Proofpoint-ORIG-GUID: k_bhFq9vmiVi5g8v2XGg6wTONbKKDohz
 
-Hello,
+On Tue, Feb 18, 2025 at 04:20:18PM +0100, David Hildenbrand wrote:
+> > Right yeah that'd be super weird. And I don't want to add that logic.
+> >
+> > > Also not sure what happens if one does an mlock()/mlockall() after
+> > > already installing PTE markers.
+> >
+> > The existing logic already handles non-present cases by skipping them, in
+> > mlock_pte_range():
+> >
+> > 	for (pte = start_pte; addr != end; pte++, addr += PAGE_SIZE) {
+> > 		ptent = ptep_get(pte);
+> > 		if (!pte_present(ptent))
+> > 			continue;
+> >
+> > 		...
+> > 	}
+>
+> I *think* that code only updates already-mapped folios, to properly call
+> mlock_folio()/munlock_folio().
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Guard regions _are_ 'already mapped' :) so it leaves them in place.
 
- 0000000000000000
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-info registers vcpu 2
+do_mlock() -> apply_vma_lock_flags() -> mlock_fixup() -> mlock_vma_pages_range()
+implies this will be invoked.
 
-CPU#2
-RAX=3D000000000003b7ed RBX=3D0000000000000002 RCX=3Dffffffff8b4e4469 RDX=3D=
-0000000000000000
-RSI=3Dffffffff8b6ceca0 RDI=3Dffffffff8bd26900 RBP=3Dffffed1003a5f000 RSP=3D=
-ffffc90000197e08
-R8 =3D0000000000000001 R9 =3Dffffed100d506f85 R10=3Dffff88806a837c2b R11=3D=
-0000000000000000
-R12=3D0000000000000002 R13=3Dffff88801d2f8000 R14=3Dffffffff90614b10 R15=3D=
-0000000000000000
-RIP=3Dffffffff8b4e584f RFL=3D00000206 [-----P-] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D1
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff88806a800000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe000008f000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D000000c001ff3000 CR3=3D0000000028542000 CR4=3D00352ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D00000000feffffd0 Opmask01=3D0000000000000000 Opmask02=3D00000000=
-ffbfef77 Opmask03=3D0000000000000000
-Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
-07ffe7ff Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00007ffcc54fe900 0000003000000010
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ff00000000000000 0000000000000000
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ffff000000000000 0000000000000000
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ffff000000000000 ffff000000000000
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ffff000000000000 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 656e696c5f706c63 73002a5d392d305b 79747400786d7470 0079747400646461
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 54003d534b4e494c 564544003d4d4554 535953425553003d 4854415056454400
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 540018534b4e494c 56454400184d4554 5359534255530018 4854415056454400
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00000000000002b1 0000000000306963 682f68746f6f7465 756c622f6c617574
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00005612a682e3d0 00005612a6800860 0000000000000031 0000000000007374
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 382433273f397b27 697a787c69303b7e 69305f474f5b647c 6930382433273f39
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 383a3a263d383a3a 263c383a3a263f38 3a3a263e383a3a26 39383a3a2638383a
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 373031383d4d0031 3d4553003053303d 4c494b4145005f4b 00383432383d4855
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 302c302c30300030 2c303000302c3030 2c302c303000302c 00302c3000313200
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
-info registers vcpu 3
+>
+> It is not the code that populates pages on mlock()/mlockall(). I think all
+> that goes via mm_populate()/__mm_populate(), where "ordinary GUP" should
+> apply.
 
-CPU#3
-RAX=3D00000000000354f1 RBX=3D0000000000000003 RCX=3Dffffffff8b4e4469 RDX=3D=
-0000000000000000
-RSI=3Dffffffff8b6ceca0 RDI=3Dffffffff8bd26900 RBP=3Dffffed1003a5f488 RSP=3D=
-ffffc900001a7e08
-R8 =3D0000000000000001 R9 =3Dffffed100d526f85 R10=3Dffff88806a937c2b R11=3D=
-0000000000000000
-R12=3D0000000000000003 R13=3Dffff88801d2fa440 R14=3Dffffffff90614b10 R15=3D=
-0000000000000000
-RIP=3Dffffffff8b4e584f RFL=3D00000202 [-------] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D1
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff88806a900000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe00000d6000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007ffcc54fcc38 CR3=3D0000000031e64000 CR4=3D00352ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D0000000000004080 Opmask01=3D0000000000000000 Opmask02=3D00000000=
-ffbfef77 Opmask03=3D0000000000000000
-Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
-07ffe7ff Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 e84fcfa9c78ccedc f9358e8b8d1e6507
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 61fe0d8ee1aa91c6 0a53a729ace036b9
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 1c4fc8d55995bb04 a4ae025458899da4
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 f6ca87b37ba1d987 c0ea7406efc60b73
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000001940
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000040
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 000000000000001f 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 8ed23ca400000000 000000000000001f
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 000000008f569510 0000001f00000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 8fb4a5e600000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 d84c7dc136d97cbf 004b5ba7b9882b91
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 716f48661497e322 0996f7d142db9648
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 a54ff53a3c6ef372 bb67ae856a09e667
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 5be0cd191f83d9ab 9b05688c510e527f
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 656e696c5f706c63 73002a5d392d305b 79747400786d7470 0079747400646461
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 54003d534b4e494c 564544003d4d4554 535953425553003d 4854415056454400
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 540018534b4e494c 56454400184d4554 5359534255530018 4854415056454400
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000356c6c 696b66722f306963 682f68746f6f7465 756c622f6c617574
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00005612a682e3d0 00005612a6800860 0000000000000031 0000000000007374
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 382433273f397b27 697a787c69303b7e 69305f474f5b647c 6930382433273f39
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 383a3a263d383a3a 263c383a3a263f38 3a3a263e383a3a26 39383a3a2638383a
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 373031383d4d0031 3d4553003053303d 4c494b4145005f4b 00383432383d4855
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 302c302c30300030 2c303000302c3030 2c302c303000302c 00302c3000313200
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
+OK I want to correct what I said earlier.
 
+Installing a guard region then attempting mlock() will result in an error. The
+populate will -EFAULT and stop at the guard region, which causes mlock() to
+error out.
 
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.22.7'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
-d'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build823339970=3D/tmp/go-build -gno-record-gcc=
--switches'
+This is a partial failure, so the VMA is split and has VM_LOCKED applied, but
+the populate halts at the guard region.
 
-git status (err=3D<nil>)
-HEAD detached at 68da6d951a
-nothing to commit, working tree clean
+This is ok as per previous discussion on aggregate operation failure, there can
+be no expectation of 'unwinding' of partially successful operations that form
+part of a requested aggregate one.
 
+However, given there's stuff to clean up, and on error a user _may_ wish to then
+remove guard regions and try again, I guess there's no harm in keeping the code
+as it is where we allow MADV_GUARD_REMOVE even if VM_LOCKED is in place.
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-go fmt ./sys/... >/dev/null
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D68da6d951a345757b69b764ceb8dda1e9d65b038 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20241122-101921'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
-x=3D1 -DGOARCH_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"68da6d951a345757b69b764ceb8dda1e9d=
-65b038\"
-/usr/bin/ld: /tmp/ccwqmbyQ.o: in function `test_cover_filter()':
-executor.cc:(.text+0x142db): warning: the use of `tempnam' is dangerous, be=
-tter use `mkstemp'
-/usr/bin/ld: /tmp/ccwqmbyQ.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
+>
+> See populate_vma_page_range(), especially also the VM_LOCKONFAULT handling.
 
+Yeah that code is horrible, you just reminded me of it... 'rightly or wrongly'
+yeah wrongly, very wrongly...
 
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D112877df980000
+>
+> >
+> > Which covers off guard regions. Removing the guard regions after this will
+> > leave you in a weird situation where these entries will be zapped... maybe
+> > we need a patch to make MADV_GUARD_REMOVE check VM_LOCKED and in this case
+> > also populate?
+>
+> Maybe? Or we say that it behaves like MADV_DONTNEED_LOCKED.
 
+See above, no we should not :P this is only good for cleanup after mlock()
+failure, although no sane program should really be trying to do this, a sane
+program would give up here (and it's a _programmatic error_ to try to mlock() a
+range with guard regions).
 
-Tested on:
+>
+> >
+> > Actually I think the simpler option is to just disallow MADV_GUARD_REMOVE
+> > if you since locked the range? The code currently allows this on the
+> > proviso that 'you aren't zapping locked mappings' but leaves the VMA in a
+> > state such that some entries would not be locked.
+> >
+> > It'd be pretty weird to lock guard regions like this.
+> >
+> > Having said all that, given what you say below, maybe it's not an issue
+> > after all?...
+> >
+> > >
+> > > __mm_populate() would skip whole VMAs in case populate_vma_page_range()
+> > > fails. And I would assume populate_vma_page_range() fails on the first
+> > > guard when it triggers a page fault.
+> > >
+> > > OTOH, supporting the mlock-on-fault thingy should be easy. That's precisely where
+> > > MADV_DONTNEED_LOCKED originates from:
+> > >
+> > > commit 9457056ac426e5ed0671356509c8dcce69f8dee0
+> > > Author: Johannes Weiner <hannes@cmpxchg.org>
+> > > Date:   Thu Mar 24 18:14:12 2022 -0700
+> > >
+> > >      mm: madvise: MADV_DONTNEED_LOCKED
+> > >      MADV_DONTNEED historically rejects mlocked ranges, but with MLOCK_ONFAULT
+> > >      and MCL_ONFAULT allowing to mlock without populating, there are valid use
+> > >      cases for depopulating locked ranges as well.
+> >
+> > ...Hm this seems to imply the current guard remove stuff isn't quite so
+> > bad, so maybe the assumption that VM_LOCKED implies 'everything is
+> > populated' isn't quite as stringent then.
+>
+> Right, with MCL_ONFAULT at least. Without MCL_ONFAULT, the assumption is
+> that everything is populated (unless, apparently one uses
+> MADV_DONTNEED_LOCKED or population failed, maybe).
+>
+> VM_LOCKONFAULT seems to be the sane case. I wonder why MADV_DONTNEED_LOCKED
+> didn't explicitly check for that one ... maybe there is a history to that.
 
-commit:         2408a807 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
-nux.git master
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D702f2e48d262560=
-e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd693c07c6f647e038=
-8d3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D168a03a45800=
-00
+Yeah weird.
 
+>
+> >
+> > The restriction is as simple as:
+> >
+> > 		if (behavior != MADV_DONTNEED_LOCKED)
+> > 			forbidden |= VM_LOCKED;
+> >
+> > >
+> > >
+> > > Adding support for that would be indeed nice.
+> >
+> > I mean it's sort of maybe understandable why you'd want to MADV_DONTNEED
+> > locked ranges, but I really don't understand why you'd want to add guard
+> > regions to mlock()'ed regions?
+>
+> Somme apps use mlockall(), and it might be nice to just be able to use guard
+> pages as if "Nothing happened".
+
+Sadly I think not given above :P
+
+>
+> E.g., QEMU has the option to use mlockall().
+>
+> >
+> > Then again we're currently asymmetric as you can add them _before_
+> > mlock()'ing...
+>
+> Right.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+I think the _LOCKED idea is therefore kaput, because it just won't work
+properly because populating guard regions fails.
+
+It fails because it tries to 'touch' the memory, but 'touching' guard
+region memory causes a segfault. This kind of breaks the idea of
+mlock()'ing guard regions.
+
+I think adding workarounds to make this possible in any way is not really
+worth it (and would probably be pretty gross).
+
+We already document that 'mlock()ing lightweight guard regions will fail'
+as per man page so this is all in line with that.
 
