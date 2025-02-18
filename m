@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-519233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE92A39972
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:46:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD7FA39966
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE954168321
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E12EF168EC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CA9238D32;
-	Tue, 18 Feb 2025 10:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437C6234969;
+	Tue, 18 Feb 2025 10:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=sdinet.de header.i=@sdinet.de header.b="mNmsaUl0"
-Received: from mail.sdinet.de (hydra.sdinet.de [136.243.3.21])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="APp4fQxu"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DE223644D;
-	Tue, 18 Feb 2025 10:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.3.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC551174EE4;
+	Tue, 18 Feb 2025 10:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739875593; cv=none; b=TZW6Kp7XvgiDbdh//+ew7yZ6xp7LFEG41FfaLa0BH+buwvW6ypqYxUXqpHzYhceleQwp+fJwtogXKf8mjWmhkLTZa7WpOSIff4XAPVkB9zljAL8lPVJIdeiHuUZOH05muC0nzqjerUT15BtYWgmvGgPRH6CwtwRAMU9ZLUw+NLo=
+	t=1739875307; cv=none; b=iJ/rkHHyp5mNP6TWM46PgpqvXeAFt6gHjpCb+X7PB/4FDDmcpW2YlUm1ATfgmuSQ9LH1lfZn9GZNMvWhawu9cnLrcsT4o+nfRCGx89EE6mZxA0cFsYYpSRitmaDgGeoLNY17R9ok2ZDSI8j34REgq2SwP9GwsRRgttoB+DhwfyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739875593; c=relaxed/simple;
-	bh=8hwAEfYHLi1qKR0YP1FUgTPhNsoxFHO8NvCdNPecFbk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gVehoRXiVw7DLwszWCbmraZUd2hp7iw8FEITHzktdhL5ka+qFZwMnuvSER5Fvhi/8OhCSaulAzyapJ/8BLGbVqQcigFhYmTgUGGOF4sFjxHgORrsOv3ns794duzaSl1jmcc8PekwEoF51/PwnLt5bEf7cRkj82Trvu499JZqTOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdinet.de; spf=pass smtp.mailfrom=sdinet.de; dkim=pass (4096-bit key) header.d=sdinet.de header.i=@sdinet.de header.b=mNmsaUl0; arc=none smtp.client-ip=136.243.3.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdinet.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdinet.de
-Received: from aurora64.sdinet.de (aurora64.sdinet.de [193.103.159.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: haegar)
-	by mail.sdinet.de (bofa-smtpd) with ESMTPSA id D1C3934003A;
-	Tue, 18 Feb 2025 11:38:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sdinet.de; s=mail2024;
-	t=1739875121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+i9Iw2wxStBEEjo8w2Ll1bq83y0kUgzFah+tO1rE1yE=;
-	b=mNmsaUl02ujcoirbeRUBrWHbfOnXEe84lH/3UD2K8o3WkE+f0/ixSJC7MbknlPXm/T24+M
-	csmyHJmlZGdRqQ8mARo+KuWYKcyYR8FYiCYcMJKmjD9no8reWWd03O8/34IMv9TnsxMS72
-	R620cx/EZmqLRzgjwuj2HQmgzn/4rwNP+3o9KjwndkTa4/JnY1AoONngc7yEDI8qVoALtG
-	3yfCJhKfP6RuDz+lSOXBn0Wzm0dg3G5Mj31ksJ7Qjj0Z3Ok92Wc8eFq4S8VE2bXIem1UdN
-	xGzD4TXFwh7I4N4Zoh/Pko7MbB8bVef4BJMVcot1vHvaGBl1O1rRtLAyXrBGEY+4GVmO5a
-	aQE8DX/sDTMpKchYvDRx7DXB7R4MoLcyGWvtSy/KN+Chx4VifXFAxzrpn0j2+1OEIPooNu
-	FTRtyhf3JU4qwZqkJmf1u2V2hZEvIs8Ds/L51hWxYMwm9MMeMQttBM1lzDXxX9UK4P4IpL
-	cZi6SFZ/x3/m3EK25OivgxLN2moTbJR4g+aqasKWUPQ3e4wlhYeVVFpxzvpKXi4jJon2yG
-	skWKyskIzR8PqOnA3blPAvytGLH6Ro5w34azGjUvXPKP+vDbxjEvvQv7S4ohFd3uEnUTD3
-	BNtB1vS75eoSsv7l1kaGInB3K1c3hf+/Bzmw3c64GXxVg7LOomhA8=
-Date: Tue, 18 Feb 2025 11:36:22 +0100 (CET)
-From: Sven-Haegar Koch <haegar@sdinet.de>
-To: Johannes Berg <johannes@sipsolutions.net>
-cc: Corentin Labbe <clabbe.montjoie@gmail.com>, kvalo@kernel.org, 
-    linux-wireless@vger.kernel.org, 
-    Linux-Kernel-Mailinglist <linux-kernel@vger.kernel.org>
-Subject: Re: unknow Network controller: Intel Corporation Device 093c (rev
- 3a)
-In-Reply-To: <6a5eb58c06cc1d5bdeb67fe877ef3a98520627ed.camel@sipsolutions.net>
-Message-ID: <8eb241a2-d8d7-f01c-c2ca-b615e8a1cc41@sdinet.de>
-References: <Z7N7AvQvv8k4OY-o@Red> <6a5eb58c06cc1d5bdeb67fe877ef3a98520627ed.camel@sipsolutions.net>
+	s=arc-20240116; t=1739875307; c=relaxed/simple;
+	bh=D0GdTdYNu5L2ksDF1ryOKiqlJ0F3Vhq7y7mplxbdGLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G9bcTGtlRak6OEIYh9M9j32cCbntDmHVCPvSvQn5RUwFxlMKNCbPcoEMfpiDAZMnoHfZlYCE89ILRbIqZ2W2BEAlq+o4HgflxMJ31Kr72ULkdas5LBlkjcgR5A777v4MSs4Z5flAzqhJstEpgXl/Gcn5Gy5PAtE09hy9B1+7kSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=APp4fQxu; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IAdTCW012257;
+	Tue, 18 Feb 2025 11:41:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	V4eYCNtATnwN1ZIKmyX0+Wk2XGtLI3NIn3i0ikesTwU=; b=APp4fQxusozWDrY6
+	juXOk6kxHRZCNbdFr2OT91Sr8enp6bZGWGhFyTEGIAte+D8JGCKboLnN71ZQb639
+	dohF5cO7IsMWw+dIWHuixxSkC/C0ZEFj+TeQdt13h1rw+kdQFv8iLnfCd7rbm8R8
+	gqvNoOand5i3pxQFGHFlpwZMmuzJE0tEQSz0QgYdxjbQDDj0W1JHZ58xrgz45lCb
+	o+FPDATKCjr2lRFJhxKeaUdWYIf/1PpGMxt2sdHEEHCtLYRGHQ3sqE5QVtwgN49B
+	3J+xOkyEjxOmpXh/uUoRFVdcpjTbHyNIl504sjtgZcQSetZo79h9BJ0k3rovVpdn
+	9it76w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44tm1uba39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 11:41:28 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1EA4340047;
+	Tue, 18 Feb 2025 11:40:09 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4E91E3BE6A5;
+	Tue, 18 Feb 2025 11:39:04 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 18 Feb
+ 2025 11:39:02 +0100
+Message-ID: <d2a2feed-a2f0-430d-a872-23d22afd937a@foss.st.com>
+Date: Tue, 18 Feb 2025 11:39:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/8] Add STM32MP25 SPI NOR support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <christophe.kerello@foss.st.com>
+References: <20250210131826.220318-1-patrice.chotard@foss.st.com>
+ <20250213-lush-rainbow-moth-0f5e18@krzk-bin>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250213-lush-rainbow-moth-0f5e18@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_04,2025-02-18_01,2024-11-22_01
 
-On Tue, 18 Feb 2025, Johannes Berg wrote:
 
-> On Mon, 2025-02-17 at 19:08 +0100, Corentin Labbe wrote:
-> > The laptop is running Debian bookworm, and I tried to update pci.ids, no more information.
-> > 
-> > lspci -vx give:
-> > 03:00.0 Network controller: Intel Corporation Device 093c (rev 3a)
-> > 	Subsystem: Intel Corporation Device 2181
+
+On 2/13/25 08:56, Krzysztof Kozlowski wrote:
+> On Mon, Feb 10, 2025 at 02:18:18PM +0100, patrice.chotard@foss.st.com wrote:
+>> From: Patrice Chotard <patrice.chotard@foss.st.com>
+>>
+>> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics,
+>> for that it adds support for:
+>>   - Octo Memory Manager driver.
+>>   - Octo SPI driver.
+>>   - yaml schema for Octo Memory Manager and Octo SPI drivers.
+>>
 > 
-> But that doesn't match at all, not even close.
+> You combined three different subsystems in one patchset and nothing here
+> explains why and what is the merging intention. Either split your work
+> or explain dependencies/merging.
+
+Ok i will add an explaination about OMM and OSPI relationship.
+
+Thanks
+Patrice
+
 > 
-> I cannot find any record for WiFi of these numbers, so either the device
-> is not WiFi or is malfunctioning. You could try to open it up, take a
-> picture so we can see what the WiFi NIC is, and also maybe re-seat the
-> NIC while at is, occasionally that fixes such issues.
-
-https://linux-hardware.org/?id=pci:8086-093c-8086-2181
-
-Suggests it to be a "Intel Wireless Gigabit 17265", with no linux driver 
-existing for it.
-
-c'ya
-sven-haegar
-
--- 
-Three may keep a secret, if two of them are dead.
-- Ben F.
+> Best regards,
+> Krzysztof
+> 
 
