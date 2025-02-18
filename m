@@ -1,410 +1,133 @@
-Return-Path: <linux-kernel+bounces-518540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025A4A3909B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:49:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 453E2A3909F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95A03B29F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D51C3B2AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E1D146A72;
-	Tue, 18 Feb 2025 01:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FEB1487FE;
+	Tue, 18 Feb 2025 01:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kqqyp40f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCJx1oVm"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D761549659
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF4E182BD;
+	Tue, 18 Feb 2025 01:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739843353; cv=none; b=guAX4JHDCJMSwW4cphHQ7OMpwbFljCoBgcZddlXGq8tpA/24px0o+p0I3mp/NDY11GOqQ+7BZN1/PMEq5yV60zsXndTgHm7cqn+V0Wizcvsmhct57/0oQOeCq/N+3bOVDmqvGkEcuQfDL+8HP3PGoI/fzMYvuedZJtyAca/626s=
+	t=1739843439; cv=none; b=YBvfW6+Anx8trfvewaXcQV2XZjvvvgdhMwzkhwYLfpbZM7suhXGhS3qnVInx9h7AhKCjf38vzJlriSsgBUnh979HPNVvRkGPlF6rq19fjVG6fuMd+jCYJ7qIiU+6tFMjk1vztVtueGQbra4TRr+IJLaWkhyNIseBqHlwajdWWgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739843353; c=relaxed/simple;
-	bh=JM41Lnt2JV7bMGjF0Re7Z/qqFKUo0zm6S2LI5DBPSyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyfHDuU6znHbQUI8IS5ai3+XMakjLU5SKLD1v39+JKvDMBggbTv8ChJ4MKuYTy0XrdZlUhvzMhm6pRnmb5+Wmt655kvWQaa4RvK4mxyJzTLVM+Mh0W/zuBrfdjv++duGJA+UhSOMato0p1Slf4XXYfdP59N5iqrxO7lwtVAdxz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kqqyp40f; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739843352; x=1771379352;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JM41Lnt2JV7bMGjF0Re7Z/qqFKUo0zm6S2LI5DBPSyU=;
-  b=kqqyp40fy/CrsZ53YMlk1oEI82aEGy/VPRByzLwpvudkF55fU1q4yXLo
-   9YVimHus6PQSFvE0dbZ6dZ/6hYtGbWpvIwbAaVRmN/4AwGFAoiib39I+m
-   dsR1a1s1ZqBA8pxJ1x3lyTVGspGyq1/yTRq1cegsmOC2SVwttgQyTcmKm
-   1rAmTfVNPBECkPkFb7uJOWzpWougMbBJ+z1ZmqpLhiXZSS52WLnBrG5GK
-   pM+WbHA0hJ+F9EhxzyszU69ndpdmNN9oRoN0dr/L/RHRqba1a+FfKSiFx
-   Zmz9twVUqbk6cZnXgeM37N28RV1v7uUbPse2iDzX816YL4p+/nQeJQe6q
-   A==;
-X-CSE-ConnectionGUID: TFYZY6l1QIOFitzp1Lk3qQ==
-X-CSE-MsgGUID: 0fRUUh49TIKSASvu8aVxJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40650057"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="40650057"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 17:49:12 -0800
-X-CSE-ConnectionGUID: ZqKvHF9cTK+RDVMycVTkcw==
-X-CSE-MsgGUID: p2qvXF2HTNSvmDpiH1XTQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="151449221"
-Received: from unknown (HELO [10.238.0.67]) ([10.238.0.67])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 17:49:09 -0800
-Message-ID: <4eba9bf7-4619-444e-9c6d-4fc28eebe8f3@linux.intel.com>
-Date: Tue, 18 Feb 2025 09:49:06 +0800
+	s=arc-20240116; t=1739843439; c=relaxed/simple;
+	bh=l6ZQJ6z++uOuRLVfZci/jNHlZxwZwwajaI0P/D1lkvY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=WSQVJ74HAn8ILPUIXxM/6g2hgR/eqcVLsv1I0hHiP82e3l9nzFw8DVpIYQ9SmT+/96Ek7OJ2chkYi9UkrfwmmDK+vuQ0I30TjfUfe7uwIlnmhLKQfmlXtIAJKRx4Ly8AMfxYYSpouGG+U2bDFPFemvBRHcFSBqrh2tDbmpCbUdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCJx1oVm; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e67f377236so13241446d6.1;
+        Mon, 17 Feb 2025 17:50:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739843437; x=1740448237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=weJhfUXcHldRk10NE9FkWe8JXq5XCSHR1Oi1+4jyWyI=;
+        b=DCJx1oVm3DGlqBMNML+SyjCeWe+s9rnnnMjxKFCp1eqAKnnuKItx7rGuT2Tu4Ultb+
+         P8owDk21VUK1b3EmbToDgovJRu0fonzqOQCptSnpnIY3BG1tRulLiKMqxY0OPzYlxsI/
+         nJbzIgq4fDQcsghGlZ0IaHWaWq1KhmdkLIEIC6rMogYCsPuZ7VU2Ilxex5BpoAlqc7le
+         7CVOtV2yyfRilAeeCA7UoSti5GDKH8gKxuYv/UCFNXPkB/NC4xSsuORdF1SLEEImc5ql
+         kh/1NL1xWDJGuK0HjC1uwEka0WK29D4dhHMRXGnajjSDsj5NcbDlztbH6eOxLL5Xc5Vn
+         LO7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739843437; x=1740448237;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=weJhfUXcHldRk10NE9FkWe8JXq5XCSHR1Oi1+4jyWyI=;
+        b=EfJfEJAb0u76Y+FgVb/XORCUVciaLJF7lgLTrplY2mCcfTl90AoJCCXyQDiwetfOvg
+         fqCuhf8jRg1PcuVEyG43s2mjO9Xyi6JjQ4ge41a5FtCy/vCCwgYUvRWs41o0+m9J1FCD
+         KQAq7bC3aDzmh+Z2nNNKiuhipSFzVhhjP2yyPw70NA8HMHt/K92VV1Q0MjPCMESEtoui
+         bgwd4KUALFkoeGkEs4N0qz6bOnRZ4X2nZLsBiUCsGqS54xtIXK6S8nC6VOuPWIB365VJ
+         gNaT9shn0E+H3mc7/sNahyU5wIg7b8xfF0w/JVVDsWhJ5naVcqiSan0YHNrnMW9WiVGT
+         ougw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOFd73KnU2xgqJ3iMqvfQlMcER5YGUjvLktPpn0azcFnRjVlA7LWHb2bG197pNmxvzzoF8JCri8CV8XT/SNcqF@vger.kernel.org, AJvYcCVZLLjMBo/zTHph1S+U8/O/gvXSH+eQkF/PusAo08UxMSpareOKGlIIi0u2582DL5+cOtM=@vger.kernel.org, AJvYcCWAc+6/f4lUW5OZDkV/DsUh9THx/RT2y7WZwaHNTw4FP4MZ9zKhfkXQO4DuA/KTwR4vfzPD2pLE@vger.kernel.org, AJvYcCXygoEkr5FRX7PvtYy/oEiTB3wPmQj4xL7GXRRjii1bjQwdSOxaeoGSQVgeIMZNfK+4y94971lZjer4lK2m@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf8i9fbuSQgqokKz9jaBLfiXFs7e+awpjzF8XmME0d2gsXiXWE
+	+8t5fK7/scNlMa4xxfNTxNYLS9eq6If4sG2s0B2wasvRSYgyuTNw
+X-Gm-Gg: ASbGncv6dVpt2X/WL2lbSi9JYi5P0NkjPUoGXcZGtW4bnqdMFLP6NR7+1vbrDIR30q4
+	lmaV8aZ6Q5ZHGUW4XnDyOm7dT2fAEkS7fT2llbUuC4BAG72FNnXZP6VnEtadCvXnhuDAHkyRfy/
+	2L7pDiQazry6ZXowrQCDq5klCpOnTEnvZyFjzfZ1LN6TpWn0ZqLzMrquf22kOWvc+ilJy3IAzIS
+	6n9pUZld+MwYolipa9Hq834x2sV90F+8JsGO6mjIZisWfdIhrSyQ45kgiKH2Uw1lv88b6xMW3ea
+	vJeUvfgTCD7tjJvonQvoRoN8qrQUZT3vX6Dkh8/6rH222Mo4jJdgkltF4qnN/NM=
+X-Google-Smtp-Source: AGHT+IFfoPLbf5s/N7R2g9lkmO6xNtLhJQ9NoPNUEyPaHPgW8K+dhPbkci1ob3XtTRXjQAfWw4cu/g==
+X-Received: by 2002:a05:6214:29cb:b0:6e4:2e5f:c03b with SMTP id 6a1803df08f44-6e66ccce1femr180711246d6.22.1739843437085;
+        Mon, 17 Feb 2025 17:50:37 -0800 (PST)
+Received: from localhost (15.60.86.34.bc.googleusercontent.com. [34.86.60.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d9f31b0sm58293606d6.90.2025.02.17.17.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 17:50:36 -0800 (PST)
+Date: Mon, 17 Feb 2025 20:50:36 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com, 
+ andrew+netdev@lunn.ch, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ andrii@kernel.org, 
+ martin.lau@linux.dev, 
+ eddyz87@gmail.com, 
+ song@kernel.org, 
+ yonghong.song@linux.dev, 
+ john.fastabend@gmail.com, 
+ kpsingh@kernel.org, 
+ sdf@fomichev.me, 
+ haoluo@google.com, 
+ jolsa@kernel.org, 
+ mykolal@fb.com, 
+ shuah@kernel.org, 
+ hawk@kernel.org, 
+ marcus.wichelmann@hetzner-cloud.de
+Message-ID: <67b3e76c57313_c6df029486@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250217172308.3291739-4-marcus.wichelmann@hetzner-cloud.de>
+References: <20250217172308.3291739-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250217172308.3291739-4-marcus.wichelmann@hetzner-cloud.de>
+Subject: Re: [PATCH bpf-next v2 3/6] selftests/bpf: move open_tuntap to
+ network helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Eric Auger <eauger@redhat.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Zhenzhong Duan <zhenzhong.duan@intel.com>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
- <cc7312ca-2745-48a5-a5ac-9ee1d1c4bee0@redhat.com>
- <20250203094700-mutt-send-email-mst@kernel.org>
- <7cee3c9e-515e-41de-a15c-04c7591e83eb@redhat.com>
- <6bce0f4c-636f-456b-ab21-4a25d3dc8803@redhat.com>
- <90a09ffa-e316-41f0-916b-25635b1d4bc6@linux.intel.com>
- <83b43e73-8599-44ff-8657-6d5f2f9b2de5@redhat.com>
- <20250214070904-mutt-send-email-mst@kernel.org>
- <a48ec78d-a86f-4332-87d0-e6071f72a7d1@redhat.com>
- <ee89c12c-a252-4c6d-a062-4fb57f2c85a9@linux.intel.com>
- <20250217191103-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-In-Reply-To: <20250217191103-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
+Marcus Wichelmann wrote:
+> To test the XDP metadata functionality of the tun driver, it's necessary
+> to create a new tap device first. A helper function for this already
+> exists in lwt_helpers.h. Move it to the common network helpers header,
+> so it can be reused in other tests.
+> 
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
 
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
-On 2025/2/18 8:12, Michael S. Tsirkin wrote:
-> On Tue, Feb 18, 2025 at 07:57:23AM +0800, Ning, Hongyu wrote:
->>
->>
->> On 2025/2/17 17:25, Eric Auger wrote:
->>> Hi Michael, Hongyu,
->>>
->>> On 2/14/25 1:16 PM, Michael S. Tsirkin wrote:
->>>> On Fri, Feb 14, 2025 at 08:56:56AM +0100, Eric Auger wrote:
->>>>> Hi,
->>>>>
->>>>> On 2/14/25 8:21 AM, Ning, Hongyu wrote:
->>>>>>
->>>>>>
->>>>>> On 2025/2/6 16:59, Eric Auger wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On 2/4/25 12:46 PM, Eric Auger wrote:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> On 2/3/25 3:48 PM, Michael S. Tsirkin wrote:
->>>>>>>>> On Fri, Jan 31, 2025 at 10:53:15AM +0100, Eric Auger wrote:
->>>>>>>>>> Hi Kirill, Michael
->>>>>>>>>>
->>>>>>>>>> On 8/8/24 9:51 AM, Kirill A. Shutemov wrote:
->>>>>>>>>>> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
->>>>>>>>>>> accesses during the hang.
->>>>>>>>>>>
->>>>>>>>>>>       Invalid read at addr 0x102877002, size 2, region '(null)',
->>>>>>>>>>> reason: rejected
->>>>>>>>>>>       Invalid write at addr 0x102877A44, size 2, region '(null)',
->>>>>>>>>>> reason: rejected
->>>>>>>>>>>       ...
->>>>>>>>>>>
->>>>>>>>>>> It was traced down to virtio-console. Kexec works fine if virtio-
->>>>>>>>>>> console
->>>>>>>>>>> is not in use.
->>>>>>>>>>>
->>>>>>>>>>> Looks like virtio-console continues to write to the MMIO even after
->>>>>>>>>>> underlying virtio-pci device is removed.
->>>>>>>>>>>
->>>>>>>>>>> The problem can be mitigated by removing all virtio devices on virtio
->>>>>>>>>>> bus shutdown.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>>>>>>>> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
->>>>>>>>>>
->>>>>>>>>> Gentle ping on that patch that seems to have fallen though the cracks.
->>>>>>>>>>
->>>>>>>>>> I think this fix is really needed. I have another test case with a
->>>>>>>>>> rebooting guest exposed with virtio-net (backed by vhost-net) and
->>>>>>>>>> viommu. Since there is currently no shutdown for the virtio-net, on
->>>>>>>>>> reboot, the IOMMU is disabled through the native_machine_shutdown()/
->>>>>>>>>> x86_platform.iommu_shutdown() while the virtio-net is still alive.
->>>>>>>>>>
->>>>>>>>>> Normally device_shutdown() should call virtio-net shutdown before the
->>>>>>>>>> IOMMU tear down and we wouldn't see any spurious transactions after
->>>>>>>>>> iommu shutdown.
->>>>>>>>>>
->>>>>>>>>> With that fix, the above test case is fixed and I do not see spurious
->>>>>>>>>> vhost IOTLB miss spurious requests.
->>>>>>>>>>
->>>>>>>>>> For more details, see qemu thread ([PATCH] hw/virtio/vhost: Disable
->>>>>>>>>> IOTLB callbacks when IOMMU gets disabled,
->>>>>>>>>> https://lore.kernel.org/all/20250120173339.865681-1-
->>>>>>>>>> eric.auger@redhat.com/)
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Reviewed-by: Eric Auger <eric.auger@redhat.com>
->>>>>>>>>> Tested-by: Eric Auger <eric.auger@redhat.com>
->>>>>>>>>>
->>>>>>>>>> Thanks
->>>>>>>>>>
->>>>>>>>>> Eric
->>>>>>>>>>
->>>>>>>>>>> ---
->>>>>>>>>>>     drivers/virtio/virtio.c | 10 ++++++++++
->>>>>>>>>>>     1 file changed, 10 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->>>>>>>>>>> index a9b93e99c23a..6c2f908eb22c 100644
->>>>>>>>>>> --- a/drivers/virtio/virtio.c
->>>>>>>>>>> +++ b/drivers/virtio/virtio.c
->>>>>>>>>>> @@ -356,6 +356,15 @@ static void virtio_dev_remove(struct device *_d)
->>>>>>>>>>>         of_node_put(dev->dev.of_node);
->>>>>>>>>>>     }
->>>>>>>>>>>     +static void virtio_dev_shutdown(struct device *_d)
->>>>>>>>>>> +{
->>>>>>>>>>> +    struct virtio_device *dev = dev_to_virtio(_d);
->>>>>>>>>>> +    struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
->>>>>>>>>>> +
->>>>>>>>>>> +    if (drv && drv->remove)
->>>>>>>>>>> +        drv->remove(dev);
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> I am concerned that full remove is a heavyweight operation.
->>>>>>>>> Do not want to slow down reboots even more.
->>>>>>>>> How about just doing a reset, instead?
->>>>>>>>
->>>>>>>> I tested with
->>>>>>>>
->>>>>>>> static void virtio_dev_shutdown(struct device *_d)
->>>>>>>> {
->>>>>>>>            struct virtio_device *dev = dev_to_virtio(_d);
->>>>>>>>
->>>>>>>>            virtio_reset_device(dev);
->>>>>>>> }
->>>>>>>>
->>>>>>>>
->>>>>>>> and it fixes my issue.
->>>>>>>>
->>>>>>>> Kirill, would that fix you issue too?
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> sorry for my late response, I synced with Kirill offline and did a retest.
->>>>>>
->>>>>> The issue is still reproduced on my side, kexec will be stuck in case of
->>>>>> "console=hvc0" append in kernel cmdline and even with such patch applied.
->>>>>
->>>>> Thanks for testing!
->>>>>
->>>>> Michael, it looks like the initial patch from Kyrill is the one that
->>>>> fixes both issues. virtio_reset_device() usage does not work for the
->>>>> initial bug report while it works for me. Other ideas?
->>>>>
->>>>> Thanks
->>>>>
->>>>> Eric
->>>>
->>>> Ah, wait a second.
->>>>
->>>> Looks like virtio-console continues to write to the MMIO even after
->>>> underlying virtio-pci device is removed.
->>>>
->>>> Hmm. I am not sure why that is a problem, but I assume some hypervisors just
->>>> hang the system if you try to kick them after reset.
->>>> Unfortunate that spec did not disallow it.
->>>>
->>>> If we want to prevent that, we want to do something like this:
->>>>
->>>>
->>>> 	/*
->>>> 	 * Some devices get wedged if you kick them after they are
->>>> 	 * reset. Mark all vqs as broken to make sure we don't.
->>>> 	 */
->>>>           virtio_break_device(dev);
->>>>           /*
->>>>            * The below virtio_synchronize_cbs() guarantees that any
->>>>            * interrupt for this line arriving after
->>>>            * virtio_synchronize_vqs() has completed is guaranteed to see
->>>>            * vq->broken as true.
->>>>            */
->>>>           virtio_synchronize_cbs(dev);
->>>>           dev->config->reset(dev);
->>>>
->>>>
->>>> I assume this still works for you, yes?
->>> Would that still been done in the virtio_dev_shutdown()?
->>>
->>> Is that what you tested Hongyu?
->>
->> Hi Eric,
->>
->> my patch applied based on Michael's comments:
->>
->> ---
->>   drivers/virtio/virtio.c | 20 ++++++++++++++++++++
->>   1 file changed, 20 insertions(+)
->>
->> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->> index ba37665188b5..458dc28be060 100644
->> --- a/drivers/virtio/virtio.c
->> +++ b/drivers/virtio/virtio.c
->> @@ -395,6 +395,25 @@ static const struct cpumask
->> *virtio_irq_get_affinity(struct device *_d,
->>          return dev->config->get_vq_affinity(dev, irq_vec);
->>   }
->>
->> +static void virtio_dev_shutdown(struct device *_d)
->> +{
->> +        struct virtio_device *dev = dev_to_virtio(_d);
->> +        /*
->> +         * Some devices get wedged if you kick them after they are
->> +         * reset. Mark all vqs as broken to make sure we don't.
->> +         */
->> +        virtio_break_device(dev);
->> +        /*
->> +         * The below virtio_synchronize_cbs() guarantees that any
->> +         * interrupt for this line arriving after
->> +         * virtio_synchronize_vqs() has completed is guaranteed to see
->> +         * vq->broken as true.
->> +         */
->> +        virtio_synchronize_cbs(dev);
->> +        dev->config->reset(dev);
->> +       //virtio_reset_device(dev);
->> +}
->> +
->>   static const struct bus_type virtio_bus = {
->>          .name  = "virtio",
->>          .match = virtio_dev_match,
->> @@ -403,6 +422,7 @@ static const struct bus_type virtio_bus = {
->>          .probe = virtio_dev_probe,
->>          .remove = virtio_dev_remove,
->>          .irq_get_affinity = virtio_irq_get_affinity,
->> +       .shutdown = virtio_dev_shutdown,
->>   };
->>
->>   int __register_virtio_driver(struct virtio_driver *driver, struct module
->> *owner)
->> --
->> 2.43.0
-> 
-> 
-> 
-> yes, that's the patch. Does it work for you? Addresses the
-> problem? If yes I'll repost.
-> 
-
-yes, issue fixed on my side. Thanks.
-
->>
->>>
->>> Eric
->>>>
->>>>
->>>>
->>>>>>
->>>>>> my kernel code base is 6.14.0-rc2.
->>>>>>
->>>>>> let me know if any more experiments needed.
->>>>>>
->>>>>> ---
->>>>>>    drivers/virtio/virtio.c | 8 ++++++++
->>>>>>    1 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->>>>>> index ba37665188b5..f9f885d04763 100644
->>>>>> --- a/drivers/virtio/virtio.c
->>>>>> +++ b/drivers/virtio/virtio.c
->>>>>> @@ -395,6 +395,13 @@ static const struct cpumask
->>>>>> *virtio_irq_get_affinity(struct device *_d,
->>>>>>           return dev->config->get_vq_affinity(dev, irq_vec);
->>>>>>    }
->>>>>>
->>>>>> +static void virtio_dev_shutdown(struct device *_d)
->>>>>> +{
->>>>>> +        struct virtio_device *dev = dev_to_virtio(_d);
->>>>>> +
->>>>>> +        virtio_reset_device(dev);
->>>>>> +}
->>>>>> +
->>>>>>    static const struct bus_type virtio_bus = {
->>>>>>           .name  = "virtio",
->>>>>>           .match = virtio_dev_match,
->>>>>> @@ -403,6 +410,7 @@ static const struct bus_type virtio_bus = {
->>>>>>           .probe = virtio_dev_probe,
->>>>>>           .remove = virtio_dev_remove,
->>>>>>           .irq_get_affinity = virtio_irq_get_affinity,
->>>>>> +       .shutdown = virtio_dev_shutdown,
->>>>>>    };
->>>>>>
->>>>>>    int __register_virtio_driver(struct virtio_driver *driver, struct
->>>>>> module *owner)
->>>>>> -- 
->>>>>> 2.43.0
->>>>>>
->>>>>>
->>>>>>> gentle ping.
->>>>>>>
->>>>>>> this also fixes another issue with qemu vSMMU + virtio-scsi-pci. With
->>>>>>> the above addition I get rid of spurious warning in qemu on guest reboot.
->>>>>>>
->>>>>>> qemu-system-aarch64: virtio: zero sized buffers are not allowed
->>>>>>> qemu-system-aarch64: vhost vring error in virtqueue 0: Invalid
->>>>>>> argument (22)
->>>>>>>
->>>>>>> Would you mind if I respin?
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>> Eric
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks
->>>>>>>>
->>>>>>>> Eric
->>>>>>>>>
->>>>>>>>>>> +}
->>>>>>>>>>> +
->>>>>>>>>>>     static const struct bus_type virtio_bus = {
->>>>>>>>>>>         .name  = "virtio",
->>>>>>>>>>>         .match = virtio_dev_match,
->>>>>>>>>>> @@ -363,6 +372,7 @@ static const struct bus_type virtio_bus = {
->>>>>>>>>>>         .uevent = virtio_uevent,
->>>>>>>>>>>         .probe = virtio_dev_probe,
->>>>>>>>>>>         .remove = virtio_dev_remove,
->>>>>>>>>>> +    .shutdown = virtio_dev_shutdown,
->>>>>>>>>>>     };
->>>>>>>>>>>       int __register_virtio_driver(struct virtio_driver *driver,
->>>>>>>>>>> struct module *owner)
->>>>>>>>>
->>>>>>>>
->>>>>>>
->>>>>>
->>>>
->>>
->>>
-> 
-> 
-
+Both tests that include lwt_helpers.h also include network_helpers.h,
+so the linking with network_helpers.o is already addressed. This was
+not entirely obvious from just reading the code.
 
