@@ -1,161 +1,110 @@
-Return-Path: <linux-kernel+bounces-520073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D8FA3A546
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:23:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9765A3A548
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B45218956F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE02A174255
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6D5270EDE;
-	Tue, 18 Feb 2025 18:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A576617A2EE;
+	Tue, 18 Feb 2025 18:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fK4Qszlm"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgGuMCdm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA89271260;
-	Tue, 18 Feb 2025 18:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0452F17A2E0;
+	Tue, 18 Feb 2025 18:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739902710; cv=none; b=bKX4AZCVhp5kTUM1POGXe4A9HLIoL+STkMk9j2ILPE71XtGC/bLZhpQWfmFdIF2/szDy33eZdzfYDRh4yjVHWFIXrDGGqt1jlw3uibMljYhgHBAopEaXsegZr9PUSCxE/wp1sBszmjrViSPaoNWWmWnyM01g4z1DKWtPzkjQ/ds=
+	t=1739902823; cv=none; b=ZIkUl9eUMXkz1u2BY83RZ6KxVn1+7hXB08Yu8qRBLaJkKzc1raVxshQMgtD1373rDTTeeS3Pm63TdEOHcUeRVqr0TVaBG2MrU/R3RL7RSyiW0f4qARhDAixGPjhe59psUbn0xCmeZ3q1/Goxvjzj9f91oD+xicdksXGwT/OBf38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739902710; c=relaxed/simple;
-	bh=LKySc1hd8oH3XoJ/e0kyHo+BUWiFLrywoT3DLOsEihY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Qoblnv0v2lah+BCxOq+Ot/6UAO0yI9oqrCaQI9HeA+lmHI7dFieBQt28Kf82yqNEGA/AZK45CD/jzDVloc4U2fcGsO3mSHfPs5u12n/Ws/+TSmXGABm7OqjZVNW4KOpoJsuMou39H/hbjO3CMeZgOKt4/fuWGHxrXerCWvOzHV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fK4Qszlm; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e479e529ebcso4300439276.3;
-        Tue, 18 Feb 2025 10:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739902707; x=1740507507; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hstotl6P8U6u0g9i0+sH14I9qLS3HJ19iSYl9IIgYgE=;
-        b=fK4QszlmoCQ3SPEha3cSQEpALEpyhysd842eczn8tTiD2o89kQrlHc5etxHeOb/CaG
-         LjzH4DVoIu0Md9rOwbogIPZcE0qX1FYQ7rwRjyV/7iIpunDsc0TdxlzlnskvnnKu38gd
-         +9biyfgUPhPY0POJXIULpeUVCbUAzLxrKhpsnqHhxf0uyWvfJYHtOKxAi8djMcgSj0Xr
-         oMGZJ+/+o4Z6M/1KyFPmqh/hr5sHDbBrTtu4xFbuPssYmh3iqn6xMKBIu9uObj5DWkUO
-         iUyUxh4jD80uN27TbAsbVrVtdf43V71+YV9NhZ1mdErxhDwI2y/iGY3xw1PyxMhU3Uq0
-         vBpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739902707; x=1740507507;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Hstotl6P8U6u0g9i0+sH14I9qLS3HJ19iSYl9IIgYgE=;
-        b=G2JBuDoULBdwmyRpPKH8vqTY3FAn22QDACc00QMyqK0HJHbS1m2odY4geOK9i26GF0
-         ac52NATWrj/X/Y02sSOQVspIMoQyuYj19tHbXzgVBmIchJAGGxDUgCAsfMPSD48Dog1U
-         0AXOFfvTMTJTNmhpN45JyqUGeVF+Uro6cFcuBTA3nDRsrXDyoFbZJ8cGfPZeGf++UZLr
-         fvXC4HNYHcB9Hv4+003F0N/CajuVfQTC6Uy87rpl73w5txIJ3PZrpm+LzReI2SS942GS
-         5d+08Oc0JgLBx3yVRwtEyL9utAugMb22SnsAXCAwEEoo4s3N8qvuz1zOBrlJMJ7bhB/E
-         NYWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIFHUJ/EUKvd2yXPzkcQi7J0xyWIZQwFqmfmCDlO2SCADcm+wBafwInBCADGINIXAl20Jw3Jecxt1VJm3i@vger.kernel.org, AJvYcCXqFH+R7VFSBYypgA2rL1Z/47iIpCtX0iO21UxTy3Ri/VFoN6gsgtqc6lELSMxUxM598pDNn14LdJD8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPZZcQhpzUQSVAYf/753aRU5E9ROp46sp2PHnAjg1aMJS7bOXN
-	Ydv9hX2xRsYqj0C57Du79zUeDVkpjSuXSfcrXJCeduTVL0gtgdwi
-X-Gm-Gg: ASbGncutMiMZk1Hoomk7pIWdyUGSw5WdWqH9wYD82mUrPawCvn++b3Z8kwVfxd62EPj
-	lOaTtesBNl6o4+XVutH/uoqgVIi0rHtFh5KibCdPtBygtqI++JuVnU/7+fp/wMCzJKgjLpHGZGu
-	CC5q69vXIGec5dFu3c2X61kVpe9iCMlRPNvDskKXPpMRn3gG1B6V1FqcWN7+WIyQFA73r1OgHcR
-	xeKbSHdAaeSiXFGIsEj1dvSNr+MKJ1AFDjjtMk8X8k80epzNmTR/TcYUj5KV4DZg1jD+MI4yO2l
-	CdR1OHI=
-X-Google-Smtp-Source: AGHT+IGECy+BuFFTQJsQbuaOJPeVq5YpsE5+g1Z9O5xWctB7M+z/Qj8nxMs5KPAkRQxY4+rQD1XK/A==
-X-Received: by 2002:a05:6902:1208:b0:e57:4db7:6d51 with SMTP id 3f1490d57ef6-e5dc92fd402mr10197597276.32.1739902707408;
-        Tue, 18 Feb 2025 10:18:27 -0800 (PST)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dae0da26csm3140099276.44.2025.02.18.10.18.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 10:18:27 -0800 (PST)
+	s=arc-20240116; t=1739902823; c=relaxed/simple;
+	bh=i7uUtXNMjRRNoE/sjgLWfCiLhOArRyzd5/y7ZwlSfj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RKyqRvJUTD2ouKTDVZdkI3u5ADzV780nRfm8VvnktsfTmHCwzRif2NmoSSanjbFq04flDbRAeUanFIGXonet9OEqa+bfTfOM33tlXJk0SzP+s5vSibCpilLxnBNUXfzw1lx79fLNWlOs16oHvD0zuBJwNxrfWjAmIO46q37U4Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgGuMCdm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76440C4CEE2;
+	Tue, 18 Feb 2025 18:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739902822;
+	bh=i7uUtXNMjRRNoE/sjgLWfCiLhOArRyzd5/y7ZwlSfj4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KgGuMCdmekrrFynqBUDp1X5Q9NtJeSK02ZZNNDaJdCAbFbHAkoj0sPqbKLttEmOOp
+	 s8XKsQbwT11tCFcQWPMKqvou9HudFfgK7xJR9zufjeiRnt+Xo2QdchF4tIhAD8uICm
+	 0AV36YNFydtvK4lGWt4a0FB9qGc1YatXESm1W/aEbq28paLxFGcy6CKs9WCCiKpqVF
+	 6+HuMeN3wsbpNaQ7RGsxZiDR/caGUnrTsiB95ZDqAF9J2wWbzHD4xXyqMTgKegMBt2
+	 kh+6d5SeCfrgIBjvQlNHtwrvgH2w9jWPqY+mT1L3IPclBt19w1sdOQeX2IJrEPcdYD
+	 y8Y44dkXsRARw==
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso17706135ab.1;
+        Tue, 18 Feb 2025 10:20:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVB5KNB5kJHYJYGJqB1zQOB/Ge8xOZMMA4g1gUpI4VHEML9nrx12Rm5hD7uBgYXpSZ005ljGi2GIDmqeAr9QJEdXA==@vger.kernel.org, AJvYcCWQAK06vczp9+l5ccsMHScF0f/sDND8+hwcc7TVPEKymIjafT9VEJNmhnddnR9X/3oeAE1y/lJpSaTUtFE6yw==@vger.kernel.org, AJvYcCXzyadJt56X+r3SQj8QFmjNLelHpuX1S4pH+RkTIh2tyye1lA3w7ikEqJT/hkrXMLkoAHqHebepEfQ5zAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Se8Tn2izN4qTCm4aYcNHgdTzIso4yDkpgySXChviTWIj/fv1
+	TU4YmgP84y4LmiN44sdf41qHW943OAO+LYIwqmLezDAvarppFfuS+i61t72ssLid94mkHQBpu6M
+	FhXFfRWOMZv3mNJIJ+CZfgE7h7sE=
+X-Google-Smtp-Source: AGHT+IG4FlnOX9Ql40omkJN+vWGOP3w/LrBrVI6Sr0U3JqnUmjReG7wWo0B7SUJhaMSh92+XkCiuQ91zPpqQH/rpcXM=
+X-Received: by 2002:a05:6e02:2408:b0:3d0:4e2b:9bbb with SMTP id
+ e9e14a558f8ab-3d2809580eemr158857095ab.21.1739902821943; Tue, 18 Feb 2025
+ 10:20:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250213024507.mvjkalvyqsxihp54@jpoimboe> <CAPhsuW4iDuTBfZowJRhxLFyK=g=s+-pK2Eq4+SNj9uL99eNkmw@mail.gmail.com>
+ <mb61py0yaz3qq.fsf@kernel.org> <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
+ <20250214080848.5xpi2y2omk4vxyoj@jpoimboe> <CAPhsuW6dxPtgqZaHrZEVhQXwm2+sETreZnGybZXVKYKfG9H6tg@mail.gmail.com>
+ <20250214193400.j4hp45jlufihv5eh@jpoimboe> <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
+ <20250214232342.5m3hveygqb2qafpp@jpoimboe> <CAPhsuW48h11yLuU7uHuPgYNCzwaxVKG+TaGOZeT7fR60+brTwA@mail.gmail.com>
+ <20250218063702.e2qrpjk4ylhnk5s7@jpoimboe>
+In-Reply-To: <20250218063702.e2qrpjk4ylhnk5s7@jpoimboe>
+From: Song Liu <song@kernel.org>
+Date: Tue, 18 Feb 2025 10:20:10 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
+X-Gm-Features: AWEUYZnvvDqTb1fovYfGDRE0ySlLJoOtPvngjhwXWpFfc6v9eHqvdMBDZzElWF0
+Message-ID: <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Puranjay Mohan <puranjay@kernel.org>, Weinan Liu <wnliu@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev, 
+	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
+	joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 18 Feb 2025 13:18:25 -0500
-Message-Id: <D7VS189559P4.BKIIWBE7VCPE@gmail.com>
-Cc: "Len Brown" <lenb@kernel.org>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Limonciello, Mario"
- <mario.limonciello@amd.com>, "Armin Wolf" <W_Armin@gmx.de>, "Gergo Koteles"
- <soyer@irl.hu>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ACPI: platform_profile: Fix memory leak in
- profile_class_is_visible()
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, "Mark Pearson"
- <mpearson-lenovo@squebb.ca>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250212193058.32110-1-kuurtb@gmail.com>
- <9a8a5084-589d-4c45-a011-5bf4d0dfc8ba@app.fastmail.com>
- <CAJZ5v0hv3frfZCLgANBi-Kn8LCiuoWFSMcjDSipXQyycS5i1rw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hv3frfZCLgANBi-Kn8LCiuoWFSMcjDSipXQyycS5i1rw@mail.gmail.com>
 
-On Tue Feb 18, 2025 at 1:07 PM -05, Rafael J. Wysocki wrote:
-> On Sat, Feb 15, 2025 at 3:18=E2=80=AFAM Mark Pearson <mpearson-lenovo@squ=
-ebb.ca> wrote:
->>
->>
->> On Wed, Feb 12, 2025, at 2:30 PM, Kurt Borja wrote:
->> > If class_find_device() finds a device it's reference count is
->> > incremented. Call put_device() to drop this reference before returning=
-.
->> >
->> > Fixes: 77be5cacb2c2 ("ACPI: platform_profile: Create class for ACPI
->> > platform profile")
->> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->> > ---
->> >  drivers/acpi/platform_profile.c | 8 +++++++-
->> >  1 file changed, 7 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/acpi/platform_profile.c
->> > b/drivers/acpi/platform_profile.c
->> > index fc92e43d0fe9..2ad53cc6aae5 100644
->> > --- a/drivers/acpi/platform_profile.c
->> > +++ b/drivers/acpi/platform_profile.c
->> > @@ -417,8 +417,14 @@ static int profile_class_registered(struct device
->> > *dev, const void *data)
->> >
->> >  static umode_t profile_class_is_visible(struct kobject *kobj, struct
->> > attribute *attr, int idx)
->> >  {
->> > -     if (!class_find_device(&platform_profile_class, NULL, NULL,
->> > profile_class_registered))
->> > +     struct device *dev;
->> > +
->> > +     dev =3D class_find_device(&platform_profile_class, NULL, NULL,
->> > profile_class_registered);
->> > +     if (!dev)
->> >               return 0;
->> > +
->> > +     put_device(dev);
->> > +
->> >       return attr->mode;
->> >  }
->> >
->> >
->> > base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
->> > --
->> > 2.48.1
->> Good find. Looks good to me.
->> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Hi Josh,
+
+On Mon, Feb 17, 2025 at 10:37=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.or=
+g> wrote:
 >
-> Applied as 6.15 material, thanks!
+> On Mon, Feb 17, 2025 at 08:38:22PM -0800, Song Liu wrote:
+> > On Fri, Feb 14, 2025 at 3:23=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel=
+.org> wrote:
+> > > Poking around the arm64 module code, arch/arm64/kernel/module-plts.c
+> > > is looking at all the relocations in order to set up the PLT.  That a=
+lso
+> > > needs to be done for klp relas, or are your patches already doing tha=
+t?
+> >
+> > I don't think either version (this set and my RFC) added logic for PLT.
+> > There is some rela logic on the kpatch-build side. But I am not sure
+> > whether it is sufficient.
+>
+> The klp relas looked ok.  I didn't see any signs of kpatch-build doing
+> anything wrong.  AFAICT the problem is that module-plts.c creates PLT
+> entries for regular relas but not klp relas.
 
-Hi Rafael,
+In my tests (with printk) module-plts.c processes the .
+klp.rela.vmlinux..text.copy_process section just like any other .rela.*
+sections. Do we need special handling of the klp.rela.* sections?
 
-Thank you!
-
-I believe this should be merged as a fix for v6.14-rc4 before
-commit 77be5cacb2c2 hits stable.
-
---=20
- ~ Kurt
-
+Thanks,
+Song
 
