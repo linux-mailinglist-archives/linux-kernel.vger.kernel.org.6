@@ -1,194 +1,227 @@
-Return-Path: <linux-kernel+bounces-520324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C29A3A894
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:21:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3634AA3A8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016A17A3BFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D6D1890E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FE51C6FFD;
-	Tue, 18 Feb 2025 20:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2081C1F12;
+	Tue, 18 Feb 2025 20:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="H4334Tr1"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QpvGp+ML"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2068.outbound.protection.outlook.com [40.107.93.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049BB21B9E0;
-	Tue, 18 Feb 2025 20:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910064; cv=none; b=Zu5p1FXzXPL1ITlUbynDzFV4OmZn+fE64pqD2AWYgn3x3TvbaC8yD4S/Uo99ho9SO74GN5zRNyqSXTAzsqR5YMovmxAijbNBxZnIUVP771P3ohEeXnJdTDaMAkN32BGxEEhThQrEK7gbpxhfYMnv5Uy1L1DCkiLxScFKdqaJaAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910064; c=relaxed/simple;
-	bh=Mi0yeJ0NG7Wggqky6pV4DEQsB94EDemrjJ+/gmx9XZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s+BC+pqoZLUA4Pdwh9vW0b5ZBuHO8racwE/PaegqrhhVEu3a2VOLqxt3gkkBwVdKZV67WnSxn0qosY7bxjj+oHm9KIR/Ua180A+KfFRjK9BODVD3FiX6y0jvjDqXr7/cPKlnuVQ4CVUhhdah7e2Bx/svfsbk7ptp8pdsF9H1GmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=H4334Tr1; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 4976fd652ffeded7; Tue, 18 Feb 2025 21:20:52 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8283696554D;
-	Tue, 18 Feb 2025 21:20:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1739910052;
-	bh=Mi0yeJ0NG7Wggqky6pV4DEQsB94EDemrjJ+/gmx9XZY=;
-	h=From:Subject:Date;
-	b=H4334Tr1mb6uz+bPzXNEwdkp3mwIlrK0St12WEBqEIygqXylgoeXIPeGgmQBfDTE1
-	 EIS/mbwrd8cfnzaJZcYvA8SBCluludgvAZxPJoB/JH3MMGPmvvfOejxysg8aB0Ri8G
-	 jRhnCQorZkjzZ99NFmNsXPEiLXomoQvkXkKJMNmjVP4ISlohMA0zlxvagtt+6BLv36
-	 vVfL9j3w4mE88vBnXjmYnkYwYekEfAaGGCQm0pjcTMysZATXWwM7Bs1AvsXsYLwyPd
-	 bMLRp9Bj6+y53eZFT0iR6lscDgwB3BkdkPIURxU8uat1J9c665xMhscsFBOnGtsHN4
-	 gQwlJjmucMJJg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Bjorn Helgaas <helgaas@kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Linux ACPI <linux-acpi@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject:
- [PATCH v2 4/4] PM: sleep: Avoid unnecessary checks in
- device_prepare_smart_suspend()
-Date: Tue, 18 Feb 2025 21:20:46 +0100
-Message-ID: <2978873.e9J7NaK4W3@rjwysocki.net>
-In-Reply-To: <12612706.O9o76ZdvQC@rjwysocki.net>
-References: <12612706.O9o76ZdvQC@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4A41B423D;
+	Tue, 18 Feb 2025 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739910079; cv=fail; b=s3NK4MSw0FjArtQ/tcZvrR2Zq7DRUu1Cq8I2+7aiX8zlllcm+lIE2CxOH55CNxifzsVInY65B3OnLfecJFnD8s/kbY0l1HRJWqBez3nAkgRlvJdnq09WjASm7tCCd2k4HTAg6YBBZ/fpyXFHqVHiVWWaMXN7olB2A3k+IvHNGmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739910079; c=relaxed/simple;
+	bh=uwy7ok+YZDcHG8lcHxkGEgtPK6fZbjdNX7LptduVmno=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P5u9ZJ8iinczEG8xjhJUCJCLamtKMDIjYeJSRvyEp09c/43amccGVo/Hzw2EZSjf/+vzK7NqtaDZxZfnJMqo+OyRpFk2xpIUtfTLkXen+5RG+OZZCyKbQ69v8WR2b+LGQecF/HH2eXmM98ngcpcxAI5ESR8r2eRF9VEagOb3GuY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QpvGp+ML; arc=fail smtp.client-ip=40.107.93.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=flLwhVY0/QgeaWkr50Z8rMD2xpKLufJU6qxDKqQ/Cy2WDR5LhuGWXP/Oc7nvZTQSI6HEQiyBNOOXAwxK0lWMkSGvbOOhhKtV+/kPL+XgpV6AIh/SFV6ZC6hPGqFfpr1Ssu3hfqPw5pnNVJvAU9BbXoqe//gACEHOc8Ek1iu6AXEg1TTXMRR+OH67WQ5M/xmkfpqCD855lOJT8rh4jBiOHwkbdp3hRxiQYGdGZcebMmYM1AzOj3e56BOBDV6dgQDZZ2JNJymdHUxcY67lvmjwEE+6q9Zmb5rLLGF6FmWMgzb871h5HML6y5wF7Forb+XhNg79++MlhUIvIX8NfkDPlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PjM1tqGHaR2CfciMWdQpjxciTlL2RzfqXWVI9H+nSEc=;
+ b=bLy7GJHC2oJFzvbDycnvuEGwrbuCj+qcaVRCiBSxQgn2PiY17sJyAt08MuEP7h2sqGfW6vqiM2kHQ5nL3xaNucpb1Vh6JXs1MWa9Ef/6lSQ5mUt4SlfS4foqgShtrS1RxkTamg16P6ay2e+PvC0jaxJE8BvTk63lveAQ9pesAjFbI/5iizFTJ0qGiQorpAQHh0mxkSyzjmHZLJl4tjvMEJn9yjUlpYkDIzbswqVqXHoZG+e9DL/ajbmgQbKjcPE2FYCAjFWi+lj3nJnAmhKA+RUBdpb96L5tllnhuQBVmv03v+i9LJ0sz9bowu75aTkupykQz9VvcMuSPxMdVX0URg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PjM1tqGHaR2CfciMWdQpjxciTlL2RzfqXWVI9H+nSEc=;
+ b=QpvGp+MLFkU7efXXPpPlHVAl7euM41eo3p1UXCYmgBdZHfIyHRNF1P/ni2Mvg7CM+bTVWOS9KTqXAcokrLllYitK6Gq8UP4/HkNSMuHHOvDYpwibWwIUeRDk/RFHdJIITtYEC8FN5goF59Z/cWr/J6llG6LF0zPv+oJpy6F5DwwE66nJxhXYUPjeiJOpiAYHnYbCflPqsE2xRitY8ATOurITmzR2wbvsEu9XP4XAj6wZCwO04H0kg/9k7FoEIfM7f1lGaSu/gOI4LLNeDNDANQmj3ZUvrG996bnOqo2niMWMhUqMtUkJgD/OfrKatPpN4j9fzCLH0OUnJFk1hJ366Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
+ DS0PR12MB9275.namprd12.prod.outlook.com (2603:10b6:8:1be::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.18; Tue, 18 Feb 2025 20:21:13 +0000
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2%5]) with mapi id 15.20.8445.016; Tue, 18 Feb 2025
+ 20:21:13 +0000
+Message-ID: <5959e316-19da-4d10-bc7c-75431b87b9e0@nvidia.com>
+Date: Tue, 18 Feb 2025 12:21:11 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] dmaengine: idxd: fix memory leak in error handling
+ path of idxd_pci_probe
+To: Shuai Xue <xueshuai@linux.alibaba.com>, vinicius.gomes@intel.com,
+ dave.jiang@intel.com, vkoul@kernel.org
+Cc: nikhil.rao@intel.com, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
+ <20250215054431.55747-6-xueshuai@linux.alibaba.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20250215054431.55747-6-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR21CA0020.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::30) To DM6PR12MB2667.namprd12.prod.outlook.com
+ (2603:10b6:5:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeivddviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohephhgvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|DS0PR12MB9275:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4990a8ac-0378-4b3a-e480-08dd5059ca08
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TjgwR3JOZXcrTnZHZWEvM2dxbForQXI0S2E2clgrSTRwUVVwMUVUTHl0T0V3?=
+ =?utf-8?B?S3ZVdkdsb0JJVlI3Skg3QjR3WjdObU1ramIzK3FVNGFoSjY0Z21xWlZ3U3V4?=
+ =?utf-8?B?UkNUMzZjbm1sZk80K01saUZBVlU4WkRhY293ZmJOMUsrMXRMQjdpeTIvRUNL?=
+ =?utf-8?B?UUxJamMrNEQyQ1NLZGJBc3lTY1F3SWNGSVJVdkZFZm1aNjNhcHpLVmF4SGlW?=
+ =?utf-8?B?Zk5uNnJPTnVoQnRwOHVNazFTeG1FSkcvVGhJUWU1d3UvZ1JnbndhUjgyNzlk?=
+ =?utf-8?B?K1JIdXMzQ080NXR5ZVBxMXkrN2dqS21wWFRkZzRXTWF0bzhGVE9rWWZWQkR5?=
+ =?utf-8?B?VWVpTG5IMlgweFVtaGtVMVB0dE5UbnVJZWcvbjJKeGwvaHdYRnJIbkhQUVo5?=
+ =?utf-8?B?VUxOYzJoTWF0SDA1a3RTSkdDTUU3ZEsvOExWYjFES2RmTGNvVnZScGg5bmkw?=
+ =?utf-8?B?aGJQQmxqR2FNMUV2OE9mcGgxZDRDcTRGZlkwVFpMeXB1djRiS1BQOGtoVFdu?=
+ =?utf-8?B?KzFvZ0pVb2VOb3p0KzN6QkowUXlCMlVyMUx5ZTZPbWFza0g3ZVBFMjBCblZs?=
+ =?utf-8?B?T290cG1ZTXROdmFMdllnQmxZNW45UWwxaUMway9xVVZrTUVhL0Q3clhGdldq?=
+ =?utf-8?B?TkJrQXV2ZDBIeS8rUWxZcmQrVDExTExOVE41RnRCMHlWK1NMUHhOdFNxL2ZW?=
+ =?utf-8?B?L0JrMlJIZ2FJeVFhNlY4RDU0Q2p2TmlNMlY3VDh3RGxyQ1o4NWlpaGxtam1a?=
+ =?utf-8?B?eno2VStpSG9zMTNvdk52Wlc3L1BiU2JJdWlneUpTRGx5RXNIeHliQnVnVG5P?=
+ =?utf-8?B?aE9wbTh3NEIrTHRvTWdzU1BLS1QyNlJldFEvUWFuVTF4Mm5qd2RDRU9YUWU4?=
+ =?utf-8?B?cGdXYzVCUGxyQ2FMVHc1ZTNjaXI4R2poVUdJTStsYUlqZUR2d0UvUDFpWkl3?=
+ =?utf-8?B?RE9EaU4wTndyV3hTNWtZeXFlWWhyTkVKR3Frajk5cGxRbGMvM1prdE9oL3ZZ?=
+ =?utf-8?B?Y3FnY0Z3K05WL3c1cVp5L3pQTE80bW4rSkRSUU02MXlNV2hkUnR3Mk1jTHEv?=
+ =?utf-8?B?enBwaVE1T2twYUdJZCtyalhZSzVLT1pKc2lRS1ArQnFsSm43aHk2UUNVOGov?=
+ =?utf-8?B?dzV2MVM0WHo2VmU2Z0E4OHBQd1ljKzJpc1FUa0lQelFERFN3K2NFWm42WnZi?=
+ =?utf-8?B?VXEwSFRVcWtycmNkWlJ2QVZwTUVxc0lnNmVWeU05YU1PbXI1SlVwVXBxeHRH?=
+ =?utf-8?B?OUlEKzd6NlR1U2d5ZUhMSFEzYlplOXZyV3o5R2d3dUVmM0Q2YWZkZmR1Tjd3?=
+ =?utf-8?B?d0F2TklrZTZZRTk1RElpakwwSSsrbnJvRjR5UFF0bnVmOHcrWmFnV0Q1NlMz?=
+ =?utf-8?B?dXdLUEdTbngya3NCRWd1MTZhRmgvUncrbW53RjRMMkFpZHlwendSL0ZCVmhQ?=
+ =?utf-8?B?d3VVem92QmFzQmY3Tjg0RW1QOXlJWmFWbW5qNGFwRkdFQ1lOdlI0dUxDUEpX?=
+ =?utf-8?B?dlVNS0xvY1JZVkVxMC9yVXFNZU9MYVIvRVhCRTh1bERLQ2RHSmdzYW84QXo5?=
+ =?utf-8?B?MGptVm9aYjNybFNSTTVlUGlQc2JZOGpGWFdrdnVka2RQQVJtV1FET2U4UDNU?=
+ =?utf-8?B?dElVMC8rQjhucEhLdU5COUNZWnV2QVZPaVhqaDRTOWpmMFZ0UWFNd1EveFhy?=
+ =?utf-8?B?dDBiSnV2ZmIySW11Zzd1MzVwNTQzNzlzMURKL0ZvUFlmUWlHNldTWGlNbmNB?=
+ =?utf-8?B?MFB1YWNMSVVtWDlQNStaSXYzNEdKVGhSazNaZ1ozMVpFVEZpMTIyTVpTOUhX?=
+ =?utf-8?B?eGJZLzFzdDBTamY2OGoxMEd0OW5uWmR4SlBpa0p4WHhNcGFFQTFvVW9rMkdM?=
+ =?utf-8?Q?MEPhxC3IKvXSr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bWhMTUJBTjM2eGlHRytXUlozcStKOU5VQ01QS2dLTjh3SUdGa3dERlZNZ29X?=
+ =?utf-8?B?RDBXQWNQSnEyVmlKRVJhbDM0eWFjWmZieHczTGFwcHVhWS9IREx0ZDN1Vkxl?=
+ =?utf-8?B?Ymd5WlJyREdmYzlkTllSb0JrRW9PY0czZ0xtTzdFQ3A2SzhEY1ErTDhDVVZM?=
+ =?utf-8?B?YjlpMDdYV2F6UmlwL1V3UXpKcnEyT3ptRTJzMU9GNW9HT1F1cFdDZTdKcGNr?=
+ =?utf-8?B?VytUL3JuTnFvbkNxZUJSbC9EREhuS2UxUlk2UEtFSFFQUUdNT3pTNXZnWHhp?=
+ =?utf-8?B?alJUT3ErK2pqa2VuODk1NkFyZ3loRVdkNGZEb0M2a3NoU2dDYVMxU3Uwbzho?=
+ =?utf-8?B?NktRU3FHUXpQT2tONzh3QzVEdjQwa2lqNWZ3a3lqMnkraG1Xei9xMUJkWkp1?=
+ =?utf-8?B?TU84QUdaZE1MaE1ic1BkNnU1eU5VSWtJb0dWUm5xdU9WMWYxcGFpb040RnFH?=
+ =?utf-8?B?aHR3dTQ4Q3ZycTg2b2sxV1hpUDBGYUxBYW1SWHZERUpKemRGelJyN2p2ekEw?=
+ =?utf-8?B?YnJ3dVUyaW1xN1oyeFF4ZG1MaDRoOVgxVmtjZGF1dHVxTHoyanBLQldlM3FF?=
+ =?utf-8?B?citSNWdETGhObmFnOTZTaWdqVWZhSUhLclZ0M3lmUE9SUnVZK3YrQXA1QlhB?=
+ =?utf-8?B?bXd1NjIrazBUWHk4RkZkbExhVE9xMGlQZjlMWEFubC9CZER3YWZlV1orNytX?=
+ =?utf-8?B?SG5nc2tvalpmSStia0wxRE5TcGJFRG9CTEpVaVByMnhtV2ZFT1c3UmhobGUv?=
+ =?utf-8?B?N1hwNGtoRkVibkcxY3ZOSFhQM3BXZkNOc3h5YktqUTVZOVc5dTdrdy9Rb0hW?=
+ =?utf-8?B?N29OZlB1SjFXS01nY0RvRlVXaGZrOHdpOFlDZWllQ1pSMUw4TFJUY2o0YWI3?=
+ =?utf-8?B?SVJpWHFGUUlRUlVLczVvc2xta2NObUQrZlBWWU1tNlltTlNaak03Sy9lRklm?=
+ =?utf-8?B?ajFSSlg2VTdyakVmeWdMWGR5MFZQVXpaYVJ2cXpDRW01RDg4cm5lVW00UUtl?=
+ =?utf-8?B?VVNhNlBFZm5iSXM0Z3p4b0NjWE1Qc212b1FTZmNQK09lWEg5NlRFRjhQa0RO?=
+ =?utf-8?B?K1FCQnoyZ1I5ZVBGN1V3MVVmTGcwZTVnN3Q4UWl0Z3Z5RHJ4ei9GK2JKNzFK?=
+ =?utf-8?B?T0pwNjkyZHp5b2liT1FFZGZ1VzJheitmcjZ6LzFNV1lYWTIrWCtVZm9aZy96?=
+ =?utf-8?B?TzUxd1NBSWtWMmJseDROYVRzdGlPc0ZhRFdsZktJeU8xVDd4Tzk3bkVkNDJ3?=
+ =?utf-8?B?RG5xYXIrRUN1TnhrQkVja3owZERGWEhrdXNuWnZDUTdiOUxMZXdDMlBZMzRk?=
+ =?utf-8?B?U29Ua2svaEo5VllDNXZpcTBaOWtWUEd0R0QzRnBjT0pGTDZqRkJvYnZpTTVH?=
+ =?utf-8?B?ZHVJTEFxdGJoaXpGdDk4RVJEdW9xdzgvSXlkMlk5Zy9zYjhrcUF3ZlUrNEgr?=
+ =?utf-8?B?MG4wbzJiRUZsdGlEM0s1RU53S3F6ZVR6dlN1cDhFYmRRekI1UjVBOTgwWC9V?=
+ =?utf-8?B?N2pnTGpuL0hkYXZlcjVSbnYwelNseWcrTTQ4UHd5VkJiUSttNVFsZjVlZUl5?=
+ =?utf-8?B?TWRQdTlQTjVub0ltT1lkNm1HajZmek5veGE5eXp6M2lvejVVOTFaQ1R1UXlB?=
+ =?utf-8?B?T2lBdVgxM21ZOFFvVFlTVWoyNUtjazBVeHJsaVljc3NxWkc4ZkpNWkRpVGMw?=
+ =?utf-8?B?ZStwVEtTd0VyZ1doOEhjeCtodGxwL0xOdHAzYzY3bm1yRHJtdWJGdXNDS0tR?=
+ =?utf-8?B?UmpzV1lPSk1yRlFlLzZGaUk0WDJMdWdjbnRoampuUE5vNWpvVFBuR1JyUWI3?=
+ =?utf-8?B?V2FFZml6S2RxZ1hKcXY1NEFPVGdYM0xDZk9jQmdJcWhyd0lsSG56OEtsdkhF?=
+ =?utf-8?B?NEhVZGlXQ3VhM0h0UytDYkdKeXp0akpQYStRbUJiaWNTN1I5Rjd1M2toa1Z1?=
+ =?utf-8?B?aWxJN21vaDZNamVwUlQrTlV1M2l6WHlHa2lpRDhGdEJxU1cyOE52UUNBMkpN?=
+ =?utf-8?B?UjhPZlZpVkpqOENoUTZkdU1PK1pBNzNrRHJrcXlkeTN0RHhsVFB2RmJtKy9q?=
+ =?utf-8?B?bWRpSnJMNElqdGcvQ2xtWUNBUDIvNFcxdlZZbmZ0T3R3ZjVXYVV2RXVyN1NU?=
+ =?utf-8?Q?Q64uY5nGlLcqHNkd4phR+VB+j?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4990a8ac-0378-4b3a-e480-08dd5059ca08
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 20:21:13.0335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ccCxnKZOoqG4MEOGKVe8y8IAzc7k6BqgjWBonVKT9W60ZOpu4XJEaywxHL4xHjQ/HNwORJswKmoDDrkUxY5+dA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9275
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi, Shuai,
 
-Add an optimization (on top of previous changes) to avoid calling
-pm_runtime_blocked(), which involves acquiring the device's PM spinlock,
-for devices with no PM callbacks and runtime PM "blocked".
+On 2/14/25 21:44, Shuai Xue wrote:
+> Memory allocated for idxd is not freed if an error occurs during
+> idxd_pci_probe(). To fix it, free the allocated memory in the reverse
+> order of allocation before exiting the function in case of an error.
+>
+> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>   drivers/dma/idxd/init.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index dc34830fe7c3..ac1cdc1d82bf 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -550,6 +550,14 @@ static void idxd_read_caps(struct idxd_device *idxd)
+>   		idxd->hw.iaa_cap.bits = ioread64(idxd->reg_base + IDXD_IAACAP_OFFSET);
+>   }
+>   
+> +static void idxd_free(struct idxd_device *idxd)
+> +{
+> +	put_device(idxd_confdev(idxd));
+> +	bitmap_free(idxd->opcap_bmap);
+> +	ida_free(&idxd_ida, idxd->id);
+> +	kfree(idxd);
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/main.c    |   16 +++++++++-------
- drivers/base/power/runtime.c |    9 +++++++--
- include/linux/pm_runtime.h   |    4 ++--
- 3 files changed, 18 insertions(+), 11 deletions(-)
+opcap_bmap, idxd_ida, idxd are NOT allocated during FLR re-init idxd 
+device. In the FLR case, they should not be freed.
 
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1796,16 +1796,14 @@
- 
- 	/*
- 	 * The "smart suspend" feature is enabled for devices whose drivers ask
--	 * for it and for devices without PM callbacks unless runtime PM is
--	 * disabled and enabling it is blocked for them.
-+	 * for it and for devices without PM callbacks.
- 	 *
- 	 * However, if "smart suspend" is not enabled for the device's parent
- 	 * or any of its suppliers that take runtime PM into account, it cannot
- 	 * be enabled for the device either.
- 	 */
--	dev->power.smart_suspend = (dev->power.no_pm_callbacks ||
--		dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) &&
--		!pm_runtime_blocked(dev);
-+	dev->power.smart_suspend = dev->power.no_pm_callbacks ||
-+		dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
- 
- 	if (!dev_pm_smart_suspend(dev))
- 		return;
-@@ -1843,6 +1841,7 @@
- static int device_prepare(struct device *dev, pm_message_t state)
- {
- 	int (*callback)(struct device *) = NULL;
-+	bool no_runtime_pm;
- 	int ret = 0;
- 
- 	/*
-@@ -1858,7 +1857,7 @@
- 	 * suspend-resume cycle is complete, so prepare to trigger a warning on
- 	 * subsequent attempts to enable it.
- 	 */
--	pm_runtime_block_if_disabled(dev);
-+	no_runtime_pm = pm_runtime_block_if_disabled(dev);
- 
- 	if (dev->power.syscore)
- 		return 0;
-@@ -1893,7 +1892,10 @@
- 		pm_runtime_put(dev);
- 		return ret;
- 	}
--	device_prepare_smart_suspend(dev);
-+	/* Do not enable "smart suspend" for devices without runtime PM. */
-+	if (!no_runtime_pm)
-+		device_prepare_smart_suspend(dev);
-+
- 	/*
- 	 * A positive return value from ->prepare() means "this device appears
- 	 * to be runtime-suspended and its state is fine, so if it really is
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1460,14 +1460,19 @@
- }
- EXPORT_SYMBOL_GPL(pm_runtime_barrier);
- 
--void pm_runtime_block_if_disabled(struct device *dev)
-+bool pm_runtime_block_if_disabled(struct device *dev)
- {
-+	bool ret;
-+
- 	spin_lock_irq(&dev->power.lock);
- 
--	if (dev->power.disable_depth && dev->power.last_status == RPM_INVALID)
-+	ret = dev->power.disable_depth && dev->power.last_status == RPM_INVALID;
-+	if (ret)
- 		dev->power.last_status = RPM_BLOCKED;
- 
- 	spin_unlock_irq(&dev->power.lock);
-+
-+	return ret;
- }
- 
- void pm_runtime_unblock(struct device *dev)
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -77,7 +77,7 @@
- extern int pm_schedule_suspend(struct device *dev, unsigned int delay);
- extern int __pm_runtime_set_status(struct device *dev, unsigned int status);
- extern int pm_runtime_barrier(struct device *dev);
--extern void pm_runtime_block_if_disabled(struct device *dev);
-+extern bool pm_runtime_block_if_disabled(struct device *dev);
- extern void pm_runtime_unblock(struct device *dev);
- extern void pm_runtime_enable(struct device *dev);
- extern void __pm_runtime_disable(struct device *dev, bool check_resume);
-@@ -274,7 +274,7 @@
- static inline int __pm_runtime_set_status(struct device *dev,
- 					    unsigned int status) { return 0; }
- static inline int pm_runtime_barrier(struct device *dev) { return 0; }
--static inline void pm_runtime_block_if_disabled(struct device *dev) {}
-+static inline bool pm_runtime_block_if_disabled(struct device *dev) { return true; }
- static inline void pm_runtime_unblock(struct device *dev) {}
- static inline void pm_runtime_enable(struct device *dev) {}
- static inline void __pm_runtime_disable(struct device *dev, bool c) {}
+> +}
+> +
+>   static struct idxd_device *idxd_alloc(struct pci_dev *pdev, struct idxd_driver_data *data)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -1219,7 +1227,7 @@ int idxd_pci_probe_alloc(struct idxd_device *idxd, struct pci_dev *pdev,
+>    err:
+>   	pci_iounmap(pdev, idxd->reg_base);
+>    err_iomap:
+> -	put_device(idxd_confdev(idxd));
+> +	idxd_free(idxd);
+>    err_idxd_alloc:
+>   	pci_disable_device(pdev);
+>   	return rc;
 
 
+Thanks.
+
+
+-Fenghua
 
 
