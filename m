@@ -1,72 +1,94 @@
-Return-Path: <linux-kernel+bounces-520553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F9AA3AB6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:04:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38562A3AB71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9A31897600
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC2C3A475B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D871D5AD3;
-	Tue, 18 Feb 2025 22:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtfJ1ueP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254161C701B;
+	Tue, 18 Feb 2025 22:05:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888532862BD;
-	Tue, 18 Feb 2025 22:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBA21D0F5A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739916261; cv=none; b=Lw9EDyU4qS5UP3ROjJILiMc6X2HFVzVPU7tN5veXteJVcfg3qRAUh1QmW7usrFCIc2VckA9+dCBVBNsHFJD4dZShLoPLkoqiQpChh8WP4UEnvVEhTFZBrSe8ine6GV68c8vRzyFp8nRYbAvBcw5UHhkJuyuxXaC++QFlbRvypEQ=
+	t=1739916304; cv=none; b=aZ1KpJekL8NyBpvBMDXGCi5asGELuK7a0iPESO4muCb3HEHG8inwSlvphcHA7OXYAmVNGVgRszxozU5VDTueoLdoJSEFd3vaMgn/vMAzzMKaxH40D0mm9U8Cvvhzk7w7auzpWJ8NRI5n82JiDgREMr3iKqEOJm2F1FO3H41P0j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739916261; c=relaxed/simple;
-	bh=LD6SxQCnKtB6lwk73QejrBOxC46rzzcZEsKpLvOtsWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gr3cxgrAL8aUV/Gjb+lbLSmvJ0XLINifFaf+tWlc2/d7DPmbBIqoyn1qFlmezl+ZMPQqMHNQmiLNwCW7qfXGmae2uz3J/njKw2QUnaMUvqDOlPEhm8X+OuN9JlgW/3mOtz0x2vQiiTduMJPd3wgpaIhvXKHRtSDwloaW35snHPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtfJ1ueP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C5EC4CEE2;
-	Tue, 18 Feb 2025 22:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739916260;
-	bh=LD6SxQCnKtB6lwk73QejrBOxC46rzzcZEsKpLvOtsWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dtfJ1uePODEKTQZQkKfszt8Ce3QsW3LXO8V1blyTOFzlmGLqv6xfX0Wp9UeVSvSDv
-	 vbLq/7QXyOZ1VO9sfkkNKSIitqfpxmU3VXc1jc17uFTNkIdaqb7lmHx8pj1kfkGVoX
-	 KEebgywoL+8t1xpASTdAt5Rukieqjr0setef71MZ75LNWtVl3bEfmr053aDdKL4G7c
-	 yE26+CTXePKnZkZSEvBhqNZoNgSm9pn7ETuX6k/7PV8KTowDukZPkmvKL7OxgfxO0g
-	 uQNdOOBd90zA00l5nmSXxA9fV41CGfLnB7KDdLtAPSe5Wdxg4Iod4p/nNykk6VgsFZ
-	 cePkqLPpIV05Q==
-Date: Tue, 18 Feb 2025 23:04:13 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 0/2] i2c: octeon: Add block-mode r/w
-Message-ID: <3ju5cg36taf4och4l5fyycumiem5ubgq2sn6zro5qlvpjtqpfu@3ywcmglr4fot>
-References: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1739916304; c=relaxed/simple;
+	bh=YAwz6c0pD7kSaVjGnc4vj0FlpUoq5ws50vP1ezS0ePU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jOpO/tDhSUD5h95TFGLC3xK0QZ97OA8wDlBMjymNfX1FOE/eiv82G8pHTphZf6YmuW89+yOpa5C5w6RgzScM/5Jd9redjl/jjU4Cor4Wwcw5g455zLEulw62LdvaVwhN8mHdYwxVTTUJH1ScFjM2EDh+DYPh3ve9yyxNjsDmYHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d2a63dc62aso10686955ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:05:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739916302; x=1740521102;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FImqr+4BueBo0iUqhlEc55Y3VSXeJLj+aXSM8e+ulyE=;
+        b=dNFjufogFtS2SbusUwFTuBZ+8uIs+uBCdin1Nyjxwa0QmZlR8leKZM4eeRJM7HQocX
+         9slnmjOB19dWJXxydv43MiMBGXyFauUS0N0OAAEGOMnsknpb1ohvgAtkM4/HtL1ZiRL5
+         87p4G715oTp2rPTciEgkGk75C98q/xo+uph+q4IWPoBqX/50wjgGgczRbcEwgA1Y+fjB
+         SSI4Tjg3p/fhacoQAUwKdVU6g0pgLXr/9muoOsd7dkngih7IB/JeKGAxUkizdAKFU02A
+         nN0kddPZxi00jOEHgGuyF3xSEJOtV+ZT36HMDKQGt31UjVnE5roz5+wbenm5ASPlqLZd
+         9VmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRdotEsDi68gLTQzfHjY/9Hm6QEUCfq49U6pQNTmiNfSPieO6vSmv6zlAA3sUHAG3wbjwfFOtaLJ4+Zyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwohxJwaEfSr/mwSNsjToRmI7mZh8Um9RNyRKA8jJol85gfhzLQ
+	m87sJerPZF0kEM+styt1XIgD8XdDBMIxT2sCKRhHSyWCUIlcbwekolBbLE8tC7Rs4TixaiFCDtr
+	kpooQPPERj3zYPVqgpPyiZRjUG/5tN9vs6N7evsVS8Tr8KMviWz0Lmbo=
+X-Google-Smtp-Source: AGHT+IHFkQCkf7a+SjYszpFggOY908K7AMaQySeg4oPtXYgEqe6lCPeS8BsNAK7kIVcqDKND1GHr9KFAOVOrC1/lZzFlrhnkRlkU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250120023327.2347863-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Received: by 2002:a05:6e02:1689:b0:3d0:4eaa:e480 with SMTP id
+ e9e14a558f8ab-3d280763d29mr156645915ab.3.1739916302497; Tue, 18 Feb 2025
+ 14:05:02 -0800 (PST)
+Date: Tue, 18 Feb 2025 14:05:02 -0800
+In-Reply-To: <67b2eaf8.050a0220.173698.0020.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b5040e.050a0220.14d86d.0013.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs] KASAN: use-after-free Read in crypto_poly1305_update
+From: syzbot <syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com, 
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Aryan,
+syzbot has bisected this issue to:
 
-> Aryan Srivastava (2):
->   i2c: octeon: refactor common i2c operations
->   i2c: octeon: Add block-mode i2c operations
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-I'm going to keep the first patch and remove the second patch.
-Please follow Andy's suggestions and resend the second patch,
-please.
+    bcachefs: Ignore unknown mount options
 
-Andi
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a303a4580000
+start commit:   2408a807bfc3 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a303a4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a303a4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6cc40dfe827ffb85
+dashboard link: https://syzkaller.appspot.com/bug?extid=d587b24799bd8c2d32f4
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c4f2e4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e4c498580000
+
+Reported-by: syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
