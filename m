@@ -1,103 +1,55 @@
-Return-Path: <linux-kernel+bounces-520185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2F1A3A6B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:04:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E11A3A6B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E5E168615
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B70188B77D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6435E1E521E;
-	Tue, 18 Feb 2025 19:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB91E51F0;
+	Tue, 18 Feb 2025 19:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sjme3HO9"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2065.outbound.protection.outlook.com [40.107.92.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Za0AaPL2"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D881E51E3;
-	Tue, 18 Feb 2025 19:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905371; cv=fail; b=kpW2Z2t4019EuEhKP+rfR/RSM2voXbI3J+utmDkthr2zGk9N390aBOovprmurtY2QJ5nw91HT7Yv+a7dGEQxOwgpwaGHhgI0TFnMtivEt/dzgNe/1vytjx7ZizdU5aL6+ED6us4RUFgIb/Fv0gMncNW5XL9Mu2kSPSqAveqX0fQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905371; c=relaxed/simple;
-	bh=ygswTeEaUBAh7jTBfqQUXIZR7oURmXtOTT7UifOZzHI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZN0pN9+GlXjiARzSwRD9vXOcNsbJ9IdFFAdP57CNd5OKppeLqk73SRO3Pz+SaoPZGhkI+dgpClCYE7bVUOId9O0WVB83lOtPIAmET8K+fNs0tG6SYOojKxn3QN2lKNUV5rjOZ4xF6NVBpbo7UL+lCfYFJRteSX+njrIkbXxq4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sjme3HO9; arc=fail smtp.client-ip=40.107.92.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VRVZ9C0ivcfbPCL3l9ezEDIWvvF7G3F+PKDhCtT9MpbAa7QQc5lZrl+xTpZpFowq1TbZ7CWFzjALSR0odyPgbDevUD93ed2hVf3BXTNZUJH1Z2DUBEnEMzm1iTIjys1HTGj9lY7eZF93dHxLbxWo+tq+nbfRHLuj++DQg7h7KSr84YZkmOA7RBBy3JWDbO+JomGD7gifbPmslVkp1YtvQ3YsdUkIXeofXy1mbyYJsMJRfvvLjQoHCPOBXyNagBnyreNrhg8K7+C7DHVU0oxEpPtJx+eMGQMIIBsAM9ZvK8Dgf6iGHLQ8OdnrYieUVSOU0Io7Pck9cbg48kW5hTzxYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R81WX5ieBKT/eq/FhZWpa790wf98iO4MC+KwyZIz0eA=;
- b=fHYPbYysjFDkVi0JStoArtcGe7GWYHMX90OB1XeEFfgbnxFNSTYFXdXl3xrR96xJSJ/5SjUl9kDwPqeLvT9ELCUsbzXTO/z8vDb1n9fKQmaPrMtssl89xGvORgNSmOprGYpcccnGONh7+MH8o/7Z0wdmppONTKHK9LmmsRkT19WajOQjThlMlzCY69flMaZdnnauvW2OgkCJs/a7QNHIl9+RZV3qAhLRPWNa9LQnsqvDMoQ30tm26OsnjYWaWnzz05RUowYw+eHyI69MvUNsGXnGJN6YSmV7RBB4JJy8FG+UYLFQ1OhcoUoR6a7w4fXj0rOx7Ss+/SABNPqZYt4jDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R81WX5ieBKT/eq/FhZWpa790wf98iO4MC+KwyZIz0eA=;
- b=sjme3HO9SwZ0vBKjhoWxYvJgHFfUuBcQzPGx6dqfia+IjtPwtlb0xhqmfg103U0t2QnENo4btZwO0HOjh66wdLnI6akcHQYZ8WBEQq4gBHtOPt5V0u4vZMoRd0xsMXmfCT0FuqcuUq19q9m9BgVawP6aQGNaSuem3ZaYoHt4+3jz31/wjMQLgsuNYhUfvSgwEOEAXmH71YlNhfbOuFjMFuzyS8nzp3ecDK1DK7PMRfKcCHqzTjlgiW23weU4CMzVeVbhfap6W8GmQ8/el+ldU6Fm0t3+FKapxGmVRnl6dBbqFNj2KiNRasxBd/HAsHsHPXyX+MBSi86A5sCINSyQVA==
-Received: from BY5PR17CA0017.namprd17.prod.outlook.com (2603:10b6:a03:1b8::30)
- by CY8PR12MB7361.namprd12.prod.outlook.com (2603:10b6:930:53::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
- 2025 19:02:43 +0000
-Received: from CO1PEPF000042A8.namprd03.prod.outlook.com
- (2603:10b6:a03:1b8:cafe::a4) by BY5PR17CA0017.outlook.office365.com
- (2603:10b6:a03:1b8::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Tue,
- 18 Feb 2025 19:02:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1PEPF000042A8.mail.protection.outlook.com (10.167.243.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 19:02:43 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
- 2025 11:02:27 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 18 Feb 2025 11:02:26 -0800
-Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 18 Feb 2025 11:02:25 -0800
-Date: Tue, 18 Feb 2025 11:02:23 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 13/14] iommu/arm-smmu-v3: Report events that belong to
- devices attached to vIOMMU
-Message-ID: <Z7TZP3jXlRzweFE8@nvidia.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <b71a5b132e8ba771998c5b810675f10b100d4ff3.1737754129.git.nicolinc@nvidia.com>
- <20250218171821.GG4099685@nvidia.com>
- <Z7TRNL0u0YmN30ax@nvidia.com>
- <20250218185046.GK4099685@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927901E5202;
+	Tue, 18 Feb 2025 19:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739905435; cv=none; b=KkX83ccqdqMvfxmqUZb0mS+FDuvyvoNZsa7D+0dIT/6zjbENO5kHj1kpUB2sesvutFwZ0c3gv8c6mDsegNhiNx00wQoiiIwYIBVU6MXsVik+6eJXiU/+GWor/9KqhVYKxJCswSmQYoEQRh2RUqFRM7BvFBNcShoeS9dtPzwHjBY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739905435; c=relaxed/simple;
+	bh=JTd1l3l1TUPJLaW1itWZ16kwRJWkduYtTgS2cfEjA+k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jNnktleuADgl44ZwYXccJ32g7dsGKBvb3EE6oEujATXgbAKUVqV69UJk0fVhty+49v8eUvomxAQCDZPJJxdXdq0VglRoFG1JwuwsSI3W07x4+5Dkek6VN7MBO7Wqf19nr3QiUyLBOjy0QvFKJ7X917AMcIWtmHGZqoKeo6MfQSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Za0AaPL2; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 201A725F6B;
+	Tue, 18 Feb 2025 20:03:52 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id bCOxpRDHNYGU; Tue, 18 Feb 2025 20:03:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1739905423; bh=JTd1l3l1TUPJLaW1itWZ16kwRJWkduYtTgS2cfEjA+k=;
+	h=From:Subject:Date:To:Cc;
+	b=Za0AaPL2U9L8yMJcz0uDqbndexvG3yPP67NXzhVQcHxW9bb2jUNVHhSEwHXg1JKGV
+	 tnZez/Z/zhjnLnhCl94uzzM/PZGQZKW3TAPxsXLzppYqZ7DHJGZmxWhQkTG/nq2aQp
+	 Zte+QSuAnA22xKT4GdgOm15zo6+l7LFMAM03c06Y3UMYJc9oSVwU9xFfZF5VnoFYwP
+	 qDM71GHd7E6eBb7JfRzW9s5kxCFAU9cpU3vdjMyIAU7Tdpl5CdGcTT/eBAMXBierBT
+	 iq8AQtMiqe2bXXoJbpqqkq5SPh0emclmCT1RCHrQqJcszPU7X4cWtbQ+39z30kRN84
+	 xwYUg4FosNv7Q==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/7] Add support for the Exynos7870 SoC, along with
+ three devices
+Date: Wed, 19 Feb 2025 00:33:10 +0530
+Message-Id: <20250219-exynos7870-v3-0-e384fb610cad@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,122 +57,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218185046.GK4099685@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A8:EE_|CY8PR12MB7361:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0aaaf8ea-f8bd-449d-bf76-08dd504ed2f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emZINW5qdEdYa3U0aFpOYzFKemQyVkI3WU9HVDIvRlNuemwyVXhnMmoxZndX?=
- =?utf-8?B?SU8zQ2RjR0orQzZwNS9ITmZ2eHcwQ1BERnM4M0xvWm1qK0ExVHk5WG9adS9o?=
- =?utf-8?B?VWo5aHdsbHR3djJUcHlseDJIck9uMVE2UG1pcXF6ODJtNUtFd0VGS0N4OHVz?=
- =?utf-8?B?OW9CZjh2em9oZXI0akZzUU82OHkwVGZZc0xSalZScGxlL1A5T0p3TnRrNjBV?=
- =?utf-8?B?S3JyakEyd2F1L2tBYXdzRFlaYWRudTlkNFpEeU5GZlJ4MVAwcGFGU1I3blpw?=
- =?utf-8?B?UitLYVZsODNEVUVTYkxBblB3T3ZUdndKMjlEQUdXQUpsWjZmLzlNTUtvMFRS?=
- =?utf-8?B?U0pZRUF1WlBtTlhoajY0UEs3YUZtWGNaZDFVQ3RMZDVjdzBXRFZHblhRS1B5?=
- =?utf-8?B?NjFWMlNyTGpoS0F4MkdjRzVZcit2Rld2TFZ4VG53dlRLYU9LRUJ1aVU3Mmgr?=
- =?utf-8?B?dGk0TjUzUzV2YWtBcW9KQzZXaTU0N1BFcXlKMHdDakFuMzc0QVdHZkdvc21k?=
- =?utf-8?B?T1FwNzBRT1ZwUGNKbjlTKzByVDVLNkdQUGlWR1BuMmdJNUVkQ0w4MmN0TUN4?=
- =?utf-8?B?NndkQTdOeEl1ZlNWVHNiVE53L1kvdzhIdGNXWi8veDVhcDduTXNBaE5nbEdU?=
- =?utf-8?B?YW5uQ25QK0dRejRGTUppdWtxZ3VxRUQ4by8xOExvZW1tL3pTTXFZZHk3ZEpZ?=
- =?utf-8?B?RDR5d2tVQ0ZQQjJLVSs3eSt4VEhGaTBiWE5jYkR2SWpqcUJkbEwvQ2JFZnRJ?=
- =?utf-8?B?WHowL2ovSWFNeWlxa29WUzNhMXlsNjJGUTB4YlhvTlM5dzRNS1NPVGk2MEZ6?=
- =?utf-8?B?WjBHUFpGenFrRDQxcUVrUHdReUdyYVBUa3Azb21OZjJMMGRKYVFBdzlWRCsx?=
- =?utf-8?B?MFZZYkx6eitxWGhyeEtvbXI4OVpqVlZhZHo2S0g5dGhUandXR1EzeUxiMDg5?=
- =?utf-8?B?dWZFUlhTeEk3cnNURDVLWm11NHJWZVV3S3pEY0dYT1FlVm9NUGloN3hVNDJF?=
- =?utf-8?B?WHZyRlpwbU5jaTV1L0hTNWxBbmJPbTM4NzY1eVR1VjVRWHdXMitaVjVOcW1D?=
- =?utf-8?B?aFJENytRQTNVd0tvNFIwOEJNQSthZ0F6MlA0dEF6RUIzY04vMUJnMGNQUXFh?=
- =?utf-8?B?ZVArMnhJWWpoZlNsVmxVc1gzRUpQbHJ2cm1xUXR5R1dTdVd4VER1d015M2lu?=
- =?utf-8?B?bEJNdzdyL2ppZlFCRVpFWEY0N1Zwbk9SZytjSHNwdjlZcEZ4Qld1WktoWjRI?=
- =?utf-8?B?OFcvTy9EN2VkZU8rZk9nSFM1dld3NnlCbjRONmh1MUlTVlB6T3RRZjMweTZR?=
- =?utf-8?B?dVNmRW1PbC9iWDN6bkorK3NhZU83ZDFDdzFzeW5paVJEcG10WVlmangxT3pJ?=
- =?utf-8?B?ZmRCcEJtRUE2Ti9qd3NYbVBteVNBTkY5Q1Y4M1puUjhhQS8zUTZjMjcrWlpD?=
- =?utf-8?B?RlFPOVhwbXdIVHJBekhQRldmN2dNTUphZkxEVTdPSUVlYVBrVllVMWNXYzBl?=
- =?utf-8?B?M3VWbU5aQ1VLOTRpamljYzhtbnFBenU2QURCdVYyQXRIV0FqN0NSek5ZTHFO?=
- =?utf-8?B?MUw3L1IrbHJXR2d2OUtERHl6YlVSL3Zkek10VWhEc1dRVXBSUENqNnkzZEps?=
- =?utf-8?B?Mi9WZkk2UCtrV0tjUURZTXlFOU0rU0pQQW9TZGczUVZpOHpRTXhlRDduSjRD?=
- =?utf-8?B?aUE1Z2xBck5Kcjh0M2J6MlhpNlp3VGNvYmt1REZaUXArQlhPM1NDWjlKcUwv?=
- =?utf-8?B?aFE4UERzb05NakZsT1J0aG00WnFpbVdKM2t0ZENqK2xPWmNudUc2VGxSYnhs?=
- =?utf-8?B?RjFsWU5QWExJeVRWNTNUeWg1ZnVQdmcrT3phdHQ1bFlPdldxQ3ArclZQQUR5?=
- =?utf-8?B?eFJ5QzNVaXFMQmtKSmE4Z29CNlhSVWkyb3J1eXUvc214SFdWTHVrR2FtajMz?=
- =?utf-8?B?WERrcmJ4enkzL2tTc3ZUeTBlZnM4YUxXUzZCVCtZTWRjWEdLM20veDhoNElq?=
- =?utf-8?Q?KlvKy3c12E9zpU+8dGrUAZ03SjdSPA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 19:02:43.2179
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0aaaf8ea-f8bd-449d-bf76-08dd504ed2f2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042A8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7361
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG7ZtGcC/1XMSwqDMBSF4a1Ixk25eduOuo/SgZobzcSURIIi7
+ r1RKOjwHPi/lSSMHhN5ViuJmH3yYSxD3CrSDc3YI/W2bMKBK+DAKM7LGJKpDVCQD1UblK2xjpT
+ gG9H5+cDen7IHn6YQl8PObH//jDgzmVGgvNXWSaMb4eBlfYohTPcQe7JDmZ9jeYl5iZUWTDCt0
+ EF3jbdt+wFjqvRd4wAAAA==
+X-Change-ID: 20250201-exynos7870-049587e4b7df
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739905418; l=3985;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=JTd1l3l1TUPJLaW1itWZ16kwRJWkduYtTgS2cfEjA+k=;
+ b=Kit8dV9N/JF0doGFtT8JtyemUTutD5Nd9US4sk2RKh4z7iLlxy1gnSlDBUvmQu4MlO7ic74NT
+ OxOgFHVjgqsAAfQzepjG4Kvn35jOlJZ1KjWS+BZwCT3/Py7XVDnz5OR
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Tue, Feb 18, 2025 at 02:50:46PM -0400, Jason Gunthorpe wrote:
-> On Tue, Feb 18, 2025 at 10:28:04AM -0800, Nicolin Chen wrote:
-> > On Tue, Feb 18, 2025 at 01:18:21PM -0400, Jason Gunthorpe wrote:
-> > > On Fri, Jan 24, 2025 at 04:30:42PM -0800, Nicolin Chen wrote:
-> > > 
-> > > > @@ -1831,31 +1831,30 @@ static int arm_smmu_handle_event(struct arm_smmu_device *smmu,
-> > > >  		return -EOPNOTSUPP;
-> > > >  	}
-> > > 
-> > > There is still the filter at the top:
-> > > 
-> > > 	switch (event->id) {
-> > > 	case EVT_ID_TRANSLATION_FAULT:
-> > > 	case EVT_ID_ADDR_SIZE_FAULT:
-> > > 	case EVT_ID_ACCESS_FAULT:
-> > > 	case EVT_ID_PERMISSION_FAULT:
-> > > 		break;
-> > > 	default:
-> > > 		return -EOPNOTSUPP;
-> > > 	}
-> > > 
-> > > Is that right here or should more event types be forwarded to the
-> > > guest?
-> > 
-> > That doesn't seem to be right. Something like EVT_ID_BAD_CD_CONFIG
-> > should be forwarded too. I will go through the list.
-> 
-> I think the above should decode into a 'faultable' path because they
-> all decode to something with an IOVA
-> 
-> The rest should decode to things that include a SID and the SID decode
-> should always be forwarded to the VM. Maybe there are small
-> exclusions, but generally that is how I would see it..
+Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that was
+announced in 2016. The chipset was found in several popular mid-range to
+low-end Samsung phones, released within 2016 to 2019.
 
-Ack. SMMU spec defines three type:
-"Three categories of events might be recorded into the Event queue:
- • Configuration errors.
- • Faults from the translation process.
- • Miscellaneous."
+This patch series aims to add support for Exynos 7870, starting with the
+most basic yet essential components such as CPU, GPU, clock controllers,
+PMIC, pin controllers, etc.
 
-The driver cares the first two only, as you remarked here.
+Moreover, the series also adds support for three Exynos 7870 devices via
+devicetree. The devices are:
+ * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
+ * Samsung Galaxy J6		- released 2018, codename j6lte
+ * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
 
-> > > This already holds the streams_mutex across all of this, do you think
-> > > we should get rid of the vmaster_rwsem and hold the streams_mutex on
-> > > write instead?
-> > 
-> > They are per master v.s. per smmu. The latter one would make master
-> > commits/attaches exclusive, which feels unnecessary to me, although
-> > it would make the code here slightly cleaner..
-> 
-> I'd pay the cost on the attach side to have a single lock on the fault
-> side..
+Additional features implemented in this series include:
+ * I2C	- touchscreen, IIO sensors, etc.
+ * UART	- bluetooth and serial debugging
+ * MMC	- eMMC, Wi-Fi SDIO, SDCard
+ * USB	- micro-USB 2.0 interface
 
-OK. Maybe a small patch to turn the streams_mutex to streams_rwsem?
+Here is a list of all sub-series:
+ * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmode-v1-1-0f17b3033c2d@disroot.org/
+ * gpu			R https://lore.kernel.org/all/20250204-exynos7870-gpu-v1-1-0db4c163a030@disroot.org/
+ * i2c	      		A https://lore.kernel.org/all/20250204-exynos7870-i2c-v1-0-63d67871ab7e@disroot.org/
+ * mmc			- https://lore.kernel.org/all/20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org/
+ * pinctrl	  	- https://lore.kernel.org/all/20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org/
+ * pmic-regulators	- https://lore.kernel.org/all/20250219-exynos7870-pmic-regulators-v2-0-1ea86fb332f7@disroot.org/
+ * pmu-clocks		- https://lore.kernel.org/all/20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org/
+ * uart			- https://lore.kernel.org/all/20250219-exynos7870-uart-v2-1-c8c67f3a936c@disroot.org/
+ * usb			- https://lore.kernel.org/all/20250219-exynos7870-usb-v2-0-1de41a89c9d4@disroot.org/
+ * usbphy		- https://lore.kernel.org/all/20250219-exynos7870-usbphy-v2-0-b8ba4e7a72e9@disroot.org/
+(Legend: [R]eviewed, [A]pplied)
 
-Thanks
-Nicolin
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v3:
+- Added patches from https://lore.kernel.org/all/20250204-exynos7870-chipid-v1-0-0bf2db08e621@disroot.org/
+- Fix devicetree formatting according to the devicetree style guide.
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v2: https://lore.kernel.org/r/20250204-exynos7870-v2-0-56313165ef0c@disroot.org
+
+Changes in v2:
+- Redo a few commit descriptions.
+- Split patchsets into multiple sub-series, subsystem-wise.
+- Link to v1: https://lore.kernel.org/r/20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org
+
+---
+Kaustabh Chakraborty (7):
+      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
+      dt-bindings: arm: samsung: add compatibles for exynos7870 devices
+      soc: samsung: exynos-chipid: add support for exynos7870
+      arm64: dts: exynos: add initial devicetree support for exynos7870
+      arm64: dts: exynos: add initial support for Samsung Galaxy J7 Prime
+      arm64: dts: exynos: add initial support for Samsung Galaxy A2 Core
+      arm64: dts: exynos: add initial support for Samsung Galaxy J6
+
+ .../bindings/arm/samsung/samsung-boards.yaml       |    8 +
+ .../bindings/hwinfo/samsung,exynos-chipid.yaml     |    1 +
+ arch/arm64/boot/dts/exynos/Makefile                |    3 +
+ .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts |  629 ++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |  617 ++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts |  665 +++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi | 1022 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7870.dtsi         |  720 ++++++++++++++
+ drivers/soc/samsung/exynos-chipid.c                |    1 +
+ 9 files changed, 3666 insertions(+)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250201-exynos7870-049587e4b7df
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
