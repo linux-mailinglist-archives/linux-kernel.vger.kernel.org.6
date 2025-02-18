@@ -1,248 +1,288 @@
-Return-Path: <linux-kernel+bounces-518921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CCBA39618
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:52:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC48FA39657
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B521886B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66153A7627
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B0A22E414;
-	Tue, 18 Feb 2025 08:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AF522E002;
+	Tue, 18 Feb 2025 08:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ICbzQaUI"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="inZgeTAE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3E11B6D11;
-	Tue, 18 Feb 2025 08:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C9D22DF8E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739868734; cv=none; b=c12GfyFNTCh2lVWaLYdnLWLZx+jAul12Rh9zIuKVfkea8usERH/QKZ+B/VKNVcDYgh6GgGjIQJmJsXz8jdlu/uCFCCvh+cxFoAvMfaLXdhUmobZKfi6pH5rKN2UjYVqFsUffB1GsFqO6H7XwEX6fU7Hs1JrrW7xA7LIyeMpfIVo=
+	t=1739868734; cv=none; b=amqYls6AgqyV5/MMsJvorGKzNv/tnRuEeQQRZByyRomnoq4SToupja4ammH2rgtm+u4eCRYBEOmZE+olS2qk8y4jBMptBH+SKFu78hQP8QFkYKNBq4voKWoBEeE940eFqr7vVV3OyOFAjhKJCjbShKjsGXx1Pq/BXQN7/oecG+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739868734; c=relaxed/simple;
-	bh=GHXqmrQak7ff03YQn85C4Va97mNvM78oxehiTTDlVKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKH68pY/d/pAUW8Uf4PonV2MFBkHwpdbOILMnbC9x/cEU36NSQC4Av83pSvgEawyK3GfJFQ6C8e6r6VeBiiUAcFq7kgeAJg1Ryxq2/9iXQZmHeMIVu2Cdf2feDK5/ISu/myzwIh+OmtkUjJ5Y7vfo5b9R162ngO9jBxlg3vxWls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ICbzQaUI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739868724;
-	bh=GHXqmrQak7ff03YQn85C4Va97mNvM78oxehiTTDlVKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ICbzQaUIT8G3ZOCfdX9MOtucwgIdnvnfOZpPWvds9KnrYistpHw7RZIXHeiEtX3Ir
-	 bXMKyXP7Hj9q24omMdV55NYHLwtTxneKb78H1ib3WC6kCPXBbCjGMwWVB5JX2u8cWK
-	 FGMJMvusQl6kR2xnMHYX0UqIW+D6fMJwG+vqWbEAqbPdLczj9CG3zW1KITtrBFH2MZ
-	 iHS7GxfMyoDhKOIwc6Jg22nFpjr0hjrp1as6ZVVqMfgjRhXm5liS1Z94+BtjjbKEo+
-	 FzZK6NXDeF0n9yIRXnkkeDjluDONmDRWCuDK4vmmjYw+aX26tZubo2nsMnsfPqYrqb
-	 WUn3ou9maOMew==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1359D17E0657;
-	Tue, 18 Feb 2025 09:52:03 +0100 (CET)
-Message-ID: <3310b6f9-df7a-4769-a221-4a93cc3ec035@collabora.com>
-Date: Tue, 18 Feb 2025 09:52:01 +0100
+	bh=qImDM2Aoz3Snnaan8A7pazPLk5kgxVW4GXVujSQsLH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIpNw9pUGgfMfV6/+s3pQJVNa+N96Y5uzKj5SBfHwIRREE9nIavmveCEqHcFjTILt02YWyadD/hxswB/T9JbKSEFh0n+dT2PMuApgtioruiB1FYAiKoDkqrHoGYK0vvT3OpSNS4aSR8EWFTnTvMwTdgbGpGj8uQyAQ1hBNB397U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=inZgeTAE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739868731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/40cidM9GqDVrc7T4DzVHlbImaecKAWNvPg5rw21iA8=;
+	b=inZgeTAEkAgB3k+Nq6TemODsnVHFOqFJWDfwqldJeVmF/0zE0abz0PqhwRjlCNbhstr2uk
+	rO91FF9yGC3TwPlgucl6c0TMlIDn3eeAgMccBZIU92pbzqItXDgG9uG8gRgQ/mwt0juqce
+	C8/hga2CD4sNAs6WB79fionVU0MeMv8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-33-IAxyY5JdO0S862Ymisxz8A-1; Tue, 18 Feb 2025 03:52:09 -0500
+X-MC-Unique: IAxyY5JdO0S862Ymisxz8A-1
+X-Mimecast-MFC-AGG-ID: IAxyY5JdO0S862Ymisxz8A_1739868728
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f3bac2944so964962f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:52:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739868728; x=1740473528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/40cidM9GqDVrc7T4DzVHlbImaecKAWNvPg5rw21iA8=;
+        b=QldDZUj4RpavsfjK2wkNASjUrCMKalMoOB9RhI9t9M4nIoxaP6Md3O/LdIqnXYw3QD
+         TmB22yU/GhAfrZx5+IKdFB3YNMNJgS0PNnyHy/fUA+Lkaalm5vPjjE3GJXKLabqa+aRC
+         KxwsAF4YE3aGLFDCCaumxCC/8nzyR389dQyoecCp9Qj6IL63sh4SDDQzUNhp7JaQ+Nnq
+         U7RUXfiJyK6UHP6dCHqp2jfrnqZB96qG6eoPNHHIiE0tzY4SmlCUTMUaG2PEcHWlhOWF
+         AaFsJ3wt0OfieOnTGnjruZqLZl+zbp0fZfYEC/MWA+sQtWzuyPn7tEHvoRhia2w8KAzN
+         NUGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXidy7c3IQv/PbXTZjmJdCuYh8BZBgDa8Uuxqxny5Twy3Oaqz/vUq32XvOWRy0qAE1WdJK5+cX61EX3FHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFLp0HyvbJIYbj5obmW9lKPvUfitdCQV+qp4GVQ3RiasKZYBUd
+	fWb1ioH7byl2C8rg8lNFBezRx4rIvADhrB0SFHszBgqkeBo+QxIA6jWBeAoNTBZ8hjXTRgxgdsx
+	WJddytiMvu41IxB9atNoeYBUQT1ixEuZfd8fR64hZb6H0Nsh0Vx2LXJtnAZVwOQ==
+X-Gm-Gg: ASbGncuLDVtS+Mmo9qnVnqFG3OfhWxBgskbM0jG+1IxervlBQSu9rBMCuVa7lshykr3
+	EBRuSeqNMyr5JQsIqVZ/xz9wUNoQzJ430VS0ssmOVDQc0vcgLyfoKCWsgEFbS8tXIFb0Uz3HBQ4
+	2l5dGr4atP4WuDra2u9tAEKL8Q8+U75DhbSgcMokJ65NhIIRTaUuy0coddxIzT2ubPBP23+t7dJ
+	k6CmsZ+pMYUHyofwg6/K1xNO0YLA53mlyc+5Ki5lFCXRUnnx6s4jlmPY2C0+PvUeIQEg8VUn+7z
+	SIANwS6vLiFY1xpm8M/CJiNOgawZIU96Neyif1dDhS25AIc3l8v2gg==
+X-Received: by 2002:a05:6000:4023:b0:38f:483f:8319 with SMTP id ffacd0b85a97d-38f483f873emr5435478f8f.51.1739868728429;
+        Tue, 18 Feb 2025 00:52:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFC8X151MW+xEw5lnrOeLO/RfeyoGSXgW9uEKgZVTfGtKVJttz9myB5BqQJ3iioFx+lN1s7Ag==
+X-Received: by 2002:a05:6000:4023:b0:38f:483f:8319 with SMTP id ffacd0b85a97d-38f483f873emr5435418f8f.51.1739868727721;
+        Tue, 18 Feb 2025 00:52:07 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d65bcsm14463188f8f.65.2025.02.18.00.52.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 00:52:07 -0800 (PST)
+Date: Tue, 18 Feb 2025 09:52:02 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: John Fastabend <john.fastabend@gmail.com>, 
+	Jakub Sitnicki <jakub@cloudflare.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Bobby Eshleman <bobby.eshleman@bytedance.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net 1/4] sockmap, vsock: For connectible sockets allow
+ only connected
+Message-ID: <yc5vdkuwpyrr7mfjp6ohqf4fzq4avgjh5pwrmox7rhipwnh7nk@26cyegopbks2>
+References: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
+ <20250213-vsock-listen-sockmap-nullptr-v1-1-994b7cd2f16b@rbox.co>
+ <251be392-7cd5-4c69-bc02-12c794ea18a1@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/6] drm/mediatek: dsi: Improves the DSI lane setup
- robustness
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "simona.vetter@ffwll.ch" <simona.vetter@ffwll.ch>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "will@kernel.org" <will@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>
-References: <20231023-display-support-v7-0-6703f3e26831@baylibre.com>
- <20231023-display-support-v7-2-6703f3e26831@baylibre.com>
- <ab3bd050c873bb6cecc00b615b938eabc157cb49.camel@mediatek.com>
- <79477810-00a9-47f1-8282-f8077ea082bb@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <79477810-00a9-47f1-8282-f8077ea082bb@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <251be392-7cd5-4c69-bc02-12c794ea18a1@rbox.co>
 
-Il 17/02/25 16:03, Alexandre Mergnat ha scritto:
-> Hi CK.
-> 
-> On 17/02/2025 08:56, CK Hu (胡俊光) wrote:
->> On Fri, 2025-01-10 at 14:31 +0100, Alexandre Mergnat wrote:
->>> External email : Please do not click links or open attachments until you have 
->>> verified the sender or the content.
->>>
->>>
->>> Currently, mtk_dsi_lane_ready (which setup the DSI lane) is triggered
->>> before mtk_dsi_poweron. lanes_ready flag toggle to true during
->>> mtk_dsi_lane_ready function, and the DSI module is set up during
->>> mtk_dsi_poweron.
->>>
->>> Later, during panel driver init, mtk_dsi_lane_ready is triggered but does
->>> nothing because lanes are considered ready. Unfortunately, when the panel
->>> driver try to communicate, the DSI returns a timeout.
->>>
->>> The solution found here is to put lanes_ready flag to false after the DSI
->>> module setup into mtk_dsi_poweron to init the DSI lanes after the power /
->>> setup of the DSI module.
+On Fri, Feb 14, 2025 at 02:11:48PM +0100, Michal Luczaj wrote:
+>> ...
+>> Another design detail is that listening vsocks are not supposed to have any
+>> transport assigned at all. Which implies they are not supported by the
+>> sockmap. But this is complicated by the fact that a socket, before
+>> switching to TCP_LISTEN, may have had some transport assigned during a
+>> failed connect() attempt. Hence, we may end up with a listening vsock in a
+>> sockmap, which blows up quickly:
 >>
->> I'm not clear about what happen.
->> I think this DSI flow has worked for a long time.
->> So only some panel has problem?
-> 
-> I don't know if it's related to a specific panel or not.
-> 
->>
->> And another question.
->> Do you mean mtk_dsi_lane_ready() do some setting to hardware, but lane is not 
->> actually ready?
-> 
-> The workflow should be:
-> ... | dsi->lanes_ready = false | Power-on | setup dsi lanes | dsi->lanes_ready = 
-> true (to avoid re-do dsi lanes setup) | ...
-> 
-> I observe (print function name called + dsi->lanes_ready value):
+>> KASAN: null-ptr-deref in range [0x0000000000000120-0x0000000000000127]
+>> CPU: 7 UID: 0 PID: 56 Comm: kworker/7:0 Not tainted 6.14.0-rc1+
+>> Workqueue: vsock-loopback vsock_loopback_work
+>> RIP: 0010:vsock_read_skb+0x4b/0x90
+>> Call Trace:
+>>  sk_psock_verdict_data_ready+0xa4/0x2e0
+>>  virtio_transport_recv_pkt+0x1ca8/0x2acc
+>>  vsock_loopback_work+0x27d/0x3f0
+>>  process_one_work+0x846/0x1420
+>>  worker_thread+0x5b3/0xf80
+>>  kthread+0x35a/0x700
+>>  ret_from_fork+0x2d/0x70
+>>  ret_from_fork_asm+0x1a/0x30
+>
+>Perhaps I should have expanded more on the null-ptr-deref itself.
+>
+>The idea is: force a vsock into assigning a transport and add it to the
+>sockmap (with a verdict program), but keep it unconnected. Then, drop
+>the transport and set the vsock to TCP_LISTEN. The moment a new
+>connection is established:
+>
+>virtio_transport_recv_pkt()
+>  virtio_transport_recv_listen()
+>    sk->sk_data_ready(sk)            i.e. sk_psock_verdict_data_ready()
+>      ops->read_skb()                i.e. vsock_read_skb()
+>        vsk->transport->read_skb()   vsk->transport is NULL, boom
+>
 
-Alex, the first poweron is called by mtk_dsi_ddp_start() - and the start callback
-is internal to the mediatek-drm driver.
+Yes I agree, it's a little clearer with this, but I think it was also 
+clear the concept before. So with or without:
 
-That callback is called by mtk_crtc during setup and during bridge enable(), and
-there we go with suboptimal code design backfiring - instead of using what the
-DRM APIs provide, this driver uses something custom *and* the DRM APIs, giving
-this issue.
+Acked-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Part of what mtk_crtc does is duplicated with what the DRM APIs want to do, so
-there you go, that's your problem here :-)
 
-Should I go on with describing the next step(s), or is that obvious for everyone?
+>Here's a stand-alone repro:
+>
+>/*
+> * # modprobe -a vsock_loopback vhost_vsock
+> * # gcc test.c && ./a.out
+> */
+>#include <stdio.h>
+>#include <stdint.h>
+>#include <stdlib.h>
+>#include <unistd.h>
+>#include <errno.h>
+>#include <sys/socket.h>
+>#include <sys/syscall.h>
+>#include <linux/bpf.h>
+>#include <linux/vm_sockets.h>
+>
+>static void die(const char *msg)
+>{
+>	perror(msg);
+>	exit(-1);
+>}
+>
+>static int sockmap_create(void)
+>{
+>	union bpf_attr attr = {
+>		.map_type = BPF_MAP_TYPE_SOCKMAP,
+>		.key_size = sizeof(int),
+>		.value_size = sizeof(int),
+>		.max_entries = 1
+>	};
+>	int map;
+>
+>	map = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
+>	if (map < 0)
+>		die("map_create");
+>
+>	return map;
+>}
+>
+>static void map_update_elem(int fd, int key, int value)
+>{
+>	union bpf_attr attr = {
+>		.map_fd = fd,
+>		.key = (uint64_t)&key,
+>		.value = (uint64_t)&value,
+>		.flags = BPF_ANY
+>	};
+>
+>	if (syscall(SYS_bpf, BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr)))
+>		die("map_update_elem");
+>}
+>
+>static int prog_load(void)
+>{
+>	/* mov %r0, 1; exit */
+>	struct bpf_insn insns[] = {
+>		{ .code = BPF_ALU64 | BPF_MOV | BPF_K, .dst_reg = 0, .imm = 1 },
+>		{ .code = BPF_JMP | BPF_EXIT }
+>	};
+>	union bpf_attr attr = {
+>		.prog_type = BPF_PROG_TYPE_SK_SKB,
+>		.insn_cnt = sizeof(insns)/sizeof(insns[0]),
+>		.insns = (long)insns,
+>		.license = (long)"",
+>	};
+>	
+>	int prog = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
+>	if (prog < 0)
+>		die("prog_load");
+>
+>	return prog;
+>}
+>
+>static void link_create(int prog_fd, int target_fd)
+>{
+>	union bpf_attr attr = {
+>		.link_create = {
+>			.prog_fd = prog_fd,
+>			.target_fd = target_fd,
+>			.attach_type = BPF_SK_SKB_VERDICT
+>		}
+>	};
+>
+>	if (syscall(SYS_bpf, BPF_LINK_CREATE, &attr, sizeof(attr)) < 0)
+>		die("link_create");
+>}
+>
+>int main(void)
+>{
+>	struct sockaddr_vm addr = {
+>		.svm_family = AF_VSOCK,
+>		.svm_cid = VMADDR_CID_LOCAL,
+>		.svm_port = VMADDR_PORT_ANY
+>	};
+>	socklen_t alen = sizeof(addr);
+>	int s, map, prog, c;
+>
+>	s = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
+>	if (s < 0)
+>		die("socket");
+>
+>	if (bind(s, (struct sockaddr *)&addr, alen))
+>		die("bind");
+>
+>	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ECONNRESET)
+>		die("connect #1");
+>
+>	map = sockmap_create();
+>	prog = prog_load();
+>	link_create(prog, map);
+>	map_update_elem(map, 0, s);
+>
+>	addr.svm_cid = 0x42424242; /* non-existing */
+>	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ESOCKTNOSUPPORT)
+>		die("connect #2");
+>
+>	if (listen(s, 1))
+>		die("listen");
+>
+>	if (getsockname(s, (struct sockaddr *)&addr, &alen))
+>		die("getsockname");
+>
+>	c = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
+>	if (c < 0)
+>		die("socket c");
+>
+>	if (connect(c, (struct sockaddr *)&addr, alen))
+>		die("connect #3");
+>
+>	return 0;
+>}
+>
 
-:-)
-
-Cheers,
-Angelo
-
-> 
-> [    9.086030] mtk_dsi_probe 0
-> [    9.662319] mtk_dsi_host_attach 0
-> [    9.662941] mtk_dsi_encoder_init
-> [    9.984685] mtk_dsi_poweron 0
-> [   10.043755] mtk_dsi_host_transfer 0
-> [   10.043769] mtk_dsi_lane_ready 0
-> [   10.055837] mtk_dsi_host_transfer 1
-> [   10.055853] mtk_dsi_lane_ready 1
-> [   10.179788] mtk_dsi_host_transfer 1
-> [   10.179803] mtk_dsi_lane_ready 1
-> [   10.179880] mtk_dsi_host_transfer 1
-> [   10.179885] mtk_dsi_lane_ready 1
-> [   10.179920] mtk_dsi_host_transfer 1
-> [   10.179923] mtk_dsi_lane_ready 1
-> [   10.179986] mtk_dsi_host_transfer 1
-> [   10.179993] mtk_dsi_lane_ready 1
-> [   10.180134] mtk_dsi_host_transfer 1
-> [   10.180143] mtk_dsi_lane_ready 1
-> [   10.180175] mtk_dsi_host_transfer 1
-> [   10.180178] mtk_dsi_lane_ready 1
-> [   10.180223] mtk_dsi_host_transfer 1
-> [   10.180226] mtk_dsi_lane_ready 1
-> [   10.180245] mtk_dsi_host_transfer 1
-> [   10.180248] mtk_dsi_lane_ready 1
-> [   10.180278] mtk_dsi_host_transfer 1
-> [   10.180280] mtk_dsi_lane_ready 1
-> [   10.180312] mtk_dsi_host_transfer 1
-> [   10.180314] mtk_dsi_lane_ready 1
-> [   10.203774] mtk_dsi_bridge_atomic_pre_enable
-> [   10.203787] mtk_dsi_poweron 1
-> [   10.203793] mtk_output_dsi_enable
-> [   10.203795] mtk_dsi_lane_ready 1
-> [   10.471517] mtk_dsi_host_transfer 1
-> [   10.486962] mtk_dsi_lane_ready 1
-> [   10.487244] mtk_dsi_host_transfer 1
-> [   10.503733] mtk_dsi_lane_ready 1
-> 
-> Here the mtk_dsi_lane_ready function:
-> 
->      static void mtk_dsi_lane_ready(struct mtk_dsi *dsi)
->      {
->          if (!dsi->lanes_ready) {
->              dsi->lanes_ready = true;
->              mtk_dsi_rxtx_control(dsi);
->              usleep_range(30, 100);
->              mtk_dsi_reset_dphy(dsi);
->              mtk_dsi_clk_ulp_mode_leave(dsi);
->              mtk_dsi_lane0_ulp_mode_leave(dsi);
->              mtk_dsi_clk_hs_mode(dsi, 0);
->              usleep_range(1000, 3000);
->              /* The reaction time after pulling up the mipi signal for dsi_rx */
->          }
->      }
-> 
-> 
-> As you can see, something call "mtk_dsi_bridge_atomic_pre_enable" then 
-> mtk_dsi_poweron is called a second time. This issue is probably due to the probe 
-> order (race condition).
-> After all, IMHO, after a poweron, the registers status should be consider as 
-> unknown (or at least HW default value), so, lanes setup has to be done. This 
-> solution improve the driver's robustness.
-> 
-> 
->> Or mtk_dsi_lane_ready() configure the hardware and lane is is actually ready,
->> but something make it not ready again, what's the thing which break lane ready?
->>
->> If this is a bug fix, add Fixes tag.
->>
->> Regards,
->> CK
->>
->>>
->>> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
->>> ---
->>>  drivers/gpu/drm/mediatek/mtk_dsi.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/ 
->>> mtk_dsi.c
->>> index e61b9bc68e9a..dcf0d93881b5 100644
->>> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
->>> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
->>> @@ -724,6 +724,8 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
->>>         mtk_dsi_config_vdo_timing(dsi);
->>>         mtk_dsi_set_interrupt_enable(dsi);
->>>
->>> +       dsi->lanes_ready = false;
->>> +
->>>         return 0;
->>>  err_disable_engine_clk:
->>>         clk_disable_unprepare(dsi->engine_clk);
->>>
->>> -- 
->>> 2.25.1
->>>
->>
 
