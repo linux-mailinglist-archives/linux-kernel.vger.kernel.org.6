@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-520273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46752A3A7D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:42:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A499EA3A7D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:42:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909073A9D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49EA18954E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E001ACEDA;
-	Tue, 18 Feb 2025 19:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0491EFF86;
+	Tue, 18 Feb 2025 19:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6efqgq3"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSir8Ewt"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289CB1E833E;
-	Tue, 18 Feb 2025 19:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C482E1E8335;
+	Tue, 18 Feb 2025 19:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907699; cv=none; b=QCY7KD/LRikE9Hr/nqJip5KfGpUcc9zOQCVT7iubn9YdABZOOy5YIjFDOyIYpX0WA+keZSrTkvJzt6FXPNbGfC2Behe6FffkTUX1x3VdtFR/xhZW9iuPIet+taiAiMi0kpwsmGp/Lr9WKRrwsXcxbHJ8LbAVvMgWemi3lk7AaQk=
+	t=1739907704; cv=none; b=TfGIE5AutTgf+HVdplDCrWxB+y2LKiGd7YNgYoTPTzgpLVLfDrW2ZbjQ++pGOvpmSpguymffUK5sik7yEBzByfFrIj1QFAW7T69NZfe3h9WJpet2fZceJTJ2ZOt8pgzkNnCxOYiog/dpgmY3+26SZAUYwBb4lN/9gZ+yFrOkoco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907699; c=relaxed/simple;
-	bh=hFLiI87cr3igWP05XfYyNhOKbMvc8Cx4sch49Pa1HBI=;
+	s=arc-20240116; t=1739907704; c=relaxed/simple;
+	bh=FkKC1cblMmiYr5M9z0M7oNEPnm2fiY498l/eRo2HEJ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ozeog3J48RVvJBvzfMbhL+GJi7i/CFgQHsJPhd6rEj3hxk3978l/fFCj8ZRGMll4Q2LKcj+PlFuPkQnPhoV8UG5Hp8MX10iI40kVB0of58fdHMnaPzhwhbu6dLMsPxgQmtcpgaImu23PIqfu3uSgeCOpJU9ysibzPsNo2ASXTiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6efqgq3; arc=none smtp.client-ip=209.85.222.42
+	 MIME-Version; b=arQWwPzuLRYnI8DZCLm7vL5irW0rq7Ti4HysiqA2N4Dklunk6oyCCpuqDXTWqoLOfv0NrSfcjT6+uqxyJG8U7pxp1E5lpN08RGnaJkJHm41y6K1uBmocxdXe0ecCq29jT6e6tnpg/ETzfsAELGaaVc6HLEzXyqfv1Mm5tyVt6SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VSir8Ewt; arc=none smtp.client-ip=209.85.222.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-868f18a629bso1602261241.2;
-        Tue, 18 Feb 2025 11:41:37 -0800 (PST)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-868e986092cso1795698241.0;
+        Tue, 18 Feb 2025 11:41:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739907697; x=1740512497; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739907701; x=1740512501; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Aum1vTGQH2NNijCedl5+ZhVVjTUbGCmvDvbVv0IZuTI=;
-        b=L6efqgq3zVXlS3cqS9nC+mGMgNyk3cOF+kPoVnhvGq3JiBGsxTtrGu/0TUA7H4HN9q
-         D0wKKZybsRV4r2u4bdEaV2+rzJKTx9MhOxOrjLsuw2R3OFZf9H4qOAEGF2WSmIfzr4Fp
-         tQ2pktDRr+Vu50FfcDdDUGvDfLsIbvlybQmtad9SSq7DFML0NESbkF2J3EfrtGAOc4MZ
-         FDnsoe5tot0WuERwkGyM8aa5IbQN1qHV/rxcB1MdOD0DgItkbBfMu60DYTbH6SNFwIpb
-         zcV379mDziKD67zOgsjDlUb5uB4JSf7d8t8+cDL2mMuneUoNbug/3WlYb5AFCpgo4e9n
-         BEoQ==
+        bh=0QuBSv9ph+j/VGeO4Pumxgm08aKHK253KJvIqheZYvs=;
+        b=VSir8EwtsFt7M1GRigHqiC6ktUTvFSy8Q18MaPkeWBQfR6ut+01O3X5vdxHoh/Rs8U
+         0ok6HVmqeSBY2D//f35+qoRbONzlrkc9cTi7fZ7as7Zo5LID0UINXamOi425TbhUpVIw
+         IIlh1u9CMBjG2YTamUehbf6K8bUYT8PaZpXq6P6EL4iMvB8QcF2nWiGE9tA1FZHCdMaR
+         2KMmeo5w05QV7GmXs3JKtN8G1NDCWE7crxdI92aDDxIdMUFH9QMWbuybAXbyq0B60dvv
+         T8U2BFjQ+oW80WxCavx6UkKWfjGwaG+Whe5oaQBUO/C3GUolyesoohpg5S2rkPOUqmmP
+         oGLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739907697; x=1740512497;
+        d=1e100.net; s=20230601; t=1739907701; x=1740512501;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Aum1vTGQH2NNijCedl5+ZhVVjTUbGCmvDvbVv0IZuTI=;
-        b=j8j4A1uQ5w+UOFJ1JQlGETvoPPS/U6rOfz4U5avtV6OCQ0CSM5pWjJhkz36eEhOlPh
-         IENuTiWK8dfxNQS4LYbJEsxLbbJUn9psMP1F040OjlyWvnP8B1iE6oR1UoUspei21SVB
-         /33f2ctaR4VeR2z4IoDow+bE69bU1lzEefG843xSCip5Sd6ob4byLmezOf5H+vL9IJy7
-         9r1Hx4MPcyhbBWvuu603bx/+aZh9gslW+CJ88dkStjnPim1sButzommydqiqXFQcDMcS
-         0X+fjo9kz8x8uBD2Kwbvm94nAz3lfx5A0wXf7E0KVx+qGE2JL8CWHcpgJKYfF1vPtlHk
-         J8VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGivtej6z2yihgsqtOiHEWR3t6+YFRfJue2jhr55Kp7+ya+tzATh7RiaexcD4/mlVEYFhKpdZt0Tpjqqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPcEl9MKhk2XCVc0qa2Q5VVSXfiMsPUNXlsLmsdSQOczx15G3P
-	94xQR/xuTYXaeailaDLQd8I9XrTsvOfBozmx+k5+M4KtQutiNni4
-X-Gm-Gg: ASbGncsCp2WqRMYLeoLfNYqijS+y1q60t5vsfnmONilOXLXsrANZozyi9yirZNhzgA8
-	xx9r+Z24rncuh6TMnquIgoFUUgAfL6VDkzMXtk6pGb5EodfPKzIoO6P8JSC69d/8AE2JA5bITch
-	/JfBLt6xuIxI/umOaYgGWkyTIHHi5hOIupHRYR8UFwsoREGNQx21DbWcnXcuMioX8Pd54QdXKUu
-	DMLSdD+5xr1fr1ZbXlOr8aTIRpXIawPA9DsgZkpOkFEvpDu/zuBKwrJ4E9wLaoAR12Rw2ckCnCJ
-	lj540mvg8j0A1vaFwmcqXV0=
-X-Google-Smtp-Source: AGHT+IGsalX4IFdNygtfG+gMS3LxKf2sFOlQxqavWEULQxH1EGNCxQNVKihNNAw1WesaVyWYqLl83g==
-X-Received: by 2002:a05:6102:f12:b0:4bb:e14a:944b with SMTP id ada2fe7eead31-4bd3fdfaec5mr8100018137.20.1739907697120;
-        Tue, 18 Feb 2025 11:41:37 -0800 (PST)
+        bh=0QuBSv9ph+j/VGeO4Pumxgm08aKHK253KJvIqheZYvs=;
+        b=OD8w3saR9jDfsrpwGNCxwyRgb3XiSHO9xp2tVQ9t8j+MDQzmcpjAUF/u104JR8m5bP
+         vMS1rlDdsmdTknS2qmWK7V6yuPd2RjYWQaT4GT1u+wx32DV2kTSV+eJNKoZRkYYxEtSV
+         gGW66XJeEI51V88/iMkBwhpXsXs+f3vhfE+TuNt/gWSK06dFMEP3T18uaq676vd/EX1z
+         qiwszpSU6Eg5SSiti4l6m9/MeKXYaIuIhkoekCH9ststpfzoAweU9fHYkAh4/oqDE/XY
+         SnyOHMLc1SkBTpOhCYuqoGPE/ROduv/5OYWTgDBSPgngRqHwqyPR+ZQiQ6qEimgCh5aW
+         K33Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXFgtuVRJW9C/QQVCmSoYYFniFolkYC+vHwxBsCYY7RWaahCl37D2R+uID+ISXppJdn/EV8WRoN28yITjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzga1zz4IfDuaSh9FlJIovwczqNDxLhI/qqkC5iP7oqysuLJoy7
+	tGQr6ym5rjMGwbZq2V+W7qgVUEF82/B3Ob8TZsZHqPP98f/esa4N7jkymsVl
+X-Gm-Gg: ASbGncsF0Jj9uo2ipuu9qchkgQQkcuKDQmW5spxzr6wgWH0YbSOUaot840gRJAwV+yB
+	MddDa7AsPMu1P3wfm/jJAPYAhW7EGYhqtiegSngYe7Xxoqh0Ki8pQkf+lYtwChVWSQJaE7pGSo9
+	DKrRdgXJFYoMzfDW3IUxgsDrfeBnnmcqT5Ro2wGkivmTFlQscw8cwZcfkPUb2kMWR893r9U3pnC
+	Ltd/tRVNkcRB2afMVIg5rJAMdEScLOV+4HzhIqXYrZ6ZzzO7LPzPzNqC/uIcFAt/ecsXSGXAZSK
+	+krsB5BZAIAQxKAbKmDzNh8=
+X-Google-Smtp-Source: AGHT+IFiSW+A77UfE53ewep9siEze74zohXl6W/5mPVL5SJd/Yxs3kK45kQNuQ3lInDAJX+4t3AxFg==
+X-Received: by 2002:a05:6102:5e91:b0:4bb:9b46:3f90 with SMTP id ada2fe7eead31-4be85bab331mr586457137.9.1739907701544;
+        Tue, 18 Feb 2025 11:41:41 -0800 (PST)
 Received: from localhost.localdomain ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc68dd766bsm2305214137.20.2025.02.18.11.41.34
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bc68dd766bsm2305214137.20.2025.02.18.11.41.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:41:36 -0800 (PST)
+        Tue, 18 Feb 2025 11:41:40 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
 To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: platform-driver-x86@vger.kernel.org,
@@ -79,11 +79,15 @@ Cc: platform-driver-x86@vger.kernel.org,
 	Mario Limonciello <mario.limonciello@amd.com>,
 	Kurt Borja <kuurtb@gmail.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Prasanth Ksr <prasanth.ksr@dell.com>,
-	Dell.Client.Kernel@dell.com
-Subject: [PATCH 1/4] platform/x86: dell: dell-wmi-sysman: Use *-y instead of *-objs in Makefile
-Date: Tue, 18 Feb 2025 14:41:08 -0500
-Message-ID: <20250218194113.26589-2-kuurtb@gmail.com>
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao@kernel.org>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Suma Hegde <suma.hegde@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Subject: [PATCH 2/4] platform/x86: amd: Use *-y instead of *-objs in Makefiles
+Date: Tue, 18 Feb 2025 14:41:09 -0500
+Message-ID: <20250218194113.26589-3-kuurtb@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250218194113.26589-1-kuurtb@gmail.com>
 References: <20250218194113.26589-1-kuurtb@gmail.com>
@@ -98,23 +102,76 @@ Content-Transfer-Encoding: 8bit
 The `objs` suffix is reserved for user-space tools. Use the `y` suffix
 instead, which is usually used for kernel drivers.
 
+While at it, fix alignment in AMD PMC and PMF Makefiles.
+
 Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/dell-wmi-sysman/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/amd/Makefile      | 2 +-
+ drivers/platform/x86/amd/hsmp/Makefile | 6 +++---
+ drivers/platform/x86/amd/pmc/Makefile  | 6 +++---
+ drivers/platform/x86/amd/pmf/Makefile  | 8 ++++----
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/Makefile b/drivers/platform/x86/dell/dell-wmi-sysman/Makefile
-index 825fb2fbeea8..0a6df449e222 100644
---- a/drivers/platform/x86/dell/dell-wmi-sysman/Makefile
-+++ b/drivers/platform/x86/dell/dell-wmi-sysman/Makefile
-@@ -1,5 +1,5 @@
- obj-$(CONFIG_DELL_WMI_SYSMAN)  += dell-wmi-sysman.o
--dell-wmi-sysman-objs := 	sysman.o		\
-+dell-wmi-sysman-y :=		sysman.o		\
- 				enum-attributes.o	\
- 				int-attributes.o	\
- 				string-attributes.o	\
+diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+index 56f62fc9c97b..c6c40bdcbded 100644
+--- a/drivers/platform/x86/amd/Makefile
++++ b/drivers/platform/x86/amd/Makefile
+@@ -5,7 +5,7 @@
+ #
+ 
+ obj-$(CONFIG_AMD_3D_VCACHE)	+= amd_3d_vcache.o
+-amd_3d_vcache-objs		:= x3d_vcache.o
++amd_3d_vcache-y			:= x3d_vcache.o
+ obj-$(CONFIG_AMD_PMC)		+= pmc/
+ obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+ obj-$(CONFIG_AMD_PMF)		+= pmf/
+diff --git a/drivers/platform/x86/amd/hsmp/Makefile b/drivers/platform/x86/amd/hsmp/Makefile
+index 3175d8885e87..0759bbcd13f6 100644
+--- a/drivers/platform/x86/amd/hsmp/Makefile
++++ b/drivers/platform/x86/amd/hsmp/Makefile
+@@ -5,8 +5,8 @@
+ #
+ 
+ obj-$(CONFIG_AMD_HSMP)			+= hsmp_common.o
+-hsmp_common-objs			:= hsmp.o
++hsmp_common-y				:= hsmp.o
+ obj-$(CONFIG_AMD_HSMP_PLAT)		+= amd_hsmp.o
+-amd_hsmp-objs				:= plat.o
++amd_hsmp-y				:= plat.o
+ obj-$(CONFIG_AMD_HSMP_ACPI)		+= hsmp_acpi.o
+-hsmp_acpi-objs				:= acpi.o
++hsmp_acpi-y				:= acpi.o
+diff --git a/drivers/platform/x86/amd/pmc/Makefile b/drivers/platform/x86/amd/pmc/Makefile
+index 255d94ddf999..bb6905c4cae9 100644
+--- a/drivers/platform/x86/amd/pmc/Makefile
++++ b/drivers/platform/x86/amd/pmc/Makefile
+@@ -4,6 +4,6 @@
+ # AMD Power Management Controller Driver
+ #
+ 
+-amd-pmc-objs := pmc.o pmc-quirks.o mp1_stb.o
+-obj-$(CONFIG_AMD_PMC) += amd-pmc.o
+-amd-pmc-$(CONFIG_AMD_MP2_STB) += mp2_stb.o
++obj-$(CONFIG_AMD_PMC)			+= amd-pmc.o
++amd-pmc-y				:= pmc.o pmc-quirks.o mp1_stb.o
++amd-pmc-$(CONFIG_AMD_MP2_STB)		+= mp2_stb.o
+diff --git a/drivers/platform/x86/amd/pmf/Makefile b/drivers/platform/x86/amd/pmf/Makefile
+index 6b26e48ce8ad..5978464e0eb7 100644
+--- a/drivers/platform/x86/amd/pmf/Makefile
++++ b/drivers/platform/x86/amd/pmf/Makefile
+@@ -4,7 +4,7 @@
+ # AMD Platform Management Framework
+ #
+ 
+-obj-$(CONFIG_AMD_PMF) += amd-pmf.o
+-amd-pmf-objs := core.o acpi.o sps.o \
+-		auto-mode.o cnqf.o \
+-		tee-if.o spc.o
++obj-$(CONFIG_AMD_PMF)		+= amd-pmf.o
++amd-pmf-y 			:= core.o acpi.o sps.o \
++				   auto-mode.o cnqf.o \
++				   tee-if.o spc.o
 -- 
 2.48.1
 
