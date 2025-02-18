@@ -1,155 +1,211 @@
-Return-Path: <linux-kernel+bounces-518935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7571A3967B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE2BA39691
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8150D3A4C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1410D3B9B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3352309AE;
-	Tue, 18 Feb 2025 08:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D1622DF9D;
+	Tue, 18 Feb 2025 08:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FERSaw+w"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FUkJ67Mh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IjnGMBZ1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37C822FDE2;
-	Tue, 18 Feb 2025 08:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C78422DFAF;
+	Tue, 18 Feb 2025 08:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739869041; cv=none; b=oxSw5vEXTWWh92VchL2kLFnHqL2dQi5viX+HeGen0GCu7koz+01lN+DwO+/siRRFNI0TdkEU2OeaUj0rjzGjDFMUraYWBi62dmY/SG0qjExSYxbsBfmTcRJVGtuKQ5avUBUPZjmlIpYgDQiNMiVdHKt6gUmsxkeBlaNF1RO+d9M=
+	t=1739869061; cv=none; b=QFEQye5w/PPua2tZ6BRJan26VlBy+h00IjZzsLMbVpy0B4lKkEBeolmeGemVIPSVUo7hE6CmR78i0p+hkYZ/d7hh8gf0wcsZvztbW3bi7eLTc28pDXZoqq8oAghDdAQdob7DplXgDm7TbygYml88uP6ZesITLXE8Rf9cWG+tEV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739869041; c=relaxed/simple;
-	bh=mhaR2Trnlsu8FfYdF9a/LlPy376WKizOyZDhx/r8OTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVpQxKZHGWlo5juTpeQb+XuGJD76vk8+sgmUefT3BOcDKzVj0wLXCFeRJp9aGKY7+2rBvb3Aooozzt2JoggdQDkqJkJMXwJ723eMQLYsuMs6qBubg9LVQWZhYC+PhySUJK2KdXxEGcREhKIZ+s0x21XhDGggz4w/pMzRf6kpNQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FERSaw+w; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739869033;
-	bh=mhaR2Trnlsu8FfYdF9a/LlPy376WKizOyZDhx/r8OTY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FERSaw+wUWOJgkTZm1leH65FcMticAx2ZDEkReE80eTRzAVt9txumwGUCAKfspNmc
-	 C7NTo7l5jcGXmclVLKA82mcoI9NhdambccpMm6NoxeGrBSWIjXXqnJvodIo8Zlqvdl
-	 kJGFbw6dkqivDA7MHQDyPm+tbw67VX4q/JFzzS4+N34JS6krZhHcoEgcLtASxkGi/G
-	 iN68mETOMiboV58T8sC8CJtWImg/gj+22aU39j2m/hu65ldnzLP2Dlb2c2j84xIcRj
-	 YUxcmNcGkgFA191chGVGDoM8uzYl/kdzIonJjEbp9vKidJMvFwWLJfeBNc2Yahw5y3
-	 qPgbOc9Auxzgw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 329F417E1562;
-	Tue, 18 Feb 2025 09:57:13 +0100 (CET)
-Message-ID: <7804ef70-efe7-476b-ae5e-bf665bfb4a47@collabora.com>
-Date: Tue, 18 Feb 2025 09:57:13 +0100
+	s=arc-20240116; t=1739869061; c=relaxed/simple;
+	bh=7n8w+ERA8pojz2++WaPBKwjwqZFE9/DbJNIdVjRs0gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGgrrFsaPnrCLikJXf5WdIK/TpWK2pL2A92db4qa9nOxbVBm0c2bgaATgshiYnZYP6KQqg49pgw/R4s+9XW585YFQC2ljAJ3jI3ATqCnTPuFjkLw6aYsZrSCnGwC3SsRasUw5VONDpxIARhPD1TQMrrhlcaZ7ZwN54G8/t55sMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FUkJ67Mh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IjnGMBZ1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 09:57:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739869057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qi00sFeb7intGV58iU7h9IRHzK7AVG7qi/qdH2z0KQQ=;
+	b=FUkJ67MhPasq8kvXjD/bsAI2FDmaN5qca6uZhURZGkoRKaE3rjjTB+2G+9MQipu9bP24rH
+	5zraI2X4z3gbbV5AAMS28pCNApEGpUEMQKh3amivMb+6PfKkkuSETG9N1g+QoY9T5K6sjL
+	U0pHyPkodErZ7cWF8fcQtolIY5tGm1smQJ8UlhgYv0M5/xroFcGaUFQ7yKNY7N/XHvLGaf
+	UkkgvtX9f6QKIiONuXuY6tf/zB+jYtoPT+aUK2xv4UdkWsOLC/qYoXOsVWPFtR03b7awWD
+	rZmU3F3stUIZKF7OQy1NOf38b9tbtbuP+gOmUHnjxENq6RHDbvjS74K76MC+2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739869057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qi00sFeb7intGV58iU7h9IRHzK7AVG7qi/qdH2z0KQQ=;
+	b=IjnGMBZ17v3aCASnhhz+y8ps26+DBt8gRKH6JNDsUUZehTAkI0aiHpImiua79+zsGbKPT+
+	BiXUzimJpXTAQrBg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: David Gow <davidgow@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 00/12] kunit: Introduce UAPI testing framework
+Message-ID: <20250218093333-04552bed-4a2e-445d-9966-e1732a1f8b21@linutronix.de>
+References: <20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de>
+ <CABVgOSn5tGDj5rnR=a133ntv3GeoXQLnHRBg9HRf86hWve7T1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] usb: mtk-xhci: add support remote wakeup of mt8196
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Mathias Nyman <mathias.nyman@intel.com>,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215100615.808-1-chunfeng.yun@mediatek.com>
- <20250215100615.808-3-chunfeng.yun@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250215100615.808-3-chunfeng.yun@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABVgOSn5tGDj5rnR=a133ntv3GeoXQLnHRBg9HRf86hWve7T1w@mail.gmail.com>
 
-Il 15/02/25 11:06, Chunfeng Yun ha scritto:
-> There are three USB controllers on mt8196, each controller's wakeup
-> control is different, add some specific versions for them.
+On Tue, Feb 18, 2025 at 04:20:06PM +0800, David Gow wrote:
+> On Mon, 17 Feb 2025 at 19:00, Thomas Weißschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+> >
+> > Currently testing of userspace and in-kernel API use two different
+> > frameworks. kselftests for the userspace ones and Kunit for the
+> > in-kernel ones. Besides their different scopes, both have different
+> > strengths and limitations:
+> >
+> > Kunit:
+> > * Tests are normal kernel code.
+> > * They use the regular kernel toolchain.
+> > * They can be packaged and distributed as modules conveniently.
+> >
+> > Kselftests:
+> > * Tests are normal userspace code
+> > * They need a userspace toolchain.
+> >   A kernel cross toolchain is likely not enough.
+> > * A fair amout of userland is required to run the tests,
+> >   which means a full distro or handcrafted rootfs.
+> > * There is no way to conveniently package and run kselftests with a
+> >   given kernel image.
+> > * The kselftests makefiles are not as powerful as regular kbuild.
+> >   For example they are missing proper header dependency tracking or more
+> >   complex compiler option modifications.
+> >
+> > Therefore kunit is much easier to run against different kernel
+> > configurations and architectures.
+> > This series aims to combine kselftests and kunit, avoiding both their
+> > limitations. It works by compiling the userspace kselftests as part of
+> > the regular kernel build, embedding them into the kunit kernel or module
+> > and executing them from there. If the kernel toolchain is not fit to
+> > produce userspace because of a missing libc, the kernel's own nolibc can
+> > be used instead.
+> > The structured TAP output from the kselftest is integrated into the
+> > kunit KTAP output transparently, the kunit parser can parse the combined
+> > logs together.
 > 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-
-Since all of the USB controllers of the MT8196 SoC are behind MTU3, and
-since the wakeup control for all of them will be handled by the MTU3 driver
-and *not* by the xhci-mtk driver....
-
-NACK!
-
-Please drop this commit.
-
-Cheers,
-Angelo
-
-> ---
-> v3: no changes
-> v2: modify marcos name
-> ---
->   drivers/usb/host/xhci-mtk.c | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
+> Wow -- this is really neat! Thanks for putting this together.
 > 
-> diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-> index 904831344440..3f8e37b25322 100644
-> --- a/drivers/usb/host/xhci-mtk.c
-> +++ b/drivers/usb/host/xhci-mtk.c
-> @@ -113,6 +113,14 @@
->   #define WC1_IS_P_95		BIT(12)
->   #define WC1_IS_EN_P0_95		BIT(6)
->   
-> +/* mt8196 */
-> +#define PERI_WK_CTRL0_8196	0x08
-> +#define WC0_IS_EN_P0_96		BIT(0)
-> +#define WC0_IS_EN_P1_96		BIT(7)
-> +
-> +#define PERI_WK_CTRL1_8196	0x10
-> +#define WC1_IS_EN_P2_96		BIT(0)
-> +
->   /* mt2712 etc */
->   #define PERI_SSUSB_SPM_CTRL	0x0
->   #define SSC_IP_SLEEP_EN	BIT(4)
-> @@ -129,6 +137,9 @@ enum ssusb_uwk_vers {
->   	SSUSB_UWK_V1_4,		/* mt8195 IP1 */
->   	SSUSB_UWK_V1_5,		/* mt8195 IP2 */
->   	SSUSB_UWK_V1_6,		/* mt8195 IP3 */
-> +	SSUSB_UWK_V1_7,		/* mt8196 IP0 */
-> +	SSUSB_UWK_V1_8,		/* mt8196 IP1 */
-> +	SSUSB_UWK_V1_9,		/* mt8196 IP2 */
->   };
->   
->   /*
-> @@ -381,6 +392,21 @@ static void usb_wakeup_ip_sleep_set(struct xhci_hcd_mtk *mtk, bool enable)
->   		msk = WC0_IS_EN_P3_95 | WC0_IS_C_95(0x7) | WC0_IS_P_95;
->   		val = enable ? (WC0_IS_EN_P3_95 | WC0_IS_C_95(0x1)) : 0;
->   		break;
-> +	case SSUSB_UWK_V1_7:
-> +		reg = mtk->uwk_reg_base + PERI_WK_CTRL0_8196;
-> +		msk = WC0_IS_EN_P0_96;
-> +		val = enable ? msk : 0;
-> +		break;
-> +	case SSUSB_UWK_V1_8:
-> +		reg = mtk->uwk_reg_base + PERI_WK_CTRL0_8196;
-> +		msk = WC0_IS_EN_P1_96;
-> +		val = enable ? msk : 0;
-> +		break;
-> +	case SSUSB_UWK_V1_9:
-> +		reg = mtk->uwk_reg_base + PERI_WK_CTRL1_8196;
-> +		msk = WC1_IS_EN_P2_96;
-> +		val = enable ? msk : 0;
-> +		break;
->   	case SSUSB_UWK_V2:
->   		reg = mtk->uwk_reg_base + PERI_SSUSB_SPM_CTRL;
->   		msk = SSC_IP_SLEEP_EN | SSC_SPM_INT_EN;
+> I haven't had a chance to play with it in detail yet, but here are a
+> few initial / random thoughts:
+> - Having support for running things from userspace within a KUnit test
+> seems like it's something that could be really useful for testing
+> syscalls (and maybe other mm / exec code as well).
+
+That's the target :-)
+
+I'm also looking for more descriptive naming ideas.
+
+> - I don't think we can totally combine kselftests and KUnit for all
+> tests (some of the selftests definitely require more complicated
+> dependencies than I think KUnit would want to reasonably support or
+> require).
+
+Agreed, though I somewhat expect that some complex selftests would be
+simplified to work with this scheme as it should improve test coverage
+from the bots.
+
+> - The in-kernel KUnit framework doesn't have any knowledge of the
+> structure or results of a uapi test. It'd be nice to at least be able
+> to get the process exit status, and bubble up a basic
+> 'passed'/'skipped'/'failed' so that we're not reporting success for
+> failed tests (and so that simple test executables could run without
+> needing to output their own KTAP if they only run one test).
+
+Currently any exitcode != 0 fails the test.
+I'll add some proper handling for exit(KSFT_SKIP).
+
+> - Equally, for some selftests, it's probably a pain to have to write a
+> kernel module if there's nothing that needs to be done in the kernel.
+> Maybe such tests could still be built with nolibc and a kernel
+> toolchain, but be triggered directly from the python tooling (e.g. as
+> the 'init' process).
+
+Some autodiscovery based on linker sections could be done.
+However that would not yet define how to group them into suites.
+Having one explicit reference in a module makes everything easier
+to understand. What about a helper macro for the test case definition:
+KUNIT_CASE_UAPI(symbol)?
+
+All UAPI tests of a subsystem can share the same module,
+so the overhead should be limited.
+I'd like to keep it usable without needing the python tooling.
+
+Note in case it was not clear:
+All test executables are available as normal files in the build directory
+and can also be executed from there.
+
+> - There still seems to be some increased requirements over plain KUnit
+> at the moment: I'm definitely seeing issues from not having the right
+> libgcc installed for all architectures. (Though it's working for most
+> of them, which is very neat!)
+
+I'll look into that.
+
+> - This is a great example of how having standardised result formats is useful!
+
+Indeed, it was surprisingly compatible.
+
+> - If this is going to change or blur the boundary between "this is a
+> ksefltest" and "this is a kunit test", we probably will need to update
+> Documentation/dev-tools/testing-overview.rst -- it probably needs some
+> clarifications there _anyway_, so this is probably a good point to
+> ensure everyone's on the same page.
+
+Agreed.
+
+> Do you have a particular non-example test you'd like to either write
+> or port to use this? I think it'd be great to see some real-world
+> examples of where this'd be most useful.
+
+I want to use it for the vDSO selftests.
+To be usable for that another series is necessary[0].
+I tested the whole thing locally with one selftest and promptly found
+a bug in the selftests [1].
+
+> Either way, I'll keep playing with this a bit over the next few days.
+> I'd love to hear what Shuah and Rae think, as well, as this involves
+> kselftest and KTAP a lot.
+
+Thanks!
+I'm also looking forward to their feedback.
 
 
+Thomas
 
+<snip>
+
+[0] https://lore.kernel.org/lkml/20250203-parse_vdso-nolibc-v1-0-9cb6268d77be@linutronix.de/
+[1] https://lore.kernel.org/lkml/20250217-selftests-vdso-s390-gnu-hash-v2-1-f6c2532ffe2a@linutronix.de/
 
