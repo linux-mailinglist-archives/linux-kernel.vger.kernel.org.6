@@ -1,255 +1,164 @@
-Return-Path: <linux-kernel+bounces-520484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C92A3AA56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C64FA3AA6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E74172D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBA118847AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24EA1D4335;
-	Tue, 18 Feb 2025 20:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13071D528;
+	Tue, 18 Feb 2025 21:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OFWfhLVq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqTe2+Zs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7321C3F2B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47028628A;
+	Tue, 18 Feb 2025 21:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739912235; cv=none; b=qPxqOT3TL+p1VKKURCv9fIt6JcMibN7dr7n2CpIczgpMPwCRYqiOBmpRlezfhH0w1ypcFznCLi2YEKd9kWZELkISwn4ta9pyDR5FI24iHNBCQEz9KRBVMGN7RVhdLZ07zmafu4HrJcKP5ogd12ItLmp/Gq7d0vSvbM4tupH0kek=
+	t=1739912497; cv=none; b=nPG/Rqb/7supnUXZ50T90CPWF+yDswBYH32AP6nwR7XkBQ3Iadb4vZmKZoRpxChOopGKAVN7FpHwgYVKEJa2f+wBxkJjUPd6Mb7DXv704+a1RX/EDSu+ZiMkI6fJ+m4X8P9rG46OXCnpA5pc+tLVKm/WLURkh7VDuSQ9nm+ANgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739912235; c=relaxed/simple;
-	bh=gpas5oUxzPV/XGxLFH15XGgXxDqbVNLYvjgja7B7R+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCoo7Vot3p95PhI1wOk+GScKUZiSt3RuwXHvyr7nYmOAt63SKOySW7mGX9+qw8Wx1rHmdv1NyPJjli2KPWzO7Ts6CnhadWfdBsVxp24+0ospEUy7yBVvasirhPFNddCYGGLqDSf55qO9h72UBKTBXIF+3yR7Syb34UPqlq+Se+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OFWfhLVq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739912232;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6FsbwLcxUhHZW9FHTie3Ead3JpCjVkROaSdeAT2Lgyo=;
-	b=OFWfhLVqlKtFVi3EP/h1X72IgDwgaLxHKz0gf4+bs3m8PbWzEDvbLQ8Ft1W2cqF0nduXTh
-	6GgOMtPGXMeVdDSBpozEP6ds7p81AKH3ENN6q+9Q+HfFYqKa09IHvxlC3eD5qLqOwMH/DC
-	f6B+4+O+YMg/Q7jB/AXFeqJ4VsN0AiM=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-wDaFHInaNfK0kE5ztUKE7g-1; Tue, 18 Feb 2025 15:57:10 -0500
-X-MC-Unique: wDaFHInaNfK0kE5ztUKE7g-1
-X-Mimecast-MFC-AGG-ID: wDaFHInaNfK0kE5ztUKE7g_1739912230
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f4bf0d5faso1202023f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:57:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739912229; x=1740517029;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6FsbwLcxUhHZW9FHTie3Ead3JpCjVkROaSdeAT2Lgyo=;
-        b=E+WwxLc051HsqGVn+RmY26+3ndA6QMf7gBc+o6/YrVDnAXutYPWYcxwjq+hpYOwwP/
-         hTBZ0HcijeYlK8sxiHNtALb4JPahlwglR0IfE6j0BUbQouzRS3ksQkSGZc62bIa/hBFC
-         mxuHeaWKru8HnFLfFyACONSmz2VNrMwFK/0OCWUbwxf0wmfrcg/qgGnQVQOozcNkovSg
-         rFA83fxef08Kmf35mpF0tJbDrj4zynvPl1ESMyX5dhYAO3+Dx+YtR4seNE9LXlXAHXwm
-         OT8QQK+rZ2laDtvzBMLQMPovjfZ8Z7Ca4Eovz6N9sDbqmQnSdRYb3UE2SgXcAFCS4DbM
-         1BIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjEIVzd7cAJ4AZTs8TvryH7GW3Y0RuYkHzLUTZerYJ4OkAwpMD/EZYW01t2cKubezDAX/ZsWMgobv6Saw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuEskorVFFrnK6jYTztwJWJaJo5bYjVix4BloguY5HEFVfM6Od
-	NBSwQSAv0RQ4CnhEg23HjVkQyS9VABVQLIOhn9qu0MqMH/trDIDHhi+PdOO8S6l4uMyBthC9b5W
-	JzlgGbLr8TqjELFpPnJ9WIorUgBzhYl980BLoeNhJWI1JU/TIOdHLycBkU92fXQ==
-X-Gm-Gg: ASbGnctZUZ3UiCOTxH5q9g0TbMRLmEb2pb0Hh3D9mFHZNO4QQOYDxaXNDXpF4p9xR+I
-	I6hv0prZ+1qATbfmkwDoL+q0i0ZPsCJEXOHM5kLpZYWbYqcAboTFLWvlFZ1nlA2vqpGAm++byTe
-	QmdrfoM22RbcVGaW+1LknL6h/UaPahbJDBwpXgHXOn2sTUjgc7u3zGf0iQv/V1tQ320XXDyRPWM
-	xFOBIwhwq8VzM/RWZDDaayd8SQcGpP+3RQR/rWdNacLWCuKSH0+CNZOQt6LFMzXzIZYcRDccENI
-	KouaTAjZ17IFJZq1RX4eakwbPLvk7KSnzD2SMfk9mj0Gaoz7icV4wQZZE5pRghGv5qbNMBkzDB3
-	dtZtAG1qlRLwTDALn0+9ukqeJqcDWNlHW
-X-Received: by 2002:a05:6000:1faf:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f5878dea4mr808587f8f.18.1739912229604;
-        Tue, 18 Feb 2025 12:57:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEhJl5VYJN1ZER6U6SOjF2yYBkVq3hxhtLzuzokjKHCH1grxuxyGuoLNfn8/aO4cMRuRSnstQ==
-X-Received: by 2002:a05:6000:1faf:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f5878dea4mr808574f8f.18.1739912229238;
-        Tue, 18 Feb 2025 12:57:09 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43987d1865asm62509405e9.3.2025.02.18.12.57.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 12:57:08 -0800 (PST)
-Message-ID: <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
-Date: Tue, 18 Feb 2025 21:57:06 +0100
+	s=arc-20240116; t=1739912497; c=relaxed/simple;
+	bh=a/d+Mpc31bvkwLBo74v/bc0NoHtCLlU347PCo0CoFyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJmgOTXk27x1/EJj9kyJdE+nC5bWrjfS8oCylBYFLJ/QpOZ24kNYmuaUso6MdHKjnealsmRU4OKCuieCmWAVYs285TyN4jhTz1GX6CVfxczysAffb3vSQVOYxo8DwXfaKNzX9c0IH9UR5eTEH3a7uLfgHwVem2iyl3dYhgVgCwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqTe2+Zs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC57C4CEE2;
+	Tue, 18 Feb 2025 21:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739912496;
+	bh=a/d+Mpc31bvkwLBo74v/bc0NoHtCLlU347PCo0CoFyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eqTe2+ZsdO5Q1rm9rypco5i4wkX6oh1q2zrPl3TP/AR7EkjlX6tjvaWrPZVwbkfRJ
+	 Q1B1tf/PG9U+A5WKbYoyufo+Iwcl5a10TeouZUvLeHeJ+a7e1ipUt/yKmT0eG6CtQ+
+	 1g4CMBhpASjAYhX/rX4M73KyibMltRNsruUr7uqu8HVBH26F7p3KlIz2mdXUTQPMl0
+	 bV1IqQ+poPDq+wrfir8lcHmjCx7OlI9EtX+YH5lD4NrysZL7qUKd5VSNYxND7NTN8K
+	 53jB7ipuDHxemHYpjk/SV9G6jlf+gZB4qJrzkDP8nM6Z1S/uuPjx2C0EUJGOpAU8FU
+	 aKXEVwulgjrwQ==
+Date: Tue, 18 Feb 2025 22:01:33 +0100
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z7T1LVSLo8EEMmkM@x1>
+References: <20250206000137.2026034-1-namhyung@kernel.org>
+ <Z60NFEAf2C8cL8Xh@x1>
+ <Z60Ndm8VVI4Ao31U@x1>
+ <CAP-5=fXw09MM5XyozJMM3FjMANJei1aNVmBghSEQFiCKAtJmXw@mail.gmail.com>
+ <CAP-5=fUqcykMdApHVweETg9bp2EVPJhJOj_PR8cByOOA6OyQGw@mail.gmail.com>
+ <Z6_CL0RpUUvw0lR7@x1>
+ <Z7TvZGjVix2asYWI@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
-To: Gregory Price <gourry@gourry.net>
-Cc: Yang Shi <shy828301@gmail.com>, lsf-pc@lists.linux-foundation.org,
- linux-mm@kvack.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
- <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
- <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
- <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
- <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7TvZGjVix2asYWI@x1>
 
-On 18.02.25 21:25, Gregory Price wrote:
-> On Tue, Feb 18, 2025 at 08:25:59PM +0100, David Hildenbrand wrote:
->> On 18.02.25 19:04, Gregory Price wrote:
->>
->> Hm?
->>
->> If you enable memmap_on_memory, we will place the memmap on that carved-out
->> region, independent of ZONE_NORMAL/ZONE_MOVABLE etc. It's the "altmap".
->>
->> Reason that we can place the memmap on a ZONE_MOVABLE is because, although
->> it is "unmovable", we told memory offlining code that it doesn't have to
->> care about offlining that memmap carveout, there is no migration to be done.
->> Just offline the block (memmap gets stale) and remove that block (memmap
->> gets removed).
->>
->> If there is a reason where we carve out the memmap and *not* use it, that
->> case must be fixed.
->>
-> 
-> Hm, I managed to trace down the wrong path on this particular code.
-> 
-> I will go back and redo my tests to sanity check, but here's what I
-> would expect to see:
-> 
-> 1) if memmap_on_memory is off, and hotplug capacity (node1) is
->     zone_movable - then zone_normal (node0) should have N pages
->     accounted in nr_memmap_pages
+On Tue, Feb 18, 2025 at 09:36:52PM +0100, Arnaldo Carvalho de Melo wrote:
+> So the call to maps_fixup_end() will set maps->end_broken to false,
+> since it fixed up the map ends, etc, but then we insert more maps with
+> broken ends:
+ 
+> #6  0x0000000000633d52 in check_invariants (maps=0xf967c0) at util/maps.c:95
+> 95						assert(map__end(prev) <= map__end(map));
+> (gdb) p prev->dso->name
+> $1 = 0xfc47ab "bpf_trampoline_6442522522"
 
-Right, we'll allocate the memmap from the buddy, which ends up
-allocating from ZONE_NORMAL on that node.
+So the above map is created overlapping a previously existing map:
 
-> 
->     1a) when dropping these memory blocks, I should see node0 memory
->         use drop by 4GB - since this is just GFP_KERNEL pages.
+root@number:~# perf probe -l
+  probe_perf:maps_fixup_end (on maps__fixup_end:1@util/maps.c in /home/acme/bin/perf with maps)
+  probe_perf:maps_insert (on maps__insert:1@util/maps.c in /home/acme/bin/perf with maps name start end)
+root@number:~# 
 
-I assume you mean "when hotunplugging them". Yes, we should be freeing the memmap back to the buddy.
+root@number:~# perf trace --lib -e probe_perf:maps* perf record sleep
+<SNIP>
+   319.791 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc0160788 end=0xffffffffc01607c8)
+   319.810 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01647b8 end=0xffffffffc01647f8)
+   319.822 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_egress" start=0xffffffffc016482c end=0xffffffffc016486c)
+   319.834 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_6deef7357e7b4530_sd_fw_ingress" start=0xffffffffc01648ac end=0xffffffffc01648ec)
+   319.845 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_prog_be31ae23198a0378_sd_devices" start=0xffffffffc0186388 end=0xffffffffc01864b2)
+   319.857 perf/1732173 probe_perf:maps_insert((634e5e) maps=0x2d9715d0 name="bpf_trampoline_6442522522" start=0xffffffffc0147640 end=0xffffffffc0148640)
+[ perf record: Captured and wrote 0.035 MB perf.data (7 samples) ]
+perf: util/maps.c:95: check_invariants: Assertion `map__end(prev) <= map__end(map)' failed.
+root@number:~# 
 
-> 
-> 2) if memmap_on_memory is on, and hotplug capacity (node1) is
->     zone_movable - then each memory block (256MB) should appear
->     as 252MB (-4MB of 64-byte page structs).  For 256GB (my system)
->     I should see a total of 252GB of onlined memory (-4GB of page struct)
+So a PERF_RECORD_KSYMBOL processing will add a map for
+"bpf_trampoline_6442522522" that has its start after before the
+"bpf_prog_40ddf486530245f5_sd_devices" start, ok, but ends after
+"bpf_prog_40ddf486530245f5_sd_devices", overlapping it.
 
-In memory_block_online(), we have:
+machine__process_ksymbol_register() does:
 
-	/*
-	 * Account once onlining succeeded. If the zone was unpopulated, it is
-	 * now already properly populated.
-	 */
-	if (nr_vmemmap_pages)
-		adjust_present_page_count(pfn_to_page(start_pfn), mem->group,
-					  nr_vmemmap_pages);
+713			map__set_start(map, event->ksymbol.addr);
+714			map__set_end(map, map__start(map) + event->ksymbol.len);
+715			err = maps__insert(machine__kernel_maps(machine), map);
 
-So we'd add the vmemmap pages to
-* zone->present_pages
-* zone->zone_pgdat->node_present_pages
+And:
 
-(mhp_init_memmap_on_memory() moved the vmemmap pages to ZONE_MOVABLE)
+(gdb) p /x event->ksymbol.addr
+$2 = 0xffffffffc0147a2c
+(gdb) p event->ksymbol.len
+$3 = 306
 
-However, we don't add them to
-* zone->managed_pages
-* totalram pages
+Thread 1 "perf" hit Breakpoint 1, machine__process_ksymbol_register (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:688
+688	{
+(gdb) bt
+#0  machine__process_ksymbol_register (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:688
+#1  0x00000000006294ca in machine__process_ksymbol (machine=0xf96158, event=0x7ffff7fb9aa0, sample=0x7fffffffa860) at util/machine.c:779
+#2  0x00000000005ce2fd in perf_event__process_ksymbol (tool=0xec8ce0 <record>, event=0x7ffff7fb9aa0, sample=0x7fffffffa860, machine=0xf96158) at util/event.c:296
+#3  0x000000000063b6e4 in machines__deliver_event (machines=0xf96158, evlist=0xf521f0, event=0x7ffff7fb9aa0, sample=0x7fffffffa860, tool=0xec8ce0 <record>, file_offset=31392, 
+    file_path=0xf96850 "perf.data") at util/session.c:1334
+#4  0x000000000063b8c9 in perf_session__deliver_event (session=0xf95f40, event=0x7ffff7fb9aa0, tool=0xec8ce0 <record>, file_offset=31392, file_path=0xf96850 "perf.data")
+    at util/session.c:1367
+#5  0x000000000063c6bd in perf_session__process_event (session=0xf95f40, event=0x7ffff7fb9aa0, file_offset=31392, file_path=0xf96850 "perf.data") at util/session.c:1626
+#6  0x000000000063de3d in process_simple (session=0xf95f40, event=0x7ffff7fb9aa0, file_offset=31392, file_path=0xf96850 "perf.data") at util/session.c:2203
+#7  0x000000000063daf4 in reader__read_event (rd=0x7fffffffafa0, session=0xf95f40, prog=0x7fffffffaf70) at util/session.c:2132
+#8  0x000000000063dcee in reader__process_events (rd=0x7fffffffafa0, session=0xf95f40, prog=0x7fffffffaf70) at util/session.c:2181
+#9  0x000000000063df8b in __perf_session__process_events (session=0xf95f40) at util/session.c:2226
+#10 0x000000000063e988 in perf_session__process_events (session=0xf95f40) at util/session.c:2390
+#11 0x000000000042d98b in process_buildids (rec=0xec8ce0 <record>) at builtin-record.c:1475
+#12 0x000000000042e963 in record__finish_output (rec=0xec8ce0 <record>) at builtin-record.c:1798
+#13 0x0000000000431c46 in __cmd_record (rec=0xec8ce0 <record>, argc=2, argv=0x7fffffffde80) at builtin-record.c:2841
+#14 0x000000000043513f in cmd_record (argc=2, argv=0x7fffffffde80) at builtin-record.c:4260
+#15 0x00000000004bcf65 in run_builtin (p=0xecbd60 <commands+288>, argc=3, argv=0x7fffffffde80) at perf.c:351
+#16 0x00000000004bd20c in handle_internal_command (argc=3, argv=0x7fffffffde80) at perf.c:404
+#17 0x00000000004bd365 in run_argv (argcp=0x7fffffffdc6c, argv=0x7fffffffdc60) at perf.c:448
+#18 0x00000000004bd6ae in main (argc=3, argv=0x7fffffffde80) at perf.c:556
+(gdb)
 
-/proc/zoneinfo would show them as present but not managed.
-/proc/meminfo would not include them in MemTotal
 
-We could adjust the latter two, if there is a problem.
-(just needs some adjust_managed_page_count() calls)
+So, this one liner "refixes" the "modules" ends when processing the
+records to find the build ids, unsure if it is the best solution tho:
 
-So yes, staring at MemTotal, you should see an increase by 252 MiB right now.
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 5db1aedf48df92d2..5c4603d08ab5f2cb 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1797,6 +1797,8 @@ record__finish_output(struct record *rec)
+ 	if (!rec->no_buildid) {
+ 		process_buildids(rec);
+ 
++		maps__fixup_end(machine__kernel_maps(&rec->session->machines.host));
++
+ 		if (rec->buildid_all)
+ 			perf_session__dsos_hit_all(rec->session);
+ 	}
 
-> 
->     2a) when dropping these memory blocks, I should see node0 memory use
->         stay the same - since it was vmemmap usage.
-
-Yes.
-
-> 
-> I will double check that this isn't working as expected, and i'll double
-> check for a build option as well.
-> 
-> stupid question - it sorta seems like you'd want this as the default
-> setting for driver-managed hotplug memory blocks, but I suppose for
-> very small blocks there's problems (as described in the docs).
-
-The issue is that it is per-memblock. So you'll never have 1 GiB ranges
-of consecutive usable memory (e.g., 1 GiB hugetlb page).
-
-> 
-> :thinking: - is it silly to suggest maybe a per-driver memmap_on_memory
-> setting rather than just a global setting?  For CXL capacity, this seems
-> like a no-brainer since blocks can't be smaller than 256MB (per spec).
-
-I thought we had that? See MHP_MEMMAP_ON_MEMORY set by dax/kmem.
-
-IIRC, the global toggle must be enabled for the driver option to be considered.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
