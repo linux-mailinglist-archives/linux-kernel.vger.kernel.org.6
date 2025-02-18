@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-518585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF95A39146
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:24:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1206AA39118
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA487A30EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE903A8D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09640188CCA;
-	Tue, 18 Feb 2025 03:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EE315667D;
+	Tue, 18 Feb 2025 03:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IKbx/RJI"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E406518E1F;
-	Tue, 18 Feb 2025 03:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8Bo9QiY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E818C31
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739849051; cv=none; b=gQx1WoyVW0VgUf58NrTDz0ZfPJ4g/jF/MuqLsA1inKodOtzyVp2fjZPZZYj0P8hvxN6QrP3WJzCfydCal59IStfh3ExyvzdzLwYl6ZEO865+YsCW/dru3nNeYKqgBpsIRtXiZuRy3D45ImHqxoLDMtPluKB49na7VH9RExs/CoY=
+	t=1739848056; cv=none; b=D5NlowsMvxTQ6MvF5+O+UcdHWXktHHLlsiWdKbyKo3IuBjZlOGvdYjfg/ocyjCmRhI/QXsgq188rkhP8sXAfeQ/qIiyB5yp9sMEDlwUI5Gc6RcLBHdxKOCMfvkauUYjPWbk5UQOti14ttXXO5xc93jXoV11Jgsahveq7QE9w2XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739849051; c=relaxed/simple;
-	bh=YJwQ56MevDZ9ZYQuremXiyKEvKkBRGC/R9BJu26M0XA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ESAyEPAnZDTusW7Nei/a7auGgDguZfF3SNSw7+E5rsnvGwjrtQTSKCN4uDxfXir0MLKcsQ2uPmUs+9zwCsoLcqxgPuy2xQdwmoH1lXSJMd4rD9dwM8MjxMBMIeTs+cyCKeX8RRmnpybl45Xnz2EdQ9ZEI0INN9tyLu7Qs1//rgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IKbx/RJI; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=KZodN
-	t1cshXHiodAWx+wxQbRKgFIgZ9m7uvCtiXcJJE=; b=IKbx/RJIr1lOZEmhCFPJ+
-	DH9xFT5fnjrR9j8hXz207W03amCloB5BGfwKjYVffNRJZnf5F1raTuSPJU8N+8QZ
-	EvHM5ULfRqZAkkDHGr+ez1LKv2VNlhL8LQh+4kbzcXyU8m+gZCWoWM7NzlfIXhjz
-	is31BLssGgpO4yOioSMySo=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCHm36q+LNn2wt_MQ--.33774S4;
-	Tue, 18 Feb 2025 11:04:12 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: kuba@kernel.org,
-	louis.peens@corigine.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	haoxiang_li2024@163.com,
-	qmo@kernel.org,
-	daniel@iogearbox.net
-Cc: bpf@vger.kernel.org,
-	oss-drivers@corigine.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net v3] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
-Date: Tue, 18 Feb 2025 11:04:09 +0800
-Message-Id: <20250218030409.2425798-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1739848056; c=relaxed/simple;
+	bh=LJCRGsPscyCMWgefTOMlF4XecTltnIfoamUgwmuNWoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KNEeRRYkA7MrB1eNVShSVgfmnmb/B02VxzJG3wjG/BI8HN96FNA+fSEoTr/oJ/Gi6cidGy+YL1h+ffTxTts0zKE19L6o3wXy+bMyfEhgZKRIFAPvSZu8kRmZppy5pULKwAblZucMxR8it45wf4N/HI9Ql/VpqdAw+DK2equ1Rh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8Bo9QiY; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739848055; x=1771384055;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LJCRGsPscyCMWgefTOMlF4XecTltnIfoamUgwmuNWoQ=;
+  b=O8Bo9QiY1hAhWIy6TGb91N8XUmfXZ6Z+Br81RZ4RcBSpZu0ldr7nk26T
+   5l4lQVPbR7XJI0324IV9LkmED6BjxZQNs499SKEEeHMRbQxDCBatF8mj/
+   FGU0ipLPV98H1PknTR+roFJkOcAB2yCjKi8qipKoUtMJshi/48mGEbZf0
+   UVvivvyiKIWcrMV4fSQavaTQT7MBW7Tn3iLEzzlmzvw+GLM6qXQMaO2x7
+   poNA4QZhKNOXX74t8pL6q+GIQKO0+AQmHY5m/qIFilGDA3DLsHG9Sl6mG
+   PG1FZFZJ+wHZOnkM8Uuw0Ef0O+69qgiK94Er78XJGxGS7ivTKOXI+rzZh
+   Q==;
+X-CSE-ConnectionGUID: pVWgzcTMTYOTM442TQwJpQ==
+X-CSE-MsgGUID: hcSUXYSsSCadb44VDP0kqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44182362"
+X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
+   d="scan'208";a="44182362"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 19:07:35 -0800
+X-CSE-ConnectionGUID: ZE877J0WRiaNmAglAEfRbQ==
+X-CSE-MsgGUID: aUXGUHQRRZeKmyPbe0Jlfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
+   d="scan'208";a="114249776"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 17 Feb 2025 19:07:32 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tkDx5-00006t-1r;
+	Tue, 18 Feb 2025 03:07:19 +0000
+Date: Tue, 18 Feb 2025 11:06:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Jinyang He <hejinyang@loongson.cn>,
+	Youling Tang <tangyouling@loongson.cn>
+Subject: drivers/net/wireless/ath/ath10k/mac.o: warning: objtool:
+ ath10k_monitor_start+0x240: stack state mismatch: reg1[26]=-1+0
+ reg2[26]=-2-40
+Message-ID: <202502181126.ot62N8wN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHm36q+LNn2wt_MQ--.33774S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFy3tr48Zw43Gry7Kw17Wrg_yoWDZFgEkF
-	129Fnak3yrKr1Ykr4jgw4avr9Iywn0qryruF9xKrZa9ry3Cr18Xr95ur95ZF9rWF4xAa9r
-	X3s7try7Aa42qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRNCJmUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0gP3bmez8hDUbwAAsF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add check for the return value of nfp_app_ctrl_msg_alloc() in
-nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2408a807bfc3f738850ef5ad5e3fd59d66168996
+commit: cb8a2ef0848ca80d67d6d56e2df757cfdf6b3355 LoongArch: Add ORC stack unwinder support
+date:   11 months ago
+config: loongarch-randconfig-r051-20250218 (https://download.01.org/0day-ci/archive/20250218/202502181126.ot62N8wN-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250218/202502181126.ot62N8wN-lkp@intel.com/reproduce)
 
-Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v3:
-- modify a spell error. Thanks, Kalesh!
-Changes in v2:
-- remove the bracket for one single-statement. Thanks, Guru!
----
- drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 2 ++
- 1 file changed, 2 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502181126.ot62N8wN-lkp@intel.com/
 
-diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-index 2ec62c8d86e1..59486fe2ad18 100644
---- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-@@ -20,6 +20,8 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned int size)
- 	struct sk_buff *skb;
- 
- 	skb = nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
-+	if (!skb)
-+		return NULL;
- 	skb_put(skb, size);
- 
- 	return skb;
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_monitor_start+0x240: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
+>> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_peer_assoc_h_ht+0x438: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
+>> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_peer_assoc_h_vht+0x3e8: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
+>> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_control_beaconing+0x2a8: stack state mismatch: reg1[27]=-1+0 reg2[27]=-2-48
+>> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_mac_handle_tx_pause_iter+0xec: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+--
+>> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_core_check_bdfext+0x230: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
+>> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_core_copy_target_iram+0x2d4: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
+>> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_download_cal_data+0x3a0: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+--
+>> drivers/net/wireless/ath/ath10k/htt_rx.o: warning: objtool: ath10k_update_per_peer_tx_stats+0x590: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
+>> drivers/net/wireless/ath/ath10k/htt_rx.o: warning: objtool: ath10k_htt_rx_alloc+0x2e0: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+--
+>> drivers/net/wireless/ath/ath10k/htt_tx.o: warning: objtool: __ath10k_htt_tx_txq_recalc.isra.0+0x354: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
+--
+>> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_handle_tdls_peer_event+0x24c: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+>> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_mgmt_tx_bundle_compl+0x138: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
+>> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_pdev_tpc_config+0x338: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
+>> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_tpc_final_table+0x32c: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
+--
+>> drivers/net/wireless/ath/ath10k/wmi-tlv.o: warning: objtool: ath10k_wmi_tlv_op_rx+0xe98: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
+--
+>> drivers/net/wireless/ath/ath10k/ahb.o: warning: objtool: ath10k_ahb_halt_chip+0x43c: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
