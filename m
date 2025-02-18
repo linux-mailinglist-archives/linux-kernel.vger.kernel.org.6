@@ -1,213 +1,110 @@
-Return-Path: <linux-kernel+bounces-518757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A14BA3940B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:47:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BCEA39412
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEAE173DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDCBF7A4608
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9551D6DC5;
-	Tue, 18 Feb 2025 07:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70671EB1A9;
+	Tue, 18 Feb 2025 07:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P3wiwOT1"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVET7U4S"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF501D88AC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D44B1EB18E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739864697; cv=none; b=gXdztn2yvUK0ai7DLIp5Ycd0ztuoS7kXEl/IG4ryNJ9zGiehK6/r9l2clwmGsnuBNBMZJqizx8jbiNsiRFOVIwjqQtMdmYEX0PAwur5MBHImg94qncLGQsP4KyP7vs4JH+NdgDni59BDJziVWoUr+YsuJCb2QUd6WaLbZ7rTm7s=
+	t=1739864891; cv=none; b=HWnzquysLrkxgd7RRaeb01A//OQGIWcFRab111wqs1NdIV6sd88Il0JrndOvAHzKSg8Ynv5Enpw0+rmjmaP9WwMrYqboZxqwzL737M7ZTkGFjCYC2oJlRmT9zTRZRNWcpBsGJ5CIkHvTc7w29FiHLTHe+J547fzxsLHy/iRk8fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739864697; c=relaxed/simple;
-	bh=D29Ha3uTOHWbzNmnWPabAcBz5kVvTEIzOuVZCzL2ZGQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Y2tpwx6GBhlk/xHt7pPzsA2MixsJgZWVK5CPqIjFujIFRNwE6IREMgV7zjIlperJqtvbPBle9JByZOzDL5z4Q2+0iMMbePvu8zLa0ntpO4lKEgRU8L0qH6qjPsYCxfvKeEMLQpGsLxxUdHBGI+TASMxNTul/wQ35dSUrDrIwheE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P3wiwOT1; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5ded4b4ff88so5430461a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 23:44:54 -0800 (PST)
+	s=arc-20240116; t=1739864891; c=relaxed/simple;
+	bh=NyklA13Dg9i+m8NkOQ63eTCA+Cty6PL2AVsa6doGskw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhjufJ+YhHnB4AFv54NCPjD4O6VeSTpFA08KOPHp24gGCbXXG3wm39EJwyE9/Do2+avwLGhZ6zGf0cUzVgQjl5ROmJ0rsJcbpdmRnXklWEcccCk8sdPvHlTe/8UI7D2hYGNejXGUx+GEvf6vUyOKX4f1FvAW+xYnFOvtKdzznpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QVET7U4S; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb90c20baeso287051766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 23:48:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739864693; x=1740469493; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=62LIsIaecTwmmmKIRFism52NcnoPuJ9j6NvnP0tlFig=;
-        b=P3wiwOT1qqszMh+oRM150lnIN2aWs/71xOVNLcH0w8mkfakclqoheLjLMyvxL39UgY
-         XveznKkyY9vsL+jUhtxrcHekk5L7IySQGKxVa2OjU8CLhrEF61xYGckKWILg0XNjQdlp
-         NY3aSPb4Tcsi7zeGB6uwRwOM+tFas4l8fQnQi403c6GIuHyRhjJADduMIH+GRxryt0XZ
-         NE3q8ljRiuQsy0b9umEj4E6kDT9NLPCiIpNRCJPmdCEbSzZm9wJXF9oxmKmGITm75+Ju
-         EpRl4TKOVoYRex+soXTvvFkuEGY6CUw/qXkZu0wZokOgp+b2d7OziGlCaw0FT4YjJeZZ
-         TnQQ==
+        d=linaro.org; s=google; t=1739864888; x=1740469688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MnwvAMuVQSCRRozrvNJADX8ge3CuPmWawHTGZ6gaoIQ=;
+        b=QVET7U4S2pqcB90o5h3sM1yCNd9s62NFq+2aX9wZ7XhL+lkKcNSsVe5KW+uHIfv4Ok
+         j60tjUa/PIguo+bFfH+enqGrlmZ+LZO8h9hPLZu8CcDDwK6ZK530smcSuI+K5nufgJwk
+         Np0ox1mYu7tev/V41vvuzZTOTsOPtLa+IqQvXzhAaoQ/qiWS2V3czD3DqOVFnZWn7kPE
+         Pt4Sv4nGuexqI9TF27hyQGVLHqkT0KHy7kXw28qCRhtC63HqIG1rwadxXpoRV/Pf4IWm
+         BvGNr4EuwNtmenkliAlJzOtz49IY1YckHjgab3mCE2Uevji6zL31eIfeg7SNyRnkC4EW
+         nshg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739864693; x=1740469493;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=62LIsIaecTwmmmKIRFism52NcnoPuJ9j6NvnP0tlFig=;
-        b=Q0z5WN7BDXK9NUqT1OQNEjgfCfcYGA8XI9+C4mZNj99TGlStwKHOH48AfC5t+GdPgy
-         KkpNbND5K3yag/ezNADYAJ3OSJy8CLYQ2dQ6i+4r9ua4AbDFmYxTMKAOE78CYakTcI1u
-         t95phnuia2qTyjzFQBXfosQeFZVzExRYWOBFG8qYwSc9tH9IjWgXoi2CKASz+wYU3H7x
-         Kf+vaL6AqJF1QclrPHmM3b213TQkFN+pNx/6aQCeiekezkDenM5/PfxRqH+yzQsIWqYE
-         WzJvnNRjXTFVgsG2NEK1PO4SEz7Worxv0Ha5h7ZpA+VcAEvlxSzlog7mOIktktPESJGn
-         zM3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDJrkwYyXM3rkX6Wv06kHuZHlCcjE7NqIGK+KTvttlhxIKzSQUfEFi4IMHFVAf2QL5e+/+HO9MfobHf+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy9DwCVkDur47swGko33nB+kOccNGu1qKupTa7diVqnyCNBdAJ
-	HJoGNfQVuN9RweII1XvhUf7uZFvgnduA87fP3G5udwsArTnMvqdA2vMEQ6QR3v6f8F3VknoR2U/
-	X9kpspw==
-X-Google-Smtp-Source: AGHT+IE2djFnOBuu2HQ7EuYmRVJKA75+74QutFtUM5CGIPuMrseT/PH4COtI8KgzO34UZyqox2iFV8/pTydp
-X-Received: from edfa69.prod.google.com ([2002:a50:9ecb:0:b0:5de:ce5e:35d7])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5246:b0:5d4:1ac2:277f
- with SMTP id 4fb4d7f45d1cf-5e0360f9617mr10419124a12.9.1739864693065; Mon, 17
- Feb 2025 23:44:53 -0800 (PST)
-Date: Tue, 18 Feb 2025 08:43:48 +0100
-In-Reply-To: <cover.1739864467.git.dvyukov@google.com>
+        d=1e100.net; s=20230601; t=1739864888; x=1740469688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MnwvAMuVQSCRRozrvNJADX8ge3CuPmWawHTGZ6gaoIQ=;
+        b=SDoMZkQ1cnpOLy9uWv3OAt3MQoHTxUxU35wnYaMcqs3UIS53pQamd/Ou2qcnVr6V8x
+         1vGhIc5SpmDIyp8m2mieBThsWr/7vpe2rOajkGbDsBgtTs/C0PoTJYn88wDb9eo7mI4z
+         tjDGPJDKTB6/7mukNhVoJFGHiYrHpWPtHtGcxk7b1V3bhcydFK6JpCDCT1+q9mf/cjMo
+         RkqDUZ6Yuty4hfToafncivN2up6mNXc5oP/r8/P4LUd3L/q1WXt2fd5kTQ+MUsxu4joN
+         0ujow/PEWl91PGyWPB5pN0w4ShhsJLAFyvndyZAPJSm+1Fu+XMttKREV/VSjnCXMqiZx
+         1X9A==
+X-Forwarded-Encrypted: i=1; AJvYcCW44XBV7hHTMaSnwNW0jBJw5sdChV2kvchqJFjOAF41XOOEbpctHEiKUlADEUl2+lCmgJ7inI+F+4IomkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHebdFmIw9xQziM5PJR9cKgLqxB+xGIdyfXEX2eqKhguaTEK/z
+	4iKMKEsA4U9G9V1xekOoqdz6xixxUNVOMkAU05eN/5ataMN87dCJiNOlP5Olmfs=
+X-Gm-Gg: ASbGncsxYyXqLjGDDjisz3cf3lslCcUt2ge4yG6/kdrsqgKu4g2GILG7Xxgr36BuREs
+	OLl00cBoOtDFqDtIsyXjno/+tVPNcSgX53Ddq+1X8VhTVXOX+ebgUQeyHedBqhWtKCplz+3NJT4
+	JL0Bhe7BqHWhJEEkUwvNjdUsfilGOgI+UD550evQ2D15zd2M3NdIo9wDDtgfUigMVr1hJ5/oyuC
+	cxRkqSdgJGUvi7CjzOgEap6nLt+FBJdABVbZ4/biOkhjHDgzMg6VhvnVmBzY0JgbKPfDc6NJqFl
+	vp41Ola0GGbONvwyqTYA
+X-Google-Smtp-Source: AGHT+IHk7Yiy7MzG1HeqNaUTij3OexQs/BZTmTN/h+Lrj2OEPwUOnLWZ6xFUVh3ErJl8crizrrH1SQ==
+X-Received: by 2002:a17:906:3118:b0:ab3:84ac:4dbc with SMTP id a640c23a62f3a-abb7052fcc8mr1092489066b.0.1739864887694;
+        Mon, 17 Feb 2025 23:48:07 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb9d1a0049sm303370766b.40.2025.02.17.23.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 23:48:07 -0800 (PST)
+Date: Tue, 18 Feb 2025 10:48:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ravi Kumar kairi <kumarkairiravi@gmail.com>
+Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org, kuba@kernel.org,
+	rmk+kernel@armlinux.org.uk, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] staging:gpib: typo fix and cleam up
+Message-ID: <4b1bf65d-bd16-495f-abb5-3d59b65a59a5@stanley.mountain>
+References: <20250217195050.117167-1-kumarkairiravi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1739864467.git.dvyukov@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <886af241b1b809f149695489b0d8281a66cdde90.1739864467.git.dvyukov@google.com>
-Subject: [PATCH v2 4/4] selftests/rseq: Add test for rseq+pkeys
-From: Dmitry Vyukov <dvyukov@google.com>
-To: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
-	elver@google.com
-Cc: Dmitry Vyukov <dvyukov@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217195050.117167-1-kumarkairiravi@gmail.com>
 
-Add a test that ensures that PKEY-protected struct rseq_cs
-works and does not lead to process kills.
+On Tue, Feb 18, 2025 at 01:20:47AM +0530, Ravi Kumar kairi wrote:
+> From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
+> 
+> minor typo fix and cleanup
+> 
+> Ravi Kumar Kairi (3):
+>   staging:gpib:agilent_82350b.c: fixed a typo
+>   staging:gpib:agilent_82350b.c: cleaned commented out code
+>   staging:gpib:agilent_82350b.c: removed braces from a single if
+>     statement
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
+Thanks.
 
----
-Changes in v2:
- - change test to install protected rseq_cs instead of rseq
----
- tools/testing/selftests/rseq/Makefile    |  2 +-
- tools/testing/selftests/rseq/pkey_test.c | 66 ++++++++++++++++++++++++
- tools/testing/selftests/rseq/rseq.h      |  1 +
- 3 files changed, 68 insertions(+), 1 deletion(-)
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb586..9111d25fea3af 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
- 
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
--		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
-+		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice pkey_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/pkey_test.c b/tools/testing/selftests/rseq/pkey_test.c
-new file mode 100644
-index 0000000000000..0bca8fda9aa92
---- /dev/null
-+++ b/tools/testing/selftests/rseq/pkey_test.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Ensure that rseq works when rseq data is protected with PKEYs.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <unistd.h>
-+
-+#include "rseq.h"
-+#include "rseq-abi.h"
-+
-+int main(int argc, char **argv)
-+{
-+	struct rseq_abi_cs *cs;
-+	__u32 *sig;
-+	unsigned long page_size;
-+	int pkey, i;
-+
-+	pkey = pkey_alloc(0, 0);
-+	if (pkey == -1) {
-+		printf("[SKIP]\tKernel does not support PKEYs: %s\n",
-+			strerror(errno));
-+		return 0;
-+	}
-+
-+	if (rseq_register_current_thread())
-+		err(1, "rseq_register_current_thread failed");
-+
-+	page_size = getpagesize();
-+	cs = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
-+		MAP_ANON | MAP_PRIVATE, -1, 0);
-+	if (cs == MAP_FAILED)
-+		err(1, "mmap failed");
-+	/* Create valid rseq_cs. */
-+	sig = (__u32 *)(cs + 1);
-+	*sig = RSEQ_SIG;
-+	cs->abort_ip = (__u64)(sig + 1);
-+	if (pkey_mprotect(cs, page_size, PROT_READ | PROT_WRITE, pkey))
-+		err(1, "pkey_mprotect failed");
-+	if (pkey_set(pkey, PKEY_DISABLE_ACCESS))
-+		err(1, "pkey_set failed");
-+
-+	/* Install pkey-protected rseq_cs. */
-+	rseq_get_abi()->rseq_cs.ptr64 = (__u64)cs;
-+
-+	/*
-+	 * If the kernel misbehaves, context switches in the following loop
-+	 * will terminate the process with SIGSEGV.
-+	 */
-+	for (i = 0; i < 10; i++)
-+		usleep(100);
-+
-+	/*
-+	 * Ensure that the kernel has restored the previous value of pkeys
-+	 * register after changing it.
-+	 */
-+	if (pkey_get(pkey) != PKEY_DISABLE_ACCESS)
-+		errx(1, "pkey protection has changed");
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index ba424ce80a719..65da4a727c550 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -8,6 +8,7 @@
- #ifndef RSEQ_H
- #define RSEQ_H
- 
-+#include <assert.h>
- #include <stdint.h>
- #include <stdbool.h>
- #include <pthread.h>
--- 
-2.48.1.601.g30ceb7b040-goog
+regards,
+dan carpenter
 
 
