@@ -1,103 +1,149 @@
-Return-Path: <linux-kernel+bounces-519225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C77A3994E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EBAA39950
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E663B1888692
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:37:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F355A174011
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA994241125;
-	Tue, 18 Feb 2025 10:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EkFPl5E+"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2D23496A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF62417CE;
+	Tue, 18 Feb 2025 10:35:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54A2239082;
+	Tue, 18 Feb 2025 10:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874907; cv=none; b=TGocen0pX8PZlJUA5xmCqEJUMzl5qqP7lCr6COAM4WhyKhLrZ3qeEFwEj0qYlZKYR20/tKNwcE5a+RlRvDb/ySDCl3kSrA129200sSOt4f44Cw3GtsbiAvJLTV8KqHY2FZgjRHMhYlfvOS+Msh0Mc4bpV/AhsTtkChnzCqiFqE0=
+	t=1739874916; cv=none; b=Y51SiR2EikILkk5uC7hAG2Lb4ykwiEvEpzGOhULWIsSqOkh07JxGwDe4VNeTctqukWophUaXhcfQfwAze2ExZONJQDukFf+9363trOv/oEJBpl/VGeEDVTa4PXCI4ZKtor9fSwRD44tMBDW/rQ6GUP3gvY1RMRAiHisQk5qQDik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874907; c=relaxed/simple;
-	bh=5rVqKyMcxcqdLy/ItiSD5rAI6C4AMSRB2IYrY+2LyXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oO10ZbtLNfk/CN3Lr15jNgCV4k/zT2ISPKZVIvVzl1PAsZ5rzFuThQubht+0umPl4keGL9L7teBTfY4OT6eAAjqCRaeDnjGVX6ITgR1obYmQO8ENqqanT5kaDE0KTRcfcrKBIS+b/dHaOv0LwZlJaN905TfDRvreF822TjRHArU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EkFPl5E+; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471b71421afso54212261cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739874904; x=1740479704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
-        b=EkFPl5E+rCJE6IfFs/oZAUYxPfZ4JEtKRwZpSibx4AVYbOsI7rBei9boiZ5hch4ohm
-         3LWV13xAIEFKCV1YhbIfWsctZhYvimpJA0EjU+9ftAx2dTZmJWRdO6n0zc6FApX+Fa7i
-         REBt+goEZZU6WntXba9yDNq8407ZuqoEhixh0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739874904; x=1740479704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
-        b=HrvoHPKaNJzaZP9R1zHXTw8B2MvL+PwMmwfemXwarngTluHQyt4PZUEXOp0jzRu1iR
-         X2F7TAKZbTQApFJfiiB5BUexxZ9vjqVJx+zKO3dxWWoMcG2IEgmwNOnL8DsjXu+qBgT2
-         FGhVMfyvq1VNHu9gRaRfvdfzBbQNsnbK+0Rb7bpcYZRS1v8hMYIF8b2/nDi/ACImkM1d
-         TpokIvWcgs8cB8EfZiugulSP3F0Xlm33XbOMmwEagvnsmp3MBP2uGtlYfRcY5RSDnHtP
-         76gntgoYOHN7FbSm3awzeEWwZicOlA8eeayYPDJA30GctQSYKVUDQEPQdSSUybQwITbJ
-         H7RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Geqt4+TAulKmwHZzTouDig4cWYWCb9cRyYWyOljVuPOkRdUpxvLaLtGSzLzEfPGbiQUXZ/inrYugbTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLFYcB0jOIAJbS1D8tUSpa5SuhroO3+LVQT51QonFT2XuCAlX
-	jL43tUTM/CLr9vRcRoVuGJ6gXOapMCeCZ+YfNxu1X80eDfo3xRieLkUoQm8NU7HOoPXuB6qG4rk
-	FiN2M06uURRVjGe8v3L0y5zV4EzwfuvPOWgmTWA==
-X-Gm-Gg: ASbGncsGLrru4REOJazGVbnRdykl0NPS0yXVMkYZJNQr7rZc2GpSmh1nRcEWVyou8p6
-	FdjK2jOZL49hmLYtXN/bPbeN4PY3H5C8yNTFVpPQ+S3V3LfeqYhmPLWq3al3/Q2jATH3boiM=
-X-Google-Smtp-Source: AGHT+IEpiwSZX4vRhJbDFJ1X30VOuKKiT69jv9pwa/7/xaXy7HKIP1sTQTKwyHkROyECd2XtP/LxfpUAt7HLKX1xnSE=
-X-Received: by 2002:ac8:5a82:0:b0:471:bb6f:5799 with SMTP id
- d75a77b69052e-471dbe7c15cmr179985471cf.35.1739874904391; Tue, 18 Feb 2025
- 02:35:04 -0800 (PST)
+	s=arc-20240116; t=1739874916; c=relaxed/simple;
+	bh=FjYf0HGEpv02FFUr/G+KaX+8fXSmO5gG6iDiBHMtiTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gg6jnkp2uryPz/Ut6WmGeFlO8v2qSq7Jpu/yiyvp7kixhb+yGrM1rPyCk/z0fxvM3zWf2L8EMn+3jA+bmYws+txJHGZdHVEvxRge9nPNvzO22CfAZZaEvnZXkKwD4wsBtHGPRp3nJ4QG8FisXnMyxW4PjkRiTPTZ6YsRoob5Kdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E68A913D5;
+	Tue, 18 Feb 2025 02:35:32 -0800 (PST)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49F6F3F6A8;
+	Tue, 18 Feb 2025 02:35:12 -0800 (PST)
+Date: Tue, 18 Feb 2025 11:35:02 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bitmap tree
+Message-ID: <Z7RiVtunqI9edfK4@arm.com>
+References: <20250218160742.49d6ab76@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com>
-In-Reply-To: <87r03v8t72.fsf@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 18 Feb 2025 11:34:53 +0100
-X-Gm-Features: AWEUYZm174Vtkg8CGi97zDvZOoF7lSynxrUSzinYaOe0zIR4ksp5V1ftEBvZ570
-Message-ID: <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Luis Henriques <luis@igalia.com>
-Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218160742.49d6ab76@canb.auug.org.au>
 
-On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
+Hi,
+On Tue, Feb 18, 2025 at 04:07:42PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the bitmap tree, today's linux-next build (arm64 defconfig)
+> failed like this:
+> 
+> arch/arm64/kernel/topology.c: In function 'arch_freq_get_on_cpu':
+> arch/arm64/kernel/topology.c:270:43: error: too many arguments to function 'cpumask_next_wrap'
+>   270 |                                 ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
+>       |                                           ^~~~~~~~~~~~~~~~~
+> In file included from arch/arm64/include/asm/cpufeature.h:27,
+>                  from arch/arm64/include/asm/ptrace.h:11,
+>                  from arch/arm64/include/asm/irqflags.h:9,
+>                  from include/linux/irqflags.h:18,
+>                  from include/linux/spinlock.h:59,
+>                  from include/linux/mmzone.h:8,
+>                  from include/linux/gfp.h:7,
+>                  from include/linux/slab.h:16,
+>                  from include/linux/resource_ext.h:11,
+>                  from include/linux/acpi.h:13,
+>                  from arch/arm64/kernel/topology.c:14:
+> include/linux/cpumask.h:317:14: note: declared here
+>   317 | unsigned int cpumask_next_wrap(int n, const struct cpumask *src)
+>       |              ^~~~~~~~~~~~~~~~~
+> 
+> Caused by commits
+> 
+>   46ac1bec179d ("cpumask: deprecate cpumask_next_wrap()")
+>   43f7f920e14e ("cpumask: re-introduce cpumask_next{,_and}_wrap()")
+>   65b98ea8b278 ("cpumask: drop cpumask_next_wrap_old()")
+> 
+> interacting with commit
+> 
+>   dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
+> 
+> from the arm64 tree.
+> 
+> I have applied the following patch for today (which may not be correct).
+Thank you for that.
 
-> The problem I'm trying to solve is that, if a filesystem wants to ask the
-> kernel to get rid of all inodes, it has to request the kernel to forget
-> each one, individually.  The specific filesystem I'm looking at is CVMFS,
-> which is a read-only filesystem that needs to be able to update the full
-> set of filesystem objects when a new generation snapshot becomes
-> available.
+I'm currently testing a proper fix for that one.
+Should I just send it over as a diff to apply or rather a proper 'fixes' patch?
 
-Yeah, we talked about this use case.  As I remember there was a
-proposal to set an epoch, marking all objects for "revalidate needed",
-which I think is a better solution to the CVMFS problem, than just
-getting rid of unused objects.
+---
+BR
+Beata
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 18 Feb 2025 15:44:06 +1100
+> Subject: [PATCH] fixup for "cpumask: drop cpumask_next_wrap_old()"
+> 
+> interacting with commit
+> 
+>   dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
+> 
+> from the arm64 tree.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm64/kernel/topology.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 6f0cab8e746b..70db234c41a2 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -231,7 +231,6 @@ void arch_cpu_idle_enter(void)
+>  int arch_freq_get_on_cpu(int cpu)
+>  {
+>  	struct amu_cntr_sample *amu_sample;
+> -	unsigned int start_cpu = cpu;
+>  	unsigned long last_update;
+>  	unsigned int freq = 0;
+>  	u64 scale;
+> @@ -267,8 +266,7 @@ int arch_freq_get_on_cpu(int cpu)
+>  
+>  
+>  			do {
+> -				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
+> -							    start_cpu, false);
+> +				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus);
+>  
+>  			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
+>  
+> -- 
+> 2.45.2
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Thanks,
-Miklos
+
 
