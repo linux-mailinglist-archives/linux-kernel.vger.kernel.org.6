@@ -1,199 +1,234 @@
-Return-Path: <linux-kernel+bounces-518632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34669A39245
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:01:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E25A39274
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06649188953E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1217E1702F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6901A8F89;
-	Tue, 18 Feb 2025 05:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5E01B042C;
+	Tue, 18 Feb 2025 05:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ir1abrC7"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O1OmSida"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B5515E5B8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855361B0424
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739854913; cv=none; b=GfUSS2IZiNUbArEVa6kvLdmqdkXSisrCclwUfYp7qG0DelKMruZpWDRxxIKQvWzBuLnHOAuZ1feRPAjGK0M7BW5+sqJeB68Q8h3G2q6VtmP7uiGTDBpIVn+aJrOIJ1Bz8FWsJa/nbPt7fIS2wPwMLP4x/gXkyVYz4VlwyXWoVYw=
+	t=1739855667; cv=none; b=dhwBFYTJ133no9eyzoDsk1Hk7A3f4L8/su6Wh1nSrXcrj6bN6rwycXeXvSALRdnZsXPtqFlBzhj9mHpTk54U+e/l0hYpp7k6ajWN8lXSwV/Wu4THM98ZzjBbRuowI+7lWA88y5Kgx0IebEURuz1SBJUL8fBOF0wucVh6KLO1Gz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739854913; c=relaxed/simple;
-	bh=hGAR3ZwoaIsq5hwwkgzfjRG2KIko8sJB+3uz2rs5wT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ks7+lk2GIHdMOO1zLdTjqpCwurleG8K67VZwbTfjsYG/P+m+BXsrNuSCFX431l+aT5Hya6FHv+tUKVr2IB9Cr+N8G1MAz5WsRJWygkVIlVi+WOXG1cjEa3nxZlsVbguTPyra656KlhpTTp3QdmyTZoA3Tgtd89f5NA+X7Q2uqaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ir1abrC7; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9B4083F477
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739854906;
-	bh=jDOQiVSxgFvgjSI4VcGsykeR8qBgIlZA/vBXLnYhpgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=Ir1abrC7/gtYi1qYUgu5lQNK3oMSWt8kdae68FZ724UQYx9HIBnDBZofXIgY8mBpT
-	 Xh9tpQkzC4FFI/JaTXJblmRK8mFEg8CyylKADNy17lOvECkU8ARHw3AGrIjc46g6YC
-	 5DMHdgXOsxgTkYpgPNRIMwKnrUTV8ECBcZ2xmdfnREtUGbeDzC1gqDxUCXOXg43N1Z
-	 XgsK6V/ip7EoiTRt4njQgpK4idxljZeZplMsX8elhyYk4FMw73Mdz252e5XAdIf9Ka
-	 s8ML0Jt+sxHwD0Mtc2JjDkTS23rBOwsvpr7I+AuXuftpCMuLKnakFOE/GLDLCM99JY
-	 vz9ZQ3sx/eJMA==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fc0bc05b36so16356084a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:01:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739854905; x=1740459705;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDOQiVSxgFvgjSI4VcGsykeR8qBgIlZA/vBXLnYhpgc=;
-        b=H4JboFy2+tSmnxH3Ldcv8AKt+8Xrylm0rY4STnTV4tZDbWW8Z9/uiJNnQXuC2nksvd
-         YfxbffOt+aJ192fVPwm10mfh/ckklvOr7+oG9b4eWOHJNKEsfwoCMboiG9hHX7s1am8b
-         RjIwWOl7qe8PCk5XtbkPvxtmJ0w1In+VEsBqemhPrtDnIK2RoAIs8PuOyR9F1hX1kB/A
-         giiEN1u9l0+DyN49D8QbT7FPVJ56fMr0lURvOZe7jL01CmIpJdsc/6fl1FIPMVnRlmNO
-         En+dBeINKz8FUIkOFq2Oo9KsIEZsa2qfqKFtCsmZJKj3bE2qqRdq5jPjIK1V0xnAmWNw
-         bNVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCFZd9XZ50aYw0CqOCJAeiIAKUoB5mQW5ySPZZSa7iVADzKizJmRRMpi2EYENqqt8KjvQ89ss4Ej/GQDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybD7u0DI/JO7GDnI53p/yXBMjZYmA57lbowMAeuh22sqdq+Q0Y
-	vR9fJdsayMa9NZiifsrkkdE/tmkJhllC39PAv05RgDj27DpAxoTMVem9waAtyMf8K9pcb9ZzcPj
-	lpTL6aXcao+iA8/fJBasiusXSDyh0TKqNo5JY/bQgOHIoNQcuxCgYwHyvX9ApMf/osvAspCXVOP
-	850Q==
-X-Gm-Gg: ASbGnct1m01dIV7JO6dgjcjAlTyV/G7p59QhDRxcI5/cRL7cUSGoj386busIrtdudmW
-	fClvxGwdTUDiY9noTH8KewOUEH5r+t3RZd68IOlY5+jw77B24nX8HKUAqd0UM57m87kM36CteJr
-	XovvWE940A9k6C87IQOBBnSQxq/ZomzIkF/GnB3IPX3on07g7SzLVCJoTXo9/6wuudBUOOpxiHp
-	jU12wKFuHJ4nkfpHPAfMqaXNbIaaq7cq1gYGst5XDMdSzVFXSCIkJ+HmUh9yi89WwqXfhj7GhxC
-	kZ4hnbU=
-X-Received: by 2002:a05:6a00:6f05:b0:732:6217:8c69 with SMTP id d2e1a72fcca58-73262178e79mr19896400b3a.3.1739854904832;
-        Mon, 17 Feb 2025 21:01:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGN7ENmQ7UTCtkITQX6L9ZZEIwCi4nZCWarJR5zmnR4HrstBiYxYvuJae5cwQZZfiEJrF1o2A==
-X-Received: by 2002:a05:6a00:6f05:b0:732:6217:8c69 with SMTP id d2e1a72fcca58-73262178e79mr19896359b3a.3.1739854904412;
-        Mon, 17 Feb 2025 21:01:44 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73252051ca0sm7242421b3a.111.2025.02.17.21.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 21:01:43 -0800 (PST)
-Date: Tue, 18 Feb 2025 14:01:41 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo
- gpio devices
-Message-ID: <saszavmizjwhzechspy6otune2xwtgjjygaitxminzclgj7zep@ofwfb5jdfcam>
-References: <20250217142758.540601-1-koichiro.den@canonical.com>
- <20250217142758.540601-2-koichiro.den@canonical.com>
- <CAMRc=McB0bcG4jERmUyrQ=eTP+kcfLBBAOaT7mCMKbgUB1W5nw@mail.gmail.com>
- <d2qdoq3f3jk6gzgsjeqszgaqk7z523r7cfnopxfq4ghsbsqgp3@zjw67ewqzi5u>
- <uogv4ckqo2e2byspffvfayu44v6fl46sxtu7eudweoye62sofi@5iwsumpttpca>
- <CAMRc=MdNtDW_Gbd6dsG345110SCWe1vD_rNd_QaWBYRApHBoxQ@mail.gmail.com>
+	s=arc-20240116; t=1739855667; c=relaxed/simple;
+	bh=3J2/q4+aYFG2CGM4EUwnwcIBmP5GUVUJAZzp5LMApBE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Nxl/8+1XmU+Yu6nPeVz+G7G9O5joepmC+RJakEmrwpBNpps3JuBsTj3DvthngUejVG9xj8izDCzGCeKyuTZwVZUz4uoLbdI53iBs7fUCM/lN8lKjQoBysW0IV0dyho+jxkup8L8oM2/eNRhzWBbJtrnbsv5825GY/YIGfGPlm70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O1OmSida; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250218051417epoutp02cc641c0e5a963860597e986fc4b4bcb2~lNYCwZJBa1681016810epoutp02f
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:14:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250218051417epoutp02cc641c0e5a963860597e986fc4b4bcb2~lNYCwZJBa1681016810epoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1739855657;
+	bh=p9TjVATQJ+VnRioxoU2Dp5yamug+dRBPU+0D6cLYC2Y=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=O1OmSidaueXtwowa1xF/cFP9PqU4bARLZXXGfiqAdQcy6utuavmhMTFAqAcmBS6z2
+	 SY6m1DKWOY85swq2QlsebC4R39F/e4Wa5h2F2n1C9CtgyRRrgOJSbzF1pt3Y9sQeRz
+	 3waHgStEGsBzom0Kqu4XKbi3nw1vTPEY7z1DtuGg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250218051417epcas5p445bc19aa4bf59eeb56c0d7b63f940742~lNYCGTc3V3054330543epcas5p42;
+	Tue, 18 Feb 2025 05:14:17 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Yxnkb164tz4x9QG; Tue, 18 Feb
+	2025 05:14:15 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B6.C5.19956.72714B76; Tue, 18 Feb 2025 14:14:15 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250218035521epcas5p26e1a209f2c2e7ab1a3647c92a8b80923~lMTH7mDnE1309513095epcas5p2W;
+	Tue, 18 Feb 2025 03:55:21 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250218035521epsmtrp2d0c1d66c7f5fd524c35480f8738994c5~lMTH6Nyor0419904199epsmtrp2R;
+	Tue, 18 Feb 2025 03:55:21 +0000 (GMT)
+X-AuditID: b6c32a4b-fd1f170000004df4-c9-67b41727575f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	56.65.33707.9A404B76; Tue, 18 Feb 2025 12:55:21 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250218035518epsmtip1336114b755255f30d7612582e4870568~lMTFPqGa01544215442epsmtip1C;
+	Tue, 18 Feb 2025 03:55:18 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Andrew Lunn'" <andrew@lunn.ch>
+Cc: <krzk+dt@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<robh@kernel.org>, <conor+dt@kernel.org>, <richardcochran@gmail.com>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+	<rmk+kernel@armlinux.org.uk>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"'Pankaj	Dubey'" <pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>
+In-Reply-To: <18746e2f-4124-4f85-97d2-a040b78b4b34@lunn.ch>
+Subject: RE: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Date: Tue, 18 Feb 2025 09:25:08 +0530
+Message-ID: <015601db81b8$ee7237f0$cb56a7d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdNtDW_Gbd6dsG345110SCWe1vD_rNd_QaWBYRApHBoxQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFMfZy5LnHh86L+CikZ+hKlrx3PbgHP/Q5uAh59lGQCP3Rr5gHaDzZ5Aa7CoQMBhZsMSAJJpHR7s/5FypA=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNJsWRmVeSWpSXmKPExsWy7bCmhq66+JZ0g7VHWC1+vpzGaLH8wQ5W
+	i/N3DzFbrNl7jslizvkWFov5R86xWjw99ojd4uWse2wWF7b1sVpsenyN1eLyrjlsFl3XnrBa
+	zPu7ltXi2AIxi2+n3zBaLNr6hd3i4Yc97BZHzrxgtrjUP5HJ4v+eHewOIh6Xr11k9tiy8iaT
+	x9P+reweO2fdZfdYsKnUY9OqTjaPzUvqPXbu+Mzk8X7fVTaPvi2rGD0O7jP0+LxJLoAnKtsm
+	IzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hNJYWyxJxS
+	oFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xtR3
+	RxkLbolWXDq7ma2BsVewi5GTQ0LARGLG5BbmLkYuDiGB3YwS3bdPMUI4nxglnh/7woLgHL8O
+	lOEAa/n0lAkivpNRom3JMijnBaPE8u//WEDmsgloSSzq28cOYosIqEjMmzsFrIhZYCWLxOXr
+	K1lBEpwC1hJXVixhA5kqLBAo0XaUDyTMIqAqceDMP7ASXgFLic41D5ggbEGJkzOfgM1nFpCX
+	2P52DjPEDwoSP58uY4XYlSTRPPM+M0SNuMTRnz1gv0kILOaUuNh8hAmiwUWip+cJG4QtLPHq
+	+BZ2CFtK4vO7vVDxeInVfVdZIOwMibu/JkLF7SUOXJnDAnIzs4CmxPpd+hBhWYmpp9YxQezl
+	k+j9/QRqFa/EjnkwtrLE39fXoEZKSmxb+p59AqPSLCSvzULy2iwkL8xC2LaAkWUVo2RqQXFu
+	emqxaYFxXmo5PMKT83M3MYJzgZb3DsZHDz7oHWJk4mA8xCjBwawkwnuoa0O6EG9KYmVValF+
+	fFFpTmrxIUZTYHhPZJYSTc4HZqO8knhDE0sDEzMzMxNLYzNDJXHe5p0t6UIC6YklqdmpqQWp
+	RTB9TBycUg1Mt5807JiltG2z+Z0Ztg5BbBcSA5SnrE7j2l1a/Ol6urDX7g/Rx7ZrX5obECrG
+	tEs5PdDSPo/7qNTRRWnHOq5ud7edt+l39MOmpcYf5K+uKarpK2apfcHqeMx26pIujSB7scjO
+	FXZ1paUZLYsvPmYMl7vJzN9kLtwtY9KsfF9u/X/RTW4/WJ7kXd29cbbfzyeHRZvsnYVE5h7s
+	ld6l8fS+uE2x3yTWZ/wnX/NuvFDPL/34cv3k1zkn1v0qv/FgdnC7MrdK1A+FqJuv7A69mBl7
+	9U7IXcXySWIn/TYXHJl79oSCkF7Mymv5ujLfz05beCM4+vbzZT1bm4/vuTf3/rRrh3/YSe6Z
+	ZrOeK/r8tJTzLEosxRmJhlrMRcWJABQwCA+OBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTURzGOe9lezdavN7a8YLVyoJVK8vglCHVh3gpqFAKutqmr1N0OjYn
+	FYSGljnLjLLLWibD0pmazeUtm7WmZF6XZRcyLTUtTMV1YZCrthH57cc5v+fh+fCncN8BIohK
+	Sk1nVanSFBGHT9Q9EYWuMhJm+RpXexhyfr4MUNlQA4l6Bqw4qnzYjSF9Tw6Bbtq6STTa9pGL
+	Puvec1BvXQGJTMP9JOpr0nOQtn+ERMWzVSRqK1mAfnRMAGS4/42LPkw3c5GtcxxHz89fwNDv
+	5gbuZn+mr9+OM2bjG4wZPX+fyzTqBrhMiUnDmCryOExtaSbT2ODAmCnLSw5TYK4AzGNLOOMw
+	he6et5+/KZ5NScpgVaujjvATiyZbgfJtwNHnXbWcLHDORwsoCtIRcGYU0wIe5UvXA9g2luhm
+	SAfCmewi0st+0Oga42oB/6/zCcBuh8sT4NBiaCiwcN3sTy+FxTcuYW4Jp1sIeEl3nfAmSnE4
+	8WLQU8WjI+GL8lKOm/3oXXDqXLsnTdBh8FGny+MI6A0wr3II87IPbL82QriX4rQEnr4H3M84
+	vRDWf9Xj3nWLoHP0NukdIYPZ1wZxryOErc6zeCHw081p0v1v0s1p0s1JlACiAgSwSrVCrohT
+	hkvUUoVakyqXxKUpTMBzAeLoBnD77qzECjAKWAGkcJG/wKqtkfsK4qXHjrOqtFiVJoVVW0Ew
+	RYiEgiUpefG+tFyaziazrJJV/fvFKF5QFlbIj8yZn/Bd8jqfZ2yxbSvinVmcW0w9ezhUPTU4
+	YQ7BWzSWbqr6TKZ8o/jql9h1IQd4zFjtJisdmFszuzqDnxHzbfGAuFKk3PGrd+9R8vEVLDQk
+	aTw3YfvO5lNX3gmGbXccW/a+msrU7nxanjyiWb41KuaEsDHzYNSyCIF5T1lPV9pks/6RIcvn
+	5Cpp31p9k+Xqg9CaFe32+b/kuyfybdur1xpkhi12o9hx88DgSpkid/x4RLD28I8uYWqd/e6D
+	ZfvL1tsCOvbJCrT5zrjW6S6ZK8EUXTUjr7pu/50t+fnBNDzd2xT0UVU4fvrQLb8FNQGM4uKK
+	jCZhr4KcxpLznMtFhDpRGi7GVWrpH0u44rdwAwAA
+X-CMS-MailID: 20250218035521epcas5p26e1a209f2c2e7ab1a3647c92a8b80923
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff
+References: <20250213044624.37334-1-swathi.ks@samsung.com>
+	<CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
+	<20250213044624.37334-2-swathi.ks@samsung.com>
+	<85e0dec0-5b40-427a-9417-cae0ed2aa484@lunn.ch>
+	<00b001db7e9f$ca7cfbd0$5f76f370$@samsung.com>
+	<ffb13051-ab93-4729-8b98-20e278552673@lunn.ch>
+	<011901db80fb$8e968f60$abc3ae20$@samsung.com>
+	<18746e2f-4124-4f85-97d2-a040b78b4b34@lunn.ch>
 
-On Mon, Feb 17, 2025 at 06:29:27PM GMT, Bartosz Golaszewski wrote:
-> On Mon, Feb 17, 2025 at 5:21 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+
+
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: 17 February 2025 20:48
+> To: Swathi K S <swathi.ks@samsung.com>
+> Cc: krzk+dt@kernel.org; andrew+netdev@lunn.ch; davem@davemloft.net;
+> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
+> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com;
+> rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+'Pankaj
+> Dubey' <pankaj.dubey@samsung.com>; ravi.patel@samsung.com
+> Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+> bindings
+> 
+> > > > > > +  phy-mode:
+> > > > > > +    enum:
+> > > > > > +      - rgmii-id
+> > > > >
+> > > > > phy-mode is normally a board property, in the .dts file, since
+> > > > > the board
+> > > > might
+> > > > > decide to have extra long clock lines and so want 'rgmii'.
+> 
+> > Hi Andrew,
+> > What you said is right. Generally, PCB provides internal delay.
+> 
+> It is actually pretty unusual for the PCB to add the delays. But there are
+some
+> boards which do this. Which is why you should support it.
+> 
+> > But in this case, due to customer request, the delay was added into SoC.
+> 
+> Idealy, by the PHY. However, in terms of DT, the board .dts file just
+needs to
+> say 'rmgii-id', meaning that the board does not provide the delays, so the
+> MAC/PHY pair needs to provide the delay.
+> 
+> > The following doc on rgmii says that "Devices which implement internal
+> > delay shall be referred to as RGMII-ID.
+> > Devices may offer an option to operate with/without internal delay and
+> > still remain compliant with this spec"
 > >
-> > On Tue, Feb 18, 2025 at 01:12:17AM GMT, Koichiro Den wrote:
-> > > On Mon, Feb 17, 2025 at 04:46:30PM GMT, Bartosz Golaszewski wrote:
-> > > > On Mon, Feb 17, 2025 at 3:28 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > > >
-> > > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > > > > platform device and wait synchronously for probe completion.
-> > > > > With gpio-aggregator adopting the same approach in a later commit for
-> > > > > its configfs interface, it's time to factor out the common code.
-> > > > >
-> > > > > Add gpio-pseudo.[ch] to house helper functions used by all the pseudo
-> > > > > GPIO device implementations.
-> > > > >
-> > > > > No functional change.
-> > > > >
-> > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > ---
-> > > >
-> > >
-> > > Thanks for the review.
-> > >
-> > > > Looking at this patch now, I've realized that there is nothing
-> > > > GPIO-specific here. It's a mechanism for synchronous platform device
-> > > > probing. I don't think its place is in drivers/gpio/ if we're making
-> > > > it a set of library functions. Can I suggest moving it to lib/ and
-> > > > renaming the module as pdev_sync_probe or something else that's
-> > > > expressive enough to tell users what it does? You can make me the
-> > > > maintainer of that module if you wish (feel free to add yourself
-> > > > too!).
-> > >
-> > > I had vaguely envisioned that this might eventually contain some
-> > > GPIO-specific code for some reason, and also it's just a tiny utility to
-> > > reduce code duplication, which is why I placed it in the neighborhood,
-> > > drivers/gpio/. However, of course you’re right, there’s nothing
-> > > GPIO-specific here, so moving it to lib/ makes sense.
-> > >
-> > > I'm not really sure if this method for synchronous platform device probing
-> > > can be broadly accepted as a general solution, but I have no objections to
-> > > making the change. I'll move it as you suggested and send v2, setting you
-> > > as its maintainer.
+> https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/imx-
+> proces
+> > sors/2
+> > 0655/1/RGMIIv2_0_final_hp.pdf
 > >
-> > Regarding this series, I feel that it might make discussions smoother if
-> > you submit it directly. So if you're okay with it, please go ahead. In
-> > that case, there's even no need to mention me or CC me - I can track it on
-> > ML :)
+> > Also, the driver is in such a way that it handles all four rgmii in
+> > the same way.
+> >
+> > Considering this, could you let us know what will be the right
+> > approach to take in this case?
 > 
-> I'm not sure I'm following. Why would I submit it myself? You did most
-> of the work already. If you want the changes to gpio-aggregator
-> merged, then I think that it's time to refactor this code before we do
-> that because repeating it three times is just bad programming. I
-> probably wouldn't have done it otherwise at this point.
+> List all four phy-modes in the binding. They should all be valid. However,
+the
+> .dtsi file should not list a phy-mode, since it is a board property, not a
+SoC
+> property.
 
-As I mentioned earlier, I'm not really sure if this particular usage of
-platform devices will be generally acceptable. gpio-pseudo was intended
-solely to reduce code duplication in methods already accepted by the GPIO
-subsystem. Moving it to lib/ would shift the approach, effectively trying
-to promote this method as a standard solution.
+Hi Andrew, 
+Thanks for the clarification.
+Will post v7 with the following updates:
 
-For example, if for any reason drivers_autoprobe is set to 0 on the
-platform bus, the synchronous mechanism might be blocked indefinitely.
-Moreover, in the first place, I'm not sure whether employing the platform
-bus in this way is appropriate.
+1. Changing phy-mode in dt-binding as shown below:
+  phy-mode:
+    enum:
+      - rgmii
+      - rgmii-id
+      - rgmii-rxid
+      - rgmii-txid
+	  
+2. Removing phy-mode from .dtsi and example given in dt-binding
+3. Add phy-mode to .dts file and specify 'rgmii-id' there.
 
-For drivers like gpio-virtuser, which we can define virtual GPIO consumers
-via DT, or for gpio-aggregator, which we can use as a generic GPIO driver,
-the expectation is to use the platform bus/device mechanism as usual. In
-those cases, adding a synchronous mechanism via the platform bus notifier
-to piggyback on the existing platform bus probe implementation is
-understandable and obviously has already been accepted in the GPIO
-subsystem. However, moving just the synchronous mechanism into lib/ can
-potentially be perceived as an abuse of the platform device concept?
+Hope this will address your review comment.
 
-Incidentally, Greg K-H’s faux bus work was recently merged into mainline:
-commit 35fa2d88ca94 ("driver core: add a faux bus for use when a simple
-device/bus is needed").
-
-Correct me where I'm wrong. And I'd appreciate if you could share your
-thoughts.
-
-Koichiro
+Thanks,
+Swathi
 
 > 
-> The code looks good other than that, just put it under lib/, rename
-> functions to pdev_sync_probe_init/register/unregister() and send it to
-> the list as usual. With that it's good to go. Just make sure to
-> mention to Andrew Morton the need for this to go through the GPIO
-> tree, I don't think he'll mind.
-> 
-> Bart
+> 	Andrew
+
 
