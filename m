@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-519724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5ADA3A115
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:24:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A19A3A116
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82CF31680D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F9116754E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20E326B941;
-	Tue, 18 Feb 2025 15:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF6526B09B;
+	Tue, 18 Feb 2025 15:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YI32NXG0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi7pV0T8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915B5211499
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C7A211499;
+	Tue, 18 Feb 2025 15:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892238; cv=none; b=eTdJ9HttSLM0IIWBCiWSYGnxP8ZothXPsYDUChr9xh6Qn8GHwKRVIdtNrVvnGzOfM/6TtNocaxEckQ6IrPkG5FhSA4kAUr9aFIA1YOqkTJAH3wFKapWEVWT/DxmNHympq9MIHK8HYNn1mn4tMry6L7koLrVIF3aWhtze6BMIvCU=
+	t=1739892271; cv=none; b=fstREXjVa04VT0w95us+s4hAxVzl1BSqpvgIT9otTf1QmI3uZvGDToH3pA5A15mlw+cPkHcfxLXth4/f6NtJmNIE0doZrO1wMNjroK0ouBwXJqr8Z7x4HtVapWOiBqJluvK2iCfVy/jMRhcGJxSXQO+36ACUoziCmbHr5pa/swY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892238; c=relaxed/simple;
-	bh=I++1OfaaY6kszWN29nHAexPRjJpGYk7wMR7qYXgrmA4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=d5jQHs67MExmph6hEI18P+vSjC5kAhKFUJYwsFh6DmZO53Gpkt4M9H3SJt6uH+V0IhhxR+SOS/+FXdHRbL+VtyI9HbumflO1QFcr82dmNOOfb+lmzvaPwnd0Gf9HN2YlvBUI37ld7XeLdSEmJKAsxQKcfq5D7/c6YgCZDc4nZvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YI32NXG0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739892234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AVxAiNMCdsH9bOyFBAQ4oaOYQMHCUBzRtQUKLspv+ZQ=;
-	b=YI32NXG0sd9ohBXD2WoLOuz0qdTOBSFU/7E+VNi2WjP7uWft8se5gULE16g7r1Lc+txAaZ
-	Zqzh71ECRvVh9jtFlR7X3M5CmdUmNkYYIRo4qDiIILt7vBARKxkrrKUl06liVZPJn6jJlC
-	tW+9fZhcHeNPdvOXWOIPphQ6Iwo/WRA=
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
- [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-4zcgSJSVPFap5ImwMubxQA-1; Tue, 18 Feb 2025 10:23:52 -0500
-X-MC-Unique: 4zcgSJSVPFap5ImwMubxQA-1
-X-Mimecast-MFC-AGG-ID: 4zcgSJSVPFap5ImwMubxQA_1739892232
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-2b8fdf98b0eso9809685fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:23:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739892232; x=1740497032;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AVxAiNMCdsH9bOyFBAQ4oaOYQMHCUBzRtQUKLspv+ZQ=;
-        b=RrkSs9tCPWJW9xeMc2rXw3IFc0Gk3gBuRSFwQxY08ZCdCZ0om+cHhm4cLIgZ5tcd05
-         16Yc4Syw8qVcUXgDY+FkkcO7tv5XUAo9I8i8SOmm/BUIrPpWXbKF4bnBlENTk6Ke6R/9
-         Ll4qWbm0HJ/jftbVgnvE9vnbURMiexaPf55Hg3Vt92p3VXUA3vG4Du4izXLt7a8Pbkeg
-         fqO0w+DymgnR5isKFsvVWl7VspJZL1m7KMKTdx1aEJs/UHFUIOfcUJsppEcRB7gJTtji
-         1gDanPs7HHXG1fFWuf0EU/+fe+5JYO/WG6RdtekqIgdrOZV2gaGTLsa4vDITFLXv1sv5
-         RuLA==
-X-Forwarded-Encrypted: i=1; AJvYcCW60uFxR92csaONGPr4Dcskmv5DKgse7kvdwmO+dqzGtAcEP50S0PJfL9B3GsMljGRpaxt0cXTU6Ais0sU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqXcvV/xtJjLOZWBAQkGlhBTRl3hLnVxRyDdeNx0ePwW20bbiV
-	p9pMI3z6+5jn1XQSK/dcivdT89iygFTnmVVHQLJOpfipcTbCiN2iWmZ9LntM0z5T+5o7TRbXZnC
-	7YsHQ8eWYxUAeTsbL1rBq5ok7KaIVOs0PxOGCnUgORJDDy0cQKYnJkWTJU/aMbQ==
-X-Gm-Gg: ASbGncvZYfmiTKgmnL0rHlnDsojECIRp1cDaL1cqv9p94zHKv8beqiB6F/ZuZlBGWF8
-	Qe3ZXfCHvBFwYwN0xSywkWkzPNSl54JN1gXUkYOhQCP/f9X7PUqFNxOVeXdyQQUztXkY8QGhJ8g
-	09KWUNhWgyZfyRBUEP36AKjbSB2BA3Euy1h3YVzGckYhwTKPgO/nkJuk4g+0f3pseA/W3JHqB8s
-	UrXTTDvW4h9+1vRcI0ylI/IJIe/3Z6tkj8+7p/sAiVb2yfi92oxDah68xu9HUYXu369nueLvA1u
-	eyXd+zvOckFkoSc8jQeD6FmetQWP7K/W+Uc3UY6xfCx0nCeF
-X-Received: by 2002:a05:6870:fbac:b0:2bc:61b3:b0ec with SMTP id 586e51a60fabf-2bd10231f20mr7534fac.9.1739892232138;
-        Tue, 18 Feb 2025 07:23:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH1Xkflrn+VD8mtgwGmlUjnJgfd7En+5mQbaK6O0vjYmO1AE583dLrMXRXbdKV1DA5suW7LEw==
-X-Received: by 2002:a05:6870:fbac:b0:2bc:61b3:b0ec with SMTP id 586e51a60fabf-2bd10231f20mr7510fac.9.1739892231762;
-        Tue, 18 Feb 2025 07:23:51 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-727001fd29esm3893639a34.38.2025.02.18.07.23.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 07:23:51 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <12775fc3-1575-4bdd-8d1e-056915d95e3d@redhat.com>
-Date: Tue, 18 Feb 2025 10:23:50 -0500
+	s=arc-20240116; t=1739892271; c=relaxed/simple;
+	bh=lz+IyjJeomORXfyusNlUxTlQKv9XoLXCm88WmFfwjQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=an+g5QbxWs+NJ70CSLSTJ6sAOTR7xc3Wd3hWl1MngPhRz2GBscATyyEscvm9Q8/PebdMfM9AhQqodAiBOdynCDVYaCpgURhqKskiC9Izo5r1tObBU3t6xYVuFyZDWAvlZMSJit3X+NvWq0yPjUJa9V2BHZHkq22QulmoQuonZm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi7pV0T8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853EAC4CEE7;
+	Tue, 18 Feb 2025 15:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739892271;
+	bh=lz+IyjJeomORXfyusNlUxTlQKv9XoLXCm88WmFfwjQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zi7pV0T8H4ZKlrgST4w04TpsySEYItjStCjRX9vqXf862KIKJQXM+1GUzxSKIhsIF
+	 tmWeDJKKNXsmAvqcmSB31VHZ/SnFcht2yq6XocAsLxXS6mE4QxcM7qM8LTtTXigVBZ
+	 OnSja8HCzVQUcNAjn+u3AT3M63LUBzZR9QKhBEijXKHj50mFZxBJrZBuj908pghYyg
+	 Yp8Y4+MJJft6r3HQaEBFVhNkdxKSKh+bvOu6GIbzpC8FtLlWySssYF8OEpZ3TKpXzU
+	 QsQJ2JPMj9+2rns990BeQWyE8QUa7pwg7zZ/qRsFAfZra/gB3tzukleV5nGGh9Hj4G
+	 3S/6Sz5jg0lCA==
+Date: Tue, 18 Feb 2025 15:24:26 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v2 14/29] ASoC: tas2770: expose die temp to hwmon
+Message-ID: <Z7SmKoWF0zLoDoLc@finisterre.sirena.org.uk>
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+ <20250218-apple-codec-changes-v2-14-932760fd7e07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [CHANGE 1/2] sched/isolation: Make use of more than one
- housekeeping cpu
-To: Phil Auld <pauld@redhat.com>, Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250211140104.420739-1-pauld@redhat.com>
- <4a8d54e7-fa29-4ce4-9023-3cdffa0807e6@linux.ibm.com>
- <20250213142653.GA472203@pauld.westford.csb> <Z67Wy9Jjn0BZa01A@linux.ibm.com>
- <20250218150059.GC547103@pauld.westford.csb>
-Content-Language: en-US
-In-Reply-To: <20250218150059.GC547103@pauld.westford.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tq6akGPotT7yuHge"
+Content-Disposition: inline
+In-Reply-To: <20250218-apple-codec-changes-v2-14-932760fd7e07@gmail.com>
+X-Cookie: Editing is a rewording activity.
 
 
-On 2/18/25 10:00 AM, Phil Auld wrote:
-> Hi Vishal.
->
-> On Fri, Feb 14, 2025 at 11:08:19AM +0530 Vishal Chourasia wrote:
->> Hi Phil, Vineeth
->>
->> On Thu, Feb 13, 2025 at 09:26:53AM -0500, Phil Auld wrote:
->>> On Thu, Feb 13, 2025 at 10:14:04AM +0530 Madadi Vineeth Reddy wrote:
->>>> Hi Phil Auld,
->>>>
->>>> On 11/02/25 19:31, Phil Auld wrote:
->>>>> The exising code uses housekeeping_any_cpu() to select a cpu for
->>>>> a given housekeeping task. However, this often ends up calling
->>>>> cpumask_any_and() which is defined as cpumask_first_and() which has
->>>>> the effect of alyways using the first cpu among those available.
->>>>>
->>>>> The same applies when multiple NUMA nodes are involved. In that
->>>>> case the first cpu in the local node is chosen which does provide
->>>>> a bit of spreading but with multiple HK cpus per node the same
->>>>> issues arise.
->>>>>
->>>>> Spread the HK work out by having housekeeping_any_cpu() and
->>>>> sched_numa_find_closest() use cpumask_any_and_distribute()
->>>>> instead of cpumask_any_and().
->>>>>
->>>> Got the overall intent of the patch for better load distribution on
->>>> housekeeping tasks. However, one potential drawback could be that by
->>>> spreading HK work across multiple CPUs might reduce the time that
->>>> some cores can spend in deeper idle states which can be beneficial for
->>>> power-sensitive systems.
->>>>
->>>> Thoughts?
->>> NOHZ_full setups are not generally used in power sensitive systems I think.
->>> They aren't in our use cases at least.
->>>
->>> In cases with many cpus a single housekeeping cpu can not keep up. Having
->>> other HK cpus in deep idle states while the one in use is overloaded is
->>> not a win.
->> To me, an overloaded CPU sounds like where more than one tasks are ready
->> to run, and a HK CPU is one receiving periodic scheduling clock
->> ticks, so HP CPU is bound to comes out of any power-saving state it is in.
-> If the overload is caused by HK and interrupts there is nothing in the
-> system to help. Tasks, sure, can get load balanced.
->
-> And as you say, the HK cpus will have generally ticks happening anyway.
->
->>> If your single HK cpu can keep up then only configure that one HK cpu.
->>> The others will go idle and stay there.  And since they are nohz_full
->>> might get to stay idle even longer.
->> While it is good to distribute the load across each HK CPU in the HK
->> cpumask (queuing jobs on different CPUs each time), this can cause
->> jitter in virtualized environments. Unnecessaryily evicting other
->> tenants, when it's better to overload a VP than to wake up other VPs of a
->> tenant.
->>
-> Sorry I'm not sure I understand your setup. Are your running virtual
-> tenants on the HK cpus?  nohz_full in the guests? Maybe you only need
-> on HK then it won't matter.
->
-> My concern is that currently there is no point in having more than
-> one HK cpu (per node in a NUMA case). The code as currently implemented
-> is just not doing what it needs to.
->
-> We have numerous cases where a single HK cpu just cannot keep up and
-> the remote_tick warning fires. It also can lead to the other things
-> (orchastration sw, HA keepalives etc) on the HK cpus getting starved
-> which leads to other issues.  In these cases we recommend increasing
-> the number of HK cpus.  But... that only helps the userspace tasks
-> somewhat. It does not help the actual housekeeping part.
+--tq6akGPotT7yuHge
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-That is the part that should go into the commit log as well as it is the 
-rationale behind your patch.
+On Tue, Feb 18, 2025 at 06:35:48PM +1000, James Calligeros wrote:
+> Create and register a hwmon device to export the die temperature
+> to the hwmon interface
 
-Cheers,
-Longman
+Oh, so there is actualy a hwmon device added (which was why I thought
+you were ignoring my review comments on the last patch...).  The
+question then becomes why also have the custom ABI for this as well?
 
+sysfs files are also supposed to be documented in Documention/ABI,
+though actal enforcement of that is a bit patchy.
+
+--tq6akGPotT7yuHge
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0pioACgkQJNaLcl1U
+h9BGHQf+L3a01Xe4BXkXRpARVZ/PhW4X39H8P97msP/0wqI1E8dPDNB5OfcQhrRo
+pbpjIX+E0hBnDTk6JBEpRXZzWjewRofoLx6shsfGJCPhxOFkEFJJgYszoWJig9oh
+1UxhrPionc0Rmf74oliCQ+BzXS0LU7FsPOZAYjnmbOJ6NfzUyBaeh6s1tVS+jetM
+moYZmVaVkD6SQ39nMUi2bo1V4P2bL2fsFLqKKi5pZO3air4AWmI5/KSd07QWye3J
+hTkA9iktMLFbXaXZFbujvIkMPxaYb00fhZFE8sjT98wvYHS6Co2c1PBMPM13wFkx
+9aSONFIY88HmnowcJtiHcFc3SwxBRQ==
+=lXao
+-----END PGP SIGNATURE-----
+
+--tq6akGPotT7yuHge--
 
