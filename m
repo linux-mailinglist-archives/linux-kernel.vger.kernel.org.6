@@ -1,173 +1,170 @@
-Return-Path: <linux-kernel+bounces-518635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB54A39266
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D35A39269
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E163D16E6E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:08:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05AE616DE4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4681B0420;
-	Tue, 18 Feb 2025 05:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A31B0421;
+	Tue, 18 Feb 2025 05:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YgaXaIwI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sr1I313A"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AA21AC882;
-	Tue, 18 Feb 2025 05:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739855278; cv=none; b=LBjZcyxFoR0+JPVnICsB4OoFAqqAgFo0lF5ClUygIhbNoaumhU+hcGEiySNVDPhira9lSr7WXXioW39JE258qj7kBXloK4t0UcGCk7NkpekbhroYHxz/wDVyASWTzFmTNLL1cFK/trfdBk3EuC6wVwaYvKCmieN0aMs0WneFQ5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739855278; c=relaxed/simple;
-	bh=z/6JA4eNoed8CZkrnBDxJDBqVf8SQDJUgT8/uSsYtK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jVatvONrBvshcWZ12hsVM60t5SNT0fRfucXtoe/NKqk66y6DTyUD+6UofXLVDSUtDuu9uNSD9S3xjF8hCQj2M0jICHStUk0O5kibgmCGgOYMbMv9e6o0S+ZRRb1hT9YYFAsUs1FKQnzhRX6buvHr5Xnv8gYDlX+cGi7mUsGZ9gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YgaXaIwI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739855264;
-	bh=5LIOKZ2TM0YfxcjNlKCXnCn+7rZf/CA6PMGHhfYZysY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YgaXaIwIVm6vbNYGnvKc3hWD4TwsJ4hBRFWpfmUGuB/Ijh1hUDLFWVAFV8o7CQrq4
-	 AptfgmYg6ZyJwfxZBsrjVNvwS0Z33dMyfs+2sXL2hXruCBa7sbGbPCskg+/fkPQY/+
-	 OIu2Kec/2t+ZAYESrxVfp42tIsU69Z9k06IEkBQz3hWiM2FcYgq9xJRCu+seIEmOq7
-	 Ag0ZTrB8GDqdiCVhN1Bdzvh6qlI2wmZUpcp1uiddjuTX5oPkG4+mZqSPug/j/XDH6J
-	 NiRaVgT6LuKYfoZtsonQl3DFtmtFSKzLzTkwBII5VeSJGUx/xpebjhAcKjmby+Dfn3
-	 EOk+vf4iGxV3w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yxnb4086Gz4wcr;
-	Tue, 18 Feb 2025 16:07:43 +1100 (AEDT)
-Date: Tue, 18 Feb 2025 16:07:42 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Yury Norov <yury.norov@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Beata Michalska <beata.michalska@arm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bitmap tree
-Message-ID: <20250218160742.49d6ab76@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5BD1AC882;
+	Tue, 18 Feb 2025 05:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739855526; cv=fail; b=iViq/loVoKYEr1OHPWYGOmNlQjEMRWCJKE0x5sF1+SbgPw90w0LOkvapEZJvY7dPCsY7KgIvBVrL5WL/KxmdPp9aYBsKIYDuJO4TdMnGfqVZXTSUZugFKUaEVyLJ/YhREqm5Y1ipRCLivCphWW3fs95Ue2wh5gWvMkgxhqdACHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739855526; c=relaxed/simple;
+	bh=NQNBrmA08AJnaKeguoVZjoiXNlu6aaRDB2hnkfznkrU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kSSKcuHxxDmadKsLwztzHiRNNd+d3p1st6R3z+Ix2VXDJ8u4UN/+51xfVBRRO13oLHIrzlMO8Y0olNA71bkJZ9hNvL+o7+WH+jdZC/ga+nbSI6Ad+Eq83oxKxSzANKlmqHkg203squQV2hw5q12HISr4zruEkhoFlpHBy2Kn9ZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sr1I313A; arc=fail smtp.client-ip=40.107.102.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FChrDerF6tpwYuQD+DyfWBwjLGnyNcU5RYuyUzf9xgoiOBT2GmiMRhTYD88b3o6sCeYsHLMQUZbQPCc1tDzG3wu89Qb3srZ0myB8VBEvwbUZM6P1FKXP6iqCMxup78Wx+V9Why4QBMgmSYeQ0wCD1cAzzFQaI8fiNe2UwrQ5kS9PU5R+zy8b71AfitwBlfWf/oTSU+q94dTBbRSGgYr/VsScCdCvNPaVxCBvM4KjPkd0gsKtvUpPLKFC3d3fYxkanZu8xF1CUEB3dIdG9/ajMd6m/JgZHu0jzyLR9AzEtuknfb7nqpwhLsBIVBfkprbxjpX9vg0NuMYensweYIzSKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=znLxHlOrgSpLn3xlANZIe2Ewij6YgDgv5/qcUlvoxNs=;
+ b=QuskOn4TDDTiBLRiTnSQDFovFU+GD+thUbM+MASmgfHozzRSIUnrW0Di4WX7GgNhgfU0IHvZBfjcOoOR9xWiM+A71sVVgnt1ponmoYEj8ImUDSlgcVrMhWRByuz2prScr9lM0IQxIUpT6i60Cq8ww3KCscoZmoz8oBnIkfQkDMpcOm84JsliYWRx56eghSuU9SrJO0wR4oZAsZkmAlFiymuf3vg1xRjhMMeCgElwvkywQ0g3+uoHo7R+5Gmf6SnrzP9Zu1VkK11hJr5GZALR2WAYa9c8lZ1rJjTsUEaMXgAMm3QHSWY3l5jO4YHOduuj/sUv8uzE9sKxHlC6zPyvqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=znLxHlOrgSpLn3xlANZIe2Ewij6YgDgv5/qcUlvoxNs=;
+ b=sr1I313A7RzHQXfBtUiaxaBy/545iC24bn7RdOmS8gK+VAJ+AmT1qsYUKHKEkaHLdfr9x+UxRXdwzn8TWvbobdFtcAJOIfnsLeKrSIEerc1tmIJPY/16IOVpvd5hHH1DW23MTaJNHT5w1bwpEQMqoy1ZyG8Oc4ifRIvle+Cx8F8=
+Received: from MN0P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:52e::29)
+ by MW4PR12MB6849.namprd12.prod.outlook.com (2603:10b6:303:20d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 05:12:00 +0000
+Received: from BL02EPF0001A0FD.namprd03.prod.outlook.com
+ (2603:10b6:208:52e:cafe::bb) by MN0P220CA0001.outlook.office365.com
+ (2603:10b6:208:52e::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.18 via Frontend Transport; Tue,
+ 18 Feb 2025 05:12:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A0FD.mail.protection.outlook.com (10.167.242.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 05:11:41 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 17 Feb 2025 23:10:56 -0600
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
+	<Mario.Limonciello@amd.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] ASoC: amd: ps: fix inconsistent indenting warning in check_and_handle_sdw_dma_irq()
+Date: Tue, 18 Feb 2025 10:40:00 +0530
+Message-ID: <20250218051000.254265-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FD:EE_|MW4PR12MB6849:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a08bd7b-119a-4d65-3ef5-08dd4fdac5f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xXnu02xJ42OHmza5vpAyRJuAnIfx0s0Zv86Yp3PD1Z54gysSo8NObDfD33gA?=
+ =?us-ascii?Q?hcx04R9dCQS958cCWoMLkSrEeN4mqPX0H36kh+a+k13QAnhel2Wpbk10Gm7b?=
+ =?us-ascii?Q?JpRW3n/3wKW4sYzoCjF4X49WE/PyWcj2ufdpJbywI58Vb84cjZXOFMOS3P+s?=
+ =?us-ascii?Q?+VsN/2XgdDpAcZL9SsoOSL2hBHxsmA3E7FIuV5MCQpVf3DCUQjgvqobo1mCm?=
+ =?us-ascii?Q?lEQ5yTh/51eOVorqnQfoWbl3PrApFV4V3YuvLYiDuDgKHMP4VfDDKggSPhLV?=
+ =?us-ascii?Q?kAWN0HliGiVxc/+JPmsU3sivIRJKRQVw7JCT/6m1Rn7EhiUwtCTvGbraJFvr?=
+ =?us-ascii?Q?liTmyj5tCPoj/PcBAJTkcy9+rd3VBgzxdKyU5mHl4kNKAcy42C6Og3oIHWrx?=
+ =?us-ascii?Q?uyYpU7AbnTnIPQUsTxMJo4QQkLusptZ/zsW+t5D4P28CLb+DNzO9VESWXpnL?=
+ =?us-ascii?Q?G4upm+qpyeE5gi62WwuDAfc0sZC8cA2eVFILbmxKxVxYUzApyau7clLYU6BV?=
+ =?us-ascii?Q?Fr5JWE6Oqg8wQnlrbBHsSBw21ky7qpvbLeFB4lStGbWrwmymTg+ZS0ZbOTAj?=
+ =?us-ascii?Q?WLd1K8U5ssfbSKNWiKRgYu6ASCTuKkQEr0P4B+pjpjYuBauAYKMXX7GAbCw4?=
+ =?us-ascii?Q?ClWdGNs62lqOn1q/kxKg8g7VNzl/uqmf0vhEtdBdVJDChTRz6VpHQ5cI+G2T?=
+ =?us-ascii?Q?A9drToSJ+ySXxPvATcaZLSyjONMl1j3xpjCN39VKhiCtUT8AFF5Fa8LxW4eD?=
+ =?us-ascii?Q?BtCAJA7g1Y3gUXdIzdfe6zk4lRmZ0tucYcs78ks0IP2E9zRqS1sKuoWabX6U?=
+ =?us-ascii?Q?Gul8N+LTW+LY3mhwmaTzf4whLJmMZk/okL8HiOCNYHonB/hemz994SUJ0mqN?=
+ =?us-ascii?Q?A007lj64bSmoTZj2vIUlqv726zQEB8/IdITLEkV6M8YlMnFSZlrR5WVq7uNT?=
+ =?us-ascii?Q?FMXiYPC21uyKwjuJtx/udf6iIWXZPNpEzUXMArwhYLXgqIY13p5Ma1/8FiZb?=
+ =?us-ascii?Q?LrXPHP/DNzWXpofhdxu6Pl4YQL3TTeUW5WxGqoHGFybgQ8W+BHPT0yiIFI05?=
+ =?us-ascii?Q?dmNDjcsWpau79gqnIhmbV0RNoC/MuOxDpwqsiP4Tihs5zblgjWBDva5rdYcW?=
+ =?us-ascii?Q?gElifiTDXv7rdflbwxgZw0o/+UNQGlyXtwKeRc+/Ybl17CUp+4oxHgMvKteb?=
+ =?us-ascii?Q?XsXbdDDcHyfZmjBNTRMNXMADXFkZXM6rPCrnA4wzthBQh7BKB4gkD/1u3Igo?=
+ =?us-ascii?Q?aHhGX4mhdYE1rMVVar0r/1n0kUjOec0SJOEFndfrIeJ0uAZsS2kWT96aPw8Y?=
+ =?us-ascii?Q?8tTDClWKau4nXklznOrPPTuFcBmpIUkVYhElXHWu8xEMQ/3UWlB1Pl87BtrJ?=
+ =?us-ascii?Q?R4AbIODnXCsC1sowvFiq9l4cVSroHjdbT9bA2ARx/WDPnfo48zFJRS12VQIa?=
+ =?us-ascii?Q?n2QtjNK7FJt8ZRuqbpvCGqwcc2P7Ex8Ny3xuiYQoYaHwdAvGbqwMiSzoSEfX?=
+ =?us-ascii?Q?OgL7odL3sYklssM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 05:11:41.8238
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a08bd7b-119a-4d65-3ef5-08dd4fdac5f1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FD.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6849
 
---Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix below inconsistent indenting smatch warning.
+smatch warnings:
+sound/soc/amd/ps/pci-ps.c:68 check_and_handle_sdw_dma_irq() warn: inconsistent indenting
 
-Hi all,
-
-After merging the bitmap tree, today's linux-next build (arm64 defconfig)
-failed like this:
-
-arch/arm64/kernel/topology.c: In function 'arch_freq_get_on_cpu':
-arch/arm64/kernel/topology.c:270:43: error: too many arguments to function =
-'cpumask_next_wrap'
-  270 |                                 ref_cpu =3D cpumask_next_wrap(ref_c=
-pu, policy->cpus,
-      |                                           ^~~~~~~~~~~~~~~~~
-In file included from arch/arm64/include/asm/cpufeature.h:27,
-                 from arch/arm64/include/asm/ptrace.h:11,
-                 from arch/arm64/include/asm/irqflags.h:9,
-                 from include/linux/irqflags.h:18,
-                 from include/linux/spinlock.h:59,
-                 from include/linux/mmzone.h:8,
-                 from include/linux/gfp.h:7,
-                 from include/linux/slab.h:16,
-                 from include/linux/resource_ext.h:11,
-                 from include/linux/acpi.h:13,
-                 from arch/arm64/kernel/topology.c:14:
-include/linux/cpumask.h:317:14: note: declared here
-  317 | unsigned int cpumask_next_wrap(int n, const struct cpumask *src)
-      |              ^~~~~~~~~~~~~~~~~
-
-Caused by commits
-
-  46ac1bec179d ("cpumask: deprecate cpumask_next_wrap()")
-  43f7f920e14e ("cpumask: re-introduce cpumask_next{,_and}_wrap()")
-  65b98ea8b278 ("cpumask: drop cpumask_next_wrap_old()")
-
-interacting with commit
-
-  dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cp=
-u")
-
-from the arm64 tree.
-
-I have applied the following patch for today (which may not be correct).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 18 Feb 2025 15:44:06 +1100
-Subject: [PATCH] fixup for "cpumask: drop cpumask_next_wrap_old()"
-
-interacting with commit
-
-  dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cp=
-u")
-
-from the arm64 tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 4516be370ced ("ASoC: amd: ps: refactor soundwire dma interrupt handling")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202502132134.BlkNw1Iq-lkp@intel.com/
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 ---
- arch/arm64/kernel/topology.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/amd/ps/pci-ps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 6f0cab8e746b..70db234c41a2 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -231,7 +231,6 @@ void arch_cpu_idle_enter(void)
- int arch_freq_get_on_cpu(int cpu)
- {
- 	struct amu_cntr_sample *amu_sample;
--	unsigned int start_cpu =3D cpu;
- 	unsigned long last_update;
- 	unsigned int freq =3D 0;
- 	u64 scale;
-@@ -267,8 +266,7 @@ int arch_freq_get_on_cpu(int cpu)
-=20
-=20
- 			do {
--				ref_cpu =3D cpumask_next_wrap(ref_cpu, policy->cpus,
--							    start_cpu, false);
-+				ref_cpu =3D cpumask_next_wrap(ref_cpu, policy->cpus);
-=20
- 			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-=20
---=20
-2.45.2
+diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
+index 2ff8e67c19bd..221c65ff03c9 100644
+--- a/sound/soc/amd/ps/pci-ps.c
++++ b/sound/soc/amd/ps/pci-ps.c
+@@ -129,7 +129,7 @@ static short int check_and_handle_sdw_dma_irq(struct acp63_dev_data *adata, u32
+ 		if (ext_intr_stat1 & ACP63_P1_AUDIO1_RX_THRESHOLD) {
+ 			writel(ACP63_P1_AUDIO1_RX_THRESHOLD,
+ 			       adata->acp63_base + ACP_EXTERNAL_INTR_STAT1);
+-		       adata->acp63_sdw1_dma_intr_stat[ACP63_SDW1_AUDIO1_RX] = 1;
++			adata->acp63_sdw1_dma_intr_stat[ACP63_SDW1_AUDIO1_RX] = 1;
+ 			sdw_dma_irq_flag = 1;
+ 		}
+ 		if (ext_intr_stat1 & ACP63_P1_AUDIO1_TX_THRESHOLD) {
+-- 
+2.34.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme0FZ4ACgkQAVBC80lX
-0Gw+/Qf/cOZpqJjjGT6gzRR7os4wyXCTQzcnm1R6jYQCafvqwaGBch7H8AnTX7G2
-N7oqfoIHdMJQtG+hpL4yBZhitsuX0CMrCGDsV6oIURF6qSjmwVVNCHCYf6r5kWu0
-uEYU2yNPoxAoTdDEFf/WKztMrSQ+JTrGrEqF4cPQcyNO9N7ECeXxYNs46i/cacMX
-muB/K03pA3ot3ELXzL1gTBYs3iK0u7F7GwGMtf6T3rxUap4uWYF/anlkWm2P5ysM
-Nr6KMOXKn2caXNOZogjqVX6hzWfpZDjqLaCI8ZL8iUsoy0YZh2g2/Y0aY34M2MUM
-tAAXUt/ar2bQGvNXOohpjXwEqe1ytQ==
-=Q9MW
------END PGP SIGNATURE-----
-
---Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d--
 
