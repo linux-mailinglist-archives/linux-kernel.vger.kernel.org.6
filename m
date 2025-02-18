@@ -1,83 +1,80 @@
-Return-Path: <linux-kernel+bounces-520496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC06CA3AA8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:12:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7552A3AA90
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 506EE7A07E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:11:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF331188B2A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DE41AAA1F;
-	Tue, 18 Feb 2025 21:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D582F1C07D5;
+	Tue, 18 Feb 2025 21:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIk1IVgR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeHqxNc8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC2B2862A2;
-	Tue, 18 Feb 2025 21:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC3E286288;
+	Tue, 18 Feb 2025 21:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739913122; cv=none; b=WSA3USMjqgtwUGs1Mn638rwTyuKR8gezZyJ+c9Djw5ibDOCvoxYl0qRJzh7eimJCU+hIILMFe9ivSCT5G4vhEFC2f6q/30hAVyLyeU8+skWwrnwAd2pLLWKYb+VNRQFqMaEJBLCie6I39UeY8Tw6U2XWkyA6AT30TL5VVfyt+8k=
+	t=1739913227; cv=none; b=F3/1snLUfQhdQ48aXLALlpkLWldMqu6Di3vDyOtCkeyREMXXege9nTYDqUjfuu4s52aQeVfKYM5+0zFC7eZNr3pcuCFxBY6mWGbuTp9YpYw6fcWg0AwtevkL7q65Mpd7D+eH3q0XE35oieywJbJ+pfUGnlMgjJRhhIzWIbAV+Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739913122; c=relaxed/simple;
-	bh=OTxnb6SXacyVo1Q7SBxbvVscuy14TZzGqRxzd1B2ZyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ujc/sSUMdozaFKjQKygNeR9Ak0n+HPkj+X3IG5BkIZJm+txpqM1M0YouKikTAfAnsdyRBOb3yjCl4hV66W+WSmHS7kok2ITUXzuLYkRy9+jdwBQvsI7oPrXKGuE4mpQKzQEHCv4T+ylQ0OEsJ91IWXbCOl9hAdveyQp7GqUSkUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIk1IVgR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5BAC4CEE2;
-	Tue, 18 Feb 2025 21:12:01 +0000 (UTC)
+	s=arc-20240116; t=1739913227; c=relaxed/simple;
+	bh=KATj1qETJsGK0zJSt9LilsCAIoK6W52KCkD9Mf6B7WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I4zccrN2eUhGjaR6JfcrVzD+AK4298fr7HHU+z3tt/QW2Jaket2IVqDtgCl7hV/PIfa769hmMKvgcJOsrbcCl/toLzFMAdYpbHUug+lMs5Mh7rPngML088ljYOmhzTQEAAZTGmUT2rWLMOjnNPG2VPcMUGPN8IOlaFfEcMdSFDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeHqxNc8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF12C4CEE2;
+	Tue, 18 Feb 2025 21:13:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739913122;
-	bh=OTxnb6SXacyVo1Q7SBxbvVscuy14TZzGqRxzd1B2ZyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIk1IVgR4ivS4+m2fiDyB3CHu0Xy5vOwJUmA1Vwr1pWNGaw8EzgUmcx+jYwiLnY72
-	 gf9IKiefw6/EJulqEe1FUS1uVGyrq2OeA8ogCCUGdDIRDqybeP0Edh9gTjYdh+Cmyt
-	 q7++61gHWKamEvNPd0jgtgTiwQNQ+dsD/GVU9+82/4e+Xajg/V4xbqBAyUemY6dA2q
-	 zGt4SpwF59jdpCUP2yj5yhKkzEfBcqHNqhtTZTO5IrdMUR7IxqqyPJrSsuyX4E2fLo
-	 /gRbMTMlm38mqWB0Kc6/HuMoHTZG08ZovOOVKX8BhtLM3+pFE1GqfSI7LFTsqIeCRO
-	 Bd3KXm8iPXQVQ==
-Date: Tue, 18 Feb 2025 15:12:00 -0600
-From: Rob Herring <robh@kernel.org>
-To: Siddharth Menon <simeddon@gmail.com>
-Cc: devicetree@vger.kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, baolin.wang@linux.alibaba.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: hwlock: Convert to dtschema
-Message-ID: <20250218211200.GA991534-robh@kernel.org>
-References: <20250218161352.269237-1-simeddon@gmail.com>
+	s=k20201202; t=1739913226;
+	bh=KATj1qETJsGK0zJSt9LilsCAIoK6W52KCkD9Mf6B7WI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZeHqxNc8bB/srOb5IZAdB6hIGh+lIBakxW6jGaleTqmLJtXX/PoU4F5jvduRIBvU7
+	 nNHvDambushh2Xgcz3ERD3Dy4yEUlOdVXVAdWbSg06PYP1iRni9trJXUx4W2MhsNVx
+	 l7ewzbo/g5ITFSXALogYxPbiaOkPpcSpX+gZ7H0wnZpMcoF92sTqT6cid5/782/Fh9
+	 rbN5ATVPkgU4fkDwlB19mCZQj/dm6Awayo7fxAWbX68gLDOSUoMwB28xO9V8olFcrh
+	 mneNxfpK9p96IetlXZ28Nb4R01WQe4PtClMW19c8ShWVdFy4PZmXZuK/OBj6whDUn6
+	 qxj8N6gH+rPrA==
+Date: Tue, 18 Feb 2025 13:13:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
+ <gustavo@embeddedor.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <20250218131345.6bd558cb@kernel.org>
+In-Reply-To: <59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
+References: <Z6GCJY8G9EzASrwQ@kspp>
+	<4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
+	<8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
+	<7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
+	<5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
+	<36ab1f42-b492-497f-a1dc-34631f594da6@lunn.ch>
+	<59b075bc-f6e6-42f0-bc01-c8921922299d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218161352.269237-1-simeddon@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 09:39:35PM +0530, Siddharth Menon wrote:
-> From: BiscuitBobby <simeddon@gmail.com>
-> 
-> Convert the generic hwspinlock bindings to DT schema.
-> ---
->  This is my first time converting bindings to dt schema, please let me
->  know if I have overlooked anything.
->  .../devicetree/bindings/hwlock/hwlock.txt     | 59 -----------------
->  .../devicetree/bindings/hwlock/hwlock.yaml    | 65 +++++++++++++++++++
->  2 files changed, 65 insertions(+), 59 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.txt
->  create mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.yaml
+On Tue, 18 Feb 2025 17:53:14 +0200 Tariq Toukan wrote:
+> Maybe it wasn't clear enough.
+> We prefer the original patch, and provided the Reviewed-by tag for it.
 
-The consumer side lives in dtschema already. Please add the provider 
-side there too. Patches to devicetree-spec@vger.kernel.org or GH PR are 
-fine.
-
-For the descriptions, you'll need to relicense the text in hwlock.txt to 
-dual GPL/BSD. You will need TI's permission for that.
-
-Rob
+Can you explain what do you mean by "cleaner"?
+I like the alternative much more.
 
