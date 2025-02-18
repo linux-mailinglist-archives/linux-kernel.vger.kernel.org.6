@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-518856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98925A39543
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:27:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F12CA39575
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307AD7A05A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E33B6928
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79869211499;
-	Tue, 18 Feb 2025 08:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C938E22B8DB;
+	Tue, 18 Feb 2025 08:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3r4LZVw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zhUQ+e6H"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0221A841B;
-	Tue, 18 Feb 2025 08:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561722B8BE;
+	Tue, 18 Feb 2025 08:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867150; cv=none; b=IAkuEcpiAFAYhzb2LcNfGL+YCvbTedjcocrxGrZDPIKVk3TDLsX7wdKMtbC+C27qkDTGjTIJaIMSebqXyKH+0oz27bVxHgxAWmHqhlVY8NumCMvQiViVVYPQAp/GE7HVrE2tDuXUg+snsVe4k7GLRfD2EvRfpQo4IvcqN2M3M4w=
+	t=1739867168; cv=none; b=NdOtmBmF7j508RZr+KvYl2BV47KyTOhT/uA+t4+QqMLqVnrRnKd3712ssutnYv4tcY+v6GbxgXl+j71MkSJDIHb0Rjs1EBDGiNZzY4ilUGQ75Qlxx4/CdSSoVeOrf4jtmMy/RjnIzbu8BiFcUvR4q3zwd/fPORkMxqywlyt3awc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867150; c=relaxed/simple;
-	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1l1FDXY72pPhwogVPO8gG67DNI4NezrgPDvGteJVIGnw3dJZI/vxPJ7rHP96ux4VCqtmlaJ2i4E0g2iqU8SFhrmLAmXpToGXhEXnNb+OEPCCcvhFJbx7+mWbYuyaV7FgPxzzPCTg0Uut0Eiv2koMiwp4nTKAtNfRaqpJpFBpjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3r4LZVw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7A8C4CEE2;
-	Tue, 18 Feb 2025 08:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739867150;
-	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X3r4LZVwnWLy/POh9hH3tZRQxKLNC1XClRyAHPbp2o1mm4xMHA4MRjgdRBRszn8tX
-	 y7VJKFLeiz+p+r2UUM82Nptn726NNgkG/JuPjxcYYDTQIRneYDE/hKbRtXngp00Fph
-	 g68+Z3QiTUgGQfW6oOOEGwZmsYRwJLkvJ8xXh0IItNPlFBaBjArVl8TDhPv76WXnuD
-	 xxv2EdFS64ShgdI6qiezKwfEqLbBNmWw98LM9ys50zz9t3GqWgDmXWlOIV4jB5WlkT
-	 GASt9J1eAtYDKfm+/6e9gfIP5l47Q3ERmlNZx4TuosVJPnKlT/9byu1o0WovsunJJK
-	 ExYJsVmS1wKEQ==
-Date: Tue, 18 Feb 2025 09:25:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: jiebing chen <jiebing.chen@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
-	shuai.li@amlogic.com, zhe.wang@amlogic.com
-Subject: Re: [PATCH v2 2/5] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
-Message-ID: <20250218-opalescent-teal-of-patience-82cecb@krzk-bin>
-References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
- <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
+	s=arc-20240116; t=1739867168; c=relaxed/simple;
+	bh=6+V3lp5W22nRBogzJ+Ne1Q5jwm+N2HfbNVp8+d6wAmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VQqaNseWIraIvWYO0x4oYG6HXSbBiUKWpZLy7JbWZZqY6lZhV2IPGxgGRidZsUapbYw2Zo/lCwvZhr2MiQdhRZ6veNjabF71uwSAxLYhnCu7hN0G4/1Hi9+KIbIaHyVAMUtHhAjWJ/FboLuG03CDAyhZEi3R3xIP2yR7tcpHQww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zhUQ+e6H; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:References;
+	bh=FkUCjxz9vjqxLei0utw3tRN3Rl77dSlMqLgpoQD9LSw=; b=zhUQ+e6HSttPyyE2/vmwfPYv33
+	X+w/gXVba5sH/Xs9XQ6XLUasYNrzvNvxOvX7Nb/XdZlh4iIa94HDOCqLQ+o/ZIVmxhCScLRN/MzTw
+	YxQy84GMZef8zz4k+rqrdU5SeKL29sLd3kN1Ez5nhGt39B+KHRdlw5Wgx89hjcwDX55Oev9byfxVQ
+	ko5eHRSUOjD80H85xR8DfMNvPlQRqotlBiVOgI2YbOZDuzxYfHaI1V0xUklb6YTAQpVD2p3GTLDH2
+	44PtrClYGsMkeWE0CHFmCANkhTCwyZs4rxxz8RR8mhke5UaII8tGB9vd1jJxb7c1JfQouNLYAxfZt
+	0tWPxfew==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkIve-00000007GjS-2N6c;
+	Tue, 18 Feb 2025 08:26:06 +0000
+Date: Tue, 18 Feb 2025 00:26:06 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/2 v9] reclaim file-backed pages given POSIX_FADV_NOREUSE
+Message-ID: <Z7REHrJ3ImdrF476@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
+In-Reply-To: <20250212023518.897942-1-jaegeuk@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Feb 14, 2025 at 10:13:41AM +0800, jiebing chen wrote:
-> add the s4 tocodec compatible
+This still has a file system sysfs HACK, you're still not Ccing the
+right list, etc.
 
-1. Please write full sentences.
-2. We see that from the diff. Say something about hardware instead.
+Can you pleae at least try to get it right?
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
+On Wed, Feb 12, 2025 at 02:31:55AM +0000, Jaegeuk Kim wrote:
+> This patch series does not add new API, but implements POSIX_FADV_NOREUSE where
+> it keeps the page ranges in the f2fs superblock and add a way for users to
+> reclaim the pages manually.
 > 
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
->  Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Change log from v8:
+>  - remove new APIs, but use fadvise(POSIX_FADV_NOREUSE)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-> index 23f82bb89750898d20c866015bc2e1a4b0554846..ea669f4359bc81b0f45bc2105c832fc2b11d8441 100644
-> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-> +++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-> @@ -26,6 +26,7 @@ properties:
->        - items:
->            - enum:
->                - amlogic,sm1-toacodec
-> +              - amlogic,s4-toacodec
-
-Keep alphabetical order.
-
-Best regards,
-Krzysztof
-
+> Jaegeuk Kim (2):
+>   f2fs: keep POSIX_FADV_NOREUSE ranges
+>   f2fs: add a sysfs entry to reclaim POSIX_FADV_NOREUSE pages
+> 
+>  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++
+>  fs/f2fs/debug.c                         |  3 +
+>  fs/f2fs/f2fs.h                          | 14 +++-
+>  fs/f2fs/file.c                          | 60 +++++++++++++++--
+>  fs/f2fs/inode.c                         | 14 ++++
+>  fs/f2fs/shrinker.c                      | 90 +++++++++++++++++++++++++
+>  fs/f2fs/super.c                         |  1 +
+>  fs/f2fs/sysfs.c                         | 63 +++++++++++++++++
+>  8 files changed, 246 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.48.1.601.g30ceb7b040-goog
+> 
+> 
+---end quoted text---
 
