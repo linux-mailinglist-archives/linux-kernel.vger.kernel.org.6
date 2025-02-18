@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-519552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE23A39E01
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:54:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31DCA39DF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318AB3AE054
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11F118947F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BD5269B10;
-	Tue, 18 Feb 2025 13:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fekQPKrh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386E1238D42;
-	Tue, 18 Feb 2025 13:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E592690C0;
+	Tue, 18 Feb 2025 13:51:04 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BB3238D42;
+	Tue, 18 Feb 2025 13:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739886583; cv=none; b=fEp7nkM5SJwgSsPmwRMYTHug9IGPu8+n0YR+8jjKQq4zM7MLXSzlUM8rFo+lvqjYJ9tO0SOXGCq72qySRc15LY3aVGICnyDdwfsrspliCJtUj0hqDb6/lG4taDPEcVzw1eFIzIPg86zQQjgxSGkN0yIj9m/Tes/gM6g+dOS3Jec=
+	t=1739886664; cv=none; b=ht93FRXFRPxAmKEr99PPHW4SL2hz7zRD07OdB5DhZlVSMAWeRZr6DdDw2/iNgt/CeEqqDLOECyX5ZVIRjKHwb/kYXoN8PyYfOZ5fR1wmwpSCabndZdwnxfcDTgUGYzKrkfXYjgEMoDSrH86RprowOrtZUw5RZ7+k0ONtsvYbGkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739886583; c=relaxed/simple;
-	bh=vRF8JzY74YazteXKwI2mCLdrMdSGMAdrzF1hKbK8Oo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MWkPCuntn0bPVIUtVV32ckM1hUgfsiMd66P8K9ICmbD3ql0mY6+omLPxPiMulEX1q8wfcUJ1eTAFZOMGaWkZkpWRcrpyKDhTXNSKp9tpnEw+CIpYphTvQKnb/Hfp9oz5G0n7l2IXtiqbc1g4Y9/DIZzoiDLDd4fPwQvmI0TD+D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fekQPKrh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1739886576;
-	bh=vRF8JzY74YazteXKwI2mCLdrMdSGMAdrzF1hKbK8Oo8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fekQPKrhIX/5GWCwIXA86FBsps+grinbeUQ87+y38B51FJELe0ca78Th5kBfqedjq
-	 Fbr5MZDFxAACtcjYrIvf4RMDKF+hpGxdinpAqMxQSwqUNtTJddRx2VWyi223xeiZL1
-	 eV+fXNyTng9SzzjylUlK3W55evWbC705aFKSHSbrSk0YVuZhofAMaaUAmzM4BV6Rn9
-	 voOmowWhVb9t2pnU3oqssJReGj8k/GYPGYq0QKzr+pJbRctZuc+s+5xcuWglSLGxIl
-	 J9J0TghQLGlBb4Ax2YbF1zCdTQ/VkzoS1//3lto6g8Sk4JCOnfAtOpZ8FXhoWLnjQ9
-	 3YIH/Il6KEecw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yy19D2lskz4wbp;
-	Wed, 19 Feb 2025 00:49:36 +1100 (AEDT)
-Date: Wed, 19 Feb 2025 00:49:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bitmap tree
-Message-ID: <20250219004934.46ace766@canb.auug.org.au>
-In-Reply-To: <Z7RiVtunqI9edfK4@arm.com>
-References: <20250218160742.49d6ab76@canb.auug.org.au>
-	<Z7RiVtunqI9edfK4@arm.com>
+	s=arc-20240116; t=1739886664; c=relaxed/simple;
+	bh=Svyq+hoIa69MUfHkJrjLQz9GxkX+VevwbxKnKao3l+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEBtyftNLzsAbNSeCYlAzWqpLSt0CZTKReKDrI1eabkjn7DdDhjFJVzD7tioPOsp10aJq6sm5CqNa9lXkyx/NN5+7MY6+8ioY3kAZG/6SjAJqXs3pAcbnPbgzt8tlb8AmYvd1UlcCtBjC7zsO0UFrugjQz5E/vP6ayeIwGWOXt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tkO01-00054x-00; Tue, 18 Feb 2025 14:50:57 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id AD83BC0135; Tue, 18 Feb 2025 14:50:46 +0100 (CET)
+Date: Tue, 18 Feb 2025 14:50:46 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Marco Crivellari <marco.crivellari@suse.com>,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>
+Subject: Re: [PATCH v2 1/1] MIPS: Fix idle VS timer enqueue
+Message-ID: <Z7SQNhL0FYGkX0Ng@alpha.franken.de>
+References: <20250218090203.43137-1-marco.crivellari@suse.com>
+ <20250218090203.43137-2-marco.crivellari@suse.com>
+ <Z7R2GqWOufd8l6NZ@alpha.franken.de>
+ <CAAhV-H7ygGqCYyQf_tvFrgEBR6uva35auGP9yhxQFqw4mpQBwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H7ygGqCYyQf_tvFrgEBR6uva35auGP9yhxQFqw4mpQBwA@mail.gmail.com>
 
---Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 18, 2025 at 08:14:43PM +0800, Huacai Chen wrote:
+> Hi, Thomas,
+> 
+> On Tue, Feb 18, 2025 at 7:59 PM Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de> wrote:
+> >
+> > On Tue, Feb 18, 2025 at 10:02:03AM +0100, Marco Crivellari wrote:
+> > > MIPS re-enables interrupts on its idle routine and performs
+> > > a TIF_NEED_RESCHED check afterwards before putting the CPU to sleep.
+> > >
+> > > The IRQs firing between the check and the 'wait' instruction may set the
+> > > TIF_NEED_RESCHED flag. In order to deal with this possible race, IRQs
+> > > interrupting __r4k_wait() rollback their return address to the
+> > > beginning of __r4k_wait() so that TIF_NEED_RESCHED is checked
+> > > again before going back to sleep.
+> > >
+> > > However idle IRQs can also queue timers that may require a tick
+> > > reprogramming through a new generic idle loop iteration but those timers
+> > > would go unnoticed here because __r4k_wait() only checks
+> > > TIF_NEED_RESCHED. It doesn't check for pending timers.
+> > >
+> > > Fix this with fast-forwarding idle IRQs return address to the end of the
+> > > idle routine instead of the beginning, so that the generic idle loop
+> > > handles both TIF_NEED_RESCHED and pending timers.
+> > >
+> > > Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> > > ---
+> > >  arch/mips/kernel/genex.S | 39 +++++++++++++++++++++------------------
+> > >  arch/mips/kernel/idle.c  |  1 -
+> > >  2 files changed, 21 insertions(+), 19 deletions(-)
+> > >
+> > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > > index a572ce36a24f..9747b216648f 100644
+> > > --- a/arch/mips/kernel/genex.S
+> > > +++ b/arch/mips/kernel/genex.S
+> > > @@ -104,25 +104,27 @@ handle_vcei:
+> > >
+> > >       __FINIT
+> > >
+> > > -     .align  5       /* 32 byte rollback region */
+> > > +     .align  5
+> > >  LEAF(__r4k_wait)
+> > >       .set    push
+> > >       .set    noreorder
+> > > -     /* start of rollback region */
+> > > -     LONG_L  t0, TI_FLAGS($28)
+> > > -     nop
+> > > -     andi    t0, _TIF_NEED_RESCHED
+> > > -     bnez    t0, 1f
+> > > -      nop
+> > > -     nop
+> > > -     nop
+> > > -#ifdef CONFIG_CPU_MICROMIPS
+> > > -     nop
+> > > -     nop
+> > > -     nop
+> > > -     nop
+> > > -#endif
+> >
+> > My quick search didnn't find the reason for the extra NOPs on MICROMIPS, but
+> > they are here for a purpose. I might still need them...
+> The original code needs #ifdef CONFIG_CPU_MICROMIPS because nop in
+> MICROMIPS is 2 bytes, so need another four nop to align. But _ssnop is
+> always 4 bytes, so we can remove #ifdefs.
 
-Hi Beata,
+ic
 
-On Tue, 18 Feb 2025 11:35:02 +0100 Beata Michalska <beata.michalska@arm.com=
-> wrote:
->
-> I'm currently testing a proper fix for that one.
-> Should I just send it over as a diff to apply or rather a proper 'fixes' =
-patch?
+> > > +     _ssnop
+> > > +     _ssnop
+> > > +     _ssnop
+> >
+> > instead of handcoded hazard nops, use __irq_enable_hazard for that
+> No, I don't think so, this region should make sure be 32 bytes on each
+> platform, but __irq_enable_hazard is not consistent, 3 _ssnop is the
+> fallback implementation but available for all MIPS.
 
-Maybe a proper 'fixes' patch, please, if easy - otherwise a diff is
-fine.
+you are right for most cases, but there is one case
 
---=20
-Cheers,
-Stephen Rothwell
+#elif (defined(CONFIG_CPU_MIPSR1) && !defined(CONFIG_MIPS_ALCHEMY)) || \
+        defined(CONFIG_CPU_BMIPS)
 
---Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+which uses
 
------BEGIN PGP SIGNATURE-----
+#define __irq_enable_hazard                                             \
+        ___ssnop;                                                       \
+        ___ssnop;                                                       \
+        ___ssnop;                                                       \
+        ___ehb
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme0j+4ACgkQAVBC80lX
-0GwXMwgAjDpwWkSJwD9hoUF3HJO8eMHIesZMOJqwSLiNFspJHxiSsB6RHiiBJQVC
-9Xz4mUh+VPEQnjshBMpHUyOBkIp+UybxJbgGGnSUhnIoJFmizige5DmheilyCvHA
-cZd47lBGTVSdLN/GBEs5tODxjraHnXSCw9bqLgZKYS1GZSpQ7S5CNUGpGB81UkKd
-bs1EQ+cdeuyX8o0XTJw2izkzZpunFhwFi7pRxu/7lS57g3SU/+eCzhIBLZAXH3Vt
-NRIbtV5aVTFHRFF0RcpuSMNOsRz/VLnVl04/doWZxA5B+6smyssz/IfA8dX8yo6v
-k3FqxTSuq3ZiSDKHp+8IlyBot3MTIw==
-=1bS+
------END PGP SIGNATURE-----
+if MIPSR1 || BMIPS needs "rollback" handler 3 ssnnop would be wrong as
+irq enable hazard.
 
---Sig_/9X/Z_Q_W0TZ01fGC.JTefxJ--
+> > But I doubt this works, because the wait instruction is not aligned to
+> > a 32 byte boundary, but the code assuemes this, IMHO.
+> Why? After this patch we only use 4 byte instructions.
+
+I've should have looked at the compiled output, sorry for the noise
+
+Still this construct feels rather fragile.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
