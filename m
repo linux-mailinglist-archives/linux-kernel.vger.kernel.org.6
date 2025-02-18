@@ -1,168 +1,173 @@
-Return-Path: <linux-kernel+bounces-518905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD4BA395E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:46:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F20A39604
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C291898409
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:44:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B21A1779AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D6822FDEE;
-	Tue, 18 Feb 2025 08:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E28B22CBD8;
+	Tue, 18 Feb 2025 08:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtcEA10d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="D1gbhU93"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6540922E00E;
-	Tue, 18 Feb 2025 08:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8F22D4D9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739868158; cv=none; b=EM0HMgOmGrBav2A91mpBmFBmy4nQMOWPTjsoCjaQPP0NzRZ/gAq04IiYU/BOtsXXE3jStTBH0bL7XJl8LAMTwz2bpNFG3BwKI/36LKsYKeDjZS4WY/CWBI9N7LqVB628YRHtTJA/NOLQlFS7ArtrOZHDlor21QkpXW40GUpgGmM=
+	t=1739868070; cv=none; b=IDjTwA5ZRh5JeiROa6SwD/DYsSVUEw1NZ8rZZrI08ejM/rbZkwOg28IXf/V03PLsGcV8je5xmzUevFHFd8FbqgdG/Pm/CC+B8zYVrIlIEfvW8a+36BZBj6M4SXts9c5AdJeS8nF2e4BiN677FQYUf3CdT+VsnXbB3CNJD+0dFyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739868158; c=relaxed/simple;
-	bh=IRJMwmgzOFNxmUBfeQTrD+oa8rPnhXa3yiox7PonBmo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c+hP05O2U72PoQMYos6nDb0EXdwt+dlFBKjf3en2/I9QdTNmXn7GwdZZIL7J0EdKwFTXG1RpvnzCkcZcqMOFkz0n9oBWHNHE9HFk8TzzXZ9ZGWB1RSUFcl882CzPdf7UbiD40Cq+3mrRBUK06wzl4RUwShvcgyfdermCEkt2jnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtcEA10d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CBADC4CEE2;
-	Tue, 18 Feb 2025 08:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739868157;
-	bh=IRJMwmgzOFNxmUBfeQTrD+oa8rPnhXa3yiox7PonBmo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EtcEA10dRrCBuV5qVNJANROtXj7bJjYrPr1UjmVWGdzmq5Ffpo1G5CyOap1gUUx1F
-	 NBc4B8n2UUHiKhwL5Wak6z3/xi0pD/FeiJHhPMa1fw4gWrhXwIARrJDe8EqUvTSIuj
-	 FRVDYkn17YjHh2KSpWGKp4eM25Q4u+sUNOjawSyv5HSEK1sBOA3PGT0r9Uv6DYzMRV
-	 Zw0udL5uSuBvsUKP6IszPRUyomnjJ9Mp+h62eZqB2zKMe3XWUiRfmta5e5FBWKoCF5
-	 Sz7K2AfVEdA8HoYxf0B8s5ZshjTp4sfv9lwgWPtiDRplCr+ntH9owd0ALV65g0OqIm
-	 Su7z/TBa3VbGg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Joel Becker" <jlbec@evilplan.org>,
-  "Christoph Hellwig" <hch@lst.de>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Ingo Molnar" <mingo@redhat.com>,  "Will Deacon"
- <will@kernel.org>,  "Waiman Long" <longman@redhat.com>,  "Fiona Behrens"
- <me@kloenk.dev>,  "Charalampos Mitrodimas" <charmitro@posteo.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] rust: configfs: introduce rust support for configfs
-In-Reply-To: <354dbebd-b211-4e8f-a181-8fbacb0e89c8@proton.me> (Benno Lossin's
-	message of "Mon, 17 Feb 2025 23:04:39 +0000")
-References: <20250207-configfs-v2-0-f7a60b24d38e@kernel.org>
-	<20250207-configfs-v2-2-f7a60b24d38e@kernel.org>
-	<S6DKlLVx4KKevl_q2zrW69Z7oS0jwyX4DXpDZrFiIy1lKo4VYHM52aDiV82c2yf52Ecr7t9FayuqBUPR9onvZA==@protonmail.internalid>
-	<dd63fcde-ba4c-4a6e-9bde-1af5af37e91b@proton.me>
- <87h64su8ux.fsf@kernel.org>
-	<Kkrr23DbfvS1nChcwAfhrogDdCOO92FQ2-9JUCab-_6CREP4iBX8k1KuxaJb-yv_ErGv9TbzDWwBZHvaszFS7w==@protonmail.internalid>
-	<bfd79db6-bd79-4187-8577-3ae412f36f35@proton.me>
- <87bjv0u5j0.fsf@kernel.org>
-	<tcJpvFhkOFzCzmninRJkr73k-06Rk0phzD0fSRQqeLPcGS9dR06GpRzWI-xxIhnRksFDhfNaLsrI-YfpraVcZg==@protonmail.internalid>
-	<354dbebd-b211-4e8f-a181-8fbacb0e89c8@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Feb 2025 09:40:53 +0100
-Message-ID: <87eczvhch6.fsf@kernel.org>
+	s=arc-20240116; t=1739868070; c=relaxed/simple;
+	bh=aIQB0ryPbjTFqrvujq0NG69gPIMMvN6Asu30Bhr0HOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aktXWruy8Gt6Vb1PSnjIkF0TgmfAo7WxVWBFu3C+72gSWVYokMra2xcpqXE5uqyv4GJVRnhAPot9nqWJapGarM6bgogxpPkxl61JZjKv+P3yKjva+WUqQR+R5ZIpJwckdkLvLWcAlKE0Wl87dPWeu3ilbSU+pmjr1fC9fxiFyZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=D1gbhU93; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so5146755a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1739868066; x=1740472866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lv/mXKWMKUfLoohDMfoS7J+NTI2dz/TZ4RnHEggjlBE=;
+        b=D1gbhU935judHdBWDbwuW8fW+XmPdtaPY4HvwQTbn41XKcOwcdhq21Jx2BHQXkm/vx
+         BqNBWhm2fttNTS1+gadmo7Yyu9K0BvUjnVM+Ky36iClbstdBORZ903i1iZpPpAEIe6lI
+         Pz+dkb8mGf2lG56JIPr+7oJ0oRSMpjRG2eb5+bgTP6TatEeaPz/Zh+5K9JsQqz/y6gmg
+         Tyb9heyKIwEV9kIvna8MNHNN0GnmM0XWmgd8xejPWwbilAIUgXyHhAc8mW/cdHIgUrFe
+         KX/8ZUIuV9n7cF7Yd2hd5IWWNuvKUbpb2uJDrTB+wCc42G+XzYTfqZftj/nkFq+Got/D
+         dmdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739868066; x=1740472866;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lv/mXKWMKUfLoohDMfoS7J+NTI2dz/TZ4RnHEggjlBE=;
+        b=WjHwcvLp3DWtnsFYej1lsBodJRt95JHJlBvSYTHyaontrr+EB6Rvk6cX+LQyuR6mpM
+         vxcW5SZrpswqi28tXVL9VPXVcnImOAr5+9UINnzcGLL8PuPH6ZutpjaJHNnM1sxqpRgk
+         yeMghHkvCyiTT99LZ5uBrZku2hjCEzITlaCGkHlY3IQWHp9wCN8oZRhVuVJ1kwlkh6o1
+         EcFadjnwIsmRfoQZEBpJrM994oPPssGNdrMjbIaVt5wrulDcmWAkdLvW5qxNlbrAuFG7
+         Wid2wHouJl3ryLgiPuhtFCeMbJSY/YcHT0M33VthkITKdwtLCIOVu9N4iwPXScEQLEHW
+         EhGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF+lhkGFUvaWAC95sJpdazVHA3ojcwRCQhTs9e4+T+LaTzmFaZij4LDsaMU29Vmypaqa3LkIeReogwU7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEr3oX1O/Vf4dS4ZJbYPBq1UToYwJeq5KMZqwVW0BXFWnaw3FD
+	HnZJkzfQ6D3lxthpwDJvJRHJ9U+LMV76Na6NFG2asKycV6y/2C3zU2ShCvrxF88=
+X-Gm-Gg: ASbGncsxLas0Yq6KydDDMjKBG8XiGM5ZMuWo/hHzfvIHLCLbU/Ag/yToBm6cW1YuRq8
+	Ig6iEVxtAQRHMrQDCot2e/St/tuewGzQ+kM8VzvrRwp4cvroIBMMllwQ5NsjaS/RDt6Qd5+WqXj
+	LhgPGw7+BH/kL1SxjvWRdcTh68kDLEh1QUodoAJzdpesy1baDg0yC2FFYC7exeZQIcek/caUevE
+	KVTbm6aldytTpyVHikkQtMAEaXs9rtOdisVUv47q8cUK0zJHCMHydCNMSuCG9vW3fY7U+MlawZA
+	DqUm4I9QiFxQtwyH5/0ve1g=
+X-Google-Smtp-Source: AGHT+IESJYF9ZfQnOU6rdJpLeVFJ0jmKCKyIk4s175nUK6ewa/oKH2Y+cggyLDQb+JelZTRVjqvbag==
+X-Received: by 2002:a17:907:d204:b0:abb:b249:4410 with SMTP id a640c23a62f3a-abbb249464amr346278966b.39.1739868064851;
+        Tue, 18 Feb 2025 00:41:04 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.25])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb961594absm384261766b.111.2025.02.18.00.41.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 00:41:04 -0800 (PST)
+Message-ID: <05f1e875-0068-4b3a-a400-e906605a3cda@tuxon.dev>
+Date: Tue, 18 Feb 2025 10:41:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] ARM: dts: microchip: sama7d65: Add DMAs to sama7d65
+ SoC
+To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, vkoul@kernel.org, wim@linux-watchdog.org,
+ linux@roeck-us.net
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-watchdog@vger.kernel.org
+References: <cover.1739555984.git.Ryan.Wanner@microchip.com>
+ <78da4125a991c6f4081fce78825f1f983091e0f5.1739555984.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <78da4125a991c6f4081fce78825f1f983091e0f5.1739555984.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hi, Ryan,
 
-> On 17.02.25 13:20, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>> On 17.02.25 12:08, Andreas Hindborg wrote:
->>>>>> +
->>>>>> +/// A `configfs` subsystem.
->>>>>> +///
->>>>>> +/// This is the top level entrypoint for a `configfs` hierarchy. To=
- register
->>>>>> +/// with configfs, embed a field of this type into your kernel modu=
-le struct.
->>>>>> +#[pin_data(PinnedDrop)]
->>>>>> +pub struct Subsystem<Data> {
->>>>>
->>>>> Usually, we don't have multi-character generics, any specific reason
->>>>> that you chose `Data` here over `T` or `D`?
->>>>
->>>> Yes, I find it more descriptive. The patch set went through quite a bit
->>>> of evolution, and the generics got a bit complicated in earlier
->>>> iterations, which necessitated more descriptive generic type parameter
->>>> names. It's not so bad in this version after I restricted the pointer
->>>> type to just `Arc`, but I still think that using a word rather a single
->>>> letter makes the code easier to comprehend at first pass.
->>>
->>> Makes sense. I'm not opposed to it, but I am a bit cautious, because one
->>> disadvantage with using multi-character names for generics is that one
->>> cannot easily see if a type is a generic or not. Maybe that is not as
->>> important as I think it could be, but to me it seems useful.
->>
->> If you use an editor with semantic highlighting, you can style the
->> generic identifiers. I am currently trying out Helix, and that is
->> unfortunately on of the features it is missing. Can't have it all I
->> guess.
->
-> That is true, but there are a lot of places where Rust code is put that
-> aren't my editor (git diffs/commit messages, mails, lore.kernel.org,
-> github) and there it'll become more difficult to read (also people might
-> not have their editor configured to highlight them).
->
-> So I think we should at least consider it more.
+On 14.02.2025 20:08, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Add DMAs to the SAMA7D65 SoC device tree.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi | 32 +++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> index d06a51972d363..b472a7d929ee4 100644
+> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> @@ -9,6 +9,7 @@
+>   */
+>  
+>  #include <dt-bindings/clock/at91.h>
+> +#include <dt-bindings/dma/at91.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> @@ -95,6 +96,17 @@ chipid@e0020000 {
+>  			reg = <0xe0020000 0x8>;
+>  		};
+>  
+> +		dma2: dma-controller@e1200000 {
+> +			compatible = "microchip,sama7d65-dma", "microchip,sama7g5-dma";
+> +			reg = <0xe1200000 0x1000>;
+> +			interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+> +			#dma-cells = <1>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 23>;
+> +			clock-names = "dma_clk";
+> +			dma-requests = <0>;
+> +			status = "disabled";
+> +		};
+> +
+>  		sdmmc1: mmc@e1208000 {
+>  			compatible = "microchip,sama7d65-sdhci", "microchip,sam9x60-sdhci";
+>  			reg = <0xe1208000 0x400>;
+> @@ -107,6 +119,26 @@ sdmmc1: mmc@e1208000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		dma0: dma-controller@e1610000 {
+> +			compatible = "microchip,sama7d65-dma", "microchip,sama7g5-dma";
+> +			reg = < 0xe1610000 0x1000>;
 
-There is a trade-off to be made for sure.
+There is an extra space b/w < and 0x. I can adjust while applying.
 
->
->>>>>> +                    // SAFETY: We are expanding `configfs_attrs`.
->>>>>> +                    static [< $data:upper _ $name:upper _ATTR >]:
->>>>>> +                      $crate::configfs::Attribute<$attr, $data, $da=
-ta> =3D
->>>>>> +                        unsafe {
->>>>>> +                            $crate::configfs::Attribute::new(c_str!=
-(::core::stringify!($name)))
->>>>>> +                        };
->>>>>> +                }
->>>>>> +            )*
->>>>>> +
->>>>>> +
->>>>>> +            const N: usize =3D $cnt + 1usize;
->>>>>
->>>>> Why do we need an additional copy? To have a zero entry at the end fo=
-r C
->>>>> to know it's the end of the list? If so, a comment here would be very
->>>>> helpful.
->>>>
->>>> Yes, we need space for a null terminator. I'll add a comment.
->>>>
->>>> We actually have a static check to make sure that we not missing this.
->>>
->>> Where is this static check?
->>
->> In `Attribute::add`:
->>
->>         if I >=3D N - 1 {
->>             kernel::build_error!("Invalid attribute index");
->>         }
->
-> Ahh I see, would be also nice to have a comment there explaining why the
-> check is `>=3D N - 1`.
-
-I'll add a comment =F0=9F=91=8D
-
-
-Best regards,
-Andreas Hindborg
-
-
+> +			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+> +			#dma-cells = <1>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 21>;
+> +			clock-names = "dma_clk";
+> +			status = "disabled";
+> +		};
+> +
+> +		dma1: dma-controller@e1614000 {
+> +			compatible = "microchip,sama7d65-dma", "microchip,sama7g5-dma";
+> +			reg = <0xe1614000 0x1000>;
+> +			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> +			#dma-cells = <1>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 22>;
+> +			clock-names = "dma_clk";
+> +			status = "disabled";
+> +		};
+> +
+>  		pit64b0: timer@e1800000 {
+>  			compatible = "microchip,sama7d65-pit64b", "microchip,sam9x60-pit64b";
+>  			reg = <0xe1800000 0x100>;
 
 
