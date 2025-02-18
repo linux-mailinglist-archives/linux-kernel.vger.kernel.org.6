@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-520031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E74A3A4F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:07:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15DEA3A4F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C381690C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B7D188980A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA613270ED4;
-	Tue, 18 Feb 2025 18:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u05GIM1b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A9A246348;
-	Tue, 18 Feb 2025 18:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA42270EDA;
+	Tue, 18 Feb 2025 18:08:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE0D246348;
+	Tue, 18 Feb 2025 18:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739902063; cv=none; b=tZZNE8ae2nnQF1qTmkNfRZlxtVOhhYaBPNA7P73Z1nNfeaHi4etcEUWgp8Ih9cazUswJCXVEYIGCgxUj+uENBiAqAXr3ndTC9BNQAd2lj0t8COga7+XweWDpgQItH7G955zjs1oCSJ4y1ZYp+OKRApm7uaM0WIuuwdZUmX6Dv3U=
+	t=1739902081; cv=none; b=g9wadBUspc/vbeWMXsBVatbhGpRZOOUpJft1dbegsubbqvbwm73gNU0e4WtCRhoxr66795oVA0+rb8EJbrMUFKVWwP7L15du5LJ1Y7A8bM7UBFeUTRqiZy/G63avJ0rgNVriC5iBE7K342FKe9DrpWaR5cbvIE9Czy99qVL1ZzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739902063; c=relaxed/simple;
-	bh=fv38A/jZk2hWPuTGmlaAYUt6BUalrsIkLT3UCj+BNOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ow8QGfb29RB5zCraD6gV+3MDibazPPtvmdtJwDFrRdsF7S96d6t4uEG+XVWpvL+OwBsoMdGTSnwUxH5K6uqt5x8J4RQltjHehEpqIXVRDxbpOCiM9sYC9A0LSr1EVFdCJeEdAiKsEZU/H2zR4k/ZjvMpQ5Rqnbn2Wb3pab7zYDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u05GIM1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98951C4CEEA;
-	Tue, 18 Feb 2025 18:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739902062;
-	bh=fv38A/jZk2hWPuTGmlaAYUt6BUalrsIkLT3UCj+BNOQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u05GIM1bPF1fOZ3pjInd9U8T38l18MUA42POfYkeDvOK87TPINS/lwzp2FYh9sEi0
-	 RFLBcrXB13uC8EpcQtPnQm6k1iPstp3r/He14I0UAYNBBkgMjXaDBWH0OWbVSln6nn
-	 rpOWU960vFlNavmrxR95L3gSDVyR/jVzCKu9eeprpEcLOi8nF9IEU1W/PwEOy5aK6m
-	 8nyBZe3+mh7bQPofmwUvwEhk16fdzHeVmjGkFOo8oEgSAwbNA1O1EzbwNp/enruR7H
-	 s6DkAhjnHmreyQwp0UC23uHrWalaNeDY0w6G879eODkp3YSpyXuqv7nhcfxBiE7uHl
-	 hMKeOmyBJ4p3w==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f40a38cb6bso429030b6e.1;
-        Tue, 18 Feb 2025 10:07:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVN2GKU+OjipgZdRR9kV9G6cwzz/wh3fpd47IZTiaisOMznH9hp0lFAzum6J5k5QQwNYnZLKM07Fc1E0Jr7@vger.kernel.org, AJvYcCWzxktvpqvdZA7V4rkdwAbIkImqEsVUr3C/MhUjGeCOtsaCFqdXLelkPVagM98BwAgg7EJv3yRXz+QD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL7Rjv24YjFP3SzSLnKcIBn7aZOsemzoUqwtWdz9rQiqkQuWud
-	igQfB3hmWcL4ZPPV71kOTtEoDac7lxn4i1CFfIUcqpxmDO3OzRmPxEim7sB/f64XqHfTl83J/OB
-	L/4dSUNyG7Y7RaS5QQUJ7DFTqahc=
-X-Google-Smtp-Source: AGHT+IHtCzeowEMsz7o85Uwwfq1Mxs+5d0HRYs5q+Hir4NsEiOM4NJfyws+ifmwOdGlRPkcMPcF/vdxhDliEhECCev0=
-X-Received: by 2002:a05:6808:1a08:b0:3eb:3b69:8ff4 with SMTP id
- 5614622812f47-3f40f1eb965mr434145b6e.15.1739902061872; Tue, 18 Feb 2025
- 10:07:41 -0800 (PST)
+	s=arc-20240116; t=1739902081; c=relaxed/simple;
+	bh=JxTliWYq2cc/F8fKLZGD8cEhFZbKZVre+wzW0bzTEL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D5cOyW+LzMBoJ7FuSy9gMYpUOOaBqOFcQbFrN+5tR6YVCQEcel4FFGTV7XaQMh3FaryVywnjfHnFUv4rhFYKJqhAC9ncxZwFc6GORaOmJwa7yrwLS/Yl4FiGSEUApJzqPh+ygBudZnzTINfAbNkW0XVYGSmA3GtegtyQx6DHcOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73DCD152B;
+	Tue, 18 Feb 2025 10:08:16 -0800 (PST)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C54FC3F6A8;
+	Tue, 18 Feb 2025 10:07:55 -0800 (PST)
+Message-ID: <9570e9bd-0555-4abb-930d-3f393df2b4ca@arm.com>
+Date: Tue, 18 Feb 2025 18:07:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212193058.32110-1-kuurtb@gmail.com> <9a8a5084-589d-4c45-a011-5bf4d0dfc8ba@app.fastmail.com>
-In-Reply-To: <9a8a5084-589d-4c45-a011-5bf4d0dfc8ba@app.fastmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 19:07:30 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hv3frfZCLgANBi-Kn8LCiuoWFSMcjDSipXQyycS5i1rw@mail.gmail.com>
-X-Gm-Features: AWEUYZkPklzlv2gvlQCGDPAXygqxoHj3l42L2M7DsqRdRMjTabp0oARrhuydHWA
-Message-ID: <CAJZ5v0hv3frfZCLgANBi-Kn8LCiuoWFSMcjDSipXQyycS5i1rw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: platform_profile: Fix memory leak in profile_class_is_visible()
-To: Mark Pearson <mpearson-lenovo@squebb.ca>, Kurt Borja <kuurtb@gmail.com>
-Cc: Len Brown <lenb@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Limonciello, Mario" <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>, Gergo Koteles <soyer@irl.hu>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/8] dt-bindings: arm: Add Morello fvp compatibility
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <20250213180309.485528-1-vincenzo.frascino@arm.com>
+ <20250213180309.485528-3-vincenzo.frascino@arm.com>
+ <20250214-utopian-griffin-of-innovation-fabc40@krzk-bin>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <20250214-utopian-griffin-of-innovation-fabc40@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 15, 2025 at 3:18=E2=80=AFAM Mark Pearson <mpearson-lenovo@squeb=
-b.ca> wrote:
->
->
-> On Wed, Feb 12, 2025, at 2:30 PM, Kurt Borja wrote:
-> > If class_find_device() finds a device it's reference count is
-> > incremented. Call put_device() to drop this reference before returning.
-> >
-> > Fixes: 77be5cacb2c2 ("ACPI: platform_profile: Create class for ACPI
-> > platform profile")
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > ---
-> >  drivers/acpi/platform_profile.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/platform_profile.c
-> > b/drivers/acpi/platform_profile.c
-> > index fc92e43d0fe9..2ad53cc6aae5 100644
-> > --- a/drivers/acpi/platform_profile.c
-> > +++ b/drivers/acpi/platform_profile.c
-> > @@ -417,8 +417,14 @@ static int profile_class_registered(struct device
-> > *dev, const void *data)
-> >
-> >  static umode_t profile_class_is_visible(struct kobject *kobj, struct
-> > attribute *attr, int idx)
-> >  {
-> > -     if (!class_find_device(&platform_profile_class, NULL, NULL,
-> > profile_class_registered))
-> > +     struct device *dev;
-> > +
-> > +     dev =3D class_find_device(&platform_profile_class, NULL, NULL,
-> > profile_class_registered);
-> > +     if (!dev)
-> >               return 0;
-> > +
-> > +     put_device(dev);
-> > +
-> >       return attr->mode;
-> >  }
-> >
-> >
-> > base-commit: 3e3e377dd1f300bbdd230533686ce9c9f4f8a90d
-> > --
-> > 2.48.1
-> Good find. Looks good to me.
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
-Applied as 6.15 material, thanks!
+
+On 14/02/2025 08:12, Krzysztof Kozlowski wrote:
+> On Thu, Feb 13, 2025 at 06:03:03PM +0000, Vincenzo Frascino wrote:
+>> Add compatibility to Arm Morello Fixed Virtual Platform.
+>>
+>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+>> index 40e7910756c8..e71e3e33c4be 100644
+>> --- a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+>> @@ -122,6 +122,10 @@ properties:
+>>          items:
+>>            - const: arm,morello-sdp
+> 
+> That's just part of the enum here.
+>
+
+I am not sure on what you want me to do :)
+
+--->8---
+
+diff --git a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+index 40e7910756c8..8de508b977b0 100644
+--- a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
++++ b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
+@@ -118,9 +118,11 @@ description: |+
+         items:
+           - const: arm,foundation-aarch64
+           - const: arm,vexpress
+-      - description: Arm Morello System Development Platform
++      - description: Arm Morello System Development/Fixed Virtual Platform
+         items:
+-          - const: arm,morello-sdp
++          - enum:
++	      - arm,morello-sdp
++	      - arm,morello-fvp
+           - const: arm,morello
+
+   arm,vexpress,position:
+-- 
+2.34.1
+
+--->8---
+
+Something like this?
+
+>>            - const: arm,morello
+>> +      - description: Arm Morello Fixed Virtual Platform
+>> +        items:
+>> +          - const: arm,morello-fvp
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+Regards,
+Vincenzo
+
 
