@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-518620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0007FA39206
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:04:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5717EA39210
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20E3163F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7111894836
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B973A19F128;
-	Tue, 18 Feb 2025 04:02:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111FE192D8A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72F419F104;
+	Tue, 18 Feb 2025 04:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IKYM2iG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A1712CDA5;
+	Tue, 18 Feb 2025 04:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739851349; cv=none; b=QvmTaphwLdhTmBm/9gSu996gZknqEQS5m0iDsm/CiqD1RyXzi+VW9YAYefnCqyCACKqXZ9wP277W61E9IhcXT1un171QlLxK32GOb0E4/UjAw0UO9rNrS+Qnk/KuQ3/H0EmZ6MCpgl9/1sBYFQ5MHbWlcACSCObZ8AjyQ0JUAG4=
+	t=1739851964; cv=none; b=NczzKbe06OUqnxvwXiqDMUopk/5uVF7763+/8SARRXjbLLl2/sGD3dWYK99GJQzVQbn/hWTXZiykE9zSOla1JvgLwnZlqQQKodnymD6gYOLmUWCm9vvoMakVhZ1W2OTRuEbc4o7FeCIY6RKwR0/FYHCLifUoYadQvyBKWfp4bVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739851349; c=relaxed/simple;
-	bh=zgXfcX8cWnp5ttK/cEYFiu0UrdB7Qa86ypq0Ib0fOtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FvtCnUzO7eIF22kWvbV6x04JUj3EYoa8N7hswEf/DuVDngC20weV+PTF6aJbz1WgZex/8SWd0wp1ZS6sZiysiD9zdUOZ7fDAM8imIWfHWYxpy7kb6Pa3Fj+O7ZE2It/smqZjbgTrP34e3m6UHIPNxL33KTbdbXxSE/U6ReVccyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF060152B;
-	Mon, 17 Feb 2025 20:02:44 -0800 (PST)
-Received: from [10.163.37.233] (unknown [10.163.37.233])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7992F3F5A1;
-	Mon, 17 Feb 2025 20:02:23 -0800 (PST)
-Message-ID: <110e8959-1d5e-4184-86f8-f4bfbb06e871@arm.com>
-Date: Tue, 18 Feb 2025 09:32:21 +0530
+	s=arc-20240116; t=1739851964; c=relaxed/simple;
+	bh=38jLuNaSVk5HK1+pU/7A9uz3NtGUBWLI+P5FDcwIGjs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=sSZJUBMhzecOfq8dCF38oqUeoyVoqYyinWA8kA1ZFqlv1kF3bxwP8w2Keh9YDZ1LWrJKkBMD3mukGoaolmo/d/5f6A0VbXbNtBeHhqLXa9G1kzwwArg4BjeN8MgMsPMUFNlPscqd7ScbngCwdTZY2zHLwgnJ2KV8YoH1mYsw0zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IKYM2iG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A2AC4CEED;
+	Tue, 18 Feb 2025 04:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1739851963;
+	bh=38jLuNaSVk5HK1+pU/7A9uz3NtGUBWLI+P5FDcwIGjs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IKYM2iG53ABjPYcjmuZLGGnEdggr4qTg4SHRnRDgi5WqVRCe9Ml8ufMn9icQVZ9oV
+	 pRrA/2wdw2WoD6FyFGDIjA9yhuUhkcByNayHQSgFkEU1wxW+ueedoEdoCB6NSvFFvr
+	 A9UzG3JQcqpg1UWwZfQ26qLzRkhfcP0fLV1E7GP0=
+Date: Mon, 17 Feb 2025 20:12:42 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, "Kirill A . Shutemov"
+ <kirill.shutemov@linux.intel.com>, David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Ryan Roberts
+ <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, Yang Shi
+ <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, Kefeng
+ Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, John
+ Hubbard <jhubbard@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/8] mm/huge_memory: add buddy allocator like
+ (non-uniform) folio_split()
+Message-Id: <20250217201242.798583040111ddc019f68438@linux-foundation.org>
+In-Reply-To: <A6E3A545-D2CD-46B6-A532-64BBBED42914@nvidia.com>
+References: <20250211155034.268962-1-ziy@nvidia.com>
+	<20250211155034.268962-5-ziy@nvidia.com>
+	<f1198e22-3358-4f82-8227-49b0e779302f@redhat.com>
+	<4483B46A-FEAF-46D9-AFF4-F0DF34864633@nvidia.com>
+	<A6E3A545-D2CD-46B6-A532-64BBBED42914@nvidia.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/hugetlb: Consistently use pud_sect_supported()
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250217065414.49489-1-anshuman.khandual@arm.com>
- <271c6277-baab-4b69-97ea-d6c80f873fe5@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <271c6277-baab-4b69-97ea-d6c80f873fe5@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Mon, 17 Feb 2025 10:22:44 -0500 Zi Yan <ziy@nvidia.com> wrote:
 
-
-On 2/17/25 19:51, Ryan Roberts wrote:
-> On 17/02/2025 06:54, Anshuman Khandual wrote:
->> Let's be consistent in using pud_sect_supported() for PUD_SIZE sized pages.
->> Hence change hugetlb_mask_last_page() and arch_make_huge_pte() as required.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> This patch applies on v6.14-rc3
->>
->>  arch/arm64/mm/hugetlbpage.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
->> index 98a2a0e64e25..5b7cfdba9c93 100644
->> --- a/arch/arm64/mm/hugetlbpage.c
->> +++ b/arch/arm64/mm/hugetlbpage.c
->> @@ -342,7 +342,9 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
->>  	switch (hp_size) {
->>  #ifndef __PAGETABLE_PMD_FOLDED
->>  	case PUD_SIZE:
->> -		return PGDIR_SIZE - PUD_SIZE;
->> +		if (pud_sect_supported())
->> +			return PGDIR_SIZE - PUD_SIZE;
->> +		break;
->>  #endif
->>  	case CONT_PMD_SIZE:
->>  		return PUD_SIZE - CONT_PMD_SIZE;
->> @@ -364,7 +366,8 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
->>  	switch (pagesize) {
->>  #ifndef __PAGETABLE_PMD_FOLDED
->>  	case PUD_SIZE:
->> -		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
->> +		if (pud_sect_supported())
->> +			entry = pud_pte(pud_mkhuge(pte_pud(entry)));
+> >
+> > Thanks. The patch below should fix it.
+> >
+> > I am going to send V8, since
+> > 1. there have been 4 fixes so far for V7, a new series would help people
+> > review;
+> >
+> > 2.  based on the discussion with you in THP cabal meeting, to
+> > convert split_huge_page*() to use __folio_split(), the current
+> > __folio_split() interface becomes awkward. Two changes are needed:
+> >    a) use in folio offset instead of struct page, since even in
+> >      truncate_inode_partial_folio() I needed to convert in folio offset
+> >      struct page to use my current interface;
+> >    b) split_huge_page*()'s caller might hold the page lock at a non-head
+> >      page, so an additional keep_lock_at_in_folio_offset is needed
+> >      to indicate which after-split folio should be kept locked after
+> >      split is done.
+> >
 > 
-> If this was to get called with PUD_SIZE for a config that doesn't fold the PMD
-> and which pud_sect_supported() returns false, we will now return the entry
-> unmodified and will not emit the warning that the default case emits. I think we
-> should at least either modify the entry (so that it is safe) or emit the
-> warning. Doing neither seems less defensive than the current situation.
-
-An warning can be added before breaking when pud_sect_supported() returns false
-which will help inform the user that the page table entry did not get modified.
-
-        switch (pagesize) {
-#ifndef __PAGETABLE_PMD_FOLDED
-        case PUD_SIZE:
-                if (pud_sect_supported())
-                        entry = pud_pte(pud_mkhuge(pte_pud(entry)));
-                else
-                        pr_warn("%s: pud huge page not supported\n", __func__);
-                break;
-#endif
-
+> Hi Andrew,
 > 
->>  		break;
->>  #endif
->>  	case CONT_PMD_SIZE:
+> I am planing to send V8 to collect all fixup patches I have so far plus
+> the one below and change folio_split() interface and some of the code.
+> What is your preferred method?
 > 
+> 1. you can pick up the fixup below and I send a new set of patches to
+> change folio_split();
+> 
+> 2. I collect a new V8 with all fixup patches and folio_split() change.
+> 
+> For 1, the commit history might be messy due to my new folio_split()
+> change. For 2, Minimize xa_node allocation during xarry split [1]
+> patchset depends on patch 1 of this series, which adds some extra work
+> for you to collect V8 (alternatively, I can send V8 without patch 1).
+
+We're only at -rc3, so I'll remove both series from mm.git.  Please
+fully resend both series against mm-unstable?
 
