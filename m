@@ -1,196 +1,118 @@
-Return-Path: <linux-kernel+bounces-520623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDEBA3AC69
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB11A3AC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EFA37A547D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:13:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9EC7A556B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ED21DDC11;
-	Tue, 18 Feb 2025 23:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4571DDC22;
+	Tue, 18 Feb 2025 23:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NkwfLZ+m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c+vgxgop"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6353D1C7019
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6331A8F6D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739920457; cv=none; b=muY9fkkCPr+45u2fbKkaomXLd5tOQHIQoVYBNiUAakYKqqI6G1C5Esd4B6tgDb92mP3o4r4+t2hfVIX6TMhBsUDECMyAUUmHdj/uxzSb2aJhI/GDPlbr3iTq0GLA16eooiWbTkejDZzqR0vXIZkstuquOOtHfRNgPZ1ctfA5v40=
+	t=1739920675; cv=none; b=uEFspeVRLArELq3F0lWIgjrGlvzeMl+W6lyeVBkypZwMnk3ShgZYqlJvdnhi4s8T2XFv5j4whjy7ZZX//Ofl1QfR8ELOCd5f1bwcl4fVRiZ1kI3teKQX+u787lxE1apAc9Bm2zHyVs570q2S6N0c7xnTiFhdA8LffXTlVaRTWdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739920457; c=relaxed/simple;
-	bh=jjzWBHJVFkuw2OOwhCBhesEY1Q7PqUCIlWTyVfPg5rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NIQyizOyjnoaqXkBLLcz+NLkSRdaANxIdSY/hJM7GwE7m4zWJDyCC84qR9BPnpt8uc58nq9SPk11CTfTShj05Vb64otO5gIKYO/bfgkxm885hvLCzfvafwS92ifb7qR7UoAGQkHjZwKzo5YZgmy4eBeC8AhB+XwZs/VwR999acM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NkwfLZ+m; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739920454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DHjLr0rLrhNcbSiUqbGgnbUKfct/I7UxqmG8LtAAQkU=;
-	b=NkwfLZ+mT2MpvzofIrRHaXW17XVJ1Q23RhMnkPclEZ35HItApqAbUun01cwXSA1wW1DG1L
-	Floj8fIA0fdhpKzd0gQJshOXpBpWXVNhVion6rgm6nc6S2MI4Ony9D8bKX8mbEsu2u1wwI
-	8FmFmcqwfK3nefgMgpjT5ZeWc6o3uIs=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-465-2iKOcpwgNcigBJNZxQj2Gw-1; Tue, 18 Feb 2025 18:14:13 -0500
-X-MC-Unique: 2iKOcpwgNcigBJNZxQj2Gw-1
-X-Mimecast-MFC-AGG-ID: 2iKOcpwgNcigBJNZxQj2Gw_1739920452
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18977ad27so5550325ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:14:12 -0800 (PST)
+	s=arc-20240116; t=1739920675; c=relaxed/simple;
+	bh=YtP9jMp1zsEuMGXw+pRfgayF/lnTYJWTTdsWP3y71BU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UO6oH0cww1xW506xj9IavyMnOixWA6FjajYjVf1mjrdp6DQvWk9FitdoYLH7eHWXopXLVh49kIuToyVUSvyQnoNhnMk+XtKt+m9dNSZKBG3dflppf1auO3Qx/fRg8TIMVrJGnM9HIqNNlZM2WV9rbFCEA5ao/QxPNN5Q28U2i7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c+vgxgop; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-727250dbf60so180076a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:17:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739920672; x=1740525472; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1kVy79PjjwS9vT6eqX/jn2fuQOg4ncGF32yCLYKYdc=;
+        b=c+vgxgopCtJw1KDe23QVBN3XYKS+rIVz7XSU4XDgZt/qJpTeGYWdnKmHJbF0YiNSV9
+         XaYRGHvrfvj107DsldUEmTME0vK95PJWOl6XP2E2+W4+zG+WQcyH7x8q83Gcuo02Qckw
+         2PCuvQTgFq90HJIp3m+H2mN4NWqsQokk18CcvVuFiGBSRb5rRtn8FgPKX+9OwMqEwR4J
+         b8GbOKmZtjrtYaeFWbjLljwa4L0S94tH66vTZySzeTe0+j61b9KSJQROzbP4NhJFnB8L
+         P6Kau9UYc+dWOo7EDKniSqATiBVmsEcEOk+sOl8UaBVnsnZ/WoNcGYRXRv3SCSAKLfmE
+         MnFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739920452; x=1740525252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DHjLr0rLrhNcbSiUqbGgnbUKfct/I7UxqmG8LtAAQkU=;
-        b=MYswx7pFO94bNIvLVVtXDWZhlYYEJo1J46g5leJ7ySnwgao8K2RvHnpO2uaWzYkkuQ
-         7ZMXVaTl1CTUoxgor+ctApum8FGmaYei+t+zw03BUcQb5q5mwgMtnYftO3AFon0qF/mH
-         r0YvpLTwi/KRpLHdGXkpSy/6CmqLJZ2pNuhSrj9oY6rFH4a9s56z0684axrlt1ND6MoZ
-         NeyYmxq7u3bwK8QrhuKCEwUbnlb/okv0WGO6Oo2gmCRqZiWrvkjgZM0FcioCfKAVgK1+
-         w+95x/n+ew6F+9u519TbtwC+bVFsbQG0w+BErXAgHPU8HDDGFLjWuAVJeazJllQ/YJbQ
-         mm/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvQ+FPUOO8I6UGXKMbpOq8C7MYeSiSCoKCfggKPjNa2o8DZz8NMJUFVxLZM6weavgd/Bza7cNGreInjEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLf52MFO3B0RdnxpcvBn+n+kKBc28UQJdIBdylhcnc3qH+A6nW
-	oavvPR9PqQhzUNCgtIvSD/9hlQn+tsWxeWrVXMb3D5IvVNVNCmOSELiGoRY9oKMkeqfaB/EpxQd
-	RmP6F+oDHc0Y1sCxHnbpQ9APeBh629MyRqIS0vIyUe8Xye3eU22XKEBre8AASnA==
-X-Gm-Gg: ASbGnctu3XQc96tMwQ/NUMXA9b3s8ZpLJuQssasgxP69xk1dW8SPmbceQuJE6PraeHJ
-	YlMiL6VMCArWvN2iw0TxridymQ4V2Gu+U/bMzI1i8hNGb0rCT/LLRqJJLboaI1JNaO63lqzNHwL
-	75N2JBF+mjzxp4kyFSdMBwrAsP34rOMNoHvY1lEuFrQZO3tA7X44c/GkI+KqWi4iReRZB0VODTH
-	j2yMUyVlKkdcJZK9fi4dQxodTayCfOVVN8WHOSZWgbHqA3kGFg74aSZ80BUGlDrN8z+4kP0JNkQ
-	jcm+Wy+B
-X-Received: by 2002:a05:6e02:1805:b0:3d1:3d56:d15d with SMTP id e9e14a558f8ab-3d280935057mr39369645ab.5.1739920452245;
-        Tue, 18 Feb 2025 15:14:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEAH7M7t38v508EoBeSUQTl2IBXKA3WOU5bkl7flcWpH68hMGeBPmER9kP9YUKvYlBW9PFl7A==
-X-Received: by 2002:a05:6e02:1805:b0:3d1:3d56:d15d with SMTP id e9e14a558f8ab-3d280935057mr39369555ab.5.1739920451911;
-        Tue, 18 Feb 2025 15:14:11 -0800 (PST)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d282233d9dsm18041285ab.40.2025.02.18.15.14.08
+        d=1e100.net; s=20230601; t=1739920672; x=1740525472;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K1kVy79PjjwS9vT6eqX/jn2fuQOg4ncGF32yCLYKYdc=;
+        b=lUXKxvq/VUe87k5c02gno1m7R4s78iA4aqNA/6sFlcwgdclC2+FaVK132/UWO3THLf
+         J9q0dETwW82hluu/etGSEps5YTTooe97boq95/nCuXJt1NUPy3WS3BRR6x7tuRmRFDF/
+         Gspbg0gVcizeBuMwHXuBjtXDujPiTUcQuD8v0YW1mODvNx5JmDXOxlHYzRGYeTixYpTb
+         7t73ssdUfotqzakLHzACfhK1M8jpJiyLX5N4w9OabRpXS4+dT6TVFQlIH0npf2nZY+RH
+         fnn4O4Xxzqcxhnxlhx9T4zC0vFAiz7N7vVdwx5C+FNAyDVX3KcCBbjze/ycVcf4pO3+E
+         mcdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKwgaVCkUYHQmcIQWgR1FmRIzwKQ5o4GDQtE3GhHTd4jbl6TEI6gQlSsYmFgD5PvtRCPAAHyKbjwrn27g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDF6iC57MTOfl0TFvmQ4yy2IaY5JVlunfnrU5cmkX/bh3/cY/Z
+	9lYxh2To2YF73Yh5XIAt0LCuzUHiFcSwBmJoA0b9LjHAPdCDEEieFz7USS/mljU=
+X-Gm-Gg: ASbGncvW9BgwijWN1EfoHESAb8im1WoaI214I5tX7qkTslCIlhuM7kynHA2Q5suKE7C
+	e/ZyudghnyRmfX7VKDqHDZzE2Do9tB3CJUVK7IRMwSdhntCQ6dOZy7AsJee4u8FRKfuJzDLI4Pu
+	QzClQppWabgWazGbnOccvISfxioByhdj1dCK9FrINhkd/Sq9IHR7gMyw7tb5srR8SHG5KvZTZms
+	EUHZphiOtkkyWZ1zz3Sumy1a1vtnr6GNNCk8PSiptNslXoiAnXwj9WTiYjHPMQo5YbEuF7bIZR+
+	mdimgFv6ZmIK9xEkKjJzde/U/8A2TMypEIEH2/V+MWWQ+Rg=
+X-Google-Smtp-Source: AGHT+IF2i0XRfyPdA91wJLKRW1188YEW171fIRsR6f4XJDZE0cMHbi74c3siOXWTxamWwIe6ApxsEg==
+X-Received: by 2002:a9d:7482:0:b0:727:2731:d5e5 with SMTP id 46e09a7af769-7273711f98bmr1287196a34.12.1739920672122;
+        Tue, 18 Feb 2025 15:17:52 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7271f7c5ba8sm1803129a34.32.2025.02.18.15.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 15:14:09 -0800 (PST)
-Date: Tue, 18 Feb 2025 16:14:07 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- mitchell.augustin@canonical.com, clg@redhat.com, jgg@nvidia.com,
- willy@infradead.org
-Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
-Message-ID: <20250218161407.6ae2b082.alex.williamson@redhat.com>
-In-Reply-To: <Z7UOEpgH5pdTBcJP@x1.local>
-References: <20250218222209.1382449-1-alex.williamson@redhat.com>
-	<20250218222209.1382449-7-alex.williamson@redhat.com>
-	<Z7UOEpgH5pdTBcJP@x1.local>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Tue, 18 Feb 2025 15:17:51 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] iio: adc: ad4695: fix out of bounds array access
+Date: Tue, 18 Feb 2025 17:17:44 -0600
+Message-Id: <20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-0-57fef8c7a3fd@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABgVtWcC/x2NSw7CMAwFr1J5jaUmtOVzFdRF4jjgTYLiFhVVv
+ TsWi1nMYt7bQbkJK9y7HRp/RKUWE3fqgF6hPBklmYPv/dh7d0WRiiGRMUy3EbNsWNcFa8ZY15I
+ UQ2vhi4GIVfGS3cSRzpHdALb5bmzF/+8xH8cPtGI/WH8AAAA=
+X-Change-ID: 20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-7f16ebc3be14
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On Tue, 18 Feb 2025 17:47:46 -0500
-Peter Xu <peterx@redhat.com> wrote:
+I was doing some more testing and found a bug with the
+in_temp_sampling_frequency attribute being corrupted. This is a patch
+to fix that, plus a bonus patch that cleans up some related code (it
+wasn't strictly part of the fix, hence the separate patch).
 
-> On Tue, Feb 18, 2025 at 03:22:06PM -0700, Alex Williamson wrote:
-> > vfio-pci supports huge_fault for PCI MMIO BARs and will insert pud and
-> > pmd mappings for well aligned mappings.  follow_pfnmap_start() walks the
-> > page table and therefore knows the page mask of the level where the
-> > address is found and returns this through follow_pfnmap_args.pgmask.
-> > Subsequent pfns from this address until the end of the mapping page are
-> > necessarily consecutive.  Use this information to retrieve a range of
-> > pfnmap pfns in a single pass.
-> > 
-> > With optimal mappings and alignment on systems with 1GB pud and 4KB
-> > page size, this reduces iterations for DMA mapping PCI BARs by a
-> > factor of 256K.  In real world testing, the overhead of iterating
-> > pfns for a VM DMA mapping a 32GB PCI BAR is reduced from ~1s to
-> > sub-millisecond overhead.
-> > 
-> > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 23 ++++++++++++++++-------
-> >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > index ce661f03f139..0ac56072af9f 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -520,7 +520,7 @@ static void vfio_batch_fini(struct vfio_batch *batch)
-> >  
-> >  static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
-> >  			    unsigned long vaddr, unsigned long *pfn,
-> > -			    bool write_fault)
-> > +			    unsigned long *addr_mask, bool write_fault)
-> >  {
-> >  	struct follow_pfnmap_args args = { .vma = vma, .address = vaddr };
-> >  	int ret;
-> > @@ -544,10 +544,12 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
-> >  			return ret;
-> >  	}
-> >  
-> > -	if (write_fault && !args.writable)
-> > +	if (write_fault && !args.writable) {
-> >  		ret = -EFAULT;
-> > -	else
-> > +	} else {
-> >  		*pfn = args.pfn;
-> > +		*addr_mask = args.addr_mask;
-> > +	}
-> >  
-> >  	follow_pfnmap_end(&args);
-> >  	return ret;
-> > @@ -590,15 +592,22 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
-> >  	vma = vma_lookup(mm, vaddr);
-> >  
-> >  	if (vma && vma->vm_flags & VM_PFNMAP) {
-> > -		ret = follow_fault_pfn(vma, mm, vaddr, pfn, prot & IOMMU_WRITE);
-> > +		unsigned long addr_mask;
-> > +
-> > +		ret = follow_fault_pfn(vma, mm, vaddr, pfn, &addr_mask,
-> > +				       prot & IOMMU_WRITE);
-> >  		if (ret == -EAGAIN)
-> >  			goto retry;
-> >  
-> >  		if (!ret) {
-> > -			if (is_invalid_reserved_pfn(*pfn))
-> > -				ret = 1;
-> > -			else
-> > +			if (is_invalid_reserved_pfn(*pfn)) {
-> > +				unsigned long epfn;
-> > +
-> > +				epfn = (*pfn | (~addr_mask >> PAGE_SHIFT)) + 1;
-> > +				ret = min_t(long, npages, epfn - *pfn);  
-> 
-> s/long/unsigned long/?
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+David Lechner (2):
+      iio: adc: ad4695: fix out of bounds array access
+      iio: adc: ad4695: simplify getting oversampling_ratio
 
-ret is signed long since it's the function return and needs to be able
-to return -errno, so long was the intention here.  Thanks,
+ drivers/iio/adc/ad4695.c | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+---
+base-commit: ac856912f210bcff6a1cf8cf9cb2f6a1dfe85798
+change-id: 20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-7f16ebc3be14
 
-Alex
- 
-> Reviewed-by: Peter Xu <peterx@redhat.com>
-> 
-> > +			} else {
-> >  				ret = -EFAULT;
-> > +			}
-> >  		}
-> >  	}
-> >  done:
-> > -- 
-> > 2.48.1
-> >   
-> 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
