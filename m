@@ -1,125 +1,259 @@
-Return-Path: <linux-kernel+bounces-518576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1206AA39118
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:07:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F082CA3911D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE903A8D7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:07:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AED5D7A2906
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EE315667D;
-	Tue, 18 Feb 2025 03:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADAE15667D;
+	Tue, 18 Feb 2025 03:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8Bo9QiY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BqDYxcUh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E818C31
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662DD1482E7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 03:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739848056; cv=none; b=D5NlowsMvxTQ6MvF5+O+UcdHWXktHHLlsiWdKbyKo3IuBjZlOGvdYjfg/ocyjCmRhI/QXsgq188rkhP8sXAfeQ/qIiyB5yp9sMEDlwUI5Gc6RcLBHdxKOCMfvkauUYjPWbk5UQOti14ttXXO5xc93jXoV11Jgsahveq7QE9w2XM=
+	t=1739848097; cv=none; b=B03mJUIUn9CSqcNm1NbrS49q2zhkzNQM4WPmSvbgEQfZ+8H7PXmRVkinloBBcp3xfOZ6RrI3YVzVuY0YA92MD/WSuHCGIZJlC4NsKg7jKBeFECNYTKaH67hivB94FYKmXIUhXT9ibuvCm+zjNmj9QzNdtgPKNuxX0TFUqwJUlKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739848056; c=relaxed/simple;
-	bh=LJCRGsPscyCMWgefTOMlF4XecTltnIfoamUgwmuNWoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KNEeRRYkA7MrB1eNVShSVgfmnmb/B02VxzJG3wjG/BI8HN96FNA+fSEoTr/oJ/Gi6cidGy+YL1h+ffTxTts0zKE19L6o3wXy+bMyfEhgZKRIFAPvSZu8kRmZppy5pULKwAblZucMxR8it45wf4N/HI9Ql/VpqdAw+DK2equ1Rh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8Bo9QiY; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739848055; x=1771384055;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=LJCRGsPscyCMWgefTOMlF4XecTltnIfoamUgwmuNWoQ=;
-  b=O8Bo9QiY1hAhWIy6TGb91N8XUmfXZ6Z+Br81RZ4RcBSpZu0ldr7nk26T
-   5l4lQVPbR7XJI0324IV9LkmED6BjxZQNs499SKEEeHMRbQxDCBatF8mj/
-   FGU0ipLPV98H1PknTR+roFJkOcAB2yCjKi8qipKoUtMJshi/48mGEbZf0
-   UVvivvyiKIWcrMV4fSQavaTQT7MBW7Tn3iLEzzlmzvw+GLM6qXQMaO2x7
-   poNA4QZhKNOXX74t8pL6q+GIQKO0+AQmHY5m/qIFilGDA3DLsHG9Sl6mG
-   PG1FZFZJ+wHZOnkM8Uuw0Ef0O+69qgiK94Er78XJGxGS7ivTKOXI+rzZh
-   Q==;
-X-CSE-ConnectionGUID: pVWgzcTMTYOTM442TQwJpQ==
-X-CSE-MsgGUID: hcSUXYSsSCadb44VDP0kqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44182362"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="44182362"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 19:07:35 -0800
-X-CSE-ConnectionGUID: ZE877J0WRiaNmAglAEfRbQ==
-X-CSE-MsgGUID: aUXGUHQRRZeKmyPbe0Jlfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="114249776"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 17 Feb 2025 19:07:32 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkDx5-00006t-1r;
-	Tue, 18 Feb 2025 03:07:19 +0000
-Date: Tue, 18 Feb 2025 11:06:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jinyang He <hejinyang@loongson.cn>,
-	Youling Tang <tangyouling@loongson.cn>
-Subject: drivers/net/wireless/ath/ath10k/mac.o: warning: objtool:
- ath10k_monitor_start+0x240: stack state mismatch: reg1[26]=-1+0
- reg2[26]=-2-40
-Message-ID: <202502181126.ot62N8wN-lkp@intel.com>
+	s=arc-20240116; t=1739848097; c=relaxed/simple;
+	bh=oa0IjU9UTAJ1KPp+r7Rt2Ef0yn+tXBSXpgRYVUvoTtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BfWZvibZK/LUbG37l+xQ95X/z2OCq0MB5I8wdaJ3CZIcSHPFdgd8/En5IdIwxwb42/qG/jfMDiHPUUpWE7wUZzPAcpOrCa5p+DksUgPP7UtbN7MLma+32z9xUY/BAW8yejtjXhofEBYEXBKFWY1H2blSDIruVAyGj3n/CPSMIaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BqDYxcUh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51I2xMk8003648;
+	Tue, 18 Feb 2025 03:07:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	shYYV8RRo/e3jDenMP8rmX0RcYFCmW9iJwK2gN92jOQ=; b=BqDYxcUhGRXXD0Ea
+	iNLJZwzc/vK+5tSoUsJw1jF4DfvejElryRziGRwb/HlC6Q2C2qtWnIlIHy5oN0/z
+	yxKoRuvYEX9bZv774AmVDsHwZR/qs7/3kpgiqdTEcDgZDUT1A7F5tz+6B1TiN+43
+	HWentZh54sTsUfUSymTYzshN+0ZFc62zyunLYX4Beht51ps52WJbQkGbQ7/BkMGp
+	Vmhvggzz/66SAmBlWghnEK0yGMrS+qFzieRQIRIDuh+8vaOue13Ea+Hlj7YXymKD
+	148A2YROZLNTp4263eek7smu9ecsH9zAkGcER51hR+PSGn5wX97u6ccJ5vytkIBT
+	pszhhg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44v3mg1wxt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 03:07:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51I37eSp018444
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 03:07:40 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
+ 2025 19:07:36 -0800
+Message-ID: <a5439884-551c-4104-9175-f95b0895a489@quicinc.com>
+Date: Tue, 18 Feb 2025 11:07:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] arm64: mm: Populate vmemmap at the page level if not
+ section aligned
+To: David Hildenbrand <david@redhat.com>, <anshuman.khandual@arm.com>,
+        <catalin.marinas@arm.com>
+CC: <will@kernel.org>, <ardb@kernel.org>, <ryan.roberts@arm.com>,
+        <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
+        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>
+References: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
+ <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
+ <ce2bd045-3e3a-42bf-9a48-9ad806ff3765@quicinc.com>
+ <871c0dae-c419-4ac2-9472-6901aab90dcf@redhat.com>
+Content-Language: en-US
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <871c0dae-c419-4ac2-9472-6901aab90dcf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HAMYsGH-0wqSvpR5iF_z7pyr5kB9jYSr
+X-Proofpoint-ORIG-GUID: HAMYsGH-0wqSvpR5iF_z7pyr5kB9jYSr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-17_09,2025-02-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180021
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2408a807bfc3f738850ef5ad5e3fd59d66168996
-commit: cb8a2ef0848ca80d67d6d56e2df757cfdf6b3355 LoongArch: Add ORC stack unwinder support
-date:   11 months ago
-config: loongarch-randconfig-r051-20250218 (https://download.01.org/0day-ci/archive/20250218/202502181126.ot62N8wN-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250218/202502181126.ot62N8wN-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502181126.ot62N8wN-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+On 2025/2/17 22:30, David Hildenbrand wrote:
+> On 17.02.25 11:34, Zhenhua Huang wrote:
+>>
+>>
+>> On 2025/2/17 17:44, David Hildenbrand wrote:
+>>> On 17.02.25 10:29, Zhenhua Huang wrote:
+>>>> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is 
+>>>> set
+>>>> to 27, making one section 128M. The related page struct which vmemmap
+>>>> points to is 2M then.
+>>>> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
+>>>> vmemmap to populate at the PMD section level which was suitable
+>>>> initially since hot plug granule is always one section(128M). However,
+>>>> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+>>>> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
+>>>> existing arm64 assumptions.
+>>>>
+>>>> The first problem is that if start or end is not aligned to a section
+>>>> boundary, such as when a subsection is hot added, populating the entire
+>>>> section is wasteful.
+>>>>
+>>>> The Next problem is if we hotplug something that spans part of 128 MiB
+>>>> section (subsections, let's call it memblock1), and then hotplug
+>>>> something
+>>>> that spans another part of a 128 MiB section(subsections, let's call it
+>>>> memblock2), and subsequently unplug memblock1, vmemmap_free() will 
+>>>> clear
+>>>> the entire PMD entry which also supports memblock2 even though 
+>>>> memblock2
+>>>> is still active.
+>>>>
+>>>> Assuming hotplug/unplug sizes are guaranteed to be symmetric. Do the
+>>>> fix similar to x86-64: populate to pages levels if start/end is not
+>>>> aligned
+>>>> with section boundary.
+>>>>
+>>>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/mm/mmu.c | 3 ++-
+>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>>>> index b4df5bc5b1b8..eec1666da368 100644
+>>>> --- a/arch/arm64/mm/mmu.c
+>>>> +++ b/arch/arm64/mm/mmu.c
+>>>> @@ -1178,7 +1178,8 @@ int __meminit vmemmap_populate(unsigned long
+>>>> start, unsigned long end, int node,
+>>>>    {
+>>>>        WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
+>>>> -    if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES))
+>>>> +    if (!IS_ENABLED(CONFIG_ARM64_4K_PAGES) ||
+>>>> +        (end - start < PAGES_PER_SECTION * sizeof(struct page)))
+>>>>            return vmemmap_populate_basepages(start, end, node, altmap);
+>>>>        else
+>>>>            return vmemmap_populate_hugepages(start, end, node, altmap);
+>>>
+>>> Yes, this does mimic what x86 does. That handling does look weird,
+>>> because it
+>>> doesn't care about any address alignments, only about the size, which is
+>>> odd.
+>>>
+>>> I wonder if we could do better and move this handling
+>>> into vmemmap_populate_hugepages(), where we already have a fallback
+>>> to vmemmap_populate_basepages().
+>>
+>> Hi David,
+>>
+>> I had the same doubt initially.
+>> After going through the codes, I noticed for vmemmap_populate(), the
+>> arguments "start" and "end" passed down should already be within one
+>> section.
+>> early path:
+>> for_each_present_section_nr
+>>     __populate_section_memmap
+>>         ..
+>>         vmemmap_populate()
+>>
+>> hotplug path:
+>> __add_pages
+>>     section_activate
+>>         vmemmap_populate()
+>>
+>> Therefore.. focusing only on the size seems OK to me, and fall back
+>> solution below appears unnecessary?
+> 
+> Ah, in that case it is fine. Might make sense to document/enforce that 
+> somehow for the time being ...
 
->> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_monitor_start+0x240: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
->> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_peer_assoc_h_ht+0x438: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
->> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_peer_assoc_h_vht+0x3e8: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
->> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_control_beaconing+0x2a8: stack state mismatch: reg1[27]=-1+0 reg2[27]=-2-48
->> drivers/net/wireless/ath/ath10k/mac.o: warning: objtool: ath10k_mac_handle_tx_pause_iter+0xec: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
---
->> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_core_check_bdfext+0x230: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
->> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_core_copy_target_iram+0x2d4: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
->> drivers/net/wireless/ath/ath10k/core.o: warning: objtool: ath10k_download_cal_data+0x3a0: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
---
->> drivers/net/wireless/ath/ath10k/htt_rx.o: warning: objtool: ath10k_update_per_peer_tx_stats+0x590: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
->> drivers/net/wireless/ath/ath10k/htt_rx.o: warning: objtool: ath10k_htt_rx_alloc+0x2e0: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
---
->> drivers/net/wireless/ath/ath10k/htt_tx.o: warning: objtool: __ath10k_htt_tx_txq_recalc.isra.0+0x354: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
---
->> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_handle_tdls_peer_event+0x24c: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
->> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_mgmt_tx_bundle_compl+0x138: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
->> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_pdev_tpc_config+0x338: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
->> drivers/net/wireless/ath/ath10k/wmi.o: warning: objtool: ath10k_wmi_event_tpc_final_table+0x32c: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
---
->> drivers/net/wireless/ath/ath10k/wmi-tlv.o: warning: objtool: ath10k_wmi_tlv_op_rx+0xe98: stack state mismatch: reg1[26]=-1+0 reg2[26]=-2-40
---
->> drivers/net/wireless/ath/ath10k/ahb.o: warning: objtool: ath10k_ahb_halt_chip+0x43c: stack state mismatch: reg1[25]=-1+0 reg2[25]=-2-32
+Shall I document and WARN_ON if the size exceeds? like:
+WARN_ON(end - start > PAGES_PER_SECTION * sizeof(struct page))
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Since vmemmap_populate() is implemented per architecture, the change 
+should apply for other architectures as well. However I have no setup to 
+test it on...
+Therefore, May I implement it only for arm64 now ?
+Additionally, from previous discussion, the change is worth 
+backporting(apologies for missing to CC stable kernel in this version). 
+Keeping it for arm64 should simplify for backporting. WDYT?
+
+> 
+> 
+>>> +/*
+>>> + * Try to populate PMDs, but fallback to populating base pages when 
+>>> ranges
+>>> + * would only partially cover a PMD.
+>>> + */
+>>>    int __meminit vmemmap_populate_hugepages(unsigned long start, 
+>>> unsigned
+>>> long end,
+>>>                                            int node, struct vmem_altmap
+>>> *altmap)
+>>>    {
+>>> @@ -313,6 +317,9 @@ int __meminit vmemmap_populate_hugepages(unsigned
+>>> long start, unsigned long end,
+>>>           for (addr = start; addr < end; addr = next) {
+>>
+>> This for loop appears to be redundant for arm64 as well, as above
+>> mentioned, a single call to pmd_addr_end() should suffice.
+> 
+> Right, that was what was confusing me in the first place.
+> 
+>>
+>>>                   next = pmd_addr_end(addr, end);
+>>>
+>>> +               if (!IS_ALIGNED(addr, PMD_SIZE) || !IS_ALIGNED(next,
+>>> PMD_SIZE))
+>>> +                       goto fallback;
+>>> +
+>>>                   pgd = vmemmap_pgd_populate(addr, node);
+>>>                   if (!pgd)
+>>>                           return -ENOMEM;
+>>> @@ -346,6 +353,7 @@ int __meminit vmemmap_populate_hugepages(unsigned
+>>> long start, unsigned long end,
+>>>                           }
+>>>                   } else if (vmemmap_check_pmd(pmd, node, addr, next))
+>>>                           continue;
+>>> +fallback:
+>>>                   if (vmemmap_populate_basepages(addr, next, node, 
+>>> altmap))
+>>>                           return -ENOMEM;
+>>
+>> It seems we have no chance to call populate_basepages here?
+> 
+> 
+> Can you elaborate?
+
+It's invoked within vmemmap_populate_hugepages(), which is called by 
+vmemmap_populate(). This implies that we are always performing a whole 
+section hotplug?
+However, since it's common code used by other architectures like x86, 
+RISC-V and LoongArch, it is still necessary to review the code for these 
+architectures as well. At the very least, it's not a BUG :)
+
+> 
+> 
+
 
