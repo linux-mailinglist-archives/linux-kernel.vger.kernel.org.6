@@ -1,244 +1,206 @@
-Return-Path: <linux-kernel+bounces-518671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A428A392E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:45:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BA4A392C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E2A27A2D31
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBCB188FC0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7CD1CBA02;
-	Tue, 18 Feb 2025 05:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938F11B0F1B;
+	Tue, 18 Feb 2025 05:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YtfdL0w4"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bA3Vzbng"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4234C1B0F1B;
-	Tue, 18 Feb 2025 05:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E42817333F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857458; cv=none; b=Ezqzga30t5/ixj3AS0rSxSYWNqZgmq1iBn8x2ZHgSp+jYK07HxNzTOf7gZFOO72ejSeRpzpHMpmd8RpB2z8DrP+CFWUqbgyhAClbvSfJGmhEcHvx+8pvKgkVAZz0tpnbIkW/G/fTy4WUR4HLsDlxP9rgGTYfvfIZgWRRNR/8dM8=
+	t=1739857396; cv=none; b=J0uwo0yd58HcrMJBfaI3V+J0V56lOf5esf79iZ2qQMcIL7iAYempoZ8l9bVf/QQbd17KwW8/7uFWf7SNnv2PTo0nSBHswaKnUTm2kK32Kktl/UmSNCq+h6nVIock3kUZXH6avhP9LH1IjUFamFNfrqzuTfM1MkR0o9ZjkJ/N1zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739857458; c=relaxed/simple;
-	bh=JZxP9q21JndKJiPcg66gq2C2nKdB7Nfg60fx22aMlnI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emiO5JaCPR4gVrR3k/FTJOn3t7nrHrlojohZ43p2cNvOn9fortJKKYZ8bEbdm5Z1XFbaxfHxMfxrzuO7rmQBQfMDt8ChSi0S/trx5r7NcAVmzcWd3e9hySIvdmZHY4fJsyIQ+u5Y9AXP5Hoxe5VcS1dTbtjNM3hYdV/NxsS7F9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=YtfdL0w4; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5f577cb4edbb11efaae1fd9735fae912-20250218
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=sRFPdOj8cHZYdN5t950ZAhhc2lYyTgP014Ju7dShJeQ=;
-	b=YtfdL0w4mjNYdugga1SAgqxj+VTY/c32AKtiLCBXawVh+v+fjMFqq4+awTwqSUPGUU9KrUzNVn8cnxRWITM2DNcUkly1Y2F2jVWPXSa+g8uyQBAjfpPrr0z/UFrHoPyy9bK1p7wpB3eF0BAI5b8tTxPdSEdhdo9WpSBLFpkRc9s=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:dfd7da7c-e087-4371-ab3f-31c568b8f9aa,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:60aa074,CLOUDID:21f5a5c6-e2f2-45f6-b8aa-31e67885facd,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:1|
-	19,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5f577cb4edbb11efaae1fd9735fae912-20250218
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 746339403; Tue, 18 Feb 2025 13:44:08 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 18 Feb 2025 13:44:07 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Tue, 18 Feb 2025 13:44:07 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
-	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xavier Chang
-	<xavier.chang@mediatek.com>, Xiandong Wang <xiandong.wang@mediatek.com>,
-	Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH v4 8/8] media: mediatek: mdp3: Add programming flow for unsupported subsys ID hardware
-Date: Tue, 18 Feb 2025 13:41:53 +0800
-Message-ID: <20250218054405.2017918-9-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
-References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1739857396; c=relaxed/simple;
+	bh=9haT/RPfWrsra5Lx47qsyBlVlLOZpTxe+wWf0CQ1lnE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=g3MPoeLKB8dmvCofD7Om/lIHbgQBttiK1B8QdCy1iaGpwMRth0Bhn06O5IOjo1OKvCCcro+F3A+Vs6biVXpwrfHPnSF0sfhL+D7Y3/UDDfquU02cVb7zosIo5QvD/iBPjLwm4+Gg4ev0aH3CdCUuHo9OVzVkcQ4x2OsOG4zxQ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bA3Vzbng; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739857395; x=1771393395;
+  h=date:from:to:cc:subject:message-id;
+  bh=9haT/RPfWrsra5Lx47qsyBlVlLOZpTxe+wWf0CQ1lnE=;
+  b=bA3VzbngKP7np1oloDfSJ5AlX74NoAbElZHDd+QxsBnZQIjZuZ6/KIvV
+   ozv4nj9Yn8tIUSanXGTVL5bL4vHZQONMCsp7YqQlO2jIr82iXG8Sn1S5j
+   EoWAdhfa5C3fRcVOudvZaNG9IX9C/Tz/VfepSuLx97l1U5kfvNzdY3H+d
+   TaYVhqutGZ4Adl+xGqxLjQ/qvsX5JhweOa99Y95JTK0gP6Ji5a4RY/GFV
+   HyXkQOTjQzHiHud7wZaLUDT93axvTnsk1/X8dkP/WNISm1lj/JZbrHNXX
+   YVtbEhe+6gVQxGoCRgyAxbXnRP7tJbB09LakJO/ydfbYUwX0JM8ii30ow
+   g==;
+X-CSE-ConnectionGUID: SyPtjEhvTMyJcqxW2K9xpQ==
+X-CSE-MsgGUID: NGVl6rZcSwak38KbCsRo3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="63015230"
+X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
+   d="scan'208";a="63015230"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 21:43:14 -0800
+X-CSE-ConnectionGUID: B48fpnOqQtmTRDMa/TEjfQ==
+X-CSE-MsgGUID: ESncnAFSSiCJe1fcCTUizA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="145203739"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 17 Feb 2025 21:43:13 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tkGNz-0000D1-0d;
+	Tue, 18 Feb 2025 05:43:11 +0000
+Date: Tue, 18 Feb 2025 13:42:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 9ca30fd083717f45b4384101b1a739bc83548ad2
+Message-ID: <202502181329.ea1U7r6g-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-To support hardware without subsys IDs on new SoCs, add a programming
-flow that checks whether the subsys ID is valid. If the subsys ID is
-invalid, the flow will call 2 alternative CMDQ APIs:
-cmdq_pkt_assign() and cmdq_pkt_write_s_mask_value() to achieve the
-same functionality.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 9ca30fd083717f45b4384101b1a739bc83548ad2  Merge branch into tip/master: 'x86/misc'
 
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
----
- .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 18 ++++-
- .../platform/mediatek/mdp3/mtk-mdp3-comp.h    | 79 ++++++++++++++-----
- 2 files changed, 77 insertions(+), 20 deletions(-)
+elapsed time: 1173m
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-index e5ccf673e152..0ee3354963db 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-@@ -321,7 +321,14 @@ static int mdp_path_config_subfrm(struct mdp_cmdq_cmd *cmd,
- 	/* Enable mux settings */
- 	for (index = 0; index < ctrl->num_sets; index++) {
- 		set = &ctrl->sets[index];
--		cmdq_pkt_write(&cmd->pkt, set->subsys_id, set->reg, set->value);
-+		if (set->subsys_id != CMDQ_SUBSYS_INVALID) {
-+			cmdq_pkt_write(&cmd->pkt, set->subsys_id, set->reg, set->value);
-+		} else {
-+			/* only MMIO access, no need to check mminfro_offset */
-+			cmdq_pkt_assign(&cmd->pkt, CMDQ_THR_SPR_IDX0, CMDQ_ADDR_HIGH(set->reg));
-+			cmdq_pkt_write_s_value(&cmd->pkt, CMDQ_THR_SPR_IDX0,
-+					       CMDQ_ADDR_LOW(set->reg), set->value);
-+		}
- 	}
- 	/* Config sub-frame information */
- 	for (index = (num_comp - 1); index >= 0; index--) {
-@@ -376,7 +383,14 @@ static int mdp_path_config_subfrm(struct mdp_cmdq_cmd *cmd,
- 	/* Disable mux settings */
- 	for (index = 0; index < ctrl->num_sets; index++) {
- 		set = &ctrl->sets[index];
--		cmdq_pkt_write(&cmd->pkt, set->subsys_id, set->reg, 0);
-+		if (set->subsys_id != CMDQ_SUBSYS_INVALID) {
-+			cmdq_pkt_write(&cmd->pkt, set->subsys_id, set->reg, 0);
-+		} else {
-+			/* only MMIO access, no need to check mminfro_offset */
-+			cmdq_pkt_assign(&cmd->pkt, CMDQ_THR_SPR_IDX0, CMDQ_ADDR_HIGH(set->reg));
-+			cmdq_pkt_write_s_value(&cmd->pkt, CMDQ_THR_SPR_IDX0,
-+					       CMDQ_ADDR_LOW(set->reg), 0);
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-index 681906c16419..e20f9d080db9 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.h
-@@ -9,17 +9,44 @@
- 
- #include "mtk-mdp3-cmdq.h"
- 
--#define MM_REG_WRITE_MASK(cmd, id, base, ofst, val, mask)	\
--do {								\
--	typeof(mask) (m) = (mask);				\
--	cmdq_pkt_write_mask(&((cmd)->pkt), id, (base) + (ofst),	\
--			    (val),				\
--		(((m) & (ofst##_MASK)) == (ofst##_MASK)) ?	\
--			(0xffffffff) : (m));			\
-+#define MM_REG_WRITE_MASK(cmd, id, base, ofst, val, mask)		\
-+do {									\
-+	typeof(cmd) (_c) = (cmd);					\
-+	typeof(id) (_i) = (id);						\
-+	typeof(base) (_b) = (base);					\
-+	typeof(ofst) (_o) = (ofst);					\
-+	typeof(val) (_v) = (val);					\
-+	typeof(mask) (_m) = (mask);					\
-+	_m = ((_m & (ofst##_MASK)) == (ofst##_MASK)) ? 0xffffffff : _m;	\
-+	if (_i != CMDQ_SUBSYS_INVALID) {				\
-+		cmdq_pkt_write_mask(&_c->pkt, _i, _b + _o, _v, _m);	\
-+	} else {							\
-+		/* only MMIO access, no need to check mminfro_offset */	\
-+		cmdq_pkt_assign(&_c->pkt, CMDQ_THR_SPR_IDX0,		\
-+				CMDQ_ADDR_HIGH(_b));			\
-+		cmdq_pkt_write_s_mask_value(&_c->pkt, CMDQ_THR_SPR_IDX0,\
-+					    CMDQ_ADDR_LOW(_b + _o),	\
-+					    _v, _m);			\
-+	}								\
- } while (0)
- 
--#define MM_REG_WRITE(cmd, id, base, ofst, val)			\
--	cmdq_pkt_write(&((cmd)->pkt), id, (base) + (ofst), (val))
-+#define MM_REG_WRITE(cmd, id, base, ofst, val)				\
-+do {									\
-+	typeof(cmd) (_c) = (cmd);					\
-+	typeof(id) (_i) = (id);						\
-+	typeof(base) (_b) = (base);					\
-+	typeof(ofst) (_o) = (ofst);					\
-+	typeof(val) (_v) = (val);					\
-+	if (_i != CMDQ_SUBSYS_INVALID) {				\
-+		cmdq_pkt_write(&_c->pkt, _i, _b + _o, _v);		\
-+	} else {							\
-+		/* only MMIO access, no need to check mminfro_offset */	\
-+		cmdq_pkt_assign(&_c->pkt, CMDQ_THR_SPR_IDX0,		\
-+				CMDQ_ADDR_HIGH(_b));			\
-+		cmdq_pkt_write_s_value(&_c->pkt, CMDQ_THR_SPR_IDX0,	\
-+				       CMDQ_ADDR_LOW(_b + _o), _v);	\
-+	}								\
-+} while (0)
- 
- #define MM_REG_WAIT(cmd, evt)					\
- do {								\
-@@ -49,17 +76,33 @@ do {								\
- 	cmdq_pkt_set_event(&((c)->pkt), (e));			\
- } while (0)
- 
--#define MM_REG_POLL_MASK(cmd, id, base, ofst, val, _mask)	\
--do {								\
--	typeof(_mask) (_m) = (_mask);				\
--	cmdq_pkt_poll_mask(&((cmd)->pkt), id,			\
--		(base) + (ofst), (val),				\
--		(((_m) & (ofst##_MASK)) == (ofst##_MASK)) ?	\
--			(0xffffffff) : (_m));			\
-+#define MM_REG_POLL_MASK(cmd, id, base, ofst, val, mask)		\
-+do {									\
-+	typeof(cmd) (_c) = (cmd);					\
-+	typeof(id) (_i) = (id);						\
-+	typeof(base) (_b) = (base);					\
-+	typeof(ofst) (_o) = (ofst);					\
-+	typeof(val) (_v) = (val);					\
-+	typeof(mask) (_m) = (mask);					\
-+	_m = ((_m & (ofst##_MASK)) == (ofst##_MASK)) ? 0xffffffff : _m;	\
-+	if (_i != CMDQ_SUBSYS_INVALID)					\
-+		cmdq_pkt_poll_mask(&_c->pkt, _i, _b + _o, _v, _m);	\
-+	else /* POLL not support SPR, so use cmdq_pkt_poll_addr() */	\
-+		cmdq_pkt_poll_addr(&_c->pkt, _b + _o, _v, _m);		\
- } while (0)
- 
--#define MM_REG_POLL(cmd, id, base, ofst, val)			\
--	cmdq_pkt_poll(&((cmd)->pkt), id, (base) + (ofst), (val))
-+#define MM_REG_POLL(cmd, id, base, ofst, val)				\
-+do {									\
-+	typeof(cmd) (_c) = (cmd);					\
-+	typeof(id) (_i) = (id);						\
-+	typeof(base) (_b) = (base);					\
-+	typeof(ofst) (_o) = (ofst);					\
-+	typeof(val) (_v) = (val);					\
-+	if (_i != CMDQ_SUBSYS_INVALID)					\
-+		cmdq_pkt_poll(&_c->pkt, _i, _b + _o, _v);		\
-+	else /* POLL not support SPR, so use cmdq_pkt_poll_addr() */	\
-+		cmdq_pkt_poll_addr(&_c->pkt, _b + _o, _v, 0xffffffff);	\
-+} while (0)
- 
- enum mtk_mdp_comp_id {
- 	MDP_COMP_NONE = -1,	/* Invalid engine */
--- 
-2.43.0
+configs tested: 114
+configs skipped: 3
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250217    gcc-13.2.0
+arc                   randconfig-002-20250217    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20250217    gcc-14.2.0
+arm                   randconfig-002-20250217    gcc-14.2.0
+arm                   randconfig-003-20250217    gcc-14.2.0
+arm                   randconfig-004-20250217    clang-19
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250217    gcc-14.2.0
+arm64                 randconfig-002-20250217    clang-21
+arm64                 randconfig-003-20250217    clang-15
+arm64                 randconfig-004-20250217    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250217    gcc-14.2.0
+csky                  randconfig-002-20250217    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250217    clang-21
+hexagon               randconfig-002-20250217    clang-14
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250217    clang-19
+i386        buildonly-randconfig-002-20250217    gcc-12
+i386        buildonly-randconfig-003-20250217    clang-19
+i386        buildonly-randconfig-004-20250217    gcc-12
+i386        buildonly-randconfig-005-20250217    gcc-12
+i386        buildonly-randconfig-006-20250217    clang-19
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250217    gcc-14.2.0
+loongarch             randconfig-002-20250217    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250217    gcc-14.2.0
+nios2                 randconfig-002-20250217    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20250217    gcc-14.2.0
+parisc                randconfig-002-20250217    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc               randconfig-001-20250217    clang-17
+powerpc               randconfig-002-20250217    clang-15
+powerpc               randconfig-003-20250217    gcc-14.2.0
+powerpc64             randconfig-001-20250217    clang-19
+powerpc64             randconfig-002-20250217    clang-21
+powerpc64             randconfig-003-20250217    clang-15
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                               defconfig    clang-19
+riscv                 randconfig-001-20250217    gcc-14.2.0
+riscv                 randconfig-002-20250217    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-15
+s390                  randconfig-001-20250217    gcc-14.2.0
+s390                  randconfig-002-20250217    clang-18
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                    randconfig-001-20250217    gcc-14.2.0
+sh                    randconfig-002-20250217    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250217    gcc-14.2.0
+sparc                 randconfig-002-20250217    gcc-14.2.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250217    gcc-14.2.0
+sparc64               randconfig-002-20250217    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250217    clang-19
+um                    randconfig-002-20250217    clang-17
+um                           x86_64_defconfig    clang-15
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250217    gcc-12
+x86_64      buildonly-randconfig-002-20250217    clang-19
+x86_64      buildonly-randconfig-003-20250217    clang-19
+x86_64      buildonly-randconfig-004-20250217    gcc-12
+x86_64      buildonly-randconfig-005-20250217    gcc-12
+x86_64      buildonly-randconfig-006-20250217    clang-19
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250217    gcc-14.2.0
+xtensa                randconfig-002-20250217    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
