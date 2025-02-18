@@ -1,164 +1,214 @@
-Return-Path: <linux-kernel+bounces-518565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC48A390F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:47:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F65A390F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63EB9172129
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7891C1891738
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D81414A4C7;
-	Tue, 18 Feb 2025 02:47:49 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710AB14A614;
+	Tue, 18 Feb 2025 02:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rc/sRB+/"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC923DE;
-	Tue, 18 Feb 2025 02:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9BD7E0E4;
+	Tue, 18 Feb 2025 02:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739846868; cv=none; b=ka1FYiOJwqAiJ8dnZm/B7vVZ6AZ29xPayX2GZDVO52goMIaREnvPrqzuIQZd9yBkBRfoeESdPhsCfbAwKT1wn44UIcNkhP263f4zdBfA48mZkKG84qtrx2y/Lh7Rn8zTS7dDwpZc/2jqYwozHIoulUISG/uuwi+Q/QAev/UME/I=
+	t=1739846960; cv=none; b=t5wUA8F3dna+5bz3hzgO3Ww7gPa/cFaFlLNa0SoTwVRSqI9jiAXB3ANFQsLKvL6ynfBEAtVodWBeostOk+jloXDF7XS0t8YR47OH525utKVilHWp5je3aU9VAf/BcxcepYZTBpXsG+tlUn2bkzlSOss7w8AlulXdn1isIsdWYqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739846868; c=relaxed/simple;
-	bh=vh6R4AHkmbR3moZclidczJg93/g+4eY55HePj1+pZ0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AdbwTWhV0NnvZvDlmkngK+OlQM9dKjaNJYzXJ4xZ3cSpLdcjk5LuwqC5VY14QbwbVIeQNNAOtNWiirEwSYdAqfdA3dQOIvNK6XsJx7YhXZh2DXcgEQWwZ5KscIjy8T8q07DcA7DKD9OG+I8gLNzD4s0aEcKqxM7agKwvZx6P12A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YxkP22X9Zz2JYZk;
-	Tue, 18 Feb 2025 10:43:50 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C9611A016C;
-	Tue, 18 Feb 2025 10:47:43 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Feb 2025 10:47:41 +0800
-Message-ID: <c2924e9e-1a42-a4f6-5066-ea2e15477c11@huawei.com>
-Date: Tue, 18 Feb 2025 10:47:41 +0800
+	s=arc-20240116; t=1739846960; c=relaxed/simple;
+	bh=94TuEB17GLW+0pTmgy4/+P8vnYkcpd8MTTgU+xtDw+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=emwPoUOWJkrB4p8GIavjLoj0r+u3mi+skbHd7H7J2Zju4BRsv4TKiPte87lAIVCi1bVqiGgGm26WGwrfatFIjhsnvgWpgqYt9WKKDf0Cr8jNScQV/F9Pr35Guah+1oBkNE6AZNc64Gfip1vq3lrdKA/IB5JQeFZqKoWV6E91AO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rc/sRB+/; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30926d77366so1923631fa.1;
+        Mon, 17 Feb 2025 18:49:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739846956; x=1740451756; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cejasenhaJOltFSQYB7sMlh4MJD60pJcoSmwimDCWsM=;
+        b=Rc/sRB+/Thb+MHh1Xy+GmB+jj2ijcsgZzW1bMRkcIyPLzjYB+7UbLvMYQz/jiYWsqz
+         dRwRvQ5ztuAS2Z3m6LnFDtlO0L2dP8Hryw7VuLkTcuF4bO+2UgzFpgh2F6QA1lce4jtq
+         h3hDWmDlpUbwRYtfi6LgH9w4gspILew3rYgcGdPkMgvHkOLMll+DCcvq93FacQkJ6VjU
+         /FP5hR/lCzndH+tb/OdZXtVj3HkvSAcC2qUTOKjXdkFABGAnCY+rt8HRDTI80nAltswI
+         /cERESbwYUd7CNsDDqEdBHJPgdHHD+77Ff+Qh9K5IknOtAv586m2v/EZ2fJygXr0kZQR
+         SjEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739846956; x=1740451756;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cejasenhaJOltFSQYB7sMlh4MJD60pJcoSmwimDCWsM=;
+        b=WDn0AT1e+3yDVD/DODPfXP30q/brdjUp8TJqZ4e7/bf7BawJzN22IZlqgF0GumrrmO
+         f843nRYV5bPWnfWwYXL1Bgvl8jGyQpwnTsxv6JMYauUPC6a5UhG2MAgPX+F/ogJxp6Fz
+         rcx7aBG8Pn0SYPWNi1rphE9mIy0XwXrbkg3X7jb8pamyYIdzDu8FB1vxvodXlfF/ImBi
+         XhqsanECXxIeMyJ87p7Jg9LRcugkZt1S6ynS1QpkLWmOw4OioUdVHmfG5666gXe7ZOtr
+         A+k2tZWO8pskmX3YMxpzloEO591Pk9Ud9EeCRRHIYE7ggd6PT5L8ZJzmWTNpxxN9XaT6
+         3Fdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVytBF2eQ7HhdxQs6okMZi8uVv4eD4+YWUN0yg3xVrvPRZWuOHWRKIyayC+lza6qCk3+p5KkfILH38hGw==@vger.kernel.org, AJvYcCWPGF+/Qj4J6ziCSh2ELWIW2RK1NbZTdBtAxJSq2lswAfQ0ldddRwf/h/3zeDZbXl3wHjMQlK/WxpG/1S1p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw09CjwNzO+REsAhl+ahPOzd8JXnO8zMSfkV1xpoRn9MMbeIwSD
+	Ug6vdBb5dYtwJzs9oU1GCg/zViScLWHOQynBfh8MJwJ6RTRNwWqHn7S+3/jXhydeKF5k+G9bxn2
+	/CXMZM6Th0Ov8nwc+HONP7H2sW6M=
+X-Gm-Gg: ASbGncsEY1FkMcZVy4Vo8lF409U0M0LTHeByMo1UJ/iqqPiuZLtPHy+mdLeUYJ2qlN1
+	lg9hiubVd8L/SQalbNAdkbihpjMSVPkNYnDNhLWdwYkx+DBtEilJXE3a6iTrz+PG04z/j2wVSNg
+	==
+X-Google-Smtp-Source: AGHT+IH8wXRnwMjaqZO5yPpB5ju366TC1Nxn/UnLJWw1YO9UjUzlAyVrHoDyJEvlplqwQD8FbfPUN8UJZyHTX+GYbSE=
+X-Received: by 2002:a2e:a809:0:b0:308:f5f0:c406 with SMTP id
+ 38308e7fff4ca-30927b1eb02mr13291881fa.9.1739846955303; Mon, 17 Feb 2025
+ 18:49:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Add Morton,Peter and David for discussion//Re: [PATCH -next] uprobes:
- fix two zero old_folio bugs in __replace_page()
-To: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, David Hildenbrand
-	<david@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<wangkefeng.wang@huawei.com>, linux-mm <linux-mm@kvack.org>
-References: <20250217123826.88503-1-tongtiangen@huawei.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <20250217123826.88503-1-tongtiangen@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+References: <67afa060.050a0220.21dd3.0051.GAE@google.com> <1739771872662.83054@unisoc.com>
+In-Reply-To: <1739771872662.83054@unisoc.com>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Tue, 18 Feb 2025 10:49:04 +0800
+X-Gm-Features: AWEUYZlitddjFf8m3lDAtMeqY3-6bG4KYKDmLbUmOTQGnqftrPKQkWjOqAemdc8
+Message-ID: <CAGWkznFFN-wBXFc4ReCdEpFFNuc_m_EXDDopfQzZtTHt2t-wKw@mail.gmail.com>
+Subject: Re: reply: [syzbot] [block?] BUG: corrupted list in loop_process_work
+To: syzbot <syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    c674aa7c289e Add linux-next specific files for 20250212
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=125063f8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a0fd539126ae5541
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c104904eeb2c0edbdb06
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158a3bdf980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e18aa4580000
+ #syz test
 
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 68c943a77e41..354d77f9228b 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1972,7 +1972,8 @@ static void loop_process_work(struct loop_worker *worker,
+         * *and* the worker will not run again which ensures that it
+         * is safe to free any worker on the idle list
+         */
+-       if (worker && !work_pending(&worker->work)) {
++       if (worker && !work_pending(&worker->work)
++               && list_empty(&worker->idle_list)) {
+                worker->last_ran_at = jiffies;
+                list_add_tail(&worker->idle_list, &lo->idle_worker_list);
+                loop_set_timer(lo);
 
-在 2025/2/17 20:38, Tong Tiangen 写道:
-> We triggered the following error logs in syzkaller test:
-> 
->    BUG: Bad page state in process syz.7.38  pfn:1eff3
->    page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1eff3
->    flags: 0x3fffff00004004(referenced|reserved|node=0|zone=1|lastcpupid=0x1fffff)
->    raw: 003fffff00004004 ffffe6c6c07bfcc8 ffffe6c6c07bfcc8 0000000000000000
->    raw: 0000000000000000 0000000000000000 00000000fffffffe 0000000000000000
->    page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
->    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->    Call Trace:
->     <TASK>
->     dump_stack_lvl+0x32/0x50
->     bad_page+0x69/0xf0
->     free_unref_page_prepare+0x401/0x500
->     free_unref_page+0x6d/0x1b0
->     uprobe_write_opcode+0x460/0x8e0
->     install_breakpoint.part.0+0x51/0x80
->     register_for_each_vma+0x1d9/0x2b0
->     __uprobe_register+0x245/0x300
->     bpf_uprobe_multi_link_attach+0x29b/0x4f0
->     link_create+0x1e2/0x280
->     __sys_bpf+0x75f/0xac0
->     __x64_sys_bpf+0x1a/0x30
->     do_syscall_64+0x56/0x100
->     entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
->     BUG: Bad rss-counter state mm:00000000452453e0 type:MM_FILEPAGES val:-1
-> 
-> The following syzkaller test case can be used to reproduce:
-> 
->    r2 = creat(&(0x7f0000000000)='./file0\x00', 0x8)
->    write$nbd(r2, &(0x7f0000000580)=ANY=[], 0x10)
->    r4 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file0\x00', 0x42, 0x0)
->    mmap$IORING_OFF_SQ_RING(&(0x7f0000ffd000/0x3000)=nil, 0x3000, 0x0, 0x12, r4, 0x0)
->    r5 = userfaultfd(0x80801)
->    ioctl$UFFDIO_API(r5, 0xc018aa3f, &(0x7f0000000040)={0xaa, 0x20})
->    r6 = userfaultfd(0x80801)
->    ioctl$UFFDIO_API(r6, 0xc018aa3f, &(0x7f0000000140))
->    ioctl$UFFDIO_REGISTER(r6, 0xc020aa00, &(0x7f0000000100)={{&(0x7f0000ffc000/0x4000)=nil, 0x4000}, 0x2})
->    ioctl$UFFDIO_ZEROPAGE(r5, 0xc020aa04, &(0x7f0000000000)={{&(0x7f0000ffd000/0x1000)=nil, 0x1000}})
->    r7 = bpf$PROG_LOAD(0x5, &(0x7f0000000140)={0x2, 0x3, &(0x7f0000000200)=ANY=[@ANYBLOB="1800000000120000000000000000000095"], &(0x7f0000000000)='GPL\x00', 0x7, 0x0, 0x0, 0x0, 0x0, '\x00', 0x0, @fallback=0x30, 0xffffffffffffffff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x10, 0x0, @void, @value}, 0x94)
->    bpf$BPF_LINK_CREATE_XDP(0x1c, &(0x7f0000000040)={r7, 0x0, 0x30, 0x1e, @val=@uprobe_multi={&(0x7f0000000080)='./file0\x00', &(0x7f0000000100)=[0x2], 0x0, 0x0, 0x1}}, 0x40)
-> 
-> The cause is that zero pfn is set to the pte without increasing the rss
-> count in mfill_atomic_pte_zeropage() and the refcount of zero folio does
-> not increase accordingly. Then, the operation on the same pfn is performed
-> in uprobe_write_opcode()->__replace_page() to unconditional decrease the
-> rss count and old_folio's refcount.
-> 
-> Therefore, two bugs are introduced:
-> 1. The rss count is incorrect, when process exit, the check_mm() report
->     error "Bad rss-count".
-> 2. The reserved folio (zero folio) is freed when folio->refcount is zero,
->     then free_pages_prepare->free_page_is_bad() report error "Bad page state".
-> 
-> To fix it, add zero folio check before rss counter and refcount decrease.
-> 
-> Fixes: 7396fa818d62 ("uprobes/core: Make background page replacement logic account for rss_stat counters")
-> Fixes: 2b1444983508 ("uprobes, mm, x86: Add the ability to install and remove uprobes breakpoints")
-> Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cc5b357d26d3/disk-c674aa7c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/11dcf272a27b/vmlinux-c674aa7c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4e487b1c1c6e/bzImage-c674aa7c.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/4ea41e9eae4d/mount_0.gz
+>
+> The issue was bisected to:
+>
+> commit 3bee991f2b68175c828dc3f9c26367fe1827319a
+> Author: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> Date:   Fri Feb 7 09:19:42 2025 +0000
+>
+>     loop: release the lo_work_lock before queue_work
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=161029b0580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=151029b0580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=111029b0580000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c104904eeb2c0edbdb06@syzkaller.appspotmail.com
+> Fixes: 3bee991f2b68 ("loop: release the lo_work_lock before queue_work")
+>
+> list_add double add: new=ffff88807fe21c70, prev=ffff88807fe21c70, next=ffff888024c29160.
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:37!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.14.0-rc2-next-20250212-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> Workqueue: loop0 loop_workfn
+> RIP: 0010:__list_add_valid_or_report+0xa4/0x130 lib/list_debug.c:35
+> Code: f7 74 11 b0 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 48 c7 c7 40 e5 60 8c 4c 89 fe 4c 89 e2 4c 89 f1 e8 fd 88 35 fc 90 <0f> 0b 48 c7 c7 40 e3 60 8c e8 ee 88 35 fc 90 0f 0b 48 c7 c7 e0 e3
+> RSP: 0018:ffffc90000117628 EFLAGS: 00010046
+> RAX: 0000000000000058 RBX: 1ffff1100ffc438e RCX: 89e05f8d6ffcb000
+> RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+> RBP: 1ffff1100498522d R08: ffffffff819f562c R09: 1ffff92000022e60
+> R10: dffffc0000000000 R11: fffff52000022e61 R12: ffff88807fe21c70
+> R13: dffffc0000000000 R14: ffff888024c29160 R15: ffff88807fe21c70
+> FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff4b64ffe00 CR3: 000000007cfa4000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  __list_add_valid include/linux/list.h:88 [inline]
+>  __list_add include/linux/list.h:150 [inline]
+>  list_add_tail include/linux/list.h:183 [inline]
+>  loop_process_work+0x1f96/0x21c0 drivers/block/loop.c:1977
+>  process_one_work kernel/workqueue.c:3236 [inline]
+>  process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
+>  worker_thread+0x870/0xd30 kernel/workqueue.c:3398
+>  kthread+0x7a9/0x920 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__list_add_valid_or_report+0xa4/0x130 lib/list_debug.c:35
+> Code: f7 74 11 b0 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 48 c7 c7 40 e5 60 8c 4c 89 fe 4c 89 e2 4c 89 f1 e8 fd 88 35 fc 90 <0f> 0b 48 c7 c7 40 e3 60 8c e8 ee 88 35 fc 90 0f 0b 48 c7 c7 e0 e3
+> RSP: 0018:ffffc90000117628 EFLAGS: 00010046
+> RAX: 0000000000000058 RBX: 1ffff1100ffc438e RCX: 89e05f8d6ffcb000
+> RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+> RBP: 1ffff1100498522d R08: ffffffff819f562c R09: 1ffff92000022e60
+> R10: dffffc0000000000 R11: fffff52000022e61 R12: ffff88807fe21c70
+> R13: dffffc0000000000 R14: ffff888024c29160 R15: ffff88807fe21c70
+> FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff4b64ffe00 CR3: 000000007cfa4000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
 > ---
->   kernel/events/uprobes.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 46ddf3a2334d..ff5694acfa68 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -213,7 +213,8 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
->   		dec_mm_counter(mm, MM_ANONPAGES);
->   
->   	if (!folio_test_anon(old_folio)) {
-> -		dec_mm_counter(mm, mm_counter_file(old_folio));
-> +		if (!is_zero_folio(old_folio))
-> +			dec_mm_counter(mm, mm_counter_file(old_folio));
->   		inc_mm_counter(mm, MM_ANONPAGES);
->   	}
->   
-> @@ -227,7 +228,8 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
->   	if (!folio_mapped(old_folio))
->   		folio_free_swap(old_folio);
->   	page_vma_mapped_walk_done(&pvmw);
-> -	folio_put(old_folio);
-> +	if (!is_zero_folio(old_folio))
-> +		folio_put(old_folio);
->   
->   	err = 0;
->    unlock:
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
