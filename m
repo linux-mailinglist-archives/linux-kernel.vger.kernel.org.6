@@ -1,214 +1,206 @@
-Return-Path: <linux-kernel+bounces-519755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E71FA3A171
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DB0A3A16E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275F3188EBD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EB557A1DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8010026E150;
-	Tue, 18 Feb 2025 15:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C642E262811;
+	Tue, 18 Feb 2025 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nXqiVTDN"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q8ACC4WL"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C4A262811
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D6426D5C4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893089; cv=none; b=AesswdcSxcxeHbO9zl4q3xs0ibRPCljrAy/7Cjta608QkqornCru1CJYSOkqtgIU3VXDk+7gxn9BIXbxS4ZqJuvAkLrgZdrOEXCv2g01GMt/hWDZG8feOKBQc5w49HRzi0UwmB13Wdt61pvgHyZ2ThRCFx6QFFu8ZVl9pvla2Js=
+	t=1739893079; cv=none; b=Y+1jhLvn7wocA1gEV37ZLbzy8Bbu1lQnJRKcloVv4bLynFAIXaNY197Y5s5a8Dqk8WvUNKcDuix4K59MsBOk83fR1uZWeBtFTBW8bDLuUq9+5/SYMqKMsglM1j7qbIQ+E4gm+qvb4fBnmkaWiPxEpN8oJTiKXNmB/T9pMt+Tn+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893089; c=relaxed/simple;
-	bh=0aD6ufK/vC5tUbx+0/mu6k4fhbXKSczIRmW2JTUH1Vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Py+qp9rpsUWFCh4tdeTDGlWlZtFAJotmFXZImRxANXfUKw5svUb4IJGbeWd2+RoT1bi005A6w9uv1puW+d8KHHkrks3V6f0LGFOH5ovSqvXQf3W1sF0KKCFdDdkuMb2ouoaqla0lFaPp8w2U5xydSWr1A2yqmLzLR1sbMmx471A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nXqiVTDN; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 18 Feb 2025 21:07:31 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739893076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NhAs/+alc8iOs1QMRuJFdglVREAEu5m/W/RgQbql3+k=;
-	b=nXqiVTDNSQwRJUS6oQyCJjjCvqgFPeh581yPRfXMfaW6dEhwuEZ7resmRcaG6VyJ1fxAKA
-	osrk0LTmA16VdgqgyQy2GQrmMvGSOYpbUYWSWapsGIFzLsp5ybTIbZBTgZ1aHIjPhm7v4a
-	zYFrtiL5GrkI4CZJVnLcU00SHZ0FXEc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jai Luthra <jai.luthra@linux.dev>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>, 
-	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-Cc: "mripard@kernel.org" <mripard@kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "devarsht@ti.com" <devarsht@ti.com>, 
-	"vaishnav.a@ti.com" <vaishnav.a@ti.com>, "r-donadkar@ti.com" <r-donadkar@ti.com>, 
-	"u-kumar1@ti.com" <u-kumar1@ti.com>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczog?=
- =?utf-8?Q?media?= =?utf-8?Q?=3A?= cdns,csi2rx.yaml: Add optional interrupts
- for cdns-csi2rx
-Message-ID: <swqtud4ohcsjjt4ofgrovsa5h7koriuvpmxb3hdemnndwems2a@nwiny4dvuzwg>
-X-PGP-Key: http://jailuthra.in/files/public-key.asc
-References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
- <20250217130013.2802293-2-y-abhilashchandra@ti.com>
- <m6ijg5colbev6lyhiobblecb4wlvwezpccibnso26gd3dadrfh@twgul4eel6hg>
- <ZQ0PR01MB13022FE965643879D8794733F2FAA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1739893079; c=relaxed/simple;
+	bh=MbSqi8fGRLE2MWdWOmZyoaqxD9LSStJyCENzg9i29vY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pkKSSuz38bhXgO2f6jtbAZ8hZiVkW4qjg+MgjjE78jo463HdLlSUB+oRezq0Y+321UlUh87omvkzGFsQtUsNw58znRAwUVm666Hen5kOVjH6MNSdFtPrELSQBHDK9pBMrU4WRyOReXYmZ24KDMVefkxhsJcicD6fwCVjqhP21Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q8ACC4WL; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3061513d353so59849101fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:37:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739893074; x=1740497874; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BCiUaH6MN7itgwvIo5MApL4e69X6Hv5T8NgmLTpDmys=;
+        b=q8ACC4WLi+oD8fUyJOAT7Mky4ZEwa/Rlp8ajoKM2grFCWKOd0YgiIo1yXMCR17g1ar
+         kBds+1rCM6qhPOhTVdRtZ5QygGCaPE+nb3y5R/KBOuOF1kkhLDBwfzcnUMQIpVXo7UAD
+         l+6OThq0JxhtqwlGjDJma3PdpNjaERO0fur0YPeIfemuSQscwi4rzn7EHs6uKKYBVh3G
+         gksA+0Mapq6UA35sZcZYX/pmDrAylD/LOqyNoHM0C8xgXo4XPqXuUK4DFuGYAq9fv4MI
+         YVbepk6jexzaS7b3t38hBJktdt6HsixEKEiBFU+fKZbei/xHAY5ghrjza6SJo80hYB8Q
+         Mhpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739893074; x=1740497874;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BCiUaH6MN7itgwvIo5MApL4e69X6Hv5T8NgmLTpDmys=;
+        b=b4QXR2nMx2ji0b5XsWsoT3vhaOwLzg6kzxbiic2jw+GjbToaGUXQMA1mdbE4M2/wOt
+         pJgPaWHEUanZsbcYXqkr04KJBMdVRid96414SUzyCZ1ez1abyrtYCzkcP8n2N/SXwlD4
+         Gft7r343CnGv4eqw5tvWL14EMgQDZFfLZQHSCOGcanhUnLNp2L+vJngwDRhtbnM+Nk7Z
+         +CuvYSA9gNaFB3ZAARlsfDjgdyXZhBq9AAZ0zVXGbACRFkMIBz7/bzaiRMlthKIGEAvy
+         OboSu5FJCr910ukB3fht6p0601Ekkvp6th+5NUuRR7GD4N9s6p3i6yuFoVg/+/KBExyb
+         imsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWqs4kZVEpdp+xybWmuAnFBXc7koxquZNZIokK+Zfc9MhjBOL1+accRz7sevOpi9taE3asq8MYScrQToU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxerwBm5knpE4+msctcGmbgAP9DPYTBG68UHYKDbkjty0ZSErqG
+	ZFNnsSG+bW+vVlan4RbSSXl/BIHqu3AdPtrsIOR1mYOgVFrKIG3c2391TfuL9NsH7Y2mdAc476k
+	NCgPsd4Y3LCC8BQhf87l6HSgMGp5iKuYvgbwmPDv4yyA2Hsy7KtAp
+X-Gm-Gg: ASbGncupGKN73pZi2RR9xI8HrsMg7fWymo3PbpJR2q7oARMuCVzfgnaWwkQ2mH0LDZS
+	hcXJ7f91y6+T6Q/lySkPDM2Jgs+cWnL5FG0t3R28FTLlElT8gQyMpH6tu6NwfxEKl2yaQM9FNsz
+	/hhzBcEPpxy/I+u1GLwKqbcx6kAw==
+X-Google-Smtp-Source: AGHT+IGYdC1sCrerPFGvCgTM7OenUn5vas2aD6yb9SWQP6KbFxMb49tyEKQ9Z//zQUg/LTm/gOO04WXUIMhNnFbo31U=
+X-Received: by 2002:a2e:a163:0:b0:308:fa1d:d833 with SMTP id
+ 38308e7fff4ca-30927b283damr39861531fa.37.1739893074018; Tue, 18 Feb 2025
+ 07:37:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ngdnlsgngwdiatpe"
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB13022FE965643879D8794733F2FAA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1739790300.git.dvyukov@google.com> <0d0e0a0a7136d49af9a8d6a849e1aa4bf086c472.1739790300.git.dvyukov@google.com>
+ <f68741e0-0cc8-4faa-8144-e1786b9591f1@efficios.com> <CACT4Y+Ym7=9mLS8b=Rq6cyHMgyboMqh15nqkRfgru-qFVTx_0A@mail.gmail.com>
+ <cf7af2a8-c004-481b-ad2e-6aa991aacb67@efficios.com> <CACT4Y+Z3PCBWDdR5PifXoMBSYJ-cdUmzLRdgbjTUG+A2S8Qq1g@mail.gmail.com>
+ <2bcfeb11-74a1-497b-b271-06dfb51eace3@efficios.com>
+In-Reply-To: <2bcfeb11-74a1-497b-b271-06dfb51eace3@efficios.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 18 Feb 2025 16:37:41 +0100
+X-Gm-Features: AWEUYZlgClxBoiDLp3jFDNZiqxLE3BW6TInhVljPffHqzNQfeYQXfkYtFhPma9A
+Message-ID: <CACT4Y+bu3WtdMLEOj0qFC_MK4G20Joq52Cr8W86Xx4xK3MsB9A@mail.gmail.com>
+Subject: Re: [PATCH 3/4] rseq: Make rseq work with protection keys
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	aruna.ramakrishna@oracle.com, elver@google.com, 
+	"Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 18 Feb 2025 at 16:27, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> On 2025-02-18 10:10, Dmitry Vyukov wrote:
+> > On Tue, 18 Feb 2025 at 15:57, Mathieu Desnoyers
+> > <mathieu.desnoyers@efficios.com> wrote:
+> >>
+> >> On 2025-02-18 02:55, Dmitry Vyukov wrote:
+> >>> On Mon, 17 Feb 2025 at 21:21, Mathieu Desnoyers
+> >> [...]
+> >>>>
+> >>>>     we still let this function read the rseq_cs.
+> >>>>> +      * It's unclear what benefits the resticted code gets by doing this
+> >>>>
+> >>>> restricted
+> >>>>
+> >>>>> +      * (it probably already hijacked control flow at this point), and
+> >>>>> +      * presumably any sane sandbox should prohibit restricted code
+> >>>>> +      * from accessing struct rseq, and this is still better than
+> >>>>> +      * terminating the app unconditionally (it always has a choice
+> >>>>> +      * of not using rseq and pkeys together).
+> >>>>
+> >>>> Note that because userspace can complete an rseq critical section
+> >>>> without clearing the rseq_cs pointer, this could happen simply because
+> >>>> the kernel is preempting the task after it has:
+> >>>>
+> >>>> 1) completed an rseq critical section, without clearing rseq_cs,
+> >>>> 2) changed pkey.
+> >>>>
+> >>>> So allowing this is important, and I would remove the comment about
+> >>>> hijacked control flow and such. This can happen with normal use of the
+> >>>> ABI.
+> >>>
+> >>> Thanks for the review!
+> >>>
+> >>> I've addressed all comments in the series in v2.
+> >>>
+> >>> I've reworded this paragraph to simplify sentences, but I still kept
+> >>> the note aboud malicious rseq_cs.
+> >>>
+> >>> If we would not be circumventing normal protection, then, yes, these
+> >>> cases would be the same. But since we are circumventing protection
+> >>> that otherwise exists, I think it's important to think about
+> >>> potentially malicious cases. In this context inaccessible rseq_cs
+> >>> values that resulted from normal execution are very different from
+> >>> malicious onces. Normal ones will point to a fixed set of real
+> >>> well-formed rseq_cs objects, while malicious ones may point to
+> >>> god-knows-where in an attempt of an attacker to do things we can't
+> >>> even imagine right now (e.g. rseq_cs overlapping with protected crypto
+> >>> keys).
+> >>>
+> >>> It's as if a particular instance of copy_to_user would allow
+> >>> user-space to write arbitrary kernel memory, and memory of other
+> >>> processes circumventing all normal protections. In that context we
+> >>> would need to be very careful regarding what we actually allow.
+> >>
+> >> I'm considering that we should clear the rseq_cs pointer whenever
+> >> userspace issues pkey_mprotect.
+> >>
+> >> This would ensure that no legitimate scenario can trigger a load
+> >> from a rseq_cs area which has the wrong pkey, and therefore we
+> >> could accept read/write from/to a struct rseq which has the wrong
+> >> pkey, but kill the process if trying to read/write from a
+> >> struct rseq_cs with the wrong key. This would prevent userspace
+> >> from making the kernel read/write from/to memory with the wrong
+> >> pkey through a pointer it controls (rseq_cs pointer).
+> >>
+> >> Thoughts ?
+> >
+> > I am not following.
+> >
+> > There are pkey_mprotect calls, then independently installs on rseq_cs
+> > pointers that happen concurrently and after pkey_mprotect, and
+> > independent set of pkey_set calls that happens concurrently and after
+> > the previous 2.
+> > I don't see how doing something at the pkey_mprotect call for the
+> > single thread avoids any scenarios.
+>
+> Hrm. Sorry, I mixed up pkey_set() vs pkey_mprotect(). What I had in mind
+> was actually pkey_set(). And that would need to clear rseq_cs for all
+> threads belonging to the process, which may not be straightforward
+> because those could legitimately be inside a rseq critical section.
+>
+> OK, let's try another approach: rather than kill the process if
+> read/write of the rseq_cs area with the wrong key fails, could we simply
+> clear the rseq_cs pointer in that case ? Technically there would be no
+> legitimate use of this except for the case where it is meant to be lazily
+> cleared.
+
+This may work, but 2 concerns with this:
+1. We don't know if the failure happened due to pkeys or not (at least
+not easily), and I am afraid of touching the logic for other failures.
+If the rseq_cs was a bogus pointer, or protected with normal mprotect,
+what does it mean? Are we masking a programming bug? Are we
+circumventing some other protections that were supposed to lead to the
+process termination?
+2. This will complicate __rseq_handle_notify_resume() logic as it
+would need to handle failures when accessing rseq and rseq_cs
+differently (+plus there is signature check). The more complex the
+logic, the higher chances of adding a bug now or in future.
 
 
---ngdnlsgngwdiatpe
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczog?=
- =?utf-8?Q?media?= =?utf-8?Q?=3A?= cdns,csi2rx.yaml: Add optional interrupts
- for cdns-csi2rx
-MIME-Version: 1.0
-
-On Tue, Feb 18, 2025 at 09:35:50AM +0000, Changhuang Liang wrote:
-> Hi Jai, Abhilash
->=20
-> > Hi Abhilash,
-> >=20
-> > On Mon, Feb 17, 2025 at 06:30:12PM +0530, Yemike Abhilash Chandra wrote:
-> > > The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
-> > > Enabling these interrupts will provide additional information about a
-> > > CSI packet or an individual frame. So, add support for optional
-> > > interrupts and interrupt-names properties.
-> > >
-> > > [0]: http://www.ti.com/lit/pdf/spruil1
-> > >
-> > > Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> > > ---
-> > >
-> > > Changes in v2:
-> > > - Address Krzysztof's review comment to remove flexibility while addi=
-ng
-> > >   interrupts.
-> > >
-> > >  .../devicetree/bindings/media/cdns,csi2rx.yaml         | 10
-> > ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> > > b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> > > index 2008a47c0580..f335429cbde9 100644
-> > > --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> > > +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
-> > > @@ -24,6 +24,16 @@ properties:
-> > >    reg:
-> > >      maxItems: 1
-> > >
-> > > +  interrupts:
-> > > +    minItems: 3
-> > > +    maxItems: 3
-> > > +
-> > > +  interrupt-names:
-> > > +    items:
-> > > +      - const: info
-> > > +      - const: error
-> > > +      - const: monitor
-> > > +
-> >=20
-> > How many interrupt lines are actually exposed by the Cadence IP?
->=20
-> I only see that the Cadence IP exposes two interrupt lines: irq and err_i=
-rq. If there are any mistakes,=20
-> please help correct them.
->=20
-
-Thank you Changhuang for the quick confirmation.
-This seems to match CSI_ERR_IRQ and CSI_IRQ in TI's integration.
-
-> > It is not clear to me from the TRM [0]. From the "Table 12-1524. CSI_RX=
-_IF
-> > Hardware Requests" it looks like there are three separate interrupt lin=
-es
-> > CSI_ERR_IRQ, CSI_IRQ and CSI_LEVEL, which are routed to the Arm core/GI=
-C.
-> > And four lines for the ASF submodule (?) that are not routed to GIC.
-> >=20
-
-Abhilash,
-
-What is unclear to me is where the third CSI_LEVEL interrupt line is coming=
-=20
-=66rom?
-
-The TRM description of the CSI_LEVEL interrupt says it is for PSI_L overflo=
-w=20
-or VP0/VP1 frame/line mismatch, both of which are outside the Cadence CSI2R=
-X,=20
-instead belonging to the TI wrapper hardware, which has its own driver.
-
-> > This does not match with the error, info and monitor line names mention=
-ed
-> > here.
-> >=20
-> > In my understanding which interrupt lines are actually integrated will =
-vary
-> > from SoC to SoC, so please check what are the actual interrupt line nam=
-es
-> > exposed by the Cadence IP. Maybe Maxime knows more.
-> >=20
-> > But I don't think it is correct to make all 3 mandatory together, as so=
-me
-> > vendors may only integrate the error interrupt ignoring the rest.
->=20
-> Agreed.
->=20
-
-I think by default there should only be two optional interrupt lines for=20
-cdns-csi2rx, "irq" and "err_irq" which is common across vendors.
-
-If this third TI-specific CSI_LEVEL interrupt *has* to be handled by=20
-cdns-csi2rx driver, it would be better to create conditional bindings and=
-=20
-match data in the driver such that the irq is only requested if=20
-"ti,j721e-csi2rx" compatible is present.
-
-> Best Regards,
-> Changhuang
-
-Thanks,
-Jai
-
---ngdnlsgngwdiatpe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAme0qTsACgkQQ96R+SSa
-cUV6YxAAhNSjyeqRNGXC5vnrDW2XCuer0HIH05/FELfhTHKMJ1j+iLVI4G27/76Z
-ZqPiLRl06wAG1IBx1sG4HqA/JLRCDx8UNAXkmulIqD9esZ7/aEglJlqwUv8qYcok
-L663Ie+8JS699GyKEsJd55atAJgE4s7Sez4kPBYq7PxOn8saSlHYPpExaWDwfrxI
-48m2uAQV6K7oUKiScFvZ73e2Spp6bHs8kzfZ1nVG3mGjSpfvxzsWQfgLhsXLwCbr
-9NMY3JNwC++0xNS/koraurUyTLQEH7N+7hFsY7vWz5FGSobyK1PPCMSHA7hl3T1I
-2OxiQ5ZIcdGB/lgjaucZ+DdFrM5Vh4ZYdjnNKcHNfGx8rUtZ00O7DJybbUKeUzoS
-sXLWVCbE7TUg6WT22FWOZZDV5cbMoIBTcY3sxnSWDYs3Rny9mOTr3SuVcX0YkC8J
-L6pOmUUShpq8wy6AUSK0OKoMK/7z+H6j2/EyCdJlIRn52jK0bO/XDZrdeXrKEjWT
-HpiVm1wOhdK3D3LPg60etT0JH/P4nLcUdeiZcE5knVZO6hwCLI3Hb1CISWFaxiwd
-baTbG+54Fh08aIH+2peyYN00X+PYWXSujVs9OM4wzytOZw0bqtjD5albJT5IOJVy
-oqXPkXawH87SbNOTbIbuHQLqRbv82SERtacdnsVAjf7gKhHE/eM=
-=ZqEt
------END PGP SIGNATURE-----
-
---ngdnlsgngwdiatpe--
+> Thanks,
+>
+> Mathieu
+>
+> > Moreover, pkey 0 is preinstalled for all pages, but access to it can
+> > be revoked in future.
+>
+>
+> --
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> https://www.efficios.com
 
