@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-519078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50D5A397BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:56:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CBAA397DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF2C7A5D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828FF3B8242
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1549A23875A;
-	Tue, 18 Feb 2025 09:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FB723956D;
+	Tue, 18 Feb 2025 09:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFraw+Iv"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkZe9OjY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33FF231C8D;
-	Tue, 18 Feb 2025 09:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9ED23237C;
+	Tue, 18 Feb 2025 09:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872161; cv=none; b=XqxRGuICG9rbHoqvF5gpbeiEtbINrh+UWpEetywd49gJRDmR8TH9Q4s5bPYsJ/3jFL81eePEHa7VHyxnfH+XImyzLX/vdC5+cKf3sMmLLbMT+mcq5BBcf0i1DNM58zeigDJvooQ3IzkGW2HVF8WqhlUO3PPKL8wWXIJJwPUg8hc=
+	t=1739872191; cv=none; b=py1eTJ+Q7h7R179wMmn3ciS/0QYY+/fOUpMR0wzmZ9In0Q8MMq/KR5bYYA50Uzwi8GeMKs/l+rb1tnr0Uz61znf2hmMEg9/H+03fOiR6VNx7+Switw7FaxjCHbwAG9Ru6PcEESzKKh2y8QL+purdbjIzZWRXecPy9BFyw/F1m3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872161; c=relaxed/simple;
-	bh=XbF9Z9EDOE+WH6IsM10sX91VT6//KmQmo+fxU51EyWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aYDCXGNxGTTWV8bN//Uzh5TG1eF2758cn29RcK5v+QRFDZXOq+TI/IdDK+Qn2qmZA/9GXKRmtM4clUTpZZ83w1omXMJp58aotdfRwA6CIN6qsIBHWgdGK9BEQ8x44pjAlaGh1RnrON+CTq4i/sUT9YfsV5aEKTukIqqSgMMDhtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFraw+Iv; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so2913299f8f.2;
-        Tue, 18 Feb 2025 01:49:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739872158; x=1740476958; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nmC+DcBpQAGFGOKtkkBPoJk4Mr/Jtv0ZiKFK90g8220=;
-        b=nFraw+IvTEiak+45ZTjOsCIVk8idx4nEpHJhdUlAp6F8JgiE4vlNQa6Vay+IN6TT47
-         +DU330t+VHrJxId0q2msTYOZk9no6h76gQxb2upP4GAjJwPHZwG11wceY3gmju+FAfl3
-         DBTLCXG8gdXW49/0cIXD+O5GmC8pK7t2Fcm0RrKKLEN/Zb2ZC7vvDUlCfQKg0/9ExIPe
-         vuCwC25znSHBnTAJ4AQV97PwazcAM4+dI8K408DIXs29aYZ3PhrWMH5VP5coKHkTV5xp
-         BUSZHFK61YLfO7FB+wRdRhEmDPH8ZbFXjh/7ifIja0nJ/b11e8rAK1SXj7l2Cp7L/Qqe
-         AyvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739872158; x=1740476958;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nmC+DcBpQAGFGOKtkkBPoJk4Mr/Jtv0ZiKFK90g8220=;
-        b=mVZIrW4rUL/gmoBrm1W6sLs82Vtj2nuMtcPOmTGED0368emgvy9dfhLRO6xAW8VAHD
-         qhUb/i01djKMIOvTIeCW362IJ5FTLePFLDFg3Nzh4j03xriMEuOlqGVIb12lwzZm2d5/
-         9r4U37MKVc9fRWosS/IDXqHZeKgDUnwCSxrStpVHPWtemHfhuEGDklhGkmLV2xLVfrKS
-         1EwgAfHfitIza10/0JHC2pfnFYfpcO6qQMpKeeKx4hp7VEE2iDv2CjmgPVlWgAfAuKd/
-         4iSgBXLUbG9tD9NPyM2x10dbNr+SrPF7dThl7mgJxH0u9cxEdHHHYLmem/y78UlhEWrE
-         AKUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJyPFrLHrvoxwEzqWYUa0eIOLsvyeGgvh3Ji/rsM2kWNYUPzWs+yRGBNlGHqZMb5kcGVk5QREPT5jFnuAm@vger.kernel.org, AJvYcCVFSvaQuCqeVPcgmNcHG848Voj+AZDwZnp9AafznTjxm7wmjDrjr+wH3c+hpMC9s0ngbrj2xePh2lpJ7A==@vger.kernel.org, AJvYcCVjTil4mSGmG223Q2npQAPxV+Use5xEnPeCnT0CjGGbNMGhaQuWawE9qnDQr60NW67yd/0R392+QfPGy1/IFFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzfdvWg/J9n5x4e3cWjmPqL/yuyUbAvF4a9HuA1MWzgv+upIUl
-	26BvIoj6IHFMJhfJqFtiL44e8hvsHxN+KwgKq0NAZrKaQPcT9/mc
-X-Gm-Gg: ASbGncsttmkB56v8rXW9P0sjR4Kn2qgPBqz7gugQ8Rv1JCSUC51aTuEIGFblezhmQPN
-	eOEBPkV7ptHIGkDbwtlffhjm41oh3DgxaEaf2S7O+WJkxcEKEnhnNskTgRPNu9hV6e/gJSQ/0jp
-	Wt7VhSHjwuMnzi706FmhnY20JMTrla2JeYD7mDOkiOH6I6rkunb4Rys//2BMZ+AzOd8TJlN62fC
-	aJH79Nhu9rP1D65Qlab/aJzGenZhMDkHZwRa6B0eyZFwjJPw3yN8az4dxu6qUwNf8F8Id5dPNB9
-	Paxiu3ncqPvfErJy9eT0hkZjicSTaF02Zne2
-X-Google-Smtp-Source: AGHT+IHMMavTvoFgwqe3JTZjFjaVhMPpCPIj09sm9EPZ0jm15kDP34LtqQrw6MAxx6sLesAeKhn1HQ==
-X-Received: by 2002:a5d:64ad:0:b0:38d:d4b5:84cf with SMTP id ffacd0b85a97d-38f33f1b5cbmr13829426f8f.5.1739872157727;
-        Tue, 18 Feb 2025 01:49:17 -0800 (PST)
-Received: from [172.27.59.237] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8273sm14201167f8f.89.2025.02.18.01.49.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 01:49:17 -0800 (PST)
-Message-ID: <5f2ca37f-3f6d-44d2-9821-7d6b0655937d@gmail.com>
-Date: Tue, 18 Feb 2025 11:49:14 +0200
+	s=arc-20240116; t=1739872191; c=relaxed/simple;
+	bh=EGzJILY69KaBGAu/j6uhfg0Ns9AWmYI3DuY2Ll/vyO8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u0Cx0sspbLpM43v4GuBsJWMA5i2dXrxwJK5zn9ByN7j1QflWo1Ue9ERBIEW1cjzKU7bgb/RP004n3mZgRzb2akXJvSGpdMqrLWJzhs3I/7WZ5N5e0Snv9wkLs1GSmarq5faoPzIjpGG96GsfrYa1m4wErHGI+Y+CV8lg3d3hFbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkZe9OjY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8CAC4CEE2;
+	Tue, 18 Feb 2025 09:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739872190;
+	bh=EGzJILY69KaBGAu/j6uhfg0Ns9AWmYI3DuY2Ll/vyO8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=LkZe9OjY6T3AAmtxwj1Xb06j5/KNp2WW26IN5goY9IcWp90alPhD7SYEaEgX5rJHt
+	 ze3FQVUVUO5v51nu3K3QYfL+oLfPrhoIXu7ER/e+zBVjJCRW07zrE2cnuw1dCzn15o
+	 bbZvSpjdZnt1Dk1jF+ut/kFKA46eZrP4y2kbrmMhzLd3WRbmTSICgRLS+oCvqhJVgq
+	 sshopbF9SHGvBKNfCkG93sr0iG+cRUiJA6l9mDfhxDcS8KdVniFMdEdnfLuQlCPJDk
+	 tu4m75UUHPX9uGTbDWYeeoI3PggiN9llNx4LC8OxCNGW6Yj+1gc01U1xF56P07rC7B
+	 bunCvfIyD4N7Q==
+Message-ID: <4c7e30d960b101fbcc9b6b8356f3bd20d26b0982.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
+From: Amit Shah <amit@kernel.org>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 18 Feb 2025 10:49:47 +0100
+In-Reply-To: <15729df921fa8718ee173963132a370de6aae9af.camel@kernel.org>
+References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
+			 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
+			 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
+			 <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
+			 <k72vfex6qy53xrunz5ohe24c2upfjcdwofozszi4l3k3rm6dou@bd6swzi3v5ng>
+			 <606b16787920ff5e1807e4f8450add5889fdd1cb.camel@kernel.org>
+			 <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
+			 <6d48bcfd0c6030c92f6a5a4a91c9b62f926b3b16.camel@kernel.org>
+			 <535ivi67jdmcuhns5q4r36fjpqde3clnqq7hr26gmg33jwoxyb@ahvuhhaewh3u>
+		 <2c676a9910c2d5b1332bb9baa999cdd16763a730.camel@kernel.org>
+	 <15729df921fa8718ee173963132a370de6aae9af.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <Z6GCJY8G9EzASrwQ@kspp>
- <4e556977-c7b9-4d37-b874-4f3d60d54429@embeddedor.com>
- <8d06f07c-5bb4-473d-90af-5f57ce2b068f@gmail.com>
- <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <7ce8d318-584f-42c2-b88a-2597acd67029@embeddedor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+On Mon, 2025-02-17 at 11:59 +0100, Amit Shah wrote:
+> On Mon, 2025-02-17 at 11:53 +0100, Amit Shah wrote:
+> > On Fri, 2025-02-14 at 18:47 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > On Fri, Feb 14, 2025 at 05:55:41PM +0100, Amit Shah wrote:
+> > > > On Fri, 2025-02-14 at 17:52 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > > > Hello Amit,
+> > > > >=20
+> > > > > On Fri, Feb 14, 2025 at 05:37:52PM +0100, Amit Shah wrote:
+> > > > > > I'm thinking of the two combinations of interest:
+> > > > > > REMOTEPROC=3Dm,
+> > > > > > VIRTIO_CONSOLE can be y or m.=C2=A0 Say virtcons_probe() happen=
+s
+> > > > > > when
+> > > > > > the
+> > > > > > remoteproc module isn't yet loaded.=C2=A0 Even after later
+> > > > > > loading
+> > > > > > remoteproc, virtio console won't do anything interesting
+> > > > > > with
+> > > > > > remoteproc.
+> > > > >=20
+> > > > > Where does the interesting thing happen if remoteproc is
+> > > > > already
+> > > > > loaded
+> > > > > at that time? I'm not seeing anything interesting in that
+> > > > > case
+> > > > > either
+> > > > > ...
+> > > >=20
+> > > > The code I pointed to,
+> > > >=20
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+tree/drivers/char/virtio_console.c#n1993
+> > > >=20
+> > > > either enables remoteproc if the module is present; or it
+> > > > enables
+> > > > multiport, but not both at the same time.=C2=A0 If remoteproc isn't
+> > > > present
+> > > > when this probe routine is executed, multiport might get
+> > > > enabled.=C2=A0
+> > > > And
+> > > > then there's no chance for remoteproc to get enabled.
+> > >=20
+> > > The only case where there is a difference between IS_REACHABLE
+> > > and
+> > > IS_ENABLED is:
+> > >=20
+> > > 	CONFIG_REMOTEPROC=3Dm
+> > > 	CONFIG_VIRTIO_CONSOLE=3Dy
+> >=20
+> > Well, also if CONFIG_VIRTIO_CONSOLE=3Dm; and virtio_console.ko is
+> > loaded
+> > before remoteproc.ko.
+> >=20
+> > > Iff in this case you never want to test for MULTIPORT (even
+> > > though
+> > > the
+> > > remoteproc module might never get loaded), then my patch is
+> > > wrong.
+> > >=20
+> > > When creating the patch I thought there is a hard dependency on
+> > > remoteproc (like calling a function that is provided by
+> > > CONFIG_REMOTEPROC). I don't understand how the remoteproc stuff
+> > > interacts with the virtio_console driver, is this something in
+> > > userspace
+> > > which then would also autoload the remoteproc module?
+> >=20
+> > What's happening is that multiport and remoteproc are mutually
+> > exclusive in the virtio_console code.
+> >=20
+> > And, I'm also not sure of how remoteproc loads and configures
+> > itself.
+> > Does loading remoteproc cause a load of virtio_console?=C2=A0 How?
+> >=20
+> > So - based on our discussions, I think your assumptions are:
+> >=20
+> > 1. remoteproc will load virtio_console when remoteproc is required
+> > 2. virtio_console will never be loaded by itself
+> > 3. General virtio_console functionality (including tty and
+> > multiport)
+> > is never used when remoteproc is used
+> >=20
+> > I think at least 3 needs more thought/justification why it's a
+> > valid
+> > assumption.=C2=A0 Documenting it in the commit msg is fine.
+> >=20
+> > At least assumptions 1 and 2 will cause remoteproc to not function
+> > correctly with virtio_console, despite both of them being loaded
+> > (because they can be loaded in the unexpected order --
+> > virtio_console
+> > before remoteproc).=C2=A0 Do you want to adjust the code so that
+> > remoteproc
+> > queries for already-existing virtio_console.ko, triggers the code
+> > that
+> > would otherwise be not triggered in virtcons_probe(), and makes
+> > remoteproc functional in that case?
+>=20
+> ... I just saw that virtcons_probe() doesn't have any setup in case
+> of
+> rproc.=C2=A0 So this last paragraph doesn't apply.
 
+... I knew I was missing something yesterday. There's the call to
+add_port() from virtcons_probe() that sets up the port for remoteproc.
+So that part will be entirely skipped in case the virtcons probe
+happens before remoteproc is loaded.
 
-On 18/02/2025 10:14, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping: who can take this, please?
-> 
-> Thanks
-> -- 
-> Gustavo
-> 
+There's much too confusion here, better to start anew.
 
-net-next maintainers, please pick it.
-I provided the Reviewed-by tag.
+> So maybe just adding some notes in the commit log about why this will
+> end up working, and why rproc usage and tty+multiport usage are
+> mutually exclusive (and fine) will help.
+>=20
+> Thanks,
+>=20
+> 		Amit
 
-Tariq.
 
