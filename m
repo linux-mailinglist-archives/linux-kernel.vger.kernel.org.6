@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-520082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98BEA3A575
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:27:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF363A3A579
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA64318880D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52D9188A388
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26822356A2;
-	Tue, 18 Feb 2025 18:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0032A17A309;
+	Tue, 18 Feb 2025 18:27:14 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604F12356B8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD772356CD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903223; cv=none; b=ckXo0X+L8b6qMJsMOn+1xMoxjl6DFRIK7ZmKOWLW3ULEVJNeVNUH/3GqrXqI4fcFN/b6lrxV3sSflkZhPqaQf3vIP8k/fo3rqDJkHWBwziMyq5fbUITT1dhauUeEkZQdmaY8udXrIXv3zcCIIiaH/nx3kVecFvO840TeK4oDp/Q=
+	t=1739903233; cv=none; b=ZtNo1oSnYq+SDHOR2w7UamHbL11wU7e0ZmolOuVyWp06CkwWFgUUYqvLiXS4jR0OG9+NDzOow5Sl04ln/Fme5sBuS6GbWzaUHg+uxM874AvFpL1hdNNEMoiQrl+XqQlYJ5AMjoIUanxBT+RAu10sAPj795x8TPgQDgHNLvcrh90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903223; c=relaxed/simple;
-	bh=Juc2Akbil/KjIj7GVAhkfHO1s/KyIG4/hSAIW20NKvo=;
+	s=arc-20240116; t=1739903233; c=relaxed/simple;
+	bh=UlvKvD0+oBjjm5RXL5FB/u9m/K/gaACp7MxXiDcd/Go=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YagSDcPnA2jPfZSWCte14UoGLO4z0FYcoiu6u6D0sPmLwFLS2g7Vhkrzj4TIgXyKtQlmjySFBo93svaZKaMCTeMFQUQCnCgtK0GjoUV6Nce1uVt+g5hWB/91N0k/BKA2/kFuR5Gr5hYARF/2qqDvv+I0ZgbE7YgF61reASSCH4I=
+	 In-Reply-To:To:Cc; b=I6Klbx7tXvttIXEfnxv1302TWh1ZrPiYRUDuzbt3aIqdPVtPDKm/8U52RRhFTwsmYp0X5nlPPKOSWjU09pphRq+RvxgGX8CMtgF3kv+psQpYsot67F1kp1YfMwRdF1lB2cCx51cJDPgcigzf6K/+WEQl5fls696OfWW1HFRX/aU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,22 +32,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIy-0006Bk-0v; Tue, 18 Feb 2025 19:26:48 +0100
+	id 1tkSIy-0006Bg-0x; Tue, 18 Feb 2025 19:26:48 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIx-001dVB-1e;
+	id 1tkSIx-001dVC-1Z;
 	Tue, 18 Feb 2025 19:26:47 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIx-00A9Hm-1C;
+	id 1tkSIx-00A9Hm-1D;
 	Tue, 18 Feb 2025 19:26:47 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Tue, 18 Feb 2025 19:26:42 +0100
-Subject: [PATCH v4 2/6] arm64: dts: imx8mp: Add optional nominal drive mode
- DTSI
+Date: Tue, 18 Feb 2025 19:26:43 +0100
+Subject: [PATCH v4 3/6] arm64: dts: imx8mp: add fsl,nominal-mode property
+ into nominal.dtsi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-imx8m-clk-v4-2-b7697dc2dcd0@pengutronix.de>
+Message-Id: <20250218-imx8m-clk-v4-3-b7697dc2dcd0@pengutronix.de>
 References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
 In-Reply-To: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
@@ -77,92 +77,31 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the device tree for
-the i.MX8MP configures some clocks at frequencies that are only validated
-for overdrive mode, i.e. when VDD_SOC is 950 mV.
+The imx8mp-nominal.dtsi is meant to be included into boards that want to
+override the default overdrive clock settings with settings suitable for
+running in nominal drive mode at its lower required voltage.
 
-Boards may want to run their SoC at the lower voltage of 850 mV though
-to reduce heat generation and power usage. For this to work, clock rates
-need to adhere to the limits of the nominal drive mode.
+Specifying fsl,operating-mode = "nominal" informs drivers of this fact,
+so they can sanity check runtime clock reconfiguration to observe the
+limits imposed by nominal mode.
 
-Add an optional DTSI file which can be included by various boards to run
-in this mode.
-
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi | 63 +++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..f9a82a663033a1dfb72163eebb62e4aee66cee2f
---- /dev/null
+index f9a82a663033a1dfb72163eebb62e4aee66cee2f..a1b75c9068b288a2fba73bbd96b1519a50df85a3 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2024 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
-+ */
-+
-+&clk {
-+	assigned-clocks = <&clk IMX8MP_CLK_A53_SRC>,
-+			  <&clk IMX8MP_CLK_A53_CORE>,
-+			  <&clk IMX8MP_SYS_PLL3>,
-+			  <&clk IMX8MP_CLK_NOC>,
-+			  <&clk IMX8MP_CLK_NOC_IO>,
-+			  <&clk IMX8MP_CLK_GIC>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
-+				 <&clk IMX8MP_ARM_PLL_OUT>,
-+				 <0>,
-+				 <&clk IMX8MP_SYS_PLL1_800M>,
-+				 <&clk IMX8MP_SYS_PLL3_OUT>,
-+				 <&clk IMX8MP_SYS_PLL1_800M>;
-+	assigned-clock-rates = <0>, <0>,
-+			       <600000000>,
-+			       <800000000>,
-+			       <600000000>,
-+			       <400000000>;
-+};
-+
-+&pgc_hdmimix {
-+	assigned-clocks = <&clk IMX8MP_CLK_HDMI_AXI>,
-+			  <&clk IMX8MP_CLK_HDMI_APB>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
-+				 <&clk IMX8MP_SYS_PLL1_133M>;
-+	assigned-clock-rates = <400000000>, <133000000>;
-+};
-+
-+&pgc_hsiomix {
-+	assigned-clocks = <&clk IMX8MP_CLK_HSIO_AXI>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
-+	assigned-clock-rates = <400000000>;
-+};
-+
-+&pgc_gpumix {
-+	assigned-clocks = <&clk IMX8MP_CLK_GPU_AXI>,
-+			  <&clk IMX8MP_CLK_GPU_AHB>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL3_OUT>,
-+				 <&clk IMX8MP_SYS_PLL3_OUT>;
-+	assigned-clock-rates = <600000000>, <300000000>;
-+};
-+
-+&media_blk_ctrl {
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI>,
-+			  <&clk IMX8MP_CLK_MEDIA_APB>,
-+			  <&clk IMX8MP_CLK_MEDIA_DISP1_PIX>,
-+			  <&clk IMX8MP_CLK_MEDIA_DISP2_PIX>,
-+			  <&clk IMX8MP_CLK_MEDIA_ISP>,
-+			  <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
-+				 <&clk IMX8MP_SYS_PLL1_800M>,
-+				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
-+				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
-+				 <&clk IMX8MP_SYS_PLL1_800M>;
-+	assigned-clock-rates = <400000000>, <200000000>,
-+			       <0>, <0>, <400000000>,
-+			       <1039500000>;
-+};
+@@ -21,6 +21,7 @@ &clk {
+ 			       <800000000>,
+ 			       <600000000>,
+ 			       <400000000>;
++	fsl,operating-mode = "nominal";
+ };
+ 
+ &pgc_hdmimix {
 
 -- 
 2.39.5
