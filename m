@@ -1,589 +1,483 @@
-Return-Path: <linux-kernel+bounces-519143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E7DA3986A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:13:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939ACA39873
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 429EA7A1502
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5921756AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45422235367;
-	Tue, 18 Feb 2025 10:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58E123AE7E;
+	Tue, 18 Feb 2025 10:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FKLJ4zT/"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZJ7dHXx"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ADD22E418;
-	Tue, 18 Feb 2025 10:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C4A23958D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739873509; cv=none; b=kxdDYha4ekEPZG26OKJZbDJDsPUzBIqcfQ9LKqWBAIH6knxhgRM+855/gOtYuuMrsp1BR9Sqx3ZYpHa3QHAMcRGEbKtOOfEajexZb1dEbPcTGr4ACPjc0e5hC5oGLPnwxJ1CPRaeZRHf5i6fuD7LDK8PZxY2gZ1mAPxTLQV+tng=
+	t=1739873487; cv=none; b=totQUHQG8oBQLVvpW70M/KzMURFe/lD+k0cgLb0rrF1OZzM1uyjq4h1Wt3Q9flsDs9xS33yfOjuIU1XgXq65Py8NYqwA7GzNrDCrdIxh6f1k8+PL1Kb8ZQkUEEkSGJuafzCqp0vtPGdpuK2oGGZUdio44aahOskK2tu7WQXBuE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739873509; c=relaxed/simple;
-	bh=1aR7BhkO1JNL3SIMP+NlNxwwIYTees2492W2Dz3FlP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sFqdc+m7qOV0GyydRde87X2CCWxIa8xPQZVGyuN+/8s4aZ72vEEMmcnk7wlKiq3bP4zdnZrktUlnIcXMqez1TwAaRKQmtnWqDsQD19CC1vGSPhlCumooLtGFcaEhuzM75SWUSKmeTTVdd2Gegnh1REbYpWEFzS3cnxjo5OHnvuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FKLJ4zT/; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IAAtIc1652803
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 04:10:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739873455;
-	bh=tcY2UWBGi1BjAJqxDU4NEYz8kUU0Ee3B8oAspQMCO/E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FKLJ4zT/h38g7n1RispnuLnajYM8bq2WNDTUhVCIwjaL382D+vTgZKlLEmuQEy9WN
-	 L+jcORLHJaJ6OK8u4Fl3cHnf4zmFss8UTp9mcOUZaNgoKWG5Pys1cu1W4xcq2Hk/Wq
-	 meH/k18BWA706jdEVAq+Ls629B8bwd5vEmSYRpWI=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IAAtVZ006111
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 04:10:55 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 04:10:54 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 04:10:54 -0600
-Received: from [172.24.20.199] (lt9560gk3.dhcp.ti.com [172.24.20.199])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IAAlhV052204;
-	Tue, 18 Feb 2025 04:10:47 -0600
-Message-ID: <615a2e1f-5ee5-4d80-a499-8ff06596a2fc@ti.com>
-Date: Tue, 18 Feb 2025 15:40:46 +0530
+	s=arc-20240116; t=1739873487; c=relaxed/simple;
+	bh=FVRj80Fl6BDqqPy3MnLQGAnWIUlIVnzIDvX5MOAdlII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOuhPPiiCyzRGkmBABmGuQBezdivKcV93Rb4mHZLCJcg8zmcqmmebfi2DxX8jFYszC2msh8HsUnfnkLZZRgSGn58sUinWuLA2U1w2upWwps79/hJqxgkEvz/ZFYRkEb413Up4ukImIUPDqDl8bU+bKjHV/74UDxeAnoctjgBZWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZJ7dHXx; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f286b5281so2463918f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:11:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739873484; x=1740478284; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jOdZKesqfoNZ275Br6kZa4W41E5z6vETxGP2OEN0Wac=;
+        b=GZJ7dHXxYA/StPoC8Bixs5c45lkVCYwxBoRjAMke7t0NZa4HP8iAyWx+5FCAvynbAz
+         5CENrkRKLTQeRgVHfOIH825UFWzDE58+H+7v6u1okIJSXUdXiwLJsq4Sv7eEJh8GGdj6
+         bJFlX131IKMo6iQnxsF2uGxY/MY/umOpo79iVDzIDlBNuQ5vuwgb3YHVXrcq9zww3XY4
+         OvzZCIQp5t7WwGyMQqw3zgxemT5w+SUgXDIUudxHLtNk2aBQXtyMWWu+FJXQLyBcRbpO
+         qzkU0ZwkskZgcCB7mwfv60zbihO3aRDOsX6GxOHMBt4mSLKboAvSFkqd0Uny2RhMclvo
+         nuWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739873484; x=1740478284;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOdZKesqfoNZ275Br6kZa4W41E5z6vETxGP2OEN0Wac=;
+        b=NhrSdQsjpRqq5FK/hETcVfFC16b6JMaEiV9nLOKu3QHncsRB1i6AI9zcM8LMa2vzYP
+         6tP2M4aYrFWWWsDuBX9SnYVhNnW4plnn2yBMQg7jg4xSFUGfYlvlBRex33ETdHE1XKiV
+         hbIjkEfa7ShxiUx4tZQ3EdO2zVjmBqeCDy4imJBIjxU/3zCl1D6mxxMV3Wq0fVsQLcR7
+         UqhUq+p/eHrtJgR7e1XyFvhYxH9yPe0rLxrEnegzXyffp6TwtqGng8J++eiNlAzX2UXQ
+         5HU2Syrj8GmCx4T9sku5qKk8g8Xs7h8Y/zRwYKTnS5WFNyUFxrj0tG90kHkBNqX3e4ix
+         zdGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSyPvv2LBipn1JNGX34hDbG2RQREIZaVKWRWMdDsd4BT+CjnjSfooi6i0chwjw73487TUY2S8dhh73pA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoV9twp8+6NeW3XvM4d8ugwg5CRmHXdGnWUUG5AT6AQuTMGE3/
+	TuM3/Sv0ilPQZMxz4eyOsopDJvu5jzAfaoaIKTq588W2p4EgU1EYbESc5Wgy
+X-Gm-Gg: ASbGncvs0gBFNm6QUdg7l7C+VdYj+JAIjIB4ajEQvomOi3L7e4/4Kf0u9PlXUA4qFUC
+	hp/9fuJKjfeouNppyqKMNn3AsoVrvp5NzKhI0o1frJ1O4SO2SDa6nP6uUkk4+Mx5gqEfzfFsRVR
+	DUaGK8XUa8oC+NtTWf7KscPBGkY3ey+FUDsfqg2jsKPi0TeI/kNc8r6/ubCOMwRw2VuM3w4JiFA
+	oxq9/Jzqney26uH3T4yF2VXjHuP7Yg82pA782OpaGNm26PI6jsoKuQoBAcyxnegbf3BgTNJJLLq
+	Wp3TiHascfMa5Lo=
+X-Google-Smtp-Source: AGHT+IGHXFUbjp01RiSXmJkE4aiTN+foCRp8wQgEPKHUD8tza4Sms4UvvdjkHTMla5PSEfeakRhI7A==
+X-Received: by 2002:a05:6000:1aca:b0:38f:37f3:5ca9 with SMTP id ffacd0b85a97d-38f37f36159mr10474463f8f.50.1739873483348;
+        Tue, 18 Feb 2025 02:11:23 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258eb141sm14292940f8f.41.2025.02.18.02.11.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 02:11:22 -0800 (PST)
+Date: Tue, 18 Feb 2025 11:11:21 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 13/14] drm/vkms: Allow to configure multiple connectors
+Message-ID: <Z7RcyT2XEVYiNZ70@fedora>
+References: <20250217100120.7620-1-jose.exposito89@gmail.com>
+ <20250217100120.7620-14-jose.exposito89@gmail.com>
+ <6e1496ac-892d-4267-a670-75e6eb50e936@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/3] net: ti: icssg-prueth: Use page_pool API
- for RX buffer allocation
-To: Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <bpf@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <u.kleine-koenig@baylibre.com>, <krzysztof.kozlowski@linaro.org>,
-        <dan.carpenter@linaro.org>, <schnelle@linux.ibm.com>,
-        <glaroque@baylibre.com>, <rdunlap@infradead.org>,
-        <diogo.ivo@siemens.com>, <jan.kiszka@siemens.com>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20250210103352.541052-1-m-malladi@ti.com>
- <20250210103352.541052-2-m-malladi@ti.com>
- <152b032e-fcd9-4d49-8154-92a475c0670c@kernel.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <152b032e-fcd9-4d49-8154-92a475c0670c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e1496ac-892d-4267-a670-75e6eb50e936@bootlin.com>
 
-Hi Roger,
-Thanks for reviewing this patch series.
-
-On 2/12/2025 7:26 PM, Roger Quadros wrote:
+On Mon, Feb 17, 2025 at 04:45:41PM +0100, Louis Chauvet wrote:
 > 
 > 
-> On 10/02/2025 12:33, Meghana Malladi wrote:
->> From: Roger Quadros <rogerq@kernel.org>
->>
->> This is to prepare for native XDP support.
->>
->> The page pool API is more faster in allocating pages than
->> __alloc_skb(). Drawback is that it works at PAGE_SIZE granularity
->> so we are not efficient in memory usage.
->> i.e. we are using PAGE_SIZE (4KB) memory for 1.5KB max packet size.
->>
->> Signed-off-by: Roger Quadros <rogerq@kernel.org>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->> ---
->> v1: https://lore.kernel.org/all/20250122124951.3072410-1-m-malladi@ti.com/
->>
->> Changes since v1 (v2-v1):
->> - Recycle pages wherever necessary using skb_mark_for_recycle()
->> - Use napi_build_skb() instead of build_skb()
->> - Update with correct frag_size argument in napi_build_skb()
->> - Use napi_gro_receive() instead of netif_receive_skb()
->> - Use PP_FLAG_DMA_SYNC_DEV to enable DMA sync with device
->> - Use page_pool_dma_sync_for_cpu() to sync Rx page pool for CPU
->>
->> All the above changes have been suggested by Ido Schimmel <idosch@idosch.org>
->>
->>   drivers/net/ethernet/ti/Kconfig               |   1 +
->>   drivers/net/ethernet/ti/icssg/icssg_common.c  | 174 ++++++++++++------
->>   drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  14 +-
->>   .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |  21 ++-
->>   4 files changed, 140 insertions(+), 70 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
->> index 0d5a862cd78a..b461281d31b6 100644
->> --- a/drivers/net/ethernet/ti/Kconfig
->> +++ b/drivers/net/ethernet/ti/Kconfig
->> @@ -204,6 +204,7 @@ config TI_ICSSG_PRUETH_SR1
->>   	select PHYLIB
->>   	select TI_ICSS_IEP
->>   	select TI_K3_CPPI_DESC_POOL
->> +	select PAGE_POOL
->>   	depends on PRU_REMOTEPROC
->>   	depends on NET_SWITCHDEV
->>   	depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> index 74f0f200a89d..c3c1e2bf461e 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> @@ -45,6 +45,11 @@ void prueth_cleanup_rx_chns(struct prueth_emac *emac,
->>   			    struct prueth_rx_chn *rx_chn,
->>   			    int max_rflows)
->>   {
->> +	if (rx_chn->pg_pool) {
->> +		page_pool_destroy(rx_chn->pg_pool);
->> +		rx_chn->pg_pool = NULL;
->> +	}
->> +
->>   	if (rx_chn->desc_pool)
->>   		k3_cppi_desc_pool_destroy(rx_chn->desc_pool);
->>   
->> @@ -461,17 +466,17 @@ int prueth_init_rx_chns(struct prueth_emac *emac,
->>   }
->>   EXPORT_SYMBOL_GPL(prueth_init_rx_chns);
->>   
->> -int prueth_dma_rx_push(struct prueth_emac *emac,
->> -		       struct sk_buff *skb,
->> -		       struct prueth_rx_chn *rx_chn)
->> +int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
->> +			      struct prueth_rx_chn *rx_chn,
->> +			      struct page *page, u32 buf_len)
->>   {
->>   	struct net_device *ndev = emac->ndev;
->>   	struct cppi5_host_desc_t *desc_rx;
->> -	u32 pkt_len = skb_tailroom(skb);
->>   	dma_addr_t desc_dma;
->>   	dma_addr_t buf_dma;
->>   	void **swdata;
->>   
->> +	buf_dma = page_pool_get_dma_addr(page) + PRUETH_HEADROOM;
->>   	desc_rx = k3_cppi_desc_pool_alloc(rx_chn->desc_pool);
->>   	if (!desc_rx) {
->>   		netdev_err(ndev, "rx push: failed to allocate descriptor\n");
->> @@ -479,25 +484,18 @@ int prueth_dma_rx_push(struct prueth_emac *emac,
->>   	}
->>   	desc_dma = k3_cppi_desc_pool_virt2dma(rx_chn->desc_pool, desc_rx);
->>   
->> -	buf_dma = dma_map_single(rx_chn->dma_dev, skb->data, pkt_len, DMA_FROM_DEVICE);
->> -	if (unlikely(dma_mapping_error(rx_chn->dma_dev, buf_dma))) {
->> -		k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
->> -		netdev_err(ndev, "rx push: failed to map rx pkt buffer\n");
->> -		return -EINVAL;
->> -	}
->> -
->>   	cppi5_hdesc_init(desc_rx, CPPI5_INFO0_HDESC_EPIB_PRESENT,
->>   			 PRUETH_NAV_PS_DATA_SIZE);
->>   	k3_udma_glue_rx_dma_to_cppi5_addr(rx_chn->rx_chn, &buf_dma);
->> -	cppi5_hdesc_attach_buf(desc_rx, buf_dma, skb_tailroom(skb), buf_dma, skb_tailroom(skb));
->> +	cppi5_hdesc_attach_buf(desc_rx, buf_dma, buf_len, buf_dma, buf_len);
->>   
->>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
->> -	*swdata = skb;
->> +	*swdata = page;
->>   
->> -	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, 0,
->> +	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, PRUETH_RX_FLOW_DATA,
->>   					desc_rx, desc_dma);
->>   }
->> -EXPORT_SYMBOL_GPL(prueth_dma_rx_push);
->> +EXPORT_SYMBOL_GPL(prueth_dma_rx_push_mapped);
->>   
->>   u64 icssg_ts_to_ns(u32 hi_sw, u32 hi, u32 lo, u32 cycle_time_ns)
->>   {
->> @@ -541,12 +539,16 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->>   	u32 buf_dma_len, pkt_len, port_id = 0;
->>   	struct net_device *ndev = emac->ndev;
->>   	struct cppi5_host_desc_t *desc_rx;
->> -	struct sk_buff *skb, *new_skb;
->>   	dma_addr_t desc_dma, buf_dma;
->> +	struct page *page, *new_page;
->> +	struct page_pool *pool;
->> +	struct sk_buff *skb;
->>   	void **swdata;
->>   	u32 *psdata;
->> +	void *pa;
->>   	int ret;
->>   
->> +	pool = rx_chn->pg_pool;
->>   	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
->>   	if (ret) {
->>   		if (ret != -ENODATA)
->> @@ -558,15 +560,10 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->>   		return 0;
->>   
->>   	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
->> -
->>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
->> -	skb = *swdata;
->> -
->> -	psdata = cppi5_hdesc_get_psdata(desc_rx);
->> -	/* RX HW timestamp */
->> -	if (emac->rx_ts_enabled)
->> -		emac_rx_timestamp(emac, skb, psdata);
->> +	page = *swdata;
->>   
-> Unnecessary blank line.
+> Le 17/02/2025 à 11:01, José Expósito a écrit :
+> > Add a list of connectors to vkms_config and helper functions to add and
+> > remove as many connectors as wanted.
+> > 
+> > For backwards compatibility, add one enabled connector to the default
+> > configuration.
+> > 
+> > A future patch will allow to attach connectors and encoders, but for the
+> > moment there are no changes in the way the output is configured.
+> > 
+> > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> > ---
+> >   .clang-format                                 |  1 +
+> >   drivers/gpu/drm/vkms/tests/vkms_config_test.c | 74 +++++++++++++++++++
+> >   drivers/gpu/drm/vkms/vkms_config.c            | 54 ++++++++++++++
+> >   drivers/gpu/drm/vkms/vkms_config.h            | 44 +++++++++++
+> >   drivers/gpu/drm/vkms/vkms_connector.c         | 11 +++
+> >   5 files changed, 184 insertions(+)
+> > 
+> > diff --git a/.clang-format b/.clang-format
+> > index 5d21c0e4edbd..ca49832993c5 100644
+> > --- a/.clang-format
+> > +++ b/.clang-format
+> > @@ -690,6 +690,7 @@ ForEachMacros:
+> >     - 'v4l2_m2m_for_each_src_buf'
+> >     - 'v4l2_m2m_for_each_src_buf_safe'
+> >     - 'virtio_device_for_each_vq'
+> > +  - 'vkms_config_for_each_connector'
+> >     - 'vkms_config_for_each_crtc'
+> >     - 'vkms_config_for_each_encoder'
+> >     - 'vkms_config_for_each_plane'
+> > diff --git a/drivers/gpu/drm/vkms/tests/vkms_config_test.c b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> > index 62fbcba4520f..0034f922713e 100644
+> > --- a/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> > +++ b/drivers/gpu/drm/vkms/tests/vkms_config_test.c
+> > @@ -27,6 +27,7 @@ static void vkms_config_test_empty_config(struct kunit *test)
+> >   	KUNIT_EXPECT_TRUE(test, list_empty(&config->planes));
+> >   	KUNIT_EXPECT_TRUE(test, list_empty(&config->crtcs));
+> >   	KUNIT_EXPECT_TRUE(test, list_empty(&config->encoders));
+> > +	KUNIT_EXPECT_TRUE(test, list_empty(&config->connectors));
 > 
-
-Ok noted. I will address all the cosmetic changes suggested by you in v3.
-
->> +	page_pool_dma_sync_for_cpu(pool, page, 0, PAGE_SIZE);
->>   	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
->>   	k3_udma_glue_rx_cppi5_to_dma_addr(rx_chn->rx_chn, &buf_dma);
->>   	pkt_len = cppi5_hdesc_get_pktlen(desc_rx);
->> @@ -574,32 +571,51 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->>   	pkt_len -= 4;
->>   	cppi5_desc_get_tags_ids(&desc_rx->hdr, &port_id, NULL);
->>   
->> -	dma_unmap_single(rx_chn->dma_dev, buf_dma, buf_dma_len, DMA_FROM_DEVICE);
->>   	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
->>   
->> -	skb->dev = ndev;
->> -	new_skb = netdev_alloc_skb_ip_align(ndev, PRUETH_MAX_PKT_SIZE);
->>   	/* if allocation fails we drop the packet but push the
->> -	 * descriptor back to the ring with old skb to prevent a stall
->> +	 * descriptor back to the ring with old page to prevent a stall
->>   	 */
->> -	if (!new_skb) {
->> +	new_page = page_pool_dev_alloc_pages(pool);
->> +	if (unlikely(!new_page)) {
->> +		new_page = page;
->>   		ndev->stats.rx_dropped++;
->> -		new_skb = skb;
->> -	} else {
->> -		/* send the filled skb up the n/w stack */
->> -		skb_put(skb, pkt_len);
->> -		if (emac->prueth->is_switch_mode)
->> -			skb->offload_fwd_mark = emac->offload_fwd_mark;
->> -		skb->protocol = eth_type_trans(skb, ndev);
->> -		napi_gro_receive(&emac->napi_rx, skb);
->> -		ndev->stats.rx_bytes += pkt_len;
->> -		ndev->stats.rx_packets++;
->> +		goto requeue;
->> +	}
->> +
->> +	/* prepare skb and send to n/w stack */
->> +	pa = page_address(page);
->> +	skb = napi_build_skb(pa, PAGE_SIZE);
->> +	if (!skb) {
->> +		ndev->stats.rx_dropped++;
->> +		page_pool_recycle_direct(pool, page);
->> +		goto requeue;
->>   	}
->>   
->> +	skb_reserve(skb, PRUETH_HEADROOM);
->> +	skb_put(skb, pkt_len);
->> +	skb->dev = ndev;
->> +
->> +	psdata = cppi5_hdesc_get_psdata(desc_rx);
->> +	/* RX HW timestamp */
->> +	if (emac->rx_ts_enabled)
->> +		emac_rx_timestamp(emac, skb, psdata);
->> +
->> +	if (emac->prueth->is_switch_mode)
->> +		skb->offload_fwd_mark = emac->offload_fwd_mark;
->> +	skb->protocol = eth_type_trans(skb, ndev);
->> +
->> +	skb_mark_for_recycle(skb);
->> +	napi_gro_receive(&emac->napi_rx, skb);
->> +	ndev->stats.rx_bytes += pkt_len;
->> +	ndev->stats.rx_packets++;
->> +
->> +requeue:
->>   	/* queue another RX DMA */
->> -	ret = prueth_dma_rx_push(emac, new_skb, &emac->rx_chns);
->> +	ret = prueth_dma_rx_push_mapped(emac, &emac->rx_chns, new_page,
->> +					PRUETH_MAX_PKT_SIZE);
->>   	if (WARN_ON(ret < 0)) {
->> -		dev_kfree_skb_any(new_skb);
->> +		page_pool_recycle_direct(pool, new_page);
->>   		ndev->stats.rx_errors++;
->>   		ndev->stats.rx_dropped++;
->>   	}
->> @@ -611,22 +627,17 @@ static void prueth_rx_cleanup(void *data, dma_addr_t desc_dma)
->>   {
->>   	struct prueth_rx_chn *rx_chn = data;
->>   	struct cppi5_host_desc_t *desc_rx;
->> -	struct sk_buff *skb;
->> -	dma_addr_t buf_dma;
->> -	u32 buf_dma_len;
->> +	struct page_pool *pool;
->> +	struct page *page;
->>   	void **swdata;
->>   
->> +	pool = rx_chn->pg_pool;
->> +
-> here too.
+> Ditto
+> With this modification:
+> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > 
->>   	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
->>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
->> -	skb = *swdata;
->> -	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
->> -	k3_udma_glue_rx_cppi5_to_dma_addr(rx_chn->rx_chn, &buf_dma);
->> -
->> -	dma_unmap_single(rx_chn->dma_dev, buf_dma, buf_dma_len,
->> -			 DMA_FROM_DEVICE);
->> +	page = *swdata;
->> +	page_pool_recycle_direct(pool, page);
->>   	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
->> -
->> -	dev_kfree_skb_any(skb);
->>   }
->>   
->>   static int prueth_tx_ts_cookie_get(struct prueth_emac *emac)
->> @@ -907,29 +918,71 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
->>   }
->>   EXPORT_SYMBOL_GPL(icssg_napi_rx_poll);
->>   
->> +static struct page_pool *prueth_create_page_pool(struct prueth_emac *emac,
->> +						 struct device *dma_dev,
->> +						 int size)
->> +{
->> +	struct page_pool_params pp_params = { 0 };
->> +	struct page_pool *pool;
->> +
->> +	pp_params.order = 0;
->> +	pp_params.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
->> +	pp_params.pool_size = size;
->> +	pp_params.nid = dev_to_node(emac->prueth->dev);
->> +	pp_params.dma_dir = DMA_BIDIRECTIONAL;
->> +	pp_params.dev = dma_dev;
->> +	pp_params.napi = &emac->napi_rx;
->> +	pp_params.max_len = PAGE_SIZE;
->> +
->> +	pool = page_pool_create(&pp_params);
->> +	if (IS_ERR(pool))
->> +		netdev_err(emac->ndev, "cannot create rx page pool\n");
->> +
->> +	return pool;
->> +}
->> +
->>   int prueth_prepare_rx_chan(struct prueth_emac *emac,
->>   			   struct prueth_rx_chn *chn,
->>   			   int buf_size)
->>   {
->> -	struct sk_buff *skb;
->> +	struct page_pool *pool;
->> +	struct page *page;
->>   	int i, ret;
->>   
->> +	pool = prueth_create_page_pool(emac, chn->dma_dev, chn->descs_num);
->> +	if (IS_ERR(pool))
->> +		return PTR_ERR(pool);
->> +
->> +	chn->pg_pool = pool;
->> +
->>   	for (i = 0; i < chn->descs_num; i++) {
->> -		skb = __netdev_alloc_skb_ip_align(NULL, buf_size, GFP_KERNEL);
->> -		if (!skb)
->> -			return -ENOMEM;
->> +		/* NOTE: we're not using memory efficiently here.
->> +		 * 1 full page (4KB?) used here instead of
->> +		 * PRUETH_MAX_PKT_SIZE (~1.5KB?)
->> +		 */
->> +		page = page_pool_dev_alloc_pages(pool);
+> >   	KUNIT_EXPECT_FALSE(test, vkms_config_is_valid(config));
+> > @@ -103,6 +104,9 @@ static void vkms_config_test_default_config(struct kunit *test)
+> >   	/* Encoders */
+> >   	KUNIT_EXPECT_EQ(test, list_count_nodes(&config->encoders), 1);
+> > +	/* Connectors */
+> > +	KUNIT_EXPECT_EQ(test, list_count_nodes(&config->connectors), 1);
+> > +
+> >   	KUNIT_EXPECT_TRUE(test, vkms_config_is_valid(config));
+> >   	vkms_config_destroy(config);
+> > @@ -232,6 +236,51 @@ static void vkms_config_test_get_encoders(struct kunit *test)
+> >   	vkms_config_destroy(config);
+> >   }
+> > +static void vkms_config_test_get_connectors(struct kunit *test)
+> > +{
+> > +	struct vkms_config *config;
+> > +	struct vkms_config_connector *connector_cfg;
+> > +	struct vkms_config_connector *connector_cfg1, *connector_cfg2;
+> > +	int n_connectors = 0;
+> > +
+> > +	config = vkms_config_create("test");
+> > +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, config);
+> > +
+> > +	vkms_config_for_each_connector(config, connector_cfg)
+> > +		n_connectors++;
+> > +	KUNIT_ASSERT_EQ(test, n_connectors, 0);
+> > +
+> > +	connector_cfg1 = vkms_config_create_connector(config);
+> > +	vkms_config_for_each_connector(config, connector_cfg) {
+> > +		n_connectors++;
+> > +		if (connector_cfg != connector_cfg1)
+> > +			KUNIT_FAIL(test, "Unexpected connector");
+> > +	}
+> > +	KUNIT_ASSERT_EQ(test, n_connectors, 1);
+> > +	n_connectors = 0;
+> > +
+> > +	connector_cfg2 = vkms_config_create_connector(config);
+> > +	vkms_config_for_each_connector(config, connector_cfg) {
+> > +		n_connectors++;
+> > +		if (connector_cfg != connector_cfg1 &&
+> > +		    connector_cfg != connector_cfg2)
+> > +			KUNIT_FAIL(test, "Unexpected connector");
+> > +	}
+> > +	KUNIT_ASSERT_EQ(test, n_connectors, 2);
+> > +	n_connectors = 0;
+> > +
+> > +	vkms_config_destroy_connector(connector_cfg2);
+> > +	vkms_config_for_each_connector(config, connector_cfg) {
+> > +		n_connectors++;
+> > +		if (connector_cfg != connector_cfg1)
+> > +			KUNIT_FAIL(test, "Unexpected connector");
+> > +	}
+> > +	KUNIT_ASSERT_EQ(test, n_connectors, 1);
+> > +	n_connectors = 0;
+> > +
+> > +	vkms_config_destroy(config);
+> > +}
+> > +
+> >   static void vkms_config_test_invalid_plane_number(struct kunit *test)
+> >   {
+> >   	struct vkms_config *config;
+> > @@ -439,6 +488,29 @@ static void vkms_config_test_valid_encoder_possible_crtcs(struct kunit *test)
+> >   	vkms_config_destroy(config);
+> >   }
+> > +static void vkms_config_test_invalid_connector_number(struct kunit *test)
+> > +{
+> > +	struct vkms_config *config;
+> > +	struct vkms_config_connector *connector_cfg;
+> > +	int n;
+> > +
+> > +	config = vkms_config_default_create(false, false, false);
+> > +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, config);
+> > +
+> > +	/* Invalid: No connectors */
+> > +	connector_cfg = list_first_entry(&config->connectors, typeof(*connector_cfg), link);
+> > +	vkms_config_destroy_connector(connector_cfg);
+> > +	KUNIT_EXPECT_FALSE(test, vkms_config_is_valid(config));
+> > +
+> > +	/* Invalid: Too many connectors */
+> > +	for (n = 0; n <= 32; n++)
+> > +		connector_cfg = vkms_config_create_connector(config);
+> > +
+> > +	KUNIT_EXPECT_FALSE(test, vkms_config_is_valid(config));
+> > +
+> > +	vkms_config_destroy(config);
+> > +}
+> > +
+> >   static void vkms_config_test_attach_different_configs(struct kunit *test)
+> >   {
+> >   	struct vkms_config *config1, *config2;
+> > @@ -678,12 +750,14 @@ static struct kunit_case vkms_config_test_cases[] = {
+> >   	KUNIT_CASE(vkms_config_test_get_planes),
+> >   	KUNIT_CASE(vkms_config_test_get_crtcs),
+> >   	KUNIT_CASE(vkms_config_test_get_encoders),
+> > +	KUNIT_CASE(vkms_config_test_get_connectors),
+> >   	KUNIT_CASE(vkms_config_test_invalid_plane_number),
+> >   	KUNIT_CASE(vkms_config_test_valid_plane_type),
+> >   	KUNIT_CASE(vkms_config_test_valid_plane_possible_crtcs),
+> >   	KUNIT_CASE(vkms_config_test_invalid_crtc_number),
+> >   	KUNIT_CASE(vkms_config_test_invalid_encoder_number),
+> >   	KUNIT_CASE(vkms_config_test_valid_encoder_possible_crtcs),
+> > +	KUNIT_CASE(vkms_config_test_invalid_connector_number),
+> >   	KUNIT_CASE(vkms_config_test_attach_different_configs),
+> >   	KUNIT_CASE(vkms_config_test_plane_attach_crtc),
+> >   	KUNIT_CASE(vkms_config_test_plane_get_possible_crtcs),
+> > diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> > index 17262a9c2567..fbbdee6068ce 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_config.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> > @@ -25,6 +25,7 @@ struct vkms_config *vkms_config_create(const char *dev_name)
+> >   	INIT_LIST_HEAD(&config->planes);
+> >   	INIT_LIST_HEAD(&config->crtcs);
+> >   	INIT_LIST_HEAD(&config->encoders);
+> > +	INIT_LIST_HEAD(&config->connectors);
+> >   	return config;
+> >   }
+> > @@ -38,6 +39,7 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+> >   	struct vkms_config_plane *plane_cfg;
+> >   	struct vkms_config_crtc *crtc_cfg;
+> >   	struct vkms_config_encoder *encoder_cfg;
+> > +	struct vkms_config_connector *connector_cfg;
+> >   	int n;
+> >   	config = vkms_config_create(DEFAULT_DEVICE_NAME);
+> > @@ -89,6 +91,10 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+> >   	if (vkms_config_encoder_attach_crtc(encoder_cfg, crtc_cfg))
+> >   		goto err_alloc;
+> > +	connector_cfg = vkms_config_create_connector(config);
+> > +	if (IS_ERR(connector_cfg))
+> > +		goto err_alloc;
+> > +
+> >   	return config;
+> >   err_alloc:
+> > @@ -102,6 +108,7 @@ void vkms_config_destroy(struct vkms_config *config)
+> >   	struct vkms_config_plane *plane_cfg, *plane_tmp;
+> >   	struct vkms_config_crtc *crtc_cfg, *crtc_tmp;
+> >   	struct vkms_config_encoder *encoder_cfg, *encoder_tmp;
+> > +	struct vkms_config_connector *connector_cfg, *connector_tmp;
+> >   	list_for_each_entry_safe(plane_cfg, plane_tmp, &config->planes, link)
+> >   		vkms_config_destroy_plane(plane_cfg);
+> > @@ -112,6 +119,9 @@ void vkms_config_destroy(struct vkms_config *config)
+> >   	list_for_each_entry_safe(encoder_cfg, encoder_tmp, &config->encoders, link)
+> >   		vkms_config_destroy_encoder(config, encoder_cfg);
+> > +	list_for_each_entry_safe(connector_cfg, connector_tmp, &config->connectors, link)
+> > +		vkms_config_destroy_connector(connector_cfg);
+> > +
+> >   	kfree_const(config->dev_name);
+> >   	kfree(config);
+> >   }
+> > @@ -255,6 +265,20 @@ static bool valid_encoder_possible_crtcs(const struct vkms_config *config)
+> >   	return true;
+> >   }
+> > +static bool valid_connector_number(const struct vkms_config *config)
+> > +{
+> > +	struct drm_device *dev = config->dev ? &config->dev->drm : NULL;
+> > +	size_t n_connectors;
+> > +
+> > +	n_connectors = list_count_nodes((struct list_head *)&config->connectors);
+> > +	if (n_connectors <= 0 || n_connectors >= 32) {
+> > +		drm_info(dev, "The number of connectors must be between 1 and 31\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> >   bool vkms_config_is_valid(const struct vkms_config *config)
+> >   {
+> >   	struct vkms_config_crtc *crtc_cfg;
+> > @@ -268,6 +292,9 @@ bool vkms_config_is_valid(const struct vkms_config *config)
+> >   	if (!valid_encoder_number(config))
+> >   		return false;
+> > +	if (!valid_connector_number(config))
+> > +		return false;
+> > +
+> >   	if (!valid_plane_possible_crtcs(config))
+> >   		return false;
+> > @@ -292,6 +319,7 @@ static int vkms_config_show(struct seq_file *m, void *data)
+> >   	struct vkms_config_plane *plane_cfg;
+> >   	struct vkms_config_crtc *crtc_cfg;
+> >   	struct vkms_config_encoder *encoder_cfg;
+> > +	struct vkms_config_connector *connector_cfg;
+> >   	dev_name = vkms_config_get_device_name((struct vkms_config *)vkmsdev->config);
+> >   	seq_printf(m, "dev_name=%s\n", dev_name);
+> > @@ -311,6 +339,9 @@ static int vkms_config_show(struct seq_file *m, void *data)
+> >   	vkms_config_for_each_encoder(vkmsdev->config, encoder_cfg)
+> >   		seq_puts(m, "encoder\n");
+> > +	vkms_config_for_each_connector(vkmsdev->config, connector_cfg)
+> > +		seq_puts(m, "connector\n");
+> > +
+> >   	return 0;
+> >   }
+> > @@ -520,3 +551,26 @@ void vkms_config_encoder_detach_crtc(struct vkms_config_encoder *encoder_cfg,
+> >   	}
+> >   }
+> >   EXPORT_SYMBOL_IF_KUNIT(vkms_config_encoder_detach_crtc);
+> > +
+> > +struct vkms_config_connector *vkms_config_create_connector(struct vkms_config *config)
+> > +{
+> > +	struct vkms_config_connector *connector_cfg;
+> > +
+> > +	connector_cfg = kzalloc(sizeof(*connector_cfg), GFP_KERNEL);
+> > +	if (!connector_cfg)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	connector_cfg->config = config;
+> > +
+> > +	list_add_tail(&connector_cfg->link, &config->connectors);
+> > +
+> > +	return connector_cfg;
+> > +}
+> > +EXPORT_SYMBOL_IF_KUNIT(vkms_config_create_connector);
+> > +
+> > +void vkms_config_destroy_connector(struct vkms_config_connector *connector_cfg)
+> > +{
+> > +	list_del(&connector_cfg->link);
+> > +	kfree(connector_cfg);
+> > +}
+> > +EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy_connector);
+> > diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> > index 3e5b2e407378..73562c894102 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_config.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> > @@ -16,6 +16,7 @@
+> >    * @planes: List of planes configured for the device
+> >    * @crtcs: List of CRTCs configured for the device
+> >    * @encoders: List of encoders configured for the device
+> > + * @connectors: List of connectors configured for the device
+> >    * @dev: Used to store the current VKMS device. Only set when the device is instantiated.
+> >    */
+> >   struct vkms_config {
+> > @@ -23,6 +24,7 @@ struct vkms_config {
+> >   	struct list_head planes;
+> >   	struct list_head crtcs;
+> >   	struct list_head encoders;
+> > +	struct list_head connectors;
+> >   	struct vkms_device *dev;
+> >   };
+> > @@ -92,6 +94,24 @@ struct vkms_config_encoder {
+> >   	struct drm_encoder *encoder;
+> >   };
+> > +/**
+> > + * struct vkms_config_connector
+> > + *
+> > + * @link: Link to the others connector in vkms_config
+> > + * @config: The vkms_config this connector belongs to
+> > + * @connector: Internal usage. This pointer should never be considered as valid.
+> > + *             It can be used to store a temporary reference to a VKMS connector
+> > + *             during device creation. This pointer is not managed by the
+> > + *             configuration and must be managed by other means.
+> > + */
+> > +struct vkms_config_connector {
+> > +	struct list_head link;
+> > +	struct vkms_config *config;
+> > +
+> > +	/* Internal usage */
+> > +	struct vkms_connector *connector;
+> > +};
+> > +
+> >   /**
+> >    * vkms_config_for_each_plane - Iterate over the vkms_config planes
+> >    * @config: &struct vkms_config pointer
+> > @@ -116,6 +136,14 @@ struct vkms_config_encoder {
+> >   #define vkms_config_for_each_encoder(config, encoder_cfg) \
+> >   	list_for_each_entry((encoder_cfg), &(config)->encoders, link)
+> > +/**
+> > + * vkms_config_for_each_connector - Iterate over the vkms_config connectors
+> > + * @config: &struct vkms_config pointer
+> > + * @connector_cfg: &struct vkms_config_connector pointer used as cursor
+> > + */
+> > +#define vkms_config_for_each_connector(config, connector_cfg) \
+> > +	list_for_each_entry((connector_cfg), &(config)->connectors, link)
+> > +
+> >   /**
+> >    * vkms_config_plane_for_each_possible_crtc - Iterate over the vkms_config_plane
+> >    * possible CRTCs
+> > @@ -361,4 +389,20 @@ int __must_check vkms_config_encoder_attach_crtc(struct vkms_config_encoder *enc
+> >   void vkms_config_encoder_detach_crtc(struct vkms_config_encoder *encoder_cfg,
+> >   				     struct vkms_config_crtc *crtc_cfg);
+> > +/**
+> > + * vkms_config_create_connector() - Add a new connector configuration
+> > + * @config: Configuration to add the connector to
+> > + *
+> > + * Returns:
+> > + * The new connector configuration or an error. Call
+> > + * vkms_config_destroy_connector() to free the returned connector configuration.
+> > + */
+> > +struct vkms_config_connector *vkms_config_create_connector(struct vkms_config *config);
+> > +
+> > +/**
+> > + * vkms_config_destroy_connector() - Remove and free a connector configuration
+> > + * @connector_cfg: Connector configuration to destroy
+> > + */
+> > +void vkms_config_destroy_connector(struct vkms_config_connector *connector_cfg);
+> > +
+> >   #endif /* _VKMS_CONFIG_H_ */
+> > diff --git a/drivers/gpu/drm/vkms/vkms_connector.c b/drivers/gpu/drm/vkms/vkms_connector.c
+> > index ab8b52a84151..48b10cba322a 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_connector.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_connector.c
+> > @@ -25,8 +25,19 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
+> >   	return count;
+> >   }
+> > +static struct drm_encoder *vkms_conn_best_encoder(struct drm_connector *connector)
+> > +{
+> > +	struct drm_encoder *encoder;
+> > +
+> > +	drm_connector_for_each_possible_encoder(connector, encoder)
+> > +		return encoder;
+> > +
+> > +	return NULL;
+> > +}
+> > +
 > 
-> Did you evaluate Ido's suggestion to use page_pool_alloc_frag()?
+> Not for this series, but does it make sense to make the "best_encoder"
+> configurable?
+
+Yes, definitely something we can configure in the future. The "pick the
+first one" algorithm leaves room for improvement.
+
+Sending v4 with the requested changes :)
+
+Jose
+
+> Thanks,
+> Louis Chauvet
 > 
-
-Yes I have done some research on this. IMO, page_pool_alloc_frag() does 
-fit our use case to reduce the memory footprint, downside of this would 
-be overhead caused by atomic operations for page->pp_ref_count, also the 
-page cannot be recycled till the page->pp_ref_count becomes 1, i.e., if 
-the page fragments are not freed properly it will cause continuous page 
-allocation, eventually leading to leaky page pool.
-
-Based on this presentation: 
-https://archive.fosdem.org/2020/schedule/event/xdp_and_page_pool_api/attachments/paper/3625/export/events/attachments/xdp_and_page_pool_api/paper/3625/XDP_and_page_pool.pdf
-Under the XDP memory model section: it is quoted that -
-- "Cannot allocate page fragments to support it (e.g. through 
-napi_alloc_skb())"
-- "Rx buffers must be recycled to get high speed"
-- "Optimized for one packet per page"
-- "Supports split-page model (usually driver is in charge of recycling)"
-
-FWIW, to ensure simplicity and avoid leaky page pools it is better to 
-use entire page instead of fragments, atleast for XDP. Please do correct 
-me if my understanding is wrong.
-
->> +		if (!page) {
->> +			netdev_err(emac->ndev, "couldn't allocate rx page\n");
->> +			ret = -ENOMEM;
->> +			goto recycle_alloc_pg;
->> +		}
->>   
->> -		ret = prueth_dma_rx_push(emac, skb, chn);
->> +		ret = prueth_dma_rx_push_mapped(emac, chn, page, buf_size);
->>   		if (ret < 0) {
->>   			netdev_err(emac->ndev,
->> -				   "cannot submit skb for rx chan %s ret %d\n",
->> +				   "cannot submit page for rx chan %s ret %d\n",
->>   				   chn->name, ret);
->> -			kfree_skb(skb);
->> -			return ret;
->> +			page_pool_recycle_direct(pool, page);
->> +			goto recycle_alloc_pg;
->>   		}
->>   	}
->>   
->>   	return 0;
->> +
->> +recycle_alloc_pg:
->> +	prueth_reset_rx_chan(&emac->rx_chns, PRUETH_MAX_RX_FLOWS, false);
->> +
->> +	return ret;
->>   }
->>   EXPORT_SYMBOL_GPL(prueth_prepare_rx_chan);
->>   
->> @@ -958,6 +1011,9 @@ void prueth_reset_rx_chan(struct prueth_rx_chn *chn,
->>   					  prueth_rx_cleanup, !!i);
->>   	if (disable)
->>   		k3_udma_glue_disable_rx_chn(chn->rx_chn);
->> +
->> +	page_pool_destroy(chn->pg_pool);
->> +	chn->pg_pool = NULL;
->>   }
->>   EXPORT_SYMBOL_GPL(prueth_reset_rx_chan);
->>   
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> index 329b46e9ee53..c7b906de18af 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> @@ -33,6 +33,8 @@
->>   #include <linux/dma/k3-udma-glue.h>
->>   
->>   #include <net/devlink.h>
->> +#include <net/xdp.h>
->> +#include <net/page_pool/helpers.h>
->>   
->>   #include "icssg_config.h"
->>   #include "icss_iep.h"
->> @@ -131,6 +133,7 @@ struct prueth_rx_chn {
->>   	u32 descs_num;
->>   	unsigned int irq[ICSSG_MAX_RFLOWS];	/* separate irq per flow */
->>   	char name[32];
->> +	struct page_pool *pg_pool;
->>   };
->>   
->>   /* There are 4 Tx DMA channels, but the highest priority is CH3 (thread 3)
->> @@ -210,6 +213,10 @@ struct prueth_emac {
->>   	struct netdev_hw_addr_list vlan_mcast_list[MAX_VLAN_ID];
->>   };
->>   
->> +/* The buf includes headroom compatible with both skb and xdpf */
->> +#define PRUETH_HEADROOM_NA (max(XDP_PACKET_HEADROOM, NET_SKB_PAD) + NET_IP_ALIGN)
->> +#define PRUETH_HEADROOM  ALIGN(PRUETH_HEADROOM_NA, sizeof(long))
->> +
->>   /**
->>    * struct prueth_pdata - PRUeth platform data
->>    * @fdqring_mode: Free desc queue mode
->> @@ -410,9 +417,10 @@ int prueth_init_rx_chns(struct prueth_emac *emac,
->>   			struct prueth_rx_chn *rx_chn,
->>   			char *name, u32 max_rflows,
->>   			u32 max_desc_num);
->> -int prueth_dma_rx_push(struct prueth_emac *emac,
->> -		       struct sk_buff *skb,
->> -		       struct prueth_rx_chn *rx_chn);
->> +int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
->> +			      struct prueth_rx_chn *rx_chn,
->> +			      struct page *page, u32 buf_len);
->> +unsigned int prueth_rxbuf_total_len(unsigned int len);
->>   void emac_rx_timestamp(struct prueth_emac *emac,
->>   		       struct sk_buff *skb, u32 *psdata);
->>   enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev);
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
->> index 64a19ff39562..aeeb8a50376b 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
->> @@ -274,10 +274,12 @@ static struct sk_buff *prueth_process_rx_mgm(struct prueth_emac *emac,
->>   	struct prueth_rx_chn *rx_chn = &emac->rx_mgm_chn;
->>   	struct net_device *ndev = emac->ndev;
->>   	struct cppi5_host_desc_t *desc_rx;
->> -	struct sk_buff *skb, *new_skb;
->> +	struct page *page, *new_page;
->>   	dma_addr_t desc_dma, buf_dma;
->>   	u32 buf_dma_len, pkt_len;
->> +	struct sk_buff *skb;
+> >   static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+> >   	.get_modes    = vkms_conn_get_modes,
+> > +	.best_encoder = vkms_conn_best_encoder,
+> >   };
+> >   struct vkms_connector *vkms_connector_init(struct vkms_device *vkmsdev)
 > 
-> Can we get rid of SKB entirely from the management channel code?
-> The packet received on this channel is never passed to user space so
-> I don't see why SKB is required.
+> -- 
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 > 
-
-Yes I do agree with you on the fact the SKB here is not passed to the 
-network stack, hence this is redundant. But honestly I am not sure how 
-that can be done, because the callers of this function access skb->data
-from the skb which is returned and the same can't be done with page (how 
-to pass the same data using page?)
-Also as you are aware we are not currently supporting SR1 devices 
-anymore, hence I don't have any SR1 devices handy to test these changes 
-and ensure nothing is broken if I remove SKB entirely.
-
->>   	void **swdata;
->> +	void *pa;
->>   	int ret;
->>   
->>   	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
->> @@ -299,32 +301,35 @@ static struct sk_buff *prueth_process_rx_mgm(struct prueth_emac *emac,
->>   	}
->>   
->>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
->> -	skb = *swdata;
->> +	page = *swdata;
->>   	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
->>   	pkt_len = cppi5_hdesc_get_pktlen(desc_rx);
->>   
->>   	dma_unmap_single(rx_chn->dma_dev, buf_dma, buf_dma_len, DMA_FROM_DEVICE);
->>   	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
->>   
->> -	new_skb = netdev_alloc_skb_ip_align(ndev, PRUETH_MAX_PKT_SIZE);
->> +	new_page = page_pool_dev_alloc_pages(rx_chn->pg_pool);
->>   	/* if allocation fails we drop the packet but push the
->>   	 * descriptor back to the ring with old skb to prevent a stall
->>   	 */
->> -	if (!new_skb) {
->> +	if (!new_page) {
->>   		netdev_err(ndev,
->> -			   "skb alloc failed, dropped mgm pkt from flow %d\n",
->> +			   "page alloc failed, dropped mgm pkt from flow %d\n",
->>   			   flow_id);
->> -		new_skb = skb;
->> +		new_page = page;
->>   		skb = NULL;	/* return NULL */
->>   	} else {
->>   		/* return the filled skb */
->> +		pa = page_address(page);
->> +		skb = napi_build_skb(pa, PAGE_SIZE);
->>   		skb_put(skb, pkt_len);
->>   	}
->>   
->>   	/* queue another DMA */
->> -	ret = prueth_dma_rx_push(emac, new_skb, &emac->rx_mgm_chn);
->> +	ret = prueth_dma_rx_push_mapped(emac, &emac->rx_chns, new_page,
->> +					PRUETH_MAX_PKT_SIZE);
->>   	if (WARN_ON(ret < 0))
->> -		dev_kfree_skb_any(new_skb);
->> +		page_pool_recycle_direct(rx_chn->pg_pool, new_page);
->>   
->>   	return skb;
->>   }
-> 
-
 
