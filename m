@@ -1,159 +1,149 @@
-Return-Path: <linux-kernel+bounces-519812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0499CA3A226
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:08:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28F0A3A239
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF773B451C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A881897353
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A7226E65F;
-	Tue, 18 Feb 2025 16:07:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF1D26E64D;
-	Tue, 18 Feb 2025 16:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E3326E176;
+	Tue, 18 Feb 2025 16:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vvXoi6Rq"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7443C1779B8;
+	Tue, 18 Feb 2025 16:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894851; cv=none; b=ZWypCWBiX6K999gy62c136zMfustEEz/xqWM6szFmIc3tIeF34RrFKB2wgy+yqFAHkV9NYaC3jw8bdA1S3bNZwhxXQnmAr1WSqxqY6V4R2X98zGBv/fvb1hUnKppjHCUr786z/xcOvBGHVSSpKs4W5NSS9PaxT+dJYDcxT7M0lw=
+	t=1739894902; cv=none; b=i8TLY926CQlbtWoCA3q9NxUSRNnFc77ik3a0Gq3/eyu2lK1ZlKfxWPazrLkvekufqYai/l4Yb2whudi5/4dI4ugDUSevfGDlVrr3uhgr6TnNN8aaJ3oPYBbyG2Zvgn1WrPA+7ZFEXyePBb1olLy2SatgJE4Io1NxA8oDngLiZgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894851; c=relaxed/simple;
-	bh=J493ZkI08m/ZPDd6OrTqJQwxSjM/yHzuw/54MfTkcq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rc+hxJQShMJ81otnszXesHfIgaEuxzKY51L4mVDnzxye8krUuUf3Ujt//aCOgmVSLnPkvlB/VDiiT5LDDFIGPxYW51/+toXHZ/CNxMYKD2cPqKlUTPYPrpECBj/Z3ylLVRzunAXfnf9QdOSytI103q7Rlm3RrkCBib56wdEfJis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 498E413D5;
-	Tue, 18 Feb 2025 08:07:47 -0800 (PST)
-Received: from [10.1.27.186] (XHFQ2J9959.cambridge.arm.com [10.1.27.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE4293F59E;
-	Tue, 18 Feb 2025 08:07:22 -0800 (PST)
-Message-ID: <8a37f99b-f207-4688-bc90-7f8e6900e29d@arm.com>
-Date: Tue, 18 Feb 2025 16:07:21 +0000
+	s=arc-20240116; t=1739894902; c=relaxed/simple;
+	bh=Ar43CwdCRmCaVipaXBSUFI/s0uXR7F77JPuCLWSSxxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=t62w51CvMu35KynOEQgvpM+RY14VfioJf1My/ihZ5RjQMZO/Hd/BTm/80zVPtUMmsjtjTzGkc5O8MZD+NHAYmJmCRMNzfCW7vEIHXq9BlCQYB2xNEalUBX3PcmIBcSiSB9gAh/44cjfi0qV3Kx5wt3Yu/4MS0xwezIQS9JINx34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vvXoi6Rq; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:References;
+	bh=9ddc9DCFXCayEdKH/c7/U+it8NB/dGaAi7b6YfBjejI=; b=vvXoi6RqXVhrBN6uHS1FprrQAH
+	l7jgjAOb541F+Ugf+i01Tve/HlgxTbcfIMYKDByozXAUBUi0sjRUxVMNuTbYO1VBLrdbVNan34Lr8
+	72hiwWq90eGRj1LqbARnKZTbKWzI9DJ628c5uK3vFf4+2iJuAUAxFXkIyGkUP+eRVGuCDzWw/n38f
+	NIdLMk5yy7gwBsnwHdJNqCCRUT6hH5ZCvWeNKnf3DxBQvuG1BdqLAYWSTd+6x+tZjULxAoCrR6lkD
+	6/pUjf+VrlsoL0tP54EXJFOrgB5y1u9UGSiCianFjUXcKjYXYyeMBzxDvz/idG5+vlOruMNcvlNpY
+	OQ9glKSQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkQ8w-00000008tKN-2syO;
+	Tue, 18 Feb 2025 16:08:18 +0000
+Date: Tue, 18 Feb 2025 08:08:18 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <Z7SwcnUzjZYfuJ4-@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 0/9] khugepaged: mTHP support
-Content-Language: en-GB
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
- usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
-References: <20250211003028.213461-1-npache@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250211003028.213461-1-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 11/02/2025 00:30, Nico Pache wrote:
-> The following series provides khugepaged and madvise collapse with the
-> capability to collapse regions to mTHPs.
+On Sun, Feb 09, 2025 at 09:56:35PM +0100, Miguel Ojeda wrote:
+> Hi all,
 > 
-> To achieve this we generalize the khugepaged functions to no longer depend
-> on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pages
-> (defined by MTHP_MIN_ORDER) that are utilized. This info is tracked
-> using a bitmap. After the PMD scan is done, we do binary recursion on the
-> bitmap to find the optimal mTHP sizes for the PMD range. The restriction
-> on max_ptes_none is removed during the scan, to make sure we account for
-> the whole PMD range. max_ptes_none will be scaled by the attempted collapse
-> order to determine how full a THP must be to be eligible. If a mTHP collapse
-> is attempted, but contains swapped out, or shared pages, we dont perform the
-> collapse.
+> Given the discussions in the last days, I decided to publish this page
+> with what our understanding is:
 > 
-> With the default max_ptes_none=511, the code should keep its most of its 
-> original behavior. To exercise mTHP collapse we need to set max_ptes_none<=255.
-> With max_ptes_none > HPAGE_PMD_NR/2 you will experience collapse "creep" and 
+>     https://rust-for-linux.com/rust-kernel-policy
+> 
+> I hope it helps to clarify things. I intend to keep it updated as needed.
 
-nit: I think you mean "max_ptes_none >= HPAGE_PMD_NR/2" (greater or *equal*)?
-This is making my head hurt, but I *think* I agree with you that if
-max_ptes_none is less than half of the number of ptes in a pmd, then creep
-doesn't happen.
+I don't think having a web page in any form is useful.  If you want it
+to be valid it has to be in the kernel tree and widely agreed on.
 
-To make sure I've understood;
+It also states factually incorrect information.  E.g.
 
- - to collapse to 16K, you would need >=3 out of 4 PTEs to be present
- - to collapse to 32K, you would need >=5 out of 8 PTEs to be present
- - to collapse to 64K, you would need >=9 out of 16 PTEs to be present
- - ...
+"Some subsystems may decide they do not want to have Rust code for the
+time being, typically for bandwidth reasons. This is fine and expected."
 
-So if we start with 3 present PTEs in a 16K area, we collapse to 16K and now
-have 4 PTEs in a 32K area which is insufficient to collapse to 32K.
+while Linus in private said that he absolutely is going to merge Rust
+code over a maintainers objection.  (He did so in private in case you
+are looking for a reference).
 
-Sounds good to me!
+So as of now, as a Linux developer or maintainer you must deal with
+Rust if you want to or not.
 
-> constantly promote mTHPs to the next available size.
-> 
-> Patch 1:     Some refactoring to combine madvise_collapse and khugepaged
-> Patch 2:     Refactor/rename hpage_collapse
-> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
-> Patch 6-9:   The mTHP patches
-> 
-> ---------
->  Testing
-> ---------
-> - Built for x86_64, aarch64, ppc64le, and s390x
-> - selftests mm
-> - I created a test script that I used to push khugepaged to its limits while
->    monitoring a number of stats and tracepoints. The code is available 
->    here[1] (Run in legacy mode for these changes and set mthp sizes to inherit)
->    The summary from my testings was that there was no significant regression
->    noticed through this test. In some cases my changes had better collapse
->    latencies, and was able to scan more pages in the same amount of time/work,
->    but for the most part the results were consistant.
-> - redis testing. I tested these changes along with my defer changes
->   (see followup post for more details).
-> - some basic testing on 64k page size.
-> - lots of general use. These changes have been running in my VM for some time.
-> 
-> Changes since V1 [2]:
-> - Minor bug fixes discovered during review and testing
-> - removed dynamic allocations for bitmaps, and made them stack based
-> - Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
-> - Updated trace events to include collapsing order info.
-> - Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
-> - No longer require a chunk to be fully utilized before setting the bit. Use
->    the same max_ptes_none scaling principle to achieve this.
-> - Skip mTHP collapse that requires swapin or shared handling. This helps prevent
->    some of the "creep" that was discovered in v1.
-> 
-> [1] - https://gitlab.com/npache/khugepaged_mthp_test
-> [2] - https://lore.kernel.org/lkml/20250108233128.14484-1-npache@redhat.com/
-> 
-> Nico Pache (9):
->   introduce khugepaged_collapse_single_pmd to unify khugepaged and
->     madvise_collapse
->   khugepaged: rename hpage_collapse_* to khugepaged_*
->   khugepaged: generalize hugepage_vma_revalidate for mTHP support
->   khugepaged: generalize alloc_charge_folio for mTHP support
->   khugepaged: generalize __collapse_huge_page_* for mTHP support
->   khugepaged: introduce khugepaged_scan_bitmap for mTHP support
->   khugepaged: add mTHP support
->   khugepaged: improve tracepoints for mTHP orders
->   khugepaged: skip collapsing mTHP to smaller orders
-> 
->  include/linux/khugepaged.h         |   4 +
->  include/trace/events/huge_memory.h |  34 ++-
->  mm/khugepaged.c                    | 422 +++++++++++++++++++----------
->  3 files changed, 306 insertions(+), 154 deletions(-)
-> 
+Where Rust code doesn't just mean Rust code [1] - the bindings look
+nothing like idiomatic Rust code, they are very different kind of beast
+trying to bridge a huge semantic gap.  And they aren't doing that in a
+few places, because they are showed into every little subsystem and
+library right now.
 
+So we'll have these bindings creep everywhere like a cancer and are
+very quickly moving from a software project that allows for and strives
+for global changes that improve the overall project to increasing
+compartmentalization [2].  This turns Linux into a project written in
+multiple languages with no clear guidelines what language is to be used
+for where [3].  Even outside the bindings a lot of code isn't going to
+be very idiomatic Rust due to kernel data structures that intrusive and
+self referencing data structures like the ubiquitous linked lists.
+Aren't we doing a disservice both to those trying to bring the existing
+codebase into a better safer space and people doing systems programming
+in Rust?
+
+Having worked on codebase like that they are my worst nightmare, because
+there is a constant churn of rewriting parts from language A to language
+B because of reason X and then back because of reason Z.  And that is
+without the usual "creative" Linux process of infighting maintainers.
+
+I'd like to understand what the goal of this Rust "experiment" is:  If
+we want to fix existing issues with memory safety we need to do that for
+existing code and find ways to retrofit it.  A lot of work went into that
+recently and we need much more.  But that also shows how core maintainers
+are put off by trivial things like checking for integer overflows or
+compiler enforced synchronization (as in the clang thread sanitizer).
+How are we're going to bridge the gap between a part of the kernel that
+is not even accepting relatively easy rules for improving safety vs
+another one that enforces even strong rules.
+
+If we just want to make writing drivers easier a new language for that
+pushes even more work and increases the workload on the already
+overworked people keeping the core infrastructure in shape.
+
+So I don't think this policy document is very useful.  Right now the
+rules is Linus can force you whatever he wants (it's his project
+obviously) and I think he needs to spell that out including the
+expectations for contributors very clearly.
+
+For myself I can and do deal with Rust itself fine, I'd love bringing
+the kernel into a more memory safe world, but dealing with an uncontrolled
+multi-language codebase is a pretty sure way to get me to spend my
+spare time on something else.  I've heard a few other folks mumble
+something similar, but not everyone is quite as outspoken.
+
+
+[1] I've written and worked on a fair bit of userspace Rust code, but
+I'm not an expert by any means, so take this with a grain of salt
+
+[2] The idea of drivers in eBPF as done by HID also really doesn't help
+with that as much as I like eBPF for some use cases
+
+[3] Unless Linus forces it onto your subsystem, or Dave decides anything
+touching Nvidia hardware must be in Rust of course
 
