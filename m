@@ -1,77 +1,88 @@
-Return-Path: <linux-kernel+bounces-519591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044FDA39E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:12:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A165DA39E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC00188D77A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DD9C16FBE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C656726A0A7;
-	Tue, 18 Feb 2025 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EF0269D03;
+	Tue, 18 Feb 2025 14:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="tzk3AXnE"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tssv+/zW"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA0F236A61
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF53269B02;
+	Tue, 18 Feb 2025 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887864; cv=none; b=HW9NB90GLD0I6nXKa3glb7fqUXR9qZcE8fsvSPL28u1m0oXzMZtdSggLn1i5i08/OQRba+EFB9i2UTpmlt9MUFAmzD40xKsikA4QbXzdPzFSfB96mDD84riAS4SoBT9IKFwUJQ6sax6CcmFIV/6BI+eNhIPIte1Dh2EARGKRYDU=
+	t=1739887930; cv=none; b=t9MbxJu4awrX9dZlQTw/wMe+Od+ANSSamxgIZ0xMqabtDjYeYnTP2+lDUEbvjU94KjI+MD2li85dhf53TVVNzvn4OENGMdMWfockXSbagOFzT0uitoG7erpWzW5h5FlCjKEH1OARjMTFFTTiQ73QoPTvNhZ38umETQbvlyIKbWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887864; c=relaxed/simple;
-	bh=yw5Mlo1NDA2JUqGk0E175mUAGVEem3ZLo8eW/gexkO8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YP4g7Af9ziVYO3iVNnHF/U7b6uNplAbud6CMOSSNEBZHTGedAB6mpwfNdO8lTjaDATq/ijVk7jtBWUzvx6D5HTv67onXMzyen8MLdJC8GvJfGdzkDBjrVyNClzIrQErlI4HH3SEp0YKkfI39YL/ScgSeaQT6VyVTem/ELNHxt3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=tzk3AXnE; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1739887930; c=relaxed/simple;
+	bh=5CvKgXsuRBvmykHjC1w18/8tMhy23ucUvHmtEyE59+0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ExN2w6ndS7WXRMGt5eSWCmfir7sEzsdKucTb/JeESS/jeNl5LWP+pZp+PtV7irn2xZD6wyF0TkkTjQPL8cuhlU3wPzQy8Wq9kfsipIidJntEXN9N7haBy1juM1E10/76TBYi67tmV0RILmgcMGiJ6OU7vZT6refllxDlr1XUhPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tssv+/zW; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22100006bc8so57117125ad.0;
+        Tue, 18 Feb 2025 06:12:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1739887860; x=1771423860;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UbGAlNFeDSOd0mKhsoLIp39iu1+dh2tNlSoCV8HdgVw=;
-  b=tzk3AXnErWmYkBLiV8NrNKQlWPjJSkRzaqic0moSY+yg77tpnLusiU5v
-   jCMioTec/BA91O8ZvdvaCr4A+K8tnM6PftvznFVcqmC9nJjjWLJkJNEPo
-   qnBE7a5siXjsCV0kkxzz9XH9DaCKEB4b0Zs/za2/J1HHQ28Y6BFgixqvn
-   I=;
-X-IronPort-AV: E=Sophos;i="6.13,296,1732579200"; 
-   d="scan'208";a="378382642"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 14:10:58 +0000
-Received: from EX19MTAUEC001.ant.amazon.com [10.0.29.78:9210]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.85.113:2525] with esmtp (Farcaster)
- id a5ce179b-5db0-4fdd-b466-595760027a8f; Tue, 18 Feb 2025 14:10:56 +0000 (UTC)
-X-Farcaster-Flow-ID: a5ce179b-5db0-4fdd-b466-595760027a8f
-Received: from EX19D008UEA001.ant.amazon.com (10.252.134.62) by
- EX19MTAUEC001.ant.amazon.com (10.252.135.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 18 Feb 2025 14:10:55 +0000
-Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
- EX19D008UEA001.ant.amazon.com (10.252.134.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 18 Feb 2025 14:10:55 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
- (10.43.8.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Tue, 18 Feb 2025 14:10:55 +0000
-Received: from dev-dsk-stanspas-1a-2337b95e.eu-west-1.amazon.com (dev-dsk-stanspas-1a-2337b95e.eu-west-1.amazon.com [172.19.107.251])
-	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTPS id C4267A6913;
-	Tue, 18 Feb 2025 14:10:53 +0000 (UTC)
-From: Stanislav Spassov <stanspas@amazon.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>
-CC: <x86@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, James Gowans
-	<jgowans@amazon.com>, Stanislav Spassov <stanspas@amazon.de>
-Subject: [PATCH v1] x86/fpu: Fix guest FPU state buffer allocation size
-Date: Tue, 18 Feb 2025 14:10:45 +0000
-Message-ID: <20250218141045.85201-1-stanspas@amazon.de>
-X-Mailer: git-send-email 2.47.1
+        d=gmail.com; s=20230601; t=1739887928; x=1740492728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfLraw7a+Ajw27pFw30ert9XFd7ZiNuKEHFKLdTH9nY=;
+        b=Tssv+/zW4j1t5S5ejQYPs3zC/PLPD626jrZzvrlBL6jOO/JlxtPOWXbAi42frqJhJ+
+         1N50pLNhtKdFIlH3r+JC/VeeYof0Mk/KgFNTMzRC00c8x59/AeFu3yzmPO9CZbgvocIO
+         /wfX1/bOP/B2+aVvt1+aqV2vzwc5yR/hGkRlfId6M7nUl0IrtHS+sIT57GScuyNEQcwt
+         VQvXUe4z4wBfSWRjRpOx5Kavb7n2tapVDLR8rxwA7m0qLGSbGQnfXLnjG8qvqeAq4fJ8
+         BeQ7XstgGZrAdNmNDSX6EuCtzyAhVw0B/u9SBRi4NmIOnT999nK9UBMJJkvjrDZbcDEY
+         ARtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739887928; x=1740492728;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BfLraw7a+Ajw27pFw30ert9XFd7ZiNuKEHFKLdTH9nY=;
+        b=OtSt/DmLYaJl8D8fgu6JM8xuJQVFqcOr05BcfGojK2hrIlCW1CbbaeEN2VzBJ3eeW/
+         d+SWnuae8aBE0+J/qp3Z+j8DEQSEtSgOPJFPQB06PTDnnjOmPJVCkiSz323Iy32OHzLP
+         2fMBTsmFEJypLyX1uux22XPasrN3Gh/P4ArZbGAhfqAeNYFlKwqfr+QxPubhrz3Tv2oZ
+         o5s9ClUhXLPGxs5hI4oUBV+LV8ViriRmo2tNvNGsWnL+/QJt+dDDe6aUBnAmoovfVbdf
+         p41a4KRCXg0uxTv1DtS/Om2CQGz4zZARnAjgcjQ8yW1raisj5zL+gbbWdheu4/vUCB0E
+         X6YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYNn63zeiONi2Lke02Py3BkiAREFHKaBDshqcNhE/5UBkxR4efrd4lwPYybieNqrThEsFFgRQb@vger.kernel.org, AJvYcCWsJioxfbpvjFAEnc5moLxGxwEd8FDfzKN9TB2KcSlnZaiYUDphUJIq8oDZ3rSy0KdXv9487jiu9wUMw8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyXSFuaQAWTZzIeInTflgGPnXuynlqmQ3R5ZtUqBrP8rNuQvBC
+	sX3KX9GOn4U+bK5beh7nratJbKTiuNOAzln3/qxZt8W6VKhouCJn
+X-Gm-Gg: ASbGncsoUY7qRD8SJveWs0zOov1ldjydDaUVyrTNchUpV9eJgv9HAdx58LlLrR4/K9o
+	LQn9IPzjXyQ/vCSOfgA49Sa2GOUrmUCWJGplPcYXDLsL9mmp6b/MZqtuq8Uy7OyCY+U6hUD7LHP
+	uZSYOhYft97+UbwVDSJV7Goxai8ik3YOcWmGhgymnhxcOxe6l7SrTbRIRQ3Ctb4dQs9X5pOKm2d
+	GyXI2Dqeww7jYYXuMLKtmfovwJn/v2ERvpbLOGh/j6mTQGz6nfx9tcxB2PX92rHYeiP0zQUOvFa
+	lr8y9Aky9di6wyPYazSf0XJ8lpkseIl2o0bVl44Bv9xVlA==
+X-Google-Smtp-Source: AGHT+IFfW78URc0uKz1eSBulFF7DfLoan+pw0pQkguvlBz6MSHawAy10c5CTqETdC7D9zNjk/soOZw==
+X-Received: by 2002:a17:902:e890:b0:21f:6885:2b0b with SMTP id d9443c01a7336-221040697ecmr220368935ad.26.1739887928258;
+        Tue, 18 Feb 2025 06:12:08 -0800 (PST)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([152.58.43.125])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d608sm89396885ad.171.2025.02.18.06.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 06:12:07 -0800 (PST)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: skhan@linuxfoundation.org,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH net-next v3] af_unix: Fix undefined 'other' error
+Date: Tue, 18 Feb 2025 19:40:45 +0530
+Message-Id: <20250218141045.38947-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,43 +90,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Ongoing work on an optimization to batch-preallocate vCPU state buffers
-for KVM revealed a mismatch between the allocation sizes used in
-fpu_alloc_guest_fpstate() and fpstate_realloc(). While the former
-allocates a buffer sized to fit the default set of XSAVE features
-in UABI form (as per fpu_user_cfg), the latter uses its ksize argument
-derived (for the requested set of features) in the same way as the sizes
-found in fpu_kernel_cfg, i.e. using the compacted in-kernel
-representation.
+Fix an issue detected by the Smatch static analysis tool where an
+"undefined 'other'" error occurs due to `__releases(&unix_sk(other)->lock)`
+being placed before 'other' is in scope.
 
-The correct size to use for guest FPU state should indeed be the
-kernel one as seen in fpstate_realloc(). The original issue likely
-went unnoticed through a combination of UABI size typically being
-larger than or equal to kernel size, and/or both amounting to the
-same number of allocated 4K pages.
+Remove the `__releases()` annotation from the `unix_wait_for_peer()`
+function to eliminate the Smatch warning. The annotation references `other`
+before it is declared, leading to a false positive error during static
+analysis.
 
-Fixes: 69f6ed1d14c6 ("x86/fpu: Provide infrastructure for KVM FPU cleanup")
-Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
+Since AF_UNIX does not use Sparse annotations, this annotation is
+unnecessary and does not impact functionality.
+
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
 ---
- arch/x86/kernel/fpu/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V1 - https://lore.kernel.org/lkml/20250209184355.16257-1-purvayeshi550@gmail.com/
+V2 - https://lore.kernel.org/all/20250212104845.2396abcf@kernel.org/
+V3 - Remove trailing double spaces.
 
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 1209c7aebb21..36df548acc40 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -220,7 +220,7 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 	struct fpstate *fpstate;
- 	unsigned int size;
+ net/unix/af_unix.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 34945de1f..319153850 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1508,7 +1508,6 @@ static int unix_dgram_connect(struct socket *sock, struct sockaddr *addr,
+ }
  
--	size = fpu_user_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
-+	size = fpu_kernel_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
- 	fpstate = vzalloc(size);
- 	if (!fpstate)
- 		return false;
+ static long unix_wait_for_peer(struct sock *other, long timeo)
+-	__releases(&unix_sk(other)->lock)
+ {
+ 	struct unix_sock *u = unix_sk(other);
+ 	int sched;
 -- 
-2.47.1
+2.34.1
 
 
