@@ -1,102 +1,65 @@
-Return-Path: <linux-kernel+bounces-520555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C127A3AB72
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:05:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3E6A3AB7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B753A4B51
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:05:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794CD175180
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C4C1D90D9;
-	Tue, 18 Feb 2025 22:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D031D7E4F;
+	Tue, 18 Feb 2025 22:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="xWAWdJIy"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBWsNAQn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBA21D0F5A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60B91C701A;
+	Tue, 18 Feb 2025 22:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739916309; cv=none; b=TCq7fX+0XzjYJf1AAm32HO12e23HkFDf50W/vb9RjkRL+P8zHUWz/dgIN4z/t1J4L3Xvwp32SVKlGFzwGYXi6PWHMGr0dRR/4fiYENQ+bLfdYb9QCVBLiXt6esfJ38PrnN+MOS7HoWjr6v/faHC2YQ0mm04tj3PEOdeK8Z+AY0g=
+	t=1739916450; cv=none; b=bQPC7pVxyP+cYy3TnOm0IYoXkonIrRdfXFposG9A2h8idOupj/Hi8pjQDJfyIlh09yPgwyGj+mlDEbeEKd5W7nT6iK0olRP6r+g7R35XAEL9lfdmO7ntUAlwzWMZtZ2n2Czeahk/dgPNYvndlbKbKtaOhmmD+o3/mnLuxJaXZ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739916309; c=relaxed/simple;
-	bh=b6hloGU1rBuA53x0sVlhq4f+c+PpNZ0TB10ziK163Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdco6UwI40ek2d3MOc5a2MoWI1LU8ounjqgkZn6FMn3+JoFPU0tppnnJSHU3rC37vRqNNCkMW0ReI1pUOx7dCEUxz0b56tjaW2DBNUWJX9D9371Hc0uTnPoicADXDWGL1Tt0SgGczoeg1VJf7/GcrNd9glMHlwwd6w5wcqC88P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=xWAWdJIy; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220c92c857aso4346625ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:05:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739916307; x=1740521107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nag61ie4gTMr5LfKPoMEyRlLePdsRV9vHTySwK445qc=;
-        b=xWAWdJIyNqcmq76ryDpl9a38f+ur0IdYgVZlxS95DE3vKXRMtxWm9hA3qqY0xXNuZn
-         YA01LQHI81yFMYqQTbm564zoD74ECqQGUGhlsjL8w28AcFmvCCE5wfhEY6E2/9j2BzP5
-         riIoxWEKP3YjIMHHDytF9lPZ7e85+BhfjWn6akm+3uIr4tCfpfwmJizsVADwUB8ERc7m
-         q7oKkRQzF55nsCxPhIas/CBTSHhI8ZgsfMvdQ1EE8s6JVSAYUCSt3AmbMLLS52iTm8/A
-         3PGqEURY0o9QVRzBQuv4pXieKT9lROaUv2aS1w9yKLIMy+fc6tFJf0q4YoCZYKVCCUGP
-         mJ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739916307; x=1740521107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nag61ie4gTMr5LfKPoMEyRlLePdsRV9vHTySwK445qc=;
-        b=gK8Ayl7pe37HhojvPdoVg8lWHcO5pjtRpeQ0pVdtsIcTAZmfT9hDYMyJAjxHddSieA
-         H6E6j8a8idahiigihW+yvVffybf4cy/23cVjPFIsojE9xhv1OV8cAonxtBo5VF/2ZGaJ
-         Dh1JHTcvW2gEF6o8Wu8Q39T1gQGeaBmlrgucF9qDH9xOOTrnBIbx/C/Rvu5gmWXVXJsS
-         qwgscsI7GRaOke2Hw2YmnL6dg1sWtAyn/g12c/Wo9+VUcXeAXgdAWpur3X3BkvsibTCv
-         ifEBXBwPiLMzkTU5H8BMwWAmiLJD87pZPCAIs8PR//tIjU7ZyIlrUxRDbIxqtcMqXJxz
-         H2dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXox9aPJeM54BT9EjIMHazh9N/yTK8kzd2ag5mBl/t+RqKRJPrkfXVRrFgAV0eHMq/0JvPCWYWBDaS5UsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwUlmqx//kmBIrYWKSjaRIu8GgZKZV/J53W8jZ5zQ3fe+6BBpI
-	M7CUn5PeW9L8F9kfjh0bkaSBtzDyNZsLZ2/F6HEo/KEU5blR5ZbVH0O3jaYVvF4/e6nSkuY8Zyq
-	a
-X-Gm-Gg: ASbGncsZJRuAEdbcNKyIjx7EEetPzfJuPLPXpvr1XPHJDMbUpIN2W4LMtWJnbtwijOO
-	fycN0oAkc134kQOKRXfrx++rdelndyems6gn2aIeOJSgh+hNND/AwMZgMLBaO1SS+dINxib5LNY
-	AWtyHNSmXwljjigTgloC6meIFUUusEzF31DL3h9wDjnkkJxF0y02UCH02CdieuCq55+Vo/Kljv6
-	1kY60dV/tRUKNrcADdp72CLW7NxZEohF3uc9olBz7qZbiH517QWvWe+bqMwm7Vyb+pe6WBPD8t4
-	PieG+ZdlcSJkodutylbZ35mJuQgIpHYOPs8ivMn3WM4E/A1jBknTxWc+pHKsls0gehg=
-X-Google-Smtp-Source: AGHT+IGvkvRLNTlfKTGNQYSAZlUgcJ+QFlAmcpZNTtHnSjPODxm9Rh5H6HhzoPku3AF2NPsfJ1c0ug==
-X-Received: by 2002:a17:902:eccb:b0:215:58be:3349 with SMTP id d9443c01a7336-2216eeb0aaemr23278175ad.14.1739916306994;
-        Tue, 18 Feb 2025 14:05:06 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556d111sm92826905ad.169.2025.02.18.14.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 14:05:06 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tkViB-00000002yp6-3iiV;
-	Wed, 19 Feb 2025 09:05:03 +1100
-Date: Wed, 19 Feb 2025 09:05:03 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matt Harvey <mharvey@jumptrading.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Valentin Volkl <valentin.volkl@cern.ch>,
-	Laura Promberger <laura.promberger@cern.ch>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for
- all inodes
-Message-ID: <Z7UED8Gh7Uo-Yj6K@dread.disaster.area>
-References: <20250217133228.24405-1-luis@igalia.com>
- <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area>
- <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
- <87r03v8t72.fsf@igalia.com>
- <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
- <87frkb8o94.fsf@igalia.com>
- <CAJfpegsThcFwhKb9XA3WWBXY_m=_0pRF+FZF+vxAxe3RbZ_c3A@mail.gmail.com>
- <87tt8r6s3e.fsf@igalia.com>
+	s=arc-20240116; t=1739916450; c=relaxed/simple;
+	bh=NZOWiC+glLsY8qZo0mE4K4nGd+wVcIoNUq4I6bumeiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=co6zHLJAKma3Bq5y/xrnI4pawUOktAtQODf3yAPxPn0IjUDYOmO1VCy2eTsu6o/QOT6EKGJFFYAJbmhpDy2wUlo0v8NIl3W1NNb36+vazkgJx5R+rMvhKsDRkOBS6TFRx7awesjLv0VFzcMB66ELLogXq7f4cmjmvoNPd3JpLk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBWsNAQn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A86C4CEE2;
+	Tue, 18 Feb 2025 22:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739916450;
+	bh=NZOWiC+glLsY8qZo0mE4K4nGd+wVcIoNUq4I6bumeiU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XBWsNAQnXEBFVzMi2wOxo+aI15uZwNSrE7WK8dzWdCzuS131u3gCjVmwyiEFHMNm3
+	 pM6H8UtOGiaVKAMtsQvc6PPBZ1SJOTiF9SXc0SzOe2qKqNznBRCwvGn2bAaxNUkvqL
+	 o1Eeab/OepqaasRX0QMayV8ABDywbK5xFer3PEHM760RpbkNoqIytbQmtzqryOuX/V
+	 x10DlupQiN7JHfUdErs+Ya7QroonPr2jf2IZa0qJRneU1f/r509POY5CNCt2i49Czm
+	 sMG+SJDZ4n6lgQGEnnhWhiCjXSSk4SXGH4V3LRpDeCEkchs49lb/kxYshH3Hi6D1l+
+	 bodSzda7o3FvA==
+Date: Tue, 18 Feb 2025 16:07:28 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, quic_jjohnson@quicinc.com,
+	quic_pyarlaga@quicinc.com, quic_vbadigan@quicinc.com,
+	quic_vpernami@quicinc.com, quic_mrana@quicinc.com
+Subject: Re: [PATCH 4/8] PCI: dwc: qcom: Update ICC & OPP votes based upon
+ the requested speed
+Message-ID: <20250218220728.GA194681@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,106 +68,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87tt8r6s3e.fsf@igalia.com>
+In-Reply-To: <20250217-mhi_bw_up-v1-4-9bad1e42bdb1@oss.qualcomm.com>
 
-On Tue, Feb 18, 2025 at 06:11:17PM +0000, Luis Henriques wrote:
-> On Tue, Feb 18 2025, Miklos Szeredi wrote:
-> 
-> > On Tue, 18 Feb 2025 at 12:51, Luis Henriques <luis@igalia.com> wrote:
-> >>
-> >> On Tue, Feb 18 2025, Miklos Szeredi wrote:
-> >>
-> >> > On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
-> >> >
-> >> >> The problem I'm trying to solve is that, if a filesystem wants to ask the
-> >> >> kernel to get rid of all inodes, it has to request the kernel to forget
-> >> >> each one, individually.  The specific filesystem I'm looking at is CVMFS,
-> >> >> which is a read-only filesystem that needs to be able to update the full
-> >> >> set of filesystem objects when a new generation snapshot becomes
-> >> >> available.
-> >> >
-> >> > Yeah, we talked about this use case.  As I remember there was a
-> >> > proposal to set an epoch, marking all objects for "revalidate needed",
-> >> > which I think is a better solution to the CVMFS problem, than just
-> >> > getting rid of unused objects.
-> >>
-> >> OK, so I think I'm missing some context here.  And, obviously, I also miss
-> >> some more knowledge on the filesystem itself.  But, if I understand it
-> >> correctly, the concept of 'inode' in CVMFS is very loose: when a new
-> >> snapshot generation is available (you mentioned 'epoch', which is, I
-> >> guess, the same thing) the inodes are all renewed -- the inode numbers
-> >> aren't kept between generations/epochs.
-> >>
-> >> Do you have any links for such discussions, or any details on how this
-> >> proposal is being implemented?  This would probably be done mostly in
-> >> user-space I guess, but it would still need a way to get rid of the unused
-> >> inodes from old snapshots, right?  (inodes from old snapshots still in use
-> >> would obvious be kept aroud).
-> >
-> > I don't have links.  Adding Valentin Volkl and Laura Promberger to the
-> > Cc list, maybe they can help with clarification.
-> >
-> > As far as I understand it would work by incrementing fc->epoch on
-> > FUSE_INVALIDATE_ALL. When an object is looked up/created the current
-> > epoch is copied to e.g. dentry->d_time.  fuse_dentry_revalidate() then
-> > compares d_time with fc->epoch and forces an invalidate on mismatch.
-> 
-> OK, so hopefully Valentin or Laura will be able to help providing some
-> more details.  But, from your description, we would still require this
-> FUSE_INVALIDATE_ALL operation to exist in order to increment the epoch.
-> And this new operation could do that *and* also already invalidate those
-> unused objects.
+Make subject line match history for this file.
 
-I think you are still looking at this from the wrong direction.
+On Mon, Feb 17, 2025 at 12:04:11PM +0530, Krishna Chaitanya Chundru wrote:
+> QCOM PCIe controllers needs to disable ASPM before initiating link
+> re-train. So as part of pre_bw_scale() disable ASPM and as part of
+> post_scale_bus_bw() enable ASPM back.
 
-Invalidation is -not the operation- that is being requested. The
-CVMFS fuse server needs to update some global state in the kernel
-side fuse mount (i.e. the snapshot ID/epoch), and the need to evict
-cached inodes from previous IDs is a CVMFS implementation
-optimisation related to changing the global state.
+s/needs/need/
 
-> > Only problem with this is that it seems very CVMFS specific, but I
-> > guess so is your proposal.
-> >
-> > Implementing the LRU purge is more generally useful, but I'm not sure
-> > if that helps CVMFS, since it would only get rid of unused objects.
-> 
-> The LRU inodes purge can indeed work for me as well, because my patch is
-> also only getting rid of unused objects, right?  Any inode still being
-> referenced will be kept around.
-> 
-> So, based on your reply, let me try to summarize a possible alternative
-> solution, that I think would be useful for CVMFS but also generic enough
-> for other filesystems:
-> 
-> - Add a new operation FUSE_INVAL_LRU_INODES, which would get rid of, at
->   most, 'N' unused inodes.
->
-> - This operation would have an argument 'N' with the maximum number of
->   inodes to invalidate.
->
-> - In addition, it would also increment this new fuse_connection attribute
->   'epoch', to be used in the dentry revalidation as you suggested above
+Why does Qcom need to disable ASPM?  Is there a PCIe spec restriction
+about this that should be applied to all PCIe host bridges?  Or is
+this a Qcom defect?
 
-As per above: invalidation is an implementation optimisation for the
-CVMFS epoch update. Invalidation, OTOH, does not imply that any fuse
-mount/connector global state (e.g. the epoch) needs to change...
+> Update ICC & OPP votes based on the requested speed so that RPMh votes
+> gets updated based on the speed.
 
-ii.e. the operation should be FUSE_UPDATE_EPOCH, not
-FUSE_INVAL_LRU_INODES...
+s/gets/get/
 
-> 
-> - This 'N' could also be set to a pre-#define'ed value that would mean
->   *all* (unused) inodes.
+> Bring out the core logic from qcom_pcie_icc_opp_update() to new function
+> qcom_pcie_set_icc_opp().
 
-Saying "only invalidate N inodes" makes no sense to me - it is
-fundamentally impossible for userspace to get right. Either the
-epoch update should evict all unreferenced inodes immediately, or it
-should leave them all behind to be purged by memory pressure or
-other periodic garbage collection mechanisms.
+This refactoring possibly could be a separate patch to make the meat
+of this change clearer.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +static int qcom_pcie_set_icc_opp(struct qcom_pcie *pcie, int speed, int width)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +	unsigned long freq_kbps;
+> +	struct dev_pm_opp *opp;
+> +	int ret, freq_mbps;
+> +
+> +	if (pcie->icc_mem) {
+> +		ret = icc_set_bw(pcie->icc_mem, 0,
+> +				 width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+> +		if (ret) {
+> +			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+> +				ret);
+> +		}
+> +	} else if (pcie->use_pm_opp) {
+> +		freq_mbps = pcie_dev_speed_mbps(pcie_link_speed[speed]);
+> +		if (freq_mbps < 0)
+> +			return -EINVAL;
+> +
+> +		freq_kbps = freq_mbps * KILO;
+> +		opp = dev_pm_opp_find_freq_exact(pci->dev, freq_kbps * width,
+> +						 true);
+> +		if (!IS_ERR(opp)) {
+> +			ret = dev_pm_opp_set_opp(pci->dev, opp);
+> +			if (ret)
+> +				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
+> +					freq_kbps * width, ret);
+> +			dev_pm_opp_put(opp);
+> +		}
+> +	}
+> +
+> +	return ret;
+
+Looks uninitialized in some paths.
 
