@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-518834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6C7A39535
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D72AA39541
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B78DE16BDFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E243B50F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5D22F3A3;
-	Tue, 18 Feb 2025 08:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8/27QDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB023315F;
+	Tue, 18 Feb 2025 08:18:24 +0000 (UTC)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3BC22B8AA;
-	Tue, 18 Feb 2025 08:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6000822CBD8;
+	Tue, 18 Feb 2025 08:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866627; cv=none; b=j2kc/HZgStDjPy/wlcuWENQOeGDQo4InqA/bEJaIRlxR+Py0B/rLi3v1HpBYnIi+8kxZ88NJ4FHkg1KyOXajVTnhDybQrkamutBj+D1bQgyHBvqNPmzfj0A6A/3k/5YuwPZUPGfvUNKqN49U82ZpqzHWcUDusc2DrXI4ThJ2dDk=
+	t=1739866703; cv=none; b=B3rrk27w4eyUJVMrvL8dkcqZlIQIu9PS/iOwDPnNIPgI09jRcZUIQOfKkJIvpSkzwdWFdlYneOxUP22q8bMvVkPPKJM0n1Pr/2hbyC1uNytoD0jkQrEH9z2SBgdKzFjoZDB4bFeOln6DN3unlvkFO0K4uuCQKyT4HEg3Tbkpsr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866627; c=relaxed/simple;
-	bh=unAtoMZ/6LB+ku15iDriUMC7ier19fz8oDz6eJJnpjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8wS1WHb3meBewYeI7ufU0pjVwM5Z8FU251HuWgsQheBbAp75ixSB++7KHjI9OtPWkXb37puWqpC4op9qG+uF22CxYzjs5TIjLFIViYyDvu0tPzNMQGRPsagHoPD7M5t04UePkSWQWIpaE3UWmFyLfrMlCLKyBKFhYVdHD4JyYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8/27QDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97349C4CEE2;
-	Tue, 18 Feb 2025 08:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739866626;
-	bh=unAtoMZ/6LB+ku15iDriUMC7ier19fz8oDz6eJJnpjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8/27QDN9jps1nyShhUPWS3f5RCyhj0k3K7aVVPA4GxyepEwMBiyAwv/VBChpTdhA
-	 /wE5ZLeiJpqRVyoMvLLdG0IT1IJitAcKhTjPght7fqvhd2w9Zdbu1zIqSz6ui40/xM
-	 RHpJHSr4qGf5xRsxmYJHahQoeiKXQ0hgHzZS2wCRcX28q1xt1CTQizsn7jU3tFnr0B
-	 wXg5KMM7PAwuT8aJ6PZwzcQ6ty1RUQX2RSvW0tCip2d3axeAeypUufgF0XyAo7T1qf
-	 HWPi47RJIcozlOD4W/Lv3zqNF3I2zI0/0tWwxecdXQnRmMPcg3xx4xrv3Ua3b0XySp
-	 VT8QUDvfqaByg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tkIn2-000000001v6-4ALR;
-	Tue, 18 Feb 2025 09:17:13 +0100
-Date: Tue, 18 Feb 2025 09:17:12 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <Z7RCCF58RTsyr-eN@hovoldconsulting.com>
-References: <20250206-x1e80100-ps8830-v6-0-60b1e49cfa8d@linaro.org>
- <20250206-x1e80100-ps8830-v6-2-60b1e49cfa8d@linaro.org>
- <Z68EUTlHcm6TxjlY@hovoldconsulting.com>
- <Z7Q8xwcfeE3tcBLL@hovoldconsulting.com>
- <2025021807-equipment-ignition-017f@gregkh>
+	s=arc-20240116; t=1739866703; c=relaxed/simple;
+	bh=2VBYXOW5In6lit0F1gJahtZuGAfHYPipCEI5SAdDqvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cQqwTwUSIoBH/dBPpKWRgH4y2KpU5/y7/ur/kuAbv8qoAh+xVcgIGEP8dRYbX+xPWrKsslLyBma7+Q5b3TDLxn1SLDZMQWFTjp8iRbLN0gkqYdLx+EclT60NXuylmLjn6P5tC+Kt6TiDHbx5GOvWNv5oVIF68ZFL2Nca7a3E8rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-521b5bd2268so410444e0c.0;
+        Tue, 18 Feb 2025 00:18:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739866700; x=1740471500;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VT68uUFOtiLM/j4EB1RwnCT+0lIJjD9PLyVD0uYr2cM=;
+        b=pJYalHd/seZz6JgzSYgsmXApfk9VN20SFUDI0hGFVENQJs/R8Hwxq6WsZe8xyAAA9q
+         +XVb/rppSptyshrtiEtBujNdzBuIyxFfNHmIXTMNaj5/slP5Mn6hQc0uRXk6V8Vy1jv2
+         YmCbQthT/xmG2DCc0hnFxvg5foEwOFPrPWMWpRjNAIgtmvrWfU9GMs7vLc4CEtSWtC5c
+         33w/PVPhK16BX06jkMTJxvzNb1dK6QaxYE74D9sK0JeO+ZHUo6sJDBut0X4ouiZwVQlw
+         yEi2izSyMh6luD5OOi4sbT4OHqrcyDHzzqJNqEKgDyICI0WheRXv+vWmGCOiG3Ku+qIN
+         0xiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8f5MiYQUDKuR+A+gm4VNgBlCrU6syJEkZ80qkkCQ+DtILXyafAxiPla3VQ8ysFLYEQCH6cvxdyRF7n3U=@vger.kernel.org, AJvYcCWeqDrnXiKAZv4ifaO6EgfII4dMhyzlUukW755UdCDxAktB01j6+BnF1/6RbBLUR6/IgUJvVBYJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+uukBYrQeT9VdoAgVROyWwfBUB71/Hhjy4fbJmsf4nVr8pfM4
+	DTL4oBubPKXedyS3XzjVDDl2nBdjL8AJGaK9eCBkvP9H6D+88yTDuElfpNcqFfo=
+X-Gm-Gg: ASbGnctPpI7xK4qQRmjNayIWD9aXQcLMVErzfpCL4I1KxIDils6Q/PYccotqcNw9ZwO
+	LSby5vHMvWpKYNHOo7LCt5Kjr8XJAqAF3Z98BtcBl5PXm0rQAuRYvpIzdu2W+YmrMI/TeY7WgIz
+	arnfMIdb24Z+cbHiVw+nQHSOC8Sp5Kk5HuFF4P5vCrXFInKUabqQwM+Xe/oYHv1sHv7fbmcoico
+	w9WiC6yU7X5SnYd7w2R4d4Z694+aFo5qtroQqgBSoPmLw35kyo1vsDhLTPy7y0GkLZap5MSF3rM
+	8rZvyJnamnkNdPlY7thV84tDTL0+LseookPkFEyu0Ff+xCdsMyS0sg==
+X-Google-Smtp-Source: AGHT+IGMgwpf+kYRAPr7XkyvWrb+UmLfkmdXvlkoGgf+GRltx16IBJkg0+LVFD+bPb17sWsfv10Dxg==
+X-Received: by 2002:a05:6122:2a56:b0:520:59ee:8197 with SMTP id 71dfb90a1353d-5209dcccf61mr6069911e0c.8.1739866699899;
+        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e8599598sm2092279241.15.2025.02.18.00.18.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4bd3c887545so2357738137.1;
+        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVxcUNr2MIRsG7425tbBNIiFKCpVgUDQTyET6myPSk1NpDDlyWE2ZCnqzxcyvgkNki3dCfKfjE6@vger.kernel.org, AJvYcCWudjV5gnNEsHldn8Z3/d9968nHXHJfaVYsdc0o4nUW35SpaTSpUcnypIwNNQjReWtTQcPKBvH17tMUSJg=@vger.kernel.org
+X-Received: by 2002:a67:e7c3:0:b0:4b1:1eb5:8ee5 with SMTP id
+ ada2fe7eead31-4bd40001d6amr6978606137.25.1739866699350; Tue, 18 Feb 2025
+ 00:18:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025021807-equipment-ignition-017f@gregkh>
+References: <20250217160017.2375536-1-haoxiang_li2024@163.com>
+In-Reply-To: <20250217160017.2375536-1-haoxiang_li2024@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 09:18:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUs_2mB5RFga8Dv7xPp5VFMaXqykJShndTW-_Q8hgUYfw@mail.gmail.com>
+X-Gm-Features: AWEUYZlXeXLAPjROcl_yxFn5h2lk18a3_Wom0kri1EP69xrAxJlcBNWCh-TcD_A
+Message-ID: <CAMuHMdUs_2mB5RFga8Dv7xPp5VFMaXqykJShndTW-_Q8hgUYfw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: sun3: Add check for __pgd_alloc()
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: sammy@sammy.net, zhengqi.arch@bytedance.com, akpm@linux-foundation.org, 
+	dave.hansen@linux.intel.com, kevin.brodsky@arm.com, 
+	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 18, 2025 at 09:00:27AM +0100, Greg Kroah-Hartman wrote:
-> On Tue, Feb 18, 2025 at 08:54:47AM +0100, Johan Hovold wrote:
-> > On Fri, Feb 14, 2025 at 09:52:33AM +0100, Johan Hovold wrote:
-> > > On Thu, Feb 06, 2025 at 11:28:28AM +0200, Abel Vesa wrote:
-> > > > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> > > > controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> > > > and the Type-C connector, and provides orientation and altmode handling.
-> > 
-> > Turns out Greg had picked this one up 20 minutes before I sent my
-> > comments. I did see Heikki's ack the day before and realised time was
-> > short but was not able to drop everything and review the last revision
-> > due to meetings that afternoon.
-> > 
-> > Well, well, I guess you can say I only have myself to blame for not
-> > reviewing within a week of the last revision being posted.
-> 
-> I can revert it if you want me to, or an incremental fix, your call.
+On Mon, 17 Feb 2025 at 17:00, Haoxiang Li <haoxiang_li2024@163.com> wrote:
+> Add check for the return value of __pgd_alloc() in
+> pgd_alloc() to prevent null pointer dereference.
+>
+> Fixes: a9b3c355c2e6 ("asm-generic: pgalloc: provide generic __pgd_{alloc,free}")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 
-Thanks, but I think Abel should be able to test the
-not-enabled-by-boot-firmware case and if needed amend the binding these
-next few weeks.
+As akpm has already taken this:
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-I'll just send an incremental fix for the error handling for now.
+Gr{oetje,eeting}s,
 
-And sorry about the rant, just needed to vent some frustration with the
-never ending stream of interruptions and unscheduled work...
+                        Geert
 
-Johan
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
