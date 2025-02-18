@@ -1,211 +1,137 @@
-Return-Path: <linux-kernel+bounces-519110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067DEA39823
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:06:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89100A39828
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EC01883A86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D306C1883771
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588B922E418;
-	Tue, 18 Feb 2025 10:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCF023496A;
+	Tue, 18 Feb 2025 10:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZhMjSZ0R"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="YsjgW8iQ"
+Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C7322CBD8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8084223024C;
+	Tue, 18 Feb 2025 10:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739873157; cv=none; b=exzac01np9XWZxvQrhHkUWdsEICs8vow+8vHwlruyL3H0qjrAqUUA7FMqW/SLqSrBKwAFQDAIClPOahwOTDdb67V+yILlv009YS8guvfGroJ6RsLX0XqbwGVocgcuaBKiMnupSSrRYIHd2W/zVmtavKMpZ5ydtXK3MtMDR1cf2E=
+	t=1739873194; cv=none; b=utcBU9ZabyHhv0DG6O2g/JRapS175GEuJbGiSNVT95B/RSojM3pH5cp78K9hJ9h/i/jFphsyjn3ZZM1PR3ojnHqJb/N1u83sWIxJC1vstqyIUudbVSbZF32cMQZA489bRGgM5zMBPN7Cml3Bzv2Zo5IzT+5qk8wAEoQSQJpmLA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739873157; c=relaxed/simple;
-	bh=5D0p078nhevpa+mC/hHlfPqIhvL1kYMkrzSPI2+eDxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VjLKcEfhZ1tr72UxGYyPGRL8J0HnE0z7PXHfQc3YdXg1Mtu+whxj7n5dlBqYsi2ABOG40qs+zG8xKe/xiXgw1CLoH7yLrC7soBxUyF4XxUOStTxqyK5fp06zSAC53yclfnATUYtV25H6HMsFkThCQnw7oVsRa7FQ5mDaT5Pv1q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZhMjSZ0R; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso34019115e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:05:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739873154; x=1740477954; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sYzIjw5m52Pb+IT0lkVGBcTiFW2c9Bpd7NnljROy9VA=;
-        b=ZhMjSZ0RFtpsjQaUTmUO6As6rO2fQkKQEVKls2sOQBWSiCp9evIRUYUFCQOjTi+EBB
-         HhbATLDAyohbkYT+Z9BcRAFSivFZkOpqzEpXnfMH4G8jCYXDVigRgoQkFvxo/selPph7
-         vQpYmFVsHsAzCG2NwiBq1mMrPeu/cB9CKyOUOEKoFxMnKmshjQOTTCSY4Rsp+TSQVhQZ
-         xpYNkxgHHZZXaaU76+qeXBmlE8EzSG/XKk6eoEkITSgRPs0P6t9MIzDeAOvGXvH6q9mG
-         T92jNh9yFJWGpGaGFqqZVbBg9f25zsNX4VMclGiCLSCMyJ2BXreur5AAvMj1bismgP0p
-         6aHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739873154; x=1740477954;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYzIjw5m52Pb+IT0lkVGBcTiFW2c9Bpd7NnljROy9VA=;
-        b=eJISESKQE5p0qFUG79g2M+UOiLcyGmYJ/4InCdTFqbdLHukuF0qqmxt25nzIM00JbV
-         EqIr2MffmeLuBXn+7fy+TldhFhHysDIK7uhB03lvbXmZTrKjU9ybG/qictHwDn6y/kmk
-         +RbJvfE2csgj8iCSGW3HM4wrYgYOGw1eyTPdaRn8DnQPC8yhMjVRJQ40hqhF0f8/rQFW
-         lq95i+lazzaNodyKqVvRqX0m8bde6VpQrEL7JIwnr8NOiO4BGXmWnoYll1/HVbk9qpc2
-         UrCf3TSWoOyRAFjssXjtxnVgArjySu8gHHeMMGRi++PVJiPbU+cmBoDi5SdMAGH5+d8K
-         Njww==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Gd7wxil8e57FhEkGGvxYL+DmNjNbSbEzR3sUFwVpoq9j9IEPdOl0apv0D1kkB+r+21GDCTcjlZce43U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz1gRtsqtsEsKvqYMZ2bNF0D2dbX++7BvQnVnpe1PNVUUIvb9Y
-	zN+wYx2u0RTtgGEPSTojAmu3clDg/Py4TbOKB+m99TFHz2weEdLzuOcp2TonWO0=
-X-Gm-Gg: ASbGncsr+0EjlCKuaUCrx2Kv5I8qUnnfGdFMgwD/Jlu1+Hy7fbgiCZnXnawpKZJdN7P
-	0oUQCnVGtdcKpn61GJOgmLDT0/KbCKgxtsY86hJoP7yG4vP8O2GDmwd5NtkIcRM8R6SKkh2Wga1
-	NPIj+keb4ENKmCHBgIBpmCJWHppRtuNJ2MH5V/Gic1sFwSx8H6A8la4s4T0eACvnHqEQs+e7sQd
-	c44nhnfnFJgHwFRzlB+dECmGbrLo1NjJWC8zG9ZFgCnSvXWYPQD5Bl3POdSExCdoEgB03s6D7m+
-	1eKOtdAoiQeHJBjPFT4GKQNZXg==
-X-Google-Smtp-Source: AGHT+IHgIFVIHEo609omEOPIL5QR94PggfZ8Q3TFUk8tAi1jFgvW0FkFC6iIanB2i61fvsZwwgB5Fw==
-X-Received: by 2002:a5d:6d06:0:b0:38f:4cdc:5d36 with SMTP id ffacd0b85a97d-38f4cdc605bmr5085888f8f.43.1739873153792;
-        Tue, 18 Feb 2025 02:05:53 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43992ad82cfsm18910875e9.37.2025.02.18.02.05.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 02:05:53 -0800 (PST)
-Message-ID: <0f6369fd-3236-40eb-bf8f-3c3d675137c9@linaro.org>
-Date: Tue, 18 Feb 2025 10:05:48 +0000
+	s=arc-20240116; t=1739873194; c=relaxed/simple;
+	bh=E3xOi/9hGj00jnNV5AhoZbkDyjCclw+unRetxDkBpRg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=eTjmwhc3oGqetrzq4iOKvWc/4Z6X3TqNu5HK8How43apSieAw8xkGlJyUMBWwoSTaBtZW6+Gru2/cHOunMfxQo/qg9p4zWrx7iay9hqBzFeRzsjnjLBsPCzoMLOO680EL9lE+BVMMhscitarjww5Afreoaevu7q6pjfPkjwXjjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=YsjgW8iQ; arc=none smtp.client-ip=162.240.238.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=OVLzpGyAnuZGHlfCQnUEFiF2NICo49l1c70JyAHdJCE=; b=YsjgW8iQkmOefbMr+6DULtsIga
+	yFggL4XyBiiokWFf3Yl10YLELIEdidsYjMd1P23he71C2U0yLjxOQ1A2Z1/Lxh452bIq7+gmWbfhH
+	ykWZ3d/b0XeYJlwVZY8I8ahMi8s3TkX4kifAxMp/kp2wa3mH+63hOkhk402KWiBaAoPNPKTJOQs2f
+	qoxFzskQ+WpcfR2y/pE4OMAAGAJDbJgiuxgQ6iop5tWejuRB+1aLSnzTWbk77Gdn66JlCUuM6pcSR
+	p4mcDjSZ/iglZq+kxgGilPEXmFV1sfz1koVdXfY2+evT2Ue16Ysfe6Ey5OKxEJvxt0YlReMGrD7be
+	0JNj/tYQ==;
+Received: from [122.175.9.182] (port=15274 helo=zimbra.couthit.local)
+	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parvathi@couthit.com>)
+	id 1tkKUm-00086M-2f;
+	Tue, 18 Feb 2025 15:36:29 +0530
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 8A9E317821C8;
+	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 665BF17823D4;
+	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AF5WfMi2JOCR; Tue, 18 Feb 2025 15:36:20 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 3381D17821C8;
+	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
+Date: Tue, 18 Feb 2025 15:36:20 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com, 
+	ssantosh@kernel.org, richardcochran@gmail.com, 
+	basharath <basharath@couthit.com>, schnelle@linux.ibm.com, 
+	diogo ivo <diogo.ivo@siemens.com>, m-karicheri2@ti.com, 
+	horms@kernel.org, jacob e keller <jacob.e.keller@intel.com>, 
+	m-malladi@ti.com, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, afd@ti.com, 
+	s-anna@ti.com, linux-arm-kernel@lists.infradead.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pratheesh <pratheesh@ti.com>, 
+	Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth@ti.com, srk@ti.com, 
+	rogerq@ti.com, krishna <krishna@couthit.com>, 
+	pmohan <pmohan@couthit.com>, mohan <mohan@couthit.com>
+Message-ID: <1348929889.600853.1739873180072.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250214170219.22730c3b@kernel.org>
+References: <20250214054702.1073139-1-parvathi@couthit.com> <20250214170219.22730c3b@kernel.org>
+Subject: Re: [PATCH net-next v3 00/10] PRU-ICSSM Ethernet Driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 0/7] Coresight: Add Coresight TMC Control Unit driver
-To: Jie Gan <quic_jiegan@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
+Thread-Topic: PRU-ICSSM Ethernet Driver
+Thread-Index: G9POODYMWs8t48CuCyp4N0Tp+gKU+w==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
 
+Hi,
 
-On 17/02/2025 9:30 am, Jie Gan wrote:
-> From: Jie Gan <jie.gan@oss.qualcomm.com>
+> On Fri, 14 Feb 2025 11:16:52 +0530 parvathi wrote:
+>> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
+>> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
+>> Megabit ICSS (ICSSM).
 > 
-> The Coresight TMC Control Unit(CTCU) device hosts miscellaneous configuration
-> registers to control various features related to TMC ETR device.
-> 
-> The CTCU device works as a helper device physically connected to the TMC ETR device.
-> ---------------------------------------------------------
->               |ETR0|             |ETR1|
->                . \                 / .
->                .  \               /  .
->                .   \             /   .
->                .    \           /    .
-> ---------------------------------------------------
-> ETR0ATID0-ETR0ATID3     CTCU    ETR1ATID0-ETR1ATID3
-> ---------------------------------------------------
-> Each ETR has four ATID registers with 128 bits long in total.
-> e.g. ETR0ATID0-ETR0ATID3 registers are used by ETR0 device.
-> 
-> Based on the trace id which is programed in CTCU ATID register of
-> specific ETR, trace data with that trace id can get into ETR's buffer
-> while other trace data gets ignored. The number of CTCU ATID registers
-> depends on the number of defined TMC ETR devices. For example, two TMC
-> ETR devices need eight ATID registers. ETR0 with ETR0ATID0-ETR0ATID3
-> and ETR1 with ETR1ATID0-ETRATID3.
-> 
-> The significant challenge in enabling the data filter function is how
-> to collect the trace ID of the source device. The introduction of
-> trace_id callback function addresses this challenge. The callback function
-> collects trace ID of the device and return it back. The trace ID will be
-> stored in the structure called coresight_path and transmitted to helper
-> and sink devices.
-> 
-> The coresight_path structure is created to address how to transmit
-> parameters needs by coresight_enable_path/coresight_disbale_path
-> functions.
-> 
-> Here is the definition of the struct coresight_path:
-> /**
->   * struct coresight_path - data needed by enable/disable path
->   * @path:               path from source to sink.
->   * @trace_id:           trace_id of the whole path.
->   */
-> struct coresight_path {
->          struct list_head                *path;
->          u8                              trace_id;
-> };
-> 
-> The atid_offset mentioned before is the offset to ATID register in CTCU
-> device.
-> 
-> Enabling the source device will configure one bit in the ATID register based
-> on its trace ID.
-> Disabling the source devices will reset the bit in the AITD register
-> based on its trace ID.
-> 
-> Useage:
-> Enable:
-> STM device with trace ID 5 and ETR0 is activated.
-> Bitmap before the enablement:
-> ETR0ATID0:
-> 31..................543210
-> ==========================
-> 0000000000000000000000...0
-> ==========================
-> 
-> Bitmap after the enablement:
-> 31..................543210
-> ==========================
-> 0000000000000...0000100000
-> ==========================
-> 
-> The bit 5 of the ETR0ATID0 register is configured to 1 when enabling the
-> STM device.
-> 
-> Disable:
-> STM device with trace ID 5 and ETR0 is activated.
-> Bitmap before the disablement:
-> ETR0ATID0:
-> 31................6543210
-> =========================
-> 000000000010111...0100000
-> =========================
-> 
-> Bitmap after the disablement
-> ETR0ATID0:
-> 31................6543210
-> =========================
-> 000000000010111...0000000
-> =========================
-> 
-> The bit 5 of the ETR0ATID0 register is reset to 0 when disabling the STM
-> device.
-> 
-> Sincere thanks to James Clark for providing an excellent idea to handle
-> the trace_id of the path.
-> 
-> Changes in V12:
-> 1. Update the method for allocating trace_id for perf mode.
-> Link to V11 - https://lore.kernel.org/linux-arm-msm/20250214024021.249655-1-quic_jiegan@quicinc.com/
-> 
+> Every individual patch must build cleanly with W=1.
+> Otherwise doing git bisections is a miserable experience.
+> --
 
-I tested the latest change, looks good to me.
+As we mentioned in cover letter we have dependency with SOC patch.
 
+"These patches have a dependency on an SOC patch, which we are including at the
+end of this series for reference. The SOC patch has been submitted in a separate
+thread [2] and we are awaiting for it to be merged."
+
+SOC patch need to be applied prior applying the "net" patches. We have changed the 
+order and appended the SOC patch at the end, because SOC changes need to go into 
+linux-next but not into net-next. 
+
+We have make sure every individual patch has compiled successfully with W=1 if we 
+apply SOC patch prior to the "net" patches.
+
+
+Thanks and Regards,
+Parvathi.
 
