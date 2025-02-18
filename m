@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-519003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D46A396FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425D7A39703
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 319C41896945
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B48F177712
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B7122FDE0;
-	Tue, 18 Feb 2025 09:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA99823315D;
+	Tue, 18 Feb 2025 09:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJlsbuGi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19B022DF8C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="TTGpfDfC"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF73233159;
+	Tue, 18 Feb 2025 09:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870579; cv=none; b=ZeV8s6P8O+VlDilQTQ2+pJf/Icb1AHJLaVlfUln0DgW5JnC/WwQrPGaH007zX4TcY4umIlUfDBxGGKepvtn3Kvl6kp6MRYPerBTd4sVcSnyNbBZsMgMXjlPMALjD3AnrmywBep2diWPJ5VXknlRFh3LPdAAZTv+b91ll3Jgh5Co=
+	t=1739870653; cv=none; b=dzdQ3FS/sdWf3l/+FVQrrX8LcDnns06YFjk6awV1AZj2lm+aCjTpAwhUpddCJsS19MVtL6yD/5oNncA37Fv/NQqGnNKsjmp011v76rlKZ6RuCV8z9byp7W65q9CGrCRSHe0u7DtoIr+JtBUlt7e+EOBuhtoCCEE/LIV2gbnpFkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870579; c=relaxed/simple;
-	bh=GrCoSmEOxWq7xZxvA0t4jFnZKfhWflsx3jCMkmytcCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXnNBPq+I2BrNCDGNI3sr07ZfbgmtaQGBvnicePgDnnWcZc/szWwXHd5HUvVy6A6lHsEvxvnHnLIlX0e1XqgG5gO9THbuP5gs66QZe7lnQylCV5o53Y7KVN0tJB3xvqeFwrc+jD1Rm/MBwJ/4SKGVTvC6SSf07SnGeZaS/JB+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJlsbuGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C515C4CEE2;
-	Tue, 18 Feb 2025 09:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739870578;
-	bh=GrCoSmEOxWq7xZxvA0t4jFnZKfhWflsx3jCMkmytcCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VJlsbuGiBHjcVjlW0coki4A5BM+1Y5At1FDP9e60r4ZK1sGCkVWFHaRyv2hRLB0rW
-	 v30ilXRQLRw+J+7UW/js1fxLYXC2vOA8IYAY10CqrV5fyIiuDcUx0JBkp3TkpQLGOp
-	 7vJSW3G021wG68AqVh2e7/G0+TEkpbhNXFfAbAkCeiwv1SX/w6kRmfD6Mc6PuY9dSF
-	 K0kVSjHLktJuGBQODFZAFnvgKuNCjXbinfExBO/7gH5szPw2yqnAQ9lKXD7F/16j6f
-	 u2EqMpKAJgNtCzmBHZkooFAA2Q/72XHambjX3FvJSTbkaopcVwrOFQJ866haAjfqh7
-	 PPx9SV/PYl+DQ==
-Date: Tue, 18 Feb 2025 10:22:47 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH v6 00/15] x86-64: Stack protector and percpu improvements
-Message-ID: <Z7RRZ0jdqsrADMm0@gmail.com>
-References: <20250123190747.745588-1-brgerst@gmail.com>
+	s=arc-20240116; t=1739870653; c=relaxed/simple;
+	bh=QlrFeM/WWhevHbuCRZ3/h/DidYjyTdQ4NVZyCs//d+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eFaZOLFITFZWYIHurwGD3dvKXfeeCrOI42dJ6yhP2D2Z1NQ3e5FCQjIrmUmcJE0wdaQvTctdPFjSaZ7owGuP8H4kjjXm9UA/SFvdxu0kZFWrOa8q/AaBDiOa/cTGDrsdo2UI0OXbgWcEUY6u1oQVxIWoHGFV3+6M6PnpdBYarVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=TTGpfDfC; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=q0FKelqD4MBXC07LZw1lv1trJGhq02WD8AUCXzMNScg=;
+	b=TTGpfDfC9SEr1KevxG+T+nBjD3R/STYOH9ZyeaAKJyA4BQ/t1cFHFCWCYOto0d
+	Ss0Nl2zD01rF7zBdeIu4U0rz82bryM6P9goh6Y963VcgeSIPqxA2rGCFDQ7Kspqs
+	KhpVKvNXphKYc1lWTk4fF94vA3Gn0hGmlad84Nodt0hAg=
+Received: from [172.19.20.199] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnl6toUbRn6etmBA--.9439S2;
+	Tue, 18 Feb 2025 17:22:48 +0800 (CST)
+Message-ID: <406c6713-356b-4acf-bcd0-e5a6c1e9adcf@126.com>
+Date: Tue, 18 Feb 2025 17:22:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250123190747.745588-1-brgerst@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: wait for hugepage folios to be freed
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
+ osalvador@suse.de, liuzixing@hygon.cn
+References: <1739514729-21265-1-git-send-email-yangge1116@126.com>
+ <37363b17-88b0-4ccc-a115-8c9f1d83a1b5@redhat.com>
+ <d043bdd2-a978-4a09-869e-b6e43f5ce409@126.com>
+ <2d0b01c5-a736-41d5-a0f7-db0da065d049@redhat.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <2d0b01c5-a736-41d5-a0f7-db0da065d049@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnl6toUbRn6etmBA--.9439S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXw17Gry8tFWfXFWruFW3ZFb_yoW5Ww48pF
+	W3Ca17G3yDJr9ayrnFqws09r10krWjqFWxWF1aqry3CFs8ArnrKF42ywn8uFW5Zr10ka10
+	qrWYvwnruF1UZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUo7tUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgD3G2e0Sbh-YAAAsr
 
 
-* Brian Gerst <brgerst@gmail.com> wrote:
 
-> Currently, x86-64 uses an unusual percpu layout, where the percpu section
-> is linked at absolute address 0.  The reason behind this is that older GCC
-> versions placed the stack protector (if enabled) at a fixed offset from the
-> GS segment base.  Since the GS segement is also used for percpu variables,
-> this forced the current layout.
+在 2025/2/18 16:55, David Hildenbrand 写道:
+> On 15.02.25 06:50, Ge Yang wrote:
+>>
+>>
+>> 在 2025/2/14 16:08, David Hildenbrand 写道:
+>>> On 14.02.25 07:32, yangge1116@126.com wrote:
+>>>> From: Ge Yang <yangge1116@126.com>
+>>>>
+>>>> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer
+>>>> freeing
+>>>> of HugeTLB pages"), which supports deferring the freeing of HugeTLB
+>>>> pages,
+>>>> the allocation of contiguous memory through cma_alloc() may fail
+>>>> probabilistically.
+>>>>
+>>>> In the CMA allocation process, if it is found that the CMA area is
+>>>> occupied
+>>>> by in-use hugepage folios, these in-use hugepage folios need to be
+>>>> migrated
+>>>> to another location. When there are no available hugepage folios in the
+>>>> free HugeTLB pool during the migration of in-use HugeTLB pages, new
+>>>> folios
+>>>> are allocated from the buddy system. A temporary state is set on the
+>>>> newly
+>>>> allocated folio. Upon completion of the hugepage folio migration, the
+>>>> temporary state is transferred from the new folios to the old folios.
+>>>> Normally, when the old folios with the temporary state are freed, it is
+>>>> directly released back to the buddy system. However, due to the 
+>>>> deferred
+>>>> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately 
+>>>> leading
+>>>> to the failure of cma_alloc().
+>>>>
+>>>> Here is a simplified call trace illustrating the process:
+>>>> cma_alloc()
+>>>>       ->__alloc_contig_migrate_range() // Migrate in-use hugepage
+>>>>           ->unmap_and_move_huge_page()
+>>>>               ->folio_putback_hugetlb() // Free old folios
+>>>>       ->test_pages_isolated()
+>>>>           ->__test_page_isolated_in_pageblock()
+>>>>                ->PageBuddy(page) // Check if the page is in buddy
+>>>>
+>>>> To resolve this issue, we have implemented a function named
+>>>> wait_for_hugepage_folios_freed(). This function ensures that the 
+>>>> hugepage
+>>>> folios are properly released back to the buddy system after their
+>>>> migration
+>>>> is completed. By invoking wait_for_hugepage_folios_freed() following 
+>>>> the
+>>>> migration process, we guarantee that when test_pages_isolated() is
+>>>> executed, it will successfully pass.
+>>>
+>>> Okay, so after every successful migration -> put of src, we wait for the
+>>> src to actually get freed.
+>>>
+>>> When migrating multiple hugetlb folios, we'd wait once per folio.
+>>>
+>>> It reminds me a bit about pcp caches, where folios are !buddy until the
+>>> pcp was drained.
+>>>
+>> It seems that we only track unmovable, reclaimable, and movable pages on
+>> the pcp lists. For specific details, please refer to the
+>> free_frozen_pages() function.
 > 
-> GCC since version 8.1 supports a configurable location for the stack
-> protector value, which allows removal of the restriction on how the percpu
-> section is linked.  This allows the percpu section to be linked normally,
-> like other architectures.  In turn, this allows removal of code that was
-> needed to support the zero-based percpu section.
+> It reminded me about PCP caches, because we effectively also have to 
+> wait for some stuck folios to properly get freed to the buddy.
 > 
-> v6:
-> - Rebased to current tip tree
-> - Dropped patches already applied
-> - Fixed typos in commit messages
-> - Added Reviewed-by tags
-> 
-> Ard Biesheuvel (1):
->   x86/module: Deal with GOT based stack cookie load on Clang < 17
-> 
-> Brian Gerst (14):
->   x86: Raise minimum GCC version to 8.1
->   x86/stackprotector: Remove stack protector test scripts
->   x86/boot: Disable stack protector for early boot code
->   x86/pvh: Use fixed_percpu_data for early boot GSBASE
->   x86/relocs: Handle R_X86_64_REX_GOTPCRELX relocations
->   x86/stackprotector/64: Convert to normal percpu variable
->   x86/percpu/64: Use relative percpu offsets
->   x86/percpu/64: Remove fixed_percpu_data
->   x86/boot/64: Remove inverse relocations
->   x86/percpu/64: Remove INIT_PER_CPU macros
->   percpu: Remove PER_CPU_FIRST_SECTION
->   percpu: Remove PERCPU_VADDR()
->   percpu: Remove __per_cpu_load
->   kallsyms: Remove KALLSYMS_ABSOLUTE_PERCPU
+It seems that when an isolated page is freed, it won't be placed back 
+into the PCP caches.
 
->  33 files changed, 100 insertions(+), 475 deletions(-)
->  delete mode 100755 scripts/gcc-x86_32-has-stack-protector.sh
->  delete mode 100755 scripts/gcc-x86_64-has-stack-protector.sh
-
-Thank you for doing this series - it all looks pretty good from my side 
-and I've applied it experimentally to tip:x86/asm. I fixed up the trivial 
-details other reviewers and me noticed.
-
-Note that the merge is tentative, it might still need a rebase if some 
-fundamental problem comes up - but let's see how testing goes in -next.
-
-Thanks,
-
-	Ingo
 
