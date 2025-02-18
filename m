@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-519658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D57A3A046
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:45:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A702CA3A057
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6A81889628
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637D03BAB84
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34B126D5C6;
-	Tue, 18 Feb 2025 14:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2374526B2AC;
+	Tue, 18 Feb 2025 14:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzbPVeL9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjlXTsY/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006EB26BD9C;
-	Tue, 18 Feb 2025 14:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A1226AAAF;
+	Tue, 18 Feb 2025 14:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889611; cv=none; b=eWSQRvOD7VpnZRaAEgmaO8Oe919DUrXJMQwF8+YiAHYjR6uL+o+jAWWgpVi5oYwW9coOE9MBzCZ80hnqJaGsd9c+M+wHHFYedYBB8pzwXEv0tQT1y7TYKOtNcKU+ydAtv5itra6Qkt5DhJaVeKBmVPQ0xHGIaXKWZYsa66VDiiw=
+	t=1739889603; cv=none; b=dTmAotCT8ZNHAYgZSieuz3kqH9anuxJOpBeI4eGzq53atVvO6IJDT/gU8mJB3PlGYcUw5NSXYxR7hRqlgGfE8+sWdvsRyE9wyjJkzB6kPz3ZOsMUzzt4oZ67Wg2DZjmIbKaeVoMRGvchW75DHAE8BCEVOHPNP+TR+eoiSmm90UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889611; c=relaxed/simple;
-	bh=YR9rSw0eu3MHVUUgxBCbni+Nva8WP3z74sHAVNGJ4uE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bk1Hy8D7h+qDJ1VcVf9tNZ8ITXdkgkWvvsaslPutgINvJAo5WMDiPtVyBRYsYHfthqDlLNjwmjAR0iWaQbPnydj8kQLLhEYI6wjIuegZxgnZJ2px+eDhX/mNXbBI1g7kwbhMrTTCnjfkHj15K/BVP6oH/S6ZwP3YRZGZ9O8ESTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzbPVeL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7521CC4CEE6;
-	Tue, 18 Feb 2025 14:40:09 +0000 (UTC)
+	s=arc-20240116; t=1739889603; c=relaxed/simple;
+	bh=NMy4Gw6L5rQhTIwdvCQIzp6p8eCeHC82U8qXljvChfs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=c6H+LGHsZv2D5zLwU43HiwIFrEGfD92O5SitSJa9PehTab25B2OsS3/fY0pYeoHUrye6O2zXTCCsoCdnpkiTcFats5NEk7BYLHF98s0fIwx1TrstJyBbqtAcLoo870hRd1SyN/QLtFqdsvfoU6HFs3VPVMQPhbPZeDW9iTlOC/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjlXTsY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84454C19425;
+	Tue, 18 Feb 2025 14:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739889610;
-	bh=YR9rSw0eu3MHVUUgxBCbni+Nva8WP3z74sHAVNGJ4uE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nzbPVeL9NZslDcCM2y1sjYmXPxgSopR14z46QVjjrNzvbEHB5+WPnFQRRTHlKISMp
-	 elixWnJEzcRwytaUb6gea/LyyTRRuwENsCzaHq2/Ekrr9ihJ3+yCEALsOdI9KCzsR2
-	 PWNuVAgF693CQ3VKdYRyO6UftU9PQLPbr7eUMVk35Fv3Hg0uIc4nBL7Y+a1KP3Qxbx
-	 wRFVMhux4nj1DaWDiSBdDylC2chqVu4Rt9cZQKfZ95oj+B177msOHcrtOLpLftHi4N
-	 WOzUo3yt1LKjb5WFnvgnOeLuooMzEyk7JokubFm+R2BYrs6+zhsrcHEr/qzku47Wt9
-	 eo2mH4SwSkZPQ==
-Date: Tue, 18 Feb 2025 06:40:08 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
- richardcochran@gmail.com, basharath <basharath@couthit.com>,
- schnelle@linux.ibm.com, diogo ivo <diogo.ivo@siemens.com>,
- m-karicheri2@ti.com, horms@kernel.org, jacob e keller
- <jacob.e.keller@intel.com>, m-malladi@ti.com, javier carrasco cruz
- <javier.carrasco.cruz@gmail.com>, afd@ti.com, s-anna@ti.com,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pratheesh
- <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, praneeth@ti.com, srk@ti.com, rogerq@ti.com, krishna
- <krishna@couthit.com>, pmohan <pmohan@couthit.com>, mohan
- <mohan@couthit.com>
-Subject: Re: [PATCH net-next v3 00/10] PRU-ICSSM Ethernet Driver
-Message-ID: <20250218064008.762e9b94@kernel.org>
-In-Reply-To: <1348929889.600853.1739873180072.JavaMail.zimbra@couthit.local>
-References: <20250214054702.1073139-1-parvathi@couthit.com>
-	<20250214170219.22730c3b@kernel.org>
-	<1348929889.600853.1739873180072.JavaMail.zimbra@couthit.local>
+	s=k20201202; t=1739889602;
+	bh=NMy4Gw6L5rQhTIwdvCQIzp6p8eCeHC82U8qXljvChfs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EjlXTsY/f75fOFP1F1VMK1N60yLPerLAdq/bSx6B4+T26Er7+a2dw2tZgHGsjphI/
+	 IQJm+jZDlXXd0jSwrZDWyTa3wPBNAIolbsgty8u2NGktD6fJ0D6f/czJlgmBO7R4NG
+	 XkQFR+fCyigzjppM0tbsWx3YGM/oAdBGSes9DIVAwbz6/uz3VJLeKorFHWmz9mLTQb
+	 xC8jfiboBYf6LvsHOaiaLZ8lFiTCl/Imr/B46JSuod193mnVcTkrHhPzIo+1CSugS6
+	 9c0+ObQUukvYbu3wjS0bYjK6j/W7X4vLQ9R6pPELm0YFyMWPpzlqZRzcYxNfBAjvRw
+	 0CkuQUl6QHWDg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB979380AAE9;
+	Tue, 18 Feb 2025 14:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] trace: tcp: Add tracepoint for
+ tcp_cwnd_reduction()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173988963251.4107754.12885780180593326493.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Feb 2025 14:40:32 +0000
+References: <20250214-cwnd_tracepoint-v2-1-ef8d15162d95@debian.org>
+In-Reply-To: <20250214-cwnd_tracepoint-v2-1-ef8d15162d95@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: edumazet@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, ncardwell@google.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, kernel-team@meta.com
 
-On Tue, 18 Feb 2025 15:36:20 +0530 (IST) Parvathi Pudi wrote:
-> > On Fri, 14 Feb 2025 11:16:52 +0530 parvathi wrote:  
-> >> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
-> >> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
-> >> Megabit ICSS (ICSSM).  
-> > 
-> > Every individual patch must build cleanly with W=1.
-> > Otherwise doing git bisections is a miserable experience.
-> > --  
-> 
-> As we mentioned in cover letter we have dependency with SOC patch.
-> 
-> "These patches have a dependency on an SOC patch, which we are including at the
-> end of this series for reference. The SOC patch has been submitted in a separate
-> thread [2] and we are awaiting for it to be merged."
-> 
-> SOC patch need to be applied prior applying the "net" patches. We have changed the 
-> order and appended the SOC patch at the end, because SOC changes need to go into 
-> linux-next but not into net-next. 
-> 
-> We have make sure every individual patch has compiled successfully with W=1 if we 
-> apply SOC patch prior to the "net" patches.
+Hello:
 
-Please resubmit after the merge window.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 14 Feb 2025 09:07:11 -0800 you wrote:
+> Add a lightweight tracepoint to monitor TCP congestion window
+> adjustments via tcp_cwnd_reduction(). This tracepoint enables tracking
+> of:
+> - TCP window size fluctuations
+> - Active socket behavior
+> - Congestion window reduction events
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2] trace: tcp: Add tracepoint for tcp_cwnd_reduction()
+    https://git.kernel.org/netdev/net-next/c/8e677a466145
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
