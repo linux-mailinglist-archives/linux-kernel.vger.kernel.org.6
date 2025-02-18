@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-518859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE11FA3956C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:31:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA63A3956B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C502F179514
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33471883E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD7B22AE49;
-	Tue, 18 Feb 2025 08:27:40 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200381B4F14;
+	Tue, 18 Feb 2025 08:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYvWgY7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6961B4250;
-	Tue, 18 Feb 2025 08:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F5E22B5A4;
+	Tue, 18 Feb 2025 08:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867260; cv=none; b=DRqcKtoZIYZ3jaTKsNF4Up6wqCxaySQhnTXf4uMlU+9Hho9MhIHOyCI6sB3odlYwIxB4R/i9+0SIihUn01R2s/9swdbYfd0YJV/PMu93wBIzGl8I8VU0cOHLjX6BousiNGeQZNtzFYR4yqZ0MtIQjm3cbmzOefveZjecDdT2Ahw=
+	t=1739867406; cv=none; b=KfUqZv1QPR1HTvREK/KDNSAA6iQIPOgdfy1GC1BotPYR6gfeI3gwpB9e0cjWzEtZNKtCET6GuFnuUAppF+mqaI3EqXxhenEg96wevXLLzmziw2A4mWyGr9l52woBYyB9UK6T1lEN6SkGDQpzlySPz9QiIxNHpfXatPeKfoABblA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867260; c=relaxed/simple;
-	bh=1soCMC1mDzlUguPyqOBPKxSSzf+ZHtXkwqiV35e1GYA=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ANKerQZPtFJV3tZNasQtM7oFUfjA8w32aqFgBxdNfTW3GxOXjjnbbWqOyAaW1rSN3xdb/PLNJytCwVMxdq3OIJEsH7uXDl0c+nI+mLOujeCjDwGPJQCxGdY2H9NiCUYnIFJC/oKuGcFracZiossvrbjUEj8MV+OXQtTBH32y8e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Yxsx40sHkz1wn5P;
-	Tue, 18 Feb 2025 16:23:36 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 179661A0188;
-	Tue, 18 Feb 2025 16:27:30 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Feb 2025 16:27:29 +0800
-Message-ID: <9d55d0a8-7a85-4caf-8358-7e04621813cc@huawei.com>
-Date: Tue, 18 Feb 2025 16:27:28 +0800
+	s=arc-20240116; t=1739867406; c=relaxed/simple;
+	bh=RJzuFaLWPOeQw2qL9MsXD0LyNRhkVMROTAKrQrtwjPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0IrCSypWBGSptrQsJNaJfj0OAhc/95qBEzjpj7ysMvxsRfrSdZeKOUxOVdI8brDYtM3othbbxDkpLcZQt7UHaoSoTC6Shadoo3BX5G3lDWhqtekKx+0mPRudHUS2+RYh9bQAhLLh1lxBI4pEnzT9cKXt/c5scYvSUQDgw1LCW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYvWgY7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24172C4CEE2;
+	Tue, 18 Feb 2025 08:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739867405;
+	bh=RJzuFaLWPOeQw2qL9MsXD0LyNRhkVMROTAKrQrtwjPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FYvWgY7cR1jjhqGVrvPJPYiflGXgdBYUr/Ys8Yg2BiiP/5zVTBa09mBwE1BHDIJHO
+	 7irbvR0iVpzIFlkvdrnk9E25pn7tPQHE6Bh6DhRkgngrJbhX4l9mBXI3iKg7J5ymNx
+	 tqeSKdzV+VxoXaPsqoM4WCmuJhkg7OCGmVNz9gsK2+jQlddFoLmtxj26+zzVGPxK6d
+	 P9gadQvj7aOFNeisylwtfCX/nsfWZ6R37+wAC1RJ++5wlXT1n6y8dVClS45JicUPDh
+	 AU1on5lt/fBN48MnzpJbh+TgPhy3BQynkSWF2ePLkekEtScXA8FpdnanuS9UNiL6T9
+	 6/4dDPwX4yHWw==
+Date: Tue, 18 Feb 2025 09:30:02 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matthew Majewski <mattwmajewski@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, 
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
+ m2m-deinterlace device
+Message-ID: <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
+References: <20250214231759.119481-1-mattwmajewski@gmail.com>
+ <20250214231759.119481-2-mattwmajewski@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, Simon Horman <horms@kernel.org>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add rx checksum offload
- supported in this module
-To: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-References: <20250213035529.2402283-1-shaojijie@huawei.com>
- <20250213035529.2402283-4-shaojijie@huawei.com>
- <20250217154028.GM1615191@kernel.org>
- <14b562d6-7006-4fe0-be61-48fe1abebe49@huawei.com>
- <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250214231759.119481-2-mattwmajewski@gmail.com>
 
+On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
+> Create a new yaml schema file to describe the device tree bindings for
+> generic m2m-deinterlace device.
+> 
+> This device is supported on any hardware that provides a MEM_TO_MEM
 
-on 2025/2/18 10:46, Kalesh Anakkur Purayil wrote:
-> On Tue, Feb 18, 2025 at 7:47 AM Jijie Shao <shaojijie@huawei.com> wrote:
->>
->> on 2025/2/17 23:40, Simon Horman wrote:
->>> On Thu, Feb 13, 2025 at 11:55:25AM +0800, Jijie Shao wrote:
->>>> This patch implements the rx checksum offload feature
->>>> including NETIF_F_IP_CSUM NETIF_F_IPV6_CSUM and NETIF_F_RXCSUM
->>>>
->>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->>> ...
->>>
->>>> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>> index 8c631a9bcb6b..aa1d128a863b 100644
->>>> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
->>>> @@ -202,8 +202,11 @@ static int hbg_napi_tx_recycle(struct napi_struct *napi, int budget)
->>>>    }
->>>>
->>>>    static bool hbg_rx_check_l3l4_error(struct hbg_priv *priv,
->>>> -                                struct hbg_rx_desc *desc)
->>>> +                                struct hbg_rx_desc *desc,
->>>> +                                struct sk_buff *skb)
->>>>    {
->>>> +    bool rx_checksum_offload = priv->netdev->features & NETIF_F_RXCSUM;
->>> nit: I think this would be better expressed in a way that
->>>        rx_checksum_offload is assigned a boolean value (completely untested).
->>>
->>>        bool rx_checksum_offload = !!(priv->netdev->features & NETIF_F_RXCSUM);
->> Okay, I'll modify it in v2.
-> Maybe you can remove " in this module" from the patch title as it is
-> implicit. This comment/suggestion applies to all patches in this
-> series.
+Which device? I don't see here any device name/model.
 
-Sorry this may not have any bad effect,
-so I don't plan to change it in V2.
-If anyone else thinks it should be modified,
-I will modify it.
+I asked to provide here some examples of devices.
 
-Thanks a lot
-Jijie Shao
+> capable dma channel with interleaved trasfer support. Device tree
+> bindings are for providing appropriate dma channel to device.
 
->> Thanks
->> Jijie Shao
->>
->>>> +
->>>>       if (likely(!FIELD_GET(HBG_RX_DESC_W4_L3_ERR_CODE_M, desc->word4) &&
->>>>                  !FIELD_GET(HBG_RX_DESC_W4_L4_ERR_CODE_M, desc->word4)))
->>>>               return true;
->
+Don't describe what DT is, but the hardware.
+
+> 
+> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
+> ---
+>  .../bindings/media/m2m-deinterlace.yaml       | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/m2m-deinterlace.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/m2m-deinterlace.yaml b/Documentation/devicetree/bindings/media/m2m-deinterlace.yaml
+> new file mode 100644
+> index 000000000000..e39599d7d07b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/m2m-deinterlace.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/m2m-deinterlace.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: M2M Deinterlacer
+> +
+> +maintainers:
+> +  - Mauro Carvalho Chehab <mchehab@kernel.org>
+> +
+> +description: |-
+> +  A generic memory2memory device for deinterlacing video using dmaengine. It can
+> +  convert between interlaced buffer formats and can convert interlaced to
+> +  progressive using a simple line-doubling algorithm. This device can be used on
+> +  any hardware that provides a MEM_TO_MEM capable dma controller that supports
+> +  interleaved transfers.
+
+And how do you program that device to deinterlace? How do you signal end
+of frame/data when writing to the memory?
+
+It still looks all this is for driver :/
+
+Best regards,
+Krzysztof
+
 
