@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-519316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A87A39B7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E9CA39B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3633B539C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E7F13B49DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25BB241131;
-	Tue, 18 Feb 2025 11:55:15 +0000 (UTC)
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056C22417C6;
+	Tue, 18 Feb 2025 11:55:16 +0000 (UTC)
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4F32405EF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE09240613
 	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739879715; cv=none; b=Feo5JdfZKaQPJbJyu/N3NkUn7kXw8AXJXTcqX16sYJRo0Y4GYbw2Hl6TtHm7NP64naqi6Cn+dVWXM7wSrAqyd/sDbgUgQg4D4uAboICcmqoWcUbas603IJyxrYzMa58v0CP8zGwnsDqDL9jggShLC3J5fRqh+yTAT25hHjWbeiw=
+	t=1739879715; cv=none; b=lCPaXXPcUTmxq+iV5FxM8pDB7Ulfxhvj4RqRZKlX3JWS+Fd5tVb33unNAoemdOvCTCy//TWit7gn5AqtbG/VZPc5x1kANdpECJUCYF4wn1tCNgUCQx/XZg++U8veCLZM8iTgHrOTrojesG/39zgq8XZX7F1sYbmvy0L2w/INIfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739879715; c=relaxed/simple;
-	bh=mBv40pRR7MKUXb++oJNPTPMLu1stYDN7CMpH6HHhSA0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L685+6E4qs+NSe39BTUo1WUjBhhJ5/DwybC/NTPeqqJN22QxTsMyBHgMjZfp1N79vu8Uay74VQ1hrvGumkkm+YXfnbLtVCrz0yy8c0NoXXof1DVZUagIA4c7mKzwNXPCA+ZLZhR72gf8UXeS6ntVoabM0P0pNMAsl7qxMt/ugco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.170
+	bh=FhCqxLQkgt7EE34RfFpYbVg7c/EXcIhB49j48kvMS1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XpjSoxubH6x6bV7cp+sQOfRH6325qwtqBQTJAxgxKCOvTmPyAHrRzZTGbrZ07dTfZ5gSHPxwM9/fK3LZNAFJBCE/Zt2CmIa68Fdm8qs5BnrurUDScBl7LsA9NBQOw3mxulcqTm+4Vf9D5mgqnGJ6fhH+tC72htf+O0yXWCP/jgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YxyVd2gHPz4FR;
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YxyVd6cw2z3GT;
 	Tue, 18 Feb 2025 12:49:29 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YxyVc59ZGzkyq;
-	Tue, 18 Feb 2025 12:49:28 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YxyVd2XrpzkJJ;
+	Tue, 18 Feb 2025 12:49:29 +0100 (CET)
 From: Quentin Schulz <foss+kernel@0leil.net>
-Subject: [PATCH 0/9] arm64: dts: rockchip: align and reorganize Theobroma
- DTS(I)
-Date: Tue, 18 Feb 2025 12:49:11 +0100
-Message-Id: <20250218-tsd-align-haikou-v1-0-5c44d1dd8658@cherry.de>
+Date: Tue, 18 Feb 2025 12:49:12 +0100
+Subject: [PATCH 1/9] arm64: dts: rockchip: enable UART5 on RK3588 Tiger
+ Haikou
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,10 +45,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALdztGcC/x3MQQqAIBBA0avErBvQIZO6SrSQmmwoLLQiiO6et
- HyL/x9IHIUTtMUDkS9JsoUMXRYwzC54RhmzgRQZRVrjkUZ0q/iAs5NlO9FSRbqyytamgZztkSe
- 5/2XXv+8HVPcwi2IAAAA=
-X-Change-ID: 20250211-tsd-align-haikou-724214707659
+Message-Id: <20250218-tsd-align-haikou-v1-1-5c44d1dd8658@cherry.de>
+References: <20250218-tsd-align-haikou-v1-0-5c44d1dd8658@cherry.de>
+In-Reply-To: <20250218-tsd-align-haikou-v1-0-5c44d1dd8658@cherry.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -57,46 +56,40 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 X-Mailer: b4 0.14.2
 X-Infomaniak-Routing: alpha
 
-We have three SoMs that can use Haikou as their carrierboard so it'd be
-nice to have consistency across SoMs on what's enabled by default. To
-that end, Tiger Haikou now has UART5 enabled and Puma Haikou now has the
-EEPROM found on Haikou specified.
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-Additionally, some devices were configured or enabled in the wrong
-places (either SoM DTSI when they needed to be configured in
-carrierboard DTS or vice-versa). This moves things around to better
-match actual HW definition and make it easier to reuse the SoM DTSI
-without having to undo carrierboard-specific changes. While at it,
-disable devices/buses exposed on connectors which do not have overlays.
-They need to be enabled in the appropriate overlays whenever they will
-be added.
+In its default configuration (SW2 on "UART1"), UART5 is exposed on the
+DB9 RS232/RS485 connector. While the same signals are also exposed on
+Q7_GPIO5 and Q7_GPIO6, a GPIO header, and thus could be used for other
+purposes, RK3399 Puma Haikou and PX30 Ringneck Haikou do enable the UART
+controller exposed on the DB9 connector, so let's keep consistency
+across our modules and enable it on RK3588 Tiger Haikou by default too.
+
+Add a comment while at it to explicit where this controller is routed
+to.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
-Quentin Schulz (9):
-      arm64: dts: rockchip: enable UART5 on RK3588 Tiger Haikou
-      arm64: dts: rockchip: move DDC bus from Haikou carrierboard to RK3399 Puma DTSI
-      arm64: dts: rockchip: move I2C6 from Haikou carrierboard to Puma DTSI
-      arm64: dts: rockchip: disable I2C6 on Puma DTSI
-      arm64: dts: rockchip: enable I2S0 in Haikou carrierboard, not Puma DTSI
-      arm64: dts: rockchip: add EEPROM found on RK3399 Puma Haikou
-      arm64: dts: rockchip: enable Ethernet in Haikou carrierboard, not Puma DTSI
-      arm64: dts: rockchip: enable I2C3 in Haikou carrierboard, not Ringneck DTSI
-      arm64: dts: rockchip: disable I2C2 bus by default on RK3588 Tiger
+ arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
- arch/arm64/boot/dts/rockchip/px30-ringneck-haikou.dts |  2 ++
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi       |  4 ----
- arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dts   | 18 +++++++++++++++---
- arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi         | 10 ++++++++--
- arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts  |  2 ++
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi        |  1 -
- 6 files changed, 27 insertions(+), 10 deletions(-)
----
-base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
-change-id: 20250211-tsd-align-haikou-724214707659
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
+index 3187b4918a300dae49fe05d760fb7e1fd55f14d5..7bd07e5026ed914063965c9f1ec6a29357b0c05d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
+@@ -310,8 +310,10 @@ &uart2 {
+ 	status = "okay";
+ };
+ 
++/* DB9 RS232/RS485 when SW2 in "UART1" mode */
+ &uart5 {
+ 	rts-gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_HIGH>;
++	status = "okay";
+ };
+ 
+ &usbdp_phy0 {
 
-Best regards,
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.48.1
 
 
