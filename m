@@ -1,107 +1,100 @@
-Return-Path: <linux-kernel+bounces-518774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E44A3943E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:59:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FB1A39443
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07307188886E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897DF3A960D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8732207644;
-	Tue, 18 Feb 2025 07:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469952116E1;
+	Tue, 18 Feb 2025 08:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gucWHkHv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lzcJk7wG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4EK+CtiQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C33B1EEA30;
-	Tue, 18 Feb 2025 07:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9E20F082;
+	Tue, 18 Feb 2025 08:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739865573; cv=none; b=I7AClUV4XG5LAsuyphFH45xARjY1/OV7sUhBK3i5DBdsCRrBvF/9NGVn2K9HzOeu33sXErRUu2NlYydAfnTD2GmjYeYjxmPpZ/yPyM/ujwvg1DpB5cgT/JJkb+TE5mP08m2EFbxUfP3BBWgRpUmbgO/EePKXuA38vjFP7rMf6HU=
+	t=1739865620; cv=none; b=ABiNNhcE2HvBT+IE8MC6g9+IRPWO7+bB0DMitNgXtpsPS/M7iREY0S12aSzIg3id/6eCtiFyEcoOvIhDDo6uOrCHM5n8wOHjSjyldq+zNWMXWj28QmTlLNM7i4mEWJPld16+J7kcHVYK+qOScKfKB7u8YUBFnzelSUCiK3uMsyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739865573; c=relaxed/simple;
-	bh=qGtiHyXODS5M/qLlBpOFQRYkyWWrYLh3zsYeNYFP0qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B244td+UJAXtN7IaaBiy9C+EWfewKfnk4FaarXgCTBDiGlLofRLHtyh/zafr/0mzgGfA4hd/k8M9tuoHVc4Q5UgN+eXf94JHow68YypC9SYqSITvdp6ONwtSJRVuu0lIqhNfKjLOTE/vSNbO86s/kIGlj/gVODeJ5h8HVSeZ1Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gucWHkHv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 81CF940E0212;
-	Tue, 18 Feb 2025 07:59:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gQrTBomRItDm; Tue, 18 Feb 2025 07:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739865562; bh=fKnAU/KEF7MFmyqTMzT8Xecp54gHhgt1Av8J7B4+x8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gucWHkHvSldV2Ggctopr4jGimaqrR3MK9VEo6eOnFu0C8Z5MxqhiJn1PS5T6CRF0t
-	 r1pZLliZLk7JWUwB31b+HBNL4oWQpvOktGYEm2lFQ/dx3d+8FXVBbSE0UDGenVKJ8G
-	 HU15damPO97VjzSf4gjxGs4FwjwP+FZXXzGdc8VKc7//Z/UR1aEKvzqrtv4MHjSwau
-	 PywKfc3Jc0W/Dld+/7rFBl2cGlY/vFmSC+nDbtS9507L8P+T+HqZzB2LFhFqsw4hLv
-	 tgcK6lAuQ2UgBuPiRcRFZXu1cEx1/Ob2eQXg9iuNvkBCFChwBFOnklCdDVtpbSuAa+
-	 tmnPFSQXwLPPZgbDqB+UEMhNhxsyxNJtjSvKrcPRyy38koyCFgXDDUu+ujxkdffomG
-	 tsIXYbiDzvQXc0sjcnXqQTi0ImfmpvETZLaAESZ6DbMDP1zdwGe17fdrlYaNHCBRyZ
-	 Z39al1oD7Vqsn44UCQTwuoRCw59eFnIiub0+fFg6/jqvbFsqGw98OFaEo4p5AzV2ls
-	 C9KtNZu2NMa7F5D8x4tXZZwBF6jQ0pH0fQznD4QwGhvAOubp4VnHjrACfdzGu9WbLx
-	 m9825snpbUITnCKZZ/tRqgzoxB5ujbLm04ZaElgiqF3SaKGAi5X+nDxzsN9xi8kwYX
-	 LKogMSFQphEd4EIlPLrEN2MA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2AF4A40E020E;
-	Tue, 18 Feb 2025 07:59:05 +0000 (UTC)
-Date: Tue, 18 Feb 2025 08:58:58 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 1/5] x86/mce: Collect error message for severities
- below MCE_PANIC_SEVERITY
-Message-ID: <20250218075858.GAZ7Q9wp_WQUsjq2AW@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217063335.22257-2-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1739865620; c=relaxed/simple;
+	bh=BIBoLdAaz+syXSP2Bq+NI3t7QHXsMK1JKWwPblX5Opk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f1TSmvr6DPdSvCXGPpuv0oaIhSWk/n959FHKy8dDcP4+2amPr8q8s/SZFdoBxtjWlhTW0Oto3ojATI8365Uz2QSR31eSD4KA1WmC/uVmJ1tpmjeYKzZw4WD8fuwHMbGuJDKTsWuJWoOIDcNmPwgjCowZoZ/k5GCvDtxgEwWjRP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lzcJk7wG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4EK+CtiQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739865617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1VopzplUY31yktOMEeJ7DZO4lbiNm+WmseWdkp9vwaE=;
+	b=lzcJk7wGfDSoswY5b6fXLF8WXUqdt6HvIakiQw//oL9GTTJ+QWsT0/Y9VU5kyBqaZl/AeY
+	xM6L8l7IIhUqYsnsNHf0nVsN6VlYITV2W/yVImUaynppDxYIUHivitxc8gzY9a2qCDInCq
+	eOuOl4psopZyNjJUqS50bwF9BTfWPNMu2qh7VZMev/mZ/7WdXtVsbPehvCXuCKmxDvStjg
+	jq9gD+KMQd9pPqFL/+JSlE0s6F9hf44j8fZQgOlDPe/qeLOf3WHo17JcFzESAimmIrn6q/
+	qhmz6mzijUyLd1irQmridL5XTcJ1WdVUgek0E6PYp0Y/G0a3cNxKwB2YKS0yNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739865617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1VopzplUY31yktOMEeJ7DZO4lbiNm+WmseWdkp9vwaE=;
+	b=4EK+CtiQ827ZYkXO6ioIZHJZXMvjyNhbA1ri+Y0EMk6EiaNNuX+ltmB4o/kxm7FO5BicXx
+	bH5M61qxoHHAJVCA==
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, Lad
+ Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] irqchip/renesas-rzv2h: Add
+ rzv2h_icu_register_dma_req_ack
+In-Reply-To: <20250212221305.431716-5-fabrizio.castro.jz@renesas.com>
+References: <20250212221305.431716-1-fabrizio.castro.jz@renesas.com>
+ <20250212221305.431716-5-fabrizio.castro.jz@renesas.com>
+Date: Tue, 18 Feb 2025 09:00:16 +0100
+Message-ID: <87a5ajk7hr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217063335.22257-2-xueshuai@linux.alibaba.com>
+Content-Type: text/plain
 
-On Mon, Feb 17, 2025 at 02:33:31PM +0800, Shuai Xue wrote:
-> Currently, mce_no_way_out() only collects error messages when the error
-> severity is equal to `MCE_PANIC_SEVERITY`. To improve diagnostics,
-> modify the behavior to also collect error messages when the severity is
-> less than `MCE_PANIC_SEVERITY`.
+On Wed, Feb 12 2025 at 22:13, Fabrizio Castro wrote:
+> On the Renesas RZ/V2H(P) family of SoCs, DMAC IPs are connected
+> to the Interrupt Control Unit (ICU).
+> For DMA transfers, a request number and an ack number must be
+> registered with the ICU, which means that the DMAC driver has
+> to be able to instruct the ICU driver with the registration of
+> such ids.
+>
+> Export rzv2h_icu_register_dma_req_ack so that the DMA driver
+> can register both ids in one go.
 
-That function is literally called "no way out" as in, is the error severe
-enough so that there is no way out.
+Please denote functions in the subject and change log body as fun()
+according to documentation:
 
-Now you went and stomped all over that to "improve diagnostics". What
-diagnostsics? Your commit messages need to explain in detail why exactly
-a patch exists.
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#function-references-in-changelogs
 
-So nope.
+With that fixed:
 
--- 
-Regards/Gruss,
-    Boris.
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+under the assumption that this will be merged via the dmaengine tree.
+
+Thanks,
+
+        tglx
 
