@@ -1,123 +1,139 @@
-Return-Path: <linux-kernel+bounces-518867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A7EA3958B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF39BA395E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECD117155E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E19C1797FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C26B22CBE4;
-	Tue, 18 Feb 2025 08:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA3423956F;
+	Tue, 18 Feb 2025 08:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="biSovEpA"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRfN2DMe"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173BF22B8A5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D952422DFE5;
+	Tue, 18 Feb 2025 08:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867761; cv=none; b=dsZT8GzhZ5IE+2sfjDbfA9/N4xona/ZiWcNF4GBxs8Wg0XwEzTjjU+mYMfiRidEis8yNebs4lnt+HUcQT3YRUarSBxd2YaPRXQy4rbuDt6qZASWNyr5YCVAPu7YLFSuyRZHLnfVwfyxOCNnAm/SxVO/zREa6g9bzYEFrtAOhlMs=
+	t=1739867920; cv=none; b=Mbm8BUNMGmwWT2OlzSqazzJu4OYMmITM5J8w06PxM8lhOT1xeiVxHo5Aqpeed+61PeN9wrw1MOoHbD4lMQpDcUrIj5aAvw1OuamdbqwUR0UqApEtN49SJqy7+Z7FabNAnLgxjMUQ5fbs1hxrlmjN8lna+LEEYU2YNgRWZfejuEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867761; c=relaxed/simple;
-	bh=feF1eHyyT0zWjy4z/Md8u1+8+0ZLHRFpAShbWTlr/Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FELcwK7LGzXm671EB9gOetofBQizlX736qkVjjkjtQYEgU7q1+UlYxmHov1FWaG0I2iab1kNZhNCE5LTn5w5LXcYcPclOXtezNmVenvIJiUvkaljip/WZTttHusx+MP80GN1F04iIm73G72/LKqNwSkdqkWmoUTKWYzS5ek9P/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=biSovEpA; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4399509058dso493735e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:35:58 -0800 (PST)
+	s=arc-20240116; t=1739867920; c=relaxed/simple;
+	bh=kJTFUNaJvHb40kFLT4FXflK4GFWczcgIpzfS/OJgv8s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hztCOvReWVdX8zacwHlO6v5e/lDvtZgyPiSp2kQTre195qPQKJUb3QR5SE0Y8WwFXCPXDktao2a8xkFVN3f8jILN51Cl27In69IaZrznwRFQ7ICYn7Gh47BbTzSqySrIYZyYm1eoBTo0AOXRlx0WapcmQsQjZWU7L3kceNhqQc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRfN2DMe; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220d39a5627so74789145ad.1;
+        Tue, 18 Feb 2025 00:38:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=6wind.com; s=google; t=1739867757; x=1740472557; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSJ23b7dcp2nXbCFtNTYLtGlvCk+YzKblQR08ITEHhc=;
-        b=biSovEpAlE38/v4+KDQyJgZSbwF/zPlf7WvgG0duyMN04oAZ1udX/rkeLmf0f2KCes
-         XrIqKcLyBtVy4U69nNVrLi+R3ED3wNcTTItEWUA95EOZQggaqiiwnHp5FAhAdw+d7WM6
-         6YH3sZqKyFoDwtoor1DIE3P0tEy7dnIWBIE1D/porQxnkqyikFrPxAQD9R6z3RVCO2xV
-         ncQ4kcuE/DlHyoRwoj1I0DsngPlfYWFv2DvjHifmtuoZnjewTO9Dp7B30PWzu8fadltL
-         BsiL9577C6AYT4GGiBC1yyEO6fZsw4trvTKikHqS5wGApwmjxTWYFAVkqLHQGRZoKa34
-         rJLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739867757; x=1740472557;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1739867918; x=1740472718; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MSJ23b7dcp2nXbCFtNTYLtGlvCk+YzKblQR08ITEHhc=;
-        b=fxeS7HbAMYF+gH+h649BI297w4oOwBf2Li99zxDXhrM1eKEP+LGjHyX3jPGdVDo7f5
-         l6KOPx6JjKMgorhDAU3Q4MtYeTfxn3gJgSEh0NtcCDyRUKOWR1sqCUlrBY99YyFhSzDD
-         e3qkSTBk1fuRqmLSM0K7Zl1mBPrbkYXcjWUkY1O77y0+jYQ7/X95QcK4rRW9+DuzQT+a
-         5c3ehosAnQ5lHiRuoQeHMX7yOPWI44+Qw8MMGW6i+lxmdHIC+HMqw5GFvFg2Jha6XGnI
-         HNHTficYPNYtrc/09vlr59CDxtjM2iIMrfdd+Xovyb7xGuHFkcU1k7noPnalpyXjSSoQ
-         XJlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQEXpIrJj/mQFtXcp4ruyZIqg9D6Mwb6QykI2UFQvGjrR4VG9CUGnxamd46+5/ic/wJZZB7K3cashmaFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxysdUkaD3VfUE/BTa7z2OhtpNFzOcxvm3GX1z1cuNmE7eL/PEI
-	czkdyOFxa57KVdpylQTul11imKfWw4TUJzC7diB68Zf+gOhF85ym1MII8w0a7go=
-X-Gm-Gg: ASbGncvuzrdITSL7F4Dvj2vepDk6gRW5ljAEbzFAqbCDwG2Uh1jHwTexXMzabSavY61
-	XA8XJ0y7wfCiVtALxbSGz6kkWN7EQ/+sYEN1QvXSmz6vlBr+L3cBEoQEl3Tk/DFKCF3K3AmGfxy
-	ISs0jZm+QwPYlLo1vnRzAUhqgzeetzkxESDue7wxp1M3cIemWwJuOUNUWSaEf3hMh2omUJeUb1l
-	+OgA4qfvlsB7p9DV6ZIkoGxXwNJlQE0/T9at6w2Aza6UDBtGIsuV4M9yaUzKlbTBU77EXJkG0Fi
-	7c/WKanGUc8LP8GaA3Oo50p+JS6lNWhvEf+7ig1SPG2yBSQjtYr9k4V0VDTAmh+ZR5f+
-X-Google-Smtp-Source: AGHT+IG92hjCJWGEFWUkF1TNBt8VJRHE77BbFuIFujokh0dlUjpL0uxRKa49heL6SedL+6HcLajH0w==
-X-Received: by 2002:a05:600c:2d04:b0:439:84d3:f7fd with SMTP id 5b1f17b1804b1-43984d3fb0bmr21918935e9.4.1739867757357;
-        Tue, 18 Feb 2025 00:35:57 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:b41:c160:8e5f:76fd:491b:501e? ([2a01:e0a:b41:c160:8e5f:76fd:491b:501e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439858ec5fasm48100965e9.29.2025.02.18.00.35.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 00:35:56 -0800 (PST)
-Message-ID: <715a9dd2-4309-436d-bdfc-716932ccb95c@6wind.com>
-Date: Tue, 18 Feb 2025 09:35:55 +0100
+        bh=/0xnSZoULp+tJndSbsnTe4b8bjzfxIgtXuAx9KCZHhY=;
+        b=iRfN2DMekoWzp7OOLenpb4XIm7+3CNIidlVN6E6dxW+5TNRffY0webmHCYn58KLREK
+         /egcNnozgl9Kz0Vtn6l2qhME3KtFf13X8UMu4iWo+t1v1TLDj6Nwkt6aCPoOc/7BoEFX
+         ZkaAvsIF/U5Ah470ygBoN012Je8s1hq3UOfrp0R1UM24+TQt+tpndTIeRnr1pCCAKxqo
+         HWTQfvuAeTxSQIKrE0OhPX8WRceSrXnkP44RFFCOrRzq7FUKyxHVUfg0BDOCaRekMMLr
+         SKIeD/4YYyxn98pEnYxuECoH+w2ONe98WBm5zj3brI96goZsnaiqKf8bnjZ4MnrKhOZv
+         +Lmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739867918; x=1740472718;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/0xnSZoULp+tJndSbsnTe4b8bjzfxIgtXuAx9KCZHhY=;
+        b=DqQ+uJz5enUJ0XF9VGS963NFn2vnBy6gZiwRzX/Kw1qwReJJmDf1ULMPbfWPYFWxbd
+         Kykiv6qvtnTH2DKMzkfU2xiu/w/S5VUyzgt4mWB3Gt1zahgJfg1gmD6RaA1sfMFtLriF
+         g5fv9n6RUc8ga2Z+GQ9RSDvs8napsvjFCEWrMfFaziCR6id4xvLzRa7zOmGho2mM6AyD
+         r5CdbxletjX8Wxa9PUSGCCdMjGMMMRiI3bJkQHmzOndZQn1u/8kVv8d5VkKjX1lSgZK5
+         nRxUmofnBwrCs/4Ip1uzgutT4S/nu5uy212WF/g+wtmD+cqPyHTA/b1qePaDmvZBpjRX
+         YUjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUojNmJPGiXc31lJLXqVYUX0SgKy/0bOQ9HMwIBWTcV1rgs5hIIDQ7kjAYLB2bobCjIN7NEHpuwpw6dv/0=@vger.kernel.org, AJvYcCVVHgfugMwFz8Iw8kcmzDNCd5po1A3Q+OKm1WEhuN1y8OfGcz60YCKGvPEDqcT4/QCIrbMvKlca6yOG649S@vger.kernel.org, AJvYcCVnKY1z8XIjEwLnV3WuubQ0xxgMCdsm+PZIg/SYPeKQCczmDdZkMHi9Wadzsr9H+LJXyqx0TF+8pIi6@vger.kernel.org, AJvYcCVvCz8o1CrYyKzjzWNeEsbyT7I5M17SARC2XQ0YWdJMAi+nYAJqNFzDXL8aBRD6smCk/EgBO9NqnqgGYCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwO276YXKNE6TMNGSsqiA3mHtfMt5Jkzeq9sgldlw3rVu4w8jW
+	XW6OsmptszlA3Vc9qFhLK1hPn6/i8CvXHoCOVsjHdTLU++SNTPObEpR4BdK+
+X-Gm-Gg: ASbGncvtHb+xaU7jIOx90zENPBZDRR3XLkKOmjCQbfw+9+fF6UcFfPdphroqK/D6HCD
+	4RqNjxCwsVyr5s22+scmZZGheSfXsGxOg++mQnVXLeIwXbq7h4pS/3DX06i9+tv5D96Emphf0Fv
+	UJKOgZ4gnxAuJoOBOTd71O6KP4/EYelXkt0+zlb4FJvgXSgmyW0RJgB9Aq64LKB6sq9AsD5tyMW
+	tMRdAeigZSBjDLDysGVxGJ/Sa/5M60cjk/3WOraBt6pKogvpKuU7v4DShpAHu7T34jzhEgZAPBy
+	0d1grgh//de7xt+saYbcs0C1TsqA6ZTev1pOaVWth1EbYTKgOXUPNerlnrc+BZ3NE2n3pBOUOcL
+	Y5oL1+ZLCIA==
+X-Google-Smtp-Source: AGHT+IFDrRp31PJvU6mzhR2mwgz+DW/BV7o0dC65MC+BF3NgEj/m25LCivVIpTeTBYyEDntfFRI9SQ==
+X-Received: by 2002:a05:6a00:198c:b0:730:4598:ddb5 with SMTP id d2e1a72fcca58-7326177622emr22154290b3a.2.1739867917918;
+        Tue, 18 Feb 2025 00:38:37 -0800 (PST)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae1ee4febb2sm787325a12.51.2025.02.18.00.38.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 00:38:37 -0800 (PST)
+From: James Calligeros <jcalligeros99@gmail.com>
+Date: Tue, 18 Feb 2025 18:35:55 +1000
+Subject: [PATCH v2 21/29] ASoC: tas2764: Add reg defaults for
+ TAS2764_INT_CLK_CFG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next v2] net: Remove redundant variable declaration in
- __dev_change_flags()
-To: Breno Leitao <leitao@debian.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, andrew@lunn.ch
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-References: <20250217-old_flags-v2-1-4cda3b43a35f@debian.org>
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Content-Language: en-US
-Organization: 6WIND
-In-Reply-To: <20250217-old_flags-v2-1-4cda3b43a35f@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250218-apple-codec-changes-v2-21-932760fd7e07@gmail.com>
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+In-Reply-To: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=757;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=Mbk5j67i1cV333wWEgS3bKTpMGxWCx//aUmM6Ej9rq8=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOlb3JJMf8fq7cwz1nK6eUmu6VR7o5J77lqlVbWOdYWX5
+ j/WN+ruKGVhEONikBVTZNnQJOQx24jtZr9I5V6YOaxMIEMYuDgFYCKBtxj+SuuHbJB9sEzlnErE
+ 1s+yf1ZyaWwQ2+4v9ORAyLGKtMRdNxgZfu3W89T30+pyeHA91F3+pMOs36kr2JuNZPOYT0aLqnB
+ xAwA=
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-Le 17/02/2025 à 16:48, Breno Leitao a écrit :
-> The old_flags variable is declared twice in __dev_change_flags(),
-> causing a shadow variable warning. This patch fixes the issue by
-> removing the redundant declaration, reusing the existing old_flags
-> variable instead.
-> 
-> 	net/core/dev.c:9225:16: warning: declaration shadows a local variable [-Wshadow]
-> 	9225 |                 unsigned int old_flags = dev->flags;
-> 	|                              ^
-> 	net/core/dev.c:9185:15: note: previous declaration is here
-> 	9185 |         unsigned int old_flags = dev->flags;
-> 	|                      ^
-> 	1 warning generated.
-> 
-> Remove the redundant inner declaration and reuse the existing old_flags
-> variable since its value is not needed outside the if block, and it is
-> safe to reuse the variable. This eliminates the warning while
-> maintaining the same functionality.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Reviewed-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Hector Martin <marcan@marcan.st>
+
+Reviewed-by: Neal Gompa <neal@gompa.dev>
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+---
+ sound/soc/codecs/tas2764.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
+index 5d89d47c1667c1067f88169575b7b76e9a25bda4..d316a369c43002e6a8a8160b85384b8824667bb1 100644
+--- a/sound/soc/codecs/tas2764.c
++++ b/sound/soc/codecs/tas2764.c
+@@ -855,6 +855,7 @@ static const struct reg_default tas2764_reg_defaults[] = {
+ 	{ TAS2764_TDM_CFG2, 0x0a },
+ 	{ TAS2764_TDM_CFG3, 0x10 },
+ 	{ TAS2764_TDM_CFG5, 0x42 },
++	{ TAS2764_INT_CLK_CFG, 0x19 },
+ };
+ 
+ static const struct regmap_range_cfg tas2764_regmap_ranges[] = {
+
+-- 
+2.48.1
+
 
