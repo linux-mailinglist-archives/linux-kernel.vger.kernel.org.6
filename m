@@ -1,213 +1,207 @@
-Return-Path: <linux-kernel+bounces-518560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F4DA390E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B10A390E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B131D3B07E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C657188EE49
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F07A1527B1;
-	Tue, 18 Feb 2025 02:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a/fETK+h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC12814B950;
+	Tue, 18 Feb 2025 02:41:11 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA41146A72
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5713AD26;
+	Tue, 18 Feb 2025 02:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739846366; cv=none; b=OvfETO2Mu/5XxpqcbKeiszIvZi3E01zDkGKxQJXxabiZOac3VuXImQaob4P1pXKdsC0g+2kigJTiVynBeHxIGdn8xSC2U6xAIjjyPVcYhskReAsb2DFlahMCsVvfw96UVuBoYcMT5ZXsLAOB4QyBshAzqLtNB0PW7BDxEIBBXss=
+	t=1739846471; cv=none; b=Jj+7ct0mvrYVwRzSutOpidiMEqficE9+EW+r+Mvkryxu06NDwtroXjeMy1HRWHzQC7xhBze1srAjnP2t2MTmnPQFF5hLUCA+gYwaEWqm3YZPyhe4MM29/XMNd1rd/RV4BRXNe1qiydh2rdrKpRQ5EiuMpHtCTRg6LpTXEAXbujg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739846366; c=relaxed/simple;
-	bh=XYKTxWIY8WkAi6EQk9rM5/LYwSGuFSyR39aS7SeeGxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKcYwNRBBZo7hkV0LR89pgXMBOsFC1gnOJAEKgTqZQRi8rdRS1a5Q8rNvpEG+gIGgBO7XgTNpzErk3+plJY3D0aOQhTiCybf1nPpB+EAc3YRT0Lx4K3EzT183JLQ4Ge02svJg7mh4aesKJ9vTF6O32NpOE7o04JgMQGFD83OJPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a/fETK+h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739846363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BSJXCcaXZJnQ9dzb7rdYVPIMXJ/QVoaHaudkSEF5u+A=;
-	b=a/fETK+h95f0SxhwXXxX6FqT+GbBMbqAXd3VbinslfU+EQMtFf6SmNUjW2wRPm7nlUBUQG
-	84cyD4pM+nyGLWGHkf6XjhNFsrZYDDLCHOE0vIs0Lnww3i3j6bE9xzF/gllTcV7DnctFei
-	F+aCUZ2smX8Mp6vgn54Omair3RowN2c=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-vBSwEWu6OOyeqHoKwRWg1w-1; Mon,
- 17 Feb 2025 21:39:20 -0500
-X-MC-Unique: vBSwEWu6OOyeqHoKwRWg1w-1
-X-Mimecast-MFC-AGG-ID: vBSwEWu6OOyeqHoKwRWg1w_1739846359
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DBB91800373;
-	Tue, 18 Feb 2025 02:39:18 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.151])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A35A19560AB;
-	Tue, 18 Feb 2025 02:39:11 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com
-Cc: xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] virtio-net: tweak for better TX performance in NAPI mode
-Date: Tue, 18 Feb 2025 10:39:08 +0800
-Message-ID: <20250218023908.1755-1-jasowang@redhat.com>
+	s=arc-20240116; t=1739846471; c=relaxed/simple;
+	bh=ddB4Ie1Thyo7pC2LluU7FJXKvtLAu7a/2Z0RXaTzPa4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ER5wWiOPVMsfQrm0jjTp6iEHP/nX4Ibr4FOZherlz8O3BvB4GchUUaqyOVOoiMQaSExeWcS1LlHW9TplxQGSg9ZLQIxNlMCVH3bJi42HPbve9FpjyzF6JZb1ay/KAaYqamFutsUlLsYYavW9xwhiXggCVhBaLawgvpn+Qccs5nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YxkKN5qX5z4f3jqM;
+	Tue, 18 Feb 2025 10:40:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 124931A06D7;
+	Tue, 18 Feb 2025 10:40:57 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8387Nnae2lEA--.14875S3;
+	Tue, 18 Feb 2025 10:40:56 +0800 (CST)
+Subject: Re: [PATCH md-6.15 2/7] md: only include md-cluster.h if necessary
+To: Glass Su <glass.su@suse.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+ <20250215092225.2427977-3-yukuai1@huaweicloud.com>
+ <E136E905-430C-40B4-B69A-7FC9B8CF3C47@suse.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c8cd970f-8b2a-bb7c-b0ad-4e11fd6bae9d@huaweicloud.com>
+Date: Tue, 18 Feb 2025 10:40:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <E136E905-430C-40B4-B69A-7FC9B8CF3C47@suse.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-CM-TRANSID:gCh0CgD3Wl8387Nnae2lEA--.14875S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxArWfuF1fKrW7Zw18ArW8JFb_yoWrCF15pa
+	1qya45Cw45JrWUWw1UZF9rZa45K3s3KrW0kryfJ34SvF9IgF9rGF4qgF98Cr1DCFW3GFnF
+	v3Wjg3Z8urnYqrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
+	73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-There are several issues existed in start_xmit():
+Hi,
 
-- Transmitted packets need to be freed before sending a packet, this
-  introduces delay and increases the average packets transmit
-  time. This also increase the time that spent in holding the TX lock.
-- Notification is enabled after free_old_xmit_skbs() which will
-  introduce unnecessary interrupts if TX notification happens on the
-  same CPU that is doing the transmission now (actually, virtio-net
-  driver are optimized for this case).
+ÔÚ 2025/02/17 18:20, Glass Su Ð´µÀ:
+> 
+> 
+>> On Feb 15, 2025, at 17:22, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> md-cluster is only supportted by raid1 and raid10, there is no need to
+>> include md-cluster.h for other personalities.
+>>
+>> Also move APIs that is only used in md-cluster.c from md.h to
+>> md-cluster.h.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> 
+> Reviewed-by: Su Yue <glass.su@suse.com>
 
-So this patch tries to avoid those issues by not cleaning transmitted
-packets in start_xmit() when TX NAPI is enabled and disable
-notifications even more aggressively. Notification will be since the
-beginning of the start_xmit(). But we can't enable delayed
-notification after TX is stopped as we will lose the
-notifications. Instead, the delayed notification needs is enabled
-after the virtqueue is kicked for best performance.
+Thanks for the review! Any ideas for the remaining patches?
 
-Performance numbers:
+Kuai
 
-1) single queue 2 vcpus guest with pktgen_sample03_burst_single_flow.sh
-   (burst 256) + testpmd (rxonly) on the host:
-
-- When pinning TX IRQ to pktgen VCPU: split virtqueue PPS were
-  increased 55% from 6.89 Mpps to 10.7 Mpps and 32% TX interrupts were
-  eliminated. Packed virtqueue PPS were increased 50% from 7.09 Mpps to
-  10.7 Mpps, 99% TX interrupts were eliminated.
-
-- When pinning TX IRQ to VCPU other than pktgen: split virtqueue PPS
-  were increased 96% from 5.29 Mpps to 10.4 Mpps and 45% TX interrupts
-  were eliminated; Packed virtqueue PPS were increased 78% from 6.12
-  Mpps to 10.9 Mpps and 99% TX interrupts were eliminated.
-
-2) single queue 1 vcpu guest + vhost-net/TAP on the host: single
-   session netperf from guest to host shows 82% improvement from
-   31Gb/s to 58Gb/s, %stddev were reduced from 34.5% to 1.9% and 88%
-   of TX interrupts were eliminated.
-
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 45 ++++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 7646ddd9bef7..ac26a6201c44 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1088,11 +1088,10 @@ static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
- 		return false;
- }
- 
--static void check_sq_full_and_disable(struct virtnet_info *vi,
--				      struct net_device *dev,
--				      struct send_queue *sq)
-+static bool tx_may_stop(struct virtnet_info *vi,
-+			struct net_device *dev,
-+			struct send_queue *sq)
- {
--	bool use_napi = sq->napi.weight;
- 	int qnum;
- 
- 	qnum = sq - vi->sq;
-@@ -1114,6 +1113,25 @@ static void check_sq_full_and_disable(struct virtnet_info *vi,
- 		u64_stats_update_begin(&sq->stats.syncp);
- 		u64_stats_inc(&sq->stats.stop);
- 		u64_stats_update_end(&sq->stats.syncp);
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static void check_sq_full_and_disable(struct virtnet_info *vi,
-+				      struct net_device *dev,
-+				      struct send_queue *sq)
-+{
-+	bool use_napi = sq->napi.weight;
-+	int qnum;
-+
-+	qnum = sq - vi->sq;
-+
-+	if (tx_may_stop(vi, dev, sq)) {
-+		struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
-+
- 		if (use_napi) {
- 			if (unlikely(!virtqueue_enable_cb_delayed(sq->vq)))
- 				virtqueue_napi_schedule(&sq->napi, sq->vq);
-@@ -3253,15 +3271,10 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	bool use_napi = sq->napi.weight;
- 	bool kick;
- 
--	/* Free up any pending old buffers before queueing new ones. */
--	do {
--		if (use_napi)
--			virtqueue_disable_cb(sq->vq);
--
-+	if (!use_napi)
- 		free_old_xmit(sq, txq, false);
--
--	} while (use_napi && !xmit_more &&
--	       unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
-+	else
-+		virtqueue_disable_cb(sq->vq);
- 
- 	/* timestamp packet in software */
- 	skb_tx_timestamp(skb);
-@@ -3287,7 +3300,10 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 		nf_reset_ct(skb);
- 	}
- 
--	check_sq_full_and_disable(vi, dev, sq);
-+	if (use_napi)
-+		tx_may_stop(vi, dev, sq);
-+	else
-+		check_sq_full_and_disable(vi, dev,sq);
- 
- 	kick = use_napi ? __netdev_tx_sent_queue(txq, skb->len, xmit_more) :
- 			  !xmit_more || netif_xmit_stopped(txq);
-@@ -3299,6 +3315,9 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 		}
- 	}
- 
-+	if (use_napi && kick && unlikely(!virtqueue_enable_cb_delayed(sq->vq)))
-+		virtqueue_napi_schedule(&sq->napi, sq->vq);
-+
- 	return NETDEV_TX_OK;
- }
- 
--- 
-2.34.1
+>> ---
+>> drivers/md/md-bitmap.c  | 2 ++
+>> drivers/md/md-cluster.h | 7 +++++++
+>> drivers/md/md.h         | 7 -------
+>> drivers/md/raid1.c      | 1 +
+>> drivers/md/raid10.c     | 1 +
+>> 5 files changed, 11 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+>> index 23c09d22fcdb..71aa7dc80e26 100644
+>> --- a/drivers/md/md-bitmap.c
+>> +++ b/drivers/md/md-bitmap.c
+>> @@ -29,8 +29,10 @@
+>> #include <linux/buffer_head.h>
+>> #include <linux/seq_file.h>
+>> #include <trace/events/block.h>
+>> +
+>> #include "md.h"
+>> #include "md-bitmap.h"
+>> +#include "md-cluster.h"
+>>
+>> #define BITMAP_MAJOR_LO 3
+>> /* version 4 insists the bitmap is in little-endian order
+>> diff --git a/drivers/md/md-cluster.h b/drivers/md/md-cluster.h
+>> index 470bf18ffde5..6c7aad00f5da 100644
+>> --- a/drivers/md/md-cluster.h
+>> +++ b/drivers/md/md-cluster.h
+>> @@ -35,4 +35,11 @@ struct md_cluster_operations {
+>> void (*update_size)(struct mddev *mddev, sector_t old_dev_sectors);
+>> };
+>>
+>> +extern int register_md_cluster_operations(const struct md_cluster_operations *ops,
+>> + struct module *module);
+>> +extern int unregister_md_cluster_operations(void);
+>> +extern int md_setup_cluster(struct mddev *mddev, int nodes);
+>> +extern void md_cluster_stop(struct mddev *mddev);
+>> +extern void md_reload_sb(struct mddev *mddev, int raid_disk);
+>> +
+>> #endif /* _MD_CLUSTER_H */
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index def808064ad8..c9bc70e6d5b4 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -19,7 +19,6 @@
+>> #include <linux/wait.h>
+>> #include <linux/workqueue.h>
+>> #include <trace/events/block.h>
+>> -#include "md-cluster.h"
+>>
+>> #define MaxSector (~(sector_t)0)
+>>
+>> @@ -845,11 +844,6 @@ static inline void safe_put_page(struct page *p)
+>>
+>> extern int register_md_personality(struct md_personality *p);
+>> extern int unregister_md_personality(struct md_personality *p);
+>> -extern int register_md_cluster_operations(const struct md_cluster_operations *ops,
+>> - struct module *module);
+>> -extern int unregister_md_cluster_operations(void);
+>> -extern int md_setup_cluster(struct mddev *mddev, int nodes);
+>> -extern void md_cluster_stop(struct mddev *mddev);
+>> extern struct md_thread *md_register_thread(
+>> void (*run)(struct md_thread *thread),
+>> struct mddev *mddev,
+>> @@ -906,7 +900,6 @@ extern void md_idle_sync_thread(struct mddev *mddev);
+>> extern void md_frozen_sync_thread(struct mddev *mddev);
+>> extern void md_unfrozen_sync_thread(struct mddev *mddev);
+>>
+>> -extern void md_reload_sb(struct mddev *mddev, int raid_disk);
+>> extern void md_update_sb(struct mddev *mddev, int force);
+>> extern void mddev_create_serial_pool(struct mddev *mddev, struct md_rdev *rdev);
+>> extern void mddev_destroy_serial_pool(struct mddev *mddev,
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index 9d57a88dbd26..e55db07e43d4 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -36,6 +36,7 @@
+>> #include "md.h"
+>> #include "raid1.h"
+>> #include "md-bitmap.h"
+>> +#include "md-cluster.h"
+>>
+>> #define UNSUPPORTED_MDDEV_FLAGS \
+>> ((1L << MD_HAS_JOURNAL) | \
+>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>> index efe93b979167..3df39b2399b2 100644
+>> --- a/drivers/md/raid10.c
+>> +++ b/drivers/md/raid10.c
+>> @@ -24,6 +24,7 @@
+>> #include "raid10.h"
+>> #include "raid0.h"
+>> #include "md-bitmap.h"
+>> +#include "md-cluster.h"
+>>
+>> /*
+>>   * RAID10 provides a combination of RAID0 and RAID1 functionality.
+>> -- 
+>> 2.39.2
+>>
+>>
+> 
+> .
+> 
 
 
