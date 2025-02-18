@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-520365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8301A3A921
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:34:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC97A3A90B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613A9177216
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44011188A471
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33311EB1B9;
-	Tue, 18 Feb 2025 20:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F781E2606;
+	Tue, 18 Feb 2025 20:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KkdB3XAL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpEU+jCM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38C01EB1B0;
-	Tue, 18 Feb 2025 20:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033561D63CC;
+	Tue, 18 Feb 2025 20:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910359; cv=none; b=MryMI2cCahhQN57o6k7H7YH7YVpeCLs4A/kOzLwgeGP5sbj+gpr/6SaTMC5i9jrvJhtD1463AChBzi4rLTAIePh1/9lxzteMc06g5qmiWK0UHHbLTRm91PvocSF6o8M0M5hpZRcc/qoECDjd3XESkG7K0mual5GljWK6G+kjXv0=
+	t=1739910348; cv=none; b=FE3DRTTc7KJZSBdauVcmrOfN5elSKBLeJsAK2wx6RD4XUXI0p8y+6kF19c45oprBabRHvzL3YfiThBrr5unxHyBpzdZfzSbwZ46pADGwIT2qDUX6kc0TtjqgH0zD8tcmdyj5X+6ztqsR6U2YCKkzLy9H7hX0WH9GH9hC1f+z1A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910359; c=relaxed/simple;
-	bh=9IUfkYYejgzYqaILdxndHszsbEAz7eKvYdVVZCcUKtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hYHfGY9Q1cSENWhYV+1MSynFG5yYGZIMJjGIiCF7mRf9H9RD2hGrcVFmyb0K9UkSu9eSCVJpWTU6h8A2WPRkvDG0zkt5jVKwv7WOZ6+UMjjg1upDFFvK9+D/E0+cDMddv4SEdMkBmBCgcKQ9fFU4KAAlrTQTA6ASymN82mutzfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KkdB3XAL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IIwLAc014993;
-	Tue, 18 Feb 2025 20:25:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xbintQ10k3gaAfsoEtml4GPxRMtrtT4KCwA9NwsAfgw=; b=KkdB3XALGA7Fv65j
-	1YtvGRTvtISofMA88kCcatAXJ4lPS2qmR7MyYEd+oA1fJ4+7SReJNFSAMt9oJytj
-	aVCSXEWaG2LdV8QvcRpcKudpnbyEhvPEIzZwMXTmCBfQm/sAjhMbM2UA8BN2jU4a
-	hVk+baI35/OrogM7ftGk9mnrOA1y8KDB3jTXGKDtOx1xiKLJDi/GKN+XMRApMzXN
-	t+7oHkR969s1VTrWMdDwcA6bzlBoFn/Po68dzWzTJsZGJVm8qqm8JOY2h0RW25db
-	8kqDnqukvcJLnY6i0nZydSaoLavGhAf1NW3YQj9zDfRUwYrdv9q7XVprEDtA/L0L
-	/ePqQw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy106nk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 20:25:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IKPdfe002295
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 20:25:39 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
- 2025 12:25:39 -0800
-Message-ID: <b3a8816c-3846-83ab-9750-fd12041d9495@quicinc.com>
-Date: Tue, 18 Feb 2025 13:25:38 -0700
+	s=arc-20240116; t=1739910348; c=relaxed/simple;
+	bh=RLervQf979kstkgoUrYWN04RQ6hrfhFVnDHU20XRDZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sG1vtIPZzZF/ZC461R7gjDXAiilx5oM+DiWyEq0LsrQ8K18bL8UL+sXC/wr3CGiYpsY5jy2qGEUY8R6zJwjMvLPaCsvrzwVUx2wrmXHoEfNiyTCznAefOhXXw2EhUlPRqVL0EQjd1OTvAh70Ua8iewzNI8ZS//fJCgf8Mzz+SGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpEU+jCM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFD6C4CEE4;
+	Tue, 18 Feb 2025 20:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739910347;
+	bh=RLervQf979kstkgoUrYWN04RQ6hrfhFVnDHU20XRDZo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=cpEU+jCMGRMpzZ2LsCrYuDeOQr8uj/u/3r/DxNIWyPabKIAVhqs3CanHpl/261VjX
+	 XJ5sLxzJWt+ZCDBK2kUoTv2hNRPNWQkS67F/PP6pg2bCgB2fZsh4cRRK0k1Lk0tM9F
+	 LmqM2gPZ8SftTUPw9sETiM8HuNaZgfM/VVg7y5d49Hr8WF2V+v67WQTnkn8VkOhrsq
+	 7Es9mVR/u9JmmCQvr0eFZ3gO3W7D8V6exoIIYASGUwYGcjAquNIG0ZNA78GYRpD2/9
+	 ZuP8PKYBRxQzzyYRDIXlPoldtjrVhmsDv2Qlz8e2cEIp5ZdMWtkL5FGVdUnGTWMxxO
+	 WKI9clUXzmDow==
+Date: Tue, 18 Feb 2025 14:25:45 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH] PCI: Update Resizable BAR Capability Register fields
+Message-ID: <20250218202545.GA177904@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-Content-Language: en-US
-To: Masahiro Yamada <masahiroy@kernel.org>, <linux-kbuild@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Kees Cook <kees@kernel.org>,
-        Nathan
- Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Ben
- Hutchings <ben@decadent.org.uk>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240727074526.1771247-4-masahiroy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6K0e3kPgCKMQGaIOtOscn-GlU9SZ47QA
-X-Proofpoint-ORIG-GUID: 6K0e3kPgCKMQGaIOtOscn-GlU9SZ47QA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_09,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1011
- suspectscore=0 spamscore=0 mlxlogscore=983 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502180139
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250218064003.238868-1-daizhiyuan@phytium.com.cn>
 
-On 7/27/2024 1:42 AM, Masahiro Yamada wrote:
-> Exclude directories and files unnecessary for building external modules:
+[+cc Christian]
+
+On Tue, Feb 18, 2025 at 02:40:03PM +0800, Zhiyuan Dai wrote:
+> This commit modifies the Resizable BAR Capability Register fields to better
+> support varying BAR sizes. Additionally, the function `pci_rebar_get_possible_sizes`
+> has been updated with a more detailed comment to clarify its role in querying
+> and returning the supported BAR sizes.
 > 
->   - include/config/  (except include/config/auto.conf)
->   - scripts/atomic/
->   - scripts/dtc/
->   - scripts/kconfig/
->   - scripts/mod/mk_elfconfig
->   - scripts/package/
->   - scripts/unifdef
->   - .config
+> For more details, refer to PCI Express庐 Base Specification Revision 5.0, Section 7.8.6.2.
 
-Please revert this (the removal of .config).
+Wrap to fit in 75 columns.
 
-I got some strange reports that our external module install broke, and 
-traced it to this change.  Our external module references the .config 
-because we have different logic for the build depending on if other, 
-related modules are present or not.
+Drop "庐" above.
 
-Also, it looks like this broke DKMS for some configurations, which not 
-only impacts DKMS itself [1] but also downstream projects [2].
+Update spec citation to r6.x.
 
-While DKMS may be updated going forward to avoid this issue, there are 
-plenty of affected version out in the wild.
+Spec r6.0 defines BAR size up to 8 EB (2^63 bytes), but supporting
+anything bigger than 128TB requires changes to
+pci_rebar_get_possible_sizes() to read the additional Capability bits
+from the Control register.
 
-Also, I haven't surveyed every distro, but it looks like Ubuntu still 
-packages the .config with their headers in their upcoming "Plucky" 
-release based on 6.12.  I suspect they wouldn't do that if they didn't 
-feel it was needed/useful.
-
--Jeff
-
-[1]: https://github.com/dell/dkms/issues/464
-[2]: https://github.com/linux-surface/linux-surface/issues/1654
+> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+> ---
+>  drivers/pci/pci.c             | 2 +-
+>  include/uapi/linux/pci_regs.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 661f98c6c63a..03fe5e6e1d72 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+>   * @bar: BAR to query
+>   *
+>   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
+> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
+> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
+>   */
+>  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+>  {
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 1601c7ed5fab..ce99d4f34ce5 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1013,7 +1013,7 @@
+>  
+>  /* Resizable BARs */
+>  #define PCI_REBAR_CAP		4	/* capability register */
+> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
+> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
+>  #define PCI_REBAR_CTRL		8	/* control register */
+>  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
+>  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
+> -- 
+> 2.43.0
+> 
 
