@@ -1,147 +1,103 @@
-Return-Path: <linux-kernel+bounces-518855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD9EA39561
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:30:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98925A39543
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A74A178D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307AD7A05A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF76122CBFD;
-	Tue, 18 Feb 2025 08:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79869211499;
+	Tue, 18 Feb 2025 08:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q3y6mbYv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3r4LZVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B8C22B59B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0221A841B;
+	Tue, 18 Feb 2025 08:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867062; cv=none; b=P5qvlRk7AN5T8Mreuhc3yEGlib3mAbL8XT3ADjldyTkub/xL3cqEVeI3hMZT1Pw4aAqMkVO8hpV8tQiamHGhSRp/oz5l6F3DFeQTKpmiE5Wo8ZXDdP1UATUkBVVdGpqXthnSIhyhvOpxGR1AlMgkDrcIDisT3jCMhGCZJIlH5x4=
+	t=1739867150; cv=none; b=IAkuEcpiAFAYhzb2LcNfGL+YCvbTedjcocrxGrZDPIKVk3TDLsX7wdKMtbC+C27qkDTGjTIJaIMSebqXyKH+0oz27bVxHgxAWmHqhlVY8NumCMvQiViVVYPQAp/GE7HVrE2tDuXUg+snsVe4k7GLRfD2EvRfpQo4IvcqN2M3M4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867062; c=relaxed/simple;
-	bh=9QSp1xJjXIJGt7MBed1jthL6tlBO/Os9n0CIOftZryg=;
+	s=arc-20240116; t=1739867150; c=relaxed/simple;
+	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCarXAw5aL+LDMZCL4N/FZOFo6RR2g0W3uRR3XtOMrqsAdZMUsLJ0Wv6aiDF/62E4ckldsKwtKMOWpAcbt0exE+FBpB4/ymbKtFVYyCqra6UAiyVbNCAtu5OFokU1etHscxpV3pQ1XSW8r4f4rdkLBxsonDAFL5xisDNtgoaqsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q3y6mbYv; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739867061; x=1771403061;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9QSp1xJjXIJGt7MBed1jthL6tlBO/Os9n0CIOftZryg=;
-  b=Q3y6mbYvLATnMc/vlXSemP1YWwHeldRpTpx+s82YhbuR3DloxRc19T7i
-   kzTJe1cw4OLyJVq3XrkKbkaIJNGkdddzGJ8CDF6Go98saHTSXDAZoJNKz
-   iiAvIykjfwxPVKnfrPcWdrgZlzFNph34Lx5CFpphh1NsPfZ6ea6sfn5el
-   8pvjkgY0nVlAsirL48dQ4TkqAaWtw285325CwtBwTa57A/RaKoUwKmDb8
-   dpQimIm0j0qWmotIktxai7WJMY5v2oUvRp0GDu1dq9KyBxWcN8xLMQ8c3
-   4fiXWnxmps8MrR9d1xFyIJi10v8VzX/UTHIaqSkLFRSm9MKHffwzdfpu7
-   w==;
-X-CSE-ConnectionGUID: XX0WtzwyQhCwxDwFZmCp/g==
-X-CSE-MsgGUID: Tw0VngQcSRG8G0eTAjQblw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44306874"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="44306874"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:24:12 -0800
-X-CSE-ConnectionGUID: rtXNBxsPQf2XUCXppQb8uA==
-X-CSE-MsgGUID: kOvm/njvSiG8keubVWzrxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="114977360"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:24:08 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id AF3D811F7F2;
-	Tue, 18 Feb 2025 10:24:05 +0200 (EET)
-Date: Tue, 18 Feb 2025 08:24:05 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Wentong Wu <wentong.wu@intel.com>, Jason Chen <jason.z.chen@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mei: vsc: Use "wakeuphostint" when getting the host
- wakeup GPIO
-Message-ID: <Z7RDpYVCLIdMiytw@kekkonen.localdomain>
-References: <20250214212425.84021-1-hdegoede@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1l1FDXY72pPhwogVPO8gG67DNI4NezrgPDvGteJVIGnw3dJZI/vxPJ7rHP96ux4VCqtmlaJ2i4E0g2iqU8SFhrmLAmXpToGXhEXnNb+OEPCCcvhFJbx7+mWbYuyaV7FgPxzzPCTg0Uut0Eiv2koMiwp4nTKAtNfRaqpJpFBpjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3r4LZVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7A8C4CEE2;
+	Tue, 18 Feb 2025 08:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739867150;
+	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X3r4LZVwnWLy/POh9hH3tZRQxKLNC1XClRyAHPbp2o1mm4xMHA4MRjgdRBRszn8tX
+	 y7VJKFLeiz+p+r2UUM82Nptn726NNgkG/JuPjxcYYDTQIRneYDE/hKbRtXngp00Fph
+	 g68+Z3QiTUgGQfW6oOOEGwZmsYRwJLkvJ8xXh0IItNPlFBaBjArVl8TDhPv76WXnuD
+	 xxv2EdFS64ShgdI6qiezKwfEqLbBNmWw98LM9ys50zz9t3GqWgDmXWlOIV4jB5WlkT
+	 GASt9J1eAtYDKfm+/6e9gfIP5l47Q3ERmlNZx4TuosVJPnKlT/9byu1o0WovsunJJK
+	 ExYJsVmS1wKEQ==
+Date: Tue, 18 Feb 2025 09:25:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: jiebing chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
+	shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v2 2/5] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
+Message-ID: <20250218-opalescent-teal-of-patience-82cecb@krzk-bin>
+References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
+ <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250214212425.84021-1-hdegoede@redhat.com>
+In-Reply-To: <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
 
-Hi Hans,
+On Fri, Feb 14, 2025 at 10:13:41AM +0800, jiebing chen wrote:
+> add the s4 tocodec compatible
 
-On Fri, Feb 14, 2025 at 10:24:25PM +0100, Hans de Goede wrote:
-> The _CRS ACPI resources table has 2 entries for the host wakeup GPIO,
-> the first one being a regular GpioIo () resource while the second one
-> is a GpioInt () resource for the same pin.
-> 
-> The acpi_gpio_mapping table used by vsc-tp.c maps the first Gpio ()
-> resource to "wakeuphost-gpios" where as the second GpioInt () entry
-> is mapped to "wakeuphostint-gpios".
-> 
-> Using "wakeuphost" to request the GPIO as was done until now, means
-> that the gpiolib-acpi code does not know that the GPIO is active-low
-> as that info is only available in the GpioInt () entry.
-> 
-> Things were still working before due to the following happening:
-> 
-> 1. Since the 2 entries point to the same pin they share a struct gpio_desc
-> 2. The SPI core creates the SPI device vsc-tp.c binds to and calls
->    acpi_dev_gpio_irq_get(). This does use the second entry and sets
->    FLAG_ACTIVE_LOW in gpio_desc.flags .
-> 3. vsc_tp_probe() requests the "wakeuphost" GPIO and inherits the
->    active-low flag set by acpi_dev_gpio_irq_get()
-> 
-> But there is a possible scenario where things do not work:
-> 
-> 1. - 3. happen as above
-> 4. After requesting the "wakeuphost" GPIO, the "resetfw" GPIO is requested
->    next, but its USB GPIO controller is not available yet, so this call
->    returns -EPROBE_DEFER.
-> 5. The gpio_desc for "wakeuphost" is put() and during this the active-low
->    flag is cleared from gpio_desc.flags .
-> 6. Later on vsc_tp_probe() requests the "wakeuphost" GPIO again, but now it
->    is not marked active-low.
-> 
-> The difference can also be seen in /sys/kernel/debug/gpio, which contains
-> the following line for this GPIO:
-> 
->  gpio-535 (                    |wakeuphost          ) in  hi IRQ ACTIVE LOW
-> 
-> If the second scenario is hit the "ACTIVE LOW" at the end disappears and
-> things do not work.
-> 
-> Fix this by requesting the GPIO through the "wakeuphostint" mapping instead
-> which provides active-low info without relying on acpi_dev_gpio_irq_get()
-> pre-populating this info in the gpio_desc.
-> 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=2316918
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+1. Please write full sentences.
+2. We see that from the diff. Say something about hardware instead.
 
-Great detective work! :-)
+Please use subject prefixes matching the subsystem. You can get them for
+example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-Tested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> index 23f82bb89750898d20c866015bc2e1a4b0554846..ea669f4359bc81b0f45bc2105c832fc2b11d8441 100644
+> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> +++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> @@ -26,6 +26,7 @@ properties:
+>        - items:
+>            - enum:
+>                - amlogic,sm1-toacodec
+> +              - amlogic,s4-toacodec
 
-This was on Arch Linux where I've seen this only, never on Debian.
+Keep alphabetical order.
 
--- 
-Regards,
+Best regards,
+Krzysztof
 
-Sakari Ailus
 
