@@ -1,819 +1,645 @@
-Return-Path: <linux-kernel+bounces-519813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0E7A3A228
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873A4A3A224
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116123A980D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07031897FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5641026F45A;
-	Tue, 18 Feb 2025 16:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B526F472;
+	Tue, 18 Feb 2025 16:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YXmb+Vnj"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aG9e1PaU"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DE426E64E;
-	Tue, 18 Feb 2025 16:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894852; cv=none; b=PXHnAhNLQod5yIInObd5HxI5pN3amUYMLwmSegTIneFyzf4g04M9H87wzcTtIqhbf4hKN/wzbhpx8yxy6k03zVYco3aasVlqjykRLdPc2QKlNFkjw66ki5KYzMAhK5KWlDd7AiX8CJilBg8rq5prm2zQ93xfR9JR9ymvBNQ28A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894852; c=relaxed/simple;
-	bh=8jYaE2a4lFc5dEP6968vC2x/qjyBSjLx/Wdpe50g1/Q=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A044626E16E;
+	Tue, 18 Feb 2025 16:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739894674; cv=fail; b=UO4ayTUVHoKKQGDsqhf84SyFnz9AKCIwLCooHQ9+7rzQP3fCfquH1qvKEbjFjA6un1sAviBktbvl4m0mgQtkkDMRkwe2amuW+sqaK3lOeJTtmLamhTCmFBOYvLnssn1MO+pjJkI/ihbi2k6dXWX6v8VXlpeUXVBKKGChrL6P3Jw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739894674; c=relaxed/simple;
+	bh=9vp0XwTEkzh+FLJwq5OvHHR3E+QzVvXaZSphqsPjcRE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sy6r7z+Xl+XiXrAhtDsySIxXZNsJr29h3l6NkNVxSXXe3HRmzOcpoaJTv8fPgLo84d53SfXrWqWpB+eqRtddg9XBserjqviLfhUKGTV6jmcW2X66NE5UnUEIHHbgeu+lDhe0g4gcEZWnPstEm/OSNrrVB5ANvOHLplbKtBXDkUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YXmb+Vnj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739894848;
-	bh=8jYaE2a4lFc5dEP6968vC2x/qjyBSjLx/Wdpe50g1/Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YXmb+VnjMD0wE657Jn1lRGYEdHcJzYVa3zME+b5nuhl2CPLHv7RDD6CZLCnD/8Adg
-	 TT9rYJSvTw7t504tEc8Eal8BikbrhNsqlT3MT2EVf/XLhy7c/n1wfIaajr/DZfoPrt
-	 SEY9geVylrVH0A1rWZJ08vhR3MqEqr7ic35cG2Dyg2pQS7EA41i/YYLrONoI5vFnTb
-	 LxtitNKTAz8CfItQpe3G+C4FbXHNd4nhBsI0keJoLdPEqD5cv3u4IBm5rBx0STFBlU
-	 cfR5I8CkzDPXsi2HuTW12M0aRMwJ3ovQ2PYGmGaVBJ3E0Jfi7xpeiz9DgCsBtIE0U4
-	 +abQXNumaKVoA==
-Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 78EA517E1568;
-	Tue, 18 Feb 2025 17:07:25 +0100 (CET)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Tim Lunn <tim@feathertop.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Stephen Chen <stephen@radxa.com>,
-	Elon Zhang <zhangzj@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH v5 2/2] arm64: dts: rockchip: Add Radxa ROCK 4D device tree
-Date: Tue, 18 Feb 2025 11:04:19 -0500
-Message-ID: <20250218160714.140709-3-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218160714.140709-1-detlev.casanova@collabora.com>
-References: <20250218160714.140709-1-detlev.casanova@collabora.com>
+	 Content-Type:MIME-Version; b=Qeq8Ghncd8Z6c7O6NAn2h0l5cy0HrOZCuxE3TNi5MhFJ+LRphhhqbAm9snvGU6Q+nXg9iohmpJ89aAie6cUVPNUDzgQ2rpjl34kqQ0PrC2kLMAw3DLOp3LTaum+d8P2CJJ70JJNgQEpDktFXlK26W7aRUBd4r8eGiGpZ6W6BonE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aG9e1PaU; arc=fail smtp.client-ip=40.107.94.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jlnANJtW+sp7V2DcFColWOl/lzj0eSV2CSPP+2LjceGHgU2Tj4ivG4ZTFMqleebkk/+rvxaJLthNC930VfJiHdRZ8aageWsMx9SBT0MB+WLdaSsrYDzs8OdDMeZhMOiDrfNxFVohw5dqGUD6hTlaCdor6J38wfLIz017nV0sXrgr0jw+DhI1ls5HH+K7izKMqiLIwaJ3ccDA4IqBQPveR4jEhfYmb0o727WgxkB0zcdKOv16ApmO/KwgPFi9Wt07v2IlxYSMgF0aam7af/XyHIhYjl5islZq4pxVCpvXKHTRQJzIhHhzENQda4fyaGBg2OQa/SVxB92WO2Wc2ijuDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fafEkoR9SEnBGO9jFx6hKcfZlQpVoj50lEO5N+wrUCA=;
+ b=U6ZEQSQbpStSK8dyIiMNknUt+xV+6yMOqUaq/XGOFcTOrsSl9aryTQtA+7OKSdQGTyhu8ojVn9tjCVKkvT0TW3xRCLgDZ0JH34/0OmGYlJZ+aecX+aIO1l8eNuwyqgVVhsmg/trW7ptYwsOai9XIKeCkhkwVvs7JzRdGqhXxnQjwcHBnp09nVyojcm9cjOuW2AMOqsT0g2oaE42AshvEuh3sEnsarvd+WvhY4gIIooPqk2D/+blULErheLjQ+YZBkURydKN+ihzd16KFAfmuAkDbg1UvvyOcV7nGYa+Wfs2L3xLUHAu69yAnea2Fq0rjX71f7T7RGUF/KZI4jFt7Sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fafEkoR9SEnBGO9jFx6hKcfZlQpVoj50lEO5N+wrUCA=;
+ b=aG9e1PaU1uGl+jDCOlLganGeHJaRC1WQUbEuhQWN4XEjWCjLnt5zKSWl2mSpksmCGFf4W152hQXxL4swnfzv3xXFBp/re76ve0+ApfO/fB8w0G7Zz/puFtsP6bj2mZZhltWXYXCvp/yaKfE66sSfIH2Wjg8L2JNKIf077ih8fzb/z3BzyEe/RhS3jhoebrSo5/Mruu3iA9ikucj0QTOmNp1L4JfyYbgv9ahzrI7WICZkNNzycdBAcj0QXEJn2Z5gTE9RQb86/Q41SBQn6DLP9032IKyMaA+J55BKNW6BlImrUPaaIAarUls7qy8eeIhl3nO66Kaf0vUy2ID7MNSHkg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ BY5PR12MB4161.namprd12.prod.outlook.com (2603:10b6:a03:209::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 16:04:25 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 16:04:25 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
+ Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/8] xarray: add xas_try_split() to split a multi-index
+ entry.
+Date: Tue, 18 Feb 2025 11:04:20 -0500
+X-Mailer: MailMate (2.0r6222)
+Message-ID: <DA7491B4-7794-4F86-AFBC-BB8BFBD1D9B3@nvidia.com>
+In-Reply-To: <af3b230c-7aeb-44bf-8db3-3538dfb1b93c@redhat.com>
+References: <20250211155034.268962-1-ziy@nvidia.com>
+ <20250211155034.268962-2-ziy@nvidia.com>
+ <0bb75517-9418-4145-8aa8-b05373010711@redhat.com>
+ <F5D2A2F4-34DC-4967-A149-A4D5578B5DB2@nvidia.com>
+ <af3b230c-7aeb-44bf-8db3-3538dfb1b93c@redhat.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: SJ0PR13CA0060.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::35) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BY5PR12MB4161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 076f267d-a70d-4e11-05ff-08dd5035ea3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZA9Pcj3QTH+5wmfIHNdmbUemKJlTVFRK5BS6Sz9ZpZCGQlFQ8sM4htSl4c0V?=
+ =?us-ascii?Q?qHu2I/hF+bW27S/NHocmbpGbbTdjD9JuAoCIZgrioeZ1NFlgXiMaQ9QintJ4?=
+ =?us-ascii?Q?vy1IiUwSOknkDPZGLzj6+xhsoL4XbF6skeiw0h1ByRS+la860lbaN0oMu59b?=
+ =?us-ascii?Q?7xFsWwMalBCmKW1FY7X05Fwzk5ax1kojpZ6D9cVi+97nmvxHeOy+L8DN17RO?=
+ =?us-ascii?Q?8KczYK5O8FyKQM8wRidYZ7YJzYh03yrNMbUwBkpKAVqj+N3h8SfChjqzQ/nZ?=
+ =?us-ascii?Q?wJ6RFPZwGtNyfTsg0L5zhzKvfg6RIkbMer94xZA8JojGXxaI5IcFpwzwfgst?=
+ =?us-ascii?Q?hbxlOcePu18Putv609P/6RJB1eXbdFGVL5Mv0IOgSsbDIC20X2vksDAWfB51?=
+ =?us-ascii?Q?FffEiKKmvQlpcG0Ed4ndXWH3NNby06UH62fQWM/RMMbdTDohx/XSDQjlXDiP?=
+ =?us-ascii?Q?vBSzSqgiEzdSKXE8hCJXf09Bwm1gK9Vx82nMVnKN+tNFoekEx7r0P9fOHJvk?=
+ =?us-ascii?Q?OPKWSiJejdMETvKga76FmAR/K/M31elqXaKy2FiemmT3dlf0YO20mCcucRyb?=
+ =?us-ascii?Q?XMn+qN5UmOxjU6cDT43UWJiVf8eNuM+9Ir2t8U2Pl5waP4gl9jUTTIXp76rl?=
+ =?us-ascii?Q?DzRLsqyQQQk2oajPk6OSF3aBMeZrvCy6rZEWCv8K+MvmzZs4WbZ4qSZZt+5w?=
+ =?us-ascii?Q?QY4LwUsGYcFZa/nWwkVWmCHT/dj8Xlp3EsL1FC0LwgEIfkhRMnbTejHWsHpa?=
+ =?us-ascii?Q?oDCv7WzA8k0mC0QbG7w6cxCyUoA+nPlmFfxt/gh4tQKKLcvBs1Ew39Hd/EUg?=
+ =?us-ascii?Q?KWQmV/JXwmXFiIrkiVy/8+7ehLSrVwXsDnw0d23OhlZlBfl27k3i9JhN3TyY?=
+ =?us-ascii?Q?IXv+VTwdy32j509F/y18t41Ffi2oJN5ErlMpGxowpdxaM17GJD5p5mBjq8Qb?=
+ =?us-ascii?Q?FcOY8NgihaDF8pdTjNhwOBUR1Pr2ZZQFmpM7yNF4LXp+rqT4YYJ1mP6X5Yht?=
+ =?us-ascii?Q?9gkWJY+HgL5xXBboFsVAA7ucueY5SVNHMsBpw4vnXTR2UTJMILgaVKzuqmep?=
+ =?us-ascii?Q?W46bdkGaSTeJL6VUPAoKgBEjFyfeW5Bg/era+v1oKiGNzQ6Up4QY/LqqL88X?=
+ =?us-ascii?Q?J8Ysu+zVwGCqPQ2dcirBkHyqFJNadvcWoUfAJaCVdiweqfpmsKhniHovjJpb?=
+ =?us-ascii?Q?7ccuM39Kd/9xojqO4p7PWt4Tq2a+q6MUxe84v6idT/gUkJKo0cveE9EBKRfe?=
+ =?us-ascii?Q?8PSy84ZHw0bMXu8yBabhSSNiLj1Y+M9OMGEAaiLTsnwCVldApAgk9PFlP7Dp?=
+ =?us-ascii?Q?7wjgmd0hDO4O4829KcrQTx4zoSq0bTmyvvhHs8mfegIZ2XjHW+B+DmaQxjPM?=
+ =?us-ascii?Q?qpLVGD5BEiIA2fBFyTLYdhiybbMU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?20dTYe9pTHtMkrcG4/CCIet4KrPdXG7KV5C8UGguqtmL8BzVQLavU0L+NSbh?=
+ =?us-ascii?Q?yJGU8mZhhEtuzCa7ogxZy2RRbBnGSj30fo70DSCnAWg/Jh7wZOjY3z8AXtwH?=
+ =?us-ascii?Q?lmBxzG8yLqdR7nsi9kXPb2MRov55nmFQYG1lnZJQ8f58IYtIv5nE4kXEWSBy?=
+ =?us-ascii?Q?EA8QRSWbX1ojd19CLV4jIKzH1yNc3clH/zJeIgSyaFW53wcZYwSo+DCl5Med?=
+ =?us-ascii?Q?eue7uaKrJkAmahaoC7t9YEwqKtVb+mqvjHYrwIlHUxfyxjPyN3WkgUwlxZ8T?=
+ =?us-ascii?Q?ccZ9sexRIKfNmu0E9lIjsmRlo3o7kNkWR3qmyHtKLLmOt0QOMLTEjgZucVnI?=
+ =?us-ascii?Q?wOOowCKdpuHOJiNwRE9xQPmubH/JMA7GkEsZIFcU6VS9vGduUEUUjC7yUks5?=
+ =?us-ascii?Q?3rvAW+BKnTVb19vDXAtAmrMhIXGsSMOmlkdcFS5k2kGpwKn2BREtrS1tmI7U?=
+ =?us-ascii?Q?OtpcFrE5UYEpGxmUe1uqtjtMllbPMsHRRu8Dar1R9sTJPBV6pPtOlvciw2OT?=
+ =?us-ascii?Q?05n0EoYTKetW6TQF893RGT1y19S8GlktJwGf1Lo/mkRXqnfH5y784Vg73iDu?=
+ =?us-ascii?Q?H7dwQFHi4QvHqnKt6+TTmhkN+anAqZ0kX62ikdck1qMlAkJQntPEj9IoOhz+?=
+ =?us-ascii?Q?ZGSxCCgxlK4xMsrtcRtLUTtptx2I3WaYxQADkOj0sHb5FUB/2Pdd37R2m/c/?=
+ =?us-ascii?Q?H4lWZFKX/ryc87LWeJOt7eRliz4gKJYUWQrn0GVI1FynsentayJcOV/wkf7z?=
+ =?us-ascii?Q?Dnf9gv08ofkxnsIY+QesWjZZoV+RExO8/qTYmxllGsbCrcT3fHLJaRUjDtsa?=
+ =?us-ascii?Q?4RG2mAAa7fIyfdjA6rE8NMn090Ob8SK6Wkym3AQRWw+zK/pYtneLSJ7Qf//3?=
+ =?us-ascii?Q?aMsqqFBz3KzSxylSjUZ25FvEZZ0zx7yJLqFZeKloQ04h99y3ZXNQreiieR9R?=
+ =?us-ascii?Q?Y+xVB8hslUVFV+B/JTinuBA4EOwJXdc5soietvSwrPrYKEcAVjEMgDovqCSW?=
+ =?us-ascii?Q?YtUKFb3cTswZ4SE1LLQuKRIWZpm0vZVq2beWEUjBugD+xGGPhCKZDVMriGxG?=
+ =?us-ascii?Q?GDYWbiSjuULGJYUC23mYj3HEDwTPW/QjL8Z5lA7BsKt7GcqGbBZhkL0itpLv?=
+ =?us-ascii?Q?/ijIhkUh8/Nl4CXQTvgcWjPbZnAbwoz3H//tNcL0cETb9CnP961k/ZH0IM2X?=
+ =?us-ascii?Q?wMHAY4qIe4RmviS6aqKPtIODxYXO7xLCmQBLj1NEy0V16yjxE0/phldrFNVx?=
+ =?us-ascii?Q?2+jQ/qSeuXBy9IyKGbl3Q8yuFGGJY4rxo53yZpqZmS0BYlUgXvLU5vMmExQh?=
+ =?us-ascii?Q?QGqNe3qwvirJddSbAGvq9XPTJ1/W6S0Fb2EXSSJ60CiOhB1cWJ377fHmc2fG?=
+ =?us-ascii?Q?sNp7qRfwOFrleJZRUsLJ/ATJKj4D3JJWFnAhE6Ec2D8RIIpTMwDwtIZZJC/r?=
+ =?us-ascii?Q?v4QY+cQ/Q6q+YbBewNmkIZhx5HShGRXBPEUxYJpOMPe1uMw9/0rlPWHgoAuu?=
+ =?us-ascii?Q?NPuoonysVgf/bu75CsUabOOTLMUD1pDb2LMt1IHha2xlBqj24zp486o54YDB?=
+ =?us-ascii?Q?L/gujYGEXpovwFAjERiW5NLGninBozhc1cKuEXgz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 076f267d-a70d-4e11-05ff-08dd5035ea3e
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 16:04:25.1131
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IokZjpS+910EsqsMll/IjCWUTT4KD0POEN0N5lJLY1VqzbnaQOGocWt3T+M271uC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4161
 
-From: Stephen Chen <stephen@radxa.com>
+On 18 Feb 2025, at 10:44, David Hildenbrand wrote:
 
-The Radxa ROCK 4D board is based on the Rockchip rk3576 SoC.
+> On 17.02.25 23:05, Zi Yan wrote:
+>> On 17 Feb 2025, at 16:44, David Hildenbrand wrote:
+>>
+>>> On 11.02.25 16:50, Zi Yan wrote:
+>>>> It is a preparation patch for non-uniform folio split, which always =
+split
+>>>> a folio into half iteratively, and minimal xarray entry split.
+>>>>
+>>>> Currently, xas_split_alloc() and xas_split() always split all slots =
+from a
+>>>> multi-index entry. They cost the same number of xa_node as the to-be=
+-split
+>>>> slots. For example, to split an order-9 entry, which takes 2^(9-6)=3D=
+8
+>>>> slots, assuming XA_CHUNK_SHIFT is 6 (!CONFIG_BASE_SMALL), 8 xa_node =
+are
+>>>> needed. Instead xas_try_split() is intended to be used iteratively t=
+o split
+>>>> the order-9 entry into 2 order-8 entries, then split one order-8 ent=
+ry,
+>>>> based on the given index, to 2 order-7 entries, ..., and split one o=
+rder-1
+>>>> entry to 2 order-0 entries. When splitting the order-6 entry and a n=
+ew
+>>>> xa_node is needed, xas_try_split() will try to allocate one if possi=
+ble.
+>>>> As a result, xas_try_split() would only need one xa_node instead of =
+8.
+>>>>
+>>>> When a new xa_node is needed during the split, xas_try_split() can t=
+ry to
+>>>> allocate one but no more. -ENOMEM will be return if a node cannot be=
 
-The device tree adds support for basic devices:
- - UART
- - SD Card
- - Ethernet
- - USB
- - RTC
+>>>> allocated. -EINVAL will be return if a sibling node is split or
+>>>> cascade split happens, where two or more new nodes are needed, and t=
+hese
+>>>> are not supported by xas_try_split().
+>>>>
+>>>> xas_split_alloc() and xas_split() split an order-9 to order-0:
+>>>>
+>>>>            ---------------------------------
+>>>>            |   |   |   |   |   |   |   |   |
+>>>>            | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+>>>>            |   |   |   |   |   |   |   |   |
+>>>>            ---------------------------------
+>>>>              |   |                   |   |
+>>>>        -------   ---               ---   -------
+>>>>        |           |     ...       |           |
+>>>>        V           V               V           V
+>>>> ----------- -----------     ----------- -----------
+>>>> | xa_node | | xa_node | ... | xa_node | | xa_node |
+>>>> ----------- -----------     ----------- -----------
+>>>>
+>>>> xas_try_split() splits an order-9 to order-0:
+>>>>      ---------------------------------
+>>>>      |   |   |   |   |   |   |   |   |
+>>>>      | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+>>>>      |   |   |   |   |   |   |   |   |
+>>>>      ---------------------------------
+>>>>        |
+>>>>        |
+>>>>        V
+>>>> -----------
+>>>> | xa_node |
+>>>> -----------
+>>>>
+>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>>> ---
+>>>>    Documentation/core-api/xarray.rst |  14 ++-
+>>>>    include/linux/xarray.h            |   7 ++
+>>>>    lib/test_xarray.c                 |  47 +++++++++++
+>>>>    lib/xarray.c                      | 136 +++++++++++++++++++++++++=
++----
+>>>>    tools/testing/radix-tree/Makefile |   1 +
+>>>>    5 files changed, 188 insertions(+), 17 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-=
+api/xarray.rst
+>>>> index f6a3eef4fe7f..c6c91cbd0c3c 100644
+>>>> --- a/Documentation/core-api/xarray.rst
+>>>> +++ b/Documentation/core-api/xarray.rst
+>>>> @@ -489,7 +489,19 @@ Storing ``NULL`` into any index of a multi-inde=
+x entry will set the
+>>>>    entry at every index to ``NULL`` and dissolve the tie.  A multi-i=
+ndex
+>>>>    entry can be split into entries occupying smaller ranges by calli=
+ng
+>>>>    xas_split_alloc() without the xa_lock held, followed by taking th=
+e lock
+>>>> -and calling xas_split().
+>>>> +and calling xas_split() or calling xas_try_split() with xa_lock. Th=
+e
+>>>> +difference between xas_split_alloc()+xas_split() and xas_try_alloc(=
+) is
+>>>> +that xas_split_alloc() + xas_split() split the entry from the origi=
+nal
+>>>> +order to the new order in one shot uniformly, whereas xas_try_split=
+()
+>>>> +iteratively splits the entry containing the index non-uniformly.
+>>>> +For example, to split an order-9 entry, which takes 2^(9-6)=3D8 slo=
+ts,
+>>>> +assuming ``XA_CHUNK_SHIFT`` is 6, xas_split_alloc() + xas_split() n=
+eed
+>>>> +8 xa_node. xas_try_split() splits the order-9 entry into
+>>>> +2 order-8 entries, then split one order-8 entry, based on the given=
+ index,
+>>>> +to 2 order-7 entries, ..., and split one order-1 entry to 2 order-0=
+ entries.
+>>>> +When splitting the order-6 entry and a new xa_node is needed, xas_t=
+ry_split()
+>>>> +will try to allocate one if possible. As a result, xas_try_split() =
+would only
+>>>> +need 1 xa_node instead of 8.
+>>>>     Functions and structures
+>>>>    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>>> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+>>>> index 0b618ec04115..9eb8c7425090 100644
+>>>> --- a/include/linux/xarray.h
+>>>> +++ b/include/linux/xarray.h
+>>>> @@ -1555,6 +1555,8 @@ int xa_get_order(struct xarray *, unsigned lon=
+g index);
+>>>>    int xas_get_order(struct xa_state *xas);
+>>>>    void xas_split(struct xa_state *, void *entry, unsigned int order=
+);
+>>>>    void xas_split_alloc(struct xa_state *, void *entry, unsigned int=
+ order, gfp_t);
+>>>> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int =
+order,
+>>>> +		gfp_t gfp);
+>>>>    #else
+>>>>    static inline int xa_get_order(struct xarray *xa, unsigned long i=
+ndex)
+>>>>    {
+>>>> @@ -1576,6 +1578,11 @@ static inline void xas_split_alloc(struct xa_=
+state *xas, void *entry,
+>>>>    		unsigned int order, gfp_t gfp)
+>>>>    {
+>>>>    }
+>>>> +
+>>>> +static inline void xas_try_split(struct xa_state *xas, void *entry,=
 
-It has 4 USB ports but only 3 are usable as the top left one is used
-for maskrom.
+>>>> +		unsigned int order, gfp_t gfp)
+>>>> +{
+>>>> +}
+>>>>    #endif
+>>>>     /**
+>>>> diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+>>>> index 6932a26f4927..598ca38a2f5b 100644
+>>>> --- a/lib/test_xarray.c
+>>>> +++ b/lib/test_xarray.c
+>>>> @@ -1857,6 +1857,49 @@ static void check_split_1(struct xarray *xa, =
+unsigned long index,
+>>>>    	xa_destroy(xa);
+>>>>    }
+>>>>   +static void check_split_2(struct xarray *xa, unsigned long index,=
 
-It has a USB-C port that is only used for powering the board.
+>>>> +				unsigned int order, unsigned int new_order)
+>>>> +{
+>>>> +	XA_STATE_ORDER(xas, xa, index, new_order);
+>>>> +	unsigned int i, found;
+>>>> +	void *entry;
+>>>> +
+>>>> +	xa_store_order(xa, index, order, xa, GFP_KERNEL);
+>>>> +	xa_set_mark(xa, index, XA_MARK_1);
+>>>> +
+>>>> +	xas_lock(&xas);
+>>>> +	xas_try_halve(&xas, xa, order, GFP_KERNEL);
+>>>> +	if (((new_order / XA_CHUNK_SHIFT) < (order / XA_CHUNK_SHIFT)) &&
+>>>> +	    new_order < order - 1) {
+>>>> +		XA_BUG_ON(xa, !xas_error(&xas) || xas_error(&xas) !=3D -EINVAL);
+>>>> +		xas_unlock(&xas);
+>>>> +		goto out;
+>>>> +	}
+>>>> +	for (i =3D 0; i < (1 << order); i +=3D (1 << new_order))
+>>>> +		__xa_store(xa, index + i, xa_mk_index(index + i), 0);
+>>>> +	xas_unlock(&xas);
+>>>> +
+>>>> +	for (i =3D 0; i < (1 << order); i++) {
+>>>> +		unsigned int val =3D index + (i & ~((1 << new_order) - 1));
+>>>> +		XA_BUG_ON(xa, xa_load(xa, index + i) !=3D xa_mk_index(val));
+>>>> +	}
+>>>> +
+>>>> +	xa_set_mark(xa, index, XA_MARK_0);
+>>>> +	XA_BUG_ON(xa, !xa_get_mark(xa, index, XA_MARK_0));
+>>>> +
+>>>> +	xas_set_order(&xas, index, 0);
+>>>> +	found =3D 0;
+>>>> +	rcu_read_lock();
+>>>> +	xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_1) {
+>>>> +		found++;
+>>>> +		XA_BUG_ON(xa, xa_is_internal(entry));
+>>>> +	}
+>>>> +	rcu_read_unlock();
+>>>> +	XA_BUG_ON(xa, found !=3D 1 << (order - new_order));
+>>>> +out:
+>>>> +	xa_destroy(xa);
+>>>> +}
+>>>> +
+>>>>    static noinline void check_split(struct xarray *xa)
+>>>>    {
+>>>>    	unsigned int order, new_order;
+>>>> @@ -1868,6 +1911,10 @@ static noinline void check_split(struct xarra=
+y *xa)
+>>>>    			check_split_1(xa, 0, order, new_order);
+>>>>    			check_split_1(xa, 1UL << order, order, new_order);
+>>>>    			check_split_1(xa, 3UL << order, order, new_order);
+>>>> +
+>>>> +			check_split_2(xa, 0, order, new_order);
+>>>> +			check_split_2(xa, 1UL << order, order, new_order);
+>>>> +			check_split_2(xa, 3UL << order, order, new_order);
+>>>>    		}
+>>>>    	}
+>>>>    }
+>>>> diff --git a/lib/xarray.c b/lib/xarray.c
+>>>> index 116e9286c64e..c38beca77830 100644
+>>>> --- a/lib/xarray.c
+>>>> +++ b/lib/xarray.c
+>>>> @@ -1007,6 +1007,31 @@ static void node_set_marks(struct xa_node *no=
+de, unsigned int offset,
+>>>>    	}
+>>>>    }
+>>>>   +static struct xa_node *__xas_alloc_node_for_split(struct xa_state=
+ *xas,
+>>>> +		void *entry, gfp_t gfp)
+>>>> +{
+>>>> +	unsigned int i;
+>>>> +	void *sibling =3D NULL;
+>>>> +	struct xa_node *node;
+>>>> +	unsigned int mask =3D xas->xa_sibs;
+>>>> +
+>>>> +	node =3D kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru,=
+ gfp);
+>>>> +	if (!node)
+>>>> +		return NULL;
+>>>> +	node->array =3D xas->xa;
+>>>> +	for (i =3D 0; i < XA_CHUNK_SIZE; i++) {
+>>>> +		if ((i & mask) =3D=3D 0) {
+>>>> +			RCU_INIT_POINTER(node->slots[i], entry);
+>>>> +			sibling =3D xa_mk_sibling(i);
+>>>> +		} else {
+>>>> +			RCU_INIT_POINTER(node->slots[i], sibling);
+>>>> +		}
+>>>> +	}
+>>>> +	RCU_INIT_POINTER(node->parent, xas->xa_alloc);
+>>>> +
+>>>> +	return node;
+>>>> +}
+>>>> +
+>>>>    /**
+>>>>     * xas_split_alloc() - Allocate memory for splitting an entry.
+>>>>     * @xas: XArray operation state.
+>>>> @@ -1025,7 +1050,6 @@ void xas_split_alloc(struct xa_state *xas, voi=
+d *entry, unsigned int order,
+>>>>    		gfp_t gfp)
+>>>>    {
+>>>>    	unsigned int sibs =3D (1 << (order % XA_CHUNK_SHIFT)) - 1;
+>>>> -	unsigned int mask =3D xas->xa_sibs;
+>>>>     	/* XXX: no support for splitting really large entries yet */
+>>>>    	if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT <=3D order))
+>>>> @@ -1034,23 +1058,9 @@ void xas_split_alloc(struct xa_state *xas, vo=
+id *entry, unsigned int order,
+>>>>    		return;
+>>>>     	do {
+>>>> -		unsigned int i;
+>>>> -		void *sibling =3D NULL;
+>>>> -		struct xa_node *node;
+>>>> -
+>>>> -		node =3D kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru=
+, gfp);
+>>>> +		struct xa_node *node =3D __xas_alloc_node_for_split(xas, entry, g=
+fp);
+>>>>    		if (!node)
+>>>>    			goto nomem;
+>>>> -		node->array =3D xas->xa;
+>>>> -		for (i =3D 0; i < XA_CHUNK_SIZE; i++) {
+>>>> -			if ((i & mask) =3D=3D 0) {
+>>>> -				RCU_INIT_POINTER(node->slots[i], entry);
+>>>> -				sibling =3D xa_mk_sibling(i);
+>>>> -			} else {
+>>>> -				RCU_INIT_POINTER(node->slots[i], sibling);
+>>>> -			}
+>>>> -		}
+>>>> -		RCU_INIT_POINTER(node->parent, xas->xa_alloc);
+>>>>    		xas->xa_alloc =3D node;
+>>>>    	} while (sibs-- > 0);
+>>>>   @@ -1122,6 +1132,100 @@ void xas_split(struct xa_state *xas, void =
+*entry, unsigned int order)
+>>>>    	xas_update(xas, node);
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(xas_split);
+>>>> +
+>>>> +/**
+>>>> + * xas_try_split() - Try to split a multi-index entry.
+>>>> + * @xas: XArray operation state.
+>>>> + * @entry: New entry to store in the array.
+>>>> + * @order: Current entry order.
+>>>> + * @gfp: Memory allocation flags.
+>>>> + *
+>>>> + * The size of the new entries is set in @xas.  The value in @entry=
+ is
+>>>> + * copied to all the replacement entries. If and only if one xa_nod=
+e needs to
+>>>> + * be allocated, the function will use @gfp to get one. If more xa_=
+node are
+>>>> + * needed, the function gives EINVAL error.
+>>>> + *
+>>>> + * Context: Any context.  The caller should hold the xa_lock.
+>>>> + */
+>>>> +void xas_try_split(struct xa_state *xas, void *entry, unsigned int =
+order,
+>>>> +		gfp_t gfp)
+>>>> +{
+>>>> +	unsigned int sibs =3D (1 << (order % XA_CHUNK_SHIFT)) - 1;
+>>>> +	unsigned int offset, marks;
+>>>> +	struct xa_node *node;
+>>>> +	void *curr =3D xas_load(xas);
+>>>> +	int values =3D 0;
+>>>> +
+>>>> +	node =3D xas->xa_node;
+>>>> +	if (xas_top(node))
+>>>> +		return;
+>>>> +
+>>>> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
+>>>> +		gfp |=3D __GFP_ACCOUNT;
+>>>> +
+>>>> +	marks =3D node_get_marks(node, xas->xa_offset);
+>>>> +
+>>>> +	offset =3D xas->xa_offset + sibs;
+>>>> +	do {
+>>>> +		if (xas->xa_shift < node->shift) {
+>>>> +			struct xa_node *child =3D xas->xa_alloc;
+>>>> +			unsigned int expected_sibs =3D
+>>>> +				(1 << ((order - 1) % XA_CHUNK_SHIFT)) - 1;
+>>>> +
+>>>> +			/*
+>>>> +			 * No support for splitting sibling entries
+>>>> +			 * (horizontally) or cascade split (vertically), which
+>>>> +			 * requires two or more new xa_nodes.
+>>>> +			 * Since if one xa_node allocation fails,
+>>>> +			 * it is hard to free the prior allocations.
+>>>> +			 */
+>>>> +			if (sibs || xas->xa_sibs !=3D expected_sibs) {
+>>>> +				xas_destroy(xas);
+>>>> +				xas_set_err(xas, -EINVAL);
+>>>> +				return;
+>>>> +			}
+>>>> +
+>>>> +			if (!child) {
+>>>> +				child =3D __xas_alloc_node_for_split(xas, entry,
+>>>> +						gfp);
+>>>> +				if (!child) {
+>>>> +					xas_destroy(xas);
+>>>> +					xas_set_err(xas, -ENOMEM);
+>>>> +					return;
+>>>> +				}
+>>>> +			}
+>>>
+>>> No expert on this, just wondering ...
+>>>
+>>> ... what is the effect if we halfway-through fail the split? Is it ok=
+ay to leave that "partially split" thing in place? Can callers deal with =
+that?
+>>
+>> Good question.
+>>
+>
+> Let me rephrase: In __split_unmapped_folio(), we call xas_try_split(). =
+If that fails, we stop the split and effectively skip over the __split_fo=
+lio_to_order(). The folio remains unsplit (no order change: old_order).
 
-Signed-off-by: Stephen Chen <stephen@radxa.com>
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3576-rock-4d.dts      | 689 ++++++++++++++++++
- 2 files changed, 690 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+Right. To be more specific, in !uniform_split case, the original folio
+can be split and old_order can change. Namely, if the caller wants to
+split an order-9, folio_split() can split it to 2 order-6s, 1 order-7,
+and 1 order-8 then cannot allocate a new xa_node due to memory constrains=
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index def1222c1907e..a112aeb37948a 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -132,6 +132,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-new file mode 100644
-index 0000000000000..5dc1c18a3b211
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-@@ -0,0 +1,689 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2024 Radxa Computer (Shenzhen) Co., Ltd.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/pwm/pwm.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+#include <dt-bindings/usb/pd.h>
-+#include "rk3576.dtsi"
-+
-+/ {
-+	model = "Radxa ROCK 4D";
-+	compatible = "radxa,rock-4d", "rockchip,rk3576";
-+
-+	aliases {
-+		ethernet0 = &gmac0;
-+		mmc0 = &sdmmc;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:1500000n8";
-+	};
-+
-+	leds: leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&led_rgb_g &led_rgb_r>;
-+
-+		power-led {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "default-on";
-+		};
-+
-+		user-led {
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	vcc_12v0_dcin: regulator-vcc-12v0-dcin {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-name = "vcc_12v0_dcin";
-+	};
-+
-+	vcc_1v1_nldo_s3: regulator-vcc-1v1-nldo-s3 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1100000>;
-+		regulator-max-microvolt = <1100000>;
-+		regulator-name = "vcc_1v1_nldo_s3";
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_1v2_ufs_vccq_s0: regulator-vcc-1v2-ufs-vccq-s0 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-name = "vcc_1v2_ufs_vccq_s0";
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_1v8_s0: regulator-vcc-1v8-s0 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-name = "vcc_1v8_s0";
-+		vin-supply = <&vcc_1v8_s3>;
-+	};
-+
-+	vcc_1v8_ufs_vccq2_s0: regulator-vcc1v8-ufs-vccq2-s0 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-name = "vcc_1v8_ufs_vccq2_s0";
-+		vin-supply = <&vcc_1v8_s3>;
-+	};
-+
-+	vcc_2v0_pldo_s3: regulator-vcc-2v0-pldo-s3 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <2000000>;
-+		regulator-max-microvolt = <2000000>;
-+		regulator-name = "vcc_2v0_pldo_s3";
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_3v3_pcie: regulator-vcc-3v3-pcie {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pcie_pwren>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-name = "vcc_3v3_pcie";
-+		startup-delay-us = <5000>;
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_3v3_rtc_s5: regulator-vcc-3v3-rtc-s5 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-name = "vcc_3v3_rtc_s5";
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_3v3_s0: regulator-vcc-3v3-s0 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-name = "vcc_3v3_s0";
-+		vin-supply = <&vcc_3v3_s3>;
-+	};
-+
-+	vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-name = "vcc_3v3_ufs_s0";
-+		vin-supply = <&vcc_5v0_sys>;
-+	};
-+
-+	vcc_5v0_device: regulator-vcc-5v0-device {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-name = "vcc_5v0_device";
-+		vin-supply = <&vcc_12v0_dcin>;
-+	};
-+
-+	vcc_5v0_host: regulator-vcc-5v0-host {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio0 RK_PD3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_host_pwren>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-name = "vcc5v0_host";
-+		vin-supply = <&vcc_5v0_device>;
-+	};
-+
-+	vcc_5v0_sys: regulator-vcc-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-name = "vcc_5v0_sys";
-+		vin-supply = <&vcc_12v0_dcin>;
-+	};
-+};
-+
-+&combphy1_psu {
-+	status = "okay";
-+};
-+
-+&cpu_b0 {
-+	cpu-supply = <&vdd_cpu_big_s0>;
-+};
-+
-+&cpu_b1 {
-+	cpu-supply = <&vdd_cpu_big_s0>;
-+};
-+
-+&cpu_b2 {
-+	cpu-supply = <&vdd_cpu_big_s0>;
-+};
-+
-+&cpu_b3 {
-+	cpu-supply = <&vdd_cpu_big_s0>;
-+};
-+
-+&cpu_l0 {
-+	cpu-supply = <&vdd_cpu_lit_s0>;
-+};
-+
-+&cpu_l1 {
-+	cpu-supply = <&vdd_cpu_lit_s0>;
-+};
-+
-+&cpu_l2 {
-+	cpu-supply = <&vdd_cpu_lit_s0>;
-+};
-+
-+&cpu_l3 {
-+	cpu-supply = <&vdd_cpu_lit_s0>;
-+};
-+
-+&gmac0 {
-+	clock_in_out = "output";
-+	phy-handle = <&rgmii_phy0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&eth0m0_miim
-+		     &eth0m0_tx_bus2
-+		     &eth0m0_rx_bus2
-+		     &eth0m0_rgmii_clk
-+		     &eth0m0_rgmii_bus
-+		     &ethm0_clk0_25m_out>;
-+	status = "okay";
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_gpu_s0>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	pmic@23 {
-+		compatible = "rockchip,rk806";
-+		reg = <0x23>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_pins
-+			     &rk806_dvs1_null
-+			     &rk806_dvs2_null
-+			     &rk806_dvs3_null>;
-+		system-power-controller;
-+		vcc1-supply = <&vcc_5v0_sys>;
-+		vcc2-supply = <&vcc_5v0_sys>;
-+		vcc3-supply = <&vcc_5v0_sys>;
-+		vcc4-supply = <&vcc_5v0_sys>;
-+		vcc5-supply = <&vcc_5v0_sys>;
-+		vcc6-supply = <&vcc_5v0_sys>;
-+		vcc7-supply = <&vcc_5v0_sys>;
-+		vcc8-supply = <&vcc_5v0_sys>;
-+		vcc9-supply = <&vcc_5v0_sys>;
-+		vcc10-supply = <&vcc_5v0_sys>;
-+		vcc11-supply = <&vcc_2v0_pldo_s3>;
-+		vcc12-supply = <&vcc_5v0_sys>;
-+		vcc13-supply = <&vcc_1v1_nldo_s3>;
-+		vcc14-supply = <&vcc_1v1_nldo_s3>;
-+		vcca-supply = <&vcc_5v0_sys>;
-+
-+		rk806_dvs1_null: dvs1-null-pins {
-+			pins = "gpio_pwrctrl1";
-+			function = "pin_fun0";
-+		};
-+
-+		rk806_dvs1_pwrdn: dvs1-pwrdn-pins {
-+			pins = "gpio_pwrctrl1";
-+			function = "pin_fun2";
-+		};
-+
-+		rk806_dvs1_rst: dvs1-rst-pins {
-+			pins = "gpio_pwrctrl1";
-+			function = "pin_fun3";
-+		};
-+
-+		rk806_dvs1_slp: dvs1-slp-pins {
-+			pins = "gpio_pwrctrl1";
-+			function = "pin_fun1";
-+		};
-+
-+		rk806_dvs2_dvs: dvs2-dvs-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun4";
-+		};
-+
-+		rk806_dvs2_gpio: dvs2-gpio-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun5";
-+		};
-+
-+		rk806_dvs2_null: dvs2-null-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun0";
-+		};
-+
-+		rk806_dvs2_pwrdn: dvs2-pwrdn-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun2";
-+		};
-+
-+		rk806_dvs2_rst: dvs2-rst-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun3";
-+		};
-+
-+		rk806_dvs2_slp: dvs2-slp-pins {
-+			pins = "gpio_pwrctrl2";
-+			function = "pin_fun1";
-+		};
-+
-+		rk806_dvs3_dvs: dvs3-dvs-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun4";
-+		};
-+
-+		rk806_dvs3_gpio: dvs3-gpio-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun5";
-+		};
-+
-+		rk806_dvs3_null: dvs3-null-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun0";
-+		};
-+
-+		rk806_dvs3_pwrdn: dvs3-pwrdn-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun2";
-+		};
-+
-+		rk806_dvs3_rst: dvs3-rst-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun3";
-+		};
-+
-+		rk806_dvs3_slp: dvs3-slp-pins {
-+			pins = "gpio_pwrctrl3";
-+			function = "pin_fun1";
-+		};
-+
-+		regulators {
-+			vdd_cpu_big_s0: dcdc-reg1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-enable-ramp-delay = <400>;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-name = "vdd_cpu_big_s0";
-+				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdd_npu_s0: dcdc-reg2 {
-+				regulator-boot-on;
-+				regulator-enable-ramp-delay = <400>;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-name = "vdd_npu_s0";
-+				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdd_cpu_lit_s0: dcdc-reg3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-name = "vdd_cpu_lit_s0";
-+				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <750000>;
-+				};
-+			};
-+
-+			vcc_3v3_s3: dcdc-reg4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc_3v3_s3";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
-+				};
-+			};
-+
-+			vdd_gpu_s0: dcdc-reg5 {
-+				regulator-boot-on;
-+				regulator-enable-ramp-delay = <400>;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <900000>;
-+				regulator-name = "vdd_gpu_s0";
-+				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <850000>;
-+				};
-+			};
-+
-+			vddq_ddr_s0: dcdc-reg6 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-name = "vddq_ddr_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdd_logic_s0: dcdc-reg7 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <800000>;
-+				regulator-name = "vdd_logic_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcc_1v8_s3: dcdc-reg8 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc_1v8_s3";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vdd2_ddr_s3: dcdc-reg9 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-name = "vdd2_ddr_s3";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
-+			};
-+
-+			vdd_ddr_s0: dcdc-reg10 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <550000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdd_ddr_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcca_1v8_s0: pldo-reg1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcca_1v8_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcca1v8_pldo2_s0: pldo-reg2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcca1v8_pldo2_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdda_1v2_s0: pldo-reg3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdda_1v2_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcca_3v3_s0: pldo-reg4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcca_3v3_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vccio_sd_s0: pldo-reg5 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vccio_sd_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcca1v8_pldo6_s3: pldo-reg6 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcca1v8_pldo6_s3";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vdd_0v75_s3: nldo-reg1 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <750000>;
-+				regulator-name = "vdd_0v75_s3";
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <750000>;
-+				};
-+			};
-+
-+			vdda_ddr_pll_s0: nldo-reg2 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-name = "vdda_ddr_pll_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdda0v75_hdmi_s0: nldo-reg3 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <837500>;
-+				regulator-max-microvolt = <837500>;
-+				regulator-name = "vdda0v75_hdmi_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdda_0v85_s0: nldo-reg4 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-name = "vdda_0v85_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdda_0v75_s0: nldo-reg5 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <750000>;
-+				regulator-name = "vdda_0v75_s0";
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	hym8563: rtc@51 {
-+		compatible = "haoyu,hym8563";
-+		reg = <0x51>;
-+		#clock-cells = <0>;
-+		clock-output-names = "hym8563";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA0 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hym8563_int>;
-+		wakeup-source;
-+	};
-+};
-+
-+&mdio0 {
-+	rgmii_phy0: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x1>;
-+		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rtl8211f_rst>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <100000>;
-+		reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&pinctrl {
-+	hym8563 {
-+		hym8563_int: hym8563-int {
-+			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
-+
-+	leds {
-+		led_rgb_g: led-green-en {
-+			rockchip,pins = <0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		led_rgb_r: led-red-en {
-+			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	rtl8211f {
-+		rtl8211f_rst: rtl8211f-rst {
-+			rockchip,pins = <2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie {
-+		pcie_pwren: pcie-pwren {
-+			rockchip,pins = <2 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	usb {
-+		usb_host_pwren: usb-host-pwren {
-+			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	max-frequency = <200000000>;
-+	no-sdio;
-+	no-mmc;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_3v3_s3>;
-+	vqmmc-supply = <&vccio_sd_s0>;
-+	status = "okay";
-+};
-+
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0m0_xfer>;
-+	status = "okay";
-+};
-+
-+&usb_drd1_dwc3 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
--- 
-2.48.1
+and stop. The caller will get 2 order-6s, 1 order-7, and 1 order-8
+and folio_split() returns -ENOMEM. The caller needs to handle this
+situation, although it should be quite rare. Because unless the caller
+is splitting order-12 (or even higher orders) to order-0, at most
+1 xa_node is needed.
 
+>
+> xas_try_split() was instructed to split from old_order -> split_order.
+>
+> xas_try_split() documents that: "The value in @entry is copied to all t=
+he replacement entries.", meaning after the split, all entries will be po=
+inting at the folio.
+
+Right.
+
+>
+> Now, can it happen that xas_try_split() would ever perform a partial sp=
+lit in any way, when invoked from __split_unmapped_folio(), such that we =
+run into the do { } while(); loop and fail with -ENOMEM after already hav=
+ing performed changes -- xas_update().
+>
+> Or is that simply impossible?
+
+Right. It is impossible. xas_try_split() either splits by copying @entry
+to all the replacement entries, or is trying to allocate a new xa_node,
+which can result in -ENOMEM. These two will not be mixed.
+
+>
+> Maybe it's just the do { } while(); loop in there that is confusing me.=
+ (again, no expert)
+
+Yeah, that the do while loop is confusing. Let me restructure the code
+so that the do while loop only runs in the @entry copy case not the
+xa_node allocation case.
+
+>
+>> xas_try_split() imposes what kind of split it does and is usually used=
+ to
+>> split from order N to order N-1:
+>
+> You mean that old_order -> split_order will in the case of __split_unma=
+pped_folio() always be a difference of 1?
+
+Yes for !uniform_split case. For uniform_split case (split_huge_page*() u=
+ses),
+xas_split() is used and all required new xa_node are preallocated by
+xas_split_alloc() in __folio_split().
+
+>
+>>
+>> 1. when N is a multiplier of XA_CHUNK_SHIFT, a new xa_node is needed, =
+so
+>> either child (namely xas->xa_alloc) is not NULL, meaning someone calle=
+d
+>> xa_nomem() to allocate a xa_node before xas_try_split() or child is NU=
+LL
+>> and an allocation is needed. If child is still NULL after the allocati=
+on,
+>> meaning we are out of memory, no split is done;
+>>
+>> 2. when N is not, no new xa_node is needed, xas_try_split() just rewri=
+tes
+>> existing slot values to perform the split (the code after the hunk abo=
+ve).
+>> No fail will happen. For this split, since no new xa_node is needed,
+>> the caller is actually allowed to split from N to a value smaller than=
+
+>> N-1 as long as N-1 is >=3D (N - N % XA_CHUNK_SHIFT).
+>>
+>>
+>> Various checks make sure xas_try_split() only sees the two above situa=
+tion:
+>>
+>> a. "xas->xa_shift < node->shift" means the split crosses XA_CHUNK_SHIF=
+T,
+>> at least 1 new xa_node is needed; the else branch only handles the cas=
+e
+>> 2 above;
+>>
+>> b. for the then branch the "if (sibs || xas->xa_sibs !=3D expected_sib=
+s)"
+>> check makes sure N is a multiplier of XA_CHUNK_SHIFT and the new order=
+
+>> has to be N-1. In "if (sibs || xas->xa_sibs !=3D expected_sibs)",
+>> "sibs !=3D 0" means the from order N covers more than 1 slot, so more =
+than 1
+>> new xa_node is needed, "xas->xa_sibs !=3D expected_sibs" makes sure
+>> the new order is N-1 (you can see it from how expected_sibs is assigne=
+d).
+>
+> Thanks!
+>
+>>
+>> Let me know if you have any other question.
+>
+> Thanks for the details!
+
+Thank you for checking the code. :)
+
+Best Regards,
+Yan, Zi
 
