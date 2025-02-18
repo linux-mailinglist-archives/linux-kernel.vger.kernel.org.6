@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-518773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03527A39439
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:57:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E44A3943E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768E17A1479
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07307188886E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4082A204C38;
-	Tue, 18 Feb 2025 07:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8732207644;
+	Tue, 18 Feb 2025 07:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cfdLUURU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gucWHkHv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9677B14A09E;
-	Tue, 18 Feb 2025 07:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C33B1EEA30;
+	Tue, 18 Feb 2025 07:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739865426; cv=none; b=cA4orcIsJhZ185rc7S+07Tn+lTVyFrTWNWLotJ0j3Kh089zwpGSclryE7Qu8nlrMjEE3wYEvrg/25iMzMCEboMppQrlyhZLK/7KAmOvCJ2gGvPI/zYKG81NXlCtPCYqnGqfxrCDgVS+/n75R+Iv2GJJsvL7IYFXb8G8ySaSiZsY=
+	t=1739865573; cv=none; b=I7AClUV4XG5LAsuyphFH45xARjY1/OV7sUhBK3i5DBdsCRrBvF/9NGVn2K9HzOeu33sXErRUu2NlYydAfnTD2GmjYeYjxmPpZ/yPyM/ujwvg1DpB5cgT/JJkb+TE5mP08m2EFbxUfP3BBWgRpUmbgO/EePKXuA38vjFP7rMf6HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739865426; c=relaxed/simple;
-	bh=PWXaRy3Kpn4O/7AGgg9asSH7PMFAQwYpAHo4UKMP4DI=;
+	s=arc-20240116; t=1739865573; c=relaxed/simple;
+	bh=qGtiHyXODS5M/qLlBpOFQRYkyWWrYLh3zsYeNYFP0qs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACtrbfJwT4jmgdnawMuJQmXMtDGexuBkgyHlyJspVNzELMFJ0WcB9aIWb1cV+1YRbSRQwV0s3NJNEHklTrFCdg72DPpxsgY3sxOQtR6apdajD+Ue4O/dEqVzC6DMzsZx2MWigHKqOMRaZ560zXLp7kCPz/RC+90FiG/VupiVCNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cfdLUURU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840E5C4CEE2;
-	Tue, 18 Feb 2025 07:57:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739865426;
-	bh=PWXaRy3Kpn4O/7AGgg9asSH7PMFAQwYpAHo4UKMP4DI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=B244td+UJAXtN7IaaBiy9C+EWfewKfnk4FaarXgCTBDiGlLofRLHtyh/zafr/0mzgGfA4hd/k8M9tuoHVc4Q5UgN+eXf94JHow68YypC9SYqSITvdp6ONwtSJRVuu0lIqhNfKjLOTE/vSNbO86s/kIGlj/gVODeJ5h8HVSeZ1Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gucWHkHv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 81CF940E0212;
+	Tue, 18 Feb 2025 07:59:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gQrTBomRItDm; Tue, 18 Feb 2025 07:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739865562; bh=fKnAU/KEF7MFmyqTMzT8Xecp54gHhgt1Av8J7B4+x8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cfdLUURUDyNJptMiASFa3y9vKuEQwFBEmVLess4icBG1cyz3CZj9JrVNsDbAGqY5M
-	 1/lXmimYgep/RTiBa8xiTOu/YFF0IpWMGwcf+kcjkv1oB50kqU6h7cYn9bsDmcCjsY
-	 36OqAbjrwf/EX9jql6Z/HD+fCar4r6x2sZ5vxWbs=
-Date: Tue, 18 Feb 2025 08:57:03 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Fiona Behrens <me@kloenk.dev>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] rust: io: rename `io::Io` accessors
-Message-ID: <2025021817-chirping-fencing-d991@gregkh>
-References: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
+	b=gucWHkHvSldV2Ggctopr4jGimaqrR3MK9VEo6eOnFu0C8Z5MxqhiJn1PS5T6CRF0t
+	 r1pZLliZLk7JWUwB31b+HBNL4oWQpvOktGYEm2lFQ/dx3d+8FXVBbSE0UDGenVKJ8G
+	 HU15damPO97VjzSf4gjxGs4FwjwP+FZXXzGdc8VKc7//Z/UR1aEKvzqrtv4MHjSwau
+	 PywKfc3Jc0W/Dld+/7rFBl2cGlY/vFmSC+nDbtS9507L8P+T+HqZzB2LFhFqsw4hLv
+	 tgcK6lAuQ2UgBuPiRcRFZXu1cEx1/Ob2eQXg9iuNvkBCFChwBFOnklCdDVtpbSuAa+
+	 tmnPFSQXwLPPZgbDqB+UEMhNhxsyxNJtjSvKrcPRyy38koyCFgXDDUu+ujxkdffomG
+	 tsIXYbiDzvQXc0sjcnXqQTi0ImfmpvETZLaAESZ6DbMDP1zdwGe17fdrlYaNHCBRyZ
+	 Z39al1oD7Vqsn44UCQTwuoRCw59eFnIiub0+fFg6/jqvbFsqGw98OFaEo4p5AzV2ls
+	 C9KtNZu2NMa7F5D8x4tXZZwBF6jQ0pH0fQznD4QwGhvAOubp4VnHjrACfdzGu9WbLx
+	 m9825snpbUITnCKZZ/tRqgzoxB5ujbLm04ZaElgiqF3SaKGAi5X+nDxzsN9xi8kwYX
+	 LKogMSFQphEd4EIlPLrEN2MA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2AF4A40E020E;
+	Tue, 18 Feb 2025 07:59:05 +0000 (UTC)
+Date: Tue, 18 Feb 2025 08:58:58 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 1/5] x86/mce: Collect error message for severities
+ below MCE_PANIC_SEVERITY
+Message-ID: <20250218075858.GAZ7Q9wp_WQUsjq2AW@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-2-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
+In-Reply-To: <20250217063335.22257-2-xueshuai@linux.alibaba.com>
 
-On Mon, Feb 17, 2025 at 09:58:14PM +0100, Fiona Behrens wrote:
-> Rename the I/O accessors provided by `Io` to encode the type as
-> number instead of letter. This is in preparation for Port I/O support
-> to use a trait for generic accessors.
-> 
-> Add a `c_fn` argument to the accessor generation macro to translate
-> between rust and C names.
-> 
-> Suggested-by: Danilo Krummrich <dakr@kernel.org>
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/PIO.20support/near/499460541
-> Signed-off-by: Fiona Behrens <me@kloenk.dev>
-> ---
->  rust/kernel/io.rs               | 66 ++++++++++++++++++++---------------------
->  samples/rust/rust_driver_pci.rs | 12 ++++----
->  2 files changed, 39 insertions(+), 39 deletions(-)
+On Mon, Feb 17, 2025 at 02:33:31PM +0800, Shuai Xue wrote:
+> Currently, mce_no_way_out() only collects error messages when the error
+> severity is equal to `MCE_PANIC_SEVERITY`. To improve diagnostics,
+> modify the behavior to also collect error messages when the severity is
+> less than `MCE_PANIC_SEVERITY`.
 
-This is good, thanks!
+That function is literally called "no way out" as in, is the error severe
+enough so that there is no way out.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Now you went and stomped all over that to "improve diagnostics". What
+diagnostsics? Your commit messages need to explain in detail why exactly
+a patch exists.
 
-Want me to take this through my tree?
+So nope.
 
-thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
-greg k-h
+https://people.kernel.org/tglx/notes-about-netiquette
 
