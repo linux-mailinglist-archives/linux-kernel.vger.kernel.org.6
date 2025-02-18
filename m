@@ -1,216 +1,173 @@
-Return-Path: <linux-kernel+bounces-518633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7EDA39262
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:06:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB54A39266
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444CD1627A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:06:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E163D16E6E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FA21B0425;
-	Tue, 18 Feb 2025 05:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4681B0420;
+	Tue, 18 Feb 2025 05:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PkLooSNF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YgaXaIwI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0CE1ACEB0;
-	Tue, 18 Feb 2025 05:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739855161; cv=fail; b=cuSQzm55S49ob5gSuRiXyF6rDFIcFFx1RN72bPA44hMtClgFWCBPon1++Vt/mQFUlueugGi8ziB+VAwrL/dlp7QzRj06GlPRk2GvncjZTpnktQwQcP2jSzlHe1X0zPMCskZAoXiRl9Sk4RckzxdBZU/psLvEMUOwgVsZf+7jJMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739855161; c=relaxed/simple;
-	bh=dJVr2yT4DipbSLIwFSFcDKtcHwWX19Ib8fGbCNlwipE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TFFPe3b284bBXW4jWnj9XuFKf4sf9eR3nGYG9R+nrLdJDWR7gqHH/6+8imaGjDTrYIHFo/2A8ztUEWAQGRRyINjqo5k+Z2v7gkE5joPvagE+PMzD4Q4X6/Omd54OiEnurXfd1iiilDxgCF7WUsogpLZoeKo8bcx43mRyTVX80nY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PkLooSNF; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739855159; x=1771391159;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dJVr2yT4DipbSLIwFSFcDKtcHwWX19Ib8fGbCNlwipE=;
-  b=PkLooSNFZI+jr3JHMBXRq80KjyCmCQtqlESb/MzauFnfKMZFmG5MeRvf
-   hKiyE/WdN9QhIzPbtK/HG+8Bl477wOxGcwvos/oLYSfmpW+UlmSQk1xte
-   h1CI/36BIIbsAUEPw/mJIL9tFE6hTU51dIGQV79oxZMfis4ZV07+2PmaK
-   CD9I9FlwLIEiX/PO+CzO5t87t/Sjgcx/nCZlmZu1Iis23c/kFxRuSzbX2
-   6AbiT+tsf2paUarDNEJnuRfS3/thMfhH5abf36r8yg5oH02EA4Afzhwm7
-   Z5omkIHN60jOLqjuMpGYohpHKZ9iZooy8jUT8A5tTvRYKKFJMMZB4Roc/
-   w==;
-X-CSE-ConnectionGUID: kAVFXPuATwqiHPX6wKcSQA==
-X-CSE-MsgGUID: 2V2SYASFQlGBRoQ5Yz5fxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44463520"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="44463520"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 21:05:59 -0800
-X-CSE-ConnectionGUID: 75HfAZ9TSA2xpXyFjCY1UA==
-X-CSE-MsgGUID: mABipiEvQVq0eIWijUqutA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114754150"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Feb 2025 21:05:58 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 17 Feb 2025 21:05:57 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 21:05:57 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Feb 2025 21:05:56 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vJLAIDjF4MSEmBuX1paJ8/L/U2ME/VHtsB5olpThnARtXa8shNyifh302NeEZKZbjesyyvzQL7dPj48nS+RiMG+Zl1+hH5C1kaM/OGb6XF4VaOXke5pVlkCm8Uc0QNWxvTppYWOgPrFXBMNUCuww+Y5BrpD4mtdfuN+bG7U+kYDqksohSRxYicbky5pAoSbxiBCL0Sz4kpM0qLBCHlWCqDf4hZa2t8pkVV2vb1ojHFIgH+uTq3ZrY1wEv53th/kT2uuZhReWccSACdZz40ngMDJ5ftb//dUviSQfv8BnuIDvEQ6cnjrkn3+BaDXf/kaq3qrPm6xP11FWEiWSLMcILQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dJVr2yT4DipbSLIwFSFcDKtcHwWX19Ib8fGbCNlwipE=;
- b=IxiBUn0nwxnnBhVUT2Oqy4uPqQD2sloEe6KP0agFagfpUCuz+etvwneplStY7Y0xHyy9Y5W6vZpwj9s4a5SwOSzBU59+KQVhPCIIi8211muLmtwoRCmrEKtqpryHripF56/ykBnGIkcYdi8s1kgGmmQ1cTxkSYISaNZid/GJ6SRxXGq5zv05OmnM90LBs4RPGRRamWAh5nK+4d56c/NyTVoVxmmUWwafLOu/I/0/z2Sr5G77hH+3P5Oz0jeIPKtSS3bE2fYPXqgtGDwOi7KY3+IaEhJc1uqqi1c87A3VNCnCEOKaAT8eimNH+vqVCdmZ7bAn5Kaq0Yum3YGpNI6Sog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by CH2PR11MB8778.namprd11.prod.outlook.com (2603:10b6:610:281::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
- 2025 05:05:54 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%6]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
- 05:05:54 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"corbet@lwn.net" <corbet@lwn.net>, "will@kernel.org" <will@kernel.org>
-CC: "joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
-	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>, "mdf@kernel.org"
-	<mdf@kernel.org>, "mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
-	<smostafa@google.com>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
-	<yi.l.liu@intel.com>, "patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: RE: [PATCH v6 01/14] iommufd/fault: Move two fault functions out of
- the header
-Thread-Topic: [PATCH v6 01/14] iommufd/fault: Move two fault functions out of
- the header
-Thread-Index: AQHbbsByR+T3yhH5dkaDWdPy5109aLNMp+kA
-Date: Tue, 18 Feb 2025 05:05:54 +0000
-Message-ID: <BN9PR11MB52768167F61D64327CB819CA8CFA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <d47fb648e36a6a5f04e0d98d02fa71e47c4a77e8.1737754129.git.nicolinc@nvidia.com>
-In-Reply-To: <d47fb648e36a6a5f04e0d98d02fa71e47c4a77e8.1737754129.git.nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|CH2PR11MB8778:EE_
-x-ms-office365-filtering-correlation-id: f1008adf-7e68-4a56-cfa2-08dd4fd9ec13
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?VP01cC/3R0hIyjVw9sGgTzeahQqD9LzZnusErTNvg9XQp9mTjmCMKppjgK4i?=
- =?us-ascii?Q?mWhKaPzdSglDQ/UByHgLlvuYIlGQCGB2wdHv9HigbBgITNdJFQ6ii5XIiCwc?=
- =?us-ascii?Q?51OdkpgsXNV4lFhKe1th2UW4XSR5a10S8ineBzNa78nu53zPqbzd8uevjJuN?=
- =?us-ascii?Q?RHUY2FWeXnEJmlrAt7oYqdOJrEjagFMQ8s4zfSU3l9C+FYtqzjVyVf4RLo1S?=
- =?us-ascii?Q?qocvGWNW2dqJvL12obpgjn5+kb8eiiImv2dhuIFqxZEwB8c2T2UgxdxSoGA1?=
- =?us-ascii?Q?TW+CqirRtBcOl0+IO2pNX38J+dFpil3/5AX+8Igz/Gu8tgtljBKp3oxFQy3f?=
- =?us-ascii?Q?NcxoJrhYiaT3IKJmlHVv6pzeYIF/r/j5ETyWWe4/FAnWIg9Lh3fm1T1AAjBs?=
- =?us-ascii?Q?Fr5J/YhUO3qplPWrJjwcuJelml6jZLsCT7P/uewrWyzeydeWafCj4N0CwmIm?=
- =?us-ascii?Q?GVggZcvwm8sWBXiltyB0EggCRvrUNNc/9+ZTWVTp/Dqhgxjev5azXATPSquS?=
- =?us-ascii?Q?NkBm7skpN2JaJ7gFgDedwHSvSJNqKQ8m4ZRYp0H6KYyHNH0xNDaD4k/li/xC?=
- =?us-ascii?Q?5U6NMNXN+xepDAeOd7yGjUhiviLmVpczTmDG31Sq3KLfHwW2JjzyPUHHpL8F?=
- =?us-ascii?Q?dHZ959QEgEj1sseS9xiWqz9WyFFe/m+8tZaX1IPIyBrY7Qu8zIHuuPm4dTCf?=
- =?us-ascii?Q?fUGbSb9Pi9bn0gSLYjm4kedbHVy+j7OLr1MOhFLStWZEF+btZSkOxVsvErD/?=
- =?us-ascii?Q?IdfBG7gtvpgWL1BHuumKhj04ptwoi+6cmc8LI6ckzrl4UDCPH9kBC4u6/pRm?=
- =?us-ascii?Q?Wn+judkiKnXC4zULmHtB5jO2HEDBulvl+bwno4yV3NvahtpzPd0efJisa0zY?=
- =?us-ascii?Q?iyKwiYLk+cJJVFzsQIzg6H4Eh5JwMOb5jsbSr+jwgBdEhFFg/evrf2mOr3Lo?=
- =?us-ascii?Q?rbo8tkB4PxzHuEzfxdAcwq+0ys+5Q9tZIHmaahIJWx1Lnzk6+P4R/mPSgYA4?=
- =?us-ascii?Q?qhw4RSIr1WeRiaH/doIVGqhEHtCHGhU2zYxaFQUx7Xuczb0kh+0CadDq6Npp?=
- =?us-ascii?Q?sgOBSyoJLoLxLBboE8kfY6gX8zJkxVKAJ0J3GR5n8PpulezeRPL4O2jRLQiB?=
- =?us-ascii?Q?m2IY0lVZzgw4OvKUcg6d5L58Z4dHkgy1Sv6Xl1hC3SCxYkrOxqJzGRoO8MCt?=
- =?us-ascii?Q?PmqTIA2ZhyqzRsKap5rV3qXqdcuONIosUJ4t5Xb6T9POwrOe/pM+M4/1qNWe?=
- =?us-ascii?Q?hd1GG5GOGeO1swpuHQfGq2kP4SjKXwrSI8FD/gDKaxMOwrITWWlGHhuISVE5?=
- =?us-ascii?Q?/ovD7vBwkLbC6dGK4KNtrOgvDv2MQvush5n0RJyjd8sbLw3YqL7qgd9Izp+E?=
- =?us-ascii?Q?dELuuGTrKwzoBVA9vbyNGMCoAtbTfVEgUUBDnsZ8I3ruYialaeu7e3HuC3NW?=
- =?us-ascii?Q?JvJG7465TU9viVwUBih4MixsV6alD7MN?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?y8J3Ye51+u6DJvQfLDEMrx+Oq0lBQDymefd35f+CBYQ/g+jLcx+/gyQKO1zz?=
- =?us-ascii?Q?pcqZAaBZETBU4yJ9KEo3HZDMNj2IIPG+SJPX+Ww/Idb3kRy43amGvxAPpx+Q?=
- =?us-ascii?Q?OWKTSKcPx44MdFk39ka2kJ04g9RwneAy2RoNsbIrzEQG5USzDQdK+eMQJbIZ?=
- =?us-ascii?Q?QarPQ8KYb2gzqXPe4/PArlSg7Vb0wa8PRCiGv3KQlPT8xO6zl4y0SfznS/44?=
- =?us-ascii?Q?ZehFDmkC/8XCM7YY+qjykBkrntObUQnf3I8NdT/Rv84TjaZKWo4PtbQ2CvhA?=
- =?us-ascii?Q?t8snbGfTqOwBcV4JohDmwxPo7PWexrdUxdl9PMYV0utx730b2zX2tD+oMKz3?=
- =?us-ascii?Q?wPZtvEx/RWvWpO+8HWCH27DC+CcNG/G6l591aVLP/441tVKt1lBKBPM+Rn0I?=
- =?us-ascii?Q?XciTO1m8IBCR1j8rHiAd8NtKKauX77L5d8rLc/yNHVcQBg5pdSDrywB6KSC/?=
- =?us-ascii?Q?WJKDMV9xBIck2pSSeC/YPaifeP6IZsBXi3pcFFwHuCGer6g49u/nJqKGIRQT?=
- =?us-ascii?Q?ub5RCXNlcWLKgvQz9R/V8RJ3z4SEYSkWelajxn9e0/kJj6vqwI8WC8JQJrio?=
- =?us-ascii?Q?7IDsees/51oMRHiJManl6ld4+WezlAd9MH56ML85VvoKex5FQzu7bR/zmpfT?=
- =?us-ascii?Q?14fgn8PJn9Yo2Rba8vRHN/baomjo369eaOPaUUPxzgxDkw1bLuXF614QfrFe?=
- =?us-ascii?Q?9hJ9MZ9925M1GXObwixOM8CeJI1JYBFCdXE3WtfiNsOsLeY5MXM1QcLveHzv?=
- =?us-ascii?Q?ScjfkhYne3MNS15hINONAIR13LXqxJe+bmvrd9WJixqWjGkp1Fqm6ITh2F3W?=
- =?us-ascii?Q?2/GXOYDllJ1eRrATjjc6+M5OiB5l14YVSOVfMRMh75KvMxKc9onVO1d5lvdt?=
- =?us-ascii?Q?jAbY9wlPumPiubAKDofMgy5h/9mkQx1WCYmHtuGfl8cMqkUJwRmkzlIPtM39?=
- =?us-ascii?Q?n+xPHDhLFs9cRQmnba40zBxsift80R0BhkZSAEWWc2JHqoPuWFORwgvxYA1K?=
- =?us-ascii?Q?cAIPD7wEQNkHpAgdXwJXqT4E9BPPF0zHfzVjhZ1H6r4eJEAQfgW8PF/UB0H+?=
- =?us-ascii?Q?fqsJTkkUUKSt/7DCT8TlIDbxEHav4aKpBW12esLVC5Y9FIb7137acI9IMZhl?=
- =?us-ascii?Q?wFpIMSpycZ60KpcvvPG2svFjRgFNc/O/cfKxIo/Rto3n02tyi2fh1bjikZ9M?=
- =?us-ascii?Q?qKQNXM1z8Q1lTi7jHF1B2YMOoeD2o4oFEKx3lHlvaUIN0qviQxkQ2fHt0k2+?=
- =?us-ascii?Q?fZ4h7PeDBPywEtStOTOgZrq0w6oZo4m9Tv487V1zrn4HwsmCNzi5M0SAEDnl?=
- =?us-ascii?Q?ZxaXK9RaJgAg7Py/5S2UdDkMweb4nYUNaiaddBUmO5svVuMgyjooHP99MXj2?=
- =?us-ascii?Q?KRBykSOnMtgxUi4+9UZTqkU45+MJRI4WhqgbBQCDdyaNTLD/6Ex6wU1DEYWh?=
- =?us-ascii?Q?xVOkOUmwYhAEF1JbZoy5i1t2+SHvENxwYECAQDE1g67vOi+W1sGozhy5gdx0?=
- =?us-ascii?Q?ZuMIP8rACeRYruaKqHwgfEgcuo0b0PLRUXbE+AfW68a4ZZGCCuqKvF6NJjpy?=
- =?us-ascii?Q?WeEqxNtBO74wFc5O3xRf+k/EzgmWfHLEHcbukbIQ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AA21AC882;
+	Tue, 18 Feb 2025 05:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739855278; cv=none; b=LBjZcyxFoR0+JPVnICsB4OoFAqqAgFo0lF5ClUygIhbNoaumhU+hcGEiySNVDPhira9lSr7WXXioW39JE258qj7kBXloK4t0UcGCk7NkpekbhroYHxz/wDVyASWTzFmTNLL1cFK/trfdBk3EuC6wVwaYvKCmieN0aMs0WneFQ5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739855278; c=relaxed/simple;
+	bh=z/6JA4eNoed8CZkrnBDxJDBqVf8SQDJUgT8/uSsYtK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jVatvONrBvshcWZ12hsVM60t5SNT0fRfucXtoe/NKqk66y6DTyUD+6UofXLVDSUtDuu9uNSD9S3xjF8hCQj2M0jICHStUk0O5kibgmCGgOYMbMv9e6o0S+ZRRb1hT9YYFAsUs1FKQnzhRX6buvHr5Xnv8gYDlX+cGi7mUsGZ9gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YgaXaIwI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1739855264;
+	bh=5LIOKZ2TM0YfxcjNlKCXnCn+7rZf/CA6PMGHhfYZysY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YgaXaIwIVm6vbNYGnvKc3hWD4TwsJ4hBRFWpfmUGuB/Ijh1hUDLFWVAFV8o7CQrq4
+	 AptfgmYg6ZyJwfxZBsrjVNvwS0Z33dMyfs+2sXL2hXruCBa7sbGbPCskg+/fkPQY/+
+	 OIu2Kec/2t+ZAYESrxVfp42tIsU69Z9k06IEkBQz3hWiM2FcYgq9xJRCu+seIEmOq7
+	 Ag0ZTrB8GDqdiCVhN1Bdzvh6qlI2wmZUpcp1uiddjuTX5oPkG4+mZqSPug/j/XDH6J
+	 NiRaVgT6LuKYfoZtsonQl3DFtmtFSKzLzTkwBII5VeSJGUx/xpebjhAcKjmby+Dfn3
+	 EOk+vf4iGxV3w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Yxnb4086Gz4wcr;
+	Tue, 18 Feb 2025 16:07:43 +1100 (AEDT)
+Date: Tue, 18 Feb 2025 16:07:42 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Yury Norov <yury.norov@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Beata Michalska <beata.michalska@arm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bitmap tree
+Message-ID: <20250218160742.49d6ab76@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1008adf-7e68-4a56-cfa2-08dd4fd9ec13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2025 05:05:54.3188
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kJp+ueJQ/da9UkCVqSfpACJOD+R53OQIUliejjvU4tO61GFOT+nWzWV9U617xhCR3haVk76RZxvbQVqlFjtAkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR11MB8778
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; boundary="Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Saturday, January 25, 2025 8:31 AM
->=20
-> There is no need to keep them in the header. The vEVENTQ version of these
-> two functions will turn out to be a different implementation and will not
-> share with this fault version. Thus, move them out of the header.
->=20
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+--Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Hi all,
+
+After merging the bitmap tree, today's linux-next build (arm64 defconfig)
+failed like this:
+
+arch/arm64/kernel/topology.c: In function 'arch_freq_get_on_cpu':
+arch/arm64/kernel/topology.c:270:43: error: too many arguments to function =
+'cpumask_next_wrap'
+  270 |                                 ref_cpu =3D cpumask_next_wrap(ref_c=
+pu, policy->cpus,
+      |                                           ^~~~~~~~~~~~~~~~~
+In file included from arch/arm64/include/asm/cpufeature.h:27,
+                 from arch/arm64/include/asm/ptrace.h:11,
+                 from arch/arm64/include/asm/irqflags.h:9,
+                 from include/linux/irqflags.h:18,
+                 from include/linux/spinlock.h:59,
+                 from include/linux/mmzone.h:8,
+                 from include/linux/gfp.h:7,
+                 from include/linux/slab.h:16,
+                 from include/linux/resource_ext.h:11,
+                 from include/linux/acpi.h:13,
+                 from arch/arm64/kernel/topology.c:14:
+include/linux/cpumask.h:317:14: note: declared here
+  317 | unsigned int cpumask_next_wrap(int n, const struct cpumask *src)
+      |              ^~~~~~~~~~~~~~~~~
+
+Caused by commits
+
+  46ac1bec179d ("cpumask: deprecate cpumask_next_wrap()")
+  43f7f920e14e ("cpumask: re-introduce cpumask_next{,_and}_wrap()")
+  65b98ea8b278 ("cpumask: drop cpumask_next_wrap_old()")
+
+interacting with commit
+
+  dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cp=
+u")
+
+from the arm64 tree.
+
+I have applied the following patch for today (which may not be correct).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Feb 2025 15:44:06 +1100
+Subject: [PATCH] fixup for "cpumask: drop cpumask_next_wrap_old()"
+
+interacting with commit
+
+  dd871ac1237f ("arm64: Provide an AMU-based version of arch_freq_get_on_cp=
+u")
+
+from the arm64 tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm64/kernel/topology.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 6f0cab8e746b..70db234c41a2 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -231,7 +231,6 @@ void arch_cpu_idle_enter(void)
+ int arch_freq_get_on_cpu(int cpu)
+ {
+ 	struct amu_cntr_sample *amu_sample;
+-	unsigned int start_cpu =3D cpu;
+ 	unsigned long last_update;
+ 	unsigned int freq =3D 0;
+ 	u64 scale;
+@@ -267,8 +266,7 @@ int arch_freq_get_on_cpu(int cpu)
+=20
+=20
+ 			do {
+-				ref_cpu =3D cpumask_next_wrap(ref_cpu, policy->cpus,
+-							    start_cpu, false);
++				ref_cpu =3D cpumask_next_wrap(ref_cpu, policy->cpus);
+=20
+ 			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
+=20
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme0FZ4ACgkQAVBC80lX
+0Gw+/Qf/cOZpqJjjGT6gzRR7os4wyXCTQzcnm1R6jYQCafvqwaGBch7H8AnTX7G2
+N7oqfoIHdMJQtG+hpL4yBZhitsuX0CMrCGDsV6oIURF6qSjmwVVNCHCYf6r5kWu0
+uEYU2yNPoxAoTdDEFf/WKztMrSQ+JTrGrEqF4cPQcyNO9N7ECeXxYNs46i/cacMX
+muB/K03pA3ot3ELXzL1gTBYs3iK0u7F7GwGMtf6T3rxUap4uWYF/anlkWm2P5ysM
+Nr6KMOXKn2caXNOZogjqVX6hzWfpZDjqLaCI8ZL8iUsoy0YZh2g2/Y0aY34M2MUM
+tAAXUt/ar2bQGvNXOohpjXwEqe1ytQ==
+=Q9MW
+-----END PGP SIGNATURE-----
+
+--Sig_/gKNUyiP8KO/XVe8SLNQ1Q6d--
 
