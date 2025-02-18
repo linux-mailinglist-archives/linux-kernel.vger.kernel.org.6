@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-519708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0518A3A0E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:15:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB575A3A0E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A273A6D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:15:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 411B27A3036
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D872F26B94B;
-	Tue, 18 Feb 2025 15:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FC26B94B;
+	Tue, 18 Feb 2025 15:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrQjXHQd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJhGCAuo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A4F23ED69;
-	Tue, 18 Feb 2025 15:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE526B2A2;
+	Tue, 18 Feb 2025 15:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891750; cv=none; b=N0nlZwy5BmoX3Pm1ztXnFLMANMG5FhzQg8oHpqWiyhn+TH7NouiFdPNw1OoINMnH3l6Lh+cAhlL2Xww+fznn+jc8T6+KJxlgcMiHwDOumwfJTRkKFkpqDEsVTRKhayCn/m78WY+x+JNZ255TJXp0YZLSDKNniCCl/7ZS/GDKkDs=
+	t=1739891785; cv=none; b=iGPTKBgX5j1al6CslZqN8OWa+DuK1SWc8K18IdeDSCCrOzX0orsTiMv8DTsBIBgdKUWAnAkFqjN2OsUccyZPBMQz6PZongzVhyTq9IQE0ACoYCqpFouiAHjTuqrb7XzGhPb3SRwA1PXDYiMQnoe6neFa4qL359YtxN4CN66tKok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891750; c=relaxed/simple;
-	bh=Ib4Pm+5C9/8AIMYLPPJHBDj/uTaSeXuNctIV6FJv7Ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5fiqA9KjNr6ArnMj/+ILLBh9OKjyzFlOyrgPqcoKuTy4coetYHOswgpy+fihRhDGMme1+xZUfP54XFtKDHj8x9vWRQyEQ9iYdoNdt5GIj3A+gimCfmIFhYXvmNB718QUyponA4I4Oi+HwjdC4lshjVJ6lVVdnyYdnYsShC7bRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrQjXHQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 015F9C4CEE7;
-	Tue, 18 Feb 2025 15:15:48 +0000 (UTC)
+	s=arc-20240116; t=1739891785; c=relaxed/simple;
+	bh=AceSqE+dN1fqncQf3jSZVkxkI4JsO0+9I/Rm/ds/R/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YyFm3HNYpHmzjOgoCoJr3EIze2Hq72Q6brC133Kx6mIfseu+OCMrufSB0sQh/m7C6ybeSrb7GypTwZBzJQDeNfPgti3GZP+hmdl8b3GT1hs8MsG5EyFx6XDaEpjMrIqufmFMLL1jTXB4Hap80pwyReTeaovhhVl0sj8q64l9XFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJhGCAuo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0402DC4CEE2;
+	Tue, 18 Feb 2025 15:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739891749;
-	bh=Ib4Pm+5C9/8AIMYLPPJHBDj/uTaSeXuNctIV6FJv7Ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FrQjXHQd850c06d7C4Ku9v0LEKUAyAoQDrNLtIYWqDeFP7kZTV6ft/v5HC/VeMPdU
-	 2siDlZ3jDeDqZ2Nj/ibboUMFaqk1q9qDOXY0OlT0B+tTKyFxXoFcxYwZCwPSjk1vR8
-	 YOMSozF/WFFJV6ztw87mqpdQoHS+oTSQBz9DyS/8gewkXC9rf1agXY3ZEgz2yivOSb
-	 1DLVCmA6V0mxB8IDejYCfkY7yu2NqLZ13GOwNjrr1YrkSdz3QlkLM06ZqXTUfdtwDN
-	 FyxMSIquqeLzqHbbPiKwQ8gfRGs3ZkNCMwGebE3XXQrFwBSyQrOO0D7EAC40bcDH6j
-	 abiOnIDJ2ecFA==
-Date: Tue, 18 Feb 2025 15:15:45 +0000
-From: Mark Brown <broonie@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH v2 05/29] ASoC: tas2764: Extend driver to SN012776
-Message-ID: <Z7SkIUs_d7ty-GU3@finisterre.sirena.org.uk>
-References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
- <20250218-apple-codec-changes-v2-5-932760fd7e07@gmail.com>
+	s=k20201202; t=1739891784;
+	bh=AceSqE+dN1fqncQf3jSZVkxkI4JsO0+9I/Rm/ds/R/Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZJhGCAuoRW4LKYqn1tFbJZJ9GkQKkOn5zHhRmSA66HDExxvLHkOjU0LuQN3lOcj6Z
+	 TQ3A4ylu2YsB2dUBDZvJaIVuvdm7o51sLerNLcXoouyDRIZecxq2BIXrVdshNi8DIh
+	 gNqL/o/QWzrtMw2vSUWe0ivH3p1AD4MAH7h/BPdhYDKx4Bl/tvxSogkNGpl6jb+c+Z
+	 8WdJ9KGKL++lx76jCRK92/EhQAmaXAEWZ+cHNdY1+Zu6H6NaKPGZo5dJ8UK8YfgLx7
+	 G++xW2k+1gf5B9NONT5HK/3ILTmpSEqokLW44m3Vmwbjn+omuzGN0mB8Z7GQg0KRpT
+	 GCu36+ESNBRBw==
+Message-ID: <b2876489-7bd5-4c38-b1f8-2d2fcb5a9aba@kernel.org>
+Date: Tue, 18 Feb 2025 09:16:20 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PPOhNaWiX4C4lTj9"
-Content-Disposition: inline
-In-Reply-To: <20250218-apple-codec-changes-v2-5-932760fd7e07@gmail.com>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Adjust all AMD audio drivers to use AMD_NODE
+To: Mark Brown <broonie@kernel.org>, Borislav Petkov <bp@alien8.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ "open list:AMD NODE DRIVER" <linux-kernel@vger.kernel.org>,
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+ <linux-sound@vger.kernel.org>,
+ "moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS"
+ <sound-open-firmware@alsa-project.org>
+References: <20250217231747.1656228-1-superm1@kernel.org>
+ <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2/18/2025 09:11, Mark Brown wrote:
+> On Mon, Feb 17, 2025 at 05:17:40PM -0600, Mario Limonciello wrote:
+> 
+>> The various AMD audio drivers have self contained implementations
+>> for SMN router communication that require hardcoding the bridge ID.
+> 
+>> These implementations also don't prevent race conditions with other
+>> drivers performing SMN communication.
+> 
+>> A new centralized driver AMD_NODE is introduced and all drivers in
+>> the kernel should use this instead. Adjust all AMD audio drivers to
+>> use it.
+>> Mario Limonciello (7):
+>>    x86/amd_node: Add a helper for use with `read_poll_timeout`
+> 
+> What's the thinking for merging this - the SMN driver is in arch/x86 but
+> the bulk of the changes are in ASoC?  My first thought is that it's
+> mostly ASoC stuff, are the x86 people OK with me picking up the arch
+> patch (I'd put it on a branch anyway so if needed we can do a merge
+> later)?
 
---PPOhNaWiX4C4lTj9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Probably need Boris' perspective here.
 
-On Tue, Feb 18, 2025 at 06:35:39PM +1000, James Calligeros wrote:
+There are some patches that just landed to tip/tip.git today which I 
+believe the first patch needs to rebase on top of.
 
-> +	if (tas2764->devid == DEVID_SN012776) {
-> +		ret = snd_soc_component_update_bits(component, TAS2764_PWR_CTRL,
-> +					TAS2764_PWR_CTRL_BOP_SRC,
-> +					TAS2764_PWR_CTRL_BOP_SRC);
+My thought is maybe:
+1) We can get an immutable branch from tip/tip.git with the conflicting 
+changes.
 
-This sort of code is generally better written with switch statements for
-extensibility.
+2) An Ack from x86 maintainers on the first patch.
 
-> +	if (device_is_compatible(&client->dev, "ti,sn012776"))
-> +		tas2764->devid = DEVID_SN012776;
-> +	else
-> +		tas2764->devid = DEVID_TAS2764;
-> +
-
->  #if defined(CONFIG_OF)
->  static const struct of_device_id tas2764_of_match[] = {
-> -	{ .compatible = "ti,tas2764" },
-> +	{ .compatible = "ti,tas2764",  },
-> +	{ .compatible = "ti,sn012776", },
-
-It would be more usual to use the data field in the of_device_id to look
-up the enum.
-
---PPOhNaWiX4C4lTj9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0pCAACgkQJNaLcl1U
-h9AavAf+PefPB5tBS+9HAQnlJyDWHiyIub1mLugOQ6Lp9v8dm7nlt1cp4T3GdXq/
-8PqSyalqppiie2kJFvhE+BoZmeXuoREbwpbV1ldT1oitu92KbLG2wu8v1uZ5f0Jd
-wnyNdyLrxo/Oy0a4F4Cc5PYw8nDOHilFCGlAvtcdTKmSpPXe95SBLLza5HJsYP0X
-nYSzqGUmdAuKnn/H4N72JEddaLjxBokHg5/8FCvgYZ8H6SB4gQ/uor9R42IO9VrG
-xbnsCQKTdQ3apGSAp1NVHqNvkE/h4itzghJyZ2oKtZbQMgD8AB89B5fyHO4FPOOG
-GVCJXefFFikpw8i4b3GEsh/B991FPA==
-=Pnbb
------END PGP SIGNATURE-----
-
---PPOhNaWiX4C4lTj9--
+3) ASoC merges immutable branch and takes the series through ASoC tree.
 
