@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-519999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0811AA3A48A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:46:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0ECBA3A491
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074171889F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB716C3AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D18226FD9A;
-	Tue, 18 Feb 2025 17:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B4270EA0;
+	Tue, 18 Feb 2025 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxR8QWsi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcZl0u26"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6805A2417DD;
-	Tue, 18 Feb 2025 17:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE2C26FDA3;
+	Tue, 18 Feb 2025 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739900778; cv=none; b=nNakr6nhWbNpOnU22MD6MmERpnWH8TEZTYL0AiOJpb/ZIxY2pOxSShXkqC/56J7sy4JK3/gsWHXZAghjFq/eVJpQ1lMadZBs/pZju7xMljJgfnQoJ7uKFeVFANzfPSH5Ai601idlmVTvwkxzEcD4u2xBxaDYwJuIIb39boO7TtM=
+	t=1739900794; cv=none; b=AZca3zoeP2wj+2/0NIPWXrhvMZ7GEqHwGJmMMCWrRHkBFliqFK+Y3Ej3D3sDCNUK3Us+j89J0EEg3Jgf1WoMghSIyAR6QAGuMTxwJ+pRYFhxrYZ7h3/wCd2ZT7RVvAlzJfE3y1thCI0PZmurUJ9zc/IyAjAe345iL5/uj+W/fXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739900778; c=relaxed/simple;
-	bh=4NmUJ1yyXz/WLu3ith9HJJe7YogoGBBKEAbi3c2j0rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D8bqIT3YEa9PBX5GPqX0Q/K7gSnUuL/l0Ieqjj+iOwRhen/cp/hHAMviX4rDzff21OpQ44Mhc7cj7fQWAxqUknalZrQcWlu6X646wmULALj/PKFWgC8Vix2ah2MY95BUjLE60fyf5ZGwn6mPyY8e27vsU59mQXVo02w9qXIPxjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxR8QWsi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7102C4CEE2;
-	Tue, 18 Feb 2025 17:46:17 +0000 (UTC)
+	s=arc-20240116; t=1739900794; c=relaxed/simple;
+	bh=WtWSTY4KUqUInfseAlQ/D+r84OfJQRXQPKA1eO1u7i4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QyXsR+B5suCV3LQpHSOg4wOcwdTOxv5l73eRKKp4HawFfAR4na48siJtpchJAy/N8VKSm9xGfhUtUnrs+ERx+ye3PyfRkasAyB2nk9u4TDVdWCKzwPtOBLPrd8mPv36wLjPsP31kGJlHB+CzM/tbCN0BHZyFUdM2thpx7+CymmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcZl0u26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A06C6C4CEE2;
+	Tue, 18 Feb 2025 17:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739900777;
-	bh=4NmUJ1yyXz/WLu3ith9HJJe7YogoGBBKEAbi3c2j0rw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MxR8QWsiboVcwhzg1P6iua3xHZLcIw7TTBnDAhNykZnedtOMERnX02uLRVy/0uCT7
-	 H7CjiCEPc181ocba7gkToU6eW8BA8/GDQ/ldWl7coKaG+ST0ERYd8yNIcVaaCqgdH1
-	 SYxayxX/NlyMXDa3ieSXU/e4W7W7acFbVy+yvL0lmw+X3NCjE6WZzSyAvJ5SagXYil
-	 BOAHV0HXM9AjkxA3HVyjvf5OSaM1hvd6YwAK0TGuMQAadApSQiMX+oPshbP0t3+6lC
-	 9admtrnkWzkzkoRa2gbixx70wIBhWjGN6M6PAgW0AyV+PEaHS8Ds18px6UUtLXybi3
-	 8L9DZk4Ud+a3Q==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-72714016741so1925596a34.3;
-        Tue, 18 Feb 2025 09:46:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVvWta0m+P8N8LycHEWPQQX8EZDWAW+u/jg3gwaTMAhB4zTiUKRH1OvZ2YoesnQK7D4zzcRrY7+YaCb@vger.kernel.org, AJvYcCW4t9qWKRC/gKJ3C8oIkEbHIrrsSl/J/sXvy0/GymA2/htgV/u2rM7B3aXeHd79ZCYnoea7zUCbkxCIbdnq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPDn8KL9Frmi+nOkHtUnLXFXNqvu72JHyTLzpLV4GiMxHlxIev
-	LGCEic6pcAOsRsbHUTP40CWc8rhUJ78LcN55f2G7Ck1XJpHcU1s1p4DL9m5GFO88Hvw+vC7nhcn
-	OzZ+t4ZynWpwDIgASnjL7DTvfPmE=
-X-Google-Smtp-Source: AGHT+IHRhp8qNHqtYiFvY/4SDElK2SXXOpyeLiZetExIjVE7j7ByBlZIoo68L35D53+QTuO7L1WmRIqJseQIC81mTpo=
-X-Received: by 2002:a05:6830:4905:b0:715:4e38:a181 with SMTP id
- 46e09a7af769-727120ba0d6mr9901251a34.25.1739900777217; Tue, 18 Feb 2025
- 09:46:17 -0800 (PST)
+	s=k20201202; t=1739900793;
+	bh=WtWSTY4KUqUInfseAlQ/D+r84OfJQRXQPKA1eO1u7i4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OcZl0u26cGvdvoAQDFz9Vx4rhUfeN4rUmdvqMLlLoW18qSQxYa88QVnWvrgl7uxqj
+	 f0l8eMRxNLRJRkAinlBNtSbn42NTX3HUB4skUC7h/1GKSJXmy4gCOKzoPJ7YS59mRT
+	 uhtRR/8jD5A8gog0e/Yw372SCdTkrY+MKRYSJWxsNn8vh25VH4yOTRx1p+o/yxA7tP
+	 +2iDnv4I8oBU4lDlz7ZaeD8HzUkamaSqEAgMVG6QZEZpOxqNWt9HAqKrKXhXojeyNp
+	 vALx1aFSlkkPsLJ2DdxfzLz0BCdgTrHvOBGqoeNvyWSk23fSX3w3FDTgwd4WXZXh+h
+	 S3+H//3LpjqoQ==
+Date: Tue, 18 Feb 2025 09:46:32 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] Add jump table support for objtool on LoongArch
+Message-ID: <20250218174632.gwseuvgezj7eni2j@jpoimboe>
+References: <20241217010905.13054-1-yangtiezhu@loongson.cn>
+ <ef1e3e7c-0117-175c-5a85-091382696748@loongson.cn>
+ <20250115013444.anzoct6gvs56m225@jpoimboe>
+ <4612bfd8-442e-fecb-240f-46e735b48540@loongson.cn>
+ <20250210212653.oidcl4aqyrcu3yzi@jpoimboe>
+ <CAAhV-H7MVDj0CbXfwveb7GDn+D=O4N6oUT6rpGrbGmYPLPpRPg@mail.gmail.com>
+ <20250211233056.q47mp5askk7qrxcp@jpoimboe>
+ <CAAhV-H563HcK2bck2k+VLTvrf0C7=cEMr8BJpQhFdJNc+dFOUw@mail.gmail.com>
+ <20250213025108.svqgj5nzseqs6qox@jpoimboe>
+ <CAAhV-H5mYGnxHPxAeXkHo2XBvi-RtPjDQRBnDiDyKVtFv-ZBBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208013335.126343-1-luoxueqin@kylinos.cn>
-In-Reply-To: <20250208013335.126343-1-luoxueqin@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 18:46:06 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iz5wjJHp2o=OGkcuE3PeJ33vqp5p9pKnRG1=14Wx-dVQ@mail.gmail.com>
-X-Gm-Features: AWEUYZkdtlpP9v27RlJHBCypT4RXA5mYOIlzYleZJARKzSHTYC_TTeWGYIaYj1o
-Message-ID: <CAJZ5v0iz5wjJHp2o=OGkcuE3PeJ33vqp5p9pKnRG1=14Wx-dVQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: thermal: Fix incorrect comment about trip points
-To: xueqin Luo <luoxueqin@kylinos.cn>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H5mYGnxHPxAeXkHo2XBvi-RtPjDQRBnDiDyKVtFv-ZBBQ@mail.gmail.com>
 
-On Sat, Feb 8, 2025 at 2:33=E2=80=AFAM xueqin Luo <luoxueqin@kylinos.cn> wr=
-ote:
->
-> The function `acpi_thermal_get_trip_points()` no longer retrieves
-> the "_CRT" resource.  Instead, it obtains "_ACi" trip points. Update
-> the comment accordingly to reflect the correct behavior.
->
-> Signed-off-by: xueqin Luo <luoxueqin@kylinos.cn>
-> ---
->  drivers/acpi/thermal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-> index 95982c098d5b..0c874186f8ae 100644
-> --- a/drivers/acpi/thermal.c
-> +++ b/drivers/acpi/thermal.c
-> @@ -803,7 +803,7 @@ static int acpi_thermal_add(struct acpi_device *devic=
-e)
->
->         acpi_thermal_aml_dependency_fix(tz);
->
-> -       /* Get trip points [_CRT, _PSV, etc.] (required). */
-> +       /* Get trip points [_ACi, _PSV, etc.] (required). */
->         acpi_thermal_get_trip_points(tz);
->
->         crit_temp =3D acpi_thermal_get_critical_trip(tz);
-> --
+On Mon, Feb 17, 2025 at 11:13:43AM +0800, Huacai Chen wrote:
+> On Thu, Feb 13, 2025 at 10:51 AM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > On Wed, Feb 12, 2025 at 03:22:45PM +0800, Huacai Chen wrote:
+> > > > The new series now has 7 patches:
+> > > >
+> > > > Tiezhu Yang (7):
+> > > >   objtool: Handle various symbol types of rodata
+> > > >   objtool: Handle different entry size of rodata
+> > > >   objtool: Handle PC relative relocation type
+> > > >   objtool/LoongArch: Add support for switch table
+> > > >   objtool/LoongArch: Add support for goto table
+> > > >   LoongArch: Enable jump table for objtool
+> > > >   LoongArch: Convert unreachable() to BUG()
+> > > >
+> > > > I was planning on queueing all 7.
+> > > >
+> > > > In particular, patch 6 should stay with the objtool patches since
+> > > > they're directly related.
+> > > >
+> > > > But I was also just going to grab 7 as well.
+> > > >
+> > > > Please let me know if you disagree.
+> > > What about you merge the first 5 patches, and then I merge the last 2
+> > > to the loongarch tree? (I prefer to merge the whole series to the
+> > > loongarch tree with your acked-by, but that may be inconvenient to
+> > > you).
+> >
+> > I want the first 5 patches to go through the -tip tree because we'll
+> > have other patches depending on them.
+> >
+> > I'll go ahead and take the first 5.
+> >
+> > If you take in patches 6 & 7 separately, that might introduce a lot of
+> > warnings.  But it's up to you.
+> >
+> > For patches 6 & 7:
+> >
+> > Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> OK, please take the first 5 patches, I will merge your objtool/core to
+> the loongarch tree and then apply the last 2 to avoid build warnings.
 
-Applied as 6.15 material with edits in the subject and changelog, thanks!
+Looks like that's not going to work.  Without patch 7 I'm getting a
+warning (upgraded to a build error with a pending change to upgrade
+objtool warnings to errors):
+
+arch/loongarch/kernel/machine_kexec.o: error: objtool: kexec_reboot() falls through to next function crash_shutdown_secondary()
+arch/loongarch/kernel/machine_kexec.o: error: objtool:   kexec_reboot+0x1c: (branch)
+arch/loongarch/kernel/machine_kexec.o: error: objtool:   kexec_reboot+0x0: <=== (sym)
+arch/loongarch/kernel/machine_kexec.o: error: objtool: 1 warning(s) upgraded to errors
+
+And that would break bisection anyway, so that really needs to come
+before the others.
+
+-- 
+Josh
 
