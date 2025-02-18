@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-518857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F12CA39575
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:33:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE8DA39577
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E33B6928
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53BAC3B700F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C938E22B8DB;
-	Tue, 18 Feb 2025 08:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751BC22CBE9;
+	Tue, 18 Feb 2025 08:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zhUQ+e6H"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bh6WoHHs"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561722B8BE;
-	Tue, 18 Feb 2025 08:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E77749A;
+	Tue, 18 Feb 2025 08:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867168; cv=none; b=NdOtmBmF7j508RZr+KvYl2BV47KyTOhT/uA+t4+QqMLqVnrRnKd3712ssutnYv4tcY+v6GbxgXl+j71MkSJDIHb0Rjs1EBDGiNZzY4ilUGQ75Qlxx4/CdSSoVeOrf4jtmMy/RjnIzbu8BiFcUvR4q3zwd/fPORkMxqywlyt3awc=
+	t=1739867187; cv=none; b=CwmBBD5+Zb2JDzBcSrgIQ50wgWgw9PBs7aQr+7YJhRmX/ZVWmvw+VblV6KC4SPT+Ws9GgvyDR1m/upOO5VTfQpgDTdmDZY7zl8O1y6pBEEOxWlXXOV9SospOQHvfKI6X48P//pw9l4bg9ECiZVfVuZ1OGop+oGsNFNbdCSGJbrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867168; c=relaxed/simple;
-	bh=6+V3lp5W22nRBogzJ+Ne1Q5jwm+N2HfbNVp8+d6wAmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VQqaNseWIraIvWYO0x4oYG6HXSbBiUKWpZLy7JbWZZqY6lZhV2IPGxgGRidZsUapbYw2Zo/lCwvZhr2MiQdhRZ6veNjabF71uwSAxLYhnCu7hN0G4/1Hi9+KIbIaHyVAMUtHhAjWJ/FboLuG03CDAyhZEi3R3xIP2yR7tcpHQww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zhUQ+e6H; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1739867187; c=relaxed/simple;
+	bh=vw8VUAUqd1LTDPrqZW2pq0bIjio3+TrURyjC/H9+pJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hN1aTPuj4qhOyYZ7S1UVaOQNW7cz/Pgw0P5vVaa6PzFrXKldqp4hZpyqzb/IJUpL/mj93UXnhBWlLozA+wuyiIlZpMaAwOtfPDiAMDnOektTvaQMHn4W6F1r/lRv8gtWS+DjtLb8LdDN3qioFgTj6fj72igcBxd6inHPfhA5apU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bh6WoHHs; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:References;
-	bh=FkUCjxz9vjqxLei0utw3tRN3Rl77dSlMqLgpoQD9LSw=; b=zhUQ+e6HSttPyyE2/vmwfPYv33
-	X+w/gXVba5sH/Xs9XQ6XLUasYNrzvNvxOvX7Nb/XdZlh4iIa94HDOCqLQ+o/ZIVmxhCScLRN/MzTw
-	YxQy84GMZef8zz4k+rqrdU5SeKL29sLd3kN1Ez5nhGt39B+KHRdlw5Wgx89hjcwDX55Oev9byfxVQ
-	ko5eHRSUOjD80H85xR8DfMNvPlQRqotlBiVOgI2YbOZDuzxYfHaI1V0xUklb6YTAQpVD2p3GTLDH2
-	44PtrClYGsMkeWE0CHFmCANkhTCwyZs4rxxz8RR8mhke5UaII8tGB9vd1jJxb7c1JfQouNLYAxfZt
-	0tWPxfew==;
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vw8VUAUqd1LTDPrqZW2pq0bIjio3+TrURyjC/H9+pJ0=; b=bh6WoHHsvHllgvyNgEjPnv7jOv
+	Gvnz4nl3mQlat0BS86DYJiXUPixN/nzmhnS2BJ+RYRMGqoKSqIi8RJS4czXq57hzIkP8JLe2S/lkl
+	90Rd5Ofhm2BcgD+gyzquBhVYThB5CBZj8rwPzEsOFwayPj2uXfDzzbvfXSjqR5s5H0Sb3jgIJWxDn
+	Kvz5CVSiWxOsYGr3+5Ds1pI0piIT+iv3wVbOKQ8WjG+RKoyG5G6YPLvAAHGEPKO8X8qnn9H9p4yTo
+	9i3kN9rMAmSSAAlzOBAKpAUBHG1LXj8Mq7rKiwBkaP8ErPXJHZKR9q/TRN6qCrkUn8yTTN8H/e0/u
+	qnq+GOvQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkIve-00000007GjS-2N6c;
-	Tue, 18 Feb 2025 08:26:06 +0000
-Date: Tue, 18 Feb 2025 00:26:06 -0800
+	id 1tkIvu-00000007Gow-2uJl;
+	Tue, 18 Feb 2025 08:26:22 +0000
+Date: Tue, 18 Feb 2025 00:26:22 -0800
 From: Christoph Hellwig <hch@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/2 v9] reclaim file-backed pages given POSIX_FADV_NOREUSE
-Message-ID: <Z7REHrJ3ImdrF476@infradead.org>
+To: Eugen Hristev <eugen.hristev@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kees@kernel.org, linux-kernel@vger.kernel.org,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	rafael@kernel.org, dakr@kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
+	pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, quic_mojha@quicinc.com,
+	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com
+Subject: Re: [RFC][PATCH 07/10] printk: export symbols for buffer address and
+ length functions
+Message-ID: <Z7RELnyWRLietj9b@infradead.org>
+References: <20250217101706.2104498-1-eugen.hristev@linaro.org>
+ <20250217101706.2104498-8-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,39 +67,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212023518.897942-1-jaegeuk@kernel.org>
+In-Reply-To: <20250217101706.2104498-8-eugen.hristev@linaro.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This still has a file system sysfs HACK, you're still not Ccing the
-right list, etc.
+On Mon, Feb 17, 2025 at 12:17:03PM +0200, Eugen Hristev wrote:
+> log_buf_addr_get() and log_buf_len_get() can be reused in another module,
+> export the symbols.
 
-Can you pleae at least try to get it right?
+Err, no way.
 
-On Wed, Feb 12, 2025 at 02:31:55AM +0000, Jaegeuk Kim wrote:
-> This patch series does not add new API, but implements POSIX_FADV_NOREUSE where
-> it keeps the page ranges in the f2fs superblock and add a way for users to
-> reclaim the pages manually.
-> 
-> Change log from v8:
->  - remove new APIs, but use fadvise(POSIX_FADV_NOREUSE)
-> 
-> Jaegeuk Kim (2):
->   f2fs: keep POSIX_FADV_NOREUSE ranges
->   f2fs: add a sysfs entry to reclaim POSIX_FADV_NOREUSE pages
-> 
->  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++
->  fs/f2fs/debug.c                         |  3 +
->  fs/f2fs/f2fs.h                          | 14 +++-
->  fs/f2fs/file.c                          | 60 +++++++++++++++--
->  fs/f2fs/inode.c                         | 14 ++++
->  fs/f2fs/shrinker.c                      | 90 +++++++++++++++++++++++++
->  fs/f2fs/super.c                         |  1 +
->  fs/f2fs/sysfs.c                         | 63 +++++++++++++++++
->  8 files changed, 246 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.48.1.601.g30ceb7b040-goog
-> 
-> 
----end quoted text---
 
