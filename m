@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-520476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24947A3AA50
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:02:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C92A3AA56
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E13189C4B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E74172D86
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE691C701F;
-	Tue, 18 Feb 2025 20:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24EA1D4335;
+	Tue, 18 Feb 2025 20:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9z1cn1m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OFWfhLVq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935C91B0F17
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7321C3F2B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 20:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739912059; cv=none; b=cbNxSRXoUpRfL/Zo+Gk++GWXAAEbvCn7mmYu9IxTAUPhb9gbbE1/PGE4IxL6Xqkood3v/6MLbcYVCsEZzzSjwxSMhuYkNsfs4QwRUXvwKipsV6R1dZXL1lgUiqZZDWPdTOKejMlx2O2IcQqtUvPiQClEKKDprkl+A2eoKzSvtYM=
+	t=1739912235; cv=none; b=qPxqOT3TL+p1VKKURCv9fIt6JcMibN7dr7n2CpIczgpMPwCRYqiOBmpRlezfhH0w1ypcFznCLi2YEKd9kWZELkISwn4ta9pyDR5FI24iHNBCQEz9KRBVMGN7RVhdLZ07zmafu4HrJcKP5ogd12ItLmp/Gq7d0vSvbM4tupH0kek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739912059; c=relaxed/simple;
-	bh=u8LzOXgnG/VJDDCdI+lBKEFumZ8TYsXra8WYaJvLsMs=;
+	s=arc-20240116; t=1739912235; c=relaxed/simple;
+	bh=gpas5oUxzPV/XGxLFH15XGgXxDqbVNLYvjgja7B7R+E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m71I/DGxnQcl8ztGNva/8u5B1VFlD2GjH+1+VcBa25/wuaugeg9FrevuDRWgvyBJVtsyUsWTj+UjEViRAEh8DVjnsW12rLTqUWxz80A1hsxmISYzC0aquZSACn2g4PXxDruVxT5iFFWLs9IIwIdnGwKtKRW9CI+LxxD0LEccWOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9z1cn1m; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739912057; x=1771448057;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u8LzOXgnG/VJDDCdI+lBKEFumZ8TYsXra8WYaJvLsMs=;
-  b=J9z1cn1m46RExQyNPWWdgbe7KA740/6zebHDei1jb4Gn4+H9cOFRAlZj
-   QIy0hrw77ibnib3HyuA+mXXYwmATaHAsqHPeRsX6jHOioX8FsuEHSFVAo
-   2Mojjg+iM7f/C9x+ozZ43fxc/MYR8cYa349xvLH0Sn5Ynqa7F2a402R+G
-   LyeSj4Bu/9Q2E7UAGnlwSjyTMWGeE+XzHto+6DKplOwa/QDR7BY2fpPSb
-   wvxIMKiNnzXjHwbE5ez71rrIDEAVCFnErdzEq+cFQS+B4R2pTP/LJvQLv
-   EExXrgDEkCjBeLG89mr9aFyZTF0W7YwWxRzps/n2zUIdNhhl0pApm/ysO
-   g==;
-X-CSE-ConnectionGUID: bGWP73a6R7SxYlCGI3wwuQ==
-X-CSE-MsgGUID: RJNfEvoBSbKKtSoBUfywTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="39818632"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="39818632"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 12:54:16 -0800
-X-CSE-ConnectionGUID: dQSit8zRSYuvBD07JB9Dfg==
-X-CSE-MsgGUID: oREvh3iNRn+GhNj5lLqfrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="115401165"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.109.220]) ([10.125.109.220])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 12:54:15 -0800
-Message-ID: <fac46937-e0a5-42c1-96ee-65fec4e17551@intel.com>
-Date: Tue, 18 Feb 2025 12:54:19 -0800
+	 In-Reply-To:Content-Type; b=fCoo7Vot3p95PhI1wOk+GScKUZiSt3RuwXHvyr7nYmOAt63SKOySW7mGX9+qw8Wx1rHmdv1NyPJjli2KPWzO7Ts6CnhadWfdBsVxp24+0ospEUy7yBVvasirhPFNddCYGGLqDSf55qO9h72UBKTBXIF+3yR7Syb34UPqlq+Se+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OFWfhLVq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739912232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6FsbwLcxUhHZW9FHTie3Ead3JpCjVkROaSdeAT2Lgyo=;
+	b=OFWfhLVqlKtFVi3EP/h1X72IgDwgaLxHKz0gf4+bs3m8PbWzEDvbLQ8Ft1W2cqF0nduXTh
+	6GgOMtPGXMeVdDSBpozEP6ds7p81AKH3ENN6q+9Q+HfFYqKa09IHvxlC3eD5qLqOwMH/DC
+	f6B+4+O+YMg/Q7jB/AXFeqJ4VsN0AiM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-wDaFHInaNfK0kE5ztUKE7g-1; Tue, 18 Feb 2025 15:57:10 -0500
+X-MC-Unique: wDaFHInaNfK0kE5ztUKE7g-1
+X-Mimecast-MFC-AGG-ID: wDaFHInaNfK0kE5ztUKE7g_1739912230
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f4bf0d5faso1202023f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:57:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739912229; x=1740517029;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6FsbwLcxUhHZW9FHTie3Ead3JpCjVkROaSdeAT2Lgyo=;
+        b=E+WwxLc051HsqGVn+RmY26+3ndA6QMf7gBc+o6/YrVDnAXutYPWYcxwjq+hpYOwwP/
+         hTBZ0HcijeYlK8sxiHNtALb4JPahlwglR0IfE6j0BUbQouzRS3ksQkSGZc62bIa/hBFC
+         mxuHeaWKru8HnFLfFyACONSmz2VNrMwFK/0OCWUbwxf0wmfrcg/qgGnQVQOozcNkovSg
+         rFA83fxef08Kmf35mpF0tJbDrj4zynvPl1ESMyX5dhYAO3+Dx+YtR4seNE9LXlXAHXwm
+         OT8QQK+rZ2laDtvzBMLQMPovjfZ8Z7Ca4Eovz6N9sDbqmQnSdRYb3UE2SgXcAFCS4DbM
+         1BIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjEIVzd7cAJ4AZTs8TvryH7GW3Y0RuYkHzLUTZerYJ4OkAwpMD/EZYW01t2cKubezDAX/ZsWMgobv6Saw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuEskorVFFrnK6jYTztwJWJaJo5bYjVix4BloguY5HEFVfM6Od
+	NBSwQSAv0RQ4CnhEg23HjVkQyS9VABVQLIOhn9qu0MqMH/trDIDHhi+PdOO8S6l4uMyBthC9b5W
+	JzlgGbLr8TqjELFpPnJ9WIorUgBzhYl980BLoeNhJWI1JU/TIOdHLycBkU92fXQ==
+X-Gm-Gg: ASbGnctZUZ3UiCOTxH5q9g0TbMRLmEb2pb0Hh3D9mFHZNO4QQOYDxaXNDXpF4p9xR+I
+	I6hv0prZ+1qATbfmkwDoL+q0i0ZPsCJEXOHM5kLpZYWbYqcAboTFLWvlFZ1nlA2vqpGAm++byTe
+	QmdrfoM22RbcVGaW+1LknL6h/UaPahbJDBwpXgHXOn2sTUjgc7u3zGf0iQv/V1tQ320XXDyRPWM
+	xFOBIwhwq8VzM/RWZDDaayd8SQcGpP+3RQR/rWdNacLWCuKSH0+CNZOQt6LFMzXzIZYcRDccENI
+	KouaTAjZ17IFJZq1RX4eakwbPLvk7KSnzD2SMfk9mj0Gaoz7icV4wQZZE5pRghGv5qbNMBkzDB3
+	dtZtAG1qlRLwTDALn0+9ukqeJqcDWNlHW
+X-Received: by 2002:a05:6000:1faf:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f5878dea4mr808587f8f.18.1739912229604;
+        Tue, 18 Feb 2025 12:57:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEhJl5VYJN1ZER6U6SOjF2yYBkVq3hxhtLzuzokjKHCH1grxuxyGuoLNfn8/aO4cMRuRSnstQ==
+X-Received: by 2002:a05:6000:1faf:b0:38f:3392:9fd8 with SMTP id ffacd0b85a97d-38f5878dea4mr808574f8f.18.1739912229238;
+        Tue, 18 Feb 2025 12:57:09 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43987d1865asm62509405e9.3.2025.02.18.12.57.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 12:57:08 -0800 (PST)
+Message-ID: <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
+Date: Tue, 18 Feb 2025 21:57:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,241 +89,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] x86/microcode/intel_staging: Support mailbox data
- transfer
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-References: <20241001161042.465584-1-chang.seok.bae@intel.com>
- <20241211014213.3671-1-chang.seok.bae@intel.com>
- <20241211014213.3671-6-chang.seok.bae@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
+To: Gregory Price <gourry@gourry.net>
+Cc: Yang Shi <shy828301@gmail.com>, lsf-pc@lists.linux-foundation.org,
+ linux-mm@kvack.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
+ <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
+ <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
+ <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+ <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241211014213.3671-6-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/10/24 17:42, Chang S. Bae wrote:
-> The staging architecture features a narrowed interface for data transfer.
-> Instead of allocating MMIO space based on data chunk size, it utilizes
-> two data registers: one for reading and one for writing, enforcing the
-> serialization of read and write operations. Additionally, it defines a
-> mailbox data format.
+On 18.02.25 21:25, Gregory Price wrote:
+> On Tue, Feb 18, 2025 at 08:25:59PM +0100, David Hildenbrand wrote:
+>> On 18.02.25 19:04, Gregory Price wrote:
+>>
+>> Hm?
+>>
+>> If you enable memmap_on_memory, we will place the memmap on that carved-out
+>> region, independent of ZONE_NORMAL/ZONE_MOVABLE etc. It's the "altmap".
+>>
+>> Reason that we can place the memmap on a ZONE_MOVABLE is because, although
+>> it is "unmovable", we told memory offlining code that it doesn't have to
+>> care about offlining that memmap carveout, there is no migration to be done.
+>> Just offline the block (memmap gets stale) and remove that block (memmap
+>> gets removed).
+>>
+>> If there is a reason where we carve out the memmap and *not* use it, that
+>> case must be fixed.
+>>
+> 
+> Hm, I managed to trace down the wrong path on this particular code.
+> 
+> I will go back and redo my tests to sanity check, but here's what I
+> would expect to see:
+> 
+> 1) if memmap_on_memory is off, and hotplug capacity (node1) is
+>     zone_movable - then zone_normal (node0) should have N pages
+>     accounted in nr_memmap_pages
 
-So I'm going back and reading this _after_ all of the code. I don't
-think I comprehended what "narrowed interface" or "serialization" really
-meant when I read this. I was thinking "serializing instructions".
+Right, we'll allocate the memmap from the buddy, which ends up
+allocating from ZONE_NORMAL on that node.
 
-Maybe something like this would help:
+> 
+>     1a) when dropping these memory blocks, I should see node0 memory
+>         use drop by 4GB - since this is just GFP_KERNEL pages.
 
-Let's say you want to write 2 bytes of data to a device. Typically, the
-device would expose 2 bytes of "wide" MMIO space. To send the data to
-the device, you could do:
+I assume you mean "when hotunplugging them". Yes, we should be freeing the memmap back to the buddy.
 
-	writeb(buf[0], io_addr + 0);
-	writeb(buf[1], io_addr + 1);
+> 
+> 2) if memmap_on_memory is on, and hotplug capacity (node1) is
+>     zone_movable - then each memory block (256MB) should appear
+>     as 252MB (-4MB of 64-byte page structs).  For 256GB (my system)
+>     I should see a total of 252GB of onlined memory (-4GB of page struct)
 
-But this mailbox is a bit different. Instead of having a "wide"
-interface where there is separate MMIO space for each word in a
-transaction, it has a "narrow" interface where several words are written
-to the same spot in MMIO space:
-
-	writeb(buf[0], io_addr);
-	writeb(buf[1], io_addr);
-
-The same goes for the read side.
-
-To me, it's much more akin to talking over a serial port than how I
-think of devices attached via MMIO.
-
-> To facilitate data transfer, implement helper functions in line with this
-> specified format for reading and writing staging data. This mailbox
-> format is a customized version and is not compatible with the existing
-> mailbox code, so reuse is not feasible.
-
-This is getting a bit too flowery.
-
-	Implement helper functions that send and receive data to and
-	from the device.
-
-	Note: the kernel has support for similar mailboxes. But none of
-	them are compatible with this one. Trying to share code resulted
-	in a bloated mess, so this code is standalone.
-
-> diff --git a/arch/x86/kernel/cpu/microcode/intel_staging.c b/arch/x86/kernel/cpu/microcode/intel_staging.c
-> index 2fc8667cab45..eab6e891db9c 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel_staging.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel_staging.c
-> @@ -3,6 +3,7 @@
->  #define pr_fmt(fmt) "microcode: " fmt
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/pci_ids.h>
->  
->  #include "internal.h"
->  
-> @@ -11,17 +12,44 @@
->  
->  #define MBOX_CONTROL_OFFSET	0x0
->  #define MBOX_STATUS_OFFSET	0x4
-> +#define MBOX_WRDATA_OFFSET	0x8
-> +#define MBOX_RDDATA_OFFSET	0xc
->  
->  #define MASK_MBOX_CTRL_ABORT	BIT(0)
-> +#define MASK_MBOX_CTRL_GO	BIT(31)
->  
->  #define MASK_MBOX_STATUS_ERROR	BIT(2)
->  #define MASK_MBOX_STATUS_READY	BIT(31)
->  
-> +#define MASK_MBOX_RESP_SUCCESS	BIT(0)
-> +#define MASK_MBOX_RESP_PROGRESS	BIT(1)
-> +#define MASK_MBOX_RESP_ERROR	BIT(2)
-> +
-> +#define MBOX_CMD_LOAD		0x3
-> +#define MBOX_OBJ_STAGING	0xb
-> +#define MBOX_HDR		(PCI_VENDOR_ID_INTEL | (MBOX_OBJ_STAGING << 16))
-> +#define MBOX_HDR_SIZE		16
-> +
->  #define MBOX_XACTION_LEN	PAGE_SIZE
->  #define MBOX_XACTION_MAX(imgsz)	((imgsz) * 2)
->  #define MBOX_XACTION_TIMEOUT	(10 * MSEC_PER_SEC)
->  
->  #define STAGING_OFFSET_END	0xffffffff
-> +#define DWORD_SIZE(s)		((s) / sizeof(u32))
-> +
-> +static inline u32 read_mbox_dword(void __iomem *base)
-> +{
-> +	u32 dword = readl(base + MBOX_RDDATA_OFFSET);
-> +
-> +	/* Inform the read completion to the staging firmware */
-> +	writel(0, base + MBOX_RDDATA_OFFSET);
-> +	return dword;
-> +}
-
-That comment doesn't quite parse for me.  Maybe:
-
-	/* Inform the staging firmware that the read is complete: */
-
-BTW, is this kind of read/write normal for MMIO reads? It looks really
-goofy to me, but I don't deal with devices much.
-
-> +static inline void write_mbox_dword(void __iomem *base, u32 dword)
-> +{
-> +	writel(dword, base + MBOX_WRDATA_OFFSET);
-> +}
->  
->  static inline void abort_xaction(void __iomem *base)
->  {
-> @@ -30,7 +58,18 @@ static inline void abort_xaction(void __iomem *base)
->  
->  static void request_xaction(void __iomem *base, u32 *chunk, unsigned int chunksize)
->  {
-> -	pr_debug_once("Need to implement staging mailbox loading code.\n");
-> +	unsigned int i, dwsize = DWORD_SIZE(chunksize);
-> +
-> +	write_mbox_dword(base, MBOX_HDR);
-> +	write_mbox_dword(base, dwsize + DWORD_SIZE(MBOX_HDR_SIZE));
-> +
-> +	write_mbox_dword(base, MBOX_CMD_LOAD);
-> +	write_mbox_dword(base, 0);
-
-This last write is a mystery. Why is it here?
-
-> +
-> +	for (i = 0; i < dwsize; i++)
-> +		write_mbox_dword(base, chunk[i]);
-
-So, again, I'm a device dummy here. But this _looks_ nonsensical like
-the code is just scribbling over itself repeatedly by rewriting data at
-'base' over and over.
-
-Would a comment like this help?
-
-/*
- * 'base' is mapped UnCached (UC). Each write shows up at the device
- * as a separate "packet" in program order. That property allows the
- * device to reassemble everything in order on its side.
- */
-
-> +	writel(MASK_MBOX_CTRL_GO, base + MBOX_CONTROL_OFFSET);
->  }
-
-Can we comment the MASK_MBOX_CTRL_GO?  Maybe:
+In memory_block_online(), we have:
 
 	/*
-	 * Tell the device that this chunk is
-	 * complete and can be processed.
+	 * Account once onlining succeeded. If the zone was unpopulated, it is
+	 * now already properly populated.
 	 */
+	if (nr_vmemmap_pages)
+		adjust_present_page_count(pfn_to_page(start_pfn), mem->group,
+					  nr_vmemmap_pages);
 
->  static enum ucode_state wait_for_xaction(void __iomem *base)
-> @@ -55,8 +94,18 @@ static enum ucode_state wait_for_xaction(void __iomem *base)
->  
->  static enum ucode_state read_xaction_response(void __iomem *base, unsigned int *offset)
->  {
-> -	pr_debug_once("Need to implement staging response handler.\n");
-> -	return UCODE_ERROR;
-> +	u32 flag;
+So we'd add the vmemmap pages to
+* zone->present_pages
+* zone->zone_pgdat->node_present_pages
 
-	/*
-	 * All responses begin with the same header
-	 * word and are the same length: 4 dwords.
-	 */
-	
-> +	WARN_ON_ONCE(read_mbox_dword(base) != MBOX_HDR);
-> +	WARN_ON_ONCE(read_mbox_dword(base) != DWORD_SIZE(MBOX_HDR_SIZE));
-> +
-> +	*offset = read_mbox_dword(base);
-> +
-> +	flag = read_mbox_dword(base);
-> +	if (flag & MASK_MBOX_RESP_ERROR)
-> +		return UCODE_ERROR;
-> +
-> +	return UCODE_OK;
->  }
->  
->  static inline unsigned int get_chunksize(unsigned int totalsize, unsigned int offset)
+(mhp_init_memmap_on_memory() moved the vmemmap pages to ZONE_MOVABLE)
+
+However, we don't add them to
+* zone->managed_pages
+* totalram pages
+
+/proc/zoneinfo would show them as present but not managed.
+/proc/meminfo would not include them in MemTotal
+
+We could adjust the latter two, if there is a problem.
+(just needs some adjust_managed_page_count() calls)
+
+So yes, staring at MemTotal, you should see an increase by 252 MiB right now.
+
+> 
+>     2a) when dropping these memory blocks, I should see node0 memory use
+>         stay the same - since it was vmemmap usage.
+
+Yes.
+
+> 
+> I will double check that this isn't working as expected, and i'll double
+> check for a build option as well.
+> 
+> stupid question - it sorta seems like you'd want this as the default
+> setting for driver-managed hotplug memory blocks, but I suppose for
+> very small blocks there's problems (as described in the docs).
+
+The issue is that it is per-memblock. So you'll never have 1 GiB ranges
+of consecutive usable memory (e.g., 1 GiB hugetlb page).
+
+> 
+> :thinking: - is it silly to suggest maybe a per-driver memmap_on_memory
+> setting rather than just a global setting?  For CXL capacity, this seems
+> like a no-brainer since blocks can't be smaller than 256MB (per spec).
+
+I thought we had that? See MHP_MEMMAP_ON_MEMORY set by dax/kmem.
+
+IIRC, the global toggle must be enabled for the driver option to be considered.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
