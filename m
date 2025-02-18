@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-519614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CBEA39F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:26:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75A8A39F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F231896947
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:25:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234701726E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544D126A0C6;
-	Tue, 18 Feb 2025 14:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBD326A1D4;
+	Tue, 18 Feb 2025 14:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T0PM7SUX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Lu2BCr7f"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3892F269D1B;
-	Tue, 18 Feb 2025 14:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0115C26A0CF;
+	Tue, 18 Feb 2025 14:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888704; cv=none; b=uYoerA+FZiJgPCmoq2ckaaR428vWXo0mqTYZfl2uj0V33utSP+PfsSReRroy7KqkU1mNt5l2TWr5QZkB0MN/7wIDyW3BumykIT5qbVfoO0WLO3EY3lNIMavyvBiY4+R1Lom6Hr+PUsEv9EnGSUgdCanr3Q9EfCHxm/0GlkV7vcA=
+	t=1739888774; cv=none; b=ARZMiHXy1fcGNbx3RrmzQmpWAocpurn6730ukN1Fv/+jlwj+h32TfulNHot46FBe0bd/U6CswkM7ifyPV5qP4n22IhnVZIXlfBs83WgAxq1aQX9QNf6+0z0ZACxPZgCfEx4WiwRblXBcUwpnOPHKAmjHqSbVLNHq0z3/2Kkkz9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888704; c=relaxed/simple;
-	bh=J2eO9J9+mwdPHssF4xChq4+/7PjWA0b/HAjHIFjPlDM=;
+	s=arc-20240116; t=1739888774; c=relaxed/simple;
+	bh=Mp8d6EpMBRloZvPuJiF6u2bGZ//0HJO6xupro/jSprM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgRDLrUfzXaSomwbbQy47OPql25/vfZ7jF1hS+30FnaGBdYwvAkqt1uGXOmvVtKIiaHMw4IkajlaUwpg+RrnC1YY81J0MPxCbwnA5u2dccRU6Yc3EWC/bwyLNww7kyqbZfYejxm9irRBgOWAIjpohpxvd85BFKmVi1CaojSZXiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T0PM7SUX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739888700;
-	bh=J2eO9J9+mwdPHssF4xChq4+/7PjWA0b/HAjHIFjPlDM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T0PM7SUXm0tzDEgb3p7/B4sIX18u9xqr1zsMb31gron78SXny/pUQb6dWPugS+zHK
-	 zoRxMEOJH5ELNcNoNXjLsff5yFYH9vXdMnovMKc7AMmN62b2pQNnov79IbV0FQLk3B
-	 PXFsY/eKKaFsJH2puzbVSOdMjnxVVnDaIFcUftyxAvwpHK/X54+h5zn/KiNHU+9j/5
-	 VucuGlCZG1/a1HhI92k+VT46yqGIAsFt0VVpaC6SkCDd4pHOvCciFMzuexi8zTfCIk
-	 2vVJ3A3uIonc1hKstWUjrHX7JeMqNSLFHvAZzL7rTzLm+7LB+UPa04mp/oKg3+4mxU
-	 hhbiJDpHVNpUw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 636C717E0391;
-	Tue, 18 Feb 2025 15:24:59 +0100 (CET)
-Message-ID: <ddd1d62e-b1d2-4271-99a3-74bb0a48fb48@collabora.com>
-Date: Tue, 18 Feb 2025 15:24:58 +0100
+	 In-Reply-To:Content-Type; b=kPT5r8E89tXaEN2C36tdtLAmwOxdHn85vtlMqqrY7gdk4sCBaH4i4vbqvSazYefbyhuifVDbgWQYxIOdXxMlkQJNrBFDuiYaKPPvPhovzxUlahv7G3Kdd9lvQxi6elAYnQIRVNxm2u0XHrcHjM/V5rC7NWB8nVxo0jdSQFQWWWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Lu2BCr7f; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id kOXytQovqwhW2kOY3t9Tl3; Tue, 18 Feb 2025 15:26:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739888769;
+	bh=FOM6aVLTCFQEhcAakTKCUK4aqN5niM+ARVw4hM5AxUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Lu2BCr7fJIuZOr77zdaf58BTviH5sweS4ZpReMKNTRPkmXsHzzmeR9rLc4eWkC1zG
+	 /PnLPl9yBgUbCSiNLnb8cmA074iI0qSIcJxw4PJugCFQtI8AYF1S2RZx81A/w9Hn8M
+	 L7mpQ/ixYp7nZ9kTxppR3t1G11kCevgapOv2lwb9nLn2iQs/pla93H+tEuN/hrx+A0
+	 qpV8I7fi1oDnCCEdHbNdhbd/f1C2pz3knB+MJs+pGqt2aBqa5bhyYhHzSE5uii6lW3
+	 V/XlR7HnJbpkNs+yQ73pl10f6lEhIuhCWtAGzxajx2RKbK4FweapZRbR54ebM8TsEw
+	 EF2zOZHKtEwnw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 18 Feb 2025 15:26:09 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <b174cc40-d08b-42a5-89fc-9fdac2b15ea9@wanadoo.fr>
+Date: Tue, 18 Feb 2025 23:26:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,245 +56,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset
- for MT8188
-To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?R2FybWluIENoYW5nICjlvLXlrrbpipgp?= <Garmin.Chang@mediatek.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?=
- <Yong.Wu@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor@kernel.org" <conor@kernel.org>
-References: <20250121065045.13514-1-friday.yang@mediatek.com>
- <20250121065045.13514-2-friday.yang@mediatek.com>
- <20250121-violet-widely-df3567b085a4@spud>
- <2bfb6c05a3471e54f51c06895709853661e82c9a.camel@mediatek.com>
- <20250124-aide-feisty-821cf9cf1382@spud>
- <85c616dd195da26313cab552b24f514b539193c1.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Matt Jan <zoo868e@gmail.com>,
+ syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
+ <20250217190404.354574-1-zoo868e@gmail.com>
+ <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
+ <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
 Content-Language: en-US
-In-Reply-To: <85c616dd195da26313cab552b24f514b539193c1.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Il 18/02/25 13:44, Friday Yang (杨阳) ha scritto:
-> On Fri, 2025-01-24 at 17:31 +0000, Conor Dooley wrote:
->> On Wed, Jan 22, 2025 at 07:40:12AM +0000, Friday Yang (杨阳) wrote:
->>> On Tue, 2025-01-21 at 17:30 +0000, Conor Dooley wrote:
->>>> On Tue, Jan 21, 2025 at 02:50:40PM +0800, Friday Yang wrote:
->>>>> SMI LARBs require reset functions when applying clamp
->>>>> operations.
->>>>> Add '#reset-cells' for the clock controller located in image,
->>>>> camera
->>>>> and IPE subsystems.
->>>>
->>>> A new required property is an abi break, please explain why this
->>>> is
->>>> required.
+On 18/02/2025 at 16:37, Marc Kleine-Budde wrote:
+> On 18.02.2025 11:22:11, Vincent Mailhol wrote:
+>> On 18/02/2025 at 04:04, Matt Jan wrote:
+>>> According to the comment, the size parameter is only required when
+>>> @dst is not an array, or when the copy needs to be smaller than
+>>> sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
+>>> correct size should be sizeof(union ucan_ctl_payload).
 >>
->> You never answered this part. From a quick check, looks like the
->> change
->> you made will cause probe failures if the resets are not present?
->> Maybe
->> I misread the driver code in my quick skim - but that is the
->> implication
->> of a new required property, so I didn't dig super far.
+>> While this fix is correct, I think that the root cause is that
+>> up->ctl_msg_buffer->raw is not NUL terminated.
 >>
->> Adding new properties that break a driver is not really acceptable,
->> so I
->> hope I made a mistake there.
+>> Because of that, a local copy was added, just to reintroduce the NUL
+>> terminating byte.
 >>
+>> I think it is better to just directly terminate up->ctl_msg_buffer->raw
+>> and get rid of the firmware_str local variable and the string copy.
+>>
+>> So, what about this:
+>>
+>> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+>> index 39a63b7313a4..268085453d24 100644
+>> --- a/drivers/net/can/usb/ucan.c
+>> +++ b/drivers/net/can/usb/ucan.c
+>> @@ -186,7 +186,7 @@ union ucan_ctl_payload {
+>>          */
+>>         struct ucan_ctl_cmd_get_protocol_version cmd_get_protocol_version;
+>>
+>> -       u8 raw[128];
+>> +       char fw_info[128];
+>>  } __packed;
+>>
+>>  enum {
+>> @@ -424,18 +424,19 @@ static int ucan_ctrl_command_out(struct ucan_priv *up,
+>>                                UCAN_USB_CTL_PIPE_TIMEOUT);
+>>  }
+>>
+>> -static int ucan_device_request_in(struct ucan_priv *up,
+>> -                                 u8 cmd, u16 subcmd, u16 datalen)
+>> +static void ucan_get_fw_info(struct ucan_priv *up, char *fw_info,
+>> size_t size)
+>>  {
+>> -       return usb_control_msg(up->udev,
+>> -                              usb_rcvctrlpipe(up->udev, 0),
+>> -                              cmd,
+>> -                              USB_DIR_IN | USB_TYPE_VENDOR |
+>> USB_RECIP_DEVICE,
+>> -                              subcmd,
+>> -                              0,
+>> -                              up->ctl_msg_buffer,
+>> -                              datalen,
+>> -                              UCAN_USB_CTL_PIPE_TIMEOUT);
+>> +       int ret;
+>> +
+>> +       ret = usb_control_msg(up->udev, usb_rcvctrlpipe(up->udev, 0),
+>> +                             UCAN_DEVICE_GET_FW_STRING,
+>> +                             USB_DIR_IN | USB_TYPE_VENDOR |
+>> USB_RECIP_DEVICE,
+>> +                             0, 0, fw_info, size - 1,
+>> +                             UCAN_USB_CTL_PIPE_TIMEOUT);
+>> +       if (ret > 0)
+>> +               fw_info[ret] = '\0';
+>> +       else
+>> +               strcpy(fw_info, "unknown");
+>>  }
+>>
+>>  /* Parse the device information structure reported by the device and
+>> @@ -1314,7 +1315,6 @@ static int ucan_probe(struct usb_interface *intf,
+>>         u8 in_ep_addr;
+>>         u8 out_ep_addr;
+>>         union ucan_ctl_payload *ctl_msg_buffer;
+>> -       char firmware_str[sizeof(union ucan_ctl_payload) + 1];
+>>
+>>         udev = interface_to_usbdev(intf);
+>>
+>> @@ -1527,17 +1527,6 @@ static int ucan_probe(struct usb_interface *intf,
+>>          */
+>>         ucan_parse_device_info(up, &ctl_msg_buffer->cmd_get_device_info);
+>>
+>> -       /* just print some device information - if available */
+>> -       ret = ucan_device_request_in(up, UCAN_DEVICE_GET_FW_STRING, 0,
+>> -                                    sizeof(union ucan_ctl_payload));
+>> -       if (ret > 0) {
+>> -               /* copy string while ensuring zero termination */
+>> -               strscpy(firmware_str, up->ctl_msg_buffer->raw,
+>> -                       sizeof(union ucan_ctl_payload) + 1);
+>> -       } else {
+>> -               strcpy(firmware_str, "unknown");
+>> -       }
+>> -
+>>         /* device is compatible, reset it */
+>>         ret = ucan_ctrl_command_out(up, UCAN_COMMAND_RESET, 0, 0);
+>>         if (ret < 0)
+>> @@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *intf,
+>>
+>>         /* initialisation complete, log device info */
+>>         netdev_info(up->netdev, "registered device\n");
+>> -       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
+>> +       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
+>> +                        sizeof(up->ctl_msg_buffer->fw_info));
+>> +       netdev_info(up->netdev, "firmware string: %s\n",
+>> +                   up->ctl_msg_buffer->fw_info);
 > 
-> Sorry to reply late.
-> This is a known bus glitch issue. It worked because MediaTek has
-> provided patches 1, 2 and 3. In other word, it can not work
-> without patches 1, 2 and 3.
+> We could also use the:
 > 
-> 1.
-> https://lore.kernel.org/all/20240327055732.28198-1-yu-chang.lee@mediatek.com/
-> 2.
-> https://lore.kernel.org/all/20240327055732.28198-2-yu-chang.lee@mediatek.com/
-> 3.
-> https://lore.kernel.org/all/20240327055732.28198-3-yu-chang.lee@mediatek.com/
+>     printf("%.*s", sizeof(up->ctl_msg_buffer->fw_info), up->ctl_msg_buffer->fw_info);
 > 
-> Patches 1, 2 and 3 have been previously reviewed, and the reviewers
-> provided the following comments:
-> 4.
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=wXpobDWU1CnvkA@mail.gmail.com/
-> 5.
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8eyhP+KJ5Fasm2rFg@mail.gmail.com/
-> As I mentioned earlier, SMI clamp and reset operations should be
-> implemented in SMI driver rather than the PM driver. Additionally, the
-> reset operations have already been implemented in the clock control
-> driver. There is no need to submit duplicate code.
-> 
-> To address this, I have provided patches 6, 7 to replace patches 1, 2,
-> and 3, as I believe this approach aligns more closely with the
-> reviewers' requirements.
-> 6.
-> https://lore.kernel.org/lkml/20250121065045.13514-1-friday.yang@mediatek.com/
-> 7.
-> https://lore.kernel.org/lkml/20250121064934.13482-1-friday.yang@mediatek.com/
-> 
-> What's more, I have tested the patch 6, 7 in MediaTek MT8188 SoC.
-> It could work well. If you have any questions, please feel free to
-> contact me.
-> 
->>> What are "SMI LARBs"? Why did things previously work
->>>> without
->>>> acting as a reset controller?
->>>>
->>>
->>> The background can refer to the discussion in the following link:
->>>
->>>
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=wXpobDWU1CnvkA@mail.gmail.com/
->>>
->>>
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8eyhP+KJ5Fasm2rFg@mail.gmail.com/
->>> SMI clamp and reset operations should be implemented in SMI driver
->>> instead of PM driver.
->>
->> So the answer to how it worked previously was that nothing actually
->> used
->> this multimedia interface?
->>
->> Your commit message needs to explain why a new required property is
->> okay
->> and why it was not there before.
->>
+> format string trick to only print a limited number of chars of the given
+> string.
 
-This conversation slipped through the cracks - wanted to reply to this quite a bit
-of time ago but then for whatever reason .... eh here we are :-)
+Indeed. But after the renaming of ucan_device_request_in() into
+ucan_get_fw_info(), it makes slightly more sense to me to have this new
+function to handle the string NUL termination logic rather than to
+deffer it to the format string.
 
-Anyway.
+But thanks for the suggestion.
 
-The cleanest option to get the glitching situation to get resolved is probably
-exactly the one that Friday proposed with this series...
+> But I'm also fine with your solution. Either way, please send a
+> proper patch :)
 
-I agree that the commit needs a proper description, though, and even though the
-drivers were never actually used (so it's not a huge problem - as in - no device
-gets broken when this is merged), it's still an ABI breakage, and that has to be
-justified with a good reason.
+Will do so right now!
 
-The good reason is that there's a hardware bug that you're trying to resolve here
-and that emerged only after the initial upstreaming of this binding (do *not*
-mention drivers in DT bindings, those describe the hardware, not software!), and
-the only way to resolve this situation is by resetting the Local Arbiter (LARB)
-of the cam/img/ipe macro-blocks.
 
-Failing to do this, the hardware is going to be unstable during high/dynamic load
-conditions.
-
-So, just describe the problem and how you're solving it in the commit description:
-that's going to be okay and justifying everything that you're doing here.
-
-I'm sorry for chiming in that late, btw.
-
-Cheers,
-Angelo
-
->> Thanks,
->> Conor.
->>
->>>
->>> I previously added the SMI reset control driver. However, the
->>> reviewer's comments are correct, these functions have already
->>> been implemented in the clock control driver. There is no need
->>> to submit duplicate code.
->>>
->>>
-> https://lore.kernel.org/lkml/20241120063305.8135-2-friday.yang@mediatek.com/
->>>
->>>
-> https://lore.kernel.org/lkml/20241120063305.8135-3-friday.yang@mediatek.com/
->>>
->>>
->>> On the MediaTek platform, the SMI block diagram like this:
->>>
->>>                  DRAM
->>>                   |
->>>              EMI(External Memory Interface)
->>>                   |  |
->>>            MediaTek IOMMU(Input Output Memory Management Unit)
->>>                   |  |
->>>               SMI-Common(Smart Multimedia Interface Common)
->>>                   |
->>>           +----------------+------------------+
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>         larb0       SMI-Sub-Common0     SMI-Sub-Common1
->>>                     |      |     |      |             |
->>>                    larb1  larb2 larb3  larb7       larb9
->>>
->>> The SMI-Common connects with SMI LARBs and IOMMU. The maximum LARBs
->>> number that connects with a SMI-Common is 8. If the engines number
->>> is
->>> over 8, sometimes we use a SMI-Sub-Common which is nearly same with
->>> SMI-Common. It supports up to 8 input and 1 output(SMI-Common has 2
->>> output).
->>>
->>>>>
->>>>> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
->>>>> ---
->>>>>   .../bindings/clock/mediatek,mt8188-clock.yaml | 21
->>>>> +++++++++++++++++++
->>>>>   1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> b/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> index 860570320545..2985c8c717d7 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> @@ -57,6 +57,27 @@ required:
->>>>>     - reg
->>>>>     - '#clock-cells'
->>>>>
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            enum:
->>>>> +              - mediatek,mt8188-camsys-rawa
->>>>> +              - mediatek,mt8188-camsys-rawb
->>>>> +              - mediatek,mt8188-camsys-yuva
->>>>> +              - mediatek,mt8188-camsys-yuvb
->>>>> +              - mediatek,mt8188-imgsys-wpe1
->>>>> +              - mediatek,mt8188-imgsys-wpe2
->>>>> +              - mediatek,mt8188-imgsys-wpe3
->>>>> +              - mediatek,mt8188-imgsys1-dip-nr
->>>>> +              - mediatek,mt8188-imgsys1-dip-top
->>>>> +              - mediatek,mt8188-ipesys
->>>>> +
->>>>> +    then:
->>>>> +      required:
->>>>> +        - '#reset-cells'
->>>>> +
->>>>>   additionalProperties: false
->>>>>
->>>>>   examples:
->>>>> --
->>>>> 2.46.0
->>>>>
-
+Yours sincerely,
+Vincent Mailhol
 
 
