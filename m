@@ -1,147 +1,248 @@
-Return-Path: <linux-kernel+bounces-520600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57429A3AC05
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:51:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9D7A3AC07
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:51:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC1A172B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B7787A5D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFAC1D934B;
-	Tue, 18 Feb 2025 22:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEC01DA0E0;
+	Tue, 18 Feb 2025 22:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IJzIFiv7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXSUteLX"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0A82862B7;
-	Tue, 18 Feb 2025 22:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1032862B7;
+	Tue, 18 Feb 2025 22:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739919090; cv=none; b=KqoutcO4CS3xt5lq9ppSPpba1PwxRnYIm2G/NtIbrIYTzi70nhPA6j5blfgGDFMBstS1iEcztJfEi7ikjOE2tOpbyNiYrV7Jyc0Ltc1nDOzWD5dr3cp/MOrM7xyEjIDWI38sSNTn45EFmk63OM6Zcy3QMQ+gAXPZrUPWE+oSM6o=
+	t=1739919103; cv=none; b=BTRIDNSrV7BYz9V4u464ERb+K5dJVH8+BeNAdwpshv/v4d80IurYIYJES95aaKJOCkNfNc9gLRvqeY1YGuXEnKAos6qIUJTXL2OmS3lnuuZl6VMcuqdbIcie+99CteAkfPXKYGe098cSPBGMzP4SsnouCCDFQpl4BiXrD2jd0oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739919090; c=relaxed/simple;
-	bh=41Ju47sY0lMfM/I4sXVYmijlHz2g9fuRqHfzZwSEb2c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LMHz0P5HM5IIufXEPGLg7e3atsIoG3VAK9Fz0gBOaNFoRePoPJEmBzfWAu4hpFhlK924saJWM1GAbI2YZwg59FsL7jxBoJedb426pPM8wZhNKcSc/+hlIq/Q15XYiJK1EKWgoYppMjtwA9BUoGZpmghUXVS1n2E2P/sFxBXDPhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IJzIFiv7; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739919088; x=1771455088;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=41Ju47sY0lMfM/I4sXVYmijlHz2g9fuRqHfzZwSEb2c=;
-  b=IJzIFiv7JQEHBFbnOA+aNIrs77a8XzirojFdkZKS7dT3Xnj0rmeQM4uZ
-   6vQ0osmmVjfxTneEnvw/Dl4gXdrZ6xPI4MxGQU6vwNUUrh2ETG8n4N3iX
-   1OeqOfz2GJlXR46tGtmNjd1pToeiG3oYDzKvKR7vM9e7agk2g9yvdUYVg
-   zhCy9Bp2akFnehAWuuS/aZ3LqTZwTHXPvbFknqXAyL916jg3rUkwvhfsh
-   ZGAwWeSmjlAQBbV0UVYM+585ZdlJNHe9Ek6gNYcg76hVYUT6fDXzHmA/k
-   v1UDdOz2+nmlUzeW7KsvsxeZnvhSKmiwl5WHNCb/41JKJYm69ajRPrtdP
-   w==;
-X-CSE-ConnectionGUID: Q4MrmnkQSbKNlOLLheLdCw==
-X-CSE-MsgGUID: cknWGdK5R1ulu9jYirWzUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44556748"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="44556748"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 14:51:28 -0800
-X-CSE-ConnectionGUID: SGqeKsewS3S1PEGd7PS0eg==
-X-CSE-MsgGUID: qBLaGenvS024Odg4vAPM9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="119642688"
-Received: from sj-2308-osc3.sj.altera.com ([10.244.138.69])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 14:51:26 -0800
-Date: Tue, 18 Feb 2025 14:51:27 -0800 (PST)
-From: matthew.gerlach@linux.intel.com
-To: Krzysztof Kozlowski <krzk@kernel.org>
-cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-    robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, 
-    conor+dt@kernel.org, dinguyen@kernel.org, joyce.ooi@intel.com, 
-    linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, matthew.gerlach@altera.com, 
-    peter.colberg@altera.com
-Subject: Re: [PATCH v7 2/7] dt-bindings: intel: document Agilex PCIe Root
- Port
-In-Reply-To: <3894efe9-fb8a-4a6f-bc50-ed54b6f7614d@kernel.org>
-Message-ID: <21475024-ba4e-6842-d760-3efe4cab9819@linux.intel.com>
-References: <20250215155359.321513-1-matthew.gerlach@linux.intel.com> <20250215155359.321513-3-matthew.gerlach@linux.intel.com> <20250216-ubiquitous-agile-spoonbill-cf12ab@krzk-bin> <dcd28035-6ba8-5d67-daa3-26812c4fc99d@linux.intel.com>
- <3894efe9-fb8a-4a6f-bc50-ed54b6f7614d@kernel.org>
+	s=arc-20240116; t=1739919103; c=relaxed/simple;
+	bh=09mhIVIKYxjiPovvCZwIfT9uucZB6bewGp1zpFbGO9o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VYkKCS+OCzAMtAryak4WM//vzzWv2daQeBuIlMDckU/rEKfvI91M6zzhf4tmfgpDArq4v10RX75nIHNJ1kw+ZoaPKsVXnPYGjDnJamc4E8VT2imLm91GzAH3jsP8y8ZsSdV9eDJL7v+XtLKTj6WdAErmXEwAqd/o1Rqhh4R955A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXSUteLX; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220ecbdb4c2so124481855ad.3;
+        Tue, 18 Feb 2025 14:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739919101; x=1740523901; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6ORrYmUDPNdGvCeOBnG5uQ7Y0NU9bK0qUq1EfyO/514=;
+        b=HXSUteLXLMEZVzKbBo/RWBPIitQOo+PyBvEWIFl0W9bUr/72/BSjdg55+LHwqN52a6
+         awmwmDZasGa0OTSnz6cUldipWch/1M4r1d8Bd8csLmj1GjOTaAy2S74xT0qWKhLQ/EXi
+         bP5UVdyOJr+/becFKfEvFSRlRqnI7Ly6Z5M/SjUuiE88uA0E5ntvhaBsEmjQKKhpZFbi
+         7+3y8UuhSZyWkeCtCi4l7E07w7Pf/KU2S0vV7mrPGKQrli5umP3v28bHOTLF2AjmafDi
+         PAS/lfiBrq9jEUCyGrD8lgp46RXgq8Nq35KioUqGM7xW6WxWZET5durhhe1/JcnLq6WU
+         MgQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739919101; x=1740523901;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ORrYmUDPNdGvCeOBnG5uQ7Y0NU9bK0qUq1EfyO/514=;
+        b=HlLLP/cGFd112fSeWOVk9t7TswktVUPbaRFBDVwDZV+yenmz1iTWM6C+cLZvG25mA5
+         bxlqZxwiwWk0L/rBLuo2pdXNPzwM4ebsG0LwSOUNTMoWnObyke3h1Rp4KgO/pBrTO4Gx
+         1t/ALIda7HpMhRSzlNQj6dehXPnYaNte8VFceqlhklRXcrTOHbLmiZmTnf4EAaFltnS6
+         RYFXdRynZxUllpPtvIx3tJj1ryUpgEzMih7PJV8tG7K4JnahA97lS/4xFIkMQt8LpWvg
+         e5/7v4nWOGnU+h05V3npnWkKjA38EZrl3+1toJ2s+sWIID7Z8BMgf8/dc4R9yeU3s0E3
+         V7SA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVLegzjXdmnZn5K+vQFYOy3PtzUkRSyWpQ+8bEx0Pdompqw9A98QyVl9oCUEGMmHmALq7nFLnQqTK4jzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXiQ0vd6p3Sjf0/FhBsWufRumpUIRvMS9nX0JX2p7BgMHcyZ+n
+	jqQN9jXtLn18WKQUA1xqytidbweRuVgk59BhCV8/TDY10z/7Y9Z5779blA==
+X-Gm-Gg: ASbGncuFY2zTlyjp5VAtaWwCvXBA0cOGds3ybWo6DyWeGkp7C7H5+qgQFv5BQ7CrBmM
+	zEUg+GGD9jv+8txoJl3nOdfQl1U7Fnt57+RlePTdyzecdRa6/oRuLjAv7lr9ffSy1YPgqUeriGY
+	7F2+/sSfCcx2DC6oV0VsLxUfpOh2yrKtWzDmc7Pm7A45IGf46XqpbVHODZjovgahoXma9rudtns
+	6fpDzhq/NFZmLsugFiojTiRsF0aFtZNguCnqMMHc1N6KTc6pVI77eOSHA8KQndZnYsjtKypC6n1
+	xtpCErXsQAZo
+X-Google-Smtp-Source: AGHT+IHw221j9N2U4Hg+3w/6umwAipgdU2Ef5aU/ybP4CQxRHBWYMQjONMnDMTpY5xFUV+A2aPoBrQ==
+X-Received: by 2002:a05:6a21:6b18:b0:1ee:688c:6ad9 with SMTP id adf61e73a8af0-1ee8cb4eec7mr27265022637.17.1739919101392;
+        Tue, 18 Feb 2025 14:51:41 -0800 (PST)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adc746d1079sm8222439a12.68.2025.02.18.14.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 14:51:40 -0800 (PST)
+Message-ID: <598a7d089936b18472937679d4131286f102cb18.camel@gmail.com>
+Subject: Re: [PATCH RESEND bpf-next v7 0/4] Add prog_kfunc feature probe
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Tao Chen <chen.dylane@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, haoluo@google.com, jolsa@kernel.org, qmo@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 18 Feb 2025 14:51:36 -0800
+In-Reply-To: <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
+References: <20250212153912.24116-1-chen.dylane@gmail.com>
+	 <2b025df3-144b-4909-a2b4-66356540f71c@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
 
+On Mon, 2025-02-17 at 13:21 +0800, Tao Chen wrote:
+> =E5=9C=A8 2025/2/12 23:39, Tao Chen =E5=86=99=E9=81=93:
+> > More and more kfunc functions are being added to the kernel.
+> > Different prog types have different restrictions when using kfunc.
+> > Therefore, prog_kfunc probe is added to check whether it is supported,
+> > and the use of this api will be added to bpftool later.
+> >=20
+> > Change list:
+> > - v6 -> v7:
+> >    - wrap err with libbpf_err
+> >    - comments fix
+> >    - handle btf_fd < 0 as vmlinux
+> >    - patchset Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> > - v6
+> >    https://lore.kernel.org/bpf/20250211111859.6029-1-chen.dylane@gmail.=
+com
+> >=20
+> > - v5 -> v6:
+> >    - remove fd_array_cnt
+> >    - test case clean code
+> > - v5
+> >    https://lore.kernel.org/bpf/20250210055945.27192-1-chen.dylane@gmail=
+.com
+> >=20
+> > - v4 -> v5:
+> >    - use fd_array on stack
+> >    - declare the scope of use of btf_fd
+> > - v4
+> >    https://lore.kernel.org/bpf/20250206051557.27913-1-chen.dylane@gmail=
+.com/
+> >=20
+> > - v3 -> v4:
+> >    - add fd_array init for kfunc in mod btf
+> >    - add test case for kfunc in mod btf
+> >    - refactor common part as prog load type check for
+> >      libbpf_probe_bpf_{helper,kfunc}
+> > - v3
+> >    https://lore.kernel.org/bpf/20250124144411.13468-1-chen.dylane@gmail=
+.com
+> >=20
+> > - v2 -> v3:
+> >    - rename parameter off with btf_fd
+> >    - extract the common part for libbpf_probe_bpf_{helper,kfunc}
+> > - v2
+> >    https://lore.kernel.org/bpf/20250123170555.291896-1-chen.dylane@gmai=
+l.com
+> >=20
+> > - v1 -> v2:
+> >    - check unsupported prog type like probe_bpf_helper
+> >    - add off parameter for module btf
+> >    - check verifier info when kfunc id invalid
+> > - v1
+> >    https://lore.kernel.org/bpf/20250122171359.232791-1-chen.dylane@gmai=
+l.com
+> >=20
+> > Tao Chen (4):
+> >    libbpf: Extract prog load type check from libbpf_probe_bpf_helper
+> >    libbpf: Init fd_array when prog probe load
+> >    libbpf: Add libbpf_probe_bpf_kfunc API
+> >    selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
+> >=20
+> >   tools/lib/bpf/libbpf.h                        |  19 ++-
+> >   tools/lib/bpf/libbpf.map                      |   1 +
+> >   tools/lib/bpf/libbpf_probes.c                 |  86 +++++++++++---
+> >   .../selftests/bpf/prog_tests/libbpf_probes.c  | 111 +++++++++++++++++=
++
+> >   4 files changed, 201 insertions(+), 16 deletions(-)
+> >=20
+>=20
+> Ping...
+>=20
+> Hi Andrii, Eduard,
+>=20
+> I've revised the previous suggestions. Please review it again. Thanks.
+>=20
 
+I tried the test enumerating all kfuncs in BTF and doing
+libbpf_probe_bpf_kfunc for BPF_PROG_TYPE_{KPROBE,XDP}.
+(Source code at the end of the email).
 
-On Tue, 18 Feb 2025, Krzysztof Kozlowski wrote:
+The set of kfuncs returned for XDP looks correct.
+The set of kfuncs returned for KPROBE contains a few incorrect entries:
+- bpf_xdp_metadata_rx_hash
+- bpf_xdp_metadata_rx_timestamp
+- bpf_xdp_metadata_rx_vlan_tag
 
-> On 17/02/2025 16:47, matthew.gerlach@linux.intel.com wrote:
->>
->>
->> On Sun, 16 Feb 2025, Krzysztof Kozlowski wrote:
->>
->>> On Sat, Feb 15, 2025 at 09:53:54AM -0600, Matthew Gerlach wrote:
->>>> The Agilex7f devkit can support PCIe End Points with the appropriate
->>>> daughter card.
->>>>
->>>> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->>>> ---
->>>> v7:
->>>>  - New patch to series.
->>>> ---
->>>>  Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->>>> index 2ee0c740eb56..0da5810c9510 100644
->>>> --- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->>>> +++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->>>> @@ -20,6 +20,7 @@ properties:
->>>>                - intel,n5x-socdk
->>>>                - intel,socfpga-agilex-n6000
->>>>                - intel,socfpga-agilex-socdk
->>>> +              - intel,socfpga-agilex7f-socdk-pcie-root-port
->>>
->>> Compatible should represent the board, so what is here exactly the
->>> board? 7f? Agilex7f? socdk? Or is it standard agilex-socdk but with some
->>> things attached?
->>
->> The board is the Agilex 7 FPGA F-Series Transceiver-Soc Development Kit:
->> https://www.intel.com/content/www/us/en/products/details/fpga/development-kits/agilex/si-agf014.html
->
-> Isn't Agilex7 a SoC? I don't see it in the list of compatibles.
-There are actually 3 different variants of the Agilex7 SoC.
->
->>
->> There is not a single, standard agilex-socdk board. There are currently
->> three variants. In addition to the F-Series socdk, there are I-Series and
->> M-Series devkits:
->> https://www.intel.com/content/www/us/en/products/details/fpga/development-kits/agilex/si-agi027.html
->> https://www.intel.com/content/www/us/en/products/details/fpga/development-kits/agilex/agm039.html
->
-> Pages above show distinctive names for the boards, so I am confused why
-> they are not used.
+This is because of a different string reported by verifier for these
+three functions.
 
-Yes, the distinctive names of the boards should be used:
-               - intel,socfpga-agilex7f-socdk
-               - intel,socfpga-agilex7i-socdk
-               - intel,socfpga-agilex7m-socdk
->
->
->
-> Best regards,
-> Krzysztof
->
+Ideally, I'd write some script looking for
+register_btf_kfunc_id_set(BPF_PROG_TYPE_***, kfunc_set)
+calls in the kernel source code and extracting the prog type /
+functions in the set, and comparing results of this script with
+output of the test below for all program types.
+But up to you if you'd like to do such rigorous verification or not.
 
-Thanks for the feedback,
-Matthew Gerlach
+Otherwise patch-set looks good to me, for all patch-set:
+
+Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+
+--- 8< -----------------------------------------------------
+
+static const struct {
+	const char *name;
+	int code;
+} program_types[] =3D {
+#define _T(n) { #n, BPF_PROG_TYPE_ ## n }
+	_T(KPROBE),
+	_T(XDP),
+#undef _T
+};
+
+void test_libbpf_probe_kfuncs_many(void)
+{
+	int i, kfunc_id, ret, id;
+	const struct btf_type *t;
+	struct btf *btf =3D NULL;
+	const char *kfunc;
+	const char *tag;
+
+	btf =3D btf__parse("/sys/kernel/btf/vmlinux", NULL);
+	if (!ASSERT_OK_PTR(btf, "btf_parse"))
+		return;
+
+	for (id =3D 0; id < btf__type_cnt(btf); ++id) {
+		t =3D btf__type_by_id(btf, id);
+		if (!btf_is_decl_tag(t))
+			continue;
+		tag =3D btf__name_by_offset(btf, t->name_off);
+		if (strcmp(tag, "bpf_kfunc") !=3D 0)
+			continue;
+		kfunc_id =3D t->type;
+		t =3D btf__type_by_id(btf, kfunc_id);
+		if (!btf_is_func(t))
+			continue;
+		kfunc =3D btf__name_by_offset(btf, t->name_off);
+		printf("[%-6d] %-42s ", kfunc_id, kfunc);
+		for (i =3D 0; i < ARRAY_SIZE(program_types); ++i) {
+			ret =3D libbpf_probe_bpf_kfunc(program_types[i].code, kfunc_id, -1, NULL=
+);
+			if (ret < 0)
+				printf("%-8d  ", ret);
+			else if (ret =3D=3D 0)
+				printf("%8s  ", "");
+			else
+				printf("%8s  ", program_types[i].name);
+		}
+		printf("\n");
+	}
+	btf__free(btf);
+}
+
+----------------------------------------------------- >8 ---
+
 
