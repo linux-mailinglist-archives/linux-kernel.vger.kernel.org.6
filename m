@@ -1,118 +1,290 @@
-Return-Path: <linux-kernel+bounces-519424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4373DA39CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:01:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4FDA39CA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D080F1892D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:01:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618AF3ABF26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14708265CDB;
-	Tue, 18 Feb 2025 13:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA420267382;
+	Tue, 18 Feb 2025 13:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="VQzKTkTZ"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NopPGMoC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682BA2475E3;
-	Tue, 18 Feb 2025 13:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5024336B;
+	Tue, 18 Feb 2025 13:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883684; cv=none; b=hwNmSnPS/YnLadeRqcMcv1JrRaXPH7xwq0tZpckq15HJslVkSW1WD6ElGKPJvXLEjlPSdlKMZvyJSmO1k8KGQ7SBvRboayRPiNm2dKpHcFYfFN80XRlrUc7i8aFF82jv0dMbwZ5yxb7LzjysYRM5GuXuAC3md2sZrFNQJWWEF/s=
+	t=1739883633; cv=none; b=qsyEqR71AtjnzOPvorQRY4UvqG35+xLFYjDMG2BiqKLqLZ9pWEmLmBN+YGtn3DzU0J3t37u6135pvRLrjcHVnY4p7m/edaimApmuBYwrZ5AmUjtKl5LHps7VTJjvoO8AVA+wcOKDangElikwENO+BMA93OMgJwDAj4r9r/TunMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883684; c=relaxed/simple;
-	bh=REMDhOVh7pJ5KFuQlenUTEO944Cb9VC/25T5owjMRlw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bTMFNwJc34yV1TD7sUlaqkvA9oG9h8MPhi+Pu+IagFlBMi5cIGY6ZZVcSBG3YDh3Hx56QiVK6MeyKDCVi3RZleU/Od6XSviMAJKKLfGV1wTO+xw7/hi3haxP75WXaFjDHgFNusW7W/B9BkyfGtWsreRtprIMSw7aDtIVIpu7FTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=VQzKTkTZ; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1739883638;
-	bh=vu9AhJ+sH4SiA9VYYHMJNNq3mIbaKW1m2kie1eFfosk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VQzKTkTZtAF89B1DWJjhgmqKu+3UVYMKg8dJLKnoFvxxwn+jUflmN5kPSW6Du83Nk
-	 ZNCnBjj06tV91TrNnRsO2bQktndPzdCxJ2gd8QVzAmQPcaPuJpHloC2F/7PpOERbxe
-	 6YYrOYvbZN4HAO/s5hVBZczx0PDZBtLpgqaMWz84=
-X-QQ-mid: bizesmtpip4t1739883626tcxbnq6
-X-QQ-Originating-IP: kYssLISZAcBG86zvva6DvONeMTAgztYYkGvTh2hosiU=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 18 Feb 2025 21:00:24 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14385670806022170288
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: chenlinxuan@uniontech.com,
-	guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com,
-	geert@linux-m68k.org,
-	herbert@gondor.apana.org.au,
-	ebiggers@google.com,
-	ardb@kernel.org
-Subject: [PATCH 7/7] MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
-Date: Tue, 18 Feb 2025 21:00:15 +0800
-Message-ID: <5CD9CFC46F6AC7FE+20250218130015.668651-2-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
-References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1739883633; c=relaxed/simple;
+	bh=kbbKpE1RfTW0FfgUrkW7wYjgwM+Dvgnqkuu5R4x8zM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dFBnFlWESTw7YagJg/YC3qt+oWgpHFJFVjaNy0sEAz+MTswUyOmUDKIYdA/nQGrCx8SmGDi+x9/E3yzH/HpgewiecQQ2vJaG5nk5SPlLZUGbD56+hUIZ5GtK4nFK04g5AUcm+1RHM+OIuez+1QgElXnVEvNqX+7F5UDMzuT0YO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NopPGMoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43633C4CEE8;
+	Tue, 18 Feb 2025 13:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739883633;
+	bh=kbbKpE1RfTW0FfgUrkW7wYjgwM+Dvgnqkuu5R4x8zM8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NopPGMoCwbigZJ6HZiMLQPrjwz0LoDUtn26Ld3K1vgTHlI9cxOXMB82K2OFXD5zfu
+	 Nbf1SZ8hhhLXib7FtEIP6r4zcLXArlq0GConyv+BUx2KD/J1gvTDSGl3vjCNBeaKlQ
+	 ZXRdDPFw07Cs4qyUsFV7aHKIUf6dcqOcJPPAJ+4xy3opS6W1tZx14r/s5ewQeCmuSr
+	 hckd9KBiezehK9D6y6T2WeKxeSc8EdeIWAY3H7s0yiizdVQuDsbWdndJu85ia1yt3H
+	 MALgQ9ADLwR6W8f0pYr16lq4lDzNSHEqw3QO6hZaZ5Qn7T5QMfecSDxzYUIvJzw55z
+	 oWFgvS+30bZ9w==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3f3f4890596so1247495b6e.2;
+        Tue, 18 Feb 2025 05:00:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUf9XUpN9PwuWu6rwl4Bo4PkxJkdOx3NF/b5XPBEfcgOPxEwa50JomUmnGZ+COTOdEuXMt+XKLLJnmypEfq@vger.kernel.org, AJvYcCUxeA9wQEg0zK5caoM0ZA6iVbeX/aPrawBnPaIvKUtCbfC9F3lEJv7HuS/wrDBUuYeO6hgeWNpoI4c=@vger.kernel.org, AJvYcCUyPOyQrggqqq1vU3CiMiTvgMWl2BO895/L2r30TP9OwYKM4wVe50g7yajImW5z5tly4NrOVPdD2aNQ@vger.kernel.org, AJvYcCXZCTqNSyfW9qu1zGDMgZsxg5GXDIuS6FPdVQ0BcV1fb+mjSaYjcILJA4sH4WssiytqaFGftZKCdW/y@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBqmByIq5+qFb8L+vs4hbTvC+/YmpQ6rjU3IWkbeKLbGAjrBPo
+	75Mte/mpzq7F3NVCQviNpTmPlwXeUQPrmT4jMVJPOe8AxdoYLMuxLwjKuZNd+jRROWMLfYsNDhZ
+	3gC5F9l8qk5zy8ENUXW4r2YV7sBQ=
+X-Google-Smtp-Source: AGHT+IHLCE2CvMrhafvCUGtIRI1GLD8xe84QBTzCr+3bhdCXzTFVTMSKKucInjaJ7hfyPAYGZmL2ZakM2AxBGzsGHMo=
+X-Received: by 2002:a05:6808:1314:b0:3f3:ea3f:bfa9 with SMTP id
+ 5614622812f47-3f3eb15a247mr7797898b6e.34.1739883632479; Tue, 18 Feb 2025
+ 05:00:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NikuFQrTsu3BJQDMA2+Etm1PHjFA8b62Q2dOGzF7I/DYNyRmYBQ2dLpu
-	hKQ0LpY6WYFbPrzVxcgZIcUceQnVS5IlyavqmVw8pLP4eooQzm/9GoY8jIMycNhF//Wb6ch
-	X2B0pr1SeSKUi9p0ODmu/LpLcJU6sGyemThoaSXjHidnnwYmvG2b0u4tdiMz3paEK5oCEEO
-	boUM36TnGeliw7lwvCEhe7JQWIuG+d+QDrFagSp7HcruHCUu1hYsaKtgqlhJbraC8Tf7n2m
-	Y+rPMkNPvg3KYHmxFaRunWsfd8ZcXtwVMxZmEywCY3rr3cDkXMvwrHe5xzObuKCXJENstz/
-	N+rld3HnYsIv9eFe90KprARbfTkuY62fnkjp8d3g69LlnUErt9LMkUQaMtOIctTm28/cyPu
-	rYOv2BiTNlW7SWcWxxx2epiPcpa/VfkIlvkktm6G76ajly1Znvh/GiXiEHQr2LZXatupFi/
-	h2SaA5QXXnctgfuokqvI/idsEOphtQ1b0kfwFXc7ELY/KIWd1IqJbbH05sjVeyFv3fZi7jw
-	F+CNTIg5jELuMqUhbz50FtpWpnqvHAZ5Fb2UQXyI+IbpbbVeFCRKwAgfspioYtmpwCpIWGi
-	73A1zU4LiEdMOvNTwU35YNYIqfxW79cCizjYkGk5bLQYWSMbL9GL5kZYls+T7tLvWNmuCx5
-	ApePES6NzGcauRXIZ+xX+9inGAf6n0yTJce5khahpPjKZyGTmAaQKMTf9QxVzIFSB0WHx6W
-	iQH1bIHwO+SJk35GMMrIcfC7iw5ajidDBA06GpDViZXNzgtSADvCqPJL1RqJFlQK9uVYw+/
-	MkRQYiMsJFMvyQS19GkcO3kqsKD4i72qM45ITvQHB3TH3Bgs2aaBR+PgqnLbAcoc+GRkyLA
-	XLZQ5mWukHyTIzwN9jxvVBAIcQe0T1mLAO+5ikybOyVgF9SoFSTlX6UXPMq74pN3CMY+hyU
-	nM38aQeE9AjgsQ47FjOnXLkxviTMpwAtNU2IjGseKY8ojZqSyrknjyVsANSP+j9rfL/0mgS
-	Wlkvx4/ZeIslGxu1mJIs7oN0HCmn9tPul/GJGRddIdHUTuiT5unagylYnQXv7ykr1Z1DIs4
-	AdptKaASB6lgpPQ48s67nlL91ZXZxTD8mZV13ajwJfnvwb5qxvhquSOKFiEjuiXJknImn8e
-	XPzH
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+References: <4966939.GXAFRqVoOG@rjwysocki.net> <2000822.PYKUYFuaPT@rjwysocki.net>
+ <CAPDyKFoB0fQCabahYpx=A_Ns7vJgWYdK=rxuHk+XHVv35cFvWQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFoB0fQCabahYpx=A_Ns7vJgWYdK=rxuHk+XHVv35cFvWQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Feb 2025 14:00:21 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iHsOw4_UbEWGk_-jPpc3q2K3fUXBs4T3JCooPGV10CHQ@mail.gmail.com>
+X-Gm-Features: AWEUYZmyfSSE72o_hkbFbpUjcrioCcW94jhQxKsdgLG4yq5EU7gyRDuTXRiZcH4
+Message-ID: <CAJZ5v0iHsOw4_UbEWGk_-jPpc3q2K3fUXBs4T3JCooPGV10CHQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Bjorn Helgaas <helgaas@kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Jon Hunter <jonathanh@nvidia.com>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-All compilation issues under decstation_64_defconfig have been
-resolved, and it is now safe to enable CONFIG_WERROR now.
+On Tue, Feb 18, 2025 at 1:49=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> + Saravana
+>
+> On Mon, 17 Feb 2025 at 21:19, Rafael J. Wysocki <rjw@rjwysocki.net> wrote=
+:
+> >
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > A recent discussion has revealed that using DPM_FLAG_SMART_SUSPEND
+> > unconditionally is generally problematic because it may lead to
+> > situations in which the device's runtime PM information is internally
+> > inconsistent or does not reflect its real state [1].
+> >
+> > For this reason, change the handling of DPM_FLAG_SMART_SUSPEND so that
+> > it is only taken into account if it is consistently set by the drivers
+> > of all devices having any PM callbacks throughout dependency graphs in
+> > accordance with the following rules:
+> >
+> >  - The "smart suspend" feature is only enabled for devices whose driver=
+s
+> >    ask for it (that is, set DPM_FLAG_SMART_SUSPEND) and for devices
+> >    without PM callbacks unless they have never had runtime PM enabled.
+> >
+> >  - The "smart suspend" feature is not enabled for a device if it has no=
+t
+> >    been enabled for the device's parent unless the parent does not take
+> >    children into account or it has never had runtime PM enabled.
+> >
+> >  - The "smart suspend" feature is not enabled for a device if it has no=
+t
+> >    been enabled for one of the device's suppliers taking runtime PM int=
+o
+> >    account unless that supplier has never had runtime PM enabled.
+> >
+> > Namely, introduce a new device PM flag called smart_suspend that is onl=
+y
+> > set if the above conditions are met and update all DPM_FLAG_SMART_SUSPE=
+ND
+> > users to check power.smart_suspend instead of directly checking the
+> > latter.
+> >
+> > At the same time, drop the power.set_active flage introduced recently
+> > in commit 3775fc538f53 ("PM: sleep: core: Synchronize runtime PM status
+> > of parents and children") because it is now sufficient to check
+> > power.smart_suspend along with the dev_pm_skip_resume() return value
+> > to decide whether or not pm_runtime_set_active() needs to be called
+> > for the device.
+> >
+> > Link: https://lore.kernel.org/linux-pm/CAPDyKFroyU3YDSfw_Y6k3giVfajg3NQ=
+GwNWeteJWqpW29BojhQ@mail.gmail.com/  [1]
+> > Fixes: 7585946243d6 ("PM: sleep: core: Restrict power.set_active propag=
+ation")
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/acpi/device_pm.c  |    6 +---
+> >  drivers/base/power/main.c |   63 +++++++++++++++++++++++++++++++++++--=
+---------
+> >  drivers/mfd/intel-lpss.c  |    2 -
+> >  drivers/pci/pci-driver.c  |    6 +---
+> >  include/linux/pm.h        |    2 -
+> >  5 files changed, 55 insertions(+), 24 deletions(-)
+> >
+> > --- a/drivers/acpi/device_pm.c
+> > +++ b/drivers/acpi/device_pm.c
+> > @@ -1161,8 +1161,7 @@
+> >   */
+> >  int acpi_subsys_suspend(struct device *dev)
+> >  {
+> > -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> > -           acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+> > +       if (!dev->power.smart_suspend || acpi_dev_needs_resume(dev, ACP=
+I_COMPANION(dev)))
+>
+> Nitpick: Rather than checking the dev->power.smart_suspend flag
+> directly here, perhaps we should provide a helper function that
+> returns true when dev->power.smart_suspend is set? In this way, it's
+> the PM core soley that operates on the flag.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/configs/decstation_64_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I can add a wrapper around this, sure.
 
-diff --git a/arch/mips/configs/decstation_64_defconfig b/arch/mips/configs/decstation_64_defconfig
-index cf8e72164e40..66bf399bbd66 100644
---- a/arch/mips/configs/decstation_64_defconfig
-+++ b/arch/mips/configs/decstation_64_defconfig
-@@ -1,3 +1,4 @@
-+CONFIG_WERROR=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_HIGH_RES_TIMERS=y
--- 
-2.47.2
+> >                 pm_runtime_resume(dev);
+> >
+> >         return pm_generic_suspend(dev);
+> > @@ -1320,8 +1319,7 @@
+> >   */
+> >  int acpi_subsys_poweroff(struct device *dev)
+> >  {
+> > -       if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
+> > -           acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
+> > +       if (!dev->power.smart_suspend || acpi_dev_needs_resume(dev, ACP=
+I_COMPANION(dev)))
+> >                 pm_runtime_resume(dev);
+> >
+> >         return pm_generic_poweroff(dev);
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -656,15 +656,13 @@
+> >          * so change its status accordingly.
+> >          *
+> >          * Otherwise, the device is going to be resumed, so set its PM-=
+runtime
+> > -        * status to "active" unless its power.set_active flag is clear=
+, in
+> > +        * status to "active" unless its power.smart_suspend flag is cl=
+ear, in
+> >          * which case it is not necessary to update its PM-runtime stat=
+us.
+> >          */
+> > -       if (skip_resume) {
+> > +       if (skip_resume)
+> >                 pm_runtime_set_suspended(dev);
+> > -       } else if (dev->power.set_active) {
+> > +       else if (dev->power.smart_suspend)
+> >                 pm_runtime_set_active(dev);
+> > -               dev->power.set_active =3D false;
+> > -       }
+> >
+> >         if (dev->pm_domain) {
+> >                 info =3D "noirq power domain ";
+> > @@ -1282,14 +1280,8 @@
+> >               dev->power.may_skip_resume))
+> >                 dev->power.must_resume =3D true;
+> >
+> > -       if (dev->power.must_resume) {
+> > -               if (dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEN=
+D)) {
+> > -                       dev->power.set_active =3D true;
+> > -                       if (dev->parent && !dev->parent->power.ignore_c=
+hildren)
+> > -                               dev->parent->power.set_active =3D true;
+> > -               }
+> > +       if (dev->power.must_resume)
+> >                 dpm_superior_set_must_resume(dev);
+> > -       }
+> >
+> >  Complete:
+> >         complete_all(&dev->power.completion);
+> > @@ -1797,6 +1789,49 @@
+> >         return error;
+> >  }
+> >
+> > +static void device_prepare_smart_suspend(struct device *dev)
+> > +{
+> > +       struct device_link *link;
+> > +       int idx;
+> > +
+> > +       /*
+> > +        * The "smart suspend" feature is enabled for devices whose dri=
+vers ask
+> > +        * for it and for devices without PM callbacks unless runtime P=
+M is
+> > +        * disabled and enabling it is blocked for them.
+> > +        *
+> > +        * However, if "smart suspend" is not enabled for the device's =
+parent
+> > +        * or any of its suppliers that take runtime PM into account, i=
+t cannot
+> > +        * be enabled for the device either.
+> > +        */
+> > +       dev->power.smart_suspend =3D (dev->power.no_pm_callbacks ||
+> > +               dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) =
+&&
+> > +               !pm_runtime_blocked(dev);
+> > +
+> > +       if (!dev->power.smart_suspend)
+> > +               return;
+> > +
+> > +       if (dev->parent && !pm_runtime_blocked(dev->parent) &&
+> > +           !dev->parent->power.ignore_children && !dev->parent->power.=
+smart_suspend) {
+> > +               dev->power.smart_suspend =3D false;
+> > +               return;
+> > +       }
+> > +
+> > +       idx =3D device_links_read_lock();
+> > +
+> > +       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_n=
+ode) {
+> > +               if (!(link->flags | DL_FLAG_PM_RUNTIME))
+> > +                       continue;
+> > +
+> > +               if (!pm_runtime_blocked(link->supplier) &&
+> > +                   !link->supplier->power.smart_suspend) {
+>
+> This requires device_prepare() for all suppliers to be run before its
+> consumer. Is that always the case?
 
+Yes, it is by design.
+
+> > +                       dev->power.smart_suspend =3D false;
+> > +                       break;
+> > +               }
+> > +       }
+> > +
+> > +       device_links_read_unlock(idx);
+>
+> From an execution overhead point of view, did you check if the above
+> code had some measurable impact on the latency for dpm_prepare()?
+
+It didn't on my systems.
+
+For the vast majority of devices the overhead is just checking
+power.no_pm_callbacks and DPM_FLAG_SMART_SUSPEND.  For some,
+pm_runtime_blocked() needs to be called which requires grabbing a
+spinlock and there are only a few with power.smart_suspend set to
+start with.
+
+I'm wondering why you didn't have this concern regarding other changes
+that involved walking suppliers or consumers, though.
 
