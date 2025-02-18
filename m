@@ -1,185 +1,177 @@
-Return-Path: <linux-kernel+bounces-520602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90240A3AC08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:53:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B442A3AC0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D733189022A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EF03B22DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39911D6DB1;
-	Tue, 18 Feb 2025 22:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5251DC19F;
+	Tue, 18 Feb 2025 22:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="onzu8fRT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEoTzr8k"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3543D2862B7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2B01D8A0D;
+	Tue, 18 Feb 2025 22:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739919177; cv=none; b=r+Sk6SjBrKLlSFGaFk3hn/22LU10mTMyufsi+lYOZYO5vhFJVi+HqI8uJuK1b0cLezWaipVtmvWf13R31H/aq+gVxmPJp2/YxMGc91f1kEsAe6nlnlRR999hk3KnfKwI+HdGuWhBbFhcHWF8yGGl0JsHIDDvHREUTsPZNB5hbLc=
+	t=1739919294; cv=none; b=Hs8tu5n0YXjX5cIhEtuepCeq/IQJUFFBwJH/1ieOix/B7FVX/CXssbX5j2yM2r/YBrPziLf0fBvPBHjJ1Ggfuk+yZ6uxDM9QmRBQPBz/VFdILQqbvIDrnB6Iv5WA9gg89/dvmuNAK3KZalOnOkp62Ux4GSYnREHWpVz1AMsNnF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739919177; c=relaxed/simple;
-	bh=TXtY7nLeS8PW+yqLiU9tMoo4KhjQk30X3Ab0W/BQRUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmvBYSLRuZ/YDMc6sgYWvz8M/Z7YyJEYYknYK2EkkxwupDEOUEFsDZFg2sAk2VKWe9MeyTBsC4lCao4CndgGfkPznufD5qKUuFOQYN6G1jlkU7BJebaExqgXy3kqIBkiD2l3TEhaJQMBZUnc5PLWoxWwaPRvu3Glss4uPdNOzS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=onzu8fRT; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IIxptN004282;
-	Tue, 18 Feb 2025 22:52:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=GaJME74QyLqMkiZIqT+fdiJXd85Ecz
-	GT682zhcyP6j8=; b=onzu8fRTDgnGwxo0ULVsUMfYIBS1W1BVDl3WCx43X4iNrh
-	uL40WsTkTDiKwpa02A84osXTDKL9sJfs1H7mRz5oUELnr0+pgJkXFaEtljgLf4wj
-	YBLFBaAcZDNIMlCu5nl/j3yl9BvpF42jRm2Sfh6XcGxCmKpW7TwfwbUTm1GrF6tu
-	fV8xOpqwFVsTLBn59Iel5dJtmkybSVPM/xd3qA/FGqPVHqbd6PT/fn3Qf1NLNAAP
-	RXt34LFM9+pwH/bWGwejaxG9UPmDBaSMHig4XP0u8C4qxj0luUxtmAK7TlSkJjVO
-	vNf+tzZq74iIrpoEcIIn9VTVRsbyRuOslSALYgcg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vyyp0vew-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 22:52:41 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51IMl30p008091;
-	Tue, 18 Feb 2025 22:52:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vyyp0ves-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 22:52:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51IJ6hgX005844;
-	Tue, 18 Feb 2025 22:52:40 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w02x8v7f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 22:52:40 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51IMqdst26673736
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 22:52:39 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0294F58054;
-	Tue, 18 Feb 2025 22:52:39 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D38CD58056;
-	Tue, 18 Feb 2025 22:52:38 +0000 (GMT)
-Received: from localhost (unknown [9.61.56.153])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Feb 2025 22:52:38 +0000 (GMT)
-Date: Tue, 18 Feb 2025 16:52:38 -0600
-From: Nick Child <nnac123@linux.ibm.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH next 1/1] lib: Optimise hex_dump_to_buffer()
-Message-ID: <Z7UPNhW_bXSOzACk@li-4c4c4544-0047-5210-804b-b8c04f323634.ibm.com>
-References: <20250216201901.161781-1-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1739919294; c=relaxed/simple;
+	bh=NHZ5tgatG1hk5aXhyUIk7AxfbmXlungsl+QkbaLBUtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YbPs+vfXeAkf9x26RRHBfDWcdbYrySmoQPkik0fKqWyYnQReJKkDH9xSb15Z+ck7k95SOs7AkFlH0zjIZ5ev7r1x0qjKrFUOhLY5g/JwEEYRNVJcSe8OcABSAEt9kZZI/gn2rJ1e6hM1NQyoVO1p2bgBLBL9l5ubwN5PLNNQWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEoTzr8k; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so934207a91.3;
+        Tue, 18 Feb 2025 14:54:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739919292; x=1740524092; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=drvJ3mqMM3e9qG8aW2Y2X9PovJqvp/GsC2QW7NPY4D0=;
+        b=aEoTzr8kL0exmWWRg4tPXZh01j1JRavtLFfqLAwxZSfSVO5/tnLYgq0gAvqe+OCoFW
+         kpuTTYB/huntvzEhQLfmkhBgeQHj+qmKkZoUPBGTyPbINXnx4yLF/PXcSL6Fth3DyEne
+         p3uOOT1KpV4nL3VVhMvLmdr6Mq2SCqh+7hYM5LIhEF6lK4EogouVtlOiEnGeI3TXauuf
+         s7/AZ00grGXJAxm7Jk19ZRap1jKedZfhWoA7QqaHW3P0TLh90fiybGW5o76DoQqAvGYQ
+         iNGJ2FOPMvw2ia8a9gcZz49uuvT/9Xe1XzHIe9PvRJUOAFthCQMQPqDgCXb5vVVgijCd
+         uFwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739919292; x=1740524092;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=drvJ3mqMM3e9qG8aW2Y2X9PovJqvp/GsC2QW7NPY4D0=;
+        b=gs5BUGc/wR9u9m0zROniTfSC7rP/mu0VLH2y/f3ZaulT4zcMuj1nLF4rNVj1jN+Cll
+         bRfrSf/guGf2n3FM9kyeMU2pteKIXz86VtwGq/08MrKRTl6jwIkvUXLyUOdhwlUvxUsp
+         V06FmgGn269LmP3WNV/Oyx2Hxa1qXJLJ0lDKpoL2ugqIdLLixksVLAwhEj1aKPZtdC+L
+         PTCEIwScYs9OPQkV8pM6HMdu3RJjsN7uoKUB3J7n/Umaklc47+ogpnNE8eJ1KjkkYgjo
+         Q5XHW/9xPuRZTzQCOzzT2In7kD1c7Xzi9hZHuWqZTnPRy1GllTT+PPI9blncy48kddzD
+         coiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGjwN7ommTDemrYqvE/xvIv8c3JRSFTMDa47OoFGlBE/+YnWqnZaiJsPkaPAN/0dM65Z6p9wyopfGclK8=@vger.kernel.org, AJvYcCX3nwU1thQDw2ffStwjtKnyceSZJypkGwB/8ZcWuK+pR9ZIQMGqXPlMCKMR2elkXcdsacfaPCRCYQ5hUjf5Ecw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF762ZpGniAqD1kqen7KcJm1YnkOfGcpzrod5gKERQEKMqk679
+	1W4qSNxPaXER+F08z4lUi5eGWmSZfTvXj/O4FNOtJcLa1wVNzeWuUL98vMnNefi2MR0Cgc89peH
+	Qh3FocQLPXPoDx5zmqicD7EUZcrw=
+X-Gm-Gg: ASbGnct1JoiBPOjT4tSTKZgU5K7TeZj2QexR0DBG08+y39BeflFEolj7dNlQAD27rkA
+	gLJCeBSGTQTbngbfNI5u4ONKp1rOmG2tUC6H41cj+sjqwG58jnYM3XB0++7IlsnGJRcDC1qTU
+X-Google-Smtp-Source: AGHT+IEtCTBGqOQRC9rNZdOYUBN5s1vmNJEBcjEH/ezu3SeAnZEITW7yhuB8ayvKj8UwfukXpAApynYvYC2ttiDTVus=
+X-Received: by 2002:a17:90b:3504:b0:2fc:f63:4b6a with SMTP id
+ 98e67ed59e1d1-2fc4078f0a1mr9513326a91.0.1739919291778; Tue, 18 Feb 2025
+ 14:54:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216201901.161781-1-david.laight.linux@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SV1Hzj3b9bk0t-IlXFOhkdlV9-hQ_43N
-X-Proofpoint-ORIG-GUID: t__mJiAXJojkyKTuYqtDlRzmj9Eeky8k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_10,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 phishscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- bulkscore=0 impostorscore=0 mlxlogscore=963 adultscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502180151
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+In-Reply-To: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 18 Feb 2025 23:54:39 +0100
+X-Gm-Features: AWEUYZllVlCBOkeQTx7fTLjoA285Tdhin73DUOICR9PC8JCLOM4rew0tsCSZ4zc
+Message-ID: <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Christoph Hellwig <hch@infradead.org>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 16, 2025 at 08:19:01PM +0000, David Laight wrote:
-> Fastpath the normal case of single byte output that fits in the buffer.
-> Output byte groups (byteswapped on little-endian) without calling snprintf().
-> Remove the restriction that rowsize must be 16 or 32.
-> Remove the restriction that groupsize must be 8 or less.
-> If groupsize isn't a power of 2 or doesn't divide into both len and
->   rowsize it is set to 1 (otherwise byteswapping is hard).
-> Change the types of the rowsize and groupsize parameters to be unsigned types.
+On Tue, Feb 18, 2025 at 10:49=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wro=
+te:
 >
+> I have a few issues with Rust in the kernel:
+>
+> 1. It seems to be held to a *completely* different and much lower standar=
+d than the C code as far as stability. For C code we typically require that=
+ it can compile with a 10-year-old version of gcc, but from what I have see=
+n there have been cases where Rust level code required not the latest bleed=
+ing edge compiler, not even a release version.
 
-Thank you!
+Our minimum version is 1.78.0, as you can check in the documentation.
+That is a very much released version of Rust, last May. This Thursday
+Rust 1.85.0 will be released.
 
-> Tested in a userspace harness, code size (x86-64) halved to 723 bytes.
-> 
-> Signed-off-by: David Laight <david.laight.linux@gmail.com>
-> ---
->  include/linux/printk.h |   6 +-
->  lib/hexdump.c          | 165 ++++++++++++++++++++---------------------
->  2 files changed, 85 insertions(+), 86 deletions(-)
-> 
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index 4217a9f412b2..49e67f63277e 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -752,9 +752,9 @@ enum {
->  	DUMP_PREFIX_ADDRESS,
->  	DUMP_PREFIX_OFFSET
->  };
-...
-> - * hex_dump_to_buffer() works on one "line" of output at a time, i.e.,
-> + * If @groupsize isn't a power of 2 that divides into both @len and @rowsize
-> + * the it is set to 1.
+You can already build the kernel with the toolchains provided by some
+distributions, too.
 
-s/the/then/
+I think you may be referring to the "unstable features". There remain
+just a few language features (which are the critical ones to avoid
+source code changes), but upstream Rust is working to get them stable
+as soon as possible -- the Linux kernel has been twice, in 2024H2 and
+2025H1, a flagship goal of theirs for this reason:
 
-> + *
-> + * hex_dump_to_buffer() works on one "line" of output at a time, e.g.,
->   * 16 or 32 bytes of input data converted to hex + ASCII output.
-...
-> -		linebuf[lx++] = ' ';
-> +	if (!ascii) {
-> +		*dst = 0;
-> +		return out_len;
->  	}
-> + 
-> +	pad_len += 2;
+    https://rust-lang.github.io/rust-project-goals/2025h1/goals.html#flagsh=
+ip-goals
+    https://rust-lang.github.io/rust-project-goals/2024h2/index.html
 
-So at a minimum there is 2 spaces before the ascii translation?
-when people allocate linebuf, what should they use to calculate the len?
+Meanwhile that happens, upstream Rust requires every PR to
+successfully build a simple configuration of the Linux kernel, to
+avoid mistakenly breaking us in a future release. This has been key
+for us to be able to establish a minimum version with some confidence.
 
-Also side nit, this existed before this patch, the endian switch may
-occur on the hex dump but it doesn't on the ascii conversion:
-[   20.172006][  T150] 706f6e6d6c6b6a696867666564636261  abcdefghijklmnop
+This does not mean there will be no hiccups, or issues here and there
+-- we are doing our best.
 
+> 2. Does Rust even support all the targets for Linux?
 
-> +	out_len += pad_len + len;
-> +	if (dst + pad_len >= dst_end)
-> +		pad_len = dst_end - dst - 1;
+Rust has several backends. For the main (LLVM) one, there is no reason
+why we shouldn't be able to target everything LLVM supports, and we
+already target several architectures.
 
-Why not jump to hex_truncate here? This feels like an error case and
-if I am understanding correctly, this will pad the rest of the buffer
-leaving no room for ascii.
+There is also a GCC backend, and an upcoming Rust compiler in GCC.
+Both should solve the GCC builds side of things. The GCC backend built
+and booted a Linux kernel with Rust enabled a couple years ago. Still,
+it is a work in progress.
 
-> +	while (pad_len--)
-> +		*dst++ = ' ';
-> +
-> +	if (dst + len >= dst_end)
-...
-> -- 
-> 2.39.5
+Anyway, for some of the current major use cases for Rust in the
+kernel, there is no need to cover all architectures for the time
+being.
 
-I will like to also support a wrapper to a bitmap argument as Andy
-mentioned. Mostly for selfish reasons though: I would like an argument
-to be added to skip endian conversion, and just observe the bytes as they
-appear in memory (without having to use groupsize 1).
+> 3. I still feel that we should consider whether it would make sense to co=
+mpile the *entire* kernel with a C++ compiler. I know there is a huge amoun=
+t of hatred against C++, and I agree with a lot of it =E2=80=93 *but* I fee=
+l that the last few C++ releases (C++14 at a minimum to be specific, with C=
+++17 a strong want) actually resolved what I personally consider to have be=
+en the worst problems.
 
-I had fun tracking some of these bitwise operations on power of 2
-integers, I think I must've missed that day in school. Cool stuff :)
+Existing Rust as a realistic option nowadays, and not having any
+existing C++ code nor depending on C++ libraries, I don't see why the
+kernel would want to jump to C++.
+
+> As far as I understand, Rust-style memory safety is being worked on for C=
+++; I don't know if that will require changes to the core language or if it=
+ is implementable in library code.
+
+Rust-style memory safety for C++ is essentially the "Safe C++"
+proposal. My understanding is that C++ is going with "Profiles" in the
+end, which is not Rust-style memory safety (and remains to be seen how
+they achieve it). "Contracts" aren't it, either.
+
+My hope would be, instead, that C is the one getting an equivalent
+"Safe C" proposal with Rust-style memory safety, and we could start
+using that, including better interop with Rust.
+
+> David Howells did a patch set in 2018 (I believe) to clean up the C code =
+in the kernel so it could be compiled with either C or C++; the patchset wa=
+sn't particularly big and mostly mechanical in nature, something that would=
+ be impossible with Rust. Even without moving away from the common subset o=
+f C and C++ we would immediately gain things like type safe linkage.
+
+That is great, but that does not give you memory safety and everyone
+would still need to learn C++.
+
+Cheers,
+Miguel
 
