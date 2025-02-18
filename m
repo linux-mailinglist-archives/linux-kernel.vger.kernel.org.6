@@ -1,286 +1,307 @@
-Return-Path: <linux-kernel+bounces-519772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC59A3A1B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EF6A3A1B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C583B0630
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB58E3B097C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D526D5D7;
-	Tue, 18 Feb 2025 15:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47E826A098;
+	Tue, 18 Feb 2025 15:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHhF5iLw"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGFgLuWX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC7B10F4;
-	Tue, 18 Feb 2025 15:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E886C26A0CF;
+	Tue, 18 Feb 2025 15:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893810; cv=none; b=KfjxWgw4fKGRDJc0Bi++y+/KWWM6Q4ERweZty75TOoJMSLJ6kPnsIPnHX8B716aBBy63lbX4g2D4MgTf9Ox5QITPmwnHuipa0NED2+TVkOT6Z3OulVZn7iPNbHDOAVJr65DXPEjhgqwged2PXvFZGaR3Hz9F7FmC/D5xHxvvgRw=
+	t=1739893864; cv=none; b=a9Nh1gK45ofOQva5prg4kwK8WRi5UMpfiR0xHvfkwaA6yiPx1Efoiqjc9QgmxbP9B9a8UnnvqtT6OKOOzgIkhuk8AKxNJs0ryoTLDlqztGUVsCv0I9FsTLFLxhniMC6f/P3i9XCUW6CpthDkJJe3Se+A+587cKrtcAMX9o2yxgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893810; c=relaxed/simple;
-	bh=xXXrFshznYsks4gPtpI00/N2HBn+xfheBhzE7onIGwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aInDxjqFMAXI2hoeecKh0RBJSe8dZb2lJty5Lz+O0tugmaXgueJWvnbtsG4v2TQDwwmyRrwXLPJxAAyaukQUvFLb8l+Y9ytEI7BhRCm/EYepX78T0z0+e7+1i5BiaezvJ1GyTi+sxYPHf5hk6lI+RVV05SgARWU/visqvjMKB+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHhF5iLw; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso939849166b.1;
-        Tue, 18 Feb 2025 07:50:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739893805; x=1740498605; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mReLmHdUalr80UPhI614ZZFtZiFvIOnOjgDKsfY1PQg=;
-        b=VHhF5iLwMBrpByPLOsALBcLLDEE+fg5Hulxf2GcKD0Rf8Gnyyh1B8ClhgeL5fw8571
-         o3NYyYmEP7grozRifUASKr25VCLl8ZYU9sXg4hYq9xMQi/85VpO1SiyKJ+PcD3gd3a+K
-         k/WLpNz++7Okib3s5Wf1rS9KnUfrOaU6ztcPrwlFSxNq2MjI8I7APDUOUQjfhhRlZaYS
-         iuPEbfCKhRWwMh1rNwF/AnKazwri+mj+7jWs29YC9Z1T6GdPG0XegotqVlkftv71Cn35
-         9S52Zylka33ebdNqw5QXr/8njHqC6dXfLkWxinhx3ibNeGpt25prlD6Tjk7YTO076Irf
-         EkQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739893805; x=1740498605;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mReLmHdUalr80UPhI614ZZFtZiFvIOnOjgDKsfY1PQg=;
-        b=hk4qvJkg2GTZGythibOL2UeGldR2CrSZM7YHqqHg+H/GIikq37YnliyUM7fA3U8qbr
-         0Sg0VBZSpxIklmAX3T3cTQzLtTph0NIGq7uaJkZ+XwxMQmSLS0MqI7clLSBToFRjzbw7
-         DB7ExMNd5UA+r5dDuH95GEDL72XNa1OH+ftFXvSYfhyrXaz1rLgfOmXFZPmatItUc2Yj
-         Iev8f/1ZReGmaGJaOYC/Or0uIqZ4eZqtgy21Sx0+kTIZSaBXlPrO0KbVisKdQ/9NpS4r
-         ljcfz+TwDd9izyDxpaqeX7szdY1aKF55lnjNcMHU7xQfnOxj/l4uarmtcEjfPTTHWNh8
-         9uGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPSO2pK1GbzWfUvbSjC3+QJwM5tlSpbNS63gI4pwWqFV/K0iytpvlkEMoppmQZR9mj8oVdRSYQUX1m@vger.kernel.org, AJvYcCXTI6akBOtj4F5IBMkTm5CVdmFPUfBvtCxoYqyuDVyF64QHmunC8eZJWC2K8wEn4rr1HO8Opl2+9fFd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGg9WKNZ9e5g45lgyzbeGxLFyUA8TyKguiPYrtHAstRECB2XEU
-	oUvMwTuT8aZZJLO5n2bNGWng9wF0BYZ+FHkZ7eyoXWv34RXT5Yw+jUdTElUJC4A=
-X-Gm-Gg: ASbGncsbvxU0cwDZxt2qoUXa3TXTof8lISjdYL319o0ZRGoo3crVJ3ZBVVroAn4QiJ/
-	AleoXcP2Uaj7ptlWRGNZ0Qu9UTPlOyfqwSt2pS0K5nP447KL3VJOuF8YwORFXNhyp8sJ5OFdVIh
-	YJYsoAdqKTbfxszfz0qHtxujzlaNemwqldg8rMQLcOVer7LU/wzM19706xJdh4JWXcoZKhMR6Wg
-	JkXYfsX8e4JJI6AxheZniAPgWlUSbZJDJMLrLqAsPRkncvah3I5gyIR3uqqqegSP0kGm5mKZFCr
-	myOdSSppNBGl1Y4=
-X-Google-Smtp-Source: AGHT+IHtAyydbfoXbx9zeo04VNjwSnQ27Knmz0ItYzncGEjZUASU18pITXXeMFFJlPuU/Bj7x5gW4g==
-X-Received: by 2002:a17:907:3d8e:b0:ab7:462f:647f with SMTP id a640c23a62f3a-abb70b35f1amr1476203766b.25.1739893805155;
-        Tue, 18 Feb 2025 07:50:05 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba002f790sm351966766b.164.2025.02.18.07.50.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Feb 2025 07:50:04 -0800 (PST)
-Date: Tue, 18 Feb 2025 15:50:04 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
-Message-ID: <20250218155004.n53fcuj2lrl5rxll@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-3-rppt@kernel.org>
+	s=arc-20240116; t=1739893864; c=relaxed/simple;
+	bh=Fxo4ZKUi4w28p/dVatgzc1oOnyML6KLgQvHAi96iHO8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dP9ob309yS3KJ1R/rA6KsVNuVtu80e3Rr+6KG9NQjyHIbkRQ8EurevrwpiKB51yW5QOioSMFJCpyRalq6rlWKfsF3JefI2dgzb+mcBsaTvD8mCR4WK3yapnZR0sr0RxTJsRYdM0s8WZBouRH8i8PLqz3eaZpbTXfrhni8Z1zMuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGFgLuWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34724C4CEE2;
+	Tue, 18 Feb 2025 15:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739893863;
+	bh=Fxo4ZKUi4w28p/dVatgzc1oOnyML6KLgQvHAi96iHO8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VGFgLuWXBHKQLS7S2VHLIR0LDn3Y3RYS1pQcBzeQNpP7wU9b9R+f+wUgLPhER6gf3
+	 CyhMQBt4uP69zbma8ipahZd3Lct5pTO18fwJqvXNmut3bGpgxLuh+fNUzw0gqf4r6a
+	 KR2F3tFxspf5RSNBOWaHR33A6zbWncnP5IkFPU1ig/XmCaD5xhAG0+Aq00evdNnkMo
+	 VlGhx9FBofa3svg0Vczo1PaA2BLkfc4pPz/c2iv4OX24T/bvMw7KHv+fAGz25qcP9d
+	 oujssjGcLRHfDw8FV89H3dmeIpQR8wLW38Bv6TPwHqJo4OYpzP21ZBfSQR24ypqPb+
+	 Mf6qflcJw5e9Q==
+Message-ID: <cb5540cc1f63a0761444850d153a41b2e33d5a8b.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Li Lingfeng
+ <lilingfeng3@huawei.com>, 	neilb@suse.de, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, 	linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Date: Tue, 18 Feb 2025 10:51:01 -0500
+In-Reply-To: <7bbc3bf5-f364-47bb-8a3a-5b4e38fec910@oracle.com>
+References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
+	 <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
+	 <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
+	 <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
+	 <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
+	 <7bbc3bf5-f364-47bb-8a3a-5b4e38fec910@oracle.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206132754.2596694-3-rppt@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Feb 06, 2025 at 03:27:42PM +0200, Mike Rapoport wrote:
->From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
->to denote areas that were reserved for kernel use either directly with
->memblock_reserve_kern() or via memblock allocations.
->
->Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->---
-> include/linux/memblock.h | 16 +++++++++++++++-
-> mm/memblock.c            | 32 ++++++++++++++++++++++++--------
-> 2 files changed, 39 insertions(+), 9 deletions(-)
->
->diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->index e79eb6ac516f..65e274550f5d 100644
->--- a/include/linux/memblock.h
->+++ b/include/linux/memblock.h
->@@ -50,6 +50,7 @@ enum memblock_flags {
-> 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
-> 	MEMBLOCK_DRIVER_MANAGED = 0x8,	/* always detected via a driver */
-> 	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
->+	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
+On Tue, 2025-02-18 at 10:02 -0500, Chuck Lever wrote:
+> On 2/18/25 9:40 AM, Jeff Layton wrote:
+> > On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
+> > > On 2/18/25 9:29 AM, Jeff Layton wrote:
+> > > > On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
+> > > > > On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
+> > > > > > In nfsd4_run_cb, cl_cb_inflight is increased before attempting =
+to queue
+> > > > > > cb_work to callback_wq. This count can be decreased in three si=
+tuations:
+> > > > > > 1) If queuing fails in nfsd4_run_cb, the count will be decremen=
+ted
+> > > > > > accordingly.
+> > > > > > 2) After cb_work is running, the count is decreased in the exce=
+ption
+> > > > > > branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
+> > > > > > 3) The count is decreased in the release callback of rpc_task =
+=E2=80=94 either
+> > > > > > directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_relea=
+se, or
+> > > > > > calling nfsd41_destroy_cb in 	.
+> > > > > >=20
+> > > > > > However, in nfsd4_cb_release, if the current cb_work needs to r=
+estart, the
+> > > > > > count will not be decreased, with the expectation that it will =
+be reduced
+> > > > > > once cb_work is running.
+> > > > > > If queuing fails here, then the count will leak, ultimately cau=
+sing the
+> > > > > > nfsd service to be unable to exit as shown below:
+> > > > > > [root@nfs_test2 ~]# cat /proc/2271/stack
+> > > > > > [<0>] nfsd4_shutdown_callback+0x22b/0x290
+> > > > > > [<0>] __destroy_client+0x3cd/0x5c0
+> > > > > > [<0>] nfs4_state_destroy_net+0xd2/0x330
+> > > > > > [<0>] nfs4_state_shutdown_net+0x2ad/0x410
+> > > > > > [<0>] nfsd_shutdown_net+0xb7/0x250
+> > > > > > [<0>] nfsd_last_thread+0x15f/0x2a0
+> > > > > > [<0>] nfsd_svc+0x388/0x3f0
+> > > > > > [<0>] write_threads+0x17e/0x2b0
+> > > > > > [<0>] nfsctl_transaction_write+0x91/0xf0
+> > > > > > [<0>] vfs_write+0x1c4/0x750
+> > > > > > [<0>] ksys_write+0xcb/0x170
+> > > > > > [<0>] do_syscall_64+0x70/0x120
+> > > > > > [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > > > > > [root@nfs_test2 ~]#
+> > > > > >=20
+> > > > > > Fix this by decreasing cl_cb_inflight if the restart fails.
+> > > > > >=20
+> > > > > > Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
+> > > > > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > > > > > ---
+> > > > > >  fs/nfsd/nfs4callback.c | 10 +++++++---
+> > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > > > > > index 484077200c5d..8a7d24efdd08 100644
+> > > > > > --- a/fs/nfsd/nfs4callback.c
+> > > > > > +++ b/fs/nfsd/nfs4callback.c
+> > > > > > @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_ta=
+sk *task, void *calldata)
+> > > > > >  static void nfsd4_cb_release(void *calldata)
+> > > > > >  {
+> > > > > >  	struct nfsd4_callback *cb =3D calldata;
+> > > > > > +	struct nfs4_client *clp =3D cb->cb_clp;
+> > > > > > +	int queued;
+> > > > > > =20
+> > > > > >  	trace_nfsd_cb_rpc_release(cb->cb_clp);
+> > > > > > =20
+> > > > > > -	if (cb->cb_need_restart)
+> > > > > > -		nfsd4_queue_cb(cb);
+> > > > > > -	else
+> > > > > > +	if (cb->cb_need_restart) {
+> > > > > > +		queued =3D nfsd4_queue_cb(cb);
+> > > > > > +		if (!queued)
+> > > > > > +			nfsd41_cb_inflight_end(clp);
+> > > > > > +	} else
+> > > > > >  		nfsd41_destroy_cb(cb);
+> > > > > > =20
+> > > > > >  }
+> > > > >=20
+> > > > > Good catch!
+> > > > >=20
+> > > > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > > > >=20
+> > > >=20
+> > > > Actually, I think this is not quite right. It's a bit more subtle t=
+han
+> > > > it first appears. The problem of course is that the callback workqu=
+eue
+> > > > jobs run in a different task than the RPC workqueue jobs, so they c=
+an
+> > > > race.
+> > > >=20
+> > > > cl_cb_inflight gets bumped when the callback is first queued, and o=
+nly
+> > > > gets released in nfsd41_destroy_cb(). If it fails to be queued, it'=
+s
+> > > > because something else has queued the workqueue job in the meantime=
+.
+> > > >=20
+> > > > There are two places that can occur: nfsd4_cb_release() and
+> > > > nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the =
+only
+> > > > other option is that something raced in and queued it via
+> > > > nfsd4_run_cb().
+> > >=20
+> > > What would be the "something" that raced in?
+> > >=20
+> >=20
+> > I think we may be able to get there via multiple __break_lease() calls
+> > on the same layout or delegation. That could mean multiple calls to the
+> > ->lm_break operation on the same object.
+>=20
+> Makes sense.
+>=20
+> Out of curiosity, what would be the complexity/performance cost of
+> serializing the lm_break calls, or having each lm_break call register
+> an interest in the CB_RECALL callback? Maybe not worth it.
+>=20
 
-Above memblock_flags, there are comments on explaining those flags.
+I'd probably resist trying to put that logic in generic code. I think
+for now I'd rather just add this logic in the nfsd4_callback handling.
 
-Seems we miss it for MEMBLOCK_RSRV_KERN.
+Longer term, I'm wondering if we really need the callback workqueue at
+all. It basically exists to just queue async RPC jobs (which are
+themselves workqueue tasks). Maybe it'd be simpler to just queue the
+RPC tasks directly at the points where we call nfsd4_run_cb() today?
 
-> };
-> 
-> /**
->@@ -116,7 +117,19 @@ int memblock_add_node(phys_addr_t base, phys_addr_t size, int nid,
-> int memblock_add(phys_addr_t base, phys_addr_t size);
-> int memblock_remove(phys_addr_t base, phys_addr_t size);
-> int memblock_phys_free(phys_addr_t base, phys_addr_t size);
->-int memblock_reserve(phys_addr_t base, phys_addr_t size);
->+int __memblock_reserve(phys_addr_t base, phys_addr_t size, int nid,
->+		       enum memblock_flags flags);
->+
->+static __always_inline int memblock_reserve(phys_addr_t base, phys_addr_t size)
->+{
->+	return __memblock_reserve(base, size, NUMA_NO_NODE, 0);
-                                                            ^ MEMBLOCK_NONE ?
+That's a bit more of an overhaul though, particularly in the callback
+channel probing codepath.
 
->+}
->+
->+static __always_inline int memblock_reserve_kern(phys_addr_t base, phys_addr_t size)
->+{
->+	return __memblock_reserve(base, size, NUMA_NO_NODE, MEMBLOCK_RSRV_KERN);
->+}
->+
-> #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
-> int memblock_physmem_add(phys_addr_t base, phys_addr_t size);
-> #endif
->@@ -477,6 +490,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
-> 
-> phys_addr_t memblock_phys_mem_size(void);
-> phys_addr_t memblock_reserved_size(void);
->+phys_addr_t memblock_reserved_kern_size(int nid);
-> unsigned long memblock_estimated_nr_free_pages(void);
-> phys_addr_t memblock_start_of_DRAM(void);
-> phys_addr_t memblock_end_of_DRAM(void);
->diff --git a/mm/memblock.c b/mm/memblock.c
->index 95af35fd1389..4c33baf4d97c 100644
->--- a/mm/memblock.c
->+++ b/mm/memblock.c
->@@ -491,7 +491,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
-> 	 * needn't do it
-> 	 */
-> 	if (!use_slab)
->-		BUG_ON(memblock_reserve(addr, new_alloc_size));
->+		BUG_ON(memblock_reserve_kern(addr, new_alloc_size));
-> 
-> 	/* Update slab flag */
-> 	*in_slab = use_slab;
->@@ -641,7 +641,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
-> #ifdef CONFIG_NUMA
-> 			WARN_ON(nid != memblock_get_region_node(rgn));
-> #endif
->-			WARN_ON(flags != rgn->flags);
->+			WARN_ON(flags != MEMBLOCK_NONE && flags != rgn->flags);
-> 			nr_new++;
-> 			if (insert) {
-> 				if (start_rgn == -1)
->@@ -901,14 +901,15 @@ int __init_memblock memblock_phys_free(phys_addr_t base, phys_addr_t size)
-> 	return memblock_remove_range(&memblock.reserved, base, size);
-> }
-> 
->-int __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
->+int __init_memblock __memblock_reserve(phys_addr_t base, phys_addr_t size,
->+				       int nid, enum memblock_flags flags)
-> {
-> 	phys_addr_t end = base + size - 1;
-> 
->-	memblock_dbg("%s: [%pa-%pa] %pS\n", __func__,
->-		     &base, &end, (void *)_RET_IP_);
->+	memblock_dbg("%s: [%pa-%pa] nid=%d flags=%x %pS\n", __func__,
->+		     &base, &end, nid, flags, (void *)_RET_IP_);
-> 
->-	return memblock_add_range(&memblock.reserved, base, size, MAX_NUMNODES, 0);
->+	return memblock_add_range(&memblock.reserved, base, size, nid, flags);
-> }
-> 
-> #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
->@@ -1459,14 +1460,14 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
-> again:
-> 	found = memblock_find_in_range_node(size, align, start, end, nid,
-> 					    flags);
->-	if (found && !memblock_reserve(found, size))
->+	if (found && !__memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN))
+>=20
+> > > > That will have incremented cl_cb_inflight() an extra
+> > > > time and so your patch will make sense for that.
+> > > >=20
+> > > > Unfortunately, the slot may leak in that case if nothing released i=
+t
+> > > > earlier. I think this probably needs to call nfsd41_destroy_cb() if=
+ the
+> > > > job can't be queued. That might, however, race with the callback
+> > > > workqueue job running.
+> > > >=20
+> > > > I think we might need to consider adding some sort of "this callbac=
+k is
+> > > > running" atomic flag: do a test_and_set on the flag in nfsd4_run_cb=
+()
+> > > > and only queue the workqueue job if that comes back false. Then, we=
+ can
+> > > > clear the bit in nfsd41_destroy_cb().
+> > > >=20
+> > > > That should ensure that you never fail to queue the workqueue job f=
+rom
+> > > > nfsd4_cb_release().
+> > > >=20
+> > > > Thoughts?
+> > >=20
+> > >=20
+> >=20
+>=20
+>=20
 
-Maybe we could use memblock_reserve_kern() directly. If my understanding is
-correct, the reserved region's nid is not used.
-
-BTW, one question here. How we handle concurrent memblock allocation? If two
-threads find the same available range and do the reservation, it seems to be a
-problem to me. Or I missed something?
-
-> 		goto done;
-> 
-> 	if (numa_valid_node(nid) && !exact_nid) {
-> 		found = memblock_find_in_range_node(size, align, start,
-> 						    end, NUMA_NO_NODE,
-> 						    flags);
->-		if (found && !memblock_reserve(found, size))
->+		if (found && !memblock_reserve_kern(found, size))
-> 			goto done;
-> 	}
-> 
->@@ -1751,6 +1752,20 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
-> 	return memblock.reserved.total_size;
-> }
-> 
->+phys_addr_t __init_memblock memblock_reserved_kern_size(int nid)
->+{
->+	struct memblock_region *r;
->+	phys_addr_t total = 0;
->+
->+	for_each_reserved_mem_region(r) {
->+		if (nid == memblock_get_region_node(r) || !numa_valid_node(nid))
->+			if (r->flags & MEMBLOCK_RSRV_KERN)
->+				total += r->size;
->+	}
->+
->+	return total;
->+}
->+
-> /**
->  * memblock_estimated_nr_free_pages - return estimated number of free pages
->  * from memblock point of view
->@@ -2397,6 +2412,7 @@ static const char * const flagname[] = {
-> 	[ilog2(MEMBLOCK_NOMAP)] = "NOMAP",
-> 	[ilog2(MEMBLOCK_DRIVER_MANAGED)] = "DRV_MNG",
-> 	[ilog2(MEMBLOCK_RSRV_NOINIT)] = "RSV_NIT",
->+	[ilog2(MEMBLOCK_RSRV_KERN)] = "RSV_KERN",
-> };
-> 
-> static int memblock_debug_show(struct seq_file *m, void *private)
->-- 
->2.47.2
->
-
--- 
-Wei Yang
-Help you, Help me
+--=20
+Jeff Layton <jlayton@kernel.org>
 
