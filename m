@@ -1,135 +1,92 @@
-Return-Path: <linux-kernel+bounces-518775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753BAA39440
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:00:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03527A39439
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ECD13A45F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:00:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768E17A1479
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 07:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68020C038;
-	Tue, 18 Feb 2025 08:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4082A204C38;
+	Tue, 18 Feb 2025 07:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Il8DsjEP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cfdLUURU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E92066C1;
-	Tue, 18 Feb 2025 07:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9677B14A09E;
+	Tue, 18 Feb 2025 07:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739865601; cv=none; b=iCoIC1QSamjsV6BLoWpcZTGRxqrnqRtPuSPQRfyB7WPeM2wWjiFqBk7ONzLq8qDYYylPzRW6bHysS+YeEzSvnfo770HI1xHnOslIF57WhNgipxFTYiBJ4TJpxdxKfBZSXD/TPF0shhecAl7/0Eu73srp+HJ8T0cLniBW2dtWgxs=
+	t=1739865426; cv=none; b=cA4orcIsJhZ185rc7S+07Tn+lTVyFrTWNWLotJ0j3Kh089zwpGSclryE7Qu8nlrMjEE3wYEvrg/25iMzMCEboMppQrlyhZLK/7KAmOvCJ2gGvPI/zYKG81NXlCtPCYqnGqfxrCDgVS+/n75R+Iv2GJJsvL7IYFXb8G8ySaSiZsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739865601; c=relaxed/simple;
-	bh=ziEzK7wRUsoPk34tXG4PKX0kfZMyG09T1TuFOZsMGH8=;
+	s=arc-20240116; t=1739865426; c=relaxed/simple;
+	bh=PWXaRy3Kpn4O/7AGgg9asSH7PMFAQwYpAHo4UKMP4DI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTJSiNOJNkR/EYZaVn6qto2a4fck2ZNFv4RdWMlTjtfm8+JSwwNYM9CsBHYM/A3kkm0tJbZk76P1tTs8VdV3pW0B/88Op4Frpn2qMDZ6+zAkyrRWIP0POsv1pCP1bczpSTh46JY4hiQE7IgI61eh9v1+v77wlbZoBQc4c4ejIEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Il8DsjEP; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739865600; x=1771401600;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ziEzK7wRUsoPk34tXG4PKX0kfZMyG09T1TuFOZsMGH8=;
-  b=Il8DsjEPYt8gsPOdIAdONGzNkYRwugGkyXiYyVfUpRQdSY8vuF4fAlC2
-   lW34dlDaC169qW646ZxZXME7hK1FNXJP2wFWtDM5xPmil9+GERQM9ylUh
-   fHq1TawIPHqS4tTlzUC2DYDK+InYAUjhrc0rbA/t+cHcMAiT20ggUkJtF
-   /hKJdhGxx7don89No1qKBzJc7Oawv4rTj37aleK8432ctKqF6VskmWVLf
-   kU/SkLPcwos2lIfrFg1eReSBQQLw2LTJ40Nitf68fE71UgvIL/jDe1ZcR
-   CDArJCMT0G5zkyc/QViocClFOlylukjvRvs1Z3eDzW/wQbzqrhU0968v1
-   w==;
-X-CSE-ConnectionGUID: Kep8qXXcS+KckG0knDufkw==
-X-CSE-MsgGUID: FRseRXI1QY6uqmVjGOl5mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="57954571"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="57954571"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 23:59:59 -0800
-X-CSE-ConnectionGUID: wQGNfdpkTraGbuexWoXZ6w==
-X-CSE-MsgGUID: In4y45QdQsCSaspdTULcUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="119419175"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 23:59:55 -0800
-Date: Tue, 18 Feb 2025 08:56:16 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Cc: Haoxiang Li <haoxiang_li2024@163.com>, kuba@kernel.org,
-	louis.peens@corigine.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	qmo@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org,
-	oss-drivers@corigine.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
-Message-ID: <Z7Q9ILUfC90Vd490@mev-dev.igk.intel.com>
-References: <20250218011744.2397726-1-haoxiang_li2024@163.com>
- <CAH-L+nP5w7hRbONxPNG7NJtJzb-A0JOEMSq1hKNepM9GpFkt-g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACtrbfJwT4jmgdnawMuJQmXMtDGexuBkgyHlyJspVNzELMFJ0WcB9aIWb1cV+1YRbSRQwV0s3NJNEHklTrFCdg72DPpxsgY3sxOQtR6apdajD+Ue4O/dEqVzC6DMzsZx2MWigHKqOMRaZ560zXLp7kCPz/RC+90FiG/VupiVCNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cfdLUURU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840E5C4CEE2;
+	Tue, 18 Feb 2025 07:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739865426;
+	bh=PWXaRy3Kpn4O/7AGgg9asSH7PMFAQwYpAHo4UKMP4DI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cfdLUURUDyNJptMiASFa3y9vKuEQwFBEmVLess4icBG1cyz3CZj9JrVNsDbAGqY5M
+	 1/lXmimYgep/RTiBa8xiTOu/YFF0IpWMGwcf+kcjkv1oB50kqU6h7cYn9bsDmcCjsY
+	 36OqAbjrwf/EX9jql6Z/HD+fCar4r6x2sZ5vxWbs=
+Date: Tue, 18 Feb 2025 08:57:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Fiona Behrens <me@kloenk.dev>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] rust: io: rename `io::Io` accessors
+Message-ID: <2025021817-chirping-fencing-d991@gregkh>
+References: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH-L+nP5w7hRbONxPNG7NJtJzb-A0JOEMSq1hKNepM9GpFkt-g@mail.gmail.com>
+In-Reply-To: <20250217-io-generic-rename-v1-1-06d97a9e3179@kloenk.dev>
 
-On Tue, Feb 18, 2025 at 08:14:49AM +0530, Kalesh Anakkur Purayil wrote:
-> On Tue, Feb 18, 2025 at 6:49 AM Haoxiang Li <haoxiang_li2024@163.com> wrote:
-> >
-> > Add check for the return value of nfp_app_ctrl_msg_alloc() in
-> > nfp_bpf_cmsg_alloc() to prevent null pointer dereference.
-> >
-> > Fixes: ff3d43f7568c ("nfp: bpf: implement helpers for FW map ops")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> > ---
-> > Changes in v2:
-> > - remove the bracket for one single-statement. Thanks, Guru!
-> > ---
-> >  drivers/net/ethernet/netronome/nfp/bpf/cmsg.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> > index 2ec62c8d86e1..b02d5fbb8c8c 100644
-> > --- a/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> > +++ b/drivers/net/ethernet/netronome/nfp/bpf/cmsg.c
-> > @@ -20,6 +20,8 @@ nfp_bpf_cmsg_alloc(struct nfp_app_bpf *bpf, unsigned int size)
-> >         struct sk_buff *skb;
-> >
-> >         skb = nfp_app_ctrl_msg_alloc(bpf->app, size, GFP_KERNEL);
-> > +       if (!skp)
-> > +               return NULL;
-> It looks like you did not compile this change.
+On Mon, Feb 17, 2025 at 09:58:14PM +0100, Fiona Behrens wrote:
+> Rename the I/O accessors provided by `Io` to encode the type as
+> number instead of letter. This is in preparation for Port I/O support
+> to use a trait for generic accessors.
 > 
-> Also, next time you push a new version, please modify the subject as:
-> "[PATCH net v3] xxxx"
-
-Yeah, you need to send v3 (skp -> skb). Fix looks fine, other call to
-nfp_app_ctrl_msg_alloc() is checking returned value as here.
-
-Feel free to add my RB tag in v3.
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-> >         skb_put(skb, size);
-> >
-> >         return skb;
-> > --
-> > 2.25.1
-> >
-> >
+> Add a `c_fn` argument to the accessor generation macro to translate
+> between rust and C names.
 > 
-> 
-> -- 
-> Regards,
-> Kalesh AP
+> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/PIO.20support/near/499460541
+> Signed-off-by: Fiona Behrens <me@kloenk.dev>
+> ---
+>  rust/kernel/io.rs               | 66 ++++++++++++++++++++---------------------
+>  samples/rust/rust_driver_pci.rs | 12 ++++----
+>  2 files changed, 39 insertions(+), 39 deletions(-)
 
+This is good, thanks!
 
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Want me to take this through my tree?
+
+thanks,
+
+greg k-h
 
