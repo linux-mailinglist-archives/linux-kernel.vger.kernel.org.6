@@ -1,81 +1,121 @@
-Return-Path: <linux-kernel+bounces-519861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA919A3A2E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:32:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 608D0A3A2E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:32:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB0B3AA87B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715863AD3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A6026E64F;
-	Tue, 18 Feb 2025 16:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AEF26E650;
+	Tue, 18 Feb 2025 16:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MUUJk25I"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cbmr0gRz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A698E26D5CA;
-	Tue, 18 Feb 2025 16:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F4813B7B3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896317; cv=none; b=NngXYE0pbsg5LVJeFZsKEJAiLKLkBGT3TNV2yS7hRLFYGfDV4o9FFIeuobieQQXvNtO+bzg9cYQ9h/ERLo6XB6EfP8y6faJaNcJYshOLFPTalumcYAg0vJQsCwnQCfIaRAYKb0ujVHRZBYdyU1jktwivsK5Dqjmyu3WWNDR1seU=
+	t=1739896328; cv=none; b=Kl0cUMke0BncAfAw8TvxI4x6wtx2+uli2QEh0erFCDnCtf6gDEB9U2C03Z4yd2EttjnEHWLDjJsOd9eEqf36azwWonmSRtmKZp0U//ZKK83aTvOvp3ArB8/CtCg/VQ+awJpZ8EA4v42u3LbXU7sDF6ckizZZ+QAb8v/PKEpi6xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896317; c=relaxed/simple;
-	bh=O1WcDjlB4uYgZf8hrYXTcaBSbG3qW5jv7r+ScLddb9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhtJFAnShief694wPU+6k1cd02UpBiHeQgkYxVNdWN41vZZcLSQU3qrhGjeV2mjyQ6qT8W15HHTA9rvqSd9JpVdUT9srEnNhrfuFsUKoMJjfbRjHm519+yhXuCq9gOna7JOduEhmkEJDzDiEYiO1Pw7aJ56JFzzIUnHsKWL8GGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MUUJk25I; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DIGo/JNUq06ew0K8FogdXyJj75K+wZ/XtC8vHgqRE+I=; b=MUUJk25IITKibdWYLiOfwJTNHF
-	jTYjZVF0QmUp8zd6mO646+shdzHM+236nm5n5810nL19RjB92XEBaeLj2KOVmo6/7jnEinXumlSeW
-	3tY5oa5JILGbGc2/iSIrfxErQ3284MDTCqGQb3QmioR2zTB/6qz8ZmNOZSNZD6uy5fzS1GYpQ19nd
-	2Aj8wymGQNblO/HLafe28admo3zzYBxSTXWcoJoMyC8X+XHvSvz0pNb1g4NS/OswGPyrkDnDxW/WD
-	snhiObaj4iRIYvhIo24Gqq8tffJcBH5GoXteww5rCfQaNX5otmaYcHCPoGWCMl5nGxAK+H23ROvYt
-	QdTjmYQA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkQVi-00000008ywd-3kxk;
-	Tue, 18 Feb 2025 16:31:50 +0000
-Date: Tue, 18 Feb 2025 08:31:50 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
-Subject: Re: [PATCH] Revert "driver: block: release the lo_work_lock before
- queue_work"
-Message-ID: <Z7S19ulXMAs7qy1H@infradead.org>
-References: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
+	s=arc-20240116; t=1739896328; c=relaxed/simple;
+	bh=8fZ2YwL4zE2wGh4mEXK1Q0dnsmYxS1QtjyJ51GvGl4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gc7g0SklCjTphjVSQ/Bl503ZHdeeV/D7t/tWfYnKaruliDPQDrbHzD3yYOO1YZ6hu/2DPut7BhAliXz4l6nS9Y90VDNbedyFGc/tk0nA/qw9H91VrR2UgsJGVvylsLhn6qS8IyrOLycs8XwskCQ4zNploq12cGNVcseYM6UhE9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cbmr0gRz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739896326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lgPlVGhbeqEzlRphlfwN5cVytTh9XFzZGkmtCQbZrNA=;
+	b=Cbmr0gRzgRQ36aeyyQipl6gbQA62xKSMy9N5wKSt/mjIotzKpnYf4IWefkpjyYioAa2aoW
+	FAZ6Z1zfz7HCWpIywez4oKKzGYI3CoP5BuFfAsG2E3l690w+gXcP7LFRmcDD9TBXljs5Hp
+	b4vnFJeVc28MZew/fhNbYqEZ9RwU4NU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-8N3Sl7dUMi-SBs_8SYx8qw-1; Tue,
+ 18 Feb 2025 11:32:02 -0500
+X-MC-Unique: 8N3Sl7dUMi-SBs_8SYx8qw-1
+X-Mimecast-MFC-AGG-ID: 8N3Sl7dUMi-SBs_8SYx8qw_1739896321
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E5641800995;
+	Tue, 18 Feb 2025 16:32:01 +0000 (UTC)
+Received: from [10.22.65.116] (unknown [10.22.65.116])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2AF6219560A3;
+	Tue, 18 Feb 2025 16:31:58 +0000 (UTC)
+Message-ID: <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+Date: Tue, 18 Feb 2025 11:31:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218065835.19503-1-zhaoyang.huang@unisoc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Keith Busch <kbusch@kernel.org>
+Cc: hch@lst.de, sagi@grimberg.me, bmarzins@redhat.com,
+ Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+ axboe@kernel.dk
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+ <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Feb 18, 2025 at 02:58:35PM +0800, zhaoyang.huang wrote:
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On 2/18/25 10:06 AM, Keith Busch wrote:
+> On Thu, Feb 13, 2025 at 03:37:28PM -0500, John Meneghini wrote:
+>> Keith, Christoph and Sagi,
+>>
+>> This patch has been fully tested and analyzed by Red Hat's QA group and no
+>> unexpected side effects or regressions have been found. Both NVMe/FC and NVMe/TCP
+>> have been tested. Our QE engineer has asked me to report this upstream.
 > 
-> This reverts commit ad934fc1784802fd1408224474b25ee5289fadfc.
-> 
-> loop_queue_work should be strictly serialized to loop_process_work since
-> the lo_worker could be freed without noticing new work has been queued
-> again.
+> What's the harm in leaving the parameter? *I* use it so I can test both
+> ways without needing to compile multiple kernels.
 
-Btw, if you care about the lock contention you might want to split out
-the trivial non-cgroup version into a separate helper or at least
-branch and reduce the lock hold time there.
+LOL.  We've been talking about this since 2017. The goal has always been to remove support for DMMP with NVMe.
+
+We want to remove this parameter because it is causing confusion with users and customers who keep trying to use
+DMMP with their multipath NVMe devices.
+
+We want to remove this parameter because:
+
+1) the upstream kernel does not support multipath nvme devices without CONFIG_NVME_MULTIPATH enabled
+2) the upstream kernel does not support multipath nvme devices when core.nvme_multipath is set to N
+3) Non-multipath nvme devies are supported just fine with core.nvme_multipath is set to Y
+
+You don't need set core.nvme_multipath to N to test your devices both ways w/o recompiling the kernel.
+All of the code paths involved here are controlled by NVME_CTRL_CMIC_MULTI_CTRL and setting core.nvme_multipath
+to N doesn't do anything to help your single path NVMe devices. It doesn't remove multipath.c, reduce the code
+path length or do anything else to optimize your non-NVME_CTRL_CMIC_MULTI_CTRL devices.  All it does is provide
+an escape hatch to disable the incore multipath scheduler start creating multiple /dev/nvme%d/n%d entries so
+that DMMP can be used with multipath capable NVMe devices.
+
+Personally, I'd like to remove CONFIG_NVME_MULTIPATH as well. It's just another source of confusion. Most users
+are running Linux with the the default settings for NVME_MULTIPATH. This is what Red Hat customers use and that's
+what's used upstream.  So what's the point?
+
+/John
+
 
 
