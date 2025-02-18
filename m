@@ -1,129 +1,133 @@
-Return-Path: <linux-kernel+bounces-519414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D2FA39C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:57:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A09A39C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E814169CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD24F3A966A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2813F263F5A;
-	Tue, 18 Feb 2025 12:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE70265CC4;
+	Tue, 18 Feb 2025 12:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kj6KxWnu"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="pjrqVmDO"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945A0264A64
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D89264A91;
+	Tue, 18 Feb 2025 12:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883460; cv=none; b=Ai7+evzUj/IUc+u+IW7OK9t+eTr1Ng4ZFeH2/bj4BA+pf29s99N/npHNzJlg1cwuXImcL+zl3fyTikLsON63BWRhpiS+VqMtHZV7iNHXewKLjsR42dILD14cg53c9pe8W59/o4S/Zd3ooCZmPohc7aVxyEuuoDIdnKhHW7txsdw=
+	t=1739883509; cv=none; b=LgOamuX99qshNsa1uAf26QFJKmtPfq2WQWY1dC3idJotVWPBk1IqbCqs+JJLcgkLpX2/LMDFRKTRXuJUevlORM8GJbkq/du6Y1tQE2tyOxh5ujuHeuRaN6PWMI+86Gsc23ffhnPciJ2txOsHfAXEdnQqspJG89saWmSjtqsh66w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883460; c=relaxed/simple;
-	bh=kyA/8Z1Zw+2QLjWBcOuMcus8AjU6fwuRtQzes92TK9Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=saMI3TRUl7Ang8fPfHhqpnvp5j1EcntRSCywcOZ3qckl1BLgURzsJUXZMjLVcepZyBt50xHMmbaQq9D+Cq2pvikp5gwQEf+Y6Wpv46be8Sy/90xJK9tBZHaAq1QraFlOqeqU/rUF4KkQqRsxY1ka3FRTlYYWGuezJSw3z6YVUwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kj6KxWnu; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so13825615e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739883456; x=1740488256; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iyY3cdE11o2Hq1NrWpk3ftrZpWXzglM3zy/nv7F8T9g=;
-        b=Kj6KxWnu46H2X/O+hwrEJM6tR9HktWL6AqIstt+cr32Ks1outeNe4ds74OdCSEKsqr
-         isF1rHePmqihMHLCF9S2aZL90H4EbgVTf4L/xTAbCFIqNVwu0jDXN06wgx6lr7hwIP/l
-         3vQx+fW4v/yF7upTh/DPqNQ9WScrM4H00cag92Y7KH9/YZceEDJBdjT1YaDBFUbfHfGT
-         zKszgDFw4yRKdRu0OIozq8dkPwiU+qWyRtkCD8f8efaeK/cZ23O5giduRre6IdKycvLM
-         +MZKKjIWSe9x11JvOlLOQfuY0SPpfLUzpe4/b5RhmV3LSN0s8eZ/oR3Uyw0rEKUaVU0E
-         QCxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883456; x=1740488256;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iyY3cdE11o2Hq1NrWpk3ftrZpWXzglM3zy/nv7F8T9g=;
-        b=eas3Wj8Vo7e65gV32a9G8rG1CLKMpIkc2AOpLajuNyMSuVSrIo8hcesrRC1RnXg5zI
-         E7GHZlNQnTxFOnRaPpm/WEJnY4cHI6JWY3W8et6Wye2vFpTuyLLbOVL5pvNQJnlurHVi
-         6G7CkbKoB9Nt4LopLKbyWuFIZsqT17ZU4zAd4HbtH+FoRlqYdQQD7hayj4SEHlaWMJ0t
-         I1jhdYtOi58gzJRtYlIbh4rJl69Z6Etiu49ytdc6LDb4Tz/XSh9lIEpzlHTRNa5ebmMi
-         QLJvMMxUEsgega2EqE9LCAbqY9txkwBjap+1bzd8l8dDC89WMRbJurptjcsMnG4plCTV
-         GmTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1GxQoJmghhr2B7ttdJJYPUcq6ZS+rnixXkOmrhJt4A0sxf7yRLcLG8nE60VxaxSViuP38TN5i4EyM1uY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7I2/EKUrrgZTluKE2MAVNWi6VPYKpixEwAWfR2D15YPduGEuj
-	LI7t1/qvNcOVcGSzFpFOO11lafdhOVe6ND9u8V1hibkwlTuNkSnJknttlZqHHFo=
-X-Gm-Gg: ASbGncudNR+kzIRCA1dCbFfq+h+yRjRYMnpcyBWahayp6m8Qq8cvEpFdt8oiRW5IsIi
-	gM5wbjpWqoIW3c1zbIhUJEJbjQVp1Qw1b7iuWIhfloeIOQ2ioUqLcLdC3CsL6LB6BVaM7E94xhd
-	J9loc2SpiUtLueBhL70hUdILkAQg2gB0CSZpTuOXtZ3Q53lBc1GERS8UQ1W0hbSarmsf+/OnJSg
-	uMCFcOOklg5JfT08iIGVeze8cTcJUUxvELW0UtvBlq7yYPFtSOm1bFwvlBuooidcD/q/APgZGZJ
-	yEKjiOBTHQPREgDuU9w=
-X-Google-Smtp-Source: AGHT+IEtE+TYwufyBI6Y+xikUzOIEu3Qh2/mlCAbkWqlJNQx7IkfumfWZLkaerK2JUgf8XedhMemIw==
-X-Received: by 2002:a05:600c:3b12:b0:439:96b2:e9b with SMTP id 5b1f17b1804b1-43996b212d9mr15246635e9.9.1739883455734;
-        Tue, 18 Feb 2025 04:57:35 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:65d3:d915:ef89:ac43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43987088ecbsm50009405e9.31.2025.02.18.04.57.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 04:57:35 -0800 (PST)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Tue, 18 Feb 2025 13:57:19 +0100
-Subject: [PATCH] firmware: config: ti-sci: Default set to ARCH_K3 for the
- ti sci driver
+	s=arc-20240116; t=1739883509; c=relaxed/simple;
+	bh=JJlh/bjdYAPnydJgo042TzApMxiaqJrFo2/KXVAdsNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q/2oCri1IdAwrLu55egn+gY5MXQkZB1xbcUU7sQEl7QVFVT9Ql17AteZ+VKnzVBtJwLrr5ZzhqTT8cfo/RLbfIlKO5/I3yGtaogIBEI7qupZ+eWPkF7ZDYuHMmlGZdT4L7MHj3hAsYULFTMPkKkO8KekkfB6kWqaL+AT/wSKDtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=pjrqVmDO; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739883494;
+	bh=2zCWdRd1PrOVUVSxD8wqwoiJzCtYme80y79Zs2msm2s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=pjrqVmDOvYJs9lRzHGDYlsQ+i5RFzbG0ZsBmURx20cT0xIzUC63JMPOEHrJOsHAYo
+	 I6uP2OwIxG//zWA277Il9zGcNrJUbdFC8xOzzFOL4R3tU8+Cbhm0ZroH02HO/pBQry
+	 a7hRxYPBu3Qqwj1cLKPPcDEfVQOtaI12n4+IYTzo=
+X-QQ-mid: bizesmtpip2t1739883448t4da3sb
+X-QQ-Originating-IP: mGMHbKw3tTDM8SfAf0LzgUC50c9uJ58QL0TdxvUEBfo=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 18 Feb 2025 20:57:26 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 18014004292230785986
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: chenlinxuan@uniontech.com,
+	guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com
+Subject: [PATCH 3/7] MIPS: cevt-ds1287: Add missing ds1287.h include
+Date: Tue, 18 Feb 2025 20:57:23 +0800
+Message-ID: <6A027EE413E09E1F+20250218125723.666989-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-ti-firmware-v1-1-7a23aacfb9d3@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAK6DtGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDI0ML3ZJM3bTMotzyxKJUXcMk82TzNBML01TTRCWgjoKi1LTMCrBp0bG
- 1tQCUwUg4XQAAAA==
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N5WxDrSUSX1PFCLI/iX7P1eZ9zo+KJOX21FLALxaDVZl2Ky5+jgYFTMV
+	0fk+RVBZGqReriMOyt7GfqMOoLkZdOu3r5Hx2qs6gq1A/WI5DeMvf3tr73tTV/BXApyHjGc
+	6p8k02x7vaBFk9Lv6r77bdx4AZ2mrULVM7b2A/E+27F9HG/8NZlYob1cbrZJWWyIUcXR5eK
+	fEb6g/OkO0vRtgwVwe0WX3vZUjVJu3KzExFLPDWNx5NzK0vMYoHdrfdvTsv6bQqBaxnSHh6
+	ptDIn+tdIFjQlKgZLrkF6V4fMHGNDk+caBP18hTmBdSj8qEQTyo/AKTuy5q6hMCbGMNfgDD
+	WWzk0SNvs5FaG0YMA6qxxE5ymd0dycTqbfq0OA4wCqSNhg+uKpGZL1WQ3fmI61mbFbPIwHf
+	+NO57PBlT7zX9+Gx5lvXXOfz3XG99/FERJ28hYbSvICvLB/UXbhjvexSQPIt32icPQT20/e
+	KjvnBetdcEo06b4AL4zdaalZDweWoshS6gIeatuJP5IONX3Vu6vhN50ChS46ahz05D95Urr
+	hqKgo5C1FA1mmcAUjNPx/0l3qLAWnQCqtLuuKeRLxq89+mv8qNsiGj2CfjJP4fsjEauzIOw
+	rzua1NTr9in8mAl8tG+rzbMIWstSOb5XEkJg0A1M7gXr5nNrpL03fY5C/UuV4ggODNCyhQ/
+	wXHNNXAL9UXgq5JvddNHcPLJaDU5CrlBLzQ6W7CODITQsW4gJ6Nra0bg7WYc0lu2vNV4MdT
+	a/aPDHP8QwDRSFwGwaVdQYFEkCmLgLnyMExCPMNgC3snANzjxoc4Jpn09vM6t3GVevDJVLg
+	Men6K4iGxasLwuECfDPIt1g6UZMV9upDVmz+n0sv3YY/ETNE4hoMCz82hAd854CcoVNi32W
+	LdPXj1e75v90BEBz3uO9KlV6Oy0eQoThn4rEJxp1e7Ez7iUsvARMrllktMoN1JEo3pJojNX
+	QRM/KYdNSepzDVFRnHn0j1xg3uRU/1Mm6NUGoTvjxQHm4kvOcNwo7yoQMPcqr7TzAPmLOzg
+	3F3mSAT37RBSmtQHYgf5JlaMkLe36pos0YDno5+2UGNEH1iXvn
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Defaulting the build to ARCH_K3 for the TI SCI driver.
+Address the issue of cevt-ds1287.c not including the ds1287.h header
+file.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Fix follow errors with gcc-14 when -Werror:
+
+arch/mips/kernel/cevt-ds1287.c:15:5: error: no previous prototype for ‘ds1287_timer_state’ [-Werror=missing-prototypes]
+   15 | int ds1287_timer_state(void)
+      |     ^~~~~~~~~~~~~~~~~~
+arch/mips/kernel/cevt-ds1287.c:20:5: error: no previous prototype for ‘ds1287_set_base_clock’ [-Werror=missing-prototypes]
+   20 | int ds1287_set_base_clock(unsigned int hz)
+      |     ^~~~~~~~~~~~~~~~~~~~~
+arch/mips/kernel/cevt-ds1287.c:103:12: error: no previous prototype for ‘ds1287_clockevent_init’ [-Werror=missing-prototypes]
+  103 | int __init ds1287_clockevent_init(int irq)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:207: arch/mips/kernel/cevt-ds1287.o] Error 1
+make[7]: *** Waiting for unfinished jobs....
+make[6]: *** [scripts/Makefile.build:465: arch/mips/kernel] Error 2
+make[6]: *** Waiting for unfinished jobs....
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
-Link to comment done on last serie [1] we come back on first version of
-series[2] to not use imply but set deps on ARCH_K3 in driver directly.
-An other patch will be sent to update Kconfig.platform when this patch
-is merged.
-
-[1] https://lore.kernel.org/all/20250123-timodulemailboxsci-v4-1-b1a31b56f162@baylibre.com/
-[2] https://lore.kernel.org/all/20221122202245.449198-4-nfrayer@baylibre.com/
----
- drivers/firmware/Kconfig | 1 +
+ arch/mips/kernel/cevt-ds1287.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 9f35f69e0f9e..109abe063093 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -215,6 +215,7 @@ config SYSFB_SIMPLEFB
- config TI_SCI_PROTOCOL
- 	tristate "TI System Control Interface (TISCI) Message Protocol"
- 	depends on TI_MESSAGE_MANAGER
-+	default ARCH_K3
- 	help
- 	  TI System Control Interface (TISCI) Message Protocol is used to manage
- 	  compute systems such as ARM, DSP etc with the system controller in
-
----
-base-commit: 2408a807bfc3f738850ef5ad5e3fd59d66168996
-change-id: 20250218-ti-firmware-1b7c7f485e5a
-
-Best regards,
+diff --git a/arch/mips/kernel/cevt-ds1287.c b/arch/mips/kernel/cevt-ds1287.c
+index 9a47fbcd4638..de64d6bb7ba3 100644
+--- a/arch/mips/kernel/cevt-ds1287.c
++++ b/arch/mips/kernel/cevt-ds1287.c
+@@ -10,6 +10,7 @@
+ #include <linux/mc146818rtc.h>
+ #include <linux/irq.h>
+ 
++#include <asm/ds1287.h>
+ #include <asm/time.h>
+ 
+ int ds1287_timer_state(void)
 -- 
-Guillaume La Roque <glaroque@baylibre.com>
+2.47.2
 
 
