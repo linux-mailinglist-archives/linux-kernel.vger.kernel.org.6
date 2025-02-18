@@ -1,202 +1,824 @@
-Return-Path: <linux-kernel+bounces-520091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55045A3A596
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:30:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD44A3A597
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6C203B4356
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:28:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD54D7A54FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F34D2356CA;
-	Tue, 18 Feb 2025 18:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07C12356DC;
+	Tue, 18 Feb 2025 18:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rplUdt2n"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2063.outbound.protection.outlook.com [40.107.93.63])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jL/6TEBw"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC02356B5;
-	Tue, 18 Feb 2025 18:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903307; cv=fail; b=MSdUBEAjHQe1XEfyF1s9OuteaH6VFgcQQixYfVPc/bG/21c/RlwvyOb/feuDymaAVp0pmQnPfgrQL/6UJOKqDrqdY9hcpYFZxuQ4VzS9Ph5v+hBUtgj9jXOJaJZkyB0mm/e/+rrXfNRux9BVtJ7cWDcphCqpf9yh7BTZxoU+yaE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903307; c=relaxed/simple;
-	bh=2BrPplgt+/0SQT73Wv4UYeQtHXHMK1Yre7EM+DoDSQA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eiY7PPMyzkqwK4utmkpeW6/TwNX7GnbHTq39n19ZG0T+O0ojLcgY35zz5QmwQiAwOZm4jWRglMXnD9m/qTvGAK+A3iykqQepHGQhJfC3IXQ09agoCbEG2QHBtUnxfRxTRU1I1hd1hHliz93UWksZNvjRm1UZvcTxKBfsBoy0FPc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rplUdt2n; arc=fail smtp.client-ip=40.107.93.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gggpx2t2SYrhpGtGhsm1FskDrsjvJJiqhPwN+FPzWxk4/3bViylbDhnrKJvhpPzGGhSkaXC2vZZQz4b+/UdmmMBPaInDnabLcu02euTzEk2bLkOY/tuKvllH+3uEkQCdc6qvHbqqjbUfBXu/09xH8OzbQ3p7R4bjIfHcCWStZjH3tt6/YMpCvnZ15tSBnbQ1oFUtaRVddE63+zfSoA68MWPoTcUcGuZ1cdO3Vypoa5W23ta3tNrqyQynCau4Hcsg3vQa6Z7mmd+fiIJX0abVzb92NEMKzy5n3KgdguGLeG0WjmfZZcfzHbLHAsfOHSlQskN33jBCQXsEYFRn1/MgBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/glo3vhL5ZjkefwwnAwHakl5+piosevkSRs4pjYSOSM=;
- b=ZKmNIdkh47SvpTV27fp9pzyDdhZn48oWWgacf37fCf1zPlttHTi8T3mnRqoi+ctWS1Z3rivv6bWyNKgXquWTUgmypn6cUUihuBcx8js0F8QAhfL4ulKLxnMzZTp4+iCT5MzBiPyKaYdU0zABl7yTYJb1Asq3JGqktjleXCIp72jl0lnqj5q8saf5QBIioQ9Mc67Rd9Jl4K/kguvezB4SiyrhGXiV7ofACO4OLqleFzMj6pCV3yU2uV2KhMexuGztdXN2lABllzE/XnRLHCmIamPfmd8iriaXVfRrjEyLdhREliEtXvB0OwvUvnzwfi0PzQns9rbPfX3HfJWEJOh7qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/glo3vhL5ZjkefwwnAwHakl5+piosevkSRs4pjYSOSM=;
- b=rplUdt2nix1GqVxqXutEB8xYPXW6A1ciIlRXG0NbThWHFUFBMnUxWWKpSpvijfxfA0/AeV5L6fbbsSaMK0F3v88r4a2jfe0x4NPdrr0xKBUQ18ghOr592nrdwGfHxDpz2tfdfaD/2Pgpm4P6Xb78WoqHU4wAo6RwGClxBjJ+gxvZIgUDArG29cM4UBnLs58VeAFVNNPwaSCkYgw02XZwKev3pX4Y7eCnGsi9arFoqOG1Gw/LbFU+rPxy/KZHpVh/T502D6/9RO3Ty8tGsH/xTULftyF5zKscGTEXlZYNKPz/Zz8+LRWElSGhB0TZHUUUImODzrU4SsIZwFKfODC8uQ==
-Received: from MW4PR04CA0051.namprd04.prod.outlook.com (2603:10b6:303:6a::26)
- by SA5PPFD911547FB.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e4) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
- 2025 18:28:23 +0000
-Received: from CO1PEPF000044F0.namprd05.prod.outlook.com
- (2603:10b6:303:6a:cafe::b3) by MW4PR04CA0051.outlook.office365.com
- (2603:10b6:303:6a::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.16 via Frontend Transport; Tue,
- 18 Feb 2025 18:28:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044F0.mail.protection.outlook.com (10.167.241.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 18:28:23 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
- 2025 10:28:07 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 18 Feb
- 2025 10:28:07 -0800
-Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 18 Feb 2025 10:28:05 -0800
-Date: Tue, 18 Feb 2025 10:28:04 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 13/14] iommu/arm-smmu-v3: Report events that belong to
- devices attached to vIOMMU
-Message-ID: <Z7TRNL0u0YmN30ax@nvidia.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <b71a5b132e8ba771998c5b810675f10b100d4ff3.1737754129.git.nicolinc@nvidia.com>
- <20250218171821.GG4099685@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211242356B7;
+	Tue, 18 Feb 2025 18:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739903394; cv=none; b=HcfntsJ4QEs19GlytkgF4recjbvYD+sTJPYRBqy/WgL9jg1w+peuii7Jgs0b4P9/yLBlj+ooCjLjp3Qd0OjQq3D1XNzxvjc86wdT2TbRjaqWtLyXHPBFC+ubIGMmMblU5cUkVE4pSrXSuFPnI/wZyWNzIYEk1iyXdc8ljliHCtc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739903394; c=relaxed/simple;
+	bh=PP+2MpNIcCvBqeRMxy3aTlCDsR5fWevv2YGNM5C9aCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sS1Zae2QTB9Ej1PItvBPv/he5nd3kFu+LVDBTGv05jNEHu1+gtMZvii+W35QR9jXOQgjmNazz43cp/gYW84i7JsvXRA15hD2UQQWY0CdInEcZeohDfF41/tKkeI4a9TARTX6DOLWJvMLbJ/0nJDDeZUWr+7bEO4Oorwioytemv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jL/6TEBw; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IITEqJ1728169
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 12:29:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1739903354;
+	bh=ICoyfKU8XLfSGJR6BhNYNqIWMbB6FYvBOJX3aPiADYk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jL/6TEBwYMmNmNOhGzj58tsQhBXlZJp0MUa7wYTRnKCFqcCp/5ngFDWPbQnTtWVlg
+	 caOqlNhGyfendOyBdTlCLEGVS/63mv5KIVpuDfibwhNadrgsZHjeVXlck9edTNdo1H
+	 YJi2AEKYkTFHD5qx1JV99WimgG3CQUeupJsqhj4A=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IITEKr005234
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Feb 2025 12:29:14 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Feb 2025 12:29:14 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Feb 2025 12:29:14 -0600
+Received: from [10.249.140.156] ([10.249.140.156])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IIT5TL097038;
+	Tue, 18 Feb 2025 12:29:05 -0600
+Message-ID: <3a7998e4-ee16-4173-a358-ca50798eb47e@ti.com>
+Date: Tue, 18 Feb 2025 23:59:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250218171821.GG4099685@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F0:EE_|SA5PPFD911547FB:EE_
-X-MS-Office365-Filtering-Correlation-Id: df7c1ce0-03fc-45b4-5a36-08dd504a0741
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9TQNnYli6ma6XSjuMwDZoniWGGgVjNt4t1pVjTMWeUg4MQ7KWsU1T2MD3q8m?=
- =?us-ascii?Q?HtPrRdKTmTTn4cAQ8UXJ2wGyvLXzL2ddiGDsKRF7qg99r/OLOyBmUX7WC5Dn?=
- =?us-ascii?Q?IpBxv+flT6n4foMwnDFzDdGs8iMvYac98xdBDWSjHtFqrMBOBLNWtyzXYLwq?=
- =?us-ascii?Q?443KkekAPoHuhLkDmKx/1xAgFtof8bHLaTDK09YRx0XyrQtKsj+iM+uVRRW7?=
- =?us-ascii?Q?m3h3j2qyMzWKnJ0jzLKElpaRsAralL1d2xWzEQLK3EY2tht6HMMEAuHzQUsB?=
- =?us-ascii?Q?5l0XmjzBxiCLC3YhqkAUw4hc7+Gsupjoi0Lk6eC5oKowRrQMq71kONjmrrEf?=
- =?us-ascii?Q?XZr+jXuBM6Nsm97y2nY/yWACvNdMnR2XykePL8wIKUV+vZYzWOptHZgNT7vV?=
- =?us-ascii?Q?EoZpxVV9mj9QXq6pRPEg3MJf+yXDYjVpXEM6QxWcM4kUhtFWk0xQncDUo8df?=
- =?us-ascii?Q?dPtQjM++82LVVs98KA1BWv3SPsMrvHbm1tSEWwRCE2+yYP9YBh2+KNbCHcQL?=
- =?us-ascii?Q?oZIYXbdjfHO1c43TbteW4rQi+Wx/CmFrvjfRRuM2BEAUqG6g/DrRCfRLWXoK?=
- =?us-ascii?Q?pb27wDFXOG905/loE5pEcf0klHUbdyFvlwIVj+fNkINY+3fxaWXfQzjiTePA?=
- =?us-ascii?Q?ku+46PaPo8l1wVTSZS6AGwXjrvwEDh43K6b5hyhqx+2Q2keRHVkpdW9L9dHI?=
- =?us-ascii?Q?9RtCpSjysabe/CeJo2FG9IDV1J9zEsW0LOOZBR5kKqJA9OuqtGDtzEa2Po6V?=
- =?us-ascii?Q?bhYChPFSs8NIdG5bKBEmfehIVsogf0cA4Ik+BXncgAcva0HivsiqKy9RqUgM?=
- =?us-ascii?Q?lUnsh/vi4R5Dp4G3ZrmZKgLnEj2e3IpxC0adozajy0WHSr6mUxwi4GmmICGe?=
- =?us-ascii?Q?QmzovTOQjQV55+lRYjIQ/N0fHkaI+6QoLDxJN0z2E4Sj1iQmCN+7sy+bqJnl?=
- =?us-ascii?Q?urEbXysUKOZTURJOGo5U2hTvLuog0v4Zor56V9DnadHP9KoP30ZplSRHYdvh?=
- =?us-ascii?Q?fUiCjyrwY6nlr6zaenH80WA0AmZmfU/LbE1zHmEfQ3SDsAO5wjO92dzKq/vs?=
- =?us-ascii?Q?dfvR+XLVtrgsMfFxCt7Y48bQZZjGnry3kTBip9BheCTy8oeDBnhJI47/e0PS?=
- =?us-ascii?Q?qrGbDrJ926vt8nK8GLeVkchssKF+xfmyvaJwTDLob6xccFlDEl2tY6PS1ikq?=
- =?us-ascii?Q?V4fLxeADIebsQy+dAHhs17pFMNBKOK9fMG9L/CFxvqCQoK7d6zG6wbY0TqnR?=
- =?us-ascii?Q?Ks3FZKjTdp5LA3oymr1StOe8gTD00nFg6Hp1Zog4u+llK194hrYjkNF/bEdY?=
- =?us-ascii?Q?4Sa8OG63PaIz8uCcbOR381IMYfiYjkSPwOPr2p5WsZLrlsmCA1gfjb+nt0kd?=
- =?us-ascii?Q?IQobqZw0RrdqWoKTGQPIwkS8SR0q+tVZbMSLji6aOtXw5X6yfXGpw8GrCoDb?=
- =?us-ascii?Q?sKtE1ISYXbJ3WBDEJzEEvQ2o3vwbsDa2RwPzBNGIR2laXSsknzsW23oNSfxG?=
- =?us-ascii?Q?C3GOz6QcItYRl14=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 18:28:23.4441
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: df7c1ce0-03fc-45b4-5a36-08dd504a0741
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFD911547FB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 3/3] net: ti: icssg-prueth: Add XDP support
+To: Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <u.kleine-koenig@baylibre.com>, <krzysztof.kozlowski@linaro.org>,
+        <dan.carpenter@linaro.org>, <schnelle@linux.ibm.com>,
+        <glaroque@baylibre.com>, <rdunlap@infradead.org>,
+        <diogo.ivo@siemens.com>, <jan.kiszka@siemens.com>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20250210103352.541052-1-m-malladi@ti.com>
+ <20250210103352.541052-4-m-malladi@ti.com>
+ <85bb807f-7ad6-4245-95cd-ccecbc1817de@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <85bb807f-7ad6-4245-95cd-ccecbc1817de@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Feb 18, 2025 at 01:18:21PM -0400, Jason Gunthorpe wrote:
-> On Fri, Jan 24, 2025 at 04:30:42PM -0800, Nicolin Chen wrote:
-> 
-> > @@ -1831,31 +1831,30 @@ static int arm_smmu_handle_event(struct arm_smmu_device *smmu,
-> >  		return -EOPNOTSUPP;
-> >  	}
-> 
-> There is still the filter at the top:
-> 
-> 	switch (event->id) {
-> 	case EVT_ID_TRANSLATION_FAULT:
-> 	case EVT_ID_ADDR_SIZE_FAULT:
-> 	case EVT_ID_ACCESS_FAULT:
-> 	case EVT_ID_PERMISSION_FAULT:
-> 		break;
-> 	default:
-> 		return -EOPNOTSUPP;
-> 	}
-> 
-> Is that right here or should more event types be forwarded to the
-> guest?
 
-That doesn't seem to be right. Something like EVT_ID_BAD_CD_CONFIG
-should be forwarded too. I will go through the list.
 
-> >  	mutex_lock(&smmu->streams_mutex);
-> [..]
->   
-> > -	ret = iommu_report_device_fault(master->dev, &fault_evt);
-> > +	if (event->stall) {
-> > +		ret = iommu_report_device_fault(master->dev, &fault_evt);
-> > +	} else {
-> > +		down_read(&master->vmaster_rwsem);
+On 2/12/2025 9:33 PM, Roger Quadros wrote:
 > 
-> This already holds the streams_mutex across all of this, do you think
-> we should get rid of the vmaster_rwsem and hold the streams_mutex on
-> write instead?
+> 
+> On 10/02/2025 12:33, Meghana Malladi wrote:
+>> From: Roger Quadros <rogerq@kernel.org>
+>>
+>> Add native XDP support. We do not support zero copy yet.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>> ---
+>> v1: https://lore.kernel.org/all/20250122124951.3072410-1-m-malladi@ti.com/
+>>
+>> Changes since v1 (v2-v1):
+>> - Fix XDP typo in the commit message
+>> - Add XDP feature flags using xdp_set_features_flag()
+>> - Use xdp_build_skb_from_buff() when XDP ran
+>>
+>> All the above changes have been suggested by Ido Schimmel <idosch@idosch.org>
+>>
+>>   drivers/net/ethernet/ti/icssg/icssg_common.c | 226 +++++++++++++++++--
+>>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 123 +++++++++-
+>>   drivers/net/ethernet/ti/icssg/icssg_prueth.h |  18 ++
+>>   3 files changed, 353 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> index a124c5773551..b01750a2d57e 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> @@ -98,11 +98,19 @@ void prueth_xmit_free(struct prueth_tx_chn *tx_chn,
+>>   {
+>>   	struct cppi5_host_desc_t *first_desc, *next_desc;
+>>   	dma_addr_t buf_dma, next_desc_dma;
+>> +	struct prueth_swdata *swdata;
+>>   	u32 buf_dma_len;
+>>   
+>>   	first_desc = desc;
+>>   	next_desc = first_desc;
+>>   
+>> +	swdata = cppi5_hdesc_get_swdata(desc);
+>> +	if (swdata->type == PRUETH_SWDATA_PAGE) {
+>> +		page_pool_recycle_direct(swdata->rx_chn->pg_pool,
+>> +					 swdata->data.page);
+> 
+> if swdata->data.page.pp already contains the page_pool then you can avoid
+> passing around rx_chn via swdata altogether.
+> 
 
-They are per master v.s. per smmu. The latter one would make master
-commits/attaches exclusive, which feels unnecessary to me, although
-it would make the code here slightly cleaner..
+Oh ok, didn't know page also contains page_pool. Will remove rx_chn from 
+swdata then.
 
-Thanks
-Nicolin
+>> +		goto free_desc;
+>> +	}
+>> +
+>>   	cppi5_hdesc_get_obuf(first_desc, &buf_dma, &buf_dma_len);
+>>   	k3_udma_glue_tx_cppi5_to_dma_addr(tx_chn->tx_chn, &buf_dma);
+>>   
+>> @@ -126,6 +134,7 @@ void prueth_xmit_free(struct prueth_tx_chn *tx_chn,
+>>   		k3_cppi_desc_pool_free(tx_chn->desc_pool, next_desc);
+>>   	}
+>>   
+>> +free_desc:
+>>   	k3_cppi_desc_pool_free(tx_chn->desc_pool, first_desc);
+>>   }
+>>   EXPORT_SYMBOL_GPL(prueth_xmit_free);
+>> @@ -139,6 +148,7 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
+>>   	struct prueth_swdata *swdata;
+>>   	struct prueth_tx_chn *tx_chn;
+>>   	unsigned int total_bytes = 0;
+>> +	struct xdp_frame *xdpf;
+>>   	struct sk_buff *skb;
+>>   	dma_addr_t desc_dma;
+>>   	int res, num_tx = 0;
+>> @@ -168,20 +178,29 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
+>>   			continue;
+>>   		}
+>>   
+>> -		if (swdata->type != PRUETH_SWDATA_SKB) {
+>> +		switch (swdata->type) {
+>> +		case PRUETH_SWDATA_SKB:
+>> +			skb = swdata->data.skb;
+>> +			ndev->stats.tx_bytes += skb->len;
+>> +			ndev->stats.tx_packets++;
+> 
+> dev_sw_netstats_tx_add() instead?
+> 
+
+Ok, will use this instead.
+
+>> +			total_bytes += skb->len;
+>> +			napi_consume_skb(skb, budget);
+>> +			break;
+>> +		case PRUETH_SWDATA_XDPF:
+>> +			xdpf = swdata->data.xdpf;
+>> +			ndev->stats.tx_bytes += xdpf->len;
+>> +			ndev->stats.tx_packets++;
+> here too
+> 
+>> +			total_bytes += xdpf->len;
+>> +			xdp_return_frame(xdpf);
+>> +			break;
+>> +		default:
+>>   			netdev_err(ndev, "tx_complete: invalid swdata type %d\n", swdata->type);
+> 
+> ndev->stats.tx_dropped++
+> 
+
+yeah, will add it.
+
+>> +			prueth_xmit_free(tx_chn, desc_tx);
+>>   			budget++;
+>>   			continue;
+>>   		}
+>>   
+>> -		skb = swdata->data.skb;
+>>   		prueth_xmit_free(tx_chn, desc_tx);
+>> -
+>> -		ndev = skb->dev;
+>> -		ndev->stats.tx_packets++;
+>> -		ndev->stats.tx_bytes += skb->len;
+>> -		total_bytes += skb->len;
+>> -		napi_consume_skb(skb, budget);
+>>   		num_tx++;
+>>   	}
+>>   
+>> @@ -498,6 +517,7 @@ int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
+>>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
+>>   	swdata->type = PRUETH_SWDATA_PAGE;
+>>   	swdata->data.page = page;
+>> +	swdata->rx_chn = rx_chn;
+>>   
+>>   	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, PRUETH_RX_FLOW_DATA,
+>>   					desc_rx, desc_dma);
+>> @@ -540,7 +560,156 @@ void emac_rx_timestamp(struct prueth_emac *emac,
+>>   	ssh->hwtstamp = ns_to_ktime(ns);
+>>   }
+>>   
+>> -static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>> +/**
+>> + * emac_xmit_xdp_frame - transmits an XDP frame
+>> + * @emac: emac device
+>> + * @xdpf: data to transmit
+>> + * @page: page from page pool if already DMA mapped
+>> + * @q_idx: queue id
+>> + *
+>> + * Return: XDP state
+>> + */
+>> +int emac_xmit_xdp_frame(struct prueth_emac *emac,
+>> +			struct xdp_frame *xdpf,
+>> +			struct page *page,
+>> +			unsigned int q_idx)
+>> +{
+>> +	struct cppi5_host_desc_t *first_desc;
+>> +	struct net_device *ndev = emac->ndev;
+>> +	struct prueth_tx_chn *tx_chn;
+>> +	dma_addr_t desc_dma, buf_dma;
+>> +	struct prueth_swdata *swdata;
+>> +	u32 *epib;
+>> +	int ret;
+>> +
+>> +	void *data = xdpf->data;
+>> +	u32 pkt_len = xdpf->len;
+>> +
+>> +	if (q_idx >= PRUETH_MAX_TX_QUEUES) {
+>> +		netdev_err(ndev, "xdp tx: invalid q_id %d\n", q_idx);
+> 
+> ndev->stats.tx_dropped++;
+> 
+
+Instead of adding this here, I will add it in the caller of the function 
+so the caller can increase the stats based on what this function 
+returns. If it returns ICSSG_XDP_CONSUMED then dropped++.
+
+>> +		return ICSSG_XDP_CONSUMED;	/* drop */
+>> +	}
+>> +
+>> +	tx_chn = &emac->tx_chns[q_idx];
+>> +
+>> +	if (page) { /* already DMA mapped by page_pool */
+>> +		buf_dma = page_pool_get_dma_addr(page);
+>> +		buf_dma += xdpf->headroom + sizeof(struct xdp_frame);
+>> +	} else { /* Map the linear buffer */
+>> +		buf_dma = dma_map_single(tx_chn->dma_dev, data, pkt_len, DMA_TO_DEVICE);
+>> +		if (dma_mapping_error(tx_chn->dma_dev, buf_dma)) {
+>> +			netdev_err(ndev, "xdp tx: failed to map data buffer\n");
+> 
+> ndev->stats.tx_dropped++;
+> 
+
+Same.
+
+>> +			return ICSSG_XDP_CONSUMED;	/* drop */
+>> +		}
+>> +	}
+>> +
+>> +	first_desc = k3_cppi_desc_pool_alloc(tx_chn->desc_pool);
+>> +	if (!first_desc) {
+>> +		netdev_dbg(ndev, "xdp tx: failed to allocate descriptor\n");
+>> +		if (!page)
+>> +			dma_unmap_single(tx_chn->dma_dev, buf_dma, pkt_len, DMA_TO_DEVICE);
+> 
+> Better to do the k3_cppi_desc_pool_alloc() before the DMA mapping
+> so it is easier to clean up on failure.
+> 
+
+Ok, will move it above.
+
+>> +		goto drop_free_descs;	/* drop */
+>> +	}
+>> +
+>> +	cppi5_hdesc_init(first_desc, CPPI5_INFO0_HDESC_EPIB_PRESENT,
+>> +			 PRUETH_NAV_PS_DATA_SIZE);
+>> +	cppi5_hdesc_set_pkttype(first_desc, 0);
+>> +	epib = first_desc->epib;
+>> +	epib[0] = 0;
+>> +	epib[1] = 0;
+>> +
+>> +	/* set dst tag to indicate internal qid at the firmware which is at
+>> +	 * bit8..bit15. bit0..bit7 indicates port num for directed
+>> +	 * packets in case of switch mode operation
+>> +	 */
+>> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
+>> +	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
+>> +	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
+>> +	swdata = cppi5_hdesc_get_swdata(first_desc);
+>> +	if (page) {
+>> +		swdata->type = PRUETH_SWDATA_PAGE;
+>> +		swdata->data.page = page;
+>> +		/* we assume page came from RX channel page pool */
+>> +		swdata->rx_chn = &emac->rx_chns;
+>> +	} else {
+>> +		swdata->type = PRUETH_SWDATA_XDPF;
+>> +		swdata->data.xdpf = xdpf;
+>> +	}
+>> +
+>> +	cppi5_hdesc_set_pktlen(first_desc, pkt_len);
+>> +	desc_dma = k3_cppi_desc_pool_virt2dma(tx_chn->desc_pool, first_desc);
+>> +
+>> +	ret = k3_udma_glue_push_tx_chn(tx_chn->tx_chn, first_desc, desc_dma);
+>> +	if (ret) {
+>> +		netdev_err(ndev, "xdp tx: push failed: %d\n", ret);
+>> +		goto drop_free_descs;
+>> +	}
+>> +
+>> +	return ICSSG_XDP_TX;
+>> +
+>> +drop_free_descs:
+> 
+> ndev->stats.tx_dropped++;
+> 
+
+Same, will let the caller decide to increase the stats.
+
+>> +	prueth_xmit_free(tx_chn, first_desc);
+> 
+> this will also unmap the dma_buffer for all cases. So maybe you need
+> to add a flag to prueth_xmit_free() to skip unmap for certain cases.
+> 
+
+Can you specify for which cases unmap should be skipped and when it 
+shouldn't.
+
+>> +	return ICSSG_XDP_CONSUMED;
+>> +}
+>> +EXPORT_SYMBOL_GPL(emac_xmit_xdp_frame);
+>> +
+>> +/**
+>> + * emac_run_xdp - run an XDP program
+>> + * @emac: emac device
+>> + * @xdp: XDP buffer containing the frame
+>> + * @page: page with RX data if already DMA mapped
+>> + *
+>> + * Return: XDP state
+>> + */
+>> +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
+>> +			struct page *page)
+>> +{
+>> +	int err, result = ICSSG_XDP_PASS;
+>> +	struct bpf_prog *xdp_prog;
+>> +	struct xdp_frame *xdpf;
+>> +	int q_idx;
+>> +	u32 act;
+>> +
+>> +	xdp_prog = READ_ONCE(emac->xdp_prog);
+>> +
+> unnecessary new line.
+> 
+
+Ok, will remove it.
+
+>> +	act = bpf_prog_run_xdp(xdp_prog, xdp);
+>> +	switch (act) {
+>> +	case XDP_PASS:
+> 
+> return ICSSG_XDP_PASS;
+> 
+
+result is populated with ICSSG_XDP_PASS initially and after break it 
+returns ICSSG_XDP_PASS.
+
+>> +		break;
+>> +	case XDP_TX:
+>> +		/* Send packet to TX ring for immediate transmission */
+>> +		xdpf = xdp_convert_buff_to_frame(xdp);
+>> +		if (unlikely(!xdpf))
+> ndev->stats.tx_dropped++;
+> 
+
+will add this after drop label, as it is applicable for all conditions 
+where drop happens.
+
+>> +			goto drop;
+>> +
+>> +		q_idx = smp_processor_id() % emac->tx_ch_num;
+>> +		result = emac_xmit_xdp_frame(emac, xdpf, page, q_idx);
+>> +		if (result == ICSSG_XDP_CONSUMED)
+>> +			goto drop;
+> 
+> increment tx stats?
+> 
+
+same
+
+> return ICSSG_XDP_TX;
+> 
+
+emac_xmit_xdp_frame() returns ICSSG_XDP_TX, if the packet hasn't been 
+dropped (ICSSG_XDP_CONSUMED)
+
+>> +		break;
+>> +	case XDP_REDIRECT:
+>> +		err = xdp_do_redirect(emac->ndev, xdp, xdp_prog);
+>> +		if (err)
+>> +			goto drop;
+>> +		result = ICSSG_XDP_REDIR;
+> 
+> return ICSSG_XDP_REDIR
+
+break handles this return.
+
+>> +		break;
+>> +	default:
+>> +		bpf_warn_invalid_xdp_action(emac->ndev, xdp_prog, act);
+>> +		fallthrough;
+>> +	case XDP_ABORTED:
+>> +drop:
+>> +		trace_xdp_exception(emac->ndev, xdp_prog, act);
+>> +		fallthrough; /* handle aborts by dropping packet */
+>> +	case XDP_DROP:
+> 
+> ndev->stats.rx_dropped++;
+> 
+
+yes, will add it under XDP_DROP to handle both XDP_DROP switch case and 
+drop label.
+
+>> +		result = ICSSG_XDP_CONSUMED;
+>> +		page_pool_recycle_direct(emac->rx_chns.pg_pool, page);
+>> +		break;
+>> +	}
+>> +
+>> +	return result;
+>> +}
+>> +
+>> +static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, int *xdp_state)
+>>   {
+>>   	struct prueth_rx_chn *rx_chn = &emac->rx_chns;
+>>   	u32 buf_dma_len, pkt_len, port_id = 0;
+>> @@ -551,10 +720,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>   	struct page *page, *new_page;
+>>   	struct page_pool *pool;
+>>   	struct sk_buff *skb;
+>> +	struct xdp_buff xdp;
+>>   	u32 *psdata;
+>>   	void *pa;
+>>   	int ret;
+>>   
+>> +	*xdp_state = 0;
+>>   	pool = rx_chn->pg_pool;
+>>   	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
+>>   	if (ret) {
+>> @@ -594,9 +765,21 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>   		goto requeue;
+>>   	}
+>>   
+>> -	/* prepare skb and send to n/w stack */
+>>   	pa = page_address(page);
+>> -	skb = napi_build_skb(pa, PAGE_SIZE);
+>> +	if (emac->xdp_prog) {
+>> +		xdp_init_buff(&xdp, PAGE_SIZE, &rx_chn->xdp_rxq);
+>> +		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
+>> +
+>> +		*xdp_state = emac_run_xdp(emac, &xdp, page);
+>> +		if (*xdp_state == ICSSG_XDP_PASS)
+>> +			skb = xdp_build_skb_from_buff(&xdp);
+>> +		else
+>> +			goto requeue;
+>> +	} else {
+>> +		/* prepare skb and send to n/w stack */
+>> +		skb = napi_build_skb(pa, PAGE_SIZE);
+>> +	}
+>> +
+>>   	if (!skb) {
+>>   		ndev->stats.rx_dropped++;
+>>   		page_pool_recycle_direct(pool, page);
+>> @@ -859,14 +1042,25 @@ static void prueth_tx_cleanup(void *data, dma_addr_t desc_dma)
+>>   	struct prueth_tx_chn *tx_chn = data;
+>>   	struct cppi5_host_desc_t *desc_tx;
+>>   	struct prueth_swdata *swdata;
+>> +	struct xdp_frame *xdpf;
+>>   	struct sk_buff *skb;
+>>   
+>>   	desc_tx = k3_cppi_desc_pool_dma2virt(tx_chn->desc_pool, desc_dma);
+>>   	swdata = cppi5_hdesc_get_swdata(desc_tx);
+>> -	if (swdata->type == PRUETH_SWDATA_SKB) {
+>> +
+>> +	switch (swdata->type) {
+>> +	case PRUETH_SWDATA_SKB:
+>>   		skb = swdata->data.skb;
+>>   		dev_kfree_skb_any(skb);
+>> +		break;
+>> +	case PRUETH_SWDATA_XDPF:
+>> +		xdpf = swdata->data.xdpf;
+>> +		xdp_return_frame(xdpf);
+>> +		break;
+> 
+> what about PRUETH_SWDATA_PAGE?
+> 
+
+This gets handled inside prueth_xmit_free().
+
+>> +	default:
+>> +		break;
+>>   	}
+>> +
+>>   	prueth_xmit_free(tx_chn, desc_tx);
+>>   }
+>>   
+>> @@ -901,15 +1095,18 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
+>>   		PRUETH_RX_FLOW_DATA_SR1 : PRUETH_RX_FLOW_DATA;
+>>   	int flow = emac->is_sr1 ?
+>>   		PRUETH_MAX_RX_FLOWS_SR1 : PRUETH_MAX_RX_FLOWS;
+>> +	int xdp_state_or = 0;
+>>   	int num_rx = 0;
+>>   	int cur_budget;
+>> +	int xdp_state;
+>>   	int ret;
+>>   
+>>   	while (flow--) {
+>>   		cur_budget = budget - num_rx;
+>>   
+>>   		while (cur_budget--) {
+>> -			ret = emac_rx_packet(emac, flow);
+>> +			ret = emac_rx_packet(emac, flow, &xdp_state);
+>> +			xdp_state_or |= xdp_state;
+>>   			if (ret)
+>>   				break;
+>>   			num_rx++;
+>> @@ -919,6 +1116,9 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
+>>   			break;
+>>   	}
+>>   
+>> +	if (xdp_state_or & ICSSG_XDP_REDIR)
+>> +		xdp_do_flush();
+>> +
+>>   	if (num_rx < budget && napi_complete_done(napi_rx, num_rx)) {
+>>   		if (unlikely(emac->rx_pace_timeout_ns)) {
+>>   			hrtimer_start(&emac->rx_hrtimer,
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index e5e4efe485f6..a360a1d6f8d7 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -559,6 +559,33 @@ const struct icss_iep_clockops prueth_iep_clockops = {
+>>   	.perout_enable = prueth_perout_enable,
+>>   };
+>>   
+>> +static int prueth_create_xdp_rxqs(struct prueth_emac *emac)
+>> +{
+>> +	struct xdp_rxq_info *rxq = &emac->rx_chns.xdp_rxq;
+>> +	struct page_pool *pool = emac->rx_chns.pg_pool;
+>> +	int ret;
+>> +
+>> +	ret = xdp_rxq_info_reg(rxq, emac->ndev, 0, rxq->napi_id);
+> 
+> but who sets rxq->napi_id?
+> 
+> I think you need to use emac->napi_rx.napi_id
+> 
+
+Yes, I have updated it with "emac->napi_rx.napi_id"
+
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = xdp_rxq_info_reg_mem_model(rxq, MEM_TYPE_PAGE_POOL, pool);
+>> +	if (ret)
+>> +		xdp_rxq_info_unreg(rxq);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void prueth_destroy_xdp_rxqs(struct prueth_emac *emac)
+>> +{
+>> +	struct xdp_rxq_info *rxq = &emac->rx_chns.xdp_rxq;
+>> +
+>> +	if (!xdp_rxq_info_is_reg(rxq))
+>> +		return;
+>> +
+>> +	xdp_rxq_info_unreg(rxq);
+>> +}
+>> +
+>>   static int icssg_prueth_add_mcast(struct net_device *ndev, const u8 *addr)
+>>   {
+>>   	struct net_device *real_dev;
+>> @@ -780,10 +807,14 @@ static int emac_ndo_open(struct net_device *ndev)
+>>   	if (ret)
+>>   		goto free_tx_ts_irq;
+>>   
+>> -	ret = k3_udma_glue_enable_rx_chn(emac->rx_chns.rx_chn);
+>> +	ret = prueth_create_xdp_rxqs(emac);
+>>   	if (ret)
+>>   		goto reset_rx_chn;
+>>   
+>> +	ret = k3_udma_glue_enable_rx_chn(emac->rx_chns.rx_chn);
+>> +	if (ret)
+>> +		goto destroy_xdp_rxqs;
+>> +
+>>   	for (i = 0; i < emac->tx_ch_num; i++) {
+>>   		ret = k3_udma_glue_enable_tx_chn(emac->tx_chns[i].tx_chn);
+>>   		if (ret)
+>> @@ -809,6 +840,8 @@ static int emac_ndo_open(struct net_device *ndev)
+>>   	 * any SKB for completion. So set false to free_skb
+>>   	 */
+>>   	prueth_reset_tx_chan(emac, i, false);
+>> +destroy_xdp_rxqs:
+>> +	prueth_destroy_xdp_rxqs(emac);
+>>   reset_rx_chn:
+>>   	prueth_reset_rx_chan(&emac->rx_chns, max_rx_flows, false);
+>>   free_tx_ts_irq:
+>> @@ -880,6 +913,8 @@ static int emac_ndo_stop(struct net_device *ndev)
+>>   
+>>   	prueth_reset_rx_chan(&emac->rx_chns, max_rx_flows, true);
+>>   
+> Please drop new line.
+> 
+
+Okay.
+
+>> +	prueth_destroy_xdp_rxqs(emac);
+>> +
+> here too.
+> 
+>>   	napi_disable(&emac->napi_rx);
+>>   	hrtimer_cancel(&emac->rx_hrtimer);
+>>   
+>> @@ -1024,6 +1059,90 @@ static int emac_ndo_vlan_rx_del_vid(struct net_device *ndev,
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * emac_xdp_xmit - Implements ndo_xdp_xmit
+>> + * @dev: netdev
+>> + * @n: number of frames
+>> + * @frames: array of XDP buffer pointers
+>> + * @flags: XDP extra info
+>> + *
+>> + * Return: number of frames successfully sent. Failed frames
+>> + * will be free'ed by XDP core.
+>> + *
+>> + * For error cases, a negative errno code is returned and no-frames
+>> + * are transmitted (caller must handle freeing frames).
+>> + **/
+>> +static int emac_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
+>> +			 u32 flags)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(dev);
+>> +	unsigned int q_idx;
+>> +	int nxmit = 0;
+>> +	int i;
+>> +
+>> +	q_idx = smp_processor_id() % emac->tx_ch_num;
+>> +
+>> +	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK))
+>> +		return -EINVAL;
+>> +
+>> +	for (i = 0; i < n; i++) {
+>> +		struct xdp_frame *xdpf = frames[i];
+>> +		int err;
+>> +
+>> +		err = emac_xmit_xdp_frame(emac, xdpf, NULL, q_idx);
+>> +		if (err != ICSSG_XDP_TX)
+>> +			break;
+>> +		nxmit++;
+>> +	}
+>> +
+>> +	return nxmit;
+>> +}
+>> +
+>> +/**
+>> + * emac_xdp_setup - add/remove an XDP program
+>> + * @emac: emac device
+>> + * @bpf: XDP program
+>> + *
+>> + * Return: Always 0 (Success)
+>> + **/
+>> +static int emac_xdp_setup(struct prueth_emac *emac, struct netdev_bpf *bpf)
+>> +{
+>> +	struct bpf_prog *prog = bpf->prog;
+>> +	xdp_features_t val;
+>> +
+>> +	val = NETDEV_XDP_ACT_BASIC | NETDEV_XDP_ACT_REDIRECT |
+>> +	      NETDEV_XDP_ACT_NDO_XMIT;
+>> +	xdp_set_features_flag(emac->ndev, val);
+>> +
+>> +	if (!emac->xdpi.prog && !prog)
+>> +		return 0;
+>> +
+>> +	WRITE_ONCE(emac->xdp_prog, prog);
+>> +
+>> +	xdp_attachment_setup(&emac->xdpi, bpf);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * emac_ndo_bpf - implements ndo_bpf for icssg_prueth
+>> + * @ndev: network adapter device
+>> + * @bpf: XDP program
+>> + *
+>> + * Return: 0 on success, error code on failure.
+>> + **/
+>> +static int emac_ndo_bpf(struct net_device *ndev, struct netdev_bpf *bpf)
+>> +{
+>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>> +
+>> +	switch (bpf->command) {
+>> +	case XDP_SETUP_PROG:
+>> +		return emac_xdp_setup(emac, bpf);
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>>   static const struct net_device_ops emac_netdev_ops = {
+>>   	.ndo_open = emac_ndo_open,
+>>   	.ndo_stop = emac_ndo_stop,
+>> @@ -1038,6 +1157,8 @@ static const struct net_device_ops emac_netdev_ops = {
+>>   	.ndo_fix_features = emac_ndo_fix_features,
+>>   	.ndo_vlan_rx_add_vid = emac_ndo_vlan_rx_add_vid,
+>>   	.ndo_vlan_rx_kill_vid = emac_ndo_vlan_rx_del_vid,
+>> +	.ndo_bpf = emac_ndo_bpf,
+>> +	.ndo_xdp_xmit = emac_xdp_xmit,
+>>   };
+>>   
+>>   static int prueth_netdev_init(struct prueth *prueth,
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> index 2c8585255b7c..fb8dc8e12c19 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> @@ -8,6 +8,8 @@
+>>   #ifndef __NET_TI_ICSSG_PRUETH_H
+>>   #define __NET_TI_ICSSG_PRUETH_H
+>>   
+>> +#include <linux/bpf.h>
+>> +#include <linux/bpf_trace.h>
+>>   #include <linux/etherdevice.h>
+>>   #include <linux/genalloc.h>
+>>   #include <linux/if_vlan.h>
+>> @@ -134,6 +136,7 @@ struct prueth_rx_chn {
+>>   	unsigned int irq[ICSSG_MAX_RFLOWS];	/* separate irq per flow */
+>>   	char name[32];
+>>   	struct page_pool *pg_pool;
+>> +	struct xdp_rxq_info xdp_rxq;
+>>   };
+>>   
+>>   enum prueth_swdata_type {
+>> @@ -141,16 +144,19 @@ enum prueth_swdata_type {
+>>   	PRUETH_SWDATA_SKB,
+>>   	PRUETH_SWDATA_PAGE,
+>>   	PRUETH_SWDATA_CMD,
+>> +	PRUETH_SWDATA_XDPF,
+>>   };
+>>   
+>>   union prueth_data {
+>>   	struct sk_buff *skb;
+>>   	struct page *page;
+>>   	u32 cmd;
+>> +	struct xdp_frame *xdpf;
+>>   };
+>>   
+>>   struct prueth_swdata {
+>>   	union prueth_data data;
+>> +	struct prueth_rx_chn *rx_chn;
+>>   	enum prueth_swdata_type type;
+>>   };
+>>   
+>> @@ -161,6 +167,12 @@ struct prueth_swdata {
+>>   
+>>   #define PRUETH_MAX_TX_TS_REQUESTS	50 /* Max simultaneous TX_TS requests */
+>>   
+>> +/* XDP BPF state */
+>> +#define ICSSG_XDP_PASS           0
+>> +#define ICSSG_XDP_CONSUMED       BIT(0)
+>> +#define ICSSG_XDP_TX             BIT(1)
+>> +#define ICSSG_XDP_REDIR          BIT(2)
+>> +
+>>   /* Minimum coalesce time in usecs for both Tx and Rx */
+>>   #define ICSSG_MIN_COALESCE_USECS 20
+>>   
+>> @@ -229,6 +241,8 @@ struct prueth_emac {
+>>   	unsigned long rx_pace_timeout_ns;
+>>   
+>>   	struct netdev_hw_addr_list vlan_mcast_list[MAX_VLAN_ID];
+>> +	struct bpf_prog *xdp_prog;
+>> +	struct xdp_attachment_info xdpi;
+>>   };
+>>   
+>>   /* The buf includes headroom compatible with both skb and xdpf */
+>> @@ -467,5 +481,9 @@ void prueth_put_cores(struct prueth *prueth, int slice);
+>>   
+>>   /* Revision specific helper */
+>>   u64 icssg_ts_to_ns(u32 hi_sw, u32 hi, u32 lo, u32 cycle_time_ns);
+>> +int emac_xmit_xdp_frame(struct prueth_emac *emac,
+>> +			struct xdp_frame *xdpf,
+>> +			struct page *page,
+>> +			unsigned int q_idx);
+>>   
+>>   #endif /* __NET_TI_ICSSG_PRUETH_H */
+> 
+
 
