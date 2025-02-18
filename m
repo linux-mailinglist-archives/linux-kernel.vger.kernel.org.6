@@ -1,295 +1,133 @@
-Return-Path: <linux-kernel+bounces-519801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52304A3A211
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:05:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6865EA3A213
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE193B4241
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF7E173E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846D226E63B;
-	Tue, 18 Feb 2025 16:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118B326E14D;
+	Tue, 18 Feb 2025 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HQUCZWR/"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9YtFzZE"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0C626B2D3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6F123536B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894658; cv=none; b=eRipSkE6jdEgOuBYdYx8q5GuhMl/ZEXCvTbjuSGjE3wZKk9u8pMdI1VFLiXL26fX0SRFBpRfUuKiwPyq69g7vNhNxd9H3FPDcUKOheCQ6isDG608sWivoaCglmU19Ywi/v8MaV17NRFT6+k/VMrurjyD3qJth1XCEe8+AzNmSkM=
+	t=1739894641; cv=none; b=JaBpDPfONhV31Oe/1wF2GYdilmjnW+8GncsR+BZsW7cEtLpWMEvLyKXasBUMzdcP+7H/ByGi2HFY+iYOLrcJm9hCbktbsNHiPjTaQDKgAiY4Ryt2to8asLqFA+8pyF96k4EXtDhVmlvRxkXh9S4km3SlT+ff5iplAOCFe8Umxxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894658; c=relaxed/simple;
-	bh=4eJWuiu8iMylG68gF/vH9qt791ZdSmlwPSbKjxx5PNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=avItXwS1JLi0X1hrwKnbWAmYO8djF10D3wfN23MQoLNOzWHFtFERrKooYXmPcfDaqawikfoKV+wNxoD8u0wx6KQt5RWDNmOMuhGZTGvpTzr6iG5SufKS2aUX6dFnq0pRlXQrV0BXr4tWv1IHzD9762Lqh4jQyffUYO4ovB+LBY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HQUCZWR/; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7E5CD3F869
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:04:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739894655;
-	bh=hXMs8HBNi/hnowMwXyt+GhCst9ecZCs2bYJfUqZe+sI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=HQUCZWR/Fl7J2/I18HW+5W3IXf/RVPNX+tYHfrOqv+YUHNF7WYjPStQ5lukOrNEq+
-	 gNubeYim3xXcf771oQl22IcsaW3APp1RFfOMtuIV5r2C4tgUSezND/FPc3ThwqPgmT
-	 y5dKTZIOMnk1sZR8DcK9sBIN9aobdFJ9yeSjRsp1+enlAdrA6QJN00cPuuEPgG95IK
-	 XwhXYcqPNPhDqpJG/lxlwU7Z+kr3Shw4F6vcLyOJPozao/DqAptEl2qiLqeJS4XVEP
-	 U9QXIjR4CKfCN07Pgq+S7d8uBhiKn2DxIpukFVmJ0bk1BHyQvA4mjraHbOP/yYJ2XX
-	 oKEnvLH/bAy7g==
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220c86e46ebso84219525ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:04:15 -0800 (PST)
+	s=arc-20240116; t=1739894641; c=relaxed/simple;
+	bh=q895/9qgMhtBqu0Uzl9tkRoBti/jVnEblaswsLouDTk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Gi0N7X9PwiDYW82HfbwHbA9DU5JHuthpEI9Ws2GwJMoWkZt5pweGKvTATtbysqGCVpfOMpQAsbZjohobUQujCPlSRO/t3+PXm6eOoZDIVOb4cEpwynXj1TWRghp3uAa8+P/Arcn/ex7DB/GNif8gedptfSpPh/AFz+TuZPbHtPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9YtFzZE; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220d6c10a17so102605465ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:03:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739894639; x=1740499439; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZDB6163brXmpWZDgT/6YzrIWqBj9L6ybAjsJnZ9ahg=;
+        b=U9YtFzZEuLU/jcqKKSgYYRSnELHPQ1kk+vkXgzXhTaMLdrxUn73VCuVKwYzi3F5GWe
+         jGuDLN98B4OFgddwplBYxJHAc8FY+cpsVIh9H43AdEjO1f5Fonjzp2WE2rlv2iGyI6yH
+         Buy5OzJTbMwkcjqtM0BEjzcPFxSfU0EOsZRjd5EG4IXpfiWbBPI3dCxNPWur8RAyIpBK
+         a166xLmFfzbf3CuZBWlr8Gwn2bXfOnR6quHgARi9b/6PeuCLjvN2TP9EL+nblRICypwZ
+         tQeLT6LgX8qpBsyNDqtuEpd0vUjzLpZr6HeWldgIYcq8nnZansrz5YQfuInn1KC8eO5I
+         48PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739894654; x=1740499454;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hXMs8HBNi/hnowMwXyt+GhCst9ecZCs2bYJfUqZe+sI=;
-        b=hCRNbCxyGs1Pfp5TJ7kTIecssZU3/KnkNuFOMhgMRHhtlPECtd6Pk44yCUBHrdpk2j
-         2A406PV4csdAClPrwH2QwDOcbD1ISGqz8c0wJLn6zcIseIrPZoUEe1gXgMMhx9uHvo2H
-         R9+1haz33Jz5lOI/5WFF9WpD0l7ye6g2yYzFl4mA0YpZArv+EgSp0q4UVEb4vQ5E7ey5
-         bGvxCTuYbAp711hAUQ3HPPXR85PPCkU3Mks6oZ2J4sHB5c6/IkJcTa3GvTuEB2M1fzTz
-         uzwvL0q5loqk7OGmQwaWCiBNIs6myzKI/4afJY7Ooxq2y9ZcezcmkrNpZzo9Xf8fVwAU
-         /zZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEx+sRlajyZcjpzdwJoS2wdCuJa2kuWf8pDOMuHQDyKd4MqZzNXDnjijuEnkQ4NDrBFvjtIPteDHg+BrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFQvvfBTetymqtBpLSNKc90bvQZPgYchQM7yhRfRoYPEEE6ZpC
-	+0UMNFoDXl4dB0i2n0RDaAC15k6C1hTPaRzEWEI6Ujig5Jbb6Tqn9JfjeQNiY7UOprXo/O3Jrp3
-	ymGul/WD/o2FvgSIIripDzjtOOFqvJ/n6qol35YRofUxCF11wD7bCbNCFTscKItXJ+W/v6YzVpj
-	PYoQ==
-X-Gm-Gg: ASbGnct0Lws2d8B4wWwHUKdHnI71FJtZohQUZvHgNyAcxPmMFbJkuLKX/ZPSC4qcew3
-	Yk0RDSWnN1mudEK6cfAAhPBAr6GkJe1xQ9scKkU/rUAEoHaH317bgU/UyEymj+W2TOu6CT/awkL
-	sfR6cUhbGHCEGQtpgBFDvqFkHAAcydvgvfhrrBfoLozJoIWZ5BMPgPBjOKfuRdl/n9+f3KAopvT
-	ia5QgTDk46f+LZEPSRTCB2UZ0j9Eq1c8fObw3mtU5+fnwbdPUsH1KnkQjdE83bRd48ycfkTLeqr
-	sOvDnaBCxWi4pMSzGtFGVaE=
-X-Received: by 2002:a17:902:f612:b0:21f:9c7:2d2e with SMTP id d9443c01a7336-221040bdb68mr245123185ad.40.1739894653514;
-        Tue, 18 Feb 2025 08:04:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH2TbTWW3u0CYVTQ9OQPM/nQJvb6h3vq+eHaom1mbDtD51GpaWKMh3d5FIgowV2tRA1OUtNOw==
-X-Received: by 2002:a17:902:f612:b0:21f:9c7:2d2e with SMTP id d9443c01a7336-221040bdb68mr245122685ad.40.1739894652947;
-        Tue, 18 Feb 2025 08:04:12 -0800 (PST)
-Received: from localhost.localdomain ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae01c768020sm3662177a12.73.2025.02.18.08.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 08:04:12 -0800 (PST)
-From: Koichiro Den <koichiro.den@canonical.com>
-To: linux-gpio@vger.kernel.org
-Cc: brgl@bgdev.pl,
-	geert+renesas@glider.be,
-	linus.walleij@linaro.org,
-	maciej.borzecki@canonical.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] gpio: virtuser: convert to use dev-sync-probe utilities
-Date: Wed, 19 Feb 2025 01:03:33 +0900
-Message-ID: <20250218160333.605829-4-koichiro.den@canonical.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250218160333.605829-1-koichiro.den@canonical.com>
-References: <20250218160333.605829-1-koichiro.den@canonical.com>
+        d=1e100.net; s=20230601; t=1739894639; x=1740499439;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZDB6163brXmpWZDgT/6YzrIWqBj9L6ybAjsJnZ9ahg=;
+        b=Py/9fo7gcVEAAzQzFceVsCFb3fwpQc8sZnA8kZd9BHxoD5oJwmTNWFdis6pEYVZMm+
+         EF7eWQ9CfjOuVkA+OL34nCzPwePz74nWKLQGtFha4EfJoYx4LujBnFzAkv/19h7UElOM
+         MjA9I+SFQjtPrkjJzUCNK4fPs6r954LlYMVJ2mVI4q8l9OVcWnqRhmhxQ4aLL674fkVy
+         7PfCHxCp1mavn9CMuylEYwE1UvAIRSl+26DL2K80Vc3h4GiCMemfMNQMZRPp4eToTpAH
+         uc751lUZTytLiwdd16K2Q3aVGeh1GNrv7UgydWRt0VBWQuZrS5OqL4lwagRz0Dp9n1cp
+         QZCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIa6kr8X0mxlpz5rKPpevR4i0fdqxIYyWQm4Ek5FspzBFdcPoc41cCM+F49p3uFhR38nZamtMTRDy7/TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKe3WELBDJvDMHDLE6lypsrdoF9Oh3Qn034TfA5qO2K4gCouNP
+	NN3NBzg919tA1mOIpNZtTdpRwS+//RUUFt2RW0WUXCn7MsEySmUCvKJbzxbTJZRLIrf66tFADIv
+	ZAg==
+X-Google-Smtp-Source: AGHT+IFNVuGgmnbQtTfdLkBHrvWh0s23OtsUX5+0HskCmpFlWqBybVXiHNX0UB/9IvEeeiAdLnbnMSNoI9o=
+X-Received: from pfan14.prod.google.com ([2002:aa7:8a4e:0:b0:730:7648:7a74])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4e06:b0:732:706c:c4ff
+ with SMTP id d2e1a72fcca58-7329cf56e98mr240940b3a.7.1739894639222; Tue, 18
+ Feb 2025 08:03:59 -0800 (PST)
+Date: Tue, 18 Feb 2025 08:03:57 -0800
+In-Reply-To: <20250217085731.19733-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250217085535.19614-1-yan.y.zhao@intel.com> <20250217085731.19733-1-yan.y.zhao@intel.com>
+Message-ID: <Z7SvbSHe74HUXvz4@google.com>
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Bail out kvm_tdp_map_page() when VM dead
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Update gpio-virtuser to use the new dev-sync-probe helper functions for
-synchronized platform device creation, reducing code duplication.
+On Mon, Feb 17, 2025, Yan Zhao wrote:
+> Bail out of the loop in kvm_tdp_map_page() when a VM is dead. Otherwise,
+> kvm_tdp_map_page() may get stuck in the kernel loop when there's only one
+> vCPU in the VM (or if the other vCPUs are not executing ioctls), even if
+> fatal errors have occurred.
+> 
+> kvm_tdp_map_page() is called by the ioctl KVM_PRE_FAULT_MEMORY or the TDX
+> ioctl KVM_TDX_INIT_MEM_REGION. It loops in the kernel whenever RET_PF_RETRY
+> is returned. In the TDP MMU, kvm_tdp_mmu_map() always returns RET_PF_RETRY,
+> regardless of the specific error code from tdp_mmu_set_spte_atomic(),
+> tdp_mmu_link_sp(), or tdp_mmu_split_huge_page(). While this is acceptable
+> in general cases where the only possible error code from these functions is
+> -EBUSY, TDX introduces an additional error code, -EIO, due to SEAMCALL
+> errors.
+> 
+> Since this -EIO error is also a fatal error, check for VM dead in the
+> kvm_tdp_map_page() to avoid unnecessary retries until a signal is pending.
+> 
+> The error -EIO is uncommon and has not been observed in real workloads.
+> Currently, it is only hypothetically triggered by bypassing the real
+> SEAMCALL and faking an error in the SEAMCALL wrapper.
+> 
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 08ed5092c15a..3a8d735939b5 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4700,6 +4700,10 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
+>  	do {
+>  		if (signal_pending(current))
+>  			return -EINTR;
+> +
+> +		if (vcpu->kvm->vm_dead)
 
-No functional change.
+This needs to be READ_ONCE().  Along those lines, I think I'd prefer
 
-Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
----
- drivers/gpio/Kconfig         |  3 +-
- drivers/gpio/gpio-virtuser.c | 73 +++++-------------------------------
- 2 files changed, 12 insertions(+), 64 deletions(-)
+		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu))
+			return -EIO;
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ba06f052b9ea..b3049993a449 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1866,7 +1866,7 @@ endmenu
- # This symbol is selected by drivers that need synchronous fake device creation
- config DEV_SYNC_PROBE
- 	tristate "Utilities for synchronous fake device creation"
--	depends on GPIO_SIM
-+	depends on GPIO_SIM || GPIO_VIRTUSER
- 	help
- 	  Common helper functions for drivers that need synchronous fake
- 	  device creation.
-@@ -1946,6 +1946,7 @@ config GPIO_VIRTUSER
- 	select DEBUG_FS
- 	select CONFIGFS_FS
- 	select IRQ_WORK
-+	select DEV_SYNC_PROBE
- 	help
- 	  Say Y here to enable the configurable, configfs-based virtual GPIO
- 	  consumer testing driver.
-diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
-index e89f299f2140..a48627352337 100644
---- a/drivers/gpio/gpio-virtuser.c
-+++ b/drivers/gpio/gpio-virtuser.c
-@@ -11,7 +11,6 @@
- #include <linux/atomic.h>
- #include <linux/bitmap.h>
- #include <linux/cleanup.h>
--#include <linux/completion.h>
- #include <linux/configfs.h>
- #include <linux/debugfs.h>
- #include <linux/device.h>
-@@ -37,6 +36,8 @@
- #include <linux/string_helpers.h>
- #include <linux/types.h>
- 
-+#include "dev-sync-probe.h"
-+
- #define GPIO_VIRTUSER_NAME_BUF_LEN 32
- 
- static DEFINE_IDA(gpio_virtuser_ida);
-@@ -973,49 +974,17 @@ static struct platform_driver gpio_virtuser_driver = {
- };
- 
- struct gpio_virtuser_device {
-+	struct dev_sync_probe_data data;
- 	struct config_group group;
- 
--	struct platform_device *pdev;
- 	int id;
- 	struct mutex lock;
- 
--	struct notifier_block bus_notifier;
--	struct completion probe_completion;
--	bool driver_bound;
--
- 	struct gpiod_lookup_table *lookup_table;
- 
- 	struct list_head lookup_list;
- };
- 
--static int gpio_virtuser_bus_notifier_call(struct notifier_block *nb,
--					   unsigned long action, void *data)
--{
--	struct gpio_virtuser_device *vdev;
--	struct device *dev = data;
--	char devname[32];
--
--	vdev = container_of(nb, struct gpio_virtuser_device, bus_notifier);
--	snprintf(devname, sizeof(devname), "gpio-virtuser.%d", vdev->id);
--
--	if (!device_match_name(dev, devname))
--		return NOTIFY_DONE;
--
--	switch (action) {
--	case BUS_NOTIFY_BOUND_DRIVER:
--		vdev->driver_bound = true;
--		break;
--	case BUS_NOTIFY_DRIVER_NOT_BOUND:
--		vdev->driver_bound = false;
--		break;
--	default:
--		return NOTIFY_DONE;
--	}
--
--	complete(&vdev->probe_completion);
--	return NOTIFY_OK;
--}
--
- static struct gpio_virtuser_device *
- to_gpio_virtuser_device(struct config_item *item)
- {
-@@ -1029,7 +998,7 @@ gpio_virtuser_device_is_live(struct gpio_virtuser_device *dev)
- {
- 	lockdep_assert_held(&dev->lock);
- 
--	return !!dev->pdev;
-+	return !!dev->data.pdev;
- }
- 
- struct gpio_virtuser_lookup {
-@@ -1369,7 +1338,7 @@ gpio_virtuser_device_config_dev_name_show(struct config_item *item,
- 
- 	guard(mutex)(&dev->lock);
- 
--	pdev = dev->pdev;
-+	pdev = dev->data.pdev;
- 	if (pdev)
- 		return sprintf(page, "%s\n", dev_name(&pdev->dev));
- 
-@@ -1478,7 +1447,6 @@ gpio_virtuser_device_activate(struct gpio_virtuser_device *dev)
- {
- 	struct platform_device_info pdevinfo;
- 	struct fwnode_handle *swnode;
--	struct platform_device *pdev;
- 	int ret;
- 
- 	lockdep_assert_held(&dev->lock);
-@@ -1499,31 +1467,12 @@ gpio_virtuser_device_activate(struct gpio_virtuser_device *dev)
- 	if (ret)
- 		goto err_remove_swnode;
- 
--	reinit_completion(&dev->probe_completion);
--	dev->driver_bound = false;
--	bus_register_notifier(&platform_bus_type, &dev->bus_notifier);
--
--	pdev = platform_device_register_full(&pdevinfo);
--	if (IS_ERR(pdev)) {
--		ret = PTR_ERR(pdev);
--		bus_unregister_notifier(&platform_bus_type, &dev->bus_notifier);
-+	ret = dev_sync_probe_register(&dev->data, &pdevinfo);
-+	if (ret)
- 		goto err_remove_lookup_table;
--	}
--
--	wait_for_completion(&dev->probe_completion);
--	bus_unregister_notifier(&platform_bus_type, &dev->bus_notifier);
--
--	if (!dev->driver_bound) {
--		ret = -ENXIO;
--		goto err_unregister_pdev;
--	}
--
--	dev->pdev = pdev;
- 
- 	return 0;
- 
--err_unregister_pdev:
--	platform_device_unregister(pdev);
- err_remove_lookup_table:
- 	gpio_virtuser_remove_lookup_table(dev);
- err_remove_swnode:
-@@ -1539,11 +1488,10 @@ gpio_virtuser_device_deactivate(struct gpio_virtuser_device *dev)
- 
- 	lockdep_assert_held(&dev->lock);
- 
--	swnode = dev_fwnode(&dev->pdev->dev);
--	platform_device_unregister(dev->pdev);
-+	swnode = dev_fwnode(&dev->data.pdev->dev);
-+	dev_sync_probe_unregister(&dev->data);
- 	gpio_virtuser_remove_lookup_table(dev);
- 	fwnode_remove_software_node(swnode);
--	dev->pdev = NULL;
- }
- 
- static void
-@@ -1772,8 +1720,7 @@ gpio_virtuser_config_make_device_group(struct config_group *group,
- 				    &gpio_virtuser_device_config_group_type);
- 	mutex_init(&dev->lock);
- 	INIT_LIST_HEAD(&dev->lookup_list);
--	dev->bus_notifier.notifier_call = gpio_virtuser_bus_notifier_call;
--	init_completion(&dev->probe_completion);
-+	dev_sync_probe_init(&dev->data);
- 
- 	return &no_free_ptr(dev)->group;
- }
--- 
-2.45.2
+or
 
+		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu)) 
+			return -EIO;
+
+so that if more terminal requests come long, we can bundle everything into a
+single check via a selective version of kvm_request_pending().
 
