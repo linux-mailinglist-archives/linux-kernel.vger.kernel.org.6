@@ -1,82 +1,161 @@
-Return-Path: <linux-kernel+bounces-519111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B734A3983D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76575A39825
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69943A2ECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CF6188D653
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3408234979;
-	Tue, 18 Feb 2025 10:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FEE23237A;
+	Tue, 18 Feb 2025 10:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="d6aJvRm4"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DFD233D91;
-	Tue, 18 Feb 2025 10:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dvjb6zU4"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF49653
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739873162; cv=none; b=J9Q4+7HZ+uu0MxevjiMSPMPL0x371KCZZM/LgoJxwMykMGauy3Eq/+onvh+Hylj7QAd4yxMMFovcvcQVYVJXWhbsss7wWJ/oA0KtWDVgzs2+/j9Y73HkEdxBFSNBQYSVOtlvkPu4gJVWVgMMpDVI/6OyNc/IqlwDiLQM+sIUkCw=
+	t=1739873193; cv=none; b=G4lPD00wI7hmOgx0dFhzIJiTIvrHIcRZOjgGnJkbJePFsmEpvWQUGHz1ht/kuZXv0rlL2ttP7JZ3WqzDQpBlpT4ZmGDCgiRkq7j1FJNjZxs/K1BxIqS7nC9QEZY7xpXUSXNct0QkEy+oxDm2sR8mukvBR7QzaCKYcg5gIwbXJbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739873162; c=relaxed/simple;
-	bh=nrKMktRPvU5Z3hqIzD/ZWShh2l5SdtIhGZTIzKRhd0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QWzrgHgyTyrza5QpBodhy3PBltDz0+s/J/J+KFpSagyN01tMHoyLzp9fgRRgH3d3o7E/mMMKrawVi1IgFJSc948Ut2eWKUw2lChKoa+9Qhr91G9D++6OM7JIXQFU5z5ryJNVRs/YF18iAYwo+E3EkfqdfJ+PstK4TR3icL+V2Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=d6aJvRm4; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=NnMwhEnzZlDnNZbKeqVTyqH7UMhTN8QyA0rAjVzJafc=;
-	b=d6aJvRm4llb3gOD6zts96Oakj9u2LBColm3KDmfsYfTOQMe9qeOv3HB5ibEtDh
-	OAYDxeaAM3nSSNL86qafeA39uqxR6SfIy2salA/w5hDcYJriQt/wBtIFNj+0/tt1
-	buHNCmBLC0t1f/Alhyl1HF512pgdN5/P4w60+RUbW8hbk=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgCH28hCW7RnZJAnCQ--.17115S3;
-	Tue, 18 Feb 2025 18:04:52 +0800 (CST)
-Date: Tue, 18 Feb 2025 18:04:50 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	NXP S32 Linux <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH v5 0/3] add I2C DTS support for S32G2/S32G3 SoCs
-Message-ID: <Z7RbQqBfKtM+AtsM@dragon>
-References: <20250113110512.506007-1-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1739873193; c=relaxed/simple;
+	bh=yTQLFA2M60fO6k4WtuJpDsKQ5AkSMH3vfnsFVh5jiew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldZnpRGDxFsAd4hGMa5ND2WZLSDHCAlYo0vJyK8sjkzYXG4/A1q7ZXQD0oAFh+EGEuinQ8Xph0StkNfKEQh2m26XH1GDtMhlCsw5hhnds9NzTLcHmlA959MCCPeiGFGpZzAlxe7f1LxPyYdE8MGBKvlfQ/49kcxdMCZaR9aRPos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dvjb6zU4; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739873164;
+	bh=TFJStyRkd1bQw5tjsHzKQeYrAIDitsLr5zzdKFMGMbc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dvjb6zU4Cxeq1fnRlr5wJeVRXw/TSdF6YG9wz+gU2EjwJCwwXp5YmViFojpPP79Ea
+	 u7E4PBllNen1FkC6+md1QkcWKRXYSI7cK6BzYKn421qvVJIRSU8kb4lmAAbN5ikKXl
+	 4wdUIPqs7Ld7fuX7naTo6ufjGuRD61fOtTUMIcBs=
+X-QQ-mid: bizesmtpip2t1739873151t23iyhi
+X-QQ-Originating-IP: TwGmGTJ49W7Svc0/Eh/Oa3QTL3/IcQynx4AZ4jbyB4w=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 18 Feb 2025 18:05:49 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5340021001472229730
+From: WangYuli <wangyuli@uniontech.com>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	guanwentao@uniontech.com,
+	yangtiezhu@loongson.cn,
+	maobibo@loongson.cn,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	chenlinxuan@uniontech.com
+Subject: [PATCH v2] LoongArch: acpi: Make parse_acpi_topology() return void
+Date: Tue, 18 Feb 2025 18:05:46 +0800
+Message-ID: <07F85BCCFA4D65DF+20250218100546.500452-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250113110512.506007-1-ciprianmarian.costea@oss.nxp.com>
-X-CM-TRANSID:M88vCgCH28hCW7RnZJAnCQ--.17115S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVdgAUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxn3ZWe0TnUxPgAAsn
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Ngks2kg28nq5wTl/POcCcm1ewxXLLymmlQMTo1osKKC8xC9zTxyTLDTB
+	ZH773r8i5lg+55A6m+Q8s/yXSNSmYXNrOyOENMcAsAAPKoLZXK09MV/2Rx/8P0iwUD6sBtI
+	tQuFBzN2jtr6GYFLC5DTS43CWHgmmdBxg8ttUx0dNcx2RZeCJKyfPI3TEBz1T85Zz1VFBrK
+	Pluj0spLhRVFCoEMBuuqzDyJwmn55dsHJDawio2cIgWYpmDhr/M+T3qVl9+mzDfuoO1Kel0
+	HRQW1+IIkCV2pQWSZJp8hLDDKc73c7zq/ExX057ujObxbsvKqtkb3azYJ+ig3mGzBOdI2UH
+	TBaZku0D33xMrrxeTCTSxq7it7eh/ea/BnFQdEfZEMlHy0v6iw9t82kuKeoN+YtRcuxZ68Y
+	02OagaYGA3aQd7RPnSvtltmZgW5kmKUKjydhYBtYcaxVNdJltbKKZv2Oih2VwF51iZmjMEF
+	neYMO7i4xNgQGw67XRtkc53iT949UX+FuSuUWNes0i6PggsHjiAg9rJkDPzkiAK4iZHS7id
+	VnRGu5dUls9oQ8thQbrtd1TkCbBar0aGpIXTYI8lYY7tF+Jtwra75ZpyABFN1mBgikwxei7
+	8XTOJLBsnanu/vw4ioZT2pabrhSNs5pbUs1prnzEgPsBuUu0FPrr1O/4uSA/nYl3cM+65oo
+	cDgsu5/XbuWxJKiVETEjDS2vwGv1TDGKf62qM8VxDNor3KNtN9sbBp1D92Cx6Ev3HW6iK3Y
+	PabGCGcO3xXfS4c6C4ldrBDL1KXejeOgmJNNmMsnc1s6xD5UoNe/j4qq8haBPCAqVNTdaoz
+	mCnRpI4jUmO3qEALZezuScu7OgVXLAAAA9zf7MMnBC4wBgpCGPgZi5xyDTEbtTLKrtSGlHc
+	3FXPfV/WdRCfzEqtkPOH1i6PC25tYj8xWkmj3OH8SXHLoNalAr1E1OQlwT9sUf00S/6i82O
+	khIFBvzyIYBfGlLZN/jwpC+vQTGxj1BpxUPHIOOakhaD7p6GWSbBVrj/bEkWWEG/JCXVrkb
+	RhvcL9vQTfjOmPzCCooxVKsNqtr678ZCyOZ6haQF9FVo3QR2K68AnG2qmbFiM=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Jan 13, 2025 at 01:05:09PM +0200, Ciprian Costea wrote:
-> Ciprian Marian Costea (3):
->   arm64: dts: s32g: add I2C[0..2] support for s32g2 and s32g3
->   arm64: dts: s32g: add common 'S32G-EVB' and 'S32G-RDB' board support
->   arm64: dts: s32g399a-rdb3: Add INA231 sensor entry over I2C4
+The return value of parse_acpi_topology() is both unnecessary and
+unused.
 
-Applied all, thanks!
+Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+---
+Changelog:
+ *v1->v2: Fix missing "return".
+---
+ arch/loongarch/include/asm/acpi.h | 2 +-
+ arch/loongarch/kernel/acpi.c      | 9 ++++-----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/arch/loongarch/include/asm/acpi.h b/arch/loongarch/include/asm/acpi.h
+index 313f66f7913a..c1b90a90e28b 100644
+--- a/arch/loongarch/include/asm/acpi.h
++++ b/arch/loongarch/include/asm/acpi.h
+@@ -38,7 +38,7 @@ static inline bool acpi_has_cpu_in_madt(void)
+ extern struct list_head acpi_wakeup_device_list;
+ extern struct acpi_madt_core_pic acpi_core_pic[MAX_CORE_PIC];
+ 
+-extern int __init parse_acpi_topology(void);
++extern void __init parse_acpi_topology(void);
+ 
+ static inline u32 get_acpi_id_for_cpu(unsigned int cpu)
+ {
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index 382a09a7152c..5581e8009421 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -173,7 +173,7 @@ static void __init acpi_process_madt(void)
+ 
+ int pptt_enabled;
+ 
+-int __init parse_acpi_topology(void)
++void __init parse_acpi_topology(void)
+ {
+ 	int cpu, topology_id;
+ 
+@@ -181,7 +181,7 @@ int __init parse_acpi_topology(void)
+ 		topology_id = find_acpi_cpu_topology(cpu, 0);
+ 		if (topology_id < 0) {
+ 			pr_warn("Invalid BIOS PPTT\n");
+-			return -ENOENT;
++			return;
+ 		}
+ 
+ 		if (acpi_pptt_cpu_is_thread(cpu) <= 0)
+@@ -189,15 +189,14 @@ int __init parse_acpi_topology(void)
+ 		else {
+ 			topology_id = find_acpi_cpu_topology(cpu, 1);
+ 			if (topology_id < 0)
+-				return -ENOENT;
++				pr_warn("Invalid BIOS PPTT\n");
++				return;
+ 
+ 			cpu_data[cpu].core = topology_id;
+ 		}
+ 	}
+ 
+ 	pptt_enabled = 1;
+-
+-	return 0;
+ }
+ 
+ #ifndef CONFIG_SUSPEND
+-- 
+2.47.2
 
 
