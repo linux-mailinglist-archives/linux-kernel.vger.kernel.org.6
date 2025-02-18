@@ -1,158 +1,125 @@
-Return-Path: <linux-kernel+bounces-519218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E47CA3992D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:39:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B611A398C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFC3166CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BB71891BCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1984D269D08;
-	Tue, 18 Feb 2025 10:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACAB2376FF;
+	Tue, 18 Feb 2025 10:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOCATJiI"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WY6k/wXs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hYaAoVqn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A9F269AF4;
-	Tue, 18 Feb 2025 10:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2101234977;
+	Tue, 18 Feb 2025 10:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874413; cv=none; b=G36DggVvOR8Kg8ZbzttqEeoa11Cb8aiwvDRDPT0XsttR931ImY6KPwbHiPCHesm+BIkbABTKfL/Ms0n05NYkMAQxbNjVuN8hq83i7TIGN7Lz7Z8NpoFhGWd2zEDVavdQKPjXvRddb+57XbUA285We0WLGrDDz4l8ZGU0mK4iHig=
+	t=1739874387; cv=none; b=V1G04bEk5mFnv1vOjBS1+B+vWo3oc/grFWXS85Coz2w/v5d0bsUVXoNRhAldfRszYJ3FnCe9T+63bCIA5j8il1BEAv1GnNGZj8PIdw5pTkGgBx9RFvTHxjqbr09H/GRkxGoRzmXdup9aUkr/oNmrhew5ftHu1nja1IOSUWSoI5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874413; c=relaxed/simple;
-	bh=mxcTS/TKtzanNcSFC5ycNWuMfjyHKMjimPE0zTyL9R0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUVv5q4M4MrfIIo+qfuZQPBv9b263SFkCXGu+zMHS5lYMeYgZgWR3k5lywxA5Itnkw9dnC4JkwDd0/VRqQiY8b0jYKz3iU+VPxW+R+1C3p9NavJe0IrdOCUAqoQZZnn+7IB0X/XHmfzw+nvDlJJemLoidGqM9V9DtU+BbKSJmOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOCATJiI; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5209ea469e9so2075376e0c.0;
-        Tue, 18 Feb 2025 02:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739874410; x=1740479210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5fTbNUo/qWCyQ6WC+r9ba4QH65ygmHbCBvKYDPCRYdE=;
-        b=gOCATJiIUNJqG89Ik8wyDceo19p7/ZNvsf3VzzwKHlnCwyPhY/Oni8KZMfWbfDsVol
-         TqaW//jsSrWs6K90YlW3tR1ArAuh9RL+jsdQSz10mEDtCxKY4WMjaw4VwwKXUDW7W4r0
-         Nn/rCp36/Fe+Tb+/1yxiTMwupPbClasNht3gU8D6uCpk1kFORz/cBuJP1v7I4q/z97HI
-         PNTl34zP7nb+mjTBzLYFda9yG7W2MlvpSDqkxG8i/MfoS4fnio2IA5fjn4V9qWreuMaM
-         2AsRTuUjDlwqUyTSDNx+81pyAXyQSKC/313kPJs40wpAmkWXqH8h65k3+a5AnRNf02jb
-         /0ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739874410; x=1740479210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5fTbNUo/qWCyQ6WC+r9ba4QH65ygmHbCBvKYDPCRYdE=;
-        b=F18j/y7ULltECgOU/9Ci+K+NkJxc/4U10QuYgI3si9WLHqDYy3a8HjFGNaBS/J9Kmq
-         KLHguXjRMj1l+d8pXwq6ePWfh/93D6WKngR7xQgfBXbBky0/Z1NVa4+RI03ZxtZ+oTqu
-         YhafWL/s5QkhCxPzmT0qCCUv9Zcm0+vmwJ9YCGfpFY6h8PPoqiOY36w0H7R6eMDFJ4x/
-         YCkQgBoaBvzCqlhFGnwl1+gYJYSRkkRAFs9UH7cDeD0NQ4n+QKVSVs9m4COEuLRo09Zv
-         /t8YCyXY4PJn3XrBHORBA9Vv69zunMA2Upxb/U/5n2vw0HiSqbJMxEPoIaj7fDsQiICa
-         Si8A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3MV8MeNJziTveaqOn1R4Tp6l7CFjOg6RWM8UfQaTd8uVN7i25H2F9LNpHtC63pDodOgSVFOqigDBKSnTA@vger.kernel.org, AJvYcCV1L9TDXjaAJyTK3CqHMg9v+rZb1Mutme06EaABjT7F9FQ60bHxjTLWcqPGaymhaKdPgTEMF9omUl5FmeOrwxk=@vger.kernel.org, AJvYcCVaX77T/PBSd8PRMCfdxcMt/lj69yrFeNkT33+WfczeFrorIUYeX/97LkHYwqEWI9zTbn10cr8aWNvzBO2o7iT5spo=@vger.kernel.org, AJvYcCWkYoOmnQm1tuFJnGWXS1FemJrsae0YlLrZ/3/q0lpAD49p00BWz/gW+fUdx0K7VqonjI45twykYXAM@vger.kernel.org, AJvYcCXU5weLmp2K6+wDHTndw0hD7M6fnR7MB/tkICcpTSufUuka38ka0jD/GSeSdjh8/StWV3Y+26RzSzX9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBrCDR0iLSo3Z4HOm9hZPhWBbe616CVB294XNTe64yW3Cy6lzT
-	oyjTX1wy44tebABdmhs4/WU/NcbFW1OYlI4lm2ZTpPv1EX73OqSNRpwl0FXBz5BdIqcCU3QIgVt
-	9smRtyZfVb9ooDh4WIJ0KUd/kRx0=
-X-Gm-Gg: ASbGncsPLhFiHVJ4hHlU9Dk3v5fJai8zgKvs0wjU9HPbWyI0ecpGceIER1katmrsUxh
-	fGolBso2/zH1dzEQ7hSPtAXj0FyhLJGhw3+M0mgrh4TjqxfNySSZrXYASef+Rf9W6XhTjyr1MmD
-	2GYqW2ZU1TN4eqD/Ea6mLTBu/+knNahQ==
-X-Google-Smtp-Source: AGHT+IEiB//Rvg/toRlYTHXOR+8uze5zclaIXpF6byYRu0iJ1Qv+6YSH2lmjvsHIbp5ehoRcoDDnqpS7HCosXSGukek=
-X-Received: by 2002:a05:6122:658b:b0:520:4d63:72da with SMTP id
- 71dfb90a1353d-5209dc87d29mr6025043e0c.6.1739874410535; Tue, 18 Feb 2025
- 02:26:50 -0800 (PST)
+	s=arc-20240116; t=1739874387; c=relaxed/simple;
+	bh=URZ/IgHvW3YBMCfOP0fLu2D9jqF/8UEJ+qtHFxAYdI4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rCTnNCoC1+iUEM8M0kpjMBgGglC3vA1zN+/KgxI0p260auRH6WTMWU9E/tc3Wk6gP25lEHc/eCAekH+RkAShXcigZYPSh9TTwla+Sse1t4WIm/shYmtH6MyuafAKodQ/i3Ie8QS6cif/8WNtRMC6E0xMRqbOIyM8UKnpSF7UX8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY6k/wXs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hYaAoVqn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 10:26:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739874384;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Na9vHdHviHpnrxDKJy2WDMeKuN0CP9E+X6XrPgOx8/g=;
+	b=WY6k/wXsFQ9iwXfhGH1bve65lClS8Z3GO12D/wH869oByoFa99aDExycL04ZcFXnOfkPmw
+	o9LB+Gh1RAmjkjWHQPV/swV4AvzhKxmmjYJ8TOMq4K26tEIpKgjZQnpT79BLC1+l9GSHrA
+	wTzJlzTS1OQ0YCC9uZEVUGcPA2NH7/mc/Di3lJRDrQmaL//6Bhv8WnWYWksNBcsRT/Cd7k
+	akYXKlSzku0n2MVzSsnduzvdf1DKu4FzAV+QcdKNP31IZo2iAR+iRRjPBWK5yKMdIR4oGl
+	aColeiUqy+SPmgO7U0Q17COMbBteJutJ2J6ymspEqxUjNTZuRnmTlIUv76W7tA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739874384;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Na9vHdHviHpnrxDKJy2WDMeKuN0CP9E+X6XrPgOx8/g=;
+	b=hYaAoVqnCGEewuVeAWY320cLyXRW5Xn8LP0S9naXF31lQycNiPY1IFCtoyzKym8OKbMVy2
+	IK//j9KLuSsSjiBw==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/cleanups] drm/vmwgfx: Switch to use hrtimer_setup()
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Zack Rusin <zack.rusin@broadcom.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C6f6664cf2fea2f782e37f64a77fc9f8699794f58=2E17387?=
+ =?utf-8?q?46904=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+References: =?utf-8?q?=3C6f6664cf2fea2f782e37f64a77fc9f8699794f58=2E173874?=
+ =?utf-8?q?6904=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 18 Feb 2025 10:26:23 +0000
-X-Gm-Features: AWEUYZl9Hr4rbmCZyrRt1t9_8JazRp98fGvLiEsB-9wshbaMSz8hdT9fU-lDNfI
-Message-ID: <CA+V-a8uOkKzijsS_dmOA1XqHYReR3n7cRGUngh-6wJG7LDRvOA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] Add support to configure CPG block for watchdog on
- RZ/V2H(P) and RZ/G3E SoCs
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	linux-renesas-soc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <173987438351.10177.1430402561997908703.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi All,
+The following commit has been merged into the timers/cleanups branch of tip:
 
-On Mon, Feb 10, 2025 at 6:49=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Hi All,
->
-> This patch series adds SYSCON support to configure and retrieve boot
-> status information from the CPG block for the RZ/V2H(P) and RZ/G3E SoCs.
-> Summary of Changes,
->
->     Clock:
->         Add syscon compatible support to the CPG block in bindings and
->         device trees.
->
->     Watchdog:
->         Document the renesas,r9a09g057-syscon-wdt-errorrst property.
->         Update the watchdog driver to fetch and report boot status via
->         Error Reset Registers (CPG_ERROR_RSTm) and configure the
->         CPG_ERRORRST_SEL2 register.
->
->     Device Tree:
->         -Add the syscon property to CPG nodes in R9A09G057 and R9A09G047
->          SoC DTSI.
->         -Add the renesas,syscon-cpg-error-rst property to WDT nodes in
->          R9A09G057 and R9A09G047 SoC DTSI.
->
-> v3->v4
-> - Added support to configure CPG_ERRORRST_SEL2 register
-> - Updated commit messages
->
-> v2->v3
-> - Updated comment section to mention there aren't any ABI breakages with
->   this patch series.
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (9):
->   dt-bindings: clock: rzv2h-cpg: Add syscon compatible for CPG
->   clk: renesas: Kconfig: Select MFD_SYSCON for RZ/V2H(P) family driver
->   arm64: dts: renesas: r9a09g047: Add `syscon` compatible for CPG node
->   arm64: dts: renesas: r9a09g057: Add `syscon` compatible for CPG node
->   dt-bindings: watchdog: renesas: Document
->     `renesas,syscon-cpg-error-rst` property
->   watchdog: rzv2h_wdt: Add support to retrieve the bootstatus
->     information
->   watchdog: rzv2h_wdt: Configure CPG_ERRORRST_SEL2 register
->   arm64: dts: renesas: r9a09g057: Add `renesas,syscon-cpg-error-rst`
->     property to WDT node
->   arm64: dts: renesas: r9a09g047: Add `renesas,syscon-cpg-error-rst`
->     property to WDT node
->
-Gentle ping.
+Commit-ID:     ff533f73d5c038e9be359fbc587dc229a8299e13
+Gitweb:        https://git.kernel.org/tip/ff533f73d5c038e9be359fbc587dc229a8299e13
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Wed, 05 Feb 2025 11:46:28 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 18 Feb 2025 11:19:07 +01:00
 
+drm/vmwgfx: Switch to use hrtimer_setup()
 
-Cheers,
-Prabhakar
+hrtimer_setup() takes the callback function pointer as argument and
+initializes the timer completely.
+
+Replace hrtimer_init() and the open coded initialization of
+hrtimer::function with the new setup mechanism.
+
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Zack Rusin <zack.rusin@broadcom.com>
+Link: https://lore.kernel.org/all/6f6664cf2fea2f782e37f64a77fc9f8699794f58.1738746904.git.namcao@linutronix.de
+
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c
+index 8651b78..aec774f 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c
+@@ -290,8 +290,8 @@ vmw_vkms_enable_vblank(struct drm_crtc *crtc)
+ 
+ 	drm_calc_timestamping_constants(crtc, &crtc->mode);
+ 
+-	hrtimer_init(&du->vkms.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	du->vkms.timer.function = &vmw_vkms_vblank_simulate;
++	hrtimer_setup(&du->vkms.timer, &vmw_vkms_vblank_simulate, CLOCK_MONOTONIC,
++		      HRTIMER_MODE_REL);
+ 	du->vkms.period_ns = ktime_set(0, vblank->framedur_ns);
+ 	hrtimer_start(&du->vkms.timer, du->vkms.period_ns, HRTIMER_MODE_REL);
+ 
 
