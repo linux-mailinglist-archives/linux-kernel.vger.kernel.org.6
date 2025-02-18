@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-519203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD27A39926
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D886A39933
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15163A172B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6605B3B03AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F235D2627F4;
-	Tue, 18 Feb 2025 10:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4FB246350;
+	Tue, 18 Feb 2025 10:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lNcNZfaT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FL4TwU0I"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v3Eqe04z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="40kwIzPZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64528248187;
-	Tue, 18 Feb 2025 10:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41802580D6;
+	Tue, 18 Feb 2025 10:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874404; cv=none; b=VxjtjgikxYkycGziHHJElkXicY24pWAxToFdTBsHTsW50e7MzIAeB6emR6x1L1MTcrsOueoIYCrKz8fE31l0IsBlBmbdDRPrPKKS78tokTdgCRfNNb7tSEpngruR5+UslBfuZ9/+T5wma2CC+AI2ymx57qATnSH6p8yxdMn+ak4=
+	t=1739874405; cv=none; b=hHgM+iI3ZX37/PZX+S/vdffGm8PbszWBo4DcprrNNyhW7S3QPeKobzY8ijFv6nUIGR9o0HKpAkvZ2TLrsedqAS7qrogKBeVKPBiNDSfKnpsff+f4boJmGguuv0W0QDzXB9h2nA6siTIhb+m18Ge4mcmdvcBIYCCxlQndS1DxFzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874404; c=relaxed/simple;
-	bh=QrZ94Ql59TpZIhqOJL9ftg2JeqlaZ5W31wg+jp3hJkM=;
+	s=arc-20240116; t=1739874405; c=relaxed/simple;
+	bh=Yv171g8ktvdE99m0rFDY9lalX5LPYbBKhjYft+R9tQE=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eYEsrqk9QNmY8hufJ4fmgokuOl1Qc9NsZL7taOnC3lQP+PWR44LssFWzzYz5yGENt+s5DUdmD1eGAF5kC2T362SANMToxhaEoOBCElPWp9UvejhMBjDTqvyFiFvzPg5y08oVi8Kx1XwVc/10503/cw95q5KPZ2Mzigawmnundx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lNcNZfaT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FL4TwU0I; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=ItAnIdbV/MXmg69/iDmcxwR4mYeAZahHmdBpOn4xriYcfUXEGq9gYgqW6ahIhQ92qTYouCWnRBPSJkTr/jK5/K/Sw3nrTGbp/CeOFn5hF+B8DlZ8b2cazD9YuVQCj7CsdKnb9hLzzM0KKH4e9Yum2d+IyWCxiuatX+IDNijRwiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v3Eqe04z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=40kwIzPZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Feb 2025 10:26:40 -0000
+Date: Tue, 18 Feb 2025 10:26:41 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739874400;
+	s=2020; t=1739874402;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c/HWwmofKWNt2oDx0ST285v/TpoHjBe47O5DWAbkiiA=;
-	b=lNcNZfaTT3HCeZYpspJDl7OJm8ljJ4MKgb2se3W3lBRw8fw869J7gaLjk6sorKu31J6EAr
-	t7cTFnviN4xsPdx3FYUjhOmbb0NCz4RZceMDlgB2xsRr6fjkfxtC+j4mXqneaPQRzeCANO
-	nmvJbHARbYU/UZPb3uu4J1d2Ie2TEgvzGLAoSJCGFk0T4FqArcf38NPfSm7ZRhPjlA6SB3
-	vLFijRr9T5TidLEqP7FQNSK0xybbaz3joz/czTnQvgrcryyw2yAIz/PFEWCIO93HRQIbEV
-	YskVqu3tJnjoFGUyWupdbWpHvTCoxXRWpwfL4jYxTpFVgIRQARI+UUoxSgi5cQ==
+	bh=pqHtTPUngK0lABvJMho4+8z4/SShq3cWEkQMAo6jG1Q=;
+	b=v3Eqe04z74r2pNAPMFDOokdF/6Nsdqr1mgodUqLz1J8X6uMkEtvdMMB1J6m/5mlLcFbvVK
+	oDJRmg8og95rMp8+2GEVhOQt6MuK9/PIEPMVVzX672pG4UeO1L9ky9X6SGCPPJWDjAKUNl
+	0nbtXoQ0A93bRfOt26tcsbOMW4x11lgBRMH5gCOuH7kl1ahm4384rDf52r39vsiQNLoja2
+	W/cnsviM0trS6zJQ2O6BFxzfS+MaZBivpCLO6LoxOzue1AmACoNcYddod5eY2iTgwsK/em
+	CjRH89cLHOIZ+07ObrYJLNrsJ5FOnh5uV5gtcguHjz9q6L8yP+Fsli4gj+fykg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739874400;
+	s=2020e; t=1739874402;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c/HWwmofKWNt2oDx0ST285v/TpoHjBe47O5DWAbkiiA=;
-	b=FL4TwU0IOoNzOHH6wPhF4T899O5AYT8zUdVpVqewSJXnEr9/w0MPajEMq3+NVRLHvhHpFl
-	pDJrDE87hFnhzwBA==
+	bh=pqHtTPUngK0lABvJMho4+8z4/SShq3cWEkQMAo6jG1Q=;
+	b=40kwIzPZhLzxK7yvboOlOssFYvdPOKRne4/TiNbnetlUaKEc8OzKumr6BssYmEyU7nnNyx
+	Ke9vo8ChsP3IuODg==
 From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/cleanups] scsi: Switch to use hrtimer_setup()
+Subject: [tip: timers/cleanups] serial: imx: Switch to use hrtimer_setup()
 Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
  Zack Rusin <zack.rusin@broadcom.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cc951a5966e134307b8e50afb08e4b742e3f6ad06=2E17387?=
+In-Reply-To: =?utf-8?q?=3Cad27070bc67c13f8a9acbd5cbf4cbae72797e3e1=2E17387?=
  =?utf-8?q?46904=2Egit=2Enamcao=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3Cc951a5966e134307b8e50afb08e4b742e3f6ad06=2E173874?=
+References: =?utf-8?q?=3Cad27070bc67c13f8a9acbd5cbf4cbae72797e3e1=2E173874?=
  =?utf-8?q?6904=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,7 +73,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173987440021.10177.890985533032094309.tip-bot2@tip-bot2>
+Message-ID: <173987440192.10177.5822486703163579137.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,14 +83,14 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/cleanups branch of tip:
 
-Commit-ID:     b7011929380d2fce41e9fa7050a1f7f1eb254c2d
-Gitweb:        https://git.kernel.org/tip/b7011929380d2fce41e9fa7050a1f7f1eb254c2d
+Commit-ID:     721c5bf65a1d19d2958a83c6eb7ddd8002b9026f
+Gitweb:        https://git.kernel.org/tip/721c5bf65a1d19d2958a83c6eb7ddd8002b9026f
 Author:        Nam Cao <namcao@linutronix.de>
-AuthorDate:    Wed, 05 Feb 2025 11:46:01 +01:00
+AuthorDate:    Wed, 05 Feb 2025 11:45:58 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 18 Feb 2025 11:19:03 +01:00
 
-scsi: Switch to use hrtimer_setup()
+serial: imx: Switch to use hrtimer_setup()
 
 hrtimer_setup() takes the callback function pointer as argument and
 initializes the timer completely.
@@ -103,61 +103,29 @@ Patch was created by using Coccinelle.
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Zack Rusin <zack.rusin@broadcom.com>
-Link: https://lore.kernel.org/all/c951a5966e134307b8e50afb08e4b742e3f6ad06.1738746904.git.namcao@linutronix.de
+Link: https://lore.kernel.org/all/ad27070bc67c13f8a9acbd5cbf4cbae72797e3e1.1738746904.git.namcao@linutronix.de
 
 ---
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 4 +---
- drivers/scsi/lpfc/lpfc_init.c            | 7 +++----
- drivers/scsi/scsi_debug.c                | 4 ++--
- 3 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/tty/serial/imx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-index 16d085d..9e42230 100644
---- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-+++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-@@ -2922,9 +2922,7 @@ static long ibmvscsis_alloctimer(struct scsi_info *vscsi)
- 	struct timer_cb *p_timer;
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 9c59ec1..9a1afe4 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -2582,10 +2582,10 @@ static int imx_uart_probe(struct platform_device *pdev)
+ 		imx_uart_writel(sport, ucr3, UCR3);
+ 	}
  
- 	p_timer = &vscsi->rsp_q_timer;
--	hrtimer_init(&p_timer->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--
--	p_timer->timer.function = ibmvscsis_service_wait_q;
-+	hrtimer_setup(&p_timer->timer, ibmvscsis_service_wait_q, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	p_timer->started = false;
- 	p_timer->timer_pops = 0;
- 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index bcadf11..d1ac1d1 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -7952,11 +7952,10 @@ lpfc_sli4_driver_resource_setup(struct lpfc_hba *phba)
- 	timer_setup(&phba->fcf.redisc_wait, lpfc_sli4_fcf_redisc_wait_tmo, 0);
- 
- 	/* CMF congestion timer */
--	hrtimer_init(&phba->cmf_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	phba->cmf_timer.function = lpfc_cmf_timer;
-+	hrtimer_setup(&phba->cmf_timer, lpfc_cmf_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	/* CMF 1 minute stats collection timer */
--	hrtimer_init(&phba->cmf_stats_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	phba->cmf_stats_timer.function = lpfc_cmf_stats_timer;
-+	hrtimer_setup(&phba->cmf_stats_timer, lpfc_cmf_stats_timer, CLOCK_MONOTONIC,
+-	hrtimer_init(&sport->trigger_start_tx, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	hrtimer_init(&sport->trigger_stop_tx, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	sport->trigger_start_tx.function = imx_trigger_start_tx;
+-	sport->trigger_stop_tx.function = imx_trigger_stop_tx;
++	hrtimer_setup(&sport->trigger_start_tx, imx_trigger_start_tx, CLOCK_MONOTONIC,
++		      HRTIMER_MODE_REL);
++	hrtimer_setup(&sport->trigger_stop_tx, imx_trigger_stop_tx, CLOCK_MONOTONIC,
 +		      HRTIMER_MODE_REL);
  
  	/*
- 	 * Control structure for handling external multi-buffer mailbox
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 5ceaa46..fe5c30b 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -6384,8 +6384,8 @@ static struct sdebug_queued_cmd *sdebug_alloc_queued_cmd(struct scsi_cmnd *scmd)
- 
- 	sd_dp = &sqcp->sd_dp;
- 
--	hrtimer_init(&sd_dp->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
--	sd_dp->hrt.function = sdebug_q_cmd_hrt_complete;
-+	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
-+		      HRTIMER_MODE_REL_PINNED);
- 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
- 
- 	sqcp->scmd = scmd;
+ 	 * Allocate the IRQ(s) i.MX1 has three interrupts whereas later
 
