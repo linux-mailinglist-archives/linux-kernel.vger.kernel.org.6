@@ -1,128 +1,72 @@
-Return-Path: <linux-kernel+bounces-520485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513BBA3AA73
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:05:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD3FA3AA71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD603B9256
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4191896B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C5C171A7;
-	Tue, 18 Feb 2025 20:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B75528629F;
+	Tue, 18 Feb 2025 21:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="iNmlna4W"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/ZB/2Px"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E810D286281;
-	Tue, 18 Feb 2025 20:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BE9286294;
+	Tue, 18 Feb 2025 21:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739912353; cv=none; b=Xv0n028hoyIqFRC08HzG1nGCGgj3S2fuDPBMHeQgKKZYIrsASf2j4aum9z/UgcQaiicTj9pM+S8vURvalNo0N2odaUBrfaPB24jrjM/K0ypOoZi10R9kGzUdu5B+MPeUtad5fVYxOFIe0S7koYY054A0Sfaw8HezlkpR2YqGTFg=
+	t=1739912539; cv=none; b=tOIRIDthsNLQ9CEki5n305uCzMbp7Gut8o5iPBQEjI+yxJMWHJnPAd9KhUez6rsjII07Z8UtwKv52cp0lGmo7A6URBPtxvuZzU8l2uJjCl3w7Jm7rxkD+fOSLbWOES/z20wueAhNsEX8PZbKZtSjdlTsIDpApsSf6onavQ5vZJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739912353; c=relaxed/simple;
-	bh=FFcCgxhkRrZf0oO7SvDjg20o6b0gL5z2N8U26yKZW40=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C0captvVqwdXTZDVYecE1biXzgtQqpOattkBw5kAi2LgExwtsVPUjckP0gD/tMy2WWZmDKBskTnl/i+Oq5Vz7hcz8tQbhS7eTsRgXvN98jgc6ieCb7GHujDmyo4T91QdRbIy1EM8IQJlU5ZbpAXvZ8zfhaUswTlpupZoR+WkYvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=iNmlna4W; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 03450411AF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739912351; bh=xob5bPJV+0BIwWpZL0BhJlMQzelJ36QmFOJ8Wa+YI5c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iNmlna4WYoaBHRJGtRyvwiNKLk0ZLSqJriSERXoLLJjWViyDSaslUGE3HcReA3ZH/
-	 QSdsTD3hGP/FHAtOXUKjsZLTPwOI8diQ78Np1cUKwUbOPTKre+YaizfDuUzOMYBtv3
-	 zTOOtKxCBS1JRDZPP7KkAF/+bsPLoAtQWc6i8UxoIrhJ0lwsPVY0X7SeFbAy+6wVve
-	 BNWjvW7zvN+pcyNwCqIFoV65fHElImLXiSj3Udo65H8R0D9iQRtS7cQQ7lBBCj6dvQ
-	 OCMtNHXgvdw45yelT8PSzX+JyejFmb5yQTbNTE0XaxswX/AHF2N33jDxVowVe2HPIP
-	 PJntKSV/BD5YA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 03450411AF;
-	Tue, 18 Feb 2025 20:59:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/kernel-doc: remove an obscure logic from
- kernel-doc
-In-Reply-To: <20250214032457.6444ee93@foz.lan>
-References: <fd3b28dec36ba1668325d6770d4c4754414337fc.1739340170.git.mchehab+huawei@kernel.org>
- <87wmdt6bv5.fsf@trenco.lwn.net> <20250214032457.6444ee93@foz.lan>
-Date: Tue, 18 Feb 2025 13:59:10 -0700
-Message-ID: <87wmdnm0kh.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1739912539; c=relaxed/simple;
+	bh=cUmUWbsEqYr6aTi6Cjcx7Kv7PTjK5Ja/7EoaFj5ggn4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=idA8I8W26Xjhtm3eOMl9MczHSSESKtXuuUvdd/yyZx7YDtHNMJuucFT5BUp67fUyzuxh844gKoZ88QfFe1NOZ7/bTBsK9MTKVZqZhqkxgTBt5Iw1RTZoMekobUa/m2wvouNxZyu88rBJwbR/6I1PJZYPT4BzwwNTNhK1iW0FCsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/ZB/2Px; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD2EC4CEE2;
+	Tue, 18 Feb 2025 21:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739912538;
+	bh=cUmUWbsEqYr6aTi6Cjcx7Kv7PTjK5Ja/7EoaFj5ggn4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=l/ZB/2PxV7KkoDSMAuUYfq5+9D2uD5X1oYa2MpFbsB7huPQXWhBUX0SfUT5ab7v/z
+	 n5RwwLRRHBznMYSbEtbPxh82nBO1nwj/KHp9f6Qy9jlMzpChvlR4iiP3nKld7fezS2
+	 ldPES6xdtaa8DCZh838OOVIMSRlOgOhpsHmahi+ASb5FTz5tmiXmwZEjti5B2Z8zLE
+	 9fAegwXcahMlgud4nG1RhoWmIv1jYMCSj/HYu4FL4SaReeEMBmqyc+IneM9TnIdi8W
+	 yBpgrmHxphKyDWfdRPli7n1lvCTFQ5MeiIucgT4hResmmTbf/vh/SjL3hPScXjFSXL
+	 gWpsMxZXKH4YA==
+Date: Tue, 18 Feb 2025 22:02:15 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+    "bentiss@kernel.org" <bentiss@kernel.org>, 
+    Dan Carpenter <dan.carpenter@linaro.org>, 
+    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
+    Kerem Karabay <kekrby@gmail.com>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] HID: hid-appletb-kbd: simplify logic used to
+ switch between media and function keys on pressing fn key
+In-Reply-To: <8365C1B3-3A38-4F6E-955B-D6BBABA6B00A@live.com>
+Message-ID: <8r0o550p-p087-3o54-o320-24snr3386263@xreary.bet>
+References: <8365C1B3-3A38-4F6E-955B-D6BBABA6B00A@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Applied all three patches to hid.git#for-6.15/apple. Thanks,
 
-> With regards to the Python transition, since our Makefile allows
-> switching to a different script since ever[1], I'm playing with 
-> the idea of sending a patch series with:
->
-> Patch 1: 
->   - drops Sphinx version check from both kerneldoc 
->     (-sphinx-version parameter) and the corresponding Sphinx extension;
->
-> patch 2: 
->   - renames kerneldoc to kerneldoc.pl
->   - creates a symlink:
-> 	kerneldoc.pl -> kerneldoc
->
-> patch 3:
->   - adds kerneldoc.py:
->
-> patch 4:
->   - add info messages on both versions related to the transition,
->     and instructions about using KERNELDOC=<script> makefile and ask
->     people to report eventual regressions with new script.
->
-> patch 5:
->   - change kerneldoc symlink to point to kerneldoc.py
->
-> We can then keep both for maybe one Kernel cycle and see how it goes,
-> stop accepting patches to the Perl version, in favor of doing the needed
-> changes at the Python one.
->
-> If everything goes well, we can remove the venerable Perl version on the 
-> upcoming merge window, and change the Sphinx extension to use the Python
-> classes directly instead of running an external executable code.
->
-> What do you think?
+-- 
+Jiri Kosina
+SUSE Labs
 
-Seems like a fine plan in general.  I wonder if we might want to keep
-the old kernel-doc a bit longer just in case, but we can decide that as
-we go.
-
-> I'm in doubt if I should split the Kernel classes for the Python version
-> into a scripts/lib/kdoc directory on this series or doing such change
-> only after we drop the Perl version.
->
-> Keeping it on a single file helps to do more complex code adjustments 
-> on a single place, specially if we end renaming/shifting stuff[2].
-
-Do whatever makes it easiest for you at this point, I'd say.
-
-> On a separate but related issue, perhaps we should start talking about
-> coding style. We don't have anything defined at the Kernel, and
-> different scripts follow different conventions (or most likely
-> don't follow any convention at all). We should probably think having 
-> something defined in the future.
-
-I've generally tried to stick to something that looks as close to the C
-coding style as possible.  Formalizing that might not be a bad idea at
-all.
-
-jon
 
