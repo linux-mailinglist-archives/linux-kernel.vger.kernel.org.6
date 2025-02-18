@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-518880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FEDA395CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:43:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E2CA395D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45C93B7E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFD21785FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CAE22B8B2;
-	Tue, 18 Feb 2025 08:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77B923536A;
+	Tue, 18 Feb 2025 08:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="q+T8dPHM"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovEbdYsV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592932309B6;
-	Tue, 18 Feb 2025 08:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C1722B8CA;
+	Tue, 18 Feb 2025 08:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867857; cv=none; b=SmAxM37Zl7iWFjG0BwQXAij06ukSnRPsemioto+Kn4sVxjfX21nV9C3iQedfO1C3UD+AR5oTVpMFb16mxB2X3yz6h5Gf4iG7yvyg/WOxA3qgquOjmZgu/MqncOXms4QWHdXSH2KZqBrzN7gfwNXiuDgU8ivcBq75JKUG3+g4Hhw=
+	t=1739867897; cv=none; b=WiPeAgbhOG1cWvgGxLd3S+VRjj8QueCP0HwjS+tEd3qOhPHP2bV34HnfXar5mZTLsRVcdGlZOLt1NPHNKEjqsfTIEbioLIaQHINFPdsII9NkXdeuKKi2AE6d+oqjmAPHl0KyhGFzcCBQVTSPxrfQ2EOxFZdKwUDqANh0Ipap65A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867857; c=relaxed/simple;
-	bh=t8ya/t1G3whzwy4abpFTKD46+lSOSltLTjgq6opU1PE=;
+	s=arc-20240116; t=1739867897; c=relaxed/simple;
+	bh=SXsWRliWYDYiH9PM4qIThXGhAe8bWyeUA8MJ5BBmb20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qarYSg3etBl/QrOKux7K2n6Oth1/XBpbipg9paO6+VYIoKxrRo8f4DWdwHfD8wdQL5URMGaCI+UctAJiQHwnsozhEJQ+qRc9kiz2ecvGIuFFY5tUgG+1TTptvG6Klr9HHZ4L4nikzpvRyNLpdrb+Z8zn+hI+OOAHdL+f26+lNjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=q+T8dPHM; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZqfEr2IqxhLtqyCvqqpJalwtiPRJPsXMgYfoDKAIWO0=; b=q+T8dPHMXwBow2nZZ3CAmxWT6O
-	O18UJ4HOVAaFVj6uTmPtqFfayvQxP48R+vcELEbpnepO8zt76cUDV2OCSgzeT9IgL4Po/ml23D1Lu
-	K04RFcENCGOMDX9sPEzFtZzn9LGai4zjpZCX+awpzCCfL5PuOOi4gI8dOiET51uJKHST5XAGsrcaF
-	GdEC9AqfzcEV08QbrBgi+wmfXKRffQpSPvrHtc53ncZtcU5807eL6tDypAK4rokdl7cp9PHzUntqv
-	PwLMvw6Bdam3x3qQ7h0BR9yl/n3EfZzO8W7Fmncd1ok1SPgdK8i1iZARy6lt8QPRrhnVy1N1KJzwP
-	s0x4LZpQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tkItd-001BwH-2L;
-	Tue, 18 Feb 2025 16:37:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 18 Feb 2025 16:37:22 +0800
-Date: Tue, 18 Feb 2025 16:37:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"agk@redhat.com" <agk@redhat.com>,
-	"snitzer@kernel.org" <snitzer@kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"dm-devel@redhat.com" <dm-devel@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"qat-linux@intel.com" <qat-linux@intel.com>,
-	"heinzm@redhat.com" <heinzm@redhat.com>,
-	Horia Geanta <horia.geanta@nxp.com>, Varun Sethi <V.Sethi@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Fiona Trahe <fiona.trahe@intel.com>
-Subject: Re: [PATCH 1/3] dm integrity: do not filter algos with
- CRYPTO_ALG_ALLOCATES_MEMORY
-Message-ID: <Z7RGwot_t0RLc3-F@gondor.apana.org.au>
-References: <20230705164009.58351-1-giovanni.cabiddu@intel.com>
- <20230705164009.58351-2-giovanni.cabiddu@intel.com>
- <20230705201205.GA866@sol.localdomain>
- <ZKXZUl4VgZkMbOL0@gcabiddu-mobl1.ger.corp.intel.com>
- <ZKXnUeueV6ncaJM6@gondor.apana.org.au>
- <PAXPR04MB8301C112A114A6AC5A19D69B8E452@PAXPR04MB8301.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l9GUuEnHu48UgKoLiRjAMK+aToLy5QTTYBjrao2U+MPwj3wQfj8aSncCzTrgGFqXToAc5uhHpD48p0LIbiDOgLGap1jeVvN5Qer4qHVd4GPdgDiYy+iFoW1XTpb5omZjggvW6tTSGIqBBqpaQermYHCxe5MJNB2nFpG/5Du21Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovEbdYsV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EC68C4CEE6;
+	Tue, 18 Feb 2025 08:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739867896;
+	bh=SXsWRliWYDYiH9PM4qIThXGhAe8bWyeUA8MJ5BBmb20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ovEbdYsVKuDVTr7JBMRtAHH4KoI8yoVZP/1EqGrjDqt7rPSb5xj9w1DZMlmZp+wVv
+	 dxqEHj3odINWyjKeoPym36WYDkUMz8j5RONhNq8Cv3bPTOndbYRJWQfE3UMg8fgNtb
+	 DzYIDgtRUVlY3284FLpW+dG0auo/8MvqcuVLbXgm2EgRkh1ZBWINjUDS/swk+jW8p1
+	 i1MsKKpSrgZGgjb7Q2PLGIW4kJSKwSGSbpju89P4GnwXnU+xag+/opOxunrt2IZn1T
+	 crVlrpYkb+fsvjJ42NfwTBz0p2iIQyOpBZWPZSUzuPS7DxGPoHFMO38M4fKPbDDwXj
+	 zqGOXiojUW0eQ==
+Date: Tue, 18 Feb 2025 09:38:12 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, jai.luthra@linux.dev, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, 
+	vaishnav.a@ti.com, r-donadkar@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+Message-ID: <20250218-honored-fascinating-cockle-81bd06@krzk-bin>
+References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
+ <20250217130013.2802293-2-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8301C112A114A6AC5A19D69B8E452@PAXPR04MB8301.eurprd04.prod.outlook.com>
+In-Reply-To: <20250217130013.2802293-2-y-abhilashchandra@ti.com>
 
-On Wed, Feb 07, 2024 at 06:22:06AM +0000, Meenakshi Aggarwal wrote:
+On Mon, Feb 17, 2025 at 06:30:12PM +0530, Yemike Abhilash Chandra wrote:
+> The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
+> Enabling these interrupts will provide additional information about a CSI
+> packet or an individual frame. So, add support for optional interrupts
+> and interrupt-names properties.
 > 
-> What are your plans for this change?
+> [0]: http://www.ti.com/lit/pdf/spruil1
+> 
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> ---
+> 
+> Changes in v2:
+> - Address Krzysztof's review comment to remove flexibility while adding
+>   interrupts.
+> 
+>  .../devicetree/bindings/media/cdns,csi2rx.yaml         | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> index 2008a47c0580..f335429cbde9 100644
+> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> @@ -24,6 +24,16 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  interrupts:
+> +    minItems: 3
 
-I finally have a solution for you.
+Drop, see other bindings.
 
-The answer is to use a software fallback.  As software fallbacks
-do not need to allocate memory, they can be used in an OOM situation
-and you fail to allocate memory in the driver with GFP_ATOMIC.
 
-This can either be done using the existing shash interface through
-SHASH_DESC_ON_STACK, or with my new hash interface where you can
-use HASH_REQUEST_ON_STACK.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Once you have implemented this fallback strategy you may remove
-the CRYPTO_ALG_ALLOCATES_MEMORY flag from your driver.
+Best regards,
+Krzysztof
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
