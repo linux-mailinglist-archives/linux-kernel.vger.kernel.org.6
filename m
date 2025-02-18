@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-519113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89100A39828
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:07:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B70A3984C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D306C1883771
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311E73A676D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCF023496A;
-	Tue, 18 Feb 2025 10:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA04233D8D;
+	Tue, 18 Feb 2025 10:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="YsjgW8iQ"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zv40QsrL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aZ7EO/nA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8084223024C;
-	Tue, 18 Feb 2025 10:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBE922FAE1;
+	Tue, 18 Feb 2025 10:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739873194; cv=none; b=utcBU9ZabyHhv0DG6O2g/JRapS175GEuJbGiSNVT95B/RSojM3pH5cp78K9hJ9h/i/jFphsyjn3ZZM1PR3ojnHqJb/N1u83sWIxJC1vstqyIUudbVSbZF32cMQZA489bRGgM5zMBPN7Cml3Bzv2Zo5IzT+5qk8wAEoQSQJpmLA0=
+	t=1739873203; cv=none; b=UrrytHyYRtJsGmPHwU2RyU5bLHDxRQ3KIP6o681GGIBoyjCIJTL2UmsZhqDs/CZl84J2HdE5EIQ/EjVBX7V2u7dz/HgKDwo3KcghjHiOxRX3NOb1PVZ9oqT/iWo9eJMV7ckIWKRpSVhmgsdw4M1n6ge4hXcmgjIF0LOKYHj9zKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739873194; c=relaxed/simple;
-	bh=E3xOi/9hGj00jnNV5AhoZbkDyjCclw+unRetxDkBpRg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eTjmwhc3oGqetrzq4iOKvWc/4Z6X3TqNu5HK8How43apSieAw8xkGlJyUMBWwoSTaBtZW6+Gru2/cHOunMfxQo/qg9p4zWrx7iay9hqBzFeRzsjnjLBsPCzoMLOO680EL9lE+BVMMhscitarjww5Afreoaevu7q6pjfPkjwXjjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=YsjgW8iQ; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OVLzpGyAnuZGHlfCQnUEFiF2NICo49l1c70JyAHdJCE=; b=YsjgW8iQkmOefbMr+6DULtsIga
-	yFggL4XyBiiokWFf3Yl10YLELIEdidsYjMd1P23he71C2U0yLjxOQ1A2Z1/Lxh452bIq7+gmWbfhH
-	ykWZ3d/b0XeYJlwVZY8I8ahMi8s3TkX4kifAxMp/kp2wa3mH+63hOkhk402KWiBaAoPNPKTJOQs2f
-	qoxFzskQ+WpcfR2y/pE4OMAAGAJDbJgiuxgQ6iop5tWejuRB+1aLSnzTWbk77Gdn66JlCUuM6pcSR
-	p4mcDjSZ/iglZq+kxgGilPEXmFV1sfz1koVdXfY2+evT2Ue16Ysfe6Ey5OKxEJvxt0YlReMGrD7be
-	0JNj/tYQ==;
-Received: from [122.175.9.182] (port=15274 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parvathi@couthit.com>)
-	id 1tkKUm-00086M-2f;
-	Tue, 18 Feb 2025 15:36:29 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 8A9E317821C8;
-	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 665BF17823D4;
-	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id AF5WfMi2JOCR; Tue, 18 Feb 2025 15:36:20 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 3381D17821C8;
-	Tue, 18 Feb 2025 15:36:20 +0530 (IST)
-Date: Tue, 18 Feb 2025 15:36:20 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com, 
-	ssantosh@kernel.org, richardcochran@gmail.com, 
-	basharath <basharath@couthit.com>, schnelle@linux.ibm.com, 
-	diogo ivo <diogo.ivo@siemens.com>, m-karicheri2@ti.com, 
-	horms@kernel.org, jacob e keller <jacob.e.keller@intel.com>, 
-	m-malladi@ti.com, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, afd@ti.com, 
-	s-anna@ti.com, linux-arm-kernel@lists.infradead.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pratheesh <pratheesh@ti.com>, 
-	Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth@ti.com, srk@ti.com, 
-	rogerq@ti.com, krishna <krishna@couthit.com>, 
-	pmohan <pmohan@couthit.com>, mohan <mohan@couthit.com>
-Message-ID: <1348929889.600853.1739873180072.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250214170219.22730c3b@kernel.org>
-References: <20250214054702.1073139-1-parvathi@couthit.com> <20250214170219.22730c3b@kernel.org>
-Subject: Re: [PATCH net-next v3 00/10] PRU-ICSSM Ethernet Driver
+	s=arc-20240116; t=1739873203; c=relaxed/simple;
+	bh=Hq6ZY5xmRWFjosBm8mkAd/kjuDQ3NGycYD8Wiy2IT6c=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KaRPWQOVtMvdRNfOgBySM4uyAJnTY6VxArD0I7tfl3S+53EFC5qGrzDWAFrFNFbgdUTde6EsJzCQDXiPjb/AJdMCpQS4kVQe1jPPzBHYrKFy2yM+qaslLNMX0aYyuhPbzjC6UPMmk7Ht9wjfpTSA356ZVRpjE2/i7jyAhsNvhPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zv40QsrL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aZ7EO/nA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 10:06:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739873199;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cN3a4pDQ2B+o9buo3DOTycAcGW0vZvYxkfuzJ08j7U8=;
+	b=Zv40QsrLpJl1h5UyNojgVRF901IDZ39tiJctm+mnWlpoZ3yoU2u7ssKXfrASutW1O81J2c
+	nObxMdFQxqQURga0yCBkhF6DZ13Jmpg++O2tU8hd35zf1aPUI5LhYL7wIcIihud07cd3vB
+	VZmxr1hXlKgnka/HwIOI51Ts7GxNMuIEqhdz7FRvXTFhgz+xQMOFCC7QSYHcOLIcyzg4tL
+	cQxeCMTuNoCybRHB4qYSsl+pX+HlqffSrVJk8fbVP8qUDZL20Q5TW+Fce9TJNS1zIPH6t0
+	CispAgb1r8IvoSY4hjchKAT8ngoGaPSV36BaHCsFIGmLraHLw2cFLAUE5N9FEA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739873199;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cN3a4pDQ2B+o9buo3DOTycAcGW0vZvYxkfuzJ08j7U8=;
+	b=aZ7EO/nAGfALyVVYNuze0PVzihdnWVtQiXmPFOXzpUmLO6bIVGwNoWu4RcJrquxAO33v7h
+	329FP1cZftppFqDA==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/cleanups] xfrm: Switch to use hrtimer_setup()
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3Cd338b246f087ee2b2a305348c896449e107a7ff4=2E17387?=
+ =?utf-8?q?46872=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+References: =?utf-8?q?=3Cd338b246f087ee2b2a305348c896449e107a7ff4=2E173874?=
+ =?utf-8?q?6872=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Message-ID: <173987319854.10177.2315963857927707295.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: PRU-ICSSM Ethernet Driver
-Thread-Index: G9POODYMWs8t48CuCyp4N0Tp+gKU+w==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
+The following commit has been merged into the timers/cleanups branch of tip:
 
-Hi,
+Commit-ID:     1417c85d16257f4cc581acca218f4f9fb17ef952
+Gitweb:        https://git.kernel.org/tip/1417c85d16257f4cc581acca218f4f9fb17ef952
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Wed, 05 Feb 2025 11:43:44 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 18 Feb 2025 10:35:47 +01:00
 
-> On Fri, 14 Feb 2025 11:16:52 +0530 parvathi wrote:
->> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
->> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
->> Megabit ICSS (ICSSM).
-> 
-> Every individual patch must build cleanly with W=1.
-> Otherwise doing git bisections is a miserable experience.
-> --
+xfrm: Switch to use hrtimer_setup()
 
-As we mentioned in cover letter we have dependency with SOC patch.
+hrtimer_setup() takes the callback function pointer as argument and
+initializes the timer completely.
 
-"These patches have a dependency on an SOC patch, which we are including at the
-end of this series for reference. The SOC patch has been submitted in a separate
-thread [2] and we are awaiting for it to be merged."
+Replace hrtimer_init() and the open coded initialization of
+hrtimer::function with the new setup mechanism.
 
-SOC patch need to be applied prior applying the "net" patches. We have changed the 
-order and appended the SOC patch at the end, because SOC changes need to go into 
-linux-next but not into net-next. 
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/d338b246f087ee2b2a305348c896449e107a7ff4.1738746872.git.namcao@linutronix.de
 
-We have make sure every individual patch has compiled successfully with W=1 if we 
-apply SOC patch prior to the "net" patches.
+---
+ net/xfrm/xfrm_iptfs.c | 6 ++----
+ net/xfrm/xfrm_state.c | 4 ++--
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-
-Thanks and Regards,
-Parvathi.
+diff --git a/net/xfrm/xfrm_iptfs.c b/net/xfrm/xfrm_iptfs.c
+index 755f1ee..3b6d728 100644
+--- a/net/xfrm/xfrm_iptfs.c
++++ b/net/xfrm/xfrm_iptfs.c
+@@ -2625,12 +2625,10 @@ static void __iptfs_init_state(struct xfrm_state *x,
+ 			       struct xfrm_iptfs_data *xtfs)
+ {
+ 	__skb_queue_head_init(&xtfs->queue);
+-	hrtimer_init(&xtfs->iptfs_timer, CLOCK_MONOTONIC, IPTFS_HRTIMER_MODE);
+-	xtfs->iptfs_timer.function = iptfs_delay_timer;
++	hrtimer_setup(&xtfs->iptfs_timer, iptfs_delay_timer, CLOCK_MONOTONIC, IPTFS_HRTIMER_MODE);
+ 
+ 	spin_lock_init(&xtfs->drop_lock);
+-	hrtimer_init(&xtfs->drop_timer, CLOCK_MONOTONIC, IPTFS_HRTIMER_MODE);
+-	xtfs->drop_timer.function = iptfs_drop_timer;
++	hrtimer_setup(&xtfs->drop_timer, iptfs_drop_timer, CLOCK_MONOTONIC, IPTFS_HRTIMER_MODE);
+ 
+ 	/* Modify type (esp) adjustment values */
+ 
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index ad2202f..9bd14fd 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -746,8 +746,8 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
+ 		INIT_HLIST_NODE(&x->bysrc);
+ 		INIT_HLIST_NODE(&x->byspi);
+ 		INIT_HLIST_NODE(&x->byseq);
+-		hrtimer_init(&x->mtimer, CLOCK_BOOTTIME, HRTIMER_MODE_ABS_SOFT);
+-		x->mtimer.function = xfrm_timer_handler;
++		hrtimer_setup(&x->mtimer, xfrm_timer_handler, CLOCK_BOOTTIME,
++			      HRTIMER_MODE_ABS_SOFT);
+ 		timer_setup(&x->rtimer, xfrm_replay_timer_handler, 0);
+ 		x->curlft.add_time = ktime_get_real_seconds();
+ 		x->lft.soft_byte_limit = XFRM_INF;
 
