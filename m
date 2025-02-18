@@ -1,110 +1,240 @@
-Return-Path: <linux-kernel+bounces-520226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EDCA3A737
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:19:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D90A3A750
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA81D188B2B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:18:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E472A7A3E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADD817A308;
-	Tue, 18 Feb 2025 19:18:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B4D1E8333;
+	Tue, 18 Feb 2025 19:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="VRDuQEP5"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE4621B9DF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A168A17A308
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906321; cv=none; b=dwCwn7XVc/So19kPNzjJolfJYM+b32P+SFLFtSc0u8mMUe9/GnDyClNRqCIBSDjkHSBfvOTMDm8Bl/8ceZH2HtmFwML+SNdVGDK9QFH1Ia9KS76omhp/+cbuceXCQ5anDiOOKVDv+H3ht38OL9jJTAaLAqUa/Zqf8FkhCn+TUoI=
+	t=1739906714; cv=none; b=Sr815lGRxhpZxrz5Fuu+at+uLnQ5GbzPobQk3rmCqISGOH1ir690VGwvOCJ0Z6VTdWjJOMhHvCsgkdNmY1XwDm/Gjfxm1/DA6Ieh/L5ggfbjPtYqrC957ngmHriAPAiY85momcl4epjqkSgDL9kDVkoa7K9w+YqoDJR2Tes5524=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906321; c=relaxed/simple;
-	bh=NYfwx10LSDctMdoVNvS9JCp6vYmsW9rdlEFhA5eQEGU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LgoJUrl9u92BBb8uYgSoy2kRH2KL+ImzVJ2IMJ3DoHkQ/1F/NUV7gK374T7akqpJGXYzjMlLbG66ONvOQatGgYvyXDuc76woLQhRsOY/gK9KIkXRIDEk59h1WMdUPDbCFx2+Ipqg06SNMZq8fsdiXIMffLKyE53xMuUyOUyKkkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkT74-0001AE-PV; Tue, 18 Feb 2025 20:18:34 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkT74-001dvB-0y;
-	Tue, 18 Feb 2025 20:18:34 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkT74-00BCDr-0m;
-	Tue, 18 Feb 2025 20:18:34 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Tue, 18 Feb 2025 20:18:32 +0100
-Subject: [PATCH] pmdomain: imx: gpcv2: use proper helper for property
- detection
+	s=arc-20240116; t=1739906714; c=relaxed/simple;
+	bh=qS/3EyDtsIqq4BE7T5sae2EOy9MZhOOp7/5dyYC0fTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6SJ7bVJ9KwDTUL9jhnVqJhN0v/8Y/T4yliyIo2V621be4je07Tc0penuCjOftLJnDmFil8QkDeyVnh63+Xzq2WWg2jru8x5+rRlAjR1Bp6DrHN/rgy982Nefx/Q7jHMs640dhs7Kv+v0lDWqx+W9ypxsuo69qz0ys/vJ2AuA3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=VRDuQEP5; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yy8V359myzcxT;
+	Tue, 18 Feb 2025 20:19:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1739906379;
+	bh=N2t6NqopJ550I8j1hKd9Uj6iHTea8v4FXcTZuUpaFOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VRDuQEP5M5HOSq3KKR7anyr0vbLSDHysQc2LE6VzYlK+WGGPcKv3IpEjc2gpd7zY3
+	 9t4bf09TESJHQxPMco46a0TPUbjiNURpBUAPB8ghbkMWDX3PWo0eQ1ybZeyIlV+259
+	 MbZ8mnS7HLjGWpy70olKehfmcSa3F+Vhk9ofNbqc=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yy8V14TGtzyC2;
+	Tue, 18 Feb 2025 20:19:37 +0100 (CET)
+Date: Tue, 18 Feb 2025 20:19:36 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Charles Zaffery <czaffery@roblox.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
+	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
+	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
+	Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 9/24] landlock: Add AUDIT_LANDLOCK_ACCESS and log
+ ptrace  denials
+Message-ID: <20250218.uuBaiB2woloo@digikod.net>
+References: <20250131163059.1139617-10-mic@digikod.net>
+ <715d3d6c220bfd818bf50175cf14fd3c@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-gpcv2-of-property-present-v1-1-3bb1a9789654@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAAfdtGcC/x2MQQqAMAwEvyI5G7ABofgV8aBtqrm0pRVRpH83e
- JsZ2H2hchGuMHUvFL6kSooqpu/AHWvcGcWrAw00DmQs7tldhClgLilzOR8FrhxPNKMN1m+ByTv
- QvfYg9/89L6194i/+OmsAAAA=
-X-Change-ID: 20250218-gpcv2-of-property-present-158f8dbfe2dc
-To: Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-pm@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <715d3d6c220bfd818bf50175cf14fd3c@paul-moore.com>
+X-Infomaniak-Routing: alpha
 
-Starting with commit c141ecc3cecd7 ("of: Warn when of_property_read_bool()
-is used on non-boolean properties"), probing the gpcv2 device on i.MX8M
-SoCs leads to warnings when LOCKDEP is enabled.
+On Fri, Feb 14, 2025 at 05:52:47PM -0500, Paul Moore wrote:
+> On Jan 31, 2025 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> > 
+> > Add a new AUDIT_LANDLOCK_ACCESS record type dedicated to an access
+> > request denied by a Landlock domain.  AUDIT_LANDLOCK_ACCESS indicates
+> > that something unexpected happened.
+> > 
+> > For now, only denied access are logged, which means that any
+> > AUDIT_LANDLOCK_ACCESS record is always followed by a SYSCALL record with
+> > "success=no".  However, log parsers should check this syscall property
+> > because this is the only sign that a request was denied.  Indeed, we
+> > could have "success=yes" if Landlock would support a "permissive" mode.
+> > We could also add a new field for this mode to AUDIT_LANDLOCK_DOMAIN
+> > (see following commit).
+> >
+> > By default, the only logged access requests are those coming from the
+> > same executed program that enforced the Landlock restriction on itself.
+> > In other words, no audit record are created for a task after it called
+> > execve(2).  This is required to avoid log spam because programs may only
+> > be aware of their own restrictions, but not the inherited ones.
+> > 
+> > Following commits will allow to conditionally generate
+> > AUDIT_LANDLOCK_ACCESS records according to dedicated
+> > landlock_restrict_self(2)'s flags.
+> > 
+> > The AUDIT_LANDLOCK_ACCESS message contains:
+> > - the "domain" ID restricting the action on an object,
+> > - the "blockers" that are missing to allow the requested access,
+> > - a set of fields identifying the related object (e.g. task identified
+> >   with "opid" and "ocomm").
+> > 
+> > The blockers are implicit restrictions (e.g. ptrace), or explicit access
+> > rights (e.g. filesystem), or explicit scopes (e.g. signal).  This field
+> > contains a list of at least one element, each separated with a comma.
+> > 
+> > The initial blocker is "ptrace", which describe all implicit Landlock
+> > restrictions related to ptrace (e.g. deny tracing of tasks outside a
+> > sandbox).
+> > 
+> > Add audit support to ptrace_access_check and ptrace_traceme hooks.  For
+> > the ptrace_access_check case, we log the current/parent domain and the
+> > child task.  For the ptrace_traceme case, we log the parent domain and
+> > the parent task.  Indeed, the requester is the current task, but the
+> > action would be performed by the parent task.
+> > 
+> > Audit event sample:
+> > 
+> >   type=LANDLOCK_ACCESS msg=audit(1729738800.349:44): domain=195ba459b blockers=ptrace opid=1 ocomm="systemd"
+> >   type=SYSCALL msg=audit(1729738800.349:44): arch=c000003e syscall=101 success=no [...] pid=300 auid=0
+> > 
+> > A following commit adds user documentation.
+> > 
+> > Add KUnit tests to check reading of domain ID relative to layer level.
+> > 
+> > The quick return for non-landlocked tasks is moved from task_ptrace() to
+> > each LSM hooks.
+> > 
+> > Because the landlock_log_denial() function is only called when an access
+> > is denied, the compiler should be able to optimize the struct
+> > landlock_request initializations.  It is not useful to inline the
+> > audit_enabled check because other computation are performed anyway, and
+> > by the same landlock_log_denia() code.
+> > 
+> > Use scoped guards for RCU read-side critical sections.
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20250131163059.1139617-10-mic@digikod.net
+> > ---
+> > Changes since v4:
+> > - Rename AUDIT_LANDLOCK_DENY to AUDIT_LANDLOCK_ACCESS, requested by
+> >   Paul.
+> > - Make landlock_log_denial() get Landlock credential instead of Landlock
+> >   domain to be able to filter on the domain_exe variable.
+> > - Rebase on top of the migration from struct landlock_ruleset to struct
+> >   landlock_cred_security.
+> > - Rename landlock_init_current_hierarchy() to
+> >   landlock_init_hierarchy_log().
+> > - Rebase on top of the scoped guard patches.
+> > - By default, do not log denials after an execution.
+> > - Use scoped guards for RCU read-side critical sections.
+> > 
+> > Changes since v3:
+> > - Extend commit message.
+> > 
+> > Changes since v2:
+> > - Log domain IDs as hexadecimal number: this is a more compact notation
+> >   (i.e. at least one less digit), it improves alignment in logs, and it
+> >   makes most IDs start with 1 as leading digit (because of the 2^32
+> >   minimal value).  Do not use the "0x" prefix that would add useless
+> >   data to logs.
+> > - Constify function arguments.
+> > - Clean up Makefile entries.
+> > 
+> > Changes since v1:
+> > - Move most audit code to this patch.
+> > - Rebase on the TCP patch series.
+> > - Don't log missing access right: simplify and make it generic for rule
+> >   types.
+> > - Don't log errno and then don't wrap the error with
+> >   landlock_log_request(), as suggested by Jeff.
+> > - Add a WARN_ON_ONCE() check to never dereference null pointers.
+> > - Only log when audit is enabled.
+> > - Don't log task's PID/TID with log_task() because it would be redundant
+> >   with the SYSCALL record.
+> > - Move the "op" in front and rename "domain" to "denying_domain" to make
+> >   it more consistent with other entries.
+> > - Don't update the request with the domain ID but add an helper to get
+> >   it from the layer masks (and in a following commit with a struct
+> >   file).
+> > - Revamp get_domain_id_from_layer_masks() into
+> >   get_level_from_layer_masks().
+> > - For ptrace_traceme, log the parent domain instead of the current one.
+> > - Add documentation.
+> > - Rename AUDIT_LANDLOCK_DENIAL to AUDIT_LANDLOCK_DENY.
+> > - Only log the domain ID and the target task.
+> > - Log "blockers", which are either implicit restrictions (e.g. ptrace)
+> >   or explicit access rights (e.g. filesystem), or scopes (e.g. signal).
+> > - Don't log LSM hook names/operations.
+> > - Pick an audit event ID folling the IPE ones.
+> > - Add KUnit tests.
+> > ---
+> >  include/uapi/linux/audit.h  |   3 +-
+> >  security/landlock/Makefile  |   5 +-
+> >  security/landlock/audit.c   | 146 ++++++++++++++++++++++++++++++++++++
+> >  security/landlock/audit.h   |  53 +++++++++++++
+> >  security/landlock/domain.c  |  28 +++++++
+> >  security/landlock/domain.h  |  22 ++++++
+> >  security/landlock/ruleset.c |   6 ++
+> >  security/landlock/task.c    |  96 ++++++++++++++++++------
+> >  8 files changed, 334 insertions(+), 25 deletions(-)
+> >  create mode 100644 security/landlock/audit.c
+> >  create mode 100644 security/landlock/audit.h
+> >  create mode 100644 security/landlock/domain.c
+> 
+> Based on previous discussions I'm under the impression that you are
+> planning to add a Landlock "permissive" mode at some point in the
+> future and based on the comments above you plan to add a "success="
+> field to the _ACCESS record defined here.  There is no problem with
+> adding fields to an existing record, but the general guidance is that
+> new fields need to be added to the end of the record (limitations due
+> the the audit userspace and poor guidance in the early days of audit).
+> Assuming you are okay with that there is no need to change anything,
+> but if you would prefer the "permissive=" field to occur somewhere
+> else in the record you may want to consider adding a "permissive=no"
+> now.  Otherwise this looks okay from an audit perspective.
+> 
+> [P.S. I just got to patch 10/24 and saw the enforcing field there,
+>  the comments above still stand, but it looks like you chose to note
+>  this in the _DOMAIN record, which is fine.]
 
-Fix this by checking property presence with of_property_present as
-intended.
+The mode is indeed specified in the _DOMAIN record.  I think the
+syscall's success field should be enough for users in most cases, no
+need to duplicate information.
 
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
- drivers/pmdomain/imx/gpcv2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
-index 958d34d4821b1be68d730ad345037b8f0a56c45a..105fcaf13a34c787b2d568bc64e7fee9bfc23393 100644
---- a/drivers/pmdomain/imx/gpcv2.c
-+++ b/drivers/pmdomain/imx/gpcv2.c
-@@ -1361,7 +1361,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
- 	}
- 
- 	if (IS_ENABLED(CONFIG_LOCKDEP) &&
--	    of_property_read_bool(domain->dev->of_node, "power-domains"))
-+	    of_property_present(domain->dev->of_node, "power-domains"))
- 		lockdep_set_subclass(&domain->genpd.mlock, 1);
- 
- 	ret = of_genpd_add_provider_simple(domain->dev->of_node,
-
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250218-gpcv2-of-property-present-158f8dbfe2dc
-
-Best regards,
--- 
-Ahmad Fatoum <a.fatoum@pengutronix.de>
-
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com> (Audit)
+> 
+> --
+> paul-moore.com
+> 
 
