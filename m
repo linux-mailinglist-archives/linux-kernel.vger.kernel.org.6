@@ -1,198 +1,165 @@
-Return-Path: <linux-kernel+bounces-520638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C9AA3AC9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:36:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E2A3ACA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CEB63AFEC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:36:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B6016962D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF801D9A7F;
-	Tue, 18 Feb 2025 23:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893781DE2CE;
+	Tue, 18 Feb 2025 23:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ky8adAWR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gtaqD/GW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0B18A6DB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0B1CEAC3;
+	Tue, 18 Feb 2025 23:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739921787; cv=none; b=vEXzu4FChUgcfs8gZroJWWOfK6bU70f3NfNxRjSelm/1tBNWHryPXYkfoUoJ49OIJoozfzyJTlf2H7kxpsMfINZ+8Xb/XlunyfyjzFeV4ph9YIzUGoGVX9C0dHXoMBcW1efoTlG9q0K4w6MJVx+Dfx0Y7m3LhlWn+EHGaoyqgcs=
+	t=1739922018; cv=none; b=IcLZ+tqD+kEFbBgN//lMz4Vs2mqZsel0/ZW59pBbr2sAdMQXPHdpZeJof95Vy2DhNvZnrh1Ar4l0s8HlInBmIimRVPIifGBE7nCKXqCliYTYYlLaWAEvdn/zXDw0fGl5pxZaBIGv79YJtE4zsbVsbdDBuQae+EModyYBUVKSw8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739921787; c=relaxed/simple;
-	bh=mKuzuS/OE08BLmNjpF+o8KaFsOrkJOF3+JG23T7SSa0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=mAYU+v47sOczUwQTy3VOjz+PFkvryGkn1rTz1eVNka0clJcPzWS6pA10n4kl3JGw330NTPAhNlQsHeFbhpeWj1d5o7AKALgHHAAtUjzrD/sPhqTF9WwFzPyC5WuV4K1GZREmD1AomXUys0Cqt/Sde+ev7fC8DBM/Iz2i6MrOwBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ky8adAWR; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739921785; x=1771457785;
-  h=date:from:to:cc:subject:message-id;
-  bh=mKuzuS/OE08BLmNjpF+o8KaFsOrkJOF3+JG23T7SSa0=;
-  b=ky8adAWRIqHVCCSB/Bh8JgzCr9x2q9YWu6GvvWGeRNDQxU79wtDVNaVn
-   GIwHd32swodZnMxcabExjzpDj2gqBbQD++pdHJtDRsDrDmUM8CVpdyZxH
-   PbJrW2kQDl6jOP4dhVqDKDaDr5Bgl0pO0SwmW31IyEm0oEnCl4R97g8Iv
-   ndOoEK44jL/Wix5nbg1Ig87CGo9Lvklnh5hVFCmXV9kg4Gi1ywqLf0Ir1
-   UhDZ/yvTwO6VJGs6PRaiWFV/P2fQuAJMDNzeV5Z0CNQRprFgNoMWyEwsY
-   CX3whp7MgdqPEq9JZePnQ1RbrP0dcqQi7u6fNhb2JognxEaAVyu53CQuo
-   w==;
-X-CSE-ConnectionGUID: WCWVXYzWRHa6TrY+RvO0qQ==
-X-CSE-MsgGUID: nPfAyj/OTaKUE44qe7gePg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40499655"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="40499655"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 15:36:24 -0800
-X-CSE-ConnectionGUID: RtqEsN3FS7GoGauu3q9ixA==
-X-CSE-MsgGUID: 5h1oVe43TCKXxfgaUuCH6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="114284127"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 18 Feb 2025 15:36:22 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkX8V-0000yN-2p;
-	Tue, 18 Feb 2025 23:36:19 +0000
-Date: Wed, 19 Feb 2025 07:36:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/urgent] BUILD SUCCESS
- d7e3fd658248f257006227285095d190e70ee73a
-Message-ID: <202502190752.VzyxVX6G-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1739922018; c=relaxed/simple;
+	bh=vtJYJScwIgD7t/Kjv9WAvIrpkcvjsYEil5lQtdhNnDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FYY7Agfa2ANSdHZs3eeTW2GKeB3vw+XDcNsATJ2biYERDLKqzQilN400h31+oEJMnGgxzY9UDSHiPwnwA1jrdFBsvfwRcQIfLKseNKwMGBdDMexXTNIq6Db914uGBHwQrHo22h7Zkw/F9gUoPGe+mHCCO/yzehPhJC/Lgzm7pxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gtaqD/GW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739922015;
+	bh=vtJYJScwIgD7t/Kjv9WAvIrpkcvjsYEil5lQtdhNnDE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gtaqD/GWX2crjMIVsm9VhPgIp6ynjZ09aQZr76a03msFBEu3FN4S2lLI3hKVIXR6g
+	 2LOCyx9ZvSLA2TOXcjTszgbUuSNTbm1pbAWf0hAavTRc+y2+rR8S5pcR5E2wOcF8tR
+	 LRplrtXfSFculPVtvURaCiLm3OcJ5reQycDBmNKAfUAstLCB74ZnIj1JtUDQNODQ4a
+	 PsSfM1eMYJZBW7KBtqIiKNy3XmfNDycBWITJZVKFPkmnkjVddJqR+8RPSF3Sjl54be
+	 1+K0vAO/qvlBsPPMzC1rIMLXxt4k7mfTjUcjcl7YqwJxTtAnEeoQmXZqMMltmntcOq
+	 eKv7Rd4oXgWSg==
+Received: from [192.168.1.143] (144.232.221.87.dynamic.jazztel.es [87.221.232.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 881CB17E1411;
+	Wed, 19 Feb 2025 00:40:13 +0100 (CET)
+Message-ID: <0dd48599-448f-4472-9a8a-54b7f0379c13@collabora.com>
+Date: Wed, 19 Feb 2025 01:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HDMI1 PHY PLL clock source
+ to VOP2 on RK3588
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Jianfeng Liu <liujianfeng1994@gmail.com>, airlied@gmail.com,
+ andy.yan@rock-chips.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, hjc@rock-chips.com, kernel@collabora.com,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, robh@kernel.org,
+ simona@ffwll.ch, tzimmermann@suse.de
+References: <1919367.CQOukoFCf9@diego>
+ <20250218121749.1382322-1-liujianfeng1994@gmail.com>
+ <lnuceofdwm6lgibworaghcujp6rrncvn4e2xc2vzltimjw3rqu@jur7x5cxt5ue>
+ <2425191.NG923GbCHz@diego>
+ <ldgdrytto5y2xf3ois23j4ymtajtwmqlxjr2zyqhwbbxcx6f6y@gzb37fntx2x6>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <ldgdrytto5y2xf3ois23j4ymtajtwmqlxjr2zyqhwbbxcx6f6y@gzb37fntx2x6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
-branch HEAD: d7e3fd658248f257006227285095d190e70ee73a  irqchip/jcore-aic, clocksource/drivers/jcore: Fix jcore-pit interrupt request
+Hi,
 
-elapsed time: 1444m
+On 2/18/25 6:05 PM, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Tue, Feb 18, 2025 at 03:53:06PM +0100, Heiko Stübner wrote:
+>> Am Dienstag, 18. Februar 2025, 15:13:07 MEZ schrieb Sebastian Reichel:
+>>> On Tue, Feb 18, 2025 at 08:17:46PM +0800, Jianfeng Liu wrote:
+>>>> On Tue, 18 Feb 2025 11:00:57 +0100, Heiko Stübnerwrote:
+>>>>> So I guess step1, check what error is actually returned.
+>>>>
+>>>> I have checked that the return value is -517:
+>>>>
+>>>> rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy1 with -517
+>>>>
+>>>>> Step2 check if clk_get_optional need to be adapted or alternatively
+>>>>> catch the error in the vop2 and set the clock to NULL ourself in that case.
+>>>>
+>>>> I tried the following patch to set the clock to NULL when clk_get_optional
+>>>> failed with value -517, and hdmi0 is working now. There are also some
+>>>> boards like rock 5 itx which only use hdmi1, I think we should also add
+>>>> this logic to vop2->pll_hdmiphy0.
+>>>>
+>>>> @@ -3733,6 +3751,15 @@ static int vop2_bind(struct device *dev, struct device *master, void *data)
+>>>>  		return PTR_ERR(vop2->pll_hdmiphy0);
+>>>>  	}
+>>>>  
+>>>> +	vop2->pll_hdmiphy1 = devm_clk_get_optional(vop2->dev, "pll_hdmiphy1");
+>>>> +	if (IS_ERR(vop2->pll_hdmiphy1)) {
+>>>> +		drm_err(vop2->drm, "failed to get pll_hdmiphy1 with %d\n", vop2->pll_hdmiphy1);
+>>>> +		if (vop2->pll_hdmiphy1 == -EPROBE_DEFER)
+>>>> +			vop2->pll_hdmiphy1 = NULL;
+>>>> +		else
+>>>> +			return PTR_ERR(vop2->pll_hdmiphy1);
+>>>> +	}
+>>>> +
+>>>
+>>> This first of all shows, that we should replace drm_err in this
+>>> place with dev_err_probe(), which hides -EPROBE_DEFER errors by
+>>> default and instead captures the reason for /sys/kernel/debug/devices_deferred.
+>>>
+>>> Second what you are doing in the above suggestion will break kernel
+>>> configurations where VOP is built-in and the HDMI PHY is build as a
+>>> module.
+>>>
+>>> But I also think it would be better to have the clocks defined in the
+>>> SoC level DT. I suppose that means vop2_bind would have to check if
+>>> the HDMI controller <ID> is enabled and only requests pll_hdmiphy<ID>
+>>> based on that. Considering there is the OF graph pointing from VOP
+>>> to the enabled HDMI controllers, it should be able to do that.
+>>
+>>
+>> I was more thinking about fixing the correct thing, with something like:
+>>
+>> ----------- 8< ----------
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index cf7720b9172f..50faafbf5dda 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+>>         if (!clkspec)
+>>                 return ERR_PTR(-EINVAL);
+>>
+>> +       /* Check if node in clkspec is in disabled/fail state */
+>> +       if (!of_device_is_available(clkspec->np))
+>> +               return ERR_PTR(-ENOENT);
+>> +
+>>         mutex_lock(&of_clk_mutex);
+>>         list_for_each_entry(provider, &of_clk_providers, link) {
+>>                 if (provider->node == clkspec->np) {
+>> ----------- 8< ----------
+>>
+>> Because right now the clk framework does not handle nodes in
+>> failed/disabled state and would defer indefinitly.
+> 
+> Also LGTM.
 
-configs tested: 106
-configs skipped: 3
+Thank you all for the feedback and proposed solutions!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I'm currently on leave and without access to any testing hw, but I'll be
+back in a couple of days.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                                 defconfig    gcc-13.2.0
-arc                   randconfig-001-20250218    gcc-13.2.0
-arc                   randconfig-002-20250218    gcc-13.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250218    gcc-14.2.0
-arm                   randconfig-002-20250218    gcc-14.2.0
-arm                   randconfig-003-20250218    gcc-14.2.0
-arm                   randconfig-004-20250218    clang-21
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250218    clang-21
-arm64                 randconfig-002-20250218    clang-21
-arm64                 randconfig-003-20250218    gcc-14.2.0
-arm64                 randconfig-004-20250218    clang-16
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-csky                  randconfig-001-20250218    gcc-14.2.0
-csky                  randconfig-002-20250218    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250218    clang-17
-hexagon               randconfig-002-20250218    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250218    gcc-12
-i386        buildonly-randconfig-002-20250218    gcc-12
-i386        buildonly-randconfig-003-20250218    gcc-12
-i386        buildonly-randconfig-004-20250218    clang-19
-i386        buildonly-randconfig-005-20250218    clang-19
-i386        buildonly-randconfig-006-20250218    gcc-12
-i386                                defconfig    clang-19
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250218    gcc-14.2.0
-loongarch             randconfig-002-20250218    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                            alldefconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250218    gcc-14.2.0
-nios2                 randconfig-002-20250218    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250218    gcc-14.2.0
-parisc                randconfig-002-20250218    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250218    gcc-14.2.0
-powerpc               randconfig-002-20250218    gcc-14.2.0
-powerpc               randconfig-003-20250218    clang-21
-powerpc64             randconfig-001-20250218    gcc-14.2.0
-powerpc64             randconfig-002-20250218    clang-16
-powerpc64             randconfig-003-20250218    clang-18
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250218    gcc-14.2.0
-riscv                 randconfig-002-20250218    clang-21
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250218    clang-21
-s390                  randconfig-002-20250218    clang-15
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250218    gcc-14.2.0
-sh                    randconfig-002-20250218    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250218    gcc-14.2.0
-sparc                 randconfig-002-20250218    gcc-14.2.0
-sparc64               randconfig-001-20250218    gcc-14.2.0
-sparc64               randconfig-002-20250218    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250218    clang-21
-um                    randconfig-002-20250218    gcc-11
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250218    clang-19
-x86_64      buildonly-randconfig-002-20250218    gcc-12
-x86_64      buildonly-randconfig-003-20250218    clang-19
-x86_64      buildonly-randconfig-004-20250218    gcc-12
-x86_64      buildonly-randconfig-005-20250218    clang-19
-x86_64      buildonly-randconfig-006-20250218    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250218    gcc-14.2.0
-xtensa                randconfig-002-20250218    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Cristian
 
