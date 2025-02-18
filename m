@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-518841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF364A39521
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9E2A39526
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57DE37A39FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F58C7A0F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C5B233D97;
-	Tue, 18 Feb 2025 08:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FF022D4E6;
+	Tue, 18 Feb 2025 08:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MvF8gBZs"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bAUkdsNN"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52BE22CBF7;
-	Tue, 18 Feb 2025 08:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830C222CBF7;
+	Tue, 18 Feb 2025 08:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866730; cv=none; b=m3KJ+8qCfiA+zfBmd2M/zE4T9J3inezO/oqPgaF7EXmFrPEfJCTU5ohABAAQP+fMTTHnPEuaXSmzZyPn/4TlQgMl1ogAFWbncsQIV/i0PHCqRB+qw5USyr4w0EFHxnPyHVY2TUfofsrVAa9cg+a4vF83crgg0blKViYL+gJWb+A=
+	t=1739866751; cv=none; b=F67g4VJAXTDlfJizrMu8I4HP+BV8MR1Fc2Q4by0v/KMVmIHfxY4hflKk/o+K3Kr0gvjeNz0WCK1nZgbwhZtG+JEQ3Q5EXXiz4zqwlkP6lB7RUbJP+lq3K1f5bvJt4afOCLgY/kaTL2MkiVQmJvR08h7x2ep8M9bd3jwEr5pJJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866730; c=relaxed/simple;
-	bh=A3dtCBfE4C8c/Xw6lULikavzFkti/llvChkLMpO3s2Q=;
+	s=arc-20240116; t=1739866751; c=relaxed/simple;
+	bh=PewXt3mq2ZzovNzL7I8Fp3xpOP5/pryHgDbcA5gr/7A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YR40DmJnB9rJJdFp6WvWqB3YOOR6efP6KiLXe25undExJFjZ0dxXdHg/vbszaYAYFJ0hvhejdYoWJUw6OcNI/wKebv0gDZKDnXlDu+6ZbprgYrfX11OQEoNTIO7neuHQ62pl7nB6iXPtePE09xNvZOy0S1RIzj8IPx5f5AW3HNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MvF8gBZs; arc=none smtp.client-ip=192.198.163.16
+	 MIME-Version; b=OUpx6aT20u15staoDeDujbR+UM5QpoJ2wmClT+AFMllmVvk1yzUbs2dLiZwx/fhAWGEE3iC+l3u5y9zx5v/MORKdBCCc9XIZjatb/crvdfAh5334zD3ukBpbDDQUowZ3zVXMjSVkHpqm1ViD5Act8Z4IZOvFMwFHsTap8U5IhHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bAUkdsNN; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739866729; x=1771402729;
+  t=1739866750; x=1771402750;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=A3dtCBfE4C8c/Xw6lULikavzFkti/llvChkLMpO3s2Q=;
-  b=MvF8gBZs3I6VDDBs4VlvTLWTbEJ6gaKtSXwEYx3fP8PdJJRSppN5Xmuc
-   FB9HUws+jcjlvI9Tbu7itAhiHDocXJ9cBCQRWCMFSfGkIEQ14t31Mxeyi
-   8p+XTrXlvPkId/FQrz99Yd+EvdZllphctCtqsQry4VPudVUPTNhq3dWuO
-   F/stdzKVudFwuISF1Z23kqUULbP7lcg8McRZm985z5zasNxrTeSLB0Pw0
-   lBH6mDlCDxYImLYYjqPzOqARkBECbozyk/Q7ZdPb3/yWRgcgPjHqFCFrI
-   qotE6VFtmBctUbOdbLJq0ysrgFgcrKUPkjf0elOy5/KYuSeh50moJ1b3o
+  bh=PewXt3mq2ZzovNzL7I8Fp3xpOP5/pryHgDbcA5gr/7A=;
+  b=bAUkdsNNBoYV/AJiC138ouqOCG4NsOIvKOVhdKS47z9eg+uKQAdbpwbk
+   2Krs/dQrI0FVX17Xelix9HzWbM08Qqc/m9L1087/AYdtlEHqbhv8UCn+j
+   jBelJjaDBBwRW/tlfaEG8C0Wn6sP/ffbsSSvgP8/bJn7pGiALk7+oUi1O
+   8+x6AvkRgLjmWZ5nhTw+tRaOKZIb/+W39EfBt1Z8bKOXK0vKcxiODXncA
+   HOCRNXQ9xxY+NpmiSufMfLtNrJ1VJmCTRzE+7ypMk4M3De2l6JjN6f/JW
+   C/zF4DfghiE7D5XXcwvi5sMpM1NKx93Nfe4c9ZZ6LO8SKDYznFkcueSuX
    w==;
-X-CSE-ConnectionGUID: XWQo6N4yQhOUKKkFyJ0zIQ==
-X-CSE-MsgGUID: ALJqhptBR1ayMxJMxkyPYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150325"
+X-CSE-ConnectionGUID: hOe+LKpRSb6YmVebrEpfXw==
+X-CSE-MsgGUID: jEqHV4GHR5GVsfYYXB/Erg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150367"
 X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="28150325"
+   d="scan'208";a="28150367"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:48 -0800
-X-CSE-ConnectionGUID: wF3cj88LRZaiNzHrGFykHQ==
-X-CSE-MsgGUID: O+VYLHV1SG6BS6/LzC21Dw==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:19:09 -0800
+X-CSE-ConnectionGUID: TjE0RLKdQ9KhXqTyx5cbfw==
+X-CSE-MsgGUID: sZVzDBj6QnqZ2EAIVQa3TA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="119247761"
+   d="scan'208";a="119247808"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.49])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:28 -0800
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:48 -0800
 From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 To: kees@kernel.org,
 	julian.stecklina@cyberus-technology.de,
@@ -130,9 +130,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-arm-kernel@lists.infradead.org,
 	x86@kernel.org
-Subject: [PATCH v2 08/14] x86: Physical address comparisons in fill_p*d/pte
-Date: Tue, 18 Feb 2025 09:15:24 +0100
-Message-ID: <c5191b5bee5e0418752bf1c6159a2f0ce3490c1d.1739866028.git.maciej.wieczor-retman@intel.com>
+Subject: [PATCH v2 09/14] mm: Pcpu chunk address tag reset
+Date: Tue, 18 Feb 2025 09:15:25 +0100
+Message-ID: <383482f87ad4f68690021e0cc75df8143b6babe2.1739866028.git.maciej.wieczor-retman@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
 References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
@@ -144,68 +144,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Calculating page offset returns a pointer without a tag. When comparing
-the calculated offset to a tagged page pointer an error is raised
-because they are not equal.
+The problem presented here is related to NUMA systems and tag-based
+KASAN mode. Getting to it can be explained in the following points:
 
-Change pointer comparisons to physical address comparisons as to avoid
-issues with tagged pointers that pointer arithmetic would create. Open
-code pte_offset_kernel(), pmd_offset(), pud_offset() and p4d_offset().
-Because one parameter is always zero and the rest of the function
-insides are enclosed inside __va(), removing that layer lowers the
-complexity of final assembly.
+	1. A new chunk is created with pcpu_create_chunk() and
+	   vm_structs are allocated. On systems with one NUMA node only
+	   one is allocated, but with more NUMA nodes at least a second
+	   one will be allocated too.
+
+	2. chunk->base_addr is assigned the modified value of
+	   vms[0]->addr and thus inherits the tag of this allocated
+	   structure.
+
+	3. In pcpu_alloc() for each possible cpu pcpu_chunk_addr() is
+	   executed which calculates per cpu pointers that correspond to
+	   the vms structure addresses. The calculations are based on
+	   adding an offset from a table to chunk->base_addr.
+
+Here the problem presents itself since for addresses based on vms[1] and
+up, the tag will be different than the ones based on vms[0] (base_addr).
+The tag mismatch happens and an error is reported.
+
+Reset the base_addr tag, since it will disable tag checks for pointers
+derived arithmetically from base_addr that would inherit its tag.
 
 Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 ---
-Changelog v2:
-- Open code *_offset() to avoid it's internal __va().
+ mm/percpu-vm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/x86/mm/init_64.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 01ea7c6df303..e555895dbb68 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -251,7 +251,10 @@ static p4d_t *fill_p4d(pgd_t *pgd, unsigned long vaddr)
- 	if (pgd_none(*pgd)) {
- 		p4d_t *p4d = (p4d_t *)spp_getpage();
- 		pgd_populate(&init_mm, pgd, p4d);
--		if (p4d != p4d_offset(pgd, 0))
-+
-+		if (__pa(p4d) != (pgtable_l5_enabled() ?
-+				  __pa(pgd) :
-+				  (unsigned long)pgd_val(*pgd) & PTE_PFN_MASK))
- 			printk(KERN_ERR "PAGETABLE BUG #00! %p <-> %p\n",
- 			       p4d, p4d_offset(pgd, 0));
+diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+index cd69caf6aa8d..e13750d804f7 100644
+--- a/mm/percpu-vm.c
++++ b/mm/percpu-vm.c
+@@ -347,7 +347,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
  	}
-@@ -263,7 +266,7 @@ static pud_t *fill_pud(p4d_t *p4d, unsigned long vaddr)
- 	if (p4d_none(*p4d)) {
- 		pud_t *pud = (pud_t *)spp_getpage();
- 		p4d_populate(&init_mm, p4d, pud);
--		if (pud != pud_offset(p4d, 0))
-+		if (__pa(pud) != (p4d_val(*p4d) & p4d_pfn_mask(*p4d)))
- 			printk(KERN_ERR "PAGETABLE BUG #01! %p <-> %p\n",
- 			       pud, pud_offset(p4d, 0));
- 	}
-@@ -275,7 +278,7 @@ static pmd_t *fill_pmd(pud_t *pud, unsigned long vaddr)
- 	if (pud_none(*pud)) {
- 		pmd_t *pmd = (pmd_t *) spp_getpage();
- 		pud_populate(&init_mm, pud, pmd);
--		if (pmd != pmd_offset(pud, 0))
-+		if (__pa(pmd) != (pud_val(*pud) & pud_pfn_mask(*pud)))
- 			printk(KERN_ERR "PAGETABLE BUG #02! %p <-> %p\n",
- 			       pmd, pmd_offset(pud, 0));
- 	}
-@@ -287,7 +290,7 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
- 	if (pmd_none(*pmd)) {
- 		pte_t *pte = (pte_t *) spp_getpage();
- 		pmd_populate_kernel(&init_mm, pmd, pte);
--		if (pte != pte_offset_kernel(pmd, 0))
-+		if (__pa(pte) != (pmd_val(*pmd) & pmd_pfn_mask(*pmd)))
- 			printk(KERN_ERR "PAGETABLE BUG #03!\n");
- 	}
- 	return pte_offset_kernel(pmd, vaddr);
+ 
+ 	chunk->data = vms;
+-	chunk->base_addr = vms[0]->addr - pcpu_group_offsets[0];
++	chunk->base_addr = kasan_reset_tag(vms[0]->addr) - pcpu_group_offsets[0];
+ 
+ 	pcpu_stats_chunk_alloc();
+ 	trace_percpu_create_chunk(chunk->base_addr);
 -- 
 2.47.1
 
