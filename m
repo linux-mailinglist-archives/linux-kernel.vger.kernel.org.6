@@ -1,110 +1,214 @@
-Return-Path: <linux-kernel+bounces-519753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BACA3A175
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E71FA3A171
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669A4173803
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275F3188EBD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E9D26D5CA;
-	Tue, 18 Feb 2025 15:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8010026E150;
+	Tue, 18 Feb 2025 15:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDF4hNMH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nXqiVTDN"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE8126B953;
-	Tue, 18 Feb 2025 15:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C4A262811
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893045; cv=none; b=oLT/1Iyl9uOctGwZmBzNWvSTBtfjCqNPdEP4oO4R39jR/dSZOkqllc7kYhjOFEbID9X/mP9s8yK1V8xH70P9NPsxDXbxzv4BIncuddJiN5hHWR6oc72arRW9Nh7M4qbzneCCgGhvQ1mhHKhc0rN8PX8AcWMaawfO7QOXOkOS450=
+	t=1739893089; cv=none; b=AesswdcSxcxeHbO9zl4q3xs0ibRPCljrAy/7Cjta608QkqornCru1CJYSOkqtgIU3VXDk+7gxn9BIXbxS4ZqJuvAkLrgZdrOEXCv2g01GMt/hWDZG8feOKBQc5w49HRzi0UwmB13Wdt61pvgHyZ2ThRCFx6QFFu8ZVl9pvla2Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893045; c=relaxed/simple;
-	bh=Pt12o47FXSx6eqtwoWUeScEOX3oJJlfjIsbV4sD9XRQ=;
+	s=arc-20240116; t=1739893089; c=relaxed/simple;
+	bh=0aD6ufK/vC5tUbx+0/mu6k4fhbXKSczIRmW2JTUH1Vg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9EMg8k/tN/fId8Z3EptwrApO4D73OsgRVw73R9XKkYfq6C3n6MK86kRprmb24tHLc72jOJ9oYMwTkLQayvvbxP7+RM1LYS5I6COibI0Mp3au9Vq8IycLr+hA2AUBHsOTUgkf93u/gA1Oeb34ipXr9Dn78CsLwoPMw5qGdpg/zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDF4hNMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D349AC4CEE2;
-	Tue, 18 Feb 2025 15:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739893044;
-	bh=Pt12o47FXSx6eqtwoWUeScEOX3oJJlfjIsbV4sD9XRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eDF4hNMHcXEh9Ay/SdBtdRxvDYUKoYxDDUdeW3dHZag7lEFN8wUHLFvSQoxdb62sh
-	 Xlm2+apObb3FGSZFjoe9Pnl4Gi1GjPLkHrxiJkI9+xDq/pbYfz+d+J4YEj8Yfp4VGS
-	 YFa/BOBbzoT/kZOXn8eK3PlIFq64OmvHQ3ggHcr0581ejv9L0ueZwsvAl6vsUMwWQ5
-	 LHL5OBSxvVxc7vKSVUuyHz74VFHwyXUHM9eWo6cyoAahzOFlU3Z0VVtBMDRHNWt4Ea
-	 TdZudm6Zhx+rl4oPz1rrTYMARc8AKbTzfZqd5rd+3jEJU8HyikPHJKAtdRhW8mi2Ne
-	 EUhIt0or/aJ/Q==
-Date: Tue, 18 Feb 2025 15:37:21 +0000
-From: Mark Brown <broonie@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH v2 26/29] ASoC: tas2770: Add zero-fill and pull-down
- controls
-Message-ID: <Z7SpMY1XtvjlUTDo@finisterre.sirena.org.uk>
-References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
- <20250218-apple-codec-changes-v2-26-932760fd7e07@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Py+qp9rpsUWFCh4tdeTDGlWlZtFAJotmFXZImRxANXfUKw5svUb4IJGbeWd2+RoT1bi005A6w9uv1puW+d8KHHkrks3V6f0LGFOH5ovSqvXQf3W1sF0KKCFdDdkuMb2ouoaqla0lFaPp8w2U5xydSWr1A2yqmLzLR1sbMmx471A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nXqiVTDN; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 18 Feb 2025 21:07:31 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1739893076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NhAs/+alc8iOs1QMRuJFdglVREAEu5m/W/RgQbql3+k=;
+	b=nXqiVTDNSQwRJUS6oQyCJjjCvqgFPeh581yPRfXMfaW6dEhwuEZ7resmRcaG6VyJ1fxAKA
+	osrk0LTmA16VdgqgyQy2GQrmMvGSOYpbUYWSWapsGIFzLsp5ybTIbZBTgZ1aHIjPhm7v4a
+	zYFrtiL5GrkI4CZJVnLcU00SHZ0FXEc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: "mripard@kernel.org" <mripard@kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "devarsht@ti.com" <devarsht@ti.com>, 
+	"vaishnav.a@ti.com" <vaishnav.a@ti.com>, "r-donadkar@ti.com" <r-donadkar@ti.com>, 
+	"u-kumar1@ti.com" <u-kumar1@ti.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczog?=
+ =?utf-8?Q?media?= =?utf-8?Q?=3A?= cdns,csi2rx.yaml: Add optional interrupts
+ for cdns-csi2rx
+Message-ID: <swqtud4ohcsjjt4ofgrovsa5h7koriuvpmxb3hdemnndwems2a@nwiny4dvuzwg>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250217130013.2802293-1-y-abhilashchandra@ti.com>
+ <20250217130013.2802293-2-y-abhilashchandra@ti.com>
+ <m6ijg5colbev6lyhiobblecb4wlvwezpccibnso26gd3dadrfh@twgul4eel6hg>
+ <ZQ0PR01MB13022FE965643879D8794733F2FAA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Dgm1DNGToy699Htt"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ngdnlsgngwdiatpe"
 Content-Disposition: inline
-In-Reply-To: <20250218-apple-codec-changes-v2-26-932760fd7e07@gmail.com>
-X-Cookie: Editing is a rewording activity.
+In-Reply-To: <ZQ0PR01MB13022FE965643879D8794733F2FAA@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+X-Migadu-Flow: FLOW_OUT
 
 
---Dgm1DNGToy699Htt
-Content-Type: text/plain; charset=us-ascii
+--ngdnlsgngwdiatpe
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczog?=
+ =?utf-8?Q?media?= =?utf-8?Q?=3A?= cdns,csi2rx.yaml: Add optional interrupts
+ for cdns-csi2rx
+MIME-Version: 1.0
 
-On Tue, Feb 18, 2025 at 06:36:00PM +1000, James Calligeros wrote:
-> From: Hector Martin <marcan@marcan.st>
+On Tue, Feb 18, 2025 at 09:35:50AM +0000, Changhuang Liang wrote:
+> Hi Jai, Abhilash
 >=20
-> Expose the bits that control the behavior of the SDOUT pin when not
-> actively transmitting slot data. Zero-fill is useful when there is a
-> single amp on the SDOUT bus (e.g. Apple machines with mono speakers or a
-> single stereo pair, where L/R are on separate buses).
+> > Hi Abhilash,
+> >=20
+> > On Mon, Feb 17, 2025 at 06:30:12PM +0530, Yemike Abhilash Chandra wrote:
+> > > The Cadence CSI2RX IP exposes 3 interrupts [0] 12.7 camera subsystem.
+> > > Enabling these interrupts will provide additional information about a
+> > > CSI packet or an individual frame. So, add support for optional
+> > > interrupts and interrupt-names properties.
+> > >
+> > > [0]: http://www.ti.com/lit/pdf/spruil1
+> > >
+> > > Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> > > ---
+> > >
+> > > Changes in v2:
+> > > - Address Krzysztof's review comment to remove flexibility while addi=
+ng
+> > >   interrupts.
+> > >
+> > >  .../devicetree/bindings/media/cdns,csi2rx.yaml         | 10
+> > ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > > b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > > index 2008a47c0580..f335429cbde9 100644
+> > > --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> > > @@ -24,6 +24,16 @@ properties:
+> > >    reg:
+> > >      maxItems: 1
+> > >
+> > > +  interrupts:
+> > > +    minItems: 3
+> > > +    maxItems: 3
+> > > +
+> > > +  interrupt-names:
+> > > +    items:
+> > > +      - const: info
+> > > +      - const: error
+> > > +      - const: monitor
+> > > +
+> >=20
+> > How many interrupt lines are actually exposed by the Cadence IP?
+>=20
+> I only see that the Cadence IP exposes two interrupt lines: irq and err_i=
+rq. If there are any mistakes,=20
+> please help correct them.
+>=20
 
-This is adding a DT property, please add a bindings update.
+Thank you Changhuang for the quick confirmation.
+This seems to match CSI_ERR_IRQ and CSI_IRQ in TI's integration.
 
---Dgm1DNGToy699Htt
+> > It is not clear to me from the TRM [0]. From the "Table 12-1524. CSI_RX=
+_IF
+> > Hardware Requests" it looks like there are three separate interrupt lin=
+es
+> > CSI_ERR_IRQ, CSI_IRQ and CSI_LEVEL, which are routed to the Arm core/GI=
+C.
+> > And four lines for the ASF submodule (?) that are not routed to GIC.
+> >=20
+
+Abhilash,
+
+What is unclear to me is where the third CSI_LEVEL interrupt line is coming=
+=20
+=66rom?
+
+The TRM description of the CSI_LEVEL interrupt says it is for PSI_L overflo=
+w=20
+or VP0/VP1 frame/line mismatch, both of which are outside the Cadence CSI2R=
+X,=20
+instead belonging to the TI wrapper hardware, which has its own driver.
+
+> > This does not match with the error, info and monitor line names mention=
+ed
+> > here.
+> >=20
+> > In my understanding which interrupt lines are actually integrated will =
+vary
+> > from SoC to SoC, so please check what are the actual interrupt line nam=
+es
+> > exposed by the Cadence IP. Maybe Maxime knows more.
+> >=20
+> > But I don't think it is correct to make all 3 mandatory together, as so=
+me
+> > vendors may only integrate the error interrupt ignoring the rest.
+>=20
+> Agreed.
+>=20
+
+I think by default there should only be two optional interrupt lines for=20
+cdns-csi2rx, "irq" and "err_irq" which is common across vendors.
+
+If this third TI-specific CSI_LEVEL interrupt *has* to be handled by=20
+cdns-csi2rx driver, it would be better to create conditional bindings and=
+=20
+match data in the driver such that the irq is only requested if=20
+"ti,j721e-csi2rx" compatible is present.
+
+> Best Regards,
+> Changhuang
+
+Thanks,
+Jai
+
+--ngdnlsgngwdiatpe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0qTAACgkQJNaLcl1U
-h9DMrQf/XvTsX5DHjtmIknji5B4246yYWOquIxmQFtaGwN4c6iu8iDlW5f+cJiAr
-by1QACyYIwd6ef3vxOD1CG2g2cwwvaqIsvX/lSYmeV276wLBi9Bhkwyxx0ySmQZD
-7xOktLhIXsmRkIMpgJfciaRdzE4F5XGjeCcBZB8AjtimcWFDuDI/iT3FAfCPM2mB
-oHFMT8pSHn3Cx9uq56GJbeE3fyXQkSJcQz7X3ExQ4U3kTDXeqIB/EbPwbFcgg0py
-8rwXonCUMy4wdVTjkngjs5G5alrlG70k2/vRqGtPJ803/xs4M2R6jZecudOuCzby
-KnFXB6e3l06mZTM40xMSm70VixH5dQ==
-=y0ej
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAme0qTsACgkQQ96R+SSa
+cUV6YxAAhNSjyeqRNGXC5vnrDW2XCuer0HIH05/FELfhTHKMJ1j+iLVI4G27/76Z
+ZqPiLRl06wAG1IBx1sG4HqA/JLRCDx8UNAXkmulIqD9esZ7/aEglJlqwUv8qYcok
+L663Ie+8JS699GyKEsJd55atAJgE4s7Sez4kPBYq7PxOn8saSlHYPpExaWDwfrxI
+48m2uAQV6K7oUKiScFvZ73e2Spp6bHs8kzfZ1nVG3mGjSpfvxzsWQfgLhsXLwCbr
+9NMY3JNwC++0xNS/koraurUyTLQEH7N+7hFsY7vWz5FGSobyK1PPCMSHA7hl3T1I
+2OxiQ5ZIcdGB/lgjaucZ+DdFrM5Vh4ZYdjnNKcHNfGx8rUtZ00O7DJybbUKeUzoS
+sXLWVCbE7TUg6WT22FWOZZDV5cbMoIBTcY3sxnSWDYs3Rny9mOTr3SuVcX0YkC8J
+L6pOmUUShpq8wy6AUSK0OKoMK/7z+H6j2/EyCdJlIRn52jK0bO/XDZrdeXrKEjWT
+HpiVm1wOhdK3D3LPg60etT0JH/P4nLcUdeiZcE5knVZO6hwCLI3Hb1CISWFaxiwd
+baTbG+54Fh08aIH+2peyYN00X+PYWXSujVs9OM4wzytOZw0bqtjD5albJT5IOJVy
+oqXPkXawH87SbNOTbIbuHQLqRbv82SERtacdnsVAjf7gKhHE/eM=
+=ZqEt
 -----END PGP SIGNATURE-----
 
---Dgm1DNGToy699Htt--
+--ngdnlsgngwdiatpe--
 
