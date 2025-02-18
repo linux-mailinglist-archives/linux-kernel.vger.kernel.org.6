@@ -1,260 +1,155 @@
-Return-Path: <linux-kernel+bounces-520004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1835EA3A49F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:48:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9309A3A4A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A03E3A012E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF013188B7EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D8C270EBF;
-	Tue, 18 Feb 2025 17:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F99270EC2;
+	Tue, 18 Feb 2025 17:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DqhElXL1"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oCX4y4n/"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38226FA59;
-	Tue, 18 Feb 2025 17:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739900894; cv=fail; b=TEposclnyClLmEGpcz6hGyduDVLFy/B3TbQesU22rW2Ll+3uw2bFXHH/Xp171SydEoDpgalaVkafx/2PBXSfErviuqVizBHcpdeFIxR2vKcZqBbnYn3O4wumO9hVPrtOS6fuPcRCEZcN8VeBgc7D6K1T3YreInpneZVwCKg3hkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739900894; c=relaxed/simple;
-	bh=dMh7bGZVd3EmChNxFSOm9kCk4NA12TfVvRFKv2SjltU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqD1T65uf4F/Zq6gQVwY+7RkZTrqBeAB08UtXFU0jnIhaKC9QdyqQveiqv0zzS+xx2VCvS6RJHe0lNMXypHt0rMr/wh/tJH1xo6/fzslbayCbq+GFja0gt0hObiHxCQLMOm7hx6n6NPJwsFMFOJNRo0I/quH7qZeQdVOzum7gHs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DqhElXL1; arc=fail smtp.client-ip=40.107.243.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hvEZqX6IJvR4OUok4YlhE4gT83lHLqpNtaC30FB9WfJBj6C7eYyKgoiLvgRIW2gVHg7OwJtAd02Ad75wHHCTSk1KljLnXf/ByMm4rmf9U/pisodvOJrd9J9YBeXJR3NRPjD24BrPSk9tvOkn+Jsy6FikjfbhMz8A4CScTRIDZIRLXBOYf6vbw7q/RoqMYk40SJTmEfLo+Nb99re/4ms4OjqvoVSsLNbEr+gNirQN7JzRtTTSCv35b+n2eyMKa96JLal/FrHtj3X/k+BjQP5MxylEVtXVZ0staFzbsdEOl5sweG/GQKqCZ8kAknvI6HZhxCvGnaXZ85KAwC6PX3EUXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EPtkH+9tRj0bGHNqJZLPBv/Q2rSN8i7fVPL1WNVmhEY=;
- b=UmjO0nOGxGYPbCN1sT3Mq5pBeX3M7hWlohyeH3ZCXk/nXGd0tJlTJBszL0H0RLPSMB1Ck2eEksiSm/WfyX+ekOfLr/qAlWb98mjf1Jyu7RwhGxsc/Zmm2Z+BaV44iwOGbbmndTdIbWpShPEEzONrg5L9sZCaSunKff01GYR9GpZFnaSobBYDnsTCpW99qLjrkPnErWqUkh/EcqErTfJBhjsxNGnXTTuw2uB3em821qqbqaLngtJU1gVc6rzzY6P6N9TAxqN0RTgiDNrFk2mM6VruG1iOcS5Tt9DPw9m26eOAD0bVKJsPQ7HXHQcAzQqXRSfMjFEqmcFNHpWdEdDbZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EPtkH+9tRj0bGHNqJZLPBv/Q2rSN8i7fVPL1WNVmhEY=;
- b=DqhElXL1uRBHuiQD/n5wCNWOq8b6JS+3p/pSMpHZAdE7yu7yPSgxIhNgntAXATOTChxk4NRoUhf2fRrRTF16HCZRUnfmwmuY80oD7TJljNRWOi5Vptz33dZ1SgezbpVfg0/wnE/73OTDqRjFkiiQeUN8LVtvSbuGoHtnSyyxf506ULTBEIGm9mChpcoUajKTclg9taPL/JpwsYRfDzwz+whlK9Zl6juUWToKXJyj0g58xN0CFcK4c8qYqX7bhSUkRgYyC19fYrX04FraxJsQenDR/yfgKU35rBPgyzGrp78z99WXlKq18kGBTUlFqxoTjNJbyvhAikk/T2YVRRlUZw==
-Received: from SJ0PR13CA0157.namprd13.prod.outlook.com (2603:10b6:a03:2c7::12)
- by DS7PR12MB6310.namprd12.prod.outlook.com (2603:10b6:8:95::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.18; Tue, 18 Feb
- 2025 17:48:04 +0000
-Received: from SJ1PEPF0000231B.namprd03.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::8c) by SJ0PR13CA0157.outlook.office365.com
- (2603:10b6:a03:2c7::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.13 via Frontend Transport; Tue,
- 18 Feb 2025 17:48:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ1PEPF0000231B.mail.protection.outlook.com (10.167.242.232) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Tue, 18 Feb 2025 17:48:03 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Feb
- 2025 09:47:53 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 18 Feb 2025 09:47:53 -0800
-Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 18 Feb 2025 09:47:51 -0800
-Date: Tue, 18 Feb 2025 09:47:50 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
-	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v6 05/14] iommufd: Add IOMMUFD_OBJ_VEVENTQ and
- IOMMUFD_CMD_VEVENTQ_ALLOC
-Message-ID: <Z7THxrq/6sYP/AIi@nvidia.com>
-References: <cover.1737754129.git.nicolinc@nvidia.com>
- <2fb8d9c7b01ad36b42849283cd33d931f11092cb.1737754129.git.nicolinc@nvidia.com>
- <20250218152959.GB4099685@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411B826B975
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739900927; cv=none; b=WJLJhX8E7KVXdd3gX/oozjlYgkaK+JmuowcWvn7PYNdmyULmeOvY3OveYceJgwLipVGPn1rZZud2Ou13QqxY+NvbdwjQG97R4ZA6huv6istNKkmdnHjrAHUdcFwVyHciCG/ETX8r4FrPP3siwaVxs5zIlVsLoe1W6pfwJxc6zlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739900927; c=relaxed/simple;
+	bh=iauYa14SsO/lsoYscvnp8YszrySxWKqagso3jWg5CLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hw+3S2loSXRTX3rpNohT21+V+6cCiMUjCV8PjK+12bH0CBUNwimxgj6eLCmnGdu7euFnAwsg2Pk4DTaO0YRmbPxNCxHfx29hf2g4l8zoDqLCPSCHAkgMzGxdUix3Q+qX2DRE8gErOpg54OKLNEc46MKf9AuEos4eusYhBNDOzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oCX4y4n/; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso3776252f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1739900922; x=1740505722; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Y/9F2KANNnqRPhOVip+6sGGo7ED+K7ta4GpssYl+9ok=;
+        b=oCX4y4n/UKpgMVUsJdVILw92Q0kzKN5V1cKjYbkWlhFiiTLyWsVKtH4mqwqXsayqjD
+         7aYSDmoQt/kAkIjNU52KNUkJ0X91mSNZ6bCuqLBud630s8X6Tx8SKAC5YGJ0v1tt0GJN
+         XewWExI+EOrmPU0nXKTgPRrKXjVkAMDnX/yfC/T5TzHj2KozMABwSunFgEX0l2Bu/lV9
+         Mh/NR0mR4PQfRD3X6ok7GhdE/HGliEdAdGanMYZ3dZpzQ+2shOMHdrekX9pCmT5CYE3i
+         nGAzEGakxh4xptatgM8p2+JbyggYkjvZ2NyFgs8qL8EAaNHkCYziIGJp6/yj4s3YGO76
+         RdPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739900922; x=1740505722;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/9F2KANNnqRPhOVip+6sGGo7ED+K7ta4GpssYl+9ok=;
+        b=bB3P4raeLVh9ZGsgT7EMgY8iiyAepVno8p+yS4OIZnLVCTL39vF76u1raWQ1xkeiKz
+         nsA1IjNpLjt6Uf8Bw6EdHvw9xEZvvf5HefEHu5lWD5NPtIty7eTRUjsa0c387EADg11n
+         3q4FYjnY6hsWFfDHBZinhuXPAAItHNx14gigmiyVxBuSZ7+f5tOQ2u0q32UKvfqVyJX0
+         zMziwirsd/w54sX2AYjZbPQW5NLHj7329ZQaSQFfA+jLv1Z7ghEz2FwmLfY4/dMUvT12
+         2NohFIDuzFHsYdlZjlgW32uUDdOGdpZ7M/s2OcKWbgX/NddpbECS+2J/yQiAoqmfTFXi
+         aXpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWahFtpPTz2+Ck0E4p/g3MF9mdkfyUtNd+Q/O2ty3T0jG15kmotwJJd6ixXcp2Qrh8urwkSch2V7WpYxXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOuPpRKN2ikzhydC7sAwQAmuTcYnSF24Hq8XMuMyqugB0H3CcY
+	mBmL6IgqjxUuVfUYhYu4iECE0QKwtP1Ga08izCwWMptzPGWXjocjoi4BYeQxHZY=
+X-Gm-Gg: ASbGncvc+4JWNdVyyOyFXaFg2DFzRms34T0WfZiSm4DWUmkGfgri94+cmJbzf2qoZ1u
+	ApB2TmkAsfL4R0XctMH2boTi3XWom3gtM09E7ha2teB8ah7rppocddLXZrzVN3RqINc7/aUj6W1
+	qYj7QkqliI6OB5OguRs5jR2JUeMC3yBoRnEzjX10thxN8xabf1/cZHx13OBOpEEs5Rk73wlYSgU
+	wRFbNo4LrZ/RItXQmrtlP7jz4DA+FWrXtgfmWA/UVxPPrpJyvWwt7c5mYTZHtnb+I99u58zsWLR
+	2SM=
+X-Google-Smtp-Source: AGHT+IGDVdEGfqSSRSuokSOsRD/Nb4bUupeEDDpkXhWkKSM85eFfn/T5hKxjkCf6oi4D/15usSNtVA==
+X-Received: by 2002:a5d:6c68:0:b0:38f:4acd:975c with SMTP id ffacd0b85a97d-38f58795a45mr438523f8f.27.1739900922377;
+        Tue, 18 Feb 2025 09:48:42 -0800 (PST)
+Received: from localhost ([2a02:8308:a00c:e200::766e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258dcc45sm15720336f8f.33.2025.02.18.09.48.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 09:48:41 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:48:41 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?6aG55paH5oiQ?= <xiangwencheng@lanxincomputing.com>
+Cc: "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "atishp@atishpatra.org" <atishp@atishpatra.org>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
+Message-ID: <20250218-57a3a16e477f83a8c267d120@orel>
+References: <38cc241c40a8ef2775e304d366bcd07df733ecf0.1d66512d.85e4.41a5.8cf7.4c1fdb05d775@feishu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250218152959.GB4099685@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231B:EE_|DS7PR12MB6310:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a0f3359-2756-40b0-f4d6-08dd504464ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wgTMqKW5hKOMQcpxMRRIiovFtqBSEBPE3lk5W6KvxCZO9wBpCTaKYLLITCoa?=
- =?us-ascii?Q?Aw8obeza1JEKfwDAwxYGiwGaHIx+Y+YpyUReyKtA4jeydSnVz2NM+CA81Eov?=
- =?us-ascii?Q?/DJQxA5nQBcZGffW3xLO1hL809dxPPU2j38aDxMz07fAPogy8BnmJ/9wtxbK?=
- =?us-ascii?Q?6fWScqfZw8kvdUKvHL9kswyCvG3z2I7gcFPUy9JlNU/aNqnbWYgcLGYnxYgJ?=
- =?us-ascii?Q?gSBquYY8nZQMdMEZObYjnmgl8/o2oHicqknQDZejeFB0ZjaaHfEoiTFlUoR2?=
- =?us-ascii?Q?+YLXJoapoLjyyuh2q3oQHBkCjVntvITNny4Su9sLT7T0KAdsLGdF2tbt8Gls?=
- =?us-ascii?Q?b2kU2hc5ayWp0iuXQRNxPYXXzaLsmA3IK543j72kp7fdtLTkBZDMgJ81SmIb?=
- =?us-ascii?Q?5IFGmd38Q852kDcL6KJ7tkTRRiOItWabctBlnDSEwvZniZmbDdqzKsvxrG3G?=
- =?us-ascii?Q?0kCxw0JAk2JIKKiQqjb+DTzn0D5/17XWAWaJEdcWbrL60d/bfrp4UMpA83If?=
- =?us-ascii?Q?a+MnS2agW1E0A/Gy63GZKf/0QTSg+Bx1P5htTcPEP4O/bIna2MwD75WoeWTE?=
- =?us-ascii?Q?7dKRj81dS1psXsyG9zoYIT+qLGRDdECgZMjHTOGHYFfGBToSR80MTeISg2TR?=
- =?us-ascii?Q?LeT62e6ivy6QXbKCH6GUaoE5AmJ1WsZuVuMdijq8r1+GJvCa2hS4txcr/35C?=
- =?us-ascii?Q?JxPadIeFC9Tj6NFBqHeosySI1YtobwV16ZMis3Nv4E7tEX4+s1nxvNrjsK6G?=
- =?us-ascii?Q?RmCjjnD1MXRwX1aZiE1quUEEGiJGOV64UBiNpfoH1hhrMX0078AJlVRsc2oM?=
- =?us-ascii?Q?TN5N95RfFWbuOaZEKLP7Lxl0FS88DYpqSaaisFJDq7rRZFerfB9taS0/fPIL?=
- =?us-ascii?Q?tv0JPWFypFkA6X8cc1yZJyb7kn2Xv+LF30Ts3FaRMKpt/kCw+S5JRQ7U3zME?=
- =?us-ascii?Q?bJ/BE4IT/FH6Wg/eviGvZABxrSs20Xi7541acYfvQuGhtupSw19fvpcu6Xpz?=
- =?us-ascii?Q?3L0HllBMafCO9phtZOsXITvcrxA5Gxi8S5zqKhv/z1cPBOz9tZpXL5jjcFX4?=
- =?us-ascii?Q?byFSCXSRIio1Vpzdf5tNGlxLWrMHSiFNHuADNMoJU+gGubMLcmWnAfJJClCB?=
- =?us-ascii?Q?eJFpG3Zfp9PYJoFbVTxp7vmkeBHiZsVfYvm7sFVQSdvgCdBxeKKjmrpt+gw1?=
- =?us-ascii?Q?T6cJwKRhjwNoHNkZoKE3VZUpf2XZisJg7v8q11rhsqRXsM6Vzi1O+ctRo2tQ?=
- =?us-ascii?Q?m17RiyHEz6PEKIXIQPGI3MKdloVDFdgfvFny66mdxrzfZc+BrAGf6xIfJGFj?=
- =?us-ascii?Q?jNO6fMO9lOAVmNShc0F66pKSYzynSwGpJLuERv3URGUH//o6EMMM09Xl3zZH?=
- =?us-ascii?Q?0xUBxZyTSs3IraxsXoTcawWiomY546gLKe0FqZMZrsjHCpcgBLvfKGj0FLZ1?=
- =?us-ascii?Q?OOvzDYewjaoynVVYtUMkTfDfHzIoGXxMlKFRIskOCpWGEMXUI7XRzfzGLS1g?=
- =?us-ascii?Q?umGJOmbZmHQH8RY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 17:48:03.7545
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0f3359-2756-40b0-f4d6-08dd504464ee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF0000231B.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6310
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <38cc241c40a8ef2775e304d366bcd07df733ecf0.1d66512d.85e4.41a5.8cf7.4c1fdb05d775@feishu.cn>
 
-On Tue, Feb 18, 2025 at 11:29:59AM -0400, Jason Gunthorpe wrote:
-> On Fri, Jan 24, 2025 at 04:30:34PM -0800, Nicolin Chen wrote:
-> > +	list_add_tail(&vevent->node, &eventq->deliver);
-> > +	vevent->on_list = true;
-> > +	vevent->header.sequence = atomic_read(&veventq->sequence);
-> > +	if (atomic_read(&veventq->sequence) == INT_MAX)
-> > +		atomic_set(&veventq->sequence, 0);
-> > +	else
-> > +		atomic_inc(&veventq->sequence);
-> > +	spin_unlock(&eventq->lock);
+On Tue, Feb 18, 2025 at 04:00:24PM +0800, 项文成 wrote:
+> From 30dd00f6886119ecc5c39b6b88f8617a57e598fc Mon Sep 17 00:00:00 2001
+> From: BillXiang <xiangwencheng@lanxincomputing.com>
+> Date: Tue, 18 Feb 2025 15:45:52 +0800
+> Subject: [PATCH] riscv: KVM: Remove unnecessary vcpu kick
 > 
-> This is all locked, we don't need veventq->sequence to be an atomic?
+> Hello everyone,
+> I'm wondering whether it's necessary to kick the virtual hart
+> after writing to the vsfile of IMSIC.
+> From my understanding, writing to the vsfile should directly
+> forward the interrupt as MSI to the virtual hart. This means that
+> an additional kick should not be necessary, as it would cause the
+> vCPU to exit unnecessarily and potentially degrade performance.
+> I've tested this behavior in QEMU, and it seems to work perfectly
+> fine without the extra kick.
+> Would appreciate any insights or confirmation on this!
+> Best regards.
+
+The above should be in a cover letter so the commit message can
+be written following the guidelines of [1]
+
+[1] Documentation/process/submitting-patches.rst
+
 > 
-> The bounding can be done with some simple math:
+> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
+> ---
+>  arch/riscv/kvm/aia_imsic.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
->   veventq->sequence = (veventq->sequence + 1) & INT_MAX;
-
-Ack. Perhaps we can reuse eventq->lock to fence @num_events too.
-
-> > +static struct iommufd_vevent *
-> > +iommufd_veventq_deliver_fetch(struct iommufd_veventq *veventq)
-> > +{
-> > +	struct iommufd_eventq *eventq = &veventq->common;
-> > +	struct list_head *list = &eventq->deliver;
-> > +	struct iommufd_vevent *vevent = NULL;
-> > +
-> > +	spin_lock(&eventq->lock);
-> > +	if (!list_empty(list)) {
-> > +		vevent = list_first_entry(list, struct iommufd_vevent, node);
-> > +		list_del(&vevent->node);
-> > +		vevent->on_list = false;
-> > +	}
-> > +	/* Make a copy of the overflow node for copy_to_user */
-> > +	if (vevent == &veventq->overflow) {
-> > +		vevent = kzalloc(sizeof(*vevent), GFP_ATOMIC);
-> > +		if (vevent)
-> > +			memcpy(vevent, &veventq->overflow, sizeof(*vevent));
-> > +	}
+> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+> index a8085cd8215e..29ef9c2133a9 100644
+> --- a/arch/riscv/kvm/aia_imsic.c
+> +++ b/arch/riscv/kvm/aia_imsic.c
+> @@ -974,7 +974,6 @@ int kvm_riscv_vcpu_aia_imsic_inject(struct kvm_vcpu *vcpu,
 > 
-> This error handling is wonky, if we can't allocate then we shouldn't
-> have done the list_del. Just return NULL which will cause
-> iommufd_veventq_fops_read() to exist and userspace will try again.
+>         if (imsic->vsfile_cpu >= 0) {
+>                 writel(iid, imsic->vsfile_va + IMSIC_MMIO_SETIPNUM_LE);
+> -               kvm_vcpu_kick(vcpu);
 
-OK.
+We can't completely remove the kick, but we could replace it with a
+kvm_vcpu_wake_up().
 
-We have two cases to support here:
-1) Normal vevent node -- list_del and return the node.
-2) Overflow node -- list_del and return a copy.
+There's also a kick in kvm_riscv_vcpu_vstimer_expired() which could be a
+kvm_vcpu_wake_up() when hideleg has IRQ_VS_TIMER set (which it currently
+always does).
 
-I think we can do:
-	if (!list_empty(list)) {
-		struct iommufd_vevent *next;
+Thanks,
+drew
 
-		next = list_first_entry(list, struct iommufd_vevent, node);
-		if (next == &veventq->overflow) {
-			/* Make a copy of the overflow node for copy_to_user */
-			vevent = kzalloc(sizeof(*vevent), GFP_ATOMIC);
-			if (!vevent)
-				goto out_unlock;
-		}
-		list_del(&next->node);
-		if (vevent)
-			memcpy(vevent, next, sizeof(*vevent));
-		else
-			vevent = next;
-	}
-
-> > @@ -403,6 +531,10 @@ static int iommufd_eventq_fops_release(struct inode *inode, struct file *filep)
-> >  {
-> >  	struct iommufd_eventq *eventq = filep->private_data;
-> >  
-> > +	if (eventq->obj.type == IOMMUFD_OBJ_VEVENTQ) {
-> > +		atomic_set(&eventq_to_veventq(eventq)->sequence, 0);
-> > +		atomic_set(&eventq_to_veventq(eventq)->num_events, 0);
-> > +	}
+>         } else {
+>                 eix = &imsic->swfile->eix[iid / BITS_PER_TYPE(u64)];
+>                 set_bit(iid & (BITS_PER_TYPE(u64) - 1), eix->eip);
+> --
+> 2.46.2
 > 
-> Why? We are about to free the memory?
-
-Ack. I thought about a re-entry of an open(). But release() does
-lose the event_fd completely, and user space wouldn't be able to
-open the same fd again.
-
-> > +int iommufd_veventq_alloc(struct iommufd_ucmd *ucmd)
-> > +{
-> > +	struct iommu_veventq_alloc *cmd = ucmd->cmd;
-> > +	struct iommufd_veventq *veventq;
-> > +	struct iommufd_viommu *viommu;
-> > +	int fdno;
-> > +	int rc;
-> > +
-> > +	if (cmd->flags || cmd->type == IOMMU_VEVENTQ_TYPE_DEFAULT)
-> > +		return -EOPNOTSUPP;
-> > +	if (!cmd->veventq_depth)
-> > +		return -EINVAL;
-> 
-> Check __reserved for 0 too
-
-Kevin is suggesting a 32-bit flag field, so I think we can drop
-the __reserved in that case.
-
-Thanks
-Nicolin
+> -- 
+> kvm-riscv mailing list
+> kvm-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kvm-riscv
 
