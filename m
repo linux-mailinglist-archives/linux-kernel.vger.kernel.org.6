@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-519018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE36A3971F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:30:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A59A39734
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE64D16F92E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79143BB65A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5113122FF42;
-	Tue, 18 Feb 2025 09:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715E022FAE1;
+	Tue, 18 Feb 2025 09:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKGfDp38"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/lPDmOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F27D22DF8C;
-	Tue, 18 Feb 2025 09:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9BC2309B6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870932; cv=none; b=jVCnInIX54bcuQ4h6w3GBH0r+9F5nY31fnuowWUcDYDqn48DaX3C8JAUN8AyjmiFMH1sDFLrKqLEEHgaAwEybVDWE14r6NwK4tP88qn667P6IiKDDW56F5opQAbEx4rd8VRJdN/99OyBQhd0OevbI2vyW5F+cx4g/E7T5f9Do4Y=
+	t=1739870961; cv=none; b=BB/4gX3HgUMto2xKTMGAQcTbuNwP0wFXTW1V4lN1G7qM5NPKjBZVnBKpuxmvW37YKTGiw1Jn1X+j2CBkMBZUVmihABo/X+hLPVAJxxHjTpTm2UFqEQ+xab4G1dbOD0WxI16sjZfPy+PPnRL3jfaZwnpqg/d1QuoePgJ1eRGaW2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870932; c=relaxed/simple;
-	bh=rF+DqFOfI59087a/Ev+sbb4fxL1DoZUspANuVUxya9k=;
+	s=arc-20240116; t=1739870961; c=relaxed/simple;
+	bh=Vt8uHoPI1XZNaOMHC73ISJa9D5QU0i2SrQwJ8IeWBPk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VRJhiXX4E4MzkAx+pUjFXrTXJbJG2Jzcy9TawEW2TEmYENNu0baXVAmZ4zkSssluiegRPh7gR2N3kCOrv5++K6bz4tvIVAuB7NDi0jO76hdVrEeOV6nn5hHK766/sF4zFB9pakYVx6CI2FMGrugacg8rMiVYlQiZ7HBfjzRDKl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKGfDp38; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3fc8f5ffdso427099b6e.0;
-        Tue, 18 Feb 2025 01:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739870930; x=1740475730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sezXMcausz+IaGoxGziV5wzbaNf+UQBQEy/lkhU+JEU=;
-        b=DKGfDp38f10WhlXlgYTDOHCpGsTpcWlFaq1TVlRceYwlB4rvthZZT2H4AFswQkQZsp
-         eeTICVUxsHFM0Qas2C6dQvTalt1c9Wnk8cyocUAoarZuMtZ4xuWFJXB4CbViFlVDw//6
-         NyL/hybgzgkj6u7FTPHBf9qP2By/vhLNkUd4+HGG+XR9SBJZny13TQH8ukZN/OJXPx15
-         i/Igig2qO6Vows6g/mdWH0n0CIjer92ILD6MzuGQOObmfC9tF13p8tAKtXWIOZ3hHCpW
-         uVzTy2pzjBIDV1J+XvnR1X8OOwsimb/CKLaYhMVklptj3N83YWMXTdhHo2bpBwdfbqPt
-         TZfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739870930; x=1740475730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sezXMcausz+IaGoxGziV5wzbaNf+UQBQEy/lkhU+JEU=;
-        b=oxBZAN3cFdOWMXVeBqAS1HH9dimNQfk3wwtvFJ4kpNuaXZzVkCN8Ulhy4RzuKxdXfH
-         ZdO879unPs22aep+kBXgWclePxGLwgz5LX8/sZvIgK02asByKLix/kbAjPhm1ZzQEn3c
-         bGvNrWWZsL4JBNK8MWaTR/A5nfa2IHsaDU8IbJWUBwRPRUZjprKh82kD5UurR8k7qMMO
-         usfoFpAvn/NTLxkT+olbsuv4GhKr62z6LGu44Zoc9g62luXe4QwriTo2CDgAIZqBle9+
-         T8xkOZrXt6f58zNryUdIEpmm+aK8YtKHzToms2VY9MtWPOZTq++iDTBvBVPW6q53RPLX
-         EEVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8bUCGEouVloPlzRyQMpoiIX7QLlD61DaBAXcYvcE8J0n7eXZOLBq983C5qwJInigeBT7a51oF@vger.kernel.org, AJvYcCX6d/B35VMJST4rUN/PwxszIUokKZvp5qiuM/1yAeIZ+2Uwol7uEa5r52GGIoemDQsF2GxEoB8NSVFhwZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxfu4pCOG+aPIXLTyrqD5HcKj4F16Veim8NwBNEX+a1xL89rTr
-	yIWq6PD+pDDXR8sBTDSA1NlBG7+AasJtfXY1IydNZngN/4V1FlXLi3K38zJvWwwXkUf9jS/17VM
-	14RhYN13yoo1zwChDTnv6rbJ5JMU=
-X-Gm-Gg: ASbGncsKWasxwgzqAl5MCc8Nv+0bM4by01vCjPEpeBkufMpbWyiLWygWTBRP2j7A42p
-	mqAplcWKGAT3pdC3cOE2JUwXEfqyYvU8XiQR/d9HDLA9As+0jwdKqWf15iPbCUViKytmA66A=
-X-Google-Smtp-Source: AGHT+IGME/AC8qe5AUB1a8euFWY1Fz/Kaovk/J9faa/18hil/HqjrzuUjLy4va4QJwZOd0rfOqeVA912FK10yH1bVmk=
-X-Received: by 2002:a05:6808:1a25:b0:3f4:756:52cf with SMTP id
- 5614622812f47-3f4075653f4mr2211945b6e.10.1739870930338; Tue, 18 Feb 2025
- 01:28:50 -0800 (PST)
+	 To:Cc:Content-Type; b=QErMUeZ1zseSz0oemwH72G9r1bQ3d9a457V80dvjmBHyixQeYjP1B+pd+po3mtQ/21mLuFpqHUS1/Y3xhV+dSUf/9ou5U8ZchucRXKwROoFFhfmuOtGVl1Z0thKtU77UWGnZZ8Uf3n/NQ++nAzpZr/Z2xX9rM5sFYJM40lZMDrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/lPDmOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB24C4CEE2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739870961;
+	bh=Vt8uHoPI1XZNaOMHC73ISJa9D5QU0i2SrQwJ8IeWBPk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n/lPDmOmu+Cj3a8tVpFDEXJWD4dMDH5VntC0Y7NojnBY9r9Y/JLttNX2o8Dx5a+0T
+	 gsWzlX5MdoB6J/6RDzppQd/q/Kwsn7ckFTYd7wMHL3hOpor8Y+WaWNqVTUAJBy+JDx
+	 G0oT2ItCEBhlbRrKgyuofU6ONokNd0xbr/gslroq9OhK2uuW2SgVsNfgdiCHjEH9iZ
+	 Fv20aljlKTt1VTYcpccARoTlBaEKXLVnxvx3oFz5mbvq+qGbcxxt1iAn3UB8KXGBAT
+	 t1oeuMSLf/RRMU6a8HbNlkaQ0plNFo3UK7603beEdb6A/xOdgBAZiNFVYmgfkThP2p
+	 qdHJEvVDHSF5A==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30a303a656aso17381101fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:29:21 -0800 (PST)
+X-Gm-Message-State: AOJu0YwX1yxQTzak7Zj7e1LO7i5c22fExf4gzWzssuPF9JgzvBgNHeM7
+	0Os1/IZLKFVc28T7EokImLKLTQYrx0VNtjsha3DFBlla+5L+dLeCkiKKD7xjNjLsSKFxjqQgiQi
+	BV/URDb1/ewidI+xvU6uYhBSx+90=
+X-Google-Smtp-Source: AGHT+IGQlg+gLOgHJQ4yvUSzGL8F+Y93q6Rargiw1nef606JJZ04uKDe0/pLDbkcDE7pNlMWGhWi42ymxz4Adbivcug=
+X-Received: by 2002:a2e:9905:0:b0:307:deea:f576 with SMTP id
+ 38308e7fff4ca-30927afe650mr39362311fa.34.1739870959658; Tue, 18 Feb 2025
+ 01:29:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAO9wTFgN=hVJN8jUrFif0SO5hAvayrKweLDQSsmJWrE55wnTwQ@mail.gmail.com>
- <0c5f1dcf-1bd4-4ddd-b6c0-e3ee2b3671ea@kernel.org> <20250217153708.65269745@kernel.org>
-In-Reply-To: <20250217153708.65269745@kernel.org>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Tue, 18 Feb 2025 14:58:39 +0530
-X-Gm-Features: AWEUYZmqW1VEzyPQIcuB1lxWtLUFNSdx1n2rsSB5LI_l9n1oKwFOzJ96mNvsxiU
-Message-ID: <CAO9wTFgjZ+in3ypHCKGOtY=K7DBBfJy82d6gXw=4mqJG4vtOjw@mail.gmail.com>
-Subject: Re: [PATCH] selftests: net: Fix minor typos in MPTCP and
- psock_tpacket tests
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Matthieu Baerts <matttbe@kernel.org>, netdev@vger.kernel.org, horms@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org
+References: <20250218092538.1903204-2-ardb+git@google.com>
+In-Reply-To: <20250218092538.1903204-2-ardb+git@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 18 Feb 2025 10:29:07 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGyhYHS3WpC2oowWOnJiQVrbHOw57ULYuSx5Rip=Lt9oA@mail.gmail.com>
+X-Gm-Features: AWEUYZnokY7fgWHWjnUTZoau8la-Ncg7fDAXpOIlhQwuDE6ix5b2cZJhn-QNOD8
+Message-ID: <CAMj1kXGyhYHS3WpC2oowWOnJiQVrbHOw57ULYuSx5Rip=Lt9oA@mail.gmail.com>
+Subject: Re: [PATCH] objtool: Use idiomatic section name for relocatable
+ rodata under PIE
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Tiezhu Yang <yangtiezhu@loongson.cn>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jakub. I've reposted the patch. Thanks.
+On Tue, 18 Feb 2025 at 10:26, Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> When running in PIE mode, the compiler will emit const global objects
+> into .data.rel.ro rather than into .rodata if those objects contain
+> statically initialized fields carrying addresses that are subject to
+> runtime relocation (e.g., function pointers).
+>
+> This is needed so that the user space runtime linker can identify which
+> parts of the executable image need to be writable initially, but can be
+> converted into read-only before the image starts executing.
+>
+> This distinction does not matter for the kernel, but when using the
+> compiler in PIE mode (such as when building for LoongArch), those
+> .data.rel.ro sections need to be treated as .rodata as well.
+>
+> It also means that manually placed const global objects that contain
+> absolute addresses (such as the non-JIT BPF jump table) need to be
+> emitted into .data.rel.ro too so that the linker does not complain about
+> conflicting permissions.
+>
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+> Please consider this approach instead of the ..rodata hack - thanks.
+>
+>  include/asm-generic/vmlinux.lds.h       | 2 +-
+>  include/linux/compiler.h                | 6 +++++-
+>  tools/objtool/check.c                   | 7 +++----
+>  tools/objtool/include/objtool/special.h | 2 +-
+>  4 files changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index 91a7e824ed8b..337d3336e175 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -457,7 +457,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>         . = ALIGN((align));                                             \
+>         .rodata           : AT(ADDR(.rodata) - LOAD_OFFSET) {           \
+>                 __start_rodata = .;                                     \
+> -               *(.rodata) *(.rodata.*) *(..rodata.*)                   \
+> +               *(.rodata) *(.rodata.*) *(.data.rel.ro*)                \
+>                 SCHED_DATA                                              \
+>                 RO_AFTER_INIT_DATA      /* Read only after init */      \
+>                 . = ALIGN(8);                                           \
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 3d013f1412e0..27024a128a6a 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -110,7 +110,11 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+>  /* Unreachable code */
+>  #ifdef CONFIG_OBJTOOL
+>  /* Annotate a C jump table to allow objtool to follow the code flow */
+> -#define __annotate_jump_table __section("..rodata.c_jump_table")
+> +#ifndef __pie__
+> +#define __annotate_jump_table __section(".rodata.c_jump_table")
+> +#else
+> +#define __annotate_jump_table __section(".data.rel.ro.c_jump_table")
+> +#endif
+>  #else /* !CONFIG_OBJTOOL */
+>  #define __annotate_jump_table
+>  #endif /* CONFIG_OBJTOOL */
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 1398ffc20b16..898d0cee4565 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2471,14 +2471,13 @@ static void mark_rodata(struct objtool_file *file)
+>          *
+>          * - .rodata: can contain GCC switch tables
+>          * - .rodata.<func>: same, if -fdata-sections is being used
+> -        * - ..rodata.c_jump_table: contains C annotated jump tables
+> +        * - .data.rel.ro: same when using -fPIE codegen
+>          *
+>          * .rodata.str1.* sections are ignored; they don't contain jump tables.
+>          */
+>         for_each_sec(file, sec) {
+> -               if ((!strncmp(sec->name, ".rodata", 7) ||
+> -                   !strncmp(sec->name, "..rodata", 8)) &&
+> -                   !strstr(sec->name, ".str1.")) {
+> +               if ((!strncmp(sec->name, ".rodata", 7) && !strstr(sec->name, ".str1.")) ||
+> +                   !strncmp(sec->name, ".data.rel.ro", 12)) {
+>                         sec->rodata = true;
+>                         found = true;
+>                 }
+> diff --git a/tools/objtool/include/objtool/special.h b/tools/objtool/include/objtool/special.h
+> index 34acf4ae5fab..e049679bb17b 100644
+> --- a/tools/objtool/include/objtool/special.h
+> +++ b/tools/objtool/include/objtool/special.h
+> @@ -10,7 +10,7 @@
+>  #include <objtool/check.h>
+>  #include <objtool/elf.h>
+>
+> -#define C_JUMP_TABLE_SECTION "..rodata.c_jump_table"
+> +#define C_JUMP_TABLE_SECTION ".data.rel.ro.c_jump_table"
+>
 
-On Tue, 18 Feb 2025 at 05:07, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Mon, 17 Feb 2025 11:08:36 +0100 Matthieu Baerts wrote:
-> > On 16/02/2025 13:25, Suchit K wrote:
-> > > Fixes minor spelling errors:
-> > > - `simult_flows.sh`: "al testcases" =E2=86=92 "all testcases"
-> > > - `psock_tpacket.c`: "accross" =E2=86=92 "across"
-> >
-> > The modifications in MPTCP (and psock_tpacket) look good to me:
-> >
-> > Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->
-> Thanks! This patch is corrupted:
->
-> Applying: selftests: net: Fix minor typos in MPTCP and psock_tpacket test=
-s
-> error: git diff header lacks filename information when removing 1 leading=
- pathname component (line 7)
-> Patch failed at 0001 selftests: net: Fix minor typos in MPTCP and psock_t=
-packet tests
-> hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
-> hint: When you have resolved this problem, run "git am --continue".
-> hint: If you prefer to skip this patch, run "git am --skip" instead.
-> hint: To restore the original branch and stop patching, run "git am --abo=
-rt".
-> hint: Disable this message with "git config set advice.mergeConflict fals=
-e"
-> Waiting for rebase to finish Mon Feb 17 03:34:36 PM PST 2025^C
->
-> So repost will be needed (unless Matt wants to take it into his tree
-> manually).
->
-> > This patch can be applied directly in the netdev tree, but I'm not sure
-> > the Netdev maintainers will accept that kind of small clean-up patch
-> > alone, see:
-> >
-> >  https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patche=
-s
->
-> FWIW spelling problems are explicitly called out as okay there.
-> --
-> pw-bot: cr
+Ugh - just spotted myself that this needs a #ifndef __pie__ too (or we
+just emit into .data.rel.ro unconditionally, which would also be
+fine).
+
+I'll send a fixed v2 once the LoongArch folks confirm that this works for them.
 
