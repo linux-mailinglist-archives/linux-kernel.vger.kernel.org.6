@@ -1,137 +1,162 @@
-Return-Path: <linux-kernel+bounces-518629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0FAA3922A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:48:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CC8A39230
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316383A7C0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CD43AEDBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 04:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5976F1ABED9;
-	Tue, 18 Feb 2025 04:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HgDAvlXx"
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F161AC435
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED1F1ACEDA;
+	Tue, 18 Feb 2025 04:53:19 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81D015E5DC;
+	Tue, 18 Feb 2025 04:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739854093; cv=none; b=PwquWvIw42BCAv57Jtkj5H5+hgiUEz9ZTCKvGtT8PXq6yk+8GhLh2722xocK4snl5UuSeNyOWFkEi5l8iNeppIAMQWKFQ27onBjxgGLgzE9J/WoQwBj38p7+Uba13G9Y9v75TSOIrcEW5TfkfydItD3ydE79P+nHUBgh873bKuo=
+	t=1739854398; cv=none; b=eYkdl8LGTCwqwdmg+R5Q9OiOyL1Ox7ihcxP7BcGL6yqwXzOd2MvCp03yT1HctNLos3q6K5v2dh302kxi1J7v+g5N/2VhRsQO0b1TFYx3/WOCkrBET1v9g+BzMy+gYdjFvdh4I1PrbN5zJdErrqH/x5cfEyM0hHQnwnHwKU40q8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739854093; c=relaxed/simple;
-	bh=IDHepmYeNiSGQ2IIF9Z8QJtrRavBH/P2swKcp2VVV/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=swAkwj7f74ImGMW+aZQSU/Bh+nx5c6kMQofDl17GQKR7wpdl+PHwhiBRdl0994yqrbRA65ce40HSvZtGiJxOYjS/zT6V1/N2A0qqAXGi203LcfBZDf6lq6c2f4vSOm1zj7oUg8bR8bstZso4kK7J2zNJ2BkXasDvKd1tUb1fJZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HgDAvlXx; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so3264413f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 20:48:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739854090; x=1740458890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IoMFj5Vm67d64jXv8v17k6H1QwlCU/79a/V71c8lTts=;
-        b=HgDAvlXxxOi8mP+hLlRDzLLvrOXjF1bXPSCHBSwbnXV098JKwVTR2Je02sZAGwqlE5
-         MVzJG+9Vf7rkz3AlNjnkiBoxrXMooxheyHjZkQ/tFL93Mhh2WYyKTwpuuEo2YHdAu7U+
-         n1xZ3a6Qlc+lwNcZ5ljKZIBu4yUmseLTRTy8YStPNsFTBJY2Jv1Xg92iSbR/sbu0xHEu
-         AGbVoofnd3KlYZoJfGQjI2DBOeYrqei2pBGqbq4zPxuVbuOBC58cSEtyroY3LcoUz9eJ
-         jiVz7aDiqYYTehfq9FxSk3ot9rJLR09jw2R52yEKLQoYiVMrURGPGyutjIM16y/qCZvF
-         oNCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739854090; x=1740458890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IoMFj5Vm67d64jXv8v17k6H1QwlCU/79a/V71c8lTts=;
-        b=BAx+LsO6Bddw7c3IcBar343of+iHA1Pp4tsmcP5o0qb4NVMgtR7ETtLIUZAT3I6S28
-         zObcCz0x9G7LOAEN24k68FvLfU4jcAMrHKLOJFuSHtxL77YOKRHu1tmgeJVHzOMJ/65S
-         WmTDNcNtJPJFel2yzGt1dy88odccEoJMoQlA9HsWJpSVly+9JzTBFymiXj+XKI5MZ5is
-         z/P9+LFPLMvXu+Sk3YEjv/1rtSJYIvK29Db6bYNwgposJeuGTIWpWIP0ch4rS27cMEc/
-         OrPCGTuZk6tYmfjcGXFg0ZaA4Y35vHMWjhuOOTTmrG1DuBZSrmz1oaUEr3OctOg2uk/H
-         9YpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZiuXmYnTm0z/mct9jiVou9w8k3G5Ip9enIoWVv6GD1WEkfaZvzSnyZoB96G482abGfxrGkxttj9o9r1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6tKLnxkBNhPsN6vbdCyLBDyvQCcjqyxDB9OZKlbloY8YwolHC
-	SwlI70MOriyRRHD4VkeQjR0D0ceNN9cnLEdxUIF6DoEGk4cN5tOxVUD7O2zbOq8=
-X-Gm-Gg: ASbGncvfTIIkExrl6uh+fGTeMRh1aQAUDzwXe4yqWWXR/ruPYmQ5NY2GLJLBocWlk1j
-	7C2DqRc+1CIjqdl/qsyTOETvUrD3NL9Urn1FZshiCk459G8mlwrWjCYilqsVfNT0foR2Oc3AFxP
-	1HFxSh2TiHD7iFMOBlGcC0Oo7TPyczzAGMn980c+Ho+5JLlFpISq1Hurx5tR8BIWjx8J5g+PQT2
-	Y21nvA/+7t4rUHOhthCmyaAlzPEvD3+ZXvYQasTswGOAK/QozeYjqTtOhtpLxCIQ/Z1N/x+KBD0
-	//TBk4pUbfpd6Ir0
-X-Google-Smtp-Source: AGHT+IFv29p+3UIr5LNNK4VzmfCWlyKJ0cYxloF+ZcpQRwkOOdASTb7wqpLFPX1JBPccUl/8XIHVaw==
-X-Received: by 2002:a5d:64c6:0:b0:38d:e3e2:27e5 with SMTP id ffacd0b85a97d-38f33f37467mr8604249f8f.5.1739854089691;
-        Mon, 17 Feb 2025 20:48:09 -0800 (PST)
-Received: from localhost ([2401:e180:8d00:54ae:3b1e:ed6a:2e2:626a])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5349510sm78786815ad.13.2025.02.17.20.48.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 20:48:09 -0800 (PST)
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Vitaly Chikunov <vt@altlinux.org>,
-	=?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-	Abhishek Dubey <dubeyabhishek777@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: [PATCH 1/1] powerpc: use __clang__ instead of CONFIG_CC_IS_CLANG
-Date: Tue, 18 Feb 2025 12:48:01 +0800
-Message-ID: <20250218044802.17302-1-shung-hsi.yu@suse.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1739854398; c=relaxed/simple;
+	bh=d85r5XVFsMQ03YgLNpDb+lOD+FFPsn41+mUyCC6e9Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPoL8AmUDtmQ3F0+mh+yvbQxFGBonuKWTSQ7rXql3CU0Mi9z/clopDe6SgbTeDjbkJ/S+xhUsEf4pIp/PjV0BqdBAxG5lmriX5941wthzCZGbO2YR5cl5R05dcf/+6A9xlYG2oOUi4NQLbezbcDyo12fibqRVb2T18gIxj08O3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 51I4qqbw008526;
+	Tue, 18 Feb 2025 05:52:52 +0100
+Date: Tue, 18 Feb 2025 05:52:52 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mips@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] tools/nolibc: add support for N64 and N32 ABIs
+Message-ID: <20250218045252.GA8134@1wt.eu>
+References: <20250212-nolibc-mips-n32-v1-1-6892e58d1321@weissschuh.net>
+ <alpine.DEB.2.21.2502161523290.65342@angie.orcam.me.uk>
+ <3080562c-7cfd-4f66-9f62-9a99552d283f@t-8ch.de>
+ <alpine.DEB.2.21.2502172208570.65342@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2502172208570.65342@angie.orcam.me.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Due to include chain (below), powerpc's asm-compat.h is part of UAPI,
-thus it should use the __clang__ macro to directly detect whether Clang
-is used rather then relying on the kernel config setting. The later is
-unreliable because the userspace tools that uses UAPI may be compile
-with a different compiler than the one used for the kernel, leading to
-incorrect constrain selection (see link for an example of such).
+Mi Maciej,
 
-  include/uapi/linux/ptrace.h
-  arch/powerpc/include/asm/ptrace.h
-  arch/powerpc/include/asm/paca.h
-  arch/powerpc/include/asm/atomic.h
-  arch/powerpc/include/asm/asm-compat.h
+On Mon, Feb 17, 2025 at 11:23:11PM +0000, Maciej W. Rozycki wrote:
+> > >  Why is this code breaking stack alignment just to have to fix it up two 
+> > > instructions down the line?  Or is it that the incoming $sp is not aligned 
+> > > in the first place (in which case we're having a deeper problem).
+> > 
+> > nolibc itself does not assume that $sp is aligned.
+> > Maybe Willy can explain the historical background.
+> 
+>  I'm all ears.
 
-Link: https://github.com/iovisor/bcc/issues/5172
-Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
----
- arch/powerpc/include/asm/asm-compat.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I had a look, that's interesting. Actually this started in the very
+early i386 code in nolibc, where we already use the stack in the entry
+code, and simply fix it up before calling main. Then we pursued this
+with x86_64 (which also uses the stack and needs to fix it up), then
+arm (where we use and fix the stack), then the MIPS entry code was
+simply written based on the same construct while it does not use the
+stack thus does indeed not need to be fixed. Here are the links, it
+predates kernel inclusion:
 
-diff --git a/arch/powerpc/include/asm/asm-compat.h b/arch/powerpc/include/asm/asm-compat.h
-index f48e644900a2..34f8740909a9 100644
---- a/arch/powerpc/include/asm/asm-compat.h
-+++ b/arch/powerpc/include/asm/asm-compat.h
-@@ -37,7 +37,7 @@
- #define STDX_BE	stringify_in_c(stdbrx)
- #endif
- 
--#ifdef CONFIG_CC_IS_CLANG
-+#ifdef __clang__
- #define DS_FORM_CONSTRAINT "Z<>"
- #else
- #define DS_FORM_CONSTRAINT "YZ<>"
--- 
-2.48.1
+    arm: https://github.com/wtarreau/nolibc/commit/af968b1
+   mips: https://github.com/wtarreau/nolibc/commit/e04cd25
 
+Thus we can shave 4 more bytes from the MIPS entry code ;-)
+
+> > > > +#endif
+> > > > +
+> > > >  		"jalr $t9\n"             /* transfer to c runtime
+> > > > */
+> > > >  		" nop\n"                 /* delayed slot
+> > > 
+> > >  On an unrelated matter JALR above ought to be JAL (or otherwise there's 
+> > > no point in using the .cprestore pseudo-op).  And I fail to see why this 
+> > > code has to be "noreorder" (except for the .cpload piece, of course), it's 
+> > > just asking for troubles.
+> > 
+> > Thanks for the hints.
+> > 
+> > Without "noreorder", is the manually addition of the delayed slot "nop"
+> > still necessary?
+> 
+>  It's not.  It's for the `.set noreorder' mode only, to fill the branch 
+> delay slot by hand.  Otherwise it'll become just a useless instruction 
+> following the call sequence and executed after return.
+
+Similarly I had ".set noreorder" and the nop in the initial code from 2017.
+I remember that it took me a long while to get that init code to work on
+my MIPS boxes, and it's extremely likely that I found the noreorder trick
+long after I placed the nop and did not remove it.
+
+> > These points also apply to the existing O32 implementation, right?
+> 
+>  Correct.  Sadly it's the first time I see this code.
+> 
+>  Overall I find it a bit of a chimera: it uses `.set noreorder' and 
+> explicit relocations on one hand, and then high-level assembly `.cpload' 
+> and `.cprestore' pseudo-ops on the other, effectively mixing the two 
+> styles of assembly.
+> 
+>  The pseudo-ops come from times when using assembly macros was the norm 
+> and are there to support that coding model where macros rely on these 
+> pseudo-ops, and before the use of explicit relocations became the norm at 
+> least for GCC.  In the absence of assembly macros you can write code 
+> expansions for these pseudo-ops by hand, just as what GCC does nowadays 
+> (in the `-mexplicit-relocs' mode, which is usually the default).
+> 
+>  But due to architecture variations it's very hard to write handcoded 
+> assembly in the `.set noreorder' mode: you need to take care of all the 
+> data dependencies that appear due to the lack of interlocking between 
+> pipeline stages, which results in code that either works correctly 
+> everywhere, but is suboptimal for newer architecture revisions, or code 
+> that works better with newer architecture revisions, but is actually 
+> broken with earlier ones.
+> 
+>  About the only typical case where you do want to use `.set noreorder' is 
+> to schedule a branch delay slot by hand due to a data anti-dependency 
+> between the two instructions.  Patchable/self-modifying code is a less 
+> frequent case.  And I had literally one case in my entire career where I 
+> wanted to actually jump to a branch delay slot instruction (it's still 
+> there in arch/mips/include/asm/div64.h, in do_div64_32(); see label #2).
+> 
+>  Also it appears no code in this function actually relies on $gp having 
+> been set up, so perhaps this stuff can just be discarded in the first 
+> place?
+
+All of this is very helpful. For example we did face an issue with
+noreorder here, that required to then add ".set push" then ".set pop"
+as it was polluting the rest of the code:
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=184177c3d6e0
+
+But I'm pretty sure that I didn't invent this ".set noreorder" and if I
+had found how to get rid of it, I'd happily done it. Like often with such
+code, it was produced by trial and error, and it's very possible that one
+solution was added to cover the problem caused by another one, and was
+not optimal. For me by then, the code was considered OK enough when my
+preinit program would work fine on all my machines (mostly mips-24Kc and
+mips-1004Kc that I daily have access to).
+
+In any case that's something that's easy to try again if we want to clean
+that up to normalize it.
+
+Thanks!
+Willy
 
