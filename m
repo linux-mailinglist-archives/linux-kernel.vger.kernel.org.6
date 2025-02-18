@@ -1,79 +1,97 @@
-Return-Path: <linux-kernel+bounces-518493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C869A38FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:33:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EFAA38FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B32167172
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:33:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE843B2069
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 00:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B01EACD;
-	Tue, 18 Feb 2025 00:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPYBCLh0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ED7EEBD;
+	Tue, 18 Feb 2025 00:35:07 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22788F40;
-	Tue, 18 Feb 2025 00:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7ECC8EB;
+	Tue, 18 Feb 2025 00:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739838826; cv=none; b=aURGQQeFWKmyk19UP+D+UwilzDiwh9p+XxS2pOHkUCtFtldUqA6sibO2rPm7q+DUTPMbbi3MzNzRP3b8WDOuqN9J09lEeGROXqTl1dKCj2mwuBd/6U11UDwRwp4exX7BM2C/28L4JmUgkON6M0Qeq4BxfqU5sn2ZaOl8gokDF5A=
+	t=1739838907; cv=none; b=prqaBN/dCXzIheNMynOvgfb81cBXWMOg3WCfAqmM4FiQsrxy45FhPJKAE9avWcIsT+GHHLszmVVRlJ24KkSrG7QeF22FosH+roLEJ+XV87bWp/AVUseKq7Ye2+4w7cgqh/o/Bo6b72T+kuh+innvVrMEMcPrAXFKy1x5JxFFfFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739838826; c=relaxed/simple;
-	bh=q0rcWJuVp3xACT0C9VSicr9GFn4icXokQr6eAKrie3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qsYOoUccQGAu3+nBR3GCJfOboJj1ver8iIILiEqNVuIAkkGfTjS7tKpC9xYeevSSiH+faQCRvuFAN7AjNnRjdHu538Is8bqf33R4hB+D03MG6CD9rzIznvuiamsyCuP42phcQRo5BCLRyI4mp+jC9po9S922o+t/4dYl/Jv/DQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPYBCLh0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DF0C4CEE7;
-	Tue, 18 Feb 2025 00:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739838825;
-	bh=q0rcWJuVp3xACT0C9VSicr9GFn4icXokQr6eAKrie3U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mPYBCLh048/MnFcVIMotJk/mVcUUWpWas+X/Fc8SjrfAYhwoGKtg1cdviibGNNlAi
-	 TZZ9dSuu7lwyztrpCvdgBk7nqiRCZ1FQZ00o8WuyLWvi7Wlm+7IEys0tBFIyRC9gME
-	 h2AutDLPaCjtbWodiIpi7WRwxoW5/jzv24b0mlrJWL1luB3Wv/CN7v/e/ylfuC90MF
-	 Ywi2g5E08uC+ZnvDdNQOwKdsoFRhkHV+YyBqe4IpBDTAjtpcY801kZXeVqa1zRicsM
-	 GN55nDjb2nFlRsSlMEBJW/JBk18clBkNuhf4mz5Ro3S7VvFt4gRN2teIsxYChfgT4R
-	 vovoJ7QSaYYbw==
-Date: Mon, 17 Feb 2025 16:33:44 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern
- <dsahern@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Eric Dumazet <eric.dumazet@gmail.com>, kuniyu@amazon.co.jp,
- ushankar@purestorage.com, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: Re: [PATCH net v4 2/2] arp: switch to dev_getbyhwaddr() in
- arp_req_set_public()
-Message-ID: <20250217163344.0b9c4a8f@kernel.org>
-In-Reply-To: <20250213-arm_fix_selftest-v4-2-26714529a6cf@debian.org>
-References: <20250213-arm_fix_selftest-v4-0-26714529a6cf@debian.org>
-	<20250213-arm_fix_selftest-v4-2-26714529a6cf@debian.org>
+	s=arc-20240116; t=1739838907; c=relaxed/simple;
+	bh=6z1+LWnsnRGAQnhfVlsd/K6Wv25tAb42tgFzwI8wILg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ehuapp4zKany9ofe7Mln23AsPjmHO/n5jAHlVR83k5qoAEqiwQRK+e+sOeuY9q2BX4SFh+icOLkZrekhKQaCMaeA1G9YdCENkdRGUlrALoG7X/+IDto31g/zL9khs9xpQ6uPhfUMqaIJ8HjW1IWSqzOwQ3BqAMOPBdOqHfz7/Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost.localdomain (unknown [180.172.76.141])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id E6210343119;
+	Tue, 18 Feb 2025 00:34:59 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javierm@redhat.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	javier@dowhile0.org,
+	rjones@redhat.com,
+	abologna@redhat.com,
+	spacemit@lists.linux.dev,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Rob Herring <robh@kernel.org>,
+	Yangyu Chen <cyy@cyyself.name>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 0/2] riscv: dts: spacemit: Add initial support for Milk-V Jupiter
+Date: Tue, 18 Feb 2025 08:34:32 +0800
+Message-ID: <173979802066.53738.3069472182540355902.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250214151700.666544-1-javierm@redhat.com>
+References: <20250214151700.666544-1-javierm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Feb 2025 04:42:38 -0800 Breno Leitao wrote:
-> The arp_req_set_public() function is called with the rtnl lock held,
-> which provides enough synchronization protection. This makes the RCU
-> variant of dev_getbyhwaddr() unnecessary. Switch to using the simpler
-> dev_getbyhwaddr() function since we already have the required rtnl
-> locking.
+
+On Fri, 14 Feb 2025 16:16:36 +0100, Javier Martinez Canillas wrote:
+> This patch-set adds a minimal support for the Milk-V Jupiter board.
+> which is a Mini ITX computer based on the SpacemiT K1/M1 RISC-V SoC.
 > 
-> This change helps maintain consistency in the networking code by using
-> the appropriate helper function for the existing locking context.
+> The DTS is very basic but at least allows to boot into a serial console
+> and get UART output, similar to what exists for other K1 based boards
+> such as the BananaPi BPI-F3.
+> 
+> [...]
 
-I think you should make it clearer whether this fixes a splat with
-PROVE_RCU_LIST=y
+Thanks, Applied to SpacemiT's SoC tree:
+ https://github.com/spacemit-com/linux/ (for-next)
+
+[1/2] dt-bindings: riscv: spacemit: Add Milk-V Jupiter board compatible
+      https://github.com/spacemit-com/linux/commit/8c8d2a19a3ad87d9344a5e58172f8e0c05c4622a
+[2/2] riscv: dts: spacemit: Add Milk-V Jupiter board device tree
+      https://github.com/spacemit-com/linux/commit/5b90a3d6092d9292d3c4fe4eef8969282e070ae3
+
+The for-next branch will be sent via a formal Pull Request to
+the Linux SoC maintainers for inclusion in next merge window.
+
+Best regards,
+-- 
+Yixun Lan
+
 
