@@ -1,239 +1,139 @@
-Return-Path: <linux-kernel+bounces-520176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683ADA3A6A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:02:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F552A3A6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6B93AC5BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4032D3ACF5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A31E520E;
-	Tue, 18 Feb 2025 18:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF291E5213;
+	Tue, 18 Feb 2025 18:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jImQJ9W4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZgA3qEvQ"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91731E51EB;
-	Tue, 18 Feb 2025 18:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680E41E51EB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905149; cv=none; b=EZVbZwTL6aYMnplh+jTJYIJIJk76XWj1ISq8dzFQuUwjdboACVNXOtFLa8Vh9tUV743tVjJ5AuBMBn8IzMELH59nBWg+lhwSHzxjTbeRhdKokmtB+myjIpFju16UKEZGzb0ZNfdGCWB4D8y3H7BB9o/2aBNH/MEF5MaDYbp9fjI=
+	t=1739905191; cv=none; b=jKb5PlDovNkyLHsz3QUpYlpOsVpYAedZq+198VMKNdUPiEUKlchKVgUZjUXVmQcfN/f0Ou8lFm9J2mp3stuIWBNCLj0mIdqxsiQrUf0RH4/VS+NmdurEhd+NVxtdn0px2w7ycFLQkKABqKTaC+j5VyVTVp8uSQ6nydV452pUxBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905149; c=relaxed/simple;
-	bh=HOvz2djX1ufWum66Lhttdb/9fZlgLVKNn2dwuXw8S5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwJhbMDxIsTM7biatIfnmZydZfg1x0LygfOYnme6tjV1DdAH0G2bxmSj/zw0MB430AwYL4pILSCcYFmXENDUwl31YLdFPaRmgzM8makGi8LYDWA08fiodu7YKK8s+znPUBDUFwx7C4+paqhY63vMisuR+7QiMWy2k4tmHV+avTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jImQJ9W4; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739905148; x=1771441148;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HOvz2djX1ufWum66Lhttdb/9fZlgLVKNn2dwuXw8S5Y=;
-  b=jImQJ9W4K+mpejdVWw653WTEkhs4C7Nsz08tBAhiUEZ0drTphT6FW4U7
-   ARFyHU/iiZMoJtItjKLYoHTJwBeunv5TK5Dm1aKFjecKUx3qFSKAosqBp
-   1InKTEK4M2Mz0WKYwcLsGFI9ujJ9WFvSRghjRvCgJdYAHfM4spWrImQf2
-   dUizS1lLUkLhSjwDdlXhQIqvPHPn6LbKXnHBCXdLNnqJLQEh1Q8uu4LIF
-   Hn+NsEfUx2NdjKQi6WWXkEnSYGgcYNWJAAgKK8Sp00MvUUKYZek39jvpH
-   PaNdWY5+/DqGP7sDN0+yztx4ASDpHIy2jYS5paqdlHrD0djOcOkzwQDOv
-   A==;
-X-CSE-ConnectionGUID: COZAu/jGQd+LyjPm8xkEwQ==
-X-CSE-MsgGUID: hVcah1lAR0a0fyjzNaXa9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="43449966"
-X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
-   d="scan'208";a="43449966"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 10:59:06 -0800
-X-CSE-ConnectionGUID: Nwj/VTR5S6qUNX6wYzFm3g==
-X-CSE-MsgGUID: 2U+fQULHRPCnIPl2IADiUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119694198"
-Received: from philliph-desk.amr.corp.intel.com (HELO [10.124.220.170]) ([10.124.220.170])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 10:59:05 -0800
-Message-ID: <99d1cd4d-2526-4ce0-aabd-508fa03cb100@linux.intel.com>
-Date: Tue, 18 Feb 2025 10:58:19 -0800
+	s=arc-20240116; t=1739905191; c=relaxed/simple;
+	bh=sgcMCXHcqmLD2fAN4moy0mYEbl/nVo/5UuzQ5yvUtoE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VrFuqlMb83Fi5SYaOCQJr3jVPA70y6ne2Ff80Ke6+K9Wo1UFi1pFL/Zh5THHk569nWeUCSzpeJ0juJhCgLwmekh5F46JbUlur8oEnOK4lndvFK3r2PoQrqda9JttYULDiLri9dHqiSakarSUY8mKuKsowPjMqlJWQCpbE1qLMB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZgA3qEvQ; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so41989955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:59:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739905188; x=1740509988; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uLokahsRp/1HhhIeL1ZdoIvCr2+1AW9MZ/zEnvPpzB0=;
+        b=ZgA3qEvQsc/IqTB9qmckEKwZBrimrQqNVCszrAtvZuU/eVE6A83EpHQWBc3Ci2r0+0
+         SRysxNK2fAD8Ff9D9ow2UytiYw+lIzQTACOmD0GsTNi4T9j/yxrWAgrjBkfUrO34eWLG
+         lXiKrf0oC9p3+KM3p1QqqV2tdQv4S9dlzm2xUESjXY8Gf+gOenH3/0YssnyYWQf9enAP
+         L6U+V78r23Gtz93AnAREcAcMZgOQDrPa7tzBsu+CVXIG600X4q12tGpbNW6Gs8W0b/Qy
+         JMs4BNTUx7n6JpDLuwLsQADUr4/WezEtp9gRhOP2RALaZ6tXgUlN28Uihd6xLobNuUde
+         Pubg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739905188; x=1740509988;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uLokahsRp/1HhhIeL1ZdoIvCr2+1AW9MZ/zEnvPpzB0=;
+        b=LqcHGbewek3+NEi1+oiqWvL5lp8umIEaKxIAR2WS8PcM3A/pCgExZCxgjTypae23NX
+         secadPQifKYi3OkgAQhTcq5l1zta+m2o0uXGWxcxQUXBHsW2kHme2Ecv3gpkT8vsNHPe
+         LMfN8ID5fDSvzXgAsP6hnhrSnc6YzV0dcKMwx6FbU7ewYr2kfEMtFhNHEXF8n5+l0lQX
+         fJc3Bz5pHgSrQTxRo/866dgNfRSVDbNcRvCXn+Ppg+D5CNCNMtTtJH8QBwGn3uItP3Fk
+         tt42QfN77dRisSprKetsHx4eKiVwyQ7LF6BbP6l0Cgz8jyqM3Ys909SOb6YfkXpjU7A2
+         OD2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbpZwwfhE44f1AStmexazAxMfJ9DCk3kCOuy4TFcWOyUvjPerEa2MDWNuOwdkdRxxh513HLNYIqyA7FL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTmPgVgVgN/OuXy6QzmCE7LlrnLqoFtXl8ZiLBlneb+9IPHGrI
+	S3iOHb0JVNxn8kfQRWQlm7hyp1w8O7myA4ArSL5G0iHKz2SP0i/Hp9hAd5zc82SoWzAolRegNR0
+	TbjEkzriwrw==
+X-Google-Smtp-Source: AGHT+IEdNjds1zwEO5M8N/CATJUdsJrMJ0qVNyBBx+DQb42yFggeDOcnhYT/2H2JfwJy3O1KbANvYtULINPbQA==
+X-Received: from wmqe5.prod.google.com ([2002:a05:600c:4e45:b0:439:8333:1efb])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b1b:b0:439:9595:c8e7 with SMTP id 5b1f17b1804b1-4399595cbb1mr41194365e9.0.1739905187848;
+ Tue, 18 Feb 2025 10:59:47 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:59:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-To: Feng Tang <feng.tang@linux.alibaba.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
- Liguang Zhang <zhangliguang@linux.alibaba.com>,
- Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org
-Cc: Markus Elfring <Markus.Elfring@web.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJrYtGcC/3WMQQ6CMBAAv0J6dk13ISKe/IfxUJa2NFFKWmk0h
+ L9buBhNPM4kM7OIOjgdxamYRdDJReeHDOWuENyrwWpwXWZBkipEbMD4wBp4nKCdLDSVkkfVSio
+ bI3IzBm3cc/tdrpl7Fx8+vLZ9wtX+OyUEBFKqRD4wMpuz9d7e9J79XayrRJ+cSP7mBBLqjmtsW dcVqa98WZY33aEwQeoAAAA=
+X-Change-Id: 20241119-force-cpu-bug-94a08ab0239f
+X-Mailer: b4 0.15-dev-42535
+Message-ID: <20250218-force-cpu-bug-v3-0-da3df43d1936@google.com>
+Subject: [PATCH v3 0/4] x86/cpu: Add facility to force-enable CPU caps and bugs
+From: Brendan Jackman <jackmanb@google.com>
+To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+For testing, development, and experimentation, add the ability to force
+the kernel to behave as if the CPU has a bug, even if it doesn't, using
+a command-line param.
 
-On 2/17/25 7:48 PM, Feng Tang wrote:
-> There was problem reported by firmware developers that they received
-> 2 pcie link control commands in very short intervals on an ARM server,
-> which doesn't comply with pcie spec, and broke their state machine and
-> work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> to wait at least 1 second for the command-complete event, before
-> resending the cmd or sending a new cmd.
->
-> And the first link control command firmware received is from
-> get_port_device_capability(), which sends cmd to disable pcie hotplug
-> interrupts without waiting for its completion.
+Also do this in general for CPU flags, since:
 
-Were you able to narrow down the source of the second command? The
-reason I am asking is, the commit you are trying to fix seems to have
-existed for 10+ years and no one had faced any issues with it. So
-I am wondering whether this needs to fixed at this place or before
-executing the second command.
+ - The infrastructure is the same so there is almost no extra
+   implementation complexity.
 
->
-> Fix it by adding the necessary wait to comply with PCIe spec, referring
-> pcie_poll_cmd().
->
-> Also make the interrupt disabling not dependent on whether pciehp
-> service driver will be loaded as suggested by Lukas.
+ - While setting random CPU flags is certain to break the kernel in
+   mysterious and horrifying ways, this is not dramatically worse than
+   setting CPU bugs. Although CPU bug mitigations don't have any very
+   obvious ways to break the system if run on the wrong hardware, it's
+   still very much an unsupported configuration, even beyond the
+   security concern implied breaking mitigation logic.
 
-May be this needs a new patch?
+   Since a taint and scary docs are necessary regardless, supporting
+   arbitrary CPU flags doesn't add significant maintenance/support
+   burden either.
 
->
-> Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
-> Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
-> Suggested-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> ---
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+Changes in v3:
+- Added pre-patch to cleanup some unnecessary macro usage.
+- More cleanups to commentary & commit messages.
+- Link to v2: https://lore.kernel.org/r/20241220-force-cpu-bug-v2-0-7dc71bce742a@google.com
 
-Code wise it looks fine to me.
+Changes in v2:
+- Switched from a bugs-only force_cpu_bug= to a more general setcpuid=.
+- Made it taint the kernel.
+- Made docs sound scarier.
+- Spellchecked and avoided new usage of personal pronouns.
+- Link to v1: https://lore.kernel.org/r/20241119-force-cpu-bug-v1-1-2aa31c6c1ccf@google.com
 
-> Changlog:
->
->    since v1:
->      * Add the Originally-by for Liguang. The issue was found on a 5.10 kernel,
->        then 6.6. I was initially given a 5.10 kernel tar bar without git info to
->        debug the issue, and made the patch. Thanks to Guanghui who recently pointed
->        me to tree https://gitee.com/anolis/cloud-kernel which show the wait logic
->        in 5.10 was originally from Liguang, and never hit mainline.
->      * Make the irq disabling not dependent on wthether pciehp service driver
->        will be loaded (Lukas Wunner)
->      * Use read_poll_timeout() API to simply the waiting logic (Sathyanarayanan
->        Kuppuswamy)
->      * Add logic to skip irq disabling if it is already disabled.
->
->   drivers/pci/pci.h          |  2 ++
->   drivers/pci/pcie/portdrv.c | 44 +++++++++++++++++++++++++++++++++-----
->   2 files changed, 41 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..c1e234d1b81d 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -759,12 +759,14 @@ static inline void pcie_ecrc_get_policy(char *str) { }
->   #ifdef CONFIG_PCIEPORTBUS
->   void pcie_reset_lbms_count(struct pci_dev *port);
->   int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
->   #else
->   static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
->   static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
->   {
->   	return -EOPNOTSUPP;
->   }
-> +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
->   #endif
->   
->   struct pci_dev_reset_methods {
-> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> index 02e73099bad0..2470333bba2f 100644
-> --- a/drivers/pci/pcie/portdrv.c
-> +++ b/drivers/pci/pcie/portdrv.c
-> @@ -18,6 +18,7 @@
->   #include <linux/string.h>
->   #include <linux/slab.h>
->   #include <linux/aer.h>
-> +#include <linux/iopoll.h>
->   
->   #include "../pci.h"
->   #include "portdrv.h"
-> @@ -205,6 +206,40 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
->   	return 0;
->   }
->   
-> +static int pcie_wait_sltctl_cmd_raw(struct pci_dev *dev)
-> +{
-> +	u16 slot_status = 0;
-> +	int ret, ret1, timeout_us;
-> +
-> +	/* 1 second, according to PCIe spec 6.1, section 6.7.3.2 */
-> +	timeout_us = 1000000;
-> +	ret = read_poll_timeout(pcie_capability_read_word, ret1,
-> +				(slot_status & PCI_EXP_SLTSTA_CC), 10000,
-> +				timeout_us, true, dev, PCI_EXP_SLTSTA,
-> +				&slot_status);
-> +	if (!ret)
-> +		pcie_capability_write_word(dev, PCI_EXP_SLTSTA,
-> +						PCI_EXP_SLTSTA_CC);
-> +
-> +	return  ret;
-> +}
-> +
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
-> +{
-> +	u16 slot_ctrl = 0;
-> +
-> +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
-> +	/* Bail out early if it is already disabled */
-> +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
-> +		return;
-> +
-> +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> +
-> +	if (pcie_wait_sltctl_cmd_raw(dev))
-> +		pci_info(dev, "Timeout on disabling PCIE hot-plug interrupt\n");
-> +}
-> +
->   /**
->    * get_port_device_capability - discover capabilities of a PCI Express port
->    * @dev: PCI Express port to examine
-> @@ -222,16 +257,15 @@ static int get_port_device_capability(struct pci_dev *dev)
->   
->   	if (dev->is_hotplug_bridge &&
->   	    (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT ||
-> -	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM) &&
-> -	    (pcie_ports_native || host->native_pcie_hotplug)) {
-> -		services |= PCIE_PORT_SERVICE_HP;
-> +	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)) {
-> +		if (pcie_ports_native || host->native_pcie_hotplug)
-> +			services |= PCIE_PORT_SERVICE_HP;
->   
->   		/*
->   		 * Disable hot-plug interrupts in case they have been enabled
->   		 * by the BIOS and the hot-plug service driver is not loaded.
->   		 */
-> -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> +		pcie_disable_hp_interrupts_early(dev);
->   	}
->   
->   #ifdef CONFIG_PCIEAER
+---
+Brendan Jackman (4):
+      x86/cpu: Remove some macros about feature names
+      x86/cpu: Create helper to parse clearcpuid param
+      x86/cpu: Add setcpuid cmdline param
+      x86/cpu: Enable modifying bug flags with {clear,set}cpuid
 
+ arch/x86/include/asm/cpufeature.h |   6 +-
+ arch/x86/kernel/cpu/common.c      | 147 +++++++++++++++++++++++---------------
+ 2 files changed, 91 insertions(+), 62 deletions(-)
+---
+base-commit: 83f8eec51fc484fe20f8d20171f6d450080c04ea
+change-id: 20241119-force-cpu-bug-94a08ab0239f
+
+Best regards,
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+Brendan Jackman <jackmanb@google.com>
 
 
