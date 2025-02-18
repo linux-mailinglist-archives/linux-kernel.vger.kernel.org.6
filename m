@@ -1,201 +1,180 @@
-Return-Path: <linux-kernel+bounces-519294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F590A39B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:40:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9A1A39B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5DD17405E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B09117427B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D2923ED6A;
-	Tue, 18 Feb 2025 11:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE8B23F276;
+	Tue, 18 Feb 2025 11:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="teE0M/Wb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZZxwPXdv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="teE0M/Wb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZZxwPXdv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043FD1AED5C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Ouss9I8F"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABAC23C8DC;
+	Tue, 18 Feb 2025 11:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878801; cv=none; b=jRGZiwFzGM1bp+QmA0BuYi5IxNomL6d04pSwQkazf1gaIH+sqwBs/l1sHS8FZ5SMe7dBJl9Oci5rDS3AsPhUVbkykqK0bEuuqUK2VHGUYS6fsnScHxssDuNPVx30iI/aEleN/rL8UtOdF9JlDFqkC1ZHp6Qvvk0NB1qabXb2SS8=
+	t=1739878971; cv=none; b=GPeRzhouFloOldRcSsaj0nuVkzGh7eL3/LWrU0KLCV1mxG23feUdO7FbnTleAdIqxtLYDGP50MVcBRjE2+xOrmvjHYH7GaE/jdrI4OkVCRLTt6W02xrXeIWl59+aWO0bnS496hiwVt4+krLhy72IxixfD+P436Ray+1pbtNGN5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878801; c=relaxed/simple;
-	bh=YAOhoExo9uFyUTnaMmDU9LC8Sh+3aQK5UBcgWoh1V7c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FHHpbQyK8GNbtOB15E6NnC2ocJhzUFtm0X+Njc3yClYVJqNlb1bwFSbKUf9v4cxuxeUU3jaKkGwywfmxGEukaMjVEtEAEiJxZxDZjagdQB595IEGnd2w5xdXje5h3fKd5wK5EzPBGHw/baDXwIDgtD6jUimKKthZ9MEv8Uhtd5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=teE0M/Wb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZZxwPXdv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=teE0M/Wb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZZxwPXdv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 142761F396;
-	Tue, 18 Feb 2025 11:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739878797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGp9Y7QBbTCowpC82AAZ/8SUfWBJRStkalWWx8EvBpg=;
-	b=teE0M/Wb7L2BCJg8MGl0eUB//LPUS+q84uAuNWNQGlLBavX5CJzvnLJ+88Z9Jm5+8Daor4
-	g72YDr3UU6omHTDvWKMICFGq4VptFmN4YTk6Xi37CAJ2DLPHY9SfOu0eZMknCYzzE64Bfb
-	C78uAstL7T6IUGGwpt4IWks6WDBw0f4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739878797;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGp9Y7QBbTCowpC82AAZ/8SUfWBJRStkalWWx8EvBpg=;
-	b=ZZxwPXdvwamMZcycvcamXZ0075s/Y3JzUrqtM56xqZnJfz7mcgdDTBoLbTWlipc/CZaQqn
-	whtbG4mprzORLMAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739878797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGp9Y7QBbTCowpC82AAZ/8SUfWBJRStkalWWx8EvBpg=;
-	b=teE0M/Wb7L2BCJg8MGl0eUB//LPUS+q84uAuNWNQGlLBavX5CJzvnLJ+88Z9Jm5+8Daor4
-	g72YDr3UU6omHTDvWKMICFGq4VptFmN4YTk6Xi37CAJ2DLPHY9SfOu0eZMknCYzzE64Bfb
-	C78uAstL7T6IUGGwpt4IWks6WDBw0f4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739878797;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGp9Y7QBbTCowpC82AAZ/8SUfWBJRStkalWWx8EvBpg=;
-	b=ZZxwPXdvwamMZcycvcamXZ0075s/Y3JzUrqtM56xqZnJfz7mcgdDTBoLbTWlipc/CZaQqn
-	whtbG4mprzORLMAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8084F13A1D;
-	Tue, 18 Feb 2025 11:39:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q1jHG4xxtGcGJAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 18 Feb 2025 11:39:56 +0000
-Date: Tue, 18 Feb 2025 12:39:55 +0100
-Message-ID: <87h64r5vn8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Takashi Iwai <tiwai@suse.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] ALSA: usb-audio: drain may fail with multi-port close race
-In-Reply-To: <Z7RnUwatOnxYxNfI-jkeeping@inmusicbrands.com>
-References: <20250217111647.3368132-1-jkeeping@inmusicbrands.com>
-	<8734gc8prr.wl-tiwai@suse.de>
-	<Z7OCJ2DikMvhAxVf-jkeeping@inmusicbrands.com>
-	<87zfij65hd.wl-tiwai@suse.de>
-	<Z7RnUwatOnxYxNfI-jkeeping@inmusicbrands.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1739878971; c=relaxed/simple;
+	bh=bBNT4QlzZXKhd7EQ9JV5YlXy79pcFJ/hqJ3SE6SkiKg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=oI0YShNL59Ooq1Al9Bv36eTembA3skm1sD3uH6FHIpGuZrPfWEeYaPA3KuVVUu6uX3gryBsMf88c6Ji4hz9+Gvz5+/gLh0tkfQRk2BSd+PB7Yck5AqCJ0+m7En9mOdaeqzLCMApsFZa2Nh7aA8D/9qiJso7Y+4/UADVG2FfDRx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Ouss9I8F; arc=none smtp.client-ip=117.135.210.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=KkHPLPhS/lcvXv2PGW
+	47P5xHPzK/OHNmih6dbHFhbrA=; b=Ouss9I8Fc4R4KkbIlN1YgVgbUZ9QDDLzp7
+	LBabT84KOv4vz0grUvIk/SJUAIjYP2QFgcip731TZfNOB/sxSN9aTFCAC+8YmvoN
+	B3FJePlnfcoha1dN0QXxr5We+uUP1LmEoS1n4wGwzEX5hZjawI5P4wOmzXDg++x7
+	tPvWiIre4=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDnD9StcbRn5BnwAw--.45758S2;
+	Tue, 18 Feb 2025 19:40:30 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	21cnbao@gmail.com,
+	david@redhat.com,
+	baolin.wang@linux.alibaba.com,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	liuzixing@hygon.cn,
+	Ge Yang <yangge1116@126.com>
+Subject: [PATCH V3] mm/hugetlb: wait for hugetlb folios to be freed
+Date: Tue, 18 Feb 2025 19:40:28 +0800
+Message-Id: <1739878828-9960-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wDnD9StcbRn5BnwAw--.45758S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXryrZr43Gw13Cw48Cw45KFg_yoWrur4rpF
+	yUKr13GayDJr9akrn7AwsYyr12y3ykZFWjkrWIqw45ZFnxJas7KFy2vwn0v3y8Ar93CFWx
+	ZrWqqrWDuF1UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR0JmUUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifgP3G2e0TMW1YgABsd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
 
-On Tue, 18 Feb 2025 11:56:19 +0100,
-John Keeping wrote:
-> 
-> On Tue, Feb 18, 2025 at 09:07:26AM +0100, Takashi Iwai wrote:
-> > On Mon, 17 Feb 2025 19:38:31 +0100,
-> > John Keeping wrote:
-> > > 
-> > > On Mon, Feb 17, 2025 at 06:06:16PM +0100, Takashi Iwai wrote:
-> > > > On Mon, 17 Feb 2025 12:16:46 +0100,
-> > > > John Keeping wrote:
-> > > > > 
-> > > > > I'm seeing a bug where data sometimes fails to send on USB MIDI devices
-> > > > > with multiple ports which seems to be a result of a race around closing
-> > > > > ports introduced by commit 0125de38122f0 ("ALSA: usb-audio: Cancel
-> > > > > pending work at closing a MIDI substream").
-> > > > > 
-> > > > > The scenario is essentially this program:
-> > > > > 
-> > > > > 	snd_rawmidi_t *port0, *port1;
-> > > > > 	snd_rawmidi_open(NULL, &port0, "hw:0,0,0", 0);
-> > > > > 	snd_rawmidi_open(NULL, &port1, "hw:0,0,1", 0);
-> > > > > 
-> > > > > 	snd_rawmidi_write(port0, data, len);
-> > > > > 
-> > > > > 	snd_rawmidi_close(port1);
-> > > > > 	snd_rawmidi_close(port0);
-> > > > > 
-> > > > > What happens seems to be the following:
-> > > > > 
-> > > > > 	write(port0)
-> > > > > 	`- snd_usbmidi_output_trigger
-> > > > > 	   `- queue_work()
-> > > > >         close(port1)
-> > > > > 	`- snd_usbmidi_output_close
-> > > > > 	   `- cancel_work_sync()	# Work has not yet started here
-> > > > > 	close(port0)
-> > > > > 	`- snd_rawmidi_drain_output
-> > > > > 	   # Times out because nothing is processing outbound data!
-> > > > > 
-> > > > > The two ports interact like this because they are on the same endpoint,
-> > > > > so should the work only be cancelled when the last endpoint is closed?
-> > > > 
-> > > > How about the following patch work?
-> > > > It's a band-aid, but should suffice.  The callback is already
-> > > > protected with rawmidi open_mutex.
-> > > 
-> > > Yes, this patch fixes it and is
-> > > 
-> > > Tested-by: John Keeping <jkeeping@inmusicbrands.com>
-> > 
-> > Thank you for quick testing!
-> > 
-> > Looking at the code again, I think the suggested fix isn't right.
-> > It still allows some pending work accessing the freed object.
-> > 
-> > Could you test the following one-liner instead?
-> 
-> Tested-by: John Keeping <jkeeping@inmusicbrands.com>
-> 
-> The patch below also fixes the issue.  Thanks!
+From: Ge Yang <yangge1116@126.com>
 
-OK, I'm going to submit and merge the proper patch.
+Since the introduction of commit c77c0a8ac4c52 ("mm/hugetlb: defer freeing
+of huge pages if in non-task context"), which supports deferring the
+freeing of hugetlb pages, the allocation of contiguous memory through
+cma_alloc() may fail probabilistically.
 
+In the CMA allocation process, if it is found that the CMA area is occupied
+by in-use hugetlb folios, these in-use hugetlb folios need to be migrated
+to another location. When there are no available hugetlb folios in the
+free hugetlb pool during the migration of in-use hugetlb folios, new folios
+are allocated from the buddy system. A temporary state is set on the newly
+allocated folio. Upon completion of the hugetlb folio migration, the
+temporary state is transferred from the new folios to the old folios.
+Normally, when the old folios with the temporary state are freed, it is
+directly released back to the buddy system. However, due to the deferred
+freeing of hugetlb pages, the PageBuddy() check fails, ultimately leading
+to the failure of cma_alloc().
 
-thanks,
+Here is a simplified call trace illustrating the process:
+cma_alloc()
+    ->__alloc_contig_migrate_range() // Migrate in-use hugetlb folios
+        ->unmap_and_move_huge_page()
+            ->folio_putback_hugetlb() // Free old folios
+    ->test_pages_isolated()
+        ->__test_page_isolated_in_pageblock()
+             ->PageBuddy(page) // Check if the page is in buddy
 
-Takashi
+To resolve this issue, we have implemented a function named
+wait_for_freed_hugetlb_folios(). This function ensures that the hugetlb
+folios are properly released back to the buddy system after their migration
+is completed. By invoking wait_for_freed_hugetlb_folios() before calling
+PageBuddy(), we ensure that PageBuddy() will succeed.
+
+Fixes: c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in non-task context")
+Signed-off-by: Ge Yang <yangge1116@126.com>
+Cc: <stable@vger.kernel.org>
+---
+
+V3:
+- adjust code and message suggested by Muchun and David
+
+V2:
+- flush all folios at once suggested by David
+
+ include/linux/hugetlb.h |  5 +++++
+ mm/hugetlb.c            |  5 +++++
+ mm/page_isolation.c     | 10 ++++++++++
+ 3 files changed, 20 insertions(+)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 6c6546b..0c54b3a 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -697,6 +697,7 @@ bool hugetlb_bootmem_page_zones_valid(int nid, struct huge_bootmem_page *m);
+ 
+ int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list);
+ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn);
++void wait_for_freed_hugetlb_folios(void);
+ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 				unsigned long addr, bool cow_from_owner);
+ struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int preferred_nid,
+@@ -1092,6 +1093,10 @@ static inline int replace_free_hugepage_folios(unsigned long start_pfn,
+ 	return 0;
+ }
+ 
++static inline void wait_for_freed_hugetlb_folios(void)
++{
++}
++
+ static inline struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 					   unsigned long addr,
+ 					   bool cow_from_owner)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 30bc34d..b4630b3 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2955,6 +2955,11 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
+ 	return ret;
+ }
+ 
++void wait_for_freed_hugetlb_folios(void)
++{
++	flush_work(&free_hpage_work);
++}
++
+ typedef enum {
+ 	/*
+ 	 * For either 0/1: we checked the per-vma resv map, and one resv
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 8ed53ee0..b2fc526 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -615,6 +615,16 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
+ 	int ret;
+ 
+ 	/*
++	 * Due to the deferred freeing of hugetlb folios, the hugepage folios may
++	 * not immediately release to the buddy system. This can cause PageBuddy()
++	 * to fail in __test_page_isolated_in_pageblock(). To ensure that the
++	 * hugetlb folios are properly released back to the buddy system, we
++	 * invoke the wait_for_freed_hugetlb_folios() function to wait for the
++	 * release to complete.
++	 */
++	wait_for_freed_hugetlb_folios();
++
++	/*
+ 	 * Note: pageblock_nr_pages != MAX_PAGE_ORDER. Then, chunks of free
+ 	 * pages are not aligned to pageblock_nr_pages.
+ 	 * Then we just check migratetype first.
+-- 
+2.7.4
+
 
