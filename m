@@ -1,114 +1,169 @@
-Return-Path: <linux-kernel+bounces-519028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC5AA3972F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:34:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04504A39745
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E1D1885F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:34:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FCDE3A166C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470A0230993;
-	Tue, 18 Feb 2025 09:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpjpJu7a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3748622E418;
+	Tue, 18 Feb 2025 09:36:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6D22D4C9;
-	Tue, 18 Feb 2025 09:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3D722AE42
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739871258; cv=none; b=rLH5T+OzWdEy3AfhPJMMyC3ojd1vaZe0j/7riBqiviQbhyihyGQNuIROWy/1EwBMo2o9c+BPWXEulkXbptOGEc+xP08m1VbQHvAEAb1qz5IAK4HyFAGrakCI8G/fROfoFkNO5e6lgNKvWveyWrMydz7ApmH/aRQ1ouczSGSK6YA=
+	t=1739871360; cv=none; b=uP4ww7DgkVK0skeZBUDeitdwEICYNWgDEZdXO3nr9bYxTfdDs3SiS5ZZK8mBUNSouhscqo68b4aByeP6r8f2Cl1aEROdYmdZZJbdij30Rju6hxMbCTfvD/fg/LD69KZKXZ6/jhmVsxrLdJm156lo/oO/GG0bnaW034YvNO7SQaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739871258; c=relaxed/simple;
-	bh=V8X1mDk7JVpQUTClaj7fdDJBMmCj/vyPTzAGGwCbZbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tReyMv43gsku0dFSvSIcjsdWi3lKnoMgRwhk605HcqhiF0QZAQ7GbemWAqUklgXRGS94aubCQoRuyHgmGyaf4XNUDKvpoliAiFxwb+1u8VH2n7UbeBnz7NpJEGCEvNQeaqaYAOxUnVIw+xI1QIANECdnv54Qw9OEkZFHWPybBg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpjpJu7a; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739871258; x=1771407258;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=V8X1mDk7JVpQUTClaj7fdDJBMmCj/vyPTzAGGwCbZbg=;
-  b=dpjpJu7adSN2m4DURT6N0uuf0/zx0GL6Oc2hsXJmcSazahIGLcSfV45V
-   eFtpsq5zWXDzY8cidzYlaJRnpr+dAEsp1oiwwEdpR3YUV65r1sf2gebKW
-   6weyro2UJM/6NYNd4qrhk/2wZDncjtiRW3TYv0k4yODl7Nb0exyqS+pYR
-   3yVGBWCbB84qq/0Nl50pUBgNxCrtCivGSD4lbCJTj0NYJZwVzsw1NGDho
-   aILEnGexHfrZBjkcm61oDpJgeMJtULGZHAdyIAbyG/eTu39kNaY/VyZoJ
-   zX3H8KK2p/F6cYVSj+uER5YtUwBnX8fsIjoUbAep1TY+FYsp4gyvaH/0p
-   w==;
-X-CSE-ConnectionGUID: ExYGjjmgS0+oSgNyDUuBpQ==
-X-CSE-MsgGUID: nqEIXHUiQ3axBmnX/uOKBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51542674"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="51542674"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 01:34:16 -0800
-X-CSE-ConnectionGUID: mbwZ4YsQQ3OJovpBmDqYOg==
-X-CSE-MsgGUID: PlFqrOiYRpK+JdpKoi7x3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118467594"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 01:34:12 -0800
-Message-ID: <28dcae5c-4fb7-46a8-9f37-a4f9f59b45a2@linux.intel.com>
-Date: Tue, 18 Feb 2025 17:34:09 +0800
+	s=arc-20240116; t=1739871360; c=relaxed/simple;
+	bh=uroR9tsECRwwrTrCr7ptIn53F42JTiUwXr1bXKvg5jE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pmU9NAE6Il4y2QgJT0FEzrZ+S6ZdSvwM7hfPCn5THDsfSVYQ+z57a5rSrrJjso6DuYQ7nVb/vd3Du5cNxZbcvEOkmIO4SvI/6oQ7nfyAWDRBgw5M9lMWGkLoFa/YzATQWxS3ubV0yh1i8akA5WgcXX9cdD/NQKrlPBBeRdJtESc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkK1C-000388-9r; Tue, 18 Feb 2025 10:35:54 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkK1C-001Z42-07;
+	Tue, 18 Feb 2025 10:35:54 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkK1B-0003co-37;
+	Tue, 18 Feb 2025 10:35:53 +0100
+Message-ID: <50c7055a676fb7f1bf27cb33a914df641c56dd15.camel@pengutronix.de>
+Subject: Re: [PATCH 5/5] imx_dsp_rproc: Use reset controller API to control
+ the DSP
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org, 
+	mathieu.poirier@linaro.org
+Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, andersson@kernel.org, 
+	linux-remoteproc@vger.kernel.org, iuliana.prodan@nxp.com, 
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, Frank.Li@nxp.com, 
+	krzk@kernel.org
+Date: Tue, 18 Feb 2025 10:35:53 +0100
+In-Reply-To: <20250218085712.66690-6-daniel.baluta@nxp.com>
+References: <20250218085712.66690-1-daniel.baluta@nxp.com>
+	 <20250218085712.66690-6-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [kvm-unit-tests patch v6 07/18] x86: pmu: Fix potential out of
- bound access for fixed events
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
- Mingwei Zhang <mizhang@google.com>, Xiong Zhang <xiong.y.zhang@intel.com>,
- Zhenyu Wang <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
- Jinrong Liang <cloudliang@tencent.com>, Yongwei Ma <yongwei.ma@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240914101728.33148-1-dapeng1.mi@linux.intel.com>
- <20240914101728.33148-8-dapeng1.mi@linux.intel.com>
- <Z6-wmhr5JDNuDC7D@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <Z6-wmhr5JDNuDC7D@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Di, 2025-02-18 at 10:57 +0200, Daniel Baluta wrote:
+> Use the reset controller API to control the DSP on i.MX8MP. This way
+> we can have a better control of the resources and avoid using a syscon
+> to access the audiomix bits.
+>=20
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
+>  drivers/remoteproc/imx_rproc.h     |  2 ++
+>  2 files changed, 19 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_=
+dsp_rproc.c
+> index ea5024919c2f..2b97e4d0bb9e 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+> =20
+>  #include "imx_rproc.h"
+> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
+>   */
+>  struct imx_dsp_rproc {
+>  	struct regmap				*regmap;
+> +	struct reset_control			*reset;
+>  	struct rproc				*rproc;
+>  	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
+>  	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
+> @@ -192,9 +194,7 @@ static int imx8mp_dsp_reset(struct imx_dsp_rproc *pri=
+v)
+>  	/* Keep reset asserted for 10 cycles */
+>  	usleep_range(1, 2);
+> =20
+> -	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL);
+> +	reset_control_assert(priv->reset);
+> =20
+>  	/* Take the DSP out of reset and keep stalled for FW loading */
+>  	pwrctl =3D readl(dap + IMX8M_DAP_PWRCTL);
+> @@ -231,13 +231,9 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *p=
+riv)
+> =20
+>  /* Specific configuration for i.MX8MP */
+>  static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp =3D {
+> -	.src_reg	=3D IMX8M_AudioDSP_REG2,
+> -	.src_mask	=3D IMX8M_AudioDSP_REG2_RUNSTALL,
+> -	.src_start	=3D 0,
+> -	.src_stop	=3D IMX8M_AudioDSP_REG2_RUNSTALL,
+>  	.att		=3D imx_dsp_rproc_att_imx8mp,
+>  	.att_size	=3D ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
+> -	.method		=3D IMX_RPROC_MMIO,
+> +	.method		=3D IMX_RPROC_RESET_CONTROLLER,
+>  };
+> =20
+>  static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp =3D {
+> @@ -329,6 +325,9 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  					  true,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret =3D reset_control_deassert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -369,6 +368,9 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  					  false,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret =3D reset_control_assert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -995,6 +997,13 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_=
+rproc *priv)
+> =20
+>  		priv->regmap =3D regmap;
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		priv->reset =3D devm_reset_control_get_optional_exclusive(dev, NULL);
 
-On 2/15/2025 5:07 AM, Sean Christopherson wrote:
-> On Sat, Sep 14, 2024, Dapeng Mi wrote:
->> @@ -744,6 +753,12 @@ int main(int ac, char **av)
->>  	printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
->>  	printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
->>  
->> +	fixed_counters_num = MIN(pmu.nr_fixed_counters, ARRAY_SIZE(fixed_events));
->> +	if (pmu.nr_fixed_counters > ARRAY_SIZE(fixed_events))
->> +		report_info("Fixed counters number %d > defined fixed events %ld. "
-> Doesn't compile on 32-bit builds.  Easiest thing is to cast ARRAY_SIZE, because
-> size_t is different between 32-bit and 64-bit.
+Is this optional on purpose? There is no mention of it in the commit
+message. Where is this resets property documented in the dt-bindings?
 
-But ARRAY_SIZE() should return same value regardless of 32-bit or 64-bit,
-right?
-
-
->
->> +			    "Please update test case.", pmu.nr_fixed_counters,
->> +			    ARRAY_SIZE(fixed_events));
->> +
->>  	apic_write(APIC_LVTPC, PMI_VECTOR);
->>  
->>  	check_counters();
->> -- 
->> 2.40.1
->>
+regards
+Philipp
 
