@@ -1,147 +1,286 @@
-Return-Path: <linux-kernel+bounces-519771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D5A3A1AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:49:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC59A3A1B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342181894F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C583B0630
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F74D26D5D8;
-	Tue, 18 Feb 2025 15:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D526D5D7;
+	Tue, 18 Feb 2025 15:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="v5LlfeBM"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHhF5iLw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E874926A098
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC7B10F4;
+	Tue, 18 Feb 2025 15:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893771; cv=none; b=KHHfL1oDCuWACvhblMYtSvBq6ayCTz1pkAwOjwhedRo0OLJ+DuOBClqLD/NACdcmeHciXxCcHSKddBmYf/H7s4NQ4QCDNLqttzbFKM4iV3+xtpB3BZAMH32H7Xy3IJ1e+rGgmObtp5t5lWxsS1XYHLfabr8VXohfi4EwuhLzg/U=
+	t=1739893810; cv=none; b=KfjxWgw4fKGRDJc0Bi++y+/KWWM6Q4ERweZty75TOoJMSLJ6kPnsIPnHX8B716aBBy63lbX4g2D4MgTf9Ox5QITPmwnHuipa0NED2+TVkOT6Z3OulVZn7iPNbHDOAVJr65DXPEjhgqwged2PXvFZGaR3Hz9F7FmC/D5xHxvvgRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893771; c=relaxed/simple;
-	bh=KnYpb6bE0eyQCr84HbKFpqpurHoiaGGJGPLTOYYxz18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MO4cPMx0IYKctdaYAmXqsemUkN6r/9NKoaqivqMZ+kkA43sY+wZdnIu4O/5hTLw7FQLvg/13gz/7cug9fmEdo59be6UfBDNGNkE+X6UEG7kpEBKBjEjRmcL/+ay29grnoZ3WQhniCkLJXW2/webLsVvQyKWDtbUYmSApfiTe81Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=v5LlfeBM; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso3665467f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:49:29 -0800 (PST)
+	s=arc-20240116; t=1739893810; c=relaxed/simple;
+	bh=xXXrFshznYsks4gPtpI00/N2HBn+xfheBhzE7onIGwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aInDxjqFMAXI2hoeecKh0RBJSe8dZb2lJty5Lz+O0tugmaXgueJWvnbtsG4v2TQDwwmyRrwXLPJxAAyaukQUvFLb8l+Y9ytEI7BhRCm/EYepX78T0z0+e7+1i5BiaezvJ1GyTi+sxYPHf5hk6lI+RVV05SgARWU/visqvjMKB+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHhF5iLw; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso939849166b.1;
+        Tue, 18 Feb 2025 07:50:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1739893768; x=1740498568; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k5lpfrcaL2Is2w5mfT4nI0tpu6NUg+OVNgUbEulgO5s=;
-        b=v5LlfeBM+1XbvFnvDOUwev5A72L5lowwCEGWlDMQrlsi17LyMPlFW5IITO+ETfxUrM
-         Ns+81FZ0ndU6Q/r6wYTLxsGblbhITj75UV6122y0OuYNO+P3N0wuLVvUaDNW5N/yrgUt
-         AA5dtoXdi9BMOjrW9gc9a2A6Tnmf3+O/vqFx66CepAHcruNlpe83sauTdT/yFT/kjbiu
-         jcTRuxauGTKPb5O4CitP9pHBh9qlMOSMNe9x8WQbX+P7uTXrxwZOCa9oK+XnVHqFe9Mq
-         OHduk5vBuINEU4groW8C7TUAZ95L1YVAHtyvzR5Cj7E/MouachcvZle/PsmUOLqCixKd
-         MN6g==
+        d=gmail.com; s=20230601; t=1739893805; x=1740498605; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mReLmHdUalr80UPhI614ZZFtZiFvIOnOjgDKsfY1PQg=;
+        b=VHhF5iLwMBrpByPLOsALBcLLDEE+fg5Hulxf2GcKD0Rf8Gnyyh1B8ClhgeL5fw8571
+         o3NYyYmEP7grozRifUASKr25VCLl8ZYU9sXg4hYq9xMQi/85VpO1SiyKJ+PcD3gd3a+K
+         k/WLpNz++7Okib3s5Wf1rS9KnUfrOaU6ztcPrwlFSxNq2MjI8I7APDUOUQjfhhRlZaYS
+         iuPEbfCKhRWwMh1rNwF/AnKazwri+mj+7jWs29YC9Z1T6GdPG0XegotqVlkftv71Cn35
+         9S52Zylka33ebdNqw5QXr/8njHqC6dXfLkWxinhx3ibNeGpt25prlD6Tjk7YTO076Irf
+         EkQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739893768; x=1740498568;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5lpfrcaL2Is2w5mfT4nI0tpu6NUg+OVNgUbEulgO5s=;
-        b=INjfLlhveuuiqCzzbrG608b5/kI51fPCNftsMOFrkCPcNDX8mAx50B3Ni5oVyO4+sU
-         0xjTqXsZAhvtRkIAl4FeYPDfCziGt5Abbm3xMzDQfL4hxNMRWeV2+IpfE8l/GAHVjR5o
-         7DDNEZah5AkwAzS0EXuZ2DhRd+/ByQ5jtMXOELHdp7dIwAN3pDwW7hAW3zO+egHezgMN
-         8tAVirJ/tnnkP5Glj2CJfbjfEjmxwbVJhYPjlTAgSzlUnoPhUr8MTmqCTUu8weoPV4Kd
-         urGR3AbifpHoHXh8Ivds3lRKBbtlQ08GZEBIDcbief+A14j5mYaydMrbIJO0JCWUC4Pm
-         Xi2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYrhRtbiLIXxiiIR11iLsnxvT1DulLxQrJZTZWDaFEPV9QZ7nl8ZWrKOOBp7zGgOh23iEtLi1kNguk56k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRWGtsxM7D+vhA1tgD6B1kdmdibzuZCIlU8H1sEd8biE5JjO9S
-	FgpQwraAPI+H7bsqAn5zQzbnOWWtYdmmTLhsfJu5e5x/a/SF57xOKptvasWGXkw=
-X-Gm-Gg: ASbGncuqAA2F3iiOmOtYndYBYRFPH/+vR3d29ViJ6p/vAdS884iT9HCqk8WtSp9+yjg
-	/HevlstKuHWPOmgx9NHEhTeV46IeGBN5CHIrEeg9DMiHymvrwXYNkEsRINS9Aelm38Npt/jF5+9
-	js30ApcuQaknULeIPUezlVf8W+FEnJMBu3/5ySogrrpVxXXhb5c7PdwGnhzQei2pyVofq4LGUBd
-	ooqJ+TScoRDcuUZEo/8V1AgFVTr29b3wweL9Wn0xVla9CupIBOo28AZfg0yX3pX/nsV66735+VK
-	TGwERMovfMeqoW8OheR9W6GcmNSy45AaryUlYr8R1sm9RzCtZIzffM5+xk0=
-X-Google-Smtp-Source: AGHT+IHzHPbfVt1Tel29A+epxPfb2KB2d12lkNDmgHGe0o8ZVjMIavmijEOcnrw/jRAI4QZkUMylUg==
-X-Received: by 2002:a05:6000:1568:b0:38f:5481:1160 with SMTP id ffacd0b85a97d-38f54811294mr1777787f8f.15.1739893768059;
-        Tue, 18 Feb 2025 07:49:28 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25913f5asm15548613f8f.52.2025.02.18.07.49.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 07:49:27 -0800 (PST)
-Message-ID: <a38ad793-8660-4942-ba29-aa5f297336ea@nexus-software.ie>
-Date: Tue, 18 Feb 2025 15:49:26 +0000
+        d=1e100.net; s=20230601; t=1739893805; x=1740498605;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mReLmHdUalr80UPhI614ZZFtZiFvIOnOjgDKsfY1PQg=;
+        b=hk4qvJkg2GTZGythibOL2UeGldR2CrSZM7YHqqHg+H/GIikq37YnliyUM7fA3U8qbr
+         0Sg0VBZSpxIklmAX3T3cTQzLtTph0NIGq7uaJkZ+XwxMQmSLS0MqI7clLSBToFRjzbw7
+         DB7ExMNd5UA+r5dDuH95GEDL72XNa1OH+ftFXvSYfhyrXaz1rLgfOmXFZPmatItUc2Yj
+         Iev8f/1ZReGmaGJaOYC/Or0uIqZ4eZqtgy21Sx0+kTIZSaBXlPrO0KbVisKdQ/9NpS4r
+         ljcfz+TwDd9izyDxpaqeX7szdY1aKF55lnjNcMHU7xQfnOxj/l4uarmtcEjfPTTHWNh8
+         9uGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPSO2pK1GbzWfUvbSjC3+QJwM5tlSpbNS63gI4pwWqFV/K0iytpvlkEMoppmQZR9mj8oVdRSYQUX1m@vger.kernel.org, AJvYcCXTI6akBOtj4F5IBMkTm5CVdmFPUfBvtCxoYqyuDVyF64QHmunC8eZJWC2K8wEn4rr1HO8Opl2+9fFd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGg9WKNZ9e5g45lgyzbeGxLFyUA8TyKguiPYrtHAstRECB2XEU
+	oUvMwTuT8aZZJLO5n2bNGWng9wF0BYZ+FHkZ7eyoXWv34RXT5Yw+jUdTElUJC4A=
+X-Gm-Gg: ASbGncsbvxU0cwDZxt2qoUXa3TXTof8lISjdYL319o0ZRGoo3crVJ3ZBVVroAn4QiJ/
+	AleoXcP2Uaj7ptlWRGNZ0Qu9UTPlOyfqwSt2pS0K5nP447KL3VJOuF8YwORFXNhyp8sJ5OFdVIh
+	YJYsoAdqKTbfxszfz0qHtxujzlaNemwqldg8rMQLcOVer7LU/wzM19706xJdh4JWXcoZKhMR6Wg
+	JkXYfsX8e4JJI6AxheZniAPgWlUSbZJDJMLrLqAsPRkncvah3I5gyIR3uqqqegSP0kGm5mKZFCr
+	myOdSSppNBGl1Y4=
+X-Google-Smtp-Source: AGHT+IHtAyydbfoXbx9zeo04VNjwSnQ27Knmz0ItYzncGEjZUASU18pITXXeMFFJlPuU/Bj7x5gW4g==
+X-Received: by 2002:a17:907:3d8e:b0:ab7:462f:647f with SMTP id a640c23a62f3a-abb70b35f1amr1476203766b.25.1739893805155;
+        Tue, 18 Feb 2025 07:50:05 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba002f790sm351966766b.164.2025.02.18.07.50.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Feb 2025 07:50:04 -0800 (PST)
+Date: Tue, 18 Feb 2025 15:50:04 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <20250218155004.n53fcuj2lrl5rxll@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-3-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom,sm8450-videocc: Add MXC
- power domain
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-1-cfe6289ea29b@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20250218-videocc-pll-multi-pd-voting-v1-1-cfe6289ea29b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206132754.2596694-3-rppt@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 18/02/2025 14:26, Jagadeesh Kona wrote:
-> To configure the video PLLs and enable the video GDSCs on SM8450,
-> SM8475, SM8550 and SM8650 platforms, the MXC rail must be ON along
-> with MMCX. Therefore, update the videocc bindings to include
-> the MXC power domain on these platforms.
-> 
-> Fixes: 1e910b2ba0ed ("dt-bindings: clock: qcom: Add SM8450 video clock controller")
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
->   Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index 62714fa54db82491a7a108f7f18a253d737f8d61..737efc4b46564c1e475b02873d2dc124329fb775 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -32,9 +32,11 @@ properties:
->         - description: Video AHB clock from GCC
->   
->     power-domains:
-> -    maxItems: 1
->       description:
-> -      MMCX power domain.
-> +      Power domains required for the clock controller to operate
-> +    items:
-> +      - description: MMCX power domain
-> +      - description: MXC power domain
->   
->     required-opps:
->       maxItems: 1
-> @@ -72,7 +74,8 @@ examples:
->         reg = <0x0aaf0000 0x10000>;
->         clocks = <&rpmhcc RPMH_CXO_CLK>,
->                  <&gcc GCC_VIDEO_AHB_CLK>;
-> -      power-domains = <&rpmhpd RPMHPD_MMCX>;
-> +      power-domains = <&rpmhpd RPMHPD_MMCX>,
-> +                      <&rpmhpd RPMHPD_MXC>;
->         required-opps = <&rpmhpd_opp_low_svs>;
->         #clock-cells = <1>;
->         #reset-cells = <1>;
-> 
+On Thu, Feb 06, 2025 at 03:27:42PM +0200, Mike Rapoport wrote:
+>From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+>to denote areas that were reserved for kernel use either directly with
+>memblock_reserve_kern() or via memblock allocations.
+>
+>Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>---
+> include/linux/memblock.h | 16 +++++++++++++++-
+> mm/memblock.c            | 32 ++++++++++++++++++++++++--------
+> 2 files changed, 39 insertions(+), 9 deletions(-)
+>
+>diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>index e79eb6ac516f..65e274550f5d 100644
+>--- a/include/linux/memblock.h
+>+++ b/include/linux/memblock.h
+>@@ -50,6 +50,7 @@ enum memblock_flags {
+> 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
+> 	MEMBLOCK_DRIVER_MANAGED = 0x8,	/* always detected via a driver */
+> 	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
+>+	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Above memblock_flags, there are comments on explaining those flags.
+
+Seems we miss it for MEMBLOCK_RSRV_KERN.
+
+> };
+> 
+> /**
+>@@ -116,7 +117,19 @@ int memblock_add_node(phys_addr_t base, phys_addr_t size, int nid,
+> int memblock_add(phys_addr_t base, phys_addr_t size);
+> int memblock_remove(phys_addr_t base, phys_addr_t size);
+> int memblock_phys_free(phys_addr_t base, phys_addr_t size);
+>-int memblock_reserve(phys_addr_t base, phys_addr_t size);
+>+int __memblock_reserve(phys_addr_t base, phys_addr_t size, int nid,
+>+		       enum memblock_flags flags);
+>+
+>+static __always_inline int memblock_reserve(phys_addr_t base, phys_addr_t size)
+>+{
+>+	return __memblock_reserve(base, size, NUMA_NO_NODE, 0);
+                                                            ^ MEMBLOCK_NONE ?
+
+>+}
+>+
+>+static __always_inline int memblock_reserve_kern(phys_addr_t base, phys_addr_t size)
+>+{
+>+	return __memblock_reserve(base, size, NUMA_NO_NODE, MEMBLOCK_RSRV_KERN);
+>+}
+>+
+> #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
+> int memblock_physmem_add(phys_addr_t base, phys_addr_t size);
+> #endif
+>@@ -477,6 +490,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+> 
+> phys_addr_t memblock_phys_mem_size(void);
+> phys_addr_t memblock_reserved_size(void);
+>+phys_addr_t memblock_reserved_kern_size(int nid);
+> unsigned long memblock_estimated_nr_free_pages(void);
+> phys_addr_t memblock_start_of_DRAM(void);
+> phys_addr_t memblock_end_of_DRAM(void);
+>diff --git a/mm/memblock.c b/mm/memblock.c
+>index 95af35fd1389..4c33baf4d97c 100644
+>--- a/mm/memblock.c
+>+++ b/mm/memblock.c
+>@@ -491,7 +491,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+> 	 * needn't do it
+> 	 */
+> 	if (!use_slab)
+>-		BUG_ON(memblock_reserve(addr, new_alloc_size));
+>+		BUG_ON(memblock_reserve_kern(addr, new_alloc_size));
+> 
+> 	/* Update slab flag */
+> 	*in_slab = use_slab;
+>@@ -641,7 +641,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
+> #ifdef CONFIG_NUMA
+> 			WARN_ON(nid != memblock_get_region_node(rgn));
+> #endif
+>-			WARN_ON(flags != rgn->flags);
+>+			WARN_ON(flags != MEMBLOCK_NONE && flags != rgn->flags);
+> 			nr_new++;
+> 			if (insert) {
+> 				if (start_rgn == -1)
+>@@ -901,14 +901,15 @@ int __init_memblock memblock_phys_free(phys_addr_t base, phys_addr_t size)
+> 	return memblock_remove_range(&memblock.reserved, base, size);
+> }
+> 
+>-int __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
+>+int __init_memblock __memblock_reserve(phys_addr_t base, phys_addr_t size,
+>+				       int nid, enum memblock_flags flags)
+> {
+> 	phys_addr_t end = base + size - 1;
+> 
+>-	memblock_dbg("%s: [%pa-%pa] %pS\n", __func__,
+>-		     &base, &end, (void *)_RET_IP_);
+>+	memblock_dbg("%s: [%pa-%pa] nid=%d flags=%x %pS\n", __func__,
+>+		     &base, &end, nid, flags, (void *)_RET_IP_);
+> 
+>-	return memblock_add_range(&memblock.reserved, base, size, MAX_NUMNODES, 0);
+>+	return memblock_add_range(&memblock.reserved, base, size, nid, flags);
+> }
+> 
+> #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
+>@@ -1459,14 +1460,14 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+> again:
+> 	found = memblock_find_in_range_node(size, align, start, end, nid,
+> 					    flags);
+>-	if (found && !memblock_reserve(found, size))
+>+	if (found && !__memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN))
+
+Maybe we could use memblock_reserve_kern() directly. If my understanding is
+correct, the reserved region's nid is not used.
+
+BTW, one question here. How we handle concurrent memblock allocation? If two
+threads find the same available range and do the reservation, it seems to be a
+problem to me. Or I missed something?
+
+> 		goto done;
+> 
+> 	if (numa_valid_node(nid) && !exact_nid) {
+> 		found = memblock_find_in_range_node(size, align, start,
+> 						    end, NUMA_NO_NODE,
+> 						    flags);
+>-		if (found && !memblock_reserve(found, size))
+>+		if (found && !memblock_reserve_kern(found, size))
+> 			goto done;
+> 	}
+> 
+>@@ -1751,6 +1752,20 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+> 	return memblock.reserved.total_size;
+> }
+> 
+>+phys_addr_t __init_memblock memblock_reserved_kern_size(int nid)
+>+{
+>+	struct memblock_region *r;
+>+	phys_addr_t total = 0;
+>+
+>+	for_each_reserved_mem_region(r) {
+>+		if (nid == memblock_get_region_node(r) || !numa_valid_node(nid))
+>+			if (r->flags & MEMBLOCK_RSRV_KERN)
+>+				total += r->size;
+>+	}
+>+
+>+	return total;
+>+}
+>+
+> /**
+>  * memblock_estimated_nr_free_pages - return estimated number of free pages
+>  * from memblock point of view
+>@@ -2397,6 +2412,7 @@ static const char * const flagname[] = {
+> 	[ilog2(MEMBLOCK_NOMAP)] = "NOMAP",
+> 	[ilog2(MEMBLOCK_DRIVER_MANAGED)] = "DRV_MNG",
+> 	[ilog2(MEMBLOCK_RSRV_NOINIT)] = "RSV_NIT",
+>+	[ilog2(MEMBLOCK_RSRV_KERN)] = "RSV_KERN",
+> };
+> 
+> static int memblock_debug_show(struct seq_file *m, void *private)
+>-- 
+>2.47.2
+>
+
+-- 
+Wei Yang
+Help you, Help me
 
