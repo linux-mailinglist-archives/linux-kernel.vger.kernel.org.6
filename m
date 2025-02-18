@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-518781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19F8A39477
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:03:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E6BA3947E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE6F1891B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C558216A6E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA9922ACC5;
-	Tue, 18 Feb 2025 08:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE922ACF3;
+	Tue, 18 Feb 2025 08:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fMDANAgX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JYtwZ3rw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD7219F120;
-	Tue, 18 Feb 2025 08:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5031DF73C;
+	Tue, 18 Feb 2025 08:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739865807; cv=none; b=BENKqojWuhLfZykAR5JSCEYgUihYattS09O0A4f/Zv8z0gLCwb2RFSG7jVg/Guz0jpwJbWJpA3ojrsx0tijvjZAnvfHf6p+bZ5ni7TbtFb8De0+ykakW2o2M8R9hbUNiUeuZUBMSlUdRpX11lgoCCY1/Dje9IaRTFeeF881chHc=
+	t=1739866040; cv=none; b=FTVJmazPx1sHe+uEGlqm5ZPX9NPP5ytPjKKNTQ/4R/ChBqT/ev43t9oYug2/Hgoy9naIy6Dsvom7sACA3/rPuGbJCwIKJQ7uF85qmrzQAmtQ43kAFN3rYc98SjHUEaghgGWE+qSXfnO7OgXCgg2CAliPYbSuDclMT349lHkOQjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739865807; c=relaxed/simple;
-	bh=+P6ReYVOxMFlYR/URuQebiSVYq4Ll96FRU/nVDQGJfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6h02jhthWXZQadmA0xkMquS6ZsYwbC+bRCUuNndyBRlWthze3QKhTeVyKv0Yjon7kmj0MP/WwPNrem8oLniTBc529qKgshMPixX6M7ihRTHJNHSD4gPjPixuBXUXqA06XkH5UjHsVkOUVhXCqtq5uTFZhnfHc7pCxTGs3HDSYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fMDANAgX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1FDF040E020E;
-	Tue, 18 Feb 2025 08:03:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id D6rjv6eRpWc0; Tue, 18 Feb 2025 08:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739865799; bh=Bl9BOnQaU0OVBVW22leXuy1TzNpH2m9SoOSIuEkd7eI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fMDANAgXRYXIR0j1WFWCZKnZ1ysygYHcs8k9ID98kpwzAmqwvafLudQyEuVuQDsPb
-	 OUkXNhBL/2+6yvlzsiBR4KhBi5TFJj2Xlk9Dib428tTd9IlJounJIkegsDKT0TmktT
-	 +BrTQx3XW/WMtRhI3dCFFrEQ0ENGS9NNV61I2DIJ4G+bCr/o/l7KxxRm83KE87Qe/8
-	 ZZN8JqfG/u3kFCW9BpC1Y5fdqgxHjtN/6T4xi8QS6DPVDXN6cJoDADKleOqwrjL1nc
-	 OgGaQxb/Cv06AWQ0AWBqmDYQM2VytLh8kp/A027LNaIfugXSwhfKeDnUoGbTMGxvwt
-	 Ba6/42EfBvf0dacU3EaJsq1sOPhOEyqjNOKSsYgrfMtrZ+ukNbEOGw7Ri2BvWGUyNK
-	 E0MYxM6HRvjkniZj4pVxEqnrXZUqkbur5p+fn0MLTJ366BaPHzNbXYuIqkELPU9Uc9
-	 fEvG+TQIfH/QI3GKbg97wwO9jj3F52gr6cIbYjwlNLDvNkxgu73fKgc/Nm7R4oJOm7
-	 rpOss0NkK/9YYx86NsBlGQL7WY7CAItmUXmRBeHuZVDygl6bwrJmrGgXPikQ5rfIvc
-	 K8P8Dwn1AidkdwC8at6YRizY4FfxiFxODvGUXuRocEhYuYjz+Xs7GhElkjMwbX8ina
-	 OEL6F5aPZJ6Avo1CJPTv1H8g=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ACAA640E00C9;
-	Tue, 18 Feb 2025 08:03:01 +0000 (UTC)
-Date: Tue, 18 Feb 2025 09:03:00 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com,
-	nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linmiaohe@huawei.com, peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-Message-ID: <20250218080300.GBZ7Q-tG0r3z3T0_i_@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
- <20250217192954.b64f88bbd79ba83ecf05110a@linux-foundation.org>
+	s=arc-20240116; t=1739866040; c=relaxed/simple;
+	bh=0nJNYoHEPY55ekPjs2MDTQbDYT48weyBXJTKQum9lYM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HdxV0dDZkC2IqubZZRGwjiiFhyMKu4Mc0n2Oe3fvu3xUthGF6g7jFsneiGAF0Xujtc7hwym7QP1NZya1bymDki7+XWKT1qyhVuRicMnG+UF8/VCJoaY6syKi5/vSFyikdwZ7Zp4GPn0st5WTMa6A8cEcn90l3gm6h4RHsZV7oUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JYtwZ3rw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E3AC4CEE6;
+	Tue, 18 Feb 2025 08:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739866038;
+	bh=0nJNYoHEPY55ekPjs2MDTQbDYT48weyBXJTKQum9lYM=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=JYtwZ3rwsLQu4WBaDduY/mEVvInOMPJ16YmXZDER0bYrEWJ7sdc7ZYLPmZh3GGD9r
+	 ESqOX2EZjua0kKcrx9D+Lgm3sRAiIBYUth0/RuncbJL/eXmaEYJ+CB9msS8pozxVDE
+	 1J+N56X+jVbr+Qg7Di4W4B8vCuSz8MTDnZTlbyp4=
+Date: Tue, 18 Feb 2025 09:07:15 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alexandre Courbot <acourbot@nvidia.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <2025021830-segment-boil-5ff7@gregkh>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7NaPYvuRF11uxnM@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250217192954.b64f88bbd79ba83ecf05110a@linux-foundation.org>
+In-Reply-To: <Z7NaPYvuRF11uxnM@phenom.ffwll.local>
 
-On Mon, Feb 17, 2025 at 07:29:54PM -0800, Andrew Morton wrote:
-> On Mon, 17 Feb 2025 14:33:30 +0800 Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+On Mon, Feb 17, 2025 at 04:48:13PM +0100, Simona Vetter wrote:
+> On Mon, Feb 17, 2025 at 11:04:45PM +0900, Alexandre Courbot wrote:
+> > Hi everyone,
+> > 
+> > This short RFC is based on top of Danilo's initial driver stub series
+> > [1] and has for goal to initiate discussions and hopefully some design
+> > decisions using the simplest subdevice of the GPU (the timer) as an
+> > example, before implementing more devices allowing the GPU
+> > initialization sequence to progress (Falcon being the logical next step
+> > so we can get the GSP rolling).
+> > 
+> > It is kept simple and short for that purpose, and to avoid bumping into
+> > a wall with much more device code because my assumptions were incorrect.
+> > 
+> > This is my first time trying to write Rust kernel code, and some of my
+> > questions below are probably due to me not understanding yet how to use
+> > the core kernel interfaces. So before going further I thought it would
+> > make sense to raise the most obvious questions that came to my mind
+> > while writing this draft:
+> > 
+> > - Where and how to store subdevices. The timer device is currently a
+> >   direct member of the GPU structure. It might work for GSP devices
+> >   which are IIUC supposed to have at least a few fixed devices required
+> >   to bring the GSP up ; but as a general rule this probably won't scale
+> >   as not all subdevices are present on all GPU variants, or in the same
+> >   numbers. So we will probably need to find an equivalent to the
+> >   `subdev` linked list in Nouveau.
+> > 
+> > - BAR sharing between subdevices. Right now each subdevice gets access
+> >   to the full BAR range. I am wondering whether we could not split it
+> >   into the relevant slices for each-subdevice, and transfer ownership of
+> >   each slice to the device that is supposed to use it. That way each
+> >   register would have a single owner, which is arguably safer - but
+> >   maybe not as flexible as we will need down the road?
+> > 
+> > - On a related note, since the BAR is behind a Devres its availability
+> >   must first be secured before any hardware access using try_access().
+> >   Doing this on a per-register or per-operation basis looks overkill, so
+> >   all methods that access the BAR take a reference to it, allowing to
+> >   call try_access() from the highest-level caller and thus reducing the
+> >   number of times this needs to be performed. Doing so comes at the cost
+> >   of an extra argument to most subdevice methods ; but also with the
+> >   benefit that we don't need to put the BAR behind another Arc and share
+> >   it across all subdevices. I don't know which design is better here,
+> >   and input would be very welcome.
+> > 
+> > - We will probably need sometime like a `Subdevice` trait or something
+> >   down the road, but I'll wait until we have more than one subdevice to
+> >   think about it.
 > 
-> > This patch addresses three regressions identified in memory failure
-> > handling, as discovered using ras-tools[1]:
-> 
-> Thanks.  I added these to mm.git for further exposure and testing. 
-> They do appear to be more an x86 thing so I'll do the usual thing: if
-> they later turn up in the x86 tree I shall drop the mm.git copies.  
+> It might make sense to go with a full-blown aux bus. Gives you a lot of
+> structures and answers to these questions, but also might be way too much.
 
-Please drop 'em. They look confused and need proper review first.
+No, it's not too much, that's exactly what the auxbus code is for
+(splitting a real device into child ones where they all share the same
+physical resources.)  So good suggestion.
 
-Also, your commits have
+thanks,
 
-"Cc: Acked-by:Thomas Gleixner <tglx@linutronix.de>"
-
-When did tglx ack them? I don't see anything in my mbox.
-
-Andrew, again, please do not take unreviewed x86 patches through your tree
-without synchronizing with us. This keeps happening and it is not helping at
-all - the opposite is happening.
-
-:-(
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
 
