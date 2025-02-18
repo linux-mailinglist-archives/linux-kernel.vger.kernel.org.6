@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-519701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6BAA3A0D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:11:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7CCA3A0D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8893A4669
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7915E1656E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EFC26B943;
-	Tue, 18 Feb 2025 15:11:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666C326B2BF;
-	Tue, 18 Feb 2025 15:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445226B2BF;
+	Tue, 18 Feb 2025 15:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wl2JcCyL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3084F26B2A2;
+	Tue, 18 Feb 2025 15:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891470; cv=none; b=aUpF/Ej7ovZlf6i+QARV2o2QZOqT7etfMmu9Ztt5xdO7E8VqoxNf+dFuySnMKM5t1z9N1YZHn1zn29Ay9nHBknGBx17XMrUdV1ZbW5KpkqXJiO6+fD86CTfYtICS0ku+vGszalaPO5mWK/UlxZfIIuDCSfvuQ+4gCifDkdRPALI=
+	t=1739891496; cv=none; b=cR0/Rh2ZC6cFV0oaNc9o12yX0EbeLEWPYTa5VmEapWmk2UgkrmWk+1JO2bVYTrnRLaIkrjO1T6Ui1x8GMyOBmvOMhoXiuyGC5KmYMZpEYA7PLWMArLot70BxCm9zvo3i5Vc10lOhygefpW5QWAp7HeGvdGgdBG0txv8eMV3Vjaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891470; c=relaxed/simple;
-	bh=FEnQfhgHSqo3Q7zro/Iiqg4tKjB4Eaf1e6s01EGT+o4=;
+	s=arc-20240116; t=1739891496; c=relaxed/simple;
+	bh=turHXDwkpIiNyMXD+1g9N3ggiuvF4xsG88lQ77iVpMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4FN98rmxS+N1tA9FdIbRAx1otB/AbreW/O+fkrNb2qIlLZFqEDiBtAX5e8F744i/1aKzPqdrrIavNYNkdHVLhiE75Thp1ZLed9wfDSF/HW5FKkyFVM2/Rb4CLlmEAsP325bdge1BZapsHnuwoeArU/+2rSpJnjvx7zpR/wTHm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C2ED13D5;
-	Tue, 18 Feb 2025 07:11:26 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA19D3F6A8;
-	Tue, 18 Feb 2025 07:11:04 -0800 (PST)
-Date: Tue, 18 Feb 2025 15:11:01 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/8] dt-bindings: arm: Add Morello compatibility
-Message-ID: <Z7SjBWme-HhNYwtV@bogus>
-References: <20250213180309.485528-1-vincenzo.frascino@arm.com>
- <20250213180309.485528-2-vincenzo.frascino@arm.com>
- <CACRpkda-J_NHC7Te=Shk0A-35qWms3xeM2MggdGM0ze3Gt0KMw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DV3x6OjFUh+u8jmkyrwC1xwKnUDIP7SOJkTNKj4DWigSnej/f5V4bSP9NPNA9aGGC/tDEtZ85FoKvP8GzL/HzoJkaOsUwQg/oQ7nuM9upkFMnVok/s8vn0qYqN/QbveyQiohqypGWKUXh9oR1EXKANdCF1U3772zzpkIBwOYJzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wl2JcCyL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CEDC4CEE2;
+	Tue, 18 Feb 2025 15:11:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739891495;
+	bh=turHXDwkpIiNyMXD+1g9N3ggiuvF4xsG88lQ77iVpMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wl2JcCyL4swZSuUygn4Mzpv3os6pEXc/Xbr1/vWWY5IyafBrMKvXEASGwevuLat4r
+	 Z6TJyTiWlybPvKSApyQY9lBPY9/PMPF9wxMumJFAhV+L3BvLCyNy+7uDZ91uERbH2+
+	 9rU5SleansbmIovtyxv3DYQj4t74iG/G1XfQQywCn0Sj4kVvFx/iHr/09gSsFtga71
+	 d/+NprrZcDkP6QRJ6Vfw0rb1P2Got9udCzoce4ibw4IruU7Z+t8Er6ducD2tr3yyTJ
+	 maSn1PLFu8A9VQAjQHMClVKAPjd9o6hLxsM2FxxhRWVPM0tkor8ewOVplAM5rhXALI
+	 PboQctBfpWfdw==
+Date: Tue, 18 Feb 2025 15:11:31 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"open list:AMD NODE DRIVER" <linux-kernel@vger.kernel.org>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	"moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>
+Subject: Re: [PATCH 0/7] Adjust all AMD audio drivers to use AMD_NODE
+Message-ID: <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
+References: <20250217231747.1656228-1-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="170e2EepvI2niirm"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkda-J_NHC7Te=Shk0A-35qWms3xeM2MggdGM0ze3Gt0KMw@mail.gmail.com>
+In-Reply-To: <20250217231747.1656228-1-superm1@kernel.org>
+X-Cookie: Editing is a rewording activity.
 
-On Fri, Feb 14, 2025 at 11:38:54AM +0100, Linus Walleij wrote:
-> Hi Vincenzo,
->
-> thanks for your patch!
->
-> On Thu, Feb 13, 2025 at 7:03 PM Vincenzo Frascino
-> <vincenzo.frascino@arm.com> wrote:
->
-> > Add compatibility to Arm Morello System Development Platform.
-> >
-> > Note: Morello is at the same time the name of an Architecture [1], an SoC
-> > [2] and a Board [2].
-> > To distinguish in between Architecture/SoC and Board we refer to the first
-> > as arm,morello and to the second as arm,morello-sdp.
-> >
-> > [1] https://developer.arm.com/Architectures/Morello
-> > [2] https://www.morello-project.org/
-> >
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml | 4 ++++
->
-> I was thinking, that since the .dtsi and .dts files are not reusing
-> any of the Juno .dtsi (correct me if I'm wrong!) this should not
-> be in vexpress-juno.yaml, instead perhaps you should create a new
-> morello.yaml file?
->
 
-It is me who suggested to put it along with other vexpress stuff as I
-wasn't sure how much of vexpress bindings will be reused here when
-Vincenzo started this. I agree it can be a separate binding on its own
-as I don't see much commonality now with the vexpress bindings.
+--170e2EepvI2niirm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Just a note, though the file is named arm,vexpress-juno.yaml, it also
-carries bindings for all Vexpress based Arm Ltd boards(both 32-bit and
-64-bit ones), but they all use common vexpress bindings in general.
+On Mon, Feb 17, 2025 at 05:17:40PM -0600, Mario Limonciello wrote:
 
-I just thought of highlighting that so that the expectation to reuse
-this file is not to check commonality in juno dtsi files but to check
-the vexpress binding reuse. Hope we are aligned with that.
+> The various AMD audio drivers have self contained implementations
+> for SMN router communication that require hardcoding the bridge ID.
 
---
-Regards,
-Sudeep
+> These implementations also don't prevent race conditions with other
+> drivers performing SMN communication.
+
+> A new centralized driver AMD_NODE is introduced and all drivers in
+> the kernel should use this instead. Adjust all AMD audio drivers to
+> use it.
+> Mario Limonciello (7):
+>   x86/amd_node: Add a helper for use with `read_poll_timeout`
+
+What's the thinking for merging this - the SMN driver is in arch/x86 but
+the bulk of the changes are in ASoC?  My first thought is that it's
+mostly ASoC stuff, are the x86 people OK with me picking up the arch
+patch (I'd put it on a branch anyway so if needed we can do a merge
+later)?
+
+--170e2EepvI2niirm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0oyMACgkQJNaLcl1U
+h9C4Lwf+JXdKsotpmFA5I71pyqyK9Ort4MqCE+7/frPtYibf+Aiy/gWhSctb2pUD
+wmjX0NU8EZMHV34AAErrfrGTDuV+h9TadhSkcD4RdhCQEf616Y1D7aM79/YI91zt
+fxayA3z7vIZgpwZsNOyNGtUZHCiPVKb43G7ZYoSSPL2QNJc3GxL5ijXQHrttQPcl
+tpmH8wYyvOFUylR9w+HL8ldh1LbBIEveuA8CJQgGfGYdAdG1Zv0bPMc/3/QDA5WQ
+pfxA+95+rzN43+B+ug3HWJfV8SE38NHPDE45b9sHLqIHuSwSa3wYQ/376zM+5Iwt
+K/3TKWL47Rq4sgxsTJiGUDeL7UNeqA==
+=wt+f
+-----END PGP SIGNATURE-----
+
+--170e2EepvI2niirm--
 
