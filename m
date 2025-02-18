@@ -1,44 +1,97 @@
-Return-Path: <linux-kernel+bounces-519457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEEBA39D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:16:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80340A39E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7B23175FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91080188E20B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E8D269D1A;
-	Tue, 18 Feb 2025 13:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8921269887;
+	Tue, 18 Feb 2025 14:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="UFmOU2AJ"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC532690DD;
-	Tue, 18 Feb 2025 13:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739884015; cv=none; b=dZmeS+eNVxDGdo9HOG1jsJm+oMtuI5IRCESK/ZpVKcIgOFdv6WGZKa4uVUiaTQ0c/smc1t5Omq9upoD2eFfzZaEnDr3eTlYJOOYg+ALD8TRVBsJtGt1EtJKqVZ5mxuR2jXBdatNAZwmr9fHCHC3FjKr+xT9Ko0/Pfb+AX2QDy9w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739884015; c=relaxed/simple;
-	bh=3RdfPZ+mVGcziAKFck3VokvkXlNM4g/j1Eywe5SORbw=;
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="B4psEMDl"
+Received: from seashell.cherry.relay.mailchannels.net (seashell.cherry.relay.mailchannels.net [23.83.223.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD2269AF0;
+	Tue, 18 Feb 2025 14:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.162
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739887214; cv=pass; b=WYUHEtVbscUboykn4gNhqy4AKT07+QZOymz3PAwmkzENli4tj+23vIUei3ntAhXPVwWEFaNIq02t1tiIWzYwJXl+huClIrNXg2a6fXnaX0r86MpmMlMgZ4BOQezESG5t9vLGVKapuhHb/pT0fGyqZ7BMv2GBoOb86kVCC/gpXCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739887214; c=relaxed/simple;
+	bh=DGgdmGoXFuNbS7z/vFF8stOUuDr8Sn4WUzD/hMg1nu4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1cdFXPuASvANMpFmL7xo16hkJgbwdilEtBvhggeZYLKOys8Iq/gq/HNduEWIIXYudKgS36NpcM8M7A8Ii6I7PNnM4Jb88Y6e1eG8Qzcg++Y4TIPH6VMxTgSg3ZPYojpDd/j+XQwd2H5uUtISp+7hQqBD+EPrtC92HCW+PKkLH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=UFmOU2AJ; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=PjVps/mbL29xZmKfD5xoWxmNLay5V9tgBzGtJ2OKIkM=;
-	b=UFmOU2AJs0pnz9fhcg4UtLj5zdpnEgMCDNnW5z7A/7nKvIXAp7gY3jlvIF01NC
-	pKTYYT/FjYW5Wiuz29BOeM19S7TsYOhoAoqKuYJ2trqiVNHuqYFPDo0DOwK3ajE+
-	QBbgnfN1dOA1hC5YKl6OziGLPtQLNFA5mgRphBSn+g25k=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3n4TverRnbKJTBA--.2790S2;
-	Tue, 18 Feb 2025 20:19:59 +0800 (CST)
-Message-ID: <17ad5bf5-545c-4418-8d08-459ce6ef54cb@126.com>
-Date: Tue, 18 Feb 2025 20:19:58 +0800
+	 In-Reply-To:Content-Type; b=ur8UROBZihrdaxtpe0UvYShhg4cwqc8p6Z1eDWQUSJIFlm1ZXAT2J+YD3Q7smtcayje35TkoTX5RRelaXeEtqQQu0BX6K+mS+z8i1y3ZdcCKdbo2TFdYohOVJCJQCQ6OjHFWWxbZHSG6CcF3tut0l+az6O12DHDjWBXvaqm6qak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=B4psEMDl; arc=pass smtp.client-ip=23.83.223.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id ADFC71A5486;
+	Tue, 18 Feb 2025 12:43:10 +0000 (UTC)
+Received: from pdx1-sub0-mail-a208.dreamhost.com (100-127-158-254.trex-nlb.outbound.svc.cluster.local [100.127.158.254])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 0E1A61A4E91;
+	Tue, 18 Feb 2025 12:43:10 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1739882590; a=rsa-sha256;
+	cv=none;
+	b=VrwwjxbFesy8mpfO2IjNYUhcLWBLaYAgmBHh+mrMKnhAM8CJ7q0AfNwtFaJZhLG8VJaNS5
+	0UWnJASq6ykqjlPUp8troZLiwAVQxv/juZ+j0UorrMeeqaHhA1gisW0M5YBp6NHy8C8hdL
+	Ai9IAOmvU5Pb6u7N1j5v/gRaisbRWh/abj7c+RZhx+Ibi6uj5qdMxt7ghv0XYU6pge5qga
+	3msspTlwd+WBz364Y3d4vPI9A1mJkuaxwJLmtUULQlvCp84czqy1ZbwmFHOkLJr3J3Hgql
+	tlzlLgRX6kB+qGuLAChdMDNxSdGaf8/VAoLBwE4OvLHgZXJqcfI4DKSiIdSJOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1739882590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=B95tabb5XZzsLZAdmM0q9rShY5CxFJ7DzbxtbrrhHbY=;
+	b=ZlvR4WgSsHn+uWciGXRxmLTLs9afzEirW57vVLw+fbrBJgl6fituvs27LNJyTNDFgw4bWi
+	mX2jnFlFWu0vFpKtYE9zuZj2SwAlDPb8hjcqUxS+qJampzAOzpev79dF+pQhKOleg5CAvZ
+	R41V/MF/pxzs+FMx94NTZigkkrXm1XT5RBwZLCocLpkk5N+vWxTGs3zgj/EYxykUcV9Edq
+	VnvUNvxwVc8iJRHqHbbQAhaIVPkB81wzd25agT2DShpo5bQRqbhmogQbWDeOMBy+ooREp3
+	zQl6SrPLeVEjrarzDrCMNpllEq1XR6puu1ciPrejLgNSVokR1xwzrCRmRoD1lg==
+ARC-Authentication-Results: i=1;
+	rspamd-78ddd997cc-ttgrr;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Stop-Madly: 6edb93bf651849a8_1739882590423_2474421560
+X-MC-Loop-Signature: 1739882590423:52837196
+X-MC-Ingress-Time: 1739882590423
+Received: from pdx1-sub0-mail-a208.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.127.158.254 (trex/7.0.2);
+	Tue, 18 Feb 2025 12:43:10 +0000
+Received: from [172.16.32.88] (unknown [198.232.126.202])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a208.dreamhost.com (Postfix) with ESMTPSA id 4YxzhX6n0qzNR;
+	Tue, 18 Feb 2025 04:43:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1739882589;
+	bh=B95tabb5XZzsLZAdmM0q9rShY5CxFJ7DzbxtbrrhHbY=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=B4psEMDltaoKyD63Dts4zk1CiSgxddy46xHI/QV5mgigdVCqa2Bu/FzfsnujpuaPb
+	 eeZbRnPq+UC/S1HRcZABcatN5jxRzWlmKGyF36KtpgCg56zffacA73cKHb2nB1SeUS
+	 vzFrvGBuMWF0+LtGa5O3dqci2KXCJ1mz9s+zz4Q8FrjVTuUvpTsKA1avO0L/QZBEVg
+	 f73zzlrc3rb6uQPQ/So8zmcuGSRtL5N/mjcXyw4mGBTYdXtDTTVC95V4o6YYMYKdD0
+	 8sXSdHaLqUotjLgMAL/wrYlInzhPKifQchb0/DKoibUsrgqxy7iZIuA9mSYZmuYomY
+	 kNmukHkY9h9+w==
+Message-ID: <c9caa50a-597b-48c7-9ac8-b3a4193c3fec@landley.net>
+Date: Tue, 18 Feb 2025 06:43:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,93 +99,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] mm/hugetlb: wait for hugetlb folios to be freed
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739878828-9960-1-git-send-email-yangge1116@126.com>
- <f5c31616-41e8-464b-84ec-8aa0cedfa556@redhat.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <f5c31616-41e8-464b-84ec-8aa0cedfa556@redhat.com>
+Subject: Re: [PATCH 2/2] irqchip: clocksource: fix jcore-pit irq request
+To: Artur Rojek <contact@artur-rojek.eu>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "D . Jeff Dionne" <jeff@coresemi.io>, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <20250216175545.35079-3-contact@artur-rojek.eu>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <20250216175545.35079-3-contact@artur-rojek.eu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n4TverRnbKJTBA--.2790S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFy5tw4DuFWkXw1kJw4UCFg_yoW5XFyrpF
-	WUKr13GFWDJrZakrn2qw4vkw10krWDZFWxKr4Sq3y3uFnxJ3s7KFyav3Z0gay8Cr1SkrW8
-	trWvqrsruFyUZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjYL9UUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbifhT3G2e0c8dX-gAAsI
+Content-Transfer-Encoding: 7bit
 
+On 2/16/25 11:55, Artur Rojek wrote:
+> The jcore-aic irqchip does not have separate interrupt numbers reserved
+> for cpu-local vs global interrupts. Instead, the task of selecting this
+> property is being delegated to the device drivers requesting the given
+> irq.
+> 
+> This quirk has not been taken into account while migrating jcore-pit to
+> request_percpu_irq(), resulting in a failure to register PIT interrupts.
+> 
+> Fix this behavior by making the following changes:
+> 1) Explicitly register irq_set_percpu_devid() in jcore-pit.
+> 2) Provide enable_percpu_irq()/disable_percpu_irq() calls in jcore-pit.
+> 3) Make jcore-aic pass the correct per-cpu cookie to the irq handler by
+>     using handle_percpu_devid_irq() instead of handle_percpu_irq().
+> 
+> Fixes: 69a9dcbd2d65 ("clocksource/drivers/jcore: Use request_percpu_irq()")
+> 
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
 
+Tested-by: Rob Landley <rob@landley.net>
 
-在 2025/2/18 19:45, David Hildenbrand 写道:
-> On 18.02.25 12:40, yangge1116@126.com wrote:
->> From: Ge Yang <yangge1116@126.com>
->>
->> Since the introduction of commit c77c0a8ac4c52 ("mm/hugetlb: defer 
->> freeing
->> of huge pages if in non-task context"), which supports deferring the
->> freeing of hugetlb pages, the allocation of contiguous memory through
->> cma_alloc() may fail probabilistically.
->>
->> In the CMA allocation process, if it is found that the CMA area is 
->> occupied
->> by in-use hugetlb folios, these in-use hugetlb folios need to be migrated
->> to another location. When there are no available hugetlb folios in the
->> free hugetlb pool during the migration of in-use hugetlb folios, new 
->> folios
->> are allocated from the buddy system. A temporary state is set on the 
->> newly
->> allocated folio. Upon completion of the hugetlb folio migration, the
->> temporary state is transferred from the new folios to the old folios.
->> Normally, when the old folios with the temporary state are freed, it is
->> directly released back to the buddy system. However, due to the deferred
->> freeing of hugetlb pages, the PageBuddy() check fails, ultimately leading
->> to the failure of cma_alloc().
->>
->> Here is a simplified call trace illustrating the process:
->> cma_alloc()
->>      ->__alloc_contig_migrate_range() // Migrate in-use hugetlb folios
->>          ->unmap_and_move_huge_page()
->>              ->folio_putback_hugetlb() // Free old folios
->>      ->test_pages_isolated()
->>          ->__test_page_isolated_in_pageblock()
->>               ->PageBuddy(page) // Check if the page is in buddy
->>
->> To resolve this issue, we have implemented a function named
->> wait_for_freed_hugetlb_folios(). This function ensures that the hugetlb
->> folios are properly released back to the buddy system after their 
->> migration
->> is completed. By invoking wait_for_freed_hugetlb_folios() before calling
->> PageBuddy(), we ensure that PageBuddy() will succeed.
->>
->> Fixes: c77c0a8ac4c52 ("mm/hugetlb: defer freeing of huge pages if in 
->> non-task context")
->> Signed-off-by: Ge Yang <yangge1116@126.com>
->> Cc: <stable@vger.kernel.org>
-> 
-> 
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
->> +void wait_for_freed_hugetlb_folios(void)
->> +{
->> +    flush_work(&free_hpage_work);
-> 
-> BTW, I was wondering if we could optimize out some calls here by sensing 
-> if there is actually work.
-> 
-for_each_hstate(h) {
-	if (hugetlb_vmemmap_optimizable(h)) {
-		flush_work(&free_hpage_work);
-		break;
-	}
-}
-Is this adjustment okay?
-> In most cases, we'll never ever have to actually wait here, especially 
-> on systems without any configured hugetlb pages etc ...
-> 
-> It's rather a corner case that we have to wait here on most systems.
-> 
-
+Rob
 
