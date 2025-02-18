@@ -1,93 +1,114 @@
-Return-Path: <linux-kernel+bounces-518953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B68A396B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:16:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E81A39669
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCE83B6FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5081894290
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A792322F39C;
-	Tue, 18 Feb 2025 09:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA3E23237A;
+	Tue, 18 Feb 2025 09:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DUtEnXkQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zfTQVk84"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YNR5OH87";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ntt86Lsn"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C28C22D7B1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1822622D4E9;
+	Tue, 18 Feb 2025 09:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739869431; cv=none; b=TEpQ3HuoPHwGR+cKozgASQm9E0X8UlDCyazOpuEJnxIotPshzWxeJ/BIe2iiHat5C7hhhIRdgaEqvpnHoe232Jodh5/rmcbt0cCOwiNM2sflA1nWZ2ZWe90RogWVHjVlap1bZtIhiCXfg5OLSQ2wcfgFZ+VCZB/3k6js7W7Ikjc=
+	t=1739869438; cv=none; b=J5Dvi2qPDrQs0MzUhSzzaxqGZ+60Wx7BxFUoIu/r0QvdIvjsXDBoh39NYtLHmZIC19YcXKyDdoYhDYW+mBhVmU+mWR+5pwlAeSMGAgWmjqgCwXJCxfIz9cvi2XB55PpdanOJvdKGqAElAhilil5+RV8umSh8Vpky1plrbuPmdIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739869431; c=relaxed/simple;
-	bh=A8M5OIt1A8haL0ANfazcjwGDE5o5/zvzY33OU08iPqo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rHdCaJuYeaCadiz0DrKkUwEhBD8rrPnM6RMy0EYackQOqV7XspDMZuoBLbyBj8naEAmPaAxYQTzsWt5XSTAF2v5fsd2H5szJhqtruDipb0NXSVYgs62TRypPlWBp6LS/vUpzRlZHzbuKgJcPd+BDFQmJlcY88x+Lj+f7q2ZmlFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DUtEnXkQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zfTQVk84; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1739869438; c=relaxed/simple;
+	bh=OhGgopD8UcgrRAAlKfX8UsrmN+XEITghrcnpLsrIWUc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HepUx/WPNG48eWbUstJ5uZSevwq949aSWlyL8oDZlt9b3+EdTHHIVcUYmxx3OQfgv0rzJ9OjvxXUvq19CSNVdLxMelP1nFQl6etZ+bcl87q5RfZ3DhGEaxe/DSejbzpDsXtMMMcYCFsKQqMnLkRIoyAZsky5RxVIMKPdiKihb5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YNR5OH87; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ntt86Lsn; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
+Date: Tue, 18 Feb 2025 09:03:54 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739869427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020; t=1739869435;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YleaTUFwb+U28EVqnF7wPDY8Ikwa5wlJUueP+F/3THg=;
-	b=DUtEnXkQ+lQw54IJaF9ZxrG+5GMaVXVaUYr2TxSaNVPmW3Za6neVU8A6OqJ6uuXIunKgT7
-	qmKuAoh7qrZT8z4gyCltCJUy67QLPuozeNrCJI+TY4zK+dg8jzLnVgCGGSZ7Vuuu24E+Ev
-	0C14Gc151lHunt1MqUmJRqz3+2CngOuJ7AYXanM63ah86WTPomA3YkZ/T8GKIcS4Kzuoyc
-	0C8kunD5nAAej93WbTo9e03/VKT5UHpjqK8ajpPuWOQ5r1EKfMEABPXAmt7EdS4hhPxt/l
-	GLClpAHFbKqAGrzgm/EeiX/lsKnd6zD7rH0naZFv1PKRovqk39JbDsIiRGUyUQ==
+	bh=odqM1eje+C7yJYPWAZCGNApFzPHDP7os21AL9LuILW0=;
+	b=YNR5OH87oPh0QZxukMXpTzIAS0xbU2hznaZlmOd/dYzDjT71QdQUzX+pg9A0yxL36YGH0H
+	BrpX2tC+jInFDmwi9jD670t6mFmwUVbeciPIpEu9Oi5aaFjFxKttAemudkm+qWJLNRI0Bi
+	oqt/b++HT6mI3mzuIKw2jfEOUH4Vr3bBWGignwV493jAKel6N5PtZIIWdJECUSnxT2iJIv
+	iXfphcuY+MBtoABI5RezPxNQt4jZ+UjmDVXK3j/NxpKtx/Bdlbf6pjVC9wFkU+QK9St+1y
+	oiNV6xWqXwjFTweYINn+kGpVn/qmfKO15CeZZWI8xQxdLOU/baD5k+NMsgJk3A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739869427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020e; t=1739869435;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YleaTUFwb+U28EVqnF7wPDY8Ikwa5wlJUueP+F/3THg=;
-	b=zfTQVk84O+lnDFxlOaFy7UzXujCSD+zqdx24vBSCWRcYUaU1CZnNTmen7gQEKnCXr9+ZBg
-	HaJsh6BSar1QlRDA==
-To: Benjamin Segall <bsegall@google.com>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- linux-kernel@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] posix-timers: cond_resched() during exit_itimers()
-In-Reply-To: <xm2634gg2n23.fsf@google.com>
-References: <xm2634gg2n23.fsf@google.com>
-Date: Tue, 18 Feb 2025 10:03:47 +0100
-Message-ID: <877c5nk4jw.ffs@tglx>
+	bh=odqM1eje+C7yJYPWAZCGNApFzPHDP7os21AL9LuILW0=;
+	b=ntt86Lsn84fJ7PsmbzSK6ECDOtgz51jW7OgwNXX63euetay8ZIqMjmqpvJcUM+ru4UJE8X
+	F5QCm7FKYh4FFuBQ==
+From: "tip-bot2 for Anup Patel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] RISC-V: Select CONFIG_GENERIC_PENDING_IRQ
+Cc: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250217085657.789309-7-apatel@ventanamicro.com>
+References: <20250217085657.789309-7-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <173986943482.10177.16197758003555178082.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14 2025 at 14:12, Benjamin Segall wrote:
-> exit_itimers() loops through every timer in the process to delete it.
-> This requires taking the system-wide hash_lock for each of these locks,
-> and contends with other processes trying to create or delete timers.
-> When a process creates hundreds of thousands of timers, and then exits
-> while other processes contend with it, this can trigger softlockups on
-> CONFIG_PREEMPT=n.
->
-> Ideally this will some day be better solved by eliminating the global
-> hashtable, but until that point mitigate the issue by doing
-> cond_resched in that loop.
+The following commit has been merged into the irq/drivers branch of tip:
 
-It won't help for a PREEMPT_NONE kernel because the loop will be equally
-long as before. Only the hash lock contention will be smaller, but that
-does not mean that mopping up 100k timers won't be able to take ages.
+Commit-ID:     213ea5f92da586fe137dfa55004ed0f7706cfae5
+Gitweb:        https://git.kernel.org/tip/213ea5f92da586fe137dfa55004ed0f7706cfae5
+Author:        Anup Patel <apatel@ventanamicro.com>
+AuthorDate:    Mon, 17 Feb 2025 14:26:52 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 18 Feb 2025 09:51:01 +01:00
 
-We really need to get this PREEMPT_LAZY thing going and kill all of this
-cond_resched() nonsense.
+RISC-V: Select CONFIG_GENERIC_PENDING_IRQ
 
-Thanks,
+Enable CONFIG_GENERIC_PENDING_IRQ for RISC-V so that RISC-V interrupt chips
+can support delayed interrupt mirgration in interrupt context.
 
-        tglx
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250217085657.789309-7-apatel@ventanamicro.com
+---
+ arch/riscv/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 7612c52..a32f397 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -111,6 +111,7 @@ config RISCV
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_IRQ_SHOW_LEVEL
+ 	select GENERIC_LIB_DEVMEM_IS_ALLOWED
++	select GENERIC_PENDING_IRQ if SMP
+ 	select GENERIC_PCI_IOMAP
+ 	select GENERIC_PTDUMP if MMU
+ 	select GENERIC_SCHED_CLOCK
 
