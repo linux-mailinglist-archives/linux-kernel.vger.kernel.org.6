@@ -1,160 +1,120 @@
-Return-Path: <linux-kernel+bounces-519559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7317DA39E08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:56:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8347A39E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E3AE163921
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A14164AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3392698AD;
-	Tue, 18 Feb 2025 13:53:02 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AB8269897;
+	Tue, 18 Feb 2025 13:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rJB2Iy0D"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949E6243387;
-	Tue, 18 Feb 2025 13:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9EB1E526;
+	Tue, 18 Feb 2025 13:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739886782; cv=none; b=jPOecxht6jE92S0mc8/H9VN67Bfs7Rvy0bk4DYz8vO7gnXjPfP4eJR9bV79N8ReDQlfUPDVYJOOcqsyEfkaYoGuP4oiIJqNnjsEDavXWPvOskSUChhl+NkHlhiHk68wBAgQ2f9rJyV2QtAQ0Spk4QWlTVYPuYo1qBeGg5T8D7kw=
+	t=1739886808; cv=none; b=X9Q657zKHpWLIx4QMGQQ1oKuyDCziYY8Ybja8+/5ucL3slVRpmYrWvZJhqsf26bkJX0OmYbeD7tcZ3p5m9qxhYS3ZPVdyEf1qDOBolObSrWcnUTh4tE6awSN4oZUBE9FYQ5C3wWCehWyHS6LqaDnluFWHUhspjXhpZ1cj1S944M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739886782; c=relaxed/simple;
-	bh=qg6tR2OJ5fUk+PNSPNlhAUrEokpSrd88BUu/FLoWZZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QG8cjrNKl510s7GXm8i9ScF97CszT9BALnuHoGi4NoPtGfnFQ3/f5K1VY1XV4KZO8uclLl629uPPtxEF62v4KQu1Liuo+lW3MTj+TV5mpPnCqvObR6isel3skewmuzinzZjdEI3B6JapPvNGTsCNHJ361BYyGYzaurmYMcLlcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-868e8cf9e20so2880223241.3;
-        Tue, 18 Feb 2025 05:53:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739886778; x=1740491578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SEMYvJ02y6eE/skRVfH3zjf1LQbRZ9uPnuefeC3IoK4=;
-        b=ZDR0TNGT2aRUszR7hF/fU0/kFJnrmxkJf6Xt/hGbwcntuvw/0gFRhCK2jmSlq12l9U
-         Ey2fVDVImwvd2hxgECoFzWd9+eKuw0x+t9JPmHhM38hLyswrUe5xMgcEtF4ZsO2X7bEF
-         ObvutWbijQQ/C433cjoX3kKE7ps2U4OT1RCMhv7CTOhzReFP6+ECgaJM81kNlPYXpBCf
-         1cS1IaRs6q39hpzT20jAuInA/3wFEwhMJQHs+jRDNgtiqf9HsfUqR5j/iY7xOHwBbqBB
-         iD0Hszi6OwoXSN0iD6+Zt/qHOc2yZr5R4o2XfLOZp4DWhNMIQdv7pIs7v14JvMWbnlez
-         nd9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwWUS4MijVEdBdwmBezlRDDO3pMIqIJOdvNMsEGWbIQD2PmAB1FyhI6ELZYfLCLb2f8uGJPxwIA+JV9UI=@vger.kernel.org, AJvYcCXlMobpJsN7brnBs1ZOIECT7E2GIY3jXadzhXa/JEiAbLU4yIXlnG/qp4mZMzVndpFNPV9bmvD8HSCUQ3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsmT6a3vtlnoMnabV0XVZ+ztfsyUhu//NfCs0+AO2fpDKO/tRj
-	ZcCJ6MRSy62brh6kTauzA5NoMNokCfuGQ/oZcU54zNg3y8Gcc8L/Ok+xXZrQ
-X-Gm-Gg: ASbGncv5jk+R0mojVhKFeowaq2vDmq80oTL+CoBGC5RAho5IEBUujZ6mg7PESujjyx6
-	H11l7ND0rdNAPb4Pq6B0AqpoR6ZvfhM/RdRUe1HrrU5rIIEOdOYLQzUABBFvDkBo54B5WXfe6pJ
-	YDz6ec44zzMeAYa4vLk8bcGPN6Dy7jCUadfMRyKXyD8v1YoyaN+bDDUlfhd3w3MbrGQhcVBUMt2
-	wu6Bd7CiYBBeAU20rMyTI1T7drl/m/PWkpp/Ckc5d99sw1VilmhbFmSnjP6EhOba4+DfOvSaHhx
-	vRdxMQlr7BU5bIPdy/LzY04irgCQMbhPflnXe2JQjfEsASQzycuSurFVtg==
-X-Google-Smtp-Source: AGHT+IF1Ro/S8O5svSKZB96rUDRWsXa6girkn4hsNP60BWSy2k2OJOBigRaOS672YfZ+oGdc4FqQzA==
-X-Received: by 2002:a05:6102:cca:b0:4bb:e511:15a6 with SMTP id ada2fe7eead31-4bd3fcd6f97mr7973838137.11.1739886778536;
-        Tue, 18 Feb 2025 05:52:58 -0800 (PST)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4bd3c9acda5sm1906921137.9.2025.02.18.05.52.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 05:52:58 -0800 (PST)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-520a48f37b4so1344086e0c.2;
-        Tue, 18 Feb 2025 05:52:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUrxvDx0+ivuwyqddQbf8VZPKLej6qLwQ16W4L0UFNoxbuQmigkqIgtpj68hu5vvnOerz4Mt7DZ2fkFLrU=@vger.kernel.org, AJvYcCW1y5Va5SDRLRodd95ZEpASJFYYY02drbXoOa7RkmqcL4Xf7vBn0K9LXiHrPRQXJAF/3d+DxKHPIxVfXnA=@vger.kernel.org
-X-Received: by 2002:a05:6102:4b12:b0:4ba:9689:870e with SMTP id
- ada2fe7eead31-4bd3fe8cda3mr7352135137.21.1739886778052; Tue, 18 Feb 2025
- 05:52:58 -0800 (PST)
+	s=arc-20240116; t=1739886808; c=relaxed/simple;
+	bh=nBN9QF3figC4DUAzfruLKZVcFf4yKnpP1nz3h1qBJ1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Afii2bI0aNu92gRn4ZkN5Psm84uRJB5Jje8xjK6xJXAZ52fyFPvUyl9eLhdK671Q/G6VVyC7KA/63T+SisqcAyUYg6yUFM9ut+dRRb3PSsQKGHwytjxIEq8Czf0aaW/gdRM6Y7rox3tx0Z6CgI8aoOLapsZ2ywlPNqYUrqU1zF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rJB2Iy0D; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1739886801; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YtCd0F7R2Ociq9DloB/HtONRO/iL2JXm/ytjU64+K00=;
+	b=rJB2Iy0DHX4Pi9J3+kdZnT2KnfG9PLZRgp/a+mzDwdX5iwKQL3ODMOORpoHIMGAsMhpB35WdQ3jL6cyo6SJLTCA6byBJxuIo7UqDH3ObBnpxUTEiO4Kbu7B/8kU9AtA/yAxxc/2hVptIDCKdlgMue/OVnEiHZkZfe/jeV7xd27M=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WPm.KiR_1739886798 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 18 Feb 2025 21:53:19 +0800
+Message-ID: <4b52e6cd-1315-4b0b-8b6e-95a3d4ed96cc@linux.alibaba.com>
+Date: Tue, 18 Feb 2025 21:53:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208-asoc-volume-limit-v1-1-b98fcf4cdbad@kernel.org>
-In-Reply-To: <20250208-asoc-volume-limit-v1-1-b98fcf4cdbad@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Feb 2025 14:52:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXc8j14PwNnO2e3sPDCeS9fXx01qoMJHxWjxtuT3DrDNQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmYXLEgw1DblqJn6pERZY_THetfHNXj7RUJTuj4dr2XcgbmEMykqQHvEKo
-Message-ID: <CAMuHMdXc8j14PwNnO2e3sPDCeS9fXx01qoMJHxWjxtuT3DrDNQ@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: ops: Enforce platform maximum on initial value
-To: broonie@kernel.org, =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+To: Borislav Petkov <bp@alien8.de>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+ peterz@infradead.org, jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
+ <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+ <02164ab7-c65b-4b2e-8686-5539bdcb8f43@linux.alibaba.com>
+ <20250218131753.GIZ7SIgRZBJokysBeX@fat_crate.local>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250218131753.GIZ7SIgRZBJokysBeX@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Mark, Martin,
 
-On Sat, 8 Feb 2025 at 01:57, <broonie@kernel.org> wrote:
-> From: Martin Povi=C5=A1er <povik+lin@cutebit.org>
->
-> Lower the volume if it is violating the platform maximum at its initial
-> value (i.e. at the time of the 'snd_soc_limit_volume' call).
->
-> Signed-off-by: Martin Povi=C5=A1er <povik+lin@cutebit.org>
-> [Cherry picked from the Asahi kernel with fixups -- broonie]
-> Signed-off-by: Mark Brown <broonie@kernel.orG>
 
-Thanks for your patch, which is now commit 783db6851c1821d8 ("ASoC:
-ops: Enforce platform maximum on initial value") in linux-next/master
-next-20250218 sound-asoc/for-next
+在 2025/2/18 21:17, Borislav Petkov 写道:
+> On Tue, Feb 18, 2025 at 09:08:25PM +0800, Shuai Xue wrote:
+>> Yes, the poison is found on user pages.
+>>
+>> Form commit log, the mechanism is added by Tony and suggested by you.
+>> https://lkml.kernel.org/r/20210818002942.1607544-3-tony.luck@intel.com
+> 
+> I'm not talking about how it is detected - I'm asking about *what* you're
+> doing exactly. I want to figure out what and why you're doing what you're
+> doing.
+> 
+>> It's the same as with real issue. There's no magic to it.
+> 
+> Magic or not, doesn't matter. The only question is whether this can happen in
+> real life and it is not just you using some tools and "fixing" things that
+> ain't broke.
 
-> --- a/sound/soc/soc-ops.c
-> +++ b/sound/soc/soc-ops.c
-> @@ -640,6 +640,33 @@ int snd_soc_get_volsw_range(struct snd_kcontrol *kco=
-ntrol,
->  }
->  EXPORT_SYMBOL_GPL(snd_soc_get_volsw_range);
->
-> +static int snd_soc_clip_to_platform_max(struct snd_kcontrol *kctl)
-> +{
-> +       struct soc_mixer_control *mc =3D (struct soc_mixer_control *)kctl=
-->private_value;
-> +       struct snd_ctl_elem_value uctl;
+The regression is reported by end user and we also observed in the production.
 
-sizeof(snd_ctl_elem_value) =3D 1224, causing:
+[5056863.064239] task: ffff8837d2a2a0c0 task.stack: ffffc90065814000
+[5056863.137299] RIP: 0010:[<ffffffff813ad231>]  [<ffffffff813ad231>] __get_user_8+0x21/0x2b
+...
+[5056864.512018] Call Trace:
+[5056864.543440]  [<ffffffff8111c203>] ? exit_robust_list+0x33/0x110
+[5056864.616456]  [<ffffffff81088399>] mm_release+0x109/0x140
+[5056864.682178]  [<ffffffff8108faf9>] do_exit+0x159/0xb60
+[5056864.744785]  [<ffffffff81090583>] do_group_exit+0x43/0xb0
+[5056864.811551]  [<ffffffff8109bdc9>] get_signal+0x289/0x630
+[5056864.877277]  [<ffffffff8102d227>] do_signal+0x37/0x690
+[5056864.940925]  [<ffffffff8111c4e5>] ? do_futex+0x205/0x520
+[5056865.006651]  [<ffffffff8111c885>] ? SyS_futex+0x85/0x170
+[5056865.072378]  [<ffffffff81003726>] exit_to_usermode_loop+0x76/0xc0
+[5056865.147464]  [<ffffffff81003d01>] do_syscall_64+0x171/0x180
+[5056865.216311]  [<ffffffff81741c8e>] entry_SYSCALL_64_after_swapgs+0x58/0xc6
+> 
+>>> What do futexes have to do with copying user memory?
+>>
+>> Return -EFAULT to userspace.
+> 
+> This doesn't even begin to answer my question so I'll ask again:
+> 
+> "What do futexes have to do with copying user memory?"
+> 
 
-    sound/soc/soc-ops.c:657:1: error: the frame size of 1232 bytes is
-larger than 1024 bytes [-Werror=3Dframe-larger-than=3D]
+Sorry, I did not get your point.
 
-> +       int ret;
-> +
-> +       if (!mc->platform_max)
-> +               return 0;
-> +
-> +       ret =3D kctl->get(kctl, &uctl);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (uctl.value.integer.value[0] > mc->platform_max)
-> +               uctl.value.integer.value[0] =3D mc->platform_max;
-> +
-> +       if (snd_soc_volsw_is_stereo(mc) &&
-> +           uctl.value.integer.value[1] > mc->platform_max)
-> +               uctl.value.integer.value[1] =3D mc->platform_max;
-> +
-> +       ret =3D kctl->put(kctl, &uctl);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * snd_soc_limit_volume - Set new limit to an existing volume control.
->   *
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks.
+Shuai
 
