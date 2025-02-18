@@ -1,183 +1,128 @@
-Return-Path: <linux-kernel+bounces-519563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA93A39E14
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:58:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF05AA39DE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CEA167456
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0169F3B5C22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD553269B17;
-	Tue, 18 Feb 2025 13:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Gt4zRKfE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E01F269B16;
+	Tue, 18 Feb 2025 13:37:11 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E291269AE8;
-	Tue, 18 Feb 2025 13:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B9A246326;
+	Tue, 18 Feb 2025 13:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739886853; cv=none; b=pG7KvzyozsATYI4ldfMlNMy9C7Y8hg+Wx9Bd31jdSWLL1ZjHPvoK6/xJCn5Kzuifx/hh3AbqWUOv9KGo+9FRryCSn9CxBgkK+8JS5xfw2xgAylPKwIZAi76ncxVIwXWemcwMV7feveKRzzbBJlGLwUrHAYgNClKypwlvYmOGMZo=
+	t=1739885830; cv=none; b=ivbczuF+UUgYgV3GxwEmM7J8CnL+Wt27pETfr7dNT64jjZjDpyxiyZOe7wpDVtCUrErUgZs/bPd5zt6B0+GpHu7igZrjs7JXDxwOVGWccT47dW7x1pwYlRP7kduQA7CErgK8gvKfLfoI+Z8HuF6dnNiEJlen07BI5QGkysOwmYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739886853; c=relaxed/simple;
-	bh=Fqt3nyMfiZx66vWK0/vAEosj9z42b2w1+of9RItKiFk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uiw+DAbd6C4Wt1p9Nqci1ZJACnKQ6OeSQQw5kkXQnUFDWX9iz/yHslpGkkm3/zQDGbq8+yTcmLlzpf6Q3AzWn41lcKowpQaFfW5PJzRNwexY14wTboqP67eywRDxmHaG01ClTOUKUrNefvc7rlEZUPaSxqj3O5JPFABRsge3FgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Gt4zRKfE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739886849;
-	bh=Fqt3nyMfiZx66vWK0/vAEosj9z42b2w1+of9RItKiFk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Gt4zRKfE1X1rcoXYE4id2Dg/ypksW1/JQid9qdmjfuSwycMX7r5XH7rpMkagRv1OK
-	 qCZSHuJAn/0/BCyNAD4/cKHjiASPrYsmJp0VfDlkolgTLYAsryVXkajWF5NCXcICbJ
-	 LF42Cq+6cKL4tZv7xkiaHROJPncxNPWE3Tp+76K4Wubr0t4tFODvhT6z++KVyOHOdA
-	 iNTb58ytGoT5k8ZLRHf+IMp9VJTX9MY9WwVKAQV6IMvvxKeAiXqOb5B+9QjP5yBdCc
-	 pI+VjXmMjyCdLCZAAqDZXK4K+LhguOWSVMMxxqqu1C0Gz1bLsT5fufWbiMWVfilyPP
-	 jir4L0CiVRoQg==
-Received: from apertis-1.home (2a01cb088CcA73006086F5f072C6A07A.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:8cca:7300:6086:f5f0:72c6:a07a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C77F517E0657;
-	Tue, 18 Feb 2025 14:54:08 +0100 (CET)
-Message-ID: <094bfb612d8895d2316d01704d37c853f8f86ae6.camel@collabora.com>
-Subject: Re: [PATCH 3/5] dt-bindings: i2c: maxim,max96717: add new properties
-From: Julien Massot <julien.massot@collabora.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Date: Tue, 18 Feb 2025 14:54:07 +0100
-In-Reply-To: <20250207112958.2571600-4-laurentiu.palcu@oss.nxp.com>
-References: <20250207112958.2571600-1-laurentiu.palcu@oss.nxp.com>
-	 <20250207112958.2571600-4-laurentiu.palcu@oss.nxp.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739885830; c=relaxed/simple;
+	bh=RgZzlg6Ld/avdXkpvLKLeXpzWvHVcfkymWlll9vVukw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SBXFU2IwzkacvfMN3N1SZsnVIg+Uqtjs541b/acbak3ZaeicsqnUHJlo8WVAA0yhu0cLQcLzoZTTkWKHR0zGCTfW9vY+8UbcCHcvWd73V/h0OwvTuU9if0gaGQg7/aSG0zCR3sBKo7QMApVB85Rzsy+/eHjVNDi1YyjY7mCH/kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Yy0ps3l8lzhZtG;
+	Tue, 18 Feb 2025 21:33:41 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id B37EC1800DB;
+	Tue, 18 Feb 2025 21:37:04 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Feb
+ 2025 21:37:03 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
+Date: Tue, 18 Feb 2025 21:54:23 +0800
+Message-ID: <20250218135423.1487309-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hi Laurentiu,
+In nfsd4_run_cb, cl_cb_inflight is increased before attempting to queue
+cb_work to callback_wq. This count can be decreased in three situations:
+1) If queuing fails in nfsd4_run_cb, the count will be decremented
+accordingly.
+2) After cb_work is running, the count is decreased in the exception
+branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
+3) The count is decreased in the release callback of rpc_task — either
+directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_release, or
+calling nfsd41_destroy_cb in nfsd4_cb_release.
 
-Thanks for your patch
+However, in nfsd4_cb_release, if the current cb_work needs to restart, the
+count will not be decreased, with the expectation that it will be reduced
+once cb_work is running.
+If queuing fails here, then the count will leak, ultimately causing the
+nfsd service to be unable to exit as shown below:
+[root@nfs_test2 ~]# cat /proc/2271/stack
+[<0>] nfsd4_shutdown_callback+0x22b/0x290
+[<0>] __destroy_client+0x3cd/0x5c0
+[<0>] nfs4_state_destroy_net+0xd2/0x330
+[<0>] nfs4_state_shutdown_net+0x2ad/0x410
+[<0>] nfsd_shutdown_net+0xb7/0x250
+[<0>] nfsd_last_thread+0x15f/0x2a0
+[<0>] nfsd_svc+0x388/0x3f0
+[<0>] write_threads+0x17e/0x2b0
+[<0>] nfsctl_transaction_write+0x91/0xf0
+[<0>] vfs_write+0x1c4/0x750
+[<0>] ksys_write+0xcb/0x170
+[<0>] do_syscall_64+0x70/0x120
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+[root@nfs_test2 ~]#
 
-On Fri, 2025-02-07 at 13:29 +0200, Laurentiu Palcu wrote:
-> Add 'maxim,override-mode' property to allow the user to toggle the pin
-> configured chip operation mode and 'maxim,fsync-config' to configure the
-> chip for relaying a frame synchronization signal, received from
-> deserializer, to the attached sensor. The latter is needed for
-> synchronizing the images in multi-sensor setups.
->=20
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
-> =C2=A0.../bindings/media/i2c/maxim,max96717.yaml=C2=A0=C2=A0=C2=A0 | 28 +=
-++++++++++++++++++
-> =C2=A01 file changed, 28 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.y=
-aml
-> b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> index d1e8ba6e368ec..fae578d55fd4d 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> @@ -42,10 +42,35 @@ properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 number must be in range of [0, 10].
-> =C2=A0
-> =C2=A0=C2=A0 gpio-controller: true
-> +=C2=A0 gpio-reserved-ranges: true
-> =C2=A0
-> =C2=A0=C2=A0 '#clock-cells':
-> =C2=A0=C2=A0=C2=A0=C2=A0 const: 0
-> =C2=A0
-> +=C2=A0 maxim,override-mode:
-> +=C2=A0=C2=A0=C2=A0 description: Toggle the operation mode from the pin c=
-onfigured one.
-> +=C2=A0=C2=A0=C2=A0 type: boolean
-I understand that this property is intended to flip the GMSL link mode betw=
-een
-pixel and tunnel mode.
-What about adding a property 'maxim,tunnel-mode' to the GMSL 'port@1'.
-Here the MAX96717 only have one GMSL port but other devices, such as MAX967=
-24 can
-have 2 GMSL link and may have each link in different mode.
+Fix this by decreasing cl_cb_inflight if the restart fails.
 
->=20
-> +
-> +=C2=A0 maxim,fsync-config:
-> +=C2=A0=C2=A0=C2=A0 description:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Frame synchronization (FSYNC) is used to =
-align images sent from multiple
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sources in surround-view applications and=
- is required for concatenation.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 In FSYNC mode, the deserializer sends a s=
-ync signal to each serializer;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the serializers then send the signal to t=
-he connected sensor.
-> +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32-array
-> +=C2=A0=C2=A0=C2=A0 items:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: FSYNC RX ID, needs to matc=
-h the TX ID configured in the deserializer.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minimum: 0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maximum: 31
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Output GPIO pin u=
-sed for sending the FSYNC to the sensor. The pin, however, needs
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to be excluded fr=
-om the gpiochip using the gpio-reserved-ranges property since
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 it will be used e=
-xclusively for FSYNC generation.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minimum: 0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maximum: 10
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 0
-> +
+Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfsd/nfs4callback.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-MAX96717 do not have any knowledge of the frame synchronisation, but this d=
-evice can forward some
-GPIO to/from the deserializer.
+diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+index 484077200c5d..8a7d24efdd08 100644
+--- a/fs/nfsd/nfs4callback.c
++++ b/fs/nfsd/nfs4callback.c
+@@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_task *task, void *calldata)
+ static void nfsd4_cb_release(void *calldata)
+ {
+ 	struct nfsd4_callback *cb = calldata;
++	struct nfs4_client *clp = cb->cb_clp;
++	int queued;
+ 
+ 	trace_nfsd_cb_rpc_release(cb->cb_clp);
+ 
+-	if (cb->cb_need_restart)
+-		nfsd4_queue_cb(cb);
+-	else
++	if (cb->cb_need_restart) {
++		queued = nfsd4_queue_cb(cb);
++		if (!queued)
++			nfsd41_cb_inflight_end(clp);
++	} else
+ 		nfsd41_destroy_cb(cb);
+ 
+ }
+-- 
+2.31.1
 
-GPIO forwarding need some information=20
-- The local GPIO number
-- The forwarding direction Rx, Tx, Bi-directionnal
-- The GPIO ID on the GMSL link (RX_ID/TX_ID)
-
-Can we add a maxim,forward-gpio property reflecting that instead ?
-
-> =C2=A0=C2=A0 reg:
-> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
-> =C2=A0
-> @@ -113,6 +138,9 @@ examples:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-#gpio-cells =3D <2>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-#clock-cells =3D <0>;
-> =C2=A0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gpio-=
-reserved-ranges =3D <0 1>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxim=
-,fsync-config =3D <0 0>;
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-ports {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
-
-Regards,
---=20
-Julien
 
