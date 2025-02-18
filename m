@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-519714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89ECA3A0F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:20:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E72A3A0FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315453A9669
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25C6165F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0126B94F;
-	Tue, 18 Feb 2025 15:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A662E26B943;
+	Tue, 18 Feb 2025 15:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZO7HGirx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHjjiTGJ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6155726B942
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1D226B2DD;
+	Tue, 18 Feb 2025 15:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892029; cv=none; b=gCG/Ts6ycoAyXHSYDrcUsJlukFMN/hD2KMfES1SLy7ZEeZ+rBn13ygRJCJ0rujnHByTLV+EBuU7pAu1id5xDYMkAjrYNX7L6R87cyzzQH37qK0zncNj2G8RNm5YKJJjD08hoYCyP0hY+x66MpwZ41cZcctistCEzuYXgryzeCZk=
+	t=1739892042; cv=none; b=XiuxsV8prwIc0YkTKifoTXCBhpzB6eEmAsO0HhV5HsnJzUVihUlfFD1qYXbRZSN7bJadJjpG5oEuyI/GU3JQ2meKQfdBf1FFAiIli9zltpQolzX0+2Yz2jbHKfknXyCaSJIWeguCb+KAKsUU6SB94ZJR+MHXWEVPBY3NS/0tf44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892029; c=relaxed/simple;
-	bh=aEDqTdmziFf/CK92QAabcyli0LRaNHAI+Sgk8xpTOm0=;
+	s=arc-20240116; t=1739892042; c=relaxed/simple;
+	bh=Gjf0kJ9HEyQ34wGkt26kNLZ83JYuY0vFR+qmzLBpVSA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uaCM2kLSIJ8wEFQF+zRg6mCrXfvNOmvAlDQEmrmBUze83RjYLRpvUEzirq3vOLeJTYv+0QPvpG2PbiYjtWzud/1ZWLKvIHKTixE85wFyXxv6hEkyl1OYRRA0X1tNbN4XNoM1HC+EIxVKuY78SH94duKtX0sLmb+EqsOAr+1jJ+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZO7HGirx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739892026;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WhNv10sgTPWImPGJDtp7CuiUxd0Y/eiyawh1eIHFiXc=;
-	b=ZO7HGirxgrf+wkdADbeG7AEeD2N3ODIkFBh8WIoAeTG77UYKWuRPY0Q0jJAlWYCHV6OCoV
-	OcKzjXWXyfZhnaQVKUJGepUPZpanP4p2IoVMklhwTXwc3sU+k0q5qnwcR4u5g2wE8xEuSJ
-	Ga0f73Qr32qd2gJxX/UD/3+KiN78TqU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-421-a9sTW6AYOv-w-Zs6y5Ui8g-1; Tue, 18 Feb 2025 10:20:25 -0500
-X-MC-Unique: a9sTW6AYOv-w-Zs6y5Ui8g-1
-X-Mimecast-MFC-AGG-ID: a9sTW6AYOv-w-Zs6y5Ui8g_1739892023
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4393e873962so30549835e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:20:23 -0800 (PST)
+	 In-Reply-To:Content-Type; b=MnsndUd8BDaq6x3zYeOx7c33YGqWkGXhw0VIEMpzH58tbg8yt8HQzWSE4/AvshrcfFV+fi89mwaE858rjVeQOcZtPHIPoBUTIbZX/IJGNpzEfE8hbpoQgGHTMX0NjRbGBg6+s2WpVzm9Z4aD4V0hM9L1YZN9dtrCvK6kPS6ue7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHjjiTGJ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220f048c038so70754585ad.2;
+        Tue, 18 Feb 2025 07:20:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739892039; x=1740496839; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=wqlDiu9+4PXHTzdQ8LtnGZRIIPBAU7VrwG1yyrtoKCQ=;
+        b=HHjjiTGJvA0Mxgwyf/WmrjcrZCA8D72OjZiT/V86T33EA5SQBkNz/4K+9BwJKMjixG
+         nY3yN2IMKg/UGIYYvYQjdWJogO5brS5VW9jnDZdiIapE99dMzfeLSwMf9jHxeW3Ih3dO
+         mJAUI7aDsARnHC0511xtSqlCszwvU1x7wWu3wQ4FTuV1HJ3X4zgJgs9K0Cxq89Ku9T6q
+         JV+wd+wtjpPqZcabzCd8GUxLw16tFdajtsy+KXUnLdBChtJVxumqyJymIg/aB+636F1/
+         G7Cr1GiLtLNY/SEwnBTskHpu5TSestoCOjem09PhNpjC0U5kJ+NhVMny/XZceo1XMNnC
+         U3mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739892023; x=1740496823;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WhNv10sgTPWImPGJDtp7CuiUxd0Y/eiyawh1eIHFiXc=;
-        b=Q6jjPin8Gn/RpurjgfgFYqn3tL7H3RUGuzOn/oYBHLyL3jIEDyXSomGzs8DNpW6uFk
-         Z9aLEErj1b70y0S2RcKCEVNDwF3o9j2akg0IMJruHbUuSM0YsJF+fi/uwjGydyX6XA+h
-         tKoD6SrDlfS/NHrjTbtGsX+dI/Jvo7UP6B8PohMIB4sAf+naApTkA565C9G9nxpiw0s/
-         f+29UA3R0y/TJaAPoZ7tkSI7N4dFcJQ23rMe2pKLzYwIiEA8BsJIs6BBaliGb8c77SqN
-         T+UYX6tTxgkMV3Hm6SA6uA8GFEb5k1+/tD5E991Beuxkn7eTW3WG+jIggo9BguSfp6uc
-         dQ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMY7NUgxzxS7zAVFp1lbx2OIlAJz5g9mTegsyBOS6+FsmH45fJjBTGM360DmYIVGMkeuiUfWBSEKH8vU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIfWg20dMJWthn7BmycvL/z4CKufFYV1zyOw5n4rABaNUbfW+d
-	ZeUvLV5ExyJqa0Awmw7J7W7yCIR6hO7fhb/BdYGMsa6uQA+ZOe4q2Sw9fECewxxdlu7pzCNzIMj
-	YctgBqWmH3N2Bcdau88Z6LuDc0GHsTncOdWOvCxahTwz5lVRXN5O8zNtX1gX2Gg==
-X-Gm-Gg: ASbGncsOSJJ8Uj2sdkA7Rl02oJOOp07CF/R8+LUs+vphYvl3XHAOfY6L7KuXlyOBJSQ
-	ejhLKzAtja+bcHP6YTAYxBHipqGAX6BboMHgMzXWi31uIe9va+XCFtllH1IIerA/HLRByfdQuIq
-	HMxzmjtWA95a17UblaZB4bZQ4hWuZzVaWe6edYJOD1Eb1iwBx8IfxgB8idgwGzmnfOryW/WczxN
-	4UbJbGNZjHug7E2rSBZFXcubILj8r0r6IA6E3qosRFmxyTuocNeuNoplgC8fcrBMfPNIrIXy3Ia
-	l2BpTjIyLCIbzR+J+OBrmMwZme/AjbCQeIXiJ7WlDDSF3TeL6tg7UMFIg/7JD0r+DUeBVpZ0GLy
-	tnW4b2R5SLkfH2h9OXZlsXa3ihcazyKyO
-X-Received: by 2002:a05:600c:4f46:b0:436:e3ea:4447 with SMTP id 5b1f17b1804b1-4396e779e07mr135001035e9.30.1739892022800;
-        Tue, 18 Feb 2025 07:20:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGt/mUXG8WAW22lDb9RLP6A0RPrWq6SnCKfzdqbAchkIC5PCf6iyMWRH2dy/3bARKrtWEKYsQ==
-X-Received: by 2002:a05:600c:4f46:b0:436:e3ea:4447 with SMTP id 5b1f17b1804b1-4396e779e07mr135000665e9.30.1739892022393;
-        Tue, 18 Feb 2025 07:20:22 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af? (p200300cbc70dfb00d3ed5f441b2d12af.dip0.t-ipconnect.de. [2003:cb:c70d:fb00:d3ed:5f44:1b2d:12af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439872b5a46sm52873715e9.32.2025.02.18.07.20.19
+        d=1e100.net; s=20230601; t=1739892039; x=1740496839;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wqlDiu9+4PXHTzdQ8LtnGZRIIPBAU7VrwG1yyrtoKCQ=;
+        b=D3U6QsmFkgPnQjjVt51/0XgHE8+RnyYijB+riAwe75glvNqL4ot1L3qhYUVazxfevg
+         3Mk2ooewtb1MfGnwunjBSZvxh2wkS1eRVuPXIXPxbtGBQBnhhg5nBLP6FrekIcu1Q07J
+         T/wHt7p8KdQRIXlO9bi9FJVGa1plJubVvXlPkn2vCeVREqyw0hS5e/Proo/7p6iTNf8x
+         madO6cYn+GYCHV7ijF291eA5Z+oAnH540WgBN0Kx7Qk0s9m+WdlI/0cDJ/2jZ9YcnmuD
+         9TyiT9zQ6/y0LKWufTBH/G6YOhqbyFGmBB8zUTR5ZV+WiubV1N0TQ4P3+uKTBrkE3QBK
+         mKJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8IBgt4etKY/nVcjArpFuYDaSDplOIqLM59o4jSKsB/Lht40VEiR/LbL0xRdf9mBP2AjP8BHlQbKnI@vger.kernel.org, AJvYcCVGSM3djFzG6wpps4+9835uC/ZjPMET9Z/jKoR9woQ0R0nYfo70HkcFWnhJBvszoLr++4oSgQ4H+Dl3xcQ=@vger.kernel.org, AJvYcCWAdOqFhofSW7WQvl4SdommwEUosQvnmOqO7zX5uj9e0KyV+djDlEdht8MyNVB91ASGX8JtoZ92eQcNMk0=@vger.kernel.org, AJvYcCXAHTjVGc234wXfEzBkxjWcc2Wh6XATwTFa2RVEOIlLbe8SL8J+ldgsjlLK59qkpqU33r/nB7HjjCjqtMOb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLcs7AunYjAUr0HVVPxQAw2YnCZYDBsqBdCbZ5o6ddm8vPV8Gl
+	g+OPa8yQeC22HpznZfEOogdN/ikzAEgVMm/r6dDYA4CMmcQu+i8M
+X-Gm-Gg: ASbGncscRdb3wq8tpaAI1w6cvzZ6CyxWnD7BjA655CgHEdY1TvPL8FylhLaUy0IO1AW
+	Jtp2XBJANjyZNigQ2vKKNM59dUnKc0HDiCzf2MTVmdvpgM4CkPSNRKxoTpQck4InHwgWEYZzMi1
+	WNHEZgwewLV6XGqFrffcU4eFESZNjGvY1VhZXAOG5dSn70o2QNjK2tNXudn5FwKmPRycLH8pL8U
+	GGX3A/V5/W+L0CgOOSIkgnIOBwBXTGtWUiwnZduHBPlQnWTtGiN7thJXj8WPAcNhBkgpeE3c9iD
+	qOPU95NqeCal/X33LQnlsAQs1M8YIIpnnWoBaAmy/jQI5NZhQhpDJm7p+8Z1OIiu
+X-Google-Smtp-Source: AGHT+IGFYo4EVA9fVJUwiKOKVkLfMpTPYy0wXj38DXcmwkklM1Y5i6yij/daLZ/w5gkqFsleIq2M9w==
+X-Received: by 2002:a17:902:ce06:b0:21d:3bee:990c with SMTP id d9443c01a7336-221040a99cemr225673635ad.42.1739892039240;
+        Tue, 18 Feb 2025 07:20:39 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d536455esm90870965ad.74.2025.02.18.07.20.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 07:20:21 -0800 (PST)
-Message-ID: <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
-Date: Tue, 18 Feb 2025 16:20:18 +0100
+        Tue, 18 Feb 2025 07:20:38 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4e0e2ae0-c53d-444c-9d8a-d465be690232@roeck-us.net>
+Date: Tue, 18 Feb 2025 07:20:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,176 +82,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
- mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
- <fbfae348-909b-48fa-9083-67696b02f15e@suse.cz>
- <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
- <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
- <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 14/29] ASoC: tas2770: expose die temp to hwmon
+To: James Calligeros <jcalligeros99@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+ Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>,
+ Jean Delvare <jdelvare@suse.com>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org
+References: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
+ <20250218-apple-codec-changes-v2-14-932760fd7e07@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250218-apple-codec-changes-v2-14-932760fd7e07@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-> Right yeah that'd be super weird. And I don't want to add that logic.
+On 2/18/25 00:35, James Calligeros wrote:
+> Create and register a hwmon device to export the die temperature
+> to the hwmon interface
 > 
->> Also not sure what happens if one does an mlock()/mlockall() after
->> already installing PTE markers.
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> ---
+>   sound/soc/codecs/tas2770.c | 69 +++++++++++++++++++++++++
+>   1 file changed, 69 insertions(+)
 > 
-> The existing logic already handles non-present cases by skipping them, in
-> mlock_pte_range():
+> diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+> index 84066884d36be8d41d83bca5680e9f683c420d78..fee99db904a5885d740c1cfe8ce2645a963c6e1d 100644
+> --- a/sound/soc/codecs/tas2770.c
+> +++ b/sound/soc/codecs/tas2770.c
+> @@ -12,6 +12,7 @@
+>   #include <linux/err.h>
+>   #include <linux/init.h>
+>   #include <linux/delay.h>
+> +#include <linux/hwmon.h>
+>   #include <linux/pm.h>
+>   #include <linux/i2c.h>
+>   #include <linux/gpio/consumer.h>
+> @@ -537,6 +538,61 @@ static struct attribute *tas2770_sysfs_attrs[] = {
+>   };
+>   ATTRIBUTE_GROUPS(tas2770_sysfs);
+>   
+> +#if defined(CONFIG_HWMON)
+
+If this works with CONFIG_TAS2770=y and CONFIG_HWMON=m, the ifdef is unnececessary
+because IS_REACHABLE() is used below and the code will be optimized away if
+it is not reachable.
+
+> +static umode_t tas2770_hwmon_is_visible(const void *data,
+> +					enum hwmon_sensor_types type, u32 attr,
+> +					int channel)
+> +{
+> +	if (type != hwmon_temp)
+> +		return 0;
+> +
+> +	switch (attr) {
+> +	case hwmon_temp_input:
+> +		return 0444;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tas2770_hwmon_read(struct device *dev,
+> +			      enum hwmon_sensor_types type,
+> +			      u32 attr, int channel, long *val)
+> +{
+> +	struct tas2770_priv *tas2770 = i2c_get_clientdata(to_i2c_client(dev));
+> +	int ret;
+> +
+> +	switch (attr) {
+> +	case hwmon_temp_input:
+> +		ret = tas2770_read_die_temp(tas2770, (int *)val);
+
+Type casting a pointer like this is never a good idea. This only works
+if sizeof(int) == sizeof(long).
+
+> +		if (!ret)
+> +			*val *= 1000;
+
+The calculations in the previous patch suggest that this is wrong.
+
+Either case, this is redundant. The temperature is already displayed
+as device specific sysfs attribute. Displaying it twice does not make sense.
+I would suggest to either drop the sysfs attribute in the previous patch
+or to drop this patch.
+
+Guenter
+
+> +		break;
+> +	default:
+> +		ret = -EOPNOTSUPP;
+> +		break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct hwmon_channel_info *const tas2770_hwmon_info[] = {
+> +	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
+> +	NULL
+> +};
+> +
+> +static const struct hwmon_ops tas2770_hwmon_ops = {
+> +	.is_visible	= tas2770_hwmon_is_visible,
+> +	.read		= tas2770_hwmon_read,
+> +};
+> +
+> +static const struct hwmon_chip_info tas2770_hwmon_chip_info = {
+> +	.ops	= &tas2770_hwmon_ops,
+> +	.info	= tas2770_hwmon_info,
+> +};
+> +#endif
+> +
+>   static const struct regmap_config tas2770_i2c_regmap;
+>   
+>   static int tas2770_codec_probe(struct snd_soc_component *component)
+> @@ -768,6 +824,19 @@ static int tas2770_i2c_probe(struct i2c_client *client)
+>   	if (result)
+>   		dev_err(tas2770->dev, "Register codec failed.\n");
+>   
+> +	if (IS_REACHABLE(CONFIG_HWMON)) {
+> +		struct device *hwmon;
+> +
+> +		hwmon = devm_hwmon_device_register_with_info(&client->dev, "tas2770",
+> +							tas2770,
+> +							&tas2770_hwmon_chip_info,
+> +							NULL);
+> +		if (IS_ERR(hwmon)) {
+> +			return dev_err_probe(&client->dev, PTR_ERR(hwmon),
+> +					     "Failed to register temp sensor\n");
+> +		}
+> +	}
+> +
+>   	return result;
+>   }
+>   
 > 
-> 	for (pte = start_pte; addr != end; pte++, addr += PAGE_SIZE) {
-> 		ptent = ptep_get(pte);
-> 		if (!pte_present(ptent))
-> 			continue;
-> 
-> 		...
-> 	}
-
-I *think* that code only updates already-mapped folios, to properly call 
-mlock_folio()/munlock_folio().
-
-It is not the code that populates pages on mlock()/mlockall(). I think 
-all that goes via mm_populate()/__mm_populate(), where "ordinary GUP" 
-should apply.
-
-See populate_vma_page_range(), especially also the VM_LOCKONFAULT handling.
-
-> 
-> Which covers off guard regions. Removing the guard regions after this will
-> leave you in a weird situation where these entries will be zapped... maybe
-> we need a patch to make MADV_GUARD_REMOVE check VM_LOCKED and in this case
-> also populate?
-
-Maybe? Or we say that it behaves like MADV_DONTNEED_LOCKED.
-
-> 
-> Actually I think the simpler option is to just disallow MADV_GUARD_REMOVE
-> if you since locked the range? The code currently allows this on the
-> proviso that 'you aren't zapping locked mappings' but leaves the VMA in a
-> state such that some entries would not be locked.
-> 
-> It'd be pretty weird to lock guard regions like this.
-> 
-> Having said all that, given what you say below, maybe it's not an issue
-> after all?...
-> 
->>
->> __mm_populate() would skip whole VMAs in case populate_vma_page_range()
->> fails. And I would assume populate_vma_page_range() fails on the first
->> guard when it triggers a page fault.
->>
->> OTOH, supporting the mlock-on-fault thingy should be easy. That's precisely where
->> MADV_DONTNEED_LOCKED originates from:
->>
->> commit 9457056ac426e5ed0671356509c8dcce69f8dee0
->> Author: Johannes Weiner <hannes@cmpxchg.org>
->> Date:   Thu Mar 24 18:14:12 2022 -0700
->>
->>      mm: madvise: MADV_DONTNEED_LOCKED
->>      MADV_DONTNEED historically rejects mlocked ranges, but with MLOCK_ONFAULT
->>      and MCL_ONFAULT allowing to mlock without populating, there are valid use
->>      cases for depopulating locked ranges as well.
-> 
-> ...Hm this seems to imply the current guard remove stuff isn't quite so
-> bad, so maybe the assumption that VM_LOCKED implies 'everything is
-> populated' isn't quite as stringent then.
-
-Right, with MCL_ONFAULT at least. Without MCL_ONFAULT, the assumption is 
-that everything is populated (unless, apparently one uses 
-MADV_DONTNEED_LOCKED or population failed, maybe).
-
-VM_LOCKONFAULT seems to be the sane case. I wonder why 
-MADV_DONTNEED_LOCKED didn't explicitly check for that one ... maybe 
-there is a history to that.
-
-> 
-> The restriction is as simple as:
-> 
-> 		if (behavior != MADV_DONTNEED_LOCKED)
-> 			forbidden |= VM_LOCKED;
-> 
->>
->>
->> Adding support for that would be indeed nice.
-> 
-> I mean it's sort of maybe understandable why you'd want to MADV_DONTNEED
-> locked ranges, but I really don't understand why you'd want to add guard
-> regions to mlock()'ed regions?
-
-Somme apps use mlockall(), and it might be nice to just be able to use 
-guard pages as if "Nothing happened".
-
-E.g., QEMU has the option to use mlockall().
-
-> 
-> Then again we're currently asymmetric as you can add them _before_
-> mlock()'ing...
-
-Right.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
