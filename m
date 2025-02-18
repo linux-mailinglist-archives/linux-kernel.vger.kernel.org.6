@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-520359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC97A3A90B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DE0A3A922
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44011188A471
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999891897AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F781E2606;
-	Tue, 18 Feb 2025 20:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234981EFFAC;
+	Tue, 18 Feb 2025 20:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpEU+jCM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DV0kAi9b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033561D63CC;
-	Tue, 18 Feb 2025 20:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651CF1C6FF8;
+	Tue, 18 Feb 2025 20:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910348; cv=none; b=FE3DRTTc7KJZSBdauVcmrOfN5elSKBLeJsAK2wx6RD4XUXI0p8y+6kF19c45oprBabRHvzL3YfiThBrr5unxHyBpzdZfzSbwZ46pADGwIT2qDUX6kc0TtjqgH0zD8tcmdyj5X+6ztqsR6U2YCKkzLy9H7hX0WH9GH9hC1f+z1A0=
+	t=1739910385; cv=none; b=FZKiGwiPWva8b3FITTby9krSwCfXdz11ttpeTszz2KkZpVzzXtH8ExemxfU0kR5mKSTfgrQdVnWWE0qqd8C0VsWKz+4VuauPIZ1xrivWeD1WkK75f5FhqYD0JiI+cxhnQmeLfmaty4mEFocPTB/gYVGQFgwURzWpG3zM98JX9kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910348; c=relaxed/simple;
-	bh=RLervQf979kstkgoUrYWN04RQ6hrfhFVnDHU20XRDZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sG1vtIPZzZF/ZC461R7gjDXAiilx5oM+DiWyEq0LsrQ8K18bL8UL+sXC/wr3CGiYpsY5jy2qGEUY8R6zJwjMvLPaCsvrzwVUx2wrmXHoEfNiyTCznAefOhXXw2EhUlPRqVL0EQjd1OTvAh70Ua8iewzNI8ZS//fJCgf8Mzz+SGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpEU+jCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFD6C4CEE4;
-	Tue, 18 Feb 2025 20:25:47 +0000 (UTC)
+	s=arc-20240116; t=1739910385; c=relaxed/simple;
+	bh=yj7yeckAsn7iveez2V/kKZzDE6FaGZg3nxRZwDhhx+E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UyqUXiwhVZhnAn/djEaSg4bqwHVC+QomgaJ7YRack+hnjeIns38Igr+8JhPOj1q6+RaccpmKaSnhL43/DNRR3a2BLCNUK5N9CoXHvTKim4J6pMmzPYLJRO8i9JVRhFEb+amfQRA7P0ojsFHZVHat7TRmkY3LPWFTc1YHAFLDQAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DV0kAi9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0088BC4CEE2;
+	Tue, 18 Feb 2025 20:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739910347;
-	bh=RLervQf979kstkgoUrYWN04RQ6hrfhFVnDHU20XRDZo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=cpEU+jCMGRMpzZ2LsCrYuDeOQr8uj/u/3r/DxNIWyPabKIAVhqs3CanHpl/261VjX
-	 XJ5sLxzJWt+ZCDBK2kUoTv2hNRPNWQkS67F/PP6pg2bCgB2fZsh4cRRK0k1Lk0tM9F
-	 LmqM2gPZ8SftTUPw9sETiM8HuNaZgfM/VVg7y5d49Hr8WF2V+v67WQTnkn8VkOhrsq
-	 7Es9mVR/u9JmmCQvr0eFZ3gO3W7D8V6exoIIYASGUwYGcjAquNIG0ZNA78GYRpD2/9
-	 ZuP8PKYBRxQzzyYRDIXlPoldtjrVhmsDv2Qlz8e2cEIp5ZdMWtkL5FGVdUnGTWMxxO
-	 WKI9clUXzmDow==
-Date: Tue, 18 Feb 2025 14:25:45 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [PATCH] PCI: Update Resizable BAR Capability Register fields
-Message-ID: <20250218202545.GA177904@bhelgaas>
+	s=k20201202; t=1739910385;
+	bh=yj7yeckAsn7iveez2V/kKZzDE6FaGZg3nxRZwDhhx+E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DV0kAi9bxoVXhH/V5gSvUvg+Mbk1cd9RjBaqxvD5rK4wLd0RsrYoc5IMAuQSDPgtk
+	 zgO7www9SXcrOFxt6i4S+/esxKLTTmf3CXwgPU62ROuiXD4aVMYl+Y4WptE53yWum5
+	 nkNWJDuIwSED7BPR8hj/79hIdouvzKsEAA4OeMtOhpEe9GsYFL88Y5Vlt8DmJVIs+j
+	 wW77Dssy5h2X6Sq+ysim3aPVI+W0YHmevqBCP0WSbLIMDUR2ohO2GXWGRXN4aqMyH2
+	 6OXH086kSj+QQfPnioLAndQX58aV4zmx+kkNUnMyoreLXcytM3Ufr+ynvjbrOWM16W
+	 OWKClZwj7mhXQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Ihor Solodrai <ihor.solodrai@pm.me>,
+	Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	shuah@kernel.org,
+	dvernet@meta.com,
+	vishalc@linux.ibm.com,
+	linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/31] sched_ext: selftests/dsp_local_on: Fix sporadic failures
+Date: Tue, 18 Feb 2025 15:25:47 -0500
+Message-Id: <20250218202619.3592630-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.15
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218064003.238868-1-daizhiyuan@phytium.com.cn>
 
-[+cc Christian]
+From: Tejun Heo <tj@kernel.org>
 
-On Tue, Feb 18, 2025 at 02:40:03PM +0800, Zhiyuan Dai wrote:
-> This commit modifies the Resizable BAR Capability Register fields to better
-> support varying BAR sizes. Additionally, the function `pci_rebar_get_possible_sizes`
-> has been updated with a more detailed comment to clarify its role in querying
-> and returning the supported BAR sizes.
-> 
-> For more details, refer to PCI Express庐 Base Specification Revision 5.0, Section 7.8.6.2.
+[ Upstream commit e9fe182772dcb2630964724fd93e9c90b68ea0fd ]
 
-Wrap to fit in 75 columns.
+dsp_local_on has several incorrect assumptions, one of which is that
+p->nr_cpus_allowed always tracks p->cpus_ptr. This is not true when a task
+is scheduled out while migration is disabled - p->cpus_ptr is temporarily
+overridden to the previous CPU while p->nr_cpus_allowed remains unchanged.
 
-Drop "庐" above.
+This led to sporadic test faliures when dsp_local_on_dispatch() tries to put
+a migration disabled task to a different CPU. Fix it by keeping the previous
+CPU when migration is disabled.
 
-Update spec citation to r6.x.
+There are SCX schedulers that make use of p->nr_cpus_allowed. They should
+also implement explicit handling for p->migration_disabled.
 
-Spec r6.0 defines BAR size up to 8 EB (2^63 bytes), but supporting
-anything bigger than 128TB requires changes to
-pci_rebar_get_possible_sizes() to read the additional Capability bits
-from the Control register.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Ihor Solodrai <ihor.solodrai@pm.me>
+Cc: Andrea Righi <arighi@nvidia.com>
+Cc: Changwoo Min <changwoo@igalia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/sched_ext/dsp_local_on.bpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-> ---
->  drivers/pci/pci.c             | 2 +-
->  include/uapi/linux/pci_regs.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 661f98c6c63a..03fe5e6e1d72 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
->   * @bar: BAR to query
->   *
->   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
->   */
->  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
->  {
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 1601c7ed5fab..ce99d4f34ce5 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -1013,7 +1013,7 @@
->  
->  /* Resizable BARs */
->  #define PCI_REBAR_CAP		4	/* capability register */
-> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
->  #define PCI_REBAR_CTRL		8	/* control register */
->  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
->  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
-> -- 
-> 2.43.0
-> 
+diff --git a/tools/testing/selftests/sched_ext/dsp_local_on.bpf.c b/tools/testing/selftests/sched_ext/dsp_local_on.bpf.c
+index c9a2da0575a0f..eea06decb6f59 100644
+--- a/tools/testing/selftests/sched_ext/dsp_local_on.bpf.c
++++ b/tools/testing/selftests/sched_ext/dsp_local_on.bpf.c
+@@ -43,7 +43,7 @@ void BPF_STRUCT_OPS(dsp_local_on_dispatch, s32 cpu, struct task_struct *prev)
+ 	if (!p)
+ 		return;
+ 
+-	if (p->nr_cpus_allowed == nr_cpus)
++	if (p->nr_cpus_allowed == nr_cpus && !p->migration_disabled)
+ 		target = bpf_get_prandom_u32() % nr_cpus;
+ 	else
+ 		target = scx_bpf_task_cpu(p);
+-- 
+2.39.5
+
 
