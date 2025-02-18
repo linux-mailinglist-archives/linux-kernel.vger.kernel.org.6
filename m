@@ -1,102 +1,105 @@
-Return-Path: <linux-kernel+bounces-519743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CF9A3A150
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:34:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E74A3A164
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CD43A8303
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8470F1732F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630FE26BD8F;
-	Tue, 18 Feb 2025 15:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505A326BDA8;
+	Tue, 18 Feb 2025 15:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cj8B1nl2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2bQybeC3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA3E262811;
-	Tue, 18 Feb 2025 15:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190A726AA94;
+	Tue, 18 Feb 2025 15:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739892787; cv=none; b=krhDX+3Ltfvgzj/3wpaXxp6NpV8tgK4Y/aEfEpJ1y9NdX4K1VU76EFR6atjd6cU3u348AplQQjxVOQjlR2PB3gOBmeGJvfYoaUq3cTdlzhlDqHwlv4bWGdESUKYaTszaV4WMrF1uQO0zz7aoIBWvtFVh2nlCC0RxevpeWmdZ5SQ=
+	t=1739892828; cv=none; b=Hih/UJ6jGYJGCVchYea3v94k131C7ODEZdUgk6s9XRjvMxpVnYFfVkHK4nXrHqmqm80iXJ9DW5MoopNofk5NJv4Ez5fKsDXASVE6zRWARKjojQ1a56Hheu34E7Sow0/bc33hPLIi72G4nppGXrxenevjIGycEaYw4+JHqDUDgYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739892787; c=relaxed/simple;
-	bh=Ho8At3fudVw1RlzYmxhPINgwfvBXMwUMGOG24duS2eQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mG2Syq7qms1sq3px/iDpUKix8IjJys+GvAmJkh1DnQXr9tAuOqGNVsU2v6FCPgvBvYQIV3BW8rq3u+FMFAKankc+pt1BEt3yM7YI03MjvYVcr0v7X7tUKFhc7YO+lzr2DaIMkVbM65C9JwtAs5HFigtGRVIebsJlSYngtGQZfio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cj8B1nl2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5549DC4CEE2;
-	Tue, 18 Feb 2025 15:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739892787;
-	bh=Ho8At3fudVw1RlzYmxhPINgwfvBXMwUMGOG24duS2eQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cj8B1nl2ae5F6ixjV3Oqs+TXJwMdBZs/hHe+wyOszHTfHUeoMarNEssW/URxVFFe+
-	 7aSGeJYpl3WZyOmDSpIdP3wgruofkb4uQrNw8e3/mX6fGW4bg7CqJO06tMCKKLI0y9
-	 1h9fL7R+Gy8ztSBaxNKGJePFkhzDdxdbo2647FAaZVhfzM9jBGbHxF4IVU75JGUMzh
-	 QPMhzDilws0WtHQBYYw9tOlflS5BmXqWjFHuCNEOT+HS7+9vWj529ZK42VUz3QBkNk
-	 p0ju/W8L88FXcQWt5XErMNdCBFbT+2s0ceNQHyv19cKBZVk2EGPx5XXuqKFVE/BFfF
-	 G4T9UfCGPtiIA==
-Message-ID: <f037a5a9-7e5a-4582-9a35-90e8442c6ed6@kernel.org>
-Date: Tue, 18 Feb 2025 09:33:03 -0600
+	s=arc-20240116; t=1739892828; c=relaxed/simple;
+	bh=pBZ6DBcpflfPTTSV2qkpelSifShPkMmpmLDJ2Bgc24E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kf21TsLxXVUMN7Dafwfc3PtzK+EVVGiCw4gCpnWY0GoLsD0ot6Xd5uXhsbnZT6DbdddzkW22TQ0piD3V7ctxljX4HB/OXbzku2M0BLvB6y+CvD880YsZEBrqK/WZ20tYLrN3/WI9X2iypGEzhvuNFphFqYl3cQWz7F49C6L7XDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2bQybeC3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+SR6bZ23Iqbr9gYinpkbLkkCfOXGYiitlLTZ/pTqB2k=; b=2bQybeC3IMlugSflIXxflyUFQz
+	ovuJU1pjz1QG/81pSg5ugxg5hB52YnTM9JviZUPcxWW+02PWxwtJG/2R39OAWS84C02ERiduOm2v/
+	WnAjHF/KStEfYdvt4Uiq2cMlCCWvGzA7invLn7XTZUaqt6YqNpW6HooEoKkh5YgbQCgA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tkPbD-00FKur-Pa; Tue, 18 Feb 2025 16:33:27 +0100
+Date: Tue, 18 Feb 2025 16:33:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+	rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	'Pankaj	Dubey' <pankaj.dubey@samsung.com>, ravi.patel@samsung.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <69d1b0fe-d35f-4242-bf80-6c024cf72dd1@lunn.ch>
+References: <20250213044624.37334-1-swathi.ks@samsung.com>
+ <CGME20250213044955epcas5p110d1e582c8ee02579ead73f9686819ff@epcas5p1.samsung.com>
+ <20250213044624.37334-2-swathi.ks@samsung.com>
+ <85e0dec0-5b40-427a-9417-cae0ed2aa484@lunn.ch>
+ <00b001db7e9f$ca7cfbd0$5f76f370$@samsung.com>
+ <ffb13051-ab93-4729-8b98-20e278552673@lunn.ch>
+ <011901db80fb$8e968f60$abc3ae20$@samsung.com>
+ <18746e2f-4124-4f85-97d2-a040b78b4b34@lunn.ch>
+ <015601db81b8$ee7237f0$cb56a7d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Adjust all AMD audio drivers to use AMD_NODE
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mark Brown <broonie@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- "open list:AMD NODE DRIVER" <linux-kernel@vger.kernel.org>,
- "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
- <linux-sound@vger.kernel.org>,
- "moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS"
- <sound-open-firmware@alsa-project.org>
-References: <20250217231747.1656228-1-superm1@kernel.org>
- <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
- <b2876489-7bd5-4c38-b1f8-2d2fcb5a9aba@kernel.org>
- <20250218152649.GKZ7SmubM_YWhDqaPo@fat_crate.local>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250218152649.GKZ7SmubM_YWhDqaPo@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <015601db81b8$ee7237f0$cb56a7d0$@samsung.com>
 
-On 2/18/2025 09:26, Borislav Petkov wrote:
-> On Tue, Feb 18, 2025 at 09:16:20AM -0600, Mario Limonciello wrote:
->> My thought is maybe:
->> 1) We can get an immutable branch from tip/tip.git with the conflicting
->> changes.
+> Hi Andrew, 
+> Thanks for the clarification.
+> Will post v7 with the following updates:
 > 
-> I can very easisy do that. Just holler.
-> 
+> 1. Changing phy-mode in dt-binding as shown below:
+>   phy-mode:
+>     enum:
+>       - rgmii
+>       - rgmii-id
+>       - rgmii-rxid
+>       - rgmii-txid
+> 	  
+> 2. Removing phy-mode from .dtsi and example given in dt-binding
 
-Yeah; please get that ready and I'll rebase the series and send out a v2 
-on that branch.
+The example can use phy-mode, since the example is the combination of
+the .dtsi and the .dts parts of the device tree. And having the
+example using 'rgmii-id' will hopefully prevent some people wrongly
+using 'rgmii'
 
+> 3. Add phy-mode to .dts file and specify 'rgmii-id' there.
+
+Great. History shows if you get the example and the first user
+correct, everybody blindly copies it and gets it right by accident. If
+the first user is wrong, everybody blindly copies it, and get is wrong
+by not sanity checking what they copy.
+
+	Andrew
 
