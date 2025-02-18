@@ -1,141 +1,431 @@
-Return-Path: <linux-kernel+bounces-520245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A12AA3A767
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:29:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B2AA3A76A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D023AD468
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:29:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA0B7A4112
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D001E8333;
-	Tue, 18 Feb 2025 19:29:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFA71E8326;
-	Tue, 18 Feb 2025 19:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C271E832C;
+	Tue, 18 Feb 2025 19:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8OLu0ml"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBA31B6CE8
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906953; cv=none; b=YIKapcL3iw5Cuz2pMqz7c9GiDDbGIg8/ncQU2vTufZVNH/bnT0jfHmFG/rkCKkajBlPybtER+8k7iIIwgyB+PJjQnutyQNggp91Ek4mDNcFjeaXEiFjDIO597JzyZKIpPvV/dqfnbhl52QuEKOW//kwgo9SbvskZwSWKB91ds3o=
+	t=1739906988; cv=none; b=QnByIAoD781s0vpAPshegCf65XCK+KxegWZA6PvJrMnz0lt8XeZ3tPAHuXF0qg5NfoWz+0Bvih9dlpd+3HFlBPmHc1OxGPghw9UiFVlw7/V8NP5n9svQ2lz/2njwCGWCNXLBcq9/OcqyuJJnjy402psq/7gqsKnsLBAI71TvCAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906953; c=relaxed/simple;
-	bh=EcclNsPtawoA7531dqGQGb0K0/n8bbxbWvJlA/q1vHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7Lp6c2cPx23/ECuvNP+sCNhDbaERaQyptnJk7wbQqOBhEnojIYj8MReKHi3WewSV+gfuAJbETqSUkIWwoxuHEjvXYbnCti2usuWvI9FJPy6+uQwecHxzFyWMFZ6uWDGpHSd9JDHKxTe+A6gt/XznXvWWeoAhIJ/TJsqUKpoDZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23571152B;
-	Tue, 18 Feb 2025 11:29:29 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2855A3F6A8;
-	Tue, 18 Feb 2025 11:29:07 -0800 (PST)
-Date: Tue, 18 Feb 2025 20:28:56 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Will Deacon <will@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bitmap tree
-Message-ID: <Z7TfeGxiy3_otBry@arm.com>
-References: <20250218160742.49d6ab76@canb.auug.org.au>
- <Z7RiVtunqI9edfK4@arm.com>
- <20250219004934.46ace766@canb.auug.org.au>
- <Z7SU0THZ6bSG9BKT@arm.com>
- <Z7SWQoO2Upm_sNNx@thinkpad>
- <Z7TQIYRPw6nxsa0K@arm.com>
+	s=arc-20240116; t=1739906988; c=relaxed/simple;
+	bh=Iyi0mkkbj829sYGj2VaDB/ZDTf8v5Q+yc6BRlMTdJbo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ten3GVJ12/KKwDbrTxGE+zY9utfVSWlWJVMAgZThuP3u8NdhIQ3FCjJP9egTqYDLa9P0rEmntbBbASx1RfT3RFkr5pojazs2Skz0uBbXigj7MKQBmyF5VkmMO0ufwxCo+QtQjotMjvwhhQDU0XKTB4x6MYR4TEVFfRL73WjVguA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8OLu0ml; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739906985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2XqglfLfBNjZUvkW/Dyb4ZzrcV/Lr4EbGt5iKUqOYU8=;
+	b=K8OLu0mlO9xmjxE501ro2EVA8ysjQv5CeZZHApdy6XR6fUNdSNFjNey8cufHjTEB24yGO2
+	7GSjevOEWHfZbqEXOx9N5YlafO+XYbUEzpoaPRhIWr4ZVMCBt86/RF6RtwKJ0vQWA9X2wo
+	YL7lKFRQ/5tmlFHj6+lxHwoLKVkFTgs=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-2-7YQxnJOZWOsf8-tb6x5g-1; Tue, 18 Feb 2025 14:29:43 -0500
+X-MC-Unique: 2-7YQxnJOZWOsf8-tb6x5g-1
+X-Mimecast-MFC-AGG-ID: 2-7YQxnJOZWOsf8-tb6x5g_1739906983
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0ab4035a1so231157285a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:29:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739906983; x=1740511783;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2XqglfLfBNjZUvkW/Dyb4ZzrcV/Lr4EbGt5iKUqOYU8=;
+        b=hqyd0zUq/owROirRhekWTJiJVXnsBXGWDIQh/0kLuJA7Y1xc+zfqrG+hngqm3hibPK
+         orlYK0buBlvxhBqriEibASbqY1Iwe51oLSawL4P0eUStc3ZBpoi8bxMtb3DCYRyiLjym
+         WkvfgX5JbwMQ1SdvOJ27Ty2m4gjzuIrorYoIyqxioTN90/RiKkrBoa/sjfLD9czSV06B
+         1WsAdFM4gO8ao+dXZHXOGr4G1/yIuPGD5bYjbkvTgoNcAzuAj/kjI8UO506suhT/W5Pv
+         E5JgnsUiwSi6hSiuLUchU2d9BMP3W/rawnFgwNrlIbW27gtJe+97OqfFPYS7NTwJo0cA
+         x9Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfnZuiZVnw3juX5j2mBVwFjXLTbv3WLW4/smEL02FkiSFT+be1UK21361kWT7T2Yj7SXQah+LqqhLIyTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLUXZdTmws5HLQWIix0ETCsCPElirkCLXIiZJWkObuemSIPznZ
+	crwfMnGWMvJownX6wDHTyIgB+xLLuXHL5+1zCN8AFWYBYyggi+jY+tdm88JD3P3Bx4a71yOa3n8
+	1e5P8hcFj4uPZol1E+PnbL8v9Sn0lHGp2uvphqVAbFbXBxGSEGaNuQIdKl0ScYg==
+X-Gm-Gg: ASbGnct8nV1uupDK8kjYWct8XB/j8V1Hw3ym7fNO0W4h1DbjLAKILjOV32MxywkiWxx
+	CMXbm+i9gXshRUf89jBzRRh5k5+hv9qjehEGKlVIWWCJHJcD4WnSK6mMC5iqIBvjTxH4GdqCgDm
+	N4uv1kczTPOj+hGOPsbA2uBmeOGOkeGHcLh2iaWTQXtxxr3+iloN0CO4EJriyWtjtcR1IL9c2Mp
+	x+UTV8IE+8BaDDWEkqIx20w1rUXauM5GksAgrHSKCLFXmviTBEYKuStZneWR2nqbxMQjS5z5jOB
+	og3i
+X-Received: by 2002:a05:620a:4146:b0:7c0:5e82:8228 with SMTP id af79cd13be357-7c08a9a6346mr1971368385a.21.1739906983319;
+        Tue, 18 Feb 2025 11:29:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGl+8v+Xj43jpMThJb5/HqXF7xZfzQHa0JE30wSeMgrl6wT/+uCV8Ncoyw1h1dz70J5H9xDvw==
+X-Received: by 2002:a05:620a:4146:b0:7c0:5e82:8228 with SMTP id af79cd13be357-7c08a9a6346mr1971363385a.21.1739906982811;
+        Tue, 18 Feb 2025 11:29:42 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c095bffcc6sm329046985a.3.2025.02.18.11.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 11:29:42 -0800 (PST)
+Message-ID: <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
+Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: James Houghton <jthoughton@google.com>, Sean Christopherson
+	 <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: David Matlack <dmatlack@google.com>, David Rientjes
+ <rientjes@google.com>,  Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao
+ <yuzhao@google.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 18 Feb 2025 14:29:41 -0500
+In-Reply-To: <20250204004038.1680123-1-jthoughton@google.com>
+References: <20250204004038.1680123-1-jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7TQIYRPw6nxsa0K@arm.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 18, 2025 at 06:23:29PM +0000, Catalin Marinas wrote:
-> On Tue, Feb 18, 2025 at 09:16:34AM -0500, Yury Norov wrote:
-> > On Tue, Feb 18, 2025 at 02:10:25PM +0000, Catalin Marinas wrote:
-> > > Hi Stephen,
-> > > 
-> > > On Wed, Feb 19, 2025 at 12:49:34AM +1100, Stephen Rothwell wrote:
-> > > > On Tue, 18 Feb 2025 11:35:02 +0100 Beata Michalska <beata.michalska@arm.com> wrote:
-> > > > > I'm currently testing a proper fix for that one.
-> > > > > Should I just send it over as a diff to apply or rather a proper 'fixes' patch?
-> > > > 
-> > > > Maybe a proper 'fixes' patch, please, if easy - otherwise a diff is
-> > > > fine.
-> > > 
-> > > I just talked to Beata off-list. I think she'll try to use the current
-> > > for_each_cpu_wrap() API and avoid conflicts with the cpumask_next_wrap()
-> > > API change.
-> > 
-> > Hi,
-> > 
-> > Yes, for_each() loops are always preferable over opencoded iterating.
-> > Please feel free to CC me in case I can help.
+On Tue, 2025-02-04 at 00:40 +0000, James Houghton wrote:
+> By aging sptes locklessly with the TDP MMU and the shadow MMU, neither
+> vCPUs nor reclaim (mmu_notifier_invalidate_range*) will get stuck
+> waiting for aging. This contention reduction improves guest performance
+> and saves a significant amount of Google Cloud's CPU usage, and it has
+> valuable improvements for ChromeOS, as Yu has mentioned previously[1].
 > 
-> Beata is going to post the official fix but in the meantime, to avoid
-> breaking next, I'll add my temporary fix:
->
-Just posted the fix [1].
-Thank you all.
+> Please see v8[8] for some performance results using
+> access_tracking_perf_test patched to use MGLRU.
+> 
+> Neither access_tracking_perf_test nor mmu_stress_test trigger any
+> splats (with CONFIG_LOCKDEP=y) with the TDP MMU and with the shadow MMU.
 
----
-[1] https://lore.kernel.org/linux-next/20250218192412.2072619-1-beata.michalska@arm.com/T/#u
 
----
-BR
-Beata
-> --------8<--------------------------------
-> From 1b12139107798128c183838c5f4a3f7ffcea1e44 Mon Sep 17 00:00:00 2001
-> From: Catalin Marinas <catalin.marinas@arm.com>
-> Date: Tue, 18 Feb 2025 18:20:46 +0000
-> Subject: [PATCH] arm64: Do not use the deprecated cpumask_next_wrap() in
->  arch_freq_get_on_cpu()
+Hi, I have a question about this patch series and about the access_tracking_perf_test:
+
+Some time ago, I investigated a failure in access_tracking_perf_test which shows up in our CI.
+
+The root cause was that 'folio_clear_idle' doesn't clear the idle bit when MGLRU is enabled,
+and overall I got the impression that MGLRU is not compatible with idle page tracking.
+
+
+I thought that this patch series and the 'mm: multi-gen LRU: Have secondary MMUs participate in MM_WALK' 
+patch series could address this but the test still fails.
+
+
+For the reference the exact problem is:
+
+1. Idle bits for guest memory under test are set via /sys/kernel/mm/page_idle/bitmap
+
+2. Guest dirties memory, which leads to A/D bits being set in the secondary mappings.
+
+3. A NUMA autobalance code write protects the guest memory. KVM in response evicts the SPTE mappings with A/D bit set,
+   and while doing so tells mm that pages were accessed using 'folio_mark_accessed' (via kvm_set_page_accessed (*) )
+   but due to MLGRU the call doesn't clear the idle bit and thus all the traces of the guest access disappear
+   and the kernel thinks that the page is still idle.
+
+I can say that the root cause of this is that folio_mark_accessed doesn't do what it supposed to do.
+
+Calling 'folio_clear_idle(folio);' in MLGRU case in folio_mark_accessed() 
+will probably fix this but I don't have enough confidence
+to say if this is all that is needed to fix this. 
+If this is the case I can send a patch.
+
+
+This patch makes the test pass (but only on 6.12 kernel and below, see below):
+
+diff --git a/mm/swap.c b/mm/swap.c
+index 59f30a981c6f..2013e1f4d572 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -460,7 +460,7 @@ void folio_mark_accessed(struct folio *folio)
+ {
+        if (lru_gen_enabled()) {
+                folio_inc_refs(folio);
+-               return;
++               goto clear_idle_bit;
+        }
+ 
+        if (!folio_test_referenced(folio)) {
+@@ -485,6 +485,7 @@ void folio_mark_accessed(struct folio *folio)
+                folio_clear_referenced(folio);
+                workingset_activation(folio);
+        }
++clear_idle_bit:
+        if (folio_test_idle(folio))
+                folio_clear_idle(folio);
+ }
+
+
+To always reproduce this, it is best to use a patch to make the test run in a loop, 
+like below (although the test fails without this as well).
+
+
+diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+index 3c7defd34f56..829774e325fa 100644
+--- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
++++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+@@ -131,6 +131,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
+        uint64_t pages = vcpu_args->pages;
+        uint64_t page;
+        uint64_t still_idle = 0;
++       uint64_t failed_to_mark_idle = 0;
+        uint64_t no_pfn = 0;
+        int page_idle_fd;
+        int pagemap_fd;
+@@ -160,6 +161,14 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
+                }
+ 
+                mark_page_idle(page_idle_fd, pfn);
++
++
++                if (!is_page_idle(page_idle_fd, pfn)) {
++                        failed_to_mark_idle++;
++                        continue;
++                }
++
++
+        }
+ 
+        /*
+@@ -183,16 +192,15 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
+         * explicitly flush the TLB when aging SPTEs.  As a result, more pages
+         * are cached and the guest won't see the "idle" bit cleared.
+         */
+-       if (still_idle >= pages / 10) {
++       //if (still_idle >= pages / 10) {
+ #ifdef __x86_64__
+-               TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
+-                           "vCPU%d: Too many pages still idle (%lu out of %lu)",
+-                           vcpu_idx, still_idle, pages);
++       //      TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
++       //                  "vCPU%d: Too many pages still idle (%lu out of %lu)",
++       //                  vcpu_idx, still_idle, pages);
+ #endif
+-               printf("WARNING: vCPU%d: Too many pages still idle (%lu out of %lu), "
+-                      "this will affect performance results.\n",
+-                      vcpu_idx, still_idle, pages);
+-       }
++               printf("vCPU%d: idle pages: %lu out of %lu, failed to mark idle: %lu no pfn: %lu\n",
++                      vcpu_idx, still_idle, pages, failed_to_mark_idle, no_pfn);
++       //}
+ 
+        close(page_idle_fd);
+        close(pagemap_fd);
+@@ -315,14 +323,16 @@ static void run_test(enum vm_guest_mode mode, void *arg)
+        access_memory(vm, nr_vcpus, ACCESS_WRITE, "Populating memory");
+ 
+        /* As a control, read and write to the populated memory first. */
+-       access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to populated memory");
+-       access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from populated memory");
++       //access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to populated memory");
++       //access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from populated memory");
+ 
+        /* Repeat on memory that has been marked as idle. */
++again:
+        mark_memory_idle(vm, nr_vcpus);
+        access_memory(vm, nr_vcpus, ACCESS_WRITE, "Writing to idle memory");
+-       mark_memory_idle(vm, nr_vcpus);
+-       access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from idle memory");
++       //mark_memory_idle(vm, nr_vcpus);
++       //access_memory(vm, nr_vcpus, ACCESS_READ, "Reading from idle memory");
++       goto again;
+ 
+        memstress_join_vcpu_threads(nr_vcpus);
+        memstress_destroy_vm(vm);
+
+
+With the above patch applied, you will notice after 4-6 iterations that the number of still idle
+pages soars:
+
+Populating memory             : 0.798882357s
+vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
+Mark memory idle              : 3.003939277s
+Writing to idle memory        : 0.503653562s
+vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
+Mark memory idle              : 3.060128175s
+Writing to idle memory        : 0.502705587s
+vCPU0: idle pages: 2048 out of 262144, failed to mark idle: 0 no pfn: 0
+Mark memory idle              : 3.039294079s
+Writing to idle memory        : 0.092227612s
+vCPU0: idle pages: 0 out of 262144, failed to mark idle: 0 no pfn: 0
+Mark memory idle              : 3.046216234s
+Writing to idle memory        : 0.295077724s
+vCPU0: idle pages: 132558 out of 262144, failed to mark idle: 0 no pfn: 0
+Mark memory idle              : 2.711946690s
+Writing to idle memory        : 0.302882502s
+
+...
+
+
+
+(*) Turns out that since kernel 6.13, this code that sets accessed bit in the primary paging
+structure, when the secondary was zapped was *removed*. I bisected this to commit:
+
+66bc627e7fee KVM: x86/mmu: Don't mark "struct page" accessed when zapping SPTEs
+
+So now the access_tracking_test is broken regardless of MGLRU.
+
+Any ideas on how to fix all this mess?
+
+
+Best regards,
+	Maxim Levitsky
+
+
 > 
-> cpumask_next_wrap() will soon disappear in its current form. Use
-> for_each_cpu_wrap() instead.
+> === Previous Versions ===
 > 
-> Fixes: 16d1e27475f6 ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> ---
->  arch/arm64/kernel/topology.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
+> Since v8[8]:
+>  - Re-added the kvm_handle_hva_range helpers and applied Sean's
+>    kvm_{handle -> age}_hva_range rename.
+>  - Renamed spte_has_volatile_bits() to spte_needs_atomic_write() and
+>    removed its Accessed bit check. Undid change to
+>    tdp_mmu_spte_need_atomic_write().
+>  - Renamed KVM_MMU_NOTIFIER_{YOUNG -> AGING}_LOCKLESS.
+>  - cpu_relax(), lockdep, preempt_disable(), and locking fixups for
+>    per-rmap lock (thanks Lai and Sean).
+>  - Renamed kvm_{has -> may_have}_shadow_mmu_sptes().
+>  - Rebased onto latest kvm/next, including changing
+>    for_each_tdp_mmu_root_rcu to use `types`.
+>  - Dropped MGLRU changes from access_tracking_perf_test.
+>  - Picked up Acked-bys from Yu. (thank you!)
 > 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index a09b0551ec59..1544d3648554 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -254,7 +254,7 @@ int arch_freq_get_on_cpu(int cpu)
->  		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
->  		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
->  			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> -			int ref_cpu = cpu;
-> +			int ref_cpu;
+> Since v7[7]:
+>  - Dropped MGLRU changes.
+>  - Dropped DAMON cleanup.
+>  - Dropped MMU notifier changes completely.
+>  - Made shadow MMU aging *always* lockless, not just lockless when the
+>    now-removed "fast_only" clear notifier was used.
+>  - Given that the MGLRU changes no longer introduce a new MGLRU
+>    capability, drop the new capability check from the selftest.
+>  - Rebased on top of latest kvm-x86/next, including the x86 mmu changes
+>    for marking pages as dirty.
 > 
->  			if (!policy)
->  				return -EINVAL;
-> @@ -265,11 +265,10 @@ int arch_freq_get_on_cpu(int cpu)
->  				return -EOPNOTSUPP;
->  			}
+> Since v6[6]:
+>  - Rebased on top of kvm-x86/next and Sean's lockless rmap walking
+>    changes.
+>  - Removed HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY (thanks DavidM).
+>  - Split up kvm_age_gfn() / kvm_test_age_gfn() optimizations (thanks
+>    DavidM and Sean).
+>  - Improved new MMU notifier documentation (thanks DavidH).
+>  - Dropped arm64 locking change.
+>  - No longer retry for CAS failure in TDP MMU non-A/D case (thanks
+>    Sean).
+>  - Added some R-bys and A-bys.
 > 
-> -			do {
-> -				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
-> -							    start_cpu, true);
-> -
-> -			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
-> +			for_each_cpu_wrap(ref_cpu, policy->cpus, start_cpu) {
-> +				if (!idle_cpu(ref_cpu))
-> +					break;
-> +			}
+> Since v5[5]:
+>  - Reworked test_clear_young_fast_only() into a new parameter for the
+>    existing notifiers (thanks Sean).
+>  - Added mmu_notifier.has_fast_aging to tell mm if calling fast-only
+>    notifiers should be done.
+>  - Added mm_has_fast_young_notifiers() to inform users if calling
+>    fast-only notifier helpers is worthwhile (for look-around to use).
+>  - Changed MGLRU to invoke a single notifier instead of two when
+>    aging and doing look-around (thanks Yu).
+>  - For KVM/x86, check indirect_shadow_pages > 0 instead of
+>    kvm_memslots_have_rmaps() when collecting age information
+>    (thanks Sean).
+>  - For KVM/arm, some fixes from Oliver.
+>  - Small fixes to access_tracking_perf_test.
+>  - Added missing !MMU_NOTIFIER version of mmu_notifier_clear_young().
 > 
->  			cpufreq_cpu_put(policy);
+> Since v4[4]:
+>  - Removed Kconfig that controlled when aging was enabled. Aging will
+>    be done whenever the architecture supports it (thanks Yu).
+>  - Added a new MMU notifier, test_clear_young_fast_only(), specifically
+>    for MGLRU to use.
+>  - Add kvm_fast_{test_,}age_gfn, implemented by x86.
+>  - Fix locking for clear_flush_young().
+>  - Added KVM_MMU_NOTIFIER_YOUNG_LOCKLESS to clean up locking changes
+>    (thanks Sean).
+>  - Fix WARN_ON and other cleanup for the arm64 locking changes
+>    (thanks Oliver).
+> 
+> Since v3[3]:
+>  - Vastly simplified the series (thanks David). Removed mmu notifier
+>    batching logic entirely.
+>  - Cleaned up how locking is done for mmu_notifier_test/clear_young
+>    (thanks David).
+>  - Look-around is now only done when there are no secondary MMUs
+>    subscribed to MMU notifiers.
+>  - CONFIG_LRU_GEN_WALKS_SECONDARY_MMU has been added.
+>  - Fixed the lockless implementation of kvm_{test,}age_gfn for x86
+>    (thanks David).
+>  - Added MGLRU functional and performance tests to
+>    access_tracking_perf_test (thanks Axel).
+>  - In v3, an mm would be completely ignored (for aging) if there was a
+>    secondary MMU but support for secondary MMU walking was missing. Now,
+>    missing secondary MMU walking support simply skips the notifier
+>    calls (except for eviction).
+>  - Added a sanity check for that range->lockless and range->on_lock are
+>    never both provided for the memslot walk.
+> 
+> For the changes since v2[2], see v3.
+> 
+> Based on latest kvm/next.
+> 
+> [1]: https://lore.kernel.org/kvm/CAOUHufYS0XyLEf_V+q5SCW54Zy2aW5nL8CnSWreM8d1rX5NKYg@mail.gmail.com/
+> [2]: https://lore.kernel.org/kvmarm/20230526234435.662652-1-yuzhao@google.com/
+> [3]: https://lore.kernel.org/linux-mm/20240401232946.1837665-1-jthoughton@google.com/
+> [4]: https://lore.kernel.org/linux-mm/20240529180510.2295118-1-jthoughton@google.com/
+> [5]: https://lore.kernel.org/linux-mm/20240611002145.2078921-1-jthoughton@google.com/
+> [6]: https://lore.kernel.org/linux-mm/20240724011037.3671523-1-jthoughton@google.com/
+> [7]: https://lore.kernel.org/kvm/20240926013506.860253-1-jthoughton@google.com/
+> [8]: https://lore.kernel.org/kvm/20241105184333.2305744-1-jthoughton@google.com/
+> 
+> James Houghton (7):
+>   KVM: Rename kvm_handle_hva_range()
+>   KVM: Add lockless memslot walk to KVM
+>   KVM: x86/mmu: Factor out spte atomic bit clearing routine
+>   KVM: x86/mmu: Relax locking for kvm_test_age_gfn() and kvm_age_gfn()
+>   KVM: x86/mmu: Rename spte_has_volatile_bits() to
+>     spte_needs_atomic_write()
+>   KVM: x86/mmu: Skip shadow MMU test_young if TDP MMU reports page as
+>     young
+>   KVM: x86/mmu: Only check gfn age in shadow MMU if
+>     indirect_shadow_pages > 0
+> 
+> Sean Christopherson (4):
+>   KVM: x86/mmu: Refactor low level rmap helpers to prep for walking w/o
+>     mmu_lock
+>   KVM: x86/mmu: Add infrastructure to allow walking rmaps outside of
+>     mmu_lock
+>   KVM: x86/mmu: Add support for lockless walks of rmap SPTEs
+>   KVM: x86/mmu: Support rmap walks without holding mmu_lock when aging
+>     gfns
+> 
+>  Documentation/virt/kvm/locking.rst |   4 +-
+>  arch/x86/include/asm/kvm_host.h    |   4 +-
+>  arch/x86/kvm/Kconfig               |   1 +
+>  arch/x86/kvm/mmu/mmu.c             | 364 +++++++++++++++++++++--------
+>  arch/x86/kvm/mmu/spte.c            |  19 +-
+>  arch/x86/kvm/mmu/spte.h            |   2 +-
+>  arch/x86/kvm/mmu/tdp_iter.h        |  26 ++-
+>  arch/x86/kvm/mmu/tdp_mmu.c         |  36 ++-
+>  include/linux/kvm_host.h           |   1 +
+>  virt/kvm/Kconfig                   |   2 +
+>  virt/kvm/kvm_main.c                |  56 +++--
+>  11 files changed, 364 insertions(+), 151 deletions(-)
 > 
 > 
+> base-commit: f7bafceba76e9ab475b413578c1757ee18c3e44b
+
+
+
+
 
