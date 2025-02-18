@@ -1,235 +1,460 @@
-Return-Path: <linux-kernel+bounces-518523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D13A3906B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E63C0A3906D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2561B1720C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:33:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B4517282F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 01:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E8412CD96;
-	Tue, 18 Feb 2025 01:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFD213A3F2;
+	Tue, 18 Feb 2025 01:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="aQSumd+W"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05EE1D52B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gL/xySdy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAD913BC0C;
+	Tue, 18 Feb 2025 01:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739842421; cv=none; b=Z2U/sNfsVeVHQ5erBXcuWvxsEv4iLnpVzqwBIaOqRWUl700kuLtjjM8oy4ZPJ2AZxevRq45AyBT5JQwrcG/WOBDbJ3OdfcU7SumG0H4hvo1MzMqbKuYY9CsU/jP2cTINgnd8lQWvD3C+EFIIKHn/o3rAGMEv34NeysHG0F1/05I=
+	t=1739842471; cv=none; b=NMFsWHKJNR90PqF6TF1Kci0QJjnegHWjdwanxAFp0dTMH1O7MIPRc9rN6Tri5wfQDBUiRJjpT9BXxJ7hH6t7SuXB6QkkMgHifTxP9+48Kmpskz19Euoc6/TB6653WCVjBybZHBlUox9bn1I3hbr2KqCqORpSbSp/eEG6Kw28QnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739842421; c=relaxed/simple;
-	bh=PqldUid8b28osb9ruzZdoEBTz6JRlxB54ChBBiDaolI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cs4ZoVUBTLOjKiYBvi+VGlVDAzMLTFPLuJ65JRU86kdeOUAlY36RbFzXKVXotI+MPU6+kwowt7lbPtqag8hBZB7TGQHteX3PpOsJXN9oxLgGhK3VfRCcmOQLyAJRHWh2MMipBgTfW+QEdLcKIfyCDba6wzdR3mlz6PsygSPZbf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=aQSumd+W; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220e6028214so80477165ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 17:33:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1739842419; x=1740447219; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UmpmFjzx9bUrYvZxoU2dK5gnUuqgFd21wJOsMgZc0Ns=;
-        b=aQSumd+WtyWu3MtKdTAvVIWEStWO9g01MpjM8dVceX6Y62HG+inQ3I5/gYcYEv5tSB
-         K27maldMzqmaGIOCf80oE86gA2SEhc75fFq6H/TcuSwBWS9EvMVu/twDqvLycCf4Ixfz
-         6A+ErNrvAyPcjpMbmvw/YSxWOH1rrsKJtzKzKFjbXZm3uvDhD2h79irMJ8BFsk7QQ8lu
-         JG7GCIGQuoUa4oNHEmLcAEl9bRZ0hPc3IjJXUAEy9NlHrdxcZ856KTqgkklMOtBl7Ltf
-         xaTQFe0ANPw/0fhFGsJbI25vk9sraUDwQ/U5ITD1Ml/YHhkuqX4VnopPg69w3VErw+PZ
-         a+uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739842419; x=1740447219;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmpmFjzx9bUrYvZxoU2dK5gnUuqgFd21wJOsMgZc0Ns=;
-        b=niVUZ8IEVvpVjCXiqf0mH54PnFdlQpr9qKUlwqvUgGSQuAODWuNsaviyg8+tQCcdGi
-         umZSdKKtEqmYcwnOxRkl2iqKk6oJdwCy0OQsWa7Kj+58Z51B7TOKkunEwNWUP5fW5FL2
-         u+NLJeIYC9hMGg+babM/SuSQbxG+QLsGi0K/5jH7IYpcPhBUFT2/FQQDgsYwfLVCuUxz
-         5jpXfDBityrUFEPH+tnVSRp1hg7c1Lzi7J3v5IKP3wQyNDu+YrGmuPq8Fm2uqZNWzx3c
-         tfy4l90G2HhpOB2lm8W8Z/+GOHE3KHdSwav9kY81BaMRZ0OTBUkujhviiYtl1ScCmyO1
-         xcug==
-X-Forwarded-Encrypted: i=1; AJvYcCVUUx1XC+B4NTQDA3wOBsxl66HeDBC8tolRAkWNwIPOyaihWcHEcXs/7wcrzJFdyfsybFZf5uIDyJ9PF+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2DwMI1JUwK48RadDpWT8X6ypmmH4VlfRl2tjMV3aoFqc8DrXk
-	rDMJ2i9uSoRNbIzgCTu1cokPKYJoFTmJQPS5ff2WQG46BnuSKV3HA835+9Yy6QI=
-X-Gm-Gg: ASbGncvlYUEIIQ+yiXTNW9/Y+wUpjOy/KZcoyyRMQU14oBkU4BTnxkrWFOyhsst1Rwk
-	bNYhSKdQhaKMcdma6ekD+UDPbXNtpflelFqQO915sKtTwspQfec0heZUX1+lpsO9F8HCGZsHqKz
-	Zbq1257p9HG6I4jlFEB9n/KTJiYslpxK6mzd06v2nebHWpgMWcT/FMYB18oB8+TBgPnd/cdQXhj
-	fq4mwfPlUFucmcuwK5mfHSPDjHHadrN8b+v3i4TAz3CeGWGRZJKqeJJW7gNYcL0F6OIKnqyFQdu
-	haMY/lSdKkCwfS8Rm+FnGTY96Lxcx/zxLtuQFEpxVhIUfNmuSanBREg+
-X-Google-Smtp-Source: AGHT+IHh0FY+Jv7gaSRcfnfFJ7EpcQsaZBH/WADBW2TP7ttlwXE5cmoU6puqsc/FMsvUfWC2fhP2Rg==
-X-Received: by 2002:a05:6a21:1fc8:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eebe05953emr5291079637.15.1739842418940;
-        Mon, 17 Feb 2025 17:33:38 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73274bdf0aasm3434763b3a.125.2025.02.17.17.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 17:33:38 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tkCUR-00000002cJb-3K4F;
-	Tue, 18 Feb 2025 12:33:35 +1100
-Date: Tue, 18 Feb 2025 12:33:35 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steve French <sfrench@samba.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	s=arc-20240116; t=1739842471; c=relaxed/simple;
+	bh=FbHhttVlORGonxs8H0S5iJCRTlanFr93rOt/1jJz8Tk=;
+	h=From:To:Subject:Date:Message-Id; b=FmnKQS0TqLe4zzevtsqoQwRuWeeaXhBuS/ckQqfqAtpDqXBQkuAd4EcE2e2kX8JV7deGwAZv1DPq6FNJXC8wirwFV9+w9aeqZc/+11Eb7V/d6606jRsM32KNUxUrEaIoUaYUtYFZfhH73NU6OLkktSb668etW1ByKQLhAIhNXqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gL/xySdy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 564DE20376D8; Mon, 17 Feb 2025 17:34:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 564DE20376D8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739842469;
+	bh=Eh+eKNsaZPft3eZnsNK/4M9XSnx0/DdmhuwJkwuLv8o=;
+	h=From:To:Subject:Date:From;
+	b=gL/xySdyANYAkQ1571l9RsvszhKcAAt1kwVqfYGxSwj3TwXqV3dtDJedvTMEJej3L
+	 XpUAB6U9geYv26+1v360YSaDLh+L3gF7YIKIQV0epEiWiWb5pjhr/YRv9SM9KfuYQc
+	 HHdH2pWnXTAWkNHODSf6G1ogC+0tridKAinpzc/A=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	michal.swiatkowski@linux.intel.com,
+	mlevitsk@redhat.com,
+	yury.norov@gmail.com,
+	shradhagupta@linux.microsoft.com,
+	kotaranov@microsoft.com,
+	peterz@infradead.org,
+	akpm@linux-foundation.org,
+	ernis@linux.microsoft.com,
+	schakrabarti@linux.microsoft.com,
+	kent.overstreet@linux.dev,
+	longli@microsoft.com,
+	erick.archer@outlook.com,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] fs: Add FS_XFLAG_COMPRESSED & FS_XFLAG_ENCRYPTED
- for FS_IOC_FS[GS]ETXATTR API
-Message-ID: <Z7Pjb5tI6jJDlFZn@dread.disaster.area>
-References: <20250216164029.20673-1-pali@kernel.org>
- <20250216164029.20673-2-pali@kernel.org>
- <20250216183432.GA2404@sol.localdomain>
- <CAOQ4uxigYpzpttfaRc=xAxJc=f2bz89_eCideuftf3egTiE+3A@mail.gmail.com>
- <20250216202441.d3re7lfky6bcozkv@pali>
- <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
+Subject: [PATCH v2] net: mana: Add debug logs in MANA network driver
+Date: Mon, 17 Feb 2025 17:34:15 -0800
+Message-Id: <1739842455-23899-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj4urR70FmLB_4Qwbp1O5TwvHWSW6QPTCuq7uXp033B7Q@mail.gmail.com>
 
-On Sun, Feb 16, 2025 at 09:43:02PM +0100, Amir Goldstein wrote:
-> On Sun, Feb 16, 2025 at 9:24 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Sunday 16 February 2025 21:17:55 Amir Goldstein wrote:
-> > > On Sun, Feb 16, 2025 at 7:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >
-> > > > On Sun, Feb 16, 2025 at 05:40:26PM +0100, Pali Rohár wrote:
-> > > > > This allows to get or set FS_COMPR_FL and FS_ENCRYPT_FL bits via FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR API.
-> > > > >
-> > > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > >
-> > > > Does this really allow setting FS_ENCRYPT_FL via FS_IOC_FSSETXATTR, and how does
-> > > > this interact with the existing fscrypt support in ext4, f2fs, ubifs, and ceph
-> > > > which use that flag?
-> > >
-> > > As far as I can tell, after fileattr_fill_xflags() call in
-> > > ioctl_fssetxattr(), the call
-> > > to ext4_fileattr_set() should behave exactly the same if it came some
-> > > FS_IOC_FSSETXATTR or from FS_IOC_SETFLAGS.
-> > > IOW, EXT4_FL_USER_MODIFIABLE mask will still apply.
-> > >
-> > > However, unlike the legacy API, we now have an opportunity to deal with
-> > > EXT4_FL_USER_MODIFIABLE better than this:
-> > >         /*
-> > >          * chattr(1) grabs flags via GETFLAGS, modifies the result and
-> > >          * passes that to SETFLAGS. So we cannot easily make SETFLAGS
-> > >          * more restrictive than just silently masking off visible but
-> > >          * not settable flags as we always did.
-> > >          */
-> > >
-> > > if we have the xflags_mask in the new API (not only the xflags) then
-> > > chattr(1) can set EXT4_FL_USER_MODIFIABLE in xflags_mask
-> > > ext4_fileattr_set() can verify that
-> > > (xflags_mask & ~EXT4_FL_USER_MODIFIABLE == 0).
-> > >
-> > > However, Pali, this is an important point that your RFC did not follow -
-> > > AFAICT, the current kernel code of ext4_fileattr_set() and xfs_fileattr_set()
-> > > (and other fs) does not return any error for unknown xflags, it just
-> > > ignores them.
-> > >
-> > > This is why a new ioctl pair FS_IOC_[GS]ETFSXATTR2 is needed IMO
-> > > before adding support to ANY new xflags, whether they are mapped to
-> > > existing flags like in this patch or are completely new xflags.
-> > >
-> > > Thanks,
-> > > Amir.
-> >
-> > But xflags_mask is available in this new API. It is available if the
-> > FS_XFLAG_HASEXTFIELDS flag is set. So I think that the ext4 improvement
-> > mentioned above can be included into this new API.
-> >
-> > Or I'm missing something?
-> 
-> Yes, you are missing something very fundamental to backward compat API -
-> You cannot change the existing kernels.
-> 
-> You should ask yourself one question:
-> What happens if I execute the old ioctl FS_IOC_FSSETXATTR
-> on an existing old kernel with the new extended flags?
+Add more logs to assist in debugging and monitoring
+driver behaviour, making it easier to identify potential
+issues  during development and testing.
 
-It should ignore all the things it does not know about.
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+---
+Changes in v2:
+* Change "debug statements" in commit message to "more logs".
+* Replace dev_err with dev_dbg in out: label in 
+  mana_gd_create_dma_region.
+* Use dev_err in resp header status check.
+ .../net/ethernet/microsoft/mana/gdma_main.c   | 50 +++++++++++++---
+ .../net/ethernet/microsoft/mana/hw_channel.c  |  6 +-
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 58 +++++++++++++++----
+ 3 files changed, 94 insertions(+), 20 deletions(-)
 
-But the correct usage of FS_IOC_FSSETXATTR is to call
-FS_IOC_FSGETXATTR to initialise the structure with all the current
-inode state. In this situation, the fsx.fsx_xflags field needs to
-return a flag that says "FS_XFLAGS_HAS_WIN_ATTRS" and now userspace
-knows that it can set/clear the MS windows attr flags.  Hence if the
-filesystem supports windows attributes, we can require them to
--support the entire set-.
-
-i.e. if an attempt to set a win attr that the filesystem cannot
-implement (e.g. compression) then it returns an error (-EINVAL),
-otherwise it will store the attr and perform whatever operation it
-requires.
-
-IMO, the whole implementation in the patchset is wrong - there is no
-need for a new xflags2 field, and there is no need for whacky field
-masks or anything like that. All it needs is a single bit to
-indicate if the windows attributes are supported, and they are all
-implemented as normal FS_XFLAG fields in the fsx_xflags field.
-
-> The answer, to the best of my code emulation abilities is that
-> old kernel will ignore the new xflags including FS_XFLAG_HASEXTFIELDS
-> and this is suboptimal, because it would be better for the new chattr tool
-> to get -EINVAL when trying to set new xflags and mask on an old kernel.
-
-What new chattr tool? I would expect that xfs_io -c "chattr ..."
-will be extended to support all these new fields because that is the
-historical tool we use for FS_IOC_FS{GS}ETXATTR regression test
-support in fstests. I would also expect that the e2fsprogs chattr(1)
-program to grow support for the new FS_XFLAGS bits as well...
-
-> It is true that the new chattr can call the old FS_IOC_FSGETXATTR
-> ioctl and see that it has no FS_XFLAG_HASEXTFIELDS,
-> so I agree that a new ioctl is not absolutely necessary,
-> but I still believe that it is a better API design.
-
-This is how FS{GS}ETXATTR interface has always worked. You *must*
-do a GET before a SET so that the fsx structure has been correctly
-initialised so the SET operation makes only the exact change being
-asked for.
-
-This makes the -API pair- backwards compatible by allowing struct
-fsxattr feature bits to be reported in the GET operation. If the
-feature bit is set, then those optional fields can be set. If the
-feature bit is not set by the GET operation, then if you try to use
-it on a SET operation you'll either get an error or it will be
-silently ignored.
-
-> Would love to hear what other fs developers prefer.
-
-Do not overcomplicate the problem. Use the interface as intended:
-GET then SET, and GET returns feature bits in the xflags field to
-indicate what is valid in the overall struct fsxattr. It's trivial
-to probe for native fs support of windows attributes like this. It
-also allows filesystems to be converted one at a time to support the
-windows attributes (e.g. as they have on-disk format support for
-them added). Applications like Samba can then switch behaviours
-based on what they probe from the underlying filesystem...
-
--Dave.
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index be95336ce089..c15a5ef4674e 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -666,8 +666,11 @@ int mana_gd_create_hwc_queue(struct gdma_dev *gd,
+ 
+ 	gmi = &queue->mem_info;
+ 	err = mana_gd_alloc_memory(gc, spec->queue_size, gmi);
+-	if (err)
++	if (err) {
++		dev_err(gc->dev, "GDMA queue type: %d, size: %u, gdma memory allocation err: %d\n",
++			spec->type, spec->queue_size, err);
+ 		goto free_q;
++	}
+ 
+ 	queue->head = 0;
+ 	queue->tail = 0;
+@@ -688,6 +691,8 @@ int mana_gd_create_hwc_queue(struct gdma_dev *gd,
+ 	*queue_ptr = queue;
+ 	return 0;
+ out:
++	dev_err(gc->dev, "Failed to create queue type %d of size %u, err: %d\n",
++		spec->type, spec->queue_size, err);
+ 	mana_gd_free_memory(gmi);
+ free_q:
+ 	kfree(queue);
+@@ -770,7 +775,13 @@ static int mana_gd_create_dma_region(struct gdma_dev *gd,
+ 	}
+ 
+ 	gmi->dma_region_handle = resp.dma_region_handle;
++	dev_dbg(gc->dev, "Created DMA region handle 0x%llx\n",
++		gmi->dma_region_handle);
+ out:
++	if (err)
++		dev_dbg(gc->dev,
++			"Failed to create DMA region of length: %u, page_type: %d, status: 0x%x, err: %d\n",
++			length, req->gdma_page_type, resp.hdr.status, err);
+ 	kfree(req);
+ 	return err;
+ }
+@@ -793,8 +804,11 @@ int mana_gd_create_mana_eq(struct gdma_dev *gd,
+ 
+ 	gmi = &queue->mem_info;
+ 	err = mana_gd_alloc_memory(gc, spec->queue_size, gmi);
+-	if (err)
++	if (err) {
++		dev_err(gc->dev, "GDMA queue type: %d, size: %u, gdma memory allocation err: %d\n",
++			spec->type, spec->queue_size, err);
+ 		goto free_q;
++	}
+ 
+ 	err = mana_gd_create_dma_region(gd, gmi);
+ 	if (err)
+@@ -815,6 +829,8 @@ int mana_gd_create_mana_eq(struct gdma_dev *gd,
+ 	*queue_ptr = queue;
+ 	return 0;
+ out:
++	dev_err(gc->dev, "Failed to create queue type %d of size: %u, err: %d\n",
++		spec->type, spec->queue_size, err);
+ 	mana_gd_free_memory(gmi);
+ free_q:
+ 	kfree(queue);
+@@ -841,8 +857,11 @@ int mana_gd_create_mana_wq_cq(struct gdma_dev *gd,
+ 
+ 	gmi = &queue->mem_info;
+ 	err = mana_gd_alloc_memory(gc, spec->queue_size, gmi);
+-	if (err)
++	if (err) {
++		dev_err(gc->dev, "GDMA queue type: %d, size: %u, memory allocation err: %d\n",
++			spec->type, spec->queue_size, err);
+ 		goto free_q;
++	}
+ 
+ 	err = mana_gd_create_dma_region(gd, gmi);
+ 	if (err)
+@@ -862,6 +881,8 @@ int mana_gd_create_mana_wq_cq(struct gdma_dev *gd,
+ 	*queue_ptr = queue;
+ 	return 0;
+ out:
++	dev_err(gc->dev, "Failed to create queue type %d of size: %u, err: %d\n",
++		spec->type, spec->queue_size, err);
+ 	mana_gd_free_memory(gmi);
+ free_q:
+ 	kfree(queue);
+@@ -1157,8 +1178,11 @@ int mana_gd_post_and_ring(struct gdma_queue *queue,
+ 	int err;
+ 
+ 	err = mana_gd_post_work_request(queue, wqe_req, wqe_info);
+-	if (err)
++	if (err) {
++		dev_err(gc->dev, "Failed to post work req from queue type %d of size %u (err=%d)\n",
++			queue->type, queue->queue_size, err);
+ 		return err;
++	}
+ 
+ 	mana_gd_wq_ring_doorbell(gc, queue);
+ 
+@@ -1435,8 +1459,10 @@ static int mana_gd_setup(struct pci_dev *pdev)
+ 	mana_smc_init(&gc->shm_channel, gc->dev, gc->shm_base);
+ 
+ 	err = mana_gd_setup_irqs(pdev);
+-	if (err)
++	if (err) {
++		dev_err(gc->dev, "Failed to setup IRQs: %d\n", err);
+ 		return err;
++	}
+ 
+ 	err = mana_hwc_create_channel(gc);
+ 	if (err)
+@@ -1454,12 +1480,14 @@ static int mana_gd_setup(struct pci_dev *pdev)
+ 	if (err)
+ 		goto destroy_hwc;
+ 
++	dev_dbg(&pdev->dev, "mana gdma setup successful\n");
+ 	return 0;
+ 
+ destroy_hwc:
+ 	mana_hwc_destroy_channel(gc);
+ remove_irq:
+ 	mana_gd_remove_irqs(pdev);
++	dev_err(&pdev->dev, "%s failed (error %d)\n", __func__, err);
+ 	return err;
+ }
+ 
+@@ -1470,6 +1498,7 @@ static void mana_gd_cleanup(struct pci_dev *pdev)
+ 	mana_hwc_destroy_channel(gc);
+ 
+ 	mana_gd_remove_irqs(pdev);
++	dev_dbg(&pdev->dev, "mana gdma cleanup successful\n");
+ }
+ 
+ static bool mana_is_pf(unsigned short dev_id)
+@@ -1488,8 +1517,10 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	BUILD_BUG_ON(2 * MAX_PORTS_IN_MANA_DEV * GDMA_EQE_SIZE > EQ_SIZE);
+ 
+ 	err = pci_enable_device(pdev);
+-	if (err)
++	if (err) {
++		dev_err(&pdev->dev, "Failed to enable pci device (err=%d)\n", err);
+ 		return -ENXIO;
++	}
+ 
+ 	pci_set_master(pdev);
+ 
+@@ -1498,9 +1529,10 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto disable_dev;
+ 
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+-	if (err)
++	if (err) {
++		dev_err(&pdev->dev, "DMA set mask failed: %d\n", err);
+ 		goto release_region;
+-
++	}
+ 	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
+ 
+ 	err = -ENOMEM;
+@@ -1575,6 +1607,8 @@ static void mana_gd_remove(struct pci_dev *pdev)
+ 
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
++
++	dev_dbg(&pdev->dev, "mana gdma remove successful\n");
+ }
+ 
+ /* The 'state' parameter is not used. */
+diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+index a00f915c5188..1ba49602089b 100644
+--- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
++++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+@@ -440,7 +440,8 @@ static int mana_hwc_alloc_dma_buf(struct hw_channel_context *hwc, u16 q_depth,
+ 	gmi = &dma_buf->mem_info;
+ 	err = mana_gd_alloc_memory(gc, buf_size, gmi);
+ 	if (err) {
+-		dev_err(hwc->dev, "Failed to allocate DMA buffer: %d\n", err);
++		dev_err(hwc->dev, "Failed to allocate DMA buffer size: %u, err %d\n",
++			buf_size, err);
+ 		goto out;
+ 	}
+ 
+@@ -529,6 +530,9 @@ static int mana_hwc_create_wq(struct hw_channel_context *hwc,
+ out:
+ 	if (err)
+ 		mana_hwc_destroy_wq(hwc, hwc_wq);
++
++	dev_err(hwc->dev, "Failed to create HWC queue size= %u type= %d err= %d\n",
++		queue_size, q_type, err);
+ 	return err;
+ }
+ 
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index aa1e47233fe5..32e2c5cd7152 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -52,10 +52,12 @@ static int mana_open(struct net_device *ndev)
+ {
+ 	struct mana_port_context *apc = netdev_priv(ndev);
+ 	int err;
+-
+ 	err = mana_alloc_queues(ndev);
+-	if (err)
++
++	if (err) {
++		netdev_err(ndev, "%s failed to allocate queues: %d\n", __func__, err);
+ 		return err;
++	}
+ 
+ 	apc->port_is_up = true;
+ 
+@@ -64,7 +66,7 @@ static int mana_open(struct net_device *ndev)
+ 
+ 	netif_carrier_on(ndev);
+ 	netif_tx_wake_all_queues(ndev);
+-
++	netdev_dbg(ndev, "%s successful\n", __func__);
+ 	return 0;
+ }
+ 
+@@ -176,6 +178,9 @@ static int mana_map_skb(struct sk_buff *skb, struct mana_port_context *apc,
+ 	return 0;
+ 
+ frag_err:
++	if (net_ratelimit())
++		netdev_err(apc->ndev, "Failed to map skb of size %u to DMA\n",
++			   skb->len);
+ 	for (i = sg_i - 1; i >= hsg; i--)
+ 		dma_unmap_page(dev, ash->dma_handle[i], ash->size[i],
+ 			       DMA_TO_DEVICE);
+@@ -687,6 +692,7 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_qu
+ 	return 0;
+ 
+ error:
++	netdev_err(mpc->ndev, "Failed to pre-allocate RX buffers for %d queues\n", num_queues);
+ 	mana_pre_dealloc_rxbufs(mpc);
+ 	return -ENOMEM;
+ }
+@@ -1304,8 +1310,10 @@ static int mana_create_eq(struct mana_context *ac)
+ 	for (i = 0; i < gc->max_num_queues; i++) {
+ 		spec.eq.msix_index = (i + 1) % gc->num_msix_usable;
+ 		err = mana_gd_create_mana_eq(gd, &spec, &ac->eqs[i].eq);
+-		if (err)
++		if (err) {
++			dev_err(gc->dev, "Failed to create EQ %d : %d\n", i, err);
+ 			goto out;
++		}
+ 		mana_create_eq_debugfs(ac, i);
+ 	}
+ 
+@@ -2080,6 +2088,8 @@ static int mana_create_txq(struct mana_port_context *apc,
+ 
+ 	return 0;
+ out:
++	netdev_err(net, "Failed to create %d TX queues, %d\n",
++		   apc->num_queues, err);
+ 	mana_destroy_txq(apc);
+ 	return err;
+ }
+@@ -2415,6 +2425,7 @@ static int mana_add_rx_queues(struct mana_port_context *apc,
+ 		rxq = mana_create_rxq(apc, i, &ac->eqs[i], ndev);
+ 		if (!rxq) {
+ 			err = -ENOMEM;
++			netdev_err(ndev, "Failed to create rxq %d : %d\n", i, err);
+ 			goto out;
+ 		}
+ 
+@@ -2661,12 +2672,18 @@ int mana_alloc_queues(struct net_device *ndev)
+ 	int err;
+ 
+ 	err = mana_create_vport(apc, ndev);
+-	if (err)
++	if (err) {
++		netdev_err(ndev, "Failed to create vPort %u : %d\n", apc->port_idx, err);
+ 		return err;
++	}
+ 
+ 	err = netif_set_real_num_tx_queues(ndev, apc->num_queues);
+-	if (err)
++	if (err) {
++		netdev_err(ndev,
++			   "netif_set_real_num_tx_queues () failed for ndev with num_queues %u : %d\n",
++			   apc->num_queues, err);
+ 		goto destroy_vport;
++	}
+ 
+ 	err = mana_add_rx_queues(apc, ndev);
+ 	if (err)
+@@ -2675,14 +2692,20 @@ int mana_alloc_queues(struct net_device *ndev)
+ 	apc->rss_state = apc->num_queues > 1 ? TRI_STATE_TRUE : TRI_STATE_FALSE;
+ 
+ 	err = netif_set_real_num_rx_queues(ndev, apc->num_queues);
+-	if (err)
++	if (err) {
++		netdev_err(ndev,
++			   "netif_set_real_num_rx_queues () failed for ndev with num_queues %u : %d\n",
++			   apc->num_queues, err);
+ 		goto destroy_vport;
++	}
+ 
+ 	mana_rss_table_init(apc);
+ 
+ 	err = mana_config_rss(apc, TRI_STATE_TRUE, true, true);
+-	if (err)
++	if (err) {
++		netdev_err(ndev, "Failed to configure RSS table: %d\n", err);
+ 		goto destroy_vport;
++	}
+ 
+ 	if (gd->gdma_context->is_pf) {
+ 		err = mana_pf_register_filter(apc);
+@@ -2823,8 +2846,10 @@ int mana_detach(struct net_device *ndev, bool from_close)
+ 
+ 	if (apc->port_st_save) {
+ 		err = mana_dealloc_queues(ndev);
+-		if (err)
++		if (err) {
++			netdev_err(ndev, "%s failed to deallocate queues: %d\n", __func__, err);
+ 			return err;
++		}
+ 	}
+ 
+ 	if (!from_close) {
+@@ -2968,6 +2993,8 @@ static int add_adev(struct gdma_dev *gd)
+ 		goto add_fail;
+ 
+ 	gd->adev = adev;
++	dev_dbg(gd->gdma_context->dev,
++		"Auxiliary device added successfully\n");
+ 	return 0;
+ 
+ add_fail:
+@@ -3009,8 +3036,10 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
+ 	}
+ 
+ 	err = mana_create_eq(ac);
+-	if (err)
++	if (err) {
++		dev_err(dev, "Failed to create EQs: %d\n", err);
+ 		goto out;
++	}
+ 
+ 	err = mana_query_device_cfg(ac, MANA_MAJOR_VERSION, MANA_MINOR_VERSION,
+ 				    MANA_MICRO_VERSION, &num_ports);
+@@ -3066,8 +3095,14 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
+ 
+ 	err = add_adev(gd);
+ out:
+-	if (err)
++	if (err) {
+ 		mana_remove(gd, false);
++	} else {
++		dev_dbg(dev, "gd=%p, id=%u, num_ports=%d, type=%u, instance=%u\n",
++			gd, gd->dev_id.as_uint32, ac->num_ports,
++			gd->dev_id.type, gd->dev_id.instance);
++		dev_dbg(dev, "%s succeeded\n", __func__);
++	}
+ 
+ 	return err;
+ }
+@@ -3129,6 +3164,7 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+ 	gd->driver_data = NULL;
+ 	gd->gdma_context = NULL;
+ 	kfree(ac);
++	dev_dbg(dev, "%s succeeded\n", __func__);
+ }
+ 
+ struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index)
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
