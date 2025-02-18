@@ -1,45 +1,82 @@
-Return-Path: <linux-kernel+bounces-519885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4088A3A324
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:47:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FD0A3A32A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D84188DB16
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12763AAD65
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3184F26E169;
-	Tue, 18 Feb 2025 16:47:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1A526E175;
+	Tue, 18 Feb 2025 16:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HD/O1tXX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4F226B2BE;
-	Tue, 18 Feb 2025 16:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000014A4E7;
+	Tue, 18 Feb 2025 16:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897246; cv=none; b=RS8gT24vopwCXoSTR9yBJmTEWwoLEaBWLH8p5FqylgwYHWhDTMtUOXNHwuoZZVZONzPp7PiMwO2nS+lBRm4xTmEn/iUfntQwPgYMgE5Ul9MQGNP8NYU6lx+CXIVCyLZOl2rKRCY2oDUoV1B1XPRY6rRntYJFUc9Mjt8XCYThy4Y=
+	t=1739897313; cv=none; b=Z56ydNAuLZx7Rx6dRuCnvQs7EuVdcGQ1psS7szmcroxAEhyeX2aggbTgmsKAWEQAlluG9gZ3C9e5JCjTyh6ZEKKWPUk7q3i5Jzi02kmV9Dg1Is8aRuaiirJecUQweqW5Js9rUuT7M7spo7VCr3Uhx/2JPKurbuZOQNkUvpgTTG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897246; c=relaxed/simple;
-	bh=oVD0aPVJ0JUxzWxJf3CwW8yIcPV/QlQ3knpGNTg2Fho=;
+	s=arc-20240116; t=1739897313; c=relaxed/simple;
+	bh=otEYAf2By+RplMWWatkXEUSLTFeywrjdB+JwrfM0OBQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExKH8vOOStYYgK7jtQD2YGAp1atPcAoV4mQD4aDYJ8wYRHBeE5XYhX4UiJ9NY4oIeVzkuWuCiOk8GjDlrGB1c8ii9FpA5p4TE15PJ54HEEbf7V0SBpZdtpRLqj1T0q1TTx5j/Sasqq16YM90BBubvBXX4wPERsxM80MLu2IAxxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E792AC4CEE2;
-	Tue, 18 Feb 2025 16:47:25 +0000 (UTC)
-Date: Tue, 18 Feb 2025 08:47:24 -0800
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=emRaGyJsrCfaPQ+ujJr4gwzqk96eftRzO97Pgg+CffCWNg4q8ChmAhhNBjrY840jNivhp43yhFMcFWP5ONSmRIldbS1A0g1VRwnD6MrusQ8iEAouKl9ZfMQEsiuxjcc7DaKurhUW0mZ5coLAYGV3LT+D062e3pcCaEaSJ3uDR6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HD/O1tXX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6FA1740E021F;
+	Tue, 18 Feb 2025 16:48:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id xeyfLXdiWnKB; Tue, 18 Feb 2025 16:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739897304; bh=4qKrqlnj1J4jOxgftZM09y1CXDjIpIB/KfD0MtUHuWo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HD/O1tXXg+DLMtbYiPZsmIvGTksECzRsjwqMgQreKM7RvI9Vt+y8h40eM9ebmG9wo
+	 b3iTh3Y8vNBurKLoxdeGhjdlj0SMlTWy8mLtVbbnoPFrkrbrSSEGAZa0hgo/Ty90vi
+	 BKDLBfk69CIuzfJscYn263RApCzaQHNUve983dYDi7yUZ5G4cxmSBekIqWlS6WMqG0
+	 DML5A/NYXI3ICXrPTt3BZqPdskntzd+qh4PeOfCW27FGFIDrScmmSkkeFIV57Hk5PS
+	 1O2KvMm8ltX0EIffOUUrPclAxye9Ej5di4yupo/XvANWRM7PCJ0xiA6Yf3ovHauwFM
+	 FjS6O8msJeiHzlcTzmi6ahAYTiGMDdjq8JE2hKYaS8NwdmbR7NA9g2cmLSqH9tqmnn
+	 DZjM3FavJgjhq5bm+ObP555idawMoGnCrPpTrfrQUjmUoEBpf5sXSIr5FM6pVqIsso
+	 NzshF7JTQ3ctHMH6Rtor1k2ii3lS2xbBEVFFB9RpF/wB6RgrXLseSTt4V0BvFrtGv8
+	 L0naVQ9q8AMl7865gHCfDQGEM4a+TE0HCEs1vnFHHzXNH8he73U5xz/z8wCaCqPW4l
+	 xQGkW7oRQ64xZz5YkyCK2JmZPpkmzZ2l+R+/e0W7XorBB//Ei7aXycqMJmWMaZBBBw
+	 3kTJKY/q3025/Oa18b9mXMBI=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 43D3640E00C9;
+	Tue, 18 Feb 2025 16:48:07 +0000 (UTC)
+Date: Tue, 18 Feb 2025 17:48:00 +0100
+From: Borislav Petkov <bp@alien8.de>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: ERROR: modpost: "kmsan_handle_dma"
- [drivers/virtio/virtio_ring.ko] undefined!
-Message-ID: <20250218164724.uxcwotv3wgc5y3id@jpoimboe>
-References: <202502150634.qjxwSeJR-lkp@intel.com>
- <20250218114857.oBuLvPYs@linutronix.de>
- <20250218132855.GE40464@noisy.programming.kicks-ass.net>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com,
+	nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linmiaohe@huawei.com, akpm@linux-foundation.org,
+	jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 3/5] x86/mce: add EX_TYPE_EFAULT_REG as in-kernel
+ recovery context to fix copy-from-user operations regression
+Message-ID: <20250218164800.GNZ7S5wL1A4dTaySOP@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-4-xueshuai@linux.alibaba.com>
+ <20250218125408.GD40464@noisy.programming.kicks-ass.net>
+ <1ff716d3-eb3d-477e-ae30-1abe97eee01b@linux.alibaba.com>
+ <20250218141535.GC34567@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,52 +85,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218132855.GE40464@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250218141535.GC34567@noisy.programming.kicks-ass.net>
 
-On Tue, Feb 18, 2025 at 02:28:55PM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 12:48:57PM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2025-02-15 06:42:36 [+0800], kernel test robot wrote:
-> > > >> arch/x86/kvm/cpuid.o: warning: objtool: do_cpuid_func+0x2428: undefined stack state
-> > 
-> 
-> > From the assembly it seems to make sense:
-> > |   110ae:       49 89 e0                mov    %rsp,%r8
-> > stash for later
-> > |   110b1:       48 85 db                test   %rbx,%rbx
-> > |   110b4:       c7 00 00 00 00 00       movl   $0x0,(%rax)
-> > |   110ba:       45 89 7e 14             mov    %r15d,0x14(%r14)
-> > |   110be:       0f 85 40 01 00 00       jne    11204 <do_cpuid_func+0x22f4>
-> > …
-> > |   11204:       44 8b 74 24 38          mov    0x38(%rsp),%r14d
-> > |   11209:       44 89 f7                mov    %r14d,%edi
-> > |   1120c:       4d 89 c7                mov    %r8,%r15
-> > 
-> > mov rsp to r15
-> 
-> This, objtool doesn't track this one. It only does:
-> 
->  mov %rsp, reg
-> 
->  mov reg, %rsp
-> 
-> I'm not entirely sure how painful it would be to teach objtool about
-> this case. Horrible code it is :/
-> 
-> > restore rsp. I just don't see how rsp is destroyed but this could be
-> > related to paravirt's xxl clobbing in__cpuid().
-> > 
-> > I miss 1120c in my output. I don't understand how it jumps from 110ae to
-> > 1124b. It misses the assignments in between but this might not be goal
-> > here…
+On Tue, Feb 18, 2025 at 03:15:35PM +0100, Peter Zijlstra wrote:
+> diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+> index dac4d64dfb2a..cfdae25eacd7 100644
+> --- a/arch/x86/kernel/cpu/mce/severity.c
+> +++ b/arch/x86/kernel/cpu/mce/severity.c
+> @@ -301,18 +301,19 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+>  	instrumentation_end();
+>  
+>  	switch (fixup_type) {
+> -	case EX_TYPE_UACCESS:
+> -		if (!copy_user)
+> -			return IN_KERNEL;
+> -		m->kflags |= MCE_IN_KERNEL_COPYIN;
+> -		fallthrough;
+> -
+>  	case EX_TYPE_FAULT_MCE_SAFE:
+>  	case EX_TYPE_DEFAULT_MCE_SAFE:
+>  		m->kflags |= MCE_IN_KERNEL_RECOV;
+>  		return IN_KERNEL_RECOV;
+>  
+>  	default:
+> +		if (copy_user) {
 
-FYI, you can add OBJTOOL_ARGS="--backtrace" or OBJTOOL_VERBOSE=1 to the
-cmdline to see how objtool got there.  On my build there were some
-ALTERNATIVE()s involved which makes it trickier to follow.
-
-There's definitely some weirdness going on, I'm also seeing the .s not
-match the .o.  Maybe it's the __msan_*() stuff.  Still looking...
+As said on chat, if we can make is_copy_from_user() *always* correctly detect
+user access, then sure but I'm afraid EX_TYPE_UACCESS being generated at the
+handful places where we do user memory access is there for a reason as it
+makes it pretty explicit.
 
 -- 
-Josh
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
