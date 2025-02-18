@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-520069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295BFA3A537
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:22:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9136A3A536
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE28189436D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75231739B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1A23184B;
-	Tue, 18 Feb 2025 18:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECB722F5A2;
+	Tue, 18 Feb 2025 18:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YXRW2rzu"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dcw0wYzL"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C482231827
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62CD231838
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 18:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739902666; cv=none; b=e+H9S65k886Jsb5+tjHslguSZnbeyT4+q83avHo8rqTg5fv0CPMElqsW7uW2fAFvJJOFI12wnhOftXruWl5nLdpzoHGAL++PBB0nnMYkAh5Cfl/WLsMq/WB7anqkHflMXYDnBZKpIGlnGLKSYO87+oKdarWoLUSq3vvSH4qkUcc=
+	t=1739902668; cv=none; b=A8vwHJ+IhyF0WiR1tz7+P1GYjtmuRNl3Y4LWy1XgNpZMFC/I8dUnIOfFc4CM43MtEKjmVjE+iRB+qYgrSU1CqR84kh30O1RaSi07eiLGoJ6CK9w9dii8kxgMW+2HdclX/8PZ75YjP7gJ+TE88rr8LegtjorQuJJpTuIp0hxEXr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739902666; c=relaxed/simple;
-	bh=zf7y2yv6MjlPZnspffrdyRTI02wP8DgpQQ5dj3SYV/A=;
+	s=arc-20240116; t=1739902668; c=relaxed/simple;
+	bh=A8ImzonnB7if/XN85ZlpSO03cvoYD/Ff9++9PdHTh88=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YYGirKdPxRh7rSXtvdNQ8UOKRKZLZ+O5kpY7g9KYzK9/76QcGhsNa47H+5mUQmFAjbCdiE2EfrBKsGYdBWRuLFK5dTdGHbVh7tR87eUDSJ3qHBDCDithOEcJ0t9AfFYhi4t2YhyOaTCM0FqZ0bslBzmGqFvNZTD5gznis+TWvNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YXRW2rzu; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=i/9QR83y5EXwM6ypieHFUZiHrI/ei1q641qtTbRGRngsJ6DI//mc7QcFCxGOeoU8k8vAeKBDrstLgn2ww9w87qJX0uAvYJLN0rL/eXs+Vr7J58cRk0jRqr7132doZ/rOOa7+Y1y66i/E9J8+mtWf/aU/4/GDpBa9MdtwgKx4r24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dcw0wYzL; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220d8599659so99373015ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:17:44 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220ee2e7746so87693195ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:17:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739902664; x=1740507464; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1739902666; x=1740507466; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGpYOJcOz/lsGyIjARR6Q+MEJZ3eOZuY6bqPCycZ40I=;
-        b=YXRW2rzuHOHSfIPZ05Zi+1JwBYA6EB9OgwAy7ktZu+WO065S+JlwmFy0z/od/LTMcd
-         plEVA+oOx6XE/gTgExhXBnFjAhw0txVaXFRKlzosTK1TsmXv9JNIb02PIWVFzUIzTXQh
-         0jkpCzchODBzln/8doh5jsYI2GdbUM38blIMKpSKkMHdySukubhRuXRgB82YNrOPj/3D
-         VWDazp5GwgBmhPuycLVm9BCZAc6FPJNMNyvuV8uP0uEo9NOURACuMbLfjhngOsYAzQgH
-         d0RvQhCBJqZiL738QwYCUrKe+FTHJXJsELl7wUtVzgH8rukK0kxjDvPA0haqRGyhggeR
-         Oayg==
+        bh=jPC4tchnt1N2YhIqVh3vzNfsaSlSSanvoj/zggZqrBE=;
+        b=Dcw0wYzLRAh6HwglyaamozICJ/r+X96rt8xjoXj+z6d+gwNE1S6ZXuRIQiV8JiB7ZR
+         yq1Ux6NrM6YL7cgYo6tJsIVSkeez4UTHH3PeoWD7PvoB1Zj1A0YI+NzmeUMZq6ciTWqU
+         8eapsAmkXOJq85/MjynRdU4IKK2e6jOz735Mpbo4gI7S4DosQmrLCSyBX6AeMP0K1qT1
+         xhU3onnwAXLfxrWQi5eVojZLKSFqXdzmoa92pqhvdLga4/cn4asCzeKz9agb+PYZsQzM
+         AmsJp5CNaCKLo2CoCyxua+diwdjFjloRv2caIHD7xXM5ss0yKNjLp48U6TbEAR2Z3pPz
+         OZyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739902664; x=1740507464;
+        d=1e100.net; s=20230601; t=1739902666; x=1740507466;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGpYOJcOz/lsGyIjARR6Q+MEJZ3eOZuY6bqPCycZ40I=;
-        b=Fi8VXnlvlkqQT6W6fGSa26HadNveyE4XMvFUljQXLSneCAwWK3ocNt+YX2GRH1z3II
-         +OEXaZrBzRuXwfnM3F9zBnbERi5xLweTkbiRJumd1Up1ldGcI+d8LSdAL6cZ9F2IHs/6
-         YJq38yoR/oIRggk9oxwppP7pn4LKo/GzzCHoUF/jzy08oEMg7oKP/pEsvVDrK9m32Ckv
-         zmkpSpvDxLxo+HLaAtYe51/ZiJc+nEnCk4WlltmcQxoPVbVN3uY6QBBdFaWQWu4XSNB/
-         CfIKUTRkI2Nyec0YyUzlixtG6wcY/Y1Re1WxXwm+wKVb3RyAdlhNzDKHqIVs8jn36XNf
-         I3KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk3m9sXzC+zADrj0rzPETjP0OFdDeJQ2fjt+hJ9ANHuD98w2x5x5TJ2FTEBmgaBz7JQLqKQzFqiqkbAlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAMIuDeAiwyeD99TMAQj34zpNQ439hGYG17KjYXFoaDrDgxpk5
-	U6OXGGfQ7l0IxMpDykHHqDaCP2bP6KKevEThvAXrIKPDa3J2xOnv6gPDWh67YXcbiUwtCw==
-X-Google-Smtp-Source: AGHT+IFh2d5idNjmWGvVf9Xf3cPlznXhdMTwHzwLmt5BRbrt6r+zOP11FtXO72U/qfZB0d+QE+Rinz2m
-X-Received: from pfbge5.prod.google.com ([2002:a05:6a00:8385:b0:730:85dc:cebb])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4fc4:b0:730:7499:4036
- with SMTP id d2e1a72fcca58-7329df28813mr421658b3a.22.1739902664466; Tue, 18
- Feb 2025 10:17:44 -0800 (PST)
-Date: Tue, 18 Feb 2025 18:16:52 +0000
+        bh=jPC4tchnt1N2YhIqVh3vzNfsaSlSSanvoj/zggZqrBE=;
+        b=uR9LhqDpbG4Qh9LiNu3BnYHbCDanK2THXtLBCy52xkE3M+blXjJqXK/lKaceHeY0zL
+         q1KX/w/3Mmke4eLRKPv62m4DKrE75GBfsd54GtJmp6yqagtQhni4Ca5NkZifutRnfEYt
+         owG22YzsDQqIOkbFDmYBglmhOoH3u6PDJEd4or65zsrVuRLkPcu+pfcYQmngKUFVIaCH
+         B9UTkHdJ/Fav1O+EWI/DMUz/62HHlNyTzjcS+9RAP0LxNWmjhZmq68Z77H6OklkMGin8
+         FlNaPpo2UgewZbhXr6EGfSg6dIkgMB6PAw3ZM2vhLbmIGwX0yjpb+10a/jucjj1/lTTG
+         3Asw==
+X-Forwarded-Encrypted: i=1; AJvYcCVObvLKRUGNwQnrLEucn81XAxUoOpt5bWEhnK/hEd+36ZVlzFgnCk9kmb35OyveH1pe7stDCuXvh53pPfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfZqsjXF+IvK8DEPOBl3y9GrT2nTal5qAA3iOrEVtvB/0wOUjn
+	j78x13eXB3mFPymIYSsWIKol+h7KCDcQR7q5wbUIlNy3lF/qLTBorGzFKM8fZcEXEp7yeQ==
+X-Google-Smtp-Source: AGHT+IEtEjZxSkaHGNUqLkCYYCbWC6D2V31JmuFgG4Dg2Vo0lypjwM3EadejgHbXDL3fVjUh+UqlBkvb
+X-Received: from pfbga8.prod.google.com ([2002:a05:6a00:6208:b0:725:e4b6:901f])
+ (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:c70b:b0:1ee:c6bf:7c49
+ with SMTP id adf61e73a8af0-1eed4e3f207mr456118637.6.1739902666173; Tue, 18
+ Feb 2025 10:17:46 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:16:53 +0000
 In-Reply-To: <20250218181656.207178-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250218181656.207178-1-fvdl@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250218181656.207178-25-fvdl@google.com>
-Subject: [PATCH v4 24/27] mm/cma: introduce interface for early reservations
+Message-ID: <20250218181656.207178-26-fvdl@google.com>
+Subject: [PATCH v4 25/27] mm/hugetlb: add hugetlb_cma_only cmdline option
 From: Frank van der Linden <fvdl@google.com>
 To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
@@ -81,250 +81,93 @@ Cc: yuzhao@google.com, usamaarif642@gmail.com, joao.m.martins@oracle.com,
 	roman.gushchin@linux.dev, Frank van der Linden <fvdl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-It can be desirable to reserve memory in a CMA area before
-it is activated, early in boot. Such reservations would
-effectively be memblock allocations, but they can be
-returned to the CMA area later. This functionality can
-be used to allow hugetlb bootmem allocations from a
-hugetlb CMA area.
+Add an option to force hugetlb gigantic pages to be allocated using
+CMA only (if hugetlb_cma is enabled). This avoids a fallback to
+allocation from the rest of system memory if the CMA allocation
+fails. This makes the size of hugetlb_cma a hard upper boundary
+for gigantic hugetlb page allocations.
 
-A new interface, cma_reserve_early is introduced. This allows
-for pageblock-aligned reservations. These reservations are
-skipped during the initial handoff of pages in a CMA area
-to the buddy allocator. The caller is responsible for making
-sure that the page structures are set up, and that the migrate
-type is set correctly, as with other memblock allocations that
-stick around. If the CMA area fails to activate (because it
-intersects with multiple zones), the reserved memory is not
-given to the buddy allocator, the caller needs to take care
-of that.
+This is useful because, with a large CMA area, the kernel's
+unmovable allocations will have less room to work with and it
+is undesirable for new hugetlb gigantic page allocations
+to be done from that remaining area. It will eat in to the space
+available for unmovable allocations, leading to unwanted system
+behavior (OOMs because the kernel fails to do unmovable allocations).
+
+So, with this enabled, an administrator can force a hard upper
+bound for runtime gigantic page allocations, and have more
+predictable system behavior.
 
 Signed-off-by: Frank van der Linden <fvdl@google.com>
 ---
- mm/cma.c      | 83 ++++++++++++++++++++++++++++++++++++++++++++++-----
- mm/cma.h      |  8 +++++
- mm/internal.h | 16 ++++++++++
- mm/mm_init.c  |  9 ++++++
- 4 files changed, 109 insertions(+), 7 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
+ mm/hugetlb.c                                    | 14 ++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/mm/cma.c b/mm/cma.c
-index 4388d941d381..34a4df29af72 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -144,9 +144,10 @@ bool cma_validate_zones(struct cma *cma)
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index ae21d911d1c7..491628ac071a 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1892,6 +1892,13 @@
+ 			hugepages using the CMA allocator. If enabled, the
+ 			boot-time allocation of gigantic hugepages is skipped.
  
- static void __init cma_activate_area(struct cma *cma)
++	hugetlb_cma_only=
++			[HW,CMA,EARLY] When allocating new HugeTLB pages, only
++			try to allocate from the CMA areas.
++
++			This option does nothing if hugetlb_cma= is not also
++			specified.
++
+ 	hugetlb_free_vmemmap=
+ 			[KNL] Requires CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+ 			enabled.
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 634dc53f1e3e..0b483c466656 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -59,6 +59,7 @@ struct hstate hstates[HUGE_MAX_HSTATE];
+ static struct cma *hugetlb_cma[MAX_NUMNODES];
+ static unsigned long hugetlb_cma_size_in_node[MAX_NUMNODES] __initdata;
+ #endif
++static bool hugetlb_cma_only;
+ static unsigned long hugetlb_cma_size __initdata;
+ 
+ __initdata struct list_head huge_boot_pages[MAX_NUMNODES];
+@@ -1510,6 +1511,9 @@ static struct folio *alloc_gigantic_folio(struct hstate *h, gfp_t gfp_mask,
+ 	}
+ #endif
+ 	if (!folio) {
++		if (hugetlb_cma_only)
++			return NULL;
++
+ 		folio = folio_alloc_gigantic(order, gfp_mask, nid, nodemask);
+ 		if (!folio)
+ 			return NULL;
+@@ -4738,6 +4742,9 @@ static __init void hugetlb_parse_params(void)
+ 
+ 		hcp->setup(hcp->val);
+ 	}
++
++	if (!hugetlb_cma_size)
++		hugetlb_cma_only = false;
+ }
+ 
+ /*
+@@ -7850,6 +7857,13 @@ static int __init cmdline_parse_hugetlb_cma(char *p)
+ 
+ early_param("hugetlb_cma", cmdline_parse_hugetlb_cma);
+ 
++static int __init cmdline_parse_hugetlb_cma_only(char *p)
++{
++	return kstrtobool(p, &hugetlb_cma_only);
++}
++
++early_param("hugetlb_cma_only", cmdline_parse_hugetlb_cma_only);
++
+ void __init hugetlb_cma_reserve(int order)
  {
--	unsigned long pfn, base_pfn;
-+	unsigned long pfn, end_pfn;
- 	int allocrange, r;
- 	struct cma_memrange *cmr;
-+	unsigned long bitmap_count, count;
- 
- 	for (allocrange = 0; allocrange < cma->nranges; allocrange++) {
- 		cmr = &cma->ranges[allocrange];
-@@ -161,8 +162,13 @@ static void __init cma_activate_area(struct cma *cma)
- 
- 	for (r = 0; r < cma->nranges; r++) {
- 		cmr = &cma->ranges[r];
--		base_pfn = cmr->base_pfn;
--		for (pfn = base_pfn; pfn < base_pfn + cmr->count;
-+		if (cmr->early_pfn != cmr->base_pfn) {
-+			count = cmr->early_pfn - cmr->base_pfn;
-+			bitmap_count = cma_bitmap_pages_to_bits(cma, count);
-+			bitmap_set(cmr->bitmap, 0, bitmap_count);
-+		}
-+
-+		for (pfn = cmr->early_pfn; pfn < cmr->base_pfn + cmr->count;
- 		     pfn += pageblock_nr_pages)
- 			init_cma_reserved_pageblock(pfn_to_page(pfn));
- 	}
-@@ -173,6 +179,7 @@ static void __init cma_activate_area(struct cma *cma)
- 	INIT_HLIST_HEAD(&cma->mem_head);
- 	spin_lock_init(&cma->mem_head_lock);
- #endif
-+	set_bit(CMA_ACTIVATED, &cma->flags);
- 
- 	return;
- 
-@@ -184,9 +191,8 @@ static void __init cma_activate_area(struct cma *cma)
- 	if (!test_bit(CMA_RESERVE_PAGES_ON_ERROR, &cma->flags)) {
- 		for (r = 0; r < allocrange; r++) {
- 			cmr = &cma->ranges[r];
--			for (pfn = cmr->base_pfn;
--			     pfn < cmr->base_pfn + cmr->count;
--			     pfn++)
-+			end_pfn = cmr->base_pfn + cmr->count;
-+			for (pfn = cmr->early_pfn; pfn < end_pfn; pfn++)
- 				free_reserved_page(pfn_to_page(pfn));
- 		}
- 	}
-@@ -290,6 +296,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 		return ret;
- 
- 	cma->ranges[0].base_pfn = PFN_DOWN(base);
-+	cma->ranges[0].early_pfn = PFN_DOWN(base);
- 	cma->ranges[0].count = cma->count;
- 	cma->nranges = 1;
- 	cma->nid = NUMA_NO_NODE;
-@@ -509,6 +516,7 @@ int __init cma_declare_contiguous_multi(phys_addr_t total_size,
- 		    nr, (u64)mlp->base, (u64)mlp->base + size);
- 		cmrp = &cma->ranges[nr++];
- 		cmrp->base_pfn = PHYS_PFN(mlp->base);
-+		cmrp->early_pfn = cmrp->base_pfn;
- 		cmrp->count = size >> PAGE_SHIFT;
- 
- 		sizeleft -= size;
-@@ -540,7 +548,6 @@ int __init cma_declare_contiguous_multi(phys_addr_t total_size,
- 		pr_info("Reserved %lu MiB in %d range%s\n",
- 			(unsigned long)total_size / SZ_1M, nr,
- 			nr > 1 ? "s" : "");
--
- 	return ret;
- }
- 
-@@ -1034,3 +1041,65 @@ bool cma_intersects(struct cma *cma, unsigned long start, unsigned long end)
- 
- 	return false;
- }
-+
-+/*
-+ * Very basic function to reserve memory from a CMA area that has not
-+ * yet been activated. This is expected to be called early, when the
-+ * system is single-threaded, so there is no locking. The alignment
-+ * checking is restrictive - only pageblock-aligned areas
-+ * (CMA_MIN_ALIGNMENT_BYTES) may be reserved through this function.
-+ * This keeps things simple, and is enough for the current use case.
-+ *
-+ * The CMA bitmaps have not yet been allocated, so just start
-+ * reserving from the bottom up, using a PFN to keep track
-+ * of what has been reserved. Unreserving is not possible.
-+ *
-+ * The caller is responsible for initializing the page structures
-+ * in the area properly, since this just points to memblock-allocated
-+ * memory. The caller should subsequently use init_cma_pageblock to
-+ * set the migrate type and CMA stats  the pageblocks that were reserved.
-+ *
-+ * If the CMA area fails to activate later, memory obtained through
-+ * this interface is not handed to the page allocator, this is
-+ * the responsibility of the caller (e.g. like normal memblock-allocated
-+ * memory).
-+ */
-+void __init *cma_reserve_early(struct cma *cma, unsigned long size)
-+{
-+	int r;
-+	struct cma_memrange *cmr;
-+	unsigned long available;
-+	void *ret = NULL;
-+
-+	if (!cma || !cma->count)
-+		return NULL;
-+	/*
-+	 * Can only be called early in init.
-+	 */
-+	if (test_bit(CMA_ACTIVATED, &cma->flags))
-+		return NULL;
-+
-+	if (!IS_ALIGNED(size, CMA_MIN_ALIGNMENT_BYTES))
-+		return NULL;
-+
-+	if (!IS_ALIGNED(size, (PAGE_SIZE << cma->order_per_bit)))
-+		return NULL;
-+
-+	size >>= PAGE_SHIFT;
-+
-+	if (size > cma->available_count)
-+		return NULL;
-+
-+	for (r = 0; r < cma->nranges; r++) {
-+		cmr = &cma->ranges[r];
-+		available = cmr->count - (cmr->early_pfn - cmr->base_pfn);
-+		if (size <= available) {
-+			ret = phys_to_virt(PFN_PHYS(cmr->early_pfn));
-+			cmr->early_pfn += size;
-+			cma->available_count -= size;
-+			return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-diff --git a/mm/cma.h b/mm/cma.h
-index bddc84b3cd96..df7fc623b7a6 100644
---- a/mm/cma.h
-+++ b/mm/cma.h
-@@ -16,9 +16,16 @@ struct cma_kobject {
-  * and the total amount of memory requested, while smaller than the total
-  * amount of memory available, is large enough that it doesn't fit in a
-  * single physical memory range because of memory holes.
-+ *
-+ * Fields:
-+ *   @base_pfn: physical address of range
-+ *   @early_pfn: first PFN not reserved through cma_reserve_early
-+ *   @count: size of range
-+ *   @bitmap: bitmap of allocated (1 << order_per_bit)-sized chunks.
-  */
- struct cma_memrange {
- 	unsigned long base_pfn;
-+	unsigned long early_pfn;
- 	unsigned long count;
- 	unsigned long *bitmap;
- #ifdef CONFIG_CMA_DEBUGFS
-@@ -58,6 +65,7 @@ enum cma_flags {
- 	CMA_RESERVE_PAGES_ON_ERROR,
- 	CMA_ZONES_VALID,
- 	CMA_ZONES_INVALID,
-+	CMA_ACTIVATED,
- };
- 
- extern struct cma cma_areas[MAX_CMA_AREAS];
-diff --git a/mm/internal.h b/mm/internal.h
-index 63fda9bb9426..8318c8e6e589 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -848,6 +848,22 @@ void init_cma_reserved_pageblock(struct page *page);
- 
- #endif /* CONFIG_COMPACTION || CONFIG_CMA */
- 
-+struct cma;
-+
-+#ifdef CONFIG_CMA
-+void *cma_reserve_early(struct cma *cma, unsigned long size);
-+void init_cma_pageblock(struct page *page);
-+#else
-+static inline void *cma_reserve_early(struct cma *cma, unsigned long size)
-+{
-+	return NULL;
-+}
-+static inline void init_cma_pageblock(struct page *page)
-+{
-+}
-+#endif
-+
-+
- int find_suitable_fallback(struct free_area *area, unsigned int order,
- 			int migratetype, bool only_stealable, bool *can_steal);
- 
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index f7d5b4fe1ae9..f31260fd393e 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2263,6 +2263,15 @@ void __init init_cma_reserved_pageblock(struct page *page)
- 	adjust_managed_page_count(page, pageblock_nr_pages);
- 	page_zone(page)->cma_pages += pageblock_nr_pages;
- }
-+/*
-+ * Similar to above, but only set the migrate type and stats.
-+ */
-+void __init init_cma_pageblock(struct page *page)
-+{
-+	set_pageblock_migratetype(page, MIGRATE_CMA);
-+	adjust_managed_page_count(page, pageblock_nr_pages);
-+	page_zone(page)->cma_pages += pageblock_nr_pages;
-+}
- #endif
- 
- void set_zone_contiguous(struct zone *zone)
+ 	unsigned long size, reserved, per_node;
 -- 
 2.48.1.601.g30ceb7b040-goog
 
