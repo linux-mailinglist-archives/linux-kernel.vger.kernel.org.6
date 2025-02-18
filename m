@@ -1,188 +1,101 @@
-Return-Path: <linux-kernel+bounces-519079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CBAA397DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:59:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBED3A397B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828FF3B8242
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:53:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A9B17502F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FB723956D;
-	Tue, 18 Feb 2025 09:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1073233132;
+	Tue, 18 Feb 2025 09:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkZe9OjY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hB9N19FO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9ED23237C;
-	Tue, 18 Feb 2025 09:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366B523278D;
+	Tue, 18 Feb 2025 09:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872191; cv=none; b=py1eTJ+Q7h7R179wMmn3ciS/0QYY+/fOUpMR0wzmZ9In0Q8MMq/KR5bYYA50Uzwi8GeMKs/l+rb1tnr0Uz61znf2hmMEg9/H+03fOiR6VNx7+Switw7FaxjCHbwAG9Ru6PcEESzKKh2y8QL+purdbjIzZWRXecPy9BFyw/F1m3c=
+	t=1739872290; cv=none; b=IfDhrXQGF+yXPP4LotAvwJpyMEkM2YXnXC4XHj2/yUAEWZ8TlCsZEI2QsT16lMaUS5S3lqEUyK2BSblW/dHAboEbHklwmql+UiYVkzinq8sWnc8pHhd1J6Tv2oSeWDdr9lX7iTftenw6BarmtK6LTlpOKAH90mZ5EP3xfhfADbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872191; c=relaxed/simple;
-	bh=EGzJILY69KaBGAu/j6uhfg0Ns9AWmYI3DuY2Ll/vyO8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u0Cx0sspbLpM43v4GuBsJWMA5i2dXrxwJK5zn9ByN7j1QflWo1Ue9ERBIEW1cjzKU7bgb/RP004n3mZgRzb2akXJvSGpdMqrLWJzhs3I/7WZ5N5e0Snv9wkLs1GSmarq5faoPzIjpGG96GsfrYa1m4wErHGI+Y+CV8lg3d3hFbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkZe9OjY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8CAC4CEE2;
-	Tue, 18 Feb 2025 09:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739872190;
-	bh=EGzJILY69KaBGAu/j6uhfg0Ns9AWmYI3DuY2Ll/vyO8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=LkZe9OjY6T3AAmtxwj1Xb06j5/KNp2WW26IN5goY9IcWp90alPhD7SYEaEgX5rJHt
-	 ze3FQVUVUO5v51nu3K3QYfL+oLfPrhoIXu7ER/e+zBVjJCRW07zrE2cnuw1dCzn15o
-	 bbZvSpjdZnt1Dk1jF+ut/kFKA46eZrP4y2kbrmMhzLd3WRbmTSICgRLS+oCvqhJVgq
-	 sshopbF9SHGvBKNfCkG93sr0iG+cRUiJA6l9mDfhxDcS8KdVniFMdEdnfLuQlCPJDk
-	 tu4m75UUHPX9uGTbDWYeeoI3PggiN9llNx4LC8OxCNGW6Yj+1gc01U1xF56P07rC7B
-	 bunCvfIyD4N7Q==
-Message-ID: <4c7e30d960b101fbcc9b6b8356f3bd20d26b0982.camel@kernel.org>
-Subject: Re: [PATCH] virtio: console: Prepare for making REMOTEPROC modular
-From: Amit Shah <amit@kernel.org>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 18 Feb 2025 10:49:47 +0100
-In-Reply-To: <15729df921fa8718ee173963132a370de6aae9af.camel@kernel.org>
-References: <20250213115517.82975-2-u.kleine-koenig@baylibre.com>
-			 <34cb36503dae7a2d0ba94d1c367004a2d901e13b.camel@kernel.org>
-			 <uo3h33wijb7mhjwgugpkjhqg7wusz6tpkh5u5fxbsxp3kzpq75@ggsdroemmdmj>
-			 <558f3faa22e5717872bf53acfe6007dc3118f17d.camel@kernel.org>
-			 <k72vfex6qy53xrunz5ohe24c2upfjcdwofozszi4l3k3rm6dou@bd6swzi3v5ng>
-			 <606b16787920ff5e1807e4f8450add5889fdd1cb.camel@kernel.org>
-			 <dard24qyuwm6plnswtz4to36w3fynb553aohf5i7u4ln37nhbk@pgrvhqwvwuzp>
-			 <6d48bcfd0c6030c92f6a5a4a91c9b62f926b3b16.camel@kernel.org>
-			 <535ivi67jdmcuhns5q4r36fjpqde3clnqq7hr26gmg33jwoxyb@ahvuhhaewh3u>
-		 <2c676a9910c2d5b1332bb9baa999cdd16763a730.camel@kernel.org>
-	 <15729df921fa8718ee173963132a370de6aae9af.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1739872290; c=relaxed/simple;
+	bh=tzev4nRdjUhf+Tc0CrR2GGEjicCFgdra84D4P+0BmQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyMXWttK9u6e2wI5l7VzR9sB/zMKVlgW9KTUecykGGAdBXsaiClbO3sJmrrBOvgfWwDjrZQKvvxI9HrApS/s0Eo4c34tI9mnicW63g9lfBcbz2Qjmgwoh2Sc7cAHA3yWlYzO5nuUez5XVEvL7UKf7bVUutuVzLYgfPbIiKrMabg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hB9N19FO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BAC3840E021F;
+	Tue, 18 Feb 2025 09:51:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id GoaDm_LIYlEX; Tue, 18 Feb 2025 09:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739872281; bh=Nr+ITGOxF83JpvuoLqhxJi5qZg9f0Li2Qbe33nyvjOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hB9N19FOVlhM+bud2kB+nzrf8irQLHAX8Y1qk0PJBPWCFBwT0TTfuWA/vjMvTBfjV
+	 G7gUwrWnx8rIvlKoZL5Qc31QcF2BySmVHJjk00ceJsRWYlV7YXnTKtYdh8IzgATpZG
+	 4TUEfN/SvrXjkC0hm5sQCYReDTqqA2cVPmTex0VKHRMcuFzm9PaSJNIMheT22fSaj+
+	 PBXvvsNSf+DCsz945knpdmV2gr2u+FqCJ5XkASQ0daE/bMWBweRgs4ZGMU5o+xTXrM
+	 Ci+ZZbQeuWECf/cHCP6ZH2rdwTQn/aOYvRrKRElodG67DZhpMubwvIto3aMCuOFr1e
+	 M2dKERiBwaknanPa+5iQqr5jRt7vk+CAl9mwDTkbd33KhztRq2PTRzMJzA1sGEKSqD
+	 6LyqZfe2AFsQL1HalX1cQ4eJsa3hKY+dtay0wJ40qOM2ku7+MGBYRGh7vGVyrYDkic
+	 59CqIrU4D4PIjl3syfRQSQad9pIvFYkabrSoXYigBt3wbDL8k9uwBw8HrnDDY1LyCY
+	 4w27/zd1dp1RPRI90Vquw08Vo8kOakrh/9KD7GWsKalJcq+rS+86i5+GEV775X0Ez2
+	 F6op/N3wAJ48J7IYpeLiffXrXiilKANf+59+1fjhZ1gDxdwQGTYouw1MSI15uZipNx
+	 e60DYGEp4luabVNFZWcCdg/Y=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9F75440E00C9;
+	Tue, 18 Feb 2025 09:51:04 +0000 (UTC)
+Date: Tue, 18 Feb 2025 10:50:59 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 1/5] x86/mce: Collect error message for severities
+ below MCE_PANIC_SEVERITY
+Message-ID: <20250218095059.GEZ7RYAzleMDRSQJAm@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250217063335.22257-2-xueshuai@linux.alibaba.com>
+ <20250218075858.GAZ7Q9wp_WQUsjq2AW@fat_crate.local>
+ <b3c12f1f-f27a-44f0-b32c-32b58e6e926c@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b3c12f1f-f27a-44f0-b32c-32b58e6e926c@linux.alibaba.com>
 
-On Mon, 2025-02-17 at 11:59 +0100, Amit Shah wrote:
-> On Mon, 2025-02-17 at 11:53 +0100, Amit Shah wrote:
-> > On Fri, 2025-02-14 at 18:47 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Fri, Feb 14, 2025 at 05:55:41PM +0100, Amit Shah wrote:
-> > > > On Fri, 2025-02-14 at 17:52 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > > > Hello Amit,
-> > > > >=20
-> > > > > On Fri, Feb 14, 2025 at 05:37:52PM +0100, Amit Shah wrote:
-> > > > > > I'm thinking of the two combinations of interest:
-> > > > > > REMOTEPROC=3Dm,
-> > > > > > VIRTIO_CONSOLE can be y or m.=C2=A0 Say virtcons_probe() happen=
-s
-> > > > > > when
-> > > > > > the
-> > > > > > remoteproc module isn't yet loaded.=C2=A0 Even after later
-> > > > > > loading
-> > > > > > remoteproc, virtio console won't do anything interesting
-> > > > > > with
-> > > > > > remoteproc.
-> > > > >=20
-> > > > > Where does the interesting thing happen if remoteproc is
-> > > > > already
-> > > > > loaded
-> > > > > at that time? I'm not seeing anything interesting in that
-> > > > > case
-> > > > > either
-> > > > > ...
-> > > >=20
-> > > > The code I pointed to,
-> > > >=20
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/drivers/char/virtio_console.c#n1993
-> > > >=20
-> > > > either enables remoteproc if the module is present; or it
-> > > > enables
-> > > > multiport, but not both at the same time.=C2=A0 If remoteproc isn't
-> > > > present
-> > > > when this probe routine is executed, multiport might get
-> > > > enabled.=C2=A0
-> > > > And
-> > > > then there's no chance for remoteproc to get enabled.
-> > >=20
-> > > The only case where there is a difference between IS_REACHABLE
-> > > and
-> > > IS_ENABLED is:
-> > >=20
-> > > 	CONFIG_REMOTEPROC=3Dm
-> > > 	CONFIG_VIRTIO_CONSOLE=3Dy
-> >=20
-> > Well, also if CONFIG_VIRTIO_CONSOLE=3Dm; and virtio_console.ko is
-> > loaded
-> > before remoteproc.ko.
-> >=20
-> > > Iff in this case you never want to test for MULTIPORT (even
-> > > though
-> > > the
-> > > remoteproc module might never get loaded), then my patch is
-> > > wrong.
-> > >=20
-> > > When creating the patch I thought there is a hard dependency on
-> > > remoteproc (like calling a function that is provided by
-> > > CONFIG_REMOTEPROC). I don't understand how the remoteproc stuff
-> > > interacts with the virtio_console driver, is this something in
-> > > userspace
-> > > which then would also autoload the remoteproc module?
-> >=20
-> > What's happening is that multiport and remoteproc are mutually
-> > exclusive in the virtio_console code.
-> >=20
-> > And, I'm also not sure of how remoteproc loads and configures
-> > itself.
-> > Does loading remoteproc cause a load of virtio_console?=C2=A0 How?
-> >=20
-> > So - based on our discussions, I think your assumptions are:
-> >=20
-> > 1. remoteproc will load virtio_console when remoteproc is required
-> > 2. virtio_console will never be loaded by itself
-> > 3. General virtio_console functionality (including tty and
-> > multiport)
-> > is never used when remoteproc is used
-> >=20
-> > I think at least 3 needs more thought/justification why it's a
-> > valid
-> > assumption.=C2=A0 Documenting it in the commit msg is fine.
-> >=20
-> > At least assumptions 1 and 2 will cause remoteproc to not function
-> > correctly with virtio_console, despite both of them being loaded
-> > (because they can be loaded in the unexpected order --
-> > virtio_console
-> > before remoteproc).=C2=A0 Do you want to adjust the code so that
-> > remoteproc
-> > queries for already-existing virtio_console.ko, triggers the code
-> > that
-> > would otherwise be not triggered in virtcons_probe(), and makes
-> > remoteproc functional in that case?
->=20
-> ... I just saw that virtcons_probe() doesn't have any setup in case
-> of
-> rproc.=C2=A0 So this last paragraph doesn't apply.
+On Tue, Feb 18, 2025 at 05:39:33PM +0800, Shuai Xue wrote:
+> Is __mc_scan_banks() a proper function to extend?
 
-... I knew I was missing something yesterday. There's the call to
-add_port() from virtcons_probe() that sets up the port for remoteproc.
-So that part will be entirely skipped in case the virtcons probe
-happens before remoteproc is loaded.
+No, first you need to explain the big picture:
 
-There's much too confusion here, better to start anew.
+https://lore.kernel.org/r/20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local
 
-> So maybe just adding some notes in the commit log about why this will
-> end up working, and why rproc usage and tty+multiport usage are
-> mutually exclusive (and fine) will help.
->=20
-> Thanks,
->=20
-> 		Amit
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
