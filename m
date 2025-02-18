@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-518839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D72AA39541
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DECA3954D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E243B50F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B7683A960D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB023315F;
-	Tue, 18 Feb 2025 08:18:24 +0000 (UTC)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7E422D7B1;
+	Tue, 18 Feb 2025 08:19:56 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6000822CBD8;
-	Tue, 18 Feb 2025 08:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E766206F15
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866703; cv=none; b=B3rrk27w4eyUJVMrvL8dkcqZlIQIu9PS/iOwDPnNIPgI09jRcZUIQOfKkJIvpSkzwdWFdlYneOxUP22q8bMvVkPPKJM0n1Pr/2hbyC1uNytoD0jkQrEH9z2SBgdKzFjoZDB4bFeOln6DN3unlvkFO0K4uuCQKyT4HEg3Tbkpsr8=
+	t=1739866795; cv=none; b=ORk2Yfc+BIoVOV8VfbW4YlcvhoOQcNCFs/cL2mGTMW5zuF+TayRx4E3XoJWTKpDoWE4CcU+2LDHkyJDhrnm52EtcDy6x6M+MO/y31i9m4LhIuJmdtpwbxFL4D8qakY3AGWxGJ1RbCjgwt2O1/WrjIN1xN0Lv6T6Rt76CMRXQzNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866703; c=relaxed/simple;
-	bh=2VBYXOW5In6lit0F1gJahtZuGAfHYPipCEI5SAdDqvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cQqwTwUSIoBH/dBPpKWRgH4y2KpU5/y7/ur/kuAbv8qoAh+xVcgIGEP8dRYbX+xPWrKsslLyBma7+Q5b3TDLxn1SLDZMQWFTjp8iRbLN0gkqYdLx+EclT60NXuylmLjn6P5tC+Kt6TiDHbx5GOvWNv5oVIF68ZFL2Nca7a3E8rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1739866795; c=relaxed/simple;
+	bh=LYHGiA6znin6dM8PhXDObFZL1R+f+59JcnUE4XOI++4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NEtrOqd3NsORkcNjcFmFn2xq2l63XLVI8ZGysfN+4Hc0ucN/aaCVrbw6vaCp7ko6G66Opo3lYarWWmVlZYUiLvxr8SpCzV+ZOaOOljeddXVAJyezrxG4pXFz/P0j4vXqLsH4nk7DZkoxDWPqyKzHEELVJz4CVKKKgMfWjmM0Fks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-521b5bd2268so410444e0c.0;
-        Tue, 18 Feb 2025 00:18:22 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so53676595e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:19:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739866700; x=1740471500;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VT68uUFOtiLM/j4EB1RwnCT+0lIJjD9PLyVD0uYr2cM=;
-        b=pJYalHd/seZz6JgzSYgsmXApfk9VN20SFUDI0hGFVENQJs/R8Hwxq6WsZe8xyAAA9q
-         +XVb/rppSptyshrtiEtBujNdzBuIyxFfNHmIXTMNaj5/slP5Mn6hQc0uRXk6V8Vy1jv2
-         YmCbQthT/xmG2DCc0hnFxvg5foEwOFPrPWMWpRjNAIgtmvrWfU9GMs7vLc4CEtSWtC5c
-         33w/PVPhK16BX06jkMTJxvzNb1dK6QaxYE74D9sK0JeO+ZHUo6sJDBut0X4ouiZwVQlw
-         yEi2izSyMh6luD5OOi4sbT4OHqrcyDHzzqJNqEKgDyICI0WheRXv+vWmGCOiG3Ku+qIN
-         0xiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8f5MiYQUDKuR+A+gm4VNgBlCrU6syJEkZ80qkkCQ+DtILXyafAxiPla3VQ8ysFLYEQCH6cvxdyRF7n3U=@vger.kernel.org, AJvYcCWeqDrnXiKAZv4ifaO6EgfII4dMhyzlUukW755UdCDxAktB01j6+BnF1/6RbBLUR6/IgUJvVBYJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+uukBYrQeT9VdoAgVROyWwfBUB71/Hhjy4fbJmsf4nVr8pfM4
-	DTL4oBubPKXedyS3XzjVDDl2nBdjL8AJGaK9eCBkvP9H6D+88yTDuElfpNcqFfo=
-X-Gm-Gg: ASbGnctPpI7xK4qQRmjNayIWD9aXQcLMVErzfpCL4I1KxIDils6Q/PYccotqcNw9ZwO
-	LSby5vHMvWpKYNHOo7LCt5Kjr8XJAqAF3Z98BtcBl5PXm0rQAuRYvpIzdu2W+YmrMI/TeY7WgIz
-	arnfMIdb24Z+cbHiVw+nQHSOC8Sp5Kk5HuFF4P5vCrXFInKUabqQwM+Xe/oYHv1sHv7fbmcoico
-	w9WiC6yU7X5SnYd7w2R4d4Z694+aFo5qtroQqgBSoPmLw35kyo1vsDhLTPy7y0GkLZap5MSF3rM
-	8rZvyJnamnkNdPlY7thV84tDTL0+LseookPkFEyu0Ff+xCdsMyS0sg==
-X-Google-Smtp-Source: AGHT+IGMgwpf+kYRAPr7XkyvWrb+UmLfkmdXvlkoGgf+GRltx16IBJkg0+LVFD+bPb17sWsfv10Dxg==
-X-Received: by 2002:a05:6122:2a56:b0:520:59ee:8197 with SMTP id 71dfb90a1353d-5209dcccf61mr6069911e0c.8.1739866699899;
-        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e8599598sm2092279241.15.2025.02.18.00.18.19
+        d=1e100.net; s=20230601; t=1739866792; x=1740471592;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkZTkbZnkokRK0M1d5m0Kxks/rddfMlEtI55Hvmyh70=;
+        b=sckTmjXiFQwfjXCCWvlm8QsnntiFykUJRGVsnABN56G7v96rtJ8MJb9UGqDnHQL5ed
+         mF8JrULNqBR1pCvHPo8LhoplxGL8jwIjNfBzRMJlMtVpdjqsZdlxrZ4rWp8H3f1jwlgA
+         hMgblFPigRZSU4oqNQbUKSm8VCztzBlq1ijiCmySQoDZIcd8gPFCLC54vea9y1xc9oWs
+         IosPFCmHMRz7k5DMxeGY5dbvd7gDSCwzKI+h1nu4oxs3O4kzfZ3XENk3T2IaDz+f8Ik0
+         gKgSU0Qx36T6g3Mg6Na5VC+qvL+WrE9cfRcp2t7vkTvr7gcliPzp1d6H6yIytxWEGN/5
+         87+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVipp/KJmvRvt27b6CK0S7AQvlFg5tIzr0CpaE8Sn2RLYl5p1mBHYYJxgedWWWxTTNJ+O5Yc+pa3Jrj6AE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwh8NkoMvgHXwf/j8BPdtZ/B/pr+NiOK37Bfp/X3sxKbjLDn8Z
+	sS+1mO1rSHlrqZFyEF0NvqwEpGs6DXZTurzEKaSdI5XNxM/ODFEr
+X-Gm-Gg: ASbGncsungfFgAih1KPMiQvSnIUn5UR/APNcLmm9WE6i2QrG5BMDBNZgPo1fMX5vyLa
+	HeMlGDuH+x6iimCR2K7XqykPLD2W9OiCDPLPyS5f12VAry7wS1FqZCLVypkgWUJWiG6VmIUq5hS
+	Uk7nl9texo9faVeksudNi5dh+PtJPEPFT0616Mi9D9ZgBAqQPSRHxfBkjgFyWBi57zr4aFjVJrc
+	MGu61kJqT8J1ZTCrrJdtCMZAzu/iWI01VwQL6fLlLqxfo7ZxTdeANz+jcPcdnYLRKMs5k7lBYNg
+	Mk3bTNi8ioBE2KrCesapvosnK8kP060Uqonj4rzZJrXVjNqZBpeWlRSt+g==
+X-Google-Smtp-Source: AGHT+IGpzKroGCXPMYzXV24w2xGqnCA8wj2NxLDnN+GaP245oMnjUtCkdXhtzKeeylr9e6dtP3b4yQ==
+X-Received: by 2002:a05:600c:1e11:b0:439:86fb:7326 with SMTP id 5b1f17b1804b1-43986fb7498mr46336425e9.22.1739866792138;
+        Tue, 18 Feb 2025 00:19:52 -0800 (PST)
+Received: from [10.50.4.206] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7f3sm177488915e9.29.2025.02.18.00.19.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4bd3c887545so2357738137.1;
-        Tue, 18 Feb 2025 00:18:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVxcUNr2MIRsG7425tbBNIiFKCpVgUDQTyET6myPSk1NpDDlyWE2ZCnqzxcyvgkNki3dCfKfjE6@vger.kernel.org, AJvYcCWudjV5gnNEsHldn8Z3/d9968nHXHJfaVYsdc0o4nUW35SpaTSpUcnypIwNNQjReWtTQcPKBvH17tMUSJg=@vger.kernel.org
-X-Received: by 2002:a67:e7c3:0:b0:4b1:1eb5:8ee5 with SMTP id
- ada2fe7eead31-4bd40001d6amr6978606137.25.1739866699350; Tue, 18 Feb 2025
- 00:18:19 -0800 (PST)
+        Tue, 18 Feb 2025 00:19:51 -0800 (PST)
+Message-ID: <ccc171d1-8de3-4632-9483-71fd5ea63d46@grimberg.me>
+Date: Tue, 18 Feb 2025 10:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217160017.2375536-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250217160017.2375536-1-haoxiang_li2024@163.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Feb 2025 09:18:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUs_2mB5RFga8Dv7xPp5VFMaXqykJShndTW-_Q8hgUYfw@mail.gmail.com>
-X-Gm-Features: AWEUYZlXeXLAPjROcl_yxFn5h2lk18a3_Wom0kri1EP69xrAxJlcBNWCh-TcD_A
-Message-ID: <CAMuHMdUs_2mB5RFga8Dv7xPp5VFMaXqykJShndTW-_Q8hgUYfw@mail.gmail.com>
-Subject: Re: [PATCH] m68k: sun3: Add check for __pgd_alloc()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: sammy@sammy.net, zhengqi.arch@bytedance.com, akpm@linux-foundation.org, 
-	dave.hansen@linux.intel.com, kevin.brodsky@arm.com, 
-	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: John Meneghini <jmeneghi@redhat.com>, kbusch@kernel.org, hch@lst.de
+Cc: bmarzins@redhat.com, Bryan Gurney <bgurney@redhat.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Marco Patalano <mpatalan@redhat.com>, axboe@kernel.dk
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+ <ea0e6445-9770-4df9-91bd-80f44cd0388e@grimberg.me>
+ <ea9537d5-721a-4b37-84d1-df797646fce2@redhat.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <ea9537d5-721a-4b37-84d1-df797646fce2@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 17 Feb 2025 at 17:00, Haoxiang Li <haoxiang_li2024@163.com> wrote:
-> Add check for the return value of __pgd_alloc() in
-> pgd_alloc() to prevent null pointer dereference.
+
+
+
+On 17/02/2025 18:14, John Meneghini wrote:
 >
-> Fixes: a9b3c355c2e6 ("asm-generic: pgalloc: provide generic __pgd_{alloc,free}")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> On 2/17/25 3:08 AM, Sagi Grimberg wrote:
+>>>
+>>> We plan to ship this patch with RHEL-10. So it would be really good 
+>>> if we could get this
+>>> change accepted and merged upstream, perhaps into v6.15.
+>>
+>> Hey John,
+>>
+>> This looks fine to me, I'm assuming this was also tested with 
+>> CONFIG_NVME_MULTIPATH=n ?
+>
+> Yes, everything has been tested with CONFIG_NVME_MULTIPATH both 
+> enabled (Y) and disabled (N).
+>
+> As we discussed in the previous email thread[1] there is an anomaly 
+> seen when you build a kernel with CONFIG_NVME_MULTIPATH=n.
+> and the host discovers a multipath capable nvme device (CMIC/NMIC=1). 
+> You will see exactly the same thing that you do with
+> CONFIG_NVME_MULTIPATH=y when the nvme_core.multipath parameter is N. 
+> You see a separate /dev/nvmeNN entry for
+> every namespace/controller path.
+>
+> We can send send a separate patch to address that problem, but this 
+> patch, which simply removes the nvme_core.multipath parameter
+> has beeen fully tested and is ready to go.
 
-As akpm has already taken this:
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I think that we want to print a warning in this case though. Can you 
+resubmit with logging a warning in this case?
 
