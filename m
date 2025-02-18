@@ -1,154 +1,109 @@
-Return-Path: <linux-kernel+bounces-519313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD53A39B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EC1A39B76
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:51:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DD823B10EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC953A0F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F85323F275;
-	Tue, 18 Feb 2025 11:51:20 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F34E23FC4A;
+	Tue, 18 Feb 2025 11:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LCjdnkhz"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42646239563
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E5223958B;
+	Tue, 18 Feb 2025 11:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739879480; cv=none; b=ZtM0h+kp3GKcswjrzctR+ex9X44R7Fy16RvCPK1YrGGR5qgjDYrhd4gH181NBMElEMruLGqLcH+uc4lzRhXfCmKTApMbK47FxYrl8bNuwheRGuC5lD0BiE5gYmBwUshUUX1ln8xH7bjOH+XRsSRTQuYQ2iwNRGLY7YRwfVZ1eTQ=
+	t=1739879497; cv=none; b=nXhsen04k9zZrJV6Cv3UXTESwYaw0iNoJFlHRp6s3q0srzW7dUw/enBoyNgT2Ct9vVNnn6skk/pnzntmdDKgU7aOmm2KL2t7mrVlJJa1bmxxWXYgS/Q4K75vWzZi5k7tBpQfPP8+Iz3bh2nRl86/Y/xeGAhkDVxCOueoVYfcqqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739879480; c=relaxed/simple;
-	bh=Gl8syjkHUwNKCeNCjGqToSXclx2exywRGpWKVrXlxf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AWA5YQuAQ6PUofqsJFQZS1xXaxk5Z5Jzf/hfoGmLqonL9chWdUsP0Anm57jD72HKg/L/VH6xMsRXWtuUKazpz5MK8nYF/blXhKyK4Rl7a2j8YVY6hHPGWYgWR+Tpnu+36CH110B2Qx9XiLnpNsgDRR6otf9bWVaCoiuc0RNnOVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4YxyT969VDzTjWs;
-	Tue, 18 Feb 2025 19:48:13 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C7E4140361;
-	Tue, 18 Feb 2025 19:51:13 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Feb 2025 19:51:11 +0800
-Message-ID: <3b181285-2ff3-b77a-867b-725f38ea86d3@huawei.com>
-Date: Tue, 18 Feb 2025 19:51:10 +0800
+	s=arc-20240116; t=1739879497; c=relaxed/simple;
+	bh=Oh2N1/d0twE/oht4u369AivclBMWat1b1M7egJyaA5c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MsB2tVCK9Mp0zy1Aut0FHiiMVhBTXr97R0g3dGnqXZv5jTtHxOWm9P3tQf26NDBiPF2DHhkIlMeLEFOSZJxTFfMXHc8cd1bsSuwm9TgeYLf+xLOesHC+pIXPPhv4E8j4ZFJluq63rsbv8NgAFqq/JiulBrOVBjF/bTimePUT03E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LCjdnkhz; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=LJBKZLXPPZUt1paA631LKSCBOvo0igAnLc0aAJ3m/Ek=; b=LCjdnkhz39Zzg/i/5UysEOFpxh
+	bYTmF0Wcf/qCUZaL123u6Ga5V/Rw4iX2uG9h0+ZtiwSMrnVk94Mh08WoEW4/WEG1c4ORQkcs1WKGN
+	F93kYmWtKS8ID82h3vN5/RXJ2rEUOiLdW9ulnfdTc35HlEFSvuJf9scrfL4KjhEuKzFz2Eracwm0i
+	9foXfkIe7ujMPsalI3Q1szRnnGZyGd4fyBLEe2bAn4CBVbIganwvcjdEsSyQcjY4mdraSSkvOaw4g
+	mm9QM1JuuWk5eDzj2k98j0TDkaG1Axk04SXOephfbSRWxnSZ0dU0o+FL/KxQjBAJffeN2KjMJcUR1
+	3A8ZcCDg==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tkM89-00A3eO-Sl; Tue, 18 Feb 2025 12:51:19 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Dave Chinner <david@fromorbit.com>,  Bernd Schubert <bschubert@ddn.com>,
+  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Matt Harvey
+ <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for
+ all inodes
+In-Reply-To: <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
+	(Miklos Szeredi's message of "Tue, 18 Feb 2025 11:34:53 +0100")
+References: <20250217133228.24405-1-luis@igalia.com>
+	<20250217133228.24405-3-luis@igalia.com>
+	<Z7PaimnCjbGMi6EQ@dread.disaster.area>
+	<CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
+	<87r03v8t72.fsf@igalia.com>
+	<CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
+Date: Tue, 18 Feb 2025 11:51:19 +0000
+Message-ID: <87frkb8o94.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v13 4/5] arm64: support copy_mc_[user]_highpage()
-To: Catalin Marinas <catalin.marinas@arm.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Mauro Carvalho Chehab
-	<mchehab+huawei@kernel.org>, Will Deacon <will@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, James Morse <james.morse@arm.com>, Robin Murphy
-	<robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
- Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
-	<glider@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Aneesh
- Kumar K.V <aneesh.kumar@kernel.org>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<kasan-dev@googlegroups.com>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-References: <20241209024257.3618492-1-tongtiangen@huawei.com>
- <20241209024257.3618492-5-tongtiangen@huawei.com> <Z6zWSXzKctkpyH7-@arm.com>
- <69955002-c3b1-459d-9b42-8d07475c3fd3@huawei.com> <Z698SFVqHjpGeGC0@arm.com>
- <e1d2affb-5c6b-00b5-8209-34bbca36f96b@huawei.com> <Z7NN5Pa-c5PtIbcF@arm.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <Z7NN5Pa-c5PtIbcF@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Feb 18 2025, Miklos Szeredi wrote:
 
+> On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
+>
+>> The problem I'm trying to solve is that, if a filesystem wants to ask the
+>> kernel to get rid of all inodes, it has to request the kernel to forget
+>> each one, individually.  The specific filesystem I'm looking at is CVMFS,
+>> which is a read-only filesystem that needs to be able to update the full
+>> set of filesystem objects when a new generation snapshot becomes
+>> available.
+>
+> Yeah, we talked about this use case.  As I remember there was a
+> proposal to set an epoch, marking all objects for "revalidate needed",
+> which I think is a better solution to the CVMFS problem, than just
+> getting rid of unused objects.
 
-在 2025/2/17 22:55, Catalin Marinas 写道:
-> On Mon, Feb 17, 2025 at 04:07:49PM +0800, Tong Tiangen wrote:
->> 在 2025/2/15 1:24, Catalin Marinas 写道:
->>> On Fri, Feb 14, 2025 at 10:49:01AM +0800, Tong Tiangen wrote:
->>>> 在 2025/2/13 1:11, Catalin Marinas 写道:
->>>>> On Mon, Dec 09, 2024 at 10:42:56AM +0800, Tong Tiangen wrote:
->>>>>> Currently, many scenarios that can tolerate memory errors when copying page
->>>>>> have been supported in the kernel[1~5], all of which are implemented by
->>>>>> copy_mc_[user]_highpage(). arm64 should also support this mechanism.
->>>>>>
->>>>>> Due to mte, arm64 needs to have its own copy_mc_[user]_highpage()
->>>>>> architecture implementation, macros __HAVE_ARCH_COPY_MC_HIGHPAGE and
->>>>>> __HAVE_ARCH_COPY_MC_USER_HIGHPAGE have been added to control it.
->>>>>>
->>>>>> Add new helper copy_mc_page() which provide a page copy implementation with
->>>>>> hardware memory error safe. The code logic of copy_mc_page() is the same as
->>>>>> copy_page(), the main difference is that the ldp insn of copy_mc_page()
->>>>>> contains the fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR, therefore, the
->>>>>> main logic is extracted to copy_page_template.S. In addition, the fixup of
->>>>>> MOPS insn is not considered at present.
->>>>>
->>>>> Could we not add the exception table entry permanently but ignore the
->>>>> exception table entry if it's not on the do_sea() path? That would save
->>>>> some code duplication.
->>>>
->>>> I'm sorry, I didn't catch your point, that the do_sea() and non do_sea()
->>>> paths use different exception tables?
->>>
->>> No, they would have the same exception table, only that we'd interpret
->>> it differently depending on whether it's a SEA error or not. Or rather
->>> ignore the exception table altogether for non-SEA errors.
->>
->> You mean to use the same exception type (EX_TYPE_KACCESS_ERR_ZERO) and
->> then do different processing on SEA errors and non-SEA errors, right?
-> 
-> Right.
+OK, so I think I'm missing some context here.  And, obviously, I also miss
+some more knowledge on the filesystem itself.  But, if I understand it
+correctly, the concept of 'inode' in CVMFS is very loose: when a new
+snapshot generation is available (you mentioned 'epoch', which is, I
+guess, the same thing) the inodes are all renewed -- the inode numbers
+aren't kept between generations/epochs.
 
-Ok, now we have the same understanding.
+Do you have any links for such discussions, or any details on how this
+proposal is being implemented?  This would probably be done mostly in
+user-space I guess, but it would still need a way to get rid of the unused
+inodes from old snapshots, right?  (inodes from old snapshots still in use
+would obvious be kept aroud).
 
-> 
->> If so, some instructions of copy_page() did not add to the exception
->> table will be added to the exception table, and the original logic will
->> be affected.
->>
->> For example, if an instruction is not added to the exception table, the
->> instruction will panic when it triggers a non-SEA error. If this
->> instruction is added to the exception table because of SEA processing,
->> and then a non-SEA error is triggered, should we fix it?
-> 
-> No, we shouldn't fix it. The exception table entries have a type
-> associated. For a non-SEA error, we preserve the original behaviour even
-> if we find a SEA-specific entry in the exception table. You already need
-> such logic even if you duplicate the code for configurations where you
-> have MC enabled.
-
-
-So we need another way to distinguish the different processing of the
-same exception type on SEA and non-SEA path.
-
-For example, using strcut exception_table_entry.data, the disadvantage
-is that it occupies the future expansion space of data.
-
-I still think it's better to use methods like copy_from_user.S and
-copy_to_user.S calling copy_template.S, and the duplicate code in
-copy_template.S.
-
-Thanks,
-Tong.
-
-> 
+Cheers,
+--=20
+Lu=C3=ADs
 
