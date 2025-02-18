@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-520166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F35BA3A688
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:59:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF339A3A674
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5C016B756
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F781883F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438971E51FD;
-	Tue, 18 Feb 2025 18:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87631E521C;
+	Tue, 18 Feb 2025 18:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m81HEGrZ"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n821mRkz"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8721F583E;
-	Tue, 18 Feb 2025 18:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2645272921;
+	Tue, 18 Feb 2025 18:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904920; cv=none; b=IF2fWu8P8kKuvtOMXonQ9WEHWfdxq/vSQZmM71QqzqroBUmqimk5FoBCMp6mq6NTwrculv4fMTyp/8Zwp404kuONKsYVr+a43m1x/00Ht/dyul6u/xNchDpvBKVibz2AAUKVRSGzftq0qzPEWlOdo/bN58Pn6twQ4W7RGn14+bo=
+	t=1739904933; cv=none; b=hchwUsSyBE7ECGsUh2ie1Ilj2aTYaXQ/AjssV0TjkVDJxePuUssOTTYP1D1M11X101kLlK4JbB/BtZOouXho0GFNbySa6Qw1LyhPJpdc2nMEvXDnB+xSfjGPDMASAO0kztEIpGvKveU7GXVXpBtuxx1BNtjm2kbG5k5NcRtHVwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904920; c=relaxed/simple;
-	bh=J1HlAHpkkPhDDk4h0ruhlOUuMzpadp3AhQP881j1pQk=;
+	s=arc-20240116; t=1739904933; c=relaxed/simple;
+	bh=7QwO5VpPa8TZk35dGV2bd9HRVK2dvnnv0gedlR8nZ4I=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h2WSzpqjb+xRx5YJb3sGStfKzpDs0QiNaSvgZ+TX7jw3+UVW1UbtjYV6EHlok4Nqyw/xL12H+ucevrCiW6Z1HncwREsby3MT6Tb0ls5yRdNDBqsWXpFtEzJzbk6qGyxPyzMpQfQknprpmfrV39Rye3UXiXTsIQndoa/9CYHJXzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m81HEGrZ; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=EIbsjceBzWocCYpVzYscCLlKubUV85SEplnit75rkva2CTA2TlLwWifAlT7kv/QT9TBoue6pt7cCTEcrpFEE6nZHx1tMWiBAsJUm4JH7QQ1GTbZgefOpsU/3PHXU3QK1obN/RAdh84buctWzAkGUVSbeX+vMe2b4aCt+AvdMsIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n821mRkz; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IItBT51601174
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IItFwD061510
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 12:55:11 -0600
+	Tue, 18 Feb 2025 12:55:15 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739904911;
-	bh=mxgXZggM7Pg2CEvVKuB/y6pGBU0FKd7gcuHTG8f+iMQ=;
+	s=ti-com-17Q1; t=1739904915;
+	bh=IK6z3Ci1qusIgI4R2i0RypC0roG8nXLJttUEzNVDJi4=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=m81HEGrZc+rvN6NeTT8auOhoiV8RCEzLXRNmBdzV3b9FjDS+KiEmXfh7ronMMWWI7
-	 7a5UAIcXYDdvEonLVVtbB9i8W9odG9Jbb3fqrWz7t9Do8OzCigPrCCDH4Zs0lIYEWu
-	 uzsMcYwz5PaVTryJ13A0vmVvGxND/5CXgkBkLzvQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IItBgc001025
+	b=n821mRkz5F1LxxPTHshr2bBlmmk326IwMwGsmfVEMbleMOvqxjXHEQ71V6M0QCGvM
+	 iZ3Sl2+ZeM4KU/pROQSSojYAL7SLLh0yOr/Yme7FkedHKwIw4iHdrxrTTxtygHvr+G
+	 VwMeKgthlMtlReGPqJRWesguwMySrjR4Fv2gzGgM=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IItF0l021310
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 12:55:11 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 18 Feb 2025 12:55:15 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 12:55:11 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ Feb 2025 12:55:14 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 12:55:11 -0600
+ Frontend Transport; Tue, 18 Feb 2025 12:55:14 -0600
 Received: from uda0490681.. ([10.24.69.142])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IIsrxc123821;
-	Tue, 18 Feb 2025 12:55:08 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IIsrxd123821;
+	Tue, 18 Feb 2025 12:55:11 -0600
 From: Vaishnav Achath <vaishnav.a@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
 CC: <linux-kernel@vger.kernel.org>, <jai.luthra@linux.dev>,
         <y-abhilashchandra@ti.com>, <vaishnav.a@ti.com>
-Subject: [PATCH 4/5] arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
-Date: Wed, 19 Feb 2025 00:24:51 +0530
-Message-ID: <20250218185452.600797-5-vaishnav.a@ti.com>
+Subject: [PATCH 5/5] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
+Date: Wed, 19 Feb 2025 00:24:52 +0530
+Message-ID: <20250218185452.600797-6-vaishnav.a@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250218185452.600797-1-vaishnav.a@ti.com>
 References: <20250218185452.600797-1-vaishnav.a@ti.com>
@@ -78,66 +78,57 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-RPi v2 Camera (IMX219) is an 8MP camera that can be used with J722S EVM
-through the 22-pin CSI-RX connector. Add a reference overlay for quad
-IMX219 RPI camera v2 modules on J722S EVM
+TechNexion TEVI OV5640 camera is a 5MP camera that can be used with
+J722S EVM through the 22-pin CSI-RX connector. Add a reference overlay
+for quad TEVI OV5640 modules on J722S EVM.
 
 Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
 ---
- arch/arm64/boot/dts/ti/Makefile               |   5 +
- ...k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso | 304 ++++++++++++++++++
- 2 files changed, 309 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso
+ arch/arm64/boot/dts/ti/Makefile               |   4 +
+ .../k3-j722s-evm-csi2-quad-tevi-ov5640.dtso   | 319 ++++++++++++++++++
+ 2 files changed, 323 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
 
 diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 8a4bdf87e2d4..9ae0917e5763 100644
+index 9ae0917e5763..0370392abda8 100644
 --- a/arch/arm64/boot/dts/ti/Makefile
 +++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -119,6 +119,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-pcie1-ep.dtbo
- # Boards with J722s SoC
+@@ -120,6 +120,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-pcie1-ep.dtbo
  dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
  dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
++dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
  
  # Boards with J784s4 SoC
  dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
-@@ -209,6 +210,8 @@ k3-j721e-sk-csi2-dual-imx219-dtbs := k3-j721e-sk.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtbo
- k3-j721s2-evm-pcie1-ep-dtbs := k3-j721s2-common-proc-board.dtb \
+@@ -212,6 +213,8 @@ k3-j721s2-evm-pcie1-ep-dtbs := k3-j721s2-common-proc-board.dtb \
  	k3-j721s2-evm-pcie1-ep.dtbo
-+k3-j722s-evm-csi2-quad-rpi-cam-imx219-dtbs := k3-j722s-evm.dtb \
-+	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
+ k3-j722s-evm-csi2-quad-rpi-cam-imx219-dtbs := k3-j722s-evm.dtb \
+ 	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
++k3-j722s-evm-csi2-quad-tevi-ov5640-dtbs := k3-j722s-evm.dtb \
++	k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
  k3-j784s4-evm-pcie0-pcie1-ep-dtbs := k3-j784s4-evm.dtb \
  	k3-j784s4-evm-pcie0-pcie1-ep.dtbo
  k3-j784s4-evm-quad-port-eth-exp1-dtbs := k3-j784s4-evm.dtb \
-@@ -243,6 +246,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-j721e-evm-pcie1-ep.dtb \
+@@ -247,6 +250,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
  	k3-j721e-sk-csi2-dual-imx219.dtb \
  	k3-j721s2-evm-pcie1-ep.dtb \
-+	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtb \
+ 	k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtb \
++	k3-j722s-evm-csi2-quad-tevi-ov5640.dtb \
  	k3-j784s4-evm-pcie0-pcie1-ep.dtb \
  	k3-j784s4-evm-quad-port-eth-exp1.dtb \
  	k3-j784s4-evm-usxgmii-exp1-exp2.dtb
-@@ -266,5 +270,6 @@ DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-evm-pcie0-ep += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
-+DTC_FLAGS_k3-j722s-evm += -@
- DTC_FLAGS_k3-j784s4-evm += -@
- DTC_FLAGS_k3-j742s2-evm += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
 new file mode 100644
-index 000000000000..4c5ec2c7826e
+index 000000000000..f33f50465a07
 --- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtso
-@@ -0,0 +1,304 @@
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm-csi2-quad-tevi-ov5640.dtso
+@@ -0,0 +1,319 @@
 +// SPDX-License-Identifier: GPL-2.0-only OR MIT
 +/*
-+ * DT Overlay for RPi Camera V2.1 on J722S-EVM board.
++ * 4 x TEVI OV5640 MIPI Camera module on RPI camera connector.
 + *
-+ * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-+ *
-+ * Schematics: https://datasheets.raspberrypi.com/camera/camera-v2-schematics.pdf
++ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
 + */
 +
 +/dts-v1/;
@@ -145,6 +136,15 @@ index 000000000000..4c5ec2c7826e
 +
 +#include <dt-bindings/gpio/gpio.h>
 +#include "k3-pinctrl.h"
++
++&{/} {
++	clk_ov5640_fixed: ov5640-xclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
++};
++
 +
 +&main_pmx0 {
 +	cam0_reset_pins_default: cam0-reset-pins-default {
@@ -172,14 +172,6 @@ index 000000000000..4c5ec2c7826e
 +	};
 +};
 +
-+&{/} {
-+	clk_imx219_fixed: imx219-xclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+	};
-+};
-+
 +&exp1 {
 +	p06-hog{
 +		/* P06 - CSI01_MUX_SEL_2 */
@@ -198,34 +190,63 @@ index 000000000000..4c5ec2c7826e
 +	};
 +};
 +
++&main_gpio0 {
++	p15-hog {
++		/* P15 - CSI2_CAMERA_GPIO1 */
++		gpio-hog;
++		gpios = <15 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "CSI2_CAMERA_GPIO1";
++	};
++
++	p17-hog {
++		/* P17 - CSI2_CAMERA_GPIO2 */
++		gpio-hog;
++		gpios = <17 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "CSI2_CAMERA_GPIO2";
++	};
++
++	p19-hog {
++		/* P19 - CSI2_CAMERA_GPIO3 */
++		gpio-hog;
++		gpios = <19 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "CSI2_CAMERA_GPIO3";
++	};
++
++	p21-hog {
++		/* P21 - CSI2_CAMERA_GPIO4 */
++		gpio-hog;
++		gpios = <21 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "CSI2_CAMERA_GPIO4";
++	};
++};
++
 +&pca9543_0 {
 +	#address-cells = <1>;
 +	#size-cells = <0>;
 +
-+	i2c-alias-pool = /bits/ 16 <0x10 0x11>;
++	i2c-alias-pool = /bits/ 16 <0x3c 0x3d>;
 +
-+	/* CAM0 I2C */
 +	i2c@0 {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +		reg = <0>;
 +
-+		imx219_0: sensor@10 {
-+			compatible = "sony,imx219";
-+			reg = <0x10>;
-+
-+			clocks = <&clk_imx219_fixed>;
++		ov5640_0: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			clocks = <&clk_ov5640_fixed>;
 +			clock-names = "xclk";
 +
 +			pinctrl-names = "default";
 +			pinctrl-0 = <&cam0_reset_pins_default>;
 +
-+			reset-gpios = <&main_gpio0 15 GPIO_ACTIVE_HIGH>;
-+
 +			port {
 +				csi2_cam0: endpoint {
 +					remote-endpoint = <&csi2rx0_in_sensor>;
-+					link-frequencies = /bits/ 64 <456000000>;
 +					clock-lanes = <0>;
 +					data-lanes = <1 2>;
 +				};
@@ -233,28 +254,23 @@ index 000000000000..4c5ec2c7826e
 +		};
 +	};
 +
-+	/* CAM1 I2C */
 +	i2c@1 {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +		reg = <1>;
 +
-+		imx219_1: sensor@10 {
-+			compatible = "sony,imx219";
-+			reg = <0x10>;
-+
-+			clocks = <&clk_imx219_fixed>;
++		ov5640_1: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			clocks = <&clk_ov5640_fixed>;
 +			clock-names = "xclk";
 +
 +			pinctrl-names = "default";
 +			pinctrl-0 = <&cam1_reset_pins_default>;
 +
-+			reset-gpios = <&main_gpio0 17 GPIO_ACTIVE_HIGH>;
-+
 +			port {
 +				csi2_cam1: endpoint {
 +					remote-endpoint = <&csi2rx1_in_sensor>;
-+					link-frequencies = /bits/ 64 <456000000>;
 +					clock-lanes = <0>;
 +					data-lanes = <1 2>;
 +				};
@@ -267,30 +283,25 @@ index 000000000000..4c5ec2c7826e
 +	#address-cells = <1>;
 +	#size-cells = <0>;
 +
-+	i2c-alias-pool = /bits/ 16 <0x10 0x11>;
++	i2c-alias-pool = /bits/ 16 <0x3c 0x3d>;
 +
-+	/* CAM0 I2C */
 +	i2c@0 {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +		reg = <0>;
 +
-+		imx219_2: sensor@10 {
-+			compatible = "sony,imx219";
-+			reg = <0x10>;
-+
-+			clocks = <&clk_imx219_fixed>;
++		ov5640_2: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			clocks = <&clk_ov5640_fixed>;
 +			clock-names = "xclk";
 +
 +			pinctrl-names = "default";
 +			pinctrl-0 = <&cam2_reset_pins_default>;
 +
-+			reset-gpios = <&main_gpio0 19 GPIO_ACTIVE_HIGH>;
-+
 +			port {
 +				csi2_cam2: endpoint {
 +					remote-endpoint = <&csi2rx2_in_sensor>;
-+					link-frequencies = /bits/ 64 <456000000>;
 +					clock-lanes = <0>;
 +					data-lanes = <1 2>;
 +				};
@@ -298,28 +309,23 @@ index 000000000000..4c5ec2c7826e
 +		};
 +	};
 +
-+	/* CAM1 I2C */
 +	i2c@1 {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +		reg = <1>;
 +
-+		imx219_3: sensor@10 {
-+			compatible = "sony,imx219";
-+			reg = <0x10>;
-+
-+			clocks = <&clk_imx219_fixed>;
++		ov5640_3: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			clocks = <&clk_ov5640_fixed>;
 +			clock-names = "xclk";
 +
 +			pinctrl-names = "default";
 +			pinctrl-0 = <&cam3_reset_pins_default>;
 +
-+			reset-gpios = <&main_gpio0 21 GPIO_ACTIVE_HIGH>;
-+
 +			port {
 +				csi2_cam3: endpoint {
 +					remote-endpoint = <&csi2rx3_in_sensor>;
-+					link-frequencies = /bits/ 64 <456000000>;
 +					clock-lanes = <0>;
 +					data-lanes = <1 2>;
 +				};
@@ -420,6 +426,7 @@ index 000000000000..4c5ec2c7826e
 +	status = "okay";
 +};
 +
++
 +&ti_csi2rx2 {
 +	status = "okay";
 +};
@@ -427,6 +434,7 @@ index 000000000000..4c5ec2c7826e
 +&dphy2 {
 +	status = "okay";
 +};
++
 +
 +&ti_csi2rx3 {
 +	status = "okay";
