@@ -1,145 +1,77 @@
-Return-Path: <linux-kernel+bounces-519059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B15A3977D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:51:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7C3A39770
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A5717549F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 496A87A4638
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2E224112A;
-	Tue, 18 Feb 2025 09:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC9723957F;
+	Tue, 18 Feb 2025 09:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="g1utORNB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C862723ED66;
-	Tue, 18 Feb 2025 09:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872000; cv=pass; b=Nn1Hf/ASDBMCSZRr/97VYw1zcqeFvSQkLs3RKLJ0rTpak0HaJFRig+EdOvZSUcwFVPjocAaSvRPHZaJ+tJwlFOBvO5tm216B4ypTPxUZ26an1L0uxk0NzTXfAhSdmLuDbRch5wAWBFoLr1eVbt7Djf9tEU0pT1GW8NASf4f4F60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872000; c=relaxed/simple;
-	bh=oluM229+QkjMcH16tdElVipTqwxo4aGfq7njvhdh9y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DoGaBmJTAb0P/pQ7RSQSz17dFerW92q5OGPPkDzuwtUW5EHpetPtmM0wb3d3pPdJ5Hd8k3diF+zryYDmQ5sY9/FDv0f1gAZGizGOl/iz87fX9DR3dqjEz/7LFjBIoh2yrzHusSBGSDxKQ1Er2geCInrJICvlkpgCp66GiaVcoaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=g1utORNB; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1739871969; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kEMoEGYx4odDVnsn3kMR/Xa8T58NL5/WmIxhiC1QmDbOw2kMQt/nIPfyAIekGWktvDCzSQAYuYhc5Abj436AfzGo5ngAIi5OCQ1jE670om64Fg/MjBH3P0wn0nzYUt5/m5cRmfADwsUCvAChuIJ8LczNcfwphDaeU3ImME8VvG8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739871969; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Q1RdT5eL57c25wsLGjqwv0tswd3r+m/iGHKhWU5vNkU=; 
-	b=hLzq0fvMYDz4a5xxxexNYBS03rTRyJMvfImGjFHcBZXArSaI4gII1ayNbBOTGf9CaecoStJL/xfhCv2E69KTZGQtfvXuzjrABQJ5DT0E0ywS30UNAKqgSC9priy2c0ORkMYZGg0hpVISv8ZnwJ8TMHDFGsYFWAKuCRsFR/cih4o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739871969;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Q1RdT5eL57c25wsLGjqwv0tswd3r+m/iGHKhWU5vNkU=;
-	b=g1utORNBtkSzGH4AGRNSLNihyapmNrQnpoMzHP+cBeRE9eEU2ZqtKp7oQcMfGo+Z
-	TrnTvx/ncakBtybvu8lPzOEs+C+Shxev/I0KWei9noHHV1ypPzapSK4ZLfPqC4uFpGI
-	+MAtfsBQlcrdwxeylDkOd7Jtj9TnrOERFBINv/+E=
-Received: by mx.zohomail.com with SMTPS id 1739871967704282.7054777678519;
-	Tue, 18 Feb 2025 01:46:07 -0800 (PST)
-Message-ID: <4a04b12c-8765-47bb-af61-c6b47133f2af@collabora.com>
-Date: Tue, 18 Feb 2025 10:46:02 +0100
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="JRYbGWXN"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB88233D9C;
+	Tue, 18 Feb 2025 09:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739871995; cv=none; b=pBumqiDGSLcadz+ASQU+q+7mQgOrQw72I9o59TgbamGTDaICe8HH4SHyNcIapYorHpoYevRk4X7sgwb9G09fzkBkAkB7URm62/RImWN/lin2VnNQXe/pdLurJQLcm7Jn1RcCxAAU190v7SXy0qYxC9ngyfkEskGDFzww9dPuC64=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739871995; c=relaxed/simple;
+	bh=9ADUzIlkRmx6sq0bOKHim7EKMOadjQ/9CTWIOLtvEYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxZFq5lIxMIUW3YHTFt1Q73tlMW6oE7aBMruELmPPE/XnsHjNCTH4pD9XfP5i23+i2PmqJ/PfcMEgUCfMJZZz+nLGX47bX2xkZpAwVc1NKhZwWfrpoi5de6KXGwXpF35UQBqj5onfEXUPtEDZdapXx/N62svej3QcQAaR11H+7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=JRYbGWXN; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=onm1rS1mxSV1bJWjghMpBfWA93PUl1xrcbo/qJEavTA=;
+	b=JRYbGWXNxNTc3fQD3n1Nod4sZvyt7wZlNtAe/m1AmszDqyjzw8m6DK6d156Y/F
+	oxdLYsPezw+v0qyX429aucWeOhcoQjlkk6JCMRarWykIkIA3lniM00lTYm6xgEHl
+	osLY2DhfEW0At1JLJOwMdP6kKdxaEHW0IYfsKdjLc2Ny0=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBnKqjhVrRnFZhhCQ--.20238S3;
+	Tue, 18 Feb 2025 17:46:11 +0800 (CST)
+Date: Tue, 18 Feb 2025 17:46:09 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Martyn Welch <martyn.welch@collabora.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND] arm64: dts: ls1028a-rdb: Add iio-hwmon
+ compatibility table
+Message-ID: <Z7RW4WK0qYs7Vo9l@dragon>
+References: <20250109112457.553169-1-martyn.welch@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: verisilicon: Fix AV1 decoder clock frequency
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- kernel@collabora.com, stable@vger.kernel.org
-References: <20250217-b4-hantro-av1-clock-rate-v2-1-e179fad52641@collabora.com>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20250217-b4-hantro-av1-clock-rate-v2-1-e179fad52641@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250109112457.553169-1-martyn.welch@collabora.com>
+X-CM-TRANSID:Ms8vCgBnKqjhVrRnFZhhCQ--.20238S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsco2UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQ33ZWe0S+AuKwAAsz
 
+On Thu, Jan 09, 2025 at 11:24:57AM +0000, Martyn Welch wrote:
+> Add an iio-hwmon map to utilise the iio framework and access power
+> information via the hwmon framework at the same time.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
 
-Le 17/02/2025 à 22:46, Nicolas Dufresne a écrit :
-> The desired clock frequency was correctly set to 400MHz in the device tree
-> but was lowered by the driver to 300MHz breaking 4K 60Hz content playback.
-> Fix the issue by removing the driver call to clk_set_rate(), which reduce
-> the amount of board specific code.
->
-> Fixes: 003afda97c65 ("media: verisilicon: Enable AV1 decoder on rk3588")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+I do not quite understand "compatibility table" in the subject.  Could
+you elaborate a bit?
 
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Shawn
 
-> ---
-> This patch fixes user report of AV1 4K60 decoder not being fast enough
-> on RK3588 based SoC. This is a break from Hantro original authors
-> habbit of coding the frequencies in the driver instead of specifying this
-> frequency in the device tree. The other calls to clk_set_rate() are left
-> since this would require modifying many dtsi files, which would then be
-> unsuitable for backport.
-> ---
-> Changes in v2:
-> - Completely remove the unused init function, the driver is null-safe
-> - Link to v1: https://lore.kernel.org/r/20250217-b4-hantro-av1-clock-rate-v1-1-65b91132c551@collabora.com
-> ---
->   drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 9 ---------
->   1 file changed, 9 deletions(-)
->
-> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> index 964122e7c355934cd80eb442219f6ba51bba8b71..842040f713c15e6ff295771bc9fa5a7b66e584b2 100644
-> --- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> +++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-> @@ -17,7 +17,6 @@
->   
->   #define RK3066_ACLK_MAX_FREQ (300 * 1000 * 1000)
->   #define RK3288_ACLK_MAX_FREQ (400 * 1000 * 1000)
-> -#define RK3588_ACLK_MAX_FREQ (300 * 1000 * 1000)
->   
->   #define ROCKCHIP_VPU981_MIN_SIZE 64
->   
-> @@ -440,13 +439,6 @@ static int rk3066_vpu_hw_init(struct hantro_dev *vpu)
->   	return 0;
->   }
->   
-> -static int rk3588_vpu981_hw_init(struct hantro_dev *vpu)
-> -{
-> -	/* Bump ACLKs to max. possible freq. to improve performance. */
-> -	clk_set_rate(vpu->clocks[0].clk, RK3588_ACLK_MAX_FREQ);
-> -	return 0;
-> -}
-> -
->   static int rockchip_vpu_hw_init(struct hantro_dev *vpu)
->   {
->   	/* Bump ACLK to max. possible freq. to improve performance. */
-> @@ -807,7 +799,6 @@ const struct hantro_variant rk3588_vpu981_variant = {
->   	.codec_ops = rk3588_vpu981_codec_ops,
->   	.irqs = rk3588_vpu981_irqs,
->   	.num_irqs = ARRAY_SIZE(rk3588_vpu981_irqs),
-> -	.init = rk3588_vpu981_hw_init,
->   	.clk_names = rk3588_vpu981_vpu_clk_names,
->   	.num_clocks = ARRAY_SIZE(rk3588_vpu981_vpu_clk_names)
->   };
->
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250217-b4-hantro-av1-clock-rate-e5497f1499df
->
-> Best regards,
 
