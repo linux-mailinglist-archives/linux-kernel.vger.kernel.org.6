@@ -1,109 +1,73 @@
-Return-Path: <linux-kernel+bounces-519693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB6A3A0C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:04:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EFDA3A0C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560733A33F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D87D16463C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A76F26B0B5;
-	Tue, 18 Feb 2025 15:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67AA26A1CE;
+	Tue, 18 Feb 2025 15:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JWJYmu4t"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozcwuBjT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5D726AA9B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A59238D3B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891077; cv=none; b=Gfzzbpax13EWOsl5ZYdgbRUB2xWxQnZQw/4JEc6PujjIEfak73XQ39us1+bHFzXWvkpfdbP0h8LklTWv5HRQaeHubj9wKcBEgNr2nQp0Wg3NYWky1A4cZ00m21wMKujw2N6JzV1X45C/bMzixa1koQK8d39FnLVjS30q1DLczB4=
+	t=1739891199; cv=none; b=mZ+8bXrkSixj0nmAW+dQtiLkFa9pOcUrhx5Sd81AnStVOhfb9gkvRTl1ESDZJ+Lb76tn7qlfqDZ0zbn2G5U1KxwRHw42ghMofwzNLVDNY/Y5EmN9m9gBC8WKSP8YwMHTqW9EhKLJSUCoAAEPe6M4gOeziQ8oLhqMCpBQurk59Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891077; c=relaxed/simple;
-	bh=I899cDCtzrLN27Unv61LFQINIpMMYCQTO3vzchKPTV8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jlSsmS2dk4sKPNnQKwkDYUpSsEr+H4k+W0jvXpNb/ZNsK6DlqPe7C4MOfuGU9naZstNioRMyRjHmeJF/Sb1GFprYgxJ37CUkZuqryr/v/v4ba1dEf8URiBECT2aJeQr8OXFv3b9k6eCHOLE++9KM6zlSKx25McipIxfA/TZGLyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JWJYmu4t; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-220e62c4f27so124971415ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 07:04:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739891074; x=1740495874; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2knpZyBZj3T0QsRG2HDCFcc/2ipgVgDbXPlB+2nkirM=;
-        b=JWJYmu4tAG+Iy607hcvs46XQbbfpO7Psf6uhLE38VWCbS3+Luw5QwCzvUTCvFPqf3w
-         P3oT2umOgdXQHJsphV0e4uPcjlvlkZcyU1DWLKODpdwX12TfIKOz8RADuqjQglKlkgn6
-         B67l86ptccjHkeA8MFxW6GvT2dCcC45yOaO5ZS98DSPyT6TtHpaTewjonErgbUrhQkPO
-         XWVK/FZCbXAQ60syyXd74tghEgPNtYPd9+6gb0c7ea3NfoJffJpj47eiHS6wIlKZpbLn
-         ORR8hzqkxKCpSwnbiM/5wHv06LuFs6+7su7J5nte6OysHkaNlOJ6h0rFGw8hGd+4D0y7
-         7dNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739891074; x=1740495874;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2knpZyBZj3T0QsRG2HDCFcc/2ipgVgDbXPlB+2nkirM=;
-        b=Ca+eyz+1164cAYGJRhMM7XuBKcvqVdf77xpozpW7nWOps9Qw0+BP5el0+1x9GgWdNs
-         n9SuTbW2efMNrcjZMua6uFWCvEcTm6bRY7hI8w5HgQ505OcSei8U1n3XH37y3MsSLATQ
-         wXwO4bIyBd8c0qOCWRPR4YKBgmIPDlmZgdkEOWupzTwwD4w3uJTURjiIECk3djNiY2/M
-         yxyJomLY5f/T8fBVfbSY8X+4O/ZqMvekSbZJCNJnzFxIYRGjwNiQDdnsuvMNbAMOGy+I
-         Ri308wx1io+9Y1QHGlP8i8SnDB6hKJw8a1SJnksv79meVI18HptxJQx2rsLLaUvrUOuX
-         p9UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7RB/V56YK7WgR1WpsKkfXATdC8M5tx/ZhQy3AciMr5orKoQF5bYtXBwVsj5s07w33VXj1APDsghzbe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjr9K17xjx9uXvoEL/cO10AsmbUuXMqK0SrAiZkYYBWLdjYvYO
-	C4LNXryOCwu41DJNiHh/EPxA/ZaiV4fLS0wXwdnPnMQGTIx+UFSYNfWW/ks6pqb4QCaaTfV//rk
-	zuA==
-X-Google-Smtp-Source: AGHT+IEQM/K6moISqV33XPWsPZzBljK/WoSuhYmU5iaE5Q5tbSVOXX7pggels/AhXSwuZfgpgUZ1nTGnfS0=
-X-Received: from pfbga8.prod.google.com ([2002:a05:6a00:6208:b0:725:e4b6:901f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a21:b0:1e1:9f57:eaaf
- with SMTP id adf61e73a8af0-1ee8caab754mr24825593637.6.1739891074053; Tue, 18
- Feb 2025 07:04:34 -0800 (PST)
-Date: Tue, 18 Feb 2025 07:04:32 -0800
-In-Reply-To: <28dcae5c-4fb7-46a8-9f37-a4f9f59b45a2@linux.intel.com>
+	s=arc-20240116; t=1739891199; c=relaxed/simple;
+	bh=sz4N5tO/fJWbp+cAUSYMXY5DgjhAHXhhf+KTPoEqg/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGaBIXfIONu+22O7xo6uFNZpUf40lAhrNVl60zZaUCnP7VwFVFz50DEMoes5M50VOX7jN2vdSwz6EGZ6b27P2n6atDtz6Vwrj3EXWHTOTjq39g9vMz7/gb9Ud0+CxTANibOL1OkMyTEn3Fubpc0v5Oo/0AGIghbphCoR3kOgW0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozcwuBjT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAFAC4CEE2;
+	Tue, 18 Feb 2025 15:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739891198;
+	bh=sz4N5tO/fJWbp+cAUSYMXY5DgjhAHXhhf+KTPoEqg/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ozcwuBjTtj9GQB+fl2ugEZFQ4GdbUlFOYHkxo8Ruj77txZxs3SulLsMKwQPhXM7Iq
+	 Ml8zSjJdz9xxbleVNQusrNKA/jxbIydBWYon/TkMWqXFJnNZDore2CEPA/7alCvYPB
+	 J35hKoKR82lMC1riG/J2vOLANvRsgArb/jA/Ht+UvG4Whgxuq3hpwOSMqklNVtYs3X
+	 f7T9D6NBpr4+KgNnLpBugEHzSHS55MKjFkrp/Y91vj3o+JjPaEVuEmciIr7mSuP41i
+	 uVVJFKMZCKgxt4eLWxJyucFly/AV8yU0h3NHwLywebMASEKePphqcDO53xGy7aw487
+	 FHrdEqXDi3nIQ==
+Date: Tue, 18 Feb 2025 08:06:35 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: hch@lst.de, sagi@grimberg.me, bmarzins@redhat.com,
+	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+	axboe@kernel.dk
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+Message-ID: <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240914101728.33148-1-dapeng1.mi@linux.intel.com>
- <20240914101728.33148-8-dapeng1.mi@linux.intel.com> <Z6-wmhr5JDNuDC7D@google.com>
- <28dcae5c-4fb7-46a8-9f37-a4f9f59b45a2@linux.intel.com>
-Message-ID: <Z7ShgKYeSqpGUXGl@google.com>
-Subject: Re: [kvm-unit-tests patch v6 07/18] x86: pmu: Fix potential out of
- bound access for fixed events
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
 
-On Tue, Feb 18, 2025, Dapeng Mi wrote:
+On Thu, Feb 13, 2025 at 03:37:28PM -0500, John Meneghini wrote:
+> Keith, Christoph and Sagi,
 > 
-> On 2/15/2025 5:07 AM, Sean Christopherson wrote:
-> > On Sat, Sep 14, 2024, Dapeng Mi wrote:
-> >> @@ -744,6 +753,12 @@ int main(int ac, char **av)
-> >>  	printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
-> >>  	printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
-> >>  
-> >> +	fixed_counters_num = MIN(pmu.nr_fixed_counters, ARRAY_SIZE(fixed_events));
-> >> +	if (pmu.nr_fixed_counters > ARRAY_SIZE(fixed_events))
-> >> +		report_info("Fixed counters number %d > defined fixed events %ld. "
-> > Doesn't compile on 32-bit builds.  Easiest thing is to cast ARRAY_SIZE, because
-> > size_t is different between 32-bit and 64-bit.
-> 
-> But ARRAY_SIZE() should return same value regardless of 32-bit or 64-bit,
-> right?
+> This patch has been fully tested and analyzed by Red Hat's QA group and no
+> unexpected side effects or regressions have been found. Both NVMe/FC and NVMe/TCP
+> have been tested. Our QE engineer has asked me to report this upstream.
 
-Yep.  The value is the same, but the type "returned" by sizeof() is different.
-On 32-bit, it's an "unsigned int"; on 64-bit, it's an unsigned long.  I.e. the
-size of sizeof() is different (sorry, couldn't resist).
+What's the harm in leaving the parameter? *I* use it so I can test both
+ways without needing to compile multiple kernels.
 
