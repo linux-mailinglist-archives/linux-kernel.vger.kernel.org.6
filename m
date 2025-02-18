@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-518860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FFDA3955E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:30:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE11FA3956C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20418995F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:28:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C502F179514
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773422AE7F;
-	Tue, 18 Feb 2025 08:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UoKlHSOz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD7B22AE49;
+	Tue, 18 Feb 2025 08:27:40 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF58F1B87CF;
-	Tue, 18 Feb 2025 08:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6961B4250;
+	Tue, 18 Feb 2025 08:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867280; cv=none; b=qRlPMq8LF6N+ksEagqDfQM5IZvRCDzNw50PmVrotcpsFxKNyE46BQHu0Z+yRT29iu9oYtMQIMYVaaExHg22e33Eldo0uKXM0F0kvTSsnFJjjW2WpWT7xTfV6eMuNrtxKemLGRIQg22OO6BtDpVx3mTNVbtR2CdQP6LjqxsKeH6I=
+	t=1739867260; cv=none; b=DRqcKtoZIYZ3jaTKsNF4Up6wqCxaySQhnTXf4uMlU+9Hho9MhIHOyCI6sB3odlYwIxB4R/i9+0SIihUn01R2s/9swdbYfd0YJV/PMu93wBIzGl8I8VU0cOHLjX6BousiNGeQZNtzFYR4yqZ0MtIQjm3cbmzOefveZjecDdT2Ahw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867280; c=relaxed/simple;
-	bh=1hbGrgaPb6b6ENR44HlCCVsM2gp2+PClw4vmk3z4fsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcdJQ/YuGgJ/uZEGSpsx9qVvZIwqsV7iMrZ/QPVLXCwvtZpQ8rzvIB17820sKuzWbgysQDNIFA+oXYPQfKUArVX15NQKAEdD1AFy69dJ1JbIB+/s9EDcV2DTXmbedyo+wCcwSJpMX6Ql0YNGG1exNupp7tcarDlBbPQy6xUnewc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UoKlHSOz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 33B3940E01A1;
-	Tue, 18 Feb 2025 08:27:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1jdlKZXk4JKo; Tue, 18 Feb 2025 08:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1739867270; bh=jAn/HNcN37jbOxycChzF/f77JjKiI97PDWxT1WP+ZdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UoKlHSOzJAu0JSvQFqfJYA9VfpBnBpdcy+1rmxWYA5pGqGdTKar0S7NRvWfUYgf/P
-	 0mjWPnZOClBlKipV5IspJBaBhQCiFkgLcAY64SB6Cj+JTs3cUeQ3EcDoAasH6jwalU
-	 Mn3IXfZNCeAH553uN2iZ0RGWFqHYl5oIO0TTyt+Oxtly+ARdyMV4Uz0/0ZWiVGFn9S
-	 SvbvuFlVnawHGcn4p6qSG0g3gZjkRgLrRt5FnfI0TgIKqQWFAC8r3zfZ/O475kYvGZ
-	 lRJKn1gtrHf5j4nrrC8zOFoTAtZ7CnID06cVx3k4a2R//Yu3jIYqYYDpEAtZvWqQaN
-	 5wLQ3bb2BiuamJ6xpV2Ki69A1oZk3yEiTLv+k/9pzD18A/b0nUyza17Fa5wIZyjLsI
-	 LKfOSsWXZ/hqJtPFo8EdBhGZKAWCMdbwu+TFsWFFF+GK8K64XO3XjiyysD0XoDeoaS
-	 dQefxl0K3X22C1JDh+lhx8TJa8Op8GG/uvxyfhE1iuuEYkoB5auo+57Hi7mLS87cmu
-	 YCsbhTWtA8ovVjif1o/Uk0k+3yRqvapxFmJjEG9SgUYwZII5KxqInIw7QZgTZNBhYe
-	 UcV0Ip+LOSpb5b8oCelDUcgZH8EaWxkWiYm+PY9m+VYXPGtVExwVAIWplbO+yj9x7Y
-	 ySs9TH3AjydRhA609hjHzfUY=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C000F40E021F;
-	Tue, 18 Feb 2025 08:27:32 +0000 (UTC)
-Date: Tue, 18 Feb 2025 09:27:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: tony.luck@intel.com, nao.horiguchi@gmail.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, linmiaohe@huawei.com, akpm@linux-foundation.org,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
- handling
-Message-ID: <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
-References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1739867260; c=relaxed/simple;
+	bh=1soCMC1mDzlUguPyqOBPKxSSzf+ZHtXkwqiV35e1GYA=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ANKerQZPtFJV3tZNasQtM7oFUfjA8w32aqFgBxdNfTW3GxOXjjnbbWqOyAaW1rSN3xdb/PLNJytCwVMxdq3OIJEsH7uXDl0c+nI+mLOujeCjDwGPJQCxGdY2H9NiCUYnIFJC/oKuGcFracZiossvrbjUEj8MV+OXQtTBH32y8e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Yxsx40sHkz1wn5P;
+	Tue, 18 Feb 2025 16:23:36 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 179661A0188;
+	Tue, 18 Feb 2025 16:27:30 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Feb 2025 16:27:29 +0800
+Message-ID: <9d55d0a8-7a85-4caf-8358-7e04621813cc@huawei.com>
+Date: Tue, 18 Feb 2025 16:27:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, Simon Horman <horms@kernel.org>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add rx checksum offload
+ supported in this module
+To: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+References: <20250213035529.2402283-1-shaojijie@huawei.com>
+ <20250213035529.2402283-4-shaojijie@huawei.com>
+ <20250217154028.GM1615191@kernel.org>
+ <14b562d6-7006-4fe0-be61-48fe1abebe49@huawei.com>
+ <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <CAH-L+nM0axD3QWXixe6p7U4dyVx=qn9zh5crOXLTxTH9Gpd9dQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Mon, Feb 17, 2025 at 02:33:30PM +0800, Shuai Xue wrote:
-> changes singce v1:
-> - Patch 1: Fix cur_sev and sev type to `int` per Tony
-> - Patch 4: Fix return value to 0 for clean pages per Miaohe
-> - Patch 5: pick return value comments of memory-failure()
-> 
-> This patch addresses three regressions identified in memory failure
-> handling, as discovered using ras-tools[1]:
-> 
-> - `./einj_mem_uc copyin -f`
-> - `./einj_mem_uc futex -f`
-> - `./einj_mem_uc instr`
 
-This is not how you write a problem statement and explain why your patches
-exist.
+on 2025/2/18 10:46, Kalesh Anakkur Purayil wrote:
+> On Tue, Feb 18, 2025 at 7:47 AM Jijie Shao <shaojijie@huawei.com> wrote:
+>>
+>> on 2025/2/17 23:40, Simon Horman wrote:
+>>> On Thu, Feb 13, 2025 at 11:55:25AM +0800, Jijie Shao wrote:
+>>>> This patch implements the rx checksum offload feature
+>>>> including NETIF_F_IP_CSUM NETIF_F_IPV6_CSUM and NETIF_F_RXCSUM
+>>>>
+>>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+>>> ...
+>>>
+>>>> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+>>>> index 8c631a9bcb6b..aa1d128a863b 100644
+>>>> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+>>>> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+>>>> @@ -202,8 +202,11 @@ static int hbg_napi_tx_recycle(struct napi_struct *napi, int budget)
+>>>>    }
+>>>>
+>>>>    static bool hbg_rx_check_l3l4_error(struct hbg_priv *priv,
+>>>> -                                struct hbg_rx_desc *desc)
+>>>> +                                struct hbg_rx_desc *desc,
+>>>> +                                struct sk_buff *skb)
+>>>>    {
+>>>> +    bool rx_checksum_offload = priv->netdev->features & NETIF_F_RXCSUM;
+>>> nit: I think this would be better expressed in a way that
+>>>        rx_checksum_offload is assigned a boolean value (completely untested).
+>>>
+>>>        bool rx_checksum_offload = !!(priv->netdev->features & NETIF_F_RXCSUM);
+>> Okay, I'll modify it in v2.
+> Maybe you can remove " in this module" from the patch title as it is
+> implicit. This comment/suggestion applies to all patches in this
+> series.
 
-You need to state:
+Sorry this may not have any bad effect,
+so I don't plan to change it in V2.
+If anyone else thinks it should be modified,
+I will modify it.
 
-1. What are you trying to do
-2. What is the expected outcome and why
-3. What actually happens and why
-4. The fix, in your opinion, should be X or Y
+Thanks a lot
+Jijie Shao
 
-Not quote some ras tools commands. Show me that you actually know what you're
-doing and explain the problem in human understandable way.  And then we can
-talk fixes.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>> Thanks
+>> Jijie Shao
+>>
+>>>> +
+>>>>       if (likely(!FIELD_GET(HBG_RX_DESC_W4_L3_ERR_CODE_M, desc->word4) &&
+>>>>                  !FIELD_GET(HBG_RX_DESC_W4_L4_ERR_CODE_M, desc->word4)))
+>>>>               return true;
+>
 
