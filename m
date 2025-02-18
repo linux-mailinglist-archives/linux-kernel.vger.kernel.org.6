@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-519623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBD9A39FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA442A39FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65C01889B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1393AB6D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04CD26D5C3;
-	Tue, 18 Feb 2025 14:27:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EF726A1A8;
+	Tue, 18 Feb 2025 14:28:43 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D649726A1A6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49266269B11;
+	Tue, 18 Feb 2025 14:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888866; cv=none; b=OZxXxQmEPFA+8qoi9E7b+h9y4rhuduyuNPa42H8T1sONrrW5M/gHINO7uDVx2vMijNeSq1MJhtr5ZCH08Lis1AcG7m3Dct0V0KyEQYb7Z8P7EP+8Ex7KA12v6SsUE1Blz4Q7lI1YSaW3Su6XJWGvcwHPbEp1yjseTpryEigDCpc=
+	t=1739888923; cv=none; b=KPYqoMqqNQ2/j2MLTYDqLAh9nZGZbfBgDZxR0bZqFXt+6iSegHKDCPsweS0am6ZWhA1RAv3JCNtHeNLwzgrsVEC9/7LPC/Q1ykz0HUTMnyTevZbyeQ9BbgulagHw+E2mpxnGUwgiIuBwBN30ziPs/+T2vvLSRqtlpe15HhtXJ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888866; c=relaxed/simple;
-	bh=S4XgtmNUByEmZZeVuy1IrEWQ986N2dY34e1tfciwELM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQTZbzN88zB2GIFGklQy1jZqpVqwOiS78BFYyHDQXPkfDH4mrFiibaUgaKdrgzwUNsT8KS/YyB8u8OEondQvxS8q8nr6gDu3wPH7c3B3N2hhIN9C/6JPY5+VR17uak1eL7PfFlrZQ9dhzRzO8H2oan4FPKIVGQFGb7dbTAI6PME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkOZZ-0004om-Gj; Tue, 18 Feb 2025 15:27:41 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tkOZZ-001bjn-0N;
-	Tue, 18 Feb 2025 15:27:41 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C0AF33C5DE5;
-	Tue, 18 Feb 2025 14:27:40 +0000 (UTC)
-Date: Tue, 18 Feb 2025 15:27:40 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Matt Jan <zoo868e@gmail.com>, 
-	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com, linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
-Subject: Re: [PATCH] can: ucan: Correct the size parameter
-Message-ID: <20250218-daring-melodic-meerkat-3f5953-mkl@pengutronix.de>
-References: <67b323a4.050a0220.173698.002b.GAE@google.com>
- <20250217190404.354574-1-zoo868e@gmail.com>
- <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
- <20250218-accurate-viridian-manatee-6f2878-mkl@pengutronix.de>
- <b174cc40-d08b-42a5-89fc-9fdac2b15ea9@wanadoo.fr>
+	s=arc-20240116; t=1739888923; c=relaxed/simple;
+	bh=Z9rlFMQcTaXGXJtgSgn0wszw+r58kBJN6c8X9V6cb/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GrkwdimDsSdQT95q1uF0r75uxBPQvmW0nOfjRL4WeXcB9E/P31Y+g6Al0sXxJJNz+5N6JGt5FAs2LPDQMD78HfJd3Nur18w3+YinYM4b5pJLXkZKrnkwszEe+Mmip5WAcXgJmsnCZIbpg/9cdO6PXg5HaI0qz7C7TEgzScOoQ0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4be55c93be1so439814137.0;
+        Tue, 18 Feb 2025 06:28:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739888919; x=1740493719;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WM9l/UfrQw+Mtu9b3G/axW371PcduIizjNc8jc9K35M=;
+        b=OCBIvK2IURWajHd8Dhw1mqChZHK9Aj3dfz4BH+OnEbDl4a7e4er2fnfB+rmZt0imwv
+         dxwt3GX8dT7GJwW1VBEhc1yA30FI1l1vzXk8+sldiz6RzFZK7JbkU6cZ9kB0hE4waScw
+         rP+pWq3rn9C+A8NzxiqDThOlvpcvqcsMmARNa/Y9urUvnQWk6AHViuQ9Hz21gjfdBsg6
+         +Ghw8Kyw+4Lp8Coy6K+kkCxvMvz04X6D4+ztBS+crDvewLmsfqHTO4IyflpRZkAUQvC6
+         +x6Nsnz8+scFWxlsmVQTZ/E7tYT4scJy9N4X33EyvhWtNO+NTQ8uVf9Vth40zdL7Nifd
+         Q3lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcyHwZjY8vXgSnCQXAKPgC0n/GG9T0UDNo2FvX0ObERVW9gTmmJFCPzufkn9aDg54Mjdo92KwEewc=@vger.kernel.org, AJvYcCViWD/YlT0z97eezlKoyUIhmb18SRXOoxq8Xy0QdrCvuZ2NKAMoAjsaChE+N8sfqz8J3PxGM6SnooNKb/K7NhVd7Qc=@vger.kernel.org, AJvYcCXjqIlwy1Lxqd/LiAHNCPlrkBj/0ph8b0LT7rnnZUHoOC19/6Z8cxqF4KpyN9g72+fUhtJYfl4ZkKRwVlKb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWOHoBbXwk/UQp+AWKaYrvbHd+UIFFNdIG0ljMNZXjIrWXgxy5
+	C9aRs5iuDAY4BXSAIf3V0Qtlh+fL8AGY8nBAJR2IoSp33zsyX4Cwmv6qtTf7
+X-Gm-Gg: ASbGncvAIDYVIZ1L+tcUiSQ/Fc3Kliw3T7JTV7FgtX7rBEblB4bSONUlkwCxPwilRoM
+	XJy3Yia3ZNcMSpIiLy3CtGzl7kNpz1oFBQuvSyde+lT8li6yiiCq51P95dwZEqSrIEAorMmLy11
+	cPJ9LXJrloYAFE8nYwG5HbUEQYa4doA31vrKQkCR+k7LlvOnEbi7u6W82vcL+cuAPNg+63T8Mba
+	RJOJ26Jny8RTBwFHgoIGU8njXiasAtI7yLHopNi5CJIsnvwKO1puyHXuSfOZ+IC8BDQ6M9VCcat
+	S2Uz5x4EhV1KODd0WgfJE+7cZNeaRSR1sUtFh7lzpVvKHC2q47qK6oLRyA==
+X-Google-Smtp-Source: AGHT+IFom9kAQjltWdnqKeMQcEIOS8FlqBQ02cRRDUXOCckSGuhBu8QQ5tyByph0ietrOGyb0X485g==
+X-Received: by 2002:a05:6102:4b0d:b0:4ba:eb24:fb02 with SMTP id ada2fe7eead31-4bd3fc818c2mr8746030137.3.1739888919229;
+        Tue, 18 Feb 2025 06:28:39 -0800 (PST)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86cbfa7sm2457763241.31.2025.02.18.06.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 06:28:38 -0800 (PST)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5209ca3e9a6so995232e0c.2;
+        Tue, 18 Feb 2025 06:28:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWfugqgNPFcZeWn7UyJ69DachFm2Pdr8VHRF4zkj2EwUmyuln0SlYf6bQDtK7/sOwsnc9Dh4SnRj5uFu6O/fd0GTyQ=@vger.kernel.org, AJvYcCXLrsiIwxZnUWw+WLqizsCEvrRFx1/XVeiym2Y9Pa14MIraylxOF5z75iO3RulfmqUD+1ikfNIlj6Y=@vger.kernel.org, AJvYcCXi+cqKhWYacfepBRdbs5erSBjDj3DWJOe1sksx1K5rmjh2k9djsTwuQGagm/6Dg+HyMLzmFPa/wezFglaM@vger.kernel.org
+X-Received: by 2002:a05:6122:488a:b0:519:fcf2:ef51 with SMTP id
+ 71dfb90a1353d-5209dbc02a2mr7024460e0c.5.1739888918607; Tue, 18 Feb 2025
+ 06:28:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xt57c3apzbfb5oxv"
-Content-Disposition: inline
-In-Reply-To: <b174cc40-d08b-42a5-89fc-9fdac2b15ea9@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com> <20250217105354.551788-6-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250217105354.551788-6-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 15:28:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXAfrLOFFbt63tJvU_g08zCR_QBQQMzUz-Ceg=G5FQnOA@mail.gmail.com>
+X-Gm-Features: AWEUYZmBgG79ffvBXB4gPQQg9HaeWPl4SFfOE4EOdmrMgWSoOWsSQYwJL7kGJYE
+Message-ID: <CAMuHMdXAfrLOFFbt63tJvU_g08zCR_QBQQMzUz-Ceg=G5FQnOA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/13] clk: renesas: Pass sub struct of cpg_mssr_priv
+ to cpg_clk_register
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Thierry,
 
---xt57c3apzbfb5oxv
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: ucan: Correct the size parameter
-MIME-Version: 1.0
+On Mon, 17 Feb 2025 at 11:54, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> In a coming evolution, the registration callback will need more parameters
+> from cpg_mssr_priv (like another base address with clock controllers
+> with double register block).
+> Instead of adding more parameters, mode the needed parameters to a public
+> sub-struct.
 
-On 18.02.2025 23:26:01, Vincent Mailhol wrote:
-> >> @@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *int=
-f,
-> >>
-> >>         /* initialisation complete, log device info */
-> >>         netdev_info(up->netdev, "registered device\n");
-> >> -       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
-> >> +       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
-> >> +                        sizeof(up->ctl_msg_buffer->fw_info));
-> >> +       netdev_info(up->netdev, "firmware string: %s\n",
-> >> +                   up->ctl_msg_buffer->fw_info);
-> >=20
-> > We could also use the:
-> >=20
-> >     printf("%.*s", sizeof(up->ctl_msg_buffer->fw_info), up->ctl_msg_buf=
-fer->fw_info);
-> >=20
-> > format string trick to only print a limited number of chars of the given
-> > string.
->=20
-> Indeed. But after the renaming of ucan_device_request_in() into
-> ucan_get_fw_info(), it makes slightly more sense to me to have this new
-> function to handle the string NUL termination logic rather than to
-> deffer it to the format string.
+No SoB?
 
-ACK, makes sense!
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c  |  7 +-
+>  drivers/clk/renesas/r8a77970-cpg-mssr.c | 11 +--
+>  drivers/clk/renesas/rcar-gen3-cpg.c     |  8 +-
+>  drivers/clk/renesas/rcar-gen3-cpg.h     |  6 +-
+>  drivers/clk/renesas/rcar-gen4-cpg.c     |  9 ++-
+>  drivers/clk/renesas/rcar-gen4-cpg.h     |  3 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c  | 99 +++++++++++++------------
+>  drivers/clk/renesas/renesas-cpg-mssr.h  | 21 +++++-
+>  8 files changed, 93 insertions(+), 71 deletions(-)
 
-> But thanks for the suggestion.
->=20
-> > But I'm also fine with your solution. Either way, please send a
-> > proper patch :)
->=20
-> Will do so right now!
+As you forgot to update drivers/clk/renesas/rcar-gen2-cpg.[ch], this
+breaks the build for R-Car Gen2 and RZ/G1 (e.g. shmobile_defconfig),
 
-Thanks,
-Marc
+Gr{oetje,eeting}s,
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+                        Geert
 
---xt57c3apzbfb5oxv
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0mNkACgkQDHRl3/mQ
-kZy11wf8C+c4LQWcDA8hNVoF5iYJwt+Gu5qvPzenFbzEq3vVSdX6nbcuzlomLEPG
-PDQWMiIwDEqkEG/sOKtBq+SDLLo+4YXxHh0azxTMuVN12aqtANkzUsRRGStOw7U5
-SsnfG5ffS+yQMhYaAaO0cuKCB3VidreGkkGvWgf8kjDgWuTInp0DRLEBTAXvXn1v
-imSQBcRKb2BoWvxg6VD4D0wJQJQskagVU76sDXvh237hy41h1jX6bfJrbBelGMXp
-xlxQ9J8YwfTrnduOswGVdZ60sXVaqBY13ewoqLF3U3y5J4zXfp9MhGTt7U1BW7iK
-5Nv1AjihdgIyV++QfF53Z4mI6YaCBA==
-=JsfW
------END PGP SIGNATURE-----
-
---xt57c3apzbfb5oxv--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
