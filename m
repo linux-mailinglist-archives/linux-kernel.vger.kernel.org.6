@@ -1,94 +1,122 @@
-Return-Path: <linux-kernel+bounces-520117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C6FA3A5E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:42:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567B5A3A5F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5613ACC3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E8E18979DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D411F5838;
-	Tue, 18 Feb 2025 18:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B9D1EB5C9;
+	Tue, 18 Feb 2025 18:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWq6yUTM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="rCnh3LIV"
+Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38E817A30E;
-	Tue, 18 Feb 2025 18:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DCE17A2EC;
+	Tue, 18 Feb 2025 18:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904079; cv=none; b=T028KXO1ujygEmCa/A6T88EjUQ6/STdgaFQMbuzPYO8fk3KBhDrnk9/7kAS1APkXxbSDYSf7r2IiCofzLZzZUclKJHF3r4wrJ9YjJZ+gVzxmJG2joRGevxGjFq/2Eduu5tX9AAtkc348CBuBTcfHYD6TvVzRMpGh2LPNHf2sJj8=
+	t=1739904118; cv=none; b=LilN+IFken5tw6RWGxw8ouBzWdw7lCgUALIOQm6eo1xsF0hRSGT1RAmnaApPVoqwiZGy1YUvUlO8Z/qkTchC/2nitoqAt7fkpGry4SD4fwyqzNhCR5a3SUeesOr0mkBD7i2rLGI3RIWNGEwEZpoIDDr/JxS5+iA+Qp2ojcP5Kvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904079; c=relaxed/simple;
-	bh=0n/N4OIMFC/2nMujN0L1S/sXtFEZdrSCzgbpESuMTxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHWW0NORIq3UoL9A1z7hhjp2QffsTYXqt3xbi7EeYXH8mRiAtBF3CVnVxvgDYg6cRvl6nCHDiWvoE63th/iAM7YchOFUeJr+UJxyG6QkSMaJ5+jaqH4DQfKUHRPlmJ01FSSzP1r5a54hPqJupruAe+0D+COc/Nci7zZYn37ioHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWq6yUTM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61EA7C4CEE2;
-	Tue, 18 Feb 2025 18:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739904074;
-	bh=0n/N4OIMFC/2nMujN0L1S/sXtFEZdrSCzgbpESuMTxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TWq6yUTMhM30VHPmrJgTSC+OuoF3COyvfzi3NZaH0PjfGH4CO1353g0qz2RXkumYn
-	 zJUH48qbksTNskXdIwln6rdqhzYP0E61y+DFL1ZkGC4RFSyUJIe5tmU/WaVCYjFDGc
-	 ffbRFU+nnswr1mLyqSK0Ga2/tHzdZKt9W8YGr3/4LHLwGFpyGvYiHYIKKRi0LBnNE4
-	 gzWNfPs6gWkmugHdbk152KLobi6gOUEAxC/J/uzcfB6RZIk2cDLCqAMB7MiAIhjAUd
-	 raFDDNhQjpCEaF3/EFeYJVEISMtX49jkmIAzStOXksyRdCzQBLkfn9z+GsibXmMWls
-	 6hoV0j0X82g+A==
-Date: Tue, 18 Feb 2025 11:41:10 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: remove KBUILD_ENABLE_EXTRA_GCC_CHECKS support
-Message-ID: <20250218184110.GA1316487@ax162>
-References: <20250217113706.1012816-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1739904118; c=relaxed/simple;
+	bh=FwQLvt0b0jjAMvDANZYeEGm1bNKJ+VufBs8kb0nglPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A+fv/rTvlWe/f19MnfFi2yHrmFJxIKnVTdkTkD3JXqFrfvpb0+g0q8sHH50DMzhR1Rf74pHsLxdOlZp1kSdzD4lu0d5F46tdFrIJjlVSQDnCug/EkR1VMQU+uqA0plmKEEp9NNLEE+MbMaSo0D4G6AUA9Ts80o4trMrkg1wBf7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=rCnh3LIV; arc=none smtp.client-ip=148.163.142.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0144092.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IHVLRK039602;
+	Tue, 18 Feb 2025 18:41:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=SZryNcz4hB8/2CgV3E5LWmJHzoiXcaur0GcsHqT1S9s=; b=rCnh3LIVz07a
+	HLO5hcfbrI4Dl801Iz3A5H1cocSoSTDB1rLTV9oj28aZ1bqvNLZ5lV68hIG3HTI5
+	PLzUi06QKh7GgcqfeGa2kcpS8tCiyl20ZuYjrmUzOB8rsbtk6WZ5oMuwcQfVqXAE
+	Gz84O/8XRU35XdoLdsKMwo+9GtEz+85PLoqKdeyCqlJkU0fhOR2L0cf+mGe8mUuQ
+	y0/4NRL8srSQHTfqZr2FOeh/b9qSUpDQQAPxb9EFNnpGs7j0WiAIJIGfrg1R9K86
+	/kR5iabhAiU4BRDgiOBzVQI291uTI8TKdndFkjz7FjFphCdCWHf8SIMPbfNTz6Bo
+	w38Ha0FXHg==
+Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 44vxp9h43h-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 18:41:13 +0000 (GMT)
+Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Tue, 18 Feb 2025 12:41:12 -0600
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Tue, 18 Feb 2025 12:41:12
+ -0600
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <adrian.hunter@intel.com>
+CC: <andy-ld.lu@mediatek.com>, <avri.altman@wdc.com>, <cw9316.lee@samsung.com>,
+        <dsimic@manjaro.org>, <erick.shepherd@ni.com>, <keita.aihara@sony.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <quic_jjohnson@quicinc.com>, <ricardo@marliere.net>,
+        <ulf.hansson@linaro.org>, <victor.shih@genesyslogic.com.tw>,
+        <wsa+renesas@sang-engineering.com>
+Subject: Re: [RFC PATCH V2 1/2] mmc: Update sdhci tune function to return errors
+Date: Tue, 18 Feb 2025 12:41:12 -0600
+Message-ID: <20250218184112.574772-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <8002f01b-97cd-4c30-b00c-c73d0cbccdc3@intel.com>
+References: <8002f01b-97cd-4c30-b00c-c73d0cbccdc3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250217113706.1012816-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-GUID: gQIfY5-fF7ovBVqH2DeT_Z-tWmElfCWK
+X-Proofpoint-ORIG-GUID: gQIfY5-fF7ovBVqH2DeT_Z-tWmElfCWK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_09,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=762 priorityscore=1501 phishscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180130
 
-On Mon, Feb 17, 2025 at 08:36:48PM +0900, Masahiro Yamada wrote:
-> Commit e27128db6283 ("kbuild: rename KBUILD_ENABLE_EXTRA_GCC_CHECKS to
-> KBUILD_EXTRA_WARN") renamed KBUILD_ENABLE_EXTRA_GCC_CHECKS in 2019.
-> The migration in downstream code should be complete.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-
-Seems reasonable.
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-> ---
-> 
->  Makefile | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 96407c1d6be1..3c1b012a156f 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -151,9 +151,6 @@ endif
->  
->  export KBUILD_EXTMOD
->  
-> -# backward compatibility
-> -KBUILD_EXTRA_WARN ?= $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)
-> -
->  ifeq ("$(origin W)", "command line")
->    KBUILD_EXTRA_WARN := $(W)
->  endif
-> -- 
-> 2.43.0
-> 
+I see, in my case intel_execute_tuning() in sdhci-pci-core.c is what=0D
+is calling into sdhci_execute_tuning() so I should check the value of=0D
+tuning_err there and possibly return it? The issue I'm trying to solve=0D
+is only for DDR50 cards that do not support tuning so I could=0D
+conditionally return tuning_err if the timing mode is DDR50. Maybe=0D
+something like this?=0D
+=0D
+---=0D
+ drivers/mmc/host/sdhci-pci-core.c | 3 +++=0D
+ 1 file changed, 3 insertions(+)=0D
+=0D
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci=
+-core.c=0D
+index 1f0bd723f011..9aedb476bd5d 100644=0D
+--- a/drivers/mmc/host/sdhci-pci-core.c=0D
++++ b/drivers/mmc/host/sdhci-pci-core.c=0D
+@@ -725,6 +725,9 @@ static int intel_execute_tuning(struct mmc_host *mmc, u=
+32 opcode)=0D
+ 	if (err)=0D
+ 		return err;=0D
+ =0D
++	if (host->tuning_err && mmc->ios.timing =3D=3D MMC_TIMING_UHS_DDR50)=0D
++		return host->tuning_err;=0D
++=0D
+ 	/*=0D
+ 	 * Tuning can leave the IP in an active state (Buffer Read Enable bit=0D
+ 	 * set) which prevents the entry to low power states (i.e. S0i3). Data=0D
+-- =0D
+=0D
+Regards=0D
+Erick=
 
