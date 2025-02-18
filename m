@@ -1,76 +1,61 @@
-Return-Path: <linux-kernel+bounces-519702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7CCA3A0D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:12:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DFDA3A0D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7915E1656E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B94718876DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D445226B2BF;
-	Tue, 18 Feb 2025 15:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wl2JcCyL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B9226B2BF;
+	Tue, 18 Feb 2025 15:12:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3084F26B2A2;
-	Tue, 18 Feb 2025 15:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441E6269890
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739891496; cv=none; b=cR0/Rh2ZC6cFV0oaNc9o12yX0EbeLEWPYTa5VmEapWmk2UgkrmWk+1JO2bVYTrnRLaIkrjO1T6Ui1x8GMyOBmvOMhoXiuyGC5KmYMZpEYA7PLWMArLot70BxCm9zvo3i5Vc10lOhygefpW5QWAp7HeGvdGgdBG0txv8eMV3Vjaw=
+	t=1739891570; cv=none; b=hl+D/MSVJZss9xy85mFO3V0Q/b640ibjEcWz84EQo2wHI3/aAZav2R/+ArVL897qH4pmmef92LoLyCnitFt9CyIYo909T50jkl1SPx5X0GvYxVk/vPncswPUauiM5AWmmqMYisyNy5H99JfR7fBFwzq1yiaA+S/ySrem65ngefM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739891496; c=relaxed/simple;
-	bh=turHXDwkpIiNyMXD+1g9N3ggiuvF4xsG88lQ77iVpMU=;
+	s=arc-20240116; t=1739891570; c=relaxed/simple;
+	bh=L7aaLIfRvxb7Oq9/EHqXH2z3bzm6VnUkkgDNwqb/6Xg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DV3x6OjFUh+u8jmkyrwC1xwKnUDIP7SOJkTNKj4DWigSnej/f5V4bSP9NPNA9aGGC/tDEtZ85FoKvP8GzL/HzoJkaOsUwQg/oQ7nuM9upkFMnVok/s8vn0qYqN/QbveyQiohqypGWKUXh9oR1EXKANdCF1U3772zzpkIBwOYJzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wl2JcCyL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CEDC4CEE2;
-	Tue, 18 Feb 2025 15:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739891495;
-	bh=turHXDwkpIiNyMXD+1g9N3ggiuvF4xsG88lQ77iVpMU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wl2JcCyL4swZSuUygn4Mzpv3os6pEXc/Xbr1/vWWY5IyafBrMKvXEASGwevuLat4r
-	 Z6TJyTiWlybPvKSApyQY9lBPY9/PMPF9wxMumJFAhV+L3BvLCyNy+7uDZ91uERbH2+
-	 9rU5SleansbmIovtyxv3DYQj4t74iG/G1XfQQywCn0Sj4kVvFx/iHr/09gSsFtga71
-	 d/+NprrZcDkP6QRJ6Vfw0rb1P2Got9udCzoce4ibw4IruU7Z+t8Er6ducD2tr3yyTJ
-	 maSn1PLFu8A9VQAjQHMClVKAPjd9o6hLxsM2FxxhRWVPM0tkor8ewOVplAM5rhXALI
-	 PboQctBfpWfdw==
-Date: Tue, 18 Feb 2025 15:11:31 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"open list:AMD NODE DRIVER" <linux-kernel@vger.kernel.org>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	"moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>
-Subject: Re: [PATCH 0/7] Adjust all AMD audio drivers to use AMD_NODE
-Message-ID: <Z7SjI-NIZbMEgz2y@finisterre.sirena.org.uk>
-References: <20250217231747.1656228-1-superm1@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDbKLv4QXuN/0ZyXsWZiM4r0Un6sa6Gyg2WGKSQt0O1owHuR8HurywHwBjJG54dC2r/llGKh+7wx50pJGSl7BcfzuXSXRXJIaJZGGlcGIFjNnJYqEJjd2lWA2AdHbdAj72osDktbmrC9P3ROiLypdFLFmwrRLpQLZs4YJby2lnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkPHB-0005I0-P4; Tue, 18 Feb 2025 16:12:45 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkPH9-001cAv-2Z;
+	Tue, 18 Feb 2025 16:12:43 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6A6663C5E73;
+	Tue, 18 Feb 2025 15:12:43 +0000 (UTC)
+Date: Tue, 18 Feb 2025 16:12:43 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Matt Jan <zoo868e@gmail.com>, Xu Panda <xu.panda@zte.com.cn>, 
+	Yang Yang <yang.yang29@zte.com>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] can: ucan: fix out of bound read in strscpy() source
+Message-ID: <20250218-pompous-diamond-bumblebee-dd4293-mkl@pengutronix.de>
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
+ <20250218143515.627682-2-mailhol.vincent@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,50 +63,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="170e2EepvI2niirm"
+	protocol="application/pgp-signature"; boundary="5qd3mzqgavgshvsc"
 Content-Disposition: inline
-In-Reply-To: <20250217231747.1656228-1-superm1@kernel.org>
-X-Cookie: Editing is a rewording activity.
+In-Reply-To: <20250218143515.627682-2-mailhol.vincent@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
---170e2EepvI2niirm
-Content-Type: text/plain; charset=us-ascii
+--5qd3mzqgavgshvsc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: ucan: fix out of bound read in strscpy() source
+MIME-Version: 1.0
 
-On Mon, Feb 17, 2025 at 05:17:40PM -0600, Mario Limonciello wrote:
+On 18.02.2025 23:32:28, Vincent Mailhol wrote:
+> Commit 7fdaf8966aae ("can: ucan: use strscpy() to instead of strncpy()")
+> unintentionally introduced a one byte out of bound read on strscpy()'s
+> source argument (which is kind of ironic knowing that strscpy() is meant
+> to be a more secure alternative :)).
+>=20
+> Let's consider below buffers:
+>=20
+>   dest[len + 1]; /* will be NUL terminated */
+>   src[len]; /* may not be NUL terminated */
+>=20
+> When doing:
+>=20
+>   strncpy(dest, src, len);
+>   dest[len] =3D '\0';
+>=20
+> strncpy() will read up to len bytes from src.
+>=20
+> On the other hand:
+>=20
+>   strscpy(dest, src, len + 1);
+>=20
+> will read up to len + 1 bytes from src, that is to say, an out of bound
+> read of one byte will occur on src if it is not NUL terminated. Note
+> that the src[len] byte is never copied, but strscpy() still needs to
+> read it to check whether a truncation occurred or not.
+>=20
+> This exact pattern happened in ucan.
+>=20
+> The root cause is that the source is not NUL terminated. Instead of
+> doing a copy in a local buffer, directly NUL terminate it as soon as
+> usb_control_msg() returns. With this, the local firmware_str[] variable
+> can be removed.
+>=20
+> On top of this do a couple refactors:
+>=20
+>   - ucan_ctl_payload->raw is only used for the firmware string, so
+>     rename it to ucan_ctl_payload->fw_str and change its type from u8 to
+>     char.
+>=20
+>   - ucan_device_request_in() is only used to retrieve the firmware
+>     string, so rename it to ucan_get_fw_str() and refactor it to make it
+>     directly handle all the string termination logic.
+>=20
+> Reported-by: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-can/67b323a4.050a0220.173698.002b.G=
+AE@google.com/
+> Fixes: 7fdaf8966aae ("can: ucan: use strscpy() to instead of strncpy()")
+> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-> The various AMD audio drivers have self contained implementations
-> for SMN router communication that require hardcoding the bridge ID.
+Wow! Thanks for the detailed analysis and description of the problem!
 
-> These implementations also don't prevent race conditions with other
-> drivers performing SMN communication.
+Applied to linux-can.
 
-> A new centralized driver AMD_NODE is introduced and all drivers in
-> the kernel should use this instead. Adjust all AMD audio drivers to
-> use it.
-> Mario Limonciello (7):
->   x86/amd_node: Add a helper for use with `read_poll_timeout`
+regards,
+Marc
 
-What's the thinking for merging this - the SMN driver is in arch/x86 but
-the bulk of the changes are in ASoC?  My first thought is that it's
-mostly ASoC stuff, are the x86 people OK with me picking up the arch
-patch (I'd put it on a branch anyway so if needed we can do a merge
-later)?
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
---170e2EepvI2niirm
+--5qd3mzqgavgshvsc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0oyMACgkQJNaLcl1U
-h9C4Lwf+JXdKsotpmFA5I71pyqyK9Ort4MqCE+7/frPtYibf+Aiy/gWhSctb2pUD
-wmjX0NU8EZMHV34AAErrfrGTDuV+h9TadhSkcD4RdhCQEf616Y1D7aM79/YI91zt
-fxayA3z7vIZgpwZsNOyNGtUZHCiPVKb43G7ZYoSSPL2QNJc3GxL5ijXQHrttQPcl
-tpmH8wYyvOFUylR9w+HL8ldh1LbBIEveuA8CJQgGfGYdAdG1Zv0bPMc/3/QDA5WQ
-pfxA+95+rzN43+B+ug3HWJfV8SE38NHPDE45b9sHLqIHuSwSa3wYQ/376zM+5Iwt
-K/3TKWL47Rq4sgxsTJiGUDeL7UNeqA==
-=wt+f
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0o2cACgkQDHRl3/mQ
+kZytMggAlOpCdCseY1s9c4i4Xvy44ljOu0rFWqlN7GHt0rnLQnvEBOoeYSx7SaLh
+n/Reu84ambrq7ww9qo2lkpFb6ctB+SoWAu7vtNYGNXsTSQO3tagh2JC4tZqnDgdI
+jfIezRGY1M+IsPlOmHCTQog/JlYzaDf7PZI7oZm8IexTc2IAEev3oxNorQG82GDW
+M1pH3kjh4tUOIFXXAPR5J8+aQ2hFKJRYscp9aHLEXpH6keHYd6by0mm4mVwY6M8n
+vvowbnrhbFy0sAvirKUQE6CPkaU6P0s+wcSWkIw8gsGiBA+TIOFikEUNvaKukISh
+oXstTykBt/YdOa0xDB3ta4SOI11l+g==
+=ze/O
 -----END PGP SIGNATURE-----
 
---170e2EepvI2niirm--
+--5qd3mzqgavgshvsc--
 
