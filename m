@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-519987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE28EA3A46A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:34:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AE8A3A46B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F96E7A4645
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1883D189287B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0310026FA6D;
-	Tue, 18 Feb 2025 17:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBF226F45C;
+	Tue, 18 Feb 2025 17:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sn83F6p0"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2lvbGNuO"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A762023497D;
-	Tue, 18 Feb 2025 17:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2274E23497D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739900059; cv=none; b=PvUIathmnUiq5yfGsOj8GBn+JXK6fzmibdD84DGB5LY/q1wtvOjISCp5oGeXkZ9gijNTrCNEyrjbpBvNvX62k7ye1l/KbRarRoKDRXlWNWFZYCeFwIGdIpt97oZbM27sI4IGoYrKwvus+k6BV+WxskCwk7zn3FgaXkwd/JXLYFI=
+	t=1739900089; cv=none; b=uxsyDUgT28dpsF8LFF+OuP1StPq15MG8ONQmONEMdQrL+6mfVkBAc6h8WOkEAX+KxgBAQ5215+R18AQybk46uuuwENRJsN4o4wvDDdxXcTnUJq9CI+vWTRotb8yAetvGkaQqrlFJba4m4R41v+Z1D9v1ULjBzO0GVAffIbYptj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739900059; c=relaxed/simple;
-	bh=pxveCCd+0WuDtzslFIWMUmLkuSfXogvGgq1ZCpgIRTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JExUzikuWhPKAD1nwOFtkDbf/e4ci2ZUrKJpNvWM4HvNtj9Di+2PL322Rc0Xx5n7IoDaGUWVmKbyYx8pVV02ZFlgji9Kg5Da4Od1qtq5XDjLcx9AjAN6ZHXBMpD89292ywIfRzeM6PnPX6fqHXIuy5zpx5yB1tkA/c7mpTXzjTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Sn83F6p0; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IHXhih1719889
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 11:33:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739900024;
-	bh=APPaTWCDnxYJLE0VYqIvhKqd5gtGQPP8bAgHzOeugXU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Sn83F6p0MCJsKg8Rbdis+Xu6V3a/WcTnbV2rN9T80EUPq7dnjRlL2q4HX127vvNgy
-	 VLZ84Y2+553DGxXdJ7UJAw+7sYlUf9u5iPlcB3d1VcMUWo+QSk9LlqeVbsZBNGtTZj
-	 5+bHPVgkpSdgU7QR1O5LadJkkzRVsGJmEm02MyyM=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IHXhrs004385
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 11:33:43 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 11:33:43 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 11:33:43 -0600
-Received: from [128.247.29.251] (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IHXhM5037290;
-	Tue, 18 Feb 2025 11:33:43 -0600
-Message-ID: <a7a2709b-f7ad-469e-86f3-6db4b4b3b37a@ti.com>
-Date: Tue, 18 Feb 2025 11:33:43 -0600
+	s=arc-20240116; t=1739900089; c=relaxed/simple;
+	bh=RYe4Ml2prJU23zBpyMoGM4BQ+siusE+C9t1PTcfWDEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kuGK7MbM/U4xolNKJgdE7G4z3AaxiwDAVTKnf+/0MvivGyO3wFcN5BNXGL/vKDxsmCzV4wxyHmXBAeRfKRTVTQ7NFeynwOg4r3FAuSKUp5MrvU+dfgOTbzqEqSqq1avyEboV+EORgEqZQeN8sXgz0r72yA6iGBqq2j0PTFaTv1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2lvbGNuO; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30a2dfcfd83so24169311fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:34:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1739900086; x=1740504886; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LfW36CEJBX+QFUXB41GrziKudJM9/Txa2CU7hlT1tzk=;
+        b=2lvbGNuOFodjmHaJXtaJpOXw0VQxonJzQwPRTd3pPbt/p6pJihiQgMmC8eiFgd6mYg
+         q76jYJP8qx2Oodg00H85sVtY8kbNSLhVo55fa+krX0NAqxpCnxH8OXTKUzNwJr9UruHC
+         UPBsrMD042m/i7Tvn3HpYCgb+euCJbUiIe8ez9kzBDzK4ix+jtCdDMhpjm8zvIE0xg6n
+         nRbTh3ep5Gp8BMlcuuZpepcP/GHXWNUVBZNXc7bxH5ImBXo2pnjQYjTejbh7QDMgZprL
+         X3D5pglEZBbspqTKfI9c8LpM4MoOfzb4XM5J71g7IXtsn+YfZ2vq3QaTsFRSzJ7d75Kk
+         ccfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739900086; x=1740504886;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LfW36CEJBX+QFUXB41GrziKudJM9/Txa2CU7hlT1tzk=;
+        b=YwYQ5S7fin67xBBkjDGcTjzXnPCCbFEV1viITtAKvBSG/Fcgs8UMYLGCJuW6Nbo53c
+         ANNN9/eD+e5XJ/BsVJQX+X74iJqO40jD8BkN/MqAzubE/Ppb2kuS+YVcmeMYef6TuRcI
+         GkMZmN6uuCZNvawVRUFe34l46wQ6sNKYYAixrWQIvKRuZTszSvsc2JvIbPQZvhTBK6p0
+         uEyhz0x0Q8MS7zu2+ezKtlKrzUFQiXYzWzqDxldHFOZOkEMD+lTbcfl1CkVrQjnupu88
+         a6um6HOuRC2Dee/2cSMXlbEFYrPoBYw43v2vWrDjlEW5OKESgzKoT5L8aIZ0ikeIPHJH
+         otpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFKga8zVatnfSzsDyAbJ9Nkd2o5UVaFhRFlzoBcpGFbnsvlvMGCMn62Zj4Rx5BDNjQ+Ne6DymitC+5+yE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUYruON5Va3xYmTZW0HKpe60Y/q3h83t+4wXcc+9nXnd/bKq8N
+	EPSYVkExxCXsVmWSdP+LCfiO4Fr7h8sRkgS+KxG3v/RLZlF+wC0/3sI4CcyhmIs93yR/WnHsPdd
+	FI6EUR0FY15TooAw8zTEwuAb3T4cbvAOAn2CT
+X-Gm-Gg: ASbGnctXWgafBo2UiRjlHo5XF0ZXakOI1wGrIGocWLaavuPhGbD/HQUXYnKzcr6k6qZ
+	9M6vtCdOBgFfjE1cc2H32YGSgXepUUqGlCllzv+TvKlN283+03JmRhMo/J2L5ss6HlRxSG6pLLi
+	X8WVrhVWc4G31xlTRu3FSh8UCtfQ==
+X-Google-Smtp-Source: AGHT+IF/Ti4E9RTJirBYzGKLERsmarFkfxpZZdYvTjtsjFuPaskxSPlcp67YvCteLQu+1JYfXCRN34XezRV9/1X8bAU=
+X-Received: by 2002:a2e:9bc2:0:b0:2ff:a928:a23e with SMTP id
+ 38308e7fff4ca-30927ad673fmr45379881fa.25.1739900085961; Tue, 18 Feb 2025
+ 09:34:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Add TI TPS65215 PMIC GPIO Support
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <m-leonard@ti.com>, <praneeth@ti.com>,
-        <christophe.jaillet@wanadoo.fr>
-References: <20250113225530.124213-1-s-ramamoorthy@ti.com>
- <CAMRc=Meqjy+cqfueM_dQE8uP32zS0ib41qE+OPPWFkhoVTGc2w@mail.gmail.com>
- <065cdaca-cc37-4b1e-9c1e-e2dedbb2ffd5@ti.com>
- <CAMRc=MfR2q8TTcEHtbX9HxyFikHP_nS+Mva3dTwmgu4tvkxJ1w@mail.gmail.com>
-Content-Language: en-US
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Organization: PMIC
-In-Reply-To: <CAMRc=MfR2q8TTcEHtbX9HxyFikHP_nS+Mva3dTwmgu4tvkxJ1w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <cover.1739894594.git.dvyukov@google.com> <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
+ <Z7S8SAGt8blFiFTg@gourry-fedora-PF4VCD3F>
+In-Reply-To: <Z7S8SAGt8blFiFTg@gourry-fedora-PF4VCD3F>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 18 Feb 2025 18:34:34 +0100
+X-Gm-Features: AWEUYZkxxwwRb99IcB9I3shnwd3XLgfxKSaJZ8SmyYG7ZqeRgGZAEmghbRplZoE
+Message-ID: <CACT4Y+Z3ismwdeqa7iMo0JVD-u-nvSmN2eS5qJ5tUqXT9NjWcw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] syscall_user_dispatch: Allow allowed range wrap-around
+To: gourry@gourry.net
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
+	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-
-
-On 2/13/25 2:11 AM, Bartosz Golaszewski wrote:
-> On Wed, Feb 12, 2025 at 10:12 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
->> Hi,
->>
->>
->> On 2/7/25 2:53 AM, Bartosz Golaszewski wrote:
->>> On Mon, Jan 13, 2025 at 11:55 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
->>>> TPS65215 is a Power Management Integrated Circuit (PMIC) that has
->>>> significant register map overlap with TPS65219. The series introduces
->>>> TPS65215 and restructures the existing driver to support multiple devices.
->>>>
->>>> This follow-up series is dependent on:
->>>> Commit f84464ec8190 ("regulator: dt-bindings: Add TI TPS65215 PMIC bindings")
->>>> Commit 8206c20f4c82 ("mfd: tps65215: Add support for TI TPS65215 PMIC")
->>>> Commit 0e0b7f00c111 ("mfd: tps65215: Remove regmap_read check")
->>>>
->>> Did these go into v6.14?
->>>
->>> Bart
->> The dependencies listed in the cover letter were just applied by Lee Jones:
->> https://lore.kernel.org/all/173928615760.2233464.12306998726512431222.b4-ty@kernel.org/
->>
->> The rest of this series still applies without a need for code modifications.
->>
-> I'm not sure I'm following: should this series wait until v6.15-rc1 is
-> tagged? Or did you ask Lee to create an immutable branch? Or doesn't
-> this series depend on the MFD changes at all after all?
+On Tue, 18 Feb 2025 at 17:58, Gregory Price <gourry@gourry.net> wrote:
 >
-> Bart
+> On Tue, Feb 18, 2025 at 05:04:34PM +0100, Dmitry Vyukov wrote:
+> > There are two possible scenarios for syscall filtering:
+> >  - having a trusted/allowed range of PCs, and intercepting everything else
+> >  - or the opposite: a single untrusted/intercepted range and allowing
+> >    everything else
+> > The current implementation only allows the former use case due to
+> > allowed range wrap-around check. Allow the latter use case as well
+> > by removing the wrap-around check.
+> > The latter use case is relevant for any kind of sandboxing scenario,
+> > or monitoring behavior of a single library. If a program wants to
+> > intercept syscalls for PC range [START, END) then it needs to call:
+> > prctl(..., END, -(END-START), ...);
+>
+> I don't necessarily disagree with the idea, but this sounds like using
+> the wrong tool for the job.  The purpose of SUD was for emulating
+> foreign OS system calls of entire programs - not a single library.
+>
+> The point being that it's very difficult to sandbox an individual
+> library when you can't ensure it won't allocate resources outside the
+> monitored bounds (this would be very difficult to guarantee, at least).
+>
+> If the intent is to load and re-use a single foreign-OS library, this
+> change seems to be the question of "why not allow multiple ranges?",
+> and you'd be on your way to reimplementing seccomp or BPF.
 
-Sorry about the confusion. Lee didn't create an immutable branch and the series does depend on the MFD changes,
-so this GPIO series should wait till v6.15-rc1 is tagged. Thank you!
+The problem with seccomp BPF is that the filter is inherited across
+fork/exec which can't be used with SIGSYS and fine-grained custom
+user-space policy. USER_DISPATCH is much more flexible in this regard.
 
+Re allocating resources outside of monitored bounds: this is exactly
+what syscall filtering is for, right :)
+If we install a filter on a library/sandbox, we can control and
+prevent it from allocating any more executable pages outside of the
+range.
 
--- 
-Best,
-Shree Ramamoorthy
-PMIC Software Engineer
-
+The motivation is sandboxing of libraries loaded within a known fixed
+address range, while non-sandboxed code can live on both sides of the
+sandboxed range (say, non-pie binary at lower addresses, and libc at
+higher addresses).
 
