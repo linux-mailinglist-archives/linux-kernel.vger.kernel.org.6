@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-519906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A4EA3A365
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:59:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A94A3A375
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A172B1893A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2941634D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E1D26F46B;
-	Tue, 18 Feb 2025 16:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6A626FA40;
+	Tue, 18 Feb 2025 16:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="TY0hx9Kb"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbSYuc8w"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70D26E177
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D90826F44E;
+	Tue, 18 Feb 2025 16:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897935; cv=none; b=eOQtB1zLYCUQIU7hEVPuDEBZdsAHzC57NDcpt5Rn+o+M47FTmIgFoYB2F9Iz9UF3uqKhCyjsZDU54MeJk4xspfak1r0XOJFLyp7KKxT5yUcYWhax9tsSEh05fo/YuiPEI6zuTn45mOzV90r11YQ+7+JJ8eD/WL2HIC+Fh+bP6Oc=
+	t=1739897975; cv=none; b=K4lMm5cZv3Xef+Ulp6vu210JsNzE9UGTV/6X3gg9B9m3KX5LVNPjD2ULvZj5sWne04t2/ycR4AugFvvIkLL/iJmmsE7+VDp0MAYyDzkjIO3gnLFJ5/9o367hzGlBRAePruBSaf4voKJAzxvxdUTxcnuRYEZEZy5ADQIUvZJVrwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897935; c=relaxed/simple;
-	bh=BMZY1iGkOcpWnMwum+lF2s3plu5xKA2Zvd2spNjY7uU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbB9eC1M6s8Rpk/FVwu0GeWDh70Y88afPRWsF6Q3rZd0UQN2zqax+50T77BBDP+X4gbxOHq++PtB3MlbsS7wGADVXON+s6Zn29BGUzuTOq2+/5NEEZwUplH+XA3N3rRGtr9NQXx4JMANotcV1iHLts1aEdPbjyBwYOfCdoJn0gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=TY0hx9Kb; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c08fc20194so495698085a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:58:51 -0800 (PST)
+	s=arc-20240116; t=1739897975; c=relaxed/simple;
+	bh=3RFWOtHbuVv6Nc1ZE3k6eCKE8OuVH5G1a5Nyu4685aE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ITsJKBU4K97J8cVUgQuDVF5kLv5/S2pK/R8oK1tM1mfhCU6ZXeYWkwKHOdMmynSn/h+mkRIkyzTAyW3+uGutZ0Xh8J0GLZUItgaQKFbAOUAW51pAnhkWO3wM5K2j0eocHLApLSy4qw1lXZvA4kSfCs6mn+VJOJpFa9UShM8aAGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbSYuc8w; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2210d92292eso85139985ad.1;
+        Tue, 18 Feb 2025 08:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1739897931; x=1740502731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9nG7ps9pZjk+cRNHuDiESfiMPlAFCR7OyfOCSsFqItQ=;
-        b=TY0hx9Kb3sqNo43no2MoiEnSXezheVPlGUP2r6DINUpOQIDmB9CgKE9vYsszDTHrY+
-         GWqkDPxxo08c62yamRAOzymJG3lbGDvTIJOz6o7SINEpj75n8YPgKr8AgZo7a13pxnr9
-         gnb6UQ5OLsRa3kN70BO30Vq9ofqnh2L0ZLYviDwbq5qw79naYBY5Ejb5RSLYej4385CH
-         DSlhqDkVHvpCxZbL5BicYo3Be06Nm0kQzvCmwcQUCDS/3KAqU0kDryX38NhxO9VbReSL
-         uhtrP2EN1YgkKhfRxOxZKDdhf3WkFwdRqhBBD6CIevx1H8cvb8MDFY76wYc73bsgmUDU
-         qwgQ==
+        d=gmail.com; s=20230601; t=1739897973; x=1740502773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQ0iczs/f01PaFvxLk0T+RHP0Y74cglMUGc/eTOXWT8=;
+        b=bbSYuc8wG8T6STaAfv9CdK9SoUMFUSwR335XFYFmeuDdjP67c+bL466RaH8IPSofYB
+         ZqU2JmWvtkCd9exgUmytbIbkWtmbrPlySH69ANaLexQel5NJEsdAtBeVPDduUBsjU4Zo
+         rcI7vgIn/cS7UDLXXBH4tRuGzUxJ+fPynEaZhP6FC+DRs+WwXb2ZO4DDE8FFGt/c0jU9
+         51WAGdt0xWOrs2qWflrHXp0oGCZUjtMLzwHz7mHBw9Dqed6AP+qrh4JHC+FxIT9rcU2u
+         4ICyBZASpNgYS88loM/KTUbnUVsV+gtU4egxjToEdUN5q3cOJihc/V1e1oDMHqLWdS0N
+         WUTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739897931; x=1740502731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9nG7ps9pZjk+cRNHuDiESfiMPlAFCR7OyfOCSsFqItQ=;
-        b=RLjN4tbncIzhodBQQORW4Fm9qSfYelfpDlwrJr+Bt1S2eFXxEzrv/cqbP7b4VP8Epa
-         bKe/BTbfRe97YTGK5KXHcU64MWt97GI1aP1jgevAfBornLkahZ0qhUF+Gp+zk1xO3UOg
-         8NkU3TT7Agv3Qb5AsW4IJGqJ9CSz4UpVbOUycYbCIdewaOIFQb8JJOUzkNkcNoyxTzqG
-         MjZ/9ucHjgAcHGZQRS+7Xd5F8ODa2T7v9U6giKEpx0gNdVVVra11MgfP1q8sPSUeaq0i
-         X9cpx1fWhbc0QM97pRqcDFmBZ3dmk6R9IYIfMgPfYRfaZjZdAlu4KJbEFnOoxvuczxJZ
-         g2Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiKcngYirEoXCuRGeGL++ZAlz98WBOy4OJ2vozut2SrBwzcJxUeHrBvzle8BytbK/TivkZhp56vAcUOzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD3btI57eaGYceOgKwelXQ442bcenza6JyT024qDg0kU2Q7Bfq
-	JdspRWKf3JZhBF5MrzS2WzYrNCFB/y6ZJslfdeaI4C6rEraKCdaONvrWDAKMG10=
-X-Gm-Gg: ASbGnct5jpfpVbvqyjHjmt8muPYC3rz6q4EMQEPSMRYmmC8Zk/pQZUkn3OOvHSNoP19
-	99zWh3b2QX6LKpBMayVQLUAV6Wu8J0/RVBVAJbYCsmvRCIPV6cJspphP9Xwc+1fO4hk4QkQBHcR
-	CyYqjQrUulPG90ZW6JFoqR/UJ75ZcoxFlmGfhQtOgdwuCkN+HEQwKIXQPJQafY0tCIbzj7628Kn
-	ALBtPa8w6ykFI229yyGZXMahhUFMPXthoQqHoXYsIjQCbR/KGEFpB2C0mAQpjJbse0yB/6nlpr0
-	2tDsGxfazosRrkzhTKUAvtcGdd+L7Z3Ts3raj2ksa7JjRjWsQKWde3fslqdEseE6AcXCuLOjTQ=
-	=
-X-Google-Smtp-Source: AGHT+IHsBiwiK4eN3gQARQDDEqdcIkGCIsdPX3m6mCWYTOycPIzgRNn8NPdgnw7C0XC4etKjOZZAaw==
-X-Received: by 2002:a05:620a:2406:b0:7b6:e47a:8e14 with SMTP id af79cd13be357-7c08aa8a421mr2134500985a.35.1739897930985;
-        Tue, 18 Feb 2025 08:58:50 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d78640fsm65527946d6.48.2025.02.18.08.58.49
+        d=1e100.net; s=20230601; t=1739897973; x=1740502773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NQ0iczs/f01PaFvxLk0T+RHP0Y74cglMUGc/eTOXWT8=;
+        b=MA5NkI+eFf+F6uv2IN4MGIC64sV0ID685ab12HIclp79o7wpbZ0cZ1zpVY3G9+NsAV
+         5gAbJdHEbZGkCkNE6vok5A60gm9PZVfKAoYebCvObGjQbdE742EIo05ROqnyV4AW77ju
+         7OhkpiCaFELvVOpSy34bXWOsgSgXbXYnZ03F3YgcuQWi22LJ5aoPfgQC3Iuidf6JLJ3D
+         dfHFeWy6oPIkBRDQQd0Y3mVOF5jjXU8OBQm9onVFOYmAmkVf0UXysawAeq0Fmi2C+S4D
+         1qJLjFRM9wou3pKACROpHpEQmLQIMcPWnJ0jn9V/oaknnsZxiqn5pZDmULPEpNAQBj1L
+         z1CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDQKz4WJtw9P5WqrOryr+F+js9ZN6tAAymPCNgDhjd8WZPEaXOdG3NB57MO962RfdorAkhdNbPB2UITDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQLUAlYBct3NaiHZY47ptNXgvmovzQzFbDagmiIlC5JuVud7zA
+	LCt9XlXOhIOP/sbhNvRvrDDkM+9pWE3IC2AwYlRalZE8qyKze7Ko77c7Tuwni7Y=
+X-Gm-Gg: ASbGnctNKSWULRvD3fr52odc3YXypuA0XBX18Z6u2qvAflYXR60Y4cll8obLe1Q7+Qm
+	DO/K23/nB0GoyOmTK+ngunzFuk3jkSMOwKqXZ3xvrMbekQTsHCyf3XdkpijH4sGFmskojsRREnE
+	lBCr4AlhZdQj9iYCFafZrnafWwzp+THw7zBfJ1imHjfw1ZBef+kqnitLXzkhbLLCrA4kZgoKXSo
+	UPMoVE2nErZXUEQOuXhWRcz6iwecZSDVirgk2pc/R/C6n2/I9CSsrRCS+Gkb57t1hwNbMu8ocC5
+	2NKjK/w2x8Q5b4KYVBA03LJUzcsh3RJRr0KoQr/1DQ==
+X-Google-Smtp-Source: AGHT+IF1JuWYJdCOgkh3XC0mHjU0ZlfP/j0jnRLaHEDrwR/uBAScx7ddu3oZrBXPR0lPCThpWj6pWg==
+X-Received: by 2002:a05:6a21:6b05:b0:1e1:e2d9:7f0a with SMTP id adf61e73a8af0-1ee8cbbba0dmr29332802637.34.1739897973071;
+        Tue, 18 Feb 2025 08:59:33 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:16eb:c16:eb93:d961:71b9:73fe])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73258dece33sm7916298b3a.37.2025.02.18.08.59.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 08:58:50 -0800 (PST)
-Date: Tue, 18 Feb 2025 11:58:48 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-	peterz@infradead.org, keescook@chromium.org,
-	gregory.price@memverge.com, Marco Elver <elver@google.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] syscall_user_dispatch: Allow allowed range
- wrap-around
-Message-ID: <Z7S8SAGt8blFiFTg@gourry-fedora-PF4VCD3F>
-References: <cover.1739894594.git.dvyukov@google.com>
- <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
+        Tue, 18 Feb 2025 08:59:32 -0800 (PST)
+From: Suchit K <suchitkarunakaran@gmail.com>
+To: netdev@vger.kernel.org
+Cc: kuba@kernel.org,
+	horms@kernel.org,
+	matttbe@kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit <suchitkarunakaran@gmail.com>
+Subject: [PATCH REPOST] selftests: net: Fix minor typos in MPTCP and psock tests
+Date: Tue, 18 Feb 2025 22:29:23 +0530
+Message-ID: <20250218165923.20740-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <607562bf50ddc81ebd404e8dc1710e5221f80342.1739894594.git.dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 05:04:34PM +0100, Dmitry Vyukov wrote:
-> There are two possible scenarios for syscall filtering:
->  - having a trusted/allowed range of PCs, and intercepting everything else
->  - or the opposite: a single untrusted/intercepted range and allowing
->    everything else
-> The current implementation only allows the former use case due to
-> allowed range wrap-around check. Allow the latter use case as well
-> by removing the wrap-around check.
-> The latter use case is relevant for any kind of sandboxing scenario,
-> or monitoring behavior of a single library. If a program wants to
-> intercept syscalls for PC range [START, END) then it needs to call:
-> prctl(..., END, -(END-START), ...);
+From: Suchit <suchitkarunakaran@gmail.com>
 
-I don't necessarily disagree with the idea, but this sounds like using
-the wrong tool for the job.  The purpose of SUD was for emulating
-foreign OS system calls of entire programs - not a single library.
+Fixes minor spelling errors:
+- `simult_flows.sh`: "al testcases" -> "all testcases"
+- `psock_tpacket.c`: "accross" -> "across"
 
-The point being that it's very difficult to sandbox an individual
-library when you can't ensure it won't allocate resources outside the
-monitored bounds (this would be very difficult to guarantee, at least).
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ tools/testing/selftests/net/mptcp/simult_flows.sh | 2 +-
+ tools/testing/selftests/net/psock_tpacket.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-If the intent is to load and re-use a single foreign-OS library, this
-change seems to be the question of "why not allow multiple ranges?",
-and you'd be on your way to reimplementing seccomp or BPF.
+diff --git a/tools/testing/selftests/net/mptcp/simult_flows.sh b/tools/testing/selftests/net/mptcp/simult_flows.sh
+index 9c2a41597..2329c2f85 100755
+--- a/tools/testing/selftests/net/mptcp/simult_flows.sh
++++ b/tools/testing/selftests/net/mptcp/simult_flows.sh
+@@ -28,7 +28,7 @@ size=0
+ 
+ usage() {
+ 	echo "Usage: $0 [ -b ] [ -c ] [ -d ] [ -i]"
+-	echo -e "\t-b: bail out after first error, otherwise runs al testcases"
++	echo -e "\t-b: bail out after first error, otherwise runs all testcases"
+ 	echo -e "\t-c: capture packets for each test using tcpdump (default: no capture)"
+ 	echo -e "\t-d: debug this script"
+ 	echo -e "\t-i: use 'ip mptcp' instead of 'pm_nl_ctl'"
+diff --git a/tools/testing/selftests/net/psock_tpacket.c b/tools/testing/selftests/net/psock_tpacket.c
+index 404a2ce75..221270cee 100644
+--- a/tools/testing/selftests/net/psock_tpacket.c
++++ b/tools/testing/selftests/net/psock_tpacket.c
+@@ -12,7 +12,7 @@
+  *
+  * Datapath:
+  *   Open a pair of packet sockets and send resp. receive an a priori known
+- *   packet pattern accross the sockets and check if it was received resp.
++ *   packet pattern across the sockets and check if it was received resp.
+  *   sent correctly. Fanout in combination with RX_RING is currently not
+  *   tested here.
+  *
+-- 
+2.48.1
 
-~Gregory
 
