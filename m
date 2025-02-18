@@ -1,169 +1,129 @@
-Return-Path: <linux-kernel+bounces-520288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF936A3A804
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:51:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DDDA3A818
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 204A83B17DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D603A5BEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF041EB5C9;
-	Tue, 18 Feb 2025 19:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B3F1EFF9A;
+	Tue, 18 Feb 2025 19:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="km8mgscc"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LtcGqAxA"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0C71EFFB3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092F01EB5DC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908257; cv=none; b=D5YKGaCN1eOF+Lv0cmw8JZnuUZxYy09fTHxwhqx+Y8gKpfcfDknaedOyd7ByJqewvyJNLIAYprJwv6gwKZ8PuFyLoOtcFq8hYr8CE3QBbLF2ThGCJ9OLjhrBNLlUrxzKlAGzr+iqf27J4HIB2/28K2YuSpF2ikEbLQopjMCeugo=
+	t=1739908349; cv=none; b=dTEoa1cWctGzyFLm2CFF3GXiEr0dwWH2r1Ia+SgcANxgtUPG4c1N1YLZY6oCdxnmsWhn/eVE6xvBENWalZe7J1l5JrCUuj8nL+mwCIQtonajjXgFnIyiwnflW4TQVvl/Yozwbi8s04KlZFOYnVDRNicfFkwd7sKxqqyk0H6LP6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908257; c=relaxed/simple;
-	bh=qm85aHAJ3fEWNO0k9VcImWfuicbCKbW9BAl+6MjlbyA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cHjBvhXKTOVypVyUj1T+4cA9KaYcJlpI4ndlyHZKCaozTTU1Dz57vPVrOWgUh8fkkK00qoWutnlfQtqbGqbQO5aDkIhjpp1kqbn9s/dpguOP0WU8b1QSp+Rhp26hKePyZODCibToWpgmRFubJeWA8Yg6n6RhDNNsTxXN1TGXLCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=km8mgscc; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1739908252;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Vk8coug+FRo/5jdUZgRpW7dUVKkTDmTjAi05VADtXHc=;
-	b=km8mgsccdl4aUB+LLwGy+ZUpUnhPFBvZQVo+FlhnXIBQS+NdfRdBKEIQu8f2At2QX6JYtL
-	YB3ZQwfVQnp71lR4xTMgCI/ImAawzp7w1+PWcKznFyVt3bc6V2XTmnNRv5GMdtJOictbJj
-	5ERD9JSQ36XR3CITfPFj+Re0hQliRV4=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	netdev@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
+	s=arc-20240116; t=1739908349; c=relaxed/simple;
+	bh=ODv3GGqKUR1bqT73hWp63rcmoOA+B/mTIKwThvKgDEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RJZhqbVk6hrZyUK/o79Q09lLsXQM1OmE0FstP+fmoHYIznGPBC485cNFlDwPYL9wklIvSRlvjYaeYy4u6F1/ZXIkf6p4m5yt5k6ZRGZcy4fbMJw6pRr+9W3i2Rmi3dWoY78kSO5Qww6XA4fVfMDQ1AY/jcS4hB9K9qLhoIK+qPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=LtcGqAxA; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 509FD2C00BE;
+	Wed, 19 Feb 2025 08:52:20 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1739908340;
+	bh=9BTR+ZuvH19w1jZujSlCK9rC3nkRI5vZ5l365E/HXFI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LtcGqAxALBCKBrHCaz9paTJxXDmd5wuqRW/6rNN0VQQcU58QksFlkUEgfkF+b2soB
+	 9JGIXeAFU9FSVZ8ul+kwyXDTMH87lLWI9oCqkrAnaw9kvANslKWWGH6ppj2TMILTOJ
+	 JXkTZl6soQ/Vjn3M4Lv/K2eVtPgYWKTpdwI/1EpzKWrnxIu5Ohs8EZBgwz7Vg+bc+S
+	 ciyuSH9uwGUx+5H7Zfw1Umek8vR5+DVmf5PQz+Pv6yC9BcPH1LuniJXaaqvG2eRJTs
+	 IKWlt0nz+8b2pp4FFG6VP7qofMS0aT2EeiOkaFHYZwXtBmlB8c3TNW7LYp9T+IHcJg
+	 xRHXijQ+ggeEw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67b4e4f30000>; Wed, 19 Feb 2025 08:52:19 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id EB67A13EE36;
+	Wed, 19 Feb 2025 08:52:19 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id E6E8F2804FB; Wed, 19 Feb 2025 08:52:19 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	tsbogend@alpha.franken.de
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH net] net: cadence: macb: Synchronize stats calculations
-Date: Tue, 18 Feb 2025 14:50:36 -0500
-Message-Id: <20250218195036.37137-1-sean.anderson@linux.dev>
+	netdev@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [RESEND PATCH net-next 0/5] dt-bindings: net: realtek,rtl9301-switch
+Date: Wed, 19 Feb 2025 08:52:11 +1300
+Message-ID: <20250218195216.1034220-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67b4e4f3 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=lchjjVjLDbdZh1ZHapMA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Stats calculations involve a RMW to add the stat update to the existing
-value. This is currently not protected by any synchronization mechanism,
-so data races are possible. Add a spinlock to protect the update. The
-reader side could be protected using u64_stats, but we would still need
-a spinlock for the update side anyway. And we always do an update
-immediately before reading the stats anyway.
+This is my attempt at trying to sort out the mess I've created with the R=
+TL9300
+switch dt-bindings. Some context is available on [1] and [2].
 
-Fixes: 89e5785fc8a6 ("[PATCH] Atmel MACB ethernet driver")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+The first patch just moves the binding from mfd/ to net/ (with an adjustm=
+ent of
+the internal path name). The next two patches are successors to patches a=
+lready
+sent as part of the series [3]. Finally the last two patches are needed t=
+o
+update the in-tree dts to pass `make dtbs_check`, I couldn't figure out a=
+ clean
+way of decoupling these `make dtbs_check` will either complain that the d=
+ts has
+unexpected properties or that it is missing required properties.
 
- drivers/net/ethernet/cadence/macb.h      |  2 ++
- drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+[1] - https://lore.kernel.org/lkml/20250204-eccentric-deer-of-felicity-02=
+b7ee@krzk-bin/
+[2] - https://lore.kernel.org/lkml/4e3c5d83-d215-4eff-bf02-6d420592df8f@a=
+lliedtelesis.co.nz/
+[3] - https://lore.kernel.org/lkml/20250204030249.1965444-1-chris.packham=
+@alliedtelesis.co.nz/
 
-diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-index 5740c98d8c9f..2847278d9cd4 100644
---- a/drivers/net/ethernet/cadence/macb.h
-+++ b/drivers/net/ethernet/cadence/macb.h
-@@ -1279,6 +1279,8 @@ struct macb {
- 	struct clk		*rx_clk;
- 	struct clk		*tsu_clk;
- 	struct net_device	*dev;
-+	/* Protects hw_stats and ethtool_stats */
-+	spinlock_t		stats_lock;
- 	union {
- 		struct macb_stats	macb;
- 		struct gem_stats	gem;
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 48496209fb16..990a3863c6e1 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1978,10 +1978,12 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
- 
- 		if (status & MACB_BIT(ISR_ROVR)) {
- 			/* We missed at least one packet */
-+			spin_lock(&bp->stats_lock);
- 			if (macb_is_gem(bp))
- 				bp->hw_stats.gem.rx_overruns++;
- 			else
- 				bp->hw_stats.macb.rx_overruns++;
-+			spin_unlock(&bp->stats_lock);
- 
- 			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
- 				queue_writel(queue, ISR, MACB_BIT(ISR_ROVR));
-@@ -3102,6 +3104,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
- 	if (!netif_running(bp->dev))
- 		return nstat;
- 
-+	spin_lock(&bp->stats_lock);
- 	gem_update_stats(bp);
- 
- 	nstat->rx_errors = (hwstat->rx_frame_check_sequence_errors +
-@@ -3131,6 +3134,7 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
- 	nstat->tx_aborted_errors = hwstat->tx_excessive_collisions;
- 	nstat->tx_carrier_errors = hwstat->tx_carrier_sense_errors;
- 	nstat->tx_fifo_errors = hwstat->tx_underrun;
-+	spin_unlock(&bp->stats_lock);
- 
- 	return nstat;
- }
-@@ -3138,12 +3142,13 @@ static struct net_device_stats *gem_get_stats(struct macb *bp)
- static void gem_get_ethtool_stats(struct net_device *dev,
- 				  struct ethtool_stats *stats, u64 *data)
- {
--	struct macb *bp;
-+	struct macb *bp = netdev_priv(dev);
- 
--	bp = netdev_priv(dev);
-+	spin_lock(&bp->stats_lock);
- 	gem_update_stats(bp);
- 	memcpy(data, &bp->ethtool_stats, sizeof(u64)
- 			* (GEM_STATS_LEN + QUEUE_STATS_LEN * MACB_MAX_QUEUES));
-+	spin_unlock(&bp->stats_lock);
- }
- 
- static int gem_get_sset_count(struct net_device *dev, int sset)
-@@ -3193,6 +3198,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
- 		return gem_get_stats(bp);
- 
- 	/* read stats from hardware */
-+	spin_lock(&bp->stats_lock);
- 	macb_update_stats(bp);
- 
- 	/* Convert HW stats into netdevice stats */
-@@ -3226,6 +3232,7 @@ static struct net_device_stats *macb_get_stats(struct net_device *dev)
- 	nstat->tx_carrier_errors = hwstat->tx_carrier_errors;
- 	nstat->tx_fifo_errors = hwstat->tx_underruns;
- 	/* Don't know about heartbeat or window errors... */
-+	spin_unlock(&bp->stats_lock);
- 
- 	return nstat;
- }
-@@ -5097,6 +5104,7 @@ static int macb_probe(struct platform_device *pdev)
- 		}
- 	}
- 	spin_lock_init(&bp->lock);
-+	spin_lock_init(&bp->stats_lock);
- 
- 	/* setup capabilities */
- 	macb_configure_caps(bp, macb_config);
--- 
-2.35.1.1320.gc452695387.dirty
+Chris Packham (5):
+  dt-bindings: net: Move realtek,rtl9301-switch to net
+  dt-bindings: net: Add switch ports and interrupts to RTL9300
+  dt-bindings: net: Add Realtek MDIO controller
+  mips: dts: realtek: Add switch interrupts
+  mips: dts: cameo-rtl9302c: Add switch block
+
+ .../bindings/net/realtek,rtl9301-mdio.yaml    | 86 +++++++++++++++++++
+ .../{mfd =3D> net}/realtek,rtl9301-switch.yaml  | 63 +++++++++++++-
+ .../cameo-rtl9302c-2x-rtl8224-2xge.dts        | 48 +++++++++++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |  3 +
+ 4 files changed, 199 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/net/realtek,rtl9301=
+-mdio.yaml
+ rename Documentation/devicetree/bindings/{mfd =3D> net}/realtek,rtl9301-=
+switch.yaml (66%)
+
+--=20
+2.48.1
 
 
