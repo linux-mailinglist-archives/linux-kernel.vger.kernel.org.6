@@ -1,155 +1,251 @@
-Return-Path: <linux-kernel+bounces-518686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B473CA39343
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 166F0A3934A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 06:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375441706AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D789170348
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 05:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83521B415E;
-	Tue, 18 Feb 2025 05:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFB91B041F;
+	Tue, 18 Feb 2025 05:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FnIx+RHE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oRHY3T2D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A671B21B8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED68749C;
+	Tue, 18 Feb 2025 05:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739857974; cv=none; b=iDw43efgEcryjkpnuExtBgqbjkccwkV41mg47UMukl1ZWgwkDSW7wbbfHmrEGAvsCSuPZnZ8Kc8RW0UEAMlecTr1Epp/X3BNByW93rbzprUrNa49OCVFcceDMezSYzBksKzbBvl/0JpULE6KHMqGenxTacrI0TbOvRYWXPtFmbA=
+	t=1739858341; cv=none; b=S+uYmSb70k02p8rpJeh2zIqttS7rtxPHbmWL8bxOcHku2ZvR3pU+OWApXf51MXUzP/XcBJErBUBWQs7tr/FSdseaG0f1KSXR7nNhu3cdrtlYnNwVcM9q8f3lnxYBUHRNMQM2x7Wl9ira8O8RT7w96n55YZ8sq7sQ7cowjnh2BME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739857974; c=relaxed/simple;
-	bh=OUNgeBG9Yaj+w1qNJC8+eYpKidf1r39gmgSZpgb8UuI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=S+KNLsBtRua+tHAMW2R1w+d2/+Z27eIrN7iF3hB1rVWKrWixe1hXpIki8QxFvlC3VYNvITVKFnr09N2fwbmiaDMRrgR309x/De4g5MOHsFeb1T+d7a/fZx6H6KmswUW5xp0S5seEsvQA5PC+M/RWA3/XmKa/9Uq8JZBtEJ16XNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FnIx+RHE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51I2Hivm027323
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=8y/PCaTCRg8VuI/K8qxbSF
-	0ICUfYwKH3o2vnyNihc+M=; b=FnIx+RHErlZr+3VgJrn0odKWnHTkOGvqsjnbYZ
-	jmfr18Hrn8mG6nsgWysEnJe/OSpaj6+DaRHm1Q2OP9pOtn54lb80JFzv2Ykngg0x
-	gyUDfu6tc+GXYI56xwUVXXMlN9uZ7Tr4JquEX876pLdsQlzD48Tahra5EE9ojHcQ
-	R5fY/UXB7BdGyy6jl2NDH1radTw3x1ZXG1K93IyrJYeG1afcPHqPsiFarSmADvXk
-	fCuZu8LScruZB3ZWYoKcGTJ+L2b4fPKgQ38hYQwWVCk/ur+rbcQTBOOnhij9x40E
-	2nHez7CuAxBd5FFpbnyFkELEpClVvyrmraVGzz4JS9khfXBQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7skrvf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:52:51 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso16075307a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Feb 2025 21:52:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739857963; x=1740462763;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8y/PCaTCRg8VuI/K8qxbSF0ICUfYwKH3o2vnyNihc+M=;
-        b=nXXONCifHcK86VrR+JfvLk9XvUXSu7Tv5W1+Z8tpbgs8ZPMRs5FAiDXAjglPHIEHvp
-         9TXAcqVLupiEB2K8fi7MQWjQvx03QhgAbD/2T3qR8WOdpUEaA6CTYrZZ/HirDr4jc4Za
-         1uk7eG1apctIR1kAMcKqNfqWhHROFRIm906FZ3X4rEAv0TPnOu/dSjnOTIE18raPH4/G
-         O6tD6V5EaeWbZEJGnX2Sx4TuJ8XbHF9tAvqy5I6A0OozAoWTeEtoH7dghWU3DkR6JMOm
-         It3O0WWVSptR6A7CsbFPr6KEAG22HrHt/CkXMz2N9oicqob4uvmmmq+ZBZB8t3gnlmfv
-         iLUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2Zx3r4i063lD+oOj3mCaai3+w9M0wlQTrslGcsk9qimqITXEJMpXa3Ux4KEjQrx9lTN7jXFUk6hznh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhGeVCnVHorUphpXNeDB8ynRZ8ghgNsoduh9Y/KWI3A4e9Mg6n
-	vrbIQFJhrJ+2UxSNLPrv6Gn6OwqdvEcqNic1/zeCxNuWd2b0psqmKQWgrQEeU6DhGvnnE08Ei1d
-	tn0gwWp1zIlYmp2xVA90M76KZygS5RnDtzYCbi2Vm/C7eve0d+qpaM+lRUHtPCnS+w8jryyI=
-X-Gm-Gg: ASbGncvzMVXZZ+MCxJLuvaJohGhbU6G8gtLmoAVGqMC8nq2JhteK8If5ZYs9Blxv24m
-	S7qKlKu1IqZuPsR98gAlxpXB1F9hSuVJ+AVCZb3k+4FtZbnqTfkN5iraOXUGgthiGSz7GxPWAru
-	eILt6GS9eVE9/vaUCv2fCFuXemEHxgfAhzSCA6z4sxd+SCSYGMlF03n4amaMoFHdiuTQ17XVCKr
-	BR6S2xiEm4cn/QeAuiXEWQ2hz0OdSeGz4DZgoojcJBw1mz003jwz7AOBoZ3GW1Jcad0cz3nJ/pV
-	VsSusTPCaK44iME/e2o=
-X-Received: by 2002:a17:90b:3ec5:b0:2ee:d63f:d77 with SMTP id 98e67ed59e1d1-2fc40f0e8a3mr19003257a91.9.1739857963333;
-        Mon, 17 Feb 2025 21:52:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFrPhFKUnWnGuRnxsogYFBCvCkW8IkxawKxO8olNqU7YqWZjZGaLhP0OfZuR3+wWGio5vXsyg==
-X-Received: by 2002:a17:90b:3ec5:b0:2ee:d63f:d77 with SMTP id 98e67ed59e1d1-2fc40f0e8a3mr19003223a91.9.1739857962891;
-        Mon, 17 Feb 2025 21:52:42 -0800 (PST)
-Received: from [10.213.103.17] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fc13ab07d6sm9145057a91.2.2025.02.17.21.52.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 21:52:42 -0800 (PST)
-From: Maulik Shah <maulik.shah@oss.qualcomm.com>
-Date: Tue, 18 Feb 2025 11:21:48 +0530
-Subject: [PATCH] arm64: dts: qcom: sm8750: Add RPMh sleep stats
+	s=arc-20240116; t=1739858341; c=relaxed/simple;
+	bh=CEVJqpctOMdfCysXFks3+xB0utmM69RdwWx2wPnB110=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rihCt97Gj26PfT4d7VEqjfvlwWjqY0OQK1wCvI1j2atknmNkHFgBOTyylkTZK26TZ9+QsrbcKOAcIVUSwGE8NoUJnISRx2wilPt/y3zn9qVlhnrTKyv9vLDGsZPd8BV/5+r4zUNeKQV4MjLRmwZAOQw0ntZP9T12txsJLRq2GV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oRHY3T2D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HFddcH020021;
+	Tue, 18 Feb 2025 05:58:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tjVxHI
+	8p+Dwo9AwyLlaVxDg1pLMBBHhFN5oRVlEBrGk=; b=oRHY3T2Dro3K+EtlSRLH1t
+	nl5+cJln+aLYxg2mqCQsCwdP8O8mG6+YjHd6krlclOVnCxoPI0rMtXAGYtvotECz
+	lTyTEdJynzeBFwuocgeb2nKN80cntn+EN/Vy25M30be1uS4hM8TL7+LQBIcrv16t
+	wt+JX2GydVxGdfBk0Cyip3ubfIstDVvEsPSWXiqxXSRU1SFKugIned4ihBSp6Dc/
+	0/afxTEODdBbZbquZztZBF3/jZiaXuM2YFk8uK/maKj+s3yhHAkmJ34z8+WduRIK
+	uDKdPl7vkEhF6Fy98VvDAYyjcLklKR/JQnb4CmmEpZ50JCFTe/uhatQ1Hx2vPMCw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44v7xub15p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 05:58:44 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51I5pjSO003681;
+	Tue, 18 Feb 2025 05:58:44 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44v7xub15k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 05:58:44 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51I52mgT008148;
+	Tue, 18 Feb 2025 05:58:43 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44u58thqv9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 05:58:43 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51I5wfH330933560
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Feb 2025 05:58:41 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9BB0720043;
+	Tue, 18 Feb 2025 05:58:41 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 05AFB20040;
+	Tue, 18 Feb 2025 05:58:39 +0000 (GMT)
+Received: from [9.124.222.120] (unknown [9.124.222.120])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Feb 2025 05:58:38 +0000 (GMT)
+Message-ID: <cc6996cc-c5c1-429d-ade0-9978b859f207@linux.ibm.com>
+Date: Tue, 18 Feb 2025 11:28:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/3] sched/fair: introduce new scheduler group type
+ group_parked
+To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org
+References: <20250217113252.21796-1-huschle@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250217113252.21796-1-huschle@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-sm8750_stats-v1-1-8902e213f82d@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAPMftGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDI0Nz3eJcC3NTg/jiksSSYl2jVIMU8yRDy2QjYxMloJaCotS0zAqwcdG
- xtbUAtCO2x14AAAA=
-X-Change-ID: 20250217-sm8750_stats-2e0d7b19c234
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_lsrao@quicinc.com,
-        Maulik Shah <maulik.shah@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739857959; l=1001;
- i=maulik.shah@oss.qualcomm.com; s=20240109; h=from:subject:message-id;
- bh=OUNgeBG9Yaj+w1qNJC8+eYpKidf1r39gmgSZpgb8UuI=;
- b=yTIGDrwcxGB+ErvGVYneeBSikR3BaiY7iLOf1Obb7uKOzIhCLdxh7HtRZq3Ik3D7YsTkcDunO
- 4eDjWFm76JYCXT1A/8m1UHAlN4Q/LWfRwE+M2Wh6NseDfkYeb8hVtnd
-X-Developer-Key: i=maulik.shah@oss.qualcomm.com; a=ed25519;
- pk=bd9h5FIIliUddIk8p3BlQWBlzKEQ/YW5V+fe759hTWQ=
-X-Proofpoint-GUID: yvSkdeVDNgoaki6EcbHNexhmSOdh6Aal
-X-Proofpoint-ORIG-GUID: yvSkdeVDNgoaki6EcbHNexhmSOdh6Aal
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Swk8pcBcXOq8yXLxc2f4gxkz7F_GouNO
+X-Proofpoint-GUID: Lka8UfRi4Fvf0hl-0fYnSZi1AmeqmgsS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_02,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=714
- clxscore=1011 priorityscore=1501 adultscore=0 spamscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2501170000
- definitions=main-2502180043
+ definitions=2025-02-18_01,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ spamscore=0 adultscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180039
 
-Add RPMh stats to read low power statistics for various subsystem
-and SoC sleep modes.
 
-Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..7b692e1798496292b2f457ab61c63d3b0bb648af 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -1978,6 +1978,11 @@ pdc: interrupt-controller@b220000 {
- 			interrupt-controller;
- 		};
- 
-+		sram@c3f0000 {
-+			compatible = "qcom,rpmh-stats";
-+			reg = <0x0 0x0c3f0000 0x0 0x400>;
-+		};
-+
- 		spmi_bus: spmi@c400000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0x0 0x0c400000 0x0 0x3000>,
+On 2/17/25 17:02, Tobias Huschle wrote:
+> Changes to v1
+> 
+> parked vs idle
+> - parked CPUs are now never considered to be idle
+> - a scheduler group is now considered parked iff there are parked CPUs
+>    and there are no idle CPUs, i.e. all non parked CPUs are busy or there
+>    are only parked CPUs. A scheduler group with parked tasks can be
+>    considered to not be parked, if it has idle CPUs which can pick up
+>    the parked tasks.
+> - idle_cpu_without always returns that the CPU will not be idle if the
+>    CPU is parked
+> 
+> active balance, no_hz, queuing
+> - should_we_balance always returns true if a scheduler groups contains
+>    a parked CPU and that CPU has a running task
+> - stopping the tick on parked CPUs is now prevented in sched_can_stop_tick
+>    if a task is running
+> - tasks are being prevented to be queued on parked CPUs in ttwu_queue_cond
+> 
+> cleanup
+> - removed duplicate checks for parked CPUs
+> 
+> CPU capacity
+> - added a patch which removes parked cpus and their capacity from
+>    scheduler statistics
+> 
+> 
+> Original description:
+> 
+> Adding a new scheduler group type which allows to remove all tasks
+> from certain CPUs through load balancing can help in scenarios where
+> such CPUs are currently unfavorable to use, for example in a
+> virtualized environment.
+> 
+> Functionally, this works as intended. The question would be, if this
+> could be considered to be added and would be worth going forward
+> with. If so, which areas would need additional attention?
+> Some cases are referenced below.
+> 
+> The underlying concept and the approach of adding a new scheduler
+> group type were presented in the Sched MC of the 2024 LPC.
+> A short summary:
+> 
+> Some architectures (e.g. s390) provide virtualization on a firmware
+> level. This implies, that Linux kernels running on such architectures
+> run on virtualized CPUs.
+> 
+> Like in other virtualized environments, the CPUs are most likely shared
+> with other guests on the hardware level. This implies, that Linux
+> kernels running in such an environment may encounter 'steal time'. In
+> other words, instead of being able to use all available time on a
+> physical CPU, some of said available time is 'stolen' by other guests.
+> 
+> This can cause side effects if a guest is interrupted at an unfavorable
+> point in time or if the guest is waiting for one of its other virtual
+> CPUs to perform certain actions while those are suspended in favour of
+> another guest.
+> 
+> Architectures, like arch/s390, address this issue by providing an
+> alternative classification for the CPUs seen by the Linux kernel.
+> 
+> The following example is arch/s390 specific:
+> In the default mode (horizontal CPU polarization), all CPUs are treated
+> equally and can be subject to steal time equally.
+> In the alternate mode (vertical CPU polarization), the underlying
+> firmware hypervisor assigns the CPUs, visible to the guest, different
+> types, depending on how many CPUs the guest is entitled to use. Said
+> entitlement is configured by assigning weights to all active guests.
+> The three CPU types are:
+>      - vertical high   : On these CPUs, the guest has always highest
+>                          priority over other guests. This means
+>                          especially that if the guest executes tasks on
+>                          these CPUs, it will encounter no steal time.
+>      - vertical medium : These CPUs are meant to cover fractions of
+>                          entitlement.
+>      - vertical low    : These CPUs will have no priority when being
+>                          scheduled. This implies especially, that while
+>                          all other guests are using their full
+>                          entitlement, these CPUs might not be ran for a
+>                          significant amount of time.
+> 
+> As a consequence, using vertical lows while the underlying hypervisor
+> experiences a high load, driven by all defined guests, is to be avoided.
+> 
+> In order to consequently move tasks off of vertical lows, introduce a
+> new type of scheduler groups: group_parked.
+> Parked implies, that processes should be evacuated as fast as possible
+> from these CPUs. This implies that other CPUs should start pulling tasks
+> immediately, while the parked CPUs should refuse to pull any tasks
+> themselves.
+> Adding a group type beyond group_overloaded achieves the expected
+> behavior. By making its selection architecture dependent, it has
+> no effect on architectures which will not make use of that group type.
+> 
+> This approach works very well for many kinds of workloads. Tasks are
+> getting migrated back and forth in line with changing the parked
+> state of the involved CPUs.
+> 
+> There are a couple of issues and corner cases which need further
+> considerations:
+> - rt & dl:      Realtime and deadline scheduling require some additional
+>                  attention.
 
----
-base-commit: 0ae0fa3bf0b44c8611d114a9f69985bf451010c3
-change-id: 20250217-sm8750_stats-2e0d7b19c234
+I think we need to address atleast rt, there would be some non percpu 
+kworker threads which need to move out of parked cpus.
 
-Best regards,
--- 
-Maulik Shah <maulik.shah@oss.qualcomm.com>
+> - ext:          Probably affected as well. Needs some conceptional
+>                  thoughts first.
+> - raciness:     Right now, there are no synchronization efforts. It needs
+>                  to be considered whether those might be necessary or if
+>                  it is alright that the parked-state of a CPU might change
+>                  during load-balancing.
+> 
+> Patches apply to tip:sched/core
+> 
+> The s390 patch serves as a simplified implementation example.
+
+
+Gave it a try on powerpc with the debugfs file. it works for 
+sched_normal tasks.
+
+> 
+> Tobias Huschle (3):
+>    sched/fair: introduce new scheduler group type group_parked
+>    sched/fair: adapt scheduler group weight and capacity for parked CPUs
+>    s390/topology: Add initial implementation for selection of parked CPUs
+> 
+>   arch/s390/include/asm/smp.h    |   2 +
+>   arch/s390/kernel/smp.c         |   5 ++
+>   include/linux/sched/topology.h |  19 ++++++
+>   kernel/sched/core.c            |  13 ++++-
+>   kernel/sched/fair.c            | 104 ++++++++++++++++++++++++++++-----
+>   kernel/sched/syscalls.c        |   3 +
+>   6 files changed, 130 insertions(+), 16 deletions(-)
+> 
 
 
