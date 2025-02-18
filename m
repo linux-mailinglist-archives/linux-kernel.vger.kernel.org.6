@@ -1,181 +1,158 @@
-Return-Path: <linux-kernel+bounces-520591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0595A3ABDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237F4A3ABE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF62B16E5AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:40:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BB7188BA78
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D091DD894;
-	Tue, 18 Feb 2025 22:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD8A286297;
+	Tue, 18 Feb 2025 22:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IvSDRWjQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gw30W8cF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7DF1D9587
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7731B6CEC;
+	Tue, 18 Feb 2025 22:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918441; cv=none; b=JeWUvqO8CTQDdmidbHXPlBX+BfmAxsa3vRoxAdTupewWyElVpDtlqBpnvQy3ikwMmlnoIJAqOSdFbninNmJ80t6NSeDccPHuET9vja0RwwCywyYJoRpWeRy8PcpJVtYmBNyhgvTiF5x8az5lXdbHgEMKsZzltZ1DYuns4ZULOTY=
+	t=1739918458; cv=none; b=Vrhe6HsKhDjMJ0YFYWzhIuizEOMKeaIf8X6SocuUjlI5sJT5WW+pmXEbxJ7thNyd7OqNhfsKXXqYFBpj0cQMxXu8az7R6M1JsZ1TEHesfFYApUZIcuarHXPBsua/XMLvk+BoYokJGr1iZUo08NdS1P5N37le2h/jpUWueCc0Jw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918441; c=relaxed/simple;
-	bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Mp1X0B/R+MIjrU4mJkDHvT3CoJbFZa0PklT0dS1a1hfHfG6pBkRIx9YOemt0xN8MMuVlMryf6IksqjOXnRrfYQbIAwuNEJhpJttuUXdtGC9xtt/JdD+Nr0wZvQRd5y+edeiKkrtSabHxZeseY/f15EYvW6ICheGPM1y7n/8Ga0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IvSDRWjQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739918438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
-	b=IvSDRWjQdRT4NGhiLewqXrvQBjvpefMgEe0SOgJq2yYLYqH11psVSMyQzhuaeplKwQUkdE
-	LBmOAI4AKSyzvglau5HjGQeUY7Cru6gGTs8WQiQUx1dBTPSitWTLr8VhR8bnOF+f1tm3na
-	CRPw44/drwXLsGZnG2r5HQGa2oaOxZE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-fXdDDQypOyq3w0KIWVlWcw-1; Tue, 18 Feb 2025 17:40:36 -0500
-X-MC-Unique: fXdDDQypOyq3w0KIWVlWcw-1
-X-Mimecast-MFC-AGG-ID: fXdDDQypOyq3w0KIWVlWcw_1739918435
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4388eee7073so961865e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:40:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739918435; x=1740523235;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
-        b=nYYsuiSbB3/BkQ01QjCBA1LkNcTt7A1plh2P/balGyEplhckA8pMgCIXcV6JSlgAtF
-         b9okfQm4DoRh+8xAvOdEUVZrCKUCj5RV2IKwUfMLoR5P47pZ2Ng8Hx1w4cGyVkxsXl3O
-         GQBbv1Fvy0EBMsbdQ4wZhYqw6ivuZS0sfON6Ayfq4m10L02OkoRP3GOTbljPag7gICaG
-         vlJtpkg3EjvW77oil0Y7jDDs9XDb43hCZvYbB+TAMidtLQV7tTFMR7eOz6RThULwn6gi
-         5w10hFrBWNmLWk1rjGtV6IOozu4d1tiUIHhElPPlDTNpz6jv1mhvuYn4ZbXQ0xBEC2cb
-         j1Cw==
-X-Gm-Message-State: AOJu0Yw29WD0b3WB6PrgSHVRUAfssE4bf9yOdJUx+DphhFW3GM7t4D6Q
-	lgVJfY+DIzZUH/DjTJz+O19jHw3Z0JoIGDjSf5joCoDxy4NIoYzSkY88YHfayLx/0otRx06Ggp2
-	p1aN6o7SRaAJizBkhxNKojO83K1eqGh/kMgYJyraeAdahHqt7YYrS9H6eCsARTA==
-X-Gm-Gg: ASbGncvSO9Q/BWAmJY39iSk3zcH/DquzeZRmJD7W3EOZsZPOPFiqnN6YA4U/NoKyiuS
-	dtEgpFJL5c1FBh0r00dWM3Lvx/K3xy+VT+Z7T2GSbsbiil1b592pZBgfkzo1ygml9R/LgZ045ko
-	92lJW+4Dh257TKgDlXKfJ5Vo2IEm1OBk7j6fBc3tpizEQRuohQDN3Rp7HIJpBg4KJgHN9dDyBgK
-	K+Q193s4owAUh6NdRhjKBM9jq/gOyviJ6C66wgLf214etgilZF+qDCvsQqbghIN1BqsFQATjvWE
-	4mthbBAYPC8OALxdIFXBiCFUXMM8HR+YumWOu2AZOQuJOhqvBjynbybaEsXER07rBQ==
-X-Received: by 2002:a05:600c:314b:b0:439:86c4:a8d7 with SMTP id 5b1f17b1804b1-43999ae0dc8mr11797435e9.5.1739918435411;
-        Tue, 18 Feb 2025 14:40:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEI17xveq4qpUoXVn3jaf3vZekMu127UgmikmUhaFlSZ5tyuyrG+gdqtYt1+dNUau7VWeDZUA==
-X-Received: by 2002:a05:600c:314b:b0:439:86c4:a8d7 with SMTP id 5b1f17b1804b1-43999ae0dc8mr11797275e9.5.1739918434928;
-        Tue, 18 Feb 2025 14:40:34 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43993847f39sm32922065e9.14.2025.02.18.14.40.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 14:40:34 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
- kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
- Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
- Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
- <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
- Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
- Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
- Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
- flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
-In-Reply-To: <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
-References: <20250114175143.81438-1-vschneid@redhat.com>
- <20250114175143.81438-30-vschneid@redhat.com>
- <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
- <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
- <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
- <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
-Date: Tue, 18 Feb 2025 23:40:31 +0100
-Message-ID: <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1739918458; c=relaxed/simple;
+	bh=RO3b7hVEQCx2e2z3TwZF1cWDw0VO09iMKEkxTQpz/0o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rlBMiFqPN0WZmzPP8VgKWHfXDGSotMbad0cAKAWPV/G3lWQocF0JKJJFgHG1eGBX+x51Vfxq4hyF9B+kFohG83+J061v+tqpl03svkTFUcnM+YTHY7SMW5UbhH+Fmy9o4J7dmSUKr9xAfitGPmvTqqnMh3zwVAr6XAntXelQQ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gw30W8cF; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739918457; x=1771454457;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=RO3b7hVEQCx2e2z3TwZF1cWDw0VO09iMKEkxTQpz/0o=;
+  b=Gw30W8cFLuMgRwHv6ApF7yP/1Wzg6M0Xvm6Rw8kHE6BXtQ37xTxcSCqF
+   ZELO+qb6aOLhmlm/BlQdr+rKcCWpZc+WNgrumUV8l9HU8eb0YL/eiSlrd
+   QNRhPHsJI6CiVR3e4mSbTY5XaYKU9QwR0eUEWZW1NeUVMEB7syGDwhKUH
+   /68hn3yO73OxyLQRujb2+2yFOmvb5yr1rWmiyqGswvt5hL84k9pzgTZKv
+   xoD64W0TPcuQebzp7+gSJeM6+k3rM6/2GOhxrFGFYi5qaOZGXd8v/i7AQ
+   dX0DDOEABVuE5mfLbePj9U0GfonLBLTA5RU0jcqutHzcCZ0KYLCF3jQjJ
+   w==;
+X-CSE-ConnectionGUID: NdAvAfq3Q7OyZQAXmSNMcw==
+X-CSE-MsgGUID: onmd2RybS2qjvEg2k6NOgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51257041"
+X-IronPort-AV: E=Sophos;i="6.13,296,1732608000"; 
+   d="scan'208";a="51257041"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 14:40:56 -0800
+X-CSE-ConnectionGUID: 2KQSNDjWQYOEKoPzPBkyQg==
+X-CSE-MsgGUID: 6DA2bOcGSK6gH0tIqfgGew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="119474723"
+Received: from sj-2308-osc3.sj.altera.com ([10.244.138.69])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 14:40:48 -0800
+Date: Tue, 18 Feb 2025 14:40:47 -0800 (PST)
+From: matthew.gerlach@linux.intel.com
+To: Krzysztof Kozlowski <krzk@kernel.org>
+cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+    robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, 
+    conor+dt@kernel.org, dinguyen@kernel.org, joyce.ooi@intel.com, 
+    linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, matthew.gerlach@altera.com, 
+    peter.colberg@altera.com
+Subject: Re: [PATCH v7 6/7] arm64: dts: agilex: add dts enabling PCIe Root
+ Port
+In-Reply-To: <20250216-super-goose-of-realization-b9efaf@krzk-bin>
+Message-ID: <f8fc27eb-6d9a-cd2c-4114-3149e7234ee5@linux.intel.com>
+References: <20250215155359.321513-1-matthew.gerlach@linux.intel.com> <20250215155359.321513-7-matthew.gerlach@linux.intel.com> <20250216-super-goose-of-realization-b9efaf@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On 11/02/25 06:22, Dave Hansen wrote:
-> On 2/11/25 05:33, Valentin Schneider wrote:
->>> 2. It's wrong to assume that TLB entries are only populated for
->>> addresses you access - thanks to speculative execution, you have to
->>> assume that the CPU might be populating random TLB entries all over
->>> the place.
->> Gotta love speculation. Now it is supposed to be limited to genuinely
->> accessible data & code, right? Say theoretically we have a full TLBi as
->> literally the last thing before doing the return-to-userspace, speculation
->> should be limited to executing maybe bits of the return-from-userspace
->> code?
+
+
+On Sun, 16 Feb 2025, Krzysztof Kozlowski wrote:
+
+> On Sat, Feb 15, 2025 at 09:53:58AM -0600, Matthew Gerlach wrote:
+>> Add a device tree enabling PCIe Root Port support on an Agilex F-series
+>> Development Kit which has the P-tile variant of the PCIe IP.
+>>
+>> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+>> ---
+>> v7:
+>>  - Create and use appropriate board compatibility and use of model.
+>>
+>> v6:
+>>  - Fix SPDX header.
+>>  - Make compatible property first.
+>>  - Fix comment line wrapping.
+>>  - Don't include .dts.
+>>
+>> v3:
+>>  - Remove accepted patches from patch set.
+>> ---
+>>  arch/arm64/boot/dts/intel/Makefile            |   1 +
+>>  .../socfpga_agilex7f_socdk_pcie_root_port.dts | 147 ++++++++++++++++++
+>>  2 files changed, 148 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
+>> index d39cfb723f5b..737e81c3c3f7 100644
+>> --- a/arch/arm64/boot/dts/intel/Makefile
+>> +++ b/arch/arm64/boot/dts/intel/Makefile
+>> @@ -2,6 +2,7 @@
+>>  dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
+>>  				socfpga_agilex_socdk.dtb \
+>>  				socfpga_agilex_socdk_nand.dtb \
+>> +				socfpga_agilex7f_socdk_pcie_root_port.dtb \
+>>  				socfpga_agilex5_socdk.dtb \
+>>  				socfpga_n5x_socdk.dtb
+>>  dtb-$(CONFIG_ARCH_KEEMBAY) += keembay-evm.dtb
+>> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts b/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
+>> new file mode 100644
+>> index 000000000000..19b14f88e32d
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
+>> @@ -0,0 +1,147 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2024, Intel Corporation
+>> + */
+>> +#include "socfpga_agilex.dtsi"
+>> +#include "socfpga_agilex_pcie_root_port.dtsi"
+>> +
+>> +/ {
+>> +	model = "SoCFPGA Agilex SoCDK";
+>> +	compatible = "intel,socfpga-agilex7f-socdk-pcie-root-port", "intel,socfpga-agilex";
 >
-> In practice, it's mostly limited like that.
+> So that's different SoC (Agilex F series)? Why isn't this expressed in
+What was formally known as Agilex is now more precisely referred Agilex 7 
+F series, Agilex 7 I series, or Agilex 7 M series. Yes, this should me 
+reflected in the compatibles.
+
+> compatibles? Is it different or the same board? If different, why
+> "root-port" in board name? Is this how the product is named?
+
+"root-port" refers to a particular board combined with a specific FPGA 
+image and possibly a daughter card and cables. I am not sure that FPGA 
+image specific DTS or DTSI should be in the kernel tree.
+
 >
-> Architecturally, there are no promises from the CPU. It is within its
-> rights to cache anything from the page tables at any time. If it's in
-> the CR3 tree, it's fair game.
+> Best regards,
+> Krzysztof
+>
 >
 
-So what if the VMEMMAP range *isn't* in the CR3 tree when a CPU is
-executing in userspace?
-
-AIUI that's the case with kPTI - the remaining kernel pages should mostly
-be .entry.text and cpu_entry_area, at least for x86.
-
-It sounds like it wouldn't do much for arm64 though, if with CnP a CPU executing in
-userspace and with the user/trampoline page table installed can still use
-TLB entries of another CPU executing in kernelspace with the kernel page
-table installed.
-
+Thanks for the feedback,
+Matthew Gerlach
 
