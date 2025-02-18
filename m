@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-519159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8ECA3988C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:18:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F05A398AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648851776C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD453BB0F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA082343C1;
-	Tue, 18 Feb 2025 10:13:17 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181CE233D99;
-	Tue, 18 Feb 2025 10:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9277323642B;
+	Tue, 18 Feb 2025 10:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avV/ipZ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A1A233D9E;
+	Tue, 18 Feb 2025 10:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739873597; cv=none; b=mz61VDmPEyHL2TxoNuD98rUXnn7HpV10/SiwwCXzsu+or4P1n8E7k/1PYcvp8FUEH9DeScWB60azzTxxpyxBxc5QQuP2/qifqk6VhvemOj6TB6E0QdmvCTKfcqwJdtvN2iulSvbyfJ5HWZ1t/Zdxk8dWe0xpWM50Tk4y4IyLOOc=
+	t=1739873604; cv=none; b=P/VvbuDPWgFrs7oph+lt/ttAledoJgPBb6GGYBh8hXjqpvqI0KQZAF6yrCLnYg1OMdke7T0nymFHsGzO0ddsrFz9vVsNtGlqFdOt6hTALpjlREohnuWVUI1Jr69nMZ1NwJRt/mDsIZJXJefG+ai3wo/r6AkXofLv3Yv2eUdZ5Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739873597; c=relaxed/simple;
-	bh=FqZ3B+iP+z/ZDGuUJRIsR4T2jVsPEEwEmT3Vp3lUXRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMHm+8TMYS4OnvkTaqLYB5fxK4M420D7tZupIrw3gADointa5uOxi5D03r9zXLY3XFt0gDsuaDO1f86zrwxEDYONj/8nfNV2O1MDlPbyvyXPkn9Lujokhxst1thbWblnLu1wiUbEFz53tCNBlOAoi7HgwV+ExstCdx8fmey1kr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwCnrmoyXbRn47auAw--.24682S2;
-	Tue, 18 Feb 2025 18:13:06 +0800 (CST)
-Received: from localhost (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwB3eYUvXbRnAQwrAA--.5979S2;
-	Tue, 18 Feb 2025 18:13:04 +0800 (CST)
-Date: Tue, 18 Feb 2025 18:12:47 +0800
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Gregory Price <gourry@gourry.net>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 1: BIOS, EFI, and Early Boot
-Message-ID: <Z7RdH7RGNivDjq6n@phytium.com.cn>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z6LKJZkcdjuit2Ck@gourry-fedora-PF4VCD3F>
+	s=arc-20240116; t=1739873604; c=relaxed/simple;
+	bh=2WgxDzSyu2ODBDOo0P+Zwpw+CoJQ2Qp8O1NrlEmVv0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rRYd+2BQnefA0s/IzU+pvxrAdlEh0UDjrLnKcLPYCoBe81dYWK/us32n5RSNzCYBlB3EulVmbGNRn9ztL48wVO7nnWMphY7P4BnjY6IYDmY3ORRg7fd5MH7A8wSEIGKZpcj7tAADMwwC9XQ1EtfA6Crs/0zhOq4W905hTvwkX/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avV/ipZ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF98CC4CEE2;
+	Tue, 18 Feb 2025 10:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739873604;
+	bh=2WgxDzSyu2ODBDOo0P+Zwpw+CoJQ2Qp8O1NrlEmVv0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=avV/ipZ87m8VHPEwjehYmsKhJHtdZYkVNIj33mbjeiauXr8HTx9m9403JQImZOv4f
+	 pGL5DD99wYfZbhq4ya+DxDY6wHbsoODx9hANbRACbsC7EyhaX8m7LCOqHYPk7itc2q
+	 Gq3LURh1dZExs+fslTfsX7fcrISmBBTdAvr+k+zhh9X/uBz//NNGvfrVm7fSLF6Hgp
+	 Yxmcmk+bnm4UnNeaiLGrhkxRRwChR29VSNDXU+GhifgNhHnXuxljRPM/GPBn/swgfd
+	 WGvx4u4FEyCu2+HkgvPlcP5o/1Nvb1gKLpGMJQYuooUY+tkB+iqnbNb7s0MD4DYSvl
+	 eXxaYBykjAh8A==
+Message-ID: <4b513ad7-b887-46c2-b383-18338dae1125@kernel.org>
+Date: Tue, 18 Feb 2025 11:13:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6LKJZkcdjuit2Ck@gourry-fedora-PF4VCD3F>
-X-CM-TRANSID:AQAAfwB3eYUvXbRnAQwrAA--.5979S2
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAFAWezlaEDBQAAsj
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7KFyUtFyDKr1Dtw4rur4rKrg_yoW8tFWkpF
-	WfJry3Cr48tr1xAr48Ars5AFyjvw1kCa13Gr9rAr95C3W5C342vr15tw18ZFyUJryUJr17
-	XayUJr12vw1UAaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] selftests: net: Fix minor typos in MPTCP and
+ psock_tpacket tests
+Content-Language: en-GB
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Suchit K <suchitkarunakaran@gmail.com>, netdev@vger.kernel.org,
+ horms@kernel.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <CAO9wTFgN=hVJN8jUrFif0SO5hAvayrKweLDQSsmJWrE55wnTwQ@mail.gmail.com>
+ <0c5f1dcf-1bd4-4ddd-b6c0-e3ee2b3671ea@kernel.org>
+ <20250217153708.65269745@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250217153708.65269745@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 04, 2025 at 09:17:09PM -0500, Gregory Price wrote:
-> 
-> ------------------------------------------------------------------
-> Step 2: BIOS / EFI generates the CEDT (CXL Early Detection Table).
-> ------------------------------------------------------------------
-> 
-> This table is responsible for reporting each "CXL Host Bridge" and
-> "CXL Fixed Memory Window" present at boot - which enables early boot
-> software to manage those devices and the memory capacity presented
-> by those devices.
-> 
-> Example CEDT Entries (truncated) 
->          Subtable Type : 00 [CXL Host Bridge Structure]
->               Reserved : 00
->                 Length : 0020
-> Associated host bridge : 00000005
-> 
->          Subtable Type : 01 [CXL Fixed Memory Window Structure]
->               Reserved : 00
->                 Length : 002C
->               Reserved : 00000000
->    Window base address : 000000C050000000
->            Window size : 0000003CA0000000
-> 
-> If this memory is NOT marked "Special Purpose" by BIOS (next section),
-> you should find a matching entry EFI Memory Map and /proc/iomem
-> 
-> BIOS-e820:   [mem 0x000000c050000000-0x000000fcefffffff] usable
-> /proc/iomem: c050000000-fcefffffff : System RAM
-> 
-> 
-> Observation: This memory is treated as 100% normal System RAM
-> 
->    1) This memory may be placed in any zone (ZONE_NORMAL, typically)
->    2) The kernel may use this memory for arbitrary allocations
->    4) The driver still enumerates CXL devices and memory regions, but
->    3) The CXL driver CANNOT manage this memory (as of today)
->       (Caveat: *some* RAS features may still work, possibly)
-> 
+Hi Jakub,
 
-Hi, Gregory
+On 18/02/2025 00:37, Jakub Kicinski wrote:
+> On Mon, 17 Feb 2025 11:08:36 +0100 Matthieu Baerts wrote:
 
-Thanks for the in-depth introduction and analysis.  
+(...)
 
-Here I have some confusion:
-
-1) In this scenario, does it mean users could not create a CXL region
-dynamically after OS boot? 
-
-2) A CXL region (interleave set) would influence the real used memory
-in this memory range. Therefore, apart from devices, does platforms
-have to configure CXL regions in this stage?
-
-3) How bios/EFI to describe a CXL region?
-
-> This creates an nuanced management state.
+>> This patch can be applied directly in the netdev tree, but I'm not sure
+>> the Netdev maintainers will accept that kind of small clean-up patch
+>> alone, see:
+>>
+>>  https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
 > 
-> The memory is online by default and completely usable, AND the driver
-> appears to be managing the devices - BUT the memory resources and the
-> management structure are fundamentally separate.
->    1) CXL Driver manages CXL features
->    2) Non-CXL SystemRAM mechanisms surface the memory to allocators.
->
+> FWIW spelling problems are explicitly called out as okay there.
+Ah yes, sorry, I missed the last line of this section:
+
+  Conversely, spelling and grammar fixes are not discouraged.
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
