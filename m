@@ -1,246 +1,113 @@
-Return-Path: <linux-kernel+bounces-520238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D70DA3A75C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:27:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F83A3A75E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6D4176F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010C6177545
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACF326AA8A;
-	Tue, 18 Feb 2025 19:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBjICclE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49691F584F;
-	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC3B1B3937;
+	Tue, 18 Feb 2025 19:24:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791B21B9C7;
+	Tue, 18 Feb 2025 19:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906609; cv=none; b=pwBs2ttKW2W0JudLehA7nTiKHkKX+B3HvynF2PndpCyUDxq12zQ1nvd+cyYW9piD2ofYjBsQqUhTKiXdjkCloO9qRHOezULN5NHVL+yY5OXQD4eGd9WRlAWuTZUZ5tZD+lDnXRNzTMLKiijiSMRRuh+qA9r9yxUUaclT3ZgpyOs=
+	t=1739906686; cv=none; b=jkyRe5B/ANxqHxt4rAEfXyK4GUnUuIKYnxOexECx6nZpCv9kvtFs/O6Vvvrh5gV3gCfLtrOU9mhdtnPmMv9SFjMC2wC1ccAnQzB12x5gbZXtW3b3ZaoGS1Z2T2mvlju0Vf0aPs53EKDUdOXdKy03uwFX32TO8pTgZOLxxDqhY84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906609; c=relaxed/simple;
-	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Shifk4dB9Ra4mkFj3C6w0ffoiitU/biZJdQ1GZnNk3BAJ/Q/Qu7Jwhf8/RdGQU1ZxBSNCkJvW501cbLUgHl6v8Bkt86t5OvIZtqtGLLkEHaLlmW+MAH/VWzp6oq9YZsLQ5LXiMcEt/fqBda/ZgU6IvnkvGbvSt8swAF5iLw7YL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBjICclE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F610C4CEEE;
-	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739906609;
-	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OBjICclEAhuFsYzZQCfh187X4A70ZB8kLhlGB+G0Y1WH52H1IVUzEefn3Yr47eVzD
-	 SRCMzEexqdZQKEQDRkNQd05L5cnaPhfvHF7iBXIoRaAHKU59bKop6m/vjg5FIw9yaq
-	 CemDgQZneYRRgnQCG6eFr9+Q4ya7+dcrDxZZAoyrTeZxwQ9v4mfA8xJSw3/kY2KYuw
-	 wWA3MAaso2buF5NziFfkUx0EqYV8hQXGpshjYnV3PeyUoYeIL5u2b7yTGTkxd/M1PX
-	 SOyARhe5rafluU1t/PdE80Q+y0wcP8OQTC04wtwMR48UIsqdCtOcg35iQ9NPMQ5a+W
-	 aKmBt9T9L4pGQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3e0498beaso55035b6e.1;
-        Tue, 18 Feb 2025 11:23:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUydrDvMsjlG0S5RSi/SGB0HJHyud9/73NldlGgxh1LjchF7xxaSrxRoD+/KvZSrQ2JxmA12o1HzmfE@vger.kernel.org, AJvYcCV2EvD4F2b8wX+PBWPRkzlPlDDdsX6dS5krwOxtEQYsTOytuOS19TAsZ8oIKdEgEJd+Qa4sdcDnoa0=@vger.kernel.org, AJvYcCVz4ni+AQ5ZntpEs4sANscnw1xQRk+h1/S5ENwcKqQ9/8CwoBBeR8VpNK4S7ONrfrjyNxmZxC3K8kfx/m8=@vger.kernel.org, AJvYcCWZhiLzhIq8Rov14dLShZTZJ77KIzuciU4seJ1VFlVFHZPepGrlyfop0pi9hrQuVRPn64CSlYo2+rUCPWVV@vger.kernel.org, AJvYcCWdyjueOjhCKGL1Da03mtQPBpG6wREcNobR7jLCTEWlUl1Gf7rDQtdwxFP0WKY29AdNp+eB6BFNqh/T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFY/guWF5YHN284cEA9+g22sgajlJfdKvQZlIslWox2ZvH8S+s
-	MAs4GOAYHLxxnUxg32L56Q/SM92k8kCqUQgVrn9/2wux14V9BtXSMxeoeNrh/6JLOuOZlFwW8Vp
-	fe25i76PjMw9aKZT45HHRrNvIXGc=
-X-Google-Smtp-Source: AGHT+IFnQSrEOQ5XyF8kcORbR22aIZWDMKNGLzVsGwRAAbFTPsjQg/3r9VLhR4uCpNrzjbTL59N8kAtr10x5ERBjPf4=
-X-Received: by 2002:a05:6808:188b:b0:3f4:9e6:fb7 with SMTP id
- 5614622812f47-3f40eefb38fmr790244b6e.1.1739906608509; Tue, 18 Feb 2025
- 11:23:28 -0800 (PST)
+	s=arc-20240116; t=1739906686; c=relaxed/simple;
+	bh=gkq0bzBew/gK9mIUYB/45V624O4MpHtRd83Uovjs+M8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kbg/jG7YDW4AQ5zuCz8kuT6aGb3U6HXleg2E2axIf0sYP/SQQPOqoDq8vfnunjQO89h2ZbD5j57y7fo5hZGTijNgJtLmx+zZ2uaQ57w+VA2FJS3CQFJ48YBfzH2zp8hdNVq+cvyMmZcZ1rRF4JFkEleOurIoraQKLLAJVvhktcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91CC9152B;
+	Tue, 18 Feb 2025 11:24:59 -0800 (PST)
+Received: from e125905.cambridge.arm.com (e125905.cambridge.arm.com [10.1.194.73])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B07CD3F6A8;
+	Tue, 18 Feb 2025 11:24:38 -0800 (PST)
+From: Beata Michalska <beata.michalska@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	sfr@canb.auug.org.au
+Cc: ionela.voinescu@arm.com,
+	yury.norov@gmail.com,
+	linux-next@vger.kernel.org,
+	sumitg@nvidia.com,
+	yang@os.amperecomputing.com,
+	vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com,
+	zhanjie9@hisilicon.com,
+	ptsm@linux.microsoft.com
+Subject: [PATCH] arm64: Utilize for_each_cpu_wrap for reference lookup
+Date: Tue, 18 Feb 2025 19:24:12 +0000
+Message-Id: <20250218192412.2072619-1-beata.michalska@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211103737.447704-1-sumitg@nvidia.com> <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
- <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com> <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
- <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com> <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
-In-Reply-To: <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 20:23:17 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
-X-Gm-Features: AWEUYZnjK1GpyeSViY75mprA6AS3e808U82IVCn4oReC-_uewxJCKtkO01zA8nA
-Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
-Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
-To: Sumit Gupta <sumitg@nvidia.com>, "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, rafael@kernel.org, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	sashal@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
-	sanjayc@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 8:09=E2=80=AFAM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
->
->
-> On 12/02/25 16:22, zhenglifeng (A) wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On 2025/2/11 22:08, Sumit Gupta wrote:
-> >>
-> >>
-> >>>
-> >>> On 2025/2/11 18:44, Viresh Kumar wrote:
-> >>>> On 11-02-25, 16:07, Sumit Gupta wrote:
-> >>>>> This patchset supports the Autonomous Performance Level Selection m=
-ode
-> >>>>> in the cppc_cpufreq driver. The feature is part of the existing CPP=
-C
-> >>>>> specification and already present in Intel and AMD specific pstate
-> >>>>> cpufreq drivers. The patchset adds the support in generic acpi cppc
-> >>>>> cpufreq driver.
-> >>>>
-> >>>> Is there an overlap with:
-> >>>>
-> >>>> https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@hu=
-awei.com/
-> >>>>
-> >>>> ?
-> >>>
-> >>> Ha, it looks like we're doing something very similar.
-> >>>
-> >>
-> >> Hi Viresh,
-> >>
-> >> Thank you for pointing to [1].
-> >>
-> >> There seems to be some common points about updating the 'energy_perf'
-> >> and 'auto_sel' registers for autonomous mode but the current patchset
-> >> has more comprehensive changes to support Autonomous mode with the
-> >> cppc_cpufreq driver.
-> >>
-> >> The patches in [1]:
-> >> 1) Make the cpc register read/write API=E2=80=99s generic and improves=
- error
-> >>     handling for 'CPC_IN_PCC'.
-> >> 2) Expose sysfs under 'cppc_cpufreq_attr' to update 'auto_select',
-> >>     'auto_act_window' and 'epp' registers.
-> >>
-> >> The current patch series:
-> >> 1) Exposes sysfs under 'cppc_attrs' to keep CPC registers together.
-> >> 2) Updates existing API=E2=80=99s to use new registers and creates new=
- API
-> >>     with similar semantics to get all perf_ctrls.
-> >> 3) Renames some existing API=E2=80=99s for clarity.
-> >> 4) Use these existing API=E2=80=99s from acpi_cppc sysfs to update the=
- CPC
-> >>     registers used in Autonomous mode:
-> >>     'auto_select', 'epp', 'min_perf', 'max_perf' registers.
-> >> 5) Add separate 'cppc_cpufreq_epp' instance of the 'cppc_cpufreq'
-> >>     driver to apply different limit and policy for Autonomous mode.
-> >>     Having it separate will avoid confusion between SW and HW mode.
-> >>     Also, it will be easy to scale and add new features in future
-> >>     without interference. Similar approach is used in Intel and AMD
-> >>     pstate drivers.
-> >>
-> >> Please share inputs about the preferred approach.
-> >>
-> >> Best Regards,
-> >> Sumit Gupta
-> >>
-> >> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@=
-huawei.com/
-> >>
-> >>
-> >
-> > Hi Sumit,
-> >
-> > Thanks for upstreaming this.
-> >
-> > I think the changes to cppc_acpi in this patchset is inappropriate.
-> >
-> > 1) cppc_attrs are common sysfs for any system that supports CPPC. That
-> > means, these interfaces would appear even if the cpufreq driver has alr=
-eady
-> > managing it, e.g. amd-pstate and cppc_cpufreq. This would create multip=
-le
-> > interfaces to modify the same CPPC regs, which may probably introduce
-> > concurrency and data consistency issues. Instead, exposing the interfac=
-es
-> > under cppc_cpufreq_attr decouples the write access to CPPC regs.
-> >
->
-> Hi Lifeng,
->
-> I think its more appropriate to keep all the CPC registers together
-> instead of splitting the read only registers to the acpi_cppc sysfs
-> and read/write registers to the cpufreq sysfs.
->
-> Only the EPP register is written from Intel and AMD.
->   $ grep cpufreq_freq_attr_rw drivers/cpufreq/* | grep -v scaling
->   drivers/cpufreq/acpi-cpufreq.c:cpufreq_freq_attr_rw(cpb);
->
-> drivers/cpufreq/amd-pstate.c:cpufreq_freq_attr_rw(energy_performance_pref=
-erence);
->
-> drivers/cpufreq/intel_pstate.c:cpufreq_freq_attr_rw(energy_performance_pr=
-eference);
->
-> We are currently updating four registers and there can be more in
-> future like 'auto_act_window' update attribute in [1].
-> Changed to make this conditional with 'ifdef CONFIG_ACPI_CPPC_CPUFREQ'
-> to not create attributes for Intel/AMD.
->
->   +++ b/drivers/acpi/cppc_acpi.c
->   @@ static struct attribute *cppc_attrs[] =3D {
->           &lowest_freq.attr,
->   +#ifdef CONFIG_ACPI_CPPC_CPUFREQ
->           &max_perf.attr,
->           &min_perf.attr,
->           &perf_limited.attr,
->           &auto_activity_window.attr,
->           &energy_perf.attr,
->   +#endif
->
-> > 2) It's inappropriate to call cpufreq_cpu_get() in cppc_acpi. This file
-> > currently provides interfaces for cpufreq drivers to use. It has no ABI
-> > dependency on cpufreq at the moment.
-> >
->
-> cpufreq_cpu_get() is already used by multiple non-cpufreq drivers.
-> So, don't think its a problem.
->   $ grep -inr "=3D cpufreq_cpu_get(.*;" drivers/*| grep -v "cpufreq/"|wc =
--l
->   10
->
-> > Apart from the changes to cppc_acpi, I think the whole patchset in [1] =
-can
-> > be independent to this patchset. In other words, adding the
-> > cppc_cpufreq_epp_driver could be standalone to discuss. I think combini=
-ng
-> > the use of ->setpolicy() and setting EPP could be a use case? Could you
-> > explain more on the motivation of adding a new cppc_cpufreq_epp_driver?
-> >
->
-> With 'cppc_cpufreq_epp_driver', we provide an easy option to boot all
-> CPU's in auto mode with right epp and policy min/max equivalent of
-> {min|max}_perf. The mode can be found clearly with scaling_driver node.
-> Separating the HW and SW mode based on driver instance also
-> makes it easy to scale later.
-> Advanced users can program sysfs to switch individual CPU's in and out
-> of the HW mode. We can update policy min/max values accordingly.
-> In this case, there can be some CPU's in SW mode with epp driver
-> instance. But a separate instance will be more convenient for the
-> users who want all CPU's either in HW mode or in SW mode than having
-> to explicitly set all the values correctly.
+While searching for a reference CPU within a given policy,
+arch_freq_get_on_cpu relies on cpumask_next_wrap to iterate over
+all available CPUs and to ensure each is verified only once.
+Recent changes to cpumask_next_wrap will handle the latter no more,
+so switching to for_each_cpu_wrap, which  preserves expected behavior
+while ensuring compatibility with the updates.
 
-There seems to be some quite fundamental disagreement on how this
-should be done, so I'm afraid I cannot do much about it ATM.
+Fixes: 16d1e27475f6 ("arm64: Provide an AMU-based version of arch_freq_get_on_cpu")
+Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+---
+ based on arm64 for-next/amuv1-avg-freq
 
-Please agree on a common approach and come back to me when you are ready.
+ arch/arm64/kernel/topology.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Sending two concurrent patchsets under confusingly similar names again
-and again isn't particularly helpful.
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index a09b0551ec59..9e3583720668 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -254,7 +254,7 @@ int arch_freq_get_on_cpu(int cpu)
+ 		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+ 		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+ 			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-			int ref_cpu = cpu;
++			int ref_cpu;
+ 
+ 			if (!policy)
+ 				return -EINVAL;
+@@ -265,11 +265,15 @@ int arch_freq_get_on_cpu(int cpu)
+ 				return -EOPNOTSUPP;
+ 			}
+ 
+-			do {
+-				ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
+-							    start_cpu, true);
+-
+-			} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
++			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
++				if (ref_cpu == start_cpu) {
++					/* Prevent verifying same CPU twice */
++					ref_cpu = nr_cpu_ids;
++					break;
++				}
++				if (!idle_cpu(ref_cpu))
++					break;
++			}
+ 
+ 			cpufreq_cpu_put(policy);
+ 
+-- 
+2.25.1
 
-Thanks!
 
