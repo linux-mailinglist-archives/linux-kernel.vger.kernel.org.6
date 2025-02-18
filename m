@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-519228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556B3A39959
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:42:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE92A39972
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5DB189AF6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE954168321
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE75123A994;
-	Tue, 18 Feb 2025 10:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CA9238D32;
+	Tue, 18 Feb 2025 10:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IctaxFc7"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (4096-bit key) header.d=sdinet.de header.i=@sdinet.de header.b="mNmsaUl0"
+Received: from mail.sdinet.de (hydra.sdinet.de [136.243.3.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864B223AE6D;
-	Tue, 18 Feb 2025 10:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DE223644D;
+	Tue, 18 Feb 2025 10:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.3.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874938; cv=none; b=OHFK3xjoyBdvmNuN1E4UOCCTbV2NY0RFM8jzD200SGStLBVeEBEjyExqTAKPmDhnYdo5CLwQ3wBdzqLjBoAc4NoTuWRdKjSKFz+z3P60HSMkaNTMBYHdWEq913X6JqEoxgqS+6suoZiD8LhvQV7pWcedrF/vTA4kKxNNHxCzsW8=
+	t=1739875593; cv=none; b=TZW6Kp7XvgiDbdh//+ew7yZ6xp7LFEG41FfaLa0BH+buwvW6ypqYxUXqpHzYhceleQwp+fJwtogXKf8mjWmhkLTZa7WpOSIff4XAPVkB9zljAL8lPVJIdeiHuUZOH05muC0nzqjerUT15BtYWgmvGgPRH6CwtwRAMU9ZLUw+NLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874938; c=relaxed/simple;
-	bh=c3BrpkDhqaCEjA27I1wRsonwAHEWi+LulnErGrPlMtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZ1+sZ4pHF31T48wGC6b7lDHvqwy9w/HqrKv6K2ATmL2fNOwp/Lw/CvPzmBG+4/JwpPAA3zY8kDvoKs7IqC+iKC/Q/Z34vk0heyShKi/Uc7nTEsFZITFUAEpd/99Bp5FrZSl/hMA0787wiby/uUtr4jLbUaJoHLW80Oc4RWfg/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IctaxFc7; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1739874931; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=5NAxMiATQ8LZrAb8v9xhHjtPlZqc6/HzlLdhP76SDgU=;
-	b=IctaxFc7U28wlFifSGELnvwMI/YkbppROenPu6Sq4NhSZgX6INFCkykbAXM0Uj4Bh+mJwzplGRWuIhNPY7DpyUkGC/mDF6C9iejCobBoApZXwSnOzlvtA1f/XSpYPsxCnMOF66sn9KvsPjuP2CHNKro7x4MAsqwe0VU2kU+Lv2M=
-Received: from U-V2QX163P-2032.local(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WPldaSl_1739874930 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 18 Feb 2025 18:35:30 +0800
-Date: Tue, 18 Feb 2025 18:35:29 +0800
-From: YinFengwei <fengwei_yin@linux.alibaba.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: will@kernel.org, mark.rutland@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jie.li.linux@linux.alibaba.com
-Subject: Re: [PATCH] perf/arm-cmn: don't claim resource during ioremap() for
- CMN700 with ACPI
-Message-ID: <cji4nqc6etzggg7hannvdg5jos4dr4mhujetviuhs3sl36bh6g@xde5izlywsei>
-References: <20250218012111.30068-1-fengwei_yin@linux.alibaba.com_quarantine>
- <d5040b5c-564d-4abf-be22-d2aa1183b633@arm.com>
+	s=arc-20240116; t=1739875593; c=relaxed/simple;
+	bh=8hwAEfYHLi1qKR0YP1FUgTPhNsoxFHO8NvCdNPecFbk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gVehoRXiVw7DLwszWCbmraZUd2hp7iw8FEITHzktdhL5ka+qFZwMnuvSER5Fvhi/8OhCSaulAzyapJ/8BLGbVqQcigFhYmTgUGGOF4sFjxHgORrsOv3ns794duzaSl1jmcc8PekwEoF51/PwnLt5bEf7cRkj82Trvu499JZqTOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdinet.de; spf=pass smtp.mailfrom=sdinet.de; dkim=pass (4096-bit key) header.d=sdinet.de header.i=@sdinet.de header.b=mNmsaUl0; arc=none smtp.client-ip=136.243.3.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sdinet.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdinet.de
+Received: from aurora64.sdinet.de (aurora64.sdinet.de [193.103.159.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: haegar)
+	by mail.sdinet.de (bofa-smtpd) with ESMTPSA id D1C3934003A;
+	Tue, 18 Feb 2025 11:38:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sdinet.de; s=mail2024;
+	t=1739875121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+i9Iw2wxStBEEjo8w2Ll1bq83y0kUgzFah+tO1rE1yE=;
+	b=mNmsaUl02ujcoirbeRUBrWHbfOnXEe84lH/3UD2K8o3WkE+f0/ixSJC7MbknlPXm/T24+M
+	csmyHJmlZGdRqQ8mARo+KuWYKcyYR8FYiCYcMJKmjD9no8reWWd03O8/34IMv9TnsxMS72
+	R620cx/EZmqLRzgjwuj2HQmgzn/4rwNP+3o9KjwndkTa4/JnY1AoONngc7yEDI8qVoALtG
+	3yfCJhKfP6RuDz+lSOXBn0Wzm0dg3G5Mj31ksJ7Qjj0Z3Ok92Wc8eFq4S8VE2bXIem1UdN
+	xGzD4TXFwh7I4N4Zoh/Pko7MbB8bVef4BJMVcot1vHvaGBl1O1rRtLAyXrBGEY+4GVmO5a
+	aQE8DX/sDTMpKchYvDRx7DXB7R4MoLcyGWvtSy/KN+Chx4VifXFAxzrpn0j2+1OEIPooNu
+	FTRtyhf3JU4qwZqkJmf1u2V2hZEvIs8Ds/L51hWxYMwm9MMeMQttBM1lzDXxX9UK4P4IpL
+	cZi6SFZ/x3/m3EK25OivgxLN2moTbJR4g+aqasKWUPQ3e4wlhYeVVFpxzvpKXi4jJon2yG
+	skWKyskIzR8PqOnA3blPAvytGLH6Ro5w34azGjUvXPKP+vDbxjEvvQv7S4ohFd3uEnUTD3
+	BNtB1vS75eoSsv7l1kaGInB3K1c3hf+/Bzmw3c64GXxVg7LOomhA8=
+Date: Tue, 18 Feb 2025 11:36:22 +0100 (CET)
+From: Sven-Haegar Koch <haegar@sdinet.de>
+To: Johannes Berg <johannes@sipsolutions.net>
+cc: Corentin Labbe <clabbe.montjoie@gmail.com>, kvalo@kernel.org, 
+    linux-wireless@vger.kernel.org, 
+    Linux-Kernel-Mailinglist <linux-kernel@vger.kernel.org>
+Subject: Re: unknow Network controller: Intel Corporation Device 093c (rev
+ 3a)
+In-Reply-To: <6a5eb58c06cc1d5bdeb67fe877ef3a98520627ed.camel@sipsolutions.net>
+Message-ID: <8eb241a2-d8d7-f01c-c2ca-b615e8a1cc41@sdinet.de>
+References: <Z7N7AvQvv8k4OY-o@Red> <6a5eb58c06cc1d5bdeb67fe877ef3a98520627ed.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5040b5c-564d-4abf-be22-d2aa1183b633@arm.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Feb 18, 2025 at 10:31:42AM +0800, Robin Murphy wrote:
-> On 2025-02-18 1:21 am, Yin Fengwei wrote:
-> > Currently, arm-cmn PMU driver assumes ACPI claim resource
-> > for CMN600 + ACPI. But with CMN700 + ACPI, the device probe
-> > failed because of resource claim failes when ioremap() is
-> > called:
-> > [   10.837300] arm-cmn ARMHC700:00: error -EBUSY: can't request region for resource [mem 0x40000000-0x4fffffff]
-> > [   10.847310] arm-cmn ARMHC700:00: probe with driver arm-cmn failed with error -16
-> > [   10.854726] arm-cmn ARMHC700:02: error -EBUSY: can't request region for resource [mem 0x40040000000-0x4004fffffff]
-> > [   10.865085] arm-cmn ARMHC700:02: probe with driver arm-cmn failed with error -16
+On Tue, 18 Feb 2025, Johannes Berg wrote:
+
+> On Mon, 2025-02-17 at 19:08 +0100, Corentin Labbe wrote:
+> > The laptop is running Debian bookworm, and I tried to update pci.ids, no more information.
 > > 
-> > Let CMN700 + ACPI do same as CMN600 + ACPI to allow CMN700
-> > work in ACPI env.
+> > lspci -vx give:
+> > 03:00.0 Network controller: Intel Corporation Device 093c (rev 3a)
+> > 	Subsystem: Intel Corporation Device 2181
 > 
-> No, the CMN-600 routine is a special case for CMN-600 having two nested
-> memory resources of its own. CMN-700 and everything else only have one
-> memory resource, so that is not appropriate. What else is claiming the
-> region to cause a conflict?
-You are right. I just saw the discussion after I sent this patch. :(.
-I proposed new fix in that thread which align with the spec.
-
-Could you please take a look? Thanks.
-
-
-Regards
-Yin, Fengwei
-
+> But that doesn't match at all, not even close.
 > 
-> Thanks,
-> Robin.
-> 
-> > Signed-off-by: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-> > ---
-> > I am also wondering whether we could just drop the CMN600 part id
-> > check here if ACPI companion device claimed the resource?
-> > 
-> >   drivers/perf/arm-cmn.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-> > index ef959e66db7c..8b5322a2aa6e 100644
-> > --- a/drivers/perf/arm-cmn.c
-> > +++ b/drivers/perf/arm-cmn.c
-> > @@ -2559,7 +2559,8 @@ static int arm_cmn_probe(struct platform_device *pdev)
-> >   	cmn->part = (unsigned long)device_get_match_data(cmn->dev);
-> >   	platform_set_drvdata(pdev, cmn);
-> > -	if (cmn->part == PART_CMN600 && has_acpi_companion(cmn->dev)) {
-> > +	if (((cmn->part == PART_CMN600) || (cmn->part == PART_CMN700)) &&
-> > +			has_acpi_companion(cmn->dev)) {
-> >   		rootnode = arm_cmn600_acpi_probe(pdev, cmn);
-> >   	} else {
-> >   		rootnode = 0;
-> > @@ -2649,7 +2650,7 @@ MODULE_DEVICE_TABLE(of, arm_cmn_of_match);
-> >   static const struct acpi_device_id arm_cmn_acpi_match[] = {
-> >   	{ "ARMHC600", PART_CMN600 },
-> >   	{ "ARMHC650" },
-> > -	{ "ARMHC700" },
-> > +	{ "ARMHC700", PART_CMN700 },
-> >   	{}
-> >   };
-> >   MODULE_DEVICE_TABLE(acpi, arm_cmn_acpi_match);
+> I cannot find any record for WiFi of these numbers, so either the device
+> is not WiFi or is malfunctioning. You could try to open it up, take a
+> picture so we can see what the WiFi NIC is, and also maybe re-seat the
+> NIC while at is, occasionally that fixes such issues.
+
+https://linux-hardware.org/?id=pci:8086-093c-8086-2181
+
+Suggests it to be a "Intel Wireless Gigabit 17265", with no linux driver 
+existing for it.
+
+c'ya
+sven-haegar
+
+-- 
+Three may keep a secret, if two of them are dead.
+- Ben F.
 
