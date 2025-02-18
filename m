@@ -1,125 +1,79 @@
-Return-Path: <linux-kernel+bounces-519674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78265A3A08B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E58A3A08D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C50161574
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DDC18869E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F48426A1BF;
-	Tue, 18 Feb 2025 14:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03626AAA4;
+	Tue, 18 Feb 2025 14:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxZopk+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MD+0QgKC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735642309B5;
-	Tue, 18 Feb 2025 14:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00AE269B09;
+	Tue, 18 Feb 2025 14:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739890504; cv=none; b=IXmhhqM7At+8xuaqojiFH+zRcjt0O1ezHHIymdplzATp+YzKGIHBDPfywL+inlmw6WCh0OYV40Kzxvz3gDxvjlmI8WSRJG7EiZax0+EdAp9K1rXQkZrsgY6y6TwL9AsHr3ysXCse9SA0BkjEZ/3lMFjyhsVFlA/mHqdqHheitEo=
+	t=1739890547; cv=none; b=KqW7WaUuPSxGQeLLcH6+jZVL9vLFtIsJWaJMPO1a6oqWYlP6Acw69BCf0Rumuy6CYDJDAqMgc7YGMzHv+kmRTkRGxwWZ4aJ1BiqcqA/fZH++5lWJMpT0epvcmnV7mmVg/CwwOhYy59goHFpky1uFrvcINR+up24e1lPl6lumYQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739890504; c=relaxed/simple;
-	bh=vhd1qtpo1JdzpatIl3cLegasb4zvWEmr+5D4nvmUfsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hm8qaUYQTQWtoEZ1QjKGK5Ki0aCRsscKRcEAnT8ZyVDZLzRdy1Xx9+eUXKJLq39qXmzefX+esCHZxF+oZko7gq/1MyIz6JZgnLvZ6N2mRO5QyCSaV98GWhhQ8rAU8FSL+QjGwzbLaDyi41kP21EhV3JFz9I/K1guzDVeWmComEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxZopk+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE7CC4CEE2;
-	Tue, 18 Feb 2025 14:55:03 +0000 (UTC)
+	s=arc-20240116; t=1739890547; c=relaxed/simple;
+	bh=/V5shWYAkK7wZryKPoRAfySkogLDBURQNFw7pVIC40M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m/IvLFagxxIb5cObyEcaVjVTbvTcoAAa5hOLfzCVkH7sUuXoYC9w/E/ApBKT3s/55N2B9x550XrFhRD2ouxFa0RlU15Svcdwc1Xj8A6bNeU6k4HcrJayjposUdoKEoOh1bsj9TcMZmVgQnQcHz1mW/xROOfDXL40Hnd3HnxZ5yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MD+0QgKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8022C4CEE2;
+	Tue, 18 Feb 2025 14:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739890504;
-	bh=vhd1qtpo1JdzpatIl3cLegasb4zvWEmr+5D4nvmUfsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxZopk+MmDffn+I+qcaMFBBKtmDMxSu5jiCHbVgP2o0gEMQ8lBFDEatsOKaeKK8i5
-	 MwHKorHaYBLgQ6TQ+A82YzaEhYoYcSxBUBaIdpT+0KzLBbXu9LKI5BPC4RQwN5NqlA
-	 MxCiCmzfiQEVfKXxl7krYfU6Nc5j/RPPaim/vbxVB8EkzjxtkZobed+vKfJxjP45Vx
-	 8L+UYhveZHIA90yeFmnlx5M+mGVrLMGRgJfXNpFFvGbKCW/ISK/B2B0p4jE5XWNmZk
-	 o+fWujqNzPxQCitaXCFcYCcc7mivMuqbE9aYnW/42IxGYgOIvSBAkOjj60SWfsuAyF
-	 TyOxBKAd0gdVg==
-Date: Tue, 18 Feb 2025 14:54:59 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, andersson@kernel.org,
-	konradybcio@kernel.org, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Tudor Ambarus <Tudor.Ambarus@linaro.org>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Michael Walle <michael@walle.cc>,
-	Pratyush Yadav <pratyush@kernel.org>, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [GIT PULL] mtd: topic branch for spi with Qcom changes
-Message-ID: <Z7SfQ4lu2fponEiX@finisterre.sirena.org.uk>
-References: <87jzbp9hnt.fsf@bootlin.com>
- <87bjwkoxwh.fsf@bootlin.com>
- <96bdefb1-4607-4a4a-8bed-b4d9b5971171@sirena.org.uk>
- <80746729-2b32-9a13-93f5-8d5c222ce4d8@quicinc.com>
+	s=k20201202; t=1739890547;
+	bh=/V5shWYAkK7wZryKPoRAfySkogLDBURQNFw7pVIC40M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MD+0QgKCaE0dGGJzjvw3Nvb68g0GeZDCzKqF3DTO6u3ZQ27KW7U7xt5k/cOAHvm8z
+	 NowOSj7jgQVVJ9vkAQo2vxQ+jFFlexsjmmtnKF8gDgjFjZMMgzTeTBR++0Ptw2rFTY
+	 IUjyLPW8Y0KcXnqxk0Jf0OFDeKIQI2DhKqkOF1eJQlHrG445GDXhOk8KvanQcbkAm1
+	 PsCnr67qTT2fpJAfMnb9DUlFQiZCuQ0mEeTuNINZY5HoG6JmRiF54vblHRl2w99SKH
+	 +C45fmu0vgGkY2a+gnh9FbDoL4QY5IeZluSgN1HfxGPvigDeQ60nrO3XI3iCGjixaJ
+	 q0qEjtE9c/SYQ==
+Date: Tue, 18 Feb 2025 06:55:45 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lee@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, tsbogend@alpha.franken.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-mips@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next 0/5] dt-bindings: net: realtek,rtl9301-switch
+Message-ID: <20250218065545.533bab5f@kernel.org>
+In-Reply-To: <20250214134528.4630b6b2@kernel.org>
+References: <20250209234751.460404-1-chris.packham@alliedtelesis.co.nz>
+	<20250214134528.4630b6b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KvxwJgM+dWb73Ypq"
-Content-Disposition: inline
-In-Reply-To: <80746729-2b32-9a13-93f5-8d5c222ce4d8@quicinc.com>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 14 Feb 2025 13:45:28 -0800 Jakub Kicinski wrote:
+> On Mon, 10 Feb 2025 12:47:46 +1300 Chris Packham wrote:
+> >   dt-bindings: net: Move realtek,rtl9301-switch to net
+> >   dt-bindings: net: Add switch ports and interrupts to RTL9300
+> >   dt-bindings: net: Add Realtek MDIO controller  
+> 
+> AFAIU we're waiting for a review from DT maintainers on this one,
+> is this series on your radar?
 
---KvxwJgM+dWb73Ypq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 17, 2025 at 11:25:24AM +0530, Md Sadre Alam wrote:
-> On 1/6/2025 9:06 PM, Mark Brown wrote:
-
-> > Thanks for the heads up - I didn't pull it yet so as you suggest I can
-> > just leave it and pick things up from mainline.
-
-> The QPIC raw nand patches are available in the linux-next. could you plea=
-se
-> pick the QPIC SPI NAND patches [1]
-> [1]
-> https://lore.kernel.org/all/20241120091507.1404368-7-quic_mdalam@quicinc.=
-com/
-
-That looks like it was posted back in November, I'd have expected
-anything for this release to have been posted after the merge window...
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---KvxwJgM+dWb73Ypq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme0n0AACgkQJNaLcl1U
-h9C7CAf9GhX9iaL8H1BWXp96KRzkYlHWeeIWT7O52PE08NkbOC8mnuDlYL5yyG45
-wbBly4US/3NeyEf7EtuOS/lXTPfcC1+6w7fEcIGk30BiEfQTsvKNjtR4+vUBAdXB
-8qbv/RCZt77TJbd933SHZF3Lf8PWBCSxv34/DOA9vAsI7X68OKEu+UN4AwK3C3jP
-PRobiMSnnvgZ1MGRHzTXk4KASUthkdbZJp6TEbQhq6rVL9P5M1XCMF+OR8NgCmva
-TR2A42a1jT+kyCR0GCchbqf+dqjvKpGSsD85h4hp77vjJpwJ5r35PdO4XGNwoYRh
-5cF/iganN6NcwFjn2l6Qtn70IX53kA==
-=nmaR
------END PGP SIGNATURE-----
-
---KvxwJgM+dWb73Ypq--
+Not sure why we're getting no reviews here.
+Chris, could you repost? Maybe we'll get this back into people's review
+queues that way..
+-- 
+pw-bot: defer
 
