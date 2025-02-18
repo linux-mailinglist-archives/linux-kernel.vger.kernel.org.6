@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-519432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B445A39CD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:05:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE645A39CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DFBB3B6428
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5981760C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEC7269AED;
-	Tue, 18 Feb 2025 13:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19C326988B;
+	Tue, 18 Feb 2025 13:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5Ie2UPL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSYrJnp2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC2267384;
-	Tue, 18 Feb 2025 13:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E68C265CCE;
+	Tue, 18 Feb 2025 13:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883725; cv=none; b=p5iUbll8NK77+v01K0tUme3SNSmbJ2+Yf41LLESx5C0d7AnZFHPdR4a1M8E0zfR6T1pNO0dsNZLAG7wJAPzqRg1UN8+UgSsdbyNoMbCthPX8GdoU6shM8w3a3eT9ukyoEEILr0Om+QkR/EY91+2neGbJhQPEwyv6MStGM7826aE=
+	t=1739883713; cv=none; b=e+PXZZUV+P8gbRrBCRUzjlXj3TpwBh4LqRRjGLVT3FBEThmKZANNsNyHbHAek0iVG8nMk1O0GLcWXjJih7v5tESlPkhzoEyV/fQTuFlYpuql78nSUaKWm80s2d5a/zMFWt1n99yeLLcA0kzduJdDLJgyTpZtCx24DebEBEqnXnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883725; c=relaxed/simple;
-	bh=kvGbpK9kXJddOYZoiGF2djCA1EY8EEWP9GNQBrdAngE=;
+	s=arc-20240116; t=1739883713; c=relaxed/simple;
+	bh=PCV7J741XsLI5Lf1r0pbxVGAOWX7VTsXjZUySE0EkOk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bFGNIShWNqiBA0YfsOYhCs8euA07MO8w3gwxq1AUS6o/1f3KRhC4+JEAi35ylQOrNxpYh/Xm5snIpFQjDU4kAPITMLxC+q2JXygSfnc7BHqeQIzABX02NNCd3Ko2yMA5DSUMne375DzgCWDv9H6IQl5VE8ox2pY+zxz8clCNwS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5Ie2UPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A968C4CEE2;
-	Tue, 18 Feb 2025 13:01:59 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=fOPCsvu70u8Eld7kf2ACKQBqZhK54NrI1beW5tOsmiI1tCsbKofKoboDNT9TPcuuNeQen1Etrh3JhgyiI41g+d41KYpIhraeGWZaYwe6axunFV53n8DpGcgU5Xb77EaQI74xEg6ue5vSTEfzHY7M1SLBI2PmpXAnACKss0/Ac1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSYrJnp2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2713C4CEE6;
+	Tue, 18 Feb 2025 13:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739883725;
-	bh=kvGbpK9kXJddOYZoiGF2djCA1EY8EEWP9GNQBrdAngE=;
+	s=k20201202; t=1739883712;
+	bh=PCV7J741XsLI5Lf1r0pbxVGAOWX7VTsXjZUySE0EkOk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=D5Ie2UPLiPm48/it8g6AvmzcXhTWyR8yEwmD/nAM6fyxJvxdkKUrn8XOSOu+2Bb25
-	 oxBA3b+SXz/5ZwvOmsH8k/ahIX0BPQ7sm69fDVnE1eyVoxMx2XIfVFyDxsXcmJl28f
-	 KaydLtAJan2g8LOOg3OCViaEZNw9U6Q1op8GF1sLNYBt7gFeFXpJHs+yjN26HyIR/z
-	 OzVPNnugcfcTGFqFFd4ZxkVuaCrrLzVKr49ILbq6DeHm5+lecKFsYXtWY3IB4V4KF7
-	 kF3phVtiJhlF94m17q469/VlZ2/hhE0HGwito842HH/jfWhkwVsOCwB1jSdwBi6IUY
-	 ecGOqy5ICTRUA==
+	b=lSYrJnp2FzLm0CpyLB6SBQIJlbIovOxZ8UGdoYQKdbrB3tBRFCJcZ0BrXUI4W4vUQ
+	 6qlM1X5UFeTgpkjXz5Uaex4HimhnBGqBwnleIMFn59xDhE9tOpsymX0EP9R2VWKIC9
+	 4WCphnmrK/4OykFt7/JconnZkC+JbKrzn0sHDaqgTxd9GR69Xtnvb/8m3jGYxIkeCd
+	 BUVQodJQQr+nJduQHQXe4jDmJk8Wkwa87RDD1I+zVRjlGcpv0fZSpYfkQFYGGquDNT
+	 jUImWr9tKeeqT6Md40pZKysxkgN/HN4jUZ9dJzwIaM4dIgjVWaD1WJqVynERC9Abt1
+	 lbzaJ8xgkrJCg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 18 Feb 2025 14:00:45 +0100
-Subject: [PATCH v7 3/6] rust: str: implement `AsRef<BStr>` for `[u8]` and
- `BStr`
+Date: Tue, 18 Feb 2025 14:00:47 +0100
+Subject: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing
+ functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-module-params-v3-v7-3-5e1afabcac1b@kernel.org>
+Message-Id: <20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org>
 References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
 In-Reply-To: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -69,54 +69,158 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
  Greg KH <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=844; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=kvGbpK9kXJddOYZoiGF2djCA1EY8EEWP9GNQBrdAngE=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBntISFZJsHCDQ/fYrSsdwC6D0joyKK16I5hZxcv
- 1WrTIW05g2JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7SEhQAKCRDhuBo+eShj
- d9LlD/9AXD7x+fgK0eDF7+5eqzztOc9cyUmJRsa9caJUaZMK20kNv9/Wu8gi72DfGynreTyx1Am
- M+PywlvqQmQmf5njTmNkD0zRuDyCH/vJYmPKdHoe8Qt5CLVc0eKfLwQC0/A34I5l3GQB9YknLxt
- T7Psf5O5u/mNbckCCLOv8JAjzXBRQL9XV0pZsXBKG9IHaen/bk93lREws+biXEh2Y2RTJ8VEteF
- ZjxncX+FoFH5btwW1Viu/LrFYfOs/ufFvHhyHX4umcf0CH5cLqWsOoqzEWNtnqLk8StgT2cTwG0
- B3HSXpmfNfy19yK3PFnvbmlMeFIO2pYcgqZ72n0IksJwiJJXLyOmz6/8sDqHYskpCoIx0flB1Wa
- Oe1owSXt2JotwiKJqnU3Ta3CX9zWTo5IgyRhlId8i5bT3rIwbv18vWPixwn13S6GvhPoec0VM1g
- iIvJ6xAOBipHc7vytgV/D0fNQ+6Mkzumseoq4uLYmZXMboAAyxai/QKf5zZExQh4453ie/tHViV
- eKB9m2dIIgkJ9t/1JXq1B0VVVtdcpnGqcOAzLGynE8HCMWcxLtHHZQce/SXWFDdObg2oLO7EVEN
- GLqrVTLoo5HUu23PDTZelJ0ZBO+BJoWLUIqT89n80pnJjmu9wxixM/IuO4Hdtiq32vZaKmBokZ4
- sLbGNo0ugaCCgCw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5711; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=PCV7J741XsLI5Lf1r0pbxVGAOWX7VTsXjZUySE0EkOk=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBntISHnjhpzfw5TGwhNAQrGg0Y+IeXAhe6Le9n/
+ 7o3cxrm2q2JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7SEhwAKCRDhuBo+eShj
+ d0V2EACQd+cmGOqcfkVRFMfEJ3T9SlONnRMUUxBpd0QLiogLrMFbw6uV+eamk/lqv8rs41TwPr9
+ o/KPBKzzTZkegvsdel3rElRuMXEgV1rV+RUrOiJY7828nLlPlUKrRjpHLNK1Yc08KgWtE72Gu4I
+ 6QzzfRRXaaxOzVGWkVmdjdCBbmCXQU03aE4orNzFP+DpUGPFGzzdGvJKFHjj4o4W1jrKxLG8ACi
+ jXCLjawwbQL6nJN23aiVOtnvuPSXOTRCukE7AdA4PVsySxbmhy/cIUh1DxAGJJAY8NwhEtLazV2
+ AnBQAmLyAQ33WNVANDCBm761fPCV+OkLeAAMTg9Gv46Vl+xMAoGalfIP0mE6eJ61w/QN8hZvo7r
+ Md0Jfa47nSnRqt78pReIhL6s1QrOwevIJ+bgb/2qCRPlX8hIpEYnFOUHBqvvvQC0F+Sd7SoFeBu
+ SSMz5EsdcP2P1FeTMRk8FElUjQPgRjwlXGoMzyf6duOgMx9b9ToegGOAvfYKuAldARKaUgWVEvi
+ jlXZQteAGjBbqUsNQCP/yNIYbcdxq6pNR5eF170q6rcr5rQ06a1sBs9pqjLNefggLBSeEgGPsVx
+ HCG9Lysdg3jqd/s0Fq8rYq//CTY78rmbVLrEJlo/yaBVM1qMaizOaqhIEbLoW5pq4u1/X58O//R
+ 7pZksyzWcCgJDtg==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Implement `AsRef<BStr>` for `[u8]` and `BStr` so these can be used
-interchangeably for operations on `BStr`.
+Add the trait `ParseInt` for parsing string representations of integers
+where the string representations are optionally prefixed by a radix
+specifier. Implement the trait for the primitive integer types.
 
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/str.rs | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ rust/kernel/str.rs | 118 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
 diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index ba6b1a5c4f99d..c6bd2c69543dc 100644
+index db272d2198fcc..8b0d814b47f52 100644
 --- a/rust/kernel/str.rs
 +++ b/rust/kernel/str.rs
-@@ -125,6 +125,18 @@ fn index(&self, index: Idx) -> &Self::Output {
-     }
+@@ -945,3 +945,121 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+ macro_rules! fmt {
+     ($($f:tt)*) => ( core::format_args!($($f)*) )
  }
- 
-+impl AsRef<BStr> for [u8] {
-+    fn as_ref(&self) -> &BStr {
-+        BStr::from_bytes(self)
-+    }
-+}
 +
-+impl AsRef<BStr> for BStr {
-+    fn as_ref(&self) -> &BStr {
-+        self
-+    }
-+}
++pub mod parse_int {
++    //! Integer parsing functions for parsing signed and unsigned integers
++    //! potentially prefixed with `0x`, `0o`, or `0b`.
 +
- /// Creates a new [`BStr`] from a string literal.
- ///
- /// `b_str!` converts the supplied string literal to byte string, so non-ASCII
++    use crate::prelude::*;
++    use crate::str::BStr;
++    use core::ops::Deref;
++
++    /// Trait that allows parsing a [`&BStr`] to an integer with a radix.
++    ///
++    /// [`&BStr`]: kernel::str::BStr
++    // This is required because the `from_str_radix` function on the primitive
++    // integer types is not part of any trait.
++    pub trait FromStrRadix: Sized {
++        /// Parse `src` to `Self` using radix `radix`.
++        fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::error::Error>;
++    }
++
++    /// Extract the radix from an integer literal optionally prefixed with
++    /// one of `0x`, `0X`, `0o`, `0O`, `0b`, `0B`, `0`.
++    fn strip_radix(src: &BStr) -> (u32, &BStr) {
++        match src.deref() {
++            [b'0', b'x' | b'X', rest @ ..] => (16, rest.as_ref()),
++            [b'0', b'o' | b'O', rest @ ..] => (8, rest.as_ref()),
++            [b'0', b'b' | b'B', rest @ ..] => (2, rest.as_ref()),
++            // NOTE: We are including the leading zero to be able to parse
++            // literal 0 here. If we removed it as a radix prefix, we would not
++            // be able to parse `0`.
++            [b'0', ..] => (8, src),
++            _ => (10, src),
++        }
++    }
++
++    /// Trait for parsing string representations of integers.
++    ///
++    /// Strings beginning with `0x`, `0o`, or `0b` are parsed as hex, octal, or
++    /// binary respectively. Strings beginning with `0` otherwise are parsed as
++    /// octal. Anything else is parsed as decimal. A leading `+` or `-` is also
++    /// permitted. Any string parsed by [`kstrtol()`] or [`kstrtoul()`] will be
++    /// successfully parsed.
++    ///
++    /// [`kstrtol()`]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.kstrtol
++    /// [`kstrtoul()`]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.kstrtoul
++    ///
++    /// # Example
++    /// ```
++    /// use kernel::str::parse_int::ParseInt;
++    /// use kernel::b_str;
++    ///
++    /// assert_eq!(Ok(0), u8::from_str(b_str!("0")));
++    ///
++    /// assert_eq!(Ok(0xa2u8), u8::from_str(b_str!("0xa2")));
++    /// assert_eq!(Ok(-0xa2i32), i32::from_str(b_str!("-0xa2")));
++    ///
++    /// assert_eq!(Ok(-0o57i8), i8::from_str(b_str!("-0o57")));
++    /// assert_eq!(Ok(0o57i8), i8::from_str(b_str!("057")));
++    ///
++    /// assert_eq!(Ok(0b1001i16), i16::from_str(b_str!("0b1001")));
++    /// assert_eq!(Ok(-0b1001i16), i16::from_str(b_str!("-0b1001")));
++    ///
++    /// assert_eq!(Ok(127), i8::from_str(b_str!("127")));
++    /// assert!(i8::from_str(b_str!("128")).is_err());
++    /// assert_eq!(Ok(-128), i8::from_str(b_str!("-128")));
++    /// assert!(i8::from_str(b_str!("-129")).is_err());
++    /// assert_eq!(Ok(255), u8::from_str(b_str!("255")));
++    /// assert!(u8::from_str(b_str!("256")).is_err());
++    /// ```
++    pub trait ParseInt: FromStrRadix + TryFrom<i128> {
++        /// Parse a string according to the description in [`Self`].
++        fn from_str(src: &BStr) -> Result<Self> {
++            match src.deref() {
++                [b'-', rest @ ..] => {
++                    let (radix, digits) = strip_radix(rest.as_ref());
++                    // 2's complement values range from -2^(b-1) to 2^(b-1)-1.
++                    // So if we want to parse negative numbers as positive and
++                    // later multiply by -1, we have to parse into a larger
++                    // integer. We choose i128 as sufficiently large.
++                    let val = i128::from_str_radix(
++                        core::str::from_utf8(digits).map_err(|_| EINVAL)?,
++                        radix,
++                    )
++                    .map_err(|_| EINVAL)?;
++                    let val = -val;
++                    val.try_into().map_err(|_| EINVAL)
++                }
++                _ => {
++                    let (radix, digits) = strip_radix(src);
++                    Self::from_str_radix(digits, radix).map_err(|_| EINVAL)
++                }
++            }
++        }
++    }
++
++    macro_rules! impl_parse_int {
++        ($ty:ty) => {
++            impl FromStrRadix for $ty {
++                fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::error::Error> {
++                    <$ty>::from_str_radix(core::str::from_utf8(src).map_err(|_| EINVAL)?, radix)
++                        .map_err(|_| EINVAL)
++                }
++            }
++
++            impl ParseInt for $ty {}
++        };
++    }
++
++    impl_parse_int!(i8);
++    impl_parse_int!(u8);
++    impl_parse_int!(i16);
++    impl_parse_int!(u16);
++    impl_parse_int!(i32);
++    impl_parse_int!(u32);
++    impl_parse_int!(i64);
++    impl_parse_int!(u64);
++    impl_parse_int!(isize);
++    impl_parse_int!(usize);
++}
 
 -- 
 2.47.0
