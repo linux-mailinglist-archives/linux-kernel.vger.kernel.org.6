@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-519030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C128A39738
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:36:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648FCA39749
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D58547A3B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C6BD3A673F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F35022FE03;
-	Tue, 18 Feb 2025 09:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GdRu56Rx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC01122FF22;
+	Tue, 18 Feb 2025 09:36:37 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EAC22AE42;
-	Tue, 18 Feb 2025 09:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82422CBF1;
+	Tue, 18 Feb 2025 09:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739871386; cv=none; b=Zsqa9jj40uyc4SUnYiZJYwL+Nsc5HAz3nf8ShY7VbjElfQIRCUpwYmafbDhl5IPaBU22EE8G/fNABFXgtA56PxAvXwc+oC4M6+EwlpiJhQW9sbxWLiXRr5/vY/Pf/nNwtgcFIaUtvduyZIfhJ4IJFRweA0Rmg9Z70Q+LsEmwOEw=
+	t=1739871397; cv=none; b=XSVHUXaEu2Gng9YfsSDjFy9pyDss12o/TZasa8ySjma3+I4H36JsFAY6zb1dinT9+13iPpTADoyZ2XwYNdyr42pFCnXhU+A7bMtQJr76PkRikrCZTFd3X0z9i4Glf6mdJEU0SxFv8h/+wp4GvN1Ie0UhTOT//ZhfyIEuZDE8JxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739871386; c=relaxed/simple;
-	bh=6wjiP+Lq8n4ALuJUpnvy+4rVMNT7sLHwAY6F3JkTrmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2Ewbb/z53QNoZqKrptu6fXy11AfsPE8Za7hHiriLSWEyTA8sYog8T4d2evlAwXrUXfyQmOVyngm0QwVvDm4EFsbgh+5Si+L3Jf2V0S27d0We36gOuvjui/pZibcG7X4O4zNzkhoIF464vyhslJA/GSXbrkUw5TbjQNJ5hVdpgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GdRu56Rx; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739871385; x=1771407385;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6wjiP+Lq8n4ALuJUpnvy+4rVMNT7sLHwAY6F3JkTrmE=;
-  b=GdRu56RxwKFyjl/Z8TVJIgO1xGKyQdCfpAuixWCk0WLQcBzWjCGvTlRX
-   KAjvPTxy72LMtqGmCeGV0CjFln2s7+G6jekfIRHIT8Q1BsxfXj0BTLo0e
-   PVRWesP9XElHKVNN7PcCW6Mmd+d7zOFaP/JNC+TqwF7h54cWWZVEkweuv
-   40GtpYXFRiQiZT1lx25Rjg7nzusslvhYU/1pEg7U1E35BQveswTPimwRY
-   a+7xM8ItP0rKBRWwc5yIXRgmF1PJ6QEw77CN8FX9Dd/7DvcePSrdva9f9
-   uhVZj+K7qWPmwxPgM5XQxBeRszpiSTLsWaEoNHtppBhjMD7/lbRzA5BR9
-   Q==;
-X-CSE-ConnectionGUID: 5yT8YMmzRc2hRucI/lTojA==
-X-CSE-MsgGUID: FyffBQ98QdiY4JK5zsafJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="40263533"
-X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="40263533"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 01:36:24 -0800
-X-CSE-ConnectionGUID: JBCiSzFDQKOFYs3bgRXvgg==
-X-CSE-MsgGUID: 3KWPQKkDTuqmdJsy9IpzJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119558090"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 01:36:21 -0800
-Message-ID: <add089ff-49d9-40a9-a020-5f4eb876aef8@linux.intel.com>
-Date: Tue, 18 Feb 2025 17:36:19 +0800
+	s=arc-20240116; t=1739871397; c=relaxed/simple;
+	bh=h8i2+8Y95agTc6zEvs2lAXFlJuYIMa3vpyoPwzxwvIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WWNWhhDtK2ijlGESii6Nenc+dhXXo8BxMs2pYtx5PoJ+ySaCZ6lSfTS0YouS8oE/Cs0TdSRh7rP+rqW5Ie5EDDnFuSvjVFi5rPqGTMAp9GSDxVQkuCkFMD5eYYnbOzDnBcp3L/RmgoSUcQD9x/oyfdWJllHj75+jwFeX0AyMWKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abb8e405640so321526266b.0;
+        Tue, 18 Feb 2025 01:36:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739871394; x=1740476194;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+hiBgrSSBArk629qXOdLhb48MutUgMJq3Kv3WZOzM/0=;
+        b=E36mBSsqy+X2XJ/YDruftM3bJnjbzkZlDekFJ1yAoqYIeIXws7S/sILQI3C3R474Oc
+         RDABfFt0AjSY6rrk8YnAUGrmG84sjdnbJZ5FIe3cxL/QUDvSCu4NqFoFd9onkw65Ix7t
+         Mdz1YeylWUkIePMcTW9SGSmODqYZdV7uTGkTDVxPcaHUiS3dA5ikLHXkdicT/f/KjzpM
+         y9hZmIC92yQ6xJ4AqvUp/AHniKdDdZp9xsKiT4kdpTIUpvJgvRCG68VVMdliLJXX9Yzx
+         /ueboyDav6eejAKLb1LOpfF92ks7WTCQMGhNT7mjwZfp2IUW/5mYIL3E+Puop0uYNG7i
+         Eq/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWCGnE81M45PXAa7XKM0M7kH86f875NBnPGitOnnAkTnHNOsOyvAtsGUzzGrMAbMhKPUHZzwTuw@vger.kernel.org, AJvYcCWoz5upcvVbP/aNSGvstC5b9P6X8jlOGsisQFiBNHp+0EAT7TSa5E57ybmASGMZOY5x9He1qzbmMLhc5Qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPg8Ndg3OwUQS6oxufGf1shCt9UqyQRHNQwT0ZowJmVAuuyfMZ
+	psQxRxWglAuVyifoIrrysktwNCuRYOCu2K6VfwaMElDRAaGc1F8V
+X-Gm-Gg: ASbGncsik9mKuEguBOBmzCqgnhfXz50UIqG6nvXTX5S2KtlPDDbQjPbS8CEMFw9nNqk
+	rwApjwUKmdLzSht+yY/vJO5srcEeXTUho61vy/x4hRTUcGaWC+pr+5WdNhJB6P4f92UvNtYowWR
+	VIE7ccu7gkitPNVjcRuG+21sStLO/KffUsEiD2TtJeiGAB0mmj+ornC/vCzoKpMRrVXl3wpLK4T
+	JBS1AWifgSLiTMXJ6azzvpp5WufBGtWOfqZPYyeM9QDXQ19WI1mUtqx5eCps1znJnfGkTWy1/6q
+	Xtc6vq4=
+X-Google-Smtp-Source: AGHT+IE6uWhyRfngWfVt1pLoeEJzXbITYg8VYoknCayHGLJmnZ5SFuHiHcNZ0yETnlRS7ouPJoJVHw==
+X-Received: by 2002:a17:906:370c:b0:abb:519e:d395 with SMTP id a640c23a62f3a-abb70a959d9mr1066105966b.20.1739871393908;
+        Tue, 18 Feb 2025 01:36:33 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb1e1bef3esm710432166b.146.2025.02.18.01.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 01:36:33 -0800 (PST)
+Date: Tue, 18 Feb 2025 01:36:30 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	kuniyu@amazon.co.jp, ushankar@purestorage.com,
+	Kuniyuki Iwashima <kuniyu@amazon.com>
+Subject: Re: [PATCH net v4 2/2] arp: switch to dev_getbyhwaddr() in
+ arp_req_set_public()
+Message-ID: <20250218-debonair-smoky-sparrow-97e07f@leitao>
+References: <20250213-arm_fix_selftest-v4-0-26714529a6cf@debian.org>
+ <20250213-arm_fix_selftest-v4-2-26714529a6cf@debian.org>
+ <20250217163344.0b9c4a8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [kvm-unit-tests patch v6 08/18] x86: pmu: Fix cycles event
- validation failure
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
- Mingwei Zhang <mizhang@google.com>, Xiong Zhang <xiong.y.zhang@intel.com>,
- Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240914101728.33148-1-dapeng1.mi@linux.intel.com>
- <20240914101728.33148-9-dapeng1.mi@linux.intel.com>
- <Z6-wrVaVSiI9ZKkD@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <Z6-wrVaVSiI9ZKkD@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217163344.0b9c4a8f@kernel.org>
 
+On Mon, Feb 17, 2025 at 04:33:44PM -0800, Jakub Kicinski wrote:
+> On Thu, 13 Feb 2025 04:42:38 -0800 Breno Leitao wrote:
+> > The arp_req_set_public() function is called with the rtnl lock held,
+> > which provides enough synchronization protection. This makes the RCU
+> > variant of dev_getbyhwaddr() unnecessary. Switch to using the simpler
+> > dev_getbyhwaddr() function since we already have the required rtnl
+> > locking.
+> > 
+> > This change helps maintain consistency in the networking code by using
+> > the appropriate helper function for the existing locking context.
+> 
+> I think you should make it clearer whether this fixes a splat with
+> PROVE_RCU_LIST=y
 
-On 2/15/2025 5:07 AM, Sean Christopherson wrote:
-> On Sat, Sep 14, 2024, Dapeng Mi wrote:
->> +static void warm_up(void)
->> +{
->> +	int i = 8;
->> +
->> +	/*
->> +	 * Since cycles event is always run as the first event, there would be
->> +	 * a warm-up state to warm up the cache, it leads to the measured cycles
->> +	 * value may exceed the pre-defined cycles upper boundary and cause
->> +	 * false positive. To avoid this, introduce an warm-up state before
->> +	 * the real verification.
->> +	 */
->> +	while (i--)
->> +		loop();
-> Use a for-loop.
-
-Sure.
-
-
->
->> +}
->> +
->>  static void check_counters(void)
->>  {
->>  	if (is_fep_available())
->>  		check_emulated_instr();
->>  
->> +	warm_up();
->>  	check_gp_counters();
->>  	check_fixed_counters();
->>  	check_rdpmc();
->> -- 
->> 2.40.1
->>
+This one doesn't fix the splat in fact, since rtnl lock was held, and it
+is moving from dev_getbyhwaddr_rcu() to dev_getbyhwaddr(), since rtnl
+lock was held.
 
