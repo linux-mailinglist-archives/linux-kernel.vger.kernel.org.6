@@ -1,235 +1,144 @@
-Return-Path: <linux-kernel+bounces-519364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BF4A39C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B51FA39C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9773F188FB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EFE1891623
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF7241C8B;
-	Tue, 18 Feb 2025 12:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27292417F8;
+	Tue, 18 Feb 2025 12:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="dZiIGKD0"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011052.outbound.protection.outlook.com [52.101.125.52])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BkBOoiME"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A5422FF40;
-	Tue, 18 Feb 2025 12:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881303; cv=fail; b=cYWKcyAHsmH5XXo5Qjx6plMlo5fj1AC3Vf8dPiKmLrZn29U2C4K1iP8e80KScp2WDqqlHdLe/YBLf9CYyHAl5g3SKVzPtJ4wL0eCEzPjpxTxWkmqvoU2qlqIoe/cB/BAK+5WNgFXxUgPv0XMCRNAeH4aqb1FljjHrqq7NmEwHLw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881303; c=relaxed/simple;
-	bh=+e0P/1hk7kjq5DQevRLSJ8TrV2Fpse9Rm5/8QAOU+Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lq6R6r2qIBIRGBnwmINm/wl+v93zTsc5p64m/rRQV2sNDbXwCVAeLvEcG+PqAetPpckb31xPZZWbZPJYtbpJg0GpO6KWCA/FoNBDHLlAoNunUJ84C6bnR1Nmf7Exz1TIRh+xJgadL6ko6qH4VsrAgY5zXNMbURmbY42nuWA5afY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=dZiIGKD0; arc=fail smtp.client-ip=52.101.125.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OX4c/nDKL2bvfj9ZTDNc1hLgLFKa/RCrYKRhbW29kPMOeWzn7Q9HfE7LfVFpoTjv/q3hqOzTfftZHTUUt6HtyXNvn2Do4ItW0M1OpixINmumQHOt4163tcJdTkMK3pYcWanxZ596Z7X0E2rVNtjUMGTee/b3f3JZxZe5e1G69ATNnHet20taN13Lk2FG7xINXOiu6MRkUGQEs7N+3V/AKA0TzvlaPSG7cpLIRifB5EQRXJnLB7jcU+wX6K/F8YNhuHKeatDMcDlMmUS+sdwthpXCiLIj+ggMbuJxaZf3bmBKSu/d5TUFNjJPsnNc3mDYo9vR2L5UHzSAIiffsR9DRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LEz7LL6VusKVsyeAO7qt5RtgYvXj3DaEZuC0FGI/AZs=;
- b=NyAhoH8Kx40JIXOBJurpyMueknnYEgXHp6wWoq0A0JNIBSfKNZNEOila+ymb/U7IRFXbbvleDgmLoNkfCQLmFajUX6p3sFcT3U0tVuUCA9zH1bR8HPjyuGXiY++f58R8sJOYFPbsaCrakGH/B92yJYG4WCtpqva3119vczd4sB9pQvpGlucwf05RH5fB4xyhEIEqIygtutB19ZX6iQtb9d764Y1YDJC29rhmHkyBE+68ThrqjmxdqvPpzHvUlOa5LeQ+QCb2mFtZD1H/Mz+eJwQ3sDeZH02A2XqK2PnlfnqEfe5+BCaOHbioRKYp1CoO8HraHxILepS4pwT1/EV9QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LEz7LL6VusKVsyeAO7qt5RtgYvXj3DaEZuC0FGI/AZs=;
- b=dZiIGKD0HD9NGlQKaeROhxmrokjRJXMuffvzuhkAbz8tRM464Ur6650K2wkb2suRtlHfqGLH8zcT9INV+YOM2KDmfPSi8pwXsTife9fhtqoJHXiGgnLlmgBiCkcNvN8ujXYVBj0ay9SQVsdh7V8+YuuKagP4vEB98se5sGBnt7I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
- by OSZPR01MB8323.jpnprd01.prod.outlook.com (2603:1096:604:181::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.21; Tue, 18 Feb
- 2025 12:21:37 +0000
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
- 12:21:36 +0000
-Date: Tue, 18 Feb 2025 13:21:24 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] media: rzg2l-cru: rzg2l-core: Use
- devm_pm_runtime_enable()
-Message-ID: <Z7R7RCkaa/iBtf4M@tom-desktop>
-References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
- <20250210114540.524790-9-tommaso.merciai.xr@bp.renesas.com>
- <20250214005059.GG8393@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214005059.GG8393@pendragon.ideasonboard.com>
-X-ClientProxiedBy: FR2P281CA0002.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::12) To OS9PR01MB13950.jpnprd01.prod.outlook.com
- (2603:1096:604:35e::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52462417E3;
+	Tue, 18 Feb 2025 12:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739881489; cv=none; b=RZoXE80abRfoTQ4G6ebnnMVtUH/JjSL4pL5hd6l7oZ1ZwOGHmVevJM7Bl02gSydRF0BrW8SivCELsGXd9w62wYJdkMSq77oV9lrrRM+sJtbFMx9JyGj8veRx/AcWeWDusvkR/b8AcLqdzmzLf9JS8KEM6orJgmOMq+/xpeXqriQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739881489; c=relaxed/simple;
+	bh=B/22zPRyJLkyFbsyzQOg7F8j5yKKchLBj1RL06SOF5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajDgjbyF7M+1/Y8hHibnFIftOy79ubuP8S2xbbrU+gkFjN3I+0kH4iqpxiOmTrBdzFHqyNb+lRWq04CRCDPYs7zDp1OXv53EKZzv3xudx/QM1+zKR/bK4nrUxctgmLCyrGErNHAR15ECnrvr9Qf9RYOXGtOZk2KypOlo9CoLGxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BkBOoiME; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2B39A40E020E;
+	Tue, 18 Feb 2025 12:24:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OyDvPaUDwoWc; Tue, 18 Feb 2025 12:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739881480; bh=WI+Uaqm9Cw9dVESJ3i25x12Uq0b4Q9A8IQaKBTE93+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BkBOoiMEQp6jcZIbbtwagiV/Mkd09m070ochMoIyiIdzrc9aMIoMIojtiuuG8zQt9
+	 /s9Haq1pxtO1MK7+24L43rHDcxwkmNJSUc29w73lHdosqGzk9MxQVNBl7hAZVay6Rx
+	 dnRjIvKIKdU/RfFELDlLTcHuxdGGffIEhhAp/I1wNai5wu5fXHwQdDwLxdkcOA48r2
+	 qcHErggIqF59QrohnLog0FS4ToJqWLHu+4lJi2HM6klQvErzfoP/0uF5HetDWxwcj6
+	 CVI7ELi7ASFOtnflUUDpXBqT83ckeh5Qy4iyQtoB/2ebxvX0LKL4R61EBy3uEdd6HB
+	 aLyHalxJ2Ic6SFTCXI/vEvaMrw4TuuS9bttqco4L6Xb5ArZWwt8UL57GuwCYYelXYs
+	 FoaERsjklDv4B2LECzgWgiSBclaQU41VEcHCgIfj3ay4FtYrkyQyQUWPurWdkE47Dr
+	 bJcjxcS1r6ux2S11bCClbdymi+5JGgNPv9WRqDbxxpLs0EtAeYR3nYJSbzVgwWTABt
+	 6biRjIRtGzIsQILJsuU/HZSa7iHML0NOAA4yMmWdxCGA0vv2XO/URUBd2ZRmm7nQYW
+	 tfBayKNLv5JtlE05eBSMhVN07wZC/qkIrMUVZoS5x25k4USRwTnt7BkS0v9/cCM8Ls
+	 S2DhYoqaZrkYwY7YKX3XlVQM=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2CD140E01A1;
+	Tue, 18 Feb 2025 12:24:22 +0000 (UTC)
+Date: Tue, 18 Feb 2025 13:24:17 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>, tony.luck@intel.com
+Cc: nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linmiaohe@huawei.com, akpm@linux-foundation.org,
+	peterz@infradead.org, jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v2 0/5] mm/hwpoison: Fix regressions in memory failure
+ handling
+Message-ID: <20250218122417.GHZ7R78fPm32jKYUlx@fat_crate.local>
+References: <20250217063335.22257-1-xueshuai@linux.alibaba.com>
+ <20250218082727.GCZ7REb7OG6NTAY-V-@fat_crate.local>
+ <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OSZPR01MB8323:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04d8ccad-ab64-4454-b429-08dd5016c9f0
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?AgBgFteK7QU5ig831Xkqd9LT/lmCAzqi/iBJhYUJ4SZOQrYbPFyf9WJjoAwy?=
- =?us-ascii?Q?w86IFJ9ar0Z2bQkOqN828LDtLfYUg2NM/4WVQc+fSv+Pt+TMqP4DFFzinczo?=
- =?us-ascii?Q?Hu9e5xYNHgbVNfBqwr1LNMwAe1UA+81uMNEboDjyD00pm0ZCO9xy/DUg3wJK?=
- =?us-ascii?Q?smYJKyQk7+4gp1JBuYZUqw/rrY6FINwMz92I+DSI2zhCZDqV9hqwLjBAXUCj?=
- =?us-ascii?Q?2eQ0Eu4IeT0AaimTLKsSKQseFyTxb+ETA9fche7VMZIGEpTd0dgkEEbk9HaP?=
- =?us-ascii?Q?d0pLGoJzd7qOkNttbXzggFMv7hCUlIfhnFDjN4SHlKRtCzEwxNYqxSP+h98G?=
- =?us-ascii?Q?DLPkfpkvo+H9Y8CNxP95LYuMrrc2sBoPTDFxC3abY0gHnR7nawdfntPTzvpz?=
- =?us-ascii?Q?Whdf67ejcgxFHeEj4Z2JIFm3j/tVUYc+gHDq4EaK7xruKAdJk5whoqg6BI15?=
- =?us-ascii?Q?vXkMoZTFgZi2NqO5B76PQRqlLSAtck+DGzqAtKkUfCzejsTnykcP/yBcxZrp?=
- =?us-ascii?Q?rUaf9lY7YqiDJGnc5C7kWixr4hC1i+4jDtNlmv02g0V6nbGLhVJpu56M1Eqb?=
- =?us-ascii?Q?E9swiDWrBcEwDVW+gVkn01Ta+LjemQzNyAHeIzI3iSSQ5uQYUUBek77HNeq8?=
- =?us-ascii?Q?0DQYiAjALU1yMmBNwW4BvjxTGfM71XkR5si1Nw7pZ0Ad2bFIOmApJHHZ1zRu?=
- =?us-ascii?Q?sA3fK+n3RGXmi1RrP+ZVdPqf9GXYjeUpiMBRzdp8c1eSTPawG+coIyV2Jf+y?=
- =?us-ascii?Q?M94yvIrWhOrxYCX/wn00xoDLyDCmZc7/+rtjvUmx1gE9QSL4GYlN+YcrUXy6?=
- =?us-ascii?Q?N7r2IJdH7PYxTAxzCA3EIKOrYzFxd61xx3BNo1cTLIoOrqp3T91K7vmoYS8q?=
- =?us-ascii?Q?3p522WnMfiFK2gVwmEtpg5qeEPMNsOStm9EQ/MeyyGur483KuMWB8F0K9/SK?=
- =?us-ascii?Q?0WS1fHOTfxMnJPQuhCSByGlNZkJTe7BYjmf29k6YpaLPtqJuihUwlGYnSSTq?=
- =?us-ascii?Q?zWjOkvBFyL8mm5GiBsJD7ATnQPGlCGS0cDxIX+kM/U8ZHNDGKGhciOe/sf1m?=
- =?us-ascii?Q?PWOeWd5CDlopi+/rnDph/3aTBkO7jtdpRV1QgUAzgws1hwdCJm9XqAdOAjXF?=
- =?us-ascii?Q?rwZBsiB8KHhVOeRnNcRag3yytnf/y9g7aCcO6NdHiD0Ws0mRSSkxFiVyTeUy?=
- =?us-ascii?Q?2cOUVNrdG8jLLc6YU35T4Jtj/Ih3GfAUE0nrD38lOB+oeCOqltfkhKiP+q0g?=
- =?us-ascii?Q?Zh0M51RnEhiP0QgW2khDhPy6QtA8cvELIRPZ5bcSC+LGou2EOhXrTvCm1ZNX?=
- =?us-ascii?Q?7Q3MJ9JFc9RkSbbZc7CgbqRV7/3PaL+c08BJxDb98WHR55bCbL21xqdM8ihS?=
- =?us-ascii?Q?n0C144tBjC8uYtHzRhlid3GryfnI9I8RIiLDCEQMbFW2KX7tWTw+9Ft12YaL?=
- =?us-ascii?Q?JhwSezTTfLctr7EVYsDpO3h8rAPUO1rI?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?yxC3CbPB2tjapQJBON8qzoi6KmHCjQtAqhqBAsy8MM2eLTmjEJ6Eisk2R4tw?=
- =?us-ascii?Q?gzIvZkBw15VbNHu3p+xen4zgCccI5X1/zvSEBYY/ndgFuaeVKHUcAwojT+pU?=
- =?us-ascii?Q?wjjFWhza6AAa38oOmikr646F4+O7apKesKq2mH6aJUzpOxuUPlh7CO4Cb1Fk?=
- =?us-ascii?Q?Sp0m7X9YMjhiCN4L3HSL833pZVjF6/I1ojS1VrylcXJv9TUhDWOXaNqJLtGa?=
- =?us-ascii?Q?YSykAZRs7ApJPyIeaOZ9Elywf7q4m0tN+zBMz9jj2zegIjVNUS+QAOWapBry?=
- =?us-ascii?Q?13Vu+tKvP1UhE4RMeBk77QLKP+V7DwloranyuVeAhIhJr1aGS1NAb3WLoulE?=
- =?us-ascii?Q?1aOBRYRC6a6+bFlEgnACKJQ5OjOisIu9KU4sKUPHzZi6ShMtDFKZ1lcp/AJ5?=
- =?us-ascii?Q?SM3OGRLJ8w1vDezWm9irBGLBTWU4CqW9DA5QDptUsajUBSCqzwlL0UEpEBtN?=
- =?us-ascii?Q?nCZA7J2UzsTwY7dukbtSWpd4IbPRUDSwo1txSLXjrpRG4O2bl8rvCAculYH/?=
- =?us-ascii?Q?BSXHInIUQ3WJnWyXtnHGsvLtUy/uSHm0nYucs6PbOndk1uoMXc2MyfQ7LtlU?=
- =?us-ascii?Q?f4ga7kZ54L4lhDhwkoBSojzrlE1SvLh4Pkz6IJduCIUD9DttIs5TqgLazA6l?=
- =?us-ascii?Q?yZlFQ9VD5i7fP40Rs4/lpJOKwoRPV25RSlP7lY9mS4v+TM4RbB8+mdZ3A7M2?=
- =?us-ascii?Q?tvAXRHvpldT6RbF0q+i3iqUUbgqU1h6brceJkYrBf+pLreJRD8BUArjX1dRC?=
- =?us-ascii?Q?cSSSY6OnLn0s/aMVxkHoULiT5kxRJcDqGZwT7fiTBPMboYFsgjNcvoVibnuN?=
- =?us-ascii?Q?k/IsycQ8gg0EvL4Jlk0708+UQu183L1nEpHAOUDJw1kTB98aLY+hzg+cXd7U?=
- =?us-ascii?Q?akKE3ITsNQZ7DoFW5tjLxfA6D4Bh2hu9GCAFFUjZHD2/amAjgGdhlier2yp+?=
- =?us-ascii?Q?hgB6Shxl5dIBlfUtPKKYSw4jX+HwJJRAzA4rWBTleAF5SVe4dNEViC2f0mBP?=
- =?us-ascii?Q?AVPO7Gu484LW6A3PB7f4Gu1s9RD+AVRJj1KuwyhK3M5/hqbpP3SA4b5lEoQu?=
- =?us-ascii?Q?+tjCxBJY5YfmKV03QUHvXKA0ZLLdyuvWzNy2Ofu/JPeHk3PCG2Z8UmU7XHi0?=
- =?us-ascii?Q?6XnJTcAb8qzvQ74ilV8ftDMw2JZbnoJkYBkYByiUBETALDBMQJTeITup/XQf?=
- =?us-ascii?Q?gHO02L38pqdqLBIESNgAd+eBcgccimsrk0/S56R2ASaNFBj6+l1TRpC7Yh2Q?=
- =?us-ascii?Q?0LBeQH3gV0Br+UVmLXubX+NuF3pWQFkAKnDd39v6Bn6pLLFmBFcuuoexLhNd?=
- =?us-ascii?Q?CFq1q4jQI/gMoru/nvWD7ULDY+D9npjXXICHWeS74BExLSK2MkNuhEKtP+Qo?=
- =?us-ascii?Q?8RyUjlMnIj0cHl/YVdNu+5ZTiCNIyb/NCg31C5oOCin6JinyapaDqp20d1hV?=
- =?us-ascii?Q?fNmw9BDkaJsFBkgVoqzO+vCreGnLAMDQdXYGd60uEMGBtdG9MeexjjMaRjg7?=
- =?us-ascii?Q?XIjOcdiUnPbhjlqpeeR+Ek1IyI5AnV7Nle+v78jfsgfifVaNfZk4i/gxl8tL?=
- =?us-ascii?Q?Il4GgMaq0kS7I9q25Csy65omNbEf7rjexMevyMLaNt92FD6zt6fMzN2N6vLT?=
- =?us-ascii?Q?KIZCjRSCbeTTt1FuYC2NAts=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04d8ccad-ab64-4454-b429-08dd5016c9f0
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 12:21:36.8054
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0hcvz5rvKryISdjgELwg2YFLNZkiuO9CG9NkXjwGv0lHFN73tYCxykzxDcbscAPwhIZ+w05VdcYbkvphwSQYgf5PQ49M9T9YcwlEeZoI2IYxTkF0UpgAL5z7gHQwzwyQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8323
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7393bcfb-fe94-4967-b664-f32da19ae5f9@linux.alibaba.com>
 
-Hi Laurent,
-Thanks for your review.
+On Tue, Feb 18, 2025 at 07:31:34PM +0800, Shuai Xue wrote:
+> Kernel can recover from poison found while copying from user space.
 
-On Fri, Feb 14, 2025 at 02:50:59AM +0200, Laurent Pinchart wrote:
-> Hi Tommaso,
-> 
-> Thank you for the patch.
-> 
-> On Mon, Feb 10, 2025 at 12:45:40PM +0100, Tommaso Merciai wrote:
-> > Use newly added devm_pm_runtime_enable() into rzg2l_cru_probe() and
-> > drop unnecessary pm_runtime_disable() from rzg2l_cru_probe() and
-> > rzg2l_csi2_remove().
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > index 70fed0ce45ea..5548b328d970 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > @@ -287,7 +287,9 @@ static int rzg2l_cru_probe(struct platform_device *pdev)
-> >  
-> >  	cru->num_buf = RZG2L_CRU_HW_BUFFER_DEFAULT;
-> >  	pm_suspend_ignore_children(dev, true);
-> > -	pm_runtime_enable(dev);
-> > +	ret = devm_pm_runtime_enable(dev);
-> > +	if (ret)
-> > +		return ret;
-> 
-> Leaking DMA.
+Where was that poison found? On user pages? So reading them consumes the
+poison?
 
-Ouch, thanks!
-Will fix this in v2.
+So you're not really seeing real issues on real hw - you're using ras tools to
+trigger those, correct?
 
-> 
-> >  
-> >  	ret = rzg2l_cru_media_init(cru);
-> >  	if (ret)
-> > @@ -297,7 +299,6 @@ static int rzg2l_cru_probe(struct platform_device *pdev)
-> >  
-> >  error_dma_unregister:
-> >  	rzg2l_cru_dma_unregister(cru);
-> > -	pm_runtime_disable(dev);
-> >  
-> >  	return ret;
-> >  }
-> > @@ -306,8 +307,6 @@ static void rzg2l_cru_remove(struct platform_device *pdev)
-> >  {
-> >  	struct rzg2l_cru_dev *cru = platform_get_drvdata(pdev);
-> >  
-> > -	pm_runtime_disable(&pdev->dev);
-> > -
-> >  	v4l2_async_nf_unregister(&cru->notifier);
-> >  	v4l2_async_nf_cleanup(&cru->notifier);
-> >  
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+If so, what guarantees ras tools are doing the right thing?
 
-Thanks & Regards,
-Tommaso
+> MCE check the fixup handler type to decide whether an in kernel #MC can be
+> recovered.  When EX_TYPE_UACCESS is found,
+
+Sounds like poison on user memory...
+
+> the PC jumps to recovery code specified in _ASM_EXTABLE_FAULT() and return
+> a -EFAULT to user space.
+
+> For instr case:
+> 
+> If a poison found while instruction fetching in user space, full recovery is
+> possible. User process takes #PF, Linux allocates a new page and fills by
+> reading from storage.
+> 
+> > 3. What actually happens and why
+> 
+> For copyin case: kernel panic since v5.17
+> 
+> Commit 4c132d1d844a ("x86/futex: Remove .fixup usage") introduced a new extable
+> fixup type, EX_TYPE_EFAULT_REG, and later patches updated the extable fixup
+> type for copy-from-user operations, changing it from EX_TYPE_UACCESS to
+> EX_TYPE_EFAULT_REG.
+
+What do futexes have to do with copying user memory?
+
+> For instr case: user process is killed by a SIGBUS signal
+> 
+> Commit 046545a661af ("mm/hwpoison: fix error page recovered but reported "not
+> recovered"") introduced a bug that kill_accessing_process() return -EHWPOISON
+> for instr case, as result, kill_me_maybe() send a SIGBUS to user process.
+
+This makes my head hurt... a race between the CMCI reporting an uncorrected
+error... why does the CMCI report uncorrected errors? This sounds like some
+nasty confusion.
+
+And you've basically reused the format and wording of 046545a661af for your
+commit message and makes staring at those a PITA.
+
+Tony, what's going on with that CMCI and SRAR race?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
