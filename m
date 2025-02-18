@@ -1,164 +1,146 @@
-Return-Path: <linux-kernel+bounces-519663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EF6A3A075
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:51:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDC8A3A077
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95573B65CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF663B67DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586826A1CF;
-	Tue, 18 Feb 2025 14:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D547C26A0EC;
+	Tue, 18 Feb 2025 14:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otD6c3nx"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfIU3O0n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E5F286A1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D8324113C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889798; cv=none; b=Acp8ycQWQeT0HYsnJPItP2gu+LkDInFJaB6l1LJq84Eh7X+RfaLBGTgJeXM2OK/dvg8xM8UUpQIuff8+ujCMKsZRYDhxcJcdBUzGfGxTbVu/QjTC04kElbDfWkA5GBgVniJiyc8yRcNdJS1xLh/gOTn75VCOl6jiBhYpSnBEDZE=
+	t=1739889830; cv=none; b=WQa79ZCmQwtx20k5qXe+dkCFwCi9gcCwOMda7r7sitJeJY1acxscMlBPfOq2OqukT3FfLFpC5A2rQaDhTtloWQLNiEscDcxtUpc01MJyhcgiJ0hpMERN/eVO5VsjhxEuI1ItSPHHifeyq2IJIYId3SSx+WqdF+p01J7VzolkbgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889798; c=relaxed/simple;
-	bh=4lW/twvdhE+A+c+wKCSUwMTcipMdqeplNUW6N48zvLA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=i1FP4YYw48fnu13dpZ1nUI0d/zM7BqY0YNqZ6A9PIT4tK/PBMoeZH+t1UgoBCK6H4FrdYKdZp8vQkRh8WjLJj1QuMU5hDEoIUhFjErHIb9eSn9dlRHhkQAOe5a7snLqHcY6QGkLNTfz1YBSpZqd0Jm6sdkOocpR29it1shiwnKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=otD6c3nx; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-438e180821aso30588315e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:43:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739889794; x=1740494594; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jel/om40HLmpwtgskjT+Vd7H7nmCr+AlMBVyaul/WCc=;
-        b=otD6c3nx+/GXsjAi/FKzW+N3t18Kj3O4klg2vJucjtvtc4kaSd8P7u5NhLaSLz3VbF
-         PJTK7TinyOWPFMsE8kT+Bn5OBMqaP7CmhGTrdXxlNetMpBZM6KlUdxALozqAMXyO1AGm
-         sixiAEM3ckLRQ48IrGFW64yvZOet76XpYo3a+VHkz/8LzyfqOWE5yZdFJ8jo6dduDVWD
-         +iUnEE2NYBkeY9ofU3NE814xUiQO0cwqzUP/AMZ6pKEnzOf+Yis8HuKrLNCAWwuhboFY
-         Bnn9cwNwWb1QAEd082ZnjJgE9tLIKFQNcjngkIGhObWVoESBqufP4S5hbB/q3t+QDdHW
-         URUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739889794; x=1740494594;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jel/om40HLmpwtgskjT+Vd7H7nmCr+AlMBVyaul/WCc=;
-        b=A5jCmmdnA41I8U/DpJSxzzc9XlamHZ7k2qZBt5N+5sYJQy60UX2OT8Ami1hRLlSrpm
-         +XV/PkGA3KMkGvCvzSC3FrXV2P5fFyVCv7pkoZkhDFzmlsw26nFRPQVoVUGamdTGkZBZ
-         CzspFXKkLzFzevhtq3SBbOEq7yjCHgGP0F3DPUBCbPOeGzN8hPNezYJQTig92SD4o4gI
-         kwSDzdWIUB+tUS+gRdZoKDu9q15LPb5vKobXChJb0IcGeFwsGhx2sXwtdsGUZkmd/KG5
-         634L6uFRETpG9HXJ8/T3OXbjmhy9VE4zHkjmRJp3IHR0ldXV8byd9Edc9yXtZuJZWHKL
-         Fbmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXImoqxmPrkwZokmWQoCVZdUxaiFMwS+Q3i2ryLQeEN2WSgpgZt3Yh1tIOkA6sP6X70q5pZZaIl+eiZyPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP6suJRvZ94EUejWoxWykXxd5j9OD8vZOOtJX3a43m93LiFulR
-	s4AtlBKAWxPY70+uIf9eEO/1GAIYgQrH0jKk9ZLAILtsyXK/o5a3E9ERvirmI7KrQwaY/ogxPJ/
-	Z6Qs7PWo+rw==
-X-Google-Smtp-Source: AGHT+IHpYFUhEi3NwetUXZRckhwIr+1DZvrCsLXzKq961BPNu7xrlPpIzMh19VLzq7zt+78SXVccEhyX+T6l1Q==
-X-Received: from wmqd18.prod.google.com ([2002:a05:600c:34d2:b0:439:8e81:fd03])
- (user=derkling job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:154d:b0:434:a923:9310 with SMTP id 5b1f17b1804b1-4396e701614mr136998375e9.15.1739889793882;
- Tue, 18 Feb 2025 06:43:13 -0800 (PST)
-Date: Tue, 18 Feb 2025 14:42:57 +0000
-In-Reply-To: <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
+	s=arc-20240116; t=1739889830; c=relaxed/simple;
+	bh=h8DEt1/6IHk73Srir2K3HMIdQ2xbglOD0uGMGqLPCeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bEexfr/Pj95O4sztYQcJkEKqbkmNJWQuyplapVWj9y3UPzyLuP6LmnjZbCKImllNWsMd5rFvT/PHI9hS2RuhC/Qjj1kWrw4E0MOzPKs5h925yL0asmibJLnZ2RiNjX7wKxTwjZJmPRrKa9LHI36HH+KQTO9lg6T3I0xz+7ylOro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfIU3O0n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739889827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OLp9JRNVUhT0m1v0T73vab4YaM/Pfh0Xi9X9EVQSmqg=;
+	b=AfIU3O0n4h2Cd6+EQqBLqzPKdEMckV6jHV/y6r0BEXTjWT1sVJJJIfVwd8Kr80VkMB6fTR
+	f6E9TSkmZXVaX3ppu0Q9LDRWXDKsZgeLpGopuXm7mztNFM7cSz6TjyQlATSw2OepypH9Tp
+	ITid6uGjUZ5LtHmOdrwZb6jSsSdcgX0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-rPY--Uj5NOyhtVFz1p5B2w-1; Tue,
+ 18 Feb 2025 09:43:43 -0500
+X-MC-Unique: rPY--Uj5NOyhtVFz1p5B2w-1
+X-Mimecast-MFC-AGG-ID: rPY--Uj5NOyhtVFz1p5B2w_1739889822
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5A681800874;
+	Tue, 18 Feb 2025 14:43:41 +0000 (UTC)
+Received: from [10.22.65.116] (unknown [10.22.65.116])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2B8E21956094;
+	Tue, 18 Feb 2025 14:43:40 +0000 (UTC)
+Message-ID: <21abd9e4-de2f-4d9e-a6d2-700b3d326524@redhat.com>
+Date: Tue, 18 Feb 2025 09:43:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250218144257.1033452-1-derkling@google.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Patrick Bellasi <derkling@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Josh Poimboeuf <jpoimboe@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Patrick Bellasi <derkling@matbug.net>, 
-	Brendan Jackman <jackmanb@google.com>, David Kaplan <David.Kaplan@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me, axboe@kernel.dk
+Cc: bmarzins@redhat.com
+References: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <20250204211158.43126-1-bgurney@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-> in the interest of finally making some progress here I'd like to commit this
-> below (will test it one more time just in case but it should work :-P). It is
-> simple and straight-forward and doesn't need an IBPB when the bit gets
-> cleared.
+Bryan,  See my comments below.
 
-That's indeed simple and straight-forward for the time being.
+On 2/4/25 4:11 PM, Bryan Gurney wrote:
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index a85d190942bd..28ab868182b2 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -9,11 +9,6 @@
+>   #include <trace/events/block.h>
+>   #include "nvme.h"
+>   
+> -bool multipath = true;
+> -module_param(multipath, bool, 0444);
+> -MODULE_PARM_DESC(multipath,
+> -	"turn on native support for multiple controllers per subsystem");
+> -
+>   static const char *nvme_iopolicy_names[] = {
+>   	[NVME_IOPOLICY_NUMA]	= "numa",
+>   	[NVME_IOPOLICY_RR]	= "round-robin",
+> @@ -632,9 +627,11 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
+>   	 * We also do this for private namespaces as the namespace sharing flag
+>   	 * could change after a rescan.
+>   	 */
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   	if (!(ctrl->subsys->cmic & NVME_CTRL_CMIC_MULTI_CTRL) ||
+> -	    !nvme_is_unique_nsid(ctrl, head) || !multipath)
+> +	    !nvme_is_unique_nsid(ctrl, head))
+>   		return 0;
+> +#endif
 
-Maybe a small improvement we could add on top is to have a separate and
-dedicated cmdline option?
+You don't need to add these #ifdef CONFIG_NVME_MULTIPATH conditional compile statements
+to multipath.c because the multipath.c is not compiled when CONFIG_NVME_MULTIPATH=N.
 
-Indeed, with `X86_FEATURE_SRSO_USER_KERNEL_NO` we are not effectively using an
-IBPB on VM-Exit anymore. Something like the diff down below?
+These won't hurt anything, but they are redundant and we can make the patch smaller by removing them.
 
-Best,
-Patrick
+>   	blk_set_stacking_limits(&lim);
+>   	lim.dma_alignment = 3;
+> @@ -1038,10 +1035,11 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+>   	size_t ana_log_size;
+>   	int error = 0;
+>   
+> +#ifdef CONFIG_NVME_MULTIPATH
+>   	/* check if multipath is enabled and we have the capability */
+> -	if (!multipath || !ctrl->subsys ||
+> -	    !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
+> +	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
+>   		return 0;
+> +#endif
 
----
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 1d7afc40f2272..7609d80eda123 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2531,6 +2531,7 @@ enum srso_mitigation_cmd {
-        SRSO_CMD_SAFE_RET,
-        SRSO_CMD_IBPB,
-        SRSO_CMD_IBPB_ON_VMEXIT,
-+       SRSO_CMD_BP_SPEC_REDUCE,
- };
+Same here.
 
- static const char * const srso_strings[] = {
-@@ -2562,6 +2563,8 @@ static int __init srso_parse_cmdline(char *str)
-                srso_cmd = SRSO_CMD_IBPB;
-        else if (!strcmp(str, "ibpb-vmexit"))
-                srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
-+       else if (!strcmp(str, "spec-reduce"))
-+               srso_cmd = SRSO_CMD_BP_SPEC_REDUCE;
-        else
-                pr_err("Ignoring unknown SRSO option (%s).", str);
+>   	/* initialize this in the identify path to cover controller resets */
+>   	atomic_set(&ctrl->nr_active, 0);
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 2c76afd00390..6dea04f05b59 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -972,7 +972,6 @@ static inline void nvme_trace_bio_complete(struct request *req)
+>   		trace_block_bio_complete(ns->head->disk->queue, req->bio);
+>   }
+>   
 
-@@ -2617,7 +2620,7 @@ static void __init srso_select_mitigation(void)
+/John
 
-        case SRSO_CMD_SAFE_RET:
-                if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO))
--                       goto ibpb_on_vmexit;
-+                       goto spec_reduce;
-
-                if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
-                        /*
-@@ -2670,14 +2673,7 @@ static void __init srso_select_mitigation(void)
-                }
-                break;
-
--ibpb_on_vmexit:
-        case SRSO_CMD_IBPB_ON_VMEXIT:
--               if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
--                       pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
--                       srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
--                       break;
--               }
--
-                if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
-                        if (has_microcode) {
-                                setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-@@ -2694,6 +2690,14 @@ static void __init srso_select_mitigation(void)
-                        pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
-                }
-                break;
-+
-+spec_reduce:
-+       case SRSO_CMD_BP_SPEC_REDUCE:
-+               if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-+                       pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+                       srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+                       break;
-+               }
-        default:
-                break;
-        }
 
