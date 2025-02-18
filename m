@@ -1,62 +1,72 @@
-Return-Path: <linux-kernel+bounces-519522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CEDA39DC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:43:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80031A39DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DDC3BA36C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E503AFBAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E48826A089;
-	Tue, 18 Feb 2025 13:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B486270ED2;
+	Tue, 18 Feb 2025 13:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bWZZTJk7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T1XgF5GJ"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1172526F479;
-	Tue, 18 Feb 2025 13:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C39270EB9;
+	Tue, 18 Feb 2025 13:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739885341; cv=none; b=R6NOuO+w2YkuNsWWDT7HZKalE8vinEPaiFLbjawDtQlb90QxMJ7MzI5DoiFph3/D1TvoYIs9R/Z1324bSY/n4f2bhlWPih/TDX5PDvVMqtJqk970b31LmlH12uG4rp/qvqkCdwptomUo/dOy9mmK+/kJmao+6XnOmBm1Juu5D5M=
+	t=1739885362; cv=none; b=T5NW9eox9U0IRGHTuC+d6UARaUbCcjjgGqvksdZmw1OgolKRPlUUzlgvhoeu3CNkjdXtuVjG2fDfE126deURcBPpyqm7NCsLP8QmFlvZA3yvoRSkh5Mt6YNH/Rcj1Raq0g/jlMwXXHzZpBcHKTayLdBkWWovC3GX4Lese/F9Ibc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739885341; c=relaxed/simple;
-	bh=iw/SPrbXn98cADc38nK9IqPnmrHPqixHtVWli1zCfVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9NR5q1LHobrIE2mUTy0HX7idXTuwrIGnDyhIWW8SLZNmygNDFGWzRupajm4LPvd5TuDmEOKMrJDdjp3VyGoPDHFlNjNycHKqw79m/rTuTqA6ULscQnaoUAdqGHvk7JtMJVDvShR5cP/BXbhV7tmjalI0i5RqW7dVDVWOf/RTJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bWZZTJk7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=R/o1iYOuTnHdhQ5dQpONUa+xtnc26ne1K/lxsZiqLlE=; b=bWZZTJk7HG6EUCdOIuwtQ31mF1
-	y3H28+JyOq58NxaxEzH+37aZDlVv2j4Zbsz6TJm0ImcqOxrtVka/Hr2QhJSF7n2saSxRmTVOYsunA
-	fWv0oRN1aFkicZUgFGE3ssWnQ4ZFqh7FQ9XDS9cJm94kS0rNI/+WNeKx3dAQiHrq7ZwtzL/+eCAXu
-	xJmCQ5Fj9eW6GbxBHwop3ReqPZ6Z//V6u9cCx3nS9MO0WTeijNcCzTXYlzuROWt4jI31IwGK8es30
-	RC377zVtYk8kRGuAI48MfMPMpTrcEmzbG13qvlEHQ8jdgB9LFy4zAvHKxjLHVhdZgm0jBgpLSCqIP
-	+Rd1dU3A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkNei-000000030UP-19lA;
-	Tue, 18 Feb 2025 13:28:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2341230066A; Tue, 18 Feb 2025 14:28:55 +0100 (CET)
-Date: Tue, 18 Feb 2025 14:28:55 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: ERROR: modpost: "kmsan_handle_dma"
- [drivers/virtio/virtio_ring.ko] undefined!
-Message-ID: <20250218132855.GE40464@noisy.programming.kicks-ass.net>
-References: <202502150634.qjxwSeJR-lkp@intel.com>
- <20250218114857.oBuLvPYs@linutronix.de>
+	s=arc-20240116; t=1739885362; c=relaxed/simple;
+	bh=rYjXngdQ0dbFzgwgn7WGaRs5H4t0BPJlZAYlLdGZ3MY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cvFmZD4WCHPzE+mC7m5yydKvLYb/acwmS96vG67uRBh0ppsKOlDlsxkMIK0NkPbWNcL9khAwnJxL+w6ff9Pe7+B0MYdgWpp84OOpmU+UZ9AX2NaI+b+pdA8R6Og7NXsnTs6OodpIJtl/CVnHWaPQQyt5J/cvLFqJUo8vqPkTpyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T1XgF5GJ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=R9zhQrQxExKFJv3fYFW1IElfhSiSEpY6hem10hrKIVc=; b=T1XgF5GJTFc7sFp9yg3KuIyNhu
+	MhzngxTkzJPcwWXf2K7zTycetZEIxkXJTrC65pGlgkQVN75mFxiKkqqT/ofRZ/5sV3bqjOXlQokOM
+	ZSJIRtb4yEfo8w0o0/ssCp5l//pqLNpL0f3OZugQlNqHKrmBQ87KwpcT6osG30gddCPKTxKNsvrUt
+	FZYVxaZs3XZKj7w86gVIswcvr8z0pjXnu77b1pb+MG5m21FSuzERou+6LEKQSa6uor22L0XgfhkMI
+	rEqJI8LL6cMDcrooDk974GXUBpJDWyLcnWuCwzCEd/Vo9Y/d5qzbEjcXZ0yx7ZBJjEuvBgXctDaN6
+	ASIDVTeA==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tkNeg-00AOyU-AF; Tue, 18 Feb 2025 14:29:00 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Bernd Schubert <bschubert@ddn.com>,  Miklos Szeredi <miklos@szeredi.hu>,
+  Dave Chinner <david@fromorbit.com>,  Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Matt
+ Harvey <mharvey@jumptrading.com>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] fuse: add new function to invalidate cache for
+ all inodes
+In-Reply-To: <bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
+	(Jan Kara's message of "Tue, 18 Feb 2025 12:57:28 +0100")
+References: <20250216165008.6671-1-luis@igalia.com>
+	<20250216165008.6671-3-luis@igalia.com>
+	<3fac8c84-2c41-461d-92f1-255903fc62a9@ddn.com>
+	<87r03wx4th.fsf@igalia.com>
+	<847288fa-b66a-4f3d-9f50-52fa293a1189@ddn.com>
+	<87ldu4x076.fsf@igalia.com>
+	<bpevrif4k5h2l4pscsnsj3flwmwdw6w5nge5n7ji2yshk5pz6z@tngefti6stld>
+Date: Tue, 18 Feb 2025 13:28:59 +0000
+Message-ID: <877c5n8jqc.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,76 +74,174 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218114857.oBuLvPYs@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 12:48:57PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2025-02-15 06:42:36 [+0800], kernel test robot wrote:
-> > >> arch/x86/kvm/cpuid.o: warning: objtool: do_cpuid_func+0x2428: undefined stack state
-> 
+On Tue, Feb 18 2025, Jan Kara wrote:
 
-> From the assembly it seems to make sense:
-> |   110ae:       49 89 e0                mov    %rsp,%r8
-> stash for later
-> |   110b1:       48 85 db                test   %rbx,%rbx
-> |   110b4:       c7 00 00 00 00 00       movl   $0x0,(%rax)
-> |   110ba:       45 89 7e 14             mov    %r15d,0x14(%r14)
-> |   110be:       0f 85 40 01 00 00       jne    11204 <do_cpuid_func+0x22f4>
-> …
-> |   11204:       44 8b 74 24 38          mov    0x38(%rsp),%r14d
-> |   11209:       44 89 f7                mov    %r14d,%edi
-> |   1120c:       4d 89 c7                mov    %r8,%r15
-> 
-> mov rsp to r15
+> On Mon 17-02-25 11:47:09, Luis Henriques wrote:
+>> On Mon, Feb 17 2025, Bernd Schubert wrote:
+>> > On 2/17/25 11:07, Luis Henriques wrote:
+>> >> On Mon, Feb 17 2025, Bernd Schubert wrote:
+>> >>=20
+>> >>> On 2/16/25 17:50, Luis Henriques wrote:
+>> >>>> Currently userspace is able to notify the kernel to invalidate the =
+cache
+>> >>>> for an inode.  This means that, if all the inodes in a filesystem n=
+eed to
+>> >>>> be invalidated, then userspace needs to iterate through all of them=
+ and do
+>> >>>> this kernel notification separately.
+>> >>>>
+>> >>>> This patch adds a new option that allows userspace to invalidate al=
+l the
+>> >>>> inodes with a single notification operation.  In addition to invali=
+date
+>> >>>> all the inodes, it also shrinks the sb dcache.
+>> >>>>
+>> >>>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> >>>> ---
+>> >>>>  fs/fuse/inode.c           | 33 +++++++++++++++++++++++++++++++++
+>> >>>>  include/uapi/linux/fuse.h |  3 +++
+>> >>>>  2 files changed, 36 insertions(+)
+>> >>>>
+>> >>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> >>>> index e9db2cb8c150..01a4dc5677ae 100644
+>> >>>> --- a/fs/fuse/inode.c
+>> >>>> +++ b/fs/fuse/inode.c
+>> >>>> @@ -547,6 +547,36 @@ struct inode *fuse_ilookup(struct fuse_conn *f=
+c, u64 nodeid,
+>> >>>>  	return NULL;
+>> >>>>  }
+>> >>>>=20=20
+>> >>>> +static int fuse_reverse_inval_all(struct fuse_conn *fc)
+>> >>>> +{
+>> >>>> +	struct fuse_mount *fm;
+>> >>>> +	struct inode *inode;
+>> >>>> +
+>> >>>> +	inode =3D fuse_ilookup(fc, FUSE_ROOT_ID, &fm);
+>> >>>> +	if (!inode || !fm)
+>> >>>> +		return -ENOENT;
+>> >>>> +
+>> >>>> +	/* Remove all possible active references to cached inodes */
+>> >>>> +	shrink_dcache_sb(fm->sb);
+>> >>>> +
+>> >>>> +	/* Remove all unreferenced inodes from cache */
+>> >>>> +	invalidate_inodes(fm->sb);
+>> >>>> +
+>> >>>> +	return 0;
+>> >>>> +}
+>> >>>> +
+>> >>>> +/*
+>> >>>> + * Notify to invalidate inodes cache.  It can be called with @node=
+id set to
+>> >>>> + * either:
+>> >>>> + *
+>> >>>> + * - An inode number - Any pending writebacks within the rage [@of=
+fset @len]
+>> >>>> + *   will be triggered and the inode will be validated.  To invali=
+date the whole
+>> >>>> + *   cache @offset has to be set to '0' and @len needs to be <=3D =
+'0'; if @offset
+>> >>>> + *   is negative, only the inode attributes are invalidated.
+>> >>>> + *
+>> >>>> + * - FUSE_INVAL_ALL_INODES - All the inodes in the superblock are =
+invalidated
+>> >>>> + *   and the whole dcache is shrinked.
+>> >>>> + */
+>> >>>>  int fuse_reverse_inval_inode(struct fuse_conn *fc, u64 nodeid,
+>> >>>>  			     loff_t offset, loff_t len)
+>> >>>>  {
+>> >>>> @@ -555,6 +585,9 @@ int fuse_reverse_inval_inode(struct fuse_conn *=
+fc, u64 nodeid,
+>> >>>>  	pgoff_t pg_start;
+>> >>>>  	pgoff_t pg_end;
+>> >>>>=20=20
+>> >>>> +	if (nodeid =3D=3D FUSE_INVAL_ALL_INODES)
+>> >>>> +		return fuse_reverse_inval_all(fc);
+>> >>>> +
+>> >>>>  	inode =3D fuse_ilookup(fc, nodeid, NULL);
+>> >>>>  	if (!inode)
+>> >>>>  		return -ENOENT;
+>> >>>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+>> >>>> index 5e0eb41d967e..e5852b63f99f 100644
+>> >>>> --- a/include/uapi/linux/fuse.h
+>> >>>> +++ b/include/uapi/linux/fuse.h
+>> >>>> @@ -669,6 +669,9 @@ enum fuse_notify_code {
+>> >>>>  	FUSE_NOTIFY_CODE_MAX,
+>> >>>>  };
+>> >>>>=20=20
+>> >>>> +/* The nodeid to request to invalidate all inodes */
+>> >>>> +#define FUSE_INVAL_ALL_INODES 0
+>> >>>> +
+>> >>>>  /* The read buffer is required to be at least 8k, but may be much =
+larger */
+>> >>>>  #define FUSE_MIN_READ_BUFFER 8192
+>> >>>>=20=20
+>> >>>
+>> >>>
+>> >>> I think this version might end up in=20
+>> >>>
+>> >>> static void fuse_evict_inode(struct inode *inode)
+>> >>> {
+>> >>> 	struct fuse_inode *fi =3D get_fuse_inode(inode);
+>> >>>
+>> >>> 	/* Will write inode on close/munmap and in all other dirtiers */
+>> >>> 	WARN_ON(inode->i_state & I_DIRTY_INODE);
+>> >>>
+>> >>>
+>> >>> if the fuse connection has writeback cache enabled.
+>> >>>
+>> >>>
+>> >>> Without having it tested, reproducer would probably be to run
+>> >>> something like passthrough_hp (without --direct-io), opening
+>> >>> and writing to a file and then sending FUSE_INVAL_ALL_INODES.
+>> >>=20
+>> >> Thanks, Bernd.  So far I couldn't trigger this warning.  But I just f=
+ound
+>> >> that there's a stupid bug in the code: a missing iput() after doing t=
+he
+>> >> fuse_ilookup().
+>> >>=20
+>> >> I'll spend some more time trying to understand how (or if) the warnin=
+g you
+>> >> mentioned can triggered before sending a new revision.
+>> >>=20
+>> >
+>> > Maybe I'm wrong, but it calls=20
+>> >
+>> >    invalidate_inodes()
+>> >       dispose_list()
+>> >         evict(inode)
+>> >            fuse_evict_inode()
+>> >
+>> > and if at the same time something writes to inode page cache, the
+>> > warning would be triggered?=20
+>> > There are some conditions in evict, like inode_wait_for_writeback()
+>> > that might protect us, but what is if it waited and then just
+>> > in the right time the another write comes and dirties the inode
+>> > again?
+>>=20
+>> Right, I have looked into that too but my understanding is that this can
+>> not happen because, before doing that wait, the code does:
+>>=20
+>> 	inode_sb_list_del(inode);
+>>=20
+>> and the inode state will include I_FREEING.
+>>=20
+>> Thus, before writing to it again, the inode will need to get added back =
+to
+>> the sb list.  Also, reading the comments on evict(), if something writes
+>> into the inode at that point that's likely a bug.  But this is just my
+>> understanding, and I may be missing something.
+>
+> Yes. invalidate_inodes() checks i_count =3D=3D 0 and sets I_FREEING. Once
+> I_FREEING is set nobody can acquire inode reference until the inode is
+> fully destroyed. So nobody should be writing to the inode or anything like
+> that.
 
-This, objtool doesn't track this one. It only does:
+Awesome, it's good to have that confirmed.  Thank you, Jan!
 
- mov %rsp, reg
-
- mov reg, %rsp
-
-I'm not entirely sure how painful it would be to teach objtool about
-this case. Horrible code it is :/
-
-> |   1120f:       e8 00 00 00 00          call   11214 <do_cpuid_func+0x2304>
-> |                        11210: R_X86_64_PLT32   __msan_chain_origin-0x4
-> |   11214:       89 c7                   mov    %eax,%edi
-> |   11216:       e8 00 00 00 00          call   1121b <do_cpuid_func+0x230b>
-> |                        11217: R_X86_64_PLT32   __msan_warning-0x4
-> |   1121b:       44 89 f7                mov    %r14d,%edi
-> |   1121e:       e8 00 00 00 00          call   11223 <do_cpuid_func+0x2313>
-> |                        1121f: R_X86_64_PLT32   __msan_chain_origin-0x4
-> |   11223:       89 c7                   mov    %eax,%edi
-> |   11225:       e8 00 00 00 00          call   1122a <do_cpuid_func+0x231a>
-> |                        11226: R_X86_64_PLT32   __msan_warning-0x4
-> |   1122a:       44 89 f7                mov    %r14d,%edi
-> |   1122d:       e8 00 00 00 00          call   11232 <do_cpuid_func+0x2322>
-> |                        1122e: R_X86_64_PLT32   __msan_chain_origin-0x4
-> |   11232:       89 c7                   mov    %eax,%edi
-> |   11234:       e8 00 00 00 00          call   11239 <do_cpuid_func+0x2329>
-> |                        11235: R_X86_64_PLT32   __msan_warning-0x4
-> |   11239:       44 89 f7                mov    %r14d,%edi
-> |   1123c:       e8 00 00 00 00          call   11241 <do_cpuid_func+0x2331>
-> |                        1123d: R_X86_64_PLT32   __msan_chain_origin-0x4
-> |   11241:       89 c7                   mov    %eax,%edi
-> |   11243:       e8 00 00 00 00          call   11248 <do_cpuid_func+0x2338>
-> |                        11244: R_X86_64_PLT32   __msan_warning-0x4
-> |   11248:       4c 89 ef                mov    %r13,%rdi
-> |   1124b:       48 8b 74 24 20          mov    0x20(%rsp),%rsi
-> |   11250:       4c 89 e2                mov    %r12,%rdx
-> |   11253:       48 8b 4c 24 08          mov    0x8(%rsp),%rcx
-> |   11258:       4c 89 fc                mov    %r15,%rsp
-> 
-> restore rsp. I just don't see how rsp is destroyed but this could be
-> related to paravirt's xxl clobbing in__cpuid().
-> 
-> I miss 1120c in my output. I don't understand how it jumps from 110ae to
-> 1124b. It misses the assignments in between but this might not be goal
-> here…
-> 
-> gcc does not cause objtool to produce the warning but then gcc does
-> shuffle rsp as much as llvm does.
-> 
-> Sebastian
+Cheers,
+--=20
+Lu=C3=ADs
 
