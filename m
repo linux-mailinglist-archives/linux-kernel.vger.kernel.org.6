@@ -1,146 +1,169 @@
-Return-Path: <linux-kernel+bounces-519664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDC8A3A077
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:52:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BBBA3A060
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF663B67DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34060188981F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D547C26A0EC;
-	Tue, 18 Feb 2025 14:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D9526A0D2;
+	Tue, 18 Feb 2025 14:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfIU3O0n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OvK8TTvn"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D8324113C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623E426AA8E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889830; cv=none; b=WQa79ZCmQwtx20k5qXe+dkCFwCi9gcCwOMda7r7sitJeJY1acxscMlBPfOq2OqukT3FfLFpC5A2rQaDhTtloWQLNiEscDcxtUpc01MJyhcgiJ0hpMERN/eVO5VsjhxEuI1ItSPHHifeyq2IJIYId3SSx+WqdF+p01J7VzolkbgI=
+	t=1739889909; cv=none; b=d9o1+pi1VbXAUOuWO836cNpBqSfV7SEIznXAbQqQA0XHO5WfH3m4AnYAXi95sbGnGfRxLgJ/QtmtsXu/3pzZBc6S5YaueAvsBbFs1uLorNktQlILIm6Da8r2eeLF0aoQ9eMn/B7VLbUxsYihAkrGvpS4t5F9mkJi17p6lwiMbiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889830; c=relaxed/simple;
-	bh=h8DEt1/6IHk73Srir2K3HMIdQ2xbglOD0uGMGqLPCeU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bEexfr/Pj95O4sztYQcJkEKqbkmNJWQuyplapVWj9y3UPzyLuP6LmnjZbCKImllNWsMd5rFvT/PHI9hS2RuhC/Qjj1kWrw4E0MOzPKs5h925yL0asmibJLnZ2RiNjX7wKxTwjZJmPRrKa9LHI36HH+KQTO9lg6T3I0xz+7ylOro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfIU3O0n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739889827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OLp9JRNVUhT0m1v0T73vab4YaM/Pfh0Xi9X9EVQSmqg=;
-	b=AfIU3O0n4h2Cd6+EQqBLqzPKdEMckV6jHV/y6r0BEXTjWT1sVJJJIfVwd8Kr80VkMB6fTR
-	f6E9TSkmZXVaX3ppu0Q9LDRWXDKsZgeLpGopuXm7mztNFM7cSz6TjyQlATSw2OepypH9Tp
-	ITid6uGjUZ5LtHmOdrwZb6jSsSdcgX0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-rPY--Uj5NOyhtVFz1p5B2w-1; Tue,
- 18 Feb 2025 09:43:43 -0500
-X-MC-Unique: rPY--Uj5NOyhtVFz1p5B2w-1
-X-Mimecast-MFC-AGG-ID: rPY--Uj5NOyhtVFz1p5B2w_1739889822
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	s=arc-20240116; t=1739889909; c=relaxed/simple;
+	bh=NbvVt7BZF1i5sDpL0YhX6xjDp5pujBMRRwFAm4iHKtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9BQSNY/BUFzN0WUCLC28NaJWyBAyNxGhOpqviwKE8V2GoxM6kjdOXKn1w7MnAeduAmluLAcK+9sCGMNNw/x2eEouZ5uVIu057vWxmte2cg6zoKa+8zypyZbvANUeCGh5K2Vv/HB1E7RFXOCqivZDiPyatL6roo4TMrI9PyAHgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OvK8TTvn; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5A681800874;
-	Tue, 18 Feb 2025 14:43:41 +0000 (UTC)
-Received: from [10.22.65.116] (unknown [10.22.65.116])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2B8E21956094;
-	Tue, 18 Feb 2025 14:43:40 +0000 (UTC)
-Message-ID: <21abd9e4-de2f-4d9e-a6d2-700b3d326524@redhat.com>
-Date: Tue, 18 Feb 2025 09:43:39 -0500
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 398583F296
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1739889898;
+	bh=2wnnPPobX2+s1VhoPCe771be48GL2/WpZ73Ug6pSCno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=OvK8TTvnopKxfjLtGqL/qstq7ieSwR1kugcidusdbC1AUNn3deRkxdjD+Hwgvh3B4
+	 sRyGbcnEGHltrkskp8fdahPjs6ent7AmJ8twqjH8m/VbAKDll2Hegqbfj+6Sr+JZ9T
+	 6M34Ke/6Q2QqhLnts511gEVwsgIPZ+LxCdFJ5VZyV8wbt+P6AYVegu7Rs2DdmsSwJr
+	 FkkLHvKZSMgRHc4N4PnsnxJ6K4fgghVw6kUjWnAF4CQ/bAl0k2WvX3oMRtAi917Vuj
+	 WiUJZhbZfSaorvOAClv2OdfNfAH3/uZ9NJZlru9ABSG44eNiR2/tUxN4AB08gd3m8v
+	 OhzkGXRLRIhQQ==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f46b7851fcso17771209a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:44:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739889895; x=1740494695;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2wnnPPobX2+s1VhoPCe771be48GL2/WpZ73Ug6pSCno=;
+        b=lmhRAzyWDw0QCGtqZKZk2eWe8vVIQEr2B97UbKgJzz6mRNikc8zBGoOVGg5dhZauKy
+         2cdkK8zT6xpbha6Jh5oXqcp63efAY7cn8N3F981W6jGSU1lVfvkUIK2U/5H5fcBd5n5w
+         s+KFIwD/hpQAdg8sBYeG+9tGRytu2jZ43tqqqAKEkw2mp9bixctUMv3ClWqU8i4hG/2+
+         SIuTL0lRPHxeae6jKCfraXLG2AUvIgoEaY1gq7tdwMXqMnJgl7slRClAYW1nI7Jj4cHE
+         IawKVspnj1QbB9Y30Nq/kD5vsyld0jnclyyWcEsJpawZ/dKf5KJpyDUaFn2hli75kuBA
+         qZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuPPIrAKT+j+BfFOa5ZrUSeclnTpK5/zLZPhEg2xGBMjwCqEcaM4PRuo6tYi5bldiOtwmwykuk/434mlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLG0NU3wnl1VP/hcO+2vvXT9YJ+9bHvLuWTLvFqvZwBtuSMzl/
+	mt4/6aCG8eYEe2SMyyIjJd2tj4/ypK+SOvaXX7TnsHtbh15knleHSFA84b5aPETRLrXXGB90n0J
+	+ryBXOo9nDvRLNyyBpaW508dwXuYQud5VLWf6ZWSu5n1ZwRh0IlVDGqF5BpiNhVDgMs0h/tJzyn
+	f+cw==
+X-Gm-Gg: ASbGnctHE0/64MxXvNlPUhb7rNvFUuXWz1gxaQaekTrXwVl4R7ahzL3H857yUYx3vFa
+	yrJYYHDPg80TiFXQdy0aVtcB3uCgNTJVB0v95dRxGzEoTTzIZet4wDXOuYWpb79rIm/D2a4C73U
+	Twk5IvhJI6/pXdD23pcVgIhTMCWkAzuNouiQTeI6A5ZTb8ZhKNtnK90JTwMKXCssqNByMVVerqS
+	EFkN6xrLWhtyRPox11nfWQQyKKbKRCQ99BUG8B5sQ6a8DR8qbzE1jvCTUVpW79ex6xAs2ntgmc9
+	GNABhBE=
+X-Received: by 2002:a17:90b:3c82:b0:2fa:13f7:960 with SMTP id 98e67ed59e1d1-2fc40f0e9dbmr22090218a91.13.1739889895160;
+        Tue, 18 Feb 2025 06:44:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IESbv8ZqGzwl13GA+Js7FWx5Lo/XTUtgadox++6SX63lhnE16lduw+yIem+lsV7vCbgIXUszw==
+X-Received: by 2002:a17:90b:3c82:b0:2fa:13f7:960 with SMTP id 98e67ed59e1d1-2fc40f0e9dbmr22090187a91.13.1739889894839;
+        Tue, 18 Feb 2025 06:44:54 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b5ddsm12120512a91.37.2025.02.18.06.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 06:44:54 -0800 (PST)
+Date: Tue, 18 Feb 2025 23:44:52 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-gpio@vger.kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo
+ gpio devices
+Message-ID: <osk442flgow3px5jilhrn57xm2ha5wyrsnjae2mz4ht2dvgg2t@e7bzgjqawgik>
+References: <20250217142758.540601-1-koichiro.den@canonical.com>
+ <20250217142758.540601-2-koichiro.den@canonical.com>
+ <CAMuHMdWSBXHE9t2pMV+9iZRzrTUGVG+dnxxOMWbVF+HeCpt-xA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-To: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, kbusch@kernel.org, hch@lst.de,
- sagi@grimberg.me, axboe@kernel.dk
-Cc: bmarzins@redhat.com
-References: <20250204211158.43126-1-bgurney@redhat.com>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <20250204211158.43126-1-bgurney@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWSBXHE9t2pMV+9iZRzrTUGVG+dnxxOMWbVF+HeCpt-xA@mail.gmail.com>
 
-Bryan,  See my comments below.
+On Tue, Feb 18, 2025 at 02:24:32PM GMT, Geert Uytterhoeven wrote:
+> Hi Den-san,
+> 
+> On Mon, 17 Feb 2025 at 15:28, Koichiro Den <koichiro.den@canonical.com> wrote:
+> > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
+> > platform device and wait synchronously for probe completion.
+> > With gpio-aggregator adopting the same approach in a later commit for
+> > its configfs interface, it's time to factor out the common code.
+> >
+> > Add gpio-pseudo.[ch] to house helper functions used by all the pseudo
+> > GPIO device implementations.
+> >
+> > No functional change.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> 
+> Thanks for your patch!
+> 
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-pseudo.c
+> 
+> > +int pseudo_gpio_register(struct pseudo_gpio_common *common,
+> > +                        struct platform_device_info *pdevinfo)
+> > +{
+> > +       struct platform_device *pdev;
+> > +       char *name;
+> > +
+> > +       name = kasprintf(GFP_KERNEL, "%s.%u", pdevinfo->name, pdevinfo->id);
+> > +       if (!name)
+> > +               return -ENOMEM;
+> > +
+> > +       common->driver_bound = false;
+> > +       common->name = name;
+> > +       reinit_completion(&common->probe_completion);
+> > +       bus_register_notifier(&platform_bus_type, &common->bus_notifier);
+> > +
+> > +       pdev = platform_device_register_full(pdevinfo);
+> > +       if (IS_ERR(pdev)) {
+> > +               bus_unregister_notifier(&platform_bus_type, &common->bus_notifier);
+> > +               kfree(common->name);
+> 
+> On arm32:
+> error: implicit declaration of function ‘kfree’
+> 
+> Adding #include <linux/slab.h> fixes that.
+> Probably you want to include a few more, to avoid relying on
+> implicit includes.
 
-On 2/4/25 4:11 PM, Bryan Gurney wrote:
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index a85d190942bd..28ab868182b2 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -9,11 +9,6 @@
->   #include <trace/events/block.h>
->   #include "nvme.h"
->   
-> -bool multipath = true;
-> -module_param(multipath, bool, 0444);
-> -MODULE_PARM_DESC(multipath,
-> -	"turn on native support for multiple controllers per subsystem");
-> -
->   static const char *nvme_iopolicy_names[] = {
->   	[NVME_IOPOLICY_NUMA]	= "numa",
->   	[NVME_IOPOLICY_RR]	= "round-robin",
-> @@ -632,9 +627,11 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
->   	 * We also do this for private namespaces as the namespace sharing flag
->   	 * could change after a rescan.
->   	 */
-> +#ifdef CONFIG_NVME_MULTIPATH
->   	if (!(ctrl->subsys->cmic & NVME_CTRL_CMIC_MULTI_CTRL) ||
-> -	    !nvme_is_unique_nsid(ctrl, head) || !multipath)
-> +	    !nvme_is_unique_nsid(ctrl, head))
->   		return 0;
-> +#endif
+Thank you for pointing that out!
 
-You don't need to add these #ifdef CONFIG_NVME_MULTIPATH conditional compile statements
-to multipath.c because the multipath.c is not compiled when CONFIG_NVME_MULTIPATH=N.
+Koichiro
 
-These won't hurt anything, but they are redundant and we can make the patch smaller by removing them.
-
->   	blk_set_stacking_limits(&lim);
->   	lim.dma_alignment = 3;
-> @@ -1038,10 +1035,11 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
->   	size_t ana_log_size;
->   	int error = 0;
->   
-> +#ifdef CONFIG_NVME_MULTIPATH
->   	/* check if multipath is enabled and we have the capability */
-> -	if (!multipath || !ctrl->subsys ||
-> -	    !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
-> +	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
->   		return 0;
-> +#endif
-
-Same here.
-
->   	/* initialize this in the identify path to cover controller resets */
->   	atomic_set(&ctrl->nr_active, 0);
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index 2c76afd00390..6dea04f05b59 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -972,7 +972,6 @@ static inline void nvme_trace_bio_complete(struct request *req)
->   		trace_block_bio_complete(ns->head->disk->queue, req->bio);
->   }
->   
-
-/John
-
+> 
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
