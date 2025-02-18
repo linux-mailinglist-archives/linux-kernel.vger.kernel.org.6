@@ -1,265 +1,151 @@
-Return-Path: <linux-kernel+bounces-519417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2BFA39C9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:59:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915F6A39CA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52F41729C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:58:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59048171CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A8C265CC4;
-	Tue, 18 Feb 2025 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4C0265CCC;
+	Tue, 18 Feb 2025 12:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="KQgVa3Wv"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GZUYwJ3+"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB90264A91
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A508D264A91;
+	Tue, 18 Feb 2025 12:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883525; cv=none; b=CJtnchtpG7UgRs157SWM1ThjapYNYoJ/jnMpYVl7eb8XBhw7j39u66TjmSrRl8ZSXWVJxmyPsGzEth+fiObXxS5WDTRHaudZqoMv+ZYyWEa20lkWEDYIc/iLVsymMzVmojEPPTOlS+s6t0OJ85BtZMTmBMugm46XA8Lz5RUDcL8=
+	t=1739883589; cv=none; b=KFTYRLGkHi2nXR21yAvaFJl5QMM/Rly3Mmgc4UIvUhjfcKniq3Oecguacb3T3gvfawUDPFqWLn9cn68dUx/c8z/JbQ+LTFw5JsIXdjZTvw6ja79PvZWqOyI4L0aYk7SbTixHzXeqelrsvTNjYNYpBd2Sbvaw6oRnfYYtAz8PjI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883525; c=relaxed/simple;
-	bh=oMH51VUXnnpfnm9nAkgicDi5ah+l53EWtaexQa428Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hf6p3f4zzNrJWwUNrkCKrop+gNBojmznlg5iPf5vxRTHoISwrlANvNLEBkpZYT8tjytm+qX8KffgIS05WkRPSZwysK7rGiJN98VigdNaes/JrFuVq8TKZz2hT5J/39q4dXr7xeiMZoinsS4fc9QDLbVs9K+bE9GYMkcKQMeYzEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=KQgVa3Wv; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6FB2C3F2F0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 12:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739883520;
-	bh=v9P5lSfpGSUeQi9lRANACSgvEEYXXekadVUZlYSjCmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=KQgVa3Wvke+1ffggoO/QErgOnlV4kh7aWXppzTxLyfScovyRDo/dwAiVw3nRPh/BT
-	 JiRPBURiZvDvMR/UXmpOh0jgvrzbVO5sqFiOzRrJ5M4ESIxSiIN86o8Gf1OEVQjFpV
-	 wldIRDEgJEveZ7pc95H63DYKdEYbIzUF1AAl/1P9jF3VQTWcmoG9cnRQHnynLj7Ws7
-	 f+s1xmNBLnZqKhL0XHbyIFtt8a90iwi2FRc59baLUvHYEqkHTfCqfnNUJvk6Mc4AF/
-	 Bpzkqj8WsfVuQbh05h5SGFgui0MuiPyBnvgUDGKSeLEevsmTYdKgzalTvrkY3sg18r
-	 l5uqB+Q3/jDXw==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so9821121a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 04:58:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883518; x=1740488318;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9P5lSfpGSUeQi9lRANACSgvEEYXXekadVUZlYSjCmQ=;
-        b=qAlyVEYkqMxHQ0G/Wq+HX+Epo9LPIJImJQ80Kf9hy32nPdogExyUJoPp7n4+WBPwLn
-         xEXqAXc+4ID/RCgdlbsH1WvTrml/eLskIKshL10mT6kFTifgBDMSvFs29HMIlcMCGvgx
-         /Y2eECwwcWkxVCAbkrgDQkMCcm/g5iECK8qkCZZGAMsa5CRZxPsRL6evtBlXte+iASTr
-         aCRWoo2SSzJL978pACdd0XVpoJECIdr0VgbMhs2MSK3ctQTjVcRFBFEw2dVWrt8I6mnV
-         C125NOLkuUy00QqcVZikqteWQXrQizcgN1CdR2wUJsYj6g98GsSSYdCzTHEqUwc6SiWI
-         kWAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXONpWDtiSi641/sn4j40eqfRQNxKIDs63iIL7pBwPGLLeYMjf/4NLZI5I4mU7gBrU06ywUWXthtiNiyvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm2PcV9H8GsiQ9tC10dl2PmpTeavxG0l3/WNiEPUgbAZxVqEAZ
-	z8mjFVKyyYmgZz+TOeA/9XqKrP4tW+URXc2eheB7wCZb3fQwEAK+NBux+mjuwvEpb1fPR07ksp9
-	BoJ0sCdfSx4rO39hIW7fYK2xz/GNIxbWQtrFLOmk8lSALar4AcTFvaoiQ8TEekmscWnJUIN3K+g
-	MoKXEBSchCWA==
-X-Gm-Gg: ASbGnculrkLYa9eeY5RvxZbVYyMBWCZXdIC3pXozSodBYPuXZwGm/ONtOwdQ2SrPcMF
-	EhcCKn5W9Ml4VccViwXxZVD/DFle16nAlk/qX207PrKK0gQgIT+B5ruqnbffG4GJQfUz5hLyYyh
-	FaDS4SUPfF750Cm3PWxFPlcg5MrlxLJyOdva3s7e9raHpnbounjx6R4HdjVZmDhjobUPg5V8sAP
-	MUKIR/xMFVkSkH2ThTTavpcuUX+KWRgjm9Wqa1ROwGckz2uEin9zQo21blk+zlw8+5L8BOW8LAS
-	oMAWNU4=
-X-Received: by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37 with SMTP id 98e67ed59e1d1-2fc40f22cd2mr25120736a91.18.1739883518327;
-        Tue, 18 Feb 2025 04:58:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFs26rQasnQvPUPYlw9nkWCSmusj5EGnCxCbFo1IYGbCgwn1O208wtCVjgu8sox+hqj8fWUxQ==
-X-Received: by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37 with SMTP id 98e67ed59e1d1-2fc40f22cd2mr25120700a91.18.1739883517907;
-        Tue, 18 Feb 2025 04:58:37 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b602sm12136721a91.35.2025.02.18.04.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 04:58:37 -0800 (PST)
-Date: Tue, 18 Feb 2025 21:58:35 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo
- gpio devices
-Message-ID: <zfyzhahnhtozrbtgdod7wyfhcdtwuofx4hl3ndtxglmzacd2at@q4hmczbylwcw>
-References: <20250217142758.540601-1-koichiro.den@canonical.com>
- <20250217142758.540601-2-koichiro.den@canonical.com>
- <CAMRc=McB0bcG4jERmUyrQ=eTP+kcfLBBAOaT7mCMKbgUB1W5nw@mail.gmail.com>
- <d2qdoq3f3jk6gzgsjeqszgaqk7z523r7cfnopxfq4ghsbsqgp3@zjw67ewqzi5u>
- <uogv4ckqo2e2byspffvfayu44v6fl46sxtu7eudweoye62sofi@5iwsumpttpca>
- <CAMRc=MdNtDW_Gbd6dsG345110SCWe1vD_rNd_QaWBYRApHBoxQ@mail.gmail.com>
- <saszavmizjwhzechspy6otune2xwtgjjygaitxminzclgj7zep@ofwfb5jdfcam>
- <CAMRc=MdDi6_neGThU3wq_uq2VA=DUHzTwvrv_wivj26ksNSnNA@mail.gmail.com>
+	s=arc-20240116; t=1739883589; c=relaxed/simple;
+	bh=13OK0ly+Y9D7D0IsatLoyzRKM7fn6t6uu4z+wld9J4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WCYRhapmJSXDQFipTNxX9FbUmfWPaRGDINeaX0qP89EvEKeC+uIvQmTjz3txFzKMG4q2ZcfJ7gQUP4fFkedvf0+k/DhjC07GDf2Kta6PF9h+vypytkOQfOjUo4NAzhapHvsAnU3RZbSiLHbRG3OAhYW9qYOGSuVy9bY5Pif75uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GZUYwJ3+; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1739883575;
+	bh=A+GxPdGU6RxcKTKTUjnNUysJyqMdd00HP+fC5NjA62U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=GZUYwJ3+bXdfxtq0uJgjZLIOlHmk1KmGfAu7iS079B/3NS4rerTpgEOh1jYXtS5kf
+	 Jhb6ajRPLmnZ77orbIKOIK8urS5/DIntl9x5A9cBWk8dCKLOUoWYc/MVqq53+ukicm
+	 MJuIfDBsH+UGIg72FResiDnNskNeGyYfrnJ2C3Yw=
+X-QQ-mid: bizesmtpip3t1739883526tocs40p
+X-QQ-Originating-IP: zfAGLJ/ZbWNea6zi7EMvGF1miZNnL7+mFFbIV8HnI1I=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 18 Feb 2025 20:58:45 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16123507562462357034
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: chenlinxuan@uniontech.com,
+	guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com
+Subject: [PATCH 5/7] MIPS: dec: Remove dec_irq_dispatch()
+Date: Tue, 18 Feb 2025 20:58:42 +0800
+Message-ID: <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdDi6_neGThU3wq_uq2VA=DUHzTwvrv_wivj26ksNSnNA@mail.gmail.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N8VH26L7kmdizyDMymZ7/E9YiRux5mfMF0iOMYTYHBk8AJ5PyxtC/GFY
+	n27MRIUVmQ2G1DdJQtsjsjCbq8iwtNwdPgO8NnopwXIJQA6OXma4bwyKfSvByTon72KrYJa
+	xrSNFAfE4fkZn6TRkszyPG14oSZG8fRMPvK8A5f3nb4CPLzeXoCDjrA3E+7Ibo42aBxtkAj
+	iZOlYFIy2K83ZPhC3NDtuh2LOF8IE+ssAFhN/gJ4L41jNQu+5NkfGsginvYf8riI48rF1iJ
+	u66atdkWGq/SO6vlt866QH2VwY/RDLyaTteR8GvcGuszDz46sWoi1roHSYHKXIJrv7VBUzi
+	KDagpm1JZJUPvN4eKKzSGgsMeg+d16tWXwvC3LuXPFOmf+rpQ4rcqCUSEm38gNtq+NK3Ybg
+	4n0Yoc62BqaUCQ8ZU86XhJmxOeU79d6PeVy2ftBzi5tkQD6fuQMToEGLjZEBhoaRoeQiWpq
+	aLiyhdkAXD7xaUZrxTOyN7IyIKZPqQ5vaj+g0Mqh06dck6GoEbzpgLeE5N1CSIEZ43lwtT/
+	Ny1qvX6cW1urdTSPbvJR1gmLcPp+5Es4v6hkQmFCC4kgGs2EgyLQxoVb4oXoAqUe0Mjda8h
+	Uq4Zh5y2/UhKEdo5RT4SgZbbi1tn8uZbdKw3Mu8tx2ihvx1Qlvk8Hg1bl49pB/cNvGYCyyY
+	zYwrIXFhTeuUkA90ItXgNbvoQMi8gsHRdhgsV/vkS/+LdlaMl05U+ADwo9xQsQVYQrugd7F
+	OUwbp2Uj4jT29u8DvooOdJg1UdxQ+I3U9C6PmDrVFgq5IYoAt/+EsTvG2cySzoMAPK+nkdr
+	QAevBg6mbcHuPke9C+u3Hju18A6bwXf8ITB95gerRClayl1BN5hr4/vyFO5jqYHoZ2xi6jg
+	4PMOfaA23/N3E6wKgtFFA1MvRHaz1NudISPjhuAwWksNP71rtypyRiYgvug8NbW2oAgKEoH
+	bn72DVRxmKyJLMz+GGt+Gon8gozAw2WAtLnieHnTfpmA0PmjqTZln1Ec4LEbJjGMws3nluK
+	EGwFJ/pEEaCDbM5SUMbESv593Qllw2Rb7L3B5cK+IVWX0wOssHZekqpVKEY4rd7Kic3vXDi
+	dXgiSg3T/DncSz82xaq5qE=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Feb 18, 2025 at 09:57:05AM GMT, Bartosz Golaszewski wrote:
-> On Tue, Feb 18, 2025 at 6:01 AM Koichiro Den <koichiro.den@canonical.com> wrote:
-> >
-> > On Mon, Feb 17, 2025 at 06:29:27PM GMT, Bartosz Golaszewski wrote:
-> > > On Mon, Feb 17, 2025 at 5:21 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > >
-> > > > On Tue, Feb 18, 2025 at 01:12:17AM GMT, Koichiro Den wrote:
-> > > > > On Mon, Feb 17, 2025 at 04:46:30PM GMT, Bartosz Golaszewski wrote:
-> > > > > > On Mon, Feb 17, 2025 at 3:28 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > > > > >
-> > > > > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > > > > > > platform device and wait synchronously for probe completion.
-> > > > > > > With gpio-aggregator adopting the same approach in a later commit for
-> > > > > > > its configfs interface, it's time to factor out the common code.
-> > > > > > >
-> > > > > > > Add gpio-pseudo.[ch] to house helper functions used by all the pseudo
-> > > > > > > GPIO device implementations.
-> > > > > > >
-> > > > > > > No functional change.
-> > > > > > >
-> > > > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > > > ---
-> > > > > >
-> > > > >
-> > > > > Thanks for the review.
-> > > > >
-> > > > > > Looking at this patch now, I've realized that there is nothing
-> > > > > > GPIO-specific here. It's a mechanism for synchronous platform device
-> > > > > > probing. I don't think its place is in drivers/gpio/ if we're making
-> > > > > > it a set of library functions. Can I suggest moving it to lib/ and
-> > > > > > renaming the module as pdev_sync_probe or something else that's
-> > > > > > expressive enough to tell users what it does? You can make me the
-> > > > > > maintainer of that module if you wish (feel free to add yourself
-> > > > > > too!).
-> > > > >
-> > > > > I had vaguely envisioned that this might eventually contain some
-> > > > > GPIO-specific code for some reason, and also it's just a tiny utility to
-> > > > > reduce code duplication, which is why I placed it in the neighborhood,
-> > > > > drivers/gpio/. However, of course you’re right, there’s nothing
-> > > > > GPIO-specific here, so moving it to lib/ makes sense.
-> > > > >
-> > > > > I'm not really sure if this method for synchronous platform device probing
-> > > > > can be broadly accepted as a general solution, but I have no objections to
-> > > > > making the change. I'll move it as you suggested and send v2, setting you
-> > > > > as its maintainer.
-> > > >
-> > > > Regarding this series, I feel that it might make discussions smoother if
-> > > > you submit it directly. So if you're okay with it, please go ahead. In
-> > > > that case, there's even no need to mention me or CC me - I can track it on
-> > > > ML :)
-> > >
-> > > I'm not sure I'm following. Why would I submit it myself? You did most
-> > > of the work already. If you want the changes to gpio-aggregator
-> > > merged, then I think that it's time to refactor this code before we do
-> > > that because repeating it three times is just bad programming. I
-> > > probably wouldn't have done it otherwise at this point.
-> >
-> > As I mentioned earlier, I'm not really sure if this particular usage of
-> > platform devices will be generally acceptable. gpio-pseudo was intended
-> > solely to reduce code duplication in methods already accepted by the GPIO
-> > subsystem. Moving it to lib/ would shift the approach, effectively trying
-> > to promote this method as a standard solution.
-> >
-> 
-> Promote it as a solution for this specific use-case - the need to
-> probe "faux" platform devices synchonously.
+Currently, dec_irq_dispatch() is exclusively invoked by int-handler.S.
+Inline the do_IRQ call into int-handler.S to silence the compiler
+warning.
 
-I think we're on the same page.
+Fix follow error with gcc-14 when -Werror:
 
-> 
-> > For example, if for any reason drivers_autoprobe is set to 0 on the
-> > platform bus, the synchronous mechanism might be blocked indefinitely.
-> > Moreover, in the first place, I'm not sure whether employing the platform
-> > bus in this way is appropriate.
-> >
-> 
-> It's sketchy, I know. Back in the day I was advised by Greg to use the
-> auxiliary bus but I realized very fast that if I want to support
-> device-tree too, then I would end up reimplementing all the code that
-> already exists for supporting the platform bus. He eventually agreed
-> that it's better to use the platform bus. We had the same issue with
-> PCI pwrctrl recently and also ended up using the platform bus.
+arch/mips/dec/setup.c:780:25: error: no previous prototype for ‘dec_irq_dispatch’ [-Werror=missing-prototypes]
+  780 | asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+      |                         ^~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:207: arch/mips/dec/setup.o] Error 1
+make[6]: *** [scripts/Makefile.build:465: arch/mips/dec] Error 2
+make[5]: *** [scripts/Makefile.build:465: arch/mips] Error 2
+make[5]: *** Waiting for unfinished jobs....
+make[4]: *** [Makefile:1992: .] Error 2
+make[3]: *** [debian/rules:74: build-arch] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
+make[1]: *** [/mnt/83364c87-f5ee-4ae8-b862-930f1bd74feb/Projects/CommitUpstream/LinuxKernel/Temp/linux/Makefile:1625: bindeb-pkg] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-Thanks for sharing the background history. My view/feeling remains unchanged.
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/dec/int-handler.S | 2 +-
+ arch/mips/dec/setup.c       | 6 ------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-> 
-> > For drivers like gpio-virtuser, which we can define virtual GPIO consumers
-> > via DT, or for gpio-aggregator, which we can use as a generic GPIO driver,
-> > the expectation is to use the platform bus/device mechanism as usual. In
-> > those cases, adding a synchronous mechanism via the platform bus notifier
-> > to piggyback on the existing platform bus probe implementation is
-> > understandable and obviously has already been accepted in the GPIO
-> > subsystem. However, moving just the synchronous mechanism into lib/ can
-> > potentially be perceived as an abuse of the platform device concept?
-> 
-> That's actually a good point. I guess this code could be reworked to
-> work with any bus (that would be specified by the user).
+diff --git a/arch/mips/dec/int-handler.S b/arch/mips/dec/int-handler.S
+index 011d1d678840..a0b439c90488 100644
+--- a/arch/mips/dec/int-handler.S
++++ b/arch/mips/dec/int-handler.S
+@@ -277,7 +277,7 @@
+ 		 srlv	t3,t1,t2
+ 
+ handle_it:
+-		j	dec_irq_dispatch
++		j	do_IRQ
+ 		 nop
+ 
+ #if defined(CONFIG_32BIT) && defined(CONFIG_MIPS_FP_SUPPORT)
+diff --git a/arch/mips/dec/setup.c b/arch/mips/dec/setup.c
+index 56a7ecf06b7b..6ba4c4973c9a 100644
+--- a/arch/mips/dec/setup.c
++++ b/arch/mips/dec/setup.c
+@@ -771,9 +771,3 @@ void __init arch_init_irq(void)
+ 			pr_err("Failed to register halt interrupt\n");
+ 	}
+ }
+-
+-asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+-{
+-	do_IRQ(irq);
+-	return 0;
+-}
+-- 
+2.47.2
 
-Alright.
-
-> 
-> >
-> > Incidentally, Greg K-H’s faux bus work was recently merged into mainline:
-> > commit 35fa2d88ca94 ("driver core: add a faux bus for use when a simple
-> > device/bus is needed").
-> >
-> 
-> Thanks for bringing this to my attention, I wasn't aware this existed.
-> However it's not useful here - I still want to support OF.
-
-I have no intention of dropping the current OF support, as I wrote in my
-last email like ".. understandable and obviously has already been accepted
-..". In that sense, I think we're on the same page here as well.
-
-> 
-> > Correct me where I'm wrong. And I'd appreciate if you could share your
-> > thoughts.
-> >
-> 
-> I don't want to block the aggregator work but I also don't want to
-> have code triplication under drivers/gpio/. Let's do the following: I
-> don't like the sound of the word "gpio-pseudo" in this context. Let's
-> keep it under drivers/gpio/ but rename the module already to
-> "dev-sync-probe.c" and use the
-> dev_sync_probe_init/register/unregister/data naming scheme. Stick to
-> supporting platform devices exclusively for now. [...]
-
-I totally agree with "dev-sync-probe" and the overall idea. Thanks for the
-suggestion. I'll send v2 later.
-
-> [...] I don't have the time
-> just yet but maybe in the next release cycle, I'll try to make it more
-> generic (work for all device types) and move it out of drivers/gpio/.
-> How does it sound?
-
-Although I'm not sure whether there are many justifiable demand for such
-generic lib, probably that's just because I don't know relevant topics.
-
-Thanks,
-
-Koichiro
-
-> 
-> Bartosz
-> 
-> > Koichiro
-> >
-> > >
-> > > The code looks good other than that, just put it under lib/, rename
-> > > functions to pdev_sync_probe_init/register/unregister() and send it to
-> > > the list as usual. With that it's good to go. Just make sure to
-> > > mention to Andrew Morton the need for this to go through the GPIO
-> > > tree, I don't think he'll mind.
-> > >
-> > > Bart
 
