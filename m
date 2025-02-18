@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-519006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425D7A39703
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:27:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295F6A39702
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B48F177712
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBAF1897977
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA99823315D;
-	Tue, 18 Feb 2025 09:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CFA232386;
+	Tue, 18 Feb 2025 09:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="TTGpfDfC"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF73233159;
-	Tue, 18 Feb 2025 09:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oyu9hqIW"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B06622FF40;
+	Tue, 18 Feb 2025 09:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870653; cv=none; b=dzdQ3FS/sdWf3l/+FVQrrX8LcDnns06YFjk6awV1AZj2lm+aCjTpAwhUpddCJsS19MVtL6yD/5oNncA37Fv/NQqGnNKsjmp011v76rlKZ6RuCV8z9byp7W65q9CGrCRSHe0u7DtoIr+JtBUlt7e+EOBuhtoCCEE/LIV2gbnpFkg=
+	t=1739870620; cv=none; b=XToINF326iWNoSvwS6L4mp9FpZA2ObRT97ysSwVbkG0w2b73GvtgoWw9u1teL2nFMuCC4Hoy4V4SL+elSmvlB5GOPgjRtoevFNcOMED7DY2xmb8EPpCmt0z9Qn8MjN5GLQgpnGbBy/qDbztGSWF5LwpN+xnRLzkZ1fxLpSuWCZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870653; c=relaxed/simple;
-	bh=QlrFeM/WWhevHbuCRZ3/h/DidYjyTdQ4NVZyCs//d+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eFaZOLFITFZWYIHurwGD3dvKXfeeCrOI42dJ6yhP2D2Z1NQ3e5FCQjIrmUmcJE0wdaQvTctdPFjSaZ7owGuP8H4kjjXm9UA/SFvdxu0kZFWrOa8q/AaBDiOa/cTGDrsdo2UI0OXbgWcEUY6u1oQVxIWoHGFV3+6M6PnpdBYarVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=TTGpfDfC; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=q0FKelqD4MBXC07LZw1lv1trJGhq02WD8AUCXzMNScg=;
-	b=TTGpfDfC9SEr1KevxG+T+nBjD3R/STYOH9ZyeaAKJyA4BQ/t1cFHFCWCYOto0d
-	Ss0Nl2zD01rF7zBdeIu4U0rz82bryM6P9goh6Y963VcgeSIPqxA2rGCFDQ7Kspqs
-	KhpVKvNXphKYc1lWTk4fF94vA3Gn0hGmlad84Nodt0hAg=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnl6toUbRn6etmBA--.9439S2;
-	Tue, 18 Feb 2025 17:22:48 +0800 (CST)
-Message-ID: <406c6713-356b-4acf-bcd0-e5a6c1e9adcf@126.com>
-Date: Tue, 18 Feb 2025 17:22:47 +0800
+	s=arc-20240116; t=1739870620; c=relaxed/simple;
+	bh=UX5PPI+ChEl3/dXxiilQBrO0SX7D3M0HfvISNEr9kMQ=;
+	h=From:To:Cc:Subject:MIME-Version:Content-Disposition:Content-Type:
+	 Message-Id:Date; b=Wq0foSizQ9t4Z2NPo4nXMlxSMO1Am80Wq7hrKRLsio0XWD3997OO0epbLosCoUn+32Ni9W2/TUXH7+PFGzMD3cvYejaEVMRNpai6YO8hJkTBsEIT5zmjD4E6ZmRSyuojzoF/kHGrZLZ2xBFz5B3aV0D7WIXcldaBH4kIVqFmnDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oyu9hqIW; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:Reply-To:Content-ID
+	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+	Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GQMYg3y3odG51dQXDSWjPv/U6qwQ6HTUOxMrmwG2YjQ=; b=oyu9hqIWz9IMHn3HJeJT0q4Kv1
+	qIKBVutjUxgzxpE9yAVmM8yGlSb3Bk/Luh8O24lNlresxN+hsAHzMiXedWvG7XCKRS8kt7CAjgRxZ
+	LJdZUXf3t/b1zSD2XWKS1ktCdFO0KyZHYZ/Zob/RPGT3wlRQOquyCOqTbAo1V1f1mg/gMiMt7ZyhX
+	pprZH7EYHeCyEqoDAEmKTeHQWIME9VKXh8MP8x5419kWIatS/MwTB6mVW2L9OEugPh85N6fjHXTbg
+	KTWzZlAzqrdhRF5c4sr4ZziC/rwzVIpoAy012g3Pyyc3UKBYxMGWxtXQ7NqHofF7cMg2lZ/ASel63
+	TJnqYBLA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:55628 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1tkJpG-0001JE-0B;
+	Tue, 18 Feb 2025 09:23:34 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1tkJow-004Nfn-Cs; Tue, 18 Feb 2025 09:23:14 +0000
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Jan Petrous <jan.petrous@oss.nxp.com>
+Cc: NXP S32 Linux Team <s32@nxp.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] MAINTAINERS: fix DWMAC S32 entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: wait for hugepage folios to be freed
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- 21cnbao@gmail.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1739514729-21265-1-git-send-email-yangge1116@126.com>
- <37363b17-88b0-4ccc-a115-8c9f1d83a1b5@redhat.com>
- <d043bdd2-a978-4a09-869e-b6e43f5ce409@126.com>
- <2d0b01c5-a736-41d5-a0f7-db0da065d049@redhat.com>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <2d0b01c5-a736-41d5-a0f7-db0da065d049@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnl6toUbRn6etmBA--.9439S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXw17Gry8tFWfXFWruFW3ZFb_yoW5Ww48pF
-	W3Ca17G3yDJr9ayrnFqws09r10krWjqFWxWF1aqry3CFs8ArnrKF42ywn8uFW5Zr10ka10
-	qrWYvwnruF1UZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUo7tUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgD3G2e0Sbh-YAAAsr
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1tkJow-004Nfn-Cs@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Tue, 18 Feb 2025 09:23:14 +0000
 
+Using L: with more than a bare email address causes getmaintainer.pl
+to be unable to parse the entry. Fix this by doing as other entries
+that use this email address and convert it to an R: entry.
 
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-在 2025/2/18 16:55, David Hildenbrand 写道:
-> On 15.02.25 06:50, Ge Yang wrote:
->>
->>
->> 在 2025/2/14 16:08, David Hildenbrand 写道:
->>> On 14.02.25 07:32, yangge1116@126.com wrote:
->>>> From: Ge Yang <yangge1116@126.com>
->>>>
->>>> Since the introduction of commit b65d4adbc0f0 ("mm: hugetlb: defer
->>>> freeing
->>>> of HugeTLB pages"), which supports deferring the freeing of HugeTLB
->>>> pages,
->>>> the allocation of contiguous memory through cma_alloc() may fail
->>>> probabilistically.
->>>>
->>>> In the CMA allocation process, if it is found that the CMA area is
->>>> occupied
->>>> by in-use hugepage folios, these in-use hugepage folios need to be
->>>> migrated
->>>> to another location. When there are no available hugepage folios in the
->>>> free HugeTLB pool during the migration of in-use HugeTLB pages, new
->>>> folios
->>>> are allocated from the buddy system. A temporary state is set on the
->>>> newly
->>>> allocated folio. Upon completion of the hugepage folio migration, the
->>>> temporary state is transferred from the new folios to the old folios.
->>>> Normally, when the old folios with the temporary state are freed, it is
->>>> directly released back to the buddy system. However, due to the 
->>>> deferred
->>>> freeing of HugeTLB pages, the PageBuddy() check fails, ultimately 
->>>> leading
->>>> to the failure of cma_alloc().
->>>>
->>>> Here is a simplified call trace illustrating the process:
->>>> cma_alloc()
->>>>       ->__alloc_contig_migrate_range() // Migrate in-use hugepage
->>>>           ->unmap_and_move_huge_page()
->>>>               ->folio_putback_hugetlb() // Free old folios
->>>>       ->test_pages_isolated()
->>>>           ->__test_page_isolated_in_pageblock()
->>>>                ->PageBuddy(page) // Check if the page is in buddy
->>>>
->>>> To resolve this issue, we have implemented a function named
->>>> wait_for_hugepage_folios_freed(). This function ensures that the 
->>>> hugepage
->>>> folios are properly released back to the buddy system after their
->>>> migration
->>>> is completed. By invoking wait_for_hugepage_folios_freed() following 
->>>> the
->>>> migration process, we guarantee that when test_pages_isolated() is
->>>> executed, it will successfully pass.
->>>
->>> Okay, so after every successful migration -> put of src, we wait for the
->>> src to actually get freed.
->>>
->>> When migrating multiple hugetlb folios, we'd wait once per folio.
->>>
->>> It reminds me a bit about pcp caches, where folios are !buddy until the
->>> pcp was drained.
->>>
->> It seems that we only track unmovable, reclaimable, and movable pages on
->> the pcp lists. For specific details, please refer to the
->> free_frozen_pages() function.
-> 
-> It reminded me about PCP caches, because we effectively also have to 
-> wait for some stuck folios to properly get freed to the buddy.
-> 
-It seems that when an isolated page is freed, it won't be placed back 
-into the PCP caches.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index de81a3d68396..7da5d2df1b45 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2877,7 +2877,7 @@ F:	drivers/pinctrl/nxp/
+ 
+ ARM/NXP S32G/S32R DWMAC ETHERNET DRIVER
+ M:	Jan Petrous <jan.petrous@oss.nxp.com>
+-L:	NXP S32 Linux Team <s32@nxp.com>
++R:	NXP S32 Linux Team <s32@nxp.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+-- 
+2.30.2
 
 
