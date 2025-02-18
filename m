@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-520449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACCADA3AA01
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:53:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C23A3AA28
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62D31893A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B7F3ADCC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1561E0B80;
-	Tue, 18 Feb 2025 20:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599CF1D618A;
+	Tue, 18 Feb 2025 20:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="L5fmSxEx"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="dVwwM/Nm"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0161DFE25;
-	Tue, 18 Feb 2025 20:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6836017A313;
+	Tue, 18 Feb 2025 20:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910614; cv=none; b=K1FlHjdZM+PvXCbhHR4lGUFFpesHfj7+P3mcqx44c3DyRncLzxje3Ib6Ps1uTRAyzAoOhjwsmMCUlaLykDILiFVj8ZHX0+tp8+ucoqpaPfp1Y4iTLk6OuNBJqLkDsKPIargtFQ6QDQ7UAEMmdMKlJmPmiz7+CjCfhKtFgVm8838=
+	t=1739910725; cv=none; b=OGlfrLebEsKiiHG7X/eKySrEZDljWSeflD/zNmrFZbKO8/7p6V4C6AC3RZq/14K/OYrD1MaBkYi1QD1PjgxYgtY1L9y2O3/kd/NIGR27HIPR6jo5mbaKIbanJzCs9HEGCvqPVQsTq2vld6i48FkhsQCbH66uqIe7S+KvX46N4h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910614; c=relaxed/simple;
-	bh=OQQ7m8L1BMzudoAvLK5XOS0A2jo3zwHZiCn7d0G8ezI=;
+	s=arc-20240116; t=1739910725; c=relaxed/simple;
+	bh=38iCzgyTFznwlQu/it3NDkH9y4ipGroHGb/uCkNizGc=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pV6ASyOVuM0gX1sjwMWEDmPgXo+hXwYIv/h3EUvMQ3/8m6Zv+5fwUsMgbvwTB4jp0N3peQYLqJ27jDaRdR9Dh3lFo4mUR0U7ucijN3VFTgpzm8Jvpb+RctSWiMIRStnzxVtIyOI/Bb0elNSOvrvJcQ9OuA90cXzo1EbnwBTiBvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=L5fmSxEx; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=HNYbgjqkepslRcvqX/B+PAaVAr50/26um3D8ajonfgCbRzvj/obDqR2CY8CAua7y3tOQyegNwE/zgVUExrs6Nwi1KplA9qNGouTxnfzyeLci0BbkeKzOLrECyyxde+RwdF/+38j8Fwpv09kWND5HNz0VINNXvrU1p02QPLVGHI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=dVwwM/Nm; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B6923411AF
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 92DB0411AF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1739910611; bh=kFYOYn1MtAEZtgRUc69ZbYn9hJuiwHY+YySaTGJ78RE=;
+	t=1739910723; bh=ZeMpIwiNJkaqVN2VlEPNKfjRBKw3/WouIDf+tqsA8h0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=L5fmSxExEYbxUUno45IHgf97DZSNzRAvQkWSZhGw0fgSGkjxTMMHffRfuqIuUXsDh
-	 t8WoD/OPn78iqiNTz1J3JwoCs5Gh1QxrofxjGRk+eE2wgeV8aM7DPB/h1/WXejy6OM
-	 ZMqW/eJ1DsmWZWq93ClvikSknHXh3X+CkH53hoLrTe4kvQKz+eeB3fmc2C0m5v1oVv
-	 s1/h8/Ftjlfr+1o4diYWudXlCqnzBAWDpNyKiH/i+tiqHgUJVjIxbFpe46zKBy7yRP
-	 fJf3wd5gPOycn7cCGQnNyR6q3JC6/DYQFtoATRF4sYvXiZKNaRzKpy1TR+ZRC3otp7
-	 c5lieeHnXpX6w==
+	b=dVwwM/NmOgvZ2pfyMZ5xQXyevDf7tBqOOGiwmM26ZWL+JndUPwloCbOjPSvAph1pK
+	 GD95Hp71PpXQVyFlBlghbEkuyaweAok+/6w+KhBOqmNfU2xRi/eAdHEGJMl6cewyP2
+	 7BwScQbQ3M1WLt0vy6oIsaXKULOCv8rEK/eEkOsCJxFabOe+T8ZD5EAVjehVNc4W1e
+	 hNOwBrPiPXyZ+ZNhA8EzmrjTVPyW2MAbnUMegmFmNLeagxSXAnFnlNd/jI+rNk302k
+	 IWWSZrsGZGPxRIhf+dskLl8HNo1pG46skyKW7lFtaohCD2+JQsh8nrEMFr1V8UOUi1
+	 wOMBazgtJ66fg==
 Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B6923411AF;
-	Tue, 18 Feb 2025 20:30:11 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id 92DB0411AF;
+	Tue, 18 Feb 2025 20:32:03 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: David Reaver <me@davidreaver.com>
-Cc: David Reaver <me@davidreaver.com>, Randy Dunlap <rdunlap@infradead.org>,
- Jens Axboe <axboe@kernel.dk>, Konstantin Khlebnikov <koct9i@gmail.com>,
- linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] docs: iostats: Rewrite intro, remove outdated formats
-In-Reply-To: <20250215180114.157948-1-me@davidreaver.com>
-References: <20250215180114.157948-1-me@davidreaver.com>
-Date: Tue, 18 Feb 2025 13:30:10 -0700
-Message-ID: <87ldu3ngh9.fsf@trenco.lwn.net>
+To: Yu-Chun Lin <eleanor15x@gmail.com>, akpm@linux-foundation.org,
+ visitorckw@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ jserv@ccns.ncku.edu.tw, Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH] Documentation/core-api: min_heap: update for variable
+ types change
+In-Reply-To: <20250215155421.2010336-1-eleanor15x@gmail.com>
+References: <20250215155421.2010336-1-eleanor15x@gmail.com>
+Date: Tue, 18 Feb 2025 13:32:02 -0700
+Message-ID: <87h64rnge5.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,34 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-David Reaver <me@davidreaver.com> writes:
+Yu-Chun Lin <eleanor15x@gmail.com> writes:
 
-> The introduction discussed stat file formats for very old kernel versions,
-> which obscured key information that readers may find useful. Additionally,
-> the example file contents and the reference to "15 fields" did not account
-> for the flush fields added in b6866318657 ("block: add iostat counters for
-> flush requests") [1].
+> Update the documentation to reflect the change in variable types of
+> 'nr' and 'size' from 'int' to 'size_t', ensuring consistency with
+> commit dec6c0aac4fc ("lib min_heap: Switch to size_t").
 >
-> Rewrite the introduction to focus only on the current kernel's disk I/O stat
-> file formats. Also, clean up wording for conciseness.
->
-> Link: https://lore.kernel.org/lkml/157433282607.7928.5202409984272248322.stgit@buzz/T/ [1]
->
-> Signed-off-by: David Reaver <me@davidreaver.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
 > ---
+>  Documentation/core-api/min_heap.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Lore links to previous versions:
-> V1: https://lore.kernel.org/linux-doc/20250214013905.60526-1-me@davidreaver.com/
-> V2: https://lore.kernel.org/linux-doc/20250214051432.207630-1-me@davidreaver.com/
->
-> Changes:
-> V1 -> V2: Rewrite entire introduction instead of just changing 15 -> 17.
-> V2 -> V3: Reword counter reset paragraph for accuracy and clarity.
->
->  Documentation/admin-guide/iostats.rst | 89 ++++++++++-----------------
->  1 file changed, 33 insertions(+), 56 deletions(-)
+> diff --git a/Documentation/core-api/min_heap.rst b/Documentation/core-api/min_heap.rst
+> index 683bc6d09f00..9f57766581df 100644
+> --- a/Documentation/core-api/min_heap.rst
+> +++ b/Documentation/core-api/min_heap.rst
+> @@ -47,8 +47,8 @@ Example:
+>  
+>      #define MIN_HEAP_PREALLOCATED(_type, _name, _nr)
+>      struct _name {
+> -        int nr;         /* Number of elements in the heap */
+> -        int size;       /* Maximum number of elements that can be held */
+> +        size_t nr;         /* Number of elements in the heap */
+> +        size_t size;       /* Maximum number of elements that can be held */
+>          _type *data;    /* Pointer to the heap data */
 
-This seems like a definite improvement at this point.  Applied, thanks.
+Applied, thanks.
 
-jn
+jon
 
