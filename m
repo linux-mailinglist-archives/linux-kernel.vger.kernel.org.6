@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-519392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996DBA39C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:37:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6A3A39C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B813B45D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8172176E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D809A246347;
-	Tue, 18 Feb 2025 12:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30951244E88;
+	Tue, 18 Feb 2025 12:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0BHV8d5"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="k4Ivd2Io";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tdRnouMm"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945A5243368;
-	Tue, 18 Feb 2025 12:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1FC244E85;
+	Tue, 18 Feb 2025 12:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739881981; cv=none; b=na02wWnahAUx3eJYI+NfG4JbYv/7em0ZC5wdfSPSEZdocUSsn/4sxbo2Bqs45zn+YuqBWGSpb9Bvo7+sBDJQlv4P8oLQiLrBvMpPRUMQIlHn6Pu4e7U8WXLLqmVoPzknhEPoT6bUmXnEn7KTp4dBCWPqgudZpIvbtJoAGb7C4eg=
+	t=1739881989; cv=none; b=f4TLsCsv7owz2Hn1t5op1RwjGAj1buaFEYwu1aF2RhLXIn74az6jXCya4TcI/ka3/J6LNZUzqWXZV21v89aPCnL9XGHEXl4qJUtxo6+bvH3wPWSyfdoWrDzHO20x7872VQCRfqae1Lx2WOoxkhBo1p6PvqKt8ppxFGZGePNLvZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739881981; c=relaxed/simple;
-	bh=gcK4z5aWV5ja3PTaCHgAsHRIlogIoZ/LBOgcMmGC0Z8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DUqC3kNIpPcQcMqGduFuBEnf+G/7th1EsB+j6kk3pc0iBpF7a1MBnp3kXEwjYbz7nz26xE2+eIfyZG9o1Bd/XrSB4IRZtC6OpIhXZy8iHtUIA8ab1uQPOvDnGBZMdI39UNmjtRGbmHc1QsfX91qehojiet6V4U7AEvVR6GV3n4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0BHV8d5; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4395f81db4dso32399605e9.1;
-        Tue, 18 Feb 2025 04:32:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739881978; x=1740486778; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dQ5oL0PDzfQvVUUjpRF8NhEOsZSv7MlEH3F6ypLG9EI=;
-        b=N0BHV8d5qA1uyt2zslksufqRa3bKwGdEGv7AqasetJpxQJqSzMsA6pyyNcvw6WhEtl
-         aQJr8Tz5NzhpnK5k3o8i6LdhYJOVbi6pXt17Sj3SP66z1lEz4pqLivp8dc3ArsFb28tI
-         vxVky8dUwMG1On403/HO2VZJThZhBakjXAJ3Ajaa4bzuxry3JdSryDkvi44CoJSnztfY
-         SwptfS6VaLUYTrdlRwBXDS4uC+ekKSSVuZN0E+HtrfP5JdXaoLezCqaNxbAl/OYfhqz/
-         EfJ6IaUsNXXsdog1Xvh0xeHoqa95ApCvUP4Kr6W3ZYTLy/QkSnx8QXn5ivBNrPymEs3O
-         PC9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739881978; x=1740486778;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQ5oL0PDzfQvVUUjpRF8NhEOsZSv7MlEH3F6ypLG9EI=;
-        b=g8JTX7Q3tPZ3/UjfjDEbGYXKrF2ihhOI0UVckUMSCm/PUhaFWNTfUaAkcenQUyqueb
-         srQ44O630lTHA46e682LbofGyFsa5V2t/iXPc2SAvrABztwMD1awbEIIHolZsXHWiTW5
-         YlYJykbn8kEHvr4JoaFMa8QPz6IrAMwBEhdQRppOiRYbd2eH+3GS6WU9nbkkiMLILpvh
-         TApk4Mu6UF67+j2Siowu1Bn/pdF3VHd2LB3JgW1dmiSj3+5RJbZJ5tsxpPotKgY7drOX
-         XNFOfyZkHSlUzhwF14V5FiANFQX+AKJ2iOhngUw+gjxeAVwb8pS9FnuL1slz2/F9Dn9O
-         UFFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcZjCbV4p1Qfd8QMvoAJTK8XZuE0OJ1FPC5m/+5MC1pUdqWtCxYonSbKdTJ30HxwCML+vMu/UY6oWqVmY=@vger.kernel.org, AJvYcCXCGTZAarHvT0btzDZS+QrESppPdI6QeCwm/3VGQFhjZ9jHE30S3sRP7Qbrn38Go0sboqFYSCJLBHTIj0NbxCt/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA9Gf80UEz8ctL2LpRr0jM+qiECeM2c1o5DjEHrKsUj1eBeCMz
-	I2Zy6Vo+8gw1GKYq65K3MjjJDcfn3r2Kuww7x3Zf7tC6zVaSXNK+
-X-Gm-Gg: ASbGnctPWYMDTB4c38OYGAh5t8+7H0SbbsRAOrchidim/t5YwYE6EKE67gXQ+bW3SIK
-	cu//INTNBKNivk3S010TGlznB/k5tF/SEE5jpACypQYZ4hkPq4vJChg+3Z6neyd81iwiLYQ18xs
-	pP0+y10Wv9pTyI2nCBcgu+LtBatDVTqCrRUk0JQsflZN23yHkud4FBS4PUEeiLeJ70q4AQ0sXlM
-	Mt4uG+GrSeSviIbMTcInarBBGnt62xzdOhESWikMBMN+9Ow//jnCDz8fhZsqTzS9DHbUybbtd3R
-	vu71mzQt+zLiqrsEVSC8hg/OuQDNPh1c4ve2XDf9aw2T8jmUCcEFzWmqLv+Y8qtlFqk19Gfvqin
-	X5Hs=
-X-Google-Smtp-Source: AGHT+IH1RB6giPvl+Q9jW0L8hnEi/rfCDBE9uiTH8KVAMba5OuaJoD003yXDk3IWncJ6bNVdm8AZUQ==
-X-Received: by 2002:a05:600c:1d23:b0:439:4c1e:d810 with SMTP id 5b1f17b1804b1-4396ec31feemr129482505e9.9.1739881977635;
-        Tue, 18 Feb 2025 04:32:57 -0800 (PST)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a1aa7f3sm183995745e9.29.2025.02.18.04.32.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 04:32:57 -0800 (PST)
-Subject: Re: [PATCH net-next v5 8/8] net: pktgen: use defines for the various
- dec/hex number parsing digits lengths
-To: Jakub Kicinski <kuba@kernel.org>, Peter Seiderer <ps.report@gmx.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Artem Chernyshev <artem.chernyshev@red-soft.ru>,
- Nam Cao <namcao@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
-References: <20250213110025.1436160-1-ps.report@gmx.net>
- <20250213110025.1436160-9-ps.report@gmx.net>
- <20250214201145.2f824428@kernel.org>
-From: Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <bc58ecd7-4665-748c-c7ea-001be64e8b4a@gmail.com>
-Date: Tue, 18 Feb 2025 12:32:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1739881989; c=relaxed/simple;
+	bh=0Lvv7rtjOdQIk9QQKm3hZYHB/EymOiAhSR+n77bEeKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lg22o78QH1+whxfxsU1swWvw41sXCTD9qU2ENd2ol5Xsmxqnvcx/UpH4EpihPXEED5VcrNIfjkWW+fisc8EIDRx4bf2gAFQb3ItaTIqDLVgBe4EMN3x/ttdQwGvqwGkKQdw51zoHqhi4baF6owov8uHl99xY6hX/qlCWtU2szWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=k4Ivd2Io; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tdRnouMm; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 26FAA1380A30;
+	Tue, 18 Feb 2025 07:33:06 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Tue, 18 Feb 2025 07:33:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1739881986; x=
+	1739968386; bh=28yRX83oWy8XKbFVALI7tpeopwOBxQY89HUmWnOuufI=; b=k
+	4Ivd2Io2ISFOMlEcM6QW8uX1W04uRBe6cyikRg1yUumcQzqIQKxDFZuDM3S3ENt9
+	QrxMJ4urvbq/3dsGzV1M7Gs4+55sp5a3EF2vXEV+iAkdqUa6FW6YtJfD1MSIlzi6
+	zP/Gb58aU4fH93xuvJaZVMhba+bKggoMRDNJkCqGmvTWS2DYjFjO8zuFL+9BFhGd
+	bfGr6vtVvZhcodPIiRh9rimPbA2/9zYratr+2J9QnaFkEFNNNtBsvJPnkZUM65wb
+	11HYRfy0jexD/n2Ts+kF1Wj9gsXfp8fw5jL+PVD3aP7APvxNdQYOlCIr4BP3YJSB
+	todkdMyoMGZ5uxw4vKKhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1739881986; x=1739968386; bh=28yRX83oWy8XKbFVALI7tpeopwOBxQY89HU
+	mWnOuufI=; b=tdRnouMmvB00wKWqqjIfD9DuQjO1oPw2Euvos6aajrdecbNZCks
+	ZiEstQOTbaeD2ts7kF7fGpXNmaIPGPCW5muIZac3Nn068IQdam4FUYyE/KPaDY4j
+	DgXoEMiDTadTsfVe7+6LzZ9M265Ep4YzjcrTAU6XGDUT7zSW+xsf2VdHZ2Hb66Xm
+	SYxvvlEeVeG6OpZ9/+ru3x0HC2ICXaSCfh8P05OBWcpc0Y2hNT41aC86UFF3oGLy
+	6d07wHJTJ0JkVWaNgWEjeTJZXwOdH0r7EXLF+162ZXsopY1rsX9dQQrL+hSXaFzD
+	l5Oa4eL1BnJ8hkpqG8pG4BD0jGsGY7mwjyw==
+X-ME-Sender: <xms:AX60Z8zE8KDmzrnCl3nk1830oGBrYLwQcLVt8VBVrT8QfTifn8FRIQ>
+    <xme:AX60ZwQvWXPjSiMwJ-KBYHDIONj6M1gfO7hWaWmVyar_K6IM5qstWCkg5xQZxUR48
+    Khj2reA5mm584D8V5Y>
+X-ME-Received: <xmr:AX60Z-X0RgTueMH-lLTArY6O9tRixe0R1vRnLPG8ky2FuFVmsCece7o0hh12Cf3qQJPgXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvf
+    evuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcutedrucfu
+    hhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeffvdevueetudfhhfffveelhfetfeevveekleevjeduudevvdduvdel
+    teduvefhkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepjedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgvfhhflhgvgihusehlihhnuhigrd
+    grlhhisggrsggrrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdp
+    rhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohep
+    sghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghn
+    ihhvrdhlihhnuhigrdhorhhgrdhukh
+X-ME-Proxy: <xmx:AX60Z6hvOzDvTKjjo4hu8MTnw7ZCG6U2AF5ALuu6UxBYPDkvIJjtHg>
+    <xmx:AX60Z-A-w8qSRRQl11N-UZGsf_1qY0K4-0xWw1Y0halL9_ieu0K68A>
+    <xmx:AX60Z7KhBXcyKYN_r-p7NaTYx2XE2dHyg8FEhl0dAVNtDZpLrk2GCg>
+    <xmx:AX60Z1BWYZvQDOoJdB0v9rlbOZYkvxxnf-_EBXk19-5wprydt9hhhQ>
+    <xmx:An60Z0CCPLyLLkg6_RC_81gZx8NtsUt_qYQk3IvyS9GpFHYhx5gDvWPf>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Feb 2025 07:33:02 -0500 (EST)
+Date: Tue, 18 Feb 2025 14:32:58 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 2/2] mm/truncate: don't skip dirty page in
+ folio_unmap_invalidate()
+Message-ID: <cedbmhuivcr2imkzuqebrrihdkfsmgqmplqqn7s2fusk3v4ezq@7jbz26dds76d>
+References: <20250218120209.88093-1-jefflexu@linux.alibaba.com>
+ <20250218120209.88093-3-jefflexu@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250214201145.2f824428@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218120209.88093-3-jefflexu@linux.alibaba.com>
 
-On 15/02/2025 04:11, Jakub Kicinski wrote:
-> On Thu, 13 Feb 2025 12:00:25 +0100 Peter Seiderer wrote:
->> Use defines for the various dec/hex number parsing digits lengths
->> (hex32_arg/num_arg calls).
-> 
-> I don't understand the value of this patch, TBH.
-> 
-> Example:
-> 
-> +#define HEX_2_DIGITS 2
-> 
-> -		len = hex32_arg(&user_buffer[i], 2, &tmp_value);
-> +		len = hex32_arg(&user_buffer[i], HEX_2_DIGITS, &tmp_value);
-> 
-> The word hex is already there.
-> There is still a two.
-> I don't think the new define has any explanatory power?
-Seems like the intent of the code is that the argument is one byte,
- which just happens to take two digits to represent in hex.
-Perhaps that would help to come up with more meaningful names for
- these constants?  (Can't think of good ones off the top of my head)
+On Tue, Feb 18, 2025 at 08:02:09PM +0800, Jingbo Xu wrote:
+> ... otherwise this is a behavior change for the previous callers of
+> invalidate_complete_folio2(), e.g. the page invalidation routine.
+
+Hm. Shouldn't the check be moved to caller of the helper in mm/filemap.c?
+
+Otherwise we would drop pages without writing them back. And lose user's
+data.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
