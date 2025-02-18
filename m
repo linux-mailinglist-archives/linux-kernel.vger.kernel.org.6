@@ -1,105 +1,90 @@
-Return-Path: <linux-kernel+bounces-520347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9568A3A8E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:28:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225E4A3A8B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED22518959A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146273A58DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2771CF5E2;
-	Tue, 18 Feb 2025 20:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DA1BCA05;
+	Tue, 18 Feb 2025 20:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DovbPsJz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ojJkG+AC"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7EC1DE8A7;
-	Tue, 18 Feb 2025 20:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3F71B85CC;
+	Tue, 18 Feb 2025 20:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739910326; cv=none; b=HSyEeZfqLpG40inxw25zkhmO/Zu9oEDqD5Qpbks4XPmAIhRKMZBM/U8EsdJgXyA4oZEkropq3Vij53V+K3w5cWTnLdIebfLgYG5IxZ72EyFsDQrsN9STZtRGOHXoThyXUQcz5dhKG95ROM1CFnPm3BdZ/RZLAWV1MLUAp76QlC8=
+	t=1739910279; cv=none; b=XYUrFKyUES2Mk9qEwQk4X1vHB3mkPrSzEuJsT7daHODlk624v6CvIVzg4UTO6SXV4NrUH7Dg6TUDc3eaGwGF17Q/6+P+yf5kfJgh2O2z02WXpi9pem5agAZQaFkYZRuM/KmgT11GT7peeEZXqd0YJimHP2mqKo+wHpBsxfborvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739910326; c=relaxed/simple;
-	bh=al7klatzUyw/rz/5PxycUjlHHgZB2p51sQV6StaucwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DnbMNayRMTNWZ8/mJJGgvrNhQRBf1hiinzL6bVSLYCAKQo5NwmC0Fmh9GibDjVysbm9TvUsH6f4PtpV5UR3EG3eU/lMAoL9XEVIujL7TVmcUsGanSxr60VzXrzD2GTNBH8tyhItOTseMpjLzEogNmFIE6e+5d6RhT5ai4hajEyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DovbPsJz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629F3C4CEEC;
-	Tue, 18 Feb 2025 20:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739910326;
-	bh=al7klatzUyw/rz/5PxycUjlHHgZB2p51sQV6StaucwA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DovbPsJzeJaw3aytBAGA12cfsxg2Wqxv2w+Vr3bO/V0xN1Oqdqv8NbLXUMWimEWSQ
-	 nVEX/JQJJZJuZJftDk7a86hbGWLo2qlXLtMeVw7FDBd8iRBhUttBBRT1DSp5eB1jfx
-	 /tkSwd2GFJMZZhMaZvbJU7Ge7s44Zy42dNUmBQOKMRqwMqvmKRNAbDBkL9gQf38kuL
-	 NSbyemLzt7ShnHWZKWADHeqYBhzbWut0gJFimeuMLnzWXhVgZXVwsw5lKPmATFn0LL
-	 YL48zk3rzZuPrAd+XDtIiW7UnkSWtmPPT/dQSh3XNH5PvaFOcTQutk0r7n+DDq1iva
-	 dbNDsVlIfnWmQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jann Horn <jannh@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Subject: [PATCH AUTOSEL 6.13 14/31] sched: Clarify wake_up_q()'s write to task->wake_q.next
-Date: Tue, 18 Feb 2025 15:24:34 -0500
-Message-Id: <20250218202455.3592096-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250218202455.3592096-1-sashal@kernel.org>
-References: <20250218202455.3592096-1-sashal@kernel.org>
+	s=arc-20240116; t=1739910279; c=relaxed/simple;
+	bh=4DkPl/uIKWli6sVtAuJSieBXxIdn9s6IGRaS2Pr9ilM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OICD8K0sS1dOoDbajcuVGXvL1nLXPnwtLyLQezKuikXnxdB+/FW4nMnqqv6hZ0Fut/xZtw8Pjl58SGl3Unej+6MOGXiOf6utZ/MHUYkZB8r5IFv4XYYsRylQwHx486uGT1jy8Ajl16vGgODQszrEvMCOsOQ/OT/LCIKmJ2KcUkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ojJkG+AC; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 52511411AF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1739910276; bh=ybkMF4J/vHwO4z2dt7srdkkRKShhkd5wEGE0vV1SgEY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ojJkG+ACpvQ/kuXxSMeCbR/PvjoclHReIf6Y6dPCwa7erzzJ8ZgGeOY6jROB/Yc2v
+	 YgtQf7A2u6DkKokLa3ZiIeM3Hu/aAsvJpL/2GwfbcpHHYZOqi11Y9PVKKjHdIYOqq+
+	 Dx+Yv9Yn1G3WYSShpLbZPq3vbmYT+oCavpuhtQneV7m3TlUtee7UNvBkBTdMGN3DkG
+	 wGc71yY91sGYtuDI8bdijchRg/DWZndFJSR0vm2YZ10QWxdSBTvGUpvmIcg0EgP9HX
+	 wCIKHRZNbEBtYDbUrvVQx26OZVtJNJtZOB7x/10NHkPwSKtoaSHx8E7mFepm1lPGX5
+	 XCEj2VTt6mbFA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 52511411AF;
+	Tue, 18 Feb 2025 20:24:36 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Carlos Bilbao
+ <carlos.bilbao@kernel.org>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel-docs: Add book to process/kernel-docs.rst
+In-Reply-To: <20250218154303.45595-1-lorenzo.stoakes@oracle.com>
+References: <20250218154303.45595-1-lorenzo.stoakes@oracle.com>
+Date: Tue, 18 Feb 2025 13:24:35 -0700
+Message-ID: <87y0y3ngqk.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.3
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Jann Horn <jannh@google.com>
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
 
-[ Upstream commit bcc6244e13b4d4903511a1ea84368abf925031c0 ]
+> Add a reference to my new book, The Linux Memory Manager, an in-depth
+> exploration of the memory management subsystem, to
+> process/kernel-docs.rst.
+>
+> This is not yet published, but the full draft is available on pre-order, so
+> it seems worthwhile adding it here. The situation is made clear in the
+> 'notes' section.
+>
+> The 'pre-release' was made available in February 2025, and full release is
+> scheduled for Fall 2025. The book's ISBN-13 is 978-1718504462.
+>
+> The document will be updated upon release to reflect this.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  Documentation/process/kernel-docs.rst | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Clarify that wake_up_q() does an atomic write to task->wake_q.next, after
-which a concurrent __wake_q_add() can immediately overwrite
-task->wake_q.next again.
+Applied, thanks.
 
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250129-sched-wakeup-prettier-v1-1-2f51f5f663fa@google.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sched/core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ffceb5ff4c5c3..452203b205d96 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1057,9 +1057,10 @@ void wake_up_q(struct wake_q_head *head)
- 		struct task_struct *task;
- 
- 		task = container_of(node, struct task_struct, wake_q);
--		/* Task can safely be re-inserted now: */
- 		node = node->next;
--		task->wake_q.next = NULL;
-+		/* pairs with cmpxchg_relaxed() in __wake_q_add() */
-+		WRITE_ONCE(task->wake_q.next, NULL);
-+		/* Task can safely be re-inserted now. */
- 
- 		/*
- 		 * wake_up_process() executes a full barrier, which pairs with
--- 
-2.39.5
-
+jon
 
