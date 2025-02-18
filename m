@@ -1,203 +1,222 @@
-Return-Path: <linux-kernel+bounces-520581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA58A3ABBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:34:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340A9A3ABBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510A9174D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6275F3A74FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC9B1DC184;
-	Tue, 18 Feb 2025 22:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8C91D934B;
+	Tue, 18 Feb 2025 22:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oDh0iWYQ"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkuwkLj3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D655F1D0F5A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B941B87EB;
+	Tue, 18 Feb 2025 22:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918042; cv=none; b=U8kuLy3HSICF5rl1ziGL1ERet4M4tJ7syLgkUtQ9BTPx9jk8/stLnTK12qDqwJ7iRiiPfXOHktzwk+Idl4Ux+vLoNVeMQPut/67rNglJpos99xqZlVuLSHXcsg7GDgfRWdXNm4Lwl9fPCmt/3UfEalVmG3uPRD1MM6sI4+JI2OQ=
+	t=1739918036; cv=none; b=IAFX4Kkhv7bDmbK6SLgpMTrYSU7Ty26A+ekBbdcB1aubIBW5Mf37n2wjFUYQP4pEwKonnoCH0HdLFV9NT2NQHhyYfcxmWBSUtPh+ukh/Qk0tdpn5ez8zgW6uYXpCvqzUOD/c/TVzzrmQh9zj/GkHf/ShXXlHDUCKc4BNe4lLV/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918042; c=relaxed/simple;
-	bh=LMr3mAVEp9T0899OdsHcYNuOQbKwWhoX8JpQNIYLZ+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eegnbYZtCXjnpJXFcMn1e3mSrYjC3/yIyj2LdFAld3XaVDSZ7dDLHuGTW5E2kPGF3Vx5F4/w/0slBRejfhDULjnOFd6oFA9bbF7SetPtUwl/MYwu4fO3ZdkebSQOioG9FTzAXdh/ZBlesAyRKPBMdqNSzWTP0pRA3yf3JypOk+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oDh0iWYQ; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d18c325ee4so632745ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:34:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739918040; x=1740522840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B/cgij1lFdZqKfhJzvdkh7LmAc2T325VXWYvJrhG6fY=;
-        b=oDh0iWYQRl2y+GBgwCET+eh4ecnW7iVY77Dsnn76nyKeV8bCkR2JJk3ll47VX4r+wb
-         bza3Wy8vKeeWSu0wuyeEu2RDuRdMym6Za6kRwB5WgsCu3GMBb2NVyoDEHNDZZdJihhOP
-         3YGJsaNy/Rrk6XdXZ5VPLTmfUNYP59jsEt2QlirZwOPBNrTDPZr+t/sk9sq0PU2PV2Od
-         jqLlzSXQ71PasDFriIHi0Mtz8xDDgqUMJXdobwUv1mSMdK9tA7TIC5Q7Q8xFAouApiqt
-         wihFAAyEST2b423lZr3n250/+gZ5iYsnPVNBWS59cIYmOfQo7qGEnRLWgxSnfTXDRcEi
-         1jyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739918040; x=1740522840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B/cgij1lFdZqKfhJzvdkh7LmAc2T325VXWYvJrhG6fY=;
-        b=URX5B/te78N4G/5vG6S8JtanhzIEck7lqvS0Skm0zuL0OpJIgmjJzpLdsVA0e/MWSR
-         eQB72sPfvy4/kRsjUYlLAQWT9cCGgjk8hgf6mZOAfDqnA8EDdz99gXAmwoz2sKVB8/c+
-         iy7N7D/mbRaZfRa5tjVjf/CaPRMiFP9NoR2U8rD4VPc3BjLpXZrvpbSbRLnOTpXZkjK4
-         imZUWq+6pJNSBu0VcBfnozBYjLV+x9pagJ6EtIdovZCeOUk8dz3xxumSzHwx2e9JrEst
-         PX0WAlXjioHoSutQiTXdTXMYhuZ6204CiT3PJlRNe5gbK0/Bj57OBEkvec/oNBmVvn9f
-         J7pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjqxF9/69Yz8ank8EQ+a0/xJeC20Rbw+WG+WGMCRWr9ubWL8WQ2EGn8yPXhr3hNHKvtsIg9aWilYLNNjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+T2SZnXrgV5EA0DQwVbuOFCGWLCD9YHJxU4GkSgvasPcRiucl
-	ub1xk70UI8M+qlGVP8fEwlhAz26VEj0E4zRWznNJ34XMx8WNStes/V/k7O/lA4/v0R7bfgAmOpX
-	Gb1Lwm1S/rzCOVNFDiJW61MAcbSw9HXw5nhXT
-X-Gm-Gg: ASbGnctubhabLCL5nBz+C/UZHwImri4h5IuN5M1U8A/uch5v7tvEphuZc5qdZBFjpxp
-	ob0tkV+yHgZySJ/VWhifCGdVnvVIMnw5HD6jYxrGaa/Xg4B85AxyLsyj9oALX0UyOlh5YO9C+QZ
-	4HJkh0X9CkycukVCoAghJnd6dh
-X-Google-Smtp-Source: AGHT+IHw3DoO4qf0xpi1Amzv3pmc+X9SJTYSaoh3aiUz35JKe6rXdAzYIXkiqfdS7Bg/GHnOCWs6r2oDH8RnN6nJDDg=
-X-Received: by 2002:a05:6e02:3287:b0:3d1:7971:e6d5 with SMTP id
- e9e14a558f8ab-3d2b6236f8amr1406365ab.0.1739918039639; Tue, 18 Feb 2025
- 14:33:59 -0800 (PST)
+	s=arc-20240116; t=1739918036; c=relaxed/simple;
+	bh=P6sZ3lNpHHpplB4AD6dWKBij+UC5ODnu6yXG6d0hA9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=J0g0CHmCOsUgYLVm4igvkjMWR9/Crw5t7pLQumFYN7sidJBAcMhQcPKeJa5nP7shph4umj2O4SnGF9UAPq90QKAVed/qvlmWlo++fJcY+m5ouBMYIIY2BB7QHjBuiCUx/3CxeDLtObf+xSO+snMwu44stKL44GECQfPOejL6D/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkuwkLj3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F74C4CEE2;
+	Tue, 18 Feb 2025 22:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739918035;
+	bh=P6sZ3lNpHHpplB4AD6dWKBij+UC5ODnu6yXG6d0hA9Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NkuwkLj3PkFL0Ng4mzbutDA/bj9RAYmBvq1aLtZvMK2HBgh93GVKt20ul8PJTeoJj
+	 oDmXtJOH5LQ6/vj0s6j2A31/Glap7l95tD3NCTTKVrZrUAqKxP8ttLM0GFTBjkdwN4
+	 EJqiOqaNHT9hWZqE4pKSEpZEbjA9mnPvGmFq9x29VkEAiuxlrNHYlPyAIWh7STyOgg
+	 aaCGfWWDKmjRZomOccAL3LhmOrRACl7cjDoYmUbwLooJWgQ/S+r05t2fqkB2blU5cX
+	 7wd61R+vGpdcwP0S5yth+2eMSa3yOUlZH27knbwsAC4KzwGUUkseRGn3TGz9oT1a9v
+	 5ptiZB6XVcg1g==
+Date: Tue, 18 Feb 2025 16:33:54 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <20250218223354.GA196886@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_5360DA048EE5B8CF3104213F8D037C698208@qq.com>
- <Z66YjGvjD_yzEHUg@google.com> <tencent_45B4E91CA370C563D6420A1A25F992056D09@qq.com>
- <1b8b234f-6435-45cf-83e7-8e86c84f075f@linaro.org> <CAP-5=fVAhLLH-a0_wLo8dPoMLOb6rOJiTgGh-OFZJJoaLFE-8Q@mail.gmail.com>
- <fe46069e-c52e-45ee-b4b3-8b929fb83b31@linaro.org> <Z7UHieRRnvRb5_oU@google.com>
-In-Reply-To: <Z7UHieRRnvRb5_oU@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 18 Feb 2025 14:33:47 -0800
-X-Gm-Features: AWEUYZnCIRZ8gA78AOy7d6LlsQyiSAxYf8f5kf90YgWTOUXfQDLRg9JD7T1vwFY
-Message-ID: <CAP-5=fWXmNoFLyWv+vo7hhLSqTDy7hf+-huKRD9OUWnO-GESRw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] perf vendor events arm64: Add A720/A520 events/metrics
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Yangyu Chen <cyy@cyyself.name>, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218034859.40397-1-feng.tang@linux.alibaba.com>
 
-On Tue, Feb 18, 2025 at 2:19=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Tue, Feb 18, 2025 at 09:30:23AM +0000, James Clark wrote:
-> >
-> >
-> > On 18/02/2025 12:41 am, Ian Rogers wrote:
-> > > On Fri, Feb 14, 2025 at 2:02=E2=80=AFAM James Clark <james.clark@lina=
-ro.org> wrote:
-> > > >
-> > > >
-> > > >
-> > > > On 14/02/2025 5:49 am, Yangyu Chen wrote:
-> > > > >
-> > > > >
-> > > > > > On 14 Feb 2025, at 09:12, Namhyung Kim <namhyung@kernel.org> wr=
-ote:
-> > > > > >
-> > > > > > Hello,
-> > > > > >
-> > > > > > On Thu, Feb 13, 2025 at 11:11:01PM +0800, Yangyu Chen wrote:
-> > > > > > > This patchset adds the perf JSON files for the Cortex-A720 an=
-d Cortex-A520
-> > > > > > > processors. Some events have been tested on Raxda Orion 6 wit=
-h Cix P1 SoC
-> > > > > > > (8xA720 + 4xA520) running mainline Kernel with ACPI mode.
-> > > > > >
-> > > > > > I'm curious how the name of PMUs look like.  It is cortex_a720 =
-(or a520)?
-> > > > >
-> > > > > The name of PMUs comes from Arm's documentation. I have included =
-these
-> > > > > links in each patch.
-> > > > >
-> > > > > > I remember there's a logic to check the length of hex digits at=
- the end.
-> > > > > >
-> > > > >
-> > > > > Could you provide more details about this?
-> > > > >
-> > > > > > Ian, are you ok with this?
-> > > > > >
-> > > >
-> > > > I think they wouldn't be merged because they're core PMUs, so shoul=
-d be
-> > > > fine? Even though they would otherwise be merged because they're mo=
-re
-> > > > than 3 hex digits.
-> > >
-> > > Do we know the PMU names? If they are cortex_a520 and cortex_a720 the=
-n
-> >
-> > It will be "armv9_cortex_a720" from this line:
-> >
-> >   PMUV3_INIT_SIMPLE(armv9_cortex_a720)
->
-> I see, thanks!
->
-> >
-> > > this comment at least reads a little stale:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
-git/tree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n76
-> > > ```
-> > > /*
-> > > * There is a '_{num}' suffix. For decimal suffixes any length
-> > > * will do, for hexadecimal ensure more than 2 hex digits so
-> > > * that S390's cpum_cf PMU doesn't match.
-> > > */
-> > > ```
-> > > James is right that core PMUs aren't put on the same list as uncore/o=
-ther PMUs.
->
-> Ok, then I guess we're good.
+On Tue, Feb 18, 2025 at 11:48:58AM +0800, Feng Tang wrote:
+> There was problem reported by firmware developers that they received
+> 2 pcie link control commands in very short intervals on an ARM server,
+> which doesn't comply with pcie spec, and broke their state machine and
+> work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
+> to wait at least 1 second for the command-complete event, before
+> resending the cmd or sending a new cmd.
 
-I think you may be able to do things that look odd, like today the
-"i915" PMU can be called just "i", I think the a520/a720 naming will
-allow "armv9_cortex/cycles/" as an event name, then open it on two
-PMUs if they are present. We may only show one PMU in perf list as
-that code I think assumes they're the same PMU as they only differ by
-suffix:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n384
-I can imagine aggregation possibly being broken, but I think that
-works off the number of PMUs not the names of the PMUs, so it should
-be okay. Probably the only thing broken that matter is perf list when
-you have a BIG.little system with a520 and a720, this may be broken
-with say a a53 and a72 today as both of those suffix lengths are >2,
-but maybe they use the "armv8._pmuv3_0", "armv8._pmuv3_1", etc. naming
-convention. I suspect the >2 here:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n80
-would still work and be correct if it were >4. If that changes then
-this will also need to change:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/Documentation/ABI/testing/sysfs-bus-event_source-devices?h=3Dperf-tools-=
-next#n12
+s/link control/hotplug/ (also below)
+s/2/two/
+s/pcie/PCIe/ (also below)
 
-Thanks,
-Ian
+> And the first link control command firmware received is from
+> get_port_device_capability(), which sends cmd to disable pcie hotplug
+> interrupts without waiting for its completion.
+> 
+> Fix it by adding the necessary wait to comply with PCIe spec, referring
+> pcie_poll_cmd().
+> 
+> Also make the interrupt disabling not dependent on whether pciehp
+> service driver will be loaded as suggested by Lukas.
 
->
-> Thanks,
-> Namhyung
->
+This sounds like maybe it should be two separate patches.
+
+> Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
+> Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+> Suggested-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> ---
+> Changlog:
+> 
+>   since v1:
+>     * Add the Originally-by for Liguang. The issue was found on a 5.10 kernel,
+>       then 6.6. I was initially given a 5.10 kernel tar bar without git info to
+>       debug the issue, and made the patch. Thanks to Guanghui who recently pointed
+>       me to tree https://gitee.com/anolis/cloud-kernel which show the wait logic
+>       in 5.10 was originally from Liguang, and never hit mainline.
+>     * Make the irq disabling not dependent on wthether pciehp service driver
+>       will be loaded (Lukas Wunner) 
+>     * Use read_poll_timeout() API to simply the waiting logic (Sathyanarayanan
+>       Kuppuswamy)
+>     * Add logic to skip irq disabling if it is already disabled.
+> 
+>  drivers/pci/pci.h          |  2 ++
+>  drivers/pci/pcie/portdrv.c | 44 +++++++++++++++++++++++++++++++++-----
+>  2 files changed, 41 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 01e51db8d285..c1e234d1b81d 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -759,12 +759,14 @@ static inline void pcie_ecrc_get_policy(char *str) { }
+>  #ifdef CONFIG_PCIEPORTBUS
+>  void pcie_reset_lbms_count(struct pci_dev *port);
+>  int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
+> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
+>  #else
+>  static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
+>  static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
+>  #endif
+>  
+>  struct pci_dev_reset_methods {
+> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> index 02e73099bad0..2470333bba2f 100644
+> --- a/drivers/pci/pcie/portdrv.c
+> +++ b/drivers/pci/pcie/portdrv.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/string.h>
+>  #include <linux/slab.h>
+>  #include <linux/aer.h>
+> +#include <linux/iopoll.h>
+>  
+>  #include "../pci.h"
+>  #include "portdrv.h"
+> @@ -205,6 +206,40 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
+>  	return 0;
+>  }
+>  
+> +static int pcie_wait_sltctl_cmd_raw(struct pci_dev *dev)
+> +{
+> +	u16 slot_status = 0;
+> +	int ret, ret1, timeout_us;
+> +
+> +	/* 1 second, according to PCIe spec 6.1, section 6.7.3.2 */
+> +	timeout_us = 1000000;
+> +	ret = read_poll_timeout(pcie_capability_read_word, ret1,
+> +				(slot_status & PCI_EXP_SLTSTA_CC), 10000,
+> +				timeout_us, true, dev, PCI_EXP_SLTSTA,
+> +				&slot_status);
+> +	if (!ret)
+> +		pcie_capability_write_word(dev, PCI_EXP_SLTSTA,
+> +						PCI_EXP_SLTSTA_CC);
+> +
+> +	return  ret;
+
+Ugh.  I really don't like the way this basically duplicates
+pcie_poll_cmd().  I don't have a great suggestion to fix it; maybe we
+need a way to build part of pciehp unconditionally.  At the very least
+we need a comment here pointing to pcie_poll_cmd().
+
+And IIUC this will add a one second delay for ports that don't need
+command completed events.  I don't think that's fair to those ports.
+
+> +}
+> +
+> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
+> +{
+> +	u16 slot_ctrl = 0;
+> +
+> +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
+> +	/* Bail out early if it is already disabled */
+> +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
+> +		return;
+> +
+> +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> +
+> +	if (pcie_wait_sltctl_cmd_raw(dev))
+> +		pci_info(dev, "Timeout on disabling PCIE hot-plug interrupt\n");
+
+s/PCIE/PCIe/
+
+> +}
+> +
+>  /**
+>   * get_port_device_capability - discover capabilities of a PCI Express port
+>   * @dev: PCI Express port to examine
+> @@ -222,16 +257,15 @@ static int get_port_device_capability(struct pci_dev *dev)
+>  
+>  	if (dev->is_hotplug_bridge &&
+>  	    (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT ||
+> -	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM) &&
+> -	    (pcie_ports_native || host->native_pcie_hotplug)) {
+> -		services |= PCIE_PORT_SERVICE_HP;
+> +	     pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+> +		if (pcie_ports_native || host->native_pcie_hotplug)
+> +			services |= PCIE_PORT_SERVICE_HP;
+>  
+>  		/*
+>  		 * Disable hot-plug interrupts in case they have been enabled
+>  		 * by the BIOS and the hot-plug service driver is not loaded.
+>  		 */
+> -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> +		pcie_disable_hp_interrupts_early(dev);
+>  	}
+>  
+>  #ifdef CONFIG_PCIEAER
+> -- 
+> 2.43.5
+> 
 
