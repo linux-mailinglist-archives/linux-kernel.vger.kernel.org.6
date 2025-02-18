@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel+bounces-519659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747EFA3A051
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:46:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D00A3A03A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F28189AE3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:42:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB3F1899F56
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B931F26E177;
-	Tue, 18 Feb 2025 14:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5834C26A1D1;
+	Tue, 18 Feb 2025 14:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yzS9Jomi"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K8zv11Px"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D8726AA98
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27F8286A1;
+	Tue, 18 Feb 2025 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739889628; cv=none; b=BNk/IVSP2K6He0zxjN5aPRHt6BlrXu58NCN7nT/4Mpj/m4tPolzsAeeD0hDgO4NhuOG4EtFxniqwD9TPXY5XN7j40zQihwUL7AdtOfqaCv+LiJTNqwClM/wpR2DNuQkUYX32j6/r2o+cxw3S5sECxDO3SqylYJVGCRMP5fTeA08=
+	t=1739889601; cv=none; b=pRoEi0HvtTnu8jQs74imEKD8IHJCl1iNzJcSLLWp2K+NlF/nmcSevxG1qRa/Z5OCilCUyPCWIYOQZih3q5b/F+ZfTZXRxE2XxkbQXwn7otGIH6oGwdyLaWPI5YMOhyS/nftBgFY0c6Ggd0Nsuvt5eMbSJu4GdmXhHe2XPcErYKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739889628; c=relaxed/simple;
-	bh=mr+2Jhhmfhv+3seL9n1mB+VOznYBvn3lX+NZfQylTqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=St0RUHjBgUhE1AI2jK70xXOvnfsNFluIbmcOlZd6U12BVu29wDp3ewb3YB14irdWqqdaYssWXAc5YNX4nqKgq8sdMnHFfDAnduNNxzLfsRSMseE54fRg1qp1fewJsH2GGlVpjlJfBvvZ3WPKsNVdeiC3ECMx9iDd3/9RaKD0pbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yzS9Jomi; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e587cca1e47so5006139276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:40:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739889624; x=1740494424; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wkeEEWV1t+jTfGMDjVEd0UQWJSursxJ+qu65t0oVks=;
-        b=yzS9JomiL+1VCRq5xGA/LVJBda1hD0LHa+tIsrOwo+8YCI4bbA8FZadK/V/4waPQQH
-         9aFpqNh/ia1C10WgvRzuB5wF2U66/lYcRX0QP2L1I3eQBf6yiuSOHZmFx2d7MpQ/D7zY
-         U4ZFcDr7s9T1qxzTzHpwAigz1L8lTWxIO0rcZsWkoNBRq0D4NxcLBiCyVoniZJywJJ7s
-         xsWKhTGX/urMFShw+xctToQ4jo4bUdGFKRL2aGJPp513TUp5dN5+B1OYXD4C9f+yFbaw
-         RGlT0VlSjnEtn1qTEGgF0XzOGk/xU6ENK+5wByLpc0RPumM9RquuK4enTt/nGOnnii8s
-         FbRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739889624; x=1740494424;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2wkeEEWV1t+jTfGMDjVEd0UQWJSursxJ+qu65t0oVks=;
-        b=VRNMitzCJwsEkjk6OCZ5QTgrD/GMr25TF6UetSe2BEF26K7ikK/RHPE74CVZeFrnNR
-         zUvD/hWtZwUVJkJjkkJbPYpDH3p8di9jG5rrJiTBIDKQpNSmD/Ik3LKWDJVS2yOfVenA
-         zZMgnorv2XT0v1/zl7OZnlu3FtezcxW0BLaolU0AE/ZWs0vCL9yAIVmsdcYe7EGcoDk6
-         LK7IM+B/x35zjusSGcV0qAdbzDgect9Ew7JZEB4AZoeRrkWlWiPIToDFNw/warKdTOe9
-         poTuTGQUTQ8YsiYF2UX85UyvbjJPtR5Jh6VeSKIskHTcBWe0OfyHkE+5ohU4fEdb76kf
-         W+Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWySJdSstIPwcGuCzdV4kaM4jxxwwcTiz+kA3LJSOsNLYE27gh/AeWAnjQbg6/hsSARl8M1k0TKaBSujwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc2nenSrD1GVfTzYzr6nwHuKi7+tEx43lG844bX354uhEhGaXG
-	XpqKi6QTkwuVwCha6qtupzwB9LoTkqcHUCY0BxZDTyA6hiCEkPfwrvmN9W5+Are8D4pz7qdNjOP
-	NBjfwZzu1gUPwtw/MRGz9rXBzO1kye849Q6hcAg==
-X-Gm-Gg: ASbGncvuLpm+Uj4SD137uEKebSzsd1XDwTGIurz/Swqo6KkJl1hrCi8QCbdw0i9uwFm
-	wjxMr0U6jry+jKUPPtO2vKThALa77dWdB5vYUopT6KynCoXFOuR+45L5GR6+rQfx6jU9Yz1A7Hg
-	==
-X-Google-Smtp-Source: AGHT+IGc7tsTon1APxRniRGgusdip7zanYIlI5kyK12K1ApVdClP0yClUsQd8ZYL07bK78dVmjWR+9yq+z6BP2esIog=
-X-Received: by 2002:a05:6902:15c4:b0:e20:25bb:7893 with SMTP id
- 3f1490d57ef6-e5dc9305520mr9687881276.46.1739889623851; Tue, 18 Feb 2025
- 06:40:23 -0800 (PST)
+	s=arc-20240116; t=1739889601; c=relaxed/simple;
+	bh=Ee9P6EhDUoFPXug91QeqALw1knWAZkKxsmgqWLX3oJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uuMhr31rMpQ4gZj24LgQZiSpcVGuciLjArN9z7P4kj52YEphouE5Mb9E70+yBi4J7Ze0vXlA92z1v+fYN7/1jdlxdM6gQe+zX3DC5+Hc7Wx3fqCo5oDP7lyanQV2D4sKutN00l0L73OHajwm2urXySVQe+JMQwvWUVfIdEK/1JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K8zv11Px; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739889597;
+	bh=Ee9P6EhDUoFPXug91QeqALw1knWAZkKxsmgqWLX3oJ8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K8zv11PxDk6e2NkrzoE7sN9oT/97HPZbAZPTquwQyyq10STWUcM2J6K8rm6F4/xoH
+	 DFPajFGCkhlx90hpAy3uCIN3L8nEsjO+SAytrqNUaGdq7MTb0nY84HlvJaxUhd1+Bq
+	 RdsCXtITrY9CW+d3pngFJQP9Eq4ROZ4udy5KCEUlp/hDcUcr5tShT5ZIYwX9bK0ZbX
+	 2UY6dowfR02DPE/1uaJNJN+mDTBZl3Bhs20E4Dl0jvTbNy0f5KMJ/dHAifDjUl7jPA
+	 vgQdMYJpi6av1VGBOP3HUl6CefY094hgX2sL4FEGQ35bIxVs5VtS273o2lAsmTsxxf
+	 tlgLZ/OHS6MFQ==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E505217E0391;
+	Tue, 18 Feb 2025 15:39:56 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: neil.armstrong@linaro.org
+Cc: quic_jesszhan@quicinc.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	pablo.sun@mediatek.com,
+	christophe.jaillet@wanadoo.fr
+Subject: [PATCH v2 0/2] Add driver for Himax HX8279 DriverIC panels
+Date: Tue, 18 Feb 2025 15:39:50 +0100
+Message-ID: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4966939.GXAFRqVoOG@rjwysocki.net> <2000822.PYKUYFuaPT@rjwysocki.net>
- <CAPDyKFoB0fQCabahYpx=A_Ns7vJgWYdK=rxuHk+XHVv35cFvWQ@mail.gmail.com> <CAJZ5v0iHsOw4_UbEWGk_-jPpc3q2K3fUXBs4T3JCooPGV10CHQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iHsOw4_UbEWGk_-jPpc3q2K3fUXBs4T3JCooPGV10CHQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 18 Feb 2025 15:39:47 +0100
-X-Gm-Features: AWEUYZkUeOWjKpfEpylPzwUgMmhW5JCtP7D9lSJ8wjRrv-WgzsAF82ls-gYur34
-Message-ID: <CAPDyKFqshaVNzHPe0KL3HRTpiuzyKVJ-LuDsaAne5PawFLMJow@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-[...]
+Changes in v2:
+ - Removed unneeded mipi_dsi_device_unregister() call for secondary
+   DSI: as the driver is using devm, that's not necessary (CJ)
+ - Removed superfluous if branch as pointed out by CJ
 
-> > >
-> > > +static void device_prepare_smart_suspend(struct device *dev)
-> > > +{
-> > > +       struct device_link *link;
-> > > +       int idx;
-> > > +
-> > > +       /*
-> > > +        * The "smart suspend" feature is enabled for devices whose drivers ask
-> > > +        * for it and for devices without PM callbacks unless runtime PM is
-> > > +        * disabled and enabling it is blocked for them.
-> > > +        *
-> > > +        * However, if "smart suspend" is not enabled for the device's parent
-> > > +        * or any of its suppliers that take runtime PM into account, it cannot
-> > > +        * be enabled for the device either.
-> > > +        */
-> > > +       dev->power.smart_suspend = (dev->power.no_pm_callbacks ||
-> > > +               dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) &&
-> > > +               !pm_runtime_blocked(dev);
-> > > +
-> > > +       if (!dev->power.smart_suspend)
-> > > +               return;
-> > > +
-> > > +       if (dev->parent && !pm_runtime_blocked(dev->parent) &&
-> > > +           !dev->parent->power.ignore_children && !dev->parent->power.smart_suspend) {
-> > > +               dev->power.smart_suspend = false;
-> > > +               return;
-> > > +       }
-> > > +
-> > > +       idx = device_links_read_lock();
-> > > +
-> > > +       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
-> > > +               if (!(link->flags | DL_FLAG_PM_RUNTIME))
-> > > +                       continue;
-> > > +
-> > > +               if (!pm_runtime_blocked(link->supplier) &&
-> > > +                   !link->supplier->power.smart_suspend) {
-> >
-> > This requires device_prepare() for all suppliers to be run before its
-> > consumer. Is that always the case?
->
-> Yes, it is by design.
+This series adds a driver for DSI panels using the Himax HX8279 and
+HX8279-D DriverICs, and introduces one panel using such a configuration,
+the Startek KX070FHFID078.
 
-Okay! I was worried that fw_devlink could mess this up.
+This panel is found on the latest hardware revisions of some MediaTek
+Genio Evaluation Kits, and specifically, at least:
+ - Genio 510 EVK
+ - Genio 700 EVK
+ - Genio 1200 EVK
 
->
-> > > +                       dev->power.smart_suspend = false;
-> > > +                       break;
-> > > +               }
-> > > +       }
-> > > +
-> > > +       device_links_read_unlock(idx);
-> >
-> > From an execution overhead point of view, did you check if the above
-> > code had some measurable impact on the latency for dpm_prepare()?
->
-> It didn't on my systems.
->
-> For the vast majority of devices the overhead is just checking
-> power.no_pm_callbacks and DPM_FLAG_SMART_SUSPEND.  For some,
-> pm_runtime_blocked() needs to be called which requires grabbing a
-> spinlock and there are only a few with power.smart_suspend set to
-> start with.
->
-> I'm wondering why you didn't have this concern regarding other changes
-> that involved walking suppliers or consumers, though.
+This driver was tested on all of the aforementioned boards.
 
-Well, the concern is mostly generic from my side. When introducing
-code that potentially could impact latency during system
-suspend/resume, we should at least check it.
+AngeloGioacchino Del Regno (2):
+  dt-bindings: display: panel: Add Himax HX8279/HX8279-D
+  drm: panel: Add driver for Himax HX8279 and Startek KD070FHFID078
 
-That said, I think the approach makes sense, so no objections from my side!
+ .../bindings/display/panel/himax,hx8279.yaml  |  74 ++
+ drivers/gpu/drm/panel/Kconfig                 |  11 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ drivers/gpu/drm/panel/panel-himax-hx8279.c    | 905 ++++++++++++++++++
+ 4 files changed, 991 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/himax,hx8279.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-himax-hx8279.c
 
-Feel free to add:
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+-- 
+2.48.1
 
-Kind regards
-Uffe
 
