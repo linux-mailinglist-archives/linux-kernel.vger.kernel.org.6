@@ -1,172 +1,140 @@
-Return-Path: <linux-kernel+bounces-519952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE970A3A3F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:19:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC35A3A3F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:18:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB98A1895EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116CF3AA7E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AAD26F47F;
-	Tue, 18 Feb 2025 17:16:59 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CEA26E14F;
+	Tue, 18 Feb 2025 17:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVNvjlRT"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EE18C907
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3680526FA51
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739899019; cv=none; b=BNXkXxEaJS+sAwE1Cf5BOhoM7g+FE71K9QW516oNC+RPmOL05HWSd6L1VWnijHhInpA/DJlLEN5FEBXxRRTnaZbH35+5ZqVJiA9bl6hftiurpt/gGSJ8xiqjn4AliYbazsEjOZnjDv6IrANzGcJicqadRMTgleUFOO5dNUM5yi8=
+	t=1739899088; cv=none; b=k581EAe5E9b0DOd9Aads71GuW7G2kjWsa0LVN1e5/vp5Xjm0FYWX/wKt5JQk4yAIFM/93oAhp1sY+ljwRhM+hWtiHbmvctFO1AHylgv4XG0LLVfvNJWct/WOKNv1eurnbiF4BRantgNIBpEgSJgtbYpMKLsVBVzeHA52xWMTrNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739899019; c=relaxed/simple;
-	bh=+PYB72AQrHKlfgnDr//0aDBg9gCfg0kImtSiDGBMay0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VdeN+9pik/rL6JcSrfr5LWXBKRReEAO+inHB3JjpRp2cIc6EMwMnNVaJsHOBqJKH4vLT9b/geamxE6jdiYdQVY2mmWPzXWxwhfLCuehpxwUZ0VMWhQtipxDiKXMEwecVKZ7M6N69EMvYHNiiTKafse2yImnmM3hAIcOwYpsJACA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2abf829dfso7719375ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:16:56 -0800 (PST)
+	s=arc-20240116; t=1739899088; c=relaxed/simple;
+	bh=+HqbUx3NMhsdQmv5gJG5aY4LXcTPtScM4DxHwm+OZQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJKTh/YxGo/PDfBCjql2pPw2EpN2lyDZIi5c1fwW8YBsK2bgIJCJ8ANCBStFiUUHOnvNdt5s876rZ5GOOMRldImcuMY2PAKY3c4KTZT1lLJ6u/sURjvXX6fbhmRhI6mNrwYvmkFw/CrtnUTH/IdSTFMl9cXOd2cnUV3MFoKE9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EVNvjlRT; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307325f2436so48833531fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:18:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739899083; x=1740503883; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFCpXaDjW046OAnqXzChWWxg9c6BmmKNGNdZCuQPouY=;
+        b=EVNvjlRTUjkWqiPgbRWJw+S1FY9HkvT9IlDK2h1m0AJwDk16lysLtGRpnmF6DDGZ/u
+         wA1eVgnaopeOtemJJSeb+neL4Xf+y63zfagZhIEiSEzYDwlXQiabOLHkJ5DQdR+vkglT
+         RATECJW+hfCEci9yB+imfuLfJen7QC6TP2si8Vc86GA0FauTPr6rzMWaTw+hKJFkV+DA
+         8x3PvFxtfec23ZKgOPtaRvQzj7gUXJgaXuFDdecqiowCO4AmkaUjfXPtYb8g+MCCbL4+
+         LEtn6VylQrUhQc8Dg+BwO12JvMA/IiByyvbaNotBh+gTHGqHzgULgOqpRDYfaCqzfbsC
+         YDLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739899016; x=1740503816;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXALNhZ+KKSeZEiwniUexR2989pE7rycSy6Z6v+QDb4=;
-        b=sWQeQ9lbwLP0C7hyvru/9hhyUoqTwvfXwN978PUgjvUeabJO4mSPhmq7bEwkk92Zhy
-         9hUtlrms+At9NkzLN66F5qnjw8rLdwbDr9z7T//M/UPS53NdhYdpZcxOzKBCM1y+ANV5
-         P61+F8silTJTNRD3PraMqe+DeR7DhxGZetsAyxZFlMvGuoihLI4gEjC5Wmxs2sLc5OLF
-         mLmKmz3Kr00oIw3FymL1tB9tPwjwRSENCb9uhJ9kzCaYYjKLk831NPIoG5pi/DVCUmkZ
-         41Q9eLvgx7KucBvo19/ggp/lgbkikE2SPzciw/ZC5NF4CDVKtW8bpoOn04+9wVppjl1c
-         xVnA==
-X-Gm-Message-State: AOJu0YzK8a1RFh96AdFwLL+SY39x1hR47HeCOHvJ6xIM5byosVABocCe
-	fQEGRRCbp4ZGgXPBFVDQyDZJduItFhV0x9HFJRcjl7vFZGGBVcwFKqz5Jo3gVI5E2A/ToVehZ8+
-	F6Zhp00V/AO0FNr1a98eDEplY3KF+m1PKoWSyRHuNbsReNm9tk+fcM6muqw==
-X-Google-Smtp-Source: AGHT+IF/IBl4rHtpXJTDF4SmMDKFzIZej4yetXqbcAvmu7G7IH8incIT7bCCrSmxLFOxCu0OhsovgzGkvZ7smwFus3Y2qqx1Aepu
+        d=1e100.net; s=20230601; t=1739899083; x=1740503883;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vFCpXaDjW046OAnqXzChWWxg9c6BmmKNGNdZCuQPouY=;
+        b=ALMhUgWJqUjeiVLf1UdAmZCU4i58kjEUZyH5HVP5fYgd9YTyW1+kOixggH+CKcDMLL
+         VpKNpCkCtNTTjBG8L6Yszg8BTMzzc3kP9v2x5oUzUAWJ6jC1gFeLTN06woG5v1rCGS0D
+         r0UibC5OKBw5M/v7Zr5f6AeI7pwOBAeNd+vB4LboP/rOTEVra8Pp0AkT+7NJkxIym2/W
+         RtDPYrMOWAB0SKqaHulFol4jYbalqwTt9L+5fF87rK7W28XOGiBuB2n+IDumeeDz2X2b
+         kMY82n+r77KHIUbxbdb077Sd6b+qDeNMzL8m1H7HGW+sQfMTRtMl3tddYwn57le/TpKG
+         0qJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZhqpI0wIsJkmkukT2qyvQ61rNcOY5n6ldAusiAqJVqhUiQUZNlHAdDkeQ0B5/8Kn7LSpS1wd2hgKXFdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzco1O8wzlINIphLYdDetghlIfLGyxEPCFYc7jDeuGiKuDeTelb
+	sqgyN78FeB4upCESEygvu9ACzm6FaeAG7rNeVmQVAMbCdFh9egZo7feV77Fv8g+1oWlyAsq/vEw
+	z
+X-Gm-Gg: ASbGncutM34PoFaEnIHq0v83KQcRrprPjowAI0P05W8zO+q4oWj66+/g+mfAfsLbN/V
+	tzQUYDKsUEqrDjcUp00rpp+J+9eqS+VyP/wOqkjGgdBKa8eHk5cTBloo62u1SiEPg7kMzuzNZpv
+	KtupXOYOHAYpAR7LXnHrl1i/nFLwglcd5IFZRlrfK6VX9kGqb0h6+NYZZw0U+w1Kz6Iao4yFOuY
+	vHk46V2LeLaFCv0gyhoKCll2PhZ5r6x+ogPV0cdP31Vb2hhRXmBCgPiaCbGq8FgiXJ0rVBSKmtH
+	+XSPmNq9AK4X5cx2bPvl1gjqi5z//ml+jRxdChjsEORQloeAayRzaJtF6CKPYX5XwRIBcU0=
+X-Google-Smtp-Source: AGHT+IE6rXImPRtO7WIVZArsGTCop6s7h35hJORLydABfahalgPYT5N99LSGxqzFHXrjk0jBaudiMg==
+X-Received: by 2002:a05:651c:94:b0:309:1c03:d2d3 with SMTP id 38308e7fff4ca-30a45035a02mr559491fa.25.1739899083255;
+        Tue, 18 Feb 2025 09:18:03 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309311777a8sm12756301fa.25.2025.02.18.09.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 09:18:02 -0800 (PST)
+Date: Tue, 18 Feb 2025 19:18:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: qcom: common: Attach clock power domains
+ conditionally
+Message-ID: <2c5rbbpe5muw53oemyq6vhsmhzpzcpn7on4ujl5v7i7s3fdlob@eh37gy5dpfnp>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:338f:b0:3d0:bd5:b863 with SMTP id
- e9e14a558f8ab-3d280951539mr136471575ab.20.1739899015917; Tue, 18 Feb 2025
- 09:16:55 -0800 (PST)
-Date: Tue, 18 Feb 2025 09:16:55 -0800
-In-Reply-To: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b4c087.050a0220.14d86d.0002.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
-From: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Feb 18, 2025 at 07:56:48PM +0530, Jagadeesh Kona wrote:
+> Attach clock power domains in qcom_cc_really_probe() only
+> if the clock controller has not already attached to them.
 
-***
+Squash this to the previous patch and call the new function. No need to
+duplicate the code.
 
-Subject: Re: [syzbot] [mm?] [bcachefs?] WARNING in lock_list_lru_of_memcg
-Author: mmpgouride@gmail.com
-
-
-> On Feb 15, 2025, at 02:11, syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com> wrote:
 > 
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148019a4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c776e555cfbdb82d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12328bf8580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-128c8f96.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a97f78ac821e/vmlinux-128c8f96.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f451cf16fc9f/bzImage-128c8f96.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/a7da783f97cf/mount_3.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5459 at mm/list_lru.c:96 lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5459 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-00185-g128c8f96eb86 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:lock_list_lru_of_memcg+0x39e/0x4d0 mm/list_lru.c:96
-> Code: e9 19 fe ff ff e8 72 f2 b5 ff 4c 8b 7c 24 08 45 84 f6 0f 84 40 ff ff ff e9 22 01 00 00 e8 5a f2 b5 ff eb 05 e8 53 f2 b5 ff 90 <0f> 0b 90 eb 97 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 71 fd ff ff 48
-> RSP: 0018:ffffc9000d70f3a0 EFLAGS: 00010293
-> RAX: ffffffff820bc50d RBX: 0000000000000000 RCX: ffff8880382d4880
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffff8880351ac054 R08: ffffffff820bc49f R09: 1ffffffff2079b8e
-> R10: dffffc0000000000 R11: fffffbfff2079b8f R12: ffffffff820bc19e
-> R13: ffff88801ee9a798 R14: 0000000000000000 R15: ffff8880351ac000
-> FS:  000055557d70b500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fff6826de40 CR3: 000000005680c000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> <TASK>
-> list_lru_del+0x58/0x1f0 mm/list_lru.c:202
-> list_lru_del_obj+0x17b/0x250 mm/list_lru.c:223
-> d_lru_del fs/dcache.c:481 [inline]
-> to_shrink_list+0x136/0x340 fs/dcache.c:904
-> select_collect+0xce/0x1b0 fs/dcache.c:1472
-> d_walk+0x1f5/0x750 fs/dcache.c:1295
-> shrink_dcache_parent+0x144/0x3b0 fs/dcache.c:1527
-> d_invalidate+0x11c/0x2d0 fs/dcache.c:1632
-> proc_invalidate_siblings_dcache+0x3fb/0x6e0 fs/proc/inode.c:142
-> release_task+0x168e/0x1830 kernel/exit.c:279
-> wait_task_zombie kernel/exit.c:1249 [inline]
-> wait_consider_task+0x1a14/0x2e60 kernel/exit.c:1476
-> do_wait_thread kernel/exit.c:1539 [inline]
-> __do_wait+0x1b0/0x850 kernel/exit.c:1657
-> do_wait+0x1e9/0x550 kernel/exit.c:1691
-> kernel_wait4+0x2a7/0x3e0 kernel/exit.c:1850
-> __do_sys_wait4 kernel/exit.c:1878 [inline]
-> __se_sys_wait4 kernel/exit.c:1874 [inline]
-> __x64_sys_wait4+0x134/0x1e0 kernel/exit.c:1874
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f93f3983057
-> Code: 89 7c 24 10 48 89 4c 24 18 e8 45 1b 03 00 4c 8b 54 24 18 8b 54 24 14 41 89 c0 48 8b 74 24 08 8b 7c 24 10 b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 89 44 24 10 e8 95 1b 03 00 8b 44
-> RSP: 002b:00007fff6826e9b0 EFLAGS: 00000293 ORIG_RAX: 000000000000003d
-> RAX: ffffffffffffffda RBX: 0000000000000019 RCX: 00007f93f3983057
-> RDX: 0000000040000001 RSI: 00007fff6826ea1c RDI: 00000000ffffffff
-> RBP: 00007fff6826ea1c R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000001388
-> R13: 00000000000927c0 R14: 000000000002f011 R15: 00007fff6826ea70
-> </TASK>
-> 
-> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 > ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+>  drivers/clk/qcom/common.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index ec27f70b24bdec24edd2f6b3df0d766fc1cdcbf0..eb7e2a56d1d135f839fd9bd470ba6231ce775a8c 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -300,9 +300,12 @@ int qcom_cc_really_probe(struct device *dev,
+>  	if (!cc)
+>  		return -ENOMEM;
+>  
+> -	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> -	if (ret < 0 && ret != -EEXIST)
+> -		return ret;
+> +	cc->pd_list = desc->pd_list;
+> +	if (!cc->pd_list) {
+> +		ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> +		if (ret < 0 && ret != -EEXIST)
+> +			return ret;
+> +	}
+>  
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+> 
+> -- 
+> 2.34.1
 > 
 
-#syz test
-
-diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-index e71b278672b6..80a0094be356 100644
---- a/fs/bcachefs/btree_io.c
-+++ b/fs/bcachefs/btree_io.c
-@@ -997,7 +997,7 @@ static int validate_bset_keys(struct bch_fs *c, struct btree *b,
-                }
- got_good_key:
-                le16_add_cpu(&i->u64s, -next_good_key);
--               memmove_u64s_down(k, bkey_p_next(k), (u64 *) vstruct_end(i) - (u64 *) k);
-+               memmove_u64s_down(k, (u64 *) k + next_good_key, (u64 *) vstruct_end(i) - (u64 *) k);
-                set_btree_node_need_rewrite(b);
-        }
- fsck_err:
-
+-- 
+With best wishes
+Dmitry
 
