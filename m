@@ -1,141 +1,136 @@
-Return-Path: <linux-kernel+bounces-518984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76142A396B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:16:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689C3A396F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C801627B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A943B70BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE7922FACA;
-	Tue, 18 Feb 2025 09:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="WZTgsvIt"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F722FF31;
+	Tue, 18 Feb 2025 09:16:07 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E341DD9A8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6246522AE4E;
+	Tue, 18 Feb 2025 09:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739870139; cv=none; b=apVu5W8HywBr/9VNFxJMWr2FUCF+CqE5/CAqtWi6EZAjdiS/RDRuxgjh7cC4hH1SKKsQqsn/VUHEuG1dNdLqkmXPXcf1RV5oFDHuCJMtwWjOd0j+ASspOjb8SpDDil6bUXbgFuAYhDmvjBVyR3L8cJb1zv1+yyet8hXvLggzls0=
+	t=1739870167; cv=none; b=TjVib/fdEUuJ8q3fgeY2oog1cZ4bd7muRGaIKLmAsSboe2M9hOxeKI2dui7/kng0H2YSoDZYHKskaRq9hnD8FcuX9Nh0JiYR0X3DX265X/9JvrXwt9ycMF+iU7PcLQ71HTfMEG42Wo92odNtn9C+mx+5mdDGVbX92xNYTMoiEjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739870139; c=relaxed/simple;
-	bh=iA9AGMXcymWk0aqUD2HB51dKBFnWqCxYYVvRaHqRk0I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IrT392B9MBNI19/aHGD4+Me/cjSJUtSl1kfNUlxCqRMPdtcN93+ehIs1hKDJ7xSOrIbrQLtyntJ6cUMXithDmV5btSKHtF225Q7lfE7G4AV0U4JWpFeqRAxD4C+w3RrenzxPVoD8MljsW5MWKtsg/CatWpaBEu+QlPhMVDTpj8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=WZTgsvIt; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46fcbb96ba9so59310091cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 01:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1739870137; x=1740474937; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/9o60+wmpu1uSsdLe+fAGgKFk/Xz6Tn0Yptqhrl0H24=;
-        b=WZTgsvItBLhqEE0bzy29A8rH0IS7Ma4m1qEmpMJg9/TzVG7qKWER+0AYmxKbiOs2tT
-         9mS6fjiQgyWnFgQlotdjMdL9W6MfnfsoTtGOajV5iBXBqZsqBYzppoPF4ROAOICJCUl5
-         9LpNtjrAOvLYpNp/cOBSHFd8KtynNd+Mrolpk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739870137; x=1740474937;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/9o60+wmpu1uSsdLe+fAGgKFk/Xz6Tn0Yptqhrl0H24=;
-        b=uTUKo74FVlLSooTuWeDm618XLc09UsVYgLp6a1Tg0jB4kUb/D8GFe7nk6IMuHHzyMY
-         /nmosUUI1VZoahwag7bAh+U/Hf0pGbWoZH6ET5m53NnRntp5OHF2EiFkwQmQWLQiiZfW
-         lxeU3uTolfT3jrZhEEdXSbKmVfQFyz1AyR+VaU4G+J79L9A/H6OEJ58vfgabkW/8TnW6
-         S1736HkdMN3LdU+7XYA/UD7k6CzO6YoBn+YH5u82FF8noDIWcYjVxSAXIUFmTDMNTFwe
-         MLxg/pGd7aCYSRhrOTvOyYFJPQRXQSJTCietoctnav5FfRA38+cr3tnroGolWglbJHmV
-         Dkvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiDP4BvdCZ7wDT2jXTgZ9nOraL3sa2Ko970lsX1ERWXKxkpS2vLLdyTfLgyyegbmMMLcoDUm+GhK774/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrMhtaX1pu0HWEXTz8j9QZyXsn1Mm4lydhniwfcamM3uQrRN1c
-	3nR0+vRk0XlSLnfMqJUlpGEtiSetZpu+BhOVLTCTdE/hOAfsWU2fuDWf4ZmnasD7XnfT+cQ4m6l
-	hD1F2JwchhWDQDg74hq9dE5HOBIHIgTrSL8Rnyg==
-X-Gm-Gg: ASbGncuODBF34NwLI599mnVukOyvWfgIxKq7aB8I5cWNRqDP/RyPXaJAh/G+ikXsxg5
-	w6JhR7NWP/njgTj3zSp/abSciYnsZTOBiel9CMYWdcTquzs47pRkNSknO1fqYWstnCEhmeqk=
-X-Google-Smtp-Source: AGHT+IF7OXUuVZIvUWcHSkdB3EmL6eX0eRGEnz8G+dLsYP7tcuw3hlXDLltRlig3xpi6GmrpcVyeyIAffsvZWcWIA0M=
-X-Received: by 2002:a05:622a:59c6:b0:471:f5d8:5f56 with SMTP id
- d75a77b69052e-471f5d86142mr83888681cf.1.1739870137132; Tue, 18 Feb 2025
- 01:15:37 -0800 (PST)
+	s=arc-20240116; t=1739870167; c=relaxed/simple;
+	bh=Z7vfeOXnRzH2MUW83NJ1BOZujFaF7BTid+tQ6g1426k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZlcHEK4MQ2xfYBeE0nkwjxhFpMZklpq2fgS6VeIl73CTHpIzZFATFdcJ4DR3s8xfVDyBNqRkwvy+IQFPEprETr9M74HAsgcK1eNX49hJhkSujkc6qGlq4ZHioWDKGczohqo4pMvEvNTgFzUXYv5pj2iRxb5joR4BWkXbbS4K9vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Yxv141mCDz1wn7M;
+	Tue, 18 Feb 2025 17:12:08 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 46C8E180214;
+	Tue, 18 Feb 2025 17:16:02 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Feb 2025 17:16:01 +0800
+Message-ID: <cc6fc730-e5f4-485b-b0b6-ec70374b3ab1@huawei.com>
+Date: Tue, 18 Feb 2025 17:16:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
- <Z7PaimnCjbGMi6EQ@dread.disaster.area>
-In-Reply-To: <Z7PaimnCjbGMi6EQ@dread.disaster.area>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 18 Feb 2025 10:15:26 +0100
-X-Gm-Features: AWEUYZlMbyj79ggSvwhwNFRl4UDBvs13x_6taoPW6P6cYlPOsVcloafHbUopCZ4
-Message-ID: <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
-To: Dave Chinner <david@fromorbit.com>
-Cc: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] mm: alloc_pages_bulk: remove assumption of populating only
+ NULL elements
+To: Chuck Lever <chuck.lever@oracle.com>, Yishai Hadas <yishaih@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>, Josef
+ Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Gao Xiang
+	<xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>,
+	Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+	<anna@kernel.org>, Jeff Layton <jlayton@kernel.org>, Neil Brown
+	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+CC: Luiz Capitulino <luizcap@redhat.com>, Mel Gorman
+	<mgorman@techsingularity.net>, <kvm@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>, <netdev@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>
+References: <20250217123127.3674033-1-linyunsheng@huawei.com>
+ <abc3ae0b-620a-4e4a-8dd8-f8e7d3764b3a@oracle.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <abc3ae0b-620a-4e4a-8dd8-f8e7d3764b3a@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, 18 Feb 2025 at 01:55, Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Feb 17, 2025 at 01:32:28PM +0000, Luis Henriques wrote:
-> > Currently userspace is able to notify the kernel to invalidate the cache
-> > for an inode.  This means that, if all the inodes in a filesystem need to
-> > be invalidated, then userspace needs to iterate through all of them and do
-> > this kernel notification separately.
-> >
-> > This patch adds a new option that allows userspace to invalidate all the
-> > inodes with a single notification operation.  In addition to invalidate
-> > all the inodes, it also shrinks the sb dcache.
->
-> You still haven't justified why we should be exposing this
-> functionality in a low level filesystem ioctl out of sight of the
-> VFS.
->
-> User driven VFS cache invalidation has long been considered a
-> DOS-in-waiting, hence we don't allow user APIs to invalidate caches
-> like this. This is one of the reasons that /proc/sys/vm/drop_caches
-> requires root access - it's system debug and problem triage
-> functionality, not a production system interface....
->
-> Every other situation where filesystems invalidate vfs caches is
-> during mount, remount or unmount operations.  Without actually
-> explaining how this functionality is controlled and how user abuse
-> is not possible (e.g. explain the permission model and/or how only
-> root can run this operation), it is not really possible to determine
-> whether we should unconditional allow VFS cache invalidation outside
-> of the existing operation scope....
+On 2025/2/17 22:20, Chuck Lever wrote:
+> On 2/17/25 7:31 AM, Yunsheng Lin wrote:
+>> As mentioned in [1], it seems odd to check NULL elements in
+>> the middle of page bulk allocating,
+> 
+> I think I requested that check to be added to the bulk page allocator.
+> 
+> When sending an RPC reply, NFSD might release pages in the middle of
 
-I think you are grabbing the wrong end of the stick here.
+It seems there is no usage of the page bulk allocation API in fs/nfsd/
+or fs/nfs/, which specific fs the above 'NFSD' is referring to?
 
-This is not about an arbitrary user being able to control caching
-behavior of a fuse filesystem.  It's about the filesystem itself being
-able to control caching behavior.
+> the rq_pages array, marking each of those array entries with a NULL
+> pointer. We want to ensure that the array is refilled completely in this
+> case.
+> 
 
-I'm not arguing for the validity of this particular patch, just saying
-that something like this could be valid.  And as explained in my other
-reply there's actually a real problem out there waiting for a
-solution.
+I did some researching, it seems you requested that in [1]?
+It seems the 'holes are always at the start' for the case in that
+discussion too, I am not sure if the case is referring to the caller
+in net/sunrpc/svc_xprt.c? If yes, it seems caller can do a better
+job of bulk allocating pages into a whole array sequentially without
+checking NULL elements first before doing the page bulk allocation
+as something below:
 
-Thanks,
-Miklos
++++ b/net/sunrpc/svc_xprt.c
+@@ -663,9 +663,10 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
+                pages = RPCSVC_MAXPAGES;
+        }
+
+-       for (filled = 0; filled < pages; filled = ret) {
+-               ret = alloc_pages_bulk(GFP_KERNEL, pages, rqstp->rq_pages);
+-               if (ret > filled)
++       for (filled = 0; filled < pages; filled += ret) {
++               ret = alloc_pages_bulk(GFP_KERNEL, pages - filled,
++                                      rqstp->rq_pages + filled);
++               if (ret)
+                        /* Made progress, don't sleep yet */
+                        continue;
+
+@@ -674,7 +675,7 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
+                        set_current_state(TASK_RUNNING);
+                        return false;
+                }
+-               trace_svc_alloc_arg_err(pages, ret);
++               trace_svc_alloc_arg_err(pages, filled);
+                memalloc_retry_wait(GFP_KERNEL);
+        }
+        rqstp->rq_page_end = &rqstp->rq_pages[pages];
 
 
->
-> FInally, given that the VFS can only do best-effort invalidation
-> and won't provide FUSE (or any other filesystem) with any cache
-> invalidation guarantees outside of specific mount and unmount
-> contexts, I'm not convinced that this is actually worth anything...
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+1. https://lkml.iu.edu/hypermail/linux/kernel/2103.2/09060.html
 
