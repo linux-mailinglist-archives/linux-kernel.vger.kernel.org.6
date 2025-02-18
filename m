@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-520570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52479A3ABA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F82A3AB97
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF9E3B1E2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CF03AAD54
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5C11D86D6;
-	Tue, 18 Feb 2025 22:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFF51DDA39;
+	Tue, 18 Feb 2025 22:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Y7AGmSlW"
-Received: from 001.mia.mailroute.net (001.mia.mailroute.net [199.89.3.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H7nwf3Uj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6961828629B;
-	Tue, 18 Feb 2025 22:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707C51D90A9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739917471; cv=none; b=aYHt5sUdqGzkMwMbevG67vKfP+GZgrUHu3bvjwDttADS3F/eP6qguzONgG+egLcI4AVettq2p2OEysjoJk1r3j4/6skTBlVydRT/06O9JF+3ScPUGtDC0KsOwm3BJhYQEdTGIjDBLzfIVgimNnLvLNyvAgUwo1nBDhs7aCT0jxM=
+	t=1739917353; cv=none; b=Ub/5zzh7tTFNa4xWUmsl0GTu2pK9EC8Uh8KtpVOWAf+HKuoW42QboxgSG71ZfAxonHd1HvBYRsY69Wn/0uwbXSDhzulcq7lJ63GmbpUhWwTCVXR14Q5IWNU2ZudhvfUVVcECl3JYjbHEbvm0vSP6aKn1u2aWJtuxrBv9VU57UKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739917471; c=relaxed/simple;
-	bh=kCmoXvGtdX3xHMk0kwjR6YvFtUveRkTB815tpRMtgh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uD+01zke7IaNkwlmoih6f/EdEKtEfcZ8U0Ka24EyDSbPfQivHPR39U+SOClyfUoK1lyK9DZw0a6Z5fxNDeqK0KWnoOwxZCqP61R2thxt/atcQiS3TukWkka/N4YS06ToSR9mULPEPQHcW+PrSq2+/C7y12DphbjJLjZUkIn2lEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Y7AGmSlW; arc=none smtp.client-ip=199.89.3.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 001.mia.mailroute.net (Postfix) with ESMTP id 4YyDXV2skrz1Xb877;
-	Tue, 18 Feb 2025 22:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1739917321; x=1742509322; bh=92vphjxGRpPWF2H9SmmPDtnz
-	qLQ6gEb/VnixK6UxtKA=; b=Y7AGmSlWBV+nVckc93MaUSUv0WI2aieQ3NCSG4eJ
-	/QhqBHYtcS0MyoAVVAvC47nka+evFaz+R9Wq2C6rkyipXZIULk1j9OJo6PrNO+NL
-	/c6gnXAXQRNILRzCY3xAVns3eoUXqyo682yPgefivVBaQzI197B8q+wfeaus2wlZ
-	qwtXEsa89Qo0Zm3+9mmvLZC0Az3ct/V2hkQP74o4qv1VS+9JSwY0XH/w3wOO/0bn
-	ioynKAZfSgw3ZYdluSAuGmOAWSlajuSu2ArOwWk2E6ZfMuStL1OA+hPxKPukjMGE
-	3hfYpBeQaufZZJOIYTjVR4iY67IzjgwGvCpSmQc9Ue247w==
-X-Virus-Scanned: by MailRoute
-Received: from 001.mia.mailroute.net ([127.0.0.1])
- by localhost (001.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 3K0IWF3JI-4B; Tue, 18 Feb 2025 22:22:01 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
+	s=arc-20240116; t=1739917353; c=relaxed/simple;
+	bh=MZi0G595/r9xUXjZTCGwzF11A8teSxnnD1Og3r0T5v8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=raXeI6W/CqaKXTAFY2iH3gNODJqgIq0l1AZ/M4IAsLOZuPO2VKSNhd8LGjEPWNbsofNL+hfeFtjIIAYPhtmYy8mTPHe4qYXVJfrQz3jZCcGhqDRNQkFD1GqyUcyedS7uYRJGky/plKioETFbPk1lrIDGGPcpas4Xfb05Y8CZ9/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H7nwf3Uj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739917350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=efAXFa+L6vXYh488YwyV1z4UrGp5zEEawYWAKbu8b9w=;
+	b=H7nwf3Uj1PEfII/uvrbQnAeQm/xWR7tUJxQqpWMKDy6lLZdiCrHBiIrTAiHyWRiOTOs3vO
+	CkkW0t9Ddk6Q55KaVYTT/rT2+S69DSB5QwdMSyKEVYLp6PlkI2jGN3T6h2iWLhITTqDumx
+	nx3D1jQ0tjF5ORLPGPWruRb6i2WJMk0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-PBxebS9QNbq5q6NhHJoBKQ-1; Tue,
+ 18 Feb 2025 17:22:26 -0500
+X-MC-Unique: PBxebS9QNbq5q6NhHJoBKQ-1
+X-Mimecast-MFC-AGG-ID: PBxebS9QNbq5q6NhHJoBKQ_1739917345
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 001.mia.mailroute.net (Postfix) with ESMTPSA id 4YyDXM4Dqfz1XY6MG;
-	Tue, 18 Feb 2025 22:21:54 +0000 (UTC)
-Message-ID: <6c3d81f0-aee5-4619-82c4-3ce72bdce317@acm.org>
-Date: Tue, 18 Feb 2025 14:21:52 -0800
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D8476180087D;
+	Tue, 18 Feb 2025 22:22:24 +0000 (UTC)
+Received: from omen.home.shazbot.org (unknown [10.22.88.77])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C482300019F;
+	Tue, 18 Feb 2025 22:22:15 +0000 (UTC)
+From: Alex Williamson <alex.williamson@redhat.com>
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	peterx@redhat.com,
+	mitchell.augustin@canonical.com,
+	clg@redhat.com,
+	jgg@nvidia.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	david@redhat.com,
+	willy@infradead.org
+Subject: [PATCH v2 0/6] vfio: Improve DMA mapping performance for huge pfnmaps
+Date: Tue, 18 Feb 2025 15:22:00 -0700
+Message-ID: <20250218222209.1382449-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: set bi_vcnt when cloning bio
-To: John Garry <john.g.garry@oracle.com>,
- Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Oliver Mangold <oliver.mangold@pm.me>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250215-clone-bi_vcnt-v1-1-5d00c95fd53a@kernel.org>
- <KP4HxjAbrINQTT05XxqLFD7bPj5ONsT3hTQJYUyXtoHBYc7-xFNDZUN3R8pWT-Cd1Q5fguKy97Oy8UJv5Nj1Cw==@protonmail.internalid>
- <f4f4fff4-5055-47f7-9f24-6b1780920f4d@oracle.com> <87r03vfpkm.fsf@kernel.org>
- <464bc3f5-aef2-4e6b-b7cb-035077d1e3f4@oracle.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <464bc3f5-aef2-4e6b-b7cb-035077d1e3f4@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 2/18/25 9:12 AM, John Garry wrote:
-> On 18/02/2025 11:40, Andreas Hindborg wrote:
->> But I am genuinely curious if there is a reason for not setting
->> `bi_vcnt` during a clone.
-> 
-> I think that it came from commit 59d276fe0 (with the addition of 
-> bio_clone_fast()), where we assume that the cloned bio is not having the 
-> bio_vec touched and so does not need to know bi_vcnt (or bi_max_vecs). 
-> And it is inefficient to needlessly set bi_vcnt then.
+v2:
+ - Rewrapped comment block in 3/6
+ - Added 4/6 to use consistent types (Jason)
+ - Renamed s/pgmask/addr_mask/ (David)
+ - Updated 6/6 with proposed epfn algorithm (Jason)
+ - Applied and retained sign-offs for all but 6/6 where the epfn
+   calculation changed
 
-Hmm ... I prefer paying the very small performance hit caused by copying
-bi_vcnt rather than having to deal with the inconsistency caused by not
-copying that data structure member.
+v1: https://lore.kernel.org/all/20250205231728.2527186-1-alex.williamson@redhat.com/
 
-Thanks,
+As GPU BAR sizes increase, the overhead of DMA mapping pfnmap ranges has
+become a significant overhead for VMs making use of device assignment.
+Not only does each mapping require upwards of a few seconds, but BARs
+are mapped in and out of the VM address space multiple times during
+guest boot.  Also factor in that multi-GPU configurations are
+increasingly commonplace and BAR sizes are continuing to increase.
+Configurations today can already be delayed minutes during guest boot.
 
-Bart.
+We've taken steps to make Linux a better guest by batching PCI BAR
+sizing operations[1], but it only provides and incremental improvement.
+
+This series attempts to fully address the issue by leveraging the huge
+pfnmap support added in v6.12.  When we insert pfnmaps using pud and pmd
+mappings, we can later take advantage of the knowledge of the mapping
+level page mask to iterate on the relevant mapping stride.  In the
+commonly achieved optimal case, this results in a reduction of pfn
+lookups by a factor of 256k.  For a local test system, an overhead of
+~1s for DMA mapping a 32GB PCI BAR is reduced to sub-millisecond (8M
+page sized operations reduced to 32 pud sized operations).
+
+Please review, test, and provide feedback.  I hope that mm folks can
+ack the trivial follow_pfnmap_args update to provide the mapping level
+page mask.  Naming is hard, so any preference other than pgmask is
+welcome.  Thanks,
+
+Alex
+
+[1]https://lore.kernel.org/all/20250120182202.1878581-1-alex.williamson@redhat.com/
+
+
+Alex Williamson (6):
+  vfio/type1: Catch zero from pin_user_pages_remote()
+  vfio/type1: Convert all vaddr_get_pfns() callers to use vfio_batch
+  vfio/type1: Use vfio_batch for vaddr_get_pfns()
+  vfio/type1: Use consistent types for page counts
+  mm: Provide address mask in struct follow_pfnmap_args
+  vfio/type1: Use mapping page mask for pfnmaps
+
+ drivers/vfio/vfio_iommu_type1.c | 123 ++++++++++++++++++++------------
+ include/linux/mm.h              |   2 +
+ mm/memory.c                     |   1 +
+ 3 files changed, 80 insertions(+), 46 deletions(-)
+
+-- 
+2.48.1
+
 
