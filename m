@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-520483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7599A3AA55
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:02:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C39A3AA68
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A45B170D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417A63ADECE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788D81DE3AA;
-	Tue, 18 Feb 2025 20:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1032862B3;
+	Tue, 18 Feb 2025 20:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A44rg6jA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="RGZ+lDda"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF191DDC0F;
-	Tue, 18 Feb 2025 20:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC8D2862B4;
+	Tue, 18 Feb 2025 20:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739912118; cv=none; b=liriQnumTYvhDg48YNm3tDLp6ZV2mIl70zxmy7qUipBoZ2VKGJhvpuRLUNtRvPUaT+09BfrgiZM38Aeq/qdmlJL6GvW3EZCAN4ZUgE2YvCMQaD6SrKDs5WX7f58M278FNnvp0SyAN02hNP+XJHwx+ym64AanCodEKrXbYAVZpHA=
+	t=1739911964; cv=none; b=bA7WKtHMCjq1LkTljYn0VnwqRRakl9ESv9yZi0KQUsJAOb8XOpHOUrzhRbdONuaXelFI22eJBersJbP4GIeml11SG6xSIwNnw/EGuHFMb98Mx57eLV7mNGbsjV0VK8McxHniGbOavnIluynE44Cqq1naxiM8qD37162IToMfBEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739912118; c=relaxed/simple;
-	bh=B3FIt860XOzRzSLwGAyU0H8nrJF+jVL8fCQPsnOwnsI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=md1XlhhICUTmwW/Cu1Uz+8KI24vD/W2/2X9Au3TAA4DinUlTygLnEZ89TILQ+rvSjGo6D6QfkcMQepACSxTF5wnKp5rDg4ceInYFrDvwtSqaUKGU5XW0NA+bafpxuyEmFtE8d2rEXFs9+12PV1UcwMBRrJc30hcNVAzsvh40d5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A44rg6jA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739912114;
-	bh=B3FIt860XOzRzSLwGAyU0H8nrJF+jVL8fCQPsnOwnsI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A44rg6jAA9mDbtSrYZ2BdQ6DT8sWsP5ts8XMj5S2SSD7XQc6Gcl6pnrHcLpx0sevy
-	 DGzA8v76GNYYMgRtiQtg/TKTDF2boxrCe4/ONmeu2yE1kYiiI6FaOQByVd/Zvy/z0T
-	 YojFlA9QxEqmtGLvRKzryT55VTMRHu4Ke5HcN+MCQrswia5lVBzG4kzese83E4ztcL
-	 +xf2Pxq3o8MTi44NZ1e3dWC0chFlKr21zBFvGOJdVwUBmIdHZkxJH8CcTzR2KIf2+m
-	 AurK+ZzRIc0KnQN7pKL1BYwHE/CJMmrO7PX0cWy1mpEL8K3snvrOvJcmyS4q752eIB
-	 ISmu+A2WC4WrA==
-Received: from [192.168.0.47] (unknown [177.33.139.78])
+	s=arc-20240116; t=1739911964; c=relaxed/simple;
+	bh=8jNMU8ip6rBeSpqlISiaPJWQQi8raU32gK6jMCIpWKM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mOzZE91ff0fL7yzajQXFyNNt32ylrN5L0hi9bghGGwUwMKjDweh1Wp4XY629p4/SIGuEnpQKYnyVCbq53D729Iyh79q4ZnHyh9jOGZCY8t2zoMosmg1aDucKIY99lRcLtnTQzN5ZNYmV6+aP8SRPK8phjvSaWbgHZ7JNc84FC1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=RGZ+lDda; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 41147411AF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1739911962; bh=8jNMU8ip6rBeSpqlISiaPJWQQi8raU32gK6jMCIpWKM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=RGZ+lDdax8qjIOiB5ZacnAgWnZTgsFpylEbMW51u+P/MIZ4iyhn77FaRGI2dDgZ/7
+	 PSdVV5Ab40gE18mE/GC17G4zDapRXyDnjvtMyLX/X1z8KjuhPso6bXPWo8AreECp1G
+	 98znlH/rTluOQYNBlOJ3zgZgHPpYqLWuZudgxDv3yJkDcFhOdWhqo1YhFEhOHIeY4A
+	 VAIzOxV+UDEcDyE8DFXCRzajUWTxsxZbIOIWZNKLrJ8usY8w0570cRguzaHptPlgAX
+	 T0ovBK0bp9qEs6SV4ZG5qi7exbun4747718D6XGCFauEWi9SsploIuqSqI6XFFY4zS
+	 3PACaipur3xJQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D98F917E14E7;
-	Tue, 18 Feb 2025 21:55:10 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 18 Feb 2025 17:52:19 -0300
-Subject: [PATCH 6/6] arm64: dts: mediatek: mt8390-genio-common: Add routes
- for DMIC
+	by ms.lwn.net (Postfix) with ESMTPSA id 41147411AF;
+	Tue, 18 Feb 2025 20:52:42 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Bagas Sanjaya
+ <bagasdotme@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Andreas Noever <andreas.noever@gmail.com>, Avadhut
+ Naik <avadhut.naik@amd.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Eric Dumazet <edumazet@google.com>, Hu Haowen
+ <2023002089@link.tyut.edu.cn>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Jamet <michael.jamet@intel.com>, Mika Westerberg
+ <mika.westerberg@linux.intel.com>, Paolo Abeni <pabeni@redhat.com>, Sean
+ Young <sean@mess.org>, Yanteng Si <si.yanteng@linux.dev>, Yehezkel Bernat
+ <YehezkelShB@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Michael
+ Ellerman <mpe@ellerman.id.au>, Shrikanth Hegde <sshegde@linux.ibm.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>, James Morse <james.morse@arm.com>,
+ "Nysal Jan K.A" <nysal@linux.ibm.com>, Tom Lendacky
+ <thomas.lendacky@amd.com>, Sourabh Jain <sourabhjain@linux.ibm.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Barrat
+ <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+ workflows@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 0/9] Extend automarkup support for ABI symbols
+In-Reply-To: <20250212135808.58d2f032@foz.lan>
+References: <cover.1739254867.git.mchehab+huawei@kernel.org>
+ <Z6yFG_NntQfkwYli@archie.me> <20250212135808.58d2f032@foz.lan>
+Date: Tue, 18 Feb 2025 13:52:41 -0700
+Message-ID: <871pvvnffq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250218-genio700-dmic-v1-6-6bc653da60f7@collabora.com>
-References: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com>
-In-Reply-To: <20250218-genio700-dmic-v1-0-6bc653da60f7@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- parkeryang <Parker.Yang@mediatek.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain
 
-Add necessary routes for the onboard dual DMIC present on the Genio
-700/510 EVK. The dmic is supplied by micbias0 and micbias2, and inputs
-into the MT8188 DMIC DAI.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Co-developed-by: parkeryang <Parker.Yang@mediatek.com>
-Signed-off-by: parkeryang <Parker.Yang@mediatek.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+>> WARNING: Documentation/ABI/testing/sysfs-class-cxl not found
+>
+> I need to double-check verify this one, as it didn't appear on
+> my tests. Are you getting it against docs-next or linux-next?
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index a37cf102a6e928440cc88e7e8fe0225fc28ec962..efdeca88b8c4e58f0c17825156276babf19af145 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -959,7 +959,11 @@ &sound {
- 	pinctrl-0 = <&audio_default_pins>;
- 	audio-routing =
- 		"Headphone", "Headphone L",
--		"Headphone", "Headphone R";
-+		"Headphone", "Headphone R",
-+		"DMIC_INPUT", "AP DMIC",
-+		"AP DMIC", "AUDGLB",
-+		"AP DMIC", "MIC_BIAS_0",
-+		"AP DMIC", "MIC_BIAS_2";
- 	mediatek,adsp = <&adsp>;
- 	status = "okay";
- 
+I get this one too, FWIW.
 
--- 
-2.48.1
+I've gone ahead and applied the series, but this would be nice to get
+cleaned up.
 
+Thanks,
+
+jon
 
