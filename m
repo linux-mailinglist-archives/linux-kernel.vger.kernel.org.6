@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-519172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD7DA398BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:26:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1607A398C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF3A16690A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA45188FB60
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4EF2343C2;
-	Tue, 18 Feb 2025 10:25:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B3D233157;
-	Tue, 18 Feb 2025 10:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E825C23496A;
+	Tue, 18 Feb 2025 10:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8lrmkG8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B38233157;
+	Tue, 18 Feb 2025 10:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874301; cv=none; b=Fk24vHE96QZvnwKf8AttFoRi7zDl3v6qOb9i3mp+dktXzm0Qfq405cEnN2Y4YB6T3OgJXv/lalciLlXOqu2tZ1uA+5qiZHEBRk+a5CK0KS7G6HSyBFJpK/2/UjX/W6sR43cvo2qJE8bfSspEhLRihyxlLl80GL6ZO6HR6qohFRI=
+	t=1739874367; cv=none; b=DDX90Aq6zc/RYA+ceDTtt8fuJ6HkwarRufyg/32hf2RcY0JPlPnib2SD/tue+Pm+a961+hV0YheaKjpcWux3g1rkoG+bTEwu3yAyhKh26du4q43ZigwRRcKW3fcCMehtvu0u9jilSQ6RO//hLwEC+HPAK+KPbPALuB3KYMtBs8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874301; c=relaxed/simple;
-	bh=m8OhKUntbc2SaOGNpmwf8cIjYThX9QnKGC7Wo5pVxvk=;
+	s=arc-20240116; t=1739874367; c=relaxed/simple;
+	bh=JV3Jjgs2g98a9pyFx/aQlL5hzStoNO6JYJtzz5JcTmo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIyX4cfA1dLGp2bM/m72jyDKahFkAbTOoeJbSC0F8j7ZstAVw+OzABJRzmGi5/B4qbrCnSSzG/qnIY8hv3bqDQDOIg6rPJMlcEsEOZ3EukXvCG9jGHOXhHwKFkryFB2IMkAg1mClw4u+jXeBa3z9b8/kb/t8SOaNyg/BwLflp1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8451D13D5;
-	Tue, 18 Feb 2025 02:25:17 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 811B93F6A8;
-	Tue, 18 Feb 2025 02:24:55 -0800 (PST)
-Date: Tue, 18 Feb 2025 10:24:52 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, <arm-scmi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<imx@lists.linux.dev>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z7Rf9GPdO2atP89Z@bogus>
-References: <20241225-scmi-fwdevlink-v1-0-e9a3a5341362@nxp.com>
- <20241225-scmi-fwdevlink-v1-1-e9a3a5341362@nxp.com>
- <Z6uFMW94QNpFxQLK@bogus>
- <20250212070120.GD15796@localhost.localdomain>
- <Z6x8cNyDt8rJ73_B@bogus>
- <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
- <Z65U2SMwSiOFYC0v@pluto>
- <20250218010949.GB22580@nxa18884-linux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvKyAhzmf3VW7WjS6vSknAF+Bont2+PzKZ+Smj1z6DQcdbQnFhGtgshzDI+HCkCf+fnKjJwUJqd5izXmib/9uDVncsuJ2EmkIzQK6WyAUlAa7utpGJtL0XbkjYRDQ9nP7pHpJ4im9nOhxQpNnthI3CBgK/2UXcRJrSaWB07uB40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8lrmkG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB00DC4CEE2;
+	Tue, 18 Feb 2025 10:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739874365;
+	bh=JV3Jjgs2g98a9pyFx/aQlL5hzStoNO6JYJtzz5JcTmo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f8lrmkG86ZMXNRL66jiYnjf2vCvfSoIkuBcmywXPGYoRahN6L2RJWaa+1wtp4mrSz
+	 iWEtBIggtxjIT7ZKSahBnLc4m7CDwA//2oPUlSqpsBc1c9zDZGe35894jrmm82t37E
+	 qOgKwWGebn7GIxWqIxaXoCz9GJF2JmSxoXG+qowBiWw/pfpMIm0HTwP0efe9jw3fQ5
+	 J2PoA5MYsi0Qgn6q9ambR/40p1hnZIwahDweefxG2tm+xs7FJnsSbh0XObGQfZZeF8
+	 oMjQB5d2UR37Fdg7mj7vDfGvJZFJtOIOtv7fq5IexDvWLCejBFcg6sJYFx9/wMYHfo
+	 xXbNkq/8m6IRg==
+Date: Tue, 18 Feb 2025 11:26:01 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z7RgOd_57wcSUyB0@pollux>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,40 +61,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218010949.GB22580@nxa18884-linux>
+In-Reply-To: <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
 
-On Tue, Feb 18, 2025 at 09:09:49AM +0800, Peng Fan wrote:
-> A potential solution is not using reg in the protocol nodes. Define nodes
-> as below:
-> devperf {
-> 	compatible ="arm,scmi-devperf";
-> }
+On Tue, Feb 18, 2025 at 11:46:26AM +1000, Dave Airlie wrote:
+> > 1. How to avoid unnecessary calls to try_access().
+> >
+> > This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argument. I
+> > think we can just call try_access() once and then propage the guard through the
+> > callchain, where necessary.
 > 
-> cpuperf {
-> 	compatible ="arm,scmi-cpuperf";
-> }
-> 
-> pinctrl {
-> 	compatible ="arm,scmi-pinctrl";
-> }
-> 
-> The reg is coded in driver.
-> 
-> But the upper requires restruction of scmi framework.
-> 
-> Put the above away, could we first purse a simple way first to address
-> the current bug in kernel? Just as I prototyped here:
-> https://github.com/MrVan/linux/tree/b4/scmi-fwdevlink-v2
-> 
+> Nope, you can't do that, RevocableGuard holds a lock and things
+> explode badly in lockdep if you do.
 
-Good luck getting these bindings merged. I don't like it as it is pushing
-software policy or issues into to the devicetree. What we have as SCMI
-binding is more than required for a firmware interface IMO. So, you are
-on your own to get these bindings approved as I am not on board with
-these but if you convince DT maintainers, I will have a look at it then
-to see if we can make that work really.
+Yes, try_access() marks the begin of an RCU read side critical section. Hence,
+sections holding the guard should be kept as short as possible.
 
--- 
-Regards,
-Sudeep
+What I meant is that for a series of I/O operations we can still pass the guard
+to subsequent functions doing the actual I/O ops.
+
+More generally, I also thought about whether we should also provide an SRCU
+variant of Revocable and hence Devres. Maybe we even want to replace it with
+SRCU entirely to ensure that drivers can't stall the RCU grace period for too
+long by accident.
 
