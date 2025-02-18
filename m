@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-519909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E063FA3A370
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:01:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98437A3A380
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751651887DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA9A3AC7E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B3C26FA4B;
-	Tue, 18 Feb 2025 17:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267CD26FA4B;
+	Tue, 18 Feb 2025 17:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMdQ1jgl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0rViv0s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336EE23FC68;
-	Tue, 18 Feb 2025 17:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7592EAE6;
+	Tue, 18 Feb 2025 17:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739898060; cv=none; b=T77dJGywbCF3wgpsrlnq0KRgweS5R5dALZS4O2kW0AnkqJewUCeOxfGPi1i3X5doGU3dpn+9Q1FDxqzhFUqcwSYeR5G/O7OL39s6Uu/tRZMlgPrNWr5RhSSyiXVIFEzGt9awO0CTPflqco/T4qPpYi1KczH7berUc3FXSznqVh4=
+	t=1739898158; cv=none; b=e7IymiN1IkGWXFtpRryNvxSk3Nc45tU/ZoWWbkYFW+g32KsRzW2GdlkhITsqQh8U+ifwrTLUcfdKTVFz1hmbHy7ARZBeBt4J5Geqyjbowh1P9ywEgf1pCSTauCwb0+QKgeXYfhTqrOfffEJwzjCGgxFZfjbeRsHrFynejPj8UE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739898060; c=relaxed/simple;
-	bh=wxVWlXKd4zOjpRPoDQOUTBz16/v4noEajLoaLCp3H3s=;
+	s=arc-20240116; t=1739898158; c=relaxed/simple;
+	bh=hxZMRmhOej47toRK0ik8X/JMRjiOAT/0BXqJA9WLLpI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrKMGZD4iryJ/aX5Ils/0aX88Rj2NpBkrdw360F2V6lylo2GaO+n89T0ZLwWh3lVm3jGhU74AjClzsr6jmGIrzO2BfB+8dzv7NPmvmew76car9zrnCvtExYnPHP2unQ+Nxfm5aZoSLVKyIpGw8UE4JnR+ccf/Fd1rYg4iw5TojE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMdQ1jgl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0877C4CEE4;
-	Tue, 18 Feb 2025 17:00:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/trUrBISxvmihN5/23WUoorEArDR/LQYPP56sXWXHGEBsaAe2n8y2CVEnF71UdvW8ybdoxaTL7xqBT4x1aWyl58OI/OM3DDvJX+a+v3T4b1palv/GJvtMpT8vAm5cbgyuxEZ77BVvMkGP258xSZ9858r7Cua4wICxHJodesRCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0rViv0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0710C4CEE2;
+	Tue, 18 Feb 2025 17:02:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739898059;
-	bh=wxVWlXKd4zOjpRPoDQOUTBz16/v4noEajLoaLCp3H3s=;
+	s=k20201202; t=1739898158;
+	bh=hxZMRmhOej47toRK0ik8X/JMRjiOAT/0BXqJA9WLLpI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bMdQ1jglKvPsgXNlQIywqNhdxIcZB6r1xwgdtlGlNXvWeYmhE8GGQJ8pW5C3oeOwD
-	 M0JqZl4PU72vbjh8mr4pqQswaGDikgrfMTCBuFHoGEuohVQYbvcNxDqjkO34YL0J4p
-	 B3O5lWK2JuyxGt1yUcSjEw/CrVBrAvcU7Jl+xu3INQ+OHQ1e/8zmIf1h71PGFIrTjn
-	 EJv/TCZcDhic9mqBdCPA6lQ7m81f3flZ0nJ2c01guEIhk0ITbX4C7RC0v6b5Pct3W4
-	 5Dk2oF4EvI9YgDzK6VbVjeuYICPjWCiCv0cwQNvTrF76PAVfhVsIsyHlckB3c6xVnf
-	 pWRcjjEFDtcOg==
-Date: Tue, 18 Feb 2025 17:00:54 +0000
+	b=V0rViv0sVQMs1kcS09YPvJGHeRgaoq1Jl9rlYGzR4H9ea6gvTt6GDQSQFfi39D5MW
+	 Lx0wkdSCEG6bIPhtC94JRqFKxcR9OBZYlYA+INqx3FWi7nUQh5Y/aBXq+qiEQI8EyK
+	 sgbC8X2HWlAbIc9fuXT0ZQxNxgZ72DWakw6ivVnB1ou4fdsrCeyCZ4yfUuuaCeWVwa
+	 wWyeva0LHupfTEwL4WJKQ17ZCeLMaJObNQO+uNdz0eByJHKyYmltmKp6BsTPAPUv83
+	 i+OgfxTIjVRcgGpIVjTZO2yfanb7r58xBadVfuw1off27um1zAjgVgWHynyitiYJap
+	 Hs4iFjifok+cw==
+Date: Tue, 18 Feb 2025 17:02:32 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Xukai Wang <kingxukai@zohomail.com>
+To: Xukai Wang <kingxukai@zohomail.com>, Stephen Boyd <sboyd@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -53,12 +53,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v4 3/3] riscv: dts: canaan: Add clock initial support for
- K230
-Message-ID: <20250218-status-friend-51fb039ab97e@spud>
+	Troy Mitchell <TroyMitchell988@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 0/3] riscv: canaan: Add support for K230-Canmv clock
+Message-ID: <20250218-poplar-iron-c894fe8deca6@spud>
 References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
- <20250217-b4-k230-clk-v4-3-5a95a3458691@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,103 +65,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wyBkyPjl9mwD8eXq"
+	protocol="application/pgp-signature"; boundary="kbLHPbgA0NhUTES7"
 Content-Disposition: inline
-In-Reply-To: <20250217-b4-k230-clk-v4-3-5a95a3458691@zohomail.com>
+In-Reply-To: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
 
 
---wyBkyPjl9mwD8eXq
+--kbLHPbgA0NhUTES7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 10:45:18PM +0800, Xukai Wang wrote:
-> This patch provides basic support for the K230 clock, which does not
-> cover all clocks.
+Stephen,
+
+Is the driver in this series satisfactory to you? If it is, can I send
+you a PR containing it and the binding so that I can apply the final
+patch in the series (and merge the basic support for the k230 soc)?
+
+Cheers,
+Conor.
+
+On Mon, Feb 17, 2025 at 10:45:15PM +0800, Xukai Wang wrote:
+> This patch series adds clock controller support for the Canaan Kendryte
+> K230 SoC. The K230 SoC includes an external 24MHz OSC and 4 internal
+> PLLs, with the controller managing these sources and their derived clocks.
 >=20
-> The clock tree of the K230 SoC consists of OSC24M,
-> PLLs and sysclk.
+> The clock tree and hardware-specific definition can be found in the
+> vendor's DTS [1],
+> and this series is based on the K230 initial series [2].
+>=20
+> Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arc=
+h/riscv/boot/dts/kendryte/clock_provider.dtsi [1]
+> Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8=
+229DAA58E08@qq.com/ [2]
 >=20
 > Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
 > Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
 > Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-> ---
->  arch/riscv/boot/dts/canaan/k230.dtsi | 32 ++++++++++++++++++++++++++++++=
-++
->  1 file changed, 32 insertions(+)
 >=20
-> diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/c=
-anaan/k230.dtsi
-> index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..e50ba03c2c21597e5f7d04a65=
-2db08f84101cbfb 100644
-> --- a/arch/riscv/boot/dts/canaan/k230.dtsi
-> +++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-> @@ -3,6 +3,7 @@
->   * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
->   */
-> =20
-> +#include <dt-bindings/clock/canaan,k230-clk.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> =20
->  /dts-v1/;
-> @@ -65,6 +66,13 @@ apb_clk: apb-clk-clock {
->  		#clock-cells =3D <0>;
->  	};
-> =20
-> +	osc24m: clock-24m {
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <24000000>;
-> +		clock-output-names =3D "osc24m";
-> +		#clock-cells =3D <0>;
-> +	};
-> +
->  	soc {
->  		compatible =3D "simple-bus";
->  		interrupt-parent =3D <&plic>;
-> @@ -138,5 +146,29 @@ uart4: serial@91404000 {
->  			reg-shift =3D <2>;
->  			status =3D "disabled";
->  		};
-> +
-> +		sysclk: clock-controller@91102000 {
-> +			compatible =3D "canaan,k230-clk";
-> +			reg =3D <0x0 0x91102000 0x0 0x1000>,
-> +			      <0x0 0x91100000 0x0 0x1000>;
-> +			clocks =3D <&osc24m>;
-> +			clock-output-names =3D "CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4",
-> +					     "CPU0_PCLK", "PMU_PCLK", "HS_HCLK_HIGH_SRC",
-> +					     "HS_HCLK_HIGH_GATE", "HS_HCLK_SRC",
-> +					     "HS_SD0_HS_AHB_GAT", "HS_SD1_HS_AHB_GAT",
-> +					     "HS_SSI1_HS_AHB_GA", "HS_SSI2_HS_AHB_GA",
-> +					     "HS_USB0_HS_AHB_GA", "HS_USB1_HS_AHB_GA",
-> +					     "HS_SSI0_AXI", "HS_SSI1", "HS_SSI2",
-> +					     "HS_QSPI_AXI_SRC", "HS_SSI1_ACLK_GATE",
-> +					     "HS_SSI2_ACLK_GATE", "HS_SD_CARD_SRC",
-> +					     "HS_SD0_CARD_TX", "HS_SD1_CARD_TX",
-> +					     "HS_SD_AXI_SRC", "HS_SD0_AXI_GATE",
-> +					     "HS_SD1_AXI_GATE", "HS_SD0_BASE_GATE",
-> +					     "HS_SD1_BASE_GATE", "HS_OSPI_SRC",
-> +					     "HS_USB_REF_51M", "HS_SD_TIMER_SRC",
-> +					     "HS_SD0_TIMER_GATE", "HS_SD1_TIMER_GATE",
-> +					     "HS_USB0_REFERENCE", "HS_USB1_REFERENCE";
-> +			#clock-cells =3D <1>;
-> +		};
+> ---
+> Changes in v4:
+> - Remove redundant onecell_get callback and add_provider function
+> for pll_divs.
+> - Modify the base-commit in cover letter.
+> - Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c791=
+24572@zohomail.com
+>=20
+> Changes in v3:
+> - Reorder the defination and declaration in drivers code.
+> - Reorder the properties in dts node.
+> - Replace global variable `k230_sysclk` with dynamic memory allocation.
+> - Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+> - Use dev_err_probe for error handling.
+> - Remove unused includes.
+> - Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2=
+ca52d@zohomail.com
+>=20
+> Changes in v2:
+> - Add items and description.
+> - Rename k230-clk.h to canaan,k230-clk.h
+> - Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917=
+e80ed@zohomail.com
+>=20
+> ---
+> Xukai Wang (3):
+>       dt-bindings: clock: Add bindings for Canaan K230 clock controller
+>       clk: canaan: Add clock driver for Canaan K230
+>       riscv: dts: canaan: Add clock initial support for K230
+>=20
+>  .../devicetree/bindings/clock/canaan,k230-clk.yaml |   43 +
+>  arch/riscv/boot/dts/canaan/k230.dtsi               |   32 +
+>  drivers/clk/Kconfig                                |    6 +
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/clk-k230.c                             | 1347 ++++++++++++++=
+++++++
+>  include/dt-bindings/clock/canaan,k230-clk.h        |   49 +
+>  6 files changed, 1478 insertions(+)
+> ---
+> base-commit: 7fdb24bbac37ce692346d60b89f5aa29844b8b88
+> change-id: 20241206-b4-k230-clk-925f33fed6c2
+>=20
+> Best regards,
+> --=20
+> Xukai Wang <kingxukai@zohomail.com>
+>=20
 
-Apologies for not commenting on it until now, but this patch seems like
-there's some hunks missing from it. I'd expect you to remove the dummy
-"apb-clk-clock" from the dts and replace it with a real one sourced from
-the newly added clock controller.
-
---wyBkyPjl9mwD8eXq
+--kbLHPbgA0NhUTES7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S8xgAKCRB4tDGHoIJi
-0hatAQCRO0T+IiRpcIn+PLRCtbTAxqFwW6t9fOFOpsJFJCLLowEAl60fTsjXKtv6
-qz34I22c5i04TjOJS443k9ADwTGz2wA=
-=6K8s
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S9KAAKCRB4tDGHoIJi
+0rI1AP9y8hypNtdPcY14Ojl+N98Ywv6/Uwj7IvHIC4k2+k80ZAD/RhGE8a8Zix3V
+2BB5hrI/mGOw51ydyOw7cdBuw6S8nAk=
+=hINT
 -----END PGP SIGNATURE-----
 
---wyBkyPjl9mwD8eXq--
+--kbLHPbgA0NhUTES7--
 
