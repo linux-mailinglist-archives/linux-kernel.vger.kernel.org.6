@@ -1,309 +1,228 @@
-Return-Path: <linux-kernel+bounces-519858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AFDA3A2DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:31:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F35CA3A2DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0441620C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5997D165375
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D68B26E65E;
-	Tue, 18 Feb 2025 16:29:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681BC26E64D;
-	Tue, 18 Feb 2025 16:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9B241CA9;
+	Tue, 18 Feb 2025 16:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XayWf85V"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A7A243387
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896188; cv=none; b=HTTGS49lsg0pspHKAlgtA6XqYY3Uz9LIh+tdGBipN9NxMYsAlmHhRZbyAw80tuDk99cBRIMQDiJbAEKSON+d4K2yp4RXqQgOoYFASCeyeyfdx6cC9MjaUb6mghXvs4O4Ok5Ump6FoQM1TSP6KOW95YzIfm+k8xhlitE1qy8yzFU=
+	t=1739896269; cv=none; b=E1kCUyTLgMUUctORIa1WpHzH4/7LrNBHVR0z7oUMlGbYMUyabkTyK5JOdxEQUCdaBwf+bWdtlQF13k2pK1moPS7HHoLu4fZoOUUC1MNyro7Wqsyo9zkN2ecyEk7GtdierLeZM8px/ZC0oLI2rF1M8rVC6QHIJnoLOSJFIBZMyeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896188; c=relaxed/simple;
-	bh=HWr81C6dpXi3EBfML/c9XIkCR8w1KpkEpuelxGb+R8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RCSqE3fYL5OnBTVjDOBv3OTFSoPmjUiIRf3h2qBoaMituAPbM5KRGhkeEwZ0hoaf53S7XxwcQnH3l/mlhQWmHzbkDlVwqodijzV1269fyXnu4fDdXRZwW2mMqbugtSvOS5johC/LH2eln+689qcr7obHxOUfW26jDPuZDxkGI2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AF2A16F3;
-	Tue, 18 Feb 2025 08:30:04 -0800 (PST)
-Received: from [10.1.27.186] (XHFQ2J9959.cambridge.arm.com [10.1.27.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEF253F59E;
-	Tue, 18 Feb 2025 08:29:39 -0800 (PST)
-Message-ID: <e8b4efe9-1c1e-4229-83a0-127319f52cc5@arm.com>
-Date: Tue, 18 Feb 2025 16:29:38 +0000
+	s=arc-20240116; t=1739896269; c=relaxed/simple;
+	bh=AgSMuhax1w6whyYc2kxg5rDY9Pznuy/Epu/NPsXVlq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBnc3lgcgz9XXQSD2XzqNHE2iJVF4yEONNlY0Ppm37TFaOMIIOf1VaftF/POi7x6Z2FV9PKDEriM28PGWYYR4FtbbSCNKo9Krc3RbuPZv4+qCloeAyDc3MgnUNQYn6BND/Ak68clB2x6qipNyQc6vFFAiHo98pvWJE9e232vRz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XayWf85V; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54622940ef7so2347105e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739896266; x=1740501066; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=btU0w+uNVFHY2e6nf/JYninIaoVDv7TVqnoTKzlZWZc=;
+        b=XayWf85Vz30Wf06EYnqPteeypPfCzj3OhFe08je6wBhg7knDlV4bCwce/Bv6a8UpXe
+         LI3X4ZkPExChYNt+xNzKDnsZUoqEljioqVW4XS3tenah0iur8zqss//My1EepQbcjlFk
+         fISPxalOeJB0GzH+iS2ghg0SSFcykabQ1KRMjwfON+8UhguSCbt6pO7pbPPuBxNSIUnB
+         rHlpB47+BMfJPkzLP6wxMqhsUxs3oXH86CsXp8gJo+riXVfVP2UTBuL+ZJ5EoGWVH3Ry
+         Mz+gMrdSjrXfTSz1Gy0/5SMYVQejOaPvOu9SK5Daq5WH2iCOcFyd2CHYRbiPdq6HjVOI
+         z+jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739896266; x=1740501066;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=btU0w+uNVFHY2e6nf/JYninIaoVDv7TVqnoTKzlZWZc=;
+        b=UpL+yOXFxX0lXvgA+2VKeqyqvkjTbfIfSgNQnBTfddv/XJvjWD/yfke4wWdyQgj57i
+         xtmV/Asn2GA5bcBh4PY0wHem24xqM0QpLC30pYWx/1mcZcBCSGAE+x72gcOgLnwobOz9
+         JigQfQh7fFqHbZiHVixFyixYzSDSo2/u6wpofK4Z0pwXEnzFcoPKYFRrxJdz8aVrz3j9
+         PY643Mr80zi3bCPdSaJkM2c1QoeHt3DKVj20OM/Iw07cAVTzcBGyR+4ok32s8hWbB41f
+         0bnwWwdOQavuzUB6bfm7t91bFPRqZJ/wCFdscTY5jecezMFd8cBt6Rw1QOufTTwZpXat
+         dMQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6KvstTFt5p7tjDnJwkESZD4A614LAcQp9WC77Qw0eiNsHpELL67QnjvmKXlo5fdG9BQa/NBPoXMIz0Z4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQPp6ZHgJBIi/9VKm8i1VRzLlHr845dWKta9/X1PrSilXQ1gk1
+	hsD+L+623EU++bTnlGwMAlQ2Yha0Ses04bk3byOqMR0x+8bKx/hS8cHLjXt/m4w=
+X-Gm-Gg: ASbGncuR3q3M3v4ouODo6ljYh82HIF29x8qBdpK/kDiMvV8ECv+spvf0feWVa+bYhn8
+	gfI6b2k59mBt/SNXo3ISEYPQDKrra6jZwlCSjxXrG5IJ4ZIYQvdxehuVoEQpKYBZHaXHZvUPyfH
+	1pHyhk6OB7HBiaFgw52NlstplfruG97AhfFRMYq+luY4waEPP9IFFKKINtwFXrmtQwkdzPs/lL6
+	Ova292N1Tz9XJd0oob0CbpLtZALW8KeGvAK9vhYzyyZAiLOCYU3E8xo76O95hrvqWgIqDSXI7BE
+	YZTLic8NfrCz9YMMAQxh+4tbHctEFWK7KkjOUVS87QF3JwMFS9jxui4MSwLsO2yYWHZoGI8=
+X-Google-Smtp-Source: AGHT+IEtC0aFiCVfXRyL9SzdaH9Q4MvJkCVZReT3BK5AY1Ni+JC9UVla9+Vl5hHTO/rCaSOKR4FQqA==
+X-Received: by 2002:a05:6512:130b:b0:545:e19:ba12 with SMTP id 2adb3069b0e04-5462ef20f0dmr90751e87.51.1739896265862;
+        Tue, 18 Feb 2025 08:31:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452fa00e6esm1360335e87.162.2025.02.18.08.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 08:31:04 -0800 (PST)
+Date: Tue, 18 Feb 2025 18:31:02 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/4] perf/dwc_pcie: Move common DWC struct definitions to
+ 'pcie-dwc.h'
+Message-ID: <4nnikepf7ay4ml3audn34gmq5jttjcfz3syfnxeowmjb4no2cj@lyawl4saa3sa>
+References: <20250218-pcie-qcom-ptm-v1-0-16d7e480d73e@linaro.org>
+ <20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 2/9] khugepaged: rename hpage_collapse_* to khugepaged_*
-Content-Language: en-GB
-To: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, willy@infradead.org,
- kirill.shutemov@linux.intel.com, david@redhat.com, aarcange@redhat.com,
- raquini@redhat.com, dev.jain@arm.com, sunnanyong@huawei.com,
- usamaarif642@gmail.com, audra@redhat.com, akpm@linux-foundation.org,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com, tiwai@suse.de
-References: <20250211003028.213461-1-npache@redhat.com>
- <20250211003028.213461-3-npache@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250211003028.213461-3-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-pcie-qcom-ptm-v1-1-16d7e480d73e@linaro.org>
 
-On 11/02/2025 00:30, Nico Pache wrote:
-> functions in khugepaged.c use a mix of hpage_collapse and khugepaged
-> as the function prefix.
+On Tue, Feb 18, 2025 at 08:06:40PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> rename all of them to khugepaged to keep things consistent and slightly
-> shorten the function names.
+> Since these are common to all Desginware PCIe IPs, move them to a new
+> header, 'pcie-dwc.h' so that other drivers could make use of them.
+
+Which drivers are going to use it? Please provide an explanation.
+
 > 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  mm/khugepaged.c | 52 ++++++++++++++++++++++++-------------------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
+>  MAINTAINERS                 |  1 +
+>  drivers/perf/dwc_pcie_pmu.c | 23 ++---------------------
+>  include/linux/pcie-dwc.h    | 34 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 37 insertions(+), 21 deletions(-)
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 46faee67378b..4c88d17250f4 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -402,14 +402,14 @@ void __init khugepaged_destroy(void)
->  	kmem_cache_destroy(mm_slot_cache);
->  }
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 896a307fa065..b4d09d52a750 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18123,6 +18123,7 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+>  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+>  F:	drivers/pci/controller/dwc/*designware*
+> +F:	include/linux/pcie-dwc.h
 >  
-> -static inline int hpage_collapse_test_exit(struct mm_struct *mm)
-> +static inline int khugepaged_test_exit(struct mm_struct *mm)
->  {
->  	return atomic_read(&mm->mm_users) == 0;
->  }
->  
-> -static inline int hpage_collapse_test_exit_or_disable(struct mm_struct *mm)
-> +static inline int khugepaged_test_exit_or_disable(struct mm_struct *mm)
->  {
-> -	return hpage_collapse_test_exit(mm) ||
-> +	return khugepaged_test_exit(mm) ||
->  	       test_bit(MMF_DISABLE_THP, &mm->flags);
->  }
->  
-> @@ -444,7 +444,7 @@ void __khugepaged_enter(struct mm_struct *mm)
->  	int wakeup;
->  
->  	/* __khugepaged_exit() must not run from under us */
-> -	VM_BUG_ON_MM(hpage_collapse_test_exit(mm), mm);
-> +	VM_BUG_ON_MM(khugepaged_test_exit(mm), mm);
->  	if (unlikely(test_and_set_bit(MMF_VM_HUGEPAGE, &mm->flags)))
->  		return;
->  
-> @@ -503,7 +503,7 @@ void __khugepaged_exit(struct mm_struct *mm)
->  	} else if (mm_slot) {
->  		/*
->  		 * This is required to serialize against
-> -		 * hpage_collapse_test_exit() (which is guaranteed to run
-> +		 * khugepaged_test_exit() (which is guaranteed to run
->  		 * under mmap sem read mode). Stop here (after we return all
->  		 * pagetables will be destroyed) until khugepaged has finished
->  		 * working on the pagetables under the mmap_lock.
-> @@ -606,7 +606,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  		folio = page_folio(page);
->  		VM_BUG_ON_FOLIO(!folio_test_anon(folio), folio);
->  
-> -		/* See hpage_collapse_scan_pmd(). */
-> +		/* See khugepaged_scan_pmd(). */
->  		if (folio_likely_mapped_shared(folio)) {
->  			++shared;
->  			if (cc->is_khugepaged &&
-> @@ -851,7 +851,7 @@ struct collapse_control khugepaged_collapse_control = {
->  	.is_khugepaged = true,
+>  PCI DRIVER FOR TI DRA7XX/J721E
+>  M:	Vignesh Raghavendra <vigneshr@ti.com>
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index cccecae9823f..05b37ea7cf16 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> +#include <linux/pcie-dwc.h>
+>  #include <linux/perf_event.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> @@ -99,26 +100,6 @@ struct dwc_pcie_dev_info {
+>  	struct list_head dev_node;
 >  };
 >  
-> -static bool hpage_collapse_scan_abort(int nid, struct collapse_control *cc)
-> +static bool khugepaged_scan_abort(int nid, struct collapse_control *cc)
+> -struct dwc_pcie_pmu_vsec_id {
+> -	u16 vendor_id;
+> -	u16 vsec_id;
+> -	u8 vsec_rev;
+> -};
+> -
+> -/*
+> - * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> - * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> - */
+> -static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
+> -	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{} /* terminator */
+> -};
+> -
+>  static ssize_t cpumask_show(struct device *dev,
+>  					 struct device_attribute *attr,
+>  					 char *buf)
+> @@ -529,7 +510,7 @@ static void dwc_pcie_unregister_pmu(void *data)
+>  
+>  static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
 >  {
->  	int i;
+> -	const struct dwc_pcie_pmu_vsec_id *vid;
+> +	const struct dwc_pcie_vsec_id *vid;
+>  	u16 vsec;
+>  	u32 val;
 >  
-> @@ -886,7 +886,7 @@ static inline gfp_t alloc_hugepage_khugepaged_gfpmask(void)
->  }
->  
->  #ifdef CONFIG_NUMA
-> -static int hpage_collapse_find_target_node(struct collapse_control *cc)
-> +static int khugepaged_find_target_node(struct collapse_control *cc)
->  {
->  	int nid, target_node = 0, max_value = 0;
->  
-> @@ -905,7 +905,7 @@ static int hpage_collapse_find_target_node(struct collapse_control *cc)
->  	return target_node;
->  }
->  #else
-> -static int hpage_collapse_find_target_node(struct collapse_control *cc)
-> +static int khugepaged_find_target_node(struct collapse_control *cc)
->  {
->  	return 0;
->  }
-> @@ -925,7 +925,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
->  	struct vm_area_struct *vma;
->  	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
->  
-> -	if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
-> +	if (unlikely(khugepaged_test_exit_or_disable(mm)))
->  		return SCAN_ANY_PROCESS;
->  
->  	*vmap = vma = find_vma(mm, address);
-> @@ -992,7 +992,7 @@ static int check_pmd_still_valid(struct mm_struct *mm,
->  
->  /*
->   * Bring missing pages in from swap, to complete THP collapse.
-> - * Only done if hpage_collapse_scan_pmd believes it is worthwhile.
-> + * Only done if khugepaged_scan_pmd believes it is worthwhile.
->   *
->   * Called and returns without pte mapped or spinlocks held.
->   * Returns result: if not SCAN_SUCCEED, mmap_lock has been released.
-> @@ -1078,7 +1078,7 @@ static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
->  {
->  	gfp_t gfp = (cc->is_khugepaged ? alloc_hugepage_khugepaged_gfpmask() :
->  		     GFP_TRANSHUGE);
-> -	int node = hpage_collapse_find_target_node(cc);
-> +	int node = khugepaged_find_target_node(cc);
->  	struct folio *folio;
->  
->  	folio = __folio_alloc(gfp, HPAGE_PMD_ORDER, node, &cc->alloc_nmask);
-> @@ -1264,7 +1264,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	return result;
->  }
->  
-> -static int hpage_collapse_scan_pmd(struct mm_struct *mm,
-> +static int khugepaged_scan_pmd(struct mm_struct *mm,
->  				   struct vm_area_struct *vma,
->  				   unsigned long address, bool *mmap_locked,
->  				   struct collapse_control *cc)
-> @@ -1380,7 +1380,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->  		 * hit record.
->  		 */
->  		node = folio_nid(folio);
-> -		if (hpage_collapse_scan_abort(node, cc)) {
-> +		if (khugepaged_scan_abort(node, cc)) {
->  			result = SCAN_SCAN_ABORT;
->  			goto out_unmap;
->  		}
-> @@ -1449,7 +1449,7 @@ static void collect_mm_slot(struct khugepaged_mm_slot *mm_slot)
->  
->  	lockdep_assert_held(&khugepaged_mm_lock);
->  
-> -	if (hpage_collapse_test_exit(mm)) {
-> +	if (khugepaged_test_exit(mm)) {
->  		/* free mm_slot */
->  		hash_del(&slot->hash);
->  		list_del(&slot->mm_node);
-> @@ -1744,7 +1744,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->  		if (find_pmd_or_thp_or_none(mm, addr, &pmd) != SCAN_SUCCEED)
->  			continue;
->  
-> -		if (hpage_collapse_test_exit(mm))
-> +		if (khugepaged_test_exit(mm))
->  			continue;
->  		/*
->  		 * When a vma is registered with uffd-wp, we cannot recycle
-> @@ -2266,7 +2266,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->  	return result;
->  }
->  
-> -static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
-> +static int khugepaged_scan_file(struct mm_struct *mm, unsigned long addr,
->  				    struct file *file, pgoff_t start,
->  				    struct collapse_control *cc)
->  {
-> @@ -2311,7 +2311,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
->  		}
->  
->  		node = folio_nid(folio);
-> -		if (hpage_collapse_scan_abort(node, cc)) {
-> +		if (khugepaged_scan_abort(node, cc)) {
->  			result = SCAN_SCAN_ABORT;
->  			break;
->  		}
-> @@ -2357,7 +2357,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
->  	return result;
->  }
->  #else
-> -static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
-> +static int khugepaged_scan_file(struct mm_struct *mm, unsigned long addr,
->  				    struct file *file, pgoff_t start,
->  				    struct collapse_control *cc)
->  {
-> @@ -2389,19 +2389,19 @@ static int khugepaged_collapse_single_pmd(unsigned long addr, struct mm_struct *
->  
->  			mmap_read_unlock(mm);
->  			*mmap_locked = false;
-> -			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
-> +			result = khugepaged_scan_file(mm, addr, file, pgoff,
->  							  cc);
->  			fput(file);
->  			if (result == SCAN_PTE_MAPPED_HUGEPAGE) {
->  				mmap_read_lock(mm);
-> -				if (hpage_collapse_test_exit_or_disable(mm))
-> +				if (khugepaged_test_exit_or_disable(mm))
->  					goto end;
->  				result = collapse_pte_mapped_thp(mm, addr,
->  								 !cc->is_khugepaged);
->  				mmap_read_unlock(mm);
->  			}
->  		} else {
-> -			result = hpage_collapse_scan_pmd(mm, vma, addr,
-> +			result = khugepaged_scan_pmd(mm, vma, addr,
->  							 mmap_locked, cc);
->  		}
->  		if (result == SCAN_SUCCEED || result == SCAN_PMD_MAPPED)
-> @@ -2449,7 +2449,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
->  		goto breakouterloop_mmap_lock;
->  
->  	progress++;
-> -	if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
-> +	if (unlikely(khugepaged_test_exit_or_disable(mm)))
->  		goto breakouterloop;
->  
->  	vma_iter_init(&vmi, mm, khugepaged_scan.address);
-> @@ -2457,7 +2457,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
->  		unsigned long hstart, hend;
->  
->  		cond_resched();
-> -		if (unlikely(hpage_collapse_test_exit_or_disable(mm))) {
-> +		if (unlikely(khugepaged_test_exit_or_disable(mm))) {
->  			progress++;
->  			break;
->  		}
-> @@ -2479,7 +2479,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
->  			bool mmap_locked = true;
->  
->  			cond_resched();
-> -			if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
-> +			if (unlikely(khugepaged_test_exit_or_disable(mm)))
->  				goto breakouterloop;
->  
->  			VM_BUG_ON(khugepaged_scan.address < hstart ||
-> @@ -2515,7 +2515,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
->  	 * Release the current mm_slot if this mm is about to die, or
->  	 * if we scanned all vmas of this mm.
->  	 */
-> -	if (hpage_collapse_test_exit(mm) || !vma) {
-> +	if (khugepaged_test_exit(mm) || !vma) {
->  		/*
->  		 * Make sure that if mm_users is reaching zero while
->  		 * khugepaged runs here, khugepaged_exit will find
+> diff --git a/include/linux/pcie-dwc.h b/include/linux/pcie-dwc.h
+> new file mode 100644
+> index 000000000000..261ae11d75a4
+> --- /dev/null
+> +++ b/include/linux/pcie-dwc.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2021-2023 Alibaba Inc.
+> + *
+> + * Copyright 2025 Linaro Ltd.
+> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> + */
+> +
+> +#ifndef LINUX_PCIE_DWC_H
+> +#define LINUX_PCIE_DWC_H
+> +
+> +#include <linux/pci_ids.h>
+> +
+> +struct dwc_pcie_vsec_id {
+> +	u16 vendor_id;
+> +	u16 vsec_id;
+> +	u8 vsec_rev;
+> +};
+> +
+> +/*
+> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> + */
+> +static const struct dwc_pcie_vsec_id dwc_pcie_pmu_vsec_ids[] = {
 
+Having it in the header means that there are going to be several
+copies of this data. Is that expected?
+
+> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{} /* terminator */
+> +};
+> +
+> +#endif /* LINUX_PCIE_DWC_H */
+> 
+> -- 
+> 2.25.1
+> 
+> 
+
+-- 
+With best wishes
+Dmitry
 
