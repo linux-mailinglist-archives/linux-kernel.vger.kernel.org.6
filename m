@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-519099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2B5A39811
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:04:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D47A39819
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5AC87A4780
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269813B8314
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F98A23498F;
-	Tue, 18 Feb 2025 09:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472D5233D69;
+	Tue, 18 Feb 2025 09:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="skjPJG3q"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvUsczMz"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3919234962;
-	Tue, 18 Feb 2025 09:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3966232792;
+	Tue, 18 Feb 2025 09:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739872733; cv=none; b=m2fd6BC9rJ+E6msvBSKMaRj7xUEw5YxjBtPInqqV+NtcvwoVqzR3xFfBbSWUwdfSDZGrUPJnxUJbQOyFRtmBLHz1vtQLHbWr+iDijdeXOlyfhznHKq4g58INkZi92IrH6C0y+b9XEFDGvBAyk0wubsAfQRkzz9/jhJWKnTia3dM=
+	t=1739872719; cv=none; b=bhhA78WK3XEExMTcL/zsureOgP3tTIu2XCirdeRDaN7UJ36s663Tw05tlV9LxkcoyNLzmyWlp3hz9PkK7JBGkAj1qmkhZkaShSIsQOiN3tp1L7UOx4Qg4jNTHw8YjMcWoa9DI7vaEGe6GIVOFOjhjCJbcmNX9zjK/Im5gOgCstY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739872733; c=relaxed/simple;
-	bh=/5c9NpxXM4pSZx9SBXZ0Bku0kkqiwO9j8xWtCl97MGc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Bzd0kut14udFZqTGmpRK4SvaFNo21JyV4QDjGADYyRKDSwo5YJXf9l9XZVTHOfJLM43je0143j93e7yyVlLBo3q6MViXCc5YdxP8t0tdtrKA0EIt0VIdlQr43YzmAfY/gOrauZQGk9cbtH6M73xC9q/zxEgSzW//1SprFaH7azw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=skjPJG3q; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=IplbbsjtQNJ9e6AF522ZXUvBfXM+LfwzW90At7QJSew=; b=skjPJG3qHyyrQxKdigVU5Yrf/3
-	Yj1J/c5z6dFoGQWIMJTz4LBoTxUbW8gsCvnA4wrW7EZhOq66KKLmF+eUxYtNF0/HOxlgJn5x9roGh
-	5TeDGN3kOkGFJ8y8IQFZR39DRkbtQeRdu7QKAw+YKlU0G+JbpWpKyzpA3xItlRY2rqL349W98C9Mg
-	WegKmZcHRR3VkNP4DPHhdZzVHw02BBXWB0OuikiFV0Zr5Ibng073GjDtPHAVyf6sSNrSKfAylxAAK
-	TcjfojLRd+Ix+3zdxJ1yc/08VFtBY1EGx3p9oIi+SrbylPcIA5adTn/LlD1AVu/CKdCaEhXgpXt7o
-	p1+xvIRg==;
-Received: from [122.175.9.182] (port=27501 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parvathi@couthit.com>)
-	id 1tkKND-0007xL-1i;
-	Tue, 18 Feb 2025 15:28:40 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id AEF9617821C8;
-	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 85C9C17823D4;
-	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id SPe3V9-vo6EN; Tue, 18 Feb 2025 15:28:29 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 41B8D17821C8;
-	Tue, 18 Feb 2025 15:28:29 +0530 (IST)
-Date: Tue, 18 Feb 2025 15:28:29 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org, 
-	richardcochran@gmail.com, basharath <basharath@couthit.com>, 
-	schnelle@linux.ibm.com, diogo ivo <diogo.ivo@siemens.com>, 
-	m-karicheri2@ti.com, horms@kernel.org, 
-	jacob e keller <jacob.e.keller@intel.com>, m-malladi@ti.com, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, afd@ti.com, 
-	s-anna@ti.com, linux-arm-kernel@lists.infradead.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pratheesh <pratheesh@ti.com>, 
-	Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth@ti.com, srk@ti.com, 
-	rogerq@ti.com, krishna <krishna@couthit.com>, 
-	pmohan <pmohan@couthit.com>, mohan <mohan@couthit.com>
-Message-ID: <1901840071.600762.1739872709135.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250214164422.1bb58a89@fedora.home>
-References: <20250214054702.1073139-1-parvathi@couthit.com> <20250214073757.1076778-5-parvathi@couthit.com> <20250214164422.1bb58a89@fedora.home>
-Subject: Re: [PATCH net-next v3 04/10] net: ti: prueth: Adds link detection,
- RX and TX support.
+	s=arc-20240116; t=1739872719; c=relaxed/simple;
+	bh=6cooqqHCoA6P1atL6E2YmZn6GVJWVgjv5JafkIvyAbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a0pkbeL53ZgY2Yl/SiQFosWzRmssJQj5jyH+M/6I+CiIITalK2mDfKICg4hCbQh/LvoxzS/iytxgoFdji7tYfHuMl4KqlRrFl20YVFO9BbdNPmm1wGKQiMx+dBa03M5b6e59sueoknCksBE/NgaFckxY36vmpYKhTV+2FXYJC1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvUsczMz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-545fed4642aso2505587e87.0;
+        Tue, 18 Feb 2025 01:58:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739872716; x=1740477516; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lmts2CcKs4nwISoE8RyWH4djGtBRCn0gg8bpEKNfluA=;
+        b=GvUsczMzokWbBz6nDDNHcgePYCB7OpPCZXZvUyt7pQLwVQofMRPOxBt7jhbf8aSaGR
+         KIOnhGPAkMSGqqor9iNYE3/Athm/WUVS56movIxXBKPWyI6MdMA7zg/pc63dAu18+wnY
+         kxIat9W6wLOV0A6bZWAyFvKHTkMJsjHaqMq1BIrKYzmJI75iDZhe65CvHx5wPt7t5/RT
+         3t4NaQhiWVU7IbnqFOH/SS5483lyVPuo6oXOAMBFd1yK31PjoDg26OcV9VBzVgubs7Mf
+         puEGXCaFfqX5TGMhmEpSFAVpkZVQisCwUY9Qodduk2HlVDSaFstJ6wGTgU8StNfh+lxf
+         MrPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739872716; x=1740477516;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lmts2CcKs4nwISoE8RyWH4djGtBRCn0gg8bpEKNfluA=;
+        b=l8swpZdZzyqpSvL0nc8JmfnlPLxl9oen9go218Xp3ZqJRcOxSe+HuD4+hg/nBOSCQO
+         k8GVDv9Ckl9RuFWqELDh1K3mhftBqM2XC7Geij5w3KQL4y3cpdzquo+j5NMH25bnRJO3
+         mUTbUxHsaZA7H8FpsBAy2hYflnDWCgChQ4WNWj1yoTfOF4BKJXSQwPpRej3JS4Uf5c2w
+         oiLpbBN3jrvT+6V+MDg+M1zAfAgy68LkMI0+HJPLpmYyb6cw77XMInQHLlOnOwOYiLMH
+         6AkNvF4M04ZIzC2QkDKVVyxtEAydp0a9e8+F4rjjlnqXqU08AzYioErT9w/O1YGpxtSD
+         kO3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwXnaS1xDVHr/U5sJypZenTIuxqVUuqY05gZyXlDE+uPIzBqe3e4ImgE/UI0/DAH99QOlL+BJMMNJwaJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoQN66p21hl/Leg0bW00qwxolp+BVNu9QWRetYdFFe/sEQJZWn
+	W1Oq3CvYYX3+gD2jykY1zWh984N02Vr6d3AAk9CY+kSUmuJXRr1M
+X-Gm-Gg: ASbGncsB5UVVccjs1hlLDk8n1HDuvY+gF3Rf7Pc/Z8LpPVjVUO5EISoCjUlAOrukOFN
+	MXhUmU+AWcuqkfw164CIwTxp5647SMmrYd2oqW1eybQ5LiUBSrlDRUDeBas4R80zbGBnnLKjPyc
+	3IiTUg+4FlxVq6o7go+wUgmhFji0E6CJVEK4/GykFuY9NDrbT2HJJOB5cR9bSzyfhfdSHRv8mCy
+	qsawz8q9RM52pa4V5Y+VUAJhRAuiaYQBXrRhk942Dr7tmr5DwU9EfU1ZH+6/0/Ed185QtgLMgzU
+	3B5j9oxcohe9VJqNPP1o1RErzG4NMgVNpp4pF37EaHxYW4XFQvDetal7GTPbaQ==
+X-Google-Smtp-Source: AGHT+IFSgaLtcnavys5mJwrcFVSSqID4HA2Wxm607QSTsSZJ468RX9mWtnC6yEKMzbHenx1fdpwcuA==
+X-Received: by 2002:a05:6512:2398:b0:545:b89:309b with SMTP id 2adb3069b0e04-5452fe955efmr5596497e87.44.1739872715711;
+        Tue, 18 Feb 2025 01:58:35 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30931b895e5sm11078211fa.113.2025.02.18.01.58.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 01:58:35 -0800 (PST)
+Message-ID: <2b019479-2d32-433f-af78-c3378dee4e2b@gmail.com>
+Date: Tue, 18 Feb 2025 11:58:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/3] rust: add dma coherent allocator abstraction.
+To: Robin Murphy <robin.murphy@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>
+Cc: rust-for-linux@vger.kernel.org, dakr@kernel.org, aliceryhl@google.com,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20250123104333.1340512-1-abdiel.janulgue@gmail.com>
+ <20250123104333.1340512-3-abdiel.janulgue@gmail.com>
+ <633274AD-E55C-4A90-AB72-33D3E176176F@collabora.com>
+ <dd57c3ba-246e-414d-a9c1-eb2cff032d83@arm.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <dd57c3ba-246e-414d-a9c1-eb2cff032d83@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds link detection, RX and TX support.
-Thread-Index: ruvuX5QuiCck3qy25K/1ke8txq1XdQ==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
+Hi Robin,
 
-Hi,
+On 17/02/2025 15:52, Robin Murphy wrote:
+> FWIW we've been wanting to steer away from relying on the default mask 
+> in new code, so it would be quite neat to actually enforce that 
+> allocations fail if dma_coherent_mask hasn't been explicitly set 
+> (assuming it's sufficiently cheap to keep a flag in the Device handle or 
+> something like that - it's not the end of the world if it isn't practical).
 
-> On Fri, 14 Feb 2025 13:07:51 +0530
-> parvathi <parvathi@couthit.com> wrote:
-> 
->> From: Roger Quadros <rogerq@ti.com>
->> 
->> Changes corresponding to link configuration such as speed and duplexity.
->> IRQ and handler initializations are performed for packet reception.Firmware
->> receives the packet from the wire and stores it into OCMC queue. Next, it
->> notifies the CPU via interrupt. Upon receiving the interrupt CPU will
->> service the IRQ and packet will be processed by pushing the newly allocated
->> SKB to upper layers.
->> 
->> When the user application want to transmit a packet, it will invoke
->> sys_send() which will inturn invoke the PRUETH driver, then it will write
->> the packet into OCMC queues. PRU firmware will pick up the packet and
->> transmit it on to the wire.
->> 
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
->> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
-> 
-> 
->> +/* update phy/port status information for firmware */
->> +static void icssm_emac_update_phystatus(struct prueth_emac *emac)
->> +{
->> +	struct prueth *prueth = emac->prueth;
->> +	u32 phy_speed, port_status = 0;
->> +	enum prueth_mem region;
->> +	u32 delay;
->> +
->> +	region = emac->dram;
->> +	phy_speed = emac->speed;
->> +	icssm_prueth_write_reg(prueth, region, PHY_SPEED_OFFSET, phy_speed);
->> +
->> +	delay = TX_CLK_DELAY_100M;
->> +
->> +	delay = delay << PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_SHIFT;
->> +
->> +	if (emac->port_id) {
->> +		regmap_update_bits(prueth->mii_rt,
->> +				   PRUSS_MII_RT_TXCFG1,
->> +				   PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
->> +				   delay);
->> +	} else {
->> +		regmap_update_bits(prueth->mii_rt,
->> +				   PRUSS_MII_RT_TXCFG0,
->> +				   PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
->> +				   delay);
->> +	}
->> +
->> +	if (emac->link)
->> +		port_status |= PORT_LINK_MASK;
->> +
->> +	writeb(port_status, prueth->mem[region].va + PORT_STATUS_OFFSET);
->> +}
->> +
->>  /* called back by PHY layer if there is change in link state of hw port*/
->>  static void icssm_emac_adjust_link(struct net_device *ndev)
->>  {
->> @@ -369,6 +426,8 @@ static void icssm_emac_adjust_link(struct net_device *ndev)
->>  		emac->link = 0;
->>  	}
->>  
->> +	icssm_emac_update_phystatus(emac);
->> +
-> 
-> It looks to me like emac->link, emac->speed and emac->duplex are only
-> used in icssm_emac_update_phystatus(). If you consider either passing
-> these as parameters to the above function, or simply merge
-> icssm_emac_update_phystatus() into your adjust_link callback, you can get
-> rid of these 3 attributes entirely. It even looks like emac->duplex is
-> simply unused.
-> 
+I just had a quick look on how to possible approach this and indeed 
+would refactor the Device binding a bit. If it is okay with you this 
+could go in a follow-up patch? I was hoping to upstream the initial 
+support first - at least with the dma_set_mask/dma_set_coherent_mask put 
+in place already.
 
-Sure, we will address this in the next version.
-
-Thanks and Regards,
-Parvathi.
+Thanks!
+/Abdiel
 
