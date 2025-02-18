@@ -1,222 +1,141 @@
-Return-Path: <linux-kernel+bounces-520021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF1FA3A4D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:01:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9278A3A4DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7844F1726EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40FBF172F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9331ACEDB;
-	Tue, 18 Feb 2025 18:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47B5270ED0;
+	Tue, 18 Feb 2025 18:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9OShoef"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kgs45BdP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0B822E401;
-	Tue, 18 Feb 2025 18:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F52D22E401;
+	Tue, 18 Feb 2025 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739901660; cv=none; b=ADn+glDKvoQ1Su26kQ/8rfGl75zUfS55AGFVkGA2f1m08VpAZdk7QpqpH6JCBvo3LEoaiS3omdadwb7y0XlFiqySqHgUIYE6LsIpIkPaVS1n62+0fyMqHLLrKCyubKwhGsvkuZZhniqxN2SntNe4Ag75E5t6i2e77kSvtADv5Ho=
+	t=1739901686; cv=none; b=BdFG/Y7T9PfUKRw1Om4+Mwy/WR447nkWWLX1+KRpBNs8b2wVArJo6LMnYzw10clyVB93n7zZyUZ3p9us9Yvq2fprwLzLlGu7FrRlUI/BKwH2qr3QaIyfDr3YiJ11jhKn6FfohqZTTTJdVagWKy4I984lrjqFEr3cob3cs7pX2iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739901660; c=relaxed/simple;
-	bh=X5cIzxfZwo4klvtzNw2WXQrEgsOXMYEji5/AX5ITIWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I3AipNVLqk1fnWuWSumvUHg53KzLXho/EvMCKVUCfToZwgb9HFuy5qT2nDHEd0AcWjH3TY8XJvx49Jd0442Xsf+TS8AOKjoOE3CKCLvlHoMualfrZbddFTo4W62YjCC0dk0jabWKE7UPNQvn4swNAoj4Uy4xXzoOMvCD+4XbJ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9OShoef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D91C4CEEA;
-	Tue, 18 Feb 2025 18:00:59 +0000 (UTC)
+	s=arc-20240116; t=1739901686; c=relaxed/simple;
+	bh=Bnq3fL80Xbs1mEN0tqq7aCS+2kwWkMlF4aMDYCfT4qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qa+SKZEqtJWYwjfjeSo+8KcAEDlbvQWV37L0Z6fX4x2MZtVoVfFLxJPBBKIRn4jGBDLxrPVkWi95J8jKXKqsaO09kPH9F6RQvAKm77mU37HlG77AUJjXRjOJd+Bc0/b+mW9nQVBbAxLVNFiAkkwfqh5dN/o+pB6rz0K0qK8sZX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kgs45BdP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C787CC4CEE4;
+	Tue, 18 Feb 2025 18:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739901659;
-	bh=X5cIzxfZwo4klvtzNw2WXQrEgsOXMYEji5/AX5ITIWQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Z9OShoeff0MEWqdSawqu7BUaDxShRZlaCP/Hjtxnu+8WTPjbAp6gl5UrOBbgPOEpT
-	 9Vkd5F0SFCi+4Hs0flC1y0wZ0FOQysaIOlnFRZCu9pux4KMdyCyR6Ce1O28U48AqUR
-	 Wy2GGFB6jlXli7TL0zGbqwpXETSAeNjZ57eyvjHWNnZ6x262KFCtyigZL90xCQZgXj
-	 KKH7YqaZevr1eWXOssA3iXQXHeu1MNQA1sR8xMFhOsQ6VP8FTdbtFRAwpsKzvPbIWN
-	 ejmgsK+QR7mg21KqheprBt9F1nxuIvfC9etUV79k5NLeBkpxGMiF1mzKDNv/OvqaWk
-	 aT/tYr2UuU5+Q==
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f3e0498beaso14048b6e.1;
-        Tue, 18 Feb 2025 10:00:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1V02IvVM4Ma7H3fjiE7IXyDXZfc8aqHvV5igv/F1kjcl9m9JOX1aPZDZY1BrMhZ41oznhM4Dt@vger.kernel.org, AJvYcCVTIitP6UG6MX4LkPcQOUx6d25VoRn7CA2at5fSRnO4Z7gTfNAAoON9va12G9zlNDQLZTWYCU8UozZs@vger.kernel.org, AJvYcCX06RUtbcCCdSgkqGM2rwqwaFZMPy10FnFVl+dsdy6MUldltlF64oSFpoTXFI7BDoL5aXYfl9riPLeNpbND@vger.kernel.org
-X-Gm-Message-State: AOJu0YzajFopBw4XruvfByYZYqs30SSZGjSvl7z123aKqLPX7gLQbrA9
-	H8KfFVHkfaouHjGs7NEZk+9mgY71bllDo8tIUbpTFPxwh/odYP3qtcvgeH+lqW0RbK9RY2pCy9B
-	hU91n9lS2xM/u5b/PJ49mmPOOVxM=
-X-Google-Smtp-Source: AGHT+IETDgAQnHmB1ym4OH/7fYtrH92mUURjm4lU0AE1WtC++HdD+kU9yToWvnK1uP0KyAPNH389H1MMc1SiyZKwJrE=
-X-Received: by 2002:a05:6808:360c:b0:3f3:d367:52fa with SMTP id
- 5614622812f47-3f40ef62f11mr422255b6e.18.1739901658915; Tue, 18 Feb 2025
- 10:00:58 -0800 (PST)
+	s=k20201202; t=1739901685;
+	bh=Bnq3fL80Xbs1mEN0tqq7aCS+2kwWkMlF4aMDYCfT4qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kgs45BdPtWlapAqhfVHCd/RksJaQiMQ9vYZpgc9S46LF+RbHUKM6njGogTdMnzG3N
+	 +BQS68NgNAO8NPss79qyarPctp6lRA75fxsYY6floW+mxb2BmXI0NLEhdDxAmJIW+4
+	 SPgRbkyTZ5BynGzoiZxT1BVwP6QWGuosA3EzIxs2LW9cy0kfeqrgSsCuuXbNi3nGzl
+	 Mzy4z64LP9pk5Nc90f+epj+Jabghb/ucADOHUDYUYbSXeFpyrKH/lgGsUvWvfgwrhw
+	 kXdgj+a7SrRdrUN4uLmsc7L57nfsA9fZArAISRdom2Awxb0a0ohfXblhLeUBU5yRON
+	 s6XA3OcCJsydg==
+Date: Tue, 18 Feb 2025 18:01:20 +0000
+From: Simon Horman <horms@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Md Danish Anwar <danishanwar@ti.com>, srk@ti.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH net-next 1/5] net: ethernet: ti: am65-cpsw: remove
+ am65_cpsw_nuss_tx_compl_packets_2g()
+Message-ID: <20250218180120.GC1615191@kernel.org>
+References: <20250217-am65-cpsw-zc-prep-v1-0-ce450a62d64f@kernel.org>
+ <20250217-am65-cpsw-zc-prep-v1-1-ce450a62d64f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-acpi-platform_profile-fix-cfi-violation-v3-1-ed9e9901c33a@kernel.org>
-In-Reply-To: <20250210-acpi-platform_profile-fix-cfi-violation-v3-1-ed9e9901c33a@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 19:00:47 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hkJPWGv8PaPixC8vsr26vBBdGAL60X9iWwKVji098XRQ@mail.gmail.com>
-X-Gm-Features: AWEUYZnLPIAbvPd7TRilaLcKa1PtFaiC5w37sc-4vTEe472uPGyGX93-jh3odew
-Message-ID: <CAJZ5v0hkJPWGv8PaPixC8vsr26vBBdGAL60X9iWwKVji098XRQ@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI: platform-profile: Fix CFI violation when
- accessing sysfs files
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Kees Cook <kees@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, patches@lists.linux.dev, 
-	stable@vger.kernel.org, John Rowley <lkml@johnrowley.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217-am65-cpsw-zc-prep-v1-1-ce450a62d64f@kernel.org>
 
-On Tue, Feb 11, 2025 at 3:28=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> When an attribute group is created with sysfs_create_group(), the
-> ->sysfs_ops() callback is set to kobj_sysfs_ops, which sets the ->show()
-> and ->store() callbacks to kobj_attr_show() and kobj_attr_store()
-> respectively. These functions use container_of() to get the respective
-> callback from the passed attribute, meaning that these callbacks need to
-> be the same type as the callbacks in 'struct kobj_attribute'.
->
-> However, the platform_profile sysfs functions have the type of the
-> ->show() and ->store() callbacks in 'struct device_attribute', which
-> results a CFI violation when accessing platform_profile or
-> platform_profile_choices under /sys/firmware/acpi because the types do
-> not match:
->
->   CFI failure at kobj_attr_show+0x19/0x30 (target: platform_profile_choic=
-es_show+0x0/0x140; expected type: 0x7a69590c)
->
-> There is no functional issue from the type mismatch because the layout
-> of 'struct kobj_attribute' and 'struct device_attribute' are the same,
-> so the container_of() cast does not break anything aside from CFI.
->
-> Change the type of platform_profile_choices_show() and
-> platform_profile_{show,store}() to match the callbacks in
-> 'struct kobj_attribute' and update the attribute variables to match,
-> which resolves the CFI violation.
->
-> Cc: stable@vger.kernel.org
-> Fixes: a2ff95e018f1 ("ACPI: platform: Add platform profile support")
-> Reported-by: John Rowley <lkml@johnrowley.me>
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/2047
-> Tested-by: John Rowley <lkml@johnrowley.me>
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
-> Changes in v3:
-> - Rebase on 6.14-rc1, which includes updates to the driver to address
->   Greg's previous concerns but this change is still needed for the
->   legacy sysfs interface. v2 can be used for the stable backport.
-> - Link to v2: https://lore.kernel.org/r/20241118-acpi-platform_profile-fi=
-x-cfi-violation-v2-1-62ff952804de@kernel.org
->
-> Changes in v2:
-> - Rebase on linux-pm/acpi
-> - Pick up Sami's reviewed-by tag
-> - Adjust wording around why there is no functional issue from the
->   mismatched types
-> - Link to v1: https://lore.kernel.org/r/20240819-acpi-platform_profile-fi=
-x-cfi-violation-v1-1-479365d848f6@kernel.org
-> ---
->  drivers/acpi/platform_profile.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index fc92e43d0fe9..1b6317f759f9 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -260,14 +260,14 @@ static int _aggregate_choices(struct device *dev, v=
-oid *data)
->
->  /**
->   * platform_profile_choices_show - Show the available profile choices fo=
-r legacy sysfs interface
-> - * @dev: The device
-> + * @kobj: The kobject
->   * @attr: The attribute
->   * @buf: The buffer to write to
->   *
->   * Return: The number of bytes written
->   */
-> -static ssize_t platform_profile_choices_show(struct device *dev,
-> -                                            struct device_attribute *att=
-r,
-> +static ssize_t platform_profile_choices_show(struct kobject *kobj,
-> +                                            struct kobj_attribute *attr,
->                                              char *buf)
->  {
->         unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> @@ -333,14 +333,14 @@ static int _store_and_notify(struct device *dev, vo=
-id *data)
->
->  /**
->   * platform_profile_show - Show the current profile for legacy sysfs int=
-erface
-> - * @dev: The device
-> + * @kobj: The kobject
->   * @attr: The attribute
->   * @buf: The buffer to write to
->   *
->   * Return: The number of bytes written
->   */
-> -static ssize_t platform_profile_show(struct device *dev,
-> -                                    struct device_attribute *attr,
-> +static ssize_t platform_profile_show(struct kobject *kobj,
-> +                                    struct kobj_attribute *attr,
->                                      char *buf)
->  {
->         enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
-> @@ -362,15 +362,15 @@ static ssize_t platform_profile_show(struct device =
-*dev,
->
->  /**
->   * platform_profile_store - Set the profile for legacy sysfs interface
-> - * @dev: The device
-> + * @kobj: The kobject
->   * @attr: The attribute
->   * @buf: The buffer to read from
->   * @count: The number of bytes to read
->   *
->   * Return: The number of bytes read
->   */
-> -static ssize_t platform_profile_store(struct device *dev,
-> -                                     struct device_attribute *attr,
-> +static ssize_t platform_profile_store(struct kobject *kobj,
-> +                                     struct kobj_attribute *attr,
->                                       const char *buf, size_t count)
->  {
->         unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
-> @@ -401,12 +401,12 @@ static ssize_t platform_profile_store(struct device=
- *dev,
->         return count;
->  }
->
-> -static DEVICE_ATTR_RO(platform_profile_choices);
-> -static DEVICE_ATTR_RW(platform_profile);
-> +static struct kobj_attribute attr_platform_profile_choices =3D __ATTR_RO=
-(platform_profile_choices);
-> +static struct kobj_attribute attr_platform_profile =3D __ATTR_RW(platfor=
-m_profile);
->
->  static struct attribute *platform_profile_attrs[] =3D {
-> -       &dev_attr_platform_profile_choices.attr,
-> -       &dev_attr_platform_profile.attr,
-> +       &attr_platform_profile_choices.attr,
-> +       &attr_platform_profile.attr,
->         NULL
->  };
->
->
-> ---
+On Mon, Feb 17, 2025 at 09:31:46AM +0200, Roger Quadros wrote:
+> The only difference between am65_cpsw_nuss_tx_compl_packets_2g() and
+> am65_cpsw_nuss_tx_compl_packets() is the usage of spin_lock() and
+> netdev_tx_completed_queue() + am65_cpsw_nuss_tx_wake at every packet
+> in the latter.
+> 
+> Insted of having 2 separate functions for TX completion, merge them
 
-Applied as 6.15 material with some edits in the changelog, thanks!
+nit, in case there is a v2 for some other reason: Instead
+
+> into one. This will reduce code duplication and make maintenance easier.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+
+...
+
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+
+...
+
+> @@ -1533,23 +1538,35 @@ static int am65_cpsw_nuss_tx_compl_packets(struct am65_cpsw_common *common,
+>  		if (buf_type == AM65_CPSW_TX_BUF_TYPE_SKB) {
+>  			skb = am65_cpsw_nuss_tx_compl_packet_skb(tx_chn, desc_dma);
+>  			ndev = skb->dev;
+> -			total_bytes = skb->len;
+> +			pkt_len = skb->len;
+>  			napi_consume_skb(skb, budget);
+>  		} else {
+>  			xdpf = am65_cpsw_nuss_tx_compl_packet_xdp(common, tx_chn,
+>  								  desc_dma, &ndev);
+> -			total_bytes = xdpf->len;
+> +			pkt_len = xdpf->len;
+>  			if (buf_type == AM65_CPSW_TX_BUF_TYPE_XDP_TX)
+>  				xdp_return_frame_rx_napi(xdpf);
+>  			else
+>  				xdp_return_frame(xdpf);
+>  		}
+> +
+> +		total_bytes += pkt_len;
+>  		num_tx++;
+>  
+> -		netif_txq = netdev_get_tx_queue(ndev, chn);
+> +		if (!single_port) {
+> +			/* as packets from multi ports can be interleaved
+> +			 * on the same channel, we have to figure out the
+> +			 * port/queue at every packet and report it/wake queue.
+> +			 */
+> +			netif_txq = netdev_get_tx_queue(ndev, chn);
+> +			netdev_tx_completed_queue(netif_txq, 1, pkt_len);
+> +			am65_cpsw_nuss_tx_wake(tx_chn, ndev, netif_txq);
+> +		}
+> +	}
+>  
+> +	if (single_port) {
+> +		netif_txq = netdev_get_tx_queue(ndev, chn);
+>  		netdev_tx_completed_queue(netif_txq, num_tx, total_bytes);
+> -
+>  		am65_cpsw_nuss_tx_wake(tx_chn, ndev, netif_txq);
+>  	}
+
+Maybe it's not worth it, but it seems that a helper could
+avoid duplication of the netif_txq handling immediately above (twice).
+
+Regardless, this looks good to me.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
 
