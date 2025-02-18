@@ -1,367 +1,488 @@
-Return-Path: <linux-kernel+bounces-519266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA82AA39A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:22:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E41DA39AAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 12:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051C3175335
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8D01893622
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D052343BE;
-	Tue, 18 Feb 2025 11:17:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937641AF0B7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739877467; cv=none; b=mni3R/sOl6wSzd9Xk+Fhyq6d6jK2LISFBPYhbUFqlt2griE+fIcx6FYM8yQdUbGTWELQ+Fx1PN7xUGqn18sq6DX6pqn/U6x9Cul229Q7b6biiQNvTqsGzfUvBQYHqbhnUZppwap/YcBwd5E/ylFAHiqFtha97Fn42m2bHi+OSs0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739877467; c=relaxed/simple;
-	bh=OtIp6Jg3WUfXEisR0wCM6raXDryIgT2dxMRscJbVH+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+qHOYbbAR4G+ZTeo16oXYYfVrAw1KsiUof9CC/132aZR1Qj+MJHgac3uBDqe28VDufLqC1H2Wyf4Cd75LgI0w64eTFcKLKHiYlLJFp5sSxIO0OdnUJYdu4OLLTFKqMQ73EX0wsLcER3ILhp4wEHdi62ZkRcyJJR2UIBf4o5uis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA5F913D5;
-	Tue, 18 Feb 2025 03:18:02 -0800 (PST)
-Received: from [10.1.27.186] (XHFQ2J9959.cambridge.arm.com [10.1.27.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5253F6A8;
-	Tue, 18 Feb 2025 03:17:42 -0800 (PST)
-Message-ID: <590573cb-d9c6-4478-bd7c-2a61b39d7e9b@arm.com>
-Date: Tue, 18 Feb 2025 11:17:41 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E590234989;
+	Tue, 18 Feb 2025 11:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="RGKyiD8i"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013058.outbound.protection.outlook.com [40.107.162.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94A21A841C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739877887; cv=fail; b=aIP7ZY75NeSFGXFaG6EpS8+9zwd82OtZu+poZZP198X2z5oKEiZEmkq62p4U3eENZm5+senM6ZGDRZxL748PucIB6KoCTy+QKbjf/UgFvONOlxQzaybIoJYv0fx0+qpJHVssiB+RIN02bl0GWGYsyBUuPV38dhMniJoEnWJ2a7A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739877887; c=relaxed/simple;
+	bh=3j5mn5LZvrYfsT6MlqH92WCMNrFQRAAaRAo7sZAeE/Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sRlj6wmYzLsqKp1uTieY1VhqPpOYgLjV/Pue/zP8OaTJs5BeDsMfc7N6lXpzGvP6yxAeFgFpBewa8J0UKIYVShfPQr8ykFrabq42nb0xHi57QnXUgDDTvvcLfCgDgdcxP8sL3f2qB+f3iNqIJWmfpAedisWZd6QlD/HweTIDpL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=RGKyiD8i; arc=fail smtp.client-ip=40.107.162.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fdOfiDm9IkyfihSYQ3O9+mNHaoAV7ID4lcj6TGNNYevVLAVY9hi+5eW2qrLOE4LFYyFtjxYMlXd40ATXhxwv4C/Fi8+FoBrEKvfsz3WCwRauUBzIDwaMvuaq7SHW/NkdvmtCJ3Xmi5LtsDPBd3CkY7PST1gm1/oWL/uP6rA2vkBqojffHGljafw4w40NwrqGFygQA3Q8Jd0/0M95sOKpjB4IbMcbWO9DQUqkIKgMmFSP5Sr3t8L6UWVjqBCxFtq1Z8ASkIfHcQf1s0fWjuRyBjPFibJ4g18DAjoyHc6XyGxWrxkcnn1hr437PlNdlSOVMMRnhq2NsqYYDv/Of9wdmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GTDk8bCKNwh3ddNA4q5rvPFoDnOSbLGiIfQ+3VuSKEM=;
+ b=rfHh27qfhAv6d4OBzDAKA/jIXAMXlhvDIulrOEB+GG+QyFPAvWoLWljIJS0SYg90/e0yd9IrJvbTKE9xigmMQ7luQe1Kw9ZWErM8VrYPhcCfUZZRCIx9hCHOvmvBa3Q+cQEHArld8tSaMUBsqJ4ZJsBAcdieM3iDY/VqTxNsxu2aQzmb1uSaRhA06+/xoZh2HuVBnSBotyi4b40GK7i7EqRQl8OEghhHKz911lw324wC3PcAaKHi+xyDVmDku0gkq6MTiSX9+pDwZxua0792p53W6k5T4HDj8u2/RQCFV76cYWU+FkXLarE2PyLKkTXIpbfjSFE8hfDUn4Vh3mUFyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GTDk8bCKNwh3ddNA4q5rvPFoDnOSbLGiIfQ+3VuSKEM=;
+ b=RGKyiD8iw29a5W0f/pcCqpzqHQVnX3CC3Rpe2RXFcuMCjNN+oR3OAo9DEmgTVO1qWols52BPb6g9ydAvbQSypJmlOxH4o1ZsBX/Z+BpqtnfeqWL+RA+syAm6NE0oAybB9u6FkJIb7XBo+yVFb5dq1SfOvs9f3Bhv6khnz8SSPWI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DB8PR04MB7115.eurprd04.prod.outlook.com (2603:10a6:10:128::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Tue, 18 Feb
+ 2025 11:24:39 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8445.016; Tue, 18 Feb 2025
+ 11:24:39 +0000
+Message-ID: <6cac5ab1-0b76-4f28-b8e1-72760464b3d1@cherry.de>
+Date: Tue, 18 Feb 2025 12:24:38 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: add usb typec host support to
+ rk3588-jaguar
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250213163013.1616467-1-heiko@sntech.de>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20250213163013.1616467-1-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0148.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:96::9) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH 1/2] arm64: cpufeature: detect FEAT_BBM level 2
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: cl@gentwo.org, scott@os.amperecomputing.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Miko Lenczewski <Miko.Lenczewski@arm.com>
-References: <20250103011822.1257189-1-yang@os.amperecomputing.com>
- <20250103011822.1257189-2-yang@os.amperecomputing.com>
- <eef5fba9-da21-4131-a8a3-ae9a735869b1@arm.com>
- <0c644070-e4be-43c1-acb3-30cd030e20e1@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <0c644070-e4be-43c1-acb3-30cd030e20e1@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DB8PR04MB7115:EE_
+X-MS-Office365-Filtering-Correlation-Id: f240a84e-b818-41e8-c911-08dd500ed531
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MUhZbUxyTjhMbEl4SkI4Zm5IYkRxQThYeHhzQjY1ZkIrWnpnVXBMVytCM0Vw?=
+ =?utf-8?B?Y0lCcmNId0FUaE9MZWh5YXNMWUJYMTRtOU9RVmd2TnhFd1REZTgrVWtYcEYr?=
+ =?utf-8?B?Zzkyem1SY0RBWHJSOU9GaTY0VDc5N0RtSUc0OWplVDJqRHVoVEpHeUdKUUZi?=
+ =?utf-8?B?elJwbTEwOWpiUGJXQ2xWMjNqZE9jMmdlaWdlV3p2ak40bVAzMkk5MnhHWVlp?=
+ =?utf-8?B?bVBSb1BLNmpEYVJaRVM1RUxtK0tDRDN6VXhiUXpkYVFDNEJZdkRma09Kc0NJ?=
+ =?utf-8?B?Wk9iNks4SjhWQ0VPSTVuRXQ0M3dWR3ZraW93Slg1MjhURGMxT1ZiZHdpYjN2?=
+ =?utf-8?B?VjZTV0xWY1VCTjVRbzJqYnhraWV4dWxWb21TeUpRSjZ0cXJURGhHQWRUQjVj?=
+ =?utf-8?B?dFF1VmRwNHFKOUlFQzhvVnZucEQ2ZzZ3MVpiYWYxV2QwSFBWWDNTUThXbkRk?=
+ =?utf-8?B?RzRxQU5tdXN0KzV1VXZyV2RXT3BCTlhFSVplV1hNam5xNlpQTEFGNE1uQVBH?=
+ =?utf-8?B?SG9LZ1IvUzk2Q3NVOFI0Q2d5RFg0TFlkcFUxcnBvRHVKcmZpQWdmZEkyVlJj?=
+ =?utf-8?B?RHo5RU5DVzU4dG13cFhKN2daZHJKRU9SNTJPSWVlUWw3cEtaQVNHY2FZQ0Nq?=
+ =?utf-8?B?cGQ4anhNTlJSd0VmbURYdGU1OURYWHFEd1hwRzJDazJSaHRWbk0vNk85a29q?=
+ =?utf-8?B?Qmd4aFVrdzBzWHRwM09SOGVzZ1BzTDdEVGhWSzV5dE8rYlFKYlkwZnpQUFZq?=
+ =?utf-8?B?Q0RyZVRYQm1WaW55bnpIUWxyMUJ6a1VIZlhjeTVDdEZHZXhxcmZsTldqK28x?=
+ =?utf-8?B?aThXUHl0TmdqZ2g4VHZva01oVHNxMHI2M3ZBQlBXZFhqZ3B2RXJwWEJlUHps?=
+ =?utf-8?B?eXlsMXRpalRRS3NTSXBRWmxQTmRlUFBoRUZzYkVkYzRGM1BzY3hmWUxoY1ZF?=
+ =?utf-8?B?djFaUUc0SUxzUUs2d0JUaTJOWlJwQmcxdTR6b3dsNU5ZNkVCQ0MrQWthdnFO?=
+ =?utf-8?B?QUtXa1FLeDJ1TTlGeFNYcVg3V21MdWpuOE02MDkvYUhNR2l5cGgwMXVIMUkr?=
+ =?utf-8?B?ZmNxNkJhTXY1K3Q5YWRnZjJtS1RENG9IMzNWNUYvVWVYQlk0ZzVaZmNySEZF?=
+ =?utf-8?B?RFRISXRpZTN6cStwYjVQblFxMkt6czhwUlpDR1VBeis0U2xOdDRXdTlEWjJP?=
+ =?utf-8?B?YndyaSt4alhXcENucTJPSFUzNXJ6NzhlK1kxblZzNUF4bmZ5ampRNERjeGM1?=
+ =?utf-8?B?dlF0bzFQMFBRWU5yVWdNQ1l2WElGQVZRbGZlSDZ6Sll3ZXU0UTlObVNMR2lL?=
+ =?utf-8?B?WFd5WUdUWW5WR0EzdEU4ZTVpclNhNXhndVJCcDNMaGpHVGE2d3V2ZE1Xcm45?=
+ =?utf-8?B?M09xZ3JOWTh5VjgvUVRuVnhybHJiNzVReUhZSFNUUWJnWEJ5QXd6SzJVSmpW?=
+ =?utf-8?B?OHl1bEtKVGRXUU13WnFJVG4rNXE5K20yQ29yaitvVGYwbkxXSHZKVnZQNDc0?=
+ =?utf-8?B?Qmw4bzFtVXFiY2c5L29saDVicWc0UXhYaW12ZHI2U0NmTnhuTjRTb1YvUUFz?=
+ =?utf-8?B?a0tGN1NGTjIwNkJMTHh5Y2R4SE9QSkpMWTdYaWswOEVCSEdaR211czdybE13?=
+ =?utf-8?B?L2pTa0RwSHZYQTFDVzNBc0JqN2c5NUI2NG9PcjRwN0VZVmN3c2xPSFBlaHJI?=
+ =?utf-8?B?N0R4R0tWNGliNXJkdGp1cXY2bHoyR1R2L3FlRFplTDJ1MFNqajZWRVJZWHdS?=
+ =?utf-8?B?R2R2Vzl3VGttTjhLdytUbld1d1BybXJrRWF3LzMzczVnQTZPa1h0alhZV3NB?=
+ =?utf-8?B?T0ZUUi9jbUhhTGl5cFd2Z1RGTHlWL2tVbllXZ0NrSWlTdmV4a0Z4K0VJTWpP?=
+ =?utf-8?Q?8Xkq1Q/eBIvlS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RVQ3bndhSktnSHFGMG53WDJtQnFFSjBJK2ZuZVhLQy90MXJpaXQ1UlJ5QXM3?=
+ =?utf-8?B?Z1dzakRXa2YwSVRDNE9LUlAxRG1PK0xoZDhPODRyZEVyNTF6bkJhU3d2b21Q?=
+ =?utf-8?B?Z0pCNVB5R2l3YXJsZmhtQ2tqb3ZIUk8yd1FBZDJSMFRzeVNzRUtIQ0ZReFVM?=
+ =?utf-8?B?M0cyRnpUN2pqZUhJU0hVck13ZFk4Y2VHUENQaUpmcU51anlqQ0ZDcE5HSG02?=
+ =?utf-8?B?TDEvZlprWUNobGhzV2czaGM5a2l4UTR2ZCsyVkJPWkkrUnZNWTdSeUQ3dUR5?=
+ =?utf-8?B?RmMyYTlKeDh5QVV3OFl0b0Y3OE9wTG5rUU44aXlWVkd2ZW01ZGgySFpYMzQx?=
+ =?utf-8?B?TjVocG1JY2lkVVkyVkpUeVVULzFFa3R3WDRJbXpETmllL3RDRDd2VllzUXBR?=
+ =?utf-8?B?dkp3VWYya1Jtd0xPaHZZQlpwb1BxWG12VmxSMllsVDkwZFFGdFdVVUhzMlRB?=
+ =?utf-8?B?QUtzcHdYb0JnQVdyaG9CRmZNWmNqM01heGtTa0NSaS9pc2FJV3F1MGcvM1Ns?=
+ =?utf-8?B?RWw4cnFIRGRhTm1xUmM3aFJpbU9kTVJDaEJxOHlMeFowU0IwaXU4ZHJvNWVn?=
+ =?utf-8?B?L1kzbXJvdThscDNLR1ltTFhmOHRDNGdKclU0UmEyTGQ5QW5HUVRKZkdXdTF5?=
+ =?utf-8?B?blgzSTJoWnNnTFV5bGFDR1dJcG5YTmwvNXdEdGRWYitFdjY1VFB0YzJYd1py?=
+ =?utf-8?B?ZU93Vno0RzR3Uk5MMlpHeGtnTHNRZEdYOUYyc2lVT2M1Z1BGUExmMjBmZ3hH?=
+ =?utf-8?B?WUpsWjBhRmYzQSs5UWdubVQ5VEhCYm9tYjloVkFXRTJVOXBVbFNOdUhLYU80?=
+ =?utf-8?B?REJ0NXZ2UkdReS9qMW04Sk95R3o2UDJqNVllaGtoRTU0S3dDYUpaM1VNa0kz?=
+ =?utf-8?B?K05uR3BUNEdyNU1SSUNSb05WOTQxdnplRzYxRVBGNG1aU1hUSVRxT0l4aDlI?=
+ =?utf-8?B?Y0hiV2RlOFlmT3BGUC9UbGZaeVdqS1BhUU0wSGxIdVZvSzNvQkJFVjFJR091?=
+ =?utf-8?B?SnBKRkdhTlplWFJFUld2ZEFZTFExUU12KytUWThUTFdZdm16YWwrSEtib3lm?=
+ =?utf-8?B?RFF0Szd5ZnVaUGw0WjNRU2oxeTBEUEpRVnAwcmQ3RmhScjBXbmhpZHI0ZTdM?=
+ =?utf-8?B?VFdxaUlmck9tVTBYd1I2UWt5elk1Y2JPR053MUJldlRKS2FCUTRVTndiTGI3?=
+ =?utf-8?B?STBqR3lBamFFeW5oTjkrd2FpdkZ3Z0NISGtCYndHUnJ6SHJOVVFaR0o2K21Q?=
+ =?utf-8?B?emE3Z1FFVW45dU5BRGFOUnFOdEZjdkZGRzRDcW83OUhmd2JMaitiajJMQlVt?=
+ =?utf-8?B?YmlyTEVZaWxNLzd1bzBXSFlaTkZ2ZXRDdG1SdDRxVzJqYWpCREw3bUlQZk83?=
+ =?utf-8?B?VjNrZkJKRGd5UWpCdzMvZDM5aGFJRlU4ZUhTSnpoaDQzVm1JNFdPa1ZPc0Fi?=
+ =?utf-8?B?OHAxWDQyTGlYVXM0TmdvWENQMGtWa3hQTDNXdXU3aWpqbWR2bTh3NjN4SlBG?=
+ =?utf-8?B?d0s5QUJqL1ZzSFZER3BtM0p4YkxRWm5FcjBaM3YxWnVaY0Vyd3F2ZHNjUm1v?=
+ =?utf-8?B?T0JIeU5xWlRFRUtDM2xpMEdtUVh0dkRUOXZwUEUvOWV3VWxQTjhsaXJsNDZx?=
+ =?utf-8?B?c1RoNHN2aWVOelJJRmgyc0tveEROOWVNWVd3a3NXOVl1Ym80bEVkWTdlcEwv?=
+ =?utf-8?B?NkJYaXpVeHArSHp2V2dZVmw5NitkRzNUVEp4aVJDOFNLemJxZHE5Q1RSMElH?=
+ =?utf-8?B?WHpNbmNWR0RkN3ZlaWcvOTlYUWZDRFVHY1dKMDBIcUFyM2VFd0xEMndMR3pE?=
+ =?utf-8?B?WDJpZHJnVFUyY1N3eGxhNGFXeXk0MEtDb1FSclNSUlhPek1YMlBvM0tvMlor?=
+ =?utf-8?B?bzJHWndUZGl2VkxiUXRnaFBuVkFXU0syd2VnVm9CR1RJS0VWWW1xdWlxV3hV?=
+ =?utf-8?B?Sk9pMFVkRisrYXlrekZTcnJERzZXN0RjNk5ITy9MQUdIK3o3L0cwOTFOSEJa?=
+ =?utf-8?B?czZvWksrNkdFT3BEQlBNOUJtUHR3MUpKSGV4Qnp6Q0tZVS9LaUpqdnhtQjh2?=
+ =?utf-8?B?Z2kySWxWN3FDSUViQ05sMWhnL1Jldi9yL25wZkE1bkltOWN5d0JzWWhOSE5B?=
+ =?utf-8?B?THdlak9hWTBUOUwxbkVkVVdDSFZENFkvKzlEV3RGUXNVVlBYWGxxVVR5YWll?=
+ =?utf-8?B?TUE9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: f240a84e-b818-41e8-c911-08dd500ed531
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 11:24:39.6785
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VlV58xiMoq6dMkTJ9nI7Sw+7FQiyfWSqAPDgfLcnKSKj45DqVMJTjzNZoG9hszL6DTRKDDmAbQOyAGFT8gI/pQk1lFcHTzT5aZqkmc1FSwQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7115
 
-Hi Yang,
+Hi Heiko,
 
-On 13/02/2025 21:14, Yang Shi wrote:
+On 2/13/25 5:30 PM, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > 
+> Jaguar has two type-c ports connected to fusb302 controllers that can
+> work both in host and device mode and can also run in display-port
+> altmode.
 > 
+> While these ports can work in dual-role data mode, they do not support
+> powering the device itself as power-sink. This causes issues because
+> the current infrastructure does not cope well with dual-role data
+> without dual-role power.
 > 
-> On 2/11/25 3:55 AM, Ryan Roberts wrote:
+> So add the necessary nodes for the type-c controllers as well
+> as enable the relevant core usb nodes, but limit the mode to host-mode
+> for now until we figure out device mode.
 > 
-> Hi Ryan,
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>   .../arm64/boot/dts/rockchip/rk3588-jaguar.dts | 178 ++++++++++++++++++
+>   1 file changed, 178 insertions(+)
 > 
-> Thanks for taking time to review the patches.
-> 
->> On 03/01/2025 01:17, Yang Shi wrote:
->>> FEAT_BBM level 2 allow changing block size of a translation with relaxed
->>> TLB flushing.  But it may incur TLB conflict abort.  We can handle the
->>> abort in kernel, however it is hard to guarantee the recuesive TLB
->> nit: recuesive -> recursive ?
-> 
-> Yes, it is a typo. Will fix in the next version.
-> 
->>> conflct will never happen in the handling itself.
->>>
->>> Some implementations can handle TLB conflict gracefully without fault
->>> handler in kernel so FEAT_BBM level 2 can be enabled on those
->>> implementations safely.
->>>
->>> Look up MIDR to filter out those CPUs.  AmpereOne is one of them.
->>>
->>> Suggested-by: Will Deacon<will@kernel.org>
->>> Signed-off-by: Yang Shi<yang@os.amperecomputing.com>
->>> ---
->>>   arch/arm64/include/asm/cpufeature.h | 19 +++++++++++++++++++
->>>   arch/arm64/kernel/cpufeature.c      | 11 +++++++++++
->>>   arch/arm64/tools/cpucaps            |  1 +
->>>   3 files changed, 31 insertions(+)
->>>
->>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/
->>> cpufeature.h
->>> index 8b4e5a3cd24c..33ca9db42741 100644
->>> --- a/arch/arm64/include/asm/cpufeature.h
->>> +++ b/arch/arm64/include/asm/cpufeature.h
->>> @@ -866,6 +866,25 @@ static __always_inline bool system_supports_mpam_hcr(void)
->>>       return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
->>>   }
->>>   +static inline bool system_supports_bbmlv2(void)
->> nit: Arm language internally is starting to refer to FEAT_BBML1 / FEAT_BBML2 and
->> I believe this will soon make it's way to the Arm ARM. So probably better to
->> refer to bbml2 rather than bbmlv2 throughout.
-> 
-> Sure.
-> 
->>> +{
->>> +    return cpus_have_final_boot_cap(ARM64_HAS_BBMLV2);
->>> +}
->>> +
->>> +static inline bool bbmlv2_available(void)
->> This function has no need to be in the header. system_supports_bbmlv2() is what
->> users should use. Suggest moving to has_bbmlv2() in cpufeature.c.
-> 
-> bbmlv2_available() will be called by map_mem() in patch 2, but map_mem() is
-> called before CPU feature is finalized. I saw you suggest collapse the page
-> table in the below comment, if it works we don't need this function anymore. But
-> I have more questions about that.
-> 
->>> +{
->>> +    static const struct midr_range support_bbmlv2[] = {
->>> +        MIDR_ALL_VERSIONS(MIDR_AMPERE1),
->>> +        MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
->>> +        {}
->>> +    };
->>> +
->>> +    if (is_midr_in_range_list(read_cpuid_id(), support_bbmlv2))
->>> +        return true;
->>> +
->>> +    return false;
->>> +}
->>> +
->>>   int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
->>>   bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
->>>   diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>> index 6ce71f444ed8..a60d5fa04828 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -1889,6 +1889,11 @@ static bool has_lpa2(const struct
->>> arm64_cpu_capabilities *entry, int scope)
->>>   }
->>>   #endif
->>>   +static bool has_bbmlv2(const struct arm64_cpu_capabilities *entry, int scope)
->>> +{
->>> +    return bbmlv2_available();
->>> +}
->>> +
->>>   #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>>   #define KPTI_NG_TEMP_VA        (-(1UL << PMD_SHIFT))
->>>   @@ -2990,6 +2995,12 @@ static const struct arm64_cpu_capabilities
->>> arm64_features[] = {
->>>           ARM64_CPUID_FIELDS(ID_AA64PFR1_EL1, GCS, IMP)
->>>       },
->>>   #endif
->>> +    {
->>> +        .desc = "BBM Level 2",
->>> +        .capability = ARM64_HAS_BBMLV2,
->>> +        .type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
->> I'm wondering if this will potentially lead to problems for assymetric
->> collections of CPUs (e.g. big.LITTLE)? I can imagine that little CPUs might not
->> support BBML2. In this case if you boot on a big CPU that does have BBML2, you
->> will require the feature and refuse to online the secondary little CPUs.
-> 
-> Yes. This is the behavior of this patch.
-> >> Perhaps this really needs to be a system feature, where it is only enabled if
->> all CPUs in the system support it? I'm guessing that will make painting the
->> linear map harder; I guess you will need to initially set it up with PTE
->> mappings, then repaint as block mappings if BBML2 is determined to be supported
->> if that's not already what you are doing.
-> 
-> Actually I thought about this before I posted the RFC patches to upstream. There
-> are a couple of options, but I can't tell which one is the preferred and whether
-> it is really that important to handle asymmetric systems gracefully or not, so I
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+> index 90f823b2c219..329d98011c60 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+> @@ -333,6 +333,52 @@ rtc_twi: rtc@6f {
+>   		};
+>   	};
+>   
+> +	usb-typec@22 {
 
-It is certainly important to handle asymmetric systems gracefully in general;
-Almost all mobile handsets use big.LITTLE. And I think it's entirely possible
-(likely even) that we will see systems where the big cores have BBML2 and the
-little ones don't. There are cases where we don't currently handle asymetric
-systems gracefully (e.g. LPA2), but we try to make those the exception rather
-than the rule. In LPA2's case, the VA size is a compile-time option and I
-suspect it's very unlikely that a 52-bit VA capable kernel would ever be
-deployed on an asymmetric system (i.e. mobile handset). Given BBML2 is runtime
-controlled only, I think we need to make it play nice with asymmetric systems.
+We have a mix of node names in the Rockchip tree, some call it usb-typec 
+some call it typec-portc, including the device tree binding.
 
-> did it in the simplest way: just fail online the conflict cores. I also noticed
-> some features behave similarly, for example, MPAM. And this RFC patch is mainly
-> aimed to get some feedback from the community about whether it is worth it and
-> the direction is right or not. So I tried to make it as simple as possible (for
-> example, I didn't add CONT_PTE support in patch 2 either).
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
 
-Based on your perf numbers, I defintely think this is something we should aim to
-get upstream.
+Should we have a pinmux for the interrupt line in GPIO mode maybe?
 
-I think there are 3 options for the approach:
+> +		vbus-supply = <&vcc_5v0_usb_c1>;
+> +
+> +		connector {
+> +			compatible = "usb-c-connector";
 
- - refuse to online secondary CPUs that don't support BBML2 if the boot CPU does
-   support BBML2.
-    - I don't personally think this is viable for the reasons above.
+Reading the binding, I'm wondering if we shouldn't set self-powered 
+property in there as well? Jaguar cannot be powered (or at least wasn't 
+designed for being powered) via USB-C and I think self-powered means 
+that? Not sure to be honest.
 
- - initially paint the linear map with ptes, then update it to block mappings if
-   BBML2 is supported system-wide.
-    - I'm guessing the main cost is the pte-mapping, and we already have that
-      today, so it's not going to slow the boot down vs today. Re-painting with
-      (mostly) PUD-sized block mappings will be significantly faster.
-    - I anticipate we can just call the same function to do the mapping over the
-      top of what's already there but with the BLOCK flag set.
-    - It's easy to test on all systems
+> +			data-role = "dual";
+> +			label = "USBC-1 P11";
+> +			power-role = "source";
+> +			source-pdos =
+> +				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
+> +
 
- - Guess at the system supporting BBML2 based only on the boot CPU, then if any
-   secondaries don't support it, stop the machine and repaint linear map as
-   PTEs (we do something similar today for nG)
-    - It means that symmetric systems will boot marginally faster because they
-      never map the linear map with ptes
-    - Asymmetric systems will boot slower because they have to stop the machine
-      to do the pte re-mapping
-    - It's a code path that won't get tested very often
+Should we have vbus-supply = <&vcc_5v0_usb_c1>; here too?
 
-My view is that option 1 is a non-starter. Personally I lean towards option 2,
-but could be persuaded that option 3 is better.
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usbc0_hs: endpoint {
+> +						remote-endpoint = <&usb_host0_xhci_drd_sw>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					usbc0_ss: endpoint {
+> +						remote-endpoint = <&usbdp_phy0_typec_ss>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					usbc0_sbu: endpoint {
+> +						remote-endpoint = <&usbdp_phy0_typec_sbu>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>   	vdd_npu_s0: regulator@42 {
+>   		compatible = "rockchip,rk8602";
+>   		reg = <0x42>;
+> @@ -394,6 +440,52 @@ &i2c8 {
+>   	pinctrl-0 = <&i2c8m2_xfer>;
+>   	status = "okay";
+>   
+> +	usb-typec@22 {
 
-> 
-> If I understand correctly, system feature needs to read the "sanitized" register
-> value per the comment in cpufeature.c, but we read MIDR here. So it actually
-> just uses the current CPU's (likely boot CPU) MIDR if it is s system feature,
-> right? If we really want to handle such asymmetric systems gracefully, we need:
->     - read all cores' MIDR then determine whether BBML2 should be advertised or not
->     - update a flag or bitmap to tell us whether it is asymmetric or not
->     - take actions based on the flag or bitmap (i.e. collapse page table or do
-> nothing)
+All the same remarks as for P11 above.
 
-It's my understanding that we want is ARM64_CPUCAP_SYSTEM_FEATURE. See it's
-comment in cpufeature.h:
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <RK_PA4 IRQ_TYPE_LEVEL_LOW>;
+> +		vbus-supply = <&vcc_5v0_usb_c2>;
+> +
+> +		connector {
+> +			compatible = "usb-c-connector";
+> +			data-role = "dual";
+> +			label = "USBC-2 P12";
+> +			power-role = "source";
+> +			source-pdos =
+> +				<PDO_FIXED(5000, 1500, PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)>;
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usbc1_hs: endpoint {
+> +						remote-endpoint = <&usb_host1_xhci_drd_sw>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					usbc1_ss: endpoint {
+> +						remote-endpoint = <&usbdp_phy1_typec_ss>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					usbc1_sbu: endpoint {
+> +						remote-endpoint = <&usbdp_phy1_typec_sbu>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>   	vdd_cpu_big0_s0: regulator@42 {
+>   		compatible = "rockchip,rk8602";
+>   		reg = <0x42>;
+> @@ -851,6 +943,24 @@ &tsadc {
+>   	status = "okay";
+>   };
+>   
 
-/*
- * CPU feature detected at boot time based on system-wide value of a
- * feature. It is safe for a late CPU to have this feature even though
- * the system hasn't enabled it, although the feature will not be used
- * by Linux in this case. If the system has enabled this feature already,
- * then every late CPU must have it.
- */
+Please add a comment here that this is for USB-C P11 connector so it 
+gets easier to figure out what's for what.
 
-> 
-> But system feature is not checked on the secondary cores. The
-> check_local_cpu_capabilities() called by secondary_start_kernel() just checks
-> SCOPE_LOCAL_CPU features if I read the code correctly. So local cpu feature may
-> be better? The local cpu feature maintains a cpumask, it can tell us whether
-> BBML2 is asymmetric or not.
+> +&u2phy0 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy0_otg {
+> +	phy-supply = <&vcc_5v0_usb_c1>;
 
-I've not read through the details of the implementation but the docs point to
-ARM64_CPUCAP_SYSTEM_FEATURE and there are many other cpu features defined as
-ARM64_CPUCAP_SYSTEM_FEATURE which need these semantics. e.g. ARM64_HAS_TLB_RANGE.
+This is a bit confusing at we have the OTG port needing to specify the 
+VBUS supply on the port, while the FUSB also specifies it and the 
+usb-c-connector node can as well.
 
-> 
-> In addition I'm also thinking about whether collapse is the best way or not. We
-> should be able to have large block mapping in the first place if the boot CPU
-> has BBML2, then split the page table if it is asymmetric. I'm supposed we need
-> to stop machine anyway even though we do collapse. 
+> +	status = "okay";
+> +};
+> +
 
-Yes I think you could do it this way as long as you stop the machine first.
-There is already a pattern to follow for this with nG; see
-kpti_install_ng_mappings().
+Comment for USB-C P12 connector.
 
-I don't think you need to stop the machine if collapsing, as long as BBML2 is
-supported.
+> +&u2phy1 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy1_otg {
+> +	phy-supply = <&vcc_5v0_usb_c2>;
+> +	status = "okay";
+> +};
+> +
+>   &u2phy2 {
+>   	status = "okay";
+>   };
+> @@ -893,6 +1003,46 @@ &uart7 {
+>   	status = "okay";
+>   };
+>   
 
-> The split need to be called
-> on the boot CPU. We already have split logic, we can reuse it anyway (maybe need
-> some minor tweak to fit). It sounds simpler than collapse. 
+Comment for USB-C P11 connector.
 
-I'm wondering if we can enhance the existing table walker in mmu.c
-(__create_pgd_mapping()) to handle collapse and split gracefully. Then we could
-reuse that logic for all collapse, split and permission change operations so
-that we always have the largest possible blocks mapped.
+> +&usbdp_phy0 {
+> +	orientation-switch;
 
-It looks like it used to be able to do (some of) this prior to commit Commit
-e98216b52176 ("arm64: mm: BUG on unsupported manipulations of live kernel
-mappings"). That approach may turn out to be cleaner and more general than the
-current logic you have to split a range to ptes?
+It seems like we have SBU1 and SBU2 GPIOs as well. So I guess we want 
+something like:
 
-> And the asymmetric
-> systems may be not that many in real world? I know there are a lot of big.LITTLE
-> SoCs in the wild, but those big cores may typically not support BBML2. If so we
-> can save boot up time for the most cases.
+sbu1-dc-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>; /* Q7_USB_C0_SBU1_DC */
+sbu2-dc-gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>; /* Q7_USB_C0_SBU2_DC */
 
-Yes, you are beginning to persuade me that stop_machine() for asymmetric systems
-may be the better way to go.
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usbdp_phy0_typec_ss: endpoint@0 {
+> +			reg = <0>;
+> +			remote-endpoint = <&usbc0_ss>;
+> +		};
+> +
+> +		usbdp_phy0_typec_sbu: endpoint@1 {
+> +			reg = <1>;
+> +			remote-endpoint = <&usbc0_sbu>;
+> +		};
 
-If the boot CPU does not support BBML2, paint with page mappings as before; no
-change.
+Something's wrong with the dt-binding here as it only lists one possible 
+port, for the orientation.
 
-If the boot CPU does support BBML2, speculatively paint with block mappings. If
-all CPUs later turn out to support BBML2 then no further action is needed, and
-this gives us a reduction in boot time because we never had to paint per-page
-PTEs. It's also a runtime advantage due to the TLB pressure reduciton.
+> +	};
+> +};
+> +
+> +&usbdp_phy1 {
+> +	orientation-switch;
 
-If any secondary CPU later turns out not to support BBML2, stop the machine and
-repaint with page mappings. Assuming the major cost is writing all the PTEs,
-then this is lightly about the same speed as it is today. And as you say, this
-path is lightly to be rare-ish.
+It seems like we have SBU1 and SBU2 GPIOs as well. So I guess we want 
+something like:
 
-OK I'm convinced.
+sbu1-dc-gpios = <&gpio0 RK_PD4 GPIO_ACTIVE_HIGH>; /* Q7_USB_C1_SBU1_DC */
+sbu2-dc-gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>; /* Q7_USB_C1_SBU2_DC */
 
-> 
-> The other concern is about cpu hotplug. For example, if all the booting cores
-> have BBML2, but the hot plugged cores don't, shall we split the page table when
-> the cores are hot added, and collapse the page table when the cores are hot
-> removed?
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usbdp_phy1_typec_ss: endpoint@0 {
+> +			reg = <0>;
+> +			remote-endpoint = <&usbc1_ss>;
+> +		};
+> +
+> +		usbdp_phy1_typec_sbu: endpoint@1 {
+> +			reg = <1>;
+> +			remote-endpoint = <&usbc1_sbu>;
+> +		};
 
-I don't think we need to worry about this case too much. There are lots of
-things today that require that the kernel can see at least 1 of each possible
-CPU during boot (applying errata is a good example). If a new CPU model gets
-hotplugged that it hasn't seen during boot then I think it's completely
-reasonable to refuse to online it if it doesn't meet the configured feature
-requirements. If you define BBML2 as a system feature, you'll get this behaviour
-for free. In reality, hotplugged CPUs are going to be symmetric so I don't think
-we will fall down this path in the real world.
+Something's wrong with the dt-binding here as it only lists one possible 
+port, for the orientation.
 
-> 
-> I'm not sure whether the extra logic to support asymmetric systems is worth it
-> or not. Maybe we should start from the symmetric systems, then add more graceful
-> handle to asymmetric systems later if it turns out to be a real problem? And
-> unfortunately I don't have the appropriate hardware to test the code. Maybe you
-> or someone else from ARM has the right hardware?
+> +	};
+> +};
+> +
+>   /* host0 on P10 USB-A */
+>   &usb_host0_ehci {
+>   	status = "okay";
+> @@ -903,6 +1053,34 @@ &usb_host0_ohci {
+>   	status = "okay";
+>   };
+>   
 
-My view is that we need to make BMML2 a system feature. Speculatively paint the
-linear map with block mappings if the primary CPU supports BBML2. Stop machine
-and repaint as page mappings if the system as a whole doesn't support BBML2 at
-system feature finalization. In the unlikely event that the system does support
-BBML2 and a CPU is hotplugged that doesn't support it, refuse to online it (that
-bit is for free as a result of defining it as a system feature).
+Comment for USB-C P11 connector.
 
-You can hack the code to always stop machine and remap as page mappings for
-testing purposes.
+> +&usb_host0_xhci {
 
-I'm happy to collaborate on development of these patches and/or do testing as
-required; I think the performance numbers you posted look compelling.
+Add a comment for highlighting it supports DRD, just that we aren't 
+ready to support it just yet.
 
-> 
-> Thanks,
-> Yang
-> 
->> Thanks,
->> Ryan
->>
->>> +        .matches = has_bbmlv2,
->>> +    },
->>>       {},
->>>   };
->>>   diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
->>> index eb17f59e543c..287bdede53f5 100644
->>> --- a/arch/arm64/tools/cpucaps
->>> +++ b/arch/arm64/tools/cpucaps
->>> @@ -14,6 +14,7 @@ HAS_ADDRESS_AUTH_ARCH_QARMA5
->>>   HAS_ADDRESS_AUTH_IMP_DEF
->>>   HAS_AMU_EXTN
->>>   HAS_ARMv8_4_TTL
->>> +HAS_BBMLV2
->>>   HAS_CACHE_DIC
->>>   HAS_CACHE_IDC
->>>   HAS_CNP
-> 
+> +	dr_mode = "host";
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usb_host0_xhci_drd_sw: endpoint {
+> +			remote-endpoint = <&usbc0_hs>;
+> +		};
 
+Does this actually make sense without usb-role-switch; set? The binding 
+seems to indicate port is only useful when that is set.
+
+> +	};
+> +};
+> +
+
+Comment for USB-C P12 connector.
+
+> +&usb_host1_xhci {
+
+Add a comment for highlighting it supports DRD, just that we aren't 
+ready to support it just yet.
+
+> +	dr_mode = "host";
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usb_host1_xhci_drd_sw: endpoint {
+> +			remote-endpoint = <&usbc1_hs>;
+> +		};
+
+Does this actually make sense without usb-role-switch; set? The binding 
+seems to indicate port is only useful when that is set.
+
+Cheers,
+Quentin
 
