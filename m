@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-520259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C300A3A7A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:33:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9FAA3A7A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D37E3B159F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4653B19BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE684272913;
-	Tue, 18 Feb 2025 19:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DD2272928;
+	Tue, 18 Feb 2025 19:31:05 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FEF270ECE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A346D271277;
 	Tue, 18 Feb 2025 19:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907064; cv=none; b=EYp0aJf69g5kUcPRY8MjC3416AoMLOf7mRJp/x7YuN78nbK9h9/1wtrRBwdGMD5MUzLPk5BD7hXUbLG66kRepicRpkZ6+37sf0qZ9V8tyVc+ivRXuUBreweryado6IVAW12MBUhmjIUc9c76WW13D35C06/2hP63/mtqALCFhjw=
+	t=1739907064; cv=none; b=sXg9jwGdpNKCrNvOVhzzBnmtbr0FxNOCzKnbKDoOP8ClsC+VVqUAOrqOgC9ugzrBo4nP+bdnIeCB5MHE0sT58GOqioXTQgMkRGQRvujM8w3NswpW/5ZLHwEaZBHUHwwfX5L7/dWfCfkdaNHt49JbxhDEcocFEEeA9NAlKCg9Xzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739907064; c=relaxed/simple;
-	bh=IczSO0h8tCSdWpAMkGFhoB9zUssOEz97ahdprfA2go8=;
+	bh=2YalSfh1sIK7ZYk5yFfNAwu0MnaY4ZnI8YiB3afchPo=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Ao5HUM1c8Ak/Elk8lcEFyQNttqsM6CVwQhxol+ZZ1yvHgn1M6TB3HQl8LfVxFfdg4aqSc7LB7LSPwAbfmyh/YmwGYEkrmbYcqrT8H1JNSA74Z/2JsFoXtErEwkEFjQ1ZmpooiEHeK6+XvE0uwqKNYGlOejcrLfytYkUJ4s9+emw=
+	 Content-Type; b=M2AaLnOxs95l+EIKwQ6Y9V+EtJscSf1tJ2P+Njm+7XySNyFs0NKkRUiQ260D1sok4FFRehtq9wIV78GpU5oyDzgKiItLaHQKEVKSKNpFmV+YtmNvWWPHYvEJalOzYSu+702M562/5riBaKkcGmQoycyurtJTDIWZzxHmfmJRug4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB39C4CEE2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848CAC4CEE8;
 	Tue, 18 Feb 2025 19:31:04 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tkTJW-00000004A0w-3vZO;
-	Tue, 18 Feb 2025 14:31:26 -0500
-Message-ID: <20250218193126.785837383@goodmis.org>
+	id 1tkTJX-00000004A1R-0QhQ;
+	Tue, 18 Feb 2025 14:31:27 -0500
+Message-ID: <20250218193126.956559192@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 18 Feb 2025 14:30:37 -0500
+Date: Tue, 18 Feb 2025 14:30:38 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -45,9 +45,8 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Heiko Carstens <hca@linux.ibm.com>,
  Sven Schnelle <svens@linux.ibm.com>,
  Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- stable@vger.kernel.org
-Subject: [PATCH 4/5] fprobe: Always unregister fgraph function from ops
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: [PATCH 5/5] selftests/ftrace: Update fprobe test to check enabled_functions file
 References: <20250218193033.338823920@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,65 +58,99 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-When the last fprobe is removed, it calls unregister_ftrace_graph() to
-remove the graph_ops from function graph. The issue is when it does so, it
-calls return before removing the function from its graph ops via
-ftrace_set_filter_ips(). This leaves the last function lingering in the
-fprobe's fgraph ops and if a probe is added it also enables that last
-function (even though the callback will just drop it, it does add unneeded
-overhead to make that call).
+A few bugs were found in the fprobe accounting logic along with it using
+the function graph infrastructure. Update the fprobe selftest to catch
+those bugs in case they or something similar shows up in the future.
 
-  # echo "f:myevent1 kernel_clone" >> /sys/kernel/tracing/dynamic_events
-  # cat /sys/kernel/tracing/enabled_functions
-kernel_clone (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
+The test now checks the enabled_functions file which shows all the
+functions attached to ftrace or fgraph. When enabling a fprobe, make sure
+that its corresponding function is also added to that file. Also add two
+more fprobes to enable to make sure that the fprobe logic works properly
+with multiple probes.
 
-  # echo "f:myevent2 schedule_timeout" >> /sys/kernel/tracing/dynamic_events
-  # cat /sys/kernel/tracing/enabled_functions
-kernel_clone (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-schedule_timeout (1)           	tramp: 0xffffffffc02f3000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-
-  # > /sys/kernel/tracing/dynamic_events
-  # cat /sys/kernel/tracing/enabled_functions
-
-  # echo "f:myevent3 kmem_cache_free" >> /sys/kernel/tracing/dynamic_events
-  # cat /sys/kernel/tracing/enabled_functions
-kmem_cache_free (1)           	tramp: 0xffffffffc0219000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-schedule_timeout (1)           	tramp: 0xffffffffc0219000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60
-
-The above enabled a fprobe on kernel_clone, and then on schedule_timeout.
-The content of the enabled_functions shows the functions that have a
-callback attached to them. The fprobe attached to those functions
-properly. Then the fprobes were cleared, and enabled_functions was empty
-after that. But after adding a fprobe on kmem_cache_free, the
-enabled_functions shows that the schedule_timeout was attached again. This
-is because it was still left in the fprobe ops that is used to tell
-function graph what functions it wants callbacks from.
-
-Cc: stable@vger.kernel.org
-Fixes: 4346ba1604093 ("fprobe: Rewrite fprobe on function-graph tracer")
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/fprobe.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../test.d/dynevent/add_remove_fprobe.tc      | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 90241091ca61..886090845b1a 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -403,11 +403,9 @@ static void fprobe_graph_remove_ips(unsigned long *addrs, int num)
- 	lockdep_assert_held(&fprobe_mutex);
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+index dc25bcf4f9e2..449f9d8be746 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+@@ -7,12 +7,38 @@ echo 0 > events/enable
+ echo > dynamic_events
  
- 	fprobe_graph_active--;
--	if (!fprobe_graph_active) {
--		/* Q: should we unregister it ? */
-+	/* Q: should we unregister it ? */
-+	if (!fprobe_graph_active)
- 		unregister_ftrace_graph(&fprobe_graph_ops);
--		return;
--	}
+ PLACE=$FUNCTION_FORK
++PLACE2="kmem_cache_free"
++PLACE3="schedule_timeout"
  
- 	ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
- }
+ echo "f:myevent1 $PLACE" >> dynamic_events
++
++# Make sure the event is attached and is the only one
++grep -q $PLACE enabled_functions
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 1 ]; then
++	exit_fail
++fi
++
+ echo "f:myevent2 $PLACE%return" >> dynamic_events
+ 
++# It should till be the only attached function
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 1 ]; then
++	exit_fail
++fi
++
++# add another event
++echo "f:myevent3 $PLACE2" >> dynamic_events
++
++grep -q $PLACE2 enabled_functions
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 2 ]; then
++	exit_fail
++fi
++
+ grep -q myevent1 dynamic_events
+ grep -q myevent2 dynamic_events
++grep -q myevent3 dynamic_events
+ test -d events/fprobes/myevent1
+ test -d events/fprobes/myevent2
+ 
+@@ -21,6 +47,34 @@ echo "-:myevent2" >> dynamic_events
+ grep -q myevent1 dynamic_events
+ ! grep -q myevent2 dynamic_events
+ 
++# should still have 2 left
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 2 ]; then
++	exit_fail
++fi
++
+ echo > dynamic_events
+ 
++# Should have none left
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 0 ]; then
++	exit_fail
++fi
++
++echo "f:myevent4 $PLACE" >> dynamic_events
++
++# Should only have one enabled
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 1 ]; then
++	exit_fail
++fi
++
++echo > dynamic_events
++
++# Should have none left
++cnt=`cat enabled_functions | wc -l`
++if [ $cnt -ne 0 ]; then
++	exit_fail
++fi
++
+ clear_trace
 -- 
 2.47.2
 
