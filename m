@@ -1,205 +1,181 @@
-Return-Path: <linux-kernel+bounces-520301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F77A3A833
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:58:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13862A3A839
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 21:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC1D1888E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F50D3A4E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0775A1EFF92;
-	Tue, 18 Feb 2025 19:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYBBKsxT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2F41EFFA5;
+	Tue, 18 Feb 2025 20:00:00 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F891EB5CA;
-	Tue, 18 Feb 2025 19:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93921E835C;
+	Tue, 18 Feb 2025 19:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908672; cv=none; b=q/6Z4vxGtvTVrL9LxoxJRwTiKp1zBoeGgwIUhZwEEwgm6SMoLTP08/UkyjFiJk1lSUgMiyHaQHqZkcLCWTwjKBMLIWb/l04hq2Fso5YRXvj5G0V9xAVvZmjhzaVDvwqgTqvtDtltO8B4FsgCR+XSmWo6YJCX0ETZqRjhLyHSNec=
+	t=1739908799; cv=none; b=YpdzocyP63jmT/b9oMMzTA95+QJxhuujUssvDMyuTucuqgK2BxPKocjiBQ1l5ZPHGgR6rdLJdzoChiNHGnnFVOQXjWe2FaCzLZXmQgdvk8guB+hzoVVTjQidXoGsjq7XAHmQhmw0189T4e0sX0K7eyDx+CE3RxG7tDvbgpZLXoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908672; c=relaxed/simple;
-	bh=NdOg0UvtyHWKWW084SqAvljhOyOWRFlP2AMh8KCGNoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTAqjHoSKFeZlcwoPGNspwNrkU9VmBVDUd/8HlzT8tXNxtO0SqWjrhXgHExQykVnt0l4JW38XU3K9I0I1/z103iGtZwsupUwbGk7s0KCpy2SG88fuR0DsnXYbqwZ69SoQYKC6FKDxBNSzo7M1wHQt69G4HO01VygbKnfGcvYEVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYBBKsxT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFFA7C4CEE8;
-	Tue, 18 Feb 2025 19:57:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739908671;
-	bh=NdOg0UvtyHWKWW084SqAvljhOyOWRFlP2AMh8KCGNoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PYBBKsxTn04vfOuRBwwdNeTfYiKdx5HHotfiprRS/CAgz/anhk5cQrAhSfpEHPP8A
-	 P+5Xn/8r9oUSYb+ZfEjuucsVZD9QVMvaL1R/y48CruxXvzhZkX+dRJ2VHMEIvTSh9f
-	 u8l8Mvy+j+WVWeFdgEDcuc8JDmD17YNWy4gLQVZmj0aJhniWEcNpKnt73PHYt/HnHc
-	 lHDBDvCbIYjAtFC5ELdHasMjVmBPMH1cta/xdzbF1lzYuGLctwCZM2/qDlrrUSm6fy
-	 PexSJuARuHlSSw33KuvS95vA+zUIVeC1UvikbgQrgUtb33Th4e73vNe/WzqXedaaBX
-	 xfi+S1EoWlg/A==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-71e10e6a1ceso1768532a34.0;
-        Tue, 18 Feb 2025 11:57:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUjysqafsG5f+P6ifFecBtBXspr8fKdMgi9A5yTu59w1HLcaHUZ6N2/VdqmhRFvO+8uRLhTH30H4L4=@vger.kernel.org, AJvYcCVwH0MizjJ6ihsRUhi/D4qq3IXQgzR/2BlQB7FxkARPDY+B4V4LdZwmthRpEAsF85mSZW73tN5pIMGzPMN5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK0fyvQk5MuqU8bGpA7WSYUjKqy2JBl+mzk0B5fahpw5c3O8v/
-	tvuS9Jiwcs1aJLIpiYV6Z7otGHoPwCAGfvYs0BY+f78epFWMd1Et/HWJQHOlkOcaIp5ueDKIc5P
-	nQJqbfETKlH7qWFDMN0lHKGEm7RQ=
-X-Google-Smtp-Source: AGHT+IGehTfwfgWTGlTqYmZ+2Zqn21Ck9f4vM9tehLAR4CXgcbyAmFYF8Ptk/fKaY/fx8HLNFpj4hS1T6r1FNiDq9+o=
-X-Received: by 2002:a05:6808:1a25:b0:3f4:756:52cf with SMTP id
- 5614622812f47-3f4075653f4mr4199404b6e.10.1739908671118; Tue, 18 Feb 2025
- 11:57:51 -0800 (PST)
+	s=arc-20240116; t=1739908799; c=relaxed/simple;
+	bh=L97Rxhcckn9npUQ6KwMiTkzEcTM9q1EIrEsNYDNgkvk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=sDNt/3tOMmIwbhvUy7wnHxrfi2WWWGCYY1ZKcDiywdYWZtFK82OsrFEciQxq20sr1mTbpbf6qfVxdaoyQutCLCJFX4wRPgf63ULUpGqyTgdXqFKtS36jhK1y4s9px7LCJ0Wbx+qtL8YwUcCfN3Uzimg0bCfL0M8+PFS/oXmK2bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC1EC4CEE2;
+	Tue, 18 Feb 2025 19:59:59 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tkTlW-00000004Aon-1RHX;
+	Tue, 18 Feb 2025 15:00:22 -0500
+Message-ID: <20250218195918.255228630@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 18 Feb 2025 14:59:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org,
+ bpf <bpf@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ linux-s390@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>,
+ Zheng Yejian <zhengyejian1@huawei.com>,
+ Martin  Kelly <martin.kelly@crowdstrike.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Josh Poimboeuf <jpoimboe@redhat.com>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: [PATCH v5 0/6] scripts/sorttable: ftrace: Remove place holders for weak functions in available_filter_functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250128141139.2033088-1-darcari@redhat.com> <20250213160741.445351-1-darcari@redhat.com>
-In-Reply-To: <20250213160741.445351-1-darcari@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 20:57:38 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g27Sutp_Ww7zGe0xB95kxFh-pzjd5-PpjR==h7-s8MLA@mail.gmail.com>
-X-Gm-Features: AWEUYZlpai7SpXsNA6Zx29eRhmjHn54ScnowNhZR7EUXOxXW2VU5HrPEd_C27oA
-Message-ID: <CAJZ5v0g27Sutp_Ww7zGe0xB95kxFh-pzjd5-PpjR==h7-s8MLA@mail.gmail.com>
-Subject: Re: [PATCH v4] intel_idle: introduce 'no_native' module parameter
-To: David Arcari <darcari@redhat.com>, Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-pm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Jacob Pan <jacob.jun.pan@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	Prarit Bhargava <prarit@redhat.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 5:07=E2=80=AFPM David Arcari <darcari@redhat.com> w=
-rote:
->
-> Since commit 18734958e9bf ("intel_idle: Use ACPI _CST for processor model=
-s
-> without C-state tables") the intel_idle driver has had the ability to use
-> the ACPI _CST to populate C-states when the processor model is not
-> recognized. However, even when the processor model is recognized (native
-> mode) there are cases where it is useful to make the driver ignore the pe=
-r
-> cpu idle states in lieu of ACPI C-states (such as specific application
-> performance). Add the 'no_native' module parameter to provide this
-> functionality.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: David Arcari <darcari@redhat.com>
-> Cc: Artem Bityutskiy <dedekind1@gmail.com>
-> Cc: Prarit Bhargava <prarit@redhat.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: David Arcari <darcari@redhat.com>
-> ---
-> v4: fix !CONFIG_ACPI_PROCESSOR_CSTATE compilation issue
+This series removes the place holder __ftrace_invalid_address___ from
+the available_filter_functions file.
 
-Artem, have all of your comments been addressed in this version?
+The rewriting of the sorttable.c code to make it more manageable
+has already been merged:
 
-> v3: more documentation cleanup
-> v2: renamed parameter, cleaned up documentation
->
-> Documentation/admin-guide/pm/intel_idle.rst | 18 +++++++++++++-----
->  drivers/idle/intel_idle.c                   | 16 ++++++++++++++++
->  2 files changed, 29 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/admin-guide/pm/intel_idle.rst b/Documentation/=
-admin-guide/pm/intel_idle.rst
-> index 39bd6ecce7de..5940528146eb 100644
-> --- a/Documentation/admin-guide/pm/intel_idle.rst
-> +++ b/Documentation/admin-guide/pm/intel_idle.rst
-> @@ -192,11 +192,19 @@ even if they have been enumerated (see :ref:`cpu-pm=
--qos` in
->  Documentation/admin-guide/pm/cpuidle.rst).
->  Setting ``max_cstate`` to 0 causes the ``intel_idle`` initialization to =
-fail.
->
-> -The ``no_acpi`` and ``use_acpi`` module parameters (recognized by ``inte=
-l_idle``
-> -if the kernel has been configured with ACPI support) can be set to make =
-the
-> -driver ignore the system's ACPI tables entirely or use them for all of t=
-he
-> -recognized processor models, respectively (they both are unset by defaul=
-t and
-> -``use_acpi`` has no effect if ``no_acpi`` is set).
-> +The ``no_acpi``, ``use_acpi`` and ``no_native`` module parameters are
-> +recognized by ``intel_idle`` if the kernel has been configured with ACPI
-> +support.  In the case that ACPI is not configured these flags have no im=
-pact
-> +on functionality.
-> +
-> +``no_acpi`` - Do not use ACPI at all.  Only native mode is available, no
-> +ACPI mode.
-> +
-> +``use_acpi`` - No-op in ACPI mode, the driver will consult ACPI tables f=
-or
-> +C-states on/off status in native mode.
-> +
-> +``no_native`` - Work only in ACPI mode, no native mode available (ignore
-> +all custom tables).
->
->  The value of the ``states_off`` module parameter (0 by default) represen=
-ts a
->  list of idle states to be disabled by default in the form of a bitmask.
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 118fe1d37c22..b0be5ef43ffc 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1695,6 +1695,10 @@ static bool force_use_acpi __read_mostly; /* No ef=
-fect if no_acpi is set. */
->  module_param_named(use_acpi, force_use_acpi, bool, 0444);
->  MODULE_PARM_DESC(use_acpi, "Use ACPI _CST for building the idle states l=
-ist");
->
-> +static bool no_native __read_mostly; /* No effect if no_acpi is set. */
-> +module_param_named(no_native, no_native, bool, 0444);
-> +MODULE_PARM_DESC(no_native, "Ignore cpu specific (native) idle states in=
- lieu of ACPI idle states");
-> +
->  static struct acpi_processor_power acpi_state_table __initdata;
->
->  /**
-> @@ -1834,6 +1838,11 @@ static bool __init intel_idle_off_by_default(unsig=
-ned int flags, u32 mwait_hint)
->         }
->         return true;
->  }
-> +
-> +static inline bool ignore_native(void)
-> +{
-> +       return no_native & !no_acpi;
-> +}
->  #else /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->  #define force_use_acpi (false)
->
-> @@ -1843,6 +1852,7 @@ static inline bool intel_idle_off_by_default(unsign=
-ed int flags, u32 mwait_hint)
->  {
->         return false;
->  }
-> +static inline bool ignore_native(void) { return false; }
->  #endif /* !CONFIG_ACPI_PROCESSOR_CSTATE */
->
->  /**
-> @@ -2328,6 +2338,12 @@ static int __init intel_idle_init(void)
->         pr_debug("MWAIT substates: 0x%x\n", mwait_substates);
->
->         icpu =3D (const struct idle_cpu *)id->driver_data;
-> +       if (ignore_native()) {
-> +               if (icpu) {
-> +                       pr_debug("ignoring native cpu idle states\n");
-> +                       icpu =3D NULL;
-> +               }
-> +       }
->         if (icpu) {
->                 if (icpu->state_table)
->                         cpuidle_state_table =3D icpu->state_table;
-> --
-> 2.48.1
->
->
+  https://git.kernel.org/torvalds/c/c0e75905caf368e19aab585d20151500e750de89
+
+Now this is only for getting rid of the ftrace invalid function place holders.
+
+The first patch adds arm64 sorting, which requires copying the Elf_Rela into
+a separate array and sorting that.
+
+There's a slight fix patch that adds using a compare function that checks the
+direct values without swapping bytes as the current method will swap bytes,
+but the copying into the array already did the necessary swapping.
+
+The third patch makes it always copy the section into an array, sort that,
+then copy it back. This allows updates to the values in one place.
+
+The forth patch adds the option "-s <file>" to sorttable.c. Now this code
+is called by:
+
+  ${NM} -S vmlinux > .tmp_vmlinux.nm-sort
+  ${objtree}/scripts/sorttable -s .tmp_vmlinux.nm-sort ${1}
+
+Where the file created by "nm -S" is read, recording the address and the
+associated sizes of each function. It then is sorted, and before sorting the
+mcount_loc table, it is scanned to make sure all symbols in the mcount_loc are
+within the boundaries of the functions defined by nm. If they are not, they
+are zeroed out, as they are most likely weak functions (I don't know what else
+they would be).
+
+Since the KASLR address can be added to the values in this section, when the
+section is read to populate the ftrace records, if the value is zero or equal
+to kaslr_offset() it is skipped and not added.
+
+Before:
+    
+ ~# grep __ftrace_invalid_address___ /sys/kernel/tracing/available_filter_functions | wc -l
+ 551
+
+After:
+
+ ~# grep __ftrace_invalid_address___ /sys/kernel/tracing/available_filter_functions | wc -l
+ 0
+
+The last patches are fixes to ftrace accounting to handle the fact that it
+will likely always have skipped values (at least for x86), and to modify the
+code to verify that the amount of skipped and saved records do match the
+calculated allocations necessary.
+
+And finally, to change the reporting of how much was allocated to reflect the
+freed pages that were allocated but not used due to the skipped entries.
+
+Changes since v4: https://lore.kernel.org/all/20250217153401.022858448@goodmis.org/
+
+- My tests found that the variable "remaining" was used uninitialized
+
+Changes since v3: https://lore.kernel.org/all/20250213162047.306074881@goodmis.org/
+
+- Do not remove 'W' weak functions that are still used.
+
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20250102232609.529842248@goodmis.org/
+
+- Rebased on mainline that has the rewriting of sorttable.c
+
+- Added the code to handle the sections being stored in Elf_Rela sections as
+  arm64 uses.
+
+- No longer use the "ftrace_skip_sym" variable to skip over the zeroed out
+  functions and instead just compare with kalsr_offset.
+
+- Sort via an array and not directly in the file's section.
+
+- Update the verification code to make sure the skipped value is correct.
+
+- Update the output to correctly reflect what was allocated.
+
+
+Changes since v1: https://lore.kernel.org/all/20250102185845.928488650@goodmis.org/
+
+- Replaced the last patch with 3 patches.
+
+  The first of the 3 patches removed the hack of reading System.map
+  with properly reading the Elf symbol table to find start_mcount_loc
+  and stop_mcount_loc.
+
+  The second patch adds the call to "nm -S vmlinux" to get the sizes
+  of each function.
+
+  The previous last patch would just check the zeroed out values and compare
+  them to kaslr_offset(). Instead, this time, the last patch adds a new
+  ftrace_mcount_skip that is used to simply skip over the first entries
+  that the sorttable.c moved to the beginning, as they were the weak functions
+  that were found.
+
+
+Steven Rostedt (6):
+      arm64: scripts/sorttable: Implement sorting mcount_loc at boot for arm64
+      scripts/sorttable: Have mcount rela sort use direct values
+      scripts/sorttable: Always use an array for the mcount_loc sorting
+      scripts/sorttable: Zero out weak functions in mcount_loc table
+      ftrace: Update the mcount_loc check of skipped entries
+      ftrace: Have ftrace pages output reflect freed pages
+
+----
+ arch/arm64/Kconfig      |   1 +
+ kernel/trace/ftrace.c   |  44 +++++-
+ scripts/link-vmlinux.sh |   4 +-
+ scripts/sorttable.c     | 401 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 436 insertions(+), 14 deletions(-)
 
