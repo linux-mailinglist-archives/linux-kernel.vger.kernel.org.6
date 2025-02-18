@@ -1,229 +1,114 @@
-Return-Path: <linux-kernel+bounces-520113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C99A3A5DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:41:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B148AA3A5E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43FE18963F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A5E176C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F7E1EB5C4;
-	Tue, 18 Feb 2025 18:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7370E1F5842;
+	Tue, 18 Feb 2025 18:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMjf4+94"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="oDovy6Oz"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BFD2356D6;
-	Tue, 18 Feb 2025 18:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DB91EB5CF;
+	Tue, 18 Feb 2025 18:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903959; cv=none; b=o6DzHMW/V/9jzvCNlpmBi9j4FDTgU1mhJrCRof10IZyb2CHbfeoRy+w6LTPQ/tUWdvAVOd+XM9a62UgcGpk1nPBivCfw7fsLlVWjwrPTqJCgsdW8oRtBLQPRWwUl1aOHHKgCOZGEYeF8WaVhtcydI3hTy1v5O43dCtKl6u5Jj08=
+	t=1739904001; cv=none; b=krP1nCM5Y3TyQVB2vj6MbMod4uFIYKqGUqPDUDJbrcYVduu12SmK4hTu1xRP0gspx02inXELn/TE5nB//JirHzhZKeT27rC7af7m3rEm8RUILLFm6IhkZjlGJ5OyJ/EtLISjiz9eKQAJeKqhFxy4n5X92ml2XluYvTKEuIP1O5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903959; c=relaxed/simple;
-	bh=oEi8+DJ1Od9anjCSCDXHxWN91goXMv9PGcjFAatOkQw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IpdNs5w+gGfPKy8DBhOCwNQxlocDvqfBfhGMDAEk7EPZbCJhNYZK2pXkRTSSSxYx4KlUoeWMHlKm/YYCin+kKP1YY9i9DmatRUhah3B0K+EWoKqn+A/TvaIqCVumKZXVNG6ryDsqi3pH8IKg9cHpTyLi3j5FnBW0uwaazAVphd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMjf4+94; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e5dcc3b0c77so2866592276.0;
-        Tue, 18 Feb 2025 10:39:15 -0800 (PST)
+	s=arc-20240116; t=1739904001; c=relaxed/simple;
+	bh=HNdgRxifz8YMGcx60trEWb6XMRQ2yH9UIRf2R3QL4p4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G1xC7mhcphHzHtGE70dAkg7w8RZBtnT4RpYMLGrgfrO+sofJQUacpmdzjKDBhSCE8a83dn5b21BF9dPgTgOgKh5yptsBA99MpzYiO1WG86GclrhsuZDP8Vum/bOQx0gpL8rYoPRugiFYNdXGn3U/OlkKxxdhWIfghRsvoHbP9rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=oDovy6Oz; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739903955; x=1740508755; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A602ukX61G8SHfGgV9Mfn3RDCkXOuF+pNpwRiPxAdqk=;
-        b=RMjf4+94YQO9sV1NMSnJO6So3XEnUiJHICbP3k//rk+BKlGrEyBmVdjfUOaOKoP/40
-         xfVLWd+75luQpFucA7jyzVUhuJ4K4fAuHI8Avf5tIxpQjBeqM4hAV1EG2H5myssJdpfS
-         8rFztHjEG+tXpRNI8JZYpt/+vusd9fHrQ3tvberfOglVc4bEWaTJIwMPXcAWZ9gbomBF
-         y4gdvPEQ+4T6ffyhBpP2KQu4yKWDk8H0nNHtqk4jA0MP6NDAh7gyrxeWc86pJ586D3mu
-         5KYq1QioRuG6/I9GUmPiB9+VI8SAhtjiNEzgr/wenqSpF7Qrc0IQg0cBHvgK26X6a0xt
-         3hkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739903955; x=1740508755;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A602ukX61G8SHfGgV9Mfn3RDCkXOuF+pNpwRiPxAdqk=;
-        b=PVYFC9qm26pIcq6BS54SGSH3Zm4Y0ONoX20J/MwGfRcpTzoh0GcFWggS/guDb3ATnB
-         Qfeg89lrRr2ySHeiiWV2dWxrtKTIb07f/3azldBT+m7LjOR9E1Sh+KUFKgekAj7UcumA
-         0FS7vaZSM1u7dYIS3Cc5ZNRGaI3E59ksW6cExUKf0aI9gSluM/1OdZrlGJjVPE2txFcS
-         rcDMSHWxj0MkRPn9pMhQnTFlGKD8jBDqpNPFJdm3JJAStBUSmtNhGUiRWfGC8ORGCHfQ
-         JvMtlL2ptGEh74AgZcNb4ZEES1D66+D2pioLaMupvNHLfsSMnuD5ESwD2eLuGalTNkEh
-         1Edw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+PJYf0iMH+WPVKwDn7LnZDHUz/0CC1wc/4q/F2oRKr+BKP7P04T+729/PVpNJ0qUAQM8JoFdvV3iSNoKtCAf9N1breA==@vger.kernel.org, AJvYcCW88FE6JX1sfQFtfLSVNjZP021Qt6da+MJ87Zjzl8SuCxs9QK6Enmo2/wrvQ4QkW4jpSXXbfZVBCgeNA7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW8MLkK3oI9140PJyX0lKySoNKeMdUzNVtQedaZSNCXlk0sQfw
-	V2yMD7P/jPhOVze3MyyoxhA/UT4X9Onbehfw7e3i2OXNn+pHVGfa
-X-Gm-Gg: ASbGncu4FYbuKMObrqCySrzAd5gftRkpAPVQ10QEB7Za/i9x/3XE7+pnoK8rcGAiUT9
-	gJxQDXUi+ml2LovGER2q3NH7NKHkriR39ygNU8E/U/MQ7GvcLLFRrRv3sYUy+Mu47Zq9aepgVZJ
-	ADvdfoy8l31vc15jZmDblhkik3YkxnO4nuCTYrDgYr4QzAvUSQbA06o/CuoWttGlFiWNTG+zhI+
-	v/IFEwk7Z6LLmtfZvKDr3PRS7NVBa40rFzT/GbewKkg4fJB5iR1i8bsK8SqNwSP5j0uqMSaPvFj
-	XAjfYRk=
-X-Google-Smtp-Source: AGHT+IF305OorZ6/B8Lr9PTjWCJ+kGoRs7RrVraUg+lZw/ZCLTQLJPtD1mmjf6z1EbXKxty6ICpHdg==
-X-Received: by 2002:a05:6902:108e:b0:e5d:d6b8:2317 with SMTP id 3f1490d57ef6-e5e0a1400admr641263276.44.1739903954958;
-        Tue, 18 Feb 2025 10:39:14 -0800 (PST)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dae0d9f25sm3289866276.36.2025.02.18.10.39.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 10:39:14 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1739904000; x=1771440000;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=u7m8oAaXCTKe270hEAyxF+vZafTCm9qe7mOPUC/9oyo=;
+  b=oDovy6Ozpvath61E8CcvbcCWFZHLccAMCGB42+1L3ckqgYr5ePUm/65M
+   sRMAVw8VYo7nRjpiLT5k0/LVYfgHxrraRaXbRPFoe0554tRnQTN+9LGa3
+   bLgRJblw15JRtm7yexbADGHEzdweaNwLuiWEkWnhBmEobFaDTALYiF0bp
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.13,296,1732579200"; 
+   d="scan'208";a="409672751"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 18:39:36 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:33463]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.115:2525] with esmtp (Farcaster)
+ id 44be82b4-125d-4530-bf06-4ad7690a1e7a; Tue, 18 Feb 2025 18:39:36 +0000 (UTC)
+X-Farcaster-Flow-ID: 44be82b4-125d-4530-bf06-4ad7690a1e7a
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Tue, 18 Feb 2025 18:39:35 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.101.36) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 18 Feb 2025 18:39:32 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <purvayeshi550@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <skhan@linuxfoundation.org>, Kuniyuki Iwashima
+	<kuniyu@amazon.com>
+Subject: Re: [PATCH net-next v3] af_unix: Fix undefined 'other' error
+Date: Tue, 18 Feb 2025 10:39:22 -0800
+Message-ID: <20250218183922.25318-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250218141045.38947-1-purvayeshi550@gmail.com>
+References: <20250218141045.38947-1-purvayeshi550@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 18 Feb 2025 13:39:12 -0500
-Message-Id: <D7VSH5I5ERDG.2QR7V6W3JX2LM@gmail.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>, "Henrique de Moraes Holschuh"
- <hmh@hmh.eng.br>, <ibm-acpi-devel@lists.sourceforge.net>,
- "platform-driver-x86@vger.kernel.org"
- <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] platform/x86: thinkpad_acpi: Move HWMON
- initialization to tpacpi_hwmon_pdriver's probe
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Mark Pearson" <mpearson-lenovo@squebb.ca>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250215000302.19753-1-kuurtb@gmail.com>
- <20250215000302.19753-3-kuurtb@gmail.com>
- <9a98e10c-dd14-45a9-96ec-6ebca8b68616@app.fastmail.com>
-In-Reply-To: <9a98e10c-dd14-45a9-96ec-6ebca8b68616@app.fastmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWA002.ant.amazon.com (10.13.139.11) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Mark,
+From: Purva Yeshi <purvayeshi550@gmail.com>
+Date: Tue, 18 Feb 2025 19:40:45 +0530
+> Fix an issue detected by the Smatch static analysis tool where an
+> "undefined 'other'" error occurs due to `__releases(&unix_sk(other)->lock)`
+> being placed before 'other' is in scope.
 
-On Tue Feb 18, 2025 at 11:50 AM -05, Mark Pearson wrote:
-> Hi Kurt,
->
-> On Fri, Feb 14, 2025, at 7:03 PM, Kurt Borja wrote:
->> Let the driver core manage the lifetime of the HWMON device, by
->> registering it inside tpacpi_hwmon_pdriver's probe and using
->> devm_hwmon_device_register_with_groups().
->>
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->> ---
->>  drivers/platform/x86/thinkpad_acpi.c | 44 +++++++++++-----------------
->>  1 file changed, 17 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/platform/x86/thinkpad_acpi.c=20
->> b/drivers/platform/x86/thinkpad_acpi.c
->> index ad9de48cc122..a7e82157bd67 100644
->> --- a/drivers/platform/x86/thinkpad_acpi.c
->> +++ b/drivers/platform/x86/thinkpad_acpi.c
->> @@ -367,7 +367,6 @@ static struct {
->>  	u32 beep_needs_two_args:1;
->>  	u32 mixer_no_level_control:1;
->>  	u32 battery_force_primary:1;
->> -	u32 sensors_pdrv_registered:1;
->>  	u32 hotkey_poll_active:1;
->>  	u32 has_adaptive_kbd:1;
->>  	u32 kbd_lang:1;
->> @@ -11815,12 +11814,10 @@ static void thinkpad_acpi_module_exit(void)
->>  {
->>  	tpacpi_lifecycle =3D TPACPI_LIFE_EXITING;
->>=20
->> -	if (tpacpi_hwmon)
->> -		hwmon_device_unregister(tpacpi_hwmon);
->> -	if (tp_features.sensors_pdrv_registered)
->> +	if (tpacpi_sensors_pdev) {
->>  		platform_driver_unregister(&tpacpi_hwmon_pdriver);
->> -	if (tpacpi_sensors_pdev)
->>  		platform_device_unregister(tpacpi_sensors_pdev);
->> +	}
->>=20
->>  	if (tpacpi_pdev) {
->>  		platform_driver_unregister(&tpacpi_pdriver);
->> @@ -11891,6 +11888,17 @@ static int __init tpacpi_pdriver_probe(struct=
-=20
->> platform_device *pdev)
->>  	return ret;
->>  }
->>=20
->> +static int __init tpacpi_hwmon_pdriver_probe(struct platform_device *pd=
-ev)
->> +{
->> +	tpacpi_hwmon =3D devm_hwmon_device_register_with_groups(
->> +		&tpacpi_sensors_pdev->dev, TPACPI_NAME, NULL, tpacpi_hwmon_groups);
->> +
->> +	if (IS_ERR(tpacpi_hwmon))
->> +		pr_err("unable to register hwmon device\n");
->> +
->> +	return PTR_ERR_OR_ZERO(tpacpi_hwmon);
->> +}
->> +
->>  static int __init thinkpad_acpi_module_init(void)
->>  {
->>  	const struct dmi_system_id *dmi_id;
->> @@ -11964,37 +11972,19 @@ static int __init thinkpad_acpi_module_init(vo=
-id)
->>  		return ret;
->>  	}
->>=20
->> -	tpacpi_sensors_pdev =3D platform_device_register_simple(
->> -						TPACPI_HWMON_DRVR_NAME,
->> -						PLATFORM_DEVID_NONE, NULL, 0);
->> +	tpacpi_sensors_pdev =3D platform_create_bundle(&tpacpi_hwmon_pdriver,
->> +						     tpacpi_hwmon_pdriver_probe,
->> +						     NULL, 0, NULL, 0);
->>  	if (IS_ERR(tpacpi_sensors_pdev)) {
->>  		ret =3D PTR_ERR(tpacpi_sensors_pdev);
->>  		tpacpi_sensors_pdev =3D NULL;
->> -		pr_err("unable to register hwmon platform device\n");
->> +		pr_err("unable to register hwmon platform device/driver bundle\n");
->>  		thinkpad_acpi_module_exit();
->>  		return ret;
->>  	}
->>=20
->>  	tpacpi_lifecycle =3D TPACPI_LIFE_RUNNING;
->>=20
->> -	ret =3D platform_driver_register(&tpacpi_hwmon_pdriver);
->> -	if (ret) {
->> -		pr_err("unable to register hwmon platform driver\n");
->> -		thinkpad_acpi_module_exit();
->> -		return ret;
->> -	}
->> -	tp_features.sensors_pdrv_registered =3D 1;
->> -
->> -	tpacpi_hwmon =3D hwmon_device_register_with_groups(
->> -		&tpacpi_sensors_pdev->dev, TPACPI_NAME, NULL, tpacpi_hwmon_groups);
->> -	if (IS_ERR(tpacpi_hwmon)) {
->> -		ret =3D PTR_ERR(tpacpi_hwmon);
->> -		tpacpi_hwmon =3D NULL;
->> -		pr_err("unable to register hwmon device\n");
->> -		thinkpad_acpi_module_exit();
->> -		return ret;
->> -	}
->> -
->>  	return 0;
->>  }
->>=20
->> --=20
->> 2.48.1
->
-> Thanks for doing this.
+I don't care much, but according to Dan, this is Sparse error due to
+const unix_sk() ?
 
-Glad to help :)
+https://lore.kernel.org/all/bbf51850-814a-4a30-8165-625d88f221a5@stanley.mountain/
 
->
-> For the series - all looks good and I tested on a X1 Carbon 12 and confir=
-med the Thinkpad devices are there under /sys/devices/thinkpad_acpi and /sy=
-s/class/hwmon. Didn't find any issues.
->
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> 
+> Remove the `__releases()` annotation from the `unix_wait_for_peer()`
+> function to eliminate the Smatch warning. The annotation references `other`
 
-Thank you! Making changes to this driver is a bit scary.
+Same here ?
 
---=20
- ~ Kurt
 
->
-> Mark
+> before it is declared, leading to a false positive error during static
+> analysis.
+> 
+> Since AF_UNIX does not use Sparse annotations, this annotation is
+> unnecessary and does not impact functionality.
+> 
+> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
 
+Anyway,
+
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+
+Also, I think you can carry over Joe and Simon's tags as the change is
+trivial.
 
