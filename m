@@ -1,288 +1,120 @@
-Return-Path: <linux-kernel+bounces-518922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC48FA39657
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:02:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BC0A3961D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:53:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66153A7627
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:52:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E817D188774F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AF522E002;
-	Tue, 18 Feb 2025 08:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F0E22C336;
+	Tue, 18 Feb 2025 08:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="inZgeTAE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bKKdcgpH"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C9D22DF8E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BD81EB1A6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739868734; cv=none; b=amqYls6AgqyV5/MMsJvorGKzNv/tnRuEeQQRZByyRomnoq4SToupja4ammH2rgtm+u4eCRYBEOmZE+olS2qk8y4jBMptBH+SKFu78hQP8QFkYKNBq4voKWoBEeE940eFqr7vVV3OyOFAjhKJCjbShKjsGXx1Pq/BXQN7/oecG+o=
+	t=1739868747; cv=none; b=kKV3jpTSTnvAZqYNn4stDUIBKX4OW+LUJ0zyjuTyFTYBxjjjQshcVLDZjO3NWIaqHQqnpkFgE1Mq/ucyKgG2vxveamSpX7ktWdwUzNPQkHEvqPEhW/DDPqJngGbAjcCDjCUrYCK/JN0C8Fp6ZgMIBUUM2xyRgzvDqj2kbPNlnTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739868734; c=relaxed/simple;
-	bh=qImDM2Aoz3Snnaan8A7pazPLk5kgxVW4GXVujSQsLH8=;
+	s=arc-20240116; t=1739868747; c=relaxed/simple;
+	bh=aKJBr3Dd2EAHMdbQa3POvki4e+uMax+JgUvBzWoMvz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIpNw9pUGgfMfV6/+s3pQJVNa+N96Y5uzKj5SBfHwIRREE9nIavmveCEqHcFjTILt02YWyadD/hxswB/T9JbKSEFh0n+dT2PMuApgtioruiB1FYAiKoDkqrHoGYK0vvT3OpSNS4aSR8EWFTnTvMwTdgbGpGj8uQyAQ1hBNB397U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=inZgeTAE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739868731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/40cidM9GqDVrc7T4DzVHlbImaecKAWNvPg5rw21iA8=;
-	b=inZgeTAEkAgB3k+Nq6TemODsnVHFOqFJWDfwqldJeVmF/0zE0abz0PqhwRjlCNbhstr2uk
-	rO91FF9yGC3TwPlgucl6c0TMlIDn3eeAgMccBZIU92pbzqItXDgG9uG8gRgQ/mwt0juqce
-	C8/hga2CD4sNAs6WB79fionVU0MeMv8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-33-IAxyY5JdO0S862Ymisxz8A-1; Tue, 18 Feb 2025 03:52:09 -0500
-X-MC-Unique: IAxyY5JdO0S862Ymisxz8A-1
-X-Mimecast-MFC-AGG-ID: IAxyY5JdO0S862Ymisxz8A_1739868728
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f3bac2944so964962f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 00:52:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739868728; x=1740473528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/40cidM9GqDVrc7T4DzVHlbImaecKAWNvPg5rw21iA8=;
-        b=QldDZUj4RpavsfjK2wkNASjUrCMKalMoOB9RhI9t9M4nIoxaP6Md3O/LdIqnXYw3QD
-         TmB22yU/GhAfrZx5+IKdFB3YNMNJgS0PNnyHy/fUA+Lkaalm5vPjjE3GJXKLabqa+aRC
-         KxwsAF4YE3aGLFDCCaumxCC/8nzyR389dQyoecCp9Qj6IL63sh4SDDQzUNhp7JaQ+Nnq
-         U7RUXfiJyK6UHP6dCHqp2jfrnqZB96qG6eoPNHHIiE0tzY4SmlCUTMUaG2PEcHWlhOWF
-         AaFsJ3wt0OfieOnTGnjruZqLZl+zbp0fZfYEC/MWA+sQtWzuyPn7tEHvoRhia2w8KAzN
-         NUGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXidy7c3IQv/PbXTZjmJdCuYh8BZBgDa8Uuxqxny5Twy3Oaqz/vUq32XvOWRy0qAE1WdJK5+cX61EX3FHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFLp0HyvbJIYbj5obmW9lKPvUfitdCQV+qp4GVQ3RiasKZYBUd
-	fWb1ioH7byl2C8rg8lNFBezRx4rIvADhrB0SFHszBgqkeBo+QxIA6jWBeAoNTBZ8hjXTRgxgdsx
-	WJddytiMvu41IxB9atNoeYBUQT1ixEuZfd8fR64hZb6H0Nsh0Vx2LXJtnAZVwOQ==
-X-Gm-Gg: ASbGncuLDVtS+Mmo9qnVnqFG3OfhWxBgskbM0jG+1IxervlBQSu9rBMCuVa7lshykr3
-	EBRuSeqNMyr5JQsIqVZ/xz9wUNoQzJ430VS0ssmOVDQc0vcgLyfoKCWsgEFbS8tXIFb0Uz3HBQ4
-	2l5dGr4atP4WuDra2u9tAEKL8Q8+U75DhbSgcMokJ65NhIIRTaUuy0coddxIzT2ubPBP23+t7dJ
-	k6CmsZ+pMYUHyofwg6/K1xNO0YLA53mlyc+5Ki5lFCXRUnnx6s4jlmPY2C0+PvUeIQEg8VUn+7z
-	SIANwS6vLiFY1xpm8M/CJiNOgawZIU96Neyif1dDhS25AIc3l8v2gg==
-X-Received: by 2002:a05:6000:4023:b0:38f:483f:8319 with SMTP id ffacd0b85a97d-38f483f873emr5435478f8f.51.1739868728429;
-        Tue, 18 Feb 2025 00:52:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFC8X151MW+xEw5lnrOeLO/RfeyoGSXgW9uEKgZVTfGtKVJttz9myB5BqQJ3iioFx+lN1s7Ag==
-X-Received: by 2002:a05:6000:4023:b0:38f:483f:8319 with SMTP id ffacd0b85a97d-38f483f873emr5435418f8f.51.1739868727721;
-        Tue, 18 Feb 2025 00:52:07 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d65bcsm14463188f8f.65.2025.02.18.00.52.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 00:52:07 -0800 (PST)
-Date: Tue, 18 Feb 2025 09:52:02 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: John Fastabend <john.fastabend@gmail.com>, 
-	Jakub Sitnicki <jakub@cloudflare.com>, Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Bobby Eshleman <bobby.eshleman@bytedance.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net 1/4] sockmap, vsock: For connectible sockets allow
- only connected
-Message-ID: <yc5vdkuwpyrr7mfjp6ohqf4fzq4avgjh5pwrmox7rhipwnh7nk@26cyegopbks2>
-References: <20250213-vsock-listen-sockmap-nullptr-v1-0-994b7cd2f16b@rbox.co>
- <20250213-vsock-listen-sockmap-nullptr-v1-1-994b7cd2f16b@rbox.co>
- <251be392-7cd5-4c69-bc02-12c794ea18a1@rbox.co>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpMGf1sQrs5y6146IkUsPe1gvl0rrpuj4E99G8TgMtWyC79EpCarIF6eDzPoJbMiyoQ/2SfZkVUzHGNefyR5/4Z+g7Uej8z/Q0UiUfgF2F3v7z/8O//mBksfsXNEY/joAVWNMgO8mAKndln+fag6qZVlCyzdbtSG7PhEXAmb92o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bKKdcgpH; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7083740E0192;
+	Tue, 18 Feb 2025 08:52:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Zsra0a39qJQn; Tue, 18 Feb 2025 08:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1739868739; bh=Jsv8YmgNP20b7Ra7WyYeyfLNrpRy0hgEpMyauFp6jlM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bKKdcgpHlDIMFrM6gac2tjqGDX7/0SV/LsGU911pdapy+cH8cRzfDSBK52ENIAQkH
+	 euUCA7dmZBFEygIp1FKcywXfBgbJyN/A4SS1VpWcFwqqVryPXib01GT3816jqjNSE0
+	 De5wwlmumBVhET+am3gEwruYZdq/e2kxZ0n9KGNRgUxVDnX2+r9nxbJ0rVIoXgNyNg
+	 qKRXZug8CZJIj8x0RhoRQ2uT/8Pc2OwDCWpmdyCFMaiWTDsXFpHhEUQ7pmFd88SeuO
+	 Ca2/uGHlVFUU/uxFeWOmPJMw5I7jva1eQWL1LNPYdJHLKqOaLaC7sITt9AIt8NImmY
+	 /vYSkCOhQTQXvud1vcYJtZOLFHvvfCqEGqCeAJDf5E5gAZXT4VtaQ9twgyidPBf+uk
+	 hgXYWvAXZTjM+3bywMtaNNtmLE7CnOO9DlrzRcBIc7JCRLqiaosGiLRTIhff+kXtC9
+	 iJa3YbyEQ6pzo4WAqxjx6Ws8jurI6lu/pPYcjYuvehwHw3L1g7YysvjJbCbyikRy7B
+	 zb4r7N14uWlNovtcXMNqxHJOzVlSFjekvnMsPxbe75nHFACXgBcDAsYe3KpMYkeTB+
+	 Y7sCVG09TRG7Q/1ZKK7XQF170rpKmKdr6RVx0vpFyIJgVN1dVA+rg34qsiOqTHYb3Q
+	 9fMKMfJMIoTodeqvRfEC/SoA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2033B40E00C9;
+	Tue, 18 Feb 2025 08:52:09 +0000 (UTC)
+Date: Tue, 18 Feb 2025 09:52:03 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
+References: <20250108202515.385902-1-david.kaplan@amd.com>
+ <20250108202515.385902-21-david.kaplan@amd.com>
+ <20250211180752.pfsjvz62bztpnmoi@jpoimboe>
+ <LV3PR12MB9265804700AB74A446F5220F94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
+ <LV3PR12MB9265249E8D0FD3920C42A1A994FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
+ <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <251be392-7cd5-4c69-bc02-12c794ea18a1@rbox.co>
+In-Reply-To: <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
 
-On Fri, Feb 14, 2025 at 02:11:48PM +0100, Michal Luczaj wrote:
->> ...
->> Another design detail is that listening vsocks are not supposed to have any
->> transport assigned at all. Which implies they are not supported by the
->> sockmap. But this is complicated by the fact that a socket, before
->> switching to TCP_LISTEN, may have had some transport assigned during a
->> failed connect() attempt. Hence, we may end up with a listening vsock in a
->> sockmap, which blows up quickly:
->>
->> KASAN: null-ptr-deref in range [0x0000000000000120-0x0000000000000127]
->> CPU: 7 UID: 0 PID: 56 Comm: kworker/7:0 Not tainted 6.14.0-rc1+
->> Workqueue: vsock-loopback vsock_loopback_work
->> RIP: 0010:vsock_read_skb+0x4b/0x90
->> Call Trace:
->>  sk_psock_verdict_data_ready+0xa4/0x2e0
->>  virtio_transport_recv_pkt+0x1ca8/0x2acc
->>  vsock_loopback_work+0x27d/0x3f0
->>  process_one_work+0x846/0x1420
->>  worker_thread+0x5b3/0xf80
->>  kthread+0x35a/0x700
->>  ret_from_fork+0x2d/0x70
->>  ret_from_fork_asm+0x1a/0x30
->
->Perhaps I should have expanded more on the null-ptr-deref itself.
->
->The idea is: force a vsock into assigning a transport and add it to the
->sockmap (with a verdict program), but keep it unconnected. Then, drop
->the transport and set the vsock to TCP_LISTEN. The moment a new
->connection is established:
->
->virtio_transport_recv_pkt()
->  virtio_transport_recv_listen()
->    sk->sk_data_ready(sk)            i.e. sk_psock_verdict_data_ready()
->      ops->read_skb()                i.e. vsock_read_skb()
->        vsk->transport->read_skb()   vsk->transport is NULL, boom
->
+On Mon, Feb 17, 2025 at 11:05:01PM -0800, Josh Poimboeuf wrote:
+> IMO, make them generic from the start, then there's less churn and it's
+> easy to port the other arches.
+> 
+> If we went with putting everything in "mitigations=", making them
+> generic would be the obvious way to go anyway.
 
-Yes I agree, it's a little clearer with this, but I think it was also 
-clear the concept before. So with or without:
+Just to make sure we're all on the same page: we obviously cannot enable
+and test and support a mitigaion on another arch like, say, arm64, or so.
 
-Acked-by: Stefano Garzarella <sgarzare@redhat.com>
+This needs to come from the respective arch maintainers themselves and they'll
+have to say, yes, pls, enable it and we'll support it. We should not go "oh,
+this would be a good idea to do on all arches" without hearing from them
+first, even if it is a good idea on its face.
 
+That's why those are x86-only as they should be initially.
 
->Here's a stand-alone repro:
->
->/*
-> * # modprobe -a vsock_loopback vhost_vsock
-> * # gcc test.c && ./a.out
-> */
->#include <stdio.h>
->#include <stdint.h>
->#include <stdlib.h>
->#include <unistd.h>
->#include <errno.h>
->#include <sys/socket.h>
->#include <sys/syscall.h>
->#include <linux/bpf.h>
->#include <linux/vm_sockets.h>
->
->static void die(const char *msg)
->{
->	perror(msg);
->	exit(-1);
->}
->
->static int sockmap_create(void)
->{
->	union bpf_attr attr = {
->		.map_type = BPF_MAP_TYPE_SOCKMAP,
->		.key_size = sizeof(int),
->		.value_size = sizeof(int),
->		.max_entries = 1
->	};
->	int map;
->
->	map = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
->	if (map < 0)
->		die("map_create");
->
->	return map;
->}
->
->static void map_update_elem(int fd, int key, int value)
->{
->	union bpf_attr attr = {
->		.map_fd = fd,
->		.key = (uint64_t)&key,
->		.value = (uint64_t)&value,
->		.flags = BPF_ANY
->	};
->
->	if (syscall(SYS_bpf, BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr)))
->		die("map_update_elem");
->}
->
->static int prog_load(void)
->{
->	/* mov %r0, 1; exit */
->	struct bpf_insn insns[] = {
->		{ .code = BPF_ALU64 | BPF_MOV | BPF_K, .dst_reg = 0, .imm = 1 },
->		{ .code = BPF_JMP | BPF_EXIT }
->	};
->	union bpf_attr attr = {
->		.prog_type = BPF_PROG_TYPE_SK_SKB,
->		.insn_cnt = sizeof(insns)/sizeof(insns[0]),
->		.insns = (long)insns,
->		.license = (long)"",
->	};
->	
->	int prog = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
->	if (prog < 0)
->		die("prog_load");
->
->	return prog;
->}
->
->static void link_create(int prog_fd, int target_fd)
->{
->	union bpf_attr attr = {
->		.link_create = {
->			.prog_fd = prog_fd,
->			.target_fd = target_fd,
->			.attach_type = BPF_SK_SKB_VERDICT
->		}
->	};
->
->	if (syscall(SYS_bpf, BPF_LINK_CREATE, &attr, sizeof(attr)) < 0)
->		die("link_create");
->}
->
->int main(void)
->{
->	struct sockaddr_vm addr = {
->		.svm_family = AF_VSOCK,
->		.svm_cid = VMADDR_CID_LOCAL,
->		.svm_port = VMADDR_PORT_ANY
->	};
->	socklen_t alen = sizeof(addr);
->	int s, map, prog, c;
->
->	s = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
->	if (s < 0)
->		die("socket");
->
->	if (bind(s, (struct sockaddr *)&addr, alen))
->		die("bind");
->
->	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ECONNRESET)
->		die("connect #1");
->
->	map = sockmap_create();
->	prog = prog_load();
->	link_create(prog, map);
->	map_update_elem(map, 0, s);
->
->	addr.svm_cid = 0x42424242; /* non-existing */
->	if (!connect(s, (struct sockaddr *)&addr, alen) || errno != ESOCKTNOSUPPORT)
->		die("connect #2");
->
->	if (listen(s, 1))
->		die("listen");
->
->	if (getsockname(s, (struct sockaddr *)&addr, &alen))
->		die("getsockname");
->
->	c = socket(AF_VSOCK, SOCK_SEQPACKET, 0);
->	if (c < 0)
->		die("socket c");
->
->	if (connect(c, (struct sockaddr *)&addr, alen))
->		die("connect #3");
->
->	return 0;
->}
->
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
