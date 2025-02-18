@@ -1,119 +1,206 @@
-Return-Path: <linux-kernel+bounces-519602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF1DA39E7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7E2A39E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A84F189573E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2D41893DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804D026A088;
-	Tue, 18 Feb 2025 14:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A46266F12;
+	Tue, 18 Feb 2025 14:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhCMfjPi"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCsHLH87";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pPEKOEXe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2zd8it1I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9+psj/5T"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5021D23958C;
-	Tue, 18 Feb 2025 14:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0102269889
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888198; cv=none; b=K6+swqSUDbLhO1330Y4bR05ftvnNDfNOzJUoyz1ljHbCmozOqhosgxm0pw7ecihYfEzX0MMUOs5dMiHn20bXgOOMNvu/tSpwbav3UQUV3u2jv/PCHQUznW+WX8UvOuDI0nxKFY7Du/I6nPRiFYS2Lr/M22zS5LqIY3uPPH+66Hc=
+	t=1739888233; cv=none; b=ipqWX5+tuk0xah8hHWVvFAs4v+l49worJYUzbkYBBgeMmzVo5kBxpbw409+8aLvPoceylafjlwfQUCi4mAJEEirUAWhZ6tCN8103IFhU285jfIJ1f9+NRqmN6iaPeX4Ssvxy7mW0mYSCeYgJDb5lcIuAoffPwW/NSRttUTynK70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888198; c=relaxed/simple;
-	bh=Q0z9FjYXWyIXtaEzCZf6FVqFshEIJPiN8uoO6wxcv3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku/eALEeUqoAGr3dlUt2QtsYCMIiZpJ55ajEDkd9Mxjj5ANxI7D0jLO3JVb/gBBinT+KFGnrVbhqGf4dXic/JObSUI7oNbxMuFKiMvxxLLiIaVhW5iQA7pA9vq+Vpx08+J0AGmcKZgQCQlQhcrY31KE0i/FfpWLaLKfL80eP1r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhCMfjPi; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e5372a2fbddso4300542276.3;
-        Tue, 18 Feb 2025 06:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739888196; x=1740492996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J0llu5YB8AGoFH0I5kYKDvWCJis6mleBIejl0Ej5nZM=;
-        b=hhCMfjPiUmDEY+2ZCO96T9B9qhUzydJakDElk/DhcE0Q7lCMdIi38Hl94ngq99mnvb
-         ihRiuOmk7L90a7cpSrkD8CE/34j73q9J1mx0E4Orc2Bbg4PICFXTCKTyWQFe0c3qmgnc
-         L0ZJzJz1x5d8+UwKUQVF6SNNxCta/hfEw7wNizsq8a8Grddo5fTZ0ucnZkiWgdQSrhiO
-         MouXcMb4VkAPovJFBLZU566GpKNA68jIrKKD4pIRLU8VqBQ5N7mD4w5QtaWtNKGJ6v7k
-         VfkpZ1vQVurOQXljP+baKjzMcO88DRfNgMWHFb2UGyOT9mofdVZAGZCV3fnLrqGL7+SB
-         ENng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739888196; x=1740492996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J0llu5YB8AGoFH0I5kYKDvWCJis6mleBIejl0Ej5nZM=;
-        b=R6VHrZzF1vv5QJA5KPBZh4swih06X0QwanoDVWNvCeAm4IcSXv6g1j35S5QL6lzcU3
-         l/aLrpjiC+4GICfDjaEJwReleIFkPY8goNmVlJZISiCHKHOJhkZw7oM0HDM2G6it5m8f
-         PxF+EgudwWZ2hY5h3yzfOyBIAPB5yE6r3O/uBcUS/Ou/AkHtt7Kk+0lxxWiLIoVSa5xM
-         NuEA4/WgarsWE4smUPRDrSnzsyJDv/OeBcaafQ5n1rXgXjjc1KJWmtyE/+IgsJLM1c8E
-         SdDMlnW+WHbMKLkjlcR0whhIQ/SLvWjiKZCVElLWBI3KCBsiPw+B6c7KtJv54zAKZrST
-         jDoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAUPeZFUAuJ8m9keVEecKSgwZ6OJs3KsxT69EpKsSFCBxdVzNqYw3SasaHuD2wadquz1Lawf3XhUF16aE=@vger.kernel.org, AJvYcCV4FMIasTopKhsNBiW/zlBusrtd31I8NA2z8lHSh7a2XzkE7ZQhNyhOL+Sb1QSqJCMd5ShddKSF16yhyg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPO7sDdibAsZ40yu1uL0YnCp2A38oHt82Mkx0QbwOLekHbs7T+
-	vwmYZ4Lmsz9MLA+Xeu7yFSLIxy3XzvjnH2c3rNQ0M1p5oDxNUwccNrAXsSa3
-X-Gm-Gg: ASbGncs4T/BNokxUi5wF/uPV1+ltaqenIahaKINhHJtlzpGyjF7m9D7gbtPbPBwqL5z
-	qJ/aLeexZUuyOLfdQvnMDe311CQoX51VjzkF+08+n3M0IRHZEPvGz7dNX79IKabshl9eKrTbiZ7
-	0/c61VkP0d6U0Ac05k9UvN7FO3DzLvxKMLmq/DSCAoSYyBsGsxV/xaYPCV54N6WOAhOKj0ibjtw
-	ySTYiouCUmC2rdS9Mvfb93lTO5Yy568VMvwZejKuD3YOBGEmI6BI4erDX2z2MAJDi6nFzJS/THt
-	nN83spE8ZlwllbnhH2vM0wloZgtHhWMcEdEOZPNMw2C+Mbk6k54=
-X-Google-Smtp-Source: AGHT+IH7nd0t1Q3cNhxJjwGpKDAwBG18APeeJ3x8AEDKf8Pz6YQOczjRk4Y46gYPIsBPF8/G2jt/PA==
-X-Received: by 2002:a05:6902:1a4a:b0:e5d:afe5:8c2b with SMTP id 3f1490d57ef6-e5dc9045af8mr11419017276.13.1739888195864;
-        Tue, 18 Feb 2025 06:16:35 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dadea63d6sm3040662276.13.2025.02.18.06.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 06:16:35 -0800 (PST)
-Date: Tue, 18 Feb 2025 09:16:34 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bitmap tree
-Message-ID: <Z7SWQoO2Upm_sNNx@thinkpad>
-References: <20250218160742.49d6ab76@canb.auug.org.au>
- <Z7RiVtunqI9edfK4@arm.com>
- <20250219004934.46ace766@canb.auug.org.au>
- <Z7SU0THZ6bSG9BKT@arm.com>
+	s=arc-20240116; t=1739888233; c=relaxed/simple;
+	bh=Ktpgj47xjYLbHoKe0iF7uwi77mgpSmdWzzCOKJysf24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uWudQpK5li+/C1XlmeIyKDB45VVIRAUBIlX7DqzOnmvOleJsY6qL/pmd1kAOMWplB14QlUMy9LbFu8eohrcXJTG5R5UeCJTY3G3lFf2nqjnA8mOwpPIZl8d3BifpcJ6VhDqZwvgau+cu9/nFLHdobP5bw9eHm7fzXLBElXc5xrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCsHLH87; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pPEKOEXe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2zd8it1I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9+psj/5T; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 19C781F399;
+	Tue, 18 Feb 2025 14:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739888230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=p2LYRqHEzUN2qTLMBBsS85G6Q2Tk8/wzW713Ueseh8U=;
+	b=UCsHLH87DtmvsMmHuLoxsvXJugT2JXJFBekhIFUAyFS47t2jXh5/GvTMsIvt0vXmzkUmgH
+	F2NfcY55cweo4vyhfCC8X81BmtZRSb9KGdZ+wdvn7pxJVS3aYM5aa4N3B3sWL5OIb4DNPe
+	5b+jdumx1oOiciG4qlzJF7eyu4wafcE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739888230;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=p2LYRqHEzUN2qTLMBBsS85G6Q2Tk8/wzW713Ueseh8U=;
+	b=pPEKOEXeLizjyNnYzFpsMB66v3+zHmdrsD5J0d4W0ZRtvExFQTvB7qzj+WYe7ntSui9siz
+	xH6bqTphCFhBhiAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1739888229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=p2LYRqHEzUN2qTLMBBsS85G6Q2Tk8/wzW713Ueseh8U=;
+	b=2zd8it1ILj6/enzgCyvrK8LwAT54SHvUw7bQ5j9pjfY6TadQ0uuivmg1tsHff4YOdMeTBG
+	I6ZyOzyNjrWL4YOTYJ+bQMXz3RUMnOLrkvv2vb3kg7bZyiXX6ZeUQrnr6NBW4w56PcyDQ6
+	sxAl7iINAZ/ioGkST601BfN5g/uOJEI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1739888229;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=p2LYRqHEzUN2qTLMBBsS85G6Q2Tk8/wzW713Ueseh8U=;
+	b=9+psj/5Tj6UKUa5t6LkZ6lYS4cxXLBNcnFMkeAJNqhwohEjtlttNc//v6LY/koQxa8/Fy4
+	sIeQ98edKZw3vwCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EAE6F132C7;
+	Tue, 18 Feb 2025 14:17:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7XT4OGSWtGdJXgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 18 Feb 2025 14:17:08 +0000
+Message-ID: <7e8a3bfd-b857-4528-a196-f237bf6d6cb9@suse.cz>
+Date: Tue, 18 Feb 2025 15:17:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7SU0THZ6bSG9BKT@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] tools/selftests: expand all guard region tests to
+ file-backed
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+ David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>
+References: <cover.1739469950.git.lorenzo.stoakes@oracle.com>
+ <ab42228d2bd9b8aa18e9faebcd5c88732a7e5820.1739469950.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ab42228d2bd9b8aa18e9faebcd5c88732a7e5820.1739469950.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue, Feb 18, 2025 at 02:10:25PM +0000, Catalin Marinas wrote:
-> Hi Stephen,
+On 2/13/25 19:17, Lorenzo Stoakes wrote:
+> Extend the guard region tests to allow for test fixture variants for anon,
+> shmem, and local file files.
 > 
-> On Wed, Feb 19, 2025 at 12:49:34AM +1100, Stephen Rothwell wrote:
-> > On Tue, 18 Feb 2025 11:35:02 +0100 Beata Michalska <beata.michalska@arm.com> wrote:
-> > > I'm currently testing a proper fix for that one.
-> > > Should I just send it over as a diff to apply or rather a proper 'fixes' patch?
-> > 
-> > Maybe a proper 'fixes' patch, please, if easy - otherwise a diff is
-> > fine.
+> This allows us to assert that each of the expected behaviours of anonymous
+> memory also applies correctly to file-backed (both shmem and an a file
+> created locally in the current working directory) and thus asserts the same
+> correctness guarantees as all the remaining tests do.
 > 
-> I just talked to Beata off-list. I think she'll try to use the current
-> for_each_cpu_wrap() API and avoid conflicts with the cpumask_next_wrap()
-> API change.
+> The fixture teardown is now performed in the parent process rather than
+> child forked ones, meaning cleanup is always performed, including unlinking
+> any generated temporary files.
+> 
+> Additionally the variant fixture data type now contains an enum value
+> indicating the type of backing store and the mmap() invocation is
+> abstracted to allow for the mapping of whichever backing store the variant
+> is testing.
+> 
+> We adjust tests as necessary to account for the fact they may now reference
+> files rather than anonymous memory.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Hi,
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Yes, for_each() loops are always preferable over opencoded iterating.
-Please feel free to CC me in case I can help.
-
-Thanks,
-Yury
 
