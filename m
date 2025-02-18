@@ -1,307 +1,211 @@
-Return-Path: <linux-kernel+bounces-519773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EF6A3A1B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:51:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90276A3A1B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB58E3B097C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76795173944
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47E826A098;
-	Tue, 18 Feb 2025 15:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE2526B2CE;
+	Tue, 18 Feb 2025 15:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGFgLuWX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fNwiTp3C"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020108.outbound.protection.outlook.com [52.101.189.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E886C26A0CF;
-	Tue, 18 Feb 2025 15:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739893864; cv=none; b=a9Nh1gK45ofOQva5prg4kwK8WRi5UMpfiR0xHvfkwaA6yiPx1Efoiqjc9QgmxbP9B9a8UnnvqtT6OKOOzgIkhuk8AKxNJs0ryoTLDlqztGUVsCv0I9FsTLFLxhniMC6f/P3i9XCUW6CpthDkJJe3Se+A+587cKrtcAMX9o2yxgc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739893864; c=relaxed/simple;
-	bh=Fxo4ZKUi4w28p/dVatgzc1oOnyML6KLgQvHAi96iHO8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dP9ob309yS3KJ1R/rA6KsVNuVtu80e3Rr+6KG9NQjyHIbkRQ8EurevrwpiKB51yW5QOioSMFJCpyRalq6rlWKfsF3JefI2dgzb+mcBsaTvD8mCR4WK3yapnZR0sr0RxTJsRYdM0s8WZBouRH8i8PLqz3eaZpbTXfrhni8Z1zMuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGFgLuWX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34724C4CEE2;
-	Tue, 18 Feb 2025 15:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739893863;
-	bh=Fxo4ZKUi4w28p/dVatgzc1oOnyML6KLgQvHAi96iHO8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VGFgLuWXBHKQLS7S2VHLIR0LDn3Y3RYS1pQcBzeQNpP7wU9b9R+f+wUgLPhER6gf3
-	 CyhMQBt4uP69zbma8ipahZd3Lct5pTO18fwJqvXNmut3bGpgxLuh+fNUzw0gqf4r6a
-	 KR2F3tFxspf5RSNBOWaHR33A6zbWncnP5IkFPU1ig/XmCaD5xhAG0+Aq00evdNnkMo
-	 VlGhx9FBofa3svg0Vczo1PaA2BLkfc4pPz/c2iv4OX24T/bvMw7KHv+fAGz25qcP9d
-	 oujssjGcLRHfDw8FV89H3dmeIpQR8wLW38Bv6TPwHqJo4OYpzP21ZBfSQR24ypqPb+
-	 Mf6qflcJw5e9Q==
-Message-ID: <cb5540cc1f63a0761444850d153a41b2e33d5a8b.camel@kernel.org>
-Subject: Re: [PATCH] nfsd: decrease cl_cb_inflight if fail to queue cb_work
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Li Lingfeng
- <lilingfeng3@huawei.com>, 	neilb@suse.de, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, 	linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, lilingfeng@huaweicloud.com
-Date: Tue, 18 Feb 2025 10:51:01 -0500
-In-Reply-To: <7bbc3bf5-f364-47bb-8a3a-5b4e38fec910@oracle.com>
-References: <20250218135423.1487309-1-lilingfeng3@huawei.com>
-	 <0ae8a05272c2eb8a503102788341e1d9c49109dd.camel@kernel.org>
-	 <04ed0c70b85a1e8b66c25b9ad4d0aa4c2fb91198.camel@kernel.org>
-	 <9cea3133-d17c-48c5-8eb9-265fbfc5708b@oracle.com>
-	 <8afc09d0728c4b71397d6b055dc86ab12310c297.camel@kernel.org>
-	 <7bbc3bf5-f364-47bb-8a3a-5b4e38fec910@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED7526A098
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739893880; cv=fail; b=CiAcAtyS80k5M5Y+DKvInotHWuCfKfqq1oX+MAgKGD5/9JQzGbWk2IQxzGMXf5kt0Ts6iR1T4RazeRIzeyhIJfUwmzVXEHBFzbGdaTAzMhVNJoKQ0tWvtxLtDxRi2Tz2er6B1QbIq7VQcMY3zaDKLAYsk6IhMYfp//PYKOK84cA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739893880; c=relaxed/simple;
+	bh=ZnavWF9p6Oq0VdhaBPEYB9LiUw+KRbAxNQ8fWVdDmOg=;
+	h=Message-ID:Date:From:To:Cc:Subject:Content-Type:MIME-Version; b=az0SkEVoEb6+39U0xEX+z29ffdUeRrSfuk2CbdVxkdh1wrl9sZkYxPszuyXbiHH18fKEAOzKQU/GMFOPAoIVkbWJ1mAanGGuBO4usyJKJLofXSH7BIW5X1/cS5mLLAOrfbo5aigXtS6crtP9WW8bgUga/nzQBjhVehgf+YNJb84=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=fNwiTp3C; arc=fail smtp.client-ip=52.101.189.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mR9aXVkDmwpCdsINoscHolG1c51FkP0nQ3I7E34kQwDsOb7sGM1pVSHTFHdoJr3Tv3HG/P7WhhcDsF2Gt3jrf1UU9JPII3hWB8Ed11wEkX2DtCyTcnk8ECUNEPSdHWxItYOLsq4eW4RunRpPPzpFRUNzUgLJIbZLGJIMeh0RG8bJRSeslY0ysXbrJCvax7aWfgyCxKBWQPG6qeoj6Wd078TXJdjdIH5u7qXdjIelz9q0Lf4XzHDmPjo0RoyCHAe5Fk8jkii7jJtVjBS9a3PJahq+yx0JohhJzoyb4MMXcqRd5/P9fMbUVJ0Jn2AKyVy9cCZG6eZ6VSXTpe7VZGCljQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wth7QwYy2N0jdDta40hwngryCT/WJOSojWhz+1j8mFg=;
+ b=ZpRoUSx0WpifLii/B87ojF0h93UCVoW93bqCrLZJFulLUhe2YJdoBJHibR44zu3XuYxNqb5Mz7N8d0Wl9bx4zs47w+rWBuxNJJujwNqZqqbkQcfvqiE66twJzGJM/ZwuFfHVcYugkDKs5fMAcD+Fxl7mQ/OL9RlIO3neyBr2Zap3MJ5N2XXwlo7lDKeeEacfu5KrS2fzhy5VwFOQU4eWd5+eqcEa+iaeUijv9N/844gt1T/bmRCIdmCJ9yDCHO0qwEt5eExw+2VLepfx+RuMWXDR7Z4n+6rN4Bjk9qx90Zq1zXG6jX/ySAv8MtT7bewpo1EUj/7oN8ELAEkBcn/T6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wth7QwYy2N0jdDta40hwngryCT/WJOSojWhz+1j8mFg=;
+ b=fNwiTp3C4/c6mb5ybGwS0DHa4kJajA0GqXcbLYbT01rUmOSbmrymGpZbqxpoKL904o4mIi8ih7hA5K7B8xW4vMqq1JsSvBXdmy+zSf5a7775XznRZg7ICx6zIU+PddUaZ/0J61sAOI5SRnDePTgDnQkLcd0rfjwIbdW3CmGAcD5QWyY5qvBxkSqLvpOkn+orcBqRrsGJSK6yaNYlB36dT6Q1GG+ktfIl8PNqyA1jsOqxOoAj+re4m3SV/ZjspbhAvP3p5nFU6QUq7e0SB3VTnrYYNHl0nCP3FN0UgWBZVTg2mRJtSHroiq91oWNpKExP7x57nqlWKi9g0C3cEe6UKA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PPFDF5E99EF2.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::494) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.14; Tue, 18 Feb
+ 2025 15:51:15 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 15:51:15 +0000
+Message-ID: <6894741e-c3c8-4464-92ab-ba8b88929961@efficios.com>
+Date: Tue, 18 Feb 2025 10:51:14 -0500
+User-Agent: Mozilla Thunderbird
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org, lttng-dev@lists.lttng.org
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [RELEASE] Userspace RCU 0.15.1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: QB1P288CA0019.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c00:2d::32) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PPFDF5E99EF2:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52fd9f5e-8583-4261-0b9f-08dd50341397
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nnc2YWJPa1hMWkJZTEV4MkhZRGM4MDNqNXc5ZWorVGx4SUdnaWp0NGQyOUJy?=
+ =?utf-8?B?dCsyeHpMak5OSWJWaVorMTE5OExVTVRZK1BrMUpVWFYzTWNqNjdMMUpDMGFG?=
+ =?utf-8?B?dzdWOFVFRDVyemozRDM5K3VwK25ud3BFVWNNa3ZQdU4yK1ByYzlOSzFEa0xr?=
+ =?utf-8?B?T3hmTC83RDFSWFd3Wk1FY2VTZVBocDJlUWRTM2tHN3RUUXhvS3d2L2lubmgz?=
+ =?utf-8?B?ck1zbXBBbzlKVVloYWFqVTlYeWVNZjZ5QU9lK1d6d2FvcnVibUdwL2RSODND?=
+ =?utf-8?B?UUJlc20xdCs4aTQ3VWRoTDJUZUNKNUo3ZDZFWGd6Q1BNWkdSQnc0bHBIYXVa?=
+ =?utf-8?B?aGIwMTAzNEJLeGsxblJ0OHZmdXhKYXdoWXBVSDBBTHQxVVRnRUd3a2w5bVE3?=
+ =?utf-8?B?RzZQbFBkQ2RmUEJobzlwSmJZZ1dSWFJTaC9LRUJac29HREt6WklLUFR5U0xH?=
+ =?utf-8?B?a1VFRnVLaXEzdCtNSStGeHQ2dDhJaHhtcllBSVQzczFwMzZoT0R2aVhiMkQx?=
+ =?utf-8?B?a0Y5MTc4SU1LdEpxaVFEWG11bThtQVA1TFJuZHdObDdDUk8xNHJIVmV4a1do?=
+ =?utf-8?B?WkpZUERvWEZmZGlxODJRakd0UnVPTmdYT2ZYWkpqenVqNWsvTEFzNmNBQXpV?=
+ =?utf-8?B?Vk5tbE9RbitnbytDTDArdWlLZmxENlNBdkh1ZUtsV1A1SHBKVlkvZVJjZk43?=
+ =?utf-8?B?RjFNWjlhc25OTEorNVBVUnVITi9pNE5tWmxZdkxCdGF6aXFOK1N3eGdNa25o?=
+ =?utf-8?B?aVpZdmYrRWFpLzVVMEczY1NCQVJhbytmSW91dWhnSlBqeHNyalMvSGpOMStU?=
+ =?utf-8?B?YmFXSzE1eS9UMUJqY2dmQWJ4Zk9RaFFONzZtcDg2QjlpN0M0eXVVL1dUMVNW?=
+ =?utf-8?B?ayt4bVU3NzFucFlGcVZRdFNqdTNBQytaQ2NVTXhCdWR1NUljZ1VNT2xXRVVz?=
+ =?utf-8?B?cHZySFI3OUlUUnVPVjV2ZEIyRjFyWE1mZWxUa2JmUmlYcEtPdXNGeUJtREs4?=
+ =?utf-8?B?WUN3enBHbFB6dXY3NVJsSnVZOG1pbEI2TGFESEtENm1RbWVTNVlBaGFiV0pz?=
+ =?utf-8?B?aDhKU0g1U0ZrOStsWUFFckJlTjAxNWFMZWNWZjVnR1Bjc1VQdTlQelR0YjIz?=
+ =?utf-8?B?MzVqSk5HTkJIR3k5M0Exek50QmNyQ2pKYmtJTnVpN0JYMWhTSXJiMEp5OUZP?=
+ =?utf-8?B?RWN4aDdoRnNsKzVYeEZwUDFrbU1FeWR0T2RSNndodGoyNmtHbjF5NytJM2wz?=
+ =?utf-8?B?NGFldzk5Ym4yQldFcnIvVFBRTkduaWlZR25nMXcrakhYRHlsYldmZEFjNnpJ?=
+ =?utf-8?B?SVJIdnh4a0JibnVMazAwR0ZlM25yY2tSUVphSFFHNWlqWmlOWEpvZ1U1S0JB?=
+ =?utf-8?B?OW9nRHAwcFBjdjl3MVJIaDZuMGhvbjNobWV4bzFVTVZrUU0wVnVoYzFXRXdx?=
+ =?utf-8?B?aEk3QTVQY0lwcVoxd3JabkV0bXE1RTA4cTBpVm5KQ2tuUTZTQXpzdDBUcTZn?=
+ =?utf-8?B?N0JXWnFyblhHV2xXK2dFTWxlNzZoZmZVT090aEI0YjZZT04vWFdkb3pmVHhU?=
+ =?utf-8?B?ZjJLVHJzaGRYRFFXcjlDc28yTHJ3OXlxTHVHam90Z2YrMXhVcnJWZlEzejB4?=
+ =?utf-8?B?dEVDaE45a2RFSVRRemlPMEl4clZuaHB4a2hwRXNzcnB5N1lIMVZ5VXpUOWdp?=
+ =?utf-8?B?VlZ5TGVPMko3RzJjZ3FCODQ4K3d6VFY3Q1ZyVG9TSVc0M1c0dm8zTy9qQzEx?=
+ =?utf-8?Q?Zz04wp81tYZUeBr2QZPbt5ku8NzqLSQAhBUTrEY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TktxdWg4VjV6Q2E1cTI0MTNtclJvRVdIaHJ2eUdyZXdoczFrazZsRGU2NDcv?=
+ =?utf-8?B?TzV3N0R4MnR0cEt4TkZrOWlGbitjUXkwcGE2L2FQRGxNWU9uOGZGc095R3Yz?=
+ =?utf-8?B?S2tlY3krQmRGNGJIWStUL0l5d3NRTUtrMWV1TVdHa1BaL1NZZVVvMDJ3Z3VZ?=
+ =?utf-8?B?MjZlZnNURmR4c0VlTERiYTF4L2V2bW9CZGMvTTdBT3FXWlVrS2pqWmlFbDNp?=
+ =?utf-8?B?RmNpUlo0dENwdU9uWXR6NktUcjVIWDUxLzdBTG9vcE1ZdVE1WHhDc3dENEVk?=
+ =?utf-8?B?UFFWelRiWmVpOWlhTXQrelRUWlZjQmtFT0pWY1dLcXdreVo2MGJUYStNZnh4?=
+ =?utf-8?B?WVBmRTV2eFlVTzg1VlhTVFlwK3I0QlpxcUc5Zml5ZUwzZFVHaHl5ZzllcTQw?=
+ =?utf-8?B?YkR4dHFPUVM2anZMY3ozQW1mUjd6d21YQ0Qydi9qRU0zUThna3BaZVNYSjRP?=
+ =?utf-8?B?VC9NcTlibWJ3T2FuSzhFVVJlNUhvak5pQit0b2VDSXZ6aHI4OUZYazhHUzlB?=
+ =?utf-8?B?ZXhLd2R5R2JCRjRZblJrRkdQaHc5M2dLZjJwQ2YxRlgydTdCTTVKS2pjLzlO?=
+ =?utf-8?B?aTRyblBoZEcrTnpiY25tV2MyU29QOGxnS3BuZFNrKzJEZkhnd1dLRnQ0ZzBz?=
+ =?utf-8?B?aHBWeU9pcHhOZ3pDMDZ4bExXN0lPN0w2OVNETHBaWkx3eEZqbUlZeXBkT0k1?=
+ =?utf-8?B?MGkweWhFTzBrVmsyZktUZVh5NHhJcnA2d2NNeUNOcU42cWlmampaLzUwdFZu?=
+ =?utf-8?B?V2V0Q28xamJiNXdiN3JrYUhqSDcwUUR0Y1N1eWRPM2NpejhRSklDQzB2OGpQ?=
+ =?utf-8?B?L1lqc1ZJZWxpS3pIa1pCWnVsYmFZL1lBaVR5YjV6elpCbDFsRnVHRGQrTHdn?=
+ =?utf-8?B?Q3BiWnVGTFN6a1dFYmRZVjM5ekdWTEJnUU9IenhMYWJqcm5XVDBQeS9nT0JW?=
+ =?utf-8?B?R1dodWVRTEZzSXIzZHNtZmpyOFBPTGc0NGJBR1lubjZjOWcvMlpzcS9zaTF4?=
+ =?utf-8?B?QjdzZTR5eXZyRkxmWXQ3SFJHMEFIUFlFbEZPWjJDd0VzWXlmOURLSVRMTzh0?=
+ =?utf-8?B?azN5ckhHY0VKRldwamtpR2cyNTc4d2Z0SndlZHh4WUhiY2pqTVRueW9EWGZr?=
+ =?utf-8?B?V04ya0xHNXRpTlZ5b2NtYTZUSHM2R1VFRXJ5a0xuWlRUbEt2K21wZmlQMjhF?=
+ =?utf-8?B?RGduTVJOdmZIaVJZVE9sN2NDUE50cUgzL0lvaWoyQXNicXlUU3YxK2RWb1hP?=
+ =?utf-8?B?dkxQc2c3bkNHdFI1Z3EwWTdIYldZUFhVVXM5MjhRVlllS0MwMEtGckhyK3pn?=
+ =?utf-8?B?TUttUWM1TFRZajRnRDd2RGN2M1Zoa1dQT3k2S0x5TXowRkNoRDdNOXNFcG5T?=
+ =?utf-8?B?ZTZZcHdlekMvK0NudTBQa2V5Z01RSHpKOGtXY1Q3Z04vb2NSNTZIOFpaN2Zy?=
+ =?utf-8?B?RnJBWVJQYWFQRlluTUs5bWg2OVEvamdhcGpnY1k0Q2xpcS9WWnRrT1dKZ2xR?=
+ =?utf-8?B?MWtkVXdVV2ZrNHpicldMejdWaFVUbVVSQmNJV0cxZmNnakR0aDdMY0xTSlJ0?=
+ =?utf-8?B?UXlqbE9hNWpWa2dGdDBqSUU3a2RCRDJWVEhpS2xCV2xwYUtGVFJxbnZqalZ0?=
+ =?utf-8?B?d011NjBmeW51b2pDeE1neVNkZ05rOHgyN1FyWnlpb05LdUNxUDR2QmQ3Yy92?=
+ =?utf-8?B?bDVpTHF5a1IvNy84VGd6ZU1qZHhMQWJtN0ZwZnhGU0JHY2M3T1ZyK2FSTWlw?=
+ =?utf-8?B?enVYc2ZrRUxYTkp1TVo5dXZHOUtnTktFTXZCWW5xdkYrWlR1V3d5MmgzNThH?=
+ =?utf-8?B?cTROQkVPaVlHNmhWVkRKd2F4d3QxUFg2N2cxQ3pEQ0pJSGNOcDFTeXZkc1RH?=
+ =?utf-8?B?YUNuT3lsYzhmbndwYTAzT2IvL0dWWVRuT0ZNMkZhTC9qV1V0VHBqRUtBVVFU?=
+ =?utf-8?B?czdOZkRITERzMys4YWxSKytIbGNVbGZ3ZXlIblNXOTNVUVcrSEFuMU8ybkVp?=
+ =?utf-8?B?TTVYWjZBbVZzZU5jS0NYbk5qc3dSYk1wMGhQTG9GdDg1cFJQMWNYUWh3VUVh?=
+ =?utf-8?B?Z213dVlmTnlyU1I4UDJNVFJkckY5MEY0RjNCT2FydVlVOHAzM1ZPbnQ4TFQ2?=
+ =?utf-8?B?LzA4YkthRjF4U2FhNk03ajlHNTlUMW5EUHA5ak1oUHJqeTEvRWtJUDhhUEpG?=
+ =?utf-8?Q?yZ+cLE27rX9SiOSa/SyPG9w=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52fd9f5e-8583-4261-0b9f-08dd50341397
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 15:51:15.5140
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dygBVftXc+TNdrg7D6QOAiLh2LO9ltSoo+rgLS1kOEd+botC/ggkXBJSvjUy6RWMGbZcTuKcrIK4xtxbr83u5HTry6KtraZcgQSt8tRyT10=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PPFDF5E99EF2
 
-On Tue, 2025-02-18 at 10:02 -0500, Chuck Lever wrote:
-> On 2/18/25 9:40 AM, Jeff Layton wrote:
-> > On Tue, 2025-02-18 at 09:31 -0500, Chuck Lever wrote:
-> > > On 2/18/25 9:29 AM, Jeff Layton wrote:
-> > > > On Tue, 2025-02-18 at 08:58 -0500, Jeff Layton wrote:
-> > > > > On Tue, 2025-02-18 at 21:54 +0800, Li Lingfeng wrote:
-> > > > > > In nfsd4_run_cb, cl_cb_inflight is increased before attempting =
-to queue
-> > > > > > cb_work to callback_wq. This count can be decreased in three si=
-tuations:
-> > > > > > 1) If queuing fails in nfsd4_run_cb, the count will be decremen=
-ted
-> > > > > > accordingly.
-> > > > > > 2) After cb_work is running, the count is decreased in the exce=
-ption
-> > > > > > branch of nfsd4_run_cb_work via nfsd41_destroy_cb.
-> > > > > > 3) The count is decreased in the release callback of rpc_task =
-=E2=80=94 either
-> > > > > > directly calling nfsd41_cb_inflight_end in nfsd4_cb_probe_relea=
-se, or
-> > > > > > calling nfsd41_destroy_cb in 	.
-> > > > > >=20
-> > > > > > However, in nfsd4_cb_release, if the current cb_work needs to r=
-estart, the
-> > > > > > count will not be decreased, with the expectation that it will =
-be reduced
-> > > > > > once cb_work is running.
-> > > > > > If queuing fails here, then the count will leak, ultimately cau=
-sing the
-> > > > > > nfsd service to be unable to exit as shown below:
-> > > > > > [root@nfs_test2 ~]# cat /proc/2271/stack
-> > > > > > [<0>] nfsd4_shutdown_callback+0x22b/0x290
-> > > > > > [<0>] __destroy_client+0x3cd/0x5c0
-> > > > > > [<0>] nfs4_state_destroy_net+0xd2/0x330
-> > > > > > [<0>] nfs4_state_shutdown_net+0x2ad/0x410
-> > > > > > [<0>] nfsd_shutdown_net+0xb7/0x250
-> > > > > > [<0>] nfsd_last_thread+0x15f/0x2a0
-> > > > > > [<0>] nfsd_svc+0x388/0x3f0
-> > > > > > [<0>] write_threads+0x17e/0x2b0
-> > > > > > [<0>] nfsctl_transaction_write+0x91/0xf0
-> > > > > > [<0>] vfs_write+0x1c4/0x750
-> > > > > > [<0>] ksys_write+0xcb/0x170
-> > > > > > [<0>] do_syscall_64+0x70/0x120
-> > > > > > [<0>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> > > > > > [root@nfs_test2 ~]#
-> > > > > >=20
-> > > > > > Fix this by decreasing cl_cb_inflight if the restart fails.
-> > > > > >=20
-> > > > > > Fixes: cba5f62b1830 ("nfsd: fix callback restarts")
-> > > > > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> > > > > > ---
-> > > > > >  fs/nfsd/nfs4callback.c | 10 +++++++---
-> > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> > > > > > index 484077200c5d..8a7d24efdd08 100644
-> > > > > > --- a/fs/nfsd/nfs4callback.c
-> > > > > > +++ b/fs/nfsd/nfs4callback.c
-> > > > > > @@ -1459,12 +1459,16 @@ static void nfsd4_cb_done(struct rpc_ta=
-sk *task, void *calldata)
-> > > > > >  static void nfsd4_cb_release(void *calldata)
-> > > > > >  {
-> > > > > >  	struct nfsd4_callback *cb =3D calldata;
-> > > > > > +	struct nfs4_client *clp =3D cb->cb_clp;
-> > > > > > +	int queued;
-> > > > > > =20
-> > > > > >  	trace_nfsd_cb_rpc_release(cb->cb_clp);
-> > > > > > =20
-> > > > > > -	if (cb->cb_need_restart)
-> > > > > > -		nfsd4_queue_cb(cb);
-> > > > > > -	else
-> > > > > > +	if (cb->cb_need_restart) {
-> > > > > > +		queued =3D nfsd4_queue_cb(cb);
-> > > > > > +		if (!queued)
-> > > > > > +			nfsd41_cb_inflight_end(clp);
-> > > > > > +	} else
-> > > > > >  		nfsd41_destroy_cb(cb);
-> > > > > > =20
-> > > > > >  }
-> > > > >=20
-> > > > > Good catch!
-> > > > >=20
-> > > > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > > >=20
-> > > >=20
-> > > > Actually, I think this is not quite right. It's a bit more subtle t=
-han
-> > > > it first appears. The problem of course is that the callback workqu=
-eue
-> > > > jobs run in a different task than the RPC workqueue jobs, so they c=
-an
-> > > > race.
-> > > >=20
-> > > > cl_cb_inflight gets bumped when the callback is first queued, and o=
-nly
-> > > > gets released in nfsd41_destroy_cb(). If it fails to be queued, it'=
-s
-> > > > because something else has queued the workqueue job in the meantime=
-.
-> > > >=20
-> > > > There are two places that can occur: nfsd4_cb_release() and
-> > > > nfsd4_run_cb(). Since this is occurring in nfsd4_cb_release(), the =
-only
-> > > > other option is that something raced in and queued it via
-> > > > nfsd4_run_cb().
-> > >=20
-> > > What would be the "something" that raced in?
-> > >=20
-> >=20
-> > I think we may be able to get there via multiple __break_lease() calls
-> > on the same layout or delegation. That could mean multiple calls to the
-> > ->lm_break operation on the same object.
->=20
-> Makes sense.
->=20
-> Out of curiosity, what would be the complexity/performance cost of
-> serializing the lm_break calls, or having each lm_break call register
-> an interest in the CB_RECALL callback? Maybe not worth it.
->=20
+Hi,
 
-I'd probably resist trying to put that logic in generic code. I think
-for now I'd rather just add this logic in the nfsd4_callback handling.
+I've released Userspace RCU v0.15.1. The main purpose is fixing a
+missing include of stdlib.h in a public header. It's a small bug, but it
+caused enough issues for end users to justify a release.
 
-Longer term, I'm wondering if we really need the callback workqueue at
-all. It basically exists to just queue async RPC jobs (which are
-themselves workqueue tasks). Maybe it'd be simpler to just queue the
-RPC tasks directly at the points where we call nfsd4_run_cb() today?
+liburcu is a LGPLv2.1 userspace RCU (read-copy-update) library. This
+data synchronization library provides read-side access which scales
+linearly with the number of cores. It does so by allowing multiple
+copies of a given data structure to live at the same time, and by
+monitoring the data structure accesses to detect grace periods after
+which memory reclamation is possible.
 
-That's a bit more of an overhaul though, particularly in the callback
-channel probing codepath.
+liburcu-cds provides efficient data structures based on RCU and
+lock-free algorithms. Those structures include hash tables, queues,
+stacks, and doubly-linked lists.
 
->=20
-> > > > That will have incremented cl_cb_inflight() an extra
-> > > > time and so your patch will make sense for that.
-> > > >=20
-> > > > Unfortunately, the slot may leak in that case if nothing released i=
-t
-> > > > earlier. I think this probably needs to call nfsd41_destroy_cb() if=
- the
-> > > > job can't be queued. That might, however, race with the callback
-> > > > workqueue job running.
-> > > >=20
-> > > > I think we might need to consider adding some sort of "this callbac=
-k is
-> > > > running" atomic flag: do a test_and_set on the flag in nfsd4_run_cb=
-()
-> > > > and only queue the workqueue job if that comes back false. Then, we=
- can
-> > > > clear the bit in nfsd41_destroy_cb().
-> > > >=20
-> > > > That should ensure that you never fail to queue the workqueue job f=
-rom
-> > > > nfsd4_cb_release().
-> > > >=20
-> > > > Thoughts?
-> > >=20
-> > >=20
-> >=20
->=20
->=20
+Changelog:
 
---=20
-Jeff Layton <jlayton@kernel.org>
+2025-02-18 [*] Userspace RCU 0.15.1
+         * uatomic/generic: Add missing #include <stdlib.h>
+         * docs: Clarify that make is required to build the project
+         * fix: add missing SPDX headers to urcu/uatomic/api.h
+         * compiler.h: Remove caa_unqual_scalar_typeof
+
+Project website: https://liburcu.org
+Git repository: git://git.liburcu.org/urcu.git
+
+[*] note the Changelog file in the liburcu v0.15.1 release has
+     2025-01-18 which is incorrect. I unfortunately noticed it too late
+     for the release, but it's fixed in the stable-0.15 branch for
+     the next release.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
