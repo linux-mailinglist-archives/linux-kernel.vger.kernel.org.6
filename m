@@ -1,167 +1,295 @@
-Return-Path: <linux-kernel+bounces-519548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39762A39DDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:46:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95320A39DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 669E6188B179
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DC33AA868
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 13:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3036269AF2;
-	Tue, 18 Feb 2025 13:46:26 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ADB233D88;
+	Tue, 18 Feb 2025 13:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kyvM9Odf"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE85E2698A0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 13:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739886386; cv=none; b=GaLnw3qU3uukoxfwCo+lvw6/8h9IApS0a9xDS86oe7U6X4bN9yyB8aYOeT8zkMl2nv96+PtvZQ44oN/qp7yOOYgADqKWhhVXvJ/Sj2UiSUlFvl3uGRbcZff+a0Mijz4SAXFvwlOAV8F0jDWkDJG/pWEg+Bq97j/QoDxeorS3wNw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739886386; c=relaxed/simple;
-	bh=il08OLKjKuHNV8BTSYpPsn4tJgo+kR2RqcDKWXGg2gQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Uwb5MEvj/MKeyuap7sC+z1ne6CeMCcniBHFfwXVDV+gL5Y7jqGpl1cV/zkO0FvYH7XrUPjCsNrzFZfBgsfNkV2WVJ+iJALhBlegh586qynQBDAXeq8MZsz7iP3VR4QNfMwayOot5kj6pY3O/fgKaM906nJo81FHT+clmDzzxGj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85564bf83fdso945091339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 05:46:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739886384; x=1740491184;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wlp3UV1yF73fleHjaJzrNOPIjk7ttS5DgEpGbxNngV8=;
-        b=XzGcFzaoCHdSsa/Wz+8ujyG0BrwJJvqkaAOOF12HSR20mfUI7MCTFjL2e+bmTIS/Xt
-         grz872GnfVhe710wiLoWEt/wx5uxTVEcMkp7ACmBmxdjQqG+2haUBDC+AiwGtwVuFNWh
-         YoaUJwjgN9c8ZKhKWOuDeHU0uKi9nnxYFirRV1PKAU+x+Jp6dEygpz9Q9s6ItQdNis6X
-         lo7vIfr0LbenujqY5uS1pN2A7X32Nt8zBJpuyI/ooNamTf2MiVdIOPOHJK2itloH/Xzx
-         fALdHdO/g7JMom5wZT7wTKqnb8uqcqjETN+ngRXn56vaQ4BlTZ7n0JAESWT1oY7/Ybl/
-         NmxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6rVJ/OXqDVYJ4ZjkggPxqon3rKaqJ9SaYA1yni+bVPkITvRswmaCPvrMCAm3Qc8gMZmfUPocSICmGMYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOmN9xBKfz/7tp8gWJCfemimwoIekI3Qqe5/qTmi0beC2qBbP8
-	byQylPUT5Jm8Uhy/0HsgAwJeA/lcexyqnNkoEmGKoEIfeTJyFyoIWaGNAaLJGU5Vnsm107Tb7PW
-	FXDNG+URuZV/D7qKkcBcwrAhpgdzYjFJ18aftTRGqZIFgbvYNxBQDOPk=
-X-Google-Smtp-Source: AGHT+IHRF8HXAs3t/VFjdcyM1iNnTahzHbeP27tXqsh2vjEjukNWoxag3AddLmPmeC5h3wzJiZW/36N7QYTboy/DfaVCT+iKPIxD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935CF38DD3;
+	Tue, 18 Feb 2025 13:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739886451; cv=fail; b=Mf0Fqa646iDHyj6I2Cy9ic3OWb3SVX2AEcGP8PADA96+UaI3ch+1ldJx/9LKJ9O0khtCF2tbihscaveOc7MomWdvs4x01lZKKGsKj1jqUxSR1+RJKeHFaABNuBeVZl416a/DOYwptbCvWgsrm7cmmJM3uy84rR2FfQ5t+96RXyQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739886451; c=relaxed/simple;
+	bh=BoMUmnZAwtwY5YECPtPkIGwShCKoaWG+ZzNgb4x4Lp0=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=Vn+4JBTlzKFXU6Cn0zLBy3G/Q/33TZnegU6cWdG6j46EXdvgwFeknKP+HXTYo/Th3yZjhHdi1VIyx9HcRvaKeU6FaCBLhIa8pxqKEdpe8BHKlPHFcKY6dRw0k/j/yoCm4hXcUsbZ+wvaeXTEiyzEoadY3ZULfYyS7PhHJN231H8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kyvM9Odf; arc=fail smtp.client-ip=40.107.243.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bjr/imw3OrGXMh3n6v4LgaorrPZJgJNX3sx8xOXukIy4i2pcWHI9zhLYJUBBWYZh7PkME/xEf11rS6d/qber1M56vhlB20pSR8/goYGMyzJSoLIyKVKEBiv3z905zxLUqljFLYGNsCtF45DmH6rb37M75fC5i0RdAhw50KEvCRnjq35n+qmq55cmke1izVSL3monGyzTLnSBtd2ypJ+BiaT8IrtnZinrJ/rfYW5T+Lq/Y7t8su9sVj0VlUv9pveSXtZTsHFU26MkwYCehBOOmBX2OTz8b2DY6DppuFZsPt4/rRkqPBBP+FpqCIafE28l5o79eqnsQkOsS7qSZcJ//Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VbGVIDHjzNH1PW1JOTuuiR9shfQah7qgZqId2oALaa0=;
+ b=Yuwb7zGgZjlqN+8RP33b3UBVqm+f6oaQqJqQKfskd00qgogdqRTbouPQghc4nDZOTJ2hHRIO7nRt3OtOmk/EBMa04PKs+M58J6Azep8FethOIGTEwT29nZzRVAMp9dbcpQ6UqFFc91zJxA9GK9oKFdc5EtMcyeQ+qjiDc9LGoGwFOOLacmxBvstE0yNmh90V0TGl7UoYuT1vE/nVzlMxsxUWmOq1/9/BYMGj3+7XpoooN22/6Sk7juFEBWes5/peNs7tb6Ujm0xOUsdV3EdIzx4neAtlmVvHIsVLWIT6qwduO0Pm3IuS+mPMaL6m0dsp5QGNhJrH94quDKUpBLxTng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VbGVIDHjzNH1PW1JOTuuiR9shfQah7qgZqId2oALaa0=;
+ b=kyvM9OdfMn53aGDdu0ADzUrJ/MCI4dmy5fL30Yd+FOMbLdmjeoKYd4H0j50vaM6A5iwrKOMCHS9i6nxZaA4ftEDcfdVywRxFWIhQuyTDj5SH7ZScvhMCrEEt5EACEIWaE8UfQBGjiFB5u4wN+Zh7pK6XpGJT/wpkz68J3gAfZYvzYMJO1s1DcOB8AaaMtZKDQGh80bestcWhkuzu8ZYAxneCArh9RHXb3UymkDp06KG2vbffjAmIK6vVyvxGOY5J5J2OUJPDrQeC8e7Gm55P97RWzFSk0Eqm/NYQqSFfZf8XtV12g5IfQyUNW3tRqBLmnJhzXYhOrDOi3wAp3pKEqg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB6750.namprd12.prod.outlook.com (2603:10b6:806:257::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Tue, 18 Feb
+ 2025 13:47:25 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8445.017; Tue, 18 Feb 2025
+ 13:47:24 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 18 Feb 2025 22:47:21 +0900
+Message-Id: <D7VM9OSG4PT8.MZOGCKO1HTM@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Dave Airlie" <airlied@gmail.com>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <CAPM=9typO2VQYDmn8LE+aEfsymqUjQZLrY60mJ30_oujyDD9ig@mail.gmail.com>
+In-Reply-To: <CAPM=9typO2VQYDmn8LE+aEfsymqUjQZLrY60mJ30_oujyDD9ig@mail.gmail.com>
+X-ClientProxiedBy: OS7PR01CA0003.jpnprd01.prod.outlook.com
+ (2603:1096:604:251::14) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1686:b0:855:2f41:f85a with SMTP id
- ca18e2360f4ac-8557a13f969mr1345339839f.9.1739886383740; Tue, 18 Feb 2025
- 05:46:23 -0800 (PST)
-Date: Tue, 18 Feb 2025 05:46:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67b48f2f.050a0220.173698.0063.GAE@google.com>
-Subject: [syzbot] [mptcp?] WARNING in mptcp_pm_nl_addr_send_ack
-From: syzbot <syzbot+cd3ce3d03a3393ae9700@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB6750:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ff5a39b-d18c-42fe-4edc-08dd5022c69b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eHcyaEJwU1RuZTB2ZW9CN1BPMmN0QWM2aVBLY05FM0ZMdGJKcDk0dkNNeW9F?=
+ =?utf-8?B?UjFicDR4SFFIVlJKeENrcDNvTm5zN0JMNExhZUJZMVZyNWpSazVSNXQ5bGN1?=
+ =?utf-8?B?aVJzUXpBZS95NFpTUTUrL29rekVaMldSbjBUazNWejl2MFM5dDl5bzRsVXgx?=
+ =?utf-8?B?Ym9qbktYYWY2SGxsSDhKNHVUYzVoTnN2Vk1WUHYrR3pPblRoZk1tN2NUaU5R?=
+ =?utf-8?B?Q1c3Y3lpUGkxMjlRaFVxZ1lGaVN3dC9EOTdYeWwxZmljUGlKc2dUV1FCSm1O?=
+ =?utf-8?B?ckFEeXh5cmZlWldCNDEwQjgwODJmQnQ2T3BWMDJuVHQwTFVFZDg5OWRYZEw3?=
+ =?utf-8?B?MkdvcHh0RUFPNUtmV3Vsb1I1Y0NJalFqbVFueUZ3anBleFYwM2lTbUNXa2tX?=
+ =?utf-8?B?eHZKTnZRWE5Va3BEcVRROVNhNUdMMXdmeXFDaDE1UHE1cXVLeEFWd0doL1B6?=
+ =?utf-8?B?QXA5UktqRVNHWW1MUUw4bW5PVGFrWDV4bUtRSjFvZzlZVXR5R2EwSFZkdkRy?=
+ =?utf-8?B?TzYrS0xNSXptQStxTHIzNzlYZkhQRVR2Q0p2clNmME5FQy9LSmFLS2VnSDdX?=
+ =?utf-8?B?cTVaS0RTQ2hXNWdKV01vajFIU09OWG5vcXJDSmhpR0owWlRmYWxtNmI4MHlE?=
+ =?utf-8?B?Z1RTeUp2U1VRWXJzQWxCckgwM3ZtazY2VGtocnVpZitOUzNtSU1XMkZLakR0?=
+ =?utf-8?B?OHozdzZkaFBwSUpadTNDMURNMGdYNEJCbE5PR1JKdUZ3Z0YrRkJTcktUMnRE?=
+ =?utf-8?B?MjN3enlWakJTSERvK1dEUEcwTWZ0OE5iN1hXeVVsMmRWcWlVQjJJcnVQSmpi?=
+ =?utf-8?B?RWE2LzZaM1lYaXQvb1Zycm5qQVd2b3l2ZmJodFRkb2MxRThIQ2FncmNDL0lu?=
+ =?utf-8?B?NElmV1BWUUZFUEJoNWtRcUdUSGRoaEZFU3VtNXZ2OVBXejRuZ3RUUXNGTzZo?=
+ =?utf-8?B?ekJlWUFzUHp2MTI4b2VVc2pwK0FJS0ZNcHFzSzhBd0VxNDEzK09xTVk0dFZT?=
+ =?utf-8?B?a01PMmxIUkJWUlBXY0xGRkJHZXVuRHBhVkk4N2hkVjJTLzBiSnNBTTJkVFFu?=
+ =?utf-8?B?KytLOGx5bVA3WWYyNTJoQkVUcWQ1SkU1aWtBdE1zNUg5ZzFYRXppLzJmdWNF?=
+ =?utf-8?B?cEZFbzJCalVjcFVjb2xEU040KzFkMElZcU1RdDc1d2k1dHU0bUlya0dVcGZl?=
+ =?utf-8?B?RkdKcTV0VE1adXlVdHNGbjVJY25PaW1WWHQyRlJGWlN3SWU5T2JoTWtCbWIz?=
+ =?utf-8?B?L1dPbmY0K1V2Q3dlMGR6VkZKQmUvNGhzV2g1NkYwVkhxcm4wZUdpTEdka3pG?=
+ =?utf-8?B?U3hycy81a0ZEblhIZ3NQK3BnbU9nUjlkQUpNaTNwekFmaG13MkVsNjh3Y0pN?=
+ =?utf-8?B?NmpwdHMxamJIeEQxZFNEYzZUSDBsUjhLNVdkM2JuQjJibDJFNHliR0hvU1I4?=
+ =?utf-8?B?c2twNFlGT25QakQveXpVQ3hKQ3ZxTTRxR29tRFBqbllZRVB2NTZGMkZIekhp?=
+ =?utf-8?B?SEVrNjQ1bHp6VW5scmxNMnFRaEtvMWpqbHdJUWRqOTJrc1NlbFhCeU9tN1JN?=
+ =?utf-8?B?WWVnM2ZVS1dPY3lKTEVoTUZESTZ2Qjh5dHF6bDBvMFhHdW0zNG1ZSDJMT3ha?=
+ =?utf-8?B?M3daSVU0K0VpczJlR3ByMThLbkJtUDdjWTc3WUZMbkJ2Mnk3VVlPTnY3OFlh?=
+ =?utf-8?B?b2ZMQmhxbTFwL2lKL0dYZmlXbm5VQ3JZaDYxVmxZUE1uTlJJelpPNzFjYVFC?=
+ =?utf-8?B?bUp0WHljR3BwT2FQMWpocHpqeFhMZEc1TkhuZ1BCRnYxNFpiS3FiNFkzeFh0?=
+ =?utf-8?B?cmdKbHBobDZINjFOS1dVci9KVitDRitweXp5cFBOcHk3NmNaYmdsMmVHVUpR?=
+ =?utf-8?Q?9mvBCv4EO0uyp?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0JYZjFNRTBFaVRKN0hucm5IK2FVWFZhaUdOSFpVaSsyTHZaeUlodkdvYkZv?=
+ =?utf-8?B?MTdqWG1rWDhYZnVMTDN1Vkt2NDFPT1ZRY21LOURBZVFac3V6L3pQaFU5TWg5?=
+ =?utf-8?B?V05RbE9mWTNwV3BNTnRYL08xQVAxKzhRckdVOXNLNUY1c1hNZDJxREVEYXpz?=
+ =?utf-8?B?cjFBVFlWc0N5WGlMWXRMUXpKOWtqdzBsSHFWTmVsNldGK2tzM0NENExYTzRa?=
+ =?utf-8?B?VFdVcWF1akloQ0NJaGVDeVBPTWsxcXRKbnJpcWxGdm1ZTmpKMk1qbkZ2UjVo?=
+ =?utf-8?B?MURkcEw4MU4yRzN1K21kTDl2L0JCNFdHVE9ac25ZdG83SXZOYlJzRzN1RWJR?=
+ =?utf-8?B?RWRDVkZ5YmVVdDMwZkpYUlp3T1JwS0c3MmIyZThYSjVHQ01oSHJqYy9jZ3Qx?=
+ =?utf-8?B?SjNuZ3l6MlVhKytQRU00OVB0L0JORXZ4aVpPY0FLdzhpa1hZT3YxTjhCTTA3?=
+ =?utf-8?B?bmNvN0c1NTZ4Kzg5Z25tMnFsaFZBMlJ3RndUaGQ0cG5wclVZZXMxQWJxU0Rl?=
+ =?utf-8?B?V2EwZHc2TFlmNnZRQ2JONHdaVzdaWEcyaTk4U1IrVGRQKzh6TUtzSlNQSmhS?=
+ =?utf-8?B?c1VTWkIyM2xQNkY1bGNVOEJFTk9yYmR4ZW44N2cyQlFPcGJCVnBGbjhTbE5k?=
+ =?utf-8?B?bEhYZ09GRlRzQmM4VVJJdjZzNWQzYWNEMURVT1dsNmdoc0dURWRkSGpwUmNk?=
+ =?utf-8?B?OGVGbUtkc2ZBTGl2KzhBMTY1QmFzNUtPOHhMRW1xN0dyRWJGai9oVVRuTDFo?=
+ =?utf-8?B?TXE1dGZHNEhUSWJZSjlDb053d1VEcDAxS1hjQlZlZjEwbTVSQ2N1d0dCZEFO?=
+ =?utf-8?B?ejgza3pUVmYxbmFIYmx2RHpYYzhjZ2J1U2p5Q051RU92MEVnZlZndENaSTZw?=
+ =?utf-8?B?UEVOdEQvY0ZKd2hvWW1VanVvd09DNzVUMDcwbjVsTklYWG1sV290VG16MTF5?=
+ =?utf-8?B?N1lYUS9DekJCb0NVZDNVMkZRNzdWVEtpSFVDT1F0QzdpSXE2ZGJZWnZHbmNB?=
+ =?utf-8?B?WFd2RGUwaFFiYW1ISTFHalNZVkFrUCt4NWxLc002NGV3QUNQUzVicWhoRWhJ?=
+ =?utf-8?B?L0JFdTA0SitqQ0ZPR3VXOWh3UkR2TmJYYVlNdytzbDg5MmZoT0JVT3dRcFE0?=
+ =?utf-8?B?T2ptWGU5K09QcEN5M0IwaVVwQWltRXk5eTk0SFhoTTkrYUVmdkZQQU4ydVdk?=
+ =?utf-8?B?NThQaVB1MzcvWTg1bXdvZ2wvbUhMMlFwMnVkQS9jSWE4OTUwcVpWN1Z2bGFP?=
+ =?utf-8?B?c2ZIKy9qKzlUeVhYZGpmMUhzYTZ5Y2xncG81bXh4aUF0UXdkK3V3allNclBV?=
+ =?utf-8?B?cklCWGg0WXAxck1rUGhLZXpuQ05vbkVZZVViL0M5TDJqUWYwSXB2dU1wK1Zx?=
+ =?utf-8?B?SGZGN2YvblJFUVRmSXZNWlVEN1gxN21yV2xGY0Nna2VaTDgrS3ZCREIvYjl6?=
+ =?utf-8?B?R0lIUDc0TjFJZERaUC9ZZkg2ajY1OWR4MEl3eWtCdzc1SGY0ZElPRDF3Zmhv?=
+ =?utf-8?B?V09TcFYyOEprODg1cDdWeWt3cGF5TzJjN2pjOFdTbnp4dGtSYWRuSzdSUHA4?=
+ =?utf-8?B?SUMwOTBsN1QxRW4rL2IzY01IRDZVZHJuV2N6K2cvdDRXRjNBQXhIMFVGVFd4?=
+ =?utf-8?B?UE0rR2UvRXZwVm5OcWEzVEFiQ01IN2xqMnMvR1hoMTFqNkZqRno1UTJCNUNE?=
+ =?utf-8?B?NVF5NW9xYWsvSXYyU084TGZ3cm03MnVsMWtRYlFpRVJDanV0RXZNelUyYW5z?=
+ =?utf-8?B?RW5GUG9YRG9vMC9GNHdNdnVTeDBkNmREYTNoYkc3Q3ZJWDFqSkxkck0wR2hM?=
+ =?utf-8?B?bG8wdW1DbUV6b24rQW9SN3RITXpKV2QxQWpCazFqblRPbmtsNWtaNmJnY2g1?=
+ =?utf-8?B?N0dTdmllWnZYdlVvSUlKM0xxbFIyZzlVSjJiK3FLLzJBZks5WUJlTWh2U1pv?=
+ =?utf-8?B?UGoyclBJM0E4WlR4RVlKajhDZFRqaXEreVkwNmh2ZjlYeFkxakljdEpQZ1pa?=
+ =?utf-8?B?Sk9PSXhNNkxVS2JlVUM5OEppV2o2SXVlbS9QU2FQSVJSbVZPNG0vcVJ6QVhx?=
+ =?utf-8?B?SzRhMDI2NFpaZDBScmEwRmtVTkdXa01SSUI4VzR3Y3BKNUcyRFhWWnYyOXc5?=
+ =?utf-8?B?YlJ4OUxTOXhrdFBDcW5SMUdFVXlhQzVrdmE1ZUlvUmNVbmZBUkxYdHpkS2oy?=
+ =?utf-8?Q?sQyZZb1xR+6VX2WeiA5RtSM11ILX3aQUDeMT6B3dZuyc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ff5a39b-d18c-42fe-4edc-08dd5022c69b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2025 13:47:24.9117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Eh6WZDJdXyh6eDN7w1ddiPP2s/Ptf47b1C3l9RZ17XQETM9guI+ifZMs9QEyHBL21JqwGdWZHXDI8r1fn4/CJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6750
 
-Hello,
+Hi Dave,
 
-syzbot found the following issue on:
+On Tue Feb 18, 2025 at 10:42 AM JST, Dave Airlie wrote:
+> On Tue, 18 Feb 2025 at 00:04, Alexandre Courbot <acourbot@nvidia.com> wro=
+te:
+>>
+>> Hi everyone,
+>>
+>> This short RFC is based on top of Danilo's initial driver stub series
+>> [1] and has for goal to initiate discussions and hopefully some design
+>> decisions using the simplest subdevice of the GPU (the timer) as an
+>> example, before implementing more devices allowing the GPU
+>> initialization sequence to progress (Falcon being the logical next step
+>> so we can get the GSP rolling).
+>>
+>> It is kept simple and short for that purpose, and to avoid bumping into
+>> a wall with much more device code because my assumptions were incorrect.
+>>
+>> This is my first time trying to write Rust kernel code, and some of my
+>> questions below are probably due to me not understanding yet how to use
+>> the core kernel interfaces. So before going further I thought it would
+>> make sense to raise the most obvious questions that came to my mind
+>> while writing this draft:
+>>
+>> - Where and how to store subdevices. The timer device is currently a
+>>   direct member of the GPU structure. It might work for GSP devices
+>>   which are IIUC supposed to have at least a few fixed devices required
+>>   to bring the GSP up ; but as a general rule this probably won't scale
+>>   as not all subdevices are present on all GPU variants, or in the same
+>>   numbers. So we will probably need to find an equivalent to the
+>>   `subdev` linked list in Nouveau.
+>
+> I deliberately avoided doing this.
+>
+> My reasoning is this isn't like nouveau, where we control a bunch of
+> devices, we have one mission, bring up GSP, if that entails a bunch of
+> fixed function blocks being setup in a particular order then let's
+> just deal with that.
+>
+> If things become optional later we can move to Option<> or just have a
+> completely new path. But in those cases I'd make the Option
+> <TuringGSPBootDevices> rather than Option<Sec2>, Option<NVDEC>, etc,
+> but I think we need to look at the boot requirements on other GSP
+> devices to know.
+>
+> I just don't see any case where we need to iterate over the subdevices
+> in any form of list that makes sense and doesn't lead to the nouveau
+> design which is a pain in the ass to tease out any sense of ordering
+> or hierarchy.
+>
+> Just be explicit, boot the devices you need in the order you need to
+> get GSP up and running.
 
-HEAD commit:    ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13798898580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=cd3ce3d03a3393ae9700
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Right, I was looking too far ahead and lost track of the fact that our
+main purpose is to get the GSP to run. For that a fixed set of devices
+should do the job just fine.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I still suspect that at some point we will need to keep some kernel-side
+state for the functions supported by the GSP thus will have to introduce
+more flexibility, but let's think about it when we arrive there. Core
+GSP boot + communication is fixed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9de6d97a8d34/disk-ad1b832b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/258463d6a9b5/vmlinux-ad1b832b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0449b94f00a/bzImage-ad1b832b.xz
+>
+>>
+>> - BAR sharing between subdevices. Right now each subdevice gets access
+>>   to the full BAR range. I am wondering whether we could not split it
+>>   into the relevant slices for each-subdevice, and transfer ownership of
+>>   each slice to the device that is supposed to use it. That way each
+>>   register would have a single owner, which is arguably safer - but
+>>   maybe not as flexible as we will need down the road?
+>
+> This could be useful, again the mission is mostly not to be hitting
+> registers since GSP will deal with it, the only case I know that it
+> won't work is, the GSP CPU sequencer code gets a script from the
+> device, the script tells you to directly hit registers, with no real
+> bounds checking, so I don't know if this is practical.
+>
+>>
+>> - On a related note, since the BAR is behind a Devres its availability
+>>   must first be secured before any hardware access using try_access().
+>>   Doing this on a per-register or per-operation basis looks overkill, so
+>>   all methods that access the BAR take a reference to it, allowing to
+>>   call try_access() from the highest-level caller and thus reducing the
+>>   number of times this needs to be performed. Doing so comes at the cost
+>>   of an extra argument to most subdevice methods ; but also with the
+>>   benefit that we don't need to put the BAR behind another Arc and share
+>>   it across all subdevices. I don't know which design is better here,
+>>   and input would be very welcome.
+>
+> We can't pass down the bar, because it takes a devres lock and it
+> interferes with lockdep ordering, even hanging onto devres too long
+> caused me lockdep issues.
+>
+> We should only be doing try access on registers that are runtime
+> sized, is this a lot of them? Do we expect to be hitting a lot of
+> registers in an actual fast path?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cd3ce3d03a3393ae9700@syzkaller.appspotmail.com
+For this particular driver, I don't think we do. But other drivers will
+probably also have this issue, and the challenge for them will to be
+find the right granularity at which to invoke try_access(). My worry
+being that this can explode down the road without warning if invoked at
+the wrong place, which is the kind of behavior we are trying to avoid by
+introducing Rust.
 
-netlink: 8 bytes leftover after parsing attributes in process `syz.0.205'.
-netlink: 8 bytes leftover after parsing attributes in process `syz.0.205'.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6693 at ./include/net/sock.h:1711 sock_owned_by_me include/net/sock.h:1711 [inline]
-WARNING: CPU: 0 PID: 6693 at ./include/net/sock.h:1711 msk_owned_by_me net/mptcp/protocol.h:363 [inline]
-WARNING: CPU: 0 PID: 6693 at ./include/net/sock.h:1711 mptcp_pm_nl_addr_send_ack+0x57c/0x610 net/mptcp/pm_netlink.c:788
-Modules linked in:
-CPU: 0 UID: 0 PID: 6693 Comm: syz.0.205 Not tainted 6.14.0-rc2-syzkaller-00303-gad1b832bf1cf #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-RIP: 0010:sock_owned_by_me include/net/sock.h:1711 [inline]
-RIP: 0010:msk_owned_by_me net/mptcp/protocol.h:363 [inline]
-RIP: 0010:mptcp_pm_nl_addr_send_ack+0x57c/0x610 net/mptcp/pm_netlink.c:788
-Code: 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 ca 7b d3 f5 eb b9 e8 c3 7b d3 f5 90 0f 0b 90 e9 dd fb ff ff e8 b5 7b d3 f5 90 <0f> 0b 90 e9 3e fb ff ff 44 89 f1 80 e1 07 38 c1 0f 8c eb fb ff ff
-RSP: 0000:ffffc900034f6f60 EFLAGS: 00010283
-RAX: ffffffff8bee3c2b RBX: 0000000000000001 RCX: 0000000000080000
-RDX: ffffc90004d42000 RSI: 000000000000a407 RDI: 000000000000a408
-RBP: ffffc900034f7030 R08: ffffffff8bee37f6 R09: 0100000000000000
-R10: dffffc0000000000 R11: ffffed100bcc62e4 R12: ffff88805e6316e0
-R13: ffff88805e630c00 R14: dffffc0000000000 R15: ffff88805e630c00
-FS:  00007f7e9a7e96c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2fd18ff8 CR3: 0000000032c24000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- mptcp_pm_remove_addr+0x103/0x1d0 net/mptcp/pm.c:59
- mptcp_pm_remove_anno_addr+0x1f4/0x2f0 net/mptcp/pm_netlink.c:1486
- mptcp_nl_remove_subflow_and_signal_addr net/mptcp/pm_netlink.c:1518 [inline]
- mptcp_pm_nl_del_addr_doit+0x118d/0x1af0 net/mptcp/pm_netlink.c:1629
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb1f/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2543
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1348
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- ____sys_sendmsg+0x53a/0x860 net/socket.c:2573
- ___sys_sendmsg net/socket.c:2627 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7e9998cde9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7e9a7e9038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7e99ba5fa0 RCX: 00007f7e9998cde9
-RDX: 000000002000c094 RSI: 0000400000000000 RDI: 0000000000000007
-RBP: 00007f7e99a0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f7e99ba5fa0 R15: 00007fff49231088
- </TASK>
+>
+>> - We will probably need sometime like a `Subdevice` trait or something
+>>   down the road, but I'll wait until we have more than one subdevice to
+>>   think about it.
+>
+> Again I'm kinda opposed to this idea, I don't think it buys anything,
+> with GSP we just want to boot, after that we never touch most of the
+> subdevices ever again.
 
+Yep, it's definitely not the thing we need to worry at the moment.
+Minimal static set of devices, and let's get the GSP running. :)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+Alex.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
