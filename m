@@ -1,146 +1,181 @@
-Return-Path: <linux-kernel+bounces-520590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBC0A3ABD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0595A3ABDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA1016C1B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF62B16E5AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 22:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332EB1DB55D;
-	Tue, 18 Feb 2025 22:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D091DD894;
+	Tue, 18 Feb 2025 22:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deIpflTI"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IvSDRWjQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6B41D958E;
-	Tue, 18 Feb 2025 22:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7DF1D9587
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 22:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918325; cv=none; b=M20a65dpaCTVe76vsRbtqACOE0zRgXNezDePmDzH5bC1xooBE8dibK4XKj1N6DKuPXDqwSPBl24C3klwPSlU00fa8bqnbPoRx/FeOsegQkhosFFEbO55rJcarZz5lDgvgbQuA/lLICOozFwCNoMQle6qF+GBxZ3DT9gCZma/AE8=
+	t=1739918441; cv=none; b=JeWUvqO8CTQDdmidbHXPlBX+BfmAxsa3vRoxAdTupewWyElVpDtlqBpnvQy3ikwMmlnoIJAqOSdFbninNmJ80t6NSeDccPHuET9vja0RwwCywyYJoRpWeRy8PcpJVtYmBNyhgvTiF5x8az5lXdbHgEMKsZzltZ1DYuns4ZULOTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918325; c=relaxed/simple;
-	bh=X/w9dv6WCIb8khQItSdUJ4hRIaz8zS+I0fws+Q13vdg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aj08Q/sauzfYSVNTeflwxO6jbWXnJtvCRD0PG0L7Z1Hha95Kdgw+46k1Qndk0/coUISnufEjt3ey1cI6dTg6DS/xheGW3YoxzYFYWfXWe0yVXWYx2dzoq1YSGqYreOIOqNsEAqpBfIibPW2rEQ7vW0qHH7oTwPzlFNzyxIn4gNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=deIpflTI; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso11135790a12.3;
-        Tue, 18 Feb 2025 14:38:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739918322; x=1740523122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X/w9dv6WCIb8khQItSdUJ4hRIaz8zS+I0fws+Q13vdg=;
-        b=deIpflTIwx7f7okhCxiDbhKDWt6v80xfg2g1HmvP0Le37ApXcjtQIZz771aYIdvIm5
-         8HI+10hDcjcg1au1dy+n3f+apETwrKMphdxswTSqgDa8JU4BpyLS7FzfNKVdd3bTAltw
-         r6XwfJc83r032uYhxYPq1oWxJKXrCN4lCsEpH9og/KCENt3qRfTjKP1+5C5wyR3DmBGm
-         3bKfWZQTJRxwJ7VdEavKHNVEpiZMugEVVXMm/NrJJ1u+vOCazC9zp3VFyV+CK7jqhBtE
-         e5DBIoozjUwlrCNHFmnWagRCz/nylM71khS61zuDVSTEXvhTG4id4yWOHgKx2eRigZlC
-         VzfQ==
+	s=arc-20240116; t=1739918441; c=relaxed/simple;
+	bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Mp1X0B/R+MIjrU4mJkDHvT3CoJbFZa0PklT0dS1a1hfHfG6pBkRIx9YOemt0xN8MMuVlMryf6IksqjOXnRrfYQbIAwuNEJhpJttuUXdtGC9xtt/JdD+Nr0wZvQRd5y+edeiKkrtSabHxZeseY/f15EYvW6ICheGPM1y7n/8Ga0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IvSDRWjQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739918438;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
+	b=IvSDRWjQdRT4NGhiLewqXrvQBjvpefMgEe0SOgJq2yYLYqH11psVSMyQzhuaeplKwQUkdE
+	LBmOAI4AKSyzvglau5HjGQeUY7Cru6gGTs8WQiQUx1dBTPSitWTLr8VhR8bnOF+f1tm3na
+	CRPw44/drwXLsGZnG2r5HQGa2oaOxZE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-fXdDDQypOyq3w0KIWVlWcw-1; Tue, 18 Feb 2025 17:40:36 -0500
+X-MC-Unique: fXdDDQypOyq3w0KIWVlWcw-1
+X-Mimecast-MFC-AGG-ID: fXdDDQypOyq3w0KIWVlWcw_1739918435
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4388eee7073so961865e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:40:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739918322; x=1740523122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X/w9dv6WCIb8khQItSdUJ4hRIaz8zS+I0fws+Q13vdg=;
-        b=ZOC4aqiXvzXEQaOuSDrMSLRC8wHljBgpPb/c1LQ28KG+bYd/MnS42aPCdolQvLw7LO
-         QlGB6yfJB6GuiitO4sZm1Uqa6+1KaICxMqP2TOf+1cTs4a/wDsQRPcIKEOW4aifbVV/g
-         om4De10fE9721IjJ3im/GrCBDaiXCXwACs3Mcat5orfWUJl0biCOmNd+wlaY2SUfGnjJ
-         V/n4TTDwETzTqJk3qDFJBoFVZLXtV8PmvEJH1wPUAbEo2fra7vi5y0O2hhNkIWTjM2J0
-         EWbPvXqpd3j87e9vj2VDl/ZyU+cBsnWv0ktzecPjyjP+2DGVeGBURL3zUPvhQ8m/2NF+
-         /G3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGU/a7kzEhqC0Pyn8bXvDKAARISITKB+H+yV5bxQM2EolCb0A0Qmg1v+vJJZ211YroHP9cz+QafbPGvso=@vger.kernel.org, AJvYcCXpXLzwHNuVG8O8ORietfdRXpQ7TMhF1/R2atgiSWdrouGRkXTRu4NMbytyfV/ocwu0kb+DxsLoHWcb6cvnhHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Qnsoro2WFR9qqovBqVCzPPixOn/KTQ6+wzoioqGUGJCoNedI
-	iy0xvwtWaTncvpVowPk/S7VybUwftU95r2wgPziG+5NJiBdTsBGvUfP79laN6QKWh665dqj4e6K
-	QjAM7R+YjulotUuZZMWdz4e2XmYU=
-X-Gm-Gg: ASbGncsggmD6/c+p4CzUIC4qLf8kn7WWUWKH5cxPOwvaAJmJIY3eiymZrOQYXX1ULJ/
-	7Dv+CcWawnSVMqhS26wPOsJ1jlKyyvleE8jEOMgP016lzjQwjG7YDoYxkPetGy13M9GMWJms=
-X-Google-Smtp-Source: AGHT+IE0KrBd630x4dCMI73nbxYD+2oUb+XNu+r9g+15xy1qsYaOv1o/LXN3NckjPiVNRFUr2VFrDcLSe32/twzUEso=
-X-Received: by 2002:a17:907:60d6:b0:ab7:ef48:1668 with SMTP id
- a640c23a62f3a-abb711c382fmr1511816266b.57.1739918321797; Tue, 18 Feb 2025
- 14:38:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739918435; x=1740523235;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ivyLIcXrK8i6Sm3bd5ok9RWHX3VEX/cjKUj/8oDDJcE=;
+        b=nYYsuiSbB3/BkQ01QjCBA1LkNcTt7A1plh2P/balGyEplhckA8pMgCIXcV6JSlgAtF
+         b9okfQm4DoRh+8xAvOdEUVZrCKUCj5RV2IKwUfMLoR5P47pZ2Ng8Hx1w4cGyVkxsXl3O
+         GQBbv1Fvy0EBMsbdQ4wZhYqw6ivuZS0sfON6Ayfq4m10L02OkoRP3GOTbljPag7gICaG
+         vlJtpkg3EjvW77oil0Y7jDDs9XDb43hCZvYbB+TAMidtLQV7tTFMR7eOz6RThULwn6gi
+         5w10hFrBWNmLWk1rjGtV6IOozu4d1tiUIHhElPPlDTNpz6jv1mhvuYn4ZbXQ0xBEC2cb
+         j1Cw==
+X-Gm-Message-State: AOJu0Yw29WD0b3WB6PrgSHVRUAfssE4bf9yOdJUx+DphhFW3GM7t4D6Q
+	lgVJfY+DIzZUH/DjTJz+O19jHw3Z0JoIGDjSf5joCoDxy4NIoYzSkY88YHfayLx/0otRx06Ggp2
+	p1aN6o7SRaAJizBkhxNKojO83K1eqGh/kMgYJyraeAdahHqt7YYrS9H6eCsARTA==
+X-Gm-Gg: ASbGncvSO9Q/BWAmJY39iSk3zcH/DquzeZRmJD7W3EOZsZPOPFiqnN6YA4U/NoKyiuS
+	dtEgpFJL5c1FBh0r00dWM3Lvx/K3xy+VT+Z7T2GSbsbiil1b592pZBgfkzo1ygml9R/LgZ045ko
+	92lJW+4Dh257TKgDlXKfJ5Vo2IEm1OBk7j6fBc3tpizEQRuohQDN3Rp7HIJpBg4KJgHN9dDyBgK
+	K+Q193s4owAUh6NdRhjKBM9jq/gOyviJ6C66wgLf214etgilZF+qDCvsQqbghIN1BqsFQATjvWE
+	4mthbBAYPC8OALxdIFXBiCFUXMM8HR+YumWOu2AZOQuJOhqvBjynbybaEsXER07rBQ==
+X-Received: by 2002:a05:600c:314b:b0:439:86c4:a8d7 with SMTP id 5b1f17b1804b1-43999ae0dc8mr11797435e9.5.1739918435411;
+        Tue, 18 Feb 2025 14:40:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEI17xveq4qpUoXVn3jaf3vZekMu127UgmikmUhaFlSZ5tyuyrG+gdqtYt1+dNUau7VWeDZUA==
+X-Received: by 2002:a05:600c:314b:b0:439:86c4:a8d7 with SMTP id 5b1f17b1804b1-43999ae0dc8mr11797275e9.5.1739918434928;
+        Tue, 18 Feb 2025 14:40:34 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43993847f39sm32922065e9.14.2025.02.18.14.40.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 14:40:34 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, xen-devel@lists.xenproject.org,
+ kvm@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, Juergen Gross <jgross@suse.com>,
+ Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
+ <alexey.amakhalov@broadcom.com>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Boris Ostrovsky
+ <boris.ostrovsky@oracle.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan
+ Gupta <pawan.kumar.gupta@linux.intel.com>, Sean Christopherson
+ <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
+ <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
+ <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
+ Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
+ Biesheuvel <ardb@kernel.org>, Neeraj Upadhyay
+ <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Clark Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
+ Tomas Glozar <tglozar@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Kees Cook
+ <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christoph
+ Hellwig <hch@infradead.org>, Shuah Khan <shuah@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Rong Xu <xur@google.com>,
+ Nicolas Saenz Julienne <nsaenzju@redhat.com>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Yosry Ahmed <yosryahmed@google.com>, "Kirill A.
+ Shutemov" <kirill.shutemov@linux.intel.com>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>, Jinghao Jia <jinghao7@illinois.edu>, Luis
+ Chamberlain <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+ Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v4 29/30] x86/mm, mm/vmalloc: Defer
+ flush_tlb_kernel_range() targeting NOHZ_FULL CPUs
+In-Reply-To: <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
+References: <20250114175143.81438-1-vschneid@redhat.com>
+ <20250114175143.81438-30-vschneid@redhat.com>
+ <CAG48ez1Mh+DOy0ysOo7Qioxh1W7xWQyK9CLGNU9TGOsLXbg=gQ@mail.gmail.com>
+ <xhsmh34hhh37q.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <CAG48ez3H8OVP1GxBLdmFgusvT1gQhwu2SiXbgi8T9uuCYVK52w@mail.gmail.com>
+ <xhsmh5xlhk5p2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <CAG48ez1EAATYcX520Nnw=P8XtUDSr5pe+qGH1YVNk3xN2LE05g@mail.gmail.com>
+ <xhsmh34gkk3ls.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <352317e3-c7dc-43b4-b4cb-9644489318d0@intel.com>
+Date: Tue, 18 Feb 2025 23:40:31 +0100
+Message-ID: <xhsmhjz9mj2qo.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-In-Reply-To: <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Wed, 19 Feb 2025 08:38:29 +1000
-X-Gm-Features: AWEUYZnxnanMLXuDMA2c6TgTwYwzjKTQk_SYXC889XG81ahvm8TLQqszxHmmj9o
-Message-ID: <CAPM=9tyWvKcUnP2XJh5G=4nSCjum69phxNpOG8adPunQ+3TNdA@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-> I have a few issues with Rust in the kernel:
+On 11/02/25 06:22, Dave Hansen wrote:
+> On 2/11/25 05:33, Valentin Schneider wrote:
+>>> 2. It's wrong to assume that TLB entries are only populated for
+>>> addresses you access - thanks to speculative execution, you have to
+>>> assume that the CPU might be populating random TLB entries all over
+>>> the place.
+>> Gotta love speculation. Now it is supposed to be limited to genuinely
+>> accessible data & code, right? Say theoretically we have a full TLBi as
+>> literally the last thing before doing the return-to-userspace, speculation
+>> should be limited to executing maybe bits of the return-from-userspace
+>> code?
 >
-> 1. It seems to be held to a *completely* different and much lower standar=
-d than the C code as far as stability. For C code we typically require that=
- it can compile with a 10-year-old version of gcc, but from what I have see=
-n there have been cases where Rust level code required not the latest bleed=
-ing edge compiler, not even a release version.
+> In practice, it's mostly limited like that.
+>
+> Architecturally, there are no promises from the CPU. It is within its
+> rights to cache anything from the page tables at any time. If it's in
+> the CR3 tree, it's fair game.
 >
 
-This is a maturity thing, as the rust code matures and distros start
-shipping things written in rust, this requirement will tighten in, as
-long as there is little rust code in the kernel that anyone cares
-about why would they want to lock down to a few years old compiler,
-when nobody is asking for that except people who aren't writing rust
-code at all. It will happen, there is already a baseline rust
-compiler, again until there is enough code in the kernel that bumping
-the compiler for new features is an impediment it should be fine, but
-at the point where everyone is trying to stop rust from maturing, this
-talking point is kinda not well thought through.
+So what if the VMEMMAP range *isn't* in the CR3 tree when a CPU is
+executing in userspace?
 
-> 2. Does Rust even support all the targets for Linux?
+AIUI that's the case with kPTI - the remaining kernel pages should mostly
+be .entry.text and cpu_entry_area, at least for x86.
 
-Does it need to *yet*? This might be a blocker as rust moves into the
-core kernel, but we aren't there yet, it's all just bindings to the
-core kernel, yes eventually that hurdle has to be jumped, but it isn't
-yet, I also suspect if we rewrite a major core piece of kernel, it
-will coexist with the C implementation for a short while, and maybe
-that will help us make decisions around the value of all the targets
-we support vs the effort. Again this is a maturity problem down the
-line, it isn't a problem right now. It's also a good chance gcc-rs
-project will mature enough to make the point moot in the meantime.
+It sounds like it wouldn't do much for arm64 though, if with CnP a CPU executing in
+userspace and with the user/trampoline page table installed can still use
+TLB entries of another CPU executing in kernelspace with the kernel page
+table installed.
 
->
-> 3. I still feel that we should consider whether it would make sense to co=
-mpile the *entire* kernel with a C++ compiler. I know there is a huge amoun=
-t of hatred against C++, and I agree with a lot of it =E2=80=93 *but* I fee=
-l that the last few C++ releases (C++14 at a minimum to be specific, with C=
-++17 a strong want) actually resolved what I personally consider to have be=
-en the worst problems.
->
-> As far as I understand, Rust-style memory safety is being worked on for C=
-++; I don't know if that will require changes to the core language or if it=
- is implementable in library code.
-
-No it isn't, C++ has not had any rust-style memory safety topics
-manage to get anywhere, C++ is just not moving here, Sean Baxter
-(circle compiler developer) has proposed safety extensions and has
-been turned away. Yes templates would be useful, but maintaining a
-block on all the pieces of C++ that aren't useful is hard, I'm not
-even sure expert C++ programmers will spot all of that, again Linus
-has show no inclination towards C++ so I think you can call it a dead
-end.
-
-Dave.
 
