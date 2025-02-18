@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-519864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDE9A3A2E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:33:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9BA3A2E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D7D18861B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB063B1283
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC9226E65D;
-	Tue, 18 Feb 2025 16:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3C426E64F;
+	Tue, 18 Feb 2025 16:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M4RZSxhC"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEMyVO09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4D14A4E7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266CE243387;
+	Tue, 18 Feb 2025 16:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896399; cv=none; b=E1lQ9ITetsd9OOI6K2vXo9yJwiFr7kPjcsh99ck6dK9GsdhBWznMg6OyNTX238uqFCICU49OW/GQ6cJn2PMBm6dtP19NHzoy26MMkD1BZ7mGgXZ8bBGtj+4KeWC3nM8Rgs1V7mPvwvQGal6c5AnTTx4zm9YmMETIiMZGryH60V4=
+	t=1739896412; cv=none; b=A3gsI83BNpaKDy/j5YAvAeKavNWKZldiZKq+ZMIjYosGmQ5P/WlPDcFldF4LHckYtUfzJQc1y2tqkKPKm9Ei6kB/QBhV37vcwd9jxSbfN7Z6wCIuvVUKlpGQPgdAsUtl3Rm89QEdfzjPgPegn5wPuSpBHOmLAWOIlTITAMR7eU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896399; c=relaxed/simple;
-	bh=haR3ZcF6zF9YuGmjTaoxjtDtA3g0eiYzi+hVai/4eOI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tiJBGmjux8CZ5JeadPXEJQRiuMBjZ8xqJ7yGnxUBB43KsLOHvqk9f/Vi0K384r0vjdaY6T2kspVn4FFOCjs4tyT1z5VQX5i+MGBrEaRMwN/UYMZKHqIDu6bFF7RJGOCerj3mWVcDI91vrV5e2QiVz4Xr5GDyg7igOjxk46cnkFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M4RZSxhC; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22107b29ac3so54642025ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 08:33:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1739896396; x=1740501196; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ALDAjApXvzBVsvNdS4XOKHnDSW6U2RJBTi7UgERfwg=;
-        b=M4RZSxhCQKkTZFmnJItr60ZI9UnLOTWws/uXOo4PhBjrjc0KDUiSU0pQkorZscuzEZ
-         dR5f3RnHLDhCg3OtnqHJRdb9LtcCuV5o/HLurEB7qVgNvfdQIMSqVy/TBnHS2HJKT7BD
-         CttLfa0AmNBV1mj/mdNHI2N9OyRL08cdD9+gbeH8fjhvIVCCN98+bCOwxttYrqjsfx8P
-         pm9PJvXaj8yDZQWBR9af16rSRbxLINBmTnXhmTCTLbQrChnaWxL9NoanpYa7662tfCbI
-         kX1kUO4BwR8Fj3j6qrJZCmx3OAa4V2dIYmNRdSM2Up2nfw7iQk6TbVqBWh4svaDs5SS3
-         ik9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739896396; x=1740501196;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ALDAjApXvzBVsvNdS4XOKHnDSW6U2RJBTi7UgERfwg=;
-        b=UeGeMytpIn5LQ8kPRu4pKGQUizwa6GnCdNvqaVEGMA1+7WA6rEixyIKPjH1p3sHyYO
-         EwuOuCn9gGXrdeb98oWsqLaljjVNrp/Z8eIylv/RyQ9Bl4SSgve3JOJf5u1Bd8aQsbRb
-         awjS+/SFTSeGWa5bBDGFHaaGaEdrZATEojIKMtwJUl+ch19Fsz8CWwraIFcIvWKqNOhs
-         Vmbywrm8bGeK1c00U/ntLoarEyCdjCBT584eFzd4dI63GrjJp0fTEkhKDDO4tLSy2+Wq
-         Ez9xQZ3ICuucFRNXQXMbWFXhyzQi1Q53mmKqCbUNOZnmO8XLLp/Nj4lwa17RChiNihz3
-         f7lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqv6SissTJsSY7KEcskAIlbuh6CJ8tT46wr9+RpOpWgx8oCLRevffaiEuFUGktRZY08U85J+jxOy1Ne8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz82xcN8xx+lTKsgj3c7awkOrAQ33jahr+HHur7XXSxdXPB8lx7
-	2FEhUgLZndI2zP9wVD9BugLQv4nWEnmH/5IQqZGx5gSlCVXt+Y9btBzgwBiP9l90es7H2R1uQ2r
-	Jxw==
-X-Google-Smtp-Source: AGHT+IHKvlgPmZU3etqmp5/W7+L+qd2h4JSM3V9roDOCzzQzTgxjLYGh9pHFETsmqY9dHuv31ZkaXyutW38=
-X-Received: from plbkz4.prod.google.com ([2002:a17:902:f9c4:b0:220:efca:379c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f546:b0:215:6c5f:d142
- with SMTP id d9443c01a7336-2216ef12768mr3670395ad.20.1739896396260; Tue, 18
- Feb 2025 08:33:16 -0800 (PST)
-Date: Tue, 18 Feb 2025 08:33:14 -0800
-In-Reply-To: <DC438DC0-CC4B-4EE2-ABA8-8E0F9D15DD46@infradead.org>
+	s=arc-20240116; t=1739896412; c=relaxed/simple;
+	bh=HG8MXPAywW+QktCxIEk+iQgG7o3B8smG8DbYQu12UIA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b/cG+/47bOmJgDx+m4BSqazehk5DWxKrhK148x+19wanDRr/Mwcz0tzRr0ZEYZ0Ywk1mtqJpr0RRmHw5tJsPd3fErpXvRiZaUP+DDDCsEAvRRvKcPArzVLkCjZBImjJC2SfCyR3LraCyhR5D81ZEkIh0pmGSU4gs4kPId3ZlVWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEMyVO09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BBCEC4CEE2;
+	Tue, 18 Feb 2025 16:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739896411;
+	bh=HG8MXPAywW+QktCxIEk+iQgG7o3B8smG8DbYQu12UIA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZEMyVO09N9YD0BFOLZYtvQSrLTutXchQdS75COw3/+XOnX4w3Ez1OtNa2BPXHUrMv
+	 PtstLTkTq27FSGZVk4YRBc8JWKAkRvNL6LJzh2fLfzq+geHydXQRHQXDkgXrA0y3B5
+	 YWQVUMrDMnG2MVjCEP08rY4pQc/BP10lY4TvqGHqADYiR5l+Y5sAUX8aFyFiyJFlbF
+	 iAJ/I+MsgR5Mq9GU6HzyL2iyPFLfHgTGdagzAS0exemNxZW7A6TxPMkXQGH4jN1rqH
+	 HUXkJkZ61G6fb2itwxi9zGKLGx6GfhhRy/ifJ2+DrcmCNC5WROcMyXxp2x08ztwYlJ
+	 eaaEe5Gxfj2rQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tkQXH-005Vjg-F7;
+	Tue, 18 Feb 2025 16:33:29 +0000
+Date: Tue, 18 Feb 2025 16:33:26 +0000
+Message-ID: <86eczvrz55.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: Eric Auger <eauger@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	kvmarm <kvmarm@lists.linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	christoffer.dall@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	coltonlewis@google.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	darren@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
+In-Reply-To: <1a19dacc-72ca-4631-bce8-7426b3de0b47@os.amperecomputing.com>
+References: <bcb4289b-507c-4ea1-afc7-6febd34d88db@redhat.com>
+	<86y10osr19.wl-maz@kernel.org>
+	<4d443db1-85b1-4071-acd5-3187deb9cb17@redhat.com>
+	<2f6b2cb1-3d32-480a-9801-9b993ae74e2d@os.amperecomputing.com>
+	<152d262e-641d-4bb1-9656-a13e049d62c4@redhat.com>
+	<86h661wje4.wl-maz@kernel.org>
+	<4a9fbdd9-ad23-44bc-8ba5-399f08068db4@redhat.com>
+	<86cygpwfy0.wl-maz@kernel.org>
+	<b22d5916-8b55-43bc-a256-2136d66ad25f@redhat.com>
+	<86frkptzr6.wl-maz@kernel.org>
+	<Z6ZMdv8jJUvYwQzT@linux.dev>
+	<86bjvdtxb5.wl-maz@kernel.org>
+	<8da22249-eedb-477b-98d8-f50dee56f1f7@redhat.com>
+	<87tt8v14j2.wl-maz@kernel.org>
+	<1a19dacc-72ca-4631-bce8-7426b3de0b47@os.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250215011437.1203084-1-seanjc@google.com> <20250215011437.1203084-2-seanjc@google.com>
- <DC438DC0-CC4B-4EE2-ABA8-8E0F9D15DD46@infradead.org>
-Message-ID: <Z7S2SpH3CtqCVlBc@google.com>
-Subject: Re: [PATCH v2 1/5] KVM: x86/xen: Restrict hypercall MSR to unofficial
- synthetic range
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Paul Durrant <paul@xen.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Joao Martins <joao.m.martins@oracle.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, eauger@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, Feb 15, 2025, David Woodhouse wrote:
-> On 15 February 2025 02:14:33 CET, Sean Christopherson <seanjc@google.com> wrote:
-> >diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-> >index a909b817b9c0..5b94825001a7 100644
-> >--- a/arch/x86/kvm/xen.c
-> >+++ b/arch/x86/kvm/xen.c
-> >@@ -1324,6 +1324,15 @@ int kvm_xen_hvm_config(struct kvm *kvm, struct kvm_xen_hvm_config *xhc)
-> > 	     xhc->blob_size_32 || xhc->blob_size_64))
-> > 		return -EINVAL;
-> > 
-> >+	/*
-> >+	 * Restrict the MSR to the range that is unofficially reserved for
-> >+	 * synthetic, virtualization-defined MSRs, e.g. to prevent confusing
-> >+	 * KVM by colliding with a real MSR that requires special handling.
-> >+	 */
-> >+	if (xhc->msr &&
-> >+	    (xhc->msr < KVM_XEN_MSR_MIN_INDEX || xhc->msr > KVM_XEN_MSR_MAX_INDEX))
-> >+		return -EINVAL;
-> >+
-> > 	mutex_lock(&kvm->arch.xen.xen_lock);
-> > 
-> > 	if (xhc->msr && !kvm->arch.xen_hvm_config.msr)
+On Tue, 18 Feb 2025 07:33:11 +0000,
+Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
 > 
-> I'd still like to restrict this to ensure it doesn't collide with MSRs that
-> KVM expects to emulate. But that can be a separate patch, as discussed.
+> 
+> Hi Marc,
+> 
+> On 15-02-2025 11:20 pm, Marc Zyngier wrote:
+> > On Mon, 10 Feb 2025 18:26:48 +0000,
+> > Eric Auger <eauger@redhat.com> wrote:
+> >> 
+> >> Hi Marc,
+> >> 
+> >> On 2/7/25 7:38 PM, Marc Zyngier wrote:
+> >>> On Fri, 07 Feb 2025 18:09:58 +0000,
+> >>> Oliver Upton <oliver.upton@linux.dev> wrote:
+> >>>> 
+> >>>> Hey,
+> >>>> 
+> >>>> On Fri, Feb 07, 2025 at 05:45:33PM +0000, Marc Zyngier wrote:
+> >>>>> I found at least one issue that could fail the migration. Before the
+> >>>>> VM starts running, we limit the feature set to the subset we actually
+> >>>>> support with NV.
+> >>>>> 
+> >>>>> By doing this, we also change the value of IDreg fields that are not
+> >>>>> writable, because they describe features that we don't support.
+> >>>>> Obviously, that fails on restore.
+> >>>>> 
+> >>>>> I need to have a think...
+> >>>> 
+> >>>> We spoke about this a while ago (and I forgot til now), but I was
+> >>>> wondering if we could use vCPU feature flags to describe NV, including
+> >>>> the selection between FEAT_E2H0 and FEAT_VHE.
+> >>>> 
+> >>>> I think this might match userspace expectations a bit more closely where
+> >>>> the state of the ID registers after init gives the actual feature set
+> >>>> supported by the VM.
+> >>> 
+> >>> I'm not sure that's enough. Let me give you an example:
+> >>> 
+> >>> My host has FEAT_XNX, described in ID_AA64MMFR1_EL1.XNX. For whatever
+> >>> reason, we don't allow this field to be written to, even out of NV
+> >>> context. This is odd, because for an EL1 VM, this field means nothing
+> >>> at all.
+> >> So the curprit fields for me look like
+> >> 
+> >> - ID_AA64MMFR1_EL1.XNX
+> >> - ID_AA64DFR0_EL1.DoubleLock
+> >> - ID_AA64PFR0_EL1.RAS
+> >> 
+> >> This is still based on your nv-next branch from Jan 9
+> >> https://github.com/eauger/linux/tree/nv_next_jan9_2025
+> > 
+> > I have now pushed out a new nv-next branch with the new and improved
+> > UAPI. I expect migration to work a bit better, or at least not to
+> > explode on ID register restore. You will notice that things have
+> > changed a bit (extra flag and cap for FEAT_E2H0), but nothing really
+> > major.
+> > 
+> 
+> Tried nv-next branch and it is breaking(kernel Oops) for normal VM
+> boot itself with qemu. Looks like this is happening since qemu is
+> trying to write to ID_UNALLOCATED mapped registers as part of
+> save-restore of registers.
 
-I think that has to go in userspace.  If KVM adds on-by-default, i.e. unguarded,
-conflicting MSR emulation, then KVM will have broken userspace regardless of
-whether or not KVM explicitly rejects KVM_XEN_HVM_CONFIG based on emulated MSRs.
+Yeah, ID_UNALLOCATED is in pretty bad shape overall. For start, it
+doesn't even have a name associated to it, and then everything else
+falls apart.
 
-If we assume future us are somewhat competent and guard new MSR emulation with a
-feature bit, capability, etc., then rejecting KVM_XEN_HVM_CONFIG isn't obviously
-better, or even feasible in some cases.  E.g. if the opt-in is done via guest
-CPUID, then KVM is stuck because KVM_XEN_HVM_CONFIG can (and generally should?)
-be called before vCPUs are even created.  Even if the opt-in is VM-scoped, e.g.
-a capabilitiy, there are still ordering issues as userpace would see different
-behavior depending on the order between KVM_XEN_HVM_CONFIG and the capability.
+I'll rework it shortly, thanks for the heads up.
 
-And if the MSR emulation is guarded, rejecting KVM_XEN_HVM_CONFIG without a
-precise check is undesirable, because KVM would unnecessarily break userspace.
+	M.
 
-> This patch should probably have a docs update too.
-
-Gah, forgot that.
+-- 
+Without deviation from the norm, progress is not possible.
 
