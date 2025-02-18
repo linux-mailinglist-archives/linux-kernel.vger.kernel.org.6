@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-518840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D43A3951E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:23:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF364A39521
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E35977A3875
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:22:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57DE37A39FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE8622CBED;
-	Tue, 18 Feb 2025 08:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C5B233D97;
+	Tue, 18 Feb 2025 08:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PVWpQFBN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MvF8gBZs"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C66123315E;
-	Tue, 18 Feb 2025 08:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52BE22CBF7;
+	Tue, 18 Feb 2025 08:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866709; cv=none; b=HAz6CVx6/5mWfJN2tXrLiXaJwqkUywQJ4vm7LRtYXrWFobQTmK0mR6uEy0U/XdGCvVBtypX8+2hUHU3P0tq1dMHGJf114XbXIs3QmO/LM+Ya4IDbkzfLXF53U2vOexQACMPEosqzF0p5u60Mufc7MuCG/qaDVF5k8CJ6cmhoOao=
+	t=1739866730; cv=none; b=m3KJ+8qCfiA+zfBmd2M/zE4T9J3inezO/oqPgaF7EXmFrPEfJCTU5ohABAAQP+fMTTHnPEuaXSmzZyPn/4TlQgMl1ogAFWbncsQIV/i0PHCqRB+qw5USyr4w0EFHxnPyHVY2TUfofsrVAa9cg+a4vF83crgg0blKViYL+gJWb+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866709; c=relaxed/simple;
-	bh=Nv/ltyViEdDWF68nXs2iXcAPsfBSVXeu+MHh0fs1GJ4=;
+	s=arc-20240116; t=1739866730; c=relaxed/simple;
+	bh=A3dtCBfE4C8c/Xw6lULikavzFkti/llvChkLMpO3s2Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sLlX7BYe5WBzrXVaRn9gq8U99SChlT9MDG00CCs8gHEafYpgveNB+b0vel3qSvxtfhGi6xEGRD8txX/RIAWgXBZ3NMhUQV1FnaRsccGQhex/IRdTmkDZkCka0LHzbK8Eg4jTIbLzZ+50TCMOXimPKyGpCPXNcEDFbXxz8e4GvTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PVWpQFBN; arc=none smtp.client-ip=192.198.163.16
+	 MIME-Version; b=YR40DmJnB9rJJdFp6WvWqB3YOOR6efP6KiLXe25undExJFjZ0dxXdHg/vbszaYAYFJ0hvhejdYoWJUw6OcNI/wKebv0gDZKDnXlDu+6ZbprgYrfX11OQEoNTIO7neuHQ62pl7nB6iXPtePE09xNvZOy0S1RIzj8IPx5f5AW3HNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MvF8gBZs; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739866708; x=1771402708;
+  t=1739866729; x=1771402729;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Nv/ltyViEdDWF68nXs2iXcAPsfBSVXeu+MHh0fs1GJ4=;
-  b=PVWpQFBNG5SaKkuv1Rq7ahiWRA8TetpRKsRlHypNZQ05FOZZD7dhoIwe
-   /H84YcsMXRS42rTUEDwE8aflf96RwCz1nttYlF6/X0nNU+Q5X7dFzpnCj
-   hSe0h6RUnRMaFjT53ADckHOMtf9sCuvSzhI9DsVyeUPRDiAAPX3bn4eMi
-   2Ncu1dGpg8W/Wv/Hh9xy6Wx4FRdbU3G6qjcDP1d7dmPDrslw09DAzS2NB
-   WI5LlnTPQr+nYlDqUgshtY2ZTasTq9pafn6CwROs8Oja4dJH2FzIOieqo
-   JaEDuTxCj4lAEitOIx/OLR8dNDfPeTaVjBQcq0kBktV9sTvQF6VFq1qSc
+  bh=A3dtCBfE4C8c/Xw6lULikavzFkti/llvChkLMpO3s2Q=;
+  b=MvF8gBZs3I6VDDBs4VlvTLWTbEJ6gaKtSXwEYx3fP8PdJJRSppN5Xmuc
+   FB9HUws+jcjlvI9Tbu7itAhiHDocXJ9cBCQRWCMFSfGkIEQ14t31Mxeyi
+   8p+XTrXlvPkId/FQrz99Yd+EvdZllphctCtqsQry4VPudVUPTNhq3dWuO
+   F/stdzKVudFwuISF1Z23kqUULbP7lcg8McRZm985z5zasNxrTeSLB0Pw0
+   lBH6mDlCDxYImLYYjqPzOqARkBECbozyk/Q7ZdPb3/yWRgcgPjHqFCFrI
+   qotE6VFtmBctUbOdbLJq0ysrgFgcrKUPkjf0elOy5/KYuSeh50moJ1b3o
    w==;
-X-CSE-ConnectionGUID: nSqKCf7ZS4SOesRSfcs/GA==
-X-CSE-MsgGUID: 6WmXdm4NQZ2pQcq1rpvENQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150286"
+X-CSE-ConnectionGUID: XWQo6N4yQhOUKKkFyJ0zIQ==
+X-CSE-MsgGUID: ALJqhptBR1ayMxJMxkyPYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="28150325"
 X-IronPort-AV: E=Sophos;i="6.13,295,1732608000"; 
-   d="scan'208";a="28150286"
+   d="scan'208";a="28150325"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:27 -0800
-X-CSE-ConnectionGUID: 5z9vRN7wSMWUvwtxJjGh6g==
-X-CSE-MsgGUID: Z/kyhOw/QdSF0c+xdlivEw==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:48 -0800
+X-CSE-ConnectionGUID: wF3cj88LRZaiNzHrGFykHQ==
+X-CSE-MsgGUID: O+VYLHV1SG6BS6/LzC21Dw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="119247683"
+   d="scan'208";a="119247761"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.49])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:10 -0800
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2025 00:18:28 -0800
 From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 To: kees@kernel.org,
 	julian.stecklina@cyberus-technology.de,
@@ -130,9 +130,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-arm-kernel@lists.infradead.org,
 	x86@kernel.org
-Subject: [PATCH v2 07/14] x86: Reset tag for virtual to physical address conversions
-Date: Tue, 18 Feb 2025 09:15:23 +0100
-Message-ID: <dc2aa15404098561c1eb5bad9b31b8d404f93b1c.1739866028.git.maciej.wieczor-retman@intel.com>
+Subject: [PATCH v2 08/14] x86: Physical address comparisons in fill_p*d/pte
+Date: Tue, 18 Feb 2025 09:15:24 +0100
+Message-ID: <c5191b5bee5e0418752bf1c6159a2f0ce3490c1d.1739866028.git.maciej.wieczor-retman@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
 References: <cover.1739866028.git.maciej.wieczor-retman@intel.com>
@@ -144,96 +144,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Any place where pointer arithmetic is used to convert a virtual address
-into a physical one can raise errors if the virtual address is tagged.
+Calculating page offset returns a pointer without a tag. When comparing
+the calculated offset to a tagged page pointer an error is raised
+because they are not equal.
 
-Reset the pointer's tag by sign extending the tag bits in macros that do
-pointer arithmetic in address conversions. There will be no change in
-compiled code with KASAN disabled since the compiler will optimize the
-__tag_reset() out.
+Change pointer comparisons to physical address comparisons as to avoid
+issues with tagged pointers that pointer arithmetic would create. Open
+code pte_offset_kernel(), pmd_offset(), pud_offset() and p4d_offset().
+Because one parameter is always zero and the rest of the function
+insides are enclosed inside __va(), removing that layer lowers the
+complexity of final assembly.
 
 Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 ---
- arch/x86/include/asm/page.h    | 17 +++++++++++++----
- arch/x86/include/asm/page_64.h |  2 +-
- arch/x86/mm/physaddr.c         |  1 +
- 3 files changed, 15 insertions(+), 5 deletions(-)
+Changelog v2:
+- Open code *_offset() to avoid it's internal __va().
 
-diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-index c9fe207916f4..fdafeb06c195 100644
---- a/arch/x86/include/asm/page.h
-+++ b/arch/x86/include/asm/page.h
-@@ -7,6 +7,7 @@
- #ifdef __KERNEL__
- 
- #include <asm/page_types.h>
-+#include <asm/kasan.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/page_64.h>
-@@ -41,7 +42,7 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
- #define __pa(x)		__phys_addr((unsigned long)(x))
- #endif
- 
--#define __pa_nodebug(x)	__phys_addr_nodebug((unsigned long)(x))
-+#define __pa_nodebug(x)	__phys_addr_nodebug((unsigned long)(__tag_reset(x)))
- /* __pa_symbol should be used for C visible symbols.
-    This seems to be the official gcc blessed way to do such arithmetic. */
- /*
-@@ -65,9 +66,17 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
-  * virt_to_page(kaddr) returns a valid pointer if and only if
-  * virt_addr_valid(kaddr) returns true.
-  */
--#define virt_to_page(kaddr)	pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
+ arch/x86/mm/init_64.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 01ea7c6df303..e555895dbb68 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -251,7 +251,10 @@ static p4d_t *fill_p4d(pgd_t *pgd, unsigned long vaddr)
+ 	if (pgd_none(*pgd)) {
+ 		p4d_t *p4d = (p4d_t *)spp_getpage();
+ 		pgd_populate(&init_mm, pgd, p4d);
+-		if (p4d != p4d_offset(pgd, 0))
 +
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define page_to_virt(x)	({									\
-+	__typeof__(x) __page = x;								\
-+	void *__addr = __va(page_to_pfn((__typeof__(x))__tag_reset(__page)) << PAGE_SHIFT);	\
-+	(void *)__tag_set((const void *)__addr, page_kasan_tag(__page));			\
-+})
-+#endif
-+#define virt_to_page(kaddr)	pfn_to_page(__pa((void *)__tag_reset(kaddr)) >> PAGE_SHIFT)
- extern bool __virt_addr_valid(unsigned long kaddr);
--#define virt_addr_valid(kaddr)	__virt_addr_valid((unsigned long) (kaddr))
-+#define virt_addr_valid(kaddr)	__virt_addr_valid((unsigned long)(__tag_reset(kaddr)))
- 
- static __always_inline void *pfn_to_kaddr(unsigned long pfn)
- {
-@@ -81,7 +90,7 @@ static __always_inline u64 __canonical_address(u64 vaddr, u8 vaddr_bits)
- 
- static __always_inline u64 __is_canonical_address(u64 vaddr, u8 vaddr_bits)
- {
--	return __canonical_address(vaddr, vaddr_bits) == vaddr;
-+	return __canonical_address(vaddr, vaddr_bits) == __tag_reset(vaddr);
- }
- 
- #endif	/* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index d63576608ce7..54990ea82f74 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -33,7 +33,7 @@ static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
- extern unsigned long __phys_addr(unsigned long);
- extern unsigned long __phys_addr_symbol(unsigned long);
- #else
--#define __phys_addr(x)		__phys_addr_nodebug(x)
-+#define __phys_addr(x)		__phys_addr_nodebug(__tag_reset(x))
- #define __phys_addr_symbol(x) \
- 	((unsigned long)(x) - __START_KERNEL_map + phys_base)
- #endif
-diff --git a/arch/x86/mm/physaddr.c b/arch/x86/mm/physaddr.c
-index fc3f3d3e2ef2..7f2b11308245 100644
---- a/arch/x86/mm/physaddr.c
-+++ b/arch/x86/mm/physaddr.c
-@@ -14,6 +14,7 @@
- #ifdef CONFIG_DEBUG_VIRTUAL
- unsigned long __phys_addr(unsigned long x)
- {
-+	x = __tag_reset(x);
- 	unsigned long y = x - __START_KERNEL_map;
- 
- 	/* use the carry flag to determine if x was < __START_KERNEL_map */
++		if (__pa(p4d) != (pgtable_l5_enabled() ?
++				  __pa(pgd) :
++				  (unsigned long)pgd_val(*pgd) & PTE_PFN_MASK))
+ 			printk(KERN_ERR "PAGETABLE BUG #00! %p <-> %p\n",
+ 			       p4d, p4d_offset(pgd, 0));
+ 	}
+@@ -263,7 +266,7 @@ static pud_t *fill_pud(p4d_t *p4d, unsigned long vaddr)
+ 	if (p4d_none(*p4d)) {
+ 		pud_t *pud = (pud_t *)spp_getpage();
+ 		p4d_populate(&init_mm, p4d, pud);
+-		if (pud != pud_offset(p4d, 0))
++		if (__pa(pud) != (p4d_val(*p4d) & p4d_pfn_mask(*p4d)))
+ 			printk(KERN_ERR "PAGETABLE BUG #01! %p <-> %p\n",
+ 			       pud, pud_offset(p4d, 0));
+ 	}
+@@ -275,7 +278,7 @@ static pmd_t *fill_pmd(pud_t *pud, unsigned long vaddr)
+ 	if (pud_none(*pud)) {
+ 		pmd_t *pmd = (pmd_t *) spp_getpage();
+ 		pud_populate(&init_mm, pud, pmd);
+-		if (pmd != pmd_offset(pud, 0))
++		if (__pa(pmd) != (pud_val(*pud) & pud_pfn_mask(*pud)))
+ 			printk(KERN_ERR "PAGETABLE BUG #02! %p <-> %p\n",
+ 			       pmd, pmd_offset(pud, 0));
+ 	}
+@@ -287,7 +290,7 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
+ 	if (pmd_none(*pmd)) {
+ 		pte_t *pte = (pte_t *) spp_getpage();
+ 		pmd_populate_kernel(&init_mm, pmd, pte);
+-		if (pte != pte_offset_kernel(pmd, 0))
++		if (__pa(pte) != (pmd_val(*pmd) & pmd_pfn_mask(*pmd)))
+ 			printk(KERN_ERR "PAGETABLE BUG #03!\n");
+ 	}
+ 	return pte_offset_kernel(pmd, vaddr);
 -- 
 2.47.1
 
