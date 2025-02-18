@@ -1,193 +1,127 @@
-Return-Path: <linux-kernel+bounces-518567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497D1A390F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:51:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E14A390FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16D7318920D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFDA3B1EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49CB1482E7;
-	Tue, 18 Feb 2025 02:51:11 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23B417597
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6814614A4C7;
+	Tue, 18 Feb 2025 02:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V27KFIIx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7304313BC35;
+	Tue, 18 Feb 2025 02:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739847071; cv=none; b=LO0n2rKx3cikkpizDs4o5dmsRFoxryn3XxD1TV5Ccv1bw3oKLvWQ/0ZkmsfGtvgQj8+A2Y6j/NWO2EN7+T+kJEmq9o8PvWydooZyVhpGGv0UHVIrfwTa4YhSs8Wf5RKuPfV0fGuwYZh9DaSm7GAmE8Lyd25wjBIDKSd553rI6oY=
+	t=1739847153; cv=none; b=hbA3J2YWNPzfbGjuwspD/spo1Rv7qzCLGFI8i3VfHxuxny8+m97eTgn9InxDrXDOJbWfwSBOKTfliOpFKsJEDsKtbvk8tqI+4lfCK0SAb5aAu7/OUJk5KWgeys40n7P8XW8FLjiWq++xmaj55Wd2a50o5UWuJF7Q2LgJuhpgS9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739847071; c=relaxed/simple;
-	bh=P405UDpZTeFjNC1+dD9AS62yWRFp1ndqDVHC8Aqn6V0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MCZkkn9Rs/vpR/x4E7qgrXSZPolbq/B0oeGrfk3j8BDqA4nzA0K9Bp/1Apht3HqBPHUO9f98YwRxl7DkTFOEfxHnQaRTEnMMfVfuzmhfs+KDRMm860nMDehCyy9AH40tqBLHnxnCO9J7HGyZsmTgMbwPXBCLlzIbxJm9b5aDkfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4YxkXK2W9YzYkyMK;
-	Tue, 18 Feb 2025 10:50:09 +0800 (CST)
-Received: from a008.hihonor.com (10.68.30.56) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Feb
- 2025 10:51:01 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a008.hihonor.com
- (10.68.30.56) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Feb
- 2025 10:51:00 +0800
-Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
- a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
- 15.02.1544.011; Tue, 18 Feb 2025 10:51:00 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Barry Song <21cnbao@gmail.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>, Yosry
- Ahmed <yosry.ahmed@linux.dev>, yipengxiang <yipengxiang@honor.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjNdIG1tOiBGaXggcG9zc2libGUgTlVMTCBwb2lu?=
- =?utf-8?B?dGVyIGRlcmVmZXJlbmNlIGluIF9fc3dhcF9kdXBsaWNhdGU=?=
-Thread-Topic: [PATCH v3] mm: Fix possible NULL pointer dereference in
- __swap_duplicate
-Thread-Index: Adt/iIz/pSZ7Q3r8TEmsD6w3AazKUAASHxkAAHYtS4A=
-Date: Tue, 18 Feb 2025 02:51:00 +0000
-Message-ID: <ef92dcc88e914c9c8d8dbcc3adbb06bb@honor.com>
-References: <f8be2606fa114184a17a48f9859ec592@honor.com>
- <CAGsJ_4zUbwFP+gf-Y70uGQeO08uAJn2RKj=h9nsV83GvfgVA0A@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zUbwFP+gf-Y70uGQeO08uAJn2RKj=h9nsV83GvfgVA0A@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739847153; c=relaxed/simple;
+	bh=PWHofPdlpUwGUnc4/kTVRwpJM2awBxl5+OMElxXC2qk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sOlxB6CfLo/573LwbOvlvivbpI8frmPNIJofGszs8NbNy3xbVJ76hEFrMkL906RxVHcxrI65JCAWQtnw/w375ngV16yusggygnA/3rqEg8NoqeKJoB391+KqDI9KFbcwRe3IlKCo58kbrVfwbKHPvtSkvFKectCpTtFMbJLkaXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V27KFIIx; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=HMfjP
+	3H+w2jYqpSYoxGCZQMFuo04FYmpgP9iP4Vdo6s=; b=V27KFIIxsfhw6UP4wxIHH
+	NactfnX++wuOeINRRakHEuCPZRf0CGhv4g9tkp9BMWf74s/BBXipzw3nSIEwtmwU
+	0bp5FJgvTX5OtglSIrpUmKJM/CrheIPfAKTANKv4siJhXycC3zwShdqNJ/yk9d4v
+	7dKFlspMwDK6KnOWWtjOO0=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDn85zi9bNnu4TUMw--.38146S4;
+	Tue, 18 Feb 2025 10:52:19 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	haoxiang_li2024@163.com,
+	schwidefsky@de.ibm.com
+Cc: linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] s390/sclp: Add check for get_zeroed_page()
+Date: Tue, 18 Feb 2025 10:52:16 +0800
+Message-Id: <20250218025216.2421548-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn85zi9bNnu4TUMw--.38146S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr1UJF1fCr47Cr1rJw1UKFg_yoW8CF17pF
+	s8Gr4Ykan8Ja9xAFy3J3ZrCayrWw48KrWUtayxAwnxXF13GrWIya47ta4rZFW5Kr18Jay3
+	JFWjyF13GF4DW37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqRz3bmez7+a-ggAAsM
 
-PiANCj4gT24gU2F0LCBGZWIgMTUsIDIwMjUgYXQgMTA6MDXigK9QTSBnYW94dSA8Z2FveHUyQGhv
-bm9yLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBBZGQgYSBOVUxMIGNoZWNrIG9uIHRoZSByZXR1cm4g
-dmFsdWUgb2Ygc3dwX3N3YXBfaW5mbyBpbg0KPiA+IF9fc3dhcF9kdXBsaWNhdGUgdG8gcHJldmVu
-dCBjcmFzaGVzIGNhdXNlZCBieSBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UuDQo+ID4NCj4gPiBU
-aGUgcmVhc29uIHdoeSBzd3Bfc3dhcF9pbmZvKCkgcmV0dXJucyBOVUxMIGlzIHVuY2xlYXI7IGl0
-IG1heSBiZSBkdWUNCj4gPiB0byBDUFUgY2FjaGUgaXNzdWVzIG9yIEREUiBiaXQgZmxpcHMuIFRo
-ZSBwcm9iYWJpbGl0eSBvZiB0aGlzIGlzc3VlIGlzDQo+ID4gdmVyeSBzbWFsbCwgYW5kIHRoZSBz
-dGFjayBpbmZvIHdlIGVuY291bnRlcmVkIGlzIGFzIGZvbGxvd3PvvJoNCj4gPiBVbmFibGUgdG8g
-aGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNz
-DQo+ID4gMDAwMDAwMDAwMDAwMDA1OA0KPiA+IFtSQi9FXXJiX3NyZWFzb25fc3RyX3NldDogc3Jl
-YXNvbl9zdHIgc2V0IG51bGxfcG9pbnRlciBNZW0gYWJvcnQgaW5mbzoNCj4gPiAgIEVTUiA9IDB4
-MDAwMDAwMDA5NjAwMDAwNQ0KPiA+ICAgRUMgPSAweDI1OiBEQUJUIChjdXJyZW50IEVMKSwgSUwg
-PSAzMiBiaXRzDQo+ID4gICBTRVQgPSAwLCBGblYgPSAwDQo+ID4gICBFQSA9IDAsIFMxUFRXID0g
-MA0KPiA+ICAgRlNDID0gMHgwNTogbGV2ZWwgMSB0cmFuc2xhdGlvbiBmYXVsdCBEYXRhIGFib3J0
-IGluZm86DQo+ID4gICBJU1YgPSAwLCBJU1MgPSAweDAwMDAwMDA1LCBJU1MyID0gMHgwMDAwMDAw
-MA0KPiA+ICAgQ00gPSAwLCBXblIgPSAwLCBUbkQgPSAwLCBUYWdBY2Nlc3MgPSAwDQo+ID4gICBH
-Q1MgPSAwLCBPdmVybGF5ID0gMCwgRGlydHlCaXQgPSAwLCBYcyA9IDAgdXNlciBwZ3RhYmxlOiA0
-ayBwYWdlcywNCj4gPiAzOS1iaXQgVkFzLCBwZ2RwPTAwMDAwMDA4YTgwZTUwMDAgWzAwMDAwMDAw
-MDAwMDAwNThdDQo+ID4gcGdkPTAwMDAwMDAwMDAwMDAwMDAsIHA0ZD0wMDAwMDAwMDAwMDAwMDAw
-LA0KPiA+IHB1ZD0wMDAwMDAwMDAwMDAwMDAwDQo+ID4gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDAw
-MDAwMDAwOTYwMDAwMDUgWyMxXSBQUkVFTVBUIFNNUCBTa2lwIG1kIGZ0cmFjZQ0KPiA+IGJ1ZmZl
-ciBkdW1wIGZvcjogMHgxNjA5ZTAgLi4uDQo+ID4gcGMgOiBzd2FwX2R1cGxpY2F0ZSsweDQ0LzB4
-MTY0DQo+ID4gbHIgOiBjb3B5X3BhZ2VfcmFuZ2UrMHg1MDgvMHgxZTc4DQo+ID4gc3AgOiBmZmZm
-ZmZjMGYyYTY5OWUwDQo+ID4geDI5OiBmZmZmZmZjMGYyYTY5OWUwIHgyODogZmZmZmZmOGE1YjI4
-ZDM4OCB4Mjc6IGZmZmZmZjhiMDY2MDMzODgNCj4gPiB4MjY6IGZmZmZmZmRmNzI5MWZlNzAgeDI1
-OiAwMDAwMDAwMDAwMDAwMDA2IHgyNDogMDAwMDAwMDAwMDEwMDA3Mw0KPiA+IHgyMzogMDAwMDAw
-MDAwMDJkMmQyZiB4MjI6IDAwMDAwMDAwMDAwMDAwMDggeDIxOiAwMDAwMDAwMDAwMDAwMDAwDQo+
-ID4geDIwOiAwMDAwMDAwMDAwMmQyZDJmIHgxOTogMTgwMDAwMDAwMDJkMmQyZiB4MTg6IGZmZmZm
-ZmRmNzI2ZmFlYzANCj4gPiB4MTc6IDAwMDAwMDAwMDAwMDAwMDAgeDE2OiAwMDEwMDAwMDAwMDAw
-MDAxIHgxNTogMDA0MDAwMDAwMDAwMDAwMQ0KPiA+IHgxNDogMDQwMDAwMDAwMDAwMDAwMSB4MTM6
-IGZmN2ZmZmZmZmZmZmZiN2YgeDEyOiBmZmVmZmZmZmZmZmZmYmZmDQo+ID4geDExOiBmZmZmZmY4
-YTVjN2UxODk4IHgxMDogMDAwMDAwMDAwMDAwMDAxOCB4OSA6IDAwMDAwMDAwMDAwMDAwMDYNCj4g
-PiB4OCA6IDE4MDAwMDAwMDAwMDAwMDAgeDcgOiAwMDAwMDAwMDAwMDAwMDAwIHg2IDogZmZmZmZm
-ODA1N2MwMWYxMA0KPiA+IHg1IDogMDAwMDAwMDAwMDAwYTMxOCB4NCA6IDAwMDAwMDAwMDAwMDAw
-MDAgeDMgOiAwMDAwMDAwMDAwMDAwMDAwDQo+ID4geDIgOiAwMDAwMDA2ZGFmMjAwMDAwIHgxIDog
-MDAwMDAwMDAwMDAwMDAwMSB4MCA6IDE4MDAwMDAwMDAyZDJkMmYgQ2FsbA0KPiA+IHRyYWNlOg0K
-PiA+ICBzd2FwX2R1cGxpY2F0ZSsweDQ0LzB4MTY0DQo+ID4gIGNvcHlfcGFnZV9yYW5nZSsweDUw
-OC8weDFlNzgNCj4gDQo+IFRoaXMgaXMgcmVhbGx5IHN0cmFuZ2Ugc2luY2Ugd2UgYWxyZWFkeSBo
-YXZlIGEgc3dhcCBlbnRyeSBjaGVjayBiZWZvcmUgY2FsbGluZw0KPiBzd2FwX2R1cGxpY2F0ZSgp
-Lg0KPiANCj4gY29weV9ub25wcmVzZW50X3B0ZShzdHJ1Y3QgbW1fc3RydWN0ICpkc3RfbW0sIHN0
-cnVjdCBtbV9zdHJ1Y3QgKnNyY19tbSwNCj4gICAgICAgICAgICAgICAgIHB0ZV90ICpkc3RfcHRl
-LCBwdGVfdCAqc3JjX3B0ZSwgc3RydWN0IHZtX2FyZWFfc3RydWN0DQo+ICpkc3Rfdm1hLA0KPiAg
-ICAgICAgICAgICAgICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICpzcmNfdm1hLCB1bnNpZ25lZCBs
-b25nIGFkZHIsIGludA0KPiAqcnNzKSB7DQo+ICAgICAgICAgdW5zaWduZWQgbG9uZyB2bV9mbGFn
-cyA9IGRzdF92bWEtPnZtX2ZsYWdzOw0KPiAgICAgICAgIHB0ZV90IG9yaWdfcHRlID0gcHRlcF9n
-ZXQoc3JjX3B0ZSk7DQo+ICAgICAgICAgcHRlX3QgcHRlID0gb3JpZ19wdGU7DQo+ICAgICAgICAg
-c3RydWN0IGZvbGlvICpmb2xpbzsNCj4gICAgICAgICBzdHJ1Y3QgcGFnZSAqcGFnZTsNCj4gICAg
-ICAgICBzd3BfZW50cnlfdCBlbnRyeSA9IHB0ZV90b19zd3BfZW50cnkob3JpZ19wdGUpOw0KPiAN
-Cj4gICAgICAgICBpZiAobGlrZWx5KCFub25fc3dhcF9lbnRyeShlbnRyeSkpKSB7DQo+ICAgICAg
-ICAgICAgICAgICBpZiAoc3dhcF9kdXBsaWNhdGUoZW50cnkpIDwgMCkNCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgcmV0dXJuIC1FSU87DQo+IC4uLg0KPiB9DQo+IA0KPiBsaWtlbHkgdGhlIHN3
-YXBfdHlwZSBpcyBsYXJnZXIgdGhhbiBNQVhfU1dBUEZJTEVTIHNvIHdlIGdldCBhIE5VTEw/DQo+
-IA0KPiBzdGF0aWMgc3RydWN0IHN3YXBfaW5mb19zdHJ1Y3QgKnN3YXBfdHlwZV90b19zd2FwX2lu
-Zm8oaW50IHR5cGUpIHsNCj4gICAgICAgICBpZiAodHlwZSA+PSBNQVhfU1dBUEZJTEVTKQ0KPiAg
-ICAgICAgICAgICAgICAgcmV0dXJuIE5VTEw7DQo+IA0KPiAgICAgICAgIHJldHVybiBSRUFEX09O
-Q0Uoc3dhcF9pbmZvW3R5cGVdKTsgLyogcmN1X2RlcmVmZXJlbmNlKCkgKi8gfQ0KPiANCj4gQnV0
-IG5vbl9zd2FwX2VudHJ5KCkgZ3VhcmFudGVlcyB0aGF0IHN3cF90eXBlIGlzIHNtYWxsZXIgdGhh
-bg0KPiBNQVhfU1dBUEZJTEVTLg0KPiANCj4gc3RhdGljIGlubGluZSBpbnQgbm9uX3N3YXBfZW50
-cnkoc3dwX2VudHJ5X3QgZW50cnkpIHsNCj4gICAgICAgICByZXR1cm4gc3dwX3R5cGUoZW50cnkp
-ID49IE1BWF9TV0FQRklMRVM7IH0NCj4gDQo+IFNvIGFub3RoZXIgcG9zc2liaWxpdHkgaXMgdGhh
-dCB3ZSBoYXZlIGFuIG92ZXJmbG93IG9mIHN3YXBfaW5mb1tdIHdoZXJlIHR5cGUgaXMgPA0KPiBN
-QVhfU1dBUEZJTEVTIGJ1dCBpcyBub3QgYSB2YWxpZCBleGlzdGluZyBzd2FwZmlsZT8NCkluIHRo
-ZSBsb2cgb2YgdGhpcyBpc3N1ZSwgdGhlcmUgaXMgYSBwcmludGVkIGVudHJ5OiBnZXRfc3dhcF9k
-ZXZpY2U6DQpCYWQgc3dhcCBmaWxlIGVudHJ5IDE4MDAwMDAwMDAyZDJkMmYuDQpJdCBjYW4gYmUg
-Y2FsY3VsYXRlZCB0aGF0IHN3cF90eXBlKDE4MDAwMDAwMDAyZDJkMmYpID0gNi4NCkluIHRoZSBB
-bmRyb2lkIDE1LWxpbnV4Ni42Og0Kc3lzdGVtOiBNQVhfU1dBUEZJTEVTID0gMjgsIG5yX3N3YXBm
-aWxlcyA9IDEuDQpTaW5jZSBzd3BfdHlwZSgxODAwMDAwMDAwMmQyZDJmKT02IGlzIGxlc3MgdGhh
-biBNQVhfU1dBUEZJTEVTIGJ1dCBncmVhdGVyDQp0aGFuIG5yX3N3YXBmaWxlcywgdGhlIHZhbHVl
-IG9mIHRoaXMgZW50cnkgaXMgYWJub3JtYWwuDQoNCnN0YXRpYyB1bnNpZ25lZCBpbnQgbnJfc3dh
-cGZpbGVzOw0Kc3RhdGljIHN0cnVjdCBzd2FwX2luZm9fc3RydWN0ICpzd2FwX2luZm9bTUFYX1NX
-QVBGSUxFU107DQpzd2FwX2luZm8gaXMgYSBzdGF0aWMgYXJyYXksIHdpdGggaXRzIHZhbHVlcyBp
-bml0aWFsaXplZCB0byAwLiANClRoZSBzaXplIG9mIHRoZSBhcnJheSBpcyBNQVhfU1dBUEZJTEVT
-LCBhbmQgdGhlIHNpemUgb2YgdmFsaWQgdmFsdWVzIGluIHRoZSBhcnJheSBpcw0KbnJfc3dhcGZp
-bGVzLiBUaGVyZWZvcmUsIHdoZW4gd2UgdmFsaWRhdGUgdGhlIHZhbGlkaXR5IG9mIHN3cF90eXBl
-KGVudHJ5KSwNCndlIHNob3VsZCBjb21wYXJlIGl0IHdpdGggbnJfc3dhcGZpbGVzLCBub3QgTUFY
-X1NXQVBGSUxFUy4NClRoZSBjb2RlIGZvciB2YWxpZGF0aW5nIHN3cF90eXBlIG1heSBuZWVkIHRv
-IGJlIG1vZGlmaWVkIGFzIGZvbGxvd3M6DQpzdGF0aWMgaW5saW5lIGludCBub25fc3dhcF9lbnRy
-eShzd3BfZW50cnlfdCBlbnRyeSkNCnsNCi0JcmV0dXJuIHN3cF90eXBlKGVudHJ5KSA+PSBNQVhf
-U1dBUEZJTEVTOw0KKwlyZXR1cm4gc3dwX3R5cGUoZW50cnkpID49IG5yX3N3YXBmaWxlczsNCn0N
-Cg0Kc3RhdGljIHN0cnVjdCBzd2FwX2luZm9fc3RydWN0ICpzd2FwX3R5cGVfdG9fc3dhcF9pbmZv
-KGludCB0eXBlKQ0Kew0KLQlpZiAodHlwZSA+PSBNQVhfU1dBUEZJTEVTKQ0KKwlpZiAodHlwZSA+
-PSBucl9zd2FwZmlsZXMpDQoJCXJldHVybiBOVUxMOw0KDQoJcmV0dXJuIFJFQURfT05DRShzd2Fw
-X2luZm9bdHlwZV0pOyAvKiByY3VfZGVyZWZlcmVuY2UoKSAqLw0KfQ0KPiANCj4gSSBkb24ndCBz
-ZWUgaG93IHRoZSBjdXJyZW50IHBhdGNoIGNvbnRyaWJ1dGVzIHRvIGRlYnVnZ2luZyBvciBmaXhp
-bmcgYW55dGhpbmcNCj4gcmVsYXRlZCB0byB0aGlzIGR1bXBlZCBzdGFjay4gQ2FuIHdlIGR1bXAg
-c3dwX3R5cGUoKSBhcyB3ZWxsPw0KPiANCj4gPiAgY29weV9wcm9jZXNzKzB4MTI3OC8weDIxY2MN
-Cj4gPiAga2VybmVsX2Nsb25lKzB4OTAvMHg0MzgNCj4gPiAgX19hcm02NF9zeXNfY2xvbmUrMHg1
-Yy8weDhjDQo+ID4gIGludm9rZV9zeXNjYWxsKzB4NTgvMHgxMTANCj4gPiAgZG9fZWwwX3N2Yysw
-eDhjLzB4ZTANCj4gPiAgZWwwX3N2YysweDM4LzB4OWMNCj4gPiAgZWwwdF82NF9zeW5jX2hhbmRs
-ZXIrMHg0NC8weGVjDQo+ID4gIGVsMHRfNjRfc3luYysweDFhOC8weDFhYw0KPiA+IENvZGU6IDkx
-MzljMzVhIDcxMDA2ZjNmIDU0MDAwNTY4IGY4Nzk3YjU1IChmOTQwMmVhOCkgLS0tWyBlbmQgdHJh
-Y2UNCj4gPiAwMDAwMDAwMDAwMDAwMDAwIF0tLS0gS2VybmVsIHBhbmljIC0gbm90IHN5bmNpbmc6
-IE9vcHM6IEZhdGFsDQo+ID4gZXhjZXB0aW9uDQo+ID4gU01QOiBzdG9wcGluZyBzZWNvbmRhcnkg
-Q1BVcw0KPiA+DQo+ID4gVGhlIHBhdGNoIHNlZW1zIHRvIG9ubHkgcHJvdmlkZSBhIHdvcmthcm91
-bmQsIGJ1dCB0aGVyZSBhcmUgbm8gbW9yZQ0KPiA+IGVmZmVjdGl2ZSBzb2Z0d2FyZSBzb2x1dGlv
-bnMgdG8gaGFuZGxlIHRoZSBiaXQgZmxpcHMgcHJvYmxlbS4gVGhpcw0KPiA+IHBhdGggd2lsbCBj
-aGFuZ2UgdGhlIGlzc3VlIGZyb20gYSBzeXN0ZW0gY3Jhc2ggdG8gYSBwcm9jZXNzIGV4Y2VwdGlv
-biwNCj4gPiB0aGVyZWJ5IHJlZHVjaW5nIHRoZSBpbXBhY3Qgb24gdGhlIGVudGlyZSBtYWNoaW5l
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogZ2FvIHh1IDxnYW94dTJAaG9ub3IuY29tPg0KPiA+
-IC0tLQ0KPiA+IHYxIC0+IHYyOg0KPiA+IC0gQWRkIFdBUk5fT05fT05DRS4NCj4gPiAtIHVwZGF0
-ZSB0aGUgY29tbWl0IGluZm8uDQo+ID4gdjIgLT4gdjM6IERlbGV0ZSB0aGUgcmV2aWV3IHRhZ3Mg
-KFRoaXMgaXMgbXkgaXNzdWUsIGFuZCBJIGFwb2xvZ2l6ZSkuDQo+ID4gLS0tDQo+ID4NCj4gPiBt
-bS9zd2FwZmlsZS5jIHwgMiArKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvbW0vc3dhcGZpbGUuYyBiL21tL3N3YXBmaWxlLmMgaW5k
-ZXggNzQ0OGEzODc2Li5hMGJmZGJhOTQNCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9tbS9zd2FwZmls
-ZS5jDQo+ID4gKysrIGIvbW0vc3dhcGZpbGUuYw0KPiA+IEBAIC0zNTIxLDYgKzM1MjEsOCBAQCBz
-dGF0aWMgaW50IF9fc3dhcF9kdXBsaWNhdGUoc3dwX2VudHJ5X3QgZW50cnksDQo+IHVuc2lnbmVk
-IGNoYXIgdXNhZ2UsIGludCBucikNCj4gPiAgICAgICAgIGludCBlcnIsIGk7DQo+ID4NCj4gPiAg
-ICAgICAgIHNpID0gc3dwX3N3YXBfaW5mbyhlbnRyeSk7DQo+ID4gKyAgICAgICBpZiAoV0FSTl9P
-Tl9PTkNFKCFzaSkpDQo+IA0KPiBJIG1lYW4sIHByaW50ayBzb21ldGhpbmcgcmVsYXRlZCB0byBz
-d3BfdHlwZSgpLiBUaGlzIGlzIHJlYWxseSBzdHJhbmdlLCBidXQgdGhlDQo+IGN1cnJlbnQgc3Rh
-Y2sgd29uJ3QgaGVscCB3aXRoIGRlYnVnZ2luZy4NClRoZSBsb2cgY2FuIGZpbmQgaW5mbyByZWxh
-dGVkIHRvICJnZXRfc3dhcF9kZXZpY2U6IEJhZCBzd2FwIGZpbGUgZW50cnkgeHh4Ig0Kd2hlbiBh
-biBlbnRyeSBlbmNvdW50ZXJzIGFuIGV4Y2VwdGlvbi4gDQpBZGQgYSBwcmludCBpbmZvIGxvZyBs
-aWtlIHRoZSBmb2xsb3dpbmc6DQpwcl9lcnIoIiVzJTA4ZFxuIiwgQmFkIHN3YXAgdHlwZSwgc3dw
-X3R5cGUoZW50cnkpKTsNCj4gDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0K
-PiA+DQo+ID4gICAgICAgICBvZmZzZXQgPSBzd3Bfb2Zmc2V0KGVudHJ5KTsNCj4gPiAgICAgICAg
-IFZNX1dBUk5fT04obnIgPiBTV0FQRklMRV9DTFVTVEVSIC0gb2Zmc2V0ICUNCj4gU1dBUEZJTEVf
-Q0xVU1RFUik7DQo+ID4gLS0NCj4gPiAyLjE3LjENCj4gDQo+IFRoYW5rcw0KPiBCYXJyeQ0K
+Add check for the return value of get_zeroed_page() in
+sclp_console_init() to prevent null pointer dereference.
+Furthermore, to solve the memory leak caused by the loop
+allocation, add a free helper to do the free job.
+
+Fixes: 4c8f4794b61e ("[S390] sclp console: convert from bootmem to slab")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v2:
+- Add a free helper to solve the memory leak caused by loop allocation.
+- Thanks Heiko! I realized that v1 patch overlooked a potential memory leak.
+After consideration, I choose to do the full exercise. I noticed a similar
+handling in [1], following that handling I submit this v2 patch. Thanks again!
+
+Reference link:
+[1]https://github.com/torvalds/linux/blob/master/drivers/s390/char/sclp_vt220.c#L699
+---
+ drivers/s390/char/sclp_con.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
+index e5d947c763ea..c87b0c204718 100644
+--- a/drivers/s390/char/sclp_con.c
++++ b/drivers/s390/char/sclp_con.c
+@@ -263,6 +263,19 @@ static struct console sclp_console =
+ 	.index = 0 /* ttyS0 */
+ };
+ 
++/*
++ *  Release allocated pages.
++ */
++static void __init __sclp_console_free_pages(void)
++{
++	struct list_head *page, *p;
++
++	list_for_each_safe(page, p, &sclp_con_pages) {
++		list_del(page);
++		free_page((unsigned long) page);
++	}
++}
++
+ /*
+  * called by console_init() in drivers/char/tty_io.c at boot-time.
+  */
+@@ -282,6 +295,10 @@ sclp_console_init(void)
+ 	/* Allocate pages for output buffering */
+ 	for (i = 0; i < sclp_console_pages; i++) {
+ 		page = (void *) get_zeroed_page(GFP_KERNEL | GFP_DMA);
++		if (!page) {
++			__sclp_console_free_pages();
++			return -ENOMEM;
++		}
+ 		list_add_tail(page, &sclp_con_pages);
+ 	}
+ 	sclp_conbuf = NULL;
+-- 
+2.25.1
+
 
