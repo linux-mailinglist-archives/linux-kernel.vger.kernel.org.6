@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-519586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DD2A39E54
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCC0A39E59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC3E169F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:10:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC761698AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE2C269CEB;
-	Tue, 18 Feb 2025 14:10:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4AE269B02;
+	Tue, 18 Feb 2025 14:10:17 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BCE236A61
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F39269B05
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887815; cv=none; b=qv/8czs4tS8x1ER1IIKN+AoZqysANppHEFKVvCxvdpjOX6/jCbLBxkRhGqyrVq9us+L/2Wr0gUMF1ibFN1hCORyGWyvoV4BmO4qNc3B0A2OFxjALzcjRhd8vqj880vqx/GIaF24o1RLR7h6rX4fvZwKbpvH1GIO7RA2mUu01JvY=
+	t=1739887817; cv=none; b=h05SIihMkZ+WPMjM9CkZI0i2lSrss6TSvDmxb4Z6cNLAaRVaqTmAOalmwv9Lik1VHnuFwPtN8dpn5ntcWPvqYf/wxfSyPSpSxM/QOOctObBg4RlQMzGeIF/Ha0O/SzT1F+jf9UJPucZDilFojMG1Tor/1Lc1I9g3xiWEQYdRkzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887815; c=relaxed/simple;
-	bh=zl2nqmDUBuQGu7Se4w2TO6KG5WeYQeT/Gw52lY9bpbc=;
+	s=arc-20240116; t=1739887817; c=relaxed/simple;
+	bh=TE3ZenKG0lTZQOcNLSZQIv50W7YootYI1SwTkMp+EoA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LSpO/92JW+wWEQFgxHJLc/NJzVBbyM+m+mu945BVSExet/6zV74I47+Mfybd1XPloeIp7S9r9PWjDBpHzFypgqXOo8Er/TmhZwm8bgXjwEFG85aDqqPrXXXGg8rf28Ap6gyyZHkhDFEK49YcnUR1V9zZuA19NVZsbcIP3QK3ISg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=kMNNJ06+6IqD4VQOeZTw2m9tO3iKWrjmWHh8eupTFWfoMK70esEh2GbCeGGxTv9CMuTcmC8E9TDrlhkEBhmJTmpIYj9/r5Dp8EBtokRWhiG6nJ87AcvD8I8ofLE/0LX2f7T35roLC5X/tIv0t8pq0wb/5WTJM7lb/TAp3uVyciM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Yy1bB44KszMrc8;
-	Tue, 18 Feb 2025 22:08:38 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Yy1dW64SHzpkBd;
+	Tue, 18 Feb 2025 22:10:39 +0800 (CST)
 Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4A3491400D6;
-	Tue, 18 Feb 2025 22:10:08 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 2D0751A016C;
+	Tue, 18 Feb 2025 22:10:09 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Feb 2025 22:10:07 +0800
+ 15.2.1258.34; Tue, 18 Feb 2025 22:10:08 +0800
 From: Yicong Yang <yangyicong@huawei.com>
 To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
 	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
@@ -50,9 +50,9 @@ CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
 	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
 	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
 	<guohanjun@huawei.com>, <sshegde@linux.ibm.com>
-Subject: [PATCH v11 1/4] cpu/SMT: Provide a default topology_is_primary_thread()
-Date: Tue, 18 Feb 2025 22:10:15 +0800
-Message-ID: <20250218141018.18082-2-yangyicong@huawei.com>
+Subject: [PATCH v11 2/4] arch_topology: Support SMT control for OF based system
+Date: Tue, 18 Feb 2025 22:10:16 +0800
+Message-ID: <20250218141018.18082-3-yangyicong@huawei.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20250218141018.18082-1-yangyicong@huawei.com>
 References: <20250218141018.18082-1-yangyicong@huawei.com>
@@ -69,95 +69,86 @@ X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
 
 From: Yicong Yang <yangyicong@hisilicon.com>
 
-Currently if architectures want to support HOTPLUG_SMT they need to
-provide a topology_is_primary_thread() telling the framework which
-thread in the SMT cannot offline. However arm64 doesn't have a
-restriction on which thread in the SMT cannot offline, a simplest
-choice is that just make 1st thread as the "primary" thread. So
-just make this as the default implementation in the framework and
-let architectures like x86 that have special primary thread to
-override this function (which they've already done).
+On building the topology from the devicetree, we've already
+gotten the SMT thread number of each core. Update the largest
+SMT thread number and enable the SMT control by the end of
+topology parsing.
 
-There's no need to provide a stub function if !CONFIG_SMP or
-!CONFIG_HOTPLUG_SMT. In such case the testing CPU is already
-the 1st CPU in the SMT so it's always the primary thread.
+The core's SMT control provides two interface to the users [1]:
+1) enable/disable SMT by writing on/off
+2) enable/disable SMT by writing thread number 1/max_thread_number
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+If a system have more than one SMT thread number the 2) may
+not handle it well, since there're multiple thread numbers in the
+system and 2) only accept 1/max_thread_number. So issue a warning
+to notify the users if such system detected.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+
 Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
 ---
-Pre questioned in v9 [1] whether this works on architectures not using
-CONFIG_GENERIC_ARCH_TOPOLOGY, See [2] for demonstration hacking on LoongArch
-VM and this also works. Architectures should use this on their own situation.
-[1] https://lore.kernel.org/linux-arm-kernel/427bd639-33c3-47e4-9e83-68c428eb1a7d@arm.com/
-[2] https://lore.kernel.org/linux-arm-kernel/a5690fee-3019-f26c-8bad-1d95e388e877@huawei.com/
+ drivers/base/arch_topology.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
- arch/powerpc/include/asm/topology.h |  1 +
- arch/x86/include/asm/topology.h     |  2 +-
- include/linux/topology.h            | 22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
-index 16bacfe8c7a2..da15b5efe807 100644
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -152,6 +152,7 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
- {
- 	return cpu == cpu_first_thread_sibling(cpu);
- }
-+#define topology_is_primary_thread topology_is_primary_thread
- 
- static inline bool topology_smt_thread_allowed(unsigned int cpu)
- {
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index ec134b719144..6c79ee7c0957 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -229,11 +229,11 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
- {
- 	return cpumask_test_cpu(cpu, cpu_primary_thread_mask);
- }
-+#define topology_is_primary_thread topology_is_primary_thread
- 
- #else /* CONFIG_SMP */
- static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
- static inline int topology_max_smt_threads(void) { return 1; }
--static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
- static inline unsigned int topology_amd_nodes_per_pkg(void) { return 1; }
- #endif /* !CONFIG_SMP */
- 
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index 52f5850730b3..b3aba443c4eb 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -240,6 +240,28 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
- }
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 3ebe77566788..23f425a9d77a 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -11,6 +11,7 @@
+ #include <linux/cleanup.h>
+ #include <linux/cpu.h>
+ #include <linux/cpufreq.h>
++#include <linux/cpu_smt.h>
+ #include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/slab.h>
+@@ -506,6 +507,10 @@ core_initcall(free_raw_capacity);
  #endif
  
-+#ifndef topology_is_primary_thread
+ #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
 +
-+#define topology_is_primary_thread topology_is_primary_thread
++/* Maximum SMT thread number detected used to enable the SMT control */
++static unsigned int max_smt_thread_num;
 +
-+static inline bool topology_is_primary_thread(unsigned int cpu)
-+{
+ /*
+  * This function returns the logic cpu number of the node.
+  * There are basically three kinds of return values:
+@@ -565,6 +570,16 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 		i++;
+ 	} while (1);
+ 
 +	/*
-+	 * On SMT hotplug the primary thread of the SMT won't be disabled.
-+	 * Architectures do have a special primary thread (e.g. x86) need
-+	 * to override this function. Otherwise just make the first thread
-+	 * in the SMT as the primary thread.
-+	 *
-+	 * The sibling cpumask of an offline CPU contains always the CPU
-+	 * itself for architectures using CONFIG_GENERIC_ARCH_TOPOLOGY.
-+	 * Other architectures should use this depend on their own
-+	 * situation.
++	 * If max_smt_thread_num has been initialized and doesn't match
++	 * the thread number of this entry, then the system has
++	 * heterogeneous SMT topology.
 +	 */
-+	return cpu == cpumask_first(topology_sibling_cpumask(cpu));
-+}
++	if (max_smt_thread_num && max_smt_thread_num != i)
++		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
 +
-+#endif
++	max_smt_thread_num = max_t(unsigned int, max_smt_thread_num, i);
 +
- static inline const struct cpumask *cpu_cpu_mask(int cpu)
- {
- 	return cpumask_of_node(cpu_to_node(cpu));
+ 	cpu = get_cpu_for_node(core);
+ 	if (cpu >= 0) {
+ 		if (!leaf) {
+@@ -677,6 +692,18 @@ static int __init parse_socket(struct device_node *socket)
+ 	if (!has_socket)
+ 		ret = parse_cluster(socket, 0, -1, 0);
+ 
++	/*
++	 * Notify the CPU framework of the SMT support. Initialize the
++	 * max_smt_thread_num to 1 if no SMT support detected or failed
++	 * to parse the topology. A thread number of 1 can be handled by
++	 * the framework so we don't need to check max_smt_thread_num to
++	 * see we support SMT or not.
++	 */
++	if (!max_smt_thread_num || ret)
++		max_smt_thread_num = 1;
++
++	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
++
+ 	return ret;
+ }
+ 
 -- 
 2.24.0
 
