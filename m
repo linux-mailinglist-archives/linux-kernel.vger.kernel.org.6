@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-520116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73081A3A5F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1E9A3A5ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F26171EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9DF3A904E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039F31EB5F9;
-	Tue, 18 Feb 2025 18:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CC1F584A;
+	Tue, 18 Feb 2025 18:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsAtfCe3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAK2nriu"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE0F17A30E;
-	Tue, 18 Feb 2025 18:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F291F5848;
+	Tue, 18 Feb 2025 18:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739904061; cv=none; b=iS64ZJ161D/Nj9fN1E6+eX49rTEGw10MJr3igr0Y7fxw7TnOwNbhO/lBs9SZpR3Xcd8xKCqdAREWLvwFE2eh/T8xwzth/WbH2mNFORDTxzXHZi2F4X3Gq8rMtvBa2/l9JvtPN36AokpWvRUWG0cmhTc/6lw8DUCxGy/vSKelRgk=
+	t=1739904082; cv=none; b=koubVJpjvjB0hNUT7pbrMAS6iOjTxa1oQQNGSILOv9/LRfVBnBY1DkYShmJ9vqcRbhYHvdFi+Iip/nh7wV982whzGrS6yKnSBP25/lGDfEsO250iIAMZPUM/ORddzzqYqpkF6dUQgJPpjNJrVePXdzwqYbxTUyMqWnJTrt/2Ojg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739904061; c=relaxed/simple;
-	bh=iSn5qlkSLrvY9fduNUiNVom2UONzE20CK92zMJiRyX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HG2qwFPZ11xrxpBtfgB15Tm0EFC5w2te6LE18IXIHgK/S4io1mxS4r+M14azoJA46cpAW41wy5990vtt9ovK6/eYMAZbQpB588aE7tZy2xHHNxxX7+G83viKbSNop9l5L2NSVOf8j1GErJ2jJ9/tHpl9N02LOuc5T8dW07NRCEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsAtfCe3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D09C4CEE2;
-	Tue, 18 Feb 2025 18:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739904061;
-	bh=iSn5qlkSLrvY9fduNUiNVom2UONzE20CK92zMJiRyX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BsAtfCe3TAKsKWVtlrXywIPoIXoilqgNSNTs7nYiJc7ox+cXZyshjoUv90wT0Osem
-	 gKt4dti+h3LbR+hjEVOSXF7DiCIUmTSBgEf3brOEfXA+gBYKnfp9lAHfcjIqppqwNt
-	 O5iJVnxAaW2giwyDCoTCa9J6qAIjM/78Mf9KEXnbHmNtRjFQJlDkwRmqVWBmvInh9W
-	 gOgfC4YJKTDkZQCamXcn2rQd2ZGzCemGdD3+fRrh1A8cslNK2eJQAq5fYaKg/lVd1P
-	 /An9oyr5gEw/rirR+v1fnVuI/KKCf5++5RsZhyZBnRErWxl5d3wj7xTVZYK0ET9teO
-	 nEMH/LLtJf9gw==
-Date: Tue, 18 Feb 2025 10:40:59 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Weinan Liu <wnliu@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>, roman.gushchin@linux.dev,
-	Will Deacon <will@kernel.org>, Ian Rogers <irogers@google.com>,
-	linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org,
-	live-patching@vger.kernel.org, joe.lawrence@redhat.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-Message-ID: <20250218184059.iysrvtaoah6e4bu4@jpoimboe>
-References: <mb61py0yaz3qq.fsf@kernel.org>
- <CAPhsuW7dV7UR3PsGVx_DLBH5-95DAmLMGTPuY0NfUwWLZMSTrQ@mail.gmail.com>
- <20250214080848.5xpi2y2omk4vxyoj@jpoimboe>
- <CAPhsuW6dxPtgqZaHrZEVhQXwm2+sETreZnGybZXVKYKfG9H6tg@mail.gmail.com>
- <20250214193400.j4hp45jlufihv5eh@jpoimboe>
- <CAPhsuW6q+yhn0pGQb0K+RhXHYDkjEgomZ2pu3P_MEeX+xNRe0g@mail.gmail.com>
- <20250214232342.5m3hveygqb2qafpp@jpoimboe>
- <CAPhsuW48h11yLuU7uHuPgYNCzwaxVKG+TaGOZeT7fR60+brTwA@mail.gmail.com>
- <20250218063702.e2qrpjk4ylhnk5s7@jpoimboe>
- <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
+	s=arc-20240116; t=1739904082; c=relaxed/simple;
+	bh=064kNw/EgN0UHYWByMwYl66J+KJpEyOx8IH/nhyVgZ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7bIuVDkiYz6+crmZdv6MUn4p236URb257LnyjqYK5QqqZeEFIsjMc0ytqNp9AvKLEQ5sBeJqG/ABp+Q7aJDhtBK8XmSRLG7BjhTncKcjqzRoCcMYs2iY+K9NBJ4HFX8vyh4/NTOmhsV7mGdY10o6soXtxQYIuu4PBgVGmyXydc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAK2nriu; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f1e8efef5so3230730f8f.1;
+        Tue, 18 Feb 2025 10:41:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739904079; x=1740508879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=064kNw/EgN0UHYWByMwYl66J+KJpEyOx8IH/nhyVgZ4=;
+        b=NAK2nriu75OA7y6JkgfVba13muttU0EMJ7Vi0Ud35Rfra8jc3lktv4rn28JM0LC74I
+         XP5sIcwL8NIumi5T5nCIn1bXMPge+5yiyygC16CalyEVG8kwW3qtvW2Gw/uNA0DvgvFy
+         eLbwEpCSG+9lGKybSLP1KoTi4JdNy5f7kvybZnYMZulB63Mot7EX1uzNbCWx2F7532zr
+         TF49XAAnGeTup3RpTnPsBsuYkpjwBegm44v7EkCR7a02E+KYTBOlBBYj7pv0Dlm8nRp8
+         V8ScHlscGiQHmrHPiZsGpeUrooee0m9ZLuXI660SB3FSzllz/NF2GrixMrGu1xRHlgUa
+         OpFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739904079; x=1740508879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=064kNw/EgN0UHYWByMwYl66J+KJpEyOx8IH/nhyVgZ4=;
+        b=BaEe6T7TTPy33vEnAgj5V52Bu4sdLiUsPpakGQvBznjXA3sjCT8yrcSfSLMh/YYp87
+         J8+YU+//5sOgNgUmOQEsDLlxf/mLeehtn6rWidCLZ0Cvnc9cBw3c8LDJ64WVhxAtqLjU
+         uUSS2yZAHpPi/5uRr7PRKrt95qh9nOAq18xYa6k7leJj1OSqq52UzdyB1KXFtlGqbJD8
+         ULqau0OBzzb9TV+HLKn+KPrSStQk+7SK9XjwWNuWdhioZFGAvhyDO0b0bjiuV0NhtCyk
+         0o1H9Bzv+/f24wunVrCY+EWQcNB4xeThxwSkC7LxcDn0e/AdkWIPXsVvMpguO2eyHJfJ
+         l2OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFqijPNfTp+PKvtqwXD/8SUAzy2PV2P7DGu0RshxGUpyfAHsVQTMkkQgB4o9kpESjsuplscnYqymNnyJI=@vger.kernel.org, AJvYcCXNjIFlopaj7p5tSIOYH/AmguBgzu4Fxkp3JgQExe3kt7ElQeNBSkzZq+cfcOgHrJUNUf3L@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzVHBf5OwlVedBnM3YUVw+zD54X/DHHgSh00+0CXW/dxPKdN5u
+	S7pV7qyU4ZjTEWX4HYwpp7+RvQGnYKHc1zyWIXLFL+SABs1QltjuOpbJ2bEJ0R8dUzjv8diQLQO
+	b4DQOscSCzsgvaXnyLtijSGw5xXA=
+X-Gm-Gg: ASbGncv17py59sufgBXC3He68o1+Nr3LN35b4bJabykbGY4gi1/u/H/jOBwHDJKhDI5
+	i0Ij5UUAeghgbksTrS7rUhh4G1BLKJ9GP/p6imm/3J3di57x4iVeKwYH/z28f9SVqM5XE9iqGZ2
+	NmHIkqjLj3GEN3
+X-Google-Smtp-Source: AGHT+IHhkiMm6MGXT17M9xfM7NM8mSv/O9ojIthPD9COWHkCQBAc+IHDA5g5Sf9lOqEzMmvYuHcqhE3bUTjjvjqFZhY=
+X-Received: by 2002:a5d:6c63:0:b0:38f:4b2c:2475 with SMTP id
+ ffacd0b85a97d-38f4b2c255amr6762956f8f.20.1739904079217; Tue, 18 Feb 2025
+ 10:41:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW5ZauBrSz11cvVtG5qQBfNmbcwPgMf=BScHtyZfHvK4FQ@mail.gmail.com>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz> <20250217141956._01BcsrG@linutronix.de>
+ <bbb29d35-0a7b-4b19-b0c4-5b2e899b7b5e@suse.cz>
+In-Reply-To: <bbb29d35-0a7b-4b19-b0c4-5b2e899b7b5e@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 18 Feb 2025 10:41:08 -0800
+X-Gm-Features: AWEUYZkw7pLuqM8rpwQ14Nm2IrYgdo2AXxznTsMF9KECxxoRCxM2XTApIligPx4
+Message-ID: <CAADnVQL_3dayDBboTkUs6g4PmEOpFhufx736eaBqoqjZcnUwiQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce localtry_lock_t
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Suren Baghdasaryan <surenb@google.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 10:20:10AM -0800, Song Liu wrote:
-> Hi Josh,
-> 
-> On Mon, Feb 17, 2025 at 10:37 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+On Mon, Feb 17, 2025 at 6:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 2/17/25 15:19, Sebastian Andrzej Siewior wrote:
+> > On 2025-02-14 17:27:39 [+0100], Vlastimil Babka wrote:
+> >> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> >>
+> >> In !PREEMPT_RT local_lock_irqsave() disables interrupts to protect
+> >> critical section, but it doesn't prevent NMI, so the fully reentrant
+> >> code cannot use local_lock_irqsave() for exclusive access.
+> >>
+> >> Introduce localtry_lock_t and localtry_lock_irqsave() that
+> >> disables interrupts and sets acquired=3D1, so localtry_lock_irqsave()
+> >> from NMI attempting to acquire the same lock will return false.
+> >>
+> >> In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+> >> Map localtry_lock_irqsave() to preemptible spin_trylock().
+> >> When in hard IRQ or NMI return false right away, since
+> >> spin_trylock() is not safe due to PI issues.
 > >
-> > On Mon, Feb 17, 2025 at 08:38:22PM -0800, Song Liu wrote:
-> > > On Fri, Feb 14, 2025 at 3:23 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> > > > Poking around the arm64 module code, arch/arm64/kernel/module-plts.c
-> > > > is looking at all the relocations in order to set up the PLT.  That also
-> > > > needs to be done for klp relas, or are your patches already doing that?
-> > >
-> > > I don't think either version (this set and my RFC) added logic for PLT.
-> > > There is some rela logic on the kpatch-build side. But I am not sure
-> > > whether it is sufficient.
-> >
-> > The klp relas looked ok.  I didn't see any signs of kpatch-build doing
-> > anything wrong.  AFAICT the problem is that module-plts.c creates PLT
-> > entries for regular relas but not klp relas.
-> 
-> In my tests (with printk) module-plts.c processes the .
-> klp.rela.vmlinux..text.copy_process section just like any other .rela.*
-> sections. Do we need special handling of the klp.rela.* sections?
+> > spin_trylock() is not safe due to explicit locking in the underneath
+> > rt_spin_trylock() implementation. Removing this explicit locking and
+> > attempting only "trylock" is undesired due to PI implications.
 
-Ok, I see how it works now:
+Makes sense.
 
-klp_write_section_relocs()
-	apply_relocate_add()
-		module_emit_plt_entry()
-  
-If that code is working correctly then I'm fresh out of ideas...
+> Just to be sure, you're suggesting how to reword that sentence in the
+> changelog to make it more precise right?
+> Alexei will you incorporate that in your version?
 
--- 
-Josh
+Sure. Let's squash patches 3 and 4 and add above
+commit log clarification.
+Whoever respins first can do it.
 
