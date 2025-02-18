@@ -1,165 +1,239 @@
-Return-Path: <linux-kernel+bounces-518558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F8AA390D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9A2A390DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64ACF3ADC98
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:24:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9902188D107
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1312F146A72;
-	Tue, 18 Feb 2025 02:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ABoCVgk0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D15314831E;
+	Tue, 18 Feb 2025 02:33:07 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A594315E;
-	Tue, 18 Feb 2025 02:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32054C9F;
+	Tue, 18 Feb 2025 02:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739845464; cv=none; b=Pr3K06Llnbrf8T/HSHZu09WsU9G4U4ioo8z0Tp/u2RjZ1b5pRxRxjkZNHTuhKVnlSOhC69OLOpn/jud3Fc5mq9b0xRerO5+rQFObFM1aLrltiKujQE6/Ik1EDVZYTrl4lW9jgmb94xLf5QmEaYsP5RTyQd9KA8uNTmSq5kMd+bk=
+	t=1739845987; cv=none; b=hu8dibaPXq/DTg1oD4qCcPqZ5NiXZsdQBBT5RmSc5V0x8wkUazgL+hpi5T9pPPsDO+beKkfl4E5pD0hP4n2POicwWNvArlzT9MpCcrWceX3t5ZwpwMp+7hLoD98ws9lsEPio7TXroJ6XJ2WvjT2TewYc8u+r5vT9fvxvixf9jC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739845464; c=relaxed/simple;
-	bh=7ipJmzLet5YB1c8k2DxOeip5VApJFjbWBfsc/HjE2bA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IPJ1kS3mYSZtBLxttRhV62aiLhCBF3RzkYonVfTAuRBsLzuguTNEVECdRIJyDxCFMi+BOU22kLffvhegI5yEZ+aa8yI35xPjyg29ZEP+CRQVgYrjRIrZNEjfFYs9MsXvT+06O8zhDcume+/9nFf1/FLredywW3+TdARSRQjaFAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ABoCVgk0; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739845463; x=1771381463;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=7ipJmzLet5YB1c8k2DxOeip5VApJFjbWBfsc/HjE2bA=;
-  b=ABoCVgk0nJpkXti4gEneR79MQH+fEweyZqTZxBeuIcjUE021hNXlQ9RS
-   K7hKYSKVmw++ANpSn7HcWTnzxOS6dR1HpBQQODQy43U58nWglrQVFRdGF
-   zGm8kb3XxOp+hBQtyoPVUob5/GsKR73li31K9KimAb7zNyUEUTp1Eeh/R
-   yW7G0vuESIvZLlpE43oVZygz1IMZ1mF8b+uZaGU4ZmUMP4qk+oeZXwlMZ
-   JTTX0gwJjIy+YVPyleilw/L5X0wcNuTLXItW4m+0KOhXJWp2E2qNx08J9
-   t7nnCgKg01OTjiDlefQLCoS2quqWNwWhOlO4TX5YRR5Fw6Sg8C+wJPyNS
-   A==;
-X-CSE-ConnectionGUID: H3HGD4mnR9emNOoiT19ROw==
-X-CSE-MsgGUID: eCWCNVdjTPeVBEOlUreWwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="44284674"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="44284674"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 18:24:22 -0800
-X-CSE-ConnectionGUID: vD97ivTsScudIVqP7A+GBA==
-X-CSE-MsgGUID: 2zNvAkghSyW5kn0bTSJyTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="114769374"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Feb 2025 18:24:19 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: Ido Schimmel <idosch@idosch.org>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Fix suspicious RCU usage
-Date: Tue, 18 Feb 2025 10:24:21 +0800
-Message-ID: <20250218022422.2315082-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1739845987; c=relaxed/simple;
+	bh=kVFDQLrwBz6/w4jbcFWfuXnpbej/CPofQc4TeZhDOF4=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=m9DmB/oKuSOVJHjCOEJ2wq96+Kj5TYcMRFgotYYMzzoEqSr3gIHB2mVYRnSw0MH0uDjRu/6Zd1enxhPAwX7mtKYP0NB+QiRCU4Atp68nvkZ8t2IcApEBYKgIDfsc421Vqmi+2PGVtwmDtJuu7hYr40TsVlrjGu2wAtV66ibTpq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Yxk550fyjz22vtY;
+	Tue, 18 Feb 2025 10:30:01 +0800 (CST)
+Received: from kwepemk500007.china.huawei.com (unknown [7.202.194.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0752B1400DD;
+	Tue, 18 Feb 2025 10:33:00 +0800 (CST)
+Received: from [10.174.179.143] (10.174.179.143) by
+ kwepemk500007.china.huawei.com (7.202.194.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Feb 2025 10:32:59 +0800
+Subject: Re: [PATCH v3] Export MDRAID bitmap on disk structure in UAPI header
+ file
+To: Tomas Mudrunka <tomas.mudrunka@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+	<song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>
+References: <20241231030929.246059-1-tomas.mudrunka@gmail.com>
+ <20250206223005.1759192-1-tomas.mudrunka@gmail.com>
+From: Yu Kuai <yukuai3@huawei.com>
+Message-ID: <bead708f-b901-18df-f461-c5324fbe2555@huawei.com>
+Date: Tue, 18 Feb 2025 10:32:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250206223005.1759192-1-tomas.mudrunka@gmail.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500007.china.huawei.com (7.202.194.92)
 
-Commit <d74169ceb0d2> ("iommu/vt-d: Allocate DMAR fault interrupts
-locally") moved the call to enable_drhd_fault_handling() to a code
-path that does not hold any lock while traversing the drhd list. Fix
-it by ensuring the dmar_global_lock lock is held when traversing the
-drhd list.
+Hi, Tomas
 
-Without this fix, the following warning is triggered:
- =============================
- WARNING: suspicious RCU usage
- 6.14.0-rc3 #55 Not tainted
- -----------------------------
- drivers/iommu/intel/dmar.c:2046 RCU-list traversed in non-reader section!!
-               other info that might help us debug this:
-               rcu_scheduler_active = 1, debug_locks = 1
- 2 locks held by cpuhp/1/23:
- #0: ffffffff84a67c50 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x87/0x2c0
- #1: ffffffff84a6a380 (cpuhp_state-up){+.+.}-{0:0}, at: cpuhp_thread_fun+0x87/0x2c0
- stack backtrace:
- CPU: 1 UID: 0 PID: 23 Comm: cpuhp/1 Not tainted 6.14.0-rc3 #55
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0xb7/0xd0
-  lockdep_rcu_suspicious+0x159/0x1f0
-  ? __pfx_enable_drhd_fault_handling+0x10/0x10
-  enable_drhd_fault_handling+0x151/0x180
-  cpuhp_invoke_callback+0x1df/0x990
-  cpuhp_thread_fun+0x1ea/0x2c0
-  smpboot_thread_fn+0x1f5/0x2e0
-  ? __pfx_smpboot_thread_fn+0x10/0x10
-  kthread+0x12a/0x2d0
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x4a/0x60
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
+ÔÚ 2025/02/07 6:30, Tomas Mudrunka Ð´µÀ:
+> When working on software that manages MD RAID disks from
+> userspace. Currently provided headers only contain MD superblock.
+> That is not enough to fully populate MD RAID metadata.
+> Therefore this patch adds bitmap superblock as well.
+> 
+> Signed-off-by: Tomas Mudrunka <tomas.mudrunka@gmail.com>
+> ---
 
-Simply holding the lock in enable_drhd_fault_handling() will trigger a
-lock order splat. Avoid holding the dmar_global_lock when calling
-iommu_device_register(), which starts the device probe process.
+Can you fix the checkpatch warning and send a new version?
 
-Fixes: d74169ceb0d2 ("iommu/vt-d: Allocate DMAR fault interrupts locally")
-Reported-by: Ido Schimmel <idosch@idosch.org>
-Closes: https://lore.kernel.org/linux-iommu/Zx9OwdLIc_VoQ0-a@shredder.mtl.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/dmar.c  | 1 +
- drivers/iommu/intel/iommu.c | 7 +++++++
- 2 files changed, 8 insertions(+)
+Thanks,
+Kuai
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index 9f424acf474e..e540092d664d 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -2043,6 +2043,7 @@ int enable_drhd_fault_handling(unsigned int cpu)
- 	/*
- 	 * Enable fault control interrupt.
- 	 */
-+	guard(rwsem_read)(&dmar_global_lock);
- 	for_each_iommu(iommu, drhd) {
- 		u32 fault_status;
- 		int ret;
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cc46098f875b..9a1e61b429ca 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3146,7 +3146,14 @@ int __init intel_iommu_init(void)
- 		iommu_device_sysfs_add(&iommu->iommu, NULL,
- 				       intel_iommu_groups,
- 				       "%s", iommu->name);
-+		/*
-+		 * The iommu device probe is protected by the iommu_probe_device_lock.
-+		 * Release the dmar_global_lock before entering the device probe path
-+		 * to avoid unnecessary lock order splat.
-+		 */
-+		up_read(&dmar_global_lock);
- 		iommu_device_register(&iommu->iommu, &intel_iommu_ops, NULL);
-+		down_read(&dmar_global_lock);
- 
- 		iommu_pmu_register(iommu);
- 	}
--- 
-2.43.0
-
+> V1 -> V2: Also exported stuff needed by mdadm according to Mariusz Tkaczyk
+> V2 -> V3: Fixed checkpatch errors
+> 
+>   drivers/md/md-bitmap.c         |  9 ------
+>   drivers/md/md-bitmap.h         | 42 +--------------------------
+>   include/uapi/linux/raid/md_p.h | 53 +++++++++++++++++++++++++++++++++-
+>   3 files changed, 53 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+> index ec4ecd96e..247610f9a 100644
+> --- a/drivers/md/md-bitmap.c
+> +++ b/drivers/md/md-bitmap.c
+> @@ -32,15 +32,6 @@
+>   #include "md.h"
+>   #include "md-bitmap.h"
+>   
+> -#define BITMAP_MAJOR_LO 3
+> -/* version 4 insists the bitmap is in little-endian order
+> - * with version 3, it is host-endian which is non-portable
+> - * Version 5 is currently set only for clustered devices
+> - */
+> -#define BITMAP_MAJOR_HI 4
+> -#define BITMAP_MAJOR_CLUSTERED 5
+> -#define	BITMAP_MAJOR_HOSTENDIAN 3
+> -
+>   /*
+>    * in-memory bitmap:
+>    *
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index 31c93019c..75bbe6b84 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -7,7 +7,7 @@
+>   #ifndef BITMAP_H
+>   #define BITMAP_H 1
+>   
+> -#define BITMAP_MAGIC 0x6d746962
+> +#include <linux/raid/md_p.h>
+>   
+>   typedef __u16 bitmap_counter_t;
+>   #define COUNTER_BITS 16
+> @@ -18,46 +18,6 @@ typedef __u16 bitmap_counter_t;
+>   #define RESYNC_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 2)))
+>   #define COUNTER_MAX ((bitmap_counter_t) RESYNC_MASK - 1)
+>   
+> -/* use these for bitmap->flags and bitmap->sb->state bit-fields */
+> -enum bitmap_state {
+> -	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
+> -	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
+> -	BITMAP_HOSTENDIAN  =15,
+> -};
+> -
+> -/* the superblock at the front of the bitmap file -- little endian */
+> -typedef struct bitmap_super_s {
+> -	__le32 magic;        /*  0  BITMAP_MAGIC */
+> -	__le32 version;      /*  4  the bitmap major for now, could change... */
+> -	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
+> -	__le64 events;       /* 24  event counter for the bitmap (1)*/
+> -	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
+> -	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
+> -	__le32 state;        /* 48  bitmap state information */
+> -	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
+> -	__le32 daemon_sleep; /* 56  seconds between disk flushes */
+> -	__le32 write_behind; /* 60  number of outstanding write-behind writes */
+> -	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
+> -				  * reserved for the bitmap. */
+> -	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
+> -	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
+> -	__u8  pad[256 - 136]; /* set to zero */
+> -} bitmap_super_t;
+> -
+> -/* notes:
+> - * (1) This event counter is updated before the eventcounter in the md superblock
+> - *    When a bitmap is loaded, it is only accepted if this event counter is equal
+> - *    to, or one greater than, the event counter in the superblock.
+> - * (2) This event counter is updated when the other one is *if*and*only*if* the
+> - *    array is not degraded.  As bits are not cleared when the array is degraded,
+> - *    this represents the last time that any bits were cleared.
+> - *    If a device is being added that has an event count with this value or
+> - *    higher, it is accepted as conforming to the bitmap.
+> - * (3)This is the number of sectors represented by the bitmap, and is the range that
+> - *    resync happens across.  For raid1 and raid5/6 it is the size of individual
+> - *    devices.  For raid10 it is the size of the array.
+> - */
+> -
+>   struct md_bitmap_stats {
+>   	u64		events_cleared;
+>   	int		behind_writes;
+> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
+> index ff47b6f0b..2995528f9 100644
+> --- a/include/uapi/linux/raid/md_p.h
+> +++ b/include/uapi/linux/raid/md_p.h
+> @@ -1,7 +1,7 @@
+>   /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+>   /*
+>      md_p.h : physical layout of Linux RAID devices
+> -          Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman
+> +	Copyright (C) 1996-98 Ingo Molnar, Gadi Oxman, Peter T. Breuer
+>   
+>      This program is free software; you can redistribute it and/or modify
+>      it under the terms of the GNU General Public License as published by
+> @@ -426,4 +426,55 @@ struct ppl_header {
+>   	struct ppl_header_entry entries[PPL_HDR_MAX_ENTRIES];
+>   } __attribute__ ((__packed__));
+>   
+> +#define MD_BITMAP_SUBERBLOCK_EXPORTED 1	/* Notify that kernel provides it */
+> +#define BITMAP_MAGIC 0x6d746962		/* This is actually "bitm" in ASCII :-) */
+> +#define BITMAP_MAJOR_LO 3
+> +/* version 4 insists the bitmap is in little-endian order
+> + * with version 3, it is host-endian which is non-portable
+> + */
+> +#define BITMAP_MAJOR_HI 4
+> +#define BITMAP_MAJOR_CLUSTERED 5
+> +#define BITMAP_MAJOR_HOSTENDIAN 3
+> +
+> +/* use these for bitmap->flags and bitmap->sb->state bit-fields */
+> +enum bitmap_state {
+> +	BITMAP_STALE	   = 1,  /* the bitmap file is out of date or had -EIO */
+> +	BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
+> +	BITMAP_HOSTENDIAN  = 15,
+> +};
+> +
+> +/* the superblock at the front of the bitmap file -- little endian */
+> +typedef struct bitmap_super_s {
+> +	__le32 magic;        /*  0  BITMAP_MAGIC */
+> +	__le32 version;      /*  4  the bitmap major for now, could change... */
+> +	__u8  uuid[16];      /*  8  128 bit uuid - must match md device uuid */
+> +	__le64 events;       /* 24  event counter for the bitmap (1)*/
+> +	__le64 events_cleared;/*32  event counter when last bit cleared (2) */
+> +	__le64 sync_size;    /* 40  the size of the md device's sync range(3) */
+> +	__le32 state;        /* 48  bitmap state information */
+> +	__le32 chunksize;    /* 52  the bitmap chunk size in bytes */
+> +	__le32 daemon_sleep; /* 56  seconds between disk flushes */
+> +	__le32 write_behind; /* 60  number of outstanding write-behind writes */
+> +	__le32 sectors_reserved; /* 64 number of 512-byte sectors that are
+> +				  * reserved for the bitmap.
+> +				  */
+> +	__le32 nodes;        /* 68 the maximum number of nodes in cluster. */
+> +	__u8 cluster_name[64]; /* 72 cluster name to which this md belongs */
+> +	__u8  pad[256 - 136]; /* set to zero */
+> +} bitmap_super_t;
+> +
+> +/* notes:
+> + * (1) This event counter is updated before the eventcounter in the md superblock
+> + *    When a bitmap is loaded, it is only accepted if this event counter is equal
+> + *    to, or one greater than, the event counter in the superblock.
+> + * (2) This event counter is updated when the other one is *if*and*only*if* the
+> + *    array is not degraded.  As bits are not cleared when the array is degraded,
+> + *    this represents the last time that any bits were cleared.
+> + *    If a device is being added that has an event count with this value or
+> + *    higher, it is accepted as conforming to the bitmap.
+> + * (3)This is the number of sectors represented by the bitmap, and is the range that
+> + *    resync happens across.  For raid1 and raid5/6 it is the size of individual
+> + *    devices.  For raid10 it is the size of the array.
+> + */
+> +
+>   #endif
+> 
 
