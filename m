@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-519575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386A3A39E40
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:06:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8717A39E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 15:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C243A99F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE87D17286C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 14:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73137269883;
-	Tue, 18 Feb 2025 14:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA3F2673A1;
+	Tue, 18 Feb 2025 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGpBOpE4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwFNbeBU"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF5512E5B;
-	Tue, 18 Feb 2025 14:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125C0269CE3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 14:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739887416; cv=none; b=Hn17t7/7uNWAf8CGLGq78vSArUxIkV8AEyPXaXLXqJumM9CJ+lHU9XgdTu0IhlduwvfqSFWOX2cJ41PbZ0DKDopaWuSyaANJUvxw415GsrSJE3+9jl0vn5Nm8PqCeAIetDgqAlsPdStV94wxwaEPpe+ohQe6KjFEb6iCql1Efeg=
+	t=1739887552; cv=none; b=fenHtuHAMo+9EHIfboVeT1xBx7/dzy3ypyIkiDsCwqeBdoFrasMXqfjeUPAZssKRlKKg9EoVfSKDiccA+wUX4SIabhnXBFSREHPy542pWVWO3sQCmWFyDB+yQRhINzrRmiKy49kfDGSBSNTSgKzxcUB4aXJEK1a6sLuT4Jgo7Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739887416; c=relaxed/simple;
-	bh=7g3Ss5mFEPQ/MC/G4bdVTlWPBOqJj0JwqqcGScdjGVk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=CvO0iwWmGFUUu0Ya0encESJR9YGcPdEWBIKgumh6F6jE5UKHClehbncOFi+q9GLgPadTHs9XHlDXf5dPnZ3ZNTTo1pdpRhPrdLq1gbflr1PFSuqNlm4w6Eb8NYZoTHeQAqZx7N9rGP571Od6/2Y2iAMwRC+IqOvRfgzc2t8+nSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGpBOpE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02FF3C4CEE2;
-	Tue, 18 Feb 2025 14:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739887416;
-	bh=7g3Ss5mFEPQ/MC/G4bdVTlWPBOqJj0JwqqcGScdjGVk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=eGpBOpE4cwSraM7JXq4doESHEtvNYMnDOhYjPZk574Nfq5SK1a++F9XEnMMO8sml6
-	 t54PQi6RY4SvbFoz6k9NdZIDY6zmAzLzdXnOSD1+LLeKx/QryvnaLsXz3lzGC8WoYC
-	 A35Lo2tKwUrk58fKixIAz/Jz2DYtlRQtFBd0fQ9MLUae/r+OTAo6m0AhbZgJMFTJdV
-	 zDbU5T7aVcXods/MN8ApjchCKVqg72w69dKX77S/aRzOsbpXMvp6pO3k2jggxwtK5G
-	 GE3y3kURi7LYfRiL7QDQj16Iy4pD4GrRlDHfbYA7zJAV1pEIWWAsoOU1XZkaG5Hx1X
-	 b8r6Hyk/sxYpA==
-Date: Tue, 18 Feb 2025 08:03:34 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1739887552; c=relaxed/simple;
+	bh=oW9DZ59UCeivFpN968pPcHaSm038AsMBBTgzSI5Lgyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXg192T43dvrErxlll4uhI6nfFSc8t+K+NTbY5n0zdkzV5zZYa8ANaEyR6Z2xQB3GnObkJS2gt7/BfoPOdNMoWxmpgSYSXU4ChhmBhts5YccwF3zVA7dmSrXu46E9ZoVrEJGkVE3u7l38nWdJaTdFF5nNHAq4nVflJKo3GQHQP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwFNbeBU; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30a303a656aso20306441fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 06:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739887549; x=1740492349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OfGCLhfhNhyGMknk1g3ezGCgyL5j8xO0MfyidAobZeQ=;
+        b=OwFNbeBUL5mmtwkvaXDIRPuQqlNBIXpVKIOLtgKGvXgJxp5BHzM13SnjFECFhx9i6u
+         k3hNQbkqxL4gQembJ/DWLVUEk7yA9weN9ScuLGs3qdelIj+pyV46S+zgn/S91NuesEGP
+         0o0kPzw/QX081J4EHt3H9OwNgGwEHceNXggh3O6E/SCyc4mCAh1UiqLVLOTbtM5obq97
+         DS95v9GvCqkiUIpwtCcH6yl064JKbxi5J1evW8VV8I5N59NFTq+jhy9K+9PxFP4CmVDW
+         tFAYx16/NSaJ/lQG5ZYFuVALUAY2Pwnh0OgZ2uOR5QxpEH6n9UITd3qhpaPAfdb05cg8
+         uutw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739887549; x=1740492349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OfGCLhfhNhyGMknk1g3ezGCgyL5j8xO0MfyidAobZeQ=;
+        b=PDanTRhR4H+FyIms1rCx8wuvbt2xwkjeLL75GHsvdGKcyTtnb9i1KMHBFA3sSO9g7v
+         Tri5tYZpkRd/UDWVovdedQhQLBCqmmvOlXUA9e+16Ht4EN47zssYX3CjYKN+wJS61UUV
+         eiDIZSSiprKHoVquOh0I4xt1JPQ+liY62OZbTUzD3SeuBa1mrWHYsVkT/K7ZDQu002HT
+         FFnuHBkzl9Mr6U64sYKI/AzRKqwX1bx6Gd4w+T7GLAeTw/UnOJ/OuTliKAT+j6fuOub5
+         nPrx0A2D15VqlwdcRs5PQ8wgRZfGcWIeRUGvwW4lWMabLC3kWVhdch46dXQYrV5IOYeU
+         KG4A==
+X-Gm-Message-State: AOJu0Yzp7g6D/h9y7ufI3uXzqstxHgyv8y74kQvq43Apbj4fesNz/oVv
+	mPGhokDymmMWYCOc7Wj63AwNUmwplq1Yr75348r4h+VkEJWhFJFns+QQzAJopTMV5qQHB1Ya+qY
+	eRRjfHeNVVHyVp4oY00jy8mnH/A==
+X-Gm-Gg: ASbGncuDRooI4gk2BREL/NbqXISbYwVJuW0+NYu42rtrYXaImEFGKZbma7Tz64XLHXV
+	/HsziU7IYgQrdBHtLA+jof1PdUcroccrzRjfJ4DcPrP2kl9waaMNHN56CovlabWponyqnk0jJWu
+	QCjH2j7z1R+W4=
+X-Google-Smtp-Source: AGHT+IE8HftFXeqmGJovNxcwN2fcYte5/ynaApscx6zw0rc1nTq+5mm1kUCFvEt27QuImgX9fCKtL59teFhpWnBmpCg=
+X-Received: by 2002:a05:6512:b27:b0:545:6b4:68c2 with SMTP id
+ 2adb3069b0e04-5452fe8f93emr4073021e87.47.1739887548738; Tue, 18 Feb 2025
+ 06:05:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev, 
- devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- linux-kernel@vger.kernel.org, Chen Wang <unicorn_wang@outlook.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-In-Reply-To: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
-References: <20250216180924.2506416-1-alexander.sverdlin@gmail.com>
-Message-Id: <173988741497.6115.7372535970415942115.robh@kernel.org>
-Subject: Re: [PATCH RFC] dt-bindings: rtc: sophgo: add RTC support for
- Sophgo CV1800 series SoC
+References: <20250123190747.745588-1-brgerst@gmail.com> <20250123190747.745588-7-brgerst@gmail.com>
+ <Z7RNxf9NWmGZ6aDE@gmail.com>
+In-Reply-To: <Z7RNxf9NWmGZ6aDE@gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Tue, 18 Feb 2025 09:05:37 -0500
+X-Gm-Features: AWEUYZnk_85bWld-FaglZtD1ihlpkM3a4fgwk9noLnSU0TrQOcAiKCRCkYzXDtk
+Message-ID: <CAMzpN2i7-=2BU=4_SY_hxPHU+n5MMGRwS7BzApy-TGoeWTZHog@mail.gmail.com>
+Subject: Re: [PATCH v6 06/15] x86/module: Deal with GOT based stack cookie
+ load on Clang < 17
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 18, 2025 at 4:07=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Brian Gerst <brgerst@gmail.com> wrote:
+>
+> >  #define R_X86_64_GOTPCREL    9       /* 32 bit signed pc relative
+> > -                                        offset to GOT */
+> > +#define R_X86_64_GOTPCRELX   41         offset to GOT */
+>                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > +#define R_X86_64_REX_GOTPCRELX       42
+>
+> Uhm, I'm pretty sure this won't even build, should any code use
+> R_X86_64_GOTPCRELX - which it doesn't currently...
+>
+> Also, each entry here has a comment explaining it - except these two
+> new GOTPCREL variants.
+
+Should we remove the non-REX version that isn't used by the kernel?
+This header is not exported to userspace.
 
 
-On Sun, 16 Feb 2025 19:09:09 +0100, Alexander Sverdlin wrote:
-> Add RTCSYS devicetree binding for Sophgo CV1800 SoC.
-> 
-> The RTC (Real Time Clock) is an independently powered module in the chip.
-> It contains a 32KHz oscillator and a Power-On-Reset (POR) sub-module, which
-> can be used for time display and scheduled alarm produce. In addition, the
-> hardware state machine provides triggering and timing control for chip
-> power-on, power-off and reset.
-> 
-> Furthermore, the 8051 subsystem is located within RTCSYS and is
-> independently powered. System software can use the 8051 to manage wake
-> conditions and wake the system while the system is asleep, and communicate
-> with external devices through peripheral controllers.
-> 
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
-> QUESTION:
-> 
-> I'm unsure about reg properties in the subnodes (child devices) of
-> RTCSYS:
-> - they will not be used anyway by the drivers because they genuinely
-> overlap (the whole point of going MFD) -- therefore the drivers will do
-> syscon_node_to_regmap(pdev->dev.parent->of_node)
-> - as I understood from the history of MFD dt bindings' submissions, regs
-> are encouraged, if can be specified
-> - overlapping regs cause dt_binding_check warnings:
-> Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/pmu@0)
-> Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
-> 
-> Shall I remove the MMIO resources from the actual devices or rather ignore the warnings?
-> 
->  .../bindings/mfd/sophgo,cv1800b-rtcsys.yaml   | 222 ++++++++++++++++++
->  1 file changed, 222 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.yaml: patternProperties:^mcu@[0-9a-f]+$:properties:sram:maxItems: False schema does not allow 1
-	hint: Scalar properties should not have array keywords
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/pmu@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:41.19-47.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/pmu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/rtc@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:34.19-39.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/mcu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/sram@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:41.19-47.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/pmu@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/sram@0)
-Documentation/devicetree/bindings/mfd/sophgo,cv1800b-rtcsys.example.dts:49.19-55.15: Warning (unique_unit_address_if_enabled): /example-0/rtcsys@5025000/rtc@0: duplicate unit-address (also used in node /example-0/rtcsys@5025000/sram@0)
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250216180924.2506416-1-alexander.sverdlin@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Brian Gerst
 
