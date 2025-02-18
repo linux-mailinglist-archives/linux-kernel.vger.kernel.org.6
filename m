@@ -1,237 +1,103 @@
-Return-Path: <linux-kernel+bounces-519224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3677AA39948
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C77A3994E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 11:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAD8173B36
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E663B1888692
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 10:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C6524060E;
-	Tue, 18 Feb 2025 10:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA994241125;
+	Tue, 18 Feb 2025 10:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YkWJfixF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EkFPl5E+"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF8423FC54;
-	Tue, 18 Feb 2025 10:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2D23496A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 10:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739874836; cv=none; b=fqirhPEv8OLsX+grE6PCyiPRRkelcbhF2KuFfDHyJcIsb6MqciEOxaUKZs5pDZZdsPuXtuBJFeD3lw24TFo7srOjI8L4rP8D3w/bjhixcrZgq6O5V1WRxTmX7vBFKQ9A9PPBfcX6Vsx0tAc7/+eC7a1k3V56AEJHnMOAjPslUW8=
+	t=1739874907; cv=none; b=TGocen0pX8PZlJUA5xmCqEJUMzl5qqP7lCr6COAM4WhyKhLrZ3qeEFwEj0qYlZKYR20/tKNwcE5a+RlRvDb/ySDCl3kSrA129200sSOt4f44Cw3GtsbiAvJLTV8KqHY2FZgjRHMhYlfvOS+Msh0Mc4bpV/AhsTtkChnzCqiFqE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739874836; c=relaxed/simple;
-	bh=eJd9f4blcegx+BISVVF5j1/hSmcvEDQUFTZlQ0zCixg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=hOejI2P9+Wef5EraaPMNBc7jgWiNf4wbWeI4tLVBG6uqyP6GqUe8H0adODfncf5QANi42u/nis5ulml9vhaFzgSd+95IimVV+5U13pM9T5Fu4TQclAw6x0UBQqiWVNi2ArMOfmvOmxOo9nERWE/p+1wxm8FPx/SfVCbDHWUO5LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YkWJfixF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51I2nhtT024167;
-	Tue, 18 Feb 2025 10:33:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nYrfwJQF1pYnp6cRMoCxa+2k7wrxFiO/+p0sCHogb6Q=; b=YkWJfixFZq8K2r99
-	ClLxjtPlJmILE6DRqEr9imEZC6FAzB0Ycbf0xMcv0jKgta2FeZD0LnSx2FVu74Ae
-	Ei7lOdBTwsXo0oFCx25V/JUbpuE6Umj0dGaoOCBvneHz3kDbcIRAf0lV+FlA5xRH
-	c2dDMbU//UmWMiZnBLFaJGudGnfiBGJsowa0nSNPAc3+Ct5xAFRnyjChz9U5pApg
-	ibmBZgCXJmPRWOyrCSwqASQT1Ysvdnktme+emTCwkxzBmJyx5f7cQa4x4AhhP7Qd
-	1OS3OHmHscwKKysqqAqcdfhIE7QX/vRQBrsbwLO9/diEbShkj9k8QLnx/Negq2V5
-	pKI+WQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7ucgc4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 10:33:49 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IAXmI5000318
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 10:33:49 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Feb 2025 02:33:45 -0800
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Tue, 18 Feb 2025 16:03:21 +0530
-Subject: [PATCH v4 2/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
+	s=arc-20240116; t=1739874907; c=relaxed/simple;
+	bh=5rVqKyMcxcqdLy/ItiSD5rAI6C4AMSRB2IYrY+2LyXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oO10ZbtLNfk/CN3Lr15jNgCV4k/zT2ISPKZVIvVzl1PAsZ5rzFuThQubht+0umPl4keGL9L7teBTfY4OT6eAAjqCRaeDnjGVX6ITgR1obYmQO8ENqqanT5kaDE0KTRcfcrKBIS+b/dHaOv0LwZlJaN905TfDRvreF822TjRHArU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EkFPl5E+; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471b71421afso54212261cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 02:35:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1739874904; x=1740479704; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
+        b=EkFPl5E+rCJE6IfFs/oZAUYxPfZ4JEtKRwZpSibx4AVYbOsI7rBei9boiZ5hch4ohm
+         3LWV13xAIEFKCV1YhbIfWsctZhYvimpJA0EjU+9ftAx2dTZmJWRdO6n0zc6FApX+Fa7i
+         REBt+goEZZU6WntXba9yDNq8407ZuqoEhixh0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739874904; x=1740479704;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E/Z0qExHB4GnNF4mgGk1aX339Qt06BNhHNrDyWrDNuc=;
+        b=HrvoHPKaNJzaZP9R1zHXTw8B2MvL+PwMmwfemXwarngTluHQyt4PZUEXOp0jzRu1iR
+         X2F7TAKZbTQApFJfiiB5BUexxZ9vjqVJx+zKO3dxWWoMcG2IEgmwNOnL8DsjXu+qBgT2
+         FGhVMfyvq1VNHu9gRaRfvdfzBbQNsnbK+0Rb7bpcYZRS1v8hMYIF8b2/nDi/ACImkM1d
+         TpokIvWcgs8cB8EfZiugulSP3F0Xlm33XbOMmwEagvnsmp3MBP2uGtlYfRcY5RSDnHtP
+         76gntgoYOHN7FbSm3awzeEWwZicOlA8eeayYPDJA30GctQSYKVUDQEPQdSSUybQwITbJ
+         H7RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Geqt4+TAulKmwHZzTouDig4cWYWCb9cRyYWyOljVuPOkRdUpxvLaLtGSzLzEfPGbiQUXZ/inrYugbTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwLFYcB0jOIAJbS1D8tUSpa5SuhroO3+LVQT51QonFT2XuCAlX
+	jL43tUTM/CLr9vRcRoVuGJ6gXOapMCeCZ+YfNxu1X80eDfo3xRieLkUoQm8NU7HOoPXuB6qG4rk
+	FiN2M06uURRVjGe8v3L0y5zV4EzwfuvPOWgmTWA==
+X-Gm-Gg: ASbGncsGLrru4REOJazGVbnRdykl0NPS0yXVMkYZJNQr7rZc2GpSmh1nRcEWVyou8p6
+	FdjK2jOZL49hmLYtXN/bPbeN4PY3H5C8yNTFVpPQ+S3V3LfeqYhmPLWq3al3/Q2jATH3boiM=
+X-Google-Smtp-Source: AGHT+IEpiwSZX4vRhJbDFJ1X30VOuKKiT69jv9pwa/7/xaXy7HKIP1sTQTKwyHkROyECd2XtP/LxfpUAt7HLKX1xnSE=
+X-Received: by 2002:ac8:5a82:0:b0:471:bb6f:5799 with SMTP id
+ d75a77b69052e-471dbe7c15cmr179985471cf.35.1739874904391; Tue, 18 Feb 2025
+ 02:35:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250218-switch_gdsc_mode-v4-2-546f6c925ae0@quicinc.com>
-References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
-In-Reply-To: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Renjiang Han
-	<quic_renjiang@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739874819; l=4234;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=i/sSEqB62BBrB+Tlclsq4GbdmCj1n3LXGCmyoP/p3IU=;
- b=iyc8bGbPoHfjtdjKkbijl7jXbnl7kP7/lukZzZe20uDp+aEtQGlqt4XQZUgHcB4ut1kLRPJq4
- c6NP2xjyysTDX5FC6GZhiTa1gZsJiGuQ0GpT6v7vev/OKfJWo7UjG4q
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s_JA_P4alxuh9fGdsaJhLch95aoGWwKP
-X-Proofpoint-ORIG-GUID: s_JA_P4alxuh9fGdsaJhLch95aoGWwKP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_04,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=690 spamscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0 adultscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502180082
+References: <20250217133228.24405-1-luis@igalia.com> <20250217133228.24405-3-luis@igalia.com>
+ <Z7PaimnCjbGMi6EQ@dread.disaster.area> <CAJfpegszFjRFnnPbetBJrHiW_yCO1mFOpuzp30CCZUnDZWQxqg@mail.gmail.com>
+ <87r03v8t72.fsf@igalia.com>
+In-Reply-To: <87r03v8t72.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 18 Feb 2025 11:34:53 +0100
+X-Gm-Features: AWEUYZm174Vtkg8CGi97zDvZOoF7lSynxrUSzinYaOe0zIR4ksp5V1ftEBvZ570
+Message-ID: <CAJfpegu51xNUKURj5rKSM5-SYZ6pn-+ZCH0d-g6PZ8vBQYsUSQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] fuse: add new function to invalidate cache for all inodes
+To: Luis Henriques <luis@igalia.com>
+Cc: Dave Chinner <david@fromorbit.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Taniya Das <quic_tdas@quicinc.com>
+On Tue, 18 Feb 2025 at 11:04, Luis Henriques <luis@igalia.com> wrote:
 
-The video driver will be using the newly introduced
-dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
-control modes at runtime.
-Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
-Qualcomm SoC SC7180, SDM845, SM7150, SM8150 and SM8450.
+> The problem I'm trying to solve is that, if a filesystem wants to ask the
+> kernel to get rid of all inodes, it has to request the kernel to forget
+> each one, individually.  The specific filesystem I'm looking at is CVMFS,
+> which is a read-only filesystem that needs to be able to update the full
+> set of filesystem objects when a new generation snapshot becomes
+> available.
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
----
- drivers/clk/qcom/videocc-sc7180.c | 2 +-
- drivers/clk/qcom/videocc-sdm845.c | 4 ++--
- drivers/clk/qcom/videocc-sm7150.c | 4 ++--
- drivers/clk/qcom/videocc-sm8150.c | 4 ++--
- drivers/clk/qcom/videocc-sm8450.c | 4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+Yeah, we talked about this use case.  As I remember there was a
+proposal to set an epoch, marking all objects for "revalidate needed",
+which I think is a better solution to the CVMFS problem, than just
+getting rid of unused objects.
 
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
---- a/drivers/clk/qcom/videocc-sc7180.c
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
- 	.pd = {
- 		.name = "vcodec0_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
---- a/drivers/clk/qcom/videocc-sdm845.c
-+++ b/drivers/clk/qcom/videocc-sdm845.c
-@@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x890, 0x930 },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sm7150.c b/drivers/clk/qcom/videocc-sm7150.c
-index 14ef7f5617537363673662adc3910ddba8ea6a4f..b6912560ef9b7a84e7fd1d9924f5aac6967da780 100644
---- a/drivers/clk/qcom/videocc-sm7150.c
-+++ b/drivers/clk/qcom/videocc-sm7150.c
-@@ -271,7 +271,7 @@ static struct gdsc vcodec0_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x890, 0x9ec },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -282,7 +282,7 @@ static struct gdsc vcodec1_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x8d0, 0xa0c },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-index daab3237eec19b727d34512d3a2ba1d7bd2743d6..3024f6fc89c8b374f2ef13debc283998cb136f6b 100644
---- a/drivers/clk/qcom/videocc-sm8150.c
-+++ b/drivers/clk/qcom/videocc-sm8150.c
-@@ -179,7 +179,7 @@ static struct gdsc vcodec0_gdsc = {
- 	.pd = {
- 		.name = "vcodec0_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -188,7 +188,7 @@ static struct gdsc vcodec1_gdsc = {
- 	.pd = {
- 		.name = "vcodec1_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- static struct clk_regmap *video_cc_sm8150_clocks[] = {
-diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
-index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..4cefcbbc020f201f19c75c20229415e0bdea2963 100644
---- a/drivers/clk/qcom/videocc-sm8450.c
-+++ b/drivers/clk/qcom/videocc-sm8450.c
-@@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs0c_gdsc.pd,
--	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc video_cc_mvs1c_gdsc = {
-@@ -372,7 +372,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs1c_gdsc.pd,
--	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
- };
- 
- static struct clk_regmap *video_cc_sm8450_clocks[] = {
-
--- 
-2.34.1
-
+Thanks,
+Miklos
 
