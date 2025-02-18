@@ -1,253 +1,155 @@
-Return-Path: <linux-kernel+bounces-520647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF30A3ACC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:46:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A23BA3ACBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Feb 2025 00:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2E31893C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:45:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69F747A59E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 23:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17A81DE3D6;
-	Tue, 18 Feb 2025 23:43:43 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD511DF267;
-	Tue, 18 Feb 2025 23:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA731DE3AA;
+	Tue, 18 Feb 2025 23:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cRo5pY/S"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EC21DB55D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 23:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739922223; cv=none; b=J2AualkSpCdM3HXXXt9VaOzR6rhET1/5lop/mAqtg1EYMwF+KGjopAeUDjpMB0mQrYKN0ClZ7NCCc2LV98z8Ln9kRmmUAk6VLBSYhTCNcsj5F9o/b2iBgBqfycaQeMUcjb6vsOjjv4VToS7Z1YkHzynzYQ23FbvcUVJy50dsQcE=
+	t=1739922364; cv=none; b=jnIEBuNulP2J+0WCPArclghH5tAU/4DTgP8+6lKV717tkgere6VV4rK5or/J4I2LmRRyu9xGf2Iwu9ysAkZniZM0GRBj6IMraL38ouHOHB18SqJbvwSpXKbdtZMpBeTJSO2/mYsnPL1jpvQ3sNPIe6Qjy3ExZ50qcnV0HpcMLvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739922223; c=relaxed/simple;
-	bh=PzVh2UYRDrFSgcPZz+IN0YUVEm+4PmqFc5hpCubpJRI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DnYzXhVuMYsLK13X+JiZmSG2rgToAPEPCcAoB9qA4oi7JyBFxycpiQ0ETEuU7Ux/WYv6b92p/7y+5+iL0ijdVPiSjxM189vT1roSx9uowAe9Gt6eIo+QP1aCg+I8sXqolyBLrkOn1r6RBL6nP1MJHaHHeuKFd04mwSDMZ5KMLrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: H22OX5uQQpqu2fByWFYzKw==
-X-CSE-MsgGUID: 5vmMer5nRsypC+oqKvlSeA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Feb 2025 08:43:39 +0900
-Received: from mulinux.example.org (unknown [10.226.92.65])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6529A40FDEC8;
-	Wed, 19 Feb 2025 08:43:36 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 7/7] arm64: dts: renesas: r9a09g057: Add DMAC nodes
-Date: Tue, 18 Feb 2025 23:43:04 +0000
-Message-Id: <20250218234305.700317-8-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250218234305.700317-1-fabrizio.castro.jz@renesas.com>
-References: <20250218234305.700317-1-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1739922364; c=relaxed/simple;
+	bh=mhhc0wf/ONFLZ2bacaNQx9TROcDDQUvNWScsp27PYbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bZLkQuEzsATBZA5JWtVEwKFZeHY/W/LaYXQpgQsODgyyUvXjC32rB+Dqb+nVXSGGiuCHwHuZoShrzZ7705np5j2B6vEhfBHZrKhiOoo2KcYYC1Qz0HIXkajjqvbLHPcKd3QDH0AiXOGY7k2C0ZNZFRj/2KQP+o7mjSu2OkOTvCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cRo5pY/S; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d18bf1c8faso15724865ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 15:46:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1739922360; x=1740527160; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j1PBftf4f0RNI82zXcvqxBwywoZCddwy1ySCBhloYSU=;
+        b=cRo5pY/S2ICDo7Ir5UGMrUqR9M0LxuDcZVWVmqLu6Cdpt3iM1dOr6KfBe0808Ovjev
+         Hko4rwohBP1gerYN0wQNIxcTU8Dc/wkTGk8pkAbE23FyZ5USsuAmF50G0Is0mMW2Y57w
+         2PO1uvpMHm2px1jvP30SzeLwumYSe4+s1qh5A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739922360; x=1740527160;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j1PBftf4f0RNI82zXcvqxBwywoZCddwy1ySCBhloYSU=;
+        b=v8LdBUppyIdRCVPbfcUcSuPVewU+gFw4UUWy1rA9mKba3DHq9WHboybOx2SHIB2F+a
+         JOI6edQgImxBO2JZH40bxmhaKxdfdFhR+CwMZf8kSphCVNpkLJ7hIlFKY69tLFHR+8Hi
+         mCKAvasFQRSL2shj9pK9P855q1oUVwB3rnuILCHuigpxS4PVnLPHnZmYBksOqRv/ocP1
+         zn0I24geRYWak70H41meHE25wq/XmdnjrMmmtNLv1aP/kv/H2hneEU6wQelRwckBTOw1
+         0KxdW4DW7RZEwKaB1mLDEbXgUFIA87Z5UiVHYX7huOlzgvzBYzpvbakSxU08GFzuAc99
+         /sUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtpYw6ANMODc0Youkc6mGV3UDUQUHr8bAB69YpJbNEErHJKk/+GbzyF7UhExAxP3uNi0c38NCLCWGS1x0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxaf5A1fm6OVJE7lrZdgWYyzMSVkh4ss7KChNUBnmQnA6s+IWZ
+	mdl8rsN1A/lHBnGWtMxK2zqU9pValkU43xtSZVe8zS4Nsdh5T7A70wfooxVtfx+B/0Aj9ifQead
+	1
+X-Gm-Gg: ASbGncsalPeeEjVCwt6Sb7ywK/qN9I0m2qsFSzpQHrV/V6trWw1b+JUUWMkqVwW0+QM
+	GnISlJnSdiqMHzWLI/f/wjARYVdbwlUCje/jcGQrQ3kkWoAzVsYQ3hHjiKAG6DVOl7L6eNrnTXZ
+	4AD8kp63X/W1VWfD782CVFBKmrqgscJjmFtcPzi2KLZBsOuLguwsqM+1B+kHgaIwwhyjfY+2ncf
+	OeyjTbzrF7trDYsFcVGOcqVBQAXqVv7G/I5IG8lb0OWAxLY4kd5jCSX40FxW0+TEwXaRbZb82qs
+	txC9fE9iQMdXTqqgxrLc5iAw3Q==
+X-Google-Smtp-Source: AGHT+IHR4e0nSCl3q8XbogddW2PD8peUhLro/fUpaufhjp9VugG2dLz/OZnLfqrqVUKTOw6xptXN2g==
+X-Received: by 2002:a05:6e02:194c:b0:3d2:1206:cab4 with SMTP id e9e14a558f8ab-3d2b535b5d9mr14592745ab.16.1739922360524;
+        Tue, 18 Feb 2025 15:46:00 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4eea0f29de7sm995514173.27.2025.02.18.15.45.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 15:45:59 -0800 (PST)
+Message-ID: <60671af0-204d-413e-9b65-00b526764ab9@linuxfoundation.org>
+Date: Tue, 18 Feb 2025 16:45:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] rseq/selftests: Add test for mm_cid compaction
+To: Gabriele Monaco <gmonaco@redhat.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250210075703.79125-1-gmonaco@redhat.com>
+ <20250210075703.79125-4-gmonaco@redhat.com>
+ <da68dc94-9aa8-4ee1-b0f9-e28eb5c7da56@efficios.com>
+ <2c2ee65283893a433ac4488f3d048b0f7454be24.camel@redhat.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <2c2ee65283893a433ac4488f3d048b0f7454be24.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add nodes for the DMAC IPs found on the Renesas RZ/V2H(P) SoC.
+On 2/10/25 08:25, Gabriele Monaco wrote:
+> 
+> 
+> On Mon, 2025-02-10 at 15:53 +0100, Mathieu Desnoyers wrote:
+>> On 2025-02-10 08:57, Gabriele Monaco wrote:
+>>> A task in the kernel (task_mm_cid_work) runs somewhat periodically
+>>> to
+>>> compact the mm_cid for each process. Add a test to validate that it
+>>> runs
+>>> correctly and timely.
+>>>
+>>> The test spawns 1 thread pinned to each CPU, then each thread,
+>>> including
+>>> the main one, runs in short bursts for some time. During this
+>>> period, the
+>>> mm_cids should be spanning all numbers between 0 and nproc.
+>>>
+>>> At the end of this phase, a thread with high enough mm_cid (>=
+>>> nproc/2)
+>>> is selected to be the new leader, all other threads terminate.
+>>>
+>>> After some time, the only running thread should see 0 as mm_cid, if
+>>> that
+>>> doesn't happen, the compaction mechanism didn't work and the test
+>>> fails.
+>>>
+>>> The test never fails if only 1 core is available, in which case, we
+>>> cannot test anything as the only available mm_cid is 0.
+>>>
+>>> To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>
+>> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>
+>> tiny nit below:
+>>
+>>> +		usleep(RUNNER_PERIOD);
+>>> +	curr_mm_cid = rseq_current_mm_cid();
+>>> +	/*
+>>> +	 * We select one thread with high enough mm_cid to be the
+>>> new leader
+>>
+>> Missing punctuation here (...new leader.  All other...)
+> 
+> I guess I'm allergic to those ;) Thanks for finding it!
+> I wonder if checkpatch should be able to catch this kind of problem,
+> but that's for another day.
+> 
+> Do I need to send a v6 for this or just reply here with the fixed
+> patch?
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
-v2->v3:
-* No change.
-v1->v2:
-* No change.
----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 165 +++++++++++++++++++++
- 1 file changed, 165 insertions(+)
+Please send v6 with the suggested changes. Also change the commit
+summary to
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 1c550b22b164..0a7d0c801e32 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -252,6 +252,171 @@ sys: system-controller@10430000 {
- 			status = "disabled";
- 		};
- 
-+		dmac0: dma-controller@11400000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x11400000 0 0x10000>;
-+			interrupts = <GIC_SPI 499 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 89  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 90  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 91  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 92  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 93  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 94  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 95  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 96  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 97  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 98  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 99  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 100 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 101 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 104 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x0>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x31>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 4>;
-+		};
-+
-+		dmac1: dma-controller@14830000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x14830000 0 0x10000>;
-+			interrupts = <GIC_SPI 495 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 25  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 26  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 27  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 28  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 29  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 30  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 31  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 32  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 33  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 34  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 35  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 36  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 37  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 38  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 39  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 40  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x1>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x32>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 0>;
-+		};
-+
-+		dmac2: dma-controller@14840000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x14840000 0 0x10000>;
-+			interrupts = <GIC_SPI 496 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 41  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 42  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 43  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 44  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 45  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 46  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 47  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 48  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 49  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 50  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 51  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 52  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 53  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 54  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 55  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 56  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x2>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x33>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 1>;
-+		};
-+
-+		dmac3: dma-controller@12000000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x12000000 0 0x10000>;
-+			interrupts = <GIC_SPI 497 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 57  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 58  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 59  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 60  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 61  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 62  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 63  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 64  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 65  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 66  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 67  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 68  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 69  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 70  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 71  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 72  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x3>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x34>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 2>;
-+		};
-+
-+		dmac4: dma-controller@12010000 {
-+			compatible = "renesas,r9a09g057-dmac";
-+			reg = <0 0x12010000 0 0x10000>;
-+			interrupts = <GIC_SPI 498 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 73  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 74  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 75  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 76  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 77  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 78  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 79  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 80  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 81  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 82  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 83  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 84  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 85  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 86  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 87  IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 88  IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 0x4>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg 0x35>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			renesas,icu = <&icu 3>;
-+		};
-+
- 		ostm0: timer@11800000 {
- 			compatible = "renesas,r9a09g057-ostm", "renesas,ostm";
- 			reg = <0x0 0x11800000 0x0 0x1000>;
--- 
-2.34.1
+"selftests/rseq"
 
+thanks,
+-- Shuah
 
