@@ -1,157 +1,219 @@
-Return-Path: <linux-kernel+bounces-518555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19099A390D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:20:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861A9A390D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 03:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6253A510B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2626E7A2C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 02:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E327DA82;
-	Tue, 18 Feb 2025 02:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B2F12C499;
+	Tue, 18 Feb 2025 02:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E68sDGIN"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jgE1PVCM"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0306B749C;
-	Tue, 18 Feb 2025 02:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E20286A1;
+	Tue, 18 Feb 2025 02:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739845226; cv=none; b=pKHSLme9n2mH6LTAHtYhgXNcRuAAG1RtLrTKDVqzU5cVcMwKZscfJucqi1lXYO8URJlMQUflDitjwwaWgGvViCg9CgGEoxpE3x94BEZFPqvs/DMHdjpixfs+r8EbCoet6SlkczA4nGQFG/DQISUQECM13wbXWVNRiH+qDX4A8Nc=
+	t=1739845414; cv=none; b=cNTaGhATKs4wW1hduYbUs7LV4AkaTYP6y6N5i/q0Xn+z47jfuw3UwIAzEQWnCODVClNM+tGj+Xqh6P0Zw8b0j3/J/f0fBLO2cpsd6TupyxIyf3M0k+0TxCQkhQgbeWpHJryGNZ1psRzf5rY4+8aKgIAGIQo4DzC4ocRWS9U1Q4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739845226; c=relaxed/simple;
-	bh=mQT153XU+LUXIdmyQcBJ+jLOKSDewI1RyRsKB+T2nEI=;
-	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIxaFKlWjP/LE6y9dcPoYi863yEEGYijHYSXBXZebgZO1/Kbh1hKLpAG6BzEVr5qMl5V/+D6jFVGPC4qRSbLmOj15rd4YXW/DtU/NmkY/7F2/DyE1wWXyCh/k2qoBBTm1tlXcqccZks15unpifw5UWwZWes3uDdOZ4L5z7ozl2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E68sDGIN; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2f42992f608so7499727a91.0;
-        Mon, 17 Feb 2025 18:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739845224; x=1740450024; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=csJP8p+MIKfp9UXiIAtHs4GYIWnmVtAB4XRG7isriQg=;
-        b=E68sDGIN77AG/Wsd3eNL1Pq7eybAzKin1Zs3PiTAiu4ANGW9jOWNsbmoCVgSmjzLNB
-         B3miwy3Pbb0MJQ2b/mIKLlW5Ed6aFtxQvlK6VAu9NvbdLyKUnbyccEDck3Vaj5RvnAHt
-         U5B+ycUHKchh9OETunm9+oVDYbnkX6xrnOPZgRsF7wPHBHu36CWWFicrMDD5mTfkTd/l
-         bBis8AvxOmhFlYn3BfoC+jook5eC1QSQMOEt9817YlL5S05STyHFncD8/dgJG8TmMoYb
-         5yxJZBaYcBse2rC+18/2bCnyIAt9i/ViJGBXM0I3mSgs36f6bPcwBLY5t+rW968d9zr7
-         fVQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739845224; x=1740450024;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=csJP8p+MIKfp9UXiIAtHs4GYIWnmVtAB4XRG7isriQg=;
-        b=rw2yg1KnndJF5T0/ifRz+IwCkEM0AHYDpmfDBmTl5s226YBjfCeZGacpupvN5+8P61
-         C7YUaea+iREPyR3EWYd+tdjsFJEuJbiOqOprRVBdUj9wCtCUC7o0pO8bjTeCtpOzlGNv
-         47eMJ5s5gNCf2ab/FEQZGwgH668P5Zob82jA1k3ymqtKlDPYrUvjSczUZ7JCUPrYdgjt
-         92KGqlAXT9G3+TuyzE7P6UPXlclF3PjW1K2+tT3WaSeka7Zzr/pAuQ/t48/kZu7/kivS
-         dwe0E7VfvJNG2GVr82LzVXEw75hwSOB9zTrLfel71WkvWiG7ZF9bKa0oqPEgwl7csnh8
-         3hiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZFpseLp6u4AYFkLgqEpfDATrRtusVhEX48UcndJQFCaIBxTzjRMGHVsuJraAuVKVvgitQVAE0YC0=@vger.kernel.org, AJvYcCWgelOwDnhfUS0LI7VgEF7XxWkYvoc5/ztIoDQvocd+PN2Cg16pkKMnajLxtSwlBPTzGHtKqemQJZy+CPta@vger.kernel.org
-X-Gm-Message-State: AOJu0YyImZdzO2q4pQ7wQYZtflHSHjGl2hWP+OUg2B8aykZgONQeh/il
-	XtgPgmUuxHMEzuAPb1mtJFU7tpZCWUXwWLjNlGjQOOBbNRdcvvPo
-X-Gm-Gg: ASbGncu2GD5WK3woPPjDh3j2b1JdhxeJnC8ZpuPdv3/mSMu66uIuzzLr193+mvS1YYE
-	Mh5T412qQJghIdIOaleYdBslkaqxxmLctxoisj93wT//697rWFMcf6hhbablo48VHrPAKvDm5Fx
-	mquRGMh5cyCPjISXQ2yfe2W7ed8sjAX91kYELtxoyjpUssSOdR/wvo24AGyMJzzYfdDQy/Jb33B
-	AkoWHSHUTT7Or5z8YxzKm3B250JJjS4mGRbSjvviMFkyiNBlAd97EW0KxlLk2tigjYau/uhLxPc
-	7ZhPE0a9ehfqKzKPihuoclprY1p9orYuqKSiDUl+Yp4=
-X-Google-Smtp-Source: AGHT+IFLqdZnR7NiVCaqT8hxtiSvjaYCcg/X+0mPqtZbu9qHISmkC4IRZQ5MEJmd0IiGvgBKk29XTw==
-X-Received: by 2002:aa7:888e:0:b0:730:8d25:4c24 with SMTP id d2e1a72fcca58-7326179e908mr18092511b3a.10.1739845224145;
-        Mon, 17 Feb 2025 18:20:24 -0800 (PST)
-Received: from asus. (c-73-189-148-61.hsd1.ca.comcast.net. [73.189.148.61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7326c87a86esm4501133b3a.132.2025.02.17.18.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 18:20:23 -0800 (PST)
-Message-ID: <67b3ee67.a70a0220.21e7fd.0285@mx.google.com>
-X-Google-Original-Message-ID: <Z7PuYr5k6gwlo6cs@asus.>
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 17 Feb 2025 18:20:18 -0800
-To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chenbaozi@phytium.com.cn
-Subject: Re: [PATCH v3 1/1] cxl/pmem: debug invalid serial number data
-References: <20250218014746.166565-1-wangyuquan1236@phytium.com.cn>
- <20250218014746.166565-2-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1739845414; c=relaxed/simple;
+	bh=vi+ezaL3q6ML386BlLYDBuoOAdlqf0JMPGF1PaApdQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eqo8iszJ6Fh0/itptQkAOmUSjMKyXd+5RCoI2EmqC7naOvqifik5cJbPxGHGkdkszcsK4qNZFtPNiFcri3nwUWm+/3xTx3xijZz1jXcIn7NM2HBUAanbIVWyiP7Q0siq+2seYqyLCKz4RPdbVS94u+sHQItkQhoc+fE800BQc4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jgE1PVCM; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id kDFUtMr7WwhW2kDFYtuOeV; Tue, 18 Feb 2025 03:22:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739845339;
+	bh=f5pjnJVuN2RARGK/eLtkdQ2AY9d+D6FXv/r6YtancYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=jgE1PVCM0C1OIfAi2GH1BRssBXKGi/Gsgbs5h8UDO0ovUs7pIXEkmtCPr7BvOVg+3
+	 8F7tBGSmmqkUoZTs+Ss4mwhNfwBZj5G33HkgN9pYUdskD8I1sb8fotOW8J6nFKOaQW
+	 mfEbgVnv4iGcE2t5oDmzO+JhaZwX6rnATPI7nyl0FwFjQukD4zwjDea3rxpxXQrOO/
+	 5O1FuSRx9XbSe/mxxMiSldcxbFos6ztZ5Eet8EdiGTsw/Rm0TpiVZzhi7IPANLX2Aa
+	 zW42KPePS25QRltB5S6rTd8lc4iBV3+WTp0GwT/M5h1W7rF3MUovLPRHINBK3fM34S
+	 akrQcHnGuC22g==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 18 Feb 2025 03:22:19 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <2f33170a-f7bb-47dd-8cb7-15c055dabc83@wanadoo.fr>
+Date: Tue, 18 Feb 2025 11:22:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218014746.166565-2-wangyuquan1236@phytium.com.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] can: ucan: Correct the size parameter
+To: Matt Jan <zoo868e@gmail.com>, Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-can@vger.kernel.org
+References: <67b323a4.050a0220.173698.002b.GAE@google.com>
+ <20250217190404.354574-1-zoo868e@gmail.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250217190404.354574-1-zoo868e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 09:47:46AM +0800, Yuquan Wang wrote:
-> In a nvdimm interleave-set each device with an invalid or zero
-> serial number may cause pmem region initialization to fail, but in
-> cxl case such device could still set cookies of nd_interleave_set
-> and create a nvdimm pmem region.
-> 
-> This adds the validation of serial number in cxl pmem region creation.
-> The event of no serial number would cause to fail to set the cookie
-> and pmem region.
-> 
-> For cxl-test to work properly, always +1 on mock device's serial
-> number.
-> 
-> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+On 18/02/2025 at 04:04, Matt Jan wrote:
+> According to the comment, the size parameter is only required when
+> @dst is not an array, or when the copy needs to be smaller than
+> sizeof(@dst). Since the source is a `union ucan_ctl_payload`, the
+> correct size should be sizeof(union ucan_ctl_payload).
+
+While this fix is correct, I think that the root cause is that
+up->ctl_msg_buffer->raw is not NUL terminated.
+
+Because of that, a local copy was added, just to reintroduce the NUL
+terminating byte.
+
+I think it is better to just directly terminate up->ctl_msg_buffer->raw
+and get rid of the firmware_str local variable and the string copy.
+
+So, what about this:
+
+diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+index 39a63b7313a4..268085453d24 100644
+--- a/drivers/net/can/usb/ucan.c
++++ b/drivers/net/can/usb/ucan.c
+@@ -186,7 +186,7 @@ union ucan_ctl_payload {
+         */
+        struct ucan_ctl_cmd_get_protocol_version cmd_get_protocol_version;
+
+-       u8 raw[128];
++       char fw_info[128];
+ } __packed;
+
+ enum {
+@@ -424,18 +424,19 @@ static int ucan_ctrl_command_out(struct ucan_priv *up,
+                               UCAN_USB_CTL_PIPE_TIMEOUT);
+ }
+
+-static int ucan_device_request_in(struct ucan_priv *up,
+-                                 u8 cmd, u16 subcmd, u16 datalen)
++static void ucan_get_fw_info(struct ucan_priv *up, char *fw_info,
+size_t size)
+ {
+-       return usb_control_msg(up->udev,
+-                              usb_rcvctrlpipe(up->udev, 0),
+-                              cmd,
+-                              USB_DIR_IN | USB_TYPE_VENDOR |
+USB_RECIP_DEVICE,
+-                              subcmd,
+-                              0,
+-                              up->ctl_msg_buffer,
+-                              datalen,
+-                              UCAN_USB_CTL_PIPE_TIMEOUT);
++       int ret;
++
++       ret = usb_control_msg(up->udev, usb_rcvctrlpipe(up->udev, 0),
++                             UCAN_DEVICE_GET_FW_STRING,
++                             USB_DIR_IN | USB_TYPE_VENDOR |
+USB_RECIP_DEVICE,
++                             0, 0, fw_info, size - 1,
++                             UCAN_USB_CTL_PIPE_TIMEOUT);
++       if (ret > 0)
++               fw_info[ret] = '\0';
++       else
++               strcpy(fw_info, "unknown");
+ }
+
+ /* Parse the device information structure reported by the device and
+@@ -1314,7 +1315,6 @@ static int ucan_probe(struct usb_interface *intf,
+        u8 in_ep_addr;
+        u8 out_ep_addr;
+        union ucan_ctl_payload *ctl_msg_buffer;
+-       char firmware_str[sizeof(union ucan_ctl_payload) + 1];
+
+        udev = interface_to_usbdev(intf);
+
+@@ -1527,17 +1527,6 @@ static int ucan_probe(struct usb_interface *intf,
+         */
+        ucan_parse_device_info(up, &ctl_msg_buffer->cmd_get_device_info);
+
+-       /* just print some device information - if available */
+-       ret = ucan_device_request_in(up, UCAN_DEVICE_GET_FW_STRING, 0,
+-                                    sizeof(union ucan_ctl_payload));
+-       if (ret > 0) {
+-               /* copy string while ensuring zero termination */
+-               strscpy(firmware_str, up->ctl_msg_buffer->raw,
+-                       sizeof(union ucan_ctl_payload) + 1);
+-       } else {
+-               strcpy(firmware_str, "unknown");
+-       }
+-
+        /* device is compatible, reset it */
+        ret = ucan_ctrl_command_out(up, UCAN_COMMAND_RESET, 0, 0);
+        if (ret < 0)
+@@ -1555,7 +1544,10 @@ static int ucan_probe(struct usb_interface *intf,
+
+        /* initialisation complete, log device info */
+        netdev_info(up->netdev, "registered device\n");
+-       netdev_info(up->netdev, "firmware string: %s\n", firmware_str);
++       ucan_get_fw_info(up, up->ctl_msg_buffer->fw_info,
++                        sizeof(up->ctl_msg_buffer->fw_info));
++       netdev_info(up->netdev, "firmware string: %s\n",
++                   up->ctl_msg_buffer->fw_info);
+
+        /* success */
+        return 0;
+
+
+> Signed-off-by: Matt Jan <zoo868e@gmail.com>
+> Reported-by: syzbot+d7d8c418e8317899e88c@syzkaller.appspotmail.com
+> Fixes: b3e40fc85735 ("USB: usb_parse_endpoint: ignore reserved bits")
+
+I saw that the bot bisected it to this commit, but I doubt that this is
+correct. In
+
+
+https://lore.kernel.org/linux-can/20250217-spectral-cordial-booby-968731-mkl@pengutronix.de/
+
+Marc pointed out that the issue came from 7fdaf8966aae ("can: ucan: use
+strscpy() to instead of strncpy()"). And I agree with Marc's analysis.
+
 > ---
->  drivers/cxl/pmem.c           | 8 ++++++++
->  tools/testing/cxl/test/mem.c | 2 +-
->  2 files changed, 9 insertions(+), 1 deletion(-)
+>  drivers/net/can/usb/ucan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-> index f9c95996e937..73787afe1b9d 100644
-> --- a/drivers/cxl/pmem.c
-> +++ b/drivers/cxl/pmem.c
-> @@ -383,6 +383,14 @@ static int cxl_pmem_region_probe(struct device *dev)
->  			.position = i,
->  		};
->  		info[i].offset = m->start;
-> +
-> +		if (cxlds->serial == 0) {
-> +			/* include missing alongside invalid in this error message. */
-> +			dev_err(dev, "%s: invalid or missing serial number\n",
-> +				dev_name(&cxlmd->dev));
-> +			rc = -ENXIO;
-> +			goto out_nvd;
-> +		}
-
-Should we do the check earlier in the code? 
-For example, right below if (!nvdimm) {}
-
-Fan
-
->  		info[i].serial = cxlds->serial;
+> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+> index 39a63b7313a4..1ccef00388ae 100644
+> --- a/drivers/net/can/usb/ucan.c
+> +++ b/drivers/net/can/usb/ucan.c
+> @@ -1533,7 +1533,7 @@ static int ucan_probe(struct usb_interface *intf,
+>  	if (ret > 0) {
+>  		/* copy string while ensuring zero termination */
+>  		strscpy(firmware_str, up->ctl_msg_buffer->raw,
+> -			sizeof(union ucan_ctl_payload) + 1);
+> +			sizeof(union ucan_ctl_payload));
+>  	} else {
+>  		strcpy(firmware_str, "unknown");
 >  	}
->  	ndr_desc.num_mappings = cxlr_pmem->nr_mappings;
-> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-> index 8d731bd63988..9e098cf06603 100644
-> --- a/tools/testing/cxl/test/mem.c
-> +++ b/tools/testing/cxl/test/mem.c
-> @@ -1533,7 +1533,7 @@ static int cxl_mock_mem_probe(struct platform_device *pdev)
->  	mds->event.buf = (struct cxl_get_event_payload *) mdata->event_buf;
->  	INIT_DELAYED_WORK(&mds->security.poll_dwork, cxl_mockmem_sanitize_work);
->  
-> -	cxlds->serial = pdev->id;
-> +	cxlds->serial = pdev->id + 1;
->  	if (is_rcd(pdev))
->  		cxlds->rcd = true;
->  
-> -- 
-> 2.34.1
-> 
+
+Yours sincerely,
+Vincent Mailhol
+
 
