@@ -1,225 +1,202 @@
-Return-Path: <linux-kernel+bounces-518865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-518866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E621A39580
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:34:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95533A39597
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 09:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9077A7A129E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BBA43ABBAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 08:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D322B8C1;
-	Tue, 18 Feb 2025 08:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C696222B8C7;
+	Tue, 18 Feb 2025 08:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRb3c/EY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBI0lgny"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC8B14A614;
-	Tue, 18 Feb 2025 08:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEE222B5B5;
+	Tue, 18 Feb 2025 08:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739867682; cv=none; b=WoPLceaFPTKdP5b4HO5sQ2B7XfnmHiikhKVStXnGplfnMTg6X3TbSjvxaltIF5mMT4BwRJE6pQ5Xdi/NT54BrLPUWGhAmblgn+dn6GH+3mY3Cft1a3ao2Y5vwrQZ+CG7tsDrLfgRGk2CmTZ/8Dk5IxRBEuwWQOWmCsiDD+vD+0U=
+	t=1739867759; cv=none; b=B7RPv+5TschB4Y/cudasCGvkZu+IqpBMOqNEIZ7qsc4dVODif7Tt1FWwwb3TtX4S6Q8LXijlQOKNnuK3McPQjidT/9XKWo/ysdpPrrc1qNb0tc5BCeHNg01aXftjGnhWa48fnktZZvfMYH41MsdJqwvfg47IuRuUqNV8p05QuD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739867682; c=relaxed/simple;
-	bh=eq2r3EqfURpJDfyUrO6e7ReKUX5wIYAdUMSspXkp1uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W0rfeZEOwbYmEfwXPhdModvLLBd8bAEnk737EuasDtMsEJC2p+ggJxElNPsf+G/qW+eS2bTEuPiWmHUXKqxCEOeF/iuCYuFIspQpHdqGgBIDE3iGrBYkS3Idy8lqe92Z1tjHUXBtE38ArcPEyTysijcShrFugi5XLn95ymAwzvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRb3c/EY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209BBC4CEE2;
-	Tue, 18 Feb 2025 08:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739867681;
-	bh=eq2r3EqfURpJDfyUrO6e7ReKUX5wIYAdUMSspXkp1uc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TRb3c/EY/sJVCKw71472WLrZ4IEMuF8E8vTFPp4HbRW9WZO88B7ruAIJPTIrVy64z
-	 N1GPzNO+6ef9OaJDenL1YYP9DE2aNb9fkoBDh6C9iA86Caoa8O7iFNBfBowPTLeBK9
-	 BjFwJ56Qo9zL1vyTduZmFrRtZg7sns95U0oJ/DnPuMRjHORsim0gx311cauOTMJjHW
-	 t8K/Ql/2sQFPhaazeBqsy+nS/mbSVFTTrEMRHw1fdpq5OflgFlupFy7e+Kr6lNbq3t
-	 xWYuxx8DRjWXg7VLp1T27oDj7HndVV9ZAbt/uMQDvJD5QsBM+rllQQ7e11U4ehwudk
-	 H1/5fel3iKPSA==
-Message-ID: <29a8e7ec-dabc-4cc1-a262-676ebd838dfd@kernel.org>
-Date: Tue, 18 Feb 2025 09:34:34 +0100
+	s=arc-20240116; t=1739867759; c=relaxed/simple;
+	bh=sFfR4eIGWeqHKx7p9Z7iGt8U9lbfIZhokJqUsiq2T+U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c4wZpni1u+DnBF+2h8omPUsiiWcPSeC4Ow9U/D2cyUww+G1tiFSXp/JfsgfBfbBlrxk3WmsgN6hI4SHGmvNOfXp9MUHrafS7O0o+IlIruMQYyCeH5I7Ds1d4E63Q9zT//0sNV+HZb11ZxmDPkEPur0XIjBmYeIpX7k3gM18zZtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBI0lgny; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220d601886fso67179155ad.1;
+        Tue, 18 Feb 2025 00:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739867755; x=1740472555; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UasE+6v+LUcf32VIrcU6EoAVg1auG4g+9EdoM3brOBo=;
+        b=RBI0lgny2etZKy14RL4P4jbdcgoq9dJr6uzCT2VVAVhUDWxS1RI6Dp7oKaQxF4B0Mn
+         O/MjK1UXmNPPtMSyjkdmDCopD7o/ir5VyJcXv6mRTv12C7F7mVHFVEshYkWKiEWrVucD
+         zwHBeZ298EpUYpA92tuzJy8g+fIbYAwDARX+eKJ/FIwt4SXqazP0Rf7rf4xKMTssKYbs
+         s7yqph6AHHnzdmGwFwPlmHu8ndgSTzvILIMrnHtQ/WfqKatE+dJdaUmDXQpiU716cPqr
+         HCOd34D43MoR+2MmdIDzy5qslBswxOD+3LX4IOCqCXAawW5YO6IOFdzy2tkiWFZNG0YX
+         osQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739867755; x=1740472555;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UasE+6v+LUcf32VIrcU6EoAVg1auG4g+9EdoM3brOBo=;
+        b=nN154iNHcjCfizDnHYxjP7r3PEREfOQnFiS5d5uYgnL4byP4uGoEfWuzmhcqfuCtwE
+         xC263KQajc14w7JkZX8ht+PPsZBPdRSm4SNBUUijRYK2N9b4d5eXAG/ryEZXh9lB7gAk
+         LgJ5WynnZyWnQ8wSVqDLJUjART80mkcSw/oEB/9w7epSpQIItWrviL8f0FgaicXoscq2
+         lHf36vFrT4pdmoC0WRtLDAGd/R+4LZi7L9EXs1+iS1fhjIGbcXnta/Ba/WUvp9n9B5MP
+         PeEi3ObuYfJqgIzjBAIaQE5h9VUCwFEoZPuTlCGNfQjZqfFCMpq6t02F/3qmfFdTAdeZ
+         FeGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq59epElPHa1auVY/8eZUvkVrzCaHwlR9sZDQVj87x20DyfHBLQ8LURczC2GugShGU/2jufIG7cy9D2Bc=@vger.kernel.org, AJvYcCVPDa9kA8CrWuh3PDg6fpCXUoDGVcO9yqzgdi0slySKSB9S6IMhVe+jRivnO6fYbFKNAeH2F/924i8SKiuO@vger.kernel.org, AJvYcCWyXDcX05MS3oD9McMvZ35jVCJHdUjyGeWZxuipAcoSeYDKBrnvCsPHdqyiK8P72UJiVFvDlR2Rxuqe@vger.kernel.org, AJvYcCXGvkpG3Qm7RwFXmqy8Cl5/T+0yD41hZ4r0wu5R5KZgzjF1MIhzCaLte/s3TcvvO95rNFzOr7D2i89EToc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIUfkzKohPVe4DvUQxQJJxpYBHaKjBZhIZ/ykaj2IVTpDsBSEb
+	SaptPmzHuXT8/SFbqyFtZWB3hZFprbpS/j+Tlo0HvanOMyvY4QA+EgTtvoIc
+X-Gm-Gg: ASbGncvU14apvlqwDD8AuoWw9RuQGvE1/1Yao3gIWa1NTxJp5VlBpFH6UOyVw8CO8Z+
+	x0AB0tIfWL/PhpaySFGufw+v2A/Wn1P97Ut3n3jrF0iT1nC3PNsOyK4fZ66WAuPA4NlJALNp6AB
+	OleCWY+EgtgditLahGyGM3prpz2zcB07ffTBsP347v2sD/LzUsfPbLoJut5tsMZFjAxIIl/Q/30
+	QaDncjhFxsq/zRW69vP1uxX8FTj3Qk60iMGT4lN5ON0HOlbVHsTc1wUBXBxXMouWdEw0cmZeDe8
+	lOErEOdnCAOz7Mnl3pjISckTwL992FBNHbis2QvOg4V6IR5ziI7LBGPf2Kgj4AB6opzDM6QG5AR
+	TcroYqUpu4A==
+X-Google-Smtp-Source: AGHT+IFTu0Jt5oOB7cldX3rIsFRKzoyx1f3pziHi+TW8B5xeOECKaq3mlWTAmJ4KLKYw1e8wd/mIAA==
+X-Received: by 2002:a62:b403:0:b0:732:6221:edea with SMTP id d2e1a72fcca58-7326221ee7dmr17780715b3a.3.1739867755169;
+        Tue, 18 Feb 2025 00:35:55 -0800 (PST)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae1ee4febb2sm787325a12.51.2025.02.18.00.35.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 00:35:54 -0800 (PST)
+From: James Calligeros <jcalligeros99@gmail.com>
+Subject: [PATCH v2 00/29] ASoC: tas27{64,70}: improve support for Apple
+ codec variants
+Date: Tue, 18 Feb 2025 18:35:34 +1000
+Message-Id: <20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
-To: Matthew Majewski <mattwmajewski@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250212170901.3881838-1-mattwmajewski@gmail.com>
- <20250212170901.3881838-2-mattwmajewski@gmail.com>
- <5e9432d7-0be1-4d98-9a61-cd288e53e772@kernel.org>
- <91fbc8f06f4d57f5e3d25dfec99e2fdb76b0a4cb.camel@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <91fbc8f06f4d57f5e3d25dfec99e2fdb76b0a4cb.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFZGtGcC/22NwQ6CMBBEf4Xs2TV0pTV48j8MB2hX2ARo0xqiI
+ fy7FePN45vMvFkhcRROcClWiLxIEj9noEMBdmjnnlFcZqCSdEmqwjaEkdF6xxa/jYSGjTbOKqb
+ KQV6GyHd57tZbk3mQ9PDxtZ8s6pP+fPqvb1FY4plO2tQdqU7V135qZTxaP0GzbdsbcCaiMrYAA
+ AA=
+X-Change-ID: 20250214-apple-codec-changes-6e656dc1e24d
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3697;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=sFfR4eIGWeqHKx7p9Z7iGt8U9lbfIZhokJqUsiq2T+U=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOlb3OJnzm4P15/epLjK71BgXt5frehfYvNXmwapilpNS
+ Tiw7fyGjlIWBjEuBlkxRZYNTUIes43YbvaLVO6FmcPKBDKEgYtTACay4jkjw53uyNUXn0iEmcfq
+ 8YhF9yi8MQ+XPiPnrd9ycd6aF0yu6owMM9dVnehcscPowLvZ38qUylk3fQniTZZIfXB/sceZ9Cv
+ nmQA=
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-On 12/02/2025 23:29, Matthew Majewski wrote:
-> Hi Krzysztof, thanks for the quick feedback. 
-> 
-> On Wed, 2025-02-12 at 18:22 +0100, Krzysztof Kozlowski wrote:
->> On 12/02/2025 18:09, Matthew Majewski wrote:
->>> Create a new yaml schema file to describe the device tree bindings
->>> for
->>> the generic m2m-deinterlace driver.
->>
->>
->> Bindings are for hardware, not drivers, and usually not generic.
->>
-> 
-> Ok, I'll change the wording from "driver" to "device" in V2.
-> 
->> Please describe here exemplary devices.
-> 
-> The m2m-deinterlace device can be used on any hardware that provides a
-> MEM_TO_MEM and interleaved capable dma channel. I'll note that in the
-> commit message for V2 as well.
+Hi all,
 
-I asked to give names of actual hardware you are writing bindings for.
+This series introduces a number of changes to the drivers for
+the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+introduce (and improve in the case of TAS2770) support for the
+variants of these amps found in Apple Silicon Macs.
 
-> 
->>>
->>> +description: |
->>> +  A generic memory2memory device for deinterlacing video
->>> +  using dmaengine.
->>
->> And what is this generic device supposed to do? What fits to generic
->> device?
->>
-> 
-> The term "generic" was taken from the driver description. It's generic
-> insofar as it only relies on the dmaengine API for processing (and
-> hence is relatively platform agnostic).
-> 
-> I will add more information about the device in the description for V2.
-> I'll also mention that it's intended for converting between interlaced
-> and non-interlaced formats by line-doubling. 
-> 
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: m2m-deinterlace
->>> +
->>> +  dma-names:
->>> +    items:
->>> +      - const: rxtx
->>> +
->>> +  dmas:
->>> +    items:
->>> +      - description: mem-to-mem capable DMA channel
->>> +
->>> +required:
->>> +  - compatible
->>> +  - dma-names
->>> +  - dmas
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    m2m-deinterlace {
->>> +        compatible = "m2m-deinterlace";
->>> +        dma-names = "rxtx";
->>> +        dmas = <&edma 20 0>;
->>
->>
->> This all looks rather like bindings for driver and not even quite
->> generic because looks quite simple. I guess media folks will provide
->> more input, but anyway it looks a bit not-DT-enough.
->>
->>> +    };
-> 
-> Yes, the bindings are much simpler than a typical media device, but
-> that is because the m2m-deinterlace device only needs to be provided a
-> handle to a dma channel to function properly. My reasoning for adding 
+Apple's variant of TAS2764 is known as SN012776, and as always with
+Apple is a subtly incompatible variant with a number of quirks. It
+is not publicly available. The TAS2770 variant is known as TAS5770L,
+and does not require incompatible handling.
 
-Really only this? How do you reset the device? How do you clock it (or
-does it come with internal oscillator?) How do you program anything
-there if there are no resources?
+Much as with the Cirrus codec patches, I do not
+expect that we will get any official acknowledgement that these parts
+exist from TI, however I would be delighted to be proven wrong.
 
+This series has been living in the downstream Asahi kernel tree[1]
+for over two years, and has been tested by many thousands of users
+by this point[2].
 
-> dt-bindings for this device is because it is a consumer of a dma-
-> channel and the dt bindings are a platform-agnostic way to be able to
-> provide a specific dma channel to the device.
-> 
-> As an example, say on an embedded device I have a dma controller which
-> provides multiple interleaved MEM_TO_MEM capable channels. I want the
+[1] https://github.com/AsahiLinux/linux/tree/asahi-wip
+[2] https://stats.asahilinux.org/
 
-I asked about the names already, still nothing.
+---
+Changes in v2:
+- Changed author field of patch to match Martin's Signed-off-by
+- Added Neal's Reviewed-by to reviewed patches
+- Moved fixes to existing code to the top of the series
+- Removed tas2764's explicit dependency on OF
+- Removed complicated single-use tas2764 quirks macro and replaced with
+  if block
+- Added hwmon interface for codec die temp
+- Fixed a malformed commit message
+- Link to v1: https://lore.kernel.org/r/20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com
 
-> m2m-deinterlace device to consume one particular channel because it is
-> higher-priority than the others. With these dt-bindings I can simply
-> specify the correct dma channel that should be used. Without the
-> device-tree bindings I would have to manually edit the driver to filter
-> for the correct dma channel to be used, but then the device is no
-> longer "generic".
-> 
-> It would be helpful to hear what the media people have to say about it.
+---
+Hector Martin (14):
+      ASoC: tas2764: Fix power control mask
+      ASoC: tas2770: Fix volume scale
+      ASoC: tas2764: Enable main IRQs
+      ASoC: tas2764: Power up/down amp on mute ops
+      ASoC: tas2764: Add SDZ regulator
+      ASoC: tas2764: Add reg defaults for TAS2764_INT_CLK_CFG
+      ASoC: tas2764: Mark SW_RESET as volatile
+      ASoC: tas2764: Wait for ramp-down after shutdown
+      ASoC: tas2770: Add SDZ regulator
+      ASoC: tas2770: Power cycle amp on ISENSE/VSENSE change
+      ASoC: tas2770: Add zero-fill and pull-down controls
+      ASoC: tas2770: Support setting the PDM TX slot
+      ASoC: tas2764: Set the SDOUT polarity correctly
+      ASoC: tas2770: Set the SDOUT polarity correctly
 
-Then wait before sending new version.
+James Calligeros (4):
+      ASoC: dt-bindings: tas27xx: add compatible for SN012776
+      ASoC: dt-bindings: tas2770: add compatible for TAS5770L
+      ASoC: tas2770: expose die temp to hwmon
+      ASoC: tas2764: expose die temp to hwmon
 
+Martin Povišer (11):
+      ASoC: tas2764: Extend driver to SN012776
+      ASoC: tas2764: Add control concerning overcurrent events
+      ASoC: tas2770: Factor out set_ivsense_slots
+      ASoC: tas2770: Fix and redo I/V sense TDM slot setting logic
+      ASoC: tas2764: Reinit cache on part reset
+      ASoC: tas2764: Configure zeroing of SDOUT slots
+      ASoC: tas2764: Apply Apple quirks
+      ASoC: tas2764: Raise regmap range maximum
+      ASoC: tas2770: Export 'die_temp' to sysfs
+      ASoC: tas2764: Export 'die_temp' to sysfs
+      ASoC: tas2764: Crop SDOUT zero-out mask based on BCLK ratio
 
+ .../bindings/sound/ti,tas2770.yaml       |   1 +
+ .../bindings/sound/ti,tas27xx.yaml       |   1 +
+ sound/soc/codecs/tas2764-quirks.h        | 180 ++++++++++++
+ sound/soc/codecs/tas2764.c               | 368 ++++++++++++++++++++++---
+ sound/soc/codecs/tas2764.h               |  29 +-
+ sound/soc/codecs/tas2770.c               | 333 ++++++++++++++++++----
+ sound/soc/codecs/tas2770.h               |  20 ++
+ 7 files changed, 839 insertions(+), 93 deletions(-)
+---
+base-commit: cc7708ae5e2aab296203fcec774695fc9d995f48
+change-id: 20250214-apple-codec-changes-6e656dc1e24d
 
 Best regards,
-Krzysztof
+-- 
+James Calligeros <jcalligeros99@gmail.com>
+
 
