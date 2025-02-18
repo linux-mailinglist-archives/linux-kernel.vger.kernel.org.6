@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-520229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E36A3A73E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:21:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BE2A3A745
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D89188D627
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15980188D96A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D0F17A308;
-	Tue, 18 Feb 2025 19:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3C217A31B;
+	Tue, 18 Feb 2025 19:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBmWdgaT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="acDAABgY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617217A316
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD3621B9C7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906479; cv=none; b=t0eRT9PGi7E5TIv57W6P916iLCyplIWNhiYbfTFuJBymwXmn7dnO7Im6DGqcyMEVM4EkKDcUY/EjbXAaIcPnP4BWOSz7cvGfeN8eujyhryWs9YWtf+5bJX4Z/sUxkFWe0TIcrC5WtIMuXrfwuBXqHqT9t7uH3uBrqwETVs8lvfw=
+	t=1739906583; cv=none; b=O2tZruHvy1PPszMPrZkqQsZ5vN+acm5KGDgYKHK/g8XncKa29VilWoc0kvIEcdoub3ld42c2NJxw/MxhUgePPyx7IcAR9MdTX9gx+ipxakoKnqP+MDzICi5+rcUD9HhjmIj1WtZRJvPTqG7R/ovzJVzyzqtuHXtkFTk7sltTywo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906479; c=relaxed/simple;
-	bh=A3ESgJ41derz8AXMorRdi10dEEcFuyL3g1FcUWdqVV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibnXUTZU0B4YgSI63rF5L7xe1A4fBpt+o+wHE8Db8DULvNjRRTtB4FIwAkn1yEmiZOpAYu5Yz/KBwyQEtNMsPVv/Ljurx6MySi2bw3ce6ExauOsWPiAdQ6eI33zNR4dwpCu6nigmUiWG9BhuzYD+O707ECGjpk2Pb58XPi/WxjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBmWdgaT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3720AC4CEE4;
-	Tue, 18 Feb 2025 19:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739906479;
-	bh=A3ESgJ41derz8AXMorRdi10dEEcFuyL3g1FcUWdqVV4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KBmWdgaTXjJ0cUlvYWGHpasiUPDRR1+PuCQajh8r9iMaD6u8TR3v1DXEJ1n5a7fdi
-	 tqrS/6WirPSsrN58EbJzgrze5ZuomngBdBCUAmCFYu6A53OgQL5s7IMtJ8iKtUWMZC
-	 bkea2w9hef//n8nnEXlUpo3VHv7aGRWYu3eopz9aK8GVA+9BeE83Wt5BzkS5hu1TTT
-	 pgLmXer9G9AaWsrdkJb7VfxOLXx4iuyYr6ab6EmJNoCB7GzIa4A9XuE6UiFnRlp0jb
-	 GiYdzF7mUhf3OecJVPcFFcibzPkpb7VrJ6pQL0UNoLGWgvdk7wq52M7bcyMgdym9wO
-	 xFWLPVTEXzryA==
-Date: Tue, 18 Feb 2025 09:21:18 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: syzbot <syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] kernfs: Drop kernfs_rwsem while invoking
- lookup_positive_unlocked().
-Message-ID: <Z7TdrqJPJh1efhld@slm.duckdns.org>
-References: <67b45276.050a0220.173698.004f.GAE@google.com>
- <20250218163938.xmvjlJ0K@linutronix.de>
+	s=arc-20240116; t=1739906583; c=relaxed/simple;
+	bh=swGB3xGE9Yoh2kRKbPlYsUFSqqbPDflfTARdV/Ubt4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s/fFWGJyvHDlvl0yFTkoueHgM28F7M06Srx8D86eLfuskQXJ0zLSt1s/Cq5zWwWiG8wzVgzAawPp3isjDvgvumeKxbKtMkJeDd25IeS4I1mJH4htlu3CStM02eC1e3nBttZJVhKex4aczZyKbIrQ3fUSXSLxpVDFV2DhsXQhPqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=acDAABgY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739906581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YaNAwOy0l3tTCLhav17cAtoV5hBrzuMcbhO7CyzKHR8=;
+	b=acDAABgYj/WJ2FN12YBco4I2LTnsy4/TvM2PNcl/mlFw+i6LGctPkPOQbmLVYR3Tk6lKdr
+	hh+Dt7WzgOcJ2fVGJAdmBOtPaR1kVAZODTo7lYYbw7areuk9kVMJtYJ+VnjYCQzBR0P4kC
+	CaEWQTx5bkJAdvkqsASYPvG/HsnIBGg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-D2-hc7eYN4mzExwpWZUUqQ-1; Tue,
+ 18 Feb 2025 14:22:57 -0500
+X-MC-Unique: D2-hc7eYN4mzExwpWZUUqQ-1
+X-Mimecast-MFC-AGG-ID: D2-hc7eYN4mzExwpWZUUqQ_1739906576
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 213F5180087B;
+	Tue, 18 Feb 2025 19:22:56 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.9])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1538E180087C;
+	Tue, 18 Feb 2025 19:22:52 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/5] rxrpc, afs: Miscellaneous fixes
+Date: Tue, 18 Feb 2025 19:22:43 +0000
+Message-ID: <20250218192250.296870-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218163938.xmvjlJ0K@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Feb 18, 2025 at 05:39:38PM +0100, Sebastian Andrzej Siewior wrote:
-> syzbot reported two warnings:
-> - kernfs_node::name was accessed outside of a RCU section so it created
->   warning. The kernfs_rwsem was held so it was okay but it wasn't seen.
-> 
-> - While kernfs_rwsem was held invoked lookup_positive_unlocked()->
->   kernfs_dop_revalidate() which acquired kernfs_rwsem.
-> 
-> kernfs_rwsem was both acquired as a read lock so it can be acquired
-> twice. However if a writer acquires the lock after the first reader then
-> neither the writer nor the second reader can obtain the lock so it
-> deadlocks.
-> 
-> The reason for the lock is to ensure that kernfs_node::name remain
-> stable during lookup_positive_unlocked()'s invocation. The function can
-> not be invoked within a RCU section because it may sleep.
-> 
-> Make a temporary copy of the kernfs_node::name under the lock so
-> GFP_KERNEL can be used and use this instead.
-> 
-> Reported-by: syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com
-> Fixes: 5b2fabf7fe8f ("kernfs: Acquire kernfs_rwsem in kernfs_node_dentry().")
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Here are some miscellaneous fixes for rxrpc and afs:
 
-Acked-by: Tejun Heo <tj@kernel.org>
+ (1) In the rxperf test server, make it correctly receive and decode the
+     terminal magic cookie.
 
-Thanks.
+ (2) In rxrpc, get rid of the peer->mtu_lock as it is not only redundant,
+     it now causes a lockdep complaint.
 
--- 
-tejun
+ (3) In rxrpc, fix a lockdep-detected instance where a spinlock is being
+     bh-locked whilst irqs are disabled.
+
+ (4) In afs, fix the ref of a server displaced from an afs_server_list
+     struct.
+
+ (5) In afs, make afs_server records belonging to a cell take refs on the
+     afs_cell record so that the latter doesn't get deleted first when that
+     cell is being destroyed.
+
+David
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
+
+David Howells (5):
+  rxrpc: rxperf: Fix missing decoding of terminal magic cookie
+  rxrpc: peer->mtu_lock is redundant
+  rxrpc: Fix locking issues with the peer record hash
+  afs: Fix the server_list to unuse a displaced server rather than
+    putting it
+  afs: Give an afs_server object a ref on the afs_cell object it points
+    to
+
+ fs/afs/server.c            |  3 +++
+ fs/afs/server_list.c       |  4 ++--
+ include/trace/events/afs.h |  2 ++
+ net/rxrpc/ar-internal.h    |  1 -
+ net/rxrpc/input.c          |  2 --
+ net/rxrpc/peer_event.c     |  9 +--------
+ net/rxrpc/peer_object.c    |  5 ++---
+ net/rxrpc/rxperf.c         | 12 ++++++++++++
+ 8 files changed, 22 insertions(+), 16 deletions(-)
+
 
