@@ -1,194 +1,159 @@
-Return-Path: <linux-kernel+bounces-519872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62383A3A2FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:38:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE447A3A304
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7A41887117
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52453A649A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 16:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861CF26D5CA;
-	Tue, 18 Feb 2025 16:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EF326B2D3;
+	Tue, 18 Feb 2025 16:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KKRfTfOd"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sxquo0ol";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F29KfG2U"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20EA14A4E7;
-	Tue, 18 Feb 2025 16:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF1414A4E7
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 16:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739896700; cv=none; b=OHbhLbudB0clcEd9nakVxfaoDRePNZ3Lt8B6VinIaQRm/eAJe2rzjaghoozWf8vQ5AbOBKjc/nqGGoal8knjfrSqmrgD6GcKL/k1mgOBSGAl5ZLwZgzvgpGf/Q/E8WUFZkE76KQ5Y7ILFAX56mwqzVb4t2tfrWkmpz+ywQNmCJs=
+	t=1739896783; cv=none; b=ss4GVdBV/zL3nfkGUtWppNTRDW3lLvl/nGyfCH16RDg0tpFXt/STzOEKuE7rHX5CTwWbdILNGzaCOKji8g6dPpf1vg81MjMERazRxZCXAeGEiiQYfrui/SCwIMJcKI+3Nolh4JfqZFCzuYO1QTygGXD0HrtCYlCNEzQmEyrdW30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739896700; c=relaxed/simple;
-	bh=qfjbUEQVSAjORcsYvRblhPjvSkUFBE/tBDvnhli6w40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=r/KXL3ajKSD7dERu8dlgQ5kpAEVv8ixF3wE63TSQCY+JNKDMjj9+nSvz1p2qEnnSVcUVQA6A7ecsRRvS+ciOYdNEipyp9FAl4oMUv1mUoRwuzRSfpWrUAezjw+bSBT8O7XmuqIZIQqueKOlNusolGqNlsBIvm5/qKuNNHK86Klk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KKRfTfOd; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51IGc83e041546
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 10:38:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1739896688;
-	bh=Hw+iVjuNQRNJjxBZXs0mx0TPrXxm7dAC+OqYhvCNa3Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KKRfTfOdk3XpLz8T9SlU1aeyDwv9gU74vFPAS8xIvUJ1XYaso0SHSru/taZ/Xz+4r
-	 mckj3Ap/ROIIvbMdt/u8yQSMwh0rSxtuS4oDKH9aJSMBBTYvo8M9g32V22ljb+T5yd
-	 uS349yQadV1phbiKJYGjE5i6wr7okwOgiLQ+8+VU=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51IGc89D061175
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Feb 2025 10:38:08 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Feb 2025 10:38:07 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Feb 2025 10:38:07 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51IGc7kv007827;
-	Tue, 18 Feb 2025 10:38:07 -0600
-Message-ID: <04e77daf-e775-44fa-82bf-8b6ebf73bcef@ti.com>
-Date: Tue, 18 Feb 2025 10:38:07 -0600
+	s=arc-20240116; t=1739896783; c=relaxed/simple;
+	bh=HDJc7RtypDDPooB5e73rQOHBIRa4tufRX1lQCVmM6hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgJN7syuKoV22ZZOgjq1NGsqRZ8FzWf1FCSv6pNXv5Qq8dQO+s8+EMFw4mpVwePjXoHEoV0qN4Pom3jyvSw+dTygirFpcek31Pux499L/XiG0yjf3/L13waDdWzMUyFUkvwx6h8J2xrIPFhR4/ig4yNy0EL5tf48n2DHObr/LEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sxquo0ol; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F29KfG2U; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Feb 2025 17:39:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1739896780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jplqvq9GdJOIcNd8y7Q+I1v34nlxrE0UMCPpI6JRAy0=;
+	b=sxquo0olvHfg6ZLQrRK9a6jV+isPC4AxTWxinAp2m2c4goW35qpSsfIiKRDJr2CTxYJKlY
+	vVX2FzOHE15XN+G1Mig7kARR46t0Q3nXP7SJAjdVzLq16VOUlNJG25bGlMOMxNjXsA3j8r
+	p2azbaP1EmLb29MM9HwNSpAXelpQK4WoYHGb+DoUV/1vUXV31os0jF0VoPfEgDg7gFuC2g
+	43t0mHMFKB+Cgu6Rd3ta2y4YbL2ZxA2Kd5weaijtwPm9tbRiVh786NGl653th0RL0wGQVL
+	sz62KRWUJ9Po8+9SL64FFZfz4sFV826wfN4kWaidDSpBnNVQhVFyL2Bi+NXigw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1739896780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jplqvq9GdJOIcNd8y7Q+I1v34nlxrE0UMCPpI6JRAy0=;
+	b=F29KfG2U2uBQZdShRtGAIZfnCAHMy6m9mIPCAMKQQICoceeUlHJCESeun0as5H87r1xar4
+	/cjY+2G+/LBTWqAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: syzbot <syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tj@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] kernfs: Drop kernfs_rwsem while invoking
+ lookup_positive_unlocked().
+Message-ID: <20250218163938.xmvjlJ0K@linutronix.de>
+References: <67b45276.050a0220.173698.004f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/10] arm64: dts: ti: k3-am62p5-sk: Enable IPC with
- remote processors
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla
-	<hnagalla@ti.com>
-References: <20250210221530.1234009-1-jm@ti.com>
- <20250210221530.1234009-7-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250210221530.1234009-7-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67b45276.050a0220.173698.004f.GAE@google.com>
 
-On 2/10/25 4:15 PM, Judith Mendez wrote:
-> From: Devarsh Thakkar <devarsht@ti.com>
-> 
-> For each remote proc, reserve memory for IPC and bind the mailbox
-> assignments. Two memory regions are reserved for each remote processor.
-> The first region of 1MB of memory is used for Vring shared buffers
-> and the second region is used as external memory to the remote processor
-> for the resource table and for tracebuffer allocations.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> Changes since v4:
-> - Drop SRAM node for am62px MCU R5fSS0 core0
-> ---
->   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 50 ++++++++++++++++++++++---
->   1 file changed, 44 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> index ad71d2f27f538..9609727d042d3 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> @@ -48,6 +48,30 @@ reserved-memory {
->   		#size-cells = <2>;
->   		ranges;
->   
-> +		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9b900000 0x00 0xf00000>;
-> +			no-map;
-> +		};
-> +
-> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9c800000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		wkup_r5fss0_core0_memory_region: r5f-memory@9c900000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9c900000 0x00 0x1e00000>;
+syzbot reported two warnings:
+- kernfs_node::name was accessed outside of a RCU section so it created
+  warning. The kernfs_rwsem was held so it was okay but it wasn't seen.
 
-0x1e00000?
+- While kernfs_rwsem was held invoked lookup_positive_unlocked()->
+  kernfs_dop_revalidate() which acquired kernfs_rwsem.
 
-Yes I know you didn't add this and are just coping it from below, but it
-is still an issue. I see the same problem for the next patch, the R5F memory
-size is 0xc00000??
+kernfs_rwsem was both acquired as a read lock so it can be acquired
+twice. However if a writer acquires the lock after the first reader then
+neither the writer nor the second reader can obtain the lock so it
+deadlocks.
 
-Every remote core gets 15MB (0xf00000), this has been true for all K3, and
-all cores, DSP, R5F, M4, etc.. You even do it correct for the MCU R5F above,
-but the WKUP R5F on AM62P and AM62 are just randomly given 30M and 12MB?
+The reason for the lock is to ensure that kernfs_node::name remain
+stable during lookup_positive_unlocked()'s invocation. The function can
+not be invoked within a RCU section because it may sleep.
 
-Andrew
+Make a temporary copy of the kernfs_node::name under the lock so
+GFP_KERNEL can be used and use this instead.
 
-> +			no-map;
-> +		};
-> +
->   		secure_tfa_ddr: tfa@9e780000 {
->   			reg = <0x00 0x9e780000 0x00 0x80000>;
->   			no-map;
-> @@ -57,12 +81,6 @@ secure_ddr: optee@9e800000 {
->   			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
->   			no-map;
->   		};
-> -
-> -		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-> -			compatible = "shared-dma-pool";
-> -			reg = <0x00 0x9c900000 0x00 0x01e00000>;
-> -			no-map;
-> -		};
->   	};
->   
->   	vmain_pd: regulator-0 {
-> @@ -638,6 +656,26 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
->   	};
->   };
->   
-> +&wkup_r5fss0 {
-> +	status = "okay";
-> +};
-> +
-> +&wkup_r5fss0_core0 {
-> +	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-> +			<&wkup_r5fss0_core0_memory_region>;
-> +};
-> +
-> +&mcu_r5fss0 {
-> +	status = "okay";
-> +};
-> +
-> +&mcu_r5fss0_core0 {
-> +	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
-> +	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-> +			<&mcu_r5fss0_core0_memory_region>;
-> +};
-> +
->   &main_uart0 {
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&main_uart0_pins_default>;
+Reported-by: syzbot+ecccecbc636b455f9084@syzkaller.appspotmail.com
+Fixes: 5b2fabf7fe8f ("kernfs: Acquire kernfs_rwsem in kernfs_node_dentry().")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ fs/kernfs/mount.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index d1f512b7bf867..f1cea282aae32 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -220,12 +220,19 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
+ 		return dentry;
+ 
+ 	root = kernfs_root(kn);
+-	guard(rwsem_read)(&root->kernfs_rwsem);
+-
+-	knparent = find_next_ancestor(kn, NULL);
+-	if (WARN_ON(!knparent)) {
+-		dput(dentry);
++	/*
++	 * As long as kn is valid, its parent can not vanish. This is cgroup's
++	 * kn so it not have its parent replaced. Therefore it is safe to use
++	 * the ancestor node outside of the RCU or locked section.
++	 */
++	if (WARN_ON_ONCE(!(root->flags & KERNFS_ROOT_INVARIANT_PARENT)))
+ 		return ERR_PTR(-EINVAL);
++	scoped_guard(rcu) {
++		knparent = find_next_ancestor(kn, NULL);
++		if (WARN_ON(!knparent)) {
++			dput(dentry);
++			return ERR_PTR(-EINVAL);
++		}
+ 	}
+ 
+ 	do {
+@@ -235,14 +242,22 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
+ 
+ 		if (kn == knparent)
+ 			return dentry;
+-		kntmp = find_next_ancestor(kn, knparent);
+-		if (WARN_ON(!kntmp)) {
+-			dput(dentry);
+-			return ERR_PTR(-EINVAL);
++
++		scoped_guard(rwsem_read, &root->kernfs_rwsem) {
++			kntmp = find_next_ancestor(kn, knparent);
++			if (WARN_ON(!kntmp)) {
++				dput(dentry);
++				return ERR_PTR(-EINVAL);
++			}
++			name = kstrdup(kernfs_rcu_name(kntmp), GFP_KERNEL);
++		}
++		if (!name) {
++			dput(dentry);
++			return ERR_PTR(-ENOMEM);
+ 		}
+-		name = rcu_dereference(kntmp->name);
+ 		dtmp = lookup_positive_unlocked(name, dentry, strlen(name));
+ 		dput(dentry);
++		kfree(name);
+ 		if (IS_ERR(dtmp))
+ 			return dtmp;
+ 		knparent = kntmp;
+-- 
+2.47.2
+
 
