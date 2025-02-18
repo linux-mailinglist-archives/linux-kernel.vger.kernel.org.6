@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-520217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-520218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D6EA3A720
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:13:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93107A3A71C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 20:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FD316DBE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29E777A15FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 19:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EAA1EB5C1;
-	Tue, 18 Feb 2025 19:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977B21B9F7;
+	Tue, 18 Feb 2025 19:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yQ8+PFAY"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfnhWYds"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21A41EFF8B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 19:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62121B9F3;
+	Tue, 18 Feb 2025 19:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739905758; cv=none; b=vFjq75u+Mw+9uf2yrfg0Bgudv6hc8XdP+9WieiT1hlKTugBUSNoVPrxND/irSXTGNKSirO+lvjBqOcWlwm1xq71D3bOH6ihYDH+PfNwIeqloLSvpvZa9y2VKXmJ/9YFf191KAwyzEz9uxEl4QP7cgsJ8LYaooghnF48NfjDA6I4=
+	t=1739905786; cv=none; b=XinPlZbcAGsCAqx8JjEWXxuyYhry1j7b4CWuiKGvMkH5Hi/Yz+9tx+GhpWOJB68W9WFuta2hqbMl1CsCuOOcEZDpFcKYNMxfr9TTFGRA9wnP5EPBweDcYe0Cd/BNyicYt2mtbabgsavqdaO4hwkI36XRzchpJ3nlWUdm2S7MjLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739905758; c=relaxed/simple;
-	bh=vtkAZPDRpeVOssKKtc3/ZBtyBpcNLoSSRXvVxehsrIg=;
+	s=arc-20240116; t=1739905786; c=relaxed/simple;
+	bh=MKRpg20GW51A8TO6MgkFLj5LD4O/ElF77sV3bubJAfM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDYZDBOK+94ADU6NzWGuYICzV/W7SVft3giqf8wYdKmjs6osZZ06nfxyQe4tk6vUrUSYeyWd01E12Fg2+g1MYjDiow8Hamn5qsQaZPzvJods3a9iOQwatUVPCaA13/y3bx2CLWgen5dZpVg6XMnom+CveICewX9UtfTamuFBLko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yQ8+PFAY; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbae92be71so198598966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 11:09:14 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4XWPaHH7wIgx5Q9z7ZgQGrVMKOt3AEWSrQwiEegHVJROrV8oN4hGwdWisqMButTXkUjAjG2KocxcgYjEmLdnEDlxLa6EeFjcEU+AIsT+NHSeOwCSxTPHMY8Qt7WbdQ9KhyYcphrDB61UjzcQFAjUWe12UEaw90O7r7Hjq8FNOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfnhWYds; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c2a87378so83445725ad.1;
+        Tue, 18 Feb 2025 11:09:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739905753; x=1740510553; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739905784; x=1740510584; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsPSNeOLOsrs5K++JmVDCL05j90mUH/WwZrpY1dTXqk=;
-        b=yQ8+PFAYU3EoFFe1afTQxcs9M5Tm46BhjXE+Ni49exR70aDh5k8D1+468WlAofxgzc
-         l199bW8uI7z8hMSdXZxfu063NSXKygNu5eeMQagj8PDwFHH7pFXjhN1b614X1NsVr4tY
-         zaseVLNxi50yxk2Hxwc7+xBmHj6ZLGoEDW2ggNcB/yhAZ65f/qoENuHZh5mzUmbIGMMN
-         tlYi9U/4YcMOEfcaVSQQ9VAUOp8xrij9kMmiipdhe5aJaN2YLO50v6pZHDDc+UB1K5We
-         IYim5GOOnK6Bj0aNEGrRC6m1s3fyAUYcn4Dca1GWWioP8LwcN1xqxbwGfv+ubXm4cAlt
-         HrBA==
+        bh=BB41eKE33tD6ZlxR2QuIN+D2oIaS7wnfJEtztipPSK4=;
+        b=MfnhWYds0qNI3aJNRXeZ9bhssOY4/b3On/bQMysu1CXRCrvsEW6o5Km4LbS8TpLq/a
+         q4tN+LPJ8vczM9eliRwYUxuwhK5YdkzUbRetOw9L3DwLbToL1UeUVfgSBbaD1u+exVwp
+         bYifpI6hxazA+AmcPOlPg1+WMA5b3M0XOq95l9fh/aBLizTQPyVhOpjz9sDWwiP7BinB
+         7H7WO4YiYS7UejpSKGkIZInHdVqbbwY1L7WKp1TZKzkMJrdN4F+ZSkfMPR4/C3FaOec6
+         oK2mmsvZxyPjs2JpzvV64UZZhUTb5jfmEXUkUW/G75mpJhvUV+SOckciEn5BChMbCRQX
+         46DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739905753; x=1740510553;
+        d=1e100.net; s=20230601; t=1739905784; x=1740510584;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xsPSNeOLOsrs5K++JmVDCL05j90mUH/WwZrpY1dTXqk=;
-        b=KK8qAVd1BEExo85qOACxrPXSVvn7Zqmc5Kow3IBJfsLRGtfxf/YW133qCKE3J33wMG
-         o8bwaXk+Dk+4OovFq3ukp0ePna47vNGJfsN69+9h9OHkCbeAZr5AnEbCU5ER5LpFp3pU
-         s7EWK6TLB44i/0x/HVTp19O2JP/H9bVNNO3PB9BrIfl2oWhwbWZHUYGuD+a6eNexCYkO
-         kVtsEUmC5YCUc3ZymBTfVIqDlZ1MsYD1P9n8gjOaNtfydz+0+xyDdQ0TNU9XxCXtIZF9
-         lSCL6+OABM2KGgLHbGw7LmTLikso7Br31nXyni/NmemczpqHJhmr6TIzwNGaOZd/azA1
-         7jNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNHG40xyKYfQA0KxHt5hWXKbULEfAqzyYgbgpKzhwo3UlfjWdzTJ2JOyOQAD7+rbwJilH/nl3swEKdJWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfp0Epfvv/IAvAWvN/r956vLfKRLVmAR5rdiGMHprlaYiqh8Dw
-	vhr6sgf+3gD9kcSLHbAxPh6K05hLICWgwEng0CJB3BMs9/9F1S66tdcrQxRJOjg=
-X-Gm-Gg: ASbGncsGGDpF4BJ6zpi7/KmHJ1zaMLxWaoRRSc2tAReOc1sIJlDAP5y5tEn7Ls8l8t/
-	HPNq8mtPvzmRjI1nRk9Z76Gv2QYmVq6J1m23882gAexU1GVRVbpTcG8sgFSMM5TQn5WUrft7XYK
-	XtlFzuQBd2B/4ubsrDPW5wnVdA78ye/gIXMNruS5P5DuAXQKYoKu9p+nH/65miSZ2LrYSk07X6D
-	TLQ9y4E5+07AR5PUkSDccuZb/NdaFWrajIwP87Q5s9cJwPT9k5jlfy2hUkT7Or0Wo1f6GRyI92i
-	aeohiS1V8KbBmrEJXT22
-X-Google-Smtp-Source: AGHT+IECzgx+wcz5EbHNUv+RuNV/8qTPAQ4z0nfTNLzDceNq6d1mjgLqh6ZvP2PHnq3FwjFOEYPEyw==
-X-Received: by 2002:a05:6402:42cc:b0:5de:4a8b:4c9c with SMTP id 4fb4d7f45d1cf-5e03618aa7emr37791483a12.32.1739905752903;
-        Tue, 18 Feb 2025 11:09:12 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1d369esm9063291a12.37.2025.02.18.11.09.11
+        bh=BB41eKE33tD6ZlxR2QuIN+D2oIaS7wnfJEtztipPSK4=;
+        b=ZQzMLXJgjuKf+Czfr/0JSzDmvxEw2+SfPEATQdMz4DMybLonL32TtgUw4bbWyBKafY
+         p1b4MozA2NwkDzeGUXl0hcTkfyoqq0BNo6dn52y8OOPwRDE4ClYywttJ7SZd1frxplfV
+         5O7SIxI7kiaa49+3vakUkqCVn7zC1GiGtM7HH83lwCowdr1CkZUS0IPyK891IGgFpxeT
+         DnMfBtUTbcfZZ0AN2GaH1bZGvMxsfztmbHcjwMP7hus+dlk6GD+qyfd/TwIGy/nurbwV
+         i3A4/Ej/JEvzDIzZ1M3tR0SEdVrQpSbQ6D5T2gxGXZ4pp0lcNRXXfq8m83mVnGxeCua7
+         XmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4jtwSFx9f9/j7SYypGKF0F0FuheR0hmrsXGzPd+D//Js9ODZ3gs6ePrc0wKhHUPKSaMw=@vger.kernel.org, AJvYcCXekByQCgsmpyY7Kyy9BHOu3KYmK5oWdUNuVfAXyzGehVp4gxaDtE4BIoOyWJHsV0I63eAvBIQ3jqxp58Jn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3DprxyNXBWOvQH/6tTaMOWZTaanriOlT1JaHQzH1aYQTp5DaP
+	/GWNZhfSk+MkCT/e+QcZUzaB9orfVsdVMy18pOTRngFmhrC+YlPt
+X-Gm-Gg: ASbGncsd/j3UDIHUOg2k1TZ+mjYk+vaO1w+eHJE0EytS3xGqHZ6zF4YBbsbC0g0gVvm
+	JA3oOtsB41m8+Z/8VO4Ev9wNmWdjslWHUJcdj1BSJFBRSwsfEIk6Y/T66CY9vNNsCyJgyxx8jjZ
+	+Te5l+7vHrl123Ne8mYVVMfWFSNHe8vu4/auUCl+5pc99uqvoP06RmzLVpJWRzbzc4z0+Sv4dk2
+	FCZm05ZQ5Hx4sMIHX5QGDlXiXhMy2N5XwA92ckV6GZgqRVHttJkQ9t0aKdYmOFioqVvcMgMQrZh
+	DLHxjqTp8R7Uwc4=
+X-Google-Smtp-Source: AGHT+IHewgZoDXqzwkD/Pf9RNFhJxKN2ex1Jk+M6rDTJ0peO0LGgdlAqipzv9O4selP+o5eu5Tnlug==
+X-Received: by 2002:a05:6a20:12c3:b0:1ee:8296:b078 with SMTP id adf61e73a8af0-1ee8cb40d00mr23483247637.25.1739905783780;
+        Tue, 18 Feb 2025 11:09:43 -0800 (PST)
+Received: from localhost ([216.228.125.131])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ae07fec1f8esm3414096a12.28.2025.02.18.11.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:09:12 -0800 (PST)
-Date: Tue, 18 Feb 2025 22:09:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Madhur Kumar <madhurkumar004@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: sm750fb: Remove unnecessary volatile
- qualifiers from the file
-Message-ID: <fc80577a-2dfc-467f-bb92-db9e0cc7151c@stanley.mountain>
-References: <20250218185749.22144-3-madhurkumar004@gmail.com>
+        Tue, 18 Feb 2025 11:09:43 -0800 (PST)
+Date: Tue, 18 Feb 2025 14:09:41 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrea Righi <arighi@nvidia.com>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>, Ian May <ianm@nvidia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: idle: Introduce node-aware
+ idle cpu kfunc helpers
+Message-ID: <Z7Ta9ULl141jcjFF@thinkpad>
+References: <20250218180441.63349-1-arighi@nvidia.com>
+ <Z7TZIvaxzEDD2u9A@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,15 +90,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218185749.22144-3-madhurkumar004@gmail.com>
+In-Reply-To: <Z7TZIvaxzEDD2u9A@slm.duckdns.org>
 
-On Wed, Feb 19, 2025 at 12:27:48AM +0530, Madhur Kumar wrote:
-> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
-> ---
+On Tue, Feb 18, 2025 at 09:01:54AM -1000, Tejun Heo wrote:
+> On Tue, Feb 18, 2025 at 07:04:41PM +0100, Andrea Righi wrote:
+> > Introduce a new kfunc to retrieve the node associated to a CPU:
+> > 
+> >  int scx_bpf_cpu_node(s32 cpu)
+> > 
+> > Add the following kfuncs to provide BPF schedulers direct access to
+> > per-node idle cpumasks information:
+> > 
+> >  const struct cpumask *scx_bpf_get_idle_cpumask_node(int node)
+> >  const struct cpumask *scx_bpf_get_idle_smtmask_node(int node)
+> >  s32 scx_bpf_pick_idle_cpu_node(const cpumask_t *cpus_allowed,
+> >  				int node, u64 flags)
+> >  s32 scx_bpf_pick_any_cpu_node(const cpumask_t *cpus_allowed,
+> >  			       int node, u64 flags)
+> > 
+> > Moreover, trigger an scx error when any of the non-node aware idle CPU
+> > kfuncs are used when SCX_OPS_BUILTIN_IDLE_PER_NODE is enabled.
+> > 
+> > Cc: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> 
+> Applied to sched_ext/for-6.15.
 
-No commit message.  No v2.  Etc.
+I added my review-by in v12. Can you please add it here?
 
-regards,
-dan carpenter
-
+Reviewed-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
