@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-519979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-519981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696CBA3A451
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:29:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C39A3A45A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 18:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2DD3A075A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D08C189237D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Feb 2025 17:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8428326FDB8;
-	Tue, 18 Feb 2025 17:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CEC270EA7;
+	Tue, 18 Feb 2025 17:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EDxbiW07";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3eED4nZl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ICt233yL"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0B286A1;
-	Tue, 18 Feb 2025 17:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6D26FA71
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 17:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739899750; cv=none; b=HIofuxIQGNHdvjhFvFUpw/rc7AnS+9kEHuhg3oZuuO/2TOS8uo/JESapIIeuDONVOB/jR66cPnrgyzquOpe3o1JMwhCpG1bitp5m+kGOvDYI63A8gr6JjmxLEXOKu3kDgmzQk4p649VnvfYoiXFErw5E42lqf9AUKIzcX+6gjLE=
+	t=1739899803; cv=none; b=XMgQU+3uKfGpNZLbP3SdHMZtIwxiQUqIdFU8hgL0YGY3CDI/mfG3Mlf0Ytk5bYX4UAHEN3NkpLTxSKptpBIUXDDmRlZjkv0eit6IkZ5EAA+C56fLHKbpvtPKKeOQ8aeAR6lPqJbvN/vt0A33jDEPMGISjyXKLjmS0Gy5E7ZDePI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739899750; c=relaxed/simple;
-	bh=MxI8M2wbkcp+37wHzG/RfF0zP5KTWHkSheAyaIx5QBc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=fztfSzBaPfn0vvSqXyxVRlWC4ruUN0jpTkND8DIZjWdn2BblhxACIaIV2RId/q+E0C15gTSPfnlZJLSt6Ru4QOCXliMplNzMsnlGn1PpODuJlTEzHeU0yaS2nIbw63WW4edwNOgW/l2hwTf/TZ29W/JfSV2d+atI+iphgZwfko4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EDxbiW07; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3eED4nZl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Feb 2025 17:29:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1739899746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RqKHgAVf+wjocvxnCDI3yCoH+0U6NFgRgYV5Thtzqgg=;
-	b=EDxbiW07sfLsM2zRbeJKV+abjbTSOligQj94eHCU+9WJCLknDSe57VtrDGeHC/bMyWbPhY
-	BX+TLMK2iqnbLCwSfPcV9DsGl2WD9+XMuc+mNFzOtOsDx88eUsCLnR+dIEGO+pInDnzTer
-	DScAiBEovUGX2xMjVO4rQaBUroo5fAHMS6wQZUjVqCNYY2x1aFroV1BiIGI+c6kfG7ozbL
-	Tfv9y9pZle4eNN0LXs2KKitTgMYf1U1v+LO5b8E6vZPTsHG83jQ1B4z+tdNrvc5JnJ7KZg
-	W2frGZJ+66tYYo13obUAN40fl04HaLLcT/6lZVTlu5J21IkTN16xSMJBoU8eQQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1739899746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RqKHgAVf+wjocvxnCDI3yCoH+0U6NFgRgYV5Thtzqgg=;
-	b=3eED4nZlsIOa8aVCrI0mJzE3zhEp/lTu0rgJFX212Sn1zQl7TUPCwJRoIG5dWKyFTSJRM6
-	et84OWvgLjllCaCA==
-From: "tip-bot2 for Mario Limonciello" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] x86/amd_node: Add a smn_read_register() helper
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250217231747.1656228-2-superm1@kernel.org>
-References: <20250217231747.1656228-2-superm1@kernel.org>
+	s=arc-20240116; t=1739899803; c=relaxed/simple;
+	bh=JPepBJMSRAuLJ4M8oZdJ9/BBgMwNySHzUtLfR8bYIH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MWb24WWhflQBCDUvLDcKiYOYAVihuXs02plMgSV4xd2VpVFUeGe/xixY2EG23HteIB3OY8a+dpxob/7JorVbDWb+B/NTep/QpYCviRzC/CgNL3fpZ/8UBjgt4tEQ3ZoVFcy9LlWgjWkbXJ+g4pDgQF1rrEGKTsNL1QxCG0ZG+EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ICt233yL; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fbfa7100b0so1398111a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Feb 2025 09:30:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739899801; x=1740504601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LUt8o7+hB6Njb2oYjIlPOyCXaxcxvi9o7/BTnTuLLWw=;
+        b=ICt233yLGb2YiKRo7yb4VlcpoVL99K6EG+9ATWylgcGqTSw1Oxwd8L7PWyJ/v4RkBE
+         V930TQl0qSRcPhR3YiEUwDODUNyrhtUlVwD8LKJwkvQ/nYKrlITP2mLKile7uuW7GJPm
+         yxcIvcMBlttktj/fCOqESOzYHTJdEf2dlE78YWIuzxWfBiWwvXVZnPjFtPQOUM8aGY6o
+         V+lV3YEjNqGH2g2mz2OLA2uexMORM8JO1Xga4jzs+iqv0DDmJPHDM0LwI+FQSIOhErES
+         w05R7tqS6SkpRO0DWQAb/l4BhMmjYbA/mlNd4yuauvWQfqZl2iQwsDYz21Kpk08Ov1T2
+         rRxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739899801; x=1740504601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LUt8o7+hB6Njb2oYjIlPOyCXaxcxvi9o7/BTnTuLLWw=;
+        b=hK4OZy8ziqp7kVQArlzotZhGLCctCtzSQNkHUsBYzr04KzAY8SO9l67S26Efz91tNF
+         ZM7jB18aJObHGw/UBGrhU/Ivp9QLb/EXhL9ElyU66yrD66wwy5YkwBiiVw6dBj/S06Nt
+         UyEz16StrAR1Y3aCrfd30ukGUNEJtEGtmLGyiP0tEEzTW5YlN7bvUUWBTihttwayHIPb
+         LRHTSox34eAn44VIYZK8+ne3nDHdJwaDk+tFqoHOweHRT/iiNzhBcRU92q0AtGCs0sgf
+         NM1QtLxKlFXawG7Tzef/tgE9m0oUuvI2UA2Rz4CGBiSeRjJEZZrjD2WeRtePHQ4OBmHd
+         0kng==
+X-Forwarded-Encrypted: i=1; AJvYcCVrPYLW4379UWbbuX97gvIGCajLWA3z2qMsEqJrd9Cxq8YRoFacG/rrgJLMKzqmWDelrdx68OWPcH5TZkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYicM9YR4dq6dLXYUv6E5lBHfzRKV0lmcvVSn/VSqVC+cK+yKI
+	083X1qelLKJV61FEidkvxk9d52FTv1qpHXti9shwfE7Bh+68lpCWsklabYoOZ2keRlIUku1vYkF
+	WdTD+3ORr6bz19wZLr0S+TnDAjiQPQX9DaIDtPw==
+X-Gm-Gg: ASbGncvUxf89EvX1Ki4mc1BBq+Iw2hnYOlE/408pENYeoI0V+nBjyKyKgzfFDXPcW5g
+	okEPryiFVhBCBvg9mATpAQv7mDjVzGEthewf1yAi/qp1X4kjwHoFk9O9Yc5uuNIaqPKBbsG0=
+X-Google-Smtp-Source: AGHT+IFeBNyWIAXh+EPk2eKwL5jW8rtVQKGRkR7rVYTeqSsk3nJIqHBXaNrLW/pvXwUtVLFmBHgNEHZDu2Oo9qOd5KI=
+X-Received: by 2002:a17:90b:2fc3:b0:2ee:a558:b6bf with SMTP id
+ 98e67ed59e1d1-2fc4117c0cfmr8724982a91.8.1739899800674; Tue, 18 Feb 2025
+ 09:30:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173989974292.10177.3977427168807711894.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250212005119.3433005-1-csander@purestorage.com>
+In-Reply-To: <20250212005119.3433005-1-csander@purestorage.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 18 Feb 2025 09:29:49 -0800
+X-Gm-Features: AWEUYZklYvNbpjeqJ25078hNrYRuo6xnxQiEhKeQ9HuaQYI6Cy_rKvk9qRwhPsw
+Message-ID: <CADUfDZo5CMo4cQeZCQ3z5vNFSJ_M_Ckeq=bj2rkA6-sq7ABSNw@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: use lockless_cq flag in io_req_complete_post()
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/misc branch of tip:
+Hi Jens,
+Gentle ping on this patch that Li Zetao reviewed last week. Do you
+think the comment should be removed/reworded to match the new if
+condition?
 
-Commit-ID:     c893ee3f95f16fcb98da934d61483d0b7d8ed568
-Gitweb:        https://git.kernel.org/tip/c893ee3f95f16fcb98da934d61483d0b7d8ed568
-Author:        Mario Limonciello <mario.limonciello@amd.com>
-AuthorDate:    Mon, 17 Feb 2025 17:17:41 -06:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 18 Feb 2025 18:14:29 +01:00
+Thanks,
+Caleb
 
-x86/amd_node: Add a smn_read_register() helper
-
-Some of the ACP drivers will poll registers through SMN using
-read_poll_timeout() which requires returning the result of the register read
-as the argument.
-
-Add a helper to do just that.
-
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250217231747.1656228-2-superm1@kernel.org
----
- arch/x86/include/asm/amd_node.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/x86/include/asm/amd_node.h b/arch/x86/include/asm/amd_node.h
-index 002c3af..23fe617 100644
---- a/arch/x86/include/asm/amd_node.h
-+++ b/arch/x86/include/asm/amd_node.h
-@@ -46,4 +46,15 @@ static inline int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *val
- }
- #endif /* CONFIG_AMD_NODE */
- 
-+/* helper for use with read_poll_timeout */
-+static inline int smn_read_register(u32 reg)
-+{
-+	int data, rc;
-+
-+	rc = amd_smn_read(0, reg, &data);
-+	if (rc)
-+		return rc;
-+
-+	return data;
-+}
- #endif /*_ASM_X86_AMD_NODE_H_*/
+On Tue, Feb 11, 2025 at 4:51=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> io_uring_create() computes ctx->lockless_cq as:
+> ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)
+>
+> So use it to simplify that expression in io_req_complete_post().
+>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  io_uring/io_uring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index ec98a0ec6f34..0bd94599df81 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -897,11 +897,11 @@ static void io_req_complete_post(struct io_kiocb *r=
+eq, unsigned issue_flags)
+>
+>         /*
+>          * Handle special CQ sync cases via task_work. DEFER_TASKRUN requ=
+ires
+>          * the submitter task context, IOPOLL protects with uring_lock.
+>          */
+> -       if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)) {
+> +       if (ctx->lockless_cq) {
+>                 req->io_task_work.func =3D io_req_task_complete;
+>                 io_req_task_work_add(req);
+>                 return;
+>         }
+>
+> --
+> 2.45.2
+>
 
